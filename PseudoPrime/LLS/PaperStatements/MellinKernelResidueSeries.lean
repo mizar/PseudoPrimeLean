@@ -35,7 +35,7 @@ theorem weightedResidue_eq_neg_oscillatingZeroTerm (K : MellinKernel) {q : ℕ} 
   have hm :
     (analyticOrderNatAt (fun z : ℂ => χ.completedLFunction (z + 1 / 2)) s : ℂ) =
       (MeromorphicOn.divisor χ.completedLFunction Set.univ (s + 1 / 2) : ℂ) := by
-    exact_mod_cast shifted_completed_orderNat_eq_divisor hp hne s
+    exact_mod_cast shifted_orderNat_eq_divisor hp hne s
   rw [hm, oscillatingZeroTerm, kernelZeroTerm]
   by_cases hD : MeromorphicOn.divisor χ.completedLFunction Set.univ (s + 1 / 2) = 0
   · simp only [hD, Int.cast_zero, neg_zero, zero_mul]
@@ -76,7 +76,7 @@ theorem eventually_mem_completedKernelSingularities {q : ℕ} [NeZero q] (hq : 2
     · have hr := completedLFunction_zero_re_eq_half hGRH hp hne hinv hz
       simp only [Complex.add_re, Complex.div_ofNat_re, Complex.one_re] at hr
       exact Or.inr (by linarith only [hr])
-  have hT := tendsto_primitiveHorizontalHeightSeq_atTop hq hGRH hp hne hinv
+  have hT := tendsto_horizontalHeightSeq_GRH hq hGRH hp hne hinv
   filter_upwards [hT.eventually_gt_atTop |s.im|] with n hn
   apply mem_completedKernelSingularities.mpr
   refine ⟨?_, hs⟩
@@ -98,9 +98,7 @@ theorem oscillatingZeroTerm_zero (K : MellinKernel) {q : ℕ} [NeZero q] {χ : D
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (x : ℝ) : K.oscillatingZeroTerm χ x 0 = 0 := by
   have hD : MeromorphicOn.divisor χ.completedLFunction Set.univ 0 = 0 := by
     by_contra hd
-    exact
-      dirichletCompletedLFunction_zero_ne_zero_of_primitive hp hne
-        (completed_zero_of_divisor_ne_zero hne hd)
+    exact completed_zero_ne_zero_of_primitive hp hne (completed_zero_of_divisor_ne_zero hne hd)
   simp only [oscillatingZeroTerm, kernelZeroTerm, hD, Int.cast_zero, zero_mul]
 
 open AnalyticNumberTheory.DirichletLFunction in

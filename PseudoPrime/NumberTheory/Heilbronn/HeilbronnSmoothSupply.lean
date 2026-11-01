@@ -45,8 +45,7 @@ theorem eventually_smooth_count_at_cutoff :
   have hgap := hratio.eventually_lt_const (div_pos (sub_pos.mpr hcA) hAp)
   have hM :=
     hL.eventually
-      (NumberTheory.eventually_const_mul_rpow_le_primeCounting_floor_rpow (C := 2)
-        (zero_lt_one.trans hb) hbA)
+      (NumberTheory.eventually_rpow_le_primeCounting_floor (C := 2) (zero_lt_one.trans hb) hbA)
   have hBfloor :=
     hL.eventually (NumberTheory.eventually_rpow_le_nat_floor_rpow (b := 0) (by norm_num only) hAp)
   have hCfloor :=

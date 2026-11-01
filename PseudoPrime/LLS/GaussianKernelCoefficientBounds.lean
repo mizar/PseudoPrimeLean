@@ -130,7 +130,7 @@ theorem gaussian_kernel_triple_denominator_le
 /-- For index h>=4, the actual fixed Gaussian denominator is at least 21943/30000.
 The cutoff mass and endpoint bounds are proved for the kernel; no numerical integral
 premise remains. This supplies the normalized P2 subgroup comparison denominator. -/
-theorem gaussian_kernel_normalized_denominator_le_of_four_le_index {h : ℝ} (hh : 4 ≤ h) :
+theorem gaussian_normalizedDenominator_index_ge_four {h : ℝ} (hh : 4 ≤ h) :
     (21943 / 30000 : ℝ) ≤
       (h *
             (∫ u in (0 : ℝ)..(21 / 10 : ℝ),
@@ -145,7 +145,7 @@ theorem gaussian_kernel_normalized_denominator_le_of_four_le_index {h : ℝ} (hh
 /-- The actual fixed Gaussian index-four denominator is at least 10971611/5000000.
 Use the sharpened cutoff mass and endpoint without a separate integral premise.
 This supplies the unnormalized denominator for the three-conductor comparison. -/
-theorem gaussian_kernel_triple_denominator_le_at_fixed_cutoff :
+theorem gaussian_tripleDenominator_fixedCutoff :
     (10971611 / 5000000 : ℝ) ≤
       4 *
           (∫ u in (0 : ℝ)..(21 / 10 : ℝ),

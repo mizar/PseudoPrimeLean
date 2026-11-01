@@ -244,10 +244,9 @@ theorem qNeOneCommonUpperBound_lt_sharp {y : ℝ} (hy : (99 / 10 : ℝ) ≤ y) :
   by_cases hu : y ≤ 12
   · exact
       max_lt (qNeOneUpperBoundZeroStar_lt_sharp_compact hy hu)
-        ((qNeOneAnalyticUpperBoundOne_lt_qNeOneAnalyticLowerBound h8).trans_le
-          (qNeOneAnalyticLowerBound_le_sharp h8))
+        ((qNeOne_oneUpper_lt_lower h8).trans_le (qNeOneAnalyticLowerBound_le_sharp h8))
   · exact
-      (qNeOneAnalyticLowerBound_gt_qNeOneCommonUpperBound_of_twelve (le_of_not_ge hu)).trans_le
+      (qNeOne_common_lt_lower_from12 (le_of_not_ge hu)).trans_le
         (qNeOneAnalyticLowerBound_le_sharp h8)
 
 end PseudoPrime.LLS.Extensions

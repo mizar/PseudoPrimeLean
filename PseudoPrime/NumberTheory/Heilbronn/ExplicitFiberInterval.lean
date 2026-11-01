@@ -33,7 +33,7 @@ theorem two_pow_lt_explicit_finite_fiber_threshold {k u : ℕ} (h : k < u) :
 /-- If 6a<u, the rational cutoff coefficient 32^a 2^a lies below P(u).
 Collect its binary powers before specializing a,u. This discharges the
 extra Fourier-height condition for the fixed scale a=68,u=1388714689827. -/
-theorem cutoff_coefficient_lt_explicit_finite_fiber_threshold {a u : ℕ} (h : 6 * a < u) :
+theorem cutoff_coefficient_lt_fiber_threshold {a u : ℕ} (h : 6 * a < u) :
     32 ^ a * 2 ^ a < explicitFiniteFiberPrimeThreshold u := by
   have he : (32 : ℕ) ^ a * 2 ^ a = 2 ^ (6 * a) := by
     rw [show (32 : ℕ) = 2 ^ 5 by decide, ← pow_mul, ← pow_add]
@@ -76,7 +76,7 @@ theorem fixed_log_square_finite_fiber_energy_budget {p H k : ℕ} [Fact p.Prime]
   have hcoeff :
     (2 ^ 176 : ℝ) ^ 68 * (finiteFiberCountCoefficient 136 68 : ℝ) ^ (13 * 68) < (p : ℝ) := by
     exact hcoeffCast.trans_le hPcast
-  have hz := three_hundred_eighty_seven_billion_le_double_log_of_explicit_fiber_threshold hlarge
+  have hz := le_log_log_387000000000 hlarge
   have hLp := Real.log_pos (Nat.one_lt_cast.mpr (Fact.out : p.Prime).one_lt)
   have hzsmall : 20000000000 ≤ Real.log (Real.log p) := le_trans (by norm_num only) hz
   obtain ⟨hL, _⟩ :=
@@ -121,8 +121,8 @@ theorem fixed_log_square_finite_fiber_energy_budget {p H k : ℕ} [Fact p.Prime]
     thirteenth_energy_power_lt_of_log_square_slack hodd 68 (finiteFiberCountCoefficient 136 68) 3
       hmargin
   have hcount :=
-    boundedCongruenceCount_power_le_explicit_finite_fiber_of_exponent_bound (a := 68) (c := 136)
-      (g := 2) (by decide) (by decide) (by norm_num only) (by norm_num only) p H hodd hHp htop
+    congruenceCount_power_le_fiber_of_exponent_bound (a := 68) (c := 136) (g := 2) (by decide)
+      (by decide) (by norm_num only) (by norm_num only) p H hodd hHp htop
   have hslack : 71 * 68 + 13 * 2 < 39 * 125 := by decide
   exact
     Analysis.thirteenth_counting_budget_of_energy_exponent_le (Fact.out : p.Prime).pos (by decide)
@@ -148,9 +148,7 @@ theorem separate_count_finite_fiber_energy_budget {p H k a h c b g r : ℕ} [Fac
         (p : ℝ) ^ r)
     (hr : r ≤ 39 * b - (71 * a + 13 * g)) :
     p * heilbronnEnergy p * boundedCongruenceCount p H < k ^ 2 := by
-  have hcount :=
-    boundedCongruenceCount_power_le_explicit_free_finite_fiber ha hh hc hprec hratio p H hodd hHp
-      htop
+  have hcount := congruenceCount_power_le_freeFiber ha hh hc hprec hratio p H hodd hHp htop
   have hbudget :=
     thirteenth_energy_power_lt_of_log_square_slack hodd a (freeFiniteFiberCountCoefficient c h) r
       henergy
@@ -171,9 +169,7 @@ theorem separate_count_finite_fiber_energy_budget_square {p H k a h c b g : ℕ}
     (hcoeff : (((2 ^ 176 : ℝ) ^ a) * (freeFiniteFiberCountCoefficient c h : ℝ) ^ (13 * a)) ^ 2 < p)
     (hlog : (1 + Real.log p) ^ (4 * a) ≤ p) :
     p * heilbronnEnergy p * boundedCongruenceCount p H < k ^ 2 := by
-  have hcount :=
-    boundedCongruenceCount_power_le_explicit_free_finite_fiber ha hh hc hprec hratio p H hodd hHp
-      htop
+  have hcount := congruenceCount_power_le_freeFiber ha hh hc hprec hratio p H hodd hHp htop
   have hbudget :=
     thirteenth_energy_power_lt_of_square_slack hodd a (freeFiniteFiberCountCoefficient c h) hcoeff
       hlog
@@ -227,7 +223,7 @@ theorem exists_fixed_finite_fiber_interval_bound {p : ℕ} [Fact p.Prime] (hodd 
         p ^ 125 ≤ k ^ 68 ∧ k ^ 68 ≤ 2 ^ 68 * p ^ 125 ∧ p * heilbronnInitialCount p k < 256 * k := by
   obtain ⟨k, hk, hkp, hlo, hhi, hb⟩ := exists_fixed_finite_fiber_rational_energy_cutoff hodd hlarge
   have hc : (32 : ℕ) ^ 68 * 2 ^ 68 < p :=
-    (cutoff_coefficient_lt_explicit_finite_fiber_threshold (a := 68) (u := 1388714689827)
+    (cutoff_coefficient_lt_fiber_threshold (a := 68) (u := 1388714689827)
           (by norm_num only)).trans_le
       hlarge
   have hheight :=
@@ -244,7 +240,7 @@ theorem exists_fixed_finite_fiber_interval_bound {p : ℕ} [Fact p.Prime] (hodd 
 /-- At the separate scale 74/40, the logarithmic-square energy estimate
 supplies the explicit finite-fiber budget above P(283000007562). The
 coefficient and logarithmic factor leave energy exponent three. -/
-theorem fixed_log_square_finite_fiber_energy_budget_40_74 {p H k : ℕ} [Fact p.Prime] (hodd : Odd p)
+theorem fiber_logSq_energy_40_74 {p H k : ℕ} [Fact p.Prime] (hodd : Odd p)
     (hlarge : explicitFiniteFiberPrimeThreshold 283000007562 ≤ p) (hHp : H < p)
     (htop : (H : ℝ) ≤ (p : ℝ) ^ (5 / 28 : ℝ)) (hcut : p ^ 74 ≤ k ^ 40)
     (hheight : H ^ 40 ≤ p ^ (2 * 40 - 74)) :
@@ -266,7 +262,7 @@ theorem fixed_log_square_finite_fiber_energy_budget_40_74 {p H k : ℕ} [Fact p.
   have hcoeff :
     (2 ^ 176 : ℝ) ^ 40 * (finiteFiberCountCoefficient 80 40 : ℝ) ^ (13 * 40) < (p : ℝ) :=
     hcoeffCast.trans_le hPcast
-  have hz := one_hundred_billion_le_double_log_of_explicit_fiber_threshold hlarge
+  have hz := le_log_log_100000000000 hlarge
   have hLp := Real.log_pos (Nat.one_lt_cast.mpr (Fact.out : p.Prime).one_lt)
   have hzsmall : 20000000000 ≤ Real.log (Real.log p) := le_trans (by norm_num only) hz
   obtain ⟨hL, _⟩ :=
@@ -311,8 +307,8 @@ theorem fixed_log_square_finite_fiber_energy_budget_40_74 {p H k : ℕ} [Fact p.
     thirteenth_energy_power_lt_of_log_square_slack hodd 40 (finiteFiberCountCoefficient 80 40) 3
       hmargin
   have hcount :=
-    boundedCongruenceCount_power_le_explicit_finite_fiber_of_exponent_bound (a := 40) (c := 80)
-      (g := 2) (by decide) (by decide) (by norm_num only) (by norm_num only) p H hodd hHp htop
+    congruenceCount_power_le_fiber_of_exponent_bound (a := 40) (c := 80) (g := 2) (by decide)
+      (by decide) (by norm_num only) (by norm_num only) p H hodd hHp htop
   have hslack : 71 * 40 + 13 * 2 < 39 * 74 := by decide
   exact
     Analysis.thirteenth_counting_budget_of_energy_exponent_le (Fact.out : p.Prime).pos (by decide)
@@ -321,7 +317,7 @@ theorem fixed_log_square_finite_fiber_energy_budget_40_74 {p H k : ℕ} [Fact p.
 /-- At the separate scale 70/38, the logarithmic-square energy estimate
 supplies the explicit finite-fiber budget above P(242591045876). The
 coefficient and logarithmic factor leave energy exponent three. -/
-theorem fixed_log_square_finite_fiber_energy_budget_38_70 {p H k : ℕ} [Fact p.Prime] (hodd : Odd p)
+theorem fiber_logSq_energy_38_70 {p H k : ℕ} [Fact p.Prime] (hodd : Odd p)
     (hlarge : explicitFiniteFiberPrimeThreshold 242591045876 ≤ p) (hHp : H < p)
     (htop : (H : ℝ) ≤ (p : ℝ) ^ (5 / 28 : ℝ)) (hcut : p ^ 70 ≤ k ^ 38)
     (hheight : H ^ 38 ≤ p ^ (2 * 38 - 70)) :
@@ -343,7 +339,7 @@ theorem fixed_log_square_finite_fiber_energy_budget_38_70 {p H k : ℕ} [Fact p.
   have hcoeff :
     (2 ^ 176 : ℝ) ^ 38 * (finiteFiberCountCoefficient 76 38 : ℝ) ^ (13 * 38) < (p : ℝ) :=
     hcoeffCast.trans_le hPcast
-  have hz := one_hundred_billion_le_double_log_of_explicit_fiber_threshold_38_70 hlarge
+  have hz := le_log_log_100000000000_38_70 hlarge
   have hLp := Real.log_pos (Nat.one_lt_cast.mpr (Fact.out : p.Prime).one_lt)
   have hzsmall : 20000000000 ≤ Real.log (Real.log p) := le_trans (by norm_num only) hz
   obtain ⟨hL, _⟩ :=
@@ -388,8 +384,8 @@ theorem fixed_log_square_finite_fiber_energy_budget_38_70 {p H k : ℕ} [Fact p.
     thirteenth_energy_power_lt_of_log_square_slack hodd 38 (finiteFiberCountCoefficient 76 38) 3
       hmargin
   have hcount :=
-    boundedCongruenceCount_power_le_explicit_finite_fiber_of_exponent_bound (a := 38) (c := 76)
-      (g := 2) (by decide) (by decide) (by norm_num only) (by norm_num only) p H hodd hHp htop
+    congruenceCount_power_le_fiber_of_exponent_bound (a := 38) (c := 76) (g := 2) (by decide)
+      (by decide) (by norm_num only) (by norm_num only) p H hodd hHp htop
   have hslack : 71 * 38 + 13 * 2 < 39 * 70 := by decide
   exact
     Analysis.thirteenth_counting_budget_of_energy_exponent_le (Fact.out : p.Prime).pos (by decide)
@@ -398,7 +394,7 @@ theorem fixed_log_square_finite_fiber_energy_budget_38_70 {p H k : ℕ} [Fact p.
 /-- Every odd prime p≥P(283000007562) has a 74/40 cutoff satisfying the
 strict Heilbronn energy budget. Obtain its height and real-power bounds from
 the rational cutoff inequalities. -/
-theorem exists_fixed_finite_fiber_rational_energy_cutoff_40_74 {p : ℕ} [Fact p.Prime] (hodd : Odd p)
+theorem exists_fiber_energy_cutoff_40_74 {p : ℕ} [Fact p.Prime] (hodd : Odd p)
     (hlarge : explicitFiniteFiberPrimeThreshold 283000007562 ≤ p) :
     ∃ k : ℕ,
       0 < k ∧
@@ -424,7 +420,7 @@ theorem exists_fixed_finite_fiber_rational_energy_cutoff_40_74 {p : ℕ} [Fact p
     have htop :=
       height_le_real_power_of_power (a := 40) (d := 6) (by decide) hp1.le
         (by norm_num only : (6 : ℝ) / 40 ≤ 5 / 28) hheightExplicit
-    exact fixed_log_square_finite_fiber_energy_budget_40_74 hodd hlarge hHp htop hlo hheight
+    exact fiber_logSq_energy_40_74 hodd hlarge hHp htop hlo hheight
   · exact (not_le_of_gt hmass hbase).elim
 
 /-- Every odd prime p≥P(283000007562) has a cutoff p^74≤k^40≤2^40 p^74
@@ -436,10 +432,9 @@ theorem exists_fixed_finite_fiber_interval_bound_40_74 {p : ℕ} [Fact p.Prime] 
       0 < k ∧
         k < p ^ 2 ∧
         p ^ 74 ≤ k ^ 40 ∧ k ^ 40 ≤ 2 ^ 40 * p ^ 74 ∧ p * heilbronnInitialCount p k < 256 * k := by
-  obtain ⟨k, hk, hkp, hlo, hhi, hb⟩ :=
-    exists_fixed_finite_fiber_rational_energy_cutoff_40_74 hodd hlarge
+  obtain ⟨k, hk, hkp, hlo, hhi, hb⟩ := exists_fiber_energy_cutoff_40_74 hodd hlarge
   have hc : (32 : ℕ) ^ 40 * 2 ^ 40 < p :=
-    (cutoff_coefficient_lt_explicit_finite_fiber_threshold (a := 40) (u := 283000007562)
+    (cutoff_coefficient_lt_fiber_threshold (a := 40) (u := 283000007562)
           (by norm_num only)).trans_le
       hlarge
   have hheight :=
@@ -456,7 +451,7 @@ theorem exists_fixed_finite_fiber_interval_bound_40_74 {p : ℕ} [Fact p.Prime] 
 /-- Every odd prime p≥P(242591045876) has a 70/38 cutoff satisfying the
 strict Heilbronn energy budget. Obtain its height and real-power bounds from
 the rational cutoff inequalities. -/
-theorem exists_fixed_finite_fiber_rational_energy_cutoff_38_70 {p : ℕ} [Fact p.Prime] (hodd : Odd p)
+theorem exists_fiber_energy_cutoff_38_70 {p : ℕ} [Fact p.Prime] (hodd : Odd p)
     (hlarge : explicitFiniteFiberPrimeThreshold 242591045876 ≤ p) :
     ∃ k : ℕ,
       0 < k ∧
@@ -482,7 +477,7 @@ theorem exists_fixed_finite_fiber_rational_energy_cutoff_38_70 {p : ℕ} [Fact p
     have htop :=
       height_le_real_power_of_power (a := 38) (d := 6) (by decide) hp1.le
         (by norm_num only : (6 : ℝ) / 38 ≤ 5 / 28) hheightExplicit
-    exact fixed_log_square_finite_fiber_energy_budget_38_70 hodd hlarge hHp htop hlo hheight
+    exact fiber_logSq_energy_38_70 hodd hlarge hHp htop hlo hheight
   · exact (not_le_of_gt hmass hbase).elim
 
 /-- Every odd prime p≥P(242591045876) has a cutoff p^70≤k^38≤2^38 p^70
@@ -494,10 +489,9 @@ theorem exists_fixed_finite_fiber_interval_bound_38_70 {p : ℕ} [Fact p.Prime] 
       0 < k ∧
         k < p ^ 2 ∧
         p ^ 70 ≤ k ^ 38 ∧ k ^ 38 ≤ 2 ^ 38 * p ^ 70 ∧ p * heilbronnInitialCount p k < 256 * k := by
-  obtain ⟨k, hk, hkp, hlo, hhi, hb⟩ :=
-    exists_fixed_finite_fiber_rational_energy_cutoff_38_70 hodd hlarge
+  obtain ⟨k, hk, hkp, hlo, hhi, hb⟩ := exists_fiber_energy_cutoff_38_70 hodd hlarge
   have hc : (32 : ℕ) ^ 38 * 2 ^ 38 < p :=
-    (cutoff_coefficient_lt_explicit_finite_fiber_threshold (a := 38) (u := 242591045876)
+    (cutoff_coefficient_lt_fiber_threshold (a := 38) (u := 242591045876)
           (by norm_num only)).trans_le
       hlarge
   have hheight :=
@@ -514,7 +508,7 @@ theorem exists_fixed_finite_fiber_interval_bound_38_70 {p : ℕ} [Fact p.Prime] 
 /-- At scale 59/32, the logarithmic-square energy estimate gives the
 finite-fiber budget above P(145000006050). The coefficient and log factor
 leave energy exponent three. -/
-theorem fixed_log_square_finite_fiber_energy_budget_32_59 {p H k : ℕ} [Fact p.Prime] (hodd : Odd p)
+theorem fiber_logSq_energy_32_59 {p H k : ℕ} [Fact p.Prime] (hodd : Odd p)
     (hlarge : explicitFiniteFiberPrimeThreshold 145000006050 ≤ p) (hHp : H < p)
     (htop : (H : ℝ) ≤ (p : ℝ) ^ (5 / 28 : ℝ)) (hcut : p ^ 59 ≤ k ^ 32)
     (hheight : H ^ 32 ≤ p ^ (2 * 32 - 59)) :
@@ -536,7 +530,7 @@ theorem fixed_log_square_finite_fiber_energy_budget_32_59 {p H k : ℕ} [Fact p.
   have hcoeff :
     (2 ^ 176 : ℝ) ^ 32 * (finiteFiberCountCoefficient 64 32 : ℝ) ^ (13 * 32) < (p : ℝ) :=
     hcoeffCast.trans_le hPcast
-  have hz := twenty_billion_le_double_log_of_explicit_fiber_threshold_32_59 hlarge
+  have hz := le_log_log_20000000000_32_59 hlarge
   have hLp := Real.log_pos (Nat.one_lt_cast.mpr (Fact.out : p.Prime).one_lt)
   have hzsmall : 20000000000 ≤ Real.log (Real.log p) := le_trans (by norm_num only) hz
   obtain ⟨hL, _⟩ :=
@@ -581,8 +575,8 @@ theorem fixed_log_square_finite_fiber_energy_budget_32_59 {p H k : ℕ} [Fact p.
     thirteenth_energy_power_lt_of_log_square_slack hodd 32 (finiteFiberCountCoefficient 64 32) 3
       hmargin
   have hcount :=
-    boundedCongruenceCount_power_le_explicit_finite_fiber_of_exponent_bound (a := 32) (c := 64)
-      (g := 2) (by decide) (by decide) (by norm_num only) (by norm_num only) p H hodd hHp htop
+    congruenceCount_power_le_fiber_of_exponent_bound (a := 32) (c := 64) (g := 2) (by decide)
+      (by decide) (by norm_num only) (by norm_num only) p H hodd hHp htop
   have hslack : 71 * 32 + 13 * 2 < 39 * 59 := by decide
   exact
     Analysis.thirteenth_counting_budget_of_energy_exponent_le (Fact.out : p.Prime).pos (by decide)
@@ -590,7 +584,7 @@ theorem fixed_log_square_finite_fiber_energy_budget_32_59 {p H k : ℕ} [Fact p.
 
 /-- Every odd prime p≥P(145000006050) has a 59/32 cutoff satisfying the
 strict finite-fiber energy budget. -/
-theorem exists_fixed_finite_fiber_rational_energy_cutoff_32_59 {p : ℕ} [Fact p.Prime] (hodd : Odd p)
+theorem exists_fiber_energy_cutoff_32_59 {p : ℕ} [Fact p.Prime] (hodd : Odd p)
     (hlarge : explicitFiniteFiberPrimeThreshold 145000006050 ≤ p) :
     ∃ k : ℕ,
       0 < k ∧
@@ -616,7 +610,7 @@ theorem exists_fixed_finite_fiber_rational_energy_cutoff_32_59 {p : ℕ} [Fact p
     have htop :=
       height_le_real_power_of_power (a := 32) (d := 5) (by decide) hp1.le
         (by norm_num only : (5 : ℝ) / 32 ≤ 5 / 28) hheightExplicit
-    exact fixed_log_square_finite_fiber_energy_budget_32_59 hodd hlarge hHp htop hlo hheight
+    exact fiber_logSq_energy_32_59 hodd hlarge hHp htop hlo hheight
   · exact (not_le_of_gt hmass hbase).elim
 
 /-- Every odd prime p≥P(145000006050) has a 59/32 cutoff with
@@ -627,10 +621,9 @@ theorem exists_fixed_finite_fiber_interval_bound_32_59 {p : ℕ} [Fact p.Prime] 
       0 < k ∧
         k < p ^ 2 ∧
         p ^ 59 ≤ k ^ 32 ∧ k ^ 32 ≤ 2 ^ 32 * p ^ 59 ∧ p * heilbronnInitialCount p k < 256 * k := by
-  obtain ⟨k, hk, hkp, hlo, hhi, hb⟩ :=
-    exists_fixed_finite_fiber_rational_energy_cutoff_32_59 hodd hlarge
+  obtain ⟨k, hk, hkp, hlo, hhi, hb⟩ := exists_fiber_energy_cutoff_32_59 hodd hlarge
   have hc : (32 : ℕ) ^ 32 * 2 ^ 32 < p :=
-    (cutoff_coefficient_lt_explicit_finite_fiber_threshold (a := 32) (u := 145000006050)
+    (cutoff_coefficient_lt_fiber_threshold (a := 32) (u := 145000006050)
           (by norm_num only)).trans_le
       hlarge
   have hheight :=
@@ -646,9 +639,9 @@ theorem exists_fixed_finite_fiber_interval_bound_32_59 {p : ℕ} [Fact p.Prime] 
 
 /-- At scale 19/10, the logarithmic-square energy estimate gives the
 finite-fiber budget above P(4449271510), with energy exponent three. -/
-theorem fixed_log_square_finite_fiber_energy_budget_10_19 {p H k u : ℕ} [Fact p.Prime]
-    (hodd : Odd p) (hu : 76598623 ≤ u) (hlarge : explicitFiniteFiberPrimeThreshold u ≤ p)
-    (hHp : H < p) (htop : (H : ℝ) ≤ (p : ℝ) ^ (5 / 28 : ℝ)) (hcut : p ^ 19 ≤ k ^ 10)
+theorem fiber_logSq_energy_10_19 {p H k u : ℕ} [Fact p.Prime] (hodd : Odd p) (hu : 76598623 ≤ u)
+    (hlarge : explicitFiniteFiberPrimeThreshold u ≤ p) (hHp : H < p)
+    (htop : (H : ℝ) ≤ (p : ℝ) ^ (5 / 28 : ℝ)) (hcut : p ^ 19 ≤ k ^ 10)
     (hheight : H ^ 10 ≤ p ^ (2 * 10 - 19)) :
     p * heilbronnEnergy p * boundedCongruenceCount p H < k ^ 2 := by
   have hA : (2 ^ 176 : ℕ) ^ 10 ≤ 2 ^ (176 * 10) := le_of_eq (pow_mul 2 176 10).symm
@@ -670,9 +663,8 @@ theorem fixed_log_square_finite_fiber_energy_budget_10_19 {p H k u : ℕ} [Fact 
     (2 ^ 176 : ℝ) ^ 10 * (finiteFiberCountCoefficient 20 10 : ℝ) ^ (13 * 10) < (p : ℝ) :=
     hcoeffCast.trans_le hPcast
   have hLp := Real.log_pos (Nat.one_lt_cast.mpr (Fact.out : p.Prime).one_lt)
-  have hz := fifty_three_million_le_double_log_of_explicit_fiber_threshold hu hlarge
-  have hlogLower : (10 : ℝ) ^ 12 ≤ Real.log p :=
-    Analysis.twelve_pow_le_of_double_log_ge_fifty_three_million hLp hz
+  have hz := le_log_log_53000000 hu hlarge
+  have hlogLower : (10 : ℝ) ^ 12 ≤ Real.log p := Analysis.pow_10_12_le_of_log_ge_53000000 hLp hz
   have hfactor : 1 + Real.log p ≤ (p : ℝ) ^ (1 / 2000 : ℝ) := by
     have hsmall := Analysis.thirty_two_mul_le_exp_div_two_thousand hlogLower
     have hone : 1 + Real.log p ≤ 32 * Real.log p := by nlinarith only [hlogLower]
@@ -710,8 +702,8 @@ theorem fixed_log_square_finite_fiber_energy_budget_10_19 {p H k u : ℕ} [Fact 
     thirteenth_energy_power_lt_of_log_square_slack hodd 10 (finiteFiberCountCoefficient 20 10) 3
       hmargin
   have hcount :=
-    boundedCongruenceCount_power_le_explicit_finite_fiber_of_exponent_bound (a := 10) (c := 20)
-      (g := 2) (by decide) (by decide) (by norm_num only) (by norm_num only) p H hodd hHp htop
+    congruenceCount_power_le_fiber_of_exponent_bound (a := 10) (c := 20) (g := 2) (by decide)
+      (by decide) (by norm_num only) (by norm_num only) p H hodd hHp htop
   have hslack : 71 * 10 + 13 * 2 < 39 * 19 := by decide
   exact
     Analysis.thirteenth_counting_budget_of_energy_exponent_le (Fact.out : p.Prime).pos (by decide)
@@ -719,12 +711,12 @@ theorem fixed_log_square_finite_fiber_energy_budget_10_19 {p H k u : ℕ} [Fact 
 
 /-- At scale 19/10, the free precision-20 count and logarithmic-square energy
 estimate fit the explicit prime threshold `P(21518759)`. -/
-theorem fixed_log_square_finite_fiber_energy_budget_10_19_free {p H k : ℕ} [Fact p.Prime]
-    (hodd : Odd p) (hlarge : explicitFiniteFiberPrimeThreshold 21518759 ≤ p) (hHp : H < p)
+theorem fiber_logSq_energy_10_19_free {p H k : ℕ} [Fact p.Prime] (hodd : Odd p)
+    (hlarge : explicitFiniteFiberPrimeThreshold 21518759 ≤ p) (hHp : H < p)
     (htop : (H : ℝ) ≤ (p : ℝ) ^ (5 / 28 : ℝ)) (hcut : p ^ 19 ≤ k ^ 10)
     (hheight : H ^ 10 ≤ p ^ (2 * 10 - 19)) :
     p * heilbronnEnergy p * boundedCongruenceCount p H < k ^ 2 := by
-  have hcoeffNat := free_finite_fiber_energy_coefficient_lt_prime_threshold_20
+  have hcoeffNat := freeFiber_energy_lt_threshold_20
   have hPgt := one_lt_explicit_finite_fiber_threshold 21518759
   have hpR : (1 : ℝ) ≤ p := Nat.one_le_cast.mpr (hPgt.le.trans hlarge)
   have hpPos : (0 : ℝ) < p := Nat.cast_pos.mpr (Fact.out : p.Prime).pos
@@ -737,11 +729,8 @@ theorem fixed_log_square_finite_fiber_energy_budget_10_19_free {p H k : ℕ} [Fa
     (2 ^ 176 : ℝ) ^ 10 * (freeFiniteFiberCountCoefficient 20 10 : ℝ) ^ (13 * 10) < (p : ℝ) :=
     hcoeffCast.trans_le hPcast
   have hLp := Real.log_pos (Nat.one_lt_cast.mpr (Fact.out : p.Prime).one_lt)
-  have hz :=
-    fourteen_million_nine_hundred_thousand_le_double_log_of_explicit_fiber_threshold
-      (by norm_num only : 21518759 ≤ 21518759) hlarge
-  have hlogLower : (10 : ℝ) ^ 12 ≤ Real.log p :=
-    Analysis.twelve_pow_le_of_double_log_ge_fourteen_nine_million hLp hz
+  have hz := le_log_log_14900000 (by norm_num only : 21518759 ≤ 21518759) hlarge
+  have hlogLower : (10 : ℝ) ^ 12 ≤ Real.log p := Analysis.pow_10_12_le_of_log_ge_14900000 hLp hz
   have hfactor : 1 + Real.log p ≤ (p : ℝ) ^ (1 / 2000 : ℝ) := by
     have hsmall := Analysis.thirty_two_mul_le_exp_div_two_thousand hlogLower
     have hone : 1 + Real.log p ≤ 32 * Real.log p := by nlinarith only [hlogLower]
@@ -779,9 +768,8 @@ theorem fixed_log_square_finite_fiber_energy_budget_10_19_free {p H k : ℕ} [Fa
     thirteenth_energy_power_lt_of_log_square_slack hodd 10 (freeFiniteFiberCountCoefficient 20 10) 3
       hmargin
   have hcount :=
-    boundedCongruenceCount_power_le_explicit_free_finite_fiber (a := 10) (h := 10) (c := 20) (g :=
-      2) (by decide) (by decide) (by decide)
-      (by norm_num only : (1 / (20 : ℝ)) ≤ (1 / (10 : ℝ)) / 2)
+    congruenceCount_power_le_freeFiber (a := 10) (h := 10) (c := 20) (g := 2) (by decide)
+      (by decide) (by decide) (by norm_num only : (1 / (20 : ℝ)) ≤ (1 / (10 : ℝ)) / 2)
       (by norm_num only : 1 / 84 + 1 / 10 ≤ (2 : ℝ) / 10) p H hodd hHp htop
   have hslack : 71 * 10 + 13 * 2 < 39 * 19 := by norm_num only
   exact
@@ -800,16 +788,16 @@ theorem explicit_finite_fiber_threshold_square_le {u v : ℕ} (huv : u + 1 ≤ v
 
 /-- At scale 30/16, the free precision-18 count with loss 9 and logarithmic-
 square energy estimate fit the explicit prime threshold `P(21518759)`. -/
-theorem fixed_log_square_finite_fiber_energy_budget_30_16_free {p H k : ℕ} [Fact p.Prime]
-    (hodd : Odd p) (hlarge : explicitFiniteFiberPrimeThreshold 21518759 ≤ p) (hHp : H < p)
+theorem fiber_logSq_energy_30_16_free {p H k : ℕ} [Fact p.Prime] (hodd : Odd p)
+    (hlarge : explicitFiniteFiberPrimeThreshold 21518759 ≤ p) (hHp : H < p)
     (htop : (H : ℝ) ≤ (p : ℝ) ^ (5 / 28 : ℝ)) (hcut : p ^ 30 ≤ k ^ 16)
     (hheight : H ^ 16 ≤ p ^ (2 * 16 - 30)) :
     p * heilbronnEnergy p * boundedCongruenceCount p H < k ^ 2 := by
   have hcountCoeff :=
-    freeFiniteFiberCountCoefficient_18_9_lt_double_exp (by norm_num only : 17428673 ≤ 17428673)
+    freeFiberCountCoeff_18_9_lt_double_exp (by norm_num only : 17428673 ≤ 17428673)
   have hcoeffNat :=
-    free_finite_fiber_energy_coefficient_lt_prime_threshold (a := 16) (B := 17428673) (u :=
-      21518759) (c := 18) (h := 9) hcountCoeff (by norm_num only)
+    freeFiber_energy_lt_threshold (a := 16) (B := 17428673) (u := 21518759) (c := 18) (h := 9)
+      hcountCoeff (by norm_num only)
   have hPgt := one_lt_explicit_finite_fiber_threshold 21518759
   have hpR : (1 : ℝ) ≤ p := Nat.one_le_cast.mpr (hPgt.le.trans hlarge)
   have hpPos : (0 : ℝ) < p := Nat.cast_pos.mpr (Fact.out : p.Prime).pos
@@ -822,11 +810,8 @@ theorem fixed_log_square_finite_fiber_energy_budget_30_16_free {p H k : ℕ} [Fa
     (2 ^ 176 : ℝ) ^ 16 * (freeFiniteFiberCountCoefficient 18 9 : ℝ) ^ (13 * 16) < (p : ℝ) :=
     hcoeffCast.trans_le hPcast
   have hLp := Real.log_pos (Nat.one_lt_cast.mpr (Fact.out : p.Prime).one_lt)
-  have hz :=
-    fourteen_million_nine_hundred_thousand_le_double_log_of_explicit_fiber_threshold
-      (by norm_num only : 21518759 ≤ 21518759) hlarge
-  have hlogLower : (10 : ℝ) ^ 12 ≤ Real.log p :=
-    Analysis.twelve_pow_le_of_double_log_ge_fourteen_nine_million hLp hz
+  have hz := le_log_log_14900000 (by norm_num only : 21518759 ≤ 21518759) hlarge
+  have hlogLower : (10 : ℝ) ^ 12 ≤ Real.log p := Analysis.pow_10_12_le_of_log_ge_14900000 hLp hz
   have hfactor : 1 + Real.log p ≤ (p : ℝ) ^ (1 / 2000 : ℝ) := by
     have hsmall := Analysis.thirty_two_mul_le_exp_div_two_thousand hlogLower
     have hone : 1 + Real.log p ≤ 32 * Real.log p := by nlinarith only [hlogLower]
@@ -864,8 +849,8 @@ theorem fixed_log_square_finite_fiber_energy_budget_30_16_free {p H k : ℕ} [Fa
     thirteenth_energy_power_lt_of_log_square_slack hodd 16 (freeFiniteFiberCountCoefficient 18 9) 2
       hmargin
   have hcount :=
-    boundedCongruenceCount_power_le_explicit_free_finite_fiber (a := 16) (h := 9) (c := 18) (g := 2)
-      (by decide) (by decide) (by decide) (by norm_num only : (1 / (18 : ℝ)) ≤ (1 / (9 : ℝ)) / 2)
+    congruenceCount_power_le_freeFiber (a := 16) (h := 9) (c := 18) (g := 2) (by decide) (by decide)
+      (by decide) (by norm_num only : (1 / (18 : ℝ)) ≤ (1 / (9 : ℝ)) / 2)
       (by norm_num only : 1 / 84 + 1 / 9 ≤ (2 : ℝ) / 16) p H hodd hHp htop
   have hslack : 71 * 16 + 13 * 2 < 39 * 30 := by norm_num only
   exact
@@ -877,16 +862,16 @@ square energy estimate fit the explicit prime threshold `P(u)` for every
 `u≥17431511`. The
 available integer slack is one, so the coefficient and logarithmic factors
 are each absorbed by one prime factor. -/
-theorem fixed_log_square_finite_fiber_energy_budget_28_15_free {p H k u : ℕ} [Fact p.Prime]
-    (hodd : Odd p) (hu : 17431511 ≤ u) (hlarge : explicitFiniteFiberPrimeThreshold u ≤ p)
-    (hHp : H < p) (htop : (H : ℝ) ≤ (p : ℝ) ^ (2 / 15 : ℝ)) (hcut : p ^ 28 ≤ k ^ 15)
+theorem fiber_logSq_energy_28_15_free {p H k u : ℕ} [Fact p.Prime] (hodd : Odd p)
+    (hu : 17431511 ≤ u) (hlarge : explicitFiniteFiberPrimeThreshold u ≤ p) (hHp : H < p)
+    (htop : (H : ℝ) ≤ (p : ℝ) ^ (2 / 15 : ℝ)) (hcut : p ^ 28 ≤ k ^ 15)
     (hheight : H ^ 15 ≤ p ^ (2 * 15 - 28)) :
     p * heilbronnEnergy p * boundedCongruenceCount p H < k ^ 2 := by
   have hcountCoeff :=
-    freeFiniteFiberCountCoefficient_18_9_lt_double_exp (by norm_num only : 17428673 ≤ 17428673)
+    freeFiberCountCoeff_18_9_lt_double_exp (by norm_num only : 17428673 ≤ 17428673)
   have hcoeffNat :=
-    free_finite_fiber_energy_coefficient_lt_prime_threshold (a := 15) (B := 17428673) (u :=
-      17431510) (c := 18) (h := 9) hcountCoeff (by norm_num only)
+    freeFiber_energy_lt_threshold (a := 15) (B := 17428673) (u := 17431510) (c := 18) (h := 9)
+      hcountCoeff (by norm_num only)
   have hPgt := one_lt_explicit_finite_fiber_threshold u
   have hpR : (1 : ℝ) ≤ p := Nat.one_le_cast.mpr (hPgt.le.trans hlarge)
   have hpPos : (0 : ℝ) < p := Nat.cast_pos.mpr (Fact.out : p.Prime).pos
@@ -912,12 +897,8 @@ theorem fixed_log_square_finite_fiber_energy_budget_28_15_free {p H k u : ℕ} [
       _ ≤ (explicitFiniteFiberPrimeThreshold u : ℝ) := by exact_mod_cast hthresholdSq
       _ ≤ p := by exact_mod_cast hlarge
   have hLp := Real.log_pos (Nat.one_lt_cast.mpr (Fact.out : p.Prime).one_lt)
-  have hz :=
-    twelve_million_eighty_two_thousand_six_hundred_one_le_double_log_of_explicit_fiber_threshold hu
-      hlarge
-  have hlogLower : (10 : ℝ) ^ 12 ≤ Real.log p :=
-    Analysis.twelve_pow_le_of_double_log_ge_twelve_million_eighty_two_thousand_six_hundred_one hLp
-      hz
+  have hz := le_log_log_12082601 hu hlarge
+  have hlogLower : (10 : ℝ) ^ 12 ≤ Real.log p := Analysis.pow_10_12_le_of_log_ge_12082601 hLp hz
   have hfactor : 1 + Real.log p ≤ (p : ℝ) ^ (1 / 2000 : ℝ) := by
     have hsmall := Analysis.thirty_two_mul_le_exp_div_two_thousand hlogLower
     have hone : 1 + Real.log p ≤ 32 * Real.log p := by nlinarith only [hlogLower]
@@ -980,8 +961,8 @@ theorem fixed_log_square_finite_fiber_energy_budget_28_15_free {p H k u : ℕ} [
     exact
       htop.trans (Real.rpow_le_rpow_of_exponent_le hpR (by norm_num only : (2 / 15 : ℝ) ≤ 5 / 28))
   have hcount :=
-    boundedCongruenceCount_power_le_explicit_free_finite_fiber (a := 15) (h := 9) (c := 18) (g := 2)
-      (by decide) (by decide) (by decide) (by norm_num only : (1 / (18 : ℝ)) ≤ (1 / (9 : ℝ)) / 2)
+    congruenceCount_power_le_freeFiber (a := 15) (h := 9) (c := 18) (g := 2) (by decide) (by decide)
+      (by decide) (by norm_num only : (1 / (18 : ℝ)) ≤ (1 / (9 : ℝ)) / 2)
       (by norm_num only : 1 / 84 + 1 / 9 ≤ (2 : ℝ) / 15) p H hodd hHp htop'
   have hslack : 71 * 15 + 13 * 2 < 39 * 28 := by norm_num only
   exact
@@ -990,8 +971,8 @@ theorem fixed_log_square_finite_fiber_energy_budget_28_15_free {p H k u : ℕ} [
 
 /-- Every odd prime above `P(21518759)` has a 30/16 cutoff satisfying the
 free finite-fiber energy budget. -/
-theorem exists_fixed_finite_fiber_rational_energy_cutoff_30_16_free {p : ℕ} [Fact p.Prime]
-    (hodd : Odd p) (hlarge : explicitFiniteFiberPrimeThreshold 21518759 ≤ p) :
+theorem exists_fiber_energy_cutoff_30_16_free {p : ℕ} [Fact p.Prime] (hodd : Odd p)
+    (hlarge : explicitFiniteFiberPrimeThreshold 21518759 ≤ p) :
     ∃ k : ℕ,
       0 < k ∧
         k ≤ p ^ 2 ∧
@@ -1016,7 +997,7 @@ theorem exists_fixed_finite_fiber_rational_energy_cutoff_30_16_free {p : ℕ} [F
     have htop :=
       height_le_real_power_of_power (a := 16) (d := 2) (rho := (5 / 28 : ℝ)) (by norm_num only)
         hp1.le (by norm_num only : (2 : ℕ) / 16 ≤ (5 : ℝ) / 28) hheightExplicit
-    exact fixed_log_square_finite_fiber_energy_budget_30_16_free hodd hlarge hHp htop hlo hheight
+    exact fiber_logSq_energy_30_16_free hodd hlarge hHp htop hlo hheight
   · exact (not_le_of_gt hmass hbase).elim
 
 /-- Inputs: an odd prime above `P(21518759)`.
@@ -1025,17 +1006,15 @@ Content: Convert the energy bound for the finite-fiber count into the
 initial-count interval used by smooth-number extraction. Proof: Bound the
 cutoff height by `p^2` and apply monotonicity of the congruence count.
 Role: Supplies the interval estimate for the 30/16 prime-extraction theorem. -/
-theorem exists_fixed_finite_fiber_interval_bound_30_16_free {p : ℕ} [Fact p.Prime] (hodd : Odd p)
+theorem exists_fiber_interval_bound_30_16_free {p : ℕ} [Fact p.Prime] (hodd : Odd p)
     (hlarge : explicitFiniteFiberPrimeThreshold 21518759 ≤ p) :
     ∃ k : ℕ,
       0 < k ∧
         k < p ^ 2 ∧
         p ^ 30 ≤ k ^ 16 ∧ k ^ 16 ≤ 2 ^ 16 * p ^ 30 ∧ p * heilbronnInitialCount p k < 256 * k := by
-  obtain ⟨k, hk, hkp, hlo, hhi, hb⟩ :=
-    exists_fixed_finite_fiber_rational_energy_cutoff_30_16_free hodd hlarge
+  obtain ⟨k, hk, hkp, hlo, hhi, hb⟩ := exists_fiber_energy_cutoff_30_16_free hodd hlarge
   have hc : (32 : ℕ) ^ 16 * 2 ^ 16 < p :=
-    (cutoff_coefficient_lt_explicit_finite_fiber_threshold (a := 16) (u := 21518759)
-          (by norm_num only)).trans_le
+    (cutoff_coefficient_lt_fiber_threshold (a := 16) (u := 21518759) (by norm_num only)).trans_le
       hlarge
   have hheight :=
     rational_cutoff_thirty_two_mul_lt_square (Fact.out : p.Prime).one_lt (by decide : 0 < 16)
@@ -1050,8 +1029,8 @@ theorem exists_fixed_finite_fiber_interval_bound_30_16_free {p : ℕ} [Fact p.Pr
 
 /-- Every odd prime above `P(u)` with `u≥17431511` has a 28/15 cutoff
 satisfying the free finite-fiber energy budget. -/
-theorem exists_fixed_finite_fiber_rational_energy_cutoff_28_15_free {p u : ℕ} [Fact p.Prime]
-    (hodd : Odd p) (hu : 17431511 ≤ u) (hlarge : explicitFiniteFiberPrimeThreshold u ≤ p) :
+theorem exists_fiber_energy_cutoff_28_15_free {p u : ℕ} [Fact p.Prime] (hodd : Odd p)
+    (hu : 17431511 ≤ u) (hlarge : explicitFiniteFiberPrimeThreshold u ≤ p) :
     ∃ k : ℕ,
       0 < k ∧
         k ≤ p ^ 2 ∧
@@ -1076,23 +1055,22 @@ theorem exists_fixed_finite_fiber_rational_energy_cutoff_28_15_free {p u : ℕ} 
     have htop :=
       height_le_real_power_of_power (a := 15) (d := 2) (rho := (2 / 15 : ℝ)) (by norm_num only)
         hp1.le (by norm_num only : (2 : ℕ) / 15 ≤ (2 : ℝ) / 15) hheightExplicit
-    exact fixed_log_square_finite_fiber_energy_budget_28_15_free hodd hu hlarge hHp htop hlo hheight
+    exact fiber_logSq_energy_28_15_free hodd hu hlarge hHp htop hlo hheight
   · exact (not_le_of_gt hmass hbase).elim
 
 /-- Inputs: an odd prime above `P(21518759)`.
 Claim: a 28/15 cutoff has initial-count cost less than `256 * k`.
 Content: Transfer the finite-fiber energy bound to the initial-count interval
 used by smooth-number extraction. -/
-theorem exists_fixed_finite_fiber_interval_bound_28_15_free {p : ℕ} [Fact p.Prime] {u : ℕ}
-    (hodd : Odd p) (hu : 17431511 ≤ u) (hlarge : explicitFiniteFiberPrimeThreshold u ≤ p) :
+theorem exists_fiber_interval_bound_28_15_free {p : ℕ} [Fact p.Prime] {u : ℕ} (hodd : Odd p)
+    (hu : 17431511 ≤ u) (hlarge : explicitFiniteFiberPrimeThreshold u ≤ p) :
     ∃ k : ℕ,
       0 < k ∧
         k < p ^ 2 ∧
         p ^ 28 ≤ k ^ 15 ∧ k ^ 15 ≤ 2 ^ 15 * p ^ 28 ∧ p * heilbronnInitialCount p k < 256 * k := by
-  obtain ⟨k, hk, hkp, hlo, hhi, hb⟩ :=
-    exists_fixed_finite_fiber_rational_energy_cutoff_28_15_free hodd hu hlarge
+  obtain ⟨k, hk, hkp, hlo, hhi, hb⟩ := exists_fiber_energy_cutoff_28_15_free hodd hu hlarge
   have hc : (32 : ℕ) ^ 15 * 2 ^ 15 < p :=
-    (cutoff_coefficient_lt_explicit_finite_fiber_threshold (a := 15) (u := u)
+    (cutoff_coefficient_lt_fiber_threshold (a := 15) (u := u)
           (Nat.lt_of_lt_of_le (by norm_num only) hu)).trans_le
       hlarge
   have hheight :=
@@ -1108,12 +1086,12 @@ theorem exists_fixed_finite_fiber_interval_bound_28_15_free {p : ℕ} [Fact p.Pr
 
 /-- At scale 150/82, the free precision-162 count and the logarithmic-square
 energy estimate fit the explicit prime threshold `P(1411732827)`. -/
-theorem fixed_log_square_finite_fiber_energy_budget_150_82_free {p H k : ℕ} [Fact p.Prime]
-    (hodd : Odd p) (hlarge : explicitFiniteFiberPrimeThreshold 1411732827 ≤ p) (hHp : H < p)
+theorem fiber_logSq_energy_150_82_free {p H k : ℕ} [Fact p.Prime] (hodd : Odd p)
+    (hlarge : explicitFiniteFiberPrimeThreshold 1411732827 ≤ p) (hHp : H < p)
     (htop : (H : ℝ) ≤ (p : ℝ) ^ (5 / 28 : ℝ)) (hcut : p ^ 150 ≤ k ^ 82)
     (hheight : H ^ 82 ≤ p ^ (2 * 82 - 150)) :
     p * heilbronnEnergy p * boundedCongruenceCount p H < k ^ 2 := by
-  have hcoeffNat := free_finite_fiber_energy_coefficient_lt_prime_threshold_162
+  have hcoeffNat := freeFiber_energy_lt_threshold_162
   have hPgt := one_lt_explicit_finite_fiber_threshold 1411732827
   have hpR : (1 : ℝ) ≤ p := Nat.one_le_cast.mpr (hPgt.le.trans hlarge)
   have hpPos : (0 : ℝ) < p := Nat.cast_pos.mpr (Fact.out : p.Prime).pos
@@ -1126,11 +1104,8 @@ theorem fixed_log_square_finite_fiber_energy_budget_150_82_free {p H k : ℕ} [F
     (2 ^ 176 : ℝ) ^ 82 * (freeFiniteFiberCountCoefficient 162 81 : ℝ) ^ (13 * 82) < (p : ℝ) :=
     hcoeffCast.trans_le hPcast
   have hLp := Real.log_pos (Nat.one_lt_cast.mpr (Fact.out : p.Prime).one_lt)
-  have hz :=
-    fifty_three_million_le_double_log_of_explicit_fiber_threshold
-      (by norm_num only : 76598623 ≤ 1411732827) hlarge
-  have hlogLower : (10 : ℝ) ^ 12 ≤ Real.log p :=
-    Analysis.twelve_pow_le_of_double_log_ge_fifty_three_million hLp hz
+  have hz := le_log_log_53000000 (by norm_num only : 76598623 ≤ 1411732827) hlarge
+  have hlogLower : (10 : ℝ) ^ 12 ≤ Real.log p := Analysis.pow_10_12_le_of_log_ge_53000000 hLp hz
   have hfactor : 1 + Real.log p ≤ (p : ℝ) ^ (1 / 2000 : ℝ) := by
     have hsmall := Analysis.thirty_two_mul_le_exp_div_two_thousand hlogLower
     have hone : 1 + Real.log p ≤ 32 * Real.log p := by nlinarith only [hlogLower]
@@ -1163,9 +1138,8 @@ theorem fixed_log_square_finite_fiber_energy_budget_150_82_free {p H k : ℕ} [F
     thirteenth_energy_power_lt_of_log_square_slack hodd 82 (freeFiniteFiberCountCoefficient 162 81)
       2 hmargin
   have hcount :=
-    boundedCongruenceCount_power_le_explicit_free_finite_fiber (a := 82) (h := 81) (c := 162) (g :=
-      2) (by decide) (by decide) (by decide)
-      (by norm_num only : (1 / (162 : ℝ)) ≤ (1 / (81 : ℝ)) / 2)
+    congruenceCount_power_le_freeFiber (a := 82) (h := 81) (c := 162) (g := 2) (by decide)
+      (by decide) (by decide) (by norm_num only : (1 / (162 : ℝ)) ≤ (1 / (81 : ℝ)) / 2)
       (by norm_num only : 1 / 84 + 1 / 81 ≤ (2 : ℝ) / 82) p H hodd hHp htop
   have hslack : 71 * 82 + 13 * 2 < 39 * 150 := by norm_num only
   exact
@@ -1176,12 +1150,12 @@ theorem fixed_log_square_finite_fiber_energy_budget_150_82_free {p H k : ℕ} [F
 and consume the single available integer slack. The squared coefficient
 threshold is inherited from the 150/82 estimate, while the fourth-power
 logarithmic bound is the same as its exponent-164 absorption. -/
-theorem fixed_log_square_finite_fiber_energy_budget_75_41_free {p H k : ℕ} [Fact p.Prime]
-    (hodd : Odd p) (hlarge : explicitFiniteFiberPrimeThreshold 1411732827 ≤ p) (hHp : H < p)
+theorem fiber_logSq_energy_75_41_free {p H k : ℕ} [Fact p.Prime] (hodd : Odd p)
+    (hlarge : explicitFiniteFiberPrimeThreshold 1411732827 ≤ p) (hHp : H < p)
     (htop : (H : ℝ) ≤ (p : ℝ) ^ (5 / 28 : ℝ)) (hcut : p ^ 75 ≤ k ^ 41)
     (hheight : H ^ 41 ≤ p ^ (2 * 41 - 75)) :
     p * heilbronnEnergy p * boundedCongruenceCount p H < k ^ 2 := by
-  have hcoeffNat := free_finite_fiber_energy_coefficient_lt_prime_threshold_162
+  have hcoeffNat := freeFiber_energy_lt_threshold_162
   have hPgt := one_lt_explicit_finite_fiber_threshold 1411732827
   have hpR : (1 : ℝ) ≤ p := Nat.one_le_cast.mpr (hPgt.le.trans hlarge)
   have hpPos : (0 : ℝ) < p := Nat.cast_pos.mpr (Fact.out : p.Prime).pos
@@ -1205,11 +1179,8 @@ theorem fixed_log_square_finite_fiber_energy_budget_75_41_free {p H k : ℕ} [Fa
       _ < explicitFiniteFiberPrimeThreshold 1411732827 := by exact_mod_cast hcoeffNat
       _ ≤ p := by exact_mod_cast hlarge
   have hLp := Real.log_pos (Nat.one_lt_cast.mpr (Fact.out : p.Prime).one_lt)
-  have hz :=
-    fifty_three_million_le_double_log_of_explicit_fiber_threshold
-      (by norm_num only : 76598623 ≤ 1411732827) hlarge
-  have hlogLower : (10 : ℝ) ^ 12 ≤ Real.log p :=
-    Analysis.twelve_pow_le_of_double_log_ge_fifty_three_million hLp hz
+  have hz := le_log_log_53000000 (by norm_num only : 76598623 ≤ 1411732827) hlarge
+  have hlogLower : (10 : ℝ) ^ 12 ≤ Real.log p := Analysis.pow_10_12_le_of_log_ge_53000000 hLp hz
   have hfactor : 1 + Real.log p ≤ (p : ℝ) ^ (1 / 2000 : ℝ) := by
     have hsmall := Analysis.thirty_two_mul_le_exp_div_two_thousand hlogLower
     have hone : 1 + Real.log p ≤ 32 * Real.log p := by nlinarith only [hlogLower]
@@ -1239,12 +1210,12 @@ theorem fixed_log_square_finite_fiber_energy_budget_75_41_free {p H k : ℕ} [Fa
 
 /-- At scale 2048/1120, precision 164 and independent loss 82 give a
 square-slack energy bound below `P(1,447,213,072)`. -/
-theorem fixed_log_square_finite_fiber_energy_budget_2048_1120_free {p H k : ℕ} [Fact p.Prime]
-    (hodd : Odd p) (hlarge : explicitFiniteFiberPrimeThreshold 1447213072 ≤ p) (hHp : H < p)
+theorem fiber_logSq_energy_2048_1120_free {p H k : ℕ} [Fact p.Prime] (hodd : Odd p)
+    (hlarge : explicitFiniteFiberPrimeThreshold 1447213072 ≤ p) (hHp : H < p)
     (htop : (H : ℝ) ≤ (p : ℝ) ^ (5 / 28 : ℝ)) (hcut : p ^ 2048 ≤ k ^ 1120)
     (hheight : H ^ 1120 ≤ p ^ (2 * 1120 - 2048)) :
     p * heilbronnEnergy p * boundedCongruenceCount p H < k ^ 2 := by
-  have hcoeffNat := free_finite_fiber_energy_coefficient_lt_prime_threshold_164_82_2240
+  have hcoeffNat := freeFiber_energy_lt_threshold_164_82_2240
   have hPgt := one_lt_explicit_finite_fiber_threshold 1447213072
   have hpR : (1 : ℝ) ≤ p := Nat.one_le_cast.mpr (hPgt.le.trans hlarge)
   have hpPos : (0 : ℝ) < p := Nat.cast_pos.mpr (Fact.out : p.Prime).pos
@@ -1263,11 +1234,9 @@ theorem fixed_log_square_finite_fiber_energy_budget_2048_1120_free {p H k : ℕ}
         rw [hx, hy]
       _ < explicitFiniteFiberPrimeThreshold 1447213072 := by exact_mod_cast hcoeffNat
       _ ≤ p := by exact_mod_cast hlarge
-  have hz :=
-    fifty_three_million_le_double_log_of_explicit_fiber_threshold
-      (by norm_num only : 76598623 ≤ 1447213072) hlarge
+  have hz := le_log_log_53000000 (by norm_num only : 76598623 ≤ 1447213072) hlarge
   have hlogLower :=
-    Analysis.twelve_pow_le_of_double_log_ge_fifty_three_million
+    Analysis.pow_10_12_le_of_log_ge_53000000
       (Real.log_pos (Nat.one_lt_cast.mpr (Fact.out : p.Prime).one_lt)) hz
   have hlogLowerFive : (2000000000 : ℝ) ≤ Real.log p :=
     (by norm_num only : (2000000000 : ℝ) ≤ 10 ^ 12).trans hlogLower
@@ -1301,8 +1270,8 @@ theorem fixed_log_square_finite_fiber_energy_budget_2048_1120_free {p H k : ℕ}
 set_option exponentiation.threshold 4096 in
 /-- Every odd prime above `P(1,447,213,072)` has a 2048/1120 cutoff
 satisfying the free finite-fiber energy budget. -/
-theorem exists_fixed_finite_fiber_rational_energy_cutoff_2048_1120_free {p : ℕ} [Fact p.Prime]
-    (hodd : Odd p) (hlarge : explicitFiniteFiberPrimeThreshold 1447213072 ≤ p) :
+theorem exists_fiber_energy_cutoff_2048_1120_free {p : ℕ} [Fact p.Prime] (hodd : Odd p)
+    (hlarge : explicitFiniteFiberPrimeThreshold 1447213072 ≤ p) :
     ∃ k : ℕ,
       0 < k ∧
         k ≤ p ^ 2 ∧
@@ -1329,23 +1298,21 @@ theorem exists_fixed_finite_fiber_rational_energy_cutoff_2048_1120_free {p : ℕ
     have htop :=
       height_le_real_power_of_power (a := 1120) (d := 192) (by norm_num only) hp1.le
         (by norm_num only : (192 : ℕ) / 1120 ≤ (5 : ℝ) / 28) hheightExplicit
-    exact
-      fixed_log_square_finite_fiber_energy_budget_2048_1120_free hodd hlarge hHp htop hlo hheight
+    exact fiber_logSq_energy_2048_1120_free hodd hlarge hHp htop hlo hheight
   · exact (not_le_of_gt hmass hbase).elim
 
 /-- Transfer the free 2048/1120 energy cutoff to the initial-count interval
 bound needed for prime extraction. -/
-theorem exists_fixed_finite_fiber_interval_bound_2048_1120_free {p : ℕ} [Fact p.Prime]
-    (hodd : Odd p) (hlarge : explicitFiniteFiberPrimeThreshold 1447213072 ≤ p) :
+theorem exists_fiber_interval_bound_2048_1120_free {p : ℕ} [Fact p.Prime] (hodd : Odd p)
+    (hlarge : explicitFiniteFiberPrimeThreshold 1447213072 ≤ p) :
     ∃ k : ℕ,
       0 < k ∧
         k < p ^ 2 ∧
         p ^ 2048 ≤ k ^ 1120 ∧
         k ^ 1120 ≤ 2 ^ 1120 * p ^ 2048 ∧ p * heilbronnInitialCount p k < 256 * k := by
-  obtain ⟨k, hk, hkp, hlo, hhi, hb⟩ :=
-    exists_fixed_finite_fiber_rational_energy_cutoff_2048_1120_free hodd hlarge
+  obtain ⟨k, hk, hkp, hlo, hhi, hb⟩ := exists_fiber_energy_cutoff_2048_1120_free hodd hlarge
   have hc : (32 : ℕ) ^ 1120 * 2 ^ 1120 < p :=
-    (cutoff_coefficient_lt_explicit_finite_fiber_threshold (a := 1120) (u := 1447213072)
+    (cutoff_coefficient_lt_fiber_threshold (a := 1120) (u := 1447213072)
           (by norm_num only)).trans_le
       hlarge
   have hheight :=
@@ -1362,12 +1329,12 @@ theorem exists_fixed_finite_fiber_interval_bound_2048_1120_free {p : ℕ} [Fact 
 /-- At scale 192/105, use precision 280 and loss 140. The count coefficient
 fits the explicit prime threshold `P(4,217,312,731)`. Seven units of integer
 slack let the energy estimate use the ordinary, unsquared budget. -/
-theorem fixed_log_square_finite_fiber_energy_budget_192_105_free {p H k : ℕ} [Fact p.Prime]
-    (hodd : Odd p) (hlarge : explicitFiniteFiberPrimeThreshold 4217312731 ≤ p) (hHp : H < p)
+theorem fiber_logSq_energy_192_105_free {p H k : ℕ} [Fact p.Prime] (hodd : Odd p)
+    (hlarge : explicitFiniteFiberPrimeThreshold 4217312731 ≤ p) (hHp : H < p)
     (htop : (H : ℝ) ≤ (p : ℝ) ^ (5 / 28 : ℝ)) (hcut : p ^ 192 ≤ k ^ 105)
     (hheight : H ^ 105 ≤ p ^ (2 * 105 - 192)) :
     p * heilbronnEnergy p * boundedCongruenceCount p H < k ^ 2 := by
-  have hcoeffNat := free_finite_fiber_energy_coefficient_lt_prime_threshold_280_140_105
+  have hcoeffNat := freeFiber_energy_lt_threshold_280_140_105
   have hPgt := one_lt_explicit_finite_fiber_threshold 4217312731
   have hpR : (1 : ℝ) ≤ p := Nat.one_le_cast.mpr (hPgt.le.trans hlarge)
   have hpPos : (0 : ℝ) < p := Nat.cast_pos.mpr (Fact.out : p.Prime).pos
@@ -1377,11 +1344,9 @@ theorem fixed_log_square_finite_fiber_energy_budget_192_105_free {p H k : ℕ} [
       (explicitFiniteFiberPrimeThreshold 4217312731 : ℝ) := by
     exact_mod_cast hcoeffNat
   have hcoeff := hcoeffCast.trans_le hPcast
-  have hz :=
-    fifty_three_million_le_double_log_of_explicit_fiber_threshold
-      (by norm_num only : 76598623 ≤ 4217312731) hlarge
+  have hz := le_log_log_53000000 (by norm_num only : 76598623 ≤ 4217312731) hlarge
   have hlogLower : (10 : ℝ) ^ 12 ≤ Real.log p :=
-    Analysis.twelve_pow_le_of_double_log_ge_fifty_three_million
+    Analysis.pow_10_12_le_of_log_ge_53000000
       (Real.log_pos (Nat.one_lt_cast.mpr (Fact.out : p.Prime).one_lt)) hz
   have hlogLowerFive : 2000000000 ≤ Real.log p :=
     (by norm_num only : (2000000000 : ℝ) ≤ 10 ^ 12).trans hlogLower
@@ -1422,8 +1387,8 @@ theorem fixed_log_square_finite_fiber_energy_budget_192_105_free {p H k : ℕ} [
 /-- Every odd prime above `P(4,217,312,731)` has a cutoff at scale 192/105
 satisfying the finite-fiber energy budget. Convert the floor-power bound into
 a height bound with exponent 18, then apply the explicit energy theorem. -/
-theorem exists_fixed_finite_fiber_rational_energy_cutoff_192_105_free {p : ℕ} [Fact p.Prime]
-    (hodd : Odd p) (hlarge : explicitFiniteFiberPrimeThreshold 4217312731 ≤ p) :
+theorem exists_fiber_energy_cutoff_192_105_free {p : ℕ} [Fact p.Prime] (hodd : Odd p)
+    (hlarge : explicitFiniteFiberPrimeThreshold 4217312731 ≤ p) :
     ∃ k : ℕ,
       0 < k ∧
         k ≤ p ^ 2 ∧
@@ -1449,24 +1414,22 @@ theorem exists_fixed_finite_fiber_rational_energy_cutoff_192_105_free {p : ℕ} 
     have htop :=
       height_le_real_power_of_power (a := 105) (d := 18) (by norm_num only) hp1.le
         (by norm_num only : (18 : ℝ) / 105 ≤ 5 / 28) hheightExplicit
-    exact fixed_log_square_finite_fiber_energy_budget_192_105_free hodd hlarge hHp htop hlo hheight
+    exact fiber_logSq_energy_192_105_free hodd hlarge hHp htop hlo hheight
   · exact (not_le_of_gt hmass hbase).elim
 
 /-- Every odd prime above `P(4,217,312,731)` has a 192/105 cutoff that also
 satisfies the initial-count bound for prime extraction. Transfer the energy
 inequality to the smaller Fourier height using count monotonicity. -/
-theorem exists_fixed_finite_fiber_interval_bound_192_105_free {p : ℕ} [Fact p.Prime] (hodd : Odd p)
+theorem exists_fiber_interval_bound_192_105_free {p : ℕ} [Fact p.Prime] (hodd : Odd p)
     (hlarge : explicitFiniteFiberPrimeThreshold 4217312731 ≤ p) :
     ∃ k : ℕ,
       0 < k ∧
         k < p ^ 2 ∧
         p ^ 192 ≤ k ^ 105 ∧
         k ^ 105 ≤ 2 ^ 105 * p ^ 192 ∧ p * heilbronnInitialCount p k < 256 * k := by
-  obtain ⟨k, hk, hkp, hlo, hhi, hb⟩ :=
-    exists_fixed_finite_fiber_rational_energy_cutoff_192_105_free hodd hlarge
+  obtain ⟨k, hk, hkp, hlo, hhi, hb⟩ := exists_fiber_energy_cutoff_192_105_free hodd hlarge
   have hc : (32 : ℕ) ^ 105 * 2 ^ 105 < p :=
-    (cutoff_coefficient_lt_explicit_finite_fiber_threshold (a := 105) (u := 4217312731)
-          (by norm_num only)).trans_le
+    (cutoff_coefficient_lt_fiber_threshold (a := 105) (u := 4217312731) (by norm_num only)).trans_le
       hlarge
   have hheight :=
     rational_cutoff_thirty_two_mul_lt_square (Fact.out : p.Prime).one_lt
@@ -1482,8 +1445,8 @@ theorem exists_fixed_finite_fiber_interval_bound_192_105_free {p : ℕ} [Fact p.
 /-- Every odd prime above `P(1411732827)` has a 75/41 cutoff satisfying the
 free finite-fiber energy budget. Convert the floor power bound into a height
 bound with exponent seven, then apply the one-unit-slack energy theorem. -/
-theorem exists_fixed_finite_fiber_rational_energy_cutoff_75_41_free {p : ℕ} [Fact p.Prime]
-    (hodd : Odd p) (hlarge : explicitFiniteFiberPrimeThreshold 1411732827 ≤ p) :
+theorem exists_fiber_energy_cutoff_75_41_free {p : ℕ} [Fact p.Prime] (hodd : Odd p)
+    (hlarge : explicitFiniteFiberPrimeThreshold 1411732827 ≤ p) :
     ∃ k : ℕ,
       0 < k ∧
         k ≤ p ^ 2 ∧
@@ -1509,23 +1472,21 @@ theorem exists_fixed_finite_fiber_rational_energy_cutoff_75_41_free {p : ℕ} [F
     have htop :=
       height_le_real_power_of_power (a := 41) (d := 7) (rho := (5 / 28 : ℝ)) (by norm_num only)
         hp1.le (by norm_num only : (7 : ℕ) / 41 ≤ (5 : ℝ) / 28) hheightExplicit
-    exact fixed_log_square_finite_fiber_energy_budget_75_41_free hodd hlarge hHp htop hlo hheight
+    exact fiber_logSq_energy_75_41_free hodd hlarge hHp htop hlo hheight
   · exact (not_le_of_gt hmass hbase).elim
 
 /-- Every odd prime above `P(1411732827)` has a 75/41 cutoff that also
 satisfies the initial-count bound needed for prime extraction. Transfer the
 energy inequality to the smaller Fourier height using count monotonicity. -/
-theorem exists_fixed_finite_fiber_interval_bound_75_41_free {p : ℕ} [Fact p.Prime] (hodd : Odd p)
+theorem exists_fiber_interval_bound_75_41_free {p : ℕ} [Fact p.Prime] (hodd : Odd p)
     (hlarge : explicitFiniteFiberPrimeThreshold 1411732827 ≤ p) :
     ∃ k : ℕ,
       0 < k ∧
         k < p ^ 2 ∧
         p ^ 75 ≤ k ^ 41 ∧ k ^ 41 ≤ 2 ^ 41 * p ^ 75 ∧ p * heilbronnInitialCount p k < 256 * k := by
-  obtain ⟨k, hk, hkp, hlo, hhi, hb⟩ :=
-    exists_fixed_finite_fiber_rational_energy_cutoff_75_41_free hodd hlarge
+  obtain ⟨k, hk, hkp, hlo, hhi, hb⟩ := exists_fiber_energy_cutoff_75_41_free hodd hlarge
   have hc : (32 : ℕ) ^ 41 * 2 ^ 41 < p :=
-    (cutoff_coefficient_lt_explicit_finite_fiber_threshold (a := 41) (u := 1411732827)
-          (by norm_num only)).trans_le
+    (cutoff_coefficient_lt_fiber_threshold (a := 41) (u := 1411732827) (by norm_num only)).trans_le
       hlarge
   have hheight :=
     rational_cutoff_thirty_two_mul_lt_square (Fact.out : p.Prime).one_lt (by norm_num only : 0 < 41)
@@ -1540,8 +1501,8 @@ theorem exists_fixed_finite_fiber_interval_bound_75_41_free {p : ℕ} [Fact p.Pr
 
 /-- Every odd prime above `P(1411732827)` has a 150/82 cutoff satisfying the
 free finite-fiber energy budget. -/
-theorem exists_fixed_finite_fiber_rational_energy_cutoff_150_82_free {p : ℕ} [Fact p.Prime]
-    (hodd : Odd p) (hlarge : explicitFiniteFiberPrimeThreshold 1411732827 ≤ p) :
+theorem exists_fiber_energy_cutoff_150_82_free {p : ℕ} [Fact p.Prime] (hodd : Odd p)
+    (hlarge : explicitFiniteFiberPrimeThreshold 1411732827 ≤ p) :
     ∃ k : ℕ,
       0 < k ∧
         k ≤ p ^ 2 ∧
@@ -1566,22 +1527,20 @@ theorem exists_fixed_finite_fiber_rational_energy_cutoff_150_82_free {p : ℕ} [
     have htop :=
       height_le_real_power_of_power (a := 82) (d := 14) (rho := (5 / 28 : ℝ)) (by norm_num only)
         hp1.le (by norm_num only : (14 : ℕ) / 82 ≤ (5 : ℝ) / 28) hheightExplicit
-    exact fixed_log_square_finite_fiber_energy_budget_150_82_free hodd hlarge hHp htop hlo hheight
+    exact fiber_logSq_energy_150_82_free hodd hlarge hHp htop hlo hheight
   · exact (not_le_of_gt hmass hbase).elim
 
 /-- Transfer the free 150/82 energy cutoff to the initial-count interval
 bound needed for prime extraction. -/
-theorem exists_fixed_finite_fiber_interval_bound_150_82_free {p : ℕ} [Fact p.Prime] (hodd : Odd p)
+theorem exists_fiber_interval_bound_150_82_free {p : ℕ} [Fact p.Prime] (hodd : Odd p)
     (hlarge : explicitFiniteFiberPrimeThreshold 1411732827 ≤ p) :
     ∃ k : ℕ,
       0 < k ∧
         k < p ^ 2 ∧
         p ^ 150 ≤ k ^ 82 ∧ k ^ 82 ≤ 2 ^ 82 * p ^ 150 ∧ p * heilbronnInitialCount p k < 256 * k := by
-  obtain ⟨k, hk, hkp, hlo, hhi, hb⟩ :=
-    exists_fixed_finite_fiber_rational_energy_cutoff_150_82_free hodd hlarge
+  obtain ⟨k, hk, hkp, hlo, hhi, hb⟩ := exists_fiber_energy_cutoff_150_82_free hodd hlarge
   have hc : (32 : ℕ) ^ 82 * 2 ^ 82 < p :=
-    (cutoff_coefficient_lt_explicit_finite_fiber_threshold (a := 82) (u := 1411732827)
-          (by norm_num only)).trans_le
+    (cutoff_coefficient_lt_fiber_threshold (a := 82) (u := 1411732827) (by norm_num only)).trans_le
       hlarge
   have hheight :=
     rational_cutoff_thirty_two_mul_lt_square (Fact.out : p.Prime).one_lt (by norm_num only : 0 < 82)
@@ -1596,9 +1555,9 @@ theorem exists_fixed_finite_fiber_interval_bound_150_82_free {p : ℕ} [Fact p.P
 
 /-- Prime supply and the free finite-fiber interval bound produce a prime
 with nontrivial Fermat quotient modulo the square of every large odd prime. -/
-theorem exists_prime_nontrivial_power_of_free_finite_fiber_interval_150_82 {p : ℕ} [Fact p.Prime]
-    (hodd : Odd p) (hlarge : explicitFiniteFiberPrimeThreshold 1411732827 ≤ p)
-    {A alpha gamma c beta : ℝ} (hL : 2 ≤ Real.log p) (hB : 0 < Nat.floor ((Real.log p) ^ A))
+theorem exists_prime_pow_ne_one_fiber_150_82 {p : ℕ} [Fact p.Prime] (hodd : Odd p)
+    (hlarge : explicitFiniteFiberPrimeThreshold 1411732827 ≤ p) {A alpha gamma c beta : ℝ}
+    (hL : 2 ≤ Real.log p) (hB : 0 < Nat.floor ((Real.log p) ^ A))
     (hC : 0 < Nat.floor ((p : ℝ) ^ gamma)) (hcL : 2 * c ≤ Real.log (Real.log p))
     (hMp : 2 * (Real.log p) ^ alpha ≤ ((Nat.floor ((Real.log p) ^ A)).primeCounting : ℝ))
     (hgap : c * A * Real.log p + A * Real.log (Real.log p) < (150 / 82 : ℝ) * Real.log p)
@@ -1606,13 +1565,12 @@ theorem exists_prime_nontrivial_power_of_free_finite_fiber_interval_150_82 {p : 
     (henv : ∀ k : ℕ, k ^ 82 ≤ 2 ^ 82 * p ^ 150 → 256 * k ≤ p * Nat.floor ((p : ℝ) ^ gamma))
     (hA : 0 < A) (halpha : 1 < alpha) (hc : 0 < c) (hcb : beta < c * (alpha - 1)) :
     ∃ q : ℕ, q.Prime ∧ (q : ℝ) ≤ (Real.log p) ^ A ∧ (q : ZMod (p ^ 2)) ^ (p - 1) ≠ 1 := by
-  obtain ⟨k, hk, _, hlo, hhi, hcount⟩ :=
-    exists_fixed_finite_fiber_interval_bound_150_82_free hodd hlarge
+  obtain ⟨k, hk, _, hlo, hhi, hcount⟩ := exists_fiber_interval_bound_150_82_free hodd hlarge
   have hsmooth :=
     smooth_count_at_rational_cutoff_of_log_bounds (a := 82) (t := 150) (A := A) (b := alpha)
       (by decide) (Fact.out : p.Prime).pos hB hC hk hL hA halpha hc hcb hcL hMp
       (Nat.floor_le (Real.rpow_nonneg (by linarith only [hL]) A)) hgap hlogC (henv k hhi) hlo
-  obtain ⟨q, hq, hqB, hpow⟩ := exists_prime_nontrivial_power_of_interval_and_smooth hcount hsmooth
+  obtain ⟨q, hq, hqB, hpow⟩ := exists_prime_pow_ne_one_of_interval_smooth hcount hsmooth
   exact
     ⟨q, hq,
       (Nat.cast_le.mpr (Nat.lt_add_one_iff.mp hqB)).trans
@@ -1626,9 +1584,9 @@ Content: Connect the 30/16 initial-count interval to the prime witness.
 Proof: Apply the rational-cutoff smooth-count bound, then extract a prime.
 Role: Converts the finite-fiber interval estimate into a Fermat-quotient
 prime witness for the later Miller–Rabin reduction. -/
-theorem exists_prime_nontrivial_power_of_free_finite_fiber_interval_30_16 {p : ℕ} [Fact p.Prime]
-    (hodd : Odd p) (hlarge : explicitFiniteFiberPrimeThreshold 21518759 ≤ p)
-    {A alpha gamma c beta : ℝ} (hL : 2 ≤ Real.log p) (hB : 0 < Nat.floor ((Real.log p) ^ A))
+theorem exists_prime_pow_ne_one_fiber_30_16 {p : ℕ} [Fact p.Prime] (hodd : Odd p)
+    (hlarge : explicitFiniteFiberPrimeThreshold 21518759 ≤ p) {A alpha gamma c beta : ℝ}
+    (hL : 2 ≤ Real.log p) (hB : 0 < Nat.floor ((Real.log p) ^ A))
     (hC : 0 < Nat.floor ((p : ℝ) ^ gamma)) (hcL : 2 * c ≤ Real.log (Real.log p))
     (hMp : 2 * (Real.log p) ^ alpha ≤ ((Nat.floor ((Real.log p) ^ A)).primeCounting : ℝ))
     (hgap : c * A * Real.log p + A * Real.log (Real.log p) < (30 / 16 : ℝ) * Real.log p)
@@ -1636,13 +1594,12 @@ theorem exists_prime_nontrivial_power_of_free_finite_fiber_interval_30_16 {p : �
     (henv : ∀ k : ℕ, k ^ 16 ≤ 2 ^ 16 * p ^ 30 → 256 * k ≤ p * Nat.floor ((p : ℝ) ^ gamma))
     (hA : 0 < A) (halpha : 1 < alpha) (hc : 0 < c) (hcb : beta < c * (alpha - 1)) :
     ∃ q : ℕ, q.Prime ∧ (q : ℝ) ≤ (Real.log p) ^ A ∧ (q : ZMod (p ^ 2)) ^ (p - 1) ≠ 1 := by
-  obtain ⟨k, hk, _, hlo, hhi, hcount⟩ :=
-    exists_fixed_finite_fiber_interval_bound_30_16_free hodd hlarge
+  obtain ⟨k, hk, _, hlo, hhi, hcount⟩ := exists_fiber_interval_bound_30_16_free hodd hlarge
   have hsmooth :=
     smooth_count_at_rational_cutoff_of_log_bounds (a := 16) (t := 30) (A := A) (b := alpha)
       (by decide) (Fact.out : p.Prime).pos hB hC hk hL hA halpha hc hcb hcL hMp
       (Nat.floor_le (Real.rpow_nonneg (by linarith only [hL]) A)) hgap hlogC (henv k hhi) hlo
-  obtain ⟨q, hq, hqB, hpow⟩ := exists_prime_nontrivial_power_of_interval_and_smooth hcount hsmooth
+  obtain ⟨q, hq, hqB, hpow⟩ := exists_prime_pow_ne_one_of_interval_smooth hcount hsmooth
   exact
     ⟨q, hq,
       (Nat.cast_le.mpr (Nat.lt_add_one_iff.mp hqB)).trans
@@ -1652,8 +1609,8 @@ theorem exists_prime_nontrivial_power_of_free_finite_fiber_interval_30_16 {p : �
 /-- Inputs: prime supply, floor, and smooth-scale bounds above
 `P(21518759)`. Claim: a prime `q ≤ (log p)^A` has nontrivial
 `(p - 1)`-st power modulo `p^2` at the 28/15 cutoff. -/
-theorem exists_prime_nontrivial_power_of_free_finite_fiber_interval_28_15 {p u : ℕ} [Fact p.Prime]
-    (hodd : Odd p) (hu : 17431511 ≤ u) (hlarge : explicitFiniteFiberPrimeThreshold u ≤ p)
+theorem exists_prime_pow_ne_one_fiber_28_15 {p u : ℕ} [Fact p.Prime] (hodd : Odd p)
+    (hu : 17431511 ≤ u) (hlarge : explicitFiniteFiberPrimeThreshold u ≤ p)
     {A alpha gamma c beta : ℝ} (hL : 2 ≤ Real.log p) (hB : 0 < Nat.floor ((Real.log p) ^ A))
     (hC : 0 < Nat.floor ((p : ℝ) ^ gamma)) (hcL : 2 * c ≤ Real.log (Real.log p))
     (hMp : 2 * (Real.log p) ^ alpha ≤ ((Nat.floor ((Real.log p) ^ A)).primeCounting : ℝ))
@@ -1662,13 +1619,12 @@ theorem exists_prime_nontrivial_power_of_free_finite_fiber_interval_28_15 {p u :
     (henv : ∀ k : ℕ, k ^ 15 ≤ 2 ^ 15 * p ^ 28 → 256 * k ≤ p * Nat.floor ((p : ℝ) ^ gamma))
     (hA : 0 < A) (halpha : 1 < alpha) (hc : 0 < c) (hcb : beta < c * (alpha - 1)) :
     ∃ q : ℕ, q.Prime ∧ (q : ℝ) ≤ (Real.log p) ^ A ∧ (q : ZMod (p ^ 2)) ^ (p - 1) ≠ 1 := by
-  obtain ⟨k, hk, _, hlo, hhi, hcount⟩ :=
-    exists_fixed_finite_fiber_interval_bound_28_15_free hodd hu hlarge
+  obtain ⟨k, hk, _, hlo, hhi, hcount⟩ := exists_fiber_interval_bound_28_15_free hodd hu hlarge
   have hsmooth :=
     smooth_count_at_rational_cutoff_of_log_bounds (a := 15) (t := 28) (A := A) (b := alpha)
       (by decide) (Fact.out : p.Prime).pos hB hC hk hL hA halpha hc hcb hcL hMp
       (Nat.floor_le (Real.rpow_nonneg (by linarith only [hL]) A)) hgap hlogC (henv k hhi) hlo
-  obtain ⟨q, hq, hqB, hpow⟩ := exists_prime_nontrivial_power_of_interval_and_smooth hcount hsmooth
+  obtain ⟨q, hq, hqB, hpow⟩ := exists_prime_pow_ne_one_of_interval_smooth hcount hsmooth
   exact
     ⟨q, hq,
       (Nat.cast_le.mpr (Nat.lt_add_one_iff.mp hqB)).trans
@@ -1677,8 +1633,8 @@ theorem exists_prime_nontrivial_power_of_free_finite_fiber_interval_28_15 {p u :
 
 /-- Every odd prime p≥P(4449271510) has a 19/10 cutoff satisfying the
 strict finite-fiber energy budget. -/
-theorem exists_fixed_finite_fiber_rational_energy_cutoff_10_19 {p u : ℕ} [Fact p.Prime]
-    (hodd : Odd p) (hu : 76598623 ≤ u) (hlarge : explicitFiniteFiberPrimeThreshold u ≤ p) :
+theorem exists_fiber_energy_cutoff_10_19 {p u : ℕ} [Fact p.Prime] (hodd : Odd p) (hu : 76598623 ≤ u)
+    (hlarge : explicitFiniteFiberPrimeThreshold u ≤ p) :
     ∃ k : ℕ,
       0 < k ∧
         k ≤ p ^ 2 ∧
@@ -1703,7 +1659,7 @@ theorem exists_fixed_finite_fiber_rational_energy_cutoff_10_19 {p u : ℕ} [Fact
     have htop :=
       height_le_real_power_of_power (a := 10) (d := 1) (rho := (5 / 28 : ℝ)) (by decide) hp1.le
         (by norm_num only : ((1 : ℕ) : ℝ) / (10 : ℕ) ≤ (5 : ℝ) / 28) hheightExplicit
-    exact fixed_log_square_finite_fiber_energy_budget_10_19 hodd hu hlarge hHp htop hlo hheight
+    exact fiber_logSq_energy_10_19 hodd hu hlarge hHp htop hlo hheight
   · exact (not_le_of_gt hmass hbase).elim
 
 /-- Every odd prime p≥P(4449271510) has a 19/10 cutoff with
@@ -1714,10 +1670,9 @@ theorem exists_fixed_finite_fiber_interval_bound_10_19 {p : ℕ} [Fact p.Prime] 
       0 < k ∧
         k < p ^ 2 ∧
         p ^ 19 ≤ k ^ 10 ∧ k ^ 10 ≤ 2 ^ 10 * p ^ 19 ∧ p * heilbronnInitialCount p k < 256 * k := by
-  obtain ⟨k, hk, hkp, hlo, hhi, hb⟩ :=
-    exists_fixed_finite_fiber_rational_energy_cutoff_10_19 hodd hu hlarge
+  obtain ⟨k, hk, hkp, hlo, hhi, hb⟩ := exists_fiber_energy_cutoff_10_19 hodd hu hlarge
   have hc : (32 : ℕ) ^ 10 * 2 ^ 10 < p :=
-    (cutoff_coefficient_lt_explicit_finite_fiber_threshold (a := 10) (u := u)
+    (cutoff_coefficient_lt_fiber_threshold (a := 10) (u := u)
           (Nat.lt_of_lt_of_le (by norm_num only : 60 < 76598623) hu)).trans_le
       hlarge
   have hheight :=
@@ -1733,8 +1688,8 @@ theorem exists_fixed_finite_fiber_interval_bound_10_19 {p : ℕ} [Fact p.Prime] 
 
 /-- Every odd prime above `P(21518759)` has a 19/10 cutoff satisfying the
 free finite-fiber energy budget. -/
-theorem exists_fixed_finite_fiber_rational_energy_cutoff_10_19_free {p : ℕ} [Fact p.Prime]
-    (hodd : Odd p) (hlarge : explicitFiniteFiberPrimeThreshold 21518759 ≤ p) :
+theorem exists_fiber_energy_cutoff_10_19_free {p : ℕ} [Fact p.Prime] (hodd : Odd p)
+    (hlarge : explicitFiniteFiberPrimeThreshold 21518759 ≤ p) :
     ∃ k : ℕ,
       0 < k ∧
         k ≤ p ^ 2 ∧
@@ -1759,22 +1714,20 @@ theorem exists_fixed_finite_fiber_rational_energy_cutoff_10_19_free {p : ℕ} [F
     have htop :=
       height_le_real_power_of_power (a := 10) (d := 1) (rho := (5 / 28 : ℝ)) (by decide) hp1.le
         (by norm_num only : (1 : ℕ) / 10 ≤ (5 : ℝ) / 28) hheightExplicit
-    exact fixed_log_square_finite_fiber_energy_budget_10_19_free hodd hlarge hHp htop hlo hheight
+    exact fiber_logSq_energy_10_19_free hodd hlarge hHp htop hlo hheight
   · exact (not_le_of_gt hmass hbase).elim
 
 /-- Transfer the free 19/10 energy cutoff to the initial-count interval bound
 needed for prime extraction. -/
-theorem exists_fixed_finite_fiber_interval_bound_10_19_free {p : ℕ} [Fact p.Prime] (hodd : Odd p)
+theorem exists_fiber_interval_bound_10_19_free {p : ℕ} [Fact p.Prime] (hodd : Odd p)
     (hlarge : explicitFiniteFiberPrimeThreshold 21518759 ≤ p) :
     ∃ k : ℕ,
       0 < k ∧
         k < p ^ 2 ∧
         p ^ 19 ≤ k ^ 10 ∧ k ^ 10 ≤ 2 ^ 10 * p ^ 19 ∧ p * heilbronnInitialCount p k < 256 * k := by
-  obtain ⟨k, hk, hkp, hlo, hhi, hb⟩ :=
-    exists_fixed_finite_fiber_rational_energy_cutoff_10_19_free hodd hlarge
+  obtain ⟨k, hk, hkp, hlo, hhi, hb⟩ := exists_fiber_energy_cutoff_10_19_free hodd hlarge
   have hc : (32 : ℕ) ^ 10 * 2 ^ 10 < p :=
-    (cutoff_coefficient_lt_explicit_finite_fiber_threshold (a := 10) (u := 21518759)
-          (by norm_num only)).trans_le
+    (cutoff_coefficient_lt_fiber_threshold (a := 10) (u := 21518759) (by norm_num only)).trans_le
       hlarge
   have hheight :=
     rational_cutoff_thirty_two_mul_lt_square (Fact.out : p.Prime).one_lt (by decide : 0 < 10)
@@ -1789,9 +1742,9 @@ theorem exists_fixed_finite_fiber_interval_bound_10_19_free {p : ℕ} [Fact p.Pr
 
 /-- Prime supply and the free 19/10 finite-fiber interval bound produce a
 prime with nontrivial Fermat quotient modulo the square of every large odd prime. -/
-theorem exists_prime_nontrivial_power_of_free_finite_fiber_interval_10_19 {p : ℕ} [Fact p.Prime]
-    (hodd : Odd p) (hlarge : explicitFiniteFiberPrimeThreshold 21518759 ≤ p)
-    {A alpha gamma c beta : ℝ} (hL : 2 ≤ Real.log p) (hB : 0 < Nat.floor ((Real.log p) ^ A))
+theorem exists_prime_pow_ne_one_fiber_10_19 {p : ℕ} [Fact p.Prime] (hodd : Odd p)
+    (hlarge : explicitFiniteFiberPrimeThreshold 21518759 ≤ p) {A alpha gamma c beta : ℝ}
+    (hL : 2 ≤ Real.log p) (hB : 0 < Nat.floor ((Real.log p) ^ A))
     (hC : 0 < Nat.floor ((p : ℝ) ^ gamma)) (hcL : 2 * c ≤ Real.log (Real.log p))
     (hMp : 2 * (Real.log p) ^ alpha ≤ ((Nat.floor ((Real.log p) ^ A)).primeCounting : ℝ))
     (hgap : c * A * Real.log p + A * Real.log (Real.log p) < (19 / 10 : ℝ) * Real.log p)
@@ -1799,13 +1752,12 @@ theorem exists_prime_nontrivial_power_of_free_finite_fiber_interval_10_19 {p : �
     (henv : ∀ k : ℕ, k ^ 10 ≤ 2 ^ 10 * p ^ 19 → 256 * k ≤ p * Nat.floor ((p : ℝ) ^ gamma))
     (hA : 0 < A) (halpha : 1 < alpha) (hc : 0 < c) (hcb : beta < c * (alpha - 1)) :
     ∃ q : ℕ, q.Prime ∧ (q : ℝ) ≤ (Real.log p) ^ A ∧ (q : ZMod (p ^ 2)) ^ (p - 1) ≠ 1 := by
-  obtain ⟨k, hk, _, hlo, hhi, hcount⟩ :=
-    exists_fixed_finite_fiber_interval_bound_10_19_free hodd hlarge
+  obtain ⟨k, hk, _, hlo, hhi, hcount⟩ := exists_fiber_interval_bound_10_19_free hodd hlarge
   have hsmooth :=
     smooth_count_at_rational_cutoff_of_log_bounds (a := 10) (t := 19) (A := A) (b := alpha)
       (by decide) (Fact.out : p.Prime).pos hB hC hk hL hA halpha hc hcb hcL hMp
       (Nat.floor_le (Real.rpow_nonneg (by linarith only [hL]) A)) hgap hlogC (henv k hhi) hlo
-  obtain ⟨q, hq, hqB, hpow⟩ := exists_prime_nontrivial_power_of_interval_and_smooth hcount hsmooth
+  obtain ⟨q, hq, hqB, hpow⟩ := exists_prime_pow_ne_one_of_interval_smooth hcount hsmooth
   exact
     ⟨q, hq,
       (Nat.cast_le.mpr (Nat.lt_add_one_iff.mp hqB)).trans

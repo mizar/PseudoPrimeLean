@@ -19,14 +19,13 @@ open PseudoPrime.AnalyticNumberTheory.Arithmetic in
 Claim: the original-level reciprocal sum retains the supplied loss and prime-factor cost.
 Proof: combine exact support with nonnegativity before taking the maximum.
 Role: accept any future cutoff-dependent reciprocal lower estimate. -/
-theorem characterReciprocalWeightedSum_re_ge_of_reciprocal_lower {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) {x r : ℝ} (hx : 0 < x)
-    (hR : Real.log x - r ≤ reciprocalWeightedMangoldtSum x)
+theorem characterRecipSum_re_ge_of_recip_lower {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    {x r : ℝ} (hx : 0 < x) (hR : Real.log x - r ≤ reciprocalWeightedMangoldtSum x)
     (ht : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ x → χ p = 1) :
     max 0 (Real.log x - r - primeFactorLogSum q) ≤ (characterReciprocalWeightedSum x χ).re := by
   apply max_le
-  · exact characterReciprocalWeightedSum_re_nonneg_of_prime_trivial x χ hx ht
-  · have h := characterReciprocalWeightedSum_re_lower_level_of_prime_trivial x χ hx ht
+  · exact characterRecipSum_re_nonneg_of_prime_trivial x χ hx ht
+  · have h := characterRecipSum_re_lower_of_prime_trivial x χ hx ht
     linarith only [h, hR]
 
 open PseudoPrime.AnalyticNumberTheory.Arithmetic in
@@ -49,7 +48,7 @@ theorem primitiveZeroMass_le_fullLevel_raw_of_saving {q : ℕ} [NeZero q] (χ : 
     rw [Nat.div_ne_zero_iff]
     exact ⟨χ.conductor_ne_zero, Nat.le_of_dvd (NeZero.pos q) χ.conductor_dvd_level⟩
   have habsorb := primitiveReciprocalConductorAbsorption x χ hx2 hqd
-  rw [characterReciprocalWeightedSum_re_primitive_eq_add_levelChangeCorrection] at hraw
+  rw [characterRecipSum_re_primitive_eq_add] at hraw
   linarith only [hraw, hR, habsorb]
 
 open PseudoPrime.AnalyticNumberTheory.Arithmetic in
@@ -78,7 +77,7 @@ open PseudoPrime.AnalyticNumberTheory.Arithmetic in
 Claim: the logarithmic character sum obeys the Part 1 upper bound with that saving.
 Proof: insert the zero-mass bound in the primitive logarithmic formula and absorb level change.
 Role: make all later Part 1 root criteria independent of a fixed reciprocal loss. -/
-theorem characterLogWeightedSum_re_le_fullLevel_of_saving {q : ℕ} [NeZero q]
+theorem characterLogSum_re_le_fullLevel_of_saving_GRH {q : ℕ} [NeZero q]
     (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hN : 2 ≤ χ.conductor)
     (hne : χ.primitiveCharacter ≠ 1) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     {x A : ℝ} (hx : 64 ≤ x) (hq : 8 < Real.log q) (hroot : Real.log q ≤ Real.sqrt x) (hA : 0 ≤ A)
@@ -100,7 +99,7 @@ theorem characterLogWeightedSum_re_le_fullLevel_of_saving {q : ℕ} [NeZero q]
     rw [Nat.div_ne_zero_iff]
     exact ⟨χ.conductor_ne_zero, Nat.le_of_dvd (NeZero.pos q) χ.conductor_dvd_level⟩
   have habsorb := primitiveLogConductorAbsorption x χ hx2 hqd
-  rw [characterLogWeightedSum_re_primitive_eq_add_levelChangeCorrection] at hraw
+  rw [characterLogSum_re_primitive_eq_add] at hraw
   nlinarith only [hraw, hmul, habsorb]
 
 end PseudoPrime.LLS

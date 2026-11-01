@@ -24,8 +24,7 @@ theorem squarefreePart_dvd_quadratic_conductor {n : ℕ} {hn : Odd n} {hns : ¬I
     bridge.squarefreePart ∣ (NumberTheory.complexQuadraticCharacter n hn).conductor := by
   have hdvd : bridge.squarefreePart ∣ n :=
     ⟨bridge.squareFactor ^ 2, by simpa only [mul_comm] using bridge.squarefreePart_sq_mul.symm⟩
-  rw [NumberTheory.complexQuadraticCharacter_conductor_eq_discriminant bridge hdvd,
-    bridge.discriminant_eq]
+  rw [NumberTheory.complexQuadratic_conductor_eq_discriminant bridge hdvd, bridge.discriminant_eq]
   unfold NumberTheory.positiveFundamentalDiscriminant
   split
   · exact dvd_refl _
@@ -34,8 +33,8 @@ theorem squarefreePart_dvd_quadratic_conductor {n : ℕ} {hn : Odd n} {hns : ¬I
 /-- Every prime in the squarefree part has zero value under the primitive
 quadratic character. Its divisibility into the conductor makes the prime a
 nonunit. This remains valid when that prime also divides the square factor. -/
-theorem primitiveQuadraticCharacter_zero_on_squarefreePart {n p : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem primitiveQuadratic_zero_on_squarefreePart {n p : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hp : p ∈ bridge.squarefreePart.primeFactors) :
     NumberTheory.primitiveQuadraticCharacter n hn p = 0 := by
   have hprime := Nat.prime_of_mem_primeFactors hp
@@ -60,7 +59,7 @@ theorem primitiveQuadraticExclusionCost_le_square_factor {n : ℕ} {hn : Odd n} 
   have hc :=
     characterExclusionCost_square_factor_le (NumberTheory.primitiveQuadraticCharacter n hn)
       bridge.squareFactor_odd.pos.ne' bridge.squarefreePart_pos.ne'
-      (fun p hp ↦ primitiveQuadraticCharacter_zero_on_squarefreePart bridge hp)
+      (fun p hp ↦ primitiveQuadratic_zero_on_squarefreePart bridge hp)
   rw [bridge.squarefreePart_sq_mul] at hc
   exact hc
 
@@ -86,8 +85,8 @@ theorem exists_prime_neg_one_le_cubic_square_factor {n : ℕ} {hn : Odd n} {hns 
     ⟨bridge.squareFactor ^ 2, by simpa only [mul_comm] using bridge.squarefreePart_sq_mul.symm⟩
   have hf :
     (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ 4 * bridge.squarefreePart := by
-    rw [NumberTheory.complexQuadraticCharacter_conductor_eq_discriminant bridge hdvd]
-    exact bridge.discriminant_le_four_mul_squarefreePart
+    rw [NumberTheory.complexQuadratic_conductor_eq_discriminant bridge hdvd]
+    exact bridge.discr_le_four_squarefreePart
   have hlog :=
     Real.log_le_log
       (Nat.cast_pos.mpr
@@ -143,7 +142,7 @@ theorem primeNeOneWitness_le_cubic_square_factor {n : ℕ} {hn : Odd n} {hns : �
 if 2B sqrt(X)+(8/3)E(s) is at most X. Apply the generic quadratic radius
 criterion and leastness. This couples conductor and square-factor costs and
 can be specialized to logarithmic powers without further analytic assumptions. -/
-theorem primeNegOneWitness_le_of_cubic_square_factor_target {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+theorem negOneWitness_le_of_cubic_square_factor_target {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) {X : ℝ} (hX : 0 < X)
@@ -174,8 +173,8 @@ open AnalyticNumberTheory.Arithmetic in
 with E_chi(2n) at most G+2E give an odd coprime negative prime below the absorbed
 cubic radius. This generic wrapper permits support-specific arithmetic estimates
 without repeating the analytic extraction and radius absorption. -/
-theorem exists_prime_neg_one_le_cubic_square_factor_of_envelopes {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {G E : ℝ}
+theorem exists_prime_negOne_cubicEnvelopes_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {G E : ℝ}
     (hlog : Real.log (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ G) (hE : 0 ≤ E)
     (hcost :
       characterExclusionCost (NumberTheory.primitiveQuadraticCharacter n hn) (2 * n) ≤ G + 2 * E) :

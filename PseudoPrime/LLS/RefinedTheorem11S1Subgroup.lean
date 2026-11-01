@@ -41,7 +41,7 @@ theorem exists_prime_outside_subgroup_le_refinedRadius {q : ℕ} [NeZero q] (hq 
 /-- Under GRH and q≥3000, the least prime outside a proper subgroup is bounded
 by the refined Part 1 radius squared. Minimize the unbounded prime predicate
 using the bounded existence witness. This adds minimality without checking any prime table. -/
-theorem exists_least_prime_outside_subgroup_le_refinedRadius {q : ℕ} [NeZero q] (hq : 3000 ≤ q)
+theorem exists_least_outside_refinedRadius_GRH {q : ℕ} [NeZero q] (hq : 3000 ≤ q)
     (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p,

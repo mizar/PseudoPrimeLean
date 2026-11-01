@@ -28,8 +28,8 @@ theorem weighted_sum_re_eq_of_full_prime_trivial {q : ℕ} (χ : DirichletCharac
   by_cases hz : ArithmeticFunction.vonMangoldt n = 0
   · simp only [hz, mul_zero, zero_mul]
   · have he :=
-      character_apply_one_of_ambient_mangoldt_ne_zero (N := 1) χ (fun p hp hpx _ ↦ ht p hp hpx)
-        (hS n hn) (Nat.coprime_one_right n) hz
+      character_eq_one_of_ambient_mangoldt (N := 1) χ (fun p hp hpx _ ↦ ht p hp hpx) (hS n hn)
+        (Nat.coprime_one_right n) hz
     rw [he, Complex.one_re, one_mul]
 
 end PseudoPrime.AnalyticNumberTheory.Arithmetic

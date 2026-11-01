@@ -40,7 +40,7 @@ theorem norm_completed_genusTerm_le {q : ℕ} [NeZero q] {χ : DirichletCharacte
   · change ‖(D : ℂ) * _‖ ≤ _ * ((D : ℝ) / _)
     simp only [hD, Int.cast_zero, zero_mul, norm_zero, zero_div, mul_zero, le_refl]
   · have hz := completed_zero_of_divisor_ne_zero hne hD
-    have hr := completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv hz
+    have hr := completed_zero_re_eq_half_of_RH hRH hp hinv hz
     have ha : AnalyticOnNhd ℂ (DirichletCharacter.completedLFunction χ) Set.univ := fun z _ ↦
       (DirichletCharacter.differentiable_completedLFunction hne).analyticAt z
     have hn : (0 : ℝ) ≤ D := by exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg ha ρ
@@ -63,7 +63,7 @@ theorem summable_completed_genus_terms {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ :
           (1 / (s - ρ) + 1 / ρ)) := by
   exact
     Summable.of_norm_bounded
-      ((summable_divisor_div_normSq_of_dirichletRH hq hRH hp hne hinv).mul_left
+      ((summable_divisor_div_normSq_of_RH hq hRH hp hne hinv).mul_left
         (‖s‖ * (1 + ‖s‖ / (s.re - 1 / 2))))
       (norm_completed_genusTerm_le hRH hp hne hinv hs)
 
@@ -71,7 +71,7 @@ theorem summable_completed_genus_terms {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ :
 difference at two points with real parts above one half is absolutely summable.
 Subtract the two convergent genus-one series; the reciprocal-zero terms cancel.
 This justifies taking real parts and later integrating the centered zero sum. -/
-theorem summable_completed_resolvent_difference {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem summable_completedResolventDiff_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {s t : ℂ} (hs : 1 / 2 < s.re) (ht : 1 / 2 < t.re) :
     Summable
@@ -95,17 +95,16 @@ theorem completed_hasOrderAtMostOne {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : Di
       (show 0 < 4 * (q : ℝ) + 3 by nlinarith only [(Nat.cast_nonneg q : (0 : ℝ) ≤ q)])
   intro s hs
   exact
-    (norm_completedLFunction_le_completedLFunctionBallBound
-          (Nat.lt_of_lt_of_le (by norm_num only : 1 < 2) hq) hp hne hinv (zero_le_one.trans hs)
-          le_rfl).trans
+    (norm_completed_le_completedBallBound (Nat.lt_of_lt_of_le (by norm_num only : 1 < 2) hq) hp hne
+          hinv (zero_le_one.trans hs) le_rfl).trans
       (completedLFunctionBallBound_le_exp hq hs)
 
 /-- For a nonprincipal character, the completed L-function is entire, so its global divisor
 at each point equals the natural analytic multiplicity cast to an integer.
 Apply the analytic divisor formula and identify the finite and infinite analytic-order cases.
 This reconciles the divisor-weighted Dirichlet series with the entire Hadamard API. -/
-theorem completed_divisor_eq_analyticOrderNatAt {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
-    (hne : χ ≠ 1) (ρ : ℂ) :
+theorem completed_divisor_eq_orderNat {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hne : χ ≠ 1)
+    (ρ : ℂ) :
     MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ =
       (analyticOrderNatAt (DirichletCharacter.completedLFunction χ) ρ : ℤ) := by
   have ha : AnalyticOnNhd ℂ (DirichletCharacter.completedLFunction χ) Set.univ := fun z _ ↦
@@ -119,9 +118,9 @@ individual RH gives the centered completed logarithmic derivative at every Re s 
 as its full divisor-weighted genus-one zero sum. RH supplies nonvanishing at zero and s;
 order-one growth and absolute convergence discharge the entire Hadamard theorem.
 This is the analytic identity behind conductor-normalized zero distribution estimates. -/
-theorem completed_centered_logDeriv_eq_genusSum {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {s : ℂ} (hs : 1 / 2 < s.re) :
+theorem completedLogDeriv_genus_eq_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    {s : ℂ} (hs : 1 / 2 < s.re) :
     logDeriv (DirichletCharacter.completedLFunction χ) s -
         logDeriv (DirichletCharacter.completedLFunction χ) 0 =
       ∑' ρ : ℂ,
@@ -129,17 +128,17 @@ theorem completed_centered_logDeriv_eq_genusSum {q : ℕ} [NeZero q] (hq : 2 ≤
           (1 / (s - ρ) + 1 / ρ) := by
   have hF := DirichletCharacter.differentiable_completedLFunction hne
   have h0 : DirichletCharacter.completedLFunction χ 0 ≠ 0 := fun hz ↦ by
-    have hr := completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv hz
+    have hr := completed_zero_re_eq_half_of_RH hRH hp hinv hz
     norm_num only [Complex.zero_re] at hr
   have hns : DirichletCharacter.completedLFunction χ s ≠ 0 := fun hz ↦
-    hs.ne' (completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv hz)
+    hs.ne' (completed_zero_re_eq_half_of_RH hRH hp hinv hz)
   have he :
     ∀ ρ : ℂ,
       (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℂ) =
         (analyticOrderNatAt (DirichletCharacter.completedLFunction χ) ρ : ℂ) :=
-    fun ρ ↦ by rw [completed_divisor_eq_analyticOrderNatAt hne ρ, Int.cast_natCast]
+    fun ρ ↦ by rw [completed_divisor_eq_orderNat hne ρ, Int.cast_natCast]
   obtain ⟨C, hC, hg⟩ :=
-    General.exists_global_exponential_bound_of_orderAtMostOne hF.continuous
+    General.exists_exp_bound_of_orderAtMostOne hF.continuous
       (completed_hasOrderAtMostOne hq hp hne hinv) (show (1 : ℝ) < 3 / 2 by norm_num only)
   have hsum :=
     (summable_completed_genus_terms hq hRH hp hne hinv hs).congr
@@ -153,7 +152,7 @@ logarithmic derivatives at two points to the right of the critical line equals t
 multiplicity-weighted difference of zero resolvents. Subtract the centered Hadamard identities
 and cancel reciprocal-zero terms inside the absolutely convergent sum.
 This removes the unknown central constant from zero-distribution calculations. -/
-theorem completed_logDeriv_sub_eq_resolventSum {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem completedLogDeriv_resolvent_eq_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {s t : ℂ} (hs : 1 / 2 < s.re) (ht : 1 / 2 < t.re) :
     logDeriv (DirichletCharacter.completedLFunction χ) s -
@@ -169,8 +168,8 @@ theorem completed_logDeriv_sub_eq_resolventSum {q : ℕ} [NeZero q] (hq : 2 ≤ 
         (logDeriv (DirichletCharacter.completedLFunction χ) t -
           logDeriv (DirichletCharacter.completedLFunction χ) 0) := by
     ring
-  rw [he, completed_centered_logDeriv_eq_genusSum hq hRH hp hne hinv hs,
-    completed_centered_logDeriv_eq_genusSum hq hRH hp hne hinv ht, ←
+  rw [he, completedLogDeriv_genus_eq_RH hq hRH hp hne hinv hs,
+    completedLogDeriv_genus_eq_RH hq hRH hp hne hinv ht, ←
     (summable_completed_genus_terms hq hRH hp hne hinv hs).tsum_sub
       (summable_completed_genus_terms hq hRH hp hne hinv ht)]
   exact tsum_congr (fun ρ ↦ by ring)
@@ -188,7 +187,7 @@ theorem summable_completed_genus_terms_right {q : ℕ} [NeZero q] {χ : Dirichle
   let base : ℂ → ℂ := fun ρ ↦ (D ρ : ℂ) * (1 / ((1 : ℂ) - ρ) + 1 / ρ)
   let target : ℂ → ℂ := fun ρ ↦ (D ρ : ℂ) * (1 / (s - ρ) + 1 / ρ)
   have hbase : Summable base := by
-    exact (summable_completedLFunctionGenusOneTerm_one hq hp hne hinv).congr (fun ρ ↦ by rfl)
+    exact (summable_completedGenusOneTerm_one hq hp hne hinv).congr (fun ρ ↦ by rfl)
   let R : ℝ := max 2 (2 * ‖s‖)
   have hR2 : 2 ≤ R := le_max_left _ _
   have hRs : 2 * ‖s‖ ≤ R := le_max_right _ _
@@ -279,24 +278,23 @@ theorem summable_completed_genus_terms_right {q : ℕ} [NeZero q] {χ : Dirichle
 /-- For a primitive nonprincipal character, the completed logarithmic derivative has an
 unconditional genus-one expansion when `Re s > 1`. The order-one growth bound and the summable
 genus series give the identity through the general centered Hadamard theorem. -/
-theorem completed_centered_logDeriv_eq_genusSum_right {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem completedLogDeriv_genus_eq_right {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {s : ℂ}
     (hs : 1 < s.re) :
     logDeriv χ.completedLFunction s - logDeriv χ.completedLFunction 0 =
       ∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℂ) * (1 / (s - ρ) + 1 / ρ) := by
   have hF := DirichletCharacter.differentiable_completedLFunction hne
-  have h0 : χ.completedLFunction 0 ≠ 0 :=
-    dirichletCompletedLFunction_zero_ne_zero_of_primitive hp hne
-  have hsn : χ.completedLFunction s ≠ 0 := completedLFunction_ne_zero_of_one_le_re hne hs.le
+  have h0 : χ.completedLFunction 0 ≠ 0 := completed_zero_ne_zero_of_primitive hp hne
+  have hsn : χ.completedLFunction s ≠ 0 := completed_ne_zero_of_one_le_re hne hs.le
   have hsum :
     Summable
       (fun ρ : ℂ ↦ (analyticOrderNatAt χ.completedLFunction ρ : ℂ) * (1 / (s - ρ) + 1 / ρ)) := by
     apply (summable_completed_genus_terms_right hq hp hne hinv hs).congr
     intro ρ
-    rw [completed_divisor_eq_analyticOrderNatAt hne ρ, Int.cast_natCast]
+    rw [completed_divisor_eq_orderNat hne ρ, Int.cast_natCast]
   obtain ⟨C, hC, hg⟩ :=
-    General.exists_global_exponential_bound_of_orderAtMostOne hF.continuous
+    General.exists_exp_bound_of_orderAtMostOne hF.continuous
       (completed_hasOrderAtMostOne hq hp hne hinv) (show (1 : ℝ) < 3 / 2 by norm_num only)
   have hformula :=
     General.centered_logDeriv_eq_genusSum hF h0 hC (show (0 : ℝ) ≤ 3 / 2 by norm_num only)
@@ -307,11 +305,11 @@ theorem completed_centered_logDeriv_eq_genusSum_right {q : ℕ} [NeZero q] (hq :
     _ =
         ∑' ρ : ℂ,
           (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℂ) * (1 / (s - ρ) + 1 / ρ) :=
-      tsum_congr (fun ρ ↦ by rw [completed_divisor_eq_analyticOrderNatAt hne ρ, Int.cast_natCast])
+      tsum_congr (fun ρ ↦ by rw [completed_divisor_eq_orderNat hne ρ, Int.cast_natCast])
 
 /-- For a zero with nonnegative real part, the two reciprocal factors centered at `1` satisfy
 `‖1 - ρ‖ ≤ ‖1 + ρ‖`. Expand their squared norms and use `0 ≤ Re ρ`. -/
-private theorem norm_one_sub_le_norm_one_add_of_re_nonneg {ρ : ℂ} (hρ : 0 ≤ ρ.re) :
+private theorem norm_one_sub_le_of_re_nonneg {ρ : ℂ} (hρ : 0 ≤ ρ.re) :
     ‖(1 : ℂ) - ρ‖ ≤ ‖(1 : ℂ) + ρ‖ := by
   have hsq : Complex.normSq ((1 : ℂ) + ρ) - Complex.normSq ((1 : ℂ) - ρ) = 4 * ρ.re := by
     rw [Complex.normSq_apply, Complex.normSq_apply]
@@ -325,12 +323,11 @@ private theorem norm_one_sub_le_norm_one_add_of_re_nonneg {ρ : ℂ} (hρ : 0 �
 
 /-- For a zero in the critical strip, the reciprocal correction caused by moving the
 Hadamard center from `0` to `-1` is dominated by the genus-one term at `1`. -/
-private theorem norm_reciprocal_correction_le_genus_one {ρ : ℂ} (hρ0 : 0 < ρ.re) (hρ1 : ρ.re < 1) :
+private theorem norm_reciprocal_correction_le_genus {ρ : ℂ} (hρ0 : 0 < ρ.re) (hρ1 : ρ.re < 1) :
     ‖1 / (ρ * (1 + ρ))‖ ≤ ‖1 / (ρ * (1 - ρ))‖ := by
   have hden : ‖ρ * (1 - ρ)‖ ≤ ‖ρ * (1 + ρ)‖ := by
     rw [norm_mul, norm_mul]
-    exact
-      mul_le_mul_of_nonneg_left (norm_one_sub_le_norm_one_add_of_re_nonneg hρ0.le) (norm_nonneg _)
+    exact mul_le_mul_of_nonneg_left (norm_one_sub_le_of_re_nonneg hρ0.le) (norm_nonneg _)
   have hρne : ρ ≠ 0 := by
     intro hz
     rw [hz] at hρ0
@@ -359,7 +356,7 @@ private theorem norm_reciprocal_correction_le_genus_one {ρ : ℂ} (hρ0 : 0 < �
 at `-1`, where the completed function is nonzero by the functional equation. Each zero then
 contributes the positive kernels `Re(1 / (s - ρ))` and `Re(1 / (1 + ρ))`; this removes the
 uncontrolled logarithmic derivative at zero from local zero-count estimates. -/
-theorem completed_centered_logDeriv_eq_genusSum_minus_one {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem completedLogDeriv_genus_eq_neg_one {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {s : ℂ}
     (hs : 1 < s.re) :
     logDeriv χ.completedLFunction s - logDeriv χ.completedLFunction (-1) =
@@ -370,11 +367,11 @@ theorem completed_centered_logDeriv_eq_genusSum_minus_one {q : ℕ} [NeZero q] (
   let G : ℂ → ℂ := fun z ↦ F (z - 1)
   have hF := DirichletCharacter.differentiable_completedLFunction hne
   have hFminus : F (-1) ≠ 0 := by
-    have hFE := dirichletCompletedLFunction_one_sub_of_isPrimitive hp (2 : ℂ)
+    have hFE := completed_one_sub_of_isPrimitive hp (2 : ℂ)
     have hpow : (q : ℂ) ^ ((2 : ℂ) - 1 / 2) ≠ 0 :=
       Complex.cpow_ne_zero_iff.mpr (Or.inl (by exact_mod_cast NeZero.ne q))
-    have hroot := dirichletCharacter_rootNumber_ne_zero_of_isPrimitive hp
-    have hinv2 := dirichletCompletedLFunction_two_ne_zero (χ := χ⁻¹) hinv
+    have hroot := rootNumber_ne_zero_of_primitive hp
+    have hinv2 := completed_two_ne_zero (χ := χ⁻¹) hinv
     have hEq :
       F (-1) =
         (q : ℂ) ^ ((2 : ℂ) - 1 / 2) * DirichletCharacter.rootNumber χ *
@@ -387,9 +384,8 @@ theorem completed_centered_logDeriv_eq_genusSum_minus_one {q : ℕ} [NeZero q] (
     exact (hF (z - 1)).comp z (by fun_prop)
   have hG0 : G 0 ≠ 0 := by simpa only [G, F, zero_sub] using hFminus
   obtain ⟨C, hC, hgrowth⟩ :=
-    PseudoPrime.AnalyticNumberTheory.General.exists_global_exponential_bound_of_orderAtMostOne
-      hF.continuous (completed_hasOrderAtMostOne hq hp hne hinv)
-      (show (1 : ℝ) < 3 / 2 by norm_num only)
+    PseudoPrime.AnalyticNumberTheory.General.exists_exp_bound_of_orderAtMostOne hF.continuous
+      (completed_hasOrderAtMostOne hq hp hne hinv) (show (1 : ℝ) < 3 / 2 by norm_num only)
   let C' : ℝ := C * (2 : ℝ) ^ (3 / 2 : ℝ)
   have hC' : 0 < C' := by
     dsimp only [C']
@@ -419,7 +415,7 @@ theorem completed_centered_logDeriv_eq_genusSum_minus_one {q : ℕ} [NeZero q] (
   have hbaseS : Summable baseS := by
     simpa only [baseS, D, F] using summable_completed_genus_terms_right hq hp hne hinv hs
   have hbaseOne : Summable baseOne := by
-    simpa only [baseOne, D, F] using summable_completedLFunctionGenusOneTerm_one hq hp hne hinv
+    simpa only [baseOne, D, F] using summable_completedGenusOneTerm_one hq hp hne hinv
   have hcorrection : Summable correction := by
     apply Summable.of_norm_bounded hbaseOne.norm
     intro ρ
@@ -451,7 +447,7 @@ theorem completed_centered_logDeriv_eq_genusSum_minus_one {q : ℕ} [NeZero q] (
       change ‖(D ρ : ℂ) * (1 / (1 + ρ) - 1 / ρ)‖ ≤ ‖(D ρ : ℂ) * (1 / (1 - ρ) + 1 / ρ)‖
       rw [hcor, hbase, norm_mul, norm_mul, norm_neg]
       exact
-        mul_le_mul_of_nonneg_left (norm_reciprocal_correction_le_genus_one hre0 hre1)
+        mul_le_mul_of_nonneg_left (norm_reciprocal_correction_le_genus hre0 hre1)
           (norm_nonneg (D ρ : ℂ))
   have htarget : Summable target := by
     have hadd := hbaseS.add hcorrection
@@ -505,14 +501,14 @@ theorem completed_centered_logDeriv_eq_genusSum_minus_one {q : ℕ} [NeZero q] (
       rw [show e ρ = ρ + 1 by rfl, horder ρ]
       have hD : (D ρ : ℂ) = (analyticOrderNatAt F ρ : ℂ) := by
         dsimp only [D]
-        rw [completed_divisor_eq_analyticOrderNatAt hne ρ, Int.cast_natCast]
+        rw [completed_divisor_eq_orderNat hne ρ, Int.cast_natCast]
       rw [← hD]
       change (D ρ : ℂ) * _ = (D ρ : ℂ) * _
       ring
     exact e.summable_iff.mp (htarget.congr (fun ρ ↦ congrFun hcongr.symm ρ))
   have hsG : G (s + 1) ≠ 0 := by
     have hsRe : 1 ≤ s.re := by linarith only [hs]
-    have hFs : F s ≠ 0 := completedLFunction_ne_zero_of_one_le_re hne hsRe
+    have hFs : F s ≠ 0 := completed_ne_zero_of_one_le_re hne hsRe
     simpa only [G, add_sub_cancel_right] using hFs
   have hformula :=
     PseudoPrime.AnalyticNumberTheory.General.centered_logDeriv_eq_genusSum hG hG0 hC'
@@ -542,12 +538,12 @@ theorem completed_centered_logDeriv_eq_genusSum_minus_one {q : ℕ} [NeZero q] (
   rw [horder ρ]
   have hD : (D ρ : ℂ) = (analyticOrderNatAt F ρ : ℂ) := by
     dsimp only [D]
-    rw [completed_divisor_eq_analyticOrderNatAt hne ρ, Int.cast_natCast]
+    rw [completed_divisor_eq_orderNat hne ρ, Int.cast_natCast]
   rw [← hD]
   change (D ρ : ℂ) * _ = (D ρ : ℂ) * _
   ring
 
-theorem summable_completed_genus_terms_minus_one {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem summable_completed_genus_neg_one {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {s : ℂ}
     (hs : 1 < s.re) :
     Summable
@@ -563,7 +559,7 @@ theorem summable_completed_genus_terms_minus_one {q : ℕ} [NeZero q] (hq : 2 �
   have hbaseS : Summable baseS := by
     simpa only [baseS, D, F] using summable_completed_genus_terms_right hq hp hne hinv hs
   have hbaseOne : Summable baseOne := by
-    simpa only [baseOne, D, F] using summable_completedLFunctionGenusOneTerm_one hq hp hne hinv
+    simpa only [baseOne, D, F] using summable_completedGenusOneTerm_one hq hp hne hinv
   have hcorrection : Summable correction := by
     apply Summable.of_norm_bounded hbaseOne.norm
     intro ρ
@@ -595,7 +591,7 @@ theorem summable_completed_genus_terms_minus_one {q : ℕ} [NeZero q] (hq : 2 �
       change ‖(D ρ : ℂ) * (1 / (1 + ρ) - 1 / ρ)‖ ≤ ‖(D ρ : ℂ) * (1 / (1 - ρ) + 1 / ρ)‖
       rw [hcor, hbase, norm_mul, norm_mul, norm_neg]
       exact
-        mul_le_mul_of_nonneg_left (norm_reciprocal_correction_le_genus_one hre0 hre1)
+        mul_le_mul_of_nonneg_left (norm_reciprocal_correction_le_genus hre0 hre1)
           (norm_nonneg (D ρ : ℂ))
   have hadd := hbaseS.add hcorrection
   apply hadd.congr
@@ -638,7 +634,7 @@ theorem summable_completed_genus_terms_minus_one {q : ℕ} [NeZero q] (hq : 2 �
 /-- For two points right of the zero-free line, subtract the unconditional centered expansions
 to obtain the divisor-weighted resolvent difference. The `1 / ρ` terms cancel, and both series
 are absolutely summable by `summable_completed_genus_terms_right`. -/
-theorem completed_logDeriv_sub_eq_resolventSum_right {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem completedLogDeriv_resolvent_right {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {s t : ℂ}
     (hs : 1 < s.re) (ht : 1 < t.re) :
     logDeriv χ.completedLFunction s - logDeriv χ.completedLFunction t =
@@ -650,8 +646,8 @@ theorem completed_logDeriv_sub_eq_resolventSum_right {q : ℕ} [NeZero q] (hq : 
       (logDeriv χ.completedLFunction s - logDeriv χ.completedLFunction 0) -
         (logDeriv χ.completedLFunction t - logDeriv χ.completedLFunction 0) := by
     ring
-  rw [he, completed_centered_logDeriv_eq_genusSum_right hq hp hne hinv hs,
-    completed_centered_logDeriv_eq_genusSum_right hq hp hne hinv ht, ←
+  rw [he, completedLogDeriv_genus_eq_right hq hp hne hinv hs,
+    completedLogDeriv_genus_eq_right hq hp hne hinv ht, ←
     (summable_completed_genus_terms_right hq hp hne hinv hs).tsum_sub
       (summable_completed_genus_terms_right hq hp hne hinv ht)]
   exact tsum_congr (fun ρ ↦ by ring)

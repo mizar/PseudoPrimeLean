@@ -22,8 +22,8 @@ namespace PseudoPrime.LLS
 outside every subgroup H of units with card H<=q^beta, bounded by log(q)^A.
 Count products of distinct eligible small primes; strict logarithmic scale margins
 force the count past card H. The threshold is uniform in H and no GRH is assumed. -/
-theorem eventually_exists_prime_outside_le_log_power_of_card_rpow {beta A : ℝ} (hbeta : 0 < beta)
-    (hb1 : beta < 1) (hA : 1 / (1 - beta) < A) :
+theorem eventually_prime_outside_logPower_cardRpow {beta A : ℝ} (hbeta : 0 < beta) (hb1 : beta < 1)
+    (hA : 1 / (1 - beta) < A) :
     Filter.Eventually
       (fun q : ℕ ↦
         ∀ H : Subgroup (ZMod q)ˣ,
@@ -84,8 +84,8 @@ theorem eventually_exists_prime_outside_le_log_power_of_card_rpow {beta A : ℝ}
 /-- For 0<eta<1 and A>1/eta, sufficiently large q admits a prime at most log(q)^A
 not dividing q and outside every H with card H<=q^(1-eta). Substitute beta=1-eta
 in the uniform cardinal-exponent bound. This is the small-subgroup LLS analogue. -/
-theorem eventually_exists_prime_outside_le_log_power_of_small_card {eta A : ℝ} (he0 : 0 < eta)
-    (he1 : eta < 1) (hA : 1 / eta < A) :
+theorem eventually_prime_outside_logPower_smallCard {eta A : ℝ} (he0 : 0 < eta) (he1 : eta < 1)
+    (hA : 1 / eta < A) :
     Filter.Eventually
       (fun q : ℕ ↦
         ∀ H : Subgroup (ZMod q)ˣ,
@@ -98,13 +98,13 @@ theorem eventually_exists_prime_outside_le_log_power_of_small_card {eta A : ℝ}
   have he : 1 - (1 - eta) = eta := by ring
   have hA' : 1 / (1 - (1 - eta)) < A := by
     rw [he]; exact hA
-  exact eventually_exists_prime_outside_le_log_power_of_card_rpow hb0 hb1 hA'
+  exact eventually_prime_outside_logPower_cardRpow hb0 hb1 hA'
 
 /-- Under the small-subgroup cardinality conditions, the least eligible prime
 outside H is at most log(q)^A for all sufficiently large q, uniformly in H.
 Minimize the NumberTheory.primesOutside predicate after constructing one bounded prime. -/
-theorem eventually_exists_least_prime_outside_le_log_power_of_small_card {eta A : ℝ} (he0 : 0 < eta)
-    (he1 : eta < 1) (hA : 1 / eta < A) :
+theorem eventually_least_outside_logPower_smallCard {eta A : ℝ} (he0 : 0 < eta) (he1 : eta < 1)
+    (hA : 1 / eta < A) :
     Filter.Eventually
       (fun q : ℕ ↦
         ∀ H : Subgroup (ZMod q)ˣ,
@@ -113,7 +113,7 @@ theorem eventually_exists_least_prime_outside_le_log_power_of_small_card {eta A 
               (r : ℝ) ≤ (Real.log q) ^ A ∧ ∀ s ∈ NumberTheory.primesOutside q H, r ≤ s)
       Filter.atTop := by
   classical
-  apply (eventually_exists_prime_outside_le_log_power_of_small_card he0 he1 hA).mono
+  apply (eventually_prime_outside_logPower_smallCard he0 he1 hA).mono
   intro q hq H hH
   obtain ⟨r, hr, hd, hb, ho⟩ := hq H hH
   have hex : ∃ s : ℕ, s ∈ NumberTheory.primesOutside q H := ⟨r, hr, hd, ho⟩

@@ -99,7 +99,7 @@ theorem gamma_primitive_sum_re_le_adaptive_scale {q m : ℕ} [NeZero m] (hq : 20
 /-- For a nonprincipal character at q≥20000 under GRH and x≥1, its primitive Gamma
  sum obeys the adaptive upper estimate with its actual conductor and variable remainder.
  Transfer to the primitive source and its inverse. This supplies the improved witness budget. -/
-theorem gamma_primitiveCharacter_sum_re_le_adaptive_scale {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+theorem gammaCharacterSum_re_le_adaptive_scale {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
     (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 ≤ x) :
     let : NeZero χ.conductor := ⟨χ.conductor_ne_zero⟩;

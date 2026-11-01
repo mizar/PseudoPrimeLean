@@ -26,9 +26,9 @@ different predecessor two-adic valuations give a failing prime base at most
 Every strong pass reduces into its proper local half-exponent kernel, and
 the Korselt factor is at most sqrt(n). Neither a global finite-index premise
 nor a supplied local size or containment premise is needed in this branch. -/
-theorem exists_prime_witness_le_0283_of_unequal_twoAdic_prime_factors {n p q : ℕ} (hp : p.Prime)
-    (hq : q.Prime) (hnOdd : Odd n) (hcomp : ¬n.Prime) (hpn : p ∣ n) (hqn : q ∣ n)
-    (hKorselt : p - 1 ∣ n - 1) (hv : padicValNat 2 (q - 1) < padicValNat 2 (p - 1))
+theorem exists_prime_0282924_unequalTwoAdic_GRH {n p q : ℕ} (hp : p.Prime) (hq : q.Prime)
+    (hnOdd : Odd n) (hcomp : ¬n.Prime) (hpn : p ∣ n) (hqn : q ∣ n) (hKorselt : p - 1 ∣ n - 1)
+    (hv : padicValNat 2 (q - 1) < padicValNat 2 (p - 1))
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hn : 10 ^ 142 ≤ n) :
     ∃ r : ℕ,
       r.Prime ∧
@@ -46,8 +46,8 @@ theorem exists_prime_witness_le_0283_of_unequal_twoAdic_prime_factors {n p q : �
       (powMonoidHom (p / 2) : (ZMod p)ˣ →* (ZMod p)ˣ).ker
       (PrimeTest.local_half_powerKernel_ne_top hpOdd)
       (fun a ha ↦
-        PrimeTest.strongMillerRabinPass_mem_local_half_kernel_of_twoAdic_lt hn1 hnOdd hpOdd hqOdd
-          hpn hqn hv ha)
+        PrimeTest.strongPass_mem_local_half_kernel_of_twoAdic_lt hn1 hnOdd hpOdd hqOdd hpn hqn hv
+          ha)
       hGRH hn hsize
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

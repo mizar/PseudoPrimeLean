@@ -40,7 +40,7 @@ theorem exists_weighted_character_upper (K : MellinKernel)
                               K.mass * NumberTheory.weightedConductorLogSum S w +
                                 (η * Real.log q + C * (1 + Real.log q * Real.log x / Real.sqrt x)) *
                                   NumberTheory.characterWeightTotal S w := by
-  obtain ⟨C, hC, hb⟩ := MellinKernel.exists_uniform_nonprincipal_summand_le_conductor K hg
+  obtain ⟨C, hC, hb⟩ := MellinKernel.exists_nonprincipal_conductor_GRH K hg
   refine ⟨C, hC, ?_⟩
   intro η hη
   obtain ⟨Q, hQ, hb⟩ := hb η hη

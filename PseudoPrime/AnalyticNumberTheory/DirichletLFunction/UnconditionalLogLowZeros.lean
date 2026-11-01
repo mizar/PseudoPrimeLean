@@ -18,8 +18,8 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 for every finite set of completed zeros. Partition the ordinates into the integer
 bins from `-H` to `H`, bound each bin, and count the bins. This reusable comparison
 retains divisor multiplicity and does not require RH or a boundary gap. -/
-theorem sum_completed_divisor_le_bounded_height_unconditionally {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} {K : ℝ} (hK : 0 < K)
+theorem sum_completed_divisor_height_bound {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} {K : ℝ}
+    (hK : 0 < K)
     (hcount :
       ∀ (t : ℝ) (S : Finset ℂ),
         (∀ ρ ∈ S, |ρ.im - t| ≤ 1) →
@@ -71,7 +71,7 @@ real parts at most one half and ordinate bounded by a natural height. The charac
 is primitive nonprincipal with nonprincipal inverse and the scale is at least two.
 Multiply the uniform bounded-height count by the origin-free kernel estimate.
 This discharges the local counting input for the low left-strip error. -/
-theorem exists_sum_norm_regularizedLogHalfZeroTerm_leftStrip_lowHeight_bound :
+theorem regularizedHalfTerm_left_sum_bound :
     ∃ K : ℝ,
       0 < K ∧
         ∀ (q : ℕ) [NeZero q],
@@ -89,11 +89,10 @@ theorem exists_sum_norm_regularizedLogHalfZeroTerm_leftStrip_lowHeight_bound :
                           ((2 * (H : ℝ) + 1) * K * (Real.log q + Real.log (4 + (H : ℝ)) + 1)) *
                             (2 * Real.sqrt x * (Real.log x) ^ 2 +
                               Real.log 2 * (Real.log x + 1)) := by
-  obtain ⟨K, hK, hcount⟩ := exists_uniform_local_zeroMultiplicity_bound_unconditionally
+  obtain ⟨K, hK, hcount⟩ := uniform_localMultiplicity_bound
   refine ⟨K, hK, ?_⟩
   intro q _ hq χ hp hne hinv x hx H S hre hh
-  have hc :=
-    sum_completed_divisor_le_bounded_height_unconditionally hK (hcount q hq χ hp hne hinv) H S hh
+  have hc := sum_completed_divisor_height_bound hK (hcount q hq χ hp hne hinv) H S hh
   have hlogx : 0 ≤ Real.log x := Real.log_nonneg (by linarith only [hx])
   have hlog2 : 0 ≤ Real.log 2 := Real.log_nonneg (by norm_num only)
   have hB : 0 ≤ 2 * Real.sqrt x * (Real.log x) ^ 2 + Real.log 2 * (Real.log x + 1) :=
@@ -104,8 +103,7 @@ theorem exists_sum_norm_regularizedLogHalfZeroTerm_leftStrip_lowHeight_bound :
         ∑ ρ ∈ S,
           (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
             (2 * Real.sqrt x * (Real.log x) ^ 2 + Real.log 2 * (Real.log x + 1)) :=
-      Finset.sum_le_sum
-        (fun ρ hρ ↦ norm_regularizedLogHalfZeroTerm_le_low_re hp hne hinv hx (hre ρ hρ))
+      Finset.sum_le_sum (fun ρ hρ ↦ norm_regularHalfTerm_le_low_re hp hne hinv hx (hre ρ hρ))
     _ =
         (∑ ρ ∈ S, (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ)) *
           (2 * Real.sqrt x * (Real.log x) ^ 2 + Real.log 2 * (Real.log x + 1)) :=

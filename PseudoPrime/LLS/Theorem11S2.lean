@@ -42,10 +42,9 @@ theorem not_characterTrivialBelow_log_sq {q : ℕ} [NeZero q] (χ : DirichletCha
   have hx := Analysis.sq_ge_64_of_ge_8 hy
   have hcore := weightedComparisonCore_of_trivialBelow χ hne hGRH hx ht
   obtain ⟨hS, hR, hb, hu⟩ :=
-    re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le
-      (llsRiemannWeightedLowerBound_of_riemannHypothesis hGRH.riemann)
-      (llsRiemannReciprocalLowerBound_of_riemannHypothesis hGRH.riemann)
-      (lt_of_lt_of_le (by norm_num only) hx) (le_trans (by norm_num only) hx) hcore
+    weightedComparison_core_bounds (riemannWeightedLower_of_RH hGRH.riemann)
+      (riemannReciprocalLower_of_RH hGRH.riemann) (lt_of_lt_of_le (by norm_num only) hx)
+      (le_trans (by norm_num only) hx) hcore
   have hsqrt : Real.sqrt ((Real.log q) ^ 2) = Real.log q :=
     Real.sqrt_sq (le_trans (by norm_num only) hy)
   simp only [sub_zero] at hS hR

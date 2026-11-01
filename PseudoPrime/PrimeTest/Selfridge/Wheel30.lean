@@ -115,9 +115,7 @@ theorem firstStopNeOne_wheel30_eq_classical {n : ℕ} (hnpos : 0 < n) (hn : Odd 
             j ∉ FirstStopNeOneSet isClassicalCandidate n := by
           intro j hj
           exact not_mem_firstStopNeOneSet_of_lt isClassicalCandidate n hclass hj
-        rcases
-          composite_minimal_classical_neOne_eq_nine_or_fifteen hnpos hn hns hi hp hstop hmin with
-          h | h
+        rcases classicalNeOne_composite_9_15 hnpos hn hns hi hp hstop hmin with h | h
         · rw [h]
           norm_num only [isWheel30NeOneCandidate, isWheel30NeOneInitial, isWheel30TailResidue,
             false_or, true_or, false_and, or_false]
@@ -154,10 +152,7 @@ theorem firstStopNegOne_wheel30_eq_classical {n : ℕ} (hn : Odd n)
             j ∉ FirstStopNegOneSet isClassicalCandidate n := by
           intro j hj
           exact not_mem_firstStopNegOneSet_of_lt isClassicalCandidate n hclass hj
-        rcases
-          composite_minimal_classical_negOne_eq_fifteen_or_twenty_one_or_twenty_seven hn hi hp hstop
-            hmin with
-          h | h | h
+        rcases classical_negOne_composite_eq_15_21_27 hn hi hp hstop hmin with h | h | h
         · rw [h]
           norm_num only [isWheel30NegOneCandidate, isWheel30NegOneInitial, isWheel30TailResidue,
             false_or, true_or, false_and, or_false]

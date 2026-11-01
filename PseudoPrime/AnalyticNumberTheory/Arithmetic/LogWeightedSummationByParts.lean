@@ -153,7 +153,7 @@ noncomputable def exponentialRampMangoldtSum (x : ℝ) : ℝ :=
 A(xu), where A is the logarithmically weighted Mangoldt sum. Reconstruct each
 positive atom, interchange the finite sum and integrals with proved integrability,
 and use the common cutoff representation. Both derivative jumps are included. -/
-theorem exponentialRampMangoldtSum_eq_logWeighted_variation {x : ℝ} (hx : 0 < x) :
+theorem expRampMangoldtSum_eq_logWeighted_variation {x : ℝ} (hx : 0 < x) :
     exponentialRampMangoldtSum x =
       exponentialRampVariationFunctional (fun u ↦ logWeightedMangoldtSum (x * u)) := by
   have he :=
@@ -270,14 +270,14 @@ theorem exponentialRampMangoldtSum_eq_main_add_error {x : ℝ} (hx : 0 < x) :
           (Set.Icc 0 (99 / 40))
         from fun u hu ↦ congrArg (fun z : ℝ ↦ z - x * u) (heq hu))
   rw [rampFunctional_sub F (fun u ↦ x * u) hF (continuous_const.mul continuous_id), hlinear] at he
-  rw [exponentialRampMangoldtSum_eq_logWeighted_variation hx]
+  rw [expRampMangoldtSum_eq_logWeighted_variation hx]
   linarith only [he, exponentialRampVariationFunctional_congr heq]
 
 /-- For x>0, divide the exact ramp sum identity by sqrt(x). The main term is
 the actual ramp mass times sqrt(x), and the normalized error is the variation
 functional of A(xu)-xu divided by sqrt(x). Cancel x/sqrt(x) using sqrt(x)^2=x.
 This is the finite double-partial-summation identity in the required normalization. -/
-theorem exponentialRampMangoldtSum_normalized_eq_main_add_error {x : ℝ} (hx : 0 < x) :
+theorem expRampMangoldt_div_sqrt_eq_main_add_error {x : ℝ} (hx : 0 < x) :
     exponentialRampMangoldtSum x / Real.sqrt x =
       (∫ u in (0 : ℝ)..(99 / 40), Analysis.exponentialRampWeight u) * Real.sqrt x +
         exponentialRampVariationFunctional (fun u ↦ logWeightedMangoldtSum (x * u) - x * u) /

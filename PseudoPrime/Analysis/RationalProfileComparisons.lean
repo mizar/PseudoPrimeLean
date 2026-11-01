@@ -110,7 +110,7 @@ theorem decimal_profile_ineligible_below_hundred {n d : ℕ} (hd : 100 < d) (hn 
 /-- For n ≥ 80000, the rational Part 2 squared cutoff is strictly below
 the pure logarithmic square. Bound log n by 45/4 and log(45/4) by the certified
 logarithms of two, three and five. This gives an improvement interval below 10^100. -/
-theorem rationalPart2CutoffRoot_sq_lt_log_sq_of_eightyThousand {n : ℕ} (hn : 80000 ≤ n) :
+theorem rationalPart2Root_sq_lt_log_sq_of_ge_80000 {n : ℕ} (hn : 80000 ≤ n) :
     rationalPart2CutoffRoot (Real.log n) ^ 2 < Real.log n ^ 2 := by
   have h :=
     Real.log_le_log (by norm_num only : (0 : ℝ) < 80000) (by exact_mod_cast hn : (80000 : ℝ) ≤ n)

@@ -19,9 +19,8 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 actual resolvent zero mass plus the nonnegative paired Euler mass equals
 the exact conductor and Gamma contributions plus the untwisted common mass.
 The real-axis derivative cancellation is preserved as an equality. -/
-theorem gammaResolvent_zeroMass_add_pairedEuler_eq {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
+theorem gammaMass_add_pairedEuler_eq_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     (∑' ρ : ℂ,
           (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
             Gamma.gammaResolventMajorant ρ.im) +
@@ -31,14 +30,13 @@ theorem gammaResolvent_zeroMass_add_pairedEuler_eq {q : ℕ} [NeZero q] (hq : 2 
             (fun ab ↦
               (ab.2 : ℝ) * (logDeriv χ.gammaFactor (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum +
         ∑' m : ℕ, Analysis.gammaResolventMangoldtWeight m := by
-  rw [gammaResolvent_zeroMass_eq_signed_euler hq hRH hp hne hinv, add_assoc,
+  rw [gammaMass_eq_signedEuler_RH hq hRH hp hne hinv, add_assoc,
     Analysis.gamma_signed_euler_add_paired_eq_total χ]
 
 /-- The signed finite-node pair of real logarithmic derivatives equals
 the nonnegative common paired Euler mass. Combine all signed coefficients
 before using positivity of H; negative coefficients are retained exactly. -/
-theorem gammaResolvent_neg_real_derivative_pair_eq_pairedEuler {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) :
+theorem gammaDerivative_pair_eq_pairedEuler {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) :
     -(Gamma.gammaResolventCoefficients.map
               (fun ab ↦
                 (ab.2 : ℝ) *
@@ -48,7 +46,7 @@ theorem gammaResolvent_neg_real_derivative_pair_eq_pairedEuler {q : ℕ} [NeZero
             (fun ab ↦
               (ab.2 : ℝ) * (logDeriv χ.LFunction (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum =
       ∑' m : ℕ, Analysis.gammaPairedEulerTerm χ m := by
-  rw [gammaResolvent_signed_ordinary_eq_euler _, gammaResolvent_signed_ordinary_eq_euler χ]
+  rw [gammaResolvent_ordinary_eq_euler _, gammaResolvent_ordinary_eq_euler χ]
   simp only [MulChar.one_apply (isUnit_of_subsingleton (_ : ZMod 1)), Complex.one_re, neg_mul,
     one_mul, tsum_neg, neg_neg]
   have h := Analysis.gamma_signed_euler_add_paired_eq_total χ
@@ -59,9 +57,9 @@ theorem gammaResolvent_neg_real_derivative_pair_eq_pairedEuler {q : ℕ} [NeZero
 the unretained nonnegative paired tail equals the original signed prefix
 budget exactly. Keep the complementary prime-power gain on the left rather
 than discard it. Subsequent local conductor absorption can use this stronger identity. -/
-theorem gammaResolvent_zeroMass_add_pairedTail_eq_prefix {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (B : Finset ℕ) :
+theorem gammaMass_add_tail_eq_prefix_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    (B : Finset ℕ) :
     (∑' ρ : ℂ,
           (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
             Gamma.gammaResolventMajorant ρ.im) +
@@ -73,7 +71,7 @@ theorem gammaResolvent_zeroMass_add_pairedTail_eq_prefix {q : ℕ} [NeZero q] (h
             (∑' m : ℕ, Analysis.gammaResolventMangoldtWeight m) -
           2 * (∑ m ∈ B, Analysis.gammaResolventMangoldtWeight m) +
         ∑ m ∈ B, (1 - (χ m).re) * Analysis.gammaResolventMangoldtWeight m := by
-  have hz := gammaResolvent_zeroMass_add_pairedEuler_eq hq hRH hp hne hinv
+  have hz := gammaMass_add_pairedEuler_eq_RH hq hRH hp hne hinv
   have hB := Analysis.gammaPairedEuler_prefix_eq_gain_sub_deficit χ B
   dsimp only [Analysis.gammaPairedEulerTail]
   linarith only [hz, hB]

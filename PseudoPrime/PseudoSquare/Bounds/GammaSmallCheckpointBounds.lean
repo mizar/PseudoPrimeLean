@@ -29,7 +29,7 @@ theorem exists_prime_neg_one_witness_of_small_checkpoint {n : ℕ} (hn : Odd n) 
     ∃ q : ℕ, q.Prime ∧ Odd q ∧ (q : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n q = -1 := by
   have hs := LLS.gamma_small_checkpoint_separation_le hGRH.riemann ha hab hU hD
   exact
-    exists_prime_neg_one_witness_of_factor_free_separation hn hns hGRH hL hlog hx
+    exists_negOneWitness_of_factor_free_separation hn hns hGRH hL hlog hx
       (by linarith only [ha, hab]) hbx (hgap.trans hs)
 
 /-- Input: GRH, an admissible common log endpoint and a small-checkpoint separation certificate.

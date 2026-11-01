@@ -28,9 +28,9 @@ factor has fourth-power height decay, their product is bounded by a constant
 times (n+2) to the inverse second power at heights of magnitude at least n+2.
 Use (n+5)^2 <= 9(n+2)^2 and the norm product formula. This scalar estimate
 controls the horizontal integrand on both good-height sequences. -/
-theorem norm_product_le_of_quadratic_growth_and_quartic_decay (L W : ℂ) (C D T : ℝ) (n : ℕ)
-    (hC : 0 ≤ C) (hL : ‖L‖ ≤ C * ((n : ℝ) + 5) ^ 2) (hW : |T| ^ 4 * ‖W‖ ≤ D)
-    (hT : (n : ℝ) + 2 ≤ |T|) : ‖L * W‖ ≤ 9 * C * D / ((n : ℝ) + 2) ^ 2 := by
+theorem norm_mul_le_of_quadratic_growth_quartic_decay (L W : ℂ) (C D T : ℝ) (n : ℕ) (hC : 0 ≤ C)
+    (hL : ‖L‖ ≤ C * ((n : ℝ) + 5) ^ 2) (hW : |T| ^ 4 * ‖W‖ ≤ D) (hT : (n : ℝ) + 2 ≤ |T|) :
+    ‖L * W‖ ≤ 9 * C * D / ((n : ℝ) + 2) ^ 2 := by
   have hn : 0 ≤ (n : ℝ) := Nat.cast_nonneg n
   have hu : 0 < (n : ℝ) + 2 := by linarith only [hn]
   have hs : ((n : ℝ) + 5) ^ 2 ≤ 9 * ((n : ℝ) + 2) ^ 2 := by
@@ -57,9 +57,9 @@ at least n+2, provided the logarithmic derivative has a uniform quadratic
 bound on the segment. Bound the integral by segment length times the
 inverse-square product majorant and squeeze its norm to zero.
 This supplies the horizontal-edge limit in the Mellin explicit formula. -/
-theorem tendsto_horizontal_logDeriv_mellin_integral_zero (F : ℂ → ℂ) (g : ℝ → ℂ)
-    (he : ∀ u : ℝ, g (-u) = g u) (hc : HasCompactSupport g) (hg : ContDiff ℝ (↑(⊤ : ℕ∞)) g)
-    (a b C : ℝ) (hab : a ≤ b) (hC : 0 ≤ C) (T : ℕ → ℝ) (hT : ∀ n : ℕ, (n : ℝ) + 2 ≤ |T n|)
+theorem horizontalMellin_logDeriv_tendsto_zero (F : ℂ → ℂ) (g : ℝ → ℂ) (he : ∀ u : ℝ, g (-u) = g u)
+    (hc : HasCompactSupport g) (hg : ContDiff ℝ (↑(⊤ : ℕ∞)) g) (a b C : ℝ) (hab : a ≤ b)
+    (hC : 0 ≤ C) (T : ℕ → ℝ) (hT : ∀ n : ℕ, (n : ℝ) + 2 ≤ |T n|)
     (hL :
       ∀ n : ℕ,
         ∀ σ ∈ Set.Icc a b, ‖logDeriv F ((σ : ℂ) + T n * Complex.I)‖ ≤ C * ((n : ℝ) + 5) ^ 2) :
@@ -69,7 +69,7 @@ theorem tendsto_horizontal_logDeriv_mellin_integral_zero (F : ℂ → ℂ) (g : 
           logDeriv F ((σ : ℂ) + T n * Complex.I) *
             mellin (logarithmicTestWeight g) ((σ : ℂ) + T n * Complex.I))
       Filter.atTop (nhds 0) := by
-  obtain ⟨D, _, hD⟩ := mellin_logarithmicTestWeight_uniform_power_bound g he hc hg a b 4
+  obtain ⟨D, _, hD⟩ := logTest_mellin_uniform_power_bound g he hc hg a b 4
   have hb :
     ∀ n : ℕ,
       ‖∫ σ in a..b,
@@ -83,8 +83,8 @@ theorem tendsto_horizontal_logDeriv_mellin_integral_zero (F : ℂ → ℂ) (g : 
       rw [← Set.uIcc_of_le hab]
       exact Set.uIoc_subset_uIcc hσ
     exact
-      norm_product_le_of_quadratic_growth_and_quartic_decay _ _ C D (T n) n hC (hL n σ hs)
-        (hD σ hs (T n)) (hT n)
+      norm_mul_le_of_quadratic_growth_quartic_decay _ _ C D (T n) n hC (hL n σ hs) (hD σ hs (T n))
+        (hT n)
   apply squeeze_zero_norm hb
   have hi : Filter.Tendsto (fun n : ℕ ↦ ((n : ℝ) + 2)⁻¹) Filter.atTop (nhds 0) := by
     simpa only [Function.comp_def, one_mul] using
@@ -102,7 +102,7 @@ test. Select the existing good-height sequences, retain nonvanishing on
 the segments, and apply uniform Mellin decay to each sequence.
 This connects height selection to the horizontal limits needed to pass from
 finite residue rectangles to an infinite-zero explicit formula. -/
-theorem exists_goodHeight_sequences_with_horizontal_integrals_zero {F : ℂ → ℂ} {C : ℝ} (hC : 0 < C)
+theorem exists_goodHeights_horizontal_zero {F : ℂ → ℂ} {C : ℝ} (hC : 0 < C)
     (hb :
       ∀ H : ℝ,
         ∃ T ∈ Set.Icc H (H + 1),
@@ -139,9 +139,7 @@ theorem exists_goodHeight_sequences_with_horizontal_integrals_zero {F : ℂ → 
       sub_zero]
     exact ⟨True.intro, True.intro⟩
   refine ⟨U, B, hu, hb', hseq, ?_, ?_⟩
-  · apply
-      tendsto_horizontal_logDeriv_mellin_integral_zero F g he hc hg (-1) 2 C (by norm_num only)
-        hC.le U
+  · apply horizontalMellin_logDeriv_tendsto_zero F g he hc hg (-1) 2 C (by norm_num only) hC.le U
     · intro n
       exact (hseq n).1.trans (le_abs_self _)
     · intro n σ hσ
@@ -151,9 +149,7 @@ theorem exists_goodHeight_sequences_with_horizontal_integrals_zero {F : ℂ → 
               rw [(hcoord σ (U n)).2]; exact hσ.1)
             (by
               rw [(hcoord σ (U n)).2]; exact hσ.2)).2
-  · apply
-      tendsto_horizontal_logDeriv_mellin_integral_zero F g he hc hg (-1) 2 C (by norm_num only)
-        hC.le B
+  · apply horizontalMellin_logDeriv_tendsto_zero F g he hc hg (-1) 2 C (by norm_num only) hC.le B
     · intro n
       have hn := (hseq n).2.1
       exact (by linarith only [hn] : (n : ℝ) + 2 ≤ -B n).trans (neg_le_abs _)

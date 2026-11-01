@@ -27,8 +27,8 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 inverse and `x > 0`, the reciprocal kernel is continuous along both selected horizontal
 lines. Positive good heights avoid `0`, `1`, and all L-function zeros, so differentiability
 of the kernel gives continuity. This supplies integrability of the horizontal edges. -/
-theorem continuous_dirichletReciprocalContourKernel_horizontalHeightSeq {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
+theorem continuous_reciprocal_heightSeq_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) (k : ℕ) :
     Continuous
         (fun σ : ℝ =>
@@ -65,9 +65,8 @@ theorem continuous_dirichletReciprocalContourKernel_horizontalHeightSeq {N : ℕ
         (by
           rw [h]
           simp only [Complex.one_im])
-    have hL :=
-      dirichletLFunction_ne_zero_of_im_eq_primitiveHeightSeq hN2 hGRH hprimitive hne hinv k hs
-    exact (differentiableAt_dirichletReciprocalContourKernel hx hne hs0 hs1 hL).continuousAt
+    have hL := L_ne_zero_at_heightSeq_of_GRH hN2 hGRH hprimitive hne hinv k hs
+    exact (differentiableAt_reciprocalKernel hx hne hs0 hs1 hL).continuousAt
   constructor
   · have hg :
       Continuous
@@ -115,8 +114,8 @@ theorem continuous_dirichletReciprocalContourKernel_horizontalHeightSeq {N : ℕ
 /-- For the same primitive-character GRH hypotheses and `x > 0`, both selected horizontal
 reciprocal kernels are integrable on any real interval `a..b`. Apply continuity on each
 line; this permits adjacent-interval decompositions without restrictions on the endpoints. -/
-theorem intervalIntegrable_dirichletReciprocalContourKernel_horizontalHeightSeq {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
+theorem reciprocal_height_integrable_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) (k : ℕ)
     (a b : ℝ) :
     IntervalIntegrable
@@ -129,15 +128,13 @@ theorem intervalIntegrable_dirichletReciprocalContourKernel_horizontalHeightSeq 
           dirichletReciprocalContourKernel x χ
             ((σ : ℂ) - primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I))
         MeasureTheory.volume a b := by
-  have h :=
-    continuous_dirichletReciprocalContourKernel_horizontalHeightSeq hN2 hGRH hprimitive hne hinv hx
-      k
+  have h := continuous_reciprocal_heightSeq_GRH hN2 hGRH hprimitive hne hinv hx k
   exact ⟨h.1.intervalIntegrable a b, h.2.intervalIntegrable a b⟩
 
 /-- For a primitive nontrivial character with nontrivial inverse under GRH and `x > 0`,
 specialize horizontal-line integrability to `[-2,2]` at both selected heights. This gives
 the central-segment input for splitting the reciprocal horizontal edges. -/
-theorem intervalIntegrable_dirichletReciprocalContourKernel_central {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem reciprocal_central_integrable_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) (k : ℕ) :
     IntervalIntegrable
@@ -150,16 +147,14 @@ theorem intervalIntegrable_dirichletReciprocalContourKernel_central {N : ℕ} [N
           dirichletReciprocalContourKernel x χ
             ((σ : ℂ) - primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I))
         MeasureTheory.volume (-2) 2 := by
-  exact
-    intervalIntegrable_dirichletReciprocalContourKernel_horizontalHeightSeq hN2 hGRH hprimitive hne
-      hinv hx k (-2) 2
+  exact reciprocal_height_integrable_GRH hN2 hGRH hprimitive hne hinv hx k (-2) 2
 
 /-- Under the primitive-character GRH hypotheses and `x > 0`, the reciprocal kernels
 at both selected heights are integrable on `(-A-1/2)..(-2)` for any natural `A`.
 Specialize arbitrary-interval integrability; no `A ≥ 2` condition is required for this
 oriented-interval statement used in the edge decomposition. -/
-theorem intervalIntegrable_dirichletReciprocalContourKernel_farLeft (A : ℕ) {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
+theorem reciprocal_farLeft_integrable_GRH (A : ℕ) {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) (k : ℕ) :
     IntervalIntegrable
         (fun σ : ℝ =>
@@ -171,15 +166,13 @@ theorem intervalIntegrable_dirichletReciprocalContourKernel_farLeft (A : ℕ) {N
           dirichletReciprocalContourKernel x χ
             ((σ : ℂ) - primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I))
         MeasureTheory.volume (-(A : ℝ) - 1 / 2) (-2) := by
-  exact
-    intervalIntegrable_dirichletReciprocalContourKernel_horizontalHeightSeq hN2 hGRH hprimitive hne
-      hinv hx k (-(A : ℝ) - 1 / 2) (-2)
+  exact reciprocal_height_integrable_GRH hN2 hGRH hprimitive hne hinv hx k (-(A : ℝ) - 1 / 2) (-2)
 
 /-- Under the primitive-character GRH hypotheses and `x > 0`, split the upper reciprocal
 horizontal integral from `-A-1/2` to `2` at `-2`. Integrability of the two segments gives
 adjacent-interval additivity for any natural `A`; this combines far-left and central limits. -/
-theorem intervalIntegral_add_adjacent_dirichletReciprocalKernel (A : ℕ) {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
+theorem reciprocal_integral_add_upper_GRH (A : ℕ) {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) (k : ℕ) :
     (∫ σ in (-(A : ℝ) - 1 / 2)..(-2 : ℝ),
           dirichletReciprocalContourKernel x χ
@@ -191,18 +184,14 @@ theorem intervalIntegral_add_adjacent_dirichletReciprocalKernel (A : ℕ) {N : �
         dirichletReciprocalContourKernel x χ
           ((σ : ℂ) + primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I) := by
   apply intervalIntegral.integral_add_adjacent_intervals
-  · exact
-      (intervalIntegrable_dirichletReciprocalContourKernel_farLeft A hN2 hGRH hprimitive hne hinv hx
-          k).1
-  · exact
-      (intervalIntegrable_dirichletReciprocalContourKernel_central hN2 hGRH hprimitive hne hinv hx
-          k).1
+  · exact (reciprocal_farLeft_integrable_GRH A hN2 hGRH hprimitive hne hinv hx k).1
+  · exact (reciprocal_central_integrable_GRH hN2 hGRH hprimitive hne hinv hx k).1
 
 /-- Under the primitive-character GRH hypotheses and `x > 0`, split the lower reciprocal
 horizontal integral from `-A-1/2` to `2` at `-2`. Apply adjacent-interval additivity to the
 integrable lower segments; this is the lower-edge counterpart of the upper decomposition. -/
-theorem intervalIntegral_add_adjacent_dirichletReciprocalKernel_lower (A : ℕ) {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
+theorem reciprocal_integral_add_lower_GRH (A : ℕ) {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) (k : ℕ) :
     (∫ σ in (-(A : ℝ) - 1 / 2)..(-2 : ℝ),
           dirichletReciprocalContourKernel x χ
@@ -214,18 +203,14 @@ theorem intervalIntegral_add_adjacent_dirichletReciprocalKernel_lower (A : ℕ) 
         dirichletReciprocalContourKernel x χ
           ((σ : ℂ) - primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I) := by
   apply intervalIntegral.integral_add_adjacent_intervals
-  · exact
-      (intervalIntegrable_dirichletReciprocalContourKernel_farLeft A hN2 hGRH hprimitive hne hinv hx
-          k).2
-  · exact
-      (intervalIntegrable_dirichletReciprocalContourKernel_central hN2 hGRH hprimitive hne hinv hx
-          k).2
+  · exact (reciprocal_farLeft_integrable_GRH A hN2 hGRH hprimitive hne hinv hx k).2
+  · exact (reciprocal_central_integrable_GRH hN2 hGRH hprimitive hne hinv hx k).2
 
 /-- Under the primitive-character GRH hypotheses and `x > 0`, package both decompositions
 of the full reciprocal horizontal edges at `-2`. Pair the upper and lower adjacent-interval
 identities so the far-left and central convergence estimates use the same height sequence. -/
-theorem intervalIntegral_add_adjacent_dirichletReciprocalKernel_pair (A : ℕ) {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
+theorem reciprocal_integral_add_pair_GRH (A : ℕ) {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) (k : ℕ) :
     (∫ σ in (-(A : ℝ) - 1 / 2)..(-2 : ℝ),
             dirichletReciprocalContourKernel x χ
@@ -247,18 +232,16 @@ theorem intervalIntegral_add_adjacent_dirichletReciprocalKernel_pair (A : ℕ) {
             ((σ : ℂ) -
               primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I) := by
   exact
-    ⟨intervalIntegral_add_adjacent_dirichletReciprocalKernel A hN2 hGRH hprimitive hne hinv hx k,
-      intervalIntegral_add_adjacent_dirichletReciprocalKernel_lower A hN2 hGRH hprimitive hne hinv
-        hx k⟩
+    ⟨reciprocal_integral_add_upper_GRH A hN2 hGRH hprimitive hne hinv hx k,
+      reciprocal_integral_add_lower_GRH A hN2 hGRH hprimitive hne hinv hx k⟩
 
 /-- Under GRH, for a primitive nontrivial character with nontrivial inverse, `N ≥ 2`,
 `A ≥ 2`, and `x ≥ 1`, both reciprocal horizontal integrals from `-A-1/2` to `2` tend to
 zero along the selected heights. Add the far-left and central limits using the paired
 split identities; this removes the horizontal edges from the boundary limit. -/
-theorem tendsto_primitiveHorizontalHeightSeq_reciprocalKernel_horizontal_integral (A : ℕ)
-    (hA : 2 ≤ A) {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis) (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
-    (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) :
+theorem tendsto_reciprocal_horizontal_GRH (A : ℕ) (hA : 2 ≤ A) {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) :
     Filter.Tendsto
         (fun k : ℕ =>
           ∫ σ in (-(A : ℝ) - 1 / 2)..(2 : ℝ),
@@ -271,15 +254,10 @@ theorem tendsto_primitiveHorizontalHeightSeq_reciprocalKernel_horizontal_integra
             dirichletReciprocalContourKernel x χ
               ((σ : ℂ) - primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I))
         Filter.atTop (nhds 0) := by
-  have hfar :=
-    tendsto_primitiveHorizontalHeightSeq_reciprocalKernel_farLeft_integral A hA hN2 hGRH hprimitive
-      hne hinv hx
-  have hcentral :=
-    tendsto_primitiveHorizontalHeightSeq_reciprocalKernel_central_integral hN2 hGRH hprimitive hne
-      hinv hx
+  have hfar := tendsto_reciprocal_farLeft_GRH A hA hN2 hGRH hprimitive hne hinv hx
+  have hcentral := tendsto_reciprocal_central_GRH hN2 hGRH hprimitive hne hinv hx
   have hsplit := fun k : ℕ =>
-    intervalIntegral_add_adjacent_dirichletReciprocalKernel_pair A hN2 hGRH hprimitive hne hinv
-      (by linarith only [hx]) k
+    reciprocal_integral_add_pair_GRH A hN2 hGRH hprimitive hne hinv (by linarith only [hx]) k
   constructor
   · have h := hfar.1.add hcentral.1
     simpa only [add_zero] using h.congr (fun k => (hsplit k).1)
@@ -290,8 +268,8 @@ theorem tendsto_primitiveHorizontalHeightSeq_reciprocalKernel_horizontal_integra
 normalized lower-minus-upper reciprocal horizontal contribution tends to zero.
 Subtract the two full-edge limits and multiply by `-i/(2π)`; this matches the horizontal
 term in the normalized rectangle-boundary decomposition. -/
-theorem tendsto_normalized_primitiveHorizontalReciprocalEdge (A : ℕ) (hA : 2 ≤ A) {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
+theorem tendsto_reciprocal_edge_GRH (A : ℕ) (hA : 2 ≤ A) {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) :
     Filter.Tendsto
       (fun k : ℕ =>
@@ -305,9 +283,7 @@ theorem tendsto_normalized_primitiveHorizontalReciprocalEdge (A : ℕ) (hA : 2 �
                 ((σ : ℂ) +
                   primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I)))
       Filter.atTop (nhds 0) := by
-  have hhoriz :=
-    tendsto_primitiveHorizontalHeightSeq_reciprocalKernel_horizontal_integral A hA hN2 hGRH
-      hprimitive hne hinv hx
+  have hhoriz := tendsto_reciprocal_horizontal_GRH A hA hN2 hGRH hprimitive hne hinv hx
   have hdiff := hhoriz.2.sub hhoriz.1
   simpa only [sub_zero, mul_zero] using
     (Filter.Tendsto.const_mul (-Complex.I / (2 * (Real.pi : ℂ))) hdiff)
@@ -321,7 +297,7 @@ Content: unfolds the generic corners; the normalized horizontal contribution ten
 the right and left vertical truncations converge along the same generic height sequence.
 Role: supplies the normalized boundary limit for the finite reciprocal residue ledger.
 -/
-theorem tendsto_normalized_dirichletReciprocalBoundary_heightSeq {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem tendsto_reciprocal_boundary_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) (A : ℕ)
     (hA : 2 ≤ A) :
@@ -414,8 +390,7 @@ theorem tendsto_normalized_dirichletReciprocalBoundary_heightSeq {N : ℕ} [NeZe
               (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)) *
           hcoeffI
   apply Filter.Tendsto.congr (fun k => (heq k).symm)
-  have hhoriz :=
-    tendsto_normalized_primitiveHorizontalReciprocalEdge A hA hN2 hGRH hprimitive hne hinv hx
+  have hhoriz := tendsto_reciprocal_edge_GRH A hA hN2 hGRH hprimitive hne hinv hx
   have hright :
     Filter.Tendsto
       (fun k : ℕ =>
@@ -425,12 +400,9 @@ theorem tendsto_normalized_dirichletReciprocalBoundary_heightSeq {N : ℕ} [NeZe
           dirichletReciprocalContourKernel x χ ((2 : ℂ) + (t : ℂ) * Complex.I))
       Filter.atTop
       (nhds (∫ t : ℝ, dirichletReciprocalContourKernel x χ ((2 : ℂ) + (t : ℂ) * Complex.I))) :=
-    (tendsto_intervalIntegral_dirichletReciprocalContourKernel hxpos χ hne
-          (show (1 : ℝ) < 2 from by norm_num only)).comp
-      (tendsto_primitiveHorizontalHeightSeq_atTop hN2 hGRH hprimitive hne hinv)
-  have hleft :=
-    tendsto_primitiveHorizontalHeightSeq_leftVertical_intervalIntegral hN2 hGRH hprimitive hne hinv
-      hxpos hA
+    (tendsto_reciprocal_truncated hxpos χ hne (show (1 : ℝ) < 2 from by norm_num only)).comp
+      (tendsto_horizontalHeightSeq_GRH hN2 hGRH hprimitive hne hinv)
+  have hleft := tendsto_reciprocal_left_height_GRH hN2 hGRH hprimitive hne hinv hxpos hA
   have hleft' :
     Filter.Tendsto
       (fun k : ℕ =>
@@ -446,7 +418,7 @@ theorem tendsto_normalized_dirichletReciprocalBoundary_heightSeq {N : ℕ} [NeZe
             (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I))) := by
     simpa only [primitiveReciprocalLeftRe] using hleft
   have hweighted :=
-    characterReciprocalWeightedSum_eq_integral χ hxpos (show (1 : ℝ) < 2 from by norm_num only)
+    reciprocalWeightedSum_eq_integral χ hxpos (show (1 : ℝ) < 2 from by norm_num only)
   have htarget :=
     (hhoriz.add (Filter.Tendsto.const_mul ((2 * Real.pi : ℝ)⁻¹ : ℂ) hright)).sub
       (Filter.Tendsto.const_mul ((2 * Real.pi : ℝ)⁻¹ : ℂ) hleft')

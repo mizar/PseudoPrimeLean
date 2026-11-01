@@ -43,8 +43,8 @@ theorem norm_gamma_primitive_remainder_le_variable_scale {q m : ℕ} [NeZero m]
             (x : ℂ) ^ (((-9 / 16 : ℝ) : ℂ) + Complex.I * t)))
   have hx1 : 1 ≤ x := hx
   have hr : ‖S - (P - Z + J)‖ ≤ 64 / 9 :=
-    norm_gamma_completed_remainder_le_sixty_four_ninths (by linarith only [hm]) hGRH hp hne hinv
-      (a := -9 / 16) (b := 9 / 16) (by norm_num only)
+    norm_gamma_completed_remainder_le_64_9_GRH (by linarith only [hm]) hGRH hp hne hinv (a :=
+      -9 / 16) (b := 9 / 16) (by norm_num only)
       (by
         change (-1 / 2 - 1 / 8 : ℝ) < -9 / 16; norm_num only)
       (by
@@ -89,7 +89,7 @@ theorem gamma_primitive_sum_re_le_variable_scale {q m : ℕ} [NeZero m] (hq : 20
  primitive Gamma sum with the actual conductor, ambient pole logarithm and explicit left error.
  Transfer to the primitive source and its inverse. This supplies the variable-scale upper input
  for coefficient-preserving non-one witness threshold optimization. -/
-theorem gamma_primitiveCharacter_sum_re_le_variable_scale {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+theorem gammaCharacterSum_re_le_variable_scale {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
     (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 ≤ x) :
     let : NeZero χ.conductor := ⟨χ.conductor_ne_zero⟩;

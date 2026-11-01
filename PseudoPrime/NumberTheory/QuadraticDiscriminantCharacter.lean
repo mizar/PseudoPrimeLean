@@ -183,12 +183,12 @@ whose conductor is its absolute value. The integer squarefree characterization g
 an odd branch, a four-times-odd branch, or an eight-times-odd branch. Use the Jacobi
 numerator character in the first, and the parity-adjusted two-primary product in the
 other two. No restriction to odd or prime discriminants is imposed. -/
-theorem exists_primitive_odd_quadratic_character_of_fundamental_discr (q : ℕ)
+theorem exists_primitive_odd_quadratic_fundamental (q : ℕ)
     (hf : Int.IsFundamentalDiscr (-(q : ℤ))) :
     ∃ χ : DirichletCharacter ℂ q, χ.IsPrimitive ∧ χ.IsQuadratic ∧ χ.Odd := by
   rcases Int.isFundamentalDiscr_iff_squarefree.mp hf with ⟨hm, _hs⟩ | ⟨hm, hs, hr⟩
   · have hqodd := odd_of_mod_four_three q (negative_mod_four_one q hm)
-    exact exists_primitive_odd_quadratic_character_of_negative_fundamental q hqodd hf
+    exact exists_primitive_odd_quadratic_negative q hqodd hf
   · have hdZ : (4 : ℤ) ∣ (q : ℤ) := dvd_neg.mp (Int.dvd_iff_emod_eq_zero.mpr hm)
     have hd : 4 ∣ q := by exact_mod_cast hdZ
     obtain ⟨n, rfl⟩ := hd
@@ -217,10 +217,10 @@ theorem exists_primitive_odd_quadratic_character_of_fundamental_discr (q : ℕ)
 of exact conductor `q`. Prove that its actual discriminant is fundamental, then apply
 the construction covering all parity branches. This supplies the character existence
 needed by the quadratic Dedekind factorization; the ideal coefficient identity is separate. -/
-theorem exists_primitive_odd_quadratic_character_of_discr (q : ℕ) (K : Type) [Field K]
-    [NumberField K] (hdeg : Module.finrank ℚ K = 2) (hd : NumberField.discr K = -(q : ℤ)) :
+theorem exists_primitive_odd_quadratic_discr (q : ℕ) (K : Type) [Field K] [NumberField K]
+    (hdeg : Module.finrank ℚ K = 2) (hd : NumberField.discr K = -(q : ℤ)) :
     ∃ χ : DirichletCharacter ℂ q, χ.IsPrimitive ∧ χ.IsQuadratic ∧ χ.Odd := by
-  apply exists_primitive_odd_quadratic_character_of_fundamental_discr q
+  apply exists_primitive_odd_quadratic_fundamental q
   rw [← hd]
   exact quadratic_discr_isFundamental K hdeg
 
@@ -452,8 +452,7 @@ whose values match its Legendre symbols at all odd primes and its character-modu
 value at two. Construct the character together with these evaluations in the odd,
 fourfold, and eightfold conductor branches. This supplies one matching character
 for all local quadratic splitting formulas, including ramified and dyadic primes. -/
-theorem exists_primitive_character_values_of_fundamental_discr (q : ℕ)
-    (hf : Int.IsFundamentalDiscr (-(q : ℤ))) :
+theorem exists_primitive_values_fundamental (q : ℕ) (hf : Int.IsFundamentalDiscr (-(q : ℤ))) :
     ∃ χ : DirichletCharacter ℂ q,
       χ.IsPrimitive ∧
         χ.IsQuadratic ∧
@@ -462,7 +461,7 @@ theorem exists_primitive_character_values_of_fundamental_discr (q : ℕ)
         χ (2 : ℕ) = (ZMod.χ₈ (-(q : ℤ)) : ℂ) := by
   rcases Int.isFundamentalDiscr_iff_squarefree.mp hf with ⟨hm, _hs⟩ | ⟨hm, hs, hr⟩
   · have hqodd := odd_of_mod_four_three q (negative_mod_four_one q hm)
-    exact exists_primitive_character_values_of_negative_odd_fundamental q hqodd hf
+    exact exists_primitive_values_odd_negative q hqodd hf
   · have hdZ : (4 : ℤ) ∣ (q : ℤ) := dvd_neg.mp (Int.dvd_iff_emod_eq_zero.mpr hm)
     have hd : 4 ∣ q := by exact_mod_cast hdZ
     obtain ⟨n, rfl⟩ := hd

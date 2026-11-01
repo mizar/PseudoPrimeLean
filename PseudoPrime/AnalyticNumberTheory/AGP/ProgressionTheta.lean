@@ -79,7 +79,7 @@ Proof: combine `thetaInProgression_le_primeCount_mul_log` with positivity of `lo
 
 Role: this is the finite conversion used after a weighted arithmetic-progression estimate.
 -/
-theorem primeCountInProgression_ge_div_log_of_theta_lower (y q a : ℕ) (hy : 2 ≤ y) (u : ℝ)
+theorem primeCount_ge_div_log_of_theta_lower (y q a : ℕ) (hy : 2 ≤ y) (u : ℝ)
     (hu : u ≤ thetaInProgression y q a) :
     u / Real.log (y : ℝ) ≤ (primeCountInProgression y q a : ℝ) := by
   have h1y : 1 < y := lt_of_lt_of_le (by norm_num only : 1 < 2) hy
@@ -147,7 +147,7 @@ value `log p` on primes.
 Role: this exact identity transfers weighted progression estimates to the theta
 sum before applying the `18 * sqrt y` error bound.
 -/
-theorem psiInProgression_eq_theta_add_higherPrimePowerMass (y : ℝ) (q a : ℕ) :
+theorem psi_eq_theta_add_primePowers (y : ℝ) (q a : ℕ) :
     psiInProgression y q a =
       thetaInProgressionReal y q a + higherPrimePowerMassInProgression y q a := by
   classical
@@ -214,7 +214,7 @@ theorem psi_sub_thetaInProgression_bounds (y : ℝ) (q a : ℕ) (hy : 1 ≤ y) :
     0 ≤ psiInProgression y q a - thetaInProgressionReal y q a ∧
       psiInProgression y q a - thetaInProgressionReal y q a ≤ 18 * Real.sqrt y := by
   have hmass := higherPrimePowerMassInProgression_bounds y q a hy
-  rw [psiInProgression_eq_theta_add_higherPrimePowerMass]
+  rw [psi_eq_theta_add_primePowers]
   simpa only [add_sub_cancel_left] using hmass
 
 /--
@@ -261,14 +261,14 @@ theorem primeCountInProgression_ge_div_log_of_psi_lower (y q a : ℕ) (hy : 2 �
     (u - 18 * Real.sqrt (y : ℝ)) / Real.log (y : ℝ) ≤ (primeCountInProgression y q a : ℝ) := by
   have hyReal : 1 ≤ (y : ℝ) := by exact_mod_cast le_trans (by norm_num only : 1 ≤ 2) hy
   have hmass := higherPrimePowerMassInProgression_bounds (y : ℝ) q a hyReal
-  have hdecomp := psiInProgression_eq_theta_add_higherPrimePowerMass (y : ℝ) q a
+  have hdecomp := psi_eq_theta_add_primePowers (y : ℝ) q a
   rw [hdecomp] at hu
   have htheta : u - 18 * Real.sqrt (y : ℝ) ≤ thetaInProgressionReal (y : ℝ) q a := by
     linarith only [hu, hmass.2]
   have hthetaNat : u - 18 * Real.sqrt (y : ℝ) ≤ thetaInProgression y q a := by
     rw [← thetaInProgressionReal_natCast y q a]
     exact htheta
-  exact primeCountInProgression_ge_div_log_of_theta_lower y q a hy _ hthetaNat
+  exact primeCount_ge_div_log_of_theta_lower y q a hy _ hthetaNat
 
 /--
 Inputs: a real cutoff `y ≥ 1`, a modulus `q`, and a residue `a`.
@@ -283,7 +283,7 @@ the finite prime-count conversion.
 -/
 theorem thetaInProgressionReal_le_psiInProgression (y : ℝ) (q a : ℕ) (hy : 1 ≤ y) :
     thetaInProgressionReal y q a ≤ psiInProgression y q a := by
-  rw [psiInProgression_eq_theta_add_higherPrimePowerMass]
+  rw [psi_eq_theta_add_primePowers]
   exact le_add_of_nonneg_right (higherPrimePowerMassInProgression_bounds y q a hy).1
 
 /--
@@ -299,7 +299,7 @@ logarithm after absorbing that defect into one quarter of the main term.
 Role: this is the finite conversion needed after the weighted estimate in
 paper95 Theorem 2.1 is specialized to an admissible progression.
 -/
-theorem primeCountInProgression_ge_main_term_of_theta_lower (y q a : ℕ) (hy : 2 ≤ y) (hq : 0 < q)
+theorem progressionCount_ge_main_term_of_theta_lower (y q a : ℕ) (hy : 2 ≤ y) (hq : 0 < q)
     (herror : 72 * (Nat.totient q : ℝ) * Real.sqrt (y : ℝ) ≤ (y : ℝ))
     (htheta : (y : ℝ) / (2 * (Nat.totient q : ℝ)) ≤ thetaInProgressionReal (y : ℝ) q a) :
     ((y : ℝ) / (4 * (Nat.totient q : ℝ))) / Real.log (y : ℝ) ≤
@@ -342,8 +342,8 @@ one sixth of the main term, leaving one third before division by the logarithm.
 Role: this sharper finite conversion improves the coefficient in the AGP
 finite average.
 -/
-theorem primeCountInProgression_ge_one_third_main_term_of_theta_lower (y q a : ℕ) (hy : 2 ≤ y)
-    (hq : 0 < q) (herror : 108 * (Nat.totient q : ℝ) * Real.sqrt (y : ℝ) ≤ (y : ℝ))
+theorem primeCount_ge_third_main_of_theta_lower (y q a : ℕ) (hy : 2 ≤ y) (hq : 0 < q)
+    (herror : 108 * (Nat.totient q : ℝ) * Real.sqrt (y : ℝ) ≤ (y : ℝ))
     (htheta : (y : ℝ) / (2 * (Nat.totient q : ℝ)) ≤ thetaInProgressionReal (y : ℝ) q a) :
     ((y : ℝ) / (3 * (Nat.totient q : ℝ))) / Real.log (y : ℝ) ≤
       (primeCountInProgression y q a : ℝ) := by
@@ -389,8 +389,8 @@ main term, then use the existing weighted-count conversion.
 
 Role: this sharpens the fixed-scale input to the AGP finite average.
 -/
-theorem primeCountInProgression_ge_four_ninths_main_term_of_theta_lower (y q a : ℕ) (hy : 2 ≤ y)
-    (hq : 0 < q) (herror : 324 * (Nat.totient q : ℝ) * Real.sqrt (y : ℝ) ≤ (y : ℝ))
+theorem primeCount_ge_4_9_main_of_theta_lower (y q a : ℕ) (hy : 2 ≤ y) (hq : 0 < q)
+    (herror : 324 * (Nat.totient q : ℝ) * Real.sqrt (y : ℝ) ≤ (y : ℝ))
     (htheta : (y : ℝ) / (2 * (Nat.totient q : ℝ)) ≤ thetaInProgressionReal (y : ℝ) q a) :
     (4 / 9 : ℝ) * ((y : ℝ) / (Nat.totient q : ℝ)) / Real.log (y : ℝ) ≤
       (primeCountInProgression y q a : ℝ) := by
@@ -440,8 +440,7 @@ apply the weighted prime-count conversion.
 Role: this parameterized estimate lets the AGP scale use the full strength of
 its large-modulus error bound.
 -/
-theorem primeCountInProgression_ge_half_minus_epsilon_main_term_of_theta_lower (y q a : ℕ)
-    (hy : 2 ≤ y) (hq : 0 < q) (epsilon : ℝ)
+theorem progressionCount_ge_half_sub_eps (y q a : ℕ) (hy : 2 ≤ y) (hq : 0 < q) (epsilon : ℝ)
     (herror : 18 * Real.sqrt (y : ℝ) ≤ epsilon * ((y : ℝ) / (Nat.totient q : ℝ)))
     (htheta : (y : ℝ) / (2 * (Nat.totient q : ℝ)) ≤ thetaInProgressionReal (y : ℝ) q a) :
     ((1 / 2 : ℝ) - epsilon) * ((y : ℝ) / (Nat.totient q : ℝ)) / Real.log (y : ℝ) ≤
@@ -476,10 +475,9 @@ Proof: use `φ(q) ≤ q`, then take square roots of the modulus bound and multip
 by the nonnegative square root of `y`.
 
 Role: this gives an elementary sufficient condition for the error hypothesis
-in `primeCountInProgression_ge_main_term_of_theta_lower`.
+in `progressionCount_ge_main_term_of_theta_lower`.
 -/
-theorem progressionTheta_error_bound_of_modulus_square_bound (y q : ℕ)
-    (hmodulus : (72 * (q : ℝ)) ^ 2 ≤ (y : ℝ)) :
+theorem theta_error_of_modulus_square (y q : ℕ) (hmodulus : (72 * (q : ℝ)) ^ 2 ≤ (y : ℝ)) :
     72 * (Nat.totient q : ℝ) * Real.sqrt (y : ℝ) ≤ (y : ℝ) := by
   have hphi : (Nat.totient q : ℝ) ≤ (q : ℝ) := by exact_mod_cast Nat.totient_le q
   have hscaled : 72 * (Nat.totient q : ℝ) ≤ 72 * (q : ℝ) :=
@@ -505,8 +503,7 @@ by `sqrt y`.
 Role: this stronger error estimate supports the improved one-third
 theta-to-prime-count conversion.
 -/
-theorem progressionTheta_strong_error_bound_of_modulus_square_bound (y q : ℕ)
-    (hmodulus : (108 * (q : ℝ)) ^ 2 ≤ (y : ℝ)) :
+theorem theta_error_108_of_modulus_sq (y q : ℕ) (hmodulus : (108 * (q : ℝ)) ^ 2 ≤ (y : ℝ)) :
     108 * (Nat.totient q : ℝ) * Real.sqrt (y : ℝ) ≤ (y : ℝ) := by
   have hphi : (Nat.totient q : ℝ) ≤ (q : ℝ) := by exact_mod_cast Nat.totient_le q
   have hscaled : 108 * (Nat.totient q : ℝ) ≤ 108 * (q : ℝ) :=
@@ -531,8 +528,7 @@ by `sqrt y`.
 
 Role: this supplies the error condition for the four-ninths conversion.
 -/
-theorem progressionTheta_four_ninths_error_bound_of_modulus_square_bound (y q : ℕ)
-    (hmodulus : (324 * (q : ℝ)) ^ 2 ≤ (y : ℝ)) :
+theorem theta_error_324_of_modulus_sq (y q : ℕ) (hmodulus : (324 * (q : ℝ)) ^ 2 ≤ (y : ℝ)) :
     324 * (Nat.totient q : ℝ) * Real.sqrt (y : ℝ) ≤ (y : ℝ) := by
   have hphi : (Nat.totient q : ℝ) ≤ (q : ℝ) := by exact_mod_cast Nat.totient_le q
   have hscaled : 324 * (Nat.totient q : ℝ) ≤ 324 * (q : ℝ) :=
@@ -559,7 +555,7 @@ by `sqrt y`.
 Role: for epsilon `1 / 1000000`, this gives the error absorption required by
 the sharper theta-to-prime-count conversion.
 -/
-theorem progressionTheta_millionth_error_bound_of_modulus_square_bound (y q : ℕ)
+theorem theta_error_18000000_of_modulus_sq (y q : ℕ)
     (hmodulus : (18000000 * (q : ℝ)) ^ 2 ≤ (y : ℝ)) :
     18000000 * (Nat.totient q : ℝ) * Real.sqrt (y : ℝ) ≤ (y : ℝ) := by
   have hphi : (Nat.totient q : ℝ) ≤ (q : ℝ) := by exact_mod_cast Nat.totient_le q
@@ -588,13 +584,13 @@ square bound, then apply the theta-to-count conversion.
 Role: this packages the finite error check needed when applying a uniform
 weighted progression estimate.
 -/
-theorem primeCountInProgression_ge_main_term_of_theta_lower_of_modulus_bound (y q a : ℕ)
-    (hy : 2 ≤ y) (hq : 0 < q) (hmodulus : (72 * (q : ℝ)) ^ 2 ≤ (y : ℝ))
+theorem progressionCount_ge_of_modulus_square (y q a : ℕ) (hy : 2 ≤ y) (hq : 0 < q)
+    (hmodulus : (72 * (q : ℝ)) ^ 2 ≤ (y : ℝ))
     (htheta : (y : ℝ) / (2 * (Nat.totient q : ℝ)) ≤ thetaInProgressionReal (y : ℝ) q a) :
     ((y : ℝ) / (4 * (Nat.totient q : ℝ))) / Real.log (y : ℝ) ≤
       (primeCountInProgression y q a : ℝ) := by
-  have herror := progressionTheta_error_bound_of_modulus_square_bound y q hmodulus
-  exact primeCountInProgression_ge_main_term_of_theta_lower y q a hy hq herror htheta
+  have herror := theta_error_of_modulus_square y q hmodulus
+  exact progressionCount_ge_main_term_of_theta_lower y q a hy hq herror htheta
 
 /-
 Inputs: cutoffs `y ≤ x`, a positive modulus `q`, the modulus-square error
@@ -608,13 +604,12 @@ denominator using `log y ≤ log x`.
 Role: this expresses the raw progression-count estimate with the common
 ambient cutoff used by the finite averaging argument.
 -/
-theorem primeCountInProgression_ge_main_term_over_log_upper_of_theta_lower (y x q a : ℕ)
-    (hy : 2 ≤ y) (hq : 0 < q) (hyx : y ≤ x) (hmodulus : (72 * (q : ℝ)) ^ 2 ≤ (y : ℝ))
+theorem progressionCount_ge_over_log_upper (y x q a : ℕ) (hy : 2 ≤ y) (hq : 0 < q) (hyx : y ≤ x)
+    (hmodulus : (72 * (q : ℝ)) ^ 2 ≤ (y : ℝ))
     (htheta : (y : ℝ) / (2 * (Nat.totient q : ℝ)) ≤ thetaInProgressionReal (y : ℝ) q a) :
     ((y : ℝ) / (4 * (Nat.totient q : ℝ))) / Real.log (x : ℝ) ≤
       (primeCountInProgression y q a : ℝ) := by
-  have hbound :=
-    primeCountInProgression_ge_main_term_of_theta_lower_of_modulus_bound y q a hy hq hmodulus htheta
+  have hbound := progressionCount_ge_of_modulus_square y q a hy hq hmodulus htheta
   have hyPos : 0 < (y : ℝ) := by exact_mod_cast (by omega : 0 < y)
   have hyxR : (y : ℝ) ≤ (x : ℝ) := by exact_mod_cast hyx
   have hlog : Real.log (y : ℝ) ≤ Real.log (x : ℝ) := Real.log_le_log hyPos hyxR
@@ -633,8 +628,8 @@ Proof: bound `72q` by `288d`, then use `d ≤ X^2` and `288^2 ≤ X`.
 Role: this is the explicit modulus-error condition at the AGP scale
 `x = X^5` and `y = d * x^(3/5)`.
 -/
-theorem progressionTheta_modulus_square_bound_of_agp_fifth_power_scale (X d q : ℕ) (hX : 82944 ≤ X)
-    (hd : d ≤ X ^ 2) (hq : q ≤ 4 * d) : (72 * q) ^ 2 ≤ d * X ^ 3 := by
+theorem modulus_sq_bound_72_of_fifth_power_scale (X d q : ℕ) (hX : 82944 ≤ X) (hd : d ≤ X ^ 2)
+    (hq : q ≤ 4 * d) : (72 * q) ^ 2 ≤ d * X ^ 3 := by
   have hqScaled : 72 * q ≤ 288 * d := by
     calc
       72 * q ≤ 72 * (4 * d) := Nat.mul_le_mul_left 72 hq
@@ -668,8 +663,8 @@ Proof: bound `108q` by `432d`, then use `d ≤ X^2` and `432^2 ≤ X`.
 Role: this stronger modulus estimate absorbs the progression prime-power
 error into one sixth of the main term.
 -/
-theorem progressionTheta_strong_modulus_square_bound_of_agp_fifth_power_scale (X d q : ℕ)
-    (hX : 186624 ≤ X) (hd : d ≤ X ^ 2) (hq : q ≤ 4 * d) : (108 * q) ^ 2 ≤ d * X ^ 3 := by
+theorem modulus_sq_bound_108_of_fifth_power_scale (X d q : ℕ) (hX : 186624 ≤ X) (hd : d ≤ X ^ 2)
+    (hq : q ≤ 4 * d) : (108 * q) ^ 2 ≤ d * X ^ 3 := by
   have hqScaled : 108 * q ≤ 432 * d := by
     calc
       108 * q ≤ 108 * (4 * d) := Nat.mul_le_mul_left 108 hq
@@ -703,8 +698,8 @@ Proof: bound `324q` by `1296d`, then use `d ≤ X^2` and `1296^2 ≤ X`.
 Role: this fixed-scale condition absorbs the prime-power error into one
 eighteenth of the progression main term.
 -/
-theorem progressionTheta_four_ninths_modulus_square_bound_of_agp_fifth_power_scale (X d q : ℕ)
-    (hX : 1679616 ≤ X) (hd : d ≤ X ^ 2) (hq : q ≤ 4 * d) : (324 * q) ^ 2 ≤ d * X ^ 3 := by
+theorem fifthPower_modulus_square_bound (X d q : ℕ) (hX : 1679616 ≤ X) (hd : d ≤ X ^ 2)
+    (hq : q ≤ 4 * d) : (324 * q) ^ 2 ≤ d * X ^ 3 := by
   have hqScaled : 324 * q ≤ 1296 * d := by
     calc
       324 * q ≤ 324 * (4 * d) := Nat.mul_le_mul_left 324 hq
@@ -739,9 +734,8 @@ Proof: bound `18000000q` by `72000000d`, then use `d ≤ X^2` and
 Role: together with `2^56 ≤ X`, this absorbs the higher prime-power error to
 within one millionth of the progression main term.
 -/
-theorem progressionTheta_millionth_modulus_square_bound_of_agp_fifth_power_scale (X d q : ℕ)
-    (hX : 5184000000000000 ≤ X) (hd : d ≤ X ^ 2) (hq : q ≤ 4 * d) :
-    (18000000 * q) ^ 2 ≤ d * X ^ 3 := by
+theorem modulus_sq_bound_18000000_of_fifth_power_scale (X d q : ℕ) (hX : 5184000000000000 ≤ X)
+    (hd : d ≤ X ^ 2) (hq : q ≤ 4 * d) : (18000000 * q) ^ 2 ≤ d * X ^ 3 := by
   have hqScaled : 18000000 * q ≤ 72000000 * d := by
     calc
       18000000 * q ≤ 18000000 * (4 * d) := Nat.mul_le_mul_left 18000000 hq
@@ -882,8 +876,8 @@ finite-set divisor exclusion theorem above.
 Role: this derives the modulus-four side condition for exceptional-factor
 removal directly from the paper95 exceptional-set property at the AGP scale.
 -/
-theorem paper95_exceptional_moduli_not_dvd_four_of_nat_fifth_power_scale (E : Finset ℕ) (X : ℕ)
-    (hX : 2 ^ 56 ≤ X) (hE : ∀ e ∈ E, Real.log ((X ^ 5 : ℕ) : ℝ) < (e : ℝ)) : ∀ e ∈ E, ¬e ∣ 4 := by
+theorem fifthPower_exceptional_not_dvd_four (E : Finset ℕ) (X : ℕ) (hX : 2 ^ 56 ≤ X)
+    (hE : ∀ e ∈ E, Real.log ((X ^ 5 : ℕ) : ℝ) < (e : ℝ)) : ∀ e ∈ E, ¬e ∣ 4 := by
   exact
     paper95_exceptional_moduli_not_dvd_four E ((X ^ 5 : ℕ) : ℝ)
       (paper95_log_gt_four_of_nat_fifth_power_scale X hX) hE
@@ -900,16 +894,15 @@ apply the exceptional-modulus divisor exclusion theorem.
 Role: this provides both exceptional-set side conditions required by the
 modulus-four version of the fifth-power prime-set construction.
 -/
-theorem paper95_exceptional_moduli_conditions_for_four_of_nat_fifth_power_scale (E : Finset ℕ)
-    (X : ℕ) (hX : 2 ^ 56 ≤ X) (hE : ∀ e ∈ E, Real.log ((X ^ 5 : ℕ) : ℝ) < (e : ℝ)) :
-    (∀ e ∈ E, 1 < e) ∧ ∀ e ∈ E, ¬e ∣ 4 := by
+theorem paper95_exceptional_conditions_of_fifth_power (E : Finset ℕ) (X : ℕ) (hX : 2 ^ 56 ≤ X)
+    (hE : ∀ e ∈ E, Real.log ((X ^ 5 : ℕ) : ℝ) < (e : ℝ)) : (∀ e ∈ E, 1 < e) ∧ ∀ e ∈ E, ¬e ∣ 4 := by
   have hlog := paper95_log_gt_four_of_nat_fifth_power_scale X hX
   constructor
   · intro e he
     have hfour : (4 : ℝ) < (e : ℝ) := lt_trans hlog (hE e he)
     have hone : (1 : ℝ) < (e : ℝ) := lt_trans (by norm_num only) hfour
     exact_mod_cast hone
-  · exact paper95_exceptional_moduli_not_dvd_four_of_nat_fifth_power_scale E X hX hE
+  · exact fifthPower_exceptional_not_dvd_four E X hX hE
 
 /--
 Inputs: a real scale `x ≥ 1`, a divisor cutoff `d ≤ x^(2/5)`, and the
@@ -1056,8 +1049,8 @@ logarithm by the natural cutoff and then by `4d`.
 Role: this makes the large-modulus range hold uniformly for every divisor
 above the selected natural cutoff.
 -/
-theorem paper95_log_modulus_bound_of_nat_fifth_power_scale (X d : ℕ) (hdPos : 0 < d)
-    (hd : d ≤ X ^ 2) (hceil : Nat.ceil (Real.log ((X ^ 5 : ℕ) : ℝ)) ≤ d) :
+theorem paper95_log_modulus_bound_of_fifth_power (X d : ℕ) (hdPos : 0 < d) (hd : d ≤ X ^ 2)
+    (hceil : Nat.ceil (Real.log ((X ^ 5 : ℕ) : ℝ)) ≤ d) :
     Real.log ((d * X ^ 3 : ℕ) : ℝ) ≤ (4 : ℝ) * (d : ℝ) := by
   have hXPos : 0 < X := by
     have hXne : X ≠ 0 := by
@@ -1155,8 +1148,8 @@ monotonicity of real powers converts this into the required bound by `y`.
 Role: this puts the fixed natural scale in the modulus form used in paper95
 Theorem 2.1, complementing the lower-modulus cutoff hypothesis above.
 -/
-theorem paper95_min_modulus_power_bound_of_nat_fifth_power_scale (X d : ℕ) (hX : 2 ^ 56 ≤ X)
-    (hdPos : 0 < d) (hd : d ≤ X ^ 2) :
+theorem paper95_min_modulus_pow_bound_of_fifth_power (X d : ℕ) (hX : 2 ^ 56 ≤ X) (hdPos : 0 < d)
+    (hd : d ≤ X ^ 2) :
     (4 : ℝ) * (d : ℝ) ≤
       min ((X ^ 5 : ℕ) : ℝ) ((d * X ^ 3 : ℕ) : ℝ) ^ ((20 : ℝ) / 49 - 1 / 1000) := by
   have hmod := paper95_modulus_range_of_nat_fifth_power_scale X d hX hd
@@ -1306,10 +1299,10 @@ theorem exists_nat_fifth_power_large_modulus_range :
   have hlogRange := hN X hNle
   have hlogRangePower : Real.log ((X ^ 5 : ℕ) : ℝ) ^ 4000 < ((X ^ 5 : ℕ) : ℝ) ^ ((1 : ℝ) / 2) := by
     simpa only [Real.sqrt_eq_rpow] using hlogRange
-  have hlogMod := paper95_log_modulus_bound_of_nat_fifth_power_scale X d hdPos hd hceil
+  have hlogMod := paper95_log_modulus_bound_of_fifth_power X d hdPos hd hceil
   have hcut :=
     paper95_cutoff_range_of_nat_fifth_power_scale X d hXlarge hdPos hd hlogMod hlogRangePower
-  have hmin := paper95_min_modulus_power_bound_of_nat_fifth_power_scale X d hXlarge hdPos hd
+  have hmin := paper95_min_modulus_pow_bound_of_fifth_power X d hXlarge hdPos hd
   rcases hcut with ⟨hlogRange', hlogMod', hqPos, _, hsqrt, hYlower, hYupper⟩
   exact ⟨hlogRange', hlogMod', hqPos, hmin, hsqrt, hYlower, hYupper⟩
 
@@ -1324,12 +1317,11 @@ bound proved above.
 Role: this supplies the error hypothesis for the weighted-to-prime-count
 conversion at the fixed AGP scale.
 -/
-theorem progressionTheta_error_bound_of_agp_fifth_power_scale (X d q : ℕ) (hX : 82944 ≤ X)
-    (hd : d ≤ X ^ 2) (hq : q ≤ 4 * d) :
+theorem fifthPower_theta_error (X d q : ℕ) (hX : 82944 ≤ X) (hd : d ≤ X ^ 2) (hq : q ≤ 4 * d) :
     72 * (Nat.totient q : ℝ) * Real.sqrt ((d * X ^ 3 : ℕ) : ℝ) ≤ ((d * X ^ 3 : ℕ) : ℝ) := by
-  have hmodNat := progressionTheta_modulus_square_bound_of_agp_fifth_power_scale X d q hX hd hq
+  have hmodNat := modulus_sq_bound_72_of_fifth_power_scale X d q hX hd hq
   have hmodulus : (72 * (q : ℝ)) ^ 2 ≤ ((d * X ^ 3 : ℕ) : ℝ) := by exact_mod_cast hmodNat
-  exact progressionTheta_error_bound_of_modulus_square_bound (d * X ^ 3) q hmodulus
+  exact theta_error_of_modulus_square (d * X ^ 3) q hmodulus
 
 /--
 Inputs: `X ≥ 82944`, `1 ≤ d ≤ X^2`, a positive modulus `q ≤ 4d`, and the
@@ -1344,8 +1336,8 @@ conversion then supplies the prime-count lower bound.
 Role: this is the fixed-scale application of the weighted progression bridge
 needed for the divisor progressions in AGP.
 -/
-theorem primeCountInProgression_ge_main_term_of_theta_lower_agp_fifth_power_scale (X d q a : ℕ)
-    (hX : 82944 ≤ X) (hdPos : 0 < d) (hd : d ≤ X ^ 2) (hqPos : 0 < q) (hq : q ≤ 4 * d)
+theorem fifthPower_progressionCount_ge (X d q a : ℕ) (hX : 82944 ≤ X) (hdPos : 0 < d)
+    (hd : d ≤ X ^ 2) (hqPos : 0 < q) (hq : q ≤ 4 * d)
     (htheta :
       ((d * X ^ 3 : ℕ) : ℝ) / (2 * (Nat.totient q : ℝ)) ≤
         thetaInProgressionReal ((d * X ^ 3 : ℕ) : ℝ) q a) :
@@ -1361,11 +1353,9 @@ theorem primeCountInProgression_ge_main_term_of_theta_lower_agp_fifth_power_scal
     have hmul : X ^ 3 ≤ d * X ^ 3 := by
       simpa only [one_mul] using Nat.mul_le_mul_right (X ^ 3) hdOne
     exact le_trans hXcube hmul
-  have hmodNat := progressionTheta_modulus_square_bound_of_agp_fifth_power_scale X d q hX hd hq
+  have hmodNat := modulus_sq_bound_72_of_fifth_power_scale X d q hX hd hq
   have hmodulus : (72 * (q : ℝ)) ^ 2 ≤ ((d * X ^ 3 : ℕ) : ℝ) := by exact_mod_cast hmodNat
-  exact
-    primeCountInProgression_ge_main_term_of_theta_lower_of_modulus_bound (d * X ^ 3) q a hy hqPos
-      hmodulus htheta
+  exact progressionCount_ge_of_modulus_square (d * X ^ 3) q a hy hqPos hmodulus htheta
 
 /--
 Inputs: `X ≥ 2` and positive `d` and `m`.
@@ -1451,8 +1441,8 @@ sum bound from the raw prime-count coefficient.
 Role: lets the finite progression argument use an unconditional progression
 bound with a coefficient different from the classical Brun–Titchmarsh value.
 -/
-noncomputable def agpFifthPowerAverageCoefficientOfProgressionBound
-    (progressionCoefficient reciprocalBound : ℝ) : ℝ :=
+noncomputable def fifthPowerProgressionAverageCoeff (progressionCoefficient reciprocalBound : ℝ) :
+    ℝ :=
   agpFifthPowerRawPrimeCountCoefficient - progressionCoefficient * reciprocalBound
 
 /--
@@ -1462,11 +1452,9 @@ Claim: the resulting fifth-power average coefficient is exactly
 Proof: unfold the coefficient definitions and normalize the rational arithmetic.
 Role: records the numerical value used to establish the strict exceptional-loss margin.
 -/
-theorem agp_fifth_power_average_coefficient_640_1024_value :
-    agpFifthPowerAverageCoefficientOfProgressionBound (640 / 3) (1 / 1024) =
-      (7 / 24 - 1 / 1000000 : ℝ) := by
-  norm_num only [agpFifthPowerAverageCoefficientOfProgressionBound,
-    agpFifthPowerRawPrimeCountCoefficient]
+theorem fifth_power_average_coefficient_640_1024_value :
+    fifthPowerProgressionAverageCoeff (640 / 3) (1 / 1024) = (7 / 24 - 1 / 1000000 : ℝ) := by
+  norm_num only [fifthPowerProgressionAverageCoeff, agpFifthPowerRawPrimeCountCoefficient]
 
 /--
 Claim: the coefficient `640 / 3` from the coarse progression sieve and the
@@ -1475,9 +1463,9 @@ Proof: rewrite the exact coefficient and normalize the rational comparison.
 Role: supplies the strict numerical margin used by the unconditional AGP
 exceptional-loss budget.
 -/
-theorem agp_fifth_power_average_coefficient_640_1024_gt_quarter :
-    (1 / 4 : ℝ) < agpFifthPowerAverageCoefficientOfProgressionBound (640 / 3) (1 / 1024) := by
-  rw [agp_fifth_power_average_coefficient_640_1024_value]
+theorem fifthPowerAverage_640_1024_gt_quarter :
+    (1 / 4 : ℝ) < fifthPowerProgressionAverageCoeff (640 / 3) (1 / 1024) := by
+  rw [fifth_power_average_coefficient_640_1024_value]
   norm_num only
 
 /--
@@ -1545,8 +1533,7 @@ lower bound `1/4`.
 
 Role: this supplies the divisor-uniform target for the sharper finite average.
 -/
-theorem agp_fifth_power_main_term_over_epsilon_adjusted_lower (X d m : ℕ) (hX : 2 ≤ X)
-    (hdPos : 0 < d) (hmPos : 0 < m) :
+theorem fifthPower_epsilon_mainTerm_le (X d m : ℕ) (hX : 2 ≤ X) (hdPos : 0 < d) (hmPos : 0 < m) :
     agpFifthPowerAverageCoefficient * (((X : ℝ) ^ 3 / (m : ℝ)) / Real.log ((X ^ 5 : ℕ) : ℝ)) ≤
       agpFifthPowerAverageCoefficient *
         ((((d * X ^ 3 : ℕ) : ℝ) / (Nat.totient (d * m) : ℝ)) / Real.log ((X ^ 5 : ℕ) : ℝ)) := by
@@ -1614,7 +1601,7 @@ positive logarithm.
 Role: this supplies the Proposition 1.5 coefficient comparison needed when
 the exceptional-loss prime set is transferred to `AGPProgressionCountData`.
 -/
-theorem reliableProp15Coefficient_le_agp_fifth_power_average_scale (X : ℕ) (c₀ : ℝ) (hX : 2 ≤ X)
+theorem prop15Coefficient_le_fifthPower_scale (X : ℕ) (c₀ : ℝ) (hX : 2 ≤ X)
     (hscale : 18000000 * c₀ ≤ 2499991 * (X : ℝ) ^ 3) :
     reliableProp15Coefficient c₀ 4 (X ^ 5) ≤
       agpFifthPowerAverageCoefficient * (((X : ℝ) ^ 3 / 4) / Real.log ((X ^ 5 : ℕ) : ℝ)) := by
@@ -1645,19 +1632,19 @@ Claim: the Proposition 1.5 coefficient is at most the per-divisor average
 target used by the fifth-power prime-supply theorem.
 
 Proof: compare it first with the uniform main term, then apply
-`agp_fifth_power_main_term_over_epsilon_adjusted_lower`.
+`fifthPower_epsilon_mainTerm_le`.
 
 Role: this constructs the `htarget` field needed to derive the finite count
 data from the AGP progression estimate.
 -/
-theorem reliableProp15Coefficient_le_agp_fifth_power_average_target (X d : ℕ) (c₀ : ℝ) (hX : 2 ≤ X)
-    (hdPos : 0 < d) (hscale : 18000000 * c₀ ≤ 2499991 * (X : ℝ) ^ 3) :
+theorem prop15Coefficient_le_fifthPower_target (X d : ℕ) (c₀ : ℝ) (hX : 2 ≤ X) (hdPos : 0 < d)
+    (hscale : 18000000 * c₀ ≤ 2499991 * (X : ℝ) ^ 3) :
     reliableProp15Coefficient c₀ 4 (X ^ 5) ≤
       agpFifthPowerAverageCoefficient *
         ((((d * X ^ 3 : ℕ) : ℝ) / (Nat.totient (d * 4) : ℝ)) / Real.log ((X ^ 5 : ℕ) : ℝ)) := by
   exact
-    le_trans (reliableProp15Coefficient_le_agp_fifth_power_average_scale X c₀ hX hscale)
-      (agp_fifth_power_main_term_over_epsilon_adjusted_lower X d 4 hX hdPos (by norm_num only))
+    le_trans (prop15Coefficient_le_fifthPower_scale X c₀ hX hscale)
+      (fifthPower_epsilon_mainTerm_le X d 4 hX hdPos (by norm_num only))
 
 /-
 Inputs: the reciprocal-prime sum bound and a scale inequality for reliable
@@ -1671,8 +1658,7 @@ the positive logarithm.
 
 Role: this extends the coefficient comparison to improved reciprocal-sum bounds.
 -/
-theorem reliableProp15Coefficient_le_agp_average_scale_of_reciprocal_bound (X : ℕ)
-    (c₀ reciprocalBound : ℝ) (hX : 2 ≤ X)
+theorem prop15Coeff_le_average_scale_of_recip_bound (X : ℕ) (c₀ reciprocalBound : ℝ) (hX : 2 ≤ X)
     (hscale :
       2 * c₀ ≤ agpFifthPowerAverageCoefficientOfReciprocalBound reciprocalBound * (X : ℝ) ^ 3) :
     reliableProp15Coefficient c₀ 4 (X ^ 5) ≤
@@ -1712,11 +1698,11 @@ Proof: specialize the reciprocal-bound comparison to `1 / 120`.
 
 Role: this is the explicit scale comparison for the improved seed-tail bound.
 -/
-theorem reliableProp15Coefficient_le_agp_average_scale120 (X : ℕ) (c₀ : ℝ) (hX : 2 ≤ X)
+theorem reliableProp15Coefficient_le_average_scale120 (X : ℕ) (c₀ : ℝ) (hX : 2 ≤ X)
     (hscale : 2 * c₀ ≤ agpFifthPowerAverageCoefficient120 * (X : ℝ) ^ 3) :
     reliableProp15Coefficient c₀ 4 (X ^ 5) ≤
       agpFifthPowerAverageCoefficient120 * (((X : ℝ) ^ 3 / 4) / Real.log ((X ^ 5 : ℕ) : ℝ)) := by
-  apply reliableProp15Coefficient_le_agp_average_scale_of_reciprocal_bound X c₀ (1 / 120) hX
+  apply prop15Coeff_le_average_scale_of_recip_bound X c₀ (1 / 120) hX
   simpa only [agpFifthPowerAverageCoefficient120] using hscale
 
 /-
@@ -1730,8 +1716,8 @@ and normalize.
 
 Role: this transfers a generalized Proposition 1.5 scale comparison to each divisor.
 -/
-theorem agp_fifth_power_main_term_lower_of_reciprocal_bound (X d : ℕ) (reciprocalBound : ℝ)
-    (hX : 2 ≤ X) (hdPos : 0 < d)
+theorem fifth_power_main_term_lower_of_reciprocal_bound (X d : ℕ) (reciprocalBound : ℝ) (hX : 2 ≤ X)
+    (hdPos : 0 < d)
     (hcoeff : 0 < agpFifthPowerAverageCoefficientOfReciprocalBound reciprocalBound) :
     agpFifthPowerAverageCoefficientOfReciprocalBound reciprocalBound *
         (((X : ℝ) ^ 3 / 4) / Real.log ((X ^ 5 : ℕ) : ℝ)) ≤
@@ -1756,8 +1742,8 @@ normalize.
 Role: this provides the divisor comparison for the general residue-class
 finite average.
 -/
-theorem agp_fifth_power_main_term_over_average_lower_of_reciprocal_bound (X d m : ℕ)
-    (reciprocalBound : ℝ) (hX : 2 ≤ X) (hdPos : 0 < d) (hmPos : 0 < m)
+theorem fifthPower_reciprocal_mainTerm_le (X d m : ℕ) (reciprocalBound : ℝ) (hX : 2 ≤ X)
+    (hdPos : 0 < d) (hmPos : 0 < m)
     (hcoeff : 0 < agpFifthPowerAverageCoefficientOfReciprocalBound reciprocalBound) :
     agpFifthPowerAverageCoefficientOfReciprocalBound reciprocalBound *
         (((X : ℝ) ^ 3 / (m : ℝ)) / Real.log ((X ^ 5 : ℕ) : ℝ)) ≤
@@ -1781,14 +1767,12 @@ coefficient and normalize the factor `36`.
 Role: supplies the divisor comparison for coefficient-generalized
 bad-quotient estimates.
 -/
-theorem agp_fifth_power_main_term_over_average_lower_of_progression_bound (X d m : ℕ)
-    (progressionCoefficient reciprocalBound : ℝ) (hX : 2 ≤ X) (hdPos : 0 < d) (hmPos : 0 < m)
-    (hcoeff :
-      0 <
-        agpFifthPowerAverageCoefficientOfProgressionBound progressionCoefficient reciprocalBound) :
-    agpFifthPowerAverageCoefficientOfProgressionBound progressionCoefficient reciprocalBound *
+theorem fifthPower_progression_mainTerm_le (X d m : ℕ) (progressionCoefficient reciprocalBound : ℝ)
+    (hX : 2 ≤ X) (hdPos : 0 < d) (hmPos : 0 < m)
+    (hcoeff : 0 < fifthPowerProgressionAverageCoeff progressionCoefficient reciprocalBound) :
+    fifthPowerProgressionAverageCoeff progressionCoefficient reciprocalBound *
         (((X : ℝ) ^ 3 / (m : ℝ)) / Real.log ((X ^ 5 : ℕ) : ℝ)) ≤
-      agpFifthPowerAverageCoefficientOfProgressionBound progressionCoefficient reciprocalBound *
+      fifthPowerProgressionAverageCoeff progressionCoefficient reciprocalBound *
         ((((d * X ^ 3 : ℕ) : ℝ) / (Nat.totient (d * m) : ℝ)) / Real.log ((X ^ 5 : ℕ) : ℝ)) := by
   have hmain := agp_fifth_power_main_term_over_36_lower X d m hX hdPos hmPos
   have hscaled :=
@@ -1806,19 +1790,16 @@ Proof: compare with the uniform term, then apply the divisor main-term bound.
 
 Role: this supplies the generalized `htarget` field for the prime-set construction.
 -/
-theorem reliableProp15Coefficient_le_agp_average_target_of_reciprocal_bound (X d : ℕ)
-    (c₀ reciprocalBound : ℝ) (hX : 2 ≤ X) (hdPos : 0 < d)
-    (hcoeff : 0 < agpFifthPowerAverageCoefficientOfReciprocalBound reciprocalBound)
+theorem prop15Coeff_le_average_target_of_recip_bound (X d : ℕ) (c₀ reciprocalBound : ℝ) (hX : 2 ≤ X)
+    (hdPos : 0 < d) (hcoeff : 0 < agpFifthPowerAverageCoefficientOfReciprocalBound reciprocalBound)
     (hscale :
       2 * c₀ ≤ agpFifthPowerAverageCoefficientOfReciprocalBound reciprocalBound * (X : ℝ) ^ 3) :
     reliableProp15Coefficient c₀ 4 (X ^ 5) ≤
       agpFifthPowerAverageCoefficientOfReciprocalBound reciprocalBound *
         ((((d * X ^ 3 : ℕ) : ℝ) / (Nat.totient (d * 4) : ℝ)) / Real.log ((X ^ 5 : ℕ) : ℝ)) := by
   exact
-    le_trans
-      (reliableProp15Coefficient_le_agp_average_scale_of_reciprocal_bound X c₀ reciprocalBound hX
-        hscale)
-      (agp_fifth_power_main_term_lower_of_reciprocal_bound X d reciprocalBound hX hdPos hcoeff)
+    le_trans (prop15Coeff_le_average_scale_of_recip_bound X c₀ reciprocalBound hX hscale)
+      (fifth_power_main_term_lower_of_reciprocal_bound X d reciprocalBound hX hdPos hcoeff)
 
 /--
 Inputs: the improved reciprocal-sum coefficient, the scale condition, and a
@@ -1833,13 +1814,13 @@ comparison at reciprocal bound `1 / 120`.
 Role: this supplies the divisor-wise target required by the finite
 prime-supply theorem for the improved seed construction.
 -/
-theorem reliableProp15Coefficient_le_agp_average_target120 (X d : ℕ) (c₀ : ℝ) (hX : 2 ≤ X)
+theorem reliableProp15Coefficient_le_average_target120 (X d : ℕ) (c₀ : ℝ) (hX : 2 ≤ X)
     (hdPos : 0 < d) (hscale : 2 * c₀ ≤ agpFifthPowerAverageCoefficient120 * (X : ℝ) ^ 3) :
     reliableProp15Coefficient c₀ 4 (X ^ 5) ≤
       agpFifthPowerAverageCoefficient120 *
         ((((d * X ^ 3 : ℕ) : ℝ) / (Nat.totient (d * 4) : ℝ)) / Real.log ((X ^ 5 : ℕ) : ℝ)) := by
   exact
-    reliableProp15Coefficient_le_agp_average_target_of_reciprocal_bound X d c₀ (1 / 120) hX hdPos
+    prop15Coeff_le_average_target_of_recip_bound X d c₀ (1 / 120) hX hdPos
       (by
         simpa only [agpFifthPowerAverageCoefficient120] using
           agp_fifth_power_average_coefficient120_pos)
@@ -1857,7 +1838,7 @@ Proof: take the ceiling of the square root of the positive part of
 
 Role: this gives an eventual scale gate for each fixed reciprocal-sum bound.
 -/
-theorem exists_eventual_agp_average_coefficient_scale_of_reciprocal_bound (c₀ reciprocalBound : ℝ)
+theorem exists_eventual_average_scale_of_recip_bound (c₀ reciprocalBound : ℝ)
     (hcoeff : 0 < agpFifthPowerAverageCoefficientOfReciprocalBound reciprocalBound) :
     ∃ X₀ : ℕ,
       ∀ X : ℕ,
@@ -1909,7 +1890,7 @@ its square with `X^2` and use `X^2 ≤ X^3` for `X ≥ 2`.
 Role: this removes the scale comparison as a separate eventuality condition
 when `c₀` has been fixed by Proposition 1.5.
 -/
-theorem exists_eventual_agp_fifth_power_prop15_coefficient_scale (c₀ : ℝ) :
+theorem exists_fifthPower_prop15_scale (c₀ : ℝ) :
     ∃ X₀ : ℕ, ∀ X : ℕ, X₀ ≤ X → 2 ^ 56 ≤ X ∧ 18000000 * c₀ ≤ 2499991 * (X : ℝ) ^ 3 := by
   let A : ℝ := max 0 ((18000000 / 2499991) * c₀)
   refine ⟨max (2 ^ 56) (Nat.ceil (Real.sqrt A)), ?_⟩
@@ -1952,9 +1933,9 @@ remaining numerator comparison is the scale hypothesis.
 Role: this discharges the coefficient comparison needed by the per-divisor
 weighted-to-prime-count estimate below.
 -/
-theorem prop15_coefficient_le_progression_main_term_agp_fifth_power_scale (X d q m : ℕ) (c₀ : ℝ)
-    (hX : 82944 ≤ X) (hdPos : 0 < d) (hd : d ≤ X ^ 2) (hqPos : 0 < q) (hq : q ≤ m * d)
-    (hmPos : 0 < m) (hc₀ : 0 < c₀) (hscale : 4 * (m : ℝ) * c₀ ≤ (X : ℝ) ^ 3) :
+theorem prop15_le_fifthPower_progression_mainTerm (X d q m : ℕ) (c₀ : ℝ) (hX : 82944 ≤ X)
+    (hdPos : 0 < d) (hd : d ≤ X ^ 2) (hqPos : 0 < q) (hq : q ≤ m * d) (hmPos : 0 < m) (hc₀ : 0 < c₀)
+    (hscale : 4 * (m : ℝ) * c₀ ≤ (X : ℝ) ^ 3) :
     c₀ / ((Nat.totient m : ℝ) * Real.log ((X ^ 5 : ℕ) : ℝ)) ≤
       (((d * X ^ 3 : ℕ) : ℝ) / (4 * (Nat.totient q : ℝ))) / Real.log ((d * X ^ 3 : ℕ) : ℝ) := by
   have hXtwo : 2 ≤ X := le_trans (by norm_num only : 2 ≤ 82944) hX
@@ -2051,21 +2032,17 @@ bounds prove the required coefficient comparison internally.
 Role: this is the per-divisor estimate to sum before applying the finite
 averaging lemma for the Proposition 1.5 parameter `k`.
 -/
-theorem primeCountInProgression_ge_prop15_coefficient_of_theta_lower_agp_scale (X d q a m : ℕ)
-    (c₀ : ℝ) (hX : 82944 ≤ X) (hdPos : 0 < d) (hd : d ≤ X ^ 2) (hqPos : 0 < q) (hq : q ≤ 4 * d)
-    (hqMul : q ≤ m * d) (hmPos : 0 < m) (hc₀ : 0 < c₀) (hscale : 4 * (m : ℝ) * c₀ ≤ (X : ℝ) ^ 3)
+theorem primeCount_ge_prop15Coeff_of_theta_scale (X d q a m : ℕ) (c₀ : ℝ) (hX : 82944 ≤ X)
+    (hdPos : 0 < d) (hd : d ≤ X ^ 2) (hqPos : 0 < q) (hq : q ≤ 4 * d) (hqMul : q ≤ m * d)
+    (hmPos : 0 < m) (hc₀ : 0 < c₀) (hscale : 4 * (m : ℝ) * c₀ ≤ (X : ℝ) ^ 3)
     (htheta :
       ((d * X ^ 3 : ℕ) : ℝ) / (2 * (Nat.totient q : ℝ)) ≤
         thetaInProgressionReal ((d * X ^ 3 : ℕ) : ℝ) q a) :
     c₀ / ((Nat.totient m : ℝ) * Real.log ((X ^ 5 : ℕ) : ℝ)) ≤
       (primeCountInProgression (d * X ^ 3) q a : ℝ) := by
   have hcoef :=
-    prop15_coefficient_le_progression_main_term_agp_fifth_power_scale X d q m c₀ hX hdPos hd hqPos
-      hqMul hmPos hc₀ hscale
-  exact
-    le_trans hcoef
-      (primeCountInProgression_ge_main_term_of_theta_lower_agp_fifth_power_scale X d q a hX hdPos hd
-        hqPos hq htheta)
+    prop15_le_fifthPower_progression_mainTerm X d q m c₀ hX hdPos hd hqPos hqMul hmPos hc₀ hscale
+  exact le_trans hcoef (fifthPower_progressionCount_ge X d q a hX hdPos hd hqPos hq htheta)
 
 /-
 Purpose: count primes in the CRT progression whose quotient by `d` is not
@@ -2099,8 +2076,8 @@ finite union by the sum of its cardinalities.
 Role: this is the finite union bound matching the bad-prime subtraction on
 paper95, page 14.
 -/
-theorem badQuotientPrimeCountInProgression_le_sum_prime_factor_progressions (x d m l L : ℕ)
-    (hd : 0 < d) (hL : L ≠ 0) (hdm : Nat.Coprime d m) (hlm : Nat.Coprime l m) :
+theorem badQuotientCount_le_factor_progressions (x d m l L : ℕ) (hd : 0 < d) (hL : L ≠ 0)
+    (hdm : Nat.Coprime d m) (hlm : Nat.Coprime l m) :
     badQuotientPrimeCountInProgression x d m l L hdm ≤
       ∑ q ∈ L.primeFactors, primeCountInProgression x (d * q) 1 := by
   classical
@@ -2171,9 +2148,8 @@ these congruences before applying the finite union bound.
 Role: this retains the residue restriction modulo `m` in the
 Brun–Titchmarsh input used to remove bad quotients.
 -/
-theorem badQuotientPrimeCountInProgression_le_sum_prime_factor_crt_progressions (x d m l L : ℕ)
-    (hd : 0 < d) (hL : L ≠ 0) (hdm : Nat.Coprime d m) (hlm : Nat.Coprime l m)
-    (hLm : Nat.Coprime L m) :
+theorem badQuotientCount_le_factor_crt (x d m l L : ℕ) (hd : 0 < d) (hL : L ≠ 0)
+    (hdm : Nat.Coprime d m) (hlm : Nat.Coprime l m) (hLm : Nat.Coprime L m) :
     badQuotientPrimeCountInProgression x d m l L hdm ≤
       ∑ q ∈ L.primeFactors.attach,
         primeCountInProgression x (d * q.val * m)
@@ -2268,8 +2244,8 @@ those not coprime to `L`, then use the assumed bound for their total count.
 Role: this is the finite interface needed to turn the theta estimate into the
 coprime-quotient counts summed by the Proposition 1.5 averaging argument.
 -/
-theorem primeCountInProgressionWithCoprimeQuotient_ge_of_crt_count (x d m l L : ℕ) (c : ℝ)
-    (hdm : Nat.Coprime d m) (hlm : Nat.Coprime l m)
+theorem coprimeProgressionCount_ge_of_crt_count (x d m l L : ℕ) (c : ℝ) (hdm : Nat.Coprime d m)
+    (hlm : Nat.Coprime l m)
     (hraw :
       c + (badQuotientPrimeCountInProgression x d m l L hdm : ℝ) ≤
         (primeCountInProgression x (d * m) (progressionCoprimeResidue d m l hdm) : ℝ)) :
@@ -2282,7 +2258,7 @@ theorem primeCountInProgressionWithCoprimeQuotient_ge_of_crt_count (x d m l L : 
   have hrawEq : primeCountInProgression x (d * m) (progressionCoprimeResidue d m l hdm) = D.card :=
     rfl
   have hgoodEq : primeCountInProgressionWithCoprimeQuotient x d m l L = G.card := by
-    rw [primeCountInProgressionWithCoprimeQuotient_eq_crt_filter x d m l L hdm hlm]
+    rw [coprimeProgressionCount_eq_crt_filter x d m l L hdm hlm]
     unfold G D
     congr 1
     ext p
@@ -2336,7 +2312,7 @@ Proof: instantiate the relative-error conversion with the expected main term
 Role: this is the direct interface from a sufficiently strong paper95
 Theorem 2.1 estimate to the theta hypothesis used in the AGP counting bridge.
 -/
-theorem thetaInProgressionReal_ge_half_main_term_of_relative_error (y : ℝ) (q a : ℕ) (epsilon : ℝ)
+theorem theta_ge_half_main_of_relative_error (y : ℝ) (q a : ℕ) (epsilon : ℝ)
     (hmain : 0 ≤ y / (Nat.totient q : ℝ)) (hepsilonHalf : epsilon ≤ 1 / 2)
     (herror :
       |thetaInProgressionReal y q a - y / (Nat.totient q : ℝ)| ≤
@@ -2366,9 +2342,9 @@ the finite exceptional-modulus avoidance property.
 Role: this joins modulus-aware exceptional-factor removal to the prime supply
 interface used by the AGP construction.
 -/
-theorem exists_prime_set_from_exceptionalFreePartForModulus_real_count_lower_bound (L : ℕ)
-    (E : Finset ℕ) (y k x m a T : ℕ) (hL : L ≠ 0) (hSquarefree : Squarefree L) (hE : ∀ e ∈ E, 1 < e)
-    (hEm : ∀ e ∈ E, ¬e ∣ m) (hLm : Nat.Coprime L m) (hk : 0 < k) (c : ℝ) (hc : 0 ≤ c)
+theorem exists_prime_set_of_exceptional_real (L : ℕ) (E : Finset ℕ) (y k x m a T : ℕ) (hL : L ≠ 0)
+    (hSquarefree : Squarefree L) (hE : ∀ e ∈ E, 1 < e) (hEm : ∀ e ∈ E, ¬e ∣ m)
+    (hLm : Nat.Coprime L m) (hk : 0 < k) (c : ℝ) (hc : 0 ≤ c)
     (htarget : (T : ℝ) * (2 ^ E.card : ℝ) < c * ((restrictedDivisors L y).card : ℝ))
     (hanalytic :
       c * ((restrictedDivisors (exceptionalFreePartForModulus L E m) y).card : ℝ) ≤
@@ -2395,11 +2371,10 @@ theorem exists_prime_set_from_exceptionalFreePartForModulus_real_count_lower_bou
     intro p hp
     exact ((Nat.mem_primeFactors.mp (Finset.mem_sdiff.mp hp).1).1).pos
   have hlower :=
-    exists_lt_exceptionalFreePartForModulus_card_of_scaled_bound L E m y hL hSquarefree (T : ℝ) c hc
-      htarget
+    lt_exceptionalFreeModulusPart_card_of_bound L E m y hL hSquarefree (T : ℝ) c hc htarget
   have hprimeSet :=
-    exists_prime_set_of_real_restricted_divisor_lower_bound (exceptionalFreePartForModulus L E m) y
-      k x m a T (Nat.ne_of_gt hL'pos) hk c hlower hanalytic
+    exists_prime_set_of_real_restricted (exceptionalFreePartForModulus L E m) y k x m a T
+      (Nat.ne_of_gt hL'pos) hk c hlower hanalytic
   have havoid : ∀ d, d ∣ exceptionalFreePartForModulus L E m → ∀ e ∈ E, ¬e ∣ d * m := by
     intro d hd e he
     exact exceptionalFreePartForModulus_divisors_avoid L E m hL hSquarefree hE hEm hLm d hd e he
@@ -2424,9 +2399,9 @@ construction.
 Role: this joins the large-modulus range count to the finite prime-set output
 needed by the AGP construction.
 -/
-theorem exists_prime_set_from_large_exceptionalFreePartForModulus_real_count_lower_bound (L : ℕ)
-    (E : Finset ℕ) (y q C k x m a T : ℕ) (hL : L ≠ 0) (hSquarefree : Squarefree L)
-    (hE : ∀ e ∈ E, 1 < e) (hEm : ∀ e ∈ E, ¬e ∣ m) (hLm : Nat.Coprime L m)
+theorem exists_large_primes_of_exceptional_real (L : ℕ) (E : Finset ℕ) (y q C k x m a T : ℕ)
+    (hL : L ≠ 0) (hSquarefree : Squarefree L) (hE : ∀ e ∈ E, 1 < e) (hEm : ∀ e ∈ E, ¬e ∣ m)
+    (hLm : Nat.Coprime L m)
     (hqL : ∀ r, r ∣ exceptionalFreePartForModulus L E m → Nat.Prime r → r ≤ q) (hC : C ≤ q)
     (hk : 0 < k) (c : ℝ) (hc : 0 ≤ c)
     (htarget : (T + c * (q + 1 : ℝ)) * (2 ^ E.card : ℝ) < c * ((restrictedDivisors L y).card : ℝ))
@@ -2447,9 +2422,7 @@ theorem exists_prime_set_from_large_exceptionalFreePartForModulus_real_count_low
             ∃ d,
               d ∣ exceptionalFreePartForModulus L E m ∧
                 d ≤ y ∧ q < d ∧ p = d * k + 1 ∧ ∀ e ∈ E, ¬e ∣ d * m := by
-  have hlower :=
-    exists_lt_largeExceptionalFreePart_card_of_scaled_bound L E m y q hL hSquarefree (T : ℝ) c hc
-      htarget
+  have hlower := largeExceptional_scaled_card_lt L E m y q hL hSquarefree (T : ℝ) c hc htarget
   let Q := selectedExceptionalPrimeFactorsForModulus L E m
   have hQfixed : selectedExceptionalPrimeFactors L Q = Q :=
     selectedExceptionalPrimeFactorsForModulus_fixed L E m hL
@@ -2460,9 +2433,8 @@ theorem exists_prime_set_from_large_exceptionalFreePartForModulus_real_count_low
     intro p hp
     exact ((Nat.mem_primeFactors.mp (Finset.mem_sdiff.mp hp).1).1).pos
   have hprimeSet :=
-    exists_prime_set_from_large_restricted_divisor_real_lower_bound
-      (exceptionalFreePartForModulus L E m) y q C k x m a T (Nat.ne_of_gt hL'pos) hqL hC hk c hlower
-      hanalytic
+    exists_large_prime_set_of_real_divisors (exceptionalFreePartForModulus L E m) y q C k x m a T
+      (Nat.ne_of_gt hL'pos) hqL hC hk c hlower hanalytic
   have havoid : ∀ d, d ∣ exceptionalFreePartForModulus L E m → ∀ e ∈ E, ¬e ∣ d * m := by
     intro d hd e he
     exact exceptionalFreePartForModulus_divisors_avoid L E m hL hSquarefree hE hEm hLm d hd e he
@@ -2486,9 +2458,8 @@ label among the restricted divisors of the original modulus.
 Role: this is the finite endpoint from the AGP prime-set output to the
 `hProp15` field of `AGPProgressionCountData`.
 -/
-theorem reliableProp15_good_divisor_count_of_large_exceptionalFreePart_prime_set (L : ℕ)
-    (E : Finset ℕ) (m y q k x T : ℕ) (c₀ : ℝ) (P : Finset ℕ) (hL : L ≠ 0)
-    (hSquarefree : Squarefree L) (hk : 0 < k)
+theorem prop15_good_divisor_count_of_large_prime_set (L : ℕ) (E : Finset ℕ) (m y q k x T : ℕ)
+    (c₀ : ℝ) (P : Finset ℕ) (hL : L ≠ 0) (hSquarefree : Squarefree L) (hk : 0 < k)
     (hP :
       ∀ p ∈ P,
         Nat.Prime p ∧
@@ -2547,11 +2518,11 @@ count, then fill the remaining fields directly.
 Role: this is the finite endpoint from the distribution estimates to the
 prime-supply input consumed by the Carmichael construction.
 -/
-def agpProgressionCountData_of_large_exceptionalFreePart_prime_set (W : Finset ℕ) (C : ℕ) (c₀ : ℝ)
-    (x₀ L y q x k T m : ℕ) (E : Finset ℕ) (P : Finset ℕ) (hL : 2 < L) (hSquarefree : Squarefree L)
-    (hLargeEnough : x₀ ≤ x) (hProp15Input : ReliableProp15Admissible L 4 y k x)
-    (hCq : max C (W.sup id) ≤ q) (hfactor : ∀ r, r ∣ L → Nat.Prime r → r ≤ q)
-    (hlambda : 3 ≤ ArithmeticFunction.carmichael L) (hk : 0 < k) (hcoprime : Nat.Coprime k L)
+def countData_of_large_exceptional_primes (W : Finset ℕ) (C : ℕ) (c₀ : ℝ) (x₀ L y q x k T m : ℕ)
+    (E : Finset ℕ) (P : Finset ℕ) (hL : 2 < L) (hSquarefree : Squarefree L) (hLargeEnough : x₀ ≤ x)
+    (hProp15Input : ReliableProp15Admissible L 4 y k x) (hCq : max C (W.sup id) ≤ q)
+    (hfactor : ∀ r, r ∣ L → Nat.Prime r → r ≤ q) (hlambda : 3 ≤ ArithmeticFunction.carmichael L)
+    (hk : 0 < k) (hcoprime : Nat.Coprime k L)
     (hlower :
       ((2 ^ W.card * Nat.floor ((ArithmeticFunction.carmichael L : ℝ) * Real.log L) + q : ℕ) : ℝ) <
         reliableProp15Coefficient c₀ 4 x * ((restrictedDivisors L y).card : ℝ))
@@ -2566,8 +2537,8 @@ def agpProgressionCountData_of_large_exceptionalFreePart_prime_set (W : Finset �
     (hPcard : T < P.card) : AGPProgressionCountData W C c₀ x₀ := by
   have hLne : L ≠ 0 := Nat.ne_of_gt (lt_trans Nat.zero_lt_two hL)
   have hProp15 :=
-    reliableProp15_good_divisor_count_of_large_exceptionalFreePart_prime_set L E m y q k x T c₀ P
-      hLne hSquarefree hk hP hcount hPcard
+    prop15_good_divisor_count_of_large_prime_set L E m y q k x T c₀ P hLne hSquarefree hk hP hcount
+      hPcard
   exact
     ⟨L, y, q, x, k, hL, hSquarefree, hLargeEnough, hProp15Input, hCq, hfactor, hlambda, hk,
       hcoprime, hlower, hProp15⟩
@@ -2585,9 +2556,9 @@ term; apply the finite partition lemma to remove the stated bad-prime mass.
 
 Role: this is the per-divisor analytic interface needed by the finite average.
 -/
-theorem primeCountInProgressionWithCoprimeQuotient_ge_of_theta_lower_and_bad_bound (X d m l L : ℕ)
-    (c : ℝ) (hX : 82944 ≤ X) (hdPos : 0 < d) (hd : d ≤ X ^ 2) (hmPos : 0 < m)
-    (hdm : Nat.Coprime d m) (hlm : Nat.Coprime l m) (hq : d * m ≤ 4 * d)
+theorem coprimeCount_ge_of_theta_badBound (X d m l L : ℕ) (c : ℝ) (hX : 82944 ≤ X) (hdPos : 0 < d)
+    (hd : d ≤ X ^ 2) (hmPos : 0 < m) (hdm : Nat.Coprime d m) (hlm : Nat.Coprime l m)
+    (hq : d * m ≤ 4 * d)
     (htheta :
       ((d * X ^ 3 : ℕ) : ℝ) / (2 * (Nat.totient (d * m) : ℝ)) ≤
         thetaInProgressionReal ((d * X ^ 3 : ℕ) : ℝ) (d * m) (progressionCoprimeResidue d m l hdm))
@@ -2597,11 +2568,10 @@ theorem primeCountInProgressionWithCoprimeQuotient_ge_of_theta_lower_and_bad_bou
           Real.log ((d * X ^ 3 : ℕ) : ℝ)) :
     c ≤ (primeCountInProgressionWithCoprimeQuotient (d * X ^ 3) d m l L : ℝ) := by
   have hmain :=
-    primeCountInProgression_ge_main_term_of_theta_lower_agp_fifth_power_scale X d (d * m)
-      (progressionCoprimeResidue d m l hdm) hX hdPos hd (Nat.mul_pos hdPos hmPos) hq htheta
+    fifthPower_progressionCount_ge X d (d * m) (progressionCoprimeResidue d m l hdm) hX hdPos hd
+      (Nat.mul_pos hdPos hmPos) hq htheta
   have hraw := le_trans hmargin hmain
-  exact
-    primeCountInProgressionWithCoprimeQuotient_ge_of_crt_count (d * X ^ 3) d m l L c hdm hlm hraw
+  exact coprimeProgressionCount_ge_of_crt_count (d * X ^ 3) d m l L c hdm hlm hraw
 
 /--
 Inputs: an AGP scale, a theta lower bound for the CRT progression, and upper
@@ -2616,9 +2586,9 @@ transfers the remaining lower bound.
 
 Role: this exposes the exact Brun–Titchmarsh input needed by the AGP average.
 -/
-theorem primeCountInProgressionWithCoprimeQuotient_ge_of_theta_lower_and_bad_factor_counts
-    (X d m l L : ℕ) (c : ℝ) (hX : 82944 ≤ X) (hdPos : 0 < d) (hd : d ≤ X ^ 2) (hL : L ≠ 0)
-    (hmPos : 0 < m) (hdm : Nat.Coprime d m) (hlm : Nat.Coprime l m) (hq : d * m ≤ 4 * d)
+theorem coprimeCount_ge_of_theta_factorCounts (X d m l L : ℕ) (c : ℝ) (hX : 82944 ≤ X)
+    (hdPos : 0 < d) (hd : d ≤ X ^ 2) (hL : L ≠ 0) (hmPos : 0 < m) (hdm : Nat.Coprime d m)
+    (hlm : Nat.Coprime l m) (hq : d * m ≤ 4 * d)
     (htheta :
       ((d * X ^ 3 : ℕ) : ℝ) / (2 * (Nat.totient (d * m) : ℝ)) ≤
         thetaInProgressionReal ((d * X ^ 3 : ℕ) : ℝ) (d * m) (progressionCoprimeResidue d m l hdm))
@@ -2627,9 +2597,7 @@ theorem primeCountInProgressionWithCoprimeQuotient_ge_of_theta_lower_and_bad_fac
         (((d * X ^ 3 : ℕ) : ℝ) / (4 * (Nat.totient (d * m) : ℝ))) /
           Real.log ((d * X ^ 3 : ℕ) : ℝ)) :
     c ≤ (primeCountInProgressionWithCoprimeQuotient (d * X ^ 3) d m l L : ℝ) := by
-  have hbad :=
-    badQuotientPrimeCountInProgression_le_sum_prime_factor_progressions (d * X ^ 3) d m l L hdPos hL
-      hdm hlm
+  have hbad := badQuotientCount_le_factor_progressions (d * X ^ 3) d m l L hdPos hL hdm hlm
   have hbadReal :
     (badQuotientPrimeCountInProgression (d * X ^ 3) d m l L hdm : ℝ) ≤
       (↑(∑ q ∈ L.primeFactors, primeCountInProgression (d * X ^ 3) (d * q) 1) : ℝ) := by
@@ -2639,9 +2607,7 @@ theorem primeCountInProgressionWithCoprimeQuotient_ge_of_theta_lower_and_bad_fac
       (((d * X ^ 3 : ℕ) : ℝ) / (4 * (Nat.totient (d * m) : ℝ))) /
         Real.log ((d * X ^ 3 : ℕ) : ℝ) := by
     linarith only [hbadReal, hmargin]
-  exact
-    primeCountInProgressionWithCoprimeQuotient_ge_of_theta_lower_and_bad_bound X d m l L c hX hdPos
-      hd hmPos hdm hlm hq htheta hmargin'
+  exact coprimeCount_ge_of_theta_badBound X d m l L c hX hdPos hd hmPos hdm hlm hq htheta hmargin'
 
 /--
 Inputs: a finite divisor set, variable prime bounds, a positive parameter
@@ -2659,9 +2625,9 @@ theorem.
 Role: this is the finite bridge from per-divisor progression estimates to the
 prime set required by the AGP construction.
 -/
-theorem exists_prime_set_from_crt_count_with_bad_quotient_allowance (D : Finset ℕ) (x : ℕ → ℕ)
-    (xmax Kmax m l L T : ℕ) (c : ℝ) (hpos : ∀ d ∈ D, 0 < d) (hdm : ∀ d ∈ D, Nat.Coprime d m)
-    (hlm : Nat.Coprime l m) (hcut : ∀ d ∈ D, x d ≤ d * Kmax + 1) (hcommon : ∀ d ∈ D, x d ≤ xmax)
+theorem exists_primes_of_crt_badAllowance (D : Finset ℕ) (x : ℕ → ℕ) (xmax Kmax m l L T : ℕ) (c : ℝ)
+    (hpos : ∀ d ∈ D, 0 < d) (hdm : ∀ d ∈ D, Nat.Coprime d m) (hlm : Nat.Coprime l m)
+    (hcut : ∀ d ∈ D, x d ≤ d * Kmax + 1) (hcommon : ∀ d ∈ D, x d ≤ xmax)
     (hlower : ((positiveCoprimeParameters L Kmax).card * T : ℕ) < c * (D.card : ℝ))
     (hraw :
       ∀ d,
@@ -2674,17 +2640,14 @@ theorem exists_prime_set_from_crt_count_with_bad_quotient_allowance (D : Finset 
         T < P.card ∧ ∀ p ∈ P, Nat.Prime p ∧ p ≤ xmax ∧ p % m = l % m ∧ ∃ d ∈ D, p = d * k + 1 := by
   have hpoint : ∀ d ∈ D, c ≤ (primeCountInProgressionWithCoprimeQuotient (x d) d m l L : ℝ) := by
     intro d hdD
-    exact
-      primeCountInProgressionWithCoprimeQuotient_ge_of_crt_count (x d) d m l L c (hdm d hdD) hlm
-        (hraw d hdD)
+    exact coprimeProgressionCount_ge_of_crt_count (x d) d m l L c (hdm d hdD) hlm (hraw d hdD)
   have hsum := Finset.sum_le_sum hpoint
   have hanalytic :
     c * (D.card : ℝ) ≤
       (↑(∑ d ∈ D, primeCountInProgressionWithCoprimeQuotient (x d) d m l L) : ℝ) := by
     simpa only [Nat.cast_sum, Finset.sum_const, nsmul_eq_mul, mul_comm] using hsum
   exact
-    exists_prime_set_from_variable_coprime_progression_lower_bound D x xmax Kmax m l L T c hpos hcut
-      hcommon hlower hanalytic
+    exists_prime_set_of_variable_coprime D x xmax Kmax m l L T c hpos hcut hcommon hlower hanalytic
 
 /--
 Inputs: a finite divisor set, an AGP fifth-power scale, theta lower bounds
@@ -2701,10 +2664,9 @@ coprime-quotient counts, and invoke the finite averaging theorem with
 
 Role: this is the direct analytic-to-finite interface for the AGP prime supply.
 -/
-theorem exists_prime_set_from_theta_lower_and_bad_factor_counts (D : Finset ℕ) (X m l L T : ℕ)
-    (c : ℝ) (hX : 82944 ≤ X) (hmPos : 0 < m) (hL : L ≠ 0) (hpos : ∀ d ∈ D, 0 < d)
-    (hd : ∀ d ∈ D, d ≤ X ^ 2) (hdm : ∀ d ∈ D, Nat.Coprime d m) (hlm : Nat.Coprime l m)
-    (hq : ∀ d ∈ D, d * m ≤ 4 * d)
+theorem exists_primes_of_theta_factorCounts (D : Finset ℕ) (X m l L T : ℕ) (c : ℝ) (hX : 82944 ≤ X)
+    (hmPos : 0 < m) (hL : L ≠ 0) (hpos : ∀ d ∈ D, 0 < d) (hd : ∀ d ∈ D, d ≤ X ^ 2)
+    (hdm : ∀ d ∈ D, Nat.Coprime d m) (hlm : Nat.Coprime l m) (hq : ∀ d ∈ D, d * m ≤ 4 * d)
     (htheta :
       ∀ d,
         ∀ hdD : d ∈ D,
@@ -2738,12 +2700,10 @@ theorem exists_prime_set_from_theta_lower_and_bad_factor_counts (D : Finset ℕ)
             ℝ) := by
     intro d hdD
     have hmain :=
-      primeCountInProgression_ge_main_term_of_theta_lower_agp_fifth_power_scale X d (d * m)
-        (progressionCoprimeResidue d m l (hdm d hdD)) hX (hpos d hdD) (hd d hdD)
-        (Nat.mul_pos (hpos d hdD) hmPos) (hq d hdD) (htheta d hdD)
+      fifthPower_progressionCount_ge X d (d * m) (progressionCoprimeResidue d m l (hdm d hdD)) hX
+        (hpos d hdD) (hd d hdD) (Nat.mul_pos (hpos d hdD) hmPos) (hq d hdD) (htheta d hdD)
     have hbad :=
-      badQuotientPrimeCountInProgression_le_sum_prime_factor_progressions (x d) d m l L (hpos d hdD)
-        hL (hdm d hdD) hlm
+      badQuotientCount_le_factor_progressions (x d) d m l L (hpos d hdD) hL (hdm d hdD) hlm
     have hbadReal :
       (badQuotientPrimeCountInProgression (x d) d m l L (hdm d hdD) : ℝ) ≤
         (↑(∑ q ∈ L.primeFactors, primeCountInProgression (x d) (d * q) 1) : ℝ) := by
@@ -2755,8 +2715,8 @@ theorem exists_prime_set_from_theta_lower_and_bad_factor_counts (D : Finset ℕ)
       linarith only [hbadReal, hmargin d hdD]
     exact le_trans hmargin' hmain
   exact
-    exists_prime_set_from_crt_count_with_bad_quotient_allowance D x (X ^ 5) (X ^ 3) m l L T c hpos
-      hdm hlm hcut hcommon hlower hraw
+    exists_primes_of_crt_badAllowance D x (X ^ 5) (X ^ 3) m l L T c hpos hdm hlm hcut hcommon hlower
+      hraw
 
 /--
 The reciprocal-sum condition in reliable Proposition 1.5 is stronger than
@@ -2777,8 +2737,8 @@ Proof: sum the individual bounds and multiply the reciprocal-sum estimate by
 Role: this records the explicit numerical loss in the bad-quotient removal on
 pages 715–716 of paper95 for `B = 2 / 5`.
 -/
-theorem sum_primeFactor_progression_counts_le_quarter_main_term (y d L : ℕ) (mainTerm : ℝ)
-    (hmainTerm : 0 ≤ mainTerm) (hrecip : (∑ q ∈ L.primeFactors, (q : ℝ)⁻¹) ≤ 3 / 160)
+theorem factor_progression_sum_le_quarter (y d L : ℕ) (mainTerm : ℝ) (hmainTerm : 0 ≤ mainTerm)
+    (hrecip : (∑ q ∈ L.primeFactors, (q : ℝ)⁻¹) ≤ 3 / 160)
     (hBT :
       ∀ q ∈ L.primeFactors,
         (primeCountInProgression y (d * q) 1 : ℝ) ≤ (40 / 3) * (q : ℝ)⁻¹ * mainTerm) :
@@ -2800,8 +2760,8 @@ theorem sum_primeFactor_progression_counts_le_quarter_main_term (y d L : ℕ) (m
 The reciprocal-prime-factor threshold `1 / 60` leaves the exact bad-count
 coefficient `2 / 9` under the Brun–Titchmarsh bound with coefficient `40 / 3`.
 -/
-theorem sum_primeFactor_progression_counts_le_two_ninths_main_term (y d L : ℕ) (mainTerm : ℝ)
-    (hmainTerm : 0 ≤ mainTerm) (hrecip : (∑ q ∈ L.primeFactors, (q : ℝ)⁻¹) ≤ 1 / 60)
+theorem factor_progression_sum_le_two_ninths (y d L : ℕ) (mainTerm : ℝ) (hmainTerm : 0 ≤ mainTerm)
+    (hrecip : (∑ q ∈ L.primeFactors, (q : ℝ)⁻¹) ≤ 1 / 60)
     (hBT :
       ∀ q ∈ L.primeFactors,
         (primeCountInProgression y (d * q) 1 : ℝ) ≤ (40 / 3) * (q : ℝ)⁻¹ * mainTerm) :
@@ -2831,8 +2791,8 @@ Proof: sum the individual Brun–Titchmarsh bounds and regroup the finite sum.
 Role: this keeps the exact reciprocal-sum dependence available to later
 finite-average theorems.
 -/
-theorem sum_primeFactor_crt_progression_counts_le_reciprocal_sum_multiple_main_term (y d m l L : ℕ)
-    (progressionCoefficient : ℝ) (hdm : Nat.Coprime d m) (hLm : Nat.Coprime L m) (mainTerm : ℝ)
+theorem factor_crt_sum_le_reciprocal_mainTerm (y d m l L : ℕ) (progressionCoefficient : ℝ)
+    (hdm : Nat.Coprime d m) (hLm : Nat.Coprime L m) (mainTerm : ℝ)
     (hBT :
       ∀ q : { q // q ∈ L.primeFactors },
         (primeCountInProgression y (d * q.val * m)
@@ -2869,9 +2829,8 @@ theorem sum_primeFactor_crt_progression_counts_le_reciprocal_sum_multiple_main_t
 The `1 / 60` reciprocal-sum threshold gives a `2 / 9` bound while preserving
 the CRT residue modulo `m` in each prime-factor progression.
 -/
-theorem sum_primeFactor_crt_progression_counts_le_two_ninths_main_term (y d m l L : ℕ)
-    (hdm : Nat.Coprime d m) (hLm : Nat.Coprime L m) (mainTerm : ℝ) (hmainTerm : 0 ≤ mainTerm)
-    (hrecip : (∑ q ∈ L.primeFactors, (q : ℝ)⁻¹) ≤ 1 / 60)
+theorem factor_crt_sum_le_two_ninths (y d m l L : ℕ) (hdm : Nat.Coprime d m) (hLm : Nat.Coprime L m)
+    (mainTerm : ℝ) (hmainTerm : 0 ≤ mainTerm) (hrecip : (∑ q ∈ L.primeFactors, (q : ℝ)⁻¹) ≤ 1 / 60)
     (hBT :
       ∀ q : { q // q ∈ L.primeFactors },
         (primeCountInProgression y (d * q.val * m)
@@ -2887,9 +2846,7 @@ theorem sum_primeFactor_crt_progression_counts_le_two_ninths_main_term (y d m l 
                 (Nat.Coprime.of_dvd_left (Nat.mem_primeFactors.mp q.property).2.1 hLm))) :
           ℝ)) ≤
       (2 / 9) * mainTerm := by
-  have hsum :=
-    sum_primeFactor_crt_progression_counts_le_reciprocal_sum_multiple_main_term y d m l L (40 / 3)
-      hdm hLm mainTerm hBT
+  have hsum := factor_crt_sum_le_reciprocal_mainTerm y d m l L (40 / 3) hdm hLm mainTerm hBT
   calc
     _ ≤ (40 / 3) * mainTerm * (∑ q ∈ L.primeFactors, (q : ℝ)⁻¹) := hsum
     _ ≤ (40 / 3) * mainTerm * (1 / 60) :=
@@ -2912,11 +2869,11 @@ apply the finite averaging theorem.
 Role: this is the finite counting conclusion of the page-716 argument in
 paper95, with its explicit prime-count estimates supplied as hypotheses.
 -/
-theorem exists_prime_set_from_brun_titchmarsh_progression_bounds (D : Finset ℕ) (x : ℕ → ℕ)
-    (xmax Kmax m l L T : ℕ) (c : ℝ) (mainTerm : ℕ → ℝ) (hpos : ∀ d ∈ D, 0 < d)
-    (hdm : ∀ d ∈ D, Nat.Coprime d m) (hlm : Nat.Coprime l m) (hcut : ∀ d ∈ D, x d ≤ d * Kmax + 1)
-    (hcommon : ∀ d ∈ D, x d ≤ xmax) (hL : L ≠ 0) (hmainTerm : ∀ d ∈ D, 0 ≤ mainTerm d)
-    (htarget : ∀ d ∈ D, c ≤ mainTerm d / 4) (hrecip : (∑ q ∈ L.primeFactors, (q : ℝ)⁻¹) ≤ 1 / 60)
+theorem exists_primes_of_brunTitchmarsh (D : Finset ℕ) (x : ℕ → ℕ) (xmax Kmax m l L T : ℕ) (c : ℝ)
+    (mainTerm : ℕ → ℝ) (hpos : ∀ d ∈ D, 0 < d) (hdm : ∀ d ∈ D, Nat.Coprime d m)
+    (hlm : Nat.Coprime l m) (hcut : ∀ d ∈ D, x d ≤ d * Kmax + 1) (hcommon : ∀ d ∈ D, x d ≤ xmax)
+    (hL : L ≠ 0) (hmainTerm : ∀ d ∈ D, 0 ≤ mainTerm d) (htarget : ∀ d ∈ D, c ≤ mainTerm d / 4)
+    (hrecip : (∑ q ∈ L.primeFactors, (q : ℝ)⁻¹) ≤ 1 / 60)
     (hraw :
       ∀ d,
         ∀ hdD : d ∈ D,
@@ -2939,8 +2896,7 @@ theorem exists_prime_set_from_brun_titchmarsh_progression_bounds (D : Finset ℕ
             ℝ) := by
     intro d hdD
     have hbad :=
-      badQuotientPrimeCountInProgression_le_sum_prime_factor_progressions (x d) d m l L (hpos d hdD)
-        hL (hdm d hdD) hlm
+      badQuotientCount_le_factor_progressions (x d) d m l L (hpos d hdD) hL (hdm d hdD) hlm
     have hbadReal :
       (badQuotientPrimeCountInProgression (x d) d m l L (hdm d hdD) : ℝ) ≤
         (∑ q ∈ L.primeFactors, (primeCountInProgression (x d) (d * q) 1 : ℝ)) := by
@@ -2948,15 +2904,14 @@ theorem exists_prime_set_from_brun_titchmarsh_progression_bounds (D : Finset ℕ
     have hrecipBT : (∑ q ∈ L.primeFactors, (q : ℝ)⁻¹) ≤ 3 / 160 :=
       le_trans hrecip reciprocal_sum_threshold_le_paper95_threshold
     have hsum :=
-      sum_primeFactor_progression_counts_le_quarter_main_term (x d) d L (mainTerm d)
-        (hmainTerm d hdD) hrecipBT (hBT d)
+      factor_progression_sum_le_quarter (x d) d L (mainTerm d) (hmainTerm d hdD) hrecipBT (hBT d)
     have hmargin :
       c + (badQuotientPrimeCountInProgression (x d) d m l L (hdm d hdD) : ℝ) ≤ mainTerm d / 2 := by
       linarith only [htarget d hdD, le_trans hbadReal hsum, hmainTerm d hdD]
     exact le_trans hmargin (hraw d hdD)
   exact
-    exists_prime_set_from_crt_count_with_bad_quotient_allowance D x xmax Kmax m l L T c hpos hdm hlm
-      hcut hcommon hlower hrawAllowance
+    exists_primes_of_crt_badAllowance D x xmax Kmax m l L T c hpos hdm hlm hcut hcommon hlower
+      hrawAllowance
 
 /-
 Inputs: a finite divisor set, theta lower bounds in the CRT progressions,
@@ -2974,8 +2929,8 @@ coefficient is passed to the finite averaging theorem.
 Role: this connects the existing theta-to-count estimate and the explicit
 Brun–Titchmarsh coefficient to the AGP finite prime-supply interface.
 -/
-theorem exists_prime_set_from_theta_lower_and_brun_titchmarsh_bounds (D : Finset ℕ) (x : ℕ → ℕ)
-    (xmax Kmax m l L T : ℕ) (c : ℝ) (progressionCoefficient reciprocalBound : ℝ)
+theorem exists_primes_of_theta_brunTitchmarsh (D : Finset ℕ) (x : ℕ → ℕ) (xmax Kmax m l L T : ℕ)
+    (c : ℝ) (progressionCoefficient reciprocalBound : ℝ)
     (hprogressionCoefficient : 0 ≤ progressionCoefficient) (hxmax : 2 ≤ xmax) (hmPos : 0 < m)
     (hpos : ∀ d ∈ D, 0 < d) (hdm : ∀ d ∈ D, Nat.Coprime d m) (hlm : Nat.Coprime l m)
     (hcut : ∀ d ∈ D, x d ≤ d * Kmax + 1) (hcommon : ∀ d ∈ D, x d ≤ xmax) (hx : ∀ d ∈ D, 2 ≤ x d)
@@ -3001,7 +2956,7 @@ theorem exists_prime_set_from_theta_lower_and_brun_titchmarsh_bounds (D : Finset
     (htarget :
       ∀ d ∈ D,
         c ≤
-          agpFifthPowerAverageCoefficientOfProgressionBound progressionCoefficient reciprocalBound *
+          fifthPowerProgressionAverageCoeff progressionCoefficient reciprocalBound *
             ((x d : ℝ) / (Nat.totient (d * m) : ℝ) / Real.log (xmax : ℝ)))
     (hlower : ((positiveCoprimeParameters L Kmax).card * T : ℕ) < c * (D.card : ℝ)) :
     ∃ k ∈ positiveCoprimeParameters L Kmax,
@@ -3026,8 +2981,7 @@ theorem exists_prime_set_from_theta_lower_and_brun_titchmarsh_bounds (D : Finset
             ℝ) := by
     intro d hdD
     have hqPos : 0 < d * m := Nat.mul_pos (hpos d hdD) hmPos
-    have herror :=
-      progressionTheta_millionth_error_bound_of_modulus_square_bound (x d) (d * m) (hmodulus d hdD)
+    have herror := theta_error_18000000_of_modulus_sq (x d) (d * m) (hmodulus d hdD)
     have hphi : 0 < (Nat.totient (d * m) : ℝ) := by exact_mod_cast Nat.totient_pos.mpr hqPos
     have hscaled :
       (18 * Real.sqrt (x d : ℝ)) * (Nat.totient (d * m) : ℝ) ≤ (x d : ℝ) / 1000000 := by
@@ -3043,9 +2997,8 @@ theorem exists_prime_set_from_theta_lower_and_brun_titchmarsh_bounds (D : Finset
           _ = (1 / 1000000 : ℝ) * (x d : ℝ) := by ring
       simpa only [mul_div_assoc] using hdiv
     have hrawAtY :=
-      primeCountInProgression_ge_half_minus_epsilon_main_term_of_theta_lower (x d) (d * m)
-        (progressionCoprimeResidue d m l (hdm d hdD)) (hx d hdD) hqPos (1 / 1000000 : ℝ) hrawError
-        (htheta d hdD)
+      progressionCount_ge_half_sub_eps (x d) (d * m) (progressionCoprimeResidue d m l (hdm d hdD))
+        (hx d hdD) hqPos (1 / 1000000 : ℝ) hrawError (htheta d hdD)
     have hxOne : 1 < x d := lt_of_lt_of_le (by norm_num only) (hx d hdD)
     have hlogY : 0 < Real.log (x d : ℝ) := Real.log_pos (by exact_mod_cast hxOne)
     have hlogCompare : Real.log (x d : ℝ) ≤ Real.log (xmax : ℝ) :=
@@ -3075,9 +3028,7 @@ theorem exists_prime_set_from_theta_lower_and_brun_titchmarsh_bounds (D : Finset
         (primeCountInProgression (x d) (d * m) (progressionCoprimeResidue d m l (hdm d hdD)) :
           ℝ) := by
       exact hmainRaw ▸ hrawLower
-    have hbad :=
-      badQuotientPrimeCountInProgression_le_sum_prime_factor_crt_progressions (x d) d m l L
-        (hpos d hdD) hL (hdm d hdD) hlm hLm
+    have hbad := badQuotientCount_le_factor_crt (x d) d m l L (hpos d hdD) hL (hdm d hdD) hlm hLm
     have hbadReal :
       (badQuotientPrimeCountInProgression (x d) d m l L (hdm d hdD) : ℝ) ≤
         (∑ q ∈ L.primeFactors.attach,
@@ -3088,8 +3039,8 @@ theorem exists_prime_set_from_theta_lower_and_brun_titchmarsh_bounds (D : Finset
             ℝ)) := by
       exact_mod_cast hbad
     have hsum :=
-      sum_primeFactor_crt_progression_counts_le_reciprocal_sum_multiple_main_term (x d) d m l L
-        progressionCoefficient (hdm d hdD) hLm (mainTerm d) (hBT d hdD)
+      factor_crt_sum_le_reciprocal_mainTerm (x d) d m l L progressionCoefficient (hdm d hdD) hLm
+        (mainTerm d) (hBT d hdD)
     have hsumBound :
       (∑ q ∈ L.primeFactors.attach,
           (primeCountInProgression (x d) (d * q.val * m)
@@ -3107,18 +3058,16 @@ theorem exists_prime_set_from_theta_lower_and_brun_titchmarsh_bounds (D : Finset
         agpFifthPowerRawPrimeCountCoefficient * mainTerm d := by
       calc
         c + (badQuotientPrimeCountInProgression (x d) d m l L (hdm d hdD) : ℝ) ≤
-            agpFifthPowerAverageCoefficientOfProgressionBound progressionCoefficient
-                  reciprocalBound *
-                mainTerm d +
+            fifthPowerProgressionAverageCoeff progressionCoefficient reciprocalBound * mainTerm d +
               progressionCoefficient * mainTerm d * reciprocalBound :=
           by exact add_le_add (htarget d hdD) (le_trans hbadReal hsumBound)
         _ = agpFifthPowerRawPrimeCountCoefficient * mainTerm d := by
-          rw [agpFifthPowerAverageCoefficientOfProgressionBound]
+          rw [fifthPowerProgressionAverageCoeff]
           ring
     exact le_trans hmargin hraw
   exact
-    exists_prime_set_from_crt_count_with_bad_quotient_allowance D x xmax Kmax m l L T c hpos hdm hlm
-      hcut hcommon hlower hrawAllowance
+    exists_primes_of_crt_badAllowance D x xmax Kmax m l L T c hpos hdm hlm hcut hcommon hlower
+      hrawAllowance
 
 /--
 Inputs: the fifth-power scale `X^5`, divisors `d ≤ X^2`, theta lower bounds
@@ -3136,11 +3085,10 @@ its uniform `2/9` coefficient.
 Role: this packages the fixed-scale analytic inputs at the finite prime-set
 endpoint used by the AGP supply construction.
 -/
-theorem exists_prime_set_from_agp_fifth_power_theta_and_brun_titchmarsh_bounds (D : Finset ℕ)
-    (X m l L T : ℕ) (progressionCoefficient reciprocalBound : ℝ)
+theorem exists_primes_fifthPower_brunTitchmarsh (D : Finset ℕ) (X m l L T : ℕ)
+    (progressionCoefficient reciprocalBound : ℝ)
     (hprogressionCoefficient : 0 ≤ progressionCoefficient)
-    (hcoeff :
-      0 < agpFifthPowerAverageCoefficientOfProgressionBound progressionCoefficient reciprocalBound)
+    (hcoeff : 0 < fifthPowerProgressionAverageCoeff progressionCoefficient reciprocalBound)
     (hX : 82944 ≤ X) (hmPos : 0 < m) (hpos : ∀ d ∈ D, 0 < d) (hd : ∀ d ∈ D, d ≤ X ^ 2)
     (hdm : ∀ d ∈ D, Nat.Coprime d m) (hlm : Nat.Coprime l m) (hL : L ≠ 0) (hLm : Nat.Coprime L m)
     (hmodulus : ∀ d ∈ D, (18000000 * ((d * m : ℕ) : ℝ)) ^ 2 ≤ ((d * X ^ 3 : ℕ) : ℝ))
@@ -3164,7 +3112,7 @@ theorem exists_prime_set_from_agp_fifth_power_theta_and_brun_titchmarsh_bounds (
                 (((d * X ^ 3 : ℕ) : ℝ) / (Nat.totient (d * m) : ℝ) / Real.log ((X ^ 5 : ℕ) : ℝ)))
     (hlower :
       ((positiveCoprimeParameters L (X ^ 3)).card * T : ℕ) <
-        (agpFifthPowerAverageCoefficientOfProgressionBound progressionCoefficient reciprocalBound *
+        (fifthPowerProgressionAverageCoeff progressionCoefficient reciprocalBound *
             (((X : ℝ) ^ 3 / (m : ℝ)) / Real.log ((X ^ 5 : ℕ) : ℝ))) *
           (D.card : ℝ)) :
     ∃ k ∈ positiveCoprimeParameters L (X ^ 3),
@@ -3172,7 +3120,7 @@ theorem exists_prime_set_from_agp_fifth_power_theta_and_brun_titchmarsh_bounds (
         T < P.card ∧ ∀ p ∈ P, Nat.Prime p ∧ p ≤ X ^ 5 ∧ p % m = l % m ∧ ∃ d ∈ D, p = d * k + 1 := by
   let x : ℕ → ℕ := fun d => d * X ^ 3
   let c : ℝ :=
-    agpFifthPowerAverageCoefficientOfProgressionBound progressionCoefficient reciprocalBound *
+    fifthPowerProgressionAverageCoeff progressionCoefficient reciprocalBound *
       (((X : ℝ) ^ 3 / (m : ℝ)) / Real.log ((X ^ 5 : ℕ) : ℝ))
   have hXtwo : 2 ≤ X := le_trans (by norm_num only : 2 ≤ 82944) hX
   have hXfive : 2 ≤ X ^ 5 := by
@@ -3201,16 +3149,16 @@ theorem exists_prime_set_from_agp_fifth_power_theta_and_brun_titchmarsh_bounds (
   have htarget :
     ∀ d ∈ D,
       c ≤
-        agpFifthPowerAverageCoefficientOfProgressionBound progressionCoefficient reciprocalBound *
+        fifthPowerProgressionAverageCoeff progressionCoefficient reciprocalBound *
           ((x d : ℝ) / (Nat.totient (d * m) : ℝ) / Real.log ((X ^ 5 : ℕ) : ℝ)) := by
     intro d hdD
     simpa only [c, x, Nat.cast_pow] using
-      agp_fifth_power_main_term_over_average_lower_of_progression_bound X d m progressionCoefficient
-        reciprocalBound hXtwo (hpos d hdD) hmPos hcoeff
+      fifthPower_progression_mainTerm_le X d m progressionCoefficient reciprocalBound hXtwo
+        (hpos d hdD) hmPos hcoeff
   exact
-    exists_prime_set_from_theta_lower_and_brun_titchmarsh_bounds D x (X ^ 5) (X ^ 3) m l L T c
-      progressionCoefficient reciprocalBound hprogressionCoefficient hXfive hmPos hpos hdm hlm hcut
-      hcommon hx hL hLm hmodulus htheta hrecip hBT htarget hlower
+    exists_primes_of_theta_brunTitchmarsh D x (X ^ 5) (X ^ 3) m l L T c progressionCoefficient
+      reciprocalBound hprogressionCoefficient hXfive hmPos hpos hdm hlm hcut hcommon hx hL hLm
+      hmodulus htheta hrecip hBT htarget hlower
 
 /--
 Input: positive real parameters `c` and `A`, nonnegative `q`, and separate
@@ -3303,18 +3251,17 @@ class `l mod m`, represented by the large exceptional-free divisors; every
 representing divisor avoids every exceptional modulus in the CRT modulus.
 
 Proof: convert the loss-inclusive divisor bound using the uniform count `Dexc`
-and `exists_lt_largeExceptionalFreePart_card_of_exceptional_count_bound`, apply
+and `largeExceptional_count_card_lt`, apply
 the fixed-scale prime-set theorem, and use modulus-aware factor removal to
 prove exceptional-modulus avoidance.
 
 Role: this combines the finite exceptional-divisor loss with the analytic
 progression-count endpoint.
 -/
-theorem exists_prime_set_from_agp_fifth_power_exceptional_loss_theta_and_brun_titchmarsh_bounds
-    (E : Finset ℕ) (X m l L y q Dexc T : ℕ) (progressionCoefficient reciprocalBound : ℝ)
+theorem exists_primes_fifthPower_exceptional_loss (E : Finset ℕ) (X m l L y q Dexc T : ℕ)
+    (progressionCoefficient reciprocalBound : ℝ)
     (hprogressionCoefficient : 0 ≤ progressionCoefficient)
-    (hcoeff :
-      0 < agpFifthPowerAverageCoefficientOfProgressionBound progressionCoefficient reciprocalBound)
+    (hcoeff : 0 < fifthPowerProgressionAverageCoeff progressionCoefficient reciprocalBound)
     (hX : 82944 ≤ X) (hmPos : 0 < m) (hL : L ≠ 0) (hSquarefree : Squarefree L)
     (hLm : Nat.Coprime L m) (hE : ∀ e ∈ E, 1 < e) (hEm : ∀ e ∈ E, ¬e ∣ m) (hEcard : E.card ≤ Dexc)
     (hpos : ∀ d ∈ largeRestrictedDivisors (exceptionalFreePartForModulus L E m) y q, 0 < d)
@@ -3344,12 +3291,11 @@ theorem exists_prime_set_from_agp_fifth_power_exceptional_loss_theta_and_brun_ti
                 (((d * X ^ 3 : ℕ) : ℝ) / (Nat.totient (d * m) : ℝ) / Real.log ((X ^ 5 : ℕ) : ℝ)))
     (hloss :
       ((((positiveCoprimeParameters L (X ^ 3)).card * T : ℕ) : ℝ) +
-            (agpFifthPowerAverageCoefficientOfProgressionBound progressionCoefficient
-                  reciprocalBound *
+            (fifthPowerProgressionAverageCoeff progressionCoefficient reciprocalBound *
                 (((X : ℝ) ^ 3 / (m : ℝ)) / Real.log ((X ^ 5 : ℕ) : ℝ))) *
               (q + 1 : ℝ)) *
           (2 ^ Dexc : ℝ) <
-        (agpFifthPowerAverageCoefficientOfProgressionBound progressionCoefficient reciprocalBound *
+        (fifthPowerProgressionAverageCoeff progressionCoefficient reciprocalBound *
             (((X : ℝ) ^ 3 / (m : ℝ)) / Real.log ((X ^ 5 : ℕ) : ℝ))) *
           ((restrictedDivisors L y).card : ℝ)) :
     ∃ k ∈ positiveCoprimeParameters L (X ^ 3),
@@ -3363,7 +3309,7 @@ theorem exists_prime_set_from_agp_fifth_power_exceptional_loss_theta_and_brun_ti
                 p = d * k + 1 ∧ ∀ e ∈ E, ¬e ∣ d * m := by
   let D := largeRestrictedDivisors (exceptionalFreePartForModulus L E m) y q
   let c : ℝ :=
-    agpFifthPowerAverageCoefficientOfProgressionBound progressionCoefficient reciprocalBound *
+    fifthPowerProgressionAverageCoeff progressionCoefficient reciprocalBound *
       (((X : ℝ) ^ 3 / (m : ℝ)) / Real.log ((X ^ 5 : ℕ) : ℝ))
   have hXtwo : 2 ≤ X := le_trans (by norm_num only : 2 ≤ 82944) hX
   have hXfive : 1 < X ^ 5 := by
@@ -3378,15 +3324,15 @@ theorem exists_prime_set_from_agp_fifth_power_exceptional_loss_theta_and_brun_ti
   have hTnonneg : 0 ≤ (((positiveCoprimeParameters L (X ^ 3)).card * T : ℕ) : ℝ) := by
     exact_mod_cast Nat.zero_le _
   have hlower' :=
-    exists_lt_largeExceptionalFreePart_card_of_exceptional_count_bound L E m y q Dexc hL hSquarefree
-      hEcard (((positiveCoprimeParameters L (X ^ 3)).card * T : ℕ) : ℝ) c (le_of_lt hcPos) hTnonneg
+    largeExceptional_count_card_lt L E m y q Dexc hL hSquarefree hEcard
+      (((positiveCoprimeParameters L (X ^ 3)).card * T : ℕ) : ℝ) c (le_of_lt hcPos) hTnonneg
       (by simpa only [c] using hloss)
   have hlower : ((positiveCoprimeParameters L (X ^ 3)).card * T : ℕ) < c * (D.card : ℝ) := by
     simpa only [D, c] using hlower'
   obtain ⟨k, hk, P, hPcard, hP⟩ :=
-    exists_prime_set_from_agp_fifth_power_theta_and_brun_titchmarsh_bounds D X m l L T
-      progressionCoefficient reciprocalBound hprogressionCoefficient hcoeff hX hmPos hpos hd hdm hlm
-      hL hLm hmodulus htheta hrecip hBT hlower
+    exists_primes_fifthPower_brunTitchmarsh D X m l L T progressionCoefficient reciprocalBound
+      hprogressionCoefficient hcoeff hX hmPos hpos hd hdm hlm hL hLm hmodulus htheta hrecip hBT
+      hlower
   let Q := selectedExceptionalPrimeFactorsForModulus L E m
   have hQfixed : selectedExceptionalPrimeFactors L Q = Q :=
     selectedExceptionalPrimeFactorsForModulus_fixed L E m hL
@@ -3422,7 +3368,7 @@ the theta lower bound, then apply the existing finite AGP averaging theorem.
 Role: this is the finite endpoint for the distribution estimate in paper95
 Theorem 2.1 once its range and exceptional-set hypotheses have been verified.
 -/
-theorem exists_prime_set_from_relative_error_and_brun_titchmarsh_bounds (D E : Finset ℕ) (x : ℕ → ℕ)
+theorem exists_primes_relativeError_brunTitchmarsh (D E : Finset ℕ) (x : ℕ → ℕ)
     (xmax Kmax m l L T qcut C : ℕ) (c epsilon reciprocalBound : ℝ) (hxmax : 2 ≤ xmax)
     (hmPos : 0 < m) (hepsilonHalf : epsilon ≤ 1 / 2) (hpos : ∀ d ∈ D, 0 < d)
     (hdm : ∀ d ∈ D, Nat.Coprime d m) (hlm : Nat.Coprime l m) (hcut : ∀ d ∈ D, x d ≤ d * Kmax + 1)
@@ -3470,15 +3416,15 @@ theorem exists_prime_set_from_relative_error_and_brun_titchmarsh_bounds (D E : F
             (progressionCoprimeResidue d m l (hdm d hdD)) := by
     intro d hdD
     exact
-      thetaInProgressionReal_ge_half_main_term_of_relative_error (x d : ℝ) (d * m)
+      theta_ge_half_main_of_relative_error (x d : ℝ) (d * m)
         (progressionCoprimeResidue d m l (hdm d hdD)) epsilon
         (div_nonneg (by exact_mod_cast (Nat.zero_le (x d)))
           (by exact_mod_cast (Nat.zero_le (Nat.totient (d * m)))))
         hepsilonHalf (hrelative d hdD)
   obtain ⟨k, hk, P, hPcard, hPproperties⟩ :=
-    exists_prime_set_from_theta_lower_and_brun_titchmarsh_bounds D x xmax Kmax m l L T c (40 / 3)
-      reciprocalBound (by norm_num only) hxmax hmPos hpos hdm hlm hcut hcommon hx hL hLm hmodulus
-      htheta hrecip hBT htarget hlower
+    exists_primes_of_theta_brunTitchmarsh D x xmax Kmax m l L T c (40 / 3) reciprocalBound
+      (by norm_num only) hxmax hmPos hpos hdm hlm hcut hcommon hx hL hLm hmodulus htheta hrecip hBT
+      htarget hlower
   refine ⟨k, hk, P, hPcard, ?_⟩
   intro p hp
   obtain ⟨hpPrime, hpx, hpm, d, hdD, hpeq⟩ := hPproperties p hp
@@ -3519,8 +3465,7 @@ theorem
     (E : Finset ℕ) (X x₀ L y q Dexc T : ℕ) (epsilon progressionCoefficient reciprocalBound : ℝ)
     (hprogressionCoefficient : 0 ≤ progressionCoefficient) (hX : 2 ^ 56 ≤ X)
     (hthreshold : x₀ ≤ X ^ 5)
-    (hcoeff :
-      0 < agpFifthPowerAverageCoefficientOfProgressionBound progressionCoefficient reciprocalBound)
+    (hcoeff : 0 < fifthPowerProgressionAverageCoeff progressionCoefficient reciprocalBound)
     (hL : L ≠ 0) (hSquarefree : Squarefree L) (hLm : Nat.Coprime L 4)
     (hElog : ∀ e ∈ E, Real.log ((X ^ 5 : ℕ) : ℝ) < (e : ℝ)) (hEcard : E.card ≤ Dexc)
     (hpos : ∀ d ∈ largeRestrictedDivisors (exceptionalFreePartForModulus L E 4) y q, 0 < d)
@@ -3551,12 +3496,11 @@ theorem
                 (((d * X ^ 3 : ℕ) : ℝ) / (Nat.totient (d * 4) : ℝ) / Real.log ((X ^ 5 : ℕ) : ℝ)))
     (hloss :
       ((((positiveCoprimeParameters L (X ^ 3)).card * T : ℕ) : ℝ) +
-            (agpFifthPowerAverageCoefficientOfProgressionBound progressionCoefficient
-                  reciprocalBound *
+            (fifthPowerProgressionAverageCoeff progressionCoefficient reciprocalBound *
                 (((X : ℝ) ^ 3 / 4) / Real.log ((X ^ 5 : ℕ) : ℝ))) *
               (q + 1 : ℝ)) *
           (2 ^ Dexc : ℝ) <
-        (agpFifthPowerAverageCoefficientOfProgressionBound progressionCoefficient reciprocalBound *
+        (fifthPowerProgressionAverageCoeff progressionCoefficient reciprocalBound *
             (((X : ℝ) ^ 3 / 4) / Real.log ((X ^ 5 : ℕ) : ℝ))) *
           ((restrictedDivisors L y).card : ℝ)) :
     ∃ k ∈ positiveCoprimeParameters L (X ^ 3),
@@ -3571,8 +3515,7 @@ theorem
   have hXweak : 82944 ≤ X := by
     have hnum : 82944 ≤ 2 ^ 56 := by norm_num only
     exact le_trans hnum hX
-  have hEconditions :=
-    paper95_exceptional_moduli_conditions_for_four_of_nat_fifth_power_scale E X hX hElog
+  have hEconditions := paper95_exceptional_conditions_of_fifth_power E X hX hElog
   have hXstrong : 5184000000000000 ≤ X := by
     have hnum : 5184000000000000 ≤ 2 ^ 56 := by norm_num only
     exact le_trans hnum hX
@@ -3581,8 +3524,8 @@ theorem
       (18000000 * ((d * 4 : ℕ) : ℝ)) ^ 2 ≤ ((d * X ^ 3 : ℕ) : ℝ) := by
     intro d hdD
     have hmodNat :=
-      progressionTheta_millionth_modulus_square_bound_of_agp_fifth_power_scale X d (4 * d) hXstrong
-        (hd d hdD) (by exact le_rfl)
+      modulus_sq_bound_18000000_of_fifth_power_scale X d (4 * d) hXstrong (hd d hdD)
+        (by exact le_rfl)
     have hmod : (18000000 * ((4 * d : ℕ) : ℝ)) ^ 2 ≤ ((d * X ^ 3 : ℕ) : ℝ) := by
       exact_mod_cast hmodNat
     simpa only [Nat.mul_comm d 4] using hmod
@@ -3595,16 +3538,16 @@ theorem
     intro d hdD
     have hrange := paper95_modulus_range_of_nat_fifth_power_scale X d hX (hd d hdD)
     exact
-      thetaInProgressionReal_ge_half_main_term_of_relative_error ((d * X ^ 3 : ℕ) : ℝ) (d * 4)
+      theta_ge_half_main_of_relative_error ((d * X ^ 3 : ℕ) : ℝ) (d * 4)
         (progressionCoprimeResidue d 4 3 (hdm d hdD)) epsilon
         (div_nonneg (by exact_mod_cast (Nat.zero_le (d * X ^ 3)))
           (by exact_mod_cast (Nat.zero_le (Nat.totient (d * 4)))))
         hepsilon (hpaper d hdD hthreshold hrange)
   exact
-    exists_prime_set_from_agp_fifth_power_exceptional_loss_theta_and_brun_titchmarsh_bounds E X 4 3
-      L y q Dexc T progressionCoefficient reciprocalBound hprogressionCoefficient hcoeff hXweak
-      (by norm_num only) hL hSquarefree hLm hEconditions.1 hEconditions.2 hEcard hpos hd hdm
-      (by norm_num only) hmodulus htheta hrecip hBT hloss
+    exists_primes_fifthPower_exceptional_loss E X 4 3 L y q Dexc T progressionCoefficient
+      reciprocalBound hprogressionCoefficient hcoeff hXweak (by norm_num only) hL hSquarefree hLm
+      hEconditions.1 hEconditions.2 hEcard hpos hd hdm (by norm_num only) hmodulus htheta hrecip hBT
+      hloss
 
 /-
 Inputs: the AGP modulus and Proposition 1.5 count fields, fixed-scale theta
@@ -3621,13 +3564,11 @@ existing Proposition 1.5 count-data constructor.
 
 Role: this closes the fixed-scale theta interface to progression-count data.
 -/
-noncomputable def agpProgressionCountData_of_fifth_power_theta_and_brun_titchmarsh (W : Finset ℕ)
-    (C : ℕ) (c₀ : ℝ) (x₀ X x₂₁ y Dexc T : ℕ) (E : Finset ℕ)
-    (progressionCoefficient reciprocalBound : ℝ)
+noncomputable def countData_fifthPower_brunTitchmarsh (W : Finset ℕ) (C : ℕ) (c₀ : ℝ)
+    (x₀ X x₂₁ y Dexc T : ℕ) (E : Finset ℕ) (progressionCoefficient reciprocalBound : ℝ)
     (hprogressionCoefficient : 0 ≤ progressionCoefficient)
     (aux : AGPProgressionAuxiliaryData W C c₀ x₀) (hX : 2 ^ 56 ≤ X) (hthresholdSeed : x₂₁ ≤ x₀)
-    (hcoeff :
-      0 < agpFifthPowerAverageCoefficientOfProgressionBound progressionCoefficient reciprocalBound)
+    (hcoeff : 0 < fifthPowerProgressionAverageCoeff progressionCoefficient reciprocalBound)
     (hEconditions : (∀ e ∈ E, 1 < e) ∧ ∀ e ∈ E, ¬e ∣ 4) (hEcard : E.card ≤ Dexc)
     (hSeedScale : aux.x = X ^ 5) (hcut : y = reliableProp15DivisorCutoff (X ^ 5))
     (hT :
@@ -3662,7 +3603,7 @@ noncomputable def agpProgressionCountData_of_fifth_power_theta_and_brun_titchmar
                 (((d * X ^ 3 : ℕ) : ℝ) / (Nat.totient (d * 4) : ℝ) / Real.log ((X ^ 5 : ℕ) : ℝ)))
     (hcoeffmargin :
       16 * (2 ^ Dexc : ℝ) * c₀ <
-        agpFifthPowerAverageCoefficientOfProgressionBound progressionCoefficient reciprocalBound) :
+        fifthPowerProgressionAverageCoeff progressionCoefficient reciprocalBound) :
     AGPProgressionCountData W C c₀ x₀ := by
   let L := aux.L
   let q := aux.q
@@ -3779,10 +3720,8 @@ noncomputable def agpProgressionCountData_of_fifth_power_theta_and_brun_titchmar
       intro r hr
       exact inv_nonneg.mpr (Nat.cast_nonneg r)
     exact le_trans hsum hrecip
-  have hbetaOne :
-    agpFifthPowerAverageCoefficientOfProgressionBound progressionCoefficient reciprocalBound ≤
-      1 := by
-    unfold agpFifthPowerAverageCoefficientOfProgressionBound agpFifthPowerRawPrimeCountCoefficient
+  have hbetaOne : fifthPowerProgressionAverageCoeff progressionCoefficient reciprocalBound ≤ 1 := by
+    unfold fifthPowerProgressionAverageCoeff agpFifthPowerRawPrimeCountCoefficient
     nlinarith only [hrecipNonneg, hprogressionCoefficient]
   have hXtwo : 2 ≤ X := le_trans (by norm_num only : 2 ≤ 2 ^ 56) hX
   have hXfiveLower : 3 ≤ X ^ 5 := by
@@ -3798,7 +3737,7 @@ noncomputable def agpProgressionCountData_of_fifth_power_theta_and_brun_titchmar
     le_trans (by norm_num only : (0 : ℝ) ≤ 1) hlogXfive.le
   have hmargin :
     8 * (2 ^ Dexc : ℝ) * (X : ℝ) ^ 3 * reliableProp15Coefficient c₀ 4 (X ^ 5) <
-      agpFifthPowerAverageCoefficientOfProgressionBound progressionCoefficient reciprocalBound *
+      fifthPowerProgressionAverageCoeff progressionCoefficient reciprocalBound *
         (((X : ℝ) ^ 3 / 4) / Real.log ((X ^ 5 : ℕ) : ℝ)) := by
     have hphi : Nat.totient 4 = 2 := by decide
     have hlogPos : 0 < Real.log ((X ^ 5 : ℕ) : ℝ) :=
@@ -3816,24 +3755,23 @@ noncomputable def agpProgressionCountData_of_fifth_power_theta_and_brun_titchmar
     calc
       _ = (16 * (2 ^ Dexc : ℝ) * c₀) * ((X : ℝ) ^ 3 / (4 * Real.log ((X ^ 5 : ℕ) : ℝ))) := by ring
       _ <
-          agpFifthPowerAverageCoefficientOfProgressionBound progressionCoefficient reciprocalBound *
+          fifthPowerProgressionAverageCoeff progressionCoefficient reciprocalBound *
             ((X : ℝ) ^ 3 / (4 * Real.log ((X ^ 5 : ℕ) : ℝ))) :=
         hmul
       _ =
-          agpFifthPowerAverageCoefficientOfProgressionBound progressionCoefficient reciprocalBound *
+          fifthPowerProgressionAverageCoeff progressionCoefficient reciprocalBound *
             (((X : ℝ) ^ 3 / 4) / Real.log ((X ^ 5 : ℕ) : ℝ)) :=
         by ring
   have hmargin' :
     8 * (2 ^ Dexc : ℝ) * ((X ^ 3 : ℕ) : ℝ) * b <
-      agpFifthPowerAverageCoefficientOfProgressionBound progressionCoefficient reciprocalBound *
+      fifthPowerProgressionAverageCoeff progressionCoefficient reciprocalBound *
         (((X : ℝ) ^ 3 / 4) / Real.log ((X ^ 5 : ℕ) : ℝ)) := by
     rw [hXcubeCast]
     exact hmargin
   have hmainNonneg : 0 ≤ ((X : ℝ) ^ 3 / 4) := by
     exact div_nonneg (by exact_mod_cast Nat.zero_le (X ^ 3)) (by norm_num only : (0 : ℝ) ≤ 4)
   have hbetaMain :
-    agpFifthPowerAverageCoefficientOfProgressionBound progressionCoefficient reciprocalBound *
-        ((X : ℝ) ^ 3 / 4) ≤
+    fifthPowerProgressionAverageCoeff progressionCoefficient reciprocalBound * ((X : ℝ) ^ 3 / 4) ≤
       (X : ℝ) ^ 3 / 4 :=
     calc
       _ ≤ 1 * ((X : ℝ) ^ 3 / 4) := mul_le_mul_of_nonneg_right hbetaOne hmainNonneg
@@ -3844,7 +3782,7 @@ noncomputable def agpProgressionCountData_of_fifth_power_theta_and_brun_titchmar
       _ ≤ ((X : ℝ) ^ 3 / 4) * Real.log ((X ^ 5 : ℕ) : ℝ) :=
         mul_le_mul_of_nonneg_left hlogXfive.le hmainNonneg
   have hcupper :
-    agpFifthPowerAverageCoefficientOfProgressionBound progressionCoefficient reciprocalBound *
+    fifthPowerProgressionAverageCoeff progressionCoefficient reciprocalBound *
         (((X : ℝ) ^ 3 / 4) / Real.log ((X ^ 5 : ℕ) : ℝ)) ≤
       ((X ^ 3 : ℕ) : ℝ) / 4 := by
     rw [hXcubeCast]
@@ -3852,8 +3790,7 @@ noncomputable def agpProgressionCountData_of_fifth_power_theta_and_brun_titchmar
       lt_of_lt_of_le (by norm_num only : (1 : ℝ) < 3) hXfiveReal
     calc
       _ =
-          (agpFifthPowerAverageCoefficientOfProgressionBound progressionCoefficient
-                reciprocalBound *
+          (fifthPowerProgressionAverageCoeff progressionCoefficient reciprocalBound *
               ((X : ℝ) ^ 3 / 4)) /
             Real.log ((X ^ 5 : ℕ) : ℝ) :=
         by rw [← mul_div_assoc]
@@ -3862,17 +3799,16 @@ noncomputable def agpProgressionCountData_of_fifth_power_theta_and_brun_titchmar
   have hsmall : 4 * (2 ^ Dexc : ℝ) * b ≤ 1 := by nlinarith only [hmargin', hcupper, hMpos]
   have hloss :
     ((((positiveCoprimeParameters aux.L (X ^ 3)).card * T : ℕ) : ℝ) +
-          (agpFifthPowerAverageCoefficientOfProgressionBound progressionCoefficient
-                reciprocalBound *
+          (fifthPowerProgressionAverageCoeff progressionCoefficient reciprocalBound *
               (((X : ℝ) ^ 3 / 4) / Real.log ((X ^ 5 : ℕ) : ℝ))) *
             ((aux.q : ℝ) + 1)) *
         (2 ^ Dexc : ℝ) <
-      (agpFifthPowerAverageCoefficientOfProgressionBound progressionCoefficient reciprocalBound *
+      (fifthPowerProgressionAverageCoeff progressionCoefficient reciprocalBound *
           (((X : ℝ) ^ 3 / 4) / Real.log ((X ^ 5 : ℕ) : ℝ))) *
         H := by
     have hbudget :=
       agp_exceptional_loss_budget_of_source_count
-        (agpFifthPowerAverageCoefficientOfProgressionBound progressionCoefficient reciprocalBound *
+        (fifthPowerProgressionAverageCoeff progressionCoefficient reciprocalBound *
           (((X : ℝ) ^ 3 / 4) / Real.log ((X ^ 5 : ℕ) : ℝ)))
         H ((positiveCoprimeParameters aux.L (X ^ 3)).card : ℝ) ((X ^ 3 : ℕ) : ℝ) (T : ℝ) (aux.q : ℝ)
         (2 ^ Dexc : ℝ) b B hApos hMpos hHpos hbpos hqnonneg hK (by exact_mod_cast Nat.zero_le T)
@@ -3899,17 +3835,16 @@ noncomputable def agpProgressionCountData_of_fifth_power_theta_and_brun_titchmar
       (18000000 * ((d * 4 : ℕ) : ℝ)) ^ 2 ≤ ((d * X ^ 3 : ℕ) : ℝ) := by
     intro d hdD
     have hmodNat :=
-      progressionTheta_millionth_modulus_square_bound_of_agp_fifth_power_scale X d (4 * d) hXstrong
-        (hd d hdD) (by exact le_rfl)
+      modulus_sq_bound_18000000_of_fifth_power_scale X d (4 * d) hXstrong (hd d hdD)
+        (by exact le_rfl)
     have hmod : (18000000 * ((4 * d : ℕ) : ℝ)) ^ 2 ≤ ((d * X ^ 3 : ℕ) : ℝ) := by
       exact_mod_cast hmodNat
     simpa only [Nat.mul_comm d 4] using hmod
   let hprimeSet :=
-    exists_prime_set_from_agp_fifth_power_exceptional_loss_theta_and_brun_titchmarsh_bounds E X 4 3
-      aux.L y aux.q Dexc T progressionCoefficient reciprocalBound hprogressionCoefficient hcoeff
-      hXweak (by norm_num only) (Nat.ne_of_gt (lt_trans Nat.zero_lt_two hL)) hSeedInput.1
-      hSeedInput.2.1 hEconditions.1 hEconditions.2 hEcard hpos hd hdm (by norm_num only) hmodulus
-      htheta hrecip hBT hloss
+    exists_primes_fifthPower_exceptional_loss E X 4 3 aux.L y aux.q Dexc T progressionCoefficient
+      reciprocalBound hprogressionCoefficient hcoeff hXweak (by norm_num only)
+      (Nat.ne_of_gt (lt_trans Nat.zero_lt_two hL)) hSeedInput.1 hSeedInput.2.1 hEconditions.1
+      hEconditions.2 hEcard hpos hd hdm (by norm_num only) hmodulus htheta hrecip hBT hloss
   let k := Classical.choose hprimeSet
   have hk : k ∈ positiveCoprimeParameters L (X ^ 3) := (Classical.choose_spec hprimeSet).1
   let hPExists :
@@ -3938,8 +3873,8 @@ noncomputable def agpProgressionCountData_of_fifth_power_theta_and_brun_titchmar
     obtain ⟨hpPrime, hpx, hpm, d, hdD, hpeq, _⟩ := hP p hp
     exact ⟨hpPrime, hpx, by simpa only using hpm, d, hdD, hpeq⟩
   exact
-    agpProgressionCountData_of_large_exceptionalFreePart_prime_set W C c₀ x₀ L y q (X ^ 5) k T 4 E P
-      hL hSeedInput.1 hLargeEnough (hProp15Input k hk) hCq hfactor hlambda hkFields.1 hkFields.2.2
-      hlower hcount hP' hPcard
+    countData_of_large_exceptional_primes W C c₀ x₀ L y q (X ^ 5) k T 4 E P hL hSeedInput.1
+      hLargeEnough (hProp15Input k hk) hCq hfactor hlambda hkFields.1 hkFields.2.2 hlower hcount hP'
+      hPcard
 
 end PseudoPrime.AnalyticNumberTheory.AGP

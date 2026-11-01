@@ -92,7 +92,7 @@ theorem jacobiPowerCharacter_apply_generator_pow {q P x : ℕ} {R : Type*} [Comm
 
 /-- A successful executable discrete-log lookup is evaluated by the character as the matching
 root power. This connects the Option table certificate to the mathematical character value. -/
-theorem jacobiPowerCharacter_apply_of_discreteLogTableSearch {q P e : ℕ} {R : Type*} [CommRing R]
+theorem jacobiPowerCharacter_apply_of_logTable {q P e : ℕ} {R : Type*} [CommRing R]
     (hq : Nat.Prime q) (g target : (ZMod q)ˣ) (hg : IsPrimitiveRoot g (q - 1)) (ζ : Rˣ)
     (hζ : (ζ : R) ^ P = 1) (hP : P ∣ q - 1) (hlookup : discreteLogTableSearch g target = some e) :
     jacobiPowerCharacter hq g hg ζ hζ hP (target : ZMod q) = (ζ : R) ^ e := by
@@ -363,7 +363,7 @@ theorem jacobiPowerCharacter_apply_oneSub_of_success {q P x e : ℕ} {R : Type*}
     simp only [jacobiOneSubLogFromTable, htarget, Option.bind_some] at hlog
     exact hlog
   rw [← hvalue]
-  exact jacobiPowerCharacter_apply_of_discreteLogTableSearch hq g target hg ζ hζ hP htable
+  exact jacobiPowerCharacter_apply_of_logTable hq g target hg ζ hζ hP htable
 
 /--
 For a valid prime-field Jacobi index and a successful one-subtraction logarithm lookup,
@@ -390,7 +390,7 @@ def jacobiExponentFromOneSubTable {q P : ℕ} (g : (ZMod q)ˣ) (a b x : ℕ) : O
 /-- For a prime auxiliary modulus and a primitive-root generator, the combined unit-lift and
 table pipeline succeeds throughout the Jacobi index range. Its result is the prescribed reduced
 exponent and remains in the coefficient interval when the period is positive. -/
-theorem jacobiExponentFromOneSubTable_some_of_primitiveRoot {q P a b : ℕ} (hq : Nat.Prime q)
+theorem jacobiExponentFromTable_some_of_primitiveRoot {q P a b : ℕ} (hq : Nat.Prime q)
     (g : (ZMod q)ˣ) (hg : IsPrimitiveRoot g (q - 1)) {x : ℕ} (hx0 : 0 < x) (hx : x < q - 1)
     (hP : 0 < P) :
     ∃ target fx e,
@@ -431,8 +431,8 @@ def jacobiExponentBatchSearch {q P : ℕ} (g : (ZMod q)ˣ) (a b : ℕ) : List �
 /-- A prime auxiliary modulus and primitive-root generator make the batch search succeed for any
 finite list of indices lying strictly between zero and `q - 1`. This is the executable finite
 Option interface used before assembling the Jacobi coefficient sum. -/
-theorem jacobiExponentBatchSearch_exists_of_valid_indices {q P a b : ℕ} (hq : Nat.Prime q)
-    (g : (ZMod q)ˣ) (hg : IsPrimitiveRoot g (q - 1)) (hP : 0 < P) {xs : List ℕ}
+theorem jacobiExponentBatch_exists_of_valid_indices {q P a b : ℕ} (hq : Nat.Prime q) (g : (ZMod q)ˣ)
+    (hg : IsPrimitiveRoot g (q - 1)) (hP : 0 < P) {xs : List ℕ}
     (hvalid : ∀ x, x ∈ xs → 0 < x ∧ x < q - 1) :
     ∃ exponents, jacobiExponentBatchSearch (P := P) g a b xs = some exponents := by
   induction xs with
@@ -440,8 +440,8 @@ theorem jacobiExponentBatchSearch_exists_of_valid_indices {q P a b : ℕ} (hq : 
   | cons x xs ih =>
     have hxmem : x ∈ x :: xs := List.mem_cons.mpr (Or.inl rfl)
     obtain ⟨target, fx, exponent, _, _, hpoint, _, _, _, _⟩ :=
-      jacobiExponentFromOneSubTable_some_of_primitiveRoot (a := a) (b := b) hq g hg
-        (hvalid x hxmem).1 (hvalid x hxmem).2 hP
+      jacobiExponentFromTable_some_of_primitiveRoot (a := a) (b := b) hq g hg (hvalid x hxmem).1
+        (hvalid x hxmem).2 hP
     have htail : ∀ y, y ∈ xs → 0 < y ∧ y < q - 1 := by
       intro y hy
       exact hvalid y (List.mem_cons.mpr (Or.inr hy))
@@ -502,9 +502,8 @@ theorem jacobiOneSubLogBatchSearch_some_spec {q : ℕ} (g : (ZMod q)ˣ) {xs loga
 
 /-- Under a prime auxiliary modulus and primitive-root generator, every finite list of valid
 Jacobi indices has a complete ordered list of discrete logarithms. -/
-theorem jacobiOneSubLogBatchSearch_exists_of_valid_indices {q : ℕ} (hq : Nat.Prime q)
-    (g : (ZMod q)ˣ) (hg : IsPrimitiveRoot g (q - 1)) {xs : List ℕ}
-    (hvalid : ∀ x, x ∈ xs → 0 < x ∧ x < q - 1) :
+theorem jacobiOneSubLogBatch_exists_of_valid_indices {q : ℕ} (hq : Nat.Prime q) (g : (ZMod q)ˣ)
+    (hg : IsPrimitiveRoot g (q - 1)) {xs : List ℕ} (hvalid : ∀ x, x ∈ xs → 0 < x ∧ x < q - 1) :
     ∃ logarithms, jacobiOneSubLogBatchSearch g xs = some logarithms := by
   induction xs with
   | nil => exact ⟨[], rfl⟩
@@ -788,8 +787,7 @@ theorem jacobiOneSubLogBatchSearch_exists_of_prime_range {q : ℕ} (hq : Nat.Pri
         List.Forall₂ (fun x logarithm => jacobiOneSubLogFromTable g x = some logarithm)
           (jacobiIndexList q) logarithms := by
   obtain ⟨logarithms, hsearch⟩ :=
-    jacobiOneSubLogBatchSearch_exists_of_valid_indices hq g hg
-      (fun x hx => jacobiIndexList_mem_valid hx)
+    jacobiOneSubLogBatch_exists_of_valid_indices hq g hg (fun x hx => jacobiIndexList_mem_valid hx)
   exact ⟨logarithms, hsearch, jacobiOneSubLogBatchSearch_some_spec g hsearch⟩
 
 /--
@@ -939,9 +937,9 @@ theorem jacobiPowerCharacter_jacobiSum_eq_coefficients {q P a b : ℕ} {R : Type
 
 /-- Over the full valid exponent interval, the powered character terms sum to exactly the
 root-power sum indexed by the totalized values of the successful Option logarithm search. -/
-theorem jacobiPowerCharacter_weightedTermSum_eq_logPowerSum {q P a b : ℕ} {R : Type*} [CommRing R]
-    (hq : Nat.Prime q) (g : (ZMod q)ˣ) (hg : IsPrimitiveRoot g (q - 1)) (ζ : Rˣ)
-    (hζ : (ζ : R) ^ P = 1) (hP : P ∣ q - 1) [Fintype { x : ℕ // 0 < x ∧ x < q - 1 }] :
+theorem jacobiWeightedSum_eq_logPowerSum {q P a b : ℕ} {R : Type*} [CommRing R] (hq : Nat.Prime q)
+    (g : (ZMod q)ˣ) (hg : IsPrimitiveRoot g (q - 1)) (ζ : Rˣ) (hζ : (ζ : R) ^ P = 1)
+    (hP : P ∣ q - 1) [Fintype { x : ℕ // 0 < x ∧ x < q - 1 }] :
     (∑ x : { x : ℕ // 0 < x ∧ x < q - 1 },
         (jacobiPowerCharacter hq g hg ζ hζ hP ((g ^ x.1 : (ZMod q)ˣ) : ZMod q)) ^ a *
           (jacobiPowerCharacter hq g hg ζ hζ hP (1 - (g : ZMod q) ^ x.1)) ^ b) =
@@ -954,9 +952,8 @@ theorem jacobiPowerCharacter_weightedTermSum_eq_logPowerSum {q P a b : ℕ} {R :
 
 /-- For a prime auxiliary modulus, the ordered Option batch search returns exactly the list of
 pointwise logarithm values on every list of valid Jacobi indices. -/
-theorem jacobiOneSubLogBatchSearch_exists_value_map_of_valid_indices {q : ℕ} (hq : Nat.Prime q)
-    (g : (ZMod q)ˣ) (hg : IsPrimitiveRoot g (q - 1)) {xs : List ℕ}
-    (hvalid : ∀ x, x ∈ xs → 0 < x ∧ x < q - 1) :
+theorem oneSubLogBatch_exists_value_map_of_valid_indices {q : ℕ} (hq : Nat.Prime q) (g : (ZMod q)ˣ)
+    (hg : IsPrimitiveRoot g (q - 1)) {xs : List ℕ} (hvalid : ∀ x, x ∈ xs → 0 < x ∧ x < q - 1) :
     ∃ logarithms,
       jacobiOneSubLogBatchSearch g xs = some logarithms ∧
         logarithms = xs.map (jacobiOneSubLogValue g) := by
@@ -988,18 +985,18 @@ theorem jacobiOneSubLogBatchSearch_exists_value_map_of_valid_indices {q : ℕ} (
 
 /-- On the complete Jacobi index range, the Option batch result is the ordered list of the
 pointwise `1 - g^x` logarithm values consumed by the coefficient-sum interface. -/
-theorem jacobiOneSubLogBatchSearch_exists_value_map_of_prime_range {q : ℕ} (hq : Nat.Prime q)
-    (g : (ZMod q)ˣ) (hg : IsPrimitiveRoot g (q - 1)) :
+theorem oneSubLogBatch_exists_value_map_of_prime_range {q : ℕ} (hq : Nat.Prime q) (g : (ZMod q)ˣ)
+    (hg : IsPrimitiveRoot g (q - 1)) :
     ∃ logarithms,
       jacobiOneSubLogBatchSearch g (jacobiIndexList q) = some logarithms ∧
         logarithms = (jacobiIndexList q).map (jacobiOneSubLogValue g) := by
   exact
-    jacobiOneSubLogBatchSearch_exists_value_map_of_valid_indices hq g hg
+    oneSubLogBatch_exists_value_map_of_valid_indices hq g hg
       (fun x hx => jacobiIndexList_mem_valid hx)
 
 /-- The executable Jacobi-exponent batch returns the pointwise coefficient exponents computed
 from `jacobiOneSubLogValue` on every finite list of valid indices. -/
-theorem jacobiExponentBatchSearch_exists_value_map_of_valid_indices {q P a b : ℕ} (hq : Nat.Prime q)
+theorem exponentBatch_exists_value_map_of_valid_indices {q P a b : ℕ} (hq : Nat.Prime q)
     (g : (ZMod q)ˣ) (hg : IsPrimitiveRoot g (q - 1)) (hP : 0 < P) {xs : List ℕ}
     (hvalid : ∀ x, x ∈ xs → 0 < x ∧ x < q - 1) :
     ∃ exponents,
@@ -1010,8 +1007,8 @@ theorem jacobiExponentBatchSearch_exists_value_map_of_valid_indices {q P a b : �
   | cons x xs ih =>
     have hxmem : x ∈ x :: xs := List.mem_cons.mpr (Or.inl rfl)
     obtain ⟨target, fx, exponent, htarget, htable, hpoint, _, _, hformula, _⟩ :=
-      jacobiExponentFromOneSubTable_some_of_primitiveRoot (a := a) (b := b) hq g hg
-        (hvalid x hxmem).1 (hvalid x hxmem).2 hP
+      jacobiExponentFromTable_some_of_primitiveRoot (a := a) (b := b) hq g hg (hvalid x hxmem).1
+        (hvalid x hxmem).2 hP
     have hlog : jacobiOneSubLogFromTable g x = some fx := by
       unfold jacobiOneSubLogFromTable
       rw [htarget]
@@ -1040,14 +1037,14 @@ theorem jacobiExponentBatchSearch_exists_value_map_of_valid_indices {q P a b : �
 
 /-- The standard Jacobi range therefore supplies the exact ordered exponent list consumed by
 the coefficient-counted Jacobi sum. -/
-theorem jacobiExponentBatchSearch_exists_value_map_of_prime_range {q P a b : ℕ} (hq : Nat.Prime q)
+theorem exponentBatch_exists_value_map_of_prime_range {q P a b : ℕ} (hq : Nat.Prime q)
     (g : (ZMod q)ˣ) (hg : IsPrimitiveRoot g (q - 1)) (hP : 0 < P) :
     ∃ exponents,
       jacobiExponentBatchSearch (P := P) g a b (jacobiIndexList q) = some exponents ∧
         exponents =
           (jacobiIndexList q).map (fun x => (a * x + b * jacobiOneSubLogValue g x) % P) := by
   exact
-    jacobiExponentBatchSearch_exists_value_map_of_valid_indices hq g hg hP
+    exponentBatch_exists_value_map_of_valid_indices hq g hg hP
       (fun x hx => jacobiIndexList_mem_valid hx)
 
 /-- Sum the root powers in a successful executable Jacobi exponent batch, retaining repeated
@@ -1058,21 +1055,21 @@ def jacobiExponentListSum {R : Type*} [Semiring R] (exponents : List ℕ) (z : R
 /-- A successful prime-range exponent batch computes the coefficient-counted Jacobi sum exactly.
 This connects the executable Option result to the finite coefficient formula while preserving
 the multiplicity and order of every index. -/
-theorem jacobiExponentBatchSearch_exists_sum_eq_jacobiSum {q P a b : ℕ} (hq : Nat.Prime q)
-    (g : (ZMod q)ˣ) (hg : IsPrimitiveRoot g (q - 1)) (hP : 0 < P) {R : Type*} [Semiring R] (z : R) :
+theorem exponentBatch_exists_sum_eq_jacobiSum {q P a b : ℕ} (hq : Nat.Prime q) (g : (ZMod q)ˣ)
+    (hg : IsPrimitiveRoot g (q - 1)) (hP : 0 < P) {R : Type*} [Semiring R] (z : R) :
     ∃ exponents,
       jacobiExponentBatchSearch (P := P) g a b (jacobiIndexList q) = some exponents ∧
         jacobiExponentListSum exponents z =
           jacobiSumFromLogCoefficients q P a b (jacobiOneSubLogValue g) z := by
   obtain ⟨exponents, hsearch, hmap⟩ :=
-    jacobiExponentBatchSearch_exists_value_map_of_prime_range (a := a) (b := b) hq g hg hP
+    exponentBatch_exists_value_map_of_prime_range (a := a) (b := b) hq g hg hP
   refine ⟨exponents, hsearch, ?_⟩
   rw [jacobiExponentListSum, hmap, List.map_map]
   exact (jacobiSumFromLogCoefficients_eq_indexListSum hP (jacobiOneSubLogValue g) z).symm
 
 /-- For every prime auxiliary modulus and primitive-root generator, the complete interval of
 powered character terms is computed by the executable Option exponent batch. -/
-theorem jacobiPowerCharacter_finiteSum_eq_executableBatch {q P a b : ℕ} {R : Type*} [CommRing R]
+theorem characterFiniteSum_eq_executableBatch {q P a b : ℕ} {R : Type*} [CommRing R]
     (hq : Nat.Prime q) (g : (ZMod q)ˣ) (hg : IsPrimitiveRoot g (q - 1)) (ζ : Rˣ)
     (hζ : (ζ : R) ^ P = 1) (hPdiv : P ∣ q - 1) (hPpos : 0 < P) :
     ∃ exponents,
@@ -1082,7 +1079,7 @@ theorem jacobiPowerCharacter_finiteSum_eq_executableBatch {q P a b : ℕ} {R : T
               (jacobiPowerCharacter hq g hg ζ hζ hPdiv (1 - (g : ZMod q) ^ x)) ^ b) =
           jacobiExponentListSum exponents (ζ : R) := by
   obtain ⟨exponents, hsearch, hsum⟩ :=
-    jacobiExponentBatchSearch_exists_sum_eq_jacobiSum (a := a) (b := b) hq g hg hPpos (ζ : R)
+    exponentBatch_exists_sum_eq_jacobiSum (a := a) (b := b) hq g hg hPpos (ζ : R)
   refine ⟨exponents, hsearch, ?_⟩
   rw [jacobiPowerCharacter_finiteSum_eq_coefficients hq g hg ζ hζ hPdiv hPpos]
   exact hsum.symm
@@ -1090,7 +1087,7 @@ theorem jacobiPowerCharacter_finiteSum_eq_executableBatch {q P a b : ℕ} {R : T
 /-- The actual finite-field Jacobi sum is computed by a successful executable exponent batch.
 The finite-field character sum, coefficient aggregation, and ordered Option batch all have the
 same value at the supplied root of unity. -/
-theorem jacobiPowerCharacter_jacobiSum_eq_executableBatch {q P a b : ℕ} {R : Type*} [CommRing R]
+theorem characterJacobiSum_eq_executableBatch {q P a b : ℕ} {R : Type*} [CommRing R]
     [Fintype (ZMod q)] (hq : Nat.Prime q) (g : (ZMod q)ˣ) (hg : IsPrimitiveRoot g (q - 1)) (ζ : Rˣ)
     (hζ : (ζ : R) ^ P = 1) (hPdiv : P ∣ q - 1) (hPpos : 0 < P)
     [Finite { x : ℕ // 0 < x ∧ x < q - 1 }] :
@@ -1101,7 +1098,7 @@ theorem jacobiPowerCharacter_jacobiSum_eq_executableBatch {q P a b : ℕ} {R : T
           jacobiExponentListSum exponents (ζ : R) := by
   have : Fintype { x : ℕ // 0 < x ∧ x < q - 1 } := Fintype.ofFinite _
   obtain ⟨exponents, hsearch, hsum⟩ :=
-    jacobiPowerCharacter_finiteSum_eq_executableBatch (a := a) (b := b) hq g hg ζ hζ hPdiv hPpos
+    characterFiniteSum_eq_executableBatch (a := a) (b := b) hq g hg ζ hζ hPdiv hPpos
   refine ⟨exponents, hsearch, ?_⟩
   calc
     jacobiSum (jacobiPowerCharacter hq g hg ζ hζ hPdiv ^ a)
@@ -1119,7 +1116,7 @@ theorem jacobiPowerCharacter_jacobiSum_eq_executableBatch {q P a b : ℕ} {R : T
 /-- The actual powered-character Jacobi sum is represented by a `Fin P` coefficient array before
 cyclotomic reduction. This is the direct interface from the proved Jacobi-sum formula to the
 fixed-size coefficient-array implementation. -/
-theorem jacobiPowerCharacter_jacobiSum_eq_fin_coefficients {q P a b : ℕ} {R : Type*} [CommRing R]
+theorem characterJacobiSum_eq_fin_coefficients {q P a b : ℕ} {R : Type*} [CommRing R]
     [Fintype (ZMod q)] (hq : Nat.Prime q) (g : (ZMod q)ˣ) (hg : IsPrimitiveRoot g (q - 1)) (ζ : Rˣ)
     (hζ : (ζ : R) ^ P = 1) (hPdiv : P ∣ q - 1) (hPpos : 0 < P)
     [Finite { x : ℕ // 0 < x ∧ x < q - 1 }] :
@@ -1214,7 +1211,7 @@ theorem aprclWeightedExponentSplit {n P u r x : ℕ} (hP : 0 < P) (hn : n = u * 
 
 /-- The finite weighted product factors as one shared large power and a residual product when
 `n = u*P+r`. This is the product identity used by the APR-CL implementation's `A^u B` rewrite. -/
-theorem aprclFiniteWeightedProduct_eq_power_mul_remainder {M : Type*} [CommMonoid M] (xs : Finset ℕ)
+theorem finiteWeightedProduct_eq_power_mul_remainder {M : Type*} [CommMonoid M] (xs : Finset ℕ)
     (term : ℕ → M) (n P u r : ℕ) (hP : 0 < P) (hn : n = u * P + r) :
     aprclFiniteWeightedProduct xs term (fun x ↦ n * x / P) =
       aprclFiniteWeightedProduct xs term (fun x ↦ x) ^ u *
@@ -1246,7 +1243,7 @@ theorem aprclFiniteWeightedProduct_eq_power_mul_mod {M : Type*} [CommMonoid M] (
       _ = n / P * P + n % P := by
         rw [Nat.mul_comm P (n / P)]
         rw [Nat.add_comm]
-  exact aprclFiniteWeightedProduct_eq_power_mul_remainder xs term n P (n / P) (n % P) hP hn
+  exact finiteWeightedProduct_eq_power_mul_remainder xs term n P (n / P) (n % P) hP hn
 
 /-- The same quotient-remainder update specialized to the APR-CL cyclotomic quotient. Here each
 term may be a Jacobi sum or one of its substituted images, so the result is the ring-level
@@ -1358,8 +1355,8 @@ theorem jacobiCoefficientWeightedProductFixedArray_class {n p k : ℕ} (hp : Nat
 
 /-- The fixed-array backend for a finite family of Jacobi coefficient sums evaluates the large
 floor-weighted product as one quotient power and the smaller remainder-weighted product. -/
-theorem jacobiCoefficientWeightedProductFixedArray_eq_power_mul_mod {n p k : ℕ} (hp : Nat.Prime p)
-    {β : Type*} [DecidableEq β] (sumIndices : Finset β) (productIndices : List ℕ)
+theorem jacobiCoefficientArray_eq_power_mul_mod {n p k : ℕ} (hp : Nat.Prime p) {β : Type*}
+    [DecidableEq β] (sumIndices : Finset β) (productIndices : List ℕ)
     (hindices : productIndices.Nodup) (exponent : ℕ → β → ℕ) (input : ℕ)
     (hP : 0 < primePowerIndex p k) :
     cyclotomicFixedArrayClass n p k
@@ -1386,7 +1383,7 @@ theorem jacobiCoefficientWeightedProductFixedArray_eq_power_mul_mod {n p k : ℕ
 /-- Evaluate the actual powered-character Jacobi sum in the prime-power cyclotomic quotient by
 the executable fixed coefficient array. This closes the finite-field sum to quotient-array bridge;
 the hypotheses retain the explicit root-of-unity order and auxiliary-prime range conditions. -/
-theorem jacobiPowerCharacter_jacobiSum_eq_cyclotomicArray {q a b n p k : ℕ} [Fintype (ZMod q)]
+theorem characterJacobiSum_eq_cyclotomicArray {q a b n p k : ℕ} [Fintype (ZMod q)]
     (hq : Nat.Prime q) (hp : Nat.Prime p) (g : (ZMod q)ˣ) (hg : IsPrimitiveRoot g (q - 1))
     (ζ : (cyclotomicQuotient n p k)ˣ)
     (hζ : (ζ : cyclotomicQuotient n p k) ^ primePowerIndex p k = 1)
@@ -1422,10 +1419,9 @@ theorem jacobiPowerCharacter_jacobiSum_eq_cyclotomicArray {q a b n p k : ℕ} [F
 
 /-- The canonical cyclotomic root itself supplies the root-of-unity character value, so the
 finite-field Jacobi sum reaches the coefficient array without an externally supplied root. -/
-theorem jacobiPowerCharacter_jacobiSum_eq_cyclotomicArray_of_canonicalRoot {q a b n p k : ℕ}
-    [Fintype (ZMod q)] (hq : Nat.Prime q) (hp : Nat.Prime p) (g : (ZMod q)ˣ)
-    (hg : IsPrimitiveRoot g (q - 1)) (hPdiv : primePowerIndex p k ∣ q - 1)
-    [Finite { x : ℕ // 0 < x ∧ x < q - 1 }] :
+theorem characterJacobiSum_array_canonicalRoot {q a b n p k : ℕ} [Fintype (ZMod q)]
+    (hq : Nat.Prime q) (hp : Nat.Prime p) (g : (ZMod q)ˣ) (hg : IsPrimitiveRoot g (q - 1))
+    (hPdiv : primePowerIndex p k ∣ q - 1) [Finite { x : ℕ // 0 < x ∧ x < q - 1 }] :
     jacobiSum
         (jacobiPowerCharacter hq g hg (cyclotomicRootUnit n hp)
             (cyclotomicRoot_pow_index_eq_one n hp) hPdiv ^
@@ -1437,17 +1433,16 @@ theorem jacobiPowerCharacter_jacobiSum_eq_cyclotomicArray_of_canonicalRoot {q a 
         (jacobiCoefficientFixedArray n p k hp (Finset.Icc 1 (q - 2))
           (fun x => (a * x + b * jacobiOneSubLogValue g x) % primePowerIndex p k)) := by
   exact
-    jacobiPowerCharacter_jacobiSum_eq_cyclotomicArray hq hp g hg (cyclotomicRootUnit n hp)
+    characterJacobiSum_eq_cyclotomicArray hq hp g hg (cyclotomicRootUnit n hp)
       (cyclotomicRoot_pow_index_eq_one n hp) (cyclotomicRootUnit_val n hp) hPdiv
       (Nat.pow_pos hp.pos)
 
 /-- A natural power of the canonical powered-character Jacobi sum is computed by binary
 exponentiation of its fixed coefficient array. This exposes the powered factor used in the
 APR-CL weighted-product branches. -/
-theorem jacobiPowerCharacter_jacobiSum_pow_eq_cyclotomicArrayPow {q a b n p k : ℕ}
-    [Fintype (ZMod q)] (hq : Nat.Prime q) (hp : Nat.Prime p) (g : (ZMod q)ˣ)
-    (hg : IsPrimitiveRoot g (q - 1)) (hPdiv : primePowerIndex p k ∣ q - 1) (u : ℕ)
-    [Finite { x : ℕ // 0 < x ∧ x < q - 1 }] :
+theorem characterJacobiSum_pow_eq_cyclotomicArrayPow {q a b n p k : ℕ} [Fintype (ZMod q)]
+    (hq : Nat.Prime q) (hp : Nat.Prime p) (g : (ZMod q)ˣ) (hg : IsPrimitiveRoot g (q - 1))
+    (hPdiv : primePowerIndex p k ∣ q - 1) (u : ℕ) [Finite { x : ℕ // 0 < x ∧ x < q - 1 }] :
     (jacobiSum
           (jacobiPowerCharacter hq g hg (cyclotomicRootUnit n hp)
               (cyclotomicRoot_pow_index_eq_one n hp) hPdiv ^
@@ -1461,16 +1456,15 @@ theorem jacobiPowerCharacter_jacobiSum_pow_eq_cyclotomicArrayPow {q a b n p k : 
           (jacobiCoefficientFixedArray n p k hp (Finset.Icc 1 (q - 2))
             (fun x => (a * x + b * jacobiOneSubLogValue g x) % primePowerIndex p k))
           u) := by
-  rw [jacobiPowerCharacter_jacobiSum_eq_cyclotomicArray_of_canonicalRoot hq hp g hg hPdiv]
+  rw [characterJacobiSum_array_canonicalRoot hq hp g hg hPdiv]
   rw [jacobiCoefficientFixedArray_class]
   rw [← jacobiCoefficientFixedArray_pow_class]
 
 /-- Evaluate a power of one powered-character Jacobi sum times a second one through the fixed
 coefficient arrays. This is the executable weighted-product bridge used by the APR-CL criterion. -/
-theorem jacobiPowerCharacter_weightedJacobiProduct_eq_cyclotomicArray {q a b c d n p k : ℕ}
-    [Fintype (ZMod q)] (hq : Nat.Prime q) (hp : Nat.Prime p) (g : (ZMod q)ˣ)
-    (hg : IsPrimitiveRoot g (q - 1)) (hPdiv : primePowerIndex p k ∣ q - 1) (u : ℕ)
-    [Finite { x : ℕ // 0 < x ∧ x < q - 1 }] :
+theorem jacobiWeightedProduct_eq_cyclotomicArray {q a b c d n p k : ℕ} [Fintype (ZMod q)]
+    (hq : Nat.Prime q) (hp : Nat.Prime p) (g : (ZMod q)ˣ) (hg : IsPrimitiveRoot g (q - 1))
+    (hPdiv : primePowerIndex p k ∣ q - 1) (u : ℕ) [Finite { x : ℕ // 0 < x ∧ x < q - 1 }] :
     (jacobiSum
             (jacobiPowerCharacter hq g hg (cyclotomicRootUnit n hp)
                 (cyclotomicRoot_pow_index_eq_one n hp) hPdiv ^
@@ -1490,16 +1484,16 @@ theorem jacobiPowerCharacter_weightedJacobiProduct_eq_cyclotomicArray {q a b c d
         (jacobiWeightedProductFixedArray n p k hp (Finset.Icc 1 (q - 2))
           (fun x => (a * x + b * jacobiOneSubLogValue g x) % primePowerIndex p k)
           (fun x => (c * x + d * jacobiOneSubLogValue g x) % primePowerIndex p k) u) := by
-  rw [jacobiPowerCharacter_jacobiSum_pow_eq_cyclotomicArrayPow hq hp g hg hPdiv]
-  rw [jacobiPowerCharacter_jacobiSum_eq_cyclotomicArray_of_canonicalRoot hq hp g hg hPdiv]
+  rw [characterJacobiSum_pow_eq_cyclotomicArrayPow hq hp g hg hPdiv]
+  rw [characterJacobiSum_array_canonicalRoot hq hp g hg hPdiv]
   rw [jacobiCoefficientFixedArray_pow_class]
   rw [jacobiCoefficientFixedArray_class]
   rw [← jacobiWeightedProductFixedArray_class]
 
 /-- Evaluate an ordered weighted product of actual finite-field Jacobi sums by its executable
 fixed coefficient array. Each list index selects the two character exponents of one Jacobi sum. -/
-theorem jacobiPowerCharacterWeightedProductFixedArray_class {q n p k : ℕ} [Fintype (ZMod q)]
-    (hq : Nat.Prime q) (hp : Nat.Prime p) (g : (ZMod q)ˣ) (hg : IsPrimitiveRoot g (q - 1))
+theorem jacobiWeightedArray_class {q n p k : ℕ} [Fintype (ZMod q)] (hq : Nat.Prime q)
+    (hp : Nat.Prime p) (g : (ZMod q)ˣ) (hg : IsPrimitiveRoot g (q - 1))
     (hPdiv : primePowerIndex p k ∣ q - 1) (productIndices : List ℕ)
     (exponent₁ exponent₂ weight : ℕ → ℕ) [Finite { x : ℕ // 0 < x ∧ x < q - 1 }] :
     (productIndices.map
@@ -1534,7 +1528,7 @@ theorem jacobiPowerCharacterWeightedProductFixedArray_class {q n p k : ℕ} [Fin
           (jacobiCoefficientFixedArray n p k hp (Finset.Icc 1 (q - 2))
             (fun y =>
               (exponent₁ x * y + exponent₂ x * jacobiOneSubLogValue g y) % primePowerIndex p k)) :=
-      jacobiPowerCharacter_jacobiSum_eq_cyclotomicArray_of_canonicalRoot hq hp g hg hPdiv
+      characterJacobiSum_array_canonicalRoot hq hp g hg hPdiv
     _ =
         jacobiCoefficientSum (primePowerIndex p k) (Finset.Icc 1 (q - 2))
           (fun y =>
@@ -1544,9 +1538,9 @@ theorem jacobiPowerCharacterWeightedProductFixedArray_class {q n p k : ℕ} [Fin
 
 /-- The list of actual APR-CL Jacobi sums follows the quotient-remainder `A^u B` update through
 the fixed-array backend, with each index carrying its floor weight. -/
-theorem jacobiPowerCharacterWeightedProductFixedArray_eq_power_mul_mod {q n p k : ℕ}
-    [Fintype (ZMod q)] (hq : Nat.Prime q) (hp : Nat.Prime p) (g : (ZMod q)ˣ)
-    (hg : IsPrimitiveRoot g (q - 1)) (hPdiv : primePowerIndex p k ∣ q - 1) (productIndices : List ℕ)
+theorem jacobiWeightedArray_eq_power_mul_mod {q n p k : ℕ} [Fintype (ZMod q)] (hq : Nat.Prime q)
+    (hp : Nat.Prime p) (g : (ZMod q)ˣ) (hg : IsPrimitiveRoot g (q - 1))
+    (hPdiv : primePowerIndex p k ∣ q - 1) (productIndices : List ℕ)
     (hindices : productIndices.Nodup) (exponent₁ exponent₂ : ℕ → ℕ) (input : ℕ)
     (hP : 0 < primePowerIndex p k) [Finite { x : ℕ // 0 < x ∧ x < q - 1 }] :
     (productIndices.map
@@ -1587,8 +1581,8 @@ theorem jacobiPowerCharacterWeightedProductFixedArray_eq_power_mul_mod {q n p k 
             (fun x y =>
               (exponent₁ x * y + exponent₂ x * jacobiOneSubLogValue g y) % primePowerIndex p k)
             (fun x => input * x / primePowerIndex p k)) :=
-      jacobiPowerCharacterWeightedProductFixedArray_class hq hp g hg hPdiv productIndices exponent₁
-        exponent₂ (fun x => input * x / primePowerIndex p k)
+      jacobiWeightedArray_class hq hp g hg hPdiv productIndices exponent₁ exponent₂
+        (fun x => input * x / primePowerIndex p k)
     _ =
         aprclListWeightedProduct productIndices
               (fun x =>
@@ -1608,8 +1602,7 @@ theorem jacobiPowerCharacterWeightedProductFixedArray_eq_power_mul_mod {q n p k 
             (fun x => input % primePowerIndex p k * x / primePowerIndex p k) :=
       by
       exact
-        jacobiCoefficientWeightedProductFixedArray_eq_power_mul_mod hp (Finset.Icc 1 (q - 2))
-          productIndices hindices
+        jacobiCoefficientArray_eq_power_mul_mod hp (Finset.Icc 1 (q - 2)) productIndices hindices
           (fun x y =>
             (exponent₁ x * y + exponent₂ x * jacobiOneSubLogValue g y) % primePowerIndex p k)
           input hP
@@ -1651,8 +1644,8 @@ theorem jacobiPowerCharacterWeightedProductFixedArray_eq_power_mul_mod {q n p k 
                       primePowerIndex p k)
                   weight).symm
           _ = _ :=
-            (jacobiPowerCharacterWeightedProductFixedArray_class hq hp g hg hPdiv productIndices
-                exponent₁ exponent₂ weight).symm
+            (jacobiWeightedArray_class hq hp g hg hPdiv productIndices exponent₁ exponent₂
+                weight).symm
       rw [hrepr (fun x => x),
         hrepr (fun x => input % primePowerIndex p k * x / primePowerIndex p k)]
 
@@ -1747,7 +1740,7 @@ theorem APRCLJacobiDatum.rootPowerSubstitution_jacobiSumValue {n p k i : ℕ} (h
     f (cyclotomicRootUnit n (p := p) (k := k) hp : cyclotomicQuotient n p k) =
       (cyclotomicRootUnit n (p := p) (k := k) hp : cyclotomicQuotient n p k) ^ i := by
     rw [cyclotomicRootUnit_val]
-    exact cyclotomicRootPowerSubstitutionEquiv_of_coprime_map_root n hp hpn hi
+    exact rootPowerEquiv_of_coprime_map_root n hp hpn hi
   change f (datum.jacobiSumValue n hp) = _
   simpa only [APRCLJacobiDatum.jacobiSumValue] using
     (@jacobiPowerCharacter_jacobiSum_ringHomComp datum.q (primePowerIndex p k) datum.exponent₁
@@ -1769,9 +1762,9 @@ theorem APRCLJacobiDatum.jacobiSumValue_eq_coefficientArray {p k : ℕ} (n : ℕ
     (datum : APRCLJacobiDatum p k) :
     datum.jacobiSumValue n hp = cyclotomicFixedArrayClass n p k (datum.coefficientArray n hp) := by
   exact
-    @jacobiPowerCharacter_jacobiSum_eq_cyclotomicArray_of_canonicalRoot datum.q datum.exponent₁
-      datum.exponent₂ n p k datum.fieldFinite datum.qPrime hp datum.generator
-      datum.generatorPrimitive datum.periodDivides datum.unitIndexFinite
+    @characterJacobiSum_array_canonicalRoot datum.q datum.exponent₁ datum.exponent₂ n p k
+      datum.fieldFinite datum.qPrime hp datum.generator datum.generatorPrimitive datum.periodDivides
+      datum.unitIndexFinite
 
 /-- The fixed-array product of a list of APR-CL data, allowing each factor to use its own
 auxiliary finite field. -/
@@ -2325,7 +2318,7 @@ theorem aprclValidatedOddPrimeArrayBranchCheck_eq_check {n p k : ℕ} (hn : 1 < 
 /-- Decode a successful odd-prime branch result as an equality with the actual finite product of
 Jacobi sums. This connects the noncomputable root specification and its `p ∤ h` guard to the
 mathematical branch expression. -/
-theorem aprclValidatedOddPrimeBranchCheck_success_product {n p k h : ℕ} (hp : Nat.Prime p)
+theorem validatedOddPrimeBranchCheck_success_product {n p k h : ℕ} (hp : Nat.Prime p)
     (hpOdd : 2 < p) (hB2 : aprclB2Condition p) (datum : APRCLJacobiDatumWithParameters p k 1 1)
     (hcheck : aprclValidatedOddPrimeBranchCheck (n := n) hp hpOdd hB2 datum = some h) :
     h % p ≠ 0 ∧
@@ -2351,9 +2344,8 @@ theorem aprclValidatedOddPrimeBranchCheck_success_product {n p k h : ℕ} (hp : 
 
 /-- An executable odd-prime array branch result satisfies the mathematical
 Jacobi-product equation, its guard, and least-root condition. -/
-theorem aprclValidatedOddPrimeArrayBranchCheck_success_product {n p k h : ℕ} (hn : 1 < n)
-    (hp : Nat.Prime p) (hpOdd : 2 < p) (hB2 : aprclB2Condition p)
-    (datum : APRCLJacobiDatumWithParameters p k 1 1)
+theorem validatedOddArray_success_product {n p k h : ℕ} (hn : 1 < n) (hp : Nat.Prime p)
+    (hpOdd : 2 < p) (hB2 : aprclB2Condition p) (datum : APRCLJacobiDatumWithParameters p k 1 1)
     (hcheck : aprclValidatedOddPrimeArrayBranchCheck (n := n) hp hpOdd hB2 datum = some h) :
     h % p ≠ 0 ∧
       h < primePowerIndex p k ∧
@@ -2369,7 +2361,7 @@ theorem aprclValidatedOddPrimeArrayBranchCheck_success_product {n p k h : ℕ} (
                 entry.jacobi.jacobiSumValue n hp ^
                   (n * entry.productIndex / primePowerIndex p k))).prod := by
   rw [aprclValidatedOddPrimeArrayBranchCheck_eq_check hn hp hpOdd hB2 datum] at hcheck
-  exact aprclValidatedOddPrimeBranchCheck_success_product hp hpOdd hB2 datum hcheck
+  exact validatedOddPrimeBranchCheck_success_product hp hpOdd hB2 datum hcheck
 
 /-- A successful odd-prime branch retains the `p ∤ h` guard and identifies each factor
 in its checked product as the inverse-index conjugate of the base Jacobi value. -/
@@ -2384,14 +2376,13 @@ theorem aprclValidatedOddPrimeBranchCheck_success_factor {n p k h : ℕ} (hp : N
         cyclotomicRootPowerSubstitutionEquiv_of_coprime n hp hpn hcop
             (entry.jacobi.jacobiSumValue n hp) =
           datum.datum.jacobiSumValue n hp := by
-  have hbranch := aprclValidatedOddPrimeBranchCheck_success_product hp hpOdd hB2 datum hcheck
+  have hbranch := validatedOddPrimeBranchCheck_success_product hp hpOdd hB2 datum hcheck
   exact ⟨hbranch.1, aprclOddPrimeJacobiIndexFamily_value_spec hp hpn hpOdd datum.datum entry hentry⟩
 
 /-- On a successful odd-prime branch, each checked Jacobi factor is the inverse
 root-substitution image of the selected base value. -/
-theorem aprclValidatedOddPrimeBranchCheck_success_factor_inverse {n p k h : ℕ} (hp : Nat.Prime p)
-    (hpn : Nat.Coprime p n) (hpOdd : 2 < p) (hB2 : aprclB2Condition p)
-    (datum : APRCLJacobiDatumWithParameters p k 1 1)
+theorem validatedOdd_success_factor_inverse {n p k h : ℕ} (hp : Nat.Prime p) (hpn : Nat.Coprime p n)
+    (hpOdd : 2 < p) (hB2 : aprclB2Condition p) (datum : APRCLJacobiDatumWithParameters p k 1 1)
     (hcheck : aprclValidatedOddPrimeBranchCheck (n := n) hp hpOdd hB2 datum = some h)
     (entry : APRCLIndexedJacobiDatum p k)
     (hentry : entry ∈ aprclOddPrimeJacobiIndexFamily p k hpOdd datum.datum) :
@@ -2400,13 +2391,13 @@ theorem aprclValidatedOddPrimeBranchCheck_success_factor_inverse {n p k h : ℕ}
         entry.jacobi.jacobiSumValue n hp =
           (cyclotomicRootPowerSubstitutionEquiv_of_coprime n hp hpn hcop).symm
             (datum.datum.jacobiSumValue n hp) := by
-  have hguard := (aprclValidatedOddPrimeBranchCheck_success_product hp hpOdd hB2 datum hcheck).1
+  have hguard := (validatedOddPrimeBranchCheck_success_product hp hpOdd hB2 datum hcheck).1
   exact ⟨hguard, aprclOddPrimeJacobiIndexFamily_inverse_value hp hpn hpOdd datum.datum entry hentry⟩
 
 /-- A successful executable odd-prime branch yields the inverse root-substitution
 value of each Jacobi factor together with the exponent guard. -/
-theorem aprclValidatedOddPrimeArrayBranchCheck_success_factor_inverse {n p k h : ℕ} (hn : 1 < n)
-    (hp : Nat.Prime p) (hpn : Nat.Coprime p n) (hpOdd : 2 < p) (hB2 : aprclB2Condition p)
+theorem validatedOddArray_success_factor_inverse {n p k h : ℕ} (hn : 1 < n) (hp : Nat.Prime p)
+    (hpn : Nat.Coprime p n) (hpOdd : 2 < p) (hB2 : aprclB2Condition p)
     (datum : APRCLJacobiDatumWithParameters p k 1 1)
     (hcheck : aprclValidatedOddPrimeArrayBranchCheck (n := n) hp hpOdd hB2 datum = some h)
     (entry : APRCLIndexedJacobiDatum p k)
@@ -2417,9 +2408,7 @@ theorem aprclValidatedOddPrimeArrayBranchCheck_success_factor_inverse {n p k h :
           (cyclotomicRootPowerSubstitutionEquiv_of_coprime n hp hpn hcop).symm
             (datum.datum.jacobiSumValue n hp) := by
   rw [aprclValidatedOddPrimeArrayBranchCheck_eq_check hn hp hpOdd hB2 datum] at hcheck
-  exact
-    aprclValidatedOddPrimeBranchCheck_success_factor_inverse hp hpn hpOdd hB2 datum hcheck entry
-      hentry
+  exact validatedOdd_success_factor_inverse hp hpn hpOdd hB2 datum hcheck entry hentry
 
 /-- Fixed-array implementation of the weighted `J₃` product for the high two-adic branch.
 The separate `J₂` correction factor from (C-2k) is represented by its own factor family. -/
@@ -2605,7 +2594,7 @@ theorem aprclTwoAdicKOneBranchCheck_eq_none_iff {n q : ℕ} :
 
 /-- A successful low two-adic branch check at exponent one certifies both the residue class and
 the negative sign in the original (C-21) value. -/
-theorem aprclTwoAdicKOneBranchCheck_some_value_eq_neg_one {n q : ℕ}
+theorem twoAdicKOneBranchCheck_some_value_eq_neg_one {n q : ℕ}
     (hcheck : aprclTwoAdicKOneBranchCheck n q = some 1) :
     n % 4 = 1 ∧ aprclTwoAdicKOneValue n q = -1 := by
   have hbranch := (aprclTwoAdicKOneBranchCheck_eq_some_iff).mp hcheck
@@ -2631,11 +2620,11 @@ theorem aprclTwoAdicKOneCoefficientArray_class (n q : ℕ) :
 /-- A successful low two-adic branch check is `-1` after translation to the `p=2` period-two (Lean
 index `k=0`)
 cyclotomic quotient. This connects the scalar test to the common coefficient-array interface. -/
-theorem aprclTwoAdicKOneBranchCheck_coefficientArray_class_eq_neg_one {n q : ℕ}
+theorem twoAdicKOne_coefficientClass_neg_one {n q : ℕ}
     (hcheck : aprclTwoAdicKOneBranchCheck n q = some 1) :
     cyclotomicFixedArrayClass n 2 0 (aprclTwoAdicKOneCoefficientArray n q) = -1 := by
   rw [aprclTwoAdicKOneCoefficientArray_class]
-  have hvalue := aprclTwoAdicKOneBranchCheck_some_value_eq_neg_one hcheck
+  have hvalue := twoAdicKOneBranchCheck_some_value_eq_neg_one hcheck
   rw [hvalue.2]
   exact map_neg (AdjoinRoot.of (primePowerCyclotomic 2 0 (ZMod n))) 1
 
@@ -2763,7 +2752,7 @@ def aprclValidatedTwoAdicKTwoArrayBranchCheck {n : ℕ} (hp : Nat.Prime 2)
     (aprclValidatedTwoAdicKTwoArrayCheck (n := n) hp datum)
 
 /-- The executable four-period branch equals the quotient-based specification. -/
-theorem aprclValidatedTwoAdicKTwoArrayBranchCheck_eq_check {n : ℕ} (hn : 1 < n) (hp : Nat.Prime 2)
+theorem validatedTwoAdicKTwoArrayBranchCheck_eq_check {n : ℕ} (hn : 1 < n) (hp : Nat.Prime 2)
     (datum : APRCLJacobiDatumWithParameters 2 1 1 1) :
     aprclValidatedTwoAdicKTwoArrayBranchCheck (n := n) hp datum =
       aprclValidatedTwoAdicKTwoBranchCheck (n := n) hp datum := by
@@ -2772,14 +2761,14 @@ theorem aprclValidatedTwoAdicKTwoArrayBranchCheck_eq_check {n : ℕ} (hn : 1 < n
 
 /-- The executable four-period branch returns exactly the least matching root
 subject to its odd-exponent and Euler guards. -/
-theorem aprclValidatedTwoAdicKTwoArrayBranchCheck_eq_some_iff {n h : ℕ} (hn : 1 < n)
-    (hp : Nat.Prime 2) (datum : APRCLJacobiDatumWithParameters 2 1 1 1) :
+theorem validatedTwoAdicKTwoArrayBranchCheck_eq_some_iff {n h : ℕ} (hn : 1 < n) (hp : Nat.Prime 2)
+    (datum : APRCLJacobiDatumWithParameters 2 1 1 1) :
     aprclValidatedTwoAdicKTwoArrayBranchCheck (n := n) hp datum = some h ↔
       h < primePowerIndex 2 1 ∧
         cyclotomicRoot n 2 1 ^ h = aprclValidatedTwoAdicKTwoValue hp datum ∧
         (∀ j < h, cyclotomicRoot n 2 1 ^ j ≠ aprclValidatedTwoAdicKTwoValue hp datum) ∧
         h % 2 = 1 ∧ (datum.datum.q : ZMod n) ^ ((n - 1) / 2) = -1 := by
-  rw [aprclValidatedTwoAdicKTwoArrayBranchCheck_eq_check hn hp datum]
+  rw [validatedTwoAdicKTwoArrayBranchCheck_eq_check hn hp datum]
   rw [aprclValidatedTwoAdicKTwoBranchCheck_eq_some_iff]
   rw [aprclValidatedTwoAdicKTwoCheck_eq_some_iff]
   simp only [and_assoc]
@@ -2930,7 +2919,7 @@ def aprclValidatedTwoAdicHighArrayBranchCheck {n k : ℕ} (hp : Nat.Prime 2) (hk
     (aprclValidatedTwoAdicHighArrayCheck (n := n) hp hk data)
 
 /-- The executable high two-adic branch equals the quotient-based specification. -/
-theorem aprclValidatedTwoAdicHighArrayBranchCheck_eq_check {n k : ℕ} (hn : 1 < n) (hp : Nat.Prime 2)
+theorem validatedTwoAdicHighArrayBranchCheck_eq_check {n k : ℕ} (hn : 1 < n) (hp : Nat.Prime 2)
     (hk : 2 ≤ k) (data : APRCLTwoAdicHighBranchData k) :
     aprclValidatedTwoAdicHighArrayBranchCheck (n := n) hp hk data =
       aprclValidatedTwoAdicHighBranchCheck (n := n) hp hk data := by
@@ -2940,8 +2929,8 @@ theorem aprclValidatedTwoAdicHighArrayBranchCheck_eq_check {n k : ℕ} (hn : 1 <
 /-- Decode a successful high two-adic branch result to the transformed Jacobi-data product,
 including the separate correction, its odd root exponent, and minimality in the root period.
 The inverse-index value of each factor is exposed by the following consumer theorem. -/
-theorem aprclValidatedTwoAdicHighBranchCheck_success_product {n k h : ℕ} (hp : Nat.Prime 2)
-    (hk : 2 ≤ k) (data : APRCLTwoAdicHighBranchData k)
+theorem validatedTwoAdicHighBranchCheck_success_product {n k h : ℕ} (hp : Nat.Prime 2) (hk : 2 ≤ k)
+    (data : APRCLTwoAdicHighBranchData k)
     (hcheck : aprclValidatedTwoAdicHighBranchCheck (n := n) hp hk data = some h) :
     h % 2 = 1 ∧
       (data.auxiliaryPrime : ZMod n) ^ ((n - 1) / 2) = -1 ∧
@@ -2970,8 +2959,8 @@ theorem aprclValidatedTwoAdicHighBranchCheck_success_product {n k h : ℕ} (hp :
 
 /-- An executable high two-adic array branch result satisfies the full
 Jacobi-product equation, Euler guard, and least-root condition. -/
-theorem aprclValidatedTwoAdicHighArrayBranchCheck_success_product {n k h : ℕ} (hn : 1 < n)
-    (hp : Nat.Prime 2) (hk : 2 ≤ k) (data : APRCLTwoAdicHighBranchData k)
+theorem validatedTwoAdicHighArray_success_product {n k h : ℕ} (hn : 1 < n) (hp : Nat.Prime 2)
+    (hk : 2 ≤ k) (data : APRCLTwoAdicHighBranchData k)
     (hcheck : aprclValidatedTwoAdicHighArrayBranchCheck (n := n) hp hk data = some h) :
     h % 2 = 1 ∧
       (data.auxiliaryPrime : ZMod n) ^ ((n - 1) / 2) = -1 ∧
@@ -2991,12 +2980,12 @@ theorem aprclValidatedTwoAdicHighArrayBranchCheck_success_product {n k h : ℕ} 
                     (n * entry.productIndex / primePowerIndex 2 k))).prod *
             data.datum₂.datum.jacobiSumValue n hp ^
               (if aprclTwoAdicHighCorrectionFlag n then 2 else 0) := by
-  rw [aprclValidatedTwoAdicHighArrayBranchCheck_eq_check hn hp hk data] at hcheck
-  exact aprclValidatedTwoAdicHighBranchCheck_success_product hp hk data hcheck
+  rw [validatedTwoAdicHighArrayBranchCheck_eq_check hn hp hk data] at hcheck
+  exact validatedTwoAdicHighBranchCheck_success_product hp hk data hcheck
 
 /-- A successful high two-adic branch retains its odd-exponent and Euler guards, while
 each factor of its checked product is an inverse-index conjugate of one base Jacobi value. -/
-theorem aprclValidatedTwoAdicHighBranchCheck_success_factor {n k h : ℕ} (hp : Nat.Prime 2)
+theorem validatedTwoAdicHighBranchCheck_success_factor {n k h : ℕ} (hp : Nat.Prime 2)
     (hpn : Nat.Coprime 2 n) (hk : 2 ≤ k) (data : APRCLTwoAdicHighBranchData k)
     (hcheck : aprclValidatedTwoAdicHighBranchCheck (n := n) hp hk data = some h)
     (entry : APRCLIndexedJacobiDatum 2 k)
@@ -3011,7 +3000,7 @@ theorem aprclValidatedTwoAdicHighBranchCheck_success_factor {n k h : ℕ} (hp : 
           cyclotomicRootPowerSubstitutionEquiv_of_coprime n hp hpn hcop
               (entry.jacobi.jacobiSumValue n hp) =
             data.datum₂₁.datum.jacobiSumValue n hp) := by
-  have hbranch := aprclValidatedTwoAdicHighBranchCheck_success_product hp hk data hcheck
+  have hbranch := validatedTwoAdicHighBranchCheck_success_product hp hk data hcheck
   have hvalue :=
     aprclTwoAdicHighJacobiIndexFamily_value_spec hpn hk data.datum₁₁.datum data.datum₂₁.datum entry
       hentry
@@ -3019,7 +3008,7 @@ theorem aprclValidatedTwoAdicHighBranchCheck_success_factor {n k h : ℕ} (hp : 
 
 /-- On a successful high two-adic branch, each checked Jacobi factor is an inverse
 root-substitution image of one of the two base values. -/
-theorem aprclValidatedTwoAdicHighBranchCheck_success_factor_inverse {n k h : ℕ} (hp : Nat.Prime 2)
+theorem validatedTwoAdicHigh_success_factor_inverse {n k h : ℕ} (hp : Nat.Prime 2)
     (hpn : Nat.Coprime 2 n) (hk : 2 ≤ k) (data : APRCLTwoAdicHighBranchData k)
     (hcheck : aprclValidatedTwoAdicHighBranchCheck (n := n) hp hk data = some h)
     (entry : APRCLIndexedJacobiDatum 2 k)
@@ -3034,7 +3023,7 @@ theorem aprclValidatedTwoAdicHighBranchCheck_success_factor_inverse {n k h : ℕ
           entry.jacobi.jacobiSumValue n hp =
             (cyclotomicRootPowerSubstitutionEquiv_of_coprime n hp hpn hcop).symm
               (data.datum₂₁.datum.jacobiSumValue n hp)) := by
-  have hbranch := aprclValidatedTwoAdicHighBranchCheck_success_product hp hk data hcheck
+  have hbranch := validatedTwoAdicHighBranchCheck_success_product hp hk data hcheck
   have hvalue :=
     aprclTwoAdicHighJacobiIndexFamily_inverse_value hpn hk data.datum₁₁.datum data.datum₂₁.datum
       entry hentry
@@ -3042,8 +3031,8 @@ theorem aprclValidatedTwoAdicHighBranchCheck_success_factor_inverse {n k h : ℕ
 
 /-- A successful executable high two-adic branch yields each inverse
 root-substitution Jacobi factor together with its odd-exponent and Euler guards. -/
-theorem aprclValidatedTwoAdicHighArrayBranchCheck_success_factor_inverse {n k h : ℕ} (hn : 1 < n)
-    (hp : Nat.Prime 2) (hpn : Nat.Coprime 2 n) (hk : 2 ≤ k) (data : APRCLTwoAdicHighBranchData k)
+theorem validatedTwoAdicHighArray_factor_inverse {n k h : ℕ} (hn : 1 < n) (hp : Nat.Prime 2)
+    (hpn : Nat.Coprime 2 n) (hk : 2 ≤ k) (data : APRCLTwoAdicHighBranchData k)
     (hcheck : aprclValidatedTwoAdicHighArrayBranchCheck (n := n) hp hk data = some h)
     (entry : APRCLIndexedJacobiDatum 2 k)
     (hentry :
@@ -3057,8 +3046,7 @@ theorem aprclValidatedTwoAdicHighArrayBranchCheck_success_factor_inverse {n k h 
           entry.jacobi.jacobiSumValue n hp =
             (cyclotomicRootPowerSubstitutionEquiv_of_coprime n hp hpn hcop).symm
               (data.datum₂₁.datum.jacobiSumValue n hp)) := by
-  rw [aprclValidatedTwoAdicHighArrayBranchCheck_eq_check hn hp hk data] at hcheck
-  exact
-    aprclValidatedTwoAdicHighBranchCheck_success_factor_inverse hp hpn hk data hcheck entry hentry
+  rw [validatedTwoAdicHighArrayBranchCheck_eq_check hn hp hk data] at hcheck
+  exact validatedTwoAdicHigh_success_factor_inverse hp hpn hk data hcheck entry hentry
 
 end PseudoPrime.PrimeTest.APRCL

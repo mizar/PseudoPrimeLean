@@ -82,9 +82,9 @@ Supply the cutoff logarithm bound, the two interval sign guards and an upper bou
 for the residue Mangoldt sum in the absence of a prime below the cutoff.
 Convert the normalized gap, bound the character norms and compare with the principal
 lower bound. This connects shared normalized estimates to Corollary 1.2. -/
-theorem exists_least_prime_in_residue_le_of_normalized_parity_gap {q : ℕ} [NeZero q] (a : (ZMod q)ˣ)
-    (hq : 64 ≤ q) (hu : q ≤ 20000) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {s T U : ℝ} (hh : (2 : ℝ) ≤ q.totient) (hs0 : 0 < s) (hs : (q.totient : ℝ) * Real.log q = s)
+theorem exists_least_residue_normalizedParity_GRH {q : ℕ} [NeZero q] (a : (ZMod q)ˣ) (hq : 64 ≤ q)
+    (hu : q ≤ 20000) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {s T U : ℝ}
+    (hh : (2 : ℝ) ≤ q.totient) (hs0 : 0 < s) (hs : (q.totient : ℝ) * Real.log q = s)
     (hx : 65536 ≤ s ^ 2) (hT : Real.log (s ^ 2) ≤ T)
     (hC : 0 ≤ residueParityIntervalCoefficient q.totient (s ^ 2) (Real.log q) T)
     (hR : 0 ≤ T - (1 + 23 / 40) + (1839 / 1000 : ℝ) / s ^ 2 + 1 / (20 * s))
@@ -100,7 +100,7 @@ theorem exists_least_prime_in_residue_le_of_normalized_parity_gap {q : ℕ} [NeZ
   have hh0 : (0 : ℝ) < q.totient := lt_of_lt_of_le (by norm_num only) hh
   have hsq := Real.sqrt_sq hs0.le
   have hn :=
-    (nonprincipal_residue_logWeightedNorm_sum_le_parity_explicit hq hGRH hx).trans
+    (residueLogNorm_sum_le_parity_explicit hq hGRH hx).trans
       (residueNonprincipalParityUpper_le_interval hq hu hh hx (sq_pos_of_pos hs0) le_rfl hs0 hsq.ge
         hsq.le le_rfl hT hC hR)
   have hg := (residueParity_normalized_gap_iff hh0 hs0 hs).mp hgap

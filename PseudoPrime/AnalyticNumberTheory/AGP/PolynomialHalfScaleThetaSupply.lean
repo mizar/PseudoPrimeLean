@@ -21,7 +21,7 @@ open DirichletLFunction in
 threshold before the modulus and residue. Avoiding the exceptional conductors now supplies
 the half-scale hypothesis unconditionally; only the displayed scalar budget and endpoint
 scale conditions remain to obtain the progression theta lower bound. -/
-theorem exists_uniform_polynomial_half_scale_theta_threshold :
+theorem exists_uniform_halfScale_theta_threshold :
     ∀ ε : ℝ,
       0 < ε →
         ∃ b : ℕ,
@@ -39,8 +39,8 @@ theorem exists_uniform_polynomial_half_scale_theta_threshold :
                           (q : ℝ) ≤ Real.sqrt ((H + 1 : ℕ) : ℝ) →
                           (∀
                             e ∈
-                              LogFreeDensity.exceptionalFamilyConductorsAwayFromFour
-                                (H + 1) (1 - 1 / Real.log ((H + 1 : ℕ) : ℝ)),
+                              LogFreeDensity.exceptionalExceptFour (H + 1)
+                                (1 - 1 / Real.log ((H + 1 : ℕ) : ℝ)),
                             ¬e ∣ q) →
                           ∀ x : ℝ,
                             X ≤ x →
@@ -57,8 +57,7 @@ theorem exists_uniform_polynomial_half_scale_theta_threshold :
                                 (1 / 32 : ℝ) * x * Real.log (5 / 4) →
                               x / (2 * (q.totient : ℝ)) ≤ thetaInProgressionReal x q a := by
   intro ε hε
-  obtain ⟨b, hb, R₀, hR₀, hhalf⟩ :=
-    DirichletLFunction.LogFreeDensity.exists_uniform_character_family_half_scale_bound ε hε
+  obtain ⟨b, hb, R₀, hR₀, hhalf⟩ := DirichletLFunction.LogFreeDensity.exists_uniformHalf ε hε
   obtain ⟨X, hX, htheta⟩ := exists_uniform_half_scale_theta_threshold
   refine ⟨b, hb, R₀, X, hR₀, hX, ?_⟩
   intro H hH hR q a inst ha hq hsqrt havoid x hx hLx hbudget

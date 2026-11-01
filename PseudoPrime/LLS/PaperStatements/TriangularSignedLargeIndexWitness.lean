@@ -20,9 +20,8 @@ namespace PseudoPrime.LLS.PaperStatements
 logarithmic scale at least 22 trillion, there is a prime at most (282924/1000000)log(q)^2
 dividing q or outside the subgroup. Apply the certified signed gap.
 No additional scalar-gap or arithmetic-family premise remains. -/
-theorem exists_prime_factor_or_outside_triangular18_signed_large_index {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hi : 1000000000 ≤ H.index)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem exists_prime_factorOrOutside_signedLarge_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hi : 1000000000 ≤ H.index) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hlog : (22000000000000 : ℝ) ≤ Real.log q) :
     ∃ p : ℕ,
       p.Prime ∧
@@ -31,7 +30,7 @@ theorem exists_prime_factor_or_outside_triangular18_signed_large_index {q : ℕ}
   have hx := (Analysis.triangular18_signed_large_scale_bounds hlog).1
   have hh : (1000000000 : ℝ) ≤ (H.index : ℝ) := by exact_mod_cast hi
   exact
-    exists_prime_factor_or_outside_of_triangular18_signed_gap H hGRH hx
+    exists_prime_factorOrOutside_signedGap_GRH H hGRH hx
       (Analysis.triangular18_signed_large_index_gap hlog hh)
 
 end PseudoPrime.LLS.PaperStatements

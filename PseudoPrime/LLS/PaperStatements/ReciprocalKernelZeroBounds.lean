@@ -113,8 +113,8 @@ theorem norm_reciprocal_zeroSum_le_real_axis {q : ℕ} [NeZero q] (hq : 2 ≤ q)
   have hu := (norm_tsum_le_tsum_norm hk.norm).trans (hk.norm.tsum_le_tsum hb (hs.mul_left (1 / a)))
   rw [tsum_mul_left] at hu
   have he :=
-    AnalyticNumberTheory.DirichletLFunction.completed_poissonSum_eq_signed_ordinary hq hrh hp hne
-      hinv (show (1 : ℝ) < 1 / 2 + a by linarith only [ha])
+    AnalyticNumberTheory.DirichletLFunction.poissonSum_eq_signedOrdinary_RH hq hrh hp hne hinv
+      (show (1 : ℝ) < 1 / 2 + a by linarith only [ha])
   simp only [add_sub_cancel_left, Complex.ofReal_add] at he
   have ht :
     (∑' ρ : ℂ,
@@ -144,7 +144,7 @@ theorem norm_reciprocal_zeroSum_le_positive_prefix {q : ℕ} [NeZero q] (hq : 2 
           ∑ n ∈ B, (1 + (χ n).re) * ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ (1 / 2 + a)) := by
   have hU := norm_reciprocal_zeroSum_le_real_axis hq hGRH hp hne hinv ha hau hx
   have hE :=
-    AnalyticNumberTheory.DirichletLFunction.re_logDeriv_le_principal_sub_positive_prefix χ
+    AnalyticNumberTheory.DirichletLFunction.re_L_logDeriv_le_positivePrefix χ
       (show (1 : ℝ) < 1 / 2 + a by linarith only [ha]) B
   simp only [Complex.ofReal_add] at hE
   have hm :=

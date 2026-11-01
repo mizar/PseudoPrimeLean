@@ -60,8 +60,8 @@ theorem summable_zeroMassTerm_of_admissible (f : GeneralLFunction) (hf : f.IsAdm
   have h0 : f.completed 0 ≠ 0 :=
     completed_ne_zero_of_re_ne_half hRH (by norm_num only [Complex.zero_re])
   obtain ⟨C, hC, hg⟩ :=
-    AnalyticNumberTheory.General.exists_global_exponential_bound_of_orderAtMostOne hF.continuous
-      horder (show (1 : ℝ) < 3 / 2 by norm_num only)
+    AnalyticNumberTheory.General.exists_exp_bound_of_orderAtMostOne hF.continuous horder
+      (show (1 : ℝ) < 3 / 2 by norm_num only)
   have hs :=
     AnalyticNumberTheory.General.summable_regularZeroWeight hF h0 hC
       (show (0 : ℝ) ≤ 3 / 2 by norm_num only) (show (3 / 2 : ℝ) < 2 by norm_num only) hg

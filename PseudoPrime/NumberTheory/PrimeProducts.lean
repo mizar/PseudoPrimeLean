@@ -320,7 +320,7 @@ and `Nat.pow_le_choose`.
 Role: this removes the factorial denominator when estimating the second-stage
 prime supply.
 -/
-theorem fixedPrimeFactorProductsOf_binomial_ratio_lower_bound (P : Finset ℕ) (s : ℕ) (hs : 0 < s)
+theorem fixedProducts_binomial_ratio_lower (P : Finset ℕ) (s : ℕ) (hs : 0 < s)
     (hsmall : 2 * s ≤ P.card) :
     ((P.card : ℝ) / (2 * (s : ℝ))) ^ s ≤ (((P.card + 1 - s : ℕ) : ℝ) ^ s) / (s.factorial : ℝ) := by
   have hsubNat : P.card ≤ 2 * (P.card + 1 - s) := by
@@ -359,11 +359,11 @@ for `fixedPrimeFactorProductsOf`.
 
 Role: this is the denominator-free finite count used by the second AGP stage.
 -/
-theorem fixedPrimeFactorProductsOf_card_lower_bound_of_two_mul_le (P : Finset ℕ) (s : ℕ)
-    (hprime : ∀ p ∈ P, Nat.Prime p) (hs : 0 < s) (hsmall : 2 * s ≤ P.card) :
+theorem fixedProducts_card_lower_two_mul (P : Finset ℕ) (s : ℕ) (hprime : ∀ p ∈ P, Nat.Prime p)
+    (hs : 0 < s) (hsmall : 2 * s ≤ P.card) :
     ((P.card : ℝ) / (2 * (s : ℝ))) ^ s ≤ ((fixedPrimeFactorProductsOf P s).card : ℝ) := by
   exact
-    le_trans (fixedPrimeFactorProductsOf_binomial_ratio_lower_bound P s hs hsmall)
+    le_trans (fixedProducts_binomial_ratio_lower P s hs hsmall)
       (fixedPrimeFactorProductsOf_card_lower_bound P s hprime)
 
 /--

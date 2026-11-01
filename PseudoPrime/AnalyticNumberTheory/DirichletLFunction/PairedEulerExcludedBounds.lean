@@ -20,7 +20,7 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 an ambient cutoff bounds the convergent Gamma zero mass by a principal finite sum
 and its quadratic exclusion budget. Combine the signed two-pole profile with the
 weighted defect identity. The exclusion modulus need not equal the conductor. -/
-theorem gamma_zeroMass_le_twoPole_quadratic_budget {q N : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem gammaNormMass_twoPole_quadratic_RH {q N : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {b : ℝ} (S : Finset ℕ)
     (hS : ∀ n ∈ S, (n : ℝ) ≤ b) (ht : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → Nat.Coprime p N → χ p = 1) :
@@ -32,12 +32,12 @@ theorem gamma_zeroMass_le_twoPole_quadratic_budget {q N : ℕ} [NeZero q] (hq : 
             2 * (∑ n ∈ S, Arithmetic.pairedEulerPrefixWeight (5 / 4) (11 / 4) (3 / 4) n) +
           Arithmetic.quadraticExcludedBudget q N S
             (Arithmetic.pairedEulerPrefixWeight (5 / 4) (11 / 4) (3 / 4)) := by
-  have h := gamma_zeroMass_le_twoPole_rational_retained hq hRH hp hne hinv S S
+  have h := gammaNormMass_twoPole_rational_RH hq hRH hp hne hinv S S
   have he := Arithmetic.paired_euler_prefixes_eq_weight χ (5 / 4) (11 / 4) (3 / 4) S
   have hb :=
     Arithmetic.paired_weighted_sum_ge_quadratic_budget χ hquad S
       (Arithmetic.pairedEulerPrefixWeight (5 / 4) (11 / 4) (3 / 4)) hS
-      (fun n _ hn ↦ Arithmetic.pairedEulerPrefixWeight_eq_zero_of_mangoldt_eq_zero _ _ _ hn)
+      (fun n _ hn ↦ Arithmetic.pairedEulerWeight_eq_zero_of_mangoldt_zero _ _ _ hn)
       (fun n _ ↦ Arithmetic.pairedEulerPrefixWeight_nonneg _ _ (by norm_num only) n) ht
   refine ⟨h.1, ?_⟩
   linarith only [h.2, he, hb]

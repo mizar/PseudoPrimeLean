@@ -17,8 +17,7 @@ namespace PseudoPrime.NumberTheory.Heilbronn
 /-- For fixed A>28/15, all sufficiently large odd primes p have a prime
 q<=log(p)^A with q^(p-1) nontrivial modulo p^2. The threshold may depend on A,
 while the result is uniform in p and uses no GRH or external Fermat estimate. -/
-theorem eventually_exists_prime_nontrivial_power_le_log_power_of_exponent {A : ℝ}
-    (hA : (28 / 15 : ℝ) < A) :
+theorem eventually_exists_prime_pow_ne_one_gt_28_15 {A : ℝ} (hA : (28 / 15 : ℝ) < A) :
     Filter.Eventually
       (fun p : ℕ ↦
         p.Prime →
@@ -29,8 +28,7 @@ theorem eventually_exists_prime_nontrivial_power_le_log_power_of_exponent {A : �
     Filter.eventually_ge_atTop P] with p hsm hlarge hp hp2
   let : Fact p.Prime := ⟨hp⟩
   obtain ⟨k, hk, hkp, hlo, hhi, hcount⟩ := hP p (hp.odd_of_ne_two hp2) hlarge
-  obtain ⟨q, hq, hqB, hpow⟩ :=
-    exists_prime_nontrivial_power_of_interval_and_smooth hcount (hsm k hk hlo hhi)
+  obtain ⟨q, hq, hqB, hpow⟩ := exists_prime_pow_ne_one_of_interval_smooth hcount (hsm k hk hlo hhi)
   have hB := Nat.lt_add_one_iff.mp hqB
   have hle : (q : ℝ) ≤ (Real.log p) ^ A :=
     (Nat.cast_le.mpr hB).trans

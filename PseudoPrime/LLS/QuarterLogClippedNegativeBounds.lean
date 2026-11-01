@@ -144,12 +144,10 @@ theorem exists_prime_neg_one_of_principalLower_anchor128 {q A : ℕ} [NeZero q]
   have hs : 5 ≤ Real.sqrt x := by nlinarith only [hx, Real.sq_sqrt hx0, Real.sqrt_nonneg x]
   have hp := pairedEulerPrefix_ge_anchor128 hGRH.riemann hb
   apply
-    exists_prime_neg_one_of_principalLower_conductor_prefix χ hquad hne hqA hGRH
-      (by linarith only [hx]) hP (Y := b) (by linarith only [hb]) (a := 3 / 10) (d :=
-      (1 / 5 : ℝ) * Real.log 2) (by norm_num only)
+    exists_prime_negOne_principalConductor_GRH χ hquad hne hqA hGRH (by linarith only [hx]) hP (Y :=
+      b) (by linarith only [hb]) (a := 3 / 10) (d := (1 / 5 : ℝ) * Real.log 2) (by norm_num only)
       (mul_nonneg (by norm_num only) (Real.log_natCast_nonneg 2)) (by linarith only [hs])
-      (fun p hp ↦
-        AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight_prime_upper_three_tenths hp)
+      (fun p hp ↦ AnalyticNumberTheory.Arithmetic.pairedEulerWeight_prime_le_three_tenths hp)
       (fun n hn ↦
         (Nat.cast_le.mpr (Finset.mem_Ioc.mp hn).2).trans
           ((Nat.floor_le (by linarith only [hb] : 0 ≤ b)).trans hcut))
@@ -163,7 +161,7 @@ theorem exists_prime_neg_one_of_principalLower_anchor128 {q A : ℕ} [NeZero q]
 a negative unit-prime witness through the new root cutoff when log A is at least 500.
 Use the certified anchor, corrected principal cap and quarter-logarithm factor bound.
 No separate numerical gap premise or finite input-range certificate remains. -/
-theorem exists_prime_neg_one_le_quarterClipped_log_ambient {q A : ℕ} [NeZero q]
+theorem exists_negOnePrime_le_quarterClipped_log_ambient {q A : ℕ} [NeZero q]
     (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (heven : χ.Even) (hne : χ ≠ 1)
     (hqA : q ≤ A) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : 500 ≤ Real.log A) :
@@ -179,10 +177,10 @@ theorem exists_prime_neg_one_le_quarterClipped_log_ambient {q A : ℕ} [NeZero q
     clippedShiftPrincipalLower_le_actual hGRH.riemann (by linarith only [hx] : 1 ≤ r ^ 2)
       (div_pos hr0 (by norm_num only : (0 : ℝ) < 20)) (by linarith only [hr0])
   have hc :=
-    AnalyticNumberTheory.DirichletLFunction.twoPoleGammaConstant_le_signed_of_even
-      χ.primitiveCharacter ((NumberTheory.primitiveCharacter_even_iff χ).mpr heven)
+    AnalyticNumberTheory.DirichletLFunction.twoPoleGamma_le_112_25_of_even χ.primitiveCharacter
+      ((NumberTheory.primitiveCharacter_even_iff χ).mpr heven)
   have hcard :=
-    AnalyticNumberTheory.Arithmetic.primeFactors_card_le_thirteen_halves_add_quarter_log
+    AnalyticNumberTheory.Arithmetic.primeFactors_card_le_13_2_add_1_4_log
       (Nat.pos_of_ne_zero (NeZero.ne q)) hqA
   have hlog : 0 ≤ Real.log ((99 / 40 : ℝ) * r ^ 2) := Real.log_nonneg (by linarith only [hx])
   have hcost :=

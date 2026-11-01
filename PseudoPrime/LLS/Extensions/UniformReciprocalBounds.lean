@@ -59,7 +59,7 @@ theorem norm_zeroMassReciprocalRemainder_le_explicit (f : GeneralLFunction) (hf 
           ((f.degree : ℝ) *
             ((Real.log x + AnalyticNumberTheory.Gamma.reciprocalGammaTailBound) / x)) +
         2 * ((f.degree : ℝ) * (Real.log 4 + 4)) := by
-  rw [← twice_gammaLogDerivativeAtOne_sub_log_conductor f hf]
+  rw [← gammaLog_one_sub_logConductor f hf]
   have hx0 : 0 < x := zero_lt_one.trans hx
   have hg :=
     (Complex.abs_re_le_norm (f.reciprocalGammaSum x)).trans
@@ -88,8 +88,7 @@ theorem norm_zeroMassReciprocalRemainder_le_explicit (f : GeneralLFunction) (hf 
 logarithmic conductor, the degree times the universal digamma error, and the zero mass.
 Insert the conductor comparison and use nonnegativity of zero mass and the triangle
 inequality. This controls the endpoint divided by the cutoff in the reciprocal remainder. -/
-theorem abs_twice_gammaLogDerivativeAtOne_add_zeroMass_le (f : GeneralLFunction)
-    (hf : f.IsAdmissible) :
+theorem gammaLog_one_add_zeroMass_abs_le (f : GeneralLFunction) (hf : f.IsAdmissible) :
     |2 * f.gammaLogDerivativeAtOne + f.zeroMass| ≤
       |Real.log f.analyticConductor| +
         (f.degree : ℝ) * AnalyticNumberTheory.Gamma.digammaLogErrorBound +
@@ -109,13 +108,13 @@ theorem abs_twice_gammaLogDerivativeAtOne_add_zeroMass_le (f : GeneralLFunction)
           f.zeroMass).trans
       (add_le_add (abs_add_le _ _) (le_refl |f.zeroMass|))
   rw [abs_of_nonneg hM] at h
-  linarith only [h, abs_twice_gammaLogDerivativeAtOne_sub_log_conductor_le f hf]
+  linarith only [h, gammaLog_one_conductor_error_le f hf]
 
 /-- For admissible RH data and cutoff greater than one, bound the zero-mass remainder
 using only the analytic conductor, degree, zero mass, and universal gamma constants.
 Apply the uniform digamma estimate to both endpoint terms in the explicit remainder bound.
 No individual gamma shifts remain; the bound supports uniform estimates on families. -/
-theorem norm_zeroMassReciprocalRemainder_le_conductor (f : GeneralLFunction) (hf : f.IsAdmissible)
+theorem zeroMassReciprocal_conductor_le_RH (f : GeneralLFunction) (hf : f.IsAdmissible)
     (hRH : f.RiemannHypothesis) {x : ℝ} (hx : 1 < x) :
     ‖f.zeroMassReciprocalRemainder x‖ ≤
       (f.degree : ℝ) * AnalyticNumberTheory.Gamma.digammaLogErrorBound +
@@ -129,11 +128,10 @@ theorem norm_zeroMassReciprocalRemainder_le_conductor (f : GeneralLFunction) (hf
             ((Real.log x + AnalyticNumberTheory.Gamma.reciprocalGammaTailBound) / x)) +
         2 * ((f.degree : ℝ) * (Real.log 4 + 4)) := by
   have h := norm_zeroMassReciprocalRemainder_le_explicit f hf hRH hx
-  rw [← twice_gammaLogDerivativeAtOne_sub_log_conductor f hf] at h
-  have ha := abs_twice_gammaLogDerivativeAtOne_sub_log_conductor_le f hf
+  rw [← gammaLog_one_sub_logConductor f hf] at h
+  have ha := gammaLog_one_conductor_error_le f hf
   have hb :=
-    div_le_div_of_nonneg_right (abs_twice_gammaLogDerivativeAtOne_add_zeroMass_le f hf)
-      (zero_lt_one.trans hx).le
+    div_le_div_of_nonneg_right (gammaLog_one_add_zeroMass_abs_le f hf) (zero_lt_one.trans hx).le
   exact h.trans (by linarith only [ha, hb])
 
 /-- For admissible data and any cutoff, bound the reciprocal arithmetic sum by the degree
@@ -165,8 +163,7 @@ theorem zeroMass_le_conductor_degree (f : GeneralLFunction) (hf : f.IsAdmissible
     (hRH : f.RiemannHypothesis) :
     f.zeroMass ≤
       (17 / 7) * |Real.log f.analyticConductor| + (f.degree : ℝ) * zeroMassDegreeBound := by
-  have hr :=
-    norm_zeroMassReciprocalRemainder_le_conductor f hf hRH (show (1 : ℝ) < 16 by norm_num only)
+  have hr := zeroMassReciprocal_conductor_le_RH f hf hRH (show (1 : ℝ) < 16 by norm_num only)
   have hs := norm_reciprocalSum_le_degree_majorant f hf 16
   have he := Complex.abs_re_le_norm (f.reciprocalSum 16)
   have hroot : Real.sqrt (16 : ℝ) = 4 := by norm_num only [Real.sqrt_eq_iff_eq_sq, Nat.ofNat_pos]
@@ -232,15 +229,14 @@ theorem norm_zeroMassReciprocalRemainder_le_uniform (f : GeneralLFunction) (hf :
         hb)
       hx0
   have h2 := div_le_div_of_nonneg_right hb (Real.sqrt_nonneg x)
-  exact
-    (norm_zeroMassReciprocalRemainder_le_conductor f hf hRH hx).trans (by linarith only [h1, h2])
+  exact (zeroMassReciprocal_conductor_le_RH f hf hRH hx).trans (by linarith only [h1, h2])
 
 /-- For admissible RH data and cutoff greater than one, the zero-mass remainder is at most
 a universal constant times the degree plus 58/7 times |log conductor|/sqrt(cutoff).
 Insert the uniform mass bound, use sqrt(x) ≤ x and log(x)/x ≤ 1, and absorb the gamma terms.
 This realizes the uniform error scale used in the general zero-mass estimate. -/
-theorem norm_zeroMassReciprocalRemainder_le_degree_add_conductor (f : GeneralLFunction)
-    (hf : f.IsAdmissible) (hRH : f.RiemannHypothesis) {x : ℝ} (hx : 1 < x) :
+theorem zeroMassReciprocal_degree_conductor_le_RH (f : GeneralLFunction) (hf : f.IsAdmissible)
+    (hRH : f.RiemannHypothesis) {x : ℝ} (hx : 1 < x) :
     ‖f.zeroMassReciprocalRemainder x‖ ≤
       (f.degree : ℝ) *
           (2 * AnalyticNumberTheory.Gamma.digammaLogErrorBound + 3 * |zeroMassDegreeBound| +
@@ -305,7 +301,7 @@ theorem norm_zeroMassReciprocalRemainder_le_degree_add_conductor (f : GeneralLFu
       (f.degree : ℝ) * (1 + AnalyticNumberTheory.Gamma.reciprocalGammaTailBound) := by
     rw [add_div]
     exact mul_le_mul_of_nonneg_left (add_le_add hlog hBx) (Nat.cast_nonneg f.degree)
-  have hr := norm_zeroMassReciprocalRemainder_le_conductor f hf hRH hx
+  have hr := zeroMassReciprocal_conductor_le_RH f hf hRH hx
   rw [add_div, add_div] at hr
   nlinarith only [hr, hMx, hMs, hC, hAx, hg]
 
@@ -336,7 +332,7 @@ theorem norm_reciprocalRemainder_le_conductor (f : GeneralLFunction) (hf : f.IsA
     rw [he, abs_div, abs_of_pos (show (0 : ℝ) < 2 by norm_num only)]
     have h := abs_add_le (2 * f.gammaLogDerivativeAtOne + f.zeroMass) f.zeroMass
     rw [abs_of_nonneg hM] at h
-    linarith only [h, abs_twice_gammaLogDerivativeAtOne_add_zeroMass_le f hf]
+    linarith only [h, gammaLog_one_add_zeroMass_abs_le f hf]
   have h := div_le_div_of_nonneg_right hg (zero_lt_one.trans hx).le
   rw [div_div] at h
   exact (norm_reciprocalRemainder_le_uniform_gamma f hf hRH hx).trans (add_le_add h (le_refl _))

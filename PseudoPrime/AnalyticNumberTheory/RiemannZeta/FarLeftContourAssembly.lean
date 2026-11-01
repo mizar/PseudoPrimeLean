@@ -24,27 +24,26 @@ horizontal edge is subtracted, and a left vertical edge contributes with `-I`.
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 
 /-- The logarithmic kernel's fixed right horizontal segment vanishes on the unified sequence. -/
-theorem tendsto_intervalIntegral_riemannZetaLogContourKernel_unifiedHeightSeq {x : ℝ} (hx : 0 < x)
-    {lam tau : ℝ} (hlam : -(1 : ℝ) / 2 ≤ lam) (hlamtau : lam ≤ tau) (htau : tau ≤ 2) :
+theorem tendsto_integral_logKernel_unifiedHeightSeq {x : ℝ} (hx : 0 < x) {lam tau : ℝ}
+    (hlam : -(1 : ℝ) / 2 ≤ lam) (hlamtau : lam ≤ tau) (htau : tau ≤ 2) :
     Filter.Tendsto
       (fun m : ℕ =>
         ∫ σ in lam..tau, riemannZetaLogContourKernel x (σ + unifiedContourHeightSeq m * Complex.I))
       Filter.atTop (nhds 0) := by
   exact
-    (tendsto_intervalIntegral_riemannZetaLogContourKernel_goodHeightSeq hx hlam hlamtau htau).comp
+    (tendsto_integral_logKernel_goodHeightSeq hx hlam hlamtau htau).comp
       tendsto_farLeftGoodHeightIndex_atTop
 
 /-- The reciprocal kernel's fixed right horizontal segment vanishes on the unified sequence. -/
-theorem tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_unifiedHeightSeq {x : ℝ}
-    (hx : 0 < x) {lam tau : ℝ} (hlam : -(1 : ℝ) / 2 ≤ lam) (hlamtau : lam ≤ tau) (htau : tau ≤ 2) :
+theorem tendsto_reciprocal_unifiedHeight {x : ℝ} (hx : 0 < x) {lam tau : ℝ}
+    (hlam : -(1 : ℝ) / 2 ≤ lam) (hlamtau : lam ≤ tau) (htau : tau ≤ 2) :
     Filter.Tendsto
       (fun m : ℕ =>
         ∫ σ in lam..tau,
           riemannZetaReciprocalContourKernel x (σ + unifiedContourHeightSeq m * Complex.I))
       Filter.atTop (nhds 0) := by
   exact
-    (tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_goodHeightSeq hx hlam hlamtau
-          htau).comp
+    (tendsto_reciprocal_goodHeightSeq hx hlam hlamtau htau).comp
       tendsto_farLeftGoodHeightIndex_atTop
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

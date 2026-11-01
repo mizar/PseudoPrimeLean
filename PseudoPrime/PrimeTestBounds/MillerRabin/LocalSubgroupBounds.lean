@@ -85,8 +85,8 @@ for a failing prime base under GRH when odd n≥10^141. The local (n-1)-power
 kernel is proper and contains every strong-pass reduction, so no supplied
 subgroup or containment premise remains. The finite-index classification must
 still derive the arithmetic size bound from its global index condition. -/
-theorem exists_prime_witness_le_0283_of_non_korselt_prime_factor {n p : ℕ} [Fact p.Prime]
-    (hnOdd : Odd n) (hpn : p ∣ n) (hdiv : ¬p - 1 ∣ n - 1)
+theorem exists_prime_0282924_nonKorseltFactor_GRH {n p : ℕ} [Fact p.Prime] (hnOdd : Odd n)
+    (hpn : p ∣ n) (hdiv : ¬p - 1 ∣ n - 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hn : 10 ^ 142 ≤ n)
     (hsize : p ^ 2 ≤ 10 ^ 9 * n) :
     ∃ r : ℕ,
@@ -98,16 +98,15 @@ theorem exists_prime_witness_le_0283_of_non_korselt_prime_factor {n p : ℕ} [Fa
     exists_prime_witness_le_0283_of_local_subgroup hnOdd (Fact.out : p.Prime).two_le hpn
       (powMonoidHom (n - 1) : (ZMod p)ˣ →* (ZMod p)ˣ).ker
       (PrimeTest.local_prime_powerKernel_ne_top_of_not_dvd hdiv)
-      (fun a ha ↦ PrimeTest.strongMillerRabinPass_mem_local_prime_powerKernel hn1 hnOdd hpn ha) hGRH
-      hn hsize
+      (fun a ha ↦ PrimeTest.strongMR_local_primeKernel hn1 hnOdd hpn ha) hGRH hn hsize
 
 /-- Under GRH for odd n≥10^141, a non-Korselt prime factor gives coefficient
 283/1000 whenever an ambient subgroup contained in the Fermat subgroup has
 index at most 10^9. Derive the cofactor positivity, compare local and ambient
 indices, and obtain the local prime-square size bound internally.
 This completes the local analytic transfer for the finite-index non-Korselt branch. -/
-theorem exists_prime_witness_le_0283_of_non_korselt_small_index {n p : ℕ} [Fact p.Prime]
-    (hnOdd : Odd n) (hpn : p ∣ n) (hdiv : ¬p - 1 ∣ n - 1) (H : Subgroup (ZMod n)ˣ)
+theorem exists_prime_0282924_nonKorseltIndex_GRH {n p : ℕ} [Fact p.Prime] (hnOdd : Odd n)
+    (hpn : p ∣ n) (hdiv : ¬p - 1 ∣ n - 1) (H : Subgroup (ZMod n)ˣ)
     (hH : H ≤ PrimeTest.fermatSubgroup n) (hi : H.index ≤ 10 ^ 9)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hn : 10 ^ 142 ≤ n) :
     ∃ r : ℕ,
@@ -123,11 +122,9 @@ theorem exists_prime_witness_le_0283_of_non_korselt_small_index {n p : ℕ} [Fac
     intro hm
     exact hdiv (by simpa only [hm, mul_one] using (dvd_refl (p - 1)))
   have hm1 : 1 < m := lt_of_le_of_ne (Nat.succ_le_of_lt hmpos) (Ne.symm hmne)
-  have hs := PrimeTest.prime_factor_square_le_local_powerKernel_index_mul (p := p) hm1
+  have hs := PrimeTest.primeFactor_sq_le_powerKernel_index (p := p) hm1
   have hlocal := PrimeTest.local_powerKernel_index_le_of_le_fermat (dvd_mul_right p m) H hH
   have hsize := hs.trans (Nat.mul_le_mul_right (p * m) (hlocal.trans hi))
-  exact
-    exists_prime_witness_le_0283_of_non_korselt_prime_factor hnOdd (dvd_mul_right p m) hdiv hGRH hn
-      hsize
+  exact exists_prime_0282924_nonKorseltFactor_GRH hnOdd (dvd_mul_right p m) hdiv hGRH hn hsize
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

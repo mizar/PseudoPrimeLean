@@ -19,7 +19,7 @@ namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 Keep the small-factor cutoff cost rather than absorbing it into the logarithmic coefficient.
 The proof splits at sixteen and uses log 16 at least 8/3; later analytic comparisons choose
 their own coefficient and entrance scale without assuming a lower bound on log q. -/
-theorem primeFactors_card_le_three_eighths_ambient_log {q A : ℕ} (hq : 0 < q) (hqA : q ≤ A) :
+theorem primeFactors_card_le_16_add_3_8_log {q A : ℕ} (hq : 0 < q) (hqA : q ≤ A) :
     (q.primeFactors.card : ℝ) ≤ 16 + (3 / 8 : ℝ) * Real.log A := by
   have hc := primeFactors_card_le_cutoff_add_log_div hq.ne' (show (1 : ℝ) < 16 by norm_num only)
   have h16 : (8 / 3 : ℝ) ≤ Real.log 16 := by
@@ -41,7 +41,7 @@ factors of q is at most log(A)/2. Split the prime support at sixteen and use
 log 16 at least 8/3. This uniform estimate covers small q as well and needs no RH. -/
 theorem primeFactors_card_le_half_ambient_log {q A : ℕ} (hq : 0 < q) (hqA : q ≤ A)
     (hL : 128 ≤ Real.log A) : (q.primeFactors.card : ℝ) ≤ Real.log A / 2 := by
-  have h := primeFactors_card_le_three_eighths_ambient_log hq hqA
+  have h := primeFactors_card_le_16_add_3_8_log hq hqA
   linarith only [h, hL]
 
 /-- For a positive level q at most A with log A at least 640, bound its distinct prime count
@@ -49,7 +49,7 @@ by 2log(A)/5. Absorb the retained cutoff cost into the logarithmic budget.
 This strengthens the half-logarithm estimate in finite-scale negative-witness comparisons. -/
 theorem primeFactors_card_le_two_fifths_ambient_log {q A : ℕ} (hq : 0 < q) (hqA : q ≤ A)
     (hL : 640 ≤ Real.log A) : (q.primeFactors.card : ℝ) ≤ (2 / 5 : ℝ) * Real.log A := by
-  have h := primeFactors_card_le_three_eighths_ambient_log hq hqA
+  have h := primeFactors_card_le_16_add_3_8_log hq hqA
   linarith only [h, hL]
 
 end PseudoPrime.AnalyticNumberTheory.Arithmetic

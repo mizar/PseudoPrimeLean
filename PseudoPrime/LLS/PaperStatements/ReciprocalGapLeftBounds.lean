@@ -111,8 +111,8 @@ theorem reciprocalGap_leftIntegral_norm_le {h : ℝ} (hh : 0 < h) {q : ℕ} [NeZ
   have hb (t : ℝ) : ‖F t‖ ≤ (B * U * x ^ a) * H t := by
     have hL : 0 ≤ Real.log (4 + |t|) := Real.log_nonneg (by linarith only [abs_nonneg t])
     have hd :=
-      AnalyticNumberTheory.DirichletLFunction.norm_logDeriv_completed_left_strip_le_gap_log hp hne
-        hinv he (by linarith only [heu] : e ≤ 1) t
+      AnalyticNumberTheory.DirichletLFunction.completedLogDeriv_left_gap_log hp hne hinv he
+        (by linarith only [heu] : e ≤ 1) t
     have hnlog : ‖Complex.log (q : ℂ)‖ = Real.log q := by
       rw [← Complex.natCast_log, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg hlog]
     rw [hnlog] at hd
@@ -186,7 +186,7 @@ theorem exists_uniform_reciprocalGap_remainder_gap_bound :
                       ((7 / 6 : ℝ) * Real.log q + 4) / (h * Real.sqrt x) +
                         reciprocalGapLeftBudget h hh q x +
                         C := by
-  obtain ⟨C, hC, hb⟩ := exists_uniform_reciprocalGap_remainder_split_bound
+  obtain ⟨C, hC, hb⟩ := exists_uniform_gap_split_error_GRH
   refine ⟨C, hC, ?_⟩
   intro h hh q _ hq χ hp hne hinv hGRH x hx
   have hL : ‖reciprocalGapLeftIntegral h hh χ x‖ ≤ reciprocalGapLeftBudget h hh q x :=
@@ -200,7 +200,7 @@ sum exceeding the zero-prefix budget, explicit pole cost, explicit left budget a
 common Gamma constant gives a prime non-one witness below the scale.
 Apply exact prime separation after bounding the remainder. All character-dependent contour
 integrals have been removed, but universal constants still need numerical evaluation. -/
-theorem exists_uniform_reciprocalGap_prime_gap_separation :
+theorem exists_uniform_gap_prime_separation_GRH :
     ∃ C : ℝ,
       0 < C ∧
         ∀ (h : ℝ) (hh : 0 < h) {q : ℕ} [NeZero q],

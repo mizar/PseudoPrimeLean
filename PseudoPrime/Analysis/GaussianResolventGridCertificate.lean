@@ -908,6 +908,6 @@ theorem gaussianResolvent_grid_lower (j : ℕ) (hj : j ≤ 16000) :
 All finite node checks, curvature, interpolation, evenness, and tail comparisons are proved. -/
 theorem norm_gaussianGammaFunction_le_gaussianResolvent (t : ℝ) :
     ‖gaussianGammaFunction (Complex.I * (t : ℂ))‖ ≤ gaussianResolventMajorant t := by
-  exact norm_gaussianGammaFunction_le_gaussianResolvent_of_grid gaussianResolvent_grid_lower t
+  exact norm_gaussianGamma_le_resolvent_of_grid gaussianResolvent_grid_lower t
 
 end PseudoPrime.Analysis

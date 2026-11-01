@@ -44,8 +44,8 @@ theorem weightedComparisonCore_of_mainErrors {f : ℕ} [NeZero f] (hf2 : 2 ≤ f
 parity-error bounds give a comparison core for the primitive inducing character.
 Transfer triviality, set both defects to zero and apply the parameterized constructor.
 The numerical cutoff is determined solely by the supplied main-error estimates. -/
-theorem weightedComparisonCore_of_trivialBelow_of_mainErrors {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hne : χ ≠ 1)
+theorem weightedComparison_trivial_mainErrors_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    [NeZero χ.conductor] (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {X e : ℝ} (hX : 1 < X)
     (hSo : Analysis.primitiveLogOddMainError X ≤ e) (hSe : Analysis.primitiveLogEvenMainError X ≤ e)
     (hRo : Analysis.primitiveReciprocalOddMainError X ≤ -(1 / 4 : ℝ))
@@ -56,7 +56,7 @@ theorem weightedComparisonCore_of_trivialBelow_of_mainErrors {q : ℕ} [NeZero q
   have hp := AnalyticNumberTheory.Arithmetic.primitiveCharacter_ne_one χ hne
   have hf : 2 ≤ χ.conductor := by
     have h0 := NeZero.pos χ.conductor
-    have h1 := AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hp
+    have h1 := AnalyticNumberTheory.DirichletLFunction.character_level_ne_one_of_ne_one hp
     exact Nat.succ_le_iff.mpr (Nat.lt_of_le_of_ne h0 (Ne.symm h1))
   have htrivial := characterTrivialBelow_primitiveCharacter ht
   have hx : 0 < X := zero_lt_one.trans hX

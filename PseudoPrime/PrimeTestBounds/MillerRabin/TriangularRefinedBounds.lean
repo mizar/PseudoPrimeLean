@@ -48,9 +48,8 @@ theorem exists_prime_triangularEarlierIndex {n : ℕ} [NeZero n] (hn : 1 < n) (h
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   have hiR : (1000000000000 : ℝ) ≤ ((PrimeTest.fermatSubgroup n).index : ℝ) := by exact_mod_cast hi
   obtain ⟨p, hp, hb, hout⟩ :=
-    LLS.PaperStatements.exists_prime_factor_or_outside_of_triangular18_signed_gap
-      (PrimeTest.fermatSubgroup n) hGRH (Analysis.triangularEarlier_scale_bounds hL).1
-      (Analysis.triangularEarlier_gap hL hiR)
+    LLS.PaperStatements.exists_prime_factorOrOutside_signedGap_GRH (PrimeTest.fermatSubgroup n) hGRH
+      (Analysis.triangularEarlier_scale_bounds hL).1 (Analysis.triangularEarlier_gap hL hiR)
   refine ⟨p, hp, hb, ?_⟩
   intro hpass
   rcases hout with hd | hout
@@ -79,8 +78,8 @@ theorem exists_prime_triangularEarlier {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc :
             norm_num only [Nat.cast_ofNat]; linarith only [hL])
       simpa only [← pow_mul, Nat.reduceMul] using h36
     rcases
-      finite_index_local_subgroup_or_uniform_korselt_triple hn ho hc (PrimeTest.fermatSubgroup n)
-        le_rfl (by norm_num only : 1 ≤ 10 ^ 12) hJ hi with
+      localSubgroup_or_uniformKorseltTriple hn ho hc (PrimeTest.fermatSubgroup n) le_rfl
+        (by norm_num only : 1 ≤ 10 ^ 12) hJ hi with
       hl | ht
     · obtain ⟨q, hq, hqn, hsize, K, hK, hpass⟩ := hl
       have hqp : 0 < q := (by norm_num only : 0 < 2).trans_le hq
@@ -93,8 +92,7 @@ theorem exists_prime_triangularEarlier {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc :
           (by
             norm_num only [Nat.cast_ofNat]; linarith only [hL])
       obtain ⟨p, hp, hb, hr⟩ :=
-        exists_prime_witness_le_0283_of_uniform_korselt_triple_card ho ht.1 ht.2.1 ht.2.2.1 ht.2.2.2
-          hGRH hdecimal
+        exists_prime_0282924_korseltTriple_GRH ho ht.1 ht.2.1 ht.2.2.1 ht.2.2.2 hGRH hdecimal
       refine ⟨p, hp, hb.trans ?_, hr⟩
       nlinarith only [sq_nonneg (Real.log n)]
   · exact exists_prime_triangularEarlierIndex hn ho (by exact_mod_cast (lt_of_not_ge hi).le) hGRH hL
@@ -146,9 +144,8 @@ theorem exists_prime_triangularRefinedIndex {n : ℕ} [NeZero n] (hn : 1 < n) (h
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   have hiR : (1000000000000 : ℝ) ≤ ((PrimeTest.fermatSubgroup n).index : ℝ) := by exact_mod_cast hi
   obtain ⟨p, hp, hb, hout⟩ :=
-    LLS.PaperStatements.exists_prime_factor_or_outside_of_triangular18_signed_gap
-      (PrimeTest.fermatSubgroup n) hGRH (Analysis.triangularRefined_scale_bounds hL).1
-      (Analysis.triangularRefined_gap hL hiR)
+    LLS.PaperStatements.exists_prime_factorOrOutside_signedGap_GRH (PrimeTest.fermatSubgroup n) hGRH
+      (Analysis.triangularRefined_scale_bounds hL).1 (Analysis.triangularRefined_gap hL hiR)
   refine ⟨p, hp, hb, ?_⟩
   intro hpass
   rcases hout with hd | hout
@@ -177,8 +174,8 @@ theorem exists_prime_triangularRefined {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc :
             norm_num only [Nat.cast_ofNat]; linarith only [hL])
       simpa only [← pow_mul, Nat.reduceMul] using h36
     rcases
-      finite_index_local_subgroup_or_uniform_korselt_triple hn ho hc (PrimeTest.fermatSubgroup n)
-        le_rfl (by norm_num only : 1 ≤ 10 ^ 12) hJ hi with
+      localSubgroup_or_uniformKorseltTriple hn ho hc (PrimeTest.fermatSubgroup n) le_rfl
+        (by norm_num only : 1 ≤ 10 ^ 12) hJ hi with
       hl | ht
     · obtain ⟨q, hq, hqn, hsize, K, hK, hpass⟩ := hl
       have hqp : 0 < q := (by norm_num only : 0 < 2).trans_le hq

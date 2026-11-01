@@ -19,7 +19,7 @@ namespace PseudoPrime.PseudoSquare
 cubic radius at most X give an odd coprime negative Jacobi prime at most X.
 Apply localized primitive-character extraction and transfer its value.
 Only excluded prime factors at most X contribute to the cost. -/
-theorem exists_prime_neg_one_le_of_truncated_cubic_radius {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+theorem exists_prime_neg_one_le_of_cubic_radius_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {G E X : ℝ}
     (hlog : Real.log (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ G)
     (hcost :
@@ -40,7 +40,7 @@ theorem exists_prime_neg_one_le_of_truncated_cubic_radius {n : ℕ} {hn : Odd n}
   have hf := NumberTheory.three_le_conductor_of_ne_one χ hχ
   have hprim := AnalyticNumberTheory.Arithmetic.primitiveCharacter_ne_one χ hχ
   obtain ⟨p, hp, hb, hd, hv⟩ :=
-    LLS.PaperStatements.exists_prime_outside_le_of_truncated_cubic_radius χ.primitiveCharacter
+    LLS.PaperStatements.exists_prime_outside_le_of_cubic_radius_GRH χ.primitiveCharacter
       (le_trans (by decide : 2 ≤ 3) hf) (mul_ne_zero (by norm_num only : (2 : ℕ) ≠ 0) hn.pos.ne')
       hGRH χ.primitiveCharacter_isPrimitive hprim hlog hcost hbound
   have hpn : ¬p ∣ n := fun h ↦ hd (h.trans (dvd_mul_left n 2))
@@ -79,7 +79,7 @@ theorem primeNegOneWitness_le_of_truncated_cubic_radius {n : ℕ} {hn : Odd n} {
     (hbound : (LLS.PaperStatements.tightCubicExclusionRadius G E) ^ 2 ≤ X) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ X := by
   obtain ⟨p, hp, ho, _, hj, hb⟩ :=
-    exists_prime_neg_one_le_of_truncated_cubic_radius (hns := hns) hGRH hlog hcost hbound
+    exists_prime_neg_one_le_of_cubic_radius_GRH (hns := hns) hGRH hlog hcost hbound
   exact (Nat.cast_le.mpr (NumberTheory.primeNegOneWitness_le n hw ⟨hp, ho, hj⟩)).trans hb
 
 /-- The same localized negative witness also bounds the least non-one
@@ -96,7 +96,7 @@ theorem primeNeOneWitness_le_of_truncated_cubic_radius {n : ℕ} {hn : Odd n} {h
     (hbound : (LLS.PaperStatements.tightCubicExclusionRadius G E) ^ 2 ≤ X) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤ X := by
   obtain ⟨p, hp, ho, _, hj, hb⟩ :=
-    exists_prime_neg_one_le_of_truncated_cubic_radius (hns := hns) hGRH hlog hcost hbound
+    exists_prime_neg_one_le_of_cubic_radius_GRH (hns := hns) hGRH hlog hcost hbound
   have hjne : jacobiSym n p ≠ 1 := hj.trans_ne (by decide : (-1 : ℤ) ≠ 1)
   exact (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hp, ho, hjne⟩)).trans hb
 

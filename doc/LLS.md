@@ -104,7 +104,7 @@ $$
 逆数損失を $32873/20800$ から $31551/20000$ に下げると、補助項は同じか大きくなり、
 補正項と二乗上界は同じか小さくなる。補正定数 $7031/5000$ は共通である。
 この半径比較は [PreciseSavingTheorem11S1.lean](../PseudoPrime/LLS/PreciseSavingTheorem11S1.lean) の
-`preciseSavingRadiusRoot_le_retainedSavingRadiusRoot` が証明する。
+`preciseSavingRoot_le_retainedRoot` が証明する。
 `max` により上界が一致する場合もある。
 
 ### 改良式の真部分群版
@@ -134,7 +134,7 @@ p\le F_{\mathrm{prec}}(q).
 $$
 
 [PreciseSavingFromThree.lean](../PseudoPrime/LLS/PreciseSavingFromThree.lean) の
-`exists_prime_character_ne_one_le_preciseSavingRadius_from_three` がこの主張を証明する。
+`exists_prime_neOne_preciseSaving_three_GRH` がこの主張を証明する。
 指標の原始性や二次性は仮定しない。両版とも、有限範囲の上限5・19・43が改良半径に収まることを確認し、
 既存の証明書を変更せずに使っている。
 
@@ -163,7 +163,7 @@ $$
 $$
 
 [PreciseSavingTheorem11S1.lean](../PseudoPrime/LLS/PreciseSavingTheorem11S1.lean) の
-`exists_prime_character_ne_one_of_precise_exact_factor_root` がこの主張を証明する。
+`exists_prime_neOne_preciseFactor_GRH` がこの主張を証明する。
 [ExactFactorLossTheorem11S1.lean](../PseudoPrime/LLS/ExactFactorLossTheorem11S1.lean) は、次の費用比較を証明する。
 
 $$
@@ -198,8 +198,8 @@ p\nmid q,\quad\chi(p)\ne1,\quad p\le\frac45(\ln q)^2.
 $$
 
 [GammaUniformTightStart.lean](../PseudoPrime/LLS/GammaUniformTightStart.lean) の
-`exists_prime_outside_subgroup_le_gamma_four_fifths_19787` と
-`exists_prime_character_ne_one_le_gamma_four_fifths_19787` が対応する。
+`exists_prime_outside_4_5_log_sq_19787_GRH` と
+`exists_prime_ne_one_4_5_log_sq_19787_GRH` が対応する。
 部分群指数・法の素因数構成の追加条件はない。
 符号付きGamma評価と非単元費用を一様に抑え、最小部分群外素数にも接続している。
 
@@ -274,7 +274,7 @@ $5\le q < 3000$ では、有限証明を指標の単数群上の核に適用す�
 $q\ge3000$ では既存の `exists_prime_not_one_le_log_sq` を用いる。
 結論は $\chi(p)=0$ を許し、 $p\nmid q$ は主張しない。
 
-同ファイルの `exists_prime_outside_subgroup_image_le_log_sq_from_five` は、
+同ファイルの `exists_prime_outside_logSq_five_GRH` は、
 この指標版から次の部分群版を導く。
 
 $$
@@ -319,11 +319,11 @@ p\le F_{4.5571}(q),\quad \chi(p)\ne1.
 $$
 
 [AnalyticFinerPart2FromFive.lean](../PseudoPrime/LLS/AnalyticFinerPart2FromFive.lean) の
-`exists_prime_not_one_le_finerPart2Root_from_five_analytic` がこの主張を証明する。
+`exists_prime_neOne_finerPart2_five_GRH` がこの主張を証明する。
 法の有限検査を使わず、 $5\le q\le500$ は逆数重み付き明示公式だけで、
 $q\ge501$ は切断点50以上・対数誤差 $-5/2$ の比較で証明する。
 ただし、少数の実定数については、対数を有理数の区間で評価する検証を用いる。
-同ファイルの `exists_prime_outside_finerPart2_from_five_analytic` は、
+同ファイルの `exists_prime_outside_finerPart2_five_GRH` は、
 小素因数排除の前提なしで真部分群の像の外の素数を与える。
 いずれも非単元を許し、 $p\nmid q$ は主張しない。
 
@@ -478,7 +478,7 @@ H\subsetneq G_q
 [p]_q\notin\iota_q(H).
 $$
 
-`FullEndpointEightyOneSubgroup.lean` の `PaperStatements.exists_prime_outside_subgroup_le_eightyOne_log_sq` が対応する。
+`FullEndpointEightyOneSubgroup.lean` の `PaperStatements.exists_primeOutsideSubgroup_81_100_logSq_GRH` が対応する。
 上の非主指標版から商群指標を使って導く。非単元と素数2も証人に含むため、負値の奇素数Jacobi証人へそのまま転用しない。
 
 ### 中間尺度での区分線形半径による改良
@@ -521,7 +521,7 @@ $$
 [非主指標版](../PseudoPrime/LLS/MidscaleEndpointRadius.lean) の
 `exists_prime_ne_one_le_midscale_radius_sq` と
 [真部分群版](../PseudoPrime/LLS/MidscaleEndpointSubgroup.lean) の
-`exists_prime_outside_subgroup_le_midscale_radius_sq` である。
+`exists_prime_outside_midscale_GRH` である。
 素数2と非単元も証人に含む。奇素数の負値Jacobi証人にはそのまま適用しない。
 
 半径は接続点でそれぞれ32、64、128となり、両端では24、256となる。
@@ -555,7 +555,7 @@ $L=\ln q$ とし、上記の $R_{\mathrm{ad}}(q)$、 $F_{\mathrm{ad}}(q)$、 $F_
 | $26 < L < 1339/50$ または $26269/100 < L < 300$ | $F_{\mathrm{ad}}(q)$ | [`exists_prime_not_one_le_adaptivePart2Root`](../PseudoPrime/LLS/AdaptiveReciprocalWitnessBounds.lean) |
 | $1339/50\le L\le26269/100$ | $R_{\mathrm{aff}}(L)^2$ | [`PaperStatements.exists_prime_ne_one_le_midscale_radius_sq`](../PseudoPrime/LLS/MidscaleEndpointRadius.lean) |
 | $L\ge300$、 $q < 10^{19787}$ | $F_\Gamma(q)$ | [`exists_prime_ne_one_le_clippedAffine`](../PseudoPrime/LLS/ClippedAffineWitnessBounds.lean) |
-| $q\ge10^{19787}$ | $(4/5)L^2$ | [`exists_prime_character_ne_one_le_gamma_four_fifths_19787`](../PseudoPrime/LLS/GammaUniformTightStart.lean) |
+| $q\ge10^{19787}$ | $(4/5)L^2$ | [`exists_prime_ne_one_4_5_log_sq_19787_GRH`](../PseudoPrime/LLS/GammaUniformTightStart.lean) |
 
 $L\le9$ の範囲では、上界61と既存の2式を表の条件で比較する。 $9 < L\le26$ では、
 `FullEndpointEightyOneSubgroup.lean` の `PaperStatements.fullEndpoint_eightyOne_lt_adaptive` により
@@ -621,7 +621,7 @@ p\le R(f_\chi,E(q)).
 \end{gathered}
 $$
 
-`exists_prime_outside_le_direct_character_conductor` がこの真部分群版を証明する。
+`exists_prime_outside_directConductor_GRH` がこの真部分群版を証明する。
 小導手の指標を選べる入力では法の対数二乗への依存を弱められる。
 また、次の比較も全域でLeanにより証明した。
 
@@ -657,7 +657,7 @@ p\nmid q,\quad\chi(p)\ne1,\quad p\le R_{\mathrm{even}}(f_\chi,E(q)).
 \end{gathered}
 $$
 
-`exists_prime_ne_one_le_even_direct_conductor_root` が対応する。
+`exists_neOnePrime_le_even_direct_conductor_root` が対応する。
 偶指標では原始Hadamard定数の絶対値を $(11/18)\ln f+21/10$ 以下と評価できる。
 一般指標用の加法定数 $19171/400$ より小さい $17939/400$ を使えるのは、この偶性を保持した場合である。
 
@@ -696,7 +696,7 @@ $$
 さらに $\chi(-1)=1$ なら、同じ結論で $W_{179/200,21/10}(f,q,x)$ を使える。
 [VariableReciprocalConductorBounds.lean](../PseudoPrime/LLS/VariableReciprocalConductorBounds.lean) の
 `exists_prime_ne_one_le_variable_reciprocal_root` と
-`exists_prime_ne_one_le_even_variable_reciprocal_root` が対応する。
+`exists_prime_neOne_evenVariableRecip_GRH` が対応する。
 
 この切断点は証人探索上限とは独立に選べる。
 固定Hadamard上界との小さい方を使うため、同じ導手・除外費用の従来の根上界以下となる。
@@ -822,8 +822,8 @@ p\nmid q,\quad\chi(p)\ne1,\quad p\le R_3(G,q).
 $$
 
 [TightCubicRadiusComparisons.lean](../PseudoPrime/LLS/TightCubicRadiusComparisons.lean) の
-`exists_prime_outside_le_tight_cubic_conductor_radius` と
-`exists_prime_ne_one_le_tight_cubic_conductor_radius` が対応する。
+`exists_prime_outside_cubicConductor_GRH` と
+`exists_prime_neOne_cubicConductor_GRH` が対応する。
 前節の $G\ge16$ という条件は、この存在定理には不要である。
 
 $$
@@ -862,11 +862,11 @@ G\ge0\quad\Longrightarrow\quad R_{3,\chi}(G,m)\le R_3(G,m).
 $$
 
 [TightCubicConductorBounds.lean](../PseudoPrime/LLS/TightCubicConductorBounds.lean) の
-`exists_prime_outside_le_tight_cubic_exclusion_radius` は $E_\chi(m)$ の任意の上界を受け取る。
+`exists_prime_neOne_tightCubic_GRH` は $E_\chi(m)$ の任意の上界を受け取る。
 除外素数でも $\chi(p)=1$ なら費用は0となる。
 一般の非主指標 $\chi$ には、その原始指標 $\theta$ を用いて
 $p\le R_{3,\theta}(G,q)$ を得る。対応する定理は
-`exists_prime_ne_one_le_tight_cubic_sensitive_radius` である。
+`exists_prime_neOne_cubicSensitive_GRH` である。
 
 #### 切断点以下の除外費用による三次上界の改良
 
@@ -895,7 +895,7 @@ p\le X,\quad p\nmid m,\quad\chi(p)\ne1.
 $$
 
 [TruncatedCubicExclusion.lean](../PseudoPrime/LLS/TruncatedCubicExclusion.lean) の
-`exists_prime_outside_le_of_truncated_cubic_radius` が対応する。
+`exists_prime_outside_le_of_cubic_radius_GRH` が対応する。
 除外整数を $X$ 以下の素因数の積に置き換えて既存の抽出定理を適用する。
 抽出した素数も $X$ 以下なので、元の $m$ を割らないことが従う。
 $X$ より大きい除外素数の費用は不要である。
@@ -952,7 +952,7 @@ G,E\ge0,\quad c\ge\frac{63}{2},\quad
 \end{gathered}
 $$
 
-`tightCubicExclusionRadius_le_square_factor_with_constant` は、除外費用の導手項を吸収する定数の条件を明示する。
+`tightCubicRadius_le_squareFactor` は、除外費用の導手項を吸収する定数の条件を明示する。
 定数ごとの証明を繰り返さず、この汎用定理を使う。
 
 $$
@@ -984,7 +984,7 @@ p\nmid q,\quad p\le R_3(G,q),\quad[p]_q\notin H.
 \end{gathered}
 $$
 
-`LLS.exists_prime_outside_le_tight_cubic_conductor_radius` が対応する。
+`LLS.exists_prime_outside_cubicConductor_GRH` が対応する。
 指標が $H$ 上で自明であることと、素数での指標値が1でないことから部分群の像の外にあることを示す。
 $p\nmid q$ を保証するため、結論の $[p]_q$ は単元剰余である。
 
@@ -1012,8 +1012,8 @@ p\nmid q,\quad[p]_q\notin H,\quad p\le(\ln q)^A.
 $$
 
 [SmallSubgroupPowerBounds.lean](../PseudoPrime/LLS/SmallSubgroupPowerBounds.lean) の
-`eventually_exists_prime_outside_le_log_power_of_small_card` が対応する。
-`eventually_exists_least_prime_outside_le_log_power_of_small_card` は、
+`eventually_prime_outside_logPower_smallCard` が対応する。
+`eventually_least_outside_logPower_smallCard` は、
 集合 $\lbrace p\in\mathbb P\mid p\nmid q,\ [p]_q\notin H\rbrace$ の最小元にも同じ上界を与える。
 開始点 $Q_0$ は $H$ に依存しないが、具体的な数値はまだ与えていない。
 
@@ -1056,7 +1056,7 @@ $$
 $I_K(\lambda)\le E_K$ と $I_K(\lambda)\le2M_K\sqrt\lambda$ を保持し、
 $D_K(h,\lambda)\le2(h-1)M_K\sqrt\lambda$ を得て証明する。
 
-`not_eventually_ambientMethodCoefficient_le_log_power_saving` は、
+`not_eventually_ambient_logPower_saving` は、
 核・指数・切断値を尺度 $L$ に応じて変える場合にも、
 この係数を固定した $\varepsilon > 0$ に対する $CL^{-\varepsilon}$ 以下にはできないことを証明する。
 対象はこの共通核の係数式である。符号付き位相和など別の解析評価による改善は、この定理の対象に含まれない。

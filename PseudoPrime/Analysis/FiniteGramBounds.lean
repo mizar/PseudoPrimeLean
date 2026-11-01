@@ -184,8 +184,8 @@ Proof: expand the squared norm as the real part of the Gram quadratic form and a
 
 Role: is the inner-product form of the Schur estimate used to prove the additive large sieve.
 -/
-theorem inner_product_sum_smul_norm_sq_le_weighted_gram_rows {ι : Type*} [Fintype ι] {E : Type*}
-    [NormedAddCommGroup E] [InnerProductSpace ℂ E] (φ : ι → E) (c : ι → ℂ) :
+theorem sum_smul_norm_sq_le_weighted_rows {ι : Type*} [Fintype ι] {E : Type*} [NormedAddCommGroup E]
+    [InnerProductSpace ℂ E] (φ : ι → E) (c : ι → ℂ) :
     ‖∑ i, c i • φ i‖ ^ 2 ≤ ∑ i, (‖c i‖) ^ 2 * ∑ j, ‖inner ℂ (φ i) (φ j)‖ := by
   classical
   let z : E := ∑ i, c i • φ i
@@ -220,18 +220,17 @@ uniform upper bound for the Gram row sums.
 Claim: the squared norm of the linear combination is bounded by the row-sum bound times the
 coefficient norm-square sum.
 
-Proof: apply `inner_product_sum_smul_norm_sq_le_weighted_gram_rows`, then use the uniform row bound
+Proof: apply `sum_smul_norm_sq_le_weighted_rows`, then use the uniform row bound
 termwise and factor the constant out of the finite sum.
 
 Role: is the dual large-sieve interface once the additive frequency Gram rows have been bounded.
 -/
-theorem inner_product_sum_smul_norm_sq_le_of_gram_row_bound {ι : Type*} [Fintype ι] {E : Type*}
-    [NormedAddCommGroup E] [InnerProductSpace ℂ E] (φ : ι → E) (c : ι → ℂ) (R : ℝ)
+theorem sum_smul_norm_sq_le_of_row_bound {ι : Type*} [Fintype ι] {E : Type*} [NormedAddCommGroup E]
+    [InnerProductSpace ℂ E] (φ : ι → E) (c : ι → ℂ) (R : ℝ)
     (hrow : ∀ i, (∑ j, ‖inner ℂ (φ i) (φ j)‖) ≤ R) :
     ‖∑ i, c i • φ i‖ ^ 2 ≤ R * ∑ i, (‖c i‖) ^ 2 := by
   calc
-    _ ≤ ∑ i, (‖c i‖) ^ 2 * ∑ j, ‖inner ℂ (φ i) (φ j)‖ :=
-      inner_product_sum_smul_norm_sq_le_weighted_gram_rows φ c
+    _ ≤ ∑ i, (‖c i‖) ^ 2 * ∑ j, ‖inner ℂ (φ i) (φ j)‖ := sum_smul_norm_sq_le_weighted_rows φ c
     _ ≤ ∑ i, (‖c i‖) ^ 2 * R := by
       apply Finset.sum_le_sum
       intro i hi
@@ -279,7 +278,7 @@ theorem sum_inner_product_norm_sq_le_of_gram_row_bound {ι : Type*} [Fintype ι]
         rw [Complex.ofReal_sum]
         simp only [Complex.ofReal_pow]
   have hT : ‖∑ i, c i • φ i‖ ^ 2 ≤ R * A := by
-    simpa only [A] using inner_product_sum_smul_norm_sq_le_of_gram_row_bound φ c R hrow
+    simpa only [A] using sum_smul_norm_sq_le_of_row_bound φ c R hrow
   have hCauchy : A ≤ ‖x‖ * ‖∑ i, c i • φ i‖ := by
     calc
       A = ‖(A : ℂ)‖ := (Complex.norm_of_nonneg hA).symm

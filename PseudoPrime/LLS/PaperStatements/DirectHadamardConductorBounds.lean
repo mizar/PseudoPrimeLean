@@ -107,8 +107,8 @@ theorem norm_characterLogWeightedSum_le_direct_hadamard {q : ℕ} [NeZero q]
 /-- Under GRH for primitive even χ and x ≥ 100, the logarithmic sum norm is
 at most ((347/180)log(q)+1037/100)sqrt(x). Retain the even Hadamard gain while
 using the common endpoint bound. This improves the quadratic witness input. -/
-theorem norm_characterLogWeightedSum_even_le_direct_hadamard {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hq : 3 ≤ q) (hp : χ.IsPrimitive) (heven : χ.Even)
+theorem characterLogSum_norm_even_le_direct_hadamard {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hq : 3 ≤ q) (hp : χ.IsPrimitive) (heven : χ.Even)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 100 ≤ x) :
     ‖AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x χ‖ ≤
       ((347 / 180 : ℝ) * Real.log q + 1037 / 100) * Real.sqrt x := by
@@ -156,7 +156,7 @@ theorem exists_prime_ne_one_le_direct_conductor_root {q m : ℕ} [NeZero q]
 /-- Under GRH for primitive even χ and m ≠ 0, a non-one prime outside m lies
 below the root bound with radius (2429/720)log(q)+17939/400. Use the parity-refined
 norm cap in the generic extractor. This retains the stronger constant for even characters. -/
-theorem exists_prime_ne_one_le_even_direct_conductor_root {q m : ℕ} [NeZero q]
+theorem exists_neOnePrime_le_even_direct_conductor_root {q m : ℕ} [NeZero q]
     (χ : DirichletCharacter ℂ q) (hq : 3 ≤ q) (hp : χ.IsPrimitive) (heven : χ.Even)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hm : m ≠ 0) :
     ∃ p : ℕ,
@@ -171,7 +171,7 @@ theorem exists_prime_ne_one_le_even_direct_conductor_root {q m : ℕ} [NeZero q]
   obtain ⟨p, hp', hb, hd, hv⟩ :=
     exists_prime_ne_one_le_norm_cap_root χ hGRH.riemann hm (F :=
       (347 / 180 : ℝ) * Real.log q + 1037 / 100) (by linarith only [Real.log_natCast_nonneg q])
-      (fun _ hx ↦ norm_characterLogWeightedSum_even_le_direct_hadamard hq hp heven hGRH hx)
+      (fun _ hx ↦ characterLogSum_norm_even_le_direct_hadamard hq hp heven hGRH hx)
   have he :
     (7 / 4 : ℝ) * ((347 / 180 : ℝ) * Real.log q + 1037 / 100) + 267 / 10 =
       (2429 / 720 : ℝ) * Real.log q + 17939 / 400 := by

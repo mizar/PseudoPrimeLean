@@ -22,8 +22,8 @@ log L ≤ L/2000, log q ≤ L+7/5, and the actual primitive Gamma sum has the st
 conductor-retaining upper bound with cost C. If its displayed scalar budget closes,
 an odd prime p ≤ (4/5)L² has χ(p) ≠ 1. Combine the actual upper bound with the
 principal and ramp lower comparison. No prefix certificate is required by this interface. -/
-theorem exists_odd_prime_ne_one_of_log_ratio_character_budget {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (h2 : 2 ∣ q)
+theorem exists_oddPrime_neOne_logRatioBudget_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hquad : χ.IsQuadratic) (h2 : 2 ∣ q)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L : ℝ} (hL : 15000 ≤ L)
     (hlogL : Real.log L ≤ L / 2000) (hlogq : Real.log q ≤ L + 7 / 5) {C : ℝ}
     (hupper :

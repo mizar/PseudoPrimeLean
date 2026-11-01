@@ -40,7 +40,7 @@ private theorem leastPrime_of_lt_shared_lower {q : ℕ} [NeZero q] (hq : 4 ≤ q
   have hc :=
     residueRoutePartitionCheck_of_all (lo := 4) (hi := 5700) reconstruction_routes_cover hq hu
   exact
-    exists_least_prime_in_residue_le_of_route_partition Corollary12PrimeCatalog.catalog_checked
+    exists_least_residue_routePartition_GRH Corollary12PrimeCatalog.catalog_checked
       Corollary12DirectCoverage.coreTree_checked Corollary12DivisorRoutes.routes_checked
       Corollary12AnalyticRoutes.routes_checked hc (Nat.le_trans (Nat.le_of_lt hu) (by decide)) a
       hGRH
@@ -56,7 +56,7 @@ theorem exists_least_prime_in_residue_le_totient_log_sq {q : ℕ} [NeZero q] (hq
       IsLeast {n : ℕ | n.Prime ∧ (n : ZMod q) = (a : ZMod q)} p ∧
         (p : ℝ) ≤ ((q.totient : ℝ) * Real.log q) ^ 2 := by
   by_cases hlarge : 20000 ≤ q
-  · exact exists_least_prime_in_residue_le_totient_log_sq_of_large a hlarge hGRH
+  · exact exists_least_residue_totientLog_large_GRH a hlarge hGRH
   · have hu : q ≤ 20000 := Nat.le_of_lt (Nat.lt_of_not_ge hlarge)
     by_cases hshared : 5700 ≤ q
     · have hc : q.primeFactors.card ≤ 5 :=

@@ -150,12 +150,11 @@ theorem logDeriv_riemannXi_zero_eq :
 Combine the centered Hadamard limit with the functional equation and the endpoint
 value to get `2 + γ - log(4π)`. Nonnegativity of the sum removes the absolute
 value in the definition of `riemannZeroMass`. -/
-theorem tsum_riemannXiZeroMultiplicity_invNormSq_eq_two_mul_riemannZeroMass_of_riemannHypothesis
-    (hRH : RiemannHypothesis) :
+theorem tsum_multiplicityInvSq_eq_two_mass_RH (hRH : RiemannHypothesis) :
     (∑' ρ : ℂ,
         if riemannXi ρ = 0 then (riemannXiZeroMultiplicity ρ : ℝ) / Complex.normSq ρ else 0) =
       2 * RiemannXi.riemannZeroMass := by
-  have hH := riemannXi_centeredLogDeriv_one_eq_tsum_invNormSq_of_riemannHypothesis hRH
+  have hH := centeredLogDeriv_one_eq_tsum_invNormSq_RH hRH
   have hcomb : logDeriv riemannXi 1 - logDeriv riemannXi 0 = -2 * logDeriv riemannXi 0 := by
     rw [logDeriv_riemannXi_one_eq_neg_zero]
     ring
@@ -205,8 +204,7 @@ The finite-radius slope error vanishes along the good-radius sequence.
 /-- Under RH, the derivative at zero of the truncated genus sum has norm at
 most `2 * riemannZeroMass`: each summand differentiates to `-mρ/ρ²`, and the
 triangle inequality bounds the finite sum by the global inverse-square mass. -/
-theorem exists_hasDerivAt_riemannXiTruncatedGenusSum_zero_norm_le (hRH : RiemannHypothesis) {R : ℝ}
-    (_hR : 0 < R) :
+theorem exists_hasDerivAt_genusSum_zero_norm_le (hRH : RiemannHypothesis) {R : ℝ} (_hR : 0 < R) :
     ∃ D : ℂ, HasDerivAt (riemannXiTruncatedGenusSum R) D 0 ∧ ‖D‖ ≤ 2 * riemannZeroMass := by
   have hanalyticClosed : AnalyticOnNhd ℂ riemannXi (Metric.closedBall (0 : ℂ) R) := fun z _ =>
     differentiable_riemannXi.analyticAt z
@@ -219,7 +217,7 @@ theorem exists_hasDerivAt_riemannXiTruncatedGenusSum_zero_norm_le (hRH : Riemann
   have hkey : ∀ u ∈ hfin.toFinset, u ∈ Metric.ball (0 : ℂ) R ∧ u ≠ 0 := by
     intro u hu
     rw [Set.Finite.mem_toFinset] at hu
-    exact ⟨Dv.supportWithinDomain hu, ne_of_mem_divisorBallSupport_of_riemannXi_ne_zero hu h0ne⟩
+    exact ⟨Dv.supportWithinDomain hu, ne_of_mem_divisor_of_value_ne_zero hu h0ne⟩
   have hsub :
     ∀ s : ℂ,
       Function.support (fun ρ : ℂ => ((Dv ρ : ℤ) : ℂ) * (1 / (s - ρ) + 1 / ρ)) ⊆ hfin.toFinset := by
@@ -267,9 +265,8 @@ theorem exists_hasDerivAt_riemannXiTruncatedGenusSum_zero_norm_le (hRH : Riemann
       rw [hfun, add_zero] at hadd
       exact hadd
     exact h4.const_mul ((Dv ρ : ℤ) : ℂ)
-  · have hzm :=
-      tsum_riemannXiZeroMultiplicity_invNormSq_eq_two_mul_riemannZeroMass_of_riemannHypothesis hRH
-    have hsummable := summable_riemannXiZeroMultiplicityInvNormSq_of_riemannHypothesis hRH
+  · have hzm := tsum_multiplicityInvSq_eq_two_mass_RH hRH
+    have hsummable := summable_zeroMultiplicityInvNormSq_RH hRH
     have hterm :
       ∀ ρ ∈ hfin.toFinset,
         ‖((Dv ρ : ℤ) : ℂ) * (-(1 / ρ ^ 2))‖ =
@@ -277,7 +274,7 @@ theorem exists_hasDerivAt_riemannXiTruncatedGenusSum_zero_norm_le (hRH : Riemann
       intro ρ hρ
       obtain ⟨hρball, hρne0⟩ := hkey ρ hρ
       have hDeq : Dv ρ = (riemannXiZeroMultiplicity ρ : ℤ) :=
-        divisor_riemannXi_ball_eq_zeroMultiplicity_of_mem_ball hρball
+        divisor_ball_eq_zeroMultiplicity hρball
       have hρzero : riemannXi ρ = 0 := by
         by_contra hcon
         have hmz : riemannXiZeroMultiplicity ρ = 0 := by
@@ -319,8 +316,7 @@ theorem norm_deriv_logDeriv_riemannXi_zero_le (hRH : RiemannHypothesis) {R : ℝ
     ‖deriv (logDeriv RiemannXi.riemannXi) 0‖ ≤
       RiemannXi.riemannXiH9eSlopeError R + 2 * RiemannXi.riemannZeroMass := by
   obtain ⟨D, hD, hDnorm⟩ :=
-    exists_hasDerivAt_riemannXiTruncatedGenusSum_zero_norm_le hRH
-      (lt_trans (by norm_num only : (0 : ℝ) < 2) hR)
+    exists_hasDerivAt_genusSum_zero_norm_le hRH (lt_trans (by norm_num only : (0 : ℝ) < 2) hR)
   have hsub := RiemannXi.norm_deriv_logDeriv_riemannXi_zero_sub_le hR hzf hD
   calc
     ‖deriv (logDeriv RiemannXi.riemannXi) 0‖ ≤ ‖deriv (logDeriv RiemannXi.riemannXi) 0 - D‖ + ‖D‖ :=
@@ -332,9 +328,9 @@ theorem norm_deriv_logDeriv_riemannXi_zero_le (hRH : RiemannHypothesis) {R : ℝ
 /-- Under RH, `‖deriv (logDeriv riemannXi) 0‖ ≤ 2 * riemannZeroMass`.
 Pass the finite-radius inequality to the good-radius limit, where the slope
 error vanishes. No termwise differentiation of an infinite series is needed. -/
-theorem norm_deriv_logDeriv_riemannXi_zero_le_two_mul_riemannZeroMass (hRH : RiemannHypothesis) :
+theorem norm_deriv_logDeriv_zero_le_two_mass_RH (hRH : RiemannHypothesis) :
     ‖deriv (logDeriv RiemannXi.riemannXi) 0‖ ≤ 2 * RiemannXi.riemannZeroMass := by
-  have htendError := RiemannXi.tendsto_riemannXiGoodRadius_H9eSlopeError_atTop
+  have htendError := RiemannXi.tendsto_xiGoodRadius_H9eSlopeError_atTop
   have htendSum :
     Filter.Tendsto
       (fun n : ℕ =>
@@ -545,10 +541,10 @@ norm estimate for the corresponding `PseudoPrime.AnalyticNumberTheory.RiemannXi.
 derivative and the bridge above. Taking real parts of the bridge and using
 `Re z ≤ ‖z‖` yields `1 - π²/24 + 2 * riemannZeroMass`, the bound used in the
 logarithmic residue ledger. -/
-theorem re_qMinusOneRiemannZetaSecondLogDerivAtZero_le (hRH : RiemannHypothesis) :
+theorem re_qMinusOneZetaSecondLogDeriv_zero_le_RH (hRH : RiemannHypothesis) :
     RiemannXi.qMinusOneRiemannZetaSecondLogDerivAtZero.re ≤
       1 - Real.pi ^ 2 / 24 + 2 * RiemannXi.riemannZeroMass := by
-  have hD := norm_deriv_logDeriv_riemannXi_zero_le_two_mul_riemannZeroMass hRH
+  have hD := norm_deriv_logDeriv_zero_le_two_mass_RH hRH
   have hre : (deriv (logDeriv RiemannXi.riemannXi) 0).re ≤ 2 * RiemannXi.riemannZeroMass :=
     (Complex.re_le_norm _).trans hD
   have hbridge := deriv_logDeriv_riemannXi_zero_eq
@@ -572,8 +568,8 @@ used by the logarithmic residue ledger. -/
 theorem re_qMinusOne_add_logTrivialZeroSeries_le (hRH : RiemannHypothesis) {x : ℝ} (hx : 1 < x) :
     qMinusOneRiemannZetaSecondLogDerivAtZero.re + RiemannZeta.riemannZetaLogTrivialZeroSeries x ≤
       1 + 2 * riemannZeroMass := by
-  have hq := re_qMinusOneRiemannZetaSecondLogDerivAtZero_le hRH
-  have ht := RiemannZeta.riemannZetaLogTrivialZeroSeries_le_pi_sq_div_twenty_four hx
+  have hq := re_qMinusOneZetaSecondLogDeriv_zero_le_RH hRH
+  have ht := RiemannZeta.logTrivialSeries_le_pi_sq_div_24 hx
   linarith only [hq, ht]
 
 end PseudoPrime.AnalyticNumberTheory.RiemannXi

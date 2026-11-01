@@ -49,7 +49,7 @@ theorem primeNeOneWitness_cast_le_half_endpoint
 /-- Under GRH for odd nonsquare n with log n>=25/2, an odd-prime witness
 has Jacobi value not one and lies through (log n-1/2)^2, strictly below log(n)^2.
 Specialize the common endpoint and compare the squares. Zero values are allowed. -/
-theorem exists_prime_ne_one_witness_le_half_shift_and_lt_log_sq
+theorem exists_neOneWitness_le_half_shift_and_lt_log_sq
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : Odd n)
     (hns : ¬IsSquare n) (hL : (25 / 2 : ℝ) ≤ Real.log n) :
     ∃ p : ℕ,

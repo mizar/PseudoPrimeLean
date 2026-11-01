@@ -193,9 +193,9 @@ theorem phase64_dyadic_zero_prefix_le {q : ℕ} (χ : DirichletCharacter ℂ q) 
           finiteSignedMangoldtWeight phaseResolvent64Coefficients (2 ^ (k + 1))) ≤
       (629 / 1000 : ℝ) := by
   have h :=
-    sum_finiteSignedMangoldtWeight_progression_le_cost phaseResolvent64Coefficients
-      phase64_node_exponents_pos (fun u hu ↦ phaseResolvent64_euler_nonneg hu) Nat.prime_two
-      (by norm_num only : 0 < (1 : ℕ)) (by norm_num only : 0 < (1 : ℕ)) K
+    sum_signedMangoldt_progression_le_cost phaseResolvent64Coefficients phase64_node_exponents_pos
+      (fun u hu ↦ phaseResolvent64_euler_nonneg hu) Nat.prime_two (by norm_num only : 0 < (1 : ℕ))
+      (by norm_num only : 0 < (1 : ℕ)) K
   simp only [Nat.one_mul] at h
   simp only [map_pow, Nat.cast_ofNat, hχ, zero_pow (Nat.succ_ne_zero _), Complex.zero_re, sub_zero,
     one_mul]

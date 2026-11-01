@@ -3786,7 +3786,7 @@ theorem leastPrime {q : ℕ} [NeZero q] {e : ℕ × List ℕ}
       IsLeast {n : ℕ | n.Prime ∧ (n : ZMod q) = (a : ZMod q)} p ∧
         (p : ℝ) ≤ ((q.totient : ℝ) * Real.log q) ^ 2 := by
   exact
-    exists_least_prime_in_residue_le_of_factor_route_lookup Corollary12PrimeCatalog.catalog_checked
-      routes_checked hl hu a hGRH
+    exists_least_residue_factorLookup_GRH Corollary12PrimeCatalog.catalog_checked routes_checked hl
+      hu a hGRH
 
 end PseudoPrime.LLS.PaperStatements.Corollary12AnalyticRoutes

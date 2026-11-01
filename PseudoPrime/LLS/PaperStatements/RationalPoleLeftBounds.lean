@@ -129,8 +129,8 @@ theorem fourContour_left_logDeriv_le {q : ℕ} [NeZero q] {χ : DirichletCharact
     ‖logDeriv χ.completedLFunction ((-1 / 4 : ℂ) + Complex.I * t)‖ ≤
       Real.log q + 33 + (1 / 8 : ℝ) * |t| := by
   have h :=
-    AnalyticNumberTheory.DirichletLFunction.norm_logDeriv_completed_left_strip_le_gap_log hp hne
-      hinv (e := (1 / 4 : ℝ)) (by norm_num only) (by norm_num only) t
+    AnalyticNumberTheory.DirichletLFunction.completedLogDeriv_left_gap_log hp hne hinv (e :=
+      (1 / 4 : ℝ)) (by norm_num only) (by norm_num only) t
   have hlog : ‖Complex.log (q : ℂ)‖ = Real.log q := by
     rw [← Complex.ofReal_natCast, ← Complex.ofReal_log (Nat.cast_nonneg q), Complex.norm_real,
       Real.norm_eq_abs,
@@ -161,8 +161,8 @@ theorem fourContour_left_continuous {q : ℕ} [NeZero q] {χ : DirichletCharacte
         (-3 / 4 : ℂ) + Complex.I * t)
         (fourContour_differentiableAt (fourContour_left_mem t)).continuousAt hline.continuousAt
   have hc :=
-    AnalyticNumberTheory.DirichletLFunction.continuous_completed_logDeriv_vertical_left hp hne hinv
-      (σ := (-1 / 4 : ℝ)) (by norm_num only)
+    AnalyticNumberTheory.DirichletLFunction.continuous_completedLogDeriv_left hp hne hinv (σ :=
+      (-1 / 4 : ℝ)) (by norm_num only)
   have hc' :
     Continuous (fun t : ℝ ↦ logDeriv χ.completedLFunction ((-1 / 4 : ℂ) + Complex.I * t)) := by
     simpa only [Complex.ofReal_neg, Complex.ofReal_div, Complex.ofReal_one,

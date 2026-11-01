@@ -25,15 +25,15 @@ theorem classicalSelfridgeD_cubic_negative_support_bound {n : ℕ} {hn : Odd n} 
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ∧
       ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         (LLS.PaperStatements.cubicSquareFactorRadius
             (Real.log ((4 * bridge.squarefreePart : ℕ) : ℝ))
@@ -46,9 +46,8 @@ theorem classicalSelfridgeD_cubic_negative_support_bound {n : ℕ} {hn : Odd n} 
         (Real.log_natCast_nonneg (4 * bridge.squarefreePart))
         (PseudoSquare.negativeSquareFactorCost_nonneg bridge.squarefreePart bridge.squareFactor)).1
   exact
-    ⟨classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_firstStopNegOne_natAbs_cast hn hns,
-      classicalSelfridgeD_neg_natAbs_le_of_prime_witness_bound hn hns hw (by nlinarith only [hr])
-        hb⟩
+    ⟨classicalD_neOne_le_negOne hn hns,
+      classicalD_neg_natAbs_le_of_primeWitness hn hns hw (by nlinarith only [hr]) hb⟩
 
 /-- Under GRH, both classical Selfridge stopping magnitudes are bounded by
 the explicit linear envelope for n=s²d. Apply the generic witness transfer and
@@ -59,15 +58,15 @@ theorem classicalSelfridgeD_cubic_linear_bound {n : ℕ} {hn : Odd n} {hns : ¬I
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ∧
       ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         LLS.PaperStatements.cubicSquareFactorLinearEnvelope
           (Real.log ((4 * bridge.squarefreePart : ℕ) : ℝ)) (Real.log n) := by
@@ -77,8 +76,8 @@ theorem classicalSelfridgeD_cubic_linear_bound {n : ℕ} {hn : Odd n} {hns : ¬I
     LLS.PaperStatements.cubicSquareFactorLinearEnvelope_ge
       (Real.log_natCast_nonneg (4 * bridge.squarefreePart)) (Real.log_natCast_nonneg n)
   exact
-    ⟨classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_firstStopNegOne_natAbs_cast hn hns,
-      classicalSelfridgeD_neg_natAbs_le_of_prime_witness_bound hn hns hw (by linarith only [hr]) hb⟩
+    ⟨classicalD_neOne_le_negOne hn hns,
+      classicalD_neg_natAbs_le_of_primeWitness hn hns hw (by linarith only [hr]) hb⟩
 
 /-- Under GRH and the two explicit conductor cutoffs, both classical Selfridge
 stopping magnitudes are at most (4/3+delta)log n. Compose the linear envelope
@@ -95,15 +94,15 @@ theorem classicalSelfridgeD_cubic_linear_coefficient {n : ℕ} {hn : Odd n} {hns
         δ ^ 2 * Real.log n) :
     ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ∧
       ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         (4 / 3 + δ) * Real.log n := by
   have h := classicalSelfridgeD_cubic_linear_bound bridge hGRH
@@ -121,26 +120,26 @@ theorem wheel30SelfridgeD_cubic_negative_support_bound {n : ℕ} {hn : Odd n} {h
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNeOne PrimeTest.isWheel30NeOneCandidate n
-                (PrimeTest.wheel30FirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.wheel30NeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNegOne PrimeTest.isWheel30NegOneCandidate n
-                (PrimeTest.wheel30FirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.wheel30NegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ∧
       ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNegOne PrimeTest.isWheel30NegOneCandidate n
-                (PrimeTest.wheel30FirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.wheel30NegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         (LLS.PaperStatements.cubicSquareFactorRadius
             (Real.log ((4 * bridge.squarefreePart : ℕ) : ℝ))
             (PseudoSquare.negativeSquareFactorCost bridge.squarefreePart bridge.squareFactor)) ^
           2 := by
   simpa only [PrimeTest.firstStopNeOne_wheel30_eq_classical hn.pos hn hns
-        (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns)
-        (PrimeTest.wheel30FirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns),
+        (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns)
+        (PrimeTest.wheel30NeOneSet_nonempty_of_odd_nonsquare hn hns),
     PrimeTest.firstStopNegOne_wheel30_eq_classical hn
-        (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns)
-        (PrimeTest.wheel30FirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns)] using
+        (PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn hns)
+        (PrimeTest.wheel30NegOneSet_nonempty_of_odd_nonsquare hn hns)] using
     classicalSelfridgeD_cubic_negative_support_bound bridge hGRH
 
 /-- The Wheel30 factor-detecting and pure negative stops satisfy the same
@@ -151,24 +150,24 @@ theorem wheel30SelfridgeD_cubic_linear_bound {n : ℕ} {hn : Odd n} {hns : ¬IsS
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNeOne PrimeTest.isWheel30NeOneCandidate n
-                (PrimeTest.wheel30FirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.wheel30NeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNegOne PrimeTest.isWheel30NegOneCandidate n
-                (PrimeTest.wheel30FirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.wheel30NegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ∧
       ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNegOne PrimeTest.isWheel30NegOneCandidate n
-                (PrimeTest.wheel30FirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.wheel30NegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         LLS.PaperStatements.cubicSquareFactorLinearEnvelope
           (Real.log ((4 * bridge.squarefreePart : ℕ) : ℝ)) (Real.log n) := by
   simpa only [PrimeTest.firstStopNeOne_wheel30_eq_classical hn.pos hn hns
-        (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns)
-        (PrimeTest.wheel30FirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns),
+        (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns)
+        (PrimeTest.wheel30NeOneSet_nonempty_of_odd_nonsquare hn hns),
     PrimeTest.firstStopNegOne_wheel30_eq_classical hn
-        (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns)
-        (PrimeTest.wheel30FirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns)] using
+        (PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn hns)
+        (PrimeTest.wheel30NegOneSet_nonempty_of_odd_nonsquare hn hns)] using
     classicalSelfridgeD_cubic_linear_bound bridge hGRH
 
 end PseudoPrime.PrimeTestBounds.Selfridge

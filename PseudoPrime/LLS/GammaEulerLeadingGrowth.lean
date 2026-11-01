@@ -19,7 +19,7 @@ namespace PseudoPrime.LLS
 Claim: doubling adds at least (2190143241/10000000000)r to the credit. Retain the positive
 Euler endpoint weight and the psi block mass. Role: remove a fixed upper
 cutoff from analytic prefix growth. -/
-theorem gamma_euler_prefix_doubling_gain_of_leading_power_lower (hRH : RiemannHypothesis) {a : ℕ}
+theorem gammaEulerPrefix_doubling_leadingPower_RH (hRH : RiemannHypothesis) {a : ℕ}
     (ha : 100000 ≤ a) {r C : ℝ} (hr : r ≤ ((2 : ℝ) * a) ^ (-1 / 20 : ℝ))
     (hC : C ≤ ∑ k ∈ Finset.Ioc 0 a, Analysis.gammaResolventMangoldtWeight k) :
     C + (2190143241 / 10000000000 : ℝ) * r ≤
@@ -73,7 +73,7 @@ theorem gamma_euler_prefix_lower_doublings_varying (hRH : RiemannHypothesis) {a 
       have h := hr k
       rw [heq, Nat.cast_mul, Nat.cast_ofNat] at h
       exact h
-    have hg := gamma_euler_prefix_doubling_gain_of_leading_power_lower hRH (ha.trans hlow) hrc ih
+    have hg := gammaEulerPrefix_doubling_leadingPower_RH hRH (ha.trans hlow) hrc ih
     rw [heq]
     simpa only [Finset.sum_range_succ, mul_add, add_assoc] using hg
 
@@ -166,8 +166,8 @@ theorem gamma_prefix100000000_lower_leading (hRH : RiemannHypothesis) {b : ℝ} 
 Claim: the asymmetric psi block yields a gain with the exact leading coefficient.
 Proof: combine the one-sided psi bounds with the stronger positive Euler weight.
 Role: share the improvement with quadratic witness and MR comparisons. -/
-theorem gamma_euler_prefix_lower_growth_leading_asymmetric (hRH : RiemannHypothesis) {a b : ℕ}
-    {s t C : ℝ} (ha : 3 ≤ a) (hab : a ≤ b) (hs : 1 < s) (hsb : s < b) (hat : (a : ℝ) < t)
+theorem gammaEulerPrefix_growth_leadingAsym_RH (hRH : RiemannHypothesis) {a b : ℕ} {s t C : ℝ}
+    (ha : 3 ≤ a) (hab : a ≤ b) (hs : 1 < s) (hsb : s < b) (hat : (a : ℝ) < t)
     (hC : C ≤ ∑ j ∈ Finset.Ioc 0 a, Analysis.gammaResolventMangoldtWeight j) :
     C + (56157519 / 100000000 : ℝ) * (b : ℝ) ^ (-21 / 20 : ℝ) * psiAsymmetricBlockLower a b s t ≤
       ∑ j ∈ Finset.Ioc 0 b, Analysis.gammaResolventMangoldtWeight j := by

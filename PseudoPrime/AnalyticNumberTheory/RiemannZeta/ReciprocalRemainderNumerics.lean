@@ -28,7 +28,7 @@ theorem riemannReciprocalRemainder_lower_bound {x : ℝ} (hx : 2 ≤ x) :
   have hxpos : 0 < x := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 2) hx
   have hsqrt : 0 < Real.sqrt x := Real.sqrt_pos.mpr hxpos
   have ht :=
-    (riemannReciprocalTrivialZeroSeries_le_geometric hx).trans
+    (reciprocalTrivialSeries_le_geometric hx).trans
       (Analysis.geometricTail_le_one_div_eighteen_mul hx)
   rw [div_mul_eq_div_div] at ht
   have hznum : 2 * RiemannXi.riemannZeroMass ≤ (1 / 20 : ℝ) := by

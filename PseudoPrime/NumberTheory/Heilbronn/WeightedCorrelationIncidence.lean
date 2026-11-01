@@ -25,18 +25,18 @@ Fourier envelope times `sum(f^2)`.
 Proof: Apply the generic weighted Parseval incidence bound to the proved
 invariance and unit support of the correlation level.
 Role: Supplies the per-band estimate used in the weighted dyadic argument. -/
-theorem weightedResidueDifferenceIncidence_le_correlation_level {p : ℕ} [Fact p.Prime]
-    (f : ZMod (p ^ 2) → ℕ) (P : ℕ → Prop) (hP : ¬P 0) :
+theorem weightedIncidence_le_correlation_level {p : ℕ} [Fact p.Prime] (f : ZMod (p ^ 2) → ℕ)
+    (P : ℕ → Prop) (hP : ¬P 0) :
     weightedResidueDifferenceIncidence f (heilbronnCorrelationLevel p P) ≤
       ((heilbronnCorrelationLevel p P).card : ℝ) * (weightedResidueMass f : ℝ) ^ 2 / (p : ℝ) ^ 2 +
         invariantFourierEnvelope p (heilbronnCorrelationLevel p P) *
           ∑ x : ZMod (p ^ 2), (f x : ℝ) ^ 2 := by
   have h :=
-    weightedResidueDifferenceIncidence_le_of_fourier_bound f (heilbronnCorrelationLevel p P)
+    weightedIncidence_le_of_fourier_bound f (heilbronnCorrelationLevel p P)
       (invariantFourierEnvelope_nonneg _)
       (fun l hl ↦
-        norm_residueCharacterSum_le_invariantFourierEnvelope _
-          (heilbronnCorrelationLevel_invariant P) (heilbronnCorrelationLevel_units P hP) hl)
+        norm_characterSum_le_invariantEnvelope _ (heilbronnCorrelationLevel_invariant P)
+          (heilbronnCorrelationLevel_units P hP) hl)
   simpa only [Nat.cast_pow] using h
 
 end PseudoPrime.NumberTheory.Heilbronn

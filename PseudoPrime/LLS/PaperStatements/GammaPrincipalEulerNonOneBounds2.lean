@@ -21,7 +21,7 @@ namespace PseudoPrime.LLS.PaperStatements
 of principal Euler mass and the primitive signed Gamma cost gives the displayed
 conductor-retaining arithmetic bound. Use the empty signed prefix and the completed
 remainder. This transports any improved common cost without fixing parity or a certificate. -/
-theorem gamma_primitiveCharacter_sum_re_lt_common_euler_cost {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+theorem gammaCharacterSum_re_lt_common_euler_cost {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
     (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x C : ℝ} (hx : 2 ≤ x)
     (hCost :
@@ -38,11 +38,11 @@ theorem gamma_primitiveCharacter_sum_re_lt_common_euler_cost {q : ℕ} [NeZero q
   have hp := DirichletCharacter.primitiveCharacter_isPrimitive χ
   have hnp := AnalyticNumberTheory.Arithmetic.primitiveCharacter_ne_one χ hne
   have hz :=
-    AnalyticNumberTheory.DirichletLFunction.gammaResolvent_zeroMass_le_signed_prefix
+    AnalyticNumberTheory.DirichletLFunction.gammaMass_le_signedPrefix_RH
       (le_trans (by norm_num only : (2 : ℕ) ≤ 3) hm) (hGRH _ χ.primitiveCharacter hp) hp hnp
       (inv_ne_one.mpr hnp) ∅
   have hu :=
-    gamma_primitive_sum_re_le_resolvent_conductor_free hq hm hmq hGRH hp hnp (inv_ne_one.mpr hnp) hx
+    gammaPrimitiveSum_re_le_resolvent_conductor_free hq hm hmq hGRH hp hnp (inv_ne_one.mpr hnp) hx
   simp only [Finset.sum_empty, mul_zero, sub_zero, add_zero] at hz
   dsimp only [gammaSignedGammaCost] at hCost
   linarith only [hz, hu, hCost]

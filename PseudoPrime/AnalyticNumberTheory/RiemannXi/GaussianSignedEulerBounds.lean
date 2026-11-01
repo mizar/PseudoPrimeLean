@@ -70,8 +70,8 @@ theorem gaussianResolvent_real_logDeriv_nonneg (hRH : RiemannHypothesis) :
       (fun ρ ↦
         mul_nonneg (Nat.cast_nonneg _)
           ((norm_nonneg _).trans
-            (Analysis.norm_gaussianGammaFunction_le_gaussianResolvent_of_grid
-              Analysis.gaussianResolvent_grid_lower ρ.im)))
+            (Analysis.norm_gaussianGamma_le_resolvent_of_grid Analysis.gaussianResolvent_grid_lower
+              ρ.im)))
 
 /-- Input: the fixed certified resolvent coefficients.
 Claim: the signed real zeta derivative combination is minus the common Euler mass.
@@ -81,8 +81,7 @@ theorem gaussianResolvent_signed_zeta_eq_neg_euler :
     (Analysis.gaussianResolventCoefficients.map
           (fun ab ↦ (ab.2 : ℝ) * (logDeriv riemannZeta (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum =
       -(∑' n : ℕ, Analysis.gaussianResolventMangoldtWeight n) := by
-  have h :=
-    DirichletLFunction.gaussianResolvent_signed_ordinary_eq_euler (1 : DirichletCharacter ℂ 1)
+  have h := DirichletLFunction.gaussianResolvent_ordinary_euler (1 : DirichletCharacter ℂ 1)
   have hc (n : ℕ) : (1 : DirichletCharacter ℂ 1) n = 1 := by
     rw [Subsingleton.elim (n : ZMod 1) 1, map_one]
   simpa only [DirichletCharacter.LFunction_modOne_eq, hc, Complex.one_re, neg_one_mul,
@@ -124,7 +123,7 @@ theorem gaussianResolvent_euler_le_poles_gamma (hRH : RiemannHypothesis) :
       linarith only [ha]
     have hpole (t : ℝ) : (1 / (t : ℂ)).re = 1 / t := by
       rw [one_div, ← Complex.ofReal_inv, Complex.ofReal_re, one_div]
-    rw [logDeriv_eq_poles_gammaFactor_zeta_of_one_lt_re hs]
+    rw [logDeriv_eq_poles_gamma_zeta_of_re_gt_one hs]
     simp only [Complex.add_re, ← Complex.ofReal_add, ← Complex.ofReal_one, ← Complex.ofReal_sub]
     have hd : (1 / 2 : ℝ) + (ab.1 : ℝ) - 1 = (ab.1 : ℝ) - 1 / 2 := by ring
     rw [hd]
@@ -150,7 +149,7 @@ theorem gaussianResolvent_pole_sum_lt_fifteen_tenth :
 Claim: the common Euler mass is below fifteen_tenth plus the signed Gamma contribution.
 Proof: combine the exact analytic comparison with the rational pole bound.
 Role: isolate the remaining signed archimedean numerical estimate. -/
-theorem gaussianResolvent_euler_lt_fifteen_tenth_add_gamma (hRH : RiemannHypothesis) :
+theorem gaussianEuler_lt_151_10_add_gamma_RH (hRH : RiemannHypothesis) :
     (∑' n : ℕ, Analysis.gaussianResolventMangoldtWeight n) <
       151 / 10 +
         (Analysis.gaussianResolventCoefficients.map

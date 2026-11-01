@@ -19,9 +19,9 @@ from the zeros in a ball has truncated genus norm bounded by its norm times the
 square roots of the full inverse-square mass and Jensen count, divided by the
 separation margin. Apply weighted Cauchy--Schwarz and unconditional mass summability.
 This removes RH from the finite-radius horizontal estimate. -/
-theorem norm_completedLFunctionTruncatedGenusSum_le_unconditionally {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {R : ℝ}
-    (hR : 0 < R) {s : ℂ} (hsne : DirichletCharacter.completedLFunction χ s ≠ 0) {δ : ℝ} (hδ : 0 < δ)
+theorem truncatedGenus_norm_bound {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {R : ℝ} (hR : 0 < R) {s : ℂ}
+    (hsne : DirichletCharacter.completedLFunction χ s ≠ 0) {δ : ℝ} (hδ : 0 < δ)
     (hsep : ∀ ρ : ℂ, DirichletCharacter.completedLFunction χ ρ = 0 → ‖ρ‖ < R → δ ≤ ‖s - ρ‖) :
     ‖completedLFunctionTruncatedGenusSum χ R s‖ ≤
       ‖s‖ * Real.sqrt (completedLFunctionInverseSquareMass χ) *
@@ -45,7 +45,7 @@ theorem norm_completedLFunctionTruncatedGenusSum_le_unconditionally {N : ℕ} [N
   have hAnU : AnalyticOnNhd ℂ (DirichletCharacter.completedLFunction χ) Set.univ := fun z _ =>
     hdiff.analyticAt z
   have h0ne : DirichletCharacter.completedLFunction χ 0 ≠ 0 :=
-    dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne
+    completed_zero_ne_zero_of_primitive hprimitive hne
   have hfin : (Function.support Dv).Finite := hAnClosed.meromorphicOn.divisor_ball_support_finite
   set S := hfin.toFinset with hS_def
   have hDv_nonneg : ∀ ρ, (0 : ℤ) ≤ Dv ρ := fun ρ =>
@@ -121,7 +121,7 @@ theorem norm_completedLFunctionTruncatedGenusSum_le_unconditionally {N : ℕ} [N
     rwa [Finset.sum_congr rfl heq1, Finset.sum_congr rfl heq2, Finset.sum_congr rfl heq3] at hkey
   -- Step 5a: bound the first Cauchy–Schwarz factor via the zero mass
   have hfactorA : ∑ ρ ∈ S, (Dv ρ : ℝ) / ‖ρ‖ ^ 2 ≤ completedLFunctionInverseSquareMass χ :=
-    sum_divisor_ball_div_normSq_le_inverseSquareMass hN2 hprimitive hne hinv R S
+    sum_ball_invNormSq_le_mass hN2 hprimitive hne hinv R S
   -- Step 5b: bound the second Cauchy–Schwarz factor via the good-height margin
   have hfactorB :
     ∑ ρ ∈ S, (Dv ρ : ℝ) / ‖s - ρ‖ ^ 2 ≤
@@ -156,7 +156,7 @@ theorem norm_completedLFunctionTruncatedGenusSum_le_unconditionally {N : ℕ} [N
         push_cast
         ring
       rw [← this, hSsumZ]
-      exact finsum_divisor_ball_completedLFunction_le hN1 hprimitive hne hinv hR
+      exact finsum_divisor_ball_completed_le hN1 hprimitive hne hinv hR
     calc
       ∑ ρ ∈ S, (Dv ρ : ℝ) / ‖s - ρ‖ ^ 2 ≤ ∑ ρ ∈ S, (Dv ρ : ℝ) / δ ^ 2 := Finset.sum_le_sum hterm_le
       _ = (∑ ρ ∈ S, (Dv ρ : ℝ)) / δ ^ 2 := by rw [Finset.sum_div]
@@ -190,7 +190,7 @@ theorem norm_completedLFunctionTruncatedGenusSum_le_unconditionally {N : ℕ} [N
     hCS.trans
       (mul_le_mul hfactorA hfactorB
         (Finset.sum_nonneg (fun ρ _ => div_nonneg (by exact_mod_cast hDv_nonneg ρ) (sq_nonneg _)))
-        (completedLFunctionInverseSquareMass_nonneg hne))
+        (completedInverseSquareMass_nonneg hne))
   have hsum_nonneg : 0 ≤ ∑ ρ ∈ S, (Dv ρ : ℝ) / (‖ρ‖ * ‖s - ρ‖) :=
     Finset.sum_nonneg
       (fun ρ _ =>
@@ -210,7 +210,7 @@ theorem norm_completedLFunctionTruncatedGenusSum_le_unconditionally {N : ℕ} [N
                 Real.log 2) /
           δ) ^
         2 := by
-    rw [div_pow, mul_pow, Real.sq_sqrt (completedLFunctionInverseSquareMass_nonneg hne),
+    rw [div_pow, mul_pow, Real.sq_sqrt (completedInverseSquareMass_nonneg hne),
       Real.sq_sqrt hH2nonneg]
     ring
   rw [hrw] at hCSfull
@@ -261,9 +261,9 @@ theorem norm_completedLFunctionTruncatedGenusSum_le_unconditionally {N : ℕ} [N
 evaluation point separated from every zero give an unconditional bound for the
 centered logarithmic derivative. Add the finite-radius Hadamard remainder to the
 mass-based truncated-genus bound. This supplies both signed horizontal contour bounds. -/
-theorem norm_centeredLogDeriv_le_of_separation_unconditionally {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {R : ℝ}
-    (hR : 1 ≤ R) (hzf : ∀ ρ : ℂ, ‖ρ‖ = R → DirichletCharacter.completedLFunction χ ρ ≠ 0) {s : ℂ}
+theorem centeredLogDeriv_separation {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {R : ℝ} (hR : 1 ≤ R)
+    (hzf : ∀ ρ : ℂ, ‖ρ‖ = R → DirichletCharacter.completedLFunction χ ρ ≠ 0) {s : ℂ}
     (hs : ‖s‖ ≤ R / 2) (hsne : DirichletCharacter.completedLFunction χ s ≠ 0) {δ : ℝ} (hδ : 0 < δ)
     (hsep : ∀ ρ : ℂ, DirichletCharacter.completedLFunction χ ρ = 0 → ‖ρ‖ < R → δ ≤ ‖s - ρ‖) :
     ‖logDeriv (DirichletCharacter.completedLFunction χ) s -
@@ -286,9 +286,9 @@ theorem norm_centeredLogDeriv_le_of_separation_unconditionally {N : ℕ} [NeZero
                 Real.log 2) /
           δ := by
   have hN1 : 1 < N := by exact Nat.lt_of_succ_le hN2
-  have hH9e := norm_centeredLogDeriv_sub_truncatedGenus_le hN1 hprimitive hne hinv hR hzf hs hsne
+  have hH9e := centeredLogDeriv_truncatedGenus_le hN1 hprimitive hne hinv hR hzf hs hsne
   have hGenus :=
-    norm_completedLFunctionTruncatedGenusSum_le_unconditionally hN2 hprimitive hne hinv
+    truncatedGenus_norm_bound hN2 hprimitive hne hinv
       (show (0 : ℝ) < R by exact lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1) hR) hsne hδ hsep
   calc
     ‖logDeriv (DirichletCharacter.completedLFunction χ) s -

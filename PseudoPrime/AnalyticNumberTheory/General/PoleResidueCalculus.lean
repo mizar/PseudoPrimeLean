@@ -57,8 +57,7 @@ theorem circleIntegral_eq_two_pi_I_mul_of_mul_sub_eq {f g : ℂ → ℂ} {c : �
 works simultaneously for every `0 < r ≤ R`: the circle integral is `2πi * g c`.
 Choose `R` strictly inside both supporting neighborhoods, then apply the Cauchy formula
 on each smaller disk. The uniform radius permits later contour constructions to shrink circles. -/
-theorem exists_radius_forall_circleIntegral_eq_two_pi_I_mul {f g : ℂ → ℂ} {c : ℂ}
-    (hg : AnalyticAt ℂ g c)
+theorem exists_radius_circleIntegral_residue {f g : ℂ → ℂ} {c : ℂ} (hg : AnalyticAt ℂ g c)
     (heq : Filter.EventuallyEq (nhdsWithin c ({c}ᶜ : Set ℂ)) (fun z ↦ (z - c) * f z) g) :
     ∃ R : ℝ,
       0 < R ∧ ∀ r : ℝ, 0 < r → r ≤ R → (∮ z in C(c, r), f z) = 2 * Real.pi * Complex.I * g c := by
@@ -91,8 +90,8 @@ theorem exists_radius_forall_circleIntegral_eq_two_pi_I_mul {f g : ℂ → ℂ} 
 `(z - c)² * f z = g z` on its boundary, the circle integral of `f` is `2πi * deriv g c`.
 The boundary identity reduces the integral to Cauchy's first-derivative formula.
 This computes the residue of a regularized pole of order at most two. -/
-theorem circleIntegral_eq_two_pi_I_mul_deriv_of_sq_mul_sub_eq {f g : ℂ → ℂ} {c : ℂ} {R : ℝ}
-    (hR : 0 < R) (hg : DifferentiableOn ℂ g (Metric.closedBall c R))
+theorem circleIntegral_double_pole_eq_deriv {f g : ℂ → ℂ} {c : ℂ} {R : ℝ} (hR : 0 < R)
+    (hg : DifferentiableOn ℂ g (Metric.closedBall c R))
     (heq : ∀ z ∈ Metric.sphere c R, (z - c) ^ 2 * f z = g z) :
     (∮ z in C(c, R), f z) = 2 * Real.pi * Complex.I * deriv g c := by
   calc
@@ -114,8 +113,7 @@ theorem circleIntegral_eq_two_pi_I_mul_deriv_of_sq_mul_sub_eq {f g : ℂ → ℂ
 `R > 0` such that every `0 < r ≤ R` gives circle integral `2πi * deriv g c`.
 The common radius lies strictly inside the analytic and identity neighborhoods, so the
 double-pole Cauchy formula applies after any shrink required by contour geometry. -/
-theorem exists_radius_forall_circleIntegral_eq_two_pi_I_mul_deriv {f g : ℂ → ℂ} {c : ℂ}
-    (hg : AnalyticAt ℂ g c)
+theorem exists_radius_circleIntegral_deriv {f g : ℂ → ℂ} {c : ℂ} (hg : AnalyticAt ℂ g c)
     (heq : Filter.EventuallyEq (nhdsWithin c ({c}ᶜ : Set ℂ)) (fun z ↦ (z - c) ^ 2 * f z) g) :
     ∃ R : ℝ,
       0 < R ∧
@@ -136,7 +134,7 @@ theorem exists_radius_forall_circleIntegral_eq_two_pi_I_mul_deriv {f g : ℂ →
   intro r hr hrR
   have hrg' : r < rg := hrR.trans_lt hRrg
   have hre' : r < re := hrR.trans_lt hRre
-  apply circleIntegral_eq_two_pi_I_mul_deriv_of_sq_mul_sub_eq hr
+  apply circleIntegral_double_pole_eq_deriv hr
   · exact hganalytic.differentiableOn.mono (Metric.closedBall_subset_ball hrg')
   · intro z hz
     apply hball (Metric.closedBall_subset_ball hre' (Metric.sphere_subset_closedBall hz))

@@ -19,10 +19,10 @@ namespace PseudoPrime.PseudoSquare
 reciprocal support, secant endpoint separation at the canonical conductor yields an odd
 prime p<=x with Jacobi(n,p)=-1. Keep both common-factor losses and transfer primitive
 character values back to Jacobi. No enumerated principal support is required. -/
-theorem exists_odd_prime_jacobi_neg_one_of_reciprocalGap_endpoint_secant {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {h x Y : ℝ}
-    (hh : 0 < h) (hx : 1 < x) (hY : 64 ≤ Y) (hYx : Y ≤ x) (C : Finset ℕ)
-    (hC : C ⊆ Finset.Ioc 0 ⌊Y⌋₊) (hcopC : ∀ a ∈ C, Nat.Coprime a (4 * n))
+theorem exists_oddPrime_negOne_secantGap_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {h x Y : ℝ} (hh : 0 < h)
+    (hx : 1 < x) (hY : 64 ≤ Y) (hYx : Y ≤ x) (C : Finset ℕ) (hC : C ⊆ Finset.Ioc 0 ⌊Y⌋₊)
+    (hcopC : ∀ a ∈ C, Nat.Coprime a (4 * n))
     (hgap :
       LLS.PaperStatements.reciprocalGapEndpointSelectedSeparation h
           (NumberTheory.complexQuadraticCharacter n hn).conductor (4 * n) x Y C <
@@ -46,8 +46,8 @@ theorem exists_odd_prime_jacobi_neg_one_of_reciprocalGap_endpoint_secant {n : �
   have hdiv := (NumberTheory.complexQuadraticCharacter n hn).conductor_dvd_level
   have htwo : 2 ∣ 4 * n := ⟨2 * n, by ring⟩
   obtain ⟨p, hprime, hodd, hpx, hpc, hv⟩ :=
-    LLS.PaperStatements.exists_odd_prime_neg_one_of_reciprocalGap_endpoint_secant hh hq hdiv htwo
-      hGRH hp hne hquad hx hY hYx C hC hcopC hgap
+    LLS.PaperStatements.exists_oddPrime_negOne_secantGap_GRH hh hq hdiv htwo hGRH hp hne hquad hx hY
+      hYx C hC hcopC hgap
   have hcp : Nat.Coprime p n := hpc.of_dvd_right (show n ∣ 4 * n from ⟨4, by ring⟩)
   have he :=
     NumberTheory.primitiveQuadraticCharacter_apply_odd_prime hn hprime hodd
@@ -64,10 +64,10 @@ namespace PseudoPrime.PseudoSquare
 negative and least non-one odd-prime Jacobi witnesses are at most x. Apply leastness
 to the constructed negative witness and then inclusion of the witness sets.
 This connects the improved analytic criterion to both quadratic witness quantities. -/
-theorem primeWitness_cast_le_of_reciprocalGap_endpoint_secant {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {h x Y : ℝ}
-    (hh : 0 < h) (hx : 1 < x) (hY : 64 ≤ Y) (hYx : Y ≤ x) (C : Finset ℕ)
-    (hC : C ⊆ Finset.Ioc 0 ⌊Y⌋₊) (hcopC : ∀ a ∈ C, Nat.Coprime a (4 * n))
+theorem primeWitness_le_of_reciprocalGap_endpoint_secant {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {h x Y : ℝ} (hh : 0 < h)
+    (hx : 1 < x) (hY : 64 ≤ Y) (hYx : Y ≤ x) (C : Finset ℕ) (hC : C ⊆ Finset.Ioc 0 ⌊Y⌋₊)
+    (hcopC : ∀ a ∈ C, Nat.Coprime a (4 * n))
     (hgap :
       LLS.PaperStatements.reciprocalGapEndpointSelectedSeparation h
           (NumberTheory.complexQuadraticCharacter n hn).conductor (4 * n) x Y C <
@@ -85,8 +85,7 @@ theorem primeWitness_cast_le_of_reciprocalGap_endpoint_secant {n : ℕ} (hn : Od
           ℝ) ≤
         x := by
   obtain ⟨p, hprime, hodd, hpx, _, hj⟩ :=
-    exists_odd_prime_jacobi_neg_one_of_reciprocalGap_endpoint_secant hn hns hGRH hh hx hY hYx C hC
-      hcopC hgap
+    exists_oddPrime_negOne_secantGap_GRH hn hns hGRH hh hx hY hYx C hC hcopC hgap
   let hneg := NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns
   have hmem : p ∈ NumberTheory.primeNegOneWitnessSet n := ⟨hprime, hodd, hj⟩
   have hb := (Nat.cast_le.mpr (NumberTheory.primeNegOneWitness_le n hneg hmem)).trans hpx

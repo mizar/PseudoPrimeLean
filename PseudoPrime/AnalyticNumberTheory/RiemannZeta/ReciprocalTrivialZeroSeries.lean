@@ -21,7 +21,7 @@ noncomputable def riemannReciprocalTrivialZeroSeries (x : ℝ) : ℝ :=
   ∑' k : ℕ, x⁻¹ ^ (2 * (k + 1) + 1) / ((2 * (k + 1) : ℝ) * (2 * (k + 1) + 1))
 
 /-- The reciprocal trivial-zero series is bounded by an explicit geometric tail. -/
-theorem riemannReciprocalTrivialZeroSeries_le_geometric {x : ℝ} (hx : 2 ≤ x) :
+theorem reciprocalTrivialSeries_le_geometric {x : ℝ} (hx : 2 ≤ x) :
     riemannReciprocalTrivialZeroSeries x ≤ x⁻¹ ^ 3 / 6 * (1 - x⁻¹ ^ 2)⁻¹ := by
   have hxpos : 0 < x := lt_of_lt_of_le (by norm_num only) hx
   have hinv : 0 ≤ x⁻¹ := inv_nonneg.mpr hxpos.le
@@ -45,7 +45,7 @@ theorem riemannReciprocalTrivialZeroSeries_le_geometric {x : ℝ} (hx : 2 ≤ x)
       rw [hgeom.tsum_mul_left, tsum_geometric_of_lt_one (pow_nonneg hinv 2) hratio]
 
 /-- The reciprocal trivial-zero summand sequence is summable for every `x > 1`. -/
-theorem summable_reciprocalTrivialZeroTerm_of_one_lt {x : ℝ} (hx : 1 < x) :
+theorem summable_recipTrivialZero_of_one_lt {x : ℝ} (hx : 1 < x) :
     Summable fun k : ℕ => x⁻¹ ^ (2 * (k + 1) + 1) / ((2 * (k + 1) : ℝ) * (2 * (k + 1) + 1)) := by
   have hxpos : 0 < x := lt_trans (by norm_num only) hx
   have hinv : 0 ≤ x⁻¹ := inv_nonneg.mpr hxpos.le
@@ -57,7 +57,7 @@ theorem summable_reciprocalTrivialZeroTerm_of_one_lt {x : ℝ} (hx : 1 < x) :
   have hmajor : Summable fun k : ℕ => x⁻¹ ^ 3 / 6 * (x⁻¹ ^ 2) ^ k := hgeom.mul_left (x⁻¹ ^ 3 / 6)
   exact
     hmajor.of_nonneg_of_le (fun k => reciprocalTrivialZeroTerm_nonneg hxpos.le k)
-      (reciprocalTrivialZeroTerm_le_geometric_of_pos hxpos)
+      (reciprocalTrivialTerm_le_geometric hxpos)
 
 /-- Finite partial sums of reciprocal trivial-zero terms are bounded by the full positive series. -/
 theorem sum_reciprocalTrivialZeroTerm_le {x : ℝ} (hx : 1 < x) (S : Finset ℂ)
@@ -81,7 +81,7 @@ theorem sum_reciprocalTrivialZeroTerm_le {x : ℝ} (hx : 1 < x) (S : Finset ℂ)
         x⁻¹ ^ (2 * (k + 1) + 1) / ((2 * (k + 1) : ℝ) * (2 * (k + 1) + 1))) hinj).symm
   rw [himg]
   have hxpos : 0 < x := lt_trans (by norm_num only) hx
-  have hsummable := summable_reciprocalTrivialZeroTerm_of_one_lt hx
+  have hsummable := summable_recipTrivialZero_of_one_lt hx
   have hle :=
     hsummable.sum_le_tsum (S.image trivialZeroIndex)
       (fun k _ => reciprocalTrivialZeroTerm_nonneg hxpos.le k)

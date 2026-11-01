@@ -17,7 +17,7 @@ namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 /-- A function vanishing outside prime powers and on level units has support
 in the injective parametrization by level primes and positive exponents.
 Prime-power uniqueness supplies the support needed for signed infinite reindexing. -/
-theorem commonFactorPrimePowerIndex_support_of_vanishing (f : ℕ → ℝ) {q : ℕ} (hq : q ≠ 0)
+theorem support_subset_common_prime_powers (f : ℕ → ℝ) {q : ℕ} (hq : q ≠ 0)
     (hprime : ∀ n, ¬IsPrimePow n → f n = 0) (hunit : ∀ n, Nat.Coprime n q → f n = 0) :
     Function.support f ⊆ Set.range (commonFactorPrimePowerIndex q) := by
   intro n hn
@@ -37,7 +37,7 @@ theorem tsum_common_factor_eq_sum_prime_powers (f : ℕ → ℝ) {q : ℕ} (hq :
     (hprime : ∀ n, ¬IsPrimePow n → f n = 0) (hunit : ∀ n, Nat.Coprime n q → f n = 0) :
     (∑' n : ℕ, f n) = ∑ p ∈ q.primeFactors, ∑' k : ℕ, f (p ^ (k + 1)) := by
   have hi := commonFactorPrimePowerIndex_injective q
-  have hs := commonFactorPrimePowerIndex_support_of_vanishing f hq hprime hunit
+  have hs := support_subset_common_prime_powers f hq hprime hunit
   have hcomp := hf.comp_injective hi
   rw [← hi.tsum_eq hs]
   change Summable (fun z ↦ f (commonFactorPrimePowerIndex q z)) at hcomp

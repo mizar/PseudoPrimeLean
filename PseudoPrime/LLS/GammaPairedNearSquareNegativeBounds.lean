@@ -22,7 +22,7 @@ character, ambient level at least 20000 and L at least 700 with the stated
 level bound, prime triviality through (99/100)L squared is impossible.
 Combine the actual paired ramp lower bound, primitive upper bound and signed
 conductor absorption. The whole-half-line numerical gap is proved here. -/
-theorem gamma_ramp_prime_trivial_false_paired_nearSquare_endpoint {n : ℕ} (hn : Odd n)
+theorem not_primeTrivial_pairedNearSquare_GRH {n : ℕ} (hn : Odd n)
     (χ : DirichletCharacter ℂ (4 * n)) (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hq : 20000 ≤ 4 * n)
     {L : ℝ} (hL : 700 ≤ L) (hlogq : Real.log (4 * n : ℕ) ≤ L + 7 / 5)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
@@ -37,12 +37,8 @@ theorem gamma_ramp_prime_trivial_false_paired_nearSquare_endpoint {n : ℕ} (hn 
   have hQ := gamma_ramp_no_witness_comparison χ hquad (zero_lt_one.trans_le hx) hsmall
   have hP := gamma_level_one_sum_upper_variable hGRH.riemann hx
   have hT := gamma_ramp_sum_lower_paired hGRH.riemann hx
-  have hC :=
-    PaperStatements.gamma_primitiveCharacter_sum_re_le_paired_nearSquare_conductor hq χ hne hGRH hL
-      hlogq
-  have hE :=
-    gammaQuadraticLocalCorrection_absorbed_nearSquare_of_twenty_le hn χ hquad hq
-      (by linarith only [hL]) hlogq
+  have hC := PaperStatements.gammaCharSum_paired_conductor_GRH hq χ hne hGRH hL hlogq
+  have hE := gammaQuadraticCorrection_nearSquare_20 hn χ hquad hq (by linarith only [hL]) hlogq
   have he := gamma_paired_nearSquare_budgets hL
   nlinarith only [hQ, hP, hT, hC, hE, he.1, he.2.1, he.2.2, hL]
 

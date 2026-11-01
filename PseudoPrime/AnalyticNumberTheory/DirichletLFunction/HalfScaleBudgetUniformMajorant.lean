@@ -46,17 +46,16 @@ theorem halfScaleTimeBudgetConstant_pos {C K : ℝ} (hC : 0 ≤ C) (hK : 0 ≤ K
 scalar family remainder is bounded by a height-decaying term and one common
 power-log term. Combine the low-height, original-tail, and correction estimates.
 All budget constants are nonnegative and no character-dependent expression remains. -/
-theorem weighted_primitive_remainder_le_two_scale_majorant {q H : ℕ} {x σ δ C K T : ℝ} (hq : 1 ≤ q)
-    (hH : 3 ≤ H) (hqr : q ≤ H + 1) (hsqrt : (q : ℝ) ≤ Real.sqrt ((H + 1 : ℕ) : ℝ)) (hx : 4 ≤ x)
+theorem weightedRemainder_twoScale_bound {q H : ℕ} {x σ δ C K T : ℝ} (hq : 1 ≤ q) (hH : 3 ≤ H)
+    (hqr : q ≤ H + 1) (hsqrt : (q : ℝ) ≤ Real.sqrt ((H + 1 : ℕ) : ℝ)) (hx : 4 ≤ x)
     (hRx : ((H + 1 : ℕ) : ℝ) ≤ x) (hpow : ((H + 1 : ℕ) : ℝ) ^ 2 ≤ x ^ δ) (hσ : 1 / 2 ≤ σ)
     (hbalance : σ + 2 * δ ≤ 1) (hC : 0 ≤ C) (hK : 0 ≤ K) (hT : 0 ≤ T) :
     (q : ℝ) * primitiveHalfScaleRemainderBudget q x σ H C K T + (q : ℝ) ^ 2 * (Real.log x) ^ 2 ≤
       240 * x * T * (Real.log 2 + Real.log ((H + 1 : ℕ) : ℝ) + 2) / Real.sqrt ((H + 1 : ℕ) : ℝ) +
         halfScaleTimeBudgetConstant C K * (x ^ (1 - δ) * (Real.log x + 1) ^ 3) := by
-  have hl := weighted_low_height_budget_le_common_weight hq hqr hx hRx hpow hσ hbalance hK
+  have hl := lowHeight_weighted_bound hq hqr hx hRx hpow hσ hbalance hK
   have ht := weighted_original_high_tail_le hq hH hqr hsqrt (by linarith only [hx] : 0 ≤ x) hT
-  have hc :=
-    weighted_genus_and_arithmetic_corrections_le_common_weight hq hqr hx hRx hpow hσ hbalance hC
+  have hc := genusArithmetic_weighted_bound hq hqr hx hRx hpow hσ hbalance hC
   rw [primitiveHalfScaleRemainderBudget, regularizedHighZeroTailMajorant_eq]
   dsimp only [halfScaleTimeBudgetConstant]
   nlinarith only [hl, ht, hc]
@@ -73,17 +72,15 @@ theorem rpow_common_weight_eq_scaled_decay {x δ : ℝ} (hx : 0 < x) :
 scalar remainder conceptually by its positive scale and bound it by the sum of
 two explicit decaying functions, one of height and one of scale. Rewrite the
 common weight exactly. This makes both large thresholds independent of the varying family. -/
-theorem weighted_primitive_remainder_le_normalized_majorant {q H : ℕ} {x σ δ C K T : ℝ} (hq : 1 ≤ q)
-    (hH : 3 ≤ H) (hqr : q ≤ H + 1) (hsqrt : (q : ℝ) ≤ Real.sqrt ((H + 1 : ℕ) : ℝ)) (hx : 4 ≤ x)
+theorem weightedRemainder_normalized_bound {q H : ℕ} {x σ δ C K T : ℝ} (hq : 1 ≤ q) (hH : 3 ≤ H)
+    (hqr : q ≤ H + 1) (hsqrt : (q : ℝ) ≤ Real.sqrt ((H + 1 : ℕ) : ℝ)) (hx : 4 ≤ x)
     (hRx : ((H + 1 : ℕ) : ℝ) ≤ x) (hpow : ((H + 1 : ℕ) : ℝ) ^ 2 ≤ x ^ δ) (hσ : 1 / 2 ≤ σ)
     (hbalance : σ + 2 * δ ≤ 1) (hC : 0 ≤ C) (hK : 0 ≤ K) (hT : 0 ≤ T) :
     (q : ℝ) * primitiveHalfScaleRemainderBudget q x σ H C K T + (q : ℝ) ^ 2 * (Real.log x) ^ 2 ≤
       x *
         (240 * T * ((Real.log 2 + Real.log ((H + 1 : ℕ) : ℝ) + 2) / Real.sqrt ((H + 1 : ℕ) : ℝ)) +
           halfScaleTimeBudgetConstant C K * ((Real.log x + 1) ^ 3 / x ^ δ)) := by
-  have hb :=
-    weighted_primitive_remainder_le_two_scale_majorant hq hH hqr hsqrt hx hRx hpow hσ hbalance hC hK
-      hT
+  have hb := weightedRemainder_twoScale_bound hq hH hqr hsqrt hx hRx hpow hσ hbalance hC hK hT
   rw [rpow_common_weight_eq_scaled_decay (by linarith only [hx] : 0 < x)] at hb
   exact hb.trans_eq (by ring)
 

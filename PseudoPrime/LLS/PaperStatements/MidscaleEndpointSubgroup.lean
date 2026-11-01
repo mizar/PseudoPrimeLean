@@ -19,8 +19,7 @@ namespace PseudoPrime.LLS.PaperStatements
 has a prime outside its image through the squared affine radius. Pull back a
 nonprincipal quotient character and apply the original-level character bound.
 Nonunit primes are permitted by this subgroup-image formulation. -/
-theorem exists_prime_outside_subgroup_le_midscale_radius_sq {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
+theorem exists_prime_outside_midscale_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hlo : 1339 / 50 ≤ Real.log q)
     (hhi : Real.log q ≤ 26269 / 100) :
     ∃ p : ℕ,

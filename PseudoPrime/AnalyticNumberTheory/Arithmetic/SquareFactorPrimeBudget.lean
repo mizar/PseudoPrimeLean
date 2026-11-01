@@ -79,7 +79,7 @@ theorem sum_prime_cost_le_square_factor_budget {n d s : ℕ} (hd : d ≠ 0) (hs 
 Subtract each exception before applying the two-rate bound, then enlarge its
 support to the fixed exception set. This accepts analytic prime tails and small
 prime deficits while retaining the conductor/input correlation. -/
-theorem sum_prime_cost_le_square_factor_budget_add_excess {n d s : ℕ} (hd : d ≠ 0) (hs : s ≠ 0)
+theorem sum_prime_cost_le_square_budget_add_excess {n d s : ℕ} (hd : d ≠ 0) (hs : s ≠ 0)
     (hdec : s ^ 2 * d = n) (F : ℕ → ℝ) {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (T : Finset ℕ)
     (e : ℕ → ℝ) (he : ∀ p ∈ T, 0 ≤ e p)
     (hR : ∀ p ∈ n.primeFactors, p ∣ d → F p ≤ a * Real.log p + if p ∈ T then e p else 0)

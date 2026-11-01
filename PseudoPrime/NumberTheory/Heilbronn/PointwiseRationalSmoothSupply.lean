@@ -77,8 +77,8 @@ theorem fixed_smooth_count_at_rational_cutoff_of_bounds {p k : ℕ} (hp : 0 < p)
 
 /-- At scale 70/38, the displayed pointwise prime and floor bounds supply
 the smooth inputs for every rational cutoff. -/
-theorem fixed_smooth_count_at_rational_cutoff_74_40_of_bounds {p k : ℕ} (hp : 0 < p) (hk : 0 < k)
-    (hL : 2 ≤ Real.log p) (hB : 0 < Nat.floor ((Real.log p) ^ (1850004 / 1000000 : ℝ)))
+theorem smooth_count_at_cutoff_74_40 {p k : ℕ} (hp : 0 < p) (hk : 0 < k) (hL : 2 ≤ Real.log p)
+    (hB : 0 < Nat.floor ((Real.log p) ^ (1850004 / 1000000 : ℝ)))
     (hC : 0 < Nat.floor ((p : ℝ) ^ (8500002 / 10000000 : ℝ)))
     (hcL : 2 * (999997 / 1000000 : ℝ) ≤ Real.log (Real.log p))
     (hMp :
@@ -106,8 +106,8 @@ theorem fixed_smooth_count_at_rational_cutoff_74_40_of_bounds {p k : ℕ} (hp : 
 
 /-- At the separate scale 74/40, the displayed pointwise prime and floor
 bounds supply the smooth inputs for every rational cutoff. -/
-theorem fixed_smooth_count_at_rational_cutoff_70_38_of_bounds {p k : ℕ} (hp : 0 < p) (hk : 0 < k)
-    (hL : 2 ≤ Real.log p) (hB : 0 < Nat.floor ((Real.log p) ^ (184211 / 100000 : ℝ)))
+theorem smooth_count_at_cutoff_70_38 {p k : ℕ} (hp : 0 < p) (hk : 0 < k) (hL : 2 ≤ Real.log p)
+    (hB : 0 < Nat.floor ((Real.log p) ^ (184211 / 100000 : ℝ)))
     (hC : 0 < Nat.floor ((p : ℝ) ^ (160000019 / 190000000 : ℝ)))
     (hcL : 2 * (999997 / 1000000 : ℝ) ≤ Real.log (Real.log p))
     (hMp :
@@ -136,8 +136,8 @@ theorem fixed_smooth_count_at_rational_cutoff_70_38_of_bounds {p k : ℕ} (hp : 
 
 /-- At scale 59/32, pointwise prime and floor bounds supply the smooth
 inputs for every rational cutoff. -/
-theorem fixed_smooth_count_at_rational_cutoff_59_32_of_bounds {p k : ℕ} (hp : 0 < p) (hk : 0 < k)
-    (hL : 2 ≤ Real.log p) (hB : 0 < Nat.floor ((Real.log p) ^ (1843755 / 1000000 : ℝ)))
+theorem smooth_count_at_cutoff_59_32 {p k : ℕ} (hp : 0 < p) (hk : 0 < k) (hL : 2 ≤ Real.log p)
+    (hB : 0 < Nat.floor ((Real.log p) ^ (1843755 / 1000000 : ℝ)))
     (hC : 0 < Nat.floor ((p : ℝ) ^ (8437505 / 10000000 : ℝ)))
     (hcL : 2 * (999997 / 1000000 : ℝ) ≤ Real.log (Real.log p))
     (hMp :
@@ -165,8 +165,8 @@ theorem fixed_smooth_count_at_rational_cutoff_59_32_of_bounds {p k : ℕ} (hp : 
 
 /-- At scale 19/10, the exponent 1.900000016707 and floor exponent 0.900000000000000001
 supply smooth inputs for every rational cutoff. -/
-theorem fixed_smooth_count_at_rational_cutoff_19_10_of_bounds {p k : ℕ} (hp : 0 < p) (hk : 0 < k)
-    (hL : 2 ≤ Real.log p) (hB : 0 < Nat.floor ((Real.log p) ^ (1900000016707 / 1000000000000 : ℝ)))
+theorem smooth_count_at_cutoff_19_10 {p k : ℕ} (hp : 0 < p) (hk : 0 < k) (hL : 2 ≤ Real.log p)
+    (hB : 0 < Nat.floor ((Real.log p) ^ (1900000016707 / 1000000000000 : ℝ)))
     (hC : 0 < Nat.floor ((p : ℝ) ^ (900000000000000001 / 1000000000000000000 : ℝ)))
     (hcL : 2 * (999999990558 / 1000000000000 : ℝ) ≤ Real.log (Real.log p))
     (hMp :

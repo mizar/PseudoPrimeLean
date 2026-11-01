@@ -74,7 +74,7 @@ the low-height zero real sum. The budget retains the signed conductor coefficien
 and Gamma combination, plus absolute-weighted Euler ratios. Establish convergence
 and apply the general height-majorant transfer. Constructing the global majorant
 and certifying its numerical budget remain separate obligations. -/
-theorem triangular18_low_zero_re_lower_of_shifted_majorant {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem triangular18_low_zero_lower_of_majorant_GRH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) {ι : Type*}
     (S : Finset ι) (r t w : ι → ℝ) (hr : ∀ i ∈ S, 0 < r i)
@@ -97,8 +97,8 @@ theorem triangular18_low_zero_re_lower_of_shifted_majorant {q : ℕ} [NeZero q] 
   have hpoint (ρ : ℂ) := triangular18_negativeLowHeightTest_divisor_eq χ x ρ
   have hs := hsre.congr (fun ρ ↦ (hpoint ρ).symm)
   have hb :=
-    AnalyticNumberTheory.DirichletLFunction.zero_height_sum_le_shifted_poisson_budget hq
-      (hGRH q χ hp) hp hne hinv S r t w hr (triangular18_negativeLowHeightTest x) hg hs
+    AnalyticNumberTheory.DirichletLFunction.heightSum_le_poissonBudget_RH hq (hGRH q χ hp) hp hne
+      hinv S r t w hr (triangular18_negativeLowHeightTest x) hg hs
   rw [tsum_congr hpoint, tsum_neg, ← Complex.re_tsum hsLo] at hb
   change -_ ≤ (∑' ρ : ℂ, Lo ρ).re
   linarith only [hb]

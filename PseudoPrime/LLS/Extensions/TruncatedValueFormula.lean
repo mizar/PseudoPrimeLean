@@ -25,7 +25,7 @@ namespace PseudoPrime.LLS.Extensions.GeneralLFunction
 plus the smoothed reciprocal sum divided by log cutoff is the truncated value sum.
 Combine the weights termwise, treating the index one separately since its Mangoldt value
 is zero. This is the arithmetic identity used when the two explicit formulas are combined. -/
-theorem logValueSum_add_reciprocalWeightedSum_div_log (f : GeneralLFunction) {x : ℝ} (hx : 1 < x) :
+theorem logValueSum_add_reciprocalSum_div_log (f : GeneralLFunction) {x : ℝ} (hx : 1 < x) :
     f.logValueSum x + f.reciprocalWeightedSum x / (Real.log x : ℂ) = f.truncatedValueSum x := by
   have hx0 : 0 < x := zero_lt_one.trans hx
   have hlx : Real.log x ≠ 0 := (Real.log_pos hx).ne'
@@ -68,9 +68,9 @@ theorem log_norm_L_one_eq_truncatedValueSum_errors (f : GeneralLFunction) (hf : 
   obtain ⟨θ₁, θ₂, hθ₁, hθ₂, h1⟩ := (lls_propL1_general_proof f hf hRH).2 x hx
   obtain ⟨θ₃, hθ₃, h2⟩ := reciprocalFormula_eq_theta f hf hRH hx1
   refine ⟨θ₁, θ₂, θ₃, hθ₁, hθ₂, hθ₃, ?_⟩
-  have hsum := congrArg Complex.re (logValueSum_add_reciprocalWeightedSum_div_log f hx1)
+  have hsum := congrArg Complex.re (logValueSum_add_reciprocalSum_div_log f hx1)
   simp only [Complex.add_re, Complex.div_ofReal_re] at hsum
-  rw [re_logDeriv_ordinary_one_eq_half_zeroMass_sub_gamma f hf hRH] at h2
+  rw [ordinary_logDeriv_one_real_RH f hf hRH] at h2
   rw [← hsum]
   linear_combination h1 + h2 / Real.log x
 

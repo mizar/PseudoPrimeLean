@@ -50,7 +50,7 @@ theorem pointwiseGap_eq {L y : ℝ} (hy : 8 ≤ y) :
       fullEndpointEvenGapDenominator y * (y + pointwiseCorrection y - L) := by
   rw [pointwiseCorrection_eq hy]
   dsimp only [endpointPointwiseGap]
-  rw [fullEndpointEvenExactComparisonGap_eq_denominator_correction hy]
+  rw [fullEvenExactGap_eq_denominator_correction hy]
   have hD := ne_of_gt (fullEndpointEvenGapDenominator_pos hy)
   dsimp only [pointwiseDelta]
   field_simp [hD]
@@ -336,7 +336,7 @@ theorem pointwiseCutoff_lt_fourStep {L : ℝ} (hL : 45 / 4 ≤ L) :
   have hd : (8 : ℝ) < endpointFourthRadius L :=
     (le_max_left _ _).trans_lt (endpoint_fourth_bounds hL).1
   have hg := endpoint_fourStep_gap hL
-  rw [fullEndpointEvenExactComparisonGap_eq_denominator_correction hd.le] at hg
+  rw [fullEvenExactGap_eq_denominator_correction hd.le] at hg
   have hf :
     0 < endpointFourthRadius L + fullEndpointEvenGapCorrection (endpointFourthRadius L) - L :=
     pos_of_mul_pos_right hg (fullEndpointEvenGapDenominator_pos hd.le).le

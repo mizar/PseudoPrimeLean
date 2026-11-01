@@ -141,7 +141,7 @@ theorem gamma_proper_prime_pow_asymptotic_bound
 index-four least-prime bound with coefficient `659/4000 + ε` for sufficiently
 large moduli. Odd primes are coprime to four, so the general prime-power bound
 needs no extra coprimality premise. The threshold is uniform in subgroups. -/
-theorem gamma_index_four_proper_prime_pow_asymptotic_bound
+theorem indexFour_primePow_asymptotic_GRH
     (hg : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (ε : ℝ) (hε : 0 < ε) :
     ∃ Q : ℕ,
       ∀ (p k : ℕ),
@@ -197,7 +197,7 @@ prime powers have one common bound on least outside primes of a fixed index
 dividing the reduced totient. The reduction kernel lies in every such
 subgroup; prime support and index are preserved. Finite existence at the
 fixed modulus bounds all image subgroups, with no explicit enumeration. -/
-theorem exists_uniform_prime_pow_bound_of_fixed_reduction {p a h : ℕ} (hp : p.Prime) (hp2 : p ≠ 2)
+theorem exists_uniform_prime_pow_bound_of_reduction {p a h : ℕ} (hp : p.Prime) (hp2 : p ≠ 2)
     (ha : 0 < a) (hh : 1 < h) (hd : h ∣ Nat.totient (p ^ a)) [NeZero p] :
     ∃ B : ℕ,
       ∀ k : ℕ,
@@ -226,9 +226,8 @@ prime-power bound if its square totient is divisible by the fixed index.
 Reduce its powers to the square modulus and use a uniform finite bound;
 logarithmic growth absorbs this bound. All other odd primes use the coprime
 bound. This supplies the exceptional bases for indices five and six. -/
-theorem gamma_proper_prime_pow_asymptotic_bound_of_exceptional_prime
-    (hg : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {h t : ℕ} (hh : 4 ≤ h)
-    (ht : t.Prime) (ht2 : t ≠ 2) [NeZero t] (hd : h ∣ Nat.totient (t ^ 2))
+theorem index_primePow_asymptotic_GRH (hg : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {h t : ℕ} (hh : 4 ≤ h) (ht : t.Prime) (ht2 : t ≠ 2) [NeZero t] (hd : h ∣ Nat.totient (t ^ 2))
     (hc : ∀ p : ℕ, p.Prime → p ≠ 2 → p ≠ t → Nat.Coprime h p) (ε : ℝ) (hε : 0 < ε) :
     ∃ Q : ℕ,
       ∀ (p k : ℕ),
@@ -242,7 +241,7 @@ theorem gamma_proper_prime_pow_asymptotic_bound_of_exceptional_prime
                 IsLeast (NumberTheory.primesOutside (p ^ k) H) r ∧
                   (r : ℝ) < (659 / 4000 + ε) * (Real.log (p ^ k : ℕ)) ^ 2 := by
   obtain ⟨B, hB⟩ :=
-    exists_uniform_prime_pow_bound_of_fixed_reduction ht ht2 (by norm_num only : 0 < 2)
+    exists_uniform_prime_pow_bound_of_reduction ht ht2 (by norm_num only : 0 < 2)
       (lt_of_lt_of_le (by norm_num only : 1 < 4) hh) hd
   obtain ⟨Q0, hQ0⟩ := gamma_proper_prime_pow_asymptotic_bound hg h hh ε hε
   obtain ⟨Q1, _, hQ1⟩ :=
@@ -260,7 +259,7 @@ theorem gamma_proper_prime_pow_asymptotic_bound_of_exceptional_prime
 asymptotic least-prime bound with coefficient `659/4000 + ε`. The exceptional
 base five reduces to modulus twenty-five, whose totient is divisible by five;
 all other prime bases are coprime to the index. The threshold is uniform. -/
-theorem gamma_index_five_proper_prime_pow_asymptotic_bound
+theorem indexFive_primePow_asymptotic_GRH
     (hg : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (ε : ℝ) (hε : 0 < ε) :
     ∃ Q : ℕ,
       ∀ (p k : ℕ),
@@ -277,8 +276,8 @@ theorem gamma_index_five_proper_prime_pow_asymptotic_bound
     rw [Nat.totient_prime_pow Nat.prime_five (by norm_num only : 0 < 2)]
     norm_num only
   apply
-    gamma_proper_prime_pow_asymptotic_bound_of_exceptional_prime hg (by norm_num only : 4 ≤ 5)
-      Nat.prime_five (by norm_num only) hd ?_ ε hε
+    index_primePow_asymptotic_GRH hg (by norm_num only : 4 ≤ 5) Nat.prime_five (by norm_num only) hd
+      ?_ ε hε
   intro p hp _ hp5
   apply Nat.Coprime.symm
   apply hp.coprime_iff_not_dvd.mpr
@@ -289,7 +288,7 @@ theorem gamma_index_five_proper_prime_pow_asymptotic_bound
 asymptotic least-prime bound with coefficient `659/4000 + ε`. The exceptional
 base three reduces to modulus nine, whose totient is six; every other odd
 prime is coprime to the index. Finite existence covers the exceptional tower. -/
-theorem gamma_index_six_proper_prime_pow_asymptotic_bound
+theorem indexSix_primePow_asymptotic_GRH
     (hg : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (ε : ℝ) (hε : 0 < ε) :
     ∃ Q : ℕ,
       ∀ (p k : ℕ),
@@ -306,8 +305,8 @@ theorem gamma_index_six_proper_prime_pow_asymptotic_bound
     rw [Nat.totient_prime_pow Nat.prime_three (by norm_num only : 0 < 2)]
     norm_num only
   apply
-    gamma_proper_prime_pow_asymptotic_bound_of_exceptional_prime hg (by norm_num only : 4 ≤ 6)
-      Nat.prime_three (by norm_num only) hd ?_ ε hε
+    index_primePow_asymptotic_GRH hg (by norm_num only : 4 ≤ 6) Nat.prime_three (by norm_num only)
+      hd ?_ ε hε
   intro p hp hp2 hp3
   apply Nat.Coprime.symm
   apply hp.coprime_iff_not_dvd.mpr
@@ -321,7 +320,7 @@ theorem gamma_index_six_proper_prime_pow_asymptotic_bound
 prime-power bound with coefficient `659/4000 + ε` for sufficiently large
 odd proper-prime-power moduli. The three index-specific results include all
 prime bases, including the exceptional bases five and three. -/
-theorem gamma_small_index_proper_prime_pow_asymptotic_bound
+theorem smallIndex_primePow_asymptotic_GRH
     (hg : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (h : ℕ) (hh4 : 4 ≤ h) (hh6 : h ≤ 6)
     (ε : ℝ) (hε : 0 < ε) :
     ∃ Q : ℕ,
@@ -337,13 +336,13 @@ theorem gamma_small_index_proper_prime_pow_asymptotic_bound
                   (r : ℝ) < (659 / 4000 + ε) * (Real.log (p ^ k : ℕ)) ^ 2 := by
   rcases Nat.eq_or_lt_of_le hh4 with he | he
   · subst h
-    exact gamma_index_four_proper_prime_pow_asymptotic_bound hg ε hε
+    exact indexFour_primePow_asymptotic_GRH hg ε hε
   · rcases Nat.eq_or_lt_of_le (Nat.succ_le_of_lt he) with he5 | he5
     · subst h
-      exact gamma_index_five_proper_prime_pow_asymptotic_bound hg ε hε
+      exact indexFive_primePow_asymptotic_GRH hg ε hε
     · have he6 : h = 6 := Nat.le_antisymm hh6 (Nat.succ_le_of_lt he5)
       subst h
-      exact gamma_index_six_proper_prime_pow_asymptotic_bound hg ε hε
+      exact indexSix_primePow_asymptotic_GRH hg ε hε
 
 /-- If the scalar factor is at least `4/25` and the logarithmic argument
 lies between `23/10` and three, its squared ratio with denominator `L-4`
@@ -428,7 +427,7 @@ theorem theorem13_small_index_of_odd_proper_prime_power
   let ε : ℝ := (C - 659 / 4000) / 2
   have hε : 0 < ε := by
     dsimp only [ε]; linarith only [hc]
-  obtain ⟨Q, hQ⟩ := gamma_small_index_proper_prime_pow_asymptotic_bound hg h hh4 hh6 ε hε
+  obtain ⟨Q, hQ⟩ := smallIndex_primePow_asymptotic_GRH hg h hh4 hh6 ε hε
   refine ⟨Q, ?_⟩
   intro p k hp hp2 hk hq _ _ H hH
   obtain ⟨r, hr, hb⟩ := hQ p k hp hp2 hk hq H hH

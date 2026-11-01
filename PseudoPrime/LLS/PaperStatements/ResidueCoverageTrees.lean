@@ -83,7 +83,7 @@ theorem exists_least_prime_in_residue_le_of_route_lookup {core routes : BinaryTr
       of_decide_eq_true (by simpa only [residueDivisorRouteCheck, hm] using hc)
     let : NeZero m := ⟨Nat.ne_of_gt hg.2.2.1⟩
     exact
-      exists_least_prime_in_residue_le_of_divisor_coverage hg.1 hg.2.1
+      exists_leastResiduePrime_divisorCoverage hg.1 hg.2.1
         (boundedPrimeResidueCoverage_of_tree_lookup hcore hm) hg.2.2.2 a
 
 end PseudoPrime.LLS.PaperStatements

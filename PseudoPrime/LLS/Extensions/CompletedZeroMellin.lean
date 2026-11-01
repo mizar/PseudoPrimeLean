@@ -136,7 +136,7 @@ theorem normalized_integral_zeroResolvent_eq (f : GeneralLFunction) (hf : f.IsAd
     rw [norm_div, norm_neg, Complex.norm_natCast, norm_pow, Real.rpow_two]
   have hz := summable_shiftedZeroSum f hRH hm (zero_lt_one.trans hx) hσ
   have he :=
-    AnalyticNumberTheory.General.normalized_integral_tsum_centeredResolventKernel
+    AnalyticNumberTheory.General.centeredResolvent_integral_tsum
       (fun ρ : f.Zero ↦ (ρ : ℂ) - (σ : ℂ)) (fun ρ : f.Zero ↦ analyticOrderNatAt f.completed (ρ : ℂ))
       (fun ρ ↦ by
         rw [Complex.sub_re, Complex.ofReal_re, hRH ρ]; linarith only [hσ])

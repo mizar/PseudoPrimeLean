@@ -32,8 +32,8 @@ noncomputable def finiteSignedParityUpper (l : List (ℚ × ℚ)) : ℝ :=
 Claim: its exact Gamma cost is bounded by the parity maximum.
 Proof: its Gamma factor is exactly the even or odd factor.
 Role: remove character dependence from the archimedean budget. -/
-theorem finiteSignedGammaCost_le_parity_upper {m : ℕ} (χ : DirichletCharacter ℂ m)
-    (l : List (ℚ × ℚ)) : finiteSignedGammaCost l χ.gammaFactor ≤ finiteSignedParityUpper l := by
+theorem finiteSignedGammaCost_le_parity {m : ℕ} (χ : DirichletCharacter ℂ m) (l : List (ℚ × ℚ)) :
+    finiteSignedGammaCost l χ.gammaFactor ≤ finiteSignedParityUpper l := by
   rcases χ.even_or_odd with he | ho
   · have hf : χ.gammaFactor = Complex.Gammaℝ := funext he.gammaFactor_def
     rw [hf]
@@ -54,12 +54,12 @@ noncomputable def finiteSignedTrivialPrefixBudget (m : ℕ) (l : List (ℚ × �
 Claim: the actual signed prefix budget is at most the character-independent budget.
 Proof: cancel the finite defect and bound the signed Gamma cost by its parity maximum.
 Role: expose explicit scalar costs to witness contradictions for arbitrary candidates. -/
-theorem finiteSignedPrefixBudget_le_of_prime_one {m : ℕ} (χ : DirichletCharacter ℂ m)
-    (l : List (ℚ × ℚ)) (B : Finset ℕ) {b : ℝ} (hB : ∀ k ∈ B, (k : ℝ) ≤ b)
+theorem signedPrefixBudget_le_of_prime_one {m : ℕ} (χ : DirichletCharacter ℂ m) (l : List (ℚ × ℚ))
+    (B : Finset ℕ) {b : ℝ} (hB : ∀ k ∈ B, (k : ℝ) ≤ b)
     (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → χ p = 1) :
     finiteSignedPrefixBudget χ l B ≤ finiteSignedTrivialPrefixBudget m l B := by
-  have he := finiteSigned_prefix_defect_eq_zero_of_prime_one χ l B hB hsmall
-  have hg := finiteSignedGammaCost_le_parity_upper χ l
+  have he := signedPrefixDefect_zero_of_prime_one χ l B hB hsmall
+  have hg := finiteSignedGammaCost_le_parity χ l
   dsimp only [finiteSignedPrefixBudget, finiteSignedTrivialPrefixBudget,
     finiteSignedGammaCost] at hg ⊢
   rw [he, add_zero]

@@ -53,6 +53,6 @@ theorem endpoint61_gap_pos {L : ℝ} (hL : L ≤ 286 / 25) :
         (Real.log (49 / 6 : ℝ)) := by
     rw [endpoint61_gap_eq]
     nlinarith only [hz, hs]
-  exact hg.trans_le (fullEndpointEvenExactComparisonGap_antitone_level (by norm_num only) hz0 hL)
+  exact hg.trans_le (fullEvenExactGap_antitone_level (by norm_num only) hz0 hL)
 
 end PseudoPrime.LLS.PaperStatements

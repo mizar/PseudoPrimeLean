@@ -70,7 +70,7 @@ theorem exists_prime_neg_one_witness_of_primeBudget {n : ℕ} (hn : Odd n) (hns 
         AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum (y ^ 2)) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ y ^ 2 ∧ jacobiSym n p = -1 := by
   exact
-    exists_prime_neg_one_witness_of_singleSupportBudget hn hns hGRH hy
+    exists_negOneWitness_of_singleSupportBudget hn hns hGRH hy
       (negativeCoprimeSupportCost_le_primeBudget hn y T ha htail) hgap
 
 /-- Under the same prime-budget assumptions, the least odd-prime negative
@@ -93,7 +93,7 @@ theorem primeNegOneWitness_cast_le_of_primeBudget {n : ℕ} (hn : Odd n) (hns : 
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ y ^ 2 := by
   exact
-    primeNegOneWitness_cast_le_of_singleSupportBudget hn hns hGRH hy
+    negOneWitness_cast_le_of_singleSupportBudget hn hns hGRH hy
       (negativeCoprimeSupportCost_le_primeBudget hn y T ha htail) hgap hw
 
 /-- Under GRH at a common root y>=8, prime tails and separated budgets for all

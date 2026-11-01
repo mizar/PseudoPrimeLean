@@ -69,28 +69,26 @@ theorem elevenFourthsRoot_branch_polynomials_pos {n : ℕ} (hnpos : 0 < n)
 /-- For odd nonsquare n under GRH and log n>=128, an odd-prime non-one Jacobi
 witness is at most (log n-log log n+11/4)^2. Apply the two positive branch
 polynomials to the existing witness criterion; no finite input check is used. -/
-theorem exists_odd_prime_jacobi_ne_one_le_elevenFourths_log_shift {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 128 ≤ Real.log (n : ℝ)) :
+theorem exists_oddPrime_neOne_shift11_4_log128_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 128 ≤ Real.log (n : ℝ)) :
     ∃ p : ℕ,
       p.Prime ∧
         Odd p ∧
         (p : ℝ) ≤ (Real.log n - Real.log (Real.log n) + 11 / 4) ^ 2 ∧ jacobiSym n p ≠ 1 := by
   have hp := elevenFourthsRoot_branch_polynomials_pos hn.pos hL
   exact
-    exists_odd_prime_jacobi_ne_one_of_branch_polynomials_pos hn hns hGRH
+    exists_oddPrime_neOne_branchPolys_GRH hn hns hGRH
       (by linarith only [LLS.elevenFourthsRoot_ge_120 hL]) hp.1 hp.2
 
 /-- Under the same assumptions, the least odd-prime non-one Jacobi witness
 satisfies the eleven-fourths logarithmic-shift bound. Apply leastness to the
 constructed witness; the nonempty-set input defines the least witness. -/
-theorem primeNeOneWitness_cast_le_elevenFourths_log_shift {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+theorem neOneWitness_cast_le_elevenFourths_log_shift {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 128 ≤ Real.log (n : ℝ))
     (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤
       (Real.log n - Real.log (Real.log n) + 11 / 4) ^ 2 := by
-  obtain ⟨p, hp, ho, hpx, hv⟩ :=
-    exists_odd_prime_jacobi_ne_one_le_elevenFourths_log_shift hn hns hGRH hL
+  obtain ⟨p, hp, ho, hpx, hv⟩ := exists_oddPrime_neOne_shift11_4_log128_GRH hn hns hGRH hL
   exact (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hpx
 
 /-- For B>0 under GRH with log B>=128, the finite maximum QNeOne(B) satisfies

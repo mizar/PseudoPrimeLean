@@ -89,28 +89,26 @@ theorem elevenFourthsRoot_branch_polynomials_pos_from_96 {n : ℕ} (hnpos : 0 < 
 /-- For odd nonsquare n under GRH with log n>=96, an odd-prime non-one Jacobi
 witness is at most (log n-log log n+11/4)^2. Apply both branch polynomials
 to the existing witness criterion, without finite enumeration of inputs. -/
-theorem exists_odd_prime_jacobi_ne_one_le_elevenFourths_log_shift_from_96 {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 96 ≤ Real.log (n : ℝ)) :
+theorem exists_oddPrime_neOne_shift11_4_log96_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 96 ≤ Real.log (n : ℝ)) :
     ∃ p : ℕ,
       p.Prime ∧
         Odd p ∧
         (p : ℝ) ≤ (Real.log n - Real.log (Real.log n) + 11 / 4) ^ 2 ∧ jacobiSym n p ≠ 1 := by
   have hp := elevenFourthsRoot_branch_polynomials_pos_from_96 hn.pos hL
   exact
-    exists_odd_prime_jacobi_ne_one_of_branch_polynomials_pos hn hns hGRH
+    exists_oddPrime_neOne_branchPolys_GRH hn hns hGRH
       (by linarith only [LLS.elevenFourthsRoot_ge_94 hL]) hp.1 hp.2
 
 /-- Under the same assumptions, the least odd-prime non-one witness satisfies
 the eleven-fourths shift bound from log n>=96. The nonempty-set input defines
 the least witness; apply leastness to the prime provided by the existence theorem. -/
-theorem primeNeOneWitness_cast_le_elevenFourths_log_shift_from_96 {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 96 ≤ Real.log (n : ℝ)) (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
+theorem neOneWitness_le_elevenFourths_log_shift_from_96 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 96 ≤ Real.log (n : ℝ))
+    (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤
       (Real.log n - Real.log (Real.log n) + 11 / 4) ^ 2 := by
-  obtain ⟨p, hp, ho, hpx, hv⟩ :=
-    exists_odd_prime_jacobi_ne_one_le_elevenFourths_log_shift_from_96 hn hns hGRH hL
+  obtain ⟨p, hp, ho, hpx, hv⟩ := exists_oddPrime_neOne_shift11_4_log96_GRH hn hns hGRH hL
   exact (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hpx
 
 /-- For positive B under GRH with log B>=96, the finite maximum QNeOne(B)

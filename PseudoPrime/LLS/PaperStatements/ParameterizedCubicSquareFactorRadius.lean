@@ -41,9 +41,8 @@ theorem cubicSquareFactorRadiusWithConstant_data {c G E : ℝ} (hE : 0 ≤ E) :
 44/15≤4(c-63/2)(10/13) and 28≤4(c-63/2)c. Use the parameterized quadratic
 identity and compare nonnegative square roots. This generic theorem avoids
 repeating the argument for each rational constant. -/
-theorem tightCubicExclusionRadius_le_square_factor_with_constant {c G E : ℝ} (hG : 0 ≤ G)
-    (hE : 0 ≤ E) (hc : 63 / 2 ≤ c) (hcoeff : 44 / 15 ≤ 4 * (c - 63 / 2) * (10 / 13 : ℝ))
-    (hconst : 28 ≤ 4 * (c - 63 / 2) * c) :
+theorem tightCubicRadius_le_squareFactor {c G E : ℝ} (hG : 0 ≤ G) (hE : 0 ≤ E) (hc : 63 / 2 ≤ c)
+    (hcoeff : 44 / 15 ≤ 4 * (c - 63 / 2) * (10 / 13 : ℝ)) (hconst : 28 ≤ 4 * (c - 63 / 2) * c) :
     tightCubicExclusionRadius G (G + 2 * E) ≤ cubicSquareFactorRadiusWithConstant c G E := by
   let r := cubicSquareFactorRadiusWithConstant c G E
   have hd := cubicSquareFactorRadiusWithConstant_data (c := c) (G := G) hE
@@ -80,8 +79,7 @@ This improves the former square-factor additive constant 65/2. -/
 theorem tightCubicExclusionRadius_le_square_factor2434 {G E : ℝ} (hG : 0 ≤ G) (hE : 0 ≤ E) :
     tightCubicExclusionRadius G (G + 2 * E) ≤ cubicSquareFactorRadius2434 G E := by
   exact
-    tightCubicExclusionRadius_le_square_factor_with_constant hG hE (by norm_num only)
-      (by norm_num only) (by norm_num only)
+    tightCubicRadius_le_squareFactor hG hE (by norm_num only) (by norm_num only) (by norm_num only)
 
 /-- For G,E≥0 the 2434/75 radius is at least 4868/75 and obeys its
 quadratic identity. Transfer the parameterized data and discard the

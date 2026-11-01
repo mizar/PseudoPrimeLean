@@ -109,13 +109,13 @@ theorem reciprocalGap_gamma_re_le_signed_budget {h x : ℝ} (hh : 0 < h) (hx : 1
             logDeriv χ.gammaFactor (Complex.I * t + 1 / 2) * reciprocalGapCentralWeight h x t)).re ≤
       reciprocalGapSignedGammaBudget h x := by
   have hx0 : 0 < x := zero_lt_one.trans_le hx
-  obtain ⟨b, hb, hb1, hseries⟩ := reciprocalGap_central_gammaIntegral_re_eq_scalar_series χ
+  obtain ⟨b, hb, hb1, hseries⟩ := reciprocalGap_gamma_re_eq_scalarSeries χ
   have hb0 : 0 < b := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1 / 4) hb
   let F := fun n : ℕ ↦
     reciprocalGapProfile h x / (b + n) -
       ∫ r : ℝ in Set.Ioi 0, reciprocalGapResolventDensity h (b + n) x r
   let U := fun n : ℕ ↦ (Real.sqrt x⁻¹ / 2) * ((b + n) ^ 2)⁻¹
-  have hsF : Summable F := summable_reciprocalGap_scalar_resolvent_difference hh hb0 hx0
+  have hsF : Summable F := summable_reciprocalGap_scalar_resolvent hh hb0 hx0
   have hsU : Summable U := (Analysis.summable_shifted_inverse_squares hb0).mul_left _
   have hterm (n : ℕ) : F n ≤ U n := by
     have h :=
@@ -145,14 +145,14 @@ theorem reciprocalGap_gamma_re_le_signed_budget {h x : ℝ} (hh : 0 < h) (hx : 1
 /-- For nonzero level, positive gap and scale at least one, the real completed remainder
 minus pole and left contributions is bounded by the signed Gamma budget.
 Use its exact central-Gamma identity. This connects the signed estimate to the contour formula. -/
-theorem reciprocalGap_remainder_gamma_re_le_signed_budget {h x : ℝ} (hh : 0 < h) (hx : 1 ≤ x)
-    {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) :
+theorem reciprocalGap_gamma_re_le_signedBudget {h x : ℝ} (hh : 0 < h) (hx : 1 ≤ x) {q : ℕ}
+    [NeZero q] (χ : DirichletCharacter ℂ q) :
     (reciprocalGapCompletedRemainder h hh χ x -
           MellinKernel.weightedResidue (reciprocalGapMellinKernel h hh)
             (fun z : ℂ ↦ χ.completedLFunction (z + 1 / 2)) x (-1 / 2) -
           reciprocalGapLeftIntegral h hh χ x).re ≤
       reciprocalGapSignedGammaBudget h x := by
-  rw [reciprocalGap_remainder_sub_pole_left_eq_central_gamma hh χ hx]
+  rw [reciprocalGap_error_eq_centralGamma hh χ hx]
   exact reciprocalGap_gamma_re_le_signed_budget hh hx χ
 
 /-- For positive h with 6*h<=1-(1/x)^h, the signed Gamma budget is nonpositive.
@@ -197,7 +197,7 @@ theorem reciprocalGap_remainder_re_le_signed_budget {h : ℝ} (hh : 0 < h) {q : 
   let L := reciprocalGapLeftIntegral h hh χ x
   let R := reciprocalGapCompletedRemainder h hh χ x
   have hΓ : (R - P - L).re ≤ reciprocalGapSignedGammaBudget h x :=
-    reciprocalGap_remainder_gamma_re_le_signed_budget hh hx χ
+    reciprocalGap_gamma_re_le_signedBudget hh hx χ
   have hP :=
     (Complex.re_le_norm P).trans
       (reciprocalGap_poleResidue_norm_le hh hq hp hne hGRH (zero_lt_one.trans_le hx))
@@ -214,11 +214,10 @@ theorem reciprocalGap_remainder_re_le_signed_budget {h : ℝ} (hh : 0 < h) {q : 
 prefix, explicit pole and left budgets and the signed Gamma budget yields a prime
 non-one witness below the scale. Apply exact prime separation with the real remainder bound.
 This replaces the constant 176 in the earlier criterion; a new global cutoff is not assumed. -/
-theorem exists_prime_not_one_of_reciprocalGap_signed_separation {h c : ℝ} (hh : 0 < h) {q : ℕ}
-    [NeZero q] (hq : 8 ≤ q) {χ : DirichletCharacter ℂ q}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hc : (1 / 2 : ℝ) < c) (hbound : c ^ 2 ≤ 1 / 4 + h / 2) {x : ℝ}
-    (hx : 1 ≤ x) (B : Finset ℕ)
+theorem exists_prime_neOne_signedGap_GRH {h c : ℝ} (hh : 0 < h) {q : ℕ} [NeZero q] (hq : 8 ≤ q)
+    {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hc : (1 / 2 : ℝ) < c)
+    (hbound : c ^ 2 ≤ 1 / 4 + h / 2) {x : ℝ} (hx : 1 ≤ x) (B : Finset ℕ)
     (hgap :
       (1 / c) *
             (Real.log q / 2 + (logDeriv χ.gammaFactor (((1 / 2 : ℝ) + c) : ℂ)).re +

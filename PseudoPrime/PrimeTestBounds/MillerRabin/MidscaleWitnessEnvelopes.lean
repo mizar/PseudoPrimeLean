@@ -365,9 +365,7 @@ theorem midscaleWitnessEnvelope_eq_twoStep {n : â„•} (hn : 1 < n) (hL : 23 / 2 â
   simp only [midscaleWitnessEnvelope, ite_eq_right hfg, mrTwoStepEnvelope, ite_eq_left h2g,
     mrLowBase, ite_eq_right h2, ite_eq_right h3, mrAnalyticBase, ite_eq_right h61, ite_eq_left he,
     endpointMidscaleBase, ite_eq_left h22]
-  exact
-    min_eq_right
-      (LLS.PaperStatements.fullEndpointEvenTwoStepCutoff_lt_shifted_sevenFourths hL hU).le
+  exact min_eq_right (LLS.PaperStatements.fullEvenTwoStepCutoff_lt_shifted_sevenFourths hL hU).le
 
 /-- At log n=240, the public envelope equals the minimum of the two-step cutoff and 35000.
 The B6 candidate is strictly larger than 35000, so it drops out of the minimum.

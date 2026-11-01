@@ -52,8 +52,7 @@ theorem exists_least_witness_gaussianMRPrefix {n : ℕ} (hnOdd : Odd n) (hcomp :
         (p : ℝ) ≤ gaussianMRPrefixEnvelope (Real.log n) ∧
         ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
   exact
-    least_prime_witness_bound_min
-      (exists_least_prime_witness_le_analysis13GammaPrefixEnvelope hnOdd hcomp hGRH hL)
+    least_prime_witness_bound_min (exists_least_prime_analysis13Prefix_GRH hnOdd hcomp hGRH hL)
       (exists_least_witness_gaussianMR6_log240 hnOdd hcomp hGRH hL)
 
 /-- From logarithmic scale 300, the least rejecting prime also obeys the refined minimum.
@@ -77,7 +76,7 @@ This justifies simplifying the refined minimum on its whole applicable half-line
 theorem gaussianMRRefined_lt_prefixEnvelope {L : ℝ} (hL : 300 ≤ L) :
     gaussianMRRefinedBound L < gaussianMRPrefixEnvelope L := by
   have hnew := gaussianMRRefined_lt_gaussianMR6 hL
-  have hold := gaussianMR6Bound_lt_min_prefixUpper_gaussianMR18Bound hL
+  have hold := gaussian6_lt_prefix_gaussian18 hL
   have hGamma :=
     (lt_of_lt_of_le hold (min_le_right _ _)).trans (gaussianMR18Bound_lt_gammaClippedUpper hL)
   have hPrefix := lt_of_lt_of_le hold (min_le_left _ _)

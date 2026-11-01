@@ -236,8 +236,8 @@ theorem truncatedLogDirichletUpper_le_euler_numerator {r : ℝ} (hr : 0 < r) {N 
 
 /-- For r>0 and N>=1, the truncated denominator floor dominates the coarse Euler denominator.
 Evaluate cutoff one and use cutoff monotonicity. This compares both APIs. -/
-theorem euler_denominator_le_truncatedPowerDirichletLower {r : ℝ} (hr : 0 < r) {N : ℕ}
-    (hN : 1 ≤ N) : 1 + (2 : ℝ) ^ (-r) / r ≤ truncatedPowerDirichletLower r N := by
+theorem euler_denominator_le_truncatedDirichlet {r : ℝ} (hr : 0 < r) {N : ℕ} (hN : 1 ≤ N) :
+    1 + (2 : ℝ) ^ (-r) / r ≤ truncatedPowerDirichletLower r N := by
   have hB := truncatedPowerDirichletLower_monotone_cutoff hr (N := 1) hN
   have he : truncatedPowerDirichletLower r 1 = 1 + (2 : ℝ) ^ (-r) / r := by
     norm_num only [truncatedPowerDirichletLower, Finset.sum_range_succ, Finset.sum_range_zero,

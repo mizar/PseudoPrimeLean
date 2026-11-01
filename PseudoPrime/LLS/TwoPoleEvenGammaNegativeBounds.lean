@@ -135,10 +135,9 @@ theorem evenGammaTwoPoleGap_negative_log_dominates_cost {q A : ℕ} (hq : 0 < q)
 log A at least 1250 has a prime not dividing q below the sharp logarithmic cutoff
 with value minus one. Apply the generic signed-gap extraction with the half-count
 budget. The common ambient scale covers small conductors. -/
-theorem exists_prime_neg_one_le_evenGammaTwoPole_log_ambient {q A : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (heven : χ.Even) (hne : χ ≠ 1)
-    (hqA : q ≤ A) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 1250 ≤ Real.log A) :
+theorem exists_prime_negOne_evenTwoPoleLog_GRH {q A : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hquad : χ.IsQuadratic) (heven : χ.Even) (hne : χ ≠ 1) (hqA : q ≤ A)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 1250 ≤ Real.log A) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬p ∣ q ∧
@@ -146,8 +145,8 @@ theorem exists_prime_neg_one_le_evenGammaTwoPole_log_ambient {q A : ℕ} [NeZero
   have hd := evenGammaTwoPoleNegativeLogRoot_data hL
   exact
     exists_prime_neg_one_of_twoPoleConstantGap χ hquad hne hqA hGRH hd.1
-      (AnalyticNumberTheory.DirichletLFunction.twoPoleGammaConstant_le_signed_of_even
-        χ.primitiveCharacter ((NumberTheory.primitiveCharacter_even_iff χ).mpr heven))
+      (AnalyticNumberTheory.DirichletLFunction.twoPoleGamma_le_112_25_of_even χ.primitiveCharacter
+        ((NumberTheory.primitiveCharacter_even_iff χ).mpr heven))
       (evenGammaTwoPoleGap_negative_log_dominates_cost (Nat.pos_of_ne_zero (NeZero.ne q)) hqA hL)
 
 end PseudoPrime.LLS

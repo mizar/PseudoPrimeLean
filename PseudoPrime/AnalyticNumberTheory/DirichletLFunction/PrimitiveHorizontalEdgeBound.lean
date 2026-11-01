@@ -16,7 +16,7 @@ Bounds `‖DirichletLFunction.dirichletReciprocalContourKernel x χ s‖` on a h
 T i` (`|σ| ≤ 2`,
 `x ≥ 1`) by `x * η`, given a bound `‖logDeriv (LFunction χ) s‖ / T² ≤ η` on the ordinary
 log-derivative (as supplied by
-`DirichletLFunction.exists_envelope_primitiveHorizontalHeightSeq_LLogDeriv_small`). This is purely
+`DirichletLFunction.horizontal_L_logDeriv_envelope_GRH`). This is purely
 mechanical: no
 primitivity, quadratic, or GRH hypotheses on `χ` are needed at this pointwise level.
 -/
@@ -38,8 +38,8 @@ Role: the horizontal estimate pointwise ingredient, feeding the central `[-2, 2]
 far-left
 horizontal integral bounds.
 -/
-theorem norm_dirichletReciprocalContourKernel_horizontal_le {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} {x σ T η : ℝ} (hx : 1 ≤ x) (hσ : |σ| ≤ 2) (hT : T ≠ 0)
+theorem norm_reciprocalKernel_horizontal_le {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    {x σ T η : ℝ} (hx : 1 ≤ x) (hσ : |σ| ≤ 2) (hT : T ≠ 0)
     (hL : ‖logDeriv (DirichletCharacter.LFunction χ) ((σ : ℂ) + (T : ℂ) * Complex.I)‖ / T ^ 2 ≤ η) :
     ‖dirichletReciprocalContourKernel x χ ((σ : ℂ) + (T : ℂ) * Complex.I)‖ ≤ x * η := by
   set s : ℂ := (σ : ℂ) + (T : ℂ) * Complex.I with hs_def
@@ -107,15 +107,15 @@ theorem norm_dirichletReciprocalContourKernel_horizontal_le {N : ℕ} [NeZero N]
 /--
 Input/assumptions: `N ≥ 2`, `χ` primitive non-principal mod `N` with `χ⁻¹ ≠ 1`, GRH (no quadratic
 hypothesis), `x ≥ 1`.
-Conclusion: same as `DirichletLFunction.exists_primitiveHorizontalHeightSeq_reciprocalKernel_bound`.
+Conclusion: same as `DirichletLFunction.reciprocalKernel_heightBound_GRH`.
 Content: identical, built on the `hquad`-free
-`DirichletLFunction.exists_envelope_primitiveHorizontalHeightSeq_LLogDeriv_small` and
+`DirichletLFunction.horizontal_L_logDeriv_envelope_GRH` and
 `DirichletLFunction.primitiveHorizontalHeightSeq_ge` instead;
-`norm_dirichletReciprocalContourKernel_horizontal_le` never mentioned `χ.IsQuadratic` and is reused
+`norm_reciprocalKernel_horizontal_le` never mentioned `χ.IsQuadratic` and is reused
 verbatim.
 Role: supplies the pointwise envelope for the generic central horizontal integral bound.
 -/
-theorem exists_primitiveHorizontalHeightSeq_reciprocalKernel_bound {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem reciprocalKernel_heightBound_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) :
     ∃ η : ℕ → ℝ,
@@ -131,8 +131,7 @@ theorem exists_primitiveHorizontalHeightSeq_reciprocalKernel_bound {N : ℕ} [Ne
                       ((σ : ℂ) -
                         primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I)‖ ≤
                   x * η k := by
-  obtain ⟨η, hη_tendsto, hη⟩ :=
-    exists_envelope_primitiveHorizontalHeightSeq_LLogDeriv_small hN2 hGRH hprimitive hne hinv
+  obtain ⟨η, hη_tendsto, hη⟩ := horizontal_L_logDeriv_envelope_GRH hN2 hGRH hprimitive hne hinv
   refine ⟨η, hη_tendsto, fun k σ hσ => ?_⟩
   set T : ℕ → ℝ := primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv with hT_def
   have hTk_ge1 : 1 ≤ T k := by
@@ -141,13 +140,13 @@ theorem exists_primitiveHorizontalHeightSeq_reciprocalKernel_bound {N : ℕ} [Ne
     rw [hT_def]
     linarith only [h, hk0]
   have hTk_ne : T k ≠ 0 := ne_of_gt (lt_of_lt_of_le zero_lt_one hTk_ge1)
-  refine ⟨norm_dirichletReciprocalContourKernel_horizontal_le hx hσ hTk_ne (hη k σ hσ).1, ?_⟩
+  refine ⟨norm_reciprocalKernel_horizontal_le hx hσ hTk_ne (hη k σ hσ).1, ?_⟩
   have hform : (σ : ℂ) - (T k : ℂ) * Complex.I = (σ : ℂ) + ((-(T k) : ℝ) : ℂ) * Complex.I := by
     push_cast
     ring
   rw [hform]
   have hL2 := (hη k σ hσ).2
   rw [hform, ← neg_sq] at hL2
-  exact norm_dirichletReciprocalContourKernel_horizontal_le hx hσ (neg_ne_zero.mpr hTk_ne) hL2
+  exact norm_reciprocalKernel_horizontal_le hx hσ (neg_ne_zero.mpr hTk_ne) hL2
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

@@ -32,16 +32,14 @@ theorem not_characterTrivialBelow_of_below64CoupledRoot {q : ℕ} [NeZero q]
   have ht0 : 0 < t := lt_trans (by norm_num only : (0 : ℝ) < 15 / 2) htRoot
   have hx := hcutoff
   have hcore :=
-    weightedComparisonCore_of_trivialBelow_of_mainErrors χ hne hGRH
-      (lt_of_lt_of_le (by norm_num only) hx) (primitiveLogOddMainError_le_fixed_of_ge59 hx)
-      (primitiveLogEvenMainError_le_fixed_of_ge59 hx)
+    weightedComparison_trivial_mainErrors_GRH χ hne hGRH (lt_of_lt_of_le (by norm_num only) hx)
+      (primitiveLogOddMainError_le_fixed_of_ge59 hx) (primitiveLogEvenMainError_le_fixed_of_ge59 hx)
       (primitiveReciprocalOddMainError_le_fixed_of_ge59 hx)
-      (primitiveReciprocalEvenMainError_le_fixed_of_ge59 hx) ht
+      (reciprocalEvenError_le_neg_quarter_ge59 hx) ht
   obtain ⟨hS, hR, hb, hu⟩ :=
-    re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le
-      (llsRiemannWeightedLowerBound_of_riemannHypothesis hGRH.riemann)
-      (llsRiemannReciprocalLowerBound_of_riemannHypothesis hGRH.riemann)
-      (lt_of_lt_of_le (by norm_num only) hx) (le_trans (by norm_num only) hx) hcore
+    weightedComparison_core_bounds (riemannWeightedLower_of_RH hGRH.riemann)
+      (riemannReciprocalLower_of_RH hGRH.riemann) (lt_of_lt_of_le (by norm_num only) hx)
+      (le_trans (by norm_num only) hx) hcore
   have hsqrt : Real.sqrt (t ^ 2) = t := Real.sqrt_sq ht0.le
   simp only [sub_zero] at hS hR
   rw [Real.log_pow] at hR
@@ -62,7 +60,7 @@ theorem not_characterTrivialBelow_of_below64CoupledRoot {q : ℕ} [NeZero q]
     nlinarith only [hS, hT, hmass, ht0]
   have hP := Analysis.log_pi_ge_2096_div_1831
   exact
-    Analysis.refinedPart2_bounds_incompatible_of_root_gt_fifteen_halves htRoot hz hlevel
+    Analysis.refinedPart2_incompatible_of_root_gt_15_2 htRoot hz hlevel
       (log_le_third_of_ge_six (by linarith only [htRoot])) (log_conductor_div_pi_le_of_lower χ hP)
       hR hb (by linarith only [hu]) hl
 
@@ -84,9 +82,8 @@ theorem exists_prime_not_one_of_below64CoupledRoot {q : ℕ} [NeZero q] (χ : Di
 prime non-one value through the precise Part 2 radius squared.
 Use the logarithmic entrance 695939/100000 in the generic coupled-root theorem.
 This is an analytic half-line result and uses no finite modulus table. -/
-theorem exists_prime_not_one_le_sharperPart2Root_of_1053_le {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1) (hq : 1053 ≤ q)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
+theorem exists_prime_neOne_sharperPart2_1053_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hne : χ ≠ 1) (hq : 1053 ≤ q) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ (Analysis.sharperPart2CutoffRoot (Real.log q)) ^ 2 ∧ χ p ≠ 1 := by
   have hL := log_level_ge_below64_entrance hq
   obtain ⟨hheight, hcutoff⟩ := sharperPart2Root_height_and_cutoff hL
@@ -98,8 +95,8 @@ theorem exists_prime_not_one_le_sharperPart2Root_of_1053_le {q : ℕ} [NeZero q]
 /-- Under GRH at q at least 1053, each proper unit subgroup misses a
 prime through the precise Part 2 radius squared. Pull back a nonprincipal
 character from the quotient. Nonunit primes are allowed in this image bound. -/
-theorem exists_prime_outside_subgroup_image_le_sharperPart2Root_of_1053_le {q : ℕ} [NeZero q]
-    (hq : 1053 ≤ q) (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
+theorem exists_prime_outside_sharperPart2_1053_GRH {q : ℕ} [NeZero q] (hq : 1053 ≤ q)
+    (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ,
       p.Prime ∧
@@ -110,7 +107,7 @@ theorem exists_prime_outside_subgroup_image_le_sharperPart2Root_of_1053_le {q : 
   obtain ⟨x, hx⟩ := exists_ne (1 : (ZMod q)ˣ ⧸ H)
   obtain ⟨χ', hχ⟩ := MulChar.exists_apply_ne_one_of_hasEnoughRootsOfUnity ((ZMod q)ˣ ⧸ H) ℂ hx
   obtain ⟨p, hp, hb, hv⟩ :=
-    exists_prime_not_one_le_sharperPart2Root_of_1053_le (pullbackCharacter χ')
+    exists_prime_neOne_sharperPart2_1053_GRH (pullbackCharacter χ')
       (pullbackCharacter_ne_one_of_ne_one χ' hχ) hq hGRH
   refine ⟨p, hp, hb, ?_⟩
   rintro ⟨u, hu, he⟩

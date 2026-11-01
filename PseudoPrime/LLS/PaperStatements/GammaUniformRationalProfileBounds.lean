@@ -68,9 +68,9 @@ namespace PseudoPrime.LLS.PaperStatements
 exists through (199/250)(log q+117)². Rescale the common ramp by sqrt(199/200),
 certify its rational lower bound, local allowance and relative scale-excess budget.
 This lowers coefficient 0.8 while retaining the smaller logarithmic entrance. -/
-theorem exists_prime_outside_le_gamma_199_div_250_plus_117_log {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 34971 ≤ Real.log q) :
+theorem exists_primeOutside_199_250_117_log_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hH : H ≠ ⊤) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hL : 34971 ≤ Real.log q) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬p ∣ q ∧
@@ -124,8 +124,7 @@ theorem exists_prime_outside_le_gamma_199_div_250_plus_117_log {q : ℕ} [NeZero
             Real.sqrt x) <
       (11783423 / 25000000 + 1 / 795 : ℝ) * T := by
     linarith only [hlocal, hexcess, hTlower, hL]
-  obtain ⟨p, hp, hd, hout, hb⟩ :=
-    exists_prime_outside_le_gamma_four_fifths_signed_scale hq H hH hGRH hT hbudget
+  obtain ⟨p, hp, hd, hout, hb⟩ := exists_prime_outside_4_5_signedScale_GRH hq H hH hGRH hT hbudget
   exact ⟨p, hp, hd, hout, he ▸ hb⟩
 
 end PseudoPrime.LLS.PaperStatements
@@ -135,9 +134,8 @@ namespace PseudoPrime.LLS.PaperStatements
 /-- Under GRH, q ≥ 10^15188 and H proper, a coprime outside prime exists
 through (199/250)(log q+117)². Convert the decimal threshold to log q > 34971.
 This is the uniform decimal entrance for the coefficient-0.796 profile. -/
-theorem exists_prime_outside_le_gamma_199_div_250_plus_117_15188 {q : ℕ} (H : Subgroup (ZMod q)ˣ)
-    (hH : H ≠ ⊤) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hq : 10 ^ 15188 ≤ q) :
+theorem exists_primeOutside_199_250_117_d15188_GRH {q : ℕ} (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hq : 10 ^ 15188 ≤ q) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬p ∣ q ∧
@@ -146,7 +144,7 @@ theorem exists_prime_outside_le_gamma_199_div_250_plus_117_15188 {q : ℕ} (H : 
   have hq0 : q ≠ 0 :=
     Nat.ne_zero_of_lt ((pow_pos (by norm_num only : (0 : ℕ) < 10) 15188).trans_le hq)
   let : NeZero q := ⟨hq0⟩
-  apply exists_prime_outside_le_gamma_199_div_250_plus_117_log H hH hGRH
+  apply exists_primeOutside_199_250_117_log_GRH H hH hGRH
   exact
     (Analysis.log_nat_gt_of_decimal_lower (by norm_num only : 0 < 15188) hq
         (by norm_num only : (34971 : ℝ) < (15188 : ℝ) * (115129 / 50000))).le

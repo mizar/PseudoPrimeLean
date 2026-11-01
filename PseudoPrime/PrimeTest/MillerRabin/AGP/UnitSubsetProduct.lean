@@ -37,9 +37,9 @@ to a product identity.
 Role: supplies the modular product condition used by the AGP Korselt
 construction.
 -/
-theorem exists_nonempty_unit_product_eq_one_of_card_gt_carmichael_log (L : ℕ) [NeZero L]
-    (hL : 2 < L) (hlambda : 3 ≤ ArithmeticFunction.carmichael L)
-    [NeZero (ArithmeticFunction.carmichael L)] (P : Finset ℕ) (hcoprime : ∀ p ∈ P, Nat.Coprime p L)
+theorem exists_nonempty_unitProd_one_of_size (L : ℕ) [NeZero L] (hL : 2 < L)
+    (hlambda : 3 ≤ ArithmeticFunction.carmichael L) [NeZero (ArithmeticFunction.carmichael L)]
+    (P : Finset ℕ) (hcoprime : ∀ p ∈ P, Nat.Coprime p L)
     (hlarge : (ArithmeticFunction.carmichael L : ℝ) * Real.log L < P.card) :
     ∃ U : Finset ℕ,
       U ⊆ P ∧
@@ -82,9 +82,9 @@ theorem exists_nonempty_unit_product_eq_one_of_card_gt_carmichael_log (L : ℕ) 
   let unitMap : ℕ → Units (ZMod L) := fun p =>
     if h : Nat.Coprime p L then ZMod.unitOfCoprime p h else 1
   obtain ⟨U, hUNe, hUP, hsum⟩ :=
-    exists_nonempty_zero_sum_label_subset_of_long_list m L L hm3 hmN (by rfl) hzero hchars P.toList
-      (Finset.nodup_toList P) (fun p => Additive.ofMul (unitMap p)) hlen
-  have hprod := prod_eq_one_of_additive_sum_eq_zero U (fun p => unitMap p) hsum
+    exists_nonempty_labels_list m L L hm3 hmN (by rfl) hzero hchars P.toList (Finset.nodup_toList P)
+      (fun p => Additive.ofMul (unitMap p)) hlen
+  have hprod := prod_one_of_add_sum_zero U (fun p => unitMap p) hsum
   refine ⟨U, ?_, hUNe, ?_, ?_, ?_⟩
   · intro p hp
     have hpin : p ∈ P.toList.toFinset := hUP p hp
@@ -139,10 +139,10 @@ label-preserving zero-sum theorem.
 Role: this is the subset-product input with the exceptional prime removed as
 in reliable.pdf Proposition 1.3.
 -/
-theorem exists_nonempty_unit_product_eq_one_of_card_gt_carmichael_log_erase (L : ℕ) [NeZero L]
-    (hL : 2 < L) (hlambda : 3 ≤ ArithmeticFunction.carmichael L)
-    [NeZero (ArithmeticFunction.carmichael L)] (P : Finset ℕ) (hcoprime : ∀ p ∈ P, Nat.Coprime p L)
-    (x : ℕ) (hlarge : (ArithmeticFunction.carmichael L : ℝ) * Real.log L < P.card) :
+theorem exists_nonempty_unitProd_one_erase (L : ℕ) [NeZero L] (hL : 2 < L)
+    (hlambda : 3 ≤ ArithmeticFunction.carmichael L) [NeZero (ArithmeticFunction.carmichael L)]
+    (P : Finset ℕ) (hcoprime : ∀ p ∈ P, Nat.Coprime p L) (x : ℕ)
+    (hlarge : (ArithmeticFunction.carmichael L : ℝ) * Real.log L < P.card) :
     ∃ U : Finset ℕ,
       U ⊆ P.erase x ∧
         U.Nonempty ∧
@@ -179,7 +179,7 @@ theorem exists_nonempty_unit_product_eq_one_of_card_gt_carmichael_log_erase (L :
     apply (Nat.floor_lt (by positivity)).2
     exact_mod_cast hlarge
   have hneeded : Nat.floor ((m : ℝ) * Real.log ((L : ℝ) / m)) + m ≤ P.card - 1 :=
-    (log_length_with_tail_le_floor_log m L L hm3 hmN (by rfl)).trans (Nat.le_sub_one_of_lt hfloor)
+    (log_with_tail_le_floor_log m L L hm3 hmN (by rfl)).trans (Nat.le_sub_one_of_lt hfloor)
   have herase : P.card - 1 ≤ (P.erase x).card := by
     by_cases hx : x ∈ P
     · rw [Finset.card_erase_of_mem hx]
@@ -191,10 +191,10 @@ theorem exists_nonempty_unit_product_eq_one_of_card_gt_carmichael_log_erase (L :
   let unitMap : ℕ → Units (ZMod L) := fun p =>
     if h : Nat.Coprime p L then ZMod.unitOfCoprime p h else 1
   obtain ⟨U, hUNe, hUP, hsum⟩ :=
-    exists_nonempty_zero_sum_label_subset_of_segmented_length m L
-      (Nat.lt_of_lt_of_le (by decide : 0 < 3) hm3) hmN hzero hchars (P.erase x).toList
-      (Finset.nodup_toList (P.erase x)) (fun p => Additive.ofMul (unitMap p)) hlen
-  have hprod := prod_eq_one_of_additive_sum_eq_zero U (fun p => unitMap p) hsum
+    exists_nonempty_labels_segment m L (Nat.lt_of_lt_of_le (by decide : 0 < 3) hm3) hmN hzero hchars
+      (P.erase x).toList (Finset.nodup_toList (P.erase x)) (fun p => Additive.ofMul (unitMap p))
+      hlen
+  have hprod := prod_one_of_add_sum_zero U (fun p => unitMap p) hsum
   have hUP' : ∀ p ∈ U, p ∈ P.erase x := by
     intro p hp
     have hpin : p ∈ (P.erase x).toList.toFinset := hUP p hp
@@ -279,7 +279,7 @@ and one using nonemptiness and the progression lemma.
 
 Role: supplies the composite-product input for the Carmichael construction.
 -/
-theorem exists_two_or_more_unit_product_eq_one_of_progression (L : ℕ) [NeZero L] (hL : 2 < L)
+theorem exists_two_or_more_unit_prod_one_of_progression (L : ℕ) [NeZero L] (hL : 2 < L)
     (hlambda : 3 ≤ ArithmeticFunction.carmichael L) [NeZero (ArithmeticFunction.carmichael L)]
     (P : Finset ℕ) (k : ℕ) (hkL : Nat.Coprime k L) (hcoprime : ∀ p ∈ P, Nat.Coprime p L)
     (hprogression : ∀ p ∈ P, ∃ d, d ∣ L ∧ p = d * k + 1)
@@ -290,8 +290,7 @@ theorem exists_two_or_more_unit_product_eq_one_of_progression (L : ℕ) [NeZero 
         (∏ p ∈ U, (if h : Nat.Coprime p L then ZMod.unitOfCoprime p h else 1)) = 1 ∧
         (∏ p ∈ U, (p : ZMod L)) = 1 := by
   obtain ⟨U, hUP, hUn, hprod, hres, _⟩ :=
-    exists_nonempty_unit_product_eq_one_of_card_gt_carmichael_log_erase L hL hlambda P hcoprime
-      (k * L + 1) hlarge
+    exists_nonempty_unitProd_one_erase L hL hlambda P hcoprime (k * L + 1) hlarge
   have hcard : 2 ≤ U.card := by
     by_contra hnot
     have hlt : U.card < 2 := Nat.lt_of_not_ge hnot

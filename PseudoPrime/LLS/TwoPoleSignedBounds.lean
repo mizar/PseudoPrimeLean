@@ -62,8 +62,8 @@ theorem gamma_primitive_sum_re_le_signedTwoPole_ambient {q A : ℕ} [NeZero q]
 four, add the actual local correction before absorbing the conductor gap. Only
 the original prime-count ramp cost remains above the signed ambient budget.
 This preserves the exclusion cost for negative witnesses. -/
-theorem gamma_primitive_add_local_le_signedTwoPole_ambient {q A : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hqA : q ≤ A)
+theorem gammaPrimitive_local_signedTwoPole_GRH {q A : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hqA : q ≤ A)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 4 ≤ x) :
     (∑' n : ℕ, PaperStatements.gammaMellinKernel.summand χ.primitiveCharacter x n).re +
         gammaQuadraticLocalCorrection χ x ≤
@@ -161,7 +161,7 @@ theorem prime_trivial_false_of_signedTwoPoleGap {q A : ℕ} [NeZero q] (χ : Dir
   have hx0 : 0 < x := by linarith only [hx]
   have hC := gamma_primitive_sum_re_le_signedTwoPole_ambient χ hne hqA hGRH hx
   have hlocal :=
-    gammaLocalCorrection_nonpos_of_level_primes_above χ hx0
+    gammaLocalCorrection_nonpos_of_large_primes χ hx0
       (fun p hp ↦ (level_prime_above_cutoff_of_all_prime_trivial χ ht hp).le)
   have hP := gamma_level_one_sum_upper_variable hGRH.riemann (by linarith only [hx] : 1 ≤ x)
   have hT := gamma_ramp_sum_lower_paired hGRH.riemann (by linarith only [hx] : 1 ≤ x)
@@ -180,7 +180,7 @@ theorem unit_prime_trivial_false_of_signedTwoPoleGap {q A : ℕ} [NeZero q]
         signedTwoPoleGap A x) :
     ¬(∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ (99 / 40 : ℝ) * x → χ p = 1) := by
   intro ht
-  have hC := gamma_primitive_add_local_le_signedTwoPole_ambient χ hquad hne hqA hGRH hx
+  have hC := gammaPrimitive_local_signedTwoPole_GRH χ hquad hne hqA hGRH hx
   have hP := gamma_level_one_sum_upper_variable hGRH.riemann (by linarith only [hx] : 1 ≤ x)
   have hT := gamma_ramp_sum_lower_paired hGRH.riemann (by linarith only [hx] : 1 ≤ x)
   have hN := gamma_ramp_no_witness_comparison χ hquad (by linarith only [hx] : 0 < x) ht

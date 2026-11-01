@@ -28,7 +28,7 @@ factor the complex power into its two exponential components.
 Role: identifies the prime terms of the zero-detection polynomial with coefficients accepted by
 the pre-sifted hybrid estimate.
 -/
-theorem prime_vonMangoldt_logMul_term_eq {p r : ℕ} {σ t : ℝ} (hp : Nat.Prime p) (χ : ℕ → ℂ) :
+theorem prime_logMul_term_eq {p r : ℕ} {σ t : ℝ} (hp : Nat.Prime p) (χ : ℕ → ℂ) :
     LSeries.term (LSeries.logMul^[r] (fun j : ℕ ↦ χ j * (ArithmeticFunction.vonMangoldt j : ℂ)))
         ((σ : ℂ) + (t : ℂ) * Complex.I) p =
       ((Real.log p : ℝ) ^ (r + 1) : ℂ) * Complex.exp (-((Real.log p : ℝ) * σ : ℝ) : ℂ) *
@@ -48,10 +48,10 @@ Inputs: a finite set of primes, a derivative order, a complex evaluation point, 
 character.
 Claim: the twisted differentiated Euler sum over those primes equals the corresponding prime
 polynomial with its real decay and oscillatory factors displayed.
-Proof: apply `prime_vonMangoldt_logMul_term_eq` term by term in the finite sum.
+Proof: apply `prime_logMul_term_eq` term by term in the finite sum.
 Role: gives the exact finite-sum interface between the Euler detector and the prime hybrid bound.
 -/
-theorem finite_prime_vonMangoldt_logMul_sum_eq {q : ℕ} [NeZero q] (r : ℕ) (σ t : ℝ) (s : Finset ℕ)
+theorem prime_logMul_sum_eq {q : ℕ} [NeZero q] (r : ℕ) (σ t : ℝ) (s : Finset ℕ)
     (hprime : ∀ p ∈ s, Nat.Prime p) (χ : DirichletCharacter ℂ q) :
     (∑ p ∈ s,
         LSeries.term
@@ -63,7 +63,7 @@ theorem finite_prime_vonMangoldt_logMul_sum_eq {q : ℕ} [NeZero q] (r : ℕ) (�
           χ (p : ZMod q) := by
   apply Finset.sum_congr rfl
   intro p hp
-  exact prime_vonMangoldt_logMul_term_eq (hprime p hp) (fun j => χ (j : ZMod q))
+  exact prime_logMul_term_eq (hprime p hp) (fun j => χ (j : ZMod q))
 
 /--
 Inputs: a derivative order, a finite Euler-series cutoff, a complex evaluation point, and a
@@ -75,8 +75,7 @@ von Mangoldt function to remove nonprime integers that are not prime powers.
 Role: isolates the higher-prime-power remainder that must be bounded before applying the prime
 hybrid estimate to zero detection.
 -/
-theorem finite_vonMangoldt_logMul_sum_eq_prime_and_higher_powers (r cutoff : ℕ) (s : ℂ)
-    (χ : ℕ → ℂ) :
+theorem mangoldt_prime_split (r cutoff : ℕ) (s : ℂ) (χ : ℕ → ℂ) :
     (∑ n ∈ Finset.range (cutoff + 1),
         LSeries.term (LSeries.logMul^[r] (fun j : ℕ ↦ χ j * (ArithmeticFunction.vonMangoldt j : ℂ)))
           s n) =
@@ -136,7 +135,7 @@ Proof: unfold the natural-number prime-power predicate and exclude exponent one 
 non-primality assumption.
 Role: makes the sparse higher-prime-power support explicit for its remainder estimate.
 -/
-theorem isPrimePow_nonprime_has_exponent_ge_two {n : ℕ} (hpow : IsPrimePow n) (hn : ¬Nat.Prime n) :
+theorem nonprime_pow_ge_two {n : ℕ} (hpow : IsPrimePow n) (hn : ¬Nat.Prime n) :
     ∃ p k : ℕ, Nat.Prime p ∧ 2 ≤ k ∧ p ^ k = n := by
   obtain ⟨p, k, hp, hk, hnk⟩ := (isPrimePow_nat_iff n).mp hpow
   have hkne : k ≠ 1 := by
@@ -155,8 +154,8 @@ Proof: apply the natural-number prime-power injectivity theorem.
 Role: ensures that indexing a higher-prime-power remainder by its prime base and exponent does
 not introduce multiplicity.
 -/
-theorem prime_power_representation_unique {p q k l : ℕ} (hp : Nat.Prime p) (hq : Nat.Prime q)
-    (hk : k ≠ 0) (hl : l ≠ 0) (h : p ^ k = q ^ l) : p = q ∧ k = l :=
+theorem primePower_unique {p q k l : ℕ} (hp : Nat.Prime p) (hq : Nat.Prime q) (hk : k ≠ 0)
+    (hl : l ≠ 0) (h : p ^ k = q ^ l) : p = q ∧ k = l :=
   Nat.Prime.pow_inj' hp hq hk hl h
 
 /--
@@ -166,7 +165,7 @@ Proof: exponents are positive, so equality of the powers determines both entries
 `Nat.Prime.pow_inj'`.
 Role: permits finite sums over higher prime powers to be reindexed by their base and exponent.
 -/
-theorem prime_power_pair_map_injective :
+theorem primePowerPair_inj :
     Function.Injective
       (fun x : { p : ℕ // Nat.Prime p } × { k : ℕ // 2 ≤ k } => x.1.val ^ x.2.val) := by
   intro x y hxy
@@ -185,8 +184,8 @@ Claim: summing the weight over the represented prime powers equals summing it ov
 Proof: reindex the image sum using injectivity of the prime-power map.
 Role: provides the finite-sum interface for quantitative higher-prime-power estimates.
 -/
-theorem finite_prime_power_pair_sum_reindex
-    (s : Finset ({ p : ℕ // Nat.Prime p } × { k : ℕ // 2 ≤ k })) (f : ℕ → ℂ) :
+theorem primePower_sum_image (s : Finset ({ p : ℕ // Nat.Prime p } × { k : ℕ // 2 ≤ k }))
+    (f : ℕ → ℂ) :
     (∑ n ∈ s.image (fun x => x.1.val ^ x.2.val), f n) = ∑ x ∈ s, f (x.1.val ^ x.2.val) := by
   classical
     exact
@@ -194,7 +193,7 @@ theorem finite_prime_power_pair_sum_reindex
       x.1.val ^ x.2.val) (f := f)
       (by
         intro x hx y hy hxy
-        exact prime_power_pair_map_injective hxy)
+        exact primePowerPair_inj hxy)
 
 /--
 Inputs: a natural-number cutoff.
@@ -204,7 +203,7 @@ Proof: use the prime-power representation in one direction and prove the represe
 composite in the other direction.
 Role: supplies a finite pair domain for estimating the higher-prime-power remainder.
 -/
-theorem finite_nonprime_prime_powers_eq_bounded_pair_image (N : ℕ) :
+theorem nonprimePow_eq_image (N : ℕ) :
     (Finset.range (N + 1)).filter (fun n => IsPrimePow n ∧ ¬Nat.Prime n) =
       (((Finset.range (N + 1)).product (Finset.range (N + 1))).filter
             (fun x : ℕ × ℕ => Nat.Prime x.1 ∧ 2 ≤ x.2 ∧ x.1 ^ x.2 ≤ N)).image
@@ -224,7 +223,7 @@ theorem finite_nonprime_prime_powers_eq_bounded_pair_image (N : ℕ) :
     have hnle : n ≤ N := by
       simp only [Finset.mem_range] at hnrange
       omega
-    obtain ⟨p, k, hp, hk, hpow⟩ := isPrimePow_nonprime_has_exponent_ge_two hnpow hnprime
+    obtain ⟨p, k, hp, hk, hpow⟩ := nonprime_pow_ge_two hnpow hnprime
     have hpk : p ^ k ≤ N := by
       calc
         p ^ k = n := hpow
@@ -281,7 +280,7 @@ Proof: rewrite the support as the image of the bounded pair set, then apply inje
 reindexing.
 Role: exposes the higher-prime-power contribution as a finite double sum for quantitative bounds.
 -/
-theorem finite_nonprime_prime_powers_sum_eq_bounded_pair_sum (N : ℕ) (f : ℕ → ℂ) :
+theorem nonprimePow_sum_pairs (N : ℕ) (f : ℕ → ℂ) :
     (∑ n ∈ (Finset.range (N + 1)).filter (fun n => IsPrimePow n ∧ ¬Nat.Prime n), f n) =
       ∑
         x ∈
@@ -293,7 +292,7 @@ theorem finite_nonprime_prime_powers_sum_eq_bounded_pair_sum (N : ℕ) (f : ℕ 
     ((Finset.range (N + 1)).product (Finset.range (N + 1))).filter
       (fun x : ℕ × ℕ => Nat.Prime x.1 ∧ 2 ≤ x.2 ∧ x.1 ^ x.2 ≤ N)
   let g : ℕ × ℕ → ℕ := fun x => x.1 ^ x.2
-  have himage := finite_nonprime_prime_powers_eq_bounded_pair_image N
+  have himage := nonprimePow_eq_image N
   have hinj : Set.InjOn g (↑P) := by
     intro x hx y hy hxy
     rcases Finset.mem_filter.mp hx with ⟨_, hpropsx⟩
@@ -301,8 +300,7 @@ theorem finite_nonprime_prime_powers_sum_eq_bounded_pair_sum (N : ℕ) (f : ℕ 
     rcases Finset.mem_filter.mp hy with ⟨_, hpropsy⟩
     rcases hpropsy with ⟨hpy, hky, _⟩
     have huniq :=
-      prime_power_pair_map_injective (a₁ := ⟨⟨x.1, hpx⟩, ⟨x.2, hkx⟩⟩) (a₂ :=
-        ⟨⟨y.1, hpy⟩, ⟨y.2, hky⟩⟩) hxy
+      primePowerPair_inj (a₁ := ⟨⟨x.1, hpx⟩, ⟨x.2, hkx⟩⟩) (a₂ := ⟨⟨y.1, hpy⟩, ⟨y.2, hky⟩⟩) hxy
     apply Prod.ext
     · exact congrArg Subtype.val (congrArg Prod.fst huniq)
     · exact congrArg Subtype.val (congrArg Prod.snd huniq)
@@ -317,8 +315,7 @@ bases and exponents at least two.
 Proof: combine the prime and higher-power decomposition with the bounded pair reindexing theorem.
 Role: presents the Euler polynomial in the two support classes needed for separate estimates.
 -/
-theorem finite_vonMangoldt_logMul_sum_eq_prime_and_prime_power_pairs (r cutoff : ℕ) (s : ℂ)
-    (χ : ℕ → ℂ) :
+theorem mangoldt_pair_split (r cutoff : ℕ) (s : ℂ) (χ : ℕ → ℂ) :
     (∑ n ∈ Finset.range (cutoff + 1),
         LSeries.term (LSeries.logMul^[r] (fun j : ℕ ↦ χ j * (ArithmeticFunction.vonMangoldt j : ℂ)))
           s n) =
@@ -332,10 +329,10 @@ theorem finite_vonMangoldt_logMul_sum_eq_prime_and_prime_power_pairs (r cutoff :
           LSeries.term
             (LSeries.logMul^[r] (fun j : ℕ ↦ χ j * (ArithmeticFunction.vonMangoldt j : ℂ))) s
             (x.1 ^ x.2) := by
-  rw [finite_vonMangoldt_logMul_sum_eq_prime_and_higher_powers]
+  rw [mangoldt_prime_split]
   congr 1
   exact
-    finite_nonprime_prime_powers_sum_eq_bounded_pair_sum cutoff
+    nonprimePow_sum_pairs cutoff
       (fun n =>
         LSeries.term (LSeries.logMul^[r] (fun j : ℕ ↦ χ j * (ArithmeticFunction.vonMangoldt j : ℂ)))
           s n)
@@ -348,7 +345,7 @@ exactly the contribution indexed by prime bases and exponents at least two.
 Proof: rewrite the established prime and prime-power decomposition and normalize the subtraction.
 Role: connects the uniform higher-prime-power estimate to the full finite Euler polynomial.
 -/
-theorem finite_vonMangoldt_prime_power_remainder_eq (r cutoff : ℕ) (s : ℂ) (χ : ℕ → ℂ) :
+theorem primePower_rem_eq (r cutoff : ℕ) (s : ℂ) (χ : ℕ → ℂ) :
     (∑ n ∈ Finset.range (cutoff + 1),
           LSeries.term
             (LSeries.logMul^[r] (fun j : ℕ ↦ χ j * (ArithmeticFunction.vonMangoldt j : ℂ))) s n) -
@@ -361,7 +358,7 @@ theorem finite_vonMangoldt_prime_power_remainder_eq (r cutoff : ℕ) (s : ℂ) (
             (fun x : ℕ × ℕ => Nat.Prime x.1 ∧ 2 ≤ x.2 ∧ x.1 ^ x.2 ≤ cutoff)),
         LSeries.term (LSeries.logMul^[r] (fun j : ℕ ↦ χ j * (ArithmeticFunction.vonMangoldt j : ℂ)))
           s (x.1 ^ x.2) := by
-  rw [finite_vonMangoldt_logMul_sum_eq_prime_and_prime_power_pairs]
+  rw [mangoldt_pair_split]
   ring
 
 /--
@@ -373,7 +370,7 @@ Proof: use the degree-`m` Taylor term bound for the exponential and the inequali
 Role: supplies a summable majorant for normalized higher-prime-power terms at the Euler point
 `Re(s) = 1 + η`.
 -/
-theorem normalized_power_weight_le_exp_bound {η σ : ℝ} (hη : 0 ≤ η) (hσ : 1 ≤ σ) (m k p : ℕ) :
+theorem scaledPower_exp_bound {η σ : ℝ} (hη : 0 ≤ η) (hσ : 1 ≤ σ) (m k p : ℕ) :
     (η ^ m / (m.factorial : ℝ)) * ((k : ℝ) * Real.log p) ^ m *
         Real.exp (-σ * ((k : ℝ) * Real.log p)) ≤
       (4 * η) ^ m * Real.exp (-(3 / 4 : ℝ) * ((k : ℝ) * Real.log p)) := by
@@ -420,16 +417,15 @@ theorem normalized_power_weight_le_exp_bound {η σ : ℝ} (hη : 0 ≤ η) (hσ
 Inputs: a nonnegative scale `η`, a decay exponent `σ ≥ 1`, a logarithmic order, and natural
 parameters `k` and `p`.
 Claim: the normalized logarithmic weight with denominator `n!` is bounded by a multiple of the
-exponential majorant from `normalized_power_weight_le_exp_bound`.
+exponential majorant from `scaledPower_exp_bound`.
 Proof: convert `n!` to `(n + 1)!` and apply that pointwise estimate at order `n + 1`.
 Role: matches the derivative normalization used by the higher-prime-power remainder.
 -/
-theorem normalized_power_weight_with_predecessor_factorial {η σ : ℝ} (hη : 0 ≤ η) (hσ : 1 ≤ σ)
-    (n k p : ℕ) :
+theorem scaledPower_succ_le {η σ : ℝ} (hη : 0 ≤ η) (hσ : 1 ≤ σ) (n k p : ℕ) :
     (η ^ (n + 1) / (n.factorial : ℝ)) * ((k : ℝ) * Real.log p) ^ (n + 1) *
         Real.exp (-σ * ((k : ℝ) * Real.log p)) ≤
       (n + 1 : ℝ) * (4 * η) ^ (n + 1) * Real.exp (-(3 / 4 : ℝ) * ((k : ℝ) * Real.log p)) := by
-  have h := normalized_power_weight_le_exp_bound hη hσ (n + 1) k p
+  have h := scaledPower_exp_bound hη hσ (n + 1) k p
   have hfac : ((n + 1).factorial : ℝ) = (n + 1 : ℝ) * (n.factorial : ℝ) := by
     rw [Nat.factorial_succ, Nat.cast_mul, Nat.cast_add, Nat.cast_one]
   have heq :
@@ -459,8 +455,7 @@ majorant with factor `(n + 1) (4η)^(n + 1)`.
 Proof: bound `log p` by `k log p`, then apply the predecessor-factorial estimate.
 Role: controls each higher-prime-power term in the differentiated Euler polynomial.
 -/
-theorem normalized_prime_power_log_term_le_exp_bound {η σ : ℝ} (hη : 0 ≤ η) (hσ : 1 ≤ σ) (p k n : ℕ)
-    (hk : 2 ≤ k) :
+theorem primePower_log_exp_le {η σ : ℝ} (hη : 0 ≤ η) (hσ : 1 ≤ σ) (p k n : ℕ) (hk : 2 ≤ k) :
     (η ^ (n + 1) / (n.factorial : ℝ)) * Real.log p * ((k : ℝ) * Real.log p) ^ n *
         Real.exp (-σ * ((k : ℝ) * Real.log p)) ≤
       (n + 1 : ℝ) * (4 * η) ^ (n + 1) * Real.exp (-(3 / 4 : ℝ) * ((k : ℝ) * Real.log p)) := by
@@ -489,7 +484,7 @@ theorem normalized_prime_power_log_term_le_exp_bound {η σ : ℝ} (hη : 0 ≤ 
   have hmain :
     c * L ^ (n + 1) * Real.exp (-σ * L) ≤
       (n + 1 : ℝ) * (4 * η) ^ (n + 1) * Real.exp (-(3 / 4 : ℝ) * L) := by
-    simpa only [c, L] using normalized_power_weight_with_predecessor_factorial hη hσ n k p
+    simpa only [c, L] using scaledPower_succ_le hη hσ n k p
   calc
     _ = c * (Real.log p * L ^ n) * Real.exp (-σ * L) := by
       dsimp only [c, L]
@@ -508,9 +503,8 @@ prime power, and apply the normalized real-weight estimate.
 Role: transfers the finite prime-power coefficient estimate to the actual differentiated Euler
 polynomial.
 -/
-theorem twisted_prime_power_term_normalized_bound {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
-    {η σ : ℝ} (hη : 0 ≤ η) (hσ : 1 ≤ σ) (n p k : ℕ) (hp : Nat.Prime p) (hk : 2 ≤ k) (s : ℂ)
-    (hs : s.re = σ) :
+theorem twistedPower_scaled {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) {η σ : ℝ} (hη : 0 ≤ η)
+    (hσ : 1 ≤ σ) (n p k : ℕ) (hp : Nat.Prime p) (hk : 2 ≤ k) (s : ℂ) (hs : s.re = σ) :
     (η ^ (n + 1) / (n.factorial : ℝ)) *
         ‖LSeries.term
             (LSeries.logMul^[n]
@@ -527,7 +521,7 @@ theorem twisted_prime_power_term_normalized_bound {N : ℕ} [NeZero N] (χ : Dir
     rw [Real.rpow_def_of_pos (by exact_mod_cast (Nat.pow_pos hp.pos))]
     rw [show ((p ^ k : ℕ) : ℝ) = (p : ℝ) ^ k by exact Nat.cast_pow p k, Real.log_pow]
     ring_nf
-  have hterm := twistedVonMangoldt_log_term_bound χ n (p ^ k) (s := s) (Nat.pow_pos hp.pos)
+  have hterm := twisted_logTerm_bound χ n (p ^ k) (s := s) (Nat.pow_pos hp.pos)
   rw [hs] at hterm
   have htermrewrite :
     ArithmeticFunction.vonMangoldt (p ^ k) * (Real.log (p ^ k : ℕ)) ^ n / ((p ^ k : ℕ) : ℝ) ^ σ =
@@ -550,7 +544,7 @@ theorem twisted_prime_power_term_normalized_bound {N : ℕ} [NeZero N] (χ : Dir
           Real.exp (-σ * ((k : ℝ) * Real.log p)) :=
       by ring
     _ ≤ (n + 1 : ℝ) * (4 * η) ^ (n + 1) * Real.exp (-(3 / 4 : ℝ) * ((k : ℝ) * Real.log p)) :=
-      normalized_prime_power_log_term_le_exp_bound hη hσ p k n hk
+      primePower_log_exp_le hη hσ p k n hk
 
 /--
 Inputs: a Dirichlet character, a finite set of prime-base/exponent pairs with exponents at least
@@ -561,8 +555,8 @@ Proof: apply the triangle inequality, distribute the nonnegative normalization a
 and use the termwise estimate for each pair.
 Role: controls the complete finite higher-prime-power part of the differentiated Euler polynomial.
 -/
-theorem normalized_twisted_prime_power_sum_bound {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
-    {η σ : ℝ} (hη : 0 ≤ η) (hσ : 1 ≤ σ) (n : ℕ) (s : ℂ) (hs : s.re = σ) (S : Finset (ℕ × ℕ))
+theorem twistedPower_sum_le {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) {η σ : ℝ} (hη : 0 ≤ η)
+    (hσ : 1 ≤ σ) (n : ℕ) (s : ℂ) (hs : s.re = σ) (S : Finset (ℕ × ℕ))
     (hS : ∀ x ∈ S, Nat.Prime x.1 ∧ 2 ≤ x.2) :
     (η ^ (n + 1) / (n.factorial : ℝ)) *
         ‖∑ x ∈ S,
@@ -603,7 +597,7 @@ theorem normalized_twisted_prime_power_sum_bound {N : ℕ} [NeZero N] (χ : Diri
                   (fun j : ℕ ↦ χ (j : ZMod N) * (ArithmeticFunction.vonMangoldt j : ℂ)))
                 s (x.1 ^ x.2)‖ ≤
           _
-      simpa only [c] using twisted_prime_power_term_normalized_bound χ hη hσ n x.1 x.2 hp hk s hs
+      simpa only [c] using twistedPower_scaled χ hη hσ n x.1 x.2 hp hk s hs
 
 /--
 Inputs: a nonnegative real ratio below one and a finite set of natural exponents, all at least two.
@@ -613,8 +607,8 @@ Proof: factor out the square, reindex the remaining powers injectively by subtra
 bound the finite sum by the full geometric series.
 Role: supplies a uniform exponent sum for the higher-prime-power majorant.
 -/
-theorem finset_sum_pow_geometric_tail {r : ℝ} (hr0 : 0 ≤ r) (hr1 : r < 1) (S : Finset ℕ)
-    (hS : ∀ k ∈ S, 2 ≤ k) : (∑ k ∈ S, r ^ k) ≤ r ^ 2 * (1 - r)⁻¹ := by
+theorem sum_geomTail_le {r : ℝ} (hr0 : 0 ≤ r) (hr1 : r < 1) (S : Finset ℕ) (hS : ∀ k ∈ S, 2 ≤ k) :
+    (∑ k ∈ S, r ^ k) ≤ r ^ 2 * (1 - r)⁻¹ := by
   have hsum : Summable (fun j : ℕ => r ^ j) := summable_geometric_of_lt_one hr0 hr1
   have hgeom := hasSum_geometric_of_lt_one hr0 hr1
   have hinj : Set.InjOn (fun k : ℕ => k - 2) (↑S) := by
@@ -655,7 +649,7 @@ summable series.
 Role: bounds the prime-base part of the higher-prime-power exponential majorant uniformly in the
 cutoff.
 -/
-theorem finite_sum_exp_neg_three_halves_log_le_tsum (P : Finset ℕ) (hP : ∀ p ∈ P, 1 ≤ p) :
+theorem sum_exp_neg_3_2_le (P : Finset ℕ) (hP : ∀ p ∈ P, 1 ≤ p) :
     (∑ p ∈ P, Real.exp (-(3 / 2 : ℝ) * Real.log p)) ≤ ∑' n : ℕ, (((n : ℝ) ^ (3 / 2 : ℝ))⁻¹) := by
   have hthree : (1 : ℝ) < 3 / 2 := by norm_num only
   have hsum : Summable (fun n : ℕ => (((n : ℝ) ^ (3 / 2 : ℝ))⁻¹)) :=
@@ -692,8 +686,7 @@ Proof: sum the geometric exponent tail for each prime, compare its ratio with th
 and bound the remaining prime sum by the full `3/2`-power series.
 Role: gives a cutoff-independent bound for the higher-prime-power remainder majorant.
 -/
-theorem finite_prime_power_exp_sum_le_tsum (P K : Finset ℕ) (hP : ∀ p ∈ P, Nat.Prime p)
-    (hK : ∀ k ∈ K, 2 ≤ k) :
+theorem primePower_exp_sum_le (P K : Finset ℕ) (hP : ∀ p ∈ P, Nat.Prime p) (hK : ∀ k ∈ K, 2 ≤ k) :
     (∑ p ∈ P, ∑ k ∈ K, Real.exp (-(3 / 4 : ℝ) * ((k : ℝ) * Real.log p))) ≤
       (1 - Real.exp (-(3 / 4 : ℝ) * Real.log 2))⁻¹ * ∑' n : ℕ, (((n : ℝ) ^ (3 / 2 : ℝ))⁻¹) := by
   let r : ℕ → ℝ := fun p => Real.exp (-(3 / 4 : ℝ) * Real.log p)
@@ -743,7 +736,7 @@ theorem finite_prime_power_exp_sum_le_tsum (P K : Finset ℕ) (hP : ∀ p ∈ P,
       apply Finset.sum_congr rfl
       intro k hk
       exact hexprep p k
-    have htail := finset_sum_pow_geometric_tail (hrbase p hp) (hrlt p hp) K hK
+    have htail := sum_geomTail_le (hrbase p hp) (hrlt p hp) K hK
     have hdenP : 0 < 1 - r p := by
       have hle := hrle p hp
       linarith only [hle, hden₀]
@@ -767,7 +760,7 @@ theorem finite_prime_power_exp_sum_le_tsum (P K : Finset ℕ) (hP : ∀ p ∈ P,
     _ = (1 - r₀)⁻¹ * ∑ p ∈ P, Real.exp (-(3 / 2 : ℝ) * Real.log p) := by rw [Finset.mul_sum]
     _ ≤ (1 - r₀)⁻¹ * ∑' n : ℕ, (((n : ℝ) ^ (3 / 2 : ℝ))⁻¹) :=
       mul_le_mul_of_nonneg_left
-        (finite_sum_exp_neg_three_halves_log_le_tsum P
+        (sum_exp_neg_3_2_le P
           (by
             intro p hp
             exact (hP p hp).one_le))
@@ -782,10 +775,10 @@ Proof: bound the subset sum by the full rectangular majorant and apply the cutof
 exponential sum estimate.
 Role: controls the higher-prime-power part of every finite differentiated Euler polynomial.
 -/
-theorem normalized_twisted_prime_power_sum_uniform_bound {N : ℕ} [NeZero N]
-    (χ : DirichletCharacter ℂ N) {η σ : ℝ} (hη : 0 ≤ η) (hσ : 1 ≤ σ) (n : ℕ) (s : ℂ) (hs : s.re = σ)
-    (P K : Finset ℕ) (hP : ∀ p ∈ P, Nat.Prime p) (hK : ∀ k ∈ K, 2 ≤ k) (S : Finset (ℕ × ℕ))
-    (hS : ∀ x ∈ S, Nat.Prime x.1 ∧ 2 ≤ x.2) (hSPK : S ⊆ P.product K) :
+theorem twistedPower_uniform {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) {η σ : ℝ} (hη : 0 ≤ η)
+    (hσ : 1 ≤ σ) (n : ℕ) (s : ℂ) (hs : s.re = σ) (P K : Finset ℕ) (hP : ∀ p ∈ P, Nat.Prime p)
+    (hK : ∀ k ∈ K, 2 ≤ k) (S : Finset (ℕ × ℕ)) (hS : ∀ x ∈ S, Nat.Prime x.1 ∧ 2 ≤ x.2)
+    (hSPK : S ⊆ P.product K) :
     (η ^ (n + 1) / (n.factorial : ℝ)) *
         ‖∑ x ∈ S,
             LSeries.term
@@ -803,7 +796,7 @@ theorem normalized_twisted_prime_power_sum_uniform_bound {N : ℕ} [NeZero N]
       (by
         intro x hx hxnot
         exact Real.exp_nonneg _)
-  have hrectangle := finite_prime_power_exp_sum_le_tsum P K hP hK
+  have hrectangle := primePower_exp_sum_le P K hP hK
   have hrect :
     (∑ x ∈ P.product K, f x) ≤
       (1 - Real.exp (-(3 / 4 : ℝ) * Real.log 2))⁻¹ * ∑' m : ℕ, (((m : ℝ) ^ (3 / 2 : ℝ))⁻¹) := by
@@ -812,7 +805,7 @@ theorem normalized_twisted_prime_power_sum_uniform_bound {N : ℕ} [NeZero N]
       _ = ∑ p ∈ P, ∑ k ∈ K, Real.exp (-(3 / 4 : ℝ) * ((k : ℝ) * Real.log p)) := by
         rw [Finset.sum_product]
       _ ≤ _ := hrectangle
-  have hterm := normalized_twisted_prime_power_sum_bound χ hη hσ n s hs S hS
+  have hterm := twistedPower_sum_le χ hη hσ n s hs S hS
   calc
     _ ≤ ∑ x ∈ S, A * f x := by simpa only [A, f] using hterm
     _ = A * ∑ x ∈ S, f x := by rw [Finset.mul_sum]
@@ -832,9 +825,8 @@ rectangular majorant.
 Role: supplies a cutoff-independent error bound for the higher-prime-power part of the finite
 differentiated Euler polynomial.
 -/
-theorem finite_twisted_prime_power_remainder_uniform_bound {N : ℕ} [NeZero N]
-    (χ : DirichletCharacter ℂ N) {η σ : ℝ} (hη : 0 ≤ η) (hσ : 1 ≤ σ) (n : ℕ) (s : ℂ) (hs : s.re = σ)
-    (cutoff : ℕ) :
+theorem primePower_error_le {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) {η σ : ℝ} (hη : 0 ≤ η)
+    (hσ : 1 ≤ σ) (n : ℕ) (s : ℂ) (hs : s.re = σ) (cutoff : ℕ) :
     let S :=
       ((Finset.range (cutoff + 1)).product (Finset.range (cutoff + 1))).filter
         (fun x : ℕ × ℕ => Nat.Prime x.1 ∧ 2 ≤ x.2 ∧ x.1 ^ x.2 ≤ cutoff)
@@ -870,7 +862,7 @@ theorem finite_twisted_prime_power_remainder_uniform_bound {N : ℕ} [NeZero N]
     constructor
     · exact Finset.mem_filter.mpr ⟨hpRange, hp⟩
     · exact Finset.mem_filter.mpr ⟨hkRange, hk⟩
-  exact normalized_twisted_prime_power_sum_uniform_bound χ hη hσ n s hs P K hP hK S hS hSPK
+  exact twistedPower_uniform χ hη hσ n s hs P K hP hK S hS hSPK
 
 /--
 Inputs: a primitive Dirichlet character, a nonnegative normalization scale, a decay exponent at
@@ -880,9 +872,8 @@ has a cutoff-independent bound.
 Proof: identify the difference with the prime-power pair sum and apply its uniform estimate.
 Role: attaches the higher-prime-power error bound to the full finite von Mangoldt polynomial.
 -/
-theorem finite_vonMangoldt_prime_power_remainder_uniform_bound {N : ℕ} [NeZero N]
-    (χ : DirichletCharacter ℂ N) {η σ : ℝ} (hη : 0 ≤ η) (hσ : 1 ≤ σ) (n : ℕ) (s : ℂ) (hs : s.re = σ)
-    (cutoff : ℕ) :
+theorem mangoldt_prime_error {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) {η σ : ℝ} (hη : 0 ≤ η)
+    (hσ : 1 ≤ σ) (n : ℕ) (s : ℂ) (hs : s.re = σ) (cutoff : ℕ) :
     (η ^ (n + 1) / (n.factorial : ℝ)) *
         ‖(∑ j ∈ Finset.range (cutoff + 1),
               LSeries.term
@@ -896,8 +887,8 @@ theorem finite_vonMangoldt_prime_power_remainder_uniform_bound {N : ℕ} [NeZero
                 s p)‖ ≤
       ((n + 1 : ℝ) * (4 * η) ^ (n + 1)) *
         ((1 - Real.exp (-(3 / 4 : ℝ) * Real.log 2))⁻¹ * ∑' m : ℕ, (((m : ℝ) ^ (3 / 2 : ℝ))⁻¹)) := by
-  rw [finite_vonMangoldt_prime_power_remainder_eq]
-  exact finite_twisted_prime_power_remainder_uniform_bound χ hη hσ n s hs cutoff
+  rw [primePower_rem_eq]
+  exact primePower_error_le χ hη hσ n s hs cutoff
 
 /--
 Definition: a fixed majorant for the higher-prime-power Euler remainder, enlarged to be at least
@@ -905,7 +896,7 @@ one.
 
 Role: gives a single constant whose growth can be absorbed by a sufficiently high derivative order.
 -/
-noncomputable def higherPrimePowerEulerMajorantConstant : ℝ :=
+noncomputable def primePowerEulerBound : ℝ :=
   max 1 ((1 - Real.exp (-(3 / 4 : ℝ) * Real.log 2))⁻¹ * ∑' j : ℕ, (((j : ℝ) ^ (3 / 2 : ℝ))⁻¹))
 
 /--
@@ -915,23 +906,17 @@ Claim: the prime-power majorant is at most the exponential of that exponent.
 Proof: compare logarithms and apply monotonicity of the exponential.
 Role: absorbs the fixed majorant into the derivative-order exponential loss.
 -/
-theorem higherPrimePowerEulerMajorantConstant_le_exp (m : ℕ)
-    (hm : Nat.ceil (Real.log higherPrimePowerEulerMajorantConstant) ≤ m) :
-    higherPrimePowerEulerMajorantConstant ≤ Real.exp (m : ℝ) := by
-  have hlogceil :
-    Real.log higherPrimePowerEulerMajorantConstant ≤
-      (Nat.ceil (Real.log higherPrimePowerEulerMajorantConstant) : ℝ) :=
+theorem primePower_exp_bound (m : ℕ) (hm : Nat.ceil (Real.log primePowerEulerBound) ≤ m) :
+    primePowerEulerBound ≤ Real.exp (m : ℝ) := by
+  have hlogceil : Real.log primePowerEulerBound ≤ (Nat.ceil (Real.log primePowerEulerBound) : ℝ) :=
     Nat.le_ceil _
-  have hceilm : (Nat.ceil (Real.log higherPrimePowerEulerMajorantConstant) : ℝ) ≤ (m : ℝ) := by
-    exact_mod_cast hm
-  have hlog : Real.log higherPrimePowerEulerMajorantConstant ≤ (m : ℝ) := le_trans hlogceil hceilm
-  have hpos : 0 < higherPrimePowerEulerMajorantConstant := by
-    dsimp only [higherPrimePowerEulerMajorantConstant]
+  have hceilm : (Nat.ceil (Real.log primePowerEulerBound) : ℝ) ≤ (m : ℝ) := by exact_mod_cast hm
+  have hlog : Real.log primePowerEulerBound ≤ (m : ℝ) := le_trans hlogceil hceilm
+  have hpos : 0 < primePowerEulerBound := by
+    dsimp only [primePowerEulerBound]
     exact lt_of_lt_of_le zero_lt_one (le_max_left _ _)
   calc
-    higherPrimePowerEulerMajorantConstant =
-        Real.exp (Real.log higherPrimePowerEulerMajorantConstant) :=
-      (Real.exp_log hpos).symm
+    primePowerEulerBound = Real.exp (Real.log primePowerEulerBound) := (Real.exp_log hpos).symm
     _ ≤ Real.exp (m : ℝ) := Real.exp_le_exp.mpr hlog
 
 /--
@@ -941,7 +926,7 @@ Proof: absorb the linear factor and majorant by `exp(m)`, then use the five-unit
 scale inequality.
 Role: makes the higher-prime-power contribution smaller than the detected finite Euler signal.
 -/
-theorem detector_scale_absorbs_linear_power {C D η : ℝ} {m K : ℕ} (hD : 0 ≤ D) (hη : 0 ≤ η)
+theorem detector_power_bound {C D η : ℝ} {m K : ℕ} (hD : 0 ≤ D) (hη : 0 ≤ η)
     (hηratio : 4 * η ≤ Real.exp (-(D + 5))) (hm : 1 ≤ m) (hKm : K ≤ m)
     (hCexp : C ≤ Real.exp (m : ℝ)) : C * (m : ℝ) * (4 * η) ^ m ≤ Real.exp (-(D * (K : ℝ))) / 4 := by
   have hmreal : 1 ≤ (m : ℝ) := by exact_mod_cast hm
@@ -1003,11 +988,10 @@ one quarter of the detector signal `exp(-D K)`.
 Proof: combine the cutoff-uniform remainder estimate with the scalar absorption bound.
 Role: preserves at least one quarter of the finite detector signal when passing to prime terms.
 -/
-theorem finite_vonMangoldt_prime_power_remainder_le_detector_scale {N : ℕ} [NeZero N]
-    (χ : DirichletCharacter ℂ N) {η σ D : ℝ} (hη : 0 ≤ η) (hσ : 1 ≤ σ) (hD : 0 ≤ D) (n K cutoff : ℕ)
-    (hKm : K ≤ n + 1) (hηratio : 4 * η ≤ Real.exp (-(D + 5)))
-    (hm : Nat.ceil (Real.log higherPrimePowerEulerMajorantConstant) ≤ n + 1) (s : ℂ)
-    (hσs : s.re = σ) :
+theorem powerTail_le_detector {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) {η σ D : ℝ}
+    (hη : 0 ≤ η) (hσ : 1 ≤ σ) (hD : 0 ≤ D) (n K cutoff : ℕ) (hKm : K ≤ n + 1)
+    (hηratio : 4 * η ≤ Real.exp (-(D + 5))) (hm : Nat.ceil (Real.log primePowerEulerBound) ≤ n + 1)
+    (s : ℂ) (hσs : s.re = σ) :
     (η ^ (n + 1) / (n.factorial : ℝ)) *
         ‖(∑ j ∈ Finset.range (cutoff + 1),
               LSeries.term
@@ -1020,15 +1004,14 @@ theorem finite_vonMangoldt_prime_power_remainder_le_detector_scale {N : ℕ} [Ne
                   (fun k : ℕ ↦ χ (k : ZMod N) * (ArithmeticFunction.vonMangoldt k : ℂ)))
                 s p)‖ ≤
       Real.exp (-(D * (K : ℝ))) / 4 := by
-  have hrem := finite_vonMangoldt_prime_power_remainder_uniform_bound χ hη hσ n s hσs cutoff
-  have hCexp : higherPrimePowerEulerMajorantConstant ≤ Real.exp ((n + 1 : ℕ) : ℝ) :=
-    higherPrimePowerEulerMajorantConstant_le_exp (n + 1) hm
+  have hrem := mangoldt_prime_error χ hη hσ n s hσs cutoff
+  have hCexp : primePowerEulerBound ≤ Real.exp ((n + 1 : ℕ) : ℝ) := primePower_exp_bound (n + 1) hm
   have hn : 1 ≤ n + 1 := by omega
-  have hscale := detector_scale_absorbs_linear_power hD hη hηratio hn hKm hCexp
+  have hscale := detector_power_bound hD hη hηratio hn hKm hCexp
   have hCmajor :
     (1 - Real.exp (-(3 / 4 : ℝ) * Real.log 2))⁻¹ * ∑' j : ℕ, (((j : ℝ) ^ (3 / 2 : ℝ))⁻¹) ≤
-      higherPrimePowerEulerMajorantConstant := by
-    dsimp only [higherPrimePowerEulerMajorantConstant]
+      primePowerEulerBound := by
+    dsimp only [primePowerEulerBound]
     exact le_max_right 1 _
   have hcast : ((n + 1 : ℝ)) = ((n + 1 : ℕ) : ℝ) := by norm_num only [Nat.cast_add, Nat.cast_one]
   rw [hcast] at hrem
@@ -1036,11 +1019,11 @@ theorem finite_vonMangoldt_prime_power_remainder_le_detector_scale {N : ℕ} [Ne
     mul_nonneg (Nat.cast_nonneg (n + 1))
       (pow_nonneg (mul_nonneg (show (0 : ℝ) ≤ 4 by norm_num only) hη) _)
   calc
-    _ ≤ ((n + 1 : ℕ) : ℝ) * (4 * η) ^ (n + 1) * higherPrimePowerEulerMajorantConstant := by
+    _ ≤ ((n + 1 : ℕ) : ℝ) * (4 * η) ^ (n + 1) * primePowerEulerBound := by
       exact le_trans hrem (mul_le_mul_of_nonneg_left hCmajor hfactor)
     _ ≤ Real.exp (-(D * (K : ℝ))) / 4 := by
       calc
-        _ = higherPrimePowerEulerMajorantConstant * ((n + 1 : ℕ) : ℝ) * (4 * η) ^ (n + 1) := by ring
+        _ = primePowerEulerBound * ((n + 1 : ℕ) : ℝ) * (4 * η) ^ (n + 1) := by ring
         _ ≤ _ := hscale
 
 /--
@@ -1051,8 +1034,8 @@ part retains at least one quarter.
 Proof: apply the triangle inequality to `F = (F - P) + P` and rearrange the scaled bounds.
 Role: transfers the finite Euler detector to the prime polynomial used by the hybrid estimate.
 -/
-theorem norm_subtract_error_preserves_quarter_signal {F P : ℂ} {A signal : ℝ} (hA : 0 ≤ A)
-    (hfull : signal / 2 ≤ A * ‖F‖) (herror : A * ‖F - P‖ ≤ signal / 4) : signal / 4 ≤ A * ‖P‖ := by
+theorem quarterSignal_sub_le {F P : ℂ} {A signal : ℝ} (hA : 0 ≤ A) (hfull : signal / 2 ≤ A * ‖F‖)
+    (herror : A * ‖F - P‖ ≤ signal / 4) : signal / 4 ≤ A * ‖P‖ := by
   have htriangle : ‖F‖ ≤ ‖F - P‖ + ‖P‖ := by
     calc
       _ = ‖(F - P) + P‖ := by
@@ -1074,11 +1057,10 @@ polynomial has at least half the signal.
 Proof: derive the prime-power error bound and apply the triangle-inequality transfer.
 Role: supplies a pointwise positive input for the finite prime-polynomial hybrid estimate.
 -/
-theorem finite_vonMangoldt_prime_sum_norm_ge_of_detector_signal {N : ℕ} [NeZero N]
-    (χ : DirichletCharacter ℂ N) {η σ D : ℝ} (hη : 0 ≤ η) (hσ : 1 ≤ σ) (hD : 0 ≤ D) (n K cutoff : ℕ)
-    (hKm : K ≤ n + 1) (hηratio : 4 * η ≤ Real.exp (-(D + 5)))
-    (hm : Nat.ceil (Real.log higherPrimePowerEulerMajorantConstant) ≤ n + 1) (s : ℂ)
-    (hσs : s.re = σ)
+theorem primeSum_ge_detector {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) {η σ D : ℝ}
+    (hη : 0 ≤ η) (hσ : 1 ≤ σ) (hD : 0 ≤ D) (n K cutoff : ℕ) (hKm : K ≤ n + 1)
+    (hηratio : 4 * η ≤ Real.exp (-(D + 5))) (hm : Nat.ceil (Real.log primePowerEulerBound) ≤ n + 1)
+    (s : ℂ) (hσs : s.re = σ)
     (hfull :
       Real.exp (-(D * (K : ℝ))) / 2 ≤
         (η ^ (n + 1) / (n.factorial : ℝ)) *
@@ -1108,12 +1090,10 @@ theorem finite_vonMangoldt_prime_sum_norm_ge_of_detector_signal {N : ℕ} [NeZer
   have hA : 0 ≤ A := by
     dsimp only [A]
     exact div_nonneg (pow_nonneg hη _) (Nat.cast_nonneg _)
-  have hrem :=
-    finite_vonMangoldt_prime_power_remainder_le_detector_scale χ hη hσ hD n K cutoff hKm hηratio hm
-      s hσs
+  have hrem := powerTail_le_detector χ hη hσ hD n K cutoff hKm hηratio hm s hσs
   have hfull' : Real.exp (-(D * (K : ℝ))) / 2 ≤ A * ‖F‖ := by simpa only [A, F] using hfull
   have herror : A * ‖F - P‖ ≤ Real.exp (-(D * (K : ℝ))) / 4 := by simpa only [A, F, P] using hrem
-  have hprime := norm_subtract_error_preserves_quarter_signal hA hfull' herror
+  have hprime := quarterSignal_sub_le hA hfull' herror
   simpa only [A, P] using hprime
 
 /--
@@ -1124,8 +1104,7 @@ Proof: factor each prime term into its exponential-series weight and its scaled 
 then apply the finite mass estimate.
 Role: controls the low-prime part before transferring detector signal to the pre-sifted support.
 -/
-theorem finite_low_prime_normalized_log_sum_le (P n : ℕ) (hP : 2 ≤ P) {η : ℝ} (hη : 0 < η)
-    (hη1 : η ≤ 1) :
+theorem lowPrime_log_bound (P n : ℕ) (hP : 2 ≤ P) {η : ℝ} (hη : 0 < η) (hη1 : η ≤ 1) :
     (∑ p ∈ (Finset.range (P + 1)).filter Nat.Prime,
         (η ^ (n + 1) / (n.factorial : ℝ)) * (Real.log p) ^ (n + 1) / (p : ℝ) ^ (1 + η)) ≤
       4 * ((η * Real.log P) ^ n / (n.factorial : ℝ)) := by
@@ -1209,8 +1188,8 @@ Claim: the normalized low-prime sum is at most `4 c^n exp(n)`.
 Proof: apply the finite mass bound and `Real.pow_div_factorial_le_exp` to the factorial quotient.
 Role: makes the low-prime loss exponentially small when `c` is chosen below `exp(-1)`.
 -/
-theorem finite_low_prime_normalized_log_sum_le_exp (P n : ℕ) (hP : 2 ≤ P) {η c : ℝ} (hη : 0 < η)
-    (hη1 : η ≤ 1) (hc : 0 ≤ c) (hscale : η * Real.log P ≤ c * (n : ℝ)) :
+theorem lowPrime_log_exp_le (P n : ℕ) (hP : 2 ≤ P) {η c : ℝ} (hη : 0 < η) (hη1 : η ≤ 1) (hc : 0 ≤ c)
+    (hscale : η * Real.log P ≤ c * (n : ℝ)) :
     (∑ p ∈ (Finset.range (P + 1)).filter Nat.Prime,
         (η ^ (n + 1) / (n.factorial : ℝ)) * (Real.log p) ^ (n + 1) / (p : ℝ) ^ (1 + η)) ≤
       4 * (c ^ n * Real.exp (n : ℝ)) := by
@@ -1228,7 +1207,7 @@ theorem finite_low_prime_normalized_log_sum_le_exp (P n : ℕ) (hP : 2 ≤ P) {�
       _ ≤ (c * (n : ℝ)) ^ n / (n.factorial : ℝ) := hdiv
       _ = c ^ n * ((n : ℝ) ^ n / (n.factorial : ℝ)) := hfactor
       _ ≤ _ := mul_le_mul_of_nonneg_left hseries (pow_nonneg hc n)
-  have hlow := finite_low_prime_normalized_log_sum_le P n hP hη hη1
+  have hlow := lowPrime_log_bound P n hP hη hη1
   exact le_trans hlow (mul_le_mul_of_nonneg_left hcoeff (by norm_num))
 
 /--
@@ -1239,7 +1218,7 @@ Proof: compare the derivative order with the detector order and use the requeste
 Role: aligns the $K \le n+1$ order relation from zero detection with the low-prime exponential
 estimate.
 -/
-theorem detector_order_exponential_margin (Krequested n K : ℕ) (D : ℝ) (hD : 0 ≤ D)
+theorem detector_order_margin (Krequested n K : ℕ) (D : ℝ) (hD : 0 ≤ D)
     (hDrequested : D + 5 ≤ 5 * ((Krequested - 1 : ℕ) : ℝ)) (hn : Krequested - 1 ≤ n)
     (hKorder : K ≤ n + 1) : D * (K : ℝ) + 5 ≤ (D + 5) * (n : ℝ) := by
   have hnReal : ((Krequested - 1 : ℕ) : ℝ) ≤ n := by exact_mod_cast hn
@@ -1263,13 +1242,13 @@ Claim: the normalized low-prime coefficient sum is at most one eighth of the det
 Proof: convert `c^n exp(n)` to `(c exp(1))^n` and apply the supplied exponent margin.
 Role: reserves positive signal for primes above the pre-sifting cutoff.
 -/
-theorem finite_low_prime_sum_detector_scale (P n K : ℕ) (hP : 2 ≤ P) {η c D : ℝ} (hη : 0 < η)
-    (hη1 : η ≤ 1) (hc : 0 ≤ c) (hmargin : D * (K : ℝ) + 5 ≤ (D + 5) * (n : ℝ))
+theorem lowPrime_detector_le (P n K : ℕ) (hP : 2 ≤ P) {η c D : ℝ} (hη : 0 < η) (hη1 : η ≤ 1)
+    (hc : 0 ≤ c) (hmargin : D * (K : ℝ) + 5 ≤ (D + 5) * (n : ℝ))
     (hscale : η * Real.log P ≤ c * (n : ℝ)) (hcexp : c * Real.exp 1 ≤ Real.exp (-(D + 5))) :
     (∑ p ∈ (Finset.range (P + 1)).filter Nat.Prime,
         (η ^ (n + 1) / (n.factorial : ℝ)) * (Real.log p) ^ (n + 1) / (p : ℝ) ^ (1 + η)) ≤
       Real.exp (-(D * (K : ℝ))) / 8 := by
-  have hlow := finite_low_prime_normalized_log_sum_le_exp P n hP hη hη1 hc hscale
+  have hlow := lowPrime_log_exp_le P n hP hη hη1 hc hscale
   have hcexp_nonneg : 0 ≤ c * Real.exp 1 := mul_nonneg hc (Real.exp_nonneg _)
   have hpower : (c * Real.exp 1) ^ n ≤ Real.exp (-((D + 5) * (n : ℝ))) := by
     calc
@@ -1321,11 +1300,10 @@ Proof: apply the triangle inequality, bound each differentiated Euler term by it
 weight, and use the low-prime coefficient estimate.
 Role: removes the low-prime part from the positive finite-prime detector before hybrid averaging.
 -/
-theorem finite_low_prime_twisted_sum_norm_le_detector_scale {N : ℕ} [NeZero N]
-    (χ : DirichletCharacter ℂ N) (P n K : ℕ) (hP : 2 ≤ P) {η c D : ℝ} (hη : 0 < η) (hη1 : η ≤ 1)
-    (hc : 0 ≤ c) (hmargin : D * (K : ℝ) + 5 ≤ (D + 5) * (n : ℝ))
-    (hscale : η * Real.log P ≤ c * (n : ℝ)) (hcexp : c * Real.exp 1 ≤ Real.exp (-(D + 5))) (s : ℂ)
-    (hs : s.re = 1 + η) :
+theorem lowPrime_twisted_le {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (P n K : ℕ) (hP : 2 ≤ P)
+    {η c D : ℝ} (hη : 0 < η) (hη1 : η ≤ 1) (hc : 0 ≤ c)
+    (hmargin : D * (K : ℝ) + 5 ≤ (D + 5) * (n : ℝ)) (hscale : η * Real.log P ≤ c * (n : ℝ))
+    (hcexp : c * Real.exp 1 ≤ Real.exp (-(D + 5))) (s : ℂ) (hs : s.re = 1 + η) :
     (η ^ (n + 1) / (n.factorial : ℝ)) *
         ‖∑ p ∈ (Finset.range (P + 1)).filter Nat.Prime,
             LSeries.term
@@ -1351,7 +1329,7 @@ theorem finite_low_prime_twisted_sum_norm_le_detector_scale {N : ℕ} [NeZero N]
     have hprime : Nat.Prime p := (Finset.mem_filter.mp hp).2
     have hlogΛ : ArithmeticFunction.vonMangoldt p = Real.log p :=
       ArithmeticFunction.vonMangoldt_apply_prime hprime
-    have hbound := twistedVonMangoldt_log_term_bound χ n p (s := s) hprime.pos
+    have hbound := twisted_logTerm_bound χ n p (s := s) hprime.pos
     rw [hs, hlogΛ] at hbound
     have hfactor : Real.log p * (Real.log p) ^ n = (Real.log p) ^ (n + 1) := by
       rw [pow_succ]
@@ -1372,7 +1350,7 @@ theorem finite_low_prime_twisted_sum_norm_le_detector_scale {N : ℕ} [NeZero N]
         apply Finset.sum_le_sum
         intro p hp
         simpa only [A, f] using hterm p hp
-  have hlow := finite_low_prime_sum_detector_scale P n K hP hη hη1 hc hmargin hscale hcexp
+  have hlow := lowPrime_detector_le P n K hP hη hη1 hc hmargin hscale hcexp
   calc
     _ ≤ _ := by simpa only [S] using hsum
     _ ≤ _ := hlow
@@ -1386,11 +1364,10 @@ Proof: split the finite prime set at `P`, bound the low part by the scaled von M
 apply the triangle inequality to remove it from the complete prime sum.
 Role: gives a positive input supported above the cutoff required by the hybrid large sieve.
 -/
-theorem finite_high_prime_sum_norm_ge_of_low_prime_removal {N : ℕ} [NeZero N]
-    (χ : DirichletCharacter ℂ N) (P cutoff n K : ℕ) (hP : 2 ≤ P) (hPcut : P ≤ cutoff) {η c D : ℝ}
-    (hη : 0 < η) (hη1 : η ≤ 1) (hc : 0 ≤ c) (hmargin : D * (K : ℝ) + 5 ≤ (D + 5) * (n : ℝ))
-    (hscale : η * Real.log P ≤ c * (n : ℝ)) (hcexp : c * Real.exp 1 ≤ Real.exp (-(D + 5))) (s : ℂ)
-    (hs : s.re = 1 + η)
+theorem highPrime_ge_removed {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (P cutoff n K : ℕ)
+    (hP : 2 ≤ P) (hPcut : P ≤ cutoff) {η c D : ℝ} (hη : 0 < η) (hη1 : η ≤ 1) (hc : 0 ≤ c)
+    (hmargin : D * (K : ℝ) + 5 ≤ (D + 5) * (n : ℝ)) (hscale : η * Real.log P ≤ c * (n : ℝ))
+    (hcexp : c * Real.exp 1 ≤ Real.exp (-(D + 5))) (s : ℂ) (hs : s.re = 1 + η)
     (hfull :
       Real.exp (-(D * (K : ℝ))) / 4 ≤
         (η ^ (n + 1) / (n.factorial : ℝ)) *
@@ -1434,9 +1411,7 @@ theorem finite_high_prime_sum_norm_ge_of_low_prime_removal {N : ℕ} [NeZero N]
   have hA : 0 ≤ A := by
     dsimp only [A]
     exact div_nonneg (pow_nonneg hη.le _) (Nat.cast_nonneg _)
-  have hlow :=
-    finite_low_prime_twisted_sum_norm_le_detector_scale χ P n K hP hη hη1 hc hmargin hscale hcexp s
-      hs
+  have hlow := lowPrime_twisted_le χ P n K hP hη hη1 hc hmargin hscale hcexp s hs
   have hlow' : A * ‖low‖ ≤ Real.exp (-(D * (K : ℝ))) / 8 := by simpa only [A, low, L, f] using hlow
   have hfull' : (Real.exp (-(D * (K : ℝ))) / 2) / 2 ≤ A * ‖F‖ := by
     have hrewrite : Real.exp (-(D * (K : ℝ))) / 4 = (Real.exp (-(D * (K : ℝ))) / 2) / 2 := by ring
@@ -1448,7 +1423,7 @@ theorem finite_high_prime_sum_norm_ge_of_low_prime_removal {N : ℕ} [NeZero N]
     calc
       _ ≤ Real.exp (-(D * (K : ℝ))) / 8 := hlow'
       _ = (Real.exp (-(D * (K : ℝ))) / 2) / 4 := by ring
-  have hresult := norm_subtract_error_preserves_quarter_signal hA hfull' herr
+  have hresult := quarterSignal_sub_le hA hfull' herr
   calc
     _ = (Real.exp (-(D * (K : ℝ))) / 2) / 4 := by ring
     _ ≤ A * ‖high‖ := hresult
@@ -1463,13 +1438,12 @@ Proof: transfer the finite Euler signal to all prime terms, then remove the low-
 the scaled Mangoldt estimate.
 Role: provides the pointwise high-prime input for the pre-sifted hybrid mean-square bound.
 -/
-theorem finite_high_prime_sum_norm_ge_of_detector_signal {N : ℕ} [NeZero N]
-    (χ : DirichletCharacter ℂ N) (P cutoff n K : ℕ) (hP : 2 ≤ P) (hPcut : P ≤ cutoff) {η D c : ℝ}
-    (hη : 0 < η) (hη1 : η ≤ 1) (hD : 0 ≤ D) (hc : 0 ≤ c) (hKorder : K ≤ n + 1)
-    (hmargin : D * (K : ℝ) + 5 ≤ (D + 5) * (n : ℝ)) (hscale : η * Real.log P ≤ c * (n : ℝ))
-    (hcexp : c * Real.exp 1 ≤ Real.exp (-(D + 5))) (hηratio : 4 * η ≤ Real.exp (-(D + 5)))
-    (hm : Nat.ceil (Real.log higherPrimePowerEulerMajorantConstant) ≤ n + 1) (s : ℂ)
-    (hs : s.re = 1 + η)
+theorem highPrime_ge_detector {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (P cutoff n K : ℕ)
+    (hP : 2 ≤ P) (hPcut : P ≤ cutoff) {η D c : ℝ} (hη : 0 < η) (hη1 : η ≤ 1) (hD : 0 ≤ D)
+    (hc : 0 ≤ c) (hKorder : K ≤ n + 1) (hmargin : D * (K : ℝ) + 5 ≤ (D + 5) * (n : ℝ))
+    (hscale : η * Real.log P ≤ c * (n : ℝ)) (hcexp : c * Real.exp 1 ≤ Real.exp (-(D + 5)))
+    (hηratio : 4 * η ≤ Real.exp (-(D + 5))) (hm : Nat.ceil (Real.log primePowerEulerBound) ≤ n + 1)
+    (s : ℂ) (hs : s.re = 1 + η)
     (hfull :
       Real.exp (-(D * (K : ℝ))) / 2 ≤
         (η ^ (n + 1) / (n.factorial : ℝ)) *
@@ -1486,18 +1460,15 @@ theorem finite_high_prime_sum_norm_ge_of_detector_signal {N : ℕ} [NeZero N]
                 (fun k : ℕ ↦ χ (k : ZMod N) * (ArithmeticFunction.vonMangoldt k : ℂ)))
               s p‖ := by
   have hprime :=
-    finite_vonMangoldt_prime_sum_norm_ge_of_detector_signal (σ := 1 + η) χ hη.le
-      (by linarith only [hη]) hD n K cutoff hKorder hηratio hm s hs hfull
-  exact
-    finite_high_prime_sum_norm_ge_of_low_prime_removal χ P cutoff n K hP hPcut hη hη1 hc hmargin
-      hscale hcexp s hs hprime
+    primeSum_ge_detector (σ := 1 + η) χ hη.le (by linarith only [hη]) hD n K cutoff hKorder hηratio
+      hm s hs hfull
+  exact highPrime_ge_removed χ P cutoff n K hP hPcut hη hη1 hc hmargin hscale hcexp s hs hprime
 
 /-- A finite prime polynomial with logarithmic coefficient power `r + 1` is differentiable in
 height, and its derivative is `-I` times the polynomial with coefficient power `r + 2`. The proof
 represents the polynomial as a finite exponential sum and differentiates term by term. This
 identity pairs the function and derivative energies required by the mesh sampling estimate. -/
-theorem finite_prime_log_power_exponential_sum_hasDerivAt {s : Finset ℕ} (r : ℕ) (σ t : ℝ)
-    (χ : ℕ → ℂ) :
+theorem hasDerivAt_primeSum {s : Finset ℕ} (r : ℕ) (σ t : ℝ) (χ : ℕ → ℂ) :
     HasDerivAt
       (fun v : ℝ =>
         ∑ p ∈ s,
@@ -1553,27 +1524,27 @@ spaced height mesh is bounded by its height integral and the integral for the ne
 power. Apply the scalar mesh estimate character by character and use the equality between the
 derivative norm and the next-order mean square. This is the finite-family interface for the hybrid
 large-sieve estimate. -/
-theorem primitiveCharacterPrimeLogPower_grid_mean_square_bound (q : ℕ) (hq : 1 < q) (s : Finset ℕ)
-    (r : ℕ) (σ a h : ℝ) (n : ℕ) (hh : 0 < h) :
+theorem primePoly_grid_bound (q : ℕ) (hq : 1 < q) (s : Finset ℕ) (r : ℕ) (σ a h : ℝ) (n : ℕ)
+    (hh : 0 < h) :
     (h / 2) *
         (∑ k ∈ Finset.range n,
-          primitiveCharacterPolynomialMeanSquare q hq s
+          polyMeanSquare q hq s
             (fun p =>
               (((Real.log p : ℝ) ^ (r + 1) : ℂ) * Complex.exp (-((Real.log p : ℝ) * σ : ℝ) : ℂ)) *
                 Complex.exp ((-((a + ((k : ℝ) + 1 / 2) * h) * Real.log p : ℝ) : ℝ) * Complex.I))) ≤
       (∫ t in a..(a + (n : ℝ) * h),
-          primitiveCharacterPolynomialMeanSquare q hq s
+          polyMeanSquare q hq s
             (fun p =>
               (((Real.log p : ℝ) ^ (r + 1) : ℂ) * Complex.exp (-((Real.log p : ℝ) * σ : ℝ) : ℂ)) *
                 Complex.exp ((-(t * Real.log p) : ℝ) * Complex.I))) +
         (h ^ 2 / 2) *
           (∫ t in a..(a + (n : ℝ) * h),
-            primitiveCharacterPolynomialMeanSquare q hq s
+            polyMeanSquare q hq s
               (fun p =>
                 (((Real.log p : ℝ) ^ (r + 2) : ℂ) * Complex.exp (-((Real.log p : ℝ) * σ : ℝ) : ℂ)) *
                   Complex.exp ((-(t * Real.log p) : ℝ) * Complex.I))) := by
   classical
-  let P := primitiveDirichletCharacterSet q
+  let P := primitiveCharacters q
   let A : ℕ → ℂ := fun p =>
     ((Real.log p : ℝ) ^ (r + 1) : ℂ) * Complex.exp (-((Real.log p : ℝ) * σ : ℝ) : ℂ)
   let B : ℕ → ℂ := fun p =>
@@ -1584,7 +1555,7 @@ theorem primitiveCharacterPrimeLogPower_grid_mean_square_bound (q : ℕ) (hq : 1
   let G (χ : DirichletCharacter ℂ q) (t : ℝ) : ℂ := -Complex.I * H χ t
   have hD (χ : DirichletCharacter ℂ q) (t : ℝ) : HasDerivAt (F χ) (G χ t) t := by
     dsimp only [F, G, H, A, B, phase]
-    exact finite_prime_log_power_exponential_sum_hasDerivAt (s := s) r σ t (fun p => χ (p : ZMod q))
+    exact hasDerivAt_primeSum (s := s) r σ t (fun p => χ (p : ZMod q))
   have hnext (χ : DirichletCharacter ℂ q) (t : ℝ) :
     HasDerivAt (H χ)
       (-Complex.I *
@@ -1594,9 +1565,7 @@ theorem primitiveCharacterPrimeLogPower_grid_mean_square_bound (q : ℕ) (hq : 1
             χ (p : ZMod q)))
       t := by
     dsimp only [H, B, phase]
-    exact
-      finite_prime_log_power_exponential_sum_hasDerivAt (s := s) (r + 1) σ t
-        (fun p => χ (p : ZMod q))
+    exact hasDerivAt_primeSum (s := s) (r + 1) σ t (fun p => χ (p : ZMod q))
   have hFc : ∀ χ ∈ P, Continuous (F χ) := by
     intro χ hχ
     apply continuous_iff_continuousAt.mpr
@@ -1615,37 +1584,30 @@ theorem primitiveCharacterPrimeLogPower_grid_mean_square_bound (q : ℕ) (hq : 1
     PseudoPrime.Analysis.uniform_grid_sum_norm_sq_le_integrals (s := P) (a := a) (h := h) (n := n)
       hh hFc hGc (fun χ hχ t => hD χ t)
   have hmeanF (t : ℝ) :
-    primitiveCharacterPolynomialMeanSquare q hq s (fun p => A p * phase t p) =
-      ∑ χ ∈ P, ‖F χ t‖ ^ 2 := by
-    simp only [primitiveCharacterPolynomialMeanSquare, Complex.normSq_eq_norm_sq, P, F, A, phase]
+    polyMeanSquare q hq s (fun p => A p * phase t p) = ∑ χ ∈ P, ‖F χ t‖ ^ 2 := by
+    simp only [polyMeanSquare, Complex.normSq_eq_norm_sq, P, F, A, phase]
   have hmeanH (t : ℝ) :
-    primitiveCharacterPolynomialMeanSquare q hq s (fun p => B p * phase t p) =
-      ∑ χ ∈ P, ‖H χ t‖ ^ 2 := by
-    simp only [primitiveCharacterPolynomialMeanSquare, Complex.normSq_eq_norm_sq, P, H, B, phase]
+    polyMeanSquare q hq s (fun p => B p * phase t p) = ∑ χ ∈ P, ‖H χ t‖ ^ 2 := by
+    simp only [polyMeanSquare, Complex.normSq_eq_norm_sq, P, H, B, phase]
   have hsample :
     (∑ k ∈ Finset.range n, ∑ χ ∈ P, ‖F χ (a + ((k : ℝ) + 1 / 2) * h)‖ ^ 2) =
       ∑ k ∈ Finset.range n,
-        primitiveCharacterPolynomialMeanSquare q hq s
-          (fun p => A p * phase (a + ((k : ℝ) + 1 / 2) * h) p) := by
+        polyMeanSquare q hq s (fun p => A p * phase (a + ((k : ℝ) + 1 / 2) * h) p) := by
     apply Finset.sum_congr rfl
     intro k hk
     rw [hmeanF]
   have hintF :
     (∫ t in a..(a + (n : ℝ) * h), ∑ χ ∈ P, ‖F χ t‖ ^ 2) =
-      (∫ t in a..(a + (n : ℝ) * h),
-        primitiveCharacterPolynomialMeanSquare q hq s (fun p => A p * phase t p)) := by
+      (∫ t in a..(a + (n : ℝ) * h), polyMeanSquare q hq s (fun p => A p * phase t p)) := by
     apply intervalIntegral.integral_congr
     intro t ht
     exact (hmeanF t).symm
-  have hEqG (t : ℝ) :
-    primitiveCharacterPolynomialMeanSquare q hq s (fun p => B p * phase t p) =
-      ∑ χ ∈ P, ‖G χ t‖ ^ 2 := by
+  have hEqG (t : ℝ) : polyMeanSquare q hq s (fun p => B p * phase t p) = ∑ χ ∈ P, ‖G χ t‖ ^ 2 := by
     rw [hmeanH]
     simp only [G, norm_mul, norm_neg, Complex.norm_I, one_mul]
   have hintG :
     (∫ t in a..(a + (n : ℝ) * h), ∑ χ ∈ P, ‖G χ t‖ ^ 2) =
-      (∫ t in a..(a + (n : ℝ) * h),
-        primitiveCharacterPolynomialMeanSquare q hq s (fun p => B p * phase t p)) := by
+      (∫ t in a..(a + (n : ℝ) * h), polyMeanSquare q hq s (fun p => B p * phase t p)) := by
     apply intervalIntegral.integral_congr
     intro t ht
     exact (hEqG t).symm
@@ -1656,14 +1618,13 @@ theorem primitiveCharacterPrimeLogPower_grid_mean_square_bound (q : ℕ) (hq : 1
 Dirichlet polynomial is continuous in height. Expand the mean square as a finite sum of squared
 norms, and use differentiability of each finite exponential sum to establish continuity. This
 justifies interval integration and subinterval comparison in the hybrid connection. -/
-theorem primitiveCharacterPolynomialMeanSquare_phase_continuous {q : ℕ} (hq : 1 < q) (s : Finset ℕ)
-    (a : ℕ → ℂ) :
+theorem continuous_polyEnergy {q : ℕ} (hq : 1 < q) (s : Finset ℕ) (a : ℕ → ℂ) :
     Continuous
       (fun t : ℝ =>
-        primitiveCharacterPolynomialMeanSquare q hq s
+        polyMeanSquare q hq s
           (fun p => a p * Complex.exp ((-(t * Real.log p) : ℝ) * Complex.I))) := by
   classical
-  let P := primitiveDirichletCharacterSet q
+  let P := primitiveCharacters q
   let γ : ℕ → ℝ := fun p => -Real.log p
   let F (χ : DirichletCharacter ℂ q) (t : ℝ) :=
     PseudoPrime.Analysis.ExponentialMeanSquare.exponentialSum s γ (fun p => a p * χ (p : ZMod q)) t
@@ -1694,10 +1655,9 @@ theorem primitiveCharacterPolynomialMeanSquare_phase_continuous {q : ℕ} (hq : 
     rw [hphase]
     ring
   have hmean (t : ℝ) :
-    primitiveCharacterPolynomialMeanSquare q hq s
-        (fun p => a p * Complex.exp ((-(t * Real.log p) : ℝ) * Complex.I)) =
+    polyMeanSquare q hq s (fun p => a p * Complex.exp ((-(t * Real.log p) : ℝ) * Complex.I)) =
       ∑ χ ∈ P, ‖F χ t‖ ^ 2 := by
-    simp only [primitiveCharacterPolynomialMeanSquare, Complex.normSq_eq_norm_sq, P]
+    simp only [polyMeanSquare, Complex.normSq_eq_norm_sq, P]
     apply Finset.sum_congr rfl
     intro χ hχ
     rw [hpoly]
@@ -1707,8 +1667,7 @@ theorem primitiveCharacterPolynomialMeanSquare_phase_continuous {q : ℕ} (hq : 
     exact (continuous_norm.comp (hFc χ)).pow 2
   have hEq :
     (fun t : ℝ =>
-        primitiveCharacterPolynomialMeanSquare q hq s
-          (fun p => a p * Complex.exp ((-(t * Real.log p) : ℝ) * Complex.I))) =
+        polyMeanSquare q hq s (fun p => a p * Complex.exp ((-(t * Real.log p) : ℝ) * Complex.I))) =
       (fun t => ∑ χ ∈ P, ‖F χ t‖ ^ 2) := by
     funext t
     exact hmean t
@@ -1725,13 +1684,11 @@ every prime factor exceed `Z`, and `R^4 T ≤ p` absorbs the height term.
 Role: supplies the higher-derivative prime-polynomial estimate needed to separate prime terms from
 higher prime powers in the zero-detection polynomial.
 -/
-theorem primitiveCharacterPrimeLogPowerMeanSquare_preSifted_hybrid_R_squared (R : ℕ) (hR : 2 ≤ R)
-    (T : ℝ) (hT : 1 ≤ T) (hTupper : T ≤ 2 * R) (r : ℕ) (σ : ℝ) (s : Finset ℕ)
-    (hprime : ∀ p ∈ s, Nat.Prime p) (hlower : ∀ p ∈ s, R ^ 6 ≤ p) :
+theorem primePoly_preSifted (R : ℕ) (hR : 2 ≤ R) (T : ℝ) (hT : 1 ≤ T) (hTupper : T ≤ 2 * R) (r : ℕ)
+    (σ : ℝ) (s : Finset ℕ) (hprime : ∀ p ∈ s, Nat.Prime p) (hlower : ∀ p ∈ s, R ^ 6 ≤ p) :
     (∑ q ∈ ((Finset.Ioc 1 (R ^ 2)).attach.filter fun q => q.val ≤ R),
         ∫ t in Set.Icc (-T) T,
-          primitiveCharacterPolynomialMeanSquare q.val
-            (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+          polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
             (fun p =>
               (((Real.log p : ℝ) ^ (r + 1) : ℂ) * Complex.exp (-((Real.log p : ℝ) * σ : ℝ) : ℂ)) *
                 Complex.exp ((-(t * Real.log p) : ℝ) * Complex.I)) ∂MeasureTheory.volume) ≤
@@ -1754,8 +1711,7 @@ theorem primitiveCharacterPrimeLogPowerMeanSquare_preSifted_hybrid_R_squared (R 
   have hpos : ∀ p ∈ s, 0 < p := by
     intro p hp
     exact (hprime p hp).pos
-  have hhybrid :=
-    primitiveCharacterFamilyMeanSquare_preSifted_hybrid_R_squared R hR T hT s hpos a hrough
+  have hhybrid := hybridFamily_Rsq R hR T hT s hpos a hrough
   have hRreal : (2 : ℝ) ≤ R := by exact_mod_cast hR
   have hR4T : (R : ℝ) ^ 4 * T ≤ (R : ℝ) ^ 6 := by
     calc
@@ -1786,8 +1742,7 @@ theorem primitiveCharacterPrimeLogPowerMeanSquare_preSifted_hybrid_R_squared (R 
   change
     (∑ q ∈ ((Finset.Ioc 1 (R ^ 2)).attach.filter fun q => q.val ≤ R),
         ∫ t in Set.Icc (-T) T,
-          primitiveCharacterPolynomialMeanSquare q.val
-            (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+          polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
             (fun p =>
               a p * Complex.exp ((-(t * Real.log p) : ℝ) * Complex.I)) ∂MeasureTheory.volume) ≤
       (4096 : ℝ) / Real.log R * ∑ p ∈ s, ‖a p‖ ^ 2 * p
@@ -1801,27 +1756,26 @@ theorem primitiveCharacterPrimeLogPowerMeanSquare_preSifted_hybrid_R_squared (R 
 subinterval integral to a common height interval. Nonnegativity and continuity justify the
 interval comparison for both the polynomial and its derivative. This prepares the family sum for
 the pre-sifted hybrid estimate. -/
-theorem primitiveCharacterPrimeLogPower_family_grid_mean_square_bound (α : Type) (Q : Finset α)
-    (qmod : α → { q : ℕ // 1 < q }) (s : Finset ℕ) (r : ℕ) (σ a h T : ℝ) (n : ℕ) (hh : 0 < h)
-    (ha : -T ≤ a) (hb : a + (n : ℝ) * h ≤ T) :
+theorem primeFamily_grid_le (α : Type) (Q : Finset α) (qmod : α → { q : ℕ // 1 < q }) (s : Finset ℕ)
+    (r : ℕ) (σ a h T : ℝ) (n : ℕ) (hh : 0 < h) (ha : -T ≤ a) (hb : a + (n : ℝ) * h ≤ T) :
     (h / 2) *
         (∑ q ∈ Q,
           ∑ k ∈ Finset.range n,
-            primitiveCharacterPolynomialMeanSquare (qmod q).val (qmod q).property s
+            polyMeanSquare (qmod q).val (qmod q).property s
               (fun p =>
                 (((Real.log p : ℝ) ^ (r + 1) : ℂ) * Complex.exp (-((Real.log p : ℝ) * σ : ℝ) : ℂ)) *
                   Complex.exp
                     ((-((a + ((k : ℝ) + 1 / 2) * h) * Real.log p : ℝ) : ℝ) * Complex.I))) ≤
       (∑ q ∈ Q,
           ∫ t in Set.Icc (-T) T,
-            primitiveCharacterPolynomialMeanSquare (qmod q).val (qmod q).property s
+            polyMeanSquare (qmod q).val (qmod q).property s
               (fun p =>
                 (((Real.log p : ℝ) ^ (r + 1) : ℂ) * Complex.exp (-((Real.log p : ℝ) * σ : ℝ) : ℂ)) *
                   Complex.exp ((-(t * Real.log p) : ℝ) * Complex.I)) ∂MeasureTheory.volume) +
         (h ^ 2 / 2) *
           (∑ q ∈ Q,
             ∫ t in Set.Icc (-T) T,
-              primitiveCharacterPolynomialMeanSquare (qmod q).val (qmod q).property s
+              polyMeanSquare (qmod q).val (qmod q).property s
                 (fun p =>
                   (((Real.log p : ℝ) ^ (r + 2) : ℂ) *
                       Complex.exp (-((Real.log p : ℝ) * σ : ℝ) : ℂ)) *
@@ -1836,7 +1790,7 @@ theorem primitiveCharacterPrimeLogPower_family_grid_mean_square_bound (α : Type
         ∑ q ∈ Q,
           (h / 2) *
             (∑ k ∈ Finset.range n,
-              primitiveCharacterPolynomialMeanSquare (qmod q).val (qmod q).property s
+              polyMeanSquare (qmod q).val (qmod q).property s
                 (fun p =>
                   A p *
                     Complex.exp
@@ -1845,50 +1799,48 @@ theorem primitiveCharacterPrimeLogPower_family_grid_mean_square_bound (α : Type
     _ ≤
         ∑ q ∈ Q,
           ((∫ t in a..(a + (n : ℝ) * h),
-              primitiveCharacterPolynomialMeanSquare (qmod q).val (qmod q).property s
+              polyMeanSquare (qmod q).val (qmod q).property s
                 (fun p => A p * Complex.exp ((-(t * Real.log p) : ℝ) * Complex.I))) +
             (h ^ 2 / 2) *
               (∫ t in a..(a + (n : ℝ) * h),
-                primitiveCharacterPolynomialMeanSquare (qmod q).val (qmod q).property s
+                polyMeanSquare (qmod q).val (qmod q).property s
                   (fun p => B p * Complex.exp ((-(t * Real.log p) : ℝ) * Complex.I)))) :=
       by
       apply Finset.sum_le_sum
       intro q hq
-      simpa only [A, B] using
-        primitiveCharacterPrimeLogPower_grid_mean_square_bound (qmod q).val (qmod q).property s r σ
-          a h n hh
+      simpa only [A, B] using primePoly_grid_bound (qmod q).val (qmod q).property s r σ a h n hh
     _ ≤
         ∑ q ∈ Q,
           ((∫ t in Set.Icc (-T) T,
-              primitiveCharacterPolynomialMeanSquare (qmod q).val (qmod q).property s
+              polyMeanSquare (qmod q).val (qmod q).property s
                 (fun p =>
                   A p * Complex.exp ((-(t * Real.log p) : ℝ) * Complex.I)) ∂MeasureTheory.volume) +
             (h ^ 2 / 2) *
               (∫ t in Set.Icc (-T) T,
-                primitiveCharacterPolynomialMeanSquare (qmod q).val (qmod q).property s
+                polyMeanSquare (qmod q).val (qmod q).property s
                   (fun p =>
                     B p *
                       Complex.exp ((-(t * Real.log p) : ℝ) * Complex.I)) ∂MeasureTheory.volume)) :=
       by
       apply Finset.sum_le_sum
       intro q hq
-      have hAcont := primitiveCharacterPolynomialMeanSquare_phase_continuous (qmod q).property s A
+      have hAcont := continuous_polyEnergy (qmod q).property s A
       have hAnonneg :
         ∀ t : ℝ,
           0 ≤
-            primitiveCharacterPolynomialMeanSquare (qmod q).val (qmod q).property s
+            polyMeanSquare (qmod q).val (qmod q).property s
               (fun p => A p * Complex.exp ((-(t * Real.log p) : ℝ) * Complex.I)) :=
         fun t =>
-        primitiveCharacterPolynomialMeanSquare_nonneg (qmod q).property s
+        polyMeanSquare_nonneg (qmod q).property s
           (fun p => A p * Complex.exp ((-(t * Real.log p) : ℝ) * Complex.I))
-      have hBcont := primitiveCharacterPolynomialMeanSquare_phase_continuous (qmod q).property s B
+      have hBcont := continuous_polyEnergy (qmod q).property s B
       have hBnonneg :
         ∀ t : ℝ,
           0 ≤
-            primitiveCharacterPolynomialMeanSquare (qmod q).val (qmod q).property s
+            polyMeanSquare (qmod q).val (qmod q).property s
               (fun p => B p * Complex.exp ((-(t * Real.log p) : ℝ) * Complex.I)) :=
         fun t =>
-        primitiveCharacterPolynomialMeanSquare_nonneg (qmod q).property s
+        polyMeanSquare_nonneg (qmod q).property s
           (fun p => B p * Complex.exp ((-(t * Real.log p) : ℝ) * Complex.I))
       have hnh : 0 ≤ (n : ℝ) * h := mul_nonneg (Nat.cast_nonneg _) hh.le
       have hEnd : a ≤ a + (n : ℝ) * h := le_add_of_nonneg_right hnh
@@ -1902,15 +1854,13 @@ theorem primitiveCharacterPrimeLogPower_family_grid_mean_square_bound (α : Type
 /-- Combine the finite-family mesh estimate with the pre-sifted hybrid bounds at derivative
 orders `r` and `r + 1`. The resulting second coefficient energy is explicit so the height-mesh
 scale can be checked against the prime support before it is absorbed. -/
-theorem primitiveCharacterPrimeLogPower_grid_hybrid_energy_bound (R : ℕ) (hR : 2 ≤ R) (T : ℝ)
-    (hT : 1 ≤ T) (hTupper : T ≤ 2 * R) (r : ℕ) (σ : ℝ) (s : Finset ℕ)
-    (hprime : ∀ p ∈ s, Nat.Prime p) (hlower : ∀ p ∈ s, R ^ 6 ≤ p) (a h : ℝ) (n : ℕ) (hh : 0 < h)
-    (ha : -T ≤ a) (hb : a + (n : ℝ) * h ≤ T) :
+theorem primeGrid_energy_le (R : ℕ) (hR : 2 ≤ R) (T : ℝ) (hT : 1 ≤ T) (hTupper : T ≤ 2 * R) (r : ℕ)
+    (σ : ℝ) (s : Finset ℕ) (hprime : ∀ p ∈ s, Nat.Prime p) (hlower : ∀ p ∈ s, R ^ 6 ≤ p) (a h : ℝ)
+    (n : ℕ) (hh : 0 < h) (ha : -T ≤ a) (hb : a + (n : ℝ) * h ≤ T) :
     (h / 2) *
         (∑ q ∈ ((Finset.Ioc 1 (R ^ 2)).attach.filter fun q => q.val ≤ R),
           ∑ k ∈ Finset.range n,
-            primitiveCharacterPolynomialMeanSquare q.val
-              (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+            polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
               (fun p =>
                 (((Real.log p : ℝ) ^ (r + 1) : ℂ) * Complex.exp (-((Real.log p : ℝ) * σ : ℝ) : ℂ)) *
                   Complex.exp
@@ -1930,20 +1880,14 @@ theorem primitiveCharacterPrimeLogPower_grid_hybrid_energy_bound (R : ℕ) (hR :
   let qmod (q : { q : ℕ // q ∈ Finset.Ioc 1 (R ^ 2) }) : { q : ℕ // 1 < q } :=
     ⟨q.val, (Finset.mem_Ioc.mp q.property).1⟩
   have hgrid :=
-    primitiveCharacterPrimeLogPower_family_grid_mean_square_bound (α :=
-      { q : ℕ // q ∈ Finset.Ioc 1 (R ^ 2) }) Q qmod s r σ a h T n hh ha hb
-  have hhybrid :=
-    primitiveCharacterPrimeLogPowerMeanSquare_preSifted_hybrid_R_squared R hR T hT hTupper r σ s
-      hprime hlower
-  have hhybridNext :=
-    primitiveCharacterPrimeLogPowerMeanSquare_preSifted_hybrid_R_squared R hR T hT hTupper (r + 1) σ
-      s hprime hlower
+    primeFamily_grid_le (α := { q : ℕ // q ∈ Finset.Ioc 1 (R ^ 2) }) Q qmod s r σ a h T n hh ha hb
+  have hhybrid := primePoly_preSifted R hR T hT hTupper r σ s hprime hlower
+  have hhybridNext := primePoly_preSifted R hR T hT hTupper (r + 1) σ s hprime hlower
   calc
     _ ≤
         (∑ q ∈ Q,
             ∫ t in Set.Icc (-T) T,
-              primitiveCharacterPolynomialMeanSquare q.val
-                (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+              polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
                 (fun p =>
                   (((Real.log p : ℝ) ^ (r + 1) : ℂ) *
                       Complex.exp (-((Real.log p : ℝ) * σ : ℝ) : ℂ)) *
@@ -1951,8 +1895,7 @@ theorem primitiveCharacterPrimeLogPower_grid_hybrid_energy_bound (R : ℕ) (hR :
           (h ^ 2 / 2) *
             (∑ q ∈ Q,
               ∫ t in Set.Icc (-T) T,
-                primitiveCharacterPolynomialMeanSquare q.val
-                  (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+                polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
                   (fun p =>
                     (((Real.log p : ℝ) ^ (r + 2) : ℂ) *
                         Complex.exp (-((Real.log p : ℝ) * σ : ℝ) : ℂ)) *
@@ -1975,8 +1918,8 @@ theorem primitiveCharacterPrimeLogPower_grid_hybrid_energy_bound (R : ℕ) (hR :
 /-- If the prime support is bounded by `X`, the order-`r + 1` coefficient energy is at most
 `(log X)^2` times the order-`r` energy. This records the precise support dependence needed to
 control the derivative term in the mesh estimate. -/
-theorem primitiveCharacterPrimeLogPower_next_energy_le_sq_log_upper_bound (s : Finset ℕ) (r : ℕ)
-    (σ : ℝ) (X : ℕ) (hprime : ∀ p ∈ s, Nat.Prime p) (hupper : ∀ p ∈ s, p ≤ X) :
+theorem primeEnergy_next_le (s : Finset ℕ) (r : ℕ) (σ : ℝ) (X : ℕ) (hprime : ∀ p ∈ s, Nat.Prime p)
+    (hupper : ∀ p ∈ s, p ≤ X) :
     (∑ p ∈ s,
         ‖((Real.log p : ℝ) ^ (r + 2) : ℂ) * Complex.exp (-((Real.log p : ℝ) * σ : ℝ) : ℂ)‖ ^ 2 *
           p) ≤
@@ -2021,15 +1964,14 @@ theorem primitiveCharacterPrimeLogPower_next_energy_le_sq_log_upper_bound (s : F
 
 /-- Under a prime upper cutoff `X`, absorb the higher-order hybrid energy into the lower-order
 energy. The mesh loss is the explicit factor `1 + (h^2 / 2) * (log X)^2`. -/
-theorem primitiveCharacterPrimeLogPower_grid_hybrid_cutoff_bound (R : ℕ) (hR : 2 ≤ R) (T : ℝ)
-    (hT : 1 ≤ T) (hTupper : T ≤ 2 * R) (r : ℕ) (σ : ℝ) (s : Finset ℕ)
-    (hprime : ∀ p ∈ s, Nat.Prime p) (hlower : ∀ p ∈ s, R ^ 6 ≤ p) (X : ℕ) (hupper : ∀ p ∈ s, p ≤ X)
-    (a h : ℝ) (n : ℕ) (hh : 0 < h) (ha : -T ≤ a) (hb : a + (n : ℝ) * h ≤ T) :
+theorem primeGrid_cutoff_le (R : ℕ) (hR : 2 ≤ R) (T : ℝ) (hT : 1 ≤ T) (hTupper : T ≤ 2 * R) (r : ℕ)
+    (σ : ℝ) (s : Finset ℕ) (hprime : ∀ p ∈ s, Nat.Prime p) (hlower : ∀ p ∈ s, R ^ 6 ≤ p) (X : ℕ)
+    (hupper : ∀ p ∈ s, p ≤ X) (a h : ℝ) (n : ℕ) (hh : 0 < h) (ha : -T ≤ a)
+    (hb : a + (n : ℝ) * h ≤ T) :
     (h / 2) *
         (∑ q ∈ ((Finset.Ioc 1 (R ^ 2)).attach.filter fun q => q.val ≤ R),
           ∑ k ∈ Finset.range n,
-            primitiveCharacterPolynomialMeanSquare q.val
-              (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+            polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
               (fun p =>
                 (((Real.log p : ℝ) ^ (r + 1) : ℂ) * Complex.exp (-((Real.log p : ℝ) * σ : ℝ) : ℂ)) *
                   Complex.exp
@@ -2043,11 +1985,8 @@ theorem primitiveCharacterPrimeLogPower_grid_hybrid_cutoff_bound (R : ℕ) (hR :
     ((Real.log p : ℝ) ^ (r + 1) : ℂ) * Complex.exp (-((Real.log p : ℝ) * σ : ℝ) : ℂ)
   let B : ℕ → ℂ := fun p =>
     ((Real.log p : ℝ) ^ (r + 2) : ℂ) * Complex.exp (-((Real.log p : ℝ) * σ : ℝ) : ℂ)
-  have hgrid :=
-    primitiveCharacterPrimeLogPower_grid_hybrid_energy_bound R hR T hT hTupper r σ s hprime hlower a
-      h n hh ha hb
-  have henergy :=
-    primitiveCharacterPrimeLogPower_next_energy_le_sq_log_upper_bound s r σ X hprime hupper
+  have hgrid := primeGrid_energy_le R hR T hT hTupper r σ s hprime hlower a h n hh ha hb
+  have henergy := primeEnergy_next_le s r σ X hprime hupper
   have hC : 0 ≤ (4096 : ℝ) / Real.log R := by
     have hRgt : 1 < R := by omega
     positivity
@@ -2069,8 +2008,8 @@ theorem primitiveCharacterPrimeLogPower_grid_hybrid_cutoff_bound (R : ℕ) (hR :
 `log X ≤ c₁ K / η`, the derivative-energy loss is bounded by a quadratic polynomial in `K`.
 This is the scale needed to absorb the mesh loss into the exponential factor in the zero-density
 estimate. -/
-theorem mesh_cutoff_loss_le_quadratic_detector_order (η c₁ h : ℝ) (K X : ℕ) (hη : 0 < η)
-    (hc₁ : 0 ≤ c₁) (hh : 0 ≤ h) (hhη : h ≤ η / 8) (hX : 1 ≤ X) (hlogX : Real.log X ≤ c₁ * K / η) :
+theorem mesh_loss_order_le (η c₁ h : ℝ) (K X : ℕ) (hη : 0 < η) (hc₁ : 0 ≤ c₁) (hh : 0 ≤ h)
+    (hhη : h ≤ η / 8) (hX : 1 ≤ X) (hlogX : Real.log X ≤ c₁ * K / η) :
     1 + (h ^ 2 / 2) * (Real.log X) ^ 2 ≤ 1 + (c₁ * K / 8) ^ 2 / 2 := by
   have hlog0 : 0 ≤ Real.log X := Real.log_nonneg (by exact_mod_cast hX)
   have hscale : h * Real.log X ≤ c₁ * K / 8 := by
@@ -2095,16 +2034,15 @@ theorem mesh_cutoff_loss_le_quadratic_detector_order (η c₁ h : ℝ) (K X : �
 `η / 8`, replace the support-dependent derivative loss by a quadratic polynomial
 in `K`. Combine the cutoff hybrid bound with the mesh loss estimate and nonnegative
 coefficient energy. This consumes the logarithmic cutoff supplied by the zero detector. -/
-theorem primitiveCharacterPrimeLogPower_grid_hybrid_detector_order_bound (R : ℕ) (hR : 2 ≤ R)
-    (T : ℝ) (hT : 1 ≤ T) (hTupper : T ≤ 2 * R) (r : ℕ) (σ : ℝ) (s : Finset ℕ)
-    (hprime : ∀ p ∈ s, Nat.Prime p) (hlower : ∀ p ∈ s, R ^ 6 ≤ p) (X : ℕ) (hupper : ∀ p ∈ s, p ≤ X)
-    (a h : ℝ) (n : ℕ) (hh : 0 < h) (ha : -T ≤ a) (hb : a + (n : ℝ) * h ≤ T) (η c₁ : ℝ) (K : ℕ)
-    (hη : 0 < η) (hc₁ : 0 ≤ c₁) (hhη : h ≤ η / 8) (hX : 1 ≤ X) (hlogX : η * Real.log X ≤ c₁ * K) :
+theorem primeGrid_order_le (R : ℕ) (hR : 2 ≤ R) (T : ℝ) (hT : 1 ≤ T) (hTupper : T ≤ 2 * R) (r : ℕ)
+    (σ : ℝ) (s : Finset ℕ) (hprime : ∀ p ∈ s, Nat.Prime p) (hlower : ∀ p ∈ s, R ^ 6 ≤ p) (X : ℕ)
+    (hupper : ∀ p ∈ s, p ≤ X) (a h : ℝ) (n : ℕ) (hh : 0 < h) (ha : -T ≤ a)
+    (hb : a + (n : ℝ) * h ≤ T) (η c₁ : ℝ) (K : ℕ) (hη : 0 < η) (hc₁ : 0 ≤ c₁) (hhη : h ≤ η / 8)
+    (hX : 1 ≤ X) (hlogX : η * Real.log X ≤ c₁ * K) :
     (h / 2) *
         (∑ q ∈ ((Finset.Ioc 1 (R ^ 2)).attach.filter fun q => q.val ≤ R),
           ∑ k ∈ Finset.range n,
-            primitiveCharacterPolynomialMeanSquare q.val
-              (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+            polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
               (fun p =>
                 (((Real.log p : ℝ) ^ (r + 1) : ℂ) * Complex.exp (-((Real.log p : ℝ) * σ : ℝ) : ℂ)) *
                   Complex.exp
@@ -2113,11 +2051,9 @@ theorem primitiveCharacterPrimeLogPower_grid_hybrid_detector_order_bound (R : �
         ∑ p ∈ s,
           ‖((Real.log p : ℝ) ^ (r + 1) : ℂ) * Complex.exp (-((Real.log p : ℝ) * σ : ℝ) : ℂ)‖ ^ 2 *
             p := by
-  have hgrid :=
-    primitiveCharacterPrimeLogPower_grid_hybrid_cutoff_bound R hR T hT hTupper r σ s hprime hlower X
-      hupper a h n hh ha hb
+  have hgrid := primeGrid_cutoff_le R hR T hT hTupper r σ s hprime hlower X hupper a h n hh ha hb
   have hlog : Real.log X ≤ c₁ * K / η := (le_div_iff₀ hη).mpr (by simpa only [mul_comm] using hlogX)
-  have hfactor := mesh_cutoff_loss_le_quadratic_detector_order η c₁ h K X hη hc₁ hh.le hhη hX hlog
+  have hfactor := mesh_loss_order_le η c₁ h K X hη hc₁ hh.le hhη hX hlog
   have hC : 0 ≤ (4096 : ℝ) / Real.log R :=
     div_nonneg (by norm_num only)
       (Real.log_nonneg (by exact_mod_cast ((by norm_num only : 1 ≤ 2).trans hR)))
@@ -2133,15 +2069,13 @@ theorem primitiveCharacterPrimeLogPower_grid_hybrid_detector_order_bound (R : �
 rate-`2η` von Mangoldt moment normalized by `η^(m+1)/m!` is bounded by
 `3(log 4 + 4) exp(-η log N)/2`. Cancel the powers of two in the Chernoff bound.
 This is the moment normalization used by squared prime coefficients. -/
-theorem normalized_doubled_rate_vonMangoldt_tail_le (η : ℝ) (m N : ℕ) (hη : 0 < η)
-    (hηsmall : 2 * η ≤ 1) (hN : 1 ≤ N) (hm : (m : ℝ) ≤ (1 + 2 * η) * Real.log N) :
+theorem doubleRate_tail_bound (η : ℝ) (m N : ℕ) (hη : 0 < η) (hηsmall : 2 * η ≤ 1) (hN : 1 ≤ N)
+    (hm : (m : ℝ) ≤ (1 + 2 * η) * Real.log N) :
     η ^ (m + 1) / (m.factorial : ℝ) *
         (∑' k : { k // k ∉ Finset.range (N + 1) },
           ArithmeticFunction.vonMangoldt k.val * (Real.log k.val) ^ m / (k.val : ℝ) ^ (1 + 2 * η)) ≤
       (3 / 2 : ℝ) * (Real.log 4 + 4) * Real.exp (-(η * Real.log N)) := by
-  have hbase :=
-    normalized_vonMangoldt_log_weight_tail_le_chernoff (2 * η) m N (mul_pos (by norm_num only) hη)
-      hηsmall hN hm
+  have hbase := scaledTail_chernoff (2 * η) m N (mul_pos (by norm_num only) hη) hηsmall hN hm
   rw [mul_pow, show -((2 * η) * Real.log N) / 2 = -(η * Real.log N) by ring] at hbase
   apply (mul_le_mul_iff_left₀ (pow_pos (by norm_num only : (0 : ℝ) < 2) (m + 1))).mp
   calc
@@ -2159,7 +2093,7 @@ theorem normalized_doubled_rate_vonMangoldt_tail_le (η : ℝ) (m N : ℕ) (hη 
 /-- For a finite prime support above `N` and positive damping, dominate its
 logarithmic moment by the von Mangoldt tail. Replace `Λ(p)` by `log p` and embed
 the finite sum into the summable nonnegative tail. This transfers the Abel bound to primes. -/
-theorem finite_prime_log_moment_le_vonMangoldt_tail (η : ℝ) (m N : ℕ) (s : Finset ℕ) (hη : 0 < η)
+theorem primeMoment_tail_le (η : ℝ) (m N : ℕ) (s : Finset ℕ) (hη : 0 < η)
     (hprime : ∀ p ∈ s, Nat.Prime p) (habove : ∀ p ∈ s, N < p) :
     (∑ p ∈ s, (Real.log p) ^ (m + 1) / (p : ℝ) ^ (1 + 2 * η)) ≤
       ∑' k : { k // k ∉ Finset.range (N + 1) },
@@ -2169,7 +2103,7 @@ theorem finite_prime_log_moment_le_vonMangoldt_tail (η : ℝ) (m N : ℕ) (s : 
   let f : ℕ → ℝ := fun k ↦
     ArithmeticFunction.vonMangoldt k * (Real.log k) ^ m / (k : ℝ) ^ (1 + 2 * η)
   have hsum :=
-    (summable_vonMangoldt_log_weight (show 1 < 1 + 2 * η by linarith only [hη]) m).subtype
+    (summable_mangoldt_log (show 1 < 1 + 2 * η by linarith only [hη]) m).subtype
       (fun k ↦ k ∉ Finset.range (N + 1))
   have hsub : ∀ p ∈ s, p ∉ Finset.range (N + 1) := by
     intro p hp
@@ -2191,20 +2125,20 @@ theorem finite_prime_log_moment_le_vonMangoldt_tail (η : ℝ) (m N : ℕ) (s : 
 /-- For finite prime support above a decreasing-range cutoff, normalize its
 logarithmic moment by `η^(m+1)/m!` and apply the doubled-rate von Mangoldt estimate.
 The resulting bound contains no inverse-rate factor and controls the prime energy moment. -/
-theorem normalized_finite_prime_log_moment_le (η : ℝ) (m N : ℕ) (s : Finset ℕ) (hη : 0 < η)
-    (hηsmall : 2 * η ≤ 1) (hN : 1 ≤ N) (hm : (m : ℝ) ≤ (1 + 2 * η) * Real.log N)
-    (hprime : ∀ p ∈ s, Nat.Prime p) (habove : ∀ p ∈ s, N < p) :
+theorem primeMoment_scaled_le (η : ℝ) (m N : ℕ) (s : Finset ℕ) (hη : 0 < η) (hηsmall : 2 * η ≤ 1)
+    (hN : 1 ≤ N) (hm : (m : ℝ) ≤ (1 + 2 * η) * Real.log N) (hprime : ∀ p ∈ s, Nat.Prime p)
+    (habove : ∀ p ∈ s, N < p) :
     η ^ (m + 1) / (m.factorial : ℝ) * (∑ p ∈ s, (Real.log p) ^ (m + 1) / (p : ℝ) ^ (1 + 2 * η)) ≤
       (3 / 2 : ℝ) * (Real.log 4 + 4) * Real.exp (-(η * Real.log N)) := by
   have hfinite :=
-    mul_le_mul_of_nonneg_left (finite_prime_log_moment_le_vonMangoldt_tail η m N s hη hprime habove)
+    mul_le_mul_of_nonneg_left (primeMoment_tail_le η m N s hη hprime habove)
       (div_nonneg (pow_nonneg hη.le (m + 1)) (Nat.cast_nonneg m.factorial))
-  exact hfinite.trans (normalized_doubled_rate_vonMangoldt_tail_le η m N hη hηsmall hN hm)
+  exact hfinite.trans (doubleRate_tail_bound η m N hη hηsmall hN hm)
 
 /-- For a positive prime index, rewrite the weighted square of its complex
 logarithmic coefficient as a real damped moment. Evaluate the exponential norm and
 combine the real powers. This identifies the exact coefficient energy in the hybrid bound. -/
-theorem prime_log_power_energy_term_eq (η : ℝ) (n p : ℕ) (hp : 0 < p) :
+theorem primeEnergy_term_eq (η : ℝ) (n p : ℕ) (hp : 0 < p) :
     ‖(((Real.log p) ^ (n + 1) : ℝ) : ℂ) * Complex.exp (-((Real.log p * (1 + η) : ℝ) : ℂ))‖ ^ 2 * p =
       (Real.log p) ^ (2 * n + 2) / (p : ℝ) ^ (1 + 2 * η) := by
   have hpR : (0 : ℝ) < p := by exact_mod_cast hp
@@ -2233,7 +2167,7 @@ theorem prime_log_power_energy_term_eq (η : ℝ) (n p : ℕ) (hp : 0 < p) :
 /-- For any rate and natural order, the squared detector normalization equals
 the moment normalization times the factorial ratio `(2n+1)!/(n!)²`. Cancel the nonzero
 factorial and identify the natural exponents. This preserves factorial gains in the energy. -/
-theorem factorial_normalization_square_eq (η : ℝ) (n : ℕ) :
+theorem factorial_norm_sq_eq (η : ℝ) (n : ℕ) :
     ((2 * n + 1).factorial : ℝ) / (n.factorial : ℝ) ^ 2 *
         (η ^ ((2 * n + 1) + 1) / ((2 * n + 1).factorial : ℝ)) =
       (η ^ (n + 1) / (n.factorial : ℝ)) ^ 2 := by
@@ -2247,10 +2181,9 @@ theorem factorial_normalization_square_eq (η : ℝ) (n : ℕ) :
 bound its squared-normalized coefficient energy by the factorial ratio times the
 exponentially damped Abel constant. Rewrite each coefficient and use the prime moment bound.
 This connects Euler-detector normalization to the hybrid coefficient energy. -/
-theorem normalized_prime_coefficient_energy_le_factorial_ratio (η : ℝ) (n N : ℕ) (s : Finset ℕ)
-    (hη : 0 < η) (hηsmall : 2 * η ≤ 1) (hN : 1 ≤ N)
-    (hn : ((2 * n + 1 : ℕ) : ℝ) ≤ (1 + 2 * η) * Real.log N) (hprime : ∀ p ∈ s, Nat.Prime p)
-    (habove : ∀ p ∈ s, N < p) :
+theorem primeEnergy_factorial (η : ℝ) (n N : ℕ) (s : Finset ℕ) (hη : 0 < η) (hηsmall : 2 * η ≤ 1)
+    (hN : 1 ≤ N) (hn : ((2 * n + 1 : ℕ) : ℝ) ≤ (1 + 2 * η) * Real.log N)
+    (hprime : ∀ p ∈ s, Nat.Prime p) (habove : ∀ p ∈ s, N < p) :
     (η ^ (n + 1) / (n.factorial : ℝ)) ^ 2 *
         (∑ p ∈ s,
           ‖(((Real.log p) ^ (n + 1) : ℝ) : ℂ) * Complex.exp (-((Real.log p * (1 + η) : ℝ) : ℂ))‖ ^
@@ -2265,18 +2198,17 @@ theorem normalized_prime_coefficient_energy_le_factorial_ratio (η : ℝ) (n N :
       ∑ p ∈ s, (Real.log p) ^ ((2 * n + 1) + 1) / (p : ℝ) ^ (1 + 2 * η) := by
     apply Finset.sum_congr rfl
     intro p hp
-    simpa only [Nat.add_assoc, Nat.reduceAdd] using
-      prime_log_power_energy_term_eq η n p (hprime p hp).pos
-  rw [heq, ← factorial_normalization_square_eq η n, mul_assoc]
+    simpa only [Nat.add_assoc, Nat.reduceAdd] using primeEnergy_term_eq η n p (hprime p hp).pos
+  rw [heq, ← factorial_norm_sq_eq η n, mul_assoc]
   exact
     mul_le_mul_of_nonneg_left
-      (normalized_finite_prime_log_moment_le η (2 * n + 1) N s hη hηsmall hN hn hprime habove)
+      (primeMoment_scaled_le η (2 * n + 1) N s hη hηsmall hN hn hprime habove)
       (div_nonneg (Nat.cast_nonneg _) (sq_nonneg _))
 
 /-- For natural `n`, bound `(2n+1)!/(n!)²` by `(n+1) 2^(2n+1)`.
 Express the ratio using a binomial coefficient and apply the complete binomial sum bound.
 This makes the coefficient energy at most exponential in the detector order. -/
-theorem factorial_ratio_le_order_exponential (n : ℕ) :
+theorem factorialRatio_exp_le (n : ℕ) :
     ((2 * n + 1).factorial : ℝ) / (n.factorial : ℝ) ^ 2 ≤ (n + 1 : ℝ) * (2 : ℝ) ^ (2 * n + 1) := by
   have hn : n ≤ 2 * n + 1 := by
     calc
@@ -2305,10 +2237,9 @@ theorem factorial_ratio_le_order_exponential (n : ℕ) :
 /-- Under the finite-prime moment hypotheses, bound normalized coefficient
 energy by `(n+1) 2^(2n+1)` times the damped Abel constant. Combine the factorial-ratio
 estimate and its binomial bound. This supplies an explicit order loss without `1/η`. -/
-theorem normalized_prime_coefficient_energy_le_exponential (η : ℝ) (n N : ℕ) (s : Finset ℕ)
-    (hη : 0 < η) (hηsmall : 2 * η ≤ 1) (hN : 1 ≤ N)
-    (hn : ((2 * n + 1 : ℕ) : ℝ) ≤ (1 + 2 * η) * Real.log N) (hprime : ∀ p ∈ s, Nat.Prime p)
-    (habove : ∀ p ∈ s, N < p) :
+theorem primeEnergy_exp_le (η : ℝ) (n N : ℕ) (s : Finset ℕ) (hη : 0 < η) (hηsmall : 2 * η ≤ 1)
+    (hN : 1 ≤ N) (hn : ((2 * n + 1 : ℕ) : ℝ) ≤ (1 + 2 * η) * Real.log N)
+    (hprime : ∀ p ∈ s, Nat.Prime p) (habove : ∀ p ∈ s, N < p) :
     (η ^ (n + 1) / (n.factorial : ℝ)) ^ 2 *
         (∑ p ∈ s,
           ‖(((Real.log p) ^ (n + 1) : ℝ) : ℂ) * Complex.exp (-((Real.log p * (1 + η) : ℝ) : ℂ))‖ ^
@@ -2316,32 +2247,29 @@ theorem normalized_prime_coefficient_energy_le_exponential (η : ℝ) (n N : ℕ
             p) ≤
       ((n + 1 : ℝ) * (2 : ℝ) ^ (2 * n + 1)) *
         ((3 / 2 : ℝ) * (Real.log 4 + 4) * Real.exp (-(η * Real.log N))) := by
-  have hbase :=
-    normalized_prime_coefficient_energy_le_factorial_ratio η n N s hη hηsmall hN hn hprime habove
+  have hbase := primeEnergy_factorial η n N s hη hηsmall hN hn hprime habove
   have hnonneg : 0 ≤ (3 / 2 : ℝ) * (Real.log 4 + 4) * Real.exp (-(η * Real.log N)) :=
     mul_nonneg
       (mul_nonneg (by norm_num only)
         (add_nonneg (Real.log_nonneg (by norm_num only)) (by norm_num only)))
       (Real.exp_pos _).le
-  exact hbase.trans (mul_le_mul_of_nonneg_right (factorial_ratio_le_order_exponential n) hnonneg)
+  exact hbase.trans (mul_le_mul_of_nonneg_right (factorialRatio_exp_le n) hnonneg)
 
 /-- For a prime-supported height grid at abscissa `1+η`, combine the scaled
 logarithmic cutoff and a decreasing-range lower cutoff with squared detector normalization.
 The resulting hybrid grid bound has an explicit polynomial mesh loss and exponential order
 loss, and no inverse-rate prefactor. Apply the grid bound and normalized coefficient energy.
 This supplies the mean-square side of the normalized zero-incidence estimate. -/
-theorem primitiveCharacterPrimeLogPower_grid_hybrid_normalized_detector_order_bound (R : ℕ)
-    (hR : 2 ≤ R) (T : ℝ) (hT : 1 ≤ T) (hTupper : T ≤ 2 * R) (r : ℕ) (s : Finset ℕ)
-    (hprime : ∀ p ∈ s, Nat.Prime p) (hlower : ∀ p ∈ s, R ^ 6 ≤ p) (X : ℕ) (hupper : ∀ p ∈ s, p ≤ X)
-    (a h : ℝ) (n : ℕ) (hh : 0 < h) (ha : -T ≤ a) (hb : a + (n : ℝ) * h ≤ T) (η c₁ : ℝ) (K : ℕ)
-    (hη : 0 < η) (hc₁ : 0 ≤ c₁) (hhη : h ≤ η / 8) (hX : 1 ≤ X) (hlogX : η * Real.log X ≤ c₁ * K)
-    (N : ℕ) (hN : 1 ≤ N) (hηsmall : 2 * η ≤ 1)
+theorem primeGrid_scaledOrder (R : ℕ) (hR : 2 ≤ R) (T : ℝ) (hT : 1 ≤ T) (hTupper : T ≤ 2 * R)
+    (r : ℕ) (s : Finset ℕ) (hprime : ∀ p ∈ s, Nat.Prime p) (hlower : ∀ p ∈ s, R ^ 6 ≤ p) (X : ℕ)
+    (hupper : ∀ p ∈ s, p ≤ X) (a h : ℝ) (n : ℕ) (hh : 0 < h) (ha : -T ≤ a)
+    (hb : a + (n : ℝ) * h ≤ T) (η c₁ : ℝ) (K : ℕ) (hη : 0 < η) (hc₁ : 0 ≤ c₁) (hhη : h ≤ η / 8)
+    (hX : 1 ≤ X) (hlogX : η * Real.log X ≤ c₁ * K) (N : ℕ) (hN : 1 ≤ N) (hηsmall : 2 * η ≤ 1)
     (hmoment : ((2 * r + 1 : ℕ) : ℝ) ≤ (1 + 2 * η) * Real.log N) (habove : ∀ p ∈ s, N < p) :
     (η ^ (r + 1) / (r.factorial : ℝ)) ^ 2 * (h / 2) *
         (∑ q ∈ ((Finset.Ioc 1 (R ^ 2)).attach.filter fun q => q.val ≤ R),
           ∑ k ∈ Finset.range n,
-            primitiveCharacterPolynomialMeanSquare q.val
-              (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+            polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
               (fun p =>
                 (((Real.log p : ℝ) ^ (r + 1) : ℂ) *
                     Complex.exp (-((Real.log p : ℝ) * (1 + η) : ℝ) : ℂ)) *
@@ -2351,10 +2279,9 @@ theorem primitiveCharacterPrimeLogPower_grid_hybrid_normalized_detector_order_bo
         (((r + 1 : ℝ) * (2 : ℝ) ^ (2 * r + 1)) *
           ((3 / 2 : ℝ) * (Real.log 4 + 4) * Real.exp (-(η * Real.log N)))) := by
   have hgrid :=
-    primitiveCharacterPrimeLogPower_grid_hybrid_detector_order_bound R hR T hT hTupper r (1 + η) s
-      hprime hlower X hupper a h n hh ha hb η c₁ K hη hc₁ hhη hX hlogX
-  have henergy :=
-    normalized_prime_coefficient_energy_le_exponential η r N s hη hηsmall hN hmoment hprime habove
+    primeGrid_order_le R hR T hT hTupper r (1 + η) s hprime hlower X hupper a h n hh ha hb η c₁ K hη
+      hc₁ hhη hX hlogX
+  have henergy := primeEnergy_exp_le η r N s hη hηsmall hN hmoment hprime habove
   simp only [Complex.ofReal_pow] at henergy
   have hA : 0 ≤ (η ^ (r + 1) / (r.factorial : ℝ)) ^ 2 := sq_nonneg _
   have hscaled := mul_le_mul_of_nonneg_left hgrid hA
@@ -2369,7 +2296,7 @@ theorem primitiveCharacterPrimeLogPower_grid_hybrid_normalized_detector_order_bo
 /-- A requested-order budget and `η log R ≤ 3` control the low-prime scale at
 `R^6` for every larger derivative order. Rewrite the logarithm and compare orders.
 This supplies one scale inequality uniformly across a detector family. -/
-theorem requested_order_R_six_log_scale (η D : ℝ) (Krequested n R : ℕ) (hn : Krequested - 1 ≤ n)
+theorem order_R_pow_six_log (η D : ℝ) (Krequested n R : ℕ) (hn : Krequested - 1 ≤ n)
     (hRscale : η * Real.log (R : ℝ) ≤ 3)
     (hRorder : 18 ≤ Real.exp (-(D + 6)) * ((Krequested - 1 : ℕ) : ℝ)) :
     η * Real.log ((R ^ 6 : ℕ) : ℝ) ≤ Real.exp (-(D + 6)) * n := by
@@ -2382,8 +2309,7 @@ theorem requested_order_R_six_log_scale (η D : ℝ) (Krequested n R : ℕ) (hn 
 /-- The exponential coefficient chosen for low-prime removal has the required
 unit-shift margin. Combine exponentials and simplify their exponents.
 This makes the removal budget independent of the character and height. -/
-theorem low_prime_exponential_budget (D : ℝ) :
-    Real.exp (-(D + 6)) * Real.exp 1 ≤ Real.exp (-(D + 5)) := by
+theorem lowPrime_exp_budget (D : ℝ) : Real.exp (-(D + 6)) * Real.exp 1 ≤ Real.exp (-(D + 5)) := by
   rw [← Real.exp_add]
   apply le_of_eq
   congr 1
@@ -2394,14 +2320,13 @@ signal above the shared cutoff retains one eighth of its local detector signal o
 primes above `R^6`. Derive the removal margins from the requested order and apply
 the established low-prime and prime-power estimates.
 This transfers a common finite support to the high-prime hybrid interface. -/
-theorem finite_high_prime_signal_of_requested_order {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
-    (η D : ℝ) (Krequested R n K cutoff : ℕ) (hη : 0 < η) (hηsmall : η ≤ 1) (hD : 0 ≤ D) (hR : 2 ≤ R)
+theorem highPrime_orderSignal {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (η D : ℝ)
+    (Krequested R n K cutoff : ℕ) (hη : 0 < η) (hηsmall : η ≤ 1) (hD : 0 ≤ D) (hR : 2 ≤ R)
     (hKrequested : Krequested ≤ K) (hKorder : K ≤ n + 1) (hcutoff : R ^ 6 ≤ cutoff)
     (hDrequested : D + 5 ≤ 5 * ((Krequested - 1 : ℕ) : ℝ)) (hRscale : η * Real.log (R : ℝ) ≤ 3)
     (hRorder : 18 ≤ Real.exp (-(D + 6)) * ((Krequested - 1 : ℕ) : ℝ))
     (hηratio : 4 * η ≤ Real.exp (-(D + 5)))
-    (hm : Nat.ceil (Real.log higherPrimePowerEulerMajorantConstant) ≤ Krequested) {s : ℂ}
-    (hs : s.re = 1 + η)
+    (hm : Nat.ceil (Real.log primePowerEulerBound) ≤ Krequested) {s : ℂ} (hs : s.re = 1 + η)
     (hfull :
       Real.exp (-(D * (K : ℝ))) / 2 ≤
         (η ^ (n + 1) / (n.factorial : ℝ)) *
@@ -2419,17 +2344,17 @@ theorem finite_high_prime_signal_of_requested_order {q : ℕ} [NeZero q] (χ : D
               s p‖ := by
   have hn : Krequested - 1 ≤ n := Nat.sub_le_iff_le_add.mpr (hKrequested.trans hKorder)
   exact
-    finite_high_prime_sum_norm_ge_of_detector_signal χ (R ^ 6) cutoff n K
-      (hR.trans (Nat.le_self_pow (by decide) R)) hcutoff hη hηsmall hD (Real.exp_pos _).le hKorder
-      (detector_order_exponential_margin Krequested n K D hD hDrequested hn hKorder)
-      (requested_order_R_six_log_scale η D Krequested n R hn hRscale hRorder)
-      (low_prime_exponential_budget D) hηratio (hm.trans (hKrequested.trans hKorder)) s hs hfull
+    highPrime_ge_detector χ (R ^ 6) cutoff n K (hR.trans (Nat.le_self_pow (by decide) R)) hcutoff hη
+      hηsmall hD (Real.exp_pos _).le hKorder
+      (detector_order_margin Krequested n K D hD hDrequested hn hKorder)
+      (order_R_pow_six_log η D Krequested n R hn hRscale hRorder) (lowPrime_exp_budget D) hηratio
+      (hm.trans (hKrequested.trans hKorder)) s hs hfull
 
 /-- For a nonnegative rate, a bounded derivative order, and a sufficiently large
 conductor scale, the weight decreases above `R^6`. Compare orders and expand the
 cutoff logarithm. This derives the moment hypothesis of the normalized hybrid energy. -/
-theorem prime_energy_decreasing_range_of_order_envelope (η : ℝ) (n nmax R : ℕ) (hη : 0 ≤ η)
-    (hn : n ≤ nmax) (hR : 1 ≤ R) (hlarge : ((2 * nmax + 1 : ℕ) : ℝ) ≤ 6 * Real.log (R : ℝ)) :
+theorem primeEnergy_moment_le (η : ℝ) (n nmax R : ℕ) (hη : 0 ≤ η) (hn : n ≤ nmax) (hR : 1 ≤ R)
+    (hlarge : ((2 * nmax + 1 : ℕ) : ℝ) ≤ 6 * Real.log (R : ℝ)) :
     ((2 * n + 1 : ℕ) : ℝ) ≤ (1 + 2 * η) * Real.log ((R ^ 6 : ℕ) : ℝ) := by
   have hnreal : (n : ℝ) ≤ nmax := by exact_mod_cast hn
   have hlog : 0 ≤ Real.log (R : ℝ) := Real.log_nonneg (by exact_mod_cast hR)
@@ -2441,7 +2366,7 @@ theorem prime_energy_decreasing_range_of_order_envelope (η : ℝ) (n nmax R : �
 scales satisfy the prime-energy decreasing condition, uniformly in nonnegative rates.
 Use logarithmic divergence and the explicit order-envelope criterion.
 This discharges the lower-cutoff condition in the asymptotic AGP range. -/
-theorem eventually_prime_energy_decreasing_range (nmax : ℕ) :
+theorem eventual_primeMoment (nmax : ℕ) :
     ∃ R₀ : ℕ,
       2 ≤ R₀ ∧
         ∀ R : ℕ,
@@ -2458,7 +2383,7 @@ theorem eventually_prime_energy_decreasing_range (nmax : ℕ) :
   intro R hR η hη n hn
   have hlarge := hR₀ R ((le_max_right 2 R₀).trans hR)
   exact
-    prime_energy_decreasing_range_of_order_envelope η n nmax R hη hn
+    primeEnergy_moment_le η n nmax R hη hn
       (((by norm_num only : 1 ≤ 2).trans (le_max_left 2 R₀)).trans hR) (by linarith only [hlarge])
 
 /-- For a scale `R` and Euler cutoff, define the finite prime support between
@@ -2470,7 +2395,7 @@ def highPrimeEulerSupport (R cutoff : ℕ) : Finset ℕ :=
 /-- Membership in the high-prime Euler support means primality and the explicit
 lower and upper bounds. Expand the filters and natural interval conditions.
 This supplies the support hypotheses for the hybrid sieve and coefficient energy. -/
-theorem mem_highPrimeEulerSupport {R cutoff p : ℕ} :
+theorem mem_highPrimeSupport {R cutoff p : ℕ} :
     p ∈ highPrimeEulerSupport R cutoff ↔ p ≤ cutoff ∧ Nat.Prime p ∧ R ^ 6 < p := by
   simp only [highPrimeEulerSupport, Finset.mem_filter, Finset.mem_range, Nat.lt_succ_iff, not_le,
     and_assoc]
@@ -2480,16 +2405,15 @@ logarithmic scale, apply the normalized hybrid grid estimate with lower cutoff `
 Use support membership and the order-envelope decreasing condition. The upper support
 enters only through the scaled logarithmic cutoff, so its loss is quadratic in `K`.
 This is the common-support mean-square interface for the zero-incidence count. -/
-theorem highPrimeEulerSupport_grid_hybrid_normalized_bound (R cutoff nmax r : ℕ) (hR : 2 ≤ R)
-    (T : ℝ) (hT : 1 ≤ T) (hTupper : T ≤ 2 * R) (a h : ℝ) (gridSize : ℕ) (hh : 0 < h) (ha : -T ≤ a)
+theorem highPrimeGrid_scaled (R cutoff nmax r : ℕ) (hR : 2 ≤ R) (T : ℝ) (hT : 1 ≤ T)
+    (hTupper : T ≤ 2 * R) (a h : ℝ) (gridSize : ℕ) (hh : 0 < h) (ha : -T ≤ a)
     (hb : a + (gridSize : ℝ) * h ≤ T) (η c₁ : ℝ) (K : ℕ) (hη : 0 < η) (hηsmall : 2 * η ≤ 1)
     (hc₁ : 0 ≤ c₁) (hhη : h ≤ η / 8) (hlogX : η * Real.log ((cutoff : ℝ) + 1) ≤ c₁ * K)
     (hr : r ≤ nmax) (hlarge : ((2 * nmax + 1 : ℕ) : ℝ) ≤ 6 * Real.log (R : ℝ)) :
     (η ^ (r + 1) / (r.factorial : ℝ)) ^ 2 * (h / 2) *
         (∑ q ∈ ((Finset.Ioc 1 (R ^ 2)).attach.filter fun q ↦ q.val ≤ R),
           ∑ k ∈ Finset.range gridSize,
-            primitiveCharacterPolynomialMeanSquare q.val
-              (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1)
+            polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1)
               (highPrimeEulerSupport R cutoff)
               (fun p ↦
                 (((Real.log p : ℝ) ^ (r + 1) : ℂ) *
@@ -2500,37 +2424,35 @@ theorem highPrimeEulerSupport_grid_hybrid_normalized_bound (R cutoff nmax r : �
         (((r + 1 : ℝ) * (2 : ℝ) ^ (2 * r + 1)) *
           ((3 / 2 : ℝ) * (Real.log 4 + 4) * Real.exp (-(η * Real.log ((R ^ 6 : ℕ) : ℝ))))) := by
   have hRone : 1 ≤ R := (by norm_num only : 1 ≤ 2).trans hR
-  have hmoment := prime_energy_decreasing_range_of_order_envelope η r nmax R hη.le hr hRone hlarge
+  have hmoment := primeEnergy_moment_le η r nmax R hη.le hr hRone hlarge
   have hlog : η * Real.log ((cutoff + 1 : ℕ) : ℝ) ≤ c₁ * K := by
     simpa only [Nat.cast_add, Nat.cast_one] using hlogX
   exact
-    primitiveCharacterPrimeLogPower_grid_hybrid_normalized_detector_order_bound R hR T hT hTupper r
-      (highPrimeEulerSupport R cutoff) (fun p hp ↦ (mem_highPrimeEulerSupport.mp hp).2.1)
-      (fun p hp ↦ (mem_highPrimeEulerSupport.mp hp).2.2.le) (cutoff + 1)
-      (fun p hp ↦ (mem_highPrimeEulerSupport.mp hp).1.trans (Nat.le_succ cutoff)) a h gridSize hh ha
-      hb η c₁ K hη hc₁ hhη (Nat.succ_pos cutoff) hlog (R ^ 6) (Nat.one_le_pow 6 R hRone) hηsmall
-      hmoment (fun p hp ↦ (mem_highPrimeEulerSupport.mp hp).2.2)
+    primeGrid_scaledOrder R hR T hT hTupper r (highPrimeEulerSupport R cutoff)
+      (fun p hp ↦ (mem_highPrimeSupport.mp hp).2.1) (fun p hp ↦ (mem_highPrimeSupport.mp hp).2.2.le)
+      (cutoff + 1) (fun p hp ↦ (mem_highPrimeSupport.mp hp).1.trans (Nat.le_succ cutoff)) a h
+      gridSize hh ha hb η c₁ K hη hc₁ hhη (Nat.succ_pos cutoff) hlog (R ^ 6)
+      (Nat.one_le_pow 6 R hRone) hηsmall hmoment (fun p hp ↦ (mem_highPrimeSupport.mp hp).2.2)
 
 /-- For a positive rate at most one and prime support above a decreasing-range
 cutoff, bound the factorial-normalized logarithmic moment by the Chernoff tail.
 Compare the prime sum with the von Mangoldt series. This supplies the first derivative energy. -/
-theorem normalized_finite_prime_log_moment_le_chernoff (η : ℝ) (m N : ℕ) (s : Finset ℕ) (hη : 0 < η)
-    (hηsmall : η ≤ 1) (hN : 1 ≤ N) (hm : (m : ℝ) ≤ (1 + η) * Real.log N)
-    (hprime : ∀ p ∈ s, Nat.Prime p) (habove : ∀ p ∈ s, N < p) :
+theorem primeMoment_chernoff (η : ℝ) (m N : ℕ) (s : Finset ℕ) (hη : 0 < η) (hηsmall : η ≤ 1)
+    (hN : 1 ≤ N) (hm : (m : ℝ) ≤ (1 + η) * Real.log N) (hprime : ∀ p ∈ s, Nat.Prime p)
+    (habove : ∀ p ∈ s, N < p) :
     η ^ (m + 1) / (m.factorial : ℝ) * (∑ p ∈ s, (Real.log p) ^ (m + 1) / (p : ℝ) ^ (1 + η)) ≤
       3 * (Real.log 4 + 4) * (2 : ℝ) ^ m * Real.exp (-(η * Real.log N) / 2) := by
-  have hcompare :=
-    finite_prime_log_moment_le_vonMangoldt_tail (η / 2) m N s (half_pos hη) hprime habove
+  have hcompare := primeMoment_tail_le (η / 2) m N s (half_pos hη) hprime habove
   rw [show 2 * (η / 2) = η by ring] at hcompare
   exact
     (mul_le_mul_of_nonneg_left hcompare
           (div_nonneg (pow_nonneg hη.le (m + 1)) (Nat.cast_nonneg m.factorial))).trans
-      (normalized_vonMangoldt_log_weight_tail_le_chernoff η m N hη hηsmall hN hm)
+      (scaledTail_chernoff η m N hη hηsmall hN hm)
 
 /-- For a rate and order, multiplying the detector normalization by the rate
 equals the next-order normalization times `r+1`. Expand the successor factorial and
 cancel its positive factor. This identifies the rate in the height-variation estimate. -/
-theorem factorial_normalization_successor_scale (η : ℝ) (r : ℕ) :
+theorem factorial_succ_scale (η : ℝ) (r : ℕ) :
     η * (η ^ (r + 1) / (r.factorial : ℝ)) =
       (r + 1 : ℝ) * (η ^ ((r + 1) + 1) / ((r + 1).factorial : ℝ)) := by
   have hr : (r + 1 : ℝ) ≠ 0 := ne_of_gt (add_pos_of_nonneg_of_pos (Nat.cast_nonneg r) zero_lt_one)
@@ -2542,13 +2464,12 @@ theorem factorial_normalization_successor_scale (η : ℝ) (r : ℕ) :
 absolute moment by `η` leaves an explicit order-dependent bound. Combine the Chernoff
 moment and the successor-factorial identity, discarding a decaying exponential.
 This yields variation of size an absolute order factor divided by `η`. -/
-theorem scaled_prime_log_derivative_moment_le (η : ℝ) (r N : ℕ) (s : Finset ℕ) (hη : 0 < η)
-    (hηsmall : η ≤ 1) (hN : 1 ≤ N) (hr : ((r + 1 : ℕ) : ℝ) ≤ (1 + η) * Real.log N)
-    (hprime : ∀ p ∈ s, Nat.Prime p) (habove : ∀ p ∈ s, N < p) :
+theorem primeDerivMoment_le (η : ℝ) (r N : ℕ) (s : Finset ℕ) (hη : 0 < η) (hηsmall : η ≤ 1)
+    (hN : 1 ≤ N) (hr : ((r + 1 : ℕ) : ℝ) ≤ (1 + η) * Real.log N) (hprime : ∀ p ∈ s, Nat.Prime p)
+    (habove : ∀ p ∈ s, N < p) :
     η * (η ^ (r + 1) / (r.factorial : ℝ)) * (∑ p ∈ s, (Real.log p) ^ (r + 2) / (p : ℝ) ^ (1 + η)) ≤
       3 * (Real.log 4 + 4) * (r + 1) * (2 : ℝ) ^ (r + 1) := by
-  have hmoment :=
-    normalized_finite_prime_log_moment_le_chernoff η (r + 1) N s hη hηsmall hN hr hprime habove
+  have hmoment := primeMoment_chernoff η (r + 1) N s hη hηsmall hN hr hprime habove
   have hexp : Real.exp (-(η * Real.log N) / 2) ≤ 1 :=
     Real.exp_le_one_iff.mpr
       (div_nonpos_of_nonpos_of_nonneg
@@ -2562,13 +2483,13 @@ theorem scaled_prime_log_derivative_moment_le (η : ℝ) (r N : ℕ) (s : Finset
   have hbound := hmoment.trans (by simpa only [mul_one] using (mul_le_mul_of_nonneg_left hexp hC))
   have hscaled :=
     mul_le_mul_of_nonneg_left hbound (add_nonneg (Nat.cast_nonneg r : (0 : ℝ) ≤ r) zero_le_one)
-  rw [factorial_normalization_successor_scale, mul_assoc]
+  rw [factorial_succ_scale, mul_assoc]
   simpa only [Nat.add_assoc, Nat.reduceAdd, mul_assoc, mul_left_comm, mul_comm] using hscaled
 
 /-- For finite support, logarithmic order, real abscissa, coefficient twist,
 and height, define the twisted prime-log exponential sum. The coefficient has real decay
 and a unit oscillatory factor. This represents the high-prime detector on height windows. -/
-noncomputable def primeLogPowerPolynomial (s : Finset ℕ) (r : ℕ) (σ : ℝ) (χ : ℕ → ℂ) (t : ℝ) : ℂ :=
+noncomputable def primeLogPowerPoly (s : Finset ℕ) (r : ℕ) (σ : ℝ) (χ : ℕ → ℂ) (t : ℝ) : ℂ :=
   ∑ p ∈ s,
     (((Real.log p : ℝ) ^ (r + 1) : ℂ) * Complex.exp (-((Real.log p : ℝ) * σ : ℝ) : ℂ)) *
       Complex.exp ((-(t * Real.log p) : ℝ) * Complex.I) *
@@ -2581,8 +2502,8 @@ Proof: each summand is a constant multiple of a complex exponential of a continu
 Role: supplies interval integrability for energy estimates on physical detection windows.
 -/
 theorem primePoly_cont (s : Finset ℕ) (r : ℕ) (σ : ℝ) (χ : ℕ → ℂ) :
-    Continuous (primeLogPowerPolynomial s r σ χ) := by
-  unfold primeLogPowerPolynomial
+    Continuous (primeLogPowerPoly s r σ χ) := by
+  unfold primeLogPowerPoly
   apply continuous_finsetSum
   intro p hp
   have hreal : Continuous (fun t : ℝ => -(t * Real.log (p : ℝ))) := (continuous_id.mul_const _).neg
@@ -2595,7 +2516,7 @@ theorem primePoly_cont (s : Finset ℕ) (r : ℕ) (σ : ℝ) (χ : ℕ → ℂ) 
 /-- For a positive index, identify the complex coefficient norm with its real
 logarithmic weight. Evaluate the exponential norm and positive-base real power.
 This converts polynomial derivative bounds into nonnegative prime moments. -/
-theorem norm_prime_log_power_coefficient_eq (p r : ℕ) (σ : ℝ) (hp : 0 < p) :
+theorem primeCoeff_norm_eq (p r : ℕ) (σ : ℝ) (hp : 0 < p) :
     ‖((Real.log p : ℝ) ^ (r + 1) : ℂ) * Complex.exp (-((Real.log p : ℝ) * σ : ℝ) : ℂ)‖ =
       (Real.log p) ^ (r + 1) / (p : ℝ) ^ σ := by
   have hpR : (0 : ℝ) < p := by exact_mod_cast hp
@@ -2607,24 +2528,22 @@ theorem norm_prime_log_power_coefficient_eq (p r : ℕ) (σ : ℝ) (hp : 0 < p) 
 /-- The finite prime-log polynomial is differentiable in height, with derivative
 `-I` times the next-order polynomial. Apply the existing finite exponential-sum derivative.
 This supplies the height derivative for the mean-value estimate. -/
-theorem primeLogPowerPolynomial_hasDerivAt (s : Finset ℕ) (r : ℕ) (σ t : ℝ) (χ : ℕ → ℂ) :
-    HasDerivAt (primeLogPowerPolynomial s r σ χ)
-      (-Complex.I * primeLogPowerPolynomial s (r + 1) σ χ t) t := by
-  unfold primeLogPowerPolynomial
-  simpa only [Nat.add_assoc, Nat.reduceAdd] using
-    (finite_prime_log_power_exponential_sum_hasDerivAt (s := s) r σ t χ)
+theorem hasDerivAt_primePoly (s : Finset ℕ) (r : ℕ) (σ t : ℝ) (χ : ℕ → ℂ) :
+    HasDerivAt (primeLogPowerPoly s r σ χ) (-Complex.I * primeLogPowerPoly s (r + 1) σ χ t) t := by
+  unfold primeLogPowerPoly
+  simpa only [Nat.add_assoc, Nat.reduceAdd] using (hasDerivAt_primeSum (s := s) r σ t χ)
 
 /-- For positive support and twists of norm at most one, bound the polynomial
 norm by its untwisted logarithmic moment. Apply the norm triangle inequality and the unit
 phase norm. This is the absolute derivative majorant for height-window transfer. -/
-theorem norm_primeLogPowerPolynomial_le_log_moment (s : Finset ℕ) (r : ℕ) (σ t : ℝ) (χ : ℕ → ℂ)
-    (hpos : ∀ p ∈ s, 0 < p) (hχ : ∀ p ∈ s, ‖χ p‖ ≤ 1) :
-    ‖primeLogPowerPolynomial s r σ χ t‖ ≤ ∑ p ∈ s, (Real.log p) ^ (r + 1) / (p : ℝ) ^ σ := by
+theorem primePoly_norm_le (s : Finset ℕ) (r : ℕ) (σ t : ℝ) (χ : ℕ → ℂ) (hpos : ∀ p ∈ s, 0 < p)
+    (hχ : ∀ p ∈ s, ‖χ p‖ ≤ 1) :
+    ‖primeLogPowerPoly s r σ χ t‖ ≤ ∑ p ∈ s, (Real.log p) ^ (r + 1) / (p : ℝ) ^ σ := by
   apply (norm_sum_le s _).trans
   apply Finset.sum_le_sum
   intro p hp
   rw [norm_mul, norm_mul, Complex.norm_exp_ofReal_mul_I, mul_one,
-    norm_prime_log_power_coefficient_eq p r σ (hpos p hp)]
+    primeCoeff_norm_eq p r σ (hpos p hp)]
   exact
     (mul_le_mul_of_nonneg_left (hχ p hp)
           (div_nonneg (pow_nonneg (Real.log_natCast_nonneg p) _)
@@ -2635,17 +2554,15 @@ theorem norm_primeLogPowerPolynomial_le_log_moment (s : Finset ℕ) (r : ℕ) (�
 most the height distance times the next logarithmic moment. Bound the derivative on the
 whole real line and apply the convex mean-value theorem.
 This gives a height-independent Lipschitz bound on the common support. -/
-theorem primeLogPowerPolynomial_vertical_variation (s : Finset ℕ) (r : ℕ) (σ t u : ℝ) (χ : ℕ → ℂ)
-    (hpos : ∀ p ∈ s, 0 < p) (hχ : ∀ p ∈ s, ‖χ p‖ ≤ 1) :
-    ‖primeLogPowerPolynomial s r σ χ u - primeLogPowerPolynomial s r σ χ t‖ ≤
+theorem primePoly_variation (s : Finset ℕ) (r : ℕ) (σ t u : ℝ) (χ : ℕ → ℂ) (hpos : ∀ p ∈ s, 0 < p)
+    (hχ : ∀ p ∈ s, ‖χ p‖ ≤ 1) :
+    ‖primeLogPowerPoly s r σ χ u - primeLogPowerPoly s r σ χ t‖ ≤
       |u - t| * ∑ p ∈ s, (Real.log p) ^ (r + 2) / (p : ℝ) ^ σ := by
-  have hder v := primeLogPowerPolynomial_hasDerivAt s r σ v χ
+  have hder v := hasDerivAt_primePoly s r σ v χ
   have hbound v :
-    ‖deriv (primeLogPowerPolynomial s r σ χ) v‖ ≤
-      ∑ p ∈ s, (Real.log p) ^ (r + 2) / (p : ℝ) ^ σ := by
+    ‖deriv (primeLogPowerPoly s r σ χ) v‖ ≤ ∑ p ∈ s, (Real.log p) ^ (r + 2) / (p : ℝ) ^ σ := by
     rw [(hder v).deriv, norm_mul, norm_neg, Complex.norm_I, one_mul]
-    simpa only [Nat.add_assoc, Nat.reduceAdd] using
-      norm_primeLogPowerPolynomial_le_log_moment s (r + 1) σ v χ hpos hχ
+    simpa only [Nat.add_assoc, Nat.reduceAdd] using primePoly_norm_le s (r + 1) σ v χ hpos hχ
   have hvar :=
     Convex.norm_image_sub_le_of_norm_deriv_le (fun v (_ : v ∈ Set.univ) ↦ (hder v).differentiableAt)
       (fun v (_ : v ∈ Set.univ) ↦ hbound v) (convex_univ : Convex ℝ (Set.univ : Set ℝ))
@@ -2655,12 +2572,12 @@ theorem primeLogPowerPolynomial_vertical_variation (s : Finset ℕ) (r : ℕ) (�
 /-- For a natural derivative order, define the absolute variation coefficient
 `3(log 4+4)(r+1)2^(r+1)`. Together with the inverse near-one rate, it controls the
 normalized high-prime polynomial slope and the physical detection-window radius. -/
-noncomputable def primeLogPowerVariationBound (r : ℕ) : ℝ :=
+noncomputable def primeLogVariation (r : ℕ) : ℝ :=
   3 * (Real.log 4 + 4) * (r + 1) * (2 : ℝ) ^ (r + 1)
 
 /-- The absolute variation coefficient is positive at every natural order.
 Each defining factor is positive. This permits division when choosing detection windows. -/
-theorem primeLogPowerVariationBound_pos (r : ℕ) : 0 < primeLogPowerVariationBound r := by
+theorem primeLogVariation_pos (r : ℕ) : 0 < primeLogVariation r := by
   exact
     mul_pos
       (mul_pos
@@ -2671,8 +2588,8 @@ theorem primeLogPowerVariationBound_pos (r : ℕ) : 0 < primeLogPowerVariationBo
 
 /-- The absolute variation coefficient increases with the natural order.
 Compare the linear and exponential factors. This provides one slope bound for an order family. -/
-theorem primeLogPowerVariationBound_mono {r nmax : ℕ} (hr : r ≤ nmax) :
-    primeLogPowerVariationBound r ≤ primeLogPowerVariationBound nmax := by
+theorem primeVariation_mono {r nmax : ℕ} (hr : r ≤ nmax) :
+    primeLogVariation r ≤ primeLogVariation nmax := by
   have horder : (r : ℝ) + 1 ≤ (nmax : ℝ) + 1 := by exact_mod_cast Nat.add_le_add_right hr 1
   exact
     mul_le_mul
@@ -2692,22 +2609,19 @@ theorem primeLogPowerVariationBound_mono {r nmax : ℕ} (hr : r ≤ nmax) :
 by `η` and bound it by the height distance times the absolute order coefficient.
 Combine the mean-value estimate and the sharp prime moment bound.
 This avoids an extra inverse-rate loss in the physical detection window. -/
-theorem scaled_primeLogPowerPolynomial_vertical_variation (η : ℝ) (r N : ℕ) (s : Finset ℕ) (t u : ℝ)
-    (χ : ℕ → ℂ) (hη : 0 < η) (hηsmall : η ≤ 1) (hN : 1 ≤ N)
-    (hr : ((r + 1 : ℕ) : ℝ) ≤ (1 + η) * Real.log N) (hprime : ∀ p ∈ s, Nat.Prime p)
-    (habove : ∀ p ∈ s, N < p) (hχ : ∀ p ∈ s, ‖χ p‖ ≤ 1) :
+theorem primePoly_scaled_diff (η : ℝ) (r N : ℕ) (s : Finset ℕ) (t u : ℝ) (χ : ℕ → ℂ) (hη : 0 < η)
+    (hηsmall : η ≤ 1) (hN : 1 ≤ N) (hr : ((r + 1 : ℕ) : ℝ) ≤ (1 + η) * Real.log N)
+    (hprime : ∀ p ∈ s, Nat.Prime p) (habove : ∀ p ∈ s, N < p) (hχ : ∀ p ∈ s, ‖χ p‖ ≤ 1) :
     η * (η ^ (r + 1) / (r.factorial : ℝ)) *
-        ‖primeLogPowerPolynomial s r (1 + η) χ u - primeLogPowerPolynomial s r (1 + η) χ t‖ ≤
-      |u - t| * primeLogPowerVariationBound r := by
-  dsimp only [primeLogPowerVariationBound]
-  have hvar :=
-    primeLogPowerPolynomial_vertical_variation s r (1 + η) t u χ (fun p hp ↦ (hprime p hp).pos) hχ
+        ‖primeLogPowerPoly s r (1 + η) χ u - primeLogPowerPoly s r (1 + η) χ t‖ ≤
+      |u - t| * primeLogVariation r := by
+  dsimp only [primeLogVariation]
+  have hvar := primePoly_variation s r (1 + η) t u χ (fun p hp ↦ (hprime p hp).pos) hχ
   have hscaled :=
     mul_le_mul_of_nonneg_left hvar
       (mul_nonneg hη.le (div_nonneg (pow_nonneg hη.le (r + 1)) (Nat.cast_nonneg r.factorial)))
   have hmoment :=
-    mul_le_mul_of_nonneg_left
-      (scaled_prime_log_derivative_moment_le η r N s hη hηsmall hN hr hprime habove)
+    mul_le_mul_of_nonneg_left (primeDerivMoment_le η r N s hη hηsmall hN hr hprime habove)
       (abs_nonneg (u - t))
   nlinarith only [hscaled, hmoment]
 
@@ -2715,24 +2629,21 @@ theorem scaled_primeLogPowerPolynomial_vertical_variation (η : ℝ) (r N : ℕ)
 prime support, retain half the signal whenever the height distance is at most
 `η B / (2 C(nmax))`. Use the uniform normalized variation bound and the norm triangle
 inequality. This gives a physical window proportional to `η`, rather than to the mesh step. -/
-theorem normalized_primeLogPowerPolynomial_window (η B : ℝ) (r nmax N : ℕ) (s : Finset ℕ) (t u : ℝ)
-    (χ : ℕ → ℂ) (hη : 0 < η) (hηsmall : η ≤ 1) (hN : 1 ≤ N) (hrmax : r ≤ nmax)
+theorem primePoly_window_le (η B : ℝ) (r nmax N : ℕ) (s : Finset ℕ) (t u : ℝ) (χ : ℕ → ℂ)
+    (hη : 0 < η) (hηsmall : η ≤ 1) (hN : 1 ≤ N) (hrmax : r ≤ nmax)
     (hr : ((r + 1 : ℕ) : ℝ) ≤ (1 + η) * Real.log N) (hprime : ∀ p ∈ s, Nat.Prime p)
     (habove : ∀ p ∈ s, N < p) (hχ : ∀ p ∈ s, ‖χ p‖ ≤ 1)
-    (hdet : B ≤ (η ^ (r + 1) / (r.factorial : ℝ)) * ‖primeLogPowerPolynomial s r (1 + η) χ t‖)
-    (hdist : |u - t| ≤ η * B / (2 * primeLogPowerVariationBound nmax)) :
-    B / 2 ≤ (η ^ (r + 1) / (r.factorial : ℝ)) * ‖primeLogPowerPolynomial s r (1 + η) χ u‖ := by
-  have hC := primeLogPowerVariationBound_pos nmax
-  have hvar :=
-    scaled_primeLogPowerPolynomial_vertical_variation η r N s t u χ hη hηsmall hN hr hprime habove
-      hχ
-  have hCm :=
-    mul_le_mul_of_nonneg_left (primeLogPowerVariationBound_mono hrmax) (abs_nonneg (u - t))
+    (hdet : B ≤ (η ^ (r + 1) / (r.factorial : ℝ)) * ‖primeLogPowerPoly s r (1 + η) χ t‖)
+    (hdist : |u - t| ≤ η * B / (2 * primeLogVariation nmax)) :
+    B / 2 ≤ (η ^ (r + 1) / (r.factorial : ℝ)) * ‖primeLogPowerPoly s r (1 + η) χ u‖ := by
+  have hC := primeLogVariation_pos nmax
+  have hvar := primePoly_scaled_diff η r N s t u χ hη hηsmall hN hr hprime habove hχ
+  have hCm := mul_le_mul_of_nonneg_left (primeVariation_mono hrmax) (abs_nonneg (u - t))
   have hdistC := mul_le_mul_of_nonneg_right hdist hC.le
   rw [div_mul_eq_mul_div, mul_div_mul_right _ _ (ne_of_gt hC)] at hdistC
   have ht :=
-    norm_sub_le (primeLogPowerPolynomial s r (1 + η) χ u)
-      (primeLogPowerPolynomial s r (1 + η) χ u - primeLogPowerPolynomial s r (1 + η) χ t)
+    norm_sub_le (primeLogPowerPoly s r (1 + η) χ u)
+      (primeLogPowerPoly s r (1 + η) χ u - primeLogPowerPoly s r (1 + η) χ t)
   rw [sub_sub_cancel] at ht
   have hA : 0 ≤ η * (η ^ (r + 1) / (r.factorial : ℝ)) :=
     mul_nonneg hη.le (div_nonneg (pow_nonneg hη.le _) (Nat.cast_nonneg _))
@@ -2744,20 +2655,20 @@ theorem normalized_primeLogPowerPolynomial_window (η B : ℝ) (r nmax N : ℕ) 
 /-- The finite Euler sum on the actual high-prime support equals the height
 polynomial with character twist. Apply the prime-term identity on that support.
 This joins the common high-prime detector to the physical-window and hybrid estimates. -/
-theorem finite_highPrimeEuler_sum_eq_primeLogPowerPolynomial {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (R cutoff r : ℕ) (σ t : ℝ) :
+theorem highPrime_sum_eq_poly {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (R cutoff r : ℕ)
+    (σ t : ℝ) :
     (∑ p ∈ highPrimeEulerSupport R cutoff,
         LSeries.term
           (LSeries.logMul^[r] (fun k : ℕ ↦ χ (k : ZMod q) * (ArithmeticFunction.vonMangoldt k : ℂ)))
           ((σ : ℂ) + (t : ℂ) * Complex.I) p) =
-      primeLogPowerPolynomial (highPrimeEulerSupport R cutoff) r σ (fun k ↦ χ (k : ZMod q)) t := by
+      primeLogPowerPoly (highPrimeEulerSupport R cutoff) r σ (fun k ↦ χ (k : ZMod q)) t := by
   exact
-    finite_prime_vonMangoldt_logMul_sum_eq r σ t (highPrimeEulerSupport R cutoff)
-      (fun p hp ↦ (mem_highPrimeEulerSupport.mp hp).2.1) χ
+    prime_logMul_sum_eq r σ t (highPrimeEulerSupport R cutoff)
+      (fun p hp ↦ (mem_highPrimeSupport.mp hp).2.1) χ
 
 /-- The absolute variation coefficient is at least one. Bound its constant, linear,
 and exponential factors from below. This controls the physical window by `η/8`. -/
-theorem one_le_primeLogPowerVariationBound (r : ℕ) : 1 ≤ primeLogPowerVariationBound r := by
+theorem one_le_primeVariation (r : ℕ) : 1 ≤ primeLogVariation r := by
   have hlog : (4 : ℝ) ≤ Real.log 4 + 4 := le_add_of_nonneg_left (Real.log_nonneg (by norm_num only))
   have hC : (1 : ℝ) ≤ 3 * (Real.log 4 + 4) := by linarith only [hlog]
   have hr : (1 : ℝ) ≤ r + 1 := le_add_of_nonneg_left (Nat.cast_nonneg r)
@@ -2770,20 +2681,18 @@ theorem one_le_primeLogPowerVariationBound (r : ℕ) : 1 ≤ primeLogPowerVariat
 
 /-- The coefficient of the physical high-prime window is positive for every real
 exponent and natural order envelope. This permits choosing a finite incidence mesh. -/
-theorem uniform_high_prime_window_factor_pos (D : ℝ) (K nmax : ℕ) :
-    0 < Real.exp (-(D * (K : ℝ))) / (16 * primeLogPowerVariationBound nmax) :=
-  div_pos (Real.exp_pos _) (mul_pos (by norm_num only) (primeLogPowerVariationBound_pos _))
+theorem primeWindowFactor_pos (D : ℝ) (K nmax : ℕ) :
+    0 < Real.exp (-(D * (K : ℝ))) / (16 * primeLogVariation nmax) :=
+  div_pos (Real.exp_pos _) (mul_pos (by norm_num only) (primeLogVariation_pos _))
 
 /-- For a nonnegative detector exponent, the physical window coefficient is at
 most one eighth. Bound the exponential by one and the variation coefficient from below.
 This keeps every detection window inside the local zero-counting scale. -/
-theorem uniform_high_prime_window_factor_le (D : ℝ) (K nmax : ℕ) (hD : 0 ≤ D) :
-    Real.exp (-(D * (K : ℝ))) / (16 * primeLogPowerVariationBound nmax) ≤ 1 / 8 := by
+theorem primeWindowFactor_le (D : ℝ) (K nmax : ℕ) (hD : 0 ≤ D) :
+    Real.exp (-(D * (K : ℝ))) / (16 * primeLogVariation nmax) ≤ 1 / 8 := by
   have he : Real.exp (-(D * (K : ℝ))) ≤ 1 :=
     Real.exp_le_one_iff.mpr (neg_nonpos.mpr (mul_nonneg hD (Nat.cast_nonneg K)))
-  apply
-    (div_le_iff₀
-        (mul_pos (by norm_num only : (0 : ℝ) < 16) (primeLogPowerVariationBound_pos nmax))).mpr
-  nlinarith only [he, one_le_primeLogPowerVariationBound nmax]
+  apply (div_le_iff₀ (mul_pos (by norm_num only : (0 : ℝ) < 16) (primeLogVariation_pos nmax))).mpr
+  nlinarith only [he, one_le_primeVariation nmax]
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LogFreeDensity

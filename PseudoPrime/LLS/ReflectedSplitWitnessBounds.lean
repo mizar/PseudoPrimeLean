@@ -51,7 +51,7 @@ theorem gamma_primitive_re_le_reflectedSplit_of_prefix {q A : ℕ} [NeZero q]
   have hm := NumberTheory.three_le_conductor_of_ne_one χ hne
   have hmA := (Nat.le_of_dvd (Nat.pos_of_ne_zero (NeZero.ne q)) χ.conductor_dvd_level).trans hqA
   have hb :=
-    PaperStatements.gamma_primitive_sum_re_le_twoPole_reflected_split (le_max_left 20000 A) hm
+    PaperStatements.gammaPrimitiveSum_re_le_twoPole_reflected_split (le_max_left 20000 A) hm
       (hmA.trans (le_max_right 20000 A)) hGRH hp hnp (inv_ne_one.mpr hnp) hx hC S S
   have he :=
     AnalyticNumberTheory.Arithmetic.paired_euler_prefixes_eq_weight χ.primitiveCharacter (5 / 4)
@@ -68,7 +68,7 @@ theorem gamma_primitive_re_le_reflectedSplit_of_prefix {q A : ℕ} [NeZero q]
 /-- For a quadratic nonprincipal character under GRH, retain a paired-prefix saving while adding
 the local correction. Absorb the conductor gap and charge only the original level-prime ramp
 cost. This keeps the Euler saving separate from the negative-witness exclusion budget. -/
-theorem gamma_primitive_add_local_le_reflectedSplit_of_prefix {q A : ℕ} [NeZero q]
+theorem gamma_primitive_local_le_reflectedSplit_GRH {q A : ℕ} [NeZero q]
     (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hqA : q ≤ A)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x C d : ℝ} (hx : 4 ≤ x)
     (hC : AnalyticNumberTheory.DirichletLFunction.twoPoleGammaConstant χ.primitiveCharacter ≤ C)
@@ -88,7 +88,7 @@ theorem gamma_primitive_add_local_le_reflectedSplit_of_prefix {q A : ℕ} [NeZer
   have hm := NumberTheory.three_le_conductor_of_ne_one χ hne
   have hmA := (Nat.le_of_dvd (Nat.pos_of_ne_zero (NeZero.ne q)) χ.conductor_dvd_level).trans hqA
   have hb :=
-    PaperStatements.gamma_primitive_sum_re_le_twoPole_reflected_split (le_max_left 20000 A) hm
+    PaperStatements.gammaPrimitiveSum_re_le_twoPole_reflected_split (le_max_left 20000 A) hm
       (hmA.trans (le_max_right 20000 A)) hGRH hp hnp (inv_ne_one.mpr hnp)
       (by linarith only [hx] : 2 ≤ x) hC S S
   have he :=
@@ -123,8 +123,8 @@ theorem prime_trivial_false_of_reflectedSplit_prefix {q A : ℕ} [NeZero q]
   have ht' : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ (99 / 40 : ℝ) * x → χ.primitiveCharacter p = 1 :=
     fun p hp hb ↦ PaperStatements.primitiveCharacter_apply_one_of_apply_one χ (ht p hp hb)
   have he :=
-    AnalyticNumberTheory.Arithmetic.pairedEulerPrefix_eq_twice_of_coprime_support
-      χ.primitiveCharacter S hS (fun n _ ↦ Nat.coprime_one_right n) (fun p hp hb _ ↦ ht' p hp hb)
+    AnalyticNumberTheory.Arithmetic.pairedEulerPrefix_eq_twice_of_coprime χ.primitiveCharacter S hS
+      (fun n _ ↦ Nat.coprime_one_right n) (fun p hp hb _ ↦ ht' p hp hb)
   have hd :
     g ≤
       ∑ n ∈ S,
@@ -135,7 +135,7 @@ theorem prime_trivial_false_of_reflectedSplit_prefix {q A : ℕ} [NeZero q]
   have hb := gamma_primitive_re_le_reflectedSplit_of_prefix χ hne hqA hGRH hx hC S hd
   have hx0 : 0 < x := by linarith only [hx]
   have hl :=
-    gammaLocalCorrection_nonpos_of_level_primes_above χ hx0
+    gammaLocalCorrection_nonpos_of_large_primes χ hx0
       (fun p hp ↦ (level_prime_above_cutoff_of_all_prime_trivial χ ht hp).le)
   have hJ := jointRampPrincipalLower_le_actual hGRH.riemann (by linarith only [hx] : 1 ≤ x)
   have hN := gamma_ramp_no_witness_comparison_general χ hx0 (fun p hp _ hb0 ↦ ht p hp hb0)
@@ -165,8 +165,8 @@ theorem exists_odd_prime_ne_one_of_reflectedSplit_prefix {q A : ℕ} [NeZero q]
     PaperStatements.primitiveCharacter_apply_one_of_apply_one χ
       (ht p hp (Nat.coprime_two_right.mp hc) hb)
   have he :=
-    AnalyticNumberTheory.Arithmetic.pairedEulerPrefix_eq_twice_of_coprime_support
-      χ.primitiveCharacter S hS (fun n hn ↦ Nat.coprime_two_right.mpr (hodd n hn)) ht'
+    AnalyticNumberTheory.Arithmetic.pairedEulerPrefix_eq_twice_of_coprime χ.primitiveCharacter S hS
+      (fun n hn ↦ Nat.coprime_two_right.mpr (hodd n hn)) ht'
   have hd :
     g ≤
       ∑ n ∈ S,
@@ -187,8 +187,8 @@ theorem exists_odd_prime_ne_one_of_reflectedSplit_prefix {q A : ℕ} [NeZero q]
 prefix exclusion and local ramp costs excludes triviality on unit primes. Keep the quadratic
 excluded budget at the primitive conductor and original exclusion level. This prevents applying
 the MR cost cancellation to negative witnesses. -/
-theorem unit_prime_trivial_false_of_reflectedSplit_prefix {q A : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hqA : q ≤ A)
+theorem not_unitPrimeTrivial_reflectedPrefix_GRH {q A : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hqA : q ≤ A)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x C : ℝ} (hx : 4 ≤ x)
     (hC : AnalyticNumberTheory.DirichletLFunction.twoPoleGammaConstant χ.primitiveCharacter ≤ C)
     (S : Finset ℕ) (hS : ∀ n ∈ S, (n : ℝ) ≤ (99 / 40 : ℝ) * x)
@@ -209,12 +209,11 @@ theorem unit_prime_trivial_false_of_reflectedSplit_prefix {q A : ℕ} [NeZero q]
       (NumberTheory.isQuadratic_primitiveCharacter χ hquad) S
       (AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight (5 / 4) (11 / 4) (3 / 4)) hS
       (fun n _ hn ↦
-        AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight_eq_zero_of_mangoldt_eq_zero _ _ _
-          hn)
+        AnalyticNumberTheory.Arithmetic.pairedEulerWeight_eq_zero_of_mangoldt_zero _ _ _ hn)
       (fun n _ ↦
         AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight_nonneg _ _ (by norm_num only) n)
       ht'
-  have hb := gamma_primitive_add_local_le_reflectedSplit_of_prefix χ hquad hne hqA hGRH hx hC S hd
+  have hb := gamma_primitive_local_le_reflectedSplit_GRH χ hquad hne hqA hGRH hx hC S hd
   have hJ := jointRampPrincipalLower_le_actual hGRH.riemann (by linarith only [hx] : 1 ≤ x)
   have hN := gamma_ramp_no_witness_comparison χ hquad (by linarith only [hx] : 0 < x) ht
   dsimp only [reflectedSplitGap, reflectedSplitUpper, twoPoleEulerPrefixMass] at hgap hb
@@ -238,7 +237,7 @@ theorem exists_prime_neg_one_of_reflectedSplit_prefix {q A : ℕ} [NeZero q]
   classical
   have hex : ∃ p : ℕ, p.Prime ∧ ¬p ∣ q ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ χ p ≠ 1 := by
     by_contra h
-    apply unit_prime_trivial_false_of_reflectedSplit_prefix χ hquad hne hqA hGRH hx hC S hS hgap
+    apply not_unitPrimeTrivial_reflectedPrefix_GRH χ hquad hne hqA hGRH hx hC S hS hgap
     intro p hp hd hb
     exact Classical.byContradiction (fun hv ↦ h ⟨p, hp, hd, hb, hv⟩)
   obtain ⟨p, hp, hd, hb, hv⟩ := hex

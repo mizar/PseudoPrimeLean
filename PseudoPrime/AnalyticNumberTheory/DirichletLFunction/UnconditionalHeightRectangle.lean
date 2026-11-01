@@ -54,9 +54,8 @@ theorem unconditionalHeightRectangleFacts (A : ℕ) (hA : 2 ≤ A) (T : ℝ) (hT
 avoids every ordinary L-zero at either signed height, for a primitive nonprincipal
 character. An ordinary zero would give a completed zero in the open critical strip,
 contradicting the central nonvanishing. This excludes singularities on full horizontal edges. -/
-theorem ordinaryLFunction_ne_zero_on_signed_horizontal {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (T : ℝ)
-    (hT : 0 < T)
+theorem L_ne_zero_signed_horizontal {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (T : ℝ) (hT : 0 < T)
     (hcentral :
       ∀ σ : ℝ,
         |σ| ≤ 2 →
@@ -71,9 +70,7 @@ theorem ordinaryLFunction_ne_zero_on_signed_horizontal {q : ℕ} [NeZero q]
     · rw [h]
       exact neg_ne_zero.mpr hT.ne'
   have hΓ : DirichletCharacter.gammaFactor χ s ≠ 0 := gammaFactor_ne_zero_of_im_ne_zero hsim
-  have heq :=
-    dirichletLFunction_eq_completed_div_gammaFactor χ s
-      (Or.inr (dirichletCharacter_level_ne_one_of_ne_one hne))
+  have heq := L_eq_completed_div_gammaFactor χ s (Or.inr (character_level_ne_one_of_ne_one hne))
   have hFzero : χ.completedLFunction s = 0 := (div_eq_zero_iff.mp (heq ▸ hzero)).resolve_right hΓ
   have hpos := completedLFunction_zero_re_pos hp hinv hFzero
   have hlt := completedLFunction_zero_re_lt_one hne hFzero
@@ -100,7 +97,7 @@ half-integer left edge, every finite singularity lies strictly inside the contou
 Exclude Mellin points and ordinary zeros from all four boundary coordinates using
 central nonvanishing, right-half-plane nonvanishing, and the left-vertical theorem.
 This supplies the unconditional finite-contour interior condition. -/
-theorem unconditionalHeight_singularities_mem_open {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+theorem height_singularities_open {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (A : ℕ) (hA : 2 ≤ A) (T : ℝ) (hTpos : 0 < T)
     (hcentral :
       ∀ σ : ℝ,
@@ -109,16 +106,16 @@ theorem unconditionalHeight_singularities_mem_open {q : ℕ} [NeZero q] {χ : Di
             χ.completedLFunction ((σ : ℂ) - T * Complex.I) ≠ 0) :
     ∀
       s ∈
-        dirichletLFunctionSingularitiesInRectangle χ hne (unconditionalHeightLowerCorner A T)
+        LFunctionSingularitiesInRectangle χ hne (unconditionalHeightLowerCorner A T)
           (unconditionalHeightUpperCorner T),
       s ∈
         RectangleGeometry.rectangleOpenBox (unconditionalHeightLowerCorner A T)
           (unconditionalHeightUpperCorner T) := by
   intro s hs
-  obtain ⟨hrect, hcase⟩ := mem_dirichletLFunctionSingularitiesInRectangle_iff.mp hs
+  obtain ⟨hrect, hcase⟩ := mem_LSingularitiesInRectangle_iff.mp hs
   obtain ⟨hzre, hzim, hwre, hwim, hre, him⟩ := unconditionalHeightRectangleFacts A hA T hTpos
   have hA' : (2 : ℝ) ≤ A := by exact_mod_cast hA
-  apply RectangleGeometry.mem_rectangleOpenBox_of_mem_closedBox_of_ne hre him hrect
+  apply RectangleGeometry.mem_openBox_of_closed_of_ne_sides hre him hrect
   · rcases hcase with hs0 | hs1 | hLzero
     · rw [hs0, hzre]
       simp only [Complex.zero_re, one_div, ne_eq]
@@ -131,7 +128,7 @@ theorem unconditionalHeight_singularities_mem_open {q : ℕ} [NeZero q] {χ : Di
       have hseq : s = ((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (s.im : ℂ) * Complex.I := by
         rw [← heq, Complex.re_add_im]
       rw [hseq] at hLzero
-      exact dirichletLFunction_ne_zero_leftVertical hp hne hinv A hA s.im hLzero
+      exact LFunction_ne_zero_leftVertical hp hne hinv A hA s.im hLzero
   · rcases hcase with hs0 | hs1 | hLzero
     · rw [hs0, hwre]
       change (0 : ℝ) ≠ 2
@@ -156,9 +153,7 @@ theorem unconditionalHeight_singularities_mem_open {q : ℕ} [NeZero q] {χ : Di
       linarith only [hTpos]
     · rw [hzim]
       intro heq
-      exact
-        ordinaryLFunction_ne_zero_on_signed_horizontal hp hne hinv T hTpos hcentral (Or.inr heq)
-          hLzero
+      exact L_ne_zero_signed_horizontal hp hne hinv T hTpos hcentral (Or.inr heq) hLzero
   · rcases hcase with hs0 | hs1 | hLzero
     · rw [hs0, hwim]
       simpa only [Complex.zero_im, ne_eq] using hTpos.ne
@@ -166,9 +161,7 @@ theorem unconditionalHeight_singularities_mem_open {q : ℕ} [NeZero q] {χ : Di
       simpa only [Complex.one_im, ne_eq] using hTpos.ne
     · rw [hwim]
       intro heq
-      exact
-        ordinaryLFunction_ne_zero_on_signed_horizontal hp hne hinv T hTpos hcentral (Or.inl heq)
-          hLzero
+      exact L_ne_zero_signed_horizontal hp hne hinv T hTpos hcentral (Or.inl heq) hLzero
 
 /-- The Mellin points zero and one belong to every positively oriented unconditional
 height rectangle with left-edge parameter at least two. Check their real and
@@ -176,35 +169,32 @@ imaginary coordinates explicitly. This permits splitting the finite residue sum.
 theorem unconditionalHeight_mellinPoints_mem {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
     (hne : χ ≠ 1) (A : ℕ) (hA : 2 ≤ A) (T : ℝ) (hT : 0 < T) :
     (0 : ℂ) ∈
-        dirichletLFunctionSingularitiesInRectangle χ hne (unconditionalHeightLowerCorner A T)
+        LFunctionSingularitiesInRectangle χ hne (unconditionalHeightLowerCorner A T)
           (unconditionalHeightUpperCorner T) ∧
       (1 : ℂ) ∈
-        dirichletLFunctionSingularitiesInRectangle χ hne (unconditionalHeightLowerCorner A T)
+        LFunctionSingularitiesInRectangle χ hne (unconditionalHeightLowerCorner A T)
           (unconditionalHeightUpperCorner T) := by
   obtain ⟨hzre, hzim, hwre, hwim, _, _⟩ := unconditionalHeightRectangleFacts A hA T hT
   have hAreal : (2 : ℝ) ≤ A := by exact_mod_cast hA
   have hbox (u : ℝ) (hu : 0 ≤ u ∧ u ≤ 1) :
     (u : ℂ) ∈
-      dirichletCompletedLFunctionRectangleBox (unconditionalHeightLowerCorner A T)
+      completedRectangleBox (unconditionalHeightLowerCorner A T)
         (unconditionalHeightUpperCorner T) := by
-    rw [dirichletCompletedLFunctionRectangleBox, Rectangle.rectangleClosedBox, Complex.mem_reProdIm,
-      hzre, hzim, hwre, hwim, Complex.ofReal_re, Complex.ofReal_im]
+    rw [completedRectangleBox, Rectangle.rectangleClosedBox, Complex.mem_reProdIm, hzre, hzim, hwre,
+      hwim, Complex.ofReal_re, Complex.ofReal_im]
     exact
       ⟨Set.Icc_subset_uIcc ⟨by linarith only [hAreal, hu.1], by linarith only [hu.2]⟩,
         Set.Icc_subset_uIcc ⟨by linarith only [hT], hT.le⟩⟩
   exact
-    ⟨mem_dirichletLFunctionSingularitiesInRectangle_iff.mpr
-        ⟨hbox 0 ⟨le_refl 0, zero_le_one⟩, Or.inl rfl⟩,
-      mem_dirichletLFunctionSingularitiesInRectangle_iff.mpr
-        ⟨hbox 1 ⟨zero_le_one, le_refl 1⟩, Or.inr (Or.inl rfl)⟩⟩
+    ⟨mem_LSingularitiesInRectangle_iff.mpr ⟨hbox 0 ⟨le_refl 0, zero_le_one⟩, Or.inl rfl⟩,
+      mem_LSingularitiesInRectangle_iff.mpr ⟨hbox 1 ⟨zero_le_one, le_refl 1⟩, Or.inr (Or.inl rfl)⟩⟩
 
 /-- For a primitive nonprincipal character and an unconditional good-height rectangle,
 the normalized logarithmic boundary integral equals its finite residue sum.
 Apply the generic finite-contour identity with the proved interior condition.
 This removes GRH from the fixed-height logarithmic residue identity. -/
-theorem unconditionalHeight_logFiniteContourIdentity_normalized {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (A : ℕ)
-    (hA : 2 ≤ A) (T : ℝ) (hT : 0 < T)
+theorem logContour_unconditional_normalized {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (A : ℕ) (hA : 2 ≤ A) (T : ℝ) (hT : 0 < T)
     (hcentral :
       ∀ σ : ℝ,
         |σ| ≤ 2 →
@@ -216,12 +206,12 @@ theorem unconditionalHeight_logFiniteContourIdentity_normalized {q : ℕ} [NeZer
           (unconditionalHeightLowerCorner A T) (unconditionalHeightUpperCorner T) =
       ∑
         ρ ∈
-          dirichletLFunctionSingularitiesInRectangle χ hne (unconditionalHeightLowerCorner A T)
+          LFunctionSingularitiesInRectangle χ hne (unconditionalHeightLowerCorner A T)
             (unconditionalHeightUpperCorner T),
         dirichletLogResidueAt hne x ρ := by
   obtain ⟨_, _, _, _, hre, him⟩ := unconditionalHeightRectangleFacts A hA T hT
   exact
-    dirichletLogFiniteContourIdentity_normalized hx hp hne hre him
-      (unconditionalHeight_singularities_mem_open hp hne hinv A hA T hT hcentral)
+    logFiniteContourIdentity_normalized hx hp hne hre him
+      (height_singularities_open hp hne hinv A hA T hT hcentral)
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

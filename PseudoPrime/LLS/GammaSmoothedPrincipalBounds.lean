@@ -119,7 +119,7 @@ theorem gamma_ramp_sum_abs_error_le_seven (hRH : RiemannHypothesis) {L : ℝ} (h
             Real.sqrt ((32 / 99 : ℝ) * L ^ 2)| ≤
       7 := by
   have hx0 : 0 < (32 / 99 : ℝ) * L ^ 2 := zero_lt_one.trans_le (Analysis.ramp_scale_ge_one hL)
-  rw [AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum_normalized_eq_main_add_error hx0,
+  rw [AnalyticNumberTheory.Arithmetic.expRampMangoldt_div_sqrt_eq_main_add_error hx0,
     add_sub_cancel_left, abs_div, abs_of_pos (Real.sqrt_pos.mpr hx0)]
   apply (div_le_iff₀ (Real.sqrt_pos.mpr hx0)).mpr
   exact
@@ -170,7 +170,7 @@ theorem gamma_ramp_error_functional_bound_paired (hRH : RiemannHypothesis) {x : 
     rw [hb, ha]
     exact logWeighted_ramp_error_increment hRH hx
   have h :=
-    AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional_abs_le_of_increment
+    AnalyticNumberTheory.Arithmetic.expRampVariation_abs_le_of_increment
       (rampErrorExtension_continuous hx0) (rampErrorExtension_bound hRH hx) hinc
   rw [AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional_congr
       (rampErrorExtension_eqOn hx0)] at h
@@ -186,7 +186,7 @@ theorem gamma_ramp_sum_lower_paired (hRH : RiemannHypothesis) {x : ℝ} (hx : 1 
       AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x := by
   have hx0 := zero_lt_one.trans_le hx
   have he := gamma_ramp_error_functional_bound_paired hRH hx
-  rw [AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum_normalized_eq_main_add_error hx0]
+  rw [AnalyticNumberTheory.Arithmetic.expRampMangoldt_div_sqrt_eq_main_add_error hx0]
   have hdiv := div_le_div_of_nonneg_right (abs_le.mp he).1 (Real.sqrt_nonneg x)
   rw [neg_div] at hdiv
   linarith only [hdiv]

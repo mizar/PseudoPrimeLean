@@ -591,7 +591,7 @@ theorem gammaPrefix100Radius_lower_mu_fourteen_fifths {L : ℝ} (hL : 270 ≤ L)
 
 /-- A linear upper estimate for the residual-29 Gaussian radius. It is used
 to compare the new three-prime cutoff with the 1000-prefix Gamma curve. -/
-theorem gammaIndex100GaussianTripleRadius29_le_half_add_213_tenths {L : ℝ} (hL : 240 ≤ L) :
+theorem gammaIndex100_triple29_half_213_10 {L : ℝ} (hL : 240 ≤ L) :
     gammaIndex100GaussianTripleRadius29 L ≤ L / 2 + 213 / 10 := by
   let R := gammaIndex100GaussianTripleRadius29 L
   let s := Real.sqrt R
@@ -681,7 +681,7 @@ theorem gammaIndex100GaussianTripleRadius29_le_half_add_213_tenths {L : ℝ} (hL
 
 /-- From `L ≥ 270`, a sharper affine upper estimate for the residual-29
 radius supplies the comparison with the 50000-prefix Gamma branch. -/
-theorem gammaIndex100GaussianTripleRadius29_le_49_hundredths_add_22 {L : ℝ} (hL : 270 ≤ L) :
+theorem gammaIndex100_triple29_le_49_100_add22 {L : ℝ} (hL : 270 ≤ L) :
     gammaIndex100GaussianTripleRadius29 L ≤ (49 / 100 : ℝ) * L + 22 := by
   let R := gammaIndex100GaussianTripleRadius29 L
   let s := Real.sqrt R
@@ -772,7 +772,7 @@ theorem gammaIndex100GaussianTripleRadius29_le_49_hundredths_add_22 {L : ℝ} (h
 
 /-- The new index-four cutoff is below the uncapped 1000-prefix Gamma curve
 for every `L ≥ 240`. The two affine radius bounds give a uniform comparison. -/
-theorem gammaIndex100GaussianTripleBound29_le_gammaPrefix1000 {L : ℝ} (hL : 240 ≤ L) :
+theorem gamma100GaussianTriple29_le_gammaPrefix1000 {L : ℝ} (hL : 240 ≤ L) :
     (21 / 10 : ℝ) * (gammaIndex100GaussianTripleRadius29 L) ^ 2 ≤
       (99 / 40 : ℝ) * (gammaPrefix100Radius L (203 / 50)) ^ 2 := by
   let R := gammaIndex100GaussianTripleRadius29 L
@@ -789,7 +789,7 @@ theorem gammaIndex100GaussianTripleBound29_le_gammaPrefix1000 {L : ℝ} (hL : 24
     exact gammaPrefix100Radius_lower_mu_six hL
   have hRupper : R ≤ T := by
     dsimp only [R, T]
-    exact gammaIndex100GaussianTripleRadius29_le_half_add_213_tenths hL
+    exact gammaIndex100_triple29_half_213_10 hL
   have hfactor : (217 / 200 : ℝ) ≤ Real.sqrt (33 / 28 : ℝ) := by
     apply Real.le_sqrt_of_sq_le
     norm_num only
@@ -835,14 +835,14 @@ theorem gammaIndex100GaussianTripleBound29_le_50000 {L : ℝ} (hL : 240 ≤ L) (
 
 /-- The residual-29 cutoff is covered by the clipped 1000-prefix Gamma
 branch throughout its range of validity. -/
-theorem gammaIndex100GaussianTripleBound29_le_gammaIndex100Prefix1000 {L : ℝ} (hL : 240 ≤ L) :
+theorem gamma100GaussianTriple29_le_gamma100Prefix1000 {L : ℝ} (hL : 240 ≤ L) :
     gammaIndex100GaussianTripleBound29 L ≤
       max 1000 ((99 / 40 : ℝ) * gammaPrefix100Radius L (203 / 50) ^ 2) := by
-  exact (gammaIndex100GaussianTripleBound29_le_gammaPrefix1000 hL).trans (le_max_right _ _)
+  exact (gamma100GaussianTriple29_le_gammaPrefix1000 hL).trans (le_max_right _ _)
 
 /-- From scale 270, the residual-29 cutoff is below the uncapped 50000-prefix
 Gamma curve. -/
-theorem gammaIndex100GaussianTripleBound29_le_gammaPrefix50000 {L : ℝ} (hL : 270 ≤ L) :
+theorem gamma100GaussianTriple29_le_gammaPrefix50000 {L : ℝ} (hL : 270 ≤ L) :
     gammaIndex100GaussianTripleBound29 L ≤
       (99 / 40 : ℝ) * (gammaPrefix100Radius L (28493 / 5000)) ^ 2 := by
   let R := gammaIndex100GaussianTripleRadius29 L
@@ -861,7 +861,7 @@ theorem gammaIndex100GaussianTripleBound29_le_gammaPrefix50000 {L : ℝ} (hL : 2
     exact gammaPrefix100Radius_lower_mu_fourteen_fifths hL
   have hRupper : R ≤ T := by
     dsimp only [R, T]
-    exact gammaIndex100GaussianTripleRadius29_le_49_hundredths_add_22 hL
+    exact gammaIndex100_triple29_le_49_100_add22 hL
   have hfactor : (217 / 200 : ℝ) ≤ Real.sqrt (33 / 28 : ℝ) := by
     apply Real.le_sqrt_of_sq_le
     norm_num only
@@ -897,14 +897,14 @@ theorem gammaIndex100GaussianTripleBound29_le_gammaPrefix50000 {L : ℝ} (hL : 2
 
 /-- The residual-29 index-four cutoff lies below both clipped prefix curves,
 and hence below their minimum `U₁₀₀`, from logarithmic scale 240 onward. -/
-theorem gammaIndex100GaussianTripleBound29_le_prefix_upper {L : ℝ} (hL : 240 ≤ L) :
+theorem gamma100GaussianTriple29_le_prefix_upper {L : ℝ} (hL : 240 ≤ L) :
     gammaIndex100GaussianTripleBound29 L ≤ gammaIndex100PrefixUpper L := by
   apply le_min
-  · exact gammaIndex100GaussianTripleBound29_le_gammaIndex100Prefix1000 hL
+  · exact gamma100GaussianTriple29_le_gamma100Prefix1000 hL
   · by_cases hU : L ≤ 270
     · exact (gammaIndex100GaussianTripleBound29_le_50000 hL hU).trans (le_max_left _ _)
     · have h270 : 270 ≤ L := le_of_not_ge hU
-      exact (gammaIndex100GaussianTripleBound29_le_gammaPrefix50000 h270).trans (le_max_right _ _)
+      exact (gamma100GaussianTriple29_le_gammaPrefix50000 h270).trans (le_max_right _ _)
 
 /-- The old `21/10` Gaussian ambient error is below 29 at the scaled
 Gamma index-100 radius for every `L ≥ 330`. Use the `9/5` negative-power
@@ -996,8 +996,7 @@ theorem gammaIndex100GaussianAmbientErrorPrefix1000_lt {n : ℕ} {L : ℝ} (hL :
 
 /-- At the residual-29 radius, the transferred 1000-prefix ambient error is
 below 23 for every `L ≥ 200`. -/
-theorem gammaIndex100GaussianTripleAmbientErrorPrefix1000_lt {n : ℕ} {L : ℝ} (hL : 200 ≤ L)
-    (hlog : Real.log n = L) :
+theorem gamma100GaussianErrorPrefix1000_lt {n : ℕ} {L : ℝ} (hL : 200 ≤ L) (hlog : Real.log n = L) :
     LLS.PaperStatements.gaussianAmbientErrorPrefix1000 n
         (gammaIndex100GaussianTripleRadius29 L ^ 2) <
       23 := by
@@ -1086,7 +1085,7 @@ theorem gammaIndex100GaussianTripleScalarError_lt {L s R A : ℝ} (hL : 330 ≤ 
 
 /-- From `L ≥ 200`, the inverse-radius terms and the 1000-prefix ambient
 error total less than the residual budget 29. -/
-theorem gammaIndex100GaussianTripleScalarErrorPrefix1000_lt {L s R A : ℝ} (hL : 200 ≤ L)
+theorem gaussianTriple_scalarError1000_lt_29 {L s R A : ℝ} (hL : 200 ≤ L)
     (hRlo : (9 / 25 : ℝ) * L + 50 ≤ R) (hs0 : 0 ≤ s) (hssq : s ^ 2 = R) (hA : A ≤ 23) :
     (4 / 3 : ℝ) * (63 * (2129 / 2000 : ℝ) / (10 * s) + 1839 * (2129 / 2000 : ℝ) / (1000 * R)) +
         13 / 3 +
@@ -1255,8 +1254,8 @@ theorem gammaIndex100GaussianTripleComparisonImpossible {L R s A I E C h : ℝ} 
 
 /-- The relative Gaussian comparison contradicts the residual-29 root equation
 for the 1000-prefix radius when the conductor cost is at most `2L`. -/
-theorem gammaIndex100GaussianTripleComparisonImpossiblePrefix1000 {L R s A I E C h : ℝ}
-    (hL : 200 ≤ L) (hRlo : (9 / 25 : ℝ) * L + 50 ≤ R) (hs0 : 0 ≤ s) (hssq : s ^ 2 = R) (hA : A ≤ 23)
+theorem gaussianTriple_comparison1000_false {L R s A I E C h : ℝ} (hL : 200 ≤ L)
+    (hRlo : (9 / 25 : ℝ) * L + 50 ≤ R) (hs0 : 0 ≤ s) (hssq : s ^ 2 = R) (hA : A ≤ 23)
     (hC : C ≤ 2 * L) (hI : 81470555 / 100000000 ≤ I) (hE : E ≤ 2129 / 2000) (hh : h = 1 / (3 * s))
     (hh1 : h ≤ 1 / 2)
     (hroot :
@@ -1300,7 +1299,7 @@ theorem gammaIndex100GaussianTripleComparisonImpossiblePrefix1000 {L R s A I E C
   have hC' : (161 / 1200 : ℝ) * C ≤ (161 / 600 : ℝ) * L := by
     have hscaled := mul_le_mul_of_nonneg_left hC (by norm_num only : (0 : ℝ) ≤ 161 / 1200)
     nlinarith only [hscaled]
-  have herror := gammaIndex100GaussianTripleScalarErrorPrefix1000_lt hL hRlo hs0 hssq hA
+  have herror := gaussianTriple_scalarError1000_lt_29 hL hRlo hs0 hssq hA
   have hmain :
     (((4 * (81470555 / 100000000 : ℝ) - 2129 / 2000) / 3) -
           (4 * (81470555 / 100000000 : ℝ)) / (9 * s)) *
@@ -1351,8 +1350,8 @@ theorem gammaIndex100GaussianTripleComparisonImpossiblePrefix1000 {L R s A I E C
 /-- A pass-containing subgroup of index four and conductor cost at most `2L`
 forces a rejecting prime below the Gamma index-100 cutoff from `L ≥ 330`.
 Use the scaled `21/10` Gaussian comparison at exactly the same final cutoff. -/
-theorem exists_prime_witness_le_gammaIndex100_of_index_four_conductor {n : ℕ} [NeZero n]
-    (hnlarge : 20000 ≤ n) (hnOdd : Odd n) (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
+theorem exists_prime_gamma100_indexFour_GRH {n : ℕ} [NeZero n] (hnlarge : 20000 ≤ n) (hnOdd : Odd n)
+    (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
@@ -1423,8 +1422,8 @@ theorem exists_prime_witness_le_gammaIndex100_of_index_four_conductor {n : ℕ} 
     dsimp only [x]
     nlinarith only [hR184]
   have hcmp :=
-    LLS.PaperStatements.gaussian_noSmallPrimes_inequality_relative_prefix1000_gain hnlarge H hGRH
-      hhpos hh1 hx (by norm_num only : (0 : ℝ) ≤ 21 / 10) hX hdiv hsmall
+    LLS.PaperStatements.gaussian_noSmall_relative1000_GRH hnlarge H hGRH hhpos hh1 hx
+      (by norm_num only : (0 : ℝ) ≤ 21 / 10) hX hdiv hsmall
   have hindex : (H.index : ℝ) = 4 := by exact_mod_cast hi
   have hcmp' :
     (4 * (1 - h) * I - E) * R ≤
@@ -1456,8 +1455,8 @@ theorem exists_prime_witness_le_gammaIndex100_of_index_four_conductor {n : ℕ} 
 
 /-- For `L ≥ 200`, an index-four pass-containing subgroup with conductor cost
 at most `2L` has a rejecting prime below the internal residual-29 cutoff. -/
-theorem exists_prime_witness_le_gammaIndex100GaussianTripleBound29_of_index_four_conductor {n : ℕ}
-    [NeZero n] (hnOdd : Odd n) (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
+theorem exists_prime_gaussianTriple29_indexFour_GRH {n : ℕ} [NeZero n] (hnOdd : Odd n)
+    (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
@@ -1544,8 +1543,8 @@ theorem exists_prime_witness_le_gammaIndex100GaussianTripleBound29_of_index_four
     dsimp only [x]
     nlinarith only [hR122]
   have hcmp :=
-    LLS.PaperStatements.gaussian_noSmallPrimes_inequality_relative_prefix1000_gain hnlarge H hGRH
-      hhpos hh1 hx (by norm_num only : (0 : ℝ) ≤ 21 / 10) hX hdiv hsmall
+    LLS.PaperStatements.gaussian_noSmall_relative1000_GRH hnlarge H hGRH hhpos hh1 hx
+      (by norm_num only : (0 : ℝ) ≤ 21 / 10) hX hdiv hsmall
   have hindex : (H.index : ℝ) = 4 := by exact_mod_cast hi
   have hcmp' :
     (4 * (1 - h) * I - E) * R ≤
@@ -1563,7 +1562,7 @@ theorem exists_prime_witness_le_gammaIndex100GaussianTripleBound29_of_index_four
     exact Analysis.gaussian_endpoint_exp_le
   have hA : A ≤ 23 := by
     dsimp only [A, x, R, L]
-    exact (gammaIndex100GaussianTripleAmbientErrorPrefix1000_lt hL rfl).le
+    exact (gamma100GaussianErrorPrefix1000_lt hL rfl).le
   have hC' : LLS.PaperStatements.subgroupConductorLogSum H ≤ 2 * L := by
     dsimp only [L]
     exact hC
@@ -1585,7 +1584,7 @@ theorem exists_prime_witness_le_gammaIndex100GaussianTripleBound29_of_index_four
     rw [hRsqrt] at hrootEq
     exact hrootEq
   exact
-    gammaIndex100GaussianTripleComparisonImpossiblePrefix1000 hL hRlower (le_of_lt hspos) hssq hA
-      hC' hI hE hh hh1 hroot hcmp'
+    gaussianTriple_comparison1000_false hL hRlower (le_of_lt hspos) hssq hA hC' hI hE hh hh1 hroot
+      hcmp'
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

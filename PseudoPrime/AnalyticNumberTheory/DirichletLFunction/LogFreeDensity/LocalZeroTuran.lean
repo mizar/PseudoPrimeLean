@@ -44,7 +44,7 @@ Proof: write the logarithmic derivative as the quotient of the analytic derivati
 function, whose denominator is nonzero at `z`.
 Role: guarantees arbitrary local differentiability of the zero-free analytic remainder.
 -/
-theorem analyticAt_logDeriv_of_ne_zero {g : ℂ → ℂ} {z : ℂ} (hg : AnalyticAt ℂ g z) (hgz : g z ≠ 0) :
+theorem analyticAt_logDeriv {g : ℂ → ℂ} {z : ℂ} (hg : AnalyticAt ℂ g z) (hgz : g z ≠ 0) :
     AnalyticAt ℂ (fun w : ℂ => logDeriv g w) z := by
   have hfun : (fun w : ℂ => logDeriv g w) = fun w => deriv g w / g w := by
     funext w
@@ -56,7 +56,7 @@ theorem analyticAt_logDeriv_of_ne_zero {g : ℂ → ℂ} {z : ℂ} (hg : Analyti
 The logarithmic derivative of the affine zero factor `z - u` is the reciprocal distance to `u`.
 The identity also holds at `z = u`, where both sides are zero by field division conventions.
 -/
-theorem logDeriv_sub_const_eq_inv (u z : ℂ) : logDeriv (fun w : ℂ => w - u) z = (z - u)⁻¹ := by
+theorem logDeriv_sub_eq_inv (u z : ℂ) : logDeriv (fun w : ℂ => w - u) z = (z - u)⁻¹ := by
   rw [logDeriv_apply, deriv_sub_const, deriv_id'']
   exact one_div _
 
@@ -72,8 +72,8 @@ factorized rational function.
 
 Role: separates the local zero sum from the analytic remainder before taking higher derivatives.
 -/
-theorem exists_analytic_local_logDeriv_decomposition {F : ℂ → ℂ}
-    (hFglobal : AnalyticOnNhd ℂ F Set.univ) (z₀ : ℂ) (hz₀ : F z₀ ≠ 0) (c : ℂ) (R : ℝ) :
+theorem exists_logDerivLocal {F : ℂ → ℂ} (hFglobal : AnalyticOnNhd ℂ F Set.univ) (z₀ : ℂ)
+    (hz₀ : F z₀ ≠ 0) (c : ℂ) (R : ℝ) :
     ∃ g : ℂ → ℂ,
       AnalyticOnNhd ℂ g (Metric.ball c |R|) ∧
         (∀ u : Metric.ball c |R|, g u ≠ 0) ∧
@@ -81,7 +81,7 @@ theorem exists_analytic_local_logDeriv_decomposition {F : ℂ → ℂ}
           (fun z =>
             (∑ᶠ u, (MeromorphicOn.divisor F (Metric.ball c |R|) u) • (z - u)⁻¹) +
               logDeriv g z) := by
-  rcases exists_analytic_local_zero_factorization hFglobal z₀ hz₀ c R with ⟨g, hg, hgn, hfactor⟩
+  rcases exists_localFactor hFglobal z₀ hz₀ c R with ⟨g, hg, hgn, hfactor⟩
   let U := Metric.ball c |R|
   let d := MeromorphicOn.divisor F U
   let P := ∏ᶠ u, (fun z : ℂ => z - u) ^ d u
@@ -134,7 +134,7 @@ theorem exists_analytic_local_logDeriv_decomposition {F : ℂ → ℂ}
     _ = (∑ᶠ u, d u • logDeriv (fun w : ℂ => w - u) z) + logDeriv g z := by
       dsimp only [P]
       rw [hZeros]
-    _ = (∑ᶠ u, d u • (z - u)⁻¹) + logDeriv g z := by simp only [logDeriv_sub_const_eq_inv]
+    _ = (∑ᶠ u, d u • (z - u)⁻¹) + logDeriv g z := by simp only [logDeriv_sub_eq_inv]
     _ = (∑ᶠ u, (MeromorphicOn.divisor F (Metric.ball c |R|) u) • (z - u)⁻¹) + logDeriv g z := by rfl
 
 /--
@@ -144,8 +144,8 @@ analytic factor.
 Proof: instantiate the generic analytic factorization at the nonzero completed value at one.
 Role: preserves the completed-L interface used by the existing local zero estimates.
 -/
-theorem exists_completedLFunction_local_logDeriv_decomposition {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (c : ℂ) (R : ℝ) :
+theorem completed_logLocal {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (c : ℂ)
+    (R : ℝ) :
     ∃ g : ℂ → ℂ,
       AnalyticOnNhd ℂ g (Metric.ball c |R|) ∧
         (∀ u : Metric.ball c |R|, g u ≠ 0) ∧
@@ -161,8 +161,8 @@ theorem exists_completedLFunction_local_logDeriv_decomposition {q : ℕ} [NeZero
   let F := DirichletCharacter.completedLFunction χ
   have hF : AnalyticOnNhd ℂ F Set.univ := fun z _ =>
     (DirichletCharacter.differentiable_completedLFunction hχ).analyticAt z
-  have h1nz : F 1 ≠ 0 := dirichletCompletedLFunction_one_ne_zero_of_ne_one hχ
-  obtain ⟨g, hg, hgn, hdecomp⟩ := exists_analytic_local_logDeriv_decomposition hF 1 h1nz c R
+  have h1nz : F 1 ≠ 0 := completed_one_ne_zero_of_ne_one hχ
+  obtain ⟨g, hg, hgn, hdecomp⟩ := exists_logDerivLocal hF 1 h1nz c R
   refine ⟨g, hg, hgn, ?_⟩
   simpa only [F] using hdecomp
 
@@ -173,7 +173,7 @@ Claim: Their `n`th iterated derivatives also agree with respect to that filter.
 Proof: Inductively apply preservation of cofinite agreement under differentiation on an open set.
 Role: transfers the local logarithmic-derivative decomposition to higher derivatives.
 -/
-theorem iteratedDeriv_congr_codiscreteWithin {f g : ℂ → ℂ} {U : Set ℂ} (hU : IsOpen U)
+theorem iteratedDeriv_congrOn {f g : ℂ → ℂ} {U : Set ℂ} (hU : IsOpen U)
     (h : f =ᶠ[Filter.codiscreteWithin U] g) (n : ℕ) :
     iteratedDeriv n f =ᶠ[Filter.codiscreteWithin U] iteratedDeriv n g := by
   induction n with
@@ -191,8 +191,8 @@ support,
 then use the reciprocal-factor formula and analyticity of the remainder's logarithmic derivative.
 Role: supplies the local higher-order zero sum needed by Turan's power-sum estimate.
 -/
-theorem exists_analytic_local_iterated_logDeriv_decomposition {F : ℂ → ℂ}
-    (hFglobal : AnalyticOnNhd ℂ F Set.univ) (z₀ : ℂ) (hz₀ : F z₀ ≠ 0) (c : ℂ) (R : ℝ) (n : ℕ) :
+theorem exists_localLogIter {F : ℂ → ℂ} (hFglobal : AnalyticOnNhd ℂ F Set.univ) (z₀ : ℂ)
+    (hz₀ : F z₀ ≠ 0) (c : ℂ) (R : ℝ) (n : ℕ) :
     ∃ g : ℂ → ℂ,
       AnalyticOnNhd ℂ g (Metric.ball c |R|) ∧
         (∀ u : Metric.ball c |R|, g u ≠ 0) ∧
@@ -202,7 +202,7 @@ theorem exists_analytic_local_iterated_logDeriv_decomposition {F : ℂ → ℂ}
                 ((MeromorphicOn.divisor F (Metric.ball c |R|) u : ℤ) : ℂ) *
                   ((-1 : ℂ) ^ n * (n.factorial : ℂ) * (z - u) ^ (-1 - n : ℤ))) +
               iteratedDeriv n (logDeriv g) z) := by
-  rcases exists_analytic_local_logDeriv_decomposition hFglobal z₀ hz₀ c R with ⟨g, hg, hgn, hdecomp⟩
+  rcases exists_logDerivLocal hFglobal z₀ hz₀ c R with ⟨g, hg, hgn, hdecomp⟩
   let U := Metric.ball c |R|
   let d := MeromorphicOn.divisor F U
   let m : ℂ → ℂ := fun u => (d u : ℂ)
@@ -224,10 +224,10 @@ theorem exists_analytic_local_iterated_logDeriv_decomposition {F : ℂ → ℂ}
     logDeriv F =ᶠ[Filter.codiscreteWithin U] (fun z => (∑ᶠ u, m u * (z - u)⁻¹) + logDeriv g z) := by
     filter_upwards [hdecomp] with z hz
     rw [hz, hsumEq]
-  have hiter := iteratedDeriv_congr_codiscreteWithin Metric.isOpen_ball hdecomp' n
+  have hiter := iteratedDeriv_congrOn Metric.isOpen_ball hdecomp' n
   let s := hfiniteM.toFinset
-  have havoid := eventually_forall_ne_of_finset s U
-  have hpower := iteratedDeriv_finsum_reciprocal_sum m hfiniteM n U
+  have havoid := eventually_forall_ne s U
+  have hpower := reciprocalFinsum_iter m hfiniteM n U
   have hUevent : ∀ᶠ z in Filter.codiscreteWithin U, z ∈ U := by
     apply
       Filter.Eventually.filter_mono
@@ -284,8 +284,8 @@ Claim: the completed-L higher logarithmic derivative has the corresponding local
 Proof: apply the generic analytic decomposition using the nonzero completed value at one.
 Role: keeps the established completed-L interface for downstream local Turán estimates.
 -/
-theorem exists_completedLFunction_local_iterated_logDeriv_decomposition {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (c : ℂ) (R : ℝ) (n : ℕ) :
+theorem exists_completedIter {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (c : ℂ)
+    (R : ℝ) (n : ℕ) :
     ∃ g : ℂ → ℂ,
       AnalyticOnNhd ℂ g (Metric.ball c |R|) ∧
         (∀ u : Metric.ball c |R|, g u ≠ 0) ∧
@@ -304,9 +304,8 @@ theorem exists_completedLFunction_local_iterated_logDeriv_decomposition {q : ℕ
   let F := DirichletCharacter.completedLFunction χ
   have hFglobal : AnalyticOnNhd ℂ F Set.univ := fun z _ =>
     (DirichletCharacter.differentiable_completedLFunction hχ).analyticAt z
-  have h1nz : F 1 ≠ 0 := dirichletCompletedLFunction_one_ne_zero_of_ne_one hχ
-  obtain ⟨g, hg, hgn, hdecomp⟩ :=
-    exists_analytic_local_iterated_logDeriv_decomposition hFglobal 1 h1nz c R n
+  have h1nz : F 1 ≠ 0 := completed_one_ne_zero_of_ne_one hχ
+  obtain ⟨g, hg, hgn, hdecomp⟩ := exists_localLogIter hFglobal 1 h1nz c R n
   refine ⟨g, hg, hgn, ?_⟩
   simpa only [F] using hdecomp
 
@@ -316,7 +315,7 @@ Claim: Its iterated derivative is also analytic at the same point.
 Proof: Induct on the order following the definition of iterated derivatives.
 Role: extends an identity on a punctured neighborhood to the center.
 -/
-private theorem analyticAt_iteratedDeriv_local {f : ℂ → ℂ} {z : ℂ} (hf : AnalyticAt ℂ f z) (n : ℕ) :
+private theorem analytic_deriv_iter {f : ℂ → ℂ} {z : ℂ} (hf : AnalyticAt ℂ f z) (n : ℕ) :
     AnalyticAt ℂ (iteratedDeriv n f) z := by
   induction n with
   | zero => simpa only [iteratedDeriv_zero] using hf
@@ -333,9 +332,8 @@ Proof: Transfer the identity on the cofinite filter to a punctured neighborhood,
 the center using analyticity and continuity of both sides.
 Role: gives a pointwise form of the multiplicity-weighted zero power sum for Turán-type estimates.
 -/
-theorem exists_analytic_local_iterated_logDeriv_decomposition_at_center {F : ℂ → ℂ}
-    (hFglobal : AnalyticOnNhd ℂ F Set.univ) (z₀ : ℂ) (hz₀ : F z₀ ≠ 0) {c : ℂ} {R : ℝ} (hR : 0 < |R|)
-    (hc : F c ≠ 0) (n : ℕ) :
+theorem exists_entireCenter {F : ℂ → ℂ} (hFglobal : AnalyticOnNhd ℂ F Set.univ) (z₀ : ℂ)
+    (hz₀ : F z₀ ≠ 0) {c : ℂ} {R : ℝ} (hR : 0 < |R|) (hc : F c ≠ 0) (n : ℕ) :
     ∃ g : ℂ → ℂ,
       AnalyticOnNhd ℂ g (Metric.ball c |R|) ∧
         (∀ u : Metric.ball c |R|, g u ≠ 0) ∧
@@ -344,8 +342,7 @@ theorem exists_analytic_local_iterated_logDeriv_decomposition_at_center {F : ℂ
               ((MeromorphicOn.divisor F (Metric.ball c |R|) u : ℤ) : ℂ) *
                 ((-1 : ℂ) ^ n * (n.factorial : ℂ) * (c - u) ^ (-1 - n : ℤ))) +
             iteratedDeriv n (logDeriv g) c := by
-  rcases exists_analytic_local_iterated_logDeriv_decomposition hFglobal z₀ hz₀ c R n with
-    ⟨g, hg, hgn, hdecomp⟩
+  rcases exists_localLogIter hFglobal z₀ hz₀ c R n with ⟨g, hg, hgn, hdecomp⟩
   let U := Metric.ball c |R|
   let d := MeromorphicOn.divisor F U
   let m : ℂ → ℂ := fun u => (d u : ℂ)
@@ -417,10 +414,8 @@ theorem exists_analytic_local_iterated_logDeriv_decomposition_at_center {F : ℂ
     exact
       (hg c (by simpa only [U] using hcU)).deriv.div (hg c (by simpa only [U] using hcU))
         (hgn ⟨c, by simpa only [U] using hcU⟩)
-  have hleft : AnalyticAt ℂ (iteratedDeriv n (logDeriv F)) c :=
-    analyticAt_iteratedDeriv_local hlogF n
-  have hrem : AnalyticAt ℂ (iteratedDeriv n (logDeriv g)) c :=
-    analyticAt_iteratedDeriv_local hlogg n
+  have hleft : AnalyticAt ℂ (iteratedDeriv n (logDeriv F)) c := analytic_deriv_iter hlogF n
+  have hrem : AnalyticAt ℂ (iteratedDeriv n (logDeriv g)) c := analytic_deriv_iter hlogg n
   have hsumPowerFun :
     (fun z : ℂ => ∑ᶠ u, m u * ((-1 : ℂ) ^ n * (n.factorial : ℂ) * (z - u) ^ (-1 - n : ℤ))) =
       ∑ u ∈ s, fun z : ℂ => m u * ((-1 : ℂ) ^ n * (n.factorial : ℂ) * (z - u) ^ (-1 - n : ℤ)) := by
@@ -487,9 +482,8 @@ analytic remainder derivative.
 Proof: instantiate the generic entire-function identity using the completed value at one.
 Role: preserves the completed-L interface for existing explicit-center estimates.
 -/
-theorem exists_completedLFunction_local_iterated_logDeriv_decomposition_at_center {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ} {R : ℝ} (hR : 0 < |R|)
-    (hc : DirichletCharacter.completedLFunction χ c ≠ 0) (n : ℕ) :
+theorem completed_iter_center {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ}
+    {R : ℝ} (hR : 0 < |R|) (hc : DirichletCharacter.completedLFunction χ c ≠ 0) (n : ℕ) :
     ∃ g : ℂ → ℂ,
       AnalyticOnNhd ℂ g (Metric.ball c |R|) ∧
         (∀ u : Metric.ball c |R|, g u ≠ 0) ∧
@@ -504,9 +498,8 @@ theorem exists_completedLFunction_local_iterated_logDeriv_decomposition_at_cente
   let F := DirichletCharacter.completedLFunction χ
   have hFglobal : AnalyticOnNhd ℂ F Set.univ := fun z _ =>
     (DirichletCharacter.differentiable_completedLFunction hχ).analyticAt z
-  have h1nz : F 1 ≠ 0 := dirichletCompletedLFunction_one_ne_zero_of_ne_one hχ
-  obtain ⟨g, hg, hgn, hdecomp⟩ :=
-    exists_analytic_local_iterated_logDeriv_decomposition_at_center hFglobal 1 h1nz hR hc n
+  have h1nz : F 1 ≠ 0 := completed_one_ne_zero_of_ne_one hχ
+  obtain ⟨g, hg, hgn, hdecomp⟩ := exists_entireCenter hFglobal 1 h1nz hR hc n
   refine ⟨g, hg, hgn, ?_⟩
   simpa only [F] using hdecomp
 
@@ -520,9 +513,8 @@ estimate.
 Role: connects the analytic-factor term in the local zero factorization to an explicit upper
 bound.
 -/
-theorem norm_iteratedDeriv_logDeriv_le_of_forall_sphere_norm_le {c : ℂ} {R C : ℝ} {g : ℂ → ℂ}
-    (n : ℕ) (hR : 0 < R) (hg : AnalyticOnNhd ℂ g (Metric.closedBall c R))
-    (hgn : ∀ z ∈ Metric.closedBall c R, g z ≠ 0)
+theorem logDeriv_iter_norm_le {c : ℂ} {R C : ℝ} {g : ℂ → ℂ} (n : ℕ) (hR : 0 < R)
+    (hg : AnalyticOnNhd ℂ g (Metric.closedBall c R)) (hgn : ∀ z ∈ Metric.closedBall c R, g z ≠ 0)
     (hC : ∀ z ∈ Metric.sphere c R, ‖logDeriv g z‖ ≤ C) :
     ‖iteratedDeriv n (logDeriv g) c‖ ≤ n.factorial * C / R ^ n := by
   have ha : ∀ z ∈ Metric.closedBall c R, AnalyticAt ℂ (logDeriv g) z := by
@@ -550,8 +542,8 @@ functions on a disk.
 Role: enables a Borel–Carathéodory estimate for the logarithmic derivative of the local
 zero-free factor.
 -/
-theorem exists_normalized_primitive_logDeriv_on_ball {c : ℂ} {R : ℝ} {g : ℂ → ℂ}
-    (hg : AnalyticOnNhd ℂ g (Metric.ball c R)) (hgn : ∀ z ∈ Metric.ball c R, g z ≠ 0) :
+theorem exists_logPrimitive {c : ℂ} {R : ℝ} {g : ℂ → ℂ} (hg : AnalyticOnNhd ℂ g (Metric.ball c R))
+    (hgn : ∀ z ∈ Metric.ball c R, g z ≠ 0) :
     ∃ h : ℂ → ℂ, h c = 0 ∧ ∀ z ∈ Metric.ball c R, HasDerivAt h (logDeriv g z) z := by
   have hlog : DifferentiableOn ℂ (fun z : ℂ => logDeriv g z) (Metric.ball c R) := by
     intro z hz
@@ -572,7 +564,7 @@ Proof: Show that the derivative of `g exp(-h)` vanishes, so this function is con
 Role: bounds the real part of the primitive using an upper bound for the analytic factor and a
 lower bound at the center.
 -/
-theorem eq_center_mul_exp_of_primitive_logDeriv_on_ball {c : ℂ} {R : ℝ} {g h : ℂ → ℂ} (hR : 0 < R)
+theorem eq_center_mul_exp {c : ℂ} {R : ℝ} {g h : ℂ → ℂ} (hR : 0 < R)
     (hg : AnalyticOnNhd ℂ g (Metric.ball c R)) (hgn : ∀ z ∈ Metric.ball c R, g z ≠ 0) (h0 : h c = 0)
     (hh : ∀ z ∈ Metric.ball c R, HasDerivAt h (logDeriv g z) z) :
     ∀ z ∈ Metric.ball c R, g z = g c * Complex.exp (h z) := by
@@ -639,8 +631,8 @@ these with ordinary derivatives on the open set.
 Role: converts Cauchy estimates for the primitive into derivative estimates for the logarithmic
 derivative.
 -/
-theorem iteratedDeriv_succ_eq_logDeriv_of_primitive_on_ball {c : ℂ} {R : ℝ} {g h : ℂ → ℂ} (n : ℕ)
-    (hR : 0 < R) (hh : ∀ z ∈ Metric.ball c R, HasDerivAt h (logDeriv g z) z) :
+theorem logPrimitive_succ {c : ℂ} {R : ℝ} {g h : ℂ → ℂ} (n : ℕ) (hR : 0 < R)
+    (hh : ∀ z ∈ Metric.ball c R, HasDerivAt h (logDeriv g z) z) :
     iteratedDeriv (n + 1) h c = iteratedDeriv n (logDeriv g) c := by
   have hderiv : Set.EqOn (deriv h) (logDeriv g) (Metric.ball c R) := by
     intro z hz
@@ -663,8 +655,8 @@ Proof: Express the norm of a complex exponential as the exponential of its real 
 monotonicity of the real logarithm.
 Role: transfers function bounds from finite Hadamard factorization to the primitive.
 -/
-theorem re_primitive_le_of_norm_bounds_on_ball {c : ℂ} {R A B : ℝ} {g h : ℂ → ℂ} (hA : 0 < A)
-    (hB : 0 < B) (hG : ∀ z ∈ Metric.ball c R, ‖g z‖ ≤ A) (hlower : B ≤ ‖g c‖)
+theorem re_primitive_le {c : ℂ} {R A B : ℝ} {g h : ℂ → ℂ} (hA : 0 < A) (hB : 0 < B)
+    (hG : ∀ z ∈ Metric.ball c R, ‖g z‖ ≤ A) (hlower : B ≤ ‖g c‖)
     (hEq : ∀ z ∈ Metric.ball c R, g z = g c * Complex.exp (h z)) :
     ∀ z ∈ Metric.ball c R, (h z).re ≤ Real.log (A / B) := by
   intro z hz
@@ -687,9 +679,9 @@ Proof: Translate the disk to center `0` and apply the Borel–Carathéodory theo
 Role: turns a real-part estimate for the primitive of a logarithmic derivative into a norm
 estimate.
 -/
-theorem norm_le_of_re_le_on_ball_of_zero_center {c : ℂ} {R M : ℝ} {f : ℂ → ℂ} (hR : 0 < R)
-    (hM : 0 < M) (hf : DifferentiableOn ℂ f (Metric.ball c R))
-    (hRe : ∀ z ∈ Metric.ball c R, (f z).re ≤ M) (hfc : f c = 0) {z : ℂ} (hz : z ∈ Metric.ball c R) :
+theorem borel_caratheodory {c : ℂ} {R M : ℝ} {f : ℂ → ℂ} (hR : 0 < R) (hM : 0 < M)
+    (hf : DifferentiableOn ℂ f (Metric.ball c R)) (hRe : ∀ z ∈ Metric.ball c R, (f z).re ≤ M)
+    (hfc : f c = 0) {z : ℂ} (hz : z ∈ Metric.ball c R) :
     ‖f z‖ ≤ 2 * M * ‖z - c‖ / (R - ‖z - c‖) := by
   let F : ℂ → ℂ := fun w => f (c + w)
   have hmap : Set.MapsTo (fun w : ℂ => c + w) (Metric.ball 0 R) (Metric.ball c R) := by
@@ -721,8 +713,8 @@ estimate.
 Role: puts derivatives of the logarithmic-derivative primitive in a form usable for zero
 detection.
 -/
-theorem norm_iteratedDeriv_le_of_re_le_on_ball {c : ℂ} {R r M : ℝ} {f : ℂ → ℂ} (n : ℕ) (hR : 0 < R)
-    (hr : 0 < r) (hrr : r < R) (hM : 0 < M) (hf : DifferentiableOn ℂ f (Metric.ball c R))
+theorem iterDeriv_re_bound {c : ℂ} {R r M : ℝ} {f : ℂ → ℂ} (n : ℕ) (hR : 0 < R) (hr : 0 < r)
+    (hrr : r < R) (hM : 0 < M) (hf : DifferentiableOn ℂ f (Metric.ball c R))
     (hRe : ∀ z ∈ Metric.ball c R, (f z).re ≤ M) (hfc : f c = 0) :
     ‖iteratedDeriv n f c‖ ≤ n.factorial * (2 * M * r / (R - r)) / r ^ n := by
   have hdiff : DifferentiableOn ℂ f (Metric.closedBall c r) := by
@@ -742,7 +734,7 @@ theorem norm_iteratedDeriv_le_of_re_le_on_ball {c : ℂ} {R r M : ℝ} {f : ℂ 
       exact Metric.mem_sphere.mp hz
     have hzball : z ∈ Metric.ball c R :=
       Metric.closedBall_subset_ball hrr (Metric.sphere_subset_closedBall hz)
-    have hbc := norm_le_of_re_le_on_ball_of_zero_center hR hM hf hRe hfc hzball
+    have hbc := borel_caratheodory hR hM hf hRe hfc hzball
     rw [hzc] at hbc
     exact hbc
   exact
@@ -759,22 +751,22 @@ exponential representation, a real-part bound, and Cauchy's estimate.
 Role: explicitly bounds the derivative error from the analytic factor in a local zero
 factorization.
 -/
-theorem norm_iteratedDeriv_logDeriv_le_of_norm_bounds_on_ball {c : ℂ} {R r A B : ℝ} {g : ℂ → ℂ}
-    (n : ℕ) (hR : 0 < R) (hr : 0 < r) (hrr : r < R) (hA : 0 < A) (hB : 0 < B) (hBA : B < A)
-    (hg : AnalyticOnNhd ℂ g (Metric.ball c R)) (hgn : ∀ z ∈ Metric.ball c R, g z ≠ 0)
-    (hG : ∀ z ∈ Metric.ball c R, ‖g z‖ ≤ A) (hlower : B ≤ ‖g c‖) :
+theorem logDeriv_norm_bounds {c : ℂ} {R r A B : ℝ} {g : ℂ → ℂ} (n : ℕ) (hR : 0 < R) (hr : 0 < r)
+    (hrr : r < R) (hA : 0 < A) (hB : 0 < B) (hBA : B < A) (hg : AnalyticOnNhd ℂ g (Metric.ball c R))
+    (hgn : ∀ z ∈ Metric.ball c R, g z ≠ 0) (hG : ∀ z ∈ Metric.ball c R, ‖g z‖ ≤ A)
+    (hlower : B ≤ ‖g c‖) :
     ‖iteratedDeriv n (logDeriv g) c‖ ≤
       (n + 1).factorial * (2 * Real.log (A / B) * r / (R - r)) / r ^ (n + 1) := by
-  obtain ⟨h, h0, hh⟩ := exists_normalized_primitive_logDeriv_on_ball hg hgn
-  have hEq := eq_center_mul_exp_of_primitive_logDeriv_on_ball hR hg hgn h0 hh
+  obtain ⟨h, h0, hh⟩ := exists_logPrimitive hg hgn
+  have hEq := eq_center_mul_exp hR hg hgn h0 hh
   have hM : 0 < Real.log (A / B) := Real.log_pos ((one_lt_div hB).2 hBA)
-  have hRe := re_primitive_le_of_norm_bounds_on_ball hA hB hG hlower hEq
-  have hiter := iteratedDeriv_succ_eq_logDeriv_of_primitive_on_ball (c := c) (R := R) n hR hh
+  have hRe := re_primitive_le hA hB hG hlower hEq
+  have hiter := logPrimitive_succ (c := c) (R := R) n hR hh
   have hdifferentiable : DifferentiableOn ℂ h (Metric.ball c R) := by
     intro z hz
     exact (hh z hz).differentiableAt.differentiableWithinAt
   rw [← hiter]
-  exact norm_iteratedDeriv_le_of_re_le_on_ball (n + 1) hR hr hrr hM hdifferentiable hRe h0
+  exact iterDeriv_re_bound (n + 1) hR hr hrr hM hdifferentiable hRe h0
 
 /--
 Inputs: a function analytic on a closed disk and a uniform bound on its difference from its
@@ -786,8 +778,8 @@ derivative of the constant term vanishes.
 Role: transfers a central-difference estimate from a finite-radius Hadamard factorization to
 higher derivatives.
 -/
-theorem norm_iteratedDeriv_le_of_forall_ball_norm_sub_center_le {c : ℂ} {R C : ℝ} {f : ℂ → ℂ}
-    (n : ℕ) (hn : 0 < n) (hR : 0 < R) (hf : AnalyticOnNhd ℂ f (Metric.closedBall c R))
+theorem iterDeriv_center_le {c : ℂ} {R C : ℝ} {f : ℂ → ℂ} (n : ℕ) (hn : 0 < n) (hR : 0 < R)
+    (hf : AnalyticOnNhd ℂ f (Metric.closedBall c R))
     (hC : ∀ z ∈ Metric.closedBall c R, ‖f z - f c‖ ≤ C) :
     ‖iteratedDeriv n f c‖ ≤ n.factorial * C / R ^ n := by
   let F : ℂ → ℂ := fun z => f z - f c
@@ -826,8 +818,8 @@ Proof: Convert the finite local zero support to multiplicity weights and apply T
 to normalized inverse distances, which are at least `1`.
 Role: obtains a zero-detection lower bound from the central logarithmic-derivative decomposition.
 -/
-theorem exists_analytic_local_zero_turan_bound {F : ℂ → ℂ} (hFglobal : AnalyticOnNhd ℂ F Set.univ)
-    {c : ℂ} {R : ℝ} (hR : 0 < |R|) (hRsmall : |R| ≤ 1) (hc : F c ≠ 0)
+theorem exists_localTuran {F : ℂ → ℂ} (hFglobal : AnalyticOnNhd ℂ F Set.univ) {c : ℂ} {R : ℝ}
+    (hR : 0 < |R|) (hRsmall : |R| ≤ 1) (hc : F c ≠ 0)
     (hzeros : ∃ u, u ∈ (MeromorphicOn.divisor F (Metric.ball c |R|)).support) (M : ℕ) :
     ∃ s : Finset ℂ,
       (∀ u, u ∈ s ↔ (MeromorphicOn.divisor F (Metric.ball c |R|)) u ≠ 0) ∧
@@ -905,8 +897,7 @@ theorem exists_analytic_local_zero_turan_bound {F : ℂ → ℂ} (hFglobal : Ana
     have hnormlt : ‖c - u‖ < 1 := lt_of_lt_of_le hdist hRsmall
     rw [norm_inv]
     simpa only [one_div] using (one_le_div₀ hnormpos).2 (le_of_lt hnormlt)
-  have hTuran :=
-    exists_finset_weighted_power_sum_norm_ge_turan s m (fun u => (c - u)⁻¹) M hspos hfreq
+  have hTuran := turan_weighted_finset s m (fun u => (c - u)⁻¹) M hspos hfreq
   obtain ⟨l, hl, hbound⟩ := hTuran
   refine ⟨s, ?_, hspos, ?_, l, hl, ?_⟩
   · intro u
@@ -929,9 +920,8 @@ Claim: the completed-L divisor satisfies the local Turán power-sum lower bound.
 Proof: instantiate the generic analytic-function result for the completed L-function.
 Role: preserves the interface used by existing completed-L derivative estimates.
 -/
-theorem exists_completedLFunction_local_zero_turan_bound {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ} {R : ℝ} (hR : 0 < |R|) (hRsmall : |R| ≤ 1)
-    (hc : DirichletCharacter.completedLFunction χ c ≠ 0)
+theorem exists_completedTuran {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ}
+    {R : ℝ} (hR : 0 < |R|) (hRsmall : |R| ≤ 1) (hc : DirichletCharacter.completedLFunction χ c ≠ 0)
     (hzeros :
       ∃ u,
         u ∈
@@ -965,8 +955,7 @@ theorem exists_completedLFunction_local_zero_turan_bound {q : ℕ} [NeZero q]
   let F := DirichletCharacter.completedLFunction χ
   have hFglobal : AnalyticOnNhd ℂ F Set.univ := fun z _ =>
     (DirichletCharacter.differentiable_completedLFunction hχ).analyticAt z
-  obtain ⟨s, hs, hspos, hdomain, l, hl, hbound⟩ :=
-    exists_analytic_local_zero_turan_bound hFglobal hR hRsmall hc hzeros M
+  obtain ⟨s, hs, hspos, hdomain, l, hl, hbound⟩ := exists_localTuran hFglobal hR hRsmall hc hzeros M
   refine ⟨s, ?_, hspos, ?_, l, hl, hbound⟩
   · intro u
     simpa only [F] using hs u
@@ -982,8 +971,8 @@ mass, and apply the finite weighted reciprocal Turán estimate on the disk.
 Role: supplies a positive, radius-sensitive zero term on the same support used by local
 factorization.
 -/
-theorem exists_analytic_local_zero_scaled_reciprocal_power_sum {F : ℂ → ℂ}
-    (hFglobal : AnalyticOnNhd ℂ F Set.univ) {c : ℂ} {R : ℝ} (hR : 0 < |R|) (hc : F c ≠ 0)
+theorem exists_scaledPowerSum {F : ℂ → ℂ} (hFglobal : AnalyticOnNhd ℂ F Set.univ) {c : ℂ} {R : ℝ}
+    (hR : 0 < |R|) (hc : F c ≠ 0)
     (hzeros : ∃ u, u ∈ (MeromorphicOn.divisor F (Metric.ball c |R|)).support) (M : ℕ) :
     ∃ s : Finset ℂ,
       ∃ l ∈ Finset.range s.card,
@@ -1080,8 +1069,7 @@ theorem exists_analytic_local_zero_scaled_reciprocal_power_sum {F : ℂ → ℂ}
     constructor
     · exact norm_pos_iff.mpr (sub_ne_zero.mpr (hcenterNe u hu))
     · exact le_of_lt (by simpa only [norm_sub_rev] using huBall)
-  obtain ⟨l, hl, hbound⟩ :=
-    exists_finset_weighted_reciprocal_power_sum_norm_ge_of_disk s c m M hspos |R| hR hdistance
+  obtain ⟨l, hl, hbound⟩ := weightedInvSum_finset s c m M hspos |R| hR hdistance
   have hden : 0 < 2 ^ (M + 2 * s.card) * |R| ^ (M + 1 + l) := by positivity
   have hscaled :
     1 / (2 ^ (M + 2 * s.card) * |R| ^ (M + 1 + l)) ≤ ‖∑ u ∈ s, m u * (c - u)⁻¹ ^ (M + 1 + l)‖ := by
@@ -1119,8 +1107,8 @@ multiplicity, and apply the finite repeated-node maximum estimate.
 Role: supplies the local zero term needed for a maximum-node logarithmic-derivative detection
 bound without discarding zero multiplicities.
 -/
-theorem exists_analytic_local_zero_max_reciprocal_power_sum {F : ℂ → ℂ}
-    (hFglobal : AnalyticOnNhd ℂ F Set.univ) {c : ℂ} {R : ℝ} (hR : 0 < |R|) (hc : F c ≠ 0)
+theorem exists_maxPowerSum {F : ℂ → ℂ} (hFglobal : AnalyticOnNhd ℂ F Set.univ) {c : ℂ} {R : ℝ}
+    (hR : 0 < |R|) (hc : F c ≠ 0)
     (hzeros : ∃ u, u ∈ (MeromorphicOn.divisor F (Metric.ball c |R|)).support) :
     ∃ s : Finset ℂ,
       (∀ v, v ∈ s ↔ MeromorphicOn.divisor F (Metric.ball c |R|) v ≠ 0) ∧
@@ -1145,8 +1133,7 @@ theorem exists_analytic_local_zero_max_reciprocal_power_sum {F : ℂ → ℂ}
   let weight : ℂ → ℂ := fun v => (d v : ℂ)
   let multiplicity : ℂ → ℕ := fun v => (d v).toNat
   let node : ℂ → ℂ := fun v => (c - v)⁻¹
-  obtain ⟨s, _, _, hs, hspos, hdomain, _⟩ :=
-    exists_analytic_local_zero_scaled_reciprocal_power_sum hFglobal hR hc hzeros 0
+  obtain ⟨s, _, _, hs, hspos, hdomain, _⟩ := exists_scaledPowerSum hFglobal hR hc hzeros 0
   have hFanalytic : AnalyticOnNhd ℂ F U := by
     intro z hz
     exact hFglobal z trivial
@@ -1197,7 +1184,7 @@ theorem exists_analytic_local_zero_max_reciprocal_power_sum {F : ℂ → ℂ}
       simp only [hzero, zero_mul]
     exact (hs v).mpr (Int.cast_ne_zero.mp hweight)
   obtain ⟨u, hu, huMult, hmax, k, hk, hbound⟩ :=
-    exists_finset_weighted_max_node_power_sum_norm_ge s multiplicity node hpositiveMass
+    weightedMax_powerSum s multiplicity node hpositiveMass
   have hsumWeighted :
     (∑ v ∈ s, (multiplicity v : ℂ) * node v ^ (k + 1)) = ∑ v ∈ s, weight v * node v ^ (k + 1) := by
     apply Finset.sum_congr rfl
@@ -1236,9 +1223,8 @@ the analytic divisor order at the specified zero.
 Role: preserves the identity of a zero supplied by a height window while passing to the maximal
 node used in derivative detection.
 -/
-theorem exists_analytic_local_zero_max_reciprocal_power_sum_of_mem {F : ℂ → ℂ}
-    (hFglobal : AnalyticOnNhd ℂ F Set.univ) {c : ℂ} {R : ℝ} (hR : 0 < |R|) (hc : F c ≠ 0) (ρ : ℂ)
-    (hρ : MeromorphicOn.divisor F (Metric.ball c |R|) ρ ≠ 0) :
+theorem exists_maxSum_of_mem {F : ℂ → ℂ} (hFglobal : AnalyticOnNhd ℂ F Set.univ) {c : ℂ} {R : ℝ}
+    (hR : 0 < |R|) (hc : F c ≠ 0) (ρ : ℂ) (hρ : MeromorphicOn.divisor F (Metric.ball c |R|) ρ ≠ 0) :
     ∃ s : Finset ℂ,
       (∀ v, v ∈ s ↔ MeromorphicOn.divisor F (Metric.ball c |R|) v ≠ 0) ∧
         ρ ∈ s ∧
@@ -1268,7 +1254,7 @@ theorem exists_analytic_local_zero_max_reciprocal_power_sum_of_mem {F : ℂ → 
       Int.toNat_of_nonneg hρnonneg
     exact_mod_cast hcast.symm ▸ hρpos
   obtain ⟨s, hs, u, hu, hmax, hrad, k, hk, hdomain, hbound⟩ :=
-    exists_analytic_local_zero_max_reciprocal_power_sum hFglobal hR hc ⟨ρ, hρ⟩
+    exists_maxPowerSum hFglobal hR hc ⟨ρ, hρ⟩
   have hρmem : ρ ∈ s := (hs ρ).mpr hρ
   refine ⟨s, hs, hρmem, u, hu, hmax, hmax ρ hρmem hρmult, hrad, k, hk, ?_⟩
   simpa only [U] using hbound
@@ -1286,8 +1272,8 @@ it with the specified zero, and raise their nonnegative norm inequality to the s
 
 Role: gives the quantitative near-zero main term required by the positive detection estimate.
 -/
-theorem exists_analytic_local_zero_power_sum_lower_bound_of_near {F : ℂ → ℂ}
-    (hFglobal : AnalyticOnNhd ℂ F Set.univ) {c : ℂ} {η : ℝ} (hη : 0 < η) (hc : F c ≠ 0) (ρ : ℂ)
+theorem exists_nearPowerSum {F : ℂ → ℂ} (hFglobal : AnalyticOnNhd ℂ F Set.univ) {c : ℂ} {η : ℝ}
+    (hη : 0 < η) (hc : F c ≠ 0) (ρ : ℂ)
     (hρ : MeromorphicOn.divisor F (Metric.ball c |80 * η|) ρ ≠ 0) (hclose : ‖c - ρ‖ ≤ 3 * η) :
     ∃ s : Finset ℂ,
       ∃ u ∈ s,
@@ -1303,8 +1289,7 @@ theorem exists_analytic_local_zero_power_sum_lower_bound_of_near {F : ℂ → �
   have hR : 0 < |80 * η| := by
     rw [abs_of_pos (mul_pos (by norm_num) hη)]
     positivity
-  obtain ⟨s, _, _, u, hu, _, hρmax, _, k, hk, hbound⟩ :=
-    exists_analytic_local_zero_max_reciprocal_power_sum_of_mem hFglobal hR hc ρ hρ
+  obtain ⟨s, _, _, u, hu, _, hρmax, _, k, hk, hbound⟩ := exists_maxSum_of_mem hFglobal hR hc ρ hρ
   have hFanalytic : AnalyticOnNhd ℂ F (Metric.ball c |80 * η|) := by
     intro z hz
     exact hFglobal z trivial
@@ -1361,8 +1346,8 @@ block estimate, and identify its finite sum with the divisor-supported sum.
 Role: carries a known near zero into a shifted power block without requiring a gap to the other
 local zeros.
 -/
-theorem exists_analytic_local_zero_power_sum_block_lower_bound_of_near {F : ℂ → ℂ}
-    (hFglobal : AnalyticOnNhd ℂ F Set.univ) {c : ℂ} {η : ℝ} (hη : 0 < η) (hc : F c ≠ 0) (ρ : ℂ)
+theorem exists_nearPowerBlock {F : ℂ → ℂ} (hFglobal : AnalyticOnNhd ℂ F Set.univ) {c : ℂ} {η : ℝ}
+    (hη : 0 < η) (hc : F c ≠ 0) (ρ : ℂ)
     (hρ : MeromorphicOn.divisor F (Metric.ball c |80 * η|) ρ ≠ 0) (hclose : ‖c - ρ‖ ≤ 3 * η)
     (K : ℕ) :
     ∃ s : Finset ℂ,
@@ -1386,8 +1371,7 @@ theorem exists_analytic_local_zero_power_sum_block_lower_bound_of_near {F : ℂ 
   have hR : 0 < |80 * η| := by
     rw [abs_of_pos (mul_pos (by norm_num) hη)]
     positivity
-  obtain ⟨s, hs, hρmem, _⟩ :=
-    exists_analytic_local_zero_max_reciprocal_power_sum_of_mem hFglobal hR hc ρ hρ
+  obtain ⟨s, hs, hρmem, _⟩ := exists_maxSum_of_mem hFglobal hR hc ρ hρ
   let U := Metric.ball c |80 * η|
   let d : ℂ → ℤ := MeromorphicOn.divisor F U
   let weight : ℂ → ℂ := fun v => (d v : ℂ)
@@ -1432,8 +1416,8 @@ theorem exists_analytic_local_zero_power_sum_block_lower_bound_of_near {F : ℂ 
     rw [norm_inv]
     simpa only [one_div] using one_div_le_one_div_of_le hρnormpos hclose
   obtain ⟨k, hk, hKlow, hKhigh, hbound⟩ :=
-    exists_finset_weighted_power_sum_norm_ge_fixed_multiple_block_of_near s multiplicity node hmass
-      (le_refl _) ρ hρmem hρmult K (1 / (3 * η)) (by positivity) hρinv
+    fixedBlock_ge_near s multiplicity node hmass (le_refl _) ρ hρmem hρmult K (1 / (3 * η))
+      (by positivity) hρinv
   have hsum (p : ℕ) : (∑ v ∈ s, weight v * node v ^ p) = ∑ᶠ v, weight v * node v ^ p := by
     symm
     apply finsum_eq_sum_of_support_subset _ (s := s)
@@ -1474,9 +1458,8 @@ replace its local total multiplicity by the supplied rectangle count bound.
 
 Role: connects the fixed-multiple power-sum estimate to the local zero-counting interface.
 -/
-theorem exists_completedLFunction_local_zero_power_sum_fixed_multiple_block_of_near {q : ℕ}
-    [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ} {η : ℝ} (hη : 0 < η)
-    (hc : DirichletCharacter.completedLFunction χ c ≠ 0) (ρ : ℂ)
+theorem completed_fixedBlock {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ}
+    {η : ℝ} (hη : 0 < η) (hc : DirichletCharacter.completedLFunction χ c ≠ 0) (ρ : ℂ)
     (hρ :
       MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) (Metric.ball c |80 * η|) ρ ≠
         0)
@@ -1486,8 +1469,8 @@ theorem exists_completedLFunction_local_zero_power_sum_fixed_multiple_block_of_n
         v ∈
           (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
               (Metric.ball c |80 * η|)).support,
-        v ∈ dirichletCompletedLFunctionRectangleBox z w)
-    (C : ℕ) (hcount : completedZeroMultiplicityCountInRectangle χ hχ z w ≤ (C : ℝ)) :
+        v ∈ completedRectangleBox z w)
+    (C : ℕ) (hcount : completedMultiplicityCount χ hχ z w ≤ (C : ℝ)) :
     ∃ s : Finset ℂ,
       (∀ v,
           v ∈ s ↔
@@ -1524,19 +1507,17 @@ theorem exists_completedLFunction_local_zero_power_sum_fixed_multiple_block_of_n
                     (c - v)⁻¹ ^ (K * (k + 1))‖ := by
   classical
   obtain ⟨s, hs, hρmem, hdomain, k, hk, hKlow, hKhigh, hbound⟩ :=
-    exists_analytic_local_zero_power_sum_block_lower_bound_of_near
+    exists_nearPowerBlock
       (fun u _ => (DirichletCharacter.differentiable_completedLFunction hχ).analyticAt u) hη hc ρ hρ
       hclose K
-  let hfinite := completedLFunction_local_zero_support_finite χ hχ c (80 * η)
+  let hfinite := completedSupport_fin χ hχ c (80 * η)
   have hsEq : s = hfinite.toFinset := by
     apply Finset.ext
     intro v
     rw [Set.Finite.mem_toFinset]
     rw [hs v]
     simp only [Function.mem_support]
-  have hmass :=
-    completedLFunction_local_divisor_support_multiplicity_le_rectangle_count χ hχ c (80 * η) z w
-      hbox
+  have hmass := localSupport_mass_le χ hχ c (80 * η) z w hbox
   have hmass' :
     (∑ v ∈ s,
         ((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) (Metric.ball c |80 * η|)
@@ -1579,10 +1560,10 @@ decomposition at the corresponding derivative order.
 
 Role: connects the shifted finite power block to the analytic derivative used by zero detection.
 -/
-theorem exists_analytic_local_zero_power_sum_block_derivative_decomposition_of_near {F : ℂ → ℂ}
-    (hFglobal : AnalyticOnNhd ℂ F Set.univ) (z₀ : ℂ) (hz₀ : F z₀ ≠ 0) {c : ℂ} {η : ℝ} (hη : 0 < η)
-    (hc : F c ≠ 0) (ρ : ℂ) (hρ : MeromorphicOn.divisor F (Metric.ball c |80 * η|) ρ ≠ 0)
-    (hclose : ‖c - ρ‖ ≤ 3 * η) (K : ℕ) (hK : 0 < K) :
+theorem exists_powerBlockIter {F : ℂ → ℂ} (hFglobal : AnalyticOnNhd ℂ F Set.univ) (z₀ : ℂ)
+    (hz₀ : F z₀ ≠ 0) {c : ℂ} {η : ℝ} (hη : 0 < η) (hc : F c ≠ 0) (ρ : ℂ)
+    (hρ : MeromorphicOn.divisor F (Metric.ball c |80 * η|) ρ ≠ 0) (hclose : ‖c - ρ‖ ≤ 3 * η) (K : ℕ)
+    (hK : 0 < K) :
     ∃ s : Finset ℂ,
       (∀ v, v ∈ s ↔ MeromorphicOn.divisor F (Metric.ball c |80 * η|) v ≠ 0) ∧
         ρ ∈ s ∧
@@ -1608,14 +1589,13 @@ theorem exists_analytic_local_zero_power_sum_block_derivative_decomposition_of_n
                         ((-1 : ℂ) ^ n * (n.factorial : ℂ) * (c - u) ^ (-1 - n : ℤ))) +
                     iteratedDeriv n (logDeriv g) c := by
   obtain ⟨s, hs, hρmem, hdomain, k, hk, hKlow, hKhigh, hbound⟩ :=
-    exists_analytic_local_zero_power_sum_block_lower_bound_of_near hFglobal hη hc ρ hρ hclose K
+    exists_nearPowerBlock hFglobal hη hc ρ hρ hclose K
   let n := K * (k + 1) - 1
   have hnplus : n + 1 = K * (k + 1) := by
     dsimp only [n]
     omega
   obtain ⟨g, hg, hgn, hcenter⟩ :=
-    exists_analytic_local_iterated_logDeriv_decomposition_at_center hFglobal z₀ hz₀ (R := 80 * η)
-      (by positivity) hc n
+    exists_entireCenter hFglobal z₀ hz₀ (R := 80 * η) (by positivity) hc n
   have hbound' :
     (1 / (4 * ((∑ v ∈ s, (MeromorphicOn.divisor F (Metric.ball c |80 * η|) v).toNat : ℕ) : ℝ))) *
         (1 / (3 * η)) ^ (n + 1) ≤
@@ -1642,9 +1622,8 @@ center decomposition for the completed function.
 
 Role: exposes the shifted local derivative data at the interface used by the zero-density proof.
 -/
-theorem exists_completedLFunction_local_zero_power_sum_block_derivative_decomposition_of_near
-    {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ} {η : ℝ} (hη : 0 < η)
-    (hc : DirichletCharacter.completedLFunction χ c ≠ 0) (ρ : ℂ)
+theorem completed_block_iter {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ}
+    {η : ℝ} (hη : 0 < η) (hc : DirichletCharacter.completedLFunction χ c ≠ 0) (ρ : ℂ)
     (hρ :
       MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) (Metric.ball c |80 * η|) ρ ≠
         0)
@@ -1654,8 +1633,8 @@ theorem exists_completedLFunction_local_zero_power_sum_block_derivative_decompos
         v ∈
           (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
               (Metric.ball c |80 * η|)).support,
-        v ∈ dirichletCompletedLFunctionRectangleBox z w)
-    (C : ℕ) (hcount : completedZeroMultiplicityCountInRectangle χ hχ z w ≤ (C : ℝ)) :
+        v ∈ completedRectangleBox z w)
+    (C : ℕ) (hcount : completedMultiplicityCount χ hχ z w ≤ (C : ℝ)) :
     ∃ s : Finset ℂ,
       (∀ v,
           v ∈ s ↔
@@ -1697,19 +1676,16 @@ theorem exists_completedLFunction_local_zero_power_sum_block_derivative_decompos
                         ((-1 : ℂ) ^ n * (n.factorial : ℂ) * (c - u) ^ (-1 - n : ℤ))) +
                     iteratedDeriv n (logDeriv g) c := by
   obtain ⟨s, hs, hρmem, hdomain, k, hk, hKlow, hKhigh, hbound⟩ :=
-    exists_completedLFunction_local_zero_power_sum_fixed_multiple_block_of_near χ hχ hη hc ρ hρ
-      hclose K z w hbox C hcount
+    completed_fixedBlock χ hχ hη hc ρ hρ hclose K z w hbox C hcount
   let n := K * (k + 1) - 1
   have hnplus : n + 1 = K * (k + 1) := by
     dsimp only [n]
     omega
-  have h1nz : DirichletCharacter.completedLFunction χ 1 ≠ 0 :=
-    dirichletCompletedLFunction_one_ne_zero_of_ne_one hχ
+  have h1nz : DirichletCharacter.completedLFunction χ 1 ≠ 0 := completed_one_ne_zero_of_ne_one hχ
   have hFglobal : AnalyticOnNhd ℂ (DirichletCharacter.completedLFunction χ) Set.univ := fun u _ =>
     (DirichletCharacter.differentiable_completedLFunction hχ).analyticAt u
   obtain ⟨g, hg, hgn, hcenter⟩ :=
-    exists_analytic_local_iterated_logDeriv_decomposition_at_center hFglobal 1 h1nz (R := 80 * η)
-      (by positivity) hc n
+    exists_entireCenter hFglobal 1 h1nz (R := 80 * η) (by positivity) hc n
   have hbound' :
     (1 /
           (4 *
@@ -1741,9 +1717,8 @@ Proof: Match Turán's exponent `M+1+l` with derivative order `M+l` and rewrite t
 over its finite support.
 Role: permits separate estimation of the analytic-factor error for zero detection.
 -/
-theorem exists_analytic_local_zero_turan_derivative_decomposition {F : ℂ → ℂ}
-    (hFglobal : AnalyticOnNhd ℂ F Set.univ) (z₀ : ℂ) (hz₀ : F z₀ ≠ 0) {c : ℂ} {R : ℝ} (hR : 0 < |R|)
-    (hRsmall : |R| ≤ 1) (hc : F c ≠ 0)
+theorem exists_turanIter {F : ℂ → ℂ} (hFglobal : AnalyticOnNhd ℂ F Set.univ) (z₀ : ℂ)
+    (hz₀ : F z₀ ≠ 0) {c : ℂ} {R : ℝ} (hR : 0 < |R|) (hRsmall : |R| ≤ 1) (hc : F c ≠ 0)
     (hzeros : ∃ u, u ∈ (MeromorphicOn.divisor F (Metric.ball c |R|)).support) (M : ℕ) :
     ∃ s : Finset ℂ,
       ∃ l ∈ Finset.range s.card,
@@ -1766,9 +1741,8 @@ theorem exists_analytic_local_zero_turan_derivative_decomposition {F : ℂ → �
                 iteratedDeriv (M + l) (logDeriv g) c := by
   classical
   obtain ⟨s, hs, hspos, hdomain, ⟨l, hl, hbound⟩⟩ :=
-    exists_analytic_local_zero_turan_bound hFglobal hR hRsmall hc hzeros M
-  obtain ⟨g, hg, hgn, hcenter⟩ :=
-    exists_analytic_local_iterated_logDeriv_decomposition_at_center hFglobal z₀ hz₀ hR hc (M + l)
+    exists_localTuran hFglobal hR hRsmall hc hzeros M
+  obtain ⟨g, hg, hgn, hcenter⟩ := exists_entireCenter hFglobal z₀ hz₀ hR hc (M + l)
   let U := Metric.ball c |R|
   let d := MeromorphicOn.divisor F U
   let m : ℂ → ℂ := fun u => (d u : ℂ)
@@ -1792,7 +1766,7 @@ theorem exists_analytic_local_zero_turan_derivative_decomposition {F : ℂ → �
     (∑ᶠ u, m u * (c - u) ^ (-1 - (M + l : ℕ) : ℤ)) = ∑ᶠ u, m u * (c - u)⁻¹ ^ (M + 1 + l) := by
     apply finsum_congr
     intro u
-    rw [zpow_neg_one_sub_add_eq_inv_pow]
+    rw [zpow_neg_add_inv_pow]
   have hcenter' :
     iteratedDeriv (M + l) (logDeriv F) c =
       ((-1 : ℂ) ^ (M + l) * ((M + l).factorial : ℂ)) * (∑ᶠ u, m u * (c - u)⁻¹ ^ (M + 1 + l)) +
@@ -1840,9 +1814,9 @@ derivative factorization at the selected derivative order.
 Role: carries the multiplicity-sensitive positive zero term into the derivative estimate used by
 the zero-detection argument.
 -/
-theorem exists_analytic_local_zero_max_turan_derivative_decomposition {F : ℂ → ℂ}
-    (hFglobal : AnalyticOnNhd ℂ F Set.univ) (z₀ : ℂ) (hz₀ : F z₀ ≠ 0) {c : ℂ} {R : ℝ} (hR : 0 < |R|)
-    (hc : F c ≠ 0) (hzeros : ∃ u, u ∈ (MeromorphicOn.divisor F (Metric.ball c |R|)).support) :
+theorem exists_maxTuranIter {F : ℂ → ℂ} (hFglobal : AnalyticOnNhd ℂ F Set.univ) (z₀ : ℂ)
+    (hz₀ : F z₀ ≠ 0) {c : ℂ} {R : ℝ} (hR : 0 < |R|) (hc : F c ≠ 0)
+    (hzeros : ∃ u, u ∈ (MeromorphicOn.divisor F (Metric.ball c |R|)).support) :
     ∃ s : Finset ℂ,
       (∀ v, v ∈ s ↔ MeromorphicOn.divisor F (Metric.ball c |R|) v ≠ 0) ∧
         ∃ u ∈ s,
@@ -1872,16 +1846,15 @@ theorem exists_analytic_local_zero_max_turan_derivative_decomposition {F : ℂ �
                       iteratedDeriv k (logDeriv g) c := by
   classical
   obtain ⟨s, hs, u, hu, hmax, hrad, k, hk, hdomain, hbound⟩ :=
-    exists_analytic_local_zero_max_reciprocal_power_sum hFglobal hR hc hzeros
-  obtain ⟨g, hg, hgn, hcenter⟩ :=
-    exists_analytic_local_iterated_logDeriv_decomposition_at_center hFglobal z₀ hz₀ hR hc k
+    exists_maxPowerSum hFglobal hR hc hzeros
+  obtain ⟨g, hg, hgn, hcenter⟩ := exists_entireCenter hFglobal z₀ hz₀ hR hc k
   let U := Metric.ball c |R|
   let d := MeromorphicOn.divisor F U
   let m : ℂ → ℂ := fun v => (d v : ℂ)
   have hpower : (∑ᶠ v, m v * (c - v) ^ (-1 - (k : ℕ) : ℤ)) = ∑ᶠ v, m v * (c - v)⁻¹ ^ (k + 1) := by
     apply finsum_congr
     intro v
-    rw [zpow_neg_one_sub_nat_eq_inv_pow]
+    rw [zpow_neg_succ_inv_pow]
   have hcenter' :
     iteratedDeriv k (logDeriv F) c =
       ((-1 : ℂ) ^ k * (k.factorial : ℂ)) * (∑ᶠ v, m v * (c - v)⁻¹ ^ (k + 1)) +
@@ -1915,10 +1888,9 @@ Proof: combine the scaled reciprocal power-sum estimate with the local logarithm
 factorization, matching exponent `M+1+l` to derivative order `M+l`.
 Role: connects the near-zero scale to the analytic remainder estimate used in zero detection.
 -/
-theorem exists_analytic_local_zero_scaled_turan_derivative_decomposition {F : ℂ → ℂ}
-    (hFglobal : AnalyticOnNhd ℂ F Set.univ) (z₀ : ℂ) (hz₀ : F z₀ ≠ 0) {c : ℂ} {R : ℝ} (hR : 0 < |R|)
-    (hc : F c ≠ 0) (hzeros : ∃ u, u ∈ (MeromorphicOn.divisor F (Metric.ball c |R|)).support)
-    (M : ℕ) :
+theorem scaled_turan_iter {F : ℂ → ℂ} (hFglobal : AnalyticOnNhd ℂ F Set.univ) (z₀ : ℂ)
+    (hz₀ : F z₀ ≠ 0) {c : ℂ} {R : ℝ} (hR : 0 < |R|) (hc : F c ≠ 0)
+    (hzeros : ∃ u, u ∈ (MeromorphicOn.divisor F (Metric.ball c |R|)).support) (M : ℕ) :
     ∃ s : Finset ℂ,
       ∃ l ∈ Finset.range s.card,
         ∃ g : ℂ → ℂ,
@@ -1938,10 +1910,8 @@ theorem exists_analytic_local_zero_scaled_turan_derivative_decomposition {F : �
                       (c - u)⁻¹ ^ (M + 1 + l)) +
                 iteratedDeriv (M + l) (logDeriv g) c := by
   classical
-  obtain ⟨s, l, hl, hs, hspos, hdomain, hbound⟩ :=
-    exists_analytic_local_zero_scaled_reciprocal_power_sum hFglobal hR hc hzeros M
-  obtain ⟨g, hg, hgn, hcenter⟩ :=
-    exists_analytic_local_iterated_logDeriv_decomposition_at_center hFglobal z₀ hz₀ hR hc (M + l)
+  obtain ⟨s, l, hl, hs, hspos, hdomain, hbound⟩ := exists_scaledPowerSum hFglobal hR hc hzeros M
+  obtain ⟨g, hg, hgn, hcenter⟩ := exists_entireCenter hFglobal z₀ hz₀ hR hc (M + l)
   let U := Metric.ball c |R|
   let d := MeromorphicOn.divisor F U
   let m : ℂ → ℂ := fun u => (d u : ℂ)
@@ -1949,7 +1919,7 @@ theorem exists_analytic_local_zero_scaled_turan_derivative_decomposition {F : �
     (∑ᶠ u, m u * (c - u) ^ (-1 - (M + l : ℕ) : ℤ)) = ∑ᶠ u, m u * (c - u)⁻¹ ^ (M + 1 + l) := by
     apply finsum_congr
     intro u
-    rw [zpow_neg_one_sub_add_eq_inv_pow]
+    rw [zpow_neg_add_inv_pow]
   have hcenter' :
     iteratedDeriv (M + l) (logDeriv F) c =
       ((-1 : ℂ) ^ (M + l) * ((M + l).factorial : ℂ)) * (∑ᶠ u, m u * (c - u)⁻¹ ^ (M + 1 + l)) +
@@ -1990,9 +1960,8 @@ zero-free analytic factor.
 Proof: instantiate the generic analytic-function result.
 Role: preserves the interface used by completed-L derivative and gamma-transfer estimates.
 -/
-theorem exists_completedLFunction_local_zero_turan_derivative_decomposition {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ} {R : ℝ} (hR : 0 < |R|) (hRsmall : |R| ≤ 1)
-    (hc : DirichletCharacter.completedLFunction χ c ≠ 0)
+theorem completed_turan_iter {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ}
+    {R : ℝ} (hR : 0 < |R|) (hRsmall : |R| ≤ 1) (hc : DirichletCharacter.completedLFunction χ c ≠ 0)
     (hzeros :
       ∃ u,
         u ∈
@@ -2040,9 +2009,9 @@ theorem exists_completedLFunction_local_zero_turan_derivative_decomposition {q :
   let F := DirichletCharacter.completedLFunction χ
   have hFglobal : AnalyticOnNhd ℂ F Set.univ := fun z _ =>
     (DirichletCharacter.differentiable_completedLFunction hχ).analyticAt z
-  have h1nz : F 1 ≠ 0 := dirichletCompletedLFunction_one_ne_zero_of_ne_one hχ
+  have h1nz : F 1 ≠ 0 := completed_one_ne_zero_of_ne_one hχ
   obtain ⟨s, l, hl, g, hs, hspos, hdomain, hg, hgn, hbound, hdecomp⟩ :=
-    exists_analytic_local_zero_turan_derivative_decomposition hFglobal 1 h1nz hR hRsmall hc hzeros M
+    exists_turanIter hFglobal 1 h1nz hR hRsmall hc hzeros M
   exact
     ⟨s, l, hl, g, by simpa only [F] using hs, hspos,
       (by
@@ -2057,7 +2026,7 @@ Proof: Apply the reverse triangle inequality and use that the coefficient has no
 Role: transfers the Turán lower bound for a zero power sum to a lower bound for a
 logarithmic-derivative derivative.
 -/
-theorem norm_derivative_lower_bound_of_zero_sum_decomposition {n : ℕ} {D S E : ℂ} {L R : ℝ}
+theorem derivNorm_from_sum {n : ℕ} {D S E : ℂ} {L R : ℝ}
     (hdecomp : D = ((-1 : ℂ) ^ n * (n.factorial : ℂ)) * S + E) (hlower : L ≤ ‖S‖)
     (herror : ‖E‖ ≤ R) : L * (n.factorial : ℝ) - R ≤ ‖D‖ := by
   let a : ℂ := (-1 : ℂ) ^ n * (n.factorial : ℂ)
@@ -2095,10 +2064,10 @@ Proof: apply the shifted block decomposition and transfer its power-sum estimate
 triangle inequality.
 Role: connects the shifted power block to a quantitative derivative-detection estimate.
 -/
-theorem exists_analytic_local_zero_power_sum_block_forces_derivative_lower_bound {F : ℂ → ℂ}
-    (hFglobal : AnalyticOnNhd ℂ F Set.univ) (z₀ : ℂ) (hz₀ : F z₀ ≠ 0) {c : ℂ} {η : ℝ} (hη : 0 < η)
-    (hc : F c ≠ 0) (ρ : ℂ) (hρ : MeromorphicOn.divisor F (Metric.ball c |80 * η|) ρ ≠ 0)
-    (hclose : ‖c - ρ‖ ≤ 3 * η) (K : ℕ) (hK : 0 < K) (remainder : ℕ → ℝ)
+theorem entire_block_deriv_ge {F : ℂ → ℂ} (hFglobal : AnalyticOnNhd ℂ F Set.univ) (z₀ : ℂ)
+    (hz₀ : F z₀ ≠ 0) {c : ℂ} {η : ℝ} (hη : 0 < η) (hc : F c ≠ 0) (ρ : ℂ)
+    (hρ : MeromorphicOn.divisor F (Metric.ball c |80 * η|) ρ ≠ 0) (hclose : ‖c - ρ‖ ≤ 3 * η) (K : ℕ)
+    (hK : 0 < K) (remainder : ℕ → ℝ)
     (hremainder :
       ∀ n (g : ℂ → ℂ),
         AnalyticOnNhd ℂ g (Metric.ball c |80 * η|) →
@@ -2119,15 +2088,14 @@ theorem exists_analytic_local_zero_power_sum_block_forces_derivative_lower_bound
                   remainder n ≤
                 ‖iteratedDeriv n (logDeriv F) c‖ := by
   obtain ⟨s, hs, hρmem, hdomain, n, hnK, hnMass, hsumLower, g, hg, hgn, hdecomp⟩ :=
-    exists_analytic_local_zero_power_sum_block_derivative_decomposition_of_near hFglobal z₀ hz₀ hη
-      hc ρ hρ hclose K hK
+    exists_powerBlockIter hFglobal z₀ hz₀ hη hc ρ hρ hclose K hK
   let U := Metric.ball c |80 * η|
   let d := MeromorphicOn.divisor F U
   let m : ℂ → ℂ := fun v => (d v : ℂ)
   have hpower : (∑ᶠ v, m v * (c - v) ^ (-1 - (n : ℕ) : ℤ)) = ∑ᶠ v, m v * (c - v)⁻¹ ^ (n + 1) := by
     apply finsum_congr
     intro v
-    rw [zpow_neg_one_sub_nat_eq_inv_pow]
+    rw [zpow_neg_succ_inv_pow]
   have hcenter' :
     iteratedDeriv n (logDeriv F) c =
       ((-1 : ℂ) ^ n * (n.factorial : ℂ)) * (∑ᶠ v, m v * (c - v)⁻¹ ^ (n + 1)) +
@@ -2147,8 +2115,7 @@ theorem exists_analytic_local_zero_power_sum_block_forces_derivative_lower_bound
             _ = _ := mul_assoc _ _ _
         _ = _ := (mul_finsum _ _).symm
     rw [hdecomp, hfactor, hpower]
-  have hderivative :=
-    norm_derivative_lower_bound_of_zero_sum_decomposition hcenter' hsumLower (hremainder n g hg hgn)
+  have hderivative := derivNorm_from_sum hcenter' hsumLower (hremainder n g hg hgn)
   refine ⟨s, hs, ρ, hρmem, n, hnK, hnMass, ?_⟩
   simpa only [U, d, m] using hderivative
 
@@ -2161,9 +2128,8 @@ Proof: specialize the analytic-function estimate and use the rectangle multiplic
 bound the local total multiplicity by `C`.
 Role: exposes a derivative-detection estimate with an explicit order range for zero-density work.
 -/
-theorem exists_completedLFunction_local_zero_power_sum_block_forces_derivative_lower_bound {q : ℕ}
-    [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ} {η : ℝ} (hη : 0 < η)
-    (hc : DirichletCharacter.completedLFunction χ c ≠ 0) (ρ : ℂ)
+theorem completedBlock_ge {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ}
+    {η : ℝ} (hη : 0 < η) (hc : DirichletCharacter.completedLFunction χ c ≠ 0) (ρ : ℂ)
     (hρ :
       MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) (Metric.ball c |80 * η|) ρ ≠
         0)
@@ -2173,9 +2139,8 @@ theorem exists_completedLFunction_local_zero_power_sum_block_forces_derivative_l
         v ∈
           (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
               (Metric.ball c |80 * η|)).support,
-        v ∈ dirichletCompletedLFunctionRectangleBox z w)
-    (C : ℕ) (hcount : completedZeroMultiplicityCountInRectangle χ hχ z w ≤ (C : ℝ))
-    (remainder : ℕ → ℝ)
+        v ∈ completedRectangleBox z w)
+    (C : ℕ) (hcount : completedMultiplicityCount χ hχ z w ≤ (C : ℝ)) (remainder : ℕ → ℝ)
     (hremainder :
       ∀ n (g : ℂ → ℂ),
         AnalyticOnNhd ℂ g (Metric.ball c |80 * η|) →
@@ -2200,19 +2165,16 @@ theorem exists_completedLFunction_local_zero_power_sum_block_forces_derivative_l
   have hglobal : AnalyticOnNhd ℂ (DirichletCharacter.completedLFunction χ) Set.univ := fun v _ =>
     (DirichletCharacter.differentiable_completedLFunction hχ).analyticAt v
   obtain ⟨s, hs, u, hu, n, hnK, hnMass, hderiv⟩ :=
-    exists_analytic_local_zero_power_sum_block_forces_derivative_lower_bound hglobal 1
-      (dirichletCompletedLFunction_one_ne_zero_of_ne_one hχ) hη hc ρ hρ hclose K hK remainder
-      hremainder
-  let hfinite := completedLFunction_local_zero_support_finite χ hχ c (80 * η)
+    entire_block_deriv_ge hglobal 1 (completed_one_ne_zero_of_ne_one hχ) hη hc ρ hρ hclose K hK
+      remainder hremainder
+  let hfinite := completedSupport_fin χ hχ c (80 * η)
   have hsEq : s = hfinite.toFinset := by
     apply Finset.ext
     intro v
     rw [Set.Finite.mem_toFinset]
     rw [hs v]
     simp only [Function.mem_support]
-  have hmass :=
-    completedLFunction_local_divisor_support_multiplicity_le_rectangle_count χ hχ c (80 * η) z w
-      hbox
+  have hmass := localSupport_mass_le χ hχ c (80 * η) z w hbox
   have hmass' :
     (∑ v ∈ s,
         ((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) (Metric.ball c |80 * η|)
@@ -2243,10 +2205,10 @@ inequality.
 
 Role: provides the quantitative near-zero derivative estimate used by positive detection.
 -/
-theorem exists_analytic_local_zero_near_forces_derivative_lower_bound {F : ℂ → ℂ}
-    (hFglobal : AnalyticOnNhd ℂ F Set.univ) (z₀ : ℂ) (hz₀ : F z₀ ≠ 0) {c : ℂ} {η : ℝ} (hη : 0 < η)
-    (hc : F c ≠ 0) (ρ : ℂ) (hρ : MeromorphicOn.divisor F (Metric.ball c |80 * η|) ρ ≠ 0)
-    (hclose : ‖c - ρ‖ ≤ 3 * η) (remainder : ℕ → ℝ)
+theorem entire_near_deriv_ge {F : ℂ → ℂ} (hFglobal : AnalyticOnNhd ℂ F Set.univ) (z₀ : ℂ)
+    (hz₀ : F z₀ ≠ 0) {c : ℂ} {η : ℝ} (hη : 0 < η) (hc : F c ≠ 0) (ρ : ℂ)
+    (hρ : MeromorphicOn.divisor F (Metric.ball c |80 * η|) ρ ≠ 0) (hclose : ‖c - ρ‖ ≤ 3 * η)
+    (remainder : ℕ → ℝ)
     (hremainder :
       ∀ n (g : ℂ → ℂ),
         AnalyticOnNhd ℂ g (Metric.ball c |80 * η|) →
@@ -2274,20 +2236,17 @@ theorem exists_analytic_local_zero_near_forces_derivative_lower_bound {F : ℂ �
                     (k.factorial : ℝ) -
                   remainder k) ≤
                 ‖iteratedDeriv k (logDeriv F) c‖ := by
-  obtain ⟨s, u, hu, k, hk, hsumLower⟩ :=
-    exists_analytic_local_zero_power_sum_lower_bound_of_near hFglobal hη hc ρ hρ hclose
+  obtain ⟨s, u, hu, k, hk, hsumLower⟩ := exists_nearPowerSum hFglobal hη hc ρ hρ hclose
   have hRpos : 0 < 80 * η := mul_pos (by norm_num) hη
   have hRabs : 0 < |80 * η| := abs_pos.mpr (ne_of_gt hRpos)
-  obtain ⟨g, hg, hgn, hcenter⟩ :=
-    exists_analytic_local_iterated_logDeriv_decomposition_at_center hFglobal z₀ hz₀ (R := 80 * η)
-      hRabs hc k
+  obtain ⟨g, hg, hgn, hcenter⟩ := exists_entireCenter hFglobal z₀ hz₀ (R := 80 * η) hRabs hc k
   let U := Metric.ball c |80 * η|
   let d := MeromorphicOn.divisor F U
   let m : ℂ → ℂ := fun v => (d v : ℂ)
   have hpower : (∑ᶠ v, m v * (c - v) ^ (-1 - (k : ℕ) : ℤ)) = ∑ᶠ v, m v * (c - v)⁻¹ ^ (k + 1) := by
     apply finsum_congr
     intro v
-    rw [zpow_neg_one_sub_nat_eq_inv_pow]
+    rw [zpow_neg_succ_inv_pow]
   have hcenter' :
     iteratedDeriv k (logDeriv F) c =
       ((-1 : ℂ) ^ k * (k.factorial : ℂ)) * (∑ᶠ v, m v * (c - v)⁻¹ ^ (k + 1)) +
@@ -2307,8 +2266,7 @@ theorem exists_analytic_local_zero_near_forces_derivative_lower_bound {F : ℂ �
             _ = _ := mul_assoc _ _ _
         _ = _ := (mul_finsum _ _).symm
     rw [hcenter, hfactor, hpower]
-  have hderivative :=
-    norm_derivative_lower_bound_of_zero_sum_decomposition hcenter' hsumLower (hremainder k g hg hgn)
+  have hderivative := derivNorm_from_sum hcenter' hsumLower (hremainder k g hg hgn)
   refine ⟨s, u, hu, k, hk, g, ?_, hgn, ?_, hderivative⟩
   · simpa only [U] using hg
   · simpa only [U, d, m] using hsumLower
@@ -2325,8 +2283,8 @@ Proof: specialize the analytic-function result using the completed `L` function 
 
 Role: exposes the near-zero derivative estimate to the primitive-character density argument.
 -/
-theorem exists_completedLFunction_local_zero_near_forces_derivative_lower_bound {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ} {η : ℝ} (hη : 0 < η) (ρ : ℂ)
+theorem completedNear_ge {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ}
+    {η : ℝ} (hη : 0 < η) (ρ : ℂ)
     (hρ :
       MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) (Metric.ball c |80 * η|) ρ ≠
         0)
@@ -2376,10 +2334,9 @@ theorem exists_completedLFunction_local_zero_near_forces_derivative_lower_bound 
   let F := DirichletCharacter.completedLFunction χ
   have hFglobal : AnalyticOnNhd ℂ F Set.univ := fun z _ =>
     (DirichletCharacter.differentiable_completedLFunction hχ).analyticAt z
-  have h1nz : F 1 ≠ 0 := dirichletCompletedLFunction_one_ne_zero_of_ne_one hχ
+  have h1nz : F 1 ≠ 0 := completed_one_ne_zero_of_ne_one hχ
   obtain ⟨s, u, hu, k, hk, g, hg, hgn, hsumLower, hderivative⟩ :=
-    exists_analytic_local_zero_near_forces_derivative_lower_bound hFglobal 1 h1nz hη hc ρ hρ hclose
-      remainder hremainder
+    entire_near_deriv_ge hFglobal 1 h1nz hη hc ρ hρ hclose remainder hremainder
   exact
     ⟨s, u, hu, k, hk, g, (by simpa only [F] using hg), hgn, (by simpa only [F] using hsumLower),
       (by simpa only [F] using hderivative)⟩
@@ -2397,9 +2354,9 @@ estimate for its derivative identity.
 Role: makes the new maximum-node power sum available as a quantitative derivative-detection
 statement.
 -/
-theorem exists_analytic_local_zero_max_forces_derivative_lower_bound {F : ℂ → ℂ}
-    (hFglobal : AnalyticOnNhd ℂ F Set.univ) (z₀ : ℂ) (hz₀ : F z₀ ≠ 0) {c : ℂ} {R : ℝ} (hR : 0 < |R|)
-    (hc : F c ≠ 0) (hzeros : ∃ u, u ∈ (MeromorphicOn.divisor F (Metric.ball c |R|)).support)
+theorem entire_max_deriv_ge {F : ℂ → ℂ} (hFglobal : AnalyticOnNhd ℂ F Set.univ) (z₀ : ℂ)
+    (hz₀ : F z₀ ≠ 0) {c : ℂ} {R : ℝ} (hR : 0 < |R|) (hc : F c ≠ 0)
+    (hzeros : ∃ u, u ∈ (MeromorphicOn.divisor F (Metric.ball c |R|)).support)
     (lower remainder : ℕ → ℝ) (hderivative : ∀ n, lower n ≤ ‖iteratedDeriv n (logDeriv F) c‖)
     (hremainder :
       ∀ n (g : ℂ → ℂ),
@@ -2429,9 +2386,8 @@ theorem exists_analytic_local_zero_max_forces_derivative_lower_bound {F : ℂ �
                         remainder k) ≤
                     ‖iteratedDeriv k (logDeriv F) c‖ := by
   obtain ⟨s, hs, u, hu, hmax, hrad, k, hk, g, hdomain, hg, hgn, hbound, hdecomp⟩ :=
-    exists_analytic_local_zero_max_turan_derivative_decomposition hFglobal z₀ hz₀ hR hc hzeros
-  have hlower :=
-    norm_derivative_lower_bound_of_zero_sum_decomposition hdecomp hbound (hremainder k g hg hgn)
+    exists_maxTuranIter hFglobal z₀ hz₀ hR hc hzeros
+  have hlower := derivNorm_from_sum hdecomp hbound (hremainder k g hg hgn)
   refine ⟨s, hs, u, hu, hmax, hrad, k, hk, g, hdomain, hg, hgn, ?_⟩
   exact max_le (hderivative k) hlower
 
@@ -2448,9 +2404,8 @@ and its nonvanishing value at `1`.
 Role: exposes the multiplicity-preserving maximum-node detection estimate for completed Dirichlet
 `L` functions.
 -/
-theorem exists_completedLFunction_local_zero_max_derivative_lower_bound {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ} {R : ℝ} (hR : 0 < |R|)
-    (hc : DirichletCharacter.completedLFunction χ c ≠ 0)
+theorem completedMax_deriv_ge {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ}
+    {R : ℝ} (hR : 0 < |R|) (hc : DirichletCharacter.completedLFunction χ c ≠ 0)
     (hzeros :
       ∃ u,
         u ∈
@@ -2504,10 +2459,9 @@ theorem exists_completedLFunction_local_zero_max_derivative_lower_bound {q : ℕ
   let F := DirichletCharacter.completedLFunction χ
   have hFglobal : AnalyticOnNhd ℂ F Set.univ := fun z _ =>
     (DirichletCharacter.differentiable_completedLFunction hχ).analyticAt z
-  have h1nz : F 1 ≠ 0 := dirichletCompletedLFunction_one_ne_zero_of_ne_one hχ
+  have h1nz : F 1 ≠ 0 := completed_one_ne_zero_of_ne_one hχ
   obtain ⟨s, hs, u, hu, hmax, hrad, k, hk, g, hdomain, hg, hgn, hbound⟩ :=
-    exists_analytic_local_zero_max_forces_derivative_lower_bound hFglobal 1 h1nz hR hc hzeros lower
-      remainder hderivative hremainder
+    entire_max_deriv_ge hFglobal 1 h1nz hR hc hzeros lower remainder hderivative hremainder
   exact
     ⟨s,
       (by
@@ -2520,9 +2474,8 @@ theorem exists_completedLFunction_local_zero_max_derivative_lower_bound {q : ℕ
         intro v hv; simpa only [F] using hdomain v hv),
       hg, hgn, (by simpa only [F] using hbound)⟩
 
-theorem exists_analytic_local_zero_forces_derivative_lower_bound {F : ℂ → ℂ}
-    (hFglobal : AnalyticOnNhd ℂ F Set.univ) (z₀ : ℂ) (hz₀ : F z₀ ≠ 0) {c : ℂ} {R : ℝ} (hR : 0 < |R|)
-    (hRsmall : |R| ≤ 1) (hc : F c ≠ 0)
+theorem entire_turan_deriv_ge {F : ℂ → ℂ} (hFglobal : AnalyticOnNhd ℂ F Set.univ) (z₀ : ℂ)
+    (hz₀ : F z₀ ≠ 0) {c : ℂ} {R : ℝ} (hR : 0 < |R|) (hRsmall : |R| ≤ 1) (hc : F c ≠ 0)
     (hzeros : ∃ u, u ∈ (MeromorphicOn.divisor F (Metric.ball c |R|)).support) (M : ℕ)
     (remainder : ℕ → ℝ)
     (hremainder :
@@ -2542,7 +2495,7 @@ theorem exists_analytic_local_zero_forces_derivative_lower_bound {F : ℂ → �
               ‖iteratedDeriv (M + l) (logDeriv F) c‖ := by
   classical
   obtain ⟨s, l, hl, g, hs, hspos, hdomain, hg, hgn, hbound, hdecomp⟩ :=
-    exists_analytic_local_zero_turan_derivative_decomposition hFglobal z₀ hz₀ hR hRsmall hc hzeros M
+    exists_turanIter hFglobal z₀ hz₀ hR hRsmall hc hzeros M
   let U := Metric.ball c |R|
   let d : ℂ → ℤ := MeromorphicOn.divisor F U
   have hFanalytic : AnalyticOnNhd ℂ F U := by
@@ -2580,7 +2533,7 @@ theorem exists_analytic_local_zero_forces_derivative_lower_bound {F : ℂ → �
     have hnumdiv := div_le_div_of_nonneg_right hnum (le_of_lt hden)
     exact hnumdiv.trans hbound
   have herror := hremainder (M + l) g hg hgn
-  have hderiv := norm_derivative_lower_bound_of_zero_sum_decomposition hdecomp hsumLower herror
+  have hderiv := derivNorm_from_sum hdecomp hsumLower herror
   exact ⟨s, l, hl, g, hs, hdomain, hg, hgn, hderiv⟩
 
 /--
@@ -2593,9 +2546,9 @@ the reverse triangle inequality.
 Role: turns the radius-sensitive reciprocal power sum into a positive detection threshold once
 the analytic-factor error is smaller than that threshold.
 -/
-theorem exists_analytic_local_zero_scaled_forces_derivative_lower_bound {F : ℂ → ℂ}
-    (hFglobal : AnalyticOnNhd ℂ F Set.univ) (z₀ : ℂ) (hz₀ : F z₀ ≠ 0) {c : ℂ} {R : ℝ} (hR : 0 < |R|)
-    (hc : F c ≠ 0) (hzeros : ∃ u, u ∈ (MeromorphicOn.divisor F (Metric.ball c |R|)).support) (M : ℕ)
+theorem entire_scaledDeriv_ge {F : ℂ → ℂ} (hFglobal : AnalyticOnNhd ℂ F Set.univ) (z₀ : ℂ)
+    (hz₀ : F z₀ ≠ 0) {c : ℂ} {R : ℝ} (hR : 0 < |R|) (hc : F c ≠ 0)
+    (hzeros : ∃ u, u ∈ (MeromorphicOn.divisor F (Metric.ball c |R|)).support) (M : ℕ)
     (remainder : ℕ → ℝ)
     (hremainder :
       ∀ n (g : ℂ → ℂ),
@@ -2614,9 +2567,9 @@ theorem exists_analytic_local_zero_scaled_forces_derivative_lower_bound {F : ℂ
               ‖iteratedDeriv (M + l) (logDeriv F) c‖ := by
   classical
   obtain ⟨s, l, hl, g, hs, hspos, hdomain, hg, hgn, hsumLower, hdecomp⟩ :=
-    exists_analytic_local_zero_scaled_turan_derivative_decomposition hFglobal z₀ hz₀ hR hc hzeros M
+    scaled_turan_iter hFglobal z₀ hz₀ hR hc hzeros M
   have herror := hremainder (M + l) g hg hgn
-  have hderiv := norm_derivative_lower_bound_of_zero_sum_decomposition hdecomp hsumLower herror
+  have hderiv := derivNorm_from_sum hdecomp hsumLower herror
   exact ⟨s, l, hl, g, hs, hspos, hdomain, hg, hgn, hderiv⟩
 
 /--
@@ -2626,9 +2579,8 @@ Claim: the completed logarithmic derivative has the local Turán lower bound.
 Proof: instantiate the generic entire-function result at the completed L-function.
 Role: preserves the completed-L interface consumed by gamma-factor transfer estimates.
 -/
-theorem exists_completedLFunction_local_zero_forces_derivative_lower_bound {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ} {R : ℝ} (hR : 0 < |R|) (hRsmall : |R| ≤ 1)
-    (hc : DirichletCharacter.completedLFunction χ c ≠ 0)
+theorem completed_deriv_ge {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ}
+    {R : ℝ} (hR : 0 < |R|) (hRsmall : |R| ≤ 1) (hc : DirichletCharacter.completedLFunction χ c ≠ 0)
     (hzeros :
       ∃ u,
         u ∈
@@ -2662,10 +2614,9 @@ theorem exists_completedLFunction_local_zero_forces_derivative_lower_bound {q : 
   let F := DirichletCharacter.completedLFunction χ
   have hFglobal : AnalyticOnNhd ℂ F Set.univ := fun z _ =>
     (DirichletCharacter.differentiable_completedLFunction hχ).analyticAt z
-  have h1nz : F 1 ≠ 0 := dirichletCompletedLFunction_one_ne_zero_of_ne_one hχ
+  have h1nz : F 1 ≠ 0 := completed_one_ne_zero_of_ne_one hχ
   obtain ⟨s, l, hl, g, hs, hdomain, hg, hgn, hbound⟩ :=
-    exists_analytic_local_zero_forces_derivative_lower_bound hFglobal 1 h1nz hR hRsmall hc hzeros M
-      remainder hremainder
+    entire_turan_deriv_ge hFglobal 1 h1nz hR hRsmall hc hzeros M remainder hremainder
   refine ⟨s, l, hl, g, ?_, ?_, hg, hgn, ?_⟩
   · intro u
     simpa only [F] using hs u
@@ -2682,8 +2633,8 @@ bound.
 Output: Turán data for the completed `L` function on the specified ball.
 Role: provides a compact result type for passing local zero detection into family estimates.
 -/
-abbrev CompletedLFunctionLocalDerivativeLowerBoundData {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (c : ℂ) (R : ℝ) (M : ℕ) (remainder : ℕ → ℝ) : Prop :=
+abbrev LocalDerivLowerBound {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (c : ℂ) (R : ℝ) (M : ℕ)
+    (remainder : ℕ → ℝ) : Prop :=
   ∃ s : Finset ℂ,
     ∃ l ∈ Finset.range s.card,
       ∃ g : ℂ → ℂ,
@@ -2713,12 +2664,10 @@ Content: the explicit center has real part in `[1,5/4]` and the zero's imaginary
 uniform high-order gamma estimate applies at the same height.
 Role: produces the derivative magnitude that the Euler-tail large sieve counts.
 -/
-theorem ordinary_derivative_lower_bound_of_completed_local_data {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {σ T : ℝ} {ρ c : ℂ} {R : ℝ}
-    (hσlower : (29 / 30 : ℝ) ≤ σ) (hσupper : σ ≤ 1) (hσlt : σ < 1) (hT : 0 ≤ T)
+theorem ordinary_from_local {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {σ T : ℝ}
+    {ρ c : ℂ} {R : ℝ} (hσlower : (29 / 30 : ℝ) ≤ σ) (hσupper : σ ≤ 1) (hσlt : σ < 1) (hT : 0 ≤ T)
     (hρlower : -T ≤ ρ.im) (hρupper : ρ.im ≤ T) (hcre : c.re = 2 - σ) (hcim : c.im = ρ.im) (M : ℕ)
-    (remainder : ℕ → ℝ)
-    (hdata : CompletedLFunctionLocalDerivativeLowerBoundData χ c R M remainder) :
+    (remainder : ℕ → ℝ) (hdata : LocalDerivLowerBound χ c R M remainder) :
     ∃ C : ℝ,
       0 ≤ C ∧
         ∃ s : Finset ℂ,
@@ -2755,8 +2704,7 @@ theorem ordinary_derivative_lower_bound_of_completed_local_data {q : ℕ} [NeZer
   have hsi : |c.im| ≤ T := by
     rw [hcim]
     exact abs_le.mpr ⟨hρlower, hρupper⟩
-  obtain ⟨C, hC, htransfer⟩ :=
-    exists_uniform_gamma_subtraction_for_ordinary_LFunction_derivative (M + l)
+  obtain ⟨C, hC, htransfer⟩ := L_logDeriv_deriv_sub_gamma_bound (M + l)
   have hordinary := htransfer hχ hsstrict hslo hshi hT hsi hcompleted
   exact ⟨C, hC, s, l, hl, g, hs, hdomain, hg, hgn, hordinary⟩
 
@@ -2771,8 +2719,8 @@ Proof: normalize the positive radius to the absolute-value convention used by th
 Role: connects completed-zero counting directly to a derivative-value input for the family large
 sieve.
 -/
-theorem exists_completedZeroCount_local_derivative_lower_bound_of_pos {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {σ T : ℝ} (hσ : σ ≤ 1) (hT : 0 ≤ T)
+theorem count_localDeriv {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {σ T : ℝ}
+    (hσ : σ ≤ 1) (hT : 0 ≤ T)
     (hcount : 0 < PseudoPrime.AnalyticNumberTheory.DirichletLFunction.completedZeroCount χ hχ σ T)
     (M : ℕ) (remainder : ℕ → ℝ)
     (hremainder :
@@ -2790,9 +2738,9 @@ theorem exists_completedZeroCount_local_derivative_lower_bound_of_pos {q : ℕ} 
             0 < R ∧
               R ≤ 1 ∧
               DirichletCharacter.completedLFunction χ c ≠ 0 ∧
-              CompletedLFunctionLocalDerivativeLowerBoundData χ c R M remainder := by
+              LocalDerivLowerBound χ c R M remainder := by
   obtain ⟨ρ, hσρ, hρ1, himLower, himUpper, hzero, c, R, hR, hRle, hc, hsupport⟩ :=
-    exists_completedZeroCount_local_support_of_pos χ hχ hσ hT hcount
+    count_localSupport χ hχ hσ hT hcount
   have hR' : 0 < |R| := by simpa only [abs_of_pos hR] using hR
   have hRsmall : |R| ≤ 1 := by simpa only [abs_of_pos hR] using hRle
   have hzeros :
@@ -2802,8 +2750,8 @@ theorem exists_completedZeroCount_local_derivative_lower_bound_of_pos {q : ℕ} 
             (Metric.ball c |R|)).support :=
     ⟨ρ, hsupport⟩
   have hdata :=
-    exists_completedLFunction_local_zero_forces_derivative_lower_bound χ hχ hR' hRsmall hc hzeros M
-      remainder (fun n g hg hgn => hremainder c R n g hg hgn)
+    completed_deriv_ge χ hχ hR' hRsmall hc hzeros M remainder
+      (fun n g hg hgn => hremainder c R n g hg hgn)
   exact ⟨ρ, hσρ, hρ1, himLower, himUpper, hzero, c, R, hR, hRle, hc, hdata⟩
 
 /--
@@ -2818,9 +2766,8 @@ with the supplied uniform remainder estimate.
 Role: provides the most controlled local input currently available for a uniform zero-density
 argument.
 -/
-theorem exists_completedZeroCount_explicit_local_derivative_lower_bound_of_pos {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {σ T : ℝ} (hσlower : (3 / 4 : ℝ) ≤ σ)
-    (hσupper : σ ≤ 1) (hT : 0 ≤ T)
+theorem count_explicitDeriv {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {σ T : ℝ}
+    (hσlower : (3 / 4 : ℝ) ≤ σ) (hσupper : σ ≤ 1) (hT : 0 ≤ T)
     (hcount : 0 < PseudoPrime.AnalyticNumberTheory.DirichletLFunction.completedZeroCount χ hχ σ T)
     (M : ℕ) (remainder : ℕ → ℝ)
     (hremainder :
@@ -2841,10 +2788,10 @@ theorem exists_completedZeroCount_explicit_local_derivative_lower_bound_of_pos {
               c.re = 2 - σ ∧
               c.im = ρ.im ∧
               DirichletCharacter.completedLFunction χ c ≠ 0 ∧
-              CompletedLFunctionLocalDerivativeLowerBoundData χ c R M remainder := by
+              LocalDerivLowerBound χ c R M remainder := by
   obtain
     ⟨ρ, hσρ, hρ1, himLower, himUpper, hzero, c, R, hRdef, hR, hRle, hcre, hcim, hc, hsupport⟩ :=
-    exists_completedZeroCount_explicit_local_support_of_pos χ hχ hσlower hσupper hT hcount
+    count_explicitSupport χ hχ hσlower hσupper hT hcount
   have hR' : 0 < |R| := by simpa only [abs_of_pos hR] using hR
   have hRsmall : |R| ≤ 1 := by simpa only [abs_of_pos hR] using hRle
   have hzeros :
@@ -2854,8 +2801,8 @@ theorem exists_completedZeroCount_explicit_local_derivative_lower_bound_of_pos {
             (Metric.ball c |R|)).support :=
     ⟨ρ, hsupport⟩
   have hdata :=
-    exists_completedLFunction_local_zero_forces_derivative_lower_bound χ hχ hR' hRsmall hc hzeros M
-      remainder (fun n g hg hgn => hremainder c R n g hg hgn)
+    completed_deriv_ge χ hχ hR' hRsmall hc hzeros M remainder
+      (fun n g hg hgn => hremainder c R n g hg hgn)
   exact ⟨ρ, hσρ, hρ1, himLower, himUpper, hzero, c, R, hRdef, hR, hRle, hcre, hcim, hc, hdata⟩
 
 /--
@@ -2867,9 +2814,8 @@ Content: this bounds the variable support cardinality that determines the deriva
 Proof: combine the explicit derivative lower-bound theorem with the real-part-two Jensen estimate.
 Role: packages the local zero detection and its finite-order cost for a later family estimate.
 -/
-theorem exists_completedZeroCount_explicit_local_derivative_lower_bound_with_card_bound_of_pos
-    {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {σ T : ℝ} (hq : 1 < q)
-    (hσlower : (29 / 30 : ℝ) ≤ σ) (hσupper : σ ≤ 1) (hT : 0 ≤ T)
+theorem count_localDeriv_card {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {σ T : ℝ}
+    (hq : 1 < q) (hσlower : (29 / 30 : ℝ) ≤ σ) (hσupper : σ ≤ 1) (hT : 0 ≤ T)
     (hcount : 0 < PseudoPrime.AnalyticNumberTheory.DirichletLFunction.completedZeroCount χ hχ σ T)
     (M : ℕ) (remainder : ℕ → ℝ)
     (hremainder :
@@ -2890,22 +2836,20 @@ theorem exists_completedZeroCount_explicit_local_derivative_lower_bound_with_car
               c.re = 2 - σ ∧
               c.im = ρ.im ∧
               DirichletCharacter.completedLFunction χ c ≠ 0 ∧
-              CompletedLFunctionLocalDerivativeLowerBoundData χ c R M remainder ∧
-              (((completedLFunction_local_zero_support_finite χ hχ c R).toFinset.card : ℕ) : ℝ) ≤
+              LocalDerivLowerBound χ c R M remainder ∧
+              (((completedSupport_fin χ hχ c R).toFinset.card : ℕ) : ℝ) ≤
                 Real.log (2 * max (1 : ℝ) (2 * (q : ℝ) * (‖(2 + Complex.I * c.im : ℂ)‖ + 3 / 2))) /
                   Real.log (9 / 8) := by
   obtain ⟨ρ, hσρ, hρ1, himLower, himUpper, hzero, c, R, hRdef, hR, hRle, hcre, hcim, hc, hdata⟩ :=
-    exists_completedZeroCount_explicit_local_derivative_lower_bound_of_pos χ hχ
-      (le_trans (by norm_num only : (3 / 4 : ℝ) ≤ 29 / 30) hσlower) hσupper hT hcount M remainder
-      hremainder
+    count_explicitDeriv χ hχ (le_trans (by norm_num only : (3 / 4 : ℝ) ≤ 29 / 30) hσlower) hσupper
+      hT hcount M remainder hremainder
   have hσlt : σ < 1 := by
     have hpos : 0 < 4 * (1 - σ) := by
       rw [← hRdef]; exact hR
     nlinarith only [hpos]
-  have hcard :=
-    completedLFunction_explicit_local_divisor_support_card_le_log_bound χ hχ hq hσlower hσlt c hcre
+  have hcard := localSupport_logBound χ hχ hq hσlower hσlt c hcre
   have hcard' :
-    (((completedLFunction_local_zero_support_finite χ hχ c R).toFinset.card : ℕ) : ℝ) ≤
+    (((completedSupport_fin χ hχ c R).toFinset.card : ℕ) : ℝ) ≤
       Real.log (2 * max (1 : ℝ) (2 * (q : ℝ) * (‖(2 + Complex.I * c.im : ℂ)‖ + 3 / 2))) /
         Real.log (9 / 8) := by
     subst R
@@ -2923,7 +2867,7 @@ coefficient norm `n!`.
 Role: connects the local zero factorization and analytic-factor estimate to a power-sum lower
 bound for zero detection.
 -/
-theorem norm_zero_sum_lower_bound_of_derivative_decomposition {n : ℕ} {D S E : ℂ} {L R : ℝ}
+theorem zeroSum_from_deriv {n : ℕ} {D S E : ℂ} {L R : ℝ}
     (hdecomp : D = ((-1 : ℂ) ^ n * (n.factorial : ℂ)) * S + E) (hlower : L ≤ ‖D‖)
     (herror : ‖E‖ ≤ R) : (L - R) / (n.factorial : ℝ) ≤ ‖S‖ := by
   let a : ℂ := (-1 : ℂ) ^ n * (n.factorial : ℂ)
@@ -2957,9 +2901,8 @@ Proof: Extract the existing Turán-type local decomposition and pass the analyti
 bound to the coefficient-removal lemma.
 Role: provides an interface for detecting local zeros from derivative estimates.
 -/
-theorem exists_completedLFunction_local_zero_turan_detected_lower_bound {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ} {R : ℝ} (hR : 0 < |R|) (hRsmall : |R| ≤ 1)
-    (hc : DirichletCharacter.completedLFunction χ c ≠ 0)
+theorem completed_detected_ge {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ}
+    {R : ℝ} (hR : 0 < |R|) (hRsmall : |R| ≤ 1) (hc : DirichletCharacter.completedLFunction χ c ≠ 0)
     (hzeros :
       ∃ u,
         u ∈
@@ -3009,10 +2952,8 @@ theorem exists_completedLFunction_local_zero_turan_detected_lower_bound {q : ℕ
                       ℂ) *
                     (c - u)⁻¹ ^ (M + 1 + l)‖ := by
   obtain ⟨s, l, hl, g, hs, hspos, hdomain, hg, hgn, hbound, hdecomp⟩ :=
-    exists_completedLFunction_local_zero_turan_derivative_decomposition χ hχ hR hRsmall hc hzeros M
-  have hzeroSum :=
-    norm_zero_sum_lower_bound_of_derivative_decomposition hdecomp (hderivative (M + l))
-      (hremainder (M + l) g hg hgn)
+    completed_turan_iter χ hχ hR hRsmall hc hzeros M
+  have hzeroSum := zeroSum_from_deriv hdecomp (hderivative (M + l)) (hremainder (M + l) g hg hgn)
   exact ⟨s, l, hl, g, hs, hspos, hdomain, hg, hgn, hbound, hzeroSum⟩
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LogFreeDensity

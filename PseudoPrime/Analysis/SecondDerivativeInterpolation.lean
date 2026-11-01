@@ -25,7 +25,7 @@ namespace PseudoPrime.Analysis
 /-- On [a,b], subtracting M x²/2 from a twice differentiable function with f''≤M
 produces a concave function. Compute the two corrected derivatives and apply the
 second-derivative criterion. This supplies the chord used in sample interpolation. -/
-theorem concaveOn_quadratic_correction_of_second_deriv_le {f f' f'' : ℝ → ℝ} {a b M : ℝ}
+theorem concaveOn_quadratic_correction {f f' f'' : ℝ → ℝ} {a b M : ℝ}
     (hf : ∀ x ∈ Set.Icc a b, HasDerivAt f (f' x) x)
     (hf' : ∀ x ∈ Set.Icc a b, HasDerivAt f' (f'' x) x) (hb : ∀ x ∈ Set.Icc a b, f'' x ≤ M) :
     ConcaveOn ℝ (Set.Icc a b) (fun x ↦ f x - M / 2 * x ^ 2) := by
@@ -78,8 +78,8 @@ theorem lower_bound_of_second_deriv_le {f f' f'' : ℝ → ℝ} {a b M c u : ℝ
     (ha : c ≤ f a) (hb : c ≤ f b) (hu : 0 ≤ u) (hu1 : u ≤ 1) :
     c - M * (b - a) ^ 2 / 8 ≤ f ((1 - u) * a + u * b) := by
   exact
-    lower_bound_of_concave_quadratic hab hM
-      (concaveOn_quadratic_correction_of_second_deriv_le hf hf' hbound) ha hb hu hu1
+    lower_bound_of_concave_quadratic hab hM (concaveOn_quadratic_correction hf hf' hbound) ha hb hu
+      hu1
 
 /-- On a nondegenerate interval [a,b], a second-derivative upper bound M≥0 and
 endpoint lower bound c imply f(x)≥c-M(b-a)²/8 for every x in the interval.
@@ -100,8 +100,8 @@ theorem lower_bound_on_interval_of_second_deriv_le {f f' f'' : ℝ → ℝ} {a b
 second derivative at most 54 give the uniform lower bound 13/1000000.
 Insert the exact rational constants into the general interpolation loss. This is the
 sample-to-interval margin used by the Gamma resolvent certificate. -/
-theorem lower_bound_on_interval_of_second_deriv_le_fifty_four {f f' f'' : ℝ → ℝ} {a b x : ℝ}
-    (hab : a < b) (hwidth : b - a ≤ 1 / 500) (hf : ∀ y ∈ Set.Icc a b, HasDerivAt f (f' y) y)
+theorem interval_lower_bound_of_deriv2_le_54 {f f' f'' : ℝ → ℝ} {a b x : ℝ} (hab : a < b)
+    (hwidth : b - a ≤ 1 / 500) (hf : ∀ y ∈ Set.Icc a b, HasDerivAt f (f' y) y)
     (hf' : ∀ y ∈ Set.Icc a b, HasDerivAt f' (f'' y) y) (hbound : ∀ y ∈ Set.Icc a b, f'' y ≤ 54)
     (ha : 1 / 25000 ≤ f a) (hb : 1 / 25000 ≤ f b) (hx : x ∈ Set.Icc a b) :
     (13 / 1000000 : ℝ) ≤ f x := by
@@ -138,7 +138,7 @@ theorem exists_cell_on_zero_sixteen_grid {x : ℝ} (hx : x ∈ Set.Icc (0 : ℝ)
 on the 8001 nodes j/500 imply f≥13/1000000 everywhere. Locate a grid cell and
 apply the endpoint interpolation estimate. This converts finite node bounds into a
 uniform compact-interval bound without trusting the sampling procedure. -/
-theorem lower_bound_on_zero_sixteen_of_grid_and_second_deriv_le {f f' f'' : ℝ → ℝ}
+theorem lower_bound_on_Icc_0_16_of_grid {f f' f'' : ℝ → ℝ}
     (hf : ∀ x ∈ Set.Icc (0 : ℝ) 16, HasDerivAt f (f' x) x)
     (hf' : ∀ x ∈ Set.Icc (0 : ℝ) 16, HasDerivAt f' (f'' x) x)
     (hbound : ∀ x ∈ Set.Icc (0 : ℝ) 16, f'' x ≤ 54)
@@ -161,7 +161,7 @@ theorem lower_bound_on_zero_sixteen_of_grid_and_second_deriv_le {f f' f'' : ℝ 
     rw [Nat.cast_add, Nat.cast_one]
     exact le_of_eq (by ring)
   exact
-    lower_bound_on_interval_of_second_deriv_le_fifty_four hab hw (fun y hy ↦ hf y (hsub hy))
+    interval_lower_bound_of_deriv2_le_54 hab hw (fun y hy ↦ hf y (hsub hy))
       (fun y hy ↦ hf' y (hsub hy)) (fun y hy ↦ hbound y (hsub hy)) (hnodes j hj.le)
       (hnodes (j + 1) hju) hcell
 

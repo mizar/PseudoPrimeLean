@@ -63,7 +63,7 @@ theorem endpoint_gap_of_step {L c d : ℝ} (hc : 8 ≤ c) (hcd : c < d)
     0 < fullEndpointEvenExactComparisonGap L (2096 / 1831) d (Real.log d) := by
   have hd8 := hc.trans hcd.le
   have hm := fullEndpointEvenGapCorrection_strictMonoOn hc hd8 hcd
-  rw [fullEndpointEvenExactComparisonGap_eq_denominator_correction hd8]
+  rw [fullEvenExactGap_eq_denominator_correction hd8]
   exact mul_pos (fullEndpointEvenGapDenominator_pos hd8) (by linarith only [hd, hm])
 
 /-- For L>=45/4, the second radius has positive gap. Apply the generic iteration-step lemma. -/

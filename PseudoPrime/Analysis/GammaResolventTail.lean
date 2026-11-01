@@ -180,7 +180,7 @@ theorem scaled_Gamma_half_add_I_lt_of_abs_ge_sixteen {t : ℝ} (ht : 16 ≤ |t|)
 /-- At every |t|≥16 the signed rational resolvent strictly dominates the Gamma norm
 on the line Re s=1/2. Compare their scaled bounds and cancel the positive factor 1+t².
 Only the compact interval remains for the global Gamma majorant certificate. -/
-theorem norm_Gamma_half_add_I_lt_gammaResolvent_of_abs_ge_sixteen {t : ℝ} (ht : 16 ≤ |t|) :
+theorem norm_Gamma_half_lt_resolvent_of_abs_ge_16 {t : ℝ} (ht : 16 ≤ |t|) :
     ‖Complex.Gamma ((1 / 2 : ℂ) + Complex.I * t)‖ <
       AnalyticNumberTheory.Gamma.gammaResolventMajorant t := by
   have hs : (256 : ℝ) ≤ t ^ 2 := by nlinarith only [ht, sq_abs t]
@@ -192,7 +192,7 @@ theorem norm_Gamma_half_add_I_lt_gammaResolvent_of_abs_ge_sixteen {t : ℝ} (ht 
 /-- A Gamma domination certificate on |t|≤16 extends to every real ordinate.
 The rational and exponential tail estimates supply the complementary interval,
 so the zero-mass comparison only needs the compact certificate as input. -/
-theorem norm_Gamma_half_add_I_le_gammaResolvent_of_compact
+theorem norm_Gamma_half_le_resolvent_of_compact
     (h :
       ∀ t : ℝ,
         |t| ≤ 16 →
@@ -203,6 +203,6 @@ theorem norm_Gamma_half_add_I_le_gammaResolvent_of_compact
       AnalyticNumberTheory.Gamma.gammaResolventMajorant t := by
   by_cases ht : |t| ≤ 16
   · exact h t ht
-  · exact (norm_Gamma_half_add_I_lt_gammaResolvent_of_abs_ge_sixteen (le_of_not_ge ht)).le
+  · exact (norm_Gamma_half_lt_resolvent_of_abs_ge_16 (le_of_not_ge ht)).le
 
 end PseudoPrime.Analysis

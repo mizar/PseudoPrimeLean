@@ -22,9 +22,9 @@ support hypothesis needed to apply the prime-factor budget to the analytic kerne
 theorem excludedEndpointWeight_eq_zero_of_not_primePow (x : ℝ) {n : ℕ} (hn : ¬IsPrimePow n) :
     excludedEndpointWeight x n = 0 := by
   unfold excludedEndpointWeight
-  rw [AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtTerm_eq_zero_of_not_primePow hn,
-    AnalyticNumberTheory.Arithmetic.logWeightedMangoldtTerm_eq_zero_of_not_primePow hn, mul_zero,
-    mul_zero, add_zero]
+  rw [AnalyticNumberTheory.Arithmetic.recipMangoldtTerm_eq_zero_of_not_primePow hn,
+    AnalyticNumberTheory.Arithmetic.logMangoldtTerm_eq_zero_of_not_primePow hn, mul_zero, mul_zero,
+    add_zero]
 
 open AnalyticNumberTheory.Arithmetic in
 /-- Under primitive nonprincipal quadratic GRH data, q dividing nonzero even N,
@@ -32,8 +32,8 @@ x>=64, and a nonnegative logarithmic tail rate, the prime-budget separation
 condition gives an odd N-coprime negative prime at most x. Bound the structural
 budget and apply the established endpoint witness theorem. The numerical tail
 and excess conditions remain explicit certification obligations. -/
-theorem exists_odd_prime_neg_one_of_quadratic_prime_budget {q N : ℕ} [NeZero q] (hq : 2 ≤ q)
-    (hN : N ≠ 0) (hqN : q ∣ N) (hN2 : 2 ∣ N) {χ : DirichletCharacter ℂ q}
+theorem exists_oddPrime_negOne_primeCost_GRH {q N : ℕ} [NeZero q] (hq : 2 ≤ q) (hN : N ≠ 0)
+    (hqN : q ∣ N) (hN2 : 2 ∣ N) {χ : DirichletCharacter ℂ q}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hquad : χ.IsQuadratic) {x : ℝ} (hx : 64 ≤ x) (T : Finset ℕ) {a : ℝ} (ha : 0 ≤ a)
     (htail :
@@ -49,7 +49,7 @@ theorem exists_odd_prime_neg_one_of_quadratic_prime_budget {q N : ℕ} [NeZero q
   have hb :=
     quadraticExcludedBudget_le_primeBudget hN q hx0 (excludedEndpointWeight x)
       (fun _ hn ↦ excludedEndpointWeight_eq_zero_of_not_primePow x hn) T ha htail
-  apply exists_odd_prime_neg_one_of_quadratic_excluded_budget hq hqN hN2 hGRH hp hne hquad hx
+  apply exists_oddPrime_negOne_excluded_GRH hq hqN hN2 hGRH hp hne hquad hx
   linarith only [hb, hsep]
 
 end PseudoPrime.LLS.PaperStatements

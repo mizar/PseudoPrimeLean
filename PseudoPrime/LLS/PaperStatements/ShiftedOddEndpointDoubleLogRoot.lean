@@ -19,7 +19,7 @@ namespace PseudoPrime.LLS.PaperStatements
 37/5 level inequality imply positivity of the zero-at-two branch polynomial.
 An exact rational decomposition retains the half-log shift in the defect.
 The remaining coefficients are nonnegative on the entire analytic range. -/
-theorem shiftedOddEndpoint_zero_polynomial_pos_of_remainder {L y z : ℝ} (hy : 94 ≤ y) (hz : 0 ≤ z)
+theorem shiftedOdd_zero_polynomial_pos_of_remainder {L y z : ℝ} (hy : 94 ≤ y) (hz : 0 ≤ z)
     (hF : 0 < (79 / 2000 : ℝ) * y + 14 + (15 / 2 : ℝ) * z - 2 * z ^ 2)
     (hlink : (y - 2) * L ≤ (y - 2) * y + y * (2 * z - 37 / 5)) :
     0 <
@@ -147,8 +147,8 @@ theorem shiftedOddEndpoint_nonzero_polynomial_ge_zero {L y z : ℝ} (hy : 94 ≤
 polynomials are positive at the 37/5 radius. Use the analytic remainder,
 cost monotonicity, and the sharper half-square defect in the nonzero branch.
 Substituting b=log two supplies the actual arithmetic certificates. -/
-theorem shiftedOddEndpoint_doubleLog_branch_polynomials_pos {L b : ℝ} (hL : 96 ≤ L)
-    (hbl : 69 / 100 ≤ b) (hbu : b ≤ 7 / 10) :
+theorem shiftedOdd_doubleLog_branch_polynomials_pos {L b : ℝ} (hL : 96 ≤ L) (hbl : 69 / 100 ≤ b)
+    (hbu : b ≤ 7 / 10) :
     let y := shiftedOddEndpointDoubleLogRoot L
     0 <
         oddEndpointTwoCostPolynomial (L + 2 * b) (2096 / 1831) y (Real.log y) b
@@ -161,7 +161,7 @@ theorem shiftedOddEndpoint_doubleLog_branch_polynomials_pos {L b : ℝ} (hL : 96
   have hy1 : 1 ≤ y := by linarith only [hd.1]
   have hz := Real.log_nonneg hy1
   have hp :=
-    shiftedOddEndpoint_zero_polynomial_pos_of_remainder hd.1 hz
+    shiftedOdd_zero_polynomial_pos_of_remainder hd.1 hz
       (Analysis.shiftedLogQuadraticRemainder_pos_of_94 hd.1) hd.2
   have hm := mul_le_mul_of_nonneg_right hbl hz
   have hb0 : 0 ≤ b := by linarith only [hbl]

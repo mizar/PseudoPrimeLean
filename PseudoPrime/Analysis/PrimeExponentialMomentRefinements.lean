@@ -233,8 +233,8 @@ theorem prime_exp_moment_le_two {p : ℕ} (hp : 3 ≤ p) {x : ℝ} (hx : 1 ≤ x
 /-- Input: p>1, 0<a<=b and b>=1. Claim: the exponential mass gain is at most
 ((p+1)/(p-1))(b-a)/a. Sum tangent bounds using the coupled moment estimate.
 Role: preserve the improved coefficient in each row of a transported window. -/
-theorem gamma_prime_exponential_mass_difference_le_base_ratio {p : ℕ} (hp : 1 < p) {a b : ℝ}
-    (ha : 0 < a) (hab : a ≤ b) (hb : 1 ≤ b) :
+theorem gamma_prime_exp_mass_sub_le_base_ratio {p : ℕ} (hp : 1 < p) {a b : ℝ} (ha : 0 < a)
+    (hab : a ≤ b) (hb : 1 ≤ b) :
     gammaPrimeExponentialMass p b - gammaPrimeExponentialMass p a ≤
       (((p : ℝ) + 1) / (p - 1)) * (b - a) / a := by
   have hb0 := zero_lt_one.trans_le hb

@@ -24,10 +24,10 @@ def ConductorPrimeSupport {q : ℕ} (χ : DirichletCharacter ℂ q) : Prop :=
 equals that of `χ.primitiveCharacter`. When `n` is coprime to the conductor, prime support
 also makes it coprime to the level quotient, and the induction formula applies; otherwise
 both characters vanish. This removes primitive-comparison errors from weighted sums. -/
-theorem apply_eq_primitiveCharacter_of_conductorPrimeSupport {q n : ℕ} (χ : DirichletCharacter ℂ q)
+theorem apply_eq_primitive_of_conductorPrimeSupport {q n : ℕ} (χ : DirichletCharacter ℂ q)
     (hsupport : ConductorPrimeSupport χ) : χ n = χ.primitiveCharacter n := by
   by_cases hconductor : Nat.Coprime n χ.conductor
-  · apply apply_eq_primitiveCharacter_of_coprime_quotient
+  · apply apply_eq_primitive_of_coprime_quotient
     by_contra hquotient
     obtain ⟨p, hp, hpn, hpquotient⟩ := Nat.Prime.not_coprime_iff_dvd.mp hquotient
     have hpq : p ∣ q := hpquotient.trans (Nat.div_dvd_of_dvd χ.conductor_dvd_level)
@@ -50,13 +50,13 @@ theorem apply_eq_primitiveCharacter_of_conductorPrimeSupport {q n : ℕ} (χ : D
 reciprocal weighted sum for `χ` equal to that for its primitive character.
 The pointwise character equality identifies every term of the finite sum, so no size or
 positivity condition on `x` is required. This eliminates the conductor-quotient correction. -/
-theorem characterReciprocalWeightedSum_eq_primitive_of_conductorPrimeSupport {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hsupport : ConductorPrimeSupport χ) :
+theorem reciprocalSum_eq_primitive_of_primeSupport {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
+    (hsupport : ConductorPrimeSupport χ) :
     characterReciprocalWeightedSum x χ = characterReciprocalWeightedSum x χ.primitiveCharacter := by
   rw [characterReciprocalWeightedSum, characterReciprocalWeightedSum]
   apply Finset.sum_congr rfl
   intro n _
   rw [characterReciprocalWeightedTerm, characterReciprocalWeightedTerm,
-    apply_eq_primitiveCharacter_of_conductorPrimeSupport χ hsupport]
+    apply_eq_primitive_of_conductorPrimeSupport χ hsupport]
 
 end PseudoPrime.AnalyticNumberTheory.Arithmetic

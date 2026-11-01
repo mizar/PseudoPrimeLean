@@ -27,9 +27,9 @@ namespace PseudoPrime.LLS.PaperStatements
 principal sum by the exact conductor logarithm sum and signed interior Gamma cost.
 Remove the scale-one arithmetic pair by aggregate positivity and bound the principal
 terms numerically. The conductor coefficient is 72-log x; no left-contour error remains. -/
-theorem triangular18_principal_sum_le_dual_interior_conductor_numeric {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {x X : ℝ} (hx : 1 ≤ x) (hlog : Real.log x ≤ 36)
+theorem triangular18_dualInterior_numeric_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x X : ℝ} (hx : 1 ≤ x)
+    (hlog : Real.log x ≤ 36)
     (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     (H.index : ℝ) *
         (∑ n ∈ Finset.Icc 1 ⌊X⌋₊,
@@ -76,7 +76,7 @@ theorem triangular18_principal_sum_le_dual_interior_conductor_numeric {q : ℕ} 
   have hb := triangular18_finite_principal_le_dual_interior H hGRH hx hlog hsmall
   dsimp only at hb
   rw [hf, hcard, hcond, hp] at hb
-  have ha := triangular18_nonprincipal_arithmetic_pair_sum_lower H (x := 1) (by norm_num only)
+  have ha := triangular18_nonprincipal_pair_lower H (x := 1) (by norm_num only)
   have h1 := triangular18_level_one_arithmetic_upper_of_rh hGRH.riemann (x := 1) (by norm_num only)
   simp only [Real.sqrt_one, Real.one_rpow, mul_one] at h1
   dsimp only at ha
@@ -87,9 +87,9 @@ theorem triangular18_principal_sum_le_dual_interior_conductor_numeric {q : ℕ} 
 range, combine the finite principal lower bound with the signed dual conductor upper
 budget. Bound the conductor sum by the ambient level logarithm. This is the scalar
 comparison whose strict gap would give a factor or subgroup witness. -/
-theorem triangular18_dual_interior_comparison_of_large_prime_factors {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ}
-    (hx : 1 < x) (hlog : Real.log x ≤ 36) (hlarge : ∀ p ∈ q.primeFactors, x ≤ (p : ℝ))
+theorem triangular18_dual_comparison_large_factors_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 < x)
+    (hlog : Real.log x ≤ 36) (hlarge : ∀ p ∈ q.primeFactors, x ≤ (p : ℝ))
     (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ x → NumberTheory.residueInSubgroup q H p) :
     (H.index : ℝ) *
         (Real.sqrt x * (68 + 4 * Real.exp (-18)) - 1456 * x ^ (1 / 4 : ℝ) -
@@ -98,14 +98,12 @@ theorem triangular18_dual_interior_comparison_of_large_prime_factors {q : ℕ} [
         1300000 * (x ^ (1 / 4 : ℝ) + (x⁻¹) ^ (1 / 4 : ℝ)) +
         602600000 +
         ((H.index : ℝ) - 1) * ((72 - Real.log x) * Real.log q - 81 + (3 / 2) * Real.log x) := by
-  have hb := triangular18_level_prime_budget_le_of_large_factors hx hlarge
+  have hb := triangular18_prime_budget_le_of_large hx hlarge
   have hl :=
     (sub_le_sub_left hb (Real.sqrt x * (68 + 4 * Real.exp (-18)) - 1456 * x ^ (1 / 4 : ℝ))).trans
       (triangular18_finite_principal_lower_of_rh (q := q) hGRH.riemann (zero_lt_one.trans hx))
   have hm := mul_le_mul_of_nonneg_left hl (Nat.cast_nonneg H.index)
-  have hc :=
-    hm.trans
-      (triangular18_principal_sum_le_dual_interior_conductor_numeric H hGRH hx.le hlog hsmall)
+  have hc := hm.trans (triangular18_dualInterior_numeric_GRH H hGRH hx.le hlog hsmall)
   have hcoef : 0 ≤ 72 - Real.log x := by linarith only [hlog]
   have hu := mul_le_mul_of_nonneg_left (subgroupConductorLogSum_le H) hcoef
   nlinarith only [hc, hu]
@@ -113,9 +111,9 @@ theorem triangular18_dual_interior_comparison_of_large_prime_factors {q : ℕ} [
 /-- Under GRH, 1<x with log x≤36 and a strict scalar interior gap, a prime at
 most x divides the level or lies outside the subgroup. Absence of a witness gives
 the large-factor and containment conditions, contradicting the proved comparison. -/
-theorem exists_prime_factor_or_outside_of_triangular18_dual_interior_gap {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ}
-    (hx : 1 < x) (hlog : Real.log x ≤ 36)
+theorem exists_prime_factorOrOutside_tri18_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 < x)
+    (hlog : Real.log x ≤ 36)
     (hgap :
       300000000 * (Real.sqrt x + Real.sqrt x⁻¹) +
           1300000 * (x ^ (1 / 4 : ℝ) + (x⁻¹) ^ (1 / 4 : ℝ)) +
@@ -139,14 +137,14 @@ theorem exists_prime_factor_or_outside_of_triangular18_dual_interior_gap {q : �
     exact hnone ⟨p, hp, hle, Or.inr hout⟩
   exact
     (not_le_of_gt hgap)
-      (triangular18_dual_interior_comparison_of_large_prime_factors H hGRH hx hlog hlarge hsmall)
+      (triangular18_dual_comparison_large_factors_GRH H hGRH hx hlog hlarge hsmall)
 
 /-- For L≥100, h≥4 and x=(283/1000)L² with 0≤log x≤11, the ambient conductor
 budget alone is at least h times the ideal triangular cutoff main term. Bound sqrt x
 by (533/1000)L and the mass by 72. This proves that the coarse ambient dual comparison
 cannot certify this range merely by reducing its nonnegative error costs; it says
 nothing against the witness theorem or the exact conductor comparison. -/
-theorem triangular18_dual_interior_ambient_budget_ge_main {L h x : ℝ} (hL : 100 ≤ L) (hh : 4 ≤ h)
+theorem triangular18_dualInterior_budget_ge_main {L h x : ℝ} (hL : 100 ≤ L) (hh : 4 ≤ h)
     (hx : x = (283 / 1000) * L ^ 2) (hlog0 : 0 ≤ Real.log x) (hlog11 : Real.log x ≤ 11) :
     h * (Real.sqrt x * (68 + 4 * Real.exp (-18))) ≤
       (h - 1) * ((72 - Real.log x) * L - 81 + (3 / 2) * Real.log x) := by

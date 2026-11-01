@@ -56,7 +56,7 @@ private theorem odd_prime_factor_ne_two {n q : ℕ} (hnOdd : Odd n) (hq : Nat.Pr
 representative of every canonical strong-test pass. If a prime square divides `n`, use
 `fermatSubgroup`; otherwise two distinct prime divisors give a proper `signSubgroup`.
 This is the subgroup interface consumed by witness bounds. -/
-theorem exists_proper_subgroup_containing_strongMillerRabinPass {n : ℕ} (hn : 1 < n) (hnOdd : Odd n)
+theorem exists_proper_subgroup_strongMR {n : ℕ} (hn : 1 < n) (hnOdd : Odd n)
     (hnComposite : ¬Nat.Prime n) :
     ∃ H : Subgroup (ZMod n)ˣ,
       H ≠ ⊤ ∧

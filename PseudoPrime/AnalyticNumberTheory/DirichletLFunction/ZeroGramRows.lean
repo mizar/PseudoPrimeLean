@@ -31,9 +31,9 @@ theorem completed_gram_term_eq_poisson {q : ℕ} [NeZero q] {χ : DirichletChara
       2 *
         ((MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
           (2 / Complex.normSq ((((5 / 2 : ℝ) : ℂ) + T * Complex.I) - ρ))) := by
-  rw [completed_divisor_eq_analyticOrderNatAt hne, Int.cast_natCast]
+  rw [completed_divisor_eq_orderNat hne, Int.cast_natCast]
   by_cases hz : χ.completedLFunction ρ = 0
-  · have hr := completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv hz
+  · have hr := completed_zero_re_eq_half_of_RH hRH hp hinv hz
     have hd : Complex.normSq ((((5 / 2 : ℝ) : ℂ) + T * Complex.I) - ρ) = 4 + (T - ρ.im) ^ 2 := by
       simp only [Complex.normSq_apply, Complex.sub_re, Complex.add_re, Complex.ofReal_re,
         Complex.mul_re, Complex.ofReal_im, Complex.I_re, Complex.I_im, zero_mul, mul_zero, sub_zero,

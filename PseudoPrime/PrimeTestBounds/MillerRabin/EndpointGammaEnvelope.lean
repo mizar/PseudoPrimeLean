@@ -22,9 +22,9 @@ noncomputable def endpointGammaEnvelope (L : ℝ) : ℝ :=
 
 /-- On `120 ≤ log n ≤ 122`, the least rejecting prime is bounded by the
 pointwise minimum of the improved endpoint and clipped-log Gamma candidates. -/
-theorem exists_least_prime_witness_le_endpointGammaEnvelope {n : ℕ} (hnOdd : Odd n)
-    (hcomp : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hLlo : 120 ≤ Real.log n) (hLhi : Real.log n ≤ 122) :
+theorem exists_leastWitness_le_endpointGammaEnvelope {n : ℕ} (hnOdd : Odd n) (hcomp : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hLlo : 120 ≤ Real.log n)
+    (hLhi : Real.log n ≤ 122) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
@@ -47,7 +47,7 @@ theorem exists_least_prime_witness_le_endpointGammaEnvelope {n : ℕ} (hnOdd : O
     (LLS.PaperStatements.midscaleEndpointRadius (Real.log n - 7 / 4)) ^ 2 ≤
       gammaClippedUpper (Real.log n)
   · obtain ⟨p, hp, hbound, hreject, hmin⟩ :=
-      exists_least_prime_reject_le_7over4_shifted_midscale_radius_sq hn hnOdd hcomp hGRH
+      exists_least_prime_shift7_4_midscale_GRH hn hnOdd hcomp hGRH
         (by linarith only [hLlo] : 144 / 5 ≤ Real.log n)
         (by linarith only [hLhi] : Real.log n ≤ 13517 / 100)
     have hbound' : (p : ℝ) ≤ endpointGammaEnvelope (Real.log n) := by

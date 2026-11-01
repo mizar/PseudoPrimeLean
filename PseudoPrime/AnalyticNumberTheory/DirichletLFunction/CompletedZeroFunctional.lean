@@ -68,7 +68,7 @@ at most log q, uniformly over primitive nonprincipal characters with nonprincipa
 satisfying individual RH. Bound the Poisson mass by log q using its one-half logarithmic
 main term and the error estimate with coefficient one half. This supplies a common bound
 for the conductor-normalized functionals. -/
-theorem exists_uniform_norm_completedZeroFunctional_le_log :
+theorem zeroFunctional_norm_le_log_RH :
     ∃ Q : ℕ,
       ∃ hQ : 2 ≤ Q,
         ∀ (q : ℕ) [NeZero q],
@@ -79,8 +79,7 @@ theorem exists_uniform_norm_completedZeroFunctional_le_log :
                   ∀ hne : χ ≠ 1,
                     ∀ hinv : χ⁻¹ ≠ 1,
                       ‖completedZeroFunctional (hQ.trans hq) hRH hp hne hinv‖ ≤ Real.log q := by
-  obtain ⟨Q, hQ, hb⟩ :=
-    exists_uniform_completedZeroPoissonSum_error_le_log (show (0 : ℝ) < 1 / 2 by norm_num only)
+  obtain ⟨Q, hQ, hb⟩ := eventually_poissonError_le_log_RH (show (0 : ℝ) < 1 / 2 by norm_num only)
   refine ⟨Q, hQ, ?_⟩
   intro q _ hq χ hRH hp hne hinv
   apply (norm_completedZeroFunctional_le (hQ.trans hq) hRH hp hne hinv).trans
@@ -117,7 +116,7 @@ operator norm at most one, uniformly over primitive nonprincipal characters with
 nonprincipal inverse satisfying individual RH. Divide the logarithmic mass bound by
 the positive logarithm. This uniform bound extends convergence from circle monomials
 to continuous functions by approximation. -/
-theorem exists_uniform_norm_normalizedCompletedZeroFunctional_le_one :
+theorem normalizedZeroFunctional_norm_RH :
     ∃ Q : ℕ,
       ∃ hQ : 2 ≤ Q,
         ∀ (q : ℕ) [NeZero q],
@@ -128,7 +127,7 @@ theorem exists_uniform_norm_normalizedCompletedZeroFunctional_le_one :
                   ∀ hne : χ ≠ 1,
                     ∀ hinv : χ⁻¹ ≠ 1,
                       ‖normalizedCompletedZeroFunctional (hQ.trans hq) hRH hp hne hinv‖ ≤ 1 := by
-  obtain ⟨Q, hQ, hb⟩ := exists_uniform_norm_completedZeroFunctional_le_log
+  obtain ⟨Q, hQ, hb⟩ := zeroFunctional_norm_le_log_RH
   refine ⟨Q, hQ, ?_⟩
   intro q _ hq χ hRH hp hne hinv
   have hq2 : (2 : ℝ) ≤ q := Nat.cast_le.mpr (hQ.trans hq)
@@ -142,8 +141,8 @@ and epsilon > 0, sufficiently large moduli make the normalized completed-zero fu
 value have norm at most epsilon, uniformly over primitive nonprincipal characters with
 nonprincipal inverse satisfying individual RH. Divide the proved Cayley moment estimate
 by the positive conductor logarithm. This gives convergence on nonconstant monomials. -/
-theorem exists_uniform_normalizedCompletedZeroFunctional_monomial_le {k : ℤ} (hk : k ≠ 0)
-    (f : C(Circle, ℂ)) (hf : ∀ p : Circle, f p = (p : ℂ) ^ k) {ε : ℝ} (hε : 0 < ε) :
+theorem normalizedZeroFunctional_monomial {k : ℤ} (hk : k ≠ 0) (f : C(Circle, ℂ))
+    (hf : ∀ p : Circle, f p = (p : ℂ) ^ k) {ε : ℝ} (hε : 0 < ε) :
     ∃ Q : ℕ,
       ∃ hQ : 2 ≤ Q,
         ∀ (q : ℕ) [NeZero q],
@@ -154,7 +153,7 @@ theorem exists_uniform_normalizedCompletedZeroFunctional_monomial_le {k : ℤ} (
                   ∀ hne : χ ≠ 1,
                     ∀ hinv : χ⁻¹ ≠ 1,
                       ‖normalizedCompletedZeroFunctional (hQ.trans hq) hRH hp hne hinv f‖ ≤ ε := by
-  obtain ⟨Q, hQ, hb⟩ := exists_uniform_completedZeroCayleyZSum_le_log hk hε
+  obtain ⟨Q, hQ, hb⟩ := eventually_cayleyZSum_le_log_RH hk hε
   refine ⟨Q, hQ, ?_⟩
   intro q _ hq χ hRH hp hne hinv
   have hq2 : (2 : ℝ) ≤ q := Nat.cast_le.mpr (hQ.trans hq)
@@ -181,7 +180,7 @@ uniformly over primitive nonprincipal characters with nonprincipal inverse satis
 individual RH. Express the constant value as real Poisson mass, subtract its logarithmic
 main term, and divide by the positive logarithm. This supplies the constant moment
 needed alongside the vanishing nonconstant monomials. -/
-theorem exists_uniform_normalizedCompletedZeroFunctional_const_one_error_le {ε : ℝ} (hε : 0 < ε) :
+theorem normalizedZeroFunctional_one_RH {ε : ℝ} (hε : 0 < ε) :
     ∃ Q : ℕ,
       ∃ hQ : 2 ≤ Q,
         ∀ (q : ℕ) [NeZero q],
@@ -195,7 +194,7 @@ theorem exists_uniform_normalizedCompletedZeroFunctional_const_one_error_le {ε 
                               (ContinuousMap.const Circle (1 : ℂ)) -
                             (1 / 2 : ℂ)‖ ≤
                         ε := by
-  obtain ⟨Q, hQ, hb⟩ := exists_uniform_completedZeroPoissonSum_error_le_log hε
+  obtain ⟨Q, hQ, hb⟩ := eventually_poissonError_le_log_RH hε
   refine ⟨Q, hQ, ?_⟩
   intro q _ hq χ hRH hp hne hinv
   have hq2 : (2 : ℝ) ≤ q := Nat.cast_le.mpr (hQ.trans hq)

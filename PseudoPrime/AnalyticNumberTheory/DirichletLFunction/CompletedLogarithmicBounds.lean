@@ -21,9 +21,8 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 at most 12+log(4+abs(Im s))/2. Use the explicit central-strip logarithmic
 estimate for heights at least one and the numerical compact-height estimate
 otherwise. This is integrable against the triangular kernel's quadratic decay. -/
-theorem norm_logDeriv_gammaFactor_seventeen_sixteenths_le_log {q : ℕ} (χ : DirichletCharacter ℂ q)
-    {s : ℂ} (hs : s.re = 17 / 16) :
-    ‖logDeriv χ.gammaFactor s‖ ≤ 12 + Real.log (4 + |s.im|) / 2 := by
+theorem gammaLogDeriv_17_16_log_bound {q : ℕ} (χ : DirichletCharacter ℂ q) {s : ℂ}
+    (hs : s.re = 17 / 16) : ‖logDeriv χ.gammaFactor s‖ ≤ 12 + Real.log (4 + |s.im|) / 2 := by
   have hlog : 0 ≤ Real.log (4 + |s.im|) := Real.log_nonneg (by linarith only [abs_nonneg s.im])
   by_cases ht : 1 ≤ |s.im|
   · have hsr : |s.re| ≤ 2 := by
@@ -35,7 +34,7 @@ theorem norm_logDeriv_gammaFactor_seventeen_sixteenths_le_log {q : ℕ} (χ : Di
       have hp := Real.log_le_sub_one_of_pos Real.pi_pos
       linarith only [hp, Real.pi_lt_four]
     linarith only [hb, hnlog, Real.pi_lt_four, Gamma.digammaLogErrorBound_le_eight]
-  · have hb := norm_logDeriv_gammaFactor_seventeen_sixteenths_le χ hs
+  · have hb := gammaLogDeriv_17_16_linear_bound χ hs
     have ht1 : |s.im| ≤ 1 := (lt_of_not_ge ht).le
     linarith only [hb, ht1, hlog]
 
@@ -43,8 +42,8 @@ theorem norm_logDeriv_gammaFactor_seventeen_sixteenths_le_log {q : ℕ} (χ : Di
 has norm at most 284+log(4+abs t)/2. Add the ordinary inverse-gap bound 272
 and the logarithmic gamma bound. No RH assumption is needed.
 This supplies the explicit reflected integrand bound for the alpha-18 kernel. -/
-theorem norm_logDeriv_completed_seventeen_sixteenths_le_log {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hne : χ ≠ 1) (t : ℝ) :
+theorem completedLogDeriv_17_16_log_bound {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hne : χ ≠ 1) (t : ℝ) :
     ‖logDeriv χ.completedLFunction (((17 / 16 : ℝ) : ℂ) + Complex.I * t)‖ ≤
       284 + Real.log (4 + |t|) / 2 := by
   let s : ℂ := ((17 / 16 : ℝ) : ℂ) + Complex.I * t
@@ -58,13 +57,12 @@ theorem norm_logDeriv_completed_seventeen_sixteenths_le_log {q : ℕ} [NeZero q]
     rw [hr]; norm_num only
   have hp : 0 < s.re := zero_lt_one.trans_le hr1
   have he :=
-    logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne
-      (completedLFunction_ne_zero_of_one_le_re hne hr1) (gammaFactor_ne_zero_of_re_pos χ hp)
-      (analyticAt_gammaFactor_of_re_pos χ hp).differentiableAt
+    L_logDeriv_sub_gamma_of_regular hne (completed_ne_zero_of_one_le_re hne hr1)
+      (gammaFactor_ne_zero_of_re_pos χ hp) (analyticAt_gammaFactor_of_re_pos χ hp).differentiableAt
   have ho := norm_logDeriv_le_inv_gap χ (by norm_num only : (1 : ℝ) < 17 / 16) t
   norm_num only at ho
   rw [mul_comm (t : ℂ) Complex.I] at ho
-  have hg := norm_logDeriv_gammaFactor_seventeen_sixteenths_le_log χ hr
+  have hg := gammaLogDeriv_17_16_log_bound χ hr
   rw [hi] at hg
   have hc :
     logDeriv χ.completedLFunction s = logDeriv χ.LFunction s + logDeriv χ.gammaFactor s := by

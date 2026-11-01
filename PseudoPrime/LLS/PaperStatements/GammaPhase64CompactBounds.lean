@@ -52,7 +52,7 @@ theorem gamma_primitive_sum_re_le_phase64_of_compact {q m : ℕ} [NeZero m] (hq 
         ((7 / 6 : ℝ) * Real.log q + 4) / Real.sqrt x +
         43 * x ^ (-9 / 16 : ℝ) := by
   exact
-    gamma_primitive_sum_re_le_phase_prefix_of_nodeCheck hq hm hmq hGRH hp hne hinv hx
+    gammaSum_phasePrefix_nodeCheck_GRH hq hm hmq hGRH hp hne hinv hx
       Analysis.phaseResolvent64Coefficients Analysis.phaseResolvent64_node_check B
       (gamma_phase64_majorant_of_compact (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 2) hx) hc)
 

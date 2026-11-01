@@ -19,7 +19,7 @@ namespace PseudoPrime.LLS.PaperStatements
 is exactly the principal-weight sum restricted to indices coprime to q.
 Use the zero-or-one prime-power values and the finite Mangoldt prefix identity.
 This retains all nonunit zeros without assuming triviality at ramified primes. -/
-theorem reciprocalGapCharacterSum_re_eq_coprime_of_trivial {h x : ℝ} (hx : 0 < x) {q : ℕ}
+theorem recipGapCharSum_re_coprime_of_trivial {h x : ℝ} (hx : 0 < x) {q : ℕ}
     (χ : DirichletCharacter ℂ q)
     (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ x → Nat.Coprime p q → χ p = 1) :
     (reciprocalGapCharacterSum h χ x).re =
@@ -48,12 +48,12 @@ theorem reciprocalGapCharacterSum_re_eq_coprime_of_trivial {h x : ℝ} (hx : 0 <
 /-- For h>=0,x>0 and coprime prime triviality through x, the principal weights on
 any unit-supported subset below x bound the real character sum from below.
 Use the exact coprime sum and nonnegativity of omitted weights. -/
-theorem sum_reciprocalGapPrincipalWeight_le_of_coprime_trivial {h x : ℝ} (hh : 0 ≤ h) (hx : 0 < x)
-    {q : ℕ} (χ : DirichletCharacter ℂ q)
+theorem reciprocalGap_sum_le_char_of_trivial {h x : ℝ} (hh : 0 ≤ h) (hx : 0 < x) {q : ℕ}
+    (χ : DirichletCharacter ℂ q)
     (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ x → Nat.Coprime p q → χ p = 1) (B : Finset ℕ)
     (hB : B ⊆ Finset.Ioc 0 ⌊x⌋₊) (hcop : ∀ n ∈ B, Nat.Coprime n q) :
     (∑ n ∈ B, reciprocalGapPrincipalWeight h x n) ≤ (reciprocalGapCharacterSum h χ x).re := by
-  rw [reciprocalGapCharacterSum_re_eq_coprime_of_trivial hx χ hsmall]
+  rw [recipGapCharSum_re_coprime_of_trivial hx χ hsmall]
   exact
     Finset.sum_le_sum_of_subset_of_nonneg (fun n hn ↦ Finset.mem_filter.mpr ⟨hB hn, hcop n hn⟩)
       (fun n hn _ ↦
@@ -64,8 +64,8 @@ theorem sum_reciprocalGapPrincipalWeight_le_of_coprime_trivial {h x : ℝ} (hh :
 /-- For h,x>0 and coprime prime triviality through x, selected unit-supported
 Mangoldt lower endpoints and power upper endpoints at most one bound the character sum
 from below. Compare terms and retain only the selected coprime contributions. -/
-theorem sum_lower_le_reciprocalGap_character_of_coprime_trivial {h x : ℝ} (hh : 0 < h) (hx : 0 < x)
-    {q : ℕ} (χ : DirichletCharacter ℂ q)
+theorem sum_lower_le_recipGapChar_of_coprime_trivial {h x : ℝ} (hh : 0 < h) (hx : 0 < x) {q : ℕ}
+    (χ : DirichletCharacter ℂ q)
     (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ x → Nat.Coprime p q → χ p = 1) (B : Finset ℕ)
     (hB : B ⊆ Finset.Ioc 0 ⌊x⌋₊) (hcop : ∀ n ∈ B, Nat.Coprime n q) (lo u : ℕ → ℝ)
     (hlo : ∀ n ∈ B, lo n ≤ ArithmeticFunction.vonMangoldt n) (hu : ∀ n ∈ B, ((n : ℝ) / x) ^ h ≤ u n)
@@ -80,8 +80,7 @@ theorem sum_lower_le_reciprocalGap_character_of_coprime_trivial {h x : ℝ} (hh 
         (div_le_div_of_nonneg_right (sub_le_sub_left (hu n hn) 1) hh.le)
         (div_nonneg (sub_nonneg.mpr (hu1 n hn)) hh.le)
         (div_nonneg ArithmeticFunction.vonMangoldt_nonneg (Real.sqrt_nonneg x))
-  exact
-    hp.trans (sum_reciprocalGapPrincipalWeight_le_of_coprime_trivial hh.le hx χ hsmall B hB hcop)
+  exact hp.trans (reciprocalGap_sum_le_char_of_trivial hh.le hx χ hsmall B hB hcop)
 
 /-- For h>=0 and arbitrary real x, Mangoldt lower endpoints and power upper
 endpoints at most one bound the weights on a selected finite support from below.

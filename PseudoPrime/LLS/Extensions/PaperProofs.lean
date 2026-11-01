@@ -33,7 +33,7 @@ theorem lls_propL1_general_proof : lls_propL1_general := by
   apply lls_propL1_general_of_shifted_formula
   intro f hf hRH x hx σ hσ
   exact
-    GeneralLFunction.shiftedArithmeticSum_eq_origin_zero_sub_gamma f hf hRH hσ
+    GeneralLFunction.shiftedArithmetic_origin_zero_gamma_RH f hf hRH hσ
       (lt_of_lt_of_le (show (1 : ℝ) < 2 by norm_num only) hx)
 
 /-- For each fixed admissible general L-function satisfying its Riemann hypothesis,
@@ -63,18 +63,18 @@ theorem lls_sumzeros_proof : lls_sumzeros := by
 imply a contradiction. Apply the common weighted-sum sandwich and numerical separation.
 This proves the external zero-branch proposition. -/
 theorem lls_qNeOne_zero_branch_proof : lls_qNeOne_zero_branch := by
-  exact primitiveLogWeightedBounds_of_qneOne_zero_branch_even_false_common
+  exact false_qNeOne_even_zero_common_GRH
 
 /-- Under the stated GRH, Riemann bounds, cutoff and negative-one branch assumptions,
 the corrected weighted sum contradicts numerical separation.
 Apply the negative-one branch derivation to prove its external proposition. -/
 theorem lls_qNeOne_neg_one_branch_proof : lls_qNeOne_neg_one_branch := by
-  exact primitiveLogWeightedBounds_of_qneOne_neg_one_branch_false_common
+  exact false_qNeOne_even_negOne_common_GRH
 
 /-- Under the stated GRH, Riemann bounds, cutoff and one-branch assumptions,
 the weighted sum contradicts numerical separation.
 Apply the one-branch derivation to prove its external proposition. -/
 theorem lls_qNeOne_one_branch_proof : lls_qNeOne_one_branch := by
-  exact primitiveLogWeightedBounds_of_qneOne_one_branch_false_common
+  exact false_qNeOne_even_one_common_GRH
 
 end PseudoPrime.LLS.Extensions

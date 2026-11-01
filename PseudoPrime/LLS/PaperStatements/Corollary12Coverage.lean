@@ -84,7 +84,7 @@ theorem boundedPrimeResidueCoverageCheck_sound {q M : ℕ} [NeZero q] {ps : List
 /-- Integer-bounded coverage bounds the least prime when `M` is below the paper's bound.
 Minimize the supplied prime witness and convert its natural-number inequality to
 the real bound. This connects direct and transferred coverage to Corollary 1.2. -/
-theorem exists_least_prime_in_residue_le_of_bounded_coverage {q M : ℕ} [NeZero q]
+theorem exists_leastResiduePrime_boundedCoverage {q M : ℕ} [NeZero q]
     (h : NumberTheory.BoundedPrimeResidueCoverage q M)
     (hM : (M : ℝ) ≤ ((q.totient : ℝ) * Real.log q) ^ 2) (a : (ZMod q)ˣ) :
     ∃ p : ℕ,
@@ -97,14 +97,14 @@ theorem exists_least_prime_in_residue_le_of_bounded_coverage {q M : ℕ} [NeZero
 Lift target units and project the prime witnesses with the same integer cap `M`.
 The target condition `M ≤ residuePrimeCap q` supplies the real bound, so the source
 coverage and its primality proofs can be shared among several target moduli. -/
-theorem exists_least_prime_in_residue_le_of_divisor_coverage {q m M : ℕ} [NeZero q] [NeZero m]
-    (hq : 4 ≤ q) (hd : q ∣ m) (h : NumberTheory.BoundedPrimeResidueCoverage m M)
-    (hM : M ≤ residuePrimeCap q) (a : (ZMod q)ˣ) :
+theorem exists_leastResiduePrime_divisorCoverage {q m M : ℕ} [NeZero q] [NeZero m] (hq : 4 ≤ q)
+    (hd : q ∣ m) (h : NumberTheory.BoundedPrimeResidueCoverage m M) (hM : M ≤ residuePrimeCap q)
+    (a : (ZMod q)ˣ) :
     ∃ p : ℕ,
       IsLeast {r : ℕ | r.Prime ∧ (r : ZMod q) = (a : ZMod q)} p ∧
         (p : ℝ) ≤ ((q.totient : ℝ) * Real.log q) ^ 2 := by
   exact
-    exists_least_prime_in_residue_le_of_bounded_coverage (h.of_dvd hd)
+    exists_leastResiduePrime_boundedCoverage (h.of_dvd hd)
       ((Nat.cast_le.mpr hM).trans (residuePrimeCap_le_totient_log_sq hq)) a
 
 /-- Check that bounded candidate primes cover all unit residue classes.
@@ -124,8 +124,8 @@ theorem exists_least_prime_in_residue_le_of_coverage {q : ℕ} [NeZero q] {ps : 
       IsLeast {r : ℕ | r.Prime ∧ (r : ZMod q) = (a : ZMod q)} p ∧
         (p : ℝ) ≤ ((q.totient : ℝ) * Real.log q) ^ 2 := by
   exact
-    exists_least_prime_in_residue_le_of_bounded_coverage
-      (boundedPrimeResidueCoverageCheck_sound hPrime h) (residuePrimeCap_le_totient_log_sq hq) a
+    exists_leastResiduePrime_boundedCoverage (boundedPrimeResidueCoverageCheck_sound hPrime h)
+      (residuePrimeCap_le_totient_log_sq hq) a
 
 /-- Check residue coverage for every modulus in a finite consecutive interval.
 The same certified prime list is shared by all moduli. Each individual mask checks
@@ -138,7 +138,7 @@ for every modulus in that interval that is at least four.
 Select the offset of the queried modulus, extract its finite check, and apply
 the single-modulus coverage theorem. This connects generated interval checks
 to the bounded part of Corollary 1.2 without progression search. -/
-theorem exists_least_prime_in_residue_le_of_coverage_range {q s w : ℕ} [NeZero q] {ps : List ℕ}
+theorem exists_leastResiduePrime_coverageRange {q s w : ℕ} [NeZero q] {ps : List ℕ}
     (hPrime : ∀ p ∈ ps, p.Prime) (h : residuePrimeCoverageRangeCheck s w ps = true) (hq : 4 ≤ q)
     (hs : s ≤ q) (hb : q < s + w) (a : (ZMod q)ˣ) :
     ∃ p : ℕ,

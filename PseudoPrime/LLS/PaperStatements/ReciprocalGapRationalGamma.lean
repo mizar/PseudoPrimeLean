@@ -154,8 +154,7 @@ noncomputable def reciprocalGapRationalGammaSeparation (q : ℕ) (x : ℝ) (B₀
 /-- For primitive nonprincipal GRH data at q>=2,x>=1 and supports below x, the
 rational-Gamma separation below the principal sum produces a non-one prime witness.
 Bound the previous budget by certified Gamma endpoints. Values zero remain allowed. -/
-theorem exists_prime_not_one_of_reciprocalGap_rationalGamma_separation {q : ℕ} [NeZero q]
-    (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+theorem exists_prime_neOne_gammaGap_GRH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) (B₀ B₁ : Finset ℕ)
     (hB₀ : ∀ n ∈ B₀, (n : ℝ) ≤ x) (hB₁ : ∀ n ∈ B₁, (n : ℝ) ≤ x)
@@ -163,8 +162,7 @@ theorem exists_prime_not_one_of_reciprocalGap_rationalGamma_separation {q : ℕ}
       reciprocalGapRationalGammaSeparation q x B₀ B₁ <
         (reciprocalGapCharacterSum (7 / 10) (1 : DirichletCharacter ℂ 1) x).re) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ x ∧ χ p ≠ 1 := by
-  apply
-    exists_prime_not_one_of_reciprocalGap_certified_separation hq hGRH hp hne hinv hx B₀ B₁ hB₀ hB₁
+  apply exists_prime_neOne_certifiedGap_GRH hq hGRH hp hne hinv hx B₀ B₁ hB₀ hB₁
   have hbound :=
     reciprocalGapCertifiedSeparation_le_scalar (zero_lt_one.trans_le hx) q B₀ B₁
       reciprocalGapOddGammaUpper_at_127_div_100 reciprocalGapOddGammaUpper_at_six_fifths

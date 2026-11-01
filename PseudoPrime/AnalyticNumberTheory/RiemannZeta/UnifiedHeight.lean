@@ -68,7 +68,7 @@ theorem farLeftHeightSeq_le_unifiedContourHeightSeq (m : ℕ) :
 `farLeftHeightSeq m + 10`. Its good-height interval gives the upper bound index plus nine,
 and the ceiling is less than the original height plus one.
 This controls the enlargement when reusing far-left decay estimates. -/
-theorem unifiedContourHeightSeq_lt_farLeftHeightSeq_add_ten (m : ℕ) :
+theorem unifiedHeight_lt_farLeftHeight_add_ten (m : ℕ) :
     unifiedContourHeightSeq m < farLeftHeightSeq m + 10 := by
   have hgood := (goodHeightSeq_mem (farLeftGoodHeightIndex m)).2
   have hceil : (farLeftGoodHeightIndex m : ℝ) < farLeftHeightSeq m + 1 := by

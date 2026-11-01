@@ -44,7 +44,7 @@ theorem primitiveQuadratic_defect_log_eq_negative {n p : ℕ} {hn : Odd n} {hns 
     (hd : ¬p ∣ bridge.squarefreePart) :
     (1 - (NumberTheory.primitiveQuadraticCharacter n hn p).re) * Real.log p =
       if jacobiSym bridge.squarefreePart p = -1 then 2 * Real.log p else 0 := by
-  have he := NumberTheory.primitiveQuadraticCharacter_apply_squarefree_odd_prime bridge hp ho hd
+  have he := NumberTheory.primitiveQuadratic_apply_squarefree_odd_prime bridge hp ho hd
   simp only [Int.cast_natCast] at he
   have hj :=
     jacobiSym.eq_one_or_neg_one
@@ -61,7 +61,7 @@ theorem primitiveQuadratic_defect_log_eq_negative {n p : ℕ} {hn : Odd n} {hns 
 at most twice the negative-prime logarithm cost. Evaluate each unramified odd
 prime by the squarefree Jacobi symbol and enlarge the nonnegative filtered sum.
 The set difference avoids charging ramified primes already counted in d. -/
-theorem primitiveQuadratic_square_factor_sdiff_le_negative {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+theorem primitiveQuadratic_squareDiff_le_negative {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns) :
     (∑ p ∈ bridge.squareFactor.primeFactors \ bridge.squarefreePart.primeFactors,
         (1 - (NumberTheory.primitiveQuadraticCharacter n hn p).re) * Real.log p) ≤
@@ -96,8 +96,8 @@ open AnalyticNumberTheory.Arithmetic in
 Split the product support exactly to avoid shared ramified primes, then bound
 only the negative square-factor primes and the contribution at two. This is
 the arithmetic input required for the refined cubic witness radius. -/
-theorem primitiveQuadraticExclusionCost_le_negative_square_factor {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns) :
+theorem quadraticExclusionCost_le_negative_square_factor {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns) :
     characterExclusionCost (NumberTheory.primitiveQuadraticCharacter n hn) (2 * n) ≤
       Real.log ((4 * bridge.squarefreePart : ℕ) : ℝ) +
         2 * negativeSquareFactorCost bridge.squarefreePart bridge.squareFactor := by
@@ -110,8 +110,8 @@ theorem primitiveQuadraticExclusionCost_le_negative_square_factor {n : ℕ} {hn 
   rw [mul_comm bridge.squarefreePart, bridge.squarefreePart_sq_mul] at he
   have hdC :=
     characterExclusionCost_le_log_of_zero χ hd
-      (fun p hp ↦ primitiveQuadraticCharacter_zero_on_squarefreePart bridge hp)
-  have hsc := primitiveQuadratic_square_factor_sdiff_le_negative bridge
+      (fun p hp ↦ primitiveQuadratic_zero_on_squarefreePart bridge hp)
+  have hsc := primitiveQuadratic_squareDiff_le_negative bridge
   have ht := characterExclusionCost_le_twice χ 2
   rw [Nat.prime_two.primeFactors, Finset.sum_singleton] at ht
   norm_num only [Nat.cast_ofNat] at ht
@@ -151,16 +151,16 @@ theorem exists_prime_neg_one_le_cubic_negative_support {n : ℕ} {hn : Odd n} {h
     ⟨bridge.squareFactor ^ 2, by simpa only [mul_comm] using bridge.squarefreePart_sq_mul.symm⟩
   have hf :=
     Nat.le_of_dvd (Nat.mul_pos (by decide : 0 < 4) bridge.squarefreePart_pos)
-      (NumberTheory.complexQuadraticCharacter_conductor_dvd_four_mul_squarefreePart bridge hdvd)
+      (NumberTheory.complexQuadratic_conductor_dvd_four_part bridge hdvd)
   have hlog :=
     Real.log_le_log
       (Nat.cast_pos.mpr
         (Nat.pos_of_ne_zero (NumberTheory.complexQuadraticCharacter n hn).conductor_ne_zero))
       (Nat.cast_le.mpr hf)
   exact
-    exists_prime_neg_one_le_cubic_square_factor_of_envelopes (hns := hns) hGRH hlog
+    exists_prime_negOne_cubicEnvelopes_GRH (hns := hns) hGRH hlog
       (negativeSquareFactorCost_nonneg _ _)
-      (primitiveQuadraticExclusionCost_le_negative_square_factor bridge)
+      (quadraticExclusionCost_le_negative_square_factor bridge)
 
 /-- Under GRH, leastness transfers the negative-support cubic radius to the
 least negative odd-prime witness of n=s²d. The support cost is the explicit
@@ -206,8 +206,8 @@ theorem cubicNegativeSupportRadius_sq_le_full (d s : ℕ) {G : ℝ} (hG : 0 ≤ 
 when 2B sqrt(X)+(8/3)E_-(s) is at most X. Apply the generic quadratic radius
 criterion with the proved negative-support cost. This strengthens the full
 square-factor criterion without changing the target interface. -/
-theorem primeNegOneWitness_le_of_cubic_negative_support_target {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem negOneWitness_le_cubicNegativeTarget_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) {X : ℝ} (hX : 0 < X)
     (hquad :
@@ -235,8 +235,8 @@ theorem primeNegOneWitness_le_of_cubic_negative_support_target {n : ℕ} {hn : O
 L^(1-epsilon/2) give the least negative witness at most L^(2-epsilon), L=log n.
 Positivity of L follows from the squarefree decomposition. Rewrite the square
 root of the target power and use the generic positive-target theorem. -/
-theorem primeNegOneWitness_le_log_rpow_of_cubic_negative_support {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem primeNegOneWitness_le_log_rpow_of_cubic_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) (ε : ℝ)
     (hquad :
@@ -253,9 +253,7 @@ theorem primeNegOneWitness_le_log_rpow_of_cubic_negative_support {n : ℕ} {hn :
     rw [Real.sqrt_eq_rpow, ← Real.rpow_mul hL.le]
     congr 1
     ring
-  apply
-    primeNegOneWitness_le_of_cubic_negative_support_target bridge hGRH hw
-      (Real.rpow_pos_of_pos hL (2 - ε))
+  apply negOneWitness_le_cubicNegativeTarget_GRH bridge hGRH hw (Real.rpow_pos_of_pos hL (2 - ε))
   rw [he]
   exact hquad
 

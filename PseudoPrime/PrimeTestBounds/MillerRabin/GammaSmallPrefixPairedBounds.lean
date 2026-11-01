@@ -22,8 +22,8 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 prefix 1000 is below mu*log(n)+101/20. Use the analytic prefix lower bound
 203/50 and the retained common cost 541/50. Role: remove the cutoff-50000
 restriction without adding a prime-power certificate. -/
-theorem gammaSignedPrefixMRBudget_small_prefix_lt_nearSquare (hRH : RiemannHypothesis) {L : ℝ}
-    (hL : 215 ≤ L) {n : ℕ} (hlog : Real.log n ≤ L) :
+theorem gammaSignedPrefix_small_nearSquare_RH (hRH : RiemannHypothesis) {L : ℝ} (hL : 215 ≤ L)
+    {n : ℕ} (hlog : Real.log n ≤ L) :
     gammaSignedPrefixMRBudget n n ((2 / 5 : ℝ) * L ^ 2) 1000 <
       (11783423 / 25000000 : ℝ) * Real.log n + 101 / 20 := by
   let x := (2 / 5 : ℝ) * L ^ 2
@@ -61,9 +61,8 @@ theorem gammaSignedPrefixMRBudget_small_prefix_lt_nearSquare (hRH : RiemannHypot
 base is at most (99/100)log(n)^2 and strictly below log(n)^2. Combine the retained
 Euler prefix with the paired ramp bounds on the whole half-line.
 Role: improve the previous log-400 analytic entrance without finite input checks. -/
-theorem exists_prime_witness_le_even_paired_nearSquare_gamma_log_215 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 215 ≤ Real.log n) :
+theorem exists_prime_evenPaired_log215_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 215 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (99 / 100 : ℝ) * (Real.log n) ^ 2 ∧
@@ -86,7 +85,7 @@ theorem exists_prime_witness_le_even_paired_nearSquare_gamma_log_215 {n : ℕ} (
   have he := LLS.gamma_small_prefix_nearSquare_budgets hL
   have hP := LLS.gamma_level_one_sum_upper_signed_variation hGRH.riemann hx1
   have hT := LLS.gamma_ramp_sum_lower_paired hGRH.riemann hx1
-  have hu := gammaSignedPrefixMRBudget_small_prefix_lt_nearSquare hGRH.riemann hL (le_refl _)
+  have hu := gammaSignedPrefix_small_nearSquare_RH hGRH.riemann hL (le_refl _)
   have hgap :
     gammaSignedPrefixMRBudget n n x 1000 <
       2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
@@ -109,17 +108,15 @@ theorem exists_prime_witness_le_even_paired_nearSquare_gamma_log_215 {n : ℕ} (
 /-- Under the same GRH, odd-composite and log(n) >= 215 hypotheses, a least
 prime MR rejecting base satisfies the displayed bound. Minimize the unbounded
 prime rejection predicate. Role: expose a least-witness version of the half-line bound. -/
-theorem exists_least_prime_witness_le_even_paired_nearSquare_gamma_log_215 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 215 ≤ Real.log n) :
+theorem exists_least_prime_evenPaired_log215_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 215 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
         (p : ℝ) ≤ (99 / 100 : ℝ) * (Real.log n) ^ 2 ∧
         ∀ r : ℕ, r.Prime → ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) → p ≤ r := by
   classical
-  obtain ⟨p, hp, hb, _, hf⟩ :=
-    exists_prime_witness_le_even_paired_nearSquare_gamma_log_215 hnOdd hnComposite hGRH hL
+  obtain ⟨p, hp, hb, _, hf⟩ := exists_prime_evenPaired_log215_GRH hnOdd hnComposite hGRH hL
   have hex : ∃ r : ℕ, r.Prime ∧ ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := ⟨p, hp, hf⟩
   exact
     ⟨Nat.find hex, (Nat.find_spec hex).1, (Nat.find_spec hex).2,
@@ -129,16 +126,14 @@ theorem exists_least_prime_witness_le_even_paired_nearSquare_gamma_log_215 {n : 
 /-- Under the same hypotheses, a prime below the stated bound fails the initial
 power equality and every negative-one equality in the standard binary decomposition
 of n-1. Apply the characterization of MR rejection. Role: expose the actual power tests. -/
-theorem exists_prime_rejecting_powers_le_even_paired_nearSquare_gamma_log_215 {n : ℕ}
-    (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+theorem exists_rejectPowers_evenPaired_log215_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 215 ≤ Real.log n) :
     let (s, d) := Nat.maxPowDvdDiv 2 (n - 1);
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (99 / 100 : ℝ) * (Real.log n) ^ 2 ∧
         (p : ZMod n) ^ d ≠ 1 ∧ ∀ j : ℕ, j < s → (p : ZMod n) ^ (2 ^ j * d) ≠ -1 := by
-  obtain ⟨p, hp, hb, _, hf⟩ :=
-    exists_prime_witness_le_even_paired_nearSquare_gamma_log_215 hnOdd hnComposite hGRH hL
+  obtain ⟨p, hp, hb, _, hf⟩ := exists_prime_evenPaired_log215_GRH hnOdd hnComposite hGRH hL
   exact ⟨p, hp, hb, PrimeTest.not_strongMillerRabinPass_iff.mp hf⟩
 
 end PseudoPrime.PrimeTestBounds.MillerRabin
@@ -208,9 +203,8 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 base is at most (99/100)log(n)^2 and strictly below log(n)^2. Combine the retained
 Euler prefix with the paired ramp bounds on the whole half-line.
 Role: improve the previous log-400 analytic entrance without finite input checks. -/
-theorem exists_prime_witness_le_even_paired_nearSquare_gamma_log_205 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 205 ≤ Real.log n) :
+theorem exists_prime_evenPaired_log205_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 205 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (99 / 100 : ℝ) * (Real.log n) ^ 2 ∧
@@ -246,17 +240,15 @@ theorem exists_prime_witness_le_even_paired_nearSquare_gamma_log_205 {n : ℕ} (
 /-- Under the same GRH, odd-composite and log(n) >= 205 hypotheses, a least
 prime MR rejecting base satisfies the displayed bound. Minimize the unbounded
 prime rejection predicate. Role: expose a least-witness version of the half-line bound. -/
-theorem exists_least_prime_witness_le_even_paired_nearSquare_gamma_log_205 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 205 ≤ Real.log n) :
+theorem exists_least_prime_evenPaired_log205_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 205 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
         (p : ℝ) ≤ (99 / 100 : ℝ) * (Real.log n) ^ 2 ∧
         ∀ r : ℕ, r.Prime → ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) → p ≤ r := by
   classical
-  obtain ⟨p, hp, hb, _, hf⟩ :=
-    exists_prime_witness_le_even_paired_nearSquare_gamma_log_205 hnOdd hnComposite hGRH hL
+  obtain ⟨p, hp, hb, _, hf⟩ := exists_prime_evenPaired_log205_GRH hnOdd hnComposite hGRH hL
   have hex : ∃ r : ℕ, r.Prime ∧ ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := ⟨p, hp, hf⟩
   exact
     ⟨Nat.find hex, (Nat.find_spec hex).1, (Nat.find_spec hex).2,
@@ -266,16 +258,14 @@ theorem exists_least_prime_witness_le_even_paired_nearSquare_gamma_log_205 {n : 
 /-- Under the same hypotheses, a prime below the stated bound fails the initial
 power equality and every negative-one equality in the standard binary decomposition
 of n-1. Apply the characterization of MR rejection. Role: expose the actual power tests. -/
-theorem exists_prime_rejecting_powers_le_even_paired_nearSquare_gamma_log_205 {n : ℕ}
-    (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+theorem exists_rejectPowers_evenPaired_log205_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 205 ≤ Real.log n) :
     let (s, d) := Nat.maxPowDvdDiv 2 (n - 1);
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (99 / 100 : ℝ) * (Real.log n) ^ 2 ∧
         (p : ZMod n) ^ d ≠ 1 ∧ ∀ j : ℕ, j < s → (p : ZMod n) ^ (2 ^ j * d) ≠ -1 := by
-  obtain ⟨p, hp, hb, _, hf⟩ :=
-    exists_prime_witness_le_even_paired_nearSquare_gamma_log_205 hnOdd hnComposite hGRH hL
+  obtain ⟨p, hp, hb, _, hf⟩ := exists_prime_evenPaired_log205_GRH hnOdd hnComposite hGRH hL
   exact ⟨p, hp, hb, PrimeTest.not_strongMillerRabinPass_iff.mp hf⟩
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

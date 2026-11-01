@@ -60,8 +60,7 @@ theorem reciprocalGap_central_gamma_norm_le_numeric {h : ℝ} (hh : 0 < h) {q : 
               Complex.ofReal_re, Complex.ofReal_im, zero_mul, mul_zero, sub_zero,
               Complex.div_ofNat_re, Complex.one_re, zero_add]
           have hg :=
-            AnalyticNumberTheory.DirichletLFunction.norm_logDeriv_gammaFactor_positive_strip_le_log
-              χ (le_of_eq hr.symm)
+            AnalyticNumberTheory.DirichletLFunction.gammaLogDeriv_strip_log χ (le_of_eq hr.symm)
               (by
                 rw [hr]; norm_num only)
           have hL : 0 ≤ Real.log (4 + |t|) := Real.log_nonneg (by linarith only [abs_nonneg t])
@@ -110,8 +109,8 @@ theorem reciprocalGap_gamma_norm_le_numeric {h : ℝ} (hh : 0 < h) {q : ℕ}
 /-- For positive gap and scale at least one, the completed remainder minus its first-pole
 residue and left integral has norm at most 176. Unfold the exact contour decomposition
 and apply the numerical right-Gamma estimate. No GRH is needed for this component. -/
-theorem reciprocalGap_remainder_sub_pole_left_norm_le_numeric {h : ℝ} (hh : 0 < h) {q : ℕ}
-    [NeZero q] (χ : DirichletCharacter ℂ q) {x : ℝ} (hx : 1 ≤ x) :
+theorem reciprocalGap_poleLeft_error_le_176 {h : ℝ} (hh : 0 < h) {q : ℕ} [NeZero q]
+    (χ : DirichletCharacter ℂ q) {x : ℝ} (hx : 1 ≤ x) :
     ‖reciprocalGapCompletedRemainder h hh χ x -
           MellinKernel.weightedResidue (reciprocalGapMellinKernel h hh)
             (fun z : ℂ ↦ χ.completedLFunction (z + 1 / 2)) x (-1 / 2) -
@@ -181,7 +180,7 @@ theorem reciprocalGap_remainder_norm_le_numeric {h : ℝ} (hh : 0 < h) {q : ℕ}
   have he : R = (R - P - L) + P + L := by ring
   have hn :=
     (norm_add_le ((R - P - L) + P) L).trans (add_le_add (norm_add_le (R - P - L) P) (le_refl ‖L‖))
-  have hγ : ‖R - P - L‖ ≤ 176 := reciprocalGap_remainder_sub_pole_left_norm_le_numeric hh χ hx
+  have hγ : ‖R - P - L‖ ≤ 176 := reciprocalGap_poleLeft_error_le_176 hh χ hx
   have hpole : ‖P‖ ≤ ((7 / 6 : ℝ) * Real.log q + 4) / (h * Real.sqrt x) :=
     reciprocalGap_poleResidue_norm_le hh hq hp hne hGRH (zero_lt_one.trans_le hx)
   have hq1 : 1 ≤ q := (by norm_num only : 1 ≤ 8).trans hq
@@ -197,11 +196,10 @@ principal finite sum and the zero-prefix budget plus explicit pole cost, numeric
 budget and 176 yields a prime non-one witness below the scale.
 Apply exact witness separation after the numerical remainder bound.
 This is a numerical criterion, not a certified new global witness cutoff. -/
-theorem exists_prime_not_one_of_reciprocalGap_numeric_separation {h c : ℝ} (hh : 0 < h) {q : ℕ}
-    [NeZero q] (hq : 8 ≤ q) {χ : DirichletCharacter ℂ q}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hc : (1 / 2 : ℝ) < c) (hbound : c ^ 2 ≤ 1 / 4 + h / 2) {x : ℝ}
-    (hx : 1 ≤ x) (B : Finset ℕ)
+theorem exists_prime_neOne_numericGap_GRH {h c : ℝ} (hh : 0 < h) {q : ℕ} [NeZero q] (hq : 8 ≤ q)
+    {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hc : (1 / 2 : ℝ) < c)
+    (hbound : c ^ 2 ≤ 1 / 4 + h / 2) {x : ℝ} (hx : 1 ≤ x) (B : Finset ℕ)
     (hgap :
       (1 / c) *
             (Real.log q / 2 + (logDeriv χ.gammaFactor (((1 / 2 : ℝ) + c) : ℂ)).re +

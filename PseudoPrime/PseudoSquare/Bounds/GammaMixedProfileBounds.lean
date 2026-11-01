@@ -37,8 +37,8 @@ theorem exists_prime_neg_one_witness_mixed_300_310 {n : ℕ} (hn : Odd n) (hns :
   obtain ⟨hx, hb, hbx⟩ := gamma_mixed_profile_inputs_300_310 hlo hhi
   have hs := LLS.gamma_factor_free_separation_300_310 hGRH.riemann hlo hhi
   obtain ⟨q, hq, ho, hbound, hv⟩ :=
-    exists_prime_neg_one_witness_of_factor_free_separation hn hns hGRH (by linarith only [hlo]) hlog
-      hx hb hbx hs
+    exists_negOneWitness_of_factor_free_separation hn hns hGRH (by linarith only [hlo]) hlog hx hb
+      hbx hs
   exact ⟨q, hq, ho, by nlinarith only [hbound], hv⟩
 
 /-- Input: GRH, odd nonsquare n with 300<=log n<=310, and the least-witness set's nonemptiness.

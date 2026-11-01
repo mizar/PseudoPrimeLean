@@ -22,7 +22,7 @@ namespace PseudoPrime.PseudoSquare
 negative Jacobi witness bounded by this squared affine-logarithmic fit.
 Transfer the actual Gamma witness using the decimal logarithm certificate.
 This proves its upper interval; the gap above the finite fitting domain remains separate. -/
-theorem exists_prime_neg_one_witness_le_qFit_negNineTenths
+theorem exists_negOneWitness_le_qFit_negNineTenths
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : Odd n)
     (hns : ¬IsSquare n) (hN : 10 ^ 19978 ≤ n) :
     ∃ p : ℕ,
@@ -62,7 +62,7 @@ theorem exists_prime_neg_one_witness_le_qFit_negOne
 non-one Jacobi witness bounded by this squared affine-logarithmic fit.
 Transfer the actual Gamma witness using the decimal logarithm certificate.
 This proves its upper interval; the gap above the finite fitting domain remains separate. -/
-theorem exists_prime_ne_one_witness_le_qFit_nonOneNineTenths
+theorem exists_neOneWitness_le_qFit_nonOneNineTenths
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : Odd n)
     (hns : ¬IsSquare n) (hN : 10 ^ 15639 ≤ n) :
     ∃ p : ℕ,
@@ -106,7 +106,7 @@ theorem primeNegOneWitness_cast_le_qFit_negNineTenths
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤
       Analysis.affineLogarithmicRoot (Real.log n) (9 / 10) (-166161 / 50000) (6168143 / 1000000) ^
         2 := by
-  obtain ⟨p, hp, ho, hb, hv⟩ := exists_prime_neg_one_witness_le_qFit_negNineTenths hGRH hn hns hN
+  obtain ⟨p, hp, ho, hb, hv⟩ := exists_negOneWitness_le_qFit_negNineTenths hGRH hn hns hN
   exact (Nat.cast_le.mpr (NumberTheory.primeNegOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hb
 
 /-- Under GRH for B ≥ 10^19978, the finite negative witness maximum
@@ -160,7 +160,7 @@ theorem primeNeOneWitness_cast_le_qFit_nonOneNineTenths
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤
       Analysis.affineLogarithmicRoot (Real.log n) (9 / 10) (-1439941 / 500000) (908039 / 250000) ^
         2 := by
-  obtain ⟨p, hp, ho, hb, hv⟩ := exists_prime_ne_one_witness_le_qFit_nonOneNineTenths hGRH hn hns hN
+  obtain ⟨p, hp, ho, hb, hv⟩ := exists_neOneWitness_le_qFit_nonOneNineTenths hGRH hn hns hN
   exact (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hb
 
 /-- Under GRH for B ≥ 10^15639, the finite non-one witness maximum

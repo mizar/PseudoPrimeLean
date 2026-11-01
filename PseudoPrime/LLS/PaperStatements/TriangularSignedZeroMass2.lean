@@ -25,8 +25,8 @@ open AnalyticNumberTheory.DirichletLFunction in
 the negative scale-one arithmetic sum plus the gamma integral. Split the regular
 logarithmic derivative and integrate its two integrable components.
 This replaces a norm estimate by an exact arithmetic identity. -/
-theorem triangular18_completed_rightIntegral_eq_arithmetic_add_gamma {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hne : χ ≠ 1) :
+theorem triangular18_right_one_arithmetic_gamma {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hne : χ ≠ 1) :
     let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
     ((1 / (2 * Real.pi) : ℝ) : ℂ) *
         (∫ t : ℝ,
@@ -74,8 +74,8 @@ theorem triangular18_completed_rightIntegral_eq_arithmetic_add_gamma {q : ℕ} [
       norm_num only
     have hp : 0 < s.re := zero_lt_one.trans_le hr
     have hd :=
-      logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne
-        (AnalyticNumberTheory.DirichletLFunction.completedLFunction_ne_zero_of_one_le_re hne hr)
+      L_logDeriv_sub_gamma_of_regular hne
+        (AnalyticNumberTheory.DirichletLFunction.completed_ne_zero_of_one_le_re hne hr)
         (AnalyticNumberTheory.DirichletLFunction.gammaFactor_ne_zero_of_re_pos χ hp)
         (AnalyticNumberTheory.DirichletLFunction.analyticAt_gammaFactor_of_re_pos χ
             hp).differentiableAt

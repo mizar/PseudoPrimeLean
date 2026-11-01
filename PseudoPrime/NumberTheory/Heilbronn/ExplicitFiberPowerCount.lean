@@ -18,9 +18,8 @@ namespace PseudoPrime.NumberTheory.Heilbronn
 explicit count bound to `a` and round its prime exponent up to an integer `g`.
 Assume `1/84+1/a≤g/a`; monotonicity of real powers absorbs this rounding.
 The result supplies the integer count input to finite-fiber energy budgets. -/
-theorem boundedCongruenceCount_power_le_explicit_finite_fiber_of_exponent_bound {a c g : ℕ}
-    (ha : 0 < a) (hc : 0 < c) (hprec : 1 / (c : ℝ) ≤ (1 / (a : ℝ)) / 2)
-    (hratio : 1 / 84 + 1 / (a : ℝ) ≤ (g : ℝ) / a) :
+theorem congruenceCount_power_le_fiber_of_exponent_bound {a c g : ℕ} (ha : 0 < a) (hc : 0 < c)
+    (hprec : 1 / (c : ℝ) ≤ (1 / (a : ℝ)) / 2) (hratio : 1 / 84 + 1 / (a : ℝ) ≤ (g : ℝ) / a) :
     ∀ (p H : ℕ) [Fact p.Prime],
       Odd p →
         H < p →
@@ -52,15 +51,13 @@ theorem boundedCongruenceCount_power_le_explicit_finite_fiber_of_exponent_bound 
 /-- For a>0 and prescribed precision 1/c≤1/(2a), raise the explicit
 full count estimate to a when g/a=1/84+1/a. The coefficient is exactly
 the natural C_(c,a), without rounding. This supplies integer energy budgets. -/
-theorem boundedCongruenceCount_power_le_explicit_finite_fiber {a c g : ℕ} (ha : 0 < a) (hc : 0 < c)
+theorem congruenceCount_power_le_fiber {a c g : ℕ} (ha : 0 < a) (hc : 0 < c)
     (hprec : 1 / (c : ℝ) ≤ (1 / (a : ℝ)) / 2) (hratio : (g : ℝ) / a = 1 / 84 + 1 / (a : ℝ)) :
     ∀ (p H : ℕ) [Fact p.Prime],
       Odd p →
         H < p →
         (H : ℝ) ≤ (p : ℝ) ^ (5 / 28 : ℝ) →
         boundedCongruenceCount p H ^ a ≤ finiteFiberCountCoefficient c a ^ a * H ^ a * p ^ g := by
-  exact
-    boundedCongruenceCount_power_le_explicit_finite_fiber_of_exponent_bound ha hc hprec
-      (by rw [hratio])
+  exact congruenceCount_power_le_fiber_of_exponent_bound ha hc hprec (by rw [hratio])
 
 end PseudoPrime.NumberTheory.Heilbronn

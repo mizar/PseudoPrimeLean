@@ -22,8 +22,8 @@ cost cancel against complementary portions of the conductor saving. Under unit-p
 the resulting arithmetic upper bound retains the full principal prefix minus d. The proof uses
 the exact logarithmic conductor identity before enlarging to the ambient level. This allows
 new scalar prime costs and smaller-scale local absorption without changing the witness proof. -/
-theorem gamma_primitive_add_local_le_of_parameterized_conductor_prefix {q A : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hqA : q ≤ A)
+theorem gamma_primitive_local_le_of_prefix_GRH {q A : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hqA : q ≤ A)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x C Y a d : ℝ} (hx : 2 ≤ x)
     (hY : 1 ≤ Y) (ha : 0 ≤ a) (hd0 : 0 ≤ d) (hscale : 1 ≤ (1 / 2 - a) * Real.sqrt x)
     (hprime :
@@ -55,19 +55,18 @@ theorem gamma_primitive_add_local_le_of_parameterized_conductor_prefix {q A : �
       (NumberTheory.isQuadratic_primitiveCharacter χ hquad) (Finset.Ioc 0 ⌊Y⌋₊)
       (AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight (5 / 4) (11 / 4) (3 / 4)) hYcut
       (fun n _ hn ↦
-        AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight_eq_zero_of_mangoldt_eq_zero _ _ _
-          hn)
+        AnalyticNumberTheory.Arithmetic.pairedEulerWeight_eq_zero_of_mangoldt_zero _ _ _ hn)
       (fun n _ ↦
         AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight_nonneg _ _ (by norm_num only) n)
       (fun p hp hb hc ↦
         PaperStatements.primitiveCharacter_apply_one_of_apply_one χ
           (ht p hp (hp.coprime_iff_not_dvd.mp hc) hb))
   have hbudget :=
-    quadraticExcludedBudget_le_prefix_add_conductor_budget χ hY
+    quadraticExcluded_le_prefix_conductor χ hY
       (AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight (5 / 4) (11 / 4) (3 / 4))
       (AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight_nonneg _ _ (by norm_num only))
       (fun n hn ↦
-        AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight_eq_zero_of_mangoldt_eq_zero _ _ _
+        AnalyticNumberTheory.Arithmetic.pairedEulerWeight_eq_zero_of_mangoldt_zero _ _ _
           (ArithmeticFunction.vonMangoldt_eq_zero_iff.mpr hn))
       (fun p hp ↦ AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight_prime_pow_antitone hp) ha
       hd0 hprime
@@ -77,8 +76,7 @@ theorem gamma_primitive_add_local_le_of_parameterized_conductor_prefix {q A : �
       (by linarith only [hx] : 1 ≤ (99 / 40 : ℝ) * x) hscale
   have hlog :=
     Real.log_le_log (Nat.cast_pos.mpr (Nat.pos_of_ne_zero (NeZero.ne q))) (Nat.cast_le.mpr hqA)
-  have hquot :=
-    AnalyticNumberTheory.DirichletLFunction.log_level_eq_log_conductor_add_log_quotient χ
+  have hquot := AnalyticNumberTheory.DirichletLFunction.log_level_eq_conductor_add_quotient χ
   have hqa := congrArg (fun t : ℝ ↦ a * t) hquot
   rw [mul_add] at hqa
   dsimp only [twoPoleConstantUpper, signedTwoPoleUpper, twoPoleEulerPrefixMass] at *
@@ -89,8 +87,8 @@ minus d yields a negative unit-prime witness whenever the saved gap exceeds the 
 ramp cost. Combine the arithmetic and principal ramp comparisons, then exclude zero by
 coprimality and one by contradiction. This is the witness consumer for arbitrary admissible
 conductor allocations; no fixed threshold twenty-five or fixed prime-cost coefficient is used. -/
-theorem exists_prime_neg_one_of_parameterized_conductor_prefix {q A : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hqA : q ≤ A)
+theorem exists_prime_negOne_paramConductor_GRH {q A : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hqA : q ≤ A)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x C Y g a d : ℝ} (hx : 2 ≤ x)
     (hY : 1 ≤ Y) (ha : 0 ≤ a) (hd : 0 ≤ d) (hscale : 1 ≤ (1 / 2 - a) * Real.sqrt x)
     (hprime :
@@ -111,8 +109,8 @@ theorem exists_prime_neg_one_of_parameterized_conductor_prefix {q A : ℕ} [NeZe
     have ht : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ (99 / 40 : ℝ) * x → χ p = 1 := fun p hp hd hb ↦
       Classical.byContradiction (fun hv ↦ hnone ⟨p, hp, hd, hb, hv⟩)
     have hb :=
-      gamma_primitive_add_local_le_of_parameterized_conductor_prefix χ hquad hne hqA hGRH hx hY ha
-        hd hscale hprime hYcut hC ht
+      gamma_primitive_local_le_of_prefix_GRH χ hquad hne hqA hGRH hx hY ha hd hscale hprime hYcut hC
+        ht
     have hP := gamma_level_one_sum_upper_variable hGRH.riemann (by linarith only [hx] : 1 ≤ x)
     have hT := gamma_ramp_sum_lower_paired hGRH.riemann (by linarith only [hx] : 1 ≤ x)
     have hN := gamma_ramp_no_witness_comparison χ hquad (by linarith only [hx] : 0 < x) ht

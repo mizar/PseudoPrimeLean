@@ -18,8 +18,8 @@ namespace PseudoPrime.PseudoSquare
 /-- Under GRH and odd nonsquare data, the nonnegative joint common margin yields
 an odd negative Jacobi prime through 99x/40. Transfer absence to unit-prime
 triviality and use the joint principal comparison without a separate series cap. -/
-theorem exists_prime_neg_one_witness_of_joint_common_separation {n Q : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hQ : 20000 ≤ Q) (hnQ : 4 * n ≤ Q)
+theorem exists_negOneWitness_of_joint_common_separation {n Q : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hQ : 20000 ≤ Q) (hnQ : 4 * n ≤ Q)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x b : ℝ} (hx : 2 ≤ x)
     (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hgap :
@@ -41,7 +41,7 @@ theorem exists_prime_neg_one_witness_of_joint_common_separation {n Q : ℕ} (hn 
         (p : ℝ) ≤ (99 / 40 : ℝ) * x → NumberTheory.complexQuadraticCharacter n hn p = 1 := by
     intro p hp hd hpb
     by_contra hv
-    have hm := NumberTheory.primeNegOneWitness_mem_of_complexQuadraticCharacter_ne_one n hn hp hd hv
+    have hm := NumberTheory.negOneWitness_mem_of_quadratic_ne_one n hn hp hd hv
     exact hnone ⟨p, hm.1, hm.2.1, hpb, hm.2.2⟩
   exact
     LLS.gamma_prime_trivial_false_of_joint_common hQ hnQ
@@ -51,9 +51,9 @@ theorem exists_prime_neg_one_witness_of_joint_common_separation {n Q : ℕ} (hn 
 /-- For log n<=L, x>=4096 and admissible prefix, scalar margin at least 7/60
 gives an odd negative prime through 99x/40 under GRH. Choose the common pole
 level and transfer the factor-free margin to the actual joint comparison. -/
-theorem exists_prime_neg_one_witness_of_joint_factor_free_separation {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L b x : ℝ}
-    (hL : 10 ≤ L) (hlog : Real.log n ≤ L) (hx : 4096 ≤ x) (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
+theorem exists_negOneWitness_of_jointFactorFree_gap {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L b x : ℝ} (hL : 10 ≤ L)
+    (hlog : Real.log n ≤ L) (hx : 4096 ≤ x) (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hgap : 7 / 60 ≤ LLS.gammaJointFactorFreeSeparation L b x) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n p = -1 := by
   let Q := max 20000 (4 * n)
@@ -67,32 +67,32 @@ theorem exists_prime_neg_one_witness_of_joint_factor_free_separation {n : ℕ} (
         (541 / 50) := by
     linarith only [hs, hgap]
   exact
-    exists_prime_neg_one_witness_of_joint_common_separation hn hns hQ hnQ hGRH
-      (by linarith only [hx]) hb hbx hg
+    exists_negOneWitness_of_joint_common_separation hn hns hQ hnQ hGRH (by linarith only [hx]) hb
+      hbx hg
 
 /-- Under the joint factor-free scalar hypotheses, the least negative odd-prime
 Jacobi witness is at most 99x/40. Apply leastness to the constructed prime.
 No input certificate or additional principal-series hypothesis remains. -/
-theorem primeNegOneWitness_cast_le_of_joint_factor_free_separation {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L b x : ℝ}
-    (hL : 10 ≤ L) (hlog : Real.log n ≤ L) (hx : 4096 ≤ x) (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
+theorem negOneWitness_le_of_jointFactorFree_gap {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L b x : ℝ} (hL : 10 ≤ L)
+    (hlog : Real.log n ≤ L) (hx : 4096 ≤ x) (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hgap : 7 / 60 ≤ LLS.gammaJointFactorFreeSeparation L b x)
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ (99 / 40 : ℝ) * x := by
   obtain ⟨p, hp, ho, hpb, hv⟩ :=
-    exists_prime_neg_one_witness_of_joint_factor_free_separation hn hns hGRH hL hlog hx hb hbx hgap
+    exists_negOneWitness_of_jointFactorFree_gap hn hns hGRH hL hlog hx hb hbx hgap
   exact (Nat.cast_le.mpr (NumberTheory.primeNegOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hpb
 
 /-- Under the joint factor-free criterion, an odd non-one prime exists through
 99x/40. Use the negative witness, which is a stronger value conclusion.
 This exports the analytic improvement to the non-one witness interface. -/
-theorem exists_prime_ne_one_witness_of_joint_factor_free_separation {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L b x : ℝ}
-    (hL : 10 ≤ L) (hlog : Real.log n ≤ L) (hx : 4096 ≤ x) (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
+theorem exists_neOneWitness_of_jointFactorFree_gap {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L b x : ℝ} (hL : 10 ≤ L)
+    (hlog : Real.log n ≤ L) (hx : 4096 ≤ x) (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hgap : 7 / 60 ≤ LLS.gammaJointFactorFreeSeparation L b x) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n p ≠ 1 := by
   obtain ⟨p, hp, ho, hpb, hv⟩ :=
-    exists_prime_neg_one_witness_of_joint_factor_free_separation hn hns hGRH hL hlog hx hb hbx hgap
+    exists_negOneWitness_of_jointFactorFree_gap hn hns hGRH hL hlog hx hb hbx hgap
   refine ⟨p, hp, ho, hpb, ?_⟩
   rw [hv]
   norm_num only
@@ -111,7 +111,7 @@ theorem QNegOne_le_of_joint_factor_free_separation {B : ℕ}
   intro n hn
   have ha := NumberTheory.mem_admissibleFinset_iff.mp hn
   exact
-    primeNegOneWitness_cast_le_of_joint_factor_free_separation ha.odd ha.not_isSquare hGRH hB
+    negOneWitness_le_of_jointFactorFree_gap ha.odd ha.not_isSquare hGRH hB
       (Real.log_le_log (Nat.cast_pos.mpr ha.odd.pos) (Nat.cast_le.mpr ha.le)) hx hb hbx hgap
       (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare ha.odd ha.not_isSquare)
 

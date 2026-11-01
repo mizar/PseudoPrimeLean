@@ -20,8 +20,8 @@ namespace PseudoPrime.LLS.PaperStatements
 primitive arithmetic sum at inverse scale is at least minus the level-one principal sum.
 Use full primitive aggregate positivity, remove the principal member, and identify inverse
 real parts. This controls the dual arithmetic term without a conductor remainder. -/
-theorem triangular18_nonprincipal_inverse_scale_sum_lower {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) {x : ℝ} (hx : 0 < x) :
+theorem triangular18_inverseScale_sum_lower {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ) {x : ℝ}
+    (hx : 0 < x) :
     letI := Classical.propDecidable
     let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18);
     -(∑' n : ℕ, K.summand (1 : DirichletCharacter ℂ 1) x⁻¹ n).re ≤
@@ -52,9 +52,8 @@ plus oscillating zero aggregate is bounded by the triangular conductor profile, 
 Gamma integrals at both scales, and the inverse-scale level-one principal sum.
 Combine the exact dual formula with the lower bound for inverse arithmetic.
 This removes the dual arithmetic family while retaining Gamma signs. -/
-theorem triangular18_annihilator_dual_scale_arithmetic_upper {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ}
-    (hx : 1 ≤ x) :
+theorem triangular18_annihilator_dual_upper_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 ≤ x) :
     letI := Classical.propDecidable
     letI : ∀ i : NumberTheory.subgroupAnnihilator H, NeZero i.val.conductor := fun i ↦
       ⟨i.val.conductor_ne_zero⟩
@@ -88,8 +87,8 @@ theorem triangular18_annihilator_dual_scale_arithmetic_upper {q : ℕ} [NeZero q
     intro χ
     simp only [Finset.mem_filter, Finset.mem_erase, Finset.mem_univ, true_and, and_true,
       not_congr (hn χ)]
-  have he := triangular18_annihilator_dual_scale_signed_formula H hGRH hx
-  have hd := triangular18_nonprincipal_inverse_scale_sum_lower H (zero_lt_one.trans_le hx)
+  have he := triangular18_annihilator_dual_signed_GRH H hGRH hx
+  have hd := triangular18_inverseScale_sum_lower H (zero_lt_one.trans_le hx)
   dsimp only at he hd ⊢
   rw [hf] at he ⊢
   simp only [Complex.add_re, Finset.sum_add_distrib] at he ⊢
@@ -99,9 +98,8 @@ theorem triangular18_annihilator_dual_scale_arithmetic_upper {q : ℕ} [NeZero q
 by the explicit RH upper bound evaluated at inverse scale. The remaining principal cost
 decays with the scale; both Gamma integrals keep their signs. This supplies the numerical
 arithmetic component of the dual-scale subgroup comparison. -/
-theorem triangular18_annihilator_dual_scale_arithmetic_upper_numeric {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ}
-    (hx : 1 ≤ x) :
+theorem triangular18_dual_upper_numeric_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 ≤ x) :
     letI := Classical.propDecidable
     letI : ∀ i : NumberTheory.subgroupAnnihilator H, NeZero i.val.conductor := fun i ↦
       ⟨i.val.conductor_ne_zero⟩
@@ -122,7 +120,7 @@ theorem triangular18_annihilator_dual_scale_arithmetic_upper_numeric {q : ℕ} [
         ∑ i ∈ S, (G i (i.val.primitiveCharacter) x + G i (i.val.primitiveCharacter)⁻¹ x⁻¹).re +
         300000000 * Real.sqrt x⁻¹ +
         1300000 * (x⁻¹) ^ (1 / 4 : ℝ) := by
-  have h := triangular18_annihilator_dual_scale_arithmetic_upper H hGRH hx
+  have h := triangular18_annihilator_dual_upper_GRH H hGRH hx
   have hp :=
     triangular18_level_one_arithmetic_upper_of_rh hGRH.riemann
       (inv_pos.mpr (zero_lt_one.trans_le hx))

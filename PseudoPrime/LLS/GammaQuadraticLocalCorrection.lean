@@ -44,8 +44,7 @@ theorem negative_primitive_prime_mem_quotientFactors {q p : ℕ} [NeZero q]
 /-- The log weight of level primes with negative primitive value is at most
 log(q/conductor). Embed their finite support into the quotient prime factors.
 This supplies the conductor deficit in the signed local correction. -/
-theorem sum_log_negative_primitive_primes_le_log_quotient {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) :
+theorem sum_log_negPrimitive_le_log_quotient {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) :
     (∑ p ∈ q.primeFactors, if χ.primitiveCharacter p = -1 then Real.log p else 0) ≤
       Real.log (q / χ.conductor : ℕ) := by
   have hsub :
@@ -80,9 +79,8 @@ noncomputable def gammaQuadraticLocalCorrection {q : ℕ} (χ : DirichletCharact
 /-- For a quadratic character, positive scale and X=(99/40)x≥1, the actual local
 series is at most (omega(q)log(X)+log(q/conductor))/sqrt(x).
 Combine per-prime signed bounds and the exact negative-prime support estimate. -/
-theorem gammaQuadraticLocalCorrection_le_count_log_quotient {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) {x : ℝ} (hx : 0 < x)
-    (hcut : 1 ≤ (99 / 40 : ℝ) * x) :
+theorem gammaQuadLocal_le_count_log_quotient {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hquad : χ.IsQuadratic) {x : ℝ} (hx : 0 < x) (hcut : 1 ≤ (99 / 40 : ℝ) * x) :
     gammaQuadraticLocalCorrection χ x ≤
       ((q.primeFactors.card : ℝ) * Real.log ((99 / 40 : ℝ) * x) + Real.log (q / χ.conductor : ℕ)) /
         Real.sqrt x := by
@@ -103,7 +101,7 @@ theorem gammaQuadraticLocalCorrection_le_count_log_quotient {q : ℕ} [NeZero q]
   rw [Finset.sum_add_distrib, Finset.sum_const, nsmul_eq_mul] at hsum
   have hbudget :=
     add_le_add (le_refl ((q.primeFactors.card : ℝ) * Real.log ((99 / 40 : ℝ) * x)))
-      (sum_log_negative_primitive_primes_le_log_quotient χ)
+      (sum_log_negPrimitive_le_log_quotient χ)
   exact div_le_div_of_nonneg_right (hsum.trans hbudget) (Real.sqrt_nonneg x)
 
 /-- When M sqrt(x)≥1, combine Mlog(conductor) with the signed local correction
@@ -122,7 +120,7 @@ theorem gammaQuadraticLocalCorrection_absorb_conductor {q : ℕ} [NeZero q]
     Real.log (q / χ.conductor : ℕ) / Real.sqrt x ≤ M * Real.log (q / χ.conductor : ℕ) := by
     rw [div_le_iff₀ hs]
     nlinarith only [hmul]
-  have he := gammaQuadraticLocalCorrection_le_count_log_quotient χ hquad hx hcut
+  have he := gammaQuadLocal_le_count_log_quotient χ hquad hx hcut
   rw [add_div] at he
   calc
     _ ≤
@@ -136,7 +134,7 @@ theorem gammaQuadraticLocalCorrection_absorb_conductor {q : ℕ} [NeZero q]
             M * Real.log (q / χ.conductor : ℕ)) :=
       add_le_add (le_refl _) (add_le_add (le_refl _) hcost)
     _ = _ := by
-      rw [AnalyticNumberTheory.DirichletLFunction.log_level_eq_log_conductor_add_log_quotient χ]
+      rw [AnalyticNumberTheory.DirichletLFunction.log_level_eq_conductor_add_quotient χ]
       ring
 
 end PseudoPrime.LLS

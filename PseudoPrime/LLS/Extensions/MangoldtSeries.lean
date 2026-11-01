@@ -154,8 +154,8 @@ theorem shiftedArithmeticSum_eq_integral_logDeriv (f : GeneralLFunction) (hf : f
     AnalyticNumberTheory.General.logarithmicWeightedSum
         (AnalyticNumberTheory.General.shiftedLSeriesCoefficient f.mangoldtSeriesCoefficient σ) x =
       _
-  rw [AnalyticNumberTheory.General.logarithmicWeightedSum_shifted_eq_integral_LSeries
-      f.mangoldtSeriesCoefficient hzero σ hx hτ
+  rw [AnalyticNumberTheory.General.logWeightedSum_shifted_integral f.mangoldtSeriesCoefficient hzero
+      σ hx hτ
       (LSeriesSummable_mangoldtSeriesCoefficient f hf
         (by simpa only [Complex.ofReal_re] using hστ))]
   congr 1

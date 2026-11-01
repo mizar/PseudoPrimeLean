@@ -18,15 +18,15 @@ namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 Claim: the reciprocal sum retains its positive inverse-cutoff and negative inverse-root terms.
 Proof: bound the trivial-zero tail geometrically before any square completion.
 Role: expose cutoff-dependent savings for both witness comparisons. -/
-theorem reciprocalWeightedMangoldtSum_ge_pointwise_of_parameters (hRH : RiemannHypothesis)
-    {x G B P : ℝ} (hx : 2 ≤ x) (hG : Real.eulerMascheroniConstant ≤ G)
-    (hB : RiemannXi.riemannZeroMass ≤ B) (hP : P ≤ Real.log (2 * Real.pi)) :
+theorem recipMangoldtSum_pointwise_lower_of_RH (hRH : RiemannHypothesis) {x G B P : ℝ} (hx : 2 ≤ x)
+    (hG : Real.eulerMascheroniConstant ≤ G) (hB : RiemannXi.riemannZeroMass ≤ B)
+    (hP : P ≤ Real.log (2 * Real.pi)) :
     Real.log x - (1 + G) - 2 * B / Real.sqrt x + (P - 1 / 18) / x ≤
       Arithmetic.reciprocalWeightedMangoldtSum x := by
   have hxp : 0 < x := lt_of_lt_of_le (by norm_num only) hx
   have hs : 0 < Real.sqrt x := Real.sqrt_pos.mpr hxp
   have ht :=
-    (riemannReciprocalTrivialZeroSeries_le_geometric hx).trans
+    (reciprocalTrivialSeries_le_geometric hx).trans
       (Analysis.geometricTail_le_one_div_eighteen_mul hx)
   rw [div_mul_eq_div_div] at ht
   have hz :=
@@ -38,9 +38,7 @@ theorem reciprocalWeightedMangoldtSum_ge_pointwise_of_parameters (hRH : RiemannH
   rw [Complex.ofReal_re] at hre
   simp only [Complex.ofReal_ofNat] at hre
   rw [hre]
-  have hf :=
-    re_integral_riemannZetaReciprocalContourKernel_two_ge_of_riemannHypothesis hRH
-      (lt_of_lt_of_le (by norm_num only) hx)
+  have hf := reciprocal_integral_two_re_lower_RH hRH (lt_of_lt_of_le (by norm_num only) hx)
   simp only [div_eq_mul_inv] at ht hz hl hf ⊢
   nlinarith only [hf, ht, hz, hl, hG]
 

@@ -31,7 +31,7 @@ theorem log_sq_le_four_div_sq_of_weighted_mean {m n : ℕ} {k : ℝ} (hm : 1 ≤
 improves the global coefficient to 4/(omega(n)+1)^2 when omega(n)≥3.
 Select r or a complementary prime pair by the marked logarithmic mean.
 This generic transfer is shared by mixed-two-adic and non-Korselt branches. -/
-theorem exists_prime_witness_le_marked_factor_coefficient {n r : ℕ} (hn : 1 < n) (ho : Odd n)
+theorem exists_primeWitness_le_marked_factor_coefficient {n r : ℕ} (hn : 1 < n) (ho : Odd n)
     (hc : 3 ≤ n.primeFactors.card) (hr : r ∈ n.primeFactors)
     (hlocal :
       ∃ q : ℕ,
@@ -55,7 +55,7 @@ theorem exists_prime_witness_le_marked_factor_coefficient {n r : ℕ} (hn : 1 < 
 /-- Under the marked-factor hypotheses, the least prime MR witness obeys
 the coefficient 4/(omega(n)+1)^2. Minimize the full prime-rejection predicate.
 This shared minimization avoids branch-specific existence choices. -/
-theorem exists_least_prime_witness_le_marked_factor_coefficient {n r : ℕ} (hn : 1 < n) (ho : Odd n)
+theorem exists_leastWitness_le_marked_factor_coefficient {n r : ℕ} (hn : 1 < n) (ho : Odd n)
     (hc : 3 ≤ n.primeFactors.card) (hr : r ∈ n.primeFactors)
     (hlocal :
       ∃ q : ℕ,
@@ -67,8 +67,7 @@ theorem exists_least_prime_witness_le_marked_factor_coefficient {n r : ℕ} (hn 
         (q : ℝ) ≤ (4 / ((n.primeFactors.card : ℝ) + 1) ^ 2) * (Real.log n) ^ 2 ∧
         ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → q ≤ s := by
   classical
-  obtain ⟨q, hq, hb, hf⟩ :=
-    exists_prime_witness_le_marked_factor_coefficient hn ho hc hr hlocal hGRH
+  obtain ⟨q, hq, hb, hf⟩ := exists_primeWitness_le_marked_factor_coefficient hn ho hc hr hlocal hGRH
   have hex : ∃ s : ℕ, s.Prime ∧ ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := ⟨q, hq, hf⟩
   exact
     ⟨Nat.find hex, (Nat.find_spec hex).1, (Nat.find_spec hex).2,
@@ -96,14 +95,14 @@ theorem exists_prime_witness_le_nonKorselt_factor_log_sq {n r : ℕ} (hn : 1 < n
     exists_prime_witness_le_local_log_sq hn ho hr5 hrn
       (powMonoidHom (n - 1) : (ZMod r)ˣ →* (ZMod r)ˣ).ker
       (PrimeTest.local_prime_powerKernel_ne_top_of_not_dvd hbad)
-      (fun a ha ↦ PrimeTest.strongMillerRabinPass_mem_local_prime_powerKernel hn ho hrn ha) hGRH
+      (fun a ha ↦ PrimeTest.strongMR_local_primeKernel hn ho hrn ha) hGRH
 
 /-- Under GRH, an odd n>1 with at least three distinct prime factors and
 a factor violating Korselt divisibility has least prime MR witness at most
 4 log(n)^2/(omega(n)+1)^2. Construct the local witness and apply marked-factor
 selection and minimization. No squarefree hypothesis is required. -/
-theorem exists_least_prime_witness_le_nonKorselt_factor_coefficient {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hc : 3 ≤ n.primeFactors.card) (hbad : ∃ r ∈ n.primeFactors, ¬r - 1 ∣ n - 1)
+theorem exists_least_prime_nonKorseltCoeff_GRH {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hc : 3 ≤ n.primeFactors.card) (hbad : ∃ r ∈ n.primeFactors, ¬r - 1 ∣ n - 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ q : ℕ,
       q.Prime ∧
@@ -114,6 +113,6 @@ theorem exists_least_prime_witness_le_nonKorselt_factor_coefficient {n : ℕ} (h
   have hlocal :=
     exists_prime_witness_le_nonKorselt_factor_log_sq hn ho (Nat.prime_of_mem_primeFactors hr)
       (Nat.dvd_of_mem_primeFactors hr) hbad hGRH
-  exact exists_least_prime_witness_le_marked_factor_coefficient hn ho hc hr hlocal hGRH
+  exact exists_leastWitness_le_marked_factor_coefficient hn ho hc hr hlocal hGRH
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

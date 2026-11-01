@@ -51,7 +51,7 @@ theorem real_genus_centering_all (hRH : RiemannHypothesis) (σ : ℝ) (ρ : ℂ)
         (1 / 2 : ℝ) * ((analyticOrderNatAt riemannXi ρ : ℂ) * (1 / (1 - ρ) + 1 / ρ)).re =
       (analyticOrderNatAt riemannXi ρ : ℝ) * ((σ - 1 / 2) / ((σ - 1 / 2) ^ 2 + ρ.im ^ 2)) := by
   by_cases hz : riemannXi ρ = 0
-  · exact real_genus_centering σ ρ _ (riemannXi_zero_re_eq_half_of_riemannHypothesis hRH hz)
+  · exact real_genus_centering σ ρ _ (xi_zero_re_eq_half_of_riemannHypothesis hRH hz)
   · have ho : analyticOrderNatAt riemannXi ρ = 0 := by
       rw [analyticOrderNatAt, analyticOrderAt_eq_zero.mpr (Or.inr hz), ENat.toNat_zero]
     simp only [ho, Nat.cast_zero, zero_mul, Complex.zero_re, mul_zero, sub_zero]
@@ -69,8 +69,8 @@ theorem hasSum_real_poisson (hRH : RiemannHypothesis) {σ : ℝ} (hσ : 1 / 2 < 
   have h1 : (1 / 2 : ℝ) < (1 : ℂ).re := by norm_num only [Complex.one_re]
   have hS := Complex.hasSum_re (summable_genus_terms_of_riemannHypothesis hRH hs).hasSum
   have hO := Complex.hasSum_re (summable_genus_terms_of_riemannHypothesis hRH h1).hasSum
-  rw [← centered_logDeriv_eq_genusSum_of_riemannHypothesis hRH hs] at hS
-  rw [← centered_logDeriv_eq_genusSum_of_riemannHypothesis hRH h1] at hO
+  rw [← centered_logDeriv_eq_genusSum_RH hRH hs] at hS
+  rw [← centered_logDeriv_eq_genusSum_RH hRH h1] at hO
   have hh := hS.sub (hO.mul_left (1 / 2 : ℝ))
   have he :
     (logDeriv riemannXi (σ : ℂ) - logDeriv riemannXi 0).re -
@@ -146,7 +146,7 @@ theorem gammaResolvent_signed_zeta_eq_neg_euler :
     (Gamma.gammaResolventCoefficients.map
           (fun ab ↦ (ab.2 : ℝ) * (logDeriv riemannZeta (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum =
       -(∑' n : ℕ, Analysis.gammaResolventMangoldtWeight n) := by
-  have h := DirichletLFunction.gammaResolvent_signed_ordinary_eq_euler (1 : DirichletCharacter ℂ 1)
+  have h := DirichletLFunction.gammaResolvent_ordinary_eq_euler (1 : DirichletCharacter ℂ 1)
   have hc (n : ℕ) : (1 : DirichletCharacter ℂ 1) n = 1 := by
     rw [Subsingleton.elim (n : ZMod 1) 1, map_one]
   simpa only [DirichletCharacter.LFunction_modOne_eq, hc, Complex.one_re, neg_one_mul,
@@ -188,7 +188,7 @@ theorem gammaResolvent_euler_le_poles_gamma (hRH : RiemannHypothesis) :
       linarith only [ha]
     have hpole (t : ℝ) : (1 / (t : ℂ)).re = 1 / t := by
       rw [one_div, ← Complex.ofReal_inv, Complex.ofReal_re, one_div]
-    rw [logDeriv_eq_poles_gammaFactor_zeta_of_one_lt_re hs]
+    rw [logDeriv_eq_poles_gamma_zeta_of_re_gt_one hs]
     simp only [Complex.add_re, ← Complex.ofReal_add, ← Complex.ofReal_one, ← Complex.ofReal_sub]
     have hd : (1 / 2 : ℝ) + (ab.1 : ℝ) - 1 = (ab.1 : ℝ) - 1 / 2 := by ring
     rw [hd]

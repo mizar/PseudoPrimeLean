@@ -74,9 +74,9 @@ assume the general logarithmic formula and admissibility of its degree-one data.
 Identify zero mass as twice the absolute real Hadamard constant using this character's RH,
 then apply the specialization formula. The mass identity is derived rather than assumed;
 the remaining premises are the formula and admissibility. -/
-theorem characterLogLValue_formula_of_general_of_admissible
-    (hformula : Extensions.lls_propL1_general) {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
-    (hq : 3 ≤ q) (hp : χ.IsPrimitive) (hRH : AnalyticNumberTheory.GRH.DirichletRiemannHypothesis χ)
+theorem characterLogValue_of_admissible_RH (hformula : Extensions.lls_propL1_general) {q : ℕ}
+    [NeZero q] (χ : DirichletCharacter ℂ q) (hq : 3 ≤ q) (hp : χ.IsPrimitive)
+    (hRH : AnalyticNumberTheory.GRH.DirichletRiemannHypothesis χ)
     (hf : (Extensions.GeneralLFunction.ofDirichletCharacter χ).IsAdmissible) {x : ℝ} (hx : 2 ≤ x) :
     ∃ θ₁ θ₂ : ℝ,
       |θ₁| ≤ 1 ∧
@@ -93,7 +93,7 @@ theorem characterLogLValue_formula_of_general_of_admissible
             2 * θ₂ / (x * (Real.log x) ^ 2) := by
   have hne := primitiveCharacter_ne_one_of_three_le hq hp
   have hMass :=
-    Extensions.GeneralLFunction.ofDirichletCharacter_zeroMass_eq_two_mul_abs_BRe_of_dirichletRH χ
+    Extensions.GeneralLFunction.dirichlet_zeroMass_two_BRe_RH χ
       (Nat.le_trans (by norm_num only : 2 ≤ 3) hq) hp hne hRH
   exact characterLogLValue_formula_of_general hformula χ hq hp hRH hf hMass hx
 
@@ -107,8 +107,6 @@ theorem lls_lemma25_of_general (hformula : Extensions.lls_propL1_general)
         3 ≤ q → χ.IsPrimitive → (Extensions.GeneralLFunction.ofDirichletCharacter χ).IsAdmissible) :
     lls_lemma25 := by
   intro q _ χ hq hp hRH x hx
-  exact
-    characterLogLValue_formula_of_general_of_admissible hformula χ hq hp hRH (hadmissible q χ hq hp)
-      hx
+  exact characterLogValue_of_admissible_RH hformula χ hq hp hRH (hadmissible q χ hq hp) hx
 
 end PseudoPrime.LLS.PaperStatements

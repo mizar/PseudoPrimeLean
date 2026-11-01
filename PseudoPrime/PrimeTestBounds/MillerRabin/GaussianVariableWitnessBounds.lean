@@ -135,9 +135,9 @@ theorem gaussian_star_relative_inequality_contradiction {n : ℕ} [NeZero n] (H 
 /-- For the index-four common-sign subgroup with conductor cost at most `2L`,
 the actual relative Gaussian comparison at the classified radius is impossible
 once its explicit ambient and inverse-radius error is below `33`. -/
-theorem gaussian_star_index_four_relative_inequality_contradiction {n : ℕ} [NeZero n]
-    (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
-    (hC : LLS.PaperStatements.subgroupConductorLogSum H ≤ 2 * Real.log n) (hL : 600 ≤ Real.log n) :
+theorem gaussianStar_indexFour_relative_false {n : ℕ} [NeZero n] (H : Subgroup (ZMod n)ˣ)
+    (hi : H.index = 4) (hC : LLS.PaperStatements.subgroupConductorLogSum H ≤ 2 * Real.log n)
+    (hL : 600 ≤ Real.log n) :
     let L := Real.log n
     let r := gaussianStarRadius L
     let s := gaussianStarRoot L
@@ -221,7 +221,7 @@ theorem gaussian_star_index_four_relative_inequality_contradiction {n : ℕ} [Ne
 /-- Under GRH, an index-four subgroup containing all strong-MR passes and with
 conductor-log sum at most `2 log n` yields a prime witness below the classified
 Gaussian star bound from logarithmic scale `600`. -/
-theorem exists_prime_witness_le_gaussian_star_of_index_four {n : ℕ} [NeZero n] (hnOdd : Odd n)
+theorem exists_prime_gaussianStar_indexFour_GRH {n : ℕ} [NeZero n] (hnOdd : Odd n)
     (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
@@ -276,13 +276,13 @@ theorem exists_prime_witness_le_gaussian_star_of_index_four {n : ℕ} [NeZero n]
   have hcmp :=
     LLS.PaperStatements.gaussian_noSmallPrimes_inequality_relative hnlarge H hGRH hwidth hwidth1 hx
       (by norm_num only : (0 : ℝ) ≤ 21 / 10) hdiv hsmall
-  exact gaussian_star_index_four_relative_inequality_contradiction H hi hC hL hcmp
+  exact gaussianStar_indexFour_relative_false H hi hC hL hcmp
 
 /-- Under GRH, an index at least `10^9` containing every strong-MR pass gives
 a prime witness below the classified Gaussian cutoff from logarithmic scale
 600 onward. The index and pass-containment conditions are internal branch data;
 the all-input theorem closes them by the Fermat-index classification. -/
-theorem exists_prime_witness_le_gaussian_star_of_index_ge_billion {n : ℕ} [NeZero n] (hnOdd : Odd n)
+theorem exists_prime_gaussianStar_largeIndex_GRH {n : ℕ} [NeZero n] (hnOdd : Odd n)
     (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ) (hi : gaussianStarIndex ≤ (H.index : ℝ))
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
@@ -341,8 +341,8 @@ theorem exists_prime_witness_le_gaussian_star_of_index_ge_billion {n : ℕ} [NeZ
 
 /-- The Fermat subgroup supplies the pass-containment condition for the
 large-index Gaussian branch. -/
-theorem exists_prime_witness_le_gaussian_star_of_large_fermat_index {n : ℕ} (hn1 : 1 < n)
-    (hnOdd : Odd n) (hi : 1000000000 ≤ (PrimeTest.fermatSubgroup n).index)
+theorem exists_prime_gaussianStar_largeFermat_GRH {n : ℕ} (hn1 : 1 < n) (hnOdd : Odd n)
+    (hi : 1000000000 ≤ (PrimeTest.fermatSubgroup n).index)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 600 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
@@ -382,13 +382,13 @@ theorem exists_prime_witness_le_gaussian_star_of_large_fermat_index {n : ℕ} (h
     intro z hz
     obtain ⟨u, hu, hz⟩ := PrimeTest.strongMillerRabinPass_mem_fermatSubgroup hn1 hnOdd hz
     exact ⟨u, hu, hz⟩
-  exact exists_prime_witness_le_gaussian_star_of_index_ge_billion hnOdd hnlarge H hiR hHpass hGRH hL
+  exact exists_prime_gaussianStar_largeIndex_GRH hnOdd hnlarge H hiR hHpass hGRH hL
 
 /-- Under GRH, a subgroup containing every strong-MR pass yields a prime
 witness below the 6/5 Gaussian bound when its index is at least 10^9. -/
-theorem gaussian6fifths_index_four_relative_inequality_contradiction {n : ℕ} [NeZero n]
-    (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
-    (hC : LLS.PaperStatements.subgroupConductorLogSum H ≤ 2 * Real.log n) (hL : 500 ≤ Real.log n) :
+theorem gaussian6_5_index_four_contradiction {n : ℕ} [NeZero n] (H : Subgroup (ZMod n)ˣ)
+    (hi : H.index = 4) (hC : LLS.PaperStatements.subgroupConductorLogSum H ≤ 2 * Real.log n)
+    (hL : 500 ≤ Real.log n) :
     let L := Real.log n
     let r := gaussian6FifthsRadius L
     let s := gaussian6FifthsRoot L
@@ -493,9 +493,9 @@ theorem gaussian6fifths_index_four_relative_inequality_contradiction {n : ℕ} [
 
 /-- The signed relative Gaussian comparison is impossible for an index-four
 subgroup at the constant-6 radius from logarithmic scale 300. -/
-theorem gaussianMR6_index_four_relative_inequality_contradiction {n : ℕ} [NeZero n]
-    (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
-    (hC : LLS.PaperStatements.subgroupConductorLogSum H ≤ 2 * Real.log n) (hL : 300 ≤ Real.log n) :
+theorem gaussian6_indexFour_relative_false {n : ℕ} [NeZero n] (H : Subgroup (ZMod n)ˣ)
+    (hi : H.index = 4) (hC : LLS.PaperStatements.subgroupConductorLogSum H ≤ 2 * Real.log n)
+    (hL : 300 ≤ Real.log n) :
     let L := Real.log n
     let r := gaussian6Radius L
     let s := gaussian6Root L
@@ -604,7 +604,7 @@ theorem gaussianMR6_index_four_relative_inequality_contradiction {n : ℕ} [NeZe
 
 /-- An index-four subgroup with conductor cost `2L` yields a prime witness
 below the constant-6 Gaussian bound from logarithmic scale 300. -/
-theorem exists_prime_witness_le_gaussianMR6_of_index_four {n : ℕ} [NeZero n] (hnOdd : Odd n)
+theorem exists_primeWitness_le_gaussianMR6_of_index_four {n : ℕ} [NeZero n] (hnOdd : Odd n)
     (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
@@ -657,15 +657,15 @@ theorem exists_prime_witness_le_gaussianMR6_of_index_four {n : ℕ} [NeZero n] (
     dsimp only [x]
     nlinarith only [hrbound]
   have hcmp :=
-    LLS.PaperStatements.gaussian_noSmallPrimes_inequality_relative_prefix_gain_signed hnlarge H hGRH
-      hwidth hwidth1 hx (by norm_num only : (0 : ℝ) ≤ 6 / 5) hX hdiv hsmall
-  exact gaussianMR6_index_four_relative_inequality_contradiction H hi hC hL hcmp
+    LLS.PaperStatements.gaussian_noSmall_relative50000_signed_GRH hnlarge H hGRH hwidth hwidth1 hx
+      (by norm_num only : (0 : ℝ) ≤ 6 / 5) hX hdiv hsmall
+  exact gaussian6_indexFour_relative_false H hi hC hL hcmp
 
 /-- The prefix-adjusted relative Gaussian comparison is impossible for an
 index-four subgroup at the constant-18 radius from logarithmic scale 300. -/
-theorem gaussianMR18_index_four_relative_inequality_contradiction {n : ℕ} [NeZero n]
-    (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
-    (hC : LLS.PaperStatements.subgroupConductorLogSum H ≤ 2 * Real.log n) (hL : 300 ≤ Real.log n) :
+theorem gaussian18_indexFour_relative_false {n : ℕ} [NeZero n] (H : Subgroup (ZMod n)ˣ)
+    (hi : H.index = 4) (hC : LLS.PaperStatements.subgroupConductorLogSum H ≤ 2 * Real.log n)
+    (hL : 300 ≤ Real.log n) :
     let L := Real.log n
     let r := gaussian18Radius L
     let s := gaussian18Root L
@@ -772,7 +772,7 @@ theorem gaussianMR18_index_four_relative_inequality_contradiction {n : ℕ} [NeZ
 
 /-- An index-four subgroup with the three-character conductor cost yields a
 prime witness below the 6/5 Gaussian bound from logarithmic scale 500. -/
-theorem exists_prime_witness_le_gaussian6fifths_of_index_four {n : ℕ} [NeZero n] (hnOdd : Odd n)
+theorem gaussian6_5_primeWitness_index_four_GRH {n : ℕ} [NeZero n] (hnOdd : Odd n)
     (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
@@ -826,11 +826,11 @@ theorem exists_prime_witness_le_gaussian6fifths_of_index_four {n : ℕ} [NeZero 
   have hcmp :=
     LLS.PaperStatements.gaussian_noSmallPrimes_inequality_relative hnlarge H hGRH hwidth hwidth1 hx
       (by norm_num only : (0 : ℝ) ≤ 6 / 5) hdiv hsmall
-  exact gaussian6fifths_index_four_relative_inequality_contradiction H hi hC hL hcmp
+  exact gaussian6_5_index_four_contradiction H hi hC hL hcmp
 
 /-- An index-four subgroup with conductor cost `2L` yields a prime witness
 below the prefix-improved constant-18 Gaussian bound from logarithmic scale 300. -/
-theorem exists_prime_witness_le_gaussianMR18_of_index_four {n : ℕ} [NeZero n] (hnOdd : Odd n)
+theorem exists_prime_gaussian18_indexFour_GRH {n : ℕ} [NeZero n] (hnOdd : Odd n)
     (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
@@ -882,15 +882,14 @@ theorem exists_prime_witness_le_gaussianMR18_of_index_four {n : ℕ} [NeZero n] 
     dsimp only [x]
     nlinarith only [hrbound]
   have hcmp :=
-    LLS.PaperStatements.gaussian_noSmallPrimes_inequality_relative_prefix_gain hnlarge H hGRH hwidth
-      hwidth1 hx (by norm_num only : (0 : ℝ) ≤ 6 / 5) hX hdiv hsmall
-  exact gaussianMR18_index_four_relative_inequality_contradiction H hi hC hL hcmp
+    LLS.PaperStatements.gaussian_noSmall_relative50000_GRH hnlarge H hGRH hwidth hwidth1 hx
+      (by norm_num only : (0 : ℝ) ≤ 6 / 5) hX hdiv hsmall
+  exact gaussian18_indexFour_relative_false H hi hC hL hcmp
 
 /-- Under GRH, a subgroup containing every strong-MR pass yields a prime
 witness below the 6/5 Gaussian bound when its index is at least 10^9. -/
-theorem exists_prime_witness_le_gaussian6fifths_of_index_ge_billion {n : ℕ} [NeZero n]
-    (hnOdd : Odd n) (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ)
-    (hi : gaussian6FifthsIndex ≤ (H.index : ℝ))
+theorem gaussian6_5_primeWitness_highIndex_GRH {n : ℕ} [NeZero n] (hnOdd : Odd n)
+    (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ) (hi : gaussian6FifthsIndex ≤ (H.index : ℝ))
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 500 ≤ Real.log n) :
@@ -1006,7 +1005,7 @@ theorem exists_prime_witness_le_gaussian6fifths_of_index_ge_billion {n : ℕ} [N
 
 /-- Under GRH, a subgroup containing every strong-MR pass yields a prime
 witness below the signed constant-6 Gaussian bound from logarithmic scale 300. -/
-theorem exists_prime_witness_le_gaussianMR6_of_index_ge_billion {n : ℕ} [NeZero n] (hnOdd : Odd n)
+theorem exists_prime_gaussian6_largeIndex_GRH {n : ℕ} [NeZero n] (hnOdd : Odd n)
     (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ) (hi : gaussian6FifthsIndex ≤ (H.index : ℝ))
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
@@ -1079,8 +1078,8 @@ theorem exists_prime_witness_le_gaussianMR6_of_index_ge_billion {n : ℕ} [NeZer
     exact ⟨u, huH, hu⟩
   have hwidth : 0 < h := one_div_pos.mpr (mul_pos (by norm_num only) hspos)
   have hcmp :=
-    LLS.PaperStatements.gaussian_noSmallPrimes_inequality_relative_prefix_gain_signed hnlarge H hGRH
-      hwidth hh1 hx (by norm_num only : (0 : ℝ) ≤ 6 / 5) hX hdiv hsmall
+    LLS.PaperStatements.gaussian_noSmall_relative50000_signed_GRH hnlarge H hGRH hwidth hh1 hx
+      (by norm_num only : (0 : ℝ) ≤ 6 / 5) hX hdiv hsmall
   have hcastIndex : ((H.index - 1 : ℕ) : ℝ) = (H.index : ℝ) - 1 := by
     have hidxReal : (1 : ℝ) ≤ (H.index : ℝ) := by
       have hK : (1 : ℝ) ≤ gaussian6FifthsIndex := by norm_num only [gaussian6FifthsIndex]
@@ -1149,7 +1148,7 @@ theorem exists_prime_witness_le_gaussianMR6_of_index_ge_billion {n : ℕ} [NeZer
       hfinish
 
 /-- The constant-6 witness theorem also implies the older constant-18 bound. -/
-theorem exists_prime_witness_le_gaussianMR18_of_index_ge_billion {n : ℕ} [NeZero n] (hnOdd : Odd n)
+theorem exists_prime_gaussian18_largeIndex_GRH {n : ℕ} [NeZero n] (hnOdd : Odd n)
     (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ) (hi : gaussian6FifthsIndex ≤ (H.index : ℝ))
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
@@ -1159,12 +1158,12 @@ theorem exists_prime_witness_le_gaussianMR18_of_index_ge_billion {n : ℕ} [NeZe
         (p : ℝ) ≤ gaussian18Bound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   obtain ⟨p, hp, hpbound, hfail⟩ :=
-    exists_prime_witness_le_gaussianMR6_of_index_ge_billion hnOdd hnlarge H hi hHpass hGRH hL
+    exists_prime_gaussian6_largeIndex_GRH hnOdd hnlarge H hi hHpass hGRH hL
   exact ⟨p, hp, hpbound.trans (gaussian6Bound_le_gaussian18Bound hL), hfail⟩
 
 /-- The Fermat subgroup supplies pass containment in the 6/5 branch. -/
-theorem exists_prime_witness_le_gaussian6fifths_of_large_fermat_index {n : ℕ} (hn1 : 1 < n)
-    (hnOdd : Odd n) (hi : 1000000000 ≤ (PrimeTest.fermatSubgroup n).index)
+theorem gaussian6_5_prime_largeFermatIndex_GRH {n : ℕ} (hn1 : 1 < n) (hnOdd : Odd n)
+    (hi : 1000000000 ≤ (PrimeTest.fermatSubgroup n).index)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 500 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
@@ -1203,12 +1202,11 @@ theorem exists_prime_witness_le_gaussian6fifths_of_large_fermat_index {n : ℕ} 
     intro z hz
     obtain ⟨u, hu, hz⟩ := PrimeTest.strongMillerRabinPass_mem_fermatSubgroup hn1 hnOdd hz
     exact ⟨u, hu, hz⟩
-  exact
-    exists_prime_witness_le_gaussian6fifths_of_index_ge_billion hnOdd hnlarge H hiR hHpass hGRH hL
+  exact gaussian6_5_primeWitness_highIndex_GRH hnOdd hnlarge H hiR hHpass hGRH hL
 
 /-- The Fermat subgroup supplies pass containment in the constant-6 branch. -/
-theorem exists_prime_witness_le_gaussianMR6_of_large_fermat_index {n : ℕ} (hn1 : 1 < n)
-    (hnOdd : Odd n) (hi : 1000000000 ≤ (PrimeTest.fermatSubgroup n).index)
+theorem exists_prime_gaussian6_largeFermat_GRH {n : ℕ} (hn1 : 1 < n) (hnOdd : Odd n)
+    (hi : 1000000000 ≤ (PrimeTest.fermatSubgroup n).index)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 300 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
@@ -1247,24 +1245,23 @@ theorem exists_prime_witness_le_gaussianMR6_of_large_fermat_index {n : ℕ} (hn1
     intro z hz
     obtain ⟨u, hu, hz⟩ := PrimeTest.strongMillerRabinPass_mem_fermatSubgroup hn1 hnOdd hz
     exact ⟨u, hu, hz⟩
-  exact exists_prime_witness_le_gaussianMR6_of_index_ge_billion hnOdd hnlarge H hiR hHpass hGRH hL
+  exact exists_prime_gaussian6_largeIndex_GRH hnOdd hnlarge H hiR hHpass hGRH hL
 
 /-- The constant-6 Fermat-index theorem implies the older constant-18 bound. -/
-theorem exists_prime_witness_le_gaussianMR18_of_large_fermat_index {n : ℕ} (hn1 : 1 < n)
-    (hnOdd : Odd n) (hi : 1000000000 ≤ (PrimeTest.fermatSubgroup n).index)
+theorem exists_prime_gaussian18_largeFermat_GRH {n : ℕ} (hn1 : 1 < n) (hnOdd : Odd n)
+    (hi : 1000000000 ≤ (PrimeTest.fermatSubgroup n).index)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 300 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ gaussian18Bound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
-  obtain ⟨p, hp, hpbound, hfail⟩ :=
-    exists_prime_witness_le_gaussianMR6_of_large_fermat_index hn1 hnOdd hi hGRH hL
+  obtain ⟨p, hp, hpbound, hfail⟩ := exists_prime_gaussian6_largeFermat_GRH hn1 hnOdd hi hGRH hL
   exact ⟨p, hp, hpbound.trans (gaussian6Bound_le_gaussian18Bound hL), hfail⟩
 
 /-- At logarithmic scale at least 4000, the actual relative Gaussian
 subgroup comparison contradicts the variable-radius numerical budget. -/
-theorem gaussian_variable_relative_inequality_contradiction {n : ℕ} [NeZero n]
-    (H : Subgroup (ZMod n)ˣ) (hi : 4 ≤ H.index) (hL : 4000 ≤ Real.log n) :
+theorem gaussianVariable_relative_false {n : ℕ} [NeZero n] (H : Subgroup (ZMod n)ˣ)
+    (hi : 4 ≤ H.index) (hL : 4000 ≤ Real.log n) :
     let L := Real.log n
     let r := gaussianVariableRadius L
     let h := 1 / (3 * Real.sqrt r)
@@ -1475,8 +1472,8 @@ theorem gaussian_variable_relative_inequality_contradiction {n : ℕ} [NeZero n]
 Miller--Rabin witness below the variable Gaussian cutoff. Assume every prime
 base below the cutoff passes and every such nondivisor lies in the subgroup;
 the relative Gaussian comparison then contradicts the numerical estimate. -/
-theorem exists_prime_witness_le_gaussian_variable_of_index_ge_four {n : ℕ} [NeZero n]
-    (hnOdd : Odd n) (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ) (hi : 4 ≤ H.index)
+theorem exists_prime_gaussianVariable_indexFour_GRH {n : ℕ} [NeZero n] (hnOdd : Odd n)
+    (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ) (hi : 4 ≤ H.index)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 4000 ≤ Real.log n) :
@@ -1532,7 +1529,7 @@ theorem exists_prime_witness_le_gaussian_variable_of_index_ge_four {n : ℕ} [Ne
   have hcmp :=
     LLS.PaperStatements.gaussian_noSmallPrimes_inequality_relative hnlarge H hGRH hwidth hwidth1 hx
       (by norm_num only : (0 : ℝ) ≤ 21 / 10) hdiv hsmall
-  exact (gaussian_variable_relative_inequality_contradiction H hi hL) hcmp
+  exact (gaussianVariable_relative_false H hi hL) hcmp
 
 /-- Under GRH, every odd composite with logarithm at least 4000 has a prime
 strong Miller--Rabin witness below the variable Gaussian cutoff. The arithmetic
@@ -1576,10 +1573,8 @@ theorem exists_prime_witness_le_gaussian_variable {n : ℕ} (hnOdd : Odd n) (hnC
     intro h
     rw [h] at hnlarge
     exact (by decide : ¬20000 ≤ 9) hnlarge
-  obtain ⟨H, hi, hHpass⟩ :=
-    PrimeTest.exists_index_ge_four_subgroup_containing_strongMillerRabinPass hn1 hnOdd hnComposite
-      hn9
-  exact exists_prime_witness_le_gaussian_variable_of_index_ge_four hnOdd hnlarge H hi hHpass hGRH hL
+  obtain ⟨H, hi, hHpass⟩ := PrimeTest.exists_index_four_subgroup_strongMR hn1 hnOdd hnComposite hn9
+  exact exists_prime_gaussianVariable_indexFour_GRH hnOdd hnlarge H hi hHpass hGRH hL
 
 /-- The least prime rejecting the strong test inherits the variable Gaussian
 cutoff from the explicit witness theorem. -/
@@ -1622,7 +1617,7 @@ theorem gaussian_star_cutoff_lt_index_four {L : ℝ} (hL : 600 ≤ L) :
 /-- For positive `L`, the coefficient bound is strictly below the variable-width
 Gaussian bound. The radius lower bound `5503 L / 10000` gives a quadratic
 coefficient larger than `282924 / 1000000`. -/
-theorem gaussian_variable_cutoff_gt_triangular_coefficient {L : ℝ} (hL : 0 < L) :
+theorem gaussianVariable_gt_triangularCoeff {L : ℝ} (hL : 0 < L) :
     (282924 / 1000000 : ℝ) * L ^ 2 < (21 / 10 : ℝ) * (gaussianVariableRadius L) ^ 2 := by
   have hs : 0 ≤ Real.sqrt L := Real.sqrt_nonneg L
   have hr : (5503 / 10000 : ℝ) * L ≤ gaussianVariableRadius L := by

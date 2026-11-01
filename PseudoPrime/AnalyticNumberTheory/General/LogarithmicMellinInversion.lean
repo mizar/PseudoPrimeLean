@@ -242,8 +242,8 @@ theorem LSeriesSummable_shiftedLSeriesCoefficient (a : ℕ → ℂ) (σ : ℝ) (
 the series weighted by n^(-sigma) and the logarithmic Mellin weight equals the normalized
 vertical integral with the original L-series at sigma+tau+iy.
 Apply unshifted inversion to shifted coefficients and translate the series argument. -/
-theorem mellinWeightTwo_shifted_tsum_eq_integral_LSeries (a : ℕ → ℂ) (ha : a 0 = 0) (σ : ℝ)
-    {x τ : ℝ} (hx : 0 < x) (hτ : 0 < τ) (hsum : LSeriesSummable a ((σ + τ : ℝ) : ℂ)) :
+theorem mellinWeightTwo_shifted_integral (a : ℕ → ℂ) (ha : a 0 = 0) (σ : ℝ) {x τ : ℝ} (hx : 0 < x)
+    (hτ : 0 < τ) (hsum : LSeriesSummable a ((σ + τ : ℝ) : ℂ)) :
     (∑' n : ℕ, a n * (n : ℂ) ^ (-(σ : ℂ)) * Analysis.mellinWeightTwo ((n : ℝ) / x)) =
       (2 * Real.pi : ℝ)⁻¹ •
         ∫ y : ℝ,
@@ -299,8 +299,8 @@ theorem mellinWeightTwo_tsum_eq_logarithmicWeightedSum (a : ℕ → ℂ) (ha : a
 the finite n^(-sigma)-weighted logarithmic sum equals the normalized shifted vertical integral.
 Combine the finite-support collapse with shifted series inversion.
 This is the right-edge identity used before shifted residue evaluation. -/
-theorem logarithmicWeightedSum_shifted_eq_integral_LSeries (a : ℕ → ℂ) (ha : a 0 = 0) (σ : ℝ)
-    {x τ : ℝ} (hx : 0 < x) (hτ : 0 < τ) (hsum : LSeriesSummable a ((σ + τ : ℝ) : ℂ)) :
+theorem logWeightedSum_shifted_integral (a : ℕ → ℂ) (ha : a 0 = 0) (σ : ℝ) {x τ : ℝ} (hx : 0 < x)
+    (hτ : 0 < τ) (hsum : LSeriesSummable a ((σ + τ : ℝ) : ℂ)) :
     logarithmicWeightedSum (shiftedLSeriesCoefficient a σ) x =
       (2 * Real.pi : ℝ)⁻¹ •
         ∫ y : ℝ,
@@ -308,7 +308,7 @@ theorem logarithmicWeightedSum_shifted_eq_integral_LSeries (a : ℕ → ℂ) (ha
             ((τ : ℂ) + y * Complex.I) ^ 2 := by
   have ha0 : shiftedLSeriesCoefficient a σ 0 = 0 := by rw [shiftedLSeriesCoefficient, ha, zero_mul]
   rw [← mellinWeightTwo_tsum_eq_logarithmicWeightedSum _ ha0 hx]
-  exact mellinWeightTwo_shifted_tsum_eq_integral_LSeries a ha σ hx hτ hsum
+  exact mellinWeightTwo_shifted_integral a ha σ hx hτ hsum
 
 /-- For `τ > 0` and `x > 1`, the kernel `x^z/z²`, with `z = τ + iy`, is integrable
 in real `y`, and its integral divided by `2π` equals `log x`. Apply logarithmic

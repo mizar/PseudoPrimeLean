@@ -32,8 +32,8 @@ theorem positive_power_kernel_parameters {a : ℕ} (ha : 0 < a) {τ A : ℝ} (h�
 primes p give prime MR witnesses for every odd n>1 divisible by p^a whose
 exact ambient Fermat kernel has size at most p^tau. Apply the uniform subgroup
 bound at modulus p^a, retaining exponent n-1. The threshold is independent of n. -/
-theorem eventually_exists_prime_witness_of_positive_local_kernel {a : ℕ} (ha : 0 < a) {τ A : ℝ}
-    (hτ : 0 < τ) (hτa : τ < a) (hA : (a : ℝ) / ((a : ℝ) - τ) < A) :
+theorem eventually_prime_positiveLocalKernel {a : ℕ} (ha : 0 < a) {τ A : ℝ} (hτ : 0 < τ)
+    (hτa : τ < a) (hA : (a : ℝ) / ((a : ℝ) - τ) < A) :
     ∀ᶠ p : ℕ in Filter.atTop,
       p.Prime →
         p ≠ 2 →
@@ -48,8 +48,7 @@ theorem eventually_exists_prime_witness_of_positive_local_kernel {a : ℕ} (ha :
                 ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
   obtain ⟨hb0, hb1, hbA⟩ := positive_power_kernel_parameters ha hτ hτa hA
   obtain ⟨Q, hQ⟩ :=
-    Filter.eventually_atTop.mp
-      (LLS.eventually_exists_prime_outside_le_log_power_of_card_rpow hb0 hb1 hbA)
+    Filter.eventually_atTop.mp (LLS.eventually_prime_outside_logPower_cardRpow hb0 hb1 hbA)
   filter_upwards [Filter.eventually_ge_atTop Q] with p hpQ hp hp2
   intro n hn ho hdiv hcard
   have hpq : p ≤ p ^ a := Nat.le_of_dvd (pow_pos hp.pos a) (dvd_pow_self p ha.ne')
@@ -66,14 +65,14 @@ theorem eventually_exists_prime_witness_of_positive_local_kernel {a : ℕ} (ha :
   obtain ⟨r, hr, _, hb, hout⟩ := hQ (p ^ a) (hpQ.trans hpq) H hH
   refine ⟨r, hr, hb, ?_⟩
   intro hpass
-  exact hout (PrimeTest.strongMillerRabinPass_mem_local_divisor_powerKernel hn ho hdiv hpass)
+  exact hout (PrimeTest.strongMR_local_divisorKernel hn ho hdiv hpass)
 
 /-- For fixed positive a, 0<tau<a and A>a/(a-tau), sufficiently large odd n>1
 with a prime-power divisor p^a and gcd(p-1,n-1)<=p^tau have a prime MR witness
 at most log(n)^A. Large local primes use the uniform subgroup bound; bounded
 local primes reject n themselves. Thus the threshold is uniform over p and n. -/
-theorem eventually_exists_prime_witness_of_positive_power_kernel {a : ℕ} (ha : 0 < a) {τ A : ℝ}
-    (hτ : 0 < τ) (hτa : τ < a) (hA : (a : ℝ) / ((a : ℝ) - τ) < A) :
+theorem eventually_prime_positivePowerKernel {a : ℕ} (ha : 0 < a) {τ A : ℝ} (hτ : 0 < τ)
+    (hτa : τ < a) (hA : (a : ℝ) / ((a : ℝ) - τ) < A) :
     ∀ᶠ n : ℕ in Filter.atTop,
       1 < n →
         Odd n →
@@ -83,9 +82,7 @@ theorem eventually_exists_prime_witness_of_positive_power_kernel {a : ℕ} (ha :
             (r : ℝ) ≤ (Real.log n) ^ A ∧ ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
   have haR : (0 : ℝ) < a := Nat.cast_pos.mpr ha
   have hAp : 0 < A := (div_pos haR (sub_pos.mpr hτa)).trans hA
-  obtain ⟨P, hP⟩ :=
-    Filter.eventually_atTop.mp
-      (eventually_exists_prime_witness_of_positive_local_kernel ha hτ hτa hA)
+  obtain ⟨P, hP⟩ := Filter.eventually_atTop.mp (eventually_prime_positiveLocalKernel ha hτ hτa hA)
   have ht : Filter.Tendsto (fun n : ℕ ↦ (Real.log n) ^ A) Filter.atTop Filter.atTop :=
     (tendsto_rpow_atTop hAp).comp (Real.tendsto_log_atTop.comp tendsto_natCast_atTop_atTop)
   filter_upwards [ht.eventually_ge_atTop (P : ℝ)] with n hnb hn ho hex
@@ -104,8 +101,8 @@ theorem eventually_exists_prime_witness_of_positive_power_kernel {a : ℕ} (ha :
 /-- For fixed positive a, 0<tau<a and A>a/(a-tau), the least prime MR witness
 obeys log(n)^A eventually on the exact-small-kernel family. Minimize the
 constructed rejecting-prime predicate. This includes squarefree inputs when a=1. -/
-theorem eventually_exists_least_prime_witness_of_positive_power_kernel {a : ℕ} (ha : 0 < a)
-    {τ A : ℝ} (hτ : 0 < τ) (hτa : τ < a) (hA : (a : ℝ) / ((a : ℝ) - τ) < A) :
+theorem eventually_least_positivePowerKernel {a : ℕ} (ha : 0 < a) {τ A : ℝ} (hτ : 0 < τ)
+    (hτa : τ < a) (hA : (a : ℝ) / ((a : ℝ) - τ) < A) :
     ∀ᶠ n : ℕ in Filter.atTop,
       1 < n →
         Odd n →
@@ -116,7 +113,7 @@ theorem eventually_exists_least_prime_witness_of_positive_power_kernel {a : ℕ}
             (r : ℝ) ≤ (Real.log n) ^ A ∧
             ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → r ≤ s := by
   classical
-  apply (eventually_exists_prime_witness_of_positive_power_kernel ha hτ hτa hA).mono
+  apply (eventually_prime_positivePowerKernel ha hτ hτa hA).mono
   intro n hn hng ho hdiv
   obtain ⟨r, hr, hb, hf⟩ := hn hng ho hdiv
   have hex : ∃ s : ℕ, s.Prime ∧ ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := ⟨r, hr, hf⟩
@@ -129,8 +126,8 @@ theorem eventually_exists_least_prime_witness_of_positive_power_kernel {a : ℕ}
 with a prime divisor p satisfying gcd(p-1,n-1)<=p^tau has least prime MR
 witness at most log(n)^A. Specialize the positive-power theorem to a=1.
 Squarefreeness is unrestricted, so this also covers the stated squarefree family. -/
-theorem eventually_exists_least_prime_witness_of_prime_small_kernel {τ A : ℝ} (hτ0 : 0 < τ)
-    (hτ1 : τ < 1) (hA : 1 / (1 - τ) < A) :
+theorem eventually_least_prime_smallKernel {τ A : ℝ} (hτ0 : 0 < τ) (hτ1 : τ < 1)
+    (hA : 1 / (1 - τ) < A) :
     ∀ᶠ n : ℕ in Filter.atTop,
       1 < n →
         Odd n →
@@ -141,14 +138,14 @@ theorem eventually_exists_least_prime_witness_of_prime_small_kernel {τ A : ℝ}
             (r : ℝ) ≤ (Real.log n) ^ A ∧
             ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → r ≤ s := by
   simpa only [pow_one] using
-    eventually_exists_least_prime_witness_of_positive_power_kernel (a := 1) (by norm_num only) hτ0
+    eventually_least_positivePowerKernel (a := 1) (by norm_num only) hτ0
       (by simpa only [Nat.cast_one] using hτ1) (by simpa only [Nat.cast_one] using hA)
 
 /-- If a is positive and 0<tau<a/2, choose a fixed exponent A<2 for the
 exact-small-kernel family. The least prime MR witness is eventually bounded
 by log(n)^A. This proves a subquadratic exponent for a=1 as well as higher powers. -/
-theorem exists_subquadratic_exponent_of_positive_power_kernel {a : ℕ} (ha : 0 < a) {τ : ℝ}
-    (hτ : 0 < τ) (hτhalf : τ < (a : ℝ) / 2) :
+theorem exists_subquadratic_positivePowerKernel {a : ℕ} (ha : 0 < a) {τ : ℝ} (hτ : 0 < τ)
+    (hτhalf : τ < (a : ℝ) / 2) :
     ∃ A : ℝ,
       0 < A ∧
         A < 2 ∧
@@ -168,8 +165,6 @@ theorem exists_subquadratic_exponent_of_positive_power_kernel {a : ℕ} (ha : 0 
     apply (div_lt_iff₀ hd).mpr
     linarith only [hτhalf]
   obtain ⟨A, hA, hA2⟩ := exists_between hb
-  exact
-    ⟨A, (div_pos haR hd).trans hA, hA2,
-      eventually_exists_least_prime_witness_of_positive_power_kernel ha hτ hτa hA⟩
+  exact ⟨A, (div_pos haR hd).trans hA, hA2, eventually_least_positivePowerKernel ha hτ hτa hA⟩
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

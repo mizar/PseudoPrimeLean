@@ -75,7 +75,7 @@ theorem gamma_primitive_sum_add_local_le_generalTwoPole {q : ℕ} [NeZero q]
   have hd :=
     paired_weighted_sum_eq_of_ambient_trivial χ.primitiveCharacter S
       (pairedEulerPrefixWeight (5 / 4) (11 / 4) (3 / 4)) hS
-      (fun n _ hn ↦ pairedEulerPrefixWeight_eq_zero_of_mangoldt_eq_zero _ _ _ hn) ht
+      (fun n _ hn ↦ pairedEulerWeight_eq_zero_of_mangoldt_zero _ _ _ hn) ht
   dsimp only [generalTwoPoleGammaUpper]
   linarith only [hC, he, hd]
 

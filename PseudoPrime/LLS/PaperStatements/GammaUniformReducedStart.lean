@@ -26,9 +26,9 @@ namespace PseudoPrime.LLS.PaperStatements
 outside H through (4/5)(log q)^2. The same local allowance is valid from 42875,
 and the fixed error closes at 45731. Apply the uniform ramp contradiction.
 This strengthens the logarithmic starting value without changing the kernel. -/
-theorem exists_prime_outside_le_gamma_four_fifths_log_45731 {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 45731 ≤ Real.log q) :
+theorem exists_prime_outside_4_5_of_log_ge_45731_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hH : H ≠ ⊤) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hL : 45731 ≤ Real.log q) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬p ∣ q ∧
@@ -66,7 +66,6 @@ theorem exists_prime_outside_le_gamma_four_fifths_19861 {q : ℕ} (H : Subgroup 
     Nat.ne_zero_of_lt ((pow_pos (by norm_num only : (0 : ℕ) < 10) 19861).trans_le hq)
   let : NeZero q := ⟨hq0⟩
   exact
-    exists_prime_outside_le_gamma_four_fifths_log_45731 H hH hGRH
-      (log_nat_gt_45731_of_decimal_19861 hq).le
+    exists_prime_outside_4_5_of_log_ge_45731_GRH H hH hGRH (log_nat_gt_45731_of_decimal_19861 hq).le
 
 end PseudoPrime.LLS.PaperStatements

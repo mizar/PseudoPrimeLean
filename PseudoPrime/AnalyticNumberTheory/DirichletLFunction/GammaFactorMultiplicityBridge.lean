@@ -105,16 +105,15 @@ theorem analyticAt_gammaFactor_of_ne_zero {N : ℕ} {χ : DirichletCharacter ℂ
 Input/assumptions: `N ≥ 1`, `χ ≠ 1`, `ρ : ℂ` with `gammaFactor χ ρ ≠ 0`.
 Conclusion: `analyticOrderAt (LFunction χ) ρ = analyticOrderAt (completedLFunction χ) ρ`.
 Content: `LFunction χ = fun z => completedLFunction χ z / gammaFactor χ z` holds as an exact
-functional identity (`DirichletLFunction.dirichletLFunction_eq_completed_div_gammaFactor`, valid at
+functional identity (`DirichletLFunction.L_eq_completed_div_gammaFactor`, valid at
 every point since
 `N ≠ 1`). Writing this as `completedLFunction χ * (gammaFactor χ)⁻¹`, `analyticOrderAt_mul` (both
 factors `AnalyticAt` — `completedLFunction χ` globally, `(gammaFactor χ)⁻¹` via `AnalyticAt.inv`
 fed by `analyticAt_gammaFactor_of_ne_zero`) splits the order into a sum; the inverse factor has
 order `0` (`AnalyticAt.analyticOrderAt_eq_zero`, since `(gammaFactor χ ρ)⁻¹ ≠ 0`).
 -/
-theorem analyticOrderAt_LFunction_eq_completedLFunction_of_gamma_ne_zero {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hne : χ ≠ 1) {ρ : ℂ}
-    (hΓ : DirichletCharacter.gammaFactor χ ρ ≠ 0) :
+theorem L_order_eq_completed_of_gamma_ne {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hne : χ ≠ 1) {ρ : ℂ} (hΓ : DirichletCharacter.gammaFactor χ ρ ≠ 0) :
     analyticOrderAt (DirichletCharacter.LFunction χ) ρ =
       analyticOrderAt (DirichletCharacter.completedLFunction χ) ρ := by
   have hFanalytic : AnalyticAt ℂ (DirichletCharacter.completedLFunction χ) ρ :=
@@ -129,8 +128,7 @@ theorem analyticOrderAt_LFunction_eq_completedLFunction_of_gamma_ne_zero {N : �
     DirichletCharacter.LFunction χ = fun z =>
       DirichletCharacter.completedLFunction χ z * (DirichletCharacter.gammaFactor χ z)⁻¹ := by
     funext z
-    rw [dirichletLFunction_eq_completed_div_gammaFactor χ z
-        (Or.inr (dirichletCharacter_level_ne_one_of_ne_one hne)),
+    rw [L_eq_completed_div_gammaFactor χ z (Or.inr (character_level_ne_one_of_ne_one hne)),
       div_eq_mul_inv]
   have hmul :
     analyticOrderAt
@@ -146,17 +144,16 @@ theorem analyticOrderAt_LFunction_eq_completedLFunction_of_gamma_ne_zero {N : �
 Input/assumptions: `N ≥ 1`, `χ ≠ 1`, `ρ : ℂ` with `gammaFactor χ ρ ≠ 0`.
 Conclusion: `dirichletLFunctionZeroMultiplicity χ ρ = divisor (completedLFunction χ) univ ρ`
 (as integers).
-Content: `analyticOrderAt_LFunction_eq_completedLFunction_of_gamma_ne_zero` gives equal `ℕ∞`-orders;
+Content: `L_order_eq_completed_of_gamma_ne` gives equal `ℕ∞`-orders;
 `dirichletLFunctionZeroMultiplicity` is the `.toNat` of `L`'s order, while `MeromorphicOn.divisor`
 (via `AnalyticOnNhd.divisor_apply`, `completedLFunction χ` being entire) is the `ℤ`-cast `.untop₀`
 of the same (now equal) order — both reductions agree on every `ℕ∞` value, `⊤` or finite.
 -/
-theorem dirichletLFunctionZeroMultiplicity_eq_divisor_completedLFunction_of_gamma_ne_zero {N : ℕ}
-    [NeZero N] {χ : DirichletCharacter ℂ N} (hne : χ ≠ 1) {ρ : ℂ}
-    (hΓ : DirichletCharacter.gammaFactor χ ρ ≠ 0) :
+theorem zeroMultiplicity_divisor_gamma_ne {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hne : χ ≠ 1) {ρ : ℂ} (hΓ : DirichletCharacter.gammaFactor χ ρ ≠ 0) :
     (dirichletLFunctionZeroMultiplicity χ ρ : ℤ) =
       MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ := by
-  have horder := analyticOrderAt_LFunction_eq_completedLFunction_of_gamma_ne_zero hne hΓ
+  have horder := L_order_eq_completed_of_gamma_ne hne hΓ
   have hAnU : AnalyticOnNhd ℂ (DirichletCharacter.completedLFunction χ) Set.univ := fun z _ =>
     (DirichletCharacter.differentiable_completedLFunction hne).analyticAt z
   rw [MeromorphicOn.AnalyticOnNhd.divisor_apply hAnU (Set.mem_univ ρ), ← horder,

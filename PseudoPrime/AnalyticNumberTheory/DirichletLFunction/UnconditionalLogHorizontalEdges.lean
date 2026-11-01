@@ -28,9 +28,9 @@ theorem logKernel_central_signed_point_bound {q : ℕ} [NeZero q] {χ : Dirichle
   have hform : (σ : ℂ) - (T : ℂ) * Complex.I = (σ : ℂ) + ((-T : ℝ) : ℂ) * Complex.I := by
     push_cast
     ring
-  refine ⟨norm_dirichletLogContourKernel_horizontal_le hx hσ hT.ne' hplus, ?_⟩
+  refine ⟨norm_logKernel_horizontal_le hx hσ hT.ne' hplus, ?_⟩
   rw [hform] at hminus ⊢
-  apply norm_dirichletLogContourKernel_horizontal_le hx hσ (neg_ne_zero.mpr hT.ne')
+  apply norm_logKernel_horizontal_le hx hσ (neg_ne_zero.mpr hT.ne')
   simpa only [neg_sq] using hminus
 
 /-- A uniform far-left ordinary logarithmic-derivative estimate gives simultaneous
@@ -53,13 +53,12 @@ theorem logKernel_farLeft_signed_point_bound {q : ℕ} [NeZero q] {χ : Dirichle
   have hplus := hD σ T hσlo hσhi (by rwa [abs_of_nonneg hTpos.le])
   rw [abs_of_nonneg hTpos.le] at hplus
   refine
-    ⟨norm_dirichletLogContourKernel_farLeft_le hx hσhi hTpos.ne'
-        (div_le_div_of_nonneg_right hplus (sq_nonneg T)),
+    ⟨norm_logKernel_farLeft_le hx hσhi hTpos.ne' (div_le_div_of_nonneg_right hplus (sq_nonneg T)),
       ?_⟩
   have hminus := hD σ (-T) hσlo hσhi (by rwa [abs_neg, abs_of_nonneg hTpos.le])
   rw [abs_neg, abs_of_nonneg hTpos.le] at hminus
   rw [hform]
-  apply norm_dirichletLogContourKernel_farLeft_le hx hσhi (neg_ne_zero.mpr hTpos.ne')
+  apply norm_logKernel_farLeft_le hx hσhi (neg_ne_zero.mpr hTpos.ne')
   simpa only [neg_sq] using div_le_div_of_nonneg_right hminus (sq_nonneg T)
 
 /-- A primitive nonprincipal character with nonprincipal inverse has one height
@@ -69,8 +68,8 @@ positive real scale at least one. The central completed edges remain nonzero.
 Combine the unconditional ordinary envelope with the far-left functional-equation
 bound and integrate a common majorant tending to zero.
 This removes GRH from the horizontal-edge limit needed by smoothed explicit formulas. -/
-theorem exists_unconditional_logKernel_horizontal_height_limits {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
+theorem exists_logKernel_heightLimits {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     ∃ T : ℕ → ℝ,
       Filter.Tendsto T Filter.atTop Filter.atTop ∧
         (∀ k : ℕ,
@@ -93,8 +92,7 @@ theorem exists_unconditional_logKernel_horizontal_height_limits {q : ℕ} [NeZer
                       ∫ σ in (-(A : ℝ) - 1 / 2)..2,
                         dirichletLogContourKernel x χ ((σ : ℂ) - T k * Complex.I))
                     Filter.atTop (nhds 0) := by
-  obtain ⟨T, η, hT, hη, hspec⟩ :=
-    exists_unconditional_ordinary_horizontal_height_sequence hq hp hne hinv
+  obtain ⟨T, η, hT, hη, hspec⟩ := exists_ordinaryHorizontalHeightSeq hq hp hne hinv
   have hTk (k : ℕ) : 1 ≤ T k := (le_add_of_nonneg_left (Nat.cast_nonneg k)).trans (hspec k).1
   have hηnonneg (k : ℕ) : 0 ≤ η k :=
     (div_nonneg (norm_nonneg _) (sq_nonneg _)).trans ((hspec k).2 0 (by norm_num only)).1
@@ -102,8 +100,7 @@ theorem exists_unconditional_logKernel_horizontal_height_limits {q : ℕ} [NeZer
   · intro k
     exact ⟨(hspec k).1, fun σ hσ ↦ ⟨((hspec k).2 σ hσ).2.2.1, ((hspec k).2 σ hσ).2.2.2⟩⟩
   · intro A hA x hx
-    obtain ⟨D, hDnonneg, hD⟩ :=
-      exists_norm_logDeriv_dirichletLFunction_farLeft_le_general A hp hne hinv
+    obtain ⟨D, hDnonneg, hD⟩ := norm_L_logDeriv_farLeft_bound A hp hne hinv
     let μ := fun k : ℕ ↦ D * (T k + 1) / (T k) ^ 2
     have hμ : Filter.Tendsto μ Filter.atTop (nhds 0) := by
       have h := tendsto_constant_add_linear_div_sq T hT 0 D (le_refl 0) hDnonneg

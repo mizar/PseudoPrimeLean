@@ -91,22 +91,20 @@ theorem integral_triangular_resolvent_vertical_eq {α : ℂ} (hα : α.re < 0) {
     simp only [div_eq_mul_inv, one_mul]
     ring_nf
   exact
-    RectangleGeometry.integral_vertical_eq_of_nonnegative_strip_decay hf hc hd
+    RectangleGeometry.vertical_integral_eq_of_strip_decay hf hc hd
       (div_nonneg (mul_nonneg hC.le (Real.exp_pos _).le) hδ.le) hb hi
 
 /-- For positive parameter and argument and a pole with negative real part,
 the central inverse transform equals the three translated regularized weights.
 Shift to one quarter and apply positive-line resolvent inversion.
 This connects the central digamma integral series to the explicit pole weights. -/
-theorem mellinInv_triangular_resolvent_central_weight_combination {α : ℂ} (hα : α.re < 0) {a u : ℝ}
-    (ha : 0 < a) (hu : 0 < u) :
+theorem mellinInv_triangular_central_resolvent {α : ℂ} (hα : α.re < 0) {a u : ℝ} (ha : 0 < a)
+    (hu : 0 < u) :
     mellinInv 0 (fun s : ℂ ↦ Analysis.triangularMellinFunction a s / (s - α)) u =
       mellinResolventWeight α (u / Real.exp (2 * a)) +
           mellinResolventWeight α (u / Real.exp (-2 * a)) -
         2 * mellinResolventWeight α u := by
-  rw [←
-    mellinInv_triangular_resolvent_weight_combination hα ha.ne' (by norm_num only : (0 : ℝ) < 1 / 4)
-      hu]
+  rw [← mellinInv_triangular_resolvent hα ha.ne' (by norm_num only : (0 : ℝ) < 1 / 4) hu]
   unfold mellinInv
   congr 1
   have h :=

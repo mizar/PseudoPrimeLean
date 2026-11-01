@@ -21,8 +21,7 @@ namespace PseudoPrime.LLS
 /-- Input: RH and x>=50000. Claim: the logarithmically weighted Mangoldt
 error is at most (3/20)sqrt(x). Retain the refined square-root and logarithm
 terms and use the logarithm tangent at 256. Role: quantify large-scale psi bounds. -/
-theorem logWeightedMangoldtSum_error_le_three_twentieths_sqrt (hRH : RiemannHypothesis) {x : ℝ}
-    (hx : 50000 ≤ x) :
+theorem logWeighted_error_le_three_20_sqrt_RH (hRH : RiemannHypothesis) {x : ℝ} (hx : 50000 ≤ x) :
     |AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum x - x| ≤
       (3 / 20 : ℝ) * Real.sqrt x := by
   have hx1 : 1 < x := by linarith only [hx]
@@ -60,13 +59,13 @@ theorem psi_bounds_of_hundred_thousand_le (hRH : RiemannHypothesis) {t : ℝ} (h
     (AnalyticNumberTheory.Arithmetic.psi_bounds_of_logWeighted_error_without_log
         (by linarith only [ht0] : 0 < (19 / 20 : ℝ) * t)
         (by linarith only [ht0] : (19 / 20 : ℝ) * t < t)
-        (logWeightedMangoldtSum_error_le_three_twentieths_sqrt hRH (by linarith only [ht]))
-        (logWeightedMangoldtSum_error_le_three_twentieths_sqrt hRH (by linarith only [ht]))).2
+        (logWeighted_error_le_three_20_sqrt_RH hRH (by linarith only [ht]))
+        (logWeighted_error_le_three_20_sqrt_RH hRH (by linarith only [ht]))).2
   have hu :=
     (AnalyticNumberTheory.Arithmetic.psi_bounds_of_logWeighted_error_without_log ht0
         (by linarith only [ht0] : t < (21 / 20 : ℝ) * t)
-        (logWeightedMangoldtSum_error_le_three_twentieths_sqrt hRH (by linarith only [ht]))
-        (logWeightedMangoldtSum_error_le_three_twentieths_sqrt hRH (by linarith only [ht]))).1
+        (logWeighted_error_le_three_20_sqrt_RH hRH (by linarith only [ht]))
+        (logWeighted_error_le_three_20_sqrt_RH hRH (by linarith only [ht]))).1
   have hlr : ((19 / 20 : ℝ) * t) / (t - (19 / 20) * t) = 19 := by
     apply (div_eq_iff (by linarith only [ht0] : t - (19 / 20 : ℝ) * t ≠ 0)).mpr
     ring
@@ -240,8 +239,8 @@ theorem psi_doubling_block_lower (hRH : RiemannHypothesis) {a : ℝ} (ha : 900 �
 Claim: the prefix through b gains at least (a/200)b^(-21/20). Use
 monotonicity of psi, the uniform short block and the positive Euler weight.
 Role: supply reusable growth below the large-scale doubling entrance. -/
-theorem gamma_euler_prefix_lower_growth_of_doubling_block (hRH : RiemannHypothesis) {a b : ℕ}
-    {C : ℝ} (ha : 900 ≤ a) (hratio : (2 : ℝ) * a ≤ b)
+theorem gammaEulerPrefix_growth_doubling_RH (hRH : RiemannHypothesis) {a b : ℕ} {C : ℝ}
+    (ha : 900 ≤ a) (hratio : (2 : ℝ) * a ≤ b)
     (hC : C ≤ ∑ j ∈ Finset.Ioc 0 a, Analysis.gammaResolventMangoldtWeight j) :
     C + ((a : ℝ) / 8) * (b : ℝ) ^ (-21 / 20 : ℝ) ≤
       ∑ j ∈ Finset.Ioc 0 b, Analysis.gammaResolventMangoldtWeight j := by
@@ -320,8 +319,8 @@ theorem psi_five_fourths_block_lower (hRH : RiemannHypothesis) {a : ℝ} (ha : 1
 Claim: the prefix through b gains at least (a/200)b^(-21/20). Use
 monotonicity of psi, the uniform short block and the positive Euler weight.
 Role: supply reusable growth below the large-scale doubling entrance. -/
-theorem gamma_euler_prefix_lower_growth_of_five_fourths_block (hRH : RiemannHypothesis) {a b : ℕ}
-    {C : ℝ} (ha : 10000 ≤ a) (hratio : (5 / 4 : ℝ) * a ≤ b)
+theorem gamma_euler_prefix_growth_5_4_RH (hRH : RiemannHypothesis) {a b : ℕ} {C : ℝ}
+    (ha : 10000 ≤ a) (hratio : (5 / 4 : ℝ) * a ≤ b)
     (hC : C ≤ ∑ j ∈ Finset.Ioc 0 a, Analysis.gammaResolventMangoldtWeight j) :
     C + ((a : ℝ) / 200) * (b : ℝ) ^ (-21 / 20 : ℝ) ≤
       ∑ j ∈ Finset.Ioc 0 b, Analysis.gammaResolventMangoldtWeight j := by
@@ -346,8 +345,8 @@ namespace PseudoPrime.LLS
 1<s<b, 1<a<t. Claim: the explicit asymmetric psi block adds the displayed
 Euler credit. Retain the endpoint weight in the actual prefix growth theorem.
 Role: handle short blocks below the fixed large-scale doubling entrance. -/
-theorem gamma_euler_prefix_lower_growth_of_asymmetric_rh_errors (hRH : RiemannHypothesis) {a b : ℕ}
-    {s t C : ℝ} (hab : a ≤ b) (hs : 1 < s) (hsb : s < b) (ha : (1 : ℝ) < a) (hat : (a : ℝ) < t)
+theorem gammaEulerPrefix_growth_asymmetric_RH (hRH : RiemannHypothesis) {a b : ℕ} {s t C : ℝ}
+    (hab : a ≤ b) (hs : 1 < s) (hsb : s < b) (ha : (1 : ℝ) < a) (hat : (a : ℝ) < t)
     (hC : C ≤ ∑ j ∈ Finset.Ioc 0 a, Analysis.gammaResolventMangoldtWeight j) :
     C + (1 / 2 : ℝ) * (b : ℝ) ^ (-21 / 20 : ℝ) * psiAsymmetricBlockLower a b s t ≤
       ∑ j ∈ Finset.Ioc 0 b, Analysis.gammaResolventMangoldtWeight j := by
@@ -483,8 +482,8 @@ theorem gamma_euler_prefix_doubling_gain_of_power_lower (hRH : RiemannHypothesis
 Claim: k doubling blocks ending at most at B add (39/200)rk to the credit.
 Induct over blocks and use antitonicity of the endpoint power. Role: keep
 the final scale dependence instead of rounding it at a fixed cutoff. -/
-theorem gamma_euler_prefix_lower_doublings_of_power_lower (hRH : RiemannHypothesis) {a B : ℕ}
-    (ha : 100000 ≤ a) {r C : ℝ} (hr : r ≤ (B : ℝ) ^ (-1 / 20 : ℝ))
+theorem gammaEulerPrefix_doublings_power_RH (hRH : RiemannHypothesis) {a B : ℕ} (ha : 100000 ≤ a)
+    {r C : ℝ} (hr : r ≤ (B : ℝ) ^ (-1 / 20 : ℝ))
     (hC : C ≤ ∑ n ∈ Finset.Ioc 0 a, Analysis.gammaResolventMangoldtWeight n) (k : ℕ) :
     a * 2 ^ k ≤ B →
       C + (39 / 200 : ℝ) * r * k ≤
@@ -536,7 +535,7 @@ theorem gamma_prefix102400000_lower_halfline (hRH : RiemannHypothesis) {b : ℝ}
       ∑ n ∈ Finset.Ioc 0 (100000 : ℕ), Analysis.gammaResolventMangoldtWeight n := by
     simpa only [Nat.floor_ofNat] using hs
   have hg :=
-    gamma_euler_prefix_lower_doublings_of_power_lower hRH (by norm_num only : (100000 : ℕ) ≤ 100000)
+    gammaEulerPrefix_doublings_power_RH hRH (by norm_num only : (100000 : ℕ) ≤ 100000)
       (show (39 / 100 : ℝ) ≤ (102400000 : ℝ) ^ (-1 / 20 : ℝ) by simpa only [neg_div] using hp) hsN
       10 (by norm_num only : (100000 : ℕ) * 2 ^ 10 ≤ 102400000)
   change

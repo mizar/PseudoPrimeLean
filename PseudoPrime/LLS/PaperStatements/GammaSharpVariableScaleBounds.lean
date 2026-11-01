@@ -22,7 +22,7 @@ namespace PseudoPrime.LLS.PaperStatements
 Claim: the completed remainder retains the pole and archimedean terms and uses sharp left moments.
 Proof: apply the exact completed formula and the improved actual left-integral bound.
 Role: the refined quantitative remainder for subsequent signed witness comparisons. -/
-theorem norm_gamma_primitive_remainder_le_variable_scale_sharp {q m : ℕ} [NeZero m]
+theorem gammaRemainder_norm_le_variable_scale_sharp {q m : ℕ} [NeZero m]
     {χ : DirichletCharacter ℂ m} (hq : 20000 ≤ q) (hm : 3 ≤ m) (hmq : m ≤ q) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     {x : ℝ} (hx : 1 ≤ x) :
@@ -43,8 +43,8 @@ theorem norm_gamma_primitive_remainder_le_variable_scale_sharp {q m : ℕ} [NeZe
             (x : ℂ) ^ (((-9 / 16 : ℝ) : ℂ) + Complex.I * t)))
   have hx1 : 1 ≤ x := hx
   have hr : ‖S - (P - Z + J)‖ ≤ 64 / 9 :=
-    norm_gamma_completed_remainder_le_sixty_four_ninths (by linarith only [hm]) hGRH hp hne hinv
-      (a := -9 / 16) (b := 9 / 16) (by norm_num only)
+    norm_gamma_completed_remainder_le_64_9_GRH (by linarith only [hm]) hGRH hp hne hinv (a :=
+      -9 / 16) (b := 9 / 16) (by norm_num only)
       (by
         change (-1 / 2 - 1 / 8 : ℝ) < -9 / 16; norm_num only)
       (by

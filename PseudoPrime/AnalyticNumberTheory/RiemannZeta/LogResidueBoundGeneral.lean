@@ -21,14 +21,14 @@ namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 
 /-- Under RH, combine the Mellin-pole residues at zero and one with the
 finite zero-contribution bound to obtain the logarithmic residue-ledger lower bound. -/
-theorem re_riemannZetaLogContourResidueLedger_unifiedTau_ge_of_riemannHypothesis
-    (hRH : RiemannHypothesis) {x τ : ℝ} (hx : 1 < x) (hτ : 1 < τ) (m : ℕ) :
+theorem logResidueLedger_unified_re_lower_RH (hRH : RiemannHypothesis) {x τ : ℝ} (hx : 1 < x)
+    (hτ : 1 < τ) (m : ℕ) :
     x - Real.log (2 * Real.pi) * Real.log x - 1 -
         2 * RiemannXi.riemannZeroMass * (Real.sqrt x + 1) ≤
       (riemannZetaLogContourResidueLedger x (unifiedRectangleLower m)
           (unifiedTauRectangleUpper τ m)).re := by
   have hxpos : 0 < x := by linarith only [hx]
-  rw [riemannZetaLogContourResidueLedger_unifiedTau_eq hτ, Complex.add_re, Complex.add_re,
+  rw [zetaLogContourResidueLedger_unifiedTau_eq hτ, Complex.add_re, Complex.add_re,
     riemannZetaLogResidueAtZero_eq hxpos, riemannZetaLogResidueAtOne_eq]
   have hre0 :
     (-RiemannXi.qMinusOneRiemannZetaSecondLogDerivAtZero -
@@ -46,7 +46,7 @@ theorem re_riemannZetaLogContourResidueLedger_unifiedTau_ge_of_riemannHypothesis
   rw [hre0, hre1]
   unfold riemannZetaLogContourZeroLedger
   have hzero_ledger :=
-    re_sum_riemannZetaLogZeroContribution_ge_of_riemannHypothesis hRH hx
+    logZeroSum_re_lower_RH hRH hx
       (riemannZetaZerosInAnyRectangle (unifiedRectangleLower m) (unifiedTauRectangleUpper τ m))
       (fun ρ hρ => (mem_riemannZetaZerosInAnyRectangle_iff.mp hρ).2)
   have hq := RiemannXi.re_qMinusOne_add_logTrivialZeroSeries_le hRH hx
@@ -54,20 +54,17 @@ theorem re_riemannZetaLogContourResidueLedger_unifiedTau_ge_of_riemannHypothesis
 
 /-- **The `τ = 2` case of the vertical-integral lower bound (logarithmic kernel), under RH.**
 Combines the finite ledger bound with
-`RiemannZeta.tendsto_riemannZetaLogContourResidueLedger_atTop` via
+`RiemannZeta.tendsto_zetaLogContourResidueLedger_atTop` via
 `ge_of_tendsto`, after cancelling the leading `I` factor. -/
-theorem re_integral_riemannZetaLogContourKernel_two_ge_of_riemannHypothesis
-    (hRH : RiemannHypothesis) {x : ℝ} (hx : 1 < x) :
+theorem logKernel_integral_two_re_lower_RH (hRH : RiemannHypothesis) {x : ℝ} (hx : 1 < x) :
     x - Real.log (2 * Real.pi) * Real.log x - 1 -
         2 * RiemannXi.riemannZeroMass * (Real.sqrt x + 1) ≤
       ((2 * Real.pi : ℝ)⁻¹ •
           ∫ y : ℝ, riemannZetaLogContourKernel x ((2 : ℂ) + (y : ℂ) * Complex.I)).re := by
   apply General.re_inv_two_pi_smul_ge_of_tendsto_residueLedger
   · simpa only [Complex.ofReal_mul, Complex.ofReal_ofNat, smul_eq_mul] using
-      tendsto_riemannZetaLogContourResidueLedger_atTop hx (by norm_num only) le_rfl
+      tendsto_zetaLogContourResidueLedger_atTop hx (by norm_num only) le_rfl
   · intro m
-    exact
-      re_riemannZetaLogContourResidueLedger_unifiedTau_ge_of_riemannHypothesis hRH hx
-        (by norm_num only) m
+    exact logResidueLedger_unified_re_lower_RH hRH hx (by norm_num only) m
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

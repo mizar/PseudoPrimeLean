@@ -275,7 +275,7 @@ theorem mellinConvergent_gammaMellinDensity_of_re_pos {s : ℂ} (hs : 0 < (s + 1
 /-- The Mellin transform of the density is vertically integrable whenever
 `c+1/2>0`. Identify its values with gamma on the corresponding positive line.
 This supplies frequency convergence for inversion on that line. -/
-theorem verticalIntegrable_mellin_gammaMellinDensity_of_pos {c : ℝ} (hc : 0 < c + 1 / 2) :
+theorem verticalIntegrable_mellin_gammaDensity {c : ℝ} (hc : 0 < c + 1 / 2) :
     Complex.VerticalIntegrable (mellin gammaMellinDensity) c := by
   change MeasureTheory.Integrable (fun t : ℝ ↦ mellin gammaMellinDensity ((c : ℂ) + t * Complex.I))
   apply (integrable_Gamma_vertical hc).congr
@@ -303,7 +303,7 @@ theorem mellinInv_gamma_half_of_pos {c u : ℝ} (hc : 0 < c + 1 / 2) (hu : 0 < u
     exact hc
   have hi :=
     mellinInv_mellin_eq c gammaMellinDensity hu (mellinConvergent_gammaMellinDensity_of_re_pos hs)
-      (verticalIntegrable_mellin_gammaMellinDensity_of_pos hc) (continuousAt_gammaMellinDensity hu)
+      (verticalIntegrable_mellin_gammaDensity hc) (continuousAt_gammaMellinDensity hu)
   rw [gammaMellinDensity_eq hu] at hi
   apply Eq.trans ?_ hi
   unfold mellinInv

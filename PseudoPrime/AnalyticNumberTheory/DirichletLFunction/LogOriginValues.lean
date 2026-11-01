@@ -29,11 +29,9 @@ theorem log_residue_zero_even_eq {q : ℕ} [NeZero q] {χ : DirichletCharacter �
               (Real.log x) ^ 2 / 2 :
             ℝ) :
           ℂ) := by
-  rw [dirichletLogResidueAt_zero_of_even hne x he,
-    iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_eq hp hne hx,
-    deriv_logDeriv_dirichletEvenZeroLocalFactor_zero hp hne,
-    logDeriv_dirichletEvenZeroLocalFactor_zero hp hne, ← Complex.ofReal_log hx.le, ←
-    Complex.ofReal_log Real.pi_nonneg]
+  rw [dirichletLogResidueAt_zero_of_even hne x he, iteratedDeriv_2_logEvenReg_zero hp hne hx,
+    deriv_logDeriv_evenZeroFactor_zero hp hne, logDeriv_evenZeroLocalFactor_zero hp hne, ←
+    Complex.ofReal_log hx.le, ← Complex.ofReal_log Real.pi_nonneg]
   simp only [Complex.ofReal_sub, Complex.ofReal_div, Complex.ofReal_mul, Complex.ofReal_add,
     Complex.ofReal_pow, Complex.ofReal_ofNat]
   ring
@@ -44,8 +42,7 @@ constant needed by the exact logarithmic and reciprocal residue formulas. -/
 theorem logDeriv_gammaFactor_zero_odd_eq {q : ℕ} {χ : DirichletCharacter ℂ q} (ho : χ.Odd) :
     logDeriv (DirichletCharacter.gammaFactor χ) 0 =
       -Complex.log (Real.pi : ℂ) / 2 - Complex.log 2 - (Real.eulerMascheroniConstant : ℂ) / 2 := by
-  rw [logDeriv_gammaFactor_eq_of_odd_of_half_ne_neg_nat ho
-      (by simpa only [zero_add] using Gamma.half_ne_neg_nat),
+  rw [gammaLogDeriv_odd_eq_digamma ho (by simpa only [zero_add] using Gamma.half_ne_neg_nat),
     zero_add, Complex.digamma_one_half]
   ring
 
@@ -66,11 +63,10 @@ theorem log_residue_zero_odd_eq {q : ℕ} [NeZero q] {χ : DirichletCharacter �
   have hbridge :
     logDeriv χ.LFunction 0 =
       logDeriv χ.completedLFunction 0 - logDeriv (DirichletCharacter.gammaFactor χ) 0 :=
-    (eventuallyEq_logDeriv_LFunction_zero_of_odd hp hne ho).self_of_nhds
+    (eventuallyEq_logDeriv_L_zero_of_odd hp hne ho).self_of_nhds
   have hl2 : Complex.log 2 = (Real.log 2 : ℂ) := by
     simpa only [Complex.ofReal_ofNat] using (Complex.ofReal_log (zero_le_two : (0 : ℝ) ≤ 2)).symm
-  rw [dirichletLogResidueAt_zero_of_odd hne x ho,
-    deriv_dirichletLogMellinZeroRegularization_zero_of_odd_eq hp hne ho hx,
+  rw [dirichletLogResidueAt_zero_of_odd hne x ho, deriv_logMellinReg_zero_odd_eq hp hne ho hx,
     deriv_logDeriv_LFunction_zero_of_odd hp hne ho, hbridge, logDeriv_gammaFactor_zero_odd_eq ho, ←
     Complex.ofReal_log hx.le, ← Complex.ofReal_log Real.pi_nonneg, hl2]
   simp only [Complex.ofReal_sub, Complex.ofReal_div, Complex.ofReal_mul, Complex.ofReal_add,

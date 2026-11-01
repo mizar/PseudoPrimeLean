@@ -111,7 +111,7 @@ theorem findBls5DiscriminantSquareRoot_isSome_iff (R F : ℕ) :
 
 /-- The root-search `Option` is empty exactly when the executable square test rejects. This
 equivalence does not require any quotient, size, or factorization hypotheses. -/
-theorem findBls5DiscriminantSquareRoot_none_iff_square_false (R F : ℕ) :
+theorem findBls5DiscrRoot_none_iff_square_false (R F : ℕ) :
     findBls5DiscriminantSquareRoot R F = none ↔ bls5DiscriminantIsSquare R F = false := by
   constructor
   · intro hnone
@@ -360,8 +360,8 @@ theorem bls5FactorSum_lt_two_F_of_expandedBound {n F u v : ℕ} (hu : 1 ≤ u) (
 /-- For a factorization `n = F * R + 1` with `R = uvF + u + v`, the BLS5 upper bound forces
 the Euclidean coefficients of `R` by `2 * F` to be `uv / 2` and `u + v`. Coprimality with even
 `F` supplies the oddness needed both for the sum bound and for the coefficient reconstruction. -/
-theorem bls5Coefficients_of_factorization_of_expandedBound {n R F u v : ℕ} (hFeven : Even F)
-    (hFpos : 0 < F) (hcop : Nat.Coprime F R) (hform : R = u * v * F + u + v) (hn : n = F * R + 1)
+theorem bls5Coefficients_of_factorization {n R F u v : ℕ} (hFeven : Even F) (hFpos : 0 < F)
+    (hcop : Nat.Coprime F R) (hform : R = u * v * F + u + v) (hn : n = F * R + 1)
     (hupper : n < (F + 1) * (2 * F ^ 2 + (R % (2 * F) - 1) * F + 1)) (hu : 1 ≤ u) (hv : 1 ≤ v) :
     bls5Quotient R F = u * v / 2 ∧ bls5Remainder R F = u + v := by
   have hRodd := odd_of_even_factor_coprime hFeven hcop
@@ -406,12 +406,11 @@ theorem bls5Discriminant_eq_factorDifferenceSq {R F u v : ℕ} (hsumOdd : Odd (u
 /-- Under the BLS5 expanded upper bound, a factor form forces the discriminant to be the square
 of the factor difference. The coefficient recovery theorem supplies the exact quotient and
 remainder consumed by the discriminant identity. -/
-theorem bls5Discriminant_eq_factorDifferenceSq_of_expandedBound {n R F u v : ℕ} (hFeven : Even F)
-    (hFpos : 0 < F) (hcop : Nat.Coprime F R) (hform : R = u * v * F + u + v) (hn : n = F * R + 1)
+theorem bls5Discr_eq_factorDiffSq_of_bound {n R F u v : ℕ} (hFeven : Even F) (hFpos : 0 < F)
+    (hcop : Nat.Coprime F R) (hform : R = u * v * F + u + v) (hn : n = F * R + 1)
     (hupper : n < (F + 1) * (2 * F ^ 2 + (R % (2 * F) - 1) * F + 1)) (hu : 1 ≤ u) (hv : 1 ≤ v) :
     bls5Discriminant R F = ((u : ℤ) - (v : ℤ)) ^ 2 := by
-  have hcoeff :=
-    bls5Coefficients_of_factorization_of_expandedBound hFeven hFpos hcop hform hn hupper hu hv
+  have hcoeff := bls5Coefficients_of_factorization hFeven hFpos hcop hform hn hupper hu hv
   have hRodd := odd_of_even_factor_coprime hFeven hcop
   have hterm : Even (u * v * F) := Even.mul_left hFeven (u * v)
   have hform' : R = u * v * F + (u + v) := by
@@ -425,17 +424,16 @@ theorem bls5Discriminant_eq_factorDifferenceSq_of_expandedBound {n R F u v : ℕ
 /-- A composite input with the BLS prime-divisor lower bound and expanded upper bound has
 positive BLS5 quotient and square discriminant. The factor shape and coefficient recovery provide
 the concrete factors and discriminant root. -/
-theorem bls5Coefficients_and_discriminant_of_composite_of_primeDivisorsAbove {n R F : ℕ}
-    (hFeven : Even F) (hFpos : 0 < F) (hn : 1 < n) (hnot : ¬Nat.Prime n) (hcop : Nat.Coprime F R)
-    (hdecomp : n = F * R + 1) (hupper : n < (F + 1) * (2 * F ^ 2 + (R % (2 * F) - 1) * F + 1))
+theorem bls5Coefficients_discriminant_of_composite {n R F : ℕ} (hFeven : Even F) (hFpos : 0 < F)
+    (hn : 1 < n) (hnot : ¬Nat.Prime n) (hcop : Nat.Coprime F R) (hdecomp : n = F * R + 1)
+    (hupper : n < (F + 1) * (2 * F ^ 2 + (R % (2 * F) - 1) * F + 1))
     (hlarge : PrimeDivisorsAbove n F) :
     ∃ u v : ℕ,
       1 ≤ u ∧
         1 ≤ v ∧
         bls5Quotient R F = u * v / 2 ∧
         bls5Remainder R F = u + v ∧ bls5Discriminant R F = ((u : ℤ) - (v : ℤ)) ^ 2 := by
-  obtain ⟨u, v, hfactor, hu, hv⟩ :=
-    exists_bls_factorization_of_composite_of_primeDivisorsAbove hn hnot hlarge
+  obtain ⟨u, v, hfactor, hu, hv⟩ := exists_factors_of_composite_of_large_primes hn hnot hlarge
   have hfactorR : n = F * (u * v * F + u + v) + 1 := by
     rw [hfactor]
     ring
@@ -443,8 +441,7 @@ theorem bls5Coefficients_and_discriminant_of_composite_of_primeDivisorsAbove {n 
     apply Nat.eq_of_mul_eq_mul_left hFpos
     apply Nat.add_right_cancel
     exact hdecomp.symm.trans hfactorR
-  have hcoeff :=
-    bls5Coefficients_of_factorization_of_expandedBound hFeven hFpos hcop hform hdecomp hupper hu hv
+  have hcoeff := bls5Coefficients_of_factorization hFeven hFpos hcop hform hdecomp hupper hu hv
   have hRodd := odd_of_even_factor_coprime hFeven hcop
   have hterm : Even (u * v * F) := Even.mul_left hFeven (u * v)
   have hform' : R = u * v * F + (u + v) := by
@@ -505,9 +502,8 @@ theorem bls5QuadraticRoots_of_discriminant_eq_square (R F : ℕ) (z : ℤ)
 
 /-- A positive quotient and square BLS5 discriminant produce a nontrivial factorization of
 `n = F * R + 1`. The quadratic roots recover the two factors after using `uv = 2s`. -/
-theorem bls5Factorization_of_positive_quotient_and_discriminant_square {n F R : ℕ}
-    (hdecomp : n = F * R + 1) (hquotient : 0 < bls5Quotient R F) (z : ℤ)
-    (hsquare : bls5Discriminant R F = z ^ 2) :
+theorem bls5Factorization_of_discr_square {n F R : ℕ} (hdecomp : n = F * R + 1)
+    (hquotient : 0 < bls5Quotient R F) (z : ℤ) (hsquare : bls5Discriminant R F = z ^ 2) :
     ∃ u v : ℕ, 1 ≤ u ∧ 1 ≤ v ∧ n = (u * F + 1) * (v * F + 1) := by
   obtain ⟨u, v, hu0, hv0, hrEq, _, hprod⟩ :=
     bls5QuadraticRoots_of_discriminant_eq_square R F z hsquare
@@ -553,11 +549,10 @@ theorem bls5Factorization_of_positive_quotient_and_discriminant_square {n F R : 
 
 /-- A positive BLS5 quotient and square discriminant prove compositeness. The factorization
 above gives a proper divisor, with both reconstructed factors at least two. -/
-theorem bls5NotPrime_of_positive_quotient_and_discriminant_square {n F R : ℕ} (hn : 1 < n)
-    (hF : 0 < F) (hdecomp : n = F * R + 1) (hquotient : 0 < bls5Quotient R F) (z : ℤ)
-    (hsquare : bls5Discriminant R F = z ^ 2) : ¬Nat.Prime n := by
-  obtain ⟨u, v, hu, hv, hfactor⟩ :=
-    bls5Factorization_of_positive_quotient_and_discriminant_square hdecomp hquotient z hsquare
+theorem bls5NotPrime_of_discr_square {n F R : ℕ} (hn : 1 < n) (hF : 0 < F) (hdecomp : n = F * R + 1)
+    (hquotient : 0 < bls5Quotient R F) (z : ℤ) (hsquare : bls5Discriminant R F = z ^ 2) :
+    ¬Nat.Prime n := by
+  obtain ⟨u, v, hu, hv, hfactor⟩ := bls5Factorization_of_discr_square hdecomp hquotient z hsquare
   have huProd : 1 ≤ u * F := Nat.succ_le_iff.mpr (Nat.mul_pos (Nat.zero_lt_of_lt hu) hF)
   have hvProd : 1 ≤ v * F := Nat.succ_le_iff.mpr (Nat.mul_pos (Nat.zero_lt_of_lt hv) hF)
   have hu2 : 2 ≤ u * F + 1 := by
@@ -594,14 +589,14 @@ theorem bls5_prime_iff_zero_quotient_or_nonsquare {n R F : ℕ} (hFeven : Even F
     · right
       intro z hsquare
       have hnotprime :=
-        bls5NotPrime_of_positive_quotient_and_discriminant_square (Nat.succ_le_iff.mpr hn) hFpos
-          hdecomp (Nat.pos_of_ne_zero hzero) z hsquare
+        bls5NotPrime_of_discr_square (Nat.succ_le_iff.mpr hn) hFpos hdecomp
+          (Nat.pos_of_ne_zero hzero) z hsquare
       exact hnotprime hnprime
   · intro hcriterion
     by_contra hnotprime
     obtain ⟨u, v, hu, hv, hquotient, hremainder, hdiscriminant⟩ :=
-      bls5Coefficients_and_discriminant_of_composite_of_primeDivisorsAbove hFeven hFpos hn hnotprime
-        hcop hdecomp hupper hlarge
+      bls5Coefficients_discriminant_of_composite hFeven hFpos hn hnotprime hcop hdecomp hupper
+        hlarge
     rcases hcriterion with hzero | hnsquare
     · have hremOdd := bls5Remainder_odd_of_coprime hFeven hcop
       rw [hremainder] at hremOdd

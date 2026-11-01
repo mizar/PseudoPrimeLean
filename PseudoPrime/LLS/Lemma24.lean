@@ -54,7 +54,7 @@ theorem llsRiemannReciprocalRemainderBound : LLSRiemannReciprocalRemainderBound 
   have hxpos : 0 < x := (by norm_num only : (0 : ℝ) < 2).trans_le hx
   have hsqrt : 0 < Real.sqrt x := Real.sqrt_pos.2 hxpos
   have htail :=
-    (AnalyticNumberTheory.RiemannZeta.riemannReciprocalTrivialZeroSeries_le_geometric hx).trans
+    (AnalyticNumberTheory.RiemannZeta.reciprocalTrivialSeries_le_geometric hx).trans
       (Analysis.geometricTail_le_one_div_eighteen_mul hx)
   have hzeroNumerator : 2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass ≤ (3 / 10 : ℝ) := by
     nlinarith only [AnalyticNumberTheory.RiemannXi.riemannZeroMass_le_three_twentieths]
@@ -88,18 +88,18 @@ theorem llsRiemannReciprocalLowerBound_of_explicit
   linarith only [hlower, herror]
 
 /-- The explicit-formula lower bound alone now implies the reciprocal Riemann estimate. -/
-theorem llsRiemannReciprocalLowerBound_of_explicit_analytic
-    (hexplicit : LLSRiemannReciprocalExplicitLowerBound) : LLSRiemannReciprocalLowerBound :=
+theorem riemannReciprocalLower_of_explicit (hexplicit : LLSRiemannReciprocalExplicitLowerBound) :
+    LLSRiemannReciprocalLowerBound :=
   llsRiemannReciprocalLowerBound_of_explicit hexplicit llsRiemannReciprocalRemainderBound
 
 /-- The staged Riemann inputs supply the Part 1 reciprocal bound under equal prime support. -/
-theorem llsPart1PrimitiveReciprocalLowerAt_of_explicit_of_conductorPrimeSupport
+theorem part1RecipLower_of_explicit_primeSupport
     (hexplicit : LLSRiemannReciprocalExplicitLowerBound)
     (hremainder : LLSRiemannReciprocalRemainderBound) {q : ℕ} [NeZero q]
     (χ : DirichletCharacter ℂ q) (hq : 3000 ≤ q) (hsmall : llsTheorem11S1NoSmallPrime χ)
     (hsupport : AnalyticNumberTheory.Arithmetic.ConductorPrimeSupport χ) :
     LLSPart1PrimitiveReciprocalLowerAt χ :=
-  llsPart1PrimitiveReciprocalLowerAt_of_riemann_of_conductorPrimeSupport
+  part1PrimitiveRecipLower_of_riemann_primeSupport
     (llsRiemannReciprocalLowerBound_of_explicit hexplicit hremainder) χ hq hsmall hsupport
 
 /--
@@ -109,12 +109,11 @@ Part 1 character.
 The complementary quotient correction remains visible in the conclusion, so no conductor-prime-
 support assumption is introduced at this stage.
 -/
-theorem llsPart1PrimitiveReciprocalLowerAtWithQuotient_of_explicit
-    (hexplicit : LLSRiemannReciprocalExplicitLowerBound)
+theorem part1ReciprocalQuotient_of_explicit (hexplicit : LLSRiemannReciprocalExplicitLowerBound)
     (hremainder : LLSRiemannReciprocalRemainderBound) {q : ℕ} [NeZero q]
     (χ : DirichletCharacter ℂ q) (hq : 3000 ≤ q) (hsmall : llsTheorem11S1NoSmallPrime χ) :
     LLSPart1PrimitiveReciprocalLowerAtWithQuotient χ :=
-  llsPart1PrimitiveReciprocalLowerAtWithQuotient_of_riemann
+  part1ReciprocalQuotient_of_riemann
     (llsRiemannReciprocalLowerBound_of_explicit hexplicit hremainder) χ hq hsmall
 
 end PseudoPrime.LLS

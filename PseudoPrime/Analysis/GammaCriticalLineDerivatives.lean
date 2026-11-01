@@ -220,7 +220,7 @@ theorem hasDerivAt_scaledGammaHalfLineNormDeriv (t : ℝ) :
 
 /-- At nonnegative t, the scaled density's absolute second derivative is at
 most (7+7t+5t²)h(t). Apply the triangle inequality and the bounds 2π≤7, π²/2≤5. -/
-theorem abs_scaledGammaHalfLineNormSecondDeriv_le_polynomial {t : ℝ} (ht : 0 ≤ t) :
+theorem abs_scaledGammaHalfLine_deriv2_le_polynomial {t : ℝ} (ht : 0 ≤ t) :
     |scaledGammaHalfLineNormSecondDeriv t| ≤ (7 + 7 * t + 5 * t ^ 2) * gammaHalfLineNorm t := by
   have hb :=
     (abs_add_le (2 * gammaHalfLineNorm t + 4 * t * gammaHalfLineNormDeriv t)
@@ -304,7 +304,7 @@ theorem abs_scaledGammaHalfLineNormSecondDeriv_le_thirty {t : ℝ} (ht : 0 ≤ t
   have hg :=
     mul_le_mul_of_nonneg_left (gammaHalfLineNorm_le_exp ht)
       (by nlinarith only [ht, sq_nonneg t] : 0 ≤ 7 + 7 * t + 5 * t ^ 2)
-  have h := (abs_scaledGammaHalfLineNormSecondDeriv_le_polynomial ht).trans hg
+  have h := (abs_scaledGammaHalfLine_deriv2_le_polynomial ht).trans hg
   have h0 : Real.exp (-(3 / 2) * t) ≤ 1 := Real.exp_le_one_iff.mpr (by linarith only [ht])
   nlinarith only [h, h0, linear_exp_decay_le_quarter ht, quadratic_exp_decay_le_quarter ht]
 

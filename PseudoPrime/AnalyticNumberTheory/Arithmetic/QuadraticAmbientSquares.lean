@@ -18,7 +18,7 @@ namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 has value one. Factor the square and exclude the zero quadratic value by coprimality.
 No primitivity, GRH, positivity or prime-power assumption is required. This restores
 positive contributions from squares excluded only by the ambient modulus. -/
-theorem quadratic_character_apply_one_of_coprime_square {q n : ℕ} (χ : DirichletCharacter ℂ q)
+theorem quadraticChar_eq_one_of_coprime_sq {q n : ℕ} (χ : DirichletCharacter ℂ q)
     (hquad : χ.IsQuadratic) (hc : Nat.Coprime n q) (hs : IsSquare n) : χ n = 1 := by
   obtain ⟨m, rfl⟩ := hs
   have hm : Nat.Coprime m q := hc.of_dvd_left (dvd_mul_right m m)
@@ -53,7 +53,7 @@ theorem quadratic_allowed_term_le_character_add_loss {q N n : ℕ} (hqN : q ∣ 
         if Nat.Coprime n q ∧ ¬Nat.Coprime n N then ArithmeticFunction.vonMangoldt n * w else 0 := by
   by_cases hs : Nat.Coprime n q ∧ ¬Nat.Coprime n N ∧ IsSquare n
   · rw [ite_eq_left hs, ite_eq_right hs.2.1, ite_eq_left ⟨hs.1, hs.2.1⟩,
-      quadratic_character_apply_one_of_coprime_square χ hquad hs.1 hs.2.2]
+      quadraticChar_eq_one_of_coprime_sq χ hquad hs.1 hs.2.2]
     simp only [Complex.one_re, one_mul, zero_add]
     nlinarith only []
   · rw [ite_eq_right hs, mul_zero, add_zero]

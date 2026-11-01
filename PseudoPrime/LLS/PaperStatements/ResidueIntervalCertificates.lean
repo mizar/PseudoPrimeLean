@@ -139,11 +139,11 @@ theorem ResidueIntervalCertificate.leastPrime (c : ResidueIntervalCertificate) {
   have hR := residueParityReciprocalCorrection_nonneg hs hT0R
   have hq0 : (0 : ℝ) < c.lower := Nat.cast_pos.mpr ((by decide : 0 < 64).trans_le hl64)
   exact
-    exists_least_prime_in_residue_le_of_interval_power_certificates a (hl64.trans hl)
-      (hu.trans hu20) hGRH hh ((by norm_num only : (0 : ℝ) < 2).trans_le hh0R) hg.2.2.1 hs0R
-      hg.2.2.2.1 hq0 (Nat.cast_le.mpr hl) rfl hx.1 hL hg.2.1 hT hx.2.1 hw hx.2.2
-      (fun k ↦ (c.roots k : ℝ)) (fun k ↦ (c.squareRoots k : ℝ)) (fun k _ ↦ Nat.cast_nonneg _)
-      (fun k _ ↦ Nat.cast_nonneg _) hpow hsq hC hR
+    exists_least_residue_intervalPower_GRH a (hl64.trans hl) (hu.trans hu20) hGRH hh
+      ((by norm_num only : (0 : ℝ) < 2).trans_le hh0R) hg.2.2.1 hs0R hg.2.2.2.1 hq0
+      (Nat.cast_le.mpr hl) rfl hx.1 hL hg.2.1 hT hx.2.1 hw hx.2.2 (fun k ↦ (c.roots k : ℝ))
+      (fun k ↦ (c.squareRoots k : ℝ)) (fun k _ ↦ Nat.cast_nonneg _) (fun k _ ↦ Nat.cast_nonneg _)
+      hpow hsq hC hR
       (by simpa only [Rat.cast_natCast] using residueParityIntervalGap_of_rational_check c.gapCheck)
 
 end PseudoPrime.LLS.PaperStatements

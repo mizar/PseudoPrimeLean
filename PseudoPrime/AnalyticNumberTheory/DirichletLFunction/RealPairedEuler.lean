@@ -111,8 +111,8 @@ theorem realPairedEuler_prefix_le_logDeriv {q : ℕ} [NeZero q] (χ : DirichletC
 /-- At σ>1 the exact zeta-plus-character logarithmic derivative is the
 nonnegative paired prime-power series. Identify the level-one L-function
 with zeta and use the absolutely convergent prime-power reindexing. -/
-theorem neg_real_zeta_logDeriv_pair_eq_prime_powers {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
-    {σ : ℝ} (hσ : 1 < σ) :
+theorem zeta_logDeriv_pair_primePowers {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) {σ : ℝ}
+    (hσ : 1 < σ) :
     -(logDeriv riemannZeta (σ : ℂ)).re - (logDeriv χ.LFunction (σ : ℂ)).re =
       ∑' p : Nat.Primes,
         ∑' k : ℕ,

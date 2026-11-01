@@ -64,9 +64,8 @@ theorem norm_shiftedLogContourKernel_left_le {N : ℕ} [NeZero N] (χ : Dirichle
 logarithmic envelope on Re z=-A-1/2. The shifted left integral is bounded by x^(-sigma)
 times its existing integrable envelope mass. Integrate the transferred pointwise bound.
 This provides quantitative control for the expanding-left-edge limit. -/
-theorem norm_integral_shiftedLogContourKernel_left_of_bound {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} {x σ : ℝ} (hx : 0 < x) (hσ : 0 ≤ σ) {A : ℕ} (hA : 2 ≤ A) {D : ℝ}
-    (hDnn : 0 ≤ D)
+theorem shiftedLog_left_integral_bound {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} {x σ : ℝ}
+    (hx : 0 < x) (hσ : 0 ≤ σ) {A : ℕ} (hA : 2 ≤ A) {D : ℝ} (hDnn : 0 ≤ D)
     (hLbound :
       ∀ t : ℝ,
         ‖logDeriv χ.LFunction (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + t * Complex.I)‖ ≤
@@ -85,15 +84,14 @@ theorem norm_integral_shiftedLogContourKernel_left_of_bound {N : ℕ} [NeZero N]
     MeasureTheory.norm_integral_le_of_norm_le hg
       (Filter.Eventually.of_forall fun t ↦
         (norm_shiftedLogContourKernel_left_le χ hx hσ hapos).trans
-          (mul_le_mul_of_nonneg_left
-            (norm_dirichletLogContourKernel_leftVertical_envelope_le hx hA hDnn hLbound t) hxnn))
+          (mul_le_mul_of_nonneg_left (logKernel_left_envelope hx hA hDnn hLbound t) hxnn))
   simpa only [MeasureTheory.integral_const_mul, General.logQuadraticEnvelopeMass] using hi
 
 /-- For a primitive nonprincipal character with nonprincipal inverse, x>0, sigma>=0,
 and A>=2, the shifted left-line kernel is continuous. The translated L-function argument
 stays on Re z=-A-1/2, where functional-equation nonvanishing holds; the Mellin denominator
 is nonzero. This supplies measurability without an RH hypothesis. -/
-theorem continuous_shiftedLogContourKernel_left {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+theorem continuous_shiftedLogKernel_left {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x σ : ℝ} (hx : 0 < x) (hσ : 0 ≤ σ) {A : ℕ}
     (hA : 2 ≤ A) :
     Continuous
@@ -105,7 +103,7 @@ theorem continuous_shiftedLogContourKernel_left {N : ℕ} [NeZero N] {χ : Diric
   have hc :=
     ((hF.deriv.continuous.comp (hline (-(A : ℝ) - 1 / 2))).neg).div
       (hF.continuous.comp (hline (-(A : ℝ) - 1 / 2)))
-      (dirichletLFunction_ne_zero_leftVertical hp hne hinv A hA)
+      (LFunction_ne_zero_leftVertical hp hne hinv A hA)
   have hs0 : ∀ t : ℝ, (((-(A : ℝ) - 1 / 2 - σ : ℝ) : ℂ) + t * Complex.I) ^ 2 ≠ 0 := by
     intro t
     apply pow_ne_zero 2
@@ -139,15 +137,14 @@ theorem continuous_shiftedLogContourKernel_left {N : ℕ} [NeZero N] {χ : Diric
 integrable. Its norm is dominated by x^(-sigma) times the integrable ordinary kernel norm,
 and its proved continuity gives measurability. Thus left integrability is not an extra
 premise of shifted rectangle assembly. -/
-theorem integrable_shiftedLogContourKernel_left {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+theorem integrable_shiftedLogKernel_left {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x σ : ℝ} (hx : 0 < x) (hσ : 0 ≤ σ) {A : ℕ}
     (hA : 2 ≤ A) :
     MeasureTheory.Integrable
       (fun t : ℝ ↦
         shiftedLogContourKernel χ x σ (((-(A : ℝ) - 1 / 2 - σ : ℝ) : ℂ) + t * Complex.I)) := by
-  have hi :=
-    (integrable_dirichletLogContourKernel_leftVertical hp hne hinv hx hA).norm.const_mul (x ^ (-σ))
-  apply hi.mono' (continuous_shiftedLogContourKernel_left hp hne hinv hx hσ hA).aestronglyMeasurable
+  have hi := (integrable_logKernel_leftVertical hp hne hinv hx hA).norm.const_mul (x ^ (-σ))
+  apply hi.mono' (continuous_shiftedLogKernel_left hp hne hinv hx hσ hA).aestronglyMeasurable
   filter_upwards with t
   exact
     norm_shiftedLogContourKernel_left_le χ hx hσ
@@ -157,16 +154,14 @@ theorem integrable_shiftedLogContourKernel_left {N : ℕ} [NeZero N] {χ : Diric
 the shifted whole-line left integral tends to zero as A tends to infinity. Combine the
 uniform functional-equation logarithmic envelope with geometric decay against a quadratic
 polynomial. No RH hypothesis is required; this removes the remaining left integral. -/
-theorem tendsto_shiftedLogContourKernel_left_integral {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x σ : ℝ}
-    (hx : 1 < x) (hσ : 0 ≤ σ) :
+theorem tendsto_shiftedLog_left_integral {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x σ : ℝ} (hx : 1 < x) (hσ : 0 ≤ σ) :
     Filter.Tendsto
       (fun A : ℕ ↦
         ∫ t : ℝ, shiftedLogContourKernel χ x σ (((-(A : ℝ) - 1 / 2 - σ : ℝ) : ℂ) + t * Complex.I))
       Filter.atTop (nhds 0) := by
   have hxpos : 0 < x := zero_lt_one.trans hx
-  obtain ⟨D, hDnn, hD⟩ :=
-    exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le_general hp hne hinv
+  obtain ⟨D, hDnn, hD⟩ := L_logDeriv_leftVertical_bound hp hne hinv
   let r : ℝ := x⁻¹
   have hr0 : 0 ≤ r := inv_nonneg.mpr hxpos.le
   have hr1 : r < 1 := inv_lt_one_of_one_lt₀ hx
@@ -185,7 +180,7 @@ theorem tendsto_shiftedLogContourKernel_left_integral {N : ℕ} [NeZero N]
               shiftedLogContourKernel χ x σ (((-(A : ℝ) - 1 / 2 - σ : ℝ) : ℂ) + t * Complex.I)‖ ≤
           K * (((A : ℝ) + 1) ^ 2 * r ^ A) := by
     intro A hA
-    have hi := norm_integral_shiftedLogContourKernel_left_of_bound hxpos hσ hA hDnn (hD A hA)
+    have hi := shiftedLog_left_integral_bound hxpos hσ hA hDnn (hD A hA)
     rw [hpow A] at hi
     calc
       _ ≤
@@ -217,9 +212,9 @@ The normalized shifted boundary tends to the arithmetic logarithmic sum minus th
 integral. The general horizontal limit, proved vertical integrability, and Mellin inversion
 remove all edge-integrability premises. Selecting heights and proving the envelopes remain
 explicit analytic inputs, rather than a full-GRH assumption. -/
-theorem tendsto_normalized_shiftedLogBoundary_of_envelopes {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x σ τ : ℝ}
-    (hx : 1 ≤ x) (hσ : 1 ≤ σ) (hτ : 0 < τ) {A : ℕ} (hA : 2 ≤ A) (T ηp ηm : ℕ → ℝ)
+theorem tendsto_shiftedLogBoundary_envelopes {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x σ τ : ℝ} (hx : 1 ≤ x) (hσ : 1 ≤ σ)
+    (hτ : 0 < τ) {A : ℕ} (hA : 2 ≤ A) (T ηp ηm : ℕ → ℝ)
     (hT : Filter.Tendsto T Filter.atTop Filter.atTop) (hTne : ∀ k, T k ≠ 0)
     (hηp : Filter.Tendsto ηp Filter.atTop (nhds 0)) (hηm : Filter.Tendsto ηm Filter.atTop (nhds 0))
     (hpbound :
@@ -249,26 +244,24 @@ theorem tendsto_normalized_shiftedLogBoundary_of_envelopes {N : ℕ} [NeZero N]
   have hσ0 := zero_le_one.trans hσ
   have hab : -(A : ℝ) - 1 / 2 - σ ≤ τ := by
     linarith only [hσ, hτ, (Nat.cast_nonneg A : (0 : ℝ) ≤ (A : ℝ))]
-  have htop :=
-    General.tendsto_integral_shiftedLogarithmicKernel_horizontal (σ : ℂ) hx hab T ηp hTne hηp
-      hpbound
+  have htop := General.shiftedLogKernel_horizontal_tendsto (σ : ℂ) hx hab T ηp hTne hηp hpbound
   have hbottom :=
-    General.tendsto_integral_shiftedLogarithmicKernel_horizontal (σ : ℂ) hx hab (fun k ↦ -T k) ηm
+    General.shiftedLogKernel_horizontal_tendsto (σ : ℂ) hx hab (fun k ↦ -T k) ηm
       (fun k ↦ neg_ne_zero.mpr (hTne k)) hηm
       (by simpa only [Complex.ofReal_neg, neg_mul, ← sub_eq_add_neg, neg_sq] using hmbound)
-  apply tendsto_normalized_shiftedLogBoundary χ hxpos hσ hτ T hT
+  apply tendsto_shiftedLogBoundary χ hxpos hσ hτ T hT
   · simpa only [shiftedLogContourKernel, General.shiftedLogarithmicKernel, logDeriv_apply, neg_div,
       Complex.ofReal_neg, neg_mul, ← sub_eq_add_neg] using hbottom
   · simpa only [shiftedLogContourKernel, General.shiftedLogarithmicKernel, logDeriv_apply,
       neg_div] using htop
-  · exact integrable_shiftedLogContourKernel_left hp hne hinv hxpos hσ0 hA
+  · exact integrable_shiftedLogKernel_left hp hne hinv hxpos hσ0 hA
 
 /-- Under the individual primitive non-principal character's RH, choose heights tending
 to infinity so the normalized shifted rectangle boundary converges to its arithmetic sum
 minus the left integral. For x>=1, sigma>=1, tau>0 and A>=2, a fixed strip containing the
 rectangle supplies both horizontal envelopes. The already proved edge limits and Mellin
 inversion identify the limit; no externally supplied envelope or full GRH is needed. -/
-theorem exists_tendsto_normalized_shiftedLogBoundary_of_dirichletRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem exists_shiftedLogBoundary_limit_RH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x σ τ : ℝ} (hx : 1 ≤ x) (hσ : 1 ≤ σ) (hτ : 0 < τ) {A : ℕ}
     (hA : 2 ≤ A) :
@@ -293,11 +286,10 @@ theorem exists_tendsto_normalized_shiftedLogBoundary_of_dirichletRH {N : ℕ} [N
   obtain ⟨B, hB⟩ := exists_nat_gt (max (A : ℝ) (σ + τ))
   have hAB : (A : ℝ) ≤ (B : ℝ) := (le_max_left _ _).trans hB.le
   have hright : σ + τ ≤ (B : ℝ) := (le_max_right _ _).trans hB.le
-  obtain ⟨T, η, hT, hT1, hη, hb⟩ :=
-    exists_fixedStrip_LLogDeriv_envelope_of_dirichletRH hN2 hRH hp hne hinv B
+  obtain ⟨T, η, hT, hT1, hη, hb⟩ := exists_fixedStrip_L_envelope_RH hN2 hRH hp hne hinv B
   refine ⟨T, hT, hT1, ?_⟩
   apply
-    tendsto_normalized_shiftedLogBoundary_of_envelopes hp hne hinv hx hσ hτ hA T η η hT
+    tendsto_shiftedLogBoundary_envelopes hp hne hinv hx hσ hτ hA T η η hT
       (fun k => ne_of_gt (zero_lt_one.trans_le (hT1 k))) hη hη
   · intro k u hu
     have hlo : -(B : ℝ) - 1 / 2 ≤ σ + u := by linarith only [hu.1, hAB]

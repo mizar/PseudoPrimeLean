@@ -55,7 +55,7 @@ of shiftedArithmeticSum over σ > 1, divided by the complex cast of log x.
 Integrate the finite terms to obtain 1/(n log n); Λ(1) = 0 removes the constant term.
 All divisions are totalized, so the identity also covers log x = 0.
 This is the arithmetic part of the integrated shifted formula. -/
-theorem logValueSum_eq_integrated_shiftedArithmeticSum (f : GeneralLFunction) (x : ℝ) :
+theorem logValueSum_integrated_arithmetic (f : GeneralLFunction) (x : ℝ) :
     f.logValueSum x = (∫ σ : ℝ in Set.Ioi 1, f.shiftedArithmeticSum x σ) / (Real.log x : ℂ) := by
   have ha : f.mangoldtCoefficient 1 * (ArithmeticFunction.vonMangoldt 1 : ℂ) = 0 := by
     rw [ArithmeticFunction.vonMangoldt_apply_one, Complex.ofReal_zero, mul_zero]
@@ -135,7 +135,7 @@ theorem integrated_decomposition_of_shifted_formula (f : GeneralLFunction) (hf :
     have hsub := MeasureTheory.integral_sub (ho.add hz) hg
     simp only [Pi.add_apply] at hsub
     rw [hsub, MeasureTheory.integral_add ho hz]
-  have hor := integral_origin_regularization_re_div_log_of_admissible f hf hRH hx
+  have hor := originRegularization_integral_RH f hf hRH hx
   have hre := Complex.reCLM.integral_comp_comm ho
   change
     (∫ σ : ℝ in Set.Ioi 1,
@@ -145,7 +145,7 @@ theorem integrated_decomposition_of_shifted_formula (f : GeneralLFunction) (hf :
           deriv (AnalyticNumberTheory.General.shiftedLogarithmicRegularization f.L x (σ : ℂ))
             0).re at hre
   rw [hre] at hor
-  rw [logValueSum_eq_integrated_shiftedArithmeticSum, he, gammaLogRemainder, Complex.div_ofReal_re,
+  rw [logValueSum_integrated_arithmetic, he, gammaLogRemainder, Complex.div_ofReal_re,
     Complex.div_ofReal_re, Complex.div_ofReal_re, Complex.sub_re, Complex.add_re]
   ring_nf at hor ⊢
   linarith only [hor]

@@ -201,7 +201,7 @@ $$
 $$
 
 [QNeOneRetainedReciprocalAnalytic.lean](../PseudoPrime/PseudoSquare/QNeOneRetainedReciprocalAnalytic.lean) の
-`exists_prime_ne_one_witness_le_retained_reciprocal_shift_and_lt_log_sq_of_ge_2984` と
+`exists_prime_neOne_logShift_2984_GRH` と
 `QNeOne_le_retained_reciprocal_shift_of_ge_2984` が対応する。
 最小証人も同じ端点で評価している。
 
@@ -236,7 +236,7 @@ $$
 $$
 
 [QNeOneDeciShiftBounds.lean](../PseudoPrime/PseudoSquare/QNeOneDeciShiftBounds.lean) の
-`exists_prime_ne_one_witness_le_deci_shift_and_lt_log_sq_of_ge_3295` と
+`exists_prime_neOne_deciShift_3295_GRH` と
 `QNeOne_le_deci_shift_of_ge_3295` が対応する。最小証人も同じ端点で評価する。
 
 $t\ge3295$ では $F_{1/10}(t) < F(t)$ であり、補正 $1/1000$ の上界をさらに小さくする。
@@ -262,7 +262,7 @@ Q_{\ne1}(B)\le\left(\ln B-\frac12\right)^2.
 $$
 
 [QNeOneHalfShiftBounds.lean](../PseudoPrime/PseudoSquare/QNeOneHalfShiftBounds.lean) の
-`exists_prime_ne_one_witness_le_half_shift_and_lt_log_sq` と `QNeOne_le_half_shift` が対応する。
+`exists_neOneWitness_le_half_shift_and_lt_log_sq` と `QNeOne_le_half_shift` が対応する。
 同じ範囲では補正 $1/10$ の式より小さい。値 $0$ を許す非1証人の定理であり、負値証人の定理ではない。
 
 根 $y\ge12$ と導手の対数上界 $L\le y+1/2$ に対し、分離式の正値性を半直線全体で証明した。
@@ -287,7 +287,7 @@ $$
 [QNeOneLogShiftBounds.lean](../PseudoPrime/PseudoSquare/QNeOneLogShiftBounds.lean) の
 `primeNeOneWitness_cast_le_log_shift_endpoint` と `QNeOne_le_log_shift` が対応する。
 さらに $\ln n\ge32$ では、この上界が $(\ln n)^2$ より小さいことと、その範囲に奇素数の非1証人が存在することを
-`exists_prime_ne_one_witness_le_log_shift_and_lt_log_sq` で証明している。
+`exists_neOneWitness_le_log_shift_and_lt_log_sq` で証明している。
 
 解析では $y\ge12$、 $L\le y+\ln y-2$ の分離条件を半直線全体で認証した。
 $L\ge16$ に対し $y=L-\ln L+3$ がその条件を満たすことを、対数の接線不等式から導く。
@@ -309,7 +309,7 @@ Q_{\ne1}(B)\le\left(\ln B-\ln\ln B+\frac{11}{4}\right)^2.
 $$
 
 [ElevenFourthsFromNinetySix.lean](../PseudoPrime/PseudoSquare/Bounds/ElevenFourthsFromNinetySix.lean) の
-`primeNeOneWitness_cast_le_elevenFourths_log_shift_from_96` と
+`neOneWitness_le_elevenFourths_log_shift_from_96` と
 `QNeOne_cast_le_elevenFourths_log_shift_from_96` が対応する。
 
 $$
@@ -351,8 +351,8 @@ Q_{\ne1}(B)\le T(\ln B)^2 < (\ln B)^2.
 $$
 
 [FiniteScaleShiftedDoubleLogBounds.lean](../PseudoPrime/PseudoSquare/Bounds/FiniteScaleShiftedDoubleLogBounds.lean) の
-`primeNeOneWitness_cast_le_shiftedDoubleLog_from_fifty`、 `QNeOne_le_shiftedDoubleLog_from_fifty` が対応する。
-`exists_prime_ne_one_le_shiftedDoubleLog_from_fifty_of_le` は、対象入力 $n\le B$ に共通尺度 $B$ の証人を与える。狭義対数二乗との比較は `shiftedDoubleLogRoot_sq_lt_log_sq_from_fifty` で証明した。
+`neOneWitness_cast_le_shiftedDoubleLog_from_fifty`、 `QNeOne_le_shiftedDoubleLog_from_fifty` が対応する。
+`exists_prime_neOne_shiftedDoubleLog50_GRH` は、対象入力 $n\le B$ に共通尺度 $B$ の証人を与える。狭義対数二乗との比較は `shiftedDoubleLogRoot_sq_lt_log_sq_from_fifty` で証明した。
 
 素数2での指標値と導手の大きさを連動させ、逆数重み付き和と対数重み付き和の二つの費用を残す。
 端点極限の多項式の係数は $y\ge49$ で非負となる。残りは $y\ge1$ における
@@ -423,7 +423,7 @@ $$
 
 が成立する。
 [OddMidscaleEndpointRadius.lean](../PseudoPrime/LLS/OddMidscaleEndpointRadius.lean)
-の `oddMidscaleEndpointRadius_sq_lt_sharpDoubleLog_sq` がこの比較を証明する。
+の `oddMidscale_sq_lt_sharpDoubleLog_sq` がこの比較を証明する。
 適用区間は $130.36\le L\le162.77$、半径の範囲は $128\le R_{\mathrm{odd}}(L)\le160$ である。
 
 主項には自然対数の下側の弦を使い、二進補正の二つの費用には上側の接線を使う。
@@ -451,7 +451,7 @@ $$
 
 [TwoPolePrefixBounds.lean](../PseudoPrime/PseudoSquare/Bounds/TwoPolePrefixBounds.lean) の
 `primeNeOneWitness_cast_le_eulerPrefixTwoPole` と `QNeOne_le_eulerPrefixTwoPole` が対応する。
-実際の奇素数証人の存在も `exists_prime_ne_one_witness_le_eulerPrefixTwoPole` で証明している。
+実際の奇素数証人の存在も `exists_neOneWitness_le_eulerPrefixTwoPole` で証明している。
 
 実軸Euler和を非負な和として保持し、二極Poisson核でGamma零点和を評価する。
 実部の符号を保持して非正の積分項を除き、導手を含まない左積分の費用を用いる。
@@ -536,7 +536,7 @@ $$
 $$
 
 [Phase64RetainedExcessJacobiCell.lean](../PseudoPrime/LLS/Phase64RetainedExcessJacobiCell.lean) の
-`exists_odd_prime_negative_phase64_retained_fixed_cap` が、4093以下の奇素数負値証人を与える。
+`exists_oddPrime_negJacobi_4093_retained_GRH` が、4093以下の奇素数負値証人を与える。
 最小証人への上界は最小性から従う。
 固定尺度64の解析比較で局所超過費用を精密に保持し、入力整数の有限列挙を使わずに証明している。
 
@@ -574,7 +574,7 @@ $$
 開始対数尺度290の上界を与える。以下は尺度550以上で再利用する定理である。
 
 [GammaPrincipalPairedBounds.lean](../PseudoPrime/PseudoSquare/Bounds/GammaPrincipalPairedBounds.lean) の
-`exists_prime_neg_one_witness_le_nearSquare_gamma_log_550` と
+`exists_negOneWitness_le_nearSquare_gamma_log_550` と
 `QNegOne_le_nearSquare_gamma_log_550` が負値証人を扱う。
 [GammaPrincipalPairedNonOneBounds.lean](../PseudoPrime/PseudoSquare/Bounds/GammaPrincipalPairedNonOneBounds.lean) は
 非1証人の最小値と有限最大値へ接続する。
@@ -620,7 +620,7 @@ Q_{-1}(B)\le\frac{9999}{10000}(\ln B)^2 < (\ln B)^2.
 $$
 
 [GammaJointEntranceBounds.lean](../PseudoPrime/PseudoSquare/Bounds/GammaJointEntranceBounds.lean) の
-`primeNegOneWitness_cast_le_joint_entrance_endpoint`、`primeNeOneWitness_bound_joint_entrance_log_255` と
+`negOneWitness_cast_le_joint_entrance_endpoint`、`primeNeOneWitness_bound_joint_entrance_log_255` と
 `QNegOne_bound_joint_entrance_log_255`、`QNeOne_bound_joint_entrance_log_255` が対応する。
 尺度を $x=(101/250)L^2$ とし、主指標和とramp和に共通する算術誤差を結合して評価する。
 素数別の既存データを小さい尺度へ移す汎用補題と、区間全体での改善量 $1/3$ を使い、 $255\le L\le260$ の分離条件を証明した。
@@ -657,7 +657,7 @@ V_{-1}(L) < \frac{99}{100}L^2 < L^2.
 $$
 
 [QuarterLogClippedNegOneBounds.lean](../PseudoPrime/PseudoSquare/Bounds/QuarterLogClippedNegOneBounds.lean) の
-`primeNegOneWitness_cast_le_quarterClippedTwoPole_logarithmic` と
+`negOneWitness_le_quarterLog_GRH` と
 `QNegOne_le_quarterClippedTwoPole_logarithmic` が対応する。
 共通の補助法 $4B$ により小さい対象入力も覆い、入力整数の有限証明書は使わない。
 
@@ -800,17 +800,17 @@ $$
 | $q_{\ne1}(n)$ | $n\in\mathcal A$、 $n < 11$ | $5$ | [`exists_prime_ne_one_witness_of_grh`](../PseudoPrime/PseudoSquare/Bounds/PointwiseWitness.lean) |
 | $q_{\ne1}(n)$ | $n\in\mathcal A$、 $11\le n < 2984$ | $(\ln n)^2$ | [`primeNeOneWitness_cast_le_log_sq_of_11_le`](../PseudoPrime/PseudoSquare/Bounds/PointwiseWitness.lean) |
 | $Q_{\ne1}(B)$ | $B\in\mathbb N$、 $10\le B < 2984$ | $(\ln B)^2$ | [`QNeOne_le_log_sq_of_grh`](../PseudoPrime/PseudoSquare/Bounds/QNeOneLogSq.lean) |
-| $q_{\ne1}(n)$ | $n\in\mathcal A$、 $2984\le n < 3295$ | $(\ln n-1/1000)^2$ | [`primeNeOneWitness_cast_le_retained_reciprocal_endpoint`](../PseudoPrime/PseudoSquare/QNeOneRetainedReciprocalAnalytic.lean) |
+| $q_{\ne1}(n)$ | $n\in\mathcal A$、 $2984\le n < 3295$ | $(\ln n-1/1000)^2$ | [`neOneWitness_le_retained_reciprocal_endpoint`](../PseudoPrime/PseudoSquare/QNeOneRetainedReciprocalAnalytic.lean) |
 | $Q_{\ne1}(B)$ | $B\in\mathbb N$、 $2984\le B < 3295$ | $(\ln B-1/1000)^2$ | [`QNeOne_le_retained_reciprocal_shift_of_ge_2984`](../PseudoPrime/PseudoSquare/QNeOneRetainedReciprocalAnalytic.lean) |
 | $q_{\ne1}(n)$ | $n\in\mathcal A$、 $n\ge3295$、 $\ln n < 25/2$ | $(\ln n-1/10)^2$ | [`primeNeOneWitness_cast_le_deci_endpoint`](../PseudoPrime/PseudoSquare/QNeOneDeciShiftBounds.lean) |
 | $Q_{\ne1}(B)$ | $B\in\mathbb N$、 $B\ge3295$、 $\ln B < 25/2$ | $(\ln B-1/10)^2$ | [`QNeOne_le_deci_shift_of_ge_3295`](../PseudoPrime/PseudoSquare/QNeOneDeciShiftBounds.lean) |
-| $q_{\ne1}(n)$ | $n\in\mathcal A$、 $25/2\le\ln n$、 $\ln\ln n\le7/2$ | $(\ln n-1/2)^2$ | [`exists_prime_ne_one_witness_le_half_shift_and_lt_log_sq`](../PseudoPrime/PseudoSquare/QNeOneHalfShiftBounds.lean) |
+| $q_{\ne1}(n)$ | $n\in\mathcal A$、 $25/2\le\ln n$、 $\ln\ln n\le7/2$ | $(\ln n-1/2)^2$ | [`exists_neOneWitness_le_half_shift_and_lt_log_sq`](../PseudoPrime/PseudoSquare/QNeOneHalfShiftBounds.lean) |
 | $Q_{\ne1}(B)$ | $B\in\mathbb N$、 $25/2\le\ln B$、 $\ln\ln B\le7/2$ | $(\ln B-1/2)^2$ | [`QNeOne_le_half_shift`](../PseudoPrime/PseudoSquare/QNeOneHalfShiftBounds.lean) |
 | $q_{\ne1}(n)$ | $n\in\mathcal A$、 $\ln\ln n > 7/2$、 $\ln\ln n\le22/5$ | $(\ln n-\ln\ln n+3)^2$ | [`primeNeOneWitness_cast_le_log_shift_endpoint`](../PseudoPrime/PseudoSquare/QNeOneLogShiftBounds.lean) |
 | $Q_{\ne1}(B)$ | $B\in\mathbb N$、 $\ln\ln B > 7/2$、 $\ln\ln B\le22/5$ | $(\ln B-\ln\ln B+3)^2$ | [`QNeOne_le_log_shift`](../PseudoPrime/PseudoSquare/QNeOneLogShiftBounds.lean) |
-| $q_{\ne1}(n)$ | $n\in\mathcal A$、 $50\le\ln n < 96$、 $\ln\ln n > 22/5$ | $T(\ln n)^2$ | [`primeNeOneWitness_cast_le_shiftedDoubleLog_from_fifty`](../PseudoPrime/PseudoSquare/Bounds/FiniteScaleShiftedDoubleLogBounds.lean) |
+| $q_{\ne1}(n)$ | $n\in\mathcal A$、 $50\le\ln n < 96$、 $\ln\ln n > 22/5$ | $T(\ln n)^2$ | [`neOneWitness_cast_le_shiftedDoubleLog_from_fifty`](../PseudoPrime/PseudoSquare/Bounds/FiniteScaleShiftedDoubleLogBounds.lean) |
 | $Q_{\ne1}(B)$ | $B\in\mathbb N$、 $50\le\ln B < 96$、 $\ln\ln B > 22/5$ | $T(\ln B)^2$ | [`QNeOne_le_shiftedDoubleLog_from_fifty`](../PseudoPrime/PseudoSquare/Bounds/FiniteScaleShiftedDoubleLogBounds.lean) |
-| $q_{\ne1}(n)$ | $n\in\mathcal A$、 $96\le\ln n$、 $\ln\ln n\le93/20$ | $S(\ln n)^2$ | [`primeNeOneWitness_cast_le_elevenFourths_log_shift_from_96`](../PseudoPrime/PseudoSquare/Bounds/ElevenFourthsFromNinetySix.lean) |
+| $q_{\ne1}(n)$ | $n\in\mathcal A$、 $96\le\ln n$、 $\ln\ln n\le93/20$ | $S(\ln n)^2$ | [`neOneWitness_le_elevenFourths_log_shift_from_96`](../PseudoPrime/PseudoSquare/Bounds/ElevenFourthsFromNinetySix.lean) |
 | $Q_{\ne1}(B)$ | $B\in\mathbb N$、 $96\le\ln B$、 $\ln\ln B\le93/20$ | $S(\ln B)^2$ | [`QNeOne_cast_le_elevenFourths_log_shift_from_96`](../PseudoPrime/PseudoSquare/Bounds/ElevenFourthsFromNinetySix.lean) |
 | $q_{\ne1}(n)$ | $n\in\mathcal A$、 $\ln n < 500$、 $\ln\ln n > 93/20$、 $\left(\ln n\notin[3259/25,16277/100]\lor T(\ln n)^2 < R_{\mathrm{odd}}(\ln n)^2\right)$ | $T(\ln n)^2$ | [`primeNeOneWitness_cast_le_shiftedDoubleLog`](../PseudoPrime/PseudoSquare/Bounds/ShiftedOddEndpointDoubleLogBounds.lean) |
 | $Q_{\ne1}(B)$ | $B\in\mathbb N$、 $\ln B < 500$、 $\ln\ln B > 93/20$、 $\left(\ln B\notin[3259/25,16277/100]\lor T(\ln B)^2 < R_{\mathrm{odd}}(\ln B)^2\right)$ | $T(\ln B)^2$ | [`QNeOne_le_shiftedDoubleLog`](../PseudoPrime/PseudoSquare/Bounds/ShiftedOddEndpointDoubleLogBounds.lean) |
@@ -882,16 +882,16 @@ $L\ge22221$ では、 $V_{\ne1}(L)/L^2 > (99/40)(500/821)^2 > 4/5$ であり、�
 |---|---|---|---|
 | $q_{-1}(n)$ | $n\in\mathcal A$、 $\ln n < 10$ | $R(n)$ | [`exists_prime_neg_one_witness_of_grh`](../PseudoPrime/PseudoSquare/Bounds/PointwiseWitness.lean) |
 | $q_{-1}(n)$ | $n\in\mathcal A$、 $10\le\ln n\le1609/25$、 $R(n)\le4093$ | $R(n)$ | [`exists_prime_neg_one_witness_of_grh`](../PseudoPrime/PseudoSquare/Bounds/PointwiseWitness.lean) |
-| $q_{-1}(n)$ | $n\in\mathcal A$、 $10\le\ln n\le1609/25$、 $R(n) > 4093$ | $4093$ | [`exists_odd_prime_negative_phase64_retained_fixed_cap`](../PseudoPrime/LLS/Phase64RetainedExcessJacobiCell.lean) |
+| $q_{-1}(n)$ | $n\in\mathcal A$、 $10\le\ln n\le1609/25$、 $R(n) > 4093$ | $4093$ | [`exists_oddPrime_negJacobi_4093_retained_GRH`](../PseudoPrime/LLS/Phase64RetainedExcessJacobiCell.lean) |
 | $q_{-1}(n)$ | $n\in\mathcal A$、 $1609/25 < \ln n < 255$ | $R(n)$ | [`exists_prime_neg_one_witness_of_grh`](../PseudoPrime/PseudoSquare/Bounds/PointwiseWitness.lean) |
 | $Q_{-1}(B)$ | $B\in\mathbb N$、 $B\ge3$、 $\ln B < 255$ | $R(B)$ | [`elementary_formula_explicit`](../PseudoPrime/PseudoSquare/Bounds/ElementaryOmegaFinal.lean) |
-| $q_{-1}(n)$ | $n\in\mathcal A$、 $255\le\ln n < 290$ | $(9999/10000)(\ln n)^2$ | [`primeNegOneWitness_cast_le_joint_entrance_endpoint`](../PseudoPrime/PseudoSquare/Bounds/GammaJointEntranceBounds.lean) |
+| $q_{-1}(n)$ | $n\in\mathcal A$、 $255\le\ln n < 290$ | $(9999/10000)(\ln n)^2$ | [`negOneWitness_cast_le_joint_entrance_endpoint`](../PseudoPrime/PseudoSquare/Bounds/GammaJointEntranceBounds.lean) |
 | $Q_{-1}(B)$ | $B\in\mathbb N$、 $255\le\ln B < 290$ | $(9999/10000)(\ln B)^2$ | [`QNegOne_bound_joint_entrance_log_255`](../PseudoPrime/PseudoSquare/Bounds/GammaJointEntranceBounds.lean) |
 | $q_{-1}(n)$ | $n\in\mathcal A$、 $290\le\ln n < 500$ | $(99/100)(\ln n)^2$ | [`primeNegOneWitness_bound_mixed_log_290`](../PseudoPrime/PseudoSquare/Bounds/GammaMixedLog290Bounds.lean) |
 | $q_{-1}(n)$ | $n\in\mathcal A$、 $500\le\ln n < 600$、 $(99/100)(\ln n)^2\le V_{-1}(\ln n)$ | $(99/100)(\ln n)^2$ | [`primeNegOneWitness_bound_mixed_log_290`](../PseudoPrime/PseudoSquare/Bounds/GammaMixedLog290Bounds.lean) |
 | $Q_{-1}(B)$ | $B\in\mathbb N$、 $290\le\ln B < 500$ | $(99/100)(\ln B)^2$ | [`QNegOne_bound_mixed_log_290`](../PseudoPrime/PseudoSquare/Bounds/GammaMixedLog290Bounds.lean) |
 | $Q_{-1}(B)$ | $B\in\mathbb N$、 $500\le\ln B < 600$、 $(99/100)(\ln B)^2\le V_{-1}(\ln B)$ | $(99/100)(\ln B)^2$ | [`QNegOne_bound_mixed_log_290`](../PseudoPrime/PseudoSquare/Bounds/GammaMixedLog290Bounds.lean) |
-| $q_{-1}(n)$ | $n\in\mathcal A$、 $\ln n\ge500$、 $n < 10^{19978}$、 $V_{-1}(\ln n) < (99/100)(\ln n)^2$ | $V_{-1}(\ln n)$ | [`primeNegOneWitness_cast_le_quarterClippedTwoPole_logarithmic`](../PseudoPrime/PseudoSquare/Bounds/QuarterLogClippedNegOneBounds.lean) |
+| $q_{-1}(n)$ | $n\in\mathcal A$、 $\ln n\ge500$、 $n < 10^{19978}$、 $V_{-1}(\ln n) < (99/100)(\ln n)^2$ | $V_{-1}(\ln n)$ | [`negOneWitness_le_quarterLog_GRH`](../PseudoPrime/PseudoSquare/Bounds/QuarterLogClippedNegOneBounds.lean) |
 | $Q_{-1}(B)$ | $B\in\mathbb N$、 $\ln B\ge500$、 $B < 10^{19978}$、 $V_{-1}(\ln B) < (99/100)(\ln B)^2$ | $V_{-1}(\ln B)$ | [`QNegOne_le_quarterClippedTwoPole_logarithmic`](../PseudoPrime/PseudoSquare/Bounds/QuarterLogClippedNegOneBounds.lean) |
 | $q_{-1}(n)$ | $n\in\mathcal A$、 $n\ge10^{19978}$、 $\ln n < 10^{18}$ | $(4/5)(\ln n)^2$ | [`primeNegOneWitness_cast_le_gamma_19978`](../PseudoPrime/PseudoSquare/Bounds/GammaWitnessBounds.lean) |
 | $q_{-1}(n)$ | $n\in\mathcal A$、 $\ln n\ge10^{18}$ | $(777/1000)(\ln n)^2$ | `fourPole_sharp_jacobi_finite_least`：[RationalPoleSharpEntrance.lean](../PseudoPrime/LLS/RationalPoleSharpEntrance.lean) |

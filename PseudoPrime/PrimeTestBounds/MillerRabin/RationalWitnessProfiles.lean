@@ -88,8 +88,8 @@ theorem rationalPart2Profile_cutoff_le {n m : ℕ} (hn : 3000 ≤ n) (horder : n
 /-- Under GRH, every odd composite 3000 ≤ n ≤ B has a prime witness through
 the signed profile cutoff evaluated at B. Apply the pointwise witness and cutoff monotonicity.
 No larger coefficient or additional starting value is used for the envelope. -/
-theorem exists_prime_witness_le_rationalPart2Profile_envelope {n B : ℕ} (hn : 3000 ≤ n)
-    (hnB : n ≤ B) (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+theorem exists_prime_rationalPart2Envelope_GRH {n B : ℕ} (hn : 3000 ≤ n) (hnB : n ≤ B)
+    (hnOdd : Odd n) (hnComposite : ¬n.Prime)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ,
       p.Prime ∧

@@ -262,8 +262,7 @@ comparison premise. This certifies the best-interval replacement without sampled
 theorem clippedAffine_cutoff_lt_adaptive {L : ℝ} (hL : 300 ≤ L) :
     (99 / 40 : ℝ) * clippedAffineRoot L ^ 2 < Analysis.adaptivePart2CutoffRoot L ^ 2 := by
   have ht :=
-    Analysis.finerPart2Root_ge_thirty_six_fifths_of_639_div_100_le
-      (by linarith only [hL] : (639 / 100 : ℝ) ≤ L)
+    Analysis.finerPart2Root_ge_36_5_of_639_100_le (by linarith only [hL] : (639 / 100 : ℝ) ≤ L)
   have hb :=
     Analysis.adaptivePart2Root_bounds
       (show 7 ≤ Analysis.finerPart2CutoffRoot L by linarith only [ht])

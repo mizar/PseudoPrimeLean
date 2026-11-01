@@ -45,8 +45,8 @@ theorem abs_re_logDeriv_GammaReal_le_prefix {σ : ℝ} (hσ : 1 ≤ σ) (hσu : 
 /-- For a Dirichlet character, sigma in [1,15/2] and 1/2≤R≤sigma/2,
  the real Gamma-factor logarithmic derivative is bounded by the m-term allowance at R.
  Both parity shifts have argument at least R. This supplies the node-specific Poisson error. -/
-theorem abs_re_logDeriv_gammaFactor_le_prefix {q : ℕ} (χ : DirichletCharacter ℂ q) {σ : ℝ}
-    (hσ : 1 ≤ σ) (hσu : σ ≤ 15 / 2) {R : ℝ} (hR : 1 / 2 ≤ R) (hRσ : R ≤ σ / 2) (m : ℕ) :
+theorem gammaLogDeriv_re_le_prefix {q : ℕ} (χ : DirichletCharacter ℂ q) {σ : ℝ} (hσ : 1 ≤ σ)
+    (hσu : σ ≤ 15 / 2) {R : ℝ} (hR : 1 / 2 ≤ R) (hRσ : R ≤ σ / 2) (m : ℕ) :
     |(logDeriv χ.gammaFactor (σ : ℂ)).re| ≤ Gamma.gammaPrefixAllowance R m := by
   have hp : 0 < (σ : ℂ).re := by
     change 0 < σ
@@ -54,7 +54,7 @@ theorem abs_re_logDeriv_gammaFactor_le_prefix {q : ℕ} (χ : DirichletCharacter
   have hfun : (1 : DirichletCharacter ℂ 1).gammaFactor = Complex.Gammaℝ := by
     funext z
     exact principal_modulus_one_even.gammaFactor_def z
-  rcases logDeriv_gammaFactor_eq_one_or_one_shift χ hp with he | he
+  rcases gammaLogDeriv_eq_one_or_shift χ hp with he | he
   · rw [he, hfun]
     exact abs_re_logDeriv_GammaReal_le_prefix hσ (by linarith only [hσu]) hR hRσ m
   · rw [he, hfun]

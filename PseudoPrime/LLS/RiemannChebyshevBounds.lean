@@ -30,7 +30,7 @@ theorem logWeightedMangoldtSum_error_le_log_sqrt (hRH : RiemannHypothesis) {x : 
       Real.log (2 * Real.pi) * Real.log x + 1 +
         2 * AnalyticNumberTheory.RiemannXi.riemannZeroMass * (Real.sqrt x + 1) +
         Real.sqrt x / 20 := by
-  have hlo := llsRiemannWeightedLowerBound_of_riemannHypothesis hRH x hx
+  have hlo := riemannWeightedLower_of_RH hRH x hx
   have hhi := logWeightedMangoldtSum_le_add_sqrt_twentieth hRH hx
   have hl :=
     mul_nonneg (Real.log_nonneg (by nlinarith only [Real.pi_gt_three] : 1 ≤ 2 * Real.pi))
@@ -101,8 +101,8 @@ theorem exists_psi_error_le_three_quarter (hRH : RiemannHypothesis) :
   refine ⟨1 + 6 * C, by linarith only [hC], ?_⟩
   intro x hx
   exact
-    AnalyticNumberTheory.Arithmetic.psi_error_le_three_quarter_of_logWeighted_error hC.le
-      (fun hu ↦ hb hu) hx
+    AnalyticNumberTheory.Arithmetic.psi_error_le_pow_3_4_of_logWeighted_error hC.le (fun hu ↦ hb hu)
+      hx
 
 /-- Under RH and x >= 16, the normalized Chebyshev error is at most a fixed
 positive constant divided by sqrt(sqrt(x)). Divide the three-quarter-power estimate

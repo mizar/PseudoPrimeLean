@@ -32,7 +32,7 @@ theorem gamma_primitiveCharacter_sum_re_le_nearSquare {q : ℕ} [NeZero q] (hq :
     nlinarith only [hL, sq_nonneg (Real.log q - 1000)]
   have he := nearSquare_gamma_error_budgets hL
   have hu :=
-    gamma_primitiveCharacter_sum_re_le_conductor_free_prefix hq χ hne hGRH hx 32
+    gammaCharacterSum_re_le_conductor_free_prefix hq χ hne hGRH hx 32
       Analysis.gammaResolvent_thirtyTwo_error_lt
   have hmq := Nat.le_of_dvd (Nat.pos_of_ne_zero (NeZero.ne q)) χ.conductor_dvd_level
   have hf : (0 : ℝ) < χ.conductor := by exact_mod_cast Nat.pos_of_ne_zero χ.conductor_ne_zero

@@ -19,7 +19,7 @@ quadratic decay and integrable vertical lines imply equal integrals at any two s
 Remove horizontal edges by decay and apply Cauchy rectangles within the strip.
 This allows negative-real-part poles outside the strip; global entire differentiability
 is not required. It supplies the resolvent shift from the central line. -/
-theorem integral_vertical_eq_of_nonnegative_strip_decay {f : ℂ → ℂ}
+theorem vertical_integral_eq_of_strip_decay {f : ℂ → ℂ}
     (hf : ∀ s : ℂ, s.re ∈ Set.Icc (0 : ℝ) 1 → DifferentiableAt ℂ f s) {c d C : ℝ}
     (hc : c ∈ Set.Icc (0 : ℝ) 1) (hd : d ∈ Set.Icc (0 : ℝ) 1) (hC : 0 ≤ C)
     (hb : ∀ s : ℂ, s.re ∈ Set.Icc (0 : ℝ) 1 → ‖f s‖ ≤ C / (1 + ‖s‖ ^ 2))
@@ -71,15 +71,14 @@ theorem integral_vertical_eq_of_nonnegative_strip_decay {f : ℂ → ℂ}
           (tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := ℝ)).const_mul C
       simpa only [zero_mul] using hlim.mul_const |d - c|
   have ht :=
-    tendsto_rectangleBoundaryIntegral_of_horizontal_limits (fun n : ℕ ↦ (n : ℝ))
-      tendsto_natCast_atTop_atTop
+    tendsto_boundaryIntegral (fun n : ℕ ↦ (n : ℝ)) tendsto_natCast_atTop_atTop
       (by
         simpa only [neg_one_mul, Complex.ofReal_neg, neg_mul, sub_eq_add_neg, one_mul] using
           hhor (-1) (Or.inr rfl))
       (by simpa only [one_mul] using hhor 1 (Or.inl rfl)) (hi c hc) (hi d hd)
   have hz (n : ℕ) :
     rectangleBoundaryIntegral f ((c : ℂ) - n * Complex.I) ((d : ℂ) + n * Complex.I) = 0 := by
-    apply rectangleBoundaryIntegral_eq_zero_of_differentiableOn
+    apply boundaryIntegral_zero_of_holomorphic
     intro s hs
     have hr := hs.1
     change s.re ∈ Set.uIcc _ _ at hr

@@ -366,8 +366,7 @@ theorem norm_integral_gammaShiftSum_le_of_two_le_re {x : ℝ} {κ : ℂ} (hx : 1
 /-- For x > 1 and Re kappa >= 2, the integrated gamma residues divided by log x
 have norm at most 1/(3 x^3 (log x)^2). Divide the integrated norm bound by the
 positive logarithm. At kappa=2 this is the error constant in Lemma 2.6. -/
-theorem norm_integrated_gammaShiftSum_div_log_le_of_two_le_re {x : ℝ} {κ : ℂ} (hx : 1 < x)
-    (hκ : 2 ≤ κ.re) :
+theorem gammaShift_integrated_norm_le_re_two {x : ℝ} {κ : ℂ} (hx : 1 < x) (hκ : 2 ≤ κ.re) :
     ‖(∫ σ : ℝ in Set.Ioi 1, gammaShiftSum x κ σ) / (Real.log x : ℂ)‖ ≤
       1 / (3 * x ^ 3 * (Real.log x) ^ 2) := by
   rw [norm_div, Complex.norm_real, Real.norm_eq_abs, abs_of_pos (Real.log_pos hx)]

@@ -20,7 +20,7 @@ and nonnegative Euler weights, two symmetric phase bounds give the actual Gamma
 character sum below the original arithmetic prefix budget plus
 (5*d^2/4)*(log(m)+76/5) and the existing contour remainder. The same prefix and
 local arithmetic data are retained; the extra zero-mass cost is quadratic in d. -/
-theorem gamma_primitive_sum_re_le_symmetric_anchor_prefix {q m : ℕ} [NeZero m] (hq : 20000 ≤ q)
+theorem gammaPrimitiveSum_re_le_symmetric_anchor_prefix {q m : ℕ} [NeZero m] (hq : 20000 ≤ q)
     (hm : 3 ≤ m) (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 2 ≤ x) (l : List (ℚ × ℚ))
@@ -46,8 +46,8 @@ theorem gamma_primitive_sum_re_le_symmetric_anchor_prefix {q m : ℕ} [NeZero m]
   have hpos : ∀ ab ∈ l, (0 : ℚ) < ab.1 := fun ab hab ↦
     (by norm_num only : (0 : ℚ) < 1 / 2).trans (hl ab hab)
   have hz :=
-    gammaMellinKernel.neg_re_oscillatingZeroSum_le_finiteResolvent hm2 hGRH hp hne hinv
-      (by linarith only [hx]) (Analysis.logarithmicPhaseExtension l ((5 / 4) * d ^ 2))
+    gammaMellinKernel.negRe_zeroSum_le_resolvent_GRH hm2 hGRH hp hne hinv (by linarith only [hx])
+      (Analysis.logarithmicPhaseExtension l ((5 / 4) * d ^ 2))
       (fun ab hab ↦
         (by norm_num only : (0 : ℚ) < 1 / 2).trans
           (Analysis.logarithmicPhaseExtension_admissible hl _ ab hab))
@@ -58,11 +58,11 @@ theorem gamma_primitive_sum_re_le_symmetric_anchor_prefix {q m : ℕ} [NeZero m]
           Analysis.gammaHalf_phase_majorant_of_symmetric_anchors (by linarith only [hx]) l d hminus
             hplus t)
   have hmz :=
-    AnalyticNumberTheory.DirichletLFunction.logarithmicPhaseExtension_zeroMass_le hm2 (hGRH m χ hp)
-      hp hne hinv l hpos hd0
+    AnalyticNumberTheory.DirichletLFunction.logPhaseExtension_mass_le_RH hm2 (hGRH m χ hp) hp hne
+      hinv l hpos hd0
   have hb :=
-    AnalyticNumberTheory.DirichletLFunction.finiteSignedResolvent_zeroMass_le_prefix hm2
-      (hGRH m χ hp) hp hne hinv l hl (Analysis.finiteSignedMangoldtWeight_nonneg l hW) B
+    AnalyticNumberTheory.DirichletLFunction.signedResolvent_mass_le_prefix_RH hm2 (hGRH m χ hp) hp
+      hne hinv l hl (Analysis.finiteSignedMangoldtWeight_nonneg l hW) B
   have hr := re_gamma_primitive_remainder_le_conductor_free hq hm hmq hp hne hinv hGRH hx
   simp only [Complex.add_re] at hr
   dsimp only [AnalyticNumberTheory.DirichletLFunction.finiteSignedPrefixBudget]

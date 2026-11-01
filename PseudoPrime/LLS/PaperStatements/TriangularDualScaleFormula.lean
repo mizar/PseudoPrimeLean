@@ -22,8 +22,8 @@ namespace PseudoPrime.LLS.PaperStatements
 /-- For a nonprincipal character and positive scale, the completed right integral
 is the negative arithmetic sum plus the Gamma integral. Split the ordinary and Gamma
 logarithmic derivatives using their integrability. This also applies at inverse scales. -/
-theorem triangular18_completed_rightIntegral_eq_scaled_arithmetic_add_gamma {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hne : χ ≠ 1) {x : ℝ} (hx : 0 < x) :
+theorem triangular18_right_eq_arithmetic_gamma {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hne : χ ≠ 1) {x : ℝ} (hx : 0 < x) :
     let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
     ((1 / (2 * Real.pi) : ℝ) : ℂ) *
         (∫ t : ℝ,
@@ -80,8 +80,7 @@ theorem triangular18_completed_rightIntegral_eq_scaled_arithmetic_add_gamma {q :
 /-- For any complex function and positive scale, the reflected weighted integral
 equals the right integral at inverse scale. Substitute the negative height, use the even
 triangular kernel, and invert the real-base complex power. No integrability input is needed. -/
-theorem triangular18_reflected_scaledIntegral_eq_inverse_scale_right (f : ℂ → ℂ) {x : ℝ}
-    (hx : 0 < x) :
+theorem triangular18_reflected_eq_inverseScale (f : ℂ → ℂ) {x : ℝ} (hx : 0 < x) :
     let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
     (∫ t : ℝ,
         f (((17 / 16 : ℝ) : ℂ) - Complex.I * t) *
@@ -123,9 +122,8 @@ theorem triangular18_reflected_scaledIntegral_eq_inverse_scale_right (f : ℂ �
 the completed left integral equals its conductor contribution minus the inverse-scale
 arithmetic sum plus the inverse-character Gamma integral. Apply the functional equation,
 split integrable terms, and reflect before taking norms. This preserves the dual sum. -/
-theorem triangular18_left_completedIntegral_eq_dual_arithmetic_add_gamma {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ}
-    (hx : 0 < x) :
+theorem triangular18_left_eq_dualArithmetic {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) :
     let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
     ((1 / (2 * Real.pi) : ℝ) : ℂ) *
         (∫ t : ℝ,
@@ -179,11 +177,8 @@ theorem triangular18_left_completedIntegral_eq_dual_arithmetic_add_gamma {q : �
   have hi : (∫ t : ℝ, F t) = (∫ t : ℝ, C t) + ∫ t : ℝ, R t := by
     rw [MeasureTheory.integral_congr_ae (MeasureTheory.ae_of_all _ he),
       MeasureTheory.integral_add hC hR]
-  have hreflect :=
-    triangular18_reflected_scaledIntegral_eq_inverse_scale_right (logDeriv χ⁻¹.completedLFunction)
-      hx
-  have hright :=
-    triangular18_completed_rightIntegral_eq_scaled_arithmetic_add_gamma hinv (inv_pos.mpr hx)
+  have hreflect := triangular18_reflected_eq_inverseScale (logDeriv χ⁻¹.completedLFunction) hx
+  have hright := triangular18_right_eq_arithmetic_gamma hinv (inv_pos.mpr hx)
   change ((1 / (2 * Real.pi) : ℝ) : ℂ) * (∫ t : ℝ, F t) = _
   rw [hi, mul_add]
   dsimp only [R, w] at *
@@ -239,7 +234,7 @@ theorem triangular18_dual_scale_signed_formula {q : ℕ} [NeZero q] (hq : 2 ≤ 
       (by norm_num only) (by norm_num only) hx (by norm_num only) (by norm_num only)
   dsimp only at he
   rw [triangular_weightedResidue_pole_eq_zero, zero_sub] at he
-  rw [triangular18_left_completedIntegral_eq_dual_arithmetic_add_gamma hp hne hinv hx0] at he
+  rw [triangular18_left_eq_dualArithmetic hp hne hinv hx0] at he
   rw [MeasureTheory.integral_const_mul] at he
   have hk := triangular18_left_scaledKernelIntegral hx0
   have hc :

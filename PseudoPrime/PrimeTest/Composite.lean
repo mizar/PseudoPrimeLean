@@ -40,7 +40,7 @@ theorem eq_one_or_three_or_nine_of_dvd_nine {n : ℕ} (hn : 0 < n) (hdvd : n ∣
   interval_cases n <;> norm_num only at hn <;> norm_num only at hdvd <;> decide
 
 /-- A positive divisor of `15` is `1`, `3`, `5`, or `15`. -/
-theorem eq_one_or_three_or_five_or_fifteen_of_dvd_fifteen {n : ℕ} (hn : 0 < n) (hdvd : n ∣ 15) :
+theorem eq_1_or_3_or_5_or_15_of_dvd_15 {n : ℕ} (hn : 0 < n) (hdvd : n ∣ 15) :
     n = 1 ∨ n = 3 ∨ n = 5 ∨ n = 15 := by
   have hnle : n ≤ 15 := Nat.le_of_dvd (by norm_num only) hdvd
   interval_cases n <;> norm_num only at hn <;> norm_num only at hdvd <;> decide
@@ -166,9 +166,8 @@ A positive composite member of the factor-detecting stopping set has a strictly 
 prime divisor at which `J(n | p) ≠ 1`.  Reciprocity converts the stopping value before the
 prime-factor extraction lemma is applied.
 -/
-theorem exists_odd_prime_lt_of_composite_mem_firstStopNeOneSet {C : ℕ → Prop} {n i : ℕ}
-    (hC : CandidateOdd C) (hn : Odd n) (hi : 0 < i) (hcomp : ¬i.Prime)
-    (hstop : i ∈ FirstStopNeOneSet C n) :
+theorem firstStopNeOne_smaller_prime {C : ℕ → Prop} {n i : ℕ} (hC : CandidateOdd C) (hn : Odd n)
+    (hi : 0 < i) (hcomp : ¬i.Prime) (hstop : i ∈ FirstStopNeOneSet C n) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ p ∣ i ∧ p < i ∧ jacobiSym n p ≠ 1 := by
   have hvalue : jacobiSym n i ≠ 1 := by
     rw [← jacobi_selfridgeD (hC hstop.1) hn]
@@ -183,9 +182,8 @@ A positive composite member of the pure `-1` stopping set has a strictly smaller
 divisor at which `J(n | p) = -1`.  This is the common reduction used to show that only the
 missing candidate prime `3` can cause a composite first-stop.
 -/
-theorem exists_odd_prime_lt_of_composite_mem_firstStopNegOneSet {C : ℕ → Prop} {n i : ℕ}
-    (hC : CandidateOdd C) (hn : Odd n) (hi : 0 < i) (hcomp : ¬i.Prime)
-    (hstop : i ∈ FirstStopNegOneSet C n) :
+theorem firstStopNegOne_smaller_prime {C : ℕ → Prop} {n i : ℕ} (hC : CandidateOdd C) (hn : Odd n)
+    (hi : 0 < i) (hcomp : ¬i.Prime) (hstop : i ∈ FirstStopNegOneSet C n) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ p ∣ i ∧ p < i ∧ jacobiSym n p = -1 := by
   have hvalue : jacobiSym n i = -1 := by
     rw [← jacobi_selfridgeD (hC hstop.1) hn]
@@ -204,8 +202,7 @@ theorem three_dvd_of_composite_minimal_classical_neOne {n i : ℕ} (hn : Odd n) 
     (hcomp : ¬i.Prime) (hstop : i ∈ FirstStopNeOneSet isClassicalCandidate n)
     (hmin : ∀ j < i, j ∉ FirstStopNeOneSet isClassicalCandidate n) : 3 ∣ i ∧ jacobiSym n 3 ≠ 1 := by
   obtain ⟨p, hp, hpodd, hpdvd, hplt, hpvalue⟩ :=
-    exists_odd_prime_lt_of_composite_mem_firstStopNeOneSet isClassicalCandidate_odd hn hi hcomp
-      hstop
+    firstStopNeOne_smaller_prime isClassicalCandidate_odd hn hi hcomp hstop
   have hp3 : p = 3 := by
     by_contra hpne
     have hp5 : 5 ≤ p := by exact Internal.oddPrime_ge_five_of_ne_three hp hpodd hpne
@@ -228,8 +225,7 @@ theorem three_dvd_of_composite_minimal_classical_negOne {n i : ℕ} (hn : Odd n)
     (hmin : ∀ j < i, j ∉ FirstStopNegOneSet isClassicalCandidate n) :
     3 ∣ i ∧ jacobiSym n 3 = -1 := by
   obtain ⟨p, hp, hpodd, hpdvd, hplt, hpvalue⟩ :=
-    exists_odd_prime_lt_of_composite_mem_firstStopNegOneSet isClassicalCandidate_odd hn hi hcomp
-      hstop
+    firstStopNegOne_smaller_prime isClassicalCandidate_odd hn hi hcomp hstop
   have hp3 : p = 3 := by
     by_contra hpne
     have hp5 : 5 ≤ p := by exact Internal.oddPrime_ge_five_of_ne_three hp hpodd hpne
@@ -257,7 +253,7 @@ theorem firstStopNeOne_le_nine_of_jacobi_three_eq_zero {n : ℕ} (hn : Odd n) (h
 If `J(n | 3) = -1`, `J(n | 5) = 1`, and `15` is valid for factor detection, every classical
 `≠ 1` first-stop is at most `15`, since multiplicativity gives `J(n | 15) = -1`.
 -/
-theorem firstStopNeOne_le_fifteen_of_jacobi_three_eq_neg_one {n : ℕ} (hn : Odd n) (hndvd : ¬n ∣ 15)
+theorem firstStopNeOne_le_15_of_jacobi_three_neg_one {n : ℕ} (hn : Odd n) (hndvd : ¬n ∣ 15)
     (h3 : jacobiSym n 3 = -1) (h5 : jacobiSym n 5 = 1)
     (hs : (FirstStopNeOneSet isClassicalCandidate n).Nonempty) :
     firstStopNeOne isClassicalCandidate n hs ≤ 15 := by
@@ -272,8 +268,8 @@ Subject to validity of the two exceptional composite candidates, a composite cla
 first-stop is exactly `9` or `15`.  The common extraction theorem forces the bad prime factor
 to be `3`; Jacobi trichotomy then selects the candidate `9` or `15`.
 -/
-theorem composite_minimal_classical_neOne_eq_nine_or_fifteen_of_not_dvd {n i : ℕ} (hn : Odd n)
-    (hi : 0 < i) (hcomp : ¬i.Prime) (hstop : i ∈ FirstStopNeOneSet isClassicalCandidate n)
+theorem classicalNeOne_composite_9_15_of_ndvd {n i : ℕ} (hn : Odd n) (hi : 0 < i) (hcomp : ¬i.Prime)
+    (hstop : i ∈ FirstStopNeOneSet isClassicalCandidate n)
     (hmin : ∀ j < i, j ∉ FirstStopNeOneSet isClassicalCandidate n) (hndvd9 : ¬n ∣ 9)
     (hndvd15 : ¬n ∣ 15) : i = 9 ∨ i = 15 := by
   obtain ⟨h3dvd, h3ne⟩ := three_dvd_of_composite_minimal_classical_neOne hn hi hcomp hstop hmin
@@ -343,8 +339,8 @@ For a positive nonsquare input n with a composite minimal classical factor-detec
 n does not divide 9. Classify the positive divisors 1,3,9: squares are excluded and
 n=3 has the earlier prime stop 5. This validates candidate 9 in the stop classification.
 -/
-theorem not_dvd_nine_of_nonsquare_composite_minimal_classical_neOne {n i : ℕ} (hnpos : 0 < n)
-    (hns : ¬IsSquare n) (hcomp : ¬i.Prime) (hstop : i ∈ FirstStopNeOneSet isClassicalCandidate n)
+theorem not_dvd_nine_of_minimal_classical_neOne {n i : ℕ} (hnpos : 0 < n) (hns : ¬IsSquare n)
+    (hcomp : ¬i.Prime) (hstop : i ∈ FirstStopNeOneSet isClassicalCandidate n)
     (hmin : ∀ j < i, j ∉ FirstStopNeOneSet isClassicalCandidate n) : ¬n ∣ 9 := by
   intro hdvd
   rcases Internal.eq_one_or_three_or_nine_of_dvd_nine hnpos hdvd with rfl | rfl | rfl
@@ -365,12 +361,11 @@ For a positive nonsquare input n with a composite minimal classical factor-detec
 n does not divide 15. Its positive divisors 1,3,5,15 are handled by nonsquareness or
 an earlier concrete prime stop 5 or 7. This validates candidate 15 in the classification.
 -/
-theorem not_dvd_fifteen_of_nonsquare_composite_minimal_classical_neOne {n i : ℕ} (hnpos : 0 < n)
-    (hns : ¬IsSquare n) (hcomp : ¬i.Prime) (hstop : i ∈ FirstStopNeOneSet isClassicalCandidate n)
+theorem not_dvd_fifteen_of_minimal_classical_neOne {n i : ℕ} (hnpos : 0 < n) (hns : ¬IsSquare n)
+    (hcomp : ¬i.Prime) (hstop : i ∈ FirstStopNeOneSet isClassicalCandidate n)
     (hmin : ∀ j < i, j ∉ FirstStopNeOneSet isClassicalCandidate n) : ¬n ∣ 15 := by
   intro hdvd
-  rcases Internal.eq_one_or_three_or_five_or_fifteen_of_dvd_fifteen hnpos hdvd with rfl | rfl |
-    rfl | rfl
+  rcases Internal.eq_1_or_3_or_5_or_15_of_dvd_15 hnpos hdvd with rfl | rfl | rfl | rfl
   · exact hns ⟨1, by norm_num only⟩
   · have h5lt : 5 < i := by
       have hi5le : 5 ≤ i := hstop.1.1
@@ -414,13 +409,12 @@ A composite minimal classical `≠ 1` stop for a positive odd nonsquare input is
 `15`.  Positivity and nonsquareness make both exceptional composite candidates valid for
 factor detection, removing the auxiliary divisibility assumptions from the classification.
 -/
-theorem composite_minimal_classical_neOne_eq_nine_or_fifteen {n i : ℕ} (hnpos : 0 < n) (hn : Odd n)
-    (hns : ¬IsSquare n) (hi : 0 < i) (hcomp : ¬i.Prime)
-    (hstop : i ∈ FirstStopNeOneSet isClassicalCandidate n)
+theorem classicalNeOne_composite_9_15 {n i : ℕ} (hnpos : 0 < n) (hn : Odd n) (hns : ¬IsSquare n)
+    (hi : 0 < i) (hcomp : ¬i.Prime) (hstop : i ∈ FirstStopNeOneSet isClassicalCandidate n)
     (hmin : ∀ j < i, j ∉ FirstStopNeOneSet isClassicalCandidate n) : i = 9 ∨ i = 15 := by
-  apply composite_minimal_classical_neOne_eq_nine_or_fifteen_of_not_dvd hn hi hcomp hstop hmin
-  · exact not_dvd_nine_of_nonsquare_composite_minimal_classical_neOne hnpos hns hcomp hstop hmin
-  · exact not_dvd_fifteen_of_nonsquare_composite_minimal_classical_neOne hnpos hns hcomp hstop hmin
+  apply classicalNeOne_composite_9_15_of_ndvd hn hi hcomp hstop hmin
+  · exact not_dvd_nine_of_minimal_classical_neOne hnpos hns hcomp hstop hmin
+  · exact not_dvd_fifteen_of_minimal_classical_neOne hnpos hns hcomp hstop hmin
 
 /--
 If the Jacobi values at `3` and `5` are `-1` and `1`, respectively, candidate `15` is a pure
@@ -467,9 +461,8 @@ A composite minimal pure `-1` stop in the classical candidate sequence is exactl
 or `27`.  The extracted factor `3` supplies value `-1`; trichotomy at `5` and then at `7`
 selects the first available composite product or the fallback cube `27`.
 -/
-theorem composite_minimal_classical_negOne_eq_fifteen_or_twenty_one_or_twenty_seven {n i : ℕ}
-    (hn : Odd n) (hi : 0 < i) (hcomp : ¬i.Prime)
-    (hstop : i ∈ FirstStopNegOneSet isClassicalCandidate n)
+theorem classical_negOne_composite_eq_15_21_27 {n i : ℕ} (hn : Odd n) (hi : 0 < i)
+    (hcomp : ¬i.Prime) (hstop : i ∈ FirstStopNegOneSet isClassicalCandidate n)
     (hmin : ∀ j < i, j ∉ FirstStopNegOneSet isClassicalCandidate n) : i = 15 ∨ i = 21 ∨ i = 27 := by
   obtain ⟨h3dvd, h3⟩ := three_dvd_of_composite_minimal_classical_negOne hn hi hcomp hstop hmin
   have hi_ge : 5 ≤ i := hstop.1.1
@@ -535,7 +528,7 @@ theorem composite_minimal_classical_negOne_eq_fifteen_or_twenty_one_or_twenty_se
 If `J(n | 3) = -1` and `J(n | 5) = 0`, then `n` is divisible by `5` but not by `3`, so its
 greatest common divisor with `15` is exactly `5`.
 -/
-theorem gcd_fifteen_eq_five_of_jacobi_three_neg_one_five_zero {n : ℕ} (h3 : jacobiSym n 3 = -1)
+theorem gcd_15_eq_5_of_jacobi_three_neg_one_five_zero {n : ℕ} (h3 : jacobiSym n 3 = -1)
     (h5 : jacobiSym n 5 = 0) : n.gcd 15 = 5 := by
   have hfive : 5 ∣ n := by
     have : Fact (Nat.Prime 5) := ⟨Nat.prime_five⟩
@@ -559,8 +552,7 @@ theorem gcd_fifteen_eq_five_of_jacobi_three_neg_one_five_zero {n : ℕ} (h3 : ja
   have hfivedvdgcd : 5 ∣ n.gcd 15 := (Nat.dvd_gcd hfive (by norm_num only))
   have hgcdpos : 0 < n.gcd 15 := Nat.gcd_pos_of_pos_right n (by norm_num only)
   have hgcddiv : n.gcd 15 ∣ 15 := Nat.gcd_dvd_right n 15
-  rcases Internal.eq_one_or_three_or_five_or_fifteen_of_dvd_fifteen hgcdpos hgcddiv with h | h | h |
-    h
+  rcases Internal.eq_1_or_3_or_5_or_15_of_dvd_15 hgcdpos hgcddiv with h | h | h | h
   · rw [h] at hfivedvdgcd
     norm_num only at hfivedvdgcd
   · rw [h] at hfivedvdgcd

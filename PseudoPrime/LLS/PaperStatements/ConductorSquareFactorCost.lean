@@ -45,12 +45,12 @@ theorem untaperedBudget_le_conductor_square_rates {n : ℕ} {hn : Odd n} {hns : 
         (a - b) * Real.log bridge.squarefreePart +
         ∑ p ∈ T, e p := by
   have hcost :=
-    bridge.sum_prime_cost_le_conductor_square_budget
+    bridge.primeCost_le_conductor_square
       (quadraticExcludedPrimeCost (NumberTheory.complexQuadraticCharacter n hn).conductor x
         (untaperedExcludedEndpointWeight x))
       ha hb T e he hR hE
   rw [quadraticExcludedBudget_four_mul_eq_two_add hn _ hx _
-      (fun _ hm ↦ untaperedExcludedEndpointWeight_eq_zero_of_not_primePow x hm)]
+      (fun _ hm ↦ untaperedEndpointWeight_zero_of_not_primePow x hm)]
   linarith only [hcost]
 
 open AnalyticNumberTheory.Arithmetic in

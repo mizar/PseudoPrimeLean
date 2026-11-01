@@ -19,9 +19,9 @@ namespace PseudoPrime.PseudoSquare
 below the squared 37/5 radius at B, provided log B≥50. The conductor-branch
 polynomials are now certified from radius 49. A common ambient scale
 allows finite maxima without enumerating small inputs. -/
-theorem exists_prime_ne_one_le_shiftedDoubleLog_from_fifty_of_le {n B : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 50 ≤ Real.log B) (hnB : n ≤ B) :
+theorem exists_prime_neOne_shiftedDoubleLog50_GRH {n B : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 50 ≤ Real.log B)
+    (hnB : n ≤ B) :
     ∃ p : ℕ,
       p.Prime ∧
         Odd p ∧
@@ -40,13 +40,12 @@ theorem exists_prime_ne_one_le_shiftedDoubleLog_from_fifty_of_le {n B : ℕ} (hn
     norm_num only [Nat.cast_ofNat]
     ring
   have hp :=
-    LLS.PaperStatements.shiftedOddEndpoint_doubleLog_branch_polynomials_pos_from_fifty hL
+    LLS.PaperStatements.shiftedOdd_doubleLog_polys_pos_from50 hL
       (show (69 / 100 : ℝ) ≤ Real.log 2 by linarith only [Real.log_two_gt_d9])
       (show Real.log 2 ≤ (7 / 10 : ℝ) by linarith only [Real.log_two_lt_d9])
   rw [← hlog4] at hp
-  have h0 :=
-    LLS.PaperStatements.oddEndpointTwoCostLimit_neg_of_rational_polynomial_pos (4 * B) hy1 hp.1
-  have h1 := LLS.PaperStatements.oddEndpointTwoCostLimit_neg_of_rational_polynomial_pos B hy1 hp.2
+  have h0 := LLS.PaperStatements.oddEndpointTwoCost_neg_of_rational_poly (4 * B) hy1 hp.1
+  have h1 := LLS.PaperStatements.oddEndpointTwoCost_neg_of_rational_poly B hy1 hp.2
   have hm0 :=
     LLS.PaperStatements.oddEndpointTwoCostLimit_mono_level (c := Real.log 2) (D :=
       (2 * Real.log y - Real.log 2 / 2) ^ 2 / 2) (Nat.mul_pos (by decide : 0 < 4) hn.pos)
@@ -70,20 +69,18 @@ theorem exists_prime_ne_one_le_shiftedDoubleLog_from_fifty_of_le {n B : ℕ} (hn
     rw [he]
     exact hm1.trans_lt h1
   obtain ⟨p, hp, ho, hb, hv⟩ :=
-    exists_odd_prime_jacobi_ne_one_of_shifted_conductor_branch_limits_neg hn hns hGRH hx h64
-      (le_refl _) hz hne
+    exists_oddPrime_neOne_shiftedBranches_GRH hn hns hGRH hx h64 (le_refl _) hz hne
   exact ⟨p, hp, ho, hv, hb⟩
 
 /-- Under GRH for an odd nonsquare input with log n≥50, the least odd-prime
 non-one Jacobi witness is bounded by the squared 37/5 radius. Apply leastness
 to the prime witness supplied by the shifted conductor-branch comparison. -/
-theorem primeNeOneWitness_cast_le_shiftedDoubleLog_from_fifty {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 50 ≤ Real.log n) (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
+theorem neOneWitness_cast_le_shiftedDoubleLog_from_fifty {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 50 ≤ Real.log n)
+    (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤
       (Real.log n - 2 * Real.log (Real.log n) + 37 / 5) ^ 2 := by
-  obtain ⟨p, hp, ho, hv, hb⟩ :=
-    exists_prime_ne_one_le_shiftedDoubleLog_from_fifty_of_le hn hns hGRH hL (le_refl n)
+  obtain ⟨p, hp, ho, hv, hb⟩ := exists_prime_neOne_shiftedDoubleLog50_GRH hn hns hGRH hL (le_refl n)
   exact (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hb
 
 /-- Under GRH and log B≥50, the same radius bounds QNeOne(B), including all
@@ -96,7 +93,7 @@ theorem QNeOne_le_shiftedDoubleLog_from_fifty {B : ℕ} (hL : 50 ≤ Real.log B)
   intro n hn
   have ha := NumberTheory.mem_admissibleFinset_iff.mp hn
   obtain ⟨p, hp, ho, hv, hb⟩ :=
-    exists_prime_ne_one_le_shiftedDoubleLog_from_fifty_of_le ha.odd ha.not_isSquare hGRH hL ha.le
+    exists_prime_neOne_shiftedDoubleLog50_GRH ha.odd ha.not_isSquare hGRH hL ha.le
   exact (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n _ ⟨hp, ho, hv⟩)).trans hb
 
 /-- For L≥50 the 37/5 squared radius is strictly below L². Use log 48

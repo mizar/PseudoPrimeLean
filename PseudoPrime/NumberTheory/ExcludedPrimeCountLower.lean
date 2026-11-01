@@ -34,7 +34,7 @@ theorem primeFactors_card_le_log_div_log_two {q : ℕ} (hq : 0 < q) :
 /-- For any cutoff B and modulus q, pi(B) is at most the number of primes
 not dividing q below B plus the number of prime factors of q. Use the cardinality
 of a finite-set difference. This separates eligible primes from excluded divisors. -/
-theorem primeCounting_le_card_sdiff_primeFactors_add_card {B q : ℕ} :
+theorem primeCounting_le_sdiff_factors_add_card {B q : ℕ} :
     B.primeCounting ≤ (B.primesLE \ q.primeFactors).card + q.primeFactors.card := by
   rw [Finset.card_sdiff_add_card, ← Nat.primesLE_card_eq_primeCounting]
   exact Finset.card_le_card Finset.subset_union_left
@@ -51,8 +51,7 @@ theorem eventually_log_power_le_card_coprime_primes {b A : ℝ} (hb : 1 < b) (hb
   have hL : Filter.Tendsto (fun q : ℕ ↦ Real.log q) Filter.atTop Filter.atTop :=
     Real.tendsto_log_atTop.comp tendsto_natCast_atTop_atTop
   have hpi :=
-    hL.eventually
-      (eventually_const_mul_rpow_le_primeCounting_floor_rpow (C := 4) (zero_lt_one.trans hb) hbA)
+    hL.eventually (eventually_rpow_le_primeCounting_floor (C := 4) (zero_lt_one.trans hb) hbA)
   have hsmall := hL.eventually (eventually_const_mul_rpow_le_rpow (b := 1) (C := 1 / Real.log 2) hb)
   filter_upwards [hpi, hsmall, Filter.eventually_gt_atTop (0 : ℕ)] with q hpiq hs hq
   have homega := primeFactors_card_le_log_div_log_two hq
@@ -62,8 +61,7 @@ theorem eventually_log_power_le_card_coprime_primes {b A : ℝ} (hb : 1 < b) (hb
       (q.primeFactors.card : ℝ) ≤ Real.log q / Real.log 2 := homega
       _ = (1 / Real.log 2) * Real.log q := by ring
       _ ≤ (Real.log q) ^ b := hs
-  have hc :=
-    primeCounting_le_card_sdiff_primeFactors_add_card (B := Nat.floor ((Real.log q) ^ A)) (q := q)
+  have hc := primeCounting_le_sdiff_factors_add_card (B := Nat.floor ((Real.log q) ^ A)) (q := q)
   have hcR :
     (((Nat.floor ((Real.log q) ^ A)).primeCounting) : ℝ) ≤
       (((Nat.floor ((Real.log q) ^ A)).primesLE \ q.primeFactors).card : ℝ) +

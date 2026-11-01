@@ -21,11 +21,10 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 the finite nonunit exponential sum is zero at every scale x.
 A prime divisor in the cutoff would fail by nonunitness. Apply the generic
 prime-divisor exclusion theorem without an analytic size condition. -/
-theorem commonFactorExponentialSum_eq_zero_of_prime_passes {n : ℕ} (hn : 1 < n) (hnOdd : Odd n)
-    {X : ℝ}
+theorem commonExpSum_zero_of_prime_passes {n : ℕ} (hn : 1 < n) (hnOdd : Odd n) {X : ℝ}
     (hpass : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ X → PrimeTest.StrongMillerRabinPass n (p : ZMod n))
     (x : ℝ) : AnalyticNumberTheory.Arithmetic.commonFactorExponentialSum x X n = 0 := by
-  apply AnalyticNumberTheory.Arithmetic.commonFactorExponentialSum_eq_zero_of_prime_divisors_gt
+  apply AnalyticNumberTheory.Arithmetic.commonExpSum_eq_zero_of_prime_divisors_gt
   intro p hp hpd
   apply lt_of_not_ge
   intro hle
@@ -37,9 +36,8 @@ p ≤ (4/5)(log n)² failing the strong Miller-Rabin test.
 Universal prime-base passage eliminates the finite nonunit loss; the conductor-free
 subgroup budget then contradicts the certified strict Gamma main gap.
 There is no numerical-gap, factorization-type or index assumption in the conclusion. -/
-theorem exists_prime_witness_le_conductor_free_gamma_log_30000 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 30000 ≤ Real.log n) :
+theorem exists_prime_conductorFree_log30000_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 30000 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log n) ^ 2 ∧
@@ -58,8 +56,7 @@ theorem exists_prime_witness_le_conductor_free_gamma_log_30000 {n : ℕ} (hnOdd 
     intro p hp hb
     by_contra hf
     exact hnone ⟨p, hp, hb, hf⟩
-  obtain ⟨H, hH, hHpass⟩ :=
-    PrimeTest.exists_proper_subgroup_containing_strongMillerRabinPass hn hnOdd hnComposite
+  obtain ⟨H, hH, hHpass⟩ := PrimeTest.exists_proper_subgroup_strongMR hn hnOdd hnComposite
   have hsmall :
     ∀ p : ℕ,
       p.Prime →
@@ -73,7 +70,7 @@ theorem exists_prime_witness_le_conductor_free_gamma_log_30000 {n : ℕ} (hnOdd 
   have hcut : (99 / 40 : ℝ) * x = (4 / 5 : ℝ) * (Real.log n) ^ 2 := by
     dsimp only [x]
     ring
-  have hz := commonFactorExponentialSum_eq_zero_of_prime_passes hn hnOdd hpass x
+  have hz := commonExpSum_zero_of_prime_passes hn hnOdd hpass x
   dsimp only at hc
   change
     _ ≤
@@ -89,7 +86,7 @@ theorem exists_prime_witness_le_conductor_free_gamma_log_30000 {n : ℕ} (hnOdd 
 the least prime strong-test rejecting base exists and is at most (4/5)(log n)².
 Minimize the unbounded prime-rejection predicate rather than the cutoff.
 Minimality compares every prime rejecting base, preserving the pointwise bound. -/
-theorem exists_least_prime_witness_le_conductor_free_gamma_log_30000 {n : ℕ} (hnOdd : Odd n)
+theorem exists_least_prime_conductorFree_log30000_GRH {n : ℕ} (hnOdd : Odd n)
     (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : 30000 ≤ Real.log n) :
     ∃ p : ℕ,
@@ -98,8 +95,7 @@ theorem exists_least_prime_witness_le_conductor_free_gamma_log_30000 {n : ℕ} (
         (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log n) ^ 2 ∧
         ∀ r : ℕ, r.Prime → ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) → p ≤ r := by
   classical
-  obtain ⟨p, hp, hb, hf⟩ :=
-    exists_prime_witness_le_conductor_free_gamma_log_30000 hnOdd hnComposite hGRH hL
+  obtain ⟨p, hp, hb, hf⟩ := exists_prime_conductorFree_log30000_GRH hnOdd hnComposite hGRH hL
   have hex : ∃ r : ℕ, r.Prime ∧ ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := ⟨p, hp, hf⟩
   exact
     ⟨Nat.find hex, (Nat.find_spec hex).1, (Nat.find_spec hex).2,
@@ -111,7 +107,7 @@ two-adic decomposition n-1=2^s d has a prime base p ≤ (4/5)(log n)²
 with p^d ≠ 1 and p^(2^j d) ≠ -1 for every j<s.
 Unfold the rejection equivalence after the prime-witness theorem.
 This is the explicit congruence form of the improved Miller-Rabin bound. -/
-theorem exists_prime_rejecting_powers_le_conductor_free_gamma_log_30000 {n : ℕ} (hnOdd : Odd n)
+theorem exists_rejectPowers_conductorFree_log30000_GRH {n : ℕ} (hnOdd : Odd n)
     (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : 30000 ≤ Real.log n) :
     let (s, d) := Nat.maxPowDvdDiv 2 (n - 1);
@@ -119,8 +115,7 @@ theorem exists_prime_rejecting_powers_le_conductor_free_gamma_log_30000 {n : ℕ
       p.Prime ∧
         (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log n) ^ 2 ∧
         (p : ZMod n) ^ d ≠ 1 ∧ ∀ j : ℕ, j < s → (p : ZMod n) ^ (2 ^ j * d) ≠ -1 := by
-  obtain ⟨p, hp, hb, hf⟩ :=
-    exists_prime_witness_le_conductor_free_gamma_log_30000 hnOdd hnComposite hGRH hL
+  obtain ⟨p, hp, hb, hf⟩ := exists_prime_conductorFree_log30000_GRH hnOdd hnComposite hGRH hL
   exact ⟨p, hp, hb, PrimeTest.not_strongMillerRabinPass_iff.mp hf⟩
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

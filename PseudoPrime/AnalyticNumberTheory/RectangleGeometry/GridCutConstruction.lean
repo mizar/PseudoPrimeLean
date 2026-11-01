@@ -12,8 +12,8 @@ public import PseudoPrime.AnalyticNumberTheory.RectangleGeometry.ResidueTheorem
 # Generic strict-grid cut construction for a finite singularity set
 
 This file constructs strict-grid cuts over an arbitrary finite singularity
-set `S : Finset ℂ`, producing a `RectangleGeometry.GridInteriorSeparation S cells`
-ready to feed `RectangleGeometry.GridInteriorSeparation.toAssignment` and ultimately
+set `S : Finset ℂ`, producing a `RectangleGeometry.InteriorSeparation S cells`
+ready to feed `RectangleGeometry.InteriorSeparation.toAssignment` and ultimately
 `PseudoPrime.AnalyticNumberTheory.RectangleGeometry.rectangleBoundaryIntegral_eq_sum_res`.
 
 `RectangleGeometry.StrictGridCuts` itself and its `cells_nodup`/`open_disjoint` consequences
@@ -105,8 +105,7 @@ theorem StrictGridCuts.open_disjoint {z w : ℂ} (grid : StrictGridCuts z w) {ce
     hne
 
 /-- The outer singularity set `S` avoids every endpoint-augmented grid coordinate. -/
-def StrictGridCuts.LedgerAvoidsCoordinates {z w : ℂ} (grid : StrictGridCuts z w) (S : Finset ℂ) :
-    Prop :=
+def StrictGridCuts.LedgerAvoidsCoords {z w : ℂ} (grid : StrictGridCuts z w) (S : Finset ℂ) : Prop :=
   ∀ s ∈ S, s.re ∉ z.re :: grid.xcuts ++ [w.re] ∧ s.im ∉ z.im :: grid.ycuts ++ [w.im]
 
 /-- The outer singularity set `S` avoids every internal cut coordinate of a strict grid. -/
@@ -118,7 +117,7 @@ Internal cuts separate every pair of distinct points of `S` in some coordinate: 
 pair of distinct points, a real or imaginary cut lies strictly between their corresponding
 coordinates in either orientation.
 -/
-def StrictGridCuts.LedgerPairsSeparatedByCuts {z w : ℂ} (grid : StrictGridCuts z w) (S : Finset ℂ) :
+def StrictGridCuts.LedgerPairsSeparated {z w : ℂ} (grid : StrictGridCuts z w) (S : Finset ℂ) :
     Prop :=
   ∀ s ∈ S,
     ∀ t ∈ S,
@@ -128,9 +127,9 @@ def StrictGridCuts.LedgerPairsSeparatedByCuts {z w : ℂ} (grid : StrictGridCuts
 
 /-- Interior containment and avoidance of internal cuts imply avoidance of all grid coordinates,
 including the outer endpoints. -/
-theorem StrictGridCuts.ledgerAvoidsCoordinates_of_open {z w : ℂ} (grid : StrictGridCuts z w)
-    {S : Finset ℂ} (hopen : ∀ s ∈ S, s ∈ rectangleOpenBox z w) (hcuts : grid.LedgerAvoidsCuts S) :
-    grid.LedgerAvoidsCoordinates S := by
+theorem StrictGridCuts.avoidsCoords_of_open {z w : ℂ} (grid : StrictGridCuts z w) {S : Finset ℂ}
+    (hopen : ∀ s ∈ S, s ∈ rectangleOpenBox z w) (hcuts : grid.LedgerAvoidsCuts S) :
+    grid.LedgerAvoidsCoords S := by
   intro s hs
   have hsre : z.re < s.re ∧ s.re < w.re := by
     simpa only [min_eq_left (le_of_lt grid.re_lt), max_eq_right (le_of_lt grid.re_lt),
@@ -153,29 +152,27 @@ theorem StrictGridCuts.ledgerAvoidsCoordinates_of_open {z w : ℂ} (grid : Stric
     · exact hsim.2.ne (List.mem_singleton.mp hlast)
 
 /-- Ledger coordinate avoidance upgrades closed-cell membership to open-cell membership. -/
-theorem StrictGridCuts.point_mem_open_of_avoidsCoordinates {z w : ℂ} (grid : StrictGridCuts z w)
-    {S : Finset ℂ} (havoid : grid.LedgerAvoidsCoordinates S) {s : ℂ} (hs : s ∈ S) {cell : ℂ × ℂ}
+theorem StrictGridCuts.point_mem_open {z w : ℂ} (grid : StrictGridCuts z w) {S : Finset ℂ}
+    (havoid : grid.LedgerAvoidsCoords S) {s : ℂ} (hs : s ∈ S) {cell : ℂ × ℂ}
     (hcell : cell ∈ (rectangleGridCells z w grid.xcuts grid.ycuts).toFinset)
     (hsclosed : s ∈ Rectangle.rectangleClosedBox cell.1 cell.2) :
     s ∈ rectangleOpenBox cell.1 cell.2 :=
-  mem_rectangleGridCell_openBox_of_avoids_coordinates grid.xcoordinates_pairwise
-    grid.ycoordinates_pairwise (by simpa only [List.mem_toFinset] using hcell) hsclosed
-    (havoid s hs).1 (havoid s hs).2
+  mem_cell_openBox_of_avoid_cuts grid.xcoordinates_pairwise grid.ycoordinates_pairwise
+    (by simpa only [List.mem_toFinset] using hcell) hsclosed (havoid s hs).1 (havoid s hs).2
 
 /-- Pair-separating cuts make each strict grid cell contain at most one point of `S`. -/
-theorem StrictGridCuts.cell_point_unique_of_pairSeparated {z w : ℂ} (grid : StrictGridCuts z w)
-    {S : Finset ℂ} (havoid : grid.LedgerAvoidsCoordinates S)
-    (hseparated : grid.LedgerPairsSeparatedByCuts S) (cell : ℂ × ℂ)
+theorem StrictGridCuts.cell_point_unique {z w : ℂ} (grid : StrictGridCuts z w) {S : Finset ℂ}
+    (havoid : grid.LedgerAvoidsCoords S) (hseparated : grid.LedgerPairsSeparated S) (cell : ℂ × ℂ)
     (hcell : cell ∈ (rectangleGridCells z w grid.xcuts grid.ycuts).toFinset) {s : ℂ} (hs : s ∈ S)
     (hsclosed : s ∈ Rectangle.rectangleClosedBox cell.1 cell.2) {t : ℂ} (ht : t ∈ S)
     (htclosed : t ∈ Rectangle.rectangleClosedBox cell.1 cell.2) : s = t := by
   by_contra hne
-  have hsopen := grid.point_mem_open_of_avoidsCoordinates havoid hs hcell hsclosed
-  have htopen := grid.point_mem_open_of_avoidsCoordinates havoid ht hcell htclosed
+  have hsopen := grid.point_mem_open havoid hs hcell hsclosed
+  have htopen := grid.point_mem_open havoid ht hcell htclosed
   apply hne
   apply
-    eq_of_mem_same_gridCell_openBox_of_coordinateSeparated grid.xcoordinates_pairwise
-      grid.ycoordinates_pairwise (by simpa only [List.mem_toFinset] using hcell) hsopen htopen
+    eq_of_same_openCell_separated grid.xcoordinates_pairwise grid.ycoordinates_pairwise
+      (by simpa only [List.mem_toFinset] using hcell) hsopen htopen
   rcases hseparated s hs t ht hne with ⟨u, hu, hbetween⟩ | ⟨v, hv, hbetween⟩
   · exact
       Or.inl
@@ -196,23 +193,22 @@ theorem StrictGridCuts.point_covered {z w : ℂ} (grid : StrictGridCuts z w) {s 
     ∃ cell ∈ (rectangleGridCells z w grid.xcuts grid.ycuts).toFinset,
       s ∈ Rectangle.rectangleClosedBox cell.1 cell.2 := by
   obtain ⟨cell, hcell, hscell⟩ :=
-    exists_mem_rectangleGridCell_closedBox grid.re_lt grid.im_lt grid.xcuts_pairwise
-      grid.ycuts_pairwise grid.xcuts_inside grid.ycuts_inside hs
+    exists_mem_gridCell_closedBox grid.re_lt grid.im_lt grid.xcuts_pairwise grid.ycuts_pairwise
+      grid.xcuts_inside grid.ycuts_inside hs
   exact ⟨cell, by simpa only [List.mem_toFinset] using hcell, hscell⟩
 
 /-- A strict grid with cut-avoidance and pair-separation certificates for `S` (relative to an
 outer rectangle whose interior contains `S`) gives complete interior singularity separation. -/
-theorem StrictGridCuts.interiorSeparationOfCutCertificates {z w : ℂ} (grid : StrictGridCuts z w)
-    {S : Finset ℂ} (hopen : ∀ s ∈ S, s ∈ rectangleOpenBox z w)
+theorem StrictGridCuts.separationOfCuts {z w : ℂ} (grid : StrictGridCuts z w) {S : Finset ℂ}
+    (hopen : ∀ s ∈ S, s ∈ rectangleOpenBox z w)
     (hclosed : ∀ s ∈ S, s ∈ Rectangle.rectangleClosedBox z w) (hcuts : grid.LedgerAvoidsCuts S)
-    (hseparated : grid.LedgerPairsSeparatedByCuts S) :
-    GridInteriorSeparation S (rectangleGridCells z w grid.xcuts grid.ycuts).toFinset := by
-  have havoid := grid.ledgerAvoidsCoordinates_of_open hopen hcuts
+    (hseparated : grid.LedgerPairsSeparated S) :
+    InteriorSeparation S (rectangleGridCells z w grid.xcuts grid.ycuts).toFinset := by
+  have havoid := grid.avoidsCoords_of_open hopen hcuts
   exact
     { cell_point_unique := fun cell hcell s hs hsclosed t ht htclosed =>
-        grid.cell_point_unique_of_pairSeparated havoid hseparated cell hcell hs hsclosed ht htclosed
-      point_mem_open := fun s hs cell hcell hsclosed =>
-        grid.point_mem_open_of_avoidsCoordinates havoid hs hcell hsclosed
+        grid.cell_point_unique havoid hseparated cell hcell hs hsclosed ht htclosed
+      point_mem_open := fun s hs cell hcell hsclosed => grid.point_mem_open havoid hs hcell hsclosed
       open_disjoint := fun cell hcell other hother hne => grid.open_disjoint hcell hother hne
       point_covered := fun s hs => grid.point_covered (hclosed s hs) }
 
@@ -375,20 +371,20 @@ theorem generatedStrictGridCuts_avoidsCuts (S : Finset ℂ) (z w : ℂ) (hre : z
   exact ⟨fun hu ↦ (realCuts_avoid hu hs) rfl, fun hv ↦ (imagCuts_avoid hv hs) rfl⟩
 
 /-- The generated strict grid separates every pair of distinct points of `S`. -/
-theorem generatedStrictGridCuts_pairsSeparated (S : Finset ℂ) (z w : ℂ) (hre : z.re < w.re)
+theorem generatedCuts_pairsSeparated (S : Finset ℂ) (z w : ℂ) (hre : z.re < w.re)
     (him : z.im < w.im) (hopen : ∀ s ∈ S, s ∈ rectangleOpenBox z w) :
-    (generatedStrictGridCuts S z w hre him hopen).LedgerPairsSeparatedByCuts S :=
-  fun _ hs _ ht hne ↦ generatedCuts_pair_separated hs ht hne
+    (generatedStrictGridCuts S z w hre him hopen).LedgerPairsSeparated S := fun _ hs _ ht hne ↦
+  generatedCuts_pair_separated hs ht hne
 
 /-- The generated grid interior separation certificate for `S`, built from `S`'s own geometry. -/
 theorem generatedGridInteriorSeparation (S : Finset ℂ) (z w : ℂ) (hre : z.re < w.re)
     (him : z.im < w.im) (hopen : ∀ s ∈ S, s ∈ rectangleOpenBox z w)
     (hclosed : ∀ s ∈ S, s ∈ Rectangle.rectangleClosedBox z w) :
-    GridInteriorSeparation S
+    InteriorSeparation S
       (rectangleGridCells z w (generatedStrictGridCuts S z w hre him hopen).xcuts
           (generatedStrictGridCuts S z w hre him hopen).ycuts).toFinset :=
-  (generatedStrictGridCuts S z w hre him hopen).interiorSeparationOfCutCertificates hopen hclosed
+  (generatedStrictGridCuts S z w hre him hopen).separationOfCuts hopen hclosed
     (generatedStrictGridCuts_avoidsCuts S z w hre him hopen)
-    (generatedStrictGridCuts_pairsSeparated S z w hre him hopen)
+    (generatedCuts_pairsSeparated S z w hre him hopen)
 
 end PseudoPrime.AnalyticNumberTheory.RectangleGeometry

@@ -50,7 +50,7 @@ theorem exists_least_prime_in_residue_le_of_weighted_gap {q : ℕ} [NeZero q] (a
     exact hpx ((Nat.cast_le.mpr (hp.2 ⟨hr, hra⟩)).trans hrx)
   have hi : (⊥ : Subgroup (ZMod q)ˣ).index = q.totient := by
     rw [Subgroup.index_bot, Nat.card_eq_fintype_card, ZMod.card_units_eq_totient]
-  have ha := principal_logWeightedSum_le_coset_add_nonprincipal_norms (⊥ : Subgroup (ZMod q)ˣ) a x
+  have ha := principalLogSum_le_coset_add_nonprincipal_norms (⊥ : Subgroup (ZMod q)ˣ) a x
   rw [cosetLogWeightedSum_bot_eq, hi] at ha
   have hm := mul_le_mul_of_nonneg_left (hu hno) (Nat.cast_nonneg q.totient : (0 : ℝ) ≤ _)
   exact (not_lt_of_ge ((cosetPrincipalLower_le hRH hx).trans (ha.trans (add_le_add hm hn)))) hgap
@@ -59,7 +59,7 @@ theorem exists_least_prime_in_residue_le_of_weighted_gap {q : ℕ} [NeZero q] (a
 the square majorant and the odd root sum retaining the zeta corrections.
 Separate square and nonsquare prime powers, then apply the corrected odd-power bound.
 This connects the retained negative terms to the residue-class contradiction argument. -/
-theorem residue_logWeightedSum_le_corrected_root_sum_of_no_prime {q : ℕ} [NeZero q] (a : (ZMod q)ˣ)
+theorem residue_logSum_le_roots_of_no_prime_RH {q : ℕ} [NeZero q] (a : (ZMod q)ˣ)
     (hRH : RiemannHypothesis) {x : ℝ} (hx : 1 < x)
     (hno : ∀ p : ℕ, p.Prime → (p : ZMod q) = (a : ZMod q) → ¬(p : ℝ) ≤ x) :
     (∑ n ∈ (Finset.Icc 1 ⌊x⌋₊).filter (fun n : ℕ ↦ (n : ZMod q) = (a : ZMod q)),
@@ -78,10 +78,10 @@ theorem residue_logWeightedSum_le_corrected_root_sum_of_no_prime {q : ℕ} [NeZe
         AnalyticNumberTheory.Arithmetic.logWeightedMangoldtTerm x n) ≤
       _ at hs
   have hn :=
-    (AnalyticNumberTheory.Arithmetic.nonsquareCompositeLogWeightedSum_le_odd_powers hx0).trans
-      (oddPrimePowerLogWeightedSum_le_corrected_root_sum hRH hx)
+    (AnalyticNumberTheory.Arithmetic.nonsquareLogSum_le_odd_powers hx0).trans
+      (oddPrimePowerSum_corrected_RH hRH hx)
   exact
-    (AnalyticNumberTheory.Arithmetic.residue_logWeightedSum_le_square_add_nonsquare (a : ZMod q) hx0
+    (AnalyticNumberTheory.Arithmetic.residue_logSum_le_square_add_nonsquare (a : ZMod q) hx0
           hno).trans
       (add_le_add hs hn)
 
@@ -89,9 +89,8 @@ theorem residue_logWeightedSum_le_corrected_root_sum_of_no_prime {q : ℕ} [NeZe
 odd root sum bounds the least prime in every unit residue class by `x`.
 Combine the corrected prime-free residue bound with the existing character-norm estimate
 through the weighted-gap criterion. The logarithmic and constant savings are retained. -/
-theorem exists_least_prime_in_residue_le_of_corrected_root_gap {q : ℕ} [NeZero q] (a : (ZMod q)ˣ)
-    (hq : 64 ≤ q) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ}
-    (hx : 65536 ≤ x)
+theorem exists_least_residue_correctedRoot_GRH {q : ℕ} [NeZero q] (a : (ZMod q)ˣ) (hq : 64 ≤ q)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 65536 ≤ x)
     (hgap :
       (q.totient : ℝ) *
             ((2 : ℝ) ^ q.primeFactors.card * (Real.log x) ^ 2 / 4 * (Real.sqrt x / q + 1) +
@@ -107,7 +106,7 @@ theorem exists_least_prime_in_residue_le_of_corrected_root_gap {q : ℕ} [NeZero
   have hx1 : 1 < x := lt_of_lt_of_le (by norm_num only) hx
   exact
     exists_least_prime_in_residue_le_of_weighted_gap a hGRH.riemann hx1
-      (residue_logWeightedSum_le_corrected_root_sum_of_no_prime a hGRH.riemann hx1)
+      (residue_logSum_le_roots_of_no_prime_RH a hGRH.riemann hx1)
       (nonprincipal_logWeightedNorm_sum_le_explicit ⊥ hq hGRH hx) hgap
 
 open Classical in
@@ -130,10 +129,10 @@ theorem residue_logWeightedSum_le_root_sum_of_no_prime {q : ℕ} [NeZero q] (a :
         AnalyticNumberTheory.Arithmetic.logWeightedMangoldtTerm x n) ≤
       _ at hs
   have hn :=
-    (AnalyticNumberTheory.Arithmetic.nonsquareCompositeLogWeightedSum_le_odd_powers hx0).trans
+    (AnalyticNumberTheory.Arithmetic.nonsquareLogSum_le_odd_powers hx0).trans
       (oddPrimePowerLogWeightedSum_le_explicit_root_sum hRH hx)
   exact
-    (AnalyticNumberTheory.Arithmetic.residue_logWeightedSum_le_square_add_nonsquare (a : ZMod q) hx0
+    (AnalyticNumberTheory.Arithmetic.residue_logSum_le_square_add_nonsquare (a : ZMod q) hx0
           hno).trans
       (add_le_add hs hn)
 
@@ -155,7 +154,7 @@ theorem residue_no_prime_root_sum_sandwich {q : ℕ} [NeZero q] (a : (ZMod q)ˣ)
   have hx1 : 1 < x := lt_of_lt_of_le (by norm_num only) hx
   have hi : (⊥ : Subgroup (ZMod q)ˣ).index = q.totient := by
     rw [Subgroup.index_bot, Nat.card_eq_fintype_card, ZMod.card_units_eq_totient]
-  have ha := principal_logWeightedSum_le_coset_add_nonprincipal_norms (⊥ : Subgroup (ZMod q)ˣ) a x
+  have ha := principalLogSum_le_coset_add_nonprincipal_norms (⊥ : Subgroup (ZMod q)ˣ) a x
   rw [cosetLogWeightedSum_bot_eq, hi] at ha
   have hu := residue_logWeightedSum_le_root_sum_of_no_prime a hGRH.riemann hx1 hno
   have hm := mul_le_mul_of_nonneg_left hu (Nat.cast_nonneg q.totient : (0 : ℝ) ≤ _)
@@ -168,9 +167,8 @@ gap between the principal lower bound and the totient-scaled square and odd root
 majorants plus the nonprincipal error bounds the least prime in any unit residue.
 If that prime exceeded the cutoff, the prime-free sandwich would contradict
 the gap. This allows Corollary 1.2 to use analytic estimates for smaller moduli. -/
-theorem exists_least_prime_in_residue_le_of_explicit_root_gap {q : ℕ} [NeZero q] (a : (ZMod q)ˣ)
-    (hq : 64 ≤ q) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ}
-    (hx : 65536 ≤ x)
+theorem exists_least_residue_explicitRoot_GRH {q : ℕ} [NeZero q] (a : (ZMod q)ˣ) (hq : 64 ≤ q)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 65536 ≤ x)
     (hgap :
       (q.totient : ℝ) *
             ((2 : ℝ) ^ q.primeFactors.card * (Real.log x) ^ 2 / 4 * (Real.sqrt x / q + 1) +
@@ -193,9 +191,9 @@ and square inequalities certify the odd root majorant. If this certified sum,
 the square-residue contribution and nonprincipal bound lie below the principal
 lower bound, every unit residue has its least prime below the cutoff. This
 connects finite rational root certificates to Corollary 1.2. -/
-theorem exists_least_prime_in_residue_le_of_power_certificates {q : ℕ} [NeZero q] (a : (ZMod q)ˣ)
-    (hq : 64 ≤ q) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ}
-    (hx : 65536 ≤ x) {K : ℕ} (hK : ⌊Real.log x / Real.log 2⌋₊ ≤ K) (b c : ℕ → ℝ)
+theorem exists_least_residue_powerCert_GRH {q : ℕ} [NeZero q] (a : (ZMod q)ˣ) (hq : 64 ≤ q)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 65536 ≤ x) {K : ℕ}
+    (hK : ⌊Real.log x / Real.log 2⌋₊ ≤ K) (b c : ℕ → ℝ)
     (hb : ∀ k ∈ (Finset.Icc 3 K).filter Odd, 0 ≤ b k)
     (hc : ∀ k ∈ (Finset.Icc 3 K).filter Odd, 0 ≤ c k)
     (hpow : ∀ k ∈ (Finset.Icc 3 K).filter Odd, x ≤ b k ^ k)
@@ -215,7 +213,7 @@ theorem exists_least_prime_in_residue_le_of_power_certificates {q : ℕ} [NeZero
         (le_refl ((2 : ℝ) ^ q.primeFactors.card * (Real.log x) ^ 2 / 4 * (Real.sqrt x / q + 1))) hr)
       (Nat.cast_nonneg q.totient : (0 : ℝ) ≤ q.totient)
   exact
-    exists_least_prime_in_residue_le_of_explicit_root_gap a hq hGRH hx
+    exists_least_residue_explicitRoot_GRH a hq hGRH hx
       (lt_of_le_of_lt (add_le_add hm (le_refl (cosetNonprincipalUpper q ⊥ x))) hgap)
 
 open Classical in
@@ -238,10 +236,10 @@ theorem residue_logWeightedSum_le_of_no_prime {q : ℕ} [NeZero q] (a : (ZMod q)
         AnalyticNumberTheory.Arithmetic.logWeightedMangoldtTerm x n) ≤
       _ at hs
   have hn :=
-    (AnalyticNumberTheory.Arithmetic.nonsquareCompositeLogWeightedSum_le_odd_powers hx0).trans
+    (AnalyticNumberTheory.Arithmetic.nonsquareLogSum_le_odd_powers hx0).trans
       (oddPrimePowerLogWeightedSum_le_sqrt_seventh hRH hx)
   exact
-    (AnalyticNumberTheory.Arithmetic.residue_logWeightedSum_le_square_add_nonsquare (a : ZMod q) hx0
+    (AnalyticNumberTheory.Arithmetic.residue_logSum_le_square_add_nonsquare (a : ZMod q) hx0
           hno).trans
       (add_le_add hs hn)
 
@@ -263,7 +261,7 @@ theorem residue_no_prime_sandwich {q : ℕ} [NeZero q] (a : (ZMod q)ˣ) (hq : 20
   have hx1 : 1 < x := lt_of_lt_of_le (by norm_num only) hx
   have hi : (⊥ : Subgroup (ZMod q)ˣ).index = q.totient := by
     rw [Subgroup.index_bot, Nat.card_eq_fintype_card, ZMod.card_units_eq_totient]
-  have ha := principal_logWeightedSum_le_coset_add_nonprincipal_norms (⊥ : Subgroup (ZMod q)ˣ) a x
+  have ha := principalLogSum_le_coset_add_nonprincipal_norms (⊥ : Subgroup (ZMod q)ˣ) a x
   rw [cosetLogWeightedSum_bot_eq, hi] at ha
   have hu := residue_logWeightedSum_le_of_no_prime a hGRH.riemann hx hno
   have hm := mul_le_mul_of_nonneg_left hu (Nat.cast_nonneg q.totient : (0 : ℝ) ≤ _)

@@ -55,9 +55,9 @@ theorem norm_characterLogWeightedSum_le_ambient_explicit {q : ℕ} [NeZero q]
         |Real.log ((χ.conductor : ℝ) / Real.pi) * Real.log x / 2 +
             logCorrection χ.primitiveCharacter x| +
         (1 / 2 : ℝ) * (q / χ.conductor).primeFactors.card * (Real.log x) ^ 2 := by
-  have hs := norm_characterLogWeightedSum_le_primitive_explicit χ hc hGRH hx
+  have hs := characterLogSum_norm_le_primitive_explicit χ hc hGRH hx
   have hb :=
-    norm_logDeriv_xi_zero_le_log_ambient_of_log_lower_bound (three_le_log_ambient_div_pi hq) hc
+    norm_logDeriv_xi_zero_le_ambient_of_GRH (three_le_log_ambient_div_pi hq) hc
       (Nat.le_of_dvd (NeZero.pos q) χ.conductor_dvd_level)
       (DirichletCharacter.primitiveCharacter_isPrimitive χ) hGRH
   have hm := mul_le_mul_of_nonneg_right hb (Real.log_pos hx).le
@@ -136,8 +136,8 @@ primitive zero-mass contribution is bounded using the original character's
 reciprocal sum and the common-factor error of the level-conductor quotient.
 Take real parts of the level-change norm estimate and substitute them into
 the primitive bound. This keeps the character sum needed for orthogonality. -/
-theorem primitive_zeroMass_logWeightedContribution_le_character {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hc : 3 ≤ χ.conductor)
+theorem primitiveZeroMass_logContribution_le_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    [NeZero χ.conductor] (hc : 3 ≤ χ.conductor)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 10000 ≤ x) :
     |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| *
         (2 * Real.sqrt x + 2) ≤
@@ -151,8 +151,7 @@ theorem primitive_zeroMass_logWeightedContribution_le_character {q : ℕ} [NeZer
   have hb :=
     primitive_zeroMass_logWeightedContribution_le χ.primitiveCharacter hc
       (DirichletCharacter.primitiveCharacter_isPrimitive χ) hGRH hx
-  have he :=
-    AnalyticNumberTheory.Arithmetic.norm_characterReciprocalWeightedSum_sub_primitive_le x χ hx0
+  have he := AnalyticNumberTheory.Arithmetic.norm_characterRecipSum_sub_primitive_le x χ hx0
   have hre := (Complex.re_le_norm _).trans he
   rw [Complex.sub_re] at hre
   have hm :=
@@ -164,8 +163,8 @@ theorem primitive_zeroMass_logWeightedContribution_le_character {q : ℕ} [NeZer
 10000, retain the exact primitive reciprocal correction in the logarithmic character norm bound.
 Substitute the reciprocal zero-mass bound and control the common-factor sum geometrically.
 The correction remains available for an exact even/odd average rather than a common constant. -/
-theorem norm_characterLogWeightedSum_le_reciprocal_parity_explicit {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hq : 64 ≤ q) (hc : 3 ≤ χ.conductor)
+theorem norm_characterLogSum_reciprocal_parity_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    [NeZero χ.conductor] (hq : 64 ≤ q) (hc : 3 ≤ χ.conductor)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 10000 ≤ x) :
     ‖AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x χ‖ ≤
       (Real.sqrt x + 19 / 6) *
@@ -179,7 +178,7 @@ theorem norm_characterLogWeightedSum_le_reciprocal_parity_explicit {q : ℕ} [Ne
         (1 / 2 : ℝ) * (q / χ.conductor).primeFactors.card * (Real.log x) ^ 2 := by
   have hx1 : (1 : ℝ) < x := lt_of_lt_of_le (by norm_num only) hx
   have hs := norm_characterLogWeightedSum_le_ambient_explicit χ hq hc hGRH hx1
-  have hb := primitive_zeroMass_logWeightedContribution_le_character χ hc hGRH hx
+  have hb := primitiveZeroMass_logContribution_le_GRH χ hc hGRH hx
   have hquot : q / χ.conductor ≠ 0 :=
     Nat.ne_of_gt
       (Nat.div_pos (Nat.le_of_dvd (NeZero.pos q) χ.conductor_dvd_level) (NeZero.pos χ.conductor))
@@ -197,8 +196,8 @@ sum, the prime-divisor error of the level-conductor quotient, and explicit
 endpoint and parity terms. Substitute the reciprocal zero-mass estimate, bound
 the common-factor sum geometrically, and use correction at most `-2/7`.
 This retains the reciprocal sum required for the coset character average. -/
-theorem norm_characterLogWeightedSum_le_reciprocal_explicit {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hq : 64 ≤ q) (hc : 3 ≤ χ.conductor)
+theorem characterLogSum_norm_le_reciprocal_explicit {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    [NeZero χ.conductor] (hq : 64 ≤ q) (hc : 3 ≤ χ.conductor)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 10000 ≤ x) :
     ‖AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x χ‖ ≤
       (Real.sqrt x + 19 / 6) *
@@ -212,7 +211,7 @@ theorem norm_characterLogWeightedSum_le_reciprocal_explicit {q : ℕ} [NeZero q]
         (1 / 2 : ℝ) * (q / χ.conductor).primeFactors.card * (Real.log x) ^ 2 := by
   have hx1 : (1 : ℝ) < x := lt_of_lt_of_le (by norm_num only) hx
   have hs := norm_characterLogWeightedSum_le_ambient_explicit χ hq hc hGRH hx1
-  have hb := primitive_zeroMass_logWeightedContribution_le_character χ hc hGRH hx
+  have hb := primitiveZeroMass_logContribution_le_GRH χ hc hGRH hx
   have hquot : q / χ.conductor ≠ 0 :=
     Nat.ne_of_gt
       (Nat.div_pos (Nat.le_of_dvd (NeZero.pos q) χ.conductor_dvd_level) (NeZero.pos χ.conductor))
@@ -275,7 +274,7 @@ theorem norm_characterLogWeightedSum_le_level_explicit {q : ℕ} [NeZero q]
         |Real.log ((χ.conductor : ℝ) / Real.pi) * Real.log x / 2 +
             logCorrection χ.primitiveCharacter x| := by
   have hs :=
-    norm_characterLogWeightedSum_le_reciprocal_explicit χ hq hc hGRH
+    characterLogSum_norm_le_reciprocal_explicit χ hq hc hGRH
       ((by norm_num only : (10000 : ℝ) ≤ 65536).trans hx)
   have hA : 0 ≤ Real.sqrt x + 19 / 6 := add_nonneg (Real.sqrt_nonneg x) (by norm_num only)
   have hcost :=
@@ -301,7 +300,7 @@ theorem norm_characterLogWeightedSum_le_level_explicit {q : ℕ} [NeZero q]
 the conductor-quotient costs while retaining the exact reciprocal parity correction.
 The prime-factor cost inequality and level-conductor logarithm identity replace
 those costs by `log 2` and `log² x`. This keeps the correction available for averaging. -/
-theorem norm_characterLogWeightedSum_le_level_parity_explicit {q : ℕ} [NeZero q]
+theorem characterLogSum_norm_le_level_parity_explicit {q : ℕ} [NeZero q]
     (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hq : 64 ≤ q) (hc : 3 ≤ χ.conductor)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 65536 ≤ x) :
     ‖AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x χ‖ ≤
@@ -315,7 +314,7 @@ theorem norm_characterLogWeightedSum_le_level_parity_explicit {q : ℕ} [NeZero 
         |Real.log ((χ.conductor : ℝ) / Real.pi) * Real.log x / 2 +
             logCorrection χ.primitiveCharacter x| := by
   have hs :=
-    norm_characterLogWeightedSum_le_reciprocal_parity_explicit χ hq hc hGRH
+    norm_characterLogSum_reciprocal_parity_GRH χ hq hc hGRH
       ((by norm_num only : (10000 : ℝ) ≤ 65536).trans hx)
   have hA : 0 ≤ Real.sqrt x + 19 / 6 := add_nonneg (Real.sqrt_nonneg x) (by norm_num only)
   have hcost :=
@@ -515,7 +514,7 @@ theorem norm_characterLogWeightedSum_le_coset_parity {q : ℕ} [NeZero q] (χ : 
         (Real.log x) ^ 2 +
         ((2 / 3 : ℝ) * Real.log ((q : ℝ) / Real.pi) + 4) * Real.log x +
         Real.log x / 2 * Real.log (max ((q : ℝ) / Real.pi) (2 * x)) := by
-  have hs := norm_characterLogWeightedSum_le_level_parity_explicit χ hq hc hGRH hx
+  have hs := characterLogSum_norm_le_level_parity_explicit χ hq hc hGRH hx
   have he :=
     neg_log_conductor_div_cutoff_le_fine hc (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 65536) hx)
   have hp :=

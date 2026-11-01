@@ -24,7 +24,7 @@ rate times the scale. Split the family by primitive conductor four, combine the
 two unconditional bounds, and recombine the level-change corrections exactly.
 The remaining terms are the explicit primitive remainders and the gap-controlled
 leading error; their uniform absorption is a subsequent quantitative scale choice. -/
-theorem exists_character_family_half_scale_budget :
+theorem exists_halfFamily :
     ∃ A B C K T : ℝ,
       0 < A ∧
         0 < B ∧
@@ -50,7 +50,7 @@ theorem exists_character_family_half_scale_budget :
                                 (∀ χ ∈ S, χ ≠ 1) →
                                   (∀
                                     e ∈
-                                      exceptionalFamilyConductorsAwayFromFour (H + 1)
+                                      exceptionalExceptFour (H + 1)
                                         (1 - c / Real.log ((H + 1 : ℕ) : ℝ)),
                                     ¬e ∣ q) →
                                   (∑ χ ∈ S,
@@ -68,11 +68,10 @@ theorem exists_character_family_half_scale_budget :
                                           T) +
                                       (S.card : ℝ) *
                                         ((q.primeFactors.card : ℝ) * (Real.log x) ^ 2) := by
-  obtain ⟨A, B, C, K, T, hA, hB, hC, hK, hT, hgood⟩ :=
-    exists_character_family_half_scale_budget_off_exceptional_conductors
+  obtain ⟨A, B, C, K, T, hA, hB, hC, hK, hT, hgood⟩ := halfFamily_off_except
   refine ⟨A, B, C, K, T, hA, hB, hC, hK, hT, ?_⟩
   intro ε hε
-  obtain ⟨X, hX, hfour⟩ := exists_uniform_induced_conductor_four_half_sum_bound hε
+  obtain ⟨X, hX, hfour⟩ := inducedConductor4_halfSum_bound hε
   refine ⟨max 4 X, le_max_left _ _, ?_⟩
   intro c hc H hH x σ hx hσlo hσhi hδ hscale q inst hq S hne havoid
   have hx4 : 4 ≤ x := (le_max_left 4 X).trans hx

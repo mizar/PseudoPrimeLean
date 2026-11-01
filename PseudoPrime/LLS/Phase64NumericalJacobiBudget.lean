@@ -55,7 +55,7 @@ theorem phase64_jacobi_no_negative_numerical_comparison {n : ℕ} {hn : Odd n} {
 /-- Under GRH and the first-cell conductor hypotheses, a strict gap above the
 explicit numerical budget gives an odd-prime negative Jacobi witness through L^2.
 The remaining numerical premise concerns only the principal-ramp quantity. -/
-theorem exists_odd_prime_negative_of_phase64_numerical_gap {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+theorem exists_oddPrime_negJacobi_phase64_numeric_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {q : ℕ} (hq : 20000 ≤ q)
     (hmq : (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ q) {L : ℝ} (hlo : 64 ≤ L)

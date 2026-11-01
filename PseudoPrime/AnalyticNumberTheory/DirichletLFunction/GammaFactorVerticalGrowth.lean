@@ -44,9 +44,9 @@ theorem analyticAt_gammaFactor_of_re_pos {N : ℕ} (χ : DirichletCharacter ℂ 
       simpa only [Complex.ofReal_zero, add_zero] using
         half_add_ne_neg_nat_of_re_pos hz (a := 0) le_rfl
     rcases χ.even_or_odd with he | ho
-    · exact (differentiableAt_gammaFactor_of_even_of_half_ne_neg_nat he h0).differentiableWithinAt
+    · exact (differentiableAt_gammaFactor_even he h0).differentiableWithinAt
     · exact
-        (differentiableAt_gammaFactor_of_odd_of_half_ne_neg_nat ho
+        (differentiableAt_gammaFactor_odd ho
             (by
               simpa only [Complex.ofReal_one] using
                 half_add_ne_neg_nat_of_re_pos hz (a := 1) zero_le_one)).differentiableWithinAt
@@ -58,10 +58,10 @@ logarithmic derivative. -/
 theorem gammaFactor_ne_zero_of_re_pos {N : ℕ} (χ : DirichletCharacter ℂ N) {s : ℂ} (hs : 0 < s.re) :
     χ.gammaFactor s ≠ 0 := by
   rcases χ.even_or_odd with he | ho
-  · apply gammaFactor_ne_zero_of_even_of_half_ne_neg_nat he
+  · apply gammaFactor_even_ne_zero_nonpole he
     simpa only [Complex.ofReal_zero, add_zero] using
       half_add_ne_neg_nat_of_re_pos hs (a := 0) le_rfl
-  · apply gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat ho
+  · apply gammaFactor_odd_ne_zero_nonpole ho
     simpa only [Complex.ofReal_one] using half_add_ne_neg_nat_of_re_pos hs (a := 1) zero_le_one
 
 /--
@@ -77,8 +77,8 @@ differentiate that local equality.
 Role: supplies the exact transfer from completed-zero detection to the ordinary $L$ derivatives
 counted by the Euler-tail large sieve.
 -/
-theorem iteratedDeriv_logDeriv_LFunction_eq_completed_sub_gammaFactor {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hne : χ ≠ 1) {s : ℂ} (hs : 1 < s.re) (n : ℕ) :
+theorem iteratedDeriv_L_logDeriv_sub_gamma {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hne : χ ≠ 1) {s : ℂ} (hs : 1 < s.re) (n : ℕ) :
     iteratedDeriv n (logDeriv (DirichletCharacter.LFunction χ)) s =
       iteratedDeriv n (logDeriv (DirichletCharacter.completedLFunction χ)) s -
         iteratedDeriv n (logDeriv (DirichletCharacter.gammaFactor χ)) s := by
@@ -98,13 +98,13 @@ theorem iteratedDeriv_logDeriv_LFunction_eq_completed_sub_gammaFactor {N : ℕ} 
     have hΓ := gammaFactor_ne_zero_of_re_pos χ (by linarith only [hz])
     have hquot :=
       DirichletCharacter.LFunction_eq_completed_div_gammaFactor χ z
-        (Or.inr (dirichletCharacter_level_ne_one_of_ne_one hne))
+        (Or.inr (character_level_ne_one_of_ne_one hne))
     have hF : DirichletCharacter.completedLFunction χ z ≠ 0 := by
       intro hzero
       apply hL
       rw [hquot, hzero, zero_div]
     have hdΓ := (analyticAt_gammaFactor_of_re_pos χ (by linarith only [hz])).differentiableAt
-    exact logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne hF hΓ hdΓ
+    exact L_logDeriv_sub_gamma_of_regular hne hF hΓ hdΓ
   have hpoint := (Set.EqOn.iteratedDeriv_of_isOpen hEq hU n) hs
   have hcompleted : AnalyticAt ℂ (logDeriv (DirichletCharacter.completedLFunction χ)) s := by
     rw [logDeriv]
@@ -114,7 +114,7 @@ theorem iteratedDeriv_logDeriv_LFunction_eq_completed_sub_gammaFactor {N : ℕ} 
       DirichletCharacter.LFunction_ne_zero_of_one_le_re χ (Or.inl hne) (le_of_lt hs)
     have hquot :=
       DirichletCharacter.LFunction_eq_completed_div_gammaFactor χ s
-        (Or.inr (dirichletCharacter_level_ne_one_of_ne_one hne))
+        (Or.inr (character_level_ne_one_of_ne_one hne))
     have hFne : DirichletCharacter.completedLFunction χ s ≠ 0 := by
       intro hzero
       apply hL
@@ -159,12 +159,12 @@ derivative, then apply the triangle inequality.
 
 Role: transfers local zero detection into the large-value set used by the Euler-tail large sieve.
 -/
-theorem norm_iteratedDeriv_logDeriv_LFunction_ge_of_completed {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hne : χ ≠ 1) {s : ℂ} (hs : 1 < s.re) (n : ℕ) {A G : ℝ}
+theorem norm_iteratedDeriv_L_logDeriv_ge {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hne : χ ≠ 1) {s : ℂ} (hs : 1 < s.re) (n : ℕ) {A G : ℝ}
     (hcompleted : A ≤ ‖iteratedDeriv n (logDeriv (DirichletCharacter.completedLFunction χ)) s‖)
     (hgamma : ‖iteratedDeriv n (logDeriv (DirichletCharacter.gammaFactor χ)) s‖ ≤ G) :
     A - G ≤ ‖iteratedDeriv n (logDeriv (DirichletCharacter.LFunction χ)) s‖ := by
-  have hidentity := iteratedDeriv_logDeriv_LFunction_eq_completed_sub_gammaFactor hne hs n
+  have hidentity := iteratedDeriv_L_logDeriv_sub_gamma hne hs n
   have hsum :
     iteratedDeriv n (logDeriv (DirichletCharacter.completedLFunction χ)) s =
       iteratedDeriv n (logDeriv (DirichletCharacter.LFunction χ)) s +
@@ -188,7 +188,7 @@ bound on the resulting positive-real-part half-arguments.
 
 Role: supplies the pointwise majorant needed for Cauchy bounds on higher gamma-factor derivatives.
 -/
-theorem exists_uniform_norm_logDeriv_gammaFactor_on_strip :
+theorem uniform_gammaLogDeriv_strip_log :
     ∃ C : ℝ,
       0 ≤ C ∧
         ∀ {N : ℕ} (χ : DirichletCharacter ℂ N) {s : ℂ},
@@ -196,7 +196,7 @@ theorem exists_uniform_norm_logDeriv_gammaFactor_on_strip :
             s.re ≤ 3 / 2 →
             ‖logDeriv (DirichletCharacter.gammaFactor χ) s‖ ≤
               C * (Real.log (2 * |s.im| + 2) + 1) := by
-  obtain ⟨Cψ, hCψ, hψ⟩ := exists_C_forall_norm_digamma_explicit_le
+  obtain ⟨Cψ, hCψ, hψ⟩ := uniform_digamma_explicit_bound
   have hdigamma :
     ∀ (a u : ℝ),
       3 / 8 ≤ a →
@@ -271,7 +271,7 @@ theorem exists_uniform_norm_logDeriv_gammaFactor_on_strip :
       intro m
       simpa only [Complex.ofReal_zero, add_zero] using
         half_add_ne_neg_nat_of_re_pos (by linarith only [hslo]) (a := 0) le_rfl m
-    have hformula := logDeriv_gammaFactor_eq_of_even_of_half_ne_neg_nat he hhalf
+    have hformula := gammaLogDeriv_even_eq_digamma he hhalf
     have harg : s / 2 = ((s.re / 2 : ℝ) : ℂ) + ((s.im / 2 : ℝ) : ℂ) * Complex.I := by
       calc
         s / 2 = ((s / 2).re : ℂ) + (s / 2).im * Complex.I := (Complex.re_add_im (s / 2)).symm
@@ -301,7 +301,7 @@ theorem exists_uniform_norm_logDeriv_gammaFactor_on_strip :
   · have hhalf : ∀ m : ℕ, (s + 1) / 2 ≠ -(m : ℂ) := by
       intro m
       exact half_add_ne_neg_nat_of_re_pos (by linarith only [hslo]) (a := 1) zero_le_one m
-    have hformula := logDeriv_gammaFactor_eq_of_odd_of_half_ne_neg_nat ho hhalf
+    have hformula := gammaLogDeriv_odd_eq_digamma ho hhalf
     have harg : (s + 1) / 2 = (((s.re + 1) / 2 : ℝ) : ℂ) + ((s.im / 2 : ℝ) : ℂ) * Complex.I := by
       calc
         (s + 1) / 2 = (((s + 1) / 2).re : ℂ) + ((s + 1) / 2).im * Complex.I :=
@@ -336,7 +336,7 @@ theorem exists_uniform_norm_logDeriv_gammaFactor_on_strip :
 /-- For a fixed positive real part, the gamma-factor logarithmic derivative is continuous on
 the entire vertical line. Analyticity and nonvanishing give an analytic quotient; compose
 with the vertical parametrization. This controls bounded height intervals. -/
-theorem continuous_logDeriv_gammaFactor_vertical {N : ℕ} (χ : DirichletCharacter ℂ N) {σ : ℝ}
+theorem continuous_gammaLogDeriv_vertical {N : ℕ} (χ : DirichletCharacter ℂ N) {σ : ℝ}
     (hσ : 0 < σ) : Continuous (fun t : ℝ => logDeriv χ.gammaFactor ((σ : ℂ) + Complex.I * t)) := by
   rw [continuous_iff_continuousAt]
   intro t
@@ -357,7 +357,7 @@ Content: apply the strip estimate on the closed radius-one-quarter disk around t
 Role: controls the high-order gamma correction when transferring completed derivatives to
 ordinary Dirichlet L-function derivatives in the central strip.
 -/
-theorem exists_uniform_norm_iteratedDeriv_gammaFactor_vertical_le (n : ℕ) :
+theorem gammaLogDeriv_deriv_bound (n : ℕ) :
     ∃ C : ℝ,
       0 ≤ C ∧
         ∀ {N : ℕ} (χ : DirichletCharacter ℂ N) {c : ℂ} {T : ℝ},
@@ -367,7 +367,7 @@ theorem exists_uniform_norm_iteratedDeriv_gammaFactor_vertical_le (n : ℕ) :
             |c.im| ≤ T →
             ‖iteratedDeriv n (logDeriv χ.gammaFactor) c‖ ≤
               (n.factorial : ℝ) * C * (Real.log (4 * T + 4) + 1) / (1 / 4 : ℝ) ^ n := by
-  obtain ⟨C, hC, hstrip⟩ := exists_uniform_norm_logDeriv_gammaFactor_on_strip
+  obtain ⟨C, hC, hstrip⟩ := uniform_gammaLogDeriv_strip_log
   refine ⟨C, hC, ?_⟩
   intro N χ c T hcLo hcHi hT hcT
   let r : ℝ := 1 / 4
@@ -442,7 +442,7 @@ radius-`1/4` disk around each center.
 Role: provides an order-independent constant for comparing high-order zero signals with the
 gamma correction.
 -/
-theorem exists_uniform_norm_iteratedDeriv_gammaFactor_vertical_le_all :
+theorem gammaLogDeriv_all_deriv_bound :
     ∃ C : ℝ,
       0 ≤ C ∧
         ∀ n : ℕ,
@@ -453,7 +453,7 @@ theorem exists_uniform_norm_iteratedDeriv_gammaFactor_vertical_le_all :
               |c.im| ≤ T →
               ‖iteratedDeriv n (logDeriv χ.gammaFactor) c‖ ≤
                 (n.factorial : ℝ) * C * (Real.log (4 * T + 4) + 1) / (1 / 4 : ℝ) ^ n := by
-  obtain ⟨C, hC, hstrip⟩ := exists_uniform_norm_logDeriv_gammaFactor_on_strip
+  obtain ⟨C, hC, hstrip⟩ := uniform_gammaLogDeriv_strip_log
   refine ⟨C, hC, ?_⟩
   intro n N χ c T hcLo hcHi hT hcT
   let r : ℝ := 1 / 4
@@ -530,7 +530,7 @@ derivative identity.
 Role: transfers the local zero-detection output into the large-value set counted by the Euler-tail
 large sieve.
 -/
-theorem exists_uniform_gamma_subtraction_for_ordinary_LFunction_derivative (n : ℕ) :
+theorem L_logDeriv_deriv_sub_gamma_bound (n : ℕ) :
     ∃ C : ℝ,
       0 ≤ C ∧
         ∀ {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N},
@@ -545,10 +545,10 @@ theorem exists_uniform_gamma_subtraction_for_ordinary_LFunction_derivative (n : 
                   A ≤ ‖iteratedDeriv n (logDeriv (DirichletCharacter.completedLFunction χ)) s‖ →
                     A - (n.factorial : ℝ) * C * (Real.log (4 * T + 4) + 1) / (1 / 4 : ℝ) ^ n ≤
                       ‖iteratedDeriv n (logDeriv (DirichletCharacter.LFunction χ)) s‖ := by
-  obtain ⟨C, hC, hgamma⟩ := exists_uniform_norm_iteratedDeriv_gammaFactor_vertical_le n
+  obtain ⟨C, hC, hgamma⟩ := gammaLogDeriv_deriv_bound n
   refine ⟨C, hC, ?_⟩
   intro N _ χ hne s T hs hslo hshi hT hsi A hA
-  apply norm_iteratedDeriv_logDeriv_LFunction_ge_of_completed hne hs n hA
+  apply norm_iteratedDeriv_L_logDeriv_ge hne hs n hA
   exact hgamma χ hslo hshi hT hsi
 
 /--
@@ -561,7 +561,7 @@ completed-to-ordinary derivative identity.
 Role: lets later arguments choose a sufficiently high detector order without changing the
 constant in the gamma error.
 -/
-theorem exists_uniform_gamma_subtraction_for_ordinary_LFunction_derivative_all :
+theorem L_logDeriv_all_deriv_sub_gamma :
     ∃ C : ℝ,
       0 ≤ C ∧
         ∀ n : ℕ,
@@ -577,25 +577,25 @@ theorem exists_uniform_gamma_subtraction_for_ordinary_LFunction_derivative_all :
                     A ≤ ‖iteratedDeriv n (logDeriv (DirichletCharacter.completedLFunction χ)) s‖ →
                       A - (n.factorial : ℝ) * C * (Real.log (4 * T + 4) + 1) / (1 / 4 : ℝ) ^ n ≤
                         ‖iteratedDeriv n (logDeriv (DirichletCharacter.LFunction χ)) s‖ := by
-  obtain ⟨C, hC, hgamma⟩ := exists_uniform_norm_iteratedDeriv_gammaFactor_vertical_le_all
+  obtain ⟨C, hC, hgamma⟩ := gammaLogDeriv_all_deriv_bound
   refine ⟨C, hC, ?_⟩
   intro n N hN χ hne s T hs hslo hshi hT hsi A hA
-  apply norm_iteratedDeriv_logDeriv_LFunction_ge_of_completed hne hs n hA
+  apply norm_iteratedDeriv_L_logDeriv_ge hne hs n hA
   exact hgamma n χ hslo hshi hT hsi
 
 /-- For a fixed real part in (0,2], the gamma-factor logarithmic derivative on its vertical
 line is bounded by A times log(4+abs t)+1 for some positive A. Use compact continuity
 near height zero and the logarithmic strip estimate elsewhere. This supplies full-line
 Mellin integrability. -/
-theorem exists_norm_logDeriv_gammaFactor_vertical_le_log {N : ℕ} (χ : DirichletCharacter ℂ N)
-    {σ : ℝ} (hσ : 0 < σ) (hσ' : σ ≤ 2) :
+theorem gammaLogDeriv_vertical_log {N : ℕ} (χ : DirichletCharacter ℂ N) {σ : ℝ} (hσ : 0 < σ)
+    (hσ' : σ ≤ 2) :
     ∃ A : ℝ,
       0 < A ∧
         ∀ t : ℝ,
           ‖logDeriv χ.gammaFactor ((σ : ℂ) + Complex.I * t)‖ ≤ A * (Real.log (4 + |t|) + 1) := by
   obtain ⟨M, hM⟩ :=
     (isCompact_Icc : IsCompact (Set.Icc (-1 : ℝ) 1)).exists_bound_of_continuousOn
-      (continuous_logDeriv_gammaFactor_vertical χ hσ).continuousOn
+      (continuous_gammaLogDeriv_vertical χ hσ).continuousOn
   let D : ℝ := ‖Complex.log (Real.pi : ℂ)‖ + Real.pi + Gamma.digammaLogErrorBound + 4
   let A : ℝ := 1 + |D| + max M 0
   have hA1 : 1 ≤ A := by
@@ -634,8 +634,7 @@ theorem principal_modulus_one_even : (1 : DirichletCharacter ℂ 1).Even := by
 the modulus-one reference derivative either at that point or translated by one.
 Parity identifies the gamma factors and the translation chain rule has derivative one.
 This reduces bounds uniform in characters to two fixed functions. -/
-theorem logDeriv_gammaFactor_eq_one_or_one_shift {N : ℕ} (χ : DirichletCharacter ℂ N) {s : ℂ}
-    (hs : 0 < s.re) :
+theorem gammaLogDeriv_eq_one_or_shift {N : ℕ} (χ : DirichletCharacter ℂ N) {s : ℂ} (hs : 0 < s.re) :
     logDeriv χ.gammaFactor s = logDeriv (1 : DirichletCharacter ℂ 1).gammaFactor s ∨
       logDeriv χ.gammaFactor s = logDeriv (1 : DirichletCharacter ℂ 1).gammaFactor (s + 1) := by
   classical
@@ -664,22 +663,22 @@ theorem logDeriv_gammaFactor_eq_one_or_one_shift {N : ℕ} (χ : DirichletCharac
 are uniformly bounded for heights of absolute value at most one. Reduce parity to the
 modulus-one gamma factor at two real parts, and use continuity on the compact interval.
 This supplies a modulus-independent bound near height zero. -/
-theorem exists_uniform_norm_logDeriv_gammaFactor_compact_le {σ : ℝ} (hσ : 0 < σ) :
+theorem uniform_gammaLogDeriv_compact {σ : ℝ} (hσ : 0 < σ) :
     ∃ M : ℝ,
       ∀ (N : ℕ) (χ : DirichletCharacter ℂ N) (t : ℝ),
         |t| ≤ 1 → ‖logDeriv χ.gammaFactor ((σ : ℂ) + Complex.I * t)‖ ≤ M := by
   obtain ⟨M0, hb0⟩ :=
     (isCompact_Icc : IsCompact (Set.Icc (-1 : ℝ) 1)).exists_bound_of_continuousOn
-      (continuous_logDeriv_gammaFactor_vertical (1 : DirichletCharacter ℂ 1) hσ).continuousOn
+      (continuous_gammaLogDeriv_vertical (1 : DirichletCharacter ℂ 1) hσ).continuousOn
   obtain ⟨M1, hb1⟩ :=
     (isCompact_Icc : IsCompact (Set.Icc (-1 : ℝ) 1)).exists_bound_of_continuousOn
-      (continuous_logDeriv_gammaFactor_vertical (1 : DirichletCharacter ℂ 1) (σ := σ + 1)
+      (continuous_gammaLogDeriv_vertical (1 : DirichletCharacter ℂ 1) (σ := σ + 1)
           (by linarith only [hσ])).continuousOn
   refine ⟨max M0 M1, fun N χ t ht => ?_⟩
   have hs : 0 < ((σ : ℂ) + Complex.I * t).re := by
     simpa only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, Complex.I_im,
       Complex.ofReal_im, zero_mul, mul_zero, sub_zero, add_zero] using hσ
-  rcases logDeriv_gammaFactor_eq_one_or_one_shift χ hs with he | he
+  rcases gammaLogDeriv_eq_one_or_shift χ hs with he | he
   · rw [he]
     exact (hb0 t (abs_le.mp ht)).trans (le_max_left M0 M1)
   · rw [he]
@@ -693,13 +692,12 @@ theorem exists_uniform_norm_logDeriv_gammaFactor_compact_le {σ : ℝ} (hσ : 0 
 modulus and character. Combine the uniform compact-height bound with the gamma strip
 estimate outside that interval. This controls both the central Mellin line and reflected
 right lines in the primitive functional equation. -/
-theorem exists_uniform_norm_logDeriv_gammaFactor_vertical_le_log {σ : ℝ} (hσ : 0 < σ)
-    (hσ' : σ ≤ 2) :
+theorem uniform_gammaLogDeriv_vertical {σ : ℝ} (hσ : 0 < σ) (hσ' : σ ≤ 2) :
     ∃ A : ℝ,
       0 < A ∧
         ∀ (N : ℕ) (χ : DirichletCharacter ℂ N) (t : ℝ),
           ‖logDeriv χ.gammaFactor ((σ : ℂ) + Complex.I * t)‖ ≤ A * (Real.log (4 + |t|) + 1) := by
-  obtain ⟨M, hM⟩ := exists_uniform_norm_logDeriv_gammaFactor_compact_le hσ
+  obtain ⟨M, hM⟩ := uniform_gammaLogDeriv_compact hσ
   let D : ℝ := ‖Complex.log (Real.pi : ℂ)‖ + Real.pi + Gamma.digammaLogErrorBound + 4
   let A : ℝ := 1 + |D| + max M 0
   have hA1 : 1 ≤ A := by

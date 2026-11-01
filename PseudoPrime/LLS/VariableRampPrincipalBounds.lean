@@ -74,7 +74,7 @@ theorem logWeighted_error_increment_variable_ramp (hRH : RiemannHypothesis) {x h
         logWeighted_error_le_variable_ramp hRH hx (by linarith only [ht0, hh])
           (by nlinarith only [ht.2, hhx])⟩
   have he :=
-    AnalyticNumberTheory.Arithmetic.logWeighted_error_increment_le_of_variable_stencil hh ha hab hE
+    AnalyticNumberTheory.Arithmetic.logWeighted_increment_le_of_variable_stencil hh ha hab hE
   have hid :
     ((x * (99 / 40 : ℝ) - x * (247 / 100)) +
             (h + 2 * variableRampEnvelope x * (x * (99 / 40) + h) / h)) *
@@ -100,8 +100,8 @@ noncomputable def variableRampPrincipalErrorNumerator (x h : ℝ) : ℝ :=
 bounded uniformly at every principal cutoff beyond the ramp. Supply continuity on that finite
 interval, the compact RH envelope, the short-ramp increment and the affine tail envelope.
 This transfers common-density cancellation to the arithmetic function. -/
-theorem jointRampPrincipal_actual_error_bound_variable_width (hRH : RiemannHypothesis) {x y h : ℝ}
-    (hx : 1 ≤ x) (hh : 0 < h) (hhx : h ≤ x) (hy : (99 / 40 : ℝ) ≤ y) :
+theorem jointRamp_error_variableWidth_RH (hRH : RiemannHypothesis) {x y h : ℝ} (hx : 1 ≤ x)
+    (hh : 0 < h) (hhx : h ≤ x) (hy : (99 / 40 : ℝ) ≤ y) :
     |AnalyticNumberTheory.Arithmetic.jointRampPrincipalFunctional
           (fun u ↦ AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum (x * u) - x * u) y| ≤
       variableRampPrincipalErrorNumerator x h := by
@@ -129,18 +129,18 @@ theorem jointRampPrincipal_actual_error_bound_variable_width (hRH : RiemannHypot
 twice the actual ramp error and the joint error budget. Use the lower side of the joint
 functional norm bound, the exact main integral and the eventual-cutoff transfer. This preserves
 the same ramp error through the passage to the principal series. -/
-theorem exponentialMangoldtSum_upper_joint_error_variable_width (hRH : RiemannHypothesis) {x h : ℝ}
-    (hx : 1 ≤ x) (hh : 0 < h) (hhx : h ≤ x) (N : ℕ) :
+theorem exponentialMangoldt_joint_variableWidth_RH (hRH : RiemannHypothesis) {x h : ℝ} (hx : 1 ≤ x)
+    (hh : 0 < h) (hhx : h ≤ x) (N : ℕ) :
     AnalyticNumberTheory.Arithmetic.exponentialMangoldtSum x (N : ℝ) ≤
       x +
         (2 *
             AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional
               (fun u ↦ AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum (x * u) - x * u) +
           variableRampPrincipalErrorNumerator x h) := by
-  apply exponentialMangoldtSum_upper_of_eventual_integral_cap hRH hx (99 / 40)
+  apply expMangoldtSum_upper_of_eventual_cap_RH hRH hx (99 / 40)
   intro y hy0 hy
-  rw [logWeighted_exponential_integral_eq_main_add_error (zero_lt_one.trans_le hx) hy0]
-  have hb := (abs_le.mp (jointRampPrincipal_actual_error_bound_variable_width hRH hx hh hhx hy)).1
+  rw [logWeighted_exp_integral_eq_main_error (zero_lt_one.trans_le hx) hy0]
+  have hb := (abs_le.mp (jointRamp_error_variableWidth_RH hRH hx hh hhx hy)).1
   dsimp only [AnalyticNumberTheory.Arithmetic.jointRampPrincipalFunctional,
     Analysis.exponentialRampVariationLeft] at hb
   have ht : 0 ≤ x * (y ^ 2 + y + 1) * Real.exp (-y) := by
@@ -167,8 +167,7 @@ theorem variableRampPrincipalLower_le_actual (hRH : RiemannHypothesis) {x h : �
             PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x n).re := by
   have hx0 := zero_lt_one.trans_le hx
   have hs := Real.sqrt_pos.mpr hx0
-  have hR :=
-    AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum_normalized_eq_main_add_error hx0
+  have hR := AnalyticNumberTheory.Arithmetic.expRampMangoldt_div_sqrt_eq_main_add_error hx0
   have hP :
     (∑' n : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x n).re ≤
       2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
@@ -179,7 +178,7 @@ theorem variableRampPrincipalLower_le_actual (hRH : RiemannHypothesis) {x h : �
     rw [Nat.floor_natCast] at heq
     rw [heq]
     apply (div_le_iff₀ hs).mpr
-    have hb := exponentialMangoldtSum_upper_joint_error_variable_width hRH hx hh hhx N
+    have hb := exponentialMangoldt_joint_variableWidth_RH hRH hx hh hhx N
     have he :
       (2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
             variableRampPrincipalLower x h) *

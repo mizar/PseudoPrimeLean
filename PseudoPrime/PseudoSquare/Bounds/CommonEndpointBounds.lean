@@ -27,7 +27,7 @@ theorem QNegOne_le_joint_endpoint {B : ℕ}
   intro n hn
   have ha := NumberTheory.mem_admissibleFinset_iff.mp hn
   exact
-    primeNegOneWitness_cast_le_joint_entrance_endpoint ha.odd ha.not_isSquare hGRH hL
+    negOneWitness_cast_le_joint_entrance_endpoint ha.odd ha.not_isSquare hGRH hL
       ((Real.log_le_log (Nat.cast_pos.mpr ha.odd.pos) (Nat.cast_le.mpr ha.le)).trans hlog) _
 
 /-- The coefficient bound evaluated at max(255,log B). The fixed endpoint covers all
@@ -104,7 +104,7 @@ theorem primeNegOneWitness_le_fixed_cap {n : ℕ} (hn : Odd n) (hns : ¬IsSquare
     NumberTheory.primeNegOneWitness n hw ≤ 4093 := by
   by_cases hlo : 10 ≤ Real.log n
   · obtain ⟨p, hp, ho, hb, hv⟩ :=
-      LLS.exists_odd_prime_negative_phase64_retained_fixed_cap hGRH hn hns hlo hlog
+      LLS.exists_oddPrime_negJacobi_4093_retained_GRH hGRH hn hns hlo hlog
     exact (NumberTheory.primeNegOneWitness_le n hw ⟨hp, ho, hv⟩).trans hb
   · have hm := (elementary_formula_real hGRH (three_le_odd_nonsquare hn hns)).2
     have ha : n ∈ NumberTheory.admissibleFinset n :=

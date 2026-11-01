@@ -34,10 +34,10 @@ theorem logarithmicHalfRemainder_re_le {N : ℕ} [NeZero N] (hN : 3 ≤ N) {χ :
     norm_sub_le (AnalyticNumberTheory.DirichletLFunction.logarithmicTrivialCorrection χ x)
       (AnalyticNumberTheory.DirichletLFunction.logarithmicTrivialCorrection χ (x / 2))
   have h1 :=
-    AnalyticNumberTheory.DirichletLFunction.norm_logarithmicTrivialCorrection_le_one χ
+    AnalyticNumberTheory.DirichletLFunction.norm_logTrivialCorrection_le_one χ
       (show 2 ≤ x by linarith only [hx])
   have h2 :=
-    AnalyticNumberTheory.DirichletLFunction.norm_logarithmicTrivialCorrection_le_one χ
+    AnalyticNumberTheory.DirichletLFunction.norm_logTrivialCorrection_le_one χ
       (show 2 ≤ x / 2 by linarith only [hx])
   have hb := PaperStatements.abs_primitiveBRe_le_direct_reciprocal hN hp hGRH
   have hl := Real.log_natCast_nonneg N

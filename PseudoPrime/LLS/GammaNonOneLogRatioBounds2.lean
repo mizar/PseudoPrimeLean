@@ -20,7 +20,7 @@ If L ≥ 15000, log L ≤ L/2800, log q ≤ L+7/5, and the certified prefix boun
 satisfies the displayed budget, an odd prime p ≤ (4/5)L² has χ(p) ≠ 1.
 Retain the primitive conductor in the Gamma comparison and combine the principal,
 ramp and pole bounds. The prefix length and its cost remain parameters. -/
-theorem exists_odd_prime_ne_one_of_log_ratio_prefix_profile {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+theorem exists_oddPrime_neOne_logRatioPrefix_GRH {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
     (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (h2 : 2 ∣ q)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L : ℝ} (hL : 15000 ≤ L)
     (hlogL : Real.log L ≤ L / 2800) (hlogq : Real.log q ≤ L + 7 / 5) (prefixLen : ℕ) {C : ℝ}
@@ -49,8 +49,7 @@ theorem exists_odd_prime_ne_one_of_log_ratio_prefix_profile {q : ℕ} [NeZero q]
   have hT := gamma_ramp_sum_lower_variable hGRH.riemann hx1
   have hmain := Analysis.nonOne_main_term_gap hL0
   have hnp :=
-    PaperStatements.gamma_primitiveCharacter_sum_re_le_conductor_free_prefix hq χ hne hGRH hx
-      prefixLen hC
+    PaperStatements.gammaCharacterSum_re_le_conductor_free_prefix hq χ hne hGRH hx prefixLen hC
   have hactual :
     (∑' k : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re +
         (∑' k : ℕ, PaperStatements.gammaMellinKernel.summand χ.primitiveCharacter x k).re +

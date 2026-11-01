@@ -62,12 +62,11 @@ at the prescribed cutoff; this is a loss bound, not the signed level-change iden
 Role: supplies the conductor algebra before either reciprocal or logarithmic quotient data is
 majorized separately.
 -/
-noncomputable def LLSPart1PrimitiveReciprocalLowerAtWithExactQuotient {q : ℕ}
-    (χ : DirichletCharacter ℂ q) : Prop :=
+noncomputable def Part1ReciprocalExactQuotientLower {q : ℕ} (χ : DirichletCharacter ℂ q) : Prop :=
   let x := (llsTheorem11S1RadiusRoot q) ^ 2
   2 * Real.log (Real.log q) - 8 / 5 -
       AnalyticNumberTheory.Arithmetic.commonFactorReciprocalWeightedSum x q -
-      AnalyticNumberTheory.Arithmetic.primitiveReciprocalQuotientPrimePowerCorrection x χ ≤
+      AnalyticNumberTheory.Arithmetic.reciprocalQuotientCorrection x χ ≤
     (AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum x χ.primitiveCharacter).re
 
 /-- Under the Part 1 no-small-prime hypothesis and within its positive cutoff, a reciprocal
@@ -79,8 +78,8 @@ theorem characterReciprocalWeightedTerm_re_eq_ite {q n : ℕ} [NeZero q] (x : �
       if Nat.Coprime n q then AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtTerm x n
       else 0 := by
   exact
-    AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedTerm_re_eq_ite_of_prime_trivial x χ
-      hx hn (fun p hp hd hbound ↦ hsmall p hp hd (hbound.trans hlimit))
+    AnalyticNumberTheory.Arithmetic.characterRecipTerm_re_ite_of_prime_trivial x χ hx hn
+      (fun p hp hd hbound ↦ hsmall p hp hd (hbound.trans hlimit))
 
 open PseudoPrime.AnalyticNumberTheory.Arithmetic in
 /-- Under the Part 1 no-small-prime hypothesis and within its positive cutoff, the reciprocal
@@ -92,7 +91,7 @@ theorem characterReciprocalWeightedSum_re_eq_coprime {q : ℕ} [NeZero q] (x : �
       ∑ n ∈ (Finset.Ioc 0 ⌊x⌋₊).filter fun n ↦ Nat.Coprime n q,
         AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtTerm x n := by
   exact
-    characterReciprocalWeightedSum_re_eq_coprime_of_prime_trivial x χ hx
+    characterRecipSum_re_eq_of_prime_trivial x χ hx
       (fun p hp hd hbound ↦ hsmall p hp hd (hbound.trans hlimit))
 
 /--
@@ -108,10 +107,8 @@ theorem llsPrimitiveReciprocalWeightedSum_re_lower_safe {q : ℕ} [NeZero q] (x 
       (AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum x
           χ.primitiveCharacter).re := by
   have horiginal := characterReciprocalWeightedSum_re_eq_coprime x χ hx hsmall hlimit
-  have hsplit :=
-    AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtSum_eq_coprime_add_common x q
-  have hnorm :=
-    AnalyticNumberTheory.Arithmetic.norm_characterReciprocalWeightedSum_sub_primitive_le x χ hx
+  have hsplit := AnalyticNumberTheory.Arithmetic.recipMangoldtSum_eq_coprime_add_common x q
+  have hnorm := AnalyticNumberTheory.Arithmetic.norm_characterRecipSum_sub_primitive_le x χ hx
   have hre :=
     Complex.re_le_norm
       (AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum x χ -
@@ -129,13 +126,13 @@ Content: rewrite the safe reciprocal comparison by the prime-power correction id
 Role: avoids prematurely replacing the quotient correction by
 `PseudoPrime.AnalyticNumberTheory.Arithmetic.primeFactorLogSum`.
 -/
-theorem llsPrimitiveReciprocalWeightedSum_re_lower_exactQuotientPrimePowers {q : ℕ} [NeZero q]
-    (x : ℝ) (χ : DirichletCharacter ℂ q) (hx : 0 < x) (hsmall : llsTheorem11S1NoSmallPrime χ)
+theorem primitiveReciprocal_lower_exactQuotient {q : ℕ} [NeZero q] (x : ℝ)
+    (χ : DirichletCharacter ℂ q) (hx : 0 < x) (hsmall : llsTheorem11S1NoSmallPrime χ)
     (hlimit : x ≤ (llsTheorem11S1RadiusRoot q) ^ 2) :
     reciprocalWeightedMangoldtSum x - commonFactorReciprocalWeightedSum x q -
-        primitiveReciprocalQuotientPrimePowerCorrection x χ ≤
+        reciprocalQuotientCorrection x χ ≤
       (characterReciprocalWeightedSum x χ.primitiveCharacter).re := by
-  rw [primitiveReciprocalQuotientPrimePowerCorrection_eq_commonFactor x χ hx.le]
+  rw [reciprocalQuotientCorrection_eq_commonFactor x χ hx.le]
   exact llsPrimitiveReciprocalWeightedSum_re_lower_safe x χ hx hsmall hlimit
 
 /--
@@ -144,7 +141,7 @@ The safe finite lower bound after applying Lemma 3.1's reciprocal estimate to bo
 The second prime-factor sum is the explicit cost of passing from the original character at level
 `q` to its primitive character.  It cannot be dropped for an arbitrary imprimitive character.
 -/
-theorem llsPrimitiveReciprocalWeightedSum_re_lower_primeFactorSums {q : ℕ} [NeZero q] (x : ℝ)
+theorem primitiveReciprocal_lower_primeFactors {q : ℕ} [NeZero q] (x : ℝ)
     (χ : DirichletCharacter ℂ q) (hx : 0 < x) (hsmall : llsTheorem11S1NoSmallPrime χ)
     (hlimit : x ≤ (llsTheorem11S1RadiusRoot q) ^ 2) :
     AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtSum x -
@@ -168,9 +165,8 @@ the complementary conductor quotient retained explicitly.
 For `q ≥ 3000` and a character satisfying `llsTheorem11S1NoSmallPrime`, this gives the input
 for numerical absorption of the quotient correction. Nontriviality is not required here.
 -/
-theorem llsPart1PrimitiveReciprocalLowerAtWithQuotient_of_riemann
-    (h24 : LLSRiemannReciprocalLowerBound) {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
-    (hq : 3000 ≤ q) (hsmall : llsTheorem11S1NoSmallPrime χ) :
+theorem part1ReciprocalQuotient_of_riemann (h24 : LLSRiemannReciprocalLowerBound) {q : ℕ} [NeZero q]
+    (χ : DirichletCharacter ℂ q) (hq : 3000 ≤ q) (hsmall : llsTheorem11S1NoSmallPrime χ) :
     LLSPart1PrimitiveReciprocalLowerAtWithQuotient χ := by
   let x := (llsTheorem11S1RadiusRoot q) ^ 2
   have hy : 0 < llsTheorem11S1RadiusRoot q :=
@@ -179,7 +175,7 @@ theorem llsPart1PrimitiveReciprocalLowerAtWithQuotient_of_riemann
   have hxTwo : (2 : ℝ) ≤ x := by
     dsimp only [x]
     nlinarith only [eight_lt_llsTheorem11S1RadiusRoot hq]
-  have hlower := llsPrimitiveReciprocalWeightedSum_re_lower_primeFactorSums x χ hx hsmall le_rfl
+  have hlower := primitiveReciprocal_lower_primeFactors x χ hx hsmall le_rfl
   have hriemann := h24 x hxTwo
   have hlogq : 0 < Real.log q :=
     Real.log_pos (by exact_mod_cast ((by decide : 1 < 3000).trans_le hq))
@@ -215,7 +211,7 @@ theorem characterReciprocalWeightedSum_re_lower_level {q : ℕ} [NeZero q] (x : 
         AnalyticNumberTheory.Arithmetic.primeFactorLogSum q ≤
       (AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum x χ).re := by
   exact
-    characterReciprocalWeightedSum_re_lower_level_of_prime_trivial x χ hx
+    characterRecipSum_re_lower_of_prime_trivial x χ hx
       (fun p hp hd hbound ↦ hsmall p hp hd (hbound.trans hlimit))
 
 /-- Under the no-small-prime hypothesis and within the Part 1 cutoff, the reciprocal sum has
@@ -225,7 +221,7 @@ theorem characterReciprocalWeightedSum_re_nonneg_level {q : ℕ} [NeZero q] (x :
     (hlimit : x ≤ (llsTheorem11S1RadiusRoot q) ^ 2) :
     0 ≤ (AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum x χ).re := by
   exact
-    AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum_re_nonneg_of_prime_trivial x χ hx
+    AnalyticNumberTheory.Arithmetic.characterRecipSum_re_nonneg_of_prime_trivial x χ hx
       (fun p hp hd hbound ↦ hsmall p hp hd (hbound.trans hlimit))
 
 /--
@@ -245,7 +241,7 @@ def LLSPart1LevelReciprocalLowerAt {q : ℕ} (χ : DirichletCharacter ℂ q) : P
 Input/assumptions: LLS Lemma 2.4's Riemann reciprocal lower bound and a Part 1 no-small-prime
 level character.
 Conclusion: `LLSPart1LevelReciprocalLowerAt χ` holds.
-Content: mirrors `llsPart1PrimitiveReciprocalLowerAt_of_riemann_of_conductorPrimeSupport`'s proof,
+Content: mirrors `part1PrimitiveRecipLower_of_riemann_primeSupport`'s proof,
 but works with `χ` throughout instead of rewriting to `χ.primitiveCharacter`, so the
 `PseudoPrime.AnalyticNumberTheory.Arithmetic.ConductorPrimeSupport` hypothesis and its rewrite
 lemma are not needed.
@@ -284,10 +280,10 @@ Input/assumptions: a level-`q` character.
 Conclusion: `A(q)` plus the exact reciprocal level-change correction is at most the primitive
 reciprocal sum's real part.
 Content: immediate from `llsPart1LevelReciprocalLowerAt_of_riemann` and the exact identity
-`Arithmetic.characterReciprocalWeightedSum_re_primitive_eq_add_levelChangeCorrection`.
+`Arithmetic.characterRecipSum_re_primitive_eq_add`.
 Role: states the lower input with the signed level-change term available for conductor absorption.
 -/
-def LLSPart1PrimitiveReciprocalLowerWithLevelChangeAt {q : ℕ} (χ : DirichletCharacter ℂ q) : Prop :=
+def Part1ReciprocalLevelChangeLower {q : ℕ} (χ : DirichletCharacter ℂ q) : Prop :=
   let x := (llsTheorem11S1RadiusRoot q) ^ 2
   llsAuxiliaryTerm q +
       AnalyticNumberTheory.Arithmetic.primitiveReciprocalLevelChangeCorrection x χ ≤
@@ -297,43 +293,40 @@ open PseudoPrime.AnalyticNumberTheory.Arithmetic in
 /--
 Input/assumptions: LLS Lemma 2.4's Riemann reciprocal lower bound and a Part 1 no-small-prime
 level character.
-Conclusion: `LLSPart1PrimitiveReciprocalLowerWithLevelChangeAt χ` holds.
+Conclusion: `Part1ReciprocalLevelChangeLower χ` holds.
 Content: combine `llsPart1LevelReciprocalLowerAt_of_riemann` with the exact level-change identity.
 Role: supplies the analytic input for
 `PseudoPrime.AnalyticNumberTheory.Arithmetic.primitiveReciprocalConductorAbsorption`.
 -/
-theorem llsPart1PrimitiveReciprocalLowerWithLevelChangeAt_of_riemann
-    (h24 : LLSRiemannReciprocalLowerBound) {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
-    (hq : 3000 ≤ q) (hsmall : llsTheorem11S1NoSmallPrime χ) :
-    LLSPart1PrimitiveReciprocalLowerWithLevelChangeAt χ := by
+theorem part1ReciprocalLevelChange_of_riemann (h24 : LLSRiemannReciprocalLowerBound) {q : ℕ}
+    [NeZero q] (χ : DirichletCharacter ℂ q) (hq : 3000 ≤ q)
+    (hsmall : llsTheorem11S1NoSmallPrime χ) : Part1ReciprocalLevelChangeLower χ := by
   have hlevel := llsPart1LevelReciprocalLowerAt_of_riemann h24 χ hq hsmall
-  have hidentity :=
-    characterReciprocalWeightedSum_re_primitive_eq_add_levelChangeCorrection
-      ((llsTheorem11S1RadiusRoot q) ^ 2) χ
+  have hidentity := characterRecipSum_re_primitive_eq_add ((llsTheorem11S1RadiusRoot q) ^ 2) χ
   rw [LLSPart1LevelReciprocalLowerAt] at hlevel
-  rw [LLSPart1PrimitiveReciprocalLowerWithLevelChangeAt]
+  rw [Part1ReciprocalLevelChangeLower]
   linarith only [hlevel, hidentity]
 
 open PseudoPrime.AnalyticNumberTheory.Arithmetic in
 /-- Under equal prime support, the finite reciprocal lower bound has only the level correction. -/
-theorem llsPrimitiveReciprocalWeightedSum_re_lower_of_conductorPrimeSupport {q : ℕ} [NeZero q]
-    (x : ℝ) (χ : DirichletCharacter ℂ q) (hx : 0 < x) (hsmall : llsTheorem11S1NoSmallPrime χ)
+theorem part1_primitiveRecipSum_lower_of_primeSupport {q : ℕ} [NeZero q] (x : ℝ)
+    (χ : DirichletCharacter ℂ q) (hx : 0 < x) (hsmall : llsTheorem11S1NoSmallPrime χ)
     (hlimit : x ≤ (llsTheorem11S1RadiusRoot q) ^ 2) (hsupport : ConductorPrimeSupport χ) :
     reciprocalWeightedMangoldtSum x - primeFactorLogSum q ≤
       (characterReciprocalWeightedSum x χ.primitiveCharacter).re := by
   have horiginal := characterReciprocalWeightedSum_re_eq_coprime x χ hx hsmall hlimit
-  have hsplit := reciprocalWeightedMangoldtSum_eq_coprime_add_common x q
+  have hsplit := recipMangoldtSum_eq_coprime_add_common x q
   have hcommon := commonFactorReciprocalWeightedSum_le (NeZero.ne q) hx
-  rw [← characterReciprocalWeightedSum_eq_primitive_of_conductorPrimeSupport x χ hsupport]
+  rw [← reciprocalSum_eq_primitive_of_primeSupport x χ hsupport]
   linarith only [horiginal, hsplit, hcommon]
 
 open PseudoPrime.AnalyticNumberTheory.Arithmetic in
 /--
 LLS Lemma 2.4 and equal prime support give the reciprocal lower input used by Lemma 2.3.
 -/
-theorem llsPart1PrimitiveReciprocalLowerAt_of_riemann_of_conductorPrimeSupport
-    (h24 : LLSRiemannReciprocalLowerBound) {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
-    (hq : 3000 ≤ q) (hsmall : llsTheorem11S1NoSmallPrime χ) (hsupport : ConductorPrimeSupport χ) :
+theorem part1PrimitiveRecipLower_of_riemann_primeSupport (h24 : LLSRiemannReciprocalLowerBound)
+    {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hq : 3000 ≤ q)
+    (hsmall : llsTheorem11S1NoSmallPrime χ) (hsupport : ConductorPrimeSupport χ) :
     LLSPart1PrimitiveReciprocalLowerAt χ := by
   let x := (llsTheorem11S1RadiusRoot q) ^ 2
   have hy : 0 < llsTheorem11S1RadiusRoot q :=
@@ -342,12 +335,10 @@ theorem llsPart1PrimitiveReciprocalLowerAt_of_riemann_of_conductorPrimeSupport
   have hxTwo : (2 : ℝ) ≤ x := by
     dsimp only [x]
     nlinarith only [eight_lt_llsTheorem11S1RadiusRoot hq]
-  have hlower :=
-    llsPrimitiveReciprocalWeightedSum_re_lower_of_conductorPrimeSupport x χ hx hsmall le_rfl
-      hsupport
+  have hlower := part1_primitiveRecipSum_lower_of_primeSupport x χ hx hsmall le_rfl hsupport
   have hriemann := h24 x hxTwo
   have hsumNonneg : 0 ≤ (characterReciprocalWeightedSum x χ.primitiveCharacter).re := by
-    rw [← characterReciprocalWeightedSum_eq_primitive_of_conductorPrimeSupport x χ hsupport,
+    rw [← reciprocalSum_eq_primitive_of_primeSupport x χ hsupport,
       characterReciprocalWeightedSum_re_eq_coprime x χ hx hsmall le_rfl]
     apply Finset.sum_nonneg
     intro n hn
@@ -391,7 +382,7 @@ Definition: Lemma 2.3's raw zero-mass upper bound with the reciprocal quotient c
 Input: a character and a real zero-mass witness candidate; nonnegativity is imposed by the core.
 Output: the exact raw bound with `llsPart1PrimitiveReciprocalQuotientCorrection` retained.
 Role: supplies the corrected raw inequality to
-`llsPart1PrimitiveZeroMassSimplificationWithQuotient`.
+`part1ZeroMass_simplify_quotient`.
 -/
 def LLSPart1PrimitiveZeroMassRawUpperWithQuotientAt {q : ℕ} (χ : DirichletCharacter ℂ q) (b : ℝ) :
     Prop :=
@@ -401,7 +392,7 @@ def LLSPart1PrimitiveZeroMassRawUpperWithQuotientAt {q : ℕ} (χ : DirichletCha
       llsPart1PrimitiveReciprocalQuotientCorrection χ
 
 /-- The reciprocal quotient correction is nonnegative. -/
-theorem llsPart1PrimitiveReciprocalQuotientCorrection_nonneg {q : ℕ} (χ : DirichletCharacter ℂ q) :
+theorem part1ReciprocalQuotientCorrection_nonneg {q : ℕ} (χ : DirichletCharacter ℂ q) :
     0 ≤ llsPart1PrimitiveReciprocalQuotientCorrection χ := by
   unfold llsPart1PrimitiveReciprocalQuotientCorrection
     AnalyticNumberTheory.Arithmetic.primeFactorLogSum
@@ -496,9 +487,8 @@ Conclusion: its Section 3.1 form retains exactly the reciprocal quotient correct
 Content: apply the existing inverse-square logarithmic tradeoff without altering the added term.
 Role: preserves the same additive correction in the simplified zero-mass upper bound.
 -/
-theorem llsPart1PrimitiveZeroMassSimplificationWithQuotient {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (b : ℝ) (hq : 3000 ≤ q) (_hb : 0 ≤ b)
-    (hraw : LLSPart1PrimitiveZeroMassRawUpperWithQuotientAt χ b) :
+theorem part1ZeroMass_simplify_quotient {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (b : ℝ)
+    (hq : 3000 ≤ q) (_hb : 0 ≤ b) (hraw : LLSPart1PrimitiveZeroMassRawUpperWithQuotientAt χ b) :
     LLSPart1PrimitiveZeroMassUpperWithQuotientAt χ b := by
   have hy : (8 : ℝ) ≤ llsTheorem11S1RadiusRoot q := (eight_lt_llsTheorem11S1RadiusRoot hq).le
   have hconductor := AnalyticNumberTheory.DirichletLFunction.log_conductor_le_log_level χ
@@ -530,7 +520,7 @@ theorem llsPart1PrimitiveZeroMassSimplificationWithQuotient {q : ℕ} [NeZero q]
 Definition: the simplified shared-witness core with the reciprocal quotient correction retained.
 Input: every nontrivial Part 1 character under the no-small-prime hypothesis.
 Output: the logarithmic upper and corrected zero-mass upper for one shared witness.
-Role: supplies the shared witness to `characterLogWeightedSum_re_le_comparisonUpperWithQuotient`.
+Role: supplies the shared witness to `characterLogWeighted_le_quotientComparison`.
 -/
 def LLSPart1PrimitiveCoreBoundsWithQuotient : Prop :=
   ∀ (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q),
@@ -560,9 +550,8 @@ reciprocal correction; the logarithmic comparison error is added only in the nex
 Content: substitute the corrected zero-mass witness into Lemma 2.2's weighted inequality.
 Role: supplies the primitive input to the original-character comparison below.
 -/
-theorem llsPrimitiveLogWeightedSum_re_le_comparisonUpperWithQuotient {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} {b : ℝ} (hq : 3000 ≤ q)
-    (hweighted : LLSPart1PrimitiveWeightedUpperAt χ b)
+theorem primitiveLogWeighted_le_quotientComparison {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    {b : ℝ} (hq : 3000 ≤ q) (hweighted : LLSPart1PrimitiveWeightedUpperAt χ b)
     (hzero : LLSPart1PrimitiveZeroMassUpperWithQuotientAt χ b) :
     (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((llsTheorem11S1RadiusRoot q) ^ 2)
           χ.primitiveCharacter).re ≤
@@ -595,19 +584,18 @@ upper bound.
 Content: add the existing `(3.2)` primitive-comparison error to the corrected primitive bound.
 Role: connects the corrected shared-witness core to the original-character finite sum.
 -/
-theorem characterLogWeightedSum_re_le_comparisonUpperWithQuotient
-    (hcore : LLSPart1PrimitiveCoreBoundsWithQuotient) {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hq : 3000 ≤ q) (hχ : χ ≠ 1)
+theorem characterLogWeighted_le_quotientComparison (hcore : LLSPart1PrimitiveCoreBoundsWithQuotient)
+    {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hq : 3000 ≤ q) (hχ : χ ≠ 1)
     (hsmall : llsTheorem11S1NoSmallPrime χ) :
     (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((llsTheorem11S1RadiusRoot q) ^ 2)
           χ).re ≤
       llsTheorem11S1ComparisonUpperBoundWithQuotient χ := by
   obtain ⟨b, _, hweighted, hzero⟩ := hcore q χ hq hχ hsmall
-  have hprimitive := llsPrimitiveLogWeightedSum_re_le_comparisonUpperWithQuotient hq hweighted hzero
+  have hprimitive := primitiveLogWeighted_le_quotientComparison hq hweighted hzero
   have hy : 0 < llsTheorem11S1RadiusRoot q :=
     (eight_lt_llsTheorem11S1RadiusRoot hq).trans' (by norm_num only)
   have hcomparison :=
-    AnalyticNumberTheory.Arithmetic.norm_characterLogWeightedSum_sub_primitive_le
+    AnalyticNumberTheory.Arithmetic.norm_characterLogSum_sub_primitive_le
       ((llsTheorem11S1RadiusRoot q) ^ 2) χ (sq_pos_of_pos hy)
   have hre :=
     Complex.re_le_norm
@@ -665,7 +653,7 @@ can be substituted for it
 once the analytic estimate supplies a concrete lower bound for the primitive reciprocal sum,
 without redoing this
 algebra.  On the logarithmic side, the exact identity
-`Arithmetic.characterLogWeightedSum_re_primitive_eq_add_levelChangeCorrection`
+`Arithmetic.characterLogSum_re_primitive_eq_add`
 is used directly in place
 of the coarse `(3.2)` norm bound, so the logarithmic correction never needs to be abstracted or
 coarsened at all: it enters the final bound as an exact subtracted term.
@@ -681,8 +669,7 @@ quotient correction factored out as a free parameter instead of fixed to its coa
 Role: the prime-local estimate interface can be discharged by an analytic proof with any exact or
 coarse reciprocal correction, without committing in advance to which one.
 -/
-def LLSPart1PrimitiveZeroMassRawUpperWithCorrectionAt {q : ℕ} (χ : DirichletCharacter ℂ q)
-    (δrec b : ℝ) : Prop :=
+def Part1ZeroMassRawCorrectionUpper {q : ℕ} (χ : DirichletCharacter ℂ q) (δrec b : ℝ) : Prop :=
   let y := llsTheorem11S1RadiusRoot q
   b ≤
     (1 - 1 / y)⁻¹ ^ 2 * (Real.log ((χ.conductor : ℝ) / Real.pi) / 2 + δrec) - llsAuxiliaryTerm q -
@@ -698,13 +685,12 @@ bounded using `δrec` through Lemma 2.2's coefficient `A(X) = 2y + 2 + log X`, a
 logarithmic level-change correction, subtracted with no coarsening at all.
 Content: chain Lemma 2.2's inequality for `χ̃` through the exact primitive/level logarithmic
 identity, instead of the coarse `(3.2)` norm bound used by
-`characterLogWeightedSum_re_le_comparisonUpperWithQuotient`.
+`characterLogWeighted_le_quotientComparison`.
 Role: transports a concrete reciprocal correction to an upper bound for the original weighted
 sum, retaining the signed logarithmic level-change correction exactly.
 -/
-theorem characterLogWeightedSum_re_le_upperBound_of_corrections {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (δrec b : ℝ) (hq : 3000 ≤ q)
-    (hweighted : LLSPart1PrimitiveWeightedUpperAt χ b)
+theorem characterLogSum_re_le_of_corrections {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (δrec b : ℝ) (hq : 3000 ≤ q) (hweighted : LLSPart1PrimitiveWeightedUpperAt χ b)
     (hzero :
       b ≤
         Real.log χ.conductor / 2 + 2 / 5 - llsAuxiliaryTerm q +
@@ -714,9 +700,7 @@ theorem characterLogWeightedSum_re_le_upperBound_of_corrections {q : ℕ} [NeZer
           (2 * llsTheorem11S1RadiusRoot q + 2 + Real.log ((llsTheorem11S1RadiusRoot q) ^ 2)) *
             ((1 - 1 / llsTheorem11S1RadiusRoot q)⁻¹ ^ 2 * δrec) -
         primitiveLogLevelChangeCorrection ((llsTheorem11S1RadiusRoot q) ^ 2) χ := by
-  have hexact :=
-    characterLogWeightedSum_re_primitive_eq_add_levelChangeCorrection
-      ((llsTheorem11S1RadiusRoot q) ^ 2) χ
+  have hexact := characterLogSum_re_primitive_eq_add ((llsTheorem11S1RadiusRoot q) ^ 2) χ
   rw [LLSPart1PrimitiveWeightedUpperAt] at hweighted
   rw [llsTheorem11S1PrimitiveUpperBound]
   have hcoefficient :
@@ -743,9 +727,8 @@ theorem llsPart1PrimitiveCoreBounds_of_raw_analytic (hraw : LLSPart1PrimitiveRaw
   llsPart1PrimitiveCoreBounds_of_raw hraw llsPart1PrimitiveZeroMassSimplification
 
 /-- The Riemann lower bound and raw primitive analytic core imply LLS Part 1. -/
-theorem llsTheorem11S1Character_of_riemann_and_primitive_raw (h21 : LLSRiemannWeightedLowerBound)
+theorem theorem11S1Character_of_riemann_raw (h21 : LLSRiemannWeightedLowerBound)
     (hraw : LLSPart1PrimitiveRawCoreBounds) : llsTheorem11S1Character :=
-  llsTheorem11S1Character_of_riemann_and_primitive_core h21
-    (llsPart1PrimitiveCoreBounds_of_raw_analytic hraw)
+  theorem11S1Character_of_riemann_core h21 (llsPart1PrimitiveCoreBounds_of_raw_analytic hraw)
 
 end PseudoPrime.LLS

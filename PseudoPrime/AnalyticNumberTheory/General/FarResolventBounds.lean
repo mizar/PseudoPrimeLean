@@ -178,8 +178,7 @@ theorem logDeriv_nearDifference_error_le {F : ℂ → ℂ} {ε : ℂ} (hε : ε 
       10 * ‖(((3 : ℝ) : ℂ) + s.im * Complex.I) - s‖ *
         (logDeriv F (((3 : ℝ) : ℂ) + s.im * Complex.I)).re := by
   obtain ⟨C, hC, hg⟩ :=
-    exists_global_exponential_bound_of_orderAtMostOne hF.continuous horder (r := 3 / 2)
-      (by norm_num only)
+    exists_exp_bound_of_orderAtMostOne hF.continuous horder (r := 3 / 2) (by norm_num only)
   have ht : F (((3 : ℝ) : ℂ) + s.im * Complex.I) ≠ 0 := by
     apply hright
     simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.ofReal_im, Complex.I_re,

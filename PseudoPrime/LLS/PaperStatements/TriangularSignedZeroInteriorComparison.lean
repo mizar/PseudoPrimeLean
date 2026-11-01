@@ -40,9 +40,9 @@ noncomputable def triangular18_annihilator_zeroRealSum {q : ℕ} [NeZero q] (H :
 sum times the index plus the signed primitive zero aggregate is bounded by the
 conductor profile, the signed Gamma budget and both principal scale costs. Split off
 the principal character and evaluate the Gamma terms without replacing zeros by norms. -/
-theorem triangular18_finite_principal_add_zero_le_dual_interior {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {x X : ℝ} (hx : 1 ≤ x) (hlog : Real.log x ≤ 36)
+theorem triangular18_finitePrincipal_zero_dual_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x X : ℝ} (hx : 1 ≤ x)
+    (hlog : Real.log x ≤ 36)
     (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     letI := Classical.propDecidable
     letI : ∀ i : NumberTheory.subgroupAnnihilator H, NeZero i.val.conductor := fun i ↦
@@ -77,9 +77,7 @@ theorem triangular18_finite_principal_add_zero_le_dual_interior {q : ℕ} [NeZer
   have hp : F (1 : A) = (∑' n : ℕ, K.summand (1 : DirichletCharacter ℂ 1) x n).re :=
     congrArg Complex.re (tsum_congr (MellinKernel.principal_primitive_summand_eq_level_one K x))
   rw [hp] at hs
-  have hc :=
-    MellinKernel.principal_sum_le_primitive_average_of_noSmallPrimes K H (zero_lt_one.trans_le hx)
-      hsmall
+  have hc := MellinKernel.principal_sum_le_primitive_of_noSmall K H (zero_lt_one.trans_le hx) hsmall
   let G :=
     fun (i : NumberTheory.subgroupAnnihilator H) (ψ : DirichletCharacter ℂ (i.val.conductor))
       (y : ℝ) ↦
@@ -96,7 +94,7 @@ theorem triangular18_finite_principal_add_zero_le_dual_interior {q : ℕ} [NeZer
       triangular18_gammaIntegral_re_le_interior i.val.primitiveCharacter (b := 9 / 16)
         (by norm_num only) (by norm_num only) hx hlog
     have h2 :=
-      triangular18_inverse_gammaIntegral_re_le_interior (i.val.primitiveCharacter)⁻¹ (b := 9 / 16)
+      triangular18_inverseGamma_interior_bound (i.val.primitiveCharacter)⁻¹ (b := 9 / 16)
         (by norm_num only) (by norm_num only) hx hlog
     change ((G i i.val.primitiveCharacter x).re + (G i (i.val.primitiveCharacter)⁻¹ x⁻¹).re) ≤ _
     dsimp only at h1 h2
@@ -109,7 +107,7 @@ theorem triangular18_finite_principal_add_zero_le_dual_interior {q : ℕ} [NeZer
     have hh := Finset.sum_le_sum (s := S) (fun i _ ↦ hpoint i)
     simpa only [Finset.sum_const, nsmul_eq_mul] using hh
   dsimp only [G, S] at hgb
-  have hb := triangular18_annihilator_dual_scale_arithmetic_upper_numeric H hGRH hx
+  have hb := triangular18_dual_upper_numeric_GRH H hGRH hx
   simp only [Complex.add_re, Finset.sum_add_distrib] at hb
   have hP := triangular18_level_one_arithmetic_upper_of_rh hGRH.riemann (zero_lt_one.trans_le hx)
   dsimp only at hb ⊢
@@ -123,9 +121,9 @@ theorem triangular18_finite_principal_add_zero_le_dual_interior {q : ℕ} [NeZer
 the exact conductor logarithm sum. Its coefficient is 36-log x and its Gamma constant
 is -45+3log x/2 per nonprincipal member. Identify the annihilator cardinality and
 profile. This is the numerical interface for a sharper signed zero lower bound. -/
-theorem triangular18_principal_add_zero_le_dual_interior_conductor_numeric {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {x X : ℝ} (hx : 1 ≤ x) (hlog : Real.log x ≤ 36)
+theorem triangular18_principalZero_numeric_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x X : ℝ} (hx : 1 ≤ x)
+    (hlog : Real.log x ≤ 36)
     (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     letI := Classical.propDecidable
     letI : ∀ i : NumberTheory.subgroupAnnihilator H, NeZero i.val.conductor := fun i ↦
@@ -172,7 +170,7 @@ theorem triangular18_principal_add_zero_le_dual_interior_conductor_numeric {q : 
     rw [abs_of_nonneg (Real.log_nonneg hx)]
     norm_num only
     exact max_eq_right (sub_nonneg.mpr hlog)
-  have hb := triangular18_finite_principal_add_zero_le_dual_interior H hGRH hx hlog hsmall
+  have hb := triangular18_finitePrincipal_zero_dual_GRH H hGRH hx hlog hsmall
   dsimp only at hb
   rw [hf, hcard, hcond, hp] at hb
   change (H.index : ℝ) * _ + _ ≤ _
@@ -183,9 +181,9 @@ theorem triangular18_principal_add_zero_le_dual_interior_conductor_numeric {q : 
 range, retain the signed zero aggregate on the left of the scalar comparison.
 Combine the cutoff lower bound and the zero-retained conductor estimate. This avoids
 the extra mass-times-logarithm cost introduced by an absolute zero estimate. -/
-theorem triangular18_zero_retained_comparison_of_large_prime_factors {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ}
-    (hx : 1 < x) (hlog : Real.log x ≤ 36) (hlarge : ∀ p ∈ q.primeFactors, x ≤ (p : ℝ))
+theorem triangular18_zero_retained_large_factors_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 < x)
+    (hlog : Real.log x ≤ 36) (hlarge : ∀ p ∈ q.primeFactors, x ≤ (p : ℝ))
     (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ x → NumberTheory.residueInSubgroup q H p) :
     (H.index : ℝ) *
           (Real.sqrt x * (68 + 4 * Real.exp (-18)) - 1456 * x ^ (1 / 4 : ℝ) -
@@ -194,13 +192,12 @@ theorem triangular18_zero_retained_comparison_of_large_prime_factors {q : ℕ} [
       300000000 * (Real.sqrt x + Real.sqrt x⁻¹) +
         1300000 * (x ^ (1 / 4 : ℝ) + (x⁻¹) ^ (1 / 4 : ℝ)) +
         ((H.index : ℝ) - 1) * ((36 - Real.log x) * Real.log q - 45 + (3 / 2) * Real.log x) := by
-  have hb := triangular18_level_prime_budget_le_of_large_factors hx hlarge
+  have hb := triangular18_prime_budget_le_of_large hx hlarge
   have hl :=
     (sub_le_sub_left hb (Real.sqrt x * (68 + 4 * Real.exp (-18)) - 1456 * x ^ (1 / 4 : ℝ))).trans
       (triangular18_finite_principal_lower_of_rh (q := q) hGRH.riemann (zero_lt_one.trans hx))
   have hm := mul_le_mul_of_nonneg_left hl (Nat.cast_nonneg H.index)
-  have hupp :=
-    triangular18_principal_add_zero_le_dual_interior_conductor_numeric H hGRH hx.le hlog hsmall
+  have hupp := triangular18_principalZero_numeric_GRH H hGRH hx.le hlog hsmall
   have hc := (add_le_add_left hm (triangular18_annihilator_zeroRealSum H x)).trans hupp
   have hcoef : 0 ≤ 36 - Real.log x := by linarith only [hlog]
   have hu := mul_le_mul_of_nonneg_left (subgroupConductorLogSum_le H) hcoef
@@ -210,9 +207,9 @@ theorem triangular18_zero_retained_comparison_of_large_prime_factors {q : ℕ} [
 at most x divides the level or lies outside the subgroup. The no-witness assumption
 gives the large-factor and containment conditions, contradicting the comparison.
 The signed zero aggregate is part of the gap and is not assumed nonnegative. -/
-theorem exists_prime_factor_or_outside_of_triangular18_zero_retained_gap {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ}
-    (hx : 1 < x) (hlog : Real.log x ≤ 36)
+theorem exists_prime_factorOrOutside_zeroGap_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 < x)
+    (hlog : Real.log x ≤ 36)
     (hgap :
       300000000 * (Real.sqrt x + Real.sqrt x⁻¹) +
           1300000 * (x ^ (1 / 4 : ℝ) + (x⁻¹) ^ (1 / 4 : ℝ)) +
@@ -235,7 +232,6 @@ theorem exists_prime_factor_or_outside_of_triangular18_zero_retained_gap {q : �
     by_contra hout
     exact hnone ⟨p, hp, hle, Or.inr hout⟩
   exact
-    (not_le_of_gt hgap)
-      (triangular18_zero_retained_comparison_of_large_prime_factors H hGRH hx hlog hlarge hsmall)
+    (not_le_of_gt hgap) (triangular18_zero_retained_large_factors_GRH H hGRH hx hlog hlarge hsmall)
 
 end PseudoPrime.LLS.PaperStatements

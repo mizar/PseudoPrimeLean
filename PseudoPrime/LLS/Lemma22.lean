@@ -60,7 +60,7 @@ theorem llsTheorem11S1PrimitiveUpperBounds_of_core (hcore : LLSPart1PrimitiveCor
   exact hweighted.trans (by linarith only [hmul])
 
 /-- The Riemann lower bound and shared-witness primitive core imply LLS Part 1. -/
-theorem llsTheorem11S1Character_of_riemann_and_primitive_core (h21 : LLSRiemannWeightedLowerBound)
+theorem theorem11S1Character_of_riemann_core (h21 : LLSRiemannWeightedLowerBound)
     (hcore : LLSPart1PrimitiveCoreBounds) : llsTheorem11S1Character :=
   llsTheorem11S1Character_of_riemann_and_primitive h21
     (llsTheorem11S1PrimitiveUpperBounds_of_core hcore)

@@ -54,7 +54,7 @@ theorem rpow_log_terms_le_common_weight {x σ δ : ℝ} (hx : 2 ≤ x) (hσ : 1 
 the combined low-height majorant by `x^delta(log(x)+1)` and bound it by the common
 power-log weight times `10+5 log 2`. Combine the low-height power bound with real
 power addition and exponent monotonicity. This controls the total low-height family cost. -/
-theorem rpow_log_low_majorant_le_common_weight {x σ δ : ℝ} (hx : 2 ≤ x) (hσ : 1 / 2 ≤ σ)
+theorem lowMajorant_rpow_log_bound {x σ δ : ℝ} (hx : 2 ≤ x) (hσ : 1 / 2 ≤ σ)
     (hbalance : σ + 2 * δ ≤ 1) :
     x ^ δ * (Real.log x + 1) * regularizedLowHeightMajorant x σ ≤
       (10 + 5 * Real.log 2) * (x ^ (1 - δ) * (Real.log x + 1) ^ 3) := by
@@ -65,7 +65,7 @@ theorem rpow_log_low_majorant_le_common_weight {x σ δ : ℝ} (hx : 2 ≤ x) (h
   have hc : 0 ≤ 10 + 5 * Real.log 2 := by
     linarith only [Real.log_nonneg (by norm_num only : (1 : ℝ) ≤ 2)]
   have hm :=
-    mul_le_mul_of_nonneg_left (regularizedLowHeightMajorant_le_power_log_square hx hσ)
+    mul_le_mul_of_nonneg_left (lowMajorant_le_power_log_sq hx hσ)
       (mul_nonneg (Real.rpow_nonneg hxpos.le δ) hlog)
   have hp :=
     Real.rpow_le_rpow_of_exponent_le (by linarith only [hx] : 1 ≤ x)

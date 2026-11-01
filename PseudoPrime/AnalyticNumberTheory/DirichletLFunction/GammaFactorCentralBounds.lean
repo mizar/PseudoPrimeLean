@@ -50,14 +50,14 @@ theorem norm_logDeriv_GammaReal_le_linear {s : ℂ} (hl : 1 / 2 ≤ s.re) (hu : 
 norm at most 10+|Im s|, uniformly in modulus and parity. Even and odd characters
 reduce to GammaReal at real parts 1/2 and 3/2. This explicit full norm estimate
 can be combined with fixed Gamma-kernel decay without an unknown compact bound. -/
-theorem norm_logDeriv_gammaFactor_central_le_linear {q : ℕ} (χ : DirichletCharacter ℂ q) {s : ℂ}
+theorem gammaLogDeriv_central_linear {q : ℕ} (χ : DirichletCharacter ℂ q) {s : ℂ}
     (hs : s.re = 1 / 2) : ‖logDeriv χ.gammaFactor s‖ ≤ 10 + |s.im| := by
   have hp : 0 < s.re := by
     rw [hs]; norm_num only
   have hf : (1 : DirichletCharacter ℂ 1).gammaFactor = Complex.Gammaℝ := by
     funext z
     exact principal_modulus_one_even.gammaFactor_def z
-  rcases logDeriv_gammaFactor_eq_one_or_one_shift χ hp with he | he
+  rcases gammaLogDeriv_eq_one_or_shift χ hp with he | he
   · rw [he, hf]
     exact
       norm_logDeriv_GammaReal_le_linear (by rw [hs])

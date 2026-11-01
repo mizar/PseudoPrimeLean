@@ -46,8 +46,8 @@ theorem ambientMethodCoefficient_ge_one_quarter (K : MellinKernel) {h : ℕ} (hh
 kernels, indices and cutoffs has ambient coefficient at most C*L^(-epsilon).
 The quarter lower bound contradicts decay to zero. This rules out fixed exponent
 savings within this coefficient formula, not for other analytic methods. -/
-theorem not_eventually_ambientMethodCoefficient_le_log_power_saving {epsilon C : ℝ}
-    (he : 0 < epsilon) (K : ℝ → MellinKernel) (h : ℝ → ℕ) (lambda : ℝ → ℝ)
+theorem not_eventually_ambient_logPower_saving {epsilon C : ℝ} (he : 0 < epsilon)
+    (K : ℝ → MellinKernel) (h : ℝ → ℕ) (lambda : ℝ → ℝ)
     (hadm :
       Filter.Eventually
         (fun L ↦ 2 ≤ h L ∧ 0 < lambda L ∧ 0 < ambientDenominator (K L) (h L) (lambda L))

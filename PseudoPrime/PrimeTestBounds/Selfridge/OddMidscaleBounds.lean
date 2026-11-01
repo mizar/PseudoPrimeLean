@@ -43,8 +43,8 @@ theorem classicalTrialCountThrough_real_le_sub_three {i : ℕ} (hi : 5 ≤ i) :
 /-- A real value bound X>=5 yields the sharp trial bound (X-3)/2 for every
 natural stopping value i<=X. Use the sharper count estimate when i>=5;
 below five the totalized trial count is one. This also covers empty maxima. -/
-theorem classicalTrialCountThrough_real_le_of_value_bound {i : ℕ} {X : ℝ} (hX : 5 ≤ X)
-    (hi : (i : ℝ) ≤ X) : (PrimeTest.classicalTrialCountThrough i : ℝ) ≤ (X - 3) / 2 := by
+theorem classicalTrialCount_real_bound {i : ℕ} {X : ℝ} (hX : 5 ≤ X) (hi : (i : ℝ) ≤ X) :
+    (PrimeTest.classicalTrialCountThrough i : ℝ) ≤ (X - 3) / 2 := by
   by_cases h5 : 5 ≤ i
   · have hc := classicalTrialCountThrough_real_le_sub_three h5
     linarith only [hc, hi]
@@ -76,12 +76,12 @@ theorem selfridgeNeOneMagnitudes_le_oddMidscale {n : ℕ} (hn : Odd n) (hns : ¬
     (hhi : Real.log n ≤ 16277 / 100) :
     ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         (LLS.PaperStatements.oddMidscaleEndpointRadius (Real.log n)) ^ 2 ∧
       ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNeOne PrimeTest.isWheel30NeOneCandidate n
-                (PrimeTest.wheel30FirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.wheel30NeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         (LLS.PaperStatements.oddMidscaleEndpointRadius (Real.log n)) ^ 2 := by
   let hw :=
@@ -89,7 +89,7 @@ theorem selfridgeNeOneMagnitudes_le_oddMidscale {n : ℕ} (hn : Odd n) (hns : ¬
       (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns)
   have hb := PseudoSquare.primeNeOneWitness_cast_le_oddMidscale hn hns hGRH hlo hhi hw
   have hr := (LLS.PaperStatements.oddMidscaleEndpointRadius_data hlo hhi).1
-  exact selfridgeNeOneMagnitudes_le_of_prime_witness_bound hn hns hw (by nlinarith only [hr]) hb
+  exact selfridgeNeOneMagnitudes_le_of_primeWitness hn hns hw (by nlinarith only [hr]) hb
 
 /-- Under GRH in the affine interval, the classical factor-detecting trial
 maximum through B is at most (r(log B)^2-3)/2. Feed the common stopping-value
@@ -101,6 +101,6 @@ theorem classicalNeOneTrialMaximum_le_oddMidscale {B : ℕ}
       ((LLS.PaperStatements.oddMidscaleEndpointRadius (Real.log B)) ^ 2 - 3) / 2 := by
   have hr := (LLS.PaperStatements.oddMidscaleEndpointRadius_data hlo hhi).1
   have hb := (selfridgeNeOneMaxima_le_oddMidscale hGRH hlo hhi).1
-  exact classicalTrialCountThrough_real_le_of_value_bound (by nlinarith only [hr]) hb
+  exact classicalTrialCount_real_bound (by nlinarith only [hr]) hb
 
 end PseudoPrime.PrimeTestBounds.Selfridge

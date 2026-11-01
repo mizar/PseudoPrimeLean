@@ -152,7 +152,7 @@ theorem tendsto_zetaMainPrimitive_one {a : ℝ} (ha : 0 < a) :
       simpa only [sub_self] using hid.sub_const (1 : ℝ)
     · filter_upwards [self_mem_nhdsWithin] with σ hσ
       exact sub_pos.mpr (show 1 < σ from hσ)
-  have hP := (General.tendsto_exponentialPolePrimitive_regularized_zero ha).comp hs
+  have hP := (General.exponentialPole_regularized_tendsto ha).comp hs
   have h :=
     (hP.sub (tendsto_log_zeta_add_log_sub_one.const_mul a)).sub
       tendsto_logDeriv_zeta_add_inv_sub_one
@@ -185,7 +185,7 @@ theorem tendsto_zetaMainPrimitive_atTop (a : ℝ) (ha : 0 < a) :
     Filter.Tendsto (fun σ : ℝ ↦ Real.log (riemannZeta (σ : ℂ)).re) Filter.atTop
       (nhds (Real.log (1 : ℂ).re)) at hlog
   simp only [Complex.one_re, Real.log_one] at hlog
-  have hD := DirichletLFunction.tendsto_logDeriv_LFunction_real_atTop (1 : DirichletCharacter ℂ 1)
+  have hD := DirichletLFunction.tendsto_logDeriv_L_real_atTop (1 : DirichletCharacter ℂ 1)
   rw [DirichletCharacter.LFunction_modOne_eq] at hD
   have hDr := Complex.continuous_re.continuousAt.tendsto.comp hD
   have hP :=

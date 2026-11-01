@@ -23,8 +23,7 @@ Claim: a common parity base gives the actual central Gamma integral as its basel
 an absolutely integrable reciprocal-difference series, with the signed coefficients retained.
 Proof: use the parity identity, actual kernel integrability and the proved digamma exchange.
 Role: exact archimedean representation for subsequent one-sided sign estimates. -/
-theorem gamma_central_archimedean_integral_eq_resolvent_series {q : ℕ}
-    (χ : DirichletCharacter ℂ q) :
+theorem gammaArchimedeanIntegral_eq_resolvent_series {q : ℕ} (χ : DirichletCharacter ℂ q) :
     ∃ b : ℝ,
       1 / 4 ≤ b ∧
         b ≤ 1 ∧
@@ -71,8 +70,7 @@ theorem gamma_central_archimedean_integral_eq_resolvent_series {q : ℕ}
           rw [he]
           ring))
   have hseries :=
-    gamma_central_digamma_vertical_sub_integral_eq_tsum
-      (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1 / 4) hb) hx
+    gamma_digamma_sub_integral_tsum (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1 / 4) hb) hx
   change
     ((1 / (2 * Real.pi) : ℝ) : ℂ) *
         (∫ t : ℝ, logDeriv χ.gammaFactor (Complex.I * t + 1 / 2) * W t) =
@@ -96,7 +94,7 @@ theorem gamma_central_archimedean_integral_eq_resolvent_series {q : ℕ}
 Claim: the signed central Gamma series has the explicit inverse-Mellin baseline density.
 Proof: substitute the certified density into the exact resolvent-series identity.
 Role: scalar baseline for the subsequent reciprocal inversion and archimedean sign estimate. -/
-theorem gamma_central_archimedean_integral_eq_density_series {q : ℕ} (χ : DirichletCharacter ℂ q) :
+theorem gammaArchimedeanIntegral_eq_density_series {q : ℕ} (χ : DirichletCharacter ℂ q) :
     ∃ b : ℝ,
       1 / 4 ≤ b ∧
         b ≤ 1 ∧
@@ -112,7 +110,7 @@ theorem gamma_central_archimedean_integral_eq_density_series {q : ℕ} (χ : Dir
                     ∫ t : ℝ,
                       (1 / ((b + n : ℝ) : ℂ) - 1 / (((b + n : ℝ) : ℂ) + Complex.I * (t / 2))) *
                         gammaCentralMellinWeight x t) := by
-  obtain ⟨b, hb, hb1, h⟩ := gamma_central_archimedean_integral_eq_resolvent_series χ
+  obtain ⟨b, hb, hb1, h⟩ := gammaArchimedeanIntegral_eq_resolvent_series χ
   refine ⟨b, hb, hb1, ?_⟩
   intro x hx
   have he := h x hx

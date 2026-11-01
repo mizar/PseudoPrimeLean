@@ -84,8 +84,7 @@ theorem poissonZeroMass_bound_of_orderAtMostOne {F : ℂ → ℂ} {ε : ℂ} (h�
       (∑' ρ : ℂ, (analyticOrderNatAt F ρ : ℝ) / (9 + (T - ρ.im) ^ 2)) ≤
         (logDeriv F (((3 : ℝ) : ℂ) + T * Complex.I)).re := by
   obtain ⟨C, hC, hg⟩ :=
-    exists_global_exponential_bound_of_orderAtMostOne hF.continuous horder (r := 3 / 2)
-      (by norm_num only)
+    exists_exp_bound_of_orderAtMostOne hF.continuous horder (r := 3 / 2) (by norm_num only)
   have hs : F (((3 : ℝ) : ℂ) + T * Complex.I) ≠ 0 := by
     apply hright
     simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.ofReal_im, Complex.I_re,

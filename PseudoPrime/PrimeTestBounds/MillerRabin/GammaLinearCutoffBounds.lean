@@ -92,7 +92,7 @@ theorem gammaIndex100Radius_prefix50000 {L : ℝ} (hL : 330 ≤ L) :
 /-- With a pass-containing subgroup of index at least one hundred, the new
 50000-prefix radius yields a rejecting prime below `gammaIndex100Bound`. The
 finite prefix and the positive-root equation close the exact budget. -/
-theorem exists_prime_witness_le_gammaIndex100_of_subgroup {n : ℕ} [NeZero n] (hn : 1 < n)
+theorem exists_primeWitness_le_gammaIndex100_of_subgroup {n : ℕ} [NeZero n] (hn : 1 < n)
     (hnOdd : Odd n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hQ : 20000 ≤ n)
     (H : Subgroup (ZMod n)ˣ) (hidx : 100 ≤ H.index)
     (hHpass :
@@ -184,7 +184,7 @@ theorem exists_prime_witness_le_gammaIndex100_of_subgroup {n : ℕ} [NeZero n] (
 
 /-- The least prime rejecting base inherits the index-100 Gamma bound whenever
 the supplied pass-containing subgroup has index at least one hundred. -/
-theorem exists_least_prime_witness_le_gammaIndex100_of_subgroup {n : ℕ} [NeZero n] (hn : 1 < n)
+theorem exists_leastWitness_le_gammaIndex100_of_subgroup {n : ℕ} [NeZero n] (hn : 1 < n)
     (hnOdd : Odd n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hQ : 20000 ≤ n)
     (H : Subgroup (ZMod n)ˣ) (hidx : 100 ≤ H.index)
     (hHpass :
@@ -197,7 +197,7 @@ theorem exists_least_prime_witness_le_gammaIndex100_of_subgroup {n : ℕ} [NeZer
         ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
   classical
   obtain ⟨p, hp, hbound, hreject⟩ :=
-    exists_prime_witness_le_gammaIndex100_of_subgroup hn hnOdd hGRH hQ H hidx hHpass hL
+    exists_primeWitness_le_gammaIndex100_of_subgroup hn hnOdd hGRH hQ H hidx hHpass hL
   let hex : ∃ q : ℕ, q.Prime ∧ ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) := ⟨p, hp, hreject⟩
   exact
     ⟨Nat.find hex, (Nat.find_spec hex).1,
@@ -221,7 +221,7 @@ theorem gammaIndex100_low_index_classification {n : ℕ} [NeZero n] (hnOdd : Odd
         (∀ p q : ℕ,
           p.Prime → q.Prime → p ∣ n → q ∣ n → padicValNat 2 (p - 1) = padicValNat 2 (q - 1))) := by
   exact
-    coefficient_0283_witness_or_uniform_korselt_triple hnOdd hcomp H hH
+    witness_0282924_or_uniformKorselt_GRH hnOdd hcomp H hH
       (Nat.le_trans (Nat.le_of_lt hidx) (by norm_num only)) hGRH hn142
 
 /-- A logarithmic scale of at least 330 forces the input beyond the finite
@@ -246,8 +246,7 @@ theorem gammaIndex100_log_ge_decimal142 {n : ℕ} [NeZero n] (hL : 330 ≤ Real.
 pass-containing subgroup. Index at least one hundred uses the new Gamma bound;
 lower index consumes the finite classification and leaves only its uniform
 Korselt triple for the dedicated Gaussian closure. -/
-theorem exists_prime_witness_le_gammaIndex100_or_uniform_korselt_triple_of_odd_composite {n : ℕ}
-    (hnOdd : Odd n) (hcomp : ¬n.Prime)
+theorem gamma100_witness_or_Korselt_oddComposite_GRH {n : ℕ} (hnOdd : Odd n) (hcomp : ¬n.Prime)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 330 ≤ Real.log n) :
     (∃ p : ℕ,
         p.Prime ∧
@@ -281,10 +280,10 @@ theorem exists_prime_witness_le_gammaIndex100_or_uniform_korselt_triple_of_odd_c
     rw [heq] at hnQ
     norm_num only at hnQ
   obtain ⟨H, hidx, hH, hHpass⟩ :=
-    PrimeTest.exists_index_ge_four_subgroup_containing_passes_with_fermat hn1 hnOdd hcomp hn9
+    PrimeTest.exists_index_four_fermat_subgroup_strongMR hn1 hnOdd hcomp hn9
   by_cases hbig : 100 ≤ H.index
   · exact
-      Or.inl (exists_prime_witness_le_gammaIndex100_of_subgroup hn1 hnOdd hGRH hnQ H hbig hHpass hL)
+      Or.inl (exists_primeWitness_le_gammaIndex100_of_subgroup hn1 hnOdd hGRH hnQ H hbig hHpass hL)
   · rcases
       gammaIndex100_low_index_classification hnOdd hcomp H hH (Nat.lt_of_not_ge hbig) hGRH
         (gammaIndex100_log_ge_decimal142 hL) with
@@ -296,11 +295,10 @@ theorem exists_prime_witness_le_gammaIndex100_or_uniform_korselt_triple_of_odd_c
 /-- At index below one hundred, consume the finite classification and transfer
 its local witness to the Gamma index-100 bound. The uniform Korselt triple is
 returned for the remaining Gaussian argument. -/
-theorem exists_prime_witness_le_gammaIndex100_or_uniform_korselt_triple {n : ℕ} [NeZero n]
-    (hnOdd : Odd n) (hcomp : ¬n.Prime) (H : Subgroup (ZMod n)ˣ)
-    (hH : H ≤ PrimeTest.fermatSubgroup n) (hidx : H.index < 100)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hn142 : 10 ^ 142 ≤ n)
-    (hL : 330 ≤ Real.log n) :
+theorem gamma100_witness_or_Korselt_smallIndex_GRH {n : ℕ} [NeZero n] (hnOdd : Odd n)
+    (hcomp : ¬n.Prime) (H : Subgroup (ZMod n)ˣ) (hH : H ≤ PrimeTest.fermatSubgroup n)
+    (hidx : H.index < 100) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hn142 : 10 ^ 142 ≤ n) (hL : 330 ≤ Real.log n) :
     (∃ r : ℕ,
         r.Prime ∧
           (r : ℝ) ≤ gammaIndex100Bound (Real.log n) ∧
@@ -453,9 +451,8 @@ strong-Miller--Rabin rejecting base at most the displayed quadratic expression.
 The proof combines the signed MR budget, the 50000-term Euler prefix, and the
 corrected principal lower bound, then verifies one rational linear margin.
 Role: improve the all-input MR envelope below the four-fifths branch. -/
-theorem exists_prime_witness_le_gamma_linear_cutoff_log_240 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 240 ≤ Real.log n) :
+theorem exists_prime_gammaLinear_log240_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 240 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (99 / 40 : ℝ) * ((287 / 500 : ℝ) * Real.log n + 9 / 2) ^ 2 ∧
@@ -657,9 +654,8 @@ strong-Miller--Rabin rejecting base at most the displayed quadratic expression.
 The proof combines the signed MR budget, the 1000-term Euler prefix, and the
 corrected principal lower bound, then verifies one rational linear margin.
 Role: improve the all-input MR envelope below the four-fifths branch. -/
-theorem exists_prime_witness_le_gamma_linear_cutoff_log_210 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 210 ≤ Real.log n) :
+theorem exists_prime_gammaLinear_log210_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 210 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (99 / 40 : ℝ) * ((287 / 500 : ℝ) * Real.log n + 9) ^ 2 ∧
@@ -800,29 +796,26 @@ theorem exists_prime_witness_le_gamma_linear_cutoff_log_210 {n : ℕ} (hnOdd : O
 
 /-- The former 250-entry API follows by specializing the 240-entry result.
 Role: preserve existing clients while exposing the lower entrance. -/
-theorem exists_prime_witness_le_gamma_linear_cutoff_log_250 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 250 ≤ Real.log n) :
+theorem exists_prime_gammaLinear_log250_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 250 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (99 / 40 : ℝ) * ((287 / 500 : ℝ) * Real.log n + 9 / 2) ^ 2 ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) :=
-  exists_prime_witness_le_gamma_linear_cutoff_log_240 hnOdd hnComposite hGRH (by linarith only [hL])
+  exists_prime_gammaLinear_log240_GRH hnOdd hnComposite hGRH (by linarith only [hL])
 
 /-- Under the same hypotheses, the least prime MR witness satisfies the affine
 cutoff. Choose a witness from the preceding theorem and minimize the rejecting
 prime predicate. Role: supply the least-witness form used by the comparison table. -/
-theorem exists_least_prime_witness_le_gamma_linear_cutoff_log_240 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 240 ≤ Real.log n) :
+theorem exists_least_prime_gammaLinear_log240_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 240 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
         (p : ℝ) ≤ (99 / 40 : ℝ) * ((287 / 500 : ℝ) * Real.log n + 9 / 2) ^ 2 ∧
         ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
   classical
-  obtain ⟨p, hp, hpbound, hreject⟩ :=
-    exists_prime_witness_le_gamma_linear_cutoff_log_240 hnOdd hnComposite hGRH hL
+  obtain ⟨p, hp, hpbound, hreject⟩ := exists_prime_gammaLinear_log240_GRH hnOdd hnComposite hGRH hL
   have hex : ∃ q : ℕ, q.Prime ∧ ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) := ⟨p, hp, hreject⟩
   exact
     ⟨Nat.find hex, (Nat.find_spec hex).1, (Nat.find_spec hex).2,
@@ -832,17 +825,15 @@ theorem exists_least_prime_witness_le_gamma_linear_cutoff_log_240 {n : ℕ} (hnO
 /-- Under the same hypotheses, the least prime MR witness satisfies the affine
 cutoff. Choose a witness from the preceding theorem and minimize the rejecting
 prime predicate. Role: supply the least-witness form used by the comparison table. -/
-theorem exists_least_prime_witness_le_gamma_linear_cutoff_log_210 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 210 ≤ Real.log n) :
+theorem exists_least_prime_gammaLinear_log210_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 210 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
         (p : ℝ) ≤ (99 / 40 : ℝ) * ((287 / 500 : ℝ) * Real.log n + 9) ^ 2 ∧
         ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
   classical
-  obtain ⟨p, hp, hpbound, hreject⟩ :=
-    exists_prime_witness_le_gamma_linear_cutoff_log_210 hnOdd hnComposite hGRH hL
+  obtain ⟨p, hp, hpbound, hreject⟩ := exists_prime_gammaLinear_log210_GRH hnOdd hnComposite hGRH hL
   have hex : ∃ q : ℕ, q.Prime ∧ ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) := ⟨p, hp, hreject⟩
   exact
     ⟨Nat.find hex, (Nat.find_spec hex).1, (Nat.find_spec hex).2,
@@ -851,16 +842,14 @@ theorem exists_least_prime_witness_le_gamma_linear_cutoff_log_210 {n : ℕ} (hnO
 
 /-- The least-witness API at logarithmic scale 250 follows by specialization.
 Role: preserve existing table references. -/
-theorem exists_least_prime_witness_le_gamma_linear_cutoff_log_250 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 250 ≤ Real.log n) :
+theorem exists_least_prime_gammaLinear_log250_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 250 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
         (p : ℝ) ≤ (99 / 40 : ℝ) * ((287 / 500 : ℝ) * Real.log n + 9 / 2) ^ 2 ∧
         ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q :=
-  exists_least_prime_witness_le_gamma_linear_cutoff_log_240 hnOdd hnComposite hGRH
-    (by linarith only [hL])
+  exists_least_prime_gammaLinear_log240_GRH hnOdd hnComposite hGRH (by linarith only [hL])
 
 /-- Under GRH, every odd composite with `log n ≥ 258` has a prime
 strong-Miller–Rabin rejecting base at most
@@ -1040,7 +1029,7 @@ theorem exists_prime_witness_le_gamma_index_four_log_258 {n : ℕ} (hnOdd : Odd 
     have hpole : ((7 / 6 : ℝ) * L + 4) / r = (7 / 6 : ℝ) * (L / r) + 4 / r := by ring
     linarith only [hbudget, hfour, hmargin', htail, hsum, hpole]
   obtain ⟨p, hp, hpbound, hreject⟩ :=
-    exists_prime_witness_of_signed_prefix_gap_all_inputs hn hnOdd hnComposite hn9 hGRH hq hx
+    exists_prime_signedPrefix_allInputs_GRH hn hnOdd hnComposite hn9 hGRH hq hx
       (by norm_num only : (0 : ℝ) ≤ 50000) hprefixBound hgap
   refine ⟨p, hp, ?_, hreject⟩
   dsimp only [x, r, a, d, L] at hpbound ⊢
@@ -1049,7 +1038,7 @@ theorem exists_prime_witness_le_gamma_index_four_log_258 {n : ℕ} (hnOdd : Odd 
 /-- The least prime rejecting base satisfies the same `B₄` upper bound.
 Minimize the unbounded rejection predicate and inherit the explicit bound from
 `exists_prime_witness_le_gamma_index_four_log_258`. -/
-theorem exists_least_prime_witness_le_gamma_index_four_log_258 {n : ℕ} (hnOdd : Odd n)
+theorem exists_leastWitness_le_gamma_index_four_log_258 {n : ℕ} (hnOdd : Odd n)
     (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : 258 ≤ Real.log n) :
     ∃ p : ℕ,

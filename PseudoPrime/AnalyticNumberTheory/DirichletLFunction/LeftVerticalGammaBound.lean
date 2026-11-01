@@ -95,7 +95,7 @@ theorem leftVertical_odd_half_ne_neg_nat (A : ℕ) (t : ℝ) (m : ℕ) :
 
 /-- The even-parity reflected-point digamma argument `(1 - s_A(t))/2 = A/2 + 3/4 - (t/2) i` avoids
 every nonpositive integer, for `A ≥ 2` and every `t`. -/
-theorem reflectedLeftVertical_even_half_ne_neg_nat (A : ℕ) (hA : 2 ≤ A) (t : ℝ) (m : ℕ) :
+theorem reflectedLeft_even_half_ne_neg_nat (A : ℕ) (hA : 2 ≤ A) (t : ℝ) (m : ℕ) :
     (1 - (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)) / 2 ≠ -(m : ℂ) := by
   have hA' : (2 : ℝ) ≤ (A : ℝ) := by exact_mod_cast hA
   have heq :
@@ -131,7 +131,7 @@ theorem reflectedLeftVertical_even_half_ne_neg_nat (A : ℕ) (hA : 2 ≤ A) (t :
 
 /-- The odd-parity reflected-point digamma argument `(2 - s_A(t))/2 = A/2 + 5/4 - (t/2) i` avoids
 every nonpositive integer, for `A ≥ 2` and every `t`. -/
-theorem reflectedLeftVertical_odd_half_ne_neg_nat (A : ℕ) (hA : 2 ≤ A) (t : ℝ) (m : ℕ) :
+theorem reflectedLeft_odd_half_ne_neg_nat (A : ℕ) (hA : 2 ≤ A) (t : ℝ) (m : ℕ) :
     ((1 - (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)) + 1) / 2 ≠ -(m : ℂ) := by
   have hA' : (2 : ℝ) ≤ (A : ℝ) := by exact_mod_cast hA
   have heq :
@@ -173,16 +173,16 @@ Conclusion: there is `C ≥ 0` such that for every `A ≥ 2`, every character `�
 parity), and every `t : ℝ`, `‖logDeriv (gammaFactor χ) (s_A(t))‖ + ‖logDeriv (gammaFactor χ)
 (1 - s_A(t))‖ ≤ C ((A + 5)² + 1 + log(|t| + 2))`, where `s_A(t) := -A - 1/2 + t i`.
 Content: dispatches on `χ.even_or_odd`; in each parity, the exact formula
-(`DirichletLFunction.logDeriv_gammaFactor_eq_of_even_of_half_ne_neg_nat`/`_odd_`) applies at both
+(`DirichletLFunction.gammaLogDeriv_even_eq_digamma`/`_odd_`) applies at both
 `s_A(t)` and
 `1 - s_A(t)` (pole-avoidance from the four `leftVertical_*`/`reflectedLeftVertical_*` facts), and
-each digamma value is bounded via `exists_C_forall_norm_digamma_explicit_le` at real part `≤ A + 2`
+each digamma value is bounded via `uniform_digamma_explicit_bound` at real part `≤ A + 2`
 in absolute value with imaginary part `± t/2` (so `2 |± t/2| + 2 = |t| + 2` matches exactly). The
 constant `log π` term is absorbed since `(A + 5)² + 1 + log(|t| + 2) ≥ 1`.
 Role: the gamma-factor ingredient — combined with the reflection identity, this gives the
 left-vertical `L'/L` bound.
 -/
-theorem exists_C_forall_norm_logDeriv_gammaFactor_leftVertical_pair_le :
+theorem gammaLogDeriv_left_pair_bound :
     ∃ C : ℝ,
       0 ≤ C ∧
         ∀ A : ℕ,
@@ -193,7 +193,7 @@ theorem exists_C_forall_norm_logDeriv_gammaFactor_leftVertical_pair_le :
                   ‖logDeriv (DirichletCharacter.gammaFactor χ)
                       (1 - (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))‖ ≤
                 C * (((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2)) := by
-  obtain ⟨Cψ, hCψnn, hψ⟩ := exists_C_forall_norm_digamma_explicit_le
+  obtain ⟨Cψ, hCψnn, hψ⟩ := uniform_digamma_explicit_bound
   set C : ℝ := Cψ + |Real.log Real.pi| + 10 with hC_def
   have hCnn : 0 ≤ C := by
     have := abs_nonneg (Real.log Real.pi)
@@ -235,10 +235,8 @@ theorem exists_C_forall_norm_logDeriv_gammaFactor_leftVertical_pair_le :
         rw [hC_def]
         nlinarith only [hCψnn, hEA1, abs_nonneg (Real.log Real.pi)]
   rcases χ.even_or_odd with heven | hodd
-  · rw [logDeriv_gammaFactor_eq_of_even_of_half_ne_neg_nat heven
-        (leftVertical_even_half_ne_neg_nat A t),
-      logDeriv_gammaFactor_eq_of_even_of_half_ne_neg_nat heven
-        (reflectedLeftVertical_even_half_ne_neg_nat A hA t)]
+  · rw [gammaLogDeriv_even_eq_digamma heven (leftVertical_even_half_ne_neg_nat A t),
+      gammaLogDeriv_even_eq_digamma heven (reflectedLeft_even_half_ne_neg_nat A hA t)]
     have hform1 :
       (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I) / 2 =
         ((-(A : ℝ) / 2 - 1 / 4 : ℝ) : ℂ) + ((t / 2 : ℝ) : ℂ) * Complex.I := by
@@ -296,10 +294,8 @@ theorem exists_C_forall_norm_logDeriv_gammaFactor_leftVertical_pair_le :
     have h1 := hmain (-(A : ℝ) / 2 - 1 / 4) (t / 2) ha1 (leftEven_quarterSep A) hb1
     have h2 := hmain ((A : ℝ) / 2 + 3 / 4) (-(t / 2)) ha2 hsep2 hb2
     linarith only [h1, h2]
-  · rw [logDeriv_gammaFactor_eq_of_odd_of_half_ne_neg_nat hodd
-        (leftVertical_odd_half_ne_neg_nat A t),
-      logDeriv_gammaFactor_eq_of_odd_of_half_ne_neg_nat hodd
-        (reflectedLeftVertical_odd_half_ne_neg_nat A hA t)]
+  · rw [gammaLogDeriv_odd_eq_digamma hodd (leftVertical_odd_half_ne_neg_nat A t),
+      gammaLogDeriv_odd_eq_digamma hodd (reflectedLeft_odd_half_ne_neg_nat A hA t)]
     have hform1 :
       ((((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I) + 1) / 2 =
         ((-(A : ℝ) / 2 + 1 / 4 : ℝ) : ℂ) + ((t / 2 : ℝ) : ℂ) * Complex.I := by

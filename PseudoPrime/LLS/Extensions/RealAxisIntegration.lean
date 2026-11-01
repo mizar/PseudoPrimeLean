@@ -253,8 +253,8 @@ theorem integrableOn_deriv_logDeriv_ordinary_real (f : GeneralLFunction) (hf : f
 the log L-value plus the normalized zero-mass and gamma endpoint terms.
 All analyticity, nonvanishing, limit and integrability inputs follow from admissibility
 and RH; no separate endpoint assumption remains. -/
-theorem integral_origin_regularization_re_div_log_of_admissible (f : GeneralLFunction)
-    (hf : f.IsAdmissible) (hRH : f.RiemannHypothesis) {x : ℝ} (hx : 1 < x) :
+theorem originRegularization_integral_RH (f : GeneralLFunction) (hf : f.IsAdmissible)
+    (hRH : f.RiemannHypothesis) {x : ℝ} (hx : 1 < x) :
     (∫ σ : ℝ in Set.Ioi 1,
           (deriv (AnalyticNumberTheory.General.shiftedLogarithmicRegularization f.L x (σ : ℂ))
               0).re) /
@@ -271,6 +271,6 @@ theorem integral_origin_regularization_re_div_log_of_admissible (f : GeneralLFun
               lt_of_lt_of_le (show (1 / 2 : ℝ) < 1 by norm_num only) hσ))
       (tendsto_logDeriv_ordinary_real_atTop f hf) (integrableOn_logDeriv_ordinary_real f hf hRH)
       (integrableOn_deriv_logDeriv_ordinary_real f hf hRH),
-    re_logDeriv_ordinary_one_eq_half_zeroMass_sub_gamma f hf hRH]
+    ordinary_logDeriv_one_real_RH f hf hRH]
 
 end PseudoPrime.LLS.Extensions.GeneralLFunction

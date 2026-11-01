@@ -103,8 +103,7 @@ theorem conductorPrefixNegative_numerator_dominates_cost {q A : ℕ} (hq : 0 < q
           (2 * Real.log (Real.log A) + 3 / 40) +
         (1 / 5 : ℝ) * conductorPrefixNegativeLogRoot (Real.log A) := by
   have hd := conductorPrefixNegativeLogRoot_data hL
-  have hcard :=
-    AnalyticNumberTheory.Arithmetic.primeFactors_card_le_five_halves_add_three_eighths_log hq hqA
+  have hcard := AnalyticNumberTheory.Arithmetic.primeFactors_card_le_5_2_add_3_8_log hq hqA
   have hr := hd.1
   have hs := sq_nonneg (conductorPrefixNegativeLogRoot (Real.log A) - 5)
   have hlog0 : 0 ≤ Real.log ((99 / 40 : ℝ) * conductorPrefixNegativeLogRoot (Real.log A) ^ 2) :=
@@ -120,10 +119,9 @@ least 500, has a unit-prime witness of value minus one below 99/40 times the imp
 squared. Use the full Euler prefix through thirteen, its saving one, and the joint
 numerator margin. This is an explicit negative-witness bound without an input-dependent prefix
 budget assumption or finite input enumeration. -/
-theorem exists_prime_neg_one_le_conductorPrefix_log_ambient {q A : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (heven : χ.Even) (hne : χ ≠ 1)
-    (hqA : q ≤ A) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 500 ≤ Real.log A) :
+theorem exists_prime_negOne_conductorPrefixLog_GRH {q A : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hquad : χ.IsQuadratic) (heven : χ.Even) (hne : χ ≠ 1) (hqA : q ≤ A)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 500 ≤ Real.log A) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬p ∣ q ∧
@@ -132,8 +130,8 @@ theorem exists_prime_neg_one_le_conductorPrefix_log_ambient {q A : ℕ} [NeZero 
   have hd := conductorPrefixNegativeLogRoot_data hL
   have hx : 25 ≤ r ^ 2 := by nlinarith only [hd.1, sq_nonneg (r - 5)]
   have hc :=
-    AnalyticNumberTheory.DirichletLFunction.twoPoleGammaConstant_le_signed_of_even
-      χ.primitiveCharacter ((NumberTheory.primitiveCharacter_even_iff χ).mpr heven)
+    AnalyticNumberTheory.DirichletLFunction.twoPoleGamma_le_112_25_of_even χ.primitiveCharacter
+      ((NumberTheory.primitiveCharacter_even_iff χ).mpr heven)
   have hn :=
     conductorPrefixNegative_numerator_dominates_cost (Nat.pos_of_ne_zero (NeZero.ne q)) hqA hL
   have hg :=
@@ -163,15 +161,14 @@ theorem exists_prime_neg_one_le_conductorPrefix_log_ambient {q A : ℕ} [NeZero 
     norm_num only at *
     exact hn.trans_le hupper
   apply
-    exists_prime_neg_one_of_jointRampPrincipal_conductor_prefix χ hquad hne hqA hGRH
+    exists_prime_negOne_jointRampConductor_GRH χ hquad hne hqA hGRH
       (by linarith only [hx] : 2 ≤ r ^ 2) (Y := 13) (by norm_num only) (a := 3 / 10) (d :=
       (1 / 5 : ℝ) * Real.log 2) (by norm_num only)
       (mul_nonneg (by norm_num only) (Real.log_natCast_nonneg 2))
       (by
         rw [Real.sqrt_sq (show 0 ≤ r by linarith only [hd.1])]; linarith only [hd.1])
-      (fun p hp ↦
-        AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight_prime_upper_three_tenths hp)
-      _ hc (g := 1) _ hgap
+      (fun p hp ↦ AnalyticNumberTheory.Arithmetic.pairedEulerWeight_prime_le_three_tenths hp) _ hc
+      (g := 1) _ hgap
   · intro n hn
     have hn13 : n ≤ 13 := by
       norm_num only [Nat.floor_ofNat] at hn

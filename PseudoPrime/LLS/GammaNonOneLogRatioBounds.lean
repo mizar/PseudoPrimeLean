@@ -26,8 +26,8 @@ theorem exists_odd_prime_ne_one_of_gamma_log_29121 {q : ℕ} [NeZero q] (hq : 20
     (hlogq : Real.log q ≤ L + 7 / 5) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * L ^ 2 ∧ χ p ≠ 1 := by
   exact
-    exists_odd_prime_ne_one_of_log_ratio_prefix_profile hq χ hquad hne h2 hGRH
-      (by linarith only [hL]) (nonOne_log_ratio_of_ge_29121 hL) hlogq 32
-      Analysis.gammaResolvent_thirtyTwo_error_lt (by linarith only [hL])
+    exists_oddPrime_neOne_logRatioPrefix_GRH hq χ hquad hne h2 hGRH (by linarith only [hL])
+      (nonOne_log_ratio_of_ge_29121 hL) hlogq 32 Analysis.gammaResolvent_thirtyTwo_error_lt
+      (by linarith only [hL])
 
 end PseudoPrime.LLS

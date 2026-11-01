@@ -72,7 +72,7 @@ theorem prime_le_4093_of_le_4096 {p : ℕ} (hp : p.Prime) (hb : p ≤ 4096) : p 
 Jacobi witness is at most 4093. Use the certified level-64 scale independently
 of log(n), then exclude three composite endpoints. Role: separate the fixed
 analytic scale from the input interval. -/
-theorem exists_odd_prime_negative_phase64_fixed_cap_from_log_ten
+theorem exists_oddPrime_negJacobi_4093_log10_GRH
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : Odd n)
     (hns : ¬IsSquare n) (hlo : (10 : ℝ) ≤ Real.log n) (hhi : Real.log n ≤ 3209 / 50) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ p ≤ 4093 ∧ jacobiSym n p = -1 := by
@@ -89,7 +89,7 @@ theorem exists_odd_prime_negative_phase64_fixed_cap_from_log_ten
     norm_num only at hA hB ⊢
     exact hB.trans_le hA
   obtain ⟨p, hp, ho, hb, hv⟩ :=
-    exists_odd_prime_negative_of_phase64_numerical_gap bridge hGRH hq hm
+    exists_oddPrime_negJacobi_phase64_numeric_GRH bridge hGRH hq hm
       (by norm_num only : (64 : ℝ) ≤ 64) (by norm_num only : (64 : ℝ) ≤ 64001 / 1000) hgap
   have hbN : p ≤ 4096 :=
     Nat.cast_le.mp
@@ -107,7 +107,7 @@ theorem exists_odd_prime_negative_phase64_lower_start
     (hns : ¬IsSquare n) (hlo : (63977 / 1000 : ℝ) ≤ Real.log n) (hhi : Real.log n ≤ 3209 / 50) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) < (Real.log n) ^ 2 ∧ jacobiSym n p = -1 := by
   obtain ⟨p, hp, ho, hb, hv⟩ :=
-    exists_odd_prime_negative_phase64_fixed_cap_from_log_ten hGRH hn hns
+    exists_oddPrime_negJacobi_4093_log10_GRH hGRH hn hns
       ((by norm_num only : (10 : ℝ) ≤ 63977 / 1000).trans hlo) hhi
   have hs : (4093 : ℝ) < (Real.log n) ^ 2 := by nlinarith only [hlo]
   exact ⟨p, hp, ho, (Nat.cast_le.mpr hb).trans_lt hs, hv⟩

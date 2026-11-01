@@ -73,7 +73,7 @@ private theorem abs_integral_mul_on_cutoff {f Q : ℝ → ℝ} (hf : Continuous 
 /-- For continuous f bounded by K on the support, the functional norm is at
 most K times the actual variation mass. Bound both smooth integrals and both
 jump terms. This is the complete finite lower-sum error estimate. -/
-theorem exponentialRampVariationFunctional_abs_le_mass {f : ℝ → ℝ} (hf : Continuous f) {K : ℝ}
+theorem expRampVariation_abs_le_mass {f : ℝ → ℝ} (hf : Continuous f) {K : ℝ}
     (hbound : ∀ u ∈ Set.Icc 0 (99 / 40), |f u| ≤ K) :
     |exponentialRampVariationFunctional f| ≤ K * Analysis.exponentialRampVariationMass := by
   have h1 :=
@@ -101,16 +101,15 @@ theorem exponentialRampVariationFunctional_abs_le {f : ℝ → ℝ} (hf : Contin
     (hK : 0 ≤ K) (hbound : ∀ u ∈ Set.Icc 0 (99 / 40), |f u| ≤ K) :
     |exponentialRampVariationFunctional f| ≤ 85 * K := by
   have hm := mul_le_mul_of_nonneg_left Analysis.variation_mass_le_85 hK
-  exact
-    (exponentialRampVariationFunctional_abs_le_mass hf hbound).trans (hm.trans_eq (mul_comm K 85))
+  exact (expRampVariation_abs_le_mass hf hbound).trans (hm.trans_eq (mul_comm K 85))
 
 /-- For a continuous error f bounded by M on the full support and with
 short-ramp increment bounded by D, the complete variation functional has
 absolute value at most (3/2)M+42D. Pair the signed jumps before estimating
 them and use the two small smooth-density masses. This replaces the 85M
 estimate when the endpoint increment is controlled. -/
-theorem exponentialRampVariationFunctional_abs_le_of_increment {f : ℝ → ℝ} (hf : Continuous f)
-    {M D : ℝ} (hb : ∀ u ∈ Set.Icc 0 (99 / 40), |f u| ≤ M) (hd : |f (99 / 40) - f (247 / 100)| ≤ D) :
+theorem expRampVariation_abs_le_of_increment {f : ℝ → ℝ} (hf : Continuous f) {M D : ℝ}
+    (hb : ∀ u ∈ Set.Icc 0 (99 / 40), |f u| ≤ M) (hd : |f (99 / 40) - f (247 / 100)| ≤ D) :
     |exponentialRampVariationFunctional f| ≤ (3 / 2) * M + 42 * D := by
   have hM := (abs_nonneg (f 0)).trans (hb 0 ⟨le_refl 0, by norm_num only⟩)
   have h1 :=

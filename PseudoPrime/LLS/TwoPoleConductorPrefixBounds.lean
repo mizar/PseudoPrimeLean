@@ -25,15 +25,14 @@ theorem pairedEulerExcludedBudget_le_prefix_conductor {q : ℕ} [NeZero q]
       twoPoleEulerPrefixMass (Finset.Ioc 0 ⌊Y⌋₊) + (3 / 10 : ℝ) * Real.log (q / χ.conductor : ℕ) +
         (1 / 5 : ℝ) * Real.log 2 := by
   exact
-    quadraticExcludedBudget_le_prefix_add_conductor_budget χ hY _
+    quadraticExcluded_le_prefix_conductor χ hY _
       (AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight_nonneg _ _ (by norm_num only))
       (fun n hn ↦
-        AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight_eq_zero_of_mangoldt_eq_zero _ _ _
+        AnalyticNumberTheory.Arithmetic.pairedEulerWeight_eq_zero_of_mangoldt_zero _ _ _
           (ArithmeticFunction.vonMangoldt_eq_zero_iff.mpr hn))
       (fun p hp ↦ AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight_prime_pow_antitone hp)
       (by norm_num only) (mul_nonneg (by norm_num only) (Real.log_natCast_nonneg 2))
-      (fun p hp ↦
-        AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight_prime_upper_three_tenths hp)
+      (fun p hp ↦ AnalyticNumberTheory.Arithmetic.pairedEulerWeight_prime_le_three_tenths hp)
 
 /-- For a nonprincipal quadratic character under GRH and x at least 25, unit-prime triviality
 below 99x/40 gives the arithmetic upper bound minus the full principal prefix, with only
@@ -54,13 +53,11 @@ theorem gamma_primitive_add_local_le_of_conductor_prefix {q A : ℕ} [NeZero q]
   have hx0 : 0 < x := by linarith only [hx]
   have hs : 5 ≤ Real.sqrt x := by nlinarith only [Real.sq_sqrt hx0.le, Real.sqrt_nonneg x, hx]
   exact
-    gamma_primitive_add_local_le_of_parameterized_conductor_prefix χ hquad hne hqA hGRH
-      (by linarith only [hx] : 2 ≤ x) hY (a := 3 / 10) (d := (1 / 5 : ℝ) * Real.log 2)
-      (by norm_num only) (mul_nonneg (by norm_num only) (Real.log_natCast_nonneg 2))
-      (by linarith only [hs])
-      (fun p hp ↦
-        AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight_prime_upper_three_tenths hp)
-      hYcut hC ht
+    gamma_primitive_local_le_of_prefix_GRH χ hquad hne hqA hGRH (by linarith only [hx] : 2 ≤ x) hY
+      (a := 3 / 10) (d := (1 / 5 : ℝ) * Real.log 2) (by norm_num only)
+      (mul_nonneg (by norm_num only) (Real.log_natCast_nonneg 2)) (by linarith only [hs])
+      (fun p hp ↦ AnalyticNumberTheory.Arithmetic.pairedEulerWeight_prime_le_three_tenths hp) hYcut
+      hC ht
 
 /-- For a nonprincipal quadratic character under GRH, x at least 25, and a full Euler prefix
 below the cutoff, a saving g no larger than the prefix mass minus (1/5) log 2 yields a negative
@@ -81,12 +78,10 @@ theorem exists_prime_neg_one_of_conductor_prefix {q A : ℕ} [NeZero q] (χ : Di
   have hx0 : 0 < x := by linarith only [hx]
   have hs : 5 ≤ Real.sqrt x := by nlinarith only [Real.sq_sqrt hx0.le, Real.sqrt_nonneg x, hx]
   exact
-    exists_prime_neg_one_of_parameterized_conductor_prefix χ hquad hne hqA hGRH
-      (by linarith only [hx] : 2 ≤ x) hY (a := 3 / 10) (d := (1 / 5 : ℝ) * Real.log 2)
-      (by norm_num only) (mul_nonneg (by norm_num only) (Real.log_natCast_nonneg 2))
-      (by linarith only [hs])
-      (fun p hp ↦
-        AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight_prime_upper_three_tenths hp)
-      hYcut hC hg hgap
+    exists_prime_negOne_paramConductor_GRH χ hquad hne hqA hGRH (by linarith only [hx] : 2 ≤ x) hY
+      (a := 3 / 10) (d := (1 / 5 : ℝ) * Real.log 2) (by norm_num only)
+      (mul_nonneg (by norm_num only) (Real.log_natCast_nonneg 2)) (by linarith only [hs])
+      (fun p hp ↦ AnalyticNumberTheory.Arithmetic.pairedEulerWeight_prime_le_three_tenths hp) hYcut
+      hC hg hgap
 
 end PseudoPrime.LLS

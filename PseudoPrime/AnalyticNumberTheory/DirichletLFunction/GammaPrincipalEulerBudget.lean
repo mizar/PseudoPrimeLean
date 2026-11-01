@@ -26,7 +26,7 @@ theorem re_gammaFactor_even {q : ℕ} {χ : DirichletCharacter ℂ q} (he : χ.E
   have hh : ∀ m : ℕ, (σ : ℂ) / 2 ≠ -(m : ℂ) := by
     simpa only [Complex.ofReal_zero, add_zero] using
       half_add_ne_neg_nat_of_re_pos hs (le_refl (0 : ℝ))
-  rw [logDeriv_gammaFactor_eq_of_even_of_half_ne_neg_nat he hh]
+  rw [gammaLogDeriv_even_eq_digamma he hh]
   rw [show (σ : ℂ) / 2 = ((σ / 2 : ℝ) : ℂ) from (Complex.ofReal_div σ 2).symm]
   simp only [Complex.add_re, Complex.div_ofNat_re, Complex.neg_re, Complex.log_re,
     Complex.norm_real, Real.norm_eq_abs, abs_of_pos Real.pi_pos]
@@ -42,7 +42,7 @@ theorem re_gammaFactor_odd {q : ℕ} {χ : DirichletCharacter ℂ q} (he : χ.Od
   have hh : ∀ m : ℕ, ((σ : ℂ) + 1) / 2 ≠ -(m : ℂ) := by
     simpa only [Complex.ofReal_one] using
       half_add_ne_neg_nat_of_re_pos hs (show (0 : ℝ) ≤ 1 by norm_num only)
-  rw [logDeriv_gammaFactor_eq_of_odd_of_half_ne_neg_nat he hh]
+  rw [gammaLogDeriv_odd_eq_digamma he hh]
   rw [show ((σ : ℂ) + 1) / 2 = (((σ + 1) / 2 : ℝ) : ℂ) from by
       simp only [Complex.ofReal_div, Complex.ofReal_add, Complex.ofReal_one, Complex.ofReal_ofNat]]
   simp only [Complex.add_re, Complex.div_ofNat_re, Complex.neg_re, Complex.log_re,
@@ -136,9 +136,9 @@ theorem gammaResolvent_euler_lt_twelve_half (hRH : RiemannHypothesis) :
 Claim: the resolvent zero mass is below mu log q + 25/2 + A.
 Proof: combine the empty-prefix character comparison with the principal Euler bound.
 Role: expose a reusable signed mass interface for both parity cases. -/
-theorem gammaResolvent_zeroMass_lt_principal_budget {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ)
-    (hRiemann : RiemannHypothesis) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {A : ℝ}
+theorem gammaMass_lt_principalBudget_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hRiemann : RiemannHypothesis) (hp : χ.IsPrimitive)
+    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {A : ℝ}
     (hA :
       (Gamma.gammaResolventCoefficients.map
             (fun ab ↦
@@ -148,7 +148,7 @@ theorem gammaResolvent_zeroMass_lt_principal_budget {q : ℕ} [NeZero q] (hq : 2
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
           Gamma.gammaResolventMajorant ρ.im) <
       (11783423 / 25000000 : ℝ) * Real.log q + (25 / 2 + A) := by
-  have hz := gammaResolvent_zeroMass_le_signed_prefix hq hRH hp hne hinv ∅
+  have hz := gammaMass_le_signedPrefix_RH hq hRH hp hne hinv ∅
   simp only [Finset.sum_empty, mul_zero, sub_zero, add_zero] at hz
   have he := gammaResolvent_euler_lt_twelve_half hRiemann
   linarith only [hz, he, hA]
@@ -157,17 +157,15 @@ theorem gammaResolvent_zeroMass_lt_principal_budget {q : ℕ} [NeZero q] (hq : 2
 Claim: the actual resolvent zero mass is below mu log q + 11.
 Proof: retain the signed even Gamma gain in the principal Euler budget.
 Role: lower the fixed analytic cost for negative quadratic witness comparisons. -/
-theorem gammaResolvent_zeroMass_lt_principal_even {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ)
-    (hRiemann : RiemannHypothesis) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
-    (he : χ.Even) :
+theorem gammaMass_lt_principalEven_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hRiemann : RiemannHypothesis) (hp : χ.IsPrimitive)
+    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (he : χ.Even) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
           Gamma.gammaResolventMajorant ρ.im) <
       (11783423 / 25000000 : ℝ) * Real.log q + 11 := by
   have h :=
-    gammaResolvent_zeroMass_lt_principal_budget hq hRH hRiemann hp hne hinv
-      (gammaResolvent_gammaFactor_0_le he)
+    gammaMass_lt_principalBudget_RH hq hRH hRiemann hp hne hinv (gammaResolvent_gammaFactor_0_le he)
   norm_num only at h
   exact h
 
@@ -175,7 +173,7 @@ theorem gammaResolvent_zeroMass_lt_principal_even {q : ℕ} [NeZero q] (hq : 2 �
 Claim: its resolvent zero mass is below mu log q + 117/10.
 Proof: use the parity-uniform negative Gamma cap.
 Role: lower the fixed analytic cost for general witness comparisons. -/
-theorem gammaResolvent_zeroMass_lt_principal_uniform {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem gammaMass_lt_principalUniform_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ)
     (hRiemann : RiemannHypothesis) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     (∑' ρ : ℂ,
@@ -183,8 +181,7 @@ theorem gammaResolvent_zeroMass_lt_principal_uniform {q : ℕ} [NeZero q] (hq : 
           Gamma.gammaResolventMajorant ρ.im) <
       (11783423 / 25000000 : ℝ) * Real.log q + 117 / 10 := by
   have h :=
-    gammaResolvent_zeroMass_lt_principal_budget hq hRH hRiemann hp hne hinv
-      (gammaResolvent_gammaFactor_le χ)
+    gammaMass_lt_principalBudget_RH hq hRH hRiemann hp hne hinv (gammaResolvent_gammaFactor_le χ)
   norm_num only at h
   exact h
 

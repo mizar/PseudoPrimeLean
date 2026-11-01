@@ -30,7 +30,7 @@ monotonicity of multiplication and the natural floor.
 Role: this is the upper side of the quantitative comparison needed to choose
 the fixed-factor seed parameters.
 -/
-theorem p2_floor_term_upper_bound_of_auxiliary_size_bounds {w x T L : ℕ} (hx : 2 ≤ x) (hL : 1 < L)
+theorem p2_floor_upper_of_auxiliary_bounds {w x T L : ℕ} (hx : 2 ≤ x) (hL : 1 < L)
     (hLbound : L ≤ x ^ (T + 1)) (hLambdaBound : ArithmeticFunction.carmichael L ≤ x ^ 2) :
     (2 ^ w : ℝ) * (Nat.floor ((ArithmeticFunction.carmichael L : ℝ) * Real.log (L : ℝ)) : ℝ) ≤
       (2 ^ w : ℝ) * (x : ℝ) ^ 2 * ((T + 1 : ℕ) : ℝ) * Real.log (x : ℝ) := by
@@ -117,8 +117,8 @@ that full count.
 Role: this packages the finite divisor estimate into the P2 interface used by
 the second Proposition 1.5 application.
 -/
-noncomputable def progressionAuxiliaryData_of_primeFactorCountLowerBound {W : Finset ℕ}
-    {C x₀ L q x s : ℕ} {c₀ : ℝ} (hc₀ : 0 < c₀) (hx : 2 ≤ x) (hL : 2 < L) (hLargeEnough : x₀ ≤ x)
+noncomputable def auxiliaryData_of_primeFactorCountLowerBound {W : Finset ℕ} {C x₀ L q x s : ℕ}
+    {c₀ : ℝ} (hc₀ : 0 < c₀) (hx : 2 ≤ x) (hL : 2 < L) (hLargeEnough : x₀ ≤ x)
     (hProp15Input : ReliableProp15ModFourInput L x)
     (hReciprocal1024 : (∑ r ∈ L.primeFactors, (r : ℝ)⁻¹) ≤ (1 / 1024 : ℝ))
     (hCq : max C (W.sup id) ≤ q) (hfactor : ∀ r, r ∣ L → Nat.Prime r → r ≤ q)
@@ -130,8 +130,7 @@ noncomputable def progressionAuxiliaryData_of_primeFactorCountLowerBound {W : Fi
           ((((L.primeFactors.card + 1 - s : ℕ) : ℝ) ^ s) / (s.factorial : ℝ))) :
     AGPProgressionAuxiliaryData W C c₀ x₀ := by
   have hLne : L ≠ 0 := Nat.ne_of_gt (lt_trans Nat.zero_lt_two hL)
-  have hdivLower :=
-    primeFactorProducts_lower_bound_restrictedDivisors hLne hProp15Input.1 hfactor hcut
+  have hdivLower := restrictedDivisors_ge_factor_products hLne hProp15Input.1 hfactor hcut
   have hxreal : (1 : ℝ) < (x : ℝ) := by
     exact_mod_cast (lt_of_lt_of_le (by norm_num only : 1 < 2) hx)
   have hlog : 0 < Real.log (x : ℝ) := Real.log_pos hxreal
@@ -177,8 +176,8 @@ to convert the ratio estimate to the existing factorial-form hypothesis.
 Role: this connects the elementary size estimate from reliable, §2 directly
 to the finite P2 interface.
 -/
-noncomputable def progressionAuxiliaryData_of_binomial_ratio_lower_bound {W : Finset ℕ}
-    {C x₀ L q x s : ℕ} {c₀ : ℝ} (hc₀ : 0 < c₀) (hx : 2 ≤ x) (hL : 2 < L) (hLargeEnough : x₀ ≤ x)
+noncomputable def auxiliaryData_of_binomial_ratio_lower_bound {W : Finset ℕ} {C x₀ L q x s : ℕ}
+    {c₀ : ℝ} (hc₀ : 0 < c₀) (hx : 2 ≤ x) (hL : 2 < L) (hLargeEnough : x₀ ≤ x)
     (hProp15Input : ReliableProp15ModFourInput L x)
     (hReciprocal1024 : (∑ r ∈ L.primeFactors, (r : ℝ)⁻¹) ≤ (1 / 1024 : ℝ))
     (hCq : max C (W.sup id) ≤ q) (hfactor : ∀ r, r ∣ L → Nat.Prime r → r ≤ q)
@@ -189,7 +188,7 @@ noncomputable def progressionAuxiliaryData_of_binomial_ratio_lower_bound {W : Fi
           ℝ) <
         reliableProp15Coefficient c₀ 4 x * ((L.primeFactors.card : ℝ) / (2 * (s : ℝ))) ^ s) :
     AGPProgressionAuxiliaryData W C c₀ x₀ := by
-  have hbinomial := fixedPrimeFactorProductsOf_binomial_ratio_lower_bound L.primeFactors s hs hsmall
+  have hbinomial := fixedProducts_binomial_ratio_lower L.primeFactors s hs hsmall
   have hxreal : (1 : ℝ) < (x : ℝ) := by
     exact_mod_cast (lt_of_lt_of_le (by norm_num only : 1 < 2) hx)
   have hlog : 0 < Real.log (x : ℝ) := Real.log_pos hxreal
@@ -205,8 +204,8 @@ noncomputable def progressionAuxiliaryData_of_binomial_ratio_lower_bound {W : Fi
   have hscaled := mul_le_mul_of_nonneg_left hbinomial (le_of_lt hcoef)
   have hlower' := lt_of_lt_of_le hlower hscaled
   exact
-    progressionAuxiliaryData_of_primeFactorCountLowerBound hc₀ hx hL hLargeEnough hProp15Input
-      hReciprocal1024 hCq hfactor hlambda hcut hlower'
+    auxiliaryData_of_primeFactorCountLowerBound hc₀ hx hL hLargeEnough hProp15Input hReciprocal1024
+      hCq hfactor hlambda hcut hlower'
 
 open PseudoPrime.NumberTheory.PrimeProducts in
 /--
@@ -223,8 +222,8 @@ then apply the binomial-ratio P2 constructor.
 Role: this connects the first-stage seed output to the second-stage P2 input
 using a single explicit size parameter.
 -/
-noncomputable def progressionAuxiliaryData_of_seed_factor_count_lower_bound {W : Finset ℕ}
-    {C x₀ L q x s T : ℕ} {c₀ : ℝ} (hc₀ : 0 < c₀) (hx : 2 ≤ x) (hL : 2 < L) (hLargeEnough : x₀ ≤ x)
+noncomputable def auxiliaryData_of_seed_factor_count_lower_bound {W : Finset ℕ} {C x₀ L q x s T : ℕ}
+    {c₀ : ℝ} (hc₀ : 0 < c₀) (hx : 2 ≤ x) (hL : 2 < L) (hLargeEnough : x₀ ≤ x)
     (hProp15Input : ReliableProp15ModFourInput L x)
     (hReciprocal1024 : (∑ r ∈ L.primeFactors, (r : ℝ)⁻¹) ≤ (1 / 1024 : ℝ))
     (hCq : max C (W.sup id) ≤ q) (hfactor : ∀ r, r ∣ L → Nat.Prime r → r ≤ q)
@@ -254,7 +253,7 @@ noncomputable def progressionAuxiliaryData_of_seed_factor_count_lower_bound {W :
   have hscaled := mul_le_mul_of_nonneg_left hratio (le_of_lt hcoef)
   have hlower' := lt_of_lt_of_le hlower hscaled
   exact
-    progressionAuxiliaryData_of_binomial_ratio_lower_bound hc₀ hx hL hLargeEnough hProp15Input
-      hReciprocal1024 hCq hfactor hlambda hcut hs hsmall hlower'
+    auxiliaryData_of_binomial_ratio_lower_bound hc₀ hx hL hLargeEnough hProp15Input hReciprocal1024
+      hCq hfactor hlambda hcut hs hsmall hlower'
 
 end PseudoPrime.AnalyticNumberTheory.AGP

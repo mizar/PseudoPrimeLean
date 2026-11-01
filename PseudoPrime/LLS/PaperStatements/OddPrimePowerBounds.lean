@@ -126,8 +126,7 @@ theorem oddPrimePowerLogWeightedSum_le_explicit_root_sum (hRH : RiemannHypothesi
   have hk0 : 0 < k := lt_of_lt_of_le (by norm_num only) hk3
   have hkR : (0 : ℝ) < k := Nat.cast_pos.mpr hk0
   have hs :=
-    AnalyticNumberTheory.Arithmetic.primePowerExponentSlice_le_logWeightedMangoldtSum
-      (zero_lt_one.trans hx) hk0
+    AnalyticNumberTheory.Arithmetic.primePowerSlice_le_logWeightedSum (zero_lt_one.trans hx) hk0
   have hb :=
     mul_le_mul_of_nonneg_left
       (logWeightedMangoldtSum_le_add_sqrt_twentieth hRH
@@ -139,8 +138,7 @@ theorem oddPrimePowerLogWeightedSum_le_explicit_root_sum (hRH : RiemannHypothesi
 the finite upper bound for odd prime powers of exponent at least three.
 Bound each prime slice by the corrected Mangoldt estimate at its root cutoff.
 This supplies the odd-power term for the sharper small-modulus residue comparison. -/
-theorem oddPrimePowerLogWeightedSum_le_corrected_root_sum (hRH : RiemannHypothesis) {x : ℝ}
-    (hx : 1 < x) :
+theorem oddPrimePowerSum_corrected_RH (hRH : RiemannHypothesis) {x : ℝ} (hx : 1 < x) :
     (∑ k ∈ (Finset.Icc 3 ⌊Real.log x / Real.log 2⌋₊).filter Odd,
         ∑ p ∈ (Finset.Ioc 0 ⌊x ^ ((1 : ℝ) / k)⌋₊).filter Nat.Prime,
           AnalyticNumberTheory.Arithmetic.logWeightedMangoldtTerm x (p ^ k)) ≤
@@ -156,8 +154,8 @@ theorem oddPrimePowerLogWeightedSum_le_corrected_root_sum (hRH : RiemannHypothes
   have hk0 : 0 < k := lt_of_lt_of_le (by norm_num only) hk3
   have hkR : (0 : ℝ) < k := Nat.cast_pos.mpr hk0
   exact
-    (AnalyticNumberTheory.Arithmetic.primePowerExponentSlice_le_logWeightedMangoldtSum
-          (zero_lt_one.trans hx) hk0).trans
+    (AnalyticNumberTheory.Arithmetic.primePowerSlice_le_logWeightedSum (zero_lt_one.trans hx)
+          hk0).trans
       (mul_le_mul_of_nonneg_left
         (logWeightedMangoldtSum_le_explicit hRH (Real.one_lt_rpow hx (div_pos zero_lt_one hkR)))
         hkR.le)
@@ -202,8 +200,7 @@ theorem oddRootPowerCheck_sound {X : ℚ} {K : ℕ} {b c : ℕ → ℕ}
 the rational saving `183/100 * log x + k/2` for each exponent `k`.
 Apply the corrected Mangoldt bound at its root cutoff and use
 `k * log(x^(1/k)) = log x`. This is the odd-power expression in refined rational certificates. -/
-theorem oddPrimePowerLogWeightedSum_le_rational_corrected_root_sum (hRH : RiemannHypothesis) {x : ℝ}
-    (hx : 1 < x) :
+theorem oddPrimePowerSum_rational_RH (hRH : RiemannHypothesis) {x : ℝ} (hx : 1 < x) :
     (∑ k ∈ (Finset.Icc 3 ⌊Real.log x / Real.log 2⌋₊).filter Odd,
         ∑ p ∈ (Finset.Ioc 0 ⌊x ^ ((1 : ℝ) / k)⌋₊).filter Nat.Prime,
           AnalyticNumberTheory.Arithmetic.logWeightedMangoldtTerm x (p ^ k)) ≤
@@ -217,8 +214,8 @@ theorem oddPrimePowerLogWeightedSum_le_rational_corrected_root_sum (hRH : Rieman
     lt_of_lt_of_le (by norm_num only : 0 < 3) (Finset.mem_Icc.mp (Finset.mem_filter.mp hk).1).1
   have hkR : (0 : ℝ) < k := Nat.cast_pos.mpr hk0
   have hs :=
-    (AnalyticNumberTheory.Arithmetic.primePowerExponentSlice_le_logWeightedMangoldtSum
-          (zero_lt_one.trans hx) hk0).trans
+    (AnalyticNumberTheory.Arithmetic.primePowerSlice_le_logWeightedSum (zero_lt_one.trans hx)
+          hk0).trans
       (mul_le_mul_of_nonneg_left
         (logWeightedMangoldtSum_le_simple_corrected hRH
           (Real.one_lt_rpow hx (div_pos zero_lt_one hkR)))
@@ -235,9 +232,9 @@ Require every corrected rational summand to be nonnegative: this permits extendi
 the exponent set without discarding the negative logarithmic correction.
 Apply the corrected Mangoldt bound, bound each root by its natural-power certificate,
 and extend the resulting finite sum. This supplies refined residue-gap certificates. -/
-theorem oddPrimePowerLogWeightedSum_le_corrected_power_certificates (hRH : RiemannHypothesis)
-    {x T : ℝ} (hx : 1 < x) (hT : T ≤ Real.log x) {K : ℕ} (hK : ⌊Real.log x / Real.log 2⌋₊ ≤ K)
-    (b c : ℕ → ℝ) (hb : ∀ k ∈ (Finset.Icc 3 K).filter Odd, 0 ≤ b k)
+theorem oddPrimePowerSum_certificates_RH (hRH : RiemannHypothesis) {x T : ℝ} (hx : 1 < x)
+    (hT : T ≤ Real.log x) {K : ℕ} (hK : ⌊Real.log x / Real.log 2⌋₊ ≤ K) (b c : ℕ → ℝ)
+    (hb : ∀ k ∈ (Finset.Icc 3 K).filter Odd, 0 ≤ b k)
     (hc : ∀ k ∈ (Finset.Icc 3 K).filter Odd, 0 ≤ c k)
     (hpow : ∀ k ∈ (Finset.Icc 3 K).filter Odd, x ≤ b k ^ k)
     (hsq : ∀ k ∈ (Finset.Icc 3 K).filter Odd, b k ≤ c k ^ 2)
@@ -274,7 +271,7 @@ theorem oddPrimePowerLogWeightedSum_le_corrected_power_certificates (hRH : Riema
             (Nat.cast_nonneg k)
         linarith only [hm, hT])
   exact
-    (oddPrimePowerLogWeightedSum_le_rational_corrected_root_sum hRH hx).trans
+    (oddPrimePowerSum_rational_RH hRH hx).trans
       (hs.trans (Finset.sum_le_sum_of_subset_of_nonneg hsub (fun k hk _ ↦ hpos k hk)))
 
 end PseudoPrime.LLS.PaperStatements

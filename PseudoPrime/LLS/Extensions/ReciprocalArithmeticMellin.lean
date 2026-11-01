@@ -52,7 +52,7 @@ theorem reciprocalWeightedSum_eq_integral_logDeriv (f : GeneralLFunction) (hf : 
   have hzero : f.mangoldtSeriesCoefficient 0 = 0 := by
     rw [mangoldtSeriesCoefficient, ArithmeticFunction.map_zero, Complex.ofReal_zero, mul_zero]
   rw [reciprocalWeightedSum_eq_shifted,
-    AnalyticNumberTheory.General.reciprocalWeightedSum_shifted_eq_integral_LSeries
+    AnalyticNumberTheory.General.reciprocalWeightedSum_shifted_integral
       f.mangoldtSeriesCoefficient hzero 1 hx hτ
       (LSeriesSummable_mangoldtSeriesCoefficient f hf
         (by

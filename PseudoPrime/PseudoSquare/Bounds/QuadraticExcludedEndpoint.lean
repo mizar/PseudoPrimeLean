@@ -19,9 +19,8 @@ open AnalyticNumberTheory.Arithmetic in
 /-- For odd nonsquare n under GRH and x>=64, a negative zero-cost endpoint
 limit plus the structural exclusion budget gives an odd negative Jacobi prime
 at most x. Transfer the primitive quadratic witness, retaining coprimality to n. -/
-theorem exists_odd_prime_jacobi_neg_one_of_quadratic_excluded_budget {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ}
-    (hx : 64 ≤ x)
+theorem exists_oddPrime_negOne_quadExcluded_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 64 ≤ x)
     (hsep :
       LLS.PaperStatements.oddEndpointTwoCostLimit
             (NumberTheory.complexQuadraticCharacter n hn).conductor x x 0 0 +
@@ -42,7 +41,7 @@ theorem exists_odd_prime_jacobi_neg_one_of_quadratic_excluded_budget {n : ℕ} (
   have hq : 2 ≤ (NumberTheory.complexQuadraticCharacter n hn).conductor :=
     (Nat.two_le_iff _).mpr ⟨NeZero.ne _, fun he ↦ hne (DirichletCharacter.level_one' χ he)⟩
   obtain ⟨p, hprime, hodd, hpx, hpc, hv⟩ :=
-    LLS.PaperStatements.exists_odd_prime_neg_one_of_quadratic_excluded_budget hq
+    LLS.PaperStatements.exists_oddPrime_negOne_excluded_GRH hq
       (NumberTheory.complexQuadraticCharacter n hn).conductor_dvd_level
       (show 2 ∣ 4 * n from ⟨2 * n, by ring⟩) hGRH hp hne hquad hx hsep
   have hcp : Nat.Coprime p n := hpc.of_dvd_right (show n ∣ 4 * n from ⟨4, by ring⟩)
@@ -57,9 +56,8 @@ open AnalyticNumberTheory.Arithmetic in
 /-- Under the same one-budget condition, the least odd-prime negative Jacobi
 witness is at most x. Apply leastness to the constructed prime; the nonempty-set
 input supplies the existing witness definition. -/
-theorem primeNegOneWitness_cast_le_of_quadratic_excluded_budget {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ}
-    (hx : 64 ≤ x)
+theorem negOneWitness_le_of_quadratic_excluded_budget {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 64 ≤ x)
     (hsep :
       LLS.PaperStatements.oddEndpointTwoCostLimit
             (NumberTheory.complexQuadraticCharacter n hn).conductor x x 0 0 +
@@ -68,8 +66,7 @@ theorem primeNegOneWitness_cast_le_of_quadratic_excluded_budget {n : ℕ} (hn : 
         0)
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ x := by
-  obtain ⟨p, hp, ho, hpx, _, hv⟩ :=
-    exists_odd_prime_jacobi_neg_one_of_quadratic_excluded_budget hn hns hGRH hx hsep
+  obtain ⟨p, hp, ho, hpx, _, hv⟩ := exists_oddPrime_negOne_quadExcluded_GRH hn hns hGRH hx hsep
   exact (Nat.cast_le.mpr (NumberTheory.primeNegOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hpx
 
 open AnalyticNumberTheory.Arithmetic in
@@ -103,7 +100,7 @@ theorem QNegOne_cast_le_of_quadratic_excluded_budget {B : ℕ}
   have hl := hlocal n hn ha.odd
   have hs := lt_of_le_of_lt (add_le_add hm hl) hsep
   exact
-    primeNegOneWitness_cast_le_of_quadratic_excluded_budget ha.odd ha.not_isSquare hGRH hx hs
+    negOneWitness_le_of_quadratic_excluded_budget ha.odd ha.not_isSquare hGRH hx hs
       (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare ha.odd ha.not_isSquare)
 
 open AnalyticNumberTheory.Arithmetic in

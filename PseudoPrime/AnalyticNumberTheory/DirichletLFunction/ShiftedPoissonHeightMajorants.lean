@@ -28,7 +28,7 @@ noncomputable def shiftedPoissonHeightKernel (r t u : ℝ) : ℝ :=
 /-- For primitive nonprincipal individual-RH data, each divisor-weighted shifted
 Poisson term equals its real height-kernel value. Away from zeros the divisor
 vanishes; at zeros RH supplies real part one half. This identifies rational height tests. -/
-theorem shifted_poisson_term_eq_height_kernel {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+theorem shiftedPoisson_heightKernel_eq_RH {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
     (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
     (r t : ℝ) (ρ : ℂ) :
     (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
@@ -40,8 +40,7 @@ theorem shifted_poisson_term_eq_height_kernel {q : ℕ} [NeZero q] {χ : Dirichl
   · dsimp only [D] at hD
     simp only [hD, Int.cast_zero, zero_mul]
   · have hr :=
-      completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv
-        (completed_zero_of_divisor_ne_zero hne hD)
+      completed_zero_re_eq_half_of_RH hRH hp hinv (completed_zero_of_divisor_ne_zero hne hD)
     have he :
       Complex.normSq ((((1 + r : ℝ) : ℂ) + t * Complex.I) - ρ) =
         (1 / 2 + r) ^ 2 + (t - ρ.im) ^ 2 := by
@@ -57,7 +56,7 @@ theorem shifted_poisson_term_eq_height_kernel {q : ℕ} [NeZero q] {χ : Dirichl
 divisor-weighted Poisson height terms form a summable real series. Transfer the
 completed Poisson summability through the critical-line identity. This justifies
 finite signed combinations even when some weights are negative. -/
-theorem summable_shifted_poisson_height_terms {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem summable_shiftedPoisson_height_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {r : ℝ} (hr : 0 < r) (t : ℝ) :
     Summable
@@ -73,12 +72,12 @@ theorem summable_shifted_poisson_height_terms {q : ℕ} [NeZero q] (hq : 2 ≤ q
   simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.ofReal_im, Complex.I_re,
     Complex.I_im, zero_mul, mul_zero, sub_zero, add_zero,
     show 1 + r - 1 / 2 = 1 / 2 + r by ring] at hs
-  exact hs.congr (shifted_poisson_term_eq_height_kernel hRH hp hne hinv r t)
+  exact hs.congr (shiftedPoisson_heightKernel_eq_RH hRH hp hne hinv r t)
 
 /-- For primitive nonprincipal individual-RH data, the shifted completed Poisson
 sum equals the divisor-weighted rational height-kernel sum. Use termwise critical-line
 identification. This connects an elementary rational function certificate to actual zeros. -/
-theorem shiftedCompletedPoissonSum_eq_height_sum {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+theorem shiftedPoisson_eq_heightSum_RH {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
     (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
     (r t : ℝ) :
     shiftedCompletedPoissonSum χ r t =
@@ -86,17 +85,16 @@ theorem shiftedCompletedPoissonSum_eq_height_sum {q : ℕ} [NeZero q] {χ : Diri
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
           shiftedPoissonHeightKernel r t ρ.im := by
   unfold shiftedCompletedPoissonSum
-  exact tsum_congr (shifted_poisson_term_eq_height_kernel hRH hp hne hinv r t)
+  exact tsum_congr (shiftedPoisson_heightKernel_eq_RH hRH hp hne hinv r t)
 
 /-- For primitive nonprincipal individual-RH data, a summable divisor-weighted
 height test bounded at every real height by a finite signed combination of positive-gap
 Poisson kernels has zero sum at most that combination of actual Poisson sums.
 Multiplicity is nonnegative; exchange the finite sum with the convergent series.
 The pointwise certificate remains an explicit assumption. -/
-theorem zero_height_sum_le_shifted_poisson_majorant {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {ι : Type*} (S : Finset ι) (r t w : ι → ℝ)
-    (hr : ∀ i ∈ S, 0 < r i) (g : ℝ → ℝ)
+theorem heightSum_le_poissonMajorant_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    {ι : Type*} (S : Finset ι) (r t w : ι → ℝ) (hr : ∀ i ∈ S, 0 < r i) (g : ℝ → ℝ)
     (hg : ∀ u, g u ≤ ∑ i ∈ S, w i * shiftedPoissonHeightKernel (r i) (t i) u)
     (hs :
       Summable (fun ρ : ℂ ↦ (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) * g ρ.im)) :
@@ -107,7 +105,7 @@ theorem zero_height_sum_le_shifted_poisson_majorant {q : ℕ} [NeZero q] (hq : 2
       ((MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
         shiftedPoissonHeightKernel (r i) (t i) ρ.im)
   have hf (i : ι) (hi : i ∈ S) : Summable (F i) :=
-    (summable_shifted_poisson_height_terms hq hRH hp hne hinv (hr i hi) (t i)).mul_left (w i)
+    (summable_shiftedPoisson_height_RH hq hRH hp hne hinv (hr i hi) (t i)).mul_left (w i)
   have hsum : Summable (fun ρ : ℂ ↦ ∑ i ∈ S, F i ρ) :=
     (hasSum_sum (fun i hi ↦ (hf i hi).hasSum)).summable
   have hb (ρ : ℂ) :
@@ -125,17 +123,16 @@ theorem zero_height_sum_le_shifted_poisson_majorant {q : ℕ} [NeZero q] (hq : 2
   rw [Finset.sum_congr rfl
       (fun i _ ↦
         congrArg (fun z : ℝ ↦ w i * z)
-          (shiftedCompletedPoissonSum_eq_height_sum hRH hp hne hinv (r i) (t i)).symm)] at h
+          (shiftedPoisson_eq_heightSum_RH hRH hp hne hinv (r i) (t i)).symm)] at h
   exact h
 
 /-- Under the same pointwise certificate and convergence assumptions, bound the
 height-test zero sum by half the signed weight sum times log q, the exact signed
 Gamma combination and absolute-weighted Euler ratios. Apply the height majorant
 and centered Poisson error theorem. This separates the certificate and its analytic cost. -/
-theorem zero_height_sum_le_shifted_poisson_budget {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {ι : Type*} (S : Finset ι) (r t w : ι → ℝ)
-    (hr : ∀ i ∈ S, 0 < r i) (g : ℝ → ℝ)
+theorem heightSum_le_poissonBudget_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    {ι : Type*} (S : Finset ι) (r t w : ι → ℝ) (hr : ∀ i ∈ S, 0 < r i) (g : ℝ → ℝ)
     (hg : ∀ u, g u ≤ ∑ i ∈ S, w i * shiftedPoissonHeightKernel (r i) (t i) u)
     (hs :
       Summable (fun ρ : ℂ ↦ (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) * g ρ.im)) :
@@ -143,8 +140,8 @@ theorem zero_height_sum_le_shifted_poisson_budget {q : ℕ} [NeZero q] (hq : 2 �
       (∑ i ∈ S, w i) * (Real.log q / 2) +
         (∑ i ∈ S, w i * (logDeriv χ.gammaFactor ((((1 + r i : ℝ) : ℂ) + t i * Complex.I))).re) +
         ∑ i ∈ S, |w i| * (((r i)⁻¹ ^ 2 + (r i + 1)⁻¹) / (1 + (2 : ℝ) ^ (-r i) / r i)) := by
-  have hc := zero_height_sum_le_shifted_poisson_majorant hq hRH hp hne hinv S r t w hr g hg hs
-  have he := shifted_poisson_signed_combination_error_le hq hRH hp hne hinv S r t w hr
+  have hc := heightSum_le_poissonMajorant_RH hq hRH hp hne hinv S r t w hr g hg hs
+  have he := shiftedPoisson_signed_error_RH hq hRH hp hne hinv S r t w hr
   simp only [mul_sub, Finset.sum_sub_distrib, ← Finset.sum_mul] at he
   have hu := (abs_le.mp he).2
   linarith only [hc, hu]

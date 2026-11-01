@@ -97,8 +97,7 @@ theorem gamma_central_resolvent_integral_re_ge_rational {c x : ℝ} (hc : 3 / 4 
 /-- Express the actual resolvent lower bound as a leading reciprocal minus
 a second-order rational error. Both denominators are positive under c > 3/4.
 This cancellation-preserving form is suited to summing the parity tails. -/
-theorem gamma_central_resolvent_integral_re_ge_main_sub_error {c x : ℝ} (hc : 3 / 4 < c)
-    (hx : 0 < x) :
+theorem gammaResolvent_integral_main_error_ge {c x : ℝ} (hc : 3 / 4 < c) (hx : 0 < x) :
     (Real.sqrt x⁻¹ * Real.exp (-x⁻¹)) * (1 / (c - 1 / 4) - x⁻¹ / (2 * (c - 1 / 4) * (c - 3 / 4))) ≤
       (((1 / (2 * Real.pi) : ℝ) : ℂ) *
           (∫ t : ℝ,

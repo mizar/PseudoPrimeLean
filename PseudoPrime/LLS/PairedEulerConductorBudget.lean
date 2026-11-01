@@ -81,15 +81,14 @@ decreasing on positive powers and bounded at primes by a log p plus a nonnegativ
 at two. The quadratic exclusion budget is at most the full prefix plus a log of the conductor
 quotient and d. Combine alternating cancellation with the quotient prime-factor bound. This
 is the conductor-sensitive interface for negative-witness comparisons. -/
-theorem quadraticExcludedBudget_le_prefix_add_conductor_budget {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) {Y : ℝ} (hY : 1 ≤ Y) (w : ℕ → ℝ) (hw : ∀ n, 0 ≤ w n)
-    (hs : ∀ n : ℕ, ¬IsPrimePow n → w n = 0)
+theorem quadraticExcluded_le_prefix_conductor {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    {Y : ℝ} (hY : 1 ≤ Y) (w : ℕ → ℝ) (hw : ∀ n, 0 ≤ w n) (hs : ∀ n : ℕ, ¬IsPrimePow n → w n = 0)
     (hdec : ∀ p : ℕ, p.Prime → Antitone (fun j : ℕ ↦ w (p ^ (j + 1)))) {a d : ℝ} (ha : 0 ≤ a)
     (hd : 0 ≤ d) (hprime : ∀ p : ℕ, p.Prime → w p ≤ a * Real.log p + if p = 2 then d else 0) :
     AnalyticNumberTheory.Arithmetic.quadraticExcludedBudget χ.conductor q (Finset.Ioc 0 ⌊Y⌋₊) w ≤
       (∑ n ∈ Finset.Ioc 0 ⌊Y⌋₊, w n) + a * Real.log (q / χ.conductor : ℕ) + d := by
   have hbase :=
-    AnalyticNumberTheory.Arithmetic.quadraticExcludedBudget_le_prefix_add_unramified (NeZero.ne q)
+    AnalyticNumberTheory.Arithmetic.quadraticBudget_le_prefix_add_unramified (NeZero.ne q)
       χ.conductor hY w hw hs hdec
   have hquot := unramified_weight_sum_le_conductor_budget χ w ha hd hprime
   linarith only [hbase, hquot]

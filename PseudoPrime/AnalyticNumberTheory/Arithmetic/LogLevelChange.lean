@@ -49,8 +49,7 @@ character vanishes on the quotient-complement support.
 Role: gives the logarithmic ledger the same exact level-change identity already available on the
 reciprocal side, so both quotient corrections can be assembled together.
 -/
-theorem characterLogWeightedSum_re_primitive_eq_add_levelChangeCorrection {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) :
+theorem characterLogSum_re_primitive_eq_add {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q) :
     (characterLogWeightedSum x χ.primitiveCharacter).re =
       (characterLogWeightedSum x χ).re + primitiveLogLevelChangeCorrection x χ := by
   have hdiff := characterLogWeightedSum_sub_primitive_eq x χ
@@ -67,7 +66,7 @@ theorem characterLogWeightedSum_re_primitive_eq_add_levelChangeCorrection {q : �
       0 := by
     apply Finset.sum_eq_zero
     intro n hn
-    rw [characterLogWeightedTerm_eq_zero_of_not_coprime_quotient x χ (Finset.mem_filter.mp hn).2]
+    rw [logCharTerm_eq_zero_of_not_coprime_quotient x χ (Finset.mem_filter.mp hn).2]
     simp only [Complex.zero_re]
   rw [Finset.sum_sub_distrib, hzero] at hre
   rw [primitiveLogLevelChangeCorrection]
@@ -79,10 +78,9 @@ For a prime `p` with `‖χ.primitiveCharacter p‖ = 1`, `x ≥ 2`, and `K` bra
 `-(log p * log x)/2`. Rewrite the terms using powers of the unit character value
 and apply the Fejér affine-weight bound. This controls each prime in the level correction.
 -/
-theorem re_sum_logPrimePowerCorrection_neg_le_half_log_mul_log {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) {p : ℕ} (hp : p.Prime) (hz : ‖χ.primitiveCharacter p‖ = 1)
-    (hx : 2 ≤ x) {K : ℕ} (hKle : (K : ℝ) * Real.log p ≤ Real.log x)
-    (hKlt : Real.log x < (K + 1 : ℝ) * Real.log p) :
+theorem re_sum_logPrimePower_ge_neg_half_log_mul_log {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
+    {p : ℕ} (hp : p.Prime) (hz : ‖χ.primitiveCharacter p‖ = 1) (hx : 2 ≤ x) {K : ℕ}
+    (hKle : (K : ℝ) * Real.log p ≤ Real.log x) (hKlt : Real.log x < (K + 1 : ℝ) * Real.log p) :
     -(1 / 2 * Real.log p * Real.log x) ≤
       ∑ k ∈ Finset.Icc 1 K, (characterLogWeightedTerm x χ.primitiveCharacter (p ^ k)).re := by
   have hxpos : (0 : ℝ) < x := by exact lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 2) hx
@@ -107,7 +105,7 @@ theorem re_sum_logPrimePowerCorrection_neg_le_half_log_mul_log {q : ℕ} (x : �
     have hk0 : k ≠ 0 := by
       have := (Finset.mem_Icc.mp hk).1
       exact Nat.ne_of_gt (Nat.lt_of_lt_of_le Nat.zero_lt_one this)
-    rw [characterLogWeightedTerm_primitive_re_prime_pow x χ hxpos.ne' hp hk0, mul_assoc]
+    rw [characterLogTerm_primitive_re_prime_pow x χ hxpos.ne' hp hk0, mul_assoc]
   have hfejer :=
     re_sum_logWeight_ge_neg_half (logX := Real.log x) (logP := Real.log p) (θ := θ) (K := K) (z :=
       z) hz hlogp hθ0 hθ1 hlogX
@@ -135,12 +133,11 @@ prime outermost and its admissible exponents `1..Nat.log p ⌊x⌋₊` innermost
 Content: reindex the prime-power expansion using
 `PseudoPrime.AnalyticNumberTheory.Arithmetic.sum_primePow_eq_sum_primesLE`,
 the same reindexing already used for
-`PseudoPrime.AnalyticNumberTheory.Arithmetic.commonFactorLogWeightedSum_eq_sum_prime_divisors`
+`PseudoPrime.AnalyticNumberTheory.Arithmetic.commonLogSum_eq_sum_prime_divisors`
 in the weighted-sum module and for the reciprocal ledger.
 Role: lets the per-prime bound be summed over `Nat.primesLE ⌊x⌋₊` directly.
 -/
-theorem primitiveLogLevelChangeCorrection_eq_sum_prime_divisors {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) :
+theorem logLevelCorrection_eq_sum_prime_divisors {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q) :
     primitiveLogLevelChangeCorrection x χ =
       ∑ p ∈ (Nat.primesLE ⌊x⌋₊).filter fun p ↦ p ∣ q / χ.conductor,
         ∑ k ∈ Finset.Icc 1 (p.log ⌊x⌋₊),
@@ -160,9 +157,8 @@ theorem primitiveLogLevelChangeCorrection_eq_sum_prime_divisors {q : ℕ} (x : �
       by_cases hpow : IsPrimePow n
       · simp only [hpow, ↓reduceIte]
       · rw [show (characterLogWeightedTerm x χ.primitiveCharacter n).re = 0 from by
-            simp only [characterLogWeightedTerm,
-              logWeightedMangoldtTerm_eq_zero_of_not_primePow hpow, Complex.ofReal_zero, zero_mul,
-              Complex.zero_re]]
+            simp only [characterLogWeightedTerm, logMangoldtTerm_eq_zero_of_not_primePow hpow,
+              Complex.ofReal_zero, zero_mul, Complex.zero_re]]
         simp only [ite_self]
     _ =
         ∑ p ∈ Nat.primesLE ⌊x⌋₊,
@@ -207,14 +203,14 @@ is at least `-log(q / χ.conductor) * log x / 2`. Reindex by quotient primes,
 discard primes dividing the conductor, and apply the unit-circle Fejér bound
 to the remaining primes. The prime logarithm sum gives the conductor absorption bound.
 -/
-theorem primitiveLogLevelChangeCorrection_ge_neg_half_log_quotient_mul_log {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hx : 2 ≤ x) (hqd : q / χ.conductor ≠ 0) :
+theorem logLevelCorrection_ge_neg_log_quotient {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
+    (hx : 2 ≤ x) (hqd : q / χ.conductor ≠ 0) :
     -(1 / 2 * Real.log ((q / χ.conductor : ℕ) : ℝ) * Real.log x) ≤
       primitiveLogLevelChangeCorrection x χ := by
   have hxpos : (0 : ℝ) < x := by exact lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 2) hx
   have hlogx : 0 ≤ Real.log x :=
     Real.log_nonneg (by exact le_trans (by norm_num only : (1 : ℝ) ≤ 2) hx)
-  rw [primitiveLogLevelChangeCorrection_eq_sum_prime_divisors]
+  rw [logLevelCorrection_eq_sum_prime_divisors]
   set S := (Nat.primesLE ⌊x⌋₊).filter fun p ↦ p ∣ q / χ.conductor with hSdef
   have hstep :
     ∀ p ∈ S,
@@ -240,8 +236,7 @@ theorem primitiveLogLevelChangeCorrection_ge_neg_half_log_quotient_mul_log {q : 
         have hk0 : k ≠ 0 := by
           have := (Finset.mem_Icc.mp hk).1
           exact Nat.ne_of_gt (Nat.lt_of_lt_of_le Nat.zero_lt_one this)
-        rw [characterLogWeightedTerm_primitive_re_prime_pow x χ hxpos.ne' hpprime hk0, hz0,
-          zero_pow hk0]
+        rw [characterLogTerm_primitive_re_prime_pow x χ hxpos.ne' hpprime hk0, hz0, zero_pow hk0]
         simp only [Complex.zero_re, mul_zero]
       rw [Finset.sum_congr rfl heach, Finset.sum_const_zero]
       nlinarith only [mul_nonneg (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 1 / 2) hlogp) hlogx]
@@ -269,7 +264,7 @@ theorem primitiveLogLevelChangeCorrection_ge_neg_half_log_quotient_mul_log {q : 
         rw [Real.log_pow] at hlog
         push_cast at hlog
         exact hlog
-      exact re_sum_logPrimePowerCorrection_neg_le_half_log_mul_log x χ hpprime hz hx hKle hKlt
+      exact re_sum_logPrimePower_ge_neg_half_log_mul_log x χ hpprime hz hx hKle hKlt
   have hbudget : ∑ p ∈ S, Real.log p ≤ Real.log ((q / χ.conductor : ℕ) : ℝ) := by
     apply le_trans _ (sum_log_primeFactors_le_log hqd)
     apply Finset.sum_le_sum_of_subset_of_nonneg
@@ -305,7 +300,7 @@ theorem primitiveLogConductorAbsorption {q : ℕ} [NeZero q] (x : ℝ) (χ : Dir
     (hx : 2 ≤ x) (hqd : q / χ.conductor ≠ 0) :
     1 / 2 * Real.log (χ.conductor : ℝ) * Real.log x - primitiveLogLevelChangeCorrection x χ ≤
       1 / 2 * Real.log (q : ℝ) * Real.log x := by
-  have hbound := primitiveLogLevelChangeCorrection_ge_neg_half_log_quotient_mul_log x χ hx hqd
+  have hbound := logLevelCorrection_ge_neg_log_quotient x χ hx hqd
   have hdvd : χ.conductor ∣ q := χ.conductor_dvd_level
   have hdpos : (χ.conductor : ℝ) ≠ 0 := by exact_mod_cast χ.conductor_ne_zero
   have hprod : χ.conductor * (q / χ.conductor) = q := Nat.mul_div_cancel' hdvd

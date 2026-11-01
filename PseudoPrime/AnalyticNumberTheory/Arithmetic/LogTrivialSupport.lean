@@ -18,7 +18,7 @@ namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 equals its unsigned weight on coprime inputs and is zero otherwise.
 Reduce the nonzero Mangoldt support to prime powers and use multiplicativity.
 This supplies the exact original-level support at a freely chosen cutoff. -/
-theorem characterLogWeightedTerm_re_eq_ite_of_prime_trivial {q n : ℕ} [NeZero q] (x : ℝ)
+theorem characterLogTerm_re_eq_ite_of_prime_trivial {q n : ℕ} [NeZero q] (x : ℝ)
     (χ : DirichletCharacter ℂ q) (hx : 0 < x) (hn : n ∈ Finset.Ioc 0 ⌊x⌋₊)
     (htrivial : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ x → χ p = 1) :
     (characterLogWeightedTerm x χ n).re =
@@ -52,7 +52,7 @@ theorem characterLogWeightedTerm_re_eq_ite_of_prime_trivial {q n : ℕ} [NeZero 
 has real part equal to the unsigned sum minus the common-factor terms.
 Sum the support identity and partition the unsigned sum into coprime and remaining inputs.
 This gives the lower comparison at an arbitrary no-witness cutoff. -/
-theorem characterLogWeightedSum_re_eq_sub_common_of_prime_trivial {q : ℕ} [NeZero q] (x : ℝ)
+theorem characterLogSum_re_eq_sub_of_prime_trivial {q : ℕ} [NeZero q] (x : ℝ)
     (χ : DirichletCharacter ℂ q) (hx : 0 < x)
     (htrivial : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ x → χ p = 1) :
     (characterLogWeightedSum x χ).re =
@@ -65,7 +65,7 @@ theorem characterLogWeightedSum_re_eq_sub_common_of_prime_trivial {q : ℕ} [NeZ
     rw [Finset.sum_filter]
     apply Finset.sum_congr rfl
     intro n hn
-    exact characterLogWeightedTerm_re_eq_ite_of_prime_trivial x χ hx hn htrivial
+    exact characterLogTerm_re_eq_ite_of_prime_trivial x χ hx hn htrivial
   have hsplit :=
     Finset.sum_filter_add_sum_filter_not (s := Finset.Ioc 0 ⌊x⌋₊) (f := logWeightedMangoldtTerm x)
       (p := fun n ↦ Nat.Coprime n q)

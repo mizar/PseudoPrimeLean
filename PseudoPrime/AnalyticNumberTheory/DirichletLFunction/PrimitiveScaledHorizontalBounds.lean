@@ -25,8 +25,7 @@ The fields require `T ∈ [n,2n]`, `R ∈ [8n,16n]`, a positive explicit margin 
 centered logarithmic-derivative bounds and nonvanishing at both heights `±T` throughout
 `|σ| ≤ 2n`. These conditions are part of the data; existence for a primitive nonprincipal
 character is proved using individual RH. Growing scales cover every fixed horizontal strip. -/
-structure PrimitiveScaledHorizontalStripData {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
-    (n : ℝ) where
+structure ScaledHorizontalData {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (n : ℝ) where
   /-- The ordinate used for both horizontal edges; `T_mem` makes it positive when n >= 1. -/
   T : ℝ
   /-- The radius controlling the finite Hadamard error terms. -/
@@ -105,7 +104,7 @@ by the selected height squared. The real envelope uses the family's radius and m
 For a primitive nonprincipal character with nonprincipal inverse and level at least two,
 it bounds both signed horizontal derivatives and tends to zero. -/
 noncomputable def scaledHorizontalStripEpsilon {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
-    (data : ∀ k : ℕ, PrimitiveScaledHorizontalStripData χ ((k : ℝ) + 1)) (k : ℕ) : ℝ :=
+    (data : ∀ k : ℕ, ScaledHorizontalData χ ((k : ℝ) + 1)) (k : ℕ) : ℝ :=
   let n : ℝ := (k : ℝ) + 1
   let d := data k
   (768 * n *
@@ -132,8 +131,7 @@ noncomputable def scaledHorizontalStripEpsilon {N : ℕ} [NeZero N] {χ : Dirich
 bounds the centered completed logarithmic derivative at both selected heights throughout
 the growing strip. The proof uses the supplied bound and the height and radius ranges. -/
 theorem scaledHorizontalStripEpsilon_bound {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (data : ∀ k : ℕ, PrimitiveScaledHorizontalStripData χ ((k : ℝ) + 1))
+    {χ : DirichletCharacter ℂ N} (data : ∀ k : ℕ, ScaledHorizontalData χ ((k : ℝ) + 1))
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (k : ℕ) {σ : ℝ}
     (hσ : |σ| ≤ 2 * ((k : ℝ) + 1)) :
     ‖logDeriv (DirichletCharacter.completedLFunction χ) ((σ : ℂ) + (data k).T * Complex.I) -
@@ -452,17 +450,16 @@ theorem scaledHorizontalStripEpsilon_bound {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
 /-- Any admissible scaled family for a primitive non-principal character is eventually
 bounded by a clean envelope with a positive constant. Radius growth and the explicit
 separation margin reduce the three terms to powers and logarithms of the scale. -/
-theorem eventually_scaledHorizontalStripEpsilon_le_cleanEnvelope {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (data : ∀ k : ℕ, PrimitiveScaledHorizontalStripData χ ((k : ℝ) + 1))
+theorem eventually_scaledEpsilon_le_envelope {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (data : ∀ k : ℕ, ScaledHorizontalData χ ((k : ℝ) + 1))
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     ∃ K : ℝ,
       0 < K ∧
         ∀ᶠ k : ℕ in Filter.atTop,
           scaledHorizontalStripEpsilon data k ≤
-            primitiveHorizontalStripCleanEnvelope (χ := χ) K ((k : ℝ) + 1) := by
+            horizontalStripCleanEnvelope (χ := χ) K ((k : ℝ) + 1) := by
   have hN1 : 1 < N := Nat.lt_of_lt_of_le (by norm_num only) hN2
-  obtain ⟨K, hKpos, hKevent⟩ := exists_K_forall_H2LogBound_thirtyTwo_le hN2 hprimitive hne
+  obtain ⟨K, hKpos, hKevent⟩ := eventually_ballCount_32_bound hN2 hprimitive hne
   refine ⟨K, hKpos, ?_⟩
   have hnn_tendsto : Filter.Tendsto (fun k : ℕ => (k : ℝ) + 1) Filter.atTop Filter.atTop :=
     Filter.tendsto_atTop_add_const_right Filter.atTop 1 tendsto_natCast_atTop_atTop
@@ -771,8 +768,7 @@ theorem eventually_scaledHorizontalStripEpsilon_le_cleanEnvelope {N : ℕ} [NeZe
 non-principal inverse. Positivity of the radius, margin and zero-count terms proves the
 claim, supplying the lower bound needed for the subsequent squeeze argument. -/
 theorem scaledHorizontalStripEpsilon_nonneg {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (data : ∀ k : ℕ, PrimitiveScaledHorizontalStripData χ ((k : ℝ) + 1))
+    {χ : DirichletCharacter ℂ N} (data : ∀ k : ℕ, ScaledHorizontalData χ ((k : ℝ) + 1))
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (k : ℕ) :
     0 ≤ scaledHorizontalStripEpsilon data k := by
   have hN1 : 1 < N := Nat.lt_of_lt_of_le (by norm_num only) hN2
@@ -849,19 +845,16 @@ theorem scaledHorizontalStripEpsilon_nonneg {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
 /-- For any admissible scaled family, its normalized centered derivative envelope tends
 to zero. The eventual clean-envelope estimate and nonnegativity permit a squeeze argument;
 this conclusion requires no further hypothesis about how the family was chosen. -/
-theorem tendsto_scaledHorizontalStripEpsilon_atTop {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (data : ∀ k : ℕ, PrimitiveScaledHorizontalStripData χ ((k : ℝ) + 1))
+theorem tendsto_scaledHorizontalEpsilon {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (data : ∀ k : ℕ, ScaledHorizontalData χ ((k : ℝ) + 1))
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     Filter.Tendsto (scaledHorizontalStripEpsilon data) Filter.atTop (nhds 0) := by
-  obtain ⟨K, hKpos, hKle⟩ :=
-    eventually_scaledHorizontalStripEpsilon_le_cleanEnvelope hN2 data hprimitive hne hinv
-  have hq := tendsto_primitiveHorizontalStripCleanEnvelope_atTop (N := N) (χ := χ) hKpos
+  obtain ⟨K, hKpos, hKle⟩ := eventually_scaledEpsilon_le_envelope hN2 data hprimitive hne hinv
+  have hq := tendsto_horizontalStripEnvelope (N := N) (χ := χ) hKpos
   have hnn_tendsto : Filter.Tendsto (fun k : ℕ => (k : ℝ) + 1) Filter.atTop Filter.atTop :=
     Filter.tendsto_atTop_add_const_right Filter.atTop 1 tendsto_natCast_atTop_atTop
   have hqk :
-    Filter.Tendsto
-      (fun k : ℕ => primitiveHorizontalStripCleanEnvelope (N := N) (χ := χ) K ((k : ℝ) + 1))
+    Filter.Tendsto (fun k : ℕ => horizontalStripCleanEnvelope (N := N) (χ := χ) K ((k : ℝ) + 1))
       Filter.atTop (nhds 0) :=
     hq.comp hnn_tendsto
   exact
@@ -873,12 +866,11 @@ theorem tendsto_scaledHorizontalStripEpsilon_atTop {N : ℕ} [NeZero N] (hN2 : 2
 /-- Choose growing-strip good-height data for primitive non-principal `χ` under its own
 Riemann hypothesis, with scale at least one and non-principal inverse. The existence theorem
 provides all ranges, separation, derivative bounds and nonvanishing fields. -/
-noncomputable def primitiveScaledHorizontalStripData_of_dirichletRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+noncomputable def scaledHorizontalData_of_RH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {n : ℝ} (hn : 1 ≤ n) :
-    PrimitiveScaledHorizontalStripData χ n := by
+    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {n : ℝ} (hn : 1 ≤ n) : ScaledHorizontalData χ n := by
   choose T hT R hR δ hδpos hδeq hall using
-    exists_primitiveHorizontalScaledStripLogDerivBound_of_dirichletRH hN2 hRH hp hne hinv hn
+    exists_scaledStripLogDeriv_bound_RH hN2 hRH hp hne hinv hn
   exact
     ⟨T, R, δ, hT, hR, hδpos, hδeq, fun σ hσ ↦ ⟨(hall σ hσ).1, (hall σ hσ).2.1⟩, fun σ hσ ↦
       (hall σ hσ).2.2⟩
@@ -886,11 +878,10 @@ noncomputable def primitiveScaledHorizontalStripData_of_dirichletRH {N : ℕ} [N
 /-- Choose good-height data at scale `k + 1` under the individual character's Riemann
 hypothesis. The heights grow at least linearly, and the strips exhaust every fixed strip;
 the generic envelope theorem applies to this sequence. -/
-noncomputable def primitiveScaledHorizontalStripDataSeq_of_dirichletRH {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hRH : GRH.DirichletRiemannHypothesis χ)
-    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (k : ℕ) :
-    PrimitiveScaledHorizontalStripData χ ((k : ℝ) + 1) :=
-  primitiveScaledHorizontalStripData_of_dirichletRH hN2 hRH hp hne hinv
+noncomputable def scaledHorizontalDataSeq_of_RH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
+    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (k : ℕ) : ScaledHorizontalData χ ((k : ℝ) + 1) :=
+  scaledHorizontalData_of_RH hN2 hRH hp hne hinv
     (by linarith only [(Nat.cast_nonneg k : (0 : ℝ) ≤ (k : ℝ))])
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

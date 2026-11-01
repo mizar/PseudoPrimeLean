@@ -24,10 +24,9 @@ noncomputable def logShiftRampPrincipalGap (A : ℕ) (C x h : ℝ) : ℝ :=
 /-- For a nonprincipal character under GRH, a retained Euler-prefix saving and positive joint
 gap exclude triviality on all primes below the cutoff. Use the actual joint principal bound in
 the general ramp comparison. This is the character input for improved MR rejecting witnesses. -/
-theorem prime_trivial_false_of_logShiftRampPrincipal_prefix {q A : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1) (hqA : q ≤ A)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x C g h : ℝ} (hx : 2 ≤ x)
-    (hh : 0 < h) (hhx : h ≤ x)
+theorem not_primeTrivial_logShiftRampPrefix_GRH {q A : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hne : χ ≠ 1) (hqA : q ≤ A) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {x C g h : ℝ} (hx : 2 ≤ x) (hh : 0 < h) (hhx : h ≤ x)
     (hC : AnalyticNumberTheory.DirichletLFunction.twoPoleGammaConstant χ.primitiveCharacter ≤ C)
     (S : Finset ℕ) (hS : ∀ n ∈ S, (n : ℝ) ≤ (99 / 40 : ℝ) * x)
     (hg : g ≤ 2 * twoPoleEulerPrefixMass S) (hgap : 0 < logShiftRampPrincipalGap A (C - g) x h) :
@@ -36,8 +35,8 @@ theorem prime_trivial_false_of_logShiftRampPrincipal_prefix {q A : ℕ} [NeZero 
   have ht' : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ (99 / 40 : ℝ) * x → χ.primitiveCharacter p = 1 :=
     fun p hp hb ↦ PaperStatements.primitiveCharacter_apply_one_of_apply_one χ (ht p hp hb)
   have he :=
-    AnalyticNumberTheory.Arithmetic.pairedEulerPrefix_eq_twice_of_coprime_support
-      χ.primitiveCharacter S hS (fun n _ ↦ Nat.coprime_one_right n) (fun p hp hb _ ↦ ht' p hp hb)
+    AnalyticNumberTheory.Arithmetic.pairedEulerPrefix_eq_twice_of_coprime χ.primitiveCharacter S hS
+      (fun n _ ↦ Nat.coprime_one_right n) (fun p hp hb _ ↦ ht' p hp hb)
   have hd :
     g ≤
       ∑ n ∈ S,
@@ -48,7 +47,7 @@ theorem prime_trivial_false_of_logShiftRampPrincipal_prefix {q A : ℕ} [NeZero 
   have hb := gamma_primitive_re_le_reflectedSplit_of_prefix χ hne hqA hGRH hx hC S hd
   have hx0 : 0 < x := by linarith only [hx]
   have hl :=
-    gammaLocalCorrection_nonpos_of_level_primes_above χ hx0
+    gammaLocalCorrection_nonpos_of_large_primes χ hx0
       (fun p hp ↦ (level_prime_above_cutoff_of_all_prime_trivial χ ht hp).le)
   have hJ :=
     logShiftRampPrincipalLower_le_actual hGRH.riemann (by linarith only [hx] : 1 ≤ x) hh hhx
@@ -60,8 +59,8 @@ theorem prime_trivial_false_of_logShiftRampPrincipal_prefix {q A : ℕ} [NeZero 
 joint gap above the prime-two allowance yield an odd non-one prime. Combine the actual joint
 principal bound with the odd-prime comparison. This preserves common-error cancellation in the
 Jacobi non-one argument. -/
-theorem exists_odd_prime_ne_one_of_logShiftRampPrincipal_prefix {q A : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (h2 : 2 ∣ q) (hqA : q ≤ A)
+theorem exists_oddPrime_neOne_logShiftRamp_GRH {q A : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (h2 : 2 ∣ q) (hqA : q ≤ A)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x C g h : ℝ} (hx : 2 ≤ x)
     (hh : 0 < h) (hhx : h ≤ x)
     (hC : AnalyticNumberTheory.DirichletLFunction.twoPoleGammaConstant χ.primitiveCharacter ≤ C)
@@ -81,8 +80,8 @@ theorem exists_odd_prime_ne_one_of_logShiftRampPrincipal_prefix {q A : ℕ} [NeZ
     PaperStatements.primitiveCharacter_apply_one_of_apply_one χ
       (ht p hp (Nat.coprime_two_right.mp hc) hb)
   have he :=
-    AnalyticNumberTheory.Arithmetic.pairedEulerPrefix_eq_twice_of_coprime_support
-      χ.primitiveCharacter S hS (fun n hn ↦ Nat.coprime_two_right.mpr (hodd n hn)) ht'
+    AnalyticNumberTheory.Arithmetic.pairedEulerPrefix_eq_twice_of_coprime χ.primitiveCharacter S hS
+      (fun n hn ↦ Nat.coprime_two_right.mpr (hodd n hn)) ht'
   have hd :
     g ≤
       ∑ n ∈ S,
@@ -104,8 +103,8 @@ theorem exists_odd_prime_ne_one_of_logShiftRampPrincipal_prefix {q A : ℕ} [NeZ
 gap above the level-prime ramp cost yield a unit-prime witness of value minus one. Combine the
 conductor-cancelled arithmetic bound with the actual joint principal lower bound, then use
 quadraticity. No sampled or implicit uniform exclusion condition is introduced. -/
-theorem exists_prime_neg_one_of_logShiftRampPrincipal_conductor_prefix {q A : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hqA : q ≤ A)
+theorem exists_prime_negOne_logShiftConductor_GRH {q A : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hqA : q ≤ A)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x C Y g a d h : ℝ} (hx : 2 ≤ x)
     (hh : 0 < h) (hhx : h ≤ x) (hY : 1 ≤ Y) (ha : 0 ≤ a) (hd : 0 ≤ d)
     (hscale : 1 ≤ (1 / 2 - a) * Real.sqrt x)
@@ -127,8 +126,8 @@ theorem exists_prime_neg_one_of_logShiftRampPrincipal_conductor_prefix {q A : �
     have ht : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ (99 / 40 : ℝ) * x → χ p = 1 := fun p hp hd hb ↦
       Classical.byContradiction (fun hv ↦ hnone ⟨p, hp, hd, hb, hv⟩)
     have hb :=
-      gamma_primitive_add_local_le_reflectedSplit_conductor_prefix χ hquad hne hqA hGRH hx hY ha hd
-        hscale hprime hYcut hC ht
+      gammaPrimitive_local_reflectedPrefix_GRH χ hquad hne hqA hGRH hx hY ha hd hscale hprime hYcut
+        hC ht
     have hJ :=
       logShiftRampPrincipalLower_le_actual hGRH.riemann (by linarith only [hx] : 1 ≤ x) hh hhx
     have hN := gamma_ramp_no_witness_comparison χ hquad (by linarith only [hx] : 0 < x) ht
@@ -159,7 +158,7 @@ the explicit variable-width gap exceeds its level-prime cost. Assume x at least 
 admissible width, and an Euler cutoff b at least 128 below the witness cutoff. Use the
 certified anchor, the prime cost 3/10 with its prime-two allowance, and the mass 133/160.
 This removes all unverified prefix and conductor-allocation premises from the consumer. -/
-theorem exists_prime_neg_one_of_logShift_anchor128_mass133 {q A : ℕ} [NeZero q]
+theorem exists_prime_negOne_logShift128_mass133_GRH {q A : ℕ} [NeZero q]
     (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hqA : q ≤ A)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x C b h : ℝ} (hx : 25 ≤ x)
     (hh : 0 < h) (hhx : h ≤ x) (hb : 128 ≤ b) (hcut : b ≤ (99 / 40 : ℝ) * x)
@@ -176,12 +175,11 @@ theorem exists_prime_neg_one_of_logShift_anchor128_mass133 {q A : ℕ} [NeZero q
   have hp := pairedEulerPrefix_ge_anchor128 hGRH.riemann hb
   have hl := logShiftRampPrincipalLower_ge_133_160 x h
   apply
-    exists_prime_neg_one_of_logShiftRampPrincipal_conductor_prefix χ hquad hne hqA hGRH
-      (by linarith only [hx]) hh hhx (Y := b) (by linarith only [hb]) (a := 3 / 10) (d :=
-      (1 / 5 : ℝ) * Real.log 2) (by norm_num only)
-      (mul_nonneg (by norm_num only) (Real.log_natCast_nonneg 2)) (by linarith only [hs])
-      (fun p hp ↦
-        AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight_prime_upper_three_tenths hp)
+    exists_prime_negOne_logShiftConductor_GRH χ hquad hne hqA hGRH (by linarith only [hx]) hh hhx
+      (Y := b) (by linarith only [hb]) (a := 3 / 10) (d := (1 / 5 : ℝ) * Real.log 2)
+      (by norm_num only) (mul_nonneg (by norm_num only) (Real.log_natCast_nonneg 2))
+      (by linarith only [hs])
+      (fun p hp ↦ AnalyticNumberTheory.Arithmetic.pairedEulerWeight_prime_le_three_tenths hp)
       (fun n hn ↦
         (Nat.cast_le.mpr (Finset.mem_Ioc.mp hn).2).trans
           ((Nat.floor_le (by linarith only [hb] : 0 ≤ b)).trans hcut))

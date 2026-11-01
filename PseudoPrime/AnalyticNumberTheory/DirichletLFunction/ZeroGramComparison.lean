@@ -25,7 +25,7 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 Gram point upper bound dominates the squared triangle upper bound for every coefficient
 family. Apply the uniform-budget obstruction to the actual completed-zero point theorem.
 This rules out using that phase-blind point budget alone to improve a witness bound. -/
-theorem completed_zero_triangle_sq_le_gram_budget {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem completed_triangleSq_gramBudget_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (S : Finset ℂ) (a : ℂ → ℂ) {H : ℝ} (hH : 0 ≤ H)
     (hheight : ∀ ρ ∈ S, |ρ.im| ≤ H) :

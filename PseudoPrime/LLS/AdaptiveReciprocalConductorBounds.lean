@@ -38,9 +38,8 @@ theorem exists_prime_ne_one_le_adaptive_reciprocal_root {q : ℕ} [NeZero q]
 /-- Under GRH, a nonprincipal character trivial on H gives a unit-prime
 outside H below the adaptive conductor bound. Transfer the non-one value to
 exclusion from the subgroup image. This is the proper-subgroup witness interface. -/
-theorem exists_prime_outside_le_adaptive_character_conductor {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1)
-    (ht : ∀ u : (ZMod q)ˣ, u ∈ H → χ (u : ZMod q) = 1)
+theorem exists_prime_outside_adaptiveConductor_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (ht : ∀ u : (ZMod q)ˣ, u ∈ H → χ (u : ZMod q) = 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ,
       p.Prime ∧

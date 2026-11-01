@@ -44,10 +44,10 @@ theorem evenLogWeighted_le_reciprocalUpper_of_mainError {N : ℕ} [NeZero N] (hN
   have hx1 : (1 : ℝ) < y ^ 2 := by linarith only [hx]
   have hr :=
     primitiveReciprocalRaw_even_le_of_mainError hN2 hGRH hp hne (inv_ne_one.mpr hne) heven hx1 hE
-  have hl := re_characterReciprocalWeightedSum_ge_of_pointwise_lower ψ hR hd
+  have hl := re_characterReciprocalSum_ge_of_pointwise_lower ψ hR hd
   have hu :=
-    AnalyticNumberTheory.DirichletLFunction.primitiveLogWeightedUpper_of_grh_even_exact hN2 hGRH hp
-      hne (inv_ne_one.mpr hne) heven hx
+    AnalyticNumberTheory.DirichletLFunction.logWeighted_upper_even_GRH hN2 hGRH hp hne
+      (inv_ne_one.mpr hne) heven hx
   rw [Real.sqrt_sq hy0.le] at hr hu
   rw [Real.log_pow] at hl hu
   norm_num only [Nat.cast_ofNat] at hl hu
@@ -87,7 +87,7 @@ theorem evenLogWeighted_le_reciprocalUpper {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) ψ).re ≤
       qNeOneReciprocalUpper y f r d := by
   have hE : Analysis.primitiveReciprocalEvenMainError (y ^ 2) ≤ -(4 / 5 : ℝ) := by
-    have h := llsPrimitiveReciprocalEvenMainError_lt_neg_four_fifths (Analysis.sq_ge_64_of_ge_8 hy)
+    have h := primitiveReciprocalEvenError_lt_neg_4_5 (Analysis.sq_ge_64_of_ge_8 hy)
     exact h.le
   have he : r + -(4 / 5 : ℝ) + 4 / 5 = r := by ring
   simpa only [he] using
@@ -198,9 +198,8 @@ theorem qNeOneReciprocalLower_le_corrected_sum {f : ℕ} [NeZero f] (ψ : Dirich
 can be used in the three dyadic branches. The effective envelope loss is
 r+e+4/5. Preserve the conductor saving in the negative-one branch and compare
 with the common Riemann lower envelope. This avoids fixing a numerical error. -/
-theorem not_oddPrimeTrivial_of_reciprocal_loss_and_mainError {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hne : χ ≠ 1)
-    (heven : χ.primitiveCharacter.Even)
+theorem not_oddPrimeTrivial_reciprocal_errors_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    [NeZero χ.conductor] (hne : χ ≠ 1) (heven : χ.primitiveCharacter.Even)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y L r e : ℝ} (hy : 8 ≤ y)
     (hE : Analysis.primitiveReciprocalEvenMainError (y ^ 2) ≤ e)
     (hlog4 : Real.log χ.conductor ≤ L + Real.log 4)
@@ -217,12 +216,11 @@ theorem not_oddPrimeTrivial_of_reciprocal_loss_and_mainError {q : ℕ} [NeZero q
   have hprim := AnalyticNumberTheory.Arithmetic.primitiveCharacter_ne_one χ hne
   have hf : 2 ≤ χ.conductor := by
     have h0 := NeZero.pos χ.conductor
-    have h1 :=
-      AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hprim
+    have h1 := AnalyticNumberTheory.DirichletLFunction.character_level_ne_one_of_ne_one hprim
     exact Nat.succ_le_iff.mpr (Nat.lt_of_le_of_ne h0 (Ne.symm h1))
   have hx := Analysis.sq_ge_64_of_ge_8 hy
   have hx2 : (2 : ℝ) ≤ y ^ 2 := le_trans (by norm_num only) hx
-  have hRH := llsRiemannWeightedLowerBound_of_riemannHypothesis hGRH.riemann
+  have hRH := riemannWeightedLower_of_RH hGRH.riemann
   have hF := sub_le_sub_right hlog4 (Real.log Real.pi)
   rcases hcases with h2 | h2 | h2
   · have hdS := weightedLogDefect_le_of_apply_two_eq_zero (y ^ 2) χ hx2 hodd h2
@@ -237,7 +235,7 @@ theorem not_oddPrimeTrivial_of_reciprocal_loss_and_mainError {q : ℕ} [NeZero q
     exact (not_lt_of_ge (hl.trans hu)) hsep
   · have hdS := weightedLogDefect_le_of_apply_two_eq_one (y ^ 2) χ hx2 hodd h2
     have hdR : weightedReciprocalDefect χ.primitiveCharacter (y ^ 2) ≤ Real.log 2 := by
-      rw [weightedReciprocalDefect_eq_zero_of_apply_two_eq_one (y ^ 2) χ hx2 hodd h2]
+      rw [weightedReciprocalDefect_zero_of_two_one (y ^ 2) χ hx2 hodd h2]
       exact (Real.log_pos (by norm_num only : (1 : ℝ) < 2)).le
     have hl :=
       qNeOneReciprocalLower_le_corrected_sum χ.primitiveCharacter hRH hy (c := 0)
@@ -250,7 +248,7 @@ theorem not_oddPrimeTrivial_of_reciprocal_loss_and_mainError {q : ℕ} [NeZero q
   · have hdS :=
       weightedLogDefect_le_of_apply_two_eq_neg_one (y ^ 2) χ (le_trans (by norm_num only) hx) hodd
         h2
-    have hdR := weightedReciprocalDefect_le_of_apply_two_eq_neg_one (y ^ 2) χ hx2 hodd h2
+    have hdR := weightedReciprocalDefect_le_of_two_neg_one (y ^ 2) χ hx2 hodd h2
     have hd :
       weightedLogDefect χ.primitiveCharacter (y ^ 2) ≤
         (Real.log (y ^ 2)) ^ 2 / 2 + Analysis.logTwoSquareCorrection y := by
@@ -286,11 +284,9 @@ theorem not_oddPrimeTrivial_of_reciprocal_loss {q : ℕ} [NeZero q] (χ : Dirich
         qNeOneReciprocalLower y) :
     ¬OddPrimeTrivial χ (y ^ 2) := by
   have hE : Analysis.primitiveReciprocalEvenMainError (y ^ 2) ≤ -(4 / 5 : ℝ) :=
-    (llsPrimitiveReciprocalEvenMainError_lt_neg_four_fifths (Analysis.sq_ge_64_of_ge_8 hy)).le
+    (primitiveReciprocalEvenError_lt_neg_4_5 (Analysis.sq_ge_64_of_ge_8 hy)).le
   have he : r + -(4 / 5 : ℝ) + 4 / 5 = r := by ring
-  apply
-    not_oddPrimeTrivial_of_reciprocal_loss_and_mainError χ hne heven hGRH hy hE hlog4 hlogOdd hcases
-      hR
+  apply not_oddPrimeTrivial_reciprocal_errors_GRH χ hne heven hGRH hy hE hlog4 hlogOdd hcases hR
   simpa only [he] using hsep
 
 end PseudoPrime.LLS.Extensions

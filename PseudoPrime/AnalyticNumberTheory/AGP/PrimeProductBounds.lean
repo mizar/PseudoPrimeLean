@@ -24,7 +24,7 @@ Inputs: the seed data and cutoff condition used by the original arithmetic
 completion interface.
 
 Claim: the tail product has the same modulus-four properties and size bounds
-as `seed_auxiliary_modulus_arithmetic_bounds_of_N_le_x`.
+as `seed_modulus_arithmetic_of_N_le_x`.
 
 Content: the cutoff is at most `x`, so the supplied condition `N ≤ cutoff`
 implies the bound `N ≤ x` required by the generalized result.
@@ -52,8 +52,8 @@ theorem seed_auxiliary_modulus_arithmetic_bounds {x N T k : ℕ} {S : Finset ℕ
   have hxone : 1 ≤ x := le_trans (by norm_num only : 1 ≤ 2) hx
   have hNleX : N ≤ x := le_trans hNcut (reliableProp15DivisorCutoff_le_self hxone)
   exact
-    seed_auxiliary_modulus_arithmetic_bounds_of_N_le_x hx hNpos hNleX hk hkpow hScard hTpower hS hL
-      hLsq hLprimeFactors hLreciprocal hLlambda hprimeCount
+    seed_modulus_arithmetic_of_N_le_x hx hNpos hNleX hk hkpow hScard hTpower hS hL hLsq
+      hLprimeFactors hLreciprocal hLlambda hprimeCount
 
 open PseudoPrime.NumberTheory.PrimeProducts in
 /--
@@ -150,7 +150,7 @@ Content: the seed-size hypotheses imply both `2 * s ≤ P.card` and
 Role: this carries the first-stage seed parameter directly into the second
 stage's divisor count.
 -/
-theorem fixedPrimeFactorProductsOf_card_lower_bound_of_seed_factor_count (P : Finset ℕ) (T s : ℕ)
+theorem fixedPrimeProducts_card_lower_of_seed_count (P : Finset ℕ) (T s : ℕ)
     (hprime : ∀ p ∈ P, Nat.Prime p) (hFactorCount : (T + 1) / 2 ≤ P.card) (hs : 0 < s)
     (hscale : 4 * s ≤ T + 1) :
     ((T : ℝ) / (4 * (s : ℝ))) ^ s ≤ ((fixedPrimeFactorProductsOf P s).card : ℝ) := by
@@ -158,8 +158,7 @@ theorem fixedPrimeFactorProductsOf_card_lower_bound_of_seed_factor_count (P : Fi
     clear * - hFactorCount hscale
     omega
   have hTtoP := fixedFactorRatio_le_of_seedFactorCount P T s hFactorCount hs hscale
-  exact
-    le_trans hTtoP (fixedPrimeFactorProductsOf_card_lower_bound_of_two_mul_le P s hprime hs hsmall)
+  exact le_trans hTtoP (fixedProducts_card_lower_two_mul P s hprime hs hsmall)
 
 open PseudoPrime.NumberTheory.PrimeProducts in
 /--
@@ -177,8 +176,8 @@ Proof: use divisibility of products over subsets and `prod_le_pow_card`.
 Role: this supplies the finite divisor inclusion needed for the second,
 modulus-four application of Proposition 1.5.
 -/
-theorem fixedPrimeFactorProductsOf_subset_restrictedDivisors {L y s B : ℕ} {P : Finset ℕ}
-    (hL : L ≠ 0) (hSquarefree : Squarefree L) (hP : P ⊆ L.primeFactors) (hPbound : ∀ p ∈ P, p ≤ B)
+theorem fixedProducts_subset_restrictedDivisors {L y s B : ℕ} {P : Finset ℕ} (hL : L ≠ 0)
+    (hSquarefree : Squarefree L) (hP : P ⊆ L.primeFactors) (hPbound : ∀ p ∈ P, p ≤ B)
     (hcut : B ^ s ≤ y) {d : ℕ} (hd : d ∈ fixedPrimeFactorProductsOf P s) :
     d ∈ restrictedDivisors L y := by
   classical
@@ -214,14 +213,14 @@ the binomial estimate for its exact cardinality.
 Role: this is the finite counting bridge from the seed prime factors to the
 second application of Proposition 1.5.
 -/
-theorem fixedPrimeFactorProductsOf_lower_bound_restrictedDivisors {L y s B : ℕ} {P : Finset ℕ}
-    (hL : L ≠ 0) (hSquarefree : Squarefree L) (hP : P ⊆ L.primeFactors)
-    (hPprime : ∀ p ∈ P, Nat.Prime p) (hPbound : ∀ p ∈ P, p ≤ B) (hcut : B ^ s ≤ y) :
+theorem restrictedDivisors_ge_subset_products {L y s B : ℕ} {P : Finset ℕ} (hL : L ≠ 0)
+    (hSquarefree : Squarefree L) (hP : P ⊆ L.primeFactors) (hPprime : ∀ p ∈ P, Nat.Prime p)
+    (hPbound : ∀ p ∈ P, p ≤ B) (hcut : B ^ s ≤ y) :
     (((P.card + 1 - s : ℕ) : ℝ) ^ s) / (s.factorial : ℝ) ≤ ((restrictedDivisors L y).card : ℝ) := by
   have hcard : (fixedPrimeFactorProductsOf P s).card ≤ (restrictedDivisors L y).card := by
     apply Finset.card_le_card
     intro d hd
-    exact fixedPrimeFactorProductsOf_subset_restrictedDivisors hL hSquarefree hP hPbound hcut hd
+    exact fixedProducts_subset_restrictedDivisors hL hSquarefree hP hPbound hcut hd
   have hlower :
     (((P.card + 1 - s : ℕ) : ℝ) ^ s) / (s.factorial : ℝ) ≤
       ((fixedPrimeFactorProductsOf P s).card : ℝ) :=
@@ -241,7 +240,7 @@ L, deriving their primality and size bound from prime-factor membership.
 Role: this is the direct divisor-count interface for the second Proposition
 1.5 application to the seed-tail product.
 -/
-theorem primeFactorProducts_lower_bound_restrictedDivisors {L y s B : ℕ} (hL : L ≠ 0)
+theorem restrictedDivisors_ge_factor_products {L y s B : ℕ} (hL : L ≠ 0)
     (hSquarefree : Squarefree L) (hFactorBound : ∀ r, r ∣ L → Nat.Prime r → r ≤ B)
     (hcut : B ^ s ≤ y) :
     (((L.primeFactors.card + 1 - s : ℕ) : ℝ) ^ s) / (s.factorial : ℝ) ≤
@@ -256,9 +255,7 @@ theorem primeFactorProducts_lower_bound_restrictedDivisors {L y s B : ℕ} (hL :
     intro p hp
     have hpFactors := Nat.mem_primeFactors.mp hp
     exact hFactorBound p hpFactors.2.1 hpFactors.1
-  exact
-    fixedPrimeFactorProductsOf_lower_bound_restrictedDivisors hL hSquarefree hPsubset hPprime
-      hPbound hcut
+  exact restrictedDivisors_ge_subset_products hL hSquarefree hPsubset hPprime hPbound hcut
 
 /--
 Inputs: a prime cutoff `z`, a factor count `s`, and a member of
@@ -300,7 +297,7 @@ then use divisibility of products over subsets.
 
 Role: this embeds the binomial family into the divisor count of Proposition 1.5.
 -/
-theorem fixedPrimeFactorProducts_subset_restrictedDivisors {z s x : ℕ}
+theorem fixedProducts_subset_primorial_divisors {z s x : ℕ}
     (hcut : (primeSetLE z).prod id ≤ reliableProp15DivisorCutoff x) :
     fixedPrimeFactorProducts z s ⊆
       restrictedDivisors ((primeSetLE z).prod id) (reliableProp15DivisorCutoff x) := by
@@ -332,14 +329,14 @@ finite cardinalities.
 Role: this is the discrete fixed-factor-count input needed for the original
 reliable §2 parameter choice.
 -/
-theorem choose_le_restrictedDivisors_card_of_fixedPrimeFactorProducts {z s x : ℕ}
+theorem choose_le_restricted_card_of_prime_products {z s x : ℕ}
     (hcut : (primeSetLE z).prod id ≤ reliableProp15DivisorCutoff x) :
     Nat.choose (Nat.primeCounting z) s ≤
       (restrictedDivisors ((primeSetLE z).prod id) (reliableProp15DivisorCutoff x)).card := by
   have hsubset :
     fixedPrimeFactorProducts z s ⊆
       restrictedDivisors ((primeSetLE z).prod id) (reliableProp15DivisorCutoff x) :=
-    fixedPrimeFactorProducts_subset_restrictedDivisors hcut
+    fixedProducts_subset_primorial_divisors hcut
   calc
     Nat.choose (Nat.primeCounting z) s = (fixedPrimeFactorProducts z s).card :=
       (fixedPrimeFactorProducts_card z s).symm
@@ -880,8 +877,8 @@ of `N^(5J)` is `J` times the logarithm of `N^5`, so the coefficients agree.
 Role: matches the initial seed count to the same primorial power used by the
 full-divisor P2 scale.
 -/
-theorem primeProductLE_count_lower_bound_of_two_pow_power {c₀ : ℝ} (hc₀ : 0 < c₀) {m J : ℕ}
-    (hm : 10 ≤ m) (hJ : 0 < J) :
+theorem primeProductLE_count_lower_of_two_pow {c₀ : ℝ} (hc₀ : 0 < c₀) {m J : ℕ} (hm : 10 ≤ m)
+    (hJ : 0 < J) :
     c₀ * ((2 ^ m : ℕ) : ℝ) ^ 2 / (10 * (J : ℝ) * (m : ℝ) * Real.log 2) ≤
       reliableProp15Coefficient c₀ 1
           ((((PseudoPrime.NumberTheory.PrimeProducts.primeSetLE (2 ^ m)).prod id : ℕ) ^ 5) ^ J) *
@@ -1213,8 +1210,8 @@ Proof: apply the witness chosen in `primeTailCountThreshold120`.
 
 Role: this supplies the small-prime count bound for the improved seed tail.
 -/
-theorem primeCounting_bound_of_primeTailCountThreshold120 {n : ℕ}
-    (hn : primeTailCountThreshold120 ≤ n) : 2 * Nat.primeCounting (120 * n) ≤ n := by
+theorem primeCounting_le_half_from_threshold120 {n : ℕ} (hn : primeTailCountThreshold120 ≤ n) :
+    2 * Nat.primeCounting (120 * n) ≤ n := by
   exact
     Classical.choose_spec
       (Filter.eventually_atTop.1 (eventually_primeCounting_mul_le_half 120 (by norm_num only))) n hn
@@ -1242,8 +1239,8 @@ Proof: apply the witness chosen in `primeTailCountThreshold1024`.
 
 Role: this supplies the small-prime count bound for the strong seed tail.
 -/
-theorem primeCounting_bound_of_primeTailCountThreshold1024 {n : ℕ}
-    (hn : primeTailCountThreshold1024 ≤ n) : 2 * Nat.primeCounting (1024 * n) ≤ n := by
+theorem primeCounting_le_half_from_threshold1024 {n : ℕ} (hn : primeTailCountThreshold1024 ≤ n) :
+    2 * Nat.primeCounting (1024 * n) ≤ n := by
   exact
     Classical.choose_spec
       (Filter.eventually_atTop.1 (eventually_primeCounting_mul_le_half 1024 (by norm_num only))) n
@@ -1264,8 +1261,7 @@ theorem primeTailCountThreshold1024_ge_two : 2 ≤ primeTailCountThreshold1024 :
   by_contra h
   have hthreshold : primeTailCountThreshold1024 ≤ 1 := by omega
   have hbound :=
-    primeCounting_bound_of_primeTailCountThreshold1024 (n := 1)
-      (le_trans hthreshold (by norm_num only))
+    primeCounting_le_half_from_threshold1024 (n := 1) (le_trans hthreshold (by norm_num only))
   have hpi := primeCounting_two_pow_lower (m := 10) (by norm_num only)
   have hpow : (2 : ℕ) ^ 10 = 1024 := by norm_num only
   rw [hpow] at hpi

@@ -127,8 +127,8 @@ private theorem log_pi_le_six_fifths : Real.log Real.pi ≤ 6 / 5 := by
 absolute value at most 8/5. Monotonicity bounds digamma between its values at
 one half and five; their exact formulas and Euler's constant bounds close the
 comparison. This sharpens the per-node Gamma allowance in the resolvent sum. -/
-theorem abs_real_digamma_sub_log_pi_div_two_le_eight_fifths {r : ℝ} (hr : 1 / 2 ≤ r)
-    (hu : r ≤ 17 / 4) : |((Complex.digamma (r : ℂ)).re - Real.log Real.pi) / 2| ≤ 8 / 5 := by
+theorem abs_digamma_sub_log_pi_half_le_8_5 {r : ℝ} (hr : 1 / 2 ≤ r) (hu : r ≤ 17 / 4) :
+    |((Complex.digamma (r : ℂ)).re - Real.log Real.pi) / 2| ≤ 8 / 5 := by
   have hlo := re_digamma_mono_of_pos (by norm_num only : (0 : ℝ) < 1 / 2) hr
   have hhi :=
     re_digamma_mono_of_pos (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1 / 2) hr)

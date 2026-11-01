@@ -56,7 +56,7 @@ above a positive cutoff `L` implies a full norm sum at most `2εx` plus the fami
 cardinality times the unsigned sum at `2L`. Apply finite dyadic recovery and the
 character-independent local majorant. The principal error does not acquire a
 factor from the number of characters. -/
-theorem sum_norm_characterLogWeightedSum_le_of_half_errors {ι : Type*} (S : Finset ι) (q : ι → ℕ)
+theorem sum_norm_characterLogSum_le_of_half_errors {ι : Type*} (S : Finset ι) (q : ι → ℕ)
     (χ : ∀ i, DirichletCharacter ℂ (q i)) {ε L x : ℝ} (hε : 0 ≤ ε) (hL : 0 < L) (hx : L ≤ x)
     (hhalf :
       ∀ t : ℝ,
@@ -98,9 +98,8 @@ theorem logWeightedMangoldtSum_le_linear_log {x : ℝ} (hx : 1 ≤ x) :
 multiple of `L log(2L)`. Insert the elementary unsigned majorant into the dyadic
 recovery estimate. This is the arithmetic interface for choosing one uniform
 small-scale budget in the theta-supply argument. -/
-theorem sum_norm_characterLogWeightedSum_le_linear_local_remainder {ι : Type*} (S : Finset ι)
-    (q : ι → ℕ) (χ : ∀ i, DirichletCharacter ℂ (q i)) {ε L x : ℝ} (hε : 0 ≤ ε) (hL : 1 ≤ L)
-    (hx : L ≤ x)
+theorem sum_norm_characterLogSum_le_linear_remainder {ι : Type*} (S : Finset ι) (q : ι → ℕ)
+    (χ : ∀ i, DirichletCharacter ℂ (q i)) {ε L x : ℝ} (hε : 0 ≤ ε) (hL : 1 ≤ L) (hx : L ≤ x)
     (hhalf :
       ∀ t : ℝ,
         L ≤ t →
@@ -108,8 +107,7 @@ theorem sum_norm_characterLogWeightedSum_le_linear_local_remainder {ι : Type*} 
             ε * t) :
     ∑ i ∈ S, ‖characterLogWeightedSum x (χ i)‖ ≤
       2 * ε * x + (S.card : ℝ) * ((Real.log 4 + 4) * (2 * L) * Real.log (2 * L)) := by
-  have hb :=
-    sum_norm_characterLogWeightedSum_le_of_half_errors S q χ hε (zero_lt_one.trans_le hL) hx hhalf
+  have hb := sum_norm_characterLogSum_le_of_half_errors S q χ hε (zero_lt_one.trans_le hL) hx hhalf
   have hsmall := logWeightedMangoldtSum_le_linear_log (by linarith only [hL] : 1 ≤ 2 * L)
   exact hb.trans (add_le_add le_rfl (mul_le_mul_of_nonneg_left hsmall (Nat.cast_nonneg S.card)))
 
@@ -118,9 +116,8 @@ above a cutoff `L >= 1` bounds the difference at `x` and `4x/5` by `4 epsilon x`
 plus twice the explicit local remainder, provided `4x/5 >= L`. Apply dyadic
 recovery at both endpoints and the norm triangle inequality. This connects the
 half-scale explicit formula to the principal difference with coefficient above one half. -/
-theorem sum_norm_characterLogWeightedSum_four_fifths_difference_le {ι : Type*} (S : Finset ι)
-    (q : ι → ℕ) (χ : ∀ i, DirichletCharacter ℂ (q i)) {ε L x : ℝ} (hε : 0 ≤ ε) (hL : 1 ≤ L)
-    (hx : L ≤ 4 * x / 5)
+theorem sum_norm_characterLogSum_sub_4_5_le {ι : Type*} (S : Finset ι) (q : ι → ℕ)
+    (χ : ∀ i, DirichletCharacter ℂ (q i)) {ε L x : ℝ} (hε : 0 ≤ ε) (hL : 1 ≤ L) (hx : L ≤ 4 * x / 5)
     (hhalf :
       ∀ t : ℝ,
         L ≤ t →
@@ -130,9 +127,8 @@ theorem sum_norm_characterLogWeightedSum_four_fifths_difference_le {ι : Type*} 
       4 * ε * x + 2 * (S.card : ℝ) * ((Real.log 4 + 4) * (2 * L) * Real.log (2 * L)) := by
   have hxpos : 0 ≤ x := by linarith only [hL, hx]
   have hscale : 4 * x / 5 ≤ x := by linarith only [hxpos]
-  have hb :=
-    sum_norm_characterLogWeightedSum_le_linear_local_remainder S q χ hε hL (hx.trans hscale) hhalf
-  have hc := sum_norm_characterLogWeightedSum_le_linear_local_remainder S q χ hε hL hx hhalf
+  have hb := sum_norm_characterLogSum_le_linear_remainder S q χ hε hL (hx.trans hscale) hhalf
+  have hc := sum_norm_characterLogSum_le_linear_remainder S q χ hε hL hx hhalf
   have ht :
     (∑ i ∈ S, ‖characterLogWeightedSum x (χ i) - characterLogWeightedSum (4 * x / 5) (χ i)‖) ≤
       (∑ i ∈ S, ‖characterLogWeightedSum x (χ i)‖) +

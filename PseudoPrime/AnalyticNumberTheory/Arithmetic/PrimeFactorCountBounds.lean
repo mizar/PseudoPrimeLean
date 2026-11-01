@@ -115,8 +115,8 @@ product with the level logarithm is at most the cutoff square root, the common-f
 logarithmic sum is at most the square root times the squared cutoff logarithm divided
 by three times the scale. Combine the count bound with the finite common-factor
 estimate; the scale is the subgroup index minus one in the coset argument. -/
-theorem commonFactorLogWeightedSum_le_sqrt_log_square {q : ℕ} (hq : 20000 ≤ q) {x d : ℝ}
-    (hx : 0 < x) (hd : 0 < d) (hs : d * Real.log q ≤ Real.sqrt x) :
+theorem commonLogSum_le_sqrt_log_sq {q : ℕ} (hq : 20000 ≤ q) {x d : ℝ} (hx : 0 < x) (hd : 0 < d)
+    (hs : d * Real.log q ≤ Real.sqrt x) :
     commonFactorLogWeightedSum x q ≤ Real.sqrt x / (3 * d) * (Real.log x) ^ 2 := by
   have hc := card_primeFactors_le_two_thirds_log hq
   have hb := commonFactorLogWeightedSum_le (Nat.ne_of_gt (lt_of_lt_of_le (by norm_num only) hq)) hx

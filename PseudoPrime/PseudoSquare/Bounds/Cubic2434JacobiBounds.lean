@@ -137,7 +137,7 @@ theorem exists_prime_neg_one_le_cubic2434_root {n : ℕ} {hn : Odd n} {hns : ¬I
     ∃ p : ℕ,
       p.Prime ∧
         Odd p ∧ Nat.Coprime p n ∧ jacobiSym n p = -1 ∧ (p : ℝ) ≤ cubic2434RootBound bridge := by
-  obtain ⟨p, hp, ho, hc, hj, hb⟩ := exists_prime_neg_one_le_cubic2434_negative_support bridge hg
+  obtain ⟨p, hp, ho, hc, hj, hb⟩ := exists_negOnePrime_le_cubic2434_negative_support bridge hg
   exact ⟨p, hp, ho, hc, hj, hb.trans (cubic2434_support_le_root bridge)⟩
 
 /-- Under GRH, the least negative odd-prime witness obeys the new root bound.

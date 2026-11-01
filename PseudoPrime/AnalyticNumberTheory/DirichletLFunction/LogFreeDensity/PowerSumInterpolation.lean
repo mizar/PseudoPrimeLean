@@ -32,7 +32,7 @@ Proof: insert the two inverse identities and rearrange in the power-series ring.
 
 Role: supplies the Newton expansion step without dividing by the difference of two nodes.
 -/
-theorem reciprocalSeries_resolvent (x z : ℂˣ) :
+theorem invSeries_resolvent (x z : ℂˣ) :
     PowerSeries.invUnitsSub x =
       PowerSeries.invUnitsSub z +
         PowerSeries.C ((z : ℂ) - x) * PowerSeries.invUnitsSub z * PowerSeries.invUnitsSub x := by
@@ -60,7 +60,7 @@ Proof: induct on the length using the resolvent identity; no difference of nodes
 
 Role: gives exact interpolation when the evaluation point is one of the selected nodes.
 -/
-theorem reciprocalSeries_newton_expansion (z : ℕ → ℂˣ) (x : ℂˣ) (n : ℕ) :
+theorem invSeries_newton (z : ℕ → ℂˣ) (x : ℂˣ) (n : ℕ) :
     PowerSeries.invUnitsSub x =
       (∑ k ∈ Finset.range n,
           (∏ i ∈ Finset.range k, PowerSeries.C ((z i : ℂ) - x)) *
@@ -73,7 +73,7 @@ theorem reciprocalSeries_newton_expansion (z : ℕ → ℂˣ) (x : ℂˣ) (n : �
   | succ n ih =>
     rw [Finset.sum_range_succ, Finset.prod_range_succ, Finset.prod_range_succ]
     conv_lhs => rw [ih]
-    have h := reciprocalSeries_resolvent x (z n)
+    have h := invSeries_resolvent x (z n)
     linear_combination
       (∏ i ∈ Finset.range n, PowerSeries.C ((z i : ℂ) - x)) *
         (∏ i ∈ Finset.range n, PowerSeries.invUnitsSub (z i)) *
@@ -88,7 +88,7 @@ Proof: evaluate its coefficient and cancel the nonzero node.
 
 Role: identifies the generating series for complete homogeneous expressions in inverse nodes.
 -/
-theorem normalizedReciprocalSeries_coeff (u : ℂˣ) (n : ℕ) :
+theorem scaledInvSeries_coeff (u : ℂˣ) (n : ℕ) :
     PowerSeries.coeff n (PowerSeries.C (u : ℂ) * PowerSeries.invUnitsSub u) = ((u : ℂ)⁻¹) ^ n := by
   rw [PowerSeries.coeff_C_mul, PowerSeries.coeff_invUnitsSub, one_divp, Units.val_inv_eq_inv_val]
   change (u : ℂ) * ((u : ℂ) ^ (n + 1))⁻¹ = _
@@ -103,9 +103,9 @@ Proof: its inverse power has norm at most one.
 
 Role: supplies the coefficientwise hypothesis for the finite-product binomial bound.
 -/
-theorem normalizedReciprocalSeries_coeff_norm_le_one (u : ℂˣ) (hu : (1 : ℝ) ≤ ‖(u : ℂ)‖) (n : ℕ) :
+theorem scaledInv_coeff_le_1 (u : ℂˣ) (hu : (1 : ℝ) ≤ ‖(u : ℂ)‖) (n : ℕ) :
     ‖PowerSeries.coeff n (PowerSeries.C (u : ℂ) * PowerSeries.invUnitsSub u)‖ ≤ 1 := by
-  rw [normalizedReciprocalSeries_coeff, norm_pow, norm_inv]
+  rw [scaledInvSeries_coeff, norm_pow, norm_inv]
   exact
     pow_le_one₀ (inv_nonneg.mpr (norm_nonneg _))
       ((inv_le_one₀ (lt_of_lt_of_le zero_lt_one hu)).mpr hu)
@@ -121,16 +121,13 @@ Proof: apply the coefficientwise geometric-series product bound.
 Role: gives the required quantitative complete homogeneous coefficient bound for Newton
 interpolation, also when nodes repeat.
 -/
-theorem normalizedReciprocalSeries_prod_coeff_norm_le_choose (z : ℕ → ℂˣ) (k M : ℕ)
-    (hz : ∀ i < k + 1, (1 : ℝ) ≤ ‖(z i : ℂ)‖) :
+theorem scaledProd_coeff_le (z : ℕ → ℂˣ) (k M : ℕ) (hz : ∀ i < k + 1, (1 : ℝ) ≤ ‖(z i : ℂ)‖) :
     ‖PowerSeries.coeff M
           (∏ i ∈ Finset.range (k + 1), (PowerSeries.C (z i : ℂ) * PowerSeries.invUnitsSub (z i)))‖ ≤
       (Nat.choose (k + M) k : ℝ) := by
   exact
     PseudoPrime.Analysis.powerSeries_coeff_prod_norm_le_choose _ _ (Finset.card_range (k + 1))
-      (fun i hi n ↦
-        normalizedReciprocalSeries_coeff_norm_le_one (z i) (hz i (Finset.mem_range.mp hi)) n)
-      M
+      (fun i hi n ↦ scaledInv_coeff_le_1 (z i) (hz i (Finset.mem_range.mp hi)) n) M
 
 /--
 Inputs: a finite set of nonzero nodes and a coefficient index.
@@ -142,7 +139,7 @@ Proof: collect the constant series and apply the constant-multiple coefficient f
 
 Role: cancels the node products against normalized Newton polynomial coefficients.
 -/
-theorem normalizedReciprocalSeries_prod_coeff {ι : Type} (s : Finset ι) (z : ι → ℂˣ) (M : ℕ) :
+theorem scaledProd_coeff_eq {ι : Type} (s : Finset ι) (z : ι → ℂˣ) (M : ℕ) :
     PowerSeries.coeff M (∏ i ∈ s, (PowerSeries.C (z i : ℂ) * PowerSeries.invUnitsSub (z i))) =
       (∏ i ∈ s, (z i : ℂ)) * PowerSeries.coeff M (∏ i ∈ s, PowerSeries.invUnitsSub (z i)) := by
   rw [Finset.prod_mul_distrib, ← map_prod, PowerSeries.coeff_C_mul]
@@ -158,12 +155,12 @@ Proof: the factored remainder vanishes at a selected node; take the coefficient 
 Role: supplies the exact finite interpolation formula needed to compare a total weight with a
 later block of weighted power sums.
 -/
-theorem inversePower_newton_interpolation (z : ℕ → ℂˣ) (n M j : ℕ) (hj : j < n) :
+theorem invPower_newton_sum (z : ℕ → ℂˣ) (n M j : ℕ) (hj : j < n) :
     ((z j : ℂ) ^ (M + 1))⁻¹ =
       ∑ k ∈ Finset.range n,
         (∏ i ∈ Finset.range k, ((z i : ℂ) - z j)) *
           PowerSeries.coeff M (∏ i ∈ Finset.range (k + 1), PowerSeries.invUnitsSub (z i)) := by
-  have h := reciprocalSeries_newton_expansion z (z j) n
+  have h := invSeries_newton z (z j) n
   have hp : (∏ i ∈ Finset.range n, PowerSeries.C ((z i : ℂ) - z j)) = (0 : PowerSeries ℂ) :=
     Finset.prod_eq_zero (Finset.mem_range.mpr hj) (by rw [sub_self, map_zero])
   rw [hp, zero_mul, zero_mul, add_zero] at h
@@ -188,10 +185,10 @@ Definition: the coefficient at `M` in the product of the first `k + 1` reciproca
 
 Role: is the scalar coefficient multiplying the Newton root polynomial.
 -/
-noncomputable def reciprocalProductCoefficient (z : ℕ → ℂˣ) (k M : ℕ) : ℂ :=
+noncomputable def reciprocalProdCoeff (z : ℕ → ℂˣ) (k M : ℕ) : ℂ :=
   PowerSeries.coeff M (∏ i ∈ Finset.range (k + 1), PowerSeries.invUnitsSub (z i))
 
-private theorem reverseRootPolynomial_coeff_norm {ι : Type} (s : Finset ι) (z : ι → ℂ) (l : ℕ) :
+private theorem reverseRootCoeff_norm {ι : Type} (s : Finset ι) (z : ι → ℂ) (l : ℕ) :
     ‖(∏ i ∈ s, (Polynomial.C (z i) - Polynomial.X)).coeff l‖ =
       ‖(∏ i ∈ s, (Polynomial.X - Polynomial.C (z i))).coeff l‖ := by
   have h :
@@ -215,15 +212,15 @@ Proof: collect the node product in the normalized series and cancel that nonzero
 
 Role: makes the cancellation of large node norms explicit before applying the binomial bounds.
 -/
-theorem newton_term_coeff_eq_normalized (z : ℕ → ℂˣ) (k M l : ℕ) :
-    reciprocalProductCoefficient z k M * (newtonRootPolynomial z k).coeff l =
+theorem newton_coeff_scaled (z : ℕ → ℂˣ) (k M l : ℕ) :
+    reciprocalProdCoeff z k M * (newtonRootPolynomial z k).coeff l =
       PowerSeries.coeff M
           (∏ i ∈ Finset.range (k + 1), (PowerSeries.C (z i : ℂ) * PowerSeries.invUnitsSub (z i))) *
         ((newtonRootPolynomial z k).coeff l / (∏ i ∈ Finset.range (k + 1), (z i : ℂ))) := by
   have hd : (∏ i ∈ Finset.range (k + 1), (z i : ℂ)) ≠ 0 :=
     Finset.prod_ne_zero_iff.mpr (fun i hi ↦ Units.ne_zero (z i))
-  rw [normalizedReciprocalSeries_prod_coeff]
-  dsimp only [reciprocalProductCoefficient]
+  rw [scaledProd_coeff_eq]
+  dsimp only [reciprocalProdCoeff]
   rw [mul_comm (∏ i ∈ Finset.range (k + 1), (z i : ℂ)), mul_assoc, ← mul_div_assoc,
     mul_div_cancel_left₀ _ hd]
 
@@ -238,17 +235,17 @@ Proof: cancel the node products and apply the normalized series and polynomial b
 Role: controls the entire Newton term before summing the coefficients to obtain a power-sum
 block estimate.
 -/
-theorem newton_term_coeff_norm_le_choose (z : ℕ → ℂˣ) (k M l : ℕ) (hl : l ≤ k)
+theorem newton_coeff_choose (z : ℕ → ℂˣ) (k M l : ℕ) (hl : l ≤ k)
     (hz : ∀ i < k + 1, (1 : ℝ) ≤ ‖(z i : ℂ)‖) :
-    ‖reciprocalProductCoefficient z k M * (newtonRootPolynomial z k).coeff l‖ ≤
+    ‖reciprocalProdCoeff z k M * (newtonRootPolynomial z k).coeff l‖ ≤
       (Nat.choose (k + M) k : ℝ) * (Nat.choose k l : ℝ) := by
-  rw [newton_term_coeff_eq_normalized, norm_mul]
-  apply mul_le_mul (normalizedReciprocalSeries_prod_coeff_norm_le_choose z k M hz)
-  · rw [norm_div, newtonRootPolynomial, reverseRootPolynomial_coeff_norm]
+  rw [newton_coeff_scaled, norm_mul]
+  apply mul_le_mul (scaledProd_coeff_le z k M hz)
+  · rw [norm_div, newtonRootPolynomial, reverseRootCoeff_norm]
     have h :=
-      normalized_prod_X_sub_C_coeff_div_extra_norm_le_choose (Finset.range k) (fun i ↦ (z i : ℂ))
-        (z k) (fun i hi ↦ hz i (Nat.lt_succ_of_lt (Finset.mem_range.mp hi)))
-        (hz k (Nat.lt_succ_self k)) (by simpa only [Finset.card_range] using hl)
+      rootCoeff_div_le (Finset.range k) (fun i ↦ (z i : ℂ)) (z k)
+        (fun i hi ↦ hz i (Nat.lt_succ_of_lt (Finset.mem_range.mp hi))) (hz k (Nat.lt_succ_self k))
+        (by simpa only [Finset.card_range] using hl)
     rw [norm_div] at h
     simpa only [Finset.prod_range_succ, Finset.card_range] using h
   · exact norm_nonneg _
@@ -263,7 +260,7 @@ Proof: each linear factor has degree one, so the product degree is at most the l
 
 Role: permits a finite coefficient expansion of every Newton term.
 -/
-theorem newtonRootPolynomial_natDegree_lt (z : ℕ → ℂˣ) (k : ℕ) :
+theorem newtonRoot_degree_lt (z : ℕ → ℂˣ) (k : ℕ) :
     (newtonRootPolynomial z k).natDegree < k + 1 := by
   calc
     _ ≤ ∑ i ∈ Finset.range k, (Polynomial.C (z i : ℂ) - Polynomial.X).natDegree :=
@@ -284,10 +281,10 @@ exchange the finite sums.
 
 Role: transfers reciprocal-power interpolation to the later power-sum block.
 -/
-theorem total_weight_eq_newton_evaluations (z : ℕ → ℂˣ) (a : ℕ → ℂ) (n M : ℕ) :
+theorem weight_eq_newton_sum (z : ℕ → ℂˣ) (a : ℕ → ℂ) (n M : ℕ) :
     (∑ j ∈ Finset.range n, a j) =
       ∑ k ∈ Finset.range n,
-        reciprocalProductCoefficient z k M *
+        reciprocalProdCoeff z k M *
           (∑ j ∈ Finset.range n,
             a j * (z j : ℂ) ^ (M + 1) * (newtonRootPolynomial z k).eval (z j : ℂ)) := by
   calc
@@ -298,7 +295,7 @@ theorem total_weight_eq_newton_evaluations (z : ℕ → ℂˣ) (a : ℕ → ℂ)
     _ =
         ∑ j ∈ Finset.range n,
           ∑ k ∈ Finset.range n,
-            reciprocalProductCoefficient z k M *
+            reciprocalProdCoeff z k M *
               (a j * (z j : ℂ) ^ (M + 1) * (newtonRootPolynomial z k).eval (z j : ℂ)) :=
       by
       apply Finset.sum_congr rfl
@@ -306,10 +303,10 @@ theorem total_weight_eq_newton_evaluations (z : ℕ → ℂˣ) (a : ℕ → ℂ)
       have h :
         ((z j : ℂ) ^ (M + 1))⁻¹ =
           ∑ k ∈ Finset.range n,
-            (newtonRootPolynomial z k).eval (z j : ℂ) * reciprocalProductCoefficient z k M := by
-        simpa only [newtonRootPolynomial, reciprocalProductCoefficient, Polynomial.eval_prod,
+            (newtonRootPolynomial z k).eval (z j : ℂ) * reciprocalProdCoeff z k M := by
+        simpa only [newtonRootPolynomial, reciprocalProdCoeff, Polynomial.eval_prod,
           Polynomial.eval_sub, Polynomial.eval_C, Polynomial.eval_X] using
-          inversePower_newton_interpolation z n M j (Finset.mem_range.mp hj)
+          invPower_newton_sum z n M j (Finset.mem_range.mp hj)
       rw [h, Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro k hk
@@ -328,15 +325,15 @@ Proof: expand the root polynomial, bound each coefficient, and sum the binomial 
 
 Role: supplies the individual terms of the quantitative Turán estimate.
 -/
-theorem newton_evaluation_norm_le (z : ℕ → ℂˣ) (a : ℕ → ℂ) (n M k : ℕ)
+theorem newton_eval_norm_le (z : ℕ → ℂˣ) (a : ℕ → ℂ) (n M k : ℕ)
     (hz : ∀ i < k + 1, (1 : ℝ) ≤ ‖(z i : ℂ)‖) (B : ℝ)
     (hB : ∀ l < k + 1, ‖∑ j ∈ Finset.range n, a j * (z j : ℂ) ^ (M + 1 + l)‖ ≤ B) :
-    ‖reciprocalProductCoefficient z k M *
+    ‖reciprocalProdCoeff z k M *
           (∑ j ∈ Finset.range n,
             a j * (z j : ℂ) ^ (M + 1) * (newtonRootPolynomial z k).eval (z j : ℂ))‖ ≤
       (Nat.choose (k + M) k : ℝ) * 2 ^ k * B := by
-  rw [weighted_polynomial_eval_eq_power_sum (Finset.range n) (fun j ↦ (z j : ℂ)) a
-      (newtonRootPolynomial z k) (newtonRootPolynomial_natDegree_lt z k) (M + 1),
+  rw [weightedEval_powerSum (Finset.range n) (fun j ↦ (z j : ℂ)) a (newtonRootPolynomial z k)
+      (newtonRoot_degree_lt z k) (M + 1),
     Finset.mul_sum]
   apply le_trans (norm_sum_le _ _)
   calc
@@ -345,8 +342,7 @@ theorem newton_evaluation_norm_le (z : ℕ → ℂˣ) (a : ℕ → ℂ) (n M k :
       intro l hl
       rw [← mul_assoc, norm_mul]
       exact
-        mul_le_mul
-          (newton_term_coeff_norm_le_choose z k M l (Nat.le_of_lt_succ (Finset.mem_range.mp hl)) hz)
+        mul_le_mul (newton_coeff_choose z k M l (Nat.le_of_lt_succ (Finset.mem_range.mp hl)) hz)
           (hB l (Finset.mem_range.mp hl)) (norm_nonneg _)
           (mul_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _))
     _ = _ := by
@@ -366,20 +362,19 @@ Proof: sum the individual Newton-term bounds in the total-weight identity.
 
 Role: provides the quantitative block estimate for arbitrary initial exponents and repeated nodes.
 -/
-theorem total_weight_norm_le_turan_factor (z : ℕ → ℂˣ) (a : ℕ → ℂ) (n M : ℕ)
+theorem weight_norm_le_turan (z : ℕ → ℂˣ) (a : ℕ → ℂ) (n M : ℕ)
     (hz : ∀ i < n, (1 : ℝ) ≤ ‖(z i : ℂ)‖) (B : ℝ)
     (hB : ∀ l < n, ‖∑ j ∈ Finset.range n, a j * (z j : ℂ) ^ (M + 1 + l)‖ ≤ B) :
     ‖∑ j ∈ Finset.range n, a j‖ ≤
       (∑ k ∈ Finset.range n, (Nat.choose (k + M) k : ℝ) * 2 ^ k) * B := by
-  rw [total_weight_eq_newton_evaluations z a n M]
+  rw [weight_eq_newton_sum z a n M]
   apply le_trans (norm_sum_le _ _)
   rw [Finset.sum_mul]
   apply Finset.sum_le_sum
   intro k hk
   exact
-    newton_evaluation_norm_le z a n M k
-      (fun i hi ↦ hz i (Nat.lt_of_lt_of_le hi (Finset.mem_range.mp hk))) B
-      (fun l hl ↦ hB l (Nat.lt_of_lt_of_le hl (Finset.mem_range.mp hk)))
+    newton_eval_norm_le z a n M k (fun i hi ↦ hz i (Nat.lt_of_lt_of_le hi (Finset.mem_range.mp hk)))
+      B (fun l hl ↦ hB l (Nat.lt_of_lt_of_le hl (Finset.mem_range.mp hk)))
 
 /--
 Inputs: a positive block length and an initial exponent.
@@ -409,7 +404,7 @@ Proof: choose the largest norm in the block and apply the finite Newton estimate
 
 Role: is the quantitative Turán first-main-theorem form needed for zero detection.
 -/
-theorem exists_power_sum_norm_ge_turan (z : ℕ → ℂˣ) (a : ℕ → ℂ) (n M : ℕ) (hn : 0 < n)
+theorem turan_weighted_units (z : ℕ → ℂˣ) (a : ℕ → ℂ) (n M : ℕ) (hn : 0 < n)
     (hz : ∀ i < n, (1 : ℝ) ≤ ‖(z i : ℂ)‖) :
     ∃ l ∈ Finset.range n,
       ‖∑ j ∈ Finset.range n, a j‖ / (∑ k ∈ Finset.range n, (Nat.choose (k + M) k : ℝ) * 2 ^ k) ≤
@@ -420,7 +415,7 @@ theorem exists_power_sum_norm_ge_turan (z : ℕ → ℂˣ) (a : ℕ → ℂ) (n 
       (Finset.nonempty_range_iff.mpr (ne_of_gt hn))
   refine ⟨l, hl, (div_le_iff₀ (turan_factor_pos n M hn)).mpr ?_⟩
   rw [mul_comm]
-  exact total_weight_norm_le_turan_factor z a n M hz _ (fun r hr ↦ hmax r (Finset.mem_range.mpr hr))
+  exact weight_norm_le_turan z a n M hz _ (fun r hr ↦ hmax r (Finset.mem_range.mpr hr))
 
 /--
 Inputs: a positive block length, arbitrary complex frequencies of norm at least one on the
@@ -433,8 +428,7 @@ Proof: represent the selected frequencies as units and apply the unit-valued the
 
 Role: exposes the quantitative power-sum theorem without a unit-valued input requirement.
 -/
-theorem exists_weighted_power_sum_norm_ge_turan (z a : ℕ → ℂ) (n M : ℕ) (hn : 0 < n)
-    (hz : ∀ i < n, (1 : ℝ) ≤ ‖z i‖) :
+theorem turan_weighted_range (z a : ℕ → ℂ) (n M : ℕ) (hn : 0 < n) (hz : ∀ i < n, (1 : ℝ) ≤ ‖z i‖) :
     ∃ l ∈ Finset.range n,
       ‖∑ j ∈ Finset.range n, a j‖ / (∑ k ∈ Finset.range n, (Nat.choose (k + M) k : ℝ) * 2 ^ k) ≤
         ‖∑ j ∈ Finset.range n, a j * z j ^ (M + 1 + l)‖ := by
@@ -444,8 +438,7 @@ theorem exists_weighted_power_sum_norm_ge_turan (z a : ℕ → ℂ) (n M : ℕ) 
   have hu : ∀ i < n, (u i : ℂ) = z i := by
     intro i hi
     simp only [u, dite_eq_left hi, Units.val_mk0]
-  obtain ⟨l, hl, hle⟩ :=
-    exists_power_sum_norm_ge_turan u a n M hn (fun i hi ↦ (hu i hi).symm ▸ hz i hi)
+  obtain ⟨l, hl, hle⟩ := turan_weighted_units u a n M hn (fun i hi ↦ (hu i hi).symm ▸ hz i hi)
   refine ⟨l, hl, ?_⟩
   have heq :
     (∑ j ∈ Finset.range n, a j * (u j : ℂ) ^ (M + 1 + l)) =
@@ -460,8 +453,8 @@ theorem exists_weighted_power_sum_norm_ge_turan (z a : ℕ → ℂ) (n M : ℕ) 
 内容: 有限集合を `Fin s.card` で添字付け、自然数列上の重み付きTurán評価へ移す。
 役割: 有限個の局所零点を重複度付き周波数として零点検出へ渡す。
 -/
-theorem exists_finset_weighted_power_sum_norm_ge_turan {α : Type} (s : Finset α) (a z : α → ℂ)
-    (M : ℕ) (hs : 0 < s.card) (hz : ∀ u ∈ s, (1 : ℝ) ≤ ‖z u‖) :
+theorem turan_weighted_finset {α : Type} (s : Finset α) (a z : α → ℂ) (M : ℕ) (hs : 0 < s.card)
+    (hz : ∀ u ∈ s, (1 : ℝ) ≤ ‖z u‖) :
     ∃ l ∈ Finset.range s.card,
       ‖∑ u ∈ s, a u‖ / (∑ k ∈ Finset.range s.card, (Nat.choose (k + M) k : ℝ) * 2 ^ k) ≤
         ‖∑ u ∈ s, a u * z u ^ (M + 1 + l)‖ := by
@@ -473,7 +466,7 @@ theorem exists_finset_weighted_power_sum_norm_ge_turan {α : Type} (s : Finset �
     intro i hi
     simp only [zz, dite_eq_left hi]
     exact hz _ (e.symm ⟨i, hi⟩).property
-  obtain ⟨l, hl, hT⟩ := exists_weighted_power_sum_norm_ge_turan zz az s.card M hs hzz
+  obtain ⟨l, hl, hT⟩ := turan_weighted_range zz az s.card M hs hzz
   have hsum (f : α → ℂ) :
     (∑ i ∈ Finset.range s.card, if hi : i < s.card then f (e.symm ⟨i, hi⟩).val else 0) =
       ∑ u ∈ s, f u := by
@@ -516,22 +509,21 @@ Proof: set all weights equal to one in the weighted theorem.
 
 Role: gives the multiplicity-sensitive finite power-sum estimate used by zero detectors.
 -/
-theorem exists_pure_power_sum_norm_ge_turan (z : ℕ → ℂ) (n M : ℕ) (hn : 0 < n)
-    (hz : ∀ i < n, (1 : ℝ) ≤ ‖z i‖) :
+theorem turan_pure_range (z : ℕ → ℂ) (n M : ℕ) (hn : 0 < n) (hz : ∀ i < n, (1 : ℝ) ≤ ‖z i‖) :
     ∃ l ∈ Finset.range n,
       (n : ℝ) / (∑ k ∈ Finset.range n, (Nat.choose (k + M) k : ℝ) * 2 ^ k) ≤
         ‖∑ j ∈ Finset.range n, z j ^ (M + 1 + l)‖ := by
   simpa only [one_mul, Finset.sum_const, Finset.card_range, nsmul_eq_mul, mul_one,
-    Complex.norm_natCast] using exists_weighted_power_sum_norm_ge_turan z (fun _ ↦ 1) n M hn hz
+    Complex.norm_natCast] using turan_weighted_range z (fun _ ↦ 1) n M hn hz
 
-private theorem turan_term_nat_le_two_pow (n M : ℕ) :
+private theorem nat_turanTerm_le_pow (n M : ℕ) :
     Nat.choose (n + M) n * 2 ^ n ≤ 2 ^ (M + 2 * n) := by
   calc
     _ ≤ 2 ^ (n + M) * 2 ^ n := Nat.mul_le_mul_right _ (Nat.choose_le_two_pow _ _)
     _ = _ := by
       rw [← pow_add]; congr 1; ring
 
-private theorem turan_factor_nat_le_two_pow (n M : ℕ) :
+private theorem nat_turanSum_le_pow (n M : ℕ) :
     (∑ k ∈ Finset.range n, Nat.choose (k + M) k * 2 ^ k) ≤ 2 ^ (M + 2 * n) := by
   induction n with
   | zero =>
@@ -539,7 +531,7 @@ private theorem turan_factor_nat_le_two_pow (n M : ℕ) :
   | succ n ih =>
     rw [Finset.sum_range_succ]
     calc
-      _ ≤ 2 ^ (M + 2 * n) + 2 ^ (M + 2 * n) := Nat.add_le_add ih (turan_term_nat_le_two_pow n M)
+      _ ≤ 2 ^ (M + 2 * n) + 2 ^ (M + 2 * n) := Nat.add_le_add ih (nat_turanTerm_le_pow n M)
       _ = 2 * 2 ^ (M + 2 * n) := (two_mul _).symm
       _ ≤ 4 * 2 ^ (M + 2 * n) := Nat.mul_le_mul_right _ (by decide)
       _ = _ := by
@@ -555,9 +547,9 @@ Proof: bound each binomial coefficient by a power of two and induct on the block
 
 Role: gives a coarse exponential estimate without an additional logarithmic factor.
 -/
-theorem turan_factor_le_two_pow (n M : ℕ) :
+theorem turanSum_le_two_pow (n M : ℕ) :
     (∑ k ∈ Finset.range n, (Nat.choose (k + M) k : ℝ) * 2 ^ k) ≤ 2 ^ (M + 2 * n) := by
-  exact_mod_cast turan_factor_nat_le_two_pow n M
+  exact_mod_cast nat_turanSum_le_pow n M
 
 /--
 Inputs: a positive number of complex frequencies of norm at least one and an initial exponent.
@@ -569,16 +561,15 @@ Proof: weaken the exact finite Turán denominator to its exponential upper bound
 
 Role: provides an explicit exponential lower bound for finite zero detectors.
 -/
-theorem exists_pure_power_sum_norm_ge_two_pow (z : ℕ → ℂ) (n M : ℕ) (hn : 0 < n)
-    (hz : ∀ i < n, (1 : ℝ) ≤ ‖z i‖) :
+theorem turan_pure_pow_two (z : ℕ → ℂ) (n M : ℕ) (hn : 0 < n) (hz : ∀ i < n, (1 : ℝ) ≤ ‖z i‖) :
     ∃ l ∈ Finset.range n,
       (n : ℝ) / 2 ^ (M + 2 * n) ≤ ‖∑ j ∈ Finset.range n, z j ^ (M + 1 + l)‖ := by
-  obtain ⟨l, hl, hle⟩ := exists_pure_power_sum_norm_ge_turan z n M hn hz
+  obtain ⟨l, hl, hle⟩ := turan_pure_range z n M hn hz
   exact
     ⟨l, hl,
       le_trans
         (div_le_div_of_nonneg_left (Nat.cast_nonneg _) (turan_factor_pos n M hn)
-          (turan_factor_le_two_pow n M))
+          (turanSum_le_two_pow n M))
         hle⟩
 
 /--
@@ -592,8 +583,8 @@ Proof: normalize inverse distances by the radius and apply the exponential Turá
 
 Role: connects the finite power-sum theorem to local lists of zeros with multiplicities.
 -/
-theorem exists_reciprocal_power_sum_norm_ge_of_disk (ρ : ℕ → ℂ) (s : ℂ) (n M : ℕ) (hn : 0 < n)
-    (R : ℝ) (hR : 0 < R) (hρ : ∀ j < n, 0 < ‖s - ρ j‖ ∧ ‖s - ρ j‖ ≤ R) :
+theorem invPowerSum_disk (ρ : ℕ → ℂ) (s : ℂ) (n M : ℕ) (hn : 0 < n) (R : ℝ) (hR : 0 < R)
+    (hρ : ∀ j < n, 0 < ‖s - ρ j‖ ∧ ‖s - ρ j‖ ≤ R) :
     ∃ l ∈ Finset.range n,
       (n : ℝ) / (2 ^ (M + 2 * n) * R ^ (M + 1 + l)) ≤
         ‖∑ j ∈ Finset.range n, ((s - ρ j)⁻¹) ^ (M + 1 + l)‖ := by
@@ -603,7 +594,7 @@ theorem exists_reciprocal_power_sum_norm_ge_of_disk (ρ : ℕ → ℂ) (s : ℂ)
     intro j hj
     rw [show z j = (R : ℂ) * (s - ρ j)⁻¹ from rfl, norm_mul, hRnorm, norm_inv, ← div_eq_mul_inv]
     exact (one_le_div (hρ j hj).1).mpr (hρ j hj).2
-  obtain ⟨l, hl, hle⟩ := exists_pure_power_sum_norm_ge_two_pow z n M hn hz
+  obtain ⟨l, hl, hle⟩ := turan_pure_pow_two z n M hn hz
   have heq :
     ‖∑ j ∈ Finset.range n, z j ^ (M + 1 + l)‖ =
       R ^ (M + 1 + l) * ‖∑ j ∈ Finset.range n, ((s - ρ j)⁻¹) ^ (M + 1 + l)‖ := by
@@ -626,9 +617,8 @@ Proof: normalize every reciprocal distance by `R`, apply the finite weighted Tur
 bound its denominator by `2^(M + 2*s.card)`.
 Role: carries multiplicities as weights when a finite local zero family is used for detection.
 -/
-theorem exists_finset_weighted_reciprocal_power_sum_norm_ge_of_disk (s : Finset ℂ) (center : ℂ)
-    (a : ℂ → ℂ) (M : ℕ) (hs : 0 < s.card) (R : ℝ) (hR : 0 < R)
-    (hzeros : ∀ ρ ∈ s, 0 < ‖center - ρ‖ ∧ ‖center - ρ‖ ≤ R) :
+theorem weightedInvSum_finset (s : Finset ℂ) (center : ℂ) (a : ℂ → ℂ) (M : ℕ) (hs : 0 < s.card)
+    (R : ℝ) (hR : 0 < R) (hzeros : ∀ ρ ∈ s, 0 < ‖center - ρ‖ ∧ ‖center - ρ‖ ≤ R) :
     ∃ l ∈ Finset.range s.card,
       ‖∑ ρ ∈ s, a ρ‖ / (2 ^ (M + 2 * s.card) * R ^ (M + 1 + l)) ≤
         ‖∑ ρ ∈ s, a ρ * ((center - ρ)⁻¹) ^ (M + 1 + l)‖ := by
@@ -638,10 +628,10 @@ theorem exists_finset_weighted_reciprocal_power_sum_norm_ge_of_disk (s : Finset 
     intro ρ hρ
     rw [show z ρ = (R : ℂ) * (center - ρ)⁻¹ from rfl, norm_mul, hRnorm, norm_inv, ← div_eq_mul_inv]
     exact (one_le_div (hzeros ρ hρ).1).mpr (hzeros ρ hρ).2
-  obtain ⟨l, hl, hTuran⟩ := exists_finset_weighted_power_sum_norm_ge_turan s a z M hs hz
+  obtain ⟨l, hl, hTuran⟩ := turan_weighted_finset s a z M hs hz
   have hfactor :
     ∑ k ∈ Finset.range s.card, (Nat.choose (k + M) k : ℝ) * 2 ^ k ≤ 2 ^ (M + 2 * s.card) :=
-    turan_factor_le_two_pow s.card M
+    turanSum_le_two_pow s.card M
   have hden : 0 < ∑ k ∈ Finset.range s.card, (Nat.choose (k + M) k : ℝ) * 2 ^ k :=
     turan_factor_pos s.card M hs
   have hbase : ‖∑ ρ ∈ s, a ρ‖ / 2 ^ (M + 2 * s.card) ≤ ‖∑ ρ ∈ s, a ρ * z ρ ^ (M + 1 + l)‖ := by
@@ -674,8 +664,8 @@ Proof: normalize all reciprocal distances by `R`, apply the finite weighted Tur�
 use the exponential upper bound for its denominator.
 Role: gives a multiplicity-preserving local power-sum lower bound directly on a finite zero set.
 -/
-theorem exists_finset_reciprocal_power_sum_norm_ge_of_disk (s : Finset ℂ) (center : ℂ) (M : ℕ)
-    (hs : 0 < s.card) (R : ℝ) (hR : 0 < R) (hzeros : ∀ ρ ∈ s, 0 < ‖center - ρ‖ ∧ ‖center - ρ‖ ≤ R) :
+theorem pureInvSum_finset (s : Finset ℂ) (center : ℂ) (M : ℕ) (hs : 0 < s.card) (R : ℝ) (hR : 0 < R)
+    (hzeros : ∀ ρ ∈ s, 0 < ‖center - ρ‖ ∧ ‖center - ρ‖ ≤ R) :
     ∃ l ∈ Finset.range s.card,
       (s.card : ℝ) / (2 ^ (M + 2 * s.card) * R ^ (M + 1 + l)) ≤
         ‖∑ ρ ∈ s, ((center - ρ)⁻¹) ^ (M + 1 + l)‖ := by
@@ -685,10 +675,10 @@ theorem exists_finset_reciprocal_power_sum_norm_ge_of_disk (s : Finset ℂ) (cen
     intro ρ hρ
     rw [show z ρ = (R : ℂ) * (center - ρ)⁻¹ from rfl, norm_mul, hRnorm, norm_inv, ← div_eq_mul_inv]
     exact (one_le_div (hzeros ρ hρ).1).mpr (hzeros ρ hρ).2
-  obtain ⟨l, hl, hTuran⟩ := exists_finset_weighted_power_sum_norm_ge_turan s (fun _ ↦ 1) z M hs hz
+  obtain ⟨l, hl, hTuran⟩ := turan_weighted_finset s (fun _ ↦ 1) z M hs hz
   have hfactor :
     ∑ k ∈ Finset.range s.card, (Nat.choose (k + M) k : ℝ) * 2 ^ k ≤ 2 ^ (M + 2 * s.card) :=
-    turan_factor_le_two_pow s.card M
+    turanSum_le_two_pow s.card M
   have hbase : (s.card : ℝ) / 2 ^ (M + 2 * s.card) ≤ ‖∑ ρ ∈ s, z ρ ^ (M + 1 + l)‖ := by
     have hden := turan_factor_pos s.card M hs
     have hnumerator : 0 ≤ (s.card : ℝ) := Nat.cast_nonneg _
@@ -713,12 +703,12 @@ Claim: one of the next `n` reciprocal-distance power sums has an explicit positi
 Proof: apply the existing reciprocal power-sum estimate to the disk of radius `3η`.
 Role: estimates a local sum of zeros satisfying `1-η ≤ Re ρ ≤ 1` and `|t-Im ρ| ≤ η`.
 -/
-theorem exists_reciprocal_power_sum_norm_ge_of_three_eta_disk (ρ : ℕ → ℂ) (s : ℂ) (n M : ℕ)
-    (hn : 0 < n) {η : ℝ} (hη : 0 < η) (hρ : ∀ j < n, 0 < ‖s - ρ j‖ ∧ ‖s - ρ j‖ ≤ 3 * η) :
+theorem invPowerSum_3_eta (ρ : ℕ → ℂ) (s : ℂ) (n M : ℕ) (hn : 0 < n) {η : ℝ} (hη : 0 < η)
+    (hρ : ∀ j < n, 0 < ‖s - ρ j‖ ∧ ‖s - ρ j‖ ≤ 3 * η) :
     ∃ l ∈ Finset.range n,
       (n : ℝ) / (2 ^ (M + 2 * n) * (3 * η) ^ (M + 1 + l)) ≤
         ‖∑ j ∈ Finset.range n, ((s - ρ j)⁻¹) ^ (M + 1 + l)‖ := by
-  exact exists_reciprocal_power_sum_norm_ge_of_disk ρ s n M hn (3 * η) (by positivity) hρ
+  exact invPowerSum_disk ρ s n M hn (3 * η) (by positivity) hρ
 
 /--
 Inputs: a finite set of complex numbers, a power, and a uniform upper bound for their norms.
@@ -727,8 +717,8 @@ norm bound.
 Proof: apply the triangle inequality termwise, then use monotonicity of natural powers.
 Role: bounds the contribution of zeros outside a selected local disk.
 -/
-theorem norm_sum_powers_le_card_mul_pow_of_norm_le {ι : Type} (s : Finset ι) (z : ι → ℂ) (k : ℕ)
-    {r : ℝ} (hz : ∀ i ∈ s, ‖z i‖ ≤ r) : ‖∑ i ∈ s, z i ^ k‖ ≤ (s.card : ℝ) * r ^ k := by
+theorem norm_pow_sum_le_card {ι : Type} (s : Finset ι) (z : ι → ℂ) (k : ℕ) {r : ℝ}
+    (hz : ∀ i ∈ s, ‖z i‖ ≤ r) : ‖∑ i ∈ s, z i ^ k‖ ≤ (s.card : ℝ) * r ^ k := by
   calc
     ‖∑ i ∈ s, z i ^ k‖ ≤ ∑ i ∈ s, ‖z i ^ k‖ := norm_sum_le _ _
     _ ≤ ∑ _i ∈ s, r ^ k := by
@@ -747,16 +737,16 @@ Proof: apply the local-disk Turán estimate, bound the outside sum termwise, and
 triangle inequality.
 Role: separates the local zero contribution from the tail before proving that the error is small.
 -/
-theorem exists_reciprocal_power_sum_norm_ge_of_three_eta_disk_with_tail (ρ τ : ℕ → ℂ) (s : ℂ)
-    (n m M : ℕ) (hn : 0 < n) {η : ℝ} (hη : 0 < η) (Rtail : ℝ)
-    (hρ : ∀ j < n, 0 < ‖s - ρ j‖ ∧ ‖s - ρ j‖ ≤ 3 * η) (hτ : ∀ j < m, ‖(s - τ j)⁻¹‖ ≤ Rtail) :
+theorem invSum_3_eta_tail (ρ τ : ℕ → ℂ) (s : ℂ) (n m M : ℕ) (hn : 0 < n) {η : ℝ} (hη : 0 < η)
+    (Rtail : ℝ) (hρ : ∀ j < n, 0 < ‖s - ρ j‖ ∧ ‖s - ρ j‖ ≤ 3 * η)
+    (hτ : ∀ j < m, ‖(s - τ j)⁻¹‖ ≤ Rtail) :
     ∃ l ∈ Finset.range n,
       (n : ℝ) / (2 ^ (M + 2 * n) * (3 * η) ^ (M + 1 + l)) - (m : ℝ) * Rtail ^ (M + 1 + l) ≤
         ‖(∑ j ∈ Finset.range n, ((s - ρ j)⁻¹) ^ (M + 1 + l)) +
             ∑ j ∈ Finset.range m, ((s - τ j)⁻¹) ^ (M + 1 + l)‖ := by
-  obtain ⟨l, hl, hlocal⟩ := exists_reciprocal_power_sum_norm_ge_of_three_eta_disk ρ s n M hn hη hρ
+  obtain ⟨l, hl, hlocal⟩ := invPowerSum_3_eta ρ s n M hn hη hρ
   have htail :=
-    norm_sum_powers_le_card_mul_pow_of_norm_le (Finset.range m) (fun j => (s - τ j)⁻¹) (M + 1 + l)
+    norm_pow_sum_le_card (Finset.range m) (fun j => (s - τ j)⁻¹) (M + 1 + l)
       (by
         intro j hj
         exact hτ j (Finset.mem_range.mp hj))
@@ -778,7 +768,7 @@ Claim: the base margin controls every later exponent when the scaled tail radius
 Proof: compare the powers by antitonicity on `[0, 1]`, then clear the positive denominator.
 Role: derives the uniform margin needed to absorb a geometric tail into a local Turán bound.
 -/
-theorem tail_power_margin_of_ratio (n m M l : ℕ) {η Rtail : ℝ} (hη : 0 < η) (hRtail : 0 ≤ Rtail)
+theorem tail_power_margin (n m M l : ℕ) {η Rtail : ℝ} (hη : 0 < η) (hRtail : 0 ≤ Rtail)
     (hscale : 3 * η * Rtail ≤ 1)
     (hbase : 2 * (m : ℝ) * (3 * η * Rtail) ^ (M + 1) ≤ (n : ℝ) / 2 ^ (M + 2 * n)) :
     2 * ((m : ℝ) * Rtail ^ (M + 1 + l)) ≤ (n : ℝ) / (2 ^ (M + 2 * n) * (3 * η) ^ (M + 1 + l)) := by
@@ -806,8 +796,7 @@ Proof: the geometric sequence with ratio twice the tail ratio tends to zero; cho
 where it is smaller than the explicit threshold determined by the local count and block length.
 Role: removes the free initial-margin premise from the geometric-tail zero detector.
 -/
-theorem exists_exponent_tail_base_margin_of_ratio_lt_half (m n : ℕ) (hn : 0 < n) {r : ℝ}
-    (hr0 : 0 ≤ r) (hr : r < 1 / 2) :
+theorem exists_tail_margin (m n : ℕ) (hn : 0 < n) {r : ℝ} (hr0 : 0 ≤ r) (hr : r < 1 / 2) :
     ∃ M : ℕ, 2 * (m : ℝ) * r ^ (M + 1) ≤ (n : ℝ) / 2 ^ (M + 2 * n) := by
   let A : ℝ := 2 * (m : ℝ) * r + 1
   let B : ℝ := 2 ^ (2 * n)
@@ -851,7 +840,7 @@ Proof: use `(3/4)^4 ≤ 1/2`, cancel the height-block factor, and bound `m / 2^m
 Role: makes the starting exponent in the separated-zero detector linear in the local and remote
 term counts.
 -/
-theorem tail_base_margin_of_ratio_three_eighths (m n : ℕ) (hn : 0 < n) :
+theorem tail_base_margin_3_8 (m n : ℕ) (hn : 0 < n) :
     2 * (m : ℝ) * (3 / 8 : ℝ) ^ (4 * (m + 2 * n) + 1) ≤
       (n : ℝ) / 2 ^ (4 * (m + 2 * n) + 2 * n) := by
   let a : ℕ := m + 2 * n
@@ -918,9 +907,9 @@ Claim: one combined reciprocal power sum is at least half the local Turán lower
 Proof: apply the split estimate and the supplied arithmetic margin at its selected exponent.
 Role: turns a quantitative tail estimate into a positive lower bound for zero detection.
 -/
-theorem exists_reciprocal_power_sum_norm_ge_of_three_eta_disk_with_small_tail (ρ τ : ℕ → ℂ) (s : ℂ)
-    (n m M : ℕ) (hn : 0 < n) {η : ℝ} (hη : 0 < η) (Rtail : ℝ)
-    (hρ : ∀ j < n, 0 < ‖s - ρ j‖ ∧ ‖s - ρ j‖ ≤ 3 * η) (hτ : ∀ j < m, ‖(s - τ j)⁻¹‖ ≤ Rtail)
+theorem invSum_small_tail (ρ τ : ℕ → ℂ) (s : ℂ) (n m M : ℕ) (hn : 0 < n) {η : ℝ} (hη : 0 < η)
+    (Rtail : ℝ) (hρ : ∀ j < n, 0 < ‖s - ρ j‖ ∧ ‖s - ρ j‖ ≤ 3 * η)
+    (hτ : ∀ j < m, ‖(s - τ j)⁻¹‖ ≤ Rtail)
     (hmargin :
       ∀ l ∈ Finset.range n,
         2 * ((m : ℝ) * Rtail ^ (M + 1 + l)) ≤ (n : ℝ) / (2 ^ (M + 2 * n) * (3 * η) ^ (M + 1 + l))) :
@@ -928,8 +917,7 @@ theorem exists_reciprocal_power_sum_norm_ge_of_three_eta_disk_with_small_tail (�
       ((n : ℝ) / (2 ^ (M + 2 * n) * (3 * η) ^ (M + 1 + l))) / 2 ≤
         ‖(∑ j ∈ Finset.range n, ((s - ρ j)⁻¹) ^ (M + 1 + l)) +
             ∑ j ∈ Finset.range m, ((s - τ j)⁻¹) ^ (M + 1 + l)‖ := by
-  obtain ⟨l, hl, hsum⟩ :=
-    exists_reciprocal_power_sum_norm_ge_of_three_eta_disk_with_tail ρ τ s n m M hn hη Rtail hρ hτ
+  obtain ⟨l, hl, hsum⟩ := invSum_3_eta_tail ρ τ s n m M hn hη Rtail hρ hτ
   refine ⟨l, hl, ?_⟩
   have hm := hmargin l hl
   linarith only [hsum, hm]
@@ -938,23 +926,20 @@ theorem exists_reciprocal_power_sum_norm_ge_of_three_eta_disk_with_small_tail (�
 Inputs: local zeros and a finite tail whose scaled radius and first exponent satisfy a ratio bound.
 Claim: some exponent in the local Turán block gives at least half the local lower bound after
 adding the tail.
-Proof: derive the block-wide margin from `tail_power_margin_of_ratio` and apply the split estimate.
+Proof: derive the block-wide margin from `tail_power_margin` and apply the split estimate.
 Role: provides a positive local power-sum bound without an unproved uniform-margin premise.
 -/
-theorem exists_reciprocal_power_sum_norm_ge_of_three_eta_disk_with_geometric_tail (ρ τ : ℕ → ℂ)
-    (s : ℂ) (n m M : ℕ) (hn : 0 < n) {η : ℝ} (hη : 0 < η) (Rtail : ℝ) (hRtail : 0 ≤ Rtail)
-    (hρ : ∀ j < n, 0 < ‖s - ρ j‖ ∧ ‖s - ρ j‖ ≤ 3 * η) (hτ : ∀ j < m, ‖(s - τ j)⁻¹‖ ≤ Rtail)
-    (hscale : 3 * η * Rtail ≤ 1)
+theorem invSum_geometric_tail (ρ τ : ℕ → ℂ) (s : ℂ) (n m M : ℕ) (hn : 0 < n) {η : ℝ} (hη : 0 < η)
+    (Rtail : ℝ) (hRtail : 0 ≤ Rtail) (hρ : ∀ j < n, 0 < ‖s - ρ j‖ ∧ ‖s - ρ j‖ ≤ 3 * η)
+    (hτ : ∀ j < m, ‖(s - τ j)⁻¹‖ ≤ Rtail) (hscale : 3 * η * Rtail ≤ 1)
     (hbase : 2 * (m : ℝ) * (3 * η * Rtail) ^ (M + 1) ≤ (n : ℝ) / 2 ^ (M + 2 * n)) :
     ∃ l ∈ Finset.range n,
       ((n : ℝ) / (2 ^ (M + 2 * n) * (3 * η) ^ (M + 1 + l))) / 2 ≤
         ‖(∑ j ∈ Finset.range n, ((s - ρ j)⁻¹) ^ (M + 1 + l)) +
             ∑ j ∈ Finset.range m, ((s - τ j)⁻¹) ^ (M + 1 + l)‖ := by
-  apply
-    exists_reciprocal_power_sum_norm_ge_of_three_eta_disk_with_small_tail ρ τ s n m M hn hη Rtail hρ
-      hτ
+  apply invSum_small_tail ρ τ s n m M hn hη Rtail hρ hτ
   intro l hl
-  exact tail_power_margin_of_ratio n m M l hη hRtail hscale hbase
+  exact tail_power_margin n m M l hη hRtail hscale hbase
 
 /--
 Inputs: local zeros within `3η`, a finite remote-zero tail, and a nonnegative tail radius whose
@@ -964,21 +949,19 @@ power-sum lower bound, with no separately supplied first-exponent margin.
 Proof: choose the starting exponent by geometric decay, then apply the uniform tail-margin theorem.
 Role: exposes the tail-split detector at the point where the local and remote zero bounds meet.
 -/
-theorem exists_reciprocal_power_sum_norm_ge_of_three_eta_disk_with_tail_ratio (ρ τ : ℕ → ℂ) (s : ℂ)
-    (n m : ℕ) (hn : 0 < n) {η : ℝ} (hη : 0 < η) (Rtail : ℝ) (hRtail : 0 ≤ Rtail)
-    (hρ : ∀ j < n, 0 < ‖s - ρ j‖ ∧ ‖s - ρ j‖ ≤ 3 * η) (hτ : ∀ j < m, ‖(s - τ j)⁻¹‖ ≤ Rtail)
-    (hscale : 3 * η * Rtail < 1 / 2) :
+theorem invSum_tail_ratio (ρ τ : ℕ → ℂ) (s : ℂ) (n m : ℕ) (hn : 0 < n) {η : ℝ} (hη : 0 < η)
+    (Rtail : ℝ) (hRtail : 0 ≤ Rtail) (hρ : ∀ j < n, 0 < ‖s - ρ j‖ ∧ ‖s - ρ j‖ ≤ 3 * η)
+    (hτ : ∀ j < m, ‖(s - τ j)⁻¹‖ ≤ Rtail) (hscale : 3 * η * Rtail < 1 / 2) :
     ∃ M : ℕ,
       ∃ l ∈ Finset.range n,
         ((n : ℝ) / (2 ^ (M + 2 * n) * (3 * η) ^ (M + 1 + l))) / 2 ≤
           ‖(∑ j ∈ Finset.range n, ((s - ρ j)⁻¹) ^ (M + 1 + l)) +
               ∑ j ∈ Finset.range m, ((s - τ j)⁻¹) ^ (M + 1 + l)‖ := by
   have hratio0 : 0 ≤ 3 * η * Rtail := by positivity
-  obtain ⟨M, hbase⟩ :=
-    exists_exponent_tail_base_margin_of_ratio_lt_half m n hn hratio0 (by linarith only [hscale])
+  obtain ⟨M, hbase⟩ := exists_tail_margin m n hn hratio0 (by linarith only [hscale])
   obtain ⟨l, hl, hbound⟩ :=
-    exists_reciprocal_power_sum_norm_ge_of_three_eta_disk_with_geometric_tail ρ τ s n m M hn hη
-      Rtail hRtail hρ hτ (le_of_lt (lt_trans hscale (by norm_num only : (1 / 2 : ℝ) < 1))) hbase
+    invSum_geometric_tail ρ τ s n m M hn hη Rtail hRtail hρ hτ
+      (le_of_lt (lt_trans hscale (by norm_num only : (1 / 2 : ℝ) < 1))) hbase
   exact ⟨M, l, hl, hbound⟩
 
 /--
@@ -990,8 +973,7 @@ Proof: the remote inverse distances are at most `1/(8η)`, so their ratio to the
 is `3/8 < 1/2`; apply the automatic exponent-selection theorem.
 Role: turns an annular zero separation into the finite-tail zero-detection interface.
 -/
-theorem exists_reciprocal_power_sum_norm_ge_of_three_eta_disk_with_remote_distance (ρ τ : ℕ → ℂ)
-    (s : ℂ) (n m : ℕ) (hn : 0 < n) {η : ℝ} (hη : 0 < η)
+theorem invSum_remote_disk (ρ τ : ℕ → ℂ) (s : ℂ) (n m : ℕ) (hn : 0 < n) {η : ℝ} (hη : 0 < η)
     (hρ : ∀ j < n, 0 < ‖s - ρ j‖ ∧ ‖s - ρ j‖ ≤ 3 * η) (hτ : ∀ j < m, 8 * η ≤ ‖s - τ j‖) :
     ∃ M : ℕ,
       ∃ l ∈ Finset.range n,
@@ -1011,9 +993,7 @@ theorem exists_reciprocal_power_sum_norm_ge_of_three_eta_disk_with_remote_distan
     have heq : 3 * η * (8 * η)⁻¹ = 3 / 8 := by field_simp [ne_of_gt hη]
     rw [heq]
     norm_num only
-  exact
-    exists_reciprocal_power_sum_norm_ge_of_three_eta_disk_with_tail_ratio ρ τ s n m hn hη Rtail
-      hRtail hρ hτbound hscale
+  exact invSum_tail_ratio ρ τ s n m hn hη Rtail hRtail hρ hτbound hscale
 
 /--
 Inputs: local zeros in the `3η` disk and a finite remote family at distance at least `8η`.
@@ -1022,8 +1002,7 @@ explicit exponent `4 * (m + 2 * n) + 1`.
 Proof: specialize the geometric-tail detector at ratio `3/8` and use the explicit base margin.
 Role: bounds the derivative-order range in terms of the near and remote zero counts.
 -/
-theorem exists_reciprocal_power_sum_norm_ge_of_three_eta_disk_with_remote_distance_explicit
-    (ρ τ : ℕ → ℂ) (s : ℂ) (n m : ℕ) (hn : 0 < n) {η : ℝ} (hη : 0 < η)
+theorem invSum_remote_fixed (ρ τ : ℕ → ℂ) (s : ℂ) (n m : ℕ) (hn : 0 < n) {η : ℝ} (hη : 0 < η)
     (hρ : ∀ j < n, 0 < ‖s - ρ j‖ ∧ ‖s - ρ j‖ ≤ 3 * η) (hτ : ∀ j < m, 8 * η ≤ ‖s - τ j‖) :
     ∃ l ∈ Finset.range n,
       ((n : ℝ) / (2 ^ (4 * (m + 2 * n) + 2 * n) * (3 * η) ^ (4 * (m + 2 * n) + 1 + l))) / 2 ≤
@@ -1048,10 +1027,9 @@ theorem exists_reciprocal_power_sum_norm_ge_of_three_eta_disk_with_remote_distan
     dsimp only [Rtail, M]
     have heq : 3 * η * (8 * η)⁻¹ = (3 / 8 : ℝ) := by field_simp [ne_of_gt hη]
     rw [heq]
-    exact tail_base_margin_of_ratio_three_eighths m n hn
+    exact tail_base_margin_3_8 m n hn
   obtain ⟨l, hl, hbound⟩ :=
-    exists_reciprocal_power_sum_norm_ge_of_three_eta_disk_with_geometric_tail ρ τ s n m M hn hη
-      Rtail hRtail hρ hτbound hscale hbase
+    invSum_geometric_tail ρ τ s n m M hn hη Rtail hRtail hρ hτbound hscale hbase
   refine ⟨l, hl, ?_⟩
   simpa only [M] using hbound
 
@@ -1063,8 +1041,8 @@ Proof: invert the two distance bounds and compare the resulting rational factors
 Role: quantifies the separation available when a local disk is centered at `1 + η + it` and the
 distinguished zero lies within `η/4` of `1 + it`.
 -/
-theorem remote_inv_norm_le_five_thirtysecond_mul_near_inv_norm (s ρ τ : ℂ) {η : ℝ} (hη : 0 < η)
-    (hnear0 : 0 < ‖s - ρ‖) (hnear : ‖s - ρ‖ ≤ 5 * η / 4) (hremote : 8 * η ≤ ‖s - τ‖) :
+theorem remoteInv_le_5_32 (s ρ τ : ℂ) {η : ℝ} (hη : 0 < η) (hnear0 : 0 < ‖s - ρ‖)
+    (hnear : ‖s - ρ‖ ≤ 5 * η / 4) (hremote : 8 * η ≤ ‖s - τ‖) :
     ‖(s - τ)⁻¹‖ ≤ (5 / 32 : ℝ) * ‖(s - ρ)⁻¹‖ := by
   rw [norm_inv, norm_inv]
   have hremote' : 1 / ‖s - τ‖ ≤ 1 / (8 * η) := one_div_le_one_div_of_le (by positivity) hremote
@@ -1085,18 +1063,14 @@ Claim: each reciprocal power sum over the remote family is bounded by its cardin
 Proof: apply the pointwise reciprocal separation and the finite power-sum norm bound.
 Role: supplies the finite remote-error term for the maximal-node zero detector.
 -/
-theorem norm_sum_remote_reciprocal_powers_le_of_near_zero (s ρ : ℂ) (τ : ℕ → ℂ) (m k : ℕ) {η : ℝ}
-    (hη : 0 < η) (hnear0 : 0 < ‖s - ρ‖) (hnear : ‖s - ρ‖ ≤ 5 * η / 4)
-    (hremote : ∀ j < m, 8 * η ≤ ‖s - τ j‖) :
+theorem remotePowers_near_le (s ρ : ℂ) (τ : ℕ → ℂ) (m k : ℕ) {η : ℝ} (hη : 0 < η)
+    (hnear0 : 0 < ‖s - ρ‖) (hnear : ‖s - ρ‖ ≤ 5 * η / 4) (hremote : ∀ j < m, 8 * η ≤ ‖s - τ j‖) :
     ‖∑ j ∈ Finset.range m, ((s - τ j)⁻¹) ^ k‖ ≤ (m : ℝ) * ((5 / 32 : ℝ) * ‖(s - ρ)⁻¹‖) ^ k := by
   have hbound :=
-    norm_sum_powers_le_card_mul_pow_of_norm_le (Finset.range m) (fun j => (s - τ j)⁻¹) k (r :=
-      (5 / 32 : ℝ) * ‖(s - ρ)⁻¹‖)
+    norm_pow_sum_le_card (Finset.range m) (fun j => (s - τ j)⁻¹) k (r := (5 / 32 : ℝ) * ‖(s - ρ)⁻¹‖)
       (by
         intro j hj
-        exact
-          remote_inv_norm_le_five_thirtysecond_mul_near_inv_norm s ρ (τ j) hη hnear0 hnear
-            (hremote j (Finset.mem_range.mp hj)))
+        exact remoteInv_le_5_32 s ρ (τ j) hη hnear0 hnear (hremote j (Finset.mem_range.mp hj)))
   simpa only [Finset.card_range] using hbound
 
 /--
@@ -1106,8 +1080,8 @@ Claim: the remote reciprocal norm is at most `1/64` times the distinguished reci
 Proof: invert the distance bounds and compare the resulting rational factors.
 Role: provides enough separation for the maximum-node power-sum lower bound with base `1/50`.
 -/
-theorem remote_inv_norm_le_one_sixtyfourth_mul_near_inv_norm (s ρ τ : ℂ) {η : ℝ} (hη : 0 < η)
-    (hnear0 : 0 < ‖s - ρ‖) (hnear : ‖s - ρ‖ ≤ 5 * η / 4) (hremote : 80 * η ≤ ‖s - τ‖) :
+theorem remoteInv_le_div_64 (s ρ τ : ℂ) {η : ℝ} (hη : 0 < η) (hnear0 : 0 < ‖s - ρ‖)
+    (hnear : ‖s - ρ‖ ≤ 5 * η / 4) (hremote : 80 * η ≤ ‖s - τ‖) :
     ‖(s - τ)⁻¹‖ ≤ (1 / 64 : ℝ) * ‖(s - ρ)⁻¹‖ := by
   rw [norm_inv, norm_inv]
   have hremote' : 1 / ‖s - τ‖ ≤ 1 / (80 * η) := one_div_le_one_div_of_le (by positivity) hremote
@@ -1128,18 +1102,14 @@ Claim: the remote reciprocal power sum of order `k` is bounded by the family siz
 Proof: apply the pointwise separation bound and the finite power-sum norm estimate.
 Role: controls the tail after applying the maximum-node theorem to a larger local disk.
 -/
-theorem norm_sum_remote_reciprocal_powers_le_of_eighty_eta (s ρ : ℂ) (τ : ℕ → ℂ) (m k : ℕ) {η : ℝ}
-    (hη : 0 < η) (hnear0 : 0 < ‖s - ρ‖) (hnear : ‖s - ρ‖ ≤ 5 * η / 4)
-    (hremote : ∀ j < m, 80 * η ≤ ‖s - τ j‖) :
+theorem remotePowers_80eta_le (s ρ : ℂ) (τ : ℕ → ℂ) (m k : ℕ) {η : ℝ} (hη : 0 < η)
+    (hnear0 : 0 < ‖s - ρ‖) (hnear : ‖s - ρ‖ ≤ 5 * η / 4) (hremote : ∀ j < m, 80 * η ≤ ‖s - τ j‖) :
     ‖∑ j ∈ Finset.range m, ((s - τ j)⁻¹) ^ k‖ ≤ (m : ℝ) * ((1 / 64 : ℝ) * ‖(s - ρ)⁻¹‖) ^ k := by
   have hbound :=
-    norm_sum_powers_le_card_mul_pow_of_norm_le (Finset.range m) (fun j => (s - τ j)⁻¹) k (r :=
-      (1 / 64 : ℝ) * ‖(s - ρ)⁻¹‖)
+    norm_pow_sum_le_card (Finset.range m) (fun j => (s - τ j)⁻¹) k (r := (1 / 64 : ℝ) * ‖(s - ρ)⁻¹‖)
       (by
         intro j hj
-        exact
-          remote_inv_norm_le_one_sixtyfourth_mul_near_inv_norm s ρ (τ j) hη hnear0 hnear
-            (hremote j (Finset.mem_range.mp hj)))
+        exact remoteInv_le_div_64 s ρ (τ j) hη hnear0 hnear (hremote j (Finset.mem_range.mp hj)))
   simpa only [Finset.card_range] using hbound
 
 /--
@@ -1149,7 +1119,7 @@ Proof: use `exp 1 < 3` to bound the coefficient base below by `1/24`, then compa
 Role: converts the Kolesnik–Straus estimate into the coarser exponential threshold used by the
 zero detector.
 -/
-theorem ks_coefficient_lower_bound_at_equal_block_lengths (n k : ℕ) (hn : 0 < n) (hk : n ≤ k) :
+theorem ks_coeff_equal_bound (n k : ℕ) (hn : 0 < n) (hk : n ≤ k) :
     ((n : ℝ) / (4 * Real.exp 1 * ((n : ℝ) + n))) ^ n ≥ (1 / (50 : ℝ)) ^ k := by
   have hnR : (0 : ℝ) < n := by exact_mod_cast hn
   have he : Real.exp 1 < 3 := Real.exp_one_lt_three
@@ -1178,7 +1148,7 @@ Proof: use `exp 1 < 3` to bound the coefficient base below by `1/48`, then compa
 
 Role: matches the exponent range beginning at `3n + 1` to the `1/50` finite-tail margin.
 -/
-theorem ks_coefficient_lower_bound_at_triple_block_lengths (n k : ℕ) (hn : 0 < n) (hk : n ≤ k) :
+theorem ks_coeff_triple_bound (n k : ℕ) (hn : 0 < n) (hk : n ≤ k) :
     ((n : ℝ) / (4 * Real.exp 1 * ((n : ℝ) + 3 * n))) ^ n ≥ (1 / (50 : ℝ)) ^ k := by
   have hnR : (0 : ℝ) < n := by exact_mod_cast hn
   have he : Real.exp 1 < 3 := Real.exp_one_lt_three
@@ -1207,7 +1177,7 @@ Proof: write `50/64 = 25/32`, use `(25/32)^3 ≤ 1/2`, and apply `2m ≤ 2^m`.
 Role: fixes a concrete exponent budget under which the finite remote tail cannot cancel more than
 half of a Kolesnik--Straus main term with base `1/50`.
 -/
-theorem remote_power_tail_ratio_le_half (m k : ℕ) (hk : 3 * m ≤ k) :
+theorem remote_ratio_le_half (m k : ℕ) (hk : 3 * m ≤ k) :
     (m : ℝ) * ((50 : ℝ) / 64) ^ k ≤ 1 / 2 := by
   have htwo : 2 * m ≤ 2 ^ m := Nat.mul_le_pow (by decide) m
   have htwoR : 2 * (m : ℝ) ≤ (2 : ℝ) ^ m := by exact_mod_cast htwo
@@ -1245,12 +1215,12 @@ Proof: combine the pointwise remote-tail estimate with the explicit ratio bound.
 
 Role: supplies the finite tail margin required by the positive zero-detection argument.
 -/
-theorem norm_sum_remote_reciprocal_powers_le_half_ks_scale (s ρ : ℂ) (τ : ℕ → ℂ) (m k : ℕ) {η : ℝ}
-    (hη : 0 < η) (hnear0 : 0 < ‖s - ρ‖) (hnear : ‖s - ρ‖ ≤ 5 * η / 4)
-    (hremote : ∀ j < m, 80 * η ≤ ‖s - τ j‖) (hk : 3 * m ≤ k) :
+theorem remotePowers_half_ks (s ρ : ℂ) (τ : ℕ → ℂ) (m k : ℕ) {η : ℝ} (hη : 0 < η)
+    (hnear0 : 0 < ‖s - ρ‖) (hnear : ‖s - ρ‖ ≤ 5 * η / 4) (hremote : ∀ j < m, 80 * η ≤ ‖s - τ j‖)
+    (hk : 3 * m ≤ k) :
     ‖∑ j ∈ Finset.range m, ((s - τ j)⁻¹) ^ k‖ ≤ (1 / 2 : ℝ) * ((1 / 50 : ℝ) * ‖(s - ρ)⁻¹‖) ^ k := by
-  have htail := norm_sum_remote_reciprocal_powers_le_of_eighty_eta s ρ τ m k hη hnear0 hnear hremote
-  have hratio := remote_power_tail_ratio_le_half m k hk
+  have htail := remotePowers_80eta_le s ρ τ m k hη hnear0 hnear hremote
+  have hratio := remote_ratio_le_half m k hk
   have hconst : (1 / 50 : ℝ) ^ k * (25 / 32 : ℝ) ^ k = (1 / 64 : ℝ) ^ k := by
     rw [← mul_pow]
     have hbase : (1 / 50 : ℝ) * (25 / 32 : ℝ) = 1 / 64 := by
@@ -1281,7 +1251,7 @@ Proof: apply the reverse triangle inequality and rearrange the two bounds.
 
 Role: combines the maximum-node contribution with the finite remote-zero tail estimate.
 -/
-theorem norm_add_ge_half_of_main_and_tail (main tail : ℂ) (A : ℝ) (hmain : A ≤ ‖main‖)
+theorem norm_add_ge_half (main tail : ℂ) (A : ℝ) (hmain : A ≤ ‖main‖)
     (htail : ‖tail‖ ≤ (1 / 2 : ℝ) * A) : (1 / 2 : ℝ) * A ≤ ‖main + tail‖ := by
   have htriangle : ‖main‖ ≤ ‖main + tail‖ + ‖tail‖ := by
     have heq : main = (main + tail) - tail := by abel
@@ -1301,14 +1271,13 @@ Proof: apply the explicit finite-tail estimate and the reverse-triangle combinat
 Role: gives the finite-zero version of the positive detection margin once the maximum-node bound
 is supplied.
 -/
-theorem norm_add_remote_reciprocal_powers_ge_half_ks_scale (s ρ main : ℂ) (τ : ℕ → ℂ) (m k : ℕ)
-    {η : ℝ} (hη : 0 < η) (hnear0 : 0 < ‖s - ρ‖) (hnear : ‖s - ρ‖ ≤ 5 * η / 4)
-    (hremote : ∀ j < m, 80 * η ≤ ‖s - τ j‖) (hk : 3 * m ≤ k)
-    (hmain : ((1 / 50 : ℝ) * ‖(s - ρ)⁻¹‖) ^ k ≤ ‖main‖) :
+theorem add_remote_ge_half_ks (s ρ main : ℂ) (τ : ℕ → ℂ) (m k : ℕ) {η : ℝ} (hη : 0 < η)
+    (hnear0 : 0 < ‖s - ρ‖) (hnear : ‖s - ρ‖ ≤ 5 * η / 4) (hremote : ∀ j < m, 80 * η ≤ ‖s - τ j‖)
+    (hk : 3 * m ≤ k) (hmain : ((1 / 50 : ℝ) * ‖(s - ρ)⁻¹‖) ^ k ≤ ‖main‖) :
     (1 / 2 : ℝ) * ((1 / 50 : ℝ) * ‖(s - ρ)⁻¹‖) ^ k ≤
       ‖main + ∑ j ∈ Finset.range m, ((s - τ j)⁻¹) ^ k‖ := by
-  apply norm_add_ge_half_of_main_and_tail main _ _ hmain
-  exact norm_sum_remote_reciprocal_powers_le_half_ks_scale s ρ τ m k hη hnear0 hnear hremote hk
+  apply norm_add_ge_half main _ _ hmain
+  exact remotePowers_half_ks s ρ τ m k hη hnear0 hnear hremote hk
 
 /--
 Inputs: nonnegative weights, a summable weighted inverse-square mass, and a uniform bound on the
@@ -1318,9 +1287,8 @@ norm bounded by the inverse-square mass times the corresponding remote-radius po
 Proof: compare each power with the square times the remaining bounded powers, then sum the norms.
 Role: supplies an infinite-tail estimate for the local zero detector.
 -/
-theorem norm_tsum_weighted_power_le_of_summable_square {ι : Type*} (w : ι → ℝ) (z : ι → ℂ) {R : ℝ}
-    (hw : ∀ i, 0 ≤ w i) (hz : ∀ i, ‖z i‖ ≤ R) (hbase : Summable (fun i => w i * ‖z i‖ ^ 2)) (k : ℕ)
-    (hk : 2 ≤ k) :
+theorem weightedPower_tsum_le {ι : Type*} (w : ι → ℝ) (z : ι → ℂ) {R : ℝ} (hw : ∀ i, 0 ≤ w i)
+    (hz : ∀ i, ‖z i‖ ≤ R) (hbase : Summable (fun i => w i * ‖z i‖ ^ 2)) (k : ℕ) (hk : 2 ≤ k) :
     Summable (fun i => (w i : ℂ) * z i ^ k) ∧
       ‖∑' i, (w i : ℂ) * z i ^ k‖ ≤ R ^ (k - 2) * ∑' i, w i * ‖z i‖ ^ 2 := by
   have hpow (i : ι) : ‖z i‖ ^ k ≤ R ^ (k - 2) * ‖z i‖ ^ 2 := by
@@ -1359,7 +1327,7 @@ Proof: compute the degree and leading coefficient of its linear and constant par
 
 Role: supports transferring extremal polynomial estimates from `[-1, 1]` to a general interval.
 -/
-private theorem affine_interval_map_degree_leadingCoeff {a b : ℝ} (hab : a < b) :
+private theorem affine_degree_coeff {a b : ℝ} (hab : a < b) :
     let q := Polynomial.C ((b - a) / 2) * Polynomial.X + Polynomial.C ((a + b) / 2)
     q.natDegree = 1 ∧ q.leadingCoeff = (b - a) / 2 := by
   have hr : (0 : ℝ) < (b - a) / 2 := by linarith only [hab]
@@ -1390,11 +1358,11 @@ Proof: apply the degree and leading-coefficient formulas for polynomial composit
 
 Role: transports the monic-polynomial extremal estimate on `[-1, 1]` to arbitrary intervals.
 -/
-private theorem affine_comp_degree_leadingCoeff (p : Polynomial ℝ) {a b : ℝ} (hab : a < b) :
+private theorem comp_affine_deg_coeff (p : Polynomial ℝ) {a b : ℝ} (hab : a < b) :
     let q := Polynomial.C ((b - a) / 2) * Polynomial.X + Polynomial.C ((a + b) / 2)
     (p.comp q).natDegree = p.natDegree ∧
       (p.comp q).leadingCoeff = p.leadingCoeff * ((b - a) / 2) ^ p.natDegree := by
-  obtain ⟨hqDegree, hqLeadingCoeff⟩ := affine_interval_map_degree_leadingCoeff hab
+  obtain ⟨hqDegree, hqLeadingCoeff⟩ := affine_degree_coeff hab
   refine ⟨?_, ?_⟩
   · rw [Polynomial.natDegree_comp, hqDegree, Nat.mul_one]
   · rw [Polynomial.leadingCoeff_comp
@@ -1412,11 +1380,10 @@ Proof: specialize the affine composition formula to a monic polynomial.
 
 Role: provides the coefficient used with the Chebyshev extremal bound on `[-1, 1]`.
 -/
-private theorem affine_comp_monic_leadingCoeff (p : Polynomial ℝ) (hp : p.Monic) {a b : ℝ}
-    (hab : a < b) :
+private theorem comp_monic_leadCoeff (p : Polynomial ℝ) (hp : p.Monic) {a b : ℝ} (hab : a < b) :
     let q := Polynomial.C ((b - a) / 2) * Polynomial.X + Polynomial.C ((a + b) / 2)
     (p.comp q).leadingCoeff = ((b - a) / 2) ^ p.natDegree := by
-  obtain ⟨_, hleading⟩ := affine_comp_degree_leadingCoeff p hab
+  obtain ⟨_, hleading⟩ := comp_affine_deg_coeff p hab
   change
     (p.comp (Polynomial.C ((b - a) / 2) * Polynomial.X + Polynomial.C ((a + b) / 2))).leadingCoeff =
       ((b - a) / 2) ^ p.natDegree
@@ -1433,8 +1400,7 @@ and apply the Chebyshev coefficient bound to contradict a smaller maximum.
 
 Role: supplies the interval extremal estimate for the second-main-theorem power-sum argument.
 -/
-private theorem exists_monic_interval_eval_ge {p : Polynomial ℝ} (hp : p.Monic) {a b : ℝ}
-    (hab : a < b) :
+private theorem monic_interval_large {p : Polynomial ℝ} (hp : p.Monic) {a b : ℝ} (hab : a < b) :
     ∃ x ∈ Set.Icc a b, ((b - a) / 2) ^ p.natDegree / (2 : ℝ) ^ (p.natDegree - 1) ≤ |p.eval x| := by
   let n := p.natDegree
   let r : ℝ := (b - a) / 2
@@ -1498,11 +1464,11 @@ private theorem exists_monic_interval_eval_ge {p : Polynomial ℝ} (hp : p.Monic
       _ ≤ 1 := by simpa only [div_eq_mul_inv, mul_comm] using (div_le_one hc).2 (le_of_lt hSc)
   have hnQ : Q.natDegree = n := by
     dsimp [Q, n]
-    rw [Polynomial.natDegree_C_mul (inv_ne_zero hcne), (affine_comp_degree_leadingCoeff p hab).1]
+    rw [Polynomial.natDegree_C_mul (inv_ne_zero hcne), (comp_affine_deg_coeff p hab).1]
   have hleadQ : Q.leadingCoeff = c⁻¹ * r ^ n := by
     dsimp [Q]
-    rw [Polynomial.leadingCoeff_mul, Polynomial.leadingCoeff_C,
-      (affine_comp_degree_leadingCoeff p hab).2, hp.leadingCoeff]
+    rw [Polynomial.leadingCoeff_mul, Polynomial.leadingCoeff_C, (comp_affine_deg_coeff p hab).2,
+      hp.leadingCoeff]
     dsimp [n, r]
     ring
   have hcoeffQ : Q.coeff n = c⁻¹ * r ^ n := by
@@ -1538,14 +1504,14 @@ extremal estimate proved from the Chebyshev coefficient bound.
 Role: chooses a radius separated collectively from the node moduli for the maximum-node
 power-sum estimate.
 -/
-theorem exists_radius_modulus_product_bound {n : ℕ} (z : Fin n → ℂ) {a b : ℝ} (hab : a < b) :
+theorem radius_product_lower {n : ℕ} (z : Fin n → ℂ) {a b : ℝ} (hab : a < b) :
     ∃ r ∈ Set.Icc a b,
       ((b - a) / 2) ^ n / (2 : ℝ) ^ (n - 1) ≤ |∏ i ∈ Finset.univ, (r - ‖z i‖)| := by
   let p : Polynomial ℝ := ∏ i ∈ Finset.univ, (Polynomial.X - Polynomial.C (‖z i‖))
   have hp : p.Monic := by
     dsimp only [p]
     exact Polynomial.monic_prod_X_sub_C (fun i : Fin n ↦ ‖z i‖) Finset.univ
-  obtain ⟨r, hr, hbound⟩ := exists_monic_interval_eval_ge hp hab
+  obtain ⟨r, hr, hbound⟩ := monic_interval_large hp hab
   have hdeg : p.natDegree = n := by
     dsimp only [p]
     rw [Polynomial.natDegree_finsetProd_X_sub_C_eq_card, Finset.card_univ]
@@ -1565,8 +1531,8 @@ is at most one.
 
 Role: removes omitted radial gaps from a full product lower bound when estimating Newton prefixes.
 -/
-theorem abs_prod_le_abs_prod_of_subset_of_abs_le_one {ι : Type*} (s t : Finset ι) (f : ι → ℝ)
-    (ht : t ⊆ s) (hf : ∀ i ∈ s, |f i| ≤ 1) : |∏ i ∈ s, f i| ≤ |∏ i ∈ t, f i| := by
+theorem abs_prod_le_subset {ι : Type*} (s t : Finset ι) (f : ι → ℝ) (ht : t ⊆ s)
+    (hf : ∀ i ∈ s, |f i| ≤ 1) : |∏ i ∈ s, f i| ≤ |∏ i ∈ t, f i| := by
   classical
   rw [Finset.abs_prod, Finset.abs_prod]
   have hdis : Disjoint (s \ t) t :=
@@ -1596,8 +1562,8 @@ Proof: every omitted gap has absolute value at most one, so apply the finite sub
 
 Role: transfers one Chebyshev radius lower bound to every Newton prefix of the node sequence.
 -/
-theorem abs_radial_prefix_product_lower_bound {z : ℕ → ℂ} {n k : ℕ} {r : ℝ} (hkn : k ≤ n)
-    (hr0 : 0 ≤ r) (hr1 : r ≤ 1) (hz : ∀ j < n, ‖z j‖ ≤ 1) :
+theorem radialProd_prefix_le {z : ℕ → ℂ} {n k : ℕ} {r : ℝ} (hkn : k ≤ n) (hr0 : 0 ≤ r) (hr1 : r ≤ 1)
+    (hz : ∀ j < n, ‖z j‖ ≤ 1) :
     |∏ i ∈ Finset.range n, (r - ‖z i‖)| ≤ |∏ i ∈ Finset.range k, (r - ‖z i‖)| := by
   have hsubset : Finset.range k ⊆ Finset.range n := Finset.range_mono hkn
   have hf : ∀ i ∈ Finset.range n, |r - ‖z i‖| ≤ 1 := by
@@ -1607,9 +1573,7 @@ theorem abs_radial_prefix_product_lower_bound {z : ℕ → ℂ} {n k : ℕ} {r :
     constructor
     · nlinarith only [hr0, norm_nonneg (z i), hz i hi']
     · nlinarith only [hr1, norm_nonneg (z i)]
-  exact
-    abs_prod_le_abs_prod_of_subset_of_abs_le_one (Finset.range n) (Finset.range k)
-      (fun i => r - ‖z i‖) hsubset hf
+  exact abs_prod_le_subset (Finset.range n) (Finset.range k) (fun i => r - ‖z i‖) hsubset hf
 
 /--
 Inputs: a finite family of complex nodes in the unit disk and a nonnegative interval endpoint.
@@ -1622,12 +1586,12 @@ value at most one.
 
 Role: supplies a common denominator lower bound for all Newton prefixes of normalized nodes.
 -/
-theorem exists_radius_all_subset_modulus_product_lower_bound {n : ℕ} (z : Fin n → ℂ)
-    (hz : ∀ i, ‖z i‖ ≤ 1) {a : ℝ} (ha : 0 ≤ a) (hab : a < 1) :
+theorem radius_subProd_lower {n : ℕ} (z : Fin n → ℂ) (hz : ∀ i, ‖z i‖ ≤ 1) {a : ℝ} (ha : 0 ≤ a)
+    (hab : a < 1) :
     ∃ r ∈ Set.Icc a 1,
       ∀ t : Finset (Fin n),
         t ⊆ Finset.univ → ((1 - a) / 2) ^ n / (2 : ℝ) ^ (n - 1) ≤ |∏ i ∈ t, (r - ‖z i‖)| := by
-  obtain ⟨r, hr, hfull⟩ := exists_radius_modulus_product_bound z hab
+  obtain ⟨r, hr, hfull⟩ := radius_product_lower z hab
   refine ⟨r, hr, ?_⟩
   intro t ht
   have hgap : ∀ i ∈ Finset.univ, |r - ‖z i‖| ≤ 1 := by
@@ -1636,8 +1600,7 @@ theorem exists_radius_all_subset_modulus_product_lower_bound {n : ℕ} (z : Fin 
     constructor
     · nlinarith only [le_trans ha hr.1, norm_nonneg (z i), hz i]
     · nlinarith only [hr.2, norm_nonneg (z i)]
-  have hsubset :=
-    abs_prod_le_abs_prod_of_subset_of_abs_le_one Finset.univ t (fun i => r - ‖z i‖) ht hgap
+  have hsubset := abs_prod_le_subset Finset.univ t (fun i => r - ‖z i‖) ht hgap
   exact hfull.trans hsubset
 
 /--
@@ -1651,13 +1614,13 @@ the corresponding complex distance on the circle.
 
 Role: gives a common contour denominator bound for all Newton prefixes.
 -/
-theorem exists_circle_all_subset_modulus_product_lower_bound {n : ℕ} (z : Fin n → ℂ)
-    (hz : ∀ i, ‖z i‖ ≤ 1) {a : ℝ} (ha : 0 ≤ a) (hab : a < 1) :
+theorem circle_subProd_lower {n : ℕ} (z : Fin n → ℂ) (hz : ∀ i, ‖z i‖ ≤ 1) {a : ℝ} (ha : 0 ≤ a)
+    (hab : a < 1) :
     ∃ r ∈ Set.Icc a 1,
       ∀ t : Finset (Fin n),
         t ⊆ Finset.univ →
           ∀ w : ℂ, ‖w‖ = r → ((1 - a) / 2) ^ n / (2 : ℝ) ^ (n - 1) ≤ ‖∏ i ∈ t, (w - z i)‖ := by
-  obtain ⟨r, hr, hradial⟩ := exists_radius_all_subset_modulus_product_lower_bound z hz ha hab
+  obtain ⟨r, hr, hradial⟩ := radius_subProd_lower z hz ha hab
   refine ⟨r, hr, ?_⟩
   intro t ht w hw
   have hgap : ∀ i ∈ t, |r - ‖z i‖| ≤ ‖w - z i‖ := by
@@ -1680,8 +1643,8 @@ Proof: apply monotonicity of division in its numerator and denominator separatel
 
 Role: converts contour denominator estimates into pointwise bounds for rational integrands.
 -/
-theorem norm_div_le_of_norm_le_of_denominator_lower_bound {p q : ℂ} {B δ : ℝ} (hP : ‖p‖ ≤ B)
-    (hB : 0 ≤ B) (hδ : 0 < δ) (hQ : δ ≤ ‖q‖) : ‖p / q‖ ≤ B / δ := by
+theorem norm_div_le_of_bounds {p q : ℂ} {B δ : ℝ} (hP : ‖p‖ ≤ B) (hB : 0 ≤ B) (hδ : 0 < δ)
+    (hQ : δ ≤ ‖q‖) : ‖p / q‖ ≤ B / δ := by
   rw [norm_div]
   calc
     ‖p‖ / ‖q‖ ≤ B / ‖q‖ := div_le_div_of_nonneg_right hP (norm_nonneg q)
@@ -1697,8 +1660,8 @@ Proof: combine the common subset denominator estimate with the pointwise norm-di
 
 Role: bounds the rational contour integrands used to estimate Newton interpolation coefficients.
 -/
-theorem exists_circle_all_subset_quotient_bound {n : ℕ} (z : Fin n → ℂ) (hz : ∀ i, ‖z i‖ ≤ 1)
-    {a B : ℝ} (ha : 0 ≤ a) (hab : a < 1) (hB : 0 ≤ B) (p : Polynomial ℂ)
+theorem circle_quotient_bound {n : ℕ} (z : Fin n → ℂ) (hz : ∀ i, ‖z i‖ ≤ 1) {a B : ℝ} (ha : 0 ≤ a)
+    (hab : a < 1) (hB : 0 ≤ B) (p : Polynomial ℂ)
     (hP : ∀ r ∈ Set.Icc a 1, ∀ w : ℂ, ‖w‖ = r → ‖p.eval w‖ ≤ B) :
     ∃ r ∈ Set.Icc a 1,
       ∀ t : Finset (Fin n),
@@ -1706,14 +1669,14 @@ theorem exists_circle_all_subset_quotient_bound {n : ℕ} (z : Fin n → ℂ) (h
           ∀ w : ℂ,
             ‖w‖ = r →
               ‖p.eval w / ∏ i ∈ t, (w - z i)‖ ≤ B / (((1 - a) / 2) ^ n / (2 : ℝ) ^ (n - 1)) := by
-  obtain ⟨r, hr, hQ⟩ := exists_circle_all_subset_modulus_product_lower_bound z hz ha hab
+  obtain ⟨r, hr, hQ⟩ := circle_subProd_lower z hz ha hab
   have hδ : 0 < ((1 - a) / 2) ^ n / (2 : ℝ) ^ (n - 1) := by
     apply div_pos
     · exact pow_pos (div_pos (sub_pos.mpr hab) (by norm_num only)) _
     · exact pow_pos (by norm_num only) _
   refine ⟨r, hr, ?_⟩
   intro t ht w hw
-  exact norm_div_le_of_norm_le_of_denominator_lower_bound (hP r hr w hw) hB hδ (hQ t ht w hw)
+  exact norm_div_le_of_bounds (hP r hr w hw) hB hδ (hQ t ht w hw)
 
 open Complex in
 /--
@@ -1728,8 +1691,7 @@ Proof: apply the Cauchy integral formula to the entire function given by polynom
 
 Role: provides the simple-pole extraction step for later contour formulas for Newton coefficients.
 -/
-theorem circleIntegral_polynomial_eval_sub_inv_mul {p : Polynomial ℂ} {c w : ℂ} {R : ℝ}
-    (hw : w ∈ Metric.ball c R) :
+theorem circle_poly_resolvent {p : Polynomial ℂ} {c w : ℂ} {R : ℝ} (hw : w ∈ Metric.ball c R) :
     (∮ z in C(c, R), (z - w)⁻¹ * p.eval z) = (2 * Real.pi * Complex.I) * p.eval w := by
   have hformula :=
     Complex.circleIntegral_sub_inv_smul_of_differentiable_on_off_countable (R := R) (c := c) (w :=
@@ -1749,7 +1711,7 @@ Proof: apply Cauchy–Goursat to the entire function given by polynomial evaluat
 
 Role: removes polynomial terms when reducing a contour expression to its simple-pole part.
 -/
-theorem circleIntegral_polynomial_eval_eq_zero {p : Polynomial ℂ} {c : ℂ} {R : ℝ} (hR : 0 ≤ R) :
+theorem circle_poly_eq_zero {p : Polynomial ℂ} {c : ℂ} {R : ℝ} (hR : 0 ≤ R) :
     (∮ z in C(c, R), p.eval z) = 0 := by
   exact
     Complex.circleIntegral_eq_zero_of_differentiable_on_off_countable (R := R) hR
@@ -1765,15 +1727,15 @@ Proof: apply the circle integral norm estimate to the pointwise quotient estimat
 
 Role: supplies integral bounds for the Newton coefficient extraction step.
 -/
-theorem exists_circle_all_subset_quotient_integral_bound {n : ℕ} (z : Fin n → ℂ)
-    (hz : ∀ i, ‖z i‖ ≤ 1) {a B : ℝ} (ha : 0 ≤ a) (hab : a < 1) (hB : 0 ≤ B) (p : Polynomial ℂ)
+theorem quotient_integral_le {n : ℕ} (z : Fin n → ℂ) (hz : ∀ i, ‖z i‖ ≤ 1) {a B : ℝ} (ha : 0 ≤ a)
+    (hab : a < 1) (hB : 0 ≤ B) (p : Polynomial ℂ)
     (hP : ∀ r ∈ Set.Icc a 1, ∀ w : ℂ, ‖w‖ = r → ‖p.eval w‖ ≤ B) :
     ∃ r ∈ Set.Icc a 1,
       ∀ t : Finset (Fin n),
         t ⊆ Finset.univ →
           ‖∮ w in C(0, r), p.eval w / ∏ i ∈ t, (w - z i)‖ ≤
             2 * Real.pi * r * (B / (((1 - a) / 2) ^ n / (2 : ℝ) ^ (n - 1))) := by
-  obtain ⟨r, hr, hpoint⟩ := exists_circle_all_subset_quotient_bound z hz ha hab hB p hP
+  obtain ⟨r, hr, hpoint⟩ := circle_quotient_bound z hz ha hab hB p hP
   refine ⟨r, hr, ?_⟩
   intro t ht
   apply circleIntegral.norm_integral_le_of_norm_le_const (le_trans ha hr.1)
@@ -1788,17 +1750,16 @@ power exponent.
 Claim: one radius in `[a, 1]` makes the radial product, multiplied by `r ^ m`, at least `a ^ m`
 times the Chebyshev interval lower bound.
 
-Proof: choose the radius from `exists_radius_modulus_product_bound`, then use monotonicity of
+Proof: choose the radius from `radius_product_lower`, then use monotonicity of
 natural powers and nonnegativity of the product lower bound.
 
 Role: lets later power-sum estimates trade a radius-dependent factor for an explicit lower endpoint.
 -/
-theorem exists_scaled_radius_modulus_product_lower_bound_of_interval {n m : ℕ} (z : Fin n → ℂ)
-    {a : ℝ} (ha : 0 ≤ a) (hab : a < 1) :
+theorem radius_scaled_product {n m : ℕ} (z : Fin n → ℂ) {a : ℝ} (ha : 0 ≤ a) (hab : a < 1) :
     ∃ r ∈ Set.Icc a 1,
       a ^ m * (((1 - a) / 2) ^ n / (2 : ℝ) ^ (n - 1)) ≤
         r ^ m * |∏ i ∈ Finset.univ, (r - ‖z i‖)| := by
-  obtain ⟨r, hr, hprod⟩ := exists_radius_modulus_product_bound z hab
+  obtain ⟨r, hr, hprod⟩ := radius_product_lower z hab
   refine ⟨r, hr, ?_⟩
   have hpow : a ^ m ≤ r ^ m := pow_le_pow_left₀ ha hr.1 m
   have hfactor : 0 ≤ ((1 - a) / 2) ^ n / (2 : ℝ) ^ (n - 1) := by
@@ -1822,8 +1783,7 @@ Proof: specialize the interval-scaled estimate at the endpoint `M / (M + n)`.
 
 Role: provides the parameter-dependent radial separation used in the maximal-node Turán step.
 -/
-theorem exists_scaled_radius_modulus_product_lower_bound_of_order {n M : ℕ} (z : Fin n → ℂ)
-    (hn : 0 < n) :
+theorem radius_order_product {n M : ℕ} (z : Fin n → ℂ) (hn : 0 < n) :
     ∃ r ∈ Set.Icc ((M : ℝ) / ((M : ℝ) + n)) 1,
       ((M : ℝ) / ((M : ℝ) + n)) ^ M *
           ((((1 - (M : ℝ) / ((M : ℝ) + n)) / 2) ^ n) / (2 : ℝ) ^ (n - 1)) ≤
@@ -1838,8 +1798,7 @@ theorem exists_scaled_radius_modulus_product_lower_bound_of_order {n M : ℕ} (z
     dsimp [a]
     rw [div_lt_one hden]
     linarith only [hnR]
-  obtain ⟨r, hr, hbound⟩ :=
-    exists_scaled_radius_modulus_product_lower_bound_of_interval (m := M) z ha hab
+  obtain ⟨r, hr, hbound⟩ := radius_scaled_product (m := M) z ha hab
   refine ⟨r, ?_, ?_⟩
   · simpa only [a] using hr
   · simpa only [a, div_eq_mul_inv, mul_comm] using hbound
@@ -1855,15 +1814,14 @@ corresponding difference of moduli.
 
 Role: supplies a denominator bound on the circle for the subsequent interpolation estimate.
 -/
-theorem exists_scaled_circle_modulus_product_lower_bound_of_order {n M : ℕ} (z : Fin n → ℂ)
-    (hn : 0 < n) :
+theorem circle_order_product {n M : ℕ} (z : Fin n → ℂ) (hn : 0 < n) :
     ∃ r ∈ Set.Icc ((M : ℝ) / ((M : ℝ) + n)) 1,
       ∀ w : ℂ,
         ‖w‖ = r →
           ((M : ℝ) / ((M : ℝ) + n)) ^ M *
               ((((1 - (M : ℝ) / ((M : ℝ) + n)) / 2) ^ n) / (2 : ℝ) ^ (n - 1)) ≤
             r ^ M * ‖∏ i ∈ Finset.univ, (w - z i)‖ := by
-  obtain ⟨r, hr, hradial⟩ := exists_scaled_radius_modulus_product_lower_bound_of_order z hn
+  obtain ⟨r, hr, hradial⟩ := radius_order_product z hn
   refine ⟨r, hr, ?_⟩
   intro w hw
   have hgap : ∀ i ∈ Finset.univ, |r - ‖z i‖| ≤ ‖w - z i‖ := by
@@ -1893,11 +1851,10 @@ factor.
 
 Role: provides the radial denominator estimate for the second-main-theorem power-sum argument.
 -/
-theorem exists_scaled_radius_modulus_product_lower_bound {n : ℕ} (z : Fin n → ℂ) :
+theorem radius_3_4_product {n : ℕ} (z : Fin n → ℂ) :
     ∃ r ∈ Set.Icc (3 / 4 : ℝ) 1,
       (1 / 40 : ℝ) ^ n ≤ r ^ (3 * n) * |∏ i ∈ Finset.univ, (r - ‖z i‖)| := by
-  obtain ⟨r, hr, hprod⟩ :=
-    exists_radius_modulus_product_bound z (a := 3 / 4) (b := 1) (by norm_num only)
+  obtain ⟨r, hr, hprod⟩ := radius_product_lower z (a := 3 / 4) (b := 1) (by norm_num only)
   refine ⟨r, hr, ?_⟩
   have hrpow : (27 / 64 : ℝ) ^ n ≤ r ^ (3 * n) := by
     calc
@@ -1938,10 +1895,10 @@ the corresponding difference of moduli.
 Role: supplies the uniform denominator bound for contour estimates in the maximum-node
 power-sum theorem.
 -/
-theorem exists_scaled_circle_product_lower_bound {n : ℕ} (z : Fin n → ℂ) :
+theorem circle_3_4_product {n : ℕ} (z : Fin n → ℂ) :
     ∃ r ∈ Set.Icc (3 / 4 : ℝ) 1,
       ∀ w : ℂ, ‖w‖ = r → (1 / 40 : ℝ) ^ n ≤ r ^ (3 * n) * ‖∏ i ∈ Finset.univ, (w - z i)‖ := by
-  obtain ⟨r, hr, hradial⟩ := exists_scaled_radius_modulus_product_lower_bound z
+  obtain ⟨r, hr, hradial⟩ := radius_3_4_product z
   refine ⟨r, hr, ?_⟩
   intro w hw
   have hrnonneg : 0 ≤ r := by linarith only [hr.1]
@@ -1970,9 +1927,8 @@ each nonnegative coefficient term by the circle average.
 Role: converts the circle estimates for interpolation polynomials into coefficient bounds for
 the power-sum identity.
 -/
-theorem polynomial_coeff_norm_mul_radius_pow_le_of_circle_bound {p : Polynomial ℂ} {r B : ℝ}
-    (hr : 0 < r) (hB : 0 ≤ B) (hbound : ∀ w : ℂ, ‖w‖ = r → ‖p.eval w‖ ≤ B) (k : ℕ) :
-    ‖p.coeff k‖ * r ^ k ≤ B := by
+theorem coeff_radius_pow_le {p : Polynomial ℂ} {r B : ℝ} (hr : 0 < r) (hB : 0 ≤ B)
+    (hbound : ∀ w : ℂ, ‖w‖ = r → ‖p.eval w‖ ≤ B) (k : ℕ) : ‖p.coeff k‖ * r ^ k ≤ B := by
   let q : Polynomial ℂ := p.comp (Polynomial.C (r : ℂ) * Polynomial.X)
   have hcont : Continuous (fun w : ℂ => ‖q.eval w‖ ^ 2) := by
     exact (continuous_norm.comp (Polynomial.continuous_eval₂ q (RingHom.id ℂ))).pow 2
@@ -2024,14 +1980,13 @@ and sum the resulting coefficientwise inequalities.
 Role: turns a circle bound for an interpolation polynomial into the coefficient norm sum needed
 by the finite power-sum identity.
 -/
-theorem sum_range_coeff_norm_le_circle_bound_mul_geom {p : Polynomial ℂ} {r B : ℝ} (hr : 1 / 2 ≤ r)
-    (hB : 0 ≤ B) (hbound : ∀ w : ℂ, ‖w‖ = r → ‖p.eval w‖ ≤ B) (m : ℕ) :
+theorem coeff_sum_le_geom {p : Polynomial ℂ} {r B : ℝ} (hr : 1 / 2 ≤ r) (hB : 0 ≤ B)
+    (hbound : ∀ w : ℂ, ‖w‖ = r → ‖p.eval w‖ ≤ B) (m : ℕ) :
     (∑ k ∈ Finset.range m, ‖p.coeff k‖) ≤ B * ∑ k ∈ Finset.range m, (2 : ℝ) ^ k := by
   have hcoeff : ∀ k ∈ Finset.range m, ‖p.coeff k‖ ≤ B * (2 : ℝ) ^ k := by
     intro k hk
     have hck :=
-      polynomial_coeff_norm_mul_radius_pow_le_of_circle_bound
-        (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1 / 2) hr) hB hbound k
+      coeff_radius_pow_le (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1 / 2) hr) hB hbound k
     have hpow : (1 / 2 : ℝ) ^ k ≤ r ^ k := pow_le_pow_left₀ (by norm_num only) hr k
     have hscaled : ‖p.coeff k‖ * (1 / 2 : ℝ) ^ k ≤ B :=
       (mul_le_mul_of_nonneg_left hpow (norm_nonneg _)).trans hck
@@ -2062,11 +2017,11 @@ inequality to each factor.
 
 Role: supplies the denominator bound for contour estimates in the maximum-node power-sum proof.
 -/
-theorem exists_circle_modulus_product_lower_bound {n : ℕ} (z : Fin n → ℂ) {a b : ℝ} (hab : a < b) :
+theorem circle_product_lower {n : ℕ} (z : Fin n → ℂ) {a b : ℝ} (hab : a < b) :
     ∃ r ∈ Set.Icc a b,
       ∀ w : ℂ,
         ‖w‖ = r → ((b - a) / 2) ^ n / (2 : ℝ) ^ (n - 1) ≤ ‖∏ i ∈ Finset.univ, (w - z i)‖ := by
-  obtain ⟨r, hr, hseparation⟩ := exists_radius_modulus_product_bound z hab
+  obtain ⟨r, hr, hseparation⟩ := radius_product_lower z hab
   refine ⟨r, hr, ?_⟩
   intro w hw
   calc
@@ -2087,8 +2042,8 @@ Proof: sum the Lagrange basis polynomials, dividing by their nonzero node-differ
 Role: constructs the interpolation polynomial used to separate outer nodes in the maximum-node
 power-sum estimate.
 -/
-theorem exists_lagrange_interpolant {n : ℕ} (x y : Fin n → ℂ) (hx : Function.Injective x)
-    (hn : 0 < n) : ∃ p : Polynomial ℂ, p.natDegree < n ∧ ∀ k, p.eval (x k) = y k := by
+theorem exists_lagrange_poly {n : ℕ} (x y : Fin n → ℂ) (hx : Function.Injective x) (hn : 0 < n) :
+    ∃ p : Polynomial ℂ, p.natDegree < n ∧ ∀ k, p.eval (x k) = y k := by
   classical
   let d : Fin n → ℂ := fun i ↦ ∏ j ∈ Finset.univ.erase i, (x i - x j)
   have hd : ∀ i, d i ≠ 0 := by
@@ -2146,8 +2101,8 @@ each coefficient out of the node sum.
 Role: converts an interpolation polynomial into the power-sum expression used in the
 maximum-node estimate.
 -/
-theorem weighted_polynomial_interpolation_eq_power_sums {n m : ℕ} (x w y : Fin n → ℂ)
-    (p : Polynomial ℂ) (hp : p.natDegree < m) (hpy : ∀ i, p.eval (x i) = y i) :
+theorem weighted_eval_powSums {n m : ℕ} (x w y : Fin n → ℂ) (p : Polynomial ℂ)
+    (hp : p.natDegree < m) (hpy : ∀ i, p.eval (x i) = y i) :
     (∑ i : Fin n, w i * y i) =
       ∑ k ∈ Finset.range m, p.coeff k * (∑ i : Fin n, w i * (x i) ^ k) := by
   calc
@@ -2179,15 +2134,14 @@ Proof: construct the Lagrange interpolant and apply the coefficient expansion id
 
 Role: packages the distinct-node interpolation step for the maximum-node power-sum argument.
 -/
-theorem exists_lagrange_power_sum_identity {n : ℕ} (x w y : Fin n → ℂ) (hx : Function.Injective x)
-    (hn : 0 < n) :
+theorem lagrange_powerSum_eq {n : ℕ} (x w y : Fin n → ℂ) (hx : Function.Injective x) (hn : 0 < n) :
     ∃ p : Polynomial ℂ,
       p.natDegree < n ∧
         (∀ i, p.eval (x i) = y i) ∧
         (∑ i : Fin n, w i * y i) =
           ∑ k ∈ Finset.range n, p.coeff k * (∑ i : Fin n, w i * (x i) ^ k) := by
-  obtain ⟨p, hp, hpy⟩ := exists_lagrange_interpolant x y hx hn
-  exact ⟨p, hp, hpy, weighted_polynomial_interpolation_eq_power_sums x w y p hp hpy⟩
+  obtain ⟨p, hp, hpy⟩ := exists_lagrange_poly x y hx hn
+  exact ⟨p, hp, hpy, weighted_eval_powSums x w y p hp hpy⟩
 
 /--
 Inputs: a finite family of complex nodes, complex weights, and a power exponent.
@@ -2200,7 +2154,7 @@ fiber by its common value.
 
 Role: converts repeated-node power sums into weighted sums over distinct nodes for interpolation.
 -/
-theorem weighted_power_sum_eq_sum_fiberwise {n : ℕ} (z a : Fin n → ℂ) (k : ℕ) :
+theorem powerSum_eq_fiberwise {n : ℕ} (z a : Fin n → ℂ) (k : ℕ) :
     (∑ i : Fin n, a i * (z i) ^ k) =
       ∑ ξ ∈ Finset.univ.image z, ∑ i ∈ Finset.univ with z i = ξ, a i * ξ ^ k := by
   classical
@@ -2227,7 +2181,7 @@ Proof: enumerate the finite set without repetition and apply the Lagrange interp
 
 Role: constructs interpolants after repeated nodes have been reduced to their distinct values.
 -/
-theorem exists_polynomial_interpolating_finset (s : Finset ℂ) (f : ℂ → ℂ) (hs : 0 < s.card) :
+theorem exists_finset_poly (s : Finset ℂ) (f : ℂ → ℂ) (hs : 0 < s.card) :
     ∃ p : Polynomial ℂ, p.natDegree < s.card ∧ ∀ ξ ∈ s, p.eval ξ = f ξ := by
   classical
   let e : s ≃ Fin s.card := s.equivFin
@@ -2237,7 +2191,7 @@ theorem exists_polynomial_interpolating_finset (s : Finset ℂ) (f : ℂ → ℂ
     intro i j hij
     apply e.symm.injective
     exact Subtype.ext hij
-  obtain ⟨p, hp, hpy⟩ := exists_lagrange_interpolant x y hx hs
+  obtain ⟨p, hp, hpy⟩ := exists_lagrange_poly x y hx hs
   refine ⟨p, hp, ?_⟩
   intro ξ hξ
   let i : Fin s.card := e ⟨ξ, hξ⟩
@@ -2263,7 +2217,7 @@ identity to the original family, including repeated nodes.
 
 Role: connects distinct-node interpolation to the repeated-node maximum-node power-sum estimate.
 -/
-theorem exists_finset_interpolation_power_sum_identity {n : ℕ} (z w : Fin n → ℂ) (f : ℂ → ℂ)
+theorem finset_powerSum_eq {n : ℕ} (z w : Fin n → ℂ) (f : ℂ → ℂ)
     (hz : 0 < (Finset.univ.image z).card) :
     ∃ p : Polynomial ℂ,
       p.natDegree < (Finset.univ.image z).card ∧
@@ -2273,13 +2227,13 @@ theorem exists_finset_interpolation_power_sum_identity {n : ℕ} (z w : Fin n �
             p.coeff k * (∑ i : Fin n, w i * (z i) ^ k) := by
   let s : Finset ℂ := Finset.univ.image z
   have hs : 0 < s.card := by simpa only [s] using hz
-  obtain ⟨p, hp, hpeval⟩ := exists_polynomial_interpolating_finset s f hs
+  obtain ⟨p, hp, hpeval⟩ := exists_finset_poly s f hs
   have hvalues : ∀ i, p.eval (z i) = f (z i) := by
     intro i
     exact hpeval (z i) (Finset.mem_image_of_mem z (Finset.mem_univ i))
   refine ⟨p, ?_, hvalues, ?_⟩
   · simpa only [s] using hp
-  · exact weighted_polynomial_interpolation_eq_power_sums z w (fun i ↦ f (z i)) p hp hvalues
+  · exact weighted_eval_powSums z w (fun i ↦ f (z i)) p hp hvalues
 
 /--
 Inputs: nonzero complex nodes and a positive number of nodes.
@@ -2294,8 +2248,7 @@ Proof: interpolate the inverse `K`th power on the finite image and weight each n
 Role: supplies the exact distinct-node interpolation identity needed for the maximum-node
 power-sum estimate.
 -/
-theorem exists_fiberwise_lagrange_power_sum_identity {n : ℕ} (z : Fin n → ℂ) (hz : ∀ i, z i ≠ 0)
-    (hn : 0 < n) (K : ℕ) :
+theorem fiber_lagrange_invPow {n : ℕ} (z : Fin n → ℂ) (hz : ∀ i, z i ≠ 0) (hn : 0 < n) (K : ℕ) :
     ∃ p : Polynomial ℂ,
       p.natDegree < (Finset.univ.image z).card ∧
         (∀ i, p.eval (z i) = (z i)⁻¹ ^ K) ∧
@@ -2307,8 +2260,7 @@ theorem exists_fiberwise_lagrange_power_sum_identity {n : ℕ} (z : Fin n → �
     apply Finset.card_pos.mpr
     let i : Fin n := ⟨0, hn⟩
     exact ⟨z i, Finset.mem_image_of_mem z (Finset.mem_univ i)⟩
-  obtain ⟨p, hp, hvalues, hidentity⟩ :=
-    exists_finset_interpolation_power_sum_identity z (fun i => z i ^ K) f himage
+  obtain ⟨p, hp, hvalues, hidentity⟩ := finset_powerSum_eq z (fun i => z i ^ K) f himage
   have hbase : (∑ i : Fin n, z i ^ K * f (z i)) = (n : ℂ) := by
     calc
       _ = ∑ i : Fin n, (1 : ℂ) := by
@@ -2343,8 +2295,7 @@ Proof: reindex by the first coordinate; the antidiagonal equation uniquely deter
 
 Role: puts Newton's power-sum recurrence into the finite range form used for norm estimates.
 -/
-theorem sum_antidiagonal_filter_fst_lt_eq_range {M : Type} [AddCommMonoid M] (k : ℕ)
-    (f : ℕ × ℕ → M) :
+theorem antidiagonal_sum_eq {M : Type} [AddCommMonoid M] (k : ℕ) (f : ℕ × ℕ → M) :
     (∑ a ∈ Finset.antidiagonal k with a.1 < k, f a) = ∑ j ∈ Finset.range k, f (j, k - j) := by
   apply
     Finset.sum_bij (s := (Finset.antidiagonal k).filter (fun a => a.1 < k)) (t := Finset.range k)
@@ -2388,7 +2339,7 @@ Proof: evaluate the universal multivariate Newton identity at the given complex 
 
 Role: supplies the algebraic recurrence used to derive a maximum-node power-sum lower bound.
 -/
-theorem finite_power_sum_newton_identity {n : ℕ} (z : Fin n → ℂ) (k : ℕ) :
+theorem powerSum_newton_eq {n : ℕ} (z : Fin n → ℂ) (k : ℕ) :
     (k : ℂ) * (Finset.univ.val.map z).esymm k =
       (-1 : ℂ) ^ (k + 1) *
         ∑ a ∈ Finset.antidiagonal k with a.1 < k,
@@ -2409,13 +2360,13 @@ Proof: reindex the evaluated multivariate Newton identity by the first antidiago
 Role: provides the recurrence in a form suitable for deriving quantitative bounds on elementary
 symmetric sums from a common bound on initial power sums.
 -/
-theorem finite_power_sum_newton_identity_range {n : ℕ} (z : Fin n → ℂ) (k : ℕ) :
+theorem powerSum_newton_range {n : ℕ} (z : Fin n → ℂ) (k : ℕ) :
     (k : ℂ) * (Finset.univ.val.map z).esymm k =
       (-1 : ℂ) ^ (k + 1) *
         ∑ j ∈ Finset.range k,
           (-1 : ℂ) ^ j * (Finset.univ.val.map z).esymm j * (∑ i : Fin n, z i ^ (k - j)) := by
-  have h := finite_power_sum_newton_identity z k
-  simpa only [sum_antidiagonal_filter_fst_lt_eq_range] using h
+  have h := powerSum_newton_eq z k
+  simpa only [antidiagonal_sum_eq] using h
 
 /--
 Inputs: a finite family of complex nodes and upper bounds for its power sums through order `n`.
@@ -2430,7 +2381,7 @@ Proof: use Newton's identity at order `k` and inductively bound each term in its
 
 Role: supplies the coefficient estimate for detecting a node of maximal norm from its power sums.
 -/
-theorem norm_esymm_le_half_pow_of_power_sum_bounds {n : ℕ} (z : Fin n → ℂ)
+theorem norm_esymm_bound {n : ℕ} (z : Fin n → ℂ)
     (hps : ∀ m, 0 < m → m ≤ n → ‖∑ i : Fin n, z i ^ m‖ ≤ (1 / 2 : ℝ) ^ m) :
     ∀ k, k ≤ n → ‖(Finset.univ.val.map z).esymm k‖ ≤ (1 / 2 : ℝ) ^ k := by
   intro k
@@ -2441,7 +2392,7 @@ theorem norm_esymm_le_half_pow_of_power_sum_bounds {n : ℕ} (z : Fin n → ℂ)
     · subst k
       simpa only [Multiset.esymm_zero, norm_one, pow_zero] using le_rfl
     · have hkpos : 0 < k := Nat.pos_of_ne_zero hk0
-      have hnewton := finite_power_sum_newton_identity_range z k
+      have hnewton := powerSum_newton_range z k
       have hmain :
         (k : ℝ) * ‖(Finset.univ.val.map z).esymm k‖ ≤
           ∑ j ∈ Finset.range k,
@@ -2498,8 +2449,7 @@ remainder.
 
 Role: provides the strict tail bound in the contradiction argument for a maximal node.
 -/
-theorem sum_range_half_pow_succ_lt_one (n : ℕ) :
-    (∑ j ∈ Finset.range n, (1 / 2 : ℝ) ^ (j + 1)) < 1 := by
+theorem sum_half_pow_lt_one (n : ℕ) : (∑ j ∈ Finset.range n, (1 / 2 : ℝ) ^ (j + 1)) < 1 := by
   let a : ℝ := 1 / 2
   have hneq : a ≠ 1 := by
     dsimp [a]
@@ -2534,15 +2484,15 @@ makes the remaining terms have total norm strictly less than its leading term.
 
 Role: gives a spacing-free power-sum lower bound from any selected nonzero node.
 -/
-theorem exists_power_sum_norm_ge_half_pow_of_node_norm_eq_one {n : ℕ} (z : Fin n → ℂ)
-    (hmax : ∃ i, ‖z i‖ = 1) : ∃ k, 0 < k ∧ k ≤ n ∧ (1 / 2 : ℝ) ^ k ≤ ‖∑ i : Fin n, z i ^ k‖ := by
+theorem unitNode_powerSum_ge {n : ℕ} (z : Fin n → ℂ) (hmax : ∃ i, ‖z i‖ = 1) :
+    ∃ k, 0 < k ∧ k ≤ n ∧ (1 / 2 : ℝ) ^ k ≤ ‖∑ i : Fin n, z i ^ k‖ := by
   by_contra h
   have hps : ∀ m, 0 < m → m ≤ n → ‖∑ i : Fin n, z i ^ m‖ ≤ (1 / 2 : ℝ) ^ m := by
     intro m hm hmn
     rcases lt_or_ge (‖∑ i : Fin n, z i ^ m‖) ((1 / 2 : ℝ) ^ m) with hlt | hge
     · exact le_of_lt hlt
     · exact False.elim (h ⟨m, hm, hmn, hge⟩)
-  have hesymm := norm_esymm_le_half_pow_of_power_sum_bounds z hps
+  have hesymm := norm_esymm_bound z hps
   obtain ⟨i, hi⟩ := hmax
   let s : Multiset ℂ := Finset.univ.val.map z
   let f : ℕ → ℂ := fun j => (-1 : ℂ) ^ j * (s.esymm j * z i ^ (n - j))
@@ -2587,7 +2537,7 @@ theorem exists_power_sum_norm_ge_half_pow_of_node_norm_eq_one {n : ℕ} (z : Fin
     calc
       _ ≤ ∑ j ∈ Finset.range n, ‖f (j + 1)‖ := norm_sum_le _ _
       _ ≤ _ := Finset.sum_le_sum fun j hj => hterm j hj
-  have hgeom := sum_range_half_pow_succ_lt_one n
+  have hgeom := sum_half_pow_lt_one n
   linarith only [hnormtail, hupper, hgeom]
 
 /--
@@ -2601,8 +2551,8 @@ by the positive coefficient-norm sum.
 
 Role: extracts the quantitative power-sum consequence of the finite interpolation identity.
 -/
-theorem exists_power_sum_norm_ge_of_coeff_identity {m n : ℕ} (p : Polynomial ℂ) (q : ℕ → ℂ)
-    (hm : 0 < m) (hC : 0 < ∑ k ∈ Finset.range m, ‖p.coeff k‖)
+theorem powerSum_ge_coeffNorm {m n : ℕ} (p : Polynomial ℂ) (q : ℕ → ℂ) (hm : 0 < m)
+    (hC : 0 < ∑ k ∈ Finset.range m, ‖p.coeff k‖)
     (hid : (n : ℂ) = ∑ k ∈ Finset.range m, p.coeff k * q k) :
     ∃ k ∈ Finset.range m, (n : ℝ) / (∑ j ∈ Finset.range m, ‖p.coeff j‖) ≤ ‖q k‖ := by
   obtain ⟨k, hk, hmax⟩ :=
@@ -2638,14 +2588,14 @@ Proof: combine the coefficient-sum bound with the maximal-term estimate for a we
 Role: converts a circle estimate for an interpolation polynomial directly into a power-sum
 lower bound.
 -/
-theorem exists_power_sum_norm_ge_div_circle_bound {m n : ℕ} {p : Polynomial ℂ} {r B : ℝ}
-    (hm : 0 < m) (hr : 1 / 2 ≤ r) (hB : 0 ≤ B) (hbound : ∀ w : ℂ, ‖w‖ = r → ‖p.eval w‖ ≤ B)
+theorem powerSum_ge_circle {m n : ℕ} {p : Polynomial ℂ} {r B : ℝ} (hm : 0 < m) (hr : 1 / 2 ≤ r)
+    (hB : 0 ≤ B) (hbound : ∀ w : ℂ, ‖w‖ = r → ‖p.eval w‖ ≤ B)
     (hC : 0 < ∑ k ∈ Finset.range m, ‖p.coeff k‖) (q : ℕ → ℂ)
     (hid : (n : ℂ) = ∑ k ∈ Finset.range m, p.coeff k * q k) :
     ∃ k ∈ Finset.range m, (n : ℝ) / (B * ∑ j ∈ Finset.range m, (2 : ℝ) ^ j) ≤ ‖q k‖ := by
-  have hcoef := sum_range_coeff_norm_le_circle_bound_mul_geom hr hB hbound m
+  have hcoef := coeff_sum_le_geom hr hB hbound m
   have hden : 0 < B * ∑ j ∈ Finset.range m, (2 : ℝ) ^ j := lt_of_lt_of_le hC hcoef
-  obtain ⟨k, hk, hmax⟩ := exists_power_sum_norm_ge_of_coeff_identity p q hm hC hid
+  obtain ⟨k, hk, hmax⟩ := powerSum_ge_coeffNorm p q hm hC hid
   have hratio :
     (n : ℝ) / (B * ∑ j ∈ Finset.range m, (2 : ℝ) ^ j) ≤
       (n : ℝ) / (∑ j ∈ Finset.range m, ‖p.coeff j‖) :=
@@ -2664,14 +2614,13 @@ sum is positive; then apply the coefficient-identity maximum lemma.
 Role: converts distinct-node interpolation into an explicit, multiplicity-sensitive power-sum
 lower bound, leaving only a quantitative bound on the interpolation coefficients.
 -/
-theorem exists_fiberwise_power_sum_norm_ge_div_coeff_norm {n : ℕ} (z : Fin n → ℂ)
-    (hz : ∀ i, z i ≠ 0) (hn : 0 < n) (K : ℕ) :
+theorem fiber_powerSum_lower {n : ℕ} (z : Fin n → ℂ) (hz : ∀ i, z i ≠ 0) (hn : 0 < n) (K : ℕ) :
     ∃ p : Polynomial ℂ,
       p.natDegree < (Finset.univ.image z).card ∧
         ∃ k ∈ Finset.range (Finset.univ.image z).card,
           (n : ℝ) / (∑ j ∈ Finset.range (Finset.univ.image z).card, ‖p.coeff j‖) ≤
             ‖∑ i : Fin n, z i ^ (K + k)‖ := by
-  obtain ⟨p, hp, hvalues, hidentity⟩ := exists_fiberwise_lagrange_power_sum_identity z hz hn K
+  obtain ⟨p, hp, hvalues, hidentity⟩ := fiber_lagrange_invPow z hz hn K
   have hidx : ∃ i : Fin n, True := by
     let i : Fin n := ⟨0, hn⟩
     exact ⟨i, trivial⟩
@@ -2692,7 +2641,7 @@ theorem exists_fiberwise_power_sum_norm_ge_div_coeff_norm {n : ℕ} (z : Fin n �
       exact norm_nonneg _
     · exact ⟨p.natDegree, Finset.mem_range.mpr hp, norm_pos_iff.mpr hcoeff⟩
   obtain ⟨k, hk, hbound⟩ :=
-    exists_power_sum_norm_ge_of_coeff_identity p (fun k => ∑ i : Fin n, z i ^ (K + k))
+    powerSum_ge_coeffNorm p (fun k => ∑ i : Fin n, z i ^ (K + k))
       (Finset.card_pos.mpr
         (by
           let i : Fin n := ⟨0, hn⟩
@@ -2713,11 +2662,11 @@ the common power-sum bound term by term.
 Role: begins the quantitative implication from small power sums to small elementary symmetric
 sums needed for a maximum-node lower bound.
 -/
-theorem finite_elementary_symm_norm_mul_index_le_power_sum_bound {n : ℕ} (z : Fin n → ℂ) (k : ℕ)
-    (B : ℝ) (hB : ∀ j ∈ Finset.range k, ‖∑ i : Fin n, z i ^ (k - j)‖ ≤ B) :
+theorem esymm_mul_le_powerSum {n : ℕ} (z : Fin n → ℂ) (k : ℕ) (B : ℝ)
+    (hB : ∀ j ∈ Finset.range k, ‖∑ i : Fin n, z i ^ (k - j)‖ ≤ B) :
     (k : ℝ) * ‖(Finset.univ.val.map z).esymm k‖ ≤
       B * ∑ j ∈ Finset.range k, ‖(Finset.univ.val.map z).esymm j‖ := by
-  have hNewton := finite_power_sum_newton_identity_range z k
+  have hNewton := powerSum_newton_range z k
   have hnorm :
     (k : ℝ) * ‖(Finset.univ.val.map z).esymm k‖ =
       ‖∑ j ∈ Finset.range k,
@@ -2766,8 +2715,7 @@ inequality convert this vanishing into the stated lower bound.
 Role: contradicts the coefficient smallness that Newton's recurrence would imply if all initial
 power sums were small.
 -/
-theorem finite_elementary_symm_norm_sum_succ_ge_one_of_contains_one {n : ℕ} (z : Fin n → ℂ)
-    (i : Fin n) (hi : z i = 1) :
+theorem esymm_sum_ge_one {n : ℕ} (z : Fin n → ℂ) (i : Fin n) (hi : z i = 1) :
     1 ≤ ∑ k ∈ Finset.range n, ‖(Finset.univ.val.map z).esymm (k + 1)‖ := by
   classical
   let q : Polynomial ℂ := ∏ j : Fin n, (Polynomial.X - Polynomial.C (z j))
@@ -2847,8 +2795,8 @@ while the preceding coefficient estimate makes that sum at least `1`.
 
 Role: gives a finite block lower bound that can be rescaled at a node of maximal norm.
 -/
-theorem exists_power_sum_norm_ge_of_contains_one {n : ℕ} (z : Fin n → ℂ) (i : Fin n)
-    (hi : z i = 1) : ∃ k ∈ Finset.range n, (1 / (4 * (n : ℝ))) ≤ ‖∑ j : Fin n, z j ^ (k + 1)‖ := by
+theorem powerSum_ge_of_one {n : ℕ} (z : Fin n → ℂ) (i : Fin n) (hi : z i = 1) :
+    ∃ k ∈ Finset.range n, (1 / (4 * (n : ℝ))) ≤ ‖∑ j : Fin n, z j ^ (k + 1)‖ := by
   classical
   have hn : 0 < n := Nat.zero_lt_of_lt i.isLt
   by_contra hnot
@@ -2874,7 +2822,7 @@ theorem exists_power_sum_norm_ge_of_contains_one {n : ℕ} (z : Fin n → ℂ) (
     rw [Finset.sum_range_succ']
     simp only [Multiset.esymm_zero, norm_one]
     rw [add_comm]
-  have hroot := finite_elementary_symm_norm_sum_succ_ge_one_of_contains_one z i hi
+  have hroot := esymm_sum_ge_one z i hi
   have hterm : ∀ k ∈ Finset.range n, e (k + 1) ≤ B * S := by
     intro k hk
     have hklt : k < n := Finset.mem_range.mp hk
@@ -2896,7 +2844,7 @@ theorem exists_power_sum_norm_ge_of_contains_one {n : ℕ} (z : Fin n → ℂ) (
         le_of_lt (hsmall l (Finset.mem_range.mpr hl))
       rw [hpow] at hbound
       exact hbound
-    have hrec := finite_elementary_symm_norm_mul_index_le_power_sum_bound z (k + 1) B hlocal
+    have hrec := esymm_mul_le_powerSum z (k + 1) B hlocal
     have hsubset : Finset.range (k + 1) ⊆ Finset.range (n + 1) := by
       apply Finset.range_subset.mpr
       intro j hj
@@ -2954,7 +2902,7 @@ estimate, and rescale the resulting power sum.
 Role: provides the maximum-node power-sum estimate for the near-zero contribution to derivative
 detection.
 -/
-theorem exists_max_node_power_sum_norm_ge {n : ℕ} (hn : 0 < n) (z : Fin n → ℂ) :
+theorem maxNode_powerSum_ge {n : ℕ} (hn : 0 < n) (z : Fin n → ℂ) :
     ∃ i : Fin n,
       (∀ j, ‖z j‖ ≤ ‖z i‖) ∧
         ∃ k ∈ Finset.range n,
@@ -2976,7 +2924,7 @@ theorem exists_max_node_power_sum_norm_ge {n : ℕ} (hn : 0 < n) (z : Fin n → 
     have hiw : w i = 1 := by
       dsimp only [w]
       exact div_self hc
-    obtain ⟨k, hk, hpower⟩ := exists_power_sum_norm_ge_of_contains_one w i hiw
+    obtain ⟨k, hk, hpower⟩ := powerSum_ge_of_one w i hiw
     have hsum : ∑ j : Fin n, w j ^ (k + 1) = (∑ j : Fin n, z j ^ (k + 1)) / (z i) ^ (k + 1) := by
       dsimp only [w]
       calc
@@ -3004,8 +2952,7 @@ rewrite the power sum through the enumeration equivalence.
 Role: retains repeated node values when finite zero occurrences are indexed by distinct
 multiplicity positions.
 -/
-theorem exists_finset_max_node_power_sum_norm_ge {α : Type*} (s : Finset α) (hs : 0 < s.card)
-    (z : α → ℂ) :
+theorem finsetMax_powerSum_ge {α : Type*} (s : Finset α) (hs : 0 < s.card) (z : α → ℂ) :
     ∃ i ∈ s,
       (∀ j ∈ s, ‖z j‖ ≤ ‖z i‖) ∧
         ∃ k ∈ Finset.range s.card,
@@ -3017,7 +2964,7 @@ theorem exists_finset_max_node_power_sum_norm_ge {α : Type*} (s : Finset α) (h
     calc
       _ = ∑ j : s, z j.val ^ (k + 1) := Equiv.sum_comp e.symm (fun j : s => z j.val ^ (k + 1))
       _ = _ := Finset.sum_coe_sort s (fun j => z j ^ (k + 1))
-  obtain ⟨i, hmax, k, hk, hpower⟩ := exists_max_node_power_sum_norm_ge hs w
+  obtain ⟨i, hmax, k, hk, hpower⟩ := maxNode_powerSum_ge hs w
   let j : α := (e.symm i).val
   have hj : j ∈ s := (e.symm i).property
   have hmax' : ∀ u ∈ s, ‖z u‖ ≤ ‖z j‖ := by
@@ -3041,8 +2988,8 @@ estimate, and rewrite the repeated sum as its multiplicity-weighted form.
 
 Role: converts analytic divisor orders into explicit repeated nodes for local zero detection.
 -/
-theorem exists_finset_weighted_max_node_power_sum_norm_ge {α : Type*} (s : Finset α)
-    (multiplicity : α → ℕ) (z : α → ℂ) (htotal : 0 < ∑ i ∈ s, multiplicity i) :
+theorem weightedMax_powerSum {α : Type*} (s : Finset α) (multiplicity : α → ℕ) (z : α → ℂ)
+    (htotal : 0 < ∑ i ∈ s, multiplicity i) :
     ∃ i ∈ s,
       0 < multiplicity i ∧
         (∀ j ∈ s, 0 < multiplicity j → ‖z j‖ ≤ ‖z i‖) ∧
@@ -3072,8 +3019,7 @@ theorem exists_finset_weighted_max_node_power_sum_norm_ge {α : Type*} (s : Fins
         simp only [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
   have hoccpos : 0 < occurrences.card := by
     rw [hcard]; exact htotal
-  obtain ⟨x, hx, hmax, k, hk, hbound⟩ :=
-    exists_finset_max_node_power_sum_norm_ge occurrences hoccpos occurrenceNode
+  obtain ⟨x, hx, hmax, k, hk, hbound⟩ := finsetMax_powerSum_ge occurrences hoccpos occurrenceNode
   have hxmem : x.1 ∈ s := (Finset.mem_sigma.mp hx).1
   have hxmultiplicity : 0 < multiplicity x.1 := by
     have hxinner : x.2 ∈ Finset.range (multiplicity x.1) := (Finset.mem_sigma.mp hx).2
@@ -3100,8 +3046,8 @@ Proof: apply the weighted maximum-node estimate to the powered nodes and combine
 Role: moves the repeated-node Turán estimate to a fixed-multiple high-order block for local zero
 detection.
 -/
-theorem exists_finset_weighted_max_node_power_sum_norm_ge_block {α : Type*} (s : Finset α)
-    (multiplicity : α → ℕ) (z : α → ℂ) (htotal : 0 < ∑ i ∈ s, multiplicity i) (K : ℕ) :
+theorem weightedMax_powBlock {α : Type*} (s : Finset α) (multiplicity : α → ℕ) (z : α → ℂ)
+    (htotal : 0 < ∑ i ∈ s, multiplicity i) (K : ℕ) :
     ∃ i ∈ s,
       0 < multiplicity i ∧
         (∀ j ∈ s, 0 < multiplicity j → ‖z j‖ ^ K ≤ ‖z i‖ ^ K) ∧
@@ -3109,7 +3055,7 @@ theorem exists_finset_weighted_max_node_power_sum_norm_ge_block {α : Type*} (s 
           (1 / (4 * ((∑ i ∈ s, multiplicity i : ℕ) : ℝ))) * ‖z i‖ ^ (K * (k + 1)) ≤
             ‖∑ i ∈ s, (multiplicity i : ℂ) * z i ^ (K * (k + 1))‖ := by
   obtain ⟨i, hi, hmi, hmax, k, hk, hpow⟩ :=
-    exists_finset_weighted_max_node_power_sum_norm_ge s multiplicity (fun i => z i ^ K) htotal
+    weightedMax_powerSum s multiplicity (fun i => z i ^ K) htotal
   refine ⟨i, hi, hmi, ?_, k, hk, ?_⟩
   · simpa only [norm_pow] using hmax
   · simpa only [norm_pow, ← pow_mul] using hpow
@@ -3123,14 +3069,13 @@ Proof: apply the powered maximum-node estimate, compare the specified node with 
 maximum, and raise the resulting nonnegative inequality to the block index.
 Role: carries a known nearby zero through the high-order finite power-sum estimate.
 -/
-theorem exists_finset_weighted_power_sum_norm_ge_block_of_near {α : Type*} (s : Finset α)
-    (multiplicity : α → ℕ) (z : α → ℂ) (htotal : 0 < ∑ i ∈ s, multiplicity i) (ρ : α)
-    (hρmem : ρ ∈ s) (hρmult : 0 < multiplicity ρ) (K : ℕ) (r : ℝ) (hr : 0 < r) (hnear : r ≤ ‖z ρ‖) :
+theorem weightedBlock_ge_near {α : Type*} (s : Finset α) (multiplicity : α → ℕ) (z : α → ℂ)
+    (htotal : 0 < ∑ i ∈ s, multiplicity i) (ρ : α) (hρmem : ρ ∈ s) (hρmult : 0 < multiplicity ρ)
+    (K : ℕ) (r : ℝ) (hr : 0 < r) (hnear : r ≤ ‖z ρ‖) :
     ∃ k ∈ Finset.range (∑ i ∈ s, multiplicity i),
       (1 / (4 * ((∑ i ∈ s, multiplicity i : ℕ) : ℝ))) * r ^ (K * (k + 1)) ≤
         ‖∑ i ∈ s, (multiplicity i : ℂ) * z i ^ (K * (k + 1))‖ := by
-  obtain ⟨i, hi, hmi, hmax, k, hk, hbound⟩ :=
-    exists_finset_weighted_max_node_power_sum_norm_ge_block s multiplicity z htotal K
+  obtain ⟨i, hi, hmi, hmax, k, hk, hbound⟩ := weightedMax_powBlock s multiplicity z htotal K
   have hnearK : r ^ K ≤ ‖z ρ‖ ^ K := pow_le_pow_left₀ hr.le hnear _
   have hnodeK := hmax ρ hρmem hρmult
   have hri : r ^ K ≤ ‖z i‖ ^ K := hnearK.trans hnodeK
@@ -3157,18 +3102,16 @@ Proof: apply the block estimate and use the total-multiplicity bound to control 
 Role: makes the fixed-multiple exponent range explicit for applications with a uniform local
 zero-count bound.
 -/
-theorem exists_finset_weighted_power_sum_norm_ge_fixed_multiple_block_of_near {α : Type*} {C : ℕ}
-    (s : Finset α) (multiplicity : α → ℕ) (z : α → ℂ) (htotal : 0 < ∑ i ∈ s, multiplicity i)
-    (hcap : ∑ i ∈ s, multiplicity i ≤ C) (ρ : α) (hρmem : ρ ∈ s) (hρmult : 0 < multiplicity ρ)
-    (K : ℕ) (r : ℝ) (hr : 0 < r) (hnear : r ≤ ‖z ρ‖) :
+theorem fixedBlock_ge_near {α : Type*} {C : ℕ} (s : Finset α) (multiplicity : α → ℕ) (z : α → ℂ)
+    (htotal : 0 < ∑ i ∈ s, multiplicity i) (hcap : ∑ i ∈ s, multiplicity i ≤ C) (ρ : α)
+    (hρmem : ρ ∈ s) (hρmult : 0 < multiplicity ρ) (K : ℕ) (r : ℝ) (hr : 0 < r) (hnear : r ≤ ‖z ρ‖) :
     ∃ k ∈ Finset.range (∑ i ∈ s, multiplicity i),
       K ≤ K * (k + 1) ∧
         K * (k + 1) ≤ K * C ∧
         (1 / (4 * ((∑ i ∈ s, multiplicity i : ℕ) : ℝ))) * r ^ (K * (k + 1)) ≤
           ‖∑ i ∈ s, (multiplicity i : ℂ) * z i ^ (K * (k + 1))‖ := by
   obtain ⟨k, hk, hbound⟩ :=
-    exists_finset_weighted_power_sum_norm_ge_block_of_near s multiplicity z htotal ρ hρmem hρmult K
-      r hr hnear
+    weightedBlock_ge_near s multiplicity z htotal ρ hρmem hρmult K r hr hnear
   have hklt : k < ∑ i ∈ s, multiplicity i := Finset.mem_range.mp hk
   have hindexLower : 1 ≤ k + 1 := Nat.succ_le_iff.mpr (Nat.zero_lt_succ k)
   have hindexUpper : k + 1 ≤ C := Nat.succ_le_iff.mpr (lt_of_lt_of_le hklt hcap)

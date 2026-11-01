@@ -78,8 +78,8 @@ all strong passes gives a prime failing base below (33/50)*log(n)^2, provided
 the fixed Gamma scale is at least one and the explicit normalized remainder is
 at most log(n)/4000. Universal passage would give the impossible Gamma comparison.
 The error condition is numerical and is discharged by the explicit cutoff below. -/
-theorem exists_prime_witness_le_gamma_of_index_ge_four_and_error {n : ℕ} [NeZero n]
-    (hnlarge : 20000 ≤ n) (hnOdd : Odd n) (H : Subgroup (ZMod n)ˣ) (hi : 4 ≤ H.index)
+theorem exists_prime_gamma_indexFour_error_GRH {n : ℕ} [NeZero n] (hnlarge : 20000 ≤ n)
+    (hnOdd : Odd n) (H : Subgroup (ZMod n)ˣ) (hi : 4 ≤ H.index)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 0 < Real.log n)
@@ -176,9 +176,7 @@ theorem exists_prime_witness_le_gamma_of_index_ge_four {n : ℕ} [NeZero n] (hnO
     norm_num only [Nat.cast_ofNat]
     linarith only [hL, hlog]
   have hb := gamma_index_four_error_budget hL
-  exact
-    exists_prime_witness_le_gamma_of_index_ge_four_and_error hnlarge hnOdd H hi hHpass hGRH hpos
-      hb.1 hb.2
+  exact exists_prime_gamma_indexFour_error_GRH hnlarge hnOdd H hi hHpass hGRH hpos hb.1 hb.2
 
 /-- A decimal exponent at least five gives a modulus cutoff at least 20000.
 Compare powers before substituting a concrete large exponent, so the kernel
@@ -225,8 +223,7 @@ theorem exists_prime_witness_le_gamma_of_two_primes {p q : ℕ} (hp : p.Prime) (
         (r : ℝ) ≤ (33 / 50 : ℝ) * (Real.log ((p * q : ℕ) : ℝ)) ^ 2 ∧
         ¬PrimeTest.StrongMillerRabinPass (p * q) (r : ZMod (p * q)) := by
   let : NeZero (p * q) := ⟨mul_ne_zero hp.ne_zero hq.ne_zero⟩
-  obtain ⟨H, hi, hHpass⟩ :=
-    PrimeTest.exists_index_ge_four_subgroup_containing_passes_two_primes hp hq hp2 hq2 hpq
+  obtain ⟨H, hi, hHpass⟩ := PrimeTest.exists_index_four_subgroup_two_primes hp hq hp2 hq2 hpq
   exact
     exists_prime_witness_le_gamma_of_index_ge_four
       ((hp.odd_of_ne_two hp2).mul (hq.odd_of_ne_two hq2)) H hi hHpass hGRH hn
@@ -250,9 +247,7 @@ theorem exists_prime_witness_le_gamma {n : ℕ} (hnOdd : Odd n) (hnComposite : �
     intro h
     rw [h] at hnlarge
     exact (by decide : ¬20000 ≤ 9) hnlarge
-  obtain ⟨H, hi, hHpass⟩ :=
-    PrimeTest.exists_index_ge_four_subgroup_containing_strongMillerRabinPass hn1 hnOdd hnComposite
-      hn9
+  obtain ⟨H, hi, hHpass⟩ := PrimeTest.exists_index_four_subgroup_strongMR hn1 hnOdd hnComposite hn9
   exact exists_prime_witness_le_gamma_of_index_ge_four hnOdd H hi hHpass hGRH hn
 
 /-- Under GRH for odd n≥10^50000000000, passing the strong test for every prime
@@ -260,7 +255,7 @@ base at most (33/50)*log(n)^2 is equivalent to primality. The composite directio
 uses the coefficient-0.66 witness theorem, and the prime direction restricts
 the existing log-squared criterion to the smaller cutoff.
 This exposes the sharpened finite-base primality criterion at one explicit threshold. -/
-theorem prime_iff_millerRabin_for_all_primes_le_gamma_log_sq {n : ℕ} (hnOdd : Odd n)
+theorem prime_iff_pass_all_primes_gammaLogSq_GRH {n : ℕ} (hnOdd : Odd n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hn : 10 ^ 50000000000 ≤ n) :
     (∀ r : ℕ,
         r.Prime →

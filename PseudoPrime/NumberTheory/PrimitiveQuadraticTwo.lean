@@ -23,7 +23,7 @@ private theorem primitiveQuadratic_two_eq_jacobi {n : ℕ} {hn : Odd n} {hns : �
   let : NeZero (4 * n) := ⟨mul_ne_zero (by norm_num only) hn.pos.ne'⟩
   have hdvd : b.squarefreePart ∣ n :=
     ⟨b.squareFactor ^ 2, by simpa only [mul_comm] using b.squarefreePart_sq_mul.symm⟩
-  have hf := complexQuadraticCharacter_conductor_eq_squarefreePart_of_mod_four_eq_one b hdvd h4
+  have hf := complexQuadratic_conductor_eq_mod4_one b hdvd h4
   have he : ((b.squarefreePart + 2 : ℕ) : ZMod (complexQuadraticCharacter n hn).conductor) = 2 := by
     rw [hf, Nat.cast_add, ZMod.natCast_self, zero_add]
     rfl
@@ -69,8 +69,7 @@ theorem primitiveQuadratic_two_zero {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
   let : NeZero (4 * n) := ⟨mul_ne_zero (by norm_num only) hn.pos.ne'⟩
   have hdvd : b.squarefreePart ∣ n :=
     ⟨b.squareFactor ^ 2, by simpa only [mul_comm] using b.squarefreePart_sq_mul.symm⟩
-  have hf :=
-    complexQuadraticCharacter_conductor_eq_four_mul_squarefreePart_of_mod_four_eq_three b hdvd h4
+  have hf := complexQuadratic_conductor_eq_mod4_three b hdvd h4
   apply MulChar.map_nonunit
   intro hu
   have hc := (ZMod.isUnit_iff_coprime 2 (complexQuadraticCharacter n hn).conductor).mp hu
@@ -115,7 +114,7 @@ theorem quadratic_mod_eight_one_data {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     ⟨b.squareFactor ^ 2, by simpa only [mul_comm] using b.squarefreePart_sq_mul.symm⟩
   have h4 : b.squarefreePart % 4 = 1 := by
     rw [← Nat.mod_mod_of_dvd b.squarefreePart (by norm_num only : 4 ∣ 8), h8]
-  refine ⟨complexQuadraticCharacter_conductor_eq_squarefreePart_of_mod_four_eq_one b hdvd h4, ?_⟩
+  refine ⟨complexQuadratic_conductor_eq_mod4_one b hdvd h4, ?_⟩
   rw [primitiveQuadratic_two_one b h8]
   norm_num only [Complex.one_re, Complex.neg_re, Complex.zero_re, zero_mul, one_mul]
 
@@ -132,7 +131,7 @@ theorem quadratic_mod_eight_five_data {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n
     ⟨b.squareFactor ^ 2, by simpa only [mul_comm] using b.squarefreePart_sq_mul.symm⟩
   have h4 : b.squarefreePart % 4 = 1 := by
     rw [← Nat.mod_mod_of_dvd b.squarefreePart (by norm_num only : 4 ∣ 8), h8]
-  refine ⟨complexQuadraticCharacter_conductor_eq_squarefreePart_of_mod_four_eq_one b hdvd h4, ?_⟩
+  refine ⟨complexQuadratic_conductor_eq_mod4_one b hdvd h4, ?_⟩
   rw [primitiveQuadratic_two_neg_one b h8]
   norm_num only [Complex.one_re, Complex.neg_re, Complex.zero_re, zero_mul, one_mul]
 
@@ -151,9 +150,7 @@ theorem quadratic_mod_eight_three_seven {n : ℕ} {hn : Odd n} {hns : ¬IsSquare
   have h4 : b.squarefreePart % 4 = 3 := by
     rw [← Nat.mod_mod_of_dvd b.squarefreePart (by norm_num only : 4 ∣ 8)]
     rcases h8 with h8 | h8 <;> rw [h8]
-  refine
-    ⟨complexQuadraticCharacter_conductor_eq_four_mul_squarefreePart_of_mod_four_eq_three b hdvd h4,
-      ?_⟩
+  refine ⟨complexQuadratic_conductor_eq_mod4_three b hdvd h4, ?_⟩
   rw [primitiveQuadratic_two_zero b h4]
   norm_num only [Complex.one_re, Complex.neg_re, Complex.zero_re, zero_mul, one_mul]
 

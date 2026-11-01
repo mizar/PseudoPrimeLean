@@ -33,8 +33,7 @@ theorem shifted_completed_order_ne_top {N : ℕ} [NeZero N] {χ : DirichletChara
       (analyticAt_id.add analyticAt_const)
   have hz : F (-1 / 2) ≠ 0 := by
     dsimp only [F]
-    simpa only [neg_div, neg_add_cancel] using
-      dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne
+    simpa only [neg_div, neg_add_cancel] using completed_zero_ne_zero_of_primitive hprimitive hne
   have ho : analyticOrderAt F (-1 / 2) = 0 := analyticOrderAt_eq_zero.mpr (Or.inr hz)
   exact
     hF.analyticOrderAt_ne_top_of_isPreconnected isPreconnected_univ (Set.mem_univ _)
@@ -114,7 +113,7 @@ theorem shifted_completed_order {q : ℕ} [NeZero q] (χ : DirichletCharacter �
 completion equals the integer divisor of the unshifted completion. Finite order and
 translation invariance turn the divisor formula into this cast identity. This matches
 finite contour multiplicities with the global zero series. -/
-theorem shifted_completed_orderNat_eq_divisor {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+theorem shifted_orderNat_eq_divisor {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (s : ℂ) :
     (analyticOrderNatAt (fun z : ℂ => χ.completedLFunction (z + 1 / 2)) s : ℤ) =
       MeromorphicOn.divisor χ.completedLFunction Set.univ (s + 1 / 2) := by

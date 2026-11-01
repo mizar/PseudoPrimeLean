@@ -63,7 +63,7 @@ theorem prime_of_findSquareCertificateFromRetainedSupply {n : ℕ}
 
 /-- Valid retained factors, a sufficient square-root bound, and a base-list witness for every
 factor key guarantee that the verified bounded certificate constructor succeeds. -/
-theorem exists_findSquareCertificateFromRetainedSupply_of_coverage {n : ℕ} (hn5 : 5 ≤ n)
+theorem exists_findSquareCertRetained_of_coverage {n : ℕ} (hn5 : 5 ≤ n)
     {params : NumberTheory.Factorization.PollardRho.Params} {fuel : ℕ} {bases : List ℕ}
     {data : PartialFactorizationData}
     (hdata : retainingPartialFactorizationOfNMinusOne n params fuel = some data)
@@ -101,7 +101,7 @@ def retainingPartialFactorizationOfNMinusOneByTree (n : ℕ)
   partialFactorizationDataOfSupply (partialPrimeFactorSupplyByTree params tree (n - 1))
 
 /-- Every partial factorization returned by the explicit-budget supplier passes the BLS checker. -/
-theorem retainingPartialFactorizationOfNMinusOneByTree_sound {n : ℕ}
+theorem retainingTreeFactorization_sound {n : ℕ}
     {params : NumberTheory.Factorization.PollardRho.Params}
     {tree : NumberTheory.Factorization.PollardRho.RhoBudgetTree} {data : PartialFactorizationData}
     (h : retainingPartialFactorizationOfNMinusOneByTree n params tree = some data) :
@@ -156,7 +156,7 @@ theorem prime_of_findSquareCertificateFromBudgetTree {n : ℕ}
         cases h
 
 /-- Every certificate returned by the budget-tree constructor retains the constructor input. -/
-theorem certificate_n_eq_input_of_findSquareCertificateFromBudgetTree {n : ℕ}
+theorem certificate_n_eq_input_of_findSquareCertTree {n : ℕ}
     {params : NumberTheory.Factorization.PollardRho.Params}
     {tree : NumberTheory.Factorization.PollardRho.RhoBudgetTree} {bases : List ℕ}
     {certificate : SquareCertificate}
@@ -186,7 +186,7 @@ theorem certificate_n_eq_input_of_findSquareCertificateFromBudgetTree {n : ℕ}
 /-- A successful budget-tree search returns a certificate whose cube-root criterion has the
 branch-sensitive prime characterization. This carries the verified certificate result into the
 alternative BLS arithmetic interface. -/
-theorem prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero_of_budget_tree_search {n : ℕ}
+theorem prime_iff_cubeCriterion_tree_certificate {n : ℕ}
     {params : NumberTheory.Factorization.PollardRho.Params}
     {tree : NumberTheory.Factorization.PollardRho.RhoBudgetTree} {bases : List ℕ}
     {certificate : SquareCertificate}
@@ -220,14 +220,12 @@ theorem prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero_of_budget_tre
         · simp only [hdata, hwitnesses] at h
           rw [ite_eq_right hverify] at h
           cases h
-  exact
-    prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero_of_valid_square_certificate
-      certificate hcheck
+  exact prime_iff_cubeCriterion_of_certificate certificate hcheck
 
 /-- The budget-tree cube criterion characterizes the original input because every returned
 certificate stores that input unchanged. -/
-theorem prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero_of_budget_tree_search_input
-    {n : ℕ} {params : NumberTheory.Factorization.PollardRho.Params}
+theorem prime_iff_cubeCriterion_tree_input {n : ℕ}
+    {params : NumberTheory.Factorization.PollardRho.Params}
     {tree : NumberTheory.Factorization.PollardRho.RhoBudgetTree} {bases : List ℕ}
     {certificate : SquareCertificate}
     (h : findSquareCertificateFromBudgetTree n params tree bases = some certificate) :
@@ -238,16 +236,15 @@ theorem prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero_of_budget_tre
         findCubeDiscriminantSquareRoot certificate.factorization.cofactor
             (factorProduct certificate.factorization.factors) =
           none := by
-  have hcriterion :=
-    prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero_of_budget_tree_search h
-  have hnumber := certificate_n_eq_input_of_findSquareCertificateFromBudgetTree h
+  have hcriterion := prime_iff_cubeCriterion_tree_certificate h
+  have hnumber := certificate_n_eq_input_of_findSquareCertTree h
   rw [hnumber] at hcriterion
   exact hcriterion
 
 /-- A successful complete factor-supply search also exposes the branch-sensitive cube criterion.
 The complete prime-power product is `n - 1`; for `n ≥ 5` this gives the cubic bound needed by
 the cube-root characterization. -/
-theorem prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero_of_findSquareCertificate {n : ℕ}
+theorem prime_iff_cubeCriterion_search_certificate {n : ℕ}
     {params : NumberTheory.Factorization.PollardRho.Params} {factorFuel : ℕ} {bases : List ℕ}
     {certificate : SquareCertificate} (hn5 : 5 ≤ n)
     (h : findSquareCertificate n params factorFuel bases = some certificate) :
@@ -290,15 +287,13 @@ theorem prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero_of_findSquare
   have hcheck : verifySquareCertificate certificate = true := by
     simp only [verifySquareCertificate, checkSquareCertificate, Bool.and_eq_true, decide_eq_true_eq]
     exact ⟨⟨⟨hn5c, hbound⟩, hfactorc⟩, hwitnessesc⟩
-  exact
-    prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero_of_valid_square_certificate
-      certificate hcheck
+  exact prime_iff_cubeCriterion_of_certificate certificate hcheck
 
 /-- The complete factor-supply constructor's cube criterion is a characterization of its input,
 because its soundness theorem identifies the returned certificate's embedded number with `n`. -/
-theorem prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero_of_findSquareCertificate_input
-    {n : ℕ} {params : NumberTheory.Factorization.PollardRho.Params} {factorFuel : ℕ}
-    {bases : List ℕ} {certificate : SquareCertificate} (hn5 : 5 ≤ n)
+theorem prime_iff_cubeCriterion_search_input {n : ℕ}
+    {params : NumberTheory.Factorization.PollardRho.Params} {factorFuel : ℕ} {bases : List ℕ}
+    {certificate : SquareCertificate} (hn5 : 5 ≤ n)
     (h : findSquareCertificate n params factorFuel bases = some certificate) :
     Nat.Prime n ↔
       cubeQuotient certificate.factorization.cofactor
@@ -307,8 +302,7 @@ theorem prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero_of_findSquare
         findCubeDiscriminantSquareRoot certificate.factorization.cofactor
             (factorProduct certificate.factorization.factors) =
           none := by
-  have hcriterion :=
-    prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero_of_findSquareCertificate hn5 h
+  have hcriterion := prime_iff_cubeCriterion_search_certificate hn5 h
   have hn2 : 2 < n := Nat.lt_of_lt_of_le (by decide : 2 < 5) hn5
   obtain ⟨hcn, _, _, _⟩ := findSquareCertificate_sound hn2 h
   rw [hcn] at hcriterion
@@ -316,9 +310,8 @@ theorem prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero_of_findSquare
 
 /-- A successful complete factor-supply search with positive cube quotient and a found
 discriminant square root certifies that the original input is composite. -/
-theorem not_prime_of_findCubeDiscriminantSquareRoot_some_of_findSquareCertificate {n : ℕ}
-    {params : NumberTheory.Factorization.PollardRho.Params} {factorFuel : ℕ} {bases : List ℕ}
-    {certificate : SquareCertificate} (hn5 : 5 ≤ n)
+theorem not_prime_of_cubeRoot_search {n : ℕ} {params : NumberTheory.Factorization.PollardRho.Params}
+    {factorFuel : ℕ} {bases : List ℕ} {certificate : SquareCertificate} (hn5 : 5 ≤ n)
     (h : findSquareCertificate n params factorFuel bases = some certificate)
     (hquotient :
       0 <
@@ -331,10 +324,7 @@ theorem not_prime_of_findCubeDiscriminantSquareRoot_some_of_findSquareCertificat
         some z) :
     ¬Nat.Prime n := by
   intro hprime
-  have hbranches :=
-    (prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero_of_findSquareCertificate_input hn5
-          h).mp
-      hprime
+  have hbranches := (prime_iff_cubeCriterion_search_input hn5 h).mp hprime
   rcases hbranches with hzero | hnone
   · exact False.elim (Nat.ne_of_gt hquotient hzero)
   · rw [hroot] at hnone
@@ -342,7 +332,7 @@ theorem not_prime_of_findCubeDiscriminantSquareRoot_some_of_findSquareCertificat
 
 /-- The budget-tree constructor has the same composite conclusion when its cube-root search
 finds a root and the corresponding quotient is positive. -/
-theorem not_prime_of_findCubeDiscriminantSquareRoot_some_of_budget_tree_search {n : ℕ}
+theorem not_prime_of_budget_tree_cube_square {n : ℕ}
     {params : NumberTheory.Factorization.PollardRho.Params}
     {tree : NumberTheory.Factorization.PollardRho.RhoBudgetTree} {bases : List ℕ}
     {certificate : SquareCertificate}
@@ -358,9 +348,7 @@ theorem not_prime_of_findCubeDiscriminantSquareRoot_some_of_budget_tree_search {
         some z) :
     ¬Nat.Prime n := by
   intro hprime
-  have hbranches :=
-    (prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero_of_budget_tree_search_input h).mp
-      hprime
+  have hbranches := (prime_iff_cubeCriterion_tree_input h).mp hprime
   rcases hbranches with hzero | hnone
   · exact False.elim (Nat.ne_of_gt hquotient hzero)
   · rw [hroot] at hnone
@@ -381,7 +369,7 @@ def bls5DiscriminantResult {n F R : ℕ} (hn : 1 < n) (hF : 0 < F) (hdecomp : n 
   match hroot : findBls5DiscriminantSquareRoot R F with
   | some z =>
     .composite
-      (bls5NotPrime_of_positive_quotient_and_discriminant_square hn hF hdecomp hquotient z
+      (bls5NotPrime_of_discr_square hn hF hdecomp hquotient z
         (findBls5DiscriminantSquareRoot_some_spec R F z hroot))
   | none => .unknown
 
@@ -403,7 +391,7 @@ theorem bls5DiscriminantResult_composite_of_some {n F R : ℕ} (hn : 1 < n) (hF 
     (hroot : findBls5DiscriminantSquareRoot R F = some z) :
     ∃ hcomp : ¬Nat.Prime n, bls5DiscriminantResult hn hF hdecomp hquotient = .composite hcomp := by
   refine
-    ⟨bls5NotPrime_of_positive_quotient_and_discriminant_square hn hF hdecomp hquotient z
+    ⟨bls5NotPrime_of_discr_square hn hF hdecomp hquotient z
         (findBls5DiscriminantSquareRoot_some_spec R F z hroot),
       ?_⟩
   unfold bls5DiscriminantResult
@@ -454,7 +442,7 @@ theorem bls5DiscriminantResult_unknown_iff_none {n F R : ℕ} (hn : 1 < n) (hF :
 
 /-- Retained factor supply provides the decomposition and positive factor needed to turn a
 found BLS5 discriminant root into a proof-carrying composite result. -/
-theorem bls5DiscriminantResult_composite_of_retainedSupply {n : ℕ}
+theorem bls5Result_composite_of_retainedSupply {n : ℕ}
     {params : NumberTheory.Factorization.PollardRho.Params} {fuel : ℕ}
     {data : PartialFactorizationData} (hn : 1 < n)
     (hdata : retainingPartialFactorizationOfNMinusOne n params fuel = some data)
@@ -774,7 +762,7 @@ theorem exists_findBLS5Certificate_of_coverage {n : ℕ} (hn5 : 5 ≤ n)
 /-- Under retained factor supply, BLS5 size and parity data, and explicit
 witness-base coverage, finite certificate discovery is equivalent to the
 executable arithmetic criterion for the retained cofactor. -/
-theorem findBLS5Certificate_some_iff_arithmetic_of_coverage {n : ℕ} (hn5 : 5 ≤ n)
+theorem findBLS5Certificate_iff_arithmetic_coverage {n : ℕ} (hn5 : 5 ≤ n)
     {params : NumberTheory.Factorization.PollardRho.Params} {fuel : ℕ} {bases : List ℕ}
     {data : PartialFactorizationData}
     (hdata : retainingPartialFactorizationOfNMinusOne n params fuel = some data)
@@ -862,7 +850,7 @@ def bls5DiscriminantResultFromRetainedSupply (n : ℕ)
     (fun _ h ↦ retainingPartialFactorizationOfNMinusOne_sound h)
 
 /-- Retained factors and a found square discriminant reach the common composite result. -/
-theorem bls5DiscriminantResultFromRetainedSupply_composite_of_some {n : ℕ}
+theorem bls5RetainedResult_composite_of_some {n : ℕ}
     {params : NumberTheory.Factorization.PollardRho.Params} {fuel : ℕ}
     {data : PartialFactorizationData} (hinput : 1 < n)
     (hdata : retainingPartialFactorizationOfNMinusOne n params fuel = some data)
@@ -886,7 +874,7 @@ theorem bls5DiscriminantResultFromRetainedSupply_composite_of_some {n : ℕ}
       exact False.elim (hnot hq)
 
 /-- With no retained factor data, the discriminant search has no justified conclusion. -/
-theorem bls5DiscriminantResultFromRetainedSupply_unknown_of_none {n : ℕ}
+theorem bls5RetainedResult_unknown_of_none {n : ℕ}
     {params : NumberTheory.Factorization.PollardRho.Params} {fuel : ℕ} (hinput : 1 < n)
     (hdata : retainingPartialFactorizationOfNMinusOne n params fuel = none) :
     bls5DiscriminantResultFromRetainedSupply n params fuel = .unknown := by
@@ -899,7 +887,7 @@ theorem bls5DiscriminantResultFromRetainedSupply_unknown_of_none {n : ℕ}
     cases hsome
 
 /-- Retained factors with zero BLS5 quotient leave the discriminant classifier unknown. -/
-theorem bls5DiscriminantResultFromRetainedSupply_unknown_of_zero {n : ℕ}
+theorem bls5RetainedResult_unknown_of_zero {n : ℕ}
     {params : NumberTheory.Factorization.PollardRho.Params} {fuel : ℕ}
     {data : PartialFactorizationData} (hinput : 1 < n)
     (hdata : retainingPartialFactorizationOfNMinusOne n params fuel = some data)
@@ -921,7 +909,7 @@ theorem bls5DiscriminantResultFromRetainedSupply_unknown_of_zero {n : ℕ}
 
 /-- A positive quotient without an integer square root of the BLS5 discriminant
 also leaves the retained-factor classifier unknown. -/
-theorem bls5DiscriminantResultFromRetainedSupply_unknown_of_root_none {n : ℕ}
+theorem bls5RetainedResult_unknown_of_root_none {n : ℕ}
     {params : NumberTheory.Factorization.PollardRho.Params} {fuel : ℕ}
     {data : PartialFactorizationData} (hinput : 1 < n)
     (hdata : retainingPartialFactorizationOfNMinusOne n params fuel = some data)
@@ -945,7 +933,7 @@ theorem bls5DiscriminantResultFromRetainedSupply_unknown_of_root_none {n : ℕ}
 /-- Given retained factors and a positive BLS5 quotient, the fallback proves
 compositeness exactly when its finite discriminant square-root search succeeds.
 The retained decomposition supplies the arithmetic hypotheses of the classifier. -/
-theorem bls5DiscriminantResultFromRetainedSupply_composite_iff_some {n : ℕ}
+theorem bls5RetainedResult_composite_iff_some {n : ℕ}
     {params : NumberTheory.Factorization.PollardRho.Params} {fuel : ℕ}
     {data : PartialFactorizationData} (hinput : 1 < n)
     (hdata : retainingPartialFactorizationOfNMinusOne n params fuel = some data)
@@ -970,7 +958,7 @@ theorem bls5DiscriminantResultFromRetainedSupply_composite_iff_some {n : ℕ}
 
 /-- Given retained factors and a positive BLS5 quotient, the fallback is
 unknown exactly when the finite discriminant square-root search fails. -/
-theorem bls5DiscriminantResultFromRetainedSupply_unknown_iff_none {n : ℕ}
+theorem bls5RetainedResult_unknown_iff_none {n : ℕ}
     {params : NumberTheory.Factorization.PollardRho.Params} {fuel : ℕ}
     {data : PartialFactorizationData} (hinput : 1 < n)
     (hdata : retainingPartialFactorizationOfNMinusOne n params fuel = some data)
@@ -1168,8 +1156,7 @@ theorem boundedBLS5SearchWithComposite_composite_case {n : ℕ}
     (hroot : findBls5DiscriminantSquareRoot data.cofactor (factorProduct data.factors) = some z) :
     ∃ hcomp : ¬Nat.Prime n,
       boundedBLS5SearchWithComposite n params fuel bases = .composite hcomp := by
-  obtain ⟨hcomp, hresult⟩ :=
-    bls5DiscriminantResultFromRetainedSupply_composite_of_some hinput hdata hq hroot
+  obtain ⟨hcomp, hresult⟩ := bls5RetainedResult_composite_of_some hinput hdata hq hroot
   exact
     ⟨hcomp, (boundedBLS5SearchWithComposite_none_case params fuel bases hinput hnone).trans hresult⟩
 
@@ -1183,15 +1170,14 @@ theorem boundedBLS5SearchWithComposite_composite_of_root {n : ℕ}
     (hroot : findBls5DiscriminantSquareRoot data.cofactor (factorProduct data.factors) = some z) :
     ∃ hcomp : ¬Nat.Prime n,
       boundedBLS5SearchWithComposite n params fuel bases = .composite hcomp := by
-  obtain ⟨hcomp, hresult⟩ :=
-    bls5DiscriminantResultFromRetainedSupply_composite_of_some hinput hdata hq hroot
+  obtain ⟨hcomp, hresult⟩ := bls5RetainedResult_composite_of_some hinput hdata hq hroot
   exact
     ⟨hcomp,
       (boundedBLS5SearchWithComposite_of_not_prime params fuel bases hinput hcomp).trans hresult⟩
 
 /-- If bounded factor supply returns nothing, both certificate and discriminant searches
 remain inconclusive. -/
-theorem boundedBLS5SearchWithComposite_unknown_of_no_factor {n : ℕ}
+theorem boundedBls5Composite_unknown_of_no_factor {n : ℕ}
     (params : NumberTheory.Factorization.PollardRho.Params) (fuel : ℕ) (bases : List ℕ)
     (hinput : 1 < n) (hdata : retainingPartialFactorizationOfNMinusOne n params fuel = none) :
     boundedBLS5SearchWithComposite n params fuel bases = .unknown := by
@@ -1199,7 +1185,7 @@ theorem boundedBLS5SearchWithComposite_unknown_of_no_factor {n : ℕ}
     unfold findBLS5Certificate findBLS5CertificateFromSupply
     rw [hdata]
   rw [boundedBLS5SearchWithComposite_none_case params fuel bases hinput hcert]
-  exact bls5DiscriminantResultFromRetainedSupply_unknown_of_none hinput hdata
+  exact bls5RetainedResult_unknown_of_none hinput hdata
 
 /-- After certificate exhaustion, retained factors with zero BLS5 quotient cannot
 justify either primality or the positive-quotient composite criterion. -/
@@ -1211,11 +1197,11 @@ theorem boundedBLS5SearchWithComposite_unknown_of_zero {n : ℕ}
     (hzero : bls5Quotient data.cofactor (factorProduct data.factors) = 0) :
     boundedBLS5SearchWithComposite n params fuel bases = .unknown := by
   rw [boundedBLS5SearchWithComposite_none_case params fuel bases hinput hcert]
-  exact bls5DiscriminantResultFromRetainedSupply_unknown_of_zero hinput hdata hzero
+  exact bls5RetainedResult_unknown_of_zero hinput hdata hzero
 
 /-- After certificate exhaustion, a nonsquare BLS5 discriminant leaves the
 combined search unknown even when the retained quotient is positive. -/
-theorem boundedBLS5SearchWithComposite_unknown_of_root_none {n : ℕ}
+theorem boundedBls5Composite_unknown_of_root_none {n : ℕ}
     (params : NumberTheory.Factorization.PollardRho.Params) (fuel : ℕ) (bases : List ℕ)
     {data : PartialFactorizationData} (hinput : 1 < n)
     (hcert : findBLS5Certificate n params fuel bases = none)
@@ -1224,7 +1210,7 @@ theorem boundedBLS5SearchWithComposite_unknown_of_root_none {n : ℕ}
     (hroot : findBls5DiscriminantSquareRoot data.cofactor (factorProduct data.factors) = none) :
     boundedBLS5SearchWithComposite n params fuel bases = .unknown := by
   rw [boundedBLS5SearchWithComposite_none_case params fuel bases hinput hcert]
-  exact bls5DiscriminantResultFromRetainedSupply_unknown_of_root_none hinput hdata hq hroot
+  exact bls5RetainedResult_unknown_of_root_none hinput hdata hq hroot
 
 /-- For an in-range input, the combined search is unknown exactly when certificate
 search is exhausted and retained-factor classification is also unknown. This
@@ -1283,7 +1269,7 @@ theorem boundedBLS5SearchWithComposite_composite_iff {n : ℕ}
 /-- With retained factors and a positive quotient, the combined BLS5 search
 returns a composite proof exactly when its finite discriminant-root search
 succeeds. The certificate branch cannot succeed on that composite input. -/
-theorem boundedBLS5SearchWithComposite_composite_iff_root {n : ℕ}
+theorem boundedBls5Composite_composite_iff_root {n : ℕ}
     (params : NumberTheory.Factorization.PollardRho.Params) (fuel : ℕ) (bases : List ℕ)
     {data : PartialFactorizationData} (hinput : 1 < n)
     (hdata : retainingPartialFactorizationOfNMinusOne n params fuel = some data)
@@ -1295,10 +1281,9 @@ theorem boundedBLS5SearchWithComposite_composite_iff_root {n : ℕ}
   · rintro ⟨hcomp, hresult⟩
     obtain ⟨_, hfallback⟩ :=
       (boundedBLS5SearchWithComposite_composite_iff params fuel bases hinput).mp ⟨hcomp, hresult⟩
-    exact (bls5DiscriminantResultFromRetainedSupply_composite_iff_some hinput hdata hq).mp hfallback
+    exact (bls5RetainedResult_composite_iff_some hinput hdata hq).mp hfallback
   · intro hroot
-    obtain ⟨hcomp, hfallback⟩ :=
-      (bls5DiscriminantResultFromRetainedSupply_composite_iff_some hinput hdata hq).mpr hroot
+    obtain ⟨hcomp, hfallback⟩ := (bls5RetainedResult_composite_iff_some hinput hdata hq).mpr hroot
     have hnone := findBLS5Certificate_eq_none_of_not_prime params fuel bases hcomp
     exact
       (boundedBLS5SearchWithComposite_composite_iff params fuel bases hinput).mpr
@@ -1307,7 +1292,7 @@ theorem boundedBLS5SearchWithComposite_composite_iff_root {n : ℕ}
 /-- For a composite input with retained factors and positive quotient, the
 combined BLS5 search remains unknown exactly when no discriminant root is
 found. Certificate search is impossible on this input by its soundness. -/
-theorem boundedBLS5SearchWithComposite_unknown_iff_root_none_of_not_prime {n : ℕ}
+theorem boundedBls5_unknown_iff_root_none_composite {n : ℕ}
     (params : NumberTheory.Factorization.PollardRho.Params) (fuel : ℕ) (bases : List ℕ)
     {data : PartialFactorizationData} (hinput : 1 < n) (hcomp : ¬Nat.Prime n)
     (hdata : retainingPartialFactorizationOfNMinusOne n params fuel = some data)
@@ -1318,16 +1303,16 @@ theorem boundedBLS5SearchWithComposite_unknown_iff_root_none_of_not_prime {n : �
   · intro hunknown
     obtain ⟨_, hfallback⟩ :=
       (boundedBLS5SearchWithComposite_unknown_iff params fuel bases hinput).mp hunknown
-    exact (bls5DiscriminantResultFromRetainedSupply_unknown_iff_none hinput hdata hq).mp hfallback
+    exact (bls5RetainedResult_unknown_iff_none hinput hdata hq).mp hfallback
   · intro hroot
     apply (boundedBLS5SearchWithComposite_unknown_iff params fuel bases hinput).mpr
     exact
       ⟨findBLS5Certificate_eq_none_of_not_prime params fuel bases hcomp,
-        (bls5DiscriminantResultFromRetainedSupply_unknown_iff_none hinput hdata hq).mpr hroot⟩
+        (bls5RetainedResult_unknown_iff_none hinput hdata hq).mpr hroot⟩
 
 /-- On a composite input, a retained decomposition with zero BLS5 quotient
 forces the combined search to remain unknown for every witness-base list. -/
-theorem boundedBLS5SearchWithComposite_unknown_of_not_prime_of_zero {n : ℕ}
+theorem boundedBls5_unknown_of_composite_zero {n : ℕ}
     (params : NumberTheory.Factorization.PollardRho.Params) (fuel : ℕ) (bases : List ℕ)
     {data : PartialFactorizationData} (hinput : 1 < n) (hcomp : ¬Nat.Prime n)
     (hdata : retainingPartialFactorizationOfNMinusOne n params fuel = some data)
@@ -1335,11 +1320,11 @@ theorem boundedBLS5SearchWithComposite_unknown_of_not_prime_of_zero {n : ℕ}
     boundedBLS5SearchWithComposite n params fuel bases = .unknown := by
   apply (boundedBLS5SearchWithComposite_unknown_iff params fuel bases hinput).mpr
   refine ⟨findBLS5Certificate_eq_none_of_not_prime params fuel bases hcomp, ?_⟩
-  exact bls5DiscriminantResultFromRetainedSupply_unknown_of_zero hinput hdata hzero
+  exact bls5RetainedResult_unknown_of_zero hinput hdata hzero
 
 /-- On a composite input, a positive quotient without a found discriminant
 root also leaves the combined search unknown for every witness-base list. -/
-theorem boundedBLS5SearchWithComposite_unknown_of_not_prime_of_root_none {n : ℕ}
+theorem boundedBls5_unknown_of_composite_root_none {n : ℕ}
     (params : NumberTheory.Factorization.PollardRho.Params) (fuel : ℕ) (bases : List ℕ)
     {data : PartialFactorizationData} (hinput : 1 < n) (hcomp : ¬Nat.Prime n)
     (hdata : retainingPartialFactorizationOfNMinusOne n params fuel = some data)
@@ -1347,13 +1332,11 @@ theorem boundedBLS5SearchWithComposite_unknown_of_not_prime_of_root_none {n : �
     (hroot : findBls5DiscriminantSquareRoot data.cofactor (factorProduct data.factors) = none) :
     boundedBLS5SearchWithComposite n params fuel bases = .unknown := by
   exact
-    (boundedBLS5SearchWithComposite_unknown_iff_root_none_of_not_prime params fuel bases hinput
-          hcomp hdata hq).mpr
-      hroot
+    (boundedBls5_unknown_iff_root_none_composite params fuel bases hinput hcomp hdata hq).mpr hroot
 
 /-- The retained-factor discriminant classifier has only composite and unknown
 branches on an in-range input. It cannot manufacture a BLS5 prime certificate. -/
-theorem bls5DiscriminantResultFromRetainedSupply_no_prime_branch {n : ℕ}
+theorem bls5RetainedResult_no_prime_branch {n : ℕ}
     (params : NumberTheory.Factorization.PollardRho.Params) (fuel : ℕ) (hinput : 1 < n) :
     ¬∃ hprime : Nat.Prime n,
         bls5DiscriminantResultFromRetainedSupply n params fuel = .prime hprime := by
@@ -1370,7 +1353,7 @@ theorem bls5DiscriminantResultFromRetainedSupply_no_prime_branch {n : ℕ}
 /-- For an in-range input, the combined BLS5 search returns a prime result
 exactly when the finite factor-and-witness search finds a checked certificate.
 The retained-factor fallback contributes only composite or unknown results. -/
-theorem boundedBLS5SearchWithComposite_prime_iff_certificate {n : ℕ}
+theorem boundedBls5Composite_prime_iff_certificate {n : ℕ}
     (params : NumberTheory.Factorization.PollardRho.Params) (fuel : ℕ) (bases : List ℕ)
     (hinput : 1 < n) :
     (∃ hprime : Nat.Prime n, boundedBLS5SearchWithComposite n params fuel bases = .prime hprime) ↔
@@ -1382,7 +1365,7 @@ theorem boundedBLS5SearchWithComposite_prime_iff_certificate {n : ℕ}
       have hfallback := boundedBLS5SearchWithComposite_none_case params fuel bases hinput hcert
       exact
         False.elim
-          (bls5DiscriminantResultFromRetainedSupply_no_prime_branch params fuel hinput
+          (bls5RetainedResult_no_prime_branch params fuel hinput
             ⟨hprime, hfallback.symm.trans hresult⟩)
     | some certificate => exact ⟨certificate, rfl⟩
   · rintro ⟨certificate, hcert⟩
@@ -1393,7 +1376,7 @@ theorem boundedBLS5SearchWithComposite_prime_iff_certificate {n : ℕ}
 /-- With retained factor data and finite base-list coverage, the combined
 BLS5 search reaches its proof-carrying prime branch exactly when its
 arithmetic criterion accepts the retained cofactor. -/
-theorem boundedBLS5SearchWithComposite_prime_iff_arithmetic_of_coverage {n : ℕ} (hn5 : 5 ≤ n)
+theorem boundedBls5_prime_iff_arithmetic_coverage {n : ℕ} (hn5 : 5 ≤ n)
     {params : NumberTheory.Factorization.PollardRho.Params} {fuel : ℕ} {bases : List ℕ}
     {data : PartialFactorizationData}
     (hdata : retainingPartialFactorizationOfNMinusOne n params fuel = some data)
@@ -1410,16 +1393,16 @@ theorem boundedBLS5SearchWithComposite_prime_iff_arithmetic_of_coverage {n : ℕ
       bls5PassesArithmeticCriterion data.cofactor (factorProduct data.factors) = true := by
   calc
     _ ↔ ∃ certificate, findBLS5Certificate n params fuel bases = some certificate :=
-      boundedBLS5SearchWithComposite_prime_iff_certificate params fuel bases
+      boundedBls5Composite_prime_iff_certificate params fuel bases
         (lt_of_lt_of_le (by decide : 1 < 5) hn5)
     _ ↔ bls5PassesArithmeticCriterion data.cofactor (factorProduct data.factors) = true :=
-      findBLS5Certificate_some_iff_arithmetic_of_coverage hn5 hdata hEven hcop hbound hcoverage
+      findBLS5Certificate_iff_arithmetic_coverage hn5 hdata hEven hcop hbound hcoverage
 
 /-- With retained factor supply and explicit witness-base coverage, the
 combined BLS5 search returns its prime branch exactly for prime inputs.
 The factor, parity, coprimality, and expanded-bound assumptions are stated
 explicitly; no claim is made about arbitrary finite search budgets. -/
-theorem boundedBLS5SearchWithComposite_prime_iff_prime_of_coverage {n : ℕ} (hn5 : 5 ≤ n)
+theorem boundedBLS5_prime_iff_of_coverage {n : ℕ} (hn5 : 5 ≤ n)
     {params : NumberTheory.Factorization.PollardRho.Params} {fuel : ℕ} {bases : List ℕ}
     {data : PartialFactorizationData}
     (hdata : retainingPartialFactorizationOfNMinusOne n params fuel = some data)
@@ -1441,8 +1424,7 @@ theorem boundedBLS5SearchWithComposite_prime_iff_prime_of_coverage {n : ℕ} (hn
     _ ↔
         ∃ hprime : Nat.Prime n,
           boundedBLS5SearchWithComposite n params fuel bases = .prime hprime :=
-      (boundedBLS5SearchWithComposite_prime_iff_arithmetic_of_coverage hn5 hdata hEven hcop hbound
-          hcoverage).symm
+      (boundedBls5_prime_iff_arithmetic_coverage hn5 hdata hEven hcop hbound hcoverage).symm
 
 /-- Inputs outside the primality domain are rejected before either bounded search. -/
 theorem boundedBLS5SearchWithComposite_invalidInput {n : ℕ}
@@ -1458,7 +1440,7 @@ theorem boundedBLS5SearchWithComposite_sound (n : ℕ)
 
 /-- The existing retained-factor and finite-witness coverage also reaches the prime branch
 of the combined search; the composite fallback does not weaken certificate success. -/
-theorem exists_boundedBLS5SearchWithComposite_prime_of_coverage {n : ℕ} (hn5 : 5 ≤ n)
+theorem exists_boundedBLS5_prime_of_coverage {n : ℕ} (hn5 : 5 ≤ n)
     {params : NumberTheory.Factorization.PollardRho.Params} {fuel : ℕ} {bases : List ℕ}
     {data : PartialFactorizationData}
     (hdata : retainingPartialFactorizationOfNMinusOne n params fuel = some data)
@@ -1474,8 +1456,7 @@ theorem exists_boundedBLS5SearchWithComposite_prime_of_coverage {n : ℕ} (hn5 :
     (hcoverage : ∀ qe, qe ∈ data.factors → ∃ a, a ∈ bases ∧ IsBLSWitness n qe.1 a) :
     ∃ hprime : Nat.Prime n, boundedBLS5SearchWithComposite n params fuel bases = .prime hprime := by
   exact
-    (boundedBLS5SearchWithComposite_prime_iff_arithmetic_of_coverage hn5 hdata hEven hcop hbound
-          hcoverage).mpr
+    (boundedBls5_prime_iff_arithmetic_coverage hn5 hdata hEven hcop hbound hcoverage).mpr
       harithmetic
 
 /-- A proper divisor contradicts primality by the prime-divisor characterization. -/
@@ -1501,7 +1482,7 @@ def boundedBLSResult (n : ℕ) (params : NumberTheory.Factorization.PollardRho.P
     match hcertificate : findSquareCertificateFromBudgetTree n params tree bases with
     | some _certificate =>
       .prime
-        (certificate_n_eq_input_of_findSquareCertificateFromBudgetTree hcertificate ▸
+        (certificate_n_eq_input_of_findSquareCertTree hcertificate ▸
           prime_of_findSquareCertificateFromBudgetTree hcertificate)
     | none =>
       match hfactor : NumberTheory.Factorization.PollardRho.findFactor n params factorFuel with
@@ -1520,7 +1501,7 @@ theorem boundedBLSResult_prime_case {n : ℕ} (params : NumberTheory.Factorizati
     (hcert : findSquareCertificateFromBudgetTree n params tree bases = some certificate) :
     boundedBLSResult n params tree bases factorFuel =
       .prime
-        (certificate_n_eq_input_of_findSquareCertificateFromBudgetTree hcert ▸
+        (certificate_n_eq_input_of_findSquareCertTree hcert ▸
           prime_of_findSquareCertificateFromBudgetTree hcert) := by
   simp only [boundedBLSResult, dite_eq_left hinput]
   split
@@ -1542,7 +1523,7 @@ theorem boundedBLSResult_prime_case_with_cubeCriterion {n : ℕ}
     (hcert : findSquareCertificateFromBudgetTree n params tree bases = some certificate) :
     boundedBLSResult n params tree bases factorFuel =
         .prime
-          (certificate_n_eq_input_of_findSquareCertificateFromBudgetTree hcert ▸
+          (certificate_n_eq_input_of_findSquareCertTree hcert ▸
             prime_of_findSquareCertificateFromBudgetTree hcert) ∧
       (Nat.Prime certificate.n ↔
         cubeQuotient certificate.factorization.cofactor
@@ -1553,7 +1534,7 @@ theorem boundedBLSResult_prime_case_with_cubeCriterion {n : ℕ}
             none) := by
   exact
     ⟨boundedBLSResult_prime_case params tree bases factorFuel hinput hcert,
-      prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero_of_budget_tree_search hcert⟩
+      prime_iff_cubeCriterion_tree_certificate hcert⟩
 
 /-- If certificate search fails but the bounded rho search finds a proper factor, the result entry
 returns its proved composite branch. Failure of the certificate search alone is not a rejection. -/
@@ -1709,7 +1690,7 @@ theorem prime_of_findSquareCertificateFromRoundBudget {n : ℕ}
 
 /-- The practical global-round-budget constructor inherits the branch-sensitive cube-root
 characterization of every certificate it returns. -/
-theorem prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero_of_round_budget_search {n : ℕ}
+theorem prime_iff_cubeCriterion_rounds_certificate {n : ℕ}
     {params : NumberTheory.Factorization.PollardRho.Params} {maxDepth roundBudget : ℕ}
     {bases : List ℕ} {certificate : SquareCertificate}
     (h :
@@ -1721,12 +1702,12 @@ theorem prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero_of_round_budg
         findCubeDiscriminantSquareRoot certificate.factorization.cofactor
             (factorProduct certificate.factorization.factors) =
           none := by
-  exact prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero_of_budget_tree_search h
+  exact prime_iff_cubeCriterion_tree_certificate h
 
 /-- For `n ≥ 5`, a successful budget-tree supply, square-root bound, and witness in the base
 list for each factor key make the verified constructor succeed. Supply success is an explicit
 premise; the proof collects witnesses and invokes the factor and witness checker specifications. -/
-theorem exists_findSquareCertificateFromBudgetTree_of_coverage {n : ℕ} (hn5 : 5 ≤ n)
+theorem exists_findSquareCertTree_of_coverage {n : ℕ} (hn5 : 5 ≤ n)
     {params : NumberTheory.Factorization.PollardRho.Params}
     {tree : NumberTheory.Factorization.PollardRho.RhoBudgetTree} {bases : List ℕ}
     {data : PartialFactorizationData}
@@ -1742,8 +1723,7 @@ theorem exists_findSquareCertificateFromBudgetTree_of_coverage {n : ℕ} (hn5 : 
     exact False.elim (Bool.noConfusion hsome)
   | some
     witnesses =>
-    have hfactor : ValidPartialFactorization n data :=
-      retainingPartialFactorizationOfNMinusOneByTree_sound hdata
+    have hfactor : ValidPartialFactorization n data := retainingTreeFactorization_sound hdata
     have hwitness : ValidWitnesses n data witnesses := by
       apply (checkWitnesses_eq_true_iff n data witnesses).mpr
       exact findBLSWitnesses_sound hwitnesses
@@ -1768,12 +1748,12 @@ theorem exists_boundedBLSResult_prime_of_coverage {n : ℕ} (hn5 : 5 ≤ n)
     (factorFuel : ℕ) :
     ∃ hprime : Nat.Prime n, boundedBLSResult n params tree bases factorFuel = .prime hprime := by
   have hinput : 1 < n := lt_of_lt_of_le (by decide : 1 < 5) hn5
-  have hcert := exists_findSquareCertificateFromBudgetTree_of_coverage hn5 hdata hbound hcoverage
+  have hcert := exists_findSquareCertTree_of_coverage hn5 hdata hbound hcoverage
   exact (boundedBLSResult_prime_iff_certificate params tree bases factorFuel hinput).mpr hcert
 
 /-- A successful balanced supply, square-root bound, and witness coverage guarantee that the
 global-round-budget BLS constructor returns a verified certificate. -/
-theorem exists_findSquareCertificateFromRoundBudget_of_coverage {n : ℕ} (hn5 : 5 ≤ n)
+theorem exists_findSquareCertRounds_of_coverage {n : ℕ} (hn5 : 5 ≤ n)
     {params : NumberTheory.Factorization.PollardRho.Params} {maxDepth roundBudget : ℕ}
     {bases : List ℕ} {data : PartialFactorizationData}
     (hdata :
@@ -1785,11 +1765,11 @@ theorem exists_findSquareCertificateFromRoundBudget_of_coverage {n : ℕ} (hn5 :
     ∃ certificate,
       findSquareCertificateFromRoundBudget n params maxDepth roundBudget bases =
         some certificate := by
-  exact exists_findSquareCertificateFromBudgetTree_of_coverage hn5 hdata hbound hcoverage
+  exact exists_findSquareCertTree_of_coverage hn5 hdata hbound hcoverage
 
 /-- Coverage for the balanced rho-budget search yields a certificate together with its complete
 branch-sensitive cube-root primality criterion. -/
-theorem exists_findSquareCertificateFromRoundBudget_with_cube_criterion {n : ℕ} (hn5 : 5 ≤ n)
+theorem exists_findSquareCertRounds_with_cube_criterion {n : ℕ} (hn5 : 5 ≤ n)
     {params : NumberTheory.Factorization.PollardRho.Params} {maxDepth roundBudget : ℕ}
     {bases : List ℕ} {data : PartialFactorizationData}
     (hdata :
@@ -1808,15 +1788,12 @@ theorem exists_findSquareCertificateFromRoundBudget_with_cube_criterion {n : ℕ
                 (factorProduct certificate.factorization.factors) =
               none) := by
   obtain ⟨certificate, hcertificate⟩ :=
-    exists_findSquareCertificateFromRoundBudget_of_coverage hn5 hdata hbound hcoverage
-  exact
-    ⟨certificate, hcertificate,
-      prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero_of_round_budget_search
-        hcertificate⟩
+    exists_findSquareCertRounds_of_coverage hn5 hdata hbound hcoverage
+  exact ⟨certificate, hcertificate, prime_iff_cubeCriterion_rounds_certificate hcertificate⟩
 
 /-- The round-budget Coverage interface characterizes the input `n` itself, since every
 certificate returned by the constructor embeds that same input. -/
-theorem exists_findSquareCertificateFromRoundBudget_with_input_cube_criterion {n : ℕ} (hn5 : 5 ≤ n)
+theorem exists_squareCertRounds_input_cubeCriterion {n : ℕ} (hn5 : 5 ≤ n)
     {params : NumberTheory.Factorization.PollardRho.Params} {maxDepth roundBudget : ℕ}
     {bases : List ℕ} {data : PartialFactorizationData}
     (hdata :
@@ -1835,7 +1812,7 @@ theorem exists_findSquareCertificateFromRoundBudget_with_input_cube_criterion {n
                 (factorProduct certificate.factorization.factors) =
               none) := by
   obtain ⟨certificate, hcertificate, hcriterion⟩ :=
-    exists_findSquareCertificateFromRoundBudget_with_cube_criterion hn5 hdata hbound hcoverage
+    exists_findSquareCertRounds_with_cube_criterion hn5 hdata hbound hcoverage
   have hembedded : certificate.n = n := by
     unfold findSquareCertificateFromRoundBudget at hcertificate
     unfold findSquareCertificateFromBudgetTree at hcertificate
@@ -1891,7 +1868,7 @@ theorem boundedBLSResultFromRoundBudget_sound (n : ℕ)
 
 /-- The balanced-round-budget result has a prime branch exactly when its
 square-certificate constructor finds a verified certificate. -/
-theorem boundedBLSResultFromRoundBudget_prime_iff_certificate {n : ℕ}
+theorem boundedRounds_prime_iff_certificate {n : ℕ}
     (params : NumberTheory.Factorization.PollardRho.Params) (maxDepth roundBudget : ℕ)
     (bases : List ℕ) (factorFuel : ℕ) (hinput : 1 < n) :
     (∃ hprime : Nat.Prime n,
@@ -1937,7 +1914,7 @@ theorem boundedBLSResultFromRoundBudget_composite_iff {n : ℕ}
 /-- Retained factor supply, the square bound, and finite witness coverage make
 the balanced-round-budget result return its proof-carrying prime branch,
 independently of the fallback rho fuel. -/
-theorem exists_boundedBLSResultFromRoundBudget_prime_of_coverage {n : ℕ} (hn5 : 5 ≤ n)
+theorem exists_boundedBLS_prime_of_roundBudget_coverage {n : ℕ} (hn5 : 5 ≤ n)
     {params : NumberTheory.Factorization.PollardRho.Params} {maxDepth roundBudget : ℕ}
     {bases : List ℕ} {data : PartialFactorizationData}
     (hdata :

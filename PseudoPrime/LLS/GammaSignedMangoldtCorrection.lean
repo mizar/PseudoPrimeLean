@@ -82,7 +82,7 @@ theorem summable_gammaSignedMangoldtCorrection {q : ℕ} [NeZero q] (χ : Dirich
     apply (summable_prod_of_nonneg (fun _ ↦ norm_nonneg _)).mpr
     exact ⟨hslice, (hasSum_fintype _).summable⟩
   have hsupp :=
-    AnalyticNumberTheory.Arithmetic.commonFactorPrimePowerIndex_support_of_vanishing
+    AnalyticNumberTheory.Arithmetic.support_subset_common_prime_powers
       (gammaSignedMangoldtCorrection χ x) (NeZero.ne q)
       (fun n hn ↦ gammaSignedMangoldtCorrection_not_prime_pow χ x hn)
       (fun n hn ↦ gammaSignedMangoldtCorrection_unit χ x hn)
@@ -99,8 +99,8 @@ theorem summable_gammaSignedMangoldtCorrection {q : ℕ} [NeZero q] (χ : Dirich
 equals the actual local correction over all original-level primes.
 Use absolute summability and the exact prime-power reindexing and term identities.
 This connects the local budget to the arithmetic no-witness comparison. -/
-theorem tsum_gammaSignedMangoldtCorrection_eq_localCorrection {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) {x : ℝ} (hx : 0 < x) :
+theorem tsum_gammaSignedCorrection_eq_quadLocal {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hquad : χ.IsQuadratic) {x : ℝ} (hx : 0 < x) :
     (∑' n : ℕ, gammaSignedMangoldtCorrection χ x n) = gammaQuadraticLocalCorrection χ x := by
   have hs := summable_gammaSignedMangoldtCorrection χ hquad hx
   rw [AnalyticNumberTheory.Arithmetic.tsum_common_factor_eq_sum_prime_powers

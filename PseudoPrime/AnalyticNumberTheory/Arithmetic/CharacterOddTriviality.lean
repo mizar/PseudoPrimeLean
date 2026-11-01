@@ -27,7 +27,7 @@ theorem weighted_term_re_ge_of_odd_prime_trivial {q n : ℕ} (χ : DirichletChar
   · simp only [hz, zero_mul, mul_zero, ite_self, sub_zero, le_refl]
   · by_cases hc : Nat.Coprime n 2
     · have he :=
-        character_apply_one_of_ambient_mangoldt_ne_zero (N := 2) χ
+        character_eq_one_of_ambient_mangoldt (N := 2) χ
           (fun p hp hpx hpc ↦ ht p hp (Nat.coprime_two_right.mp hpc) hpx) hn hc hz
       rw [ite_eq_left hc, he, Complex.one_re, one_mul, mul_zero, sub_zero]
     · have hr := (abs_le.mp ((Complex.abs_re_le_norm (χ n)).trans (χ.norm_le_one n))).1

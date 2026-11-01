@@ -65,7 +65,7 @@ theorem rho_budget_tree_builds_prime_certificate :
     have hbound : 1 < PrimeTest.BLS.factorProduct [(2, 2), (3, 1)] := by decide
     simp only [data, PrimeTest.BLS.retainingPartialFactorizationOfNMinusOneByTree,
       PrimeTest.BLS.partialFactorizationDataOfSupply, hsupply, haggregate, hbound, ite_true]
-  have hvalid := PrimeTest.BLS.retainingPartialFactorizationOfNMinusOneByTree_sound hdata
+  have hvalid := PrimeTest.BLS.retainingTreeFactorization_sound hdata
   have hcoverage :
     ∀ qe, qe ∈ data.factors → ∃ a, a ∈ List.range 13 ∧ PrimeTest.BLS.IsBLSWitness 13 qe.1 a := by
     have hsome :=
@@ -74,12 +74,11 @@ theorem rho_budget_tree_builds_prime_certificate :
     exact (PrimeTest.BLS.findBLSWitnesses_isSome_iff.mp hsome) qe hmem
   have hbound : 13 < PrimeTest.BLS.factorProduct data.factors ^ 2 := by decide +kernel
   obtain ⟨certificate, hcertificate⟩ :=
-    PrimeTest.BLS.exists_findSquareCertificateFromBudgetTree_of_coverage (by decide) hdata hbound
-      hcoverage
+    PrimeTest.BLS.exists_findSquareCertTree_of_coverage (by decide) hdata hbound hcoverage
   refine ⟨certificate, ?_, ?_⟩
   · rw [PrimeTest.BLS.findSquareCertificateFromRoundBudget, htree]
     exact hcertificate
-  · have hrounds := PrimeTest.BLS.partialPrimeFactorSupplyByTreeRounds_le ⟨2, 1⟩ tree 12
+  · have hrounds := PrimeTest.BLS.partialFactorSupply_rounds_le_fuel ⟨2, 1⟩ tree 12
     rw [← htree] at hrounds
     exact
       Nat.le_trans hrounds
@@ -112,8 +111,7 @@ theorem rho_round_budget_result_prime_branch :
         .prime hp := by
   obtain ⟨certificate, hcertificate, _⟩ := rho_budget_tree_builds_prime_certificate
   exact
-    (PrimeTest.BLS.boundedBLSResultFromRoundBudget_prime_iff_certificate ⟨2, 1⟩ 2 9 (List.range 13)
-          0 (by decide)).mpr
+    (PrimeTest.BLS.boundedRounds_prime_iff_certificate ⟨2, 1⟩ 2 9 (List.range 13) 0 (by decide)).mpr
       ⟨certificate, hcertificate⟩
 
 /-- With empty witness bases, the round-budget result uses the fallback factor
@@ -140,7 +138,7 @@ theorem round_budget_result_unknown_small :
 
 /-- The same budget-tree result exposes its successful prime branch and the cube criterion for
 the original input, using the exact certificate consumed by the result entry. -/
-theorem rho_budget_tree_bls_result_prime_branch_with_cube_criterion :
+theorem rhoTree_bls_prime_cube_criterion :
     ∃ certificate : PrimeTest.BLS.SquareCertificate,
       ∃ hp : Nat.Prime 13,
         PrimeTest.BLS.findSquareCertificateFromRoundBudget 13 ⟨2, 1⟩ 2 9 (List.range 13) =
@@ -160,8 +158,7 @@ theorem rho_budget_tree_bls_result_prime_branch_with_cube_criterion :
     (PrimeTest.BLS.boundedBLSResult_prime_case_with_cubeCriterion ⟨2, 1⟩
         (NumberTheory.Factorization.PollardRho.balancedRhoBudgetTree 2 9) (List.range 13) 0
         (by decide) hcertificate).2
-  have hnumber :=
-    PrimeTest.BLS.certificate_n_eq_input_of_findSquareCertificateFromBudgetTree hcertificate
+  have hnumber := PrimeTest.BLS.certificate_n_eq_input_of_findSquareCertTree hcertificate
   rw [hnumber] at hcriterion
   exact ⟨certificate, hp, hcertificate, hresult, hcriterion⟩
 
@@ -186,9 +183,8 @@ theorem rho_even_input_bls_result_composite_branch :
 and the positive-quotient square criterion returns a compositeness proof. -/
 theorem bls5_square_discriminant_composite_small_case : ¬Nat.Prime 15 := by
   exact
-    PrimeTest.BLS.bls5NotPrime_of_positive_quotient_and_discriminant_square (by decide : 1 < 15)
-      (by decide : 0 < 2) (by decide : 15 = 2 * 7 + 1)
-      (by decide : 0 < PrimeTest.BLS.bls5Quotient 7 2) 1
+    PrimeTest.BLS.bls5NotPrime_of_discr_square (by decide : 1 < 15) (by decide : 0 < 2)
+      (by decide : 15 = 2 * 7 + 1) (by decide : 0 < PrimeTest.BLS.bls5Quotient 7 2) 1
       (by decide : PrimeTest.BLS.bls5Discriminant 7 2 = (1 : ℤ) ^ 2)
 
 /-- The same square discriminant reaches the proof-carrying composite result for `15`. -/
@@ -214,7 +210,7 @@ theorem bls5_combined_search_composite_28 :
 theorem bls5_combined_search_unknown_fuel_zero :
     PrimeTest.BLS.boundedBLS5SearchWithComposite 28 ⟨2, 1⟩ 0 [] = .unknown := by
   exact
-    PrimeTest.BLS.boundedBLS5SearchWithComposite_unknown_of_no_factor ⟨2, 1⟩ 0 [] (by decide)
+    PrimeTest.BLS.boundedBls5Composite_unknown_of_no_factor ⟨2, 1⟩ 0 [] (by decide)
       (by decide +kernel)
 
 /-- At `n=13`, retained `F=2,R=6` gives a positive BLS5 quotient but a
@@ -222,9 +218,8 @@ negative discriminant, so the combined search remains unknown. -/
 theorem bls5_combined_search_unknown_nonsquare_13 :
     PrimeTest.BLS.boundedBLS5SearchWithComposite 13 ⟨2, 1⟩ 1 [] = .unknown := by
   exact
-    PrimeTest.BLS.boundedBLS5SearchWithComposite_unknown_of_root_none ⟨2, 1⟩ 1 [] (data :=
-      ⟨[(2, 1)], 6⟩) (by decide) (by decide +kernel) (by decide +kernel) (by decide)
-      (by decide +kernel)
+    PrimeTest.BLS.boundedBls5Composite_unknown_of_root_none ⟨2, 1⟩ 1 [] (data := ⟨[(2, 1)], 6⟩)
+      (by decide) (by decide +kernel) (by decide +kernel) (by decide) (by decide +kernel)
 
 /-- At `n=7`, full retained factorization makes the BLS5 quotient zero;
 without a witness base, the combined search remains unknown. -/
@@ -408,7 +403,7 @@ theorem aprcl_inverse_conjugate_exponent_three (datum : PrimeTest.APRCL.APRCLJac
 /-- A cube-root certificate for `17` uses the retained factor `F = 4`, cofactor `R = 4`,
 and a base-3 witness for the factor `2`. The checker proves primality independently of the
 square-root certificate. -/
-theorem cube_verified_certificate_prime_beyond_square_bound : Nat.Prime 17 := by
+theorem cube_certificate_prime17 : Nat.Prime 17 := by
   apply PrimeTest.BLS.prime_of_valid_cube_certificate ⟨17, ⟨[(2, 2)], 4⟩, [(2, 3)]⟩
   decide
 

@@ -19,9 +19,9 @@ open AnalyticNumberTheory.Arithmetic in
 exact two-adic reciprocal correction and logarithmic branch cost with negative
 endpoint limit yield an odd non-one prime. Use the exact reciprocal lower input,
 then pass the established nonnegative gap comparison to its endpoint limit. -/
-theorem exists_odd_prime_inducing_ne_one_of_exact_two_cost_limit {N : ℕ}
-    (χ : DirichletCharacter ℂ N) [NeZero χ.conductor] (hq : 2 ≤ χ.conductor)
-    (hne : χ.primitiveCharacter ≠ 1) (hquad : χ.primitiveCharacter.IsQuadratic)
+theorem exists_oddPrime_inducing_exactTwoCost_GRH {N : ℕ} (χ : DirichletCharacter ℂ N)
+    [NeZero χ.conductor] (hq : 2 ≤ χ.conductor) (hne : χ.primitiveCharacter ≠ 1)
+    (hquad : χ.primitiveCharacter.IsQuadratic)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x Y c D : ℝ} (hx : 1 < x)
     (hY : 64 ≤ Y) (hYx : Y ≤ x) (hC : twoAdicReciprocalCorrection Y χ ≤ c)
     (hD : quadraticTwoLogCost x (χ.primitiveCharacter 2) ≤ D)
@@ -81,7 +81,7 @@ theorem exists_odd_prime_inducing_ne_one_of_exact_two_cost_limit {N : ℕ}
 reciprocal cost and a logarithmic branch bound give an odd non-one prime whenever
 the refined endpoint limit is negative. Insert the proved exact correction bound.
 This exposes the finite-cutoff improvement to witness consumers. -/
-theorem exists_odd_prime_inducing_ne_one_of_tapered_limit {N : ℕ} (χ : DirichletCharacter ℂ N)
+theorem exists_oddPrime_inducing_tapered_GRH {N : ℕ} (χ : DirichletCharacter ℂ N)
     [NeZero χ.conductor] (hq : 2 ≤ χ.conductor) (hne : χ.primitiveCharacter ≠ 1)
     (hquad : χ.primitiveCharacter.IsQuadratic)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x Y D : ℝ} (hx : 1 < x)
@@ -92,7 +92,7 @@ theorem exists_odd_prime_inducing_ne_one_of_tapered_limit {N : ℕ} (χ : Dirich
         0) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ x ∧ χ.primitiveCharacter p ≠ 1 := by
   exact
-    exists_odd_prime_inducing_ne_one_of_exact_two_cost_limit χ hq hne hquad hGRH hx hY hYx
+    exists_oddPrime_inducing_exactTwoCost_GRH χ hq hne hquad hGRH hx hY hYx
       (twoAdicReciprocalCorrection_le_tapered χ Y hquad) hD hlim
 
 end PseudoPrime.LLS.PaperStatements

@@ -51,7 +51,7 @@ theorem gaussianResolvent_poissonSum_lt {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ 
   norm_num only [Rat.cast_div, Rat.cast_add, Rat.cast_ofNat] at hauR
   have hs : 1 < 1 / 2 + (ab.1 : ℝ) := by linarith only [halR]
   have hsu : 1 / 2 + (ab.1 : ℝ) ≤ 15 / 2 := by linarith only [hauR]
-  have hb := completed_poissonSum_centered_le_inv_gap hq hRH hp hne hinv hs hsu
+  have hb := poissonSum_centered_inv_gap_RH hq hRH hp hne hinv hs hsu
   have hn : 1 / 2 + (ab.1 : ℝ) - 1 / 2 = (ab.1 : ℝ) := by ring
   have he : 1 / 2 + (ab.1 : ℝ) - 1 = (ab.1 : ℝ) - 1 / 2 := by ring
   simpa only [hn, he, Complex.ofReal_add] using hb
@@ -77,7 +77,7 @@ theorem gaussianResolvent_weightedTerm_eq {q : ℕ} [NeZero q] (χ : DirichletCh
 for a primitive nonprincipal character under individual RH. The certified positive scales
 allow the Poisson summability theorem; scalar multiplication preserves convergence.
 This is the common input for the finite/infinite sum interchange and total mass convergence. -/
-theorem summable_gaussianResolvent_node_terms {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem summable_gaussianResolvent_nodes_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     ∀ ab ∈ Analysis.gaussianResolventCoefficients,
@@ -98,7 +98,7 @@ theorem summable_gaussianResolvent_node_terms {q : ℕ} [NeZero q] (hq : 2 ≤ q
 the divisor-weighted signed Gaussian resolvent is summable. Sum the convergent node series
 and use the pointwise finite-sum identity.
 This permits comparison with a dominated Gaussian kernel. -/
-theorem summable_completed_gaussianResolvent_terms {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem summable_gaussianResolvent_mass_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     Summable
@@ -107,16 +107,15 @@ theorem summable_completed_gaussianResolvent_terms {q : ℕ} [NeZero q] (hq : 2 
           Analysis.gaussianResolventMajorant ρ.im) := by
   exact
     (Analysis.summable_list_sum Analysis.gaussianResolventCoefficients _
-          (summable_gaussianResolvent_node_terms hq hRH hp hne hinv)).congr
+          (summable_gaussianResolvent_nodes_RH hq hRH hp hne hinv)).congr
       (fun ρ ↦ (gaussianResolvent_weightedTerm_eq χ ρ).symm)
 
 /-- For a primitive nonprincipal character under individual RH with nonprincipal inverse,
 the divisor-weighted Gaussian resolvent mass equals the finite signed combination of real Poisson
 sums. Each resolvent series is summable; interchange the finite and infinite sums and
 identify the ordinate-only kernels on the critical line. This exposes the exact conductor term. -/
-theorem gaussianResolvent_zeroMass_eq_poissonSum {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
+theorem gaussianMass_eq_poissonSum_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
           Analysis.gaussianResolventMajorant ρ.im) =
@@ -126,7 +125,7 @@ theorem gaussianResolvent_zeroMass_eq_poissonSum {q : ℕ} [NeZero q] (hq : 2 �
               ∑' ρ : ℂ,
                 (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
                   ((ab.1 : ℝ) / Complex.normSq ((((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ) - ρ)))).sum := by
-  have hs := summable_gaussianResolvent_node_terms hq hRH hp hne hinv
+  have hs := summable_gaussianResolvent_nodes_RH hq hRH hp hne hinv
   rw [tsum_congr (fun ρ ↦ gaussianResolvent_weightedTerm_eq χ ρ),
     Analysis.tsum_list_sum Analysis.gaussianResolventCoefficients _ hs]
   apply congrArg List.sum
@@ -146,14 +145,14 @@ theorem gaussianResolvent_zeroMass_lt {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : 
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
           Analysis.gaussianResolventMajorant ρ.im) <
       (20115621 / 50000000 : ℝ) * Real.log q + 1811 := by
-  rw [gaussianResolvent_zeroMass_eq_poissonSum hq hRH hp hne hinv]
+  rw [gaussianMass_eq_poissonSum_RH hq hRH hp hne hinv]
   exact gaussianResolvent_poissonSum_lt hq hRH hp hne hinv
 
 /-- Given global domination by the Gaussian resolvent, individual RH for a
 primitive nonprincipal character with nonprincipal inverse yields the actual Gaussian
 zero-mass bound with coefficient 20115621/50000000 and additive allowance 1811.
 Nonnegative multiplicities and resolvent summability justify the infinite-sum comparison. -/
-theorem gaussian_zeroMass_lt_of_resolvent_majorant
+theorem gaussianNormMass_lt_of_majorant_RH
     (hK :
       ∀ t : ℝ,
         ‖Analysis.gaussianGammaFunction (Complex.I * (t : ℂ))‖ ≤
@@ -176,8 +175,7 @@ theorem gaussian_zeroMass_lt_of_resolvent_majorant
     by_cases hD : MeromorphicOn.divisor χ.completedLFunction Set.univ ρ = 0
     · simp only [hD, Int.cast_zero, zero_mul, le_refl]
     · have hr :=
-        completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv
-          (completed_zero_of_divisor_ne_zero hne hD)
+        completed_zero_re_eq_half_of_RH hRH hp hinv (completed_zero_of_divisor_ne_zero hne hD)
       have he : ρ - 1 / 2 = Complex.I * (ρ.im : ℂ) := by
         calc
           ρ - 1 / 2 = (ρ.re : ℂ) + (ρ.im : ℂ) * Complex.I - 1 / 2 := by rw [Complex.re_add_im]
@@ -186,7 +184,7 @@ theorem gaussian_zeroMass_lt_of_resolvent_majorant
             norm_num only [Complex.ofReal_div, Complex.ofReal_one, Complex.ofReal_ofNat]
             ring
       exact mul_le_mul_of_nonneg_left (by simpa only [he] using hK ρ.im) (hn ρ)
-  have hg := summable_completed_gaussianResolvent_terms hq hRH hp hne hinv
+  have hg := summable_gaussianResolvent_mass_RH hq hRH hp hne hinv
   have hsum := hg.of_nonneg_of_le (fun ρ ↦ mul_nonneg (hn ρ) (norm_nonneg _)) hb
   exact (hsum.tsum_le_tsum hb hg).trans_lt (gaussianResolvent_zeroMass_lt hq hRH hp hne hinv)
 
@@ -204,8 +202,8 @@ theorem gaussian_zeroMass_lt_of_grid
           ‖Analysis.gaussianGammaFunction (ρ - 1 / 2)‖) <
       (20115621 / 50000000 : ℝ) * Real.log q + 1811 := by
   exact
-    gaussian_zeroMass_lt_of_resolvent_majorant
-      (Analysis.norm_gaussianGammaFunction_le_gaussianResolvent_of_grid hnodes) hq hRH hp hne hinv
+    gaussianNormMass_lt_of_majorant_RH (Analysis.norm_gaussianGamma_le_resolvent_of_grid hnodes) hq
+      hRH hp hne hinv
 
 /-- Under the same grid and character hypotheses, the Gaussian zero mass is
 below 161/400 times log q plus 1811. Enlarge the exact rational coefficient using

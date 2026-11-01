@@ -25,15 +25,14 @@ theorem classicalFirstStopNeOne_cast_le_log_sq_of_49_le
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn49 : 49 ≤ n)
     (hn : Odd n) (hns : ¬IsSquare n) :
     (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n
-          (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns) :
+          (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns) :
         ℝ) ≤
       Real.log (n : ℝ) ^ 2 := by
-  let hs := PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns
+  let hs := PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns
   obtain ⟨hw, hqR⟩ :=
-    PseudoSquare.exists_primeNeOneWitness_cast_le_log_sq_of_odd_nonsquare hGRH hn hns
+    PseudoSquare.exists_neOneWitness_le_log_sq_of_odd_nonsquare hGRH hn hns
       ((by decide : 11 ≤ 49).trans hn49)
-  have hmax :=
-    PrimeTest.primeNeOneWitness_le_classicalFirstStop_le_max_unconditional hn.pos hn hns hw hs
+  have hmax := PrimeTest.neOneWitness_classicalStop_bounds hn.pos hn hns hw hs
   have hmaxR :
     (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n hs : ℝ) ≤
       ((max 15 (NumberTheory.primeNeOneWitness n hw) : ℕ) : ℝ) := by
@@ -47,12 +46,12 @@ theorem classicalFirstStopNeOne_cast_le_log_sq_of_49_le
 /-- Under GRH, the absolute classical discriminant at the factor-detecting first stop is at most
 `(log n)²` for odd nonsquares `n ≥ 49`. Rewrite its absolute value as the stopping index and reuse
 the index bound; this is the discriminant form consumed by scan bounds. -/
-theorem classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_log_sq_of_49_le
+theorem classicalD_neOne_logSq_from49_GRH
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn49 : 49 ≤ n)
     (hn : Odd n) (hns : ¬IsSquare n) :
     ((PrimeTest.selfridgeD
             (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n
-              (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+              (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
         ℝ) ≤
       Real.log (n : ℝ) ^ 2 := by
   simpa only [PrimeTest.selfridgeD_natAbs] using
@@ -65,22 +64,22 @@ theorem classicalFirstStopNeOne_cast_le_log_sq_of_13_le
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn13 : 13 ≤ n)
     (hn : Odd n) (hns : ¬IsSquare n) :
     (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n
-          (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns) :
+          (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns) :
         ℝ) ≤
       Real.log (n : ℝ) ^ 2 := by
   by_cases hn49 : n < 49
-  · exact classicalFirstStopNeOne_cast_le_log_sq_of_13_le_of_lt_49 hn13 hn49 hn hns
+  · exact classicalNeOne_logSq_between13_49 hn13 hn49 hn hns
   · exact classicalFirstStopNeOne_cast_le_log_sq_of_49_le hGRH (Nat.le_of_not_lt hn49) hn hns
 
 /-- Under GRH, the absolute classical factor-detecting stopping discriminant for an odd nonsquare
 `n ≥ 13` is at most `(log n)²`. Its absolute value equals the first-stop index, so the preceding
 index estimate gives the discriminant bound directly. -/
-theorem classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_log_sq_of_13_le
+theorem classicalD_neOne_logSq_from13_GRH
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn13 : 13 ≤ n)
     (hn : Odd n) (hns : ¬IsSquare n) :
     ((PrimeTest.selfridgeD
             (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n
-              (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+              (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
         ℝ) ≤
       Real.log (n : ℝ) ^ 2 := by
   simpa only [PrimeTest.selfridgeD_natAbs] using
@@ -89,36 +88,34 @@ theorem classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_log_sq_of_13_le
 /-- Under GRH, the absolute Wheel30 factor-detecting stopping discriminant for an odd nonsquare
 `n ≥ 13` is at most `(log n)²`. The Wheel30 and classical first stops agree; rewriting that
 identity transfers the classical bound to the executable scan's candidate family. -/
-theorem wheel30SelfridgeD_firstStopNeOne_natAbs_cast_le_log_sq_of_13_le
+theorem wheel30D_neOne_logSq_from13_GRH
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn13 : 13 ≤ n)
     (hn : Odd n) (hns : ¬IsSquare n) :
     ((PrimeTest.selfridgeD
             (PrimeTest.firstStopNeOne PrimeTest.isWheel30NeOneCandidate n
-              (PrimeTest.wheel30FirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+              (PrimeTest.wheel30NeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
         ℝ) ≤
       Real.log (n : ℝ) ^ 2 := by
-  let hclass := PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns
-  let hwheel := PrimeTest.wheel30FirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns
+  let hclass := PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns
+  let hwheel := PrimeTest.wheel30NeOneSet_nonempty_of_odd_nonsquare hn hns
   rw [PrimeTest.firstStopNeOne_wheel30_eq_classical hn.pos hn hns hclass hwheel]
   simpa only [PrimeTest.selfridgeD_natAbs] using
     classicalFirstStopNeOne_cast_le_log_sq_of_13_le hGRH hn13 hn hns
 
 /-- Extend the logarithmic `g_ne1` bound to the full positive odd nonsquare range. -/
-theorem classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_max_thirteen_log_sq
+theorem classicalD_neOne_le_max13_logSq_GRH
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hnpos : 0 < n)
     (hn : Odd n) (hns : ¬IsSquare n) :
     ((PrimeTest.selfridgeD
             (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n
-              (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+              (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
         ℝ) ≤
       max 13 (Real.log (n : ℝ) ^ 2) := by
   by_cases hn13 : 13 ≤ n
-  · exact
-      (classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_log_sq_of_13_le hGRH hn13 hn hns).trans
-        (le_max_right _ _)
+  · exact (classicalD_neOne_logSq_from13_GRH hGRH hn13 hn hns).trans (le_max_right _ _)
   · have hsmall :
       PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n
-          (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns) ≤
+          (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns) ≤
         13 := by
       interval_cases n
       case «2» => norm_num only at hn
@@ -163,14 +160,14 @@ theorem classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_max_thirteen_log_sq
             (by norm_num only)
     have hstopR :
       (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n
-            (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns) :
+            (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns) :
           ℝ) ≤
         13 :=
       Nat.cast_le.mpr hsmall
     have hsmallR :
       ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         13 := by
       simpa only [PrimeTest.selfridgeD_natAbs] using hstopR
@@ -179,15 +176,15 @@ theorem classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_max_thirteen_log_sq
 /-- GRH-labelled entry for the uniform classical bound `|D| ≤ max 13 (log n)²` on positive odd
 nonsquares. It reuses the pointwise bound with the finite small-input allowance, supplying the
 same hypotheses and conclusion to consumers that explicitly select a GRH interface. -/
-theorem classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_max_thirteen_log_sq_of_grh
+theorem classicalD_neOne_max13_logSq_of_GRH
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hnpos : 0 < n)
     (hn : Odd n) (hns : ¬IsSquare n) :
     ((PrimeTest.selfridgeD
             (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n
-              (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+              (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
         ℝ) ≤
       max 13 (Real.log (n : ℝ) ^ 2) := by
-  exact classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_max_thirteen_log_sq hGRH hnpos hn hns
+  exact classicalD_neOne_le_max13_logSq_GRH hGRH hnpos hn hns
 
 /--
 Under GRH, for an odd nonsquare `n ≥ 3`, the absolute classical pure `-1` stopping value is
@@ -196,17 +193,17 @@ The proof bounds the stop by `max 27 (primeNegOneWitness n)`, bounds the witness
 and then by `elementaryRadius n`, and uses `31 < elementaryRadius n` to absorb `27`.
 Rewriting `selfridgeD_natAbs` gives the absolute-value form used by the elementary-radius wrapper.
 -/
-theorem classicalSelfridgeD_firstStopNegOne_natAbs_cast_le_log_sq_of_3_le
+theorem classicalD_negOne_elementary_GRH
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn3 : 3 ≤ n)
     (hn : Odd n) (hns : ¬IsSquare n) :
     ((PrimeTest.selfridgeD
             (PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n
-              (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+              (PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
         ℝ) ≤
       (Real.log (4 * (n : ℝ)) + (24 / 5 : ℝ) * Real.log (Real.log (4 * (n : ℝ))) + 3) ^ 2 := by
   let hw := PrimeTest.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns
-  let hs := PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns
-  have hstop := PrimeTest.classicalFirstStopNegOne_le_max_twenty_seven_primeWitness hn hw hs
+  let hs := PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn hns
+  have hstop := PrimeTest.classicalFirstNegOne_le_max_27_primeWitness hn hw hs
   have hmem : n ∈ NumberTheory.admissibleFinset n := by
     apply NumberTheory.mem_admissibleFinset_iff.mpr
     exact ⟨(by decide : 0 < 3).trans_le hn3, le_rfl, hn, hns⟩

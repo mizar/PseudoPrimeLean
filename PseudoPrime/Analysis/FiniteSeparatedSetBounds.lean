@@ -55,7 +55,7 @@ contradicting the separation hypothesis.
 
 Role: counts the negative side of the endpoint-adjusted signed distance shells.
 -/
-theorem finset_card_le_one_of_right_closed_interval_separated (s : Finset ℝ) (a δ : ℝ)
+theorem finset_card_le_one_of_separated_Ioc (s : Finset ℝ) (a δ : ℝ)
     (hsep : ∀ x ∈ s, ∀ y ∈ s, x ≠ y → δ ≤ |x - y|) (hinterval : ∀ x ∈ s, a < x ∧ x ≤ a + δ) :
     s.card ≤ 1 := by
   classical
@@ -143,7 +143,7 @@ theorem finset_card_le_two_of_mixed_interval_cover (s : Finset ℝ) (a b δ : �
       exact (Finset.mem_filter.mp hx).2
   have hcard₂ : s₂.card ≤ 1 := by
     dsimp only [s₂]
-    apply finset_card_le_one_of_right_closed_interval_separated (s.filter fun x => ¬p x) b δ
+    apply finset_card_le_one_of_separated_Ioc (s.filter fun x => ¬p x) b δ
     · intro x hx y hy hxy
       exact hsep x (Finset.mem_filter.mp hx).1 y (Finset.mem_filter.mp hy).1 hxy
     · intro x hx

@@ -113,7 +113,7 @@ theorem card_signSubgroup_coprime_mul {m n E : ℕ} [NeZero (m * n)] (hc : m.Cop
 the global sign subgroup has index phi(m)*phi(n)/(2*gcd(phi(m),E)*gcd(phi(n),E)).
 Distinct local signs and m*n>2 permit the two-fiber count; CRT and cyclic kernel
 cardinalities then yield the exact index for the two-factor MR branch. -/
-theorem index_signSubgroup_coprime_mul_of_cyclic_even_images {m n E : ℕ} [NeZero m] [NeZero n]
+theorem signSubgroup_index_coprime_mul_of_even_images {m n E : ℕ} [NeZero m] [NeZero n]
     [NeZero (m * n)] [IsCyclic (ZMod m)ˣ] [IsCyclic (ZMod n)ˣ] (hc : m.Coprime n) (hgt : 2 < m * n)
     (hmne : (-1 : (ZMod m)ˣ) ≠ 1) (hnne : (-1 : (ZMod n)ˣ) ≠ 1)
     (hme : 2 ∣ m.totient / m.totient.gcd E) (hne : 2 ∣ n.totient / n.totient.gcd E) :

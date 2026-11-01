@@ -28,7 +28,7 @@ Input/assumptions: `c : ℂ`, `R U : ℝ` with `R > 0`, the open ball `ball c R`
 `log ‖Γ c‖ < U`, and `log ‖Γ w‖ ≤ U` for every `w ∈ ball c R`.
 Conclusion: `‖digamma c‖ ≤ 4 * (U - log ‖Γ c‖) / R`.
 Content: `PseudoPrime.AnalyticNumberTheory.RiemannZeta.`
-  `exists_hasDerivAt_digamma_re_eq_log_norm_Gamma` gives a local primitive `g` of `digamma`
+  `exists_digamma_primitive_re_logGamma` gives a local primitive `g` of `digamma`
   with `Re (g w) = log ‖Γ w‖`; `Complex.borelCaratheodory_zero` (mathlib, general Schwarz-lemma
   Borel–Carathéodory) applied to `h z := g (c + z) - g c` on `ball 0 R` (bounded above by
   `M := U - Re (g c)` in real part, `h 0 = 0`) gives `‖h z‖ ≤ 2 M ‖z‖ / (R - ‖z‖)`;
@@ -41,11 +41,11 @@ Role: the left-vertical step backbone — letting `R` grow with `|Im s|`
   into `O(log |Im s|)`, which the left-edge argument's left-vertical integral needs to be
   absolutely convergent.
 -/
-theorem norm_digamma_le_of_logGamma_ball_bound {c : ℂ} {R U : ℝ} (hR : 0 < R)
+theorem norm_digamma_le_of_logGamma_bound {c : ℂ} {R U : ℝ} (hR : 0 < R)
     (hball : ∀ w ∈ Metric.ball c R, 0 < w.re) (hMpos : Real.log ‖Complex.Gamma c‖ < U)
     (hupper : ∀ w ∈ Metric.ball c R, Real.log ‖Complex.Gamma w‖ ≤ U) :
     ‖Complex.digamma c‖ ≤ 4 * (U - Real.log ‖Complex.Gamma c‖) / R := by
-  obtain ⟨g, hg', hgRe⟩ := RiemannZeta.exists_hasDerivAt_digamma_re_eq_log_norm_Gamma hR hball
+  obtain ⟨g, hg', hgRe⟩ := RiemannZeta.exists_digamma_primitive_re_logGamma hR hball
   have hccenter : c ∈ Metric.ball c R := Metric.mem_ball_self hR
   set M : ℝ := U - (g c).re with hM_def
   have hMpos' : 0 < M := by
@@ -141,7 +141,7 @@ triangle inequality accumulates `n` terms of size `1 / |z.im|` each — unlike
 requiring `|z.im| ≥ 1/2`), this scales the *shift itself* by `1/|z.im|`, giving an `O(1)` bound
 when `n ≍ |z.im|`.
 Role: the left-vertical step ingredient — combined with a variable radius `R ≍ |t|`
-(`norm_digamma_le_of_logGamma_ball_bound`) and a shift `n ≍ |t|` that pushes `Re (z + n) ≍ |t|`
+(`norm_digamma_le_of_logGamma_bound`) and a shift `n ≍ |t|` that pushes `Re (z + n) ≍ |t|`
 into the region where `log Γ` is polynomially bounded, this keeps the shift cost `O(1)` instead of
 `O(|t|)`, which is what turns the final digamma bound sublinear.
 -/
@@ -201,7 +201,7 @@ n` on a fresh induction variable `j`, since `hpole`/`hsep` already mention the f
 Role: the left-vertical step shift ingredient that (unlike `norm_digamma_sub_shift_nat_le`)
 covers `Im z = 0`, needed for the left-vertical line's `t = 0` point.
 -/
-theorem norm_digamma_sub_shift_nat_le_of_re_sep {z : ℂ} (n : ℕ) {δ : ℝ} (hδ : 0 < δ)
+theorem norm_digamma_shift_le_of_re_sep {z : ℂ} (n : ℕ) {δ : ℝ} (hδ : 0 < δ)
     (hpole : ∀ k < n, ∀ m : ℕ, z + (k : ℂ) ≠ -(m : ℂ)) (hsep : ∀ k < n, δ ≤ |(z + (k : ℂ)).re|) :
     ‖Complex.digamma (z + n) - Complex.digamma z‖ ≤ n / δ := by
   have main : ∀ j : ℕ, j ≤ n → ‖Complex.digamma (z + j) - Complex.digamma z‖ ≤ j / δ := by
@@ -266,13 +266,13 @@ Input/assumptions: none (existence statement).
 Conclusion: there is `C ≥ 0`, independent of `a`, such that for every `a t : ℝ` with
 `4 * (|a| + 3) ≤ |t|`, `‖digamma (a + t i)‖ ≤ C * (1 + log (|t| + 2))`.
 Content: shifts `z := a + t i` by `m := ⌈|a| + |t|⌉₊` to `c := z + m` (`c.re ≍ |t|`), applies
-`norm_digamma_le_of_logGamma_ball_bound` on `ball c (|t|/8)` — the upper bound `U` on `log ‖Γ‖`
+`norm_digamma_le_of_logGamma_bound` on `ball c (|t|/8)` — the upper bound `U` on `log ‖Γ‖`
 over the ball comes from `PseudoPrime.AnalyticNumberTheory.Gamma.log_Gamma_le_of_one_le`
 at the ball's rightmost point `X ≍ |t|`
 (`PseudoPrime.AnalyticNumberTheory.RiemannZeta.Real.Gamma_le_max_of_mem_Icc'` plus
 `Real.Gamma_strictMonoOn_Ici` to see `Γ 1 ≤ Γ X`), and the
 center lower bound from `PseudoPrime.AnalyticNumberTheory.RiemannZeta.`
-`exists_neg_log_norm_Gamma_one_add_add_mul_I_le_uniform` — giving
+`exists_neg_log_Gamma_shift_bound` — giving
 `‖digamma c‖ = O(log |t|)`; then undoes the shift via `norm_digamma_sub_shift_nat_le`
 (`≤ m / |t| = O(1)` since `m ≍ |a| + |t|` and the hypothesis `|t| ≥ 4(|a| + 3)` keeps `|a|` from
 dominating). The witness `C` never mentions `a`, so it is pulled outside the `∀ a` — this matters
@@ -280,13 +280,13 @@ because the eventual `A → ∞` limit needs a single constant, not an opaque pe
 Role: the left-vertical step large-`|t|` half of the left-vertical digamma bound
 (paired with a small-`|t|` finite bound handling `A`-dependence explicitly).
 -/
-theorem exists_C_forall_norm_digamma_large_im_le :
+theorem uniform_digamma_large_im_bound :
     ∃ C : ℝ,
       0 ≤ C ∧
         ∀ a t : ℝ,
           4 * (|a| + 3) ≤ |t| →
             ‖Complex.digamma ((a : ℂ) + (t : ℂ) * Complex.I)‖ ≤ C * (1 + Real.log (|t| + 2)) := by
-  obtain ⟨C₁, hC₁⟩ := RiemannZeta.exists_neg_log_norm_Gamma_one_add_add_mul_I_le_uniform
+  obtain ⟨C₁, hC₁⟩ := RiemannZeta.exists_neg_log_Gamma_shift_bound
   set C : ℝ := 69 + 80 * Real.pi + 32 * max C₁ 0 + 64 + 10 with hC_def
   have hCnonneg : 0 ≤ C := by
     have h1 : (0 : ℝ) ≤ max C₁ 0 := le_max_right _ _
@@ -385,7 +385,7 @@ theorem exists_C_forall_norm_digamma_large_im_le :
     have := hupper_logGamma w hw
     rw [hU_def]
     linarith only [this]
-  have hdigamma_c := norm_digamma_le_of_logGamma_ball_bound hR_pos hball hMpos hupper
+  have hdigamma_c := norm_digamma_le_of_logGamma_bound hR_pos hball hMpos hupper
   set r : ℝ := c.re - 1 with hr_def
   have hr0 : 0 ≤ r := by
     rw [hr_def]

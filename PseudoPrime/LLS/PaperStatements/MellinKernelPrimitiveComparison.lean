@@ -30,8 +30,7 @@ theorem summand_eq_primitive_of_coprime_quotient (K : MellinKernel) {q n : ℕ}
     (χ : DirichletCharacter ℂ q) (x : ℝ) (hcop : Nat.Coprime n (q / χ.conductor)) :
     K.summand χ x n = K.summand χ.primitiveCharacter x n := by
   rw [summand, summand,
-    PseudoPrime.AnalyticNumberTheory.Arithmetic.apply_eq_primitiveCharacter_of_coprime_quotient χ
-      hcop]
+    PseudoPrime.AnalyticNumberTheory.Arithmetic.apply_eq_primitive_of_coprime_quotient χ hcop]
 
 /-- For a nonzero level and positive scale, split the kernel's arithmetic series into
 the primitive source series and their termwise difference. Both series are summable,
@@ -67,7 +66,7 @@ private theorem exists_real_primitive_summand_formula (K : MellinKernel) :
                           |r| ≤ C * (1 + Real.log q / Real.sqrt x) ∧
                           (∑' n : ℕ, K.summand χ.primitiveCharacter x n).re =
                             θ * (∑' ρ : ℂ, ‖K.kernelZeroTerm χ.primitiveCharacter ρ‖) + r := by
-  obtain ⟨C, hC, hb⟩ := exists_real_summand_formula_zeroMass_ambient K
+  obtain ⟨C, hC, hb⟩ := exists_summand_ambient_zeroMass_GRH K
   refine ⟨C, hC, ?_⟩
   intro q _ hq χ hne hGRH _ x hx
   have hm := PseudoPrime.NumberTheory.three_le_conductor_of_ne_one χ hne
@@ -83,7 +82,7 @@ by C(1 + log q / sqrt x), and the exact series of level-change differences. The 
 coefficient has absolute value at most one and C depends only on the kernel. Combine
 the primitive completed formula with summability of the two arithmetic series. This
 isolates the arithmetic correction still needed for the general form of Lemma 6.1. -/
-theorem exists_real_summand_formula_with_primitive_correction (K : MellinKernel) :
+theorem exists_summand_primitiveCorrection_GRH (K : MellinKernel) :
     ∃ C : ℝ,
       0 < C ∧
         ∀ {q : ℕ} [NeZero q],
@@ -163,8 +162,8 @@ level-change differences equals the double sum over positive exponents and prime
 the level-to-conductor quotient. Remove coprime indices using primitive induction, remove
 non-prime-powers using Mangoldt vanishing, and apply finite prime-power reindexing. This
 is the finite correction interface for the geometric-tail bound in Lemma 6.1. -/
-theorem sum_norm_summand_sub_primitive_eq_prime_powers (K : MellinKernel) {q : ℕ}
-    (χ : DirichletCharacter ℂ q) {x y : ℝ} (hy : 0 ≤ y) :
+theorem summand_primitiveNorm_primePowers (K : MellinKernel) {q : ℕ} (χ : DirichletCharacter ℂ q)
+    {x y : ℝ} (hy : 0 ≤ y) :
     ∑ n ∈ Finset.Ioc 0 ⌊y⌋₊, ‖K.summand χ x n - K.summand χ.primitiveCharacter x n‖ =
       ∑ k ∈ Finset.Icc 1 ⌊Real.log y / Real.log 2⌋₊,
         ∑ p ∈ (Finset.Ioc 0 ⌊y ^ ((1 : ℝ) / k)⌋₊).filter (fun p => p.Prime ∧ p ∣ q / χ.conductor),
@@ -198,7 +197,7 @@ characters, positive scales and nonnegative cutoffs. Apply the norm triangle ine
 reindex the correction norm sum, and substitute the prime-power Mangoldt value into the
 pointwise profile bound. This reduces the total correction estimate to real finite sums
 whose low powers and geometric tails can be bounded separately. -/
-theorem exists_norm_sum_summand_sub_primitive_le_prime_profile (K : MellinKernel) :
+theorem exists_primitiveDiff_normSum_profile (K : MellinKernel) :
     ∃ C : ℝ,
       0 < C ∧
         ∀ {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) {x y : ℝ},
@@ -218,7 +217,7 @@ theorem exists_norm_sum_summand_sub_primitive_le_prime_profile (K : MellinKernel
   intro q _ χ x y hx hy
   have h :=
     norm_sum_le (Finset.Ioc 0 ⌊y⌋₊) (fun n => K.summand χ x n - K.summand χ.primitiveCharacter x n)
-  rw [sum_norm_summand_sub_primitive_eq_prime_powers K χ hy] at h
+  rw [summand_primitiveNorm_primePowers K χ hy] at h
   refine h.trans ?_
   apply Finset.sum_le_sum
   intro k hk
@@ -297,7 +296,7 @@ level-change terms from any positive start m through N by 2 C log p sqrt x/p^m,
 uniformly over nonzero levels, characters and positive scales. Use the reciprocal-index
 bound for each summand and the finite inverse-prime-power tail estimate. The upper
 cutoff does not occur in the bound, allowing the correction's tail limit in Lemma 6.1. -/
-theorem exists_sum_norm_summand_sub_primitive_prime_tail_le (K : MellinKernel) :
+theorem exists_primitiveDiff_primeTail (K : MellinKernel) :
     ∃ C : ℝ,
       0 < C ∧
         ∀ {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) {x : ℝ},
@@ -338,7 +337,7 @@ terms by 2 C log p/sqrt x whenever the first power is at least the positive scal
 The bound is uniform in the final exponent, nonzero level and character. Apply the
 geometric-tail bound, compare the first prime power with x, and cancel sqrt x/x.
 This is the high-power contribution to the primitivization error in Lemma 6.1. -/
-theorem exists_sum_norm_summand_sub_primitive_prime_tail_le_scale (K : MellinKernel) :
+theorem exists_primitiveDiff_tail_scale (K : MellinKernel) :
     ∃ C : ℝ,
       0 < C ∧
         ∀ {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) {x : ℝ},
@@ -350,7 +349,7 @@ theorem exists_sum_norm_summand_sub_primitive_prime_tail_le_scale (K : MellinKer
                 ∑ k ∈ Finset.Icc m N,
                     ‖K.summand χ x (p ^ k) - K.summand χ.primitiveCharacter x (p ^ k)‖ ≤
                   2 * C * Real.log p / Real.sqrt x := by
-  obtain ⟨C, hC, hb⟩ := exists_sum_norm_summand_sub_primitive_prime_tail_le K
+  obtain ⟨C, hC, hb⟩ := exists_primitiveDiff_primeTail K
   refine ⟨C, hC, ?_⟩
   intro q _ χ x hx p m N hp hm hxm
   have hlog : 0 ≤ Real.log p := Real.log_nonneg (by exact_mod_cast hp.one_le)
@@ -365,7 +364,7 @@ theorem exists_sum_norm_summand_sub_primitive_prime_tail_le_scale (K : MellinKer
 terms by N C log p/sqrt x, uniformly over nonzero levels, characters and positive scales.
 Apply the constant-index bound to each prime power and count the positive exponents.
 This supplies the low-power part of the primitivization error before choosing a cutoff. -/
-theorem exists_sum_norm_summand_sub_primitive_prime_prefix_le (K : MellinKernel) :
+theorem exists_primitiveDiff_primePrefix (K : MellinKernel) :
     ∃ C : ℝ,
       0 < C ∧
         ∀ {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) {x : ℝ},
@@ -396,7 +395,7 @@ The bound is uniform in N, level and character. Split at m, count the low powers
 apply the scale-normalized geometric tail. If N is smaller, enlarge its nonnegative
 norm sum to the low-power prefix. This is the uniform primewise estimate to which an
 integer logarithmic cutoff will be applied in the total primitivization bound. -/
-theorem exists_sum_norm_summand_sub_primitive_prime_le_of_cutoff (K : MellinKernel) :
+theorem exists_primitiveDiff_prime_cutoff (K : MellinKernel) :
     ∃ C : ℝ,
       0 < C ∧
         ∀ {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) {x : ℝ},
@@ -407,8 +406,8 @@ theorem exists_sum_norm_summand_sub_primitive_prime_le_of_cutoff (K : MellinKern
                 ∑ k ∈ Finset.Icc 1 N,
                     ‖K.summand χ x (p ^ k) - K.summand χ.primitiveCharacter x (p ^ k)‖ ≤
                   ((m : ℝ) + 2) * C * Real.log p / Real.sqrt x := by
-  obtain ⟨Cl, hCl, hl⟩ := exists_sum_norm_summand_sub_primitive_prime_prefix_le K
-  obtain ⟨Ct, hCt, ht⟩ := exists_sum_norm_summand_sub_primitive_prime_tail_le_scale K
+  obtain ⟨Cl, hCl, hl⟩ := exists_primitiveDiff_primePrefix K
+  obtain ⟨Ct, hCt, ht⟩ := exists_primitiveDiff_tail_scale K
   refine ⟨Cl + Ct, add_pos hCl hCt, ?_⟩
   intro q _ χ x hx p m N hp hxm
   let f := fun k : ℕ => ‖K.summand χ x (p ^ k) - K.summand χ.primitiveCharacter x (p ^ k)‖
@@ -468,7 +467,7 @@ terms by C log x log p/sqrt x for x at least two, uniformly in N, nonzero level 
 character. Use the base-two logarithmic cutoff common to every prime and combine its
 count bound with the primewise correction estimate. This is summed over the quotient's
 prime divisors to obtain the uniform primitivization error in Lemma 6.1. -/
-theorem exists_sum_norm_summand_sub_primitive_prime_le_log_scale (K : MellinKernel) :
+theorem exists_primitiveDiff_prime_logScale (K : MellinKernel) :
     ∃ C : ℝ,
       0 < C ∧
         ∀ {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) {x : ℝ},
@@ -478,7 +477,7 @@ theorem exists_sum_norm_summand_sub_primitive_prime_le_log_scale (K : MellinKern
                 ∑ k ∈ Finset.Icc 1 N,
                     ‖K.summand χ x (p ^ k) - K.summand χ.primitiveCharacter x (p ^ k)‖ ≤
                   C * Real.log x * Real.log p / Real.sqrt x := by
-  obtain ⟨C, hC, hb⟩ := exists_sum_norm_summand_sub_primitive_prime_le_of_cutoff K
+  obtain ⟨C, hC, hb⟩ := exists_primitiveDiff_prime_cutoff K
   have hl2 : 0 < Real.log 2 := Real.log_pos (by norm_num only)
   refine ⟨3 * C / Real.log 2, div_pos (mul_pos (by norm_num only) hC) hl2, ?_⟩
   intro q _ χ x hx p N hp
@@ -503,7 +502,7 @@ uniformly in the cutoff, nonzero level and character. Reindex by prime powers, e
 the prime support to the quotient's prime divisors, exchange the finite sums, and use
 the primewise bound and the sum of prime-factor logarithms. This is the absolute finite
 sum estimate passed to the infinite primitivization error in Lemma 6.1. -/
-theorem exists_sum_norm_summand_sub_primitive_le_log (K : MellinKernel) :
+theorem exists_primitiveDiff_sumNorm_log (K : MellinKernel) :
     ∃ C : ℝ,
       0 < C ∧
         ∀ {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) {x y : ℝ},
@@ -511,7 +510,7 @@ theorem exists_sum_norm_summand_sub_primitive_le_log (K : MellinKernel) :
             0 ≤ y →
             (∑ n ∈ Finset.Ioc 0 ⌊y⌋₊, ‖K.summand χ x n - K.summand χ.primitiveCharacter x n‖) ≤
               C * Real.log q * Real.log x / Real.sqrt x := by
-  obtain ⟨C, hC, hb⟩ := exists_sum_norm_summand_sub_primitive_prime_le_log_scale K
+  obtain ⟨C, hC, hb⟩ := exists_primitiveDiff_prime_logScale K
   refine ⟨C, hC, ?_⟩
   intro q _ χ x y hx hy
   let m := q / χ.conductor
@@ -528,7 +527,7 @@ theorem exists_sum_norm_summand_sub_primitive_le_log (K : MellinKernel) :
     div_nonneg (mul_nonneg hC.le (Real.log_nonneg ((by norm_num only : (1 : ℝ) ≤ 2).trans hx)))
       (Real.sqrt_nonneg x)
   let f := fun k p : ℕ => ‖K.summand χ x (p ^ k) - K.summand χ.primitiveCharacter x (p ^ k)‖
-  rw [sum_norm_summand_sub_primitive_eq_prime_powers K χ hy]
+  rw [summand_primitiveNorm_primePowers K χ hy]
   calc
     _ ≤ ∑ k ∈ Finset.Icc 1 ⌊Real.log y / Real.log 2⌋₊, ∑ p ∈ m.primeFactors, f k p := by
       apply Finset.sum_le_sum
@@ -560,7 +559,7 @@ characters and x at least two. The norm series is summable. Enlarge an arbitrary
 set to its maximum's interval, remove the zero term, and use the finite uniform bound
 to obtain summability and the total-sum estimate. This removes the arithmetic
 primitivization error as an extra hypothesis in the general form of Lemma 6.1. -/
-theorem exists_tsum_norm_summand_sub_primitive_le_log (K : MellinKernel) :
+theorem exists_primitiveDiff_tsumNorm_log (K : MellinKernel) :
     ∃ C : ℝ,
       0 < C ∧
         ∀ {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) {x : ℝ},
@@ -570,7 +569,7 @@ theorem exists_tsum_norm_summand_sub_primitive_le_log (K : MellinKernel) :
                 C * Real.log q * Real.log x / Real.sqrt x ∧
               ‖∑' n : ℕ, (K.summand χ x n - K.summand χ.primitiveCharacter x n)‖ ≤
                 C * Real.log q * Real.log x / Real.sqrt x := by
-  obtain ⟨C, hC, hb⟩ := exists_sum_norm_summand_sub_primitive_le_log K
+  obtain ⟨C, hC, hb⟩ := exists_primitiveDiff_sumNorm_log K
   refine ⟨C, hC, ?_⟩
   intro q _ χ x hx
   let f := fun n : ℕ => ‖K.summand χ x n - K.summand χ.primitiveCharacter x n‖
@@ -598,7 +597,7 @@ most one, and the remainder is bounded uniformly by
 C * (1 + log q * log x / sqrt x) for x ≥ 2. The proof combines the primitive explicit
 formula with the absolutely convergent level-change correction and absorbs both errors.
 This isolates the zero-mass estimate needed for Lemma 6.1. -/
-theorem exists_real_summand_formula_primitive_zeroMass (K : MellinKernel) :
+theorem exists_summand_primitiveZeroMass_GRH (K : MellinKernel) :
     ∃ C : ℝ,
       0 < C ∧
         ∀ {q : ℕ} [NeZero q],
@@ -614,8 +613,8 @@ theorem exists_real_summand_formula_primitive_zeroMass (K : MellinKernel) :
                           |r| ≤ C * (1 + Real.log q * Real.log x / Real.sqrt x) ∧
                           (∑' n : ℕ, K.summand χ x n).re =
                             θ * (∑' ρ : ℂ, ‖K.kernelZeroTerm χ.primitiveCharacter ρ‖) + r := by
-  obtain ⟨Ca, hCa, ha⟩ := exists_real_summand_formula_with_primitive_correction K
-  obtain ⟨Cd, hCd, hd⟩ := exists_tsum_norm_summand_sub_primitive_le_log K
+  obtain ⟨Ca, hCa, ha⟩ := exists_summand_primitiveCorrection_GRH K
+  obtain ⟨Cd, hCd, hd⟩ := exists_primitiveDiff_tsumNorm_log K
   have hl2 : 0 < Real.log 2 := Real.log_pos (by norm_num only)
   have hratio : 0 < Ca / Real.log 2 := div_pos hCa hl2
   refine ⟨Ca + Ca / Real.log 2 + Cd, add_pos (add_pos hCa hratio) hCd, ?_⟩
@@ -656,7 +655,7 @@ with a positive constant depending only on the kernel. The primitive source of a
 principal character has conductor one and value one at every index. Rewrite the
 absolutely convergent level-change correction using this source. This reduces the
 principal-character part of Lemma 6.1 to the zeta case at level one. -/
-theorem exists_norm_principal_summand_sub_level_one_le (K : MellinKernel) :
+theorem exists_principal_sub_levelOne_error (K : MellinKernel) :
     ∃ C : ℝ,
       0 < C ∧
         ∀ {q : ℕ} [NeZero q] {x : ℝ},
@@ -664,7 +663,7 @@ theorem exists_norm_principal_summand_sub_level_one_le (K : MellinKernel) :
             ‖(∑' n : ℕ, K.summand (1 : DirichletCharacter ℂ q) x n) -
                   (∑' n : ℕ, K.summand (1 : DirichletCharacter ℂ 1) x n)‖ ≤
               C * Real.log q * Real.log x / Real.sqrt x := by
-  obtain ⟨C, hC, hb⟩ := exists_tsum_norm_summand_sub_primitive_le_log K
+  obtain ⟨C, hC, hb⟩ := exists_primitiveDiff_tsumNorm_log K
   refine ⟨C, hC, ?_⟩
   intro q _ x hx
   have he :
@@ -690,7 +689,7 @@ at least two. The bound becomes `C * (1 + log q * log x / sqrt x)`, with `C` ind
 of the level and scale. Apply the triangle inequality to the level-change correction
 and the assumed zeta remainder. This transfers the zeta part of Lemma 6.1 to all levels;
 the level-one analytic estimate remains an explicit hypothesis. -/
-theorem exists_principal_summand_remainder_le_of_level_one (K : MellinKernel) {A : ℝ} (hA : 0 < A)
+theorem exists_principal_error_of_levelOne (K : MellinKernel) {A : ℝ} (hA : 0 < A)
     (hbase :
       ∀ {x : ℝ},
         2 ≤ x →
@@ -704,7 +703,7 @@ theorem exists_principal_summand_remainder_le_of_level_one (K : MellinKernel) {A
             ‖(∑' n : ℕ, K.summand (1 : DirichletCharacter ℂ q) x n) -
                   K.function (1 / 2) * (Real.sqrt x : ℂ)‖ ≤
               C * (1 + Real.log q * Real.log x / Real.sqrt x) := by
-  obtain ⟨B, hB, hb⟩ := exists_norm_principal_summand_sub_level_one_le K
+  obtain ⟨B, hB, hb⟩ := exists_principal_sub_levelOne_error K
   refine ⟨A + B, add_pos hA hB, ?_⟩
   intro q _ x hx
   let S := ∑' n : ℕ, K.summand (1 : DirichletCharacter ℂ q) x n

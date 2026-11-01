@@ -52,7 +52,7 @@ theorem exists_odd_prime_neg_one_le_twoPole_ambient {n B : ℕ} (hn : Odd n) (hn
     linarith only [hlog]
   have hs := mul_self_le_mul_self hr hu
   have hw :=
-    NumberTheory.primeNegOneWitness_mem_of_complexQuadraticCharacter_ne_one n hn hp hd
+    NumberTheory.negOneWitness_mem_of_quadratic_ne_one n hn hp hd
       (by
         rw [hv]; norm_num only)
   refine ⟨p, hp, hw.2.1, ?_, hw.2.2⟩

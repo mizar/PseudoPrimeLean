@@ -36,10 +36,8 @@ theorem exists_prime_witness_le_strictLogSquare {n : ℕ} (hnOdd : Odd n) (hnCom
         (p : ℝ) < (Real.log n) ^ 2 ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   have hn1 : 1 < n := (by decide : (1 : ℕ) < 3000).trans_le hn
   let : NeZero n := ⟨(zero_lt_one.trans hn1).ne'⟩
-  obtain ⟨H, hH, hpass⟩ :=
-    PrimeTest.exists_proper_subgroup_containing_strongMillerRabinPass hn1 hnOdd hnComposite
-  obtain ⟨p, hp, hb, hout⟩ :=
-    LLS.exists_prime_outside_subgroup_image_le_strictLogSquare hn H hH hGRH
+  obtain ⟨H, hH, hpass⟩ := PrimeTest.exists_proper_subgroup_strongMR hn1 hnOdd hnComposite
+  obtain ⟨p, hp, hb, hout⟩ := LLS.exists_prime_outside_strictLogSquare_GRH hn H hH hGRH
   exact
     ⟨p, hp, hb, hb.trans_lt (strictLogSquare_lt_log_sq hn),
       PrimeTest.not_pass_of_outside_subgroup hpass hout⟩
@@ -48,7 +46,7 @@ theorem exists_prime_witness_le_strictLogSquare {n : ℕ} (hnOdd : Odd n) (hnCom
 Claim: primality is equivalent to acceptance at every prime through the shifted-square cutoff.
 Proof: use the rejecting witness for composites and the existing prime acceptance theorem.
 This is the decision interface for the independent strict analytic bound. -/
-theorem prime_iff_millerRabin_for_all_primes_le_strictLogSquare {n : ℕ} (hnOdd : Odd n)
+theorem prime_iff_pass_primes_strictLogSquare_GRH {n : ℕ} (hnOdd : Odd n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hn : 3000 ≤ n) :
     (∀ p : ℕ,
         p.Prime →

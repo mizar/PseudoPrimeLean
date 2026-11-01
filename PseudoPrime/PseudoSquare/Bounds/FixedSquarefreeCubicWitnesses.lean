@@ -35,7 +35,7 @@ theorem exists_prime_neg_one_le_fixed_squarefree_family {n d s : ℕ} (hn : Odd 
         jacobiSym bridge.squarefreePart p = -1 →
         fixedSquarefreeCubicBound bridge.squarefreePart < p := by
     simpa only [he, hs] using hlarge
-  simpa only [he] using exists_prime_neg_one_le_fixed_squarefree_cubic_bound bridge hGRH hl
+  simpa only [he] using exists_prime_negOne_fixedSquarefreeCubic_GRH bridge hGRH hl
 
 /-- The fixed squarefree-family bound controls the least negative odd-prime
 witness. Apply the family existence theorem and leastness; the supplied

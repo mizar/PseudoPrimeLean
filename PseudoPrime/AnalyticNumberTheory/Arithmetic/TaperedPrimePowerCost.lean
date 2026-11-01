@@ -50,7 +50,7 @@ theorem twoAdicReciprocalCorrection_le_tapered_zero {q : ℕ} (x : ℝ) (χ : Di
 /-- For primitive value minus one at two, the reciprocal correction is at most
 (4/3)log 2 minus 2*log 2/x for each odd exponent through floor(log x/log 2).
 Use the exact odd-exponent formula and retain the taper before the geometric bound. -/
-theorem twoAdicReciprocalCorrection_le_tapered_neg_one {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
+theorem recipTwoCorrection_le_tapered_neg_one {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
     (h2 : χ.primitiveCharacter 2 = -1) :
     twoAdicReciprocalCorrection x χ ≤
       (4 / 3 : ℝ) * Real.log 2 -
@@ -60,7 +60,7 @@ theorem twoAdicReciprocalCorrection_le_tapered_neg_one {q : ℕ} (x : ℝ) (χ :
   have he :
     twoAdicReciprocalCorrection x χ =
       ∑ k ∈ S, (2 * Real.log 2) / (2 : ℝ) ^ k * (1 - (2 : ℝ) ^ k / x) := by
-    rw [twoAdicReciprocalCorrection_eq_odd_sum_of_apply_two_eq_neg_one x χ h2]
+    rw [recipTwoCorrection_eq_odd_sum_of_neg_one x χ h2]
     rw [show S = (Finset.Icc 1 K).filter Odd from rfl, Finset.sum_filter]
     apply Finset.sum_congr rfl
     intro k _

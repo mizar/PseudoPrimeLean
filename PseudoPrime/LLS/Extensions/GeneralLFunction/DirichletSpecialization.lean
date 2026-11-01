@@ -110,8 +110,7 @@ theorem ofDirichletCharacter_truncatedValueSum {q : ℕ} [NeZero q] (χ : Dirich
 
 /-- Every canonical degree-one Mangoldt coefficient has norm at most one.
 Prime powers use the extension's root bound; other indices have zero coefficient. -/
-theorem ofDirichletCharacter_mangoldtCoefficient_norm_le {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (n : ℕ) :
+theorem dirichlet_mangoldt_norm_le {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (n : ℕ) :
     ‖(ofDirichletCharacter χ).mangoldtCoefficient n‖ ≤ 1 := by
   by_cases hn : IsPrimePow n
   · obtain ⟨p, k, hp, hk, rfl⟩ := hn

@@ -78,8 +78,8 @@ theorem norm_canonical_factor_eq_on_zero_free_sphere {F : ℂ → ℂ} (hF : Dif
 
 /-- For an entire function, a nonzero value has meromorphic order zero.
 Convert to analytic order. This removes divisor terms at regular evaluation points. -/
-theorem meromorphicOrderAt_eq_zero_of_entire_value_ne_zero {F : ℂ → ℂ} (hF : Differentiable ℂ F)
-    {i : ℂ} (hi : F i ≠ 0) : meromorphicOrderAt (F) i = 0 := by
+theorem entire_meromorphicOrder_eq_zero_of_ne_zero {F : ℂ → ℂ} (hF : Differentiable ℂ F) {i : ℂ}
+    (hi : F i ≠ 0) : meromorphicOrderAt (F) i = 0 := by
   have hdiff := hF
   rw [(hdiff.analyticAt i).meromorphicOrderAt_eq, analyticOrderAt_eq_zero.mpr (Or.inr hi)]
   rfl
@@ -96,7 +96,7 @@ theorem norm_canonical_factor_zero_ge {F : ℂ → ℂ} (h0 : F 0 ≠ 0) (hF : D
   have hF0ne := h0
   have h0mem : (0 : ℂ) ∈ Metric.closedBall (0 : ℂ) R := by
     simp only [Metric.mem_closedBall, dist_self, hR.le]
-  have horder0 := meromorphicOrderAt_eq_zero_of_entire_value_ne_zero hF hF0ne
+  have horder0 := entire_meromorphicOrder_eq_zero_of_ne_zero hF hF0ne
   have hlogeq := D.log_norm_eq h0mem horder0 hR
   have hspherezero :
     ∀ i : ℂ,
@@ -109,7 +109,7 @@ theorem norm_canonical_factor_zero_ge {F : ℂ → ℂ} (h0 : F 0 ≠ 0) (hF : D
         hdiff.analyticAt z
       have hdiv0 : MeromorphicOn.divisor (F) (Metric.sphere (0 : ℂ) R) i = 0 := by
         rw [MeromorphicOn.divisor_apply hanalyticSphere.meromorphicOn hi,
-          meromorphicOrderAt_eq_zero_of_entire_value_ne_zero hF (hzf i hine)]
+          entire_meromorphicOrder_eq_zero_of_ne_zero hF (hzf i hine)]
         rfl
       simp only [hdiv0, Int.cast_zero, zero_mul]
     · have hdiv0 : MeromorphicOn.divisor (F) (Metric.sphere (0 : ℂ) R) i = 0 :=
@@ -269,7 +269,7 @@ theorem sphereFactor_eq_one_of_zeroFree {F : ℂ → ℂ} (hF : Differentiable �
       hdiff.analyticAt z
     have hdiv0 : MeromorphicOn.divisor (F) (Metric.sphere (0 : ℂ) R) v = 0 := by
       rw [MeromorphicOn.divisor_apply hanalyticSphere.meromorphicOn hv,
-        meromorphicOrderAt_eq_zero_of_entire_value_ne_zero hF (hzf v hvne)]
+        entire_meromorphicOrder_eq_zero_of_ne_zero hF (hzf v hvne)]
       rfl
     rw [hdiv0]
     funext z
@@ -308,9 +308,8 @@ theorem meromorphicAt_ecanonicalDecompRHS {F : ℂ → ℂ} (hF : Differentiable
 /-- For entire F nonzero at a point in the closed disk, its canonical factor
 product is analytic there. A divisor-supported factor cannot have its pole at
 the evaluation point; integer powers preserve analyticity at nonzero factors. -/
-theorem analyticAt_canonicalFactorProduct_of_entire_value_ne_zero {F : ℂ → ℂ}
-    (hF : Differentiable ℂ F) {R : ℝ} {x : ℂ} (hxclosed : x ∈ Metric.closedBall (0 : ℂ) R)
-    (hxne : F x ≠ 0) :
+theorem analyticAt_canonicalProduct_of_value_ne_zero {F : ℂ → ℂ} (hF : Differentiable ℂ F) {R : ℝ}
+    {x : ℂ} (hxclosed : x ∈ Metric.closedBall (0 : ℂ) R) (hxne : F x ≠ 0) :
     AnalyticAt ℂ
       (∏ᶠ u : ℂ,
         (Complex.canonicalFactor R u) ^ (-MeromorphicOn.divisor (F) (Metric.ball (0 : ℂ) R) u))
@@ -329,7 +328,7 @@ theorem analyticAt_canonicalFactorProduct_of_entire_value_ne_zero {F : ℂ → �
       have hanalyticBall : AnalyticOnNhd ℂ (F) (Metric.ball (0 : ℂ) R) := fun z _ ↦
         hdiff.analyticAt z
       rw [MeromorphicOn.divisor_apply hanalyticBall.meromorphicOn huball,
-        meromorphicOrderAt_eq_zero_of_entire_value_ne_zero hF hxne]
+        entire_meromorphicOrder_eq_zero_of_ne_zero hF hxne]
       rfl
     have hcfAt : AnalyticAt ℂ (Complex.canonicalFactor R u) x :=
       Complex.analyticOnNhd_canonicalFactor R u x huxne.symm
@@ -372,8 +371,7 @@ theorem ecanonicalDecomp_logDeriv_eq_at {F : ℂ → ℂ} (hF : Differentiable �
       funext z
       simp only [Pi.smul_apply', smul_eq_mul, Pi.mul_apply]
     rwa [hrw] at hFeqRHS
-  have hPAt : AnalyticAt ℂ P x :=
-    analyticAt_canonicalFactorProduct_of_entire_value_ne_zero hF hxclosed hxne
+  have hPAt : AnalyticAt ℂ P x := analyticAt_canonicalProduct_of_value_ne_zero hF hxclosed hxne
   have hgxne : g x ≠ 0 := D.ne_zero x hxclosed
   have hPxne : P x ≠ 0 := by
     have hFxeqPg : (F) x = (P * g) x :=
@@ -403,9 +401,8 @@ theorem ecanonicalDecomp_logDeriv_eq_at {F : ℂ → ℂ} (hF : Differentiable �
 /-- A point in the ball divisor support of an entire function differs from every
 point where that function is nonzero. Its positive order would otherwise contradict
 regularity of the evaluation point. -/
-theorem ne_of_mem_divisorBallSupport_of_entire_value_ne_zero {F : ℂ → ℂ} (hF : Differentiable ℂ F)
-    {R : ℝ} {u x : ℂ} (hu : MeromorphicOn.divisor (F) (Metric.ball (0 : ℂ) R) u ≠ 0)
-    (hxne : F x ≠ 0) : u ≠ x := by
+theorem ne_of_mem_divisor_of_value_ne_zero {F : ℂ → ℂ} (hF : Differentiable ℂ F) {R : ℝ} {u x : ℂ}
+    (hu : MeromorphicOn.divisor (F) (Metric.ball (0 : ℂ) R) u ≠ 0) (hxne : F x ≠ 0) : u ≠ x := by
   rintro rfl
   apply hu
   have hdiff := hF
@@ -413,14 +410,14 @@ theorem ne_of_mem_divisorBallSupport_of_entire_value_ne_zero {F : ℂ → ℂ} (
     (MeromorphicOn.divisor (F) (Metric.ball (0 : ℂ) R)).supportWithinDomain hu
   have hanalyticBall : AnalyticOnNhd ℂ (F) (Metric.ball (0 : ℂ) R) := fun z _ ↦ hdiff.analyticAt z
   rw [MeromorphicOn.divisor_apply hanalyticBall.meromorphicOn huball,
-    meromorphicOrderAt_eq_zero_of_entire_value_ne_zero hF hxne]
+    entire_meromorphicOrder_eq_zero_of_ne_zero hF hxne]
   rfl
 
 /-- For entire F nonzero at a closed-disk point, the logarithmic derivative of
 its canonical product equals the finite divisor-weighted factor derivative sum.
 Differentiate the finite product and its integer powers at regular factors. -/
-theorem logDeriv_canonicalFactorProduct_eq_finsum_at {F : ℂ → ℂ} (hF : Differentiable ℂ F) {R : ℝ}
-    {x : ℂ} (hxclosed : x ∈ Metric.closedBall (0 : ℂ) R) (hxne : F x ≠ 0) :
+theorem canonicalProduct_logDeriv_finsum {F : ℂ → ℂ} (hF : Differentiable ℂ F) {R : ℝ} {x : ℂ}
+    (hxclosed : x ∈ Metric.closedBall (0 : ℂ) R) (hxne : F x ≠ 0) :
     logDeriv
         (∏ᶠ u : ℂ,
           (Complex.canonicalFactor R u) ^ (-MeromorphicOn.divisor (F) (Metric.ball (0 : ℂ) R) u))
@@ -453,7 +450,7 @@ theorem logDeriv_canonicalFactorProduct_eq_finsum_at {F : ℂ → ℂ} (hF : Dif
   have hkey : ∀ i ∈ hdfin.toFinset, i ≠ x ∧ i ∈ Metric.ball (0 : ℂ) R := by
     intro i hi
     rw [Set.Finite.mem_toFinset, Function.mem_support, ne_eq, neg_eq_zero] at hi
-    have hine : i ≠ x := ne_of_mem_divisorBallSupport_of_entire_value_ne_zero hF hi hxne
+    have hine : i ≠ x := ne_of_mem_divisor_of_value_ne_zero hF hi hxne
     exact ⟨hine, (MeromorphicOn.divisor (F) (Metric.ball (0 : ℂ) R)).supportWithinDomain hi⟩
   have h0 :
     (∏ᶠ u : ℂ,
@@ -555,8 +552,8 @@ theorem logDeriv_canonicalFactorProduct_eq_finsum_at {F : ℂ → ℂ} (hF : Dif
 /-- For entire F nonzero at zero and at the evaluation point, a zero-free sphere
 allows the centered logarithmic derivative to split into the centered factor sum
 and analytic factor derivative. Subtract the two regular-point identities. -/
-theorem ecanonicalDecomp_centered_logDeriv_eq {F : ℂ → ℂ} (h0 : F 0 ≠ 0) (hF : Differentiable ℂ F)
-    {R : ℝ} (hR : 0 < R) {g : ℂ → ℂ} (D : Complex.ECanonicalDecomp (F) g R)
+theorem ecanonical_centered_logDeriv_eq {F : ℂ → ℂ} (h0 : F 0 ≠ 0) (hF : Differentiable ℂ F) {R : ℝ}
+    (hR : 0 < R) {g : ℂ → ℂ} (D : Complex.ECanonicalDecomp (F) g R)
     (hzf : ∀ ρ : ℂ, ‖ρ‖ = R → F ρ ≠ 0) {s : ℂ} (hsclosed : s ∈ Metric.closedBall (0 : ℂ) R)
     (hsne : F s ≠ 0) :
     logDeriv (F) s - logDeriv (F) 0 =
@@ -572,8 +569,8 @@ theorem ecanonicalDecomp_centered_logDeriv_eq {F : ℂ → ℂ} (h0 : F 0 ≠ 0)
   have h0ne : F 0 ≠ 0 := h0
   have heqs := ecanonicalDecomp_logDeriv_eq_at hF hR D hzf hsclosed hsne
   have heq0 := ecanonicalDecomp_logDeriv_eq_at hF hR D hzf h0closed h0ne
-  rw [logDeriv_canonicalFactorProduct_eq_finsum_at hF hsclosed hsne] at heqs
-  rw [logDeriv_canonicalFactorProduct_eq_finsum_at hF h0closed h0ne] at heq0
+  rw [canonicalProduct_logDeriv_finsum hF hsclosed hsne] at heqs
+  rw [canonicalProduct_logDeriv_finsum hF h0closed h0ne] at heq0
   linear_combination heqs - heq0
 
 /-- For entire F nonzero at zero with a global exponential power bound, the
@@ -670,7 +667,7 @@ theorem exists_ecanonicalDecomp_of_entire {F : ℂ → ℂ} (hF : Differentiable
     (R : ℝ) : ∃ g, Complex.ECanonicalDecomp F g R := by
   have ha : AnalyticOnNhd ℂ F Set.univ := fun z _ ↦ hF.analyticAt z
   have ho : meromorphicOrderAt F 0 ≠ ⊤ := by
-    rw [meromorphicOrderAt_eq_zero_of_entire_value_ne_zero hF h0]
+    rw [entire_meromorphicOrder_eq_zero_of_ne_zero hF h0]
     exact WithTop.coe_ne_top
   exact
     MeromorphicOn.exists_ecanonicalDecomp (fun z _ ↦ (hF.analyticAt z).meromorphicAt)

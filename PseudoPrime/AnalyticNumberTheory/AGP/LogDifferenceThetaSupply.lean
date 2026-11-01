@@ -22,8 +22,8 @@ open Classical in
 difference minus the sum of nonprincipal norms is at most `phi(q) psi(y;q,a)
 log(y/x)`. Apply weighted orthogonality and the pointwise upper difference bound.
 This transfers analytic character errors to an unsmoothed progression sum. -/
-theorem principalLogDifference_sub_errors_le_psiInProgression {q a : ℕ} [NeZero q]
-    (ha : Nat.Coprime a q) {x y : ℝ} (hx : 0 < x) (hxy : x ≤ y) :
+theorem principalLogDiff_errors_le_psi {q a : ℕ} [NeZero q] (ha : Nat.Coprime a q) {x y : ℝ}
+    (hx : 0 < x) (hxy : x ≤ y) :
     (Arithmetic.characterLogWeightedSum y (1 : DirichletCharacter ℂ q) -
             Arithmetic.characterLogWeightedSum x (1 : DirichletCharacter ℂ q)).re -
         ∑ χ ∈ (Finset.univ : Finset (DirichletCharacter ℂ q)).erase 1,
@@ -67,8 +67,8 @@ and a total error budget `x log(5/4)/32` imply `theta(x;q,a) >= x/(2 phi(q))`.
 The budget includes the common-factor correction, nonprincipal difference norms,
 and the elementary prime-power loss. Combine the progression psi inequality with
 `psi - theta <= 18 sqrt(x)` and cancel positive logarithm and totient factors. -/
-theorem thetaInProgression_lower_of_log_difference_budget {q a : ℕ} [NeZero q]
-    (ha : Nat.Coprime a q) {x : ℝ} (hx : 1 ≤ x)
+theorem theta_lower_of_log_difference_budget {q a : ℕ} [NeZero q] (ha : Nat.Coprime a q) {x : ℝ}
+    (hx : 1 ≤ x)
     (hprincipal :
       (17 / 32 : ℝ) * x * Real.log (5 / 4) - (1 / 2 : ℝ) * q.primeFactors.card * (Real.log x) ^ 2 ≤
         (Arithmetic.characterLogWeightedSum x (1 : DirichletCharacter ℂ q) -
@@ -88,7 +88,7 @@ theorem thetaInProgression_lower_of_log_difference_budget {q a : ℕ} [NeZero q]
     apply (div_eq_iff ht.ne').2
     ring
   have hlog : 0 < Real.log (5 / 4 : ℝ) := Real.log_pos (by norm_num only)
-  have hb := principalLogDifference_sub_errors_le_psiInProgression ha ht htx
+  have hb := principalLogDiff_errors_le_psi ha ht htx
   rw [hratio] at hb
   have hd := (psi_sub_thetaInProgression_bounds x q a hx).2
   have hφ : 0 < (q.totient : ℝ) := by
@@ -125,8 +125,6 @@ theorem exists_uniform_log_difference_theta_threshold :
   obtain ⟨X, hX, hp⟩ := Arithmetic.exists_principalLogDifference_lower
   refine ⟨X, hX, ?_⟩
   intro q a inst ha x hx hbudget
-  exact
-    thetaInProgression_lower_of_log_difference_budget ha (hX.trans hx) (hp q (NeZero.ne q) x hx)
-      hbudget
+  exact theta_lower_of_log_difference_budget ha (hX.trans hx) (hp q (NeZero.ne q) x hx) hbudget
 
 end PseudoPrime.AnalyticNumberTheory.AGP

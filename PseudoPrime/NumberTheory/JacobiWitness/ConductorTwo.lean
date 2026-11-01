@@ -25,8 +25,7 @@ theorem primitiveQuadratic_conductor_dvd_of_two_ne_zero {n : ℕ} (hn : Odd n)
   have hd : 4 * n ∣ (2 : ℕ) ^ 2 * n := by
     norm_num only [Nat.reducePow]
     exact dvd_refl _
-  exact
-    conductor_dvd_of_level_dvd_power_mul_of_primitive_ne_zero (complexQuadraticCharacter n hn) hd h2
+  exact conductor_dvd_of_level_dvd_pow_mul_nonzero (complexQuadraticCharacter n hn) hd h2
 
 /-- For odd n and nonzero primitive value at two, the canonical conductor is
 at most n. Combine divisibility with positivity of odd n. This replaces the

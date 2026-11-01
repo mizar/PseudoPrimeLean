@@ -16,8 +16,8 @@ public import PseudoPrime.Analysis.PrimitiveReciprocalMainErrorBounds
 Pure numerical (character-free) content: the two "main error" functions appearing in the odd/even
 `s = 0` log-kernel residue closed forms
 (`PrimitiveLogResidueClosedForms.lean`,
-`DirichletLFunction.re_deriv_dirichletLogMellinZeroRegularization_zero_of_odd`,
-`DirichletLFunction.re_iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_div_two`) are
+`DirichletLFunction.re_logMellinReg_deriv_zero_odd_GRH`,
+`DirichletLFunction.re_logEvenReg_deriv2_div2_GRH`) are
 `≤ -11/4` once
 `x ≥ 64`. Mirrors `PrimitiveReciprocalMainErrorBounds.lean`'s odd/even numerical bounds, but odd
 and even are *not* proved by a shared argument here: odd's margin is tight (`≈ 0.02`) and needs a
@@ -33,16 +33,16 @@ Input/assumptions: `x ≥ 64`.
 Conclusion: `PseudoPrime.Analysis.primitiveLogOddMainError x ≤ -11/4`.
 Content: `log x ≥ 6 log 2 > 4158/1000` (`Analysis.six_mul_log_two_le_log_of_sixty_four_le`,
 `Real.log_two_gt_d9`); `log 2 + γ/2 > 963/1000` (`Real.log_two_gt_d9`,
-`Analysis.twenty_seven_fiftieths_lt_eulerMascheroniConstant`); their product exceeds `4.004`, while
+`Analysis.eulerMascheroniConstant_gt_27_50`); their product exceeds `4.004`, while
 `π²/8 < 3.1416²/8 < 1.235` (`Real.pi_lt_d4`), giving `E₁⁺(x) < 1.235 - 4.004 < -11/4`.
 Role: the odd half of the log-kernel main-error estimate.
 -/
-theorem llsPrimitiveLogOddMainError_le_neg_eleven_fourths {x : ℝ} (hx : 64 ≤ x) :
+theorem primitiveLogOddError_le_neg_11_4 {x : ℝ} (hx : 64 ≤ x) :
     Analysis.primitiveLogOddMainError x ≤ -(11 / 4 : ℝ) := by
   have hlogx : (6 * Real.log 2 : ℝ) ≤ Real.log x :=
     Analysis.six_mul_log_two_le_log_of_sixty_four_le hx
   have hlog2 := Real.log_two_gt_d9
-  have hγ := Analysis.twenty_seven_fiftieths_lt_eulerMascheroniConstant
+  have hγ := Analysis.eulerMascheroniConstant_gt_27_50
   have hpi := Real.pi_lt_d4
   have hpinn : (0 : ℝ) ≤ Real.pi := Real.pi_pos.le
   have hpisq : Real.pi ^ 2 ≤ (3.1416 : ℝ) ^ 2 := by nlinarith only [hpi, hpinn]
@@ -70,7 +70,7 @@ Content: `log x ≥ 6 log 2 > 4` (`Analysis.six_mul_log_two_le_log_of_sixty_four
 gives `π²/24 ≤ 2/3`, `(γ/2) log x ≥ 1`, `(1/2)(log x)² ≥ 8`, so `E₀⁺(x) ≤ 2/3 - 1 - 8 < -11/4`.
 Role: the even half of the log-kernel main-error estimate.
 -/
-theorem llsPrimitiveLogEvenMainError_le_neg_eleven_fourths {x : ℝ} (hx : 64 ≤ x) :
+theorem primitiveLogEvenError_le_neg_11_4 {x : ℝ} (hx : 64 ≤ x) :
     Analysis.primitiveLogEvenMainError x ≤ -(11 / 4 : ℝ) := by
   have hlogx : (6 * Real.log 2 : ℝ) ≤ Real.log x :=
     Analysis.six_mul_log_two_le_log_of_sixty_four_le hx

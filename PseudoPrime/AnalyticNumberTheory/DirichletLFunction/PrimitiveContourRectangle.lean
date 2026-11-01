@@ -17,7 +17,7 @@ public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ContourRegular
 Apply the finite rectangle residue theorem to the corners `-A-1/2-iT_k` and `2+iT_k`.
 The general GRH wrappers retain an explicit hypothesis that the singularity ledger lies
 in the open rectangle. The quadratic wrappers obtain that certificate from
-`primitiveHeightSeq_singularities_mem_open`. Normalized forms cancel `2πi`.
+`heightSeq_singularities_open_GRH`. Normalized forms cancel `2πi`.
 The local centered-square residue certificate only requires a nontrivial character.
 -/
 
@@ -26,17 +26,16 @@ The local centered-square residue certificate only requires a nontrivial charact
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 
 /-- Normalized form of the generic reciprocal finite-contour identity. -/
-theorem dirichletReciprocalFiniteContourIdentity_normalized {N : ℕ} [NeZero N] {x : ℝ} (hx : 0 < x)
+theorem reciprocalContour_normalized {N : ℕ} [NeZero N] {x : ℝ} (hx : 0 < x)
     {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) {z w : ℂ}
     (hre : z.re < w.re) (him : z.im < w.im)
     (hopen :
-      ∀ s ∈ dirichletLFunctionSingularitiesInRectangle χ hne z w,
+      ∀ s ∈ LFunctionSingularitiesInRectangle χ hne z w,
         s ∈ RectangleGeometry.rectangleOpenBox z w) :
     (-Complex.I / (2 * Real.pi)) *
         RectangleGeometry.rectangleBoundaryIntegral (dirichletReciprocalContourKernel x χ) z w =
-      ∑ s ∈ dirichletLFunctionSingularitiesInRectangle χ hne z w,
-        dirichletReciprocalResidueAt hne x s := by
-  rw [dirichletReciprocalFiniteContourIdentity hx hprimitive hne hre him hopen, Finset.mul_sum]
+      ∑ s ∈ LFunctionSingularitiesInRectangle χ hne z w, dirichletReciprocalResidueAt hne x s := by
+  rw [reciprocalFiniteContourIdentity hx hprimitive hne hre him hopen, Finset.mul_sum]
   apply Finset.sum_congr rfl
   intro s hs
   have hπ : (Real.pi : ℂ) ≠ 0 := by exact_mod_cast Real.pi_ne_zero
@@ -60,14 +59,14 @@ theorem dirichletReciprocalFiniteContourIdentity_normalized {N : ℕ} [NeZero N]
 membership of every listed singularity, the boundary integral multiplied by `-i/(2π)` equals
 the finite reciprocal residue sum. The selected corner facts reduce this to the normalized
 rectangle identity, supplying the normalization used by the subsequent height-limit argument. -/
-theorem dirichletReciprocalFiniteContourIdentity_heightSeq_normalized {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
+theorem reciprocalContour_heightSeq_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) (A k : ℕ)
     (hA : 2 ≤ A)
     (hopen :
       ∀
         s ∈
-          dirichletLFunctionSingularitiesInRectangle χ hne
+          LFunctionSingularitiesInRectangle χ hne
             (primitiveHeightSeqLowerCorner hN2 hGRH hprimitive hne hinv A k)
             (primitiveHeightSeqUpperCorner hN2 hGRH hprimitive hne hinv k),
         s ∈
@@ -80,12 +79,12 @@ theorem dirichletReciprocalFiniteContourIdentity_heightSeq_normalized {N : ℕ} 
           (primitiveHeightSeqUpperCorner hN2 hGRH hprimitive hne hinv k) =
       ∑
         s ∈
-          dirichletLFunctionSingularitiesInRectangle χ hne
+          LFunctionSingularitiesInRectangle χ hne
             (primitiveHeightSeqLowerCorner hN2 hGRH hprimitive hne hinv A k)
             (primitiveHeightSeqUpperCorner hN2 hGRH hprimitive hne hinv k),
         dirichletReciprocalResidueAt hne x s := by
   obtain ⟨_, _, _, _, hre, him⟩ :=
     primitiveHeightSeqRectangleFacts hN2 hGRH hprimitive hne hinv A k hA
-  exact dirichletReciprocalFiniteContourIdentity_normalized hx hprimitive hne hre him hopen
+  exact reciprocalContour_normalized hx hprimitive hne hre him hopen
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

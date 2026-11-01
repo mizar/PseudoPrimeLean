@@ -123,7 +123,7 @@ theorem tendsto_one_sub_exp_div_zero (a : ℝ) :
 /-- For a > 0, adding 1/t+a log t to the exponential pole primitive gives the
 finite right limit a-a log a at zero. Combine the exponential difference quotient with t log t -> 0
 and the continuous logarithmic exponential primitive; this cancels the zeta pole at one. -/
-theorem tendsto_exponentialPolePrimitive_regularized_zero {a : ℝ} (ha : 0 < a) :
+theorem exponentialPole_regularized_tendsto {a : ℝ} (ha : 0 < a) :
     Filter.Tendsto (fun t : ℝ ↦ exponentialPolePrimitive a t + 1 / t + a * Real.log t)
       (nhdsWithin 0 (Set.Ioi 0)) (nhds (a - a * Real.log a)) := by
   have ht : Filter.Tendsto (fun t : ℝ ↦ t) (nhdsWithin 0 (Set.Ioi 0)) (nhds 0) :=

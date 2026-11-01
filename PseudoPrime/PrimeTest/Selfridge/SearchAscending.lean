@@ -419,7 +419,7 @@ theorem selfridgeClassicalSearchAscending_none_spec {n k fuel : ℕ}
         · simpa only [Nat.add_assoc, Nat.add_comm 1 fuel] using hjlt
 
 /-- An ascending search returns the first successful candidate in a finite range. -/
-theorem selfridgeClassicalSearchAscendingFrom_some_of_prior_failures {n s k : ℕ} {i : ℕ}
+theorem classicalAscending_of_prior_failures {n s k : ℕ} {i : ℕ}
     (hi : classicalCandidateMagnitude (s + k) = i) (hjacobi : jacobiSym (selfridgeD i) n = -1)
     (hfail :
       ∀ j, s ≤ j → j < s + k → jacobiSym (selfridgeD (classicalCandidateMagnitude j)) n ≠ -1) :
@@ -447,7 +447,7 @@ theorem selfridgeClassicalSearchAscendingFrom_some_of_prior_failures {n s k : �
       · simpa only [Nat.add_assoc, Nat.add_comm 1 k] using hjs
 
 /-- The mathematical `-1` first-stop is realized by the ascending search. -/
-theorem selfridgeClassicalSearchAscending_some_of_firstStopNegOne {n : ℕ}
+theorem classicalSearchAscending_some_of_firstStop {n : ℕ}
     (hs : (FirstStopNegOneSet isClassicalCandidate n).Nonempty) :
     ∃ k,
       classicalCandidateMagnitude k = firstStopNegOne isClassicalCandidate n hs ∧
@@ -460,9 +460,7 @@ theorem selfridgeClassicalSearchAscending_some_of_firstStopNegOne {n : ℕ}
   have hk' : classicalCandidateMagnitude (0 + k) = i := by simpa only [Nat.zero_add, i] using hk
   refine ⟨k, hk, ?_⟩
   change selfridgeClassicalSearchAscendingFrom n 0 (k + 1) = some (selfridgeD i)
-  apply
-    selfridgeClassicalSearchAscendingFrom_some_of_prior_failures (s := 0) (k := k) (i := i) hk'
-      hjacobi
+  apply classicalAscending_of_prior_failures (s := 0) (k := k) (i := i) hk' hjacobi
   intro j h0 hjk hsuccess
   have hji : classicalCandidateMagnitude j < i := by
     dsimp only [classicalCandidateMagnitude] at hk ⊢
@@ -477,7 +475,7 @@ theorem selfridgeClassicalSearchAscending_some_of_firstStopNegOne {n : ℕ}
       ⟨classicalCandidateMagnitude_isCandidate j, hsuccess⟩
 
 /-- Increasing the fuel preserves a successful ascending-search result. -/
-theorem selfridgeClassicalSearchAscendingFrom_some_of_le_fuel {n s fuel extra : ℕ} {D : ℤ}
+theorem classicalAscending_some_of_more_fuel {n s fuel extra : ℕ} {D : ℤ}
     (hsearch : selfridgeClassicalSearchAscendingFrom n s fuel = some D) :
     selfridgeClassicalSearchAscendingFrom n s (fuel + extra) = some D := by
   induction fuel generalizing s extra with
@@ -505,7 +503,7 @@ theorem selfridgeClassicalSearchAscending_seventeen :
     change some (5 : ℤ) = some 5
     rfl
   simpa only [selfridgeClassicalSearchAscending] using
-    (selfridgeClassicalSearchAscendingFrom_some_of_le_fuel (extra := 14)
+    (classicalAscending_some_of_more_fuel (extra := 14)
       (by simpa only [selfridgeClassicalSearchAscending] using hsearch))
 
 /-- The remaining prime below `27` with second candidate `D = -7`. -/
@@ -527,7 +525,7 @@ theorem selfridgeClassicalSearchAscending_nineteen :
     change some (-7 : ℤ) = some (-7)
     rfl
   simpa only [selfridgeClassicalSearchAscending] using
-    (selfridgeClassicalSearchAscendingFrom_some_of_le_fuel (extra := 15)
+    (classicalAscending_some_of_more_fuel (extra := 15)
       (by simpa only [selfridgeClassicalSearchAscending] using hsearch))
 
 /-- The last prime below `27` again stops at the initial positive candidate. -/
@@ -542,15 +540,15 @@ theorem selfridgeClassicalSearchAscending_twenty_three :
     change some (5 : ℤ) = some 5
     rfl
   simpa only [selfridgeClassicalSearchAscending] using
-    (selfridgeClassicalSearchAscendingFrom_some_of_le_fuel (extra := 20)
+    (classicalAscending_some_of_more_fuel (extra := 20)
       (by simpa only [selfridgeClassicalSearchAscending] using hsearch))
 
 /-- A first-stop below `n` is found by the elementary `n - 2` fuel budget. -/
-theorem selfridgeClassicalSearchAscendingWithinTwoMul_some_of_firstStop_lt {n : ℕ} (hn : 3 ≤ n)
+theorem classicalAscending_twoMul_firstStop {n : ℕ} (hn : 3 ≤ n)
     (hs : (FirstStopNegOneSet isClassicalCandidate n).Nonempty)
     (hstop : firstStopNegOne isClassicalCandidate n hs < n) :
     ∃ D, selfridgeClassicalSearchAscending n (n - 2) = some D := by
-  obtain ⟨k, hk, hsearch⟩ := selfridgeClassicalSearchAscending_some_of_firstStopNegOne hs
+  obtain ⟨k, hk, hsearch⟩ := classicalSearchAscending_some_of_firstStop hs
   have hkfuel : k + 1 ≤ n - 2 := by
     dsimp only [classicalCandidateMagnitude] at hk
     have hstop' : 5 + 2 * k < n := by
@@ -564,41 +562,40 @@ theorem selfridgeClassicalSearchAscendingWithinTwoMul_some_of_firstStop_lt {n : 
   refine ⟨selfridgeD (firstStopNegOne isClassicalCandidate n hs), ?_⟩
   have hextra : (k + 1) + (n - 2 - (k + 1)) = n - 2 := Nat.add_sub_of_le hkfuel
   rw [← hextra]
-  exact selfridgeClassicalSearchAscendingFrom_some_of_le_fuel hsearch
+  exact classicalAscending_some_of_more_fuel hsearch
 
 /-- A least prime witness below `n` and the exceptional bound `27` imply bounded success. -/
-theorem selfridgeClassicalSearchAscendingWithinTwoMul_some_of_primeWitness_lt {n : ℕ} (hn : 3 ≤ n)
-    (hnodd : Odd n) (hn27 : 27 < n) (hw : (primeNegOneWitnessSet n).Nonempty)
+theorem classicalAscending_twoMul_witness {n : ℕ} (hn : 3 ≤ n) (hnodd : Odd n) (hn27 : 27 < n)
+    (hw : (primeNegOneWitnessSet n).Nonempty)
     (hs : (FirstStopNegOneSet isClassicalCandidate n).Nonempty)
     (hqw : primeNegOneWitness n hw < n) :
     ∃ D, selfridgeClassicalSearchAscending n (n - 2) = some D := by
-  apply selfridgeClassicalSearchAscendingWithinTwoMul_some_of_firstStop_lt hn hs
-  have hbound := classicalFirstStopNegOne_le_max_twenty_seven_primeWitness hnodd hw hs
+  apply classicalAscending_twoMul_firstStop hn hs
+  have hbound := classicalFirstNegOne_le_max_27_primeWitness hnodd hw hs
   exact hbound.trans_lt ((Nat.max_lt).2 ⟨hn27, hqw⟩)
 
 /-- Every prime above `27` supplies the witness bound needed by the ascending search. -/
-theorem selfridgeClassicalSearchAscendingWithinTwoMul_some_of_prime {n : ℕ} (hn : n.Prime)
-    (hn27 : 27 < n) (hw : (primeNegOneWitnessSet n).Nonempty)
+theorem classicalAscending_twoMul_prime_large {n : ℕ} (hn : n.Prime) (hn27 : 27 < n)
+    (hw : (primeNegOneWitnessSet n).Nonempty)
     (hs : (FirstStopNegOneSet isClassicalCandidate n).Nonempty) :
     ∃ D, selfridgeClassicalSearchAscending n (n - 2) = some D := by
   have hodd : Odd n := hn.odd_iff.mpr (Nat.le_trans (by decide : 3 ≤ 27) (Nat.le_of_lt hn27))
   obtain ⟨p, hp, hpodd, hplt, hvalue⟩ :=
-    NumberTheory.exists_smaller_prime_jacobiSym_eq_neg_one_of_prime hn
-      (lt_trans (by decide : 3 < 27) hn27)
+    NumberTheory.exists_smaller_jacobi_neg_one_prime hn (lt_trans (by decide : 3 < 27) hn27)
   apply
-    selfridgeClassicalSearchAscendingWithinTwoMul_some_of_primeWitness_lt
-      (Nat.le_trans (by decide : 3 ≤ 27) (Nat.le_of_lt hn27)) hodd hn27 hw hs
+    classicalAscending_twoMul_witness (Nat.le_trans (by decide : 3 ≤ 27) (Nat.le_of_lt hn27)) hodd
+      hn27 hw hs
   exact (primeNegOneWitness_le n hw ⟨hp, hpodd, hvalue⟩).trans_lt hplt
 
 /-- Every prime at least `3` has a successful elementary ascending search. -/
-theorem selfridgeClassicalSearchAscendingWithinTwoMul_some_of_prime_of_three_le {n : ℕ}
-    (hn : n.Prime) (hn3 : 3 ≤ n) : ∃ D, selfridgeClassicalSearchAscending n (n - 2) = some D := by
+theorem classicalAscending_twoMul_prime {n : ℕ} (hn : n.Prime) (hn3 : 3 ≤ n) :
+    ∃ D, selfridgeClassicalSearchAscending n (n - 2) = some D := by
   by_cases hn27 : 27 < n
   · exact
-      selfridgeClassicalSearchAscendingWithinTwoMul_some_of_prime hn hn27
+      classicalAscending_twoMul_prime_large hn hn27
         (primeNegOneWitnessSet_nonempty_of_odd_nonsquare
           (hn.odd_of_ne_two (ne_of_gt (lt_of_lt_of_le (by decide : 2 < 3) hn3))) hn.not_isSquare)
-        (classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare
+        (classicalNegOneSet_nonempty_of_odd_nonsquare
           (hn.odd_of_ne_two (ne_of_gt (lt_of_lt_of_le (by decide : 2 < 3) hn3))) hn.not_isSquare)
   · have hnle : n ≤ 27 := le_of_not_gt hn27
     interval_cases n <;>
@@ -614,7 +611,7 @@ theorem selfridgeClassicalSearchAscendingWithinTwoMul_some_of_prime_of_three_le 
       | norm_num only at hn
 
 /-- A successful ascending search converts to the corresponding Method A* parameters. -/
-theorem selfridgeClassicalMethodAStarParamsAscending_of_search {n fuel : ℕ} {D : ℤ}
+theorem classicalAStarAscending_of_search {n fuel : ℕ} {D : ℤ}
     (hsearch : selfridgeClassicalSearchAscending n fuel = some D) :
     selfridgeClassicalMethodAStarParamsAscending n fuel =
       some
@@ -636,7 +633,7 @@ theorem selfridgeClassicalMethodAStarParamsAscending_of_search {n fuel : ℕ} {D
             exact selfridgeD_methodA_mod_four (classicalCandidateMagnitude_isCandidate k).2))
 
 /-- A successful ascending Wheel30 search determines its Method A* parameters. -/
-theorem selfridgeWheel30MethodAStarParamsAscending_of_search {n fuel : ℕ} {D : ℤ}
+theorem wheel30AStarAscending_of_search {n fuel : ℕ} {D : ℤ}
     (hsearch : selfridgeWheel30SearchAscending n fuel = some D) :
     selfridgeWheel30MethodAStarParamsAscending n fuel =
       some
@@ -654,7 +651,7 @@ theorem selfridgeWheel30MethodAStarParamsAscending_of_search {n fuel : ℕ} {D :
             (by simpa only [selfridgeWheel30SearchAscending] using hsearch)))
 
 /-- A successful ascending prime search determines its Method A* parameters. -/
-theorem selfridgePrimeMethodAStarParamsAscending_of_search {n fuel : ℕ} {D : ℤ}
+theorem primeAStarAscending_of_search {n fuel : ℕ} {D : ℤ}
     (hsearch : selfridgePrimeSearchAscending n fuel = some D) :
     selfridgePrimeMethodAStarParamsAscending n fuel =
       some

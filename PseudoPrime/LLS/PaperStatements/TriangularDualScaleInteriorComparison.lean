@@ -67,7 +67,7 @@ theorem triangular18_finite_principal_le_dual_interior {q : ℕ} [NeZero q] (H :
       triangular18_gammaIntegral_re_le_interior i.val.primitiveCharacter (b := 9 / 16)
         (by norm_num only) (by norm_num only) hx hlog
     have h2 :=
-      triangular18_inverse_gammaIntegral_re_le_interior (i.val.primitiveCharacter)⁻¹ (b := 9 / 16)
+      triangular18_inverseGamma_interior_bound (i.val.primitiveCharacter)⁻¹ (b := 9 / 16)
         (by norm_num only) (by norm_num only) hx hlog
     change ((G i i.val.primitiveCharacter x).re + (G i (i.val.primitiveCharacter)⁻¹ x⁻¹).re) ≤ _
     dsimp only at h1 h2

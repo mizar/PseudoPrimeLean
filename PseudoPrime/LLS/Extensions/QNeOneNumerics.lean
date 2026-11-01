@@ -214,7 +214,7 @@ Role: records the first interval certificate for the reciprocal-envelope
 table; later intervals use the same cleared-denominator pattern with their own
 anchor and constant.
 -/
-theorem qNeOneBUpperBoundZeroStar_le_affine_twelve_thirteen {y : ℝ} (hy : 12 ≤ y) (hy13 : y ≤ 13) :
+theorem qNeOne_BzeroStar_affine_12_13 {y : ℝ} (hy : 12 ≤ y) (hy13 : y ≤ 13) :
     qNeOneBUpperBoundZeroStar y ≤ y / 2 - 2 * Real.log y + 21 / 10 := by
   have hy0 : 0 < y := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 12) hy
   have hlog : (247 : ℝ) / 100 + (2 / 25) * (y - 12) < Real.log y := by
@@ -278,7 +278,7 @@ theorem qNeOneBUpperBoundZeroStar_le_affine_twelve_thirteen {y : ℝ} (hy : 12 �
   linarith only [hB, hdiff]
 
 /-- The second compact interval closes with the rational constant `11/5`. -/
-theorem qNeOneBUpperBoundZeroStar_le_affine_thirteen_sixteen {y : ℝ} (hy : 13 ≤ y) (hy16 : y ≤ 16) :
+theorem qNeOne_BzeroStar_affine_13_16 {y : ℝ} (hy : 13 ≤ y) (hy16 : y ≤ 16) :
     qNeOneBUpperBoundZeroStar y ≤ y / 2 - 2 * Real.log y + 11 / 5 := by
   have hlog13 : (256 : ℝ) / 100 < Real.log 13 := by
     have h12 : (248 : ℝ) / 100 < Real.log 12 := by
@@ -302,8 +302,8 @@ theorem qNeOneBUpperBoundZeroStar_le_affine_thirteen_sixteen {y : ℝ} (hy : 13 
   nlinarith only [hL, h2, sq_nonneg (y - 13), sq_nonneg (y - 16), hy, hy16]
 
 /-- The third compact interval closes with the rational constant `23/10`. -/
-theorem qNeOneBUpperBoundZeroStar_le_affine_sixteen_twenty_four {y : ℝ} (hy : 16 ≤ y)
-    (hy24 : y ≤ 24) : qNeOneBUpperBoundZeroStar y ≤ y / 2 - 2 * Real.log y + 23 / 10 := by
+theorem qNeOneBZeroStar_affine_16_24 {y : ℝ} (hy : 16 ≤ y) (hy24 : y ≤ 24) :
+    qNeOneBUpperBoundZeroStar y ≤ y / 2 - 2 * Real.log y + 23 / 10 := by
   have hlog16 : (277 : ℝ) / 100 < Real.log 16 := by
     rw [show (16 : ℝ) = 2 ^ 4 by norm_num only, Real.log_pow]
     norm_num only
@@ -320,8 +320,8 @@ theorem qNeOneBUpperBoundZeroStar_le_affine_sixteen_twenty_four {y : ℝ} (hy : 
   nlinarith only [hL, h2, sq_nonneg (y - 16), sq_nonneg (y - 24), hy, hy24]
 
 /-- The fourth compact interval closes with the rational constant `12/5`. -/
-theorem qNeOneBUpperBoundZeroStar_le_affine_twenty_four_thirty_two {y : ℝ} (hy : 24 ≤ y)
-    (hy32 : y ≤ 32) : qNeOneBUpperBoundZeroStar y ≤ y / 2 - 2 * Real.log y + 12 / 5 := by
+theorem qNeOneBZeroStar_affine_24_32 {y : ℝ} (hy : 24 ≤ y) (hy32 : y ≤ 32) :
+    qNeOneBUpperBoundZeroStar y ≤ y / 2 - 2 * Real.log y + 12 / 5 := by
   have hlog24 : (317 : ℝ) / 100 < Real.log 24 := by
     rw [show (24 : ℝ) = 3 * 2 ^ 3 by norm_num only,
       Real.log_mul (by norm_num only) (by norm_num only), Real.log_pow]
@@ -339,8 +339,8 @@ theorem qNeOneBUpperBoundZeroStar_le_affine_twenty_four_thirty_two {y : ℝ} (hy
   nlinarith only [hL, h2, sq_nonneg (y - 24), sq_nonneg (y - 32), hy, hy32]
 
 /-- The fifth compact interval closes with the same rational constant `12/5`. -/
-theorem qNeOneBUpperBoundZeroStar_le_affine_thirty_two_forty_eight {y : ℝ} (hy : 32 ≤ y)
-    (hy48 : y ≤ 48) : qNeOneBUpperBoundZeroStar y ≤ y / 2 - 2 * Real.log y + 12 / 5 := by
+theorem qNeOne_BzeroStar_affine_32_48 {y : ℝ} (hy : 32 ≤ y) (hy48 : y ≤ 48) :
+    qNeOneBUpperBoundZeroStar y ≤ y / 2 - 2 * Real.log y + 12 / 5 := by
   have hlog32 : (346 : ℝ) / 100 < Real.log 32 := by
     rw [show (32 : ℝ) = 2 ^ 5 by norm_num only, Real.log_pow]
     norm_num only
@@ -580,7 +580,7 @@ theorem qNeOneAnalyticLowerBound_gt_upperBound {y : ℝ} (hy : 8 ≤ y) :
   exact sub_pos.mp hdiff
 
 /-- The c=1 analytic envelope is strictly below the common lower envelope on `y ≥ 8`. -/
-theorem qNeOneAnalyticUpperBoundOne_lt_qNeOneAnalyticLowerBound {y : ℝ} (hy : 8 ≤ y) :
+theorem qNeOne_oneUpper_lt_lower {y : ℝ} (hy : 8 ≤ y) :
     qNeOneAnalyticUpperBoundOne y < qNeOneAnalyticLowerBound y := by
   exact
     (qNeOneAnalyticUpperBoundOne_le_qNeOneUpperBound hy).trans_lt
@@ -593,7 +593,7 @@ Content: use the monotone logarithmic ratio from Analysis, the decimal logarithm
 `γ > 27/50` with the larger margin required by the Q-ne-one B estimate.
 Role: the strong even remainder consumed by the general-character reciprocal raw-formula adapter.
 -/
-theorem llsPrimitiveReciprocalEvenMainError_lt_neg_four_fifths {x : ℝ} (hx : 64 ≤ x) :
+theorem primitiveReciprocalEvenError_lt_neg_4_5 {x : ℝ} (hx : 64 ≤ x) :
     Analysis.primitiveReciprocalEvenMainError x < -(4 / 5 : ℝ) := by
   have hxpos : (0 : ℝ) < x := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 64) hx
   have hlogx_nn : (0 : ℝ) ≤ Real.log x :=
@@ -616,7 +616,7 @@ theorem llsPrimitiveReciprocalEvenMainError_lt_neg_four_fifths {x : ℝ} (hx : 6
     rw [show (64 : ℝ) = 2 ^ 6 from by norm_num only, Real.log_pow]
     norm_num only
     ring
-  have hγ := Analysis.twenty_seven_fiftieths_lt_eulerMascheroniConstant
+  have hγ := Analysis.eulerMascheroniConstant_gt_27_50
   have hlog2lo := Real.log_two_gt_d9
   have hlog2hi := Real.log_two_lt_d9
   have hinv_le : 1 / x ≤ 1 / 64 := by

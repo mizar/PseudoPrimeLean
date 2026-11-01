@@ -72,8 +72,7 @@ theorem phase64_jacobi_no_negative_local_comparison {n : ℕ} {hn : Odd n} {hns 
   have ha :=
     gamma_jacobi_no_negative_ramp_comparison bridge hx0 (fun p hp ho hcut ↦ hno p hp ho (he ▸ hcut))
   have hl :=
-    finiteSigned_character_prefix_add_ambient_ramp_eq_local_cost
-      Analysis.phaseResolvent64Coefficients bridge.character
+    signedPrefix_add_ramp_eq_cost Analysis.phaseResolvent64Coefficients bridge.character
       (mul_pos (by norm_num only : (0 : ℕ) < 4) hn.pos) hb
       (gamma_jacobi_no_negative_prefix_prime_one bridge hno) (L ^ 2 / (99 / 40))
   dsimp only [phase64JacobiLocalBudget]

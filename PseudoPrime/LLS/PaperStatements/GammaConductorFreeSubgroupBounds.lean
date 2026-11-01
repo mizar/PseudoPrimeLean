@@ -52,8 +52,8 @@ theorem gamma_index_two_scalar_general {h I s A P R D : ℝ} (hh : 2 ≤ h) (hI 
 Gamma sum at x=(32/99)(log q)² is at most M log q+2181/100.
 Use the thirty-two-term zero certificate, conductor-free remainder and common
 pole/left budgets. Quadraticity is not required, so all annihilator characters qualify. -/
-theorem gamma_primitiveCharacter_sum_re_le_conductor_free_uniform {q : ℕ} [NeZero q]
-    (hq : 20000 ≤ q) (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
+theorem gammaCharacterSum_re_le_conductor_free_uniform {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 30000 ≤ Real.log q) :
     let x := (32 / 99 : ℝ) * (Real.log q) ^ 2;
     (∑' k : ℕ, gammaMellinKernel.summand χ.primitiveCharacter x k).re ≤
@@ -70,7 +70,7 @@ theorem gamma_primitiveCharacter_sum_re_le_conductor_free_uniform {q : ℕ} [NeZ
     gamma_tail_pole_budget (show (15000 : ℝ) ≤ Real.log q by linarith only [hL]) hs
       (show Real.log q ≤ Real.log q + 2 by linarith only)
   have hu :=
-    gamma_primitiveCharacter_sum_re_le_conductor_free_prefix hq χ hne hGRH hx 32
+    gammaCharacterSum_re_le_conductor_free_prefix hq χ hne hGRH hx 32
       Analysis.gammaResolvent_thirtyTwo_error_lt
   have hmq := Nat.le_of_dvd (Nat.pos_of_ne_zero (NeZero.ne q)) χ.conductor_dvd_level
   have hf : (0 : ℝ) < χ.conductor := by exact_mod_cast Nat.pos_of_ne_zero χ.conductor_ne_zero
@@ -84,7 +84,7 @@ theorem gamma_primitiveCharacter_sum_re_le_conductor_free_uniform {q : ℕ} [NeZ
 the actual primitive aggregate is at most sqrt(x)+3/20 plus M log q+2181/100
 for each nonidentity character. Apply the generic finite-family bound and
 separate the principal primitive character. This supplies the subgroup upper side. -/
-theorem gamma_primitive_average_re_le_conductor_free_uniform {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+theorem gammaAverage_re_le_conductor_free_uniform {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
     (S : Subgroup (DirichletCharacter ℂ q)) [Fintype S]
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 30000 ≤ Real.log q) :
     let x := (32 / 99 : ℝ) * (Real.log q) ^ 2;
@@ -108,8 +108,8 @@ theorem gamma_primitive_average_re_le_conductor_free_uniform {q : ℕ} [NeZero q
   have hrest : ∀ χ : S, χ ≠ 1 → F χ ≤ (11783423 / 25000000 : ℝ) * Real.log q + 2181 / 100 := by
     intro χ hχ
     exact
-      gamma_primitiveCharacter_sum_re_le_conductor_free_uniform hq χ.val
-        (fun heq ↦ hχ (Subtype.ext heq)) hGRH hL
+      gammaCharacterSum_re_le_conductor_free_uniform hq χ.val (fun heq ↦ hχ (Subtype.ext heq)) hGRH
+        hL
   have hsum := sum_le_distinguished_and_common (1 : S) F h1 hrest
   change
     Complex.reCLM (∑ χ : S, ∑' k : ℕ, gammaMellinKernel.summand χ.val.primitiveCharacter x k) ≤ _
@@ -149,8 +149,7 @@ theorem gamma_ramp_subgroup_comparison_conductor_free {q : ℕ} [NeZero q] (hq :
     dsimp only [x]
     ring
   have hu :=
-    gamma_primitive_average_re_le_conductor_free_uniform hq (NumberTheory.subgroupAnnihilator H)
-      hGRH hL
+    gammaAverage_re_le_conductor_free_uniform hq (NumberTheory.subgroupAnnihilator H) hGRH hL
   rw [NumberTheory.card_subgroupAnnihilator] at hu
   change
     Complex.reCLM

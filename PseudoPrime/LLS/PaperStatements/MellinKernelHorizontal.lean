@@ -139,23 +139,21 @@ theorem tendsto_completed_horizontalIntegral (K : MellinKernel) {q : ℕ} [NeZer
     · simpa only [neg_one_mul, abs_neg, abs_of_nonneg (zero_le_one.trans (ht n))] using ht n
   · intro n
     exact
-      add_nonneg (primitiveHorizontalStripEpsilon_nonneg hq hGRH hp hne hinv n)
+      add_nonneg (horizontalStripEpsilon_nonneg_GRH hq hGRH hp hne hinv n)
         (div_nonneg (norm_nonneg _) (sq_nonneg _))
-  · have hTi :=
-      tendsto_inv_atTop_zero.comp (tendsto_primitiveHorizontalHeightSeq_atTop hq hGRH hp hne hinv)
+  · have hTi := tendsto_inv_atTop_zero.comp (tendsto_horizontalHeightSeq_GRH hq hGRH hp hne hinv)
     have hB :
       Filter.Tendsto (fun n ↦ ‖logDeriv (DirichletCharacter.completedLFunction χ) 0‖ / (T n) ^ 2)
         Filter.atTop (nhds 0) := by
       simpa only [Function.comp_apply, div_eq_mul_inv, inv_pow,
         zero_pow (by norm_num only : (2 : ℕ) ≠ 0), mul_zero] using
         (hTi.pow 2).const_mul ‖logDeriv (DirichletCharacter.completedLFunction χ) 0‖
-    simpa only [zero_add] using
-      (tendsto_primitiveHorizontalStripEpsilon_atTop hq hGRH hp hne hinv).add hB
+    simpa only [zero_add] using (tendsto_horizontalStripEpsilon_GRH hq hGRH hp hne hinv).add hB
   · intro n σ hσ
     have hσ' : a < σ ∧ σ ≤ b := by simpa only [Set.uIoc_of_le hab, Set.mem_Ioc] using hσ
     have hσbound : |σ + 1 / 2| ≤ 2 :=
       abs_le.mpr ⟨by linarith only [ha', hσ'.1], by linarith only [hb', hσ'.2]⟩
-    have hf := primitiveHorizontalHeightSeq_completedLogDeriv_bound hq hGRH hp hne hinv n hσbound
+    have hf := horizontalHeight_logDeriv_bound_GRH hq hGRH hp hne hinv n hσbound
     have htsq : 0 < (T n) ^ 2 := sq_pos_of_pos (zero_lt_one.trans_le (ht n))
     have hcenter :
       ‖logDeriv (DirichletCharacter.completedLFunction χ)

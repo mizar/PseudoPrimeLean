@@ -126,8 +126,8 @@ private theorem normCount_geometric_neg_one (k : ℕ) :
 of norm `p^k` equals the character divisor sum. Both sides are one: the ideal is
 `P^k`, and the character geometric sum has only its constant term.
 This proves the coefficient identity in the ramified quadratic case. -/
-theorem ideal_prime_power_count_eq_divisor_sum_of_ramified (K : Type) [Field K] [NumberField K]
-    {p q : ℕ} (hp : p.Prime) (P : Ideal (NumberField.RingOfIntegers K)) (hP : Prime P)
+theorem ideal_primePower_count_ramified (K : Type) [Field K] [NumberField K] {p q : ℕ}
+    (hp : p.Prime) (P : Ideal (NumberField.RingOfIntegers K)) (hP : Prime P)
     (hs : Ideal.span {(p : NumberField.RingOfIntegers K)} = P ^ 2) (hN : Ideal.absNorm P = p)
     (χ : DirichletCharacter ℂ q) (hχ : χ (p : ℕ) = 0) (k : ℕ) :
     (Nat.card { I : Ideal (NumberField.RingOfIntegers K) // Ideal.absNorm I = p ^ k } : ℂ) =
@@ -265,14 +265,13 @@ def quadraticPrimeSplittingAt (K : Type) [Field K] [NumberField K] {q : ℕ}
 /-- If the splitting of a prime `p` agrees with `χ(p)`, the ideal count at every
 power of `p` equals the character divisor sum. Apply the ramified, inert, or split
 count according to the splitting condition. This supplies the prime-power comparison. -/
-theorem ideal_prime_power_count_eq_divisor_sum_of_splitting (K : Type) [Field K] [NumberField K]
-    {p q : ℕ} (χ : DirichletCharacter ℂ q) (hp : p.Prime) (hsplit : quadraticPrimeSplittingAt K χ p)
-    (k : ℕ) :
+theorem ideal_primePower_count_splitting (K : Type) [Field K] [NumberField K] {p q : ℕ}
+    (χ : DirichletCharacter ℂ q) (hp : p.Prime) (hsplit : quadraticPrimeSplittingAt K χ p) (k : ℕ) :
     (Nat.card { I : Ideal (NumberField.RingOfIntegers K) // Ideal.absNorm I = p ^ k } : ℂ) =
       ∑ d ∈ (p ^ k).divisorsAntidiagonal, χ (d.2 : ℕ) := by
   rcases hsplit with ⟨hχ, P, hP, hs, hN⟩ | ⟨hχ, P, hP, hs, hN⟩ |
     ⟨hχ, P, Q, hP, hQ, hc, hs, hNP, hNQ⟩
-  · exact ideal_prime_power_count_eq_divisor_sum_of_ramified K hp P hP hs hN χ hχ k
+  · exact ideal_primePower_count_ramified K hp P hP hs hN χ hχ k
   · exact ideal_prime_power_count_eq_divisor_sum_of_inert K hp P hP hs hN χ hχ k
   · exact ideal_prime_power_count_eq_divisor_sum_of_split K hp P Q hP hQ hc hs hNP hNQ χ hχ k
 
@@ -288,6 +287,6 @@ theorem ideal_count_eq_divisor_sum_of_splitting (K : Type) [Field K] [NumberFiel
       ∑ d ∈ n.divisorsAntidiagonal, χ (d.2 : ℕ) := by
   apply ideal_count_eq_divisor_sum_of_prime_power_count K χ ?_ n hn
   intro p k hp
-  exact ideal_prime_power_count_eq_divisor_sum_of_splitting K χ hp (hsplit p hp) k
+  exact ideal_primePower_count_splitting K χ hp (hsplit p hp) k
 
 end PseudoPrime.NumberTheory

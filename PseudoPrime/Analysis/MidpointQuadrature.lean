@@ -56,8 +56,8 @@ theorem midpoint_integral_lower_of_second_deriv_ge {f f' f'' : ℝ → ℝ} {a b
     (hf' : ∀ x ∈ Set.Icc a b, HasDerivAt f' (f'' x) x) (hb : ∀ x ∈ Set.Icc a b, -M ≤ f'' x) :
     (b - a) * f ((a + b) / 2) - M * (b - a) ^ 3 / 24 ≤ ∫ x in a..b, f x := by
   have hc :=
-    concaveOn_quadratic_correction_of_second_deriv_le (fun x hx ↦ (hf x hx).neg)
-      (fun x hx ↦ (hf' x hx).neg) (fun x hx ↦ neg_le_neg (hb x hx))
+    concaveOn_quadratic_correction (fun x hx ↦ (hf x hx).neg) (fun x hx ↦ (hf' x hx).neg)
+      (fun x hx ↦ neg_le_neg (hb x hx))
   have hconv : ConvexOn ℝ (Set.Icc a b) (fun x ↦ f x + M / 2 * x ^ 2) := by
     convert hc.neg using 1
     funext x
@@ -357,8 +357,8 @@ values on an equally spaced grid is bounded by the full interval integral and th
 squared times the derivative's squared integral energy. The proof sums the local cell estimate and
 telescopes both interval integrals. This is the sampling bound used to compare a height mesh with
 the pre-sifted hybrid mean-square estimate. -/
-theorem uniform_grid_norm_sq_le_height_and_derivative_energy {f g : ℝ → ℂ} {a h : ℝ} {n : ℕ}
-    (hf : Continuous f) (hg : Continuous g) (hh : 0 < h) (hderiv : ∀ y, HasDerivAt f (g y) y) :
+theorem uniform_grid_norm_sq_le_energy {f g : ℝ → ℂ} {a h : ℝ} {n : ℕ} (hf : Continuous f)
+    (hg : Continuous g) (hh : 0 < h) (hderiv : ∀ y, HasDerivAt f (g y) y) :
     (h / 2) * (∑ k ∈ Finset.range n, ‖f (a + ((k : ℝ) + 1 / 2) * h)‖ ^ 2) ≤
       (∫ x in a..(a + (n : ℝ) * h), ‖f x‖ ^ 2) +
         (h ^ 2 / 2) * (∫ x in a..(a + (n : ℝ) * h), ‖g x‖ ^ 2) := by
@@ -419,8 +419,8 @@ theorem uniform_grid_sum_norm_sq_le_integrals {ι : Type*} (s : Finset ι) {f g 
   have hsum :=
     Finset.sum_le_sum (s := s)
       (fun i hi =>
-        uniform_grid_norm_sq_le_height_and_derivative_energy (a := a) (h := h) (n := n) (hf i hi)
-          (hg i hi) hh (hderiv i hi))
+        uniform_grid_norm_sq_le_energy (a := a) (h := h) (n := n) (hf i hi) (hg i hi) hh
+          (hderiv i hi))
   have hcomm :
     (∑ k ∈ Finset.range n, ∑ i ∈ s, ‖f i (a + ((k : ℝ) + 1 / 2) * h)‖ ^ 2) =
       ∑ i ∈ s, ∑ k ∈ Finset.range n, ‖f i (a + ((k : ℝ) + 1 / 2) * h)‖ ^ 2 := by

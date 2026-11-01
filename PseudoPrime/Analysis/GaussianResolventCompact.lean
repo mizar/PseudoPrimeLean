@@ -72,10 +72,10 @@ theorem gaussianResolventScaledGap_abs (t : ℝ) :
 norm at every real height. Interpolation covers [0,16], evenness covers its reflection,
 and the certified rational-analytic tail covers the remaining heights.
 Only the finite node inequalities remain as certificate inputs. -/
-theorem norm_gaussianGammaFunction_le_gaussianResolvent_of_grid
+theorem norm_gaussianGamma_le_resolvent_of_grid
     (hnodes : ∀ j : ℕ, j ≤ 16000 → 9 / 100000 ≤ gaussianResolventScaledGap ((j : ℝ) / 1000))
     (t : ℝ) : ‖gaussianGammaFunction (Complex.I * (t : ℂ))‖ ≤ gaussianResolventMajorant t := by
-  apply norm_gaussianGammaFunction_le_gaussianResolvent_of_compact _ t
+  apply norm_gaussianGamma_le_resolvent_of_compact _ t
   intro x hx
   have h :=
     gaussianResolventScaledGap_lower_of_grid hnodes

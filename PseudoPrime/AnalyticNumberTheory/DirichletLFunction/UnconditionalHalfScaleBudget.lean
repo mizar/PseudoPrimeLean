@@ -26,8 +26,7 @@ theorem completedZerosInRectangle_height_le {q : ℕ} [NeZero q] {χ : Dirichlet
           ((1 : ℂ) + (H : ℝ) * Complex.I)) :
     |ρ.im| ≤ H := by
   have hb := (mem_completedZerosInRectangle_iff.mp hρ).1
-  rw [dirichletCompletedLFunctionRectangleBox, Rectangle.rectangleClosedBox,
-    Complex.mem_reProdIm] at hb
+  rw [completedRectangleBox, Rectangle.rectangleClosedBox, Complex.mem_reProdIm] at hb
   have him := hb.2
   simp only [Complex.sub_im, Complex.mul_im, Complex.ofReal_im, Complex.I_re, Complex.I_im,
     zero_mul, mul_one, zero_sub, Complex.add_im, Complex.one_im, zero_add, add_zero,
@@ -44,8 +43,8 @@ noncomputable def regularizedHighZeroTailMajorant (q : ℕ) (x : ℝ) (H : ℕ) 
     192 * x * K * (Real.log ((H + 3 : ℕ) : ℝ) + 2) / (H + 3) +
     Real.log 2 *
       (32 *
-        (12 + LogFreeDensity.completedGenusMassShiftConstant * (Real.log 4 + 1) + Real.log q +
-          LogFreeDensity.completedGenusMassCenterConstant * (Real.log 4 + 1)))
+        (12 + LogFreeDensity.genusMassShift * (Real.log 4 + 1) + Real.log q +
+          LogFreeDensity.genusMassCenter * (Real.log 4 + 1)))
 
 /-- There are positive absolute remainder, local-count, and tail constants giving
 the displayed half-scale arithmetic bound for every primitive nonprincipal
@@ -54,7 +53,7 @@ real threshold at most one, and integer cutoff at least two. Split the regulariz
 zero sum at height `H+1`, apply the below-threshold count and high-tail bounds,
 and retain only the near-one finite norm sum as the density-controlled term.
 All analytic estimates in this interface are unconditional. -/
-theorem exists_norm_characterLogWeightedSum_half_le_truncated_zero_budget :
+theorem logWeighted_half_truncated_bound :
     ∃ C K T : ℝ,
       0 < C ∧
         0 < K ∧
@@ -83,14 +82,14 @@ theorem exists_norm_characterLogWeightedSum_half_le_truncated_zero_budget :
                                   regularizedLowHeightMajorant x σ +
                                 regularizedHighZeroTailMajorant q x H T +
                                 C * (Real.log x + 1) := by
-  obtain ⟨C, hC, harith⟩ := exists_norm_characterLogWeightedSum_half_le_regularized_zero_sum
-  obtain ⟨K, hK, hlow⟩ := exists_sum_norm_regularizedLogHalfZeroTerm_below_threshold_bound
-  obtain ⟨T, hT, htail⟩ := exists_tsum_norm_regularizedLogHalfZeroTerm_tail_bound_unconditionally
+  obtain ⟨C, hC, harith⟩ := logWeighted_half_regularized_bound
+  obtain ⟨K, hK, hlow⟩ := regularizedHalfTerm_low_sum_bound
+  obtain ⟨T, hT, htail⟩ := regularizedHalfTerm_tail_bound
   refine ⟨C, K, T, hC, hK, hT, ?_⟩
   intro q inst hq χ hp hne hinv x σ hx hσ H hH
   have hx2 : 2 ≤ x := by linarith only [hx]
   have hb := harith q hq χ hp hne hinv x hx
-  have hs := tsum_norm_regularizedLogHalfZeroTerm_le_truncated_parts hq hp hne hinv hx2 σ (H + 1)
+  have hs := regularizedHalfTerm_truncated_bound hq hp hne hinv hx2 σ (H + 1)
   have hl :=
     hlow q hq χ hp hne hinv x σ hx2 hσ (H + 1)
       ((completedZerosInRectangle χ hne ((0 : ℂ) - ((H + 1 : ℕ) : ℝ) * Complex.I)

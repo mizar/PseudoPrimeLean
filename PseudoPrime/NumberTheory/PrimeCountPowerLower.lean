@@ -42,7 +42,7 @@ theorem tendsto_log_nat_div_sqrt :
 /-- Eventually pi(B)*log B is at least (log 2)/2 times B.
 Absorb both errors in the elementary Chebyshev lower bound using their vanishing
 normalized limits. This supplies the main term needed for power lower bounds. -/
-theorem eventually_half_log_two_mul_le_primeCounting_mul_log :
+theorem eventually_log2_half_le_primeCounting_log :
     Filter.Eventually (fun B : ℕ ↦ (Real.log 2 / 2) * B ≤ (B.primeCounting : ℝ) * Real.log B)
       Filter.atTop := by
   have hlog2 : 0 < Real.log 2 := Real.log_pos (by norm_num only)
@@ -71,7 +71,7 @@ theorem eventually_rpow_le_primeCounting {t : ℝ} (ht : t < 1) :
   have hlim := (isLittleO_log_rpow_atTop (sub_pos.mpr ht)).tendsto_div_nhds_zero
   have hnat := hlim.comp (tendsto_natCast_atTop_atTop (R := ℝ))
   have he := hnat.eventually_lt_const (div_pos hlog2 (by norm_num only : (0 : ℝ) < 2))
-  filter_upwards [he, eventually_half_log_two_mul_le_primeCounting_mul_log,
+  filter_upwards [he, eventually_log2_half_le_primeCounting_log,
     Filter.eventually_gt_atTop (1 : ℕ)] with B hsmall hlower hB
   have hp : (0 : ℝ) < B := Nat.cast_pos.mpr (Nat.zero_lt_of_lt hB)
   have hlog : 0 < Real.log (B : ℝ) := Real.log_pos (Nat.one_lt_cast.mpr hB)
@@ -110,7 +110,7 @@ theorem eventually_rpow_le_nat_floor_rpow {b A : ℝ} (hb : 0 ≤ b) (h : b < A)
 /-- For 0<b<A and any C, pi(floor(x^A)) is eventually at least C*x^b.
 Choose intermediate powers, combine the floor lower bound with pi(B)>=B^t,
 and absorb the remaining constant. This is the prime supply for MR product counting. -/
-theorem eventually_const_mul_rpow_le_primeCounting_floor_rpow {b A C : ℝ} (hb : 0 < b) (h : b < A) :
+theorem eventually_rpow_le_primeCounting_floor {b A C : ℝ} (hb : 0 < b) (h : b < A) :
     Filter.Eventually (fun x : ℝ ↦ C * x ^ b ≤ ((Nat.floor (x ^ A)).primeCounting : ℝ))
       Filter.atTop := by
   obtain ⟨d, hbd, hdA⟩ := exists_between h

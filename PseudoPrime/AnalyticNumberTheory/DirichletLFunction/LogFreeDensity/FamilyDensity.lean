@@ -19,11 +19,10 @@ a rectangle contained in a disk of radius `r` has multiplicity count at most `r^
 times the global inverse-square genus mass at that point. Compare each multiplicity
 with its kernel contribution and use the nonnegative summable genus expansion.
 This supplies coarse counting without any Riemann-hypothesis assumption. -/
-theorem completedZeroMultiplicityCountInRectangle_le_inverse_square_mass {q : ℕ} [NeZero q]
-    (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1)
-    (z w s : ℂ) (hs : 1 < s.re) (r : ℝ)
+theorem rectMass_invSq_le {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1)
+    (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) (z w s : ℂ) (hs : 1 < s.re) (r : ℝ)
     (hbox : ∀ ρ ∈ completedZerosInRectangle χ hχ z w, ‖s - ρ‖ ≤ r) :
-    completedZeroMultiplicityCountInRectangle χ hχ z w ≤
+    completedMultiplicityCount χ hχ z w ≤
       r ^ 2 *
         ∑' ρ : ℂ,
           (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) * ‖(s - ρ)⁻¹‖ ^ 2 := by
@@ -36,13 +35,13 @@ theorem completedZeroMultiplicityCountInRectangle_le_inverse_square_mass {q : �
   have hDnonneg (ρ : ℂ) : 0 ≤ (D ρ : ℝ) := by
     exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg hF ρ
   have hfnonneg (ρ : ℂ) : 0 ≤ f ρ := mul_nonneg (hDnonneg ρ) (sq_nonneg _)
-  have hsum : Summable f := summable_completed_genus_inverse_square hq hχ hp hinv hs
+  have hsum : Summable f := summable_genusInvSq hq hχ hp hinv hs
   have hpoint (ρ : ℂ) (hρ : ρ ∈ S) : (analyticOrderNatAt F ρ : ℝ) ≤ r ^ 2 * f ρ := by
     have hzero := (mem_completedZerosInRectangle_iff.mp hρ).2
     have hsne : s - ρ ≠ 0 := by
       intro heq
       have hsρ := sub_eq_zero.mp heq
-      have hsnonzero := DirichletLFunction.completedLFunction_ne_zero_of_one_le_re hχ hs.le
+      have hsnonzero := DirichletLFunction.completed_ne_zero_of_one_le_re hχ hs.le
       exact hsnonzero (hsρ ▸ hzero)
     have hnorm : 0 < ‖s - ρ‖ := norm_pos_iff.mpr hsne
     have hnormle := hbox ρ hρ
@@ -75,7 +74,7 @@ theorem completedZeroMultiplicityCountInRectangle_le_inverse_square_mass {q : �
 closed critical half-strip by `(T+3)^2(C+2 log q)`. Compare the rectangle with the
 inverse-square genus mass centered at `3/2`, then use the uniform mass bound.
 This provides a fixed polynomial estimate outside the small-shift detector range. -/
-theorem exists_uniform_completedZeroCount_coarse_bound :
+theorem exists_coarseCount :
     ∃ C : ℝ,
       0 < C ∧
         ∀ {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q},
@@ -89,12 +88,11 @@ theorem exists_uniform_completedZeroCount_coarse_bound :
                     0 ≤ T →
                     DirichletLFunction.completedZeroCount χ hχ σ T ≤
                       (T + 3) ^ 2 * (C + 2 * Real.log q) := by
-  let C :=
-    24 + 2 * (completedGenusMassShiftConstant + completedGenusMassCenterConstant) * (Real.log 4 + 1)
+  let C := 24 + 2 * (genusMassShift + genusMassCenter) * (Real.log 4 + 1)
   have hlog4 : 0 ≤ Real.log 4 := Real.log_nonneg (by norm_num only)
   have hC : 0 < C := by
     have h :=
-      mul_pos (add_pos completedGenusMassShiftConstant_pos completedGenusMassCenterConstant_pos)
+      mul_pos (add_pos genusMassShift_pos genusMassCenter_pos)
         (by linarith only [hlog4] : 0 < Real.log 4 + 1)
     dsimp only [C]
     linarith only [h]
@@ -103,8 +101,7 @@ theorem exists_uniform_completedZeroCount_coarse_bound :
   let s : ℂ := (3 / 2 : ℝ)
   have hs : 1 < s.re := by norm_num only [s, Complex.ofReal_re]
   obtain ⟨A, B, hAeq, hBeq, _, _, hmass⟩ :=
-    exists_completed_genus_inverse_square_mass_le_uniform_bound hqtwo hχ hp hinv (η := 1 / 2)
-      (by norm_num only) (by norm_num only) 0
+    exists_genusMassBound hqtwo hχ hp hinv (η := 1 / 2) (by norm_num only) (by norm_num only) 0
   have hmass' :
     (∑' ρ : ℂ, (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) * ‖(s - ρ)⁻¹‖ ^ 2) ≤
       C + 2 * Real.log q := by
@@ -126,8 +123,7 @@ theorem exists_uniform_completedZeroCount_coarse_bound :
       abs_neg, abs_of_nonneg hre] at hnorm
     linarith only [hnorm, him, hρlow, hσhalf]
   exact
-    (completedZeroMultiplicityCountInRectangle_le_inverse_square_mass hqtwo hχ hp hinv _ _ s hs
-          (T + 3) hbox).trans
+    (rectMass_invSq_le hqtwo hχ hp hinv _ _ s hs (T + 3) hbox).trans
       (mul_le_mul_of_nonneg_left hmass' (sq_nonneg _))
 
 /-- One positive absolute constant bounds the actual primitive-family zero count by
@@ -135,14 +131,12 @@ the fifth power of every positive natural cutoff, uniformly in the closed critic
 half-strip. Sum the per-character inverse-square estimate, bound the number of
 characters by the modulus, and absorb the remaining logarithm into the cutoff.
 This supplies the coarse branch of the full log-free density estimate. -/
-theorem exists_primitiveCharacterFamily_coarse_count_bound :
+theorem exists_familyCoarse :
     ∃ C : ℝ,
       0 < C ∧
-        ∀ (R : ℕ) (σ : ℝ),
-          1 ≤ R →
-            (1 / 2 : ℝ) ≤ σ → σ ≤ 1 → primitiveCharacterFamilyZeroCount R σ ≤ C * (R : ℝ) ^ 5 := by
+        ∀ (R : ℕ) (σ : ℝ), 1 ≤ R → (1 / 2 : ℝ) ≤ σ → σ ≤ 1 → familyZeros R σ ≤ C * (R : ℝ) ^ 5 := by
   classical
-  obtain ⟨C, hC, hchar⟩ := exists_uniform_completedZeroCount_coarse_bound
+  obtain ⟨C, hC, hchar⟩ := exists_coarseCount
   refine ⟨16 * (C + 2), by linarith only [hC], ?_⟩
   intro R σ hR hσhalf hσ
   have hRreal : (1 : ℝ) ≤ R := by exact_mod_cast hR
@@ -170,8 +164,8 @@ theorem exists_primitiveCharacterFamily_coarse_count_bound :
         · by_cases hp : χ.IsPrimitive
           · simp only [dite_eq_left hχ, dite_eq_left hp]
             have hbound :=
-              hchar (two_le_succ_modulus_of_nonprincipal q.val χ hχ) hχ hp
-                (fun h ↦ hχ (inv_eq_one.mp h)) σ R hσhalf hσ (Nat.cast_nonneg R)
+              hchar (modulus_succ_ge_two q.val χ hχ) hχ hp (fun h ↦ hχ (inv_eq_one.mp h)) σ R hσhalf
+                hσ (Nat.cast_nonneg R)
             have hlogq := Real.log_le_log (Nat.cast_pos.mpr (Nat.succ_pos q.val)) hqRreal
             exact hbound.trans (mul_le_mul_of_nonneg_left (by linarith only [hlogq]) (sq_nonneg _))
           · simp only [dite_eq_left hχ, dite_eq_right hp]
@@ -181,7 +175,7 @@ theorem exists_primitiveCharacterFamily_coarse_count_bound :
       _ = (Fintype.card (DirichletCharacter ℂ (q.val + 1)) : ℝ) * H := by
         simp only [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
       _ ≤ _ := mul_le_mul_of_nonneg_right (Nat.cast_le.mpr hcard) hH
-  have hfamily : primitiveCharacterFamilyZeroCount R σ ≤ (R : ℝ) ^ 2 * H := by
+  have hfamily : familyZeros R σ ≤ (R : ℝ) ^ 2 * H := by
     calc
       _ ≤ ∑ _q : Fin R, (R : ℝ) * H := Finset.sum_le_sum (fun q _ ↦ hper q)
       _ = _ := by
@@ -207,19 +201,16 @@ Use the general-scale near-one density estimate, absorb the coarse fifth-power
 bound by a larger fixed exponent outside that strip, and cover bounded cutoffs by
 one absolute constant. This is the unconditional full-range log-free density input
 for theta supply; it assumes neither a density estimate nor GRH. -/
-theorem exists_primitiveCharacterFamily_log_free_density :
+theorem exists_familyDensity :
     ∃ A C : ℝ,
       0 < A ∧
         0 < C ∧
         ∀ T : ℕ,
           2 ≤ T →
             ∀ σ : ℝ,
-              (1 / 2 : ℝ) ≤ σ →
-                σ ≤ 1 →
-                primitiveCharacterFamilyZeroCount T σ ≤ C * Real.rpow (T : ℝ) (A * (1 - σ)) := by
-  obtain ⟨C₁, A₁, η₀, hC₁, hA₁, hη₀, R₀, hR₀, hnear⟩ :=
-    exists_primitiveCharacterFamily_near_one_log_free_density
-  obtain ⟨C₂, hC₂, hcoarse⟩ := exists_primitiveCharacterFamily_coarse_count_bound
+              (1 / 2 : ℝ) ≤ σ → σ ≤ 1 → familyZeros T σ ≤ C * Real.rpow (T : ℝ) (A * (1 - σ)) := by
+  obtain ⟨C₁, A₁, η₀, hC₁, hA₁, hη₀, R₀, hR₀, hnear⟩ := exists_nearOneDensity
+  obtain ⟨C₂, hC₂, hcoarse⟩ := exists_familyCoarse
   let A := max A₁ (5 / η₀)
   let C := C₁ + C₂ * ((R₀ : ℝ) ^ 5 + 1)
   have hA : 0 < A := hA₁.trans_le (le_max_left _ _)
@@ -282,7 +273,7 @@ dyadic sum when the density exponent is at most one half. Instantiate the existi
 partial-summation interfaces with the proved unconditional family density theorem.
 No density hypothesis remains as an argument. This supplies the zero-height sums
 needed by the next theta-supply stage while retaining the conductor factor. -/
-theorem exists_primitiveCharacterFamily_log_free_density_height_sum_bounds :
+theorem familyDensity_heights :
     ∃ A C : ℝ,
       0 < A ∧
         0 < C ∧
@@ -292,38 +283,30 @@ theorem exists_primitiveCharacterFamily_log_free_density_height_sum_bounds :
             A * (1 - σ) ≤ 1 / 2 →
             (∀ n : ℕ,
                 2 ≤ n →
-                  primitiveCharacterFamilyZeroCountAtNatHeight Q σ n ≤
+                  familyNatZeros Q σ n ≤
                     (C * Real.rpow ((Q + 1 : ℕ) : ℝ) (A * (1 - σ))) *
                       Real.rpow (n : ℝ) (A * (1 - σ))) ∧
               (∀ J : ℕ,
                 (∑ j ∈ Finset.range J,
-                    (primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ (j + 1)) -
-                        primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ j)) *
+                    (familyNatZeros Q σ (2 ^ (j + 1)) - familyNatZeros Q σ (2 ^ j)) *
                       (1 / 2 : ℝ) ^ j) ≤
                   2 * (C * Real.rpow ((Q + 1 : ℕ) : ℝ) (A * (1 - σ))) * J) ∧
               (∑' j : ℕ,
-                  (primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ (j + 1)) -
-                      primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ j)) *
+                  (familyNatZeros Q σ (2 ^ (j + 1)) - familyNatZeros Q σ (2 ^ j)) *
                     (1 / 2 : ℝ) ^ j) ≤
                 8 * (C * Real.rpow ((Q + 1 : ℕ) : ℝ) (A * (1 - σ))) := by
-  obtain ⟨A, C, hA, hC, hdensity⟩ := exists_primitiveCharacterFamily_log_free_density
+  obtain ⟨A, C, hA, hC, hdensity⟩ := exists_familyDensity
   refine ⟨A, C, hA, hC, ?_⟩
   intro Q σ hσhalf hσ hδhalf
   have hδ : 0 ≤ A * (1 - σ) := mul_nonneg hA.le (sub_nonneg.mpr hσ)
-  have hdiag :
-    ∀ T : ℕ, 2 ≤ T → primitiveCharacterFamilyZeroCount T σ ≤ C * Real.rpow (T : ℝ) (A * (1 - σ)) :=
-    fun T hT ↦ hdensity T hT σ hσhalf hσ
+  have hdiag : ∀ T : ℕ, 2 ≤ T → familyZeros T σ ≤ C * Real.rpow (T : ℝ) (A * (1 - σ)) := fun T hT ↦
+    hdensity T hT σ hσhalf hσ
   refine ⟨?_, ?_, ?_⟩
   · intro n hn
-    exact
-      primitiveCharacterFamilyZeroCountAtNatHeight_le_rpow_of_diagonal_rpow_density Q n σ C
-        (A * (1 - σ)) hσ hC.le hδ hn hdiag
+    exact familyNat_rpow_le Q n σ C (A * (1 - σ)) hσ hC.le hδ hn hdiag
   · intro J
     exact
-      primitiveCharacterFamilyZeroCountAtNatHeight_dyadic_sum_le_two_mul_of_diagonal_density Q J σ C
-        (A * (1 - σ)) hσ hC.le hδ (hδhalf.trans (by norm_num only)) hdiag
-  · exact
-      primitiveCharacterFamilyZeroCountAtNatHeight_tsum_le_eight_of_diagonal_density Q σ C
-        (A * (1 - σ)) hσ hC.le hδ hδhalf hdiag
+      familyNat_two_diag Q J σ C (A * (1 - σ)) hσ hC.le hδ (hδhalf.trans (by norm_num only)) hdiag
+  · exact familyNat_tsum_diag Q σ C (A * (1 - σ)) hσ hC.le hδ hδhalf hdiag
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LogFreeDensity

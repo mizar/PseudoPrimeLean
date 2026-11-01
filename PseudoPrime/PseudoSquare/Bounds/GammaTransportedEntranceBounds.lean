@@ -24,13 +24,13 @@ theorem primeNegOneWitness_cast_le_base_ratio_endpoint {n : ℕ} (hn : Odd n) (h
     (hlog : Real.log n ≤ L) (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ (9999 / 10000 : ℝ) * L ^ 2 := by
   by_cases h260 : 260 ≤ L
-  · exact primeNegOneWitness_cast_le_signedPrincipal_log_260_endpoint hn hns hGRH h260 hlog hw
+  · exact negOneWitness_le_signedPrincipal_log260_GRH hn hns hGRH h260 hlog hw
   · obtain ⟨hlo, hhi, hx, hb⟩ :=
       LLS.gamma_transported_profile_inputs hL (le_of_lt (lt_of_not_ge h260))
     have hs := LLS.gamma_transported_separation hGRH.riemann hL (le_of_lt (lt_of_not_ge h260))
     have h :=
-      primeNegOneWitness_cast_le_of_retained_common_factor_free_separation hn hns hGRH
-        (by linarith only [hL]) hlog hx (by norm_num only : (1 : ℝ) ≤ 50000) hb hs.le hw
+      negOneWitness_le_retainedFactorFree_GRH hn hns hGRH (by linarith only [hL]) hlog hx
+        (by norm_num only : (1 : ℝ) ≤ 50000) hb hs.le hw
     nlinarith only [h]
 
 /-- Input: the former log-519/2 endpoint assumptions. Claim: the same bound
@@ -46,9 +46,8 @@ theorem primeNegOneWitness_cast_le_transported_endpoint {n : ℕ} (hn : Odd n) (
 from logarithmic level 519/2. Claim: the coefficient-9999/10000 witness or
 maximum bound holds. Apply the transported common-endpoint theorem and the
 existing minimization/maximum interfaces. Role: expose the improved half-line. -/
-theorem exists_prime_neg_one_witness_le_transported_log_519_div_two {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 519 / 2 ≤ Real.log n) :
+theorem exists_prime_negOne_log519_2_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 519 / 2 ≤ Real.log n) :
     ∃ q : ℕ,
       q.Prime ∧ Odd q ∧ (q : ℝ) ≤ (9999 / 10000 : ℝ) * (Real.log n) ^ 2 ∧ jacobiSym n q = -1 := by
   let hw := NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns
@@ -61,9 +60,9 @@ theorem exists_prime_neg_one_witness_le_transported_log_519_div_two {n : ℕ} (h
 from logarithmic level 519/2. Claim: the coefficient-9999/10000 witness or
 maximum bound holds. Apply the transported common-endpoint theorem and the
 existing minimization/maximum interfaces. Role: expose the improved half-line. -/
-theorem primeNegOneWitness_bound_transported_log_519_div_two {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 519 / 2 ≤ Real.log n) (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
+theorem negOneWitness_bound_transported_log_519_div_two {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 519 / 2 ≤ Real.log n)
+    (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ (9999 / 10000 : ℝ) * (Real.log n) ^ 2 ∧
       (NumberTheory.primeNegOneWitness n hw : ℝ) < (Real.log n) ^ 2 := by
   have h := primeNegOneWitness_cast_le_transported_endpoint hn hns hGRH hL (le_refl _) hw
@@ -73,13 +72,12 @@ theorem primeNegOneWitness_bound_transported_log_519_div_two {n : ℕ} (hn : Odd
 from logarithmic level 519/2. Claim: the coefficient-9999/10000 witness or
 maximum bound holds. Apply the transported common-endpoint theorem and the
 existing minimization/maximum interfaces. Role: expose the improved half-line. -/
-theorem primeNeOneWitness_bound_transported_log_519_div_two {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+theorem neOneWitness_bound_transported_log_519_div_two {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 519 / 2 ≤ Real.log n)
     (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤ (9999 / 10000 : ℝ) * (Real.log n) ^ 2 ∧
       (NumberTheory.primeNeOneWitness n hw : ℝ) < (Real.log n) ^ 2 := by
-  obtain ⟨q, hq, ho, hbound, hv⟩ :=
-    exists_prime_neg_one_witness_le_transported_log_519_div_two hn hns hGRH hL
+  obtain ⟨q, hq, ho, hbound, hv⟩ := exists_prime_negOne_log519_2_GRH hn hns hGRH hL
   have hne : jacobiSym n q ≠ 1 := by
     rw [hv]; norm_num only
   have h := (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hq, ho, hne⟩)).trans hbound
@@ -124,9 +122,8 @@ namespace PseudoPrime.PseudoSquare
 from logarithmic level 2591/10. Claim: the coefficient-9999/10000 witness or
 maximum bound holds. Apply the transported common-endpoint theorem and the
 existing minimization/maximum interfaces. Role: expose the improved half-line. -/
-theorem exists_prime_neg_one_witness_le_base_ratio_log_2591_div_ten {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 2591 / 10 ≤ Real.log n) :
+theorem exists_prime_negOne_log2591_10_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 2591 / 10 ≤ Real.log n) :
     ∃ q : ℕ,
       q.Prime ∧ Odd q ∧ (q : ℝ) ≤ (9999 / 10000 : ℝ) * (Real.log n) ^ 2 ∧ jacobiSym n q = -1 := by
   let hw := NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns
@@ -139,9 +136,9 @@ theorem exists_prime_neg_one_witness_le_base_ratio_log_2591_div_ten {n : ℕ} (h
 from logarithmic level 2591/10. Claim: the coefficient-9999/10000 witness or
 maximum bound holds. Apply the transported common-endpoint theorem and the
 existing minimization/maximum interfaces. Role: expose the improved half-line. -/
-theorem primeNegOneWitness_bound_base_ratio_log_2591_div_ten {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 2591 / 10 ≤ Real.log n) (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
+theorem negOneWitness_bound_base_ratio_log_2591_div_ten {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 2591 / 10 ≤ Real.log n)
+    (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ (9999 / 10000 : ℝ) * (Real.log n) ^ 2 ∧
       (NumberTheory.primeNegOneWitness n hw : ℝ) < (Real.log n) ^ 2 := by
   have h := primeNegOneWitness_cast_le_base_ratio_endpoint hn hns hGRH hL (le_refl _) hw
@@ -151,13 +148,12 @@ theorem primeNegOneWitness_bound_base_ratio_log_2591_div_ten {n : ℕ} (hn : Odd
 from logarithmic level 2591/10. Claim: the coefficient-9999/10000 witness or
 maximum bound holds. Apply the transported common-endpoint theorem and the
 existing minimization/maximum interfaces. Role: expose the improved half-line. -/
-theorem primeNeOneWitness_bound_base_ratio_log_2591_div_ten {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+theorem neOneWitness_bound_base_ratio_log_2591_div_ten {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 2591 / 10 ≤ Real.log n)
     (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤ (9999 / 10000 : ℝ) * (Real.log n) ^ 2 ∧
       (NumberTheory.primeNeOneWitness n hw : ℝ) < (Real.log n) ^ 2 := by
-  obtain ⟨q, hq, ho, hbound, hv⟩ :=
-    exists_prime_neg_one_witness_le_base_ratio_log_2591_div_ten hn hns hGRH hL
+  obtain ⟨q, hq, ho, hbound, hv⟩ := exists_prime_negOne_log2591_10_GRH hn hns hGRH hL
   have hne : jacobiSym n q ≠ 1 := by
     rw [hv]; norm_num only
   have h := (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hq, ho, hne⟩)).trans hbound

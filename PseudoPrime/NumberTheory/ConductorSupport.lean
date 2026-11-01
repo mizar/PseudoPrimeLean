@@ -26,7 +26,7 @@ theorem conductor_coprime_of_primitive_apply_ne_zero {N a : ℕ} (χ : Dirichlet
 is nonzero, the conductor divides m. It is coprime to a^k, so remove this factor
 from conductor divisibility. This generalizes the odd-conductor reduction at two
 without discriminant data or a quadraticity assumption. -/
-theorem conductor_dvd_of_level_dvd_power_mul_of_primitive_ne_zero {N a m k : ℕ} [NeZero N]
+theorem conductor_dvd_of_level_dvd_pow_mul_nonzero {N a m k : ℕ} [NeZero N]
     (χ : DirichletCharacter ℂ N) (hN : N ∣ a ^ k * m) (ha : χ.primitiveCharacter a ≠ 0) :
     χ.conductor ∣ m := by
   have hc := conductor_coprime_of_primitive_apply_ne_zero χ ha

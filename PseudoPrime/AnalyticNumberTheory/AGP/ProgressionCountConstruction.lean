@@ -84,7 +84,7 @@ transfer its size, factor-count, and ratio bounds through the explicit P2 compar
 
 Role: this proves the finite auxiliary-data existence interface from the initial analytic count.
 -/
-theorem agp_progression_auxiliary_data_exists_of_uniform_count (c₀ : ℝ) (xSeed x₀ : ℕ) :
+theorem progression_auxiliary_data_exists (c₀ : ℝ) (xSeed x₀ : ℕ) :
     AGPProgressionAuxiliaryDataExists c₀ xSeed x₀ := by
   intro hc₀ hcount W C hWpos
   obtain
@@ -101,7 +101,7 @@ theorem agp_progression_auxiliary_data_exists_of_uniform_count (c₀ : ℝ) (xSe
     · intro L x hx hSquarefree hCoprime
       exact hcountFn L x (le_trans hxSeedBase hx) hSquarefree hCoprime
   obtain ⟨m, z, T, hm10, hmbase, hz, hTdef, hT, hT1024, hscale, hTpow, hdata⟩ :=
-    exists_seed_auxiliary_modulus_of_primeProductLE_scale hc₀ mBase hcountBase
+    exists_seed_modulus_primorial_scale hc₀ mBase hcountBase
   have hbaseToSeed : mBase ≤ m := hmbase
   have hlog2 : 0 < Real.log (2 : ℝ) := Real.log_pos (by norm_num only : (1 : ℝ) < 2)
   have hlogden : 0 < 20 * Real.log 2 := mul_pos (by norm_num only : (0 : ℝ) < 20) hlog2
@@ -170,7 +170,7 @@ theorem agp_progression_auxiliary_data_exists_of_uniform_count (c₀ : ℝ) (xSe
   have hSthreshold1024 : primeTailCountThreshold1024 ≤ S.card := by
     rw [hScard]
     exact le_trans hT1024 (Nat.le_succ T)
-  have hprimeCount1024 := primeCounting_bound_of_primeTailCountThreshold1024 hSthreshold1024
+  have hprimeCount1024 := primeCounting_le_half_from_threshold1024 hSthreshold1024
   have hSprime : ∀ p ∈ S, Nat.Prime p := fun p hp => (hS p hp).1
   have hSseed : ∀ p ∈ S, ∃ d, d ∣ N ∧ p = d * k + 1 := by
     intro p hp
@@ -195,7 +195,7 @@ theorem agp_progression_auxiliary_data_exists_of_uniform_count (c₀ : ℝ) (xSe
   have hTpowX : (T + 1) ^ 4 ≤ N ^ 5 := le_trans hTpow hNfiveLower
   rcases hStrongSeedData with ⟨hSqStrong, hpfStrong, hrecipStrong, hlambdaDivStrong, hcardStrong⟩
   have hStrongArithmetic :=
-    seed_auxiliary_modulus_arithmetic_bounds_of_cutoff_of_N_le_x 1024 (by norm_num only : 60 ≤ 1024)
+    seed_modulus_arithmetic_cutoff 1024 (by norm_num only : 60 ≤ 1024)
       (le_trans hNge2 (Nat.le_self_pow (by norm_num only : 5 ≠ 0) N)) (primeProductLE_pos z) hNleN5
       hk hkpow hScard hTpowX hS hL1024 hSqStrong hpfStrong hrecipStrong hlambdaDivStrong
       hprimeCount1024
@@ -231,8 +231,8 @@ Role: this records the two applications of Proposition 1.5 in reliable, §2:
 the modulus-1 count constructs the auxiliary modulus, and the modulus-4
 coprime count supplies the final primes.
 -/
-theorem agp_progression_count_data_exists_of_uniform_count_and_auxiliary (c₀ : ℝ) (hc₀ : 0 < c₀)
-    (xSeed x₀ : ℕ) (hseed : ReliableProp15UniformCount c₀ 1 1 xSeed)
+theorem countData_of_uniformCount_auxiliary (c₀ : ℝ) (hc₀ : 0 < c₀) (xSeed x₀ : ℕ)
+    (hseed : ReliableProp15UniformCount c₀ 1 1 xSeed)
     (hcount : ReliableProp15UniformCoprimeCount c₀ x₀)
     (haux : AGPProgressionAuxiliaryDataExists c₀ xSeed x₀) : AGPProgressionCountDataExists := by
   refine ⟨c₀, hc₀, x₀, hcount.1.1, ?_⟩
@@ -268,16 +268,16 @@ Inputs: the initial modulus-one uniform count and the final modulus-four coprime
 Claim: these two analytic count hypotheses imply `AGPProgressionCountDataExists`.
 
 Content: construct the P2 auxiliary data from the initial count, then apply both
-Proposition 1.5 counts through `agp_progression_count_data_exists_of_uniform_count_and_auxiliary`.
+Proposition 1.5 counts through `countData_of_uniformCount_auxiliary`.
 
 Role: this is the direct interface from the analytic count hypotheses to the finite
 progression-count data used by the prime-supply construction.
 -/
-theorem agp_progression_count_data_exists_of_uniform_counts (c₀ : ℝ) (hc₀ : 0 < c₀) (xSeed x₀ : ℕ)
+theorem progression_count_data_exists_of_uniform_counts (c₀ : ℝ) (hc₀ : 0 < c₀) (xSeed x₀ : ℕ)
     (hseed : ReliableProp15UniformCount c₀ 1 1 xSeed)
     (hcount : ReliableProp15UniformCoprimeCount c₀ x₀) : AGPProgressionCountDataExists :=
-  agp_progression_count_data_exists_of_uniform_count_and_auxiliary c₀ hc₀ xSeed x₀ hseed hcount
-    (agp_progression_auxiliary_data_exists_of_uniform_count c₀ xSeed x₀)
+  countData_of_uniformCount_auxiliary c₀ hc₀ xSeed x₀ hseed hcount
+    (progression_auxiliary_data_exists c₀ xSeed x₀)
 
 /--
 Inputs: uniform modulus-one and modulus-four counts at coefficient `c₂`, and
@@ -292,11 +292,11 @@ then apply the existing construction at `c₁`.
 Role: this lets the count-data construction use a coefficient small enough to
 absorb the exceptional-modulus loss.
 -/
-theorem agp_progression_count_data_exists_of_uniform_counts_at_smaller_coefficient (c₁ c₂ : ℝ)
-    (hc₁ : 0 < c₁) (hc : c₁ ≤ c₂) (xSeed x₀ : ℕ) (hseed : ReliableProp15UniformCount c₂ 1 1 xSeed)
+theorem countData_of_smaller_coefficient (c₁ c₂ : ℝ) (hc₁ : 0 < c₁) (hc : c₁ ≤ c₂) (xSeed x₀ : ℕ)
+    (hseed : ReliableProp15UniformCount c₂ 1 1 xSeed)
     (hcount : ReliableProp15UniformCoprimeCount c₂ x₀) : AGPProgressionCountDataExists := by
   exact
-    agp_progression_count_data_exists_of_uniform_counts c₁ hc₁ xSeed x₀
+    progression_count_data_exists_of_uniform_counts c₁ hc₁ xSeed x₀
       (reliableProp15UniformCount_mono hc hseed) (reliableProp15UniformCoprimeCount_mono hc hcount)
 
 /--
@@ -313,7 +313,7 @@ the definition of the minimum gives the strict margin.
 Role: this completes the finite coefficient-selection step before applying
 the fifth-power exceptional-loss construction.
 -/
-theorem agp_progression_count_data_exists_with_loss_margin (c₂ beta : ℝ) (D : ℕ) (hc₂ : 0 < c₂)
+theorem progression_count_data_exists_with_loss_margin (c₂ beta : ℝ) (D : ℕ) (hc₂ : 0 < c₂)
     (hbeta : 0 < beta) (xSeed x₀ : ℕ) (hseed : ReliableProp15UniformCount c₂ 1 1 xSeed)
     (hcount : ReliableProp15UniformCoprimeCount c₂ x₀) :
     ∃ c₁ : ℝ, 0 < c₁ ∧ c₁ ≤ c₂ ∧ 16 * (2 ^ D : ℝ) * c₁ < beta ∧ AGPProgressionCountDataExists := by
@@ -337,8 +337,6 @@ theorem agp_progression_count_data_exists_with_loss_margin (c₂ beta : ℝ) (D 
         norm_num only
   have hhalf : beta / 2 < beta := by nlinarith only [hbeta]
   refine ⟨c₁, hc₁, hc₁le, lt_of_le_of_lt hscaled hhalf, ?_⟩
-  exact
-    agp_progression_count_data_exists_of_uniform_counts_at_smaller_coefficient c₁ c₂ hc₁ hc₁le xSeed
-      x₀ hseed hcount
+  exact countData_of_smaller_coefficient c₁ c₂ hc₁ hc₁le xSeed x₀ hseed hcount
 
 end PseudoPrime.AnalyticNumberTheory.AGP

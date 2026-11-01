@@ -88,7 +88,7 @@ logarithmic test, each weighted arithmetic coefficient equals its normalized
 vertical L-series term integral. Positive indices follow from the proved
 Mellin inversion; the index-zero contribution vanishes. The normalization
 is 1/(2*pi). This evaluates each term of the arithmetic side. -/
-theorem logarithmicTestWeight_coefficient_eq_term_integral (a : ℕ → ℂ) (ha : a 0 = 0) (g : ℝ → ℂ)
+theorem logTest_coefficient_term_integral (a : ℕ → ℂ) (ha : a 0 = 0) (g : ℝ → ℂ)
     (he : ∀ u : ℝ, g (-u) = g u) (hc : HasCompactSupport g) (hg : ContDiff ℝ (↑(⊤ : ℕ∞)) g) (σ : ℝ)
     (n : ℕ) :
     a n * logarithmicTestWeight g n =
@@ -131,8 +131,7 @@ theorem logarithmicTestWeight_tsum_eq_integral_LSeries (a : ℕ → ℂ) (ha : a
         (∫ T : ℝ,
           LSeries a ((σ : ℂ) + T * Complex.I) *
             mellin (logarithmicTestWeight g) ((σ : ℂ) + T * Complex.I)) := by
-  rw [tsum_congr (logarithmicTestWeight_coefficient_eq_term_integral a ha g he hc hg σ),
-    tsum_const_smul'']
+  rw [tsum_congr (logTest_coefficient_term_integral a ha g he hc hg σ), tsum_const_smul'']
   rw [integral_LSeries_mellin_eq_tsum a _ σ hs
       (verticalIntegrable_mellin_logarithmicTestWeight g he hc hg σ)]
 
@@ -165,7 +164,7 @@ theorem summable_logarithmicTestWeight_coefficients (a : ℕ → ℂ) (ha : a 0 
         (summable_integral_norm_mellinLSeriesTerm a _ σ hs)).summable
   exact
     (hh.const_smul (1 / (2 * Real.pi) : ℝ)).congr
-      (fun n ↦ (logarithmicTestWeight_coefficient_eq_term_integral a ha g he hc hg σ n).symm)
+      (fun n ↦ (logTest_coefficient_term_integral a ha g he hc hg σ n).symm)
 
 /-- If an ordinary logarithmic derivative equals the negative coefficient
 L-series on an absolutely convergent vertical line, an even smooth compact
@@ -173,9 +172,9 @@ logarithmic test gives its arithmetic sum as the negative normalized
 logarithmic-derivative integral. Apply the proved L-series evaluation and
 retain the minus sign. The input series identity must still be derived
 from Euler-product data; this theorem does not assume an explicit formula. -/
-theorem logarithmicTestWeight_tsum_eq_neg_logDeriv_integral (L : ℂ → ℂ) (a : ℕ → ℂ) (ha : a 0 = 0)
-    (g : ℝ → ℂ) (he : ∀ u : ℝ, g (-u) = g u) (hc : HasCompactSupport g)
-    (hg : ContDiff ℝ (↑(⊤ : ℕ∞)) g) (σ : ℝ) (hs : LSeriesSummable a (σ : ℂ))
+theorem logTest_tsum_neg_logDeriv_integral (L : ℂ → ℂ) (a : ℕ → ℂ) (ha : a 0 = 0) (g : ℝ → ℂ)
+    (he : ∀ u : ℝ, g (-u) = g u) (hc : HasCompactSupport g) (hg : ContDiff ℝ (↑(⊤ : ℕ∞)) g) (σ : ℝ)
+    (hs : LSeriesSummable a (σ : ℂ))
     (hlog : ∀ T : ℝ, logDeriv L ((σ : ℂ) + T * Complex.I) = -LSeries a ((σ : ℂ) + T * Complex.I)) :
     (∑' n : ℕ, a n * logarithmicTestWeight g n) =
       -(1 / (2 * Real.pi) : ℝ) •

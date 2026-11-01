@@ -34,14 +34,13 @@ theorem exists_prime_strong_witness_of_logShiftRampGap {n : ℕ} [NeZero n] (hn 
     ∀ p : ℕ,
       p.Prime → (p : ℝ) ≤ (99 / 40 : ℝ) * x → PrimeTest.StrongMillerRabinPass n (p : ZMod n) :=
     fun p hp hb ↦ Classical.byContradiction (fun hf ↦ h ⟨p, hp, hb, hf⟩)
-  obtain ⟨H, hH, hHpass⟩ :=
-    PrimeTest.exists_proper_subgroup_containing_strongMillerRabinPass hn hnOdd hnComposite
+  obtain ⟨H, hH, hHpass⟩ := PrimeTest.exists_proper_subgroup_strongMR hn hnOdd hnComposite
   have : H.Normal := H.normal_of_isMulCommutative
   have : Nontrivial ((ZMod n)ˣ ⧸ H) := QuotientGroup.nontrivial_iff.mpr hH
   obtain ⟨z, hz⟩ := exists_ne (1 : (ZMod n)ˣ ⧸ H)
   obtain ⟨χ', hχz⟩ := MulChar.exists_apply_ne_one_of_hasEnoughRootsOfUnity ((ZMod n)ˣ ⧸ H) ℂ hz
   apply
-    LLS.prime_trivial_false_of_logShiftRampPrincipal_prefix (LLS.pullbackCharacter χ')
+    LLS.not_primeTrivial_logShiftRampPrefix_GRH (LLS.pullbackCharacter χ')
       (LLS.pullbackCharacter_ne_one_of_ne_one χ' hχz) (le_refl n) hGRH hx hh hhx
       (AnalyticNumberTheory.DirichletLFunction.twoPoleGammaConstant_le_signed _) S hS hg hgap
   intro p hp hb

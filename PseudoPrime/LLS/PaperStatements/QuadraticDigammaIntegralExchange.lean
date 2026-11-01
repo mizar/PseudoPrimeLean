@@ -77,8 +77,8 @@ theorem quadratic_weight_resolvent_moment_bound {A c : ℝ} (hc : 0 < c) (W : �
 reciprocal difference is integrable and its normalized norm integral is at most
 A/(c*sqrt(2c)). Apply the exact reciprocal norm and the regularized moment estimate.
 This supplies summable decay in the pole coordinate for rational kernels. -/
-theorem quadratic_weight_vertical_resolvent_integral_bound {A c : ℝ} (hc : 0 < c) (W : ℝ → ℂ)
-    (hW : Continuous W) (hbound : ∀ t : ℝ, ‖W t‖ ≤ A / (1 + t ^ 2)) :
+theorem quadratic_resolvent_integral_bound {A c : ℝ} (hc : 0 < c) (W : ℝ → ℂ) (hW : Continuous W)
+    (hbound : ∀ t : ℝ, ‖W t‖ ≤ A / (1 + t ^ 2)) :
     MeasureTheory.Integrable
         (fun t : ℝ ↦ (1 / (c : ℂ) - 1 / ((c : ℂ) + Complex.I * (t / 2))) * W t) ∧
       (∫ t : ℝ, ‖(1 / (c : ℂ) - 1 / ((c : ℂ) + Complex.I * (t / 2))) * W t‖) / (2 * Real.pi) ≤
@@ -113,8 +113,8 @@ theorem quadratic_weight_vertical_resolvent_integral_bound {A c : ℝ} (hc : 0 <
 of the shifted reciprocal differences form a summable series.
 Compare the n-th term eventually with A/n^(3/2) using the explicit resolvent bound.
 This permits exchanging the digamma series and integration without a first-moment premise. -/
-theorem summable_quadratic_weight_resolvent_integral_norm {A b : ℝ} (hb : 0 < b) (W : ℝ → ℂ)
-    (hW : Continuous W) (hbound : ∀ t : ℝ, ‖W t‖ ≤ A / (1 + t ^ 2)) :
+theorem summable_quadratic_resolvent_norm {A b : ℝ} (hb : 0 < b) (W : ℝ → ℂ) (hW : Continuous W)
+    (hbound : ∀ t : ℝ, ‖W t‖ ≤ A / (1 + t ^ 2)) :
     Summable
       (fun n : ℕ ↦
         (∫ t : ℝ, ‖(1 / ((b + n : ℝ) : ℂ) - 1 / (((b + n : ℝ) : ℂ) + Complex.I * (t / 2))) * W t‖) /
@@ -129,7 +129,7 @@ theorem summable_quadratic_weight_resolvent_integral_norm {A b : ℝ} (hb : 0 < 
   intro n hn
   have hn0 : (0 : ℝ) < n := Nat.cast_pos.mpr hn
   have hc : 0 < b + n := add_pos_of_pos_of_nonneg hb (Nat.cast_nonneg n)
-  have h := (quadratic_weight_vertical_resolvent_integral_bound hc W hW hbound).2
+  have h := (quadratic_resolvent_integral_bound hc W hW hbound).2
   have hi :
     0 ≤
       (∫ t : ℝ, ‖(1 / ((b + n : ℝ) : ℂ) - 1 / (((b + n : ℝ) : ℂ) + Complex.I * (t / 2))) * W t‖) /
@@ -152,20 +152,19 @@ theorem summable_quadratic_weight_resolvent_integral_norm {A b : ℝ} (hb : 0 < 
 the weighted vertical digamma difference integral equals the series of reciprocal integrals.
 Use the exact digamma series and summability of the integrated norms.
 This retains signs for compact rational Mellin kernels whose absolute first moment diverges. -/
-theorem integral_quadratic_weight_digamma_vertical_sub_eq_tsum {A b : ℝ} (hb : 0 < b) (W : ℝ → ℂ)
-    (hW : Continuous W) (hbound : ∀ t : ℝ, ‖W t‖ ≤ A / (1 + t ^ 2)) :
+theorem quadratic_digamma_integral_eq_tsum {A b : ℝ} (hb : 0 < b) (W : ℝ → ℂ) (hW : Continuous W)
+    (hbound : ∀ t : ℝ, ‖W t‖ ≤ A / (1 + t ^ 2)) :
     (∫ t : ℝ, (Complex.digamma ((b : ℂ) + Complex.I * (t / 2)) - Complex.digamma (b : ℂ)) * W t) =
       ∑' n : ℕ,
         ∫ t : ℝ, (1 / ((b + n : ℝ) : ℂ) - 1 / (((b + n : ℝ) : ℂ) + Complex.I * (t / 2))) * W t := by
   let F := fun (n : ℕ) (t : ℝ) ↦
     (1 / ((b + n : ℝ) : ℂ) - 1 / (((b + n : ℝ) : ℂ) + Complex.I * (t / 2))) * W t
-  have hs :=
-    (summable_quadratic_weight_resolvent_integral_norm hb W hW hbound).mul_left (2 * Real.pi)
+  have hs := (summable_quadratic_resolvent_norm hb W hW hbound).mul_left (2 * Real.pi)
   simp only [mul_div_cancel₀ _ (mul_pos (by norm_num only : (0 : ℝ) < 2) Real.pi_pos).ne'] at hs
   change Summable (fun n : ℕ ↦ ∫ t : ℝ, ‖F n t‖) at hs
   have hi (n : ℕ) : MeasureTheory.Integrable (F n) :=
-    (quadratic_weight_vertical_resolvent_integral_bound
-        (add_pos_of_pos_of_nonneg hb (Nat.cast_nonneg n)) W hW hbound).1
+    (quadratic_resolvent_integral_bound (add_pos_of_pos_of_nonneg hb (Nat.cast_nonneg n)) W hW
+        hbound).1
   have he (t : ℝ) :
     (Complex.digamma ((b : ℂ) + Complex.I * (t / 2)) - Complex.digamma (b : ℂ)) * W t =
       ∑' n : ℕ, F n t := by

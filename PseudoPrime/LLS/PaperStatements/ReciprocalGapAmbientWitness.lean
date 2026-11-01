@@ -31,10 +31,9 @@ noncomputable def reciprocalGapAmbientRationalSeparation (q N : ℕ) (x : ℝ) (
 supports, ambient separation against a selected N-coprime lower certificate yields
 an N-coprime non-one prime witness below x. Under witness nonexistence, bound positive
 prefixes from below and subtract precisely the extra nonunit cost from the main sum. -/
-theorem exists_prime_coprime_not_one_of_reciprocalGap_ambient_lower {q N : ℕ} [NeZero q]
-    (hq : 2 ≤ q) (hqN : q ∣ N) {χ : DirichletCharacter ℂ q}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) (B₀ B₁ B : Finset ℕ)
+theorem exists_prime_neOne_ambientGap_GRH {q N : ℕ} [NeZero q] (hq : 2 ≤ q) (hqN : q ∣ N)
+    {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) (B₀ B₁ B : Finset ℕ)
     (hB₀ : ∀ n ∈ B₀, (n : ℝ) ≤ x) (hB₁ : ∀ n ∈ B₁, (n : ℝ) ≤ x) (hB : B ⊆ Finset.Ioc 0 ⌊x⌋₊)
     (hcop : ∀ n ∈ B, Nat.Coprime n N) (lo u : ℕ → ℝ)
     (hlo : ∀ n ∈ B, lo n ≤ ArithmeticFunction.vonMangoldt n)
@@ -59,7 +58,7 @@ theorem exists_prime_coprime_not_one_of_reciprocalGap_ambient_lower {q N : ℕ} 
   simp only [← div_eq_mul_inv] at hK₀ hK₁
   have hU := reciprocalGapCharacterSum_re_le_scalar_rational hq hGRH hp hne hinv hx B₀ B₁ hK₀ hK₁
   have hL :=
-    selected_reciprocalGap_lower_sub_loss_le_character hqN (by norm_num only : (0 : ℝ) ≤ 7 / 10)
+    reciprocalGap_selected_lower_le_char hqN (by norm_num only : (0 : ℝ) ≤ 7 / 10)
       (zero_lt_one.trans_le hx) χ hsmall B hB hcop lo u hlo hu hu1
   unfold reciprocalGapAmbientRationalSeparation at hgap
   linarith only [hL, hU, hgap]
@@ -68,8 +67,8 @@ theorem exists_prime_coprime_not_one_of_reciprocalGap_ambient_lower {q N : ℕ} 
 and two divides N. Ambient separation against the selected lower certificate yields
 an odd N-coprime prime p<=x with chi(p)=-1. Coprimality excludes two and zero character
 values. The exact extra-exclusion budget is retained in the separation premise. -/
-theorem exists_odd_prime_neg_one_of_reciprocalGap_ambient_lower {q N : ℕ} [NeZero q] (hq : 2 ≤ q)
-    (hqN : q ∣ N) (hN2 : 2 ∣ N) {χ : DirichletCharacter ℂ q}
+theorem exists_oddPrime_negOne_ambientGap_GRH {q N : ℕ} [NeZero q] (hq : 2 ≤ q) (hqN : q ∣ N)
+    (hN2 : 2 ∣ N) {χ : DirichletCharacter ℂ q}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hquad : χ.IsQuadratic) {x : ℝ} (hx : 1 ≤ x) (B₀ B₁ B : Finset ℕ)
     (hB₀ : ∀ n ∈ B₀, (n : ℝ) ≤ x) (hB₁ : ∀ n ∈ B₁, (n : ℝ) ≤ x) (hB : B ⊆ Finset.Ioc 0 ⌊x⌋₊)
@@ -84,15 +83,15 @@ theorem exists_odd_prime_neg_one_of_reciprocalGap_ambient_lower {q N : ℕ} [NeZ
     rw [hquad.inv]
     exact hne
   obtain ⟨p, hprime, hpx, hpc, hv⟩ :=
-    exists_prime_coprime_not_one_of_reciprocalGap_ambient_lower hq hqN hGRH hp hne hinv hx B₀ B₁ B
-      hB₀ hB₁ hB hcop lo u hlo hu hu1 hgap
+    exists_prime_neOne_ambientGap_GRH hq hqN hGRH hp hne hinv hx B₀ B₁ B hB₀ hB₁ hB hcop lo u hlo hu
+      hu1 hgap
   have hne2 : p ≠ 2 := by
     intro he
     subst p
     exact (Nat.prime_two.coprime_iff_not_dvd.mp hpc) hN2
   exact
     ⟨p, hprime, hprime.odd_of_ne_two hne2, hpx, hpc,
-      AnalyticNumberTheory.Arithmetic.quadratic_character_apply_neg_one_of_coprime_ne_one χ hquad
+      AnalyticNumberTheory.Arithmetic.quadraticChar_eq_neg_one_of_coprime_ne_one χ hquad
         (hpc.of_dvd_right hqN) hv⟩
 
 end PseudoPrime.LLS.PaperStatements

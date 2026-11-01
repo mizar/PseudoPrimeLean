@@ -81,21 +81,18 @@ theorem gamma_jacobi_integer_prefix_local_budget {n : ℕ} {hn : Odd n} {hns : �
               0 := by
   let K := AnalyticNumberTheory.DirichletLFunction.gammaPrefixPowerIndices b
   have he :=
-    AnalyticNumberTheory.DirichletLFunction.gamma_character_prefix_add_ambient_ramp_eq_local_cost
-      bridge.character (Nat.mul_pos (by norm_num only) hn.pos) hb hone
-      (Analysis.gammaRefinedScale (Real.log n))
+    AnalyticNumberTheory.DirichletLFunction.gammaPrefix_add_ramp_eq_cost bridge.character
+      (Nat.mul_pos (by norm_num only) hn.pos) hb hone (Analysis.gammaRefinedScale (Real.log n))
   rw [he, gamma_ambient_four_factor_sum_eq hn]
-  simpa only [add_assoc] using
-    gamma_jacobi_refined_input_all_local_cost_le_finite_signed_dual bridge K (K 2) hlarge
+  simpa only [add_assoc] using gammaJacobi_allLocal_finiteDual_le bridge K (K 2) hlarge
 
 /-- With no negative Jacobi prime witness up to b, the original integer
 prefix and actual ambient ramp losses satisfy the finite signed dual
 comparison. Transfer the witness assumption to ambient unit primes and
 apply the integer-prefix budget. This is the no-negative-witness interface. -/
-theorem gamma_jacobi_no_negative_integer_prefix_local_budget {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns) {b : ℝ}
-    (hb : 1 ≤ b) (hno : ∀ p : ℕ, p.Prime → Odd p → (p : ℝ) ≤ b → jacobiSym n p ≠ -1)
-    (hlarge : 10 ^ 100 ≤ n) :
+theorem gammaJacobi_noNeg_integerLocalBudget {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns) {b : ℝ} (hb : 1 ≤ b)
+    (hno : ∀ p : ℕ, p.Prime → Odd p → (p : ℝ) ≤ b → jacobiSym n p ≠ -1) (hlarge : 10 ^ 100 ≤ n) :
     (11783423 / 25000000 : ℝ) * Real.log (NumberTheory.complexQuadraticCharacter n hn).conductor +
         ((∑ m ∈ Finset.Ioc 0 ⌊b⌋₊,
             (1 - (bridge.character m).re) * Analysis.gammaResolventMangoldtWeight m) +
@@ -135,8 +132,8 @@ signed zero-mass prefix and full ambient ramp losses obey a common
 finite dual comparison. The original integer prefix is retained and
 its correction is absorbed by the proved local conductor budget. This
 is the combined analytic interface for the remaining numerical inequality. -/
-theorem gamma_jacobi_zeroMass_add_ambient_ramp_le_integer_prefix_dual {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem gammaJacobi_massAmbient_integerDual_RH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hRH : AnalyticNumberTheory.GRH.DirichletRiemannHypothesis bridge.character) {b : ℝ}
     (hb : 1 ≤ b)
     (hone : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → Nat.Coprime p (4 * n) → bridge.character p = 1)
@@ -167,7 +164,7 @@ theorem gamma_jacobi_zeroMass_add_ambient_ramp_le_integer_prefix_dual {n : ℕ} 
     (Nat.succ_le_iff.mpr bridge.squarefreePart_gt_one).trans
       (Nat.le_of_dvd hf (gamma_jacobi_modulus_squarefree_data bridge).1)
   have hz :=
-    AnalyticNumberTheory.DirichletLFunction.gammaResolvent_zeroMass_le_signed_prefix hq hRH
+    AnalyticNumberTheory.DirichletLFunction.gammaMass_le_signedPrefix_RH hq hRH
       bridge.character_primitive bridge.character_ne_one
       (by
         rw [bridge.character_quadratic.inv]; exact bridge.character_ne_one)
@@ -181,8 +178,8 @@ up to b, the actual primitive zero mass and ambient ramp satisfy the
 finite dual comparison with the original integer prefix. The witness
 transfer excludes no square-part or ramified losses. The remaining
 comparison is purely numerical in the logarithmic scale and prefix cutoff. -/
-theorem gamma_jacobi_no_negative_zeroMass_add_ramp_le_prefix_dual {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem gammaJacobi_noNeg_massRamp_prefixDual_RH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hRH : AnalyticNumberTheory.GRH.DirichletRiemannHypothesis bridge.character) {b : ℝ}
     (hb : 1 ≤ b) (hno : ∀ p : ℕ, p.Prime → Odd p → (p : ℝ) ≤ b → jacobiSym n p ≠ -1)
     (hlarge : 10 ^ 100 ≤ n) :
@@ -206,7 +203,7 @@ theorem gamma_jacobi_no_negative_zeroMass_add_ramp_le_prefix_dual {n : ℕ} {hn 
         (3 / 4 : ℝ) +
         gammaRefinedSignedDualBudget (Real.log n) := by
   exact
-    gamma_jacobi_zeroMass_add_ambient_ramp_le_integer_prefix_dual bridge hRH hb
+    gammaJacobi_massAmbient_integerDual_RH bridge hRH hb
       (gamma_jacobi_no_negative_prefix_prime_one bridge hno) hlarge
 
 end PseudoPrime.LLS

@@ -18,9 +18,8 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 an ordinate window of radius one is bounded by four times its shifted inverse-square
 mass. The open critical strip bounds the squared distance from `3/2 + it` by four.
 This compares local multiplicity with an unconditional summable genus series. -/
-theorem completed_divisor_le_four_mul_shifted_mass_unconditionally {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {t : ℝ} {ρ : ℂ}
-    (ht : |ρ.im - t| ≤ 1) :
+theorem completed_divisor_le_shiftedMass {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {t : ℝ} {ρ : ℂ} (ht : |ρ.im - t| ≤ 1) :
     (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) ≤
       4 *
         ((MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
@@ -68,7 +67,7 @@ moduli at least two, finite multiplicity in every ordinate window of radius one 
 bounded by an absolute constant times the conductor and height logarithms. Sum the
 pointwise shifted-mass comparison and use the unconditional genus mass estimate.
 This supplies the local input for quantitative high-zero tails without RH. -/
-theorem exists_uniform_local_zeroMultiplicity_bound_unconditionally :
+theorem uniform_localMultiplicity_bound :
     ∃ C : ℝ,
       0 < C ∧
         ∀ (q : ℕ) [NeZero q],
@@ -81,8 +80,8 @@ theorem exists_uniform_local_zeroMultiplicity_bound_unconditionally :
                   (∀ ρ ∈ S, |ρ.im - t| ≤ 1) →
                     ∑ ρ ∈ S, (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) ≤
                       C * (Real.log q + Real.log (4 + |t|) + 1) := by
-  let A := LogFreeDensity.completedGenusMassShiftConstant
-  let B := LogFreeDensity.completedGenusMassCenterConstant
+  let A := LogFreeDensity.genusMassShift
+  let B := LogFreeDensity.genusMassCenter
   let C := 8 * (13 + |A| + |B| * (Real.log 4 + 1))
   have hlog4 : 0 ≤ Real.log 4 := Real.log_nonneg (by norm_num only)
   have hC : 0 < C := by
@@ -95,7 +94,7 @@ theorem exists_uniform_local_zeroMultiplicity_bound_unconditionally :
   have hs : 1 < s.re := by
     norm_num only [s, Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, Complex.I_im,
       Complex.ofReal_im, zero_mul, mul_zero, sub_zero, add_zero]
-  have hsum := LogFreeDensity.summable_completed_genus_inverse_square hq hne hp hinv hs
+  have hsum := LogFreeDensity.summable_genusInvSq hq hne hp hinv hs
   have hAn : AnalyticOnNhd ℂ χ.completedLFunction Set.univ := fun z _ ↦
     (χ.differentiable_completedLFunction hne).analyticAt z
   have hnonneg (ρ : ℂ) :
@@ -107,13 +106,9 @@ theorem exists_uniform_local_zeroMultiplicity_bound_unconditionally :
       4 *
         ∑ ρ ∈ S, (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) * ‖(s - ρ)⁻¹‖ ^ 2 := by
     rw [Finset.mul_sum]
-    exact
-      Finset.sum_le_sum
-        (fun ρ hρ ↦
-          completed_divisor_le_four_mul_shifted_mass_unconditionally hp hne hinv (hS ρ hρ))
+    exact Finset.sum_le_sum (fun ρ hρ ↦ completed_divisor_le_shiftedMass hp hne hinv (hS ρ hρ))
   obtain ⟨a, b, ha, hb, _, _, hmass⟩ :=
-    LogFreeDensity.exists_completed_genus_inverse_square_mass_le_uniform_bound hq hne hp hinv (η :=
-      1 / 2) (by norm_num only) le_rfl t
+    LogFreeDensity.exists_genusMassBound hq hne hp hinv (η := 1 / 2) (by norm_num only) le_rfl t
   have he : (((1 + 1 / 2 : ℝ) : ℂ) + Complex.I * t) = s := by
     dsimp only [s]
     norm_num only

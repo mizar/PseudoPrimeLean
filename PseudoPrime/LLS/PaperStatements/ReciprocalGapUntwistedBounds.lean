@@ -20,10 +20,9 @@ separation using the untwisted finite Euler prefix and Gamma cap 8/5 yields a no
 prime witness up to the scale. Assume the prefix indices are at most that scale.
 Under witness nonexistence every weighted character value equals one; apply the generic
 prime-triviality identity and the numerical contour criterion. The premise is character-free. -/
-theorem exists_prime_not_one_of_reciprocalGap_untwisted_separation {h c : ℝ} (hh : 0 < h) {q : ℕ}
-    [NeZero q] (hq : 8 ≤ q) {χ : DirichletCharacter ℂ q}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hc : (1 / 2 : ℝ) < c) (hcu : c ≤ 7)
+theorem exists_prime_neOne_untwistedGap_GRH {h c : ℝ} (hh : 0 < h) {q : ℕ} [NeZero q] (hq : 8 ≤ q)
+    {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hc : (1 / 2 : ℝ) < c) (hcu : c ≤ 7)
     (hbound : c ^ 2 ≤ 1 / 4 + h / 2) {x : ℝ} (hx : 1 ≤ x) (B : Finset ℕ) (hB : ∀ n ∈ B, (n : ℝ) ≤ x)
     (hgap :
       (1 / c) *
@@ -49,13 +48,12 @@ theorem exists_prime_not_one_of_reciprocalGap_untwisted_separation {h c : ℝ} (
         (fun n ↦ ((n : ℝ) ^ (1 / 2 + c))⁻¹) hB hs
     simpa only [div_eq_mul_inv] using he
   have hg :=
-    AnalyticNumberTheory.DirichletLFunction.abs_re_logDeriv_gammaFactor_le_eight_fifths χ (σ :=
-      1 / 2 + c) (by linarith only [hc]) (by linarith only [hcu])
+    AnalyticNumberTheory.DirichletLFunction.gammaLogDeriv_re_le_8_5 χ (σ := 1 / 2 + c)
+      (by linarith only [hc]) (by linarith only [hcu])
   have hγ := (abs_le.mp hg).2
   rw [Complex.ofReal_add] at hγ
   have hc0 : 0 < c := lt_trans (by norm_num only : (0 : ℝ) < 1 / 2) hc
-  have hW :=
-    exists_prime_not_one_of_reciprocalGap_numeric_separation hh hq hGRH hp hne hinv hc hbound hx B
+  have hW := exists_prime_neOne_numericGap_GRH hh hq hGRH hp hne hinv hc hbound hx B
   apply hn
   apply hW
   rw [hpref]
@@ -76,10 +74,9 @@ for the untwisted Mangoldt Dirichlet series. The finite prefix retains its subtr
 Monotonicity in M reduces the claim to the exact Euler-series criterion.
 This permits elementary bounds or sharper certified Euler evaluations without changing
 character hypotheses or generating input-range certificates. -/
-theorem exists_prime_not_one_of_reciprocalGap_euler_cap_separation {h c : ℝ} (hh : 0 < h) {q : ℕ}
-    [NeZero q] (hq : 8 ≤ q) {χ : DirichletCharacter ℂ q}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hc : (1 / 2 : ℝ) < c) (hcu : c ≤ 7)
+theorem exists_prime_neOne_eulerCapGap_GRH {h c : ℝ} (hh : 0 < h) {q : ℕ} [NeZero q] (hq : 8 ≤ q)
+    {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hc : (1 / 2 : ℝ) < c) (hcu : c ≤ 7)
     (hbound : c ^ 2 ≤ 1 / 4 + h / 2) {x : ℝ} (hx : 1 ≤ x) (B : Finset ℕ) (hB : ∀ n ∈ B, (n : ℝ) ≤ x)
     (M : ℝ) (hM : (∑' n : ℕ, ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ (1 / 2 + c)) ≤ M)
     (hgap :
@@ -91,9 +88,7 @@ theorem exists_prime_not_one_of_reciprocalGap_euler_cap_separation {h c : ℝ} (
             176) <
         (reciprocalGapCharacterSum h (1 : DirichletCharacter ℂ 1) x).re) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ x ∧ χ p ≠ 1 := by
-  apply
-    exists_prime_not_one_of_reciprocalGap_untwisted_separation hh hq hGRH hp hne hinv hc hcu hbound
-      hx B hB
+  apply exists_prime_neOne_untwistedGap_GRH hh hq hGRH hp hne hinv hc hcu hbound hx B hB
   have hc0 : 0 < c := lt_trans (by norm_num only : (0 : ℝ) < 1 / 2) hc
   have hE :
     (1 / c) *

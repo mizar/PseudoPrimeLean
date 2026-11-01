@@ -35,8 +35,8 @@ theorem norm_completedZero_sub_real_ge_half {q : ℕ} [NeZero q] {χ : Dirichlet
     (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {σ : ℝ}
     (hσ : 1 ≤ σ) (ρ : CompletedZero χ) : (1 / 2 : ℝ) ≤ ‖(ρ : ℂ) - (σ : ℂ)‖ := by
   have h := Complex.re_le_norm ((σ : ℂ) - (ρ : ℂ))
-  rw [Complex.sub_re, Complex.ofReal_re,
-    completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv ρ.property, norm_sub_rev] at h
+  rw [Complex.sub_re, Complex.ofReal_re, completed_zero_re_eq_half_of_RH hRH hp hinv ρ.property,
+    norm_sub_rev] at h
   linarith only [h, hσ]
 
 /-- For a primitive nonprincipal character of modulus at least two with nonprincipal inverse
@@ -44,25 +44,24 @@ and individual RH, its natural zero multiplicities divided by squared distance t
 sigma >= 1 form a summable series. Restrict the inverse-square divisor mass to actual zeros;
 the critical-line denominator comparison can only decrease each term after shifting.
 This is the local uniform majorant for termwise differentiation. -/
-theorem summable_completedZero_shifted_inverseSquare {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {σ : ℝ} (hσ : 1 ≤ σ) :
+theorem summable_zero_invSquare_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    {σ : ℝ} (hσ : 1 ≤ σ) :
     Summable
       (fun ρ : CompletedZero χ ↦
         (analyticOrderNatAt χ.completedLFunction (ρ : ℂ) : ℝ) / ‖(ρ : ℂ) - (σ : ℂ)‖ ^ 2) := by
   have hb :=
-    (summable_divisor_div_normSq_of_dirichletRH hq hRH hp hne hinv).subtype
+    (summable_divisor_div_normSq_of_RH hq hRH hp hne hinv).subtype
       {ρ : ℂ | χ.completedLFunction ρ = 0}
   have he :
     ∀ ρ : CompletedZero χ,
       (MeromorphicOn.divisor χ.completedLFunction Set.univ (ρ : ℂ) : ℝ) / Complex.normSq (ρ : ℂ) =
         (analyticOrderNatAt χ.completedLFunction (ρ : ℂ) : ℝ) / ‖(ρ : ℂ)‖ ^ 2 :=
-    fun ρ ↦ by
-    rw [completed_divisor_eq_analyticOrderNatAt hne, Int.cast_natCast, Complex.normSq_eq_norm_sq]
+    fun ρ ↦ by rw [completed_divisor_eq_orderNat hne, Int.cast_natCast, Complex.normSq_eq_norm_sq]
   have hm := hb.congr he
   apply
     Summable.of_nonneg_of_le (fun ρ ↦ div_nonneg (Nat.cast_nonneg _) (sq_nonneg _)) (fun ρ ↦ ?_) hm
-  have hr := completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv ρ.property
+  have hr := completed_zero_re_eq_half_of_RH hRH hp hinv ρ.property
   have hpos : 0 < ‖ρ.1‖ ^ 2 := sq_pos_of_pos (norm_pos_iff.mpr (General.zero_ne_of_re_half hr))
   exact
     div_le_div_of_nonneg_left (Nat.cast_nonneg _) hpos
@@ -73,19 +72,19 @@ completed logarithmic derivatives at two points to the right of the critical lin
 the multiplicity-weighted reciprocal difference sum over actual completed zeros.
 Convert the divisor to natural analytic order and discard nonzeros, whose order is zero.
 This aligns the Hadamard expansion with shifted pole-series differentiation. -/
-theorem completed_logDeriv_sub_eq_zeroSubtypeSeries {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem completedLogDeriv_sub_zeroSeries_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {s t : ℂ} (hs : 1 / 2 < s.re) (ht : 1 / 2 < t.re) :
     logDeriv χ.completedLFunction s - logDeriv χ.completedLFunction t =
       ∑' ρ : CompletedZero χ,
         (analyticOrderNatAt χ.completedLFunction (ρ : ℂ) : ℂ) *
           (1 / (s - (ρ : ℂ)) - 1 / (t - (ρ : ℂ))) := by
-  rw [completed_logDeriv_sub_eq_resolventSum hq hRH hp hne hinv hs ht]
+  rw [completedLogDeriv_resolvent_eq_RH hq hRH hp hne hinv hs ht]
   have he :
     ∀ ρ : ℂ,
       (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℂ) =
         (analyticOrderNatAt χ.completedLFunction ρ : ℂ) :=
-    fun ρ ↦ by rw [completed_divisor_eq_analyticOrderNatAt hne, Int.cast_natCast]
+    fun ρ ↦ by rw [completed_divisor_eq_orderNat hne, Int.cast_natCast]
   rw [tsum_congr (fun ρ ↦ congrArg (fun m : ℂ ↦ m * (1 / (s - ρ) - 1 / (t - ρ))) (he ρ))]
   symm
   apply
@@ -102,10 +101,9 @@ completed logarithmic derivative is differentiable at every point of the radius-
 ball around zero, for real sigma >= 1. Its derivative is the translated inverse-square
 zero series. Apply the local pole-series derivative and the Hadamard identity throughout
 the same ball. This neighborhood formula supports higher zero-moment differentiation. -/
-theorem hasDerivAt_completed_logDeriv_translate {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {σ : ℝ} (hσ : 1 ≤ σ) {z₀ : ℂ}
-    (hz₀ : z₀ ∈ Metric.ball 0 (1 / 4)) :
+theorem hasDerivAt_completedLogDeriv_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    {σ : ℝ} (hσ : 1 ≤ σ) {z₀ : ℂ} (hz₀ : z₀ ∈ Metric.ball 0 (1 / 4)) :
     HasDerivAt
       (fun z : ℂ ↦
         logDeriv χ.completedLFunction ((σ : ℂ) + z) - logDeriv χ.completedLFunction (σ : ℂ))
@@ -117,7 +115,7 @@ theorem hasDerivAt_completed_logDeriv_translate {q : ℕ} [NeZero q] (hq : 2 ≤
       (fun ρ : CompletedZero χ ↦ (ρ : ℂ) - (σ : ℂ))
       (fun ρ : CompletedZero χ ↦ analyticOrderNatAt χ.completedLFunction (ρ : ℂ))
       (norm_completedZero_sub_real_ge_half hRH hp hinv hσ)
-      (summable_completedZero_shifted_inverseSquare hq hRH hp hne hinv hσ) hz₀
+      (summable_zero_invSquare_RH hq hRH hp hne hinv hσ) hz₀
   have he :
     (fun z : ℂ ↦
         logDeriv χ.completedLFunction ((σ : ℂ) + z) -
@@ -136,7 +134,7 @@ theorem hasDerivAt_completed_logDeriv_translate {q : ℕ} [NeZero q] (hq : 2 ≤
     have ht : 1 / 2 < (σ : ℂ).re := by
       rw [Complex.ofReal_re]
       linarith only [hσ]
-    rw [completed_logDeriv_sub_eq_zeroSubtypeSeries hq hRH hp hne hinv hs ht]
+    rw [completedLogDeriv_sub_zeroSeries_RH hq hRH hp hne hinv hs ht]
     apply tsum_congr
     intro ρ
     rw [show (σ : ℂ) + z - (ρ : ℂ) = z - ((ρ : ℂ) - (σ : ℂ)) by ring,
@@ -149,7 +147,7 @@ and individual RH, the derivative of the completed logarithmic derivative at rea
 equals the negative inverse-square completed-zero series. The shifted mass and pole separation
 justify differentiating the locally centered expansion; analytic nonvanishing identifies
 the derivative by uniqueness. This provides the first nonconstant zero-distribution moment. -/
-theorem deriv_completed_logDeriv_real_eq_zeroSeries {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem deriv_completedLogDeriv_zeroSum_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {σ : ℝ} (hσ : 1 ≤ σ) :
     deriv (logDeriv χ.completedLFunction) (σ : ℂ) =
@@ -158,11 +156,11 @@ theorem deriv_completed_logDeriv_real_eq_zeroSeries {q : ℕ} [NeZero q] (hq : 2
   have hz : (0 : ℂ) ∈ Metric.ball 0 (1 / 4) := by
     rw [Metric.mem_ball, dist_self]
     norm_num only
-  have hd := hasDerivAt_completed_logDeriv_translate hq hRH hp hne hinv hσ hz
+  have hd := hasDerivAt_completedLogDeriv_RH hq hRH hp hne hinv hσ hz
   simp only [zero_sub, neg_sq] at hd
   have hF := (DirichletCharacter.differentiable_completedLFunction hne).analyticAt (σ : ℂ)
   have hn : χ.completedLFunction (σ : ℂ) ≠ 0 := fun hz ↦ by
-    have hr := completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv hz
+    have hr := completed_zero_re_eq_half_of_RH hRH hp hinv hz
     rw [Complex.ofReal_re] at hr
     linarith only [hr, hσ]
   have hDa : AnalyticAt ℂ (logDeriv χ.completedLFunction) (σ : ℂ) := hF.deriv.div hF hn
@@ -183,7 +181,7 @@ a positive bound independent of the modulus and character. Identify it with the 
 of the completed logarithmic derivative and apply the uniform Cauchy estimate of order one.
 The bound is for the norm of the complex sum, not the sum of term norms; cancellation is
 essential for the conductor-normalized nonconstant zero moment. -/
-theorem exists_uniform_norm_completedZero_inverseSquareSum_le :
+theorem uniform_zeroInvSquare_bound_RH :
     ∃ C : ℝ,
       0 < C ∧
         ∀ (q : ℕ) [NeZero q],
@@ -197,12 +195,12 @@ theorem exists_uniform_norm_completedZero_inverseSquareSum_le :
                       -(analyticOrderNatAt χ.completedLFunction (ρ : ℂ) : ℂ) /
                         ((ρ : ℂ) - (((3 / 2 : ℝ) : ℂ))) ^ 2‖ ≤
                   C := by
-  obtain ⟨C, hC, hb⟩ := exists_uniform_norm_iteratedDeriv_completed_logDeriv_le 1
+  obtain ⟨C, hC, hb⟩ := iteratedDeriv_completedLogDeriv_le 1
   refine ⟨C, hC, ?_⟩
   intro q _ hq χ hRH hp hne hinv
   have h := hb q χ hne
   rw [iteratedDeriv_one,
-    deriv_completed_logDeriv_real_eq_zeroSeries hq hRH hp hne hinv
+    deriv_completedLogDeriv_zeroSum_RH hq hRH hp hne hinv
       (show (1 : ℝ) ≤ 3 / 2 by norm_num only)] at h
   exact h
 
@@ -211,7 +209,7 @@ inverse-square completed-zero sum at real 3/2 at most epsilon log q, uniformly o
 primitive nonprincipal characters satisfying individual RH. Absorb the modulus-independent
 bound into the growing logarithm. This is the first vanishing nonconstant moment in the
 conductor-normalized zero distribution; it does not bound the absolute zero mass. -/
-theorem exists_uniform_completedZero_inverseSquareSum_le_log {ε : ℝ} (hε : 0 < ε) :
+theorem eventually_zeroInvSquare_le_log_RH {ε : ℝ} (hε : 0 < ε) :
     ∃ Q : ℕ,
       2 ≤ Q ∧
         ∀ (q : ℕ) [NeZero q],
@@ -225,7 +223,7 @@ theorem exists_uniform_completedZero_inverseSquareSum_le_log {ε : ℝ} (hε : 0
                       -(analyticOrderNatAt χ.completedLFunction (ρ : ℂ) : ℂ) /
                         ((ρ : ℂ) - (((3 / 2 : ℝ) : ℂ))) ^ 2‖ ≤
                   ε * Real.log q := by
-  obtain ⟨C, _, hb⟩ := exists_uniform_norm_completedZero_inverseSquareSum_le
+  obtain ⟨C, _, hb⟩ := uniform_zeroInvSquare_bound_RH
   have hl :=
     (Real.tendsto_log_atTop.comp (tendsto_natCast_atTop_atTop (R := ℝ))).eventually_ge_atTop (C / ε)
   obtain ⟨Q, hQ⟩ := Filter.eventually_atTop.mp hl

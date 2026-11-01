@@ -26,9 +26,9 @@ namespace PseudoPrime.LLS.PaperStatements
 actual normalized nonunit loss gives a unit prime outside H through (4/5)(log q)^2.
 Contradict the uniform ramp comparison and the main-term gap.
 This internal interface keeps the witness proof independent of the local-budget parameters. -/
-private theorem exists_prime_outside_of_uniform_gamma_local_budget {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 35000 ≤ Real.log q)
+private theorem exists_prime_outside_of_gamma_budget_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hH : H ≠ ⊤) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hL : 35000 ≤ Real.log q)
     (hbudget :
       (40159 / 900 : ℝ) +
           2 *
@@ -61,15 +61,15 @@ private theorem exists_prime_outside_of_uniform_gamma_local_budget {q : ℕ} [Ne
 exists through (4/5)(log q)^2. Apply the parameterized local allowance 63960/5041
 and the rational strict error budget to the common contradiction interface.
 No additional arithmetic or analytic premise remains in this log entrance. -/
-theorem exists_prime_outside_le_gamma_four_fifths_log_45561 {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 45561 ≤ Real.log q) :
+theorem exists_prime_outside_4_5_of_log_ge_45561_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hH : H ≠ ⊤) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hL : 45561 ≤ Real.log q) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬p ∣ q ∧
         ¬NumberTheory.residueInSubgroup q H p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log q) ^ 2 := by
   apply
-    exists_prime_outside_of_uniform_gamma_local_budget H hH hGRH
+    exists_prime_outside_of_gamma_budget_GRH H hH hGRH
       ((by norm_num only : (35000 : ℝ) ≤ 45561).trans hL)
   have hD :=
     gamma_commonFactor_budget_of_log_ge_44739 ((by norm_num only : (44739 : ℝ) ≤ 45561).trans hL)
@@ -95,7 +95,6 @@ theorem exists_prime_outside_le_gamma_four_fifths_19787 {q : ℕ} (H : Subgroup 
     Nat.ne_zero_of_lt ((pow_pos (by norm_num only : (0 : ℕ) < 10) 19787).trans_le hq)
   let : NeZero q := ⟨hq0⟩
   exact
-    exists_prime_outside_le_gamma_four_fifths_log_45561 H hH hGRH
-      (log_nat_gt_45561_of_decimal_19787 hq).le
+    exists_prime_outside_4_5_of_log_ge_45561_GRH H hH hGRH (log_nat_gt_45561_of_decimal_19787 hq).le
 
 end PseudoPrime.LLS.PaperStatements

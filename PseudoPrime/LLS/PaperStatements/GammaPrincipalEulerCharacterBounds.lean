@@ -31,8 +31,8 @@ theorem gamma_primitive_sum_re_le_principal_euler {q m : ℕ} [NeZero m] (hq : 2
         43 * x ^ (-9 / 16 : ℝ) := by
   have hm2 : 2 ≤ m := le_trans (by norm_num only) hm
   have hz :=
-    AnalyticNumberTheory.DirichletLFunction.gammaResolvent_zeroMass_lt_principal_uniform hm2
-      (hGRH m χ hp) hGRH.riemann hp hne hinv
+    AnalyticNumberTheory.DirichletLFunction.gammaMass_lt_principalUniform_RH hm2 (hGRH m χ hp)
+      hGRH.riemann hp hne hinv
   have hn :=
     norm_gamma_oscillatingZeroSum_le_resolvent hm2 (hGRH m χ hp) hp hne hinv
       (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 2) hx)
@@ -46,7 +46,7 @@ theorem gamma_primitive_sum_re_le_principal_euler {q m : ℕ} [NeZero m] (hq : 2
 Claim: the primitive-character Gamma sum retains its conductor with fixed cost 117/10.
 Proof: primitivize and apply the signed principal Euler arithmetic bound.
 Role: supply the improved upper input to quadratic and subgroup comparisons. -/
-theorem gamma_primitiveCharacter_sum_re_lt_principal_euler {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+theorem gammaCharacterSum_re_lt_principal_euler {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
     (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 2 ≤ x) :
     (∑' k : ℕ, gammaMellinKernel.summand χ.primitiveCharacter x k).re <

@@ -21,7 +21,7 @@ rejecting base p ≤ (99/100)(log n)², hence p < (log n)².
 Combine the uniform nonprincipal upper bound with exact-principal index
 reduction and certified principal/ramp errors. No numerical-gap assumption
 or input-factorization restriction remains. -/
-theorem exists_prime_witness_le_nearSquare_gamma_log_1000 {n : ℕ} (hnOdd : Odd n)
+theorem exists_primeWitness_le_nearSquare_gamma_log_1000 {n : ℕ} (hnOdd : Odd n)
     (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : 1000 ≤ Real.log n) :
     ∃ p : ℕ,

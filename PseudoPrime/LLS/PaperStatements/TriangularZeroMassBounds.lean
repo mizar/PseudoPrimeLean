@@ -23,7 +23,7 @@ alpha-18 absolute zero mass is at most 36*log(q), the absolute real scale-one
 arithmetic sum, and 1150000000000000. Remove the zero pole term, take real parts
 of the conductor formula, and apply the two numerical integral bounds.
 This isolates the arithmetic term still needed for the final additive constant. -/
-theorem triangular18_absoluteMass_le_conductor_add_arithmetic {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem triangular18_mass_conductor_arith_GRH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
@@ -40,7 +40,7 @@ theorem triangular18_absoluteMass_le_conductor_add_arithmetic {q : ℕ} [NeZero 
       (∫ t : ℝ,
         logDeriv χ.gammaFactor (((9 / 16 : ℝ) : ℂ) + Complex.I * t + 1 / 2) *
           K.function (((9 / 16 : ℝ) : ℂ) + Complex.I * t))
-  have hR : ‖R‖ ≤ (1100000000000000 : ℝ) := triangular18_normalized_reflectedIntegral_norm_le hinv
+  have hR : ‖R‖ ≤ (1100000000000000 : ℝ) := triangular18_normalized_reflected_bound hinv
   have hG : ‖G‖ ≤ (50000000000000 : ℝ) := triangular18_normalized_gammaIntegral_norm_le χ
   have he := triangular18_absoluteMass_conductor_formula hq hGRH hp hne hinv
   dsimp only at he

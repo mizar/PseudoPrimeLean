@@ -42,7 +42,7 @@ open Classical in
 p*q, p*r and q*r, and n=p*q*r with positive factors, their conductor-log sum
 is exactly twice log n. Expand the classified finite sum and each product logarithm.
 This supplies the conductor saving for the Gaussian three-character branch. -/
-theorem subgroupConductorLogSum_eq_twice_log_of_three_conductors {n p q r : ℕ} [NeZero n]
+theorem subgroupConductorLogSum_eq_two_log_of_three {n p q r : ℕ} [NeZero n]
     (H : Subgroup (ZMod n)ˣ) (a b c : NumberTheory.subgroupAnnihilator H) (hab : a ≠ b)
     (hac : a ≠ c) (hbc : b ≠ c)
     (hs : Finset.univ.erase (1 : NumberTheory.subgroupAnnihilator H) = {a, b, c})
@@ -68,11 +68,10 @@ theorem subgroupConductorLogSum_eq_twice_log_of_three_conductors {n p q r : ℕ}
 p,q,r are positive and pairwise distinct. Equality of characters would equate
 conductors; cancel the common positive factor. This verifies distinctness of the
 three nonprincipal characters without a separate character-level assumption. -/
-theorem three_characters_ne_of_pairwise_product_conductors {n p q r : ℕ} [NeZero n]
-    (H : Subgroup (ZMod n)ˣ) (a b c : NumberTheory.subgroupAnnihilator H)
-    (ha : a.val.conductor = p * q) (hb : b.val.conductor = p * r) (hc : c.val.conductor = q * r)
-    (hp : 0 < p) (hq : 0 < q) (hr : 0 < r) (hpq : p ≠ q) (hpr : p ≠ r) (hqr : q ≠ r) :
-    a ≠ b ∧ a ≠ c ∧ b ≠ c := by
+theorem three_characters_ne_of_product_conductors {n p q r : ℕ} [NeZero n] (H : Subgroup (ZMod n)ˣ)
+    (a b c : NumberTheory.subgroupAnnihilator H) (ha : a.val.conductor = p * q)
+    (hb : b.val.conductor = p * r) (hc : c.val.conductor = q * r) (hp : 0 < p) (hq : 0 < q)
+    (hr : 0 < r) (hpq : p ≠ q) (hpr : p ≠ r) (hqr : q ≠ r) : a ≠ b ∧ a ≠ c ∧ b ≠ c := by
   have hab : a ≠ b := by
     intro h
     have he := congrArg (fun d : NumberTheory.subgroupAnnihilator H ↦ d.val.conductor) h

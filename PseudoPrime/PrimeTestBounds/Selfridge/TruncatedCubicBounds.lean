@@ -19,8 +19,8 @@ namespace PseudoPrime.PrimeTestBounds.Selfridge
 negative Selfridge discriminant magnitudes under GRH. First bound the least
 negative odd-prime witness, then use the generic stopping-value transfer.
 The exclusion cost charges only prime factors at most X. -/
-theorem selfridgeNegOneMagnitudes_le_of_truncated_cubic_radius {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem negOne_truncatedCubic_bound_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) {G E X : ℝ}
     (hlog : Real.log (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ G)
     (hcost :
@@ -30,16 +30,16 @@ theorem selfridgeNegOneMagnitudes_le_of_truncated_cubic_radius {n : ℕ} (hn : O
     (hbound : (LLS.PaperStatements.tightCubicExclusionRadius G E) ^ 2 ≤ X) (h27 : 27 ≤ X) :
     ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         X ∧
       ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNegOne PrimeTest.isWheel30NegOneCandidate n
-                (PrimeTest.wheel30FirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.wheel30NegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         X := by
   exact
-    selfridgeNegOneMagnitudes_le_of_prime_witness_bound hn hns hw h27
+    negOne_magnitudes_of_witness hn hns hw h27
       (PseudoSquare.primeNegOneWitness_le_of_truncated_cubic_radius (hns := hns) hGRH hw hlog hcost
         hbound)
 

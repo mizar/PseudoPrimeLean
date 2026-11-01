@@ -20,9 +20,8 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 of exact conductor, Gaussian and ordinary derivative terms. The certified nodes
 all lie to the right of one after shifting by one half. Apply the node identity
 before any bound, retaining negative coefficients in the common combination. -/
-theorem gaussianResolvent_zeroMass_eq_signed_derivatives {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
+theorem gaussianMass_eq_signedDerivs_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
           Analysis.gaussianResolventMajorant ρ.im) =
@@ -31,7 +30,7 @@ theorem gaussianResolvent_zeroMass_eq_signed_derivatives {q : ℕ} [NeZero q] (h
             (ab.2 : ℝ) *
               (Real.log q / 2 + (logDeriv χ.gammaFactor (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re +
                 (logDeriv χ.LFunction (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re))).sum := by
-  rw [gaussianResolvent_zeroMass_eq_poissonSum hq hRH hp hne hinv]
+  rw [gaussianMass_eq_poissonSum_RH hq hRH hp hne hinv]
   apply congrArg List.sum
   apply List.map_congr_left
   intro ab hab
@@ -41,7 +40,7 @@ theorem gaussianResolvent_zeroMass_eq_signed_derivatives {q : ℕ} [NeZero q] (h
     norm_num only at h
     exact h
   have hσ : 1 < (1 / 2 : ℝ) + (ab.1 : ℝ) := by linarith only [har]
-  have h := completed_poissonSum_eq_signed_ordinary hq hRH hp hne hinv hσ
+  have h := poissonSum_eq_signedOrdinary_RH hq hRH hp hne hinv hσ
   have he : (1 / 2 : ℝ) + (ab.1 : ℝ) - 1 / 2 = (ab.1 : ℝ) := by ring
   rw [he] at h
   simp only [Complex.ofReal_add] at h
@@ -52,7 +51,7 @@ theorem gaussianResolvent_zeroMass_eq_signed_derivatives {q : ℕ} [NeZero q] (h
 Evaluate the certified finite rational coefficients after the exact node
 identity, preserving their signs. This is the conductor-normalized Poisson
 identity to be matched with the common Euler weight and local budget. -/
-theorem gaussianResolvent_zeroMass_eq_conductor_signed_derivatives {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem gaussianMass_conductor_derivs_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     (∑' ρ : ℂ,
@@ -65,7 +64,7 @@ theorem gaussianResolvent_zeroMass_eq_conductor_signed_derivatives {q : ℕ} [Ne
         (Analysis.gaussianResolventCoefficients.map
             (fun ab ↦
               (ab.2 : ℝ) * (logDeriv χ.LFunction (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum := by
-  rw [gaussianResolvent_zeroMass_eq_signed_derivatives hq hRH hp hne hinv]
+  rw [gaussianMass_eq_signedDerivs_RH hq hRH hp hne hinv]
   norm_num only [Analysis.gaussianResolventCoefficients, List.map_cons, List.map_nil, List.sum_cons,
     List.sum_nil]
   ring
@@ -74,7 +73,7 @@ theorem gaussianResolvent_zeroMass_eq_conductor_signed_derivatives {q : ℕ} [Ne
 character Euler series weighted by the actual common Gaussian Mangoldt weight.
 Absolute convergence permits interchanging the finite coefficient list and
 the infinite series. Coefficient signs are retained before estimating prefixes. -/
-theorem gaussianResolvent_signed_ordinary_eq_euler {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) :
+theorem gaussianResolvent_ordinary_euler {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) :
     (Analysis.gaussianResolventCoefficients.map
           (fun ab ↦ (ab.2 : ℝ) * (logDeriv χ.LFunction (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum =
       ∑' n : ℕ, -(χ n).re * Analysis.gaussianResolventMangoldtWeight n := by
@@ -110,9 +109,8 @@ Gaussian resolvent zero mass equals its exact conductor contribution, signed
 Gaussian-node contribution and the common-weight Euler series. Both the Poisson
 and Euler identities are discharged. This is the exact signed comparison
 used before absorbing the local nonunit correction. -/
-theorem gaussianResolvent_zeroMass_eq_signed_euler {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
+theorem gaussianMass_eq_signedEuler_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
           Analysis.gaussianResolventMajorant ρ.im) =
@@ -121,16 +119,15 @@ theorem gaussianResolvent_zeroMass_eq_signed_euler {q : ℕ} [NeZero q] (hq : 2 
             (fun ab ↦
               (ab.2 : ℝ) * (logDeriv χ.gammaFactor (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum +
         ∑' n : ℕ, -(χ n).re * Analysis.gaussianResolventMangoldtWeight n := by
-  rw [gaussianResolvent_zeroMass_eq_conductor_signed_derivatives hq hRH hp hne hinv,
-    gaussianResolvent_signed_ordinary_eq_euler χ]
+  rw [gaussianMass_conductor_derivs_RH hq hRH hp hne hinv, gaussianResolvent_ordinary_euler χ]
 
 /-- The actual Gaussian zero mass obeys the signed prefix upper bound under
 individual RH and primitive nonprincipal conductor data. The common Euler
 weight gives twice the prefix gain, and its nonunit correction is retained
 exactly. This is the zero-side interface for the joint local conductor budget. -/
-theorem gaussianResolvent_zeroMass_le_signed_prefix {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (B : Finset ℕ) :
+theorem gaussianMass_le_signedPrefix_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    (B : Finset ℕ) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
           Analysis.gaussianResolventMajorant ρ.im) ≤
@@ -141,7 +138,7 @@ theorem gaussianResolvent_zeroMass_le_signed_prefix {q : ℕ} [NeZero q] (hq : 2
             (∑' n : ℕ, Analysis.gaussianResolventMangoldtWeight n) -
           2 * (∑ n ∈ B, Analysis.gaussianResolventMangoldtWeight n) +
         ∑ n ∈ B, (1 - (χ n).re) * Analysis.gaussianResolventMangoldtWeight n := by
-  rw [gaussianResolvent_zeroMass_eq_signed_euler hq hRH hp hne hinv]
+  rw [gaussianMass_eq_signedEuler_RH hq hRH hp hne hinv]
   have h := Analysis.gaussian_character_signed_euler_prefix_le χ B
   linarith only [h]
 

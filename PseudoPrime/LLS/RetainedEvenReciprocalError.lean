@@ -45,7 +45,7 @@ theorem evenReciprocalError_le_exact {y : ℝ} (hy : 1 ≤ y) :
 /-- For `y ≥ 8`, the exact even reciprocal main error at `y^2` is bounded by
 `-1961/2000 + (2 log y + 103/80)/y^2`. The proof keeps the factor
 `1 - y⁻²` attached to the lower bound for `γ/2` before collecting terms. -/
-theorem primitiveReciprocalEvenMainError_le_exact_even_envelope {y : ℝ} (hy : 8 ≤ y) :
+theorem reciprocalEvenError_le_exactEnvelope {y : ℝ} (hy : 8 ≤ y) :
     Analysis.primitiveReciprocalEvenMainError (y ^ 2) ≤
       -(1961 / 2000 : ℝ) + (2 * Real.log y + 103 / 80) / y ^ 2 := by
   exact evenReciprocalError_le_exact (by linarith only [hy])
@@ -54,7 +54,7 @@ theorem primitiveReciprocalEvenMainError_le_exact_even_envelope {y : ℝ} (hy : 
 Use the exact half-ratio identity for the tail, monotonicity of the logarithmic
 ratio, and the Euler-constant lower bound 23/40. This retains the improvement
 needed by the parity-conditional contour API at finite analytic scales. -/
-theorem primitiveReciprocalEvenMainError_le_neg_179_div_200 {x : ℝ} (hx : 64 ≤ x) :
+theorem reciprocalEvenError_le_neg_179_200 {x : ℝ} (hx : 64 ≤ x) :
     Analysis.primitiveReciprocalEvenMainError x ≤ -(179 / 200 : ℝ) := by
   have hxp : 0 < x := by linarith only [hx]
   have hi : 1 / x ≤ (1 / 64 : ℝ) :=

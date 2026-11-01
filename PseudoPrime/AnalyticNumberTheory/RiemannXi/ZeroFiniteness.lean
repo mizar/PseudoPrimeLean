@@ -34,8 +34,8 @@ namespace PseudoPrime.AnalyticNumberTheory.RiemannXi
 /-- A zeta zero with nonnegative real part is also a zero of
 `PseudoPrime.AnalyticNumberTheory.RiemannXi.riemannXi`.  Kept in the xi-zero
 layer so low-level trivial-zero bookkeeping need not depend on xi machinery. -/
-theorem riemannXi_eq_zero_of_riemannZeta_zero_re_nonneg {ρ : ℂ} (hz : riemannZeta ρ = 0)
-    (hre : 0 ≤ ρ.re) : riemannXi ρ = 0 := by
+theorem xi_zero_of_zeta_zero_of_re_nonneg {ρ : ℂ} (hz : riemannZeta ρ = 0) (hre : 0 ≤ ρ.re) :
+    riemannXi ρ = 0 := by
   have hne1 : ρ ≠ 1 := by
     intro h
     rw [h] at hz
@@ -139,7 +139,7 @@ out all negative even trivial-zero locations, while `ξ(1) = 1/2` rules out the 
 Role: this is the RH specialization used when finite xi ledgers are converted to critical-line
 zero sums in the xi-side result.
 -/
-theorem riemannXi_zero_re_eq_half_of_riemannHypothesis (hRH : RiemannHypothesis) {s : ℂ}
+theorem xi_zero_re_eq_half_of_riemannHypothesis (hRH : RiemannHypothesis) {s : ℂ}
     (hs : riemannXi s = 0) : s.re = (1 : ℝ) / 2 := by
   apply hRH s (riemannZeta_zero_of_riemannXi_zero hs)
   · intro htrivial
@@ -162,10 +162,10 @@ Content: expand `Complex.normSq` and substitute the critical-line equality for t
 Role: it converts radial Hadamard weights into the one-dimensional zero weights used by downstream
   modules.
 -/
-theorem norm_sq_riemannXi_zero_eq_quarter_add_im_sq_of_riemannHypothesis (hRH : RiemannHypothesis)
-    {s : ℂ} (hs : riemannXi s = 0) : ‖s‖ ^ 2 = (1 : ℝ) / 4 + s.im ^ 2 := by
+theorem norm_sq_zero_eq_quarter_add_im_sq_RH (hRH : RiemannHypothesis) {s : ℂ}
+    (hs : riemannXi s = 0) : ‖s‖ ^ 2 = (1 : ℝ) / 4 + s.im ^ 2 := by
   rw [← Complex.normSq_eq_norm_sq, Complex.normSq_apply,
-    riemannXi_zero_re_eq_half_of_riemannHypothesis hRH hs]
+    xi_zero_re_eq_half_of_riemannHypothesis hRH hs]
   ring
 
 /-- The analytic order of `PseudoPrime.AnalyticNumberTheory.RiemannXi.riemannXi`
@@ -190,23 +190,22 @@ noncomputable def riemannXiZeroMultiplicity (ρ : ℂ) : ℕ :=
   analyticOrderNatAt riemannXi ρ
 
 /-- For `Re ρ ≥ 0` and `ρ ≠ 1`, xi and zeta have equal analytic multiplicities. -/
-theorem riemannXiZeroMultiplicity_eq_riemannZetaZeroMultiplicity {ρ : ℂ} (hre : 0 ≤ ρ.re)
-    (hρ1 : ρ ≠ 1) (hnt : ∀ n : ℕ, ρ ≠ -2 * (n + 1)) :
+theorem zeroMultiplicity_eq_zetaMultiplicity {ρ : ℂ} (hre : 0 ≤ ρ.re) (hρ1 : ρ ≠ 1)
+    (hnt : ∀ n : ℕ, ρ ≠ -2 * (n + 1)) :
     riemannXiZeroMultiplicity ρ = RiemannZeta.riemannZetaZeroMultiplicity ρ := by
   unfold riemannXiZeroMultiplicity RiemannZeta.riemannZetaZeroMultiplicity analyticOrderNatAt
   rw [analyticOrderAt_riemannXi_eq_riemannZeta hre hρ1 hnt]
 
 /-- Every xi-zero is nontrivial and therefore has the same analytic multiplicity as the
 corresponding zeta-zero. -/
-theorem riemannXiZeroMultiplicity_eq_riemannZetaZeroMultiplicity_of_zero {ρ : ℂ}
-    (hρ : riemannXi ρ = 0) :
+theorem zeroMultiplicity_eq_zetaMultiplicity_of_zero {ρ : ℂ} (hρ : riemannXi ρ = 0) :
     riemannXiZeroMultiplicity ρ = RiemannZeta.riemannZetaZeroMultiplicity ρ := by
   have hre : 0 ≤ ρ.re := riemannXi_zero_re_nonneg hρ
   have hρ1 : ρ ≠ 1 := by
     intro h
     rw [h, riemannXi_one] at hρ
     norm_num only at hρ
-  apply riemannXiZeroMultiplicity_eq_riemannZetaZeroMultiplicity hre hρ1
+  apply zeroMultiplicity_eq_zetaMultiplicity hre hρ1
   intro n h
   rw [h] at hre
   simp only [Complex.neg_re, Complex.mul_re, Complex.re_ofNat, Complex.add_re, Complex.one_re,
@@ -220,7 +219,7 @@ noncomputable def riemannXiZeroMultiplicityWeight (s : ℂ) : ℝ :=
   if riemannXi s = 0 then riemannXiZeroMultiplicity s / (1 + s.im ^ 2) else 0
 
 /-- The xi multiplicity weight is pointwise bounded by the completed zeta multiplicity weight. -/
-theorem riemannXiZeroMultiplicityWeight_le_nontrivialZetaZeroMultiplicityWeightFull (s : ℂ) :
+theorem zeroWeight_le_zetaFullWeight (s : ℂ) :
     riemannXiZeroMultiplicityWeight s ≤ RiemannZeta.nontrivialZetaZeroMultiplicityWeightFull s := by
   unfold riemannXiZeroMultiplicityWeight RiemannZeta.nontrivialZetaZeroMultiplicityWeightFull
   by_cases hs : riemannXi s = 0
@@ -229,7 +228,7 @@ theorem riemannXiZeroMultiplicityWeight_le_nontrivialZetaZeroMultiplicityWeightF
     have hre : 0 ≤ s.re := riemannXi_zero_re_nonneg hs
     have hre1 : s.re ≤ 1 := riemannXi_zero_re_le_one hs
     rw [ite_eq_left ⟨hzeta, hre, hre1⟩]
-    rw [riemannXiZeroMultiplicity_eq_riemannZetaZeroMultiplicity_of_zero hs]
+    rw [zeroMultiplicity_eq_zetaMultiplicity_of_zero hs]
   · rw [ite_eq_right hs]
     positivity
 
@@ -243,8 +242,7 @@ theorem summable_riemannXiZeroMultiplicityWeight : Summable riemannXiZeroMultipl
       (fun s => by
         unfold riemannXiZeroMultiplicityWeight
         split <;> positivity)
-      riemannXiZeroMultiplicityWeight_le_nontrivialZetaZeroMultiplicityWeightFull
-      RiemannZeta.summable_nontrivialZetaZeroMultiplicityWeightFull
+      zeroWeight_le_zetaFullWeight RiemannZeta.summable_nontrivialZeroWeightFull
 
 /-- For a complex `s`, assign its xi-zero multiplicity divided by `1 + ‖s‖²` at zeros,
 and zero elsewhere. The denominator is everywhere positive. This radial multiplicity weight
@@ -255,7 +253,7 @@ noncomputable def riemannXiZeroMultiplicityNormWeight (s : ℂ) : ℝ :=
 /-- For every complex `s`, the radial multiplicity weight is at most the vertical one.
 At a zero, compare the positive denominators using `(Im s)² ≤ ‖s‖²` and the nonnegative
 multiplicity; elsewhere both vanish. This transfers summability to the radial weight. -/
-theorem riemannXiZeroMultiplicityNormWeight_le_riemannXiZeroMultiplicityWeight (s : ℂ) :
+theorem zeroNormWeight_le_zeroWeight (s : ℂ) :
     riemannXiZeroMultiplicityNormWeight s ≤ riemannXiZeroMultiplicityWeight s := by
   unfold riemannXiZeroMultiplicityNormWeight riemannXiZeroMultiplicityWeight
   by_cases hs : riemannXi s = 0
@@ -275,7 +273,6 @@ theorem summable_riemannXiZeroMultiplicityNormWeight :
       (fun s => by
         unfold riemannXiZeroMultiplicityNormWeight
         split <;> positivity)
-      riemannXiZeroMultiplicityNormWeight_le_riemannXiZeroMultiplicityWeight
-      summable_riemannXiZeroMultiplicityWeight
+      zeroNormWeight_le_zeroWeight summable_riemannXiZeroMultiplicityWeight
 
 end PseudoPrime.AnalyticNumberTheory.RiemannXi

@@ -19,14 +19,14 @@ namespace PseudoPrime.LLS.PaperStatements
 reflected digamma difference with the series of weighted reciprocal differences.
 Reflect the existing positive-height exchange through measure-preserving negation.
 This retains signs for the left-contour Gamma contribution. -/
-theorem integral_quadratic_weight_reflected_digamma_sub_eq_tsum {A b : ℝ} (hb : 0 < b) (W : ℝ → ℂ)
-    (hW : Continuous W) (hbound : ∀ t : ℝ, ‖W t‖ ≤ A / (1 + t ^ 2)) :
+theorem quadratic_reflected_digamma_eq_tsum {A b : ℝ} (hb : 0 < b) (W : ℝ → ℂ) (hW : Continuous W)
+    (hbound : ∀ t : ℝ, ‖W t‖ ≤ A / (1 + t ^ 2)) :
     (∫ t : ℝ, (Complex.digamma ((b : ℂ) - Complex.I * (t / 2)) - Complex.digamma (b : ℂ)) * W t) =
       ∑' n : ℕ,
         ∫ t : ℝ, (1 / ((b + n : ℝ) : ℂ) - 1 / (((b + n : ℝ) : ℂ) - Complex.I * (t / 2))) * W t := by
   have he :=
-    integral_quadratic_weight_digamma_vertical_sub_eq_tsum hb (fun t ↦ W (-t))
-      (hW.comp continuous_neg) (fun t ↦ by simpa only [neg_sq] using hbound (-t))
+    quadratic_digamma_integral_eq_tsum hb (fun t ↦ W (-t)) (hW.comp continuous_neg)
+      (fun t ↦ by simpa only [neg_sq] using hbound (-t))
   have hI :=
     MeasureTheory.integral_neg_eq_self
       (fun t : ℝ ↦
@@ -46,7 +46,7 @@ theorem integral_quadratic_weight_reflected_digamma_sub_eq_tsum {A b : ℝ} (hb 
 reflected digamma difference is integrable. Reflect the term estimates and use summable
 integral norms to prove integrability of the pointwise complex series.
 No separate first-moment or convergence premise is imposed on the weight. -/
-theorem integrable_quadratic_weight_reflected_digamma_sub {A b : ℝ} (hb : 0 < b) (W : ℝ → ℂ)
+theorem integrable_quadratic_reflected_digamma {A b : ℝ} (hb : 0 < b) (W : ℝ → ℂ)
     (hW : Continuous W) (hbound : ∀ t : ℝ, ‖W t‖ ≤ A / (1 + t ^ 2)) :
     MeasureTheory.Integrable
       (fun t : ℝ ↦
@@ -58,10 +58,10 @@ theorem integrable_quadratic_weight_reflected_digamma_sub {A b : ℝ} (hb : 0 < 
   have hv (t : ℝ) : ‖V t‖ ≤ A / (1 + t ^ 2) := by simpa only [V, neg_sq] using hbound (-t)
   have hi (n : ℕ) : MeasureTheory.Integrable (F n) := by
     have h :=
-      (quadratic_weight_vertical_resolvent_integral_bound
-          (add_pos_of_pos_of_nonneg hb (Nat.cast_nonneg n)) V hV hv).1.comp_neg
+      (quadratic_resolvent_integral_bound (add_pos_of_pos_of_nonneg hb (Nat.cast_nonneg n)) V hV
+          hv).1.comp_neg
     simpa only [F, V, neg_div, Complex.ofReal_neg, mul_neg, neg_neg, ← sub_eq_add_neg] using h
-  have hs0 := (summable_quadratic_weight_resolvent_integral_norm hb V hV hv).mul_left (2 * Real.pi)
+  have hs0 := (summable_quadratic_resolvent_norm hb V hV hv).mul_left (2 * Real.pi)
   simp only [mul_div_cancel₀ _ (mul_pos (by norm_num only : (0 : ℝ) < 2) Real.pi_pos).ne'] at hs0
   have hs : Summable (fun n : ℕ ↦ ∫ t : ℝ, ‖F n t‖) := by
     apply hs0.congr
@@ -87,7 +87,7 @@ theorem integrable_quadratic_weight_reflected_digamma_sub {A b : ℝ} (hb : 0 < 
     simp only [Complex.ofReal_add, Complex.ofReal_natCast]
     ring
   exact
-    (AnalyticNumberTheory.General.integrable_complex_tsum_of_summable_integral_norm hi hs).congr
+    (AnalyticNumberTheory.General.integrable_complex_tsum_of_integral_norm hi hs).congr
       (MeasureTheory.ae_of_all _ (fun t ↦ (he t).symm))
 
 /-- For positive gap and digamma base, a line between the poles and x>=1, evaluate the
@@ -109,8 +109,8 @@ theorem reciprocalGap_reflected_difference_integral {h c b x : ℝ} (hh : 0 < h)
     MeasureTheory.Integrable
       (fun t : ℝ ↦ (1 / (b : ℂ) - 1 / ((b : ℂ) - Complex.I * (t / 2))) * W t) := by
     have h :=
-      (quadratic_weight_vertical_resolvent_integral_bound hb (fun t ↦ W (-t))
-          (hW.comp continuous_neg) (fun t ↦ by simpa only [neg_sq] using hA (-t))).1.comp_neg
+      (quadratic_resolvent_integral_bound hb (fun t ↦ W (-t)) (hW.comp continuous_neg)
+          (fun t ↦ by simpa only [neg_sq] using hA (-t))).1.comp_neg
     simpa only [neg_div, Complex.ofReal_neg, mul_neg, neg_neg, ← sub_eq_add_neg] using h
   have hiR : MeasureTheory.Integrable (fun t : ℝ ↦ (1 / ((b : ℂ) - Complex.I * (t / 2))) * W t) :=
     ((hiW.const_mul (1 / (b : ℂ))).sub hiD).congr
@@ -155,7 +155,7 @@ theorem reciprocalGap_reflected_digamma_sub_integral {h c b x : ℝ} (hh : 0 < h
         (Complex.digamma ((b + (c + (1 / 2 + h)) / 2 : ℝ) : ℂ) - Complex.digamma (b : ℂ)) := by
   have hx0 := zero_lt_one.trans_le hx
   obtain ⟨A, hA⟩ := norm_reciprocalGapMiddleWeight_quadratic hcl hcu hx0
-  rw [integral_quadratic_weight_reflected_digamma_sub_eq_tsum hb (reciprocalGapMiddleWeight h c x)
+  rw [quadratic_reflected_digamma_eq_tsum hb (reciprocalGapMiddleWeight h c x)
       (continuous_reciprocalGapMiddleWeight hcl hcu hx0) hA,
     ← tsum_mul_left]
   have ht : 0 < (((b + (c + (1 / 2 + h)) / 2 : ℝ) : ℂ)).re := by
@@ -190,8 +190,8 @@ theorem reciprocalGap_reflected_digamma_integral {h c b x : ℝ} (hh : 0 < h) (h
   have hiW := integrable_reciprocalGapMiddleWeight hcl hcu hx0
   obtain ⟨A, hA⟩ := norm_reciprocalGapMiddleWeight_quadratic hcl hcu hx0
   have hiD :=
-    integrable_quadratic_weight_reflected_digamma_sub hb W
-      (continuous_reciprocalGapMiddleWeight hcl hcu hx0) hA
+    integrable_quadratic_reflected_digamma hb W (continuous_reciprocalGapMiddleWeight hcl hcu hx0)
+      hA
   have he (t : ℝ) :
     Complex.digamma ((b : ℂ) - Complex.I * (t / 2)) * W t =
       (Complex.digamma ((b : ℂ) - Complex.I * (t / 2)) - Complex.digamma (b : ℂ)) * W t +
@@ -220,7 +220,7 @@ theorem integrable_reciprocalGap_reflected_digamma {h c b x : ℝ} (hcl : -1 / 2
         Complex.digamma ((b : ℂ) - Complex.I * (t / 2)) * reciprocalGapMiddleWeight h c x t) := by
   obtain ⟨A, hA⟩ := norm_reciprocalGapMiddleWeight_quadratic hcl hcu hx
   have hD :=
-    integrable_quadratic_weight_reflected_digamma_sub hb (reciprocalGapMiddleWeight h c x)
+    integrable_quadratic_reflected_digamma hb (reciprocalGapMiddleWeight h c x)
       (continuous_reciprocalGapMiddleWeight hcl hcu hx) hA
   exact
     (hD.add

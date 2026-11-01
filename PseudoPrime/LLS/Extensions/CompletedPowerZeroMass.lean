@@ -23,14 +23,14 @@ namespace PseudoPrime.LLS.Extensions.GeneralLFunction
 for every exponent p > 1. Choose growth exponent (1+p)/2 and apply the dyadic Jensen bound.
 For 1 < p < 2 this is stronger than inverse-square convergence and provides
 the power-weighted majorants used in vertical integral estimates. -/
-theorem summable_regularPowerZeroWeight_of_admissible (f : GeneralLFunction) (hf : f.IsAdmissible)
+theorem summable_regularZeroWeight_of_admissible_RH (f : GeneralLFunction) (hf : f.IsAdmissible)
     (hRH : f.RiemannHypothesis) {p : ℝ} (hp : 1 < p) :
     Summable (AnalyticNumberTheory.General.regularPowerZeroWeight f.completed p) := by
   have hF : Differentiable ℂ f.completed := hf.2.2.2.2.2.2.2.1
   have h0 : f.completed 0 ≠ 0 :=
     completed_ne_zero_of_re_ne_half hRH (by norm_num only [Complex.zero_re])
   obtain ⟨C, hC, hg⟩ :=
-    AnalyticNumberTheory.General.exists_global_exponential_bound_of_orderAtMostOne hF.continuous
+    AnalyticNumberTheory.General.exists_exp_bound_of_orderAtMostOne hF.continuous
       hf.2.2.2.2.2.2.2.2.1 (show (1 : ℝ) < (1 + p) / 2 by linarith only [hp])
   exact
     AnalyticNumberTheory.General.summable_regularPowerZeroWeight hF h0 hC (by linarith only [hp])
@@ -46,7 +46,7 @@ theorem summable_shifted_power_mass_of_admissible (f : GeneralLFunction) (hf : f
       (fun ρ : f.Zero ↦
         (analyticOrderNatAt f.completed (ρ : ℂ) : ℝ) / ‖(ρ : ℂ) - (σ : ℂ)‖ ^ p) := by
   have hs :=
-    (summable_regularPowerZeroWeight_of_admissible f hf hRH hp).subtype {z : ℂ | f.completed z = 0}
+    (summable_regularZeroWeight_of_admissible_RH f hf hRH hp).subtype {z : ℂ | f.completed z = 0}
   change
     Summable
       (fun ρ : f.Zero ↦

@@ -24,8 +24,8 @@ Claim: the predicate records a fixed-multiple power-sum block with its exponent 
 bound.
 Role: names the output type used by the rectangle-level zero-detection theorem.
 -/
-def CompletedLFunctionLocalZeroPowerSumBlockData {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
-    (c : ℂ) (η : ℝ) (ρ : ℂ) (K C : ℕ) : Prop :=
+def LocalPowerSumBlock {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (c : ℂ) (η : ℝ) (ρ : ℂ)
+    (K C : ℕ) : Prop :=
   ∃ s : Finset ℂ,
     (∀ v,
         v ∈ s ↔
@@ -69,29 +69,28 @@ Proof: identify the block's support with the finite divisor support and replace 
 the corresponding finite sum.
 Role: puts the local power-sum lower bound in the form used by the logarithmic-derivative split.
 -/
-theorem exists_completedLFunction_local_zero_block_on_finite_support {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {η : ℝ} {c ρ : ℂ} (K C : ℕ)
-    (hblock : CompletedLFunctionLocalZeroPowerSumBlockData χ c η ρ K C) :
+theorem localBlock_support {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {η : ℝ}
+    {c ρ : ℂ} (K C : ℕ) (hblock : LocalPowerSumBlock χ c η ρ K C) :
     0 <
-        ∑ v ∈ (completedLFunction_local_zero_support_finite χ hχ c (80 * η)).toFinset,
+        ∑ v ∈ (completedSupport_fin χ hχ c (80 * η)).toFinset,
           (MeromorphicOn.divisor χ.completedLFunction (Metric.ball c |80 * η|) v).toNat ∧
       ∃ m : ℕ,
         K ≤ m ∧
           m ≤ K * C ∧
           1 /
                 (4 *
-                  ((∑ v ∈ (completedLFunction_local_zero_support_finite χ hχ c (80 * η)).toFinset,
+                  ((∑ v ∈ (completedSupport_fin χ hχ c (80 * η)).toFinset,
                         (MeromorphicOn.divisor χ.completedLFunction (Metric.ball c |80 * η|)
                             v).toNat :
                       ℕ) :
                     ℝ)) *
               (1 / (3 * η)) ^ m ≤
-            ‖∑ v ∈ (completedLFunction_local_zero_support_finite χ hχ c (80 * η)).toFinset,
+            ‖∑ v ∈ (completedSupport_fin χ hχ c (80 * η)).toFinset,
                 ((MeromorphicOn.divisor χ.completedLFunction (Metric.ball c |80 * η|) v : ℤ) : ℂ) *
                   (c - v)⁻¹ ^ m‖ := by
   classical
   rcases hblock with ⟨s, hs, hρs, hmem, k, hk, hK, hKC, hlower⟩
-  let hfinite := completedLFunction_local_zero_support_finite χ hχ c (80 * η)
+  let hfinite := completedSupport_fin χ hχ c (80 * η)
   let S := hfinite.toFinset
   have hsS : s = S := by
     ext v
@@ -148,13 +147,13 @@ Proof: rewrite the negative integer power as a natural power of the reciprocal, 
 constant out of the finite sum.
 Role: converts the local power-sum block into the local contribution to the derivative split.
 -/
-theorem completedLFunction_local_divisor_power_sum_factorization {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ} (R : ℝ) (n : ℕ) :
-    (∑ v ∈ (completedLFunction_local_zero_support_finite χ hχ c R).toFinset,
+theorem localPower_factorial {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ}
+    (R : ℝ) (n : ℕ) :
+    (∑ v ∈ (completedSupport_fin χ hχ c R).toFinset,
         (MeromorphicOn.divisor χ.completedLFunction (Metric.ball c |R|) v : ℂ) *
           ((-1 : ℂ) ^ n * (n.factorial : ℂ) * (c - v) ^ (-1 - (n : ℕ) : ℤ))) =
       ((-1 : ℂ) ^ n * (n.factorial : ℂ)) *
-        ∑ v ∈ (completedLFunction_local_zero_support_finite χ hχ c R).toFinset,
+        ∑ v ∈ (completedSupport_fin χ hχ c R).toFinset,
           (MeromorphicOn.divisor χ.completedLFunction (Metric.ball c |R|) v : ℂ) *
             (c - v)⁻¹ ^ (n + 1) := by
   classical
@@ -179,9 +178,9 @@ bound to the local fixed-multiple power-sum theorem.
 
 Role: joins local zero detection to the unconditional multiplicity-counting interface.
 -/
-theorem exists_completedLFunction_local_zero_power_sum_block_of_near_of_rectangle {q : ℕ} [NeZero q]
-    (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1)
-    {c : ℂ} {η : ℝ} (hη : 0 < η) (hc : DirichletCharacter.completedLFunction χ c ≠ 0) (ρ : ℂ)
+theorem localBlock_rectangle {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {c : ℂ} {η : ℝ} (hη : 0 < η)
+    (hc : DirichletCharacter.completedLFunction χ c ≠ 0) (ρ : ℂ)
     (hρ :
       MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) (Metric.ball c |80 * η|) ρ ≠
         0)
@@ -191,29 +190,18 @@ theorem exists_completedLFunction_local_zero_power_sum_block_of_near_of_rectangl
         v ∈
           (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
               (Metric.ball c |80 * η|)).support,
-        v ∈ dirichletCompletedLFunctionRectangleBox z w)
+        v ∈ completedRectangleBox z w)
     {θ t : ℝ} (hθ : 0 < θ) (hθle : θ ≤ 1 / 2)
-    (hRectangle :
-      ∀ u ∈ dirichletCompletedLFunctionRectangleBox z w,
-        ‖u - ((1 : ℂ) + (t : ℂ) * Complex.I)‖ ≤ θ / 4) :
+    (hRectangle : ∀ u ∈ completedRectangleBox z w, ‖u - ((1 : ℂ) + (t : ℂ) * Complex.I)‖ ≤ θ / 4) :
     ∃ C : ℕ,
-      completedZeroMultiplicityCountInRectangle χ hχ z w ≤ (C : ℝ) ∧
-        CompletedLFunctionLocalZeroPowerSumBlockData χ c η ρ K C ∧
-        C =
-          Nat.ceil
-            (completedZeroLocalLogBoundConstant * (1 + θ * Real.log ((q : ℝ) * (|t| + 3)))) := by
-  let B := completedZeroLocalLogBoundConstant * (1 + θ * Real.log ((q : ℝ) * (|t| + 3)))
+      completedMultiplicityCount χ hχ z w ≤ (C : ℝ) ∧
+        LocalPowerSumBlock χ c η ρ K C ∧
+        C = Nat.ceil (localLogConstant * (1 + θ * Real.log ((q : ℝ) * (|t| + 3)))) := by
+  let B := localLogConstant * (1 + θ * Real.log ((q : ℝ) * (|t| + 3)))
   let C : ℕ := Nat.ceil B
-  have hcount :=
-    completedZeroMultiplicityCountInRectangle_le_nat_ceil_uniform_local_log_bound hq hχ hp hinv hθ
-      hθle z w hRectangle
-  have hcount' : completedZeroMultiplicityCountInRectangle χ hχ z w ≤ (C : ℝ) := by
-    simpa only [C, B] using hcount
-  exact
-    ⟨C, hcount',
-      exists_completedLFunction_local_zero_power_sum_fixed_multiple_block_of_near χ hχ hη hc ρ hρ
-        hclose K z w hSupport C hcount',
-      by rfl⟩
+  have hcount := rectMass_localCeil_le hq hχ hp hinv hθ hθle z w hRectangle
+  have hcount' : completedMultiplicityCount χ hχ z w ≤ (C : ℝ) := by simpa only [C, B] using hcount
+  exact ⟨C, hcount', completed_fixedBlock χ hχ hη hc ρ hρ hclose K z w hSupport C hcount', by rfl⟩
 
 /--
 Inputs: a primitive completed-function zero within horizontal distance `η` of `1`, a nonzero
@@ -227,21 +215,17 @@ Proof: obtain the zero's divisor membership, use the centered-square support bou
 rectangle-level theorem with localization parameter `644η`.
 Role: connects each near-one zero to a block whose cost is controlled by the uniform local count.
 -/
-theorem exists_completedLFunction_local_zero_power_sum_block_of_near_one_zero {q : ℕ} [NeZero q]
-    (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1)
-    {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 1288) {c ρ : ℂ} (hcre : c.re = 1 + η)
-    (hcim : c.im = ρ.im) (hρre : |ρ.re - 1| ≤ η)
+theorem localBlock_nearOne {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1)
+    (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 1288) {c ρ : ℂ}
+    (hcre : c.re = 1 + η) (hcim : c.im = ρ.im) (hρre : |ρ.re - 1| ≤ η)
     (hzero : DirichletCharacter.completedLFunction χ ρ = 0)
     (hc : DirichletCharacter.completedLFunction χ c ≠ 0) (K : ℕ) :
     ∃ C : ℕ,
-      completedZeroMultiplicityCountInRectangle χ hχ ⟨c.re - 80 * η, c.im - 80 * η⟩
+      completedMultiplicityCount χ hχ ⟨c.re - 80 * η, c.im - 80 * η⟩
             ⟨c.re + 80 * η, c.im + 80 * η⟩ ≤
           (C : ℝ) ∧
-        CompletedLFunctionLocalZeroPowerSumBlockData χ c η ρ K C ∧
-        C =
-          Nat.ceil
-            (completedZeroLocalLogBoundConstant *
-              (1 + 644 * η * Real.log ((q : ℝ) * (|ρ.im| + 3)))) := by
+        LocalPowerSumBlock χ c η ρ K C ∧
+        C = Nat.ceil (localLogConstant * (1 + 644 * η * Real.log ((q : ℝ) * (|ρ.im| + 3)))) := by
   have hreal : |c.re - ρ.re| ≤ 2 * η := by
     rw [hcre]
     have h := abs_le.mp hρre
@@ -263,7 +247,7 @@ theorem exists_completedLFunction_local_zero_power_sum_block_of_near_one_zero {q
       ‖ρ - c‖ = ‖c - ρ‖ := norm_sub_rev _ _
       _ ≤ 2 * η := hdist
       _ < 80 * η := by nlinarith only [hη]
-  have hρ := completedLFunction_zero_mem_local_divisor_support χ hχ hball hzero
+  have hρ := zero_mem_localSupport χ hχ hball hzero
   let z : ℂ := ⟨c.re - 80 * η, c.im - 80 * η⟩
   let w : ℂ := ⟨c.re + 80 * η, c.im + 80 * η⟩
   have hSupport :
@@ -271,7 +255,7 @@ theorem exists_completedLFunction_local_zero_power_sum_block_of_near_one_zero {q
       v ∈
         (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
             (Metric.ball c |80 * η|)).support,
-      v ∈ dirichletCompletedLFunctionRectangleBox z w := by
+      v ∈ completedRectangleBox z w := by
     intro v hv
     have hR : 0 < 80 * η := mul_pos (by norm_num) hη
     have hv'' := hv
@@ -281,15 +265,14 @@ theorem exists_completedLFunction_local_zero_power_sum_block_of_near_one_zero {q
         (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
             (Metric.ball c (80 * η))).support := by
       exact hv''
-    have hsquare := completedLFunction_local_divisor_support_mem_centered_square χ c hR hv'
+    have hsquare := localSupport_square χ c hR hv'
     simpa only [z, w] using hsquare
   have hθ : 0 < 644 * η := by positivity
   have hθle : 644 * η ≤ 1 / 2 := by
     have := hηsmall
     nlinarith only [this]
   have hRectangle :
-    ∀ u ∈ dirichletCompletedLFunctionRectangleBox z w,
-      ‖u - ((1 : ℂ) + (ρ.im : ℂ) * Complex.I)‖ ≤ (644 * η) / 4 := by
+    ∀ u ∈ completedRectangleBox z w, ‖u - ((1 : ℂ) + (ρ.im : ℂ) * Complex.I)‖ ≤ (644 * η) / 4 := by
     intro u hu
     change
       u.re ∈ Set.uIcc (c.re - 80 * η) (c.re + 80 * η) ∧
@@ -325,8 +308,7 @@ theorem exists_completedLFunction_local_zero_power_sum_block_of_near_one_zero {q
       _ = (644 * η) / 4 := by ring
   have hηpositive : 0 < η := hη
   exact
-    exists_completedLFunction_local_zero_power_sum_block_of_near_of_rectangle hq hχ hp hinv
-      hηpositive hc ρ hρ hclose K z w hSupport hθ hθle hRectangle
+    localBlock_rectangle hq hχ hp hinv hηpositive hc ρ hρ hclose K z w hSupport hθ hθle hRectangle
 
 /--
 Inputs: a near-one completed-function zero, a nonzero center at real part `1 + η`, and a small
@@ -337,17 +319,17 @@ Proof: obtain the rectangle count cap, choose a uniform remote-tail threshold fr
 bound, and apply the local block theorem at that threshold.
 Role: aligns the local zero signal and the unconditional remote contribution on one order range.
 -/
-theorem exists_completedLFunction_local_zero_block_with_remote_tail {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {η : ℝ}
-    (hη : 0 < η) (hηsmall : η ≤ 1 / 1288) {c ρ : ℂ} (hcre : c.re = 1 + η) (hcim : c.im = ρ.im)
-    (hρre : |ρ.re - 1| ≤ η) (hzero : DirichletCharacter.completedLFunction χ ρ = 0)
+theorem localBlock_remoteSucc {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 1288)
+    {c ρ : ℂ} (hcre : c.re = 1 + η) (hcim : c.im = ρ.im) (hρre : |ρ.re - 1| ≤ η)
+    (hzero : DirichletCharacter.completedLFunction χ ρ = 0)
     (hc : DirichletCharacter.completedLFunction χ c ≠ 0) :
     ∃ C K : ℕ,
       2 ≤ K ∧
-        completedZeroMultiplicityCountInRectangle χ hχ ⟨c.re - 80 * η, c.im - 80 * η⟩
+        completedMultiplicityCount χ hχ ⟨c.re - 80 * η, c.im - 80 * η⟩
             ⟨c.re + 80 * η, c.im + 80 * η⟩ ≤
           (C : ℝ) ∧
-        CompletedLFunctionLocalZeroPowerSumBlockData χ c η ρ K C ∧
+        LocalPowerSumBlock χ c η ρ K C ∧
         ∀ k : ℕ,
           K ≤ k →
             ‖∑' v : ℂ,
@@ -359,9 +341,7 @@ theorem exists_completedLFunction_local_zero_block_with_remote_tail {q : ℕ} [N
                     (if 80 * η ≤ ‖c - v‖ then (c - v)⁻¹ else 0) ^ k‖ ≤
               (1 / (8 * ((C : ℝ) + 1))) * (1 / (3 * η)) ^ (k + 1) := by
   classical
-  obtain ⟨C, hcount, _⟩ :=
-    exists_completedLFunction_local_zero_power_sum_block_of_near_one_zero hq hχ hp hinv hη hηsmall
-      hcre hcim hρre hzero hc 2
+  obtain ⟨C, hcount, _⟩ := localBlock_nearOne hq hχ hp hinv hη hηsmall hcre hcim hρre hzero hc 2
   have hreal : |c.re - ρ.re| ≤ 2 * η := by
     rw [hcre]
     have h := abs_le.mp hρre
@@ -383,7 +363,7 @@ theorem exists_completedLFunction_local_zero_block_with_remote_tail {q : ℕ} [N
       ‖ρ - c‖ = ‖c - ρ‖ := norm_sub_rev _ _
       _ ≤ 2 * η := hdist
       _ < 80 * η := by nlinarith only [hη]
-  have hρ := completedLFunction_zero_mem_local_divisor_support χ hχ hball hzero
+  have hρ := zero_mem_localSupport χ hχ hball hzero
   let z : ℂ := ⟨c.re - 80 * η, c.im - 80 * η⟩
   let w : ℂ := ⟨c.re + 80 * η, c.im + 80 * η⟩
   have hSupport :
@@ -391,12 +371,12 @@ theorem exists_completedLFunction_local_zero_block_with_remote_tail {q : ℕ} [N
       v ∈
         (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
             (Metric.ball c |80 * η|)).support,
-      v ∈ dirichletCompletedLFunctionRectangleBox z w := by
+      v ∈ completedRectangleBox z w := by
     intro v hv
     have hR : 0 < 80 * η := mul_pos (by norm_num) hη
     have hv' := hv
     rw [abs_of_pos hR] at hv'
-    have hsquare := completedLFunction_local_divisor_support_mem_centered_square χ c hR hv'
+    have hsquare := localSupport_square χ c hR hv'
     simpa only [z, w] using hsquare
   have hcenter : c = ((1 + η : ℝ) : ℂ) + Complex.I * ρ.im := by
     apply Complex.ext
@@ -415,11 +395,8 @@ theorem exists_completedLFunction_local_zero_block_with_remote_tail {q : ℕ} [N
     exact le_trans hηscale hv'
   have hN : 0 < (C : ℝ) + 1 := by positivity
   obtain ⟨A, B, hA, hB, K, _, hK, htail⟩ :=
-    exists_k_completed_genus_remote_reciprocal_power_le_uniform_half_near_scale hq hχ hp hinv S hη
-      (by nlinarith only [hηsmall]) ρ.im hN 2 hremote
-  have hblock :=
-    exists_completedLFunction_local_zero_power_sum_fixed_multiple_block_of_near χ hχ hη hc ρ hρ
-      hclose K z w hSupport C hcount
+    exists_uniformSuccSum hq hχ hp hinv S hη (by nlinarith only [hηsmall]) ρ.im hN 2 hremote
+  have hblock := completed_fixedBlock χ hχ hη hc ρ hρ hclose K z w hSupport C hcount
   refine ⟨C, K, hK, hcount, hblock, ?_⟩
   intro k hk
   simpa only [hcenter, S, Set.mem_ofPred_eq] using htail k hk
@@ -435,28 +412,27 @@ threshold.
 Role: aligns the local zero signal and remote contribution while preserving a quantitative order
 bound for downstream derivative detection.
 -/
-theorem exists_completedLFunction_local_zero_block_with_remote_tail_matching_scale {q : ℕ}
-    [NeZero q] {χ : DirichletCharacter ℂ q} (hq : 2 ≤ q) (hχ : χ ≠ 1) (hp : χ.IsPrimitive)
-    (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 1288) (Kmin : ℕ) (hKmin : 2 ≤ Kmin)
-    {c ρ : ℂ} (hcre : c.re = 1 + η) (hcim : c.im = ρ.im) (hρre : |ρ.re - 1| ≤ η)
-    (hzero : DirichletCharacter.completedLFunction χ ρ = 0)
+theorem localBlock_remoteSame {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hq : 2 ≤ q)
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 1288)
+    (Kmin : ℕ) (hKmin : 2 ≤ Kmin) {c ρ : ℂ} (hcre : c.re = 1 + η) (hcim : c.im = ρ.im)
+    (hρre : |ρ.re - 1| ≤ η) (hzero : DirichletCharacter.completedLFunction χ ρ = 0)
     (hc : DirichletCharacter.completedLFunction χ c ≠ 0) :
     ∃ A B : ℝ,
       0 < A ∧
         0 < B ∧
         ∃ C K : ℕ,
           Kmin ≤ K ∧
-            K ≤ completedGenusRemoteTailUniformCutoff q η ρ.im ((C : ℝ) + 1) Kmin ∧
+            K ≤ uniformRemoteCutoff q η ρ.im ((C : ℝ) + 1) Kmin ∧
             2 ≤ K ∧
-            completedZeroMultiplicityCountInRectangle χ hχ ⟨c.re - 80 * η, c.im - 80 * η⟩
+            completedMultiplicityCount χ hχ ⟨c.re - 80 * η, c.im - 80 * η⟩
                 ⟨c.re + 80 * η, c.im + 80 * η⟩ ≤
               (C : ℝ) ∧
-            ((∑ v ∈ (completedLFunction_local_zero_support_finite χ hχ c (80 * η)).toFinset,
+            ((∑ v ∈ (completedSupport_fin χ hχ c (80 * η)).toFinset,
                     (MeromorphicOn.divisor χ.completedLFunction (Metric.ball c |80 * η|) v).toNat :
                   ℕ) :
                 ℝ) ≤
               (C : ℝ) ∧
-            CompletedLFunctionLocalZeroPowerSumBlockData χ c η ρ K C ∧
+            LocalPowerSumBlock χ c η ρ K C ∧
             (∀ k : ℕ,
               K ≤ k →
                 ‖∑' v : ℂ,
@@ -468,13 +444,10 @@ theorem exists_completedLFunction_local_zero_block_with_remote_tail_matching_sca
                         (if 80 * η ≤ ‖c - v‖ then (c - v)⁻¹ else 0) ^ k‖ ≤
                   (1 / (8 * ((C : ℝ) + 1))) * (1 / (3 * η)) ^ k) ∧
             C =
-              Nat.ceil
-                (completedZeroLocalLogBoundConstant *
-                  (1 + 644 * η * Real.log ((q : ℝ) * (|ρ.im| + 3)))) := by
+              Nat.ceil (localLogConstant * (1 + 644 * η * Real.log ((q : ℝ) * (|ρ.im| + 3)))) := by
   classical
   obtain ⟨C, hcount, hblockInfo⟩ :=
-    exists_completedLFunction_local_zero_power_sum_block_of_near_one_zero hq hχ hp hinv hη hηsmall
-      hcre hcim hρre hzero hc 2
+    localBlock_nearOne hq hχ hp hinv hη hηsmall hcre hcim hρre hzero hc 2
   obtain ⟨_, hCeq⟩ := hblockInfo
   have hreal : |c.re - ρ.re| ≤ 2 * η := by
     rw [hcre]
@@ -497,7 +470,7 @@ theorem exists_completedLFunction_local_zero_block_with_remote_tail_matching_sca
       ‖ρ - c‖ = ‖c - ρ‖ := norm_sub_rev _ _
       _ ≤ 2 * η := hdist
       _ < 80 * η := by nlinarith only [hη]
-  have hρ := completedLFunction_zero_mem_local_divisor_support χ hχ hball hzero
+  have hρ := zero_mem_localSupport χ hχ hball hzero
   let z : ℂ := ⟨c.re - 80 * η, c.im - 80 * η⟩
   let w : ℂ := ⟨c.re + 80 * η, c.im + 80 * η⟩
   have hSupport :
@@ -505,20 +478,19 @@ theorem exists_completedLFunction_local_zero_block_with_remote_tail_matching_sca
       v ∈
         (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
             (Metric.ball c |80 * η|)).support,
-      v ∈ dirichletCompletedLFunctionRectangleBox z w := by
+      v ∈ completedRectangleBox z w := by
     intro v hv
     have hR : 0 < 80 * η := mul_pos (by norm_num) hη
     have hv' := hv
     rw [abs_of_pos hR] at hv'
-    have hsquare := completedLFunction_local_divisor_support_mem_centered_square χ c hR hv'
+    have hsquare := localSupport_square χ c hR hv'
     simpa only [z, w] using hsquare
   have hθ : 0 < 644 * η := by positivity
   have hθle : 644 * η ≤ 1 / 2 := by
     have := hηsmall
     nlinarith only [this]
   have hRectangle :
-    ∀ u ∈ dirichletCompletedLFunctionRectangleBox z w,
-      ‖u - ((1 : ℂ) + (ρ.im : ℂ) * Complex.I)‖ ≤ (644 * η) / 4 := by
+    ∀ u ∈ completedRectangleBox z w, ‖u - ((1 : ℂ) + (ρ.im : ℂ) * Complex.I)‖ ≤ (644 * η) / 4 := by
     intro u hu
     change
       u.re ∈ Set.uIcc (c.re - 80 * η) (c.re + 80 * η) ∧
@@ -569,16 +541,12 @@ theorem exists_completedLFunction_local_zero_block_with_remote_tail_matching_sca
     exact le_trans hηscale hv'
   have hN : 0 < (C : ℝ) + 1 := by positivity
   obtain ⟨A, B, hA, hB, K, hKmin', hKupper, hK, htail⟩ :=
-    exists_k_completed_genus_remote_reciprocal_power_le_uniform_matching_scale hq hχ hp hinv S hη
-      (by nlinarith only [hηsmall]) ρ.im hN Kmin hKmin hremote
-  have hblock :=
-    exists_completedLFunction_local_zero_power_sum_fixed_multiple_block_of_near χ hχ hη hc ρ hρ
-      hclose K z w hSupport C hcount
-  have hlocalMass :=
-    completedLFunction_local_divisor_support_multiplicity_le_rectangle_count χ hχ c (80 * η) z w
-      hSupport
+    exists_uniformSameSum hq hχ hp hinv S hη (by nlinarith only [hηsmall]) ρ.im hN Kmin hKmin
+      hremote
+  have hblock := completed_fixedBlock χ hχ hη hc ρ hρ hclose K z w hSupport C hcount
+  have hlocalMass := localSupport_mass_le χ hχ c (80 * η) z w hSupport
   have hlocalMass' :
-    ((∑ v ∈ (completedLFunction_local_zero_support_finite χ hχ c (80 * η)).toFinset,
+    ((∑ v ∈ (completedSupport_fin χ hχ c (80 * η)).toFinset,
             (MeromorphicOn.divisor χ.completedLFunction (Metric.ball c |80 * η|) v).toNat :
           ℕ) :
         ℝ) ≤
@@ -597,10 +565,9 @@ Proof: convert the local block's finitely supported sum to the canonical divisor
 the remote estimate at the exponent selected by that block.
 Role: provides the common-order input for comparing the local zero signal with the remote zeros.
 -/
-theorem exists_completedLFunction_local_finite_power_sum_and_remote_tail_same_order {q : ℕ}
-    [NeZero q] {χ : DirichletCharacter ℂ q} (hq : 2 ≤ q) (hχ : χ ≠ 1) (hp : χ.IsPrimitive)
-    (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 1288) (Kmin : ℕ) (hKmin : 2 ≤ Kmin)
-    {c ρ : ℂ} (hcre : c.re = 1 + η) (hcim : c.im = ρ.im) (hρre : |ρ.re - 1| ≤ η)
+theorem localSum_remote_lt {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hq : 2 ≤ q) (hχ : χ ≠ 1)
+    (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 1288) (Kmin : ℕ)
+    (hKmin : 2 ≤ Kmin) {c ρ : ℂ} (hcre : c.re = 1 + η) (hcim : c.im = ρ.im) (hρre : |ρ.re - 1| ≤ η)
     (hzero : DirichletCharacter.completedLFunction χ ρ = 0)
     (hc : DirichletCharacter.completedLFunction χ c ≠ 0) :
     ∃ A B : ℝ,
@@ -608,15 +575,15 @@ theorem exists_completedLFunction_local_finite_power_sum_and_remote_tail_same_or
         0 < B ∧
         ∃ C K m : ℕ,
           Kmin ≤ K ∧
-            K ≤ completedGenusRemoteTailUniformCutoff q η ρ.im ((C : ℝ) + 1) Kmin ∧
+            K ≤ uniformRemoteCutoff q η ρ.im ((C : ℝ) + 1) Kmin ∧
             2 ≤ K ∧
-            completedZeroMultiplicityCountInRectangle χ hχ ⟨c.re - 80 * η, c.im - 80 * η⟩
+            completedMultiplicityCount χ hχ ⟨c.re - 80 * η, c.im - 80 * η⟩
                 ⟨c.re + 80 * η, c.im + 80 * η⟩ ≤
               (C : ℝ) ∧
             0 <
-              ∑ v ∈ (completedLFunction_local_zero_support_finite χ hχ c (80 * η)).toFinset,
+              ∑ v ∈ (completedSupport_fin χ hχ c (80 * η)).toFinset,
                 (MeromorphicOn.divisor χ.completedLFunction (Metric.ball c |80 * η|) v).toNat ∧
-            (∑ v ∈ (completedLFunction_local_zero_support_finite χ hχ c (80 * η)).toFinset,
+            (∑ v ∈ (completedSupport_fin χ hχ c (80 * η)).toFinset,
                 ((MeromorphicOn.divisor χ.completedLFunction (Metric.ball c |80 * η|) v).toNat :
                   ℝ)) ≤
               (C : ℝ) ∧
@@ -624,13 +591,13 @@ theorem exists_completedLFunction_local_finite_power_sum_and_remote_tail_same_or
             m ≤ K * C ∧
             (1 /
                   (4 *
-                    ((∑ v ∈ (completedLFunction_local_zero_support_finite χ hχ c (80 * η)).toFinset,
+                    ((∑ v ∈ (completedSupport_fin χ hχ c (80 * η)).toFinset,
                           (MeromorphicOn.divisor χ.completedLFunction (Metric.ball c |80 * η|)
                               v).toNat :
                         ℕ) :
                       ℝ)) *
                 (1 / (3 * η)) ^ m ≤
-              ‖∑ v ∈ (completedLFunction_local_zero_support_finite χ hχ c (80 * η)).toFinset,
+              ‖∑ v ∈ (completedSupport_fin χ hχ c (80 * η)).toFinset,
                   ((MeromorphicOn.divisor χ.completedLFunction (Metric.ball c |80 * η|) v : ℤ) :
                       ℂ) *
                     (c - v)⁻¹ ^ m‖) ∧
@@ -649,27 +616,23 @@ theorem exists_completedLFunction_local_finite_power_sum_and_remote_tail_same_or
                         ℝ) :
                       ℂ) *
                     (if 80 * η ≤ ‖c - v‖ then (c - v)⁻¹ else 0) ^ m‖ <
-              ‖∑ v ∈ (completedLFunction_local_zero_support_finite χ hχ c (80 * η)).toFinset,
+              ‖∑ v ∈ (completedSupport_fin χ hχ c (80 * η)).toFinset,
                   ((MeromorphicOn.divisor χ.completedLFunction (Metric.ball c |80 * η|) v : ℤ) :
                       ℂ) *
                     (c - v)⁻¹ ^ m‖ ∧
             C =
-              Nat.ceil
-                (completedZeroLocalLogBoundConstant *
-                  (1 + 644 * η * Real.log ((q : ℝ) * (|ρ.im| + 3)))) := by
+              Nat.ceil (localLogConstant * (1 + 644 * η * Real.log ((q : ℝ) * (|ρ.im| + 3)))) := by
   obtain ⟨A, B, hA, hB, C, K, hKmin', hKupper, hK, hcount, hlocalMass, hblockTail⟩ :=
-    exists_completedLFunction_local_zero_block_with_remote_tail_matching_scale hq hχ hp hinv hη
-      hηsmall Kmin hKmin hcre hcim hρre hzero hc
+    localBlock_remoteSame hq hχ hp hinv hη hηsmall Kmin hKmin hcre hcim hρre hzero hc
   obtain ⟨hblock, htail, hCeq⟩ := hblockTail
-  obtain ⟨hmasspos, m, hmK, hmKC, hlocal⟩ :=
-    exists_completedLFunction_local_zero_block_on_finite_support χ hχ K C hblock
+  obtain ⟨hmasspos, m, hmK, hmKC, hlocal⟩ := localBlock_support χ hχ K C hblock
   have hmass' :
-    (∑ v ∈ (completedLFunction_local_zero_support_finite χ hχ c (80 * η)).toFinset,
+    (∑ v ∈ (completedSupport_fin χ hχ c (80 * η)).toFinset,
         ((MeromorphicOn.divisor χ.completedLFunction (Metric.ball c |80 * η|) v).toNat : ℝ)) ≤
       (C : ℝ) := by
     simpa only [Nat.cast_sum] using hlocalMass
   let M :=
-    ∑ v ∈ (completedLFunction_local_zero_support_finite χ hχ c (80 * η)).toFinset,
+    ∑ v ∈ (completedSupport_fin χ hχ c (80 * η)).toFinset,
       (MeromorphicOn.divisor χ.completedLFunction (Metric.ball c |80 * η|) v).toNat
   have hMpos : 0 < (M : ℝ) := by exact_mod_cast (show 0 < M by simpa only [M] using hmasspos)
   have hMle : (M : ℝ) ≤ (C : ℝ) := by simpa only [M, Nat.cast_sum] using hmass'
@@ -684,7 +647,7 @@ theorem exists_completedLFunction_local_finite_power_sum_and_remote_tail_same_or
     mul_lt_mul_of_pos_right hcoeff (pow_pos hx m)
   have hlocal' :
     1 / (4 * (M : ℝ)) * (1 / (3 * η)) ^ m ≤
-      ‖∑ v ∈ (completedLFunction_local_zero_support_finite χ hχ c (80 * η)).toFinset,
+      ‖∑ v ∈ (completedSupport_fin χ hχ c (80 * η)).toFinset,
           ((MeromorphicOn.divisor χ.completedLFunction (Metric.ball c |80 * η|) v : ℤ) : ℂ) *
             (c - v)⁻¹ ^ m‖ := by
     simpa only [M] using hlocal
@@ -702,20 +665,19 @@ Proof: combine the local power-sum lower bound and remote-tail upper bound in th
 identity, then apply the reverse triangle inequality with the factorial coefficient retained.
 Role: supplies a quantitative completed logarithmic-derivative detector for later density work.
 -/
-theorem exists_completedLFunction_iteratedDerivWithin_logDeriv_lower_bound_near_one_zero {q : ℕ}
-    [NeZero q] {χ : DirichletCharacter ℂ q} (hq : 2 ≤ q) (hχ : χ ≠ 1) (hp : χ.IsPrimitive)
-    (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 1288) (Kmin : ℕ) (hKmin : 2 ≤ Kmin)
-    {c ρ : ℂ} (hcre : c.re = 1 + η) (hcim : c.im = ρ.im) (hρre : |ρ.re - 1| ≤ η)
-    (hzero : DirichletCharacter.completedLFunction χ ρ = 0)
+theorem completed_within_ge {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hq : 2 ≤ q)
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 1288)
+    (Kmin : ℕ) (hKmin : 2 ≤ Kmin) {c ρ : ℂ} (hcre : c.re = 1 + η) (hcim : c.im = ρ.im)
+    (hρre : |ρ.re - 1| ≤ η) (hzero : DirichletCharacter.completedLFunction χ ρ = 0)
     (hc : DirichletCharacter.completedLFunction χ c ≠ 0) :
     ∃ massConstA massConstB : ℝ,
       0 < massConstA ∧
         0 < massConstB ∧
         ∃ C K m n : ℕ,
           Kmin ≤ K ∧
-            K ≤ completedGenusRemoteTailUniformCutoff q η ρ.im ((C : ℝ) + 1) Kmin ∧
+            K ≤ uniformRemoteCutoff q η ρ.im ((C : ℝ) + 1) Kmin ∧
             2 ≤ K ∧
-            completedZeroMultiplicityCountInRectangle χ hχ ⟨c.re - 80 * η, c.im - 80 * η⟩
+            completedMultiplicityCount χ hχ ⟨c.re - 80 * η, c.im - 80 * η⟩
                 ⟨c.re + 80 * η, c.im + 80 * η⟩ ≤
               (C : ℝ) ∧
             0 < n ∧
@@ -726,14 +688,11 @@ theorem exists_completedLFunction_iteratedDerivWithin_logDeriv_lower_bound_near_
               ‖iteratedDerivWithin n (fun z : ℂ => logDeriv χ.completedLFunction z)
                   {z : ℂ | 1 < z.re} c‖ ∧
             C =
-              Nat.ceil
-                (completedZeroLocalLogBoundConstant *
-                  (1 + 644 * η * Real.log ((q : ℝ) * (|ρ.im| + 3)))) := by
+              Nat.ceil (localLogConstant * (1 + 644 * η * Real.log ((q : ℝ) * (|ρ.im| + 3)))) := by
   obtain
     ⟨massConstA, massConstB, hmassConstA, hmassConstB, C, K, m, hKmin', hKupper, hK, hcount,
       hmasspos, hmass, hmK, hmKC, hlocal, hremote, hgap, hCeq⟩ :=
-    exists_completedLFunction_local_finite_power_sum_and_remote_tail_same_order hq hχ hp hinv hη
-      hηsmall Kmin hKmin hcre hcim hρre hzero hc
+    localSum_remote_lt hq hχ hp hinv hη hηsmall Kmin hKmin hcre hcim hρre hzero hc
   have hmTwo : 2 ≤ m := le_trans hK hmK
   have hmPositive : 0 < m := by omega
   let n := m - 1
@@ -743,7 +702,7 @@ theorem exists_completedLFunction_iteratedDerivWithin_logDeriv_lower_bound_near_
     dsimp only [n]; omega
   have hcRight : 1 < c.re := by
     rw [hcre]; linarith only [hη]
-  let S := (completedLFunction_local_zero_support_finite χ hχ c (80 * η)).toFinset
+  let S := (completedSupport_fin χ hχ c (80 * η)).toFinset
   let A : ℂ := (-1 : ℂ) ^ n * (n.factorial : ℂ)
   let L : ℂ :=
     ∑ v ∈ S,
@@ -756,16 +715,13 @@ theorem exists_completedLFunction_iteratedDerivWithin_logDeriv_lower_bound_near_
             ℝ) :
           ℂ) *
         (if 80 * η ≤ ‖c - v‖ then (c - v)⁻¹ else 0) ^ m
-  have hsplit :=
-    iteratedDerivWithin_logDeriv_eq_local_divisor_sum_add_complement hq hχ hp hinv hcRight (80 * η)
-      n hn
+  have hsplit := logDeriv_local_tail hq hχ hp hinv hcRight (80 * η) n hn
   have hlocalFactor :
     (∑ v ∈ S,
         (MeromorphicOn.divisor χ.completedLFunction (Metric.ball c |80 * η|) v : ℂ) *
           ((-1 : ℂ) ^ n * (n.factorial : ℂ) * (c - v) ^ (-1 - (n : ℕ) : ℤ))) =
       A * L := by
-    have hfactor :=
-      completedLFunction_local_divisor_power_sum_factorization χ hχ (c := c) (80 * η) n
+    have hfactor := localPower_factorial χ hχ (c := c) (80 * η) n
     simpa only [S, A, L, hnm] using hfactor
   have hexp : (-1 : ℤ) - (n : ℤ) = Int.negSucc n := by
     rw [Int.negSucc_eq]
@@ -792,7 +748,7 @@ theorem exists_completedLFunction_iteratedDerivWithin_logDeriv_lower_bound_near_
             ∑' (v : { v : ℂ // v ∉ S }),
               (MeromorphicOn.divisor χ.completedLFunction Set.univ v : ℂ) * (c - v)⁻¹ ^ m :=
         tsum_mul_left
-  have hremoteEq := completedLFunction_local_support_complement_eq_remote_power_sum χ hχ c hη m
+  have hremoteEq := localTail_remoteSum χ hχ c hη m
   have hderiv :
     iteratedDerivWithin n (fun z : ℂ => logDeriv χ.completedLFunction z) {z : ℂ | 1 < z.re} c =
       A * (L + R) := by
@@ -834,7 +790,7 @@ theorem exists_completedLFunction_iteratedDerivWithin_logDeriv_lower_bound_near_
       A * L + A * R := by
     rw [hderiv]
     ring
-  have hderivLower := norm_derivative_lower_bound_of_zero_sum_decomposition hdecomp hlocal' herror
+  have hderivLower := derivNorm_from_sum hdecomp hlocal' herror
   have hboundEq :
     B * (n.factorial : ℝ) =
       ((1 / (4 * ((C : ℝ) + 1))) * (1 / (3 * η)) ^ m) * (n.factorial : ℝ) -
@@ -862,20 +818,19 @@ analyticity of the logarithmic derivative and uniqueness of derivatives on the o
 Role: exposes the quantitative zero detector in the ordinary derivative form needed by density
 estimates.
 -/
-theorem exists_completedLFunction_iteratedDeriv_logDeriv_lower_bound_near_one_zero {q : ℕ}
-    [NeZero q] {χ : DirichletCharacter ℂ q} (hq : 2 ≤ q) (hχ : χ ≠ 1) (hp : χ.IsPrimitive)
-    (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 1288) (Kmin : ℕ) (hKmin : 2 ≤ Kmin)
-    {c ρ : ℂ} (hcre : c.re = 1 + η) (hcim : c.im = ρ.im) (hρre : |ρ.re - 1| ≤ η)
-    (hzero : DirichletCharacter.completedLFunction χ ρ = 0)
+theorem completed_iter_lower {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hq : 2 ≤ q)
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 1288)
+    (Kmin : ℕ) (hKmin : 2 ≤ Kmin) {c ρ : ℂ} (hcre : c.re = 1 + η) (hcim : c.im = ρ.im)
+    (hρre : |ρ.re - 1| ≤ η) (hzero : DirichletCharacter.completedLFunction χ ρ = 0)
     (hc : DirichletCharacter.completedLFunction χ c ≠ 0) :
     ∃ massConstA massConstB : ℝ,
       0 < massConstA ∧
         0 < massConstB ∧
         ∃ C K m n : ℕ,
           Kmin ≤ K ∧
-            K ≤ completedGenusRemoteTailUniformCutoff q η ρ.im ((C : ℝ) + 1) Kmin ∧
+            K ≤ uniformRemoteCutoff q η ρ.im ((C : ℝ) + 1) Kmin ∧
             2 ≤ K ∧
-            completedZeroMultiplicityCountInRectangle χ hχ ⟨c.re - 80 * η, c.im - 80 * η⟩
+            completedMultiplicityCount χ hχ ⟨c.re - 80 * η, c.im - 80 * η⟩
                 ⟨c.re + 80 * η, c.im + 80 * η⟩ ≤
               (C : ℝ) ∧
             0 < n ∧
@@ -888,14 +843,11 @@ theorem exists_completedLFunction_iteratedDeriv_logDeriv_lower_bound_near_one_ze
                 ‖iteratedDeriv n (fun z : ℂ => logDeriv χ.completedLFunction z) c‖ ≥
               (1 / (8 * ((C : ℝ) + 1))) * (1 / 3 : ℝ) ^ m ∧
             C =
-              Nat.ceil
-                (completedZeroLocalLogBoundConstant *
-                  (1 + 644 * η * Real.log ((q : ℝ) * (|ρ.im| + 3)))) := by
+              Nat.ceil (localLogConstant * (1 + 644 * η * Real.log ((q : ℝ) * (|ρ.im| + 3)))) := by
   obtain
     ⟨massConstA, massConstB, hmassConstA, hmassConstB, C, K, m, n, hKmin', hKupper, hK, hcount, hn,
       hnm, hmK, hmKC, hboundPair⟩ :=
-    exists_completedLFunction_iteratedDerivWithin_logDeriv_lower_bound_near_one_zero hq hχ hp hinv
-      hη hηsmall Kmin hKmin hcre hcim hρre hzero hc
+    completed_within_ge hq hχ hp hinv hη hηsmall Kmin hKmin hcre hcim hρre hzero hc
   obtain ⟨hbound, hCeq⟩ := hboundPair
   let U : Set ℂ := {z : ℂ | 1 < z.re}
   have hcU : c ∈ U := by

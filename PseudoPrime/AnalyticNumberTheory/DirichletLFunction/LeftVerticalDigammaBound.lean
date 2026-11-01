@@ -90,15 +90,15 @@ Content: shifts `z := a + u i` by `n := A + 5` to `z + n` (real part `≥ 3`, so
 `Real.Gamma_strictMonoOn_Ici` directly (no `Icc`-convexity needed since `r + 1/2, r + 3/2 ≥ 2`
 already) to get `Γ (r + 1/2), Γ (r + 3/2) ≤ Γ (X)` for `X := 2(A + 5) ≥ r + 3/2`, then the crude
 `log Γ (X) ≤ X log X ≤ X² = 4(A + 5)²`; undoes the shift via
-`norm_digamma_sub_shift_nat_le_of_re_sep` with `δ := 1/4`, where pole-avoidance is derived
+`norm_digamma_shift_le_of_re_sep` with `δ := 1/4`, where pole-avoidance is derived
 *directly from the separation hypothesis itself*
 (if `z + k = -m` then `a + (k + m) = 0`, contradicting `1/4 ≤ |a + (k + m)|` — no need for a
 separate quarter-lattice argument at this level of generality).
 Role: the left-vertical step small-`|t|` half of the left-vertical digamma bound, generic in `a` so
 it applies
-uniformly to all four gamma-factor arguments (`exists_C_forall_norm_digamma_explicit_le`).
+uniformly to all four gamma-factor arguments (`uniform_digamma_explicit_bound`).
 -/
-theorem exists_C_forall_norm_digamma_small_im_le :
+theorem uniform_digamma_small_im_bound :
     ∃ C : ℝ,
       0 ≤ C ∧
         ∀ A : ℕ,
@@ -108,7 +108,7 @@ theorem exists_C_forall_norm_digamma_small_im_le :
                 (∀ q : ℕ, (1 : ℝ) / 4 ≤ |a + (q : ℝ)|) →
                 |u| ≤ 4 * ((A : ℝ) + 5) →
                 ‖Complex.digamma ((a : ℂ) + (u : ℂ) * Complex.I)‖ ≤ C * ((A : ℝ) + 5) ^ 2 := by
-  obtain ⟨C₁, hC₁⟩ := RiemannZeta.exists_neg_log_norm_Gamma_one_add_add_mul_I_le_uniform
+  obtain ⟨C₁, hC₁⟩ := RiemannZeta.exists_neg_log_Gamma_shift_bound
   set C : ℝ := 8 * max C₁ 0 + 32 + 80 * Real.pi + 24 with hC_def
   have hCnonneg : 0 ≤ C := by
     have h1 : (0 : ℝ) ≤ max C₁ 0 := le_max_right _ _
@@ -235,7 +235,7 @@ theorem exists_C_forall_norm_digamma_small_im_le :
     rw [hre_eq]
     exact hsepQ k
   have hshiftback :=
-    norm_digamma_sub_shift_nat_le_of_re_sep n (by norm_num only : (0 : ℝ) < 1 / 4) hpole hsep
+    norm_digamma_shift_le_of_re_sep n (by norm_num only : (0 : ℝ) < 1 / 4) hpole hsep
   have hshiftback_le : (n : ℝ) / (1 / 4) ≤ 4 * ((A : ℝ) + 5) := by
     rw [hn_def]
     push_cast
@@ -303,14 +303,14 @@ theorem quarterSep_of_pos {a : ℝ} (ha : (1 : ℝ) / 4 ≤ a) (q : ℕ) : (1 : 
 Input/assumptions: none (existence statement, `A`-uniform).
 Conclusion: there is `C ≥ 0` such that for every `A ≥ 2`, every `a u : ℝ` with `|a| ≤ A + 2` and
 `∀ q : ℕ, 1/4 ≤ |a + q|`, `‖digamma (a + u i)‖ ≤ C ((A + 5)² + 1 + log (2|u| + 2))`.
-Content: splits on `4(A + 5) ≤ |u|` (large, via `exists_C_forall_norm_digamma_large_im_le`, noting
+Content: splits on `4(A + 5) ≤ |u|` (large, via `uniform_digamma_large_im_bound`, noting
 `4(|a| + 3) ≤ 4(A + 5) ≤ |u|` and `log(|u| + 2) ≤ log(2|u| + 2)`) vs `|u| < 4(A + 5)` (small, via
-`exists_C_forall_norm_digamma_small_im_le`).
+`uniform_digamma_small_im_bound`).
 Role: the left-vertical step checkpoint — a single explicit-`A` digamma bound covering all `u : ℝ`,
 ready to
 feed the gamma-factor log-derivative at both the left-vertical point and its reflection.
 -/
-theorem exists_C_forall_norm_digamma_explicit_le :
+theorem uniform_digamma_explicit_bound :
     ∃ C : ℝ,
       0 ≤ C ∧
         ∀ A : ℕ,
@@ -320,8 +320,8 @@ theorem exists_C_forall_norm_digamma_explicit_le :
                 (∀ q : ℕ, (1 : ℝ) / 4 ≤ |a + (q : ℝ)|) →
                 ‖Complex.digamma ((a : ℂ) + (u : ℂ) * Complex.I)‖ ≤
                   C * (((A : ℝ) + 5) ^ 2 + 1 + Real.log (2 * |u| + 2)) := by
-  obtain ⟨CL, hCLnn, hCL⟩ := exists_C_forall_norm_digamma_large_im_le
-  obtain ⟨CS, hCSnn, hCS⟩ := exists_C_forall_norm_digamma_small_im_le
+  obtain ⟨CL, hCLnn, hCL⟩ := uniform_digamma_large_im_bound
+  obtain ⟨CS, hCSnn, hCS⟩ := uniform_digamma_small_im_bound
   set C : ℝ := CL + CS + 10 with hC_def
   have hCnn : (0 : ℝ) ≤ C := by linarith only [hCLnn, hCSnn]
   refine ⟨C, hCnn, fun A hA2 a u ha hsepQ => ?_⟩

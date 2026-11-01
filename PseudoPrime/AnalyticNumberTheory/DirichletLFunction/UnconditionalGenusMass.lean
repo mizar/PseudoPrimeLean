@@ -20,7 +20,7 @@ multiplicities divided by squared zero norms form a summable family without RH.
 Split at norm one: the inner part has finite support, and the outer part is
 bounded by twice the existing summable zero weight. This supplies a finite
 character-dependent mass for unconditional contour estimates. -/
-theorem summable_divisor_div_normSq_unconditionally {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem summable_invNormSq_unconditional {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     Summable
       (fun ρ : ℂ ↦
@@ -36,7 +36,7 @@ theorem summable_divisor_div_normSq_unconditionally {q : ℕ} [NeZero q] (hq : 2
     exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg hAn ρ
   have hf (ρ : ℂ) : 0 ≤ f ρ := div_nonneg (hD ρ) (Complex.normSq_nonneg _)
   have hfinite : Function.HasFiniteSupport near := by
-    apply (finite_dirichletCompletedLFunction_zerosOn χ hne (isCompact_closedBall (0 : ℂ) 1)).subset
+    apply (finite_completed_zerosOn χ hne (isCompact_closedBall (0 : ℂ) 1)).subset
     intro ρ hρ
     have hnear : near ρ ≠ 0 := Function.mem_support.mp hρ
     have hnorm : ‖ρ‖ ≤ 1 := by
@@ -67,7 +67,7 @@ theorem summable_divisor_div_normSq_unconditionally {q : ℕ} [NeZero q] (hq : 2
       exact (div_le_div_iff₀ hxpos hden).mpr (by nlinarith only [hmult])
   have hsumfar : Summable far :=
     Summable.of_nonneg_of_le hfarNonneg hfarBound
-      ((summable_completedLFunctionZeroWeight hq hp hne hinv).mul_left 2)
+      ((summable_completedZeroWeight hq hp hne hinv).mul_left 2)
   have heq : (fun ρ ↦ near ρ + far ρ) = f := by
     funext ρ
     dsimp only [near, far]
@@ -87,7 +87,7 @@ noncomputable def completedLFunctionInverseSquareMass {q : ℕ} [NeZero q]
 /-- The inverse-square mass of a nonprincipal completed function is nonnegative.
 Entirety makes each divisor multiplicity nonnegative. This permits Cauchy--Schwarz
 and monotonicity estimates using the mass as a fixed character-dependent constant. -/
-theorem completedLFunctionInverseSquareMass_nonneg {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+theorem completedInverseSquareMass_nonneg {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
     (hne : χ ≠ 1) : 0 ≤ completedLFunctionInverseSquareMass χ := by
   apply tsum_nonneg
   intro ρ
@@ -101,9 +101,8 @@ theorem completedLFunctionInverseSquareMass_nonneg {q : ℕ} [NeZero q] {χ : Di
 restricted to a ball is at most the full inverse-square mass. Compare the ball and
 global divisors and use unconditional summability. This controls the first factor
 in the truncated-genus Cauchy--Schwarz estimate. -/
-theorem sum_divisor_ball_div_normSq_le_inverseSquareMass {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (R : ℝ)
-    (S : Finset ℂ) :
+theorem sum_ball_invNormSq_le_mass {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (R : ℝ) (S : Finset ℂ) :
     (∑ ρ ∈ S,
         (MeromorphicOn.divisor χ.completedLFunction (Metric.ball (0 : ℂ) R) ρ : ℝ) / ‖ρ‖ ^ 2) ≤
       completedLFunctionInverseSquareMass χ := by
@@ -123,7 +122,6 @@ theorem sum_divisor_ball_div_normSq_le_inverseSquareMass {q : ℕ} [NeZero q] (h
     · simpa only [Int.cast_zero, zero_div] using hnonneg ρ
   exact
     (Finset.sum_le_sum (fun ρ _ ↦ hpoint ρ)).trans
-      ((summable_divisor_div_normSq_unconditionally hq hp hne hinv).sum_le_tsum S
-        (fun ρ _ ↦ hnonneg ρ))
+      ((summable_invNormSq_unconditional hq hp hne hinv).sum_le_tsum S (fun ρ _ ↦ hnonneg ρ))
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

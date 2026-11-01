@@ -24,7 +24,7 @@ namespace PseudoPrime.AnalyticNumberTheory.General
 logarithmic derivative is the pi constant plus the half-weighted digamma sum.
 Exclude gamma poles and differentiate the finite product. This extends the
 right-half-plane formula to the critical line for nonnegative-real shifts. -/
-theorem logDeriv_archimedeanGammaFactor_of_argument_re_pos {d : ℕ} {κ : Fin d → ℂ} {s : ℂ}
+theorem gammaFactor_logDeriv_of_pos {d : ℕ} {κ : Fin d → ℂ} {s : ℂ}
     (hp : ∀ j, 0 < ((s + κ j) / 2).re) :
     logDeriv (archimedeanGammaFactor κ) s =
       (-(d : ℂ) / 2) * Complex.log (Real.pi : ℂ) +
@@ -67,12 +67,12 @@ theorem logDeriv_archimedeanGammaFactor_of_argument_re_pos {d : ℕ} {κ : Fin d
 bounded by the pi contribution plus half the sum of digamma norms. Apply the
 triangle inequality to the exact derivative formula. This reduces strip growth
 to the individual gamma arguments. -/
-theorem norm_logDeriv_archimedeanGammaFactor_of_argument_re_pos {d : ℕ} {κ : Fin d → ℂ} {s : ℂ}
+theorem norm_logDeriv_archimedeanGammaFactor {d : ℕ} {κ : Fin d → ℂ} {s : ℂ}
     (hp : ∀ j, 0 < ((s + κ j) / 2).re) :
     ‖logDeriv (archimedeanGammaFactor κ) s‖ ≤
       (d : ℝ) / 2 * ‖Complex.log (Real.pi : ℂ)‖ +
         (1 / 2 : ℝ) * ∑ j : Fin d, ‖Complex.digamma ((s + κ j) / 2)‖ := by
-  rw [logDeriv_archimedeanGammaFactor_of_argument_re_pos hp]
+  rw [gammaFactor_logDeriv_of_pos hp]
   calc
     _ ≤
         ‖(-(d : ℂ) / 2) * Complex.log (Real.pi : ℂ)‖ +
@@ -91,8 +91,8 @@ endpoint, the gamma logarithmic derivative has a uniform linear-height bound.
 Use the left endpoint to control reciprocal arguments and the right endpoint
 for their norms, then sum the digamma bounds. This discharges the growth inputs
 of vertical Mellin integrability and horizontal contour decay. -/
-theorem exists_archimedeanGamma_linear_bound_on_positive_strip {d : ℕ} (κ : Fin d → ℂ)
-    (hk : ∀ j, 0 ≤ (κ j).re) (a b : ℝ) (ha : 0 < a) (hab : a ≤ b) :
+theorem exists_gammaFactor_linear_strip {d : ℕ} (κ : Fin d → ℂ) (hk : ∀ j, 0 ≤ (κ j).re) (a b : ℝ)
+    (ha : 0 < a) (hab : a ≤ b) :
     ∃ A : ℝ,
       0 ≤ A ∧
         ∀ σ ∈ Set.Icc a b,
@@ -128,7 +128,7 @@ theorem exists_archimedeanGamma_linear_bound_on_positive_strip {d : ℕ} (κ : F
     have hh := Gamma.norm_digamma_le_linear_of_re_ge hδ (hp j)
     dsimp only [M]
     linarith only [hh, hn, le_abs_self Gamma.digammaLogErrorBound]
-  have hs := norm_logDeriv_archimedeanGammaFactor_of_argument_re_pos (fun j ↦ hδ.trans_le (hp j))
+  have hs := norm_logDeriv_archimedeanGammaFactor (fun j ↦ hδ.trans_le (hp j))
   have hsum := Finset.sum_le_sum (fun j (_ : j ∈ Finset.univ) ↦ hd j)
   have hexpand : (∑ j : Fin d, (‖κ j‖ + M + |T|)) = (∑ j : Fin d, (‖κ j‖ + M)) + d * |T| := by
     simp only [Finset.sum_add_distrib, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
@@ -156,8 +156,7 @@ theorem star_logDeriv_archimedeanGammaFactor {d : ℕ} (κ : Fin d → ℂ) (hk 
     intro j
     simp only [Complex.div_ofNat_re, Complex.add_re, Complex.star_def, Complex.conj_re]
     linarith only [hs, hk j]
-  rw [logDeriv_archimedeanGammaFactor_of_argument_re_pos hp,
-    logDeriv_archimedeanGammaFactor_of_argument_re_pos hq]
+  rw [gammaFactor_logDeriv_of_pos hp, gammaFactor_logDeriv_of_pos hq]
   simp only [Complex.star_def, map_add, map_mul, map_div₀, map_neg, map_natCast, map_ofNat, map_one,
     map_sum, ← Gamma.digamma_conj, Complex.conj_conj, ← Complex.ofReal_log Real.pi_pos.le,
     Complex.conj_ofReal]

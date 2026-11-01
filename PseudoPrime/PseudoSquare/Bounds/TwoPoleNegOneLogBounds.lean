@@ -56,7 +56,7 @@ theorem exists_odd_prime_neg_one_le_twoPole_log_ambient {n B : ℕ} (hn : Odd n)
     LLS.twoPoleNegativeLogRoot_mono (by linarith only [hLA] : 0 < Real.log (4 * B : ℕ)) hlog
   have hs := mul_self_le_mul_self hr hu
   have hw :=
-    NumberTheory.primeNegOneWitness_mem_of_complexQuadraticCharacter_ne_one n hn hp hd
+    NumberTheory.negOneWitness_mem_of_quadratic_ne_one n hn hp hd
       (by
         rw [hv]; norm_num only)
   refine ⟨p, hp, hw.2.1, ?_, hw.2.2⟩
@@ -105,7 +105,7 @@ theorem twoPoleNegOneLogRadius_lt_ninety_nine {L : ℝ} (hL : 2250 ≤ L) :
 /-- For odd nonsquare n under GRH with log n at least 2250, an odd prime negative
 Jacobi witness lies below the logarithmic radius at n. Specialize the common
 ambient theorem to B=n. -/
-theorem exists_prime_neg_one_witness_le_twoPole_logarithmic {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+theorem exists_negOneWitness_le_twoPole_logarithmic {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 2250 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧ Odd p ∧ (p : ℝ) ≤ twoPoleNegOneLogRadius (Real.log n) ∧ jacobiSym n p = -1 := by

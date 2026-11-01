@@ -30,8 +30,8 @@ Termwise Mellin inversion and the summable integral-norm majorant justify interc
 The twisted von Mangoldt Dirichlet series identifies the logarithmic derivative.
 This supplies the integral identity before the finite-sum collapse.
 -/
-theorem characterLogWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
-    {x : ℝ} (hx : 0 < x) {τ : ℝ} (hτ : 1 < τ) :
+theorem logWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) {x : ℝ}
+    (hx : 0 < x) {τ : ℝ} (hτ : 1 < τ) :
     ∑' n : ℕ,
         (ArithmeticFunction.vonMangoldt n : ℂ) * χ (n : ZMod N) *
           Analysis.mellinWeightTwo ((n : ℝ) / x) =
@@ -210,7 +210,7 @@ theorem characterLogWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N] (χ : Dir
       simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
         Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero]
       exact hτ
-    have hLS := lSeries_twist_vonMangoldt_eq_neg_logDeriv_dirichletLFunction_of_one_lt_re χ hs
+    have hLS := LSeries_mangoldt_eq_neg_logDeriv χ hs
     have hsum :
       ∑' n : ℕ,
           (ArithmeticFunction.vonMangoldt n : ℂ) * χ (n : ZMod N) *
@@ -268,14 +268,13 @@ theorem characterLogWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N] (χ : Dir
 /--
 For any character of nonzero level, `x > 0`, and `τ > 1`, the finite logarithmic
 weighted character sum equals `(2π)⁻¹` times the right-vertical kernel integral.
-Combine the finite-sum collapse with `characterLogWeightedTerm_tsum_eq_integral`.
+Combine the finite-sum collapse with `logWeightedTerm_tsum_eq_integral`.
 This identifies the right edge in the logarithmic contour limit.
 -/
 theorem characterLogWeightedSum_eq_integral {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) {x : ℝ}
     (hx : 0 < x) {τ : ℝ} (hτ : 1 < τ) :
     (Arithmetic.characterLogWeightedSum x χ : ℂ) =
       (2 * Real.pi : ℝ)⁻¹ • ∫ y : ℝ, dirichletLogContourKernel x χ ((τ : ℂ) + y * Complex.I) := by
-  rw [← Arithmetic.characterLogWeightedTerm_tsum_eq χ hx,
-    characterLogWeightedTerm_tsum_eq_integral χ hx hτ]
+  rw [← Arithmetic.characterLogWeightedTerm_tsum_eq χ hx, logWeightedTerm_tsum_eq_integral χ hx hτ]
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

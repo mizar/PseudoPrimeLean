@@ -22,11 +22,10 @@ namespace PseudoPrime.AnalyticNumberTheory.RectangleGeometry
 /-- A function differentiable off a finite rectangle ledger is integrable along every
 coordinate segment of a strict grid avoiding that ledger. Coordinate avoidance excludes
 singularities; differentiability gives continuity and hence interval integrability. -/
-theorem gridCoordinateIntegrable_of_differentiable_off (f : ℂ → ℂ) (S : Finset ℂ) {z w : ℂ}
+theorem grid_integrable_of_differentiable (f : ℂ → ℂ) (S : Finset ℂ) {z w : ℂ}
     (hdiff : ∀ p ∈ Rectangle.rectangleClosedBox z w, p ∉ S → DifferentiableAt ℂ f p)
-    (grid : StrictGridCuts z w) (havoid : grid.LedgerAvoidsCoordinates S) :
-    RectangleGridCoordinateIntegrable f (z.re :: grid.xcuts ++ [w.re])
-      (z.im :: grid.ycuts ++ [w.im]) := by
+    (grid : StrictGridCuts z w) (havoid : grid.LedgerAvoidsCoords S) :
+    GridLineIntegrable f (z.re :: grid.xcuts ++ [w.re]) (z.im :: grid.ycuts ++ [w.im]) := by
   have hre (u v : ℝ) : ((u : ℂ) + v * Complex.I).re = u := by
     simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
       Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero]
@@ -35,7 +34,7 @@ theorem gridCoordinateIntegrable_of_differentiable_off (f : ℂ → ℂ) (S : Fi
       mul_one, Complex.I_re, mul_zero, add_zero, zero_add]
   constructor
   · intro c hc a ha b hb
-    apply intervalIntegrable_horizontal_of_continuousAt
+    apply intervalIntegrable_horizontal_cont
     intro t ht
     apply (hdiff _ ?_ ?_).continuousAt
     · rw [Rectangle.rectangleClosedBox, Complex.mem_reProdIm, hre, him]
@@ -47,7 +46,7 @@ theorem gridCoordinateIntegrable_of_differentiable_off (f : ℂ → ℂ) (S : Fi
       rw [him] at h
       exact h hc
   · intro c hc a ha b hb
-    apply intervalIntegrable_vertical_of_continuousAt
+    apply intervalIntegrable_vertical_cont
     intro t ht
     apply (hdiff _ ?_ ?_).continuousAt
     · rw [Rectangle.rectangleClosedBox, Complex.mem_reProdIm, hre, him]
@@ -64,7 +63,7 @@ ledger and certified local square integrals identify the outer integral with the
 local contributions. Construct a separating grid, shrink each singular cell to a certified
 square, and cancel regular cells. This applies to shifted kernels without kernel-specific
 integrability or cell-assignment hypotheses. -/
-theorem rectangleBoundaryIntegral_eq_sum_of_local_residues (f res : ℂ → ℂ) (S : Finset ℂ) {z w : ℂ}
+theorem boundaryIntegral_eq_sum_residues (f res : ℂ → ℂ) (S : Finset ℂ) {z w : ℂ}
     (hre : z.re < w.re) (him : z.im < w.im)
     (hclosed : ∀ s ∈ S, s ∈ Rectangle.rectangleClosedBox z w)
     (hopen : ∀ s ∈ S, s ∈ rectangleOpenBox z w)
@@ -85,9 +84,8 @@ theorem rectangleBoundaryIntegral_eq_sum_of_local_residues (f res : ℂ → ℂ)
   set assignment := interior.toAssignment with hassignment_def
   have havoidCuts : grid.LedgerAvoidsCuts S :=
     generatedStrictGridCuts_avoidsCuts S z w hre him hopen
-  have havoid : grid.LedgerAvoidsCoordinates S :=
-    grid.ledgerAvoidsCoordinates_of_open hopen havoidCuts
-  have hcoordint := gridCoordinateIntegrable_of_differentiable_off f S hdiffGlobal grid havoid
+  have havoid : grid.LedgerAvoidsCoords S := grid.avoidsCoords_of_open hopen havoidCuts
+  have hcoordint := grid_integrable_of_differentiable f S hdiffGlobal grid havoid
   have hgridint : RectangleGridSubdivisionIntegrable f z w grid.xcuts grid.ycuts := by
     apply
       hcoordint.gridSubdivision List.mem_cons_self
@@ -108,8 +106,8 @@ theorem rectangleBoundaryIntegral_eq_sum_of_local_residues (f res : ℂ → ℂ)
   have hsum :
     rectangleBoundaryIntegral f z w =
       ∑ cell ∈ cells, rectangleBoundaryIntegral f cell.1 cell.2 := by
-    rw [rectangleBoundaryIntegral_eq_gridSubdivision _ z w grid.xcuts grid.ycuts hgridint,
-      rectangleGridSubdivision_eq_sum_toFinset _ z w grid.xcuts grid.ycuts grid.cells_nodup]
+    rw [boundaryIntegral_eq_gridSubdivision _ z w grid.xcuts grid.ycuts hgridint,
+      gridSubdivision_eq_sum_toFinset _ z w grid.xcuts grid.ycuts grid.cells_nodup]
   have hxcuts : ∀ u ∈ grid.xcuts, u ∈ Set.uIcc z.re w.re := fun u hu ↦
     Set.mem_uIcc_of_le (grid.xcuts_inside u hu).1.le (grid.xcuts_inside u hu).2.le
   have hycuts : ∀ v ∈ grid.ycuts, v ∈ Set.uIcc z.im w.im := fun v hv ↦
@@ -134,7 +132,7 @@ theorem rectangleBoundaryIntegral_eq_sum_of_local_residues (f res : ℂ → ℂ)
     set c := assignment.pointOfCell cell with hc_def
     have hpointS : c ∈ S := assignment.point_mem_ledger cell hcell
     obtain ⟨Rc, hRc, hcert⟩ := hlocal c hpointS
-    obtain ⟨ε, hε, hball⟩ := interior.exists_closedBall_pointOfCell_subset_open hcell
+    obtain ⟨ε, hε, hball⟩ := interior.exists_point_ball hcell
     set r := min (ε / 2) (Rc / 2) with hr_def
     have hr : 0 < r := lt_min (half_pos hε) (half_pos hRc)
     have hball' : Metric.closedBall c r ⊆ rectangleOpenBox cell.1 cell.2 :=
@@ -148,7 +146,7 @@ theorem rectangleBoundaryIntegral_eq_sum_of_local_residues (f res : ℂ → ℂ)
       ∀ y ∈ Rectangle.rectangleClosedBox cell.1 cell.2, y ∉ S → DifferentiableAt ℂ f y :=
       hdiff cell hcellmem.1
     have hcopen : c ∈ rectangleOpenBox cell.1 cell.2 := hball' (Metric.mem_closedBall_self hr.le)
-    have havoidSq := centeredSquare_augmented_coordinates_avoid hcellOrder.1 hcellOrder.2 hr hcopen
+    have havoidSq := square_augmented_coordinates_avoid hcellOrder.1 hcellOrder.2 hr hcopen
     set xs := cell.1.re :: [a.re, b.re] ++ [cell.2.re] with hxs_def
     set ys := cell.1.im :: [a.im, b.im] ++ [cell.2.im] with hys_def
     have hxmem : ∀ u ∈ xs, u ∈ Set.uIcc cell.1.re cell.2.re := by
@@ -168,8 +166,7 @@ theorem rectangleBoundaryIntegral_eq_sum_of_local_residues (f res : ℂ → ℂ)
       · exact Set.mem_uIcc_of_le (hcuts.2.2.2.1.trans hcuts.2.2.2.2.1).le hcuts.2.2.2.2.2.le
       · exact Set.right_mem_uIcc
     have hcoordint :=
-      assignment.kernelCoordinateIntegrable f hcell hdiffCell xs ys hxmem hymem havoidSq.1
-        havoidSq.2
+      assignment.kernel_integrable f hcell hdiffCell xs ys hxmem hymem havoidSq.1 havoidSq.2
     have hgrid3 : RectangleGridSubdivisionIntegrable f cell.1 cell.2 [a.re, b.re] [a.im, b.im] :=
       hcoordint.gridSubdivision
         (by
@@ -196,8 +193,8 @@ theorem rectangleBoundaryIntegral_eq_sum_of_local_residues (f res : ℂ → ℂ)
             simp only [hys_def, List.cons_append, List.nil_append, List.mem_cons, List.not_mem_nil,
               or_false, true_or, or_true])
     have hshrink :=
-      assignment.parent_boundaryIntegral_eq_of_shrink f hcell hcuts.1 hcuts.2.1 hcuts.2.2.1
-        hcuts.2.2.2.1 hcuts.2.2.2.2.1 hcuts.2.2.2.2.2 hpoint hdiffCell hgrid3
+      assignment.integral_eq_shrink f hcell hcuts.1 hcuts.2.1 hcuts.2.2.1 hcuts.2.2.2.1
+        hcuts.2.2.2.2.1 hcuts.2.2.2.2.2 hpoint hdiffCell hgrid3
     rw [hshrink]
     have hrRc : r ≤ Rc := le_trans (min_le_right _ _) (half_le_self hRc.le)
     exact hcert r hr hrRc
@@ -210,21 +207,20 @@ regularization and differentiability elsewhere determine the boundary integral
 as 2*pi*i times the regularization at the pole. Use the local square certificate
 and assemble it with the singleton singularity ledger. This avoids an external
 simple-pole residue theorem when shifting Mellin contours. -/
-theorem rectangleBoundaryIntegral_eq_of_simple_regularization {f h : ℂ → ℂ} {z w c : ℂ}
-    (hre : z.re < w.re) (him : z.im < w.im) (hc : c ∈ rectangleOpenBox z w)
+theorem boundaryIntegral_simple_pole {f h : ℂ → ℂ} {z w c : ℂ} (hre : z.re < w.re)
+    (him : z.im < w.im) (hc : c ∈ rectangleOpenBox z w)
     (hd : ∀ p ∈ Rectangle.rectangleClosedBox z w, p ≠ c → DifferentiableAt ℂ f p)
     (hh : AnalyticAt ℂ h c)
     (heq : Filter.EventuallyEq (nhdsWithin c ({c}ᶜ : Set ℂ)) (fun s ↦ (s - c) * f s) h) :
     rectangleBoundaryIntegral f z w = 2 * Real.pi * Complex.I * h c := by
   classical
-  have hl := exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul hh heq
+  have hl := exists_radius_integral_residue hh heq
   have hb :=
-    rectangleBoundaryIntegral_eq_sum_of_local_residues f (fun _ ↦ 2 * Real.pi * Complex.I * h c) {c}
-      hre him
+    boundaryIntegral_eq_sum_residues f (fun _ ↦ 2 * Real.pi * Complex.I * h c) {c} hre him
       (fun s hs ↦ by
         rw [Finset.mem_singleton] at hs
         subst s
-        exact rectangleOpenBox_subset_rectangleClosedBox z w hc)
+        exact openBox_subset_closedBox z w hc)
       (fun s hs ↦ by
         rw [Finset.mem_singleton] at hs; exact hs ▸ hc)
       (fun p hp hn ↦

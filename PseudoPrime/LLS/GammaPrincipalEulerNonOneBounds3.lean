@@ -28,10 +28,10 @@ theorem exists_odd_prime_ne_one_of_gamma_log_22920 {q : ℕ} [NeZero q] (hq : 20
     (hlogq : Real.log q ≤ L + 7 / 5) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * L ^ 2 ∧ χ p ≠ 1 := by
   apply
-    exists_odd_prime_ne_one_of_log_ratio_character_budget χ hquad h2 hGRH (by linarith only [hL])
+    exists_oddPrime_neOne_logRatioBudget_GRH χ hquad h2 hGRH (by linarith only [hL])
       (nonOne_log_ratio_of_ge_22920 hL) hlogq (C := 117 / 10)
   · exact
-      (PaperStatements.gamma_primitiveCharacter_sum_re_lt_principal_euler hq χ hne hGRH
+      (PaperStatements.gammaCharacterSum_re_lt_principal_euler hq χ hne hGRH
           (by nlinarith only [hL, sq_nonneg (L - 22920)])).le
   · linarith only [hL]
 

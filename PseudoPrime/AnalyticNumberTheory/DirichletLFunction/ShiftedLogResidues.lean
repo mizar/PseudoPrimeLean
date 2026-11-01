@@ -31,7 +31,7 @@ theorem shiftedLogContourKernel_eq_general {N : ℕ} [NeZero N] (χ : DirichletC
 /-- For a nonprincipal character, x>0 and sigma>=1, all sufficiently small squares at zero
 have the explicit double-pole residue. L is analytic and nonzero at sigma; specialize the
 general regularization formula. This is the Mellin-pole term of the shifted contour ledger. -/
-theorem exists_radius_shiftedLogContourKernel_origin {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+theorem exists_shiftedLog_origin_residue {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     (hχ : χ ≠ 1) {x σ : ℝ} (hx : 0 < x) (hσ : 1 ≤ σ) :
     ∃ R : ℝ,
       0 < R ∧
@@ -58,8 +58,8 @@ theorem exists_radius_shiftedLogContourKernel_origin {N : ℕ} [NeZero N] {χ : 
 rho-sigma is minus its multiplicity times x^(rho-sigma)/(rho-sigma)^2.
 The local finite-order factorization supplies the regular logarithmic derivative.
 This records the shifted zero contribution before global contour assembly. -/
-theorem exists_radius_shiftedLogContourKernel_zero {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
-    (hχ : χ ≠ 1) {x σ : ℝ} {ρ : ℂ} (hx : 0 < x) (hzero : χ.LFunction ρ = 0) (hρ : ρ - (σ : ℂ) ≠ 0) :
+theorem exists_shiftedLog_zero_residue {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ : χ ≠ 1)
+    {x σ : ℝ} {ρ : ℂ} (hx : 0 < x) (hzero : χ.LFunction ρ = 0) (hρ : ρ - (σ : ℂ) ≠ 0) :
     ∃ R : ℝ,
       0 < R ∧
         ∀ r : ℝ,
@@ -71,7 +71,7 @@ theorem exists_radius_shiftedLogContourKernel_zero {N : ℕ} [NeZero N] {χ : Di
               2 * Real.pi * Complex.I *
                 (-(dirichletLFunctionZeroMultiplicity χ ρ : ℂ) * (x : ℂ) ^ (ρ - (σ : ℂ)) /
                   (ρ - (σ : ℂ)) ^ 2) := by
-  obtain ⟨g, _, hg, hg0, hlog⟩ := exists_eventuallyEq_logDeriv_dirichletLFunction_at_zero hχ hzero
+  obtain ⟨g, _, hg, hg0, hlog⟩ := exists_L_logDeriv_zero_expansion hχ hzero
   have heq :
     shiftedLogContourKernel χ x σ = General.shiftedLogarithmicKernel χ.LFunction x (σ : ℂ) :=
     funext (shiftedLogContourKernel_eq_general χ x σ)

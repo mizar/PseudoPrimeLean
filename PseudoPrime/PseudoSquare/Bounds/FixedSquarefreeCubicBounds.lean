@@ -20,7 +20,7 @@ namespace PseudoPrime.PseudoSquare
 s with negative Jacobi value for d exceeds X. The primitive localized cost
 at 2n is then at most the full cost at 2d. Classify primes outside 2d and
 use the nonzero quadratic character values. This removes the size of s. -/
-theorem primitiveQuadratic_truncated_cost_le_fixed_support {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+theorem primitiveQuadratic_truncated_le_fixedSupport {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns) {X : ℝ}
     (hlarge :
       ∀ p : ℕ, p.Prime → p ∣ bridge.squareFactor → jacobiSym bridge.squarefreePart p = -1 → X < p) :
@@ -29,7 +29,7 @@ theorem primitiveQuadratic_truncated_cost_le_fixed_support {n : ℕ} {hn : Odd n
       AnalyticNumberTheory.Arithmetic.characterExclusionCost
         (NumberTheory.primitiveQuadraticCharacter n hn) (2 * bridge.squarefreePart) := by
   apply
-    LLS.PaperStatements.truncatedCharacterExclusionCost_le_of_prime_coverage _
+    LLS.PaperStatements.truncatedExclusionCost_le_of_prime_coverage _
       (mul_ne_zero (by norm_num only : (2 : ℕ) ≠ 0) bridge.squarefreePart_pos.ne')
   intro p hp hM hx
   by_cases hpd : p ∣ 2 * bridge.squarefreePart
@@ -50,14 +50,14 @@ theorem primitiveQuadratic_truncated_cost_le_fixed_support {n : ℕ} {hn : Odd n
           exact (hp.coprime_iff_not_dvd.mpr hd).symm.gcd_eq_one)
     have hjone : jacobiSym bridge.squarefreePart p = 1 :=
       hj.resolve_right (fun hv ↦ (not_lt_of_ge hx) (hlarge p hp hs hv))
-    have he := NumberTheory.primitiveQuadraticCharacter_apply_squarefree_odd_prime bridge hp ho hd
+    have he := NumberTheory.primitiveQuadratic_apply_squarefree_odd_prime bridge hp ho hd
     simpa only [Int.cast_natCast, hjone, Int.cast_one] using he
 
 /-- With no negative square-factor prime at most X, the localized primitive
 cost is at most log(4d). Combine prime coverage with vanishing on ramified
 primes and the generic cost of excluding two. This is the fixed-family
 arithmetic input to the cubic radius theorem. -/
-theorem primitiveQuadratic_truncated_cost_le_log_squarefree {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+theorem primitiveQuadratic_truncated_le_squarefreeLog {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns) {X : ℝ}
     (hlarge :
       ∀ p : ℕ, p.Prime → p ∣ bridge.squareFactor → jacobiSym bridge.squarefreePart p = -1 → X < p) :
@@ -65,10 +65,10 @@ theorem primitiveQuadratic_truncated_cost_le_log_squarefree {n : ℕ} {hn : Odd 
         (NumberTheory.primitiveQuadraticCharacter n hn) (2 * n) X ≤
       Real.log ((4 * bridge.squarefreePart : ℕ) : ℝ) := by
   exact
-    (primitiveQuadratic_truncated_cost_le_fixed_support bridge hlarge).trans
-      (AnalyticNumberTheory.Arithmetic.characterExclusionCost_two_mul_le_log_four_mul _
+    (primitiveQuadratic_truncated_le_fixedSupport bridge hlarge).trans
+      (AnalyticNumberTheory.Arithmetic.characterExclusionCost_two_mul_le_log_four _
         bridge.squarefreePart_pos.ne'
-        (fun p hp ↦ primitiveQuadraticCharacter_zero_on_squarefreePart bridge hp))
+        (fun p hp ↦ primitiveQuadratic_zero_on_squarefreePart bridge hp))
 
 /-- The squared tight cubic radius with both conductor and cost envelopes
 equal to log(4d). For positive odd squarefree d greater than one, this is a
@@ -83,8 +83,8 @@ noncomputable def fixedSquarefreeCubicBound (d : ℕ) : ℝ :=
 fixed bound for d if every negative prime divisor of s exceeds that bound.
 Discharge the conductor envelope arithmetically and the cost envelope by
 localized prime coverage. This is the witness existence statement for the family. -/
-theorem exists_prime_neg_one_le_fixed_squarefree_cubic_bound {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem exists_prime_negOne_fixedSquarefreeCubic_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hlarge :
       ∀ p : ℕ,
@@ -102,15 +102,15 @@ theorem exists_prime_neg_one_le_fixed_squarefree_cubic_bound {n : ℕ} {hn : Odd
     ⟨bridge.squareFactor ^ 2, by simpa only [mul_comm] using bridge.squarefreePart_sq_mul.symm⟩
   have hf :=
     Nat.le_of_dvd (Nat.mul_pos (by norm_num only : 0 < 4) bridge.squarefreePart_pos)
-      (NumberTheory.complexQuadraticCharacter_conductor_dvd_four_mul_squarefreePart bridge hdvd)
+      (NumberTheory.complexQuadratic_conductor_dvd_four_part bridge hdvd)
   have hlog :=
     Real.log_le_log
       (Nat.cast_pos.mpr
         (Nat.pos_of_ne_zero (NumberTheory.complexQuadraticCharacter n hn).conductor_ne_zero))
       (Nat.cast_le.mpr hf)
   exact
-    exists_prime_neg_one_le_of_truncated_cubic_radius (hns := hns) hGRH hlog
-      (primitiveQuadratic_truncated_cost_le_log_squarefree bridge hlarge)
+    exists_prime_neg_one_le_of_cubic_radius_GRH (hns := hns) hGRH hlog
+      (primitiveQuadratic_truncated_le_squarefreeLog bridge hlarge)
       (le_refl (fixedSquarefreeCubicBound bridge.squarefreePart))
 
 /-- The fixed squared radius is at least 27 for every natural d. The cubic

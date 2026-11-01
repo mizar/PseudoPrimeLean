@@ -75,8 +75,7 @@ theorem exists_odd_prime_ne_one_of_gamma_prefix_profile {q : ℕ} [NeZero q] (hq
           Real.sqrt x at hmain
     nlinarith only [hP, heP, hT, heT, hpole, hleft, hlead, htwo, hmain, hbudget]
   obtain ⟨p, hp, hodd, hbound, hval⟩ :=
-    exists_odd_prime_ne_one_of_variable_prefix_budget hq χ hquad hne h2 hGRH hx hcut prefixLen hC
-      hgap
+    exists_oddPrime_neOne_variablePrefix_GRH hq χ hquad hne h2 hGRH hx hcut prefixLen hC hgap
   refine ⟨p, hp, hodd, ?_, hval⟩
   calc
     (p : ℝ) ≤ (99 / 40 : ℝ) * x := hbound

@@ -49,8 +49,8 @@ theorem summable_mellin_zero_terms {F : ℂ → ℂ} (hm : Summable (regularZero
     (hs : ∀ ρ : ℂ, F ρ = 0 → ρ.re ∈ Set.Icc (0 : ℝ) 1) (g : ℝ → ℂ) (he : ∀ u : ℝ, g (-u) = g u)
     (hc : HasCompactSupport g) (hg : ContDiff ℝ (↑(⊤ : ℕ∞)) g) :
     Summable (fun ρ : ℂ ↦ (analyticOrderNatAt F ρ : ℂ) * mellin (logarithmicTestWeight g) ρ) := by
-  obtain ⟨D₀, hD₀, h₀⟩ := mellin_logarithmicTestWeight_uniform_power_bound g he hc hg 0 1 0
-  obtain ⟨D₂, hD₂, h₂⟩ := mellin_logarithmicTestWeight_uniform_power_bound g he hc hg 0 1 2
+  obtain ⟨D₀, hD₀, h₀⟩ := logTest_mellin_uniform_power_bound g he hc hg 0 1 0
+  obtain ⟨D₂, hD₂, h₂⟩ := logTest_mellin_uniform_power_bound g he hc hg 0 1 2
   apply Summable.of_norm_bounded (hm.mul_left (2 * D₀ + D₂))
   intro ρ
   by_cases hn : analyticOrderNatAt F ρ = 0
@@ -87,8 +87,7 @@ theorem summable_mellin_zero_terms_of_orderAtMostOne {F : ℂ → ℂ} {ε : ℂ
     (he : ∀ u : ℝ, g (-u) = g u) (hc : HasCompactSupport g) (hg : ContDiff ℝ (↑(⊤ : ℕ∞)) g) :
     Summable (fun ρ : ℂ ↦ (analyticOrderNatAt F ρ : ℂ) * mellin (logarithmicTestWeight g) ρ) := by
   obtain ⟨C, hC, hbound⟩ :=
-    exists_global_exponential_bound_of_orderAtMostOne hF.continuous horder (r := 3 / 2)
-      (by norm_num only)
+    exists_exp_bound_of_orderAtMostOne hF.continuous horder (r := 3 / 2) (by norm_num only)
   exact
     summable_mellin_zero_terms
       (summable_regularZeroWeight hF h0 hC (by norm_num only : (0 : ℝ) ≤ 3 / 2)

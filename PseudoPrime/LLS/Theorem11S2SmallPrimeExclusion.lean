@@ -110,9 +110,8 @@ theorem weightedLogDefect_eq_zero_of_trivialBelow {q : ℕ} [NeZero q] {χ : Dir
 /-- Every reciprocal-weighted term below the cutoff agrees with the Riemann term: forced equal by
 the counterexample hypothesis, or sitting exactly at the boundary `n = X`, where the reciprocal
 weight vanishes regardless of the character value. -/
-theorem re_characterReciprocalWeightedTerm_eq_of_trivialBelow {q n : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} {X : ℝ} (hX : 0 < X) (hn : n ∈ Finset.Ioc 0 ⌊X⌋₊)
-    (htrivial : LLSCharacterTrivialBelow χ X) :
+theorem re_recipCharTerm_eq_of_trivialBelow {q n : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    {X : ℝ} (hX : 0 < X) (hn : n ∈ Finset.Ioc 0 ⌊X⌋₊) (htrivial : LLSCharacterTrivialBelow χ X) :
     (AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedTerm X χ n).re =
       AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtTerm X n := by
   by_cases hΛ : ArithmeticFunction.vonMangoldt n = 0
@@ -149,7 +148,7 @@ theorem re_characterReciprocalWeightedTerm_eq_of_trivialBelow {q n : ℕ} [NeZer
 Input/assumptions: a level-`q` character trivial on every prime residue below `X > 0`.
 Conclusion: the reciprocal-weighted defect vanishes exactly.
 Content: every term of `characterReciprocalWeightedSum X χ` has the same real part as the
-corresponding Riemann term, by `re_characterReciprocalWeightedTerm_eq_of_trivialBelow`.
+corresponding Riemann term, by `re_recipCharTerm_eq_of_trivialBelow`.
 Role: supplies `dR = 0` in `LLSWeightedComparisonCore` for Theorem 1.1 S2.
 -/
 theorem weightedReciprocalDefect_eq_zero_of_trivialBelow {q : ℕ} [NeZero q]
@@ -158,9 +157,7 @@ theorem weightedReciprocalDefect_eq_zero_of_trivialBelow {q : ℕ} [NeZero q]
   unfold weightedReciprocalDefect AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtSum
     AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum
   rw [sub_eq_zero, Complex.re_sum]
-  exact
-    Finset.sum_congr rfl fun n hn ↦
-      (re_characterReciprocalWeightedTerm_eq_of_trivialBelow hX hn htrivial).symm
+  exact Finset.sum_congr rfl fun n hn ↦ (re_recipCharTerm_eq_of_trivialBelow hX hn htrivial).symm
 
 /-- `LLSWeightedComparisonS2Defects` follows from the counterexample hypothesis alone: no
 separate arithmetic small-prime-factor input on `q` is needed once `χ` is trivial below `X`. -/

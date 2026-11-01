@@ -84,7 +84,7 @@ theorem gamma_refined_scale_actual_cost_absorbed {n d m f : ℕ} (hn : n = d * m
                 Real.sqrt (gammaRefinedScale L)))) ≤
       (11783423 / 25000000 : ℝ) * Real.log (4 * (n : ℝ)) := by
   exact
-    gamma_odd_input_actual_cost_absorbed_by_conductor_gap hn hodd hd hm hf hdf hfd S hS χ hχ K
+    gamma_odd_input_cost_le_conductor_gap hn hodd hd hm hf hdf hfd S hS χ hχ K
       (by linarith only [gamma_refined_scale_ge_twenty_thousand hL])
 
 /-- An input at least ten to the hundredth power belongs to the prescribed

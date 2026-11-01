@@ -40,7 +40,7 @@ $$
 
 解析証明では、有限矩形の境界積分を留数和に変換する。次に、適切な高さ列に沿って水平辺の積分を消し、左辺を遠方へ移す。一般指標用の [PrimitiveGenericLogLeftVertical.lean](../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/PrimitiveGenericLogLeftVertical.lean) などが、この極限を与える。有限輪郭と極限に必要な条件は、それぞれ個別の定理で確認する。RH・GRH に基づく零点評価は各定理の引数として受け取る。
 
-偶原始二次指標については [EvenLogWeightedUpper.lean](../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/EvenLogWeightedUpper.lean) の `primitiveLogWeightedUpper_of_grh_even_exact` が、 $x \ge 64$ で偶指標の誤差項を保持した $\mathrm{Re} S(x,\chi)$ の上界を与える。一般の偶指標すべてを対象とする型ではなく、現状は二次性も要求する。
+偶原始二次指標については [EvenLogWeightedUpper.lean](../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/EvenLogWeightedUpper.lean) の `logWeighted_upper_even_GRH` が、 $x \ge 64$ で偶指標の誤差項を保持した $\mathrm{Re} S(x,\chi)$ の上界を与える。一般の偶指標すべてを対象とする型ではなく、現状は二次性も要求する。
 
 ## 無条件の定量的成果
 

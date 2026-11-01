@@ -53,16 +53,15 @@ theorem norm_kernelZeroTerm_eq_order_mul (K : MellinKernel) {q : ℕ} [NeZero q]
     {χ : DirichletCharacter ℂ q} (hne : χ ≠ 1) (ρ : ℂ) :
     ‖K.kernelZeroTerm χ ρ‖ =
       (analyticOrderNatAt χ.completedLFunction ρ : ℝ) * ‖K.function (Complex.I * ρ.im)‖ := by
-  rw [kernelZeroTerm,
-    AnalyticNumberTheory.DirichletLFunction.completed_divisor_eq_analyticOrderNatAt hne,
+  rw [kernelZeroTerm, AnalyticNumberTheory.DirichletLFunction.completed_divisor_eq_orderNat hne,
     Int.cast_natCast, norm_mul, norm_natCast]
 
 /-- For a nonprincipal character and any cutoff height, the truncated absolute
 kernel sum over the complex plane equals the natural-multiplicity sum over actual
 completed zeros. Terms vanish outside the zero set. This permits applying the
 continuous-test zero-distribution estimate to the LLS zero ledger. -/
-theorem tsum_truncated_norm_kernelZeroTerm_eq_completedZero_sum (K : MellinKernel) {q : ℕ}
-    [NeZero q] {χ : DirichletCharacter ℂ q} (hne : χ ≠ 1) (T : ℝ) :
+theorem truncated_zeroNorm_tsum_eq_subtype (K : MellinKernel) {q : ℕ} [NeZero q]
+    {χ : DirichletCharacter ℂ q} (hne : χ ≠ 1) (T : ℝ) :
     (∑' ρ : ℂ, if |ρ.im| < T then ‖K.kernelZeroTerm χ ρ‖ else 0) =
       ∑' ρ : AnalyticNumberTheory.DirichletLFunction.CompletedZero χ,
         if |(ρ : ℂ).im| < T then
@@ -89,8 +88,8 @@ uniformly over primitive nonprincipal characters under individual RH. Choose a
 continuous compact cutoff equal to one on the height interval and between zero
 and one elsewhere. Apply completed-zero height convergence and bound its integral
 by the full kernel norm integral. This proves the compact input of the sharp mass bound. -/
-theorem exists_uniform_truncated_kernelZeroSum_le_mass (K : MellinKernel) (T : ℝ) (_hT : 0 < T)
-    {δ : ℝ} (hδ : 0 < δ) :
+theorem exists_truncated_zeroSum_mass_RH (K : MellinKernel) (T : ℝ) (_hT : 0 < T) {δ : ℝ}
+    (hδ : 0 < δ) :
     ∃ Q : ℕ,
       2 ≤ Q ∧
         ∀ (q : ℕ) [NeZero q],
@@ -117,7 +116,7 @@ theorem exists_uniform_truncated_kernelZeroSum_le_mass (K : MellinKernel) (T : �
   have hint := MeasureTheory.integral_mono (hg.integrable_of_hasCompactSupport hcg) hik hle
   have hmass : (∫ t : ℝ, g t) / (2 * Real.pi) ≤ K.mass :=
     div_le_div_of_nonneg_right hint (mul_nonneg (by norm_num only) Real.pi_pos.le)
-  obtain ⟨Q, hQ, hb⟩ := exists_uniform_completedZero_real_height_test_upper_bound g hg hcg hδ
+  obtain ⟨Q, hQ, hb⟩ := uniform_realZeroHeightTest_upper_RH g hg hcg hδ
   refine ⟨Q, hQ, ?_⟩
   intro q _ hq χ hRH hp hne hinv
   have hscomplex :=
@@ -149,7 +148,7 @@ theorem exists_uniform_truncated_kernelZeroSum_le_mass (K : MellinKernel) (T : �
     Summable.of_nonneg_of_le
       (fun ρ : CompletedZero χ ↦ ite_nonneg (mul_nonneg (Nat.cast_nonneg _) (norm_nonneg _)) le_rfl)
       ht hs
-  rw [tsum_truncated_norm_kernelZeroTerm_eq_completedZero_sum K hne T]
+  rw [truncated_zeroNorm_tsum_eq_subtype K hne T]
   exact
     ((Summable.tsum_le_tsum ht hinside hs).trans (hb q hq χ hRH hp hne hinv)).trans
       (mul_le_mul_of_nonneg_right (add_le_add hmass (le_refl δ)) (Real.log_natCast_nonneg q))
@@ -172,9 +171,9 @@ theorem exists_uniform_kernelZeroSum_le_mass (K : MellinKernel)
                     χ ≠ 1 →
                     χ⁻¹ ≠ 1 →
                     (∑' ρ : ℂ, ‖K.kernelZeroTerm χ ρ‖) ≤ (1 + ε) * K.mass * Real.log q := by
-  apply exists_uniform_kernelZeroSum_le_mass_of_truncations K hGRH
+  apply exists_zeroSum_mass_of_truncations_GRH K hGRH
   intro T hT δ hδ
-  obtain ⟨Q, hQ, hb⟩ := exists_uniform_truncated_kernelZeroSum_le_mass K T hT hδ
+  obtain ⟨Q, hQ, hb⟩ := exists_truncated_zeroSum_mass_RH K T hT hδ
   refine ⟨Q, hQ, ?_⟩
   intro q _ hq χ hp hne hinv
   exact hb q hq χ (hGRH q χ hp) hp hne hinv

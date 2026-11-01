@@ -217,7 +217,7 @@ theorem quotientPowerBoundConstant_le_double_exp_log {r : ℕ} (hr : 4 ≤ r) :
 
 /-- For r≥7, retain the quarter-sized prime range in the divisor factor and
 save one unit in the double-exponential exponent of the quotient coefficient. -/
-theorem quotientPowerBoundConstant_le_double_exp_log_quarter {r : ℕ} (hr : 7 ≤ r) :
+theorem quotientConstant_le_double_exp_quarter {r : ℕ} (hr : 7 ≤ r) :
     quotientPowerBoundConstant r ≤
       2 ^ (2 ^ (2 * r - 1 + Nat.log2 (2 * r * (Nat.log2 (2 * r) + 1) + 2 * r))) := by
   let P : ℕ := 2 * r * (Nat.log2 (2 * r) + 1) + 2 * r

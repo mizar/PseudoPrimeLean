@@ -56,7 +56,7 @@ theorem trivialZeros_unifiedRectangle_eq_image {τ : ℝ} (hτ : 1 < τ) (m : �
   · intro h
     have hmem := Finset.mem_filter.mp h
     obtain ⟨k, hk⟩ :=
-      exists_nat_eq_neg_two_mul_add_one_of_riemannZeta_zero_re_neg hmem.2
+      exists_neg_even_of_zeta_zero_re_neg hmem.2
         (mem_riemannZetaZerosInAnyRectangle_iff.mp hmem.1).2
     exact
       Finset.mem_image.mpr
@@ -93,14 +93,13 @@ theorem sum_logTrivialZeros_unifiedRectangle_eq {x τ : ℝ} (hx : 0 < x) (hτ :
   classical
   rw [trivialZeros_unifiedRectangle_eq_image hτ,
     Finset.sum_image (fun a _ b _ h ↦ trivialZeroLocation_injective h), Complex.re_sum]
-  simp only [riemannZetaLogZeroContribution_neg_two_mul_nat_add_one hx, Complex.neg_re,
-    Complex.ofReal_re, Finset.sum_neg_distrib]
+  simp only [logZeroTerm_neg_two_succ hx, Complex.neg_re, Complex.ofReal_re, Finset.sum_neg_distrib]
 
 /-- For x > 0 and right abscissa tau > 1, the real reciprocal trivial-zero ledger is
 the negative sum of the first m natural reciprocal correction terms. Identify the
 negative-even zero locations in the rectangle and evaluate their multiplicity-one residues.
 This finite identity needs no convergence of the full series; x > 1 is used for its limit. -/
-theorem sum_reciprocalTrivialZeros_unifiedRectangle_eq {x τ : ℝ} (hx : 0 < x) (hτ : 1 < τ) (m : ℕ) :
+theorem reciprocalTrivialSum_unified_eq {x τ : ℝ} (hx : 0 < x) (hτ : 1 < τ) (m : ℕ) :
     (∑
           ρ ∈
             (riemannZetaZerosInAnyRectangle (unifiedRectangleLower m)
@@ -112,11 +111,11 @@ theorem sum_reciprocalTrivialZeros_unifiedRectangle_eq {x τ : ℝ} (hx : 0 < x)
   classical
   rw [trivialZeros_unifiedRectangle_eq_image hτ,
     Finset.sum_image (fun a _ b _ h ↦ trivialZeroLocation_injective h), Complex.re_sum]
-  simp only [riemannZetaReciprocalZeroContribution_neg_two_mul_nat_add_one hx, Complex.neg_re,
-    Complex.ofReal_re, Finset.sum_neg_distrib]
+  simp only [reciprocalZeroTerm_neg_two_succ hx, Complex.neg_re, Complex.ofReal_re,
+    Finset.sum_neg_distrib]
 
 /-- For `x > 1`, logarithmic trivial-zero residue sums converge to the negative full series. -/
-theorem tendsto_sum_logTrivialZeros_unifiedRectangle {x τ : ℝ} (hx : 1 < x) (hτ : 1 < τ) :
+theorem tendsto_logTrivialSum_unified {x τ : ℝ} (hx : 1 < x) (hτ : 1 < τ) :
     Filter.Tendsto
       (fun m ↦
         (∑
@@ -132,7 +131,7 @@ theorem tendsto_sum_logTrivialZeros_unifiedRectangle {x τ : ℝ} (hx : 1 < x) (
         (sum_logTrivialZeros_unifiedRectangle_eq (lt_trans zero_lt_one hx) hτ m).symm)
 
 /-- For `x > 1`, reciprocal trivial-zero residue sums converge to the negative full series. -/
-theorem tendsto_sum_reciprocalTrivialZeros_unifiedRectangle {x τ : ℝ} (hx : 1 < x) (hτ : 1 < τ) :
+theorem tendsto_reciprocalTrivialSum_unified {x τ : ℝ} (hx : 1 < x) (hτ : 1 < τ) :
     Filter.Tendsto
       (fun m ↦
         (∑
@@ -143,8 +142,8 @@ theorem tendsto_sum_reciprocalTrivialZeros_unifiedRectangle {x τ : ℝ} (hx : 1
             riemannZetaReciprocalZeroContribution x ρ).re)
       Filter.atTop (nhds (-riemannReciprocalTrivialZeroSeries x)) := by
   exact
-    (summable_reciprocalTrivialZeroTerm_of_one_lt hx).hasSum.tendsto_sum_nat.neg.congr'
+    (summable_recipTrivialZero_of_one_lt hx).hasSum.tendsto_sum_nat.neg.congr'
       (Filter.Eventually.of_forall fun m ↦
-        (sum_reciprocalTrivialZeros_unifiedRectangle_eq (lt_trans zero_lt_one hx) hτ m).symm)
+        (reciprocalTrivialSum_unified_eq (lt_trans zero_lt_one hx) hτ m).symm)
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

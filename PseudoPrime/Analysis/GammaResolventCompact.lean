@@ -33,7 +33,7 @@ theorem gammaResolventScaledGap_lower_of_grid
     (hnodes : ∀ j : ℕ, j ≤ 8000 → 1 / 25000 ≤ gammaResolventScaledGap ((j : ℝ) / 500)) {t : ℝ}
     (ht : t ∈ Set.Icc (0 : ℝ) 16) : (13 / 1000000 : ℝ) ≤ gammaResolventScaledGap t := by
   apply
-    lower_bound_on_zero_sixteen_of_grid_and_second_deriv_le (f' := fun x ↦
+    lower_bound_on_Icc_0_16_of_grid (f' := fun x ↦
       gammaResolventScaledDeriv x - scaledGammaHalfLineNormDeriv x) (f'' := fun x ↦
       gammaResolventScaledSecondDeriv x - scaledGammaHalfLineNormSecondDeriv x) _ _ _ hnodes ht
   · intro x _hx
@@ -49,7 +49,7 @@ theorem gammaResolventScaledGap_lower_of_grid
 
 /-- The finite grid gap bounds imply Gamma domination on [0,16]. Use the
 positive interpolation margin and cancel the strictly positive scaling factor 1+t². -/
-theorem norm_Gamma_half_add_I_le_gammaResolvent_on_nonneg_of_grid
+theorem norm_Gamma_half_le_resolvent_of_grid
     (hnodes : ∀ j : ℕ, j ≤ 8000 → 1 / 25000 ≤ gammaResolventScaledGap ((j : ℝ) / 500)) {t : ℝ}
     (ht : t ∈ Set.Icc (0 : ℝ) 16) :
     ‖Complex.Gamma ((1 / 2 : ℂ) + Complex.I * t)‖ ≤
@@ -73,10 +73,10 @@ theorem norm_Gamma_half_add_I_le_gammaResolvent_of_grid
     (hnodes : ∀ j : ℕ, j ≤ 8000 → 1 / 25000 ≤ gammaResolventScaledGap ((j : ℝ) / 500)) (t : ℝ) :
     ‖Complex.Gamma ((1 / 2 : ℂ) + Complex.I * t)‖ ≤
       AnalyticNumberTheory.Gamma.gammaResolventMajorant t := by
-  apply norm_Gamma_half_add_I_le_gammaResolvent_of_compact _ t
+  apply norm_Gamma_half_le_resolvent_of_compact _ t
   intro x hx
   have h :=
-    norm_Gamma_half_add_I_le_gammaResolvent_on_nonneg_of_grid hnodes
+    norm_Gamma_half_le_resolvent_of_grid hnodes
       (show |x| ∈ Set.Icc (0 : ℝ) 16 from ⟨abs_nonneg x, hx⟩)
   have he : Real.pi * |x| = |Real.pi * x| := by rw [abs_mul, abs_of_pos Real.pi_pos]
   simpa only [norm_Gamma_half_add_I, he, Real.cosh_abs,

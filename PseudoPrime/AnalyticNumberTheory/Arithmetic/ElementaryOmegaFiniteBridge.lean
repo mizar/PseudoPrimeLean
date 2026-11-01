@@ -31,7 +31,7 @@ theorem oddPrime_eq_primeByIndex_succ (k : ℕ) : oddPrime k = NumberTheory.prim
 
 /-- The count-indexed primorial with `m + 1` factors is twice the `m`-factor odd
 primorial: `PseudoPrime.NumberTheory.primeByIndex 0 = 2` supplies the missing even prime. -/
-theorem primePrimorialCount_succ_eq_two_mul_oddPrimorial (m : ℕ) :
+theorem primorialCount_succ_eq_two_mul_odd (m : ℕ) :
     NumberTheory.primePrimorialCount (m + 1) = 2 * oddPrimorial m := by
   induction m with
   | zero =>
@@ -149,7 +149,7 @@ to per-`m` numeric certificates.** Given a bound
 finite statement follows by transferring that bound from the anchor up to the actual
 `PseudoPrime.NumberTheory.characterModulus n` via
 `PseudoPrime.AnalyticNumberTheory.Arithmetic.elementaryOmegaRhsReal_mono`. -/
-theorem elementaryOmegaFiniteStatement_of_certificates
+theorem elementaryOmegaFinite_of_certificates
     (hcert : ∀ m : ℕ, 1 ≤ m → m < 163 → (m + 1 : ℝ) ≤ elementaryOmegaRhsReal (elementaryAnchor m)) :
     ElementaryOmegaFiniteStatement := by
   intro n hn hn750 hmcard
@@ -170,8 +170,7 @@ theorem elementaryOmegaFiniteStatement_of_certificates
       (elementaryAnchor_le_characterModulus hn hn750)
   have hcardeq : (NumberTheory.characterModulus n).primeFactors.card = n.primeFactors.card + 1 := by
     have h1 := distinctPrimeFactorCount_characterModulus hn
-    rwa [distinctPrimeFactorCount_eq_primeFactors_card,
-      distinctPrimeFactorCount_eq_primeFactors_card] at h1
+    rwa [distinctPrimeFactorCount_eq_card, distinctPrimeFactorCount_eq_card] at h1
   rw [hcardeq]
   push_cast
   exact hcertm.trans hmono

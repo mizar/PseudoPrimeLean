@@ -31,14 +31,14 @@ theorem phase64_principalRamp_lower_of_finite_bounds {L r p e C : ℝ} (hlo : 64
   have hs : Real.sqrt (4096128001 / 2475000 : ℝ) ≤ 407 / 10 := by
     exact Real.sqrt_le_iff.mpr ⟨by norm_num only, by norm_num only⟩
   exact
-    principalRampDifference_lower_of_finite_endpoints (by norm_num only : (0 : ℝ) < 163840 / 99)
-      hx.1 hx.2 N hr hp he hC hC0 hs
+    principalRampDifference_lower_finite_endpoints (by norm_num only : (0 : ℝ) < 163840 / 99) hx.1
+      hx.2 N hr hp he hC hC0 hs
 
 /-- Under GRH and first-cell conductor hypotheses, finite endpoint estimates
 and a strict explicit budget gap give an odd-prime negative Jacobi witness through L^2.
 Apply the generic endpoint lower bound to the actual witness criterion. -/
-theorem exists_odd_prime_negative_of_phase64_finite_endpoints {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem exists_oddPrime_negJacobi_phase64_finite_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {q : ℕ} (hq : 20000 ≤ q)
     (hmq : (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ q) {L r p e C : ℝ}
     (hlo : 64 ≤ L) (hhi : L ≤ 64001 / 1000) (N : ℕ)
@@ -51,8 +51,7 @@ theorem exists_odd_prime_negative_of_phase64_finite_endpoints {n : ℕ} {hn : Od
     (hC0 : 0 ≤ C) (hgap : phase64NumericalJacobiBudget n q (L ^ 2 / (99 / 40)) < C / (407 / 10)) :
     ∃ k : ℕ, k.Prime ∧ Odd k ∧ (k : ℝ) ≤ L ^ 2 ∧ jacobiSym n k = -1 := by
   have hA := phase64_principalRamp_lower_of_finite_bounds hlo hhi N hr hp he hC hC0
-  exact
-    exists_odd_prime_negative_of_phase64_numerical_gap bridge hGRH hq hmq hlo hhi (hgap.trans_le hA)
+  exact exists_oddPrime_negJacobi_phase64_numeric_GRH bridge hGRH hq hmq hlo hhi (hgap.trans_le hA)
 
 /-- For the first cell, positive n, log(n)<=L and log(q)<=L+7/5, the explicit
 Jacobi budget is strictly below 1373/(407/10). Bound the root below, certify the rational
@@ -119,7 +118,7 @@ theorem exists_odd_prime_negative_of_phase64_prefix_caps {n : ℕ} {hn : Odd n} 
     principalExponentialTailBound_40000_le (by norm_num only : (0 : ℝ) < 4096128001 / 2475000)
       (by norm_num only : (4096128001 / 2475000 : ℝ) ≤ 1660)
   exact
-    exists_odd_prime_negative_of_phase64_finite_endpoints bridge hGRH hq hmq hlo hhi 40000 hr hp he
+    exists_oddPrime_negJacobi_phase64_finite_GRH bridge hGRH hq hmq hlo hhi 40000 hr hp he
       (by norm_num only : (1373 : ℝ) ≤ 2 * 1514 - 1654 - 1 / 100)
       (by norm_num only : (0 : ℝ) ≤ 1373)
       (phase64_numerical_budget_lt_endpoint_margin hn.pos hlo hhi hnL hqL)

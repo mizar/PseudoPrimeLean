@@ -285,9 +285,9 @@ theorem shiftedHeightLayers_weighted_sum_le {p H : ℕ} [Fact p.Prime] {theta de
 /-- The uniform small-power ratio estimates supply one constant per degree,
 independent of p and H. Combining these finitely many constants gives the
 height-layer bound with exponent 1/42+eta. -/
-theorem exists_uniform_shiftedHeightLayers_weighted_sum_bound {p H : ℕ} [Fact p.Prime]
-    {theta delta eta : ℝ} (hp : 1 < p) (hHp : H < p) (hdelta : 0 < delta) (htheta0 : 0 < theta)
-    (htheta : theta < 1 / 42) (hbudget : theta + delta / 6 ≤ eta) :
+theorem exists_uniform_heightLayer_sum_bound {p H : ℕ} [Fact p.Prime] {theta delta eta : ℝ}
+    (hp : 1 < p) (hHp : H < p) (hdelta : 0 < delta) (htheta0 : 0 < theta) (htheta : theta < 1 / 42)
+    (hbudget : theta + delta / 6 ≤ eta) :
     ∃ C : ℝ,
       0 < C ∧
         ∑ j ∈ Finset.Icc 6 41,
@@ -468,7 +468,7 @@ theorem exists_uniform_boundedCongruenceCount_rpow_bound {p H : ℕ} [Fact p.Pri
   obtain ⟨Csmall, hCsmall, hsmall⟩ :=
     shiftedHeightSmallTerm_rpow_bound hp htop hdelta htheta0 hbudget
   obtain ⟨Clayer, hClayer, hlayer⟩ :=
-    exists_uniform_shiftedHeightLayers_weighted_sum_bound hp hHp hdelta htheta0 htheta hbudget
+    exists_uniform_heightLayer_sum_bound hp hHp hdelta htheta0 htheta hbudget
   let small : ℝ := ((shiftedHeightCutoff p theta 42 * H * maxDivisorCount H : ℕ) : ℝ)
   let tail : ℝ :=
     ∑ j ∈ Finset.Icc 6 41,

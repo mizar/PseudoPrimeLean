@@ -43,7 +43,7 @@ theorem differentiable_inverse_gammaFactor {N : ℕ} (χ : DirichletCharacter �
 /-- At a zero of the totalized gamma factor its reciprocal has analytic order one.
 The parity formulas reduce the claim to the simple zeros of reciprocal `Gammaℝ`.
 This order supplies the exact multiplicity of ordinary trivial zeros. -/
-theorem analyticOrderAt_inverse_gammaFactor_of_zero {N : ℕ} {χ : DirichletCharacter ℂ N} {ρ : ℂ}
+theorem inv_gammaFactor_order_of_zero {N : ℕ} {χ : DirichletCharacter ℂ N} {ρ : ℂ}
     (hΓ : DirichletCharacter.gammaFactor χ ρ = 0) :
     analyticOrderAt (fun s : ℂ => (DirichletCharacter.gammaFactor χ s)⁻¹) ρ = 1 := by
   rcases χ.even_or_odd with he | ho
@@ -71,8 +71,8 @@ theorem analyticOrderAt_inverse_gammaFactor_of_zero {N : ℕ} {χ : DirichletCha
 /-- For a nonprincipal primitive character, each gamma-forced zero in the closed
 left half-plane is simple. Functional-equation nonvanishing of the completed
 function and analytic-order multiplication give the exact residue multiplicity. -/
-theorem dirichletLFunctionZeroMultiplicity_of_gamma_zero_eq_one {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hp : χ.IsPrimitive) (hne : χ ≠ 1) {ρ : ℂ} (hρ : ρ.re ≤ 0)
+theorem zeroMultiplicity_gammaZero_eq_one {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) {ρ : ℂ} (hρ : ρ.re ≤ 0)
     (hΓ : DirichletCharacter.gammaFactor χ ρ = 0) : dirichletLFunctionZeroMultiplicity χ ρ = 1 := by
   have hinv : χ⁻¹ ≠ 1 := inv_ne_one.mpr hne
   have hreflect : 1 ≤ ((1 : ℂ) - ρ).re := by
@@ -87,36 +87,33 @@ theorem dirichletLFunctionZeroMultiplicity_of_gamma_zero_eq_one {N : ℕ} [NeZer
         (fun s : ℂ => (DirichletCharacter.gammaFactor χ s)⁻¹) := by
     funext s
     exact
-      (dirichletLFunction_eq_completed_div_gammaFactor χ s
-            (Or.inr (dirichletCharacter_level_ne_one_of_ne_one hne))).trans
+      (L_eq_completed_div_gammaFactor χ s (Or.inr (character_level_ne_one_of_ne_one hne))).trans
         (div_eq_mul_inv _ _)
   have ho : analyticOrderAt (DirichletCharacter.LFunction χ) ρ = 1 := by
     rw [heq, analyticOrderAt_mul hF hG, hF.analyticOrderAt_eq_zero.mpr hFne,
-      analyticOrderAt_inverse_gammaFactor_of_zero hΓ, zero_add]
+      inv_gammaFactor_order_of_zero hΓ, zero_add]
   unfold dirichletLFunctionZeroMultiplicity analyticOrderNatAt
   rw [ho, ENat.toNat_one]
 
 /-- At a gamma-forced zero in the left half-plane, the logarithmic contribution
 is exactly `-x^ρ/ρ²`. The primitive character has multiplicity one; this identity
 removes the unknown multiplicity from the trivial-zero part of a finite ledger. -/
-theorem dirichletLFunctionLogZeroContribution_of_gamma_zero {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hp : χ.IsPrimitive) (hne : χ ≠ 1) {ρ : ℂ} (hρ : ρ.re ≤ 0)
+theorem logZeroContribution_of_gamma_zero {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) {ρ : ℂ} (hρ : ρ.re ≤ 0)
     (hΓ : DirichletCharacter.gammaFactor χ ρ = 0) (x : ℝ) :
-    dirichletLFunctionLogZeroContribution x χ ρ = -(x : ℂ) ^ ρ / ρ ^ 2 := by
-  simp only [dirichletLFunctionLogZeroContribution,
-    dirichletLFunctionZeroMultiplicity_of_gamma_zero_eq_one hp hne hρ hΓ, Nat.cast_one, neg_mul,
-    one_mul]
+    LFunctionLogZeroContribution x χ ρ = -(x : ℂ) ^ ρ / ρ ^ 2 := by
+  simp only [LFunctionLogZeroContribution, zeroMultiplicity_gammaZero_eq_one hp hne hρ hΓ,
+    Nat.cast_one, neg_mul, one_mul]
 
 /-- At the same simple trivial zeros, the reciprocal contribution is exactly
 `-x^(ρ-1)/(ρ*(ρ-1))`. This is the summand of the parity-dependent correction
 series in the reciprocal explicit formula. -/
-theorem dirichletLFunctionReciprocalZeroContribution_of_gamma_zero {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hp : χ.IsPrimitive) (hne : χ ≠ 1) {ρ : ℂ} (hρ : ρ.re ≤ 0)
+theorem reciprocalZeroTerm_of_gammaZero {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) {ρ : ℂ} (hρ : ρ.re ≤ 0)
     (hΓ : DirichletCharacter.gammaFactor χ ρ = 0) (x : ℝ) :
-    dirichletLFunctionReciprocalZeroContribution x χ ρ = -(x : ℂ) ^ (ρ - 1) / (ρ * (ρ - 1)) := by
-  simp only [dirichletLFunctionReciprocalZeroContribution,
-    dirichletLFunctionZeroMultiplicity_of_gamma_zero_eq_one hp hne hρ hΓ, Nat.cast_one, neg_mul,
-    one_mul]
+    LFunctionReciprocalZeroContribution x χ ρ = -(x : ℂ) ^ (ρ - 1) / (ρ * (ρ - 1)) := by
+  simp only [LFunctionReciprocalZeroContribution, zeroMultiplicity_gammaZero_eq_one hp hne hρ hΓ,
+    Nat.cast_one, neg_mul, one_mul]
 
 /-- Every zero of a complex Dirichlet gamma factor has nonpositive real part.
 The even and odd formulas locate it at a nonpositive even integer or a

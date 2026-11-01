@@ -46,8 +46,8 @@ theorem exists_uniform_reciprocalGap_central_gamma_bound :
                             (x : ℂ) ^ (Complex.I * t)))‖ ≤
                   C := by
   obtain ⟨A, hA, hbA⟩ :=
-    AnalyticNumberTheory.DirichletLFunction.exists_uniform_norm_logDeriv_gammaFactor_vertical_le_log
-      (σ := 1 / 2) (by norm_num only) (by norm_num only)
+    AnalyticNumberTheory.DirichletLFunction.uniform_gammaLogDeriv_vertical (σ := 1 / 2)
+      (by norm_num only) (by norm_num only)
   let H := fun t : ℝ ↦ (Real.log (4 + |t|) + 1) / (1 + t ^ 2)
   let D := (A * 4) * (∫ t : ℝ, H t)
   let d : ℂ := ((1 / (2 * Real.pi) : ℝ) : ℂ)
@@ -133,7 +133,7 @@ noncomputable def reciprocalGapLeftIntegral {q : ℕ} [NeZero q] (h : ℝ) (hh :
 the completed remainder for all positive gaps and scales at least one.
 The exact definition leaves the right gamma integral; use its gap-uniform estimate.
 This separates the two potentially gap-dependent costs from the uniform archimedean cost. -/
-theorem exists_uniform_reciprocalGap_remainder_sub_pole_left_bound :
+theorem exists_uniform_gap_poleLeft_error :
     ∃ C : ℝ,
       0 < C ∧
         ∀ (h : ℝ) (hh : 0 < h) (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q) {x : ℝ},
@@ -171,7 +171,7 @@ bounded by ((7/6) log(q)+4)/(h sqrt(x)), the norm of the left integral, and a co
 constant independent of h, q, character and scale x at least one.
 Combine the explicit pole bound and uniform gamma bound by the triangle inequality.
 The left integral still needs an explicit numerical estimate for witness cutoffs. -/
-theorem exists_uniform_reciprocalGap_remainder_split_bound :
+theorem exists_uniform_gap_split_error_GRH :
     ∃ C : ℝ,
       0 < C ∧
         ∀ (h : ℝ) (hh : 0 < h) {q : ℕ} [NeZero q],
@@ -186,7 +186,7 @@ theorem exists_uniform_reciprocalGap_remainder_split_bound :
                       ((7 / 6 : ℝ) * Real.log q + 4) / (h * Real.sqrt x) +
                         ‖reciprocalGapLeftIntegral h hh χ x‖ +
                         C := by
-  obtain ⟨C, hC, hb⟩ := exists_uniform_reciprocalGap_remainder_sub_pole_left_bound
+  obtain ⟨C, hC, hb⟩ := exists_uniform_gap_poleLeft_error
   refine ⟨C, hC, ?_⟩
   intro h hh q _ hq χ hp hne hGRH x hx
   let P :=
@@ -237,7 +237,7 @@ theorem exists_uniform_reciprocalGap_prime_separation :
                               C) <
                           (reciprocalGapCharacterSum h (1 : DirichletCharacter ℂ 1) x).re →
                         ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ x ∧ χ p ≠ 1 := by
-  obtain ⟨C, hC, hb⟩ := exists_uniform_reciprocalGap_remainder_split_bound
+  obtain ⟨C, hC, hb⟩ := exists_uniform_gap_split_error_GRH
   refine ⟨C, hC, ?_⟩
   intro h hh q _ hq χ hGRH hp hne hinv c x hc hbound hx B hgap
   apply

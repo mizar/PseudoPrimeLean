@@ -21,8 +21,8 @@ L at least 700 and log q at most L+7/5, the primitive Gamma sum is at most
 M log(conductor)+22. Keep the actual conductor and combine the certified
 32-term zero-error prefix, pole cost and left cost.
 This is the conductor-retaining upper input for the paired comparison. -/
-theorem gamma_primitiveCharacter_sum_re_le_paired_nearSquare_conductor {q : ℕ} [NeZero q]
-    (hq : 20000 ≤ q) (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
+theorem gammaCharSum_paired_conductor_GRH {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L : ℝ} (hL : 700 ≤ L)
     (hlogq : Real.log q ≤ L + 7 / 5) :
     let x := (2 / 5 : ℝ) * L ^ 2;
@@ -55,7 +55,7 @@ theorem gamma_primitiveCharacter_sum_re_le_paired_nearSquare_conductor {q : ℕ}
     rw [div_le_iff₀ hs]
     linarith only [hlogq, hroot, hL]
   have hu :=
-    gamma_primitiveCharacter_sum_re_le_conductor_free_prefix hq χ hne hGRH hx 32
+    gammaCharacterSum_re_le_conductor_free_prefix hq χ hne hGRH hx 32
       Analysis.gammaResolvent_thirtyTwo_error_lt
   linarith only [hu, hleft, hpole]
 

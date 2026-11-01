@@ -36,7 +36,7 @@ theorem finiteSigned_actual_zero_prime_cost_le (l : List (ℚ × ℚ))
     (hp : p.Prime) (hχ : χ p = 0) (K : Finset ℕ) (x : ℝ) :
     finiteSignedActualPrimeLocalCost l χ p K x ≤ Real.log p * finiteSignedRamifiedCost l p x := by
   have he :=
-    sum_finiteSignedMangoldtWeight_progression_le_cost l ha hW hp (by norm_num only : 0 < (1 : ℕ))
+    sum_signedMangoldt_progression_le_cost l ha hW hp (by norm_num only : 0 < (1 : ℕ))
       (by norm_num only : 0 < (1 : ℕ)) K
   simp only [Nat.one_mul] at he
   dsimp only [finiteSignedActualPrimeLocalCost, finiteSignedRamifiedCost]

@@ -76,7 +76,7 @@ theorem summable_regularPowerZeroWeight_riemannXi {p : ℝ} (hp : 1 < p) :
     rw [riemannXi_zero]
     norm_num only
   obtain ⟨C, hC, hg⟩ :=
-    General.exists_global_exponential_bound_of_orderAtMostOne differentiable_riemannXi.continuous
+    General.exists_exp_bound_of_orderAtMostOne differentiable_riemannXi.continuous
       hasOrderAtMostOne_riemannXi (show (1 : ℝ) < (1 + p) / 2 by linarith only [hp])
   exact
     General.summable_regularPowerZeroWeight differentiable_riemannXi h0 hC (by linarith only [hp])
@@ -92,24 +92,24 @@ abbrev Zero :=
 /-- Under RH, a xi zero stays at norm distance at least one half from every real sigma >= 1.
 Its real part is one half, so the real part of the reflected difference bounds its norm.
 This gives uniform pole separation for differentiating the centered zero series. -/
-theorem norm_zero_sub_real_ge_half_of_riemannHypothesis (hRH : RiemannHypothesis) {σ : ℝ}
-    (hσ : 1 ≤ σ) (ρ : Zero) : (1 / 2 : ℝ) ≤ ‖(ρ : ℂ) - (σ : ℂ)‖ := by
+theorem norm_zero_sub_real_ge_half_RH (hRH : RiemannHypothesis) {σ : ℝ} (hσ : 1 ≤ σ) (ρ : Zero) :
+    (1 / 2 : ℝ) ≤ ‖(ρ : ℂ) - (σ : ℂ)‖ := by
   have hh := Complex.re_le_norm ((σ : ℂ) - (ρ : ℂ))
-  rw [Complex.sub_re, Complex.ofReal_re,
-    riemannXi_zero_re_eq_half_of_riemannHypothesis hRH ρ.property, norm_sub_rev] at hh
+  rw [Complex.sub_re, Complex.ofReal_re, xi_zero_re_eq_half_of_riemannHypothesis hRH ρ.property,
+    norm_sub_rev] at hh
   linarith only [hh, hσ]
 
 /-- Under RH, for sigma >= 1 and p > 1, the xi multiplicities divided by
 norm(rho-sigma)^p form a summable series over xi zeros. Compare the shifted distance
 with 1+norm rho using critical-line separation, then use the regularized power mass.
 The cases p=3/2 and p=2 justify Mellin interchange and zero-series differentiation. -/
-theorem summable_shifted_power_mass_of_riemannHypothesis (hRH : RiemannHypothesis) {σ : ℝ}
-    (hσ : 1 ≤ σ) {p : ℝ} (hp : 1 < p) :
+theorem summable_shifted_power_mass_RH (hRH : RiemannHypothesis) {σ : ℝ} (hσ : 1 ≤ σ) {p : ℝ}
+    (hp : 1 < p) :
     Summable
       (fun ρ : Zero ↦ (riemannXiZeroMultiplicity (ρ : ℂ) : ℝ) / ‖(ρ : ℂ) - (σ : ℂ)‖ ^ p) := by
   have hs := (summable_regularPowerZeroWeight_riemannXi hp).subtype {z : ℂ | riemannXi z = 0}
   change Summable (fun ρ : Zero ↦ General.regularPowerZeroWeight riemannXi p (ρ : ℂ)) at hs
-  have hδ := norm_zero_sub_real_ge_half_of_riemannHypothesis hRH hσ
+  have hδ := norm_zero_sub_real_ge_half_RH hRH hσ
   have hc : ∀ ρ : Zero, 1 + ‖(ρ : ℂ)‖ ≤ (3 + 2 * σ) * ‖(ρ : ℂ) - (σ : ℂ)‖ := by
     intro ρ
     have ht := norm_add_le ((ρ : ℂ) - (σ : ℂ)) (σ : ℂ)
@@ -141,11 +141,9 @@ theorem summable_shifted_power_mass_of_riemannHypothesis (hRH : RiemannHypothesi
 /-- Under RH, the inverse-square xi zero mass is summable on the zero subtype.
 Restrict the existing all-point mass and identify the complex norm square.
 This is the absolute majorant for the genus-one series. -/
-theorem summable_inverse_square_mass_of_riemannHypothesis (hRH : RiemannHypothesis) :
+theorem summable_inverse_square_mass_RH (hRH : RiemannHypothesis) :
     Summable (fun ρ : Zero ↦ (riemannXiZeroMultiplicity (ρ : ℂ) : ℝ) / ‖(ρ : ℂ)‖ ^ 2) := by
-  have h :=
-    (summable_riemannXiZeroMultiplicityInvNormSq_of_riemannHypothesis hRH).subtype
-      {z : ℂ | riemannXi z = 0}
+  have h := (summable_zeroMultiplicityInvNormSq_RH hRH).subtype {z : ℂ | riemannXi z = 0}
   change
     Summable
       (fun ρ : Zero ↦
@@ -166,14 +164,13 @@ theorem summable_genus_terms_of_riemannHypothesis (hRH : RiemannHypothesis) {s :
         (analyticOrderNatAt riemannXi (ρ : ℂ) : ℂ) * (1 / (s - (ρ : ℂ)) + 1 / (ρ : ℂ))) := by
     apply
       Summable.of_norm_bounded
-        ((summable_inverse_square_mass_of_riemannHypothesis hRH).mul_left
-          (‖s‖ * (1 + ‖s‖ / (s.re - 1 / 2))))
+        ((summable_inverse_square_mass_RH hRH).mul_left (‖s‖ * (1 + ‖s‖ / (s.re - 1 / 2))))
     intro ρ
     rw [norm_mul, norm_natCast]
     have h :=
       mul_le_mul_of_nonneg_left
         (General.norm_genusTerm_le_inverseSquare
-          (riemannXi_zero_re_eq_half_of_riemannHypothesis hRH ρ.property) hs)
+          (xi_zero_re_eq_half_of_riemannHypothesis hRH ρ.property) hs)
         (Nat.cast_nonneg (analyticOrderNatAt riemannXi (ρ : ℂ)) : (0 : ℝ) ≤ _)
     exact
       h.trans_eq
@@ -192,16 +189,14 @@ theorem summable_genus_terms_of_riemannHypothesis (hRH : RiemannHypothesis) {s :
 /-- Under RH and Re s > 1/2, the xi logarithmic derivative centered at zero equals
 the genus-one zero sum. The order-one bound and absolute convergence discharge
 the general entire Hadamard theorem; xi(0)=1/2 fixes the nonzero center. -/
-theorem centered_logDeriv_eq_genusSum_of_riemannHypothesis (hRH : RiemannHypothesis) {s : ℂ}
-    (hs : 1 / 2 < s.re) :
+theorem centered_logDeriv_eq_genusSum_RH (hRH : RiemannHypothesis) {s : ℂ} (hs : 1 / 2 < s.re) :
     logDeriv riemannXi s - logDeriv riemannXi 0 =
       ∑' ρ : ℂ, (analyticOrderNatAt riemannXi ρ : ℂ) * (1 / (s - ρ) + 1 / ρ) := by
   have h0 : riemannXi 0 ≠ 0 := by
     rw [riemannXi_zero]; norm_num only
-  have hne : riemannXi s ≠ 0 := fun hz ↦
-    hs.ne' (riemannXi_zero_re_eq_half_of_riemannHypothesis hRH hz)
+  have hne : riemannXi s ≠ 0 := fun hz ↦ hs.ne' (xi_zero_re_eq_half_of_riemannHypothesis hRH hz)
   obtain ⟨C, hC, hg⟩ :=
-    General.exists_global_exponential_bound_of_orderAtMostOne differentiable_riemannXi.continuous
+    General.exists_exp_bound_of_orderAtMostOne differentiable_riemannXi.continuous
       hasOrderAtMostOne_riemannXi (show (1 : ℝ) < 3 / 2 by norm_num only)
   exact
     General.centered_logDeriv_eq_genusSum differentiable_riemannXi h0 hC
@@ -212,8 +207,8 @@ theorem centered_logDeriv_eq_genusSum_of_riemannHypothesis (hRH : RiemannHypothe
 above one half gives the difference of their zero resolvents. Subtract the two
 convergent genus-one expansions to cancel the center and reciprocal-zero terms.
 This identity supplies the centered resolvent for shifted Mellin inversion. -/
-theorem logDeriv_sub_eq_zeroSeries_of_riemannHypothesis (hRH : RiemannHypothesis) {s t : ℂ}
-    (hs : 1 / 2 < s.re) (ht : 1 / 2 < t.re) :
+theorem logDeriv_sub_eq_zeroSeries_RH (hRH : RiemannHypothesis) {s t : ℂ} (hs : 1 / 2 < s.re)
+    (ht : 1 / 2 < t.re) :
     logDeriv riemannXi s - logDeriv riemannXi t =
       ∑' ρ : ℂ, (analyticOrderNatAt riemannXi ρ : ℂ) * (1 / (s - ρ) - 1 / (t - ρ)) := by
   have he :
@@ -221,8 +216,7 @@ theorem logDeriv_sub_eq_zeroSeries_of_riemannHypothesis (hRH : RiemannHypothesis
       (logDeriv riemannXi s - logDeriv riemannXi 0) -
         (logDeriv riemannXi t - logDeriv riemannXi 0) := by
     ring
-  rw [he, centered_logDeriv_eq_genusSum_of_riemannHypothesis hRH hs,
-    centered_logDeriv_eq_genusSum_of_riemannHypothesis hRH ht, ←
+  rw [he, centered_logDeriv_eq_genusSum_RH hRH hs, centered_logDeriv_eq_genusSum_RH hRH ht, ←
     (summable_genus_terms_of_riemannHypothesis hRH hs).tsum_sub
       (summable_genus_terms_of_riemannHypothesis hRH ht)]
   exact tsum_congr (fun ρ ↦ by ring)

@@ -44,8 +44,7 @@ theorem exists_rational_scale_above_height_layers {A : ℝ} (hA : (116 / 63 : �
 q<=log(p)^A with q^(p-1) nontrivial modulo p². Fix a rational scale below A,
 combine its proved interval and smooth-count bounds, and extract a prime factor.
 The threshold depends only on A; GRH and external Fermat estimates are absent. -/
-theorem eventually_exists_prime_nontrivial_power_of_height_layers {A : ℝ}
-    (hA : (116 / 63 : ℝ) < A) :
+theorem eventually_exists_prime_pow_ne_one_gt_116_63 {A : ℝ} (hA : (116 / 63 : ℝ) < A) :
     Filter.Eventually
       (fun p : ℕ ↦
         p.Prime →
@@ -54,13 +53,12 @@ theorem eventually_exists_prime_nontrivial_power_of_height_layers {A : ℝ}
   obtain ⟨a, t, ha, hgap, hsmall, hscale⟩ := exists_rational_scale_above_height_layers hA
   have hat : a < t := by nlinarith only [hgap, ha]
   have hκ : 1 < (t : ℝ) / a := (one_lt_div (Nat.cast_pos.mpr ha)).mpr (Nat.cast_lt.mpr hat)
-  obtain ⟨P, hP⟩ := exists_uniform_height_layer_heilbronn_interval_bound ha hgap hsmall
+  obtain ⟨P, hP⟩ := exists_uniform_height_layer_interval_bound ha hgap hsmall
   filter_upwards [eventually_smooth_count_at_rational_cutoff ha hκ hscale,
     Filter.eventually_ge_atTop P] with p hsm hlarge hp hp2
   let : Fact p.Prime := ⟨hp⟩
   obtain ⟨k, hk, hkp, hlo, hhi, hcount⟩ := hP p (hp.odd_of_ne_two hp2) hlarge
-  obtain ⟨q, hq, hqB, hpow⟩ :=
-    exists_prime_nontrivial_power_of_interval_and_smooth hcount (hsm k hk hlo hhi)
+  obtain ⟨q, hq, hqB, hpow⟩ := exists_prime_pow_ne_one_of_interval_smooth hcount (hsm k hk hlo hhi)
   have hB := Nat.lt_add_one_iff.mp hqB
   have hle : (q : ℝ) ≤ (Real.log p) ^ A :=
     (Nat.cast_le.mpr hB).trans

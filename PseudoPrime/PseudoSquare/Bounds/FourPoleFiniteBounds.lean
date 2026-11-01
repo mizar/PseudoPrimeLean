@@ -42,7 +42,7 @@ theorem QNegOne_le_fourPole_cumulative (B : ℕ)
       nlinarith only [hs]
     exact (hb.trans he).trans (le_max_right _ _)
   · have hb :=
-      primeNegOneWitness_cast_le_joint_entrance_endpoint ha.odd ha.not_isSquare hGRH
+      negOneWitness_cast_le_joint_entrance_endpoint ha.odd ha.not_isSquare hGRH
         (by norm_num only : (255 : ℝ) ≤ (10 : ℝ) ^ 18) (le_of_not_ge hL) hw
     exact hb.trans (le_max_left _ _)
 

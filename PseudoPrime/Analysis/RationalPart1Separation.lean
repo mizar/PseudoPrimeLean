@@ -18,9 +18,9 @@ namespace PseudoPrime.Analysis
 when the correction is at least 2 log L+499/250+w-2A.
 Retain the negative pi contribution and control the logarithmic ratio by its tangent.
 The rational endpoint margin is positive. This improves the constant two to 499/250. -/
-theorem refinedPart1_bounds_incompatible_fourNinetyNine_twoFiftieths {L y A w z P T U : ℝ}
-    (hL : 8 < L) (hy : L ≤ y) (hA : 0 ≤ A) (hz : z ≤ (1 / 40 : ℝ)) (hP : (57 / 50 : ℝ) ≤ P)
-    (hT : T ≤ (1839 / 1000 : ℝ)) (hB : 2 * Real.log L + 499 / 250 + w - 2 * A ≤ y - L)
+theorem refinedPart1_incompatible_499_250 {L y A w z P T U : ℝ} (hL : 8 < L) (hy : L ≤ y)
+    (hA : 0 ≤ A) (hz : z ≤ (1 / 40 : ℝ)) (hP : (57 / 50 : ℝ) ≤ P) (hT : T ≤ (1839 / 1000 : ℝ))
+    (hB : 2 * Real.log L + 499 / 250 + w - 2 * A ≤ y - L)
     (hupper :
       U ≤
         (2 * y + 2 + Real.log (y ^ 2)) * (L / 2 + 9 / 50 - A) +

@@ -19,8 +19,7 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 to the closed contour rectangle exactly when its real coordinate lies between
 the two vertical edges. Compute coordinates explicitly. This removes the height
 sequence and GRH from trivial-zero support identification. -/
-theorem real_mem_unconditionalHeightRectangle_iff (A : ℕ) (hA : 2 ≤ A) (T : ℝ) (hT : 0 < T)
-    (r : ℝ) :
+theorem real_mem_heightRectangle_iff (A : ℕ) (hA : 2 ≤ A) (T : ℝ) (hT : 0 < T) (r : ℝ) :
     (r : ℂ) ∈
         Rectangle.rectangleClosedBox (unconditionalHeightLowerCorner A T)
           (unconditionalHeightUpperCorner T) ↔
@@ -37,8 +36,8 @@ theorem real_mem_unconditionalHeightRectangle_iff (A : ℕ) (hA : 2 ≤ A) (T : 
 belongs to the rectangle with left edge minus twice the cutoff minus one half
 exactly when its natural index is below the cutoff. Reduce to real coordinate
 inequalities. This fixes the finite trivial-zero support without RH. -/
-theorem trivialLocation_mem_unconditionalHeightRectangle_iff (m : ℕ) (T : ℝ) (hT : 0 < T) (j a : ℕ)
-    (hm : 1 ≤ m) (ha : a ≤ 1) :
+theorem trivial_mem_heightRectangle_iff (m : ℕ) (T : ℝ) (hT : 0 < T) (j a : ℕ) (hm : 1 ≤ m)
+    (ha : a ≤ 1) :
     (-2 * ((j : ℂ) + 1) + (a : ℂ)) ∈
         Rectangle.rectangleClosedBox (unconditionalHeightLowerCorner (2 * m) T)
           (unconditionalHeightUpperCorner T) ↔
@@ -47,7 +46,7 @@ theorem trivialLocation_mem_unconditionalHeightRectangle_iff (m : ℕ) (T : ℝ)
   have hc : (-2 * ((j : ℂ) + 1) + (a : ℂ)) = ((-2 * ((j : ℝ) + 1) + (a : ℝ) : ℝ) : ℂ) := by
     simp only [Complex.ofReal_add, Complex.ofReal_mul, Complex.ofReal_neg, Complex.ofReal_ofNat,
       Complex.ofReal_natCast, Complex.ofReal_one]
-  rw [hc, real_mem_unconditionalHeightRectangle_iff (2 * m) hA T hT]
+  rw [hc, real_mem_heightRectangle_iff (2 * m) hA T hT]
   simp only [Nat.cast_mul, Nat.cast_ofNat]
   have han : (0 : ℝ) ≤ a := Nat.cast_nonneg a
   have ha1 : (a : ℝ) ≤ 1 := by
@@ -67,9 +66,8 @@ theorem trivialLocation_mem_unconditionalHeightRectangle_iff (m : ℕ) (T : ℝ)
 zeros in the contour rectangle are precisely the first negative even integer
 locations. Use gamma zero classification and the explicit rectangle coordinates.
 This identifies the even trivial correction independently of any height sequence. -/
-theorem even_trivialZeros_unconditionalRectangle_eq_image {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hne : χ ≠ 1) (he : χ.Even) (m : ℕ) (hm : 1 ≤ m) (T : ℝ)
-    (hT : 0 < T) :
+theorem evenTrivialZeros_rectangle_image {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hne : χ ≠ 1) (he : χ.Even) (m : ℕ) (hm : 1 ≤ m) (T : ℝ) (hT : 0 < T) :
     (dirichletLFunctionZerosInRectangle χ hne (unconditionalHeightLowerCorner (2 * m) T)
             (unconditionalHeightUpperCorner T)).filter
         (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0) =
@@ -80,12 +78,10 @@ theorem even_trivialZeros_unconditionalRectangle_eq_image {N : ℕ} [NeZero N]
   · intro h
     obtain ⟨hZ, hΓ, hρ⟩ := Finset.mem_filter.mp h
     obtain ⟨j, hj⟩ := exists_nat_trivial_location_of_even he hΓ hρ
-    have hb := (mem_dirichletLFunctionZerosInRectangle_iff.mp hZ).1
+    have hb := (mem_LFunctionZerosInRectangle_iff.mp hZ).1
     have hmem :=
-      (trivialLocation_mem_unconditionalHeightRectangle_iff m T hT j 0 hm (Nat.zero_le 1)).mp
-        (by
-          simpa only [dirichletCompletedLFunctionRectangleBox, Nat.cast_zero, add_zero, ← hj] using
-            hb)
+      (trivial_mem_heightRectangle_iff m T hT j 0 hm (Nat.zero_le 1)).mp
+        (by simpa only [completedRectangleBox, Nat.cast_zero, add_zero, ← hj] using hb)
     exact Finset.mem_image.mpr ⟨j, Finset.mem_range.mpr hmem, hj.symm⟩
   · intro h
     obtain ⟨j, hj, rfl⟩ := Finset.mem_image.mp h
@@ -94,21 +90,18 @@ theorem even_trivialZeros_unconditionalRectangle_eq_image {N : ℕ} [NeZero N]
       exact ⟨j + 1, by rw [Nat.cast_add, Nat.cast_one, neg_mul]⟩
     have hz : -2 * ((j : ℂ) + 1) ≠ 0 :=
       mul_ne_zero (neg_ne_zero.mpr two_ne_zero) (Nat.cast_add_one_ne_zero j)
-    refine Finset.mem_filter.mpr ⟨mem_dirichletLFunctionZerosInRectangle_iff.mpr ⟨?_, ?_⟩, hΓ, hz⟩
-    · simpa only [dirichletCompletedLFunctionRectangleBox, Nat.cast_zero, add_zero] using
-        (trivialLocation_mem_unconditionalHeightRectangle_iff m T hT j 0 hm (Nat.zero_le 1)).mpr
-          (Finset.mem_range.mp hj)
-    · rw [dirichletLFunction_eq_completed_div_gammaFactor χ _
-          (Or.inr (dirichletCharacter_level_ne_one_of_ne_one hne)),
-        hΓ, div_zero]
+    refine Finset.mem_filter.mpr ⟨mem_LFunctionZerosInRectangle_iff.mpr ⟨?_, ?_⟩, hΓ, hz⟩
+    · simpa only [completedRectangleBox, Nat.cast_zero, add_zero] using
+        (trivial_mem_heightRectangle_iff m T hT j 0 hm (Nat.zero_le 1)).mpr (Finset.mem_range.mp hj)
+    · rw [L_eq_completed_div_gammaFactor χ _ (Or.inr (character_level_ne_one_of_ne_one hne)), hΓ,
+        div_zero]
 
 /-- For an odd nonprincipal character and positive height, the gamma-forced zeros
 in the contour rectangle are precisely the first negative odd integer locations.
 Use gamma zero classification and the explicit rectangle coordinates.
 This identifies the odd trivial correction independently of any height sequence. -/
-theorem odd_trivialZeros_unconditionalRectangle_eq_image {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hne : χ ≠ 1) (ho : χ.Odd) (m : ℕ) (hm : 1 ≤ m) (T : ℝ)
-    (hT : 0 < T) :
+theorem oddTrivialZeros_rectangle_image {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hne : χ ≠ 1) (ho : χ.Odd) (m : ℕ) (hm : 1 ≤ m) (T : ℝ) (hT : 0 < T) :
     (dirichletLFunctionZerosInRectangle χ hne (unconditionalHeightLowerCorner (2 * m) T)
             (unconditionalHeightUpperCorner T)).filter
         (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0) =
@@ -119,10 +112,10 @@ theorem odd_trivialZeros_unconditionalRectangle_eq_image {N : ℕ} [NeZero N]
   · intro h
     obtain ⟨hZ, hΓ, _⟩ := Finset.mem_filter.mp h
     obtain ⟨j, hj⟩ := exists_nat_trivial_location_of_odd ho hΓ
-    have hb := (mem_dirichletLFunctionZerosInRectangle_iff.mp hZ).1
+    have hb := (mem_LFunctionZerosInRectangle_iff.mp hZ).1
     have hmem :=
-      (trivialLocation_mem_unconditionalHeightRectangle_iff m T hT j 1 hm (Nat.le_refl 1)).mp
-        (by simpa only [dirichletCompletedLFunctionRectangleBox, Nat.cast_one, ← hj] using hb)
+      (trivial_mem_heightRectangle_iff m T hT j 1 hm (Nat.le_refl 1)).mp
+        (by simpa only [completedRectangleBox, Nat.cast_one, ← hj] using hb)
     exact Finset.mem_image.mpr ⟨j, Finset.mem_range.mpr hmem, hj.symm⟩
   · intro h
     obtain ⟨j, hj, rfl⟩ := Finset.mem_image.mp h
@@ -135,30 +128,28 @@ theorem odd_trivialZeros_unconditionalRectangle_eq_image {N : ℕ} [NeZero N]
       simp only [Complex.add_re, Complex.mul_re, Complex.neg_re, Complex.re_ofNat, Complex.im_ofNat,
         Complex.natCast_re, Complex.one_re, Complex.zero_re, Complex.neg_im] at hre
       linarith only [hre, Nat.cast_nonneg (α := ℝ) j]
-    refine Finset.mem_filter.mpr ⟨mem_dirichletLFunctionZerosInRectangle_iff.mpr ⟨?_, ?_⟩, hΓ, hz⟩
-    · simpa only [dirichletCompletedLFunctionRectangleBox, Nat.cast_one] using
-        (trivialLocation_mem_unconditionalHeightRectangle_iff m T hT j 1 hm (Nat.le_refl 1)).mpr
-          (Finset.mem_range.mp hj)
-    · rw [dirichletLFunction_eq_completed_div_gammaFactor χ _
-          (Or.inr (dirichletCharacter_level_ne_one_of_ne_one hne)),
-        hΓ, div_zero]
+    refine Finset.mem_filter.mpr ⟨mem_LFunctionZerosInRectangle_iff.mpr ⟨?_, ?_⟩, hΓ, hz⟩
+    · simpa only [completedRectangleBox, Nat.cast_one] using
+        (trivial_mem_heightRectangle_iff m T hT j 1 hm (Nat.le_refl 1)).mpr (Finset.mem_range.mp hj)
+    · rw [L_eq_completed_div_gammaFactor χ _ (Or.inr (character_level_ne_one_of_ne_one hne)), hΓ,
+        div_zero]
 
 /-- For an even primitive nonprincipal character and positive contour height, the
 finite logarithmic trivial-zero contribution equals the negative cast of the
 first even inverse-power terms. Use the exact finite support and multiplicity-one
 residue formula. This makes the correction independent of height without RH. -/
-theorem sum_even_log_trivialZeros_unconditionalRectangle_eq {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (he : χ.Even) (x : ℝ) (m : ℕ)
-    (hm : 1 ≤ m) (T : ℝ) (hT : 0 < T) :
+theorem sum_evenLogTrivial_rectangle {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (he : χ.Even) (x : ℝ) (m : ℕ) (hm : 1 ≤ m) (T : ℝ)
+    (hT : 0 < T) :
     (∑
         ρ ∈
           (dirichletLFunctionZerosInRectangle χ hne (unconditionalHeightLowerCorner (2 * m) T)
                 (unconditionalHeightUpperCorner T)).filter
             (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0),
-        dirichletLFunctionLogZeroContribution x χ ρ) =
+        LFunctionLogZeroContribution x χ ρ) =
       -((∑ j ∈ Finset.range m, x⁻¹ ^ (2 * (j + 1)) / ((2 * (j + 1) : ℕ) : ℝ) ^ 2 : ℝ) : ℂ) := by
   classical
-  rw [even_trivialZeros_unconditionalRectangle_eq_image hne he m hm T hT,
+  rw [evenTrivialZeros_rectangle_image hne he m hm T hT,
     Finset.sum_image
       (fun a _ b _ h =>
         Nat.cast_injective (R := ℂ)
@@ -178,18 +169,18 @@ theorem sum_even_log_trivialZeros_unconditionalRectangle_eq {N : ℕ} [NeZero N]
 finite logarithmic trivial-zero contribution equals the negative cast of the
 first odd inverse-power terms. Use the exact finite support and multiplicity-one
 residue formula. This makes the correction independent of height without RH. -/
-theorem sum_odd_log_trivialZeros_unconditionalRectangle_eq {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (ho : χ.Odd) (x : ℝ) (m : ℕ)
-    (hm : 1 ≤ m) (T : ℝ) (hT : 0 < T) :
+theorem sum_oddLogTrivial_rectangle {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (ho : χ.Odd) (x : ℝ) (m : ℕ) (hm : 1 ≤ m) (T : ℝ)
+    (hT : 0 < T) :
     (∑
         ρ ∈
           (dirichletLFunctionZerosInRectangle χ hne (unconditionalHeightLowerCorner (2 * m) T)
                 (unconditionalHeightUpperCorner T)).filter
             (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0),
-        dirichletLFunctionLogZeroContribution x χ ρ) =
+        LFunctionLogZeroContribution x χ ρ) =
       -((∑ j ∈ Finset.range m, x⁻¹ ^ (2 * j + 1) / ((2 * j + 1 : ℕ) : ℝ) ^ 2 : ℝ) : ℂ) := by
   classical
-  rw [odd_trivialZeros_unconditionalRectangle_eq_image hne ho m hm T hT,
+  rw [oddTrivialZeros_rectangle_image hne ho m hm T hT,
     Finset.sum_image
       (fun a _ b _ h =>
         Nat.cast_injective (R := ℂ)
@@ -212,9 +203,9 @@ theorem sum_odd_log_trivialZeros_unconditionalRectangle_eq {N : ℕ} [NeZero N]
 trivial logarithmic sums tend to the full even correction along any positive
 height selection as the left edge expands. Use the exact partial sums and the
 summable even subsequence. This removes RH from the trivial-zero limit. -/
-theorem tendsto_sum_even_log_trivialZeros_unconditionalRectangle {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (he : χ.Even) {x : ℝ}
-    (hx : 1 < x) (g : ℕ → ℝ) (hg : ∀ m : ℕ, 0 < g m) :
+theorem tendsto_evenLogTrivial_rectangle {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (he : χ.Even) {x : ℝ} (hx : 1 < x) (g : ℕ → ℝ)
+    (hg : ∀ m : ℕ, 0 < g m) :
     Filter.Tendsto
       (fun m =>
         ∑
@@ -222,7 +213,7 @@ theorem tendsto_sum_even_log_trivialZeros_unconditionalRectangle {N : ℕ} [NeZe
             (dirichletLFunctionZerosInRectangle χ hne (unconditionalHeightLowerCorner (2 * m) (g m))
                   (unconditionalHeightUpperCorner (g m))).filter
               (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0),
-          dirichletLFunctionLogZeroContribution x χ ρ)
+          LFunctionLogZeroContribution x χ ρ)
       Filter.atTop
       (nhds (-((∑' j : ℕ, x⁻¹ ^ (2 * (j + 1)) / ((2 * (j + 1) : ℕ) : ℝ) ^ 2 : ℝ) : ℂ))) := by
   have hi : Function.Injective (fun j : ℕ => 2 * (j + 1)) := by
@@ -241,16 +232,15 @@ theorem tendsto_sum_even_log_trivialZeros_unconditionalRectangle {N : ℕ} [NeZe
     ht.congr'
       (by
         filter_upwards [Filter.eventually_ge_atTop 1] with m hm
-        exact
-          (sum_even_log_trivialZeros_unconditionalRectangle_eq hp hne he x m hm (g m) (hg m)).symm)
+        exact (sum_evenLogTrivial_rectangle hp hne he x m hm (g m) (hg m)).symm)
 
 /-- For an odd primitive nonprincipal character and scale greater than one, the
 trivial logarithmic sums tend to the full odd correction along any positive
 height selection as the left edge expands. Use the exact partial sums and the
 summable odd subsequence. This removes RH from the trivial-zero limit. -/
-theorem tendsto_sum_odd_log_trivialZeros_unconditionalRectangle {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (ho : χ.Odd) {x : ℝ}
-    (hx : 1 < x) (g : ℕ → ℝ) (hg : ∀ m : ℕ, 0 < g m) :
+theorem tendsto_oddLogTrivial_rectangle {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (ho : χ.Odd) {x : ℝ} (hx : 1 < x) (g : ℕ → ℝ)
+    (hg : ∀ m : ℕ, 0 < g m) :
     Filter.Tendsto
       (fun m =>
         ∑
@@ -258,7 +248,7 @@ theorem tendsto_sum_odd_log_trivialZeros_unconditionalRectangle {N : ℕ} [NeZer
             (dirichletLFunctionZerosInRectangle χ hne (unconditionalHeightLowerCorner (2 * m) (g m))
                   (unconditionalHeightUpperCorner (g m))).filter
               (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0),
-          dirichletLFunctionLogZeroContribution x χ ρ)
+          LFunctionLogZeroContribution x χ ρ)
       Filter.atTop
       (nhds (-((∑' j : ℕ, x⁻¹ ^ (2 * j + 1) / ((2 * j + 1 : ℕ) : ℝ) ^ 2 : ℝ) : ℂ))) := by
   have hi : Function.Injective (fun j : ℕ => 2 * j + 1) := by
@@ -276,7 +266,6 @@ theorem tendsto_sum_odd_log_trivialZeros_unconditionalRectangle {N : ℕ} [NeZer
     ht.congr'
       (by
         filter_upwards [Filter.eventually_ge_atTop 1] with m hm
-        exact
-          (sum_odd_log_trivialZeros_unconditionalRectangle_eq hp hne ho x m hm (g m) (hg m)).symm)
+        exact (sum_oddLogTrivial_rectangle hp hne ho x m hm (g m) (hg m)).symm)
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

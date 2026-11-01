@@ -41,7 +41,7 @@ theorem eventually_two_thirds_mul_le_psi :
 between `x` and `4x/5` exceeds `17x log(5/4)/32`. Apply the finite difference
 inequality to the eventual Chebyshev lower bound. The coefficient exceeds one
 half, leaving room for nonprincipal and prime-power errors in theta supply. -/
-theorem exists_logWeightedMangoldtSum_four_fifths_difference_lower :
+theorem exists_logMangoldt_sub_4_5_lower :
     ∃ X : ℝ,
       1 ≤ X ∧
         ∀ x : ℝ,
@@ -85,8 +85,7 @@ theorem commonFactorLogWeightedSum_nonneg {x : ℝ} (hx : 0 < x) (q : ℕ) :
 is at least the unsigned difference minus `omega(q) log(x)^2/2`. Use the exact
 principal-character identity and discard the nonnegative lower-end correction.
 This keeps the modulus dependence explicit for the uniform theta-supply budget. -/
-theorem principalLogDifference_ge_unsigned_sub_common_bound {q : ℕ} (hq : q ≠ 0) {x : ℝ}
-    (hx : 0 < x) :
+theorem principalLogDifference_ge_sub_common_bound {q : ℕ} (hq : q ≠ 0) {x : ℝ} (hx : 0 < x) :
     logWeightedMangoldtSum x - logWeightedMangoldtSum (4 * x / 5) -
         (1 / 2 : ℝ) * q.primeFactors.card * (Real.log x) ^ 2 ≤
       (characterLogWeightedSum x (1 : DirichletCharacter ℂ q) -
@@ -113,10 +112,10 @@ theorem exists_principalLogDifference_lower :
                     (1 / 2 : ℝ) * q.primeFactors.card * (Real.log x) ^ 2 ≤
                   (characterLogWeightedSum x (1 : DirichletCharacter ℂ q) -
                       characterLogWeightedSum (4 * x / 5) (1 : DirichletCharacter ℂ q)).re := by
-  obtain ⟨X, hX, hbound⟩ := exists_logWeightedMangoldtSum_four_fifths_difference_lower
+  obtain ⟨X, hX, hbound⟩ := exists_logMangoldt_sub_4_5_lower
   refine ⟨X, hX, fun q hq x hx ↦ ?_⟩
   exact
     (sub_le_sub_right (hbound x hx) _).trans
-      (principalLogDifference_ge_unsigned_sub_common_bound hq (zero_lt_one.trans_le (hX.trans hx)))
+      (principalLogDifference_ge_sub_common_bound hq (zero_lt_one.trans_le (hX.trans hx)))
 
 end PseudoPrime.AnalyticNumberTheory.Arithmetic

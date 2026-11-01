@@ -41,7 +41,7 @@ theorem sharpDoubleLogNeOne_branch_polynomials {B : ℕ} (hL : 96 ≤ Real.log B
     norm_num only [Nat.cast_ofNat]
     ring
   have hp :=
-    LLS.PaperStatements.sharpOddEndpoint_doubleLog_branch_polynomials_pos hL
+    LLS.PaperStatements.sharpOdd_doubleLog_branchPolys_pos hL
       (by linarith only [Real.log_two_lt_d9] : Real.log 2 ≤ (7 / 10 : ℝ))
   rw [← he] at hp
   have hD : (2 * Real.log y) ^ 2 / 2 = 2 * (Real.log y) ^ 2 := by ring
@@ -87,9 +87,8 @@ theorem sharpDoubleLogNeOneRoot_sq_lt_elevenFourths {L : ℝ} (hL : 96 ≤ L)
 Jacobi witness lies through (log n-2log log n+149/20)^2 and strictly below (log n)^2.
 Insert both certified branch polynomials into the existing arithmetic consumer.
 Divisors of n remain allowed zero witnesses; two is excluded. -/
-theorem exists_prime_ne_one_witness_le_sharpDoubleLog_and_lt_log_sq {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 96 ≤ Real.log n) :
+theorem exists_prime_neOne_sharpDoubleLog_strict_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 96 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         Odd p ∧
@@ -98,8 +97,7 @@ theorem exists_prime_ne_one_witness_le_sharpDoubleLog_and_lt_log_sq {n : ℕ} (h
   have hd := LLS.PaperStatements.sharpOddEndpointDoubleLogRoot_data hL
   obtain ⟨hzero, hnonzero⟩ := sharpDoubleLogNeOne_branch_polynomials hL
   obtain ⟨p, hp, ho, hb, hv⟩ :=
-    exists_odd_prime_jacobi_ne_one_of_branch_polynomials_pos hn hns hGRH (by linarith only [hd.1])
-      hzero hnonzero
+    exists_oddPrime_neOne_branchPolys_GRH hn hns hGRH (by linarith only [hd.1]) hzero hnonzero
   have hs := sharpDoubleLogNeOneRoot_sq_lt_log_sq hL
   have hlt := hb.trans_lt hs
   dsimp only [LLS.PaperStatements.sharpOddEndpointDoubleLogRoot] at hb
@@ -113,8 +111,7 @@ theorem primeNeOneWitness_cast_le_sharpDoubleLog {n : ℕ} (hn : Odd n) (hns : �
     (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤
       (Real.log n - 2 * Real.log (Real.log n) + 149 / 20) ^ 2 := by
-  obtain ⟨p, hp, ho, hb, _, hv⟩ :=
-    exists_prime_ne_one_witness_le_sharpDoubleLog_and_lt_log_sq hn hns hGRH hL
+  obtain ⟨p, hp, ho, hb, _, hv⟩ := exists_prime_neOne_sharpDoubleLog_strict_GRH hn hns hGRH hL
   exact (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hb
 
 /-- Under GRH and log B>=96, QNeOne(B) is at most the double-logarithm square.

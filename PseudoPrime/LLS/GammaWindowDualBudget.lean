@@ -65,9 +65,9 @@ namespace PseudoPrime.LLS
 window support, plus a cap E on their joint signed allowances. Claim: the
 actual dual budget is at most delta(lo)*L+E throughout the cell. Extract the
 Euler/numerator caps and apply window transport. Role: reuse stored rows. -/
-theorem gamma_scale_signed_dual_budget_le_checked_window_rows (c : GammaLocalCellData)
-    (rows : ℕ → GammaLocalPrimeRow) (hcell : c.check = true) {L x E : ℝ} (hL : 0 ≤ L)
-    (hlo : (1 : ℝ) ≤ c.lo) (hlox : (c.lo : ℝ) ≤ x) (hxhi : x ≤ (c.hi : ℝ))
+theorem gammaSignedDual_checkedRows (c : GammaLocalCellData) (rows : ℕ → GammaLocalPrimeRow)
+    (hcell : c.check = true) {L x E : ℝ} (hL : 0 ≤ L) (hlo : (1 : ℝ) ≤ c.lo) (hlox : (c.lo : ℝ) ≤ x)
+    (hxhi : x ≤ (c.hi : ℝ))
     (hcheck : ∀ p ∈ gammaAnchoredWindowPrimeSet c.hi, (rows p).prime = p ∧ (rows p).check c = true)
     (hrows :
       (∑ p ∈ gammaAnchoredWindowPrimeSet c.hi,

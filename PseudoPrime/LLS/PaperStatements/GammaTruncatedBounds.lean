@@ -98,7 +98,7 @@ theorem gamma_level_one_sum_lower (hRH : RiemannHypothesis) {x lambda : ℝ} (hx
       ∑ n ∈ Finset.Ioc 0 ⌊lambda * x⌋₊,
         (gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x n).re := by
   have h :=
-    AnalyticNumberTheory.Arithmetic.exponentialMangoldtSum_div_sqrt_lower_of_psi_error
+    AnalyticNumberTheory.Arithmetic.expMangoldtSum_div_sqrt_lower_of_psi_error
       (by norm_num only : (0 : ℝ) ≤ 38) hx (mul_nonneg hl hx.le)
       (fun t ht ↦ LLS.psi_error_le_thirty_eight hRH ht)
   rw [neg_div, mul_div_cancel_right₀ _ hx.ne'] at h
@@ -136,7 +136,7 @@ theorem gamma_level_one_sum_lower_thirteen (hRH : RiemannHypothesis) {x lambda :
       ∑ n ∈ Finset.Ioc 0 ⌊lambda * x⌋₊,
         (gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x n).re := by
   have h :=
-    AnalyticNumberTheory.Arithmetic.exponentialMangoldtSum_div_sqrt_lower_of_psi_error
+    AnalyticNumberTheory.Arithmetic.expMangoldtSum_div_sqrt_lower_of_psi_error
       (by norm_num only : (0 : ℝ) ≤ 13) hx (mul_nonneg hl hx.le)
       (fun t ht ↦ LLS.psi_error_le_thirteen hRH ht)
   rw [neg_div, mul_div_cancel_right₀ _ hx.ne'] at h

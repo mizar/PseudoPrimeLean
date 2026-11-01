@@ -21,9 +21,9 @@ open AnalyticNumberTheory.Arithmetic in
 cost bounds and a negative endpoint limit at the canonical conductor give an
 odd prime at most x coprime to n with Jacobi value minus one. Transfer the
 primitive character witness; no selected support or positive gap is required. -/
-theorem exists_odd_prime_jacobi_neg_one_of_excluded_endpoint {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x Y c D : ℝ}
-    (hx : 1 < x) (hY : 64 ≤ Y) (hYx : Y ≤ x)
+theorem exists_oddPrime_negOne_excludedEndpoint_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x Y c D : ℝ} (hx : 1 < x)
+    (hY : 64 ≤ Y) (hYx : Y ≤ x)
     (hC :
       excludedCharacterDefect (NumberTheory.primitiveQuadraticCharacter n hn) (4 * n)
           (Finset.Ioc 0 ⌊Y⌋₊) (reciprocalWeightedMangoldtTerm Y) ≤
@@ -50,7 +50,7 @@ theorem exists_odd_prime_jacobi_neg_one_of_excluded_endpoint {n : ℕ} (hn : Odd
   have hq : 2 ≤ (NumberTheory.complexQuadraticCharacter n hn).conductor :=
     (Nat.two_le_iff _).mpr ⟨NeZero.ne _, fun he ↦ hne (DirichletCharacter.level_one' χ he)⟩
   obtain ⟨p, hprime, hodd, hpx, hpc, hv⟩ :=
-    LLS.PaperStatements.exists_odd_prime_neg_one_of_excluded_two_cost_limit_neg hq
+    LLS.PaperStatements.exists_oddNegOne_twoCost_GRH hq
       (NumberTheory.complexQuadraticCharacter n hn).conductor_dvd_level
       (show 2 ∣ 4 * n from ⟨2 * n, by ring⟩) hGRH hp hne hquad hx hY hYx hC hD hlim
   have hcp : Nat.Coprime p n := hpc.of_dvd_right (show n ∣ 4 * n from ⟨4, by ring⟩)
@@ -83,7 +83,7 @@ theorem primeNegOneWitness_cast_le_of_excluded_endpoint {n : ℕ} (hn : Odd n) (
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ x := by
   obtain ⟨p, hp, ho, hpx, _, hv⟩ :=
-    exists_odd_prime_jacobi_neg_one_of_excluded_endpoint hn hns hGRH hx hY hYx hC hD hlim
+    exists_oddPrime_negOne_excludedEndpoint_GRH hn hns hGRH hx hY hYx hC hD hlim
   exact (Nat.cast_le.mpr (NumberTheory.primeNegOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hpx
 
 open AnalyticNumberTheory.Arithmetic in

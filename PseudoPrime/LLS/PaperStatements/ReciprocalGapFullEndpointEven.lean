@@ -31,11 +31,10 @@ negative even endpoint separation yields a prime `p <= x` with `χ(p) != 1`.
 Assume no such prime, identify both finite character sums with their principal
 counterparts, and compare the even reciprocal mass cap with the principal lower
 bound. A prime dividing `q` remains an allowed witness. -/
-theorem exists_prime_not_one_of_reciprocalGap_full_endpoint_even {h : ℝ} (hh : 0 < h) {q : ℕ}
-    [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (heven : χ.Even) {x Y : ℝ} (hx : 1 < x) (hY : 64 ≤ Y)
-    (hYx : Y ≤ x) (hgap : reciprocalGapFullEndpointEvenSeparation h q x Y < 0) :
+theorem exists_prime_neOne_fullEvenGap_GRH {h : ℝ} (hh : 0 < h) {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+    {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (heven : χ.Even) {x Y : ℝ} (hx : 1 < x)
+    (hY : 64 ≤ Y) (hYx : Y ≤ x) (hgap : reciprocalGapFullEndpointEvenSeparation h q x Y < 0) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ x ∧ χ p ≠ 1 := by
   by_contra hn
   have ht : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ x → χ p = 1 := by
@@ -46,7 +45,7 @@ theorem exists_prime_not_one_of_reciprocalGap_full_endpoint_even {h : ℝ} (hh :
   have he :=
     reciprocalSum_re_eq_of_full_prime_trivial χ (by linarith only [hy2] : 0 ≤ Y)
       (fun p hp hpy ↦ ht p hp (hpy.trans hYx))
-  have hR := reciprocalWeightedMangoldtSum_ge_log_sub_31551_div_20000 hGRH.riemann hy2
+  have hR := reciprocalMangoldt_ge_log_sub_31551_20000 hGRH.riemann hy2
   rw [← he] at hR
   have hM := reciprocalGap_mass_le_even_reciprocal_cap hq hGRH hp hne heven hY hR
   have hU := reciprocalGapCharacterSum_re_le_endpoint_mass hh hq hGRH hp hne hinv hx.le hM
@@ -77,7 +76,7 @@ noncomputable def reciprocalGapFullEndpointEvenLimit (q : ℕ) (x Y : ℝ) : ℝ
 /-- The even endpoint separation converges to its stated limit as `h` decreases
 to zero. Reuse the quotient and signed Gamma limits; the changed mass constant is
 independent of `h`. -/
-theorem tendsto_reciprocalGapFullEndpointEvenSeparation_right (q : ℕ) {x : ℝ} (hx : 1 ≤ x) (Y : ℝ) :
+theorem tendsto_reciprocalGapFullEvenEndpoint (q : ℕ) {x : ℝ} (hx : 1 ≤ x) (Y : ℝ) :
     Filter.Tendsto (fun h : ℝ ↦ reciprocalGapFullEndpointEvenSeparation h q x Y)
       (nhdsWithin 0 (Set.Ioi 0)) (nhds (reciprocalGapFullEndpointEvenLimit q x Y)) := by
   let M := reciprocalGapEvenReciprocalMassCap q Y (Real.log Y - (31551 / 20000 : ℝ))
@@ -120,28 +119,25 @@ theorem tendsto_reciprocalGapFullEndpointEvenSeparation_right (q : ℕ) {x : ℝ
 
 /-- A negative even endpoint limit yields a positive gap with negative separation.
 Use right continuity of the separation at zero and the nontrivial right filter. -/
-theorem exists_pos_gap_of_reciprocalGapFullEndpointEvenLimit_neg (q : ℕ) {x Y : ℝ} (hx : 1 ≤ x)
+theorem exists_gap_of_evenEndpointLimit_neg (q : ℕ) {x Y : ℝ} (hx : 1 ≤ x)
     (hlim : reciprocalGapFullEndpointEvenLimit q x Y < 0) :
     ∃ h : ℝ, 0 < h ∧ reciprocalGapFullEndpointEvenSeparation h q x Y < 0 := by
   have hn :
     ∀ᶠ h : ℝ in nhdsWithin 0 (Set.Ioi 0), reciprocalGapFullEndpointEvenSeparation h q x Y < 0 :=
-    (tendsto_reciprocalGapFullEndpointEvenSeparation_right q hx Y).eventually (Iio_mem_nhds hlim)
+    (tendsto_reciprocalGapFullEvenEndpoint q hx Y).eventually (Iio_mem_nhds hlim)
   have hp : ∀ᶠ h : ℝ in nhdsWithin 0 (Set.Ioi 0), 0 < h := self_mem_nhdsWithin
   exact (hp.and hn).exists
 
 /-- For primitive even nonprincipal GRH data, a negative even endpoint limit at
 `x >= 1` gives a non-one prime through `x`. Choose a positive gap and apply the
 finite-gap endpoint witness theorem. -/
-theorem exists_prime_not_one_of_reciprocalGapFullEndpointEvenLimit_neg {q : ℕ} [NeZero q]
-    (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (heven : χ.Even) {x Y : ℝ} (hx : 1 < x) (hY : 64 ≤ Y)
-    (hYx : Y ≤ x) (hlim : reciprocalGapFullEndpointEvenLimit q x Y < 0) :
+theorem exists_prime_neOne_evenLimit_GRH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+    {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (heven : χ.Even) {x Y : ℝ} (hx : 1 < x)
+    (hY : 64 ≤ Y) (hYx : Y ≤ x) (hlim : reciprocalGapFullEndpointEvenLimit q x Y < 0) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ x ∧ χ p ≠ 1 := by
-  obtain ⟨h, hh, hs⟩ := exists_pos_gap_of_reciprocalGapFullEndpointEvenLimit_neg q hx.le hlim
-  exact
-    exists_prime_not_one_of_reciprocalGap_full_endpoint_even hh hq hGRH hp hne hinv heven hx hY hYx
-      hs
+  obtain ⟨h, hh, hs⟩ := exists_gap_of_evenEndpointLimit_neg q hx.le hlim
+  exact exists_prime_neOne_fullEvenGap_GRH hh hq hGRH hp hne hinv heven hx hY hYx hs
 
 /-- The even reciprocal mass cap and its right-limit separation are monotone in
 the level. This transfers a negative estimate at the original level to any

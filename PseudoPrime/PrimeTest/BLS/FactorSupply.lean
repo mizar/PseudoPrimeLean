@@ -404,8 +404,7 @@ theorem findBLSWitnesses_range_isSome {n : ℕ} (hn : Nat.Prime n) (hn5 : 5 ≤ 
     (data : PartialFactorizationData) (hdata : ValidPartialFactorization n data) :
     (findBLSWitnesses n data.factors (List.range n)).isSome = true := by
   rw [findBLSWitnesses_isSome_iff]
-  obtain ⟨a, ha, hvalid⟩ :=
-    exists_common_blsWitness_for_valid_partialFactorization hn hn5 data hdata
+  obtain ⟨a, ha, hvalid⟩ := exists_common_witness_of_partialFactorization hn hn5 data hdata
   intro qe hmem
   exact ⟨a, ha, hvalid qe hmem⟩
 
@@ -463,7 +462,7 @@ theorem findSquareCertificate_isSome_iff {n : ℕ}
 
 /-- On a prime input `n ≥ 5`, any successful `n - 1` factor supply can be completed by the
 exhaustive base list `List.range n` to a square-root BLS certificate. -/
-theorem exists_findSquareCertificate_of_prime_factorSupply {n : ℕ} (hn : Nat.Prime n) (hn5 : 5 ≤ n)
+theorem exists_squareCertificate_of_factorSupply {n : ℕ} (hn : Nat.Prime n) (hn5 : 5 ≤ n)
     (params : NumberTheory.Factorization.PollardRho.Params) (fuel : ℕ)
     {data : PartialFactorizationData}
     (hdata : partialFactorizationOfNMinusOne n params fuel = some data) :

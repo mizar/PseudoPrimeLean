@@ -129,8 +129,7 @@ theorem tsum_vonMangoldt_le_six_fifths_certified {σ : ℝ} (hσ : (6 / 5 : ℝ)
 /-- For real exponent sigma>=127 / 100, the Mangoldt Euler series is at most 1597 / 500.
 Certify sixteen prefix terms and the integral tails, then use exponent monotonicity.
 No GRH, modulus or character assumptions are needed. -/
-theorem tsum_vonMangoldt_le_hundredTwentySeven_hundredths_certified {σ : ℝ}
-    (hσ : (127 / 100 : ℝ) ≤ σ) :
+theorem tsum_vonMangoldt_le_of_ge_127_100_certified {σ : ℝ} (hσ : (127 / 100 : ℝ) ≤ σ) :
     (∑' n : ℕ, ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ σ) ≤ (1597 / 500 : ℝ) := by
   have hc := rationalEulerIntervalCheck_sound euler16_twentySevenHundredths_check
   norm_num only [Nat.cast_ofNat, Rat.cast_div, Rat.cast_ofNat] at hc
@@ -139,7 +138,7 @@ theorem tsum_vonMangoldt_le_hundredTwentySeven_hundredths_certified {σ : ℝ}
 /-- For real exponent sigma>=17 / 10, the Mangoldt Euler series is at most 97 / 100.
 Certify sixteen prefix terms and the integral tails, then use exponent monotonicity.
 No GRH, modulus or character assumptions are needed. -/
-theorem tsum_vonMangoldt_le_seventeen_tenths_certified {σ : ℝ} (hσ : (17 / 10 : ℝ) ≤ σ) :
+theorem tsum_vonMangoldt_le_of_ge_17_10_certified {σ : ℝ} (hσ : (17 / 10 : ℝ) ≤ σ) :
     (∑' n : ℕ, ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ σ) ≤ (97 / 100 : ℝ) := by
   have hc := rationalEulerIntervalCheck_sound euler16_sevenTenths_check
   norm_num only [Nat.cast_ofNat, Rat.cast_div, Rat.cast_ofNat] at hc

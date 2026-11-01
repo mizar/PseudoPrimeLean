@@ -50,9 +50,7 @@ theorem re_logDeriv_eq_signed_Mangoldt_tsum {q : ℕ} [NeZero q] (χ : Dirichlet
       exact Pi.mul_apply _ _ _
     rw [LSeriesSummable, hf] at hi
     exact hi
-  have h :=
-    congrArg Complex.re
-      (lSeries_twist_vonMangoldt_eq_neg_logDeriv_dirichletLFunction_of_one_lt_re χ hs)
+  have h := congrArg Complex.re (LSeries_mangoldt_eq_neg_logDeriv χ hs)
   unfold LSeries at h
   rw [Complex.re_tsum hI] at h
   simp only [neg_div, ← logDeriv_apply, Complex.neg_re, re_twistedMangoldt_term] at h
@@ -76,7 +74,7 @@ theorem summable_real_twistedMangoldt {q : ℕ} (χ : DirichletCharacter ℂ q) 
 character Euler series weighted by the actual common Gamma Mangoldt weight.
 Absolute convergence permits interchanging the finite coefficient list and
 the infinite series. Coefficient signs are retained before estimating prefixes. -/
-theorem gammaResolvent_signed_ordinary_eq_euler {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) :
+theorem gammaResolvent_ordinary_eq_euler {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) :
     (Gamma.gammaResolventCoefficients.map
           (fun ab ↦ (ab.2 : ℝ) * (logDeriv χ.LFunction (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum =
       ∑' n : ℕ, -(χ n).re * Analysis.gammaResolventMangoldtWeight n := by
@@ -112,9 +110,8 @@ Gamma resolvent zero mass equals its exact conductor contribution, signed
 Gamma-node contribution and the common-weight Euler series. Both the Poisson
 and Euler identities are discharged. This is the exact signed comparison
 used before absorbing the local nonunit correction. -/
-theorem gammaResolvent_zeroMass_eq_signed_euler {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
+theorem gammaMass_eq_signedEuler_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
           Gamma.gammaResolventMajorant ρ.im) =
@@ -123,16 +120,15 @@ theorem gammaResolvent_zeroMass_eq_signed_euler {q : ℕ} [NeZero q] (hq : 2 ≤
             (fun ab ↦
               (ab.2 : ℝ) * (logDeriv χ.gammaFactor (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum +
         ∑' n : ℕ, -(χ n).re * Analysis.gammaResolventMangoldtWeight n := by
-  rw [gammaResolvent_zeroMass_eq_conductor_signed_derivatives hq hRH hp hne hinv,
-    gammaResolvent_signed_ordinary_eq_euler χ]
+  rw [gammaMass_conductor_signedDerivs_RH hq hRH hp hne hinv, gammaResolvent_ordinary_eq_euler χ]
 
 /-- The actual Gamma zero mass obeys the signed prefix upper bound under
 individual RH and primitive nonprincipal conductor data. The common Euler
 weight gives twice the prefix gain, and its nonunit correction is retained
 exactly. This is the zero-side interface for the joint local conductor budget. -/
-theorem gammaResolvent_zeroMass_le_signed_prefix {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (B : Finset ℕ) :
+theorem gammaMass_le_signedPrefix_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    (B : Finset ℕ) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
           Gamma.gammaResolventMajorant ρ.im) ≤
@@ -143,7 +139,7 @@ theorem gammaResolvent_zeroMass_le_signed_prefix {q : ℕ} [NeZero q] (hq : 2 �
             (∑' n : ℕ, Analysis.gammaResolventMangoldtWeight n) -
           2 * (∑ n ∈ B, Analysis.gammaResolventMangoldtWeight n) +
         ∑ n ∈ B, (1 - (χ n).re) * Analysis.gammaResolventMangoldtWeight n := by
-  rw [gammaResolvent_zeroMass_eq_signed_euler hq hRH hp hne hinv]
+  rw [gammaMass_eq_signedEuler_RH hq hRH hp hne hinv]
   have h := Analysis.gamma_character_signed_euler_prefix_le χ B
   linarith only [h]
 

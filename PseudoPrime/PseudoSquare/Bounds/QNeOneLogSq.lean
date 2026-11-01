@@ -28,7 +28,7 @@ nonemptiness and bound the least odd-prime Jacobi `≠ 1` witness by `(log B)^2`
 The proof uses explicit witnesses `5`, `3`, and `5`, respectively, and `5 < (log B)^2`.
 This handles the small-input branch of the uniform admissible-domain estimate.
 -/
-private lemma exists_primeNeOneWitness_cast_le_log_sq_of_small_admissible {B n : ℕ} (hB : 10 ≤ B)
+private lemma exists_neOneWitness_logSq_smallAdmissible {B n : ℕ} (hB : 10 ≤ B)
     (hn : n ∈ NumberTheory.admissibleFinset B) (hn3 : n = 3 ∨ n = 5 ∨ n = 7) :
     ∃ hdn : (NumberTheory.primeNeOneWitnessSet n).Nonempty,
       (NumberTheory.primeNeOneWitness n hdn : ℝ) ≤ (Real.log (B : ℝ)) ^ 2 := by
@@ -79,7 +79,7 @@ Proof: split at `11 ≤ n`, classify the remaining positive odd nonsquares,
 and compare logarithmic radii after casting the natural inequalities to `ℝ`.
 Role: the pointwise input to `QNeOne_le_log_sq_of_grh`.
 -/
-theorem exists_primeNeOneWitness_cast_le_log_sq_of_admissible
+theorem exists_neOneWitness_cast_le_log_sq_of_admissible
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {B n : ℕ} (hB : 10 ≤ B)
     (hn : n ∈ NumberTheory.admissibleFinset B) :
     ∃ hdn : (NumberTheory.primeNeOneWitnessSet n).Nonempty,
@@ -87,7 +87,7 @@ theorem exists_primeNeOneWitness_cast_le_log_sq_of_admissible
   have ha := NumberTheory.mem_admissibleFinset_iff.mp hn
   by_cases hn11 : 11 ≤ n
   · obtain ⟨hdn, hdnBound⟩ :=
-      exists_primeNeOneWitness_cast_le_log_sq_of_odd_nonsquare hGRH ha.odd ha.not_isSquare hn11
+      exists_neOneWitness_le_log_sq_of_odd_nonsquare hGRH ha.odd ha.not_isSquare hn11
     refine ⟨hdn, ?_⟩
     have hnposR : (0 : ℝ) < n := by exact_mod_cast ha.pos
     have hBposR : (0 : ℝ) < B := by exact_mod_cast (Nat.lt_of_lt_of_le (by decide) hB)
@@ -127,7 +127,7 @@ theorem exists_primeNeOneWitness_cast_le_log_sq_of_admissible
         exact Or.inr (Or.inr h7)
       · have h9 : n = 9 := by simpa only [Nat.reduceMul, Nat.reduceAdd] using hk
         exact (hn9 h9).elim
-    exact exists_primeNeOneWitness_cast_le_log_sq_of_small_admissible hB hn hcases
+    exact exists_neOneWitness_logSq_smallAdmissible hB hn hcases
 
 /--
 Input/assumptions: a nonnegative real pointwise bound for every admissible
@@ -166,7 +166,7 @@ theorem QNeOne_cast_le_of_forall {B : ℕ} {R : ℝ} (hR : 0 ≤ R)
 /--
 Input/assumptions: GRH and `B ≥ 10`.
 Conclusion: `(QNeOne B : ℝ) ≤ (log B)^2`.
-Content: `exists_primeNeOneWitness_cast_le_log_sq_of_admissible` is lifted through the finite
+Content: `exists_neOneWitness_cast_le_log_sq_of_admissible` is lifted through the finite
 maximum.
 Proof: apply `QNeOne_cast_le_of_forall` with the nonnegative logarithmic square
 and discharge each admissible member using the fixed-radius consumer.
@@ -176,7 +176,7 @@ theorem QNeOne_le_log_sq_of_grh (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiem
     {B : ℕ} (hB : 10 ≤ B) : (QNeOne B : ℝ) ≤ (Real.log (B : ℝ)) ^ 2 := by
   apply QNeOne_cast_le_of_forall (sq_nonneg _)
   intro n hn
-  exact exists_primeNeOneWitness_cast_le_log_sq_of_admissible hGRH hB hn |>.choose_spec
+  exact exists_neOneWitness_cast_le_log_sq_of_admissible hGRH hB hn |>.choose_spec
 
 /--
 Input/assumptions: GRH and `B ≥ 10`.
@@ -200,7 +200,7 @@ theorem QNeOne_le_greatestOddPrimeLE_of_grh
   · intro a ha b hb
     exact max_le ha hb
   · intro n _
-    obtain ⟨hdn, hbound⟩ := exists_primeNeOneWitness_cast_le_log_sq_of_admissible hGRH hB n.property
+    obtain ⟨hdn, hbound⟩ := exists_neOneWitness_cast_le_log_sq_of_admissible hGRH hB n.property
     have hmem := NumberTheory.primeNeOneWitness_mem n.val hdn
     apply AnalyticNumberTheory.Arithmetic.le_greatestOddPrimeLE hmem.1 hmem.2.1
     exact hbound

@@ -289,9 +289,9 @@ theorem gamma_odd_prime_square_cost_le {p : ℕ} (hp : p.Prime) (hp3 : 3 ≤ p) 
 minus-one prime losses are absorbed by the certified conductor gap.
 Oddness excludes prime two; the small and large prime certificates
 discharge every remaining local numerical condition. -/
-theorem gamma_odd_input_actual_cost_absorbed_by_conductor_gap {n d m f : ℕ} (hn : n = d * m ^ 2)
-    (hodd : Odd n) (hd : 0 < d) (hm : 0 < m) (hf : 0 < f) (hdf : d ∣ f) (hfd : f ≤ 4 * d)
-    (S : Finset ℕ) (hS : S ⊆ n.primeFactors) (χ : DirichletCharacter ℂ f) (hχ : ∀ p ∈ S, χ p = -1)
+theorem gamma_odd_input_cost_le_conductor_gap {n d m f : ℕ} (hn : n = d * m ^ 2) (hodd : Odd n)
+    (hd : 0 < d) (hm : 0 < m) (hf : 0 < f) (hdf : d ∣ f) (hfd : f ≤ 4 * d) (S : Finset ℕ)
+    (hS : S ⊆ n.primeFactors) (χ : DirichletCharacter ℂ f) (hχ : ∀ p ∈ S, χ p = -1)
     (K : ℕ → Finset ℕ) {x : ℝ} (hx : 10000 ≤ x) :
     (11783423 / 25000000 : ℝ) * Real.log f +
         (∑ p ∈ S,
@@ -302,8 +302,8 @@ theorem gamma_odd_input_actual_cost_absorbed_by_conductor_gap {n d m f : ℕ} (h
                 Real.sqrt x))) ≤
       (11783423 / 25000000 : ℝ) * Real.log (4 * (n : ℝ)) := by
   apply
-    gamma_minus_one_actual_cost_absorbed_by_conductor_gap hn hd hm hf hdf hfd S hS χ hχ K
-      (by linarith only [hx]) (by norm_num only)
+    gamma_neg_one_cost_le_conductor_gap hn hd hm hf hdf hfd S hS χ hχ K (by linarith only [hx])
+      (by norm_num only)
   intro p hp
   have hprime := Nat.prime_of_mem_primeFactors (hS hp)
   have hpne : p ≠ 2 := by

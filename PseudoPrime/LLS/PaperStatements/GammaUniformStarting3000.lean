@@ -72,7 +72,7 @@ theorem gamma_profile_199_div_250_plus_216_middle {q : ℕ} [NeZero q] (H : Subg
       (11783423 / 25000000 + 1 / 795 : ℝ) * T := by
     linarith only [hlocal, hTlower, hL]
   obtain ⟨p, hp, hd, hout, hb⟩ :=
-    exists_prime_outside_le_gamma_four_fifths_small_scale hq H hH hGRH hT hambient hbudget
+    exists_prime_outside_4_5_smallScale_GRH hq H hH hGRH hT hambient hbudget
   have he : (4 / 5 : ℝ) * T ^ 2 = (199 / 250 : ℝ) * (L + 216) ^ 2 := by
     dsimp only [T]
     rw [mul_pow, Real.sq_sqrt (by norm_num only : (0 : ℝ) ≤ 199 / 200)]
@@ -117,8 +117,8 @@ namespace PseudoPrime.LLS.PaperStatements
 outside prime through (199/250)(log q+216)². Split at modulus 20000 and
 logarithmic value 34971, using the small, middle and stronger large profiles.
 This has rational coefficients (199/250,0,216) and no further arithmetic hypothesis. -/
-theorem exists_prime_outside_le_gamma_199_div_250_plus_216_3000 {q : ℕ} (H : Subgroup (ZMod q)ˣ)
-    (hH : H ≠ ⊤) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hq : 3000 ≤ q) :
+theorem exists_primeOutside_199_250_216_from3000_GRH {q : ℕ} (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hq : 3000 ≤ q) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬p ∣ q ∧
@@ -129,8 +129,7 @@ theorem exists_prime_outside_le_gamma_199_div_250_plus_216_3000 {q : ℕ} (H : S
   by_cases hsmall : q < 20000
   · exact gamma_profile_199_div_250_plus_216_small H hH hGRH hq hsmall
   · by_cases hlarge : 34971 ≤ Real.log q
-    · obtain ⟨p, hp, hd, hout, hb⟩ :=
-        exists_prime_outside_le_gamma_199_div_250_plus_117_log H hH hGRH hlarge
+    · obtain ⟨p, hp, hd, hout, hb⟩ := exists_primeOutside_199_250_117_log_GRH H hH hGRH hlarge
       have hbound :
         (199 / 250 : ℝ) * (Real.log q + 117) ^ 2 ≤ (199 / 250 : ℝ) * (Real.log q + 216) ^ 2 := by
         nlinarith only [hlarge, sq_nonneg (Real.log q + 117)]

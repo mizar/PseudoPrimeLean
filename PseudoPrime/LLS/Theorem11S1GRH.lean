@@ -44,16 +44,15 @@ structure LLSAnalyticCore : Prop where
 The proof uses the completed Mellin/vertical-integral identification in `ExplicitFormula.lean`. -/
 theorem LLSAnalyticCore.riemannWeightedLowerBound (hcore : LLSAnalyticCore) :
     LLSRiemannWeightedLowerBound :=
-  llsRiemannWeightedLowerBound_of_verticalIntegralLowerBound hcore.riemannLog
+  riemannWeightedLower_of_vertical hcore.riemannLog
 
 /-- The analytic core supplies the reciprocal Riemann lower bound of LLS Lemma 2.4.
 
-The proof uses `llsRiemannReciprocalExplicitLowerBound_of_verticalIntegralLowerBound`
-and `llsRiemannReciprocalLowerBound_of_explicit_analytic`. -/
+The proof uses `riemannReciprocalLower_of_vertical`
+and `riemannReciprocalLower_of_explicit`. -/
 theorem LLSAnalyticCore.riemannReciprocalLowerBound (hcore : LLSAnalyticCore) :
     LLSRiemannReciprocalLowerBound :=
-  llsRiemannReciprocalLowerBound_of_explicit_analytic
-    (llsRiemannReciprocalExplicitLowerBound_of_verticalIntegralLowerBound hcore.riemannReciprocal)
+  riemannReciprocalLower_of_explicit (riemannReciprocalLower_of_vertical hcore.riemannReciprocal)
 
 /-- The analytic core proves the character-specialized LLS Theorem 1.1.
 
@@ -62,9 +61,7 @@ it with `primitiveRaw` through the algebraic and numerical reductions. The `riem
 field is not needed by this theorem. -/
 theorem LLSAnalyticCore.llsTheorem11S1Character (hcore : LLSAnalyticCore) :
     llsTheorem11S1Character := by
-  exact
-    llsTheorem11S1Character_of_riemann_and_primitive_raw hcore.riemannWeightedLowerBound
-      hcore.primitiveRaw
+  exact theorem11S1Character_of_riemann_raw hcore.riemannWeightedLowerBound hcore.primitiveRaw
 
 /-!
 The generic exact full-level route supplies the existing Part 1 analytic-bounds interface.
@@ -86,7 +83,7 @@ theorem llsPart1AnalyticBounds_of_grh_generic (h21 : LLSRiemannWeightedLowerBoun
           χ).re,
       ?_, ?_⟩
   · exact (llsPart1WeightedLowerBounds_of_riemann h21) q χ hq hχ hsmall
-  · exact characterLogWeightedSum_re_le_upper_of_grh_generic χ hq hχ hGRH h24 hsmall
+  · exact characterLogSum_re_le_upper_of_grh_generic χ hq hχ hGRH h24 hsmall
 
 /-- Combine the generic GRH analytic sandwich with the established numerical separation
 to obtain the nontrivial-character S1 bound. The supplied Riemann lower bounds feed
@@ -115,12 +112,11 @@ def LLSPart1PrimitiveFullLevelCoreBounds : Prop :=
       ∃ b : ℝ,
         0 ≤ b ∧
           LLSPart1PrimitiveWeightedUpperAt χ b ∧
-          LLSPart1PrimitiveReciprocalLowerWithLevelChangeAt χ ∧
-          LLSPart1PrimitiveZeroMassFullLevelRawAt χ b
+          Part1ReciprocalLevelChangeLower χ ∧ LLSPart1PrimitiveZeroMassFullLevelRawAt χ b
 
 /-- The generic estimates construct the full-level core with witness
 `|PseudoPrime.AnalyticNumberTheory.DirichletLFunction.primitiveBRe|`. -/
-theorem llsPart1PrimitiveFullLevelCoreBounds_of_grh_generic
+theorem part1PrimitiveFullLevelCore_of_GRH
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (h24 : LLSRiemannReciprocalLowerBound) : LLSPart1PrimitiveFullLevelCoreBounds := by
   intro q _ χ hq hne hsmall
@@ -129,8 +125,8 @@ theorem llsPart1PrimitiveFullLevelCoreBounds_of_grh_generic
     ⟨|AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter|, abs_nonneg _, ?_,
       ?_, ?_⟩
   · exact llsPart1PrimitiveWeightedUpperAt_of_grh_generic χ hq hne hGRH
-  · exact llsPart1PrimitiveReciprocalLowerWithLevelChangeAt_of_riemann h24 χ hq hsmall
-  · exact llsPart1PrimitiveZeroMassFullLevelRawAt_of_grh_generic χ hq hne hGRH h24 hsmall
+  · exact part1ReciprocalLevelChange_of_riemann h24 χ hq hsmall
+  · exact part1ZeroMassFullLevelRaw_of_GRH χ hq hne hGRH h24 hsmall
 
 /-- GRH implies the nontrivial-character S1 bound. The proof obtains the Riemann lower
 bounds from `hGRH.riemann`, combines them with the general primitive-character upper
@@ -138,9 +134,8 @@ estimates, and applies numerical separation. This supplies the subgroup and Jaco
 theorem llsTheorem11S1Character_of_grh
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) : llsTheorem11S1Character := by
   exact
-    llsTheorem11S1Character_of_grh_generic_analytic
-      (llsRiemannWeightedLowerBound_of_riemannHypothesis hGRH.riemann) hGRH
-      (llsRiemannReciprocalLowerBound_of_riemannHypothesis hGRH.riemann)
+    llsTheorem11S1Character_of_grh_generic_analytic (riemannWeightedLower_of_RH hGRH.riemann) hGRH
+      (riemannReciprocalLower_of_RH hGRH.riemann)
 
 /-- GRH gives the proper-subgroup S1 bound through the general character theorem.
 The quotient-character construction supplies separation for every proper subgroup;

@@ -89,7 +89,7 @@ theorem agp_prime_supply_of_progression_count_data (hdata : AGPProgressionCountD
     have hcard := Finset.card_le_card hsubset
     exact le_trans (Nat.cast_le.mpr hcard) (card_small_parameters_le D data.k data.q data.hk)
   have hretained :=
-    real_card_filter_lower_bound_of_discarded_count_bound D (keep := keep) (good := good)
+    real_card_filter_lower_of_discarded_bound D (keep := keep) (good := good)
       (reliableProp15Coefficient c₀ 4 data.x)
       (2 ^ W.card * Nat.floor ((ArithmeticFunction.carmichael data.L : ℝ) * Real.log data.L)) data.q
       data.hlower data.hProp15 hdiscarded
@@ -98,7 +98,7 @@ theorem agp_prime_supply_of_progression_count_data (hdata : AGPProgressionCountD
       (D.filter (fun d => keep d ∧ good d)).card :=
     Nat.cast_lt.mp hretained
   obtain ⟨P, hPcard, hP⟩ :=
-    exists_prime_set_from_real_divisor_count_lower_bound_above D data.k data.x 4 3 data.q
+    exists_prime_set_above_of_divisor_count D data.k data.x 4 3 data.q
       (2 ^ W.card * Nat.floor ((ArithmeticFunction.carmichael data.L : ℝ) * Real.log data.L))
       data.hk hretainedCount
   have hsize :

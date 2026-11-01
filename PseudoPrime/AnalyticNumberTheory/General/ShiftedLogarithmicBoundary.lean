@@ -55,8 +55,8 @@ theorem norm_shiftedLogarithmicKernel_horizontal_le {F : ℂ → ℂ} {x u b T �
 logarithmic derivative divided by T^2 on (a,b], the horizontal kernel integral has
 norm at most x^b*eta*(b-a). Integrate the pointwise norm bound over the interval.
 This supplies horizontal contour decay without a separate integrability premise. -/
-theorem norm_integral_shiftedLogarithmicKernel_horizontal_le {F : ℂ → ℂ} {x a b T η : ℝ} (σ : ℂ)
-    (hx : 1 ≤ x) (hab : a ≤ b) (hT : T ≠ 0)
+theorem shiftedLogKernel_horizontal_norm_le {F : ℂ → ℂ} {x a b T η : ℝ} (σ : ℂ) (hx : 1 ≤ x)
+    (hab : a ≤ b) (hT : T ≠ 0)
     (hD : ∀ u ∈ Set.Ioc a b, ‖logDeriv F (σ + ((u : ℂ) + T * Complex.I))‖ / T ^ 2 ≤ η) :
     ‖∫ u in a..b, shiftedLogarithmicKernel F x σ ((u : ℂ) + T * Complex.I)‖ ≤
       x ^ b * η * (b - a) := by
@@ -72,16 +72,13 @@ theorem norm_integral_shiftedLogarithmicKernel_horizontal_le {F : ℂ → ℂ} {
 envelope eta tending to zero makes the shifted horizontal integral tend to zero.
 Squeeze its norm by the preceding interval estimate. The choice of good heights
 and the derivative envelope remain explicit inputs. -/
-theorem tendsto_integral_shiftedLogarithmicKernel_horizontal {F : ℂ → ℂ} {x a b : ℝ} (σ : ℂ)
-    (hx : 1 ≤ x) (hab : a ≤ b) (T η : ℕ → ℝ) (hT : ∀ k, T k ≠ 0)
-    (hη : Filter.Tendsto η Filter.atTop (nhds 0))
+theorem shiftedLogKernel_horizontal_tendsto {F : ℂ → ℂ} {x a b : ℝ} (σ : ℂ) (hx : 1 ≤ x)
+    (hab : a ≤ b) (T η : ℕ → ℝ) (hT : ∀ k, T k ≠ 0) (hη : Filter.Tendsto η Filter.atTop (nhds 0))
     (hD :
       ∀ k, ∀ u ∈ Set.Ioc a b, ‖logDeriv F (σ + ((u : ℂ) + T k * Complex.I))‖ / (T k) ^ 2 ≤ η k) :
     Filter.Tendsto (fun k ↦ ∫ u in a..b, shiftedLogarithmicKernel F x σ ((u : ℂ) + T k * Complex.I))
       Filter.atTop (nhds 0) := by
-  apply
-    squeeze_zero_norm
-      (fun k ↦ norm_integral_shiftedLogarithmicKernel_horizontal_le σ hx hab (hT k) (hD k))
+  apply squeeze_zero_norm (fun k ↦ shiftedLogKernel_horizontal_norm_le σ hx hab (hT k) (hD k))
   simpa only [mul_zero, zero_mul] using (hη.const_mul (x ^ b)).mul_const (b - a)
 
 end PseudoPrime.AnalyticNumberTheory.General

@@ -80,7 +80,7 @@ theorem triangular18_absoluteMass_le_explicit {q : ℕ} [NeZero q] (hq : 2 ≤ q
     let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
     (∑' ρ : ℂ, ‖K.kernelZeroTerm χ ρ‖) ≤ 36 * Real.log q + 1350000000000000 := by
   let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
-  have hZ := triangular18_absoluteMass_le_conductor_add_arithmetic hq hGRH hp hne hinv
+  have hZ := triangular18_mass_conductor_arith_GRH hq hGRH hp hne hinv
   change
     (∑' ρ : ℂ, ‖K.kernelZeroTerm χ ρ‖) ≤
       36 * Real.log q + |(∑' n : ℕ, K.summand χ 1 n).re| + 1150000000000000 at hZ

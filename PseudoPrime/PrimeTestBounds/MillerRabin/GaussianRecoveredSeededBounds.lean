@@ -450,8 +450,8 @@ theorem exists_prime_gaussianRecoveredSeededProfile (f : Bool) {n : ℕ} (ho : O
       norm_num only [← pow_mul, Nat.reduceMul]
       exact hN
     rcases
-      finite_index_local_subgroup_or_uniform_korselt_triple hn1 ho hc (PrimeTest.fermatSubgroup n)
-        le_rfl (by norm_num only : 1 ≤ 10 ^ 9) hJ hi with
+      localSubgroup_or_uniformKorseltTriple hn1 ho hc (PrimeTest.fermatSubgroup n) le_rfl
+        (by norm_num only : 1 ≤ 10 ^ 9) hJ hi with
       hl | ht
     · obtain ⟨q, hq, hqn, hqsize, K, hK, hpass⟩ := hl
       have hqp : 0 < q := (by norm_num only : 0 < 2).trans_le hq

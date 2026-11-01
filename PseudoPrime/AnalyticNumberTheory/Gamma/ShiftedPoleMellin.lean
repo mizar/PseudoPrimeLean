@@ -104,8 +104,7 @@ theorem normalized_integral_gammaPoleResolvent_eq {κ : ℂ} (hκ : 0 ≤ κ.re)
     rw [norm_div, norm_one, norm_pow, norm_neg, Real.rpow_two]
   have hz := General.summable_gammaShiftResidues hx hσ hκ
   have he :=
-    General.normalized_integral_tsum_centeredResolventKernel
-      (fun n : ℕ ↦ -((σ : ℂ) + κ + 2 * (n : ℂ))) (fun _ ↦ 1)
+    General.centeredResolvent_integral_tsum (fun n : ℕ ↦ -((σ : ℂ) + κ + 2 * (n : ℂ))) (fun _ ↦ 1)
       (fun n ↦ by
         simp only [Complex.neg_re, Complex.add_re, Complex.ofReal_re, Complex.mul_re,
           Complex.re_ofNat, Complex.natCast_re, Complex.im_ofNat, Complex.natCast_im, mul_zero,

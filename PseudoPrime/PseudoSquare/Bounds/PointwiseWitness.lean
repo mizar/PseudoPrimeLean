@@ -61,7 +61,7 @@ theorem primeNeOneWitness_cast_le_log_sq_of_11_le
             (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns)) :
         ℝ) ≤
       (Real.log (n : ℝ)) ^ 2 := by
-  obtain ⟨hw, hbound⟩ := exists_primeNeOneWitness_cast_le_log_sq_of_odd_nonsquare hGRH hn hns hn11
+  obtain ⟨hw, hbound⟩ := exists_neOneWitness_le_log_sq_of_odd_nonsquare hGRH hn hns hn11
   exact hbound
 
 /--

@@ -18,7 +18,7 @@ namespace PseudoPrime.LLS.PaperStatements
 /-- Under primitive GRH and a scalar Gamma-constant cap, retain both finite Euler savings in the
 norm bound. The proof uses the triangle inequality and the two-pole zero-mass estimate; this
 transfers signed Gamma bounds to oscillating zero sums. -/
-theorem norm_gamma_oscillatingZeroSum_le_twoPole_constant {m : ℕ} [NeZero m] (hm : 2 ≤ m)
+theorem norm_gammaZeroSum_twoPole_bound_GRH {m : ℕ} [NeZero m] (hm : 2 ≤ m)
     {χ : DirichletCharacter ℂ m} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) {C : ℝ}
     (hC : AnalyticNumberTheory.DirichletLFunction.twoPoleGammaConstant χ ≤ C) (A B : Finset ℕ) :
@@ -37,8 +37,8 @@ theorem norm_gamma_oscillatingZeroSum_le_twoPole_constant {m : ℕ} [NeZero m] (
   rw [tsum_congr he] at hn
   exact
     hn.trans
-      (AnalyticNumberTheory.DirichletLFunction.gamma_zeroMass_le_twoPole_of_constant hm
-          (hGRH m χ hp) hp hne hinv hC A B).2
+      (AnalyticNumberTheory.DirichletLFunction.gamma_zeroMass_le_twoPole_of_RH hm (hGRH m χ hp) hp
+          hne hinv hC A B).2
 
 /-- For a primitive nonprincipal character of conductor at most the ambient level, bound the
 real smoothed sum using a scalar Gamma cap. Combine the zero-sum norm with the conductor-free
@@ -58,8 +58,8 @@ theorem gamma_primitive_sum_re_le_twoPole_constant {q m : ℕ} [NeZero m] (hq : 
         ((7 / 6 : ℝ) * Real.log q + 4) / Real.sqrt x +
         43 * x ^ (-9 / 16 : ℝ) := by
   have hz :=
-    norm_gamma_oscillatingZeroSum_le_twoPole_constant (by linarith only [hm] : 2 ≤ m) hGRH hp hne
-      hinv (by linarith only [hx] : 0 < x) hC A B
+    norm_gammaZeroSum_twoPole_bound_GRH (by linarith only [hm] : 2 ≤ m) hGRH hp hne hinv
+      (by linarith only [hx] : 0 < x) hC A B
   have hr := re_gamma_primitive_remainder_le_conductor_free hq hm hmq hp hne hinv hGRH hx
   have hn := Complex.re_le_norm (-(∑' ρ : ℂ, gammaMellinKernel.oscillatingZeroTerm χ x ρ))
   simp only [Complex.neg_re, norm_neg] at hn

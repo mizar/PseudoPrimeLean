@@ -42,8 +42,8 @@ theorem gammaRefinedArithmeticBudget_le_certified (L b : ℝ) :
 an odd-prime negative Jacobi witness for an odd nonsquare n at least 10^100
 under GRH. The fixed Gamma correction is already proved rather than an input
 to the numerical certificate. Transfer the upper bound to the existing witness theorem. -/
-theorem exists_odd_prime_negative_of_certified_square_gain_gap {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem exists_oddPrime_negJacobi_certSquare_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hlarge : 10 ^ 100 ≤ n) {b : ℝ}
     (hb : 1 ≤ b) (hbX : b ≤ (99 / 40 : ℝ) * Analysis.gammaRefinedScale (Real.log n)) (C : Finset ℕ)
     (hC : ∀ m ∈ C, IsSquare m) (hBC : Disjoint (Finset.Ioc 0 ⌊b⌋₊) C)
@@ -62,7 +62,7 @@ theorem exists_odd_prime_negative_of_certified_square_gain_gap {n : ℕ} {hn : O
         Odd p ∧
         (p : ℝ) ≤ (99 / 40 : ℝ) * Analysis.gammaRefinedScale (Real.log n) ∧ jacobiSym n p = -1 := by
   exact
-    exists_odd_prime_negative_of_refined_square_gain_gap bridge hGRH hlarge hb hbX C hC hBC
+    exists_oddPrime_negJacobi_refinedSquare_GRH bridge hGRH hlarge hb hbX C hC hBC
       ((gammaRefinedArithmeticBudget_le_certified _ _).trans_lt hgap)
 
 end PseudoPrime.LLS

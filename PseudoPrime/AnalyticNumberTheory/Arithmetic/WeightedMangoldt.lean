@@ -64,7 +64,7 @@ noncomputable def commonFactorReciprocalWeightedSum (x : ℝ) (m : ℕ) : ℝ :=
   ∑ n ∈ (Finset.Ioc 0 ⌊x⌋₊).filter fun n ↦ ¬Nat.Coprime n m, reciprocalWeightedMangoldtTerm x n
 
 /-- The reciprocal weighted sum splits into its coprime part and the common-factor part. -/
-theorem reciprocalWeightedMangoldtSum_eq_coprime_add_common (x : ℝ) (q : ℕ) :
+theorem recipMangoldtSum_eq_coprime_add_common (x : ℝ) (q : ℕ) :
     reciprocalWeightedMangoldtSum x =
       ∑ n ∈ (Finset.Ioc 0 ⌊x⌋₊).filter fun n ↦ Nat.Coprime n q, reciprocalWeightedMangoldtTerm x n +
         commonFactorReciprocalWeightedSum x q := by
@@ -92,14 +92,14 @@ noncomputable def characterReciprocalWeightedSum {q : ℕ} (x : ℝ) (χ : Diric
   ∑ n ∈ Finset.Ioc 0 ⌊x⌋₊, characterReciprocalWeightedTerm x χ n
 
 /-- Outside the prime powers, the logarithmically weighted summand vanishes. -/
-theorem logWeightedMangoldtTerm_eq_zero_of_not_primePow {x : ℝ} {n : ℕ} (hn : ¬IsPrimePow n) :
+theorem logMangoldtTerm_eq_zero_of_not_primePow {x : ℝ} {n : ℕ} (hn : ¬IsPrimePow n) :
     logWeightedMangoldtTerm x n = 0 := by
   rw [logWeightedMangoldtTerm, ArithmeticFunction.vonMangoldt_apply]
   simp only [hn, ↓reduceIte, zero_mul]
 
 /-- Outside the prime powers, the reciprocal weighted summand vanishes. -/
-theorem reciprocalWeightedMangoldtTerm_eq_zero_of_not_primePow {x : ℝ} {n : ℕ}
-    (hn : ¬IsPrimePow n) : reciprocalWeightedMangoldtTerm x n = 0 := by
+theorem recipMangoldtTerm_eq_zero_of_not_primePow {x : ℝ} {n : ℕ} (hn : ¬IsPrimePow n) :
+    reciprocalWeightedMangoldtTerm x n = 0 := by
   rw [reciprocalWeightedMangoldtTerm, ArithmeticFunction.vonMangoldt_apply]
   simp only [hn, ↓reduceIte, zero_div, zero_mul]
 
@@ -285,7 +285,7 @@ theorem sum_logWeightedMangoldtTerm_prime_pow_le {x : ℝ} {p K : ℕ} (hx : x �
 The logarithmic common-factor sum can be reindexed with prime divisors of `m` outside and their
 admissible positive exponents inside.
 -/
-theorem commonFactorLogWeightedSum_eq_sum_prime_divisors (m : ℕ) (x : ℝ) :
+theorem commonLogSum_eq_sum_prime_divisors (m : ℕ) (x : ℝ) :
     commonFactorLogWeightedSum x m =
       ∑ p ∈ (Nat.primesLE ⌊x⌋₊).filter fun p ↦ p ∣ m,
         ∑ k ∈ Finset.Icc 1 (p.log ⌊x⌋₊), logWeightedMangoldtTerm x (p ^ k) := by
@@ -300,7 +300,7 @@ theorem commonFactorLogWeightedSum_eq_sum_prime_divisors (m : ℕ) (x : ℝ) :
       intro q hq
       by_cases hpow : IsPrimePow q
       · simp only [hpow, ↓reduceIte]
-      · rw [logWeightedMangoldtTerm_eq_zero_of_not_primePow hpow]
+      · rw [logMangoldtTerm_eq_zero_of_not_primePow hpow]
         simp only [ite_self]
     _ =
         ∑ p ∈ Nat.primesLE ⌊x⌋₊,
@@ -339,7 +339,7 @@ For `m ≠ 0` and `x > 0`, the logarithmic common-factor weighted sum is at most
 -/
 theorem commonFactorLogWeightedSum_le {m : ℕ} (hm0 : m ≠ 0) {x : ℝ} (hx : 0 < x) :
     commonFactorLogWeightedSum x m ≤ (1 / 2 : ℝ) * m.primeFactors.card * (Real.log x) ^ 2 := by
-  rw [commonFactorLogWeightedSum_eq_sum_prime_divisors m x]
+  rw [commonLogSum_eq_sum_prime_divisors m x]
   let source := (Nat.primesLE ⌊x⌋₊).filter fun p ↦ p ∣ m
   calc
     ∑ p ∈ source, ∑ k ∈ Finset.Icc 1 (p.log ⌊x⌋₊), logWeightedMangoldtTerm x (p ^ k) ≤
@@ -365,25 +365,24 @@ theorem commonFactorLogWeightedSum_le {m : ℕ} (hm0 : m ≠ 0) {x : ℝ} (hx : 
 The common-factor reciprocal weighted sum is a double sum over powers of primes not coprime
 to the modulus.
 -/
-theorem commonFactorReciprocalWeightedSum_eq_sum_prime_powers (m : ℕ) {x : ℝ} (hx : 0 ≤ x) :
+theorem commonRecipSum_eq_sum_prime_powers (m : ℕ) {x : ℝ} (hx : 0 ≤ x) :
     commonFactorReciprocalWeightedSum x m =
       ∑ k ∈ Finset.Icc 1 ⌊Real.log x / Real.log 2⌋₊,
         ∑ p ∈ (Finset.Ioc 0 ⌊x ^ ((1 : ℝ) / k)⌋₊).filter fun p ↦ p.Prime ∧ p ∣ m,
           reciprocalWeightedMangoldtTerm x (p ^ k) := by
   exact
     sum_not_coprime_eq_sum_prime_powers (reciprocalWeightedMangoldtTerm x) m hx fun _ ↦
-      reciprocalWeightedMangoldtTerm_eq_zero_of_not_primePow
+      recipMangoldtTerm_eq_zero_of_not_primePow
 
 /--
 The reciprocal common-factor sum is bounded by complete finite geometric tails for all prime
 divisors of the modulus.
 -/
-theorem commonFactorReciprocalWeightedSum_le_primeFactors {m : ℕ} (hm0 : m ≠ 0) {x : ℝ}
-    (hx : 0 < x) :
+theorem commonRecipSum_le_primeFactors {m : ℕ} (hm0 : m ≠ 0) {x : ℝ} (hx : 0 < x) :
     commonFactorReciprocalWeightedSum x m ≤
       ∑ k ∈ Finset.Icc 1 ⌊Real.log x / Real.log 2⌋₊,
         ∑ p ∈ m.primeFactors, Real.log p / (p : ℝ) ^ k := by
-  rw [commonFactorReciprocalWeightedSum_eq_sum_prime_powers m hx.le]
+  rw [commonRecipSum_eq_sum_prime_powers m hx.le]
   apply Finset.sum_le_sum
   intro k hk
   let source := (Finset.Ioc 0 ⌊x ^ ((1 : ℝ) / k)⌋₊).filter fun p ↦ p.Prime ∧ p ∣ m
@@ -417,7 +416,7 @@ theorem commonFactorReciprocalWeightedSum_le {m : ℕ} (hm0 : m ≠ 0) {x : ℝ}
     _ ≤
         ∑ k ∈ Finset.Icc 1 ⌊Real.log x / Real.log 2⌋₊,
           ∑ p ∈ m.primeFactors, Real.log p / (p : ℝ) ^ k :=
-      commonFactorReciprocalWeightedSum_le_primeFactors hm0 hx
+      commonRecipSum_le_primeFactors hm0 hx
     _ =
         ∑ p ∈ m.primeFactors,
           ∑ k ∈ Finset.Icc 1 ⌊Real.log x / Real.log 2⌋₊, Real.log p / (p : ℝ) ^ k :=

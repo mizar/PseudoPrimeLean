@@ -37,10 +37,10 @@ theorem reciprocalGapRealAxisLeftValue_le_budget {h x : ℝ} (hh : 0 < h) (hx : 
     rw [Complex.ofReal_re]; linarith only [hh]
   have hs0 : 0 < (((1 + h : ℝ) : ℂ)).re := zero_lt_one.trans_le hs
   have he :=
-    logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hinv
-      (completedLFunction_ne_zero_of_one_le_re hinv hs) (gammaFactor_ne_zero_of_re_pos χ⁻¹ hs0)
+    L_logDeriv_sub_gamma_of_regular hinv (completed_ne_zero_of_one_le_re hinv hs)
+      (gammaFactor_ne_zero_of_re_pos χ⁻¹ hs0)
       (analyticAt_gammaFactor_of_re_pos χ⁻¹ hs0).differentiableAt
-  have hn := norm_neg_deriv_div_dirichletLFunction_le_vonMangoldt_tsum χ⁻¹ hr 0
+  have hn := norm_logDeriv_L_le_mangoldt_tsum χ⁻¹ hr 0
   simp only [Complex.ofReal_zero, zero_mul, add_zero, neg_div, norm_neg] at hn
   have hnorm : ‖logDeriv χ⁻¹.LFunction ((1 + h : ℝ) : ℂ)‖ ≤ M := hn.trans hM
   have hl :=
@@ -66,11 +66,10 @@ admissible zero-test coordinate and scale at least one, scalar Euler/Gamma bound
 and the explicit real-axis separation produce a non-one prime witness.
 Bound the exact left value and apply the signed real-axis witness criterion.
 The bounds M and G remain arbitrary certified inputs for later quantitative choices. -/
-theorem exists_prime_not_one_of_reciprocalGap_realAxis_budget_separation {h c : ℝ} (hh : 0 < h)
-    {q : ℕ} [NeZero q] (hq : 8 ≤ q) {χ : DirichletCharacter ℂ q}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hc : (1 / 2 : ℝ) < c) (hbound : c ^ 2 ≤ 1 / 4 + h / 2) {x : ℝ}
-    (hx : 1 ≤ x) (B : Finset ℕ) (M G : ℝ)
+theorem exists_prime_neOne_axisBudgetGap_GRH {h c : ℝ} (hh : 0 < h) {q : ℕ} [NeZero q] (hq : 8 ≤ q)
+    {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hc : (1 / 2 : ℝ) < c)
+    (hbound : c ^ 2 ≤ 1 / 4 + h / 2) {x : ℝ} (hx : 1 ≤ x) (B : Finset ℕ) (M G : ℝ)
     (hM : (∑' n : ℕ, ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ (1 + h)) ≤ M)
     (hG : G ≤ (logDeriv χ⁻¹.gammaFactor ((1 + h : ℝ) : ℂ)).re)
     (hgap :
@@ -83,8 +82,7 @@ theorem exists_prime_not_one_of_reciprocalGap_realAxis_budget_separation {h c : 
             reciprocalGapSignedGammaBudget h x) <
         (reciprocalGapCharacterSum h (1 : DirichletCharacter ℂ 1) x).re) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ x ∧ χ p ≠ 1 := by
-  apply
-    exists_prime_not_one_of_reciprocalGap_realAxis_separation hh hq hGRH hp hne hinv hc hbound hx B
+  apply exists_prime_neOne_axisGap_GRH hh hq hGRH hp hne hinv hc hbound hx B
   have hV := reciprocalGapRealAxisLeftValue_le_budget hh (zero_lt_one.trans_le hx) hinv hM hG
   linarith only [hV, hgap]
 

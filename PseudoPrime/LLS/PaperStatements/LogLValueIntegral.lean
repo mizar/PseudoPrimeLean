@@ -220,7 +220,7 @@ theorem norm_logLValueSum_sub_zetaMain_le (hRH : RiemannHypothesis) {x : ℝ} (h
     simpa only [AnalyticNumberTheory.RiemannXi.riemannXiZeroMultiplicity] using
       AnalyticNumberTheory.RiemannXi.norm_integrated_shifted_zero_sum_div_log_le hRH hx
   have hG : ‖G‖ ≤ 1 / (3 * x ^ 3 * (Real.log x) ^ 2) :=
-    AnalyticNumberTheory.General.norm_integrated_gammaShiftSum_div_log_le_of_two_le_re hx
+    AnalyticNumberTheory.General.gammaShift_integrated_norm_le_re_two hx
       (show (2 : ℝ) ≤ (2 : ℂ).re by norm_num only [Complex.re_ofNat])
   have he : (logLValueSum x : ℂ) = zetaLogLValueMain x - Z - G :=
     logLValueSum_eq_zetaMain_sub_zero_sub_gamma hRH hx
@@ -290,7 +290,7 @@ theorem logLValueSum_eq_main_with_bounded_errors (hRH : RiemannHypothesis) {x : 
     simpa only [AnalyticNumberTheory.RiemannXi.riemannXiZeroMultiplicity] using
       AnalyticNumberTheory.RiemannXi.norm_integrated_shifted_zero_sum_div_log_le hRH hx
   have hG : ‖G‖ ≤ 1 / (3 * x ^ 3 * (Real.log x) ^ 2) :=
-    AnalyticNumberTheory.General.norm_integrated_gammaShiftSum_div_log_le_of_two_le_re hx
+    AnalyticNumberTheory.General.gammaShift_integrated_norm_le_re_two hx
       (show (2 : ℝ) ≤ (2 : ℂ).re by norm_num only [Complex.re_ofNat])
   have hz :
     |-Z.re| ≤

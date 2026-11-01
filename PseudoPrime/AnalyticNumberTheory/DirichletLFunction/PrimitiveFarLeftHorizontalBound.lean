@@ -37,13 +37,13 @@ Conclusion: `‖DirichletLFunction.dirichletReciprocalContourKernel x χ (σ + T
 `x` need not
 appear on the right, unlike the central-strip case).
 Content: same structure as
-`DirichletLFunction.norm_dirichletReciprocalContourKernel_horizontal_le`, except
+`DirichletLFunction.norm_reciprocalKernel_horizontal_le`, except
 `‖x ^ (s - 1)‖ = x ^ (σ - 1) ≤ x ^ (-3) ≤ 1` (`σ - 1 ≤ -3` from `σ ≤ -2`, and `x ^ (-3) ≤ 1` from
 `x ≥ 1`), so the numerator bound is `η * T²` rather than `η * T² * x`.
 Role: the horizontal estimate pointwise kernel ingredient on the far-left strip.
 -/
-theorem norm_dirichletReciprocalContourKernel_farLeft_le {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} {x σ T η : ℝ} (hx : 1 ≤ x) (hσ : σ ≤ -2) (hT : T ≠ 0)
+theorem norm_reciprocalKernel_farLeft_le {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    {x σ T η : ℝ} (hx : 1 ≤ x) (hσ : σ ≤ -2) (hT : T ≠ 0)
     (hL : ‖logDeriv (DirichletCharacter.LFunction χ) ((σ : ℂ) + (T : ℂ) * Complex.I)‖ / T ^ 2 ≤ η) :
     ‖dirichletReciprocalContourKernel x χ ((σ : ℂ) + (T : ℂ) * Complex.I)‖ ≤ η := by
   set s : ℂ := (σ : ℂ) + (T : ℂ) * Complex.I with hs_def
@@ -108,19 +108,18 @@ theorem norm_dirichletReciprocalContourKernel_farLeft_le {N : ℕ} [NeZero N]
 Input/assumptions: `A ≥ 2`, `N ≥ 2`, `χ` primitive non-principal mod `N` with `χ⁻¹ ≠ 1`, GRH (no
 quadratic hypothesis), `x ≥ 1`.
 Conclusion: same as
-`DirichletLFunction.exists_primitiveHorizontalHeightSeq_reciprocalKernel_farLeft_integral_le`.
-Content: use `exists_norm_logDeriv_dirichletLFunction_farLeft_le_general` and the height facts
-`primitiveHorizontalHeightSeq`, `tendsto_primitiveHorizontalHeightSeq_atTop`,
+`DirichletLFunction.reciprocal_farLeft_heightBound_GRH`.
+Content: use `norm_L_logDeriv_farLeft_bound` and the height facts
+`primitiveHorizontalHeightSeq`, `tendsto_horizontalHeightSeq_GRH`,
 and `primitiveHorizontalHeightSeq_ge`;
-`DirichletLFunction.norm_dirichletReciprocalContourKernel_farLeft_le` never mentioned
+`DirichletLFunction.norm_reciprocalKernel_farLeft_le` never mentioned
 `χ.IsQuadratic` and is reused
 verbatim.
 Role: supplies the far-left integral envelope for the generic horizontal-edge limit.
 -/
-theorem exists_primitiveHorizontalHeightSeq_reciprocalKernel_farLeft_integral_le (A : ℕ)
-    (hA : 2 ≤ A) {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis) (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
-    (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) :
+theorem reciprocal_farLeft_heightBound_GRH (A : ℕ) (hA : 2 ≤ A) {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) :
     ∃ μ : ℕ → ℝ,
       Filter.Tendsto μ Filter.atTop (nhds 0) ∧
         ∀ k : ℕ,
@@ -137,11 +136,10 @@ theorem exists_primitiveHorizontalHeightSeq_reciprocalKernel_farLeft_integral_le
   have hAab : -(A : ℝ) - 1 / 2 ≤ -2 := by
     have hA' : (2 : ℝ) ≤ (A : ℝ) := by exact_mod_cast hA
     linarith only [hA']
-  obtain ⟨D, hDnonneg, hD⟩ :=
-    exists_norm_logDeriv_dirichletLFunction_farLeft_le_general A hprimitive hne hinv
+  obtain ⟨D, hDnonneg, hD⟩ := norm_L_logDeriv_farLeft_bound A hprimitive hne hinv
   set T : ℕ → ℝ := primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv with hT_def
   have hT_tendsto : Filter.Tendsto T Filter.atTop Filter.atTop :=
-    tendsto_primitiveHorizontalHeightSeq_atTop hN2 hGRH hprimitive hne hinv
+    tendsto_horizontalHeightSeq_GRH hN2 hGRH hprimitive hne hinv
   set η : ℕ → ℝ := fun k => D * (T k + 1) / (T k) ^ 2 with hη_def
   set L : ℝ := |(-2 : ℝ) - (-(A : ℝ) - 1 / 2)| with hL_def
   set μ : ℕ → ℝ := fun k => η k * L with hμ_def
@@ -189,7 +187,7 @@ theorem exists_primitiveHorizontalHeightSeq_reciprocalKernel_farLeft_integral_le
               η k := by
             rw [hη_def]
             exact div_le_div_of_nonneg_right hLbase hTksq_pos.le
-          exact norm_dirichletReciprocalContourKernel_farLeft_le hx hσ2 hTk_ne hL')
+          exact norm_reciprocalKernel_farLeft_le hx hσ2 hTk_ne hL')
     rwa [hμ_def, hL_def]
   · have hTk_ge1 : 1 ≤ T k := by
       have h := primitiveHorizontalHeightSeq_ge hN2 hGRH hprimitive hne hinv k
@@ -223,13 +221,12 @@ theorem exists_primitiveHorizontalHeightSeq_reciprocalKernel_farLeft_integral_le
               η k := by
             rw [neg_sq, hη_def]
             exact div_le_div_of_nonneg_right hLbase hTksq_pos.le
-          exact
-            norm_dirichletReciprocalContourKernel_farLeft_le hx hσ2 (neg_ne_zero.mpr hTk_ne) hL2')
+          exact norm_reciprocalKernel_farLeft_le hx hσ2 (neg_ne_zero.mpr hTk_ne) hL2')
     rwa [hμ_def, hL_def]
 
 /--
 Input/assumptions: same as
-`exists_primitiveHorizontalHeightSeq_reciprocalKernel_farLeft_integral_le`.
+`reciprocal_farLeft_heightBound_GRH`.
 Conclusion: both fixed-`A` far-left horizontal-segment integrals of the reciprocal contour kernel,
 at height `± DirichletLFunction.primitiveHorizontalHeightSeq k`, tend to `0` as `k → ∞` (no
 quadratic
@@ -237,10 +234,9 @@ hypothesis).
 Content: `squeeze_zero_norm`.
 Role: supplies the far-left component of the generic horizontal-edge limit.
 -/
-theorem tendsto_primitiveHorizontalHeightSeq_reciprocalKernel_farLeft_integral (A : ℕ) (hA : 2 ≤ A)
-    {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : GRH.GeneralizedRiemannHypothesis) (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
-    (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) :
+theorem tendsto_reciprocal_farLeft_GRH (A : ℕ) (hA : 2 ≤ A) {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) :
     Filter.Tendsto
         (fun k : ℕ =>
           ∫ σ in (-(A : ℝ) - 1 / 2)..(-2 : ℝ),
@@ -254,8 +250,7 @@ theorem tendsto_primitiveHorizontalHeightSeq_reciprocalKernel_farLeft_integral (
               ((σ : ℂ) - primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k * Complex.I))
         Filter.atTop (nhds 0) := by
   obtain ⟨μ, hμ_tendsto, hμ⟩ :=
-    exists_primitiveHorizontalHeightSeq_reciprocalKernel_farLeft_integral_le A hA hN2 hGRH
-      hprimitive hne hinv hx
+    reciprocal_farLeft_heightBound_GRH A hA hN2 hGRH hprimitive hne hinv hx
   exact
     ⟨squeeze_zero_norm (fun k => (hμ k).1) hμ_tendsto,
       squeeze_zero_norm (fun k => (hμ k).2) hμ_tendsto⟩

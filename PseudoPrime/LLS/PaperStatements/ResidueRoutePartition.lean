@@ -28,7 +28,7 @@ def residueRoutePartitionCheck (factorRoutes : BinaryTree (ℕ × List ℕ))
 Assume GRH and a modulus at most 20000. Select the analytic route when present;
 otherwise transfer checked finite coverage from the divisor route's source.
 This joins the two branches before the public Corollary 1.2 proof. -/
-theorem exists_least_prime_in_residue_le_of_route_partition {primes : BinaryTree ℕ}
+theorem exists_least_residue_routePartition_GRH {primes : BinaryTree ℕ}
     (hp : NumberTheory.primeTreeChecked primes) {core divisorRoutes : BinaryTree (ℕ × ℕ)}
     {factorRoutes : BinaryTree (ℕ × List ℕ)}
     (hcore :
@@ -45,7 +45,7 @@ theorem exists_least_prime_in_residue_le_of_route_partition {primes : BinaryTree
       IsLeast {n : ℕ | n.Prime ∧ (n : ZMod q) = (a : ZMod q)} p ∧
         (p : ℝ) ≤ ((q.totient : ℝ) * Real.log q) ^ 2 := by
   cases hf : NumberTheory.certificateTreeLookup Prod.fst factorRoutes q with
-  | some e => exact exists_least_prime_in_residue_le_of_factor_route_lookup hp hfac hf hu a hGRH
+  | some e => exact exists_least_residue_factorLookup_GRH hp hfac hf hu a hGRH
   | none =>
     cases hd : NumberTheory.certificateTreeLookup Prod.fst divisorRoutes q with
     | some e => exact exists_least_prime_in_residue_le_of_route_lookup hcore hdiv hd a

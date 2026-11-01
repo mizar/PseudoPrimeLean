@@ -34,7 +34,7 @@ theorem exists_odd_prime_ne_one_of_logShift_gap {n B : ℕ} (hn : Odd n) (hns : 
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n p ≠ 1 := by
   let : NeZero (4 * n) := ⟨Nat.mul_ne_zero (by norm_num only) hn.pos.ne'⟩
   have hC :=
-    AnalyticNumberTheory.DirichletLFunction.twoPoleGammaConstant_le_signed_of_even
+    AnalyticNumberTheory.DirichletLFunction.twoPoleGamma_le_112_25_of_even
       (NumberTheory.complexQuadraticCharacter n hn).primitiveCharacter
       ((NumberTheory.primitiveCharacter_even_iff _).mpr
         (NumberTheory.complexQuadraticCharacter_isEven n hn))
@@ -48,8 +48,7 @@ theorem exists_odd_prime_ne_one_of_logShift_gap {n B : ℕ} (hn : Odd n) (hns : 
     dsimp only [logShiftNeOneGap] at hgap
     linarith only [hgap]
   obtain ⟨p, hp, ho, hb, hv⟩ :=
-    LLS.exists_odd_prime_ne_one_of_logShiftRampPrincipal_prefix
-      (NumberTheory.complexQuadraticCharacter n hn)
+    LLS.exists_oddPrime_neOne_logShiftRamp_GRH (NumberTheory.complexQuadraticCharacter n hn)
       (NumberTheory.complexQuadraticCharacter_isQuadratic n hn)
       (NumberTheory.complexQuadraticCharacter_ne_one_of_not_square n hn hns)
       (show 2 ∣ 4 * n from ⟨2 * n, by ring⟩) (Nat.mul_le_mul_left 4 hnB) hGRH
@@ -86,12 +85,12 @@ theorem exists_odd_prime_neg_one_of_logShift_gap {n B : ℕ} (hn : Odd n) (hns :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n p = -1 := by
   let : NeZero (4 * n) := ⟨Nat.mul_ne_zero (by norm_num only) hn.pos.ne'⟩
   have hC :=
-    AnalyticNumberTheory.DirichletLFunction.twoPoleGammaConstant_le_signed_of_even
+    AnalyticNumberTheory.DirichletLFunction.twoPoleGamma_le_112_25_of_even
       (NumberTheory.complexQuadraticCharacter n hn).primitiveCharacter
       ((NumberTheory.primitiveCharacter_even_iff _).mpr
         (NumberTheory.complexQuadraticCharacter_isEven n hn))
   have hcard :=
-    AnalyticNumberTheory.Arithmetic.primeFactors_card_le_five_halves_add_three_eighths_log
+    AnalyticNumberTheory.Arithmetic.primeFactors_card_le_5_2_add_3_8_log
       (Nat.mul_pos (by norm_num only : 0 < 4) hn.pos) (Nat.mul_le_mul_left 4 hnB)
   have hc :=
     div_le_div_of_nonneg_right
@@ -117,18 +116,16 @@ theorem exists_odd_prime_neg_one_of_logShift_gap {n B : ℕ} (hn : Odd n) (hns :
     norm_num only [Nat.floor_ofNat]
     exact LLS.twoPoleEulerPrefixMass_thirteen_saving_one
   obtain ⟨p, hp, hd, hb, hv⟩ :=
-    LLS.exists_prime_neg_one_of_logShiftRampPrincipal_conductor_prefix
-      (NumberTheory.complexQuadraticCharacter n hn)
+    LLS.exists_prime_negOne_logShiftConductor_GRH (NumberTheory.complexQuadraticCharacter n hn)
       (NumberTheory.complexQuadraticCharacter_isQuadratic n hn)
       (NumberTheory.complexQuadraticCharacter_ne_one_of_not_square n hn hns)
       (Nat.mul_le_mul_left 4 hnB) hGRH (by linarith only [hx]) hh hhx (Y := 13) (by norm_num only)
       (a := 3 / 10) (d := (1 / 5 : ℝ) * Real.log 2) (by norm_num only)
       (mul_nonneg (by norm_num only) (Real.log_natCast_nonneg 2)) (by linarith only [hs])
-      (fun p hp ↦
-        AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight_prime_upper_three_tenths hp)
-      hY hC (g := 1) hSaving (hc.trans_lt hg)
+      (fun p hp ↦ AnalyticNumberTheory.Arithmetic.pairedEulerWeight_prime_le_three_tenths hp) hY hC
+      (g := 1) hSaving (hc.trans_lt hg)
   have hw :=
-    NumberTheory.primeNegOneWitness_mem_of_complexQuadraticCharacter_ne_one n hn hp hd
+    NumberTheory.negOneWitness_mem_of_quadratic_ne_one n hn hp hd
       (by
         rw [hv]; norm_num only)
   exact ⟨p, hp, hw.2.1, hb, hw.2.2⟩

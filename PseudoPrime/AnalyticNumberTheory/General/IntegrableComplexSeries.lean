@@ -18,7 +18,7 @@ namespace PseudoPrime.AnalyticNumberTheory.General
 their pointwise series is integrable. Use measurable summation and bound the norm
 lintegral by the sum of norm lintegrals. This supplies convergence for Gamma-series
 integral decompositions without a separate integrability premise. -/
-theorem integrable_complex_tsum_of_summable_integral_norm {F : ℕ → ℝ → ℂ}
+theorem integrable_complex_tsum_of_integral_norm {F : ℕ → ℝ → ℂ}
     (hi : ∀ n, MeasureTheory.Integrable (F n)) (hs : Summable (fun n ↦ ∫ t : ℝ, ‖F n t‖)) :
     MeasureTheory.Integrable (fun t : ℝ ↦ ∑' n : ℕ, F n t) := by
   refine ⟨MeasureTheory.AEStronglyMeasurable.tsum (fun n ↦ (hi n).aestronglyMeasurable), ?_⟩

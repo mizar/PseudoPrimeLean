@@ -50,7 +50,7 @@ theorem triangular_resolvent_first_moment_majorant {a c : ℝ} (hc : 0 < c) (t :
 moment is integrable and its normalized integral is at most 2a/sqrt c plus 2sqrt c/c.
 Integrate the scalar majorant using mass 2a and the height-square moment bound.
 This supplies integrated norm bounds for the digamma reciprocal-difference series. -/
-theorem triangular_resolvent_first_moment_integrable_and_bound {a c : ℝ} (ha : 0 < a) (hc : 0 < c) :
+theorem triangular_firstMoment_integrable_bound {a c : ℝ} (ha : 0 < a) (hc : 0 < c) :
     MeasureTheory.Integrable
         (fun t : ℝ ↦
           |t| * ‖Analysis.triangularMellinFunction a (Complex.I * t)‖ / Real.sqrt (c ^ 2 + t ^ 2)) ∧
@@ -119,7 +119,7 @@ theorem triangular_resolvent_normalized_first_moment_le {a c : ℝ} (ha : 0 < a)
           |t| * ‖Analysis.triangularMellinFunction a (Complex.I * t)‖ / Real.sqrt (c ^ 2 + t ^ 2)) /
         (2 * Real.pi) ≤
       (2 * a + 2) / Real.sqrt c := by
-  have h := (triangular_resolvent_first_moment_integrable_and_bound ha hc).2
+  have h := (triangular_firstMoment_integrable_bound ha hc).2
   have hy := Real.sqrt_pos.mpr hc
   have he : Real.sqrt c / c = 1 / Real.sqrt c :=
     (div_eq_div_iff hc.ne' hy.ne').mpr

@@ -18,7 +18,7 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 /-- A primitive nonprincipal character at nonzero level has level at least two.
 Primitivity identifies the level with its conductor, and conductor one is equivalent
 to principality. This discharges the lower-modulus condition in finite family sums. -/
-theorem two_le_level_of_primitive_nonprincipal {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+theorem two_le_level_of_primitive_ne_one {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) : 2 ≤ q := by
   apply (Nat.two_le_iff q).mpr
   refine ⟨NeZero.ne q, ?_⟩
@@ -47,7 +47,7 @@ apply the proved regularized near-one family estimate, and sum the individual
 explicit remainders. The leading exponential error has no character-count factor.
 All density, counting, truncation, and remainder estimates are unconditional;
 only the displayed scale and exception-avoidance conditions remain. -/
-theorem exists_primitive_character_family_half_scale_budget_off_exceptional_conductors :
+theorem primitiveHalfScaleOff :
     ∃ A B C K T : ℝ,
       0 < A ∧
         0 < B ∧
@@ -70,18 +70,15 @@ theorem exists_primitive_character_family_half_scale_budget_off_exceptional_cond
                         (∀ p ∈ S, p.1.val + 1 ≠ 4) →
                         (∀ p ∈ S,
                           p.1.val + 1 ∉
-                            exceptionalFamilyConductorsAwayFromFour (H + 1)
-                              (1 - c / Real.log ((H + 1 : ℕ) : ℝ))) →
+                            exceptionalExceptFour (H + 1) (1 - c / Real.log ((H + 1 : ℕ) : ℝ))) →
                         (∑ p ∈ S,
                             ‖Arithmetic.characterLogWeightedSum x p.2 -
                                 Arithmetic.characterLogWeightedSum (x / 2) p.2‖) ≤
                           B * x * Real.exp (-(c / Real.log ((H + 1 : ℕ) : ℝ)) * Real.log x / 2) +
                             ∑ p ∈ S,
                               primitiveHalfScaleRemainderBudget (p.1.val + 1) x σ H C K T := by
-  obtain ⟨A, B, hA, hB, hnear⟩ :=
-    exists_character_family_regularized_zero_norm_sum_off_exceptional_conductors
-  obtain ⟨C, K, T, hC, hK, hT, hpart⟩ :=
-    exists_norm_characterLogWeightedSum_half_le_truncated_zero_budget
+  obtain ⟨A, B, hA, hB, hnear⟩ := family_regularOff_le
+  obtain ⟨C, K, T, hC, hK, hT, hpart⟩ := logWeighted_half_truncated_bound
   refine ⟨A, B, C, K, T, hA, hB, hC, hK, hT, ?_⟩
   intro c hc H hH x σ hx hσlo hσhi hδ hscale S hp hne hfour havoid
   have hx2 : 2 ≤ x := by linarith only [hx]
@@ -107,7 +104,7 @@ theorem exists_primitive_character_family_half_scale_budget_off_exceptional_cond
     intro p hps
     have hpn := hne p hps
     have hpp := hp p hps
-    have hq := two_le_level_of_primitive_nonprincipal hpp hpn
+    have hq := two_le_level_of_primitive_ne_one hpp hpn
     have hb := hpart (p.1.val + 1) hq p.2 hpp hpn (inv_ne_one.mpr hpn) x σ hx hσhi H hH
     rw [dite_eq_left hpn, dite_eq_left hpp]
     dsimp only [primitiveHalfScaleRemainderBudget]

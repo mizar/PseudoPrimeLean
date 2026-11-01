@@ -33,7 +33,7 @@ theorem exists_norm_reciprocalGapCompletedRemainder_le {h : ℝ} (hh : 0 < h) :
                     ‖reciprocalGapCompletedRemainder h hh χ x‖ ≤
                       C * (1 + Real.log q / Real.sqrt x) := by
   obtain ⟨C, hC, hb⟩ :=
-    MellinKernel.exists_norm_summand_add_oscillatingZeroSum_le (reciprocalGapMellinKernel h hh)
+    MellinKernel.exists_summand_oscillating_error_GRH (reciprocalGapMellinKernel h hh)
   refine ⟨C, hC, ?_⟩
   intro q _ hq χ hGRH hp hne hinv x hx
   have hs := hb hq hGRH hp hne hinv hx
@@ -42,15 +42,15 @@ theorem exists_norm_reciprocalGapCompletedRemainder_le {h : ℝ} (hh : 0 < h) :
     ‖reciprocalGapCharacterSum h χ x +
           (∑' ρ : ℂ, (reciprocalGapMellinKernel h hh).oscillatingZeroTerm χ x ρ)‖ ≤
       _ at hs
-  rw [reciprocalGapCharacterSum_eq_zeroSum_add_remainder hh ((by norm_num only : 2 ≤ 8).trans hq)
-      hGRH hp hne hinv hx] at hs
+  rw [reciprocalGap_eq_zeroSum_remainder_GRH hh ((by norm_num only : 2 ≤ 8).trans hq) hGRH hp hne
+      hinv hx] at hs
   simpa only [neg_add_cancel_comm] using hs
 
 /-- For a fixed positive gap, bound the finite character sum uniformly by the positive-prefix
 zero budget and C(1+log(q)/sqrt(x)), at levels at least eight under primitive GRH data.
 Use the exact arithmetic comparison and the norm estimate for the remainder.
 This removes contour integrals as extra hypotheses while retaining a kernel-dependent constant. -/
-theorem exists_reciprocalGapCharacterSum_re_le_positive_prefix {h : ℝ} (hh : 0 < h) :
+theorem exists_gap_positivePrefix_bound_GRH {h : ℝ} (hh : 0 < h) :
     ∃ C : ℝ,
       0 < C ∧
         ∀ {q : ℕ} [NeZero q],
@@ -88,8 +88,8 @@ theorem exists_reciprocalGapCharacterSum_re_le_positive_prefix {h : ℝ} (hh : 0
 /-- If a character takes value one at every prime up to a nonnegative scale, its finite gap sum
 equals the level-one principal sum. Zero Mangoldt terms vanish and prime powers inherit
 value one from their prime. This is the witness-nonexistence side of the comparison. -/
-theorem reciprocalGapCharacterSum_eq_principal_of_prime_one {h x : ℝ} {q : ℕ}
-    (χ : DirichletCharacter ℂ q) (hx : 0 ≤ x) (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ x → χ p = 1) :
+theorem recipGapCharSum_eq_principal_of_prime_one {h x : ℝ} {q : ℕ} (χ : DirichletCharacter ℂ q)
+    (hx : 0 ≤ x) (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ x → χ p = 1) :
     reciprocalGapCharacterSum h χ x =
       reciprocalGapCharacterSum h (1 : DirichletCharacter ℂ 1) x := by
   unfold reciprocalGapCharacterSum
@@ -129,7 +129,7 @@ theorem exists_prime_not_one_of_reciprocalGap_separation {h c : ℝ} (hh : 0 < h
     by_contra hχ
     exact hn ⟨p, hp, hpx, hχ⟩
   have hu := reciprocalGapCharacterSum_re_le_positive_prefix hh hq hGRH hp hne hinv hc hbound hx B
-  rw [reciprocalGapCharacterSum_eq_principal_of_prime_one χ (zero_le_one.trans hx) hs] at hu
+  rw [recipGapCharSum_eq_principal_of_prime_one χ (zero_le_one.trans hx) hs] at hu
   exact (not_lt_of_ge hu) hgap
 
 /-- For a positive gap and scale, the first-pole residue has norm equal to the completed

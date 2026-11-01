@@ -27,20 +27,19 @@ open PseudoPrime.AnalyticNumberTheory.RiemannZeta in
 /-- Under RH, the logarithmic weighted Mangoldt sum satisfies LLS Lemma 2.1 for
 x > 1. The Mellin identity at real part two transports the contour lower bound
 directly to the finite sum, supplying the Riemann input for LLS Theorem 1.1. -/
-theorem llsRiemannWeightedLowerBound_of_riemannHypothesis (hRH : RiemannHypothesis) :
-    LLSRiemannWeightedLowerBound := by
+theorem riemannWeightedLower_of_RH (hRH : RiemannHypothesis) : LLSRiemannWeightedLowerBound := by
   intro x hx
   have heq := logWeightedMangoldtSum_eq_integral (zero_lt_one.trans hx) (τ := 2) (by norm_num only)
   have hre := congrArg Complex.re heq
   rw [Complex.ofReal_re] at hre
   rw [hre]
-  exact re_integral_riemannZetaLogContourKernel_two_ge_of_riemannHypothesis hRH hx
+  exact logKernel_integral_two_re_lower_RH hRH hx
 
 open PseudoPrime.AnalyticNumberTheory.RiemannZeta in
 /-- Under RH, the reciprocal weighted Mangoldt sum is at least log x - 8/5
 for x ≥ 2. The Mellin identity at real part two gives the explicit lower bound;
 the numerical remainder estimate yields the input used in LLS Section 3.1. -/
-theorem llsRiemannReciprocalLowerBound_of_riemannHypothesis (hRH : RiemannHypothesis) :
+theorem riemannReciprocalLower_of_RH (hRH : RiemannHypothesis) :
     LLSRiemannReciprocalLowerBound := by
   intro x hx
   have h := reciprocalWeightedMangoldtSum_lower_bound hRH hx

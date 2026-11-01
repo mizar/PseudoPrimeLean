@@ -23,8 +23,8 @@ namespace PseudoPrime.LLS.Extensions.GeneralLFunction
 form 2*theta/(x*log(x)^2) with |theta|<=1. Its parity shift is zero or one,
 so the degree-one specialization needs no RH or primitivity assumption.
 This gives the gamma-error scale of the original logarithmic formula. -/
-theorem ofDirichletCharacter_gammaLogRemainder_eq_theta {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) {x : ℝ} (hx : 1 < x) :
+theorem dirichlet_gammaLog_theta {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) {x : ℝ}
+    (hx : 1 < x) :
     ∃ θ : ℝ,
       |θ| ≤ 1 ∧
         ((ofDirichletCharacter χ).gammaLogRemainder x).re = 2 * θ / (x * (Real.log x) ^ 2) := by

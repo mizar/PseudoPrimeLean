@@ -22,8 +22,7 @@ namespace PseudoPrime.LLS
 /-- Under RH and x>1, the logarithmically weighted Mangoldt sum has error at most
 (61/10)sqrt(x). Apply the explicit zeta formula, zero mass at most 1/40 and log(2π)<2.
 The constant feeds the finite-difference Chebyshev estimate. -/
-theorem logWeightedMangoldtSum_error_le_sqrt_sixty_one_tenths (hRH : RiemannHypothesis) {x : ℝ}
-    (hx : 1 < x) :
+theorem mangoldt_log_error_le_61_10_sqrt_RH (hRH : RiemannHypothesis) {x : ℝ} (hx : 1 < x) :
     |AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum x - x| ≤ (61 / 10) * Real.sqrt x := by
   have hs : 1 ≤ Real.sqrt x := by simpa only [Real.sqrt_one] using Real.sqrt_le_sqrt hx.le
   have hl := Real.log_le_sub_one_of_pos (Real.sqrt_pos.mpr (zero_lt_one.trans hx))
@@ -80,9 +79,9 @@ private theorem psi_error_le_thirty_eight_sqrt (hRH : RiemannHypothesis) {x : �
   by_cases hl : x ≤ 16
   · exact psi_error_le_thirty_eight_of_le_sixteen hx hl
   · have h :=
-      AnalyticNumberTheory.Arithmetic.psi_error_le_three_quarter_of_logWeighted_error
-        (by norm_num only : (0 : ℝ) ≤ 61 / 10)
-        (fun hu ↦ logWeightedMangoldtSum_error_le_sqrt_sixty_one_tenths hRH hu) (le_of_not_ge hl)
+      AnalyticNumberTheory.Arithmetic.psi_error_le_pow_3_4_of_logWeighted_error
+        (by norm_num only : (0 : ℝ) ≤ 61 / 10) (fun hu ↦ mangoldt_log_error_le_61_10_sqrt_RH hRH hu)
+        (le_of_not_ge hl)
     have hq : 0 ≤ Real.sqrt x * Real.sqrt (Real.sqrt x) :=
       mul_nonneg (Real.sqrt_nonneg x) (Real.sqrt_nonneg (Real.sqrt x))
     nlinarith only [h, hq]
@@ -165,7 +164,7 @@ private theorem psi_error_le_thirteen_sqrt (hRH : RiemannHypothesis) {x : ℝ} (
   by_cases hl : x ≤ 16
   · exact psi_error_le_thirteen_of_le_sixteen hx hl
   · have h :=
-      AnalyticNumberTheory.Arithmetic.psi_error_le_three_quarter_of_logWeighted_error
+      AnalyticNumberTheory.Arithmetic.psi_error_le_pow_3_4_of_logWeighted_error
         (by norm_num only : (0 : ℝ) ≤ 2) (fun hu ↦ logWeightedMangoldtSum_error_le_two_sqrt hRH hu)
         (le_of_not_ge hl)
     have hq : 0 ≤ Real.sqrt x * Real.sqrt (Real.sqrt x) :=

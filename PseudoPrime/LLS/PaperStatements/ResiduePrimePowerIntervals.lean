@@ -126,7 +126,7 @@ logarithm and prime-count bounds and lower-cutoff power certificates bound its
 Mangoldt sum divided by the radius. Apply the prime-free square-plus-odd-root
 estimate and the two interval estimates. This supplies the prime-free input to
 shared parity gap certificates. -/
-theorem residue_logWeightedSum_normalized_le_interval_of_no_prime {q : ℕ} [NeZero q] (a : (ZMod q)ˣ)
+theorem residue_logSum_div_sqrt_le_of_no_prime_RH {q : ℕ} [NeZero q] (a : (ZMod q)ˣ)
     (hRH : RiemannHypothesis) {q₀ s₀ s T₁ : ℝ} {W K : ℕ} (hs₀ : 0 < s₀) (hss : s₀ ≤ s)
     (hq₀ : 0 < q₀) (hqq : q₀ ≤ q) (hx : 1 < s ^ 2) (hT : Real.log (s ^ 2) ≤ T₁)
     (hw : q.primeFactors.card ≤ W) (hK : ⌊Real.log (s ^ 2) / Real.log 2⌋₊ ≤ K) (b c : ℕ → ℝ)
@@ -167,14 +167,13 @@ bounds, the logarithmic interval, exponent and prime-count bounds, and the exist
 cutoff and sign guards. Bound the prime-free Mangoldt sum by the radius times its
 normalized interval bound and apply the parity interval theorem.
 This removes a separate prime-free-sum hypothesis from interval certificates. -/
-theorem exists_least_prime_in_residue_le_of_interval_power_certificates {q : ℕ} [NeZero q]
-    (a : (ZMod q)ˣ) (hq : 64 ≤ q) (hu : q ≤ 20000)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {q₀ h₀ s₀ s L₁ T₁ : ℝ} {W K : ℕ}
-    (hh : (2 : ℝ) ≤ q.totient) (hh₀ : 0 < h₀) (hhh : h₀ ≤ q.totient) (hs₀ : 0 < s₀) (hss : s₀ ≤ s)
-    (hq₀ : 0 < q₀) (hqq : q₀ ≤ q) (hs : (q.totient : ℝ) * Real.log q = s) (hx : 65536 ≤ s ^ 2)
-    (hL : 1719 / 1000 ≤ Real.log q) (hLL : Real.log q ≤ L₁) (hT : 0 ≤ T₁)
-    (hTx : Real.log (s ^ 2) ≤ T₁) (hw : q.primeFactors.card ≤ W)
-    (hK : ⌊Real.log (s ^ 2) / Real.log 2⌋₊ ≤ K) (b c : ℕ → ℝ)
+theorem exists_least_residue_intervalPower_GRH {q : ℕ} [NeZero q] (a : (ZMod q)ˣ) (hq : 64 ≤ q)
+    (hu : q ≤ 20000) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {q₀ h₀ s₀ s L₁ T₁ : ℝ} {W K : ℕ} (hh : (2 : ℝ) ≤ q.totient) (hh₀ : 0 < h₀)
+    (hhh : h₀ ≤ q.totient) (hs₀ : 0 < s₀) (hss : s₀ ≤ s) (hq₀ : 0 < q₀) (hqq : q₀ ≤ q)
+    (hs : (q.totient : ℝ) * Real.log q = s) (hx : 65536 ≤ s ^ 2) (hL : 1719 / 1000 ≤ Real.log q)
+    (hLL : Real.log q ≤ L₁) (hT : 0 ≤ T₁) (hTx : Real.log (s ^ 2) ≤ T₁)
+    (hw : q.primeFactors.card ≤ W) (hK : ⌊Real.log (s ^ 2) / Real.log 2⌋₊ ≤ K) (b c : ℕ → ℝ)
     (hb : ∀ k ∈ (Finset.Icc 3 K).filter Odd, 0 ≤ b k)
     (hc : ∀ k ∈ (Finset.Icc 3 K).filter Odd, 0 ≤ c k)
     (hpow : ∀ k ∈ (Finset.Icc 3 K).filter Odd, s₀ ^ 2 ≤ b k ^ k)
@@ -194,11 +193,11 @@ theorem exists_least_prime_in_residue_le_of_interval_power_certificates {q : ℕ
     rw [mul_comm s A]
     exact
       (div_le_iff₀ (hs₀.trans_le hss)).mp
-        (residue_logWeightedSum_normalized_le_interval_of_no_prime a hGRH.riemann hs₀ hss hq₀ hqq
+        (residue_logSum_div_sqrt_le_of_no_prime_RH a hGRH.riemann hs₀ hss hq₀ hqq
           (lt_of_lt_of_le (by norm_num only : (1 : ℝ) < 65536) hx) hTx hw hK b c hb hc hpow hsq hno)
   have hA : s * A / s ≤ A := (mul_div_cancel_left₀ A (hs₀.trans_le hss).ne').le
   exact
-    exists_least_prime_in_residue_le_of_parity_interval a hq hu hGRH hh hh₀ hhh hs₀ hss hs hx hL hLL
-      hT hTx le_rfl (Nat.cast_le.mpr hw) hA hC hR hf hg
+    exists_least_residue_parityInterval_GRH a hq hu hGRH hh hh₀ hhh hs₀ hss hs hx hL hLL hT hTx
+      le_rfl (Nat.cast_le.mpr hw) hA hC hR hf hg
 
 end PseudoPrime.LLS.PaperStatements

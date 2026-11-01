@@ -40,15 +40,14 @@ theorem eventually_prime_witness_bound_iff_squarefree {A : ℝ} (hA : (28 / 15 :
   · intro h
     exact h.mono (fun n hn hng ho hcomp _ ↦ hn hng ho hcomp)
   · intro hs
-    filter_upwards [hs, eventually_exists_prime_witness_le_exponent_of_not_squarefree hA] with n hsq
-      hns hn ho hcomp
+    filter_upwards [hs, eventually_prime_witness_pow_not_squarefree hA] with n hsq hns hn ho hcomp
     by_cases hsf : Squarefree n
     · exact hsq hn ho hcomp hsf
     · exact hns hn ho hsf
 
 /-- For A>28/15, the same equivalence holds for the least prime MR witness.
 Combine the squarefree premise with the proved nonsquarefree result, using the larger threshold. -/
-theorem eventually_least_prime_witness_bound_iff_squarefree {A : ℝ} (hA : (28 / 15 : ℝ) < A) :
+theorem eventually_least_bound_iff_squarefree {A : ℝ} (hA : (28 / 15 : ℝ) < A) :
     (Filter.Eventually
         (fun n : ℕ ↦
           1 < n →
@@ -76,8 +75,7 @@ theorem eventually_least_prime_witness_bound_iff_squarefree {A : ℝ} (hA : (28 
   · intro h
     exact h.mono (fun n hn hng ho hcomp _ ↦ hn hng ho hcomp)
   · intro hs
-    filter_upwards [hs, eventually_exists_least_prime_witness_le_exponent_of_not_squarefree hA] with
-      n hsq hns hn ho hcomp
+    filter_upwards [hs, eventually_least_exponent_nonSquarefree hA] with n hsq hns hn ho hcomp
     by_cases hsf : Squarefree n
     · exact hsq hn ho hcomp hsf
     · exact hns hn ho hsf

@@ -99,9 +99,8 @@ theorem reciprocalGap_completed_reflection {q : ℕ} [NeZero q] {χ : DirichletC
     rw [Complex.sub_re, Complex.div_ofNat_re, Complex.one_re]
     linarith only [hs]
   have he :=
-    AnalyticNumberTheory.DirichletLFunction.completedLFunction_logDeriv_functionalEquation_at hp hne
-      (s := 1 / 2 - s)
-      (AnalyticNumberTheory.DirichletLFunction.completedLFunction_ne_zero_of_one_le_re hinv hr)
+    AnalyticNumberTheory.DirichletLFunction.completedLogDeriv_functionalEq hp hne (s := 1 / 2 - s)
+      (AnalyticNumberTheory.DirichletLFunction.completed_ne_zero_of_one_le_re hinv hr)
   have hz : (1 : ℂ) - (1 / 2 - s) = s + 1 / 2 := by ring
   rw [hz] at he
   exact he
@@ -192,9 +191,9 @@ theorem integrable_reciprocalGap_reflected_line {h : ℝ} (hh : 0 < h) {q : ℕ}
 inverse, the actual left integral equals -log(q)*x^(-1/2-h)/h plus the reflected integral.
 Split integrable terms under the functional equation and evaluate the conductor kernel.
 No GRH is needed; the negative conductor contribution is retained. -/
-theorem reciprocalGap_leftIntegral_eq_conductor_add_reflected {h : ℝ} (hh : 0 < h) {q : ℕ}
-    [NeZero q] {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
-    {x : ℝ} (hx : 1 ≤ x) :
+theorem reciprocalGap_left_eq_conductor_reflected {h : ℝ} (hh : 0 < h) {q : ℕ} [NeZero q]
+    {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ}
+    (hx : 1 ≤ x) :
     reciprocalGapLeftIntegral h hh χ x =
       ((-Real.log q * x ^ (-1 / 2 - h) / h : ℝ) : ℂ) + reciprocalGapReflectedIntegral h hh χ x := by
   let K := reciprocalGapMellinKernel h hh

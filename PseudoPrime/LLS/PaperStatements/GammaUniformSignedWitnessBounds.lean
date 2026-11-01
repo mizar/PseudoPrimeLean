@@ -27,8 +27,7 @@ namespace PseudoPrime.LLS.PaperStatements
 /-- Under GRH, q ≥ 10^15188 and H proper, a coprime prime outside H exists
 through (4/5)(log q+29)². Convert the exact decimal entrance to log q > 34971.
 This is the decimal proper-subgroup interface for the signed profile. -/
-theorem exists_prime_outside_le_gamma_four_fifths_plus_twentyNine_15188 {q : ℕ}
-    (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
+theorem exists_prime_outside_4_5_shift_29_15188_GRH {q : ℕ} (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hq : 10 ^ 15188 ≤ q) :
     ∃ p : ℕ,
       p.Prime ∧
@@ -37,7 +36,7 @@ theorem exists_prime_outside_le_gamma_four_fifths_plus_twentyNine_15188 {q : ℕ
   have hq0 : q ≠ 0 :=
     Nat.ne_zero_of_lt ((pow_pos (by norm_num only : (0 : ℕ) < 10) 15188).trans_le hq)
   let : NeZero q := ⟨hq0⟩
-  apply exists_prime_outside_le_gamma_four_fifths_log_plus_twentyNine H hH hGRH
+  apply exists_prime_outside_4_5_shift_29_GRH H hH hGRH
   exact
     (Analysis.log_nat_gt_of_decimal_lower (by norm_num only : 0 < 15188) hq
         (by norm_num only : (34971 : ℝ) < (15188 : ℝ) * (115129 / 50000))).le
@@ -45,9 +44,8 @@ theorem exists_prime_outside_le_gamma_four_fifths_plus_twentyNine_15188 {q : ℕ
 /-- Under GRH, q ≥ 10^20121 and H proper, a coprime prime outside H exists
 through (4/5)(log q-2)². Convert the exact decimal entrance to log q > 46330.
 This is the decimal proper-subgroup interface for the signed profile. -/
-theorem exists_prime_outside_le_gamma_four_fifths_minus_two_20121 {q : ℕ} (H : Subgroup (ZMod q)ˣ)
-    (hH : H ≠ ⊤) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hq : 10 ^ 20121 ≤ q) :
+theorem exists_prime_outside_4_5_shift_neg_2_20121_GRH {q : ℕ} (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hq : 10 ^ 20121 ≤ q) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬p ∣ q ∧
@@ -55,7 +53,7 @@ theorem exists_prime_outside_le_gamma_four_fifths_minus_two_20121 {q : ℕ} (H :
   have hq0 : q ≠ 0 :=
     Nat.ne_zero_of_lt ((pow_pos (by norm_num only : (0 : ℕ) < 10) 20121).trans_le hq)
   let : NeZero q := ⟨hq0⟩
-  apply exists_prime_outside_le_gamma_four_fifths_log_minus_two H hH hGRH
+  apply exists_prime_outside_4_5_shift_neg_2_GRH H hH hGRH
   exact
     (Analysis.log_nat_gt_of_decimal_lower (by norm_num only : 0 < 20121) hq
         (by norm_num only : (46330 : ℝ) < (20121 : ℝ) * (115129 / 50000))).le
@@ -63,8 +61,7 @@ theorem exists_prime_outside_le_gamma_four_fifths_minus_two_20121 {q : ℕ} (H :
 /-- Under GRH, q ≥ 10^22097 and H proper, a coprime prime outside H exists
 through (4/5)(log q-log log q)². Convert the exact decimal entrance to log q > 50880.
 This is the decimal proper-subgroup interface for the signed profile. -/
-theorem exists_prime_outside_le_gamma_four_fifths_minus_loglog_22097 {q : ℕ}
-    (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
+theorem exists_prime_outside_4_5_sub_loglog_22097_GRH {q : ℕ} (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hq : 10 ^ 22097 ≤ q) :
     ∃ p : ℕ,
       p.Prime ∧
@@ -74,7 +71,7 @@ theorem exists_prime_outside_le_gamma_four_fifths_minus_loglog_22097 {q : ℕ}
   have hq0 : q ≠ 0 :=
     Nat.ne_zero_of_lt ((pow_pos (by norm_num only : (0 : ℕ) < 10) 22097).trans_le hq)
   let : NeZero q := ⟨hq0⟩
-  apply exists_prime_outside_le_gamma_four_fifths_log_minus_loglog H hH hGRH
+  apply exists_prime_outside_4_5_sub_loglog_GRH H hH hGRH
   exact
     (Analysis.log_nat_gt_of_decimal_lower (by norm_num only : 0 < 22097) hq
         (by norm_num only : (50880 : ℝ) < (22097 : ℝ) * (115129 / 50000))).le

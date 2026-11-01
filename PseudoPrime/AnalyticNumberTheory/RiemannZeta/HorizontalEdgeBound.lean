@@ -30,8 +30,8 @@ namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 `Re s = σ ∈ [-1/2, 2]`. The `x`-dependence is absorbed into the fixed factor
 `max (x ^ (-1/2)) (x ^ 2)`, which dominates `x ^ σ` for every `σ` in this range regardless of
 whether `x ≤ 1` or `x ≥ 1`. -/
-theorem norm_riemannZetaLogContourKernel_good_height_le {x : ℝ} (hx : 0 < x) {H : ℝ} (hH : 8 ≤ H)
-    {T : ℝ} (hT : T ∈ Set.Icc H (H + 1))
+theorem norm_logKernel_good_height_le {x : ℝ} (hx : 0 < x) {H : ℝ} (hH : 8 ≤ H) {T : ℝ}
+    (hT : T ∈ Set.Icc H (H + 1))
     (hgood :
       ∀ ρ : ℂ,
         riemannZeta ρ = 0 →
@@ -84,13 +84,13 @@ theorem norm_riemannZetaLogContourKernel_good_height_le {x : ℝ} (hx : 0 < x) {
       by apply div_le_div_of_nonneg_right h1 (by positivity)
 
 /-- The reciprocal-kernel analogue of
-`RiemannZeta.norm_riemannZetaLogContourKernel_good_height_le`. Since
+`RiemannZeta.norm_logKernel_good_height_le`. Since
 `RiemannZeta.riemannZetaReciprocalContourKernel` carries `x ^ (s - 1) / (s * (s - 1))` instead of
 `x ^ s / s ^ 2`, the exponent range shifts to `σ - 1 ∈ [-3/2, 1]` and the denominator's lower
 bound comes from `‖z‖ ≥ T` and `‖z - 1‖ ≥ T` separately (both via the imaginary-part projection,
 since `Im(z - 1) = Im z = T`). -/
-theorem norm_riemannZetaReciprocalContourKernel_good_height_le {x : ℝ} (hx : 0 < x) {H : ℝ}
-    (hH : 8 ≤ H) {T : ℝ} (hT : T ∈ Set.Icc H (H + 1))
+theorem norm_reciprocalKernel_good_height_le {x : ℝ} (hx : 0 < x) {H : ℝ} (hH : 8 ≤ H) {T : ℝ}
+    (hT : T ∈ Set.Icc H (H + 1))
     (hgood :
       ∀ ρ : ℂ,
         riemannZeta ρ = 0 →
@@ -158,8 +158,8 @@ theorem norm_riemannZetaReciprocalContourKernel_good_height_le {x : ℝ} (hx : 0
 
 /-- Integrate the pointwise logarithmic-kernel bound over a fixed segment
 `[lam,tau] ⊆ [-1/2,2]` at a good height. -/
-theorem norm_intervalIntegral_riemannZetaLogContourKernel_good_height_le {x : ℝ} (hx : 0 < x)
-    {H : ℝ} (hH : 8 ≤ H) {T : ℝ} (hT : T ∈ Set.Icc H (H + 1))
+theorem norm_integral_logKernel_good_height_le {x : ℝ} (hx : 0 < x) {H : ℝ} (hH : 8 ≤ H) {T : ℝ}
+    (hT : T ∈ Set.Icc H (H + 1))
     (hgood :
       ∀ ρ : ℂ,
         riemannZeta ρ = 0 →
@@ -177,15 +177,13 @@ theorem norm_intervalIntegral_riemannZetaLogContourKernel_good_height_le {x : �
       (by
         rw [Set.uIoc_of_le hlamtau]
         rintro σ ⟨hσ1, hσ2⟩
-        exact
-          norm_riemannZetaLogContourKernel_good_height_le hx hH hT hgood (le_trans hlam hσ1.le)
-            (hσ2.trans htau))
+        exact norm_logKernel_good_height_le hx hH hT hgood (le_trans hlam hσ1.le) (hσ2.trans htau))
   rwa [abs_of_nonneg (by linarith only [hlamtau] : (0 : ℝ) ≤ tau - lam)] at hbound
 
 /-- The reciprocal-kernel analogue of
-`RiemannZeta.norm_intervalIntegral_riemannZetaLogContourKernel_good_height_le`. -/
-theorem norm_intervalIntegral_riemannZetaReciprocalContourKernel_good_height_le {x : ℝ} (hx : 0 < x)
-    {H : ℝ} (hH : 8 ≤ H) {T : ℝ} (hT : T ∈ Set.Icc H (H + 1))
+`RiemannZeta.norm_integral_logKernel_good_height_le`. -/
+theorem norm_reciprocal_goodHeight_integral {x : ℝ} (hx : 0 < x) {H : ℝ} (hH : 8 ≤ H) {T : ℝ}
+    (hT : T ∈ Set.Icc H (H + 1))
     (hgood :
       ∀ ρ : ℂ,
         riemannZeta ρ = 0 →
@@ -204,14 +202,14 @@ theorem norm_intervalIntegral_riemannZetaReciprocalContourKernel_good_height_le 
         rw [Set.uIoc_of_le hlamtau]
         rintro σ ⟨hσ1, hσ2⟩
         exact
-          norm_riemannZetaReciprocalContourKernel_good_height_le hx hH hT hgood
-            (le_trans hlam hσ1.le) (hσ2.trans htau))
+          norm_reciprocalKernel_good_height_le hx hH hT hgood (le_trans hlam hσ1.le)
+            (hσ2.trans htau))
   rwa [abs_of_nonneg (by linarith only [hlamtau] : (0 : ℝ) ≤ tau - lam)] at hbound
 
 /-- For positive `x`, the logarithmic-kernel integral over a fixed horizontal
 segment `[lam,tau] ⊆ [-1/2,2]` tends to zero along `goodHeightSeq`. -/
-theorem tendsto_intervalIntegral_riemannZetaLogContourKernel_goodHeightSeq {x : ℝ} (hx : 0 < x)
-    {lam tau : ℝ} (hlam : -(1 : ℝ) / 2 ≤ lam) (hlamtau : lam ≤ tau) (htau : tau ≤ 2) :
+theorem tendsto_integral_logKernel_goodHeightSeq {x : ℝ} (hx : 0 < x) {lam tau : ℝ}
+    (hlam : -(1 : ℝ) / 2 ≤ lam) (hlamtau : lam ≤ tau) (htau : tau ≤ 2) :
     Filter.Tendsto
       (fun j : ℕ =>
         ∫ σ in lam..tau, riemannZetaLogContourKernel x (σ + goodHeightSeq j * Complex.I))
@@ -239,15 +237,14 @@ theorem tendsto_intervalIntegral_riemannZetaLogContourKernel_goodHeightSeq {x : 
   exact
     squeeze_zero_norm
       (fun j =>
-        norm_intervalIntegral_riemannZetaLogContourKernel_good_height_le hx
-          (le_add_of_nonneg_right (Nat.cast_nonneg j)) (goodHeightSeq_mem j) (goodHeightSeq_good j)
-          hlam hlamtau htau)
+        norm_integral_logKernel_good_height_le hx (le_add_of_nonneg_right (Nat.cast_nonneg j))
+          (goodHeightSeq_mem j) (goodHeightSeq_good j) hlam hlamtau htau)
       hatend
 
 /-- The reciprocal-kernel analogue of
-`RiemannZeta.tendsto_intervalIntegral_riemannZetaLogContourKernel_goodHeightSeq`. -/
-theorem tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_goodHeightSeq {x : ℝ}
-    (hx : 0 < x) {lam tau : ℝ} (hlam : -(1 : ℝ) / 2 ≤ lam) (hlamtau : lam ≤ tau) (htau : tau ≤ 2) :
+`RiemannZeta.tendsto_integral_logKernel_goodHeightSeq`. -/
+theorem tendsto_reciprocal_goodHeightSeq {x : ℝ} (hx : 0 < x) {lam tau : ℝ}
+    (hlam : -(1 : ℝ) / 2 ≤ lam) (hlamtau : lam ≤ tau) (htau : tau ≤ 2) :
     Filter.Tendsto
       (fun j : ℕ =>
         ∫ σ in lam..tau, riemannZetaReciprocalContourKernel x (σ + goodHeightSeq j * Complex.I))
@@ -275,9 +272,8 @@ theorem tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_goodHeightSe
   exact
     squeeze_zero_norm
       (fun j =>
-        norm_intervalIntegral_riemannZetaReciprocalContourKernel_good_height_le hx
-          (le_add_of_nonneg_right (Nat.cast_nonneg j)) (goodHeightSeq_mem j) (goodHeightSeq_good j)
-          hlam hlamtau htau)
+        norm_reciprocal_goodHeight_integral hx (le_add_of_nonneg_right (Nat.cast_nonneg j))
+          (goodHeightSeq_mem j) (goodHeightSeq_good j) hlam hlamtau htau)
       hatend
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

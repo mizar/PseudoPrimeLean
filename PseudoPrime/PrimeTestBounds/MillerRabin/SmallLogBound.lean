@@ -59,8 +59,8 @@ private theorem log_sq_ge_three_of_odd_composite {n : ℕ} (hn : 1 < n) (hnOdd :
 
 /-- A small odd composite has a prime strong Miller–Rabin witness below the log-square
 bound. The predecessor decomposition is computed by the test itself. -/
-theorem exists_prime_millerRabin_witness_le_log_sq_of_lt_3000 {n : ℕ} (hn : 1 < n) (hnOdd : Odd n)
-    (hnNotPrime : ¬Nat.Prime n) (hlt : n < 3000) : PrimeMillerRabinWitness n := by
+theorem exists_primeWitness_lt_3000 {n : ℕ} (hn : 1 < n) (hnOdd : Odd n) (hnNotPrime : ¬Nat.Prime n)
+    (hlt : n < 3000) : PrimeMillerRabinWitness n := by
   have hlog := log_sq_ge_three_of_odd_composite hn hnOdd hnNotPrime
   rcases PrimeTest.base_two_or_three_rejects_of_lt_3000 hn hnOdd hnNotPrime hlt with hbase2 | hbase3
   · refine ⟨2, Nat.prime_two, ?_, ?_⟩

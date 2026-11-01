@@ -91,7 +91,7 @@ theorem exists_conductor_comparison_scale (K : MellinKernel)
                           K.mass * subgroupConductorLogSum H + ε * Real.log q := by
   have hhR : (1 : ℝ) < h := by exact_mod_cast hh
   have hh0 : (0 : ℝ) < h := zero_lt_one.trans hhR
-  obtain ⟨Cu, hCu, hu⟩ := exists_uniform_principal_sum_le_conductor_sum_of_noSmallPrimes K hg
+  obtain ⟨Cu, hCu, hu⟩ := exists_principal_noSmallPrimes_GRH K hg
   obtain ⟨Cl, hCl, hl⟩ := exists_eventually_principal_sum_ge_integral K hg.riemann
   let C := Cu + Cl
   have hC : 0 < C := add_pos hCu hCl

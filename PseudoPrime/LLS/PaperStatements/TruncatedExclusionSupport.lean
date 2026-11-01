@@ -18,9 +18,8 @@ namespace PseudoPrime.LLS.PaperStatements
 has character value one, the localized cost is bounded by the full cost at D.
 Remove the zero summands outside D and enlarge the remaining nonnegative sum.
 This separates fixed ramified support from arbitrarily large added factors. -/
-theorem truncatedCharacterExclusionCost_le_of_prime_coverage {f M D : ℕ}
-    (χ : DirichletCharacter ℂ f) (hD : D ≠ 0) {X : ℝ}
-    (hcover : ∀ p : ℕ, p.Prime → p ∣ M → (p : ℝ) ≤ X → p ∣ D ∨ χ p = 1) :
+theorem truncatedExclusionCost_le_of_prime_coverage {f M D : ℕ} (χ : DirichletCharacter ℂ f)
+    (hD : D ≠ 0) {X : ℝ} (hcover : ∀ p : ℕ, p.Prime → p ∣ M → (p : ℝ) ≤ X → p ∣ D ∨ χ p = 1) :
     truncatedCharacterExclusionCost χ M X ≤
       AnalyticNumberTheory.Arithmetic.characterExclusionCost χ D := by
   classical

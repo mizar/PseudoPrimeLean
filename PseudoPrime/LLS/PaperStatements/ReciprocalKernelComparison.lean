@@ -49,8 +49,7 @@ theorem reciprocalCharacterSum_eq_zeroSum_add_remainder {q : ℕ} [NeZero q] (hq
     reciprocalCharacterSum χ x =
       -(∑' ρ : ℂ, reciprocalMellinKernel.oscillatingZeroTerm χ x ρ) +
         reciprocalCompletedRemainder χ x := by
-  rw [reciprocalCharacterSum,
-    reciprocalMellinKernel_finite_sum_eq_completed_formula hq hGRH hp hne hinv hx]
+  rw [reciprocalCharacterSum, reciprocalMellin_completed_formula_GRH hq hGRH hp hne hinv hx]
   dsimp only [reciprocalCompletedRemainder]
   ring
 

@@ -48,7 +48,7 @@ theorem oddEndpointTwoCostPolynomial_mono_pi {L P Q y z c D : ℝ} (hy : 1 ≤ y
 /-- At y>1, positive polynomial value with P=2096/1831 implies a negative
 two-cost endpoint limit at x=Y=y^2. Use the certified pi-log lower bound and
 the positive denominator multiplier. The result feeds the odd-prime criterion. -/
-theorem oddEndpointTwoCostLimit_neg_of_rational_polynomial_pos (q : ℕ) {y c D : ℝ} (hy : 1 < y)
+theorem oddEndpointTwoCost_neg_of_rational_poly (q : ℕ) {y c D : ℝ} (hy : 1 < y)
     (hP : 0 < oddEndpointTwoCostPolynomial (Real.log q) (2096 / 1831) y (Real.log y) c D) :
     oddEndpointTwoCostLimit q (y ^ 2) (y ^ 2) c D < 0 := by
   have hm :=

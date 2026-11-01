@@ -31,7 +31,7 @@ theorem invariant_weight_energy_amplification {p : ℕ} [Fact p.Prime] (g : ZMod
   have h :=
     PseudoPrime.Analysis.finite_correlation_energy_amplification (heilbronnElements p) g
       (∑ y : heilbronnElements p, g (1 - y.val)) he (invariant_weight_row_sum g hg)
-  simpa only [← heilbronn_correlation_eq_finiteDifferenceCorrelation, card_heilbronnElements,
+  simpa only [← correlation_eq_finiteDifferenceCorrelation, card_heilbronnElements,
     heilbronnEnergy] using h
 
 end PseudoPrime.NumberTheory.Heilbronn

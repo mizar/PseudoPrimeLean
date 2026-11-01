@@ -103,7 +103,7 @@ theorem rpow_le_half {q a : ℝ} (hq : 4 ≤ q) (ha : a ≤ -(1 / 2 : ℝ)) : q 
 
 /-- For q ≥ 4 and the manuscript's local power bounds, the actual rational correction
 has error at most correctionMajorant q. No hypothesis about zeros is needed. -/
-theorem norm_localCorrection_sub_one_le_correctionMajorant {q : ℝ} {D R : ℂ} (hq : 4 ≤ q)
+theorem norm_localCorrection_sub_one_le_of_rpow {q : ℝ} {D R : ℂ} (hq : 4 ≤ q)
     (hD : ‖D‖ ≤ q ^ (-(11 / 12) : ℝ)) (hR : ‖R‖ ≤ q ^ (-(5 / 2) : ℝ)) :
     ‖localCorrection q⁻¹ D R - 1‖ ≤ correctionMajorant q := by
   have hq0 : 0 < q := lt_of_lt_of_le (by norm_num only) hq
@@ -166,7 +166,7 @@ theorem local_correction_tprod_inverse_of_tail (N : ℕ) (hN : 3 ≤ N) (keep : 
     masked_correction_tprod_inverse_of_tail N (lt_of_lt_of_le (by norm_num only : 0 < 3) hN) keep _
       hδ0 hδ1 _ hB
   intro n hn
-  apply norm_localCorrection_sub_one_le_correctionMajorant _ (hD n hn) (hR n hn)
+  apply norm_localCorrection_sub_one_le_of_rpow _ (hD n hn) (hR n hn)
   exact_mod_cast Nat.succ_le_succ (hN.trans (Nat.le_add_left N n))
 
 /-- A finite set of slots for each integer norm preserves summability of the majorant.

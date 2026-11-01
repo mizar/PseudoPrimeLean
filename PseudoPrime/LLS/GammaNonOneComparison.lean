@@ -56,7 +56,7 @@ theorem gamma_prime_power_tail_series_nonpos {q p : ℕ} [NeZero q] (χ : Dirich
 the cutoff, the full signed local correction is at most the prime-two correction.
 Odd level primes lie above the cutoff and contribute nonpositive series.
 This eliminates the square-factor cost in the non-one witness comparison. -/
-theorem gammaQuadraticLocalCorrection_le_two_of_odd_trivial {q : ℕ} [NeZero q]
+theorem gammaQuadraticCorrection_le_two_of_odd_trivial {q : ℕ} [NeZero q]
     (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (h2 : 2 ∣ q) {x : ℝ} (hx : 0 < x)
     (hsmall : ∀ p : ℕ, p.Prime → Odd p → (p : ℝ) ≤ (99 / 40 : ℝ) * x → χ p = 1) :
     gammaQuadraticLocalCorrection χ x ≤
@@ -125,8 +125,7 @@ theorem gamma_ramp_no_odd_ne_one_comparison {q : ℕ} [NeZero q] (χ : Dirichlet
     exact hsmall p hp (hp.odd_of_ne_two hp2) hcut
   exact
     (gamma_ramp_no_witness_comparison χ hquad hx helig).trans
-      (add_le_add_right (gammaQuadraticLocalCorrection_le_two_of_odd_trivial χ hquad h2 hx hsmall)
-        _)
+      (add_le_add_right (gammaQuadraticCorrection_le_two_of_odd_trivial χ hquad h2 hx hsmall) _)
 
 /-- Under the same odd-prime triviality condition with cutoff at least one,
 replace the prime-two series by (log(cutoff)+log(2))/sqrt(x).
@@ -191,7 +190,7 @@ theorem exists_odd_prime_ne_one_of_gamma_variable_budget {q : ℕ} [NeZero q] (h
           (Real.log ((99 / 40 : ℝ) * x) + Real.log 2) / Real.sqrt x <
         2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x)) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ χ p ≠ 1 := by
-  have hnp := PaperStatements.gamma_primitiveCharacter_sum_re_le_variable_scale hq χ hne hGRH hx
+  have hnp := PaperStatements.gammaCharacterSum_re_le_variable_scale hq χ hne hGRH hx
   apply exists_odd_prime_ne_one_of_gamma_ramp_gap χ hquad h2 (zero_lt_one.trans_le hx) hcut
   linarith only [hnp, hgap]
 

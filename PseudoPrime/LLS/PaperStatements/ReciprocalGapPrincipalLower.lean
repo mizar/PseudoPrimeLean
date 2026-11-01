@@ -80,7 +80,7 @@ theorem sum_lower_le_reciprocalGap_principal {h x : ℝ} (hh : 0 < h) (hx : 0 < 
 against any certified selected lower sum gives a non-one prime witness below x.
 Compose the principal lower certificate with the rational-Gamma witness criterion.
 Euler and Gamma special values and the full principal sum are absent from the premises. -/
-theorem exists_prime_not_one_of_reciprocalGap_principal_lower {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem exists_prime_neOne_principalGap_GRH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) (B₀ B₁ B : Finset ℕ)
     (hB₀ : ∀ n ∈ B₀, (n : ℝ) ≤ x) (hB₁ : ∀ n ∈ B₁, (n : ℝ) ≤ x) (hB : B ⊆ Finset.Ioc 0 ⌊x⌋₊)
@@ -90,9 +90,7 @@ theorem exists_prime_not_one_of_reciprocalGap_principal_lower {q : ℕ} [NeZero 
       reciprocalGapRationalGammaSeparation q x B₀ B₁ <
         ∑ n ∈ B, (lo n / Real.sqrt x) * ((1 - u n) / (7 / 10 : ℝ))) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ x ∧ χ p ≠ 1 := by
-  apply
-    exists_prime_not_one_of_reciprocalGap_rationalGamma_separation hq hGRH hp hne hinv hx B₀ B₁ hB₀
-      hB₁
+  apply exists_prime_neOne_gammaGap_GRH hq hGRH hp hne hinv hx B₀ B₁ hB₀ hB₁
   exact
     hgap.trans_le
       (sum_lower_le_reciprocalGap_principal (by norm_num only : (0 : ℝ) < 7 / 10)

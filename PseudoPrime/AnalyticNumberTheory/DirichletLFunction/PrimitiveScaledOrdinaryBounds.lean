@@ -25,9 +25,8 @@ scaled family, there is a vanishing envelope for ordinary `L'/L` on the intersec
 growing strip and the fixed strip `[-A-1/2,A+3/2]`. Subtract the gamma logarithmic derivative,
 then squeeze the constant and linear correction terms divided by height squared.
 This supplies the horizontal estimates for shifted rectangles. -/
-theorem exists_envelope_scaledHorizontalStrip_LLogDeriv_small {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N}
-    (data : ∀ k : ℕ, PrimitiveScaledHorizontalStripData χ ((k : ℝ) + 1)) (A : ℕ)
+theorem scaledStrip_L_logDeriv_envelope {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (data : ∀ k : ℕ, ScaledHorizontalData χ ((k : ℝ) + 1)) (A : ℕ)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     ∃ η : ℕ → ℝ,
       Filter.Tendsto η Filter.atTop (nhds 0) ∧
@@ -42,7 +41,7 @@ theorem exists_envelope_scaledHorizontalStrip_LLogDeriv_small {N : ℕ} [NeZero 
                 ‖logDeriv (DirichletCharacter.LFunction χ) ((σ : ℂ) - (data k).T * Complex.I)‖ /
                     ((data k).T) ^ 2 ≤
                   η k := by
-  obtain ⟨CΓ, hCΓnonneg, hCΓ⟩ := exists_norm_logDeriv_gammaFactor_fixed_strip_le A
+  obtain ⟨CΓ, hCΓnonneg, hCΓ⟩ := gammaLogDeriv_fixed_strip_bound A
   set T : ℕ → ℝ := fun k => (data k).T with hT_def
   set ε : ℕ → ℝ := scaledHorizontalStripEpsilon data with hε_def
   set η : ℕ → ℝ := fun k =>
@@ -53,7 +52,7 @@ theorem exists_envelope_scaledHorizontalStrip_LLogDeriv_small {N : ℕ} [NeZero 
     Filter.tendsto_atTop_mono (fun k => (data k).T_mem.1)
       (Filter.tendsto_atTop_add_const_right Filter.atTop 1 tendsto_natCast_atTop_atTop)
   have hε_tendsto : Filter.Tendsto ε Filter.atTop (nhds 0) :=
-    tendsto_scaledHorizontalStripEpsilon_atTop hN2 data hprimitive hne hinv
+    tendsto_scaledHorizontalEpsilon hN2 data hprimitive hne hinv
   refine ⟨η, ?_, fun k σ hσ hlo hhi => ?_⟩
   · set F0 : ℝ := ‖logDeriv (DirichletCharacter.completedLFunction χ) (0 : ℂ)‖ with hF0_def
     set K : ℝ := F0 + 2 * CΓ with hK_def
@@ -126,7 +125,7 @@ theorem exists_envelope_scaledHorizontalStrip_LLogDeriv_small {N : ℕ} [NeZero 
         intro h
         rw [h] at hTreal_ge1
         norm_num only at hTreal_ge1
-      have hbridge := logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor hne hFne hsim_ne
+      have hbridge := L_logDeriv_eq_completed_sub_gamma hne hFne hsim_ne
       have hgamma_bound := hCΓ χ σ Treal hlo hhi hTreal_ge1
       rw [habs] at hgamma_bound
       have hcompleted_diff_le :
@@ -204,7 +203,7 @@ theorem exists_envelope_scaledHorizontalStrip_LLogDeriv_small {N : ℕ} [NeZero 
 ordinary logarithmic-derivative envelope on any fixed strip. Primitivity and non-principality
 of the character and its inverse permit the completed-to-ordinary bridge. Discarding the
 initial scales places the fixed strip inside every growing strip of the remaining family. -/
-theorem exists_fixedStrip_LLogDeriv_envelope_of_dirichletRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem exists_fixedStrip_L_envelope_RH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (A : ℕ) :
     ∃ T η : ℕ → ℝ,
@@ -216,9 +215,8 @@ theorem exists_fixedStrip_LLogDeriv_envelope_of_dirichletRH {N : ℕ} [NeZero N]
             v ≤ (A : ℝ) + 3 / 2 →
             ‖logDeriv χ.LFunction ((v : ℂ) + T k * Complex.I)‖ / (T k) ^ 2 ≤ η k ∧
               ‖logDeriv χ.LFunction ((v : ℂ) - T k * Complex.I)‖ / (T k) ^ 2 ≤ η k := by
-  let data := primitiveScaledHorizontalStripDataSeq_of_dirichletRH hN2 hRH hp hne hinv
-  obtain ⟨η, hη, hbound⟩ :=
-    exists_envelope_scaledHorizontalStrip_LLogDeriv_small hN2 data A hp hne hinv
+  let data := scaledHorizontalDataSeq_of_RH hN2 hRH hp hne hinv
+  obtain ⟨η, hη, hbound⟩ := scaledStrip_L_logDeriv_envelope hN2 data A hp hne hinv
   have hT : Filter.Tendsto (fun k => (data k).T) Filter.atTop Filter.atTop :=
     Filter.tendsto_atTop_mono (fun k => (data k).T_mem.1)
       (Filter.tendsto_atTop_add_const_right Filter.atTop 1 tendsto_natCast_atTop_atTop)

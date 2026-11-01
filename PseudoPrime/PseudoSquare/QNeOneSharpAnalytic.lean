@@ -31,7 +31,7 @@ theorem qNeOne_log_conductor_le_y_of_two_ne_zero {n : ℕ} {hn : Odd n} {hns : �
       (DirichletCharacter.apply_eq_zero_iff bridge.character.primitiveCharacter (2 : ℤ)).mpr h
   have hoddC : Odd bridge.character.conductor := Nat.Coprime.odd_of_left hc.natCoprime
   have hoddD : Odd bridge.discriminant := by
-    rw [← bridge.character_conductor_eq_discriminant]
+    rw [← bridge.conductor_eq_discriminant]
     exact hoddC
   have hdmod : bridge.squarefreePart % 4 = 1 := by
     by_contra h
@@ -39,7 +39,7 @@ theorem qNeOne_log_conductor_le_y_of_two_ne_zero {n : ℕ} {hn : Odd n} {hns : �
     exact (Nat.not_even_iff_odd.mpr hoddD) ⟨2 * bridge.squarefreePart, by ring⟩
   have hd : bridge.discriminant = bridge.squarefreePart := by
     rw [bridge.discriminant_eq, NumberTheory.positiveFundamentalDiscriminant_eq_self hdmod]
-  exact bridge.log_character_conductor_le_of_discriminant_le hd.le
+  exact bridge.log_conductor_le_of_discriminant hd.le
 
 /-- Input: an odd nonsquare arithmetic bridge, GRH and log squarefree part at least 99/10.
 Claim: absence of all odd-prime non-one witnesses through its logarithmic square is impossible.
@@ -59,22 +59,21 @@ theorem qNeOneAnalyticFalse_of_bridge_of_sharp {n : ℕ} {hn : Odd n} {hns : ¬I
           ((DirichletCharacter.isPrimitive_def bridge.character).mp bridge.character_primitive ▸
             hc)⟩
   have hodd : LLS.Extensions.OddPrimeTrivial bridge.character (bridge.y ^ 2) :=
-    bridge.primitiveCharacter_eq_one_in_log_square_range (show 1 ≤ bridge.y by linarith only [hy])
-      hno
+    bridge.primitive_eq_one_log_square (show 1 ≤ bridge.y by linarith only [hy]) hno
   have hcases :=
     NumberTheory.isQuadratic_primitiveCharacter bridge.character bridge.character_quadratic
       (2 : ZMod bridge.character.conductor)
   exact
     LLS.Extensions.not_oddPrimeTrivial_of_sharp bridge.character bridge.character_ne_one
-      bridge.primitiveCharacter_even hGRH hy bridge.log_character_conductor_le_y_add_log_four
+      bridge.primitiveCharacter_even hGRH hy bridge.log_conductor_le
       (qNeOne_log_conductor_le_y_of_two_ne_zero bridge) hcases hodd
 
 /-- Input: the same arithmetic bridge and analytic lower threshold under GRH.
 Claim: there is an actual odd-prime non-one witness through the squarefree logarithmic square.
 Proof: negate witness existence and use the analytic contradiction.
 This connects the real comparison to the original Jacobi symbol at n. -/
-theorem exists_prime_ne_one_witness_le_log_squarefree_sq_of_sharp {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} [NeZero (NumberTheory.complexQuadraticCharacter n hn).conductor]
+theorem exists_prime_neOne_squarefree_sharp_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    [NeZero (NumberTheory.complexQuadraticCharacter n hn).conductor]
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hy : (99 / 10 : ℝ) ≤ bridge.y) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ bridge.y ^ 2 ∧ jacobiSym n p ≠ 1 := by
@@ -102,15 +101,14 @@ theorem log_ge_ninety_nine_tenths_of_ge_20000 {d : ℕ} (hd : 20000 ≤ d) :
 Claim: an odd-prime non-one witness lies below its squarefree-part logarithmic square.
 Proof: apply the analytic threshold conversion and the concrete witness theorem.
 No finite input or small-squarefree-part case is used. -/
-theorem exists_prime_ne_one_witness_le_log_squarefree_sq_of_ge_20000 {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} [NeZero (NumberTheory.complexQuadraticCharacter n hn).conductor]
+theorem exists_prime_neOne_squarefree_20000_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    [NeZero (NumberTheory.complexQuadraticCharacter n hn).conductor]
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hd : 20000 ≤ bridge.squarefreePart) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ bridge.y ^ 2 ∧ jacobiSym n p ≠ 1 := by
   exact
-    exists_prime_ne_one_witness_le_log_squarefree_sq_of_sharp bridge hGRH
-      (log_ge_ninety_nine_tenths_of_ge_20000 hd)
+    exists_prime_neOne_squarefree_sharp_GRH bridge hGRH (log_ge_ninety_nine_tenths_of_ge_20000 hd)
 
 /-- Input: an odd nonsquare bridge whose squarefree part is strictly below the input.
 Claim: the squarefree logarithm is strictly below the input logarithm.
@@ -125,14 +123,13 @@ theorem qNeOne_bridge_y_lt_log_of_squarefreePart_lt {n : ℕ} {hn : Odd n} {hns 
 Claim: an odd-prime non-one witness lies strictly below the input logarithmic square.
 Proof: combine the analytic squarefree-part witness with strict logarithm monotonicity.
 The squarefree-input boundary and small squarefree parts remain separate analytic tasks. -/
-theorem exists_prime_ne_one_witness_lt_log_sq_of_squarefreePart_lt {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} [NeZero (NumberTheory.complexQuadraticCharacter n hn).conductor]
+theorem exists_prime_ne_one_log_sq_of_part_lt_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    [NeZero (NumberTheory.complexQuadraticCharacter n hn).conductor]
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hd : 20000 ≤ bridge.squarefreePart) (hdn : bridge.squarefreePart < n) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) < (Real.log n) ^ 2 ∧ jacobiSym n p ≠ 1 := by
-  obtain ⟨p, hp, ho, hb, hv⟩ :=
-    exists_prime_ne_one_witness_le_log_squarefree_sq_of_ge_20000 bridge hGRH hd
+  obtain ⟨p, hp, ho, hb, hv⟩ := exists_prime_neOne_squarefree_20000_GRH bridge hGRH hd
   have hy : 0 ≤ bridge.y :=
     (by norm_num only : (0 : ℝ) ≤ 99 / 10).trans (log_ge_ninety_nine_tenths_of_ge_20000 hd)
   have hlog := qNeOne_bridge_y_lt_log_of_squarefreePart_lt bridge hdn

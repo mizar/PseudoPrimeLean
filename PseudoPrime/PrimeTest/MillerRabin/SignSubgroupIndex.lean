@@ -31,17 +31,14 @@ theorem four_le_index_signSubgroup_of_local_conditions {n E : ℕ} [NeZero n] (h
   have hgt : 2 < n := lt_of_le_of_ne hn1 (Ne.symm (hnOdd.ne_two_of_dvd_nat dvd_rfl))
   let : Fact (2 < n) := ⟨hgt⟩
   have hne : (-1 : (ZMod n)ˣ) ≠ 1 := fun h ↦ ZMod.neg_one_ne_one (n := n) (congrArg Units.val h)
-  obtain ⟨hroot, _⟩ :=
-    NumberTheory.exists_negative_root_and_even_image_of_local_twoAdic_lt hn1 hnOdd hE hv
+  obtain ⟨hroot, _⟩ := NumberTheory.exists_neg_root_even_image_of_twoAdic_lt hn1 hnOdd hE hv
   have hindex := two_mul_index_signSubgroup_of_neg_one_mem_image hne hroot
   by_contra hnot
   have hi : (signSubgroup n E).index < 4 := lt_of_not_ge hnot
   have hsmall : Nat.card (powMonoidHom E : (ZMod n)ˣ →* (ZMod n)ˣ).range < 8 := by
     rw [← hindex]
     linarith only [hi]
-  rcases
-    NumberTheory.prime_or_nine_or_two_primes_of_card_unitPowerImage_lt_eight hn1 hnOdd hE hpE hv
-      hsmall with
+  rcases NumberTheory.prime_or_9_or_two_primes_of_powImage_card_lt_8 hn1 hnOdd hE hpE hv hsmall with
     hp | hn | ⟨p, q, hp, hq, hpq, rfl⟩
   · exact hnComposite hp
   · exact hn9 hn
@@ -115,8 +112,8 @@ all strong Miller–Rabin passes. Choose a prime divisor with minimal two-adic
 valuation of p-1, form its sign subgroup, and apply the global image classification
 and pass-containment theorem. This supplies the arithmetic input for the uniform
 Gamma coefficient-0.66 witness bound without a restriction on the factorization. -/
-theorem exists_index_ge_four_subgroup_containing_strongMillerRabinPass {n : ℕ} (hn1 : 1 < n)
-    (hnOdd : Odd n) (hnComposite : ¬n.Prime) (hn9 : n ≠ 9) :
+theorem exists_index_four_subgroup_strongMR {n : ℕ} (hn1 : 1 < n) (hnOdd : Odd n)
+    (hnComposite : ¬n.Prime) (hn9 : n ≠ 9) :
     ∃ H : Subgroup (ZMod n)ˣ,
       4 ≤ H.index ∧
         ∀ z : ZMod n, StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z := by
@@ -144,8 +141,8 @@ theorem exists_index_ge_four_subgroup_containing_strongMillerRabinPass {n : ℕ}
 strong Miller–Rabin pass, and lies inside the Fermat subgroup. The last property
 follows because twice its defining exponent divides `n - 1`; it supports the
 finite-index classification when the index is below the Gamma threshold. -/
-theorem exists_index_ge_four_subgroup_containing_passes_with_fermat {n : ℕ} (hn1 : 1 < n)
-    (hnOdd : Odd n) (hnComposite : ¬n.Prime) (hn9 : n ≠ 9) :
+theorem exists_index_four_fermat_subgroup_strongMR {n : ℕ} (hn1 : 1 < n) (hnOdd : Odd n)
+    (hnComposite : ¬n.Prime) (hn9 : n ≠ 9) :
     ∃ H : Subgroup (ZMod n)ˣ,
       4 ≤ H.index ∧
         H ≤ fermatSubgroup n ∧
@@ -187,7 +184,7 @@ private theorem exists_sign_power_negative {n t d : ℕ} (hn1 : 1 < n) (hnOdd : 
     rw [padicValNat.mul (pow_ne_zero _ (by decide : (2 : ℕ) ≠ 0)) hd0, padicValNat.prime_pow,
       padicValNat.eq_zero_of_not_dvd hd.not_two_dvd_nat, Nat.add_zero]
   exact
-    (NumberTheory.exists_negative_root_and_even_image_of_local_twoAdic_lt hn1 hnOdd hE
+    (NumberTheory.exists_neg_root_even_image_of_twoAdic_lt hn1 hnOdd hE
         (fun p hp hdvd ↦ by
           rw [hval]
           exact lt_of_lt_of_le (Nat.sub_lt ht0 (by decide : 0 < 1)) (ht p hp hdvd))).1

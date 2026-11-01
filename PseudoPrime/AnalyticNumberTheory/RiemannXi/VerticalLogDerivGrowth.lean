@@ -28,7 +28,7 @@ theorem exists_norm_logDeriv_vertical_right_le_log {σ : ℝ} (hσ : 1 < σ) (h�
       0 < A ∧
         ∀ t : ℝ, ‖logDeriv riemannXi ((σ : ℂ) + Complex.I * t)‖ ≤ A * (Real.log (4 + |t|) + 1) := by
   obtain ⟨B, hB, hb⟩ :=
-    DirichletLFunction.exists_norm_logDeriv_gammaFactor_vertical_le_log (1 : DirichletCharacter ℂ 1)
+    DirichletLFunction.gammaLogDeriv_vertical_log (1 : DirichletCharacter ℂ 1)
       (zero_lt_one.trans hσ) hσ'
   let M := ∑' n : ℕ, ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ σ
   have hM : 0 ≤ M :=
@@ -44,9 +44,7 @@ theorem exists_norm_logDeriv_vertical_right_le_log {σ : ℝ} (hσ : 1 < σ) (h�
     simpa only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, Complex.I_im,
       Complex.ofReal_im, zero_mul, mul_zero, sub_zero, add_zero] using hσ
   have ho : ‖logDeriv riemannZeta ((σ : ℂ) + Complex.I * t)‖ ≤ M := by
-    have h :=
-      DirichletLFunction.norm_neg_deriv_div_dirichletLFunction_le_vonMangoldt_tsum
-        (1 : DirichletCharacter ℂ 1) hσ t
+    have h := DirichletLFunction.norm_logDeriv_L_le_mangoldt_tsum (1 : DirichletCharacter ℂ 1) hσ t
     simpa only [DirichletCharacter.LFunction_modOne_eq, neg_div, norm_neg, logDeriv_apply,
       mul_comm] using h
   have hp0 : ‖1 / ((σ : ℂ) + Complex.I * t)‖ ≤ 1 / σ := by
@@ -62,7 +60,7 @@ theorem exists_norm_logDeriv_vertical_right_le_log {σ : ℝ} (hσ : 1 < σ) (h�
       Complex.one_re] at hr1
     rw [one_div, norm_inv, ← one_div]
     exact one_div_le_one_div_of_le hσ1 hr1
-  rw [logDeriv_eq_poles_gammaFactor_zeta_of_one_lt_re hr]
+  rw [logDeriv_eq_poles_gamma_zeta_of_re_gt_one hr]
   have hn0 := norm_add_le (1 / ((σ : ℂ) + Complex.I * t)) (1 / (((σ : ℂ) + Complex.I * t) - 1))
   have hn1 :=
     norm_add_le (1 / ((σ : ℂ) + Complex.I * t) + 1 / (((σ : ℂ) + Complex.I * t) - 1))

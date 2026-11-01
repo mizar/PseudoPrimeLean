@@ -31,13 +31,12 @@ and compare it to the common rational-frequency mean square.
 Role: separates the support-independent pre-sifted comparison from finite interval large-sieve
 bounds.
 -/
-theorem primitiveCharacterFamilyMeanSquare_preSifted_le_rationalMeanSquare (Z : ℕ) (S : Finset ℕ)
-    (a : ℕ → ℂ) (hprime : ∀ n ∈ S, ∀ p, Nat.Prime p → p ∣ n → Z < p) :
+theorem preSifted_rational_le (Z : ℕ) (S : Finset ℕ) (a : ℕ → ℂ)
+    (hprime : ∀ n ∈ S, ∀ p, Nat.Prime p → p ∣ n → Z < p) :
     (∑ q ∈ (Finset.Ioc 1 Z).attach,
         Real.log ((Z : ℝ) / (q.val : ℝ)) *
-          primitiveCharacterPolynomialMeanSquare q.val
-            (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) S a) ≤
-      2 * rationalAdditivePolynomialMeanSquare (reducedUnitFrequencyRationalSet Z) S a := by
+          polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) S a) ≤
+      2 * rationalPolyEnergy (reducedRationalSet Z) S a := by
   classical
   let Q : Finset ℕ := Finset.Ioc 1 Z
   let R : ℕ → Finset ℕ := fun q =>
@@ -47,8 +46,7 @@ theorem primitiveCharacterFamilyMeanSquare_preSifted_le_rationalMeanSquare (Z : 
     if hq : 1 < q then
       if hr : 0 < r then
         (q : ℝ) / (Nat.totient (q * r) : ℝ) *
-          primitiveCharacterPolynomialMeanSquare q hq S
-            (fun n => a n * @ramanujanSum r n ⟨Nat.ne_of_gt hr⟩)
+          polyMeanSquare q hq S (fun n => a n * @ramanujanSum r n ⟨Nat.ne_of_gt hr⟩)
       else 0
     else 0
   have hPq : ∀ p, p ∈ P → 1 < p.1 := by
@@ -102,8 +100,7 @@ theorem primitiveCharacterFamilyMeanSquare_preSifted_le_rationalMeanSquare (Z : 
   have hhalf :
     (∑ q ∈ Q.attach,
         Real.log ((Z : ℝ) / (q.val : ℝ)) / 2 *
-          primitiveCharacterPolynomialMeanSquare q.val
-            (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) S a) ≤
+          polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) S a) ≤
       ∑ p ∈ P.attach, w p.val.1 p.val.2 := by
     rw [← hsum]
     apply Finset.sum_le_sum
@@ -111,11 +108,9 @@ theorem primitiveCharacterFamilyMeanSquare_preSifted_le_rationalMeanSquare (Z : 
     have hq1 : 1 < q.val := (Finset.mem_Ioc.mp q.property).1
     have hqpos : 0 < q.val := lt_trans Nat.zero_lt_one hq1
     have hqZ : q.val ≤ Z := (Finset.mem_Ioc.mp q.property).2
-    have hlower :=
-      primitiveCharacterPolynomialMeanSquare_preSifted_weighted_lower q.val Z hqpos hqZ hq1 S a
-        hprime
+    have hlower := preSifted_lower q.val Z hqpos hqZ hq1 S a hprime
     calc
-      Real.log ((Z : ℝ) / (q.val : ℝ)) / 2 * primitiveCharacterPolynomialMeanSquare q.val hq1 S a ≤
+      Real.log ((Z : ℝ) / (q.val : ℝ)) / 2 * polyMeanSquare q.val hq1 S a ≤
           ∑ r ∈ (R q.val).attach, w q.val r.val :=
         by
         convert hlower using 1
@@ -124,11 +119,9 @@ theorem primitiveCharacterFamilyMeanSquare_preSifted_le_rationalMeanSquare (Z : 
         have hrpos : 0 < r.val := (Finset.mem_filter.mp r.property).2.1
         simp only [w, dite_eq_left hq1, dite_eq_left hrpos]
       _ = ∑ r ∈ (R q.val).attach, w q.val r.val := rfl
-  have hupper :=
-    primitive_ramanujan_weighted_pair_family_le_rationalMeanSquare P hPq hPr hPcop Z hPmax S a
+  have hupper := ramanujanPairs_rat P hPq hPr hPcop Z hPmax S a
   have hupper' :
-    (∑ p ∈ P.attach, w p.val.1 p.val.2) ≤
-      rationalAdditivePolynomialMeanSquare (reducedUnitFrequencyRationalSet Z) S a := by
+    (∑ p ∈ P.attach, w p.val.1 p.val.2) ≤ rationalPolyEnergy (reducedRationalSet Z) S a := by
     apply le_trans ?_ hupper
     apply le_of_eq
     apply Finset.sum_congr rfl
@@ -140,8 +133,7 @@ theorem primitiveCharacterFamilyMeanSquare_preSifted_le_rationalMeanSquare (Z : 
         ∑ q ∈ Q.attach,
           2 *
             (Real.log ((Z : ℝ) / (q.val : ℝ)) / 2 *
-              primitiveCharacterPolynomialMeanSquare q.val
-                (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) S a) :=
+              polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) S a) :=
       by
       apply Finset.sum_congr rfl
       intro q hq
@@ -150,10 +142,9 @@ theorem primitiveCharacterFamilyMeanSquare_preSifted_le_rationalMeanSquare (Z : 
         2 *
           (∑ q ∈ Q.attach,
             Real.log ((Z : ℝ) / (q.val : ℝ)) / 2 *
-              primitiveCharacterPolynomialMeanSquare q.val
-                (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) S a) :=
+              polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) S a) :=
       by rw [Finset.mul_sum]
-    _ ≤ 2 * rationalAdditivePolynomialMeanSquare (reducedUnitFrequencyRationalSet Z) S a :=
+    _ ≤ 2 * rationalPolyEnergy (reducedRationalSet Z) S a :=
       mul_le_mul_of_nonneg_left hhalfBound (Nat.cast_nonneg 2)
 
 /--
@@ -169,21 +160,16 @@ and apply the factor-free additive large sieve once.
 Role: provides the range-supported pre-sifted estimate used to construct its interval and hybrid
 versions.
 -/
-theorem primitiveCharacterFamilyMeanSquare_preSifted_le_of_range (Z : ℕ) (hZ : 2 ≤ Z) (N : ℕ)
-    (S : Finset ℕ) (hSN : S ⊆ Finset.range N) (a : ℕ → ℂ)
-    (hprime : ∀ n ∈ S, ∀ p, Nat.Prime p → p ∣ n → Z < p) :
+theorem preSifted_range_le (Z : ℕ) (hZ : 2 ≤ Z) (N : ℕ) (S : Finset ℕ) (hSN : S ⊆ Finset.range N)
+    (a : ℕ → ℂ) (hprime : ∀ n ∈ S, ∀ p, Nat.Prime p → p ∣ n → Z < p) :
     (∑ q ∈ (Finset.Ioc 1 Z).attach,
         Real.log ((Z : ℝ) / (q.val : ℝ)) *
-          primitiveCharacterPolynomialMeanSquare q.val
-            (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) S a) ≤
+          polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) S a) ≤
       (4 * (N : ℝ) + 6 * (Z : ℝ) ^ 2) * ∑ n ∈ S, ‖a n‖ ^ 2 := by
   calc
-    _ ≤ 2 * rationalAdditivePolynomialMeanSquare (reducedUnitFrequencyRationalSet Z) S a :=
-      primitiveCharacterFamilyMeanSquare_preSifted_le_rationalMeanSquare Z S a hprime
+    _ ≤ 2 * rationalPolyEnergy (reducedRationalSet Z) S a := preSifted_rational_le Z S a hprime
     _ ≤ 2 * ((2 * (N : ℝ) + 3 * ((Z * Z : ℕ) : ℝ)) * ∑ n ∈ S, ‖a n‖ ^ 2) :=
-      mul_le_mul_of_nonneg_left
-        (reducedUnitFrequencyRationalSet_mean_square_le_window_row_of_range
-          (lt_of_lt_of_le Nat.zero_lt_two hZ) N S hSN a)
+      mul_le_mul_of_nonneg_left (ratSet_energy_range (lt_of_lt_of_le Nat.zero_lt_two hZ) N S hSN a)
         (Nat.cast_nonneg 2)
     _ = _ := by
       rw [Nat.cast_mul]
@@ -201,21 +187,17 @@ for interval support.
 
 Role: supplies the short-interval pre-sifted estimate for the finite-support hybrid argument.
 -/
-theorem primitiveCharacterFamilyMeanSquare_preSifted_le_of_support_Ico (Z : ℕ) (hZ : 2 ≤ Z)
-    (M N : ℕ) (S : Finset ℕ) (hS : S ⊆ Finset.Ico M (M + N)) (a : ℕ → ℂ)
+theorem preSifted_Ico_le (Z : ℕ) (hZ : 2 ≤ Z) (M N : ℕ) (S : Finset ℕ)
+    (hS : S ⊆ Finset.Ico M (M + N)) (a : ℕ → ℂ)
     (hprime : ∀ n ∈ S, ∀ p, Nat.Prime p → p ∣ n → Z < p) :
     (∑ q ∈ (Finset.Ioc 1 Z).attach,
         Real.log ((Z : ℝ) / (q.val : ℝ)) *
-          primitiveCharacterPolynomialMeanSquare q.val
-            (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) S a) ≤
+          polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) S a) ≤
       (4 * (N : ℝ) + 6 * (Z : ℝ) ^ 2) * ∑ n ∈ S, ‖a n‖ ^ 2 := by
   calc
-    _ ≤ 2 * rationalAdditivePolynomialMeanSquare (reducedUnitFrequencyRationalSet Z) S a :=
-      primitiveCharacterFamilyMeanSquare_preSifted_le_rationalMeanSquare Z S a hprime
+    _ ≤ 2 * rationalPolyEnergy (reducedRationalSet Z) S a := preSifted_rational_le Z S a hprime
     _ ≤ 2 * ((2 * (N : ℝ) + 3 * ((Z * Z : ℕ) : ℝ)) * ∑ n ∈ S, ‖a n‖ ^ 2) :=
-      mul_le_mul_of_nonneg_left
-        (reducedUnitFrequencyRationalSet_mean_square_le_of_support_Ico
-          (lt_of_lt_of_le Nat.zero_lt_two hZ) M N S hS a)
+      mul_le_mul_of_nonneg_left (ratSet_energy_Ico (lt_of_lt_of_le Nat.zero_lt_two hZ) M N S hS a)
         (Nat.cast_nonneg 2)
     _ = _ := by
       rw [Nat.cast_mul]
@@ -230,15 +212,13 @@ Proof: rewrite `[0, N)` as `Finset.range N` and apply the interval-supported est
 
 Role: checks that the interval formulation specializes to the existing range formulation.
 -/
-theorem primitiveCharacterFamilyMeanSquare_preSifted_le_of_range_via_support_Ico (Z : ℕ)
-    (hZ : 2 ≤ Z) (N : ℕ) (S : Finset ℕ) (hSN : S ⊆ Finset.range N) (a : ℕ → ℂ)
-    (hprime : ∀ n ∈ S, ∀ p, Nat.Prime p → p ∣ n → Z < p) :
+theorem preSifted_range_bound (Z : ℕ) (hZ : 2 ≤ Z) (N : ℕ) (S : Finset ℕ) (hSN : S ⊆ Finset.range N)
+    (a : ℕ → ℂ) (hprime : ∀ n ∈ S, ∀ p, Nat.Prime p → p ∣ n → Z < p) :
     (∑ q ∈ (Finset.Ioc 1 Z).attach,
         Real.log ((Z : ℝ) / (q.val : ℝ)) *
-          primitiveCharacterPolynomialMeanSquare q.val
-            (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) S a) ≤
+          polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) S a) ≤
       (4 * (N : ℝ) + 6 * (Z : ℝ) ^ 2) * ∑ n ∈ S, ‖a n‖ ^ 2 := by
-  apply primitiveCharacterFamilyMeanSquare_preSifted_le_of_support_Ico Z hZ 0 N S ?_ a hprime
+  apply preSifted_Ico_le Z hZ 0 N S ?_ a hprime
   intro n hn
   have hnN := Finset.mem_range.mp (hSN hn)
   simp only [Finset.mem_Ico, Nat.zero_add]

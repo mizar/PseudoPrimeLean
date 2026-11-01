@@ -43,20 +43,20 @@
 
 Jacobi 記号が $1$ でないという条件は値 $0$ も許すため、 $p \mid n$ による因子検出も含む。 Jacobi 記号が $-1$ という条件は平方非剰余だけを要求する。最小元 `primeNeOneWitness` と `primeNegOneWitness` は非空性の証明を引数に取り、 `Nat.find` による `noncomputable` な数学的定義である。有限 `fuel` 付きの実行用探索ではない。
 
-主な比較定理は `primeNeOneWitness_le_primeNegOneWitness` である。存在証明には `primeNegOneWitnessSet_nonempty_of_odd_nonsquare`、より小さい証人の構成には `exists_smaller_prime_jacobiSym_eq_neg_one_of_odd_nonsquare` と `exists_smaller_prime_jacobiSym_eq_neg_one_of_prime` を参照する。これらの算術的な存在証明に GRH は必要ない。
+主な比較定理は `primeNeOneWitness_le_primeNegOneWitness` である。存在証明には `primeNegOneWitnessSet_nonempty_of_odd_nonsquare`、より小さい証人の構成には `exists_smaller_jacobi_neg_one_nonsquare` と `exists_smaller_jacobi_neg_one_prime` を参照する。これらの算術的な存在証明に GRH は必要ない。
 
 ## 主要な主張と成果
 
 | 定理 | 前提と結論 |
 |---|---|
 | `primeNegOneWitnessSet_nonempty_of_odd_nonsquare` | 奇数かつ非平方数 $n$ に Jacobi 値が $-1$ の奇素数証人が存在 |
-| `exists_smaller_prime_jacobiSym_eq_neg_one_of_odd_nonsquare` | 奇数かつ非平方数 $n > 3$ なら、その証人を $p < n$ に取れる |
-| `exists_smaller_prime_jacobiSym_eq_neg_one_of_prime` | 素数 $n > 3$ なら、別途奇数を仮定せず $p < n$ の証人を得る |
+| `exists_smaller_jacobi_neg_one_nonsquare` | 奇数かつ非平方数 $n > 3$ なら、その証人を $p < n$ に取れる |
+| `exists_smaller_jacobi_neg_one_prime` | 素数 $n > 3$ なら、別途奇数を仮定せず $p < n$ の証人を得る |
 | `primeNeOneWitness_le_primeNegOneWitness` | 非空性のもとでJacobi 記号が $1$ でない最小証人は、記号が $-1$ となる最小証人以下 |
 
 存在証明には合同式、素因数分解、二次相互法則を用いる。$n > 3$ を仮定する小証人定理と、小さい入力も含む非空性定理は別の結果である。
 
-法 $4n$ の `complexQuadraticCharacter` と、その原始指標を構成する。奇数かつ非平方数では原始指標は非自明で、二次性・偶性を持つことを証明している。 [JacobiCharacterPrimeEvaluation.lean](../PseudoPrime/NumberTheory/JacobiCharacterPrimeEvaluation.lean) の `primeNegOneWitness_mem_of_complexQuadraticCharacter_ne_one` は、素数 $p \nmid 4n$ で指標値が $1$ でないことから、Jacobi 値が $-1$ の奇素数証人を取り出す。 $p \nmid 4n$ が素数 $2$ と Jacobi 値 $0$ を排除するため、[LLS](LLS.md) の一般 S1 の結論をそのまま利用できる。
+法 $4n$ の `complexQuadraticCharacter` と、その原始指標を構成する。奇数かつ非平方数では原始指標は非自明で、二次性・偶性を持つことを証明している。 [JacobiCharacterPrimeEvaluation.lean](../PseudoPrime/NumberTheory/JacobiCharacterPrimeEvaluation.lean) の `negOneWitness_mem_of_quadratic_ne_one` は、素数 $p \nmid 4n$ で指標値が $1$ でないことから、Jacobi 値が $-1$ の奇素数証人を取り出す。 $p \nmid 4n$ が素数 $2$ と Jacobi 値 $0$ を排除するため、[LLS](LLS.md) の一般 S1 の結論をそのまま利用できる。
 
 ## 利用方法と下流
 

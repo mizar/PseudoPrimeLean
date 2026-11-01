@@ -224,9 +224,8 @@ Proof: choose the supplied sign for each base and apply
 Role: this closes P1's finite-base interface under the local conditions used by
 the AGP construction; establishing those conditions is the responsibility of P2.
 -/
-theorem strongMillerRabinPass_all_of_common_legendre_sign {n : ℕ} (W : Finset ℕ) (hn : 1 < n)
-    (hnOdd : Odd n) (hnSquarefree : Squarefree n) (hn0 : n ≠ 0)
-    (hpMod : ∀ p : ℕ, Nat.Prime p → p ∣ n → p % 4 = 3)
+theorem strongPass_all_of_common_legendre_sign {n : ℕ} (W : Finset ℕ) (hn : 1 < n) (hnOdd : Odd n)
+    (hnSquarefree : Squarefree n) (hn0 : n ≠ 0) (hpMod : ∀ p : ℕ, Nat.Prime p → p ∣ n → p % 4 = 3)
     (hpK : ∀ p : ℕ, Nat.Prime p → p ∣ n → p - 1 ∣ n - 1) (hbase : ∀ b ∈ W, 0 < b)
     (hbp : ∀ b ∈ W, ∀ p : ℕ, Nat.Prime p → p ∣ n → ¬p ∣ b)
     (hcommon :

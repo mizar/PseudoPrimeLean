@@ -47,8 +47,7 @@ theorem primeNegOneWitnessSet_nonempty_of_odd_nonsquare {n : ℕ} (hn : Odd n) (
       nlinarith only [hk, hkgt]
   rcases hn3 with rfl | hn3
   · exact ⟨5, Nat.prime_five, by decide, jacobiSym_three_five_eq_neg_one⟩
-  · obtain ⟨q, hqprime, hqodd, _, hqvalue⟩ :=
-      exists_smaller_prime_jacobiSym_eq_neg_one_of_odd_nonsquare hn hn3 hns
+  · obtain ⟨q, hqprime, hqodd, _, hqvalue⟩ := exists_smaller_jacobi_neg_one_nonsquare hn hn3 hns
     exact ⟨q, hqprime, hqodd, hqvalue⟩
 
 end PseudoPrime.NumberTheory

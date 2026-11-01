@@ -37,7 +37,7 @@ theorem gamma_odd_mangoldt_series_eq_cost {p : ℕ} (hp : p.Prime) :
     ArithmeticFunction.vonMangoldt_apply_prime hp, Nat.cast_pow]
   constructor
   · exact (summable_gammaResolventEulerWeight_odd_powers hpR).mul_left (Real.log p)
-  · rw [tsum_mul_left, tsum_gammaResolventEulerWeight_odd_powers_eq_cost hpR]
+  · rw [tsum_mul_left, tsum_gammaEulerWeight_odd_powers_eq_cost hpR]
 
 /-- When chi(p)=-1, the actual correction over all positive powers converges
 and sums to twice log p times the odd Euler cost. Split the index by parity:
@@ -66,8 +66,8 @@ theorem gamma_minus_one_positive_euler_series_eq_cost {f p : ℕ} (χ : Dirichle
 /-- At local value minus one, any finite set of positive Euler powers has
 cost at most twice log p times the odd Euler cost. Nonnegativity enlarges
 the arbitrary prefix to the full parity-cancelled series. -/
-theorem gamma_minus_one_positive_prime_correction_le_cost {f p : ℕ} (χ : DirichletCharacter ℂ f)
-    (hp : p.Prime) (hχ : χ p = -1) (K : Finset ℕ) :
+theorem gamma_neg_one_prime_correction_le_cost {f p : ℕ} (χ : DirichletCharacter ℂ f) (hp : p.Prime)
+    (hχ : χ p = -1) (K : Finset ℕ) :
     (∑ k ∈ K, (1 - (χ (p ^ (k + 1))).re) * gammaResolventMangoldtWeight (p ^ (k + 1))) ≤
       2 * (Real.log p * gammaPrimeOddEulerCost p) := by
   have hs := gamma_minus_one_positive_euler_series_eq_cost χ hp hχ

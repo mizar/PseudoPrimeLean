@@ -30,10 +30,10 @@ input to subgroup averaging and Proposition 6.1. -/
 theorem lemma61 : lls_lemma61 := by
   intro hGRH K
   obtain ⟨Cp, hCp, hbP⟩ := exists_principal_summand_remainder_le K hGRH.riemann
-  obtain ⟨Cn, hCn, hbN⟩ := exists_real_summand_formula_primitive_zeroMass K
+  obtain ⟨Cn, hCn, hbN⟩ := exists_summand_primitiveZeroMass_GRH K
   refine ⟨Cp + Cn, add_pos hCp hCn, ?_⟩
   intro ε hε
-  obtain ⟨N, _, hbM⟩ := exists_uniform_kernelZeroSum_le_mass_ambient K hGRH hε
+  obtain ⟨N, _, hbM⟩ := exists_zeroSum_mass_ambient_GRH K hGRH hε
   refine ⟨max 20000 N, (by norm_num only : 3 ≤ 20000).trans (Nat.le_max_left _ _), ?_⟩
   intro q _ hq H _ χ _ x hx
   have hq0 : 20000 ≤ q := (Nat.le_max_left 20000 N).trans hq

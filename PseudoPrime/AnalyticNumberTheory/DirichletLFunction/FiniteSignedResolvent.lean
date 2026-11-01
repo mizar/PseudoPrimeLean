@@ -54,7 +54,7 @@ theorem summable_finiteSignedResolvent_terms {q : ℕ} [NeZero q] (hq : 2 ≤ q)
 Claim: the zero mass equals the signed real logarithmic-derivative expression.
 Proof: interchange the finite list and apply the exact Poisson identity at each node.
 Role: preserve conductor and archimedean terms before bounding. -/
-theorem finiteSignedResolvent_zeroMass_eq_nodes {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem signedResolvent_mass_eq_nodes_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (l : List (ℚ × ℚ)) (ha : ∀ ab ∈ l, (1 / 2 : ℚ) < ab.1) :
     (∑' ρ : ℂ,
@@ -84,7 +84,7 @@ theorem finiteSignedResolvent_zeroMass_eq_nodes {q : ℕ} [NeZero q] (hq : 2 ≤
     norm_num only at h
     linarith only [h]
   have hn : (1 / 2 : ℝ) + (ab.1 : ℝ) - 1 / 2 = ab.1 := by ring
-  have he := completed_poissonSum_eq_signed_ordinary hq hRH hp hne hinv hσ
+  have he := poissonSum_eq_signedOrdinary_RH hq hRH hp hne hinv hσ
   rw [hn] at he
   simpa only [Complex.ofReal_add] using he
 
@@ -96,7 +96,7 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 Claim: the ordinary logarithmic derivatives equal the signed common Mangoldt series.
 Proof: use the real Euler identity and finite/infinite interchange.
 Role: keep the common weight before using positivity. -/
-theorem finiteSignedResolvent_ordinary_eq_euler {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+theorem signedResolvent_ordinary_eq_euler {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
     (l : List (ℚ × ℚ)) (ha : ∀ ab ∈ l, (1 / 2 : ℚ) < ab.1) :
     (l.map (fun ab ↦ (ab.2 : ℝ) * (logDeriv χ.LFunction (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum =
       ∑' n : ℕ, -(χ n).re * Analysis.finiteSignedMangoldtWeight l n := by
@@ -130,7 +130,7 @@ theorem finiteSignedResolvent_ordinary_eq_euler {q : ℕ} [NeZero q] (χ : Diric
 Claim: exact conductor, gamma-factor and Euler decomposition of the signed zero mass.
 Proof: substitute the ordinary Euler identity in the node formula.
 Role: supply the arithmetic side of phase-sensitive estimates. -/
-theorem finiteSignedResolvent_zeroMass_eq_euler {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem signedResolvent_mass_eq_euler_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (l : List (ℚ × ℚ)) (ha : ∀ ab ∈ l, (1 / 2 : ℚ) < ab.1) :
     (∑' ρ : ℂ,
@@ -141,15 +141,15 @@ theorem finiteSignedResolvent_zeroMass_eq_euler {q : ℕ} [NeZero q] (hq : 2 ≤
             (fun ab ↦
               (ab.2 : ℝ) * (logDeriv χ.gammaFactor (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re)).sum +
         ∑' n : ℕ, -(χ n).re * Analysis.finiteSignedMangoldtWeight l n := by
-  rw [finiteSignedResolvent_zeroMass_eq_nodes hq hRH hp hne hinv l ha]
+  rw [signedResolvent_mass_eq_nodes_RH hq hRH hp hne hinv l ha]
   simp only [mul_add, List.sum_map_add, List.sum_map_mul_right]
-  rw [finiteSignedResolvent_ordinary_eq_euler χ l ha]
+  rw [signedResolvent_ordinary_eq_euler χ l ha]
 
 /-- Input: a primitive nonprincipal character under RH, admissible nodes and a finite prefix.
 Claim: exact zero-mass decomposition retaining both prefix defect and paired tail.
 Proof: apply the signed-weight identity to the Euler series.
 Role: preserve the nonnegative prime-power savings. -/
-theorem finiteSignedResolvent_zeroMass_eq_prefix_tail {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem signedResolvent_mass_prefix_tail_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (l : List (ℚ × ℚ)) (ha : ∀ ab ∈ l, (1 / 2 : ℚ) < ab.1)
     (B : Finset ℕ) :
@@ -169,13 +169,13 @@ theorem finiteSignedResolvent_zeroMass_eq_prefix_tail {q : ℕ} [NeZero q] (hq :
   have he :=
     Analysis.signed_weight_eq_prefix_sub_paired_tail (Analysis.finiteSignedMangoldtWeight l)
       (fun n ↦ (χ n).re) (Analysis.summable_finiteSignedMangoldtWeight l ha) hc B
-  rw [finiteSignedResolvent_zeroMass_eq_euler hq hRH hp hne hinv l ha, he]
+  rw [signedResolvent_mass_eq_euler_RH hq hRH hp hne hinv l ha, he]
   ring
 
 /-- Input: the exact zero-mass hypotheses and nonnegative common Mangoldt weights.
 Claim: the prefix budget bounds the zero mass above.
 Proof: remove the nonnegative paired tail. Role: obtain a quantitative spectral upper bound. -/
-theorem finiteSignedResolvent_zeroMass_le_prefix {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem signedResolvent_mass_le_prefix_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (l : List (ℚ × ℚ)) (ha : ∀ ab ∈ l, (1 / 2 : ℚ) < ab.1)
     (hW : ∀ n, 0 ≤ Analysis.finiteSignedMangoldtWeight l n) (B : Finset ℕ) :
@@ -189,7 +189,7 @@ theorem finiteSignedResolvent_zeroMass_le_prefix {q : ℕ} [NeZero q] (hq : 2 �
             (∑' n : ℕ, Analysis.finiteSignedMangoldtWeight l n) -
           2 * (∑ n ∈ B, Analysis.finiteSignedMangoldtWeight l n) +
         ∑ n ∈ B, (1 - (χ n).re) * Analysis.finiteSignedMangoldtWeight l n := by
-  rw [finiteSignedResolvent_zeroMass_eq_prefix_tail hq hRH hp hne hinv l ha B]
+  rw [signedResolvent_mass_prefix_tail_RH hq hRH hp hne hinv l ha B]
   have hn :=
     Analysis.pairedWeightTail_nonneg (Analysis.finiteSignedMangoldtWeight l) (fun n ↦ (χ n).re)
       (Analysis.summable_finiteSignedMangoldtWeight l ha) hW

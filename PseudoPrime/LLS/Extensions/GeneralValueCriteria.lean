@@ -59,13 +59,12 @@ theorem generalL_of_primeSum_bounds_and_degreeOne {A B : ℝ} (hB : 0 ≤ B)
         ((d : ℝ) * (A + B) + (34 / 7 : ℝ) * (d : ℝ) + 1)
         (Real.log (Real.log f.val.analyticConductor))
     have hs :=
-      isLittleO_valueUpperCorrection_on_conductorFilter d (Real.log (2 * (d : ℝ)))
+      valueCorrection_isLittleO d (Real.log (2 * (d : ℝ)))
         ((d : ℝ) * (A + B) + (34 / 7 : ℝ) * (d : ℝ) + 1)
     have hb :=
-      isBigO_valueUpperCorrection_on_conductorFilter hd2 (Real.log (2 * (d : ℝ)))
+      valueCorrection_isBigO_degree hd2 (Real.log (2 * (d : ℝ)))
         ((d : ℝ) * (A + B) + (34 / 7 : ℝ) * (d : ℝ) + 1)
-    exact
-      ⟨e, e, hs, hs, hb, hb, eventually_value_bounds_with_correction_of_mangoldt_errors hd hB hH hψ⟩
+    exact ⟨e, e, hs, hs, hb, hb, eventually_value_bounds_of_mangoldt_errors hd hB hH hψ⟩
 
 /-- The public general L-value proposition implies the exact degree-one endpoint.
 Its degree-one Big-O scale is identically zero, so both errors vanish eventually.

@@ -68,7 +68,7 @@ theorem exists_odd_prime_ne_one_of_gamma_log_37150 {q : ℕ} [NeZero q] (hq : 20
         (2 * (∫ u in (0 : ℝ)..(99 / 40), Analysis.exponentialRampWeight u) - 1) *
           Real.sqrt x at hmain
     nlinarith only [hP, heP, hT, heT, hpole, hleft, hlead, htwo, hmain, hL]
-  have hnp := PaperStatements.gamma_primitiveCharacter_sum_re_le_adaptive_scale hq χ hne hGRH hx
+  have hnp := PaperStatements.gammaCharacterSum_re_le_adaptive_scale hq χ hne hGRH hx
   have hactual :
     (∑' n : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x n).re +
         (∑' n : ℕ, PaperStatements.gammaMellinKernel.summand χ.primitiveCharacter x n).re +

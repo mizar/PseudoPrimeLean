@@ -22,9 +22,8 @@ rejecting base p ≤ (99/100)(log n)², hence p < (log n)².
 Combine the uniform nonprincipal upper bound with exact-principal index
 reduction and certified principal/ramp errors. No numerical-gap assumption
 or input-factorization restriction remains. -/
-theorem exists_prime_witness_le_principal_paired_nearSquare_gamma_log_550 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 550 ≤ Real.log n) :
+theorem exists_prime_principalPaired_log550_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 550 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (99 / 100 : ℝ) * (Real.log n) ^ 2 ∧
@@ -55,10 +54,7 @@ theorem exists_prime_witness_le_principal_paired_nearSquare_gamma_log_550 {n : �
     nlinarith only [hP, hT, he.1, he.2.1, he.2.2, hL]
   obtain ⟨p, hp, hb, hf⟩ :=
     exists_prime_witness_of_common_primitive_upper hn hnOdd hnComposite hx0
-      (fun χ hχ ↦
-        LLS.PaperStatements.gamma_primitiveCharacter_sum_re_le_principal_paired_nearSquare hq χ hχ
-          hGRH hL)
-      hgap
+      (fun χ hχ ↦ LLS.PaperStatements.gammaCharSum_principalPaired_GRH hq χ hχ hGRH hL) hgap
   have hsq : 0 < (Real.log n) ^ 2 := sq_pos_of_pos (by linarith only [hL])
   dsimp only [x] at hb
   refine ⟨p, hp, ?_, ?_, hf⟩
@@ -69,17 +65,16 @@ theorem exists_prime_witness_le_principal_paired_nearSquare_gamma_log_550 {n : �
 prime rejecting base through (99/100)(log n) squared.
 Minimize the unbounded rejection predicate and compare with the constructed
 witness. Minimality ranges over every prime rejecting base. -/
-theorem exists_least_prime_witness_le_principal_paired_nearSquare_gamma_log_550 {n : ℕ}
-    (hnOdd : Odd n) (hnComposite : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 550 ≤ Real.log n) :
+theorem exists_least_prime_principalPaired_log550_GRH {n : ℕ} (hnOdd : Odd n)
+    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hL : 550 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
         (p : ℝ) ≤ (99 / 100 : ℝ) * (Real.log n) ^ 2 ∧
         ∀ r : ℕ, r.Prime → ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) → p ≤ r := by
   classical
-  obtain ⟨p, hp, hb, _, hf⟩ :=
-    exists_prime_witness_le_principal_paired_nearSquare_gamma_log_550 hnOdd hnComposite hGRH hL
+  obtain ⟨p, hp, hb, _, hf⟩ := exists_prime_principalPaired_log550_GRH hnOdd hnComposite hGRH hL
   have hex : ∃ r : ℕ, r.Prime ∧ ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := ⟨p, hp, hf⟩
   exact
     ⟨Nat.find hex, (Nat.find_spec hex).1, (Nat.find_spec hex).2,
@@ -90,16 +85,15 @@ theorem exists_least_prime_witness_le_principal_paired_nearSquare_gamma_log_550 
 decomposition n-1=2^s d has a prime base through the coefficient-99/100
 cutoff whose d-th power is not one and whose tested doubled powers are not
 minus one. Apply the exact rejection equivalence to the proved witness. -/
-theorem exists_prime_rejecting_powers_le_principal_paired_nearSquare_gamma_log_550 {n : ℕ}
-    (hnOdd : Odd n) (hnComposite : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 550 ≤ Real.log n) :
+theorem exists_rejectPowers_principalPaired_log550_GRH {n : ℕ} (hnOdd : Odd n)
+    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hL : 550 ≤ Real.log n) :
     let (s, d) := Nat.maxPowDvdDiv 2 (n - 1);
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (99 / 100 : ℝ) * (Real.log n) ^ 2 ∧
         (p : ZMod n) ^ d ≠ 1 ∧ ∀ j : ℕ, j < s → (p : ZMod n) ^ (2 ^ j * d) ≠ -1 := by
-  obtain ⟨p, hp, hb, _, hf⟩ :=
-    exists_prime_witness_le_principal_paired_nearSquare_gamma_log_550 hnOdd hnComposite hGRH hL
+  obtain ⟨p, hp, hb, _, hf⟩ := exists_prime_principalPaired_log550_GRH hnOdd hnComposite hGRH hL
   exact ⟨p, hp, hb, PrimeTest.not_strongMillerRabinPass_iff.mp hf⟩
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

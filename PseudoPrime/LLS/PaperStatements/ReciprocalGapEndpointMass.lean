@@ -35,12 +35,12 @@ theorem reciprocalGap_pole_left_le_endpoint_mass {h : ℝ} (hh : 0 < h) {q : ℕ
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x M : ℝ} (hx : 1 ≤ x) (hM : |primitiveBRe χ| ≤ M) :
     reciprocalGapPoleLeftValue h χ x ≤ reciprocalGapEndpointMassBudget h q x M := by
-  have hi := DirichletCharacter.isPrimitive_inv hp
+  have hi := AnalyticNumberTheory.DirichletLFunction.character_isPrimitive_inv hp
   have hni : χ⁻¹⁻¹ ≠ 1 := by simpa only [inv_inv] using hne
   have hw :=
-    completedLogDeriv_endpoint_weighted_gap_le hq (hGRH q χ⁻¹ hi) hi hinv hni hh (x ^ (-h))
+    completedLogDeriv_weight_bound_RH hq (hGRH q χ⁻¹ hi) hi hinv hni hh (x ^ (-h))
       (Real.rpow_nonneg (zero_le_one.trans hx) _)
-  have he := completedLFunction_logDeriv_one_re_eq_abs_BRe_sub_half_log hq hGRH hi hinv hni
+  have he := completedLogDeriv_one_abs_BRe_GRH hq hGRH hi hinv hni
   rw [primitiveBRe_inv_eq hne] at he
   have hv : (logDeriv χ⁻¹.completedLFunction 1).re + Real.log q / 2 = |primitiveBRe χ| := by
     rw [he]
@@ -111,7 +111,7 @@ theorem reciprocalGapCharacterSum_re_le_endpoint_mass {h : ℝ} (hh : 0 < h) {q 
     Complex.re_le_norm (-(∑' ρ : ℂ, (reciprocalGapMellinKernel h hh).oscillatingZeroTerm χ x ρ))
   simp only [Complex.neg_re, norm_neg] at hr
   have hR := reciprocalGap_remainder_re_le_endpoint_mass hh hq hGRH hp hne hinv hx hM
-  rw [reciprocalGapCharacterSum_eq_zeroSum_add_remainder hh hq hGRH hp hne hinv hx, Complex.add_re,
+  rw [reciprocalGap_eq_zeroSum_remainder_GRH hh hq hGRH hp hne hinv hx, Complex.add_re,
     Complex.neg_re]
   linarith only [hz.2, hr, hR, hM]
 

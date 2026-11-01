@@ -20,7 +20,7 @@ namespace PseudoPrime.LLS.PaperStatements
 the real Gamma arithmetic sum is bounded by its actual resolvent mass plus
 the pole cost and conductor-free left allowance. Preserve the nonpositive
 archimedean contribution; no positive 64/9 allowance is added. -/
-theorem gamma_primitive_sum_re_le_resolvent_conductor_free {q m : ℕ} [NeZero m] (hq : 20000 ≤ q)
+theorem gammaPrimitiveSum_re_le_resolvent_conductor_free {q m : ℕ} [NeZero m] (hq : 20000 ≤ q)
     (hm : 3 ≤ m) (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 2 ≤ x) :

@@ -35,8 +35,7 @@ theorem exists_prime_strong_witness_of_generalTwoPole {n : ℕ} [NeZero n]
 trivial on that subgroup, positive general two-pole separation supplies a prime
 strong witness. Pass containment forces character value one, contrary to the
 analytic witness. The subgroup and character may be chosen independently. -/
-theorem exists_prime_strong_witness_of_subgroup_generalTwoPole {n : ℕ} [NeZero n]
-    (H : Subgroup (ZMod n)ˣ)
+theorem exists_prime_subgroup_generalTwoPole_GRH {n : ℕ} [NeZero n] (H : Subgroup (ZMod n)ˣ)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (χ : DirichletCharacter ℂ n) (hne : χ ≠ 1) (hχH : ∀ u : (ZMod n)ˣ, u ∈ H → χ (u : ZMod n) = 1)
@@ -55,23 +54,21 @@ theorem exists_prime_strong_witness_of_subgroup_generalTwoPole {n : ℕ} [NeZero
 for every nonprincipal character gives a prime strong witness through the cutoff.
 Choose a proper pass-containing subgroup and a nonprincipal quotient character.
 This closes the MR connection while leaving the uniform scalar estimate explicit. -/
-theorem exists_prime_strong_witness_of_uniform_generalTwoPole {n : ℕ} [NeZero n] (hn : 1 < n)
-    (hnOdd : Odd n) (hnComposite : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 ≤ x)
-    (S : Finset ℕ) (hS : ∀ k ∈ S, (k : ℝ) ≤ (99 / 40 : ℝ) * x)
+theorem exists_prime_uniform_generalTwoPole_GRH {n : ℕ} [NeZero n] (hn : 1 < n) (hnOdd : Odd n)
+    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ}
+    (hx : 1 ≤ x) (S : Finset ℕ) (hS : ∀ k ∈ S, (k : ℝ) ≤ (99 / 40 : ℝ) * x)
     (hgap : ∀ χ : DirichletCharacter ℂ n, χ ≠ 1 → 0 < LLS.generalTwoPoleGammaSeparation χ S x) :
     ∃ p : ℕ,
       p.Prime ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   classical
-  obtain ⟨H, hH, hHpass⟩ :=
-    PrimeTest.exists_proper_subgroup_containing_strongMillerRabinPass hn hnOdd hnComposite
+  obtain ⟨H, hH, hHpass⟩ := PrimeTest.exists_proper_subgroup_strongMR hn hnOdd hnComposite
   have : H.Normal := H.normal_of_isMulCommutative
   have : Nontrivial ((ZMod n)ˣ ⧸ H) := QuotientGroup.nontrivial_iff.mpr hH
   obtain ⟨z, hz⟩ := exists_ne (1 : (ZMod n)ˣ ⧸ H)
   obtain ⟨χ', hχz⟩ := MulChar.exists_apply_ne_one_of_hasEnoughRootsOfUnity ((ZMod n)ˣ ⧸ H) ℂ hz
   have hne := LLS.pullbackCharacter_ne_one_of_ne_one χ' hχz
   exact
-    exists_prime_strong_witness_of_subgroup_generalTwoPole H hHpass (LLS.pullbackCharacter χ') hne
+    exists_prime_subgroup_generalTwoPole_GRH H hHpass (LLS.pullbackCharacter χ') hne
       (fun _ hu ↦ LLS.pullbackCharacter_eq_one_of_mem χ' hu) hGRH hx S hS (hgap _ hne)
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

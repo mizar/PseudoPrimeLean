@@ -21,8 +21,8 @@ selected N-coprime reciprocal support and strict separation against the analytic
 logarithmic lower bound yield an N-coprime non-one prime at most x.
 Infer reciprocal mass under witness nonexistence and use the RH principal lower
 bound. No selected principal support or unknown character sum is required. -/
-theorem exists_prime_coprime_not_one_of_reciprocalGap_endpoint_analytic {h : ℝ} (hh : 0 < h)
-    {q N : ℕ} [NeZero q] (hq : 2 ≤ q) (hqN : q ∣ N) {χ : DirichletCharacter ℂ q}
+theorem exists_prime_neOne_analyticGap_GRH {h : ℝ} (hh : 0 < h) {q N : ℕ} [NeZero q] (hq : 2 ≤ q)
+    (hqN : q ∣ N) {χ : DirichletCharacter ℂ q}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x Y : ℝ} (hx : 1 < x) (hY : 64 ≤ Y) (hYx : Y ≤ x) (C : Finset ℕ)
     (hC : C ⊆ Finset.Ioc 0 ⌊Y⌋₊) (hcopC : ∀ n ∈ C, Nat.Coprime n N)
@@ -43,7 +43,7 @@ theorem exists_prime_coprime_not_one_of_reciprocalGap_endpoint_analytic {h : ℝ
       (fun p hp hpy hpc ↦ ht p hp (hpy.trans hYx) hpc)
   have hm := reciprocalGap_mass_le_reciprocal_cap hq hGRH hp hne hinv hY hR
   have hU := reciprocalGapCharacterSum_re_le_endpoint_mass hh hq hGRH hp hne hinv hx.le hm
-  have hL := reciprocalGapCharacterSum_re_ge_logarithmic_analytic hqN χ hh hx hGRH.riemann ht
+  have hL := reciprocalGap_log_lower_RH hqN χ hh hx hGRH.riemann ht
   dsimp only [reciprocalGapEndpointSelectedSeparation, reciprocalGapSelectedReciprocalLower] at hgap
   linarith only [hU, hL, hgap]
 
@@ -52,8 +52,8 @@ open AnalyticNumberTheory.Arithmetic in
 analytic endpoint separation, obtain an odd N-coprime prime at most x of value
 minus one. Apply the non-one theorem, exclude two and classify quadratic values.
 This keeps the principal lower bound analytic throughout the positive-gap range. -/
-theorem exists_odd_prime_neg_one_of_reciprocalGap_endpoint_analytic {h : ℝ} (hh : 0 < h) {q N : ℕ}
-    [NeZero q] (hq : 2 ≤ q) (hqN : q ∣ N) (hN2 : 2 ∣ N) {χ : DirichletCharacter ℂ q}
+theorem exists_oddPrime_negOne_analyticGap_GRH {h : ℝ} (hh : 0 < h) {q N : ℕ} [NeZero q]
+    (hq : 2 ≤ q) (hqN : q ∣ N) (hN2 : 2 ∣ N) {χ : DirichletCharacter ℂ q}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hquad : χ.IsQuadratic) {x Y : ℝ} (hx : 1 < x) (hY : 64 ≤ Y) (hYx : Y ≤ x)
     (C : Finset ℕ) (hC : C ⊆ Finset.Ioc 0 ⌊Y⌋₊) (hcopC : ∀ n ∈ C, Nat.Coprime n N)
@@ -67,14 +67,13 @@ theorem exists_odd_prime_neg_one_of_reciprocalGap_endpoint_analytic {h : ℝ} (h
     rw [hquad.inv]
     exact hne
   obtain ⟨p, hprime, hpx, hpc, hv⟩ :=
-    exists_prime_coprime_not_one_of_reciprocalGap_endpoint_analytic hh hq hqN hGRH hp hne hi hx hY
-      hYx C hC hcopC hgap
+    exists_prime_neOne_analyticGap_GRH hh hq hqN hGRH hp hne hi hx hY hYx C hC hcopC hgap
   have hne2 : p ≠ 2 := by
     intro he
     subst p
     exact (Nat.prime_two.coprime_iff_not_dvd.mp hpc) hN2
   exact
     ⟨p, hprime, hprime.odd_of_ne_two hne2, hpx, hpc,
-      quadratic_character_apply_neg_one_of_coprime_ne_one χ hquad (hpc.of_dvd_right hqN) hv⟩
+      quadraticChar_eq_neg_one_of_coprime_ne_one χ hquad (hpc.of_dvd_right hqN) hv⟩
 
 end PseudoPrime.LLS.PaperStatements

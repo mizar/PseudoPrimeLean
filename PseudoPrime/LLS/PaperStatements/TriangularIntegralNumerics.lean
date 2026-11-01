@@ -29,7 +29,7 @@ theorem triangular18_reflectedIntegral_norm_le_numeric {q : ℕ} [NeZero q]
           logDeriv χ⁻¹.completedLFunction (((17 / 16 : ℝ) : ℂ) - Complex.I * t) *
             Analysis.triangularMellinFunction 18 (((-9 / 16 : ℝ) : ℂ) + Complex.I * t)‖ ≤
       (6248000000000000 : ℝ) := by
-  have hb := triangular18_reflectedIntegral_norm_le_fixed_decay hinv
+  have hb := triangular18_reflected_decay_bound hinv
   have hJ :=
     mul_le_mul_of_nonneg_left Analysis.logarithmic_inverseSquare_integral_le_twenty_two
       (by norm_num only : (0 : ℝ) ≤ 284 * 1000000000000)
@@ -71,8 +71,8 @@ theorem norm_mellinNormalization_mul_le_sixth {z : ℂ} {C : ℝ} (hz : ‖z‖ 
 for a nonprincipal inverse character. Apply the raw numerical estimate and
 the normalization factor at most one sixth, with a rational safety margin.
 This is the left remainder constant in the conductor-free zero formula. -/
-theorem triangular18_normalized_reflectedIntegral_norm_le {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hinv : χ⁻¹ ≠ 1) :
+theorem triangular18_normalized_reflected_bound {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hinv : χ⁻¹ ≠ 1) :
     ‖((1 / (2 * Real.pi) : ℝ) : ℂ) *
           (∫ t : ℝ,
             logDeriv χ⁻¹.completedLFunction (((17 / 16 : ℝ) : ℂ) - Complex.I * t) *

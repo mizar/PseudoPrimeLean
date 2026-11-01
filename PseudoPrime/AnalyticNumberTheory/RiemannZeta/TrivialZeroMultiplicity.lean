@@ -76,7 +76,7 @@ Every trivial zero `-2(n+1)` has multiplicity one. The functional equation facto
 zeta into a nonvanishing analytic factor and a sine with nonzero derivative. Add their
 analytic orders; the residue formulas then have no unknown multiplicity factor.
 -/
-theorem riemannZetaZeroMultiplicity_neg_two_mul_nat_add_one (n : ℕ) :
+theorem zeroMultiplicity_neg_two_succ_eq_one (n : ℕ) :
     riemannZetaZeroMultiplicity (-2 * ((n : ℂ) + 1)) = 1 := by
   set w₀ : ℂ := -2 * ((n : ℂ) + 1) with hw₀_def
   set A : ℂ → ℂ := fun w =>
@@ -226,11 +226,11 @@ theorem riemannZetaZeroMultiplicity_neg_two_mul_nat_add_one (n : ℕ) :
 
 /-- `ζ`'s reciprocal-kernel contribution at the `k`-th trivial zero `-2(k+1)` is exactly the
 negative of the `k`-th summand of the reciprocal trivial-zero series. -/
-theorem riemannZetaReciprocalZeroContribution_neg_two_mul_nat_add_one {x : ℝ} (hx : 0 < x) (k : ℕ) :
+theorem reciprocalZeroTerm_neg_two_succ {x : ℝ} (hx : 0 < x) (k : ℕ) :
     riemannZetaReciprocalZeroContribution x (-2 * ((k : ℂ) + 1)) =
       -((x⁻¹ ^ (2 * (k + 1) + 1) / ((2 * (k + 1) : ℝ) * (2 * (k + 1) + 1)) : ℝ) : ℂ) := by
   unfold riemannZetaReciprocalZeroContribution
-  rw [riemannZetaZeroMultiplicity_neg_two_mul_nat_add_one]
+  rw [zeroMultiplicity_neg_two_succ_eq_one]
   set ρ : ℂ := -2 * ((k : ℂ) + 1) with hρ_def
   have hρ1_eq : ρ - 1 = ((-(2 * (k + 1) + 1 : ℕ) : ℝ) : ℂ) := by
     rw [hρ_def]
@@ -292,7 +292,7 @@ theorem reciprocalTrivialZeroTerm_le_geometric {x : ℝ} (hx : 2 ≤ x) (k : ℕ
       ring
 
 /-- A reciprocal trivial-zero summand is bounded by a geometric summand for every `x > 0`. -/
-theorem reciprocalTrivialZeroTerm_le_geometric_of_pos {x : ℝ} (hx : 0 < x) (k : ℕ) :
+theorem reciprocalTrivialTerm_le_geometric {x : ℝ} (hx : 0 < x) (k : ℕ) :
     x⁻¹ ^ (2 * (k + 1) + 1) / ((2 * (k + 1) : ℝ) * (2 * (k + 1) + 1)) ≤
       x⁻¹ ^ 3 / 6 * (x⁻¹ ^ 2) ^ k := by
   have hinv : 0 ≤ x⁻¹ := inv_nonneg.mpr hx.le
@@ -316,11 +316,11 @@ For positive `x`, the logarithmic-kernel contribution at `-2(k+1)` is
 power to an inverse natural power, and normalize the denominator; trivial-zero ledgers
 use this expression in their finite and infinite series.
 -/
-theorem riemannZetaLogZeroContribution_neg_two_mul_nat_add_one {x : ℝ} (hx : 0 < x) (k : ℕ) :
+theorem logZeroTerm_neg_two_succ {x : ℝ} (hx : 0 < x) (k : ℕ) :
     riemannZetaLogZeroContribution x (-2 * ((k : ℂ) + 1)) =
       -((x⁻¹ ^ (2 * (k + 1)) / (4 * ((k : ℝ) + 1) ^ 2) : ℝ) : ℂ) := by
   unfold riemannZetaLogZeroContribution
-  rw [riemannZetaZeroMultiplicity_neg_two_mul_nat_add_one]
+  rw [zeroMultiplicity_neg_two_succ_eq_one]
   set ρ : ℂ := -2 * ((k : ℂ) + 1) with hρ_def
   have hρ_eq : ρ = ((-(2 * (k + 1) : ℕ) : ℝ) : ℂ) := by
     rw [hρ_def]
@@ -381,7 +381,7 @@ theorem summable_logTrivialZeroTerm {x : ℝ} (hx : 1 < x) :
     _ = x⁻¹ ^ 2 / 4 * (x⁻¹ ^ 2) ^ k := by ring
 
 /-- The logarithmic trivial-zero series is bounded by the Basel sum for `x > 1`. -/
-theorem riemannZetaLogTrivialZeroSeries_le_pi_sq_div_twenty_four {x : ℝ} (hx : 1 < x) :
+theorem logTrivialSeries_le_pi_sq_div_24 {x : ℝ} (hx : 1 < x) :
     riemannZetaLogTrivialZeroSeries x ≤ Real.pi ^ 2 / 24 := by
   have hs := summable_logTrivialZeroTerm hx
   have hbase : Summable (fun k : ℕ => (1 : ℝ) / ((k : ℝ) + 1) ^ 2) := by

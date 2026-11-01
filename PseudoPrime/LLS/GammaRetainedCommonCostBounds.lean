@@ -103,15 +103,15 @@ theorem gamma_primitive_sum_add_local_lt_common_cost {q Q : ℕ} [NeZero q] (hQ 
   have hp := DirichletCharacter.primitiveCharacter_isPrimitive χ
   have hnp := AnalyticNumberTheory.Arithmetic.primitiveCharacter_ne_one χ hne
   have hz :=
-    AnalyticNumberTheory.DirichletLFunction.gammaResolvent_zeroMass_le_signed_prefix
+    AnalyticNumberTheory.DirichletLFunction.gammaMass_le_signedPrefix_RH
       (le_trans (by norm_num only : (2 : ℕ) ≤ 3) hm) (hGRH _ χ.primitiveCharacter hp) hp hnp
       (inv_ne_one.mpr hnp) (Finset.Ioc 0 ⌊b⌋₊)
   have hu :=
-    PaperStatements.gamma_primitive_sum_re_le_resolvent_conductor_free hQ hm (hmq.trans hqQ) hGRH hp
+    PaperStatements.gammaPrimitiveSum_re_le_resolvent_conductor_free hQ hm (hmq.trans hqQ) hGRH hp
       hnp (inv_ne_one.mpr hnp) hx
   have he :=
-    AnalyticNumberTheory.DirichletLFunction.gamma_character_prefix_add_ambient_ramp_eq_local_cost
-      χ.primitiveCharacter (Nat.pos_of_ne_zero (NeZero.ne q)) hb
+    AnalyticNumberTheory.DirichletLFunction.gammaPrefix_add_ramp_eq_cost χ.primitiveCharacter
+      (Nat.pos_of_ne_zero (NeZero.ne q)) hb
       (fun p hp hpb hcop ↦
         PaperStatements.primitiveCharacter_apply_one_of_apply_one χ (hone p hp hpb hcop))
       x
@@ -176,7 +176,7 @@ theorem gamma_retained_common_factor_free_le_joint {n Q : ℕ} (hn : Odd n) (hns
       gammaJointPrefixSeparationWithCommonCap Q (NumberTheory.complexQuadraticCharacter n hn) b x
           (541 / 50) (gammaSignedVariationPrincipalCap x) +
         7 / 60 := by
-  have hJ := gamma_joint_prefix_le_factor_free_budget_small_scale (b := b) hn hns hlog hx
+  have hJ := gammaJointPrefix_factorFree_smallScale (b := b) hn hns hlog hx
   have hN :
     ((7 / 6 : ℝ) * Real.log Q + 4) / Real.sqrt x ≤ ((7 / 6 : ℝ) * (L + 7 / 5) + 4) / Real.sqrt x :=
     div_le_div_of_nonneg_right (by linarith only [hlogQ]) (Real.sqrt_nonneg x)

@@ -70,7 +70,7 @@ theorem twoPole_zeroSum_le_abs_BRe {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : Dir
     Summable (twoPoleCompletedZeroTerm χ a b phase) ∧
       ‖∑' ρ : ℂ, twoPoleCompletedZeroTerm χ a b phase ρ‖ ≤ 2 * |primitiveBRe χ| := by
   have hz := twoPole_zeroSum_le_centered_endpoint hq (hGRH q χ hp) hp hne hinv hab phase hphase
-  have he := completedLFunction_logDeriv_one_re_eq_abs_BRe_sub_half_log hq hGRH hp hne hinv
+  have he := completedLogDeriv_one_abs_BRe_GRH hq hGRH hp hne hinv
   have hv : (logDeriv χ.completedLFunction 1).re + Real.log q / 2 = |primitiveBRe χ| := by
     rw [he]
     ring

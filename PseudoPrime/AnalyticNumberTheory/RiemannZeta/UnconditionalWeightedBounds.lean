@@ -41,8 +41,7 @@ theorem abs_logResidueLedger_cutoff_error {c x T : ℝ} (hc : 0 < c)
     norm_sum_logZero_split_le hc hg hx hT (S.filter (fun ρ : ℂ ↦ ¬ρ.re < 0))
       (fun ρ hρ ↦ (mem_riemannZetaZerosInAnyRectangle_iff.mp (Finset.mem_filter.mp hρ).1).2)
       (fun ρ hρ ↦ not_lt.mp (Finset.mem_filter.mp hρ).2)
-  rw [riemannZetaLogContourResidueLedger_unifiedTau_eq (by norm_num only : (1 : ℝ) < 2),
-    Complex.add_re]
+  rw [zetaLogContourResidueLedger_unifiedTau_eq (by norm_num only : (1 : ℝ) < 2), Complex.add_re]
   change
     |(riemannZetaLogResidueAtZero x + riemannZetaLogResidueAtOne x).re +
             (∑ ρ ∈ S, riemannZetaLogZeroContribution x ρ).re -
@@ -75,13 +74,13 @@ theorem logWeighted_cutoff_error_le {c x T : ℝ} (hc : 0 < c)
         x * T ^ (-(1 : ℝ) / 2) * ∑' ρ : ℂ, RiemannXi.inversePowerZeroWeight (3 / 2) ρ := by
   have hR :=
     Analysis.tendsto_residueLedger_of_normalized
-      (tendsto_riemannZetaLogContourResidueLedger_atTop hx (by norm_num only : (1 : ℝ) < 2) le_rfl)
+      (tendsto_zetaLogContourResidueLedger_atTop hx (by norm_num only : (1 : ℝ) < 2) le_rfl)
   rw [←
     logWeightedMangoldtSum_eq_integral (zero_lt_one.trans hx)
       (by norm_num only : (1 : ℝ) < 2)] at hR
   have hRe := (Complex.continuous_re.tendsto _).comp hR
   simp only [Complex.ofReal_re] at hRe
-  have ht := tendsto_sum_logTrivialZeros_unifiedRectangle hx (by norm_num only : (1 : ℝ) < 2)
+  have ht := tendsto_logTrivialSum_unified hx (by norm_num only : (1 : ℝ) < 2)
   have hlim :=
     ((hRe.sub_const (riemannZetaLogResidueAtZero x + riemannZetaLogResidueAtOne x).re).sub ht).abs
   have hb :=
@@ -133,7 +132,7 @@ theorem logWeighted_main_error_le {c x T : ℝ} (hc : 0 < c)
     exact
       div_nonneg (pow_nonneg (inv_nonneg.mpr (zero_lt_one.trans hx).le) _)
         (mul_nonneg (by norm_num only) (sq_nonneg _))
-  have ht := riemannZetaLogTrivialZeroSeries_le_pi_sq_div_twenty_four hx
+  have ht := logTrivialSeries_le_pi_sq_div_24 hx
   have hR := norm_logResidueAtZero_le hx
   have hreal := Complex.abs_re_le_norm (riemannZetaLogResidueAtZero x)
   have htri :

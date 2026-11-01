@@ -95,7 +95,7 @@ theorem exists_least_prime_in_coset_le_of_explicit_gap {q : ℕ} [NeZero q] (H :
   have hc :=
     mul_le_mul_of_nonneg_left (compositeRootSum_le hx) (Nat.cast_nonneg H.index : (0 : ℝ) ≤ H.index)
   apply
-    exists_least_prime_in_coset_le_of_explicit_root_gap H a
+    exists_least_prime_in_coset_le_of_root_gap_GRH H a
       ((by norm_num only : (64 : ℕ) ≤ 20000).trans hq) hGRH
       ((by norm_num only : (65536 : ℝ) ≤ 1000000000).trans hx)
   exact lt_of_le_of_lt (add_le_add hc (le_refl _)) hgap

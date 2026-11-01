@@ -18,9 +18,9 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 finite completed-zero ledger with fixed left edge `-5/2` and right edge two.
 Primitivity and nonprincipality put the zero in the open critical strip.
 This identifies the finite low-height set without RH. -/
-theorem completedLogHalfZeroTerm_mem_height_ledger_unconditionally {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x T : ℝ}
-    {ρ : ℂ} (hnz : completedLogHalfZeroTerm χ x ρ ≠ 0) (hheight : |ρ.im| ≤ T) :
+theorem logHalfZeroTerm_mem_height_ledger {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x T : ℝ} {ρ : ℂ}
+    (hnz : completedLogHalfZeroTerm χ x ρ ≠ 0) (hheight : |ρ.im| ≤ T) :
     ρ ∈
       completedZerosInRectangle χ hne (unconditionalHeightLowerCorner 2 T)
         (unconditionalHeightUpperCorner T) := by
@@ -32,7 +32,7 @@ theorem completedLogHalfZeroTerm_mem_height_ledger_unconditionally {q : ℕ} [Ne
   have hrpos := completedLFunction_zero_re_pos hp hinv hz
   have hrlt := completedLFunction_zero_re_lt_one hne hz
   apply mem_completedZerosInRectangle_iff.mpr ⟨?_, hz⟩
-  rw [dirichletCompletedLFunctionRectangleBox, Rectangle.rectangleClosedBox, Complex.mem_reProdIm]
+  rw [completedRectangleBox, Rectangle.rectangleClosedBox, Complex.mem_reProdIm]
   simp only [unconditionalHeightLowerCorner, unconditionalHeightUpperCorner, Complex.sub_re,
     Complex.ofReal_re, Complex.mul_re, Complex.ofReal_im, Complex.I_re, mul_zero, sub_zero,
     Complex.add_re, add_zero, Complex.sub_im, Complex.mul_im, Complex.I_im, mul_one, zero_sub,
@@ -45,9 +45,8 @@ theorem completedLogHalfZeroTerm_mem_height_ledger_unconditionally {q : ℕ} [Ne
 absolutely convergent half-scale zero sum into a finite height ledger and a high
 ordinate tail. The scale is at least two; no zero-free boundary is required.
 A pointwise indicator comparison preserves boundary zeros and multiplicity. -/
-theorem tsum_norm_half_le_finite_height_add_tail_unconditionally {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ}
-    (hx : 2 ≤ x) (T : ℝ) :
+theorem logHalfZeroSum_norm_finite_tail {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 2 ≤ x) (T : ℝ) :
     (∑' ρ : ℂ, ‖completedLogHalfZeroTerm χ x ρ‖) ≤
       (∑
           ρ ∈
@@ -62,7 +61,7 @@ theorem tsum_norm_half_le_finite_height_add_tail_unconditionally {q : ℕ} [NeZe
   let f : ℂ → ℝ := fun ρ ↦ ‖completedLogHalfZeroTerm χ x ρ‖
   let lo : ℂ → ℝ := fun ρ ↦ if ρ ∈ S then f ρ else 0
   let hi : ℂ → ℝ := fun ρ ↦ if T ≤ |ρ.im| then f ρ else 0
-  have hs : Summable f := (summable_completedLogHalfZeroTerm_unconditionally hq hp hne hinv hx).norm
+  have hs : Summable f := (summable_completedLogHalfTerm hq hp hne hinv hx).norm
   have hlo : Summable lo := by
     apply (hs.indicator (S : Set ℂ)).congr
     intro ρ
@@ -87,10 +86,7 @@ theorem tsum_norm_half_le_finite_height_add_tail_unconditionally {q : ℕ} [NeZe
       · simp only [f, lo, hi, hz, norm_zero, ite_self, add_zero, le_refl]
       · have ht : T ≤ |ρ.im| := by
           by_contra ht
-          exact
-            hm
-              (completedLogHalfZeroTerm_mem_height_ledger_unconditionally hp hne hinv hz
-                (le_of_lt (lt_of_not_ge ht)))
+          exact hm (logHalfZeroTerm_mem_height_ledger hp hne hinv hz (le_of_lt (lt_of_not_ge ht)))
         simp only [lo, hi, ite_eq_right hm, ite_eq_left ht, zero_add, le_refl]
   have hlowSum : (∑' ρ : ℂ, lo ρ) = ∑ ρ ∈ S, f ρ := by
     rw [tsum_eq_sum (s := S) (fun ρ hρ ↦ ite_eq_right hρ)]
@@ -105,7 +101,7 @@ and trivial-zero remainder. The character and its inverse are nonprincipal and
 the character is primitive; modulus and height are at least two and `x > 2`.
 Combine the unconditional explicit formula, finite ledger comparison, and uniform
 tail estimate. This is the quantitative finite-height interface for theta supply. -/
-theorem exists_norm_characterLogWeightedSum_half_le_finite_height_unconditionally :
+theorem logWeighted_half_finiteHeight_bound :
     ∃ K : ℝ,
       0 < K ∧
         ∀ (q : ℕ) [NeZero q],
@@ -129,11 +125,10 @@ theorem exists_norm_characterLogWeightedSum_half_le_finite_height_unconditionall
                                   (24 * x * K * Real.log q / ((H - 1 : ℕ) : ℝ) +
                                     192 * x * K * (Real.log ((H + 3 : ℕ) : ℝ) + 2) / (H + 3))) +
                                 ‖logarithmicHalfRemainder hne x‖ := by
-  obtain ⟨K, hK, htail⟩ := exists_tsum_norm_completedLogHalfZeroTerm_tail_bound_unconditionally
+  obtain ⟨K, hK, htail⟩ := logHalfZeroTerm_tail_tsum_bound
   refine ⟨K, hK, ?_⟩
   intro q _ hq χ hp hne hinv x hx H hH
-  have hsplit :=
-    tsum_norm_half_le_finite_height_add_tail_unconditionally hq hp hne hinv hx.le (H + 1)
+  have hsplit := logHalfZeroSum_norm_finite_tail hq hp hne hinv hx.le (H + 1)
   have ht := htail q hq χ hp hne hinv x hx.le H hH
   have ht' :
     (∑' ρ : ℂ, if (H : ℝ) + 1 ≤ |ρ.im| then ‖completedLogHalfZeroTerm χ x ρ‖ else 0) ≤
@@ -141,7 +136,7 @@ theorem exists_norm_characterLogWeightedSum_half_le_finite_height_unconditionall
         192 * x * K * (Real.log ((H + 3 : ℕ) : ℝ) + 2) / (H + 3) := by
     simpa only [Nat.cast_add, Nat.cast_one] using ht
   exact
-    (norm_characterLogWeightedSum_half_le_unconditionally hq hp hne hinv hx).trans
+    (norm_logWeighted_half_le_zeroSum hq hp hne hinv hx).trans
       (add_le_add (hsplit.trans (add_le_add le_rfl ht')) le_rfl)
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

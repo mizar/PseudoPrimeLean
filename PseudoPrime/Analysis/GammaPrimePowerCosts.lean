@@ -118,7 +118,7 @@ theorem sum_gammaResolventEulerWeight_powers_le_cost {p : ℝ} (hp : 1 < p) (K :
 Euler weights sum to at most log p times the closed signed Euler cost.
 Mangoldt is exactly log p on those powers; combine the finite-power bound
 with its nonnegative logarithm. This is the ramified prefix local-cost input. -/
-theorem sum_gammaResolventMangoldtWeight_primePowers_le_cost {p : ℕ} (hp : p.Prime) (K : Finset ℕ) :
+theorem sum_gammaMangoldt_primePowers_le_cost {p : ℕ} (hp : p.Prime) (K : Finset ℕ) :
     (∑ k ∈ K, gammaResolventMangoldtWeight (p ^ (k + 1))) ≤ Real.log p * gammaPrimeEulerCost p := by
   have hp1 : (1 : ℝ) < (p : ℝ) := by exact_mod_cast hp.one_lt
   simp only [gammaResolventMangoldtWeight,
@@ -144,8 +144,7 @@ theorem gamma_primePower_joint_cost_le_dual_cap (S : Finset ℕ) (K : ℕ → Fi
     apply Finset.sum_le_sum
     intro p hp
     rw [mul_add]
-    exact
-      add_le_add (sum_gammaResolventMangoldtWeight_primePowers_le_cost (hprime p hp) (K p)) le_rfl
+    exact add_le_add (sum_gammaMangoldt_primePowers_le_cost (hprime p hp) (K p)) le_rfl
   have hlog (p : ℕ) (hp : p ∈ S) : 0 ≤ Real.log p := by
     have h : (1 : ℝ) ≤ (p : ℝ) := by exact_mod_cast (hprime p hp).one_le
     exact Real.log_nonneg h

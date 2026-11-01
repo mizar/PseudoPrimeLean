@@ -61,7 +61,7 @@ vanish; within the cutoff the Mellin weight is `1 - n/x`. Finite support reduces
 `tsum` to the defining finite sum. This identifies the arithmetic side of reciprocal Mellin
 inversion without a character twist.
 -/
-theorem mellinWeightOne_vonMangoldt_div_tsum_eq_ofReal {x : ℝ} (hx : 0 < x) :
+theorem mellinWeightOne_mangoldt_tsum_eq_ofReal {x : ℝ} (hx : 0 < x) :
     ∑' n : ℕ,
         (ArithmeticFunction.vonMangoldt n : ℂ) / (n : ℂ) * Analysis.mellinWeightOne ((n : ℝ) / x) =
       (reciprocalWeightedMangoldtSum x : ℂ) := by
@@ -102,7 +102,7 @@ for
 finitely
 many terms survive, collapsing the `tsum` to the defining finite sum.
 Role: identifies the Mellin-weighted series with the finite reciprocal character sum;
-`mellinWeightOne_vonMangoldt_div_tsum_eq_ofReal` is the character-free identity in this file.
+`mellinWeightOne_mangoldt_tsum_eq_ofReal` is the character-free identity in this file.
 -/
 theorem characterReciprocalWeightedTerm_tsum_eq {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
     {x : ℝ} (hx : 0 < x) :

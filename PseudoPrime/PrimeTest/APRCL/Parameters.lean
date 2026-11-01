@@ -236,8 +236,7 @@ theorem discreteLogTableSearch_isSome_of_prime {q : ℕ} (hq : Nat.Prime q) (g x
 
 /-- The root search and materialized power table compose: every prime modulus supplies a searched
 primitive root and every target unit then has a returned exponent from its finite table. -/
-theorem primitiveRootSearch_discreteLogTableSearch_exists_of_prime {q : ℕ} (hq : Nat.Prime q)
-    (x : (ZMod q)ˣ) :
+theorem exists_primitiveRootSearch_and_log {q : ℕ} (hq : Nat.Prime q) (x : (ZMod q)ˣ) :
     ∃ a,
       ∃ g : (ZMod q)ˣ,
         ∃ e,
@@ -694,7 +693,7 @@ theorem pow_modEq_one_auxiliaryPrimePowerProduct {t a : ℕ} (ht : t ≠ 0) (S :
 the odd auxiliary-prime-power blocks. For positive `t`, the result identifies the exact modulus
 factors; `two_mem_auxiliaryPrimes` inserts the `q = 2` block and exponent arithmetic absorbs the
 leading factor 2. This decomposition is used by the global CRT period proof. -/
-theorem modulus_eq_twoPrimary_mul_oddAuxiliaryPrimePowerProduct {t : ℕ} (ht : t ≠ 0) :
+theorem modulus_eq_twoPrimary_mul_oddPrimePowers {t : ℕ} (ht : t ≠ 0) :
     modulus t =
       2 ^ (2 + Nat.factorization t 2) *
         ((auxiliaryPrimes t).erase 2).prod (fun q => q ^ (1 + Nat.factorization t q)) := by
@@ -752,7 +751,7 @@ theorem modEq_modulus_of_local {t a b : ℕ} (ht : t ≠ 0)
       exact hqne2 hqeq
     exact (Nat.Coprime.pow_left _ h2q).pow_right _
   have hcombined := modEq_mul_of_coprime_moduli hcop htwo hoddBlocks
-  rw [modulus_eq_twoPrimary_mul_oddAuxiliaryPrimePowerProduct ht]
+  rw [modulus_eq_twoPrimary_mul_oddPrimePowers ht]
   exact hcombined
 
 /-- Congruence modulo the APR-CL modulus is equivalent to simultaneous congruence
@@ -765,7 +764,7 @@ theorem modEq_modulus_iff_local {t a b : ℕ} (ht : t ≠ 0) :
         ∀ q ∈ (auxiliaryPrimes t).erase 2, Nat.ModEq (q ^ (1 + Nat.factorization t q)) a b := by
   constructor
   · intro hfull
-    have hmod := modulus_eq_twoPrimary_mul_oddAuxiliaryPrimePowerProduct ht
+    have hmod := modulus_eq_twoPrimary_mul_oddPrimePowers ht
     constructor
     · apply Nat.ModEq.of_dvd _ hfull
       exact ⟨_, hmod⟩
@@ -949,7 +948,7 @@ theorem pow_modEq_one_modulus_of_factorization_pos {t a : ℕ} (ht : t ≠ 0)
       exact hqne2 hqeq
     exact (Nat.Coprime.pow_left _ h2q).pow_right _
   have hcombined := modEq_mul_of_coprime_moduli hcop htwo hoddBlocks
-  rw [modulus_eq_twoPrimary_mul_oddAuxiliaryPrimePowerProduct ht]
+  rw [modulus_eq_twoPrimary_mul_oddPrimePowers ht]
   exact hcombined
 
 /-- For every positive even APR-CL parameter, each unit raised to the parameter is

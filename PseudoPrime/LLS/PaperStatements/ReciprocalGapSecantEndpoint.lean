@@ -28,11 +28,10 @@ noncomputable def reciprocalGapFullSecantSeparation (h : ℝ) (q : ℕ) (x Y : �
 endpoint separation gives a non-one prime through x. Under witness nonexistence both
 character sums are principal; combine the endpoint mass cap with the secant RH lower.
 Values zero remain valid witnesses in this full-prime theorem. -/
-theorem exists_prime_not_one_of_reciprocalGap_full_secant {h : ℝ} (hh : 0 < h) {q : ℕ} [NeZero q]
-    (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x Y : ℝ} (hx : 1 < x) (hY : 64 ≤ Y) (hYx : Y ≤ x)
-    (hgap : reciprocalGapFullSecantSeparation h q x Y < 0) :
+theorem exists_prime_neOne_fullSecantGap_GRH {h : ℝ} (hh : 0 < h) {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+    {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x Y : ℝ} (hx : 1 < x) (hY : 64 ≤ Y)
+    (hYx : Y ≤ x) (hgap : reciprocalGapFullSecantSeparation h q x Y < 0) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ x ∧ χ p ≠ 1 := by
   by_contra hn
   have ht : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ x → χ p = 1 := by
@@ -43,8 +42,8 @@ theorem exists_prime_not_one_of_reciprocalGap_full_secant {h : ℝ} (hh : 0 < h)
     reciprocalSum_re_eq_of_full_prime_trivial χ (by linarith only [hY] : 0 ≤ Y)
       (fun p hp hpy ↦ ht p hp (hpy.trans hYx))
   have hR :=
-    AnalyticNumberTheory.RiemannZeta.reciprocalWeightedMangoldtSum_ge_log_sub_31551_div_20000
-      hGRH.riemann (by linarith only [hY] : (2 : ℝ) ≤ Y)
+    AnalyticNumberTheory.RiemannZeta.reciprocalMangoldt_ge_log_sub_31551_20000 hGRH.riemann
+      (by linarith only [hY] : (2 : ℝ) ≤ Y)
   rw [← he] at hR
   have hm := reciprocalGap_mass_le_reciprocal_cap hq hGRH hp hne hinv hY hR
   have hU := reciprocalGapCharacterSum_re_le_endpoint_mass hh hq hGRH hp hne hinv hx.le hm
@@ -93,8 +92,8 @@ theorem reciprocalGapFullSecantSeparation_lt_old {h x Y : ℝ} (hh : 0 < h) (hx 
 selected N-coprime reciprocal support and secant analytic separation yield an N-coprime
 non-one prime at most x. Retain the exact common-factor and additional nonunit losses.
 No enumerated principal support or character-sum premise is needed. -/
-theorem exists_prime_coprime_not_one_of_reciprocalGap_endpoint_secant {h : ℝ} (hh : 0 < h) {q N : ℕ}
-    [NeZero q] (hq : 2 ≤ q) (hqN : q ∣ N) {χ : DirichletCharacter ℂ q}
+theorem exists_prime_neOne_endpointSecantGap_GRH {h : ℝ} (hh : 0 < h) {q N : ℕ} [NeZero q]
+    (hq : 2 ≤ q) (hqN : q ∣ N) {χ : DirichletCharacter ℂ q}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x Y : ℝ} (hx : 1 < x) (hY : 64 ≤ Y) (hYx : Y ≤ x) (C : Finset ℕ)
     (hC : C ⊆ Finset.Ioc 0 ⌊Y⌋₊) (hcopC : ∀ n ∈ C, Nat.Coprime n N)
@@ -124,8 +123,8 @@ theorem exists_prime_coprime_not_one_of_reciprocalGap_endpoint_secant {h : ℝ} 
 and the secant endpoint separation give an odd N-coprime prime with value minus one.
 Apply the non-one result, exclude zero and two, and classify quadratic values.
 This connects the variable-gap secant improvement to negative unit-prime witnesses. -/
-theorem exists_odd_prime_neg_one_of_reciprocalGap_endpoint_secant {h : ℝ} (hh : 0 < h) {q N : ℕ}
-    [NeZero q] (hq : 2 ≤ q) (hqN : q ∣ N) (hN2 : 2 ∣ N) {χ : DirichletCharacter ℂ q}
+theorem exists_oddPrime_negOne_secantGap_GRH {h : ℝ} (hh : 0 < h) {q N : ℕ} [NeZero q] (hq : 2 ≤ q)
+    (hqN : q ∣ N) (hN2 : 2 ∣ N) {χ : DirichletCharacter ℂ q}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hquad : χ.IsQuadratic) {x Y : ℝ} (hx : 1 < x) (hY : 64 ≤ Y) (hYx : Y ≤ x)
     (C : Finset ℕ) (hC : C ⊆ Finset.Ioc 0 ⌊Y⌋₊) (hcopC : ∀ n ∈ C, Nat.Coprime n N)
@@ -140,15 +139,14 @@ theorem exists_odd_prime_neg_one_of_reciprocalGap_endpoint_secant {h : ℝ} (hh 
     rw [hquad.inv]
     exact hne
   obtain ⟨p, hprime, hpx, hpc, hv⟩ :=
-    exists_prime_coprime_not_one_of_reciprocalGap_endpoint_secant hh hq hqN hGRH hp hne hi hx hY hYx
-      C hC hcopC hgap
+    exists_prime_neOne_endpointSecantGap_GRH hh hq hqN hGRH hp hne hi hx hY hYx C hC hcopC hgap
   have hne2 : p ≠ 2 := by
     intro he
     subst p
     exact (Nat.prime_two.coprime_iff_not_dvd.mp hpc) hN2
   exact
     ⟨p, hprime, hprime.odd_of_ne_two hne2, hpx, hpc,
-      AnalyticNumberTheory.Arithmetic.quadratic_character_apply_neg_one_of_coprime_ne_one χ hquad
+      AnalyticNumberTheory.Arithmetic.quadraticChar_eq_neg_one_of_coprime_ne_one χ hquad
         (hpc.of_dvd_right hqN) hv⟩
 
 end PseudoPrime.LLS.PaperStatements

@@ -154,8 +154,8 @@ theorem gamma_transported_actual_dual_cap {L x : ℝ} (hL : 0 ≤ L)
       Analysis.gamma_adaptive_euler_upper_sound (Finset.mem_filter.mp hp).2
         (Finset.mem_Icc.mp (Finset.mem_filter.mp hp).1).1
   exact
-    gamma_scale_signed_dual_budget_le_lowered_window_rows_base_ratio gammaTransportedOldCell
-      gammaTransportedRow hg.1 hL hg.2.1 hg.2.2.1 hlox hxhi hc he gamma_transported_rows_upper
+    gammaSignedDual_loweredRows_baseRatio gammaTransportedOldCell gammaTransportedRow hg.1 hL hg.2.1
+      hg.2.2.1 hlox hxhi hc he gamma_transported_rows_upper
 
 end PseudoPrime.LLS
 

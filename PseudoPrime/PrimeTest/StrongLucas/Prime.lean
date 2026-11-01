@@ -37,8 +37,6 @@ theorem strongLucasWithParams_of_prime {n : ℕ} (hn : n.Prime) (D P Q : ℤ)
     rw [lucasProbablePrimeIndex_of_jacobi_eq_neg_one hjacobi]
     exact lucasUZMod_prime_eq_zero n P Q hdiscZ
   rw [strongLucasWithParams_eq_true_iff n D P Q hdisc]
-  exact
-    isStrongLucasProbablePrime_of_lucasUZMod_index_zero (LucasParams.ofDiscriminant D P Q hdisc)
-      hzero
+  exact strongLucas_of_prime_U_index_zero (LucasParams.ofDiscriminant D P Q hdisc) hzero
 
 end PseudoPrime.PrimeTest

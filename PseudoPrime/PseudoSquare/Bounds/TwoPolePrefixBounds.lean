@@ -26,8 +26,8 @@ noncomputable def eulerPrefixTwoPoleNeOneRadius (L : ℝ) : ℝ :=
 with non-one Jacobi value lies below the common two-pole radius at B. Apply the
 character theorem with ambient level 4B, including small input conductors, and
 convert the value by quadratic reciprocity. No lower bound on log n is required. -/
-theorem exists_odd_prime_ne_one_le_eulerPrefixTwoPole_ambient {n B : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hnB : n ≤ B) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem exists_oddPrime_neOne_eulerPrefixAmbient_GRH {n B : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hnB : n ≤ B) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : 500 ≤ Real.log B) :
     ∃ p : ℕ,
       p.Prime ∧
@@ -39,8 +39,7 @@ theorem exists_odd_prime_ne_one_le_eulerPrefixTwoPole_ambient {n B : ℕ} (hn : 
     nlinarith only [(Nat.cast_nonneg B : (0 : ℝ) ≤ B)]
   have hLA : 500 ≤ Real.log (4 * B : ℕ) := hL.trans (Real.log_le_log (Nat.cast_pos.mpr hBpos) hBA)
   obtain ⟨p, hp, ho, hb, hv⟩ :=
-    LLS.exists_odd_prime_ne_one_le_twoPolePrincipalPrefix_even
-      (NumberTheory.complexQuadraticCharacter n hn)
+    LLS.exists_oddPrime_neOne_twoPoleEven_GRH (NumberTheory.complexQuadraticCharacter n hn)
       (NumberTheory.complexQuadraticCharacter_isQuadratic n hn)
       (NumberTheory.complexQuadraticCharacter_isEven n hn)
       (NumberTheory.complexQuadraticCharacter_ne_one_of_not_square n hn hns)
@@ -76,12 +75,11 @@ theorem exists_odd_prime_ne_one_le_eulerPrefixTwoPole_ambient {n B : ℕ} (hn : 
 /-- Under the same common-ambient assumptions, the least odd-prime non-one Jacobi
 witness for n is bounded by the two-pole radius at B. Apply leastness to the
 constructed prime. This is the input to the full finite-maximum theorem. -/
-theorem primeNeOneWitness_cast_le_eulerPrefixTwoPole_ambient {n B : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hnB : n ≤ B) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem neOneWitness_cast_le_eulerPrefixTwoPole_ambient {n B : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hnB : n ≤ B) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : 500 ≤ Real.log B) (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤ eulerPrefixTwoPoleNeOneRadius (Real.log B) := by
-  obtain ⟨p, hp, ho, hb, hv⟩ :=
-    exists_odd_prime_ne_one_le_eulerPrefixTwoPole_ambient hn hns hnB hGRH hL
+  obtain ⟨p, hp, ho, hb, hv⟩ := exists_oddPrime_neOne_eulerPrefixAmbient_GRH hn hns hnB hGRH hL
   exact (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hb
 
 /-- Under GRH with log B at least 500, QNeOne(B) is bounded by the affine two-pole
@@ -94,7 +92,7 @@ theorem QNeOne_le_eulerPrefixTwoPole {B : ℕ} (hL : 500 ≤ Real.log B)
   intro n hn
   have ha := NumberTheory.mem_admissibleFinset_iff.mp hn
   exact
-    primeNeOneWitness_cast_le_eulerPrefixTwoPole_ambient ha.odd ha.not_isSquare ha.le hGRH hL
+    neOneWitness_cast_le_eulerPrefixTwoPole_ambient ha.odd ha.not_isSquare ha.le hGRH hL
       (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
         (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare ha.odd ha.not_isSquare))
 
@@ -114,12 +112,12 @@ theorem eulerPrefixTwoPoleNeOneRadius_lt_log_square {L : ℝ} (hL : 500 ≤ L) :
 /-- For odd nonsquare n under GRH with log n at least 500, an odd prime non-one
 Jacobi witness lies below the affine two-pole radius at n. Specialize the common
 ambient endpoint to B=n. Character value zero remains an allowed witness. -/
-theorem exists_prime_ne_one_witness_le_eulerPrefixTwoPole {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+theorem exists_neOneWitness_le_eulerPrefixTwoPole {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 500 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         Odd p ∧ (p : ℝ) ≤ eulerPrefixTwoPoleNeOneRadius (Real.log n) ∧ jacobiSym n p ≠ 1 := by
-  exact exists_odd_prime_ne_one_le_eulerPrefixTwoPole_ambient hn hns le_rfl hGRH hL
+  exact exists_oddPrime_neOne_eulerPrefixAmbient_GRH hn hns le_rfl hGRH hL
 
 /-- Under the same pointwise assumptions, bound the least odd-prime non-one Jacobi
 witness by the affine two-pole radius. Specialize the common ambient leastness
@@ -128,7 +126,7 @@ theorem primeNeOneWitness_cast_le_eulerPrefixTwoPole {n : ℕ} (hn : Odd n) (hns
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 500 ≤ Real.log n)
     (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤ eulerPrefixTwoPoleNeOneRadius (Real.log n) := by
-  exact primeNeOneWitness_cast_le_eulerPrefixTwoPole_ambient hn hns le_rfl hGRH hL hw
+  exact neOneWitness_cast_le_eulerPrefixTwoPole_ambient hn hns le_rfl hGRH hL hw
 
 /-- For an odd nonsquare input n and a common ambient level A under GRH, the saved-gap
 criterion with its structural exclusion and local costs yields an odd negative Jacobi prime.
@@ -147,8 +145,7 @@ theorem exists_odd_prime_neg_one_of_twoPolePrefixGap {n A : ℕ} (hn : Odd n) (h
   let : NeZero (4 * n) := ⟨Nat.mul_ne_zero (by norm_num only) hn.pos.ne'⟩
   let χ := NumberTheory.complexQuadraticCharacter n hn
   have hc :=
-    AnalyticNumberTheory.DirichletLFunction.twoPoleGammaConstant_le_signed_of_even
-      χ.primitiveCharacter
+    AnalyticNumberTheory.DirichletLFunction.twoPoleGamma_le_112_25_of_even χ.primitiveCharacter
       ((NumberTheory.primitiveCharacter_even_iff χ).mpr
         (NumberTheory.complexQuadraticCharacter_isEven n hn))
   obtain ⟨p, hp, hd, hb, hv⟩ :=
@@ -156,7 +153,7 @@ theorem exists_odd_prime_neg_one_of_twoPolePrefixGap {n A : ℕ} (hn : Odd n) (h
       (NumberTheory.complexQuadraticCharacter_isQuadratic n hn)
       (NumberTheory.complexQuadraticCharacter_ne_one_of_not_square n hn hns) hA hGRH hx hc S hS hgap
   have hw :=
-    NumberTheory.primeNegOneWitness_mem_of_complexQuadraticCharacter_ne_one n hn hp hd
+    NumberTheory.negOneWitness_mem_of_quadratic_ne_one n hn hp hd
       (by
         rw [hv]; norm_num only)
   exact ⟨p, hp, hw.2.1, hb, hw.2.2⟩
@@ -204,8 +201,7 @@ theorem exists_odd_prime_neg_one_of_jointPrincipalGap {n A : ℕ} (hn : Odd n) (
   have hx0 : 0 < x := by linarith only [hx]
   have hs : 5 ≤ Real.sqrt x := by nlinarith only [Real.sq_sqrt hx0.le, Real.sqrt_nonneg x, hx]
   have hc :=
-    AnalyticNumberTheory.DirichletLFunction.twoPoleGammaConstant_le_signed_of_even
-      χ.primitiveCharacter
+    AnalyticNumberTheory.DirichletLFunction.twoPoleGamma_le_112_25_of_even χ.primitiveCharacter
       ((NumberTheory.primitiveCharacter_even_iff χ).mpr
         (NumberTheory.complexQuadraticCharacter_isEven n hn))
   have hY : ∀ k ∈ Finset.Ioc 0 ⌊(13 : ℝ)⌋₊, (k : ℝ) ≤ (99 / 40 : ℝ) * x := by
@@ -213,21 +209,20 @@ theorem exists_odd_prime_neg_one_of_jointPrincipalGap {n A : ℕ} (hn : Odd n) (
     norm_num only [Nat.floor_ofNat] at hk
     exact (Nat.cast_le.mpr (Finset.mem_Ioc.mp hk).2).trans hcut
   obtain ⟨p, hp, hd, hb, hv⟩ :=
-    LLS.exists_prime_neg_one_of_jointRampPrincipal_conductor_prefix χ
+    LLS.exists_prime_negOne_jointRampConductor_GRH χ
       (NumberTheory.complexQuadraticCharacter_isQuadratic n hn)
       (NumberTheory.complexQuadraticCharacter_ne_one_of_not_square n hn hns) hA hGRH
       (by linarith only [hx] : 2 ≤ x) (Y := 13) (by norm_num only) (a := 3 / 10) (d :=
       (1 / 5 : ℝ) * Real.log 2) (by norm_num only)
       (mul_nonneg (by norm_num only) (Real.log_natCast_nonneg 2)) (by linarith only [hs])
-      (fun p hp ↦
-        AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight_prime_upper_three_tenths hp)
-      hY hc (g := 1)
+      (fun p hp ↦ AnalyticNumberTheory.Arithmetic.pairedEulerWeight_prime_le_three_tenths hp) hY hc
+      (g := 1)
       (by
         norm_num only [Nat.floor_ofNat]; exact LLS.twoPoleEulerPrefixMass_thirteen_saving_one)
       (by
         norm_num only at hgap ⊢; exact hgap)
   have hw :=
-    NumberTheory.primeNegOneWitness_mem_of_complexQuadraticCharacter_ne_one n hn hp hd
+    NumberTheory.negOneWitness_mem_of_quadratic_ne_one n hn hp hd
       (by
         rw [hv]; norm_num only)
   exact ⟨p, hp, hw.2.1, hb, hw.2.2⟩

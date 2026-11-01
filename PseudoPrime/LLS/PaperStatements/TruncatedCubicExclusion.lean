@@ -61,7 +61,7 @@ theorem characterExclusionCost_truncated {f : ℕ} (χ : DirichletCharacter ℂ 
 prime at most X outside M with non-one character value. Extract outside the
 localized modulus and use the cutoff to recover avoidance of the full M.
 No contribution from excluded primes larger than X is charged. -/
-theorem exists_prime_outside_le_of_truncated_cubic_radius {f M : ℕ} [NeZero f]
+theorem exists_prime_outside_le_of_cubic_radius_GRH {f M : ℕ} [NeZero f]
     (χ : DirichletCharacter ℂ f) (hf : 2 ≤ f) (hM : M ≠ 0)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) {G E X : ℝ} (hlog : Real.log f ≤ G)
@@ -70,8 +70,8 @@ theorem exists_prime_outside_le_of_truncated_cubic_radius {f M : ℕ} [NeZero f]
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ X ∧ ¬p ∣ M ∧ χ p ≠ 1 := by
   have hc := (characterExclusionCost_truncated χ M X).trans_le hcost
   obtain ⟨p, hprime, hb, hd, hv⟩ :=
-    exists_prime_outside_le_tight_cubic_exclusion_radius χ hf
-      (truncatedExclusionModulus_ne_zero M X) hGRH hp hne hlog hc
+    exists_prime_neOne_tightCubic_GRH χ hf (truncatedExclusionModulus_ne_zero M X) hGRH hp hne hlog
+      hc
   have hbX := hb.trans hbound
   exact ⟨p, hprime, hbX, fun h ↦ hd (dvd_truncatedExclusionModulus hM hprime h hbX), hv⟩
 

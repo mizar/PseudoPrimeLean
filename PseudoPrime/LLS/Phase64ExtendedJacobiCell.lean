@@ -106,7 +106,7 @@ theorem exists_odd_prime_negative_phase64_fixed_cap
     norm_num only at hA hB ⊢
     exact hB.trans_le hA
   have hw :=
-    exists_odd_prime_negative_of_phase64_numerical_gap bridge hGRH hq hm
+    exists_oddPrime_negJacobi_phase64_numeric_GRH bridge hGRH hq hm
       (by norm_num only : (64 : ℝ) ≤ 64) (by norm_num only : (64 : ℝ) ≤ 64001 / 1000) hgap
   norm_num only at hw
   exact hw

@@ -21,7 +21,7 @@ instead of a two-stage `Real.log` Taylor expansion on the exact (often hundreds-
 anchor value, each certificate only needs a `norm_num`-checkable power-of-two lower bound
 `2 ^ e <= PseudoPrime.AnalyticNumberTheory.Arithmetic.elementaryAnchor m` (reusing
 the cumulative primorial values from `PseudoPrime.NumberTheory.PrimorialCertificates` via
-`PseudoPrime.AnalyticNumberTheory.Arithmetic.primePrimorialCount_succ_eq_two_mul_oddPrimorial`)
+`PseudoPrime.AnalyticNumberTheory.Arithmetic.primorialCount_succ_eq_two_mul_odd`)
 and a purely rational cross-multiplied inequality in `e`, `k`, and `m`.
 Fixed rational denominators are cleared once by
 `PseudoPrime.AnalyticNumberTheory.Arithmetic.certificate_rational_of_nat`;
@@ -41,17 +41,14 @@ namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 private theorem certificate_rational_of_nat {m e k : ℕ}
     (h : (m + 1) * (3470 * k * 2 ^ k + 3470 * e) ≤ 4851 * e * 2 ^ k + 5000 * (m + 1) * 2 ^ k) :
     ((m + 1 : ℕ) : ℝ) *
-        ((k : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoUpper +
-            (e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoUpper / 2 ^ k -
-          1) ≤
-      elementaryOmegaConstant * ((e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoLower) := by
+        ((k : ℝ) * elementaryOmegaLogTwoUpper + (e : ℝ) * elementaryOmegaLogTwoUpper / 2 ^ k - 1) ≤
+      elementaryOmegaConstant * ((e : ℝ) * elementaryOmegaLogTwoLower) := by
   have hR :
     ((m : ℝ) + 1) * (3470 * k * (2 : ℝ) ^ k + 3470 * e) ≤
       4851 * e * (2 : ℝ) ^ k + 5000 * (m + 1) * (2 : ℝ) ^ k := by
     exact_mod_cast h
-  norm_num only [ElementaryOmegaPowTwoBridgeInternal.logTwoUpper,
-    ElementaryOmegaPowTwoBridgeInternal.logTwoLower, elementaryOmegaConstant, Nat.cast_add,
-    Nat.cast_one]
+  norm_num only [elementaryOmegaLogTwoUpper, elementaryOmegaLogTwoLower, elementaryOmegaConstant,
+    Nat.cast_add, Nat.cast_one]
   apply (mul_le_mul_iff_right₀ (show (0 : ℝ) < 2 ^ k by positivity)).mp
   have hp : (2 : ℝ) ^ k ≠ 0 := by positivity
   field_simp [hp]
@@ -1679,6 +1676,6 @@ The anchor certificates settle factor counts below `163`; the independent
 calculus tail theorem supplies all larger counts, so no certificate hypothesis remains. -/
 theorem elementaryOmegaStatement : ElementaryOmegaStatement :=
   elementaryOmegaStatement_of_finite
-    (elementaryOmegaFiniteStatement_of_certificates elementaryOmegaFiniteCertificates)
+    (elementaryOmegaFinite_of_certificates elementaryOmegaFiniteCertificates)
 
 end PseudoPrime.AnalyticNumberTheory.Arithmetic

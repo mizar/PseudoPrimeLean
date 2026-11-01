@@ -26,10 +26,9 @@ characters belongs to the annihilator of the actual common-sign subgroup when
 the exponent is an odd multiple of both local half exponents. Evaluate the
 characters on unit representatives and apply the paired Legendre identity.
 This constructs the annihilator members used in the three-prime branch. -/
-theorem paired_quadraticCharacter_mem_signSubgroup_annihilator {n p q E kp kq : ℕ} [NeZero n]
-    [Fact p.Prime] [Fact q.Prime] [Fact (2 < p)] [Fact (2 < q)] (hpOdd : Odd p) (hqOdd : Odd q)
-    (hpn : p ∣ n) (hqn : q ∣ n) (hkp : Odd kp) (hkq : Odd kq) (hEp : E = (p / 2) * kp)
-    (hEq : E = (q / 2) * kq) :
+theorem pairedQuadratic_sign_annihilator {n p q E kp kq : ℕ} [NeZero n] [Fact p.Prime]
+    [Fact q.Prime] [Fact (2 < p)] [Fact (2 < q)] (hpOdd : Odd p) (hqOdd : Odd q) (hpn : p ∣ n)
+    (hqn : q ∣ n) (hkp : Odd kp) (hkq : Odd kq) (hEp : E = (p / 2) * kp) (hEq : E = (q / 2) * kq) :
     (NumberTheory.complexJacobiNumeratorCharacter p hpOdd).changeLevel hpn *
         (NumberTheory.complexJacobiNumeratorCharacter q hqOdd).changeLevel hqn ∈
       NumberTheory.subgroupAnnihilator (signSubgroup n E) := by
@@ -85,10 +84,7 @@ theorem exists_paired_sign_annihilator_with_conductor {n p q E kp kq : ℕ} [NeZ
     (hqn : q ∣ n) (hkp : Odd kp) (hkq : Odd kq) (hEp : E = (p / 2) * kp) (hEq : E = (q / 2) * kq)
     (hpq : p ≠ q) :
     ∃ a : NumberTheory.subgroupAnnihilator (signSubgroup n E), a.val.conductor = p * q := by
-  refine
-    ⟨⟨_,
-        paired_quadraticCharacter_mem_signSubgroup_annihilator hpOdd hqOdd hpn hqn hkp hkq hEp hEq⟩,
-      ?_⟩
+  refine ⟨⟨_, pairedQuadratic_sign_annihilator hpOdd hqOdd hpn hqn hkp hkq hEp hEq⟩, ?_⟩
   exact paired_quadraticCharacter_conductor hpOdd hqOdd hpn hqn hpq
 
 end PseudoPrime.PrimeTest

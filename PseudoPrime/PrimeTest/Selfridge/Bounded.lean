@@ -69,7 +69,7 @@ The premise is an explicit successful result `some D`; conclude `(1 - D) % 4 = 0
 The search specification identifies a classical candidate, whose sign rule gives the congruence.
 This constructs the proof field required by Method A and Method A* parameter selection.
 -/
-theorem selfridgeClassicalSearchWithinTwoMul_some_methodA_mod {n : ℕ} {D : ℤ}
+theorem classicalTwoMul_methodA_mod {n : ℕ} {D : ℤ}
     (hsearch : selfridgeClassicalSearchWithinTwoMul n = some D) : (1 - D) % 4 = 0 := by
   obtain ⟨k, _, _, hD⟩ := selfridgeClassicalSearchAscending_some_index hsearch
   rw [← hD]
@@ -81,9 +81,9 @@ From `some D`, conclude `(1 - D) % 4 = 0` by the Method A admissibility theorem.
 The congruence is shared by both parameter rules; only their `D = 5` recurrence pair differs.
 This alias exposes the search-to-Method-A* contract without an extra mathematical hypothesis.
 -/
-theorem selfridgeClassicalSearchWithinTwoMul_some_methodAStar_mod {n : ℕ} {D : ℤ}
+theorem classicalTwoMul_methodAStar_mod {n : ℕ} {D : ℤ}
     (hsearch : selfridgeClassicalSearchWithinTwoMul n = some D) : (1 - D) % 4 = 0 := by
-  exact selfridgeClassicalSearchWithinTwoMul_some_methodA_mod hsearch
+  exact classicalTwoMul_methodA_mod hsearch
 
 /--
 A successful bounded discriminant search determines the exact Method A* parameter record.
@@ -92,13 +92,11 @@ Given `selfridgeClassicalSearchWithinTwoMul n = some D`, the parameter search re
 Apply the general ascending-search parameter bridge at the fixed fuel. This lets prime-pass
 proofs recover the full parameter invariant from the simpler discriminant search result.
 -/
-theorem selfridgeClassicalMethodAStarParamsWithinTwoMul_of_search {n : ℕ} {D : ℤ}
+theorem classicalAStarTwoMul_of_search {n : ℕ} {D : ℤ}
     (hsearch : selfridgeClassicalSearchWithinTwoMul n = some D) :
     selfridgeClassicalMethodAStarParamsWithinTwoMul n =
-      some
-        (LucasParams.methodAStar D
-          (selfridgeClassicalSearchWithinTwoMul_some_methodA_mod hsearch)) := by
-  exact selfridgeClassicalMethodAStarParamsAscending_of_search hsearch
+      some (LucasParams.methodAStar D (classicalTwoMul_methodA_mod hsearch)) := by
+  exact classicalAStarAscending_of_search hsearch
 
 /--
 The Method A* record formed from a successful bounded search retains `|D| < 2 * n`.
@@ -106,7 +104,7 @@ Assume `n ≥ 3`, search success, and any admissibility proof for the returned `
 Both constructor branches preserve the discriminant, so rewrite that projection and apply
 the successful-search bound. This carries elementary magnitude estimates through parameterization.
 -/
-theorem selfridgeClassicalMethodAStarParamsWithinTwoMul_some_bound {n : ℕ} (hn : 3 ≤ n) {D : ℤ}
+theorem classicalAStarTwoMul_bound {n : ℕ} (hn : 3 ≤ n) {D : ℤ}
     (hsearch : selfridgeClassicalSearchWithinTwoMul n = some D) (hmod : (1 - D) % 4 = 0) :
     (LucasParams.methodAStar D hmod).D.natAbs < 2 * n := by
   have hparamD : (LucasParams.methodAStar D hmod).D = D := by

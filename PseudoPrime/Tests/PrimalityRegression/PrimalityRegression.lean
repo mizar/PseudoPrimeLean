@@ -175,7 +175,7 @@ theorem aprcl_fixed_array_rootExponent_spec_regression :
 
 /-- A `none` result for the zero coefficient array excludes every reduced root monomial
 in the bounded prime-power exponent range. -/
-theorem aprcl_fixed_array_rootExponent_none_spec_regression :
+theorem aprcl_array_no_rootExponent :
     ∀ e,
       e < PrimeTest.APRCL.primePowerIndex 3 0 →
         PrimeTest.APRCL.cyclotomicFixedArrayMonomialReduce 5 (p := 3) (k := 0) (by decide) e ≠

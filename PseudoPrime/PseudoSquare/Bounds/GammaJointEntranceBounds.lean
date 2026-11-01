@@ -19,7 +19,7 @@ namespace PseudoPrime.PseudoSquare
 /-- Under GRH, L>=255 and log n<=L for odd nonsquare n, the least negative
 odd-prime witness is at most (9999/10000)L^2. Below 260 use the transported
 joint margin; above 260 apply the existing half-line theorem. -/
-theorem primeNegOneWitness_cast_le_joint_entrance_endpoint {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+theorem negOneWitness_cast_le_joint_entrance_endpoint {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L : ℝ} (hL : 255 ≤ L)
     (hlog : Real.log n ≤ L) (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ (9999 / 10000 : ℝ) * L ^ 2 := by
@@ -30,33 +30,30 @@ theorem primeNegOneWitness_cast_le_joint_entrance_endpoint {n : ℕ} (hn : Odd n
     obtain ⟨hlo, hhi, hx, hb, hlow, hupp⟩ := LLS.gamma_joint_entrance_profile_inputs hL hU
     have hs := LLS.gamma_joint_entrance_separation hGRH.riemann hL hU
     have h :=
-      primeNegOneWitness_cast_le_of_joint_factor_free_separation hn hns hGRH (by linarith only [hL])
-        hlog hx (by norm_num only : (1 : ℝ) ≤ 50000) hb hs.le hw
+      negOneWitness_le_of_jointFactorFree_gap hn hns hGRH (by linarith only [hL]) hlog hx
+        (by norm_num only : (1 : ℝ) ≤ 50000) hb hs.le hw
     nlinarith only [h]
 
 /-- For odd nonsquare n with log n>=255 under GRH, an odd negative Jacobi prime
 exists through (9999/10000)(log n)^2. Extract the least witness from the
 common-endpoint bound. This proves the improved entrance for all larger inputs. -/
-theorem exists_prime_neg_one_witness_le_joint_entrance_log_255 {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 255 ≤ Real.log n) :
+theorem exists_negOneWitness_le_joint_entrance_log_255 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 255 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (9999 / 10000 : ℝ) * (Real.log n) ^ 2 ∧ jacobiSym n p = -1 := by
   let hw := NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns
   have hm := NumberTheory.primeNegOneWitness_mem n hw
   exact
     ⟨NumberTheory.primeNegOneWitness n hw, hm.1, hm.2.1,
-      primeNegOneWitness_cast_le_joint_entrance_endpoint hn hns hGRH hL (le_refl _) hw, hm.2.2⟩
+      negOneWitness_cast_le_joint_entrance_endpoint hn hns hGRH hL (le_refl _) hw, hm.2.2⟩
 
 /-- Under the same input and GRH hypotheses, an odd non-one Jacobi prime obeys
 the log-255 bound. Its constructed value is minus one, so zero is not needed. -/
-theorem exists_prime_ne_one_witness_le_joint_entrance_log_255 {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 255 ≤ Real.log n) :
+theorem exists_neOneWitness_le_joint_entrance_log_255 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 255 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (9999 / 10000 : ℝ) * (Real.log n) ^ 2 ∧ jacobiSym n p ≠ 1 := by
-  obtain ⟨p, hp, ho, hb, hv⟩ :=
-    exists_prime_neg_one_witness_le_joint_entrance_log_255 hn hns hGRH hL
+  obtain ⟨p, hp, ho, hb, hv⟩ := exists_negOneWitness_le_joint_entrance_log_255 hn hns hGRH hL
   refine ⟨p, hp, ho, hb, ?_⟩
   rw [hv]
   norm_num only
@@ -69,7 +66,7 @@ theorem primeNeOneWitness_bound_joint_entrance_log_255 {n : ℕ} (hn : Odd n) (h
     (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤ (9999 / 10000 : ℝ) * (Real.log n) ^ 2 ∧
       (NumberTheory.primeNeOneWitness n hw : ℝ) < (Real.log n) ^ 2 := by
-  obtain ⟨p, hp, ho, hb, hv⟩ := exists_prime_ne_one_witness_le_joint_entrance_log_255 hn hns hGRH hL
+  obtain ⟨p, hp, ho, hb, hv⟩ := exists_neOneWitness_le_joint_entrance_log_255 hn hns hGRH hL
   have h := (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hb
   have hs := sq_pos_of_pos (show 0 < Real.log n by linarith only [hL])
   exact ⟨h, by nlinarith only [h, hs]⟩
@@ -88,7 +85,7 @@ theorem QNegOne_bound_joint_entrance_log_255 {B : ℕ}
     intro n hn
     have ha := NumberTheory.mem_admissibleFinset_iff.mp hn
     exact
-      primeNegOneWitness_cast_le_joint_entrance_endpoint ha.odd ha.not_isSquare hGRH hL
+      negOneWitness_cast_le_joint_entrance_endpoint ha.odd ha.not_isSquare hGRH hL
         (Real.log_le_log (Nat.cast_pos.mpr ha.odd.pos) (Nat.cast_le.mpr ha.le))
         (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare ha.odd ha.not_isSquare)
   have hs := sq_pos_of_pos (show 0 < Real.log B by linarith only [hL])

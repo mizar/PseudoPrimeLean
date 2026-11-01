@@ -66,9 +66,8 @@ theorem exists_prime_not_one_le_log_sq_from_five {q : ℕ} [NeZero q] (χ : Diri
 Claim: a prime at most `(log q)^2` lies outside the subgroup image.
 Proof: pull back a nonprincipal quotient character and apply the entrance from five.
 Role: expose the subgroup consequence without a small-prime-exclusion premise. -/
-theorem exists_prime_outside_subgroup_image_le_log_sq_from_five {q : ℕ} [NeZero q] (hq : 5 ≤ q)
-    (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
+theorem exists_prime_outside_logSq_five_GRH {q : ℕ} [NeZero q] (hq : 5 ≤ q) (H : Subgroup (ZMod q)ˣ)
+    (hH : H ≠ ⊤) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (Real.log q) ^ 2 ∧ ¬∃ u : (ZMod q)ˣ, u ∈ H ∧ (u : ZMod q) = (p : ZMod q) := by

@@ -19,7 +19,7 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 majorant is at most `(10+5 log 2) x^sigma (log(x)+1)^2`. Dominate the square-root
 term by `x^sigma` and each logarithmic factor by the common square. This reduces
 the low and intermediate strips to one power-log expression. -/
-theorem regularizedLowHeightMajorant_le_power_log_square {x σ : ℝ} (hx : 2 ≤ x) (hσ : 1 / 2 ≤ σ) :
+theorem lowMajorant_le_power_log_sq {x σ : ℝ} (hx : 2 ≤ x) (hσ : 1 / 2 ≤ σ) :
     regularizedLowHeightMajorant x σ ≤ (10 + 5 * Real.log 2) * x ^ σ * (Real.log x + 1) ^ 2 := by
   let L := Real.log x + 1
   have hlog : 0 ≤ Real.log x := Real.log_nonneg (by linarith only [hx])

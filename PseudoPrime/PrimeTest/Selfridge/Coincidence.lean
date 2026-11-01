@@ -65,7 +65,7 @@ Assume the pure-minus-one set is nonempty. Its least element belongs to the broa
 inclusion, so broader leastness gives the inequality. No primality hypothesis is needed;
 factor detection may make the inequality strict on composite inputs.
 -/
-theorem firstStopNeOne_le_firstStopNegOne_same_candidates {C : ℕ → Prop} {n : ℕ} (hn : 1 < n)
+theorem firstStopNeOne_le_negOne {C : ℕ → Prop} {n : ℕ} (hn : 1 < n)
     (hneg : (FirstStopNegOneSet C n).Nonempty) :
     firstStopNeOne C n (firstStopNeOneSet_nonempty_of_negOne hn hneg) ≤
       firstStopNegOne C n hneg := by

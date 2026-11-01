@@ -21,7 +21,7 @@ Claim: the actual Gamma arithmetic sum is bounded by the signed prefix budget an
 Proof: transfer rounded endpoints, interpolate using the logarithmic moment, and apply
 the global phase bound to the explicit formula.
 Role: replace an infinite spectral premise by finitely many endpoint and cover obligations. -/
-theorem gamma_primitive_sum_re_le_phase64_of_rounded_cover {ι : Type*} {q m : ℕ} [NeZero m]
+theorem gammaPrimitiveSum_re_le_phase64_of_rounded_cover {ι : Type*} {q m : ℕ} [NeZero m]
     (hq : 20000 ≤ q) (hm : 3 ≤ m) (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 2 ≤ x) (hlog : |Real.log x| ≤ 8) (B : Finset ℕ)

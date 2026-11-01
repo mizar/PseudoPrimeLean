@@ -99,8 +99,7 @@ theorem gaussian_star_small_index_classification {n : ℕ} [NeZero n] (hnOdd : O
         (∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1) ∧
         (∀ p q : ℕ,
           p.Prime → q.Prime → p ∣ n → q ∣ n → padicValNat 2 (p - 1) = padicValNat 2 (q - 1))) := by
-  rcases coefficient_0283_witness_or_uniform_korselt_triple hnOdd hcomp H hH hi hGRH hn with
-    hlocal | htriple
+  rcases witness_0282924_or_uniformKorselt_GRH hnOdd hcomp H hH hi hGRH hn with hlocal | htriple
   · obtain ⟨r, hr, hbound, hfail⟩ := hlocal
     have hcoef := gaussianStarBound_gt_triangular_coefficient hL
     exact Or.inl ⟨r, hr, hbound.trans (le_of_lt hcoef), hfail⟩
@@ -108,9 +107,8 @@ theorem gaussian_star_small_index_classification {n : ℕ} [NeZero n] (hnOdd : O
 
 /-- The squarefree uniform Korselt triple remaining after finite-index
 classification has a prime witness below the classified Gaussian star bound. -/
-theorem exists_prime_witness_le_gaussian_star_of_uniform_korselt_triple_card {n : ℕ} (hnOdd : Odd n)
-    (hsf : Squarefree n) (hc : n.primeFactors.card = 3)
-    (hK : ∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1)
+theorem exists_prime_gaussianStar_korseltCard_GRH {n : ℕ} (hnOdd : Odd n) (hsf : Squarefree n)
+    (hc : n.primeFactors.card = 3) (hK : ∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1)
     (hU :
       ∀ p q : ℕ, p.Prime → q.Prime → p ∣ n → q ∣ n → padicValNat 2 (p - 1) = padicValNat 2 (q - 1))
     (hnlarge : 20000 ≤ n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
@@ -136,7 +134,7 @@ theorem exists_prime_witness_le_gaussian_star_of_uniform_korselt_triple_card {n 
     simpa only [Finset.prod_insert, Finset.prod_singleton, Finset.mem_insert, Finset.mem_singleton,
       hpq, hpr, hqr, or_self, not_false_eq_true, mul_assoc] using hprod
   exact
-    exists_prime_witness_le_gaussian_star_of_three_prime_korselt hp hq hr
+    exists_prime_gaussianStar_threeKorselt_GRH hp hq hr
       (hp.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hpn))
       (hq.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hqn))
       (hr.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hrn)) hpq hpr hqr hnprod (hK p hp hpn)
@@ -144,9 +142,8 @@ theorem exists_prime_witness_le_gaussian_star_of_uniform_korselt_triple_card {n 
 
 /-- The residual squarefree uniform Korselt triple from finite-index
 classification has a witness below the Gamma index-100 cutoff from `L ≥ 330`. -/
-theorem exists_prime_witness_le_gammaIndex100_of_uniform_korselt_triple_card {n : ℕ} (hnOdd : Odd n)
-    (hsf : Squarefree n) (hc : n.primeFactors.card = 3)
-    (hK : ∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1)
+theorem exists_prime_gamma100_korseltCard_GRH {n : ℕ} (hnOdd : Odd n) (hsf : Squarefree n)
+    (hc : n.primeFactors.card = 3) (hK : ∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1)
     (hU :
       ∀ p q : ℕ, p.Prime → q.Prime → p ∣ n → q ∣ n → padicValNat 2 (p - 1) = padicValNat 2 (q - 1))
     (hnlarge : 20000 ≤ n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
@@ -172,17 +169,15 @@ theorem exists_prime_witness_le_gammaIndex100_of_uniform_korselt_triple_card {n 
     simpa only [Finset.prod_insert, Finset.prod_singleton, Finset.mem_insert, Finset.mem_singleton,
       hpq, hpr, hqr, or_self, not_false_eq_true, mul_assoc] using hprod
   exact
-    exists_prime_witness_le_gammaIndex100_of_three_prime_korselt hp hq hr
-      (hp.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hpn))
+    exists_prime_gamma100_threeKorselt_GRH hp hq hr (hp.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hpn))
       (hq.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hqn))
       (hr.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hrn)) hpq hpr hqr hnprod (hK p hp hpn)
       (hK q hq hqn) (hK r hr hrn) (hU p q hp hq hpn hqn) (hU p r hp hr hpn hrn) hnlarge hGRH hL
 
 /-- The residual-29 Gaussian estimate closes the uniform three-prime
 Korselt branch below `U₁₀₀` from logarithmic scale 240. -/
-theorem exists_prime_witness_le_gammaIndex100PrefixUpper_of_uniform_korselt_triple_card {n : ℕ}
-    (hnOdd : Odd n) (hsf : Squarefree n) (hc : n.primeFactors.card = 3)
-    (hK : ∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1)
+theorem exists_prime_gamma100Prefix_korseltCard_GRH {n : ℕ} (hnOdd : Odd n) (hsf : Squarefree n)
+    (hc : n.primeFactors.card = 3) (hK : ∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1)
     (hU :
       ∀ p q : ℕ, p.Prime → q.Prime → p ∣ n → q ∣ n → padicValNat 2 (p - 1) = padicValNat 2 (q - 1))
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 240 ≤ Real.log n) :
@@ -219,9 +214,8 @@ theorem exists_prime_witness_le_gammaIndex100PrefixUpper_of_uniform_korselt_trip
       (hr.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hrn)) hpq hpr hqr hnprod (hK p hp hpn)
       (hK q hq hqn) (hK r hr hrn) (hU p q hp hq hpn hqn) (hU p r hp hr hpn hrn)
   obtain ⟨s, hs, hbound, hfail⟩ :=
-    exists_prime_witness_le_gammaIndex100GaussianTripleBound29_of_index_four_conductor hnOdd H hi
-      hpass hGRH hC.le (by linarith only [hL])
-  exact ⟨s, hs, hbound.trans (gammaIndex100GaussianTripleBound29_le_prefix_upper hL), hfail⟩
+    exists_prime_gaussianTriple29_indexFour_GRH hnOdd H hi hpass hGRH hC.le (by linarith only [hL])
+  exact ⟨s, hs, hbound.trans (gamma100GaussianTriple29_le_prefix_upper hL), hfail⟩
 
 /-- Under GRH, every odd composite with `log n ≥ 240` has a prime
 Miller--Rabin witness bounded by the two-prefix `U₁₀₀` envelope. -/
@@ -231,23 +225,17 @@ theorem exists_prime_witness_le_gammaIndex100PrefixUpper {n : ℕ} (hnOdd : Odd 
       p.Prime ∧
         (p : ℝ) ≤ gammaIndex100PrefixUpper (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
-  rcases
-    exists_prime_witness_le_gammaIndex100PrefixUpper_or_uniform_korselt_triple hnOdd hcomp hGRH
-      hL with
-    hWitness | hTriple
+  rcases gamma100Prefix_witness_or_Korselt_GRH hnOdd hcomp hGRH hL with hWitness | hTriple
   · exact hWitness
   · obtain ⟨hsf, hc, hK, hU⟩ := hTriple
-    exact
-      exists_prime_witness_le_gammaIndex100PrefixUpper_of_uniform_korselt_triple_card hnOdd hsf hc
-        hK hU hGRH hL
+    exact exists_prime_gamma100Prefix_korseltCard_GRH hnOdd hsf hc hK hU hGRH hL
 
 /-- Complete the finite Fermat-index branch at scale `600`: the local
 coefficient witness lies below the classified Gaussian bound, and the only
 remaining uniform Korselt triple uses its index-four Gaussian witness. -/
-theorem exists_prime_witness_le_gaussian_star_of_small_fermat_index {n : ℕ} [NeZero n]
-    (hnOdd : Odd n) (hcomp : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hn : 10 ^ 142 ≤ n)
-    (hi : (PrimeTest.fermatSubgroup n).index ≤ 10 ^ 9) (hL : 600 ≤ Real.log n) :
+theorem exists_prime_gaussianStar_smallFermat_GRH {n : ℕ} [NeZero n] (hnOdd : Odd n)
+    (hcomp : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hn : 10 ^ 142 ≤ n) (hi : (PrimeTest.fermatSubgroup n).index ≤ 10 ^ 9) (hL : 600 ≤ Real.log n) :
     ∃ s : ℕ,
       s.Prime ∧
         (s : ℝ) ≤ gaussianStarBound (Real.log n) ∧
@@ -262,15 +250,12 @@ theorem exists_prime_witness_le_gaussian_star_of_small_fermat_index {n : ℕ} [N
     have hnlarge : 20000 ≤ n := by
       have h20000 : 20000 ≤ 10 ^ 142 := by norm_num only
       exact h20000.trans hn
-    exact
-      exists_prime_witness_le_gaussian_star_of_uniform_korselt_triple_card hnOdd hsf hc hK hU
-        hnlarge hGRH hL
+    exact exists_prime_gaussianStar_korseltCard_GRH hnOdd hsf hc hK hU hnlarge hGRH hL
 
 /-- The uniform squarefree Korselt triple remaining after the finite-index
 classification has a witness below the 6/5 Gaussian bound. -/
-theorem exists_prime_witness_le_gaussian6fifths_of_uniform_korselt_triple_card {n : ℕ}
-    (hnOdd : Odd n) (hsf : Squarefree n) (hc : n.primeFactors.card = 3)
-    (hK : ∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1)
+theorem gaussian6_5_primeWitness_korselt_card_GRH {n : ℕ} (hnOdd : Odd n) (hsf : Squarefree n)
+    (hc : n.primeFactors.card = 3) (hK : ∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1)
     (hU :
       ∀ p q : ℕ, p.Prime → q.Prime → p ∣ n → q ∣ n → padicValNat 2 (p - 1) = padicValNat 2 (q - 1))
     (hnlarge : 20000 ≤ n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
@@ -296,7 +281,7 @@ theorem exists_prime_witness_le_gaussian6fifths_of_uniform_korselt_triple_card {
     simpa only [Finset.prod_insert, Finset.prod_singleton, Finset.mem_insert, Finset.mem_singleton,
       hpq, hpr, hqr, or_self, not_false_eq_true, mul_assoc] using hprod
   exact
-    exists_prime_witness_le_gaussian6fifths_of_three_prime_korselt hp hq hr
+    gaussian6_5_primeWitness_threeKorselt_GRH hp hq hr
       (hp.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hpn))
       (hq.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hqn))
       (hr.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hrn)) hpq hpr hqr hnprod (hK p hp hpn)
@@ -304,9 +289,8 @@ theorem exists_prime_witness_le_gaussian6fifths_of_uniform_korselt_triple_card {
 
 /-- A squarefree uniform Korselt triple has a witness below the
 prefix-improved constant-18 Gaussian bound from logarithmic scale 300. -/
-theorem exists_prime_witness_le_gaussianMR18_of_uniform_korselt_triple_card {n : ℕ} (hnOdd : Odd n)
-    (hsf : Squarefree n) (hc : n.primeFactors.card = 3)
-    (hK : ∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1)
+theorem exists_prime_gaussian18_korseltCard_GRH {n : ℕ} (hnOdd : Odd n) (hsf : Squarefree n)
+    (hc : n.primeFactors.card = 3) (hK : ∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1)
     (hU :
       ∀ p q : ℕ, p.Prime → q.Prime → p ∣ n → q ∣ n → padicValNat 2 (p - 1) = padicValNat 2 (q - 1))
     (hnlarge : 20000 ≤ n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
@@ -332,7 +316,7 @@ theorem exists_prime_witness_le_gaussianMR18_of_uniform_korselt_triple_card {n :
     simpa only [Finset.prod_insert, Finset.prod_singleton, Finset.mem_insert, Finset.mem_singleton,
       hpq, hpr, hqr, or_self, not_false_eq_true, mul_assoc] using hprod
   exact
-    exists_prime_witness_le_gaussianMR18_of_three_prime_korselt hp hq hr
+    exists_prime_gaussian18_threeKorselt_GRH hp hq hr
       (hp.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hpn))
       (hq.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hqn))
       (hr.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hrn)) hpq hpr hqr hnprod (hK p hp hpn)
@@ -340,9 +324,8 @@ theorem exists_prime_witness_le_gaussianMR18_of_uniform_korselt_triple_card {n :
 
 /-- The residual uniform three-prime Korselt case has a witness below the
 constant-6 Gaussian bound from logarithmic scale 300. -/
-theorem exists_prime_witness_le_gaussianMR6_of_uniform_korselt_triple_card {n : ℕ} (hnOdd : Odd n)
-    (hsf : Squarefree n) (hc : n.primeFactors.card = 3)
-    (hK : ∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1)
+theorem exists_prime_gaussian6_korseltCard_GRH {n : ℕ} (hnOdd : Odd n) (hsf : Squarefree n)
+    (hc : n.primeFactors.card = 3) (hK : ∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1)
     (hU :
       ∀ p q : ℕ, p.Prime → q.Prime → p ∣ n → q ∣ n → padicValNat 2 (p - 1) = padicValNat 2 (q - 1))
     (hnlarge : 20000 ≤ n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
@@ -368,7 +351,7 @@ theorem exists_prime_witness_le_gaussianMR6_of_uniform_korselt_triple_card {n : 
     simpa only [Finset.prod_insert, Finset.prod_singleton, Finset.mem_insert, Finset.mem_singleton,
       hpq, hpr, hqr, or_self, not_false_eq_true, mul_assoc] using hprod
   exact
-    exists_prime_witness_le_gaussianMR6_of_three_prime_korselt hp hq hr
+    exists_prime_gaussian6_threeKorselt_GRH hp hq hr
       (hp.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hpn))
       (hq.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hqn))
       (hr.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hrn)) hpq hpr hqr hnprod (hK p hp hpn)
@@ -376,17 +359,16 @@ theorem exists_prime_witness_le_gaussianMR6_of_uniform_korselt_triple_card {n : 
 
 /-- Complete the finite Fermat-index branch at scale 300 using the local
 `0.3 L²` bound and the prefix-improved Gaussian bound for the triple remainder. -/
-theorem exists_prime_witness_le_gaussianMR18_of_small_fermat_index {n : ℕ} [NeZero n]
-    (hnOdd : Odd n) (hcomp : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem exists_prime_gaussian18_smallFermat_GRH {n : ℕ} [NeZero n] (hnOdd : Odd n)
+    (hcomp : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hi : (PrimeTest.fermatSubgroup n).index ≤ 10 ^ 9) (hL : 300 ≤ Real.log n) :
     ∃ s : ℕ,
       s.Prime ∧
         (s : ℝ) ≤ gaussian18Bound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   rcases
-    finite_index_witness_or_uniform_korselt_triple_log250 hnOdd hcomp (PrimeTest.fermatSubgroup n)
-      le_rfl hi hGRH (by linarith only [hL]) with
+    witness_or_uniformKorselt_log250_GRH hnOdd hcomp (PrimeTest.fermatSubgroup n) le_rfl hi hGRH
+      (by linarith only [hL]) with
     hlocal | htriple
   · obtain ⟨s, hs, hbound, hfail⟩ := hlocal
     have hbound' := gaussian18Bound_gt_local_three_tenths hL
@@ -396,22 +378,20 @@ theorem exists_prime_witness_le_gaussianMR18_of_small_fermat_index {n : ℕ} [Ne
     have hnlarge : 20000 ≤ n := by
       have h20000 : 20000 ≤ 10 ^ 27 := by norm_num only
       exact h20000.trans hN27
-    exact
-      exists_prime_witness_le_gaussianMR18_of_uniform_korselt_triple_card hnOdd hsf hc hK hU hnlarge
-        hGRH hL
+    exact exists_prime_gaussian18_korseltCard_GRH hnOdd hsf hc hK hU hnlarge hGRH hL
 
 /-- Complete the finite Fermat-index branch at scale 300 for the constant-6
 Gaussian bound. -/
-theorem exists_prime_witness_le_gaussianMR6_of_small_fermat_index {n : ℕ} [NeZero n] (hnOdd : Odd n)
-    (hcomp : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem exists_prime_gaussian6_smallFermat_GRH {n : ℕ} [NeZero n] (hnOdd : Odd n) (hcomp : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hi : (PrimeTest.fermatSubgroup n).index ≤ 10 ^ 9) (hL : 300 ≤ Real.log n) :
     ∃ s : ℕ,
       s.Prime ∧
         (s : ℝ) ≤ gaussian6Bound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   rcases
-    finite_index_witness_or_uniform_korselt_triple_log250 hnOdd hcomp (PrimeTest.fermatSubgroup n)
-      le_rfl hi hGRH (by linarith only [hL]) with
+    witness_or_uniformKorselt_log250_GRH hnOdd hcomp (PrimeTest.fermatSubgroup n) le_rfl hi hGRH
+      (by linarith only [hL]) with
     hlocal | htriple
   · obtain ⟨s, hs, hbound, hfail⟩ := hlocal
     have hbound' := gaussian6Bound_gt_local_three_tenths hL
@@ -421,9 +401,7 @@ theorem exists_prime_witness_le_gaussianMR6_of_small_fermat_index {n : ℕ} [NeZ
     have hnlarge : 20000 ≤ n := by
       have h20000 : 20000 ≤ 10 ^ 27 := by norm_num only
       exact h20000.trans hN27
-    exact
-      exists_prime_witness_le_gaussianMR6_of_uniform_korselt_triple_card hnOdd hsf hc hK hU hnlarge
-        hGRH hL
+    exact exists_prime_gaussian6_korseltCard_GRH hnOdd hsf hc hK hU hnlarge hGRH hL
 
 /-- Under GRH, every odd composite with logarithm at least 300 has a prime
 strong-MR witness below the prefix-improved constant-18 Gaussian bound. -/
@@ -446,7 +424,7 @@ theorem exists_prime_witness_le_gaussianMR18 {n : ℕ} (hnOdd : Odd n) (hcomp : 
     exact Nat.cast_lt.mp hn1R
   let : NeZero n := ⟨Nat.ne_zero_of_lt hn1⟩
   by_cases hi : (PrimeTest.fermatSubgroup n).index ≤ 10 ^ 9
-  · exact exists_prime_witness_le_gaussianMR18_of_small_fermat_index hnOdd hcomp hGRH hi hL
+  · exact exists_prime_gaussian18_smallFermat_GRH hnOdd hcomp hGRH hi hL
   · have hlarge : 1000000000 ≤ (PrimeTest.fermatSubgroup n).index := by
       have h := (lt_of_not_ge hi).le
       norm_num only at h
@@ -465,8 +443,8 @@ theorem exists_prime_witness_le_gaussianMR18 {n : ℕ} (hnOdd : Odd n) (hcomp : 
       obtain ⟨u, hu, hzu⟩ := PrimeTest.strongMillerRabinPass_mem_fermatSubgroup hn1 hnOdd hz
       exact ⟨u, hu, hzu⟩
     exact
-      exists_prime_witness_le_gaussianMR18_of_index_ge_billion hnOdd hnlarge
-        (PrimeTest.fermatSubgroup n) hiR hHpass hGRH hL
+      exists_prime_gaussian18_largeIndex_GRH hnOdd hnlarge (PrimeTest.fermatSubgroup n) hiR hHpass
+        hGRH hL
 
 /-- Under GRH, every odd composite with logarithm at least 300 has a prime
 strong-MR witness below the constant-6 Gaussian bound. -/
@@ -489,12 +467,12 @@ theorem exists_prime_witness_le_gaussianMR6 {n : ℕ} (hnOdd : Odd n) (hcomp : �
     exact Nat.cast_lt.mp hn1R
   let : NeZero n := ⟨Nat.ne_zero_of_lt hn1⟩
   by_cases hi : (PrimeTest.fermatSubgroup n).index ≤ 10 ^ 9
-  · exact exists_prime_witness_le_gaussianMR6_of_small_fermat_index hnOdd hcomp hGRH hi hL
+  · exact exists_prime_gaussian6_smallFermat_GRH hnOdd hcomp hGRH hi hL
   · have hlarge : 1000000000 ≤ (PrimeTest.fermatSubgroup n).index := by
       have h := (lt_of_not_ge hi).le
       norm_num only at h
       exact h
-    exact exists_prime_witness_le_gaussianMR6_of_large_fermat_index hn1 hnOdd hlarge hGRH hL
+    exact exists_prime_gaussian6_largeFermat_GRH hn1 hnOdd hlarge hGRH hL
 
 /-- The least prime rejecting strong MR inherits the constant-6 Gaussian
 bound from logarithmic scale 300 onward. -/
@@ -531,8 +509,7 @@ theorem exists_least_prime_witness_le_gaussianMR18 {n : ℕ} (hnOdd : Odd n) (hc
       Nat.find_min' hex ⟨hq, hreject⟩⟩
 
 /-- Complete the finite Fermat-index branch for the 6/5 bound at scale 500. -/
-theorem exists_prime_witness_le_gaussian6fifths_of_small_fermat_index {n : ℕ} [NeZero n]
-    (hnOdd : Odd n) (hcomp : ¬n.Prime)
+theorem gaussian6_5_prime_smallFermatIndex_GRH {n : ℕ} [NeZero n] (hnOdd : Odd n) (hcomp : ¬n.Prime)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hn : 10 ^ 142 ≤ n)
     (hi : (PrimeTest.fermatSubgroup n).index ≤ 10 ^ 9) (hL : 500 ≤ Real.log n) :
     ∃ s : ℕ,
@@ -540,8 +517,8 @@ theorem exists_prime_witness_le_gaussian6fifths_of_small_fermat_index {n : ℕ} 
         (s : ℝ) ≤ gaussian6FifthsBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   rcases
-    coefficient_0283_witness_or_uniform_korselt_triple hnOdd hcomp (PrimeTest.fermatSubgroup n)
-      le_rfl hi hGRH hn with
+    witness_0282924_or_uniformKorselt_GRH hnOdd hcomp (PrimeTest.fermatSubgroup n) le_rfl hi hGRH
+      hn with
     hlocal | htriple
   · obtain ⟨s, hs, hbound, hfail⟩ := hlocal
     have hbound' := gaussian6FifthsBound_lower hL
@@ -550,9 +527,7 @@ theorem exists_prime_witness_le_gaussian6fifths_of_small_fermat_index {n : ℕ} 
     have hnlarge : 20000 ≤ n := by
       have h20000 : 20000 ≤ 10 ^ 142 := by norm_num only
       exact h20000.trans hn
-    exact
-      exists_prime_witness_le_gaussian6fifths_of_uniform_korselt_triple_card hnOdd hsf hc hK hU
-        hnlarge hGRH hL
+    exact gaussian6_5_primeWitness_korselt_card_GRH hnOdd hsf hc hK hU hnlarge hGRH hL
 
 /-- Under GRH, every odd composite whose logarithmic scale is at least `600`
 has a prime failing strong Miller--Rabin below the classified Gaussian star
@@ -577,12 +552,12 @@ theorem exists_prime_witness_le_gaussian_star {n : ℕ} (hnOdd : Odd n) (hcomp :
   let : NeZero n := ⟨Nat.ne_zero_of_lt hn1⟩
   have hN := gaussian_star_decimal_threshold_of_log hL
   by_cases hi : (PrimeTest.fermatSubgroup n).index ≤ 10 ^ 9
-  · exact exists_prime_witness_le_gaussian_star_of_small_fermat_index hnOdd hcomp hGRH hN hi hL
+  · exact exists_prime_gaussianStar_smallFermat_GRH hnOdd hcomp hGRH hN hi hL
   · have hlarge : 1000000000 ≤ (PrimeTest.fermatSubgroup n).index := by
       have h := (lt_of_not_ge hi).le
       norm_num only at h
       exact h
-    exact exists_prime_witness_le_gaussian_star_of_large_fermat_index hn1 hnOdd hlarge hGRH hL
+    exact exists_prime_gaussianStar_largeFermat_GRH hn1 hnOdd hlarge hGRH hL
 
 /-- Under GRH, every odd composite with logarithm at least 500 has a prime
 strong-MR witness below the 6/5 Gaussian bound. The Fermat-index split and
@@ -607,7 +582,7 @@ theorem exists_prime_witness_le_gaussian6fifths {n : ℕ} (hnOdd : Odd n) (hcomp
   let : NeZero n := ⟨Nat.ne_zero_of_lt hn1⟩
   have hN := gaussian6fifths_decimal_threshold_of_log hL
   by_cases hi : (PrimeTest.fermatSubgroup n).index ≤ 10 ^ 9
-  · exact exists_prime_witness_le_gaussian6fifths_of_small_fermat_index hnOdd hcomp hGRH hN hi hL
+  · exact gaussian6_5_prime_smallFermatIndex_GRH hnOdd hcomp hGRH hN hi hL
   · have hlarge : 1000000000 ≤ (PrimeTest.fermatSubgroup n).index := by
       have h := (lt_of_not_ge hi).le
       norm_num only at h
@@ -615,7 +590,7 @@ theorem exists_prime_witness_le_gaussian6fifths {n : ℕ} (hnOdd : Odd n) (hcomp
     have hnlarge : 20000 ≤ n := by
       have h20000 : 20000 ≤ 10 ^ 142 := by norm_num only
       exact h20000.trans hN
-    exact exists_prime_witness_le_gaussian6fifths_of_large_fermat_index hn1 hnOdd hlarge hGRH hL
+    exact gaussian6_5_prime_largeFermatIndex_GRH hn1 hnOdd hlarge hGRH hL
 
 /-- The least prime rejecting the strong test inherits the 6/5 Gaussian
 bound by minimizing the nonempty prime-witness set. -/

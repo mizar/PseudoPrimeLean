@@ -344,8 +344,8 @@ Proof: make `t` exceed `(40 D J + 1) * 2 ^ u * u`; the primorial logarithm is at
 Role: establishes exponential room for the right side of the boxed P2 concentration bound
 while satisfying an externally chosen lower scale.
 -/
-theorem exists_p2_seed_log_multiple_below_floor_half_from {c₀ D H : ℝ} {J : ℕ} (hc₀ : 0 < c₀)
-    (hD : 0 < D) (hJ : 0 < J) (U₀ : ℕ) (hU₀ : 10 ≤ U₀) :
+theorem exists_powTwo_seed_log_margin {c₀ D H : ℝ} {J : ℕ} (hc₀ : 0 < c₀) (hD : 0 < D) (hJ : 0 < J)
+    (U₀ : ℕ) (hU₀ : 10 ≤ U₀) :
     ∃ u : ℕ,
       U₀ ≤ u ∧
         c₀ < 20 * Real.log 2 * (u : ℝ) ^ 4 ∧
@@ -463,7 +463,7 @@ theorem exists_p2_seed_log_multiple_below_floor_half {c₀ D H : ℝ} {J : ℕ} 
               ℝ) *
             Real.log 2 := by
   obtain ⟨u, hu, hparam, hthreshold, hlog⟩ :=
-    exists_p2_seed_log_multiple_below_floor_half_from hc₀ hD hJ 10 (by norm_num only)
+    exists_powTwo_seed_log_margin hc₀ hD hJ 10 (by norm_num only)
   exact ⟨u, hu, hparam, hthreshold, hlog⟩
 
 /--
@@ -651,7 +651,7 @@ theorem exists_p2_seed_q_six_loggap_from {c₀ : ℝ} {J w : ℕ} (hc₀ : 0 < c
     have hratio : 0 ≤ |Real.log C| / Real.log 2 := div_nonneg (abs_nonneg _) (le_of_lt hlog2)
     linarith only [hratio]
   obtain ⟨u, huU, hparam, hthresholdMax, hDlog⟩ :=
-    exists_p2_seed_log_multiple_below_floor_half_from hc₀ hD hJ U₀ hU₀ (H :=
+    exists_powTwo_seed_log_margin hc₀ hD hJ U₀ hU₀ (H :=
       max (PseudoPrime.AnalyticNumberTheory.AGP.primeTailCountThreshold1024 : ℝ) 2)
   have hu10 : 10 ≤ u := le_trans hU₀ huU
   let N : ℕ := (PseudoPrime.NumberTheory.PrimeProducts.primeSetLE (2 ^ u)).prod id
@@ -841,11 +841,10 @@ theorem exists_p2_full_divisor_concentration_bound {c₀ : ℝ} {J w : ℕ} (hc�
           Nat.floor (c₀ * (2 ^ u : ℝ) ^ 2 / (20 * (J : ℝ) * (u : ℝ) * Real.log 2)) + 1
         by exact_mod_cast hthreshold)
   · exact
-      PseudoPrime.AnalyticNumberTheory.AGP.primeCounting_bound_of_primeTailCountThreshold1024
+      PseudoPrime.AnalyticNumberTheory.AGP.primeCounting_le_half_from_threshold1024
         (by simpa only [t] using hthreshold)
   · have hseedCount :=
-      PseudoPrime.AnalyticNumberTheory.AGP.primeProductLE_count_lower_bound_of_two_pow_power hc₀
-        hu10 hJ
+      PseudoPrime.AnalyticNumberTheory.AGP.primeProductLE_count_lower_of_two_pow hc₀ hu10 hJ
     have hApos : 0 < c₀ * (2 ^ u : ℝ) ^ 2 / (20 * (J : ℝ) * (u : ℝ) * Real.log 2) := by positivity
     have hfloor :
       (Nat.floor (c₀ * (2 ^ u : ℝ) ^ 2 / (20 * (J : ℝ) * (u : ℝ) * Real.log 2)) : ℝ) ≤
@@ -951,8 +950,7 @@ theorem exists_p2_full_divisor_concentration_bound_above {c₀ : ℝ} {J w : ℕ
     PseudoPrime.AnalyticNumberTheory.AGP.p2_concentration_log_left_le_q_six (q := q) (t := t) (J :=
       J) (w := w) hqNat' htq
   have hseedCount :=
-    PseudoPrime.AnalyticNumberTheory.AGP.primeProductLE_count_lower_bound_of_two_pow_power hc₀ hu10
-      hJ
+    PseudoPrime.AnalyticNumberTheory.AGP.primeProductLE_count_lower_of_two_pow hc₀ hu10 hJ
   have hlog2 : 0 < Real.log (2 : ℝ) := Real.log_pos (by norm_num only : (1 : ℝ) < 2)
   have hJpos : 0 < (J : ℝ) := by exact_mod_cast hJ
   have huPos : 0 < (u : ℝ) := by exact_mod_cast (by omega : 0 < u)
@@ -998,7 +996,7 @@ theorem exists_p2_full_divisor_concentration_bound_above {c₀ : ℝ} {J w : ℕ
           Nat.floor (c₀ * (2 ^ u : ℝ) ^ 2 / (20 * (J : ℝ) * (u : ℝ) * Real.log 2)) + 1
         by exact_mod_cast hthreshold)
   · exact
-      PseudoPrime.AnalyticNumberTheory.AGP.primeCounting_bound_of_primeTailCountThreshold1024
+      PseudoPrime.AnalyticNumberTheory.AGP.primeCounting_le_half_from_threshold1024
         (by simpa only [t] using hthreshold)
   · simpa only [Nat.cast_add, Nat.cast_ofNat, mul_assoc] using hcombine
 
@@ -1016,8 +1014,7 @@ prime-product estimate already used in its seed-count proof.
 Role: provides enough strict margin to account for both exceptional-factor
 removal and exclusion of the divisor `1` in the initial seed average.
 -/
-theorem exists_p2_full_divisor_concentration_bound_with_seed_margin {c₀ : ℝ} {J w : ℕ}
-    (hc₀ : 0 < c₀) (hJ : 0 < J) :
+theorem exists_powTwo_seed_concentration {c₀ : ℝ} {J w : ℕ} (hc₀ : 0 < c₀) (hJ : 0 < J) :
     ∃ u q t : ℕ,
       10 ≤ u ∧
         q = (((PseudoPrime.NumberTheory.PrimeProducts.primeSetLE (2 ^ u)).prod id : ℕ) ^ 5) ^ J ∧
@@ -1036,7 +1033,7 @@ theorem exists_p2_full_divisor_concentration_bound_with_seed_margin {c₀ : ℝ}
   obtain ⟨u, q, t, hu, hq, ht, hthreshold, htail, hseed, hbox⟩ :=
     exists_p2_full_divisor_concentration_bound hc₀ hJ
   have hmargin :=
-    PseudoPrime.AnalyticNumberTheory.AGP.primeProductLE_count_lower_bound_of_two_pow_power hc₀ hu hJ
+    PseudoPrime.AnalyticNumberTheory.AGP.primeProductLE_count_lower_of_two_pow hc₀ hu hJ
   refine ⟨u, q, t, hu, hq, ht, hthreshold, htail, hseed, ?_, hbox⟩
   simpa only [hq, Nat.cast_pow, Nat.cast_ofNat] using hmargin
 
@@ -1053,8 +1050,8 @@ that supplies the stronger initial-count margin.
 Role: gives the seed-selection stage a single output that can dominate prescribed base cutoffs and
 feed both initial counting and the later P2 construction.
 -/
-theorem exists_p2_full_divisor_concentration_bound_above_with_seed_margin {c₀ : ℝ} {J w : ℕ}
-    (hc₀ : 0 < c₀) (hJ : 0 < J) (q₀ : ℕ) :
+theorem exists_powTwo_seed_concentration_above {c₀ : ℝ} {J w : ℕ} (hc₀ : 0 < c₀) (hJ : 0 < J)
+    (q₀ : ℕ) :
     ∃ u q t : ℕ,
       10 ≤ u ∧
         q₀ ≤ q ∧
@@ -1075,7 +1072,7 @@ theorem exists_p2_full_divisor_concentration_bound_above_with_seed_margin {c₀ 
   obtain ⟨u, q, t, hu, hq₀, hq₀u, hq, ht, hthreshold, htail, hseed, hbox⟩ :=
     exists_p2_full_divisor_concentration_bound_above hc₀ hJ q₀
   have hmargin :=
-    PseudoPrime.AnalyticNumberTheory.AGP.primeProductLE_count_lower_bound_of_two_pow_power hc₀ hu hJ
+    PseudoPrime.AnalyticNumberTheory.AGP.primeProductLE_count_lower_of_two_pow hc₀ hu hJ
   refine ⟨u, q, t, hu, hq₀, hq₀u, hq, ht, hthreshold, htail, hseed, ?_, hbox⟩
   simpa only [hq, Nat.cast_pow, Nat.cast_ofNat] using hmargin
 
@@ -1228,7 +1225,7 @@ theorem p2_full_divisor_floor_term_bound {L q t : ℕ} (hq : 2 ≤ q) (hL : 1 < 
   have hLbound' : L ≤ q ^ ((t - 1) + 1) := by
     rw [Nat.sub_add_cancel ht]
     exact hLbound
-  have h := p2_floor_term_upper_bound_of_auxiliary_size_bounds (w := 0) hq hL hLbound' hLambda
+  have h := p2_floor_upper_of_auxiliary_bounds (w := 0) hq hL hLbound' hLambda
   simpa only [pow_zero, Nat.cast_ofNat, one_mul, Nat.cast_pow, Nat.sub_add_cancel ht] using h
 
 /--
@@ -1363,7 +1360,7 @@ estimate depends on `R`.
 Role: decouples the finite-base bound in the output interface from the fixed
 cutoff used to make the reciprocal prime-factor sum small.
 -/
-noncomputable def progressionAuxiliaryData_of_full_divisor_seed_with_cutoff {W S : Finset ℕ}
+noncomputable def auxiliaryData_of_full_divisor_seed_with_cutoff {W S : Finset ℕ}
     {C R x₀ L q X t J : ℕ} {c₀ : ℝ} (hc₀ : 0 < c₀) (hq : 2 ≤ q) (hL : 2 < L) (ht : 0 < t)
     (hJ : 0 < J) (hX : X = (4 * q * L) ^ J) (hLargeEnough : x₀ ≤ X ^ 5)
     (hProp15Input : ReliableProp15ModFourInput L (X ^ 5))
@@ -1419,9 +1416,9 @@ cutoff condition; the seed-count constructor then supplies the data.
 Role: this packages the cutoff choice with the finite P2 construction so that
 the remaining analytic work is concentrated in the displayed count estimate.
 -/
-noncomputable def progressionAuxiliaryData_of_seed_factor_count_lower_bound_fifth_power
-    {W : Finset ℕ} {C x₀ L q s T : ℕ} {c₀ : ℝ} (hc₀ : 0 < c₀) (hq : 2 ≤ q) (hL : 2 < L)
-    (hLargeEnough : x₀ ≤ q ^ (5 * s)) (hProp15Input : ReliableProp15ModFourInput L (q ^ (5 * s)))
+noncomputable def auxiliaryData_of_fifth_power_factors {W : Finset ℕ} {C x₀ L q s T : ℕ} {c₀ : ℝ}
+    (hc₀ : 0 < c₀) (hq : 2 ≤ q) (hL : 2 < L) (hLargeEnough : x₀ ≤ q ^ (5 * s))
+    (hProp15Input : ReliableProp15ModFourInput L (q ^ (5 * s)))
     (hReciprocal1024 : (∑ r ∈ L.primeFactors, (r : ℝ)⁻¹) ≤ (1 / 1024 : ℝ))
     (hCq : max C (W.sup id) ≤ q) (hfactor : ∀ r, r ∣ L → Nat.Prime r → r ≤ q)
     (hlambda : 3 ≤ ArithmeticFunction.carmichael L)
@@ -1439,7 +1436,7 @@ noncomputable def progressionAuxiliaryData_of_seed_factor_count_lower_bound_fift
     dsimp [x]
     exact pow_le_reliableProp15DivisorCutoff_fifth_power (by omega)
   exact
-    progressionAuxiliaryData_of_seed_factor_count_lower_bound hc₀ hx hL hLargeEnough hProp15Input
+    auxiliaryData_of_seed_factor_count_lower_bound hc₀ hx hL hLargeEnough hProp15Input
       hReciprocal1024 hCq hfactor hlambda hcut hFactorCount hs hscale hlower
 
 /--
@@ -1456,8 +1453,8 @@ of the `s`-th power.
 Role: this turns the improved seed ratio into the explicit lower side of the
 remaining P2 parameter comparison.
 -/
-theorem p2_fixed_factor_lower_bound_of_fifth_power_cutoff {c₀ : ℝ} {q s T : ℕ} {b : ℝ}
-    (hc₀ : 0 < c₀) (hq : 2 ≤ q) (hs : 0 < s) (hb : 0 < b) (hbase : b ≤ (T : ℝ) / (4 * (s : ℝ))) :
+theorem p2_factor_lower_of_fifth_power_cutoff {c₀ : ℝ} {q s T : ℕ} {b : ℝ} (hc₀ : 0 < c₀)
+    (hq : 2 ≤ q) (hs : 0 < s) (hb : 0 < b) (hbase : b ≤ (T : ℝ) / (4 * (s : ℝ))) :
     c₀ / (10 * (s : ℝ) * Real.log (q : ℝ)) * b ^ s ≤
       reliableProp15Coefficient c₀ 4 (q ^ (5 * s)) * ((T : ℝ) / (4 * (s : ℝ))) ^ s := by
   have hqreal : (1 : ℝ) < (q : ℝ) := by
@@ -1933,8 +1930,7 @@ theorem progressionAuxiliaryData_of_p2_seed_scale {W : Finset ℕ} {C x₀ L N m
     lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 2 ^ 64) hratio
   have hP2 := p2_fixed_factor_seed_scale_comparison hm hz hNlower hNupper hTupper hw hcscale hratio
   have hLone : 1 < L := lt_trans (by norm_num only : 1 < 2) hL
-  have hfloor :=
-    p2_floor_term_upper_bound_of_auxiliary_size_bounds (w := W.card) hq hLone hLbound hLambdaBound
+  have hfloor := p2_floor_upper_of_auxiliary_bounds (w := W.card) hq hLone hLbound hLambdaBound
   have hfloorAdd :
     ((2 ^ W.card * Nat.floor ((ArithmeticFunction.carmichael L : ℝ) * Real.log (L : ℝ)) + N ^ 5 :
           ℕ) :
@@ -1952,7 +1948,7 @@ theorem progressionAuxiliaryData_of_p2_seed_scale {W : Finset ℕ} {C x₀ L N m
         ((T : ℝ) / (4 * ((z * m : ℕ) : ℝ))) ^ (z * m) := by
     exact lt_of_le_of_lt hfloorAdd hP2
   have hcoeff :=
-    p2_fixed_factor_lower_bound_of_fifth_power_cutoff hc₀ hq hs hbasepos
+    p2_factor_lower_of_fifth_power_cutoff hc₀ hq hs hbasepos
       (le_rfl : (T : ℝ) / (4 * ((z * m : ℕ) : ℝ)) ≤ (T : ℝ) / (4 * ((z * m : ℕ) : ℝ)))
   have hlower :
     ((2 ^ W.card * Nat.floor ((ArithmeticFunction.carmichael L : ℝ) * Real.log (L : ℝ)) + N ^ 5 :
@@ -1990,20 +1986,18 @@ theorem progressionAuxiliaryData_of_p2_seed_scale {W : Finset ℕ} {C x₀ L N m
     exact le_trans hsmall hpow
   refine ⟨(N ^ 5) ^ (z * m), ?_, ?_, ?_, ?_⟩
   · exact
-      progressionAuxiliaryData_of_seed_factor_count_lower_bound_fifth_power hc₀ hq hL hLargeEnough
-        hProp15Input' hReciprocal1024 hCq hfactor hlambda hFactorCount hs hscale hlower
+      auxiliaryData_of_fifth_power_factors hc₀ hq hL hLargeEnough hProp15Input' hReciprocal1024 hCq
+        hfactor hlambda hFactorCount hs hscale hlower
   · exact hscaleLower
-  · dsimp only [progressionAuxiliaryData_of_seed_factor_count_lower_bound_fifth_power,
-      progressionAuxiliaryData_of_seed_factor_count_lower_bound,
-      progressionAuxiliaryData_of_binomial_ratio_lower_bound,
-      progressionAuxiliaryData_of_primeFactorCountLowerBound]
+  · dsimp only [auxiliaryData_of_fifth_power_factors,
+      auxiliaryData_of_seed_factor_count_lower_bound, auxiliaryData_of_binomial_ratio_lower_bound,
+      auxiliaryData_of_primeFactorCountLowerBound]
     calc
       (N ^ 5) ^ (5 * (z * m)) = (N ^ 5) ^ ((z * m) * 5) := by rw [Nat.mul_comm]
       _ = ((N ^ 5) ^ (z * m)) ^ 5 := by rw [Nat.pow_mul]
-  · dsimp only [progressionAuxiliaryData_of_seed_factor_count_lower_bound_fifth_power,
-      progressionAuxiliaryData_of_seed_factor_count_lower_bound,
-      progressionAuxiliaryData_of_binomial_ratio_lower_bound,
-      progressionAuxiliaryData_of_primeFactorCountLowerBound]
+  · dsimp only [auxiliaryData_of_fifth_power_factors,
+      auxiliaryData_of_seed_factor_count_lower_bound, auxiliaryData_of_binomial_ratio_lower_bound,
+      auxiliaryData_of_primeFactorCountLowerBound]
     exact Nat.le_self_pow (Nat.ne_of_gt hs) (N ^ 5)
 
 end PseudoPrime.AnalyticNumberTheory.AGP

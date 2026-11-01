@@ -37,8 +37,8 @@ theorem local_prime_powerKernel_ne_top_of_not_dvd {p E : ℕ} [Fact p.Prime] (hd
 kernel modulo a prime factor p. Map unitness and the Fermat power identity
 through the canonical reduction, then choose the local unit representative.
 This supplies local subgroup containment with the ambient exponent preserved. -/
-theorem strongMillerRabinPass_mem_local_prime_powerKernel {n p a : ℕ} [Fact p.Prime] (hn : 1 < n)
-    (hnOdd : Odd n) (hpn : p ∣ n) (hpass : StrongMillerRabinPass n (a : ZMod n)) :
+theorem strongMR_local_primeKernel {n p a : ℕ} [Fact p.Prime] (hn : 1 < n) (hnOdd : Odd n)
+    (hpn : p ∣ n) (hpass : StrongMillerRabinPass n (a : ZMod n)) :
     ∃ u : (ZMod p)ˣ,
       u ∈ (powMonoidHom (n - 1) : (ZMod p)ˣ →* (ZMod p)ˣ).ker ∧ (u : ZMod p) = (a : ZMod p) := by
   let f := ZMod.castHom hpn (ZMod p)
@@ -56,8 +56,8 @@ theorem strongMillerRabinPass_mem_local_prime_powerKernel {n p a : ℕ} [Fact p.
 power kernel at any nonzero divisor modulus q. Preserve unitness and the
 Fermat identity through the canonical reduction. This includes prime-square
 moduli for the finite-index square-factor branch. -/
-theorem strongMillerRabinPass_mem_local_divisor_powerKernel {n q a : ℕ} [NeZero q] (hn : 1 < n)
-    (hnOdd : Odd n) (hqn : q ∣ n) (hpass : StrongMillerRabinPass n (a : ZMod n)) :
+theorem strongMR_local_divisorKernel {n q a : ℕ} [NeZero q] (hn : 1 < n) (hnOdd : Odd n)
+    (hqn : q ∣ n) (hpass : StrongMillerRabinPass n (a : ZMod n)) :
     ∃ u : (ZMod q)ˣ,
       u ∈ (powMonoidHom (n - 1) : (ZMod q)ˣ →* (ZMod q)ˣ).ker ∧ (u : ZMod q) = (a : ZMod q) := by
   let f := ZMod.castHom hqn (ZMod q)

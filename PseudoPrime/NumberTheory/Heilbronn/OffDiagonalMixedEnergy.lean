@@ -61,7 +61,7 @@ theorem weightedHeilbronnOffDiagonal_sq_le_weightedPair {p : ℕ} [Fact p.Prime]
           ∑ b : ZMod (p ^ 2),
             (if a = b then 0 else g a * g b * Nat.card (cosetDifferenceAt p 0 0 (b - a))) ^ 2 := by
     rw [weightedHeilbronnOffDiagonal_eq_correlation_sum]
-    simpa only [heilbronnTripleCorrelation, ← heilbronn_correlation_eq_finiteDifferenceCorrelation,
+    simpa only [heilbronnTripleCorrelation, ← correlation_eq_finiteDifferenceCorrelation,
       heilbronnThirdEnergy] using hc
   have hsum :
     (∑ a : ZMod (p ^ 2),
@@ -145,7 +145,7 @@ theorem weightedHeilbronnOffDiagonal_square_le {p : ℕ} [Fact p.Prime] (S : Fin
           ∑ b : ZMod (p ^ 2),
             (if a = b then 0 else g a * g b * Nat.card (cosetDifferenceAt p 0 0 (b - a))) ^ 2 := by
     rw [weightedHeilbronnOffDiagonal_eq_correlation_sum]
-    simpa only [heilbronnTripleCorrelation, ← heilbronn_correlation_eq_finiteDifferenceCorrelation,
+    simpa only [heilbronnTripleCorrelation, ← correlation_eq_finiteDifferenceCorrelation,
       heilbronnThirdEnergy] using hc
   have hb :=
     PseudoPrime.Analysis.finite_supported_off_diagonal_square_le S g

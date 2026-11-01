@@ -42,8 +42,7 @@ theorem re_characterLogWeightedSum_sub_leftVertical_le {N : ℕ} [NeZero N] (hN2
           (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x -
         11 / 4 := by
   have hx1 : (1 : ℝ) ≤ x := le_trans (by norm_num only) hx
-  have htend :=
-    tendsto_normalized_dirichletLogBoundary_heightSeq_of_grh hN2 hGRH hprimitive hne hinv hx1 A hA
+  have htend := tendsto_logBoundary_heightSeq_GRH hN2 hGRH hprimitive hne hinv hx1 A hA
   have htendRe := (Complex.continuous_re.tendsto _).comp htend
   have hev :
     ∀ᶠ k : ℕ in Filter.atTop,
@@ -57,11 +56,9 @@ theorem re_characterLogWeightedSum_sub_leftVertical_le {N : ℕ} [NeZero N] (hN2
           11 / 4 := by
     filter_upwards with k
     have hid :=
-      dirichletLogFiniteContourIdentity_heightSeq_normalized hN2 hGRH hprimitive hne hinv
+      logContour_heightSeq_normalized_GRH hN2 hGRH hprimitive hne hinv
         (lt_of_lt_of_le (by norm_num only) hx) A k hA
-    obtain ⟨h0, h1⟩ :=
-      primitiveReciprocalMellinPoints_mem_singularities_heightSeq hN2 hGRH hprimitive hne hinv A k
-        hA
+    obtain ⟨h0, h1⟩ := heightSeq_zero_one_singular_GRH hN2 hGRH hprimitive hne hinv A k hA
     have hbound :=
       re_sum_llsPrimitiveLogResidueAt_le hN2 hGRH hprimitive hne hinv hx (z :=
         primitiveHeightSeqLowerCorner hN2 hGRH hprimitive hne hinv A k) (w :=
@@ -103,8 +100,7 @@ theorem primitiveGenericLogWeightedUpper {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
           (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x -
         11 / 4 := by
   have hx1 : (1 : ℝ) < x := lt_of_lt_of_le (by norm_num only) hx
-  have htend :=
-    tendsto_dirichletLogContourKernel_leftVertical_integral_atTop hprimitive hne hinv hx1
+  have htend := tendsto_logKernel_left_integral hprimitive hne hinv hx1
   have htendRe := (Complex.continuous_re.tendsto _).comp htend
   have htendScaled :
     Filter.Tendsto

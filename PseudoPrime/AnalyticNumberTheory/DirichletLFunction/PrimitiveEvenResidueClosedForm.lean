@@ -28,14 +28,14 @@ Input/assumptions: `N ≥ 2`, `χ` primitive nontrivial even mod `N`, GRH, `χ�
 Conclusion:
 `Re (r₀ + r₁) = (1/2)(1 - 1/x)(log N - log π) - (1 + 1/x)|Re B(χ)| - log 2 - (γ/2)(1 - 1/x) +
 (log x + 1)/x`.
-Proof: `dirichletReciprocalResidueAt_zero_of_primitive_even_eq` identifies `r₀` with the derivative
-of the canonical regularization; `deriv_dirichletReciprocalEvenZeroRegularization_zero` and
-`logDeriv_dirichletEvenZeroLocalFactor_zero` evaluate it. At one, the completed-to-ordinary
+Proof: `reciprocalResidue_zero_even_eq` identifies `r₀` with the derivative
+of the canonical regularization; `deriv_reciprocalEvenReg_zero` and
+`logDeriv_evenZeroLocalFactor_zero` evaluate it. At one, the completed-to-ordinary
 logarithmic-derivative identity evaluates `r₁ = -L'/L(1)`. Substitute the completed-L-function
 endpoint real parts and the even gamma-factor value, then collect terms.
 Role: supplies the even-character endpoint contribution to the reciprocal-kernel residue sum.
 -/
-theorem re_add_dirichletReciprocalResidues_zero_one_of_even_raw {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem reciprocalResidues_even_raw_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (heven : χ.Even) {x : ℝ}
     (hx : 0 < x) :
@@ -46,10 +46,10 @@ theorem re_add_dirichletReciprocalResidues_zero_one_of_even_raw {N : ℕ} [NeZer
         (Real.log x + 1) / x := by
   have hxC : (x : ℂ) ≠ 0 := by exact_mod_cast hx.ne'
   -- r₀ via the canonical local factor and (ER)
-  have hr0eq := dirichletReciprocalResidueAt_zero_of_primitive_even_eq hprimitive hne heven x
-  obtain ⟨hGanalytic, hG0⟩ := analyticAt_and_ne_zero_dirichletEvenZeroLocalFactor hprimitive hne
-  have hER := deriv_dirichletReciprocalEvenZeroRegularization_zero hx 1 hGanalytic hG0
-  have hG0logDeriv := logDeriv_dirichletEvenZeroLocalFactor_zero hprimitive hne
+  have hr0eq := reciprocalResidue_zero_even_eq hprimitive hne heven x
+  obtain ⟨hGanalytic, hG0⟩ := evenZeroFactor_analytic_ne_zero hprimitive hne
+  have hER := deriv_reciprocalEvenReg_zero hx 1 hGanalytic hG0
+  have hG0logDeriv := logDeriv_evenZeroLocalFactor_zero hprimitive hne
   rw [hG0logDeriv] at hER
   rw [hER] at hr0eq
   have hr0re :
@@ -94,7 +94,7 @@ theorem re_add_dirichletReciprocalResidues_zero_one_of_even_raw {N : ℕ} [NeZer
     rw [hmulre]
   -- r₁ via the regular-point bridge
   have hΓ1ne : DirichletCharacter.gammaFactor χ 1 ≠ 0 :=
-    gammaFactor_ne_zero_of_even_of_half_ne_neg_nat heven
+    gammaFactor_even_ne_zero_nonpole heven
       (by
         intro m hm
         have him := congrArg Complex.re hm
@@ -103,7 +103,7 @@ theorem re_add_dirichletReciprocalResidues_zero_one_of_even_raw {N : ℕ} [NeZer
           div_self_mul_self', Complex.neg_re, Complex.natCast_re] at him
         linarith only [him, hmnn])
   have hdΓ1 : DifferentiableAt ℂ (DirichletCharacter.gammaFactor χ) 1 :=
-    differentiableAt_gammaFactor_of_even_of_half_ne_neg_nat heven
+    differentiableAt_gammaFactor_even heven
       (by
         intro m hm
         have him := congrArg Complex.re hm
@@ -112,10 +112,9 @@ theorem re_add_dirichletReciprocalResidues_zero_one_of_even_raw {N : ℕ} [NeZer
           div_self_mul_self', Complex.neg_re, Complex.natCast_re] at him
         linarith only [him, hmnn])
   have hF1ne : DirichletCharacter.completedLFunction χ 1 ≠ 0 :=
-    completedLFunction_ne_zero_of_one_le_re hne (le_refl 1)
-  have hbridge1 :=
-    logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne hF1ne hΓ1ne hdΓ1
-  have hr1 := dirichletReciprocalResidueAt_one_eq_neg_logDeriv hne x
+    completed_ne_zero_of_one_le_re hne (le_refl 1)
+  have hbridge1 := L_logDeriv_sub_gamma_of_regular hne hF1ne hΓ1ne hdΓ1
+  have hr1 := reciprocalResidue_one_eq hne x
   have hr1re :
     (dirichletReciprocalResidueAt hne x 1).re =
       -((logDeriv (DirichletCharacter.completedLFunction χ) 1).re -
@@ -123,10 +122,8 @@ theorem re_add_dirichletReciprocalResidues_zero_one_of_even_raw {N : ℕ} [NeZer
     rw [hr1, hbridge1]
     simp only [neg_sub, Complex.sub_re]
   -- assemble
-  have hF0re :=
-    completedLFunction_logDeriv_zero_re_eq_neg_abs_BRe_sub_half_log hN2 hGRH hprimitive hne hinv
-  have hF1re :=
-    completedLFunction_logDeriv_one_re_eq_abs_BRe_sub_half_log hN2 hGRH hprimitive hne hinv
+  have hF0re := completedLogDeriv_zero_abs_BRe_GRH hN2 hGRH hprimitive hne hinv
+  have hF1re := completedLogDeriv_one_abs_BRe_GRH hN2 hGRH hprimitive hne hinv
   have hG1re := logDeriv_gammaFactor_one_re_of_even heven
   rw [Complex.add_re, hr0re, hr1re, hF0re, hF1re, hG1re]
   ring

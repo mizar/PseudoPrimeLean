@@ -99,8 +99,7 @@ theorem oddMidscaleEndpointRadius_lt_sharpDoubleLog {L : ℝ} (hlo : 3259 / 25 �
 /-- The squared affine radius is strictly smaller than the previous
 double-logarithm squared radius throughout the certified interval.
 Multiply the positive radius difference and sum. -/
-theorem oddMidscaleEndpointRadius_sq_lt_sharpDoubleLog_sq {L : ℝ} (hlo : 3259 / 25 ≤ L)
-    (hhi : L ≤ 16277 / 100) :
+theorem oddMidscale_sq_lt_sharpDoubleLog_sq {L : ℝ} (hlo : 3259 / 25 ≤ L) (hhi : L ≤ 16277 / 100) :
     (oddMidscaleEndpointRadius L) ^ 2 < (sharpOddEndpointDoubleLogRoot L) ^ 2 := by
   have hr := (oddMidscaleEndpointRadius_data hlo hhi).1
   have hc := oddMidscaleEndpointRadius_lt_sharpDoubleLog hlo hhi

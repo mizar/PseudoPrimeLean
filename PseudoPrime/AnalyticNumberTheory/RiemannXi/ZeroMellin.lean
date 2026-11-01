@@ -27,12 +27,12 @@ namespace PseudoPrime.AnalyticNumberTheory.RiemannXi
 difference is the zero-subtype reciprocal difference series. Restrict Hadamard's
 all-point sum to zeros, because the analytic order vanishes elsewhere.
 This uses the same indices as the shifted mass and Mellin estimates. -/
-theorem logDeriv_sub_eq_zeroSubtypeSeries_of_riemannHypothesis (hRH : RiemannHypothesis) {s t : ℂ}
-    (hs : 1 / 2 < s.re) (ht : 1 / 2 < t.re) :
+theorem logDeriv_sub_eq_zeroSubtypeSeries_RH (hRH : RiemannHypothesis) {s t : ℂ} (hs : 1 / 2 < s.re)
+    (ht : 1 / 2 < t.re) :
     logDeriv riemannXi s - logDeriv riemannXi t =
       ∑' ρ : Zero,
         (analyticOrderNatAt riemannXi (ρ : ℂ) : ℂ) * (1 / (s - (ρ : ℂ)) - 1 / (t - (ρ : ℂ))) := by
-  rw [logDeriv_sub_eq_zeroSeries_of_riemannHypothesis hRH hs ht]
+  rw [logDeriv_sub_eq_zeroSeries_RH hRH hs ht]
   symm
   apply
     tsum_subtype_eq_of_support_subset (s := {ρ : ℂ | riemannXi ρ = 0}) (f := fun ρ : ℂ ↦
@@ -47,19 +47,18 @@ theorem logDeriv_sub_eq_zeroSubtypeSeries_of_riemannHypothesis (hRH : RiemannHyp
 the negative inverse-square shifted zero series. Differentiate the locally centered
 Hadamard expansion using uniform pole separation and the summable square mass,
 then identify the derivative by uniqueness. This is the Mellin origin term. -/
-theorem deriv_logDeriv_real_eq_zeroSeries_of_riemannHypothesis (hRH : RiemannHypothesis) {σ : ℝ}
-    (hσ : 1 ≤ σ) :
+theorem deriv_logDeriv_real_eq_zeroSeries_RH (hRH : RiemannHypothesis) {σ : ℝ} (hσ : 1 ≤ σ) :
     deriv (logDeriv riemannXi) (σ : ℂ) =
       ∑' ρ : Zero, -(analyticOrderNatAt riemannXi (ρ : ℂ) : ℂ) / ((ρ : ℂ) - (σ : ℂ)) ^ 2 := by
   have hm :
     Summable
       (fun ρ : Zero ↦ (analyticOrderNatAt riemannXi (ρ : ℂ) : ℝ) / ‖(ρ : ℂ) - (σ : ℂ)‖ ^ 2) := by
     simpa only [Real.rpow_two, riemannXiZeroMultiplicity] using
-      summable_shifted_power_mass_of_riemannHypothesis hRH hσ (show (1 : ℝ) < 2 by norm_num only)
+      summable_shifted_power_mass_RH hRH hσ (show (1 : ℝ) < 2 by norm_num only)
   have hh :=
     General.hasDerivAt_centeredResolventSum_zero (fun ρ : Zero ↦ (ρ : ℂ) - (σ : ℂ))
-      (fun ρ : Zero ↦ analyticOrderNatAt riemannXi (ρ : ℂ))
-      (norm_zero_sub_real_ge_half_of_riemannHypothesis hRH hσ) hm
+      (fun ρ : Zero ↦ analyticOrderNatAt riemannXi (ρ : ℂ)) (norm_zero_sub_real_ge_half_RH hRH hσ)
+      hm
   have he :
     (fun z : ℂ ↦ logDeriv riemannXi ((σ : ℂ) + z) - logDeriv riemannXi (σ : ℂ)) =ᶠ[nhds 0]
       (fun z : ℂ ↦
@@ -76,7 +75,7 @@ theorem deriv_logDeriv_real_eq_zeroSeries_of_riemannHypothesis (hRH : RiemannHyp
     have hs : 1 / 2 < ((σ : ℂ) + z).re := by
       rw [Complex.add_re, Complex.ofReal_re]
       linarith only [hr, hz, hσ]
-    rw [logDeriv_sub_eq_zeroSubtypeSeries_of_riemannHypothesis hRH hs
+    rw [logDeriv_sub_eq_zeroSubtypeSeries_RH hRH hs
         (by
           simpa only [Complex.ofReal_re] using
             (lt_of_lt_of_le (show (1 / 2 : ℝ) < 1 by norm_num only) hσ))]
@@ -90,7 +89,7 @@ theorem deriv_logDeriv_real_eq_zeroSeries_of_riemannHypothesis (hRH : RiemannHyp
   have hn : riemannXi (σ : ℂ) ≠ 0 := fun hz ↦
     (show (σ : ℂ).re ≠ 1 / 2 by
         rw [Complex.ofReal_re]; linarith only [hσ])
-      (riemannXi_zero_re_eq_half_of_riemannHypothesis hRH hz)
+      (xi_zero_re_eq_half_of_riemannHypothesis hRH hz)
   have hDa : AnalyticAt ℂ (logDeriv riemannXi) (σ : ℂ) := hF.deriv.div hF hn
   have hD := hDa.differentiableAt.hasDerivAt
   have hD' :
@@ -107,8 +106,8 @@ the centered xi zero resolvents equals the shifted residue sum, with a plus sign
 the derivative of the xi logarithmic derivative. The three-halves mass justifies
 termwise Mellin inversion; square mass splits the exponential and constant terms.
 This evaluates the nontrivial-zero part of the shifted zeta formula. -/
-theorem normalized_integral_zeroResolvent_eq_of_riemannHypothesis (hRH : RiemannHypothesis)
-    {σ τ x : ℝ} (hσ : 1 ≤ σ) (hτ : 0 < τ) (hx : 1 < x) :
+theorem normalized_integral_zeroResolvent_eq_RH (hRH : RiemannHypothesis) {σ τ x : ℝ} (hσ : 1 ≤ σ)
+    (hτ : 0 < τ) (hx : 1 < x) :
     (2 * Real.pi)⁻¹ •
         (∫ y : ℝ,
           ∑' ρ : Zero,
@@ -118,8 +117,7 @@ theorem normalized_integral_zeroResolvent_eq_of_riemannHypothesis (hRH : Riemann
           (analyticOrderNatAt riemannXi (ρ : ℂ) : ℂ) * (x : ℂ) ^ ((ρ : ℂ) - (σ : ℂ)) /
             ((ρ : ℂ) - (σ : ℂ)) ^ 2) +
         deriv (logDeriv riemannXi) (σ : ℂ) := by
-  have hm :=
-    summable_shifted_power_mass_of_riemannHypothesis hRH hσ (show (1 : ℝ) < 2 by norm_num only)
+  have hm := summable_shifted_power_mass_RH hRH hσ (show (1 : ℝ) < 2 by norm_num only)
   have hi :
     Summable
       (fun ρ : Zero ↦ -(analyticOrderNatAt riemannXi (ρ : ℂ) : ℂ) / ((ρ : ℂ) - (σ : ℂ)) ^ 2) := by
@@ -136,22 +134,21 @@ theorem normalized_integral_zeroResolvent_eq_of_riemannHypothesis (hRH : Riemann
     intro ρ
     rw [norm_div, norm_mul, Complex.norm_natCast, norm_pow,
       Complex.norm_cpow_eq_rpow_re_of_pos (zero_lt_one.trans hx), Complex.sub_re, Complex.ofReal_re,
-      riemannXi_zero_re_eq_half_of_riemannHypothesis hRH ρ.property, Real.rpow_two]
+      xi_zero_re_eq_half_of_riemannHypothesis hRH ρ.property, Real.rpow_two]
     unfold riemannXiZeroMultiplicity
     exact le_of_eq (by ring)
   have he :=
-    General.normalized_integral_tsum_centeredResolventKernel (fun ρ : Zero ↦ (ρ : ℂ) - (σ : ℂ))
+    General.centeredResolvent_integral_tsum (fun ρ : Zero ↦ (ρ : ℂ) - (σ : ℂ))
       (fun ρ : Zero ↦ analyticOrderNatAt riemannXi (ρ : ℂ))
       (fun ρ ↦ by
         rw [Complex.sub_re, Complex.ofReal_re,
-          riemannXi_zero_re_eq_half_of_riemannHypothesis hRH ρ.property]
+          xi_zero_re_eq_half_of_riemannHypothesis hRH ρ.property]
         linarith only [hσ])
       hτ hx
       (by
         simpa only [riemannXiZeroMultiplicity] using
-          (summable_shifted_power_mass_of_riemannHypothesis hRH hσ
-            (show (1 : ℝ) < 3 / 2 by norm_num only)))
-  rw [he, deriv_logDeriv_real_eq_zeroSeries_of_riemannHypothesis hRH hσ, ← hz.tsum_add hi]
+          (summable_shifted_power_mass_RH hRH hσ (show (1 : ℝ) < 3 / 2 by norm_num only)))
+  rw [he, deriv_logDeriv_real_eq_zeroSeries_RH hRH hσ, ← hz.tsum_add hi]
   exact tsum_congr (fun ρ ↦ by ring)
 
 /-- Under RH, sigma >= 1 and tau > 0, the xi zero kernel sum equals the centered
@@ -169,14 +166,14 @@ theorem zeroResolventKernel_eq_logDeriv_difference (hRH : RiemannHypothesis) {σ
       (fun ρ : Zero ↦ analyticOrderNatAt riemannXi (ρ : ℂ))
       (fun ρ ↦ by
         rw [Complex.sub_re, Complex.ofReal_re,
-          riemannXi_zero_re_eq_half_of_riemannHypothesis hRH ρ.property]
+          xi_zero_re_eq_half_of_riemannHypothesis hRH ρ.property]
         linarith only [hσ])
       hτ]
   have hs : 1 / 2 < ((σ : ℂ) + ((τ : ℂ) + y * Complex.I)).re := by
     simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, Complex.I_im,
       Complex.ofReal_im, mul_zero, zero_mul, sub_self, add_zero]
     linarith only [hσ, hτ]
-  rw [logDeriv_sub_eq_zeroSubtypeSeries_of_riemannHypothesis hRH hs
+  rw [logDeriv_sub_eq_zeroSubtypeSeries_RH hRH hs
       (by
         simpa only [Complex.ofReal_re] using
           (lt_of_lt_of_le (show (1 / 2 : ℝ) < 1 by norm_num only) hσ))]
@@ -205,12 +202,12 @@ theorem normalized_integral_logDeriv_difference_eq (hRH : RiemannHypothesis) {σ
             ((ρ : ℂ) - (σ : ℂ)) ^ 2) +
         deriv (logDeriv riemannXi) (σ : ℂ) := by
   simp_rw [← zeroResolventKernel_eq_logDeriv_difference hRH hσ hτ]
-  exact normalized_integral_zeroResolvent_eq_of_riemannHypothesis hRH hσ hτ hx
+  exact normalized_integral_zeroResolvent_eq_RH hRH hσ hτ hx
 
 /-- Under RH, the inverse-square xi mass on the zero subtype equals twice the
 Riemann zero mass. Restrict the known all-point identity to actual zeros and
 identify the complex norm square. This fixes the constant in integrated zero errors. -/
-theorem tsum_inverse_square_mass_eq_two_mul_riemannZeroMass (hRH : RiemannHypothesis) :
+theorem tsum_zeroInvSq_eq_two_mass_RH (hRH : RiemannHypothesis) :
     (∑' ρ : Zero, (riemannXiZeroMultiplicity (ρ : ℂ) : ℝ) / ‖(ρ : ℂ)‖ ^ 2) =
       2 * riemannZeroMass := by
   have he :
@@ -230,8 +227,7 @@ theorem tsum_inverse_square_mass_eq_two_mul_riemannZeroMass (hRH : RiemannHypoth
     intro ρ
     change _ = if riemannXi (ρ : ℂ) = 0 then _ else 0
     rw [ite_eq_left ρ.property, Complex.normSq_eq_norm_sq]
-  rw [he,
-    tsum_riemannXiZeroMultiplicity_invNormSq_eq_two_mul_riemannZeroMass_of_riemannHypothesis hRH]
+  rw [he, tsum_multiplicityInvSq_eq_two_mass_RH hRH]
 
 /-- Under RH and x > 1, the integral over sigma > 1 of the shifted xi
 zero residues has norm at most 2 B x^(-1/2)/log x, where B is the Riemann zero mass.
@@ -246,10 +242,10 @@ theorem norm_integral_shifted_zero_sum_le (hRH : RiemannHypothesis) {x : ℝ} (h
   have h :=
     General.norm_integral_shifted_zero_residues_le (fun ρ : Zero ↦ (ρ : ℂ))
       (fun ρ : Zero ↦ riemannXiZeroMultiplicity (ρ : ℂ))
-      (fun ρ ↦ riemannXi_zero_re_eq_half_of_riemannHypothesis hRH ρ.property) hx
-      (summable_inverse_square_mass_of_riemannHypothesis hRH)
+      (fun ρ ↦ xi_zero_re_eq_half_of_riemannHypothesis hRH ρ.property) hx
+      (summable_inverse_square_mass_RH hRH)
   simp only [neg_mul, neg_div, tsum_neg, MeasureTheory.integral_neg, norm_neg] at h
-  rwa [tsum_inverse_square_mass_eq_two_mul_riemannZeroMass hRH] at h
+  rwa [tsum_zeroInvSq_eq_two_mass_RH hRH] at h
 
 /-- Under RH and x > 1, the shifted xi zero residue sum is integrable
 over sigma > 1. Negate the general critical-line residue sum and use its summable
@@ -265,8 +261,8 @@ theorem integrableOn_shifted_zero_sum (hRH : RiemannHypothesis) {x : ℝ} (hx : 
   have h :=
     General.integrableOn_shifted_zero_sum (fun ρ : Zero ↦ (ρ : ℂ))
       (fun ρ : Zero ↦ riemannXiZeroMultiplicity (ρ : ℂ))
-      (fun ρ ↦ riemannXi_zero_re_eq_half_of_riemannHypothesis hRH ρ.property) hx
-      (summable_inverse_square_mass_of_riemannHypothesis hRH)
+      (fun ρ ↦ xi_zero_re_eq_half_of_riemannHypothesis hRH ρ.property) hx
+      (summable_inverse_square_mass_RH hRH)
   simpa only [neg_mul, neg_div, tsum_neg, Pi.neg_def, neg_neg] using h.neg
 
 /-- Under RH and x > 1, the shifted xi zero integral divided by log x has norm

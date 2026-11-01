@@ -116,7 +116,7 @@ theorem gamma_profile_dual_le_of_certificate (a b C : ℚ) (K : ℕ) (ha : (300 
   have hx100 : (100 : ℝ) ≤ x := by
     dsimp only [x]; nlinarith only [hsq]
   change gammaScaleSignedDualBudget L x ≤ 2 + (C : ℝ)
-  rw [gamma_scale_signed_dual_budget_eq_anchored_support L hx100]
+  rw [gammaSignedDual_eq_anchorSupport L hx100]
   linarith only [hp, he]
 
 end PseudoPrime.LLS

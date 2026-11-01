@@ -82,7 +82,7 @@ theorem gamma_euler_boundary_tail_upper {b w ψ s v M : ℝ} (hw0 : 0 ≤ w)
 Claim: the actual factor-free joint budget is bounded with the transported prefix gain.
 Proof: substitute the proved prefix lower bound before multiplying by negative two.
 Role: connect small-prefix transport to the established witness separation. -/
-theorem gamma_factor_free_joint_budget_le_of_prefix_transport (hRH : RiemannHypothesis)
+theorem gamma_factor_free_budget_le_of_transport_RH (hRH : RiemannHypothesis)
     {a b c A B E L x D : ℝ} (ha : 1 ≤ a) (hb : 1 ≤ b)
     (hc : c ≤ ∑ m ∈ Finset.Ioc 0 ⌊a⌋₊, Analysis.gammaResolventMangoldtWeight m)
     (hA : A ≤ gammaEulerBoundaryTail a) (hB : gammaEulerBoundaryTail b ≤ B)
@@ -106,8 +106,8 @@ theorem gamma_joint_prefix_le_of_prefix_transport (hRH : RiemannHypothesis) {n :
     (hD : gammaScaleSignedDualBudget L x ≤ D) :
     gammaJointPrefixLocalBudget (NumberTheory.complexQuadraticCharacter n hn) b x ≤
       (11783423 / 25000000 : ℝ) * (L + 7 / 5) + 3 / 4 + D - 2 * (c + A - B - E) + 7 / 60 := by
-  have hj := gamma_joint_prefix_le_factor_free_budget_small_scale (b := b) hn hns hlog hx
-  have ht := gamma_factor_free_joint_budget_le_of_prefix_transport hRH ha hb hc hA hB hE hD
+  have hj := gammaJointPrefix_factorFree_smallScale (b := b) hn hns hlog hx
+  have ht := gamma_factor_free_budget_le_of_transport_RH hRH ha hb hc hA hB hE hD
   linarith only [hj, ht]
 
 end PseudoPrime.LLS

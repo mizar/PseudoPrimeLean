@@ -26,8 +26,8 @@ noncomputable def reciprocalGapAdditionalSquareWeight (h : ℝ) (q N : ℕ) (x :
 restore twice the exact additional square weight in the selected principal-sum bound.
 Pass the generic arithmetic square restoration to the principal factor and identify
 the real character sum. This retains squared excluded-prime contributions positively. -/
-theorem quadratic_selected_reciprocalGap_sum_sub_loss_le_character {q N : ℕ} (hqN : q ∣ N) {h x : ℝ}
-    (hh : 0 ≤ h) (hx : 0 < x) (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic)
+theorem reciprocalGap_quad_sum_le_char {q N : ℕ} (hqN : q ∣ N) {h x : ℝ} (hh : 0 ≤ h) (hx : 0 < x)
+    (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic)
     (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ x → Nat.Coprime p N → χ p = 1) (B : Finset ℕ)
     (hB : B ⊆ Finset.Ioc 0 ⌊x⌋₊) (hcop : ∀ n ∈ B, Nat.Coprime n N) :
     (∑ n ∈ B, reciprocalGapPrincipalWeight h x n) - reciprocalGapAdditionalNonunitWeight h q N x +
@@ -51,8 +51,8 @@ theorem quadratic_selected_reciprocalGap_sum_sub_loss_le_character {q N : ℕ} (
 give a selected lower certificate minus exclusion cost plus twice the square restoration.
 Combine the generic selected-weight bound with the restored exact principal sum.
 This is the input for improved odd negative witness separation. -/
-theorem quadratic_selected_reciprocalGap_lower_sub_loss_le_character {q N : ℕ} (hqN : q ∣ N)
-    {h x : ℝ} (hh : 0 ≤ h) (hx : 0 < x) (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic)
+theorem reciprocalGap_quad_lower_le_char {q N : ℕ} (hqN : q ∣ N) {h x : ℝ} (hh : 0 ≤ h) (hx : 0 < x)
+    (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic)
     (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ x → Nat.Coprime p N → χ p = 1) (B : Finset ℕ)
     (hB : B ⊆ Finset.Ioc 0 ⌊x⌋₊) (hcop : ∀ n ∈ B, Nat.Coprime n N) (lo u : ℕ → ℝ)
     (hlo : ∀ n ∈ B, lo n ≤ ArithmeticFunction.vonMangoldt n) (hu : ∀ n ∈ B, ((n : ℝ) / x) ^ h ≤ u n)
@@ -62,8 +62,7 @@ theorem quadratic_selected_reciprocalGap_lower_sub_loss_le_character {q N : ℕ}
         2 * reciprocalGapAdditionalSquareWeight h q N x ≤
       (reciprocalGapCharacterSum h χ x).re := by
   have hl := sum_lower_le_reciprocalGap_selectedWeight hh B lo u hlo hu hu1
-  have hs :=
-    quadratic_selected_reciprocalGap_sum_sub_loss_le_character hqN hh hx χ hquad hsmall B hB hcop
+  have hs := reciprocalGap_quad_sum_le_char hqN hh hx χ hquad hsmall B hB hcop
   linarith only [hl, hs]
 
 /-- For h>=0,x>0, the additional excluded square principal weight is nonnegative.

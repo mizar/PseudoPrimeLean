@@ -29,7 +29,7 @@ the displayed explicit coupled-envelope gap give an odd prime negative
 Jacobi witness through y squared. Apply the coprime character-witness theorem
 and use quadraticity to turn its non-one value into -1.
 The quantitative gap remains an explicit hypothesis. -/
-theorem exists_prime_neg_one_witness_of_coupledCoprimeGap {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+theorem exists_negOneWitness_of_coupledCoprimeGap {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y : ℝ} (hy : 8 ≤ y)
     (hgap :
       negativeCoprimeEnvelope n hn y <
@@ -39,11 +39,11 @@ theorem exists_prime_neg_one_witness_of_coupledCoprimeGap {n : ℕ} (hn : Odd n)
   let : NeZero (NumberTheory.complexQuadraticCharacter n hn).conductor :=
     ⟨NumberTheory.complexQuadraticCharacter_conductor_ne_zero n hn⟩
   obtain ⟨p, hp, hd, hv, hb⟩ :=
-    LLS.Extensions.exists_prime_coprime_ne_one_of_retainedEvenCoprimeGap
+    LLS.Extensions.exists_prime_coprime_ne_one_of_even_gap_GRH
       (NumberTheory.complexQuadraticCharacter n hn)
       (NumberTheory.complexQuadraticCharacter_ne_one_of_not_square n hn hns)
       (NumberTheory.primitiveQuadraticCharacter_isEven n hn) hGRH hy hgap
-  have hm := NumberTheory.primeNegOneWitness_mem_of_complexQuadraticCharacter_ne_one n hn hp hd hv
+  have hm := NumberTheory.negOneWitness_mem_of_quadratic_ne_one n hn hp hd hv
   exact ⟨p, hm.1, hm.2.1, hb, hm.2.2⟩
 
 /-- Under the same odd-nonsquare, GRH, root and explicit-gap assumptions,
@@ -57,8 +57,7 @@ theorem primeNegOneWitness_cast_le_of_coupledCoprimeGap {n : ℕ} (hn : Odd n) (
         AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum (y ^ 2))
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ y ^ 2 := by
-  obtain ⟨p, hp, ho, hb, hv⟩ :=
-    exists_prime_neg_one_witness_of_coupledCoprimeGap hn hns hGRH hy hgap
+  obtain ⟨p, hp, ho, hb, hv⟩ := exists_negOneWitness_of_coupledCoprimeGap hn hns hGRH hy hgap
   exact (Nat.cast_le.mpr (NumberTheory.primeNegOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hb
 
 /-- Under GRH at root y at least eight, if the explicit coupled gap holds
@@ -88,8 +87,8 @@ the explicit gap at root log n-1/1000 yield a negative Jacobi witness at most
 the shifted square and strictly below log(n) squared.
 Combine the root-independent witness theorem with the scalar comparison.
 The gap is not asserted on an entire input half-line. -/
-theorem exists_prime_neg_one_witness_le_shift_of_coupledCoprimeGap {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem exists_prime_neg_one_le_shift_of_gap_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : (8001 / 1000 : ℝ) ≤ Real.log n)
     (hgap :
       negativeCoprimeEnvelope n hn (Real.log n - 1 / 1000) <
@@ -100,8 +99,7 @@ theorem exists_prime_neg_one_witness_le_shift_of_coupledCoprimeGap {n : ℕ} (hn
         (p : ℝ) ≤ (Real.log n - 1 / 1000) ^ 2 ∧
         (p : ℝ) < (Real.log n) ^ 2 ∧ jacobiSym n p = -1 := by
   have hy : (8 : ℝ) ≤ Real.log n - 1 / 1000 := by linarith only [hL]
-  obtain ⟨p, hp, ho, hb, hv⟩ :=
-    exists_prime_neg_one_witness_of_coupledCoprimeGap hn hns hGRH hy hgap
+  obtain ⟨p, hp, ho, hb, hv⟩ := exists_negOneWitness_of_coupledCoprimeGap hn hns hGRH hy hgap
   have hs : (Real.log n - 1 / 1000) ^ 2 < (Real.log n) ^ 2 := by nlinarith only [hL]
   exact ⟨p, hp, ho, hb, hb.trans_lt hs, hv⟩
 

@@ -31,7 +31,7 @@ is eventually at most `K.mass * log m + η * log q`, uniformly in the conductor
 and character. For large `m`, use relative error `η / K.mass` in the sharp
 bound. For bounded `m`, absorb the coarse bound into the ambient allowance.
 The leading conductor term is retained even when `m` stays bounded. -/
-theorem exists_uniform_kernelZeroSum_le_conductor_add_ambient (K : MellinKernel)
+theorem exists_zeroSum_conductor_ambient_GRH (K : MellinKernel)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∀ η : ℝ,
       0 < η →
@@ -129,7 +129,7 @@ theorem average_le_of_pointwise_smoothed_estimates {q : ℕ} [NeZero q] (K : Mel
 smoothed character sum. The common remainder is uniform in the ambient level
 and scale. Combine the primitive explicit formula with the additive ambient
 zero-mass bound; its coefficient has absolute value at most one. -/
-theorem exists_uniform_nonprincipal_summand_le_conductor (K : MellinKernel)
+theorem exists_nonprincipal_conductor_GRH (K : MellinKernel)
     (hg : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ C : ℝ,
       0 < C ∧
@@ -146,10 +146,10 @@ theorem exists_uniform_nonprincipal_summand_le_conductor (K : MellinKernel)
                             (∑' n : ℕ, K.summand χ x n).re ≤
                               K.mass * Real.log χ.conductor + η * Real.log q +
                                 C * (1 + Real.log q * Real.log x / Real.sqrt x) := by
-  obtain ⟨C, hC, hf⟩ := exists_real_summand_formula_primitive_zeroMass K
+  obtain ⟨C, hC, hf⟩ := exists_summand_primitiveZeroMass_GRH K
   refine ⟨C, hC, ?_⟩
   intro η hη
-  obtain ⟨Q, _, hz⟩ := exists_uniform_kernelZeroSum_le_conductor_add_ambient K hg η hη
+  obtain ⟨Q, _, hz⟩ := exists_zeroSum_conductor_ambient_GRH K hg η hη
   refine ⟨max 20000 Q, Nat.le_max_left _ _, ?_⟩
   intro q _ hq χ hχ x hx
   let : NeZero χ.conductor := ⟨χ.conductor_ne_zero⟩
@@ -196,7 +196,7 @@ theorem exists_uniform_average_le_conductor_sum (K : MellinKernel)
                             ((H.index : ℝ) - 1) * (η * Real.log q) +
                             H.index * (C * (1 + Real.log q * Real.log x / Real.sqrt x)) := by
   classical
-  obtain ⟨C, hC, hb⟩ := exists_uniform_nonprincipal_summand_le_conductor K hg
+  obtain ⟨C, hC, hb⟩ := exists_nonprincipal_conductor_GRH K hg
   refine ⟨C, hC, ?_⟩
   intro η hη
   obtain ⟨Q, hQ, hq⟩ := hb η hη
@@ -221,7 +221,7 @@ open Classical in
 main bound, one ambient allowance for each nonprincipal character, and a
 uniform analytic remainder. The principal explicit formula supplies the main
 term; the remaining character estimates retain their primitive conductors. -/
-theorem exists_uniform_smoothed_average_le_conductor_sum (K : MellinKernel)
+theorem exists_smoothed_conductorSum_GRH (K : MellinKernel)
     (hg : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ C : ℝ,
       0 < C ∧
@@ -278,7 +278,7 @@ sum satisfies the conductor-sensitive averaged upper bound under GRH.
 Combine the arithmetic orthogonality comparison with the proved full-series
 estimate. This preserves the no-small-outside-prime hypothesis required to
 turn the estimate into a cutting-point bound. -/
-theorem exists_uniform_principal_sum_le_conductor_sum_of_noSmallPrimes (K : MellinKernel)
+theorem exists_principal_noSmallPrimes_GRH (K : MellinKernel)
     (hg : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ C : ℝ,
       0 < C ∧
@@ -301,7 +301,7 @@ theorem exists_uniform_principal_sum_le_conductor_sum_of_noSmallPrimes (K : Mell
                                 Real.log χ.val.conductor) +
                             ((H.index : ℝ) - 1) * (η * Real.log q) +
                             H.index * (C * (1 + Real.log q * Real.log x / Real.sqrt x)) := by
-  obtain ⟨C, hC, ha⟩ := exists_uniform_smoothed_average_le_conductor_sum K hg
+  obtain ⟨C, hC, ha⟩ := exists_smoothed_conductorSum_GRH K hg
   refine ⟨C, hC, ?_⟩
   intro η hη
   obtain ⟨Q, hQ, hb⟩ := ha η hη

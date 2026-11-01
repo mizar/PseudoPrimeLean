@@ -20,9 +20,9 @@ namespace PseudoPrime.PseudoSquare
 condition at 4*n gives an odd non-one Jacobi prime at most x. Use the uniform
 reciprocal cost (4/3)log 2 and sharp half-square principal envelope, transfer from the
 canonical primitive character, and allow divisors of n as zero witnesses. -/
-theorem exists_odd_prime_jacobi_ne_one_of_sharp_twoCostLimit_neg {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x Y : ℝ}
-    (hx : 1 < x) (hY : 64 ≤ Y) (hYx : Y ≤ x)
+theorem exists_oddPrime_neOne_sharpTwoCost_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x Y : ℝ} (hx : 1 < x)
+    (hY : 64 ≤ Y) (hYx : Y ≤ x)
     (hlim :
       LLS.PaperStatements.oddEndpointTwoCostLimit (4 * n) x Y ((4 / 3 : ℝ) * Real.log 2)
           ((Real.log x) ^ 2 / 2) <
@@ -46,13 +46,12 @@ theorem exists_odd_prime_jacobi_ne_one_of_sharp_twoCostLimit_neg {n : ℕ} (hn :
   obtain ⟨p, hp, ho, hpx, hv⟩ :=
     LLS.PaperStatements.exists_odd_prime_of_sharp_twoCostLimit_neg χ hq hne hquad hGRH hx hY hYx
       (LLS.PaperStatements.quadraticTwoReciprocalCost_le_four_thirds _) (hm.trans_lt hlim)
-  exact
-    ⟨p, hp, ho, hpx, NumberTheory.jacobi_ne_one_of_primitiveQuadraticCharacter_ne_one hn hp ho hv⟩
+  exact ⟨p, hp, ho, hpx, NumberTheory.jacobi_ne_one_of_primitive_ne_one hn hp ho hv⟩
 
 /-- Under the same two-cost endpoint condition, the least odd-prime non-one
 Jacobi witness is at most x. The nonempty-set input defines the existing least
 witness. Apply leastness to the prime obtained from the two-branch comparison. -/
-theorem primeNeOneWitness_cast_le_of_sharp_twoCostLimit_neg {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+theorem neOneWitness_cast_le_of_sharp_twoCostLimit_neg {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x Y : ℝ} (hx : 1 < x)
     (hY : 64 ≤ Y) (hYx : Y ≤ x)
     (hlim :
@@ -61,8 +60,7 @@ theorem primeNeOneWitness_cast_le_of_sharp_twoCostLimit_neg {n : ℕ} (hn : Odd 
         0)
     (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤ x := by
-  obtain ⟨p, hp, ho, hpx, hv⟩ :=
-    exists_odd_prime_jacobi_ne_one_of_sharp_twoCostLimit_neg hn hns hGRH hx hY hYx hlim
+  obtain ⟨p, hp, ho, hpx, hv⟩ := exists_oddPrime_neOne_sharpTwoCost_GRH hn hns hGRH hx hY hYx hlim
   exact (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hpx
 
 /-- Under GRH,64<=Y<=x and the two-cost condition at 4*B, the finite maximum
@@ -85,7 +83,7 @@ theorem QNeOne_cast_le_of_sharp_twoCostLimit_neg {B : ℕ}
     LLS.PaperStatements.oddEndpointTwoCostLimit_mono_level (c := (4 / 3 : ℝ) * Real.log 2) (D :=
       (Real.log x) ^ 2 / 2) hq0 hle hx.le hY
   exact
-    primeNeOneWitness_cast_le_of_sharp_twoCostLimit_neg ha.odd ha.not_isSquare hGRH hx hY hYx
+    neOneWitness_cast_le_of_sharp_twoCostLimit_neg ha.odd ha.not_isSquare hGRH hx hY hYx
       (hm.trans_lt hlim)
       (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
         (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare ha.odd ha.not_isSquare))

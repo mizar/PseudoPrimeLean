@@ -95,7 +95,7 @@ theorem gammaResolvent_euler_error_lt_twenty_four :
 the signed combination is less than 11783423/25000000 times L plus 24.
 Keep signs in the common main term and absolute weights only in the error sum.
 This connects the rational error certificate to the analytic Poisson values. -/
-theorem gammaResolvent_weighted_lt_of_euler_centered_bounds (P : ℚ → ℝ) (L : ℝ)
+theorem gammaResolvent_weighted_lt_of_centered_bounds (P : ℚ → ℝ) (L : ℝ)
     (h :
       ∀ ab ∈ AnalyticNumberTheory.Gamma.gammaResolventCoefficients,
         |P ab.1 - L / 2| ≤ gammaResolventEulerError ab.1) :

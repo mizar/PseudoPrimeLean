@@ -98,8 +98,8 @@ theorem exists_prime_neg_one_le_affine_squarefree_budget {n : ℕ} {hn : Odd n} 
     ⟨bridge.squareFactor ^ 2, by simpa only [mul_comm] using bridge.squarefreePart_sq_mul.symm⟩
   have hf :
     (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ 4 * bridge.squarefreePart := by
-    rw [NumberTheory.complexQuadraticCharacter_conductor_eq_discriminant bridge hdiv]
-    exact bridge.discriminant_le_four_mul_squarefreePart
+    rw [NumberTheory.complexQuadratic_conductor_eq_discriminant bridge hdiv]
+    exact bridge.discr_le_four_squarefreePart
   have hflog :=
     Real.log_le_log
       (Nat.cast_pos.mpr
@@ -167,7 +167,7 @@ theorem primeNeOneWitness_le_affine_squarefree_budget {n : ℕ} {hn : Odd n} {hn
 /-- Under GRH and n=s²d, the least negative odd-prime witness is at most
 4((21/4)log(4d)+627/10)²+(14/5)log(n). Use E(s) ≤ log(n)/2.
 For fixed d this gives a smaller explicit logarithm-linear envelope. -/
-theorem primeNegOneWitness_le_affine_squarefree_log_budget {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+theorem negOneWitness_le_affine_squarefree_log_budget {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
@@ -180,8 +180,8 @@ theorem primeNegOneWitness_le_affine_squarefree_log_budget {n : ℕ} {hn : Odd n
 /-- Under GRH and the canonical decomposition, an actual negative odd-prime
 witness lies below the improved logarithm-linear envelope. Take the least witness
 and its membership proof, without any new finite input verification. -/
-theorem exists_prime_neg_one_le_affine_squarefree_log_budget {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem exists_prime_negOne_affineSquarefreeLog_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ,
       p.Prime ∧
@@ -194,7 +194,7 @@ theorem exists_prime_neg_one_le_affine_squarefree_log_budget {n : ℕ} {hn : Odd
   have hm := NumberTheory.primeNegOneWitness_mem n hw
   exact
     ⟨NumberTheory.primeNegOneWitness n hw, hm.1, hm.2.1, hm.2.2,
-      primeNegOneWitness_le_affine_squarefree_log_budget bridge hGRH hw⟩
+      negOneWitness_le_affine_squarefree_log_budget bridge hGRH hw⟩
 
 /-- Under GRH for an odd nonsquare n, its least negative odd-prime witness is
 bounded by the improved root expression in the actual conductor and E(2n).
@@ -217,8 +217,8 @@ theorem primeNegOneWitness_le_affine_conductor_root {n : ℕ} {hn : Odd n} {hns 
 /-- Under GRH and the displayed squarefree radius and radical conditions, an
 odd coprime negative prime lies below log(n)^(2-epsilon). Square the radius and
 combine the improved coefficients. The allowed radical cost is log(n)^(2-epsilon)/8. -/
-theorem exists_prime_neg_one_le_log_power_of_affine_squarefree_budget {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem exists_prime_negOne_affineLogPower_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {epsilon : ℝ}
     (hA :
       (21 / 4 : ℝ) * Real.log ((4 * bridge.squarefreePart : ℕ) : ℝ) + 627 / 10 ≤
@@ -243,8 +243,8 @@ theorem exists_prime_neg_one_le_log_power_of_affine_squarefree_budget {n : ℕ} 
 /-- Under GRH and the improved structural radius and radical conditions, the
 least negative odd-prime witness is at most log(n)^(2-epsilon).
 Apply leastness to the actual exponent-bounded prime. This completes the minimum interface. -/
-theorem primeNegOneWitness_le_log_power_of_affine_squarefree_budget {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem negOneWitness_le_affineLogPower_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) {epsilon : ℝ}
     (hA :
@@ -252,8 +252,7 @@ theorem primeNegOneWitness_le_log_power_of_affine_squarefree_budget {n : ℕ} {h
         (Real.log n) ^ (1 - epsilon / 2) / 4)
     (hE : (∑ r ∈ bridge.squareFactor.primeFactors, Real.log r) ≤ (Real.log n) ^ (2 - epsilon) / 8) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ (Real.log n) ^ (2 - epsilon) := by
-  obtain ⟨p, hp, ho, _, hj, hb⟩ :=
-    exists_prime_neg_one_le_log_power_of_affine_squarefree_budget bridge hGRH hA hE
+  obtain ⟨p, hp, ho, _, hj, hb⟩ := exists_prime_negOne_affineLogPower_GRH bridge hGRH hA hE
   exact (Nat.cast_le.mpr (NumberTheory.primeNegOneWitness_le n hw ⟨hp, ho, hj⟩)).trans hb
 
 end PseudoPrime.PseudoSquare

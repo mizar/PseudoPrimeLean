@@ -100,15 +100,14 @@ cutoff.
 Role: this is the source-faithful finite counting bridge for the initial
 modulus-one prime supply.
 -/
-theorem initial_uniform_count_lower_bound_of_sqrt_divisors {N x T : ℕ} {c₀ : ℝ} (hc₀ : 0 < c₀)
-    (hN : N ≠ 0) (hSquarefree : Squarefree N) (hcut : Nat.sqrt N ≤ reliableProp15DivisorCutoff x)
-    (hx : 2 ≤ x)
+theorem initialCount_lower_of_sqrt_divisors {N x T : ℕ} {c₀ : ℝ} (hc₀ : 0 < c₀) (hN : N ≠ 0)
+    (hSquarefree : Squarefree N) (hcut : Nat.sqrt N ≤ reliableProp15DivisorCutoff x) (hx : 2 ≤ x)
     (hlower :
       (T : ℝ) < reliableProp15Coefficient c₀ 1 x * (((2 ^ N.primeFactors.card : ℕ) : ℝ) / 2)) :
     (T : ℝ) <
       reliableProp15Coefficient c₀ 1 x *
         ((restrictedDivisors N (reliableProp15DivisorCutoff x)).card : ℝ) := by
-  have hhalfNat := two_pow_primeFactors_card_le_twice_restrictedDivisors_sqrt hN hSquarefree
+  have hhalfNat := two_pow_factors_le_twice_sqrt_divisors hN hSquarefree
   have hhalfR :
     (((2 ^ N.primeFactors.card : ℕ) : ℝ) / 2) ≤ ((restrictedDivisors N (Nat.sqrt N)).card : ℝ) := by
     apply (div_le_iff₀ (by norm_num only : (0 : ℝ) < 2)).2
@@ -172,7 +171,7 @@ bound.
 Role: turns membership in the fifth-power restricted-divisor set into the
 range hypothesis required by the fixed-scale theta estimate.
 -/
-theorem reliableProp15DivisorCutoff_fifth_power_le_square (X : ℕ) :
+theorem prop15Cutoff_fifthPower_le_square (X : ℕ) :
     reliableProp15DivisorCutoff (X ^ 5) ≤ X ^ 2 := by
   change Nat.floor (Real.rpow ((X ^ 5 : ℕ) : ℝ) ((2 : ℝ) / 5)) ≤ X ^ 2
   have hXnonneg : 0 ≤ (X : ℝ) := by exact_mod_cast Nat.zero_le X
@@ -198,10 +197,10 @@ Claim: `X ^ 2` is no larger than the divisor cutoff for `X ^ 5`.
 Proof: apply the logarithmic characterization of real powers; the logarithms on both sides are
 equal after expanding the natural powers.
 
-Role: together with `reliableProp15DivisorCutoff_fifth_power_le_square`, identifies the exact
+Role: together with `prop15Cutoff_fifthPower_le_square`, identifies the exact
 cutoff needed when the full divisor set of an auxiliary modulus is used.
 -/
-theorem square_le_reliableProp15DivisorCutoff_fifth_power (X : ℕ) (hX : 0 < X) :
+theorem square_le_prop15Cutoff_fifthPower (X : ℕ) (hX : 0 < X) :
     X ^ 2 ≤ reliableProp15DivisorCutoff (X ^ 5) := by
   change X ^ 2 ≤ Nat.floor (Real.rpow ((X ^ 5 : ℕ) : ℝ) ((2 : ℝ) / 5))
   apply Nat.le_floor
@@ -221,11 +220,11 @@ Proof: combine the floor upper bound with the logarithmic lower bound for the sa
 Role: removes the cutoff from restricted divisor counts whenever the auxiliary modulus is at
 most `X ^ 2`.
 -/
-theorem reliableProp15DivisorCutoff_fifth_power_eq_square (X : ℕ) (hX : 0 < X) :
+theorem prop15Cutoff_fifthPower_eq_square (X : ℕ) (hX : 0 < X) :
     reliableProp15DivisorCutoff (X ^ 5) = X ^ 2 := by
   apply Nat.le_antisymm
-  · exact reliableProp15DivisorCutoff_fifth_power_le_square X
-  · exact square_le_reliableProp15DivisorCutoff_fifth_power X hX
+  · exact prop15Cutoff_fifthPower_le_square X
+  · exact square_le_prop15Cutoff_fifthPower X hX
 
 /--
 Inputs: a positive scale `X` and a nonzero squarefree modulus `L ≤ X ^ 2`.
@@ -241,11 +240,11 @@ theorem restrictedDivisors_card_eq_full_at_fifth_power {L X : ℕ} (hX : 0 < X) 
     (hSquarefree : Squarefree L) (hLbound : L ≤ X ^ 2) :
     (restrictedDivisors L (reliableProp15DivisorCutoff (X ^ 5))).card =
       2 ^ L.primeFactors.card := by
-  have hcut := reliableProp15DivisorCutoff_fifth_power_eq_square X hX
+  have hcut := prop15Cutoff_fifthPower_eq_square X hX
   have hLy : L ≤ reliableProp15DivisorCutoff (X ^ 5) := by
     rw [hcut]
     exact hLbound
-  exact card_restrictedDivisors_eq_two_pow_primeFactors_card hL hSquarefree hLy
+  exact restrictedDivisors_card_eq_two_pow hL hSquarefree hLy
 
 /--
 Inputs: positive natural numbers `q`, `L`, and an exponent `J`.
@@ -584,7 +583,7 @@ Content: this specializes the generic real-count bridge to the exact
 `c₀/(φ(m) log x)` coefficient in Proposition 1.5.
 
 Proof: unfold the coefficient and apply
-`exists_prime_set_of_real_restricted_divisor_lower_bound`.
+`exists_prime_set_of_real_restricted`.
 
 Role: this is the finite output interface for the analytic estimate in
 Proposition 1.5.
@@ -602,8 +601,8 @@ theorem exists_prime_set_of_reliable_prop15_count_bound (L y k x m a T : ℕ) (h
       T < P.card ∧
         ∀ p ∈ P, Nat.Prime p ∧ p ≤ x ∧ p % m = a % m ∧ ∃ d, d ∣ L ∧ d ≤ y ∧ p = d * k + 1 := by
   exact
-    exists_prime_set_of_real_restricted_divisor_lower_bound L y k x m a T hL hk
-      (reliableProp15Coefficient c₀ m x) hlower hcount
+    exists_prime_set_of_real_restricted L y k x m a T hL hk (reliableProp15Coefficient c₀ m x)
+      hlower hcount
 
 /--
 Inputs: the uniform form of reliable, Proposition 1.5 for modulus `m` and
@@ -619,7 +618,7 @@ Proposition 1.5 input, then apply the finite-count conversion above.
 Role: this is the reusable output interface for both applications in reliable,
 §2: the initial modulus-1 seed set and the final modulus-4 prime set.
 -/
-theorem exists_prime_set_of_reliable_prop15_uniform_count (c₀ : ℝ) (m l x₀ L x T : ℕ)
+theorem exists_primes_of_prop15_uniformCount (c₀ : ℝ) (m l x₀ L x T : ℕ)
     (hcount : ReliableProp15UniformCount c₀ m l x₀) (hx : x₀ ≤ x) (hL : L ≠ 0)
     (hSquarefree : Squarefree L) (hCoprime : Nat.Coprime L m)
     (hlower :

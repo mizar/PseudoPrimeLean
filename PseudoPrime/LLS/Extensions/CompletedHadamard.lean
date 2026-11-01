@@ -65,7 +65,7 @@ theorem centered_logDeriv_completed_eq_genusSum (f : GeneralLFunction) (hf : f.I
     completed_ne_zero_of_re_ne_half hRH (by norm_num only [Complex.zero_re])
   have hne : f.completed s ≠ 0 := completed_ne_zero_of_re_ne_half hRH hs.ne'
   obtain ⟨C, hC, hg⟩ :=
-    AnalyticNumberTheory.General.exists_global_exponential_bound_of_orderAtMostOne hF.continuous
+    AnalyticNumberTheory.General.exists_exp_bound_of_orderAtMostOne hF.continuous
       hf.2.2.2.2.2.2.2.2.1 (show (1 : ℝ) < 3 / 2 by norm_num only)
   exact
     AnalyticNumberTheory.General.centered_logDeriv_eq_genusSum hF h0 hC
@@ -93,7 +93,7 @@ theorem logDeriv_completed_sub_eq_zeroSeries (f : GeneralLFunction) (hf : f.IsAd
 /-- For admissible RH data and two points to the right of the critical line, the ordinary
 logarithmic derivative difference is the zero-resolvent sum minus the completion-factor difference.
 Combine the completed Hadamard expansion with the completion product rule. -/
-theorem logDeriv_ordinary_sub_eq_zeroSeries_sub_gamma (f : GeneralLFunction) (hf : f.IsAdmissible)
+theorem ordinary_logDeriv_sub_zero_gamma_RH (f : GeneralLFunction) (hf : f.IsAdmissible)
     (hRH : f.RiemannHypothesis) {s t : ℂ} (hs : 1 / 2 < s.re) (ht : 1 / 2 < t.re) :
     logDeriv f.L s - logDeriv f.L t =
       (∑' ρ : ℂ, (analyticOrderNatAt f.completed ρ : ℂ) * (1 / (s - ρ) - 1 / (t - ρ))) -
@@ -135,8 +135,8 @@ of logarithmic derivatives of the completion factor equals half the sum of
 the translated digamma differences minus the finite reciprocal differences.
 Apply the digamma recurrence at each shifted argument; this separates the finite
 resolvent sum from the translated remainder. -/
-theorem logDeriv_completionFactor_sub_eq_partial_resolvent (f : GeneralLFunction)
-    (hf : f.IsAdmissible) {s t : ℂ} (hs : 0 < s.re) (ht : 0 < t.re) (n : ℕ) :
+theorem completion_logDeriv_partial_resolvent (f : GeneralLFunction) (hf : f.IsAdmissible) {s t : ℂ}
+    (hs : 0 < s.re) (ht : 0 < t.re) (n : ℕ) :
     logDeriv f.completionFactor s - logDeriv f.completionFactor t =
       (∑ j : Fin f.degree,
           ((Complex.digamma (((s + f.shift j) / 2) + n) -
@@ -158,8 +158,8 @@ logarithmic derivatives of the completion factor is half the finite sum of
 convergent gamma reciprocal difference series. Apply the digamma series identity
 to each shifted argument. This represents the gamma contribution to the ordinary
 L-function logarithmic derivative difference. -/
-theorem logDeriv_completionFactor_sub_eq_resolventSeries (f : GeneralLFunction)
-    (hf : f.IsAdmissible) {s t : ℂ} (hs : 0 < s.re) (ht : 0 < t.re) :
+theorem completion_logDeriv_resolventSeries (f : GeneralLFunction) (hf : f.IsAdmissible) {s t : ℂ}
+    (hs : 0 < s.re) (ht : 0 < t.re) :
     logDeriv f.completionFactor s - logDeriv f.completionFactor t =
       (∑ j : Fin f.degree,
           ∑' n : ℕ, (1 / (((t + f.shift j) / 2) + n) - 1 / (((s + f.shift j) / 2) + n))) /

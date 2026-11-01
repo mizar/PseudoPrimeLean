@@ -112,7 +112,7 @@ theorem findCubeDiscriminantSquareRoot_isSome_iff (R F : ℕ) :
 
 /-- The root-search `Option` is empty exactly when the executable square test rejects. This
 equivalence does not require any quotient, size, or factorization hypotheses. -/
-theorem findCubeDiscriminantSquareRoot_none_iff_square_false (R F : ℕ) :
+theorem findCubeDiscrRoot_none_iff_square_false (R F : ℕ) :
     findCubeDiscriminantSquareRoot R F = none ↔ cubeDiscriminantIsSquare R F = false := by
   constructor
   · intro hnone
@@ -271,7 +271,7 @@ theorem cubeCoefficients_of_factorization_cube_bound {n F R u v : ℕ} (hF : 0 <
   exact cubeCoefficients_of_factorization hF hdecomp hfactor hsum
 
 /-- The cube-root discriminant is a square for a factorization below the `F^3` bound. -/
-theorem cubeDiscriminant_eq_square_of_factorization_cube_bound {n F R u v : ℕ} (hF : 0 < F)
+theorem cubeDiscriminant_square_of_bounded_factors {n F R u v : ℕ} (hF : 0 < F)
     (hdecomp : n = F * R + 1) (hfactor : (u * F + 1) * (v * F + 1) = n) (hbound : n < F ^ 3)
     (hu : 1 ≤ u) (hv : 1 ≤ v) : cubeDiscriminant R F = ((u : ℤ) - v) ^ 2 := by
   have hcoeff := cubeCoefficients_of_factorization_cube_bound hF hdecomp hfactor hbound hu hv
@@ -289,7 +289,7 @@ theorem cubeDiscriminant_add_four_quotient (R F : ℕ) :
 
 /-- A square discriminant forces the quotient and remainder to satisfy the usual
 quadratic-root identity, prior to parity and nonnegativity reconstruction. -/
-theorem quotient_remainder_identity_of_cubeDiscriminant_eq_square (R F : ℕ) (z : ℤ)
+theorem cube_remainder_identity_of_square_discriminant (R F : ℕ) (z : ℤ)
     (hsquare : cubeDiscriminant R F = z ^ 2) :
     z ^ 2 + 4 * (cubeQuotient R F : ℤ) = (cubeRemainder R F : ℤ) ^ 2 := by
   have hid := cubeDiscriminant_add_four_quotient R F
@@ -298,10 +298,10 @@ theorem quotient_remainder_identity_of_cubeDiscriminant_eq_square (R F : ℕ) (z
 
 /-- A square discriminant forces the remainder and its square root to have the
 same parity, so their sum is even. This is the first integrality condition for root recovery. -/
-theorem even_remainder_add_sub_root_of_cubeDiscriminant_eq_square (R F : ℕ) (z : ℤ)
+theorem even_remainder_add_sub_of_square_discriminant (R F : ℕ) (z : ℤ)
     (hsquare : cubeDiscriminant R F = z ^ 2) :
     Even ((cubeRemainder R F : ℤ) + z) ∧ Even ((cubeRemainder R F : ℤ) - z) := by
-  have hid := quotient_remainder_identity_of_cubeDiscriminant_eq_square R F z hsquare
+  have hid := cube_remainder_identity_of_square_discriminant R F z hsquare
   have hdiff : (cubeRemainder R F : ℤ) ^ 2 - z ^ 2 = 4 * (cubeQuotient R F : ℤ) := by
     calc
       (cubeRemainder R F : ℤ) ^ 2 - z ^ 2 = (z ^ 2 + 4 * (cubeQuotient R F : ℤ)) - z ^ 2 := by
@@ -325,10 +325,10 @@ theorem even_remainder_add_sub_root_of_cubeDiscriminant_eq_square (R F : ℕ) (z
 
 /-- A nonnegative quotient in the square-discriminant identity bounds the absolute
 value of its integer square root by the nonnegative Euclidean remainder. -/
-theorem abs_root_le_remainder_of_cubeDiscriminant_eq_square (R F : ℕ) (z : ℤ)
+theorem abs_root_le_remainder_of_square_discriminant (R F : ℕ) (z : ℤ)
     (hsquare : cubeDiscriminant R F = z ^ 2) :
     -(cubeRemainder R F : ℤ) ≤ z ∧ z ≤ (cubeRemainder R F : ℤ) := by
-  have hid := quotient_remainder_identity_of_cubeDiscriminant_eq_square R F z hsquare
+  have hid := cube_remainder_identity_of_square_discriminant R F z hsquare
   have hr2 : z ^ 2 ≤ (cubeRemainder R F : ℤ) ^ 2 := by
     calc
       z ^ 2 ≤ z ^ 2 + 4 * (cubeQuotient R F : ℤ) :=
@@ -366,18 +366,17 @@ theorem quadratic_roots_of_cubeDiscriminant_eq_square (R F : ℕ) (z : ℤ)
     ∃ u v : ℤ,
       0 ≤ u ∧
         0 ≤ v ∧ (cubeRemainder R F : ℤ) = u + v ∧ z = u - v ∧ (cubeQuotient R F : ℤ) = u * v := by
-  have hid := quotient_remainder_identity_of_cubeDiscriminant_eq_square R F z hsquare
-  have hparity := even_remainder_add_sub_root_of_cubeDiscriminant_eq_square R F z hsquare
-  have hbound := abs_root_le_remainder_of_cubeDiscriminant_eq_square R F z hsquare
+  have hid := cube_remainder_identity_of_square_discriminant R F z hsquare
+  have hparity := even_remainder_add_sub_of_square_discriminant R F z hsquare
+  have hbound := abs_root_le_remainder_of_square_discriminant R F z hsquare
   exact
     quadratic_roots_of_discriminant_identity (cubeRemainder R F : ℤ) (cubeQuotient R F : ℤ) z hid
       hparity hbound.1 hbound.2
 
 /-- A positive quotient and square discriminant reconstruct a nontrivial factorization
 of `n = F * R + 1`. This is the arithmetic converse to the forward discriminant theorem. -/
-theorem factorization_of_positive_quotient_and_cubeDiscriminant_square {n F R : ℕ}
-    (hdecomp : n = F * R + 1) (hquotient : 0 < cubeQuotient R F) (z : ℤ)
-    (hsquare : cubeDiscriminant R F = z ^ 2) :
+theorem factorization_of_cubeDiscr_square {n F R : ℕ} (hdecomp : n = F * R + 1)
+    (hquotient : 0 < cubeQuotient R F) (z : ℤ) (hsquare : cubeDiscriminant R F = z ^ 2) :
     ∃ u v : ℕ, 1 ≤ u ∧ 1 ≤ v ∧ n = (u * F + 1) * (v * F + 1) := by
   obtain ⟨u, v, hu0, hv0, hrEq, _, hqEq⟩ :=
     quadratic_roots_of_cubeDiscriminant_eq_square R F z hsquare
@@ -415,11 +414,10 @@ theorem factorization_of_positive_quotient_and_cubeDiscriminant_square {n F R : 
 
 /-- A square discriminant with positive quotient gives a proper divisor, hence
 proves compositeness. No prime-divisor congruence or cube-size bound is needed here. -/
-theorem not_prime_of_positive_quotient_and_cubeDiscriminant_square {n F R : ℕ} (hn : 1 < n)
-    (hF : 0 < F) (hdecomp : n = F * R + 1) (hquotient : 0 < cubeQuotient R F) (z : ℤ)
+theorem not_prime_of_pos_cubeQuotient_sq_discriminant {n F R : ℕ} (hn : 1 < n) (hF : 0 < F)
+    (hdecomp : n = F * R + 1) (hquotient : 0 < cubeQuotient R F) (z : ℤ)
     (hsquare : cubeDiscriminant R F = z ^ 2) : ¬Nat.Prime n := by
-  obtain ⟨u, v, hu, hv, hfactor⟩ :=
-    factorization_of_positive_quotient_and_cubeDiscriminant_square hdecomp hquotient z hsquare
+  obtain ⟨u, v, hu, hv, hfactor⟩ := factorization_of_cubeDiscr_square hdecomp hquotient z hsquare
   have huProd : 1 ≤ u * F := Nat.succ_le_iff.mpr (Nat.mul_pos (Nat.zero_lt_of_lt hu) hF)
   have hvProd : 1 ≤ v * F := Nat.succ_le_iff.mpr (Nat.mul_pos (Nat.zero_lt_of_lt hv) hF)
   have hu2 : 2 ≤ u * F + 1 := by
@@ -445,7 +443,7 @@ theorem not_prime_of_positive_quotient_and_cubeDiscriminant_square {n F R : ℕ}
 theorem not_prime_of_checkCubeDiscriminantSquareWitness {n F R : ℕ} (hn : 1 < n) (hF : 0 < F)
     (hdecomp : n = F * R + 1) (hquotient : 0 < cubeQuotient R F) (z : ℤ)
     (hcheck : checkCubeDiscriminantSquareWitness R F z = true) : ¬Nat.Prime n := by
-  apply not_prime_of_positive_quotient_and_cubeDiscriminant_square hn hF hdecomp hquotient z
+  apply not_prime_of_pos_cubeQuotient_sq_discriminant hn hF hdecomp hquotient z
   exact (checkCubeDiscriminantSquareWitness_eq_true_iff R F z).mp hcheck
 
 /-- The complete square-root search supplies the certificate consumed by the BLS
@@ -453,7 +451,7 @@ compositeness theorem whenever the quotient is positive. -/
 theorem not_prime_of_findCubeDiscriminantSquareRoot {n F R : ℕ} (hn : 1 < n) (hF : 0 < F)
     (hdecomp : n = F * R + 1) (hquotient : 0 < cubeQuotient R F) (z : ℤ)
     (hfind : findCubeDiscriminantSquareRoot R F = some z) : ¬Nat.Prime n := by
-  apply not_prime_of_positive_quotient_and_cubeDiscriminant_square hn hF hdecomp hquotient z
+  apply not_prime_of_pos_cubeQuotient_sq_discriminant hn hF hdecomp hquotient z
   exact findCubeDiscriminantSquareRoot_some_spec R F z hfind
 
 /-- The quotient-remainder decomposition is preserved as an integer identity. -/
@@ -508,9 +506,8 @@ theorem exists_factor_form_of_primeDivisorsAbove {n F m : ℕ} (hlarge : PrimeDi
 
 /-- A composite input with all prime divisors above `F` splits into two nontrivial
 factors of the BLS form. This supplies the factorization consumed by the cube discriminant. -/
-theorem exists_bls_factorization_of_composite_of_primeDivisorsAbove {n F : ℕ} (hn : 1 < n)
-    (hnot : ¬Nat.Prime n) (hlarge : PrimeDivisorsAbove n F) :
-    ∃ u v, n = (u * F + 1) * (v * F + 1) ∧ 1 ≤ u ∧ 1 ≤ v := by
+theorem exists_factors_of_composite_of_large_primes {n F : ℕ} (hn : 1 < n) (hnot : ¬Nat.Prime n)
+    (hlarge : PrimeDivisorsAbove n F) : ∃ u v, n = (u * F + 1) * (v * F + 1) ∧ 1 ≤ u ∧ 1 ≤ v := by
   obtain ⟨p, hp, hpn⟩ := Nat.exists_prime_and_dvd (Nat.ne_of_gt hn)
   have hpne : p ≠ n := by
     intro heq
@@ -555,68 +552,57 @@ theorem exists_bls_factorization_of_composite_of_primeDivisorsAbove {n F : ℕ} 
 
 /-- Below the cube-root bound, a composite input satisfying the BLS prime-divisor
 condition has square discriminant. Thus nonsquareness is a sound compositeness exclusion. -/
-theorem cubeDiscriminant_eq_square_of_composite_of_primeDivisorsAbove {n F R : ℕ} (hF : 0 < F)
-    (hn : 1 < n) (hnot : ¬Nat.Prime n) (hlarge : PrimeDivisorsAbove n F) (hdecomp : n = F * R + 1)
+theorem cubeDiscriminant_square_of_composite {n F R : ℕ} (hF : 0 < F) (hn : 1 < n)
+    (hnot : ¬Nat.Prime n) (hlarge : PrimeDivisorsAbove n F) (hdecomp : n = F * R + 1)
     (hbound : n < F ^ 3) : ∃ u v : ℕ, 1 ≤ u ∧ 1 ≤ v ∧ cubeDiscriminant R F = ((u : ℤ) - v) ^ 2 := by
-  obtain ⟨u, v, hfactor, hu, hv⟩ :=
-    exists_bls_factorization_of_composite_of_primeDivisorsAbove hn hnot hlarge
+  obtain ⟨u, v, hfactor, hu, hv⟩ := exists_factors_of_composite_of_large_primes hn hnot hlarge
   exact
-    ⟨u, v, hu, hv,
-      cubeDiscriminant_eq_square_of_factorization_cube_bound hF hdecomp hfactor.symm hbound hu hv⟩
+    ⟨u, v, hu, hv, cubeDiscriminant_square_of_bounded_factors hF hdecomp hfactor.symm hbound hu hv⟩
 
 /-- Under the cube bound and BLS prime-divisor condition, a nonsquare discriminant
 proves primality. -/
-theorem prime_of_nonsquare_cubeDiscriminant_of_primeDivisorsAbove {n F R : ℕ} (hF : 0 < F)
-    (hn : 1 < n) (hdecomp : n = F * R + 1) (hbound : n < F ^ 3) (hlarge : PrimeDivisorsAbove n F)
+theorem prime_of_nonsquare_cubeDiscriminant {n F R : ℕ} (hF : 0 < F) (hn : 1 < n)
+    (hdecomp : n = F * R + 1) (hbound : n < F ^ 3) (hlarge : PrimeDivisorsAbove n F)
     (hnsquare : ∀ z : ℤ, cubeDiscriminant R F ≠ z ^ 2) : Nat.Prime n := by
   by_contra hnot
   obtain ⟨u, v, _, _, hsquare⟩ :=
-    cubeDiscriminant_eq_square_of_composite_of_primeDivisorsAbove hF hn hnot hlarge hdecomp hbound
+    cubeDiscriminant_square_of_composite hF hn hnot hlarge hdecomp hbound
   exact hnsquare ((u : ℤ) - v) hsquare
 
 /-- With positive quotient, the cube-root BLS arithmetic conditions characterize
 primality exactly by nonsquareness of the discriminant. -/
-theorem prime_iff_nonsquare_cubeDiscriminant_of_primeDivisorsAbove {n F R : ℕ} (hn : 1 < n)
-    (hF : 0 < F) (hdecomp : n = F * R + 1) (hquotient : 0 < cubeQuotient R F) (hbound : n < F ^ 3)
+theorem prime_iff_nonsquare_cubeDiscriminant {n F R : ℕ} (hn : 1 < n) (hF : 0 < F)
+    (hdecomp : n = F * R + 1) (hquotient : 0 < cubeQuotient R F) (hbound : n < F ^ 3)
     (hlarge : PrimeDivisorsAbove n F) : Nat.Prime n ↔ ∀ z : ℤ, cubeDiscriminant R F ≠ z ^ 2 := by
   constructor
   · intro hprime z hsquare
-    exact
-      (not_prime_of_positive_quotient_and_cubeDiscriminant_square hn hF hdecomp hquotient z hsquare)
-        hprime
+    exact (not_prime_of_pos_cubeQuotient_sq_discriminant hn hF hdecomp hquotient z hsquare) hprime
   · intro hnsquare
-    exact
-      prime_of_nonsquare_cubeDiscriminant_of_primeDivisorsAbove hF hn hdecomp hbound hlarge hnsquare
+    exact prime_of_nonsquare_cubeDiscriminant hF hn hdecomp hbound hlarge hnsquare
 
 /-- The cube-root BLS primality criterion as an executable square-test specification. -/
-theorem prime_iff_cubeDiscriminantIsSquare_false_of_primeDivisorsAbove {n F R : ℕ} (hn : 1 < n)
-    (hF : 0 < F) (hdecomp : n = F * R + 1) (hquotient : 0 < cubeQuotient R F) (hbound : n < F ^ 3)
+theorem prime_iff_cubeDiscriminantIsSquare_false {n F R : ℕ} (hn : 1 < n) (hF : 0 < F)
+    (hdecomp : n = F * R + 1) (hquotient : 0 < cubeQuotient R F) (hbound : n < F ^ 3)
     (hlarge : PrimeDivisorsAbove n F) : Nat.Prime n ↔ cubeDiscriminantIsSquare R F = false := by
   constructor
   · intro hprime
     apply (cubeDiscriminantIsSquare_eq_false_iff R F).2
-    exact
-      (prime_iff_nonsquare_cubeDiscriminant_of_primeDivisorsAbove hn hF hdecomp hquotient hbound
-            hlarge).mp
-        hprime
+    exact (prime_iff_nonsquare_cubeDiscriminant hn hF hdecomp hquotient hbound hlarge).mp hprime
   · intro htest
-    apply
-      (prime_iff_nonsquare_cubeDiscriminant_of_primeDivisorsAbove hn hF hdecomp hquotient hbound
-          hlarge).mpr
+    apply (prime_iff_nonsquare_cubeDiscriminant hn hF hdecomp hquotient hbound hlarge).mpr
     exact (cubeDiscriminantIsSquare_eq_false_iff R F).1 htest
 
 /-- Under the BLS prime-divisor condition, a zero quotient forces primality. A composite input
 would factor as `(uF+1)(vF+1)` with positive `u` and `v`, forcing the cofactor `R` to be at least
 `F` and hence its quotient by `F` to be positive. -/
-private theorem prime_of_cubeQuotient_eq_zero_of_primeDivisorsAbove {n F R : ℕ} (hn : 1 < n)
-    (hF : 0 < F) (hdecomp : n = F * R + 1) (hlarge : PrimeDivisorsAbove n F)
-    (hquotient : cubeQuotient R F = 0) : Nat.Prime n := by
+private theorem prime_of_cubeQuotient_zero_large_divisors {n F R : ℕ} (hn : 1 < n) (hF : 0 < F)
+    (hdecomp : n = F * R + 1) (hlarge : PrimeDivisorsAbove n F) (hquotient : cubeQuotient R F = 0) :
+    Nat.Prime n := by
   by_contra hprime
   have hnot : ¬Nat.Prime n := by
     intro hp
     exact hprime hp
-  obtain ⟨u, v, hfactor, hu, hv⟩ :=
-    exists_bls_factorization_of_composite_of_primeDivisorsAbove hn hnot hlarge
+  obtain ⟨u, v, hfactor, hu, hv⟩ := exists_factors_of_composite_of_large_primes hn hnot hlarge
   have hcofactor := cubeCofactor_eq_factor_coefficients hF hdecomp hfactor.symm
   have huvpos : 0 < u * v := Nat.mul_pos (Nat.zero_lt_of_lt hu) (Nat.zero_lt_of_lt hv)
   have huv : 1 ≤ u * v := Nat.succ_le_iff.mpr huvpos
@@ -634,9 +620,8 @@ private theorem prime_of_cubeQuotient_eq_zero_of_primeDivisorsAbove {n F R : ℕ
 branch is kept explicit: under the prime-divisor condition and cubic size bound, primality is
 equivalent to a zero quotient or a nonsquare discriminant. The zero branch is necessary because
 prime inputs can have a square discriminant when `R < F`. -/
-theorem prime_iff_cubeDiscriminantIsSquare_false_or_quotient_zero_of_primeDivisorsAbove {n F R : ℕ}
-    (hn : 1 < n) (hF : 0 < F) (hdecomp : n = F * R + 1) (hbound : n < F ^ 3)
-    (hlarge : PrimeDivisorsAbove n F) :
+theorem prime_iff_cubeCriterion_of_divisorsAbove {n F R : ℕ} (hn : 1 < n) (hF : 0 < F)
+    (hdecomp : n = F * R + 1) (hbound : n < F ^ 3) (hlarge : PrimeDivisorsAbove n F) :
     Nat.Prime n ↔ cubeQuotient R F = 0 ∨ cubeDiscriminantIsSquare R F = false := by
   constructor
   · intro hprime
@@ -646,41 +631,37 @@ theorem prime_iff_cubeDiscriminantIsSquare_false_or_quotient_zero_of_primeDiviso
       apply (cubeDiscriminantIsSquare_eq_false_iff R F).2
       intro z hz
       have hqpos : 0 < cubeQuotient R F := Nat.pos_of_ne_zero hqzero
-      exact
-        (not_prime_of_positive_quotient_and_cubeDiscriminant_square hn hF hdecomp hqpos z hz) hprime
+      exact (not_prime_of_pos_cubeQuotient_sq_discriminant hn hF hdecomp hqpos z hz) hprime
   · rintro (hqzero | hfalse)
-    · exact prime_of_cubeQuotient_eq_zero_of_primeDivisorsAbove hn hF hdecomp hlarge hqzero
-    · apply prime_of_nonsquare_cubeDiscriminant_of_primeDivisorsAbove hF hn hdecomp hbound hlarge
+    · exact prime_of_cubeQuotient_zero_large_divisors hn hF hdecomp hlarge hqzero
+    · apply prime_of_nonsquare_cubeDiscriminant hF hn hdecomp hbound hlarge
       exact (cubeDiscriminantIsSquare_eq_false_iff R F).1 hfalse
 
 /-- The cube-root BLS result contract with its degenerate quotient branch made explicit. Under
 the prime-divisor and cubic-size conditions, the input is prime exactly when the quotient is zero
 or the complete discriminant-root search returns `none`. -/
-theorem prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero {n F R : ℕ} (hn : 1 < n)
-    (hF : 0 < F) (hdecomp : n = F * R + 1) (hbound : n < F ^ 3) (hlarge : PrimeDivisorsAbove n F) :
+theorem prime_iff_cubeRootSearch_none_or_quotient_zero {n F R : ℕ} (hn : 1 < n) (hF : 0 < F)
+    (hdecomp : n = F * R + 1) (hbound : n < F ^ 3) (hlarge : PrimeDivisorsAbove n F) :
     Nat.Prime n ↔ cubeQuotient R F = 0 ∨ findCubeDiscriminantSquareRoot R F = none := by
-  rw [prime_iff_cubeDiscriminantIsSquare_false_or_quotient_zero_of_primeDivisorsAbove hn hF hdecomp
-      hbound hlarge]
+  rw [prime_iff_cubeCriterion_of_divisorsAbove hn hF hdecomp hbound hlarge]
   constructor
   · rintro (hz | hfalse)
     · exact Or.inl hz
-    · exact Or.inr ((findCubeDiscriminantSquareRoot_none_iff_square_false R F).2 hfalse)
+    · exact Or.inr ((findCubeDiscrRoot_none_iff_square_false R F).2 hfalse)
   · rintro (hz | hnone)
     · exact Or.inl hz
-    · exact Or.inr ((findCubeDiscriminantSquareRoot_none_iff_square_false R F).1 hnone)
+    · exact Or.inr ((findCubeDiscrRoot_none_iff_square_false R F).1 hnone)
 
 /-- Under the cube-root BLS hypotheses, the complete discriminant-root search returns `none`
 exactly for prime inputs. -/
-theorem prime_iff_cubeDiscriminantSquareRootSearch_none_of_primeDivisorsAbove {n F R : ℕ}
-    (hn : 1 < n) (hF : 0 < F) (hdecomp : n = F * R + 1) (hquotient : 0 < cubeQuotient R F)
-    (hbound : n < F ^ 3) (hlarge : PrimeDivisorsAbove n F) :
+theorem prime_iff_cubeRoot_none_of_divisorsAbove {n F R : ℕ} (hn : 1 < n) (hF : 0 < F)
+    (hdecomp : n = F * R + 1) (hquotient : 0 < cubeQuotient R F) (hbound : n < F ^ 3)
+    (hlarge : PrimeDivisorsAbove n F) :
     Nat.Prime n ↔ findCubeDiscriminantSquareRoot R F = none := by
   constructor
   · intro hprime
     have hfalse :=
-      (prime_iff_cubeDiscriminantIsSquare_false_of_primeDivisorsAbove hn hF hdecomp hquotient hbound
-            hlarge).mp
-        hprime
+      (prime_iff_cubeDiscriminantIsSquare_false hn hF hdecomp hquotient hbound hlarge).mp hprime
     cases hroot : findCubeDiscriminantSquareRoot R F with
     | none => rfl
     | some
@@ -692,9 +673,7 @@ theorem prime_iff_cubeDiscriminantSquareRootSearch_none_of_primeDivisorsAbove {n
       rw [hfalse] at htrue
       exact Bool.noConfusion htrue
   · intro hnone
-    apply
-      (prime_iff_cubeDiscriminantIsSquare_false_of_primeDivisorsAbove hn hF hdecomp hquotient hbound
-          hlarge).mpr
+    apply (prime_iff_cubeDiscriminantIsSquare_false hn hF hdecomp hquotient hbound hlarge).mpr
     cases htest : cubeDiscriminantIsSquare R F with
     | false => rfl
     | true =>
@@ -705,8 +684,8 @@ theorem prime_iff_cubeDiscriminantSquareRootSearch_none_of_primeDivisorsAbove {n
 /-- Valid BLS factor and witness data supply the prime-divisor condition for the cube criterion.
 Together with the Euclidean decomposition and cube bound, the executable square-root search
 returns `none` exactly for prime inputs. -/
-theorem prime_iff_cubeDiscriminantSquareRootSearch_none_of_valid_bls_data {n F R : ℕ} (hn : 1 < n)
-    (hF : 0 < F) (hdecomp : n = F * R + 1) (hquotient : 0 < cubeQuotient R F) (hbound : n < F ^ 3)
+theorem prime_iff_cubeRoot_none_of_valid_data {n F R : ℕ} (hn : 1 < n) (hF : 0 < F)
+    (hdecomp : n = F * R + 1) (hquotient : 0 < cubeQuotient R F) (hbound : n < F ^ 3)
     (data : PartialFactorizationData) (witnesses : List (ℕ × ℕ))
     (hfactor : ValidPartialFactorization n data) (hwitness : ValidWitnesses n data witnesses)
     (hproduct : factorProduct data.factors = F) :
@@ -716,29 +695,26 @@ theorem prime_iff_cubeDiscriminantSquareRootSearch_none_of_valid_bls_data {n F R
     intro p hp hpn
     rw [← hproduct]
     exact hlargeData p hp hpn
-  exact
-    prime_iff_cubeDiscriminantSquareRootSearch_none_of_primeDivisorsAbove hn hF hdecomp hquotient
-      hbound hlarge
+  exact prime_iff_cubeRoot_none_of_divisorsAbove hn hF hdecomp hquotient hbound hlarge
 
 /-- Valid BLS factor and witness data also support the zero-quotient branch: the prime criterion
 is the disjunction of a zero quotient and failure of the complete square-root search. -/
-theorem prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero_of_valid_bls_data {n F R : ℕ}
-    (hn : 1 < n) (hF : 0 < F) (hdecomp : n = F * R + 1) (hbound : n < F ^ 3)
-    (data : PartialFactorizationData) (witnesses : List (ℕ × ℕ))
-    (hfactor : ValidPartialFactorization n data) (hwitness : ValidWitnesses n data witnesses)
-    (hproduct : factorProduct data.factors = F) :
+theorem prime_iff_cubeCriterion_of_valid_data {n F R : ℕ} (hn : 1 < n) (hF : 0 < F)
+    (hdecomp : n = F * R + 1) (hbound : n < F ^ 3) (data : PartialFactorizationData)
+    (witnesses : List (ℕ × ℕ)) (hfactor : ValidPartialFactorization n data)
+    (hwitness : ValidWitnesses n data witnesses) (hproduct : factorProduct data.factors = F) :
     Nat.Prime n ↔ cubeQuotient R F = 0 ∨ findCubeDiscriminantSquareRoot R F = none := by
   have hlargeData := primeDivisorsAbove_of_valid_bls_data hn data witnesses hfactor hwitness
   have hlarge : PrimeDivisorsAbove n F := by
     intro p hp hpn
     rw [← hproduct]
     exact hlargeData p hp hpn
-  exact prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero hn hF hdecomp hbound hlarge
+  exact prime_iff_cubeRootSearch_none_or_quotient_zero hn hF hdecomp hbound hlarge
 
 /-- Every accepted square-root certificate also satisfies the branch-sensitive cube-root result.
 The certificate's stronger square-root bound implies the cubic bound required by the latter. -/
-theorem prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero_of_valid_square_certificate
-    (c : SquareCertificate) (hcheck : verifySquareCertificate c = true) :
+theorem prime_iff_cubeCriterion_of_certificate (c : SquareCertificate)
+    (hcheck : verifySquareCertificate c = true) :
     Nat.Prime c.n ↔
       cubeQuotient c.factorization.cofactor (factorProduct c.factorization.factors) = 0 ∨
         findCubeDiscriminantSquareRoot c.factorization.cofactor
@@ -765,32 +741,27 @@ theorem prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero_of_valid_squa
       _ = factorProduct c.factorization.factors ^ 3 := (pow_succ _ 2).symm
   have hbound3 : c.n < factorProduct c.factorization.factors ^ 3 := lt_of_lt_of_le hbound hF2le
   exact
-    prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero_of_valid_bls_data hn hFpos hdecomp
-      hbound3 c.factorization c.witnesses hfactor hwitness rfl
+    prime_iff_cubeCriterion_of_valid_data hn hFpos hdecomp hbound3 c.factorization c.witnesses
+      hfactor hwitness rfl
 
 /-- An accepted square-root certificate with zero cube quotient already certifies primality.
 This is the degenerate branch of the certificate's three-way cube-root result. -/
-theorem prime_of_cubeQuotient_eq_zero_of_valid_square_certificate (c : SquareCertificate)
+theorem prime_of_zero_quotient_certificate (c : SquareCertificate)
     (hcheck : verifySquareCertificate c = true)
     (hzero : cubeQuotient c.factorization.cofactor (factorProduct c.factorization.factors) = 0) :
-    Nat.Prime c.n := by
-  exact
-    (prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero_of_valid_square_certificate c
-          hcheck).mpr
-      (Or.inl hzero)
+    Nat.Prime c.n := by exact (prime_iff_cubeCriterion_of_certificate c hcheck).mpr (Or.inl hzero)
 
 /-- Away from the zero-quotient branch, an accepted square-root certificate is prime exactly
 when the complete discriminant square-root search returns `none`. -/
-theorem prime_iff_cubeDiscriminantSquareRootSearch_none_of_valid_square_certificate
-    (c : SquareCertificate) (hcheck : verifySquareCertificate c = true)
+theorem prime_iff_cubeRoot_none_of_certificate (c : SquareCertificate)
+    (hcheck : verifySquareCertificate c = true)
     (hquotient :
       0 < cubeQuotient c.factorization.cofactor (factorProduct c.factorization.factors)) :
     Nat.Prime c.n ↔
       findCubeDiscriminantSquareRoot c.factorization.cofactor
           (factorProduct c.factorization.factors) =
         none := by
-  rw [prime_iff_cubeDiscriminantRootSearch_none_or_quotient_zero_of_valid_square_certificate c
-      hcheck]
+  rw [prime_iff_cubeCriterion_of_certificate c hcheck]
   constructor
   · intro hprime
     rcases hprime with hzero | hnone
@@ -801,8 +772,8 @@ theorem prime_iff_cubeDiscriminantSquareRootSearch_none_of_valid_square_certific
 
 /-- For an accepted certificate with positive cube quotient, a found discriminant square root
 proves that the certified input is composite. -/
-theorem not_prime_of_findCubeDiscriminantSquareRoot_some_of_valid_square_certificate
-    (c : SquareCertificate) (hcheck : verifySquareCertificate c = true)
+theorem not_prime_of_cubeRoot_certificate (c : SquareCertificate)
+    (hcheck : verifySquareCertificate c = true)
     (hquotient : 0 < cubeQuotient c.factorization.cofactor (factorProduct c.factorization.factors))
     {z : ℤ}
     (hroot :
@@ -811,10 +782,7 @@ theorem not_prime_of_findCubeDiscriminantSquareRoot_some_of_valid_square_certifi
         some z) :
     ¬Nat.Prime c.n := by
   intro hprime
-  have hnone :=
-    (prime_iff_cubeDiscriminantSquareRootSearch_none_of_valid_square_certificate c hcheck
-          hquotient).mp
-      hprime
+  have hnone := (prime_iff_cubeRoot_none_of_certificate c hcheck hquotient).mp hprime
   rw [hroot] at hnone
   cases hnone
 

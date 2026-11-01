@@ -65,7 +65,7 @@ theorem tendsto_oddEndpointCostSeparation_right (q : ℕ) {x : ℝ} (hx : 1 ≤ 
         (by norm_num only : (1 : ℝ) ≠ 0))
   dsimp only [oddEndpointCostSeparation, oddEndpointCostLimit]
   exact
-    ((tendsto_reciprocalGapFullEndpointSeparation_right q hx Y).add
+    ((tendsto_reciprocalGapFullEndpoint q hx Y).add
           (((hc.div_const (Real.sqrt x)).const_add 2).mul_const
             (c / (1 - 1 / Real.sqrt Y) ^ 2))).add_const
       _
@@ -76,7 +76,7 @@ conductor>=2 under GRH, 64<=Y<=x, a branch-cost upper bound c and negative limit
 give an odd non-one prime for the primitive associate. Under nonexistence apply
 the refined reciprocal branch input and the analytic odd-prime principal lower
 bound. Pass the nonnegative separation to its right limit for a contradiction. -/
-theorem exists_odd_prime_inducing_ne_one_of_costLimit_neg {N : ℕ} (χ : DirichletCharacter ℂ N)
+theorem exists_oddPrime_inducing_costLimit_GRH {N : ℕ} (χ : DirichletCharacter ℂ N)
     [NeZero χ.conductor] (hq : 2 ≤ χ.conductor) (hne : χ.primitiveCharacter ≠ 1)
     (hquad : χ.primitiveCharacter.IsQuadratic)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x Y c : ℝ} (hx : 1 < x)

@@ -57,9 +57,7 @@ theorem triangular18_reflectedIntegral_norm_le {q : ℕ} [NeZero q] {χ : Dirich
       (284 * B) * (∫ t : ℝ, (Real.log (4 + |t|) + 1) / (1 + t ^ 2)) := by
   apply norm_logWeighted_product_integral_le (by norm_num only : (0 : ℝ) ≤ 284) _ hK
   intro t
-  have hb :=
-    AnalyticNumberTheory.DirichletLFunction.norm_logDeriv_completed_seventeen_sixteenths_le_log hinv
-      (-t)
+  have hb := AnalyticNumberTheory.DirichletLFunction.completedLogDeriv_17_16_log_bound hinv (-t)
   simp only [Complex.ofReal_neg, mul_neg, abs_neg, ← sub_eq_add_neg] at hb
   have hL : 0 ≤ Real.log (4 + |t|) := Real.log_nonneg (by linarith only [abs_nonneg t])
   linarith only [hb, hL]
@@ -84,9 +82,7 @@ theorem triangular18_gammaIntegral_norm_le {q : ℕ} (χ : DirichletCharacter �
       Complex.ofReal_im, zero_mul, mul_zero, sub_zero, add_zero, Complex.div_ofNat_re,
       Complex.one_re]
     norm_num only
-  have hb :=
-    AnalyticNumberTheory.DirichletLFunction.norm_logDeriv_gammaFactor_seventeen_sixteenths_le_log χ
-      hr
+  have hb := AnalyticNumberTheory.DirichletLFunction.gammaLogDeriv_17_16_log_bound χ hr
   simp only [Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.I_re, Complex.I_im,
     Complex.ofReal_re, one_mul, zero_mul, zero_add, Complex.div_ofNat_im, Complex.one_im, zero_div,
     add_zero] at hb
@@ -97,8 +93,8 @@ theorem triangular18_gammaIntegral_norm_le {q : ℕ} (χ : DirichletCharacter �
 the common finite logarithmic integral for a nonprincipal inverse character.
 Insert the certified fixed-line decay into the reflected logarithmic bound.
 No kernel decay constant remains as a hypothesis. -/
-theorem triangular18_reflectedIntegral_norm_le_fixed_decay {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hinv : χ⁻¹ ≠ 1) :
+theorem triangular18_reflected_decay_bound {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hinv : χ⁻¹ ≠ 1) :
     ‖∫ t : ℝ,
           logDeriv χ⁻¹.completedLFunction (((17 / 16 : ℝ) : ℂ) - Complex.I * t) *
             Analysis.triangularMellinFunction 18 (((-9 / 16 : ℝ) : ℂ) + Complex.I * t)‖ ≤

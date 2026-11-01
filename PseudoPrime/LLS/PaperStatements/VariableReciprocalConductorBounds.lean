@@ -102,9 +102,9 @@ theorem variableReciprocalNormCap_nonneg {q : ℕ} [NeZero q] {χ : DirichletCha
 /-- Under primitive GRH at q ≥ 3, two Hadamard caps give a logarithmic-sum norm
 bound at every t ≥ 100. Apply the generic endpoint theorem to their minimum.
 The reciprocal cutoff x is independent of the witness comparison cutoff t. -/
-theorem norm_characterLogWeightedSum_le_variable_reciprocal {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hq : 3 ≤ q) (hp : χ.IsPrimitive)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x η c t : ℝ} (ht : 100 ≤ t)
+theorem characterLogSum_norm_le_variable_reciprocal {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hq : 3 ≤ q) (hp : χ.IsPrimitive) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {x η c t : ℝ} (ht : 100 ≤ t)
     (hb : |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ| ≤ (11 / 18 : ℝ) * Real.log q + c)
     (hv : |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ| ≤ reciprocalHadamardCap q x η) :
     ‖AnalyticNumberTheory.Arithmetic.characterLogWeightedSum t χ‖ ≤
@@ -116,9 +116,9 @@ theorem norm_characterLogWeightedSum_le_variable_reciprocal {q : ℕ} [NeZero q]
 /-- Under primitive GRH, two certified Hadamard caps and nonzero exclusion m
 produce a non-one prime outside m below the variable root bound.
 Pass their nonnegative norm coefficient to the generic witness extractor. -/
-theorem exists_prime_ne_one_le_variable_reciprocal_root_of_bounds {q m : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hq : 3 ≤ q) (hp : χ.IsPrimitive)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hm : m ≠ 0) {x η c : ℝ}
+theorem exists_prime_neOne_variableRecip_GRH {q m : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hq : 3 ≤ q) (hp : χ.IsPrimitive) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hm : m ≠ 0) {x η c : ℝ}
     (hb : |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ| ≤ (11 / 18 : ℝ) * Real.log q + c)
     (hv : |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ| ≤ reciprocalHadamardCap q x η) :
     ∃ p : ℕ,
@@ -132,7 +132,7 @@ theorem exists_prime_ne_one_le_variable_reciprocal_root_of_bounds {q m : ℕ} [N
         ¬p ∣ m ∧ χ p ≠ 1 := by
   exact
     exists_prime_ne_one_le_norm_cap_root χ hGRH.riemann hm (variableReciprocalNormCap_nonneg hb hv)
-      (fun _ ht ↦ norm_characterLogWeightedSum_le_variable_reciprocal hq hp hGRH ht hb hv)
+      (fun _ ht ↦ characterLogSum_norm_le_variable_reciprocal hq hp hGRH ht hb hv)
 
 /-- Under GRH for primitive χ at q ≥ 3, m ≠ 0 and x ≥ 64, a prime outside m
 has χ(p) ≠ 1 below the variable reciprocal root. Combine the fixed general cap
@@ -151,15 +151,15 @@ theorem exists_prime_ne_one_le_variable_reciprocal_root {q m : ℕ} [NeZero q]
             2 ∧
         ¬p ∣ m ∧ χ p ≠ 1 := by
   exact
-    exists_prime_ne_one_le_variable_reciprocal_root_of_bounds χ hq hp hGRH hm
+    exists_prime_neOne_variableRecip_GRH χ hq hp hGRH hm
       (abs_primitiveBRe_le_direct_reciprocal hq hp hGRH)
       (abs_primitiveBRe_le_variable_reciprocal hq hp hGRH hx)
 
 /-- Under GRH for primitive even χ at q ≥ 3, m ≠ 0 and x ≥ 64, a prime outside m
 has χ(p) ≠ 1 below the variable even root. Preserve evenness and the 179/200
 saving when applying the common extractor. -/
-theorem exists_prime_ne_one_le_even_variable_reciprocal_root {q m : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hq : 3 ≤ q) (hp : χ.IsPrimitive) (heven : χ.Even)
+theorem exists_prime_neOne_evenVariableRecip_GRH {q m : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hq : 3 ≤ q) (hp : χ.IsPrimitive) (heven : χ.Even)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hm : m ≠ 0) {x : ℝ}
     (hx : 64 ≤ x) :
     ∃ p : ℕ,
@@ -173,7 +173,7 @@ theorem exists_prime_ne_one_le_even_variable_reciprocal_root {q m : ℕ} [NeZero
             2 ∧
         ¬p ∣ m ∧ χ p ≠ 1 := by
   exact
-    exists_prime_ne_one_le_variable_reciprocal_root_of_bounds χ hq hp hGRH hm
+    exists_prime_neOne_variableRecip_GRH χ hq hp hGRH hm
       (abs_primitiveBRe_even_le_direct_reciprocal hq hp heven hGRH)
       (abs_primitiveBRe_even_le_variable_reciprocal hq hp heven hGRH hx)
 

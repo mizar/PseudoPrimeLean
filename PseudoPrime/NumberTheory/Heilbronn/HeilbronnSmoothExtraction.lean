@@ -92,7 +92,7 @@ theorem pow_sub_one_ne_one_of_not_mem_coset {p : ℕ} [Fact p.Prime] {x : ZMod (
 /-- Combine the proved interval upper bound with a quantitative smooth-number lower
 bound to extract a prime q<y with nontrivial (p-1)-st power modulo p^2.
 Only the displayed smooth-number comparison remains as an input. -/
-theorem exists_prime_nontrivial_power_of_interval_and_smooth {p k y : ℕ} [Fact p.Prime]
+theorem exists_prime_pow_ne_one_of_interval_smooth {p k y : ℕ} [Fact p.Prime]
     (hinterval : p * heilbronnInitialCount p k < 256 * k)
     (hsmooth : 256 * k ≤ p * (Nat.smoothNumbersUpTo k y).card) :
     ∃ q : ℕ, q.Prime ∧ q < y ∧ (q : ZMod (p ^ 2)) ^ (p - 1) ≠ 1 := by

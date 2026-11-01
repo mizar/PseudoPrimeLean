@@ -20,7 +20,7 @@ The odd gamma factor is fixed, the even correction is explicit, the completed
 logarithmic derivative at two is uniformly bounded, and both trivial corrections
 have norm at most one. This removes every uncontrolled origin-derivative term
 from the arithmetic error bound without RH or an exceptional-zero hypothesis. -/
-theorem exists_norm_regularized_logarithmicHalfRemainder_le_log :
+theorem regularizedHalfRemainder_log_bound :
     ∃ C : ℝ,
       0 < C ∧
         ∀ (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q),
@@ -32,8 +32,7 @@ theorem exists_norm_regularized_logarithmicHalfRemainder_le_log :
                         (Real.log 2 : ℂ) *
                           (logDeriv χ.completedLFunction 2 - logDeriv χ.completedLFunction 0)‖ ≤
                     C * (Real.log x + 1) := by
-  obtain ⟨B, hB, hderiv⟩ :=
-    exists_norm_completed_logDeriv_small_shift_bound (r := 1) (by norm_num only) le_rfl
+  obtain ⟨B, hB, hderiv⟩ := completedLogDeriv_smallShift_bound (r := 1) (by norm_num only) le_rfl
   let G := 4 + B * (Real.log 4 + 1)
   let a := ‖(Real.log 2 : ℂ)‖
   let E := ‖(Complex.log (Real.pi : ℂ) + (Real.eulerMascheroniConstant : ℂ)) / 2‖
@@ -64,14 +63,14 @@ theorem exists_norm_regularized_logarithmicHalfRemainder_le_log :
     have h := hderiv χ hne 0
     norm_num only [Complex.ofReal_zero, mul_zero, add_zero, div_one, abs_zero] at h
     exact h
-  have ht1 := norm_logarithmicTrivialCorrection_le_one χ (by linarith only [hx] : 2 ≤ x)
-  have ht2 := norm_logarithmicTrivialCorrection_le_one χ (by linarith only [hx] : 2 ≤ x / 2)
+  have ht1 := norm_logTrivialCorrection_le_one χ (by linarith only [hx] : 2 ≤ x)
+  have ht2 := norm_logTrivialCorrection_le_one χ (by linarith only [hx] : 2 ≤ x / 2)
   have hnorm :
     ‖logarithmicHalfRemainder hne x -
           (Real.log 2 : ℂ) * (logDeriv χ.completedLFunction 2 - logDeriv χ.completedLFunction 0)‖ ≤
       R + a * Real.log x := by
     rcases χ.even_or_odd with he | ho
-    · rw [logarithmicHalfRemainder_regularized_of_even hp hne he hxpos]
+    · rw [regularizedHalfRemainder_even hp hne he hxpos]
       let u := -(Real.log 2 : ℂ) * logDeriv χ.completedLFunction 2
       let v :=
         (Real.log 2 : ℂ) * ((Complex.log (Real.pi : ℂ) + (Real.eulerMascheroniConstant : ℂ)) / 2)
@@ -110,7 +109,7 @@ theorem exists_norm_regularized_logarithmicHalfRemainder_le_log :
       dsimp only [R]
       have had := mul_nonneg ha hD
       nlinarith only [h1, h2, h3, h4, h5, hu, hv, hw, hz, ht1, ht2, had]
-    · rw [logarithmicHalfRemainder_regularized_of_odd hp hne ho hxpos]
+    · rw [regularizedHalfRemainder_odd hp hne ho hxpos]
       have hg : DirichletCharacter.gammaFactor χ = fun s : ℂ ↦ Complex.Gammaℝ (s + 1) :=
         funext ho.gammaFactor_def
       have hgamma : ‖logDeriv (DirichletCharacter.gammaFactor χ) 0‖ = D := by rw [hg]
@@ -143,7 +142,7 @@ modulus at least two, and scale at least four, the half-scale arithmetic sum is
 bounded by the absolute regularized zero sum and an absolute logarithmic error.
 Combine the exact regularized formula, absolute convergence, and the uniform
 remainder estimate. This is the origin-free interface for the density argument. -/
-theorem exists_norm_characterLogWeightedSum_half_le_regularized_zero_sum :
+theorem logWeighted_half_regularized_bound :
     ∃ C : ℝ,
       0 < C ∧
         ∀ (q : ℕ) [NeZero q],
@@ -157,12 +156,12 @@ theorem exists_norm_characterLogWeightedSum_half_le_regularized_zero_sum :
                     ‖Arithmetic.characterLogWeightedSum x χ -
                           Arithmetic.characterLogWeightedSum (x / 2) χ‖ ≤
                       (∑' ρ : ℂ, ‖regularizedLogHalfZeroTerm χ x ρ‖) + C * (Real.log x + 1) := by
-  obtain ⟨C, hC, hrem⟩ := exists_norm_regularized_logarithmicHalfRemainder_le_log
+  obtain ⟨C, hC, hrem⟩ := regularizedHalfRemainder_log_bound
   refine ⟨C, hC, ?_⟩
   intro q _ hq χ hp hne hinv x hx
   have hx2 : 2 < x := by linarith only [hx]
-  rw [characterLogWeightedSum_half_regularized_formula_unconditionally hq hp hne hinv hx2]
-  have hs := (summable_regularizedLogHalfZeroTerm_unconditionally hq hp hne hinv hx2.le).norm
+  rw [logWeighted_half_regularized_formula hq hp hne hinv hx2]
+  have hs := (summable_regularizedHalfTerm hq hp hne hinv hx2.le).norm
   have hn :=
     norm_add_le (-(∑' ρ : ℂ, regularizedLogHalfZeroTerm χ x ρ))
       (logarithmicHalfRemainder hne x -

@@ -31,14 +31,13 @@ private theorem one_lt_of_decimal_power {n d : ℕ} (hd : d ≠ 0) (hn : 10 ^ d 
 a coprime prime Miller–Rabin witness through B. Choose a proper subgroup containing
 passing residues and retain the coprimality of its outside prime.
 This supports cutoffs that may exceed n near their starting value. -/
-theorem exists_prime_coprime_witness_of_uniform_unit_subgroup_cutoff {n : ℕ} {B : ℝ} (hn : 1 < n)
-    (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+theorem exists_prime_coprime_witness_of_subgroup {n : ℕ} {B : ℝ} (hn : 1 < n) (hnOdd : Odd n)
+    (hnComposite : ¬n.Prime)
     (hbound :
       ∀ H : Subgroup (ZMod n)ˣ,
         H ≠ ⊤ → ∃ p : ℕ, p.Prime ∧ ¬p ∣ n ∧ ¬NumberTheory.residueInSubgroup n H p ∧ (p : ℝ) ≤ B) :
     ∃ p : ℕ, p.Prime ∧ ¬p ∣ n ∧ (p : ℝ) ≤ B ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
-  obtain ⟨H, hH, hpass⟩ :=
-    PrimeTest.exists_proper_subgroup_containing_strongMillerRabinPass hn hnOdd hnComposite
+  obtain ⟨H, hH, hpass⟩ := PrimeTest.exists_proper_subgroup_strongMR hn hnOdd hnComposite
   obtain ⟨p, hp, hd, hout, hb⟩ := hbound H hH
   exact ⟨p, hp, hd, hb, PrimeTest.not_pass_of_outside_subgroup hpass hout⟩
 
@@ -46,9 +45,8 @@ theorem exists_prime_coprime_witness_of_uniform_unit_subgroup_cutoff {n : ℕ} {
 Miller–Rabin witness through (199/250)(log n+117)².
 Apply the rational LLS profile to the subgroup containing passing residues.
 No factorization, conductor or index condition is added. -/
-theorem exists_prime_witness_le_gamma_199_div_250_plus_117_15188 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hn : 10 ^ 15188 ≤ n) :
+theorem exists_prime_gamma117_d15188_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hn : 10 ^ 15188 ≤ n) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬p ∣ n ∧
@@ -56,17 +54,15 @@ theorem exists_prime_witness_le_gamma_199_div_250_plus_117_15188 {n : ℕ} (hnOd
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   have hn1 : 1 < n := one_lt_of_decimal_power (by decide : (15188 : ℕ) ≠ 0) hn
   exact
-    exists_prime_coprime_witness_of_uniform_unit_subgroup_cutoff hn1 hnOdd hnComposite
-      (fun H hH ↦
-        LLS.PaperStatements.exists_prime_outside_le_gamma_199_div_250_plus_117_15188 H hH hGRH hn)
+    exists_prime_coprime_witness_of_subgroup hn1 hnOdd hnComposite
+      (fun H hH ↦ LLS.PaperStatements.exists_primeOutside_199_250_117_d15188_GRH H hH hGRH hn)
 
 /-- Under GRH, every odd composite n ≥ 3000 has a coprime prime
 Miller–Rabin witness through (199/250)(log n+216)².
 Apply the uniform small-start LLS profile to the subgroup containing passing residues.
 This exposes the rational triple (199/250,0,216) at the starting value 3000. -/
-theorem exists_prime_witness_le_gamma_199_div_250_plus_216_3000 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hn : 3000 ≤ n) :
+theorem exists_prime_gamma216_3000_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hn : 3000 ≤ n) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬p ∣ n ∧
@@ -74,16 +70,15 @@ theorem exists_prime_witness_le_gamma_199_div_250_plus_216_3000 {n : ℕ} (hnOdd
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   have hn1 : 1 < n := (by decide : (1 : ℕ) < 3000).trans_le hn
   exact
-    exists_prime_coprime_witness_of_uniform_unit_subgroup_cutoff hn1 hnOdd hnComposite
-      (fun H hH ↦
-        LLS.PaperStatements.exists_prime_outside_le_gamma_199_div_250_plus_216_3000 H hH hGRH hn)
+    exists_prime_coprime_witness_of_subgroup hn1 hnOdd hnComposite
+      (fun H hH ↦ LLS.PaperStatements.exists_primeOutside_199_250_216_from3000_GRH H hH hGRH hn)
 
 /-- Under GRH, an odd n ≥ 3000 is prime exactly when every coprime prime
 base through (199/250)(log n+216)² passes Miller–Rabin.
 Use the coprime witness for a composite and the prime acceptance theorem otherwise.
 Coprimality is explicit because this cutoff may exceed n near the entrance. -/
-theorem prime_iff_millerRabin_for_coprime_primes_le_gamma_199_div_250_plus_216_3000 {n : ℕ}
-    (hnOdd : Odd n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hn : 3000 ≤ n) :
+theorem prime_iff_pass_coprimePrimes_gamma216_GRH {n : ℕ} (hnOdd : Odd n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hn : 3000 ≤ n) :
     (∀ p : ℕ,
         p.Prime →
           (p : ℝ) ≤ (199 / 250 : ℝ) * (Real.log n + 216) ^ 2 →
@@ -92,8 +87,7 @@ theorem prime_iff_millerRabin_for_coprime_primes_le_gamma_199_div_250_plus_216_3
   constructor
   · intro hpass
     by_contra hc
-    obtain ⟨p, hp, hd, hb, hfail⟩ :=
-      exists_prime_witness_le_gamma_199_div_250_plus_216_3000 hnOdd hc hGRH hn
+    obtain ⟨p, hp, hd, hb, hfail⟩ := exists_prime_gamma216_3000_GRH hnOdd hc hGRH hn
     exact hfail (hpass p hp hb hd)
   · intro hp p hprime _hb hd
     exact
@@ -103,9 +97,8 @@ theorem prime_iff_millerRabin_for_coprime_primes_le_gamma_199_div_250_plus_216_3
 /-- Under GRH, every odd composite with log n at least 34971 has a coprime
 prime MR witness at most (199/250)(log n+117)^2. Transfer the natural-log
 LLS profile to the subgroup of bases that pass the strong test. -/
-theorem exists_prime_witness_le_gamma_199_div_250_plus_117_log_34971 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 34971 ≤ Real.log n) :
+theorem exists_prime_gamma117_log34971_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 34971 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬p ∣ n ∧
@@ -120,8 +113,7 @@ theorem exists_prime_witness_le_gamma_199_div_250_plus_117_log_34971 {n : ℕ} (
     have hlog := Real.log_le_sub_one_of_pos hn0
     linarith only [hlog, hL, hnR]
   exact
-    exists_prime_coprime_witness_of_uniform_unit_subgroup_cutoff hn hnOdd hnComposite
-      (fun H hH ↦
-        LLS.PaperStatements.exists_prime_outside_le_gamma_199_div_250_plus_117_log H hH hGRH hL)
+    exists_prime_coprime_witness_of_subgroup hn hnOdd hnComposite
+      (fun H hH ↦ LLS.PaperStatements.exists_primeOutside_199_250_117_log_GRH H hH hGRH hL)
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

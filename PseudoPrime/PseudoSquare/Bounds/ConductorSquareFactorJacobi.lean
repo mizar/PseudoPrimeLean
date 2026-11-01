@@ -58,8 +58,8 @@ theorem exists_prime_neg_one_of_conductor_square_rates {n : ℕ} {hn : Odd n} {h
     ⟨bridge.squareFactor ^ 2, by simpa only [Nat.mul_comm] using bridge.squarefreePart_sq_mul.symm⟩
   have hqle :
     (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ 4 * bridge.squarefreePart := by
-    rw [NumberTheory.complexQuadraticCharacter_conductor_eq_discriminant bridge hdvd]
-    exact bridge.discriminant_le_four_mul_squarefreePart
+    rw [NumberTheory.complexQuadratic_conductor_eq_discriminant bridge hdvd]
+    exact bridge.discr_le_four_squarefreePart
   have hU :=
     LLS.PaperStatements.untaperedBudget_le_conductor_square_rates bridge
       (by linarith only [hx] : 0 ≤ x) ha hb T e he hR hE

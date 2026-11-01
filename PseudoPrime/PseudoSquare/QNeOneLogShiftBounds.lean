@@ -20,8 +20,8 @@ namespace PseudoPrime.PseudoSquare
 witness lies through (L-log L+3)^2. Insert the explicit radius into the variable
 conductor comparison and arithmetic bridge. Small squarefree parts use the
 same analytic endpoint, without additional finite-input certificates. -/
-theorem exists_prime_ne_one_witness_le_log_shift_endpoint {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
-    {L : ℝ} (hL : (16 : ℝ) ≤ L) (hlogn : Real.log n ≤ L)
+theorem exists_neOneWitness_le_log_shift_endpoint {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n) {L : ℝ}
+    (hL : (16 : ℝ) ≤ L) (hlogn : Real.log n ≤ L)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (L - Real.log L + 3) ^ 2 ∧ jacobiSym n p ≠ 1 := by
   let : NeZero (NumberTheory.complexQuadraticCharacter n hn).conductor :=
@@ -43,8 +43,7 @@ theorem primeNeOneWitness_cast_le_log_shift_endpoint
     (hns : ¬IsSquare n) {L : ℝ} (hL : (16 : ℝ) ≤ L) (hlogn : Real.log n ≤ L)
     (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤ (L - Real.log L + 3) ^ 2 := by
-  obtain ⟨p, hp, ho, hb, hv⟩ :=
-    exists_prime_ne_one_witness_le_log_shift_endpoint hn hns hL hlogn hGRH
+  obtain ⟨p, hp, ho, hb, hv⟩ := exists_neOneWitness_le_log_shift_endpoint hn hns hL hlogn hGRH
   exact (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hb
 
 /-- Under GRH and log B>=16, the full maximum of least non-one witnesses
@@ -81,7 +80,7 @@ theorem log_shift_sq_lt_log_sq {L : ℝ} (hL : (32 : ℝ) ≤ L) : (L - Real.log
 /-- Under GRH for odd nonsquare n with log n>=32, an odd-prime non-one witness
 lies through the logarithmic radius squared and strictly below log(n)^2.
 Combine the endpoint theorem and strict square comparison. Zero values are allowed. -/
-theorem exists_prime_ne_one_witness_le_log_shift_and_lt_log_sq
+theorem exists_neOneWitness_le_log_shift_and_lt_log_sq
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : Odd n)
     (hns : ¬IsSquare n) (hL : (32 : ℝ) ≤ Real.log n) :
     ∃ p : ℕ,
@@ -90,7 +89,7 @@ theorem exists_prime_ne_one_witness_le_log_shift_and_lt_log_sq
         (p : ℝ) ≤ (Real.log n - Real.log (Real.log n) + 3) ^ 2 ∧
         (p : ℝ) < (Real.log n) ^ 2 ∧ jacobiSym n p ≠ 1 := by
   obtain ⟨p, hp, ho, hb, hv⟩ :=
-    exists_prime_ne_one_witness_le_log_shift_endpoint hn hns
+    exists_neOneWitness_le_log_shift_endpoint hn hns
       (show (16 : ℝ) ≤ Real.log n by linarith only [hL]) (le_refl _) hGRH
   exact ⟨p, hp, ho, hb, hb.trans_lt (log_shift_sq_lt_log_sq hL), hv⟩
 

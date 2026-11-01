@@ -34,11 +34,11 @@ theorem reciprocalGap_pole_re_le_scalar_prefix {h r x : ℝ} (hh : 0 < h) (hr : 
     (MellinKernel.weightedResidue (reciprocalGapMellinKernel h hh)
           (fun z : ℂ ↦ χ.completedLFunction (z + 1 / 2)) x (-1 / 2)).re ≤
       reciprocalGapScalarPoleBudget h r q x M G K := by
-  have hpi := DirichletCharacter.isPrimitive_inv hp
+  have hpi := AnalyticNumberTheory.DirichletLFunction.character_isPrimitive_inv hp
   have hni : χ⁻¹⁻¹ ≠ 1 := by simpa only [inv_inv] using hne
-  have hc :=
-    completedLogDeriv_endpoint_le_positive_prefix hq (hGRH q χ⁻¹ hpi) hpi hinv hni hr B hM hG
-  simp only [DirichletCharacter.inv_apply_eq_conj, Complex.conj_re] at hc
+  have hc := completedLogDeriv_prefix_bound_RH hq (hGRH q χ⁻¹ hpi) hpi hinv hni hr B hM hG
+  simp only [AnalyticNumberTheory.DirichletLFunction.character_inv_apply_eq_conj,
+    Complex.conj_re] at hc
   have hsub :=
     mul_le_mul_of_nonneg_left (sub_le_sub_left hK (G + M))
       (show 0 ≤ 1 + 2 * r by linarith only [hr])
@@ -67,7 +67,7 @@ theorem reciprocalGap_remainder_re_le_scalar_prefix {h r : ℝ} (hh : 0 < h) (hr
       reciprocalGapScalarPoleBudget h r q x M₁ G₁ K + reciprocalGapRealAxisBudget h q x M₂ G₂ +
         reciprocalGapSignedGammaBudget h x := by
   have hx0 := zero_lt_one.trans_le hx
-  have hΓ := reciprocalGap_remainder_gamma_re_le_signed_budget hh hx χ
+  have hΓ := reciprocalGap_gamma_re_le_signedBudget hh hx χ
   have hP := reciprocalGap_pole_re_le_scalar_prefix hh hr hx0 hq hp hne hinv hGRH B hM₁ hG₁ hK
   have hL := reciprocalGap_leftIntegral_re_eq_realAxis hh hp hne hinv hx
   have hV := reciprocalGapRealAxisLeftValue_le_budget hh hx0 hinv hM₂ hG₂
@@ -139,7 +139,7 @@ theorem reciprocalGapCharacterSum_re_le_scalar_rational {q : ℕ} [NeZero q] (hq
         (by norm_num only) hx B₀ B₁ (1597 / 500) (-(759 / 1000)) (4481 / 1000) (-(784 / 1000))
         (97 / 100) (-(1001 / 1000)) K₀ K₁ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
     · exact
-        AnalyticNumberTheory.Arithmetic.tsum_vonMangoldt_le_hundredTwentySeven_hundredths_certified
+        AnalyticNumberTheory.Arithmetic.tsum_vonMangoldt_le_of_ge_127_100_certified
           (by norm_num only)
     · have hg :=
         (reciprocalGapGamma_re_le_odd (by norm_num only : (0 : ℝ) < 127 / 100) χ).trans
@@ -154,8 +154,7 @@ theorem reciprocalGapCharacterSum_re_le_scalar_rational {q : ℕ} [NeZero q] (hq
       norm_num only [Complex.ofReal_div, Complex.ofReal_ofNat, Complex.ofReal_one] at hg ⊢
       exact hg
     · exact
-        AnalyticNumberTheory.Arithmetic.tsum_vonMangoldt_le_seventeen_tenths_certified
-          (by norm_num only)
+        AnalyticNumberTheory.Arithmetic.tsum_vonMangoldt_le_of_ge_17_10_certified (by norm_num only)
     · have hg :=
         reciprocalGapEvenGammaLower_at_seventeen_tenths.trans
           (reciprocalGapEvenGammaLower_le (by norm_num only : (0 : ℝ) < 17 / 10) χ⁻¹)

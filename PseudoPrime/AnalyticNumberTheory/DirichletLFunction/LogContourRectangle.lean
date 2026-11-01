@@ -18,25 +18,25 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 /--
 Coordinate avoidance makes the primitive logarithmic kernel integrable on every
 finite outer grid-coordinate segment. Mirrors
-`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.dirichletReciprocalKernelCoordinateIntegrable`
+`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.reciprocalKernelCoordinateIntegrable`
 exactly, taking the `.2` component of the
 already-bundled horizontal/vertical integrability facts instead of the `.1` component.
 -/
-theorem dirichletLogKernelCoordinateIntegrable {N : ℕ} [NeZero N] {x : ℝ} (hx : 0 < x)
+theorem logKernelCoordinateIntegrable {N : ℕ} [NeZero N] {x : ℝ} (hx : 0 < x)
     {χ : DirichletCharacter ℂ N} (hne : χ ≠ 1) {z w : ℂ}
     (grid : RectangleGeometry.StrictGridCuts z w)
-    (havoid : grid.LedgerAvoidsCoordinates (dirichletLFunctionSingularitiesInRectangle χ hne z w)) :
-    RectangleGeometry.RectangleGridCoordinateIntegrable (dirichletLogContourKernel x χ)
+    (havoid : grid.LedgerAvoidsCoords (LFunctionSingularitiesInRectangle χ hne z w)) :
+    RectangleGeometry.GridLineIntegrable (dirichletLogContourKernel x χ)
       (z.re :: grid.xcuts ++ [w.re]) (z.im :: grid.ycuts ++ [w.im]) := by
   constructor
   · intro c hc a ha b hb
     exact
-      (intervalIntegrable_dirichletKernels_horizontal hx hne (grid.xcoordinate_mem_uIcc ha)
+      (kernels_horizontal_integrable hx hne (grid.xcoordinate_mem_uIcc ha)
           (grid.xcoordinate_mem_uIcc hb) (grid.ycoordinate_mem_uIcc hc) fun s hs hsc ↦
           (havoid s hs).2 (hsc ▸ hc)).2
   · intro c hc a ha b hb
     exact
-      (intervalIntegrable_dirichletKernels_vertical hx hne (grid.xcoordinate_mem_uIcc hc)
+      (intervalIntegrable_kernels_vertical hx hne (grid.xcoordinate_mem_uIcc hc)
           (grid.ycoordinate_mem_uIcc ha) (grid.ycoordinate_mem_uIcc hb) fun s hs hsc ↦
           (havoid s hs).1 (hsc ▸ hc)).2
 
@@ -45,7 +45,7 @@ The primitive logarithmic finite contour identity. For an outer rectangle whose
 primitive singularity ledger stays in its interior, the log-kernel boundary integral is `2πi`
 times the sum of `PseudoPrime.AnalyticNumberTheory.DirichletLFunction.dirichletLogResidueAt` over
 that ledger. Mirrors
-`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.dirichletReciprocalFiniteContourIdentity`
+`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.reciprocalFiniteContourIdentity`
 line-for-line, replacing every kernel/residue/
 coordinate-integrability name with its log-kernel counterpart.
 -/
@@ -53,14 +53,14 @@ theorem dirichletLogFiniteContourIdentity {N : ℕ} [NeZero N] {x : ℝ} (hx : 0
     {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) {z w : ℂ}
     (hre : z.re < w.re) (him : z.im < w.im)
     (hopen :
-      ∀ s ∈ dirichletLFunctionSingularitiesInRectangle χ hne z w,
+      ∀ s ∈ LFunctionSingularitiesInRectangle χ hne z w,
         s ∈ RectangleGeometry.rectangleOpenBox z w) :
     RectangleGeometry.rectangleBoundaryIntegral (dirichletLogContourKernel x χ) z w =
-      ∑ s ∈ dirichletLFunctionSingularitiesInRectangle χ hne z w,
+      ∑ s ∈ LFunctionSingularitiesInRectangle χ hne z w,
         2 * Real.pi * Complex.I * dirichletLogResidueAt hne x s := by
-  set S := dirichletLFunctionSingularitiesInRectangle χ hne z w with hS_def
+  set S := LFunctionSingularitiesInRectangle χ hne z w with hS_def
   have hclosed : ∀ s ∈ S, s ∈ Rectangle.rectangleClosedBox z w := fun s hs ↦
-    (mem_dirichletLFunctionSingularitiesInRectangle_iff.mp hs).1
+    (mem_LSingularitiesInRectangle_iff.mp hs).1
   set grid := RectangleGeometry.generatedStrictGridCuts S z w hre him hopen with hgrid_def
   set cells := (RectangleGeometry.rectangleGridCells z w grid.xcuts grid.ycuts).toFinset with
     hcells_def
@@ -68,9 +68,8 @@ theorem dirichletLogFiniteContourIdentity {N : ℕ} [NeZero N] {x : ℝ} (hx : 0
   set assignment := interior.toAssignment with hassignment_def
   have havoidCuts : grid.LedgerAvoidsCuts S :=
     RectangleGeometry.generatedStrictGridCuts_avoidsCuts S z w hre him hopen
-  have havoid : grid.LedgerAvoidsCoordinates S :=
-    grid.ledgerAvoidsCoordinates_of_open hopen havoidCuts
-  have hcoordint := dirichletLogKernelCoordinateIntegrable hx hne grid havoid
+  have havoid : grid.LedgerAvoidsCoords S := grid.avoidsCoords_of_open hopen havoidCuts
+  have hcoordint := logKernelCoordinateIntegrable hx hne grid havoid
   have hgridint :
     RectangleGeometry.RectangleGridSubdivisionIntegrable (dirichletLogContourKernel x χ) z w
       grid.xcuts grid.ycuts := by
@@ -95,9 +94,8 @@ theorem dirichletLogFiniteContourIdentity {N : ℕ} [NeZero N] {x : ℝ} (hx : 0
       ∑ cell ∈ cells,
         RectangleGeometry.rectangleBoundaryIntegral (dirichletLogContourKernel x χ) cell.1
           cell.2 := by
-    rw [RectangleGeometry.rectangleBoundaryIntegral_eq_gridSubdivision _ z w grid.xcuts grid.ycuts
-        hgridint,
-      RectangleGeometry.rectangleGridSubdivision_eq_sum_toFinset _ z w grid.xcuts grid.ycuts
+    rw [RectangleGeometry.boundaryIntegral_eq_gridSubdivision _ z w grid.xcuts grid.ycuts hgridint,
+      RectangleGeometry.gridSubdivision_eq_sum_toFinset _ z w grid.xcuts grid.ycuts
         grid.cells_nodup]
   have hxcuts : ∀ u ∈ grid.xcuts, u ∈ Set.uIcc z.re w.re := fun u hu ↦
     Set.mem_uIcc_of_le (grid.xcuts_inside u hu).1.le (grid.xcuts_inside u hu).2.le
@@ -113,9 +111,9 @@ theorem dirichletLogFiniteContourIdentity {N : ℕ} [NeZero N] {x : ℝ} (hx : 0
         (by simpa only [hcells_def, List.mem_toFinset] using hcell)
     have hyz : y ∈ Rectangle.rectangleClosedBox z w := hcellSubset hy
     have hy' : ¬(y = 0 ∨ y = 1 ∨ DirichletCharacter.LFunction χ y = 0) := fun hmem ↦
-      hyS (mem_dirichletLFunctionSingularitiesInRectangle_iff.mpr ⟨hyz, hmem⟩)
+      hyS (mem_LSingularitiesInRectangle_iff.mpr ⟨hyz, hmem⟩)
     push Not at hy'
-    exact differentiableAt_dirichletLogContourKernel hx hne hy'.1 hy'.2.2
+    exact differentiableAt_logKernel hx hne hy'.1 hy'.2.2
   have hsingular_res :
     ∀ cell ∈ RectangleGeometry.finiteSingularCells S cells,
       RectangleGeometry.rectangleBoundaryIntegral (dirichletLogContourKernel x χ) cell.1 cell.2 =
@@ -127,11 +125,9 @@ theorem dirichletLogFiniteContourIdentity {N : ℕ} [NeZero N] {x : ℝ} (hx : 0
         grid.ycoordinates_pairwise (by simpa only [hcells_def, List.mem_toFinset] using hcellmem.1)
     set c := assignment.pointOfCell cell with hc_def
     have hpointS : c ∈ S := assignment.point_mem_ledger cell hcell
-    have hpointHyp := (mem_dirichletLFunctionSingularitiesInRectangle_iff.mp hpointS).2
-    obtain ⟨Rc, hRc, hcert⟩ :=
-      exists_radius_forall_dirichletRectangleBoundaryIntegral_log_residueAt hx hprimitive hne
-        hpointHyp
-    obtain ⟨ε, hε, hball⟩ := interior.exists_closedBall_pointOfCell_subset_open hcell
+    have hpointHyp := (mem_LSingularitiesInRectangle_iff.mp hpointS).2
+    obtain ⟨Rc, hRc, hcert⟩ := exists_local_log_residue hx hprimitive hne hpointHyp
+    obtain ⟨ε, hε, hball⟩ := interior.exists_point_ball hcell
     set r := min (ε / 2) (Rc / 2) with hr_def
     have hr : 0 < r := lt_min (half_pos hε) (half_pos hRc)
     have hball' : Metric.closedBall c r ⊆ RectangleGeometry.rectangleOpenBox cell.1 cell.2 :=
@@ -149,8 +145,7 @@ theorem dirichletLogFiniteContourIdentity {N : ℕ} [NeZero N] {x : ℝ} (hx : 0
     have hcopen : c ∈ RectangleGeometry.rectangleOpenBox cell.1 cell.2 :=
       hball' (Metric.mem_closedBall_self hr.le)
     have havoidSq :=
-      RectangleGeometry.centeredSquare_augmented_coordinates_avoid hcellOrder.1 hcellOrder.2 hr
-        hcopen
+      RectangleGeometry.square_augmented_coordinates_avoid hcellOrder.1 hcellOrder.2 hr hcopen
     set xs := cell.1.re :: [a.re, b.re] ++ [cell.2.re] with hxs_def
     set ys := cell.1.im :: [a.im, b.im] ++ [cell.2.im] with hys_def
     have hxmem : ∀ u ∈ xs, u ∈ Set.uIcc cell.1.re cell.2.re := by
@@ -170,8 +165,8 @@ theorem dirichletLogFiniteContourIdentity {N : ℕ} [NeZero N] {x : ℝ} (hx : 0
       · exact Set.mem_uIcc_of_le (hcuts.2.2.2.1.trans hcuts.2.2.2.2.1).le hcuts.2.2.2.2.2.le
       · exact Set.right_mem_uIcc
     have hcoordint :=
-      assignment.kernelCoordinateIntegrable (dirichletLogContourKernel x χ) hcell hdiffCell xs ys
-        hxmem hymem havoidSq.1 havoidSq.2
+      assignment.kernel_integrable (dirichletLogContourKernel x χ) hcell hdiffCell xs ys hxmem hymem
+        havoidSq.1 havoidSq.2
     have hgrid3 :
       RectangleGeometry.RectangleGridSubdivisionIntegrable (dirichletLogContourKernel x χ) cell.1
         cell.2 [a.re, b.re] [a.im, b.im] :=
@@ -200,8 +195,8 @@ theorem dirichletLogFiniteContourIdentity {N : ℕ} [NeZero N] {x : ℝ} (hx : 0
             simp only [hys_def, List.cons_append, List.nil_append, List.mem_cons, List.not_mem_nil,
               or_false, true_or, or_true])
     have hshrink :=
-      assignment.parent_boundaryIntegral_eq_of_shrink (dirichletLogContourKernel x χ) hcell hcuts.1
-        hcuts.2.1 hcuts.2.2.1 hcuts.2.2.2.1 hcuts.2.2.2.2.1 hcuts.2.2.2.2.2 hpoint hdiffCell hgrid3
+      assignment.integral_eq_shrink (dirichletLogContourKernel x χ) hcell hcuts.1 hcuts.2.1
+        hcuts.2.2.1 hcuts.2.2.2.1 hcuts.2.2.2.2.1 hcuts.2.2.2.2.2 hpoint hdiffCell hgrid3
     rw [hshrink]
     have hrRc : r ≤ Rc := le_trans (min_le_right _ _) (half_le_self hRc.le)
     exact hcert r hr hrRc
@@ -211,16 +206,15 @@ theorem dirichletLogFiniteContourIdentity {N : ℕ} [NeZero N] {x : ℝ} (hx : 0
       hdiff hsingular_res
 
 /-- Normalized form of the generic logarithmic finite-contour identity. -/
-theorem dirichletLogFiniteContourIdentity_normalized {N : ℕ} [NeZero N] {x : ℝ} (hx : 0 < x)
+theorem logFiniteContourIdentity_normalized {N : ℕ} [NeZero N] {x : ℝ} (hx : 0 < x)
     {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) {z w : ℂ}
     (hre : z.re < w.re) (him : z.im < w.im)
     (hopen :
-      ∀ s ∈ dirichletLFunctionSingularitiesInRectangle χ hne z w,
+      ∀ s ∈ LFunctionSingularitiesInRectangle χ hne z w,
         s ∈ RectangleGeometry.rectangleOpenBox z w) :
     (-Complex.I / (2 * Real.pi)) *
         RectangleGeometry.rectangleBoundaryIntegral (dirichletLogContourKernel x χ) z w =
-      ∑ s ∈ dirichletLFunctionSingularitiesInRectangle χ hne z w,
-        dirichletLogResidueAt hne x s := by
+      ∑ s ∈ LFunctionSingularitiesInRectangle χ hne z w, dirichletLogResidueAt hne x s := by
   rw [dirichletLogFiniteContourIdentity hx hprimitive hne hre him hopen, Finset.mul_sum]
   apply Finset.sum_congr rfl
   intro s hs
@@ -243,7 +237,7 @@ The normalized logarithmic contour identity on the generic
 GRH height-sequence rectangle.  This removes the quadratic-character restriction
 from the finite residue identity and is the interface used by the boundary limit.
 -/
-theorem dirichletLogFiniteContourIdentity_heightSeq_normalized {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem logContour_heightSeq_normalized_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) (A k : ℕ)
     (hA : 2 ≤ A) :
@@ -253,14 +247,14 @@ theorem dirichletLogFiniteContourIdentity_heightSeq_normalized {N : ℕ} [NeZero
           (primitiveHeightSeqUpperCorner hN2 hGRH hprimitive hne hinv k) =
       ∑
         s ∈
-          dirichletLFunctionSingularitiesInRectangle χ hne
+          LFunctionSingularitiesInRectangle χ hne
             (primitiveHeightSeqLowerCorner hN2 hGRH hprimitive hne hinv A k)
             (primitiveHeightSeqUpperCorner hN2 hGRH hprimitive hne hinv k),
         dirichletLogResidueAt hne x s := by
   obtain ⟨_, _, _, _, hre, him⟩ :=
     primitiveHeightSeqRectangleFacts hN2 hGRH hprimitive hne hinv A k hA
   exact
-    dirichletLogFiniteContourIdentity_normalized hx hprimitive hne hre him
-      (primitiveHeightSeq_singularities_mem_open hN2 hGRH hprimitive hne hinv A k hA)
+    logFiniteContourIdentity_normalized hx hprimitive hne hre him
+      (heightSeq_singularities_open_GRH hN2 hGRH hprimitive hne hinv A k hA)
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

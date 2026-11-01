@@ -208,9 +208,9 @@ theorem gammaPrefix100_signed_budget_gap_of_radius {n : ℕ} [NeZero n] (hRH : R
 /-- From logarithmic scale 240, the 1000-term Gamma prefix gives an
 index-100 witness below its retained-prefix curve for every subgroup of
 index at least one hundred containing all strong-MR passes. -/
-theorem exists_prime_witness_le_gammaIndex100Prefix1000_of_subgroup {n : ℕ} [NeZero n] (hn : 1 < n)
-    (hnOdd : Odd n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (H : Subgroup (ZMod n)ˣ) (hidx : 100 ≤ H.index)
+theorem exists_prime_witness_gamma100_prefix1000_GRH {n : ℕ} [NeZero n] (hn : 1 < n) (hnOdd : Odd n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (H : Subgroup (ZMod n)ˣ)
+    (hidx : 100 ≤ H.index)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hL : 240 ≤ Real.log n) :
@@ -257,7 +257,7 @@ theorem exists_prime_witness_le_gammaIndex100Prefix1000_of_subgroup {n : ℕ} [N
 /-- From logarithmic scale 270, the retained 50000-term Gamma prefix gives an
 index-100 witness below its own clipped curve for every pass-containing
 subgroup of index at least one hundred. -/
-theorem exists_prime_witness_le_gammaIndex100Prefix50000_of_subgroup {n : ℕ} [NeZero n] (hn : 1 < n)
+theorem exists_prime_witness_gamma100_prefix50000_GRH {n : ℕ} [NeZero n] (hn : 1 < n)
     (hnOdd : Odd n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (H : Subgroup (ZMod n)ˣ) (hidx : 100 ≤ H.index)
     (hHpass :
@@ -309,9 +309,9 @@ theorem exists_prime_witness_le_gammaIndex100Prefix50000_of_subgroup {n : ℕ} [
 /-- From logarithmic scale 240, the 50000-term Gamma prefix gives a witness
 below its clipped retained-prefix curve. If the positive root lies below the
 cutoff radius, use that cutoff radius in the signed budget. -/
-theorem exists_prime_witness_le_gammaIndex100Prefix50000_clipped_of_subgroup {n : ℕ} [NeZero n]
-    (hn : 1 < n) (hnOdd : Odd n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (H : Subgroup (ZMod n)ˣ) (hidx : 100 ≤ H.index)
+theorem exists_prime_gamma100_clipped50000_GRH {n : ℕ} [NeZero n] (hn : 1 < n) (hnOdd : Odd n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (H : Subgroup (ZMod n)ˣ)
+    (hidx : 100 ≤ H.index)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hL : 240 ≤ Real.log n) :
@@ -391,9 +391,9 @@ theorem exists_prime_witness_le_gammaIndex100Prefix50000_clipped_of_subgroup {n 
 
 /-- For every pass-containing subgroup of index at least 100, one of the two
 retained Gamma prefixes supplies a witness below their minimum envelope. -/
-theorem exists_prime_witness_le_gammaIndex100PrefixUpper_of_subgroup {n : ℕ} [NeZero n] (hn : 1 < n)
-    (hnOdd : Odd n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (H : Subgroup (ZMod n)ˣ) (hidx : 100 ≤ H.index)
+theorem exists_prime_gamma100_prefixSubgroup_GRH {n : ℕ} [NeZero n] (hn : 1 < n) (hnOdd : Odd n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (H : Subgroup (ZMod n)ˣ)
+    (hidx : 100 ≤ H.index)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hL : 240 ≤ Real.log n) :
@@ -405,15 +405,14 @@ theorem exists_prime_witness_le_gammaIndex100PrefixUpper_of_subgroup {n : ℕ} [
   let upper50000 := max 50000 ((99 / 40 : ℝ) * gammaPrefix100Radius (Real.log n) (28493 / 5000) ^ 2)
   by_cases hcmp : upper1000 ≤ upper50000
   · obtain ⟨p, hp, hbound, hreject⟩ :=
-      exists_prime_witness_le_gammaIndex100Prefix1000_of_subgroup hn hnOdd hGRH H hidx hHpass hL
+      exists_prime_witness_gamma100_prefix1000_GRH hn hnOdd hGRH H hidx hHpass hL
     refine ⟨p, hp, ?_, hreject⟩
     change (p : ℝ) ≤ min upper1000 upper50000
     rw [min_eq_left hcmp]
     exact hbound
   · have hcmp' : upper50000 ≤ upper1000 := le_of_not_ge hcmp
     obtain ⟨p, hp, hbound, hreject⟩ :=
-      exists_prime_witness_le_gammaIndex100Prefix50000_clipped_of_subgroup hn hnOdd hGRH H hidx
-        hHpass hL
+      exists_prime_gamma100_clipped50000_GRH hn hnOdd hGRH H hidx hHpass hL
     refine ⟨p, hp, ?_, hreject⟩
     change (p : ℝ) ≤ min upper1000 upper50000
     rw [min_eq_right hcmp']
@@ -446,10 +445,10 @@ theorem local_three_tenths_le_gammaIndex100PrefixUpper {L : ℝ} (hL : 240 ≤ L
 /-- The finite-index classification yields a witness below the `U₁₀₀`
 candidate or a uniform Korselt triple. The local branch is absorbed by the
 two clipped retained-prefix curves. -/
-theorem finite_index_witness_or_uniform_korselt_triple_gammaIndex100Prefix {n : ℕ} [NeZero n]
-    (hnOdd : Odd n) (hcomp : ¬n.Prime) (H : Subgroup (ZMod n)ˣ)
-    (hH : H ≤ PrimeTest.fermatSubgroup n) (hi : H.index ≤ 10 ^ 9)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 240 ≤ Real.log n) :
+theorem gamma100Prefix_witness_or_Korselt_index_GRH {n : ℕ} [NeZero n] (hnOdd : Odd n)
+    (hcomp : ¬n.Prime) (H : Subgroup (ZMod n)ˣ) (hH : H ≤ PrimeTest.fermatSubgroup n)
+    (hi : H.index ≤ 10 ^ 9) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hL : 240 ≤ Real.log n) :
     (∃ p : ℕ,
         p.Prime ∧
           (p : ℝ) ≤ gammaIndex100PrefixUpper (Real.log n) ∧
@@ -459,8 +458,7 @@ theorem finite_index_witness_or_uniform_korselt_triple_gammaIndex100Prefix {n : 
         (∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1) ∧
         (∀ p q : ℕ,
           p.Prime → q.Prime → p ∣ n → q ∣ n → padicValNat 2 (p - 1) = padicValNat 2 (q - 1))) := by
-  rcases finite_index_witness_or_uniform_korselt_triple_log240 hnOdd hcomp H hH hi hGRH hL with
-    hlocal | htriple
+  rcases witness_or_uniformKorselt_log240_GRH hnOdd hcomp H hH hi hGRH hL with hlocal | htriple
   · obtain ⟨p, hp, hbound, hfail⟩ := hlocal
     exact Or.inl ⟨p, hp, hbound.trans (local_three_tenths_le_gammaIndex100PrefixUpper hL), hfail⟩
   · exact Or.inr htriple
@@ -468,8 +466,7 @@ theorem finite_index_witness_or_uniform_korselt_triple_gammaIndex100Prefix {n : 
 /-- Under GRH, every odd composite with logarithm at least 240 either has a
 prime witness below the two-prefix `U₁₀₀` curve or is a uniform Korselt
 three-prime remainder. Split on the Fermat subgroup index. -/
-theorem exists_prime_witness_le_gammaIndex100PrefixUpper_or_uniform_korselt_triple {n : ℕ}
-    (hnOdd : Odd n) (hcomp : ¬n.Prime)
+theorem gamma100Prefix_witness_or_Korselt_GRH {n : ℕ} (hnOdd : Odd n) (hcomp : ¬n.Prime)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 240 ≤ Real.log n) :
     (∃ p : ℕ,
         p.Prime ∧
@@ -494,8 +491,8 @@ theorem exists_prime_witness_le_gammaIndex100PrefixUpper_or_uniform_korselt_trip
   let : NeZero n := ⟨Nat.ne_zero_of_lt hn1⟩
   by_cases hi : (PrimeTest.fermatSubgroup n).index ≤ 10 ^ 9
   · exact
-      finite_index_witness_or_uniform_korselt_triple_gammaIndex100Prefix hnOdd hcomp
-        (PrimeTest.fermatSubgroup n) le_rfl hi hGRH hL
+      gamma100Prefix_witness_or_Korselt_index_GRH hnOdd hcomp (PrimeTest.fermatSubgroup n) le_rfl hi
+        hGRH hL
   · have hindex : 100 ≤ (PrimeTest.fermatSubgroup n).index := by
       have hlarge := (lt_of_not_ge hi).le
       norm_num only at hlarge
@@ -508,7 +505,7 @@ theorem exists_prime_witness_le_gammaIndex100PrefixUpper_or_uniform_korselt_trip
       exact PrimeTest.strongMillerRabinPass_mem_fermatSubgroup hn1 hnOdd hz
     exact
       Or.inl
-        (exists_prime_witness_le_gammaIndex100PrefixUpper_of_subgroup hn1 hnOdd hGRH
-          (PrimeTest.fermatSubgroup n) hindex hHpass hL)
+        (exists_prime_gamma100_prefixSubgroup_GRH hn1 hnOdd hGRH (PrimeTest.fermatSubgroup n) hindex
+          hHpass hL)
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

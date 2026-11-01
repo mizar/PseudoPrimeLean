@@ -102,7 +102,7 @@ derivative at most two, using the existing common prefix allowance. -/
 theorem fourPole_gammaFactor_le_two {q : ℕ} (χ : DirichletCharacter ℂ q) {σ : ℝ} (hl : 1 ≤ σ)
     (hu : σ ≤ 2) : |(logDeriv χ.gammaFactor (σ : ℂ)).re| ≤ 2 := by
   have h :=
-    AnalyticNumberTheory.DirichletLFunction.abs_re_logDeriv_gammaFactor_le_prefix χ hl
+    AnalyticNumberTheory.DirichletLFunction.gammaLogDeriv_re_le_prefix χ hl
       (hu.trans (by norm_num only)) (R := 1 / 2) le_rfl (by linarith only [hl]) 0
   norm_num only [AnalyticNumberTheory.Gamma.gammaPrefixAllowance, Finset.sum_range_zero, sub_zero,
     max_def, ite_true] at h
@@ -114,7 +114,7 @@ theorem fourPole_principalEuler_le_nine {σ : ℝ} (hl : 13 / 9 ≤ σ) (hu : σ
     |(logDeriv (1 : DirichletCharacter ℂ 1).LFunction (σ : ℂ)).re| ≤ 9 := by
   have hp : 0 < σ - 1 := by linarith only [hl]
   have h :=
-    AnalyticNumberTheory.DirichletLFunction.norm_logDeriv_vertical_le_four_div_gap
+    AnalyticNumberTheory.DirichletLFunction.norm_L_logDeriv_le_four_div_gap
       (1 : DirichletCharacter ℂ 1) hp (by linarith only [hu]) 0
   simp only [Complex.ofReal_zero, zero_mul, add_zero, show 1 + (σ - 1) = σ by ring] at h
   apply ((Complex.abs_re_le_norm _).trans h).trans

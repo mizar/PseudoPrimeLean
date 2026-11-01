@@ -19,8 +19,8 @@ namespace PseudoPrime.LLS.PaperStatements
 archimedean series is nonpositive. Special digamma values reduce the full upper
 bound to elementary logarithmic constants, and the initial integral is
 nonnegative. This is the scalar sign gate for the actual Gamma integral. -/
-theorem gamma_scalar_archimedean_series_nonpos_of_exact_parity {b x : ℝ}
-    (hb : b = 1 / 4 ∨ b = 3 / 4) (hx : 2 ≤ x) :
+theorem gamma_archimedean_series_nonpos_of_parity {b x : ℝ} (hb : b = 1 / 4 ∨ b = 3 / 4)
+    (hx : 2 ≤ x) :
     ((-Real.log Real.pi + (Complex.digamma (b : ℂ)).re) / 2) * (Real.sqrt x⁻¹ * Real.exp (-x⁻¹)) +
         (1 / 2 : ℝ) *
           (∑' n : ℕ,
@@ -96,9 +96,9 @@ theorem gamma_central_archimedean_integral_re_nonpos {q : ℕ} (χ : DirichletCh
           (∫ t : ℝ,
             logDeriv χ.gammaFactor (Complex.I * t + 1 / 2) * gammaCentralMellinWeight x t)).re ≤
       0 := by
-  obtain ⟨b, hb, h⟩ := gamma_central_archimedean_integral_re_eq_scalar_exact_parity χ
+  obtain ⟨b, hb, h⟩ := gammaArchIntegral_scalar_parity χ
   rw [h x (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 2) hx)]
-  exact gamma_scalar_archimedean_series_nonpos_of_exact_parity hb hx
+  exact gamma_archimedean_series_nonpos_of_parity hb hx
 
 /-- At scale at least two, the actual Gamma integral on any admissible right
 line has nonpositive real part. The proved contour-independence identity

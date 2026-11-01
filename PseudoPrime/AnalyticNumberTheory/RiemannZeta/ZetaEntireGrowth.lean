@@ -25,7 +25,7 @@ namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 /-- A polynomial-in-`‖s‖` growth bound for `riemannZeta₁`
 on `Re s > -1`, uniform in `Im s`: the pole
 of `riemannZeta` at `s = 1` that forced the exclusion `s ≠ 1` in
-`PseudoPrime.AnalyticNumberTheory.RiemannZeta.norm_riemannZeta_le_of_reGt_neg_one_diff_one` is
+`PseudoPrime.AnalyticNumberTheory.RiemannZeta.norm_zeta_le_of_reGt_neg_one_diff_one` is
 exactly cancelled by the `(s - 1)` factor in
 `riemannZeta₁`,
 and separately checked at the patched point `s = 1` itself. -/
@@ -43,7 +43,7 @@ theorem norm_riemannZeta₁_le_of_reGt_neg_one {s : ℂ} (hs : -1 < s.re) :
     have hsm1_pos : 0 < ‖s - 1‖ := norm_pos_iff.mpr hsm1_ne
     have hζ :
       ‖riemannZeta s‖ ≤ ‖s‖ / ‖s - 1‖ + 1 / 2 + ‖s‖ * (‖s‖ + 1) * sawtoothRemainderBound s.re :=
-      norm_riemannZeta_le_of_reGt_neg_one_diff_one ⟨hs, hne⟩
+      norm_zeta_le_of_reGt_neg_one_diff_one ⟨hs, hne⟩
     have hstep1 :
       ‖riemannZeta₁ s‖ ≤
         ‖s - 1‖ * (‖s‖ / ‖s - 1‖ + 1 / 2 + ‖s‖ * (‖s‖ + 1) * sawtoothRemainderBound s.re) := by

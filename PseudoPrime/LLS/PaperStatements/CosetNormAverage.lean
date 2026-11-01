@@ -32,8 +32,7 @@ reciprocal corrections over all nonprincipal full-level characters using exact p
 Primitive normalization preserves parity; even and odd upper bounds have coefficients
 `totient/2 - 1` and `totient/2`. Expanding the average retains the logarithm-of-two
 and gamma savings needed for smaller-modulus residue comparisons. -/
-theorem sum_nonprincipal_reciprocalCorrection_le_parity_average {q : ℕ} [NeZero q] (hq : 2 < q)
-    {x : ℝ} (hx : 100 ≤ x) :
+theorem sum_nonprincipal_reciprocal_parity {q : ℕ} [NeZero q] (hq : 2 < q) {x : ℝ} (hx : 100 ≤ x) :
     2 *
         (∑ χ ∈ Finset.univ.erase (1 : DirichletCharacter ℂ q),
           reciprocalCorrection χ.primitiveCharacter x) ≤
@@ -42,7 +41,7 @@ theorem sum_nonprincipal_reciprocalCorrection_le_parity_average {q : ℕ} [NeZer
             (q.totient : ℝ) * (Real.log 2 + Real.eulerMascheroniConstant / 2)) /
           x := by
   have hs :=
-    NumberTheory.sum_nonprincipal_dirichletCharacters_le_parity_average hq
+    NumberTheory.sum_nonprincipal_le_parity_average hq
       (fun χ ↦ reciprocalCorrection χ.primitiveCharacter x)
       (fun χ _ he ↦
         reciprocalCorrection_le_even χ.primitiveCharacter
@@ -153,7 +152,7 @@ theorem cosetPrincipalLower_le {q : ℕ} [NeZero q] (hRH : RiemannHypothesis) {x
     cosetPrincipalLower q x ≤
       (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x
           (1 : DirichletCharacter ℂ q)).re := by
-  have hr := llsRiemannWeightedLowerBound_of_riemannHypothesis hRH x hx
+  have hr := riemannWeightedLower_of_RH hRH x hx
   have hm :=
     mul_le_mul_of_nonneg_right AnalyticNumberTheory.RiemannXi.riemannZeroMass_le_one_fortieth
       (add_nonneg (Real.sqrt_nonneg x) zero_le_one)
@@ -205,9 +204,9 @@ the explicit principal lower bound and the composite-root and nonprincipal
 majorants produces the least prime in any prescribed coset below `x`.
 Insert the analytic estimates into the character-average prime criterion.
 This leaves only real inequalities and a finite root sum to prove. -/
-theorem exists_least_prime_in_coset_le_of_explicit_root_gap {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (a : (ZMod q)ˣ) (hq : 64 ≤ q)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 65536 ≤ x)
+theorem exists_least_prime_in_coset_le_of_root_gap_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (a : (ZMod q)ˣ) (hq : 64 ≤ q) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {x : ℝ} (hx : 65536 ≤ x)
     (hgap :
       (H.index : ℝ) *
             (∑ k ∈ Finset.Icc 2 ⌊Real.log x / Real.log 2⌋₊,
@@ -219,7 +218,7 @@ theorem exists_least_prime_in_coset_le_of_explicit_root_gap {q : ℕ} [NeZero q]
   have hx1 : 1 < x := lt_of_lt_of_le (by norm_num only) hx
   have hn := nonprincipal_logWeightedNorm_sum_le_explicit H hq hGRH hx
   have hp := cosetPrincipalLower_le (q := q) hGRH.riemann hx1
-  have hc := compositePrimePowerLogWeightedSum_le_explicit_root_sums hGRH.riemann hx1
+  have hc := compositePrimePowerSum_explicit_RH hGRH.riemann hx1
   have hm := mul_le_mul_of_nonneg_left hc (Nat.cast_nonneg H.index : (0 : ℝ) ≤ H.index)
   apply exists_least_prime_in_coset_le_of_principal_gap H a (zero_lt_one.trans hx1)
   linarith only [hgap, hn, hp, hm]
@@ -231,7 +230,7 @@ Average the primitive reciprocal corrections with even count `totient/2 - 1`
 and odd count `totient/2`; subgroup orthogonality bounds the reciprocal sum below
 by the negative principal contribution. This keeps the `log pi + gamma` saving
 for small-modulus residue certificates. -/
-theorem nonprincipal_logWeightedNorm_sum_le_parity_average {q : ℕ} [NeZero q] (hq : 64 ≤ q)
+theorem nonprincipalLogNormSum_le_parity_average {q : ℕ} [NeZero q] (hq : 64 ≤ q)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 65536 ≤ x) :
     (∑ χ ∈ Finset.univ.erase (1 : DirichletCharacter ℂ q),
         ‖AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x χ‖) ≤
@@ -290,8 +289,7 @@ theorem nonprincipal_logWeightedNorm_sum_le_parity_average {q : ℕ} [NeZero q] 
       Nat.card_eq_fintype_card.symm,
       DirichletCharacter.card_eq_totient_of_hasEnoughRootsOfUnity ℂ q, Nat.cast_one]
   have he :=
-    sum_nonprincipal_reciprocalCorrection_le_parity_average
-      (lt_of_lt_of_le (by norm_num only : (2 : ℕ) < 64) hq)
+    sum_nonprincipal_reciprocal_parity (lt_of_lt_of_le (by norm_num only : (2 : ℕ) < 64) hq)
       ((by norm_num only : (100 : ℝ) ≤ 65536).trans hx)
   have hmE := mul_le_mul_of_nonneg_left he hA
   have hmR := mul_le_mul_of_nonneg_left hr (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 2) hA)
@@ -304,8 +302,8 @@ theorem nonprincipal_logWeightedNorm_sum_le_parity_average {q : ℕ} [NeZero q] 
 sum is bounded by the unsigned Mangoldt sum and its explicit formula.
 The zero-mass bound gives the rational square-root error `1/(20*sqrt x)`.
 This removes the principal contribution from parity-averaged norm estimates. -/
-theorem principal_characterReciprocalWeightedSum_re_le_explicit {q : ℕ} [NeZero q]
-    (hRH : RiemannHypothesis) {x : ℝ} (hx : 1 < x) :
+theorem principalReciprocalSum_re_le_explicit {q : ℕ} [NeZero q] (hRH : RiemannHypothesis) {x : ℝ}
+    (hx : 1 < x) :
     (AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum x
           (1 : DirichletCharacter ℂ q)).re ≤
       Real.log x - (1 + Real.eulerMascheroniConstant) + Real.log (2 * Real.pi) / x +
@@ -345,16 +343,16 @@ nonprincipal residue-character norm sum by the explicit parity majorant.
 Identify the identity subgroup's annihilator with all characters, apply the
 parity average, and replace the principal reciprocal sum by its RH upper bound.
 No character sums remain in the majorant used by numerical certificates. -/
-theorem nonprincipal_residue_logWeightedNorm_sum_le_parity_explicit {q : ℕ} [NeZero q] (hq : 64 ≤ q)
+theorem residueLogNorm_sum_le_parity_explicit {q : ℕ} [NeZero q] (hq : 64 ≤ q)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 65536 ≤ x) :
     (∑ χ ∈ Finset.univ.erase (1 : NumberTheory.subgroupAnnihilator (⊥ : Subgroup (ZMod q)ˣ)),
         ‖AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x χ.val‖) ≤
       residueNonprincipalParityUpper q x := by
   rw [NumberTheory.sum_nonprincipal_subgroupAnnihilator_bot
       (fun χ ↦ ‖AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x χ‖)]
-  have hs := nonprincipal_logWeightedNorm_sum_le_parity_average hq hGRH hx
+  have hs := nonprincipalLogNormSum_le_parity_average hq hGRH hx
   have hr :=
-    principal_characterReciprocalWeightedSum_re_le_explicit (q := q) hGRH.riemann
+    principalReciprocalSum_re_le_explicit (q := q) hGRH.riemann
       (lt_of_lt_of_le (by norm_num only : (1 : ℝ) < 65536) hx)
   have hm :=
     mul_le_mul_of_nonneg_left hr

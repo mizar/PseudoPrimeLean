@@ -33,7 +33,7 @@ noncomputable def classicalNeOneMaximum (B : ℕ) : ℕ := by
     exact
     (NumberTheory.admissibleFinset B).attach.sup fun n =>
       PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n.val
-        (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare
+        (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare
           ((NumberTheory.mem_admissibleFinset_iff.mp n.property).odd)
           ((NumberTheory.mem_admissibleFinset_iff.mp n.property).not_isSquare))
 
@@ -45,7 +45,7 @@ noncomputable def wheel30NeOneMaximum (B : ℕ) : ℕ := by
     exact
     (NumberTheory.admissibleFinset B).attach.sup fun n =>
       PrimeTest.firstStopNeOne PrimeTest.isWheel30NeOneCandidate n.val
-        (PrimeTest.wheel30FirstStopNeOneSet_nonempty_of_odd_nonsquare
+        (PrimeTest.wheel30NeOneSet_nonempty_of_odd_nonsquare
           ((NumberTheory.mem_admissibleFinset_iff.mp n.property).odd)
           ((NumberTheory.mem_admissibleFinset_iff.mp n.property).not_isSquare))
 
@@ -58,7 +58,7 @@ noncomputable def classicalNegOneMaximum (B : ℕ) : ℕ := by
     exact
     (NumberTheory.admissibleFinset B).attach.sup fun n =>
       PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n.val
-        (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare
+        (PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare
           ((NumberTheory.mem_admissibleFinset_iff.mp n.property).odd)
           ((NumberTheory.mem_admissibleFinset_iff.mp n.property).not_isSquare))
 
@@ -71,7 +71,7 @@ noncomputable def wheel30NegOneMaximum (B : ℕ) : ℕ := by
     exact
     (NumberTheory.admissibleFinset B).attach.sup fun n =>
       PrimeTest.firstStopNegOne PrimeTest.isWheel30NegOneCandidate n.val
-        (PrimeTest.wheel30FirstStopNegOneSet_nonempty_of_odd_nonsquare
+        (PrimeTest.wheel30NegOneSet_nonempty_of_odd_nonsquare
           ((NumberTheory.mem_admissibleFinset_iff.mp n.property).odd)
           ((NumberTheory.mem_admissibleFinset_iff.mp n.property).not_isSquare))
 
@@ -88,8 +88,8 @@ theorem wheel30NegOneMaximum_eq_classicalNegOneMaximum (B : ℕ) :
   have hn := NumberTheory.mem_admissibleFinset_iff.mp n.property
   exact
     PrimeTest.firstStopNegOne_wheel30_eq_classical hn.odd
-      (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn.odd hn.not_isSquare)
-      (PrimeTest.wheel30FirstStopNegOneSet_nonempty_of_odd_nonsquare hn.odd hn.not_isSquare)
+      (PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn.odd hn.not_isSquare)
+      (PrimeTest.wheel30NegOneSet_nonempty_of_odd_nonsquare hn.odd hn.not_isSquare)
 
 /-- The Wheel30 and classical factor-detecting maxima agree on every admissible domain. -/
 theorem wheel30NeOneMaximum_eq_classicalNeOneMaximum (B : ℕ) :
@@ -101,13 +101,13 @@ theorem wheel30NeOneMaximum_eq_classicalNeOneMaximum (B : ℕ) :
   have hn := NumberTheory.mem_admissibleFinset_iff.mp n.property
   exact
     PrimeTest.firstStopNeOne_wheel30_eq_classical hn.pos hn.odd hn.not_isSquare
-      (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn.odd hn.not_isSquare)
-      (PrimeTest.wheel30FirstStopNeOneSet_nonempty_of_odd_nonsquare hn.odd hn.not_isSquare)
+      (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn.odd hn.not_isSquare)
+      (PrimeTest.wheel30NeOneSet_nonempty_of_odd_nonsquare hn.odd hn.not_isSquare)
 
 /--
 The classical factor-detecting maximum is bounded by the classical pure `-1` maximum: the same
 candidate predicate is used for both stopping rules, so the pointwise "first-stop inclusion"
-(`PrimeTest.firstStopNeOne_le_firstStopNegOne_same_candidates`) lifts to the finite supremum.
+(`PrimeTest.firstStopNeOne_le_negOne`) lifts to the finite supremum.
 -/
 theorem classicalNeOneMaximum_le_classicalNegOneMaximum (B : ℕ) :
     classicalNeOneMaximum B ≤ classicalNegOneMaximum B := by
@@ -123,8 +123,8 @@ theorem classicalNeOneMaximum_le_classicalNegOneMaximum (B : ℕ) :
     have := hn.pos
     exact Nat.lt_of_le_of_ne this (Ne.symm hne1)
   exact
-    PrimeTest.firstStopNeOne_le_firstStopNegOne_same_candidates hn1
-      (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn.odd hn.not_isSquare)
+    PrimeTest.firstStopNeOne_le_negOne hn1
+      (PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn.odd hn.not_isSquare)
 
 /-- The least-prime `≠ 1` maximum is bounded by the classical first-stop maximum. -/
 theorem QNeOne_le_classicalNeOneMaximum (B : ℕ) :
@@ -134,9 +134,7 @@ theorem QNeOne_le_classicalNeOneMaximum (B : ℕ) :
   apply Finset.sup_mono_fun
   intro n _
   have hn := NumberTheory.mem_admissibleFinset_iff.mp n.property
-  exact
-    (PrimeTest.primeNeOneWitness_le_classicalFirstStop_le_max_unconditional hn.pos hn.odd
-        hn.not_isSquare _ _).1
+  exact (PrimeTest.neOneWitness_classicalStop_bounds hn.pos hn.odd hn.not_isSquare _ _).1
 
 /-- The classical `≠ 1` maximum is at most `max 15 PseudoPrime.PseudoSquare.QNeOne`. -/
 theorem classicalNeOneMaximum_le_max_fifteen_QNeOne (B : ℕ) :
@@ -147,11 +145,10 @@ theorem classicalNeOneMaximum_le_max_fifteen_QNeOne (B : ℕ) :
   intro n _
   have hn := NumberTheory.mem_admissibleFinset_iff.mp n.property
   have hpoint :=
-    PrimeTest.primeNeOneWitness_le_classicalFirstStop_le_max_unconditional hn.pos hn.odd
-      hn.not_isSquare
+    PrimeTest.neOneWitness_classicalStop_bounds hn.pos hn.odd hn.not_isSquare
       (PrimeTest.primeNeOneWitnessSet_nonempty_of_negOne
         (PrimeTest.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn.odd hn.not_isSquare))
-      (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn.odd hn.not_isSquare)
+      (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn.odd hn.not_isSquare)
   exact hpoint.2.trans (max_le_max_left 15 (PseudoSquare.primeNeOneWitness_le_QNeOne n.property))
 
 /-- Once `PseudoSquare.QNeOne` exceeds `15`, the classical maximum agrees with it permanently. -/
@@ -179,7 +176,7 @@ theorem QNegOne_le_classicalNegOneMaximum (B : ℕ) :
   exact (PrimeTest.primeNegOneWitness_le_classicalFirstStop_le_max hn.odd _ _).1
 
 /-- The classical pure `-1` maximum is at most `max 27 PseudoPrime.PseudoSquare.QNegOne`. -/
-theorem classicalNegOneMaximum_le_max_twenty_seven_QNegOne (B : ℕ) :
+theorem classicalNegOneMaximum_le_max_27_QNegOne (B : ℕ) :
     classicalNegOneMaximum B ≤ max 27 (PseudoSquare.QNegOne B) := by
   classical
   unfold classicalNegOneMaximum
@@ -189,29 +186,27 @@ theorem classicalNegOneMaximum_le_max_twenty_seven_QNegOne (B : ℕ) :
   have hpoint :=
     PrimeTest.primeNegOneWitness_le_classicalFirstStop_le_max hn.odd
       (PrimeTest.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn.odd hn.not_isSquare)
-      (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn.odd hn.not_isSquare)
+      (PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn.odd hn.not_isSquare)
   exact hpoint.2.trans (max_le_max_left 27 (PseudoSquare.primeNegOneWitness_le_QNegOne n.property))
 
 /-- Once `PseudoSquare.QNegOne` exceeds `27`, the classical and Wheel30 pure maxima equal it. -/
-theorem classicalNegOneMaximum_eq_QNegOne_of_twenty_seven_lt {B : ℕ}
-    (hB : 27 < PseudoSquare.QNegOne B) : classicalNegOneMaximum B = PseudoSquare.QNegOne B := by
+theorem classicalNegOneMax_eq_QNegOne_of_gt_27 {B : ℕ} (hB : 27 < PseudoSquare.QNegOne B) :
+    classicalNegOneMaximum B = PseudoSquare.QNegOne B := by
   apply Nat.le_antisymm
   · rw [← max_eq_right hB.le]
-    exact classicalNegOneMaximum_le_max_twenty_seven_QNegOne B
+    exact classicalNegOneMaximum_le_max_27_QNegOne B
   · exact QNegOne_le_classicalNegOneMaximum B
 
 /-- The Wheel30 pure maximum also equals `PseudoSquare.QNegOne` once the latter exceeds `27`. -/
-theorem wheel30NegOneMaximum_eq_QNegOne_of_twenty_seven_lt {B : ℕ}
-    (hB : 27 < PseudoSquare.QNegOne B) : wheel30NegOneMaximum B = PseudoSquare.QNegOne B := by
+theorem wheel30NegOneMax_eq_QNegOne_of_gt_27 {B : ℕ} (hB : 27 < PseudoSquare.QNegOne B) :
+    wheel30NegOneMaximum B = PseudoSquare.QNegOne B := by
   rw [wheel30NegOneMaximum_eq_classicalNegOneMaximum]
-  exact classicalNegOneMaximum_eq_QNegOne_of_twenty_seven_lt hB
+  exact classicalNegOneMax_eq_QNegOne_of_gt_27 hB
 
 /-- The pure `-1` classical maximum equals `QNegOne` once the admissible range reaches `399`. -/
 theorem classicalNegOneMaximum_eq_QNegOne_of_399_le {B : ℕ} (hB : 399 ≤ B) :
     classicalNegOneMaximum B = PseudoSquare.QNegOne B := by
-  exact
-    classicalNegOneMaximum_eq_QNegOne_of_twenty_seven_lt
-      (PseudoSquare.twenty_seven_lt_QNegOne_of_399_le hB)
+  exact classicalNegOneMax_eq_QNegOne_of_gt_27 (PseudoSquare.twenty_seven_lt_QNegOne_of_399_le hB)
 
 /-- The input `751` keeps `QNeOne` above `15` at every later bound. -/
 theorem fifteen_lt_QNeOne_of_751_le {B : ℕ} (hB : 751 ≤ B) : 15 < PseudoSquare.QNeOne B := by
@@ -229,9 +224,7 @@ theorem fifteen_lt_QNeOne_of_751_le {B : ℕ} (hB : 751 ≤ B) : 15 < PseudoSqua
 /-- The Wheel30 pure `-1` maximum equals `QNegOne` from `399` onward. -/
 theorem wheel30NegOneMaximum_eq_QNegOne_of_399_le {B : ℕ} (hB : 399 ≤ B) :
     wheel30NegOneMaximum B = PseudoSquare.QNegOne B := by
-  exact
-    wheel30NegOneMaximum_eq_QNegOne_of_twenty_seven_lt
-      (PseudoSquare.twenty_seven_lt_QNegOne_of_399_le hB)
+  exact wheel30NegOneMax_eq_QNegOne_of_gt_27 (PseudoSquare.twenty_seven_lt_QNegOne_of_399_le hB)
 
 /-- The classical and Wheel30 factor-detecting maxima equal `QNeOne` from `751` onward. -/
 theorem classicalNeOneMaximum_eq_QNeOne_of_751_le {B : ℕ} (hB : 751 ≤ B) :

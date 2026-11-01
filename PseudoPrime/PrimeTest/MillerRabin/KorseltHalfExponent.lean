@@ -61,8 +61,8 @@ every strong MR pass lies in the half-exponent sign subgroup. Identify the
 canonical local sign exponent with the ambient half exponent, then apply the
 existing prime-factor sign-subgroup containment. This removes the pass premise
 from the equal-valuation three-prime Gaussian branch. -/
-theorem strongMillerRabinPass_mem_half_signSubgroup_of_equal_twoAdic {n p : ℕ} {x : ZMod n}
-    (hn : 1 < n) (hnOdd : Odd n) (hp : p.Prime) (hpOdd : Odd p) (hpn : p ∣ n)
+theorem strongPass_mem_half_signSubgroup_of_twoAdic_eq {n p : ℕ} {x : ZMod n} (hn : 1 < n)
+    (hnOdd : Odd n) (hp : p.Prime) (hpOdd : Odd p) (hpn : p ∣ n)
     (hval : padicValNat 2 (p - 1) = padicValNat 2 (n - 1)) (hpass : StrongMillerRabinPass n x) :
     ∃ u : (ZMod n)ˣ, u ∈ signSubgroup n ((n - 1) / 2) ∧ (u : ZMod n) = x := by
   have hhalf := half_exponent_eq_canonical_sign_exponent hn hnOdd

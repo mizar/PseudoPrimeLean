@@ -84,8 +84,8 @@ private theorem dedekindZeta_residue_limit_of_factorization (K : Type) [Field K]
 L(1,χ) equals the complex embedding of the positive Dedekind zeta residue.
 Uniqueness of limits compares the product limit with the general class-number
 formula. This identifies the L-value once factorization has been established. -/
-theorem LFunction_one_eq_dedekindZeta_residue_of_factorization (K : Type) [Field K] [NumberField K]
-    {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
+theorem L_one_eq_dedekind_residue_of_factorization (K : Type) [Field K] [NumberField K] {q : ℕ}
+    [NeZero q] (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
     (hf : ∀ s : ℝ, 1 < s → NumberField.dedekindZeta K s = riemannZeta s * χ.LFunction s) :
     χ.LFunction 1 = (NumberField.dedekindZeta_residue K : ℂ) := by
   exact
@@ -96,12 +96,12 @@ theorem LFunction_one_eq_dedekindZeta_residue_of_factorization (K : Type) [Field
 the norm of L(1,χ) is the positive Dedekind zeta residue. Take norms in the
 complex residue identity and use positivity. This is the real-valued interface
 needed by the imaginary quadratic class-number bound. -/
-theorem norm_LFunction_one_eq_dedekindZeta_residue_of_factorization (K : Type) [Field K]
-    [NumberField K] {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
+theorem norm_L_one_eq_dedekindResidue_factorization (K : Type) [Field K] [NumberField K] {q : ℕ}
+    [NeZero q] (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
     (hf : ∀ s : ℝ, 1 < s → NumberField.dedekindZeta K s = riemannZeta s * χ.LFunction s) :
     ‖χ.LFunction 1‖ = NumberField.dedekindZeta_residue K := by
-  rw [LFunction_one_eq_dedekindZeta_residue_of_factorization K χ hne hf, Complex.norm_real,
-    Real.norm_eq_abs, abs_of_pos (NumberField.dedekindZeta_residue_pos K)]
+  rw [L_one_eq_dedekind_residue_of_factorization K χ hne hf, Complex.norm_real, Real.norm_eq_abs,
+    abs_of_pos (NumberField.dedekindZeta_residue_pos K)]
 
 /-- If the number of integral ideals of every positive norm n equals the
 divisor-antidiagonal sum of a character, then ζ_K(s)=ζ(s)L(s,χ) for Re(s)>1.
@@ -134,15 +134,15 @@ positive norm, the norm of L(1,χ) equals the Dedekind zeta residue. Obtain the
 half-plane factorization from convolution and apply the residue comparison.
 Thus the arithmetic coefficient identity suffices to identify the L-value
 norm used in the class-number bound. -/
-theorem norm_LFunction_one_eq_dedekindZeta_residue_of_ideal_count (K : Type) [Field K]
-    [NumberField K] {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
+theorem norm_L_one_eq_dedekindResidue_idealCount (K : Type) [Field K] [NumberField K] {q : ℕ}
+    [NeZero q] (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
     (hc :
       ∀ n : ℕ,
         n ≠ 0 →
           (Nat.card { I : Ideal (NumberField.RingOfIntegers K) // Ideal.absNorm I = n } : ℂ) =
             ∑ p ∈ n.divisorsAntidiagonal, χ (p.2 : ℕ)) :
     ‖χ.LFunction 1‖ = NumberField.dedekindZeta_residue K := by
-  apply norm_LFunction_one_eq_dedekindZeta_residue_of_factorization K χ hne
+  apply norm_L_one_eq_dedekindResidue_factorization K χ hne
   intro s hs
   exact
     dedekindZeta_factorization_of_ideal_count K χ hc (by simpa only [Complex.ofReal_re] using hs)
@@ -170,7 +170,7 @@ theorem imaginaryQuadratic_dedekindZeta_residue (q : ℕ) (hq : 4 < q) (K : Type
 specified imaginary quadratic field with q > 4, then
 h_K=√q norm(L(1,χ))/π. Use the specialized residue and cancel the positive
 factors; this isolates the L-function identification needed by Corollary 1.3. -/
-theorem imaginaryQuadratic_classNumber_formula_of_residue (q : ℕ) [NeZero q] (hq : 4 < q) (K : Type)
+theorem imaginaryQuadratic_classNumber_of_residue (q : ℕ) [NeZero q] (hq : 4 < q) (K : Type)
     [Field K] [NumberField K] (hdeg : Module.finrank ℚ K = 2) (hd : NumberField.discr K = -(q : ℤ))
     (χ : DirichletCharacter ℂ q) (hL : ‖χ.LFunction 1‖ = NumberField.dedekindZeta_residue K) :
     (NumberField.classNumber K : ℝ) = Real.sqrt q / Real.pi * ‖χ.LFunction 1‖ := by

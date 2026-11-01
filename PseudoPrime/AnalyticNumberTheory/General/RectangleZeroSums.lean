@@ -105,7 +105,7 @@ theorem weighted_entire_finite_contour {F W : ℂ → ℂ} (hF : Differentiable 
       ∑ ρ ∈ entireZerosInRectangle hF h0 z w,
         2 * Real.pi * Complex.I * (-(analyticOrderNatAt F ρ : ℂ) * W ρ) := by
   apply
-    RectangleGeometry.rectangleBoundaryIntegral_eq_sum_of_local_residues _ _ _ hre him
+    RectangleGeometry.boundaryIntegral_eq_sum_residues _ _ _ hre him
       (fun ρ hρ ↦ (mem_entireZerosInRectangle hF h0 z w ρ).mp hρ |>.1) hopen
   · intro s hs hn
     have hf : F s ≠ 0 := fun hz ↦ hn ((mem_entireZerosInRectangle hF h0 z w s).mpr ⟨hs, hz⟩)

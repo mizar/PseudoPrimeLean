@@ -70,7 +70,7 @@ that coordinate and use injectivity to identify it.
 Role: this assigns the final coordinates to the residual characters in
 paper95 Theorem 1.1.
 -/
-theorem exists_coefficients_matching_embedding {α ι : Type} (R : Finset α) (S : Finset ι)
+theorem exists_matching_embedding {α ι : Type} (R : Finset α) (S : Finset ι)
     (e : { x // x ∈ R } ↪ { i // i ∈ S }) (f : α → ι → ℂ) (hf : ∀ x ∈ R, ∀ i ∈ S, f x i ≠ 0) :
     ∃ a : ι → ℂ,
       (∀ i ∈ S, a i ≠ 0) ∧ ∀ x (hx : x ∈ R), f x (e ⟨x, hx⟩).val = a (e ⟨x, hx⟩).val := by
@@ -103,18 +103,18 @@ Claim: nonzero coefficients can be chosen so each character matches at some
 coordinate.
 
 Content: the cardinality inequality gives an injection, then
-`exists_coefficients_matching_embedding` assigns the values.
+`exists_matching_embedding` assigns the values.
 
 Proof: compose the finite-set injection with the coefficient assignment lemma.
 
 Role: this is the cardinality form used for the final residual characters.
 -/
-theorem exists_coefficients_matching_card {α ι : Type} (R : Finset α) (S : Finset ι)
-    (hcard : R.card ≤ S.card) (f : α → ι → ℂ) (hf : ∀ x ∈ R, ∀ i ∈ S, f x i ≠ 0) :
+theorem exists_matching_card {α ι : Type} (R : Finset α) (S : Finset ι) (hcard : R.card ≤ S.card)
+    (f : α → ι → ℂ) (hf : ∀ x ∈ R, ∀ i ∈ S, f x i ≠ 0) :
     ∃ a : ι → ℂ, (∀ i ∈ S, a i ≠ 0) ∧ ∀ x (_hx : x ∈ R), ∃ i ∈ S, f x i = a i := by
   classical
   obtain ⟨e⟩ := exists_embedding_of_card_le R S hcard
-  obtain ⟨a, ha, hmatch⟩ := exists_coefficients_matching_embedding R S e f hf
+  obtain ⟨a, ha, hmatch⟩ := exists_matching_embedding R S e f hf
   refine ⟨a, ha, ?_⟩
   intro x _hx
   refine ⟨(e ⟨x, _hx⟩).val, (e ⟨x, _hx⟩).property, ?_⟩
@@ -150,16 +150,16 @@ matches its value at some selected coordinate.
 Content: the cardinality bound provides an injection into the coordinates,
 and additive character values are nonzero.
 
-Proof: apply `exists_coefficients_matching_card` to character evaluation.
+Proof: apply `exists_matching_card` to character evaluation.
 
 Role: this is the final-coordinate assignment interface in paper95
 Theorem 1.1.
 -/
-theorem exists_character_coefficients_matching_card {G ι : Type} [AddCommGroup G]
-    (R : Finset (AddChar G ℂ)) (S : Finset ι) (hcard : R.card ≤ S.card) (g : ι → G) :
+theorem exists_character_matching {G ι : Type} [AddCommGroup G] (R : Finset (AddChar G ℂ))
+    (S : Finset ι) (hcard : R.card ≤ S.card) (g : ι → G) :
     ∃ a : ι → ℂ, (∀ i ∈ S, a i ≠ 0) ∧ ∀ ψ ∈ R, ∃ i ∈ S, ψ (g i) = a i := by
   classical
-  apply exists_coefficients_matching_card R S hcard (fun ψ i => ψ (g i))
+  apply exists_matching_card R S hcard (fun ψ i => ψ (g i))
   intro ψ hψ i hi
   exact addChar_apply_ne_zero ψ (g i)
 
@@ -178,7 +178,7 @@ apply the corresponding matching theorem.
 
 Role: this combines both stages of the paper95 coefficient selection.
 -/
-theorem exists_character_match_prefix_or_tail {G ι : Type} [AddCommGroup G] (m : ℕ) [NeZero m]
+theorem exists_match_prefix_or_tail {G ι : Type} [AddCommGroup G] (m : ℕ) [NeZero m]
     (hzero : ∀ x : G, m • x = 0) (S : Finset (AddChar G ℂ)) (choices : List (G × rootsOfUnity m ℂ))
     (T : Finset ι) (g : ι → G)
     (hcard : (greedyResidualCharacters m hzero S choices).card ≤ T.card) :
@@ -189,15 +189,14 @@ theorem exists_character_match_prefix_or_tail {G ι : Type} [AddCommGroup G] (m 
             (∃ i ∈ T, ψ (g i) = a i) := by
   classical
   obtain ⟨a, ha, hmatch⟩ :=
-    exists_character_coefficients_matching_card (greedyResidualCharacters m hzero S choices) T hcard
-      g
+    exists_character_matching (greedyResidualCharacters m hzero S choices) T hcard g
   refine ⟨a, ha, ?_⟩
   intro ψ hψ
   by_cases hres : ψ ∈ greedyResidualCharacters m hzero S choices
   · right
     exact hmatch ψ hres
   · left
-    exact exists_greedy_prefix_match_of_not_residual m hzero S choices ψ hψ hres
+    exact greedy_match_of_not_residual m hzero S choices ψ hψ hres
 
 /--
 Purpose: index the concatenated prefix coordinates and tail coordinates by a
@@ -252,15 +251,14 @@ values and the chosen tail coefficients.
 Role: this is the finite coefficient system needed for the Fourier
 contradiction in paper95 Theorem 1.1.
 -/
-theorem exists_combined_character_coefficients {G ι : Type} [AddCommGroup G] (m : ℕ) [NeZero m]
+theorem exists_combined_coefficients {G ι : Type} [AddCommGroup G] (m : ℕ) [NeZero m]
     (hzero : ∀ x : G, m • x = 0) (S : Finset (AddChar G ℂ)) (choices : List (G × rootsOfUnity m ℂ))
     (T : Finset ι) (g : ι → G)
     (hcard : (greedyResidualCharacters m hzero S choices).card ≤ T.card) :
     ∃ a : Sum (Fin choices.length) { i // i ∈ T } → ℂ,
       (∀ i, a i ≠ 0) ∧ ∀ ψ ∈ S, ∃ i, ψ (prefixTailCoordinate choices T g i) = a i := by
   classical
-  obtain ⟨aTail, haTail, hmatches⟩ :=
-    exists_character_match_prefix_or_tail m hzero S choices T g hcard
+  obtain ⟨aTail, haTail, hmatches⟩ := exists_match_prefix_or_tail m hzero S choices T g hcard
   refine ⟨prefixTailCoefficient choices T aTail, ?_, ?_⟩
   · intro i
     cases i with
@@ -313,8 +311,8 @@ Proof: expand the finite product of sums and combine basis terms with
 Role: this gives the identity coefficient formula for arbitrary finite index
 types.
 -/
-theorem indexedCharacterKillingProduct_eq_sum_powerset {G ι : Type} [AddCommGroup G] [DecidableEq ι]
-    (S : Finset ι) (g : ι → G) (a : ι → ℂ) :
+theorem indexedKillingProduct_powerset {G ι : Type} [AddCommGroup G] [DecidableEq ι] (S : Finset ι)
+    (g : ι → G) (a : ι → ℂ) :
     indexedCharacterKillingProduct S g a =
       ∑ t ∈ S.powerset,
         AddMonoidAlgebra.single (∑ i ∈ t, g i) ((-1 : ℂ) ^ t.card * ∏ i ∈ S \ t, a i) := by
@@ -336,11 +334,11 @@ at zero.
 
 Role: this is the coefficient formula for the disjoint-sum index family.
 -/
-theorem coeff_zero_indexedCharacterKillingProduct {G ι : Type} [AddCommGroup G] [DecidableEq G]
+theorem coeff_zero_indexedKillingProduct {G ι : Type} [AddCommGroup G] [DecidableEq G]
     [DecidableEq ι] (S : Finset ι) (g : ι → G) (a : ι → ℂ) :
     (indexedCharacterKillingProduct S g a).coeff 0 =
       ∑ t ∈ S.powerset, if (∑ i ∈ t, g i) = 0 then (-1 : ℂ) ^ t.card * ∏ i ∈ S \ t, a i else 0 := by
-  rw [indexedCharacterKillingProduct_eq_sum_powerset]
+  rw [indexedKillingProduct_powerset]
   rw [AddMonoidAlgebra.coeff_sum]
   rw [Finset.sum_apply' (0 : G)]
   simp only [AddMonoidAlgebra.coeff_single, Finsupp.single_apply]
@@ -361,12 +359,11 @@ nonempty subset using the zero-sum hypothesis.
 Role: this supplies the nonzero coefficient for the Fourier contradiction on
 the combined prefix-tail index type.
 -/
-theorem coeff_zero_indexedCharacterKillingProduct_eq_prod_of_no_nonempty {G ι : Type}
-    [AddCommGroup G] (S : Finset ι) (g : ι → G) (a : ι → ℂ)
-    (hNo : ∀ t ∈ S.powerset, (∑ i ∈ t, g i) = 0 → t = ∅) :
+theorem indexedKilling_coeff_zero_prod {G ι : Type} [AddCommGroup G] (S : Finset ι) (g : ι → G)
+    (a : ι → ℂ) (hNo : ∀ t ∈ S.powerset, (∑ i ∈ t, g i) = 0 → t = ∅) :
     (indexedCharacterKillingProduct S g a).coeff 0 = ∏ i ∈ S, a i := by
   classical
-  rw [coeff_zero_indexedCharacterKillingProduct]
+  rw [coeff_zero_indexedKillingProduct]
   rw [Finset.sum_eq_single_of_mem ∅ (by simp only [Finset.mem_powerset, Finset.empty_subset])]
   · simp only [Finset.sum_empty, Finset.card_empty, pow_zero, one_mul, Finset.sdiff_empty,
       ite_eq_left]
@@ -391,7 +388,7 @@ two-term group-algebra sum.
 Role: this formula turns the combined matching property into zero character
 evaluations.
 -/
-theorem lift_indexedCharacterKillingProduct {G ι : Type} [AddCommGroup G] (S : Finset ι) (g : ι → G)
+theorem lift_indexedKillingProduct {G ι : Type} [AddCommGroup G] (S : Finset ι) (g : ι → G)
     (a : ι → ℂ) (ψ : AddChar G ℂ) :
     AddMonoidAlgebra.lift ℂ ℂ G ψ.toMonoidHom (indexedCharacterKillingProduct S g a) =
       ∏ i ∈ S, (a i - ψ (g i)) := by
@@ -419,18 +416,17 @@ and contradict its identity coefficient.
 Role: this is the contradiction endpoint for the combined coefficient
 construction.
 -/
-theorem exists_character_eval_ne_zero_of_indexed_no_nonempty {G ι : Type} [AddCommGroup G]
-    [Finite G] (S : Finset ι) (g : ι → G) (a : ι → ℂ)
-    (hNo : ∀ t ∈ S.powerset, (∑ i ∈ t, g i) = 0 → t = ∅) (ha : ∀ i ∈ S, a i ≠ 0) :
+theorem exists_indexed_eval_ne_zero {G ι : Type} [AddCommGroup G] [Finite G] (S : Finset ι)
+    (g : ι → G) (a : ι → ℂ) (hNo : ∀ t ∈ S.powerset, (∑ i ∈ t, g i) = 0 → t = ∅)
+    (ha : ∀ i ∈ S, a i ≠ 0) :
     ∃ ψ : AddChar G ℂ,
       AddMonoidAlgebra.lift ℂ ℂ G ψ.toMonoidHom (indexedCharacterKillingProduct S g a) ≠ 0 := by
   classical
   apply not_forall.mp
   intro hall
-  have hz :=
-    eq_zero_of_all_character_evaluations_eq_zero (indexedCharacterKillingProduct S g a) hall
+  have hz := zero_of_character_evals_zero (indexedCharacterKillingProduct S g a) hall
   have hc := congrArg (fun x : AddMonoidAlgebra ℂ G => x.coeff 0) hz
-  rw [coeff_zero_indexedCharacterKillingProduct_eq_prod_of_no_nonempty S g a hNo] at hc
+  rw [indexedKilling_coeff_zero_prod S g a hNo] at hc
   simp only [AddMonoidAlgebra.coeff_zero] at hc
   have hprod : ∏ i ∈ S, a i ≠ 0 := Finset.prod_ne_zero_iff.mpr ha
   exact hprod hc
@@ -451,8 +447,8 @@ contradictory evaluations of `indexedCharacterKillingProduct`.
 Role: this turns the combined coefficient family into the finite-group
 subset-product conclusion of paper95 Theorem 1.1.
 -/
-theorem exists_nonempty_zero_sum_of_character_matches {G ι : Type} [AddCommGroup G] [Finite G]
-    (S : Finset ι) (g : ι → G) (a : ι → ℂ) (ha : ∀ i ∈ S, a i ≠ 0)
+theorem exists_nonempty_zeroSum_match {G ι : Type} [AddCommGroup G] [Finite G] (S : Finset ι)
+    (g : ι → G) (a : ι → ℂ) (ha : ∀ i ∈ S, a i ≠ 0)
     (hmatches : ∀ ψ : AddChar G ℂ, ∃ i ∈ S, ψ (g i) = a i) :
     ∃ t ∈ S.powerset, t ≠ ∅ ∧ (∑ i ∈ t, g i) = 0 := by
   classical
@@ -461,10 +457,10 @@ theorem exists_nonempty_zero_sum_of_character_matches {G ι : Type} [AddCommGrou
     intro t ht hsum
     by_contra hne
     exact hnone ⟨t, ht, hne, hsum⟩
-  obtain ⟨ψ, hneval⟩ := exists_character_eval_ne_zero_of_indexed_no_nonempty S g a hNo ha
+  obtain ⟨ψ, hneval⟩ := exists_indexed_eval_ne_zero S g a hNo ha
   have heval :
     AddMonoidAlgebra.lift ℂ ℂ G ψ.toMonoidHom (indexedCharacterKillingProduct S g a) = 0 := by
-    rw [lift_indexedCharacterKillingProduct]
+    rw [lift_indexedKillingProduct]
     obtain ⟨i, hi, hmatch⟩ := hmatches ψ
     exact Finset.prod_eq_zero hi (sub_eq_zero.mpr hmatch.symm)
   exact hneval heval
@@ -487,9 +483,8 @@ Fourier contradiction theorem.
 Role: this closes the coefficient-versus-zero-sum contradiction for the two
 stages of paper95 Theorem 1.1.
 -/
-theorem exists_nonempty_zero_sum_of_greedy_prefix {G ι : Type} [AddCommGroup G] [Finite G] (m : ℕ)
-    [NeZero m] (hzero : ∀ x : G, m • x = 0) (choices : List (G × rootsOfUnity m ℂ)) (T : Finset ι)
-    (g : ι → G)
+theorem exists_nonempty_zeroSum_greedy {G ι : Type} [AddCommGroup G] [Finite G] (m : ℕ) [NeZero m]
+    (hzero : ∀ x : G, m • x = 0) (choices : List (G × rootsOfUnity m ℂ)) (T : Finset ι) (g : ι → G)
     (hcard :
       (greedyResidualCharacters m hzero (Finset.univ : Finset (AddChar G ℂ)) choices).card ≤
         T.card) :
@@ -497,11 +492,9 @@ theorem exists_nonempty_zero_sum_of_greedy_prefix {G ι : Type} [AddCommGroup G]
       t ≠ ∅ ∧ (∑ i ∈ t, prefixTailCoordinate choices T g i) = 0 := by
   classical
   obtain ⟨a, ha, hmatch⟩ :=
-    exists_combined_character_coefficients m hzero (Finset.univ : Finset (AddChar G ℂ)) choices T g
-      hcard
+    exists_combined_coefficients m hzero (Finset.univ : Finset (AddChar G ℂ)) choices T g hcard
   apply
-    exists_nonempty_zero_sum_of_character_matches
-      (Finset.univ : Finset (Sum (Fin choices.length) { i // i ∈ T }))
+    exists_nonempty_zeroSum_match (Finset.univ : Finset (Sum (Fin choices.length) { i // i ∈ T }))
       (prefixTailCoordinate choices T g) a
   · intro i hi
     exact ha i
@@ -525,10 +518,9 @@ to `N`, and use `geometric_product_log_bound`.
 Role: this supplies the residual-size hypothesis for the final coordinate
 assignment.
 -/
-theorem exists_greedy_character_prefix_residual_lt {G : Type} [AddCommGroup G] (m N : ℕ) [NeZero m]
-    (hm : 0 < m) (hmN : m ≤ N) (hzero : ∀ x : G, m • x = 0) (S : Finset (AddChar G ℂ))
-    (hS : S.card ≤ N) (coords : List G)
-    (hlen : coords.length = Nat.floor ((m : ℝ) * Real.log ((N : ℝ) / m)) + 1) :
+theorem exists_greedy_residual_lt {G : Type} [AddCommGroup G] (m N : ℕ) [NeZero m] (hm : 0 < m)
+    (hmN : m ≤ N) (hzero : ∀ x : G, m • x = 0) (S : Finset (AddChar G ℂ)) (hS : S.card ≤ N)
+    (coords : List G) (hlen : coords.length = Nat.floor ((m : ℝ) * Real.log ((N : ℝ) / m)) + 1) :
     ∃ choices : List (G × rootsOfUnity m ℂ),
       choices.map Prod.fst = coords ∧ (greedyResidualCharacters m hzero S choices).card < m := by
   obtain ⟨choices, hmap, hprefixbound⟩ := exists_greedy_character_prefix m hzero S coords
@@ -549,13 +541,13 @@ Content: greedy selection leaves fewer than `m` characters, so each remaining
 character can be assigned a distinct tail coordinate.
 
 Proof: convert the strict residual bound to the required tail cardinality and
-apply `exists_nonempty_zero_sum_of_greedy_prefix`.
+apply `exists_nonempty_zeroSum_greedy`.
 
 Role: this is the quantitative sequence-length interface from paper95,
 separated from the later indexing back to one contiguous sequence.
 -/
-theorem exists_nonempty_zero_sum_of_log_prefix_and_tail {G ι : Type} [AddCommGroup G] [Finite G]
-    (m N : ℕ) [NeZero m] (hm : 0 < m) (hmN : m ≤ N) (hzero : ∀ x : G, m • x = 0)
+theorem exists_nonempty_zeroSum_logTail {G ι : Type} [AddCommGroup G] [Finite G] (m N : ℕ)
+    [NeZero m] (hm : 0 < m) (hmN : m ≤ N) (hzero : ∀ x : G, m • x = 0)
     (hchars : (Finset.univ : Finset (AddChar G ℂ)).card ≤ N) (coords : List G)
     (hlen : coords.length = Nat.floor ((m : ℝ) * Real.log ((N : ℝ) / m)) + 1) (T : Finset ι)
     (g : ι → G) (hT : m - 1 ≤ T.card) :
@@ -564,11 +556,9 @@ theorem exists_nonempty_zero_sum_of_log_prefix_and_tail {G ι : Type} [AddCommGr
         ∃ t ∈ (Finset.univ : Finset (Sum (Fin choices.length) { i // i ∈ T })).powerset,
           t ≠ ∅ ∧ (∑ i ∈ t, prefixTailCoordinate choices T g i) = 0 := by
   obtain ⟨choices, hmap, hres⟩ :=
-    exists_greedy_character_prefix_residual_lt m N hm hmN hzero Finset.univ hchars coords hlen
+    exists_greedy_residual_lt m N hm hmN hzero Finset.univ hchars coords hlen
   refine ⟨choices, hmap, ?_⟩
-  exact
-    exists_nonempty_zero_sum_of_greedy_prefix m hzero choices T g
-      ((Nat.le_sub_one_of_lt hres).trans hT)
+  exact exists_nonempty_zeroSum_greedy m hzero choices T g ((Nat.le_sub_one_of_lt hres).trans hT)
 
 /--
 Inputs: a prefix of the logarithmic length from paper95, followed by `m - 1`
@@ -585,8 +575,8 @@ set.
 Role: this is the Fourier-combinatorial conclusion in the segmented indexing
 used by the later finite-subsequence extraction.
 -/
-theorem exists_nonempty_zero_sum_of_log_length_segmented_sequence {G : Type} [AddCommGroup G]
-    [Finite G] (m N : ℕ) [NeZero m] (hm : 0 < m) (hmN : m ≤ N) (hzero : ∀ x : G, m • x = 0)
+theorem exists_nonempty_zeroSum_segment {G : Type} [AddCommGroup G] [Finite G] (m N : ℕ) [NeZero m]
+    (hm : 0 < m) (hmN : m ≤ N) (hzero : ∀ x : G, m • x = 0)
     (hchars : (Finset.univ : Finset (AddChar G ℂ)).card ≤ N) (prefixCoords : List G)
     (hlen : prefixCoords.length = Nat.floor ((m : ℝ) * Real.log ((N : ℝ) / m)) + 1)
     (tail : Fin (m - 1) → G) :
@@ -602,9 +592,8 @@ theorem exists_nonempty_zero_sum_of_log_length_segmented_sequence {G : Type} [Ad
   have htail : m - 1 ≤ (Finset.univ : Finset (Fin (m - 1))).card := by
     rw [Finset.card_univ, Fintype.card_fin]
   exact
-    exists_nonempty_zero_sum_of_log_prefix_and_tail (G := G) (ι := Fin (m - 1)) (m := m) (N := N) hm
-      hmN hzero hchars prefixCoords hlen (T := (Finset.univ : Finset (Fin (m - 1)))) (g := tail)
-      (hT := htail)
+    exists_nonempty_zeroSum_logTail (G := G) (ι := Fin (m - 1)) (m := m) (N := N) hm hmN hzero
+      hchars prefixCoords hlen (T := (Finset.univ : Finset (Fin (m - 1)))) (g := tail) (hT := htail)
 
 /--
 Inputs: natural parameters `m`, `N`, and `n` with `m ≥ 3`, `m ≤ N`, and
@@ -621,7 +610,7 @@ natural floor.
 Role: this converts the `m * log n` cardinal threshold in reliable.pdf into
 the sequence length required by the paper95 Fourier theorem.
 -/
-theorem log_length_with_tail_le_floor_log (m N n : ℕ) (hm : 3 ≤ m) (hmN : m ≤ N) (hN : N ≤ n) :
+theorem log_with_tail_le_floor_log (m N n : ℕ) (hm : 3 ≤ m) (hmN : m ≤ N) (hN : N ≤ n) :
     Nat.floor ((m : ℝ) * Real.log ((N : ℝ) / m)) + m ≤ Nat.floor ((m : ℝ) * Real.log n) := by
   have hmPos : 0 < m := Nat.lt_of_lt_of_le (by norm_num only) hm
   have hNPos : 0 < N := Nat.lt_of_lt_of_le hmPos hmN
@@ -658,17 +647,17 @@ Content: the preceding floor comparison bounds the required length by
 `floor(m * log n)`, which is strictly below `r`.
 
 Proof: apply `Nat.floor_lt` to the strict real threshold, then compose with
-`log_length_with_tail_le_floor_log`.
+`log_with_tail_le_floor_log`.
 
 Role: this exposes the cardinal threshold needed to feed a sufficiently large
 prime set into the Fourier subsequence construction.
 -/
-theorem log_length_le_nat_of_real_threshold (m N n r : ℕ) (hm : 3 ≤ m) (hmN : m ≤ N) (hN : N ≤ n)
+theorem log_length_le_of_threshold (m N n r : ℕ) (hm : 3 ≤ m) (hmN : m ≤ N) (hN : N ≤ n)
     (hr : (m : ℝ) * Real.log n < r) : Nat.floor ((m : ℝ) * Real.log ((N : ℝ) / m)) + m ≤ r := by
   have hfloor : Nat.floor ((m : ℝ) * Real.log n) < r := by
     apply (Nat.floor_lt (by positivity)).2
     exact_mod_cast hr
-  exact (log_length_with_tail_le_floor_log m N n hm hmN hN).trans (Nat.le_of_lt hfloor)
+  exact (log_with_tail_le_floor_log m N n hm hmN hN).trans (Nat.le_of_lt hfloor)
 
 /--
 Inputs: a list whose length exceeds `m * log n`, with `m ≥ 3`, `m ≤ N ≤ n`,
@@ -686,8 +675,8 @@ corresponding prefix and index the following tail.
 Role: this is the list form needed to apply the paper95 result to a finite set
 of primes after choosing an enumeration.
 -/
-theorem exists_nonempty_zero_sum_of_long_list {G : Type} [AddCommGroup G] [Finite G] (m N n : ℕ)
-    [NeZero m] (hm : 3 ≤ m) (hmN : m ≤ N) (hN : N ≤ n) (hzero : ∀ x : G, m • x = 0)
+theorem exists_nonempty_zeroSum_list {G : Type} [AddCommGroup G] [Finite G] (m N n : ℕ) [NeZero m]
+    (hm : 3 ≤ m) (hmN : m ≤ N) (hN : N ≤ n) (hzero : ∀ x : G, m • x = 0)
     (hchars : (Finset.univ : Finset (AddChar G ℂ)).card ≤ N) (coords : List G)
     (hlen : (m : ℝ) * Real.log n < coords.length) :
     ∃ choices : List (G × rootsOfUnity m ℂ),
@@ -706,7 +695,7 @@ theorem exists_nonempty_zero_sum_of_long_list {G : Type} [AddCommGroup G] [Finit
                       ⟨Nat.floor ((m : ℝ) * Real.log ((N : ℝ) / m)) + 1 + j.val, by
                         have hmPos : 0 < m := Nat.lt_of_lt_of_le (by norm_num only) hm
                         have hlength :=
-                          log_length_le_nat_of_real_threshold m N n coords.length hm hmN hN hlen
+                          log_length_le_of_threshold m N n coords.length hm hmN hN hlen
                         have hpred : 1 + (m - 1) = m := by
                           calc
                             1 + (m - 1) = (m - 1) + 1 := Nat.add_comm 1 (m - 1)
@@ -722,7 +711,7 @@ theorem exists_nonempty_zero_sum_of_long_list {G : Type} [AddCommGroup G] [Finit
               0 := by
   let q := Nat.floor ((m : ℝ) * Real.log ((N : ℝ) / m)) + 1
   have hmPos : 0 < m := Nat.lt_of_lt_of_le (by norm_num only) hm
-  have hlength := log_length_le_nat_of_real_threshold m N n coords.length hm hmN hN hlen
+  have hlength := log_length_le_of_threshold m N n coords.length hm hmN hN hlen
   have hpred : 1 + (m - 1) = m := by
     calc
       1 + (m - 1) = (m - 1) + 1 := Nat.add_comm 1 (m - 1)
@@ -739,8 +728,8 @@ theorem exists_nonempty_zero_sum_of_long_list {G : Type} [AddCommGroup G] [Finit
   have htailValid (j : Fin (m - 1)) : q + j.val < coords.length :=
     (Nat.add_lt_add_left j.isLt q).trans_le htotal
   exact
-    exists_nonempty_zero_sum_of_log_length_segmented_sequence m N hmPos hmN hzero hchars
-      (coords.take q) (by rw [hprefix]) (fun j => coords.get ⟨q + j.val, htailValid j⟩)
+    exists_nonempty_zeroSum_segment m N hmPos hmN hzero hchars (coords.take q) (by rw [hprefix])
+      (fun j => coords.get ⟨q + j.val, htailValid j⟩)
 
 /--
 Inputs: a finite set of elements of a finite additive group whose cardinality
@@ -754,13 +743,13 @@ Content: `Finset.toList` preserves the set cardinality, so the long-list result
 applies directly to this enumeration.
 
 Proof: rewrite the list length as the finset cardinality and apply
-`exists_nonempty_zero_sum_of_long_list`.
+`exists_nonempty_zeroSum_list`.
 
 Role: this is the finite-set input boundary for the reliable.pdf subset-product
 construction.
 -/
-theorem exists_nonempty_zero_sum_of_finset_enumeration {G : Type} [AddCommGroup G] [Finite G]
-    (m N n : ℕ) [NeZero m] (hm : 3 ≤ m) (hmN : m ≤ N) (hN : N ≤ n) (hzero : ∀ x : G, m • x = 0)
+theorem exists_nonempty_zeroSum_finset {G : Type} [AddCommGroup G] [Finite G] (m N n : ℕ) [NeZero m]
+    (hm : 3 ≤ m) (hmN : m ≤ N) (hN : N ≤ n) (hzero : ∀ x : G, m • x = 0)
     (hchars : (Finset.univ : Finset (AddChar G ℂ)).card ≤ N) (S : Finset G)
     (hS : (m : ℝ) * Real.log n < S.card) :
     ∃ choices : List (G × rootsOfUnity m ℂ),
@@ -782,7 +771,7 @@ theorem exists_nonempty_zero_sum_of_finset_enumeration {G : Type} [AddCommGroup 
                           rw [Finset.length_toList]
                           exact hS
                         have htail :=
-                          log_length_le_nat_of_real_threshold m N n S.toList.length hm hmN hN hlong
+                          log_length_le_of_threshold m N n S.toList.length hm hmN hN hlong
                         have hpred : 1 + (m - 1) = m := by
                           calc
                             1 + (m - 1) = (m - 1) + 1 := Nat.add_comm 1 (m - 1)
@@ -799,7 +788,7 @@ theorem exists_nonempty_zero_sum_of_finset_enumeration {G : Type} [AddCommGroup 
   have hlen : (m : ℝ) * Real.log n < S.toList.length := by
     rw [Finset.length_toList]
     exact hS
-  exact exists_nonempty_zero_sum_of_long_list m N n hm hmN hN hzero hchars S.toList hlen
+  exact exists_nonempty_zeroSum_list m N n hm hmN hN hzero hchars S.toList hlen
 
 /--
 Inputs: a finite set, a greedy prefix whose first coordinates enumerate an
@@ -816,7 +805,7 @@ membership equivalence.
 Role: this recovers the selected prime factors as elements of the finite set
 used by the subset-product construction.
 -/
-theorem prefixTailCoordinate_mem_of_finset_enumeration {G : Type} {m : ℕ} (S : Finset G)
+theorem prefixTail_mem_enumeration {G : Type} {m : ℕ} (S : Finset G)
     (choices : List (G × rootsOfUnity m ℂ)) (q : ℕ) (hmap : choices.map Prod.fst = S.toList.take q)
     (tail : Fin (m - 1) → G) (htail : ∀ j, tail j ∈ S) :
     ∀ i : Sum (Fin choices.length) { j // j ∈ (Finset.univ : Finset (Fin (m - 1))) },
@@ -870,18 +859,16 @@ finite image.
 Role: this is the direct bridge from the Fourier output to a subset of the
 finite set used by the later prime product construction.
 -/
-theorem exists_nonempty_zero_sum_subset_of_indexed_subset {G : Type} [AddCommMonoid G] {m : ℕ}
-    (S : Finset G) (choices : List (G × rootsOfUnity m ℂ)) (q : ℕ)
-    (hmap : choices.map Prod.fst = S.toList.take q) (tail : Fin (m - 1) → G)
-    (htail : ∀ j, tail j ∈ S)
+theorem exists_nonempty_zero_subset {G : Type} [AddCommMonoid G] {m : ℕ} (S : Finset G)
+    (choices : List (G × rootsOfUnity m ℂ)) (q : ℕ) (hmap : choices.map Prod.fst = S.toList.take q)
+    (tail : Fin (m - 1) → G) (htail : ∀ j, tail j ∈ S)
     (t : Finset (Sum (Fin choices.length) { j // j ∈ (Finset.univ : Finset (Fin (m - 1))) }))
     (ht : t.Nonempty) (hinj : Set.InjOn (prefixTailCoordinate choices Finset.univ tail) ↑t)
     (hsum : (∑ i ∈ t, prefixTailCoordinate choices Finset.univ tail i) = 0) :
     ∃ u : Finset G, u ⊆ S ∧ u.Nonempty ∧ (∑ x ∈ u, x) = 0 := by
   classical
   let coord := prefixTailCoordinate choices Finset.univ tail
-  have hmem : ∀ i, coord i ∈ S :=
-    prefixTailCoordinate_mem_of_finset_enumeration S choices q hmap tail htail
+  have hmem : ∀ i, coord i ∈ S := prefixTail_mem_enumeration S choices q hmap tail htail
   have hsum' : (∑ i ∈ t, coord i) = 0 := by simpa only [coord] using hsum
   obtain ⟨hu, husum⟩ := nonempty_zero_sum_image_of_injOn coord t ht hinj hsum'
   refine ⟨t.image coord, ?_, hu, husum⟩
@@ -905,7 +892,7 @@ Proof: translate coordinate equality to equality of list entries, use
 Role: this reduces the remaining distinctness proof for the Fourier output to
 constructing its source list indices.
 -/
-theorem prefixTailCoordinate_injective_of_list_index {G : Type} {m : ℕ} (S : Finset G)
+theorem prefixTail_injective_of_index {G : Type} {m : ℕ} (S : Finset G)
     (choices : List (G × rootsOfUnity m ℂ)) (tail : Fin (m - 1) → G)
     (idx :
       Sum (Fin choices.length) { j // j ∈ (Finset.univ : Finset (Fin (m - 1))) } →
@@ -935,7 +922,7 @@ number indices.
 Role: this is the source-position map used to prove distinctness of the
 prefix-tail coordinates selected by the Fourier argument.
 -/
-theorem prefix_tail_source_index_injective {G : Type} {m q : ℕ} (coords : List G)
+theorem prefixTail_index_injective {G : Type} {m q : ℕ} (coords : List G)
     (choices : List (G × rootsOfUnity m ℂ)) (hprefix : choices.length = q) (hq : q ≤ coords.length)
     (hbound : ∀ j : Fin (m - 1), q + j.val < coords.length) :
     Function.Injective
@@ -1041,7 +1028,7 @@ coordinate branches with the corresponding list entries, then use nodup.
 Role: this discharges the distinctness condition needed to turn the Fourier
 zero-sum indices into a finite subset of `S`.
 -/
-theorem prefixTailCoordinate_injective_of_finset_enumeration {G : Type} {m q : ℕ} (S : Finset G)
+theorem prefixTail_injective_enumerated {G : Type} {m q : ℕ} (S : Finset G)
     (choices : List (G × rootsOfUnity m ℂ)) (hmap : choices.map Prod.fst = S.toList.take q)
     (hq : q ≤ S.toList.length) (hbound : ∀ j : Fin (m - 1), q + j.val < S.toList.length) :
     Function.Injective
@@ -1059,7 +1046,7 @@ theorem prefixTailCoordinate_injective_of_finset_enumeration {G : Type} {m q : �
     | .inl j => ⟨j.val, Nat.lt_of_lt_of_le (by simpa only [hprefix] using j.isLt) hq⟩
     | .inr j => ⟨q + j.val, hbound j.val⟩
   have hidx : Function.Injective idx :=
-    prefix_tail_source_index_injective S.toList choices hprefix hq hbound
+    prefixTail_index_injective S.toList choices hprefix hq hbound
   have hcoordinate :
     ∀ i,
       prefixTailCoordinate choices Finset.univ
@@ -1075,7 +1062,7 @@ theorem prefixTailCoordinate_injective_of_finset_enumeration {G : Type} {m q : �
       change S.toList.get ⟨q + j.val, hbound j.val⟩ = S.toList.get (idx (Sum.inr j))
       rfl
   exact
-    prefixTailCoordinate_injective_of_list_index S choices
+    prefixTail_injective_of_index S choices
       (fun j : Fin (m - 1) => S.toList.get ⟨q + j.val, hbound j⟩) idx hidx hcoordinate
 
 /--
@@ -1095,10 +1082,9 @@ sum with `Finset.sum_image`.
 Role: this preserves distinct prime labels when their residues in the finite
 group are not distinct.
 -/
-theorem exists_nonempty_zero_sum_label_subset_of_indices {G L I : Type} [AddCommMonoid G]
-    [DecidableEq L] (labels : List L) (hlabels : labels.Nodup) (φ : L → G)
-    (indices : I → Fin labels.length) (t : Finset I) (ht : t.Nonempty)
-    (hidx : Function.Injective indices) (coord : I → G)
+theorem exists_nonempty_labels_indices {G L I : Type} [AddCommMonoid G] [DecidableEq L]
+    (labels : List L) (hlabels : labels.Nodup) (φ : L → G) (indices : I → Fin labels.length)
+    (t : Finset I) (ht : t.Nonempty) (hidx : Function.Injective indices) (coord : I → G)
     (hcoord : ∀ i, coord i = φ (labels.get (indices i))) (hsum : (∑ i ∈ t, coord i) = 0) :
     ∃ U : Finset L, U.Nonempty ∧ (∀ x ∈ U, x ∈ labels.toFinset) ∧ (∑ x ∈ U, φ x) = 0 := by
   classical
@@ -1142,21 +1128,20 @@ source-position injection, then transfer the sum to the label image.
 Role: this is the label-preserving subset-product input for AGP Proposition
 1.3, where distinct primes may have equal residues in the finite group.
 -/
-theorem exists_nonempty_zero_sum_label_subset_of_long_list {G L : Type} [AddCommGroup G] [Finite G]
-    [DecidableEq L] (m N n : ℕ) [NeZero m] (hm : 3 ≤ m) (hmN : m ≤ N) (hN : N ≤ n)
-    (hzero : ∀ x : G, m • x = 0) (hchars : (Finset.univ : Finset (AddChar G ℂ)).card ≤ N)
-    (labels : List L) (hlabels : labels.Nodup) (φ : L → G)
-    (hlen : (m : ℝ) * Real.log n < labels.length) :
+theorem exists_nonempty_labels_list {G L : Type} [AddCommGroup G] [Finite G] [DecidableEq L]
+    (m N n : ℕ) [NeZero m] (hm : 3 ≤ m) (hmN : m ≤ N) (hN : N ≤ n) (hzero : ∀ x : G, m • x = 0)
+    (hchars : (Finset.univ : Finset (AddChar G ℂ)).card ≤ N) (labels : List L)
+    (hlabels : labels.Nodup) (φ : L → G) (hlen : (m : ℝ) * Real.log n < labels.length) :
     ∃ U : Finset L, U.Nonempty ∧ (∀ x ∈ U, x ∈ labels.toFinset) ∧ (∑ x ∈ U, φ x) = 0 := by
   classical
   let coords := labels.map φ
   have hlenCoords : (m : ℝ) * Real.log n < coords.length := by
     simpa only [coords, List.length_map] using hlen
   obtain ⟨choices, hmap, t, _, htne, hsum⟩ :=
-    exists_nonempty_zero_sum_of_long_list m N n hm hmN hN hzero hchars coords hlenCoords
+    exists_nonempty_zeroSum_list m N n hm hmN hN hzero hchars coords hlenCoords
   let q := Nat.floor ((m : ℝ) * Real.log ((N : ℝ) / m)) + 1
   have hmPos : 0 < m := Nat.lt_of_lt_of_le (by norm_num only) hm
-  have hlogLength := log_length_le_nat_of_real_threshold m N n coords.length hm hmN hN hlenCoords
+  have hlogLength := log_length_le_of_threshold m N n coords.length hm hmN hN hlenCoords
   have hpred : 1 + (m - 1) = m := by
     calc
       1 + (m - 1) = (m - 1) + 1 := Nat.add_comm 1 (m - 1)
@@ -1183,8 +1168,7 @@ theorem exists_nonempty_zero_sum_label_subset_of_long_list {G L : Type} [AddComm
     match i with
     | .inl j => ⟨j.val, Nat.lt_of_lt_of_le (by simpa only [hprefix] using j.isLt) hq⟩
     | .inr j => ⟨q + j.val, hbound j.val⟩
-  have hidx : Function.Injective idx :=
-    prefix_tail_source_index_injective coords choices hprefix hq hbound
+  have hidx : Function.Injective idx := prefixTail_index_injective coords choices hprefix hq hbound
   have hmapLen : coords.length = labels.length := by simp only [coords, List.length_map]
   let labelIdx :
     Sum (Fin choices.length) { j // j ∈ (Finset.univ : Finset (Fin (m - 1))) } →
@@ -1216,7 +1200,7 @@ theorem exists_nonempty_zero_sum_label_subset_of_long_list {G L : Type} [AddComm
       change coords.get ⟨q + j.val, hbound j.val⟩ = φ (labels.get (labelIdx (Sum.inr j)))
       exact hgetMap (idx (Sum.inr j))
   exact
-    exists_nonempty_zero_sum_label_subset_of_indices labels hlabels φ labelIdx t
+    exists_nonempty_labels_indices labels hlabels φ labelIdx t
       (Finset.nonempty_iff_ne_empty.mpr htne) hlabelIdx
       (prefixTailCoordinate choices Finset.univ tail) hcoord (by simpa only [q, tail] using hsum)
 
@@ -1235,10 +1219,10 @@ selected coordinates into the source list, then transfer the sum to labels.
 Role: this allows one exceptional prime to be removed before applying the
 AGP subset-product argument.
 -/
-theorem exists_nonempty_zero_sum_label_subset_of_segmented_length {G L : Type} [AddCommGroup G]
-    [Finite G] [DecidableEq L] (m N : ℕ) [NeZero m] (hm : 0 < m) (hmN : m ≤ N)
-    (hzero : ∀ x : G, m • x = 0) (hchars : (Finset.univ : Finset (AddChar G ℂ)).card ≤ N)
-    (labels : List L) (hlabels : labels.Nodup) (φ : L → G)
+theorem exists_nonempty_labels_segment {G L : Type} [AddCommGroup G] [Finite G] [DecidableEq L]
+    (m N : ℕ) [NeZero m] (hm : 0 < m) (hmN : m ≤ N) (hzero : ∀ x : G, m • x = 0)
+    (hchars : (Finset.univ : Finset (AddChar G ℂ)).card ≤ N) (labels : List L)
+    (hlabels : labels.Nodup) (φ : L → G)
     (hlen : Nat.floor ((m : ℝ) * Real.log ((N : ℝ) / m)) + m ≤ labels.length) :
     ∃ U : Finset L, U.Nonempty ∧ (∀ x ∈ U, x ∈ labels.toFinset) ∧ (∑ x ∈ U, φ x) = 0 := by
   classical
@@ -1264,8 +1248,7 @@ theorem exists_nonempty_zero_sum_label_subset_of_segmented_length {G L : Type} [
     (coords.take q).length = Nat.floor ((m : ℝ) * Real.log ((N : ℝ) / m)) + 1 := by
     simp only [List.length_take, Nat.min_eq_left hq, q]
   obtain ⟨choices, hmap, t, _, htne, hsum⟩ :=
-    exists_nonempty_zero_sum_of_log_length_segmented_sequence m N hm hmN hzero hchars
-      (coords.take q) hprefixLength tail
+    exists_nonempty_zeroSum_segment m N hm hmN hzero hchars (coords.take q) hprefixLength tail
   have hprefix : choices.length = q := by
     have hlen := congrArg List.length hmap
     rw [List.length_map, List.length_take, Nat.min_eq_left hq] at hlen
@@ -1277,8 +1260,7 @@ theorem exists_nonempty_zero_sum_label_subset_of_segmented_length {G L : Type} [
     match i with
     | .inl j => ⟨j.val, Nat.lt_of_lt_of_le (by simpa only [hprefix] using j.isLt) hq⟩
     | .inr j => ⟨q + j.val, hbound j.val⟩
-  have hidx : Function.Injective idx :=
-    prefix_tail_source_index_injective coords choices hprefix hq hbound
+  have hidx : Function.Injective idx := prefixTail_index_injective coords choices hprefix hq hbound
   have hmapLen : coords.length = labels.length := by simp only [coords, List.length_map]
   let labelIdx :
     Sum (Fin choices.length) { j // j ∈ (Finset.univ : Finset (Fin (m - 1))) } →
@@ -1309,7 +1291,7 @@ theorem exists_nonempty_zero_sum_label_subset_of_segmented_length {G L : Type} [
       change coords.get ⟨q + j.val, hbound j.val⟩ = φ (labels.get (labelIdx (Sum.inr j)))
       exact hgetMap (idx (Sum.inr j))
   exact
-    exists_nonempty_zero_sum_label_subset_of_indices labels hlabels φ labelIdx t
+    exists_nonempty_labels_indices labels hlabels φ labelIdx t
       (Finset.nonempty_iff_ne_empty.mpr htne) hlabelIdx
       (prefixTailCoordinate choices Finset.univ tail) hcoord (by simpa only [q, tail] using hsum)
 
@@ -1351,7 +1333,7 @@ identity.
 Role: this is the abstract group-to-product step for the AGP subset
 construction.
 -/
-theorem prod_eq_one_of_additive_sum_eq_zero {I M : Type} [CommMonoid M] (s : Finset I) (f : I → M)
+theorem prod_one_of_add_sum_zero {I M : Type} [CommMonoid M] (s : Finset I) (f : I → M)
     (hsum : (∑ i ∈ s, Additive.ofMul (f i)) = 0) : ∏ i ∈ s, f i = 1 := by
   have hprod := additive_toMul_sum_ofMul_eq_prod s f
   rw [hsum] at hprod

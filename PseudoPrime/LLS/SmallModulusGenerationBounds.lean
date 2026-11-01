@@ -45,7 +45,7 @@ theorem smallModulusPrimeCap_le_parity_square {q : ℕ} (hq : 3 ≤ q) :
 /-- For q ≥ 3 with a valid tree at the selected cap, every proper subgroup has an outside prime
 through the parity profile. Transfer the integer witness using the cap comparison.
 This is the small-modulus consumer for the finite certificate catalog. -/
-theorem exists_prime_outside_le_parity_of_generation_tree {q : ℕ} [NeZero q]
+theorem exists_prime_outside_parity_of_generation_tree {q : ℕ} [NeZero q]
     {tree : ℕ → NumberTheory.UnitGenerationNode} (hq : 3 ≤ q)
     (hvalid : NumberTheory.UnitGenerationTreeValid q (smallModulusPrimeCap q) tree)
     (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤) :

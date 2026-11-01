@@ -20,9 +20,8 @@ namespace PseudoPrime.LLS.PaperStatements
 there is a prime through (283/1000)log(q)^2 dividing q or outside the subgroup.
 Apply the certified numerical gap; no additional arithmetic-factor or analytic budget premise
       remains. -/
-theorem exists_prime_factor_or_outside_triangular18_large_index {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hi : 1000000000 ≤ H.index)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem exists_prime_factorOrOutside_largeIndex_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hi : 1000000000 ≤ H.index) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hlog : (100000000000000000000 : ℝ) ≤ Real.log q) :
     ∃ p : ℕ,
       p.Prime ∧
@@ -31,7 +30,7 @@ theorem exists_prime_factor_or_outside_triangular18_large_index {q : ℕ} [NeZer
   have hx := (Analysis.triangular18_large_scale_bounds hlog).1
   have hh : (1000000000 : ℝ) ≤ (H.index : ℝ) := by exact_mod_cast hi
   exact
-    exists_prime_factor_or_outside_of_triangular18_gap H hGRH hx
+    exists_prime_factorOrOutside_tri18_gap_GRH H hGRH hx
       (Analysis.triangular18_large_index_gap hlog hh)
 
 end PseudoPrime.LLS.PaperStatements

@@ -44,13 +44,12 @@ noncomputable def tightCubicConductorRadius (G : ℝ) (m : ℕ) : ℝ :=
 /-- Under primitive nonprincipal GRH, an excluded integer m≠0 and a
 conductor envelope G yield a non-one prime outside m below the tight cubic
 conductor radius squared. Bound the sensitive cost by the uniform cost. -/
-theorem exists_prime_outside_le_tight_cubic_conductor_radius {f m : ℕ} [NeZero f]
-    (χ : DirichletCharacter ℂ f) (hf : 2 ≤ f) (hm : m ≠ 0)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) {G : ℝ} (hlog : Real.log f ≤ G) :
+theorem exists_prime_outside_cubicConductor_GRH {f m : ℕ} [NeZero f] (χ : DirichletCharacter ℂ f)
+    (hf : 2 ≤ f) (hm : m ≠ 0) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) {G : ℝ} (hlog : Real.log f ≤ G) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ (tightCubicConductorRadius G m) ^ 2 ∧ ¬p ∣ m ∧ χ p ≠ 1 := by
   exact
-    exists_prime_outside_le_tight_cubic_exclusion_radius χ hf hm hGRH hp hne hlog
+    exists_prime_neOne_tightCubic_GRH χ hf hm hGRH hp hne hlog
       (AnalyticNumberTheory.Arithmetic.characterExclusionCost_le_twice χ m)
 
 /-- For a nonnegative conductor envelope, the tight sensitive squared radius

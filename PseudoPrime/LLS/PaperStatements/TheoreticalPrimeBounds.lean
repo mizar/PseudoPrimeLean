@@ -326,7 +326,7 @@ least-prime bound holds at every index at least seven. For indices seven
 through twenty-seven, use the gamma kernel and the coefficient comparison;
 for larger indices, use the concrete triangular kernel. This completes the
 two-range reduction while leaving indices four through six separate. -/
-theorem triangular_asymptotic_prime_bound_of_index_ge_seven
+theorem triangular_prime_bound_of_index_ge_7_GRH
     (hg : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (h : ℕ) (hh : 7 ≤ h) (ε : ℝ)
     (he : 0 < ε) :
     ∃ Q : ℕ,

@@ -33,8 +33,7 @@ theorem exists_prime_strong_witness_of_signedTwoPoleGap {n : ℕ} [NeZero n] (hn
     ∀ p : ℕ,
       p.Prime → (p : ℝ) ≤ (99 / 40 : ℝ) * x → PrimeTest.StrongMillerRabinPass n (p : ZMod n) :=
     fun p hp hb ↦ Classical.byContradiction (fun hf ↦ h ⟨p, hp, hb, hf⟩)
-  obtain ⟨H, hH, hHpass⟩ :=
-    PrimeTest.exists_proper_subgroup_containing_strongMillerRabinPass hn hnOdd hnComposite
+  obtain ⟨H, hH, hHpass⟩ := PrimeTest.exists_proper_subgroup_strongMR hn hnOdd hnComposite
   have : H.Normal := H.normal_of_isMulCommutative
   have : Nontrivial ((ZMod n)ˣ ⧸ H) := QuotientGroup.nontrivial_iff.mpr hH
   obtain ⟨z, hz⟩ := exists_ne (1 : (ZMod n)ˣ ⧸ H)
@@ -51,9 +50,9 @@ theorem exists_prime_strong_witness_of_signedTwoPoleGap {n : ℕ} [NeZero n] (hn
 a prime rejecting base lies through (99/40)((500/821)log n+22) squared. Insert the
 continuous affine separation into the character-free MR criterion.
 No additional numerical or factorization hypothesis remains. -/
-theorem exists_prime_strong_witness_le_signedTwoPole_affine {n : ℕ} [NeZero n] (hn : 1 < n)
-    (hnOdd : Odd n) (hnComposite : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 1500 ≤ Real.log n) :
+theorem exists_prime_signedTwoPoleAffine_GRH {n : ℕ} [NeZero n] (hn : 1 < n) (hnOdd : Odd n)
+    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hL : 1500 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (99 / 40 : ℝ) * ((500 / 821 : ℝ) * Real.log n + 22) ^ 2 ∧
@@ -69,7 +68,7 @@ theorem exists_prime_strong_witness_le_signedTwoPole_affine {n : ℕ} [NeZero n]
 obeys the affine two-pole bound, which is strictly below (log n) squared.
 Derive n greater than one from its logarithm and bound the affine root by 6291log n/10000.
 This is the public pointwise bound used in the best-interval comparison. -/
-theorem exists_prime_witness_le_signedTwoPole_affine_log_1500 {n : ℕ} (hnOdd : Odd n)
+theorem exists_prime_signedAffine_log1500_strict_GRH {n : ℕ} (hnOdd : Odd n)
     (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : 1500 ≤ Real.log n) :
     ∃ p : ℕ,
@@ -80,8 +79,7 @@ theorem exists_prime_witness_le_signedTwoPole_affine_log_1500 {n : ℕ} (hnOdd :
   have hn0 : (0 : ℝ) < n := Nat.cast_pos.mpr hnOdd.pos
   have ht := Real.log_le_sub_one_of_pos hn0
   have hn : 1 < n := by exact_mod_cast (show (1 : ℝ) < n by linarith only [ht, hL])
-  obtain ⟨p, hp, hb, hf⟩ :=
-    exists_prime_strong_witness_le_signedTwoPole_affine hn hnOdd hnComposite hGRH hL
+  obtain ⟨p, hp, hb, hf⟩ := exists_prime_signedTwoPoleAffine_GRH hn hnOdd hnComposite hGRH hL
   have hr : 0 ≤ (500 / 821 : ℝ) * Real.log n + 22 := by linarith only [hL]
   have hu : (500 / 821 : ℝ) * Real.log n + 22 ≤ (6291 / 10000 : ℝ) * Real.log n := by
     linarith only [hL]
@@ -92,9 +90,8 @@ theorem exists_prime_witness_le_signedTwoPole_affine_log_1500 {n : ℕ} (hnOdd :
 /-- Under the same hypotheses, the least prime rejecting base obeys the affine
 two-pole bound. Minimize the unbounded rejection predicate and compare with the
 explicit witness. Leastness ranges over all prime rejecting bases. -/
-theorem exists_least_prime_witness_le_signedTwoPole_affine_log_1500 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 1500 ≤ Real.log n) :
+theorem exists_least_prime_signedAffine_log1500_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 1500 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
@@ -102,7 +99,7 @@ theorem exists_least_prime_witness_le_signedTwoPole_affine_log_1500 {n : ℕ} (h
         ∀ r : ℕ, r.Prime → ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) → p ≤ r := by
   classical
   obtain ⟨p, hp, hb, _, hf⟩ :=
-    exists_prime_witness_le_signedTwoPole_affine_log_1500 hnOdd hnComposite hGRH hL
+    exists_prime_signedAffine_log1500_strict_GRH hnOdd hnComposite hGRH hL
   have hex : ∃ r : ℕ, r.Prime ∧ ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := ⟨p, hp, hf⟩
   exact
     ⟨Nat.find hex, (Nat.find_spec hex).1, (Nat.find_spec hex).2,
@@ -113,7 +110,7 @@ theorem exists_least_prime_witness_le_signedTwoPole_affine_log_1500 {n : ℕ} (h
 the initial power equality and every negative-one equality in the canonical binary
 decomposition of n-1. Apply the exact strong-test rejection equivalence.
 This exposes the actual power conditions of the rejecting witness. -/
-theorem exists_prime_rejecting_powers_le_signedTwoPole_affine_log_1500 {n : ℕ} (hnOdd : Odd n)
+theorem exists_rejectPowers_signedAffine_log1500_GRH {n : ℕ} (hnOdd : Odd n)
     (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : 1500 ≤ Real.log n) :
     let (s, d) := Nat.maxPowDvdDiv 2 (n - 1);
@@ -122,7 +119,7 @@ theorem exists_prime_rejecting_powers_le_signedTwoPole_affine_log_1500 {n : ℕ}
         (p : ℝ) ≤ (99 / 40 : ℝ) * ((500 / 821 : ℝ) * Real.log n + 22) ^ 2 ∧
         (p : ZMod n) ^ d ≠ 1 ∧ ∀ j : ℕ, j < s → (p : ZMod n) ^ (2 ^ j * d) ≠ -1 := by
   obtain ⟨p, hp, hb, _, hf⟩ :=
-    exists_prime_witness_le_signedTwoPole_affine_log_1500 hnOdd hnComposite hGRH hL
+    exists_prime_signedAffine_log1500_strict_GRH hnOdd hnComposite hGRH hL
   exact ⟨p, hp, hb, PrimeTest.not_strongMillerRabinPass_iff.mp hf⟩
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

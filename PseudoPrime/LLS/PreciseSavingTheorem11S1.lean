@@ -44,7 +44,7 @@ theorem refinedAuxiliaryTerm_le_preciseSavingAuxiliary (q : ℕ) :
 /-- Input: any modulus. Claim: the new radius root never exceeds the previous root.
 Proof: the stronger auxiliary saving decreases the nonnegative correction.
 Role: make the pointwise improvement explicit. -/
-theorem preciseSavingRadiusRoot_le_retainedSavingRadiusRoot (q : ℕ) :
+theorem preciseSavingRoot_le_retainedRoot (q : ℕ) :
     preciseSavingRadiusRoot q ≤ retainedSavingRadiusRoot q := by
   have hA := refinedAuxiliaryTerm_le_preciseSavingAuxiliary q
   dsimp only [preciseSavingRadiusRoot, retainedSavingRadiusRoot, preciseSavingCorrectionTerm,
@@ -57,17 +57,15 @@ theorem preciseSavingRadiusRoot_le_retainedSavingRadiusRoot (q : ℕ) :
 Claim: a coprime non-one prime exists through the precise-saving squared radius.
 Proof: instantiate the variable-loss root theorem with the finer Riemann lower bound.
 Role: expose the explicit analytic improvement of Part 1. -/
-theorem exists_prime_character_ne_one_le_preciseSavingRadius {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hq : 3000 ≤ q) (hne : χ ≠ 1)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
+theorem exists_prime_neOne_preciseSaving_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hq : 3000 ≤ q) (hne : χ ≠ 1) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ, p.Prime ∧ ¬p ∣ q ∧ χ p ≠ 1 ∧ (p : ℝ) ≤ (preciseSavingRadiusRoot q) ^ 2 := by
   have hy : Real.log q ≤ preciseSavingRadiusRoot q := le_add_of_nonneg_right (le_max_left _ _)
   have hL := Analysis.eight_lt_log_level hq
   have hx : (2 : ℝ) ≤ (preciseSavingRadiusRoot q) ^ 2 := by nlinarith only [hL, hy]
   apply
-    exists_prime_character_ne_one_of_reciprocal_saving_root χ hq hne hGRH hy
-      (AnalyticNumberTheory.RiemannZeta.reciprocalWeightedMangoldtSum_ge_log_sub_31551_div_20000
-        hGRH.riemann hx)
+    exists_prime_neOne_reciprocalSaving_GRH χ hq hne hGRH hy
+      (AnalyticNumberTheory.RiemannZeta.reciprocalMangoldt_ge_log_sub_31551_20000 hGRH.riemann hx)
       (div_nonneg (mul_nonneg (mul_nonneg (by norm_num only) (Nat.cast_nonneg _)) (sq_nonneg _))
         (by linarith only [hL]))
       (exact_factor_cost_le_distinct_prime_cost hq hy)
@@ -79,9 +77,9 @@ theorem exists_prime_character_ne_one_le_preciseSavingRadius {q : ℕ} [NeZero q
 Claim: a coprime non-one prime exists through the squared root.
 Proof: retain the exact common-factor cost in the variable-loss root criterion.
 Role: combine both Part 1 improvements without weakening either cost. -/
-theorem exists_prime_character_ne_one_of_precise_exact_factor_root {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hq : 3000 ≤ q) (hne : χ ≠ 1)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y : ℝ} (hy : Real.log q ≤ y)
+theorem exists_prime_neOne_preciseFactor_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hq : 3000 ≤ q) (hne : χ ≠ 1) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {y : ℝ} (hy : Real.log q ≤ y)
     (hB :
       2 * Real.log (Real.log q) + 7031 / 5000 +
             AnalyticNumberTheory.Arithmetic.commonFactorLogWeightedSum (y ^ 2) q / y -
@@ -92,16 +90,15 @@ theorem exists_prime_character_ne_one_of_precise_exact_factor_root {q : ℕ} [Ne
   have hy0 : 0 < y := by linarith only [hL, hy]
   have hx : (2 : ℝ) ≤ y ^ 2 := by nlinarith only [hL, hy]
   exact
-    exists_prime_character_ne_one_of_reciprocal_saving_root χ hq hne hGRH hy
-      (AnalyticNumberTheory.RiemannZeta.reciprocalWeightedMangoldtSum_ge_log_sub_31551_div_20000
-        hGRH.riemann hx)
+    exists_prime_neOne_reciprocalSaving_GRH χ hq hne hGRH hy
+      (AnalyticNumberTheory.RiemannZeta.reciprocalMangoldt_ge_log_sub_31551_20000 hGRH.riemann hx)
       (div_nonneg (commonFactorLogWeightedSum_nonneg (sq_pos_of_pos hy0)) hy0.le) (le_refl _) hB
 
 /-- Input: GRH, a proper unit subgroup, and a modulus at least 3000.
 Claim: a coprime prime outside the subgroup image lies within the new squared radius.
 Proof: use a nonprincipal character of the quotient.
 Role: give the subgroup counterpart for the entrance-three extension. -/
-theorem exists_prime_outside_subgroup_le_preciseSavingRadius {q : ℕ} [NeZero q] (hq : 3000 ≤ q)
+theorem exists_prime_outside_preciseSaving_GRH {q : ℕ} [NeZero q] (hq : 3000 ≤ q)
     (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ,
@@ -113,7 +110,7 @@ theorem exists_prime_outside_subgroup_le_preciseSavingRadius {q : ℕ} [NeZero q
   obtain ⟨x, hx⟩ := exists_ne (1 : (ZMod q)ˣ ⧸ H)
   obtain ⟨χ', hχ⟩ := MulChar.exists_apply_ne_one_of_hasEnoughRootsOfUnity ((ZMod q)ˣ ⧸ H) ℂ hx
   obtain ⟨p, hp, hd, hv, hb⟩ :=
-    exists_prime_character_ne_one_le_preciseSavingRadius (pullbackCharacter χ') hq
+    exists_prime_neOne_preciseSaving_GRH (pullbackCharacter χ') hq
       (pullbackCharacter_ne_one_of_ne_one χ' hχ) hGRH
   refine ⟨p, hp, hd, hb, ?_⟩
   rintro ⟨u, hu, he⟩
@@ -125,7 +122,7 @@ theorem exists_prime_outside_subgroup_le_preciseSavingRadius {q : ℕ} [NeZero q
 Claim: the auxiliary saving increases by at most the reciprocal-loss difference.
 Proof: compare both branches of its maximum with zero.
 Role: quantify the change without assuming either branch is active. -/
-theorem preciseSavingAuxiliary_le_refined_add_loss_difference (q : ℕ) :
+theorem preciseSavingAux_le_refined_lossDiff (q : ℕ) :
     preciseSavingAuxiliary q ≤ refinedAuxiliaryTerm q + ((32873 / 20800 : ℝ) - 31551 / 20000) := by
   have hz : 0 ≤ refinedAuxiliaryTerm q := le_max_left _ _
   have hr :=
@@ -142,10 +139,10 @@ theorem preciseSavingAuxiliary_le_refined_add_loss_difference (q : ℕ) :
 Claim: the radius root decreases by at most twice the reciprocal-loss difference.
 Proof: transfer the auxiliary comparison through the nonnegative correction.
 Role: bound the pointwise numerical improvement, including changes of maximum branches. -/
-theorem retainedSavingRadiusRoot_sub_precise_le_loss_difference (q : ℕ) :
+theorem retainedRoot_sub_precise_le_lossDiff (q : ℕ) :
     retainedSavingRadiusRoot q - preciseSavingRadiusRoot q ≤
       2 * ((32873 / 20800 : ℝ) - 31551 / 20000) := by
-  have hA := preciseSavingAuxiliary_le_refined_add_loss_difference q
+  have hA := preciseSavingAux_le_refined_lossDiff q
   have hz : 0 ≤ preciseSavingCorrectionTerm q := le_max_left _ _
   have hr :=
     le_max_right (0 : ℝ)

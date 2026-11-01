@@ -28,7 +28,7 @@ theorem gamma_actual_minus_one_prime_cost_le {f p : ℕ} (χ : DirichletCharacte
     (hχ : χ p = -1) (K : Finset ℕ) {x : ℝ} (hx : 0 < x) :
     Analysis.gammaActualPrimeLocalCost χ p K x ≤
       Real.log p * Analysis.gammaSquareCombinedCost p x := by
-  have he := Analysis.gamma_minus_one_positive_prime_correction_le_cost χ hp hχ K
+  have he := Analysis.gamma_neg_one_prime_correction_le_cost χ hp hχ K
   have hl : 0 ≤ Real.log p := Real.log_nonneg (by exact_mod_cast hp.one_le)
   have hr := mul_le_mul_of_nonneg_left (Analysis.gamma_ramp_neg_one_series_le_count hp.one_lt hx) hl
   dsimp only [Analysis.gammaActualPrimeLocalCost, Analysis.gammaSquareCombinedCost]
@@ -62,7 +62,7 @@ theorem gamma_actual_dyadic_minus_one_cost_le {f : ℕ} (χ : DirichletCharacter
     (K : Finset ℕ) {x : ℝ} (hx : 10000 ≤ x) :
     Analysis.gammaActualPrimeLocalCost χ 2 K x - (11783423 / 25000000 : ℝ) * Real.log 4 ≤
       (12 / 25 : ℝ) := by
-  have he := Analysis.gamma_minus_one_positive_prime_correction_le_cost χ Nat.prime_two hχ K
+  have he := Analysis.gamma_neg_one_prime_correction_le_cost χ Nat.prime_two hχ K
   have hr := gamma_dyadic_minus_one_actual_ramp_le hx
   have hc := gamma_dyadic_weighted_euler_bounds.2
   norm_num only [Nat.cast_ofNat] at he

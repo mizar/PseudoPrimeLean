@@ -33,8 +33,8 @@ of `A` and `t` so that, for `A ≥ 2`, the ordinary logarithmic derivative on
 Reflect to the inverse character in the Euler half-plane, apply the von Mangoldt series bound,
 and combine the two gamma-factor bounds using parity invariance under inversion.
 This supplies whole-line contour envelopes for general primitive characters without GRH. -/
-theorem exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le_general {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
+theorem L_logDeriv_leftVertical_bound {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     ∃ D : ℝ,
       0 ≤ D ∧
         ∀ A : ℕ,
@@ -43,7 +43,7 @@ theorem exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le_general {N : �
               ‖logDeriv (DirichletCharacter.LFunction χ)
                     (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
                 D * (((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2)) := by
-  obtain ⟨CΓ, hCΓnn, hCΓ⟩ := exists_C_forall_norm_logDeriv_gammaFactor_leftVertical_pair_le
+  obtain ⟨CΓ, hCΓnn, hCΓ⟩ := gammaLogDeriv_left_pair_bound
   set M3 : ℝ := ∑' n : ℕ, ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ (3 : ℝ)
   have hM3nn : 0 ≤ M3 :=
     tsum_nonneg fun n => div_nonneg ArithmeticFunction.vonMangoldt_nonneg (by positivity)
@@ -54,7 +54,7 @@ theorem exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le_general {N : �
   refine ⟨D, hDnn, fun A hA t => ?_⟩
   have hA' : (2 : ℝ) ≤ (A : ℝ) := by exact_mod_cast hA
   set s : ℂ := ((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I
-  have hrefl0 := logDeriv_dirichletLFunction_reflection_leftVertical hprimitive hne hinv A hA t
+  have hrefl0 := logDeriv_L_reflection_leftVertical hprimitive hne hinv A hA t
   have hrefl := by
     simpa only [one_div, Complex.ofReal_sub, Complex.ofReal_neg, Complex.ofReal_natCast,
       Complex.ofReal_inv, Complex.ofReal_ofNat] using hrefl0
@@ -68,7 +68,7 @@ theorem exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le_general {N : �
     have h1 : (1 - s).re = 1 - s.re := by simp only [Complex.sub_re, Complex.one_re]
     rw [h1, hsre]
     linarith only [hA']
-  have hLone := norm_logDeriv_dirichletLFunction_le_of_three_le_re χ⁻¹ h1sre
+  have hLone := norm_logDeriv_LFunction_le_re_ge_3 χ⁻¹ h1sre
   have hgam := hCΓ A hA χ t
   have htnn : (0 : ℝ) ≤ Real.log (|t| + 2) := Real.log_nonneg (by linarith only [abs_nonneg t])
   have hEA1 : (1 : ℝ) ≤ ((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2) := by
@@ -127,7 +127,7 @@ theorem exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le_general {N : �
         ‖logDeriv (DirichletCharacter.gammaFactor χ⁻¹) (1 - s)‖ +
             ‖logDeriv (DirichletCharacter.gammaFactor χ) s‖ ≤
           CΓ * (((A : ℝ) + 5) ^ 2 + 1 + Real.log (|t| + 2)) := by
-        have heq := DirichletCharacter.gammaFactor_inv_eq χ
+        have heq := gammaFactor_character_inv_eq χ
         have hgf : DirichletCharacter.gammaFactor χ⁻¹ = DirichletCharacter.gammaFactor χ := by
           funext z
           exact heq z

@@ -21,7 +21,7 @@ namespace PseudoPrime.LLS.PaperStatements
 Claim: the half-height reciprocal difference norm is at most abs(t)/(2c^2).
 Proof: bound its exact denominator below using the positive real coordinate.
 Role: summable pole-coordinate domination for kernels with an integrable first moment. -/
-theorem vertical_half_height_resolvent_norm_le_first_moment {c : ℝ} (hc : 0 < c) (t : ℝ) :
+theorem halfHeight_resolvent_norm_le {c : ℝ} (hc : 0 < c) (t : ℝ) :
     ‖1 / (c : ℂ) - 1 / ((c : ℂ) + Complex.I * (t / 2))‖ ≤ |t| / (2 * c ^ 2) := by
   rw [vertical_half_height_resolvent_norm hc]
   have hs : 2 * c ≤ Real.sqrt ((2 * c) ^ 2 + t ^ 2) := by
@@ -42,9 +42,7 @@ theorem norm_weighted_vertical_resolvent_le_first_moment {c : ℝ} (hc : 0 < c) 
     ‖(1 / (c : ℂ) - 1 / ((c : ℂ) + Complex.I * (t / 2))) * W t‖ ≤
       (1 / (2 * c ^ 2)) * (|t| * ‖W t‖) := by
   rw [norm_mul]
-  have h :=
-    mul_le_mul_of_nonneg_right (vertical_half_height_resolvent_norm_le_first_moment hc t)
-      (norm_nonneg (W t))
+  have h := mul_le_mul_of_nonneg_right (halfHeight_resolvent_norm_le hc t) (norm_nonneg (W t))
   convert h using 1
   ring
 
@@ -90,7 +88,7 @@ theorem integral_norm_weighted_vertical_resolvent_le {c : ℝ} (hc : 0 < c) (W :
 Claim: the integrated norms of all weighted reciprocal differences form a summable series.
 Proof: dominate the nth term by a constant times n to the power minus two for positive n.
 Role: justify exchanging the signed digamma series with the weighted integral. -/
-theorem summable_weighted_vertical_resolvent_integral_norm {b : ℝ} (hb : 0 < b) (W : ℝ → ℂ)
+theorem summable_vertical_resolvent_integrals {b : ℝ} (hb : 0 < b) (W : ℝ → ℂ)
     (hW : MeasureTheory.AEStronglyMeasurable W MeasureTheory.volume)
     (hM : MeasureTheory.Integrable (fun t : ℝ ↦ |t| * ‖W t‖)) :
     Summable
@@ -132,7 +130,7 @@ theorem integral_weighted_digamma_vertical_sub_eq_tsum {b : ℝ} (hb : 0 < b) (W
         ∫ t : ℝ, (1 / ((b + n : ℝ) : ℂ) - 1 / (((b + n : ℝ) : ℂ) + Complex.I * (t / 2))) * W t := by
   let F := fun (n : ℕ) (t : ℝ) ↦
     (1 / ((b + n : ℝ) : ℂ) - 1 / (((b + n : ℝ) : ℂ) + Complex.I * (t / 2))) * W t
-  have hs := summable_weighted_vertical_resolvent_integral_norm hb W hW hM
+  have hs := summable_vertical_resolvent_integrals hb W hW hM
   have hi (n : ℕ) : MeasureTheory.Integrable (F n) :=
     integrable_weighted_vertical_resolvent (add_pos_of_pos_of_nonneg hb (Nat.cast_nonneg n)) W hW hM
   have he (t : ℝ) :

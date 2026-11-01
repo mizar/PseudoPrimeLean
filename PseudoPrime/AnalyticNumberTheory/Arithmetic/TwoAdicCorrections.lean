@@ -70,7 +70,7 @@ theorem twoAdicLogCorrection_eq_sum {q : ℕ} (x : ℝ) (χ : DirichletCharacter
   intro k hk
   have hkpos : k ≠ 0 := Nat.ne_of_gt (lt_of_lt_of_le Nat.zero_lt_one (Finset.mem_Icc.mp hk).1)
   rw [logWeightedMangoldtTerm_prime_pow hx Nat.prime_two hkpos,
-    characterLogWeightedTerm_primitive_re_prime_pow x χ hx Nat.prime_two hkpos]
+    characterLogTerm_primitive_re_prime_pow x χ hx Nat.prime_two hkpos]
   norm_num only
 
 /-- For a real cutoff and any inducing character, express the reciprocal correction through
@@ -86,14 +86,13 @@ theorem twoAdicReciprocalCorrection_eq_sum {q : ℕ} (x : ℝ) (χ : DirichletCh
   intro k hk
   have hkpos : k ≠ 0 := Nat.ne_of_gt (lt_of_lt_of_le Nat.zero_lt_one (Finset.mem_Icc.mp hk).1)
   rw [reciprocalWeightedMangoldtTerm_prime_pow Nat.prime_two hkpos,
-    characterReciprocalWeightedTerm_primitive_re_prime_pow x χ Nat.prime_two hkpos]
+    characterRecipTerm_primitive_re_prime_pow x χ Nat.prime_two hkpos]
   norm_num only
 
 /-- If the primitive character has value `1` at `2` and `x ≠ 0`, the logarithmic
 2-adic correction vanishes. -/
-theorem twoAdicLogCorrection_eq_zero_of_apply_two_eq_one {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hx : x ≠ 0) (h2 : χ.primitiveCharacter 2 = 1) :
-    twoAdicLogCorrection x χ = 0 := by
+theorem logTwoCorrection_eq_zero_of_one {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q) (hx : x ≠ 0)
+    (h2 : χ.primitiveCharacter 2 = 1) : twoAdicLogCorrection x χ = 0 := by
   rw [twoAdicLogCorrection_eq_sum x χ hx]
   apply Finset.sum_eq_zero
   intro k hk
@@ -102,17 +101,15 @@ theorem twoAdicLogCorrection_eq_zero_of_apply_two_eq_one {q : ℕ} (x : ℝ)
 /-- If the primitive character has value one at two, the reciprocal two-adic correction
 vanishes for every real cutoff. All powers of the value at two are one, so every
 difference term is zero. This disposes of the value-one branch. -/
-theorem twoAdicReciprocalCorrection_eq_zero_of_apply_two_eq_one {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (h2 : χ.primitiveCharacter 2 = 1) :
-    twoAdicReciprocalCorrection x χ = 0 := by
+theorem recipTwoCorrection_eq_zero_of_one {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
+    (h2 : χ.primitiveCharacter 2 = 1) : twoAdicReciprocalCorrection x χ = 0 := by
   rw [twoAdicReciprocalCorrection_eq_sum x χ]
   apply Finset.sum_eq_zero
   intro k hk
   simp only [h2, one_pow, Complex.one_re, mul_one, sub_self]
 
 /-- The real logarithmic weighted difference is an exact finite-sum decomposition. -/
-theorem logWeightedMangoldtSum_sub_characterLogWeightedSum_re {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) :
+theorem logMangoldt_sub_character_re_eq_sum {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q) :
     logWeightedMangoldtSum x - (characterLogWeightedSum x χ.primitiveCharacter).re =
       ∑ n ∈ Finset.Ioc 0 ⌊x⌋₊,
         (logWeightedMangoldtTerm x n - (characterLogWeightedTerm x χ.primitiveCharacter n).re) := by
@@ -120,8 +117,7 @@ theorem logWeightedMangoldtSum_sub_characterLogWeightedSum_re {q : ℕ} (x : ℝ
   rw [Finset.sum_sub_distrib]
 
 /-- The reciprocal weighted difference is an exact finite-sum decomposition. -/
-theorem reciprocalWeightedMangoldtSum_sub_characterReciprocalWeightedSum_re {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) :
+theorem recipMangoldt_sub_character_re_eq_sum {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q) :
     reciprocalWeightedMangoldtSum x - (characterReciprocalWeightedSum x χ.primitiveCharacter).re =
       ∑ n ∈ Finset.Ioc 0 ⌊x⌋₊,
         (reciprocalWeightedMangoldtTerm x n -
@@ -131,22 +127,20 @@ theorem reciprocalWeightedMangoldtSum_sub_characterReciprocalWeightedSum_re {q :
 
 /-- A prime-power logarithmic character term agrees with the zeta term when the
 character value at the underlying prime is one. -/
-theorem characterLogWeightedTerm_primitive_re_prime_pow_eq_of_apply_prime_eq_one {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) {p k : ℕ} (hx : x ≠ 0) (hp : p.Prime) (hk : k ≠ 0)
-    (hχp : χ.primitiveCharacter p = 1) :
+theorem logCharTerm_prime_pow_re_eq_of_prime_eq_one {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
+    {p k : ℕ} (hx : x ≠ 0) (hp : p.Prime) (hk : k ≠ 0) (hχp : χ.primitiveCharacter p = 1) :
     (characterLogWeightedTerm x χ.primitiveCharacter (p ^ k)).re =
       logWeightedMangoldtTerm x (p ^ k) := by
-  rw [characterLogWeightedTerm_primitive_re_prime_pow x χ hx hp hk,
+  rw [characterLogTerm_primitive_re_prime_pow x χ hx hp hk,
     logWeightedMangoldtTerm_prime_pow hx hp hk]
   simp only [hχp, one_pow, Complex.one_re, mul_one]
 
 /-- The reciprocal analogue of the prime-power cancellation lemma. -/
-theorem characterReciprocalWeightedTerm_primitive_re_prime_pow_eq_of_apply_prime_eq_one {q : ℕ}
-    (x : ℝ) (χ : DirichletCharacter ℂ q) {p k : ℕ} (hp : p.Prime) (hk : k ≠ 0)
-    (hχp : χ.primitiveCharacter p = 1) :
+theorem recipCharTerm_prime_pow_re_eq_of_prime_one {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
+    {p k : ℕ} (hp : p.Prime) (hk : k ≠ 0) (hχp : χ.primitiveCharacter p = 1) :
     (characterReciprocalWeightedTerm x χ.primitiveCharacter (p ^ k)).re =
       reciprocalWeightedMangoldtTerm x (p ^ k) := by
-  rw [characterReciprocalWeightedTerm_primitive_re_prime_pow x χ hp hk,
+  rw [characterRecipTerm_primitive_re_prime_pow x χ hp hk,
     reciprocalWeightedMangoldtTerm_prime_pow hp hk]
   simp only [hχp, one_pow, Complex.one_re, mul_one]
 
@@ -174,7 +168,7 @@ noncomputable def oddPrimeLogPrimePowerDifference {q : ℕ} (x : ℝ) (χ : Diri
         (characterLogWeightedTerm x χ.primitiveCharacter (p ^ k)).re))
 
 /-- The prime-power ledger splits exactly into its 2-adic and odd-prime slices. -/
-theorem logPrimePowerDifferenceSum_eq_twoAdic_add_odd {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q) :
+theorem logPrimePowerDiff_eq_two_add_odd {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q) :
     logPrimePowerDifferenceSum x χ =
       twoAdicLogPrimePowerDifference x χ + oddPrimeLogPrimePowerDifference x χ := by
   unfold logPrimePowerDifferenceSum twoAdicLogPrimePowerDifference oddPrimeLogPrimePowerDifference
@@ -189,8 +183,7 @@ theorem logPrimePowerDifferenceSum_eq_twoAdic_add_odd {q : ℕ} (x : ℝ) (χ : 
 
 /-- For `x ≠ 0`, if the primitive character has value `1` at every odd prime in each
 prime-power cutoff, the odd-prime logarithmic slice vanishes. -/
-theorem oddPrimeLogPrimePowerDifference_eq_zero_of_eq_one {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hx : x ≠ 0)
+theorem oddPrimeLogDiff_zero_of_eq_one {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q) (hx : x ≠ 0)
     (hodd :
       ∀ {k p : ℕ},
         k ∈ Finset.Icc 1 ⌊Real.log x / Real.log 2⌋₊ →
@@ -205,7 +198,7 @@ theorem oddPrimeLogPrimePowerDifference_eq_zero_of_eq_one {q : ℕ} (x : ℝ)
   have hpprime : p.Prime := (Finset.mem_filter.mp hp).2.1
   have hpne : p ≠ 2 := (Finset.mem_filter.mp hp).2.2
   have hpodd : Odd p := hpprime.odd_of_ne_two hpne
-  rw [characterLogWeightedTerm_primitive_re_prime_pow_eq_of_apply_prime_eq_one x χ hx hpprime
+  rw [logCharTerm_prime_pow_re_eq_of_prime_eq_one x χ hx hpprime
       (Nat.ne_of_gt (Finset.mem_Icc.mp hk).1) (hodd hk hpmem hpprime hpodd)]
   simp only [sub_self]
 
@@ -234,8 +227,7 @@ noncomputable def oddPrimeReciprocalPrimePowerDifference {q : ℕ} (x : ℝ)
         (characterReciprocalWeightedTerm x χ.primitiveCharacter (p ^ k)).re))
 
 /-- The reciprocal prime-power ledger splits into its 2-adic and odd-prime slices. -/
-theorem reciprocalPrimePowerDifferenceSum_eq_twoAdic_add_odd {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) :
+theorem recipPrimePowerDiff_eq_two_add_odd {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q) :
     reciprocalPrimePowerDifferenceSum x χ =
       twoAdicReciprocalPrimePowerDifference x χ + oddPrimeReciprocalPrimePowerDifference x χ := by
   unfold reciprocalPrimePowerDifferenceSum twoAdicReciprocalPrimePowerDifference
@@ -251,8 +243,7 @@ theorem reciprocalPrimePowerDifferenceSum_eq_twoAdic_add_odd {q : ℕ} (x : ℝ)
   simpa only [s, f, one_div, Finset.sum_sub_distrib, ne_eq, Finset.filter_filter] using hsplit
 
 /-- Under prime-value-one cancellation, the odd-prime reciprocal slice vanishes. -/
-theorem oddPrimeReciprocalPrimePowerDifference_eq_zero_of_eq_one {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q)
+theorem oddPrimeRecipDiff_zero_of_eq_one {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
     (hodd :
       ∀ {k p : ℕ},
         k ∈ Finset.Icc 1 ⌊Real.log x / Real.log 2⌋₊ →
@@ -267,23 +258,23 @@ theorem oddPrimeReciprocalPrimePowerDifference_eq_zero_of_eq_one {q : ℕ} (x : 
   have hpprime : p.Prime := (Finset.mem_filter.mp hp).2.1
   have hpne : p ≠ 2 := (Finset.mem_filter.mp hp).2.2
   have hpodd : Odd p := hpprime.odd_of_ne_two hpne
-  rw [characterReciprocalWeightedTerm_primitive_re_prime_pow_eq_of_apply_prime_eq_one x χ hpprime
-      (Nat.ne_of_gt (Finset.mem_Icc.mp hk).1) (hodd hk hpmem hpprime hpodd)]
+  rw [recipCharTerm_prime_pow_re_eq_of_prime_one x χ hpprime (Nat.ne_of_gt (Finset.mem_Icc.mp hk).1)
+      (hodd hk hpmem hpprime hpodd)]
   simp only [sub_self]
 
 /-- The logarithmic weighted difference is exactly its prime-power ledger. -/
-theorem logWeightedMangoldtSum_sub_characterLogWeightedSum_re_eq_primePowerDifference {q : ℕ}
-    (x : ℝ) (χ : DirichletCharacter ℂ q) (hx : 0 ≤ x) :
+theorem logMangoldt_sub_re_eq_primePowerDiff {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
+    (hx : 0 ≤ x) :
     logWeightedMangoldtSum x - (characterLogWeightedSum x χ.primitiveCharacter).re =
       logPrimePowerDifferenceSum x χ := by
-  rw [logWeightedMangoldtSum_sub_characterLogWeightedSum_re x χ]
+  rw [logMangoldt_sub_character_re_eq_sum x χ]
   let s := Finset.Ioc 0 ⌊x⌋₊
   let f : ℕ → ℝ := fun n ↦
     logWeightedMangoldtTerm x n - (characterLogWeightedTerm x χ.primitiveCharacter n).re
   have hzero : ∀ n : ℕ, ¬IsPrimePow n → f n = 0 := by
     intro n hn
     simp only [characterLogWeightedTerm, Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im,
-      zero_mul, sub_zero, logWeightedMangoldtTerm_eq_zero_of_not_primePow hn, sub_self, f]
+      zero_mul, sub_zero, logMangoldtTerm_eq_zero_of_not_primePow hn, sub_self, f]
   have hcop : ∑ n ∈ s.filter fun n ↦ Nat.Coprime n 0, f n = 0 := by
     apply Finset.sum_eq_zero
     intro n hn
@@ -308,11 +299,11 @@ theorem logWeightedMangoldtSum_sub_characterLogWeightedSum_re_eq_primePowerDiffe
     one_div, dvd_zero, and_true] using (sum_not_coprime_eq_sum_prime_powers f 0 hx hzero)
 
 /-- The reciprocal weighted difference is exactly its prime-power ledger. -/
-theorem reciprocalWeightedMangoldtSum_sub_characterReciprocalWeightedSum_re_eq_primePowerDifference
-    {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q) (hx : 0 ≤ x) :
+theorem recipMangoldt_sub_re_eq_primePowerDiff {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
+    (hx : 0 ≤ x) :
     reciprocalWeightedMangoldtSum x - (characterReciprocalWeightedSum x χ.primitiveCharacter).re =
       reciprocalPrimePowerDifferenceSum x χ := by
-  rw [reciprocalWeightedMangoldtSum_sub_characterReciprocalWeightedSum_re x χ]
+  rw [recipMangoldt_sub_character_re_eq_sum x χ]
   let s := Finset.Ioc 0 ⌊x⌋₊
   let f : ℕ → ℝ := fun n ↦
     reciprocalWeightedMangoldtTerm x n -
@@ -320,8 +311,8 @@ theorem reciprocalWeightedMangoldtSum_sub_characterReciprocalWeightedSum_re_eq_p
   have hzero : ∀ n : ℕ, ¬IsPrimePow n → f n = 0 := by
     intro n hn
     simp only [characterReciprocalWeightedTerm, Complex.mul_re, Complex.ofReal_re,
-      Complex.ofReal_im, zero_mul, sub_zero,
-      reciprocalWeightedMangoldtTerm_eq_zero_of_not_primePow hn, sub_self, f]
+      Complex.ofReal_im, zero_mul, sub_zero, recipMangoldtTerm_eq_zero_of_not_primePow hn, sub_self,
+      f]
   have hcop : ∑ n ∈ s.filter fun n ↦ Nat.Coprime n 0, f n = 0 := by
     apply Finset.sum_eq_zero
     intro n hn
@@ -350,32 +341,27 @@ theorem reciprocalWeightedMangoldtSum_sub_characterReciprocalWeightedSum_re_eq_p
 
 /-- For `x ≠ 0`, value `1` at every odd prime in each prime-power cutoff leaves only
 the 2-adic logarithmic slice. -/
-theorem logPrimePowerDifferenceSum_eq_twoAdic_of_eq_one {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
-    (hx : x ≠ 0)
+theorem logPrimePowerDiff_eq_two_of_eq_one {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q) (hx : x ≠ 0)
     (hodd :
       ∀ {k p : ℕ},
         k ∈ Finset.Icc 1 ⌊Real.log x / Real.log 2⌋₊ →
           p ∈ Finset.Ioc 0 ⌊x ^ ((1 : ℝ) / k)⌋₊ → p.Prime → Odd p → (χ.primitiveCharacter p = 1)) :
     logPrimePowerDifferenceSum x χ = twoAdicLogPrimePowerDifference x χ := by
-  rw [logPrimePowerDifferenceSum_eq_twoAdic_add_odd,
-    oddPrimeLogPrimePowerDifference_eq_zero_of_eq_one x χ hx hodd, add_zero]
+  rw [logPrimePowerDiff_eq_two_add_odd, oddPrimeLogDiff_zero_of_eq_one x χ hx hodd, add_zero]
 
 /-- Value `1` at every odd prime in each prime-power cutoff leaves only the 2-adic
 reciprocal slice. -/
-theorem reciprocalPrimePowerDifferenceSum_eq_twoAdic_of_eq_one {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q)
+theorem recipPrimePowerDiff_eq_two_of_eq_one {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
     (hodd :
       ∀ {k p : ℕ},
         k ∈ Finset.Icc 1 ⌊Real.log x / Real.log 2⌋₊ →
           p ∈ Finset.Ioc 0 ⌊x ^ ((1 : ℝ) / k)⌋₊ → p.Prime → Odd p → (χ.primitiveCharacter p = 1)) :
     reciprocalPrimePowerDifferenceSum x χ = twoAdicReciprocalPrimePowerDifference x χ := by
-  rw [reciprocalPrimePowerDifferenceSum_eq_twoAdic_add_odd,
-    oddPrimeReciprocalPrimePowerDifference_eq_zero_of_eq_one x χ hodd, add_zero]
+  rw [recipPrimePowerDiff_eq_two_add_odd, oddPrimeRecipDiff_zero_of_eq_one x χ hodd, add_zero]
 
 /-- The `p = 2` logarithmic ledger is the `2 ^ k` correction once the cutoff
 membership of `2` is supplied. -/
-theorem twoAdicLogPrimePowerDifference_eq_twoAdicLogCorrection_of_mem {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q)
+theorem logTwoPrimePowerDiff_eq_correction_of_mem {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
     (hmem :
       ∀ {k : ℕ},
         k ∈ Finset.Icc 1 ⌊Real.log x / Real.log 2⌋₊ → 2 ∈ Finset.Ioc 0 ⌊x ^ ((1 : ℝ) / k)⌋₊) :
@@ -391,8 +377,7 @@ theorem twoAdicLogPrimePowerDifference_eq_twoAdicLogCorrection_of_mem {q : ℕ} 
     exact False.elim (hnot (Finset.mem_filter.mpr ⟨h2mem, Nat.prime_two, rfl⟩))
 
 /-- The reciprocal `p = 2` ledger has the same normalization interface. -/
-theorem twoAdicReciprocalPrimePowerDifference_eq_twoAdicReciprocalCorrection_of_mem {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q)
+theorem recipTwoPrimePowerDiff_eq_correction_of_mem {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
     (hmem :
       ∀ {k : ℕ},
         k ∈ Finset.Icc 1 ⌊Real.log x / Real.log 2⌋₊ → 2 ∈ Finset.Ioc 0 ⌊x ^ ((1 : ℝ) / k)⌋₊) :
@@ -409,42 +394,38 @@ theorem twoAdicReciprocalPrimePowerDifference_eq_twoAdicReciprocalCorrection_of_
 
 /-- The logarithmic weighted difference reduces exactly to the 2-adic correction
 under prime-value-one cancellation at every odd prime in the cutoff. -/
-theorem logWeightedMangoldtSum_sub_characterLogWeightedSum_re_eq_twoAdicCorrection_of_eq_one {q : ℕ}
-    (x : ℝ) (χ : DirichletCharacter ℂ q) (hx : 2 ≤ x)
+theorem logMangoldt_sub_re_eq_twoCorrection_of_one {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
+    (hx : 2 ≤ x)
     (hodd :
       ∀ {k p : ℕ},
         k ∈ Finset.Icc 1 ⌊Real.log x / Real.log 2⌋₊ →
           p ∈ Finset.Ioc 0 ⌊x ^ ((1 : ℝ) / k)⌋₊ → p.Prime → Odd p → (χ.primitiveCharacter p = 1)) :
     logWeightedMangoldtSum x - (characterLogWeightedSum x χ.primitiveCharacter).re =
       twoAdicLogCorrection x χ := by
-  rw [logWeightedMangoldtSum_sub_characterLogWeightedSum_re_eq_primePowerDifference x χ
-      (le_trans (by norm_num only : (0 : ℝ) ≤ 2) hx)]
-  rw [logPrimePowerDifferenceSum_eq_twoAdic_of_eq_one x χ
+  rw [logMangoldt_sub_re_eq_primePowerDiff x χ (le_trans (by norm_num only : (0 : ℝ) ≤ 2) hx)]
+  rw [logPrimePowerDiff_eq_two_of_eq_one x χ
       (ne_of_gt (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 2) hx)) hodd]
   exact
-    twoAdicLogPrimePowerDifference_eq_twoAdicLogCorrection_of_mem x χ
-      (fun hk ↦ two_mem_prime_cutoff_of_two_le hx hk)
+    logTwoPrimePowerDiff_eq_correction_of_mem x χ (fun hk ↦ two_mem_prime_cutoff_of_two_le hx hk)
 
 /-- The reciprocal weighted difference has the analogous exact 2-adic reduction. -/
-theorem reciprocalWeightedSum_sub_re_eq_twoAdicCorrection_of_eq_one {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hx : 2 ≤ x)
+theorem recipMangoldt_sub_re_eq_twoCorrection_of_one {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
+    (hx : 2 ≤ x)
     (hodd :
       ∀ {k p : ℕ},
         k ∈ Finset.Icc 1 ⌊Real.log x / Real.log 2⌋₊ →
           p ∈ Finset.Ioc 0 ⌊x ^ ((1 : ℝ) / k)⌋₊ → p.Prime → Odd p → (χ.primitiveCharacter p = 1)) :
     reciprocalWeightedMangoldtSum x - (characterReciprocalWeightedSum x χ.primitiveCharacter).re =
       twoAdicReciprocalCorrection x χ := by
-  rw [reciprocalWeightedMangoldtSum_sub_characterReciprocalWeightedSum_re_eq_primePowerDifference x
-      χ (le_trans (by norm_num only : (0 : ℝ) ≤ 2) hx)]
-  rw [reciprocalPrimePowerDifferenceSum_eq_twoAdic_of_eq_one x χ hodd]
+  rw [recipMangoldt_sub_re_eq_primePowerDiff x χ (le_trans (by norm_num only : (0 : ℝ) ≤ 2) hx)]
+  rw [recipPrimePowerDiff_eq_two_of_eq_one x χ hodd]
   exact
-    twoAdicReciprocalPrimePowerDifference_eq_twoAdicReciprocalCorrection_of_mem x χ
-      (fun hk ↦ two_mem_prime_cutoff_of_two_le hx hk)
+    recipTwoPrimePowerDiff_eq_correction_of_mem x χ (fun hk ↦ two_mem_prime_cutoff_of_two_le hx hk)
 
 /-- In the `χ̃(2)=0` branch, the logarithmic correction is bounded by the
 standard half-square prime-power estimate. -/
-theorem twoAdicLogCorrection_le_half_log_sq_of_apply_two_eq_zero {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hx : x ≠ 0) (h2 : χ.primitiveCharacter 2 = 0) :
+theorem logTwoCorrection_le_half_sq_of_zero {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
+    (hx : x ≠ 0) (h2 : χ.primitiveCharacter 2 = 0) :
     twoAdicLogCorrection x χ ≤ (Real.log x) ^ 2 / 2 := by
   unfold twoAdicLogCorrection
   calc
@@ -452,7 +433,7 @@ theorem twoAdicLogCorrection_le_half_log_sq_of_apply_two_eq_zero {q : ℕ} (x : 
       apply Finset.sum_congr rfl
       intro k hk
       have hkpos : k ≠ 0 := Nat.ne_of_gt (Finset.mem_Icc.mp hk).1
-      rw [characterLogWeightedTerm_primitive_re_prime_pow x χ hx Nat.prime_two hkpos]
+      rw [characterLogTerm_primitive_re_prime_pow x χ hx Nat.prime_two hkpos]
       have h2' : χ.primitiveCharacter (↑(2 : ℕ)) = 0 := by simpa only [Nat.cast_ofNat] using h2
       have h2pow : (χ.primitiveCharacter (↑(2 : ℕ)) ^ k).re = 0 := by
         rw [h2', zero_pow hkpos]
@@ -462,8 +443,8 @@ theorem twoAdicLogCorrection_le_half_log_sq_of_apply_two_eq_zero {q : ℕ} (x : 
     _ ≤ (Real.log x) ^ 2 / 2 := sum_logWeightedMangoldtTerm_prime_pow_le hx Nat.prime_two
 
 /-- In the `χ̃(2)=0` branch, the reciprocal correction is bounded by `log 2`. -/
-theorem twoAdicReciprocalCorrection_le_log_two_of_apply_two_eq_zero {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hx : 0 < x) (h2 : χ.primitiveCharacter 2 = 0) :
+theorem recipTwoCorrection_le_log_two_of_zero {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
+    (hx : 0 < x) (h2 : χ.primitiveCharacter 2 = 0) :
     twoAdicReciprocalCorrection x χ ≤ Real.log 2 := by
   unfold twoAdicReciprocalCorrection
   calc
@@ -471,7 +452,7 @@ theorem twoAdicReciprocalCorrection_le_log_two_of_apply_two_eq_zero {q : ℕ} (x
       apply Finset.sum_le_sum
       intro k hk
       have hkpos : k ≠ 0 := Nat.ne_of_gt (Finset.mem_Icc.mp hk).1
-      rw [characterReciprocalWeightedTerm_primitive_re_prime_pow x χ Nat.prime_two hkpos]
+      rw [characterRecipTerm_primitive_re_prime_pow x χ Nat.prime_two hkpos]
       have h2' : χ.primitiveCharacter (↑(2 : ℕ)) = 0 := by simpa only [Nat.cast_ofNat] using h2
       have h2pow : (χ.primitiveCharacter (↑(2 : ℕ)) ^ k).re = 0 := by
         rw [h2', zero_pow hkpos]
@@ -488,15 +469,14 @@ theorem twoAdicReciprocalCorrection_le_log_two_of_apply_two_eq_zero {q : ℕ} (x
 /-- If `x ≠ 0` and the primitive character has value one at two, its logarithmic
 two-adic correction is at most `(log x)²/2`. The correction is exactly zero and the
 square is nonnegative. This puts the zero-correction branch in the half-square envelope. -/
-theorem twoAdicLogCorrection_le_half_log_sq_of_apply_two_eq_one {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hx : x ≠ 0) (h2 : χ.primitiveCharacter 2 = 1) :
-    twoAdicLogCorrection x χ ≤ (Real.log x) ^ 2 / 2 := by
-  rw [twoAdicLogCorrection_eq_zero_of_apply_two_eq_one x χ hx h2]
+theorem logTwoCorrection_le_half_sq_of_one {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q) (hx : x ≠ 0)
+    (h2 : χ.primitiveCharacter 2 = 1) : twoAdicLogCorrection x χ ≤ (Real.log x) ^ 2 / 2 := by
+  rw [logTwoCorrection_eq_zero_of_one x χ hx h2]
   positivity
 
 /-- In the `χ̃(2)=-1` logarithmic branch, only odd exponents contribute. -/
-theorem twoAdicLogCorrection_eq_odd_sum_of_apply_two_eq_neg_one {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hx : x ≠ 0) (h2 : χ.primitiveCharacter 2 = -1) :
+theorem logTwoCorrection_eq_odd_sum_of_neg_one {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
+    (hx : x ≠ 0) (h2 : χ.primitiveCharacter 2 = -1) :
     twoAdicLogCorrection x χ =
       ∑ k ∈ Finset.Icc 1 ⌊Real.log x / Real.log 2⌋₊,
         if Odd k then 2 * (Real.log 2 * (Real.log x - k * Real.log 2)) else 0 := by
@@ -508,8 +488,8 @@ theorem twoAdicLogCorrection_eq_odd_sum_of_apply_two_eq_neg_one {q : ℕ} (x : �
   split_ifs <;> ring
 
 /-- In the `χ̃(2)=-1` reciprocal branch, only odd exponents contribute. -/
-theorem twoAdicReciprocalCorrection_eq_odd_sum_of_apply_two_eq_neg_one {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (h2 : χ.primitiveCharacter 2 = -1) :
+theorem recipTwoCorrection_eq_odd_sum_of_neg_one {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
+    (h2 : χ.primitiveCharacter 2 = -1) :
     twoAdicReciprocalCorrection x χ =
       ∑ k ∈ Finset.Icc 1 ⌊Real.log x / Real.log 2⌋₊,
         if Odd k then 2 * (Real.log 2 / (2 : ℝ) ^ k * (1 - (2 : ℝ) ^ k / x)) else 0 := by
@@ -523,11 +503,10 @@ theorem twoAdicReciprocalCorrection_eq_odd_sum_of_apply_two_eq_neg_one {q : ℕ}
 /-! The `χ̃(2) = -1` logarithmic branch is controlled by the full weighted tail. -/
 
 /-- The odd logarithmic correction is bounded by the square-log envelope. -/
-theorem twoAdicLogCorrection_le_log_sq_of_apply_two_eq_neg_one {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hx : 2 ≤ x) (h2 : χ.primitiveCharacter 2 = -1) :
-    twoAdicLogCorrection x χ ≤ (Real.log x) ^ 2 := by
-  rw [twoAdicLogCorrection_eq_odd_sum_of_apply_two_eq_neg_one x χ
-      (ne_of_gt (lt_of_lt_of_le (by norm_num only) hx)) h2]
+theorem logTwoCorrection_le_sq_of_neg_one {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q) (hx : 2 ≤ x)
+    (h2 : χ.primitiveCharacter 2 = -1) : twoAdicLogCorrection x χ ≤ (Real.log x) ^ 2 := by
+  rw [logTwoCorrection_eq_odd_sum_of_neg_one x χ (ne_of_gt (lt_of_lt_of_le (by norm_num only) hx))
+      h2]
   let K := ⌊Real.log x / Real.log 2⌋₊
   have hlog2 : 0 < Real.log 2 := Real.log_pos (by norm_num only)
   have hquot_nonneg : 0 ≤ Real.log x / Real.log 2 :=
@@ -552,10 +531,10 @@ theorem twoAdicLogCorrection_le_log_sq_of_apply_two_eq_neg_one {q : ℕ} (x : �
 /-! The reciprocal odd tail has the corresponding explicit `4/3` constant. -/
 
 /-- The odd reciprocal correction is bounded by `(4 / 3) * log 2`. -/
-theorem twoAdicReciprocalCorrection_le_four_thirds_log_two_of_apply_two_eq_neg_one {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hx : 2 ≤ x) (h2 : χ.primitiveCharacter 2 = -1) :
+theorem recipTwoCorrection_le_4_3_log_two_of_neg_one {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
+    (hx : 2 ≤ x) (h2 : χ.primitiveCharacter 2 = -1) :
     twoAdicReciprocalCorrection x χ ≤ (4 / 3) * Real.log 2 := by
-  rw [twoAdicReciprocalCorrection_eq_odd_sum_of_apply_two_eq_neg_one x χ h2]
+  rw [recipTwoCorrection_eq_odd_sum_of_neg_one x χ h2]
   let K := ⌊Real.log x / Real.log 2⌋₊
   have hlog2 : 0 < Real.log 2 := Real.log_pos (by norm_num only)
   have hquot_nonneg : 0 ≤ Real.log x / Real.log 2 :=
@@ -674,7 +653,7 @@ private lemma alternating_linear_sum_le_first {A b : ℝ} (hA : 2 * b ≤ A) (hb
 
 /-- For `x ≥ 4` and `K * log 2 ≤ log x`, the alternating affine sum with first term
 `log 2 * (log x - log 2)` is at most that first term. -/
-theorem alternatingLogCorrection_le_log_two_mul_log_half {x : ℝ} (K : ℕ) (hx : 4 ≤ x)
+theorem alternatingLogCorrection_le_log_two_mul_log {x : ℝ} (K : ℕ) (hx : 4 ≤ x)
     (hK : (K : ℝ) * Real.log 2 ≤ Real.log x) :
     (∑ k ∈ Finset.range K,
         (if Even k then Real.log 2 * (Real.log x - (k + 1) * Real.log 2)
@@ -708,7 +687,7 @@ The same alternating estimate in the native `Icc 1 K` indexing used by the corre
 The shift `k = j + 1` is exposed explicitly so later branch comparisons can consume the exact
 correction without introducing a second cutoff convention.
 -/
-theorem alternatingLogCorrection_Icc_le_log_two_mul_log_half {x : ℝ} (K : ℕ) (hx : 4 ≤ x)
+theorem alternatingLogCorrection_Icc_le_log_two_mul {x : ℝ} (K : ℕ) (hx : 4 ≤ x)
     (hK : (K : ℝ) * Real.log 2 ≤ Real.log x) :
     (∑ k ∈ Finset.Icc 1 K,
         if Odd k then Real.log 2 * (Real.log x - k * Real.log 2)
@@ -742,17 +721,17 @@ theorem alternatingLogCorrection_Icc_le_log_two_mul_log_half {x : ℝ} (K : ℕ)
         have hnodd : ¬Odd (K + 1) := Nat.not_odd_iff_even.mpr heven
         simp only [hnodd, ↓reduceIte, Nat.cast_add, Nat.cast_one, he]
   rw [hshift]
-  exact alternatingLogCorrection_le_log_two_mul_log_half K hx hK
+  exact alternatingLogCorrection_le_log_two_mul_log K hx hK
 
 /--
 For a primitive character with value `-1` at `2` and `x ≥ 4`, the logarithmic
 correction is at most `(log x)²/2 + log 2 * (log x - log 2)`. Split twice the odd-indexed sum
 into the full affine sum and its alternating sum, and bound these two sums separately.
 -/
-theorem twoAdicLogCorrection_le_half_log_sq_add_log_two_mul_log_half_of_apply_two_eq_neg_one {q : ℕ}
-    (x : ℝ) (χ : DirichletCharacter ℂ q) (hx : 4 ≤ x) (h2 : χ.primitiveCharacter 2 = -1) :
+theorem logTwoCorrection_le_half_sq_add_of_neg_one {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
+    (hx : 4 ≤ x) (h2 : χ.primitiveCharacter 2 = -1) :
     twoAdicLogCorrection x χ ≤ (Real.log x) ^ 2 / 2 + Real.log 2 * (Real.log x - Real.log 2) := by
-  rw [twoAdicLogCorrection_eq_odd_sum_of_apply_two_eq_neg_one x χ
+  rw [logTwoCorrection_eq_odd_sum_of_neg_one x χ
       (ne_of_gt (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 4) hx)) h2]
   let K := ⌊Real.log x / Real.log 2⌋₊
   have hlog2 : 0 < Real.log 2 := Real.log_pos (by norm_num only)
@@ -763,7 +742,7 @@ theorem twoAdicLogCorrection_le_half_log_sq_add_log_two_mul_log_half_of_apply_tw
     exact Nat.floor_le hquot_nonneg
   have hK : (K : ℝ) * Real.log 2 ≤ Real.log x := (le_div_iff₀ hlog2).mp hfloor
   have hbase := sum_log_weight_le_half_sq (Real.log 2) (Real.log x) K
-  have halt := alternatingLogCorrection_Icc_le_log_two_mul_log_half K hx hK
+  have halt := alternatingLogCorrection_Icc_le_log_two_mul K hx hK
   have hdecomp :
     (∑ k ∈ Finset.Icc 1 K, if Odd k then 2 * (Real.log 2 * (Real.log x - k * Real.log 2)) else 0) =
       (∑ k ∈ Finset.Icc 1 K, Real.log 2 * (Real.log x - k * Real.log 2)) +

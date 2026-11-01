@@ -47,7 +47,7 @@ theorem abs_re_logDeriv_gammaFactor_le_six {q : ℕ} (χ : DirichletCharacter �
   have hfun : (1 : DirichletCharacter ℂ 1).gammaFactor = Complex.Gammaℝ := by
     funext z
     exact principal_modulus_one_even.gammaFactor_def z
-  rcases logDeriv_gammaFactor_eq_one_or_one_shift χ hp with he | he
+  rcases gammaLogDeriv_eq_one_or_shift χ hp with he | he
   · rw [he, hfun]
     exact abs_re_logDeriv_GammaReal_le_six hσ (by linarith only [hσu])
   · rw [he, hfun]
@@ -57,14 +57,14 @@ theorem abs_re_logDeriv_gammaFactor_le_six {q : ℕ} (χ : DirichletCharacter �
 /-- For real sigma in [1,17/2], the real logarithmic derivative of GammaReal has
 absolute value at most 8/5. The explicit digamma formula reduces it to the real
 Gamma argument sigma/2 in [1/2,17/4]. This supplies the fixed archimedean error. -/
-theorem abs_re_logDeriv_GammaReal_le_eight_fifths {σ : ℝ} (hσ : 1 ≤ σ) (hσu : σ ≤ 17 / 2) :
+theorem GammaReal_logDeriv_re_le_8_5 {σ : ℝ} (hσ : 1 ≤ σ) (hσu : σ ≤ 17 / 2) :
     |(logDeriv Complex.Gammaℝ (σ : ℂ)).re| ≤ 8 / 5 := by
   have hp : 0 < (σ : ℂ).re := lt_of_lt_of_le zero_lt_one hσ
   have hr : ∀ m : ℕ, (σ : ℂ) / 2 ≠ -(m : ℂ) := by
     simpa only [Complex.ofReal_zero, add_zero] using
       half_add_ne_neg_nat_of_re_pos hp (a := 0) le_rfl
   have hb :=
-    Gamma.abs_real_digamma_sub_log_pi_div_two_le_eight_fifths (r := σ / 2) (by linarith only [hσ])
+    Gamma.abs_digamma_sub_log_pi_half_le_8_5 (r := σ / 2) (by linarith only [hσ])
       (by linarith only [hσu])
   rw [logDeriv_Gammaℝ_of_half_ne_neg_nat hr]
   rw [show (σ : ℂ) / 2 = ((σ / 2 : ℝ) : ℂ) from (Complex.ofReal_div σ 2).symm]
@@ -76,17 +76,17 @@ theorem abs_re_logDeriv_GammaReal_le_eight_fifths {σ : ℝ} (hσ : 1 ≤ σ) (h
 derivative has absolute value at most 8/5. Even characters use GammaReal at sigma;
 odd characters use sigma+1. Both lie in the certified interval, independently of the modulus.
 This bound is used in real Poisson estimates for the completed L-function. -/
-theorem abs_re_logDeriv_gammaFactor_le_eight_fifths {q : ℕ} (χ : DirichletCharacter ℂ q) {σ : ℝ}
-    (hσ : 1 ≤ σ) (hσu : σ ≤ 15 / 2) : |(logDeriv χ.gammaFactor (σ : ℂ)).re| ≤ 8 / 5 := by
+theorem gammaLogDeriv_re_le_8_5 {q : ℕ} (χ : DirichletCharacter ℂ q) {σ : ℝ} (hσ : 1 ≤ σ)
+    (hσu : σ ≤ 15 / 2) : |(logDeriv χ.gammaFactor (σ : ℂ)).re| ≤ 8 / 5 := by
   have hp : 0 < (σ : ℂ).re := lt_of_lt_of_le zero_lt_one hσ
   have hfun : (1 : DirichletCharacter ℂ 1).gammaFactor = Complex.Gammaℝ := by
     funext z
     exact principal_modulus_one_even.gammaFactor_def z
-  rcases logDeriv_gammaFactor_eq_one_or_one_shift χ hp with he | he
+  rcases gammaLogDeriv_eq_one_or_shift χ hp with he | he
   · rw [he, hfun]
-    exact abs_re_logDeriv_GammaReal_le_eight_fifths hσ (by linarith only [hσu])
+    exact GammaReal_logDeriv_re_le_8_5 hσ (by linarith only [hσu])
   · rw [he, hfun]
     rw [show (σ : ℂ) + 1 = ((σ + 1 : ℝ) : ℂ) from (Complex.ofReal_add σ 1).symm]
-    exact abs_re_logDeriv_GammaReal_le_eight_fifths (by linarith only [hσ]) (by linarith only [hσu])
+    exact GammaReal_logDeriv_re_le_8_5 (by linarith only [hσ]) (by linarith only [hσu])
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

@@ -34,7 +34,7 @@ theorem exists_prime_reject_of_fullEndpointLimit_neg {N : ℕ} [NeZero N] (hn : 
 endpoint polynomial at L=log N,z=log y gives a rejecting prime at most y^2.
 Use equal squared cutoffs, the exact polynomial identity and the right-limit
 witness theorem. This reduces the analytic bound to one real polynomial sign. -/
-theorem exists_prime_reject_of_fullEndpointPolynomial_pos {N : ℕ} [NeZero N] (hn : 1 < N)
+theorem exists_primeReject_of_fullEndpointPolynomial_pos {N : ℕ} [NeZero N] (hn : 1 < N)
     (ho : Odd N) (hc : ¬N.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     {y : ℝ} (hy : 8 ≤ y)
     (hpoly :

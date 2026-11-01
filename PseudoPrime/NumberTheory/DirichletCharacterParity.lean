@@ -61,7 +61,7 @@ open Classical in
 /-- The sum of character values at minus one is the even count minus the odd count.
 Each summand is one or minus one according to parity; split the sum over that predicate.
 Orthogonality can then identify the two counts without enumerating characters. -/
-theorem sum_dirichletCharacters_neg_one_eq_card_even_sub_card_odd (q : ℕ) :
+theorem sum_characters_neg_one_eq_even_sub_odd (q : ℕ) :
     (∑ χ : DirichletCharacter ℂ q, χ (-1)) =
       ((Finset.univ.filter (fun χ : DirichletCharacter ℂ q ↦ χ.Even)).card : ℂ) -
         ((Finset.univ.filter (fun χ : DirichletCharacter ℂ q ↦ χ.Odd)).card : ℂ) := by
@@ -103,7 +103,7 @@ theorem card_even_dirichletCharacters_eq_card_odd {q : ℕ} [NeZero q] (hq : 2 <
       (Finset.univ.filter (fun χ : DirichletCharacter ℂ q ↦ χ.Odd)).card := by
   let : Fact (2 < q) := ⟨hq⟩
   have hz := DirichletCharacter.sum_characters_eq_zero ℂ (ZMod.neg_one_ne_one (n := q))
-  rw [sum_dirichletCharacters_neg_one_eq_card_even_sub_card_odd q] at hz
+  rw [sum_characters_neg_one_eq_even_sub_odd q] at hz
   have hr := congrArg Complex.re hz
   simp only [Complex.sub_re, Complex.natCast_re, Complex.zero_re] at hr
   exact_mod_cast sub_eq_zero.mp hr
@@ -160,7 +160,7 @@ complex characters sum with coefficients `totient/2 - 1` and `totient/2`.
 Compare each term with its parity bound and remove the even principal character
 from the full-character averaging formula. No sign assumptions on the bounds are needed.
 This keeps the parity savings instead of using a common worst-case bound. -/
-theorem sum_nonprincipal_dirichletCharacters_le_parity_average {q : ℕ} [NeZero q] (hq : 2 < q)
+theorem sum_nonprincipal_le_parity_average {q : ℕ} [NeZero q] (hq : 2 < q)
     (f : DirichletCharacter ℂ q → ℝ) {E O : ℝ} (hE : ∀ χ, χ ≠ 1 → χ.Even → f χ ≤ E)
     (hO : ∀ χ, χ ≠ 1 → χ.Odd → f χ ≤ O) :
     (∑ χ ∈ Finset.univ.erase 1, f χ) ≤ ((q.totient : ℝ) / 2 - 1) * E + (q.totient : ℝ) / 2 * O := by

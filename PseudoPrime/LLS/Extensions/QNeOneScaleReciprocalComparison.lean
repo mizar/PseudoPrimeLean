@@ -25,7 +25,7 @@ noncomputable def qNeOneScaleReciprocalLoss (y : ℝ) : ℝ :=
 This compares the variable condition with the published fixed-loss condition. -/
 theorem qNeOneScaleReciprocalLoss_le {y : ℝ} (hy : (8 : ℝ) ≤ y) :
     qNeOneScaleReciprocalLoss y ≤ 1483 / 1000 := by
-  have h := primitiveReciprocalEvenMainError_le_neg_179_div_200 (Analysis.sq_ge_64_of_ge_8 hy)
+  have h := reciprocalEvenError_le_neg_179_200 (Analysis.sq_ge_64_of_ge_8 hy)
   unfold qNeOneScaleReciprocalLoss
   linarith only [h]
 
@@ -53,9 +53,8 @@ theorem qNeOneReciprocalUpper_mono_loss {y f r s d : ℝ} (hy : (8 : ℝ) ≤ y)
 the scale-dependent separation rules out odd-prime triviality. Apply the
 generic transfer with the actual even error and the Riemann loss 789/500.
 This retains the error dependence needed for subsequent cutoff improvements. -/
-theorem not_oddPrimeTrivial_of_scale_reciprocal_separation {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hne : χ ≠ 1)
-    (heven : χ.primitiveCharacter.Even)
+theorem not_oddPrimeTrivial_scaleReciprocal_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    [NeZero χ.conductor] (hne : χ ≠ 1) (heven : χ.primitiveCharacter.Even)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y L : ℝ} (hy : (8 : ℝ) ≤ y)
     (hlog4 : Real.log χ.conductor ≤ L + Real.log 4)
     (hlogOdd : χ.primitiveCharacter 2 ≠ 0 → Real.log χ.conductor ≤ L)
@@ -66,10 +65,9 @@ theorem not_oddPrimeTrivial_of_scale_reciprocal_separation {q : ℕ} [NeZero q]
         qNeOneReciprocalLower y) :
     ¬OddPrimeTrivial χ (y ^ 2) := by
   exact
-    not_oddPrimeTrivial_of_reciprocal_loss_and_mainError χ hne heven hGRH hy (le_refl _) hlog4
-      hlogOdd hcases
-      (AnalyticNumberTheory.RiemannZeta.reciprocalWeightedMangoldtSum_ge_log_sub_789_div_500
-        hGRH.riemann (le_trans (by norm_num only) (Analysis.sq_ge_64_of_ge_8 hy)))
+    not_oddPrimeTrivial_reciprocal_errors_GRH χ hne heven hGRH hy (le_refl _) hlog4 hlogOdd hcases
+      (AnalyticNumberTheory.RiemannZeta.reciprocalMangoldt_ge_log_sub_789_500 hGRH.riemann
+        (le_trans (by norm_num only) (Analysis.sq_ge_64_of_ge_8 hy)))
       hsep
 
 /-- Above root eight, the scale-dependent upper envelope is no larger than

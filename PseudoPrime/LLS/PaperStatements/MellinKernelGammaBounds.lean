@@ -39,8 +39,7 @@ theorem exists_norm_central_gammaIntegral_le (K : MellinKernel) :
                       (K.function (Complex.I * t) * (x : ℂ) ^ (Complex.I * t)))‖ ≤
               C := by
   obtain ⟨A, hA, hbA⟩ :=
-    exists_uniform_norm_logDeriv_gammaFactor_vertical_le_log (σ := 1 / 2) (by norm_num only)
-      (by norm_num only)
+    uniform_gammaLogDeriv_vertical (σ := 1 / 2) (by norm_num only) (by norm_num only)
   obtain ⟨B, hB, hbB⟩ := exists_vertical_decay_bound K
   let H := fun t : ℝ => (Real.log (4 + |t|) + 1) / (1 + t ^ 2)
   let D := (A * B) * (∫ t : ℝ, H t)
@@ -173,8 +172,7 @@ theorem gammaIntegral_eq_central (K : MellinKernel) {N : ℕ} (χ : DirichletCha
   have htop := tendsto_gamma_horizontalIntegral K χ hb hbK hb2 hx 1 (Or.inl rfl)
   have hbot := tendsto_gamma_horizontalIntegral K χ hb hbK hb2 hx (-1) (Or.inr rfl)
   have ht :=
-    AnalyticNumberTheory.RectangleGeometry.tendsto_rectangleBoundaryIntegral_of_horizontal_limits
-      (K := F) (a := 0) (b := b) T
+    AnalyticNumberTheory.RectangleGeometry.tendsto_boundaryIntegral (K := F) (a := 0) (b := b) T
       (Filter.tendsto_atTop_add_const_right _ 1 tendsto_natCast_atTop_atTop)
       (by
         simpa only [F, T, neg_one_mul, Complex.ofReal_neg, neg_mul, sub_eq_add_neg, one_mul] using
@@ -185,8 +183,7 @@ theorem gammaIntegral_eq_central (K : MellinKernel) {N : ℕ} (χ : DirichletCha
     AnalyticNumberTheory.RectangleGeometry.rectangleBoundaryIntegral F ((0 : ℂ) - T n * Complex.I)
         ((b : ℂ) + T n * Complex.I) =
       0 := by
-    apply
-      AnalyticNumberTheory.RectangleGeometry.rectangleBoundaryIntegral_eq_zero_of_differentiableOn
+    apply AnalyticNumberTheory.RectangleGeometry.boundaryIntegral_zero_of_holomorphic
     intro s hs
     have hsr : 0 ≤ s.re ∧ s.re ≤ b := by
       have hs' := hs.1

@@ -72,7 +72,7 @@ theorem integrable_gamma_mellin_of_nonArithmetic (q : ℂ) (k : ℤ) (G : ℂ �
 reflected non-arithmetic integrand implies integrability of the reflected gamma
 integrand. Subtract the conjugated conductor and the invariant endpoint kernel.
 This provides the dual integral needed after endpoint removal. -/
-theorem integrable_reflected_gamma_mellin_of_nonArithmetic (q : ℂ) (k : ℤ) (G : ℂ → ℂ) (g : ℝ → ℂ)
+theorem integrable_reflected_gamma_mellin (q : ℂ) (k : ℤ) (G : ℂ → ℂ) (g : ℝ → ℂ)
     (he : ∀ u : ℝ, g (-u) = g u) (hc : HasCompactSupport g) (hg : ContDiff ℝ (↑(⊤ : ℕ∞)) g) (σ : ℝ)
     (hs : 1 < σ)
     (hd :
@@ -99,7 +99,7 @@ theorem integrable_reflected_gamma_mellin_of_nonArithmetic (q : ℂ) (k : ℤ) (
 integrand, the conductor-free completion integral splits into endpoint and gamma
 integrals. The endpoint integrability theorem permits integral linearity; the
 pointwise completion identity identifies the integrands. -/
-theorem integral_completion_remainder_eq_endpoint_add_gamma (q : ℂ) (k : ℤ) (G : ℂ → ℂ) (g : ℝ → ℂ)
+theorem completionRemainder_integral_endpoints_gamma (q : ℂ) (k : ℤ) (G : ℂ → ℂ) (g : ℝ → ℂ)
     (he : ∀ u : ℝ, g (-u) = g u) (hc : HasCompactSupport g) (hg : ContDiff ℝ (↑(⊤ : ℕ∞)) g) (σ : ℝ)
     (hs : 1 < σ)
     (hiG :
@@ -128,9 +128,9 @@ theorem integral_completion_remainder_eq_endpoint_add_gamma (q : ℂ) (k : ℤ) 
 gamma integrand, the reflected conductor-free completion integral splits into the
 original endpoint integral and the reflected gamma integral. Use conjugation of the
 endpoint kernel and integral linearity. This evaluates the dual remainder. -/
-theorem integral_reflected_completion_remainder_eq_endpoint_add_gamma (q : ℂ) (k : ℤ) (G : ℂ → ℂ)
-    (g : ℝ → ℂ) (he : ∀ u : ℝ, g (-u) = g u) (hc : HasCompactSupport g)
-    (hg : ContDiff ℝ (↑(⊤ : ℕ∞)) g) (σ : ℝ) (hs : 1 < σ)
+theorem reflectedRemainder_integral_endpoints_gamma (q : ℂ) (k : ℤ) (G : ℂ → ℂ) (g : ℝ → ℂ)
+    (he : ∀ u : ℝ, g (-u) = g u) (hc : HasCompactSupport g) (hg : ContDiff ℝ (↑(⊤ : ℕ∞)) g) (σ : ℝ)
+    (hs : 1 < σ)
     (hiG :
       MeasureTheory.Integrable
         (fun T : ℝ ↦
@@ -160,9 +160,9 @@ and reflected non-arithmetic integrands, the conductor-free pair equals
 2*k*Mellin(phi)(1) plus the paired gamma integrals. Derive gamma integrability,
 split both remainders, and evaluate the endpoint kernel. This removes all rational
 endpoint integrals before shifting the gamma contour. -/
-theorem normalized_paired_completion_remainder_eq_endpoints_add_gamma (q : ℂ) (k : ℤ) (G : ℂ → ℂ)
-    (g : ℝ → ℂ) (he : ∀ u : ℝ, g (-u) = g u) (hc : HasCompactSupport g)
-    (hg : ContDiff ℝ (↑(⊤ : ℕ∞)) g) (σ : ℝ) (hs : 1 < σ)
+theorem pairedCompletion_eq_endpoints_gamma (q : ℂ) (k : ℤ) (G : ℂ → ℂ) (g : ℝ → ℂ)
+    (he : ∀ u : ℝ, g (-u) = g u) (hc : HasCompactSupport g) (hg : ContDiff ℝ (↑(⊤ : ℕ∞)) g) (σ : ℝ)
+    (hs : 1 < σ)
     (hi :
       MeasureTheory.Integrable
         (fun T : ℝ ↦
@@ -191,10 +191,10 @@ theorem normalized_paired_completion_remainder_eq_endpoints_add_gamma (q : ℂ) 
             (∫ T : ℝ,
               star (logDeriv G ((σ : ℂ) + (-T) * Complex.I)) *
                 mellin (logarithmicTestWeight g) ((σ : ℂ) + T * Complex.I))) := by
-  rw [integral_completion_remainder_eq_endpoint_add_gamma q k G g he hc hg σ hs
+  rw [completionRemainder_integral_endpoints_gamma q k G g he hc hg σ hs
       (integrable_gamma_mellin_of_nonArithmetic q k G g he hc hg σ hs hi),
-    integral_reflected_completion_remainder_eq_endpoint_add_gamma q k G g he hc hg σ hs
-      (integrable_reflected_gamma_mellin_of_nonArithmetic q k G g he hc hg σ hs hd)]
+    reflectedRemainder_integral_endpoints_gamma q k G g he hc hg σ hs
+      (integrable_reflected_gamma_mellin q k G g he hc hg σ hs hd)]
   simp only [smul_add]
   rw [normalized_integral_regularization_endpoint k g he hc hg σ hs]
   simp only [Complex.real_smul]
@@ -207,8 +207,8 @@ compact test gives a completed zero sum plus arithmetic sum equal to log(q)*g(0)
 non-arithmetic integrability and apply the conductor and endpoint evaluations.
 The gamma contour shift and the ordinary L-function zero ledger are still needed
 to obtain the source's Mellin explicit formula. -/
-theorem mellin_zero_sum_add_arithmetic_eq_conductor_endpoints_gamma {F L : ℂ → ℂ} {ε : ℂ} {q d : ℕ}
-    (hq : 1 ≤ q) (k : ℤ) (κ : Fin d → ℂ) (hκ : ∀ j, -1 < (κ j).re)
+theorem mellin_explicit_formula_right {F L : ℂ → ℂ} {ε : ℂ} {q d : ℕ} (hq : 1 ≤ q) (k : ℤ)
+    (κ : Fin d → ℂ) (hκ : ∀ j, -1 < (κ j).re)
     (hreg :
       ∀ z,
         z ≠ 0 →
@@ -240,10 +240,10 @@ theorem mellin_zero_sum_add_arithmetic_eq_conductor_endpoints_gamma {F L : ℂ �
   obtain ⟨hi, hd⟩ :=
     integrable_paired_nonArithmetic_of_completion hq k κ hκ hreg hε hfe hright hF h0 horder ha hL
       hdL hlog g he hc hg hs2 hlog2
-  rw [mellin_zero_sum_add_arithmetic_eq_conductor_add_remainder hq k κ hκ hreg hε hfe hright hF h0
-      horder ha hL hdL hlog g he hc hg ha0 hs2 hlog2,
-    normalized_paired_completion_remainder_eq_endpoints_add_gamma q k (archimedeanGammaFactor κ) g
-      he hc hg 2 (by norm_num only) hi hd,
+  rw [mellin_explicit_formula_conductor_remainder hq k κ hκ hreg hε hfe hright hF h0 horder ha hL
+      hdL hlog g he hc hg ha0 hs2 hlog2,
+    pairedCompletion_eq_endpoints_gamma q k (archimedeanGammaFactor κ) g he hc hg 2
+      (by norm_num only) hi hd,
     add_assoc]
 
 end PseudoPrime.AnalyticNumberTheory.General

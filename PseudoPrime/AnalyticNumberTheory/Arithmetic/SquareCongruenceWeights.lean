@@ -265,9 +265,9 @@ Mangoldt-weighted square roots in a half period by `r/2` times the nonnegative
 left-endpoint weight. All indices must be positive, at least the endpoint, and
 have square at most the cutoff. Apply the decreasing pointwise weight bound.
 This retains the decay in successive half-period blocks. -/
-theorem square_congruence_half_period_weighted_sum_le_of_lower_bound {q r : ℕ} [NeZero q]
-    (hq : 2 < q) (a : (ZMod q)ˣ) (hroot : Nat.card { x : ZMod q // x ^ 2 = (a : ZMod q) } ≤ r)
-    (s : Finset ℕ) (k : ℕ) (lower : Bool)
+theorem sq_congruence_half_sum_le_of_lower_bound {q r : ℕ} [NeZero q] (hq : 2 < q) (a : (ZMod q)ˣ)
+    (hroot : Nat.card { x : ZMod q // x ^ 2 = (a : ZMod q) } ≤ r) (s : Finset ℕ) (k : ℕ)
+    (lower : Bool)
     (hperiod :
       ∀ n ∈ s,
         n / q = k ∧
@@ -288,9 +288,9 @@ theorem square_congruence_half_period_weighted_sum_le_of_lower_bound {q r : ℕ}
 square-root cutoff by `r/2 * log² X/8`, given a residue-root bound `r`.
 Combine the global quadratic weight maximum with the half-period root count.
 This supplies the initial block before the decreasing-weight estimates apply. -/
-theorem square_congruence_half_period_weighted_sum_le {q r : ℕ} [NeZero q] (hq : 2 < q)
-    (a : (ZMod q)ˣ) (hroot : Nat.card { x : ZMod q // x ^ 2 = (a : ZMod q) } ≤ r) (s : Finset ℕ)
-    (k : ℕ) (lower : Bool)
+theorem sq_congruence_half_sum_le {q r : ℕ} [NeZero q] (hq : 2 < q) (a : (ZMod q)ˣ)
+    (hroot : Nat.card { x : ZMod q // x ^ 2 = (a : ZMod q) } ≤ r) (s : Finset ℕ) (k : ℕ)
+    (lower : Bool)
     (hperiod :
       ∀ n ∈ s,
         n / q = k ∧
@@ -355,10 +355,10 @@ using one nonnegative majorant per half period. Every index must lie in a half p
 at most `J`, and its weight must be bounded by that period's supplied majorant.
 Partition by `floor(2*n/q)`, apply the `r/2` root count in each block, and sum.
 This is the finite-sum interface for the refined small-modulus square contribution. -/
-theorem square_congruence_sum_le_half_period_majorants {q r : ℕ} [NeZero q] (hq : 2 < q)
-    (a : (ZMod q)ˣ) (hroot : Nat.card { x : ZMod q // x ^ 2 = (a : ZMod q) } ≤ r) (s : Finset ℕ)
-    (J : ℕ) (hJ : ∀ n ∈ s, (2 * n) / q ≤ J) (hsquare : ∀ n ∈ s, (n : ZMod q) ^ 2 = (a : ZMod q))
-    (F : ℕ → ℝ) (W : ℕ → ℝ) (hW : ∀ j ≤ J, 0 ≤ W j) (hF : ∀ n ∈ s, F n ≤ W ((2 * n) / q)) :
+theorem sq_congruence_sum_le_half_majorants {q r : ℕ} [NeZero q] (hq : 2 < q) (a : (ZMod q)ˣ)
+    (hroot : Nat.card { x : ZMod q // x ^ 2 = (a : ZMod q) } ≤ r) (s : Finset ℕ) (J : ℕ)
+    (hJ : ∀ n ∈ s, (2 * n) / q ≤ J) (hsquare : ∀ n ∈ s, (n : ZMod q) ^ 2 = (a : ZMod q)) (F : ℕ → ℝ)
+    (W : ℕ → ℝ) (hW : ∀ j ≤ J, 0 ≤ W j) (hF : ∀ n ∈ s, F n ≤ W ((2 * n) / q)) :
     (∑ n ∈ s, F n) ≤ (r : ℝ) / 2 * ∑ j ∈ Finset.range (J + 1), W j := by
   have hsum :=
     Finset.sum_fiberwise_of_maps_to (fun n hn ↦ Finset.mem_range.mpr (Nat.lt_succ_of_le (hJ n hn)))
@@ -389,10 +389,10 @@ All indices are positive, have square at most `X`, and have half-period index at
 `J`; assume the first positive endpoint `q/2` is beyond the weight maximum.
 Use the global maximum in period zero and the decreasing weight at `j*q/2` thereafter.
 This gives the finite analytic square estimate used in the refined residue certificates. -/
-theorem square_congruence_weighted_sum_le_half_periods {q r : ℕ} [NeZero q] (hq : 2 < q)
-    (a : (ZMod q)ˣ) (hroot : Nat.card { x : ZMod q // x ^ 2 = (a : ZMod q) } ≤ r) (s : Finset ℕ)
-    (J : ℕ) (hJ : ∀ n ∈ s, (2 * n) / q ≤ J) (hsquare : ∀ n ∈ s, (n : ZMod q) ^ 2 = (a : ZMod q))
-    {X : ℝ} (hX : 0 < X) (hn : ∀ n ∈ s, 0 < n) (hnX : ∀ n ∈ s, (n : ℝ) ^ 2 ≤ X)
+theorem sq_congruence_weighted_sum_le_half_periods {q r : ℕ} [NeZero q] (hq : 2 < q) (a : (ZMod q)ˣ)
+    (hroot : Nat.card { x : ZMod q // x ^ 2 = (a : ZMod q) } ≤ r) (s : Finset ℕ) (J : ℕ)
+    (hJ : ∀ n ∈ s, (2 * n) / q ≤ J) (hsquare : ∀ n ∈ s, (n : ZMod q) ^ 2 = (a : ZMod q)) {X : ℝ}
+    (hX : 0 < X) (hn : ∀ n ∈ s, 0 < n) (hnX : ∀ n ∈ s, (n : ℝ) ^ 2 ≤ X)
     (hbase : Real.log X ≤ 4 * Real.log ((q : ℝ) / 2)) :
     (∑ n ∈ s, ArithmeticFunction.vonMangoldt n * Real.log (X / (n : ℝ) ^ 2)) ≤
       (r : ℝ) / 2 *
@@ -401,7 +401,7 @@ theorem square_congruence_weighted_sum_le_half_periods {q r : ℕ} [NeZero q] (h
           else
             max 0 (Real.log ((j : ℝ) * q / 2) * (Real.log X - 2 * Real.log ((j : ℝ) * q / 2))) := by
   apply
-    square_congruence_sum_le_half_period_majorants hq a hroot s J hJ hsquare
+    sq_congruence_sum_le_half_majorants hq a hroot s J hJ hsquare
       (fun n ↦ ArithmeticFunction.vonMangoldt n * Real.log (X / (n : ℝ) ^ 2))
   · intro j _
     by_cases hj : j = 0
@@ -448,7 +448,7 @@ theorem square_residue_sum_le_half_periods {q r : ℕ} [NeZero q] (hq : 2 < q) (
           else
             max 0 (Real.log ((j : ℝ) * q / 2) * (Real.log X - 2 * Real.log ((j : ℝ) * q / 2))) := by
   rw [square_residue_sum_eq_root_sum (a : ZMod q) hX]
-  apply square_congruence_weighted_sum_le_half_periods hq a hroot _ J
+  apply sq_congruence_weighted_sum_le_half_periods hq a hroot _ J
   · intro n hn
     exact
       (Nat.div_le_div_right

@@ -85,9 +85,8 @@ theorem refinedCorrectionTerm_le_elementary {n : ℕ} (hn : Odd n) (hn750 : 750 
 witness within the refined elementary radius. Apply the refined LLS character theorem at 4n,
 convert the character value to a negative Jacobi witness, and bound the correction.
 This supplies the large-input branch without dropping the modulus or odd-prime conditions. -/
-theorem primeNegOneWitness_le_refinedElementaryRadius_of_large {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hn750 : 750 ≤ n)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem negOneWitness_le_refinedElementary_large_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hn750 : 750 ≤ n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ refinedElementaryRadius n := by
   let _ : NeZero (4 * n) := ⟨Nat.mul_ne_zero (by norm_num only) (Odd.pos hn).ne'⟩
@@ -95,7 +94,7 @@ theorem primeNegOneWitness_le_refinedElementaryRadius_of_large {n : ℕ} (hn : O
   obtain ⟨p, hp, hd, hv, hb⟩ :=
     LLS.exists_prime_character_ne_one_le_refinedRadius (NumberTheory.complexQuadraticCharacter n hn)
       hq (NumberTheory.complexQuadraticCharacter_ne_one_of_not_square n hn hns) hGRH
-  have hm := NumberTheory.primeNegOneWitness_mem_of_complexQuadraticCharacter_ne_one n hn hp hd hv
+  have hm := NumberTheory.negOneWitness_mem_of_quadratic_ne_one n hn hp hd hv
   have hleast : (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ p :=
     Nat.cast_le.mpr (NumberTheory.primeNegOneWitness_le n hw hm)
   have hc := refinedCorrectionTerm_le_elementary hn hn750
@@ -120,7 +119,7 @@ theorem primeNegOneWitness_le_refinedElementaryRadius {n : ℕ} (hn3 : 3 ≤ n) 
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ refinedElementaryRadius n := by
   by_cases hn750 : 750 ≤ n
-  · exact primeNegOneWitness_le_refinedElementaryRadius_of_large hn hns hn750 hGRH hw
+  · exact negOneWitness_le_refinedElementary_large_GRH hn hns hn750 hGRH hw
   · have hs : (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ 31 :=
       Nat.cast_le.mpr (smallNegOneWitnessBound n hn hns (Nat.lt_of_not_ge hn750))
     have hb := refinedElementaryRoot_gt hn3
@@ -176,7 +175,7 @@ theorem refined_elementary_formula_explicit {B : ℕ} (hB : 3 ≤ B)
 at most (log(4n)+(24/5)log(log(4n))+2)².
 Take the least negative witness and use the full pointwise refined envelope.
 This is the explicit prime-existence form of the improved global quadratic bound. -/
-theorem exists_prime_neg_one_witness_le_refined_elementary
+theorem exists_negOneWitness_le_refined_elementary
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn3 : 3 ≤ n)
     (hn : Odd n) (hns : ¬IsSquare n) :
     ∃ p : ℕ,

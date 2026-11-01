@@ -108,8 +108,8 @@ theorem prime_log_deficit_six_prime_bound {p : ℕ} (hp : p.Prime) :
 generic finite-deficit theorem to the six primes below sixteen. No hypothesis on the size of
 the logarithm, squarefreeness, parity or RH is needed. This removes the coarse cutoff cost
 sixteen from small-scale local budgets. -/
-theorem primeFactors_card_le_five_halves_add_three_eighths_log {q A : ℕ} (hq : 0 < q)
-    (hqA : q ≤ A) : (q.primeFactors.card : ℝ) ≤ 5 / 2 + (3 / 8 : ℝ) * Real.log A := by
+theorem primeFactors_card_le_5_2_add_3_8_log {q A : ℕ} (hq : 0 < q) (hqA : q ≤ A) :
+    (q.primeFactors.card : ℝ) ≤ 5 / 2 + (3 / 8 : ℝ) * Real.log A := by
   have h :=
     primeFactors_card_le_log_deficit hq hqA (by norm_num only : (0 : ℝ) ≤ 3 / 8)
       ({2,3,5,7,11,13} : Finset ℕ) (fun p ↦ 1 - (3 / 8 : ℝ) * Real.log p)
@@ -121,15 +121,15 @@ most log A divided by two. Absorb the retained deficit five halves into the loga
 supplies the half-logarithm budget at smaller analytic scales. -/
 theorem primeFactors_card_le_half_log_of_twenty {q A : ℕ} (hq : 0 < q) (hqA : q ≤ A)
     (hL : 20 ≤ Real.log A) : (q.primeFactors.card : ℝ) ≤ Real.log A / 2 := by
-  have h := primeFactors_card_le_five_halves_add_three_eighths_log hq hqA
+  have h := primeFactors_card_le_5_2_add_3_8_log hq hqA
   linarith only [h, hL]
 
 /-- For positive q at most A with log A at least one hundred, its distinct prime count is at
 most two fifths of log A. Absorb the finite deficit in the generic affine estimate. This is the
 factor-count input for smaller-scale negative-witness comparisons. -/
-theorem primeFactors_card_le_two_fifths_log_of_hundred {q A : ℕ} (hq : 0 < q) (hqA : q ≤ A)
+theorem primeFactors_card_le_2_5_log_of_log_ge_100 {q A : ℕ} (hq : 0 < q) (hqA : q ≤ A)
     (hL : 100 ≤ Real.log A) : (q.primeFactors.card : ℝ) ≤ (2 / 5 : ℝ) * Real.log A := by
-  have h := primeFactors_card_le_five_halves_add_three_eighths_log hq hqA
+  have h := primeFactors_card_le_5_2_add_3_8_log hq hqA
   linarith only [h, hL]
 
 end PseudoPrime.AnalyticNumberTheory.Arithmetic

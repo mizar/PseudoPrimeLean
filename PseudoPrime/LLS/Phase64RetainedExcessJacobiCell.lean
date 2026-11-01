@@ -61,7 +61,7 @@ theorem phase64_retained_fixed_budget_lt_margin {n q : ℕ} (hn : 0 < n)
 odd-prime Jacobi witness at most 4093. Contradict the no-witness local comparison
 using the retained numerical saving and the existing fixed-scale lower bound.
 Role: widen the bounded input cell without recomputing endpoint sums. -/
-theorem exists_odd_prime_negative_phase64_retained_fixed_cap
+theorem exists_oddPrime_negJacobi_4093_retained_GRH
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : Odd n)
     (hns : ¬IsSquare n) (hlo : (10 : ℝ) ≤ Real.log n) (hhi : Real.log n ≤ 1609 / 25) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ p ≤ 4093 ∧ jacobiSym n p = -1 := by
@@ -104,7 +104,7 @@ theorem exists_odd_prime_negative_phase64_retained_cell
     (hns : ¬IsSquare n) (hlo : (63977 / 1000 : ℝ) ≤ Real.log n) (hhi : Real.log n ≤ 1609 / 25) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) < (Real.log n) ^ 2 ∧ jacobiSym n p = -1 := by
   obtain ⟨p, hp, ho, hb, hv⟩ :=
-    exists_odd_prime_negative_phase64_retained_fixed_cap hGRH hn hns
+    exists_oddPrime_negJacobi_4093_retained_GRH hGRH hn hns
       ((by norm_num only : (10 : ℝ) ≤ 63977 / 1000).trans hlo) hhi
   have hs : (4093 : ℝ) < (Real.log n) ^ 2 := by nlinarith only [hlo]
   exact ⟨p, hp, ho, (Nat.cast_le.mpr hb).trans_lt hs, hv⟩

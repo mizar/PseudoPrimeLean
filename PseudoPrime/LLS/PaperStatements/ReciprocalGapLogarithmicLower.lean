@@ -98,8 +98,8 @@ through x, the real gap sum has the displayed analytic lower bound. Apply the
 logarithmic comparison on the full N-coprime support and the existing RH main term.
 Keep both the common-factor logarithmic loss and additional gap nonunit loss exact.
 No enumerated principal support or per-modulus certificate is required. -/
-theorem reciprocalGapCharacterSum_re_ge_logarithmic_analytic {q N : ℕ} (hqN : q ∣ N)
-    (χ : DirichletCharacter ℂ q) {h x : ℝ} (hh : 0 < h) (hx : 1 < x) (hRH : RiemannHypothesis)
+theorem reciprocalGap_log_lower_RH {q N : ℕ} (hqN : q ∣ N) (χ : DirichletCharacter ℂ q) {h x : ℝ}
+    (hh : 0 < h) (hx : 1 < x) (hRH : RiemannHypothesis)
     (ht : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ x → Nat.Coprime p N → χ p = 1) :
     (x - Real.sqrt x / 20 - (1839 / 1000 : ℝ) * Real.log x - 21 / 20 -
             commonFactorLogWeightedSum x N) /

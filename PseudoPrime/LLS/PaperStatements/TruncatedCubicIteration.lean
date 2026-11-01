@@ -66,7 +66,7 @@ theorem exists_prime_outside_le_truncatedCubicIterate {f M : ℕ} [NeZero f]
     (hne : χ ≠ 1) {G : ℝ} (hlog : Real.log f ≤ G) (k : ℕ) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ truncatedCubicIterate χ M G k ∧ ¬p ∣ M ∧ χ p ≠ 1 := by
   exact
-    exists_prime_outside_le_of_truncated_cubic_radius χ hf hM hGRH hp hne hlog le_rfl
+    exists_prime_outside_le_of_cubic_radius_GRH χ hf hM hGRH hp hne hlog le_rfl
       (truncatedCubicIterate_step_le χ M ((Real.log_natCast_nonneg f).trans hlog) k)
 
 /-- An antitone sequence in a linear order with values in a fixed finite set

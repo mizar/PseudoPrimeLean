@@ -130,7 +130,7 @@ common small ball, its derivative of order n+1 is (-1)^ (n+1) (n+1)! times the i
 series of degree n+2. Assume separated poles and summable inverse-square multiplicity mass.
 Induct using local equality of derivatives and termwise differentiation of the higher series.
 This identifies all nonconstant moments in completed logarithmic-derivative expansions. -/
-theorem iteratedDeriv_eq_inversePowerSeries_of_hasDerivAt {ι : Type*} (α : ι → ℂ) (m : ι → ℕ)
+theorem iteratedDeriv_eq_inversePowerSeries {ι : Type*} (α : ι → ℂ) (m : ι → ℕ)
     (hα : ∀ i, (1 / 2 : ℝ) ≤ ‖α i‖) (hm : Summable (fun i => (m i : ℝ) / ‖α i‖ ^ 2)) (f : ℂ → ℂ)
     (hf : ∀ z ∈ Metric.ball 0 (1 / 4), HasDerivAt f (∑' i, -(m i : ℂ) / (z - α i) ^ 2) z) (n : ℕ)
     {z : ℂ} (hz : z ∈ Metric.ball 0 (1 / 4)) :

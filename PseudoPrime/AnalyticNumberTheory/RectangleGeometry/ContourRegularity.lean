@@ -21,8 +21,8 @@ do not mention Dirichlet `L`-functions, Mellin kernels, or the fixed points `0` 
 namespace PseudoPrime.AnalyticNumberTheory.RectangleGeometry
 
 /-- A horizontal segment is outside a set when its imaginary coordinate is avoided by that set. -/
-theorem horizontal_segment_subset_compl_of_im_avoid {S : Set ℂ} {c a b : ℝ}
-    (havoid : ∀ s ∈ S, s.im ≠ c) : ∀ t ∈ Set.uIcc a b, t + c * Complex.I ∉ S := by
+theorem horizontal_avoids_of_im_ne {S : Set ℂ} {c a b : ℝ} (havoid : ∀ s ∈ S, s.im ≠ c) :
+    ∀ t ∈ Set.uIcc a b, t + c * Complex.I ∉ S := by
   intro t ht hs
   exact
     havoid _ hs
@@ -31,8 +31,8 @@ theorem horizontal_segment_subset_compl_of_im_avoid {S : Set ℂ} {c a b : ℝ}
           Complex.I_re, mul_zero, Complex.I_im, mul_one, add_zero, zero_add])
 
 /-- A vertical segment is outside a set when its real coordinate is avoided by that set. -/
-theorem vertical_segment_subset_compl_of_re_avoid {S : Set ℂ} {c a b : ℝ}
-    (havoid : ∀ s ∈ S, s.re ≠ c) : ∀ t ∈ Set.uIcc a b, c + t * Complex.I ∉ S := by
+theorem vertical_avoids_of_re_ne {S : Set ℂ} {c a b : ℝ} (havoid : ∀ s ∈ S, s.re ≠ c) :
+    ∀ t ∈ Set.uIcc a b, c + t * Complex.I ∉ S := by
   intro t ht hs
   exact
     havoid _ hs

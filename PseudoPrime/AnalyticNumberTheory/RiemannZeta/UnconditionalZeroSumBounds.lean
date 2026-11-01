@@ -107,13 +107,10 @@ theorem sum_nontrivial_inverse_square_le (S : Finset ℂ) (hz : ∀ ρ ∈ S, ri
     (∑ ρ ∈ S, (riemannZetaZeroMultiplicity ρ : ℝ) / Complex.normSq ρ) ≤
       ∑' ρ : ℂ, RiemannXi.inversePowerZeroWeight 2 ρ := by
   have hxi : ∀ ρ ∈ S, RiemannXi.riemannXi ρ = 0 := fun ρ hρ ↦
-    RiemannXi.riemannXi_eq_zero_of_riemannZeta_zero_re_nonneg (hz ρ hρ) (hre ρ hρ)
+    RiemannXi.xi_zero_of_zeta_zero_of_re_nonneg (hz ρ hρ) (hre ρ hρ)
   exact
     RiemannXi.sum_inverse_square_le_mass S
-      (fun ρ hρ ↦
-        (RiemannXi.riemannXiZeroMultiplicity_eq_riemannZetaZeroMultiplicity_of_zero
-            (hxi ρ hρ)).symm)
-      hxi
+      (fun ρ hρ ↦ (RiemannXi.zeroMultiplicity_eq_zetaMultiplicity_of_zero (hxi ρ hρ)).symm) hxi
 
 /-- For an actual zeta zero of nonnegative real part, its inverse-square multiplicity
 weight equals the xi indicator weight. Transfer the zero and analytic multiplicity.
@@ -121,9 +118,9 @@ This identifies the summands in unconditional mass and tail estimates. -/
 theorem nontrivial_inverse_square_eq_weight {ρ : ℂ} (hz : riemannZeta ρ = 0) (hre : 0 ≤ ρ.re) :
     (riemannZetaZeroMultiplicity ρ : ℝ) / Complex.normSq ρ =
       RiemannXi.inversePowerZeroWeight 2 ρ := by
-  have hxi := RiemannXi.riemannXi_eq_zero_of_riemannZeta_zero_re_nonneg hz hre
+  have hxi := RiemannXi.xi_zero_of_zeta_zero_of_re_nonneg hz hre
   rw [RiemannXi.inversePowerZeroWeight, ite_eq_left hxi,
-    RiemannXi.riemannXiZeroMultiplicity_eq_riemannZetaZeroMultiplicity_of_zero hxi, Real.rpow_two,
+    RiemannXi.zeroMultiplicity_eq_zetaMultiplicity_of_zero hxi, Real.rpow_two,
     Complex.normSq_eq_norm_sq]
 
 /-- For x at least one and positive cutoff T, the logarithmic contributions of any

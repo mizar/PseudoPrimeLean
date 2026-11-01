@@ -31,7 +31,7 @@ theorem log_half_signed_phase_upper {N : ℕ} [NeZero N] (hN : 3 ≤ N) {χ : Di
       Real.sqrt X * AnalyticNumberTheory.DirichletLFunction.logarithmicHalfPhase χ (Real.log X) +
         (4 / 5 : ℝ) * Real.log N +
         5 := by
-  rw [AnalyticNumberTheory.DirichletLFunction.characterLogWeightedSum_half_phase_formula
+  rw [AnalyticNumberTheory.DirichletLFunction.logWeighted_half_phaseFormula_GRH
       (le_trans (by decide : 2 ≤ 3) hN) hGRH hp hne hinv (show 2 < X by linarith only [hX])]
   have hr := logarithmicHalfRemainder_re_le hN hGRH hp hne hinv hX
   linarith only [hr]
@@ -70,7 +70,7 @@ def HalfZeroPhasePowerWindow {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N
 /-- For a primitive nonprincipal character under GRH and RH, log(N)≤L and
 E(m)≤CₘL, the actual phase-window input and explicit power budget give a prime
 through CL^a. Retain the conductor remainder as a linear cost, using L≥1. -/
-theorem exists_prime_ne_one_le_of_half_phase_power_window {N m : ℕ} [NeZero N] (hN : 3 ≤ N)
+theorem exists_neOnePrime_le_of_half_phase_power_window {N m : ℕ} [NeZero N] (hN : 3 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hRH : RiemannHypothesis) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hm : m ≠ 0)
     {L a δ C θ C₁ C₂ Cₘ : ℝ} (hL : 1 ≤ L) (hlog : Real.log N ≤ L) (hC₁ : 0 ≤ C₁) (hC₂ : 0 ≤ C₂)
@@ -117,8 +117,8 @@ theorem exists_prime_ne_one_le_of_half_phase_power_window {N m : ℕ} [NeZero N]
 Under GRH the actual phase-window input gives a prime through CL^a uniformly for
 large L over all primitive nonprincipal conductors with log(N)≤L and E(m)≤CₘL.
 Absorb the linear remainder in the existing power budget; no phase estimate is assumed proved. -/
-theorem eventually_exists_prime_ne_one_of_half_phase_power_window {a δ C θ C₁ C₂ Cₘ : ℝ}
-    (ha : 1 < a) (hδ : 1 - δ < a / 2) (hC : 0 < C) (hθ : 0 < θ) (hC₁ : 0 ≤ C₁) (hC₂ : 0 ≤ C₂)
+theorem eventually_prime_neOne_halfPhase_GRH {a δ C θ C₁ C₂ Cₘ : ℝ} (ha : 1 < a)
+    (hδ : 1 - δ < a / 2) (hC : 0 < C) (hθ : 0 < θ) (hC₁ : 0 ≤ C₁) (hC₂ : 0 ≤ C₂)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∀ᶠ L : ℝ in Filter.atTop,
       ∀ (N m : ℕ) [NeZero N] (χ : DirichletCharacter ℂ N),
@@ -142,7 +142,7 @@ theorem eventually_exists_prime_ne_one_of_half_phase_power_window {a δ C θ C�
   intro N m _ χ hN hp hne hinv hm hlog hE hw
   rw [he] at hbudget
   exact
-    exists_prime_ne_one_le_of_half_phase_power_window hN hGRH hGRH.riemann hp hne hinv hm hL hlog
-      hC₁ hC₂ hbudget.1 hE hbudget.2 hw
+    exists_neOnePrime_le_of_half_phase_power_window hN hGRH hGRH.riemann hp hne hinv hm hL hlog hC₁
+      hC₂ hbudget.1 hE hbudget.2 hw
 
 end PseudoPrime.LLS.PaperStatements

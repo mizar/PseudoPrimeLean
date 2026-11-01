@@ -39,8 +39,8 @@ theorem gammaSignedPrefixMRBudget_lt_principal_even (hRH : RiemannHypothesis) (n
 Claim: the empty-prefix MR budget at x=(2/5)L squared is below mu log n + 66/5.
 Proof: retain the even zero cost 11 and bound pole and left costs by 2 and 1/5.
 Role: supply the uniform upper input for a closed MR separation on the whole half-line. -/
-theorem gammaSignedPrefixMRBudget_zero_lt_even_nearSquare (hRH : RiemannHypothesis) {L : ℝ}
-    (hL : 400 ≤ L) {n : ℕ} (hlog : Real.log n ≤ L) :
+theorem gammaSignedPrefix_zero_evenNearSquare_RH (hRH : RiemannHypothesis) {L : ℝ} (hL : 400 ≤ L)
+    {n : ℕ} (hlog : Real.log n ≤ L) :
     gammaSignedPrefixMRBudget n n ((2 / 5 : ℝ) * L ^ 2) 0 <
       (11783423 / 25000000 : ℝ) * Real.log n + 66 / 5 := by
   let x := (2 / 5 : ℝ) * L ^ 2
@@ -77,9 +77,8 @@ Claim: a prime MR rejecting base is at most (99/100)(log n) squared.
 It is strictly below (log n) squared.
 Proof: every strong-pass annihilator is even; the signed-prefix extraction and paired errors close.
 Role: improve the unconditional analytic entrance within the GRH theorem. -/
-theorem exists_prime_witness_le_even_paired_nearSquare_gamma_log_400 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 400 ≤ Real.log n) :
+theorem exists_prime_evenPaired_log400_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 400 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (99 / 100 : ℝ) * (Real.log n) ^ 2 ∧
@@ -102,7 +101,7 @@ theorem exists_prime_witness_le_even_paired_nearSquare_gamma_log_400 {n : ℕ} (
   have he := LLS.gamma_even_paired_nearSquare_budgets hL
   have hP := LLS.gamma_level_one_sum_upper_variable hGRH.riemann hx1
   have hT := LLS.gamma_ramp_sum_lower_paired hGRH.riemann hx1
-  have hu := gammaSignedPrefixMRBudget_zero_lt_even_nearSquare hGRH.riemann hL (le_refl _)
+  have hu := gammaSignedPrefix_zero_evenNearSquare_RH hGRH.riemann hL (le_refl _)
   have hgap :
     gammaSignedPrefixMRBudget n n x 0 <
       2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
@@ -122,17 +121,15 @@ theorem exists_prime_witness_le_even_paired_nearSquare_gamma_log_400 {n : ℕ} (
 prime rejecting base through (99/100)(log n) squared.
 Minimize the unbounded rejection predicate and compare with the constructed
 witness. Minimality ranges over every prime rejecting base. -/
-theorem exists_least_prime_witness_le_even_paired_nearSquare_gamma_log_400 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 400 ≤ Real.log n) :
+theorem exists_least_prime_evenPaired_log400_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 400 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
         (p : ℝ) ≤ (99 / 100 : ℝ) * (Real.log n) ^ 2 ∧
         ∀ r : ℕ, r.Prime → ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) → p ≤ r := by
   classical
-  obtain ⟨p, hp, hb, _, hf⟩ :=
-    exists_prime_witness_le_even_paired_nearSquare_gamma_log_400 hnOdd hnComposite hGRH hL
+  obtain ⟨p, hp, hb, _, hf⟩ := exists_prime_evenPaired_log400_GRH hnOdd hnComposite hGRH hL
   have hex : ∃ r : ℕ, r.Prime ∧ ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := ⟨p, hp, hf⟩
   exact
     ⟨Nat.find hex, (Nat.find_spec hex).1, (Nat.find_spec hex).2,
@@ -143,16 +140,14 @@ theorem exists_least_prime_witness_le_even_paired_nearSquare_gamma_log_400 {n : 
 decomposition n-1=2^s d has a prime base through the coefficient-99/100
 cutoff whose d-th power is not one and whose tested doubled powers are not
 minus one. Apply the exact rejection equivalence to the proved witness. -/
-theorem exists_prime_rejecting_powers_le_even_paired_nearSquare_gamma_log_400 {n : ℕ}
-    (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+theorem exists_rejectPowers_evenPaired_log400_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 400 ≤ Real.log n) :
     let (s, d) := Nat.maxPowDvdDiv 2 (n - 1);
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (99 / 100 : ℝ) * (Real.log n) ^ 2 ∧
         (p : ZMod n) ^ d ≠ 1 ∧ ∀ j : ℕ, j < s → (p : ZMod n) ^ (2 ^ j * d) ≠ -1 := by
-  obtain ⟨p, hp, hb, _, hf⟩ :=
-    exists_prime_witness_le_even_paired_nearSquare_gamma_log_400 hnOdd hnComposite hGRH hL
+  obtain ⟨p, hp, hb, _, hf⟩ := exists_prime_evenPaired_log400_GRH hnOdd hnComposite hGRH hL
   exact ⟨p, hp, hb, PrimeTest.not_strongMillerRabinPass_iff.mp hf⟩
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

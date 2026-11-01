@@ -283,7 +283,7 @@ theorem abs_mul_rpow_neg_four {a : ℝ} (ha : 0 < a) : a * a ^ (-4 : ℝ) = a ^ 
 
 /-- On Re s=-1/16, |Im s| times the Gamma norm is bounded by the first profile.
 Multiply each of the three Gamma bounds by the nonnegative height. -/
-theorem norm_Gamma_neg_one_sixteenth_mul_height_le_firstProfile {s : ℂ} (hs : s.re = -1 / 16) :
+theorem norm_Gamma_neg_1_16_mul_height_le_profile {s : ℂ} (hs : s.re = -1 / 16) :
     |s.im| * ‖Complex.Gamma s‖ ≤ gammaLeftFirstProfile |s.im| := by
   apply le_gammaLeftFirstProfile (abs_nonneg s.im)
   · have h :=
@@ -373,9 +373,9 @@ theorem norm_Gamma_neg_one_sixteenth_le_zeroEnvelope {s : ℂ} (hs : s.re = -1 /
 
 /-- On Re s=-1/16, the height-weighted Gamma norm is bounded by the first envelope.
 Symmetrize the first profile to obtain the whole-line weighted majorant. -/
-theorem norm_Gamma_neg_one_sixteenth_mul_height_le_firstEnvelope {s : ℂ} (hs : s.re = -1 / 16) :
+theorem norm_Gamma_neg_1_16_mul_height_le_envelope {s : ℂ} (hs : s.re = -1 / 16) :
     |s.im| * ‖Complex.Gamma s‖ ≤ gammaLeftFirstEnvelope s.im :=
-  (norm_Gamma_neg_one_sixteenth_mul_height_le_firstProfile hs).trans
+  (norm_Gamma_neg_1_16_mul_height_le_profile hs).trans
     (profile_abs_le_symmetric gammaLeftFirstProfile_nonneg s.im)
 
 end PseudoPrime.Analysis

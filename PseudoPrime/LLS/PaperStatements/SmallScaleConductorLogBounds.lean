@@ -71,9 +71,9 @@ theorem abs_logCorrection_le_log_sq_of_ge_hundred {q : ℕ} (χ : DirichletChara
 most 6(log(q)+6)sqrt(x) for x ≥ 100. Combine endpoint and parity bounds using
 log(x)² ≤ 3sqrt(x), rather than the former stronger absorption.
 The conductor coefficient is unchanged on the enlarged domain. -/
-theorem norm_characterLogWeightedSum_le_sqrt_conductor_of_ge_hundred {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hq : 3 ≤ q) (hp : χ.IsPrimitive)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 100 ≤ x) :
+theorem norm_logWeightedSum_le_sqrt_x_GRH {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hq : 3 ≤ q) (hp : χ.IsPrimitive) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {x : ℝ} (hx : 100 ≤ x) :
     ‖AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x χ‖ ≤
       6 * (Real.log q + 6) * Real.sqrt x := by
   have hx1 : 1 < x := (by norm_num only : (1 : ℝ) < 100).trans_le hx
@@ -114,8 +114,7 @@ namespace PseudoPrime.LLS.PaperStatements
 /-- Under RH and y ≥ 200, the principal logarithmic half-difference is at
 least y/2-4sqrt(y). Subtract the corrected formulas and retain the bounded
 log(2pi)log(2) loss. This supplies the principal input at the smaller scale. -/
-theorem principal_log_half_difference_lower_of_ge_twoHundred (hRH : RiemannHypothesis) {y : ℝ}
-    (hy : 200 ≤ y) :
+theorem principal_log_half_lower_of_ge_200_RH (hRH : RiemannHypothesis) {y : ℝ} (hy : 200 ≤ y) :
     y / 2 - 4 * Real.sqrt y ≤
       AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum y -
         AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum (y / 2) := by
@@ -141,10 +140,9 @@ theorem principal_log_half_difference_lower_of_ge_twoHundred (hRH : RiemannHypot
 absence of non-one prime values outside m implies the displayed conductor
 comparison. Combine the smaller-scale norm bound, principal half-difference and
 higher-power exclusion. This preserves the previous coefficients at a lower cutoff. -/
-theorem log_half_no_witness_conductor_comparison_of_ge_twoHundred {q m : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hq : 3 ≤ q) (hp : χ.IsPrimitive)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hm : m ≠ 0) {y : ℝ}
-    (hy : 200 ≤ y) (hno : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ y → ¬p ∣ m → χ p = 1) :
+theorem noWitness_half_conductor_bound_200_GRH {q m : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hq : 3 ≤ q) (hp : χ.IsPrimitive) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hm : m ≠ 0) {y : ℝ} (hy : 200 ≤ y) (hno : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ y → ¬p ∣ m → χ p = 1) :
     y / 2 ≤ (12 * Real.log q + 112) * Real.sqrt y + 2 * (∑ p ∈ m.primeFactors, Real.log p) := by
   have hy0 : 0 < y := (by norm_num only : (0 : ℝ) < 200).trans_le hy
   have hh : 100 ≤ y / 2 := by linarith only [hy]
@@ -154,11 +152,10 @@ theorem log_half_no_witness_conductor_comparison_of_ge_twoHundred {q m : ℕ} [N
       (div_pos hy0 (by norm_num only : (0 : ℝ) < 2)) hhalf hno
   have hr : y / (y / 2) = 2 := by field_simp [hy0.ne']
   rw [hr] at hb
-  have hP := principal_log_half_difference_lower_of_ge_twoHundred hGRH.riemann hy
+  have hP := principal_log_half_lower_of_ge_200_RH hGRH.riemann hy
   have hR :=
-    norm_characterLogWeightedSum_le_sqrt_conductor_of_ge_hundred hq hp hGRH
-      ((by norm_num only : (100 : ℝ) ≤ 200).trans hy)
-  have hL := norm_characterLogWeightedSum_le_sqrt_conductor_of_ge_hundred hq hp hGRH hh
+    norm_logWeightedSum_le_sqrt_x_GRH hq hp hGRH ((by norm_num only : (100 : ℝ) ≤ 200).trans hy)
+  have hL := norm_logWeightedSum_le_sqrt_x_GRH hq hp hGRH hh
   have hs := Real.sqrt_le_sqrt hhalf
   have hcoef : 0 ≤ 6 * (Real.log q + 6) := by linarith only [Real.log_natCast_nonneg q]
   have hLs := mul_le_mul_of_nonneg_left hs hcoef

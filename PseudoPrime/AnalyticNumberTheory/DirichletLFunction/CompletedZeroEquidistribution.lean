@@ -50,13 +50,12 @@ private theorem converges_monomial (k : ℤ) :
   intro ε hε
   by_cases hk : k = 0
   · rw [hk]
-    have h := exists_uniform_normalizedCompletedZeroFunctional_const_one_error_le hε
+    have h := normalizedZeroFunctional_one_RH hε
     have hmono : PseudoPrime.Analysis.circleMonomial 0 = ContinuousMap.const Circle (1 : ℂ) := by
       ext p; exact zpow_zero _
     simpa only [hmono, PseudoPrime.Analysis.circleAverage_const_one, mul_one] using h
   · have h :=
-      exists_uniform_normalizedCompletedZeroFunctional_monomial_le hk
-        (PseudoPrime.Analysis.circleMonomial k) (fun p => rfl) hε
+      normalizedZeroFunctional_monomial hk (PseudoPrime.Analysis.circleMonomial k) (fun p => rfl) hε
     simpa only [PseudoPrime.Analysis.circleAverage_circleMonomial, ite_eq_right hk, mul_zero,
       sub_zero] using h
 
@@ -161,7 +160,7 @@ private theorem converges_all (f : C(Circle, ℂ)) : ConvergesToHalfCircleAverag
   intro ε hε
   have he4 : (0 : ℝ) < ε / 4 := div_pos hε (by norm_num only : (0 : ℝ) < 4)
   obtain ⟨g, hg, hfg⟩ := PseudoPrime.Analysis.exists_circleMonomial_approximation f he4
-  obtain ⟨Q0, hQ0, hb0⟩ := exists_uniform_norm_normalizedCompletedZeroFunctional_le_one
+  obtain ⟨Q0, hQ0, hb0⟩ := normalizedZeroFunctional_norm_RH
   obtain ⟨Q1, hQ1, hb1⟩ := converges_span hg (ε / 2) (div_pos hε zero_lt_two)
   refine ⟨max Q0 Q1, hQ0.trans (Nat.le_max_left _ _), ?_⟩
   intro q _ hq χ hRH hp hne hinv
@@ -198,8 +197,7 @@ average by norm at most epsilon, uniformly over primitive nonprincipal character
 nonprincipal inverse satisfying individual RH. Prove convergence on integer monomials,
 extend by linearity to their span, and use uniform approximation with the common operator
 norm bound. This is the continuous-test-function form of the weighted zero distribution. -/
-theorem exists_uniform_normalizedCompletedZeroFunctional_error_le (f : C(Circle, ℂ)) {ε : ℝ}
-    (hε : 0 < ε) :
+theorem normalizedZeroFunctional_error_RH (f : C(Circle, ℂ)) {ε : ℝ} (hε : 0 < ε) :
     ∃ Q : ℕ,
       ∃ hQ : 2 ≤ Q,
         ∀ (q : ℕ) [NeZero q],

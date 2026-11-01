@@ -116,7 +116,7 @@ theorem gaussian_primitive_sum_prefix_le
   have hxpos : 0 < x := zero_lt_one.trans_le hx
   have hz :=
     norm_gaussian_zeroSum_prefix_lt hprefix (by linarith only [hm]) hGRH hp hne hinv hsmall hxpos
-  have hr := re_gaussian_primitive_remainder_le_variable_scale hq hm hmq hp hne hinv hGRH hx
+  have hr := re_gaussianRemainder_variable_GRH hq hm hmq hp hne hinv hGRH hx
   have hnegZ : -Z.re ≤ ‖Z‖ := by
     have h := Complex.re_le_norm (-Z)
     simpa only [Complex.neg_re, norm_neg] using h
@@ -242,7 +242,7 @@ theorem gaussian_principal_prefix_le
       _ at hu
   rw [map_sum] at hu
   exact
-    (MellinKernel.principal_sum_le_primitive_average_of_noSmallPrimes gaussianGammaMellinKernel H
+    (MellinKernel.principal_sum_le_primitive_of_noSmall gaussianGammaMellinKernel H
           ((by norm_num only : (0 : ℝ) < 4).trans_le hx) hsmall).trans
       hu
 
@@ -275,8 +275,7 @@ theorem gaussian_relative_prefix_le
     ext n
     simp only [Finset.mem_Icc, Finset.mem_Ioc, Nat.succ_le_iff]
   rw [he, ← Complex.re_sum,
-    MellinKernel.principal_sum_eq_level_one_of_no_small_prime_divisor gaussianGammaMellinKernel
-      (q := q) x hdiv,
+    MellinKernel.principal_sum_level_one_of_no_divisor gaussianGammaMellinKernel (q := q) x hdiv,
     Complex.re_sum] at hhi
   nlinarith only [hm, hhi]
 

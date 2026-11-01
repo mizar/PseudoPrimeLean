@@ -21,20 +21,17 @@ multiplicity bound from the right-half-plane genus sum. The Euler estimate contr
 constant `8`; the remaining terms isolate the gamma growth and the central logarithmic derivative.
 For `η ≤ 1 / 2`, the gamma contribution has one constant uniform in the shift, modulus, and
 character. -/
-theorem exists_completedZeroMultiplicityCountInRectangle_le_euler_gamma_center {q : ℕ} [NeZero q]
-    (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1)
-    {η : ℝ} (hη : 0 < η) (hη1 : η ≤ 1 / 2) {t : ℝ} (z w : ℂ)
-    (hbox :
-      ∀ ρ ∈ dirichletCompletedLFunctionRectangleBox z w,
-        ‖ρ - ((1 : ℂ) + (t : ℂ) * Complex.I)‖ ≤ η / 4) :
+theorem rectMass_euler_center {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) (hη1 : η ≤ 1 / 2)
+    {t : ℝ} (z w : ℂ)
+    (hbox : ∀ ρ ∈ completedRectangleBox z w, ‖ρ - ((1 : ℂ) + (t : ℂ) * Complex.I)‖ ≤ η / 4) :
     ∃ A : ℝ,
       0 < A ∧
-        completedZeroMultiplicityCountInRectangle χ hχ z w ≤
+        completedMultiplicityCount χ hχ z w ≤
           8 + 2 * η * (A * (Real.log (4 + |t|) + 1) + |(logDeriv χ.completedLFunction 0).re|) := by
-  obtain ⟨A, hA, hderiv⟩ := exists_uniform_norm_completed_logDeriv_small_shift_bound
+  obtain ⟨A, hA, hderiv⟩ := uniform_completedLogDeriv_smallShift
   let s : ℂ := ((1 + η : ℝ) : ℂ) + Complex.I * t
-  have hgenus :=
-    completedZeroMultiplicityCountInRectangle_le_right_genus_sum hq hχ hp hinv hη z w hbox
+  have hgenus := rectMass_genus_le hq hχ hp hinv hη z w hbox
   have hnorm := hderiv χ hχ hη hη1 t
   have hPoints : (1 + (η : ℂ) + (t : ℂ) * Complex.I) = (((1 + η : ℝ) : ℂ) + Complex.I * t) := by
     rw [Complex.ofReal_add, Complex.ofReal_one]
@@ -58,7 +55,7 @@ theorem exists_completedZeroMultiplicityCountInRectangle_le_euler_gamma_center {
     ring
   refine ⟨A, hA, ?_⟩
   calc
-    completedZeroMultiplicityCountInRectangle χ hχ z w ≤
+    completedMultiplicityCount χ hχ z w ≤
         2 * η * (logDeriv χ.completedLFunction s - logDeriv χ.completedLFunction 0).re :=
       by simpa only [s, hPoints] using hgenus
     _ ≤ 2 * η * (4 / η + A * (Real.log (4 + |t|) + 1) + |(logDeriv χ.completedLFunction 0).re|) :=
@@ -73,23 +70,20 @@ Inputs: a rectangle within `η / 4` of `1 + it`, with `0 < η ≤ 1 / 2`.
 Claim: the multiplicity is bounded by an absolute height term, the conductor logarithm, and
 logarithmic height.
 Role: supplies the unconditional local multiplicity estimate for the log-free density argument. -/
-theorem exists_completedZeroMultiplicityCountInRectangle_le_euler_gamma_minus_one {q : ℕ} [NeZero q]
-    (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1)
-    {η : ℝ} (hη : 0 < η) (hη1 : η ≤ 1 / 2) {t : ℝ} (z w : ℂ)
-    (hbox :
-      ∀ ρ ∈ dirichletCompletedLFunctionRectangleBox z w,
-        ‖ρ - ((1 : ℂ) + (t : ℂ) * Complex.I)‖ ≤ η / 4) :
+theorem rectMass_euler_negOne {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) (hη1 : η ≤ 1 / 2)
+    {t : ℝ} (z w : ℂ)
+    (hbox : ∀ ρ ∈ completedRectangleBox z w, ‖ρ - ((1 : ℂ) + (t : ℂ) * Complex.I)‖ ≤ η / 4) :
     ∃ A B : ℝ,
       0 < A ∧
         0 < B ∧
-        completedZeroMultiplicityCountInRectangle χ hχ z w ≤
+        completedMultiplicityCount χ hχ z w ≤
           8 + 2 * η * (A * (Real.log (4 + |t|) + 1) + Real.log q + 4 + B * (Real.log 4 + 1)) := by
-  obtain ⟨A, hA, hderiv⟩ := exists_uniform_norm_completed_logDeriv_small_shift_bound
+  obtain ⟨A, hA, hderiv⟩ := uniform_completedLogDeriv_smallShift
   obtain ⟨B, hB, hbase⟩ :=
-    exists_norm_completed_logDeriv_small_shift_bound (r := 1) (by norm_num only) (by norm_num only)
+    completedLogDeriv_smallShift_bound (r := 1) (by norm_num only) (by norm_num only)
   let s : ℂ := ((1 + η : ℝ) : ℂ) + Complex.I * t
-  have hgenus :=
-    completedZeroMultiplicityCountInRectangle_le_minus_one_genus_sum hq hχ hp hinv hη z w hbox
+  have hgenus := rectMass_genus_negOne hq hχ hp hinv hη z w hbox
   have hnorm := hderiv χ hχ hη hη1 t
   let u : ℂ := ((1 + 1 : ℝ) : ℂ) + Complex.I * (0 : ℝ)
   have htwo : ‖logDeriv χ⁻¹.completedLFunction u‖ ≤ 4 + B * (Real.log 4 + 1) := by
@@ -104,8 +98,8 @@ theorem exists_completedZeroMultiplicityCountInRectangle_le_euler_gamma_minus_on
     rw [huEq]
     change (1 : ℝ) ≤ 2
     norm_num only
-  have hF2 : χ⁻¹.completedLFunction u ≠ 0 := completedLFunction_ne_zero_of_one_le_re hinv huRe
-  have hfe := completedLFunction_logDeriv_functionalEquation_at hp hχ (s := u) hF2
+  have hF2 : χ⁻¹.completedLFunction u ≠ 0 := completed_ne_zero_of_one_le_re hinv huRe
+  have hfe := completedLogDeriv_functionalEq hp hχ (s := u) hF2
   have hone : (1 : ℂ) - u = -1 := by
     rw [huEq]; norm_num only
   rw [hone] at hfe
@@ -148,7 +142,7 @@ theorem exists_completedZeroMultiplicityCountInRectangle_le_euler_gamma_minus_on
     ring
   refine ⟨A, B, hA, hB, ?_⟩
   calc
-    completedZeroMultiplicityCountInRectangle χ hχ z w ≤
+    completedMultiplicityCount χ hχ z w ≤
         2 * η * (logDeriv χ.completedLFunction s - logDeriv χ.completedLFunction (-1)).re :=
       by simpa only [s, hPoints] using hgenus
     _ ≤ 2 * η * (4 / η + A * (Real.log (4 + |t|) + 1) + Real.log q + 4 + B * (Real.log 4 + 1)) :=
@@ -163,26 +157,23 @@ Proof: choose the uniform shifted logarithmic-derivative bounds once, then repea
 functional-equation, and Euler estimates with those fixed constants.
 Role: exposes the absolute constants needed when local zero counts are summed over a finite family.
 -/
-theorem exists_uniform_completedZeroMultiplicityCountInRectangle_le_euler_gamma_minus_one :
+theorem uniform_euler_negOne :
     ∃ A B : ℝ,
       0 < A ∧
         0 < B ∧
         ∀ {q : ℕ} [NeZero q] (_hq : 2 ≤ q) {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1)
           (_hp : χ.IsPrimitive) (_hinv : χ⁻¹ ≠ 1) {η : ℝ} (_hη : 0 < η) (_hη1 : η ≤ 1 / 2) {t : ℝ}
           (z w : ℂ)
-          (_hbox :
-            ∀ ρ ∈ dirichletCompletedLFunctionRectangleBox z w,
-              ‖ρ - ((1 : ℂ) + (t : ℝ) * Complex.I)‖ ≤ η / 4),
-          completedZeroMultiplicityCountInRectangle χ hχ z w ≤
+          (_hbox : ∀ ρ ∈ completedRectangleBox z w, ‖ρ - ((1 : ℂ) + (t : ℝ) * Complex.I)‖ ≤ η / 4),
+          completedMultiplicityCount χ hχ z w ≤
             8 + 2 * η * (A * (Real.log (4 + |t|) + 1) + Real.log q + 4 + B * (Real.log 4 + 1)) := by
-  obtain ⟨A, hA, hderiv⟩ := exists_uniform_norm_completed_logDeriv_small_shift_bound
+  obtain ⟨A, hA, hderiv⟩ := uniform_completedLogDeriv_smallShift
   obtain ⟨B, hB, hbase⟩ :=
-    exists_norm_completed_logDeriv_small_shift_bound (r := 1) (by norm_num only) (by norm_num only)
+    completedLogDeriv_smallShift_bound (r := 1) (by norm_num only) (by norm_num only)
   refine ⟨A, B, hA, hB, ?_⟩
   intro q _ hq χ hχ hp hinv η hη hη1 t z w hbox
   let s : ℂ := ((1 + η : ℝ) : ℂ) + Complex.I * t
-  have hgenus :=
-    completedZeroMultiplicityCountInRectangle_le_minus_one_genus_sum hq hχ hp hinv hη z w hbox
+  have hgenus := rectMass_genus_negOne hq hχ hp hinv hη z w hbox
   have hnorm := hderiv χ hχ hη hη1 t
   let u : ℂ := ((1 + 1 : ℝ) : ℂ) + Complex.I * (0 : ℝ)
   have htwo : ‖logDeriv χ⁻¹.completedLFunction u‖ ≤ 4 + B * (Real.log 4 + 1) := by
@@ -197,8 +188,8 @@ theorem exists_uniform_completedZeroMultiplicityCountInRectangle_le_euler_gamma_
     rw [huEq]
     change (1 : ℝ) ≤ 2
     norm_num only
-  have hF2 : χ⁻¹.completedLFunction u ≠ 0 := completedLFunction_ne_zero_of_one_le_re hinv huRe
-  have hfe := completedLFunction_logDeriv_functionalEquation_at hp hχ (s := u) hF2
+  have hF2 : χ⁻¹.completedLFunction u ≠ 0 := completed_ne_zero_of_one_le_re hinv huRe
+  have hfe := completedLogDeriv_functionalEq hp hχ (s := u) hF2
   have hone : (1 : ℂ) - u = -1 := by
     rw [huEq]; norm_num only
   rw [hone] at hfe
@@ -240,7 +231,7 @@ theorem exists_uniform_completedZeroMultiplicityCountInRectangle_le_euler_gamma_
     field_simp [ne_of_gt hη]
     ring
   calc
-    completedZeroMultiplicityCountInRectangle χ hχ z w ≤
+    completedMultiplicityCount χ hχ z w ≤
         2 * η * (logDeriv χ.completedLFunction s - logDeriv χ.completedLFunction (-1)).re :=
       by simpa only [s, hPoints] using hgenus
     _ ≤ 2 * η * (4 / η + A * (Real.log (4 + |t|) + 1) + Real.log q + 4 + B * (Real.log 4 + 1)) :=
@@ -251,26 +242,21 @@ open PseudoPrime.AnalyticNumberTheory.DirichletLFunction in
 /-- For primitive nonprincipal characters, a rectangle close to `1 + it` has multiplicity
 bounded by one plus its radius times the logarithm of the conductor-height product.
 Inputs: the hypotheses and rectangle containment from
-`exists_completedZeroMultiplicityCountInRectangle_le_euler_gamma_minus_one`.
+`rectMass_euler_negOne`.
 Claim: there is a positive constant `C` such that the count is at most
 `C * (1 + η * log(q * (|t| + 3)))`.
 Proof: compare `log(4 + |t|)` with twice `log(|t| + 3)`, then absorb fixed terms using
 `η ≤ 1 / 2`.
 Role: gives the local multiplicity estimate in the scale required by the zero-window incidence
 argument. -/
-theorem exists_completedZeroMultiplicityCountInRectangle_le_local_log_bound {q : ℕ} [NeZero q]
-    (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1)
-    {η : ℝ} (hη : 0 < η) (hη1 : η ≤ 1 / 2) {t : ℝ} (z w : ℂ)
-    (hbox :
-      ∀ ρ ∈ dirichletCompletedLFunctionRectangleBox z w,
-        ‖ρ - ((1 : ℂ) + (t : ℂ) * Complex.I)‖ ≤ η / 4) :
+theorem exists_rectLocalLog {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) (hη1 : η ≤ 1 / 2)
+    {t : ℝ} (z w : ℂ)
+    (hbox : ∀ ρ ∈ completedRectangleBox z w, ‖ρ - ((1 : ℂ) + (t : ℂ) * Complex.I)‖ ≤ η / 4) :
     ∃ C : ℝ,
       0 < C ∧
-        completedZeroMultiplicityCountInRectangle χ hχ z w ≤
-          C * (1 + η * Real.log ((q : ℝ) * (|t| + 3))) := by
-  obtain ⟨A, B, hA, hB, hbase⟩ :=
-    exists_completedZeroMultiplicityCountInRectangle_le_euler_gamma_minus_one hq hχ hp hinv hη hη1 z
-      w hbox
+        completedMultiplicityCount χ hχ z w ≤ C * (1 + η * Real.log ((q : ℝ) * (|t| + 3))) := by
+  obtain ⟨A, B, hA, hB, hbase⟩ := rectMass_euler_negOne hq hχ hp hinv hη hη1 z w hbox
   let H : ℝ := Real.log (|t| + 3)
   let L : ℝ := Real.log (q : ℝ) + H
   let K : ℝ := A + 4 + B * (Real.log 4 + 1)
@@ -324,7 +310,7 @@ theorem exists_completedZeroMultiplicityCountInRectangle_le_local_log_bound {q :
     linarith only [hK]
   refine ⟨C, hC, ?_⟩
   calc
-    completedZeroMultiplicityCountInRectangle χ hχ z w ≤
+    completedMultiplicityCount χ hχ z w ≤
         8 + 2 * η * (A * (Real.log (4 + |t|) + 1) + Real.log (q : ℝ) + 4 + B * (Real.log 4 + 1)) :=
       hbase
     _ ≤ 8 + 2 * η * (D * L + K) := by
@@ -346,19 +332,15 @@ Proof: use the uniform Euler and gamma constants from the preceding rectangle es
 same logarithmic comparison, choosing the final constant before the family parameters.
 Role: permits the local zero-window bound to be summed without conductor-dependent constants.
 -/
-theorem exists_uniform_completedZeroMultiplicityCountInRectangle_le_local_log_bound :
+theorem exists_uniformRectLog :
     ∃ C : ℝ,
       0 < C ∧
         ∀ {q : ℕ} [NeZero q] (_hq : 2 ≤ q) {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1)
           (_hp : χ.IsPrimitive) (_hinv : χ⁻¹ ≠ 1) {η : ℝ} (_hη : 0 < η) (_hη1 : η ≤ 1 / 2) {t : ℝ}
           (z w : ℂ)
-          (_hbox :
-            ∀ ρ ∈ dirichletCompletedLFunctionRectangleBox z w,
-              ‖ρ - ((1 : ℂ) + (t : ℝ) * Complex.I)‖ ≤ η / 4),
-          completedZeroMultiplicityCountInRectangle χ hχ z w ≤
-            C * (1 + η * Real.log ((q : ℝ) * (|t| + 3))) := by
-  obtain ⟨A, B, hA, hB, hbase⟩ :=
-    exists_uniform_completedZeroMultiplicityCountInRectangle_le_euler_gamma_minus_one
+          (_hbox : ∀ ρ ∈ completedRectangleBox z w, ‖ρ - ((1 : ℂ) + (t : ℝ) * Complex.I)‖ ≤ η / 4),
+          completedMultiplicityCount χ hχ z w ≤ C * (1 + η * Real.log ((q : ℝ) * (|t| + 3))) := by
+  obtain ⟨A, B, hA, hB, hbase⟩ := uniform_euler_negOne
   let K : ℝ := A + 4 + B * (Real.log 4 + 1)
   let D : ℝ := 2 * A + 1
   let C : ℝ := 8 + K + 2 * D
@@ -414,7 +396,7 @@ theorem exists_uniform_completedZeroMultiplicityCountInRectangle_le_local_log_bo
     dsimp only [C]
     linarith only [hK]
   calc
-    completedZeroMultiplicityCountInRectangle χ hχ z w ≤
+    completedMultiplicityCount χ hχ z w ≤
         8 + 2 * η * (A * (Real.log (4 + |t|) + 1) + Real.log (q : ℝ) + 4 + B * (Real.log 4 + 1)) :=
       hbase
     _ ≤ 8 + 2 * η * (D * L + K) := by
@@ -429,27 +411,21 @@ theorem exists_uniform_completedZeroMultiplicityCountInRectangle_le_local_log_bo
       ring
 
 /-- The absolute constant chosen by the uniform local logarithmic zero-count estimate. -/
-noncomputable def completedZeroLocalLogBoundConstant : ℝ :=
-  Classical.choose exists_uniform_completedZeroMultiplicityCountInRectangle_le_local_log_bound
+noncomputable def localLogConstant : ℝ :=
+  Classical.choose exists_uniformRectLog
 
 /-- The uniform local logarithmic zero-count constant is positive. -/
-theorem completedZeroLocalLogBoundConstant_pos : 0 < completedZeroLocalLogBoundConstant :=
-  (Classical.choose_spec
-      exists_uniform_completedZeroMultiplicityCountInRectangle_le_local_log_bound).1
+theorem localLogConstant_pos : 0 < localLogConstant :=
+  (Classical.choose_spec exists_uniformRectLog).1
 
 /-- Apply the same absolute local logarithmic zero-count constant to any admissible rectangle. -/
-theorem completedZeroMultiplicityCountInRectangle_le_uniform_local_log_bound {q : ℕ} [NeZero q]
-    (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1)
-    {η : ℝ} (hη : 0 < η) (hη1 : η ≤ 1 / 2) {t : ℝ} (z w : ℂ)
-    (hbox :
-      ∀ ρ ∈ dirichletCompletedLFunctionRectangleBox z w,
-        ‖ρ - ((1 : ℂ) + (t : ℝ) * Complex.I)‖ ≤ η / 4) :
-    completedZeroMultiplicityCountInRectangle χ hχ z w ≤
-      completedZeroLocalLogBoundConstant * (1 + η * Real.log ((q : ℝ) * (|t| + 3))) := by
-  exact
-    (Classical.choose_spec
-          exists_uniform_completedZeroMultiplicityCountInRectangle_le_local_log_bound).2
-      hq hχ hp hinv hη hη1 z w hbox
+theorem rectMass_localLog_le {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) (hη1 : η ≤ 1 / 2)
+    {t : ℝ} (z w : ℂ)
+    (hbox : ∀ ρ ∈ completedRectangleBox z w, ‖ρ - ((1 : ℂ) + (t : ℝ) * Complex.I)‖ ≤ η / 4) :
+    completedMultiplicityCount χ hχ z w ≤
+      localLogConstant * (1 + η * Real.log ((q : ℝ) * (|t| + 3))) := by
+  exact (Classical.choose_spec exists_uniformRectLog).2 hq hχ hp hinv hη hη1 z w hbox
 
 /--
 Inputs: an admissible primitive-character rectangle at conductor `q` and height `t`.
@@ -462,23 +438,16 @@ Proof: apply the uniform local estimate and use the defining upper-bound propert
 Role: converts the analytic count estimate into the natural cap used by the fixed-multiple power
 sum theorem.
 -/
-theorem completedZeroMultiplicityCountInRectangle_le_nat_ceil_uniform_local_log_bound {q : ℕ}
-    [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive)
-    (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) (hη1 : η ≤ 1 / 2) {t : ℝ} (z w : ℂ)
-    (hbox :
-      ∀ ρ ∈ dirichletCompletedLFunctionRectangleBox z w,
-        ‖ρ - ((1 : ℂ) + (t : ℝ) * Complex.I)‖ ≤ η / 4) :
-    completedZeroMultiplicityCountInRectangle χ hχ z w ≤
-      ((Nat.ceil
-            (completedZeroLocalLogBoundConstant * (1 + η * Real.log ((q : ℝ) * (|t| + 3))) : ℝ) :
-          ℕ) :
-        ℝ) := by
-  let B := completedZeroLocalLogBoundConstant * (1 + η * Real.log ((q : ℝ) * (|t| + 3)))
+theorem rectMass_localCeil_le {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) (hη1 : η ≤ 1 / 2)
+    {t : ℝ} (z w : ℂ)
+    (hbox : ∀ ρ ∈ completedRectangleBox z w, ‖ρ - ((1 : ℂ) + (t : ℝ) * Complex.I)‖ ≤ η / 4) :
+    completedMultiplicityCount χ hχ z w ≤
+      ((Nat.ceil (localLogConstant * (1 + η * Real.log ((q : ℝ) * (|t| + 3))) : ℝ) : ℕ) : ℝ) := by
+  let B := localLogConstant * (1 + η * Real.log ((q : ℝ) * (|t| + 3)))
   calc
-    completedZeroMultiplicityCountInRectangle χ hχ z w ≤ B := by
-      simpa only [B] using
-        completedZeroMultiplicityCountInRectangle_le_uniform_local_log_bound hq hχ hp hinv hη hη1 z
-          w hbox
+    completedMultiplicityCount χ hχ z w ≤ B := by
+      simpa only [B] using rectMass_localLog_le hq hχ hp hinv hη hη1 z w hbox
     _ ≤ (Nat.ceil B : ℝ) := Nat.le_ceil B
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LogFreeDensity

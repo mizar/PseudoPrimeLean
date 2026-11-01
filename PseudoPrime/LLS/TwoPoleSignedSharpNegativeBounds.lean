@@ -97,7 +97,7 @@ theorem sharpSignedTwoPoleNegativeLogRoot_data {L : ℝ} (hL : 1500 ≤ L) :
 sharp negative root exceeds the actual prime-count local cost. Bound omega(q) by
 log(A)/2 and the cost by (5/3)log log A, then use the direct signed-gap lower bound.
 No RH is required for this scalar separation. -/
-theorem sharpSignedTwoPoleGap_negative_log_dominates_cost {q A : ℕ} (hq : 0 < q) (hqA : q ≤ A)
+theorem sharpSignedTwoPole_log_gt_cost {q A : ℕ} (hq : 0 < q) (hqA : q ≤ A)
     (hL : 1500 ≤ Real.log A) :
     (q.primeFactors.card : ℝ) *
           Real.log ((99 / 40 : ℝ) * sharpSignedTwoPoleNegativeLogRoot (Real.log A) ^ 2) /
@@ -148,8 +148,8 @@ theorem sharpSignedTwoPoleGap_negative_log_dominates_cost {q A : ℕ} (hq : 0 < 
 log A at least 1500 has a prime not dividing q below the sharp logarithmic cutoff
 with value minus one. Apply the generic signed-gap extraction with the half-count
 budget. The common ambient scale covers small conductors. -/
-theorem exists_prime_neg_one_le_sharpSignedTwoPole_log_ambient {q A : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hqA : q ≤ A)
+theorem exists_prime_negOne_sharpSignedLog_GRH {q A : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hqA : q ≤ A)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 1500 ≤ Real.log A) :
     ∃ p : ℕ,
       p.Prime ∧
@@ -159,6 +159,6 @@ theorem exists_prime_neg_one_le_sharpSignedTwoPole_log_ambient {q A : ℕ} [NeZe
   have hd := sharpSignedTwoPoleNegativeLogRoot_data hL
   exact
     exists_prime_neg_one_of_signedTwoPoleGap χ hquad hne hqA hGRH hd.1
-      (sharpSignedTwoPoleGap_negative_log_dominates_cost (Nat.pos_of_ne_zero (NeZero.ne q)) hqA hL)
+      (sharpSignedTwoPole_log_gt_cost (Nat.pos_of_ne_zero (NeZero.ne q)) hqA hL)
 
 end PseudoPrime.LLS

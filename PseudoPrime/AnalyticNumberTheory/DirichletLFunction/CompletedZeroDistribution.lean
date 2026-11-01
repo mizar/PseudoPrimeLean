@@ -41,17 +41,15 @@ theorem summable_completedZeroPoissonWeight {q : ℕ} [NeZero q] (hq : 2 ≤ q)
         (analyticOrderNatAt χ.completedLFunction (ρ : ℂ) : ℝ) /
           Complex.normSq ((((3 / 2 : ℝ) : ℂ)) - (ρ : ℂ)))
   simpa only [Complex.normSq_eq_norm_sq, norm_sub_rev] using
-    summable_completedZero_shifted_inverseSquare hq hRH hp hne hinv
-      (show (1 : ℝ) ≤ 3 / 2 by norm_num only)
+    summable_zero_invSquare_RH hq hRH hp hne hinv (show (1 : ℝ) ≤ 3 / 2 by norm_num only)
 
 /-- For primitive nonprincipal characters of modulus at least two, with nonprincipal
 inverse and individual RH, the total completed-zero Poisson weight is the real completed
 logarithmic derivative at 3/2 plus log q / 2. Convert divisor multiplicities to natural
 orders and discard the zero terms outside the actual zero subtype in the Poisson identity.
 This determines the limiting normalized mass. -/
-theorem completedZeroPoissonSum_eq_logDeriv_re {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
+theorem poissonSum_eq_logDeriv_re_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     (∑' ρ : CompletedZero χ, completedZeroPoissonWeight χ ρ) =
       (logDeriv χ.completedLFunction (((3 / 2 : ℝ) : ℂ))).re + Real.log q / 2 := by
   have h :=
@@ -60,8 +58,7 @@ theorem completedZeroPoissonSum_eq_logDeriv_re {q : ℕ} [NeZero q] (hq : 2 ≤ 
         rw [Complex.ofReal_re]; norm_num only)
   simp only [Complex.ofReal_re, show (3 / 2 : ℝ) - 1 / 2 = 1 by norm_num only,
     ← div_eq_mul_one_div] at h
-  rw [tsum_congr
-      (fun ρ => by rw [completed_divisor_eq_analyticOrderNatAt hne, Int.cast_natCast])] at h
+  rw [tsum_congr (fun ρ => by rw [completed_divisor_eq_orderNat hne, Int.cast_natCast])] at h
   rw [←
     tsum_subtype_eq_of_support_subset (s := {ρ : ℂ | χ.completedLFunction ρ = 0}) (f := fun ρ : ℂ =>
       (analyticOrderNatAt χ.completedLFunction ρ : ℝ) /
@@ -99,13 +96,13 @@ theorem completedZeroCayleySum_zero {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : Di
     (∑' ρ : CompletedZero χ, completedZeroCayleyTerm χ 0 ρ) =
       (((logDeriv χ.completedLFunction (((3 / 2 : ℝ) : ℂ))).re + Real.log q / 2 : ℝ) : ℂ) := by
   rw [tsum_congr (completedZeroCayleyTerm_zero χ), ← Complex.ofReal_tsum,
-    completedZeroPoissonSum_eq_logDeriv_re hq hRH hp hne hinv]
+    poissonSum_eq_logDeriv_re_RH hq hRH hp hne hinv]
 
 /-- The total Poisson weight differs from log q / 2 by a positive constant uniform
 over moduli and primitive nonprincipal characters with nonprincipal inverse satisfying
 individual RH. Use the Poisson identity and the fixed-disk completed logarithmic-derivative
 bound at its center. This controls the total mass in continuous-function approximation. -/
-theorem exists_uniform_completedZeroPoissonSum_error_le :
+theorem uniform_poissonSum_error_RH :
     ∃ C : ℝ,
       0 < C ∧
         ∀ (q : ℕ) [NeZero q],
@@ -117,10 +114,10 @@ theorem exists_uniform_completedZeroPoissonSum_error_le :
                 χ⁻¹ ≠ 1 →
                 |(∑' ρ : CompletedZero χ, completedZeroPoissonWeight χ ρ) - Real.log q / 2| ≤
                   C := by
-  obtain ⟨C, hC, hb⟩ := exists_uniform_norm_completed_logDeriv_disk_le
+  obtain ⟨C, hC, hb⟩ := uniform_completedLogDeriv_disk
   refine ⟨C, hC, ?_⟩
   intro q _ hq χ hRH hp hne hinv
-  rw [completedZeroPoissonSum_eq_logDeriv_re hq hRH hp hne hinv, add_sub_cancel_right]
+  rw [poissonSum_eq_logDeriv_re_RH hq hRH hp hne hinv, add_sub_cancel_right]
   apply (Complex.abs_re_le_norm _).trans
   apply hb q χ hne
   rw [Metric.mem_closedBall, dist_self]
@@ -132,8 +129,7 @@ Subtract its critical-line real part from 3/2. This verifies the Cayley circle d
 theorem completedZeroShift_re_eq_one {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
     (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1)
     (ρ : CompletedZero χ) : ((((3 / 2 : ℝ) : ℂ)) - (ρ : ℂ)).re = 1 := by
-  rw [Complex.sub_re, Complex.ofReal_re,
-    completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv ρ.property]
+  rw [Complex.sub_re, Complex.ofReal_re, completed_zero_re_eq_half_of_RH hRH hp hinv ρ.property]
   norm_num only
 
 /-- For a primitive character with nonprincipal inverse satisfying individual RH,
@@ -151,9 +147,9 @@ noncomputable def completedZeroCayleyPoint {q : ℕ} [NeZero q] {χ : DirichletC
 the degree-n Cayley term is its real Poisson weight times the nth power of its circle point.
 Unfold the definitions and commute natural and real casts.
 This expresses the zero series as a weighted evaluation of circle monomials. -/
-theorem completedZeroCayleyTerm_eq_weight_mul_pointPow {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hinv : χ⁻¹ ≠ 1) (n : ℕ) (ρ : CompletedZero χ) :
+theorem cayleyTerm_eq_weight_mul_pow_RH {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) (n : ℕ)
+    (ρ : CompletedZero χ) :
     completedZeroCayleyTerm χ n ρ =
       (completedZeroPoissonWeight χ ρ : ℂ) * (completedZeroCayleyPoint hRH hp hinv ρ : ℂ) ^ n := by
   simp only [completedZeroCayleyTerm, completedZeroPoissonWeight, completedZeroCayleyPoint,
@@ -166,8 +162,8 @@ This controls all monomial series by the same positive summable mass. -/
 theorem norm_completedZeroCayleyTerm {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
     (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) (n : ℕ)
     (ρ : CompletedZero χ) : ‖completedZeroCayleyTerm χ n ρ‖ = completedZeroPoissonWeight χ ρ := by
-  rw [completedZeroCayleyTerm_eq_weight_mul_pointPow hRH hp hinv, norm_mul, norm_pow,
-    Circle.norm_coe, one_pow, mul_one, Complex.norm_real, Real.norm_eq_abs,
+  rw [cayleyTerm_eq_weight_mul_pow_RH hRH hp hinv, norm_mul, norm_pow, Circle.norm_coe, one_pow,
+    mul_one, Complex.norm_real, Real.norm_eq_abs,
     abs_of_nonneg (completedZeroPoissonWeight_nonneg χ ρ)]
 
 /-- For primitive nonprincipal characters of modulus at least two, with nonprincipal
@@ -197,8 +193,7 @@ theorem completedZeroCayleyZTerm_natCast {q : ℕ} [NeZero q] {χ : DirichletCha
     (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) (n : ℕ)
     (ρ : CompletedZero χ) :
     completedZeroCayleyZTerm hRH hp hinv (n : ℤ) ρ = completedZeroCayleyTerm χ n ρ := by
-  rw [completedZeroCayleyZTerm, zpow_natCast,
-    completedZeroCayleyTerm_eq_weight_mul_pointPow hRH hp hinv]
+  rw [completedZeroCayleyZTerm, zpow_natCast, cayleyTerm_eq_weight_mul_pow_RH hRH hp hinv]
 
 /-- For a negative natural degree, the weighted integer Cayley term is the complex
 conjugate of the corresponding positive-degree term. The inverse of a unit circle point
@@ -209,8 +204,8 @@ theorem completedZeroCayleyZTerm_neg_natCast {q : ℕ} [NeZero q] {χ : Dirichle
     (ρ : CompletedZero χ) :
     completedZeroCayleyZTerm hRH hp hinv (-(n : ℤ)) ρ =
       (starRingEnd ℂ) (completedZeroCayleyTerm χ n ρ) := by
-  rw [completedZeroCayleyZTerm, completedZeroCayleyTerm_eq_weight_mul_pointPow hRH hp hinv,
-    zpow_neg, zpow_natCast, ← inv_pow, Complex.inv_eq_conj (Circle.norm_coe _)]
+  rw [completedZeroCayleyZTerm, cayleyTerm_eq_weight_mul_pow_RH hRH hp hinv, zpow_neg, zpow_natCast,
+    ← inv_pow, Complex.inv_eq_conj (Circle.norm_coe _)]
   simp only [map_mul, map_pow, Complex.conj_ofReal]
 
 /-- For every nonzero integer degree and epsilon > 0, sufficiently large moduli make
@@ -218,7 +213,7 @@ the norm of the weighted Cayley moment at most epsilon log q, uniformly over pri
 nonprincipal characters with nonprincipal inverse satisfying individual RH.
 Split the degree into a positive or negative natural degree and use conjugation of
 the convergent series. This supplies all nonconstant Fourier moments. -/
-theorem exists_uniform_completedZeroCayleyZSum_le_log {k : ℤ} (hk : k ≠ 0) {ε : ℝ} (hε : 0 < ε) :
+theorem eventually_cayleyZSum_le_log_RH {k : ℤ} (hk : k ≠ 0) {ε : ℝ} (hε : 0 < ε) :
     ∃ Q : ℕ,
       2 ≤ Q ∧
         ∀ (q : ℕ) [NeZero q],
@@ -234,7 +229,7 @@ theorem exists_uniform_completedZeroCayleyZSum_le_log {k : ℤ} (hk : k ≠ 0) {
   cases n with
   | zero => rcases hn with rfl | rfl <;> exact (hk rfl).elim
   | succ n =>
-    obtain ⟨Q, hQ, hb⟩ := exists_uniform_completedZeroCayleySum_le_log n hε
+    obtain ⟨Q, hQ, hb⟩ := eventually_cayleySum_le_log_RH n hε
     refine ⟨Q, hQ, ?_⟩
     intro q _ hq χ hRH hp hne hinv
     rcases hn with rfl | rfl
@@ -249,7 +244,7 @@ Poisson weight from log q / 2 at most epsilon log q, uniformly over primitive no
 characters with nonprincipal inverse satisfying individual RH. Absorb the fixed error
 bound into the logarithm. This supplies the limiting constant moment alongside the
 vanishing nonzero integer moments. -/
-theorem exists_uniform_completedZeroPoissonSum_error_le_log {ε : ℝ} (hε : 0 < ε) :
+theorem eventually_poissonError_le_log_RH {ε : ℝ} (hε : 0 < ε) :
     ∃ Q : ℕ,
       2 ≤ Q ∧
         ∀ (q : ℕ) [NeZero q],
@@ -261,7 +256,7 @@ theorem exists_uniform_completedZeroPoissonSum_error_le_log {ε : ℝ} (hε : 0 
                 χ⁻¹ ≠ 1 →
                 |(∑' ρ : CompletedZero χ, completedZeroPoissonWeight χ ρ) - Real.log q / 2| ≤
                   ε * Real.log q := by
-  obtain ⟨C, _, hb⟩ := exists_uniform_completedZeroPoissonSum_error_le
+  obtain ⟨C, _, hb⟩ := uniform_poissonSum_error_RH
   have hl :=
     (Real.tendsto_log_atTop.comp (tendsto_natCast_atTop_atTop (R := ℝ))).eventually_ge_atTop (C / ε)
   obtain ⟨Q, hQ⟩ := Filter.eventually_atTop.mp hl

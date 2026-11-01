@@ -170,8 +170,8 @@ theorem gaussian_archimedean_integrand_exp_bound {q : ℕ} (χ : DirichletCharac
 /-- For every character and positive scale, the normalized central Gaussian integral
 has norm at most 64/9. Integrate the exponential envelope and use π>3.14.
 The bound is uniform in modulus, parity and scale. -/
-theorem norm_gaussian_central_integral_le_sixty_four_ninths {q : ℕ} (χ : DirichletCharacter ℂ q)
-    {x : ℝ} (hx : 0 < x) :
+theorem norm_gaussian_central_integral_le_64_9 {q : ℕ} (χ : DirichletCharacter ℂ q) {x : ℝ}
+    (hx : 0 < x) :
     ‖((1 / (2 * Real.pi) : ℝ) : ℂ) *
           (∫ t : ℝ,
             logDeriv χ.gammaFactor (Complex.I * t + 1 / 2) *
@@ -205,8 +205,8 @@ theorem norm_gaussian_central_integral_le_sixty_four_ninths {q : ℕ} (χ : Diri
 /-- For x≥1 and an admissible nonnegative right line, the normalized Gamma integral
 has norm at most 64/9. Transfer to the central line by contour independence.
 This supplies the improved archimedean constant for the completed formula. -/
-theorem norm_gaussian_right_integral_le_sixty_four_ninths {q : ℕ} (χ : DirichletCharacter ℂ q)
-    {b x : ℝ} (hb : 0 ≤ b) (hbK : b ≤ 1 / 2 + gaussianGammaMellinKernel.delta) (hb2 : b ≤ 3 / 2)
+theorem norm_gaussian_right_integral_le_64_9 {q : ℕ} (χ : DirichletCharacter ℂ q) {b x : ℝ}
+    (hb : 0 ≤ b) (hbK : b ≤ 1 / 2 + gaussianGammaMellinKernel.delta) (hb2 : b ≤ 3 / 2)
     (hx : 1 ≤ x) :
     ‖((1 / (2 * Real.pi) : ℝ) : ℂ) *
           (∫ t : ℝ,
@@ -215,13 +215,13 @@ theorem norm_gaussian_right_integral_le_sixty_four_ninths {q : ℕ} (χ : Dirich
                 (x : ℂ) ^ ((b : ℂ) + Complex.I * t)))‖ ≤
       64 / 9 := by
   rw [MellinKernel.gammaIntegral_eq_central gaussianGammaMellinKernel χ hb hbK hb2 hx]
-  exact norm_gaussian_central_integral_le_sixty_four_ninths χ (zero_lt_one.trans_le hx)
+  exact norm_gaussian_central_integral_le_64_9 χ (zero_lt_one.trans_le hx)
 
 /-- Under GRH and primitive nonprincipal data, the completed Gaussian arithmetic
 formula has archimedean remainder at most 64/9 on admissible contour lines.
 Substitute the exact formula and apply the right-line integral bound.
 The residue, zero sum and left integral remain explicit for later estimates. -/
-theorem norm_gaussian_completed_remainder_le_sixty_four_ninths {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem norm_gaussian_completed_remainder_le_64_9_GRH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {a b x : ℝ} (hab : a < b)
     (ha : -1 / 2 - gaussianGammaMellinKernel.delta < a)
@@ -242,6 +242,6 @@ theorem norm_gaussian_completed_remainder_le_sixty_four_ninths {q : ℕ} [NeZero
       hinv hab ha hb ha' hb' hx hal hbr
   dsimp only at h
   rw [h, add_sub_cancel_left]
-  exact norm_gaussian_right_integral_le_sixty_four_ninths χ (by linarith only [hbr]) hb hb' hx
+  exact norm_gaussian_right_integral_le_64_9 χ (by linarith only [hbr]) hb hb' hx
 
 end PseudoPrime.LLS.PaperStatements

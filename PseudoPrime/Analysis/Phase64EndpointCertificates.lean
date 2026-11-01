@@ -92,6 +92,6 @@ theorem phase64_principal_endpoint_upper :
     (∑ n ∈ Finset.range 40000,
         Real.exp (-(n : ℝ) / (4096128001 / 2475000)) * ArithmeticFunction.vonMangoldt n) ≤
       (1654 : ℝ) := by
-  exact phase64_principal_endpoint_upper_of_blocks principal_blocks
+  exact principal_endpoint_upper_of_blocks principal_blocks
 
 end PseudoPrime.Analysis.Phase64EndpointCertificates

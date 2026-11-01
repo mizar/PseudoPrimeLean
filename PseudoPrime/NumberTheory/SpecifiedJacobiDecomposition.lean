@@ -76,7 +76,7 @@ theorem exists_jacobiCharacterArithmeticData_of_sq_mul {n d b : ℕ} (hn : Odd n
         discriminant_eq := rfl
         discriminant_isFundamentalDiscr := by
           dsimp only [D]
-          exact positiveFundamentalDiscriminant_isFundamentalDiscr hdodd hdsquarefree
+          exact positiveFundamentalDiscr_isFundamental hdodd hdsquarefree
         discriminant_pos := hDpos
         discriminant_le := hDle
         character := χ

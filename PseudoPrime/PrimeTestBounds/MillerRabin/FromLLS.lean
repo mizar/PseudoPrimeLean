@@ -111,7 +111,7 @@ theorem exists_prime_millerRabin_witness_le_log_sq_of_s2 (hS2 : LLS.llsTheorem11
       intro p hp hpBound hpDiv
       exact hsmallFactor ⟨p, hp, hpBound, hpDiv⟩
     obtain ⟨H, hHproper, hpassImage⟩ :=
-      PrimeTest.exists_proper_subgroup_containing_strongMillerRabinPass hn hnOdd hnNotPrime
+      PrimeTest.exists_proper_subgroup_strongMR hn hnOdd hnNotPrime
     obtain ⟨p, hp, hpBound, hpOutside⟩ := hS2 n hlarge hnoSmallFactor H hHproper
     refine ⟨p, hp, hpBound, ?_⟩
     apply PrimeTest.not_strongMillerRabinPass_iff.mp
@@ -130,7 +130,7 @@ theorem exists_prime_millerRabin_witness_le_log_sq
         (p : ZMod n) ^ d ≠ 1 ∧ ∀ j : ℕ, j < s → (p : ZMod n) ^ (2 ^ j * d) ≠ -1 := by
   have hS2 : LLS.llsTheorem11S2 := LLS.llsTheorem11S2_of_grh hGRH
   by_cases hsmall : n < 3000
-  · exact exists_prime_millerRabin_witness_le_log_sq_of_lt_3000 hn hnOdd hnNotPrime hsmall
+  · exact exists_primeWitness_lt_3000 hn hnOdd hnNotPrime hsmall
   · have hlarge : 3000 ≤ n := Nat.le_of_not_lt hsmall
     exact exists_prime_millerRabin_witness_le_log_sq_of_s2 hS2 hn hnOdd hnNotPrime hlarge
 
@@ -202,9 +202,8 @@ theorem prime_iff_millerRabin_for_all_primes_le_log_sq
 canonical odd-part power differs from `1` and whose every repeated-square power differs
 from `-1`. The canonical witness theorem supplies these power conditions directly; this entry
 exposes the rejection certificate in the naming used by strong-test consumers. -/
-theorem exists_prime_strongMillerRabinWithBase_eq_false_le_log_sq
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : 1 < n)
-    (hnOdd : Odd n) (hnNotPrime : ¬Nat.Prime n) :
+theorem exists_rejectPowers_logSq_GRH (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {n : ℕ} (hn : 1 < n) (hnOdd : Odd n) (hnNotPrime : ¬Nat.Prime n) :
     let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)
     ∃ p : ℕ,
       Nat.Prime p ∧

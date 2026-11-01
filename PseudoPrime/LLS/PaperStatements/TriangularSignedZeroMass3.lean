@@ -40,7 +40,7 @@ theorem triangular18_absoluteMass_signed_formula {q : ℕ} [NeZero q] (hq : 2 �
   have he := triangular18_absoluteMass_conductor_formula hq hGRH hp hne hinv
   dsimp only at he ⊢
   rw [triangular_weightedResidue_pole_eq_zero, add_zero, triangular18_reflectedIntegral_eq_right,
-    triangular18_completed_rightIntegral_eq_arithmetic_add_gamma hinv] at he
+    triangular18_right_one_arithmetic_gamma hinv] at he
   linear_combination he
 
 end PseudoPrime.LLS.PaperStatements

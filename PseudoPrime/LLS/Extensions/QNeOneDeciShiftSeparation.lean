@@ -153,9 +153,8 @@ theorem qNeOneDeciShiftUpper_lt_lower {y L : ℝ} (hy : (8 : ℝ) ≤ y) (hL : L
 odd-prime triviality is impossible when y is at least 8 and L at most
 y+1/10. Insert the certified reciprocal loss and global separation into
 the generic three-branch transfer theorem. -/
-theorem not_oddPrimeTrivial_of_deci_shift_reciprocal_entrance {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hne : χ ≠ 1)
-    (heven : χ.primitiveCharacter.Even)
+theorem not_oddPrimeTrivial_deciEntrance_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    [NeZero χ.conductor] (hne : χ ≠ 1) (heven : χ.primitiveCharacter.Even)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y L : ℝ} (hy : (8 : ℝ) ≤ y)
     (hL : L ≤ y + 1 / 10) (hlog4 : Real.log χ.conductor ≤ L + Real.log 4)
     (hlogOdd : χ.primitiveCharacter 2 ≠ 0 → Real.log χ.conductor ≤ L)
@@ -163,12 +162,12 @@ theorem not_oddPrimeTrivial_of_deci_shift_reciprocal_entrance {q : ℕ} [NeZero 
       χ.primitiveCharacter 2 = 0 ∨ χ.primitiveCharacter 2 = 1 ∨ χ.primitiveCharacter 2 = -1) :
     ¬OddPrimeTrivial χ (y ^ 2) := by
   have hx := Analysis.sq_ge_64_of_ge_8 hy
-  have hE := primitiveReciprocalEvenMainError_le_neg_179_div_200 hx
+  have hE := reciprocalEvenError_le_neg_179_200 hx
   have he : (789 / 500 : ℝ) + -(179 / 200) + 4 / 5 = 1483 / 1000 := by norm_num only
   apply
-    not_oddPrimeTrivial_of_reciprocal_loss_and_mainError χ hne heven hGRH hy hE hlog4 hlogOdd hcases
-      (AnalyticNumberTheory.RiemannZeta.reciprocalWeightedMangoldtSum_ge_log_sub_789_div_500
-        hGRH.riemann (le_trans (by norm_num only) hx))
+    not_oddPrimeTrivial_reciprocal_errors_GRH χ hne heven hGRH hy hE hlog4 hlogOdd hcases
+      (AnalyticNumberTheory.RiemannZeta.reciprocalMangoldt_ge_log_sub_789_500 hGRH.riemann
+        (le_trans (by norm_num only) hx))
   simpa only [he] using qNeOneDeciShiftUpper_lt_lower hy hL
 
 end PseudoPrime.LLS.Extensions

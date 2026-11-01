@@ -21,7 +21,7 @@ namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 `σ ∈ [-(2m+1),-1/2]`. The majorant has a Gamma-envelope term depending on `m`,
 a term linear in `|t|`, and a hyperbolic-cotangent bound which can grow near
 `t=0`. Gamma recurrence estimates later give polynomial control in `m`. -/
-theorem exists_norm_logDeriv_riemannZeta_neg_add_mul_I_le_of_mem_Icc :
+theorem exists_logDeriv_farLeft_bound :
     ∃ C : ℝ,
       ∀ (m : ℕ) (σ t : ℝ),
         σ ∈ Set.Icc (-(2 * (m : ℝ) + 1)) (-1 / 2) →
@@ -35,7 +35,7 @@ theorem exists_norm_logDeriv_riemannZeta_neg_add_mul_I_le_of_mem_Icc :
                     1) +
               20 * Real.pi * |t| +
               Real.pi / 2 * Real.sqrt (1 + 1 / Real.sinh (Real.pi * t / 2) ^ 2) := by
-  obtain ⟨C₁, hC₁⟩ := exists_neg_log_norm_Gamma_one_add_add_mul_I_le_uniform
+  obtain ⟨C₁, hC₁⟩ := exists_neg_log_Gamma_shift_bound
   refine
     ⟨Real.log (2 * Real.pi) + 8 * C₁ +
         ∑' n : ℕ, ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ (3 / 2 : ℝ),
@@ -87,11 +87,11 @@ theorem exists_norm_logDeriv_riemannZeta_neg_add_mul_I_le_of_mem_Icc :
     tsum_vonMangoldt_div_rpow_antitone (x := 3 / 2) (y := 1 - σ) (by norm_num only) h32
   linarith only [hbase, hlog_le, hGammaB, hsum_le]
 
-/-- A concrete witness constant for `exists_norm_logDeriv_riemannZeta_neg_add_mul_I_le_of_mem_Icc`,
+/-- A concrete witness constant for `exists_logDeriv_farLeft_bound`,
 following the `goodHeightSeq`/`PseudoPrime.AnalyticNumberTheory.RiemannZeta.exists_good_height`
 `.choose`/`.choose_spec` idiom. -/
 noncomputable def qMinusOneHorizontalFarLeftConst : ℝ :=
-  exists_norm_logDeriv_riemannZeta_neg_add_mul_I_le_of_mem_Icc.choose
+  exists_logDeriv_farLeft_bound.choose
 
 /-- The `m`-dependent term of `farLeftZetaLogDerivBound`, isolated for reuse in the diagonal-limit
 construction below. -/
@@ -113,10 +113,10 @@ For nonzero height and real part in the stated far-left interval, the zeta logar
 derivative satisfies the chosen explicit majorant. Extract the estimate from the
 uniform existence theorem; horizontal far-left contour bounds use it.
 -/
-theorem norm_logDeriv_riemannZeta_neg_add_mul_I_le_of_mem_Icc {m : ℕ} {σ t : ℝ}
+theorem norm_logDeriv_le_farLeftBound {m : ℕ} {σ t : ℝ}
     (hσ : σ ∈ Set.Icc (-(2 * (m : ℝ) + 1)) (-1 / 2)) (ht : t ≠ 0) :
     ‖logDeriv riemannZeta ((σ : ℂ) + (t : ℂ) * Complex.I)‖ ≤ farLeftZetaLogDerivBound m t :=
-  exists_norm_logDeriv_riemannZeta_neg_add_mul_I_le_of_mem_Icc.choose_spec m σ t hσ ht
+  exists_logDeriv_farLeft_bound.choose_spec m σ t hσ ht
 
 /-- The far-left `ζ'/ζ` bound's `m`-dependent term `farLeftBTerm m → ∞`. -/
 theorem tendsto_farLeftBTerm_atTop : Filter.Tendsto farLeftBTerm Filter.atTop Filter.atTop := by
@@ -363,7 +363,7 @@ theorem farLeftHeightSeq_le_poly :
 /-- `farLeftHeightSeq m ^ 2 · r ^ m → 0` for `0 ≤ r < 1`: combines `farLeftHeightSeq_le_poly`'s
 cubic growth bound with `tendsto_add_one_pow_mul_pow_of_lt_one` (at degree `6`) to show `x > 1`'s
 exponential decay dominates `farLeftHeightSeq`'s polynomial growth. -/
-theorem tendsto_farLeftHeightSeq_sq_mul_pow_of_lt_one {r : ℝ} (hr : 0 ≤ r) (h'r : r < 1) :
+theorem tendsto_farLeftHeight_sq_mul_pow {r : ℝ} (hr : 0 ≤ r) (h'r : r < 1) :
     Filter.Tendsto (fun m : ℕ => farLeftHeightSeq m ^ 2 * r ^ m) Filter.atTop (nhds 0) := by
   obtain ⟨G, hGnn, hG⟩ := farLeftHeightSeq_le_poly
   have hbound :

@@ -21,7 +21,7 @@ namespace PseudoPrime.LLS
 of L works for all levels and characters whose original-level cost is at most
 CₘL. A signed-window input for the primitive character gives an original-level
 unit-prime non-one witness. Transfer the primitive value on coprime primes. -/
-theorem eventually_exists_unit_prime_of_signed_half_power_window {a δ C θ C₁ C₂ Cₘ : ℝ} (ha : 1 < a)
+theorem eventually_unit_prime_of_signed_window_RH {a δ C θ C₁ C₂ Cₘ : ℝ} (ha : 1 < a)
     (hδ : 1 - δ < a / 2) (hC : 0 < C) (hθ : 0 < θ) (hC₁ : 0 ≤ C₁) (hC₂ : 0 ≤ C₂)
     (hRH : RiemannHypothesis) :
     ∀ᶠ L : ℝ in Filter.atTop,
@@ -29,9 +29,7 @@ theorem eventually_exists_unit_prime_of_signed_half_power_window {a δ C θ C₁
         (∑ p ∈ q.primeFactors, Real.log p) ≤ Cₘ * L →
           PaperStatements.SignedHalfPowerWindow χ.primitiveCharacter q L a δ C θ C₁ C₂ →
           ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ C * L ^ a ∧ ¬p ∣ q ∧ χ p ≠ 1 := by
-  have h :=
-    PaperStatements.eventually_exists_prime_ne_one_of_signed_half_power_window (Cₘ := Cₘ) ha hδ hC
-      hθ hC₁ hC₂ hRH
+  have h := PaperStatements.eventually_prime_neOne_signedHalf_RH (Cₘ := Cₘ) ha hδ hC hθ hC₁ hC₂ hRH
   filter_upwards [h] with L hL
   intro q _ χ hE hw
   obtain ⟨p, hp, hb, hd, hv⟩ := hL χ.conductor q χ.primitiveCharacter (NeZero.ne q) hE hw
@@ -42,8 +40,8 @@ theorem eventually_exists_unit_prime_of_signed_half_power_window {a δ C θ C₁
 /-- Under RH and fixed power parameters, the primitive signed-window input
 and E(q)≤CₘL give a unit-prime outside any subgroup on which χ is trivial.
 Transfer the character non-one value to nonmembership; the start is uniform. -/
-theorem eventually_exists_prime_outside_of_signed_half_power_window {a δ C θ C₁ C₂ Cₘ : ℝ}
-    (ha : 1 < a) (hδ : 1 - δ < a / 2) (hC : 0 < C) (hθ : 0 < θ) (hC₁ : 0 ≤ C₁) (hC₂ : 0 ≤ C₂)
+theorem eventually_prime_outside_of_signed_window_RH {a δ C θ C₁ C₂ Cₘ : ℝ} (ha : 1 < a)
+    (hδ : 1 - δ < a / 2) (hC : 0 < C) (hθ : 0 < θ) (hC₁ : 0 ≤ C₁) (hC₂ : 0 ≤ C₂)
     (hRH : RiemannHypothesis) :
     ∀ᶠ L : ℝ in Filter.atTop,
       ∀ (q : ℕ) [NeZero q] (H : Subgroup (ZMod q)ˣ) (χ : DirichletCharacter ℂ q),
@@ -54,8 +52,7 @@ theorem eventually_exists_prime_outside_of_signed_half_power_window {a δ C θ C
             p.Prime ∧
               (p : ℝ) ≤ C * L ^ a ∧
               ¬p ∣ q ∧ ¬∃ u : (ZMod q)ˣ, u ∈ H ∧ (u : ZMod q) = (p : ZMod q) := by
-  have h :=
-    eventually_exists_unit_prime_of_signed_half_power_window (Cₘ := Cₘ) ha hδ hC hθ hC₁ hC₂ hRH
+  have h := eventually_unit_prime_of_signed_window_RH (Cₘ := Cₘ) ha hδ hC hθ hC₁ hC₂ hRH
   filter_upwards [h] with L hL
   intro q _ H χ ht hE hw
   obtain ⟨p, hp, hb, hd, hv⟩ := hL q χ hE hw
@@ -67,15 +64,14 @@ theorem eventually_exists_prime_outside_of_signed_half_power_window {a δ C θ C
 a unit-prime non-one witness through C(log q)^a whenever their primitive character
 satisfies the explicit signed-window hypothesis. Use E(q)≤log(q) and the uniform
 L theorem. This isolates the remaining phase estimate from the completed transfer. -/
-theorem eventually_exists_unit_prime_log_power_of_signed_half_window {a δ C θ C₁ C₂ : ℝ}
-    (ha : 1 < a) (hδ : 1 - δ < a / 2) (hC : 0 < C) (hθ : 0 < θ) (hC₁ : 0 ≤ C₁) (hC₂ : 0 ≤ C₂)
+theorem eventually_unit_prime_log_pow_signed_window_RH {a δ C θ C₁ C₂ : ℝ} (ha : 1 < a)
+    (hδ : 1 - δ < a / 2) (hC : 0 < C) (hθ : 0 < θ) (hC₁ : 0 ≤ C₁) (hC₂ : 0 ≤ C₂)
     (hRH : RiemannHypothesis) :
     ∀ᶠ q : ℕ in Filter.atTop,
       ∀ [NeZero q] (χ : DirichletCharacter ℂ q),
         PaperStatements.SignedHalfPowerWindow χ.primitiveCharacter q (Real.log q) a δ C θ C₁ C₂ →
           ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ C * (Real.log q) ^ a ∧ ¬p ∣ q ∧ χ p ≠ 1 := by
-  have h :=
-    eventually_exists_unit_prime_of_signed_half_power_window (Cₘ := 1) ha hδ hC hθ hC₁ hC₂ hRH
+  have h := eventually_unit_prime_of_signed_window_RH (Cₘ := 1) ha hδ hC hθ hC₁ hC₂ hRH
   have hlog : Filter.Tendsto (fun q : ℕ ↦ Real.log q) Filter.atTop Filter.atTop :=
     Real.tendsto_log_atTop.comp tendsto_natCast_atTop_atTop
   filter_upwards [hlog.eventually h] with q hq
@@ -86,8 +82,8 @@ theorem eventually_exists_unit_prime_log_power_of_signed_half_window {a δ C θ 
 /-- Under RH and fixed power parameters, for every sufficiently large q the
 primitive signed-window hypothesis gives a prime outside a subgroup on which
 χ is trivial, through C(log q)^a and coprime to q. Transfer the unit-prime theorem. -/
-theorem eventually_exists_prime_outside_log_power_of_signed_half_window {a δ C θ C₁ C₂ : ℝ}
-    (ha : 1 < a) (hδ : 1 - δ < a / 2) (hC : 0 < C) (hθ : 0 < θ) (hC₁ : 0 ≤ C₁) (hC₂ : 0 ≤ C₂)
+theorem eventually_prime_outside_log_pow_window_RH {a δ C θ C₁ C₂ : ℝ} (ha : 1 < a)
+    (hδ : 1 - δ < a / 2) (hC : 0 < C) (hθ : 0 < θ) (hC₁ : 0 ≤ C₁) (hC₂ : 0 ≤ C₂)
     (hRH : RiemannHypothesis) :
     ∀ᶠ q : ℕ in Filter.atTop,
       ∀ [NeZero q] (H : Subgroup (ZMod q)ˣ) (χ : DirichletCharacter ℂ q),
@@ -97,7 +93,7 @@ theorem eventually_exists_prime_outside_log_power_of_signed_half_window {a δ C 
             p.Prime ∧
               (p : ℝ) ≤ C * (Real.log q) ^ a ∧
               ¬p ∣ q ∧ ¬∃ u : (ZMod q)ˣ, u ∈ H ∧ (u : ZMod q) = (p : ZMod q) := by
-  have h := eventually_exists_unit_prime_log_power_of_signed_half_window ha hδ hC hθ hC₁ hC₂ hRH
+  have h := eventually_unit_prime_log_pow_signed_window_RH ha hδ hC hθ hC₁ hC₂ hRH
   filter_upwards [h] with q hq
   intro _ H χ ht hw
   obtain ⟨p, hp, hb, hd, hv⟩ := hq χ hw
@@ -109,8 +105,8 @@ theorem eventually_exists_prime_outside_log_power_of_signed_half_window {a δ C 
 all nonprincipal characters yields a prime outside every proper subgroup at
 all sufficiently large levels. Choose a nontrivial quotient character, pull it
 back, and apply the completed character transfer. The phase input remains explicit. -/
-theorem eventually_exists_prime_outside_proper_subgroup_of_signed_half_windows {a δ C θ C₁ C₂ : ℝ}
-    (ha : 1 < a) (hδ : 1 - δ < a / 2) (hC : 0 < C) (hθ : 0 < θ) (hC₁ : 0 ≤ C₁) (hC₂ : 0 ≤ C₂)
+theorem eventually_prime_outside_proper_of_windows_RH {a δ C θ C₁ C₂ : ℝ} (ha : 1 < a)
+    (hδ : 1 - δ < a / 2) (hC : 0 < C) (hθ : 0 < θ) (hC₁ : 0 ≤ C₁) (hC₂ : 0 ≤ C₂)
     (hRH : RiemannHypothesis) :
     ∀ᶠ q : ℕ in Filter.atTop,
       ∀ [NeZero q] (H : Subgroup (ZMod q)ˣ),
@@ -123,7 +119,7 @@ theorem eventually_exists_prime_outside_proper_subgroup_of_signed_half_windows {
             p.Prime ∧
               (p : ℝ) ≤ C * (Real.log q) ^ a ∧
               ¬p ∣ q ∧ ¬∃ u : (ZMod q)ˣ, u ∈ H ∧ (u : ZMod q) = (p : ZMod q) := by
-  have h := eventually_exists_prime_outside_log_power_of_signed_half_window ha hδ hC hθ hC₁ hC₂ hRH
+  have h := eventually_prime_outside_log_pow_window_RH ha hδ hC hθ hC₁ hC₂ hRH
   filter_upwards [h] with q hq
   intro _ H hH hphase
   have : H.Normal := H.normal_of_isMulCommutative

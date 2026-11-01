@@ -219,7 +219,7 @@ For odd n with jacobiSym 5 n=-1, ordinary BPSW has the same result at (D,P,Q)=(5
 as at (5,1,-1). Rewrite the Strong Lucas component using Method A/A* equality; the
 base-two MR component is common. This validates the ordinary bounded Method A comparison.
 -/
-theorem bailliePSWWithParams_methodAStar_eq_methodA_of_five {n : ℕ} (hn : Odd n)
+theorem bailliePSW_AStar_eq_A_of_jacobi_five_neg_one {n : ℕ} (hn : Odd n)
     (hjacobi : jacobiSym 5 n = -1) :
     bailliePSWWithParams n 5 5 5 = bailliePSWWithParams n 5 1 (-1) := by
   have hsl := strongLucasMethodAStar_eq_methodA hn (by norm_num only [Int.reduceMod]) hjacobi

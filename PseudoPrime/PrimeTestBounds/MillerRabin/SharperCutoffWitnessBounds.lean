@@ -27,10 +27,8 @@ theorem exists_prime_witness_le_sharperPart2Root {n : ℕ} (hnOdd : Odd n) (hnCo
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   have hn : 1 < n := (by norm_num only : (1 : ℕ) < 3000).trans_le hnLarge
   let : NeZero n := ⟨(zero_lt_one.trans hn).ne'⟩
-  obtain ⟨H, hH, hpass⟩ :=
-    PrimeTest.exists_proper_subgroup_containing_strongMillerRabinPass hn hnOdd hnComposite
-  obtain ⟨p, hp, hb, hout⟩ :=
-    LLS.exists_prime_outside_subgroup_image_le_sharperPart2Root hnLarge H hH hGRH
+  obtain ⟨H, hH, hpass⟩ := PrimeTest.exists_proper_subgroup_strongMR hn hnOdd hnComposite
+  obtain ⟨p, hp, hb, hout⟩ := LLS.exists_prime_outside_sharperPart2_GRH hnLarge H hH hGRH
   exact ⟨p, hp, hb, PrimeTest.not_pass_of_outside_subgroup hpass hout⟩
 
 /-- Under the same assumptions, the least prime rejecting base is bounded
@@ -56,7 +54,7 @@ theorem exists_least_prime_witness_le_sharperPart2Root {n : ℕ} (hnOdd : Odd n)
 n-1=2^s d has a prime base through the sharper Part 2 cutoff with p^d ≠ 1
 and p^(2^j d) ≠ -1 for every j<s. Apply the exact rejection equivalence
 to the proved prime witness. -/
-theorem exists_prime_rejecting_powers_le_sharperPart2Root {n : ℕ} (hnOdd : Odd n)
+theorem exists_primeRejectPowers_le_sharperPart2Root {n : ℕ} (hnOdd : Odd n)
     (hnComposite : ¬n.Prime) (hnLarge : 3000 ≤ n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     let (s, d) := Nat.maxPowDvdDiv 2 (n - 1);

@@ -65,7 +65,7 @@ theorem oddEndpointLimit_le_elementary (q : ℕ) {x Y : ℝ} (hx : 1 ≤ x) (hY 
 /-- For primitive nonprincipal GRH data at q>=2 and 64<=Y<=x, negativity of the
 elementary odd endpoint limit gives an odd non-one prime at most x. Apply the
 exact criterion and its elementary upper bound. No finite arithmetic sums remain. -/
-theorem exists_odd_prime_not_one_of_oddEndpointElementaryLimit_neg {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem exists_oddPrime_neOne_elementary_GRH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x Y : ℝ} (hx : 1 < x) (hY : 64 ≤ Y)
     (hYx : Y ≤ x) (hlim : oddEndpointElementaryLimit q x Y < 0) :
@@ -87,8 +87,8 @@ theorem fullEndpointLimit_mono_level {q N : ℕ} {x Y : ℝ} (hq : 0 < q) (hqN :
     Filter.Eventually.mono self_mem_nhdsWithin
       (fun h hh ↦ reciprocalGapFullEndpointSeparation_mono_level hh hx hY hq hqN)
   exact
-    le_of_tendsto_of_tendsto (tendsto_reciprocalGapFullEndpointSeparation_right q hx Y)
-      (tendsto_reciprocalGapFullEndpointSeparation_right N hx Y) he
+    le_of_tendsto_of_tendsto (tendsto_reciprocalGapFullEndpoint q hx Y)
+      (tendsto_reciprocalGapFullEndpoint N hx Y) he
 
 /-- For 0<q<=N,x>=1,Y>=64, the elementary odd endpoint limit is monotone in
 its level. The two-power corrections are independent of the level; apply the

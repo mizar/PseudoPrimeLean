@@ -64,7 +64,7 @@ theorem jacobi_no_negative_logarithmic_phase_comparison {n : ℕ} {hn : Odd n} {
       bridge.character_ne_one hinv hx hy l hl δ hd hW (Finset.Ioc 0 ⌊b⌋₊) hyphase
   have ha := gamma_jacobi_no_negative_ramp_comparison bridge (by linarith only [hx]) hno
   have he :=
-    finiteSigned_character_prefix_add_ambient_ramp_eq_local_cost l bridge.character
+    signedPrefix_add_ramp_eq_cost l bridge.character
       (Nat.mul_pos (by norm_num only : (0 : ℕ) < 4) hn.pos) hb
       (gamma_jacobi_no_negative_prefix_prime_one bridge
         (fun p hp ho hpb ↦ hno p hp ho (hpb.trans hbx)))
@@ -75,7 +75,7 @@ theorem jacobi_no_negative_logarithmic_phase_comparison {n : ℕ} {hn : Odd n} {
 /-- Under the transported-phase hypotheses, a strict gap between the explicit
 local budget and the actual ramp-minus-principal quantity gives a negative odd-prime
 Jacobi witness through 99*x/40. Contradict the proved no-witness comparison. -/
-theorem exists_odd_prime_negative_of_logarithmic_phase_gap {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+theorem exists_oddPrime_negJacobi_logPhase_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {q : ℕ} (hq : 20000 ≤ q)
     (hmq : (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ q) {x y b : ℝ} (hx : 2 ≤ x)
@@ -106,8 +106,8 @@ theorem exists_odd_prime_negative_of_logarithmic_phase_gap {n : ℕ} {hn : Odd n
 any positive target scale with the displayed log-distance cap. Under GRH and a strict
 transported-budget gap, obtain a negative odd-prime witness through 99*x/40.
 The spectral comparison at the new scale needs no new grid certificate. -/
-theorem exists_odd_prime_negative_of_transported_phase64_gap {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem exists_oddPrime_negJacobi_transport64_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {q : ℕ} (hq : 20000 ≤ q)
     (hmq : (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ q) {x b L : ℝ} (hx : 2 ≤ x)
     (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x) (hlo : 64 ≤ L) (hhi : L ≤ 64001 / 1000) (δ : ℚ)
@@ -122,7 +122,7 @@ theorem exists_odd_prime_negative_of_transported_phase64_gap {n : ℕ} {hn : Odd
   have hy : (0 : ℝ) < L ^ 2 / (99 / 40) :=
     (by norm_num only : (0 : ℝ) < 163840 / 99).trans_le (Analysis.scale64_cell_of_level hlo hhi).1
   exact
-    exists_odd_prime_negative_of_logarithmic_phase_gap bridge hGRH hq hmq hx hy hb hbx
+    exists_oddPrime_negJacobi_logPhase_GRH bridge hGRH hq hmq hx hy hb hbx
       Analysis.phaseResolvent64Coefficients hl δ hd
       (fun u hu ↦ Analysis.phaseResolvent64_euler_nonneg hu)
       (fun t ↦ Analysis.phaseCell64_full_phase_of_level hlo hhi t) hgap

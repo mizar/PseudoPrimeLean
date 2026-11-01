@@ -47,7 +47,7 @@ noncomputable def shiftedLogSingularitiesInRectangle {N : ℕ} [NeZero N] (χ : 
 /-- Membership in the shifted ledger means rectangle membership and either being the
 origin or a zero of L at `σ+s`. Unfold finite-set conversion to recover these analytic
 conditions for grid avoidance and local residue certificates. -/
-theorem mem_shiftedLogSingularitiesInRectangle {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+theorem mem_shiftedLogSingularities_iff {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     {hne : χ ≠ 1} {σ : ℝ} {z w s : ℂ} :
     s ∈ shiftedLogSingularitiesInRectangle χ hne σ z w ↔
       s ∈ Rectangle.rectangleClosedBox z w ∧ (s = 0 ∨ χ.LFunction ((σ : ℂ) + s) = 0) := by
@@ -56,7 +56,7 @@ theorem mem_shiftedLogSingularitiesInRectangle {N : ℕ} [NeZero N] {χ : Dirich
 /-- For a non-principal character and x>0, the shifted kernel is differentiable away from
 the origin and shifted L-zeros. Compose the analytic logarithmic derivative with translation,
 then multiply by the analytic power and divide by the nonzero square. -/
-theorem differentiableAt_shiftedLogContourKernel {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+theorem differentiableAt_shiftedLogKernel {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     (hne : χ ≠ 1) {x σ : ℝ} (hx : 0 < x) {s : ℂ} (hs : s ≠ 0) (hL : χ.LFunction ((σ : ℂ) + s) ≠ 0) :
     DifferentiableAt ℂ (shiftedLogContourKernel χ x σ) s := by
   have hF := (χ.differentiable_LFunction hne).analyticAt ((σ : ℂ) + s)
@@ -97,34 +97,31 @@ theorem shiftedLogFiniteContourIdentity {N : ℕ} [NeZero N] {χ : DirichletChar
       ∑ s ∈ shiftedLogSingularitiesInRectangle χ hne σ z w,
         2 * Real.pi * Complex.I * shiftedLogResidueAt χ x σ s := by
   apply
-    RectangleGeometry.rectangleBoundaryIntegral_eq_sum_of_local_residues
-      (shiftedLogContourKernel χ x σ)
+    RectangleGeometry.boundaryIntegral_eq_sum_residues (shiftedLogContourKernel χ x σ)
       (fun s => 2 * Real.pi * Complex.I * shiftedLogResidueAt χ x σ s)
       (shiftedLogSingularitiesInRectangle χ hne σ z w) hre him
-      (fun s hs => (mem_shiftedLogSingularitiesInRectangle.mp hs).1) hopen
+      (fun s hs => (mem_shiftedLogSingularities_iff.mp hs).1) hopen
   · intro s hs hnot
     have hregular : ¬(s = 0 ∨ χ.LFunction ((σ : ℂ) + s) = 0) := fun h =>
-      hnot (mem_shiftedLogSingularitiesInRectangle.mpr ⟨hs, h⟩)
+      hnot (mem_shiftedLogSingularities_iff.mpr ⟨hs, h⟩)
     exact
-      differentiableAt_shiftedLogContourKernel hne hx (fun h => hregular (Or.inl h))
+      differentiableAt_shiftedLogKernel hne hx (fun h => hregular (Or.inl h))
         (fun h => hregular (Or.inr h))
   · intro s hs
     by_cases hs0 : s = 0
     · subst s
-      simpa only [shiftedLogResidueAt, ↓reduceIte] using
-        exists_radius_shiftedLogContourKernel_origin hne hx hσ
+      simpa only [shiftedLogResidueAt, ↓reduceIte] using exists_shiftedLog_origin_residue hne hx hσ
     · have hzero : χ.LFunction ((σ : ℂ) + s) = 0 :=
-        ((mem_shiftedLogSingularitiesInRectangle.mp hs).2).resolve_left hs0
+        ((mem_shiftedLogSingularities_iff.mp hs).2).resolve_left hs0
       have hshift : (σ : ℂ) + s - (σ : ℂ) = s := by ring
-      have hcert := exists_radius_shiftedLogContourKernel_zero hne hx hzero (hshift ▸ hs0)
+      have hcert := exists_shiftedLog_zero_residue hne hx hzero (hshift ▸ hs0)
       simpa only [hshift, shiftedLogResidueAt, ite_eq_right hs0] using hcert
 
 /-- Normalize the finite shifted contour identity by `-i/(2π)` to obtain the sum of residue
 coefficients. For the same non-principal data and interior ledger, distribute over the finite
 sum and cancel `i²=-1`. This form feeds the subsequent height limit. -/
-theorem shiftedLogFiniteContourIdentity_normalized {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
-    (hne : χ ≠ 1) {x σ : ℝ} (hx : 0 < x) (hσ : 1 ≤ σ) {z w : ℂ} (hre : z.re < w.re)
-    (him : z.im < w.im)
+theorem shiftedLogContour_normalized {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hne : χ ≠ 1)
+    {x σ : ℝ} (hx : 0 < x) (hσ : 1 ≤ σ) {z w : ℂ} (hre : z.re < w.re) (him : z.im < w.im)
     (hopen :
       ∀ s ∈ shiftedLogSingularitiesInRectangle χ hne σ z w,
         s ∈ RectangleGeometry.rectangleOpenBox z w) :

@@ -234,8 +234,7 @@ theorem primeCountInProgression_le_thirty_two {Y Q a : ℕ} (hQ : 0 < Q)
     apply Real.log_pos
     exact_mod_cast (Nat.lt_succ_of_le hz)
   have hnorm : (Nat.totient Q : ℝ) / (Q : ℝ) * (Real.log ((z + 1 : ℕ) : ℝ) / 2) ≤ G := by
-    simpa only [G, P] using
-      selbergTruncatedTotientSum_coprime_primorial_ge_totient_ratio_log_div_two z Q hQ hz
+    simpa only [G, P] using selbergTotient_coprime_ge_totient_log z Q hQ hz
   have hGpos : 0 < G := by
     apply lt_of_lt_of_le _ hnorm
     exact mul_pos (div_pos hphiPos hQpos) (div_pos hlogZpos (by norm_num only : (0 : ℝ) < 2))
@@ -308,8 +307,8 @@ theorem primeCountInProgression_le_thirty_two {Y Q a : ℕ} (hQ : 0 < Q)
       _ = 8 * (Y : ℝ) / ((Nat.totient Q : ℝ) * Real.log M) := by
         field_simp [ne_of_gt hphiPos, ne_of_gt hlogMpos]
   have hbase :=
-    progressionPrimeCount_le_truncatedOptimal_selberg_explicit_error (Y := Y) (Q := Q) (a := a)
-      (z := z) (P := P) hP hQ hPQ hz G rfl hPsmall
+    progressionPrimes_le_optimal_explicit (Y := Y) (Q := Q) (a := a) (z := z) (P := P) hP hQ hPQ hz
+      G rfl hPsmall
   calc
     (primeCountInProgression Y Q a : ℝ) ≤
         ((Finset.range (z + 1)).filter Nat.Prime).card +

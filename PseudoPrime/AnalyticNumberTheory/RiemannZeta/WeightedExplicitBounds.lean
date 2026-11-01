@@ -40,7 +40,7 @@ theorem abs_reciprocalResidueLedger_error_le (hRH : RiemannHypothesis) {x τ : �
     Finset.sum_filter_add_sum_filter_not S (fun ρ : ℂ ↦ ρ.re < 0)
       (riemannZetaReciprocalZeroContribution x)
   have hb :=
-    norm_sum_riemannZetaReciprocalZeroContribution_le hRH hxpos (S.filter (fun ρ ↦ ¬ρ.re < 0))
+    norm_sum_zetaReciprocalZeroContribution_le hRH hxpos (S.filter (fun ρ ↦ ¬ρ.re < 0))
       (fun ρ hρ ↦ (mem_riemannZetaZerosInAnyRectangle_iff.mp (Finset.mem_filter.mp hρ).1).2)
       (fun ρ hρ ↦ not_lt.mp (Finset.mem_filter.mp hρ).2)
   have hre0 : (Complex.log (2 * (Real.pi : ℂ)) * (x : ℂ)⁻¹).re = Real.log (2 * Real.pi) / x := by
@@ -53,9 +53,8 @@ theorem abs_reciprocalResidueLedger_error_le (hRH : RiemannHypothesis) {x τ : �
       Real.log x - 1 - Real.eulerMascheroniConstant := by
     rw [← Complex.ofReal_log hxpos.le]
     simp only [Complex.sub_re, Complex.ofReal_re, Complex.one_re]
-  rw [riemannZetaReciprocalContourResidueLedger_unifiedTau_eq hτ,
-    riemannZetaReciprocalResidueAtZero_eq, riemannZetaReciprocalResidueAtOne_eq hxpos,
-    Complex.add_re, Complex.add_re, hre0, hre1]
+  rw [reciprocalResidueLedger_unifiedTau_eq hτ, riemannZetaReciprocalResidueAtZero_eq,
+    riemannZetaReciprocalResidueAtOne_eq hxpos, Complex.add_re, Complex.add_re, hre0, hre1]
   change
     |Real.log (2 * Real.pi) / x + (Real.log x - 1 - Real.eulerMascheroniConstant) +
             (∑ ρ ∈ S, riemannZetaReciprocalZeroContribution x ρ).re -
@@ -85,11 +84,11 @@ theorem abs_reciprocalWeightedMangoldtSum_error_le (hRH : RiemannHypothesis) {x 
   have h2 : (1 : ℝ) < 2 := by norm_num only
   have hR :=
     Analysis.tendsto_residueLedger_of_normalized
-      (tendsto_riemannZetaReciprocalContourResidueLedger_atTop hx h2 le_rfl)
+      (tendsto_reciprocalResidueLedger_unified hx h2 le_rfl)
   rw [← reciprocalWeightedMangoldtSum_eq_integral (lt_trans zero_lt_one hx) h2] at hR
   have hRe := (Complex.continuous_re.tendsto _).comp hR
   simp only [Complex.ofReal_re] at hRe
-  have ht := tendsto_sum_reciprocalTrivialZeros_unifiedRectangle hx h2
+  have ht := tendsto_reciprocalTrivialSum_unified hx h2
   have hlim :=
     ((hRe.sub_const
             (Real.log x - (1 + Real.eulerMascheroniConstant) + Real.log (2 * Real.pi) / x)).sub
@@ -134,7 +133,7 @@ theorem abs_logResidueLedger_error_le (hRH : RiemannHypothesis) {x τ : ℝ} (hx
     norm_sum_riemannZetaLogZeroContribution_le hRH hxpos Sn
       (fun ρ hρ ↦ (mem_riemannZetaZerosInAnyRectangle_iff.mp (Finset.mem_filter.mp hρ).1).2)
       (fun ρ hρ ↦ not_lt.mp (Finset.mem_filter.mp hρ).2)
-  have hD := RiemannXi.norm_deriv_logDeriv_riemannXi_zero_le_two_mul_riemannZeroMass hRH
+  have hD := RiemannXi.norm_deriv_logDeriv_zero_le_two_mass_RH hRH
   have hbridge := congrArg Complex.re RiemannXi.deriv_logDeriv_riemannXi_zero_eq
   have hbridge' :
     (deriv (logDeriv RiemannXi.riemannXi) 0).re =
@@ -150,7 +149,7 @@ theorem abs_logResidueLedger_error_le (hRH : RiemannHypothesis) {x τ : ℝ} (hx
       Complex.ofReal_log (mul_nonneg (by norm_num only) Real.pi_pos.le), ←
       Complex.ofReal_log hxpos.le, ← Complex.ofReal_mul, Complex.sub_re, Complex.neg_re,
       Complex.ofReal_re]
-  rw [riemannZetaLogContourResidueLedger_unifiedTau_eq hτ, riemannZetaLogResidueAtZero_eq hxpos,
+  rw [zetaLogContourResidueLedger_unifiedTau_eq hτ, riemannZetaLogResidueAtZero_eq hxpos,
     riemannZetaLogResidueAtOne_eq, Complex.add_re, Complex.add_re, hre0, Complex.ofReal_re]
   change
     |-RiemannXi.qMinusOneRiemannZetaSecondLogDerivAtZero.re - Real.log (2 * Real.pi) * Real.log x +
@@ -186,11 +185,11 @@ theorem abs_logWeightedMangoldtSum_error_le (hRH : RiemannHypothesis) {x : ℝ} 
   have h2 : (1 : ℝ) < 2 := by norm_num only
   have hR :=
     Analysis.tendsto_residueLedger_of_normalized
-      (tendsto_riemannZetaLogContourResidueLedger_atTop hx h2 le_rfl)
+      (tendsto_zetaLogContourResidueLedger_atTop hx h2 le_rfl)
   rw [← logWeightedMangoldtSum_eq_integral (lt_trans zero_lt_one hx) h2] at hR
   have hRe := (Complex.continuous_re.tendsto _).comp hR
   simp only [Complex.ofReal_re] at hRe
-  have ht := tendsto_sum_logTrivialZeros_unifiedRectangle hx h2
+  have ht := tendsto_logTrivialSum_unified hx h2
   have hlim :=
     ((hRe.sub_const (x - Real.log (2 * Real.pi) * Real.log x - 1 + Real.pi ^ 2 / 24)).sub ht).abs
   have hb :=

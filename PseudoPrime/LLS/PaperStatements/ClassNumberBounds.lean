@@ -74,9 +74,9 @@ of positive norm gives the bounds of Corollary 1.3 for the specified quadratic
 field and q ≥ 10^10. Derive factorization and the residue identity from the
 coefficient formula, then apply Theorem 1.5 and the specialized class-number
 formula. The assumed coefficient identity connects the field to the character. -/
-theorem imaginaryQuadratic_classNumber_bounds_of_ideal_count (q : ℕ) [NeZero q] (hq : 10 ^ 10 ≤ q)
-    (K : Type) [Field K] [NumberField K] (hdeg : Module.finrank ℚ K = 2)
-    (hd : NumberField.discr K = -(q : ℤ)) (χ : DirichletCharacter ℂ q) (hp : χ.IsPrimitive)
+theorem imaginaryQuadratic_classNumber_bounds_GRH (q : ℕ) [NeZero q] (hq : 10 ^ 10 ≤ q) (K : Type)
+    [Field K] [NumberField K] (hdeg : Module.finrank ℚ K = 2) (hd : NumberField.discr K = -(q : ℤ))
+    (χ : DirichletCharacter ℂ q) (hp : χ.IsPrimitive)
     (hc :
       ∀ n : ℕ,
         n ≠ 0 →
@@ -93,11 +93,11 @@ theorem imaginaryQuadratic_classNumber_bounds_of_ideal_count (q : ℕ) [NeZero q
   have hq4 : 4 < q := lt_of_lt_of_le (by norm_num only : (4 : ℕ) < 10 ^ 10) hq
   have hq3 : 3 ≤ q := le_trans (by norm_num only : (3 : ℕ) ≤ 10 ^ 10) hq
   have hL :=
-    AnalyticNumberTheory.norm_LFunction_one_eq_dedekindZeta_residue_of_ideal_count K χ
+    AnalyticNumberTheory.norm_L_one_eq_dedekindResidue_idealCount K χ
       (primitiveCharacter_ne_one_of_three_le hq3 hp) hc
   exact
     classNumber_bounds_of_LValue_bounds q K χ hq0
-      (AnalyticNumberTheory.imaginaryQuadratic_classNumber_formula_of_residue q hq4 K hdeg hd χ hL)
+      (AnalyticNumberTheory.imaginaryQuadratic_classNumber_of_residue q hq4 K hdeg hd χ hL)
       ⟨lValue_upper_bound χ hq hp hGRH, lValue_reciprocal_bound χ hq hp hGRH⟩
 
 /-- Given a primitive character whose divisor sum counts integral ideals in each
@@ -123,7 +123,7 @@ theorem lls_corollary13_of_ideal_count
   have hq0 : 0 < q := lt_of_lt_of_le (by norm_num only : (0 : ℕ) < 10 ^ 10) hq
   let : NeZero q := ⟨Nat.ne_of_gt hq0⟩
   obtain ⟨χ, hp, hc⟩ := hcount q K hq hdeg hd
-  exact imaginaryQuadratic_classNumber_bounds_of_ideal_count q hq K hdeg hd χ hp hc hGRH
+  exact imaginaryQuadratic_classNumber_bounds_GRH q hq K hdeg hd χ hp hc hGRH
 
 /-- If each imaginary quadratic field has a primitive character whose values agree
 with the splitting of every rational prime, prove Corollary 1.3 as originally stated.

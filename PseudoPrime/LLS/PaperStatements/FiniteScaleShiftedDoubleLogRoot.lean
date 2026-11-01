@@ -19,8 +19,8 @@ namespace PseudoPrime.LLS.PaperStatements
 37/5 level inequality force positivity of the zero branch. The rational
 remainder coefficients are already nonnegative at this smaller height.
 The same exact decomposition supplies the lower analytic starting scale. -/
-theorem shiftedOddEndpoint_zero_polynomial_pos_of_remainder_of_49 {L y z : ℝ} (hy : 49 ≤ y)
-    (hz : 0 ≤ z) (hF : 0 < (79 / 2000 : ℝ) * y + 14 + (15 / 2 : ℝ) * z - 2 * z ^ 2)
+theorem shiftedOdd_zeroPoly_pos_from49 {L y z : ℝ} (hy : 49 ≤ y) (hz : 0 ≤ z)
+    (hF : 0 < (79 / 2000 : ℝ) * y + 14 + (15 / 2 : ℝ) * z - 2 * z ^ 2)
     (hlink : (y - 2) * L ≤ (y - 2) * y + y * (2 * z - 37 / 5)) :
     0 <
       oddEndpointTwoCostPolynomial (L + 7 / 5) (2096 / 1831) y z (7 / 10)
@@ -85,7 +85,7 @@ theorem shiftedOddEndpoint_zero_polynomial_pos_of_remainder_of_49 {L y z : ℝ} 
 /-- For y≥49 and z≥0 the nonzero branch polynomial dominates the
 shifted zero branch. Expand the exact difference and bound its two
 coefficients using the lower height; this transfers the same positive certificate. -/
-theorem shiftedOddEndpoint_nonzero_polynomial_ge_zero_of_49 {L y z : ℝ} (hy : 49 ≤ y) (hz : 0 ≤ z) :
+theorem shiftedOdd_nonzero_polynomial_ge_zero_of_49 {L y z : ℝ} (hy : 49 ≤ y) (hz : 0 ≤ z) :
     oddEndpointTwoCostPolynomial (L + 7 / 5) (2096 / 1831) y z (7 / 10)
         (2 * z ^ 2 - (69 / 100 : ℝ) * z + 49 / 800) ≤
       oddEndpointTwoCostPolynomial L (2096 / 1831) y z (14 / 15) (2 * z ^ 2) := by
@@ -141,8 +141,8 @@ theorem shiftedOddEndpointDoubleLogRoot_data_from_fifty {L : ℝ} (hL : 50 ≤ L
 polynomials are positive at the 37/5 radius. Use remainder positivity from one
 and the y≥49 comparison, retaining the half-square shift at two.
 Substitution of b=log two supplies the odd-prime Jacobi certificates. -/
-theorem shiftedOddEndpoint_doubleLog_branch_polynomials_pos_from_fifty {L b : ℝ} (hL : 50 ≤ L)
-    (hbl : 69 / 100 ≤ b) (hbu : b ≤ 7 / 10) :
+theorem shiftedOdd_doubleLog_polys_pos_from50 {L b : ℝ} (hL : 50 ≤ L) (hbl : 69 / 100 ≤ b)
+    (hbu : b ≤ 7 / 10) :
     let y := shiftedOddEndpointDoubleLogRoot L
     0 <
         oddEndpointTwoCostPolynomial (L + 2 * b) (2096 / 1831) y (Real.log y) b
@@ -155,8 +155,8 @@ theorem shiftedOddEndpoint_doubleLog_branch_polynomials_pos_from_fifty {L b : �
   have hy1 : 1 ≤ y := by linarith only [hd.1]
   have hz := Real.log_nonneg hy1
   have hp :=
-    shiftedOddEndpoint_zero_polynomial_pos_of_remainder_of_49 hd.1 hz
-      (Analysis.shiftedLogQuadraticRemainder_pos_of_one hy1) hd.2
+    shiftedOdd_zeroPoly_pos_from49 hd.1 hz (Analysis.shiftedLogQuadraticRemainder_pos_of_one hy1)
+      hd.2
   have hm := mul_le_mul_of_nonneg_right hbl hz
   have hb0 : 0 ≤ b := by linarith only [hbl]
   have hb2 := mul_self_le_mul_self hb0 hbu
@@ -171,7 +171,7 @@ theorem shiftedOddEndpoint_doubleLog_branch_polynomials_pos_from_fifty {L b : �
   have hcost0 :=
     oddEndpointTwoCostPolynomial_antitone_cost (L := L + 2 * b) (P := (2096 / 1831 : ℝ)) hy1 hz hbu
       hD
-  have hbranch := shiftedOddEndpoint_nonzero_polynomial_ge_zero_of_49 (L := L) hd.1 hz
+  have hbranch := shiftedOdd_nonzero_polynomial_ge_zero_of_49 (L := L) hd.1 hz
   have hcost1 :=
     oddEndpointTwoCostPolynomial_antitone_cost (L := L) (P := (2096 / 1831 : ℝ)) (D :=
       2 * (Real.log y) ^ 2) hy1 hz (show (4 / 3 : ℝ) * b ≤ 14 / 15 by linarith only [hbu]) le_rfl

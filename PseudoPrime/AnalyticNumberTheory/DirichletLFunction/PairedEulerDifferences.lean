@@ -49,8 +49,8 @@ theorem realPairedEuler_difference_prefix_le {q : ℕ} (χ : DirichletCharacter 
 bounds the difference of the paired principal and character logarithmic derivatives
 below. Substitute the two exact absolutely convergent Euler identities.
 This needs neither RH nor primitivity. -/
-theorem real_logDeriv_pair_difference_prefix_le {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
-    {σ τ : ℝ} (hs : 1 < σ) (hst : σ ≤ τ) (B : Finset ℕ) :
+theorem realPaired_diff_prefix_le {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) {σ τ : ℝ}
+    (hs : 1 < σ) (hst : σ ≤ τ) (B : Finset ℕ) :
     (∑ m ∈ B, (realPairedEulerTerm χ σ m - realPairedEulerTerm χ τ m)) ≤
       (-(logDeriv (1 : DirichletCharacter ℂ 1).LFunction (σ : ℂ)).re -
           (logDeriv χ.LFunction (σ : ℂ)).re) -
@@ -63,8 +63,7 @@ theorem real_logDeriv_pair_difference_prefix_le {q : ℕ} [NeZero q] (χ : Diric
 right-endpoint term times the exponent gap is at most the paired term difference.
 Multiply the scalar secant inequality by the nonnegative Mangoldt coefficient.
 The zero index vanishes. No differentiation of an infinite sum is invoked. -/
-theorem realPairedEulerTerm_log_weight_le_difference {q : ℕ} (χ : DirichletCharacter ℂ q) (σ τ : ℝ)
-    (m : ℕ) :
+theorem pairedEuler_logWeight_le_diff {q : ℕ} (χ : DirichletCharacter ℂ q) (σ τ : ℝ) (m : ℕ) :
     (τ - σ) * Real.log m * realPairedEulerTerm χ τ m ≤
       realPairedEulerTerm χ σ m - realPairedEulerTerm χ τ m := by
   rcases eq_or_ne m 0 with rfl | hm
@@ -85,12 +84,11 @@ theorem realPairedEulerTerm_log_weight_le_difference {q : ℕ} (χ : DirichletCh
 is at most the difference of the full paired Euler sums. Sum the pointwise secant
 lower bound and discard only nonnegative difference terms in the complementary
 support. This supplies a stable positive gain for nearby real-axis nodes. -/
-theorem realPairedEuler_log_prefix_le_difference {q : ℕ} (χ : DirichletCharacter ℂ q) {σ τ : ℝ}
-    (hs : 1 < σ) (hst : σ ≤ τ) (B : Finset ℕ) :
+theorem pairedEuler_logPrefix_le_diff {q : ℕ} (χ : DirichletCharacter ℂ q) {σ τ : ℝ} (hs : 1 < σ)
+    (hst : σ ≤ τ) (B : Finset ℕ) :
     (τ - σ) * (∑ m ∈ B, Real.log m * realPairedEulerTerm χ τ m) ≤
       (∑' m : ℕ, realPairedEulerTerm χ σ m) - ∑' m : ℕ, realPairedEulerTerm χ τ m := by
-  have h :=
-    Finset.sum_le_sum (fun m (_ : m ∈ B) ↦ realPairedEulerTerm_log_weight_le_difference χ σ τ m)
+  have h := Finset.sum_le_sum (fun m (_ : m ∈ B) ↦ pairedEuler_logWeight_le_diff χ σ τ m)
   rw [Finset.mul_sum]
   simp only [mul_assoc] at h
   exact h.trans (realPairedEuler_difference_prefix_le χ hs hst B)
@@ -99,22 +97,22 @@ theorem realPairedEuler_log_prefix_le_difference {q : ℕ} (χ : DirichletCharac
 difference is bounded above by the opposite principal difference minus the finite
 paired Euler-difference gain. Rearrange the paired identity without separate norm
 bounds. This is the arithmetic input to the completed zero-mass comparison. -/
-theorem real_logDeriv_difference_le_paired_prefix {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
-    {σ τ : ℝ} (hs : 1 < σ) (hst : σ ≤ τ) (B : Finset ℕ) :
+theorem realLogDeriv_diff_le_pairedPrefix {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) {σ τ : ℝ}
+    (hs : 1 < σ) (hst : σ ≤ τ) (B : Finset ℕ) :
     (logDeriv χ.LFunction (σ : ℂ)).re - (logDeriv χ.LFunction (τ : ℂ)).re ≤
       (logDeriv (1 : DirichletCharacter ℂ 1).LFunction (τ : ℂ)).re -
         (logDeriv (1 : DirichletCharacter ℂ 1).LFunction (σ : ℂ)).re -
         ∑ m ∈ B, (realPairedEulerTerm χ σ m - realPairedEulerTerm χ τ m) := by
-  have h := real_logDeriv_pair_difference_prefix_le χ hs hst B
+  have h := realPaired_diff_prefix_le χ hs hst B
   linarith only [h]
 
 /-- For primitive nonprincipal individual-RH data and 1<sigma<=tau, the difference
 of the two actual Poisson zero masses is at most the Gamma difference plus the
 opposite principal derivative difference minus the finite paired Euler gain.
 Use the exact signed Poisson identities; the conductor contributions cancel. -/
-theorem completed_poissonSum_difference_le_paired_prefix {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {σ τ : ℝ} (hs : 1 < σ) (hst : σ ≤ τ) (B : Finset ℕ) :
+theorem poissonDiff_le_pairedPrefix_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    {σ τ : ℝ} (hs : 1 < σ) (hst : σ ≤ τ) (B : Finset ℕ) :
     (∑' ρ : ℂ,
           (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
             ((σ - 1 / 2) / Complex.normSq ((σ : ℂ) - ρ))) -
@@ -125,18 +123,18 @@ theorem completed_poissonSum_difference_le_paired_prefix {q : ℕ} [NeZero q] (h
           (logDeriv (1 : DirichletCharacter ℂ 1).LFunction (τ : ℂ)).re -
         (logDeriv (1 : DirichletCharacter ℂ 1).LFunction (σ : ℂ)).re -
         ∑ m ∈ B, (realPairedEulerTerm χ σ m - realPairedEulerTerm χ τ m) := by
-  rw [completed_poissonSum_eq_signed_ordinary hq hRH hp hne hinv hs,
-    completed_poissonSum_eq_signed_ordinary hq hRH hp hne hinv (hs.trans_le hst)]
-  have h := real_logDeriv_difference_le_paired_prefix χ hs hst B
+  rw [poissonSum_eq_signedOrdinary_RH hq hRH hp hne hinv hs,
+    poissonSum_eq_signedOrdinary_RH hq hRH hp hne hinv (hs.trans_le hst)]
+  have h := realLogDeriv_diff_le_pairedPrefix χ hs hst B
   linarith only [h]
 
 /-- For the same primitive individual-RH data, retain the exponent gap times a finite
 log-weighted right-endpoint Euler prefix in the Poisson zero-mass difference.
 Use the secant lower bound in the exact Euler and Poisson identities. This avoids
 both derivative estimates at the series level and independent endpoint norms. -/
-theorem completed_poissonSum_difference_le_paired_log_prefix {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {σ τ : ℝ} (hs : 1 < σ) (hst : σ ≤ τ) (B : Finset ℕ) :
+theorem poissonDiff_le_logPrefix_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    {σ τ : ℝ} (hs : 1 < σ) (hst : σ ≤ τ) (B : Finset ℕ) :
     (∑' ρ : ℂ,
           (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
             ((σ - 1 / 2) / Complex.normSq ((σ : ℂ) - ρ))) -
@@ -147,11 +145,11 @@ theorem completed_poissonSum_difference_le_paired_log_prefix {q : ℕ} [NeZero q
           (logDeriv (1 : DirichletCharacter ℂ 1).LFunction (τ : ℂ)).re -
         (logDeriv (1 : DirichletCharacter ℂ 1).LFunction (σ : ℂ)).re -
         (τ - σ) * (∑ m ∈ B, Real.log m * realPairedEulerTerm χ τ m) := by
-  have h := realPairedEuler_log_prefix_le_difference χ hs hst B
+  have h := pairedEuler_logPrefix_le_diff χ hs hst B
   rw [← neg_real_logDeriv_pair_eq_euler χ hs, ←
     neg_real_logDeriv_pair_eq_euler χ (hs.trans_le hst)] at h
-  rw [completed_poissonSum_eq_signed_ordinary hq hRH hp hne hinv hs,
-    completed_poissonSum_eq_signed_ordinary hq hRH hp hne hinv (hs.trans_le hst)]
+  rw [poissonSum_eq_signedOrdinary_RH hq hRH hp hne hinv hs,
+    poissonSum_eq_signedOrdinary_RH hq hRH hp hne hinv (hs.trans_le hst)]
   linarith only [h]
 
 /-- For primitive nonprincipal individual-RH data, 1<sigma<=tau and 0<=v<=u,
@@ -159,7 +157,7 @@ bound u times the first Poisson mass minus v times the second. Decompose it into
 (u-v) times the first mass and v times the mass difference, retaining independent
 ordinary and log-weighted finite prefixes. This handles a negative node coefficient
 without replacing it by its absolute value. -/
-theorem completed_poissonSum_signed_pair_le_retained_prefixes {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem poissonPair_le_retainedPrefixes_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {σ τ u v : ℝ} (hs : 1 < σ) (hst : σ ≤ τ) (hv : 0 ≤ v)
     (hvu : v ≤ u) (A B : Finset ℕ) :
@@ -181,7 +179,7 @@ theorem completed_poissonSum_signed_pair_le_retained_prefixes {q : ℕ} [NeZero 
             (logDeriv (1 : DirichletCharacter ℂ 1).LFunction (σ : ℂ)).re -
             (τ - σ) * (∑ m ∈ B, Real.log m * realPairedEulerTerm χ τ m)) := by
   have hbase := realPairedEuler_prefix_le_logDeriv χ hs A
-  have he := completed_poissonSum_eq_signed_ordinary hq hRH hp hne hinv hs
+  have he := poissonSum_eq_signedOrdinary_RH hq hRH hp hne hinv hs
   have hb :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
@@ -190,7 +188,7 @@ theorem completed_poissonSum_signed_pair_le_retained_prefixes {q : ℕ} [NeZero 
         (logDeriv (1 : DirichletCharacter ℂ 1).LFunction (σ : ℂ)).re -
         ∑ m ∈ A, realPairedEulerTerm χ σ m := by
     linarith only [hbase, he]
-  have hd := completed_poissonSum_difference_le_paired_log_prefix hq hRH hp hne hinv hs hst B
+  have hd := poissonDiff_le_logPrefix_RH hq hRH hp hne hinv hs hst B
   have h :=
     add_le_add (mul_le_mul_of_nonneg_left hb (sub_nonneg.mpr hvu)) (mul_le_mul_of_nonneg_left hd hv)
   convert h using 1
@@ -201,9 +199,9 @@ the actual zero-mass series for the signed two-profile weight equals the signed
 combination of Poisson sums, for arbitrary real coefficients. Existing resolvent
 summability justifies subtraction and scalar extraction; RH identifies ordinates
 with the real-axis Poisson denominators. No unsigned-tail estimate is introduced. -/
-theorem completed_poissonDifferenceWeight_tsum_eq {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {σ τ : ℝ} (hs : 1 / 2 < σ) (ht : 1 / 2 < τ) (u v : ℝ) :
+theorem poissonDiffWeight_tsum_eq_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    {σ τ : ℝ} (hs : 1 / 2 < σ) (ht : 1 / 2 < τ) (u v : ℝ) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
           Analysis.poissonDifferenceWeight (σ - 1 / 2) (τ - 1 / 2) u v ρ.im) =
@@ -248,10 +246,9 @@ the signed rational-kernel zero mass obeys the retained two-prefix upper bound.
 First identify the convergent kernel series with the two Poisson sums, then apply
 the coupled real-axis estimate. This is the kernel-level interface for choosing
 certified scales and coefficients in later witness-bound comparisons. -/
-theorem completed_poissonDifferenceWeight_mass_le_retained_prefixes {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {σ τ u v : ℝ} (hs : 1 < σ) (hst : σ ≤ τ) (hv : 0 ≤ v)
-    (hvu : v ≤ u) (A B : Finset ℕ) :
+theorem poissonDiffMass_le_prefixes_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    {σ τ u v : ℝ} (hs : 1 < σ) (hst : σ ≤ τ) (hv : 0 ≤ v) (hvu : v ≤ u) (A B : Finset ℕ) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
           Analysis.poissonDifferenceWeight (σ - 1 / 2) (τ - 1 / 2) u v ρ.im) ≤
@@ -265,16 +262,16 @@ theorem completed_poissonDifferenceWeight_mass_le_retained_prefixes {q : ℕ} [N
             (logDeriv (1 : DirichletCharacter ℂ 1).LFunction (σ : ℂ)).re -
             (τ - σ) * (∑ m ∈ B, Real.log m * realPairedEulerTerm χ τ m)) := by
   have hs0 : 1 / 2 < σ := lt_trans (by norm_num only) hs
-  rw [completed_poissonDifferenceWeight_tsum_eq hq hRH hp hne hinv hs0 (hs0.trans_le hst) u v]
-  exact completed_poissonSum_signed_pair_le_retained_prefixes hq hRH hp hne hinv hs hst hv hvu A B
+  rw [poissonDiffWeight_tsum_eq_RH hq hRH hp hne hinv hs0 (hs0.trans_le hst) u v]
+  exact poissonPair_le_retainedPrefixes_RH hq hRH hp hne hinv hs hst hv hvu A B
 
 /-- For primitive nonprincipal individual-RH data and two nodes right of one half,
 the divisor-weighted signed Poisson-difference kernel is summable for arbitrary
 real coefficients. Combine the two known summable resolvent series and distribute
 the weights. This supplies convergence for comparisons with new Mellin kernels. -/
-theorem summable_completed_poissonDifferenceWeight {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {σ τ : ℝ} (hs : 1 / 2 < σ) (ht : 1 / 2 < τ) (u v : ℝ) :
+theorem summable_poissonDiffWeight_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    {σ τ : ℝ} (hs : 1 / 2 < σ) (ht : 1 / 2 < τ) (u v : ℝ) :
     Summable
       (fun ρ : ℂ ↦
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
@@ -292,7 +289,7 @@ Then its actual divisor-weighted zero series is summable and bounded by the reta
 ordinary and log-weighted Euler prefixes. Analyticity makes divisor multiplicities
 nonnegative; transfer domination to the summable rational kernel before summing.
 This isolates the remaining kernel-majorant and numerical parameter certificates. -/
-theorem zeroMass_le_of_poissonDifferenceWeight_majorant {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem zeroMass_le_of_poisson_majorant_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {σ τ u v : ℝ} (hs : 1 < σ) (hst : σ ≤ τ) (hv : 0 ≤ v)
     (hvu : v ≤ u) (A B : Finset ℕ) (K : ℝ → ℝ) (hK : ∀ t, 0 ≤ K t)
@@ -309,8 +306,7 @@ theorem zeroMass_le_of_poissonDifferenceWeight_majorant {q : ℕ} [NeZero q] (hq
               (logDeriv (1 : DirichletCharacter ℂ 1).LFunction (σ : ℂ)).re -
               (τ - σ) * (∑ m ∈ B, Real.log m * realPairedEulerTerm χ τ m)) := by
   have hs0 : 1 / 2 < σ := lt_trans (by norm_num only) hs
-  have hsum :=
-    summable_completed_poissonDifferenceWeight hq hRH hp hne hinv hs0 (hs0.trans_le hst) u v
+  have hsum := summable_poissonDiffWeight_RH hq hRH hp hne hinv hs0 (hs0.trans_le hst) u v
   have hAn : AnalyticOnNhd ℂ χ.completedLFunction Set.univ := fun z _ ↦
     (DirichletCharacter.differentiable_completedLFunction hne).analyticAt z
   have hn (ρ : ℂ) : (0 : ℝ) ≤ (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) := by
@@ -324,7 +320,6 @@ theorem zeroMass_le_of_poissonDifferenceWeight_majorant {q : ℕ} [NeZero q] (hq
   exact
     ⟨hk,
       (hk.tsum_le_tsum hdom hsum).trans
-        (completed_poissonDifferenceWeight_mass_le_retained_prefixes hq hRH hp hne hinv hs hst hv
-          hvu A B)⟩
+        (poissonDiffMass_le_prefixes_RH hq hRH hp hne hinv hs hst hv hvu A B)⟩
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

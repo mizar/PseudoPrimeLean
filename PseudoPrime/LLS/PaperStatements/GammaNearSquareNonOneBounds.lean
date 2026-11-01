@@ -51,7 +51,7 @@ nonprincipal primitive Gamma sum at x=(2/5)L² is at most M L+23.
 Bound the conductor by q and use the existing thirty-two-term certificate,
 the common left cost, and the pole budget above. The bound is uniform in q's
 factorization and in the character; quadraticity is not required. -/
-theorem gamma_primitiveCharacter_sum_re_le_nearSquare_endpoint {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+theorem gammaCharacterSum_re_le_nearSquare_endpoint {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
     (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L : ℝ} (hL : 1000 ≤ L)
     (hlogq : Real.log q ≤ L + 7 / 5) :
@@ -65,7 +65,7 @@ theorem gamma_primitiveCharacter_sum_re_le_nearSquare_endpoint {q : ℕ} [NeZero
   have he := nearSquare_gamma_error_budgets hL
   have hpole := (nearSquare_gamma_dyadic_pole_budgets hL hlogq).2
   have hu :=
-    gamma_primitiveCharacter_sum_re_le_conductor_free_prefix hq χ hne hGRH hx 32
+    gammaCharacterSum_re_le_conductor_free_prefix hq χ hne hGRH hx 32
       Analysis.gammaResolvent_thirtyTwo_error_lt
   have hmq := Nat.le_of_dvd (Nat.pos_of_ne_zero (NeZero.ne q)) χ.conductor_dvd_level
   have hf : (0 : ℝ) < χ.conductor := by exact_mod_cast Nat.pos_of_ne_zero χ.conductor_ne_zero

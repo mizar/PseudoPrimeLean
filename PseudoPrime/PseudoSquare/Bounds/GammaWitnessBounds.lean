@@ -41,7 +41,7 @@ theorem exists_primeNegOneWitness_le_gamma_of_large_log {n : ℕ} (hn : Odd n) (
         (p : ℝ) ≤ (99 / 40 : ℝ) * x → NumberTheory.complexQuadraticCharacter n hn p = 1 := by
     intro p hp hd hb
     by_contra hv
-    have hm := NumberTheory.primeNegOneWitness_mem_of_complexQuadraticCharacter_ne_one n hn hp hd hv
+    have hm := NumberTheory.negOneWitness_mem_of_quadratic_ne_one n hn hp hd hv
     rw [hcut] at hb
     exact hnone ⟨p, hm, hb⟩
   exact

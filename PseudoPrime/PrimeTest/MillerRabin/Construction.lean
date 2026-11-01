@@ -319,10 +319,10 @@ private theorem local_minus_one_iff_signature {p s j d : ℕ} [Fact (Nat.Prime p
 
 /-- Under the two local Fermat congruences, a semiprime passes a base exactly when its
 prime factors have the same two-adic multiplicative-order signature. -/
-private theorem strongMillerRabinWithBase_mul_iff_order_signature_decomp {p q s d a : ℕ}
-    [Fact (Nat.Prime p)] [Fact (Nat.Prime q)] (hpOdd : Odd p) (hqOdd : Odd q) (hc : p.Coprime q)
-    (hn : 1 < p * q) (hdecomp : p * q - 1 = 2 ^ s * d) (hdOdd : Odd d)
-    (hfp : (a : ZMod p) ^ (2 ^ s * d) = 1) (hfq : (a : ZMod q) ^ (2 ^ s * d) = 1) :
+private theorem strongMR_mul_iff_signature_decomp {p q s d a : ℕ} [Fact (Nat.Prime p)]
+    [Fact (Nat.Prime q)] (hpOdd : Odd p) (hqOdd : Odd q) (hc : p.Coprime q) (hn : 1 < p * q)
+    (hdecomp : p * q - 1 = 2 ^ s * d) (hdOdd : Odd d) (hfp : (a : ZMod p) ^ (2 ^ s * d) = 1)
+    (hfq : (a : ZMod q) ^ (2 ^ s * d) = 1) :
     strongMillerRabinWithBase (p * q) a = true ↔
       padicValNat 2 (orderOf (a : ZMod p)) = padicValNat 2 (orderOf (a : ZMod q)) := by
   rw [strongMillerRabinWithBase_mul_eq_true_iff_decomp hc hn hdecomp hdOdd]
@@ -353,9 +353,9 @@ private theorem strongMillerRabinWithBase_mul_iff_order_signature_decomp {p q s 
         exact hminus
 
 /-- Complete semiprime criterion: both Fermat equations and matching two-adic order signatures. -/
-private theorem strongMillerRabinWithBase_mul_iff_fermat_and_order_signature_decomp {p q s d a : ℕ}
-    [Fact (Nat.Prime p)] [Fact (Nat.Prime q)] (hpOdd : Odd p) (hqOdd : Odd q) (hc : p.Coprime q)
-    (hn : 1 < p * q) (hdecomp : p * q - 1 = 2 ^ s * d) (hdOdd : Odd d) :
+private theorem strongMR_mul_iff_fermat_signature_decomp {p q s d a : ℕ} [Fact (Nat.Prime p)]
+    [Fact (Nat.Prime q)] (hpOdd : Odd p) (hqOdd : Odd q) (hc : p.Coprime q) (hn : 1 < p * q)
+    (hdecomp : p * q - 1 = 2 ^ s * d) (hdOdd : Odd d) :
     strongMillerRabinWithBase (p * q) a = true ↔
       (a : ZMod p) ^ (2 ^ s * d) = 1 ∧
         (a : ZMod q) ^ (2 ^ s * d) = 1 ∧
@@ -370,14 +370,10 @@ private theorem strongMillerRabinWithBase_mul_iff_fermat_and_order_signature_dec
     have hlocal := (pow_mod_mul_eq_one_iff hc a _).mp hglobal
     exact
       ⟨hlocal.1, hlocal.2,
-        (strongMillerRabinWithBase_mul_iff_order_signature_decomp hpOdd hqOdd hc hn hdecomp hdOdd
-              hlocal.1 hlocal.2).mp
+        (strongMR_mul_iff_signature_decomp hpOdd hqOdd hc hn hdecomp hdOdd hlocal.1 hlocal.2).mp
           hpass⟩
   · rintro ⟨hfp, hfq, ht⟩
-    exact
-      (strongMillerRabinWithBase_mul_iff_order_signature_decomp hpOdd hqOdd hc hn hdecomp hdOdd hfp
-            hfq).mpr
-        ht
+    exact (strongMR_mul_iff_signature_decomp hpOdd hqOdd hc hn hdecomp hdOdd hfp hfq).mpr ht
 
 /-- If a prime-factor predecessor divides `n - 1` with the same two-adic valuation, the
 Korselt quotient is odd. -/
@@ -545,10 +541,10 @@ theorem pow_mod_list_prod_eq_neg_one_iff (factors : List ℕ) (a e : ℕ)
 
 /-- For an odd squarefree product, a base passes exactly when every prime factor satisfies
 Fermat and all factors share one two-adic multiplicative-order signature. -/
-private theorem strongMillerRabinWithBase_factors_iff_fermat_and_order_signature_decomp
-    (factors : List ℕ) {s d a : ℕ} (hpair : List.Pairwise Nat.Coprime factors)
-    (hprimes : ∀ p ∈ factors, Nat.Prime p) (hodd : ∀ p ∈ factors, Odd p) (hn : 1 < factors.prod)
-    (hnOdd : Odd factors.prod) (hdecomp : factors.prod - 1 = 2 ^ s * d) (hdOdd : Odd d) :
+private theorem strongMR_factors_iff_fermat_signature_decomp (factors : List ℕ) {s d a : ℕ}
+    (hpair : List.Pairwise Nat.Coprime factors) (hprimes : ∀ p ∈ factors, Nat.Prime p)
+    (hodd : ∀ p ∈ factors, Odd p) (hn : 1 < factors.prod) (hnOdd : Odd factors.prod)
+    (hdecomp : factors.prod - 1 = 2 ^ s * d) (hdOdd : Odd d) :
     strongMillerRabinWithBase factors.prod a = true ↔
       (∀ p ∈ factors, (a : ZMod p) ^ (2 ^ s * d) = 1) ∧
         ∃ t : ℕ, t ≤ s ∧ ∀ p ∈ factors, padicValNat 2 (orderOf (a : ZMod p)) = t := by
@@ -620,21 +616,19 @@ private theorem strongMillerRabinWithBase_factors_iff_fermat_and_order_signature
 
 /-- A semiprime passes a base exactly when both local Fermat equations hold and the
 two local multiplicative orders have the same two-adic valuation. -/
-theorem strongMillerRabinWithBase_mul_iff_fermat_and_order_signature {p q a : ℕ}
-    [Fact (Nat.Prime p)] [Fact (Nat.Prime q)] (hpOdd : Odd p) (hqOdd : Odd q) (hc : p.Coprime q)
-    (hn : 1 < p * q) (hnOdd : Odd (p * q)) :
+theorem strongMR_mul_iff_fermat_signature {p q a : ℕ} [Fact (Nat.Prime p)] [Fact (Nat.Prime q)]
+    (hpOdd : Odd p) (hqOdd : Odd q) (hc : p.Coprime q) (hn : 1 < p * q) (hnOdd : Odd (p * q)) :
     strongMillerRabinWithBase (p * q) a = true ↔
       (a : ZMod p) ^ (p * q - 1) = 1 ∧
         (a : ZMod q) ^ (p * q - 1) = 1 ∧
         padicValNat 2 (orderOf (a : ZMod p)) = padicValNat 2 (orderOf (a : ZMod q)) := by
   obtain ⟨hs, hd, hdecomp⟩ := odd_sub_canonical_decomp hn hnOdd
   simpa only [← hdecomp] using
-    (strongMillerRabinWithBase_mul_iff_fermat_and_order_signature_decomp hpOdd hqOdd hc hn hdecomp
-      hd (a := a))
+    (strongMR_mul_iff_fermat_signature_decomp hpOdd hqOdd hc hn hdecomp hd (a := a))
 
 /-- A squarefree odd product passes a base exactly when all local Fermat equations hold
 and the two-adic valuations of the local multiplicative orders agree. -/
-theorem strongMillerRabinWithBase_factors_iff_fermat_and_order_signature (factors : List ℕ) {a : ℕ}
+theorem strongMR_factors_iff_fermat_signature (factors : List ℕ) {a : ℕ}
     (hpair : List.Pairwise Nat.Coprime factors) (hprimes : ∀ p ∈ factors, Nat.Prime p)
     (hodd : ∀ p ∈ factors, Odd p) (hn : 1 < factors.prod) (hnOdd : Odd factors.prod) :
     strongMillerRabinWithBase factors.prod a = true ↔
@@ -644,8 +638,8 @@ theorem strongMillerRabinWithBase_factors_iff_fermat_and_order_signature (factor
             ∀ p ∈ factors, padicValNat 2 (orderOf (a : ZMod p)) = t := by
   obtain ⟨hs, hd, hdecomp⟩ := odd_sub_canonical_decomp hn hnOdd
   simpa only [← hdecomp] using
-    (strongMillerRabinWithBase_factors_iff_fermat_and_order_signature_decomp factors hpair hprimes
-      hodd hn hnOdd hdecomp hd (a := a))
+    (strongMR_factors_iff_fermat_signature_decomp factors hpair hprimes hodd hn hnOdd hdecomp hd
+      (a := a))
 
 /-- Three prime factors meeting the Legendre, Korselt, and valuation conditions give a
 strong pseudoprime to every listed base. -/
@@ -708,15 +702,13 @@ theorem strongMillerRabinWithBase_mul_eq_true_iff {p q a : ℕ} (hc : p.Coprime 
 
 /-- Under both local Fermat equations, matching order signatures characterize the
 strong test at the canonical decomposition. -/
-theorem strongMillerRabinWithBase_mul_iff_order_signature {p q a : ℕ} [Fact (Nat.Prime p)]
-    [Fact (Nat.Prime q)] (hpOdd : Odd p) (hqOdd : Odd q) (hc : p.Coprime q) (hn : 1 < p * q)
-    (hnOdd : Odd (p * q)) (hfp : (a : ZMod p) ^ (p * q - 1) = 1)
-    (hfq : (a : ZMod q) ^ (p * q - 1) = 1) :
+theorem strongMR_mul_iff_order_signature {p q a : ℕ} [Fact (Nat.Prime p)] [Fact (Nat.Prime q)]
+    (hpOdd : Odd p) (hqOdd : Odd q) (hc : p.Coprime q) (hn : 1 < p * q) (hnOdd : Odd (p * q))
+    (hfp : (a : ZMod p) ^ (p * q - 1) = 1) (hfq : (a : ZMod q) ^ (p * q - 1) = 1) :
     strongMillerRabinWithBase (p * q) a = true ↔
       padicValNat 2 (orderOf (a : ZMod p)) = padicValNat 2 (orderOf (a : ZMod q)) := by
   obtain ⟨hs, hd, hdecomp⟩ := odd_sub_canonical_decomp hn hnOdd
   rw [hdecomp] at hfp hfq
-  exact
-    strongMillerRabinWithBase_mul_iff_order_signature_decomp hpOdd hqOdd hc hn hdecomp hd hfp hfq
+  exact strongMR_mul_iff_signature_decomp hpOdd hqOdd hc hn hdecomp hd hfp hfq
 
 end PseudoPrime.PrimeTest

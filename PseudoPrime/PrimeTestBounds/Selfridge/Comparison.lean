@@ -24,18 +24,17 @@ it is not an additional hypothesis. The proof derives `1 < n`, applies the same-
 stopping comparison, and rewrites `selfridgeD_natAbs`. This supplies the first inequality
 of `classicalSelfridgeD_elementary_bound_explicit`.
 -/
-theorem classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_firstStopNegOne_natAbs_cast {n : ℕ}
-    (hn : Odd n) (hns : ¬IsSquare n) :
+theorem classicalD_neOne_le_negOne {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n) :
     ((PrimeTest.selfridgeD
             (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n
-              (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+              (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
         ℝ) ≤
       ((PrimeTest.selfridgeD
             (PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n
-              (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+              (PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
         ℝ) := by
-  let hne := PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns
-  let hneg := PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns
+  let hne := PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns
+  let hneg := PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn hns
   have hn1 : 1 < n := by
     have hneq : n ≠ 1 := by
       intro h
@@ -48,7 +47,7 @@ theorem classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_firstStopNegOne_natAbs
   have hle :
     PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n hne ≤
       PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n hneg :=
-    PrimeTest.firstStopNeOne_le_firstStopNegOne_same_candidates hn1 hneg
+    PrimeTest.firstStopNeOne_le_negOne hn1 hneg
   simpa only [PrimeTest.selfridgeD_natAbs] using
     (show
       (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n hne : ℝ) ≤

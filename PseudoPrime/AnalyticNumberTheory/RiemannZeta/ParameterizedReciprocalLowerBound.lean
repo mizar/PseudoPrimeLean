@@ -30,7 +30,7 @@ theorem riemannReciprocalRemainder_ge_of_parameters {x G B P : ℝ} (hx : 2 ≤ 
   have hxp : 0 < x := lt_of_lt_of_le (by norm_num only) hx
   have hs : 0 < Real.sqrt x := Real.sqrt_pos.mpr hxp
   have ht :=
-    (riemannReciprocalTrivialZeroSeries_le_geometric hx).trans
+    (reciprocalTrivialSeries_le_geometric hx).trans
       (Analysis.geometricTail_le_one_div_eighteen_mul hx)
   rw [div_mul_eq_div_div] at ht
   have hz :=
@@ -49,8 +49,8 @@ theorem riemannReciprocalRemainder_ge_of_parameters {x G B P : ℝ} (hx : 2 ≤ 
 sum is at least log x minus the parameterized remainder cost for x at least two.
 Transport the contour lower bound through its Mellin identity.
 This supplies a reusable arithmetic lower bound for witness comparisons. -/
-theorem reciprocalWeightedMangoldtSum_ge_of_parameters (hRH : RiemannHypothesis) {x G B P : ℝ}
-    (hx : 2 ≤ x) (hG : Real.eulerMascheroniConstant ≤ G) (hB : RiemannXi.riemannZeroMass ≤ B)
+theorem reciprocalMangoldtSum_lower_of_RH (hRH : RiemannHypothesis) {x G B P : ℝ} (hx : 2 ≤ x)
+    (hG : Real.eulerMascheroniConstant ≤ G) (hB : RiemannXi.riemannZeroMass ≤ B)
     (hP : P ≤ Real.log (2 * Real.pi)) (ha : (1 / 18 : ℝ) < P) :
     Real.log x - (1 + G + B ^ 2 / (P - 1 / 18)) ≤ Arithmetic.reciprocalWeightedMangoldtSum x := by
   have hx1 : 1 < x := lt_of_lt_of_le (by norm_num only : (1 : ℝ) < 2) hx
@@ -60,8 +60,7 @@ theorem reciprocalWeightedMangoldtSum_ge_of_parameters (hRH : RiemannHypothesis)
   rw [Complex.ofReal_re] at hre
   simp only [Complex.ofReal_ofNat] at hre
   rw [hre]
-  have hformula :=
-    re_integral_riemannZetaReciprocalContourKernel_two_ge_of_riemannHypothesis hRH hx1
+  have hformula := reciprocal_integral_two_re_lower_RH hRH hx1
   have hrem := riemannReciprocalRemainder_ge_of_parameters hx hG hB hP ha
   linarith only [hformula, hrem]
 
@@ -69,12 +68,12 @@ theorem reciprocalWeightedMangoldtSum_ge_of_parameters (hRH : RiemannHypothesis)
 789/500 for every x at least two. Instantiate the parameterized remainder with
 the certified Euler and Riemann zero-mass bounds. This sharpens the former
 8/5 loss without changing the weight or enumerating cutoffs. -/
-theorem reciprocalWeightedMangoldtSum_ge_log_sub_789_div_500 (hRH : RiemannHypothesis) {x : ℝ}
-    (hx : 2 ≤ x) : Real.log x - (789 / 500 : ℝ) ≤ Arithmetic.reciprocalWeightedMangoldtSum x := by
+theorem reciprocalMangoldt_ge_log_sub_789_500 (hRH : RiemannHypothesis) {x : ℝ} (hx : 2 ≤ x) :
+    Real.log x - (789 / 500 : ℝ) ≤ Arithmetic.reciprocalWeightedMangoldtSum x := by
   have h :=
-    reciprocalWeightedMangoldtSum_ge_of_parameters hRH hx
-      Analysis.eulerMascheroniConstant_le_5773_div_10000 RiemannXi.riemannZeroMass_le_233_div_10000
-      Analysis.log_two_mul_pi_gt.le (by norm_num only : (1 / 18 : ℝ) < 1837 / 1000)
+    reciprocalMangoldtSum_lower_of_RH hRH hx Analysis.eulerMascheroniConstant_le_5773_div_10000
+      RiemannXi.riemannZeroMass_le_233_div_10000 Analysis.log_two_mul_pi_gt.le
+      (by norm_num only : (1 / 18 : ℝ) < 1837 / 1000)
   linarith only [h]
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

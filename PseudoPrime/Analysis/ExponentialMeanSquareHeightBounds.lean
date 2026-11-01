@@ -49,8 +49,8 @@ theorem energy_block_le_four {ι : Type*} (s : Finset ι) (γ : ι → ℝ) (a :
 
 /-- For nonnegative A and B, energies E ≤ 4A and E' ≤ 4B squared A imply the explicit
 point bound 4(1+B)A. Bound the square-root product in the proved finite-sum Sobolev estimate. -/
-theorem exponentialSum_point_le_of_energy_derivative_bound {ι : Type*} (s : Finset ι) (γ : ι → ℝ)
-    (a : ι → ℂ) {A B : ℝ} (hA : 0 ≤ A) (hB : 0 ≤ B) (hE : energy (exponentialSum s γ a) ≤ 4 * A)
+theorem exponentialSum_point_le_of_energy {ι : Type*} (s : Finset ι) (γ : ι → ℝ) (a : ι → ℂ)
+    {A B : ℝ} (hA : 0 ≤ A) (hB : 0 ≤ B) (hE : energy (exponentialSum s γ a) ≤ 4 * A)
     (hD : energy (exponentialSum s γ (fun j ↦ Complex.I * γ j * a j)) ≤ 4 * B ^ 2 * A) :
     ‖exponentialSum s γ a 0‖ ^ 2 ≤ 4 * (1 + B) * A := by
   have h := exponentialSum_norm_zero_sq_le s γ a
@@ -85,7 +85,7 @@ theorem block_point_le_of_derivative_bound {ι : Type*} (s : Finset ι) (γ : ι
       4 * (1 + 2 * T - U) * A := by
   have hB : 0 ≤ 2 * T - U := by linarith only [hU, hUT]
   have h :=
-    exponentialSum_point_le_of_energy_derivative_bound s γ (blockCoefficients γ a U T) hA hB
+    exponentialSum_point_le_of_energy s γ (blockCoefficients γ a U T) hA hB
       (energy_block_le_four s γ a hT hU') hD
   rw [exponentialSum_block] at h
   nlinarith only [h]

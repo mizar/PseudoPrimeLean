@@ -108,7 +108,7 @@ theorem selectedPrimeFactorOutsideModulus_mem (L m e : ℕ)
   exact Finset.min'_mem _ h
 
 /-- The number of selected factors is at most the number of exceptional moduli. -/
-theorem selectedExceptionalPrimeFactorsForModulus_card_le (L : ℕ) (E : Finset ℕ) (m : ℕ) :
+theorem selectedExceptionalFactors_card_le (L : ℕ) (E : Finset ℕ) (m : ℕ) :
     (selectedExceptionalPrimeFactorsForModulus L E m).card ≤ E.card := by
   unfold selectedExceptionalPrimeFactorsForModulus
   exact (Finset.card_image_le).trans (Finset.card_filter_le _ _)
@@ -117,8 +117,7 @@ theorem selectedExceptionalPrimeFactorsForModulus_card_le (L : ℕ) (E : Finset 
 The selected factors for the fixed modulus belong to `L.primeFactors` and do
 not divide `m`.
 -/
-theorem selectedExceptionalPrimeFactorsForModulus_properties (L : ℕ) (E : Finset ℕ) (m : ℕ)
-    (hL : L ≠ 0) :
+theorem selectedExceptionalFactors_properties (L : ℕ) (E : Finset ℕ) (m : ℕ) (hL : L ≠ 0) :
     selectedExceptionalPrimeFactorsForModulus L E m ⊆ L.primeFactors ∧
       (∀ q ∈ selectedExceptionalPrimeFactorsForModulus L E m, Nat.Prime q) ∧
       ∀ q ∈ selectedExceptionalPrimeFactorsForModulus L E m, ¬q ∣ m := by
@@ -152,10 +151,8 @@ theorem selectedExceptionalPrimeFactorsForModulus_fixed (L : ℕ) (E : Finset �
     selectedExceptionalPrimeFactors L (selectedExceptionalPrimeFactorsForModulus L E m) =
       selectedExceptionalPrimeFactorsForModulus L E m := by
   let Q := selectedExceptionalPrimeFactorsForModulus L E m
-  have hQsubset : Q ⊆ L.primeFactors :=
-    (selectedExceptionalPrimeFactorsForModulus_properties L E m hL).1
-  have hQprime : ∀ q ∈ Q, Nat.Prime q :=
-    (selectedExceptionalPrimeFactorsForModulus_properties L E m hL).2.1
+  have hQsubset : Q ⊆ L.primeFactors := (selectedExceptionalFactors_properties L E m hL).1
+  have hQprime : ∀ q ∈ Q, Nat.Prime q := (selectedExceptionalFactors_properties L E m hL).2.1
   ext q
   constructor
   · intro hq
@@ -289,7 +286,7 @@ Removing the selected prime factors loses at most one distinct prime factor
 per exceptional modulus. This is the factor-count estimate used for the
 `2 ^ (-D_B)` loss in paper95, equation (3.1).
 -/
-theorem exceptionalFreePart_primeFactors_card_lower_bound (L : ℕ) (E : Finset ℕ) (hL : L ≠ 0)
+theorem exceptionalFreePart_factor_card (L : ℕ) (E : Finset ℕ) (hL : L ≠ 0)
     (hSquarefree : Squarefree L) (hE : ∀ e ∈ E, 1 < e) :
     L.primeFactors.card ≤ (exceptionalFreePart L E).primeFactors.card + E.card := by
   have hQsubset := selectedExceptionalPrimeFactors_subset L E hL hE
@@ -304,10 +301,10 @@ The full squarefree divisor count decreases by at most a factor of
 `2 ^ E.card` after exceptional factors are removed. This is the unrestricted
 divisor-count form of the loss in paper95, equation (3.1).
 -/
-theorem two_pow_primeFactors_card_le_exceptional_loss_mul (L : ℕ) (E : Finset ℕ) (hL : L ≠ 0)
+theorem two_pow_factors_exceptional_loss (L : ℕ) (E : Finset ℕ) (hL : L ≠ 0)
     (hSquarefree : Squarefree L) (hE : ∀ e ∈ E, 1 < e) :
     2 ^ L.primeFactors.card ≤ 2 ^ E.card * 2 ^ (exceptionalFreePart L E).primeFactors.card := by
-  have hcount := exceptionalFreePart_primeFactors_card_lower_bound L E hL hSquarefree hE
+  have hcount := exceptionalFreePart_factor_card L E hL hSquarefree hE
   calc
     2 ^ L.primeFactors.card ≤ 2 ^ ((exceptionalFreePart L E).primeFactors.card + E.card) :=
       Nat.pow_le_pow_right (by norm_num only) hcount
@@ -407,7 +404,7 @@ theorem exceptionalFreePartForModulus_properties (L : ℕ) (E : Finset ℕ) (m :
         ¬q ∣ exceptionalFreePartForModulus L E m := by
   let Q := selectedExceptionalPrimeFactorsForModulus L E m
   have hQone : ∀ q ∈ Q, 1 < q := fun q hq =>
-    (selectedExceptionalPrimeFactorsForModulus_properties L E m hL).2.1 q hq |>.one_lt
+    (selectedExceptionalFactors_properties L E m hL).2.1 q hq |>.one_lt
   have hQfixed : selectedExceptionalPrimeFactors L Q = Q :=
     selectedExceptionalPrimeFactorsForModulus_fixed L E m hL
   have hbase := exceptionalFreePart_properties L Q hL hSquarefree hQone
@@ -462,17 +459,15 @@ theorem exceptionalFreePartForModulus_divisors_avoid (L : ℕ) (E : Finset ℕ) 
 The selected-factor construction has the same divisor-count loss as removing
 one factor per exceptional modulus.
 -/
-theorem restrictedDivisors_card_le_exceptional_modulus_loss (L : ℕ) (E : Finset ℕ) (m y : ℕ)
-    (hL : L ≠ 0) (hSquarefree : Squarefree L) :
+theorem restrictedDivisors_exceptional_loss (L : ℕ) (E : Finset ℕ) (m y : ℕ) (hL : L ≠ 0)
+    (hSquarefree : Squarefree L) :
     (restrictedDivisors L y).card ≤
       2 ^ E.card * (restrictedDivisors (exceptionalFreePartForModulus L E m) y).card := by
   let Q := selectedExceptionalPrimeFactorsForModulus L E m
-  have hQsubset : Q ⊆ L.primeFactors :=
-    (selectedExceptionalPrimeFactorsForModulus_properties L E m hL).1
-  have hQprime : ∀ q ∈ Q, Nat.Prime q :=
-    (selectedExceptionalPrimeFactorsForModulus_properties L E m hL).2.1
+  have hQsubset : Q ⊆ L.primeFactors := (selectedExceptionalFactors_properties L E m hL).1
+  have hQprime : ∀ q ∈ Q, Nat.Prime q := (selectedExceptionalFactors_properties L E m hL).2.1
   have hQone : ∀ q ∈ Q, 1 < q := fun q hq => (hQprime q hq).one_lt
-  have hQcard : Q.card ≤ E.card := selectedExceptionalPrimeFactorsForModulus_card_le L E m
+  have hQcard : Q.card ≤ E.card := selectedExceptionalFactors_card_le L E m
   have hQfixed : selectedExceptionalPrimeFactors L Q = Q :=
     selectedExceptionalPrimeFactorsForModulus_fixed L E m hL
   have hcount := restrictedDivisors_card_le_exceptional_loss L Q y hL hSquarefree hQone
@@ -507,11 +502,11 @@ natural powers and multiplication with the hypothesis `E.card ≤ D`.
 Role: this exposes the divisor-loss bound using the uniform exceptional-set
 size parameter from paper95 Theorem 2.1.
 -/
-theorem restrictedDivisors_card_le_exceptional_modulus_count_bound (L : ℕ) (E : Finset ℕ)
-    (m y D : ℕ) (hL : L ≠ 0) (hSquarefree : Squarefree L) (hEcard : E.card ≤ D) :
+theorem restrictedDivisors_exceptional_count (L : ℕ) (E : Finset ℕ) (m y D : ℕ) (hL : L ≠ 0)
+    (hSquarefree : Squarefree L) (hEcard : E.card ≤ D) :
     (restrictedDivisors L y).card ≤
       2 ^ D * (restrictedDivisors (exceptionalFreePartForModulus L E m) y).card := by
-  have hcount := restrictedDivisors_card_le_exceptional_modulus_loss L E m y hL hSquarefree
+  have hcount := restrictedDivisors_exceptional_loss L E m y hL hSquarefree
   have hpowNat : 2 ^ E.card ≤ 2 ^ D := Nat.pow_le_pow_right (by norm_num only) hEcard
   exact le_trans hcount (Nat.mul_le_mul_right _ hpowNat)
 
@@ -527,11 +522,11 @@ the positive factor `2 ^ E.card`.
 Role: this supplies the count threshold for the modulus-adjusted prime-set
 construction.
 -/
-theorem exists_lt_exceptionalFreePartForModulus_card_of_scaled_bound (L : ℕ) (E : Finset ℕ)
-    (m y : ℕ) (hL : L ≠ 0) (hSquarefree : Squarefree L) (t c : ℝ) (hc : 0 ≤ c)
+theorem lt_exceptionalFreeModulusPart_card_of_bound (L : ℕ) (E : Finset ℕ) (m y : ℕ) (hL : L ≠ 0)
+    (hSquarefree : Squarefree L) (t c : ℝ) (hc : 0 ≤ c)
     (htarget : t * (2 ^ E.card : ℝ) < c * ((restrictedDivisors L y).card : ℝ)) :
     t < c * ((restrictedDivisors (exceptionalFreePartForModulus L E m) y).card : ℝ) := by
-  have hcount := restrictedDivisors_card_le_exceptional_modulus_loss L E m y hL hSquarefree
+  have hcount := restrictedDivisors_exceptional_loss L E m y hL hSquarefree
   have hcountReal :
     ((restrictedDivisors L y).card : ℝ) ≤
       (2 ^ E.card : ℝ) *
@@ -554,8 +549,8 @@ compare both sides after cancelling the positive factor `2 ^ E.card`.
 Role: this transfers a global divisor-count threshold to the family on which
 the exceptional-modulus estimate can be applied.
 -/
-theorem exists_lt_exceptionalFreePart_card_of_scaled_bound (L : ℕ) (E : Finset ℕ) (y : ℕ)
-    (hL : L ≠ 0) (hSquarefree : Squarefree L) (hE : ∀ e ∈ E, 1 < e) (t c : ℝ) (hc : 0 ≤ c)
+theorem lt_exceptionalFreePart_card_of_bound (L : ℕ) (E : Finset ℕ) (y : ℕ) (hL : L ≠ 0)
+    (hSquarefree : Squarefree L) (hE : ∀ e ∈ E, 1 < e) (t c : ℝ) (hc : 0 ≤ c)
     (htarget : t * (2 ^ E.card : ℝ) < c * ((restrictedDivisors L y).card : ℝ)) :
     t < c * ((restrictedDivisors (exceptionalFreePart L E) y).card : ℝ) := by
   have hcount := restrictedDivisors_card_le_exceptional_loss L E y hL hSquarefree hE
@@ -580,12 +575,12 @@ loss for `largeRestrictedDivisors`.
 
 Role: this gives a single finite count estimate for the large-modulus branch.
 -/
-theorem restrictedDivisors_card_le_exceptional_modulus_loss_after_threshold (L : ℕ) (E : Finset ℕ)
-    (m y q : ℕ) (hL : L ≠ 0) (hSquarefree : Squarefree L) :
+theorem restrictedDivisors_loss_above_cutoff (L : ℕ) (E : Finset ℕ) (m y q : ℕ) (hL : L ≠ 0)
+    (hSquarefree : Squarefree L) :
     (restrictedDivisors L y).card ≤
       2 ^ E.card *
         ((largeRestrictedDivisors (exceptionalFreePartForModulus L E m) y q).card + (q + 1)) := by
-  have hcount := restrictedDivisors_card_le_exceptional_modulus_loss L E m y hL hSquarefree
+  have hcount := restrictedDivisors_exceptional_loss L E m y hL hSquarefree
   have hlarge :=
     restrictedDivisors_card_sub_threshold_le_large (exceptionalFreePartForModulus L E m) y q
   have hfree := Nat.sub_le_iff_le_add.mp hlarge
@@ -611,12 +606,11 @@ the positive exceptional factor.
 Role: this supplies the large-modulus count premise for the prime-set
 construction directly from a lower bound on the original divisor count.
 -/
-theorem exists_lt_largeExceptionalFreePart_card_of_scaled_bound (L : ℕ) (E : Finset ℕ) (m y q : ℕ)
-    (hL : L ≠ 0) (hSquarefree : Squarefree L) (t c : ℝ) (hc : 0 ≤ c)
+theorem largeExceptional_scaled_card_lt (L : ℕ) (E : Finset ℕ) (m y q : ℕ) (hL : L ≠ 0)
+    (hSquarefree : Squarefree L) (t c : ℝ) (hc : 0 ≤ c)
     (htarget : (t + c * (q + 1 : ℝ)) * (2 ^ E.card : ℝ) < c * ((restrictedDivisors L y).card : ℝ)) :
     t < c * ((largeRestrictedDivisors (exceptionalFreePartForModulus L E m) y q).card : ℝ) := by
-  have hbound :=
-    restrictedDivisors_card_le_exceptional_modulus_loss_after_threshold L E m y q hL hSquarefree
+  have hbound := restrictedDivisors_loss_above_cutoff L E m y q hL hSquarefree
   have hboundReal :
     ((restrictedDivisors L y).card : ℝ) ≤
       (2 ^ E.card : ℝ) *
@@ -658,14 +652,13 @@ Claim: after multiplying its large exceptional-free divisor count by `c`, the
 result exceeds the target `t`.
 
 Proof: lower the loss factor from `2^D` to `2^E.card`, then apply
-`exists_lt_largeExceptionalFreePart_card_of_scaled_bound`.
+`largeExceptional_scaled_card_lt`.
 
 Role: this uses the uniform exceptional-set cardinality from paper95 directly
 in the finite averaging threshold.
 -/
-theorem exists_lt_largeExceptionalFreePart_card_of_exceptional_count_bound (L : ℕ) (E : Finset ℕ)
-    (m y q D : ℕ) (hL : L ≠ 0) (hSquarefree : Squarefree L) (hEcard : E.card ≤ D) (t c : ℝ)
-    (hc : 0 ≤ c) (ht : 0 ≤ t)
+theorem largeExceptional_count_card_lt (L : ℕ) (E : Finset ℕ) (m y q D : ℕ) (hL : L ≠ 0)
+    (hSquarefree : Squarefree L) (hEcard : E.card ≤ D) (t c : ℝ) (hc : 0 ≤ c) (ht : 0 ≤ t)
     (htarget : (t + c * (q + 1 : ℝ)) * (2 ^ D : ℝ) < c * ((restrictedDivisors L y).card : ℝ)) :
     t < c * ((largeRestrictedDivisors (exceptionalFreePartForModulus L E m) y q).card : ℝ) := by
   have hpowNat : 2 ^ E.card ≤ 2 ^ D := Nat.pow_le_pow_right (by norm_num only) hEcard
@@ -675,8 +668,7 @@ theorem exists_lt_largeExceptionalFreePart_card_of_exceptional_count_bound (L : 
   have hscale : (t + c * (q + 1 : ℝ)) * (2 ^ E.card : ℝ) ≤ (t + c * (q + 1 : ℝ)) * (2 ^ D : ℝ) :=
     mul_le_mul_of_nonneg_left hpow hbase
   exact
-    exists_lt_largeExceptionalFreePart_card_of_scaled_bound L E m y q hL hSquarefree t c hc
-      (lt_of_le_of_lt hscale htarget)
+    largeExceptional_scaled_card_lt L E m y q hL hSquarefree t c hc (lt_of_le_of_lt hscale htarget)
 
 /--
 Inputs: a finite averaging parameter set, a target prime count, and an original
@@ -691,15 +683,15 @@ multiple of the target as its real threshold.
 Role: this is the count premise consumed by the variable-cutoff progression
 average.
 -/
-theorem exists_lt_largeExceptionalFreePart_card_of_positiveCoprimeParameters_bound (L : ℕ)
-    (E : Finset ℕ) (m y q K T : ℕ) (hL : L ≠ 0) (hSquarefree : Squarefree L) (c : ℝ) (hc : 0 ≤ c)
+theorem coprimeParameters_lt_exceptional_card (L : ℕ) (E : Finset ℕ) (m y q K T : ℕ) (hL : L ≠ 0)
+    (hSquarefree : Squarefree L) (c : ℝ) (hc : 0 ≤ c)
     (htarget :
       ((((positiveCoprimeParameters L K).card * T : ℕ) : ℝ) + c * (q + 1 : ℝ)) * (2 ^ E.card : ℝ) <
         c * ((restrictedDivisors L y).card : ℝ)) :
     (((positiveCoprimeParameters L K).card * T : ℕ) : ℝ) <
       c * ((largeRestrictedDivisors (exceptionalFreePartForModulus L E m) y q).card : ℝ) := by
   exact
-    exists_lt_largeExceptionalFreePart_card_of_scaled_bound L E m y q hL hSquarefree
+    largeExceptional_scaled_card_lt L E m y q hL hSquarefree
       (((positiveCoprimeParameters L K).card * T : ℕ) : ℝ) c hc htarget
 
 end PseudoPrime.AnalyticNumberTheory.AGP

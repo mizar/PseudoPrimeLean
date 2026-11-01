@@ -29,7 +29,7 @@ theorem real_log_pi_le_six_fifths : Real.log Real.pi ≤ 6 / 5 := by
 /-- For real argument 1≤r≤17/4, the archimedean digamma correction has absolute value
  at most 9/10. Use monotonicity and exact values at one and five, with Euler constant bounds.
  This sharpens the allowance for later resolvent nodes. -/
-theorem abs_real_digamma_sub_log_pi_div_two_le_nine_tenths {r : ℝ} (hr : 1 ≤ r) (hu : r ≤ 17 / 4) :
+theorem abs_digamma_sub_log_pi_half_le_9_10 {r : ℝ} (hr : 1 ≤ r) (hu : r ≤ 17 / 4) :
     |((Complex.digamma (r : ℂ)).re - Real.log Real.pi) / 2| ≤ 9 / 10 := by
   have hlo := re_digamma_mono_of_pos (by norm_num only : (0 : ℝ) < 1) hr
   have hhi :=

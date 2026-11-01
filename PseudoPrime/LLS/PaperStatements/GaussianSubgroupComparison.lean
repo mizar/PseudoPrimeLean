@@ -124,9 +124,7 @@ private theorem gaussian_primitive_average_re_le_variable_scale {q : ℕ} [NeZer
         apply Finset.sum_le_sum
         intro χ hχ
         have hn : χ.val ≠ 1 := fun he ↦ (Finset.mem_erase.mp hχ).1 (Subtype.ext he)
-        have h :=
-          gaussian_primitiveCharacter_sum_re_le_variable_scale hq χ.val hn hGRH
-            (by linarith only [hx])
+        have h := gaussianCharSum_variable_GRH hq χ.val hn hGRH (by linarith only [hx])
         have hmpos : (0 : ℝ) < χ.val.conductor :=
           Nat.cast_pos.mpr (Nat.pos_of_ne_zero χ.val.conductor_ne_zero)
         have hmq := Nat.le_of_dvd (Nat.pos_of_ne_zero (NeZero.ne q)) χ.val.conductor_dvd_level
@@ -153,8 +151,8 @@ private theorem gaussian_primitive_average_re_le_variable_scale {q : ℕ} [NeZer
 /-- Average primitive Gaussian sums using the transferred 50000-prefix bound
 for each nonprincipal character. The conductor logarithms stay separate, while
 the common ambient error uses the reduced additive constant. -/
-private theorem gaussian_primitive_average_re_le_variable_scale_prefix_gain {q : ℕ} [NeZero q]
-    (hq : 20000 ≤ q) (S : Subgroup (DirichletCharacter ℂ q)) [Fintype S] [DecidableEq S]
+private theorem gaussianAverage_re_le_variable_scale_prefix_gain {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+    (S : Subgroup (DirichletCharacter ℂ q)) [Fintype S] [DecidableEq S]
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hsmall : ∀ χ : S, ∀ p : ℕ, p.Prime → (p : ℝ) ≤ 50000 → χ.val.primitiveCharacter p = 1) {x : ℝ}
     (hx : 4 ≤ x) :
@@ -181,8 +179,8 @@ private theorem gaussian_primitive_average_re_le_variable_scale_prefix_gain {q :
         intro χ hχ
         have hn : χ.val ≠ 1 := fun he ↦ (Finset.mem_erase.mp hχ).1 (Subtype.ext he)
         have h :=
-          gaussian_primitiveCharacter_sum_re_le_variable_scale_prefix_gain hq χ.val hn hGRH
-            (hsmall χ) (by linarith only [hx])
+          gaussianCharSum_variable_prefix50000_GRH hq χ.val hn hGRH (hsmall χ)
+            (by linarith only [hx])
         have hmpos : (0 : ℝ) < χ.val.conductor :=
           Nat.cast_pos.mpr (Nat.pos_of_ne_zero χ.val.conductor_ne_zero)
         have hmq := Nat.le_of_dvd (Nat.pos_of_ne_zero (NeZero.ne q)) χ.val.conductor_dvd_level
@@ -206,8 +204,8 @@ private theorem gaussian_primitive_average_re_le_variable_scale_prefix_gain {q :
 /-- Average primitive Gaussian sums using the signed 50000-prefix bound.
 Each nonprincipal character keeps its conductor logarithm, while the common
 ambient error uses the conductor-independent left-contour term. -/
-private theorem gaussian_primitive_average_re_le_variable_scale_prefix_gain_signed {q : ℕ}
-    [NeZero q] (hq : 20000 ≤ q) (S : Subgroup (DirichletCharacter ℂ q)) [Fintype S] [DecidableEq S]
+private theorem gaussianAverage_scale_prefix50000_signed_GRH {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+    (S : Subgroup (DirichletCharacter ℂ q)) [Fintype S] [DecidableEq S]
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hsmall : ∀ χ : S, ∀ p : ℕ, p.Prime → (p : ℝ) ≤ 50000 → χ.val.primitiveCharacter p = 1) {x : ℝ}
     (hx : 4 ≤ x) :
@@ -234,8 +232,7 @@ private theorem gaussian_primitive_average_re_le_variable_scale_prefix_gain_sign
         intro χ hχ
         have hn : χ.val ≠ 1 := fun he ↦ (Finset.mem_erase.mp hχ).1 (Subtype.ext he)
         have h :=
-          gaussian_primitiveCharacter_sum_re_le_variable_scale_prefix_gain_signed hq χ.val hn hGRH
-            (hsmall χ) (by linarith only [hx])
+          gaussianCharSum_prefix50000_signed_GRH hq χ.val hn hGRH (hsmall χ) (by linarith only [hx])
         simpa only [F, gaussianAmbientErrorPrefixSigned, add_assoc] using h
       _ = _ := by rw [Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_const, nsmul_eq_mul]
   rw [Finset.card_erase_of_mem (Finset.mem_univ (1 : S)), Finset.card_univ] at hrest
@@ -250,8 +247,8 @@ private theorem gaussian_primitive_average_re_le_variable_scale_prefix_gain_sign
 
 /-- Average primitive Gaussian sums using the transferred 1000-prefix bound
 for each nonprincipal character, with the reduced common ambient error. -/
-private theorem gaussian_primitive_average_re_le_variable_scale_prefix1000_gain {q : ℕ} [NeZero q]
-    (hq : 20000 ≤ q) (S : Subgroup (DirichletCharacter ℂ q)) [Fintype S] [DecidableEq S]
+private theorem gaussianAverage_scale_prefix1000_GRH {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+    (S : Subgroup (DirichletCharacter ℂ q)) [Fintype S] [DecidableEq S]
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hsmall : ∀ χ : S, ∀ p : ℕ, p.Prime → (p : ℝ) ≤ 1000 → χ.val.primitiveCharacter p = 1) {x : ℝ}
     (hx : 4 ≤ x) :
@@ -278,8 +275,8 @@ private theorem gaussian_primitive_average_re_le_variable_scale_prefix1000_gain 
         intro χ hχ
         have hn : χ.val ≠ 1 := fun he ↦ (Finset.mem_erase.mp hχ).1 (Subtype.ext he)
         have h :=
-          gaussian_primitiveCharacter_sum_re_le_variable_scale_prefix1000_gain hq χ.val hn hGRH
-            (hsmall χ) (by linarith only [hx])
+          gaussianCharSum_variable_prefix1000_GRH hq χ.val hn hGRH (hsmall χ)
+            (by linarith only [hx])
         have hmpos : (0 : ℝ) < χ.val.conductor :=
           Nat.cast_pos.mpr (Nat.pos_of_ne_zero χ.val.conductor_ne_zero)
         have hmq := Nat.le_of_dvd (Nat.pos_of_ne_zero (NeZero.ne q)) χ.val.conductor_dvd_level
@@ -304,9 +301,9 @@ private theorem gaussian_primitive_average_re_le_variable_scale_prefix1000_gain 
 the index multiple of the original principal finite sum is at most the numerical
 primitive average. Apply the signed no-small-prime comparison and annihilator
 cardinality, retaining the exact conductor-log cost and precise remainder. -/
-theorem gaussian_principal_sum_le_conductor_bound_of_noSmallPrimes {q : ℕ} [NeZero q]
-    (hq : 20000 ≤ q) (H : Subgroup (ZMod q)ˣ)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x X : ℝ} (hx : 4 ≤ x)
+theorem gaussianPrincipal_variable_noSmall_GRH {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {x X : ℝ} (hx : 4 ≤ x)
     (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     (H.index : ℝ) *
         ∑ n ∈ Finset.Icc 1 ⌊X⌋₊,
@@ -325,17 +322,16 @@ theorem gaussian_principal_sum_le_conductor_bound_of_noSmallPrimes {q : ℕ} [Ne
       _ at hu
   rw [map_sum] at hu
   exact
-    (MellinKernel.principal_sum_le_primitive_average_of_noSmallPrimes gaussianGammaMellinKernel H
+    (MellinKernel.principal_sum_le_primitive_of_noSmall gaussianGammaMellinKernel H
           ((by norm_num only : (0 : ℝ) < 4).trans_le hx) hsmall).trans
       hu
 
 /-- Under the same prime exclusion and subgroup assumptions, transfer the
 50000-prefix gain to every nonprincipal character in the annihilator. The cutoff
 must reach 50000 so every prime in the retained prefix is a unit modulo q. -/
-theorem gaussian_principal_sum_le_conductor_bound_of_noSmallPrimes_prefix_gain {q : ℕ} [NeZero q]
-    (hq : 20000 ≤ q) (H : Subgroup (ZMod q)ˣ)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x X : ℝ} (hx : 4 ≤ x)
-    (hX : 50000 ≤ X) (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊X⌋₊ < p)
+theorem gaussianPrincipal_scale_prefix50000_GRH {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {x X : ℝ} (hx : 4 ≤ x) (hX : 50000 ≤ X) (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊X⌋₊ < p)
     (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     (H.index : ℝ) *
         ∑ n ∈ Finset.Icc 1 ⌊X⌋₊,
@@ -361,8 +357,8 @@ theorem gaussian_principal_sum_le_conductor_bound_of_noSmallPrimes_prefix_gain {
       exact hone
     exact primitiveCharacter_apply_one_of_apply_one χ.val hone'
   have hu :=
-    gaussian_primitive_average_re_le_variable_scale_prefix_gain hq
-      (NumberTheory.subgroupAnnihilator H) hGRH hsmallChars hx
+    gaussianAverage_re_le_variable_scale_prefix_gain hq (NumberTheory.subgroupAnnihilator H) hGRH
+      hsmallChars hx
   rw [NumberTheory.card_subgroupAnnihilator] at hu
   change
     Complex.reCLM
@@ -371,16 +367,15 @@ theorem gaussian_principal_sum_le_conductor_bound_of_noSmallPrimes_prefix_gain {
       _ at hu
   rw [map_sum] at hu
   exact
-    (MellinKernel.principal_sum_le_primitive_average_of_noSmallPrimes gaussianGammaMellinKernel H
+    (MellinKernel.principal_sum_le_primitive_of_noSmall gaussianGammaMellinKernel H
           ((by norm_num only : (0 : ℝ) < 4).trans_le hx) hsmall).trans
       hu
 
 /-- Under the same prime exclusion and subgroup assumptions, transfer the
 50000-prefix gain with the signed left-contour error. -/
-theorem gaussian_principal_sum_le_conductor_bound_of_noSmallPrimes_prefix_gain_signed {q : ℕ}
-    [NeZero q] (hq : 20000 ≤ q) (H : Subgroup (ZMod q)ˣ)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x X : ℝ} (hx : 4 ≤ x)
-    (hX : 50000 ≤ X) (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊X⌋₊ < p)
+theorem gaussianPrincipal_prefix50000_signed_GRH {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {x X : ℝ} (hx : 4 ≤ x) (hX : 50000 ≤ X) (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊X⌋₊ < p)
     (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     (H.index : ℝ) *
         ∑ n ∈ Finset.Icc 1 ⌊X⌋₊,
@@ -406,8 +401,8 @@ theorem gaussian_principal_sum_le_conductor_bound_of_noSmallPrimes_prefix_gain_s
       exact hone
     exact primitiveCharacter_apply_one_of_apply_one χ.val hone'
   have hu :=
-    gaussian_primitive_average_re_le_variable_scale_prefix_gain_signed hq
-      (NumberTheory.subgroupAnnihilator H) hGRH hsmallChars hx
+    gaussianAverage_scale_prefix50000_signed_GRH hq (NumberTheory.subgroupAnnihilator H) hGRH
+      hsmallChars hx
   rw [NumberTheory.card_subgroupAnnihilator] at hu
   change
     Complex.reCLM
@@ -416,16 +411,15 @@ theorem gaussian_principal_sum_le_conductor_bound_of_noSmallPrimes_prefix_gain_s
       _ at hu
   rw [map_sum] at hu
   exact
-    (MellinKernel.principal_sum_le_primitive_average_of_noSmallPrimes gaussianGammaMellinKernel H
+    (MellinKernel.principal_sum_le_primitive_of_noSmall gaussianGammaMellinKernel H
           ((by norm_num only : (0 : ℝ) < 4).trans_le hx) hsmall).trans
       hu
 
 /-- Transfer the 1000-prefix gain to every nonprincipal character in the
 annihilator when the cutoff reaches 1000. -/
-theorem gaussian_principal_sum_le_conductor_bound_of_noSmallPrimes_prefix1000_gain {q : ℕ}
-    [NeZero q] (hq : 20000 ≤ q) (H : Subgroup (ZMod q)ˣ)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x X : ℝ} (hx : 4 ≤ x)
-    (hX : 1000 ≤ X) (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊X⌋₊ < p)
+theorem gaussianPrincipal_scale_prefix1000_GRH {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {x X : ℝ} (hx : 4 ≤ x) (hX : 1000 ≤ X) (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊X⌋₊ < p)
     (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     (H.index : ℝ) *
         ∑ n ∈ Finset.Icc 1 ⌊X⌋₊,
@@ -451,8 +445,7 @@ theorem gaussian_principal_sum_le_conductor_bound_of_noSmallPrimes_prefix1000_ga
       exact hone
     exact primitiveCharacter_apply_one_of_apply_one χ.val hone'
   have hu :=
-    gaussian_primitive_average_re_le_variable_scale_prefix1000_gain hq
-      (NumberTheory.subgroupAnnihilator H) hGRH hsmallChars hx
+    gaussianAverage_scale_prefix1000_GRH hq (NumberTheory.subgroupAnnihilator H) hGRH hsmallChars hx
   rw [NumberTheory.card_subgroupAnnihilator] at hu
   change
     Complex.reCLM
@@ -461,7 +454,7 @@ theorem gaussian_principal_sum_le_conductor_bound_of_noSmallPrimes_prefix1000_ga
       _ at hu
   rw [map_sum] at hu
   exact
-    (MellinKernel.principal_sum_le_primitive_average_of_noSmallPrimes gaussianGammaMellinKernel H
+    (MellinKernel.principal_sum_le_primitive_of_noSmall gaussianGammaMellinKernel H
           ((by norm_num only : (0 : ℝ) < 4).trans_le hx) hsmall).trans
       hu
 
@@ -470,10 +463,10 @@ primes below the cutoff lie in H and every prime divisor exceeds the natural cut
 The actual Gaussian cutoff mass and endpoint main term are bounded by the exact
 conductor cost, principal error fourteen, and the variable-scale secondary errors.
 The principal finite sum equals level one, so no finite modulus loss remains. -/
-theorem gaussian_noSmallPrimes_explicit_inequality_of_no_small_divisor {q : ℕ} [NeZero q]
-    (hq : 20000 ≤ q) (H : Subgroup (ZMod q)ˣ)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x lambda : ℝ} (hx : 4 ≤ x)
-    (hl : 0 ≤ lambda) (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊lambda * x⌋₊ < p)
+theorem gaussian_noSmallPrimes_bound_of_no_divisor_GRH {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {x lambda : ℝ} (hx : 4 ≤ x) (hl : 0 ≤ lambda)
+    (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊lambda * x⌋₊ < p)
     (hsmall :
       ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → NumberTheory.residueInSubgroup q H p) :
     ((H.index : ℝ) *
@@ -486,13 +479,12 @@ theorem gaussian_noSmallPrimes_explicit_inequality_of_no_small_divisor {q : ℕ}
     gaussian_level_one_sum_lower_fourteen hGRH.riemann
       ((by norm_num only : (0 : ℝ) < 4).trans_le hx) hl
   have hm := mul_le_mul_of_nonneg_left hlo (Nat.cast_nonneg H.index)
-  have hhi := gaussian_principal_sum_le_conductor_bound_of_noSmallPrimes hq H hGRH hx hsmall
+  have hhi := gaussianPrincipal_variable_noSmall_GRH hq H hGRH hx hsmall
   have he : Finset.Icc 1 ⌊lambda * x⌋₊ = Finset.Ioc 0 ⌊lambda * x⌋₊ := by
     ext n
     simp only [Finset.mem_Icc, Finset.mem_Ioc, Nat.succ_le_iff]
   rw [he, ← Complex.re_sum,
-    MellinKernel.principal_sum_eq_level_one_of_no_small_prime_divisor gaussianGammaMellinKernel
-      (q := q) x hdiv,
+    MellinKernel.principal_sum_level_one_of_no_divisor gaussianGammaMellinKernel (q := q) x hdiv,
     Complex.re_sum] at hhi
   nlinarith only [hm, hhi]
 
@@ -500,7 +492,7 @@ theorem gaussian_noSmallPrimes_explicit_inequality_of_no_small_divisor {q : ℕ}
 floor(X), and X reaches 50000, the Gaussian comparison has the reduced prefix
 error. The principal finite sum is level one, while the annihilator average
 uses the transferred Gaussian prefix bound. -/
-theorem gaussian_noSmallPrimes_explicit_inequality_prefix_gain {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+theorem gaussian_noSmall_prefix50000_GRH {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
     (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     {x lambda : ℝ} (hx : 4 ≤ x) (hX : 50000 ≤ lambda * x)
     (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊lambda * x⌋₊ < p)
@@ -522,23 +514,20 @@ theorem gaussian_noSmallPrimes_explicit_inequality_prefix_gain {q : ℕ} [NeZero
     gaussian_level_one_sum_lower_fourteen hGRH.riemann
       ((by norm_num only : (0 : ℝ) < 4).trans_le hx) hl
   have hm := mul_le_mul_of_nonneg_left hlo (Nat.cast_nonneg H.index)
-  have hhi :=
-    gaussian_principal_sum_le_conductor_bound_of_noSmallPrimes_prefix_gain hq H hGRH hx hX hdiv
-      hsmall
+  have hhi := gaussianPrincipal_scale_prefix50000_GRH hq H hGRH hx hX hdiv hsmall
   have he : Finset.Icc 1 ⌊lambda * x⌋₊ = Finset.Ioc 0 ⌊lambda * x⌋₊ := by
     ext n
     simp only [Finset.mem_Icc, Finset.mem_Ioc, Nat.succ_le_iff]
   rw [he, ← Complex.re_sum,
-    MellinKernel.principal_sum_eq_level_one_of_no_small_prime_divisor gaussianGammaMellinKernel
-      (q := q) x hdiv,
+    MellinKernel.principal_sum_level_one_of_no_divisor gaussianGammaMellinKernel (q := q) x hdiv,
     Complex.re_sum] at hhi
   nlinarith only [hm, hhi]
 
 /-- The Gaussian comparison inequality with the signed 50000-prefix error. -/
-theorem gaussian_noSmallPrimes_explicit_inequality_prefix_gain_signed {q : ℕ} [NeZero q]
-    (hq : 20000 ≤ q) (H : Subgroup (ZMod q)ˣ)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x lambda : ℝ} (hx : 4 ≤ x)
-    (hX : 50000 ≤ lambda * x) (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊lambda * x⌋₊ < p)
+theorem gaussian_noSmall_prefix50000_signed_GRH {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {x lambda : ℝ} (hx : 4 ≤ x) (hX : 50000 ≤ lambda * x)
+    (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊lambda * x⌋₊ < p)
     (hsmall :
       ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → NumberTheory.residueInSubgroup q H p) :
     ((H.index : ℝ) *
@@ -557,22 +546,18 @@ theorem gaussian_noSmallPrimes_explicit_inequality_prefix_gain_signed {q : ℕ} 
     gaussian_level_one_sum_lower_fourteen hGRH.riemann
       ((by norm_num only : (0 : ℝ) < 4).trans_le hx) hl
   have hm := mul_le_mul_of_nonneg_left hlo (Nat.cast_nonneg H.index)
-  have hhi :=
-    gaussian_principal_sum_le_conductor_bound_of_noSmallPrimes_prefix_gain_signed hq H hGRH hx hX
-      hdiv hsmall
+  have hhi := gaussianPrincipal_prefix50000_signed_GRH hq H hGRH hx hX hdiv hsmall
   have he : Finset.Icc 1 ⌊lambda * x⌋₊ = Finset.Ioc 0 ⌊lambda * x⌋₊ := by
     ext n
     simp only [Finset.mem_Icc, Finset.mem_Ioc, Nat.succ_le_iff]
   rw [he, ← Complex.re_sum,
-    MellinKernel.principal_sum_eq_level_one_of_no_small_prime_divisor gaussianGammaMellinKernel
-      (q := q) x hdiv,
+    MellinKernel.principal_sum_level_one_of_no_divisor gaussianGammaMellinKernel (q := q) x hdiv,
     Complex.re_sum] at hhi
   nlinarith only [hm, hhi]
 
 /-- If eligible primes below X lie in H, prime divisors exceed floor(X), and
 X reaches 1000, the Gaussian comparison uses the reduced 1000-prefix error. -/
-theorem gaussian_noSmallPrimes_explicit_inequality_prefix1000_gain {q : ℕ} [NeZero q]
-    (hq : 20000 ≤ q) (H : Subgroup (ZMod q)ˣ)
+theorem gaussian_noSmall_prefix1000_GRH {q : ℕ} [NeZero q] (hq : 20000 ≤ q) (H : Subgroup (ZMod q)ˣ)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x lambda : ℝ} (hx : 4 ≤ x)
     (hX : 1000 ≤ lambda * x) (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊lambda * x⌋₊ < p)
     (hsmall :
@@ -593,15 +578,12 @@ theorem gaussian_noSmallPrimes_explicit_inequality_prefix1000_gain {q : ℕ} [Ne
     gaussian_level_one_sum_lower_fourteen hGRH.riemann
       ((by norm_num only : (0 : ℝ) < 4).trans_le hx) hl
   have hm := mul_le_mul_of_nonneg_left hlo (Nat.cast_nonneg H.index)
-  have hhi :=
-    gaussian_principal_sum_le_conductor_bound_of_noSmallPrimes_prefix1000_gain hq H hGRH hx hX hdiv
-      hsmall
+  have hhi := gaussianPrincipal_scale_prefix1000_GRH hq H hGRH hx hX hdiv hsmall
   have he : Finset.Icc 1 ⌊lambda * x⌋₊ = Finset.Ioc 0 ⌊lambda * x⌋₊ := by
     ext n
     simp only [Finset.mem_Icc, Finset.mem_Ioc, Nat.succ_le_iff]
   rw [he, ← Complex.re_sum,
-    MellinKernel.principal_sum_eq_level_one_of_no_small_prime_divisor gaussianGammaMellinKernel
-      (q := q) x hdiv,
+    MellinKernel.principal_sum_level_one_of_no_divisor gaussianGammaMellinKernel (q := q) x hdiv,
     Complex.re_sum] at hhi
   nlinarith only [hm, hhi]
 

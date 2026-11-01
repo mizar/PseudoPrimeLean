@@ -68,8 +68,8 @@ theorem re_characterLogWeightedSum_ge_of_defect_le (h21 : LLSRiemannWeightedLowe
 /-- Given the Riemann reciprocal lower bound, X ≥ 2, and reciprocal defect at most dR,
 the real part of the character sum is at least log X - 8/5 - dR.
 The proof unfolds the defect and combines the two inequalities by linear arithmetic. -/
-theorem re_characterReciprocalWeightedSum_ge_of_defect_le (h24 : LLSRiemannReciprocalLowerBound)
-    {f : ℕ} [NeZero f] (ψ : DirichletCharacter ℂ f) {X dR : ℝ} (hX : 2 ≤ X)
+theorem re_characterReciprocalSum_ge_of_defect_le (h24 : LLSRiemannReciprocalLowerBound) {f : ℕ}
+    [NeZero f] (ψ : DirichletCharacter ℂ f) {X dR : ℝ} (hX : 2 ≤ X)
     (hdR : weightedReciprocalDefect ψ X ≤ dR) :
     Real.log X - 8 / 5 - dR ≤
       (AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum X ψ).re := by
@@ -109,9 +109,9 @@ The proof applies the two defect-transfer lemmas and retains the core's analytic
 Both witness branches consume this four-part conclusion with the same cutoff and zero-mass
 parameter, keeping the Riemann and character comparisons aligned.
 -/
-theorem re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le
-    (h21 : LLSRiemannWeightedLowerBound) (h24 : LLSRiemannReciprocalLowerBound) {f : ℕ} [NeZero f]
-    {ψ : DirichletCharacter ℂ f} {X b dS dR eS : ℝ} (hX1 : 1 < X) (hX2 : 2 ≤ X)
+theorem weightedComparison_core_bounds (h21 : LLSRiemannWeightedLowerBound)
+    (h24 : LLSRiemannReciprocalLowerBound) {f : ℕ} [NeZero f] {ψ : DirichletCharacter ℂ f}
+    {X b dS dR eS : ℝ} (hX1 : 1 < X) (hX2 : 2 ≤ X)
     (hcore : LLSWeightedComparisonCore ψ X b dS dR eS) :
     riemannLogLowerAt X - dS ≤ (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum X ψ).re ∧
       Real.log X - 8 / 5 - dR ≤
@@ -125,7 +125,7 @@ theorem re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le
           (1 / 2) * Real.log ((f : ℝ) / Real.pi) * Real.log X +
           eS :=
   ⟨re_characterLogWeightedSum_ge_of_defect_le h21 ψ hX1 hcore.logDefect_le,
-    re_characterReciprocalWeightedSum_ge_of_defect_le h24 ψ hX2 hcore.reciprocalDefect_le,
+    re_characterReciprocalSum_ge_of_defect_le h24 ψ hX2 hcore.reciprocalDefect_le,
     hcore.zeroMass_le, hcore.logWeighted_le⟩
 
 /-!
@@ -145,10 +145,10 @@ def LLSWeightedComparisonS2Defects (q : ℕ) [NeZero q] (χ : DirichletCharacter
 with zero defect bounds, obtain the logarithmic and reciprocal lower bounds, the inequality
 for b, and the logarithmic upper bound at the Part 2 cutoff. The proof specializes the general
 comparison and simplifies subtraction of the zero defect-bound parameters. -/
-theorem re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le_S2
-    (h21 : LLSRiemannWeightedLowerBound) (h24 : LLSRiemannReciprocalLowerBound) {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hq1 : 1 < (Real.log q) ^ 2) (hq2 : 2 ≤ (Real.log q) ^ 2)
-    {b eS : ℝ} (hcore : LLSWeightedComparisonCore χ ((Real.log q) ^ 2) b 0 0 eS) :
+theorem weightedComparison_core_bounds_S2 (h21 : LLSRiemannWeightedLowerBound)
+    (h24 : LLSRiemannReciprocalLowerBound) {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hq1 : 1 < (Real.log q) ^ 2) (hq2 : 2 ≤ (Real.log q) ^ 2) {b eS : ℝ}
+    (hcore : LLSWeightedComparisonCore χ ((Real.log q) ^ 2) b 0 0 eS) :
     riemannLogLowerAt ((Real.log q) ^ 2) ≤
         (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((Real.log q) ^ 2) χ).re ∧
       Real.log ((Real.log q) ^ 2) - 8 / 5 ≤
@@ -161,7 +161,7 @@ theorem re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le_S2
         (2 * Real.sqrt ((Real.log q) ^ 2) + 2 + Real.log ((Real.log q) ^ 2)) * b +
           (1 / 2) * Real.log ((q : ℝ) / Real.pi) * Real.log ((Real.log q) ^ 2) +
           eS := by
-  have h := re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le h21 h24 hq1 hq2 hcore
+  have h := weightedComparison_core_bounds h21 h24 hq1 hq2 hcore
   simpa only [Real.log_pow, Nat.cast_ofNat, tsub_le_iff_right, one_div, sub_zero] using h
 
 end PseudoPrime.LLS

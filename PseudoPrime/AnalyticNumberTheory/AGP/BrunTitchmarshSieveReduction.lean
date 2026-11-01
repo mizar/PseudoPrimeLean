@@ -60,7 +60,7 @@ apply the Möbius divisor-sum cancellation identity.
 Role: converts coprimality conditions in finite progression counts into a
 finite divisor sum that can be exchanged with the summation over `n`.
 -/
-theorem moebius_sum_modulus_divisors_eq_coprime_indicator {n Q : ℕ} (hQ : 0 < Q) :
+theorem moebius_divisor_sum_coprime {n Q : ℕ} (hQ : 0 < Q) :
     (∑ d ∈ Q.divisors, if d ∣ n then (ArithmeticFunction.moebius : ArithmeticFunction ℝ) d else 0) =
       if Nat.Coprime n Q then 1 else 0 := by
   classical
@@ -96,7 +96,7 @@ then convert the resulting indicator sum to a filtered cardinality.
 Role: identifies the precise support of the floor-function error in the
 coprime counting estimate.
 -/
-theorem moebius_abs_divisor_sum_eq_squarefree_divisor_card (Q : ℕ) :
+theorem moebius_abs_sum_squarefree_card (Q : ℕ) :
     (∑ d ∈ Q.divisors, |(ArithmeticFunction.moebius : ArithmeticFunction ℝ) d|) =
       ((Q.divisors.filter (fun d => Squarefree d)).card : ℝ) := by
   classical
@@ -122,7 +122,7 @@ normalized prime factors, then count the powerset.
 Role: expresses the coprime-counting error using only the number of distinct
 prime factors of the modulus.
 -/
-theorem squarefree_divisor_count_eq_two_pow_cardDistinctFactors (Q : ℕ) (hQ : 0 < Q) :
+theorem squarefree_card_eq_two_pow_factors (Q : ℕ) (hQ : 0 < Q) :
     (Q.divisors.filter (fun d => Squarefree d)).card =
       2 ^ ArithmeticFunction.cardDistinctFactors Q := by
   rw [Finset.card_def, Nat.divisors_filter_squarefree hQ.ne', Multiset.card_map]
@@ -139,7 +139,7 @@ Claim: the number of integers `n ≤ T` coprime to `Q` equals a finite sum of
 Möbius divisor indicators over `n` and the divisors of `Q`.
 
 Proof: write the coprimality count as the sum of its indicator function and
-apply `moebius_sum_modulus_divisors_eq_coprime_indicator` termwise.
+apply `moebius_divisor_sum_coprime` termwise.
 
 Role: this is the finite inclusion-exclusion identity used to separate the
 main density from the floor-function errors in the Brun–Titchmarsh estimate.
@@ -160,7 +160,7 @@ theorem coprime_card_range_eq_moebius_double_sum (T Q : ℕ) (hQ : 0 < Q) :
       by
       apply Finset.sum_congr rfl
       intro n hn
-      exact (moebius_sum_modulus_divisors_eq_coprime_indicator hQ).symm
+      exact (moebius_divisor_sum_coprime hQ).symm
 
 /--
 Inputs: a positive modulus `Q` and an inclusive counting bound `T`.
@@ -352,7 +352,7 @@ with `φ(Q) / Q`.
 Role: supplies the uniform coprime-count estimate needed to bound the
 modulus-restricted Selberg weight mass.
 -/
-theorem coprime_card_range_le_density_add_moebius_abs_sum (T Q : ℕ) (hQ : 0 < Q) :
+theorem coprime_card_le_density_moebius (T Q : ℕ) (hQ : 0 < Q) :
     (((Finset.range (T + 1)).filter (fun n => Nat.Coprime n Q)).card : ℝ) ≤
       (T : ℝ) * ((Nat.totient Q : ℝ) / (Q : ℝ)) +
         ∑ d ∈ Q.divisors, |(ArithmeticFunction.moebius : ArithmeticFunction ℝ) d| := by
@@ -450,7 +450,7 @@ as a squarefree divisor count.
 Role: states the coprime density estimate with an error term that omits
 non-squarefree divisors.
 -/
-theorem coprime_card_range_le_density_add_squarefree_divisor_count (T Q : ℕ) (hQ : 0 < Q) :
+theorem coprime_card_le_density_squarefree (T Q : ℕ) (hQ : 0 < Q) :
     (((Finset.range (T + 1)).filter (fun n => Nat.Coprime n Q)).card : ℝ) ≤
       (T : ℝ) * ((Nat.totient Q : ℝ) / (Q : ℝ)) +
         ((Q.divisors.filter (fun d => Squarefree d)).card : ℝ) := by
@@ -458,11 +458,11 @@ theorem coprime_card_range_le_density_add_squarefree_divisor_count (T Q : ℕ) (
     (((Finset.range (T + 1)).filter (fun n => Nat.Coprime n Q)).card : ℝ) ≤
         (T : ℝ) * ((Nat.totient Q : ℝ) / (Q : ℝ)) +
           ∑ d ∈ Q.divisors, |(ArithmeticFunction.moebius : ArithmeticFunction ℝ) d| :=
-      coprime_card_range_le_density_add_moebius_abs_sum T Q hQ
+      coprime_card_le_density_moebius T Q hQ
     _ =
         (T : ℝ) * ((Nat.totient Q : ℝ) / (Q : ℝ)) +
           ((Q.divisors.filter (fun d => Squarefree d)).card : ℝ) :=
-      by rw [moebius_abs_divisor_sum_eq_squarefree_divisor_card]
+      by rw [moebius_abs_sum_squarefree_card]
 
 /--
 Inputs: a positive modulus `Q` and an inclusive counting bound `T`.
@@ -475,7 +475,7 @@ choosing a subset of the distinct prime factors of `Q`.
 
 Role: provides an explicit divisor-error form for later AGP parameter bounds.
 -/
-theorem coprime_card_range_le_density_add_two_pow_cardDistinctFactors (T Q : ℕ) (hQ : 0 < Q) :
+theorem coprime_card_le_density_two_pow (T Q : ℕ) (hQ : 0 < Q) :
     (((Finset.range (T + 1)).filter (fun n => Nat.Coprime n Q)).card : ℝ) ≤
       (T : ℝ) * ((Nat.totient Q : ℝ) / (Q : ℝ)) +
         (2 : ℝ) ^ ArithmeticFunction.cardDistinctFactors Q := by
@@ -483,14 +483,12 @@ theorem coprime_card_range_le_density_add_two_pow_cardDistinctFactors (T Q : ℕ
     (((Finset.range (T + 1)).filter (fun n => Nat.Coprime n Q)).card : ℝ) ≤
         (T : ℝ) * ((Nat.totient Q : ℝ) / (Q : ℝ)) +
           ((Q.divisors.filter (fun d => Squarefree d)).card : ℝ) :=
-      coprime_card_range_le_density_add_squarefree_divisor_count T Q hQ
+      coprime_card_le_density_squarefree T Q hQ
     _ =
         (T : ℝ) * ((Nat.totient Q : ℝ) / (Q : ℝ)) +
           (2 : ℝ) ^ ArithmeticFunction.cardDistinctFactors Q :=
       by
-      have hcount :=
-        congrArg (fun n : ℕ => (n : ℝ))
-          (squarefree_divisor_count_eq_two_pow_cardDistinctFactors Q hQ)
+      have hcount := congrArg (fun n : ℕ => (n : ℝ)) (squarefree_card_eq_two_pow_factors Q hQ)
       have hcountReal :
         ((Q.divisors.filter (fun d => Squarefree d)).card : ℝ) =
           (2 : ℝ) ^ ArithmeticFunction.cardDistinctFactors Q := by
@@ -929,8 +927,8 @@ apply the exact residue-class count on a finite range.
 Role: gives an explicit formula for every divisor term in the progression
 sieve's remainder sum.
 -/
-theorem progressionDivisorFilter_card_eq_quotient_add_last_block (Y Q a d : ℕ) (hQ : 0 < Q)
-    (hd : 0 < d) (hcop : Nat.Coprime d Q) :
+theorem progressionFilter_card_quotient (Y Q a d : ℕ) (hQ : 0 < Q) (hd : 0 < d)
+    (hcop : Nat.Coprime d Q) :
     ((Finset.range (Y + 1)).filter (fun n => n % Q = a % Q ∧ d ∣ n)).card =
       (Y + 1) / (Q * d) +
         if (Nat.chineseRemainder hcop.symm a 0).val % (Q * d) < (Y + 1) % (Q * d) then 1
@@ -969,7 +967,7 @@ theorem progressionBoundingSieve_multSum_eq_crt_quotient {Y Q a P d : ℕ} (hP :
     ((((Finset.range (Y + 1)).filter (fun n => n % Q = a % Q)).filter (fun n => d ∣ n)).card : ℝ) =
       _
   rw [Finset.filter_filter]
-  exact_mod_cast progressionDivisorFilter_card_eq_quotient_add_last_block Y Q a d hQ hd hcop
+  exact_mod_cast progressionFilter_card_quotient Y Q a d hQ hd hcop
 
 /--
 Inputs: a canonical progression sieve and a positive natural number `d`.
@@ -998,8 +996,7 @@ use Euler's product formula for the totient.
 
 Role: identifies the diagonal coefficients in the Λ² main sum explicitly.
 -/
-theorem progressionBoundingSieve_selbergTerms_eq_totient_inv {Y Q a P d : ℕ} (hP : Squarefree P)
-    (hd : 0 < d) :
+theorem sieve_selbergTerms_eq_totient_inv {Y Q a P d : ℕ} (hP : Squarefree P) (hd : 0 < d) :
     (BoundingSieve.selbergTerms (s := progressionBoundingSieve Y Q a P hP) d) =
       1 / (Nat.totient d : ℝ) := by
   rw [BoundingSieve.selbergTerms_apply, progressionBoundingSieve_nu_eq_inv hP hd]
@@ -1039,11 +1036,10 @@ Proof: invert the totient formula and use positivity of the totient.
 
 Role: gives the coefficient in the diagonal Λ² main-term quadratic form.
 -/
-theorem progressionBoundingSieve_selbergTerms_inv_eq_totient {Y Q a P d : ℕ} (hP : Squarefree P)
-    (hd : 0 < d) :
+theorem sieve_selbergTerms_inv_eq_totient {Y Q a P d : ℕ} (hP : Squarefree P) (hd : 0 < d) :
     (BoundingSieve.selbergTerms (s := progressionBoundingSieve Y Q a P hP) d)⁻¹ =
       (Nat.totient d : ℝ) := by
-  rw [progressionBoundingSieve_selbergTerms_eq_totient_inv hP hd]
+  rw [sieve_selbergTerms_eq_totient_inv hP hd]
   field_simp
 
 /--
@@ -1407,8 +1403,8 @@ square.
 
 Role: supplies the error estimate for selecting and truncating Selberg weights.
 -/
-theorem progressionBoundingSieve_lambdaSquared_errSum_le_square {Y Q a P : ℕ} (hP : Squarefree P)
-    (hQ : 0 < Q) (hPQ : Nat.Coprime P Q) (w : ℕ → ℝ) :
+theorem sieve_lambdaSquared_errSum_le_square {Y Q a P : ℕ} (hP : Squarefree P) (hQ : 0 < Q)
+    (hPQ : Nat.Coprime P Q) (w : ℕ → ℝ) :
     (progressionBoundingSieve Y Q a P hP).errSum (BoundingSieve.lambdaSquared w) ≤
       (∑ d ∈ P.divisors, |w d|) ^ 2 := by
   calc
@@ -1430,8 +1426,7 @@ Role: exposes the exact main-term expression to be optimized for the
 Brun–Titchmarsh estimate; its local density is `1/d` by
 `progressionBoundingSieve_nu_eq_inv`.
 -/
-theorem progressionBoundingSieve_lambdaSquared_mainSum_diagonalized {Y Q a P : ℕ}
-    (hP : Squarefree P) (w : ℕ → ℝ) :
+theorem sieve_lambdaSquared_mainSum_diagonalized {Y Q a P : ℕ} (hP : Squarefree P) (w : ℕ → ℝ) :
     (progressionBoundingSieve Y Q a P hP).mainSum (BoundingSieve.lambdaSquared w) =
       ∑ l ∈ P.divisors,
         (BoundingSieve.selbergTerms (s := progressionBoundingSieve Y Q a P hP) l)⁻¹ *
@@ -1453,16 +1448,15 @@ the identity between inverse Selberg terms and totients.
 
 Role: puts the main-term optimization into its explicit arithmetic form.
 -/
-theorem progressionBoundingSieve_lambdaSquared_mainSum_totient_form {Y Q a P : ℕ}
-    (hP : Squarefree P) (w : ℕ → ℝ) :
+theorem sieve_lambdaSquared_mainSum_totient_form {Y Q a P : ℕ} (hP : Squarefree P) (w : ℕ → ℝ) :
     (progressionBoundingSieve Y Q a P hP).mainSum (BoundingSieve.lambdaSquared w) =
       ∑ l ∈ P.divisors,
         (Nat.totient l : ℝ) * (∑ d ∈ P.divisors, if l ∣ d then (1 / (d : ℝ)) * w d else 0) ^ 2 := by
-  rw [progressionBoundingSieve_lambdaSquared_mainSum_diagonalized]
+  rw [sieve_lambdaSquared_mainSum_diagonalized]
   apply Finset.sum_congr rfl
   intro l hl
   have hl0 : l ≠ 0 := ne_zero_of_dvd_ne_zero hP.ne_zero (Nat.mem_divisors.mp hl).1
-  rw [progressionBoundingSieve_selbergTerms_inv_eq_totient hP (Nat.pos_of_ne_zero hl0)]
+  rw [sieve_selbergTerms_inv_eq_totient hP (Nat.pos_of_ne_zero hl0)]
   apply congrArg (fun t : ℝ => (Nat.totient l : ℝ) * t)
   apply congrArg (fun t : ℝ => t ^ 2)
   apply Finset.sum_congr rfl
@@ -1485,12 +1479,11 @@ Proof: rewrite the main sum in totient form and apply
 Role: connects finite Möbius inversion to the exact optimization problem for
 the Selberg main term.
 -/
-theorem progressionBoundingSieve_lambdaSquared_mainSum_inverseWeight_eq {Y Q a P : ℕ}
-    (hP : Squarefree P) (v : ℕ → ℝ) :
+theorem sieve_lambdaSquared_mainSum_inverseWeight_eq {Y Q a P : ℕ} (hP : Squarefree P) (v : ℕ → ℝ) :
     (progressionBoundingSieve Y Q a P hP).mainSum
         (BoundingSieve.lambdaSquared (selbergDiagonalInverseWeight P v)) =
       ∑ l ∈ P.divisors, (Nat.totient l : ℝ) * v l ^ 2 := by
-  rw [progressionBoundingSieve_lambdaSquared_mainSum_totient_form]
+  rw [sieve_lambdaSquared_mainSum_totient_form]
   apply Finset.sum_congr rfl
   intro l hl
   have hdiag :
@@ -1618,7 +1611,7 @@ divisors in the sieve normalizer using the supplied divisibility certificate.
 Role: supports sieve products that omit prime factors of the progression
 modulus.
 -/
-theorem selbergTruncatedTotientSum_ge_coprime_reciprocal_sum {P z Q : ℕ} (hP : Squarefree P)
+theorem selbergTotientSum_ge_coprime_reciprocal_sum {P z Q : ℕ} (hP : Squarefree P)
     (hdiv : ∀ n : ℕ, 1 ≤ n → n ≤ z → Squarefree n → Nat.Coprime n Q → n ∣ P) :
     (∑ n ∈ (Finset.range (z + 1)).filter (fun n => 0 < n ∧ Squarefree n ∧ Nat.Coprime n Q),
         1 / (n : ℝ)) ≤
@@ -1768,8 +1761,8 @@ Möbius-square identity, and factor out `1 / G`.
 
 Role: gives a normalized Selberg weight with support restricted by `z`.
 -/
-theorem selbergTruncatedOptimalDiagonal_inverseWeight_normalized {P z : ℕ} (hP : Squarefree P)
-    (hz : 1 ≤ z) (G : ℝ) (hG : G = selbergTruncatedTotientSum P z) :
+theorem selbergDiagonal_inverseWeight_normalized {P z : ℕ} (hP : Squarefree P) (hz : 1 ≤ z) (G : ℝ)
+    (hG : G = selbergTruncatedTotientSum P z) :
     selbergDiagonalInverseWeight P (selbergTruncatedOptimalDiagonal z G) 1 = 1 := by
   have hGpos := selbergTruncatedTotientSum_pos hP.ne_zero hz
   rw [← hG] at hGpos
@@ -1831,8 +1824,8 @@ identity below the cutoff; all diagonal coordinates above it vanish.
 
 Role: provides a cutoff-compatible main-term optimizer for the sieve bound.
 -/
-theorem progressionBoundingSieve_truncatedOptimal_mainSum_eq {Y Q a P z : ℕ} (hP : Squarefree P)
-    (hz : 1 ≤ z) (G : ℝ) (hG : G = selbergTruncatedTotientSum P z) :
+theorem sieve_truncatedOptimal_mainSum_eq {Y Q a P z : ℕ} (hP : Squarefree P) (hz : 1 ≤ z) (G : ℝ)
+    (hG : G = selbergTruncatedTotientSum P z) :
     (progressionBoundingSieve Y Q a P hP).mainSum
         (BoundingSieve.lambdaSquared
           (selbergDiagonalInverseWeight P (selbergTruncatedOptimalDiagonal z G))) =
@@ -1861,7 +1854,7 @@ theorem progressionBoundingSieve_truncatedOptimal_mainSum_eq {Y Q a P z : ℕ} (
     · simp only [selbergTruncatedOptimalDiagonal, hcut, ite_false]
       rw [show (0 : ℝ) ^ 2 = 0 by norm_num only]
       exact mul_zero (Nat.totient l : ℝ)
-  rw [progressionBoundingSieve_lambdaSquared_mainSum_inverseWeight_eq]
+  rw [sieve_lambdaSquared_mainSum_inverseWeight_eq]
   calc
     _ = ∑ l ∈ P.divisors, if l ≤ z then (1 / G ^ 2) * (1 / (Nat.totient l : ℝ)) else 0 := by
       apply Finset.sum_congr rfl
@@ -2042,8 +2035,8 @@ the triangle inequality before summing over divisor multiples.
 Role: retains the divisor structure of each coefficient so later estimates can
 sum the weights by first grouping on the multiple `k`.
 -/
-theorem selbergTruncatedOptimalWeight_abs_le_divisor_mass {P z d : ℕ} (hP : Squarefree P)
-    (hz : 1 ≤ z) (G : ℝ) (hG : G = selbergTruncatedTotientSum P z) :
+theorem selbergWeight_abs_le_divisor_mass {P z d : ℕ} (hP : Squarefree P) (hz : 1 ≤ z) (G : ℝ)
+    (hG : G = selbergTruncatedTotientSum P z) :
     |selbergTruncatedOptimalWeight P z G d| ≤
       (d : ℝ) * ∑ k ∈ P.divisors, if d ∣ k ∧ k ≤ z then 1 / ((Nat.totient k : ℝ) * G) else 0 := by
   classical
@@ -2170,7 +2163,7 @@ inner sum with `selbergTruncatedOptimalWeightDivisorSum_reindex`.
 
 Role: isolates the arithmetic sum that remains to be bounded quantitatively.
 -/
-theorem selbergTruncatedOptimalWeightDivisorMass_eq_divisor_sum {P z : ℕ} (G : ℝ) :
+theorem selbergDivisorMass_eq_divisor_sum {P z : ℕ} (G : ℝ) :
     selbergTruncatedOptimalWeightDivisorMass P z G =
       ∑ k ∈ P.divisors,
         if k ≤ z then (∑ d ∈ k.divisors, (d : ℝ)) / ((Nat.totient k : ℝ) * G) else 0 := by
@@ -2210,8 +2203,8 @@ sum, and exchange the two divisor sums.
 Role: reduces the total weight error to an explicit sum involving
 `∑_{d ∣ k} d / φ(k)`, which can be estimated separately from the main term.
 -/
-theorem selbergTruncatedOptimalWeight_abs_sum_le_reordered_divisor_mass {P z : ℕ}
-    (hP : Squarefree P) (hz : 1 ≤ z) (G : ℝ) (hG : G = selbergTruncatedTotientSum P z) :
+theorem selbergWeight_abs_sum_le_reordered_divisor_mass {P z : ℕ} (hP : Squarefree P) (hz : 1 ≤ z)
+    (G : ℝ) (hG : G = selbergTruncatedTotientSum P z) :
     (∑ d ∈ P.divisors, |selbergTruncatedOptimalWeight P z G d|) ≤
       selbergTruncatedOptimalWeightDivisorMass P z G := by
   have hsum :
@@ -2220,7 +2213,7 @@ theorem selbergTruncatedOptimalWeight_abs_sum_le_reordered_divisor_mass {P z : �
         (d : ℝ) * ∑ k ∈ P.divisors, if d ∣ k ∧ k ≤ z then 1 / ((Nat.totient k : ℝ) * G) else 0 := by
     apply Finset.sum_le_sum
     intro d hd
-    exact selbergTruncatedOptimalWeight_abs_le_divisor_mass hP hz G hG
+    exact selbergWeight_abs_le_divisor_mass hP hz G hG
   calc
     _ ≤
         ∑ d ∈ P.divisors,
@@ -2300,8 +2293,8 @@ of `G`.
 
 Role: proves equality in the finite Selberg quadratic optimization problem.
 -/
-theorem progressionBoundingSieve_lambdaSquared_mainSum_inverseWeight_attains_lower_bound
-    {Y Q a P : ℕ} (hP : Squarefree P) (G : ℝ) (hG : G = ∑ l ∈ P.divisors, 1 / (Nat.totient l : ℝ)) :
+theorem sieve_optimal_mainSum {Y Q a P : ℕ} (hP : Squarefree P) (G : ℝ)
+    (hG : G = ∑ l ∈ P.divisors, 1 / (Nat.totient l : ℝ)) :
     (progressionBoundingSieve Y Q a P hP).mainSum
         (BoundingSieve.lambdaSquared (selbergDiagonalInverseWeight P (selbergOptimalDiagonal G))) =
       1 / G := by
@@ -2324,7 +2317,7 @@ theorem progressionBoundingSieve_lambdaSquared_mainSum_inverseWeight_attains_low
     unfold selbergOptimalDiagonal
     field_simp [hphi l hl, hG0]
     nlinarith only [hmu l hl]
-  rw [progressionBoundingSieve_lambdaSquared_mainSum_inverseWeight_eq]
+  rw [sieve_lambdaSquared_mainSum_inverseWeight_eq]
   calc
     _ = ∑ l ∈ P.divisors, (1 / G ^ 2) * (1 / (Nat.totient l : ℝ)) := by
       apply Finset.sum_congr rfl
@@ -2345,12 +2338,12 @@ variables and use that every divisor of a squarefree number is squarefree.
 Role: identifies the optimal scale of the Selberg quadratic main term before
 constructing weights with a matching upper bound.
 -/
-theorem progressionBoundingSieve_lambdaSquared_mainSum_lower_bound {Y Q a P : ℕ} (hP : Squarefree P)
-    (w : ℕ → ℝ) (hw : w 1 = 1) :
+theorem sieve_lambdaSquared_mainSum_lower_bound {Y Q a P : ℕ} (hP : Squarefree P) (w : ℕ → ℝ)
+    (hw : w 1 = 1) :
     1 / (∑ l ∈ P.divisors, 1 / (Nat.totient l : ℝ)) ≤
       (progressionBoundingSieve Y Q a P hP).mainSum (BoundingSieve.lambdaSquared w) := by
   classical
-  rw [progressionBoundingSieve_lambdaSquared_mainSum_totient_form]
+  rw [sieve_lambdaSquared_mainSum_totient_form]
   let y := fun l => ∑ d ∈ P.divisors, if l ∣ d then (1 / (d : ℝ)) * w d else 0
   have hnorm :
     (∑ l ∈ P.divisors, (ArithmeticFunction.moebius : ArithmeticFunction ℝ) l * y l) = 1 := by
@@ -2429,8 +2422,8 @@ explicit normalized inverse weight for equality.
 Role: closes the finite-dimensional main-term optimization needed by the
 Brun–Titchmarsh sieve reduction.
 -/
-theorem progressionBoundingSieve_lambdaSquared_mainSum_minimum {Y Q a P : ℕ} (hP : Squarefree P)
-    (G : ℝ) (hG : G = ∑ l ∈ P.divisors, 1 / (Nat.totient l : ℝ)) :
+theorem sieve_lambdaSquared_mainSum_minimum {Y Q a P : ℕ} (hP : Squarefree P) (G : ℝ)
+    (hG : G = ∑ l ∈ P.divisors, 1 / (Nat.totient l : ℝ)) :
     (∀ w : ℕ → ℝ,
         w 1 = 1 →
           1 / G ≤ (progressionBoundingSieve Y Q a P hP).mainSum (BoundingSieve.lambdaSquared w)) ∧
@@ -2440,13 +2433,12 @@ theorem progressionBoundingSieve_lambdaSquared_mainSum_minimum {Y Q a P : ℕ} (
             1 / G := by
   constructor
   · intro w hw
-    have hmain :=
-      progressionBoundingSieve_lambdaSquared_mainSum_lower_bound (Y := Y) (Q := Q) (a := a) hP w hw
+    have hmain := sieve_lambdaSquared_mainSum_lower_bound (Y := Y) (Q := Q) (a := a) hP w hw
     rw [← hG] at hmain
     exact hmain
   · refine ⟨selbergDiagonalInverseWeight P (selbergOptimalDiagonal G), ?_, ?_⟩
     · exact selbergOptimalDiagonal_inverseWeight_normalized hP G hG
-    · exact progressionBoundingSieve_lambdaSquared_mainSum_inverseWeight_attains_lower_bound hP G hG
+    · exact sieve_optimal_mainSum hP G hG
 
 /--
 Inputs: a `BoundingSieve` supported on the integers up to `Y` in the residue
@@ -2468,7 +2460,7 @@ theorem progressionPrimeCount_le_small_primes_add_sieve {Y Q a z : ℕ} (s : Bou
     (hPsmall : ∀ p : ℕ, Nat.Prime p → p ∣ s.prodPrimes → p ≤ z) :
     primeCountInProgression Y Q a ≤
       ((Finset.range (z + 1)).filter Nat.Prime).card + s.siftedSum := by
-  have hbridge := primeCountInProgression_le_small_primes_add_coprime Y Q a s.prodPrimes z hPsmall
+  have hbridge := progressionCount_le_small_primes_add_coprime Y Q a s.prodPrimes z hPsmall
   let C := (Finset.range (Y + 1)).filter (fun n => n % Q = a % Q ∧ Nat.Coprime s.prodPrimes n)
   have hC : C = s.support.filter (fun n => Nat.Coprime s.prodPrimes n) := by
     dsimp only [C]
@@ -2504,7 +2496,7 @@ Proof: instantiate the generic finite reduction with
 Role: removes the support and unit-weight bookkeeping from later applications
 of the Selberg sieve.
 -/
-theorem progressionPrimeCount_le_small_primes_add_concrete_sieve {Y Q a z P : ℕ} (hP : Squarefree P)
+theorem progressionPrimes_le_siftedSum {Y Q a z P : ℕ} (hP : Squarefree P)
     (hPsmall : ∀ p : ℕ, Nat.Prime p → p ∣ P → p ≤ z) :
     primeCountInProgression Y Q a ≤
       ((Finset.range (z + 1)).filter Nat.Prime).card +
@@ -2530,8 +2522,8 @@ Proof: combine the finite reduction with mathlib's upper Moebius sieve bound.
 Role: isolates the exact quantitative estimates still needed to derive the
 Brun–Titchmarsh input from the Selberg sieve.
 -/
-theorem progressionPrimeCount_le_small_primes_add_selberg_bound {Y Q a z : ℕ} (s : BoundingSieve)
-    (muPlus : ℕ → ℝ) (hsupport : s.support = (Finset.range (Y + 1)).filter (fun n => n % Q = a % Q))
+theorem progressionPrimes_le_selberg_bound {Y Q a z : ℕ} (s : BoundingSieve) (muPlus : ℕ → ℝ)
+    (hsupport : s.support = (Finset.range (Y + 1)).filter (fun n => n % Q = a % Q))
     (hweights : ∀ n ∈ s.support, s.weights n = 1)
     (hPsmall : ∀ p : ℕ, Nat.Prime p → p ∣ s.prodPrimes → p ≤ z)
     (hupper : BoundingSieve.IsUpperMoebius muPlus) :
@@ -2555,8 +2547,8 @@ Proof: instantiate the general main-term estimate with
 Role: this is the concrete finite endpoint to which divisor-counting and
 Selberg-weight estimates can be connected in a proof of Brun–Titchmarsh.
 -/
-theorem progressionPrimeCount_le_small_primes_add_concrete_selberg_bound {Y Q a z P : ℕ}
-    (hP : Squarefree P) (muPlus : ℕ → ℝ) (hPsmall : ∀ p : ℕ, Nat.Prime p → p ∣ P → p ≤ z)
+theorem progressionPrimes_le_concrete_selberg {Y Q a z P : ℕ} (hP : Squarefree P) (muPlus : ℕ → ℝ)
+    (hPsmall : ∀ p : ℕ, Nat.Prime p → p ∣ P → p ≤ z)
     (hupper : BoundingSieve.IsUpperMoebius muPlus) :
     (primeCountInProgression Y Q a : ℝ) ≤
       ((Finset.range (z + 1)).filter Nat.Prime).card +
@@ -2569,8 +2561,8 @@ theorem progressionPrimeCount_le_small_primes_add_concrete_selberg_bound {Y Q a 
     intro n hn
     rfl
   exact
-    progressionPrimeCount_le_small_primes_add_selberg_bound (Y := Y) (Q := Q) (a := a) (z := z) s
-      muPlus hsupport hweights hPsmall hupper
+    progressionPrimes_le_selberg_bound (Y := Y) (Q := Q) (a := a) (z := z) s muPlus hsupport
+      hweights hPsmall hupper
 
 /--
 Inputs: a squarefree sieve product coprime to the progression modulus, an
@@ -2585,7 +2577,7 @@ estimate above.
 Role: exposes the remaining finite coefficient estimate needed for the
 Brun–Titchmarsh specialization.
 -/
-theorem progressionPrimeCount_le_concrete_selberg_coeff_sum {Y Q a z P : ℕ} (hP : Squarefree P)
+theorem progressionPrimes_le_concrete_selberg_coeff_sum {Y Q a z P : ℕ} (hP : Squarefree P)
     (hQ : 0 < Q) (hPQ : Nat.Coprime P Q) (muPlus : ℕ → ℝ)
     (hPsmall : ∀ p : ℕ, Nat.Prime p → p ∣ P → p ≤ z)
     (hupper : BoundingSieve.IsUpperMoebius muPlus) :
@@ -2595,8 +2587,8 @@ theorem progressionPrimeCount_le_concrete_selberg_coeff_sum {Y Q a z P : ℕ} (h
             (progressionBoundingSieve Y Q a P hP).mainSum muPlus +
           ∑ d ∈ P.divisors, |muPlus d|) := by
   have hbase :=
-    progressionPrimeCount_le_small_primes_add_concrete_selberg_bound (Y := Y) (Q := Q) (a := a)
-      (z := z) (P := P) hP muPlus hPsmall hupper
+    progressionPrimes_le_concrete_selberg (Y := Y) (Q := Q) (a := a) (z := z) (P := P) hP muPlus
+      hPsmall hupper
   have herr :=
     progressionBoundingSieve_errSum_le_sum_abs (Y := Y) (Q := Q) (a := a) (P := P) hP hQ hPQ muPlus
   linarith only [hbase, herr]
@@ -2613,8 +2605,8 @@ coefficient by its divisor double sum.
 
 Role: reduces both Selberg terms to explicit expressions in the chosen weights.
 -/
-theorem progressionPrimeCount_le_concrete_selberg_lambdaSquared {Y Q a z P : ℕ} (hP : Squarefree P)
-    (hQ : 0 < Q) (hPQ : Nat.Coprime P Q) (w : ℕ → ℝ) (hw : w 1 = 1)
+theorem progressionPrimes_le_lambdaSquared {Y Q a z P : ℕ} (hP : Squarefree P) (hQ : 0 < Q)
+    (hPQ : Nat.Coprime P Q) (w : ℕ → ℝ) (hw : w 1 = 1)
     (hPsmall : ∀ p : ℕ, Nat.Prime p → p ∣ P → p ≤ z) :
     (primeCountInProgression Y Q a : ℝ) ≤
       ((Finset.range (z + 1)).filter Nat.Prime).card +
@@ -2622,9 +2614,8 @@ theorem progressionPrimeCount_le_concrete_selberg_lambdaSquared {Y Q a z P : ℕ
             (progressionBoundingSieve Y Q a P hP).mainSum (BoundingSieve.lambdaSquared w) +
           ∑ d ∈ P.divisors, ∑ d1 ∈ d.divisors, ∑ d2 ∈ d.divisors, |w d1| * |w d2|) := by
   have hbase :=
-    progressionPrimeCount_le_concrete_selberg_coeff_sum (Y := Y) (Q := Q) (a := a) (z := z) (P := P)
-      hP hQ hPQ (BoundingSieve.lambdaSquared w) hPsmall
-      (BoundingSieve.upperMoebius_lambdaSquared w hw)
+    progressionPrimes_le_concrete_selberg_coeff_sum (Y := Y) (Q := Q) (a := a) (z := z) (P := P) hP
+      hQ hPQ (BoundingSieve.lambdaSquared w) hPsmall (BoundingSieve.upperMoebius_lambdaSquared w hw)
   have hcoeff :
     ∑ d ∈ P.divisors, |BoundingSieve.lambdaSquared w d| ≤
       ∑ d ∈ P.divisors, ∑ d1 ∈ d.divisors, ∑ d2 ∈ d.divisors, |w d1| * |w d2| := by
@@ -2645,8 +2636,8 @@ Proof: apply the Λ² upper-bound coefficients and the unique-lcm error estimate
 Role: isolates the quantitative weight sum that must be optimized with the
 main term to obtain the Brun–Titchmarsh estimate.
 -/
-theorem progressionPrimeCount_le_concrete_selberg_lambdaSquared_square_error {Y Q a z P : ℕ}
-    (hP : Squarefree P) (hQ : 0 < Q) (hPQ : Nat.Coprime P Q) (w : ℕ → ℝ) (hw : w 1 = 1)
+theorem progressionPrimes_le_lambdaSquare_error {Y Q a z P : ℕ} (hP : Squarefree P) (hQ : 0 < Q)
+    (hPQ : Nat.Coprime P Q) (w : ℕ → ℝ) (hw : w 1 = 1)
     (hPsmall : ∀ p : ℕ, Nat.Prime p → p ∣ P → p ≤ z) :
     (primeCountInProgression Y Q a : ℝ) ≤
       ((Finset.range (z + 1)).filter Nat.Prime).card +
@@ -2654,9 +2645,8 @@ theorem progressionPrimeCount_le_concrete_selberg_lambdaSquared_square_error {Y 
             (progressionBoundingSieve Y Q a P hP).mainSum (BoundingSieve.lambdaSquared w) +
           (∑ d ∈ P.divisors, |w d|) ^ 2) := by
   have hbase :=
-    progressionPrimeCount_le_concrete_selberg_coeff_sum (Y := Y) (Q := Q) (a := a) (z := z) (P := P)
-      hP hQ hPQ (BoundingSieve.lambdaSquared w) hPsmall
-      (BoundingSieve.upperMoebius_lambdaSquared w hw)
+    progressionPrimes_le_concrete_selberg_coeff_sum (Y := Y) (Q := Q) (a := a) (z := z) (P := P) hP
+      hQ hPQ (BoundingSieve.lambdaSquared w) hPsmall (BoundingSieve.upperMoebius_lambdaSquared w hw)
   have hcoeff := lambdaSquared_divisor_abs_sum_le_square P w
   linarith only [hbase, hcoeff]
 
@@ -2673,7 +2663,7 @@ and main-term identities, and remove the zero weights above the cutoff.
 Role: exposes the quantitative error term needed for the Brun–Titchmarsh
 estimate with the cutoff optimizer.
 -/
-theorem progressionPrimeCount_le_truncatedOptimal_selberg {Y Q a z P : ℕ} (hP : Squarefree P)
+theorem progressionPrimes_le_truncatedOptimal_selberg {Y Q a z P : ℕ} (hP : Squarefree P)
     (hQ : 0 < Q) (hPQ : Nat.Coprime P Q) (hz : 1 ≤ z) (G : ℝ)
     (hG : G = selbergTruncatedTotientSum P z) (hPsmall : ∀ p : ℕ, Nat.Prime p → p ∣ P → p ≤ z) :
     (primeCountInProgression Y Q a : ℝ) ≤
@@ -2685,7 +2675,7 @@ theorem progressionPrimeCount_le_truncatedOptimal_selberg {Y Q a z P : ℕ} (hP 
   let w := selbergTruncatedOptimalWeight P z G
   have hnorm : w 1 = 1 := by
     change selbergDiagonalInverseWeight P (selbergTruncatedOptimalDiagonal z G) 1 = 1
-    exact selbergTruncatedOptimalDiagonal_inverseWeight_normalized hP hz G hG
+    exact selbergDiagonal_inverseWeight_normalized hP hz G hG
   have hmain :
     (progressionBoundingSieve Y Q a P hP).mainSum (BoundingSieve.lambdaSquared w) = 1 / G := by
     change
@@ -2693,7 +2683,7 @@ theorem progressionPrimeCount_le_truncatedOptimal_selberg {Y Q a z P : ℕ} (hP 
           (BoundingSieve.lambdaSquared
             (selbergDiagonalInverseWeight P (selbergTruncatedOptimalDiagonal z G))) =
         1 / G
-    exact progressionBoundingSieve_truncatedOptimal_mainSum_eq hP hz G hG
+    exact sieve_truncatedOptimal_mainSum_eq hP hz G hG
   have hweight :
     (∑ d ∈ P.divisors, |w d|) =
       ∑ d ∈ P.divisors, if d ≤ z then |selbergTruncatedOptimalWeight P z G d| else 0 := by
@@ -2711,13 +2701,13 @@ theorem progressionPrimeCount_le_truncatedOptimal_selberg {Y Q a z P : ℕ} (hP 
       rw [hzero]
       simp only [hcut, ite_false, abs_zero]
   have hbound :=
-    progressionPrimeCount_le_concrete_selberg_lambdaSquared_square_error (Y := Y) (Q := Q) (a := a)
-      (z := z) (P := P) hP hQ hPQ w hnorm hPsmall
+    progressionPrimes_le_lambdaSquare_error (Y := Y) (Q := Q) (a := a) (z := z) (P := P) hP hQ hPQ w
+      hnorm hPsmall
   rw [hmain, hweight] at hbound
   exact hbound
 
 /--
-Inputs: the hypotheses of `progressionPrimeCount_le_truncatedOptimal_selberg`.
+Inputs: the hypotheses of `progressionPrimes_le_truncatedOptimal_selberg`.
 
 Claim: the progression prime count is bounded by the small primes, the exact
 truncated main term, and the square of `selbergTruncatedOptimalWeightDivisorMass`.
@@ -2728,9 +2718,9 @@ monotonicity of squaring on nonnegative reals.
 Role: exposes the divisor-grouped error estimate directly at the prime-count
 interface for later arithmetic evaluation.
 -/
-theorem progressionPrimeCount_le_truncatedOptimal_selberg_divisor_mass_error {Y Q a z P : ℕ}
-    (hP : Squarefree P) (hQ : 0 < Q) (hPQ : Nat.Coprime P Q) (hz : 1 ≤ z) (G : ℝ)
-    (hG : G = selbergTruncatedTotientSum P z) (hPsmall : ∀ p : ℕ, Nat.Prime p → p ∣ P → p ≤ z) :
+theorem progressionPrimes_le_optimal_mass_error {Y Q a z P : ℕ} (hP : Squarefree P) (hQ : 0 < Q)
+    (hPQ : Nat.Coprime P Q) (hz : 1 ≤ z) (G : ℝ) (hG : G = selbergTruncatedTotientSum P z)
+    (hPsmall : ∀ p : ℕ, Nat.Prime p → p ∣ P → p ≤ z) :
     (primeCountInProgression Y Q a : ℝ) ≤
       ((Finset.range (z + 1)).filter Nat.Prime).card +
         ((progressionBoundingSieve Y Q a P hP).totalMass * (1 / G) +
@@ -2748,7 +2738,7 @@ theorem progressionPrimeCount_le_truncatedOptimal_selberg_divisor_mass_error {Y 
     · simp only [hdz, ite_false]
       exact abs_nonneg _
   have hweight : (∑ d ∈ P.divisors, |selbergTruncatedOptimalWeight P z G d|) ≤ B := by
-    exact selbergTruncatedOptimalWeight_abs_sum_le_reordered_divisor_mass hP hz G hG
+    exact selbergWeight_abs_sum_le_reordered_divisor_mass hP hz G hG
   have hWB : W ≤ B := le_trans hcut hweight
   have hWnonneg : 0 ≤ W := by
     dsimp only [W]
@@ -2762,8 +2752,8 @@ theorem progressionPrimeCount_le_truncatedOptimal_selberg_divisor_mass_error {Y 
   have hBnonneg : 0 ≤ B := le_trans hWnonneg hWB
   have hWsq : W ^ 2 ≤ B ^ 2 := (sq_le_sq₀ hWnonneg hBnonneg).2 hWB
   have hbase :=
-    progressionPrimeCount_le_truncatedOptimal_selberg (Y := Y) (Q := Q) (a := a) (z := z) (P := P)
-      hP hQ hPQ hz G hG hPsmall
+    progressionPrimes_le_truncatedOptimal_selberg (Y := Y) (Q := Q) (a := a) (z := z) (P := P) hP hQ
+      hPQ hz G hG hPsmall
   change
     (primeCountInProgression Y Q a : ℝ) ≤
       ((Finset.range (z + 1)).filter Nat.Prime).card +
@@ -2779,7 +2769,7 @@ theorem progressionPrimeCount_le_truncatedOptimal_selberg_divisor_mass_error {Y 
       by linarith only [hWsq]
 
 /--
-Inputs: the hypotheses of `progressionPrimeCount_le_truncatedOptimal_selberg`.
+Inputs: the hypotheses of `progressionPrimes_le_truncatedOptimal_selberg`.
 
 Claim: the progression prime count is bounded by the small primes, the exact
 truncated main term, and the explicit error `(z * (z + 1)) ^ 2`.
@@ -2789,9 +2779,9 @@ nonnegative reals to the finite Selberg count inequality.
 
 Role: removes the weight function from the quantitative finite sieve bound.
 -/
-theorem progressionPrimeCount_le_truncatedOptimal_selberg_explicit_error {Y Q a z P : ℕ}
-    (hP : Squarefree P) (hQ : 0 < Q) (hPQ : Nat.Coprime P Q) (hz : 1 ≤ z) (G : ℝ)
-    (hG : G = selbergTruncatedTotientSum P z) (hPsmall : ∀ p : ℕ, Nat.Prime p → p ∣ P → p ≤ z) :
+theorem progressionPrimes_le_optimal_explicit {Y Q a z P : ℕ} (hP : Squarefree P) (hQ : 0 < Q)
+    (hPQ : Nat.Coprime P Q) (hz : 1 ≤ z) (G : ℝ) (hG : G = selbergTruncatedTotientSum P z)
+    (hPsmall : ∀ p : ℕ, Nat.Prime p → p ∣ P → p ≤ z) :
     (primeCountInProgression Y Q a : ℝ) ≤
       ((Finset.range (z + 1)).filter Nat.Prime).card +
         ((progressionBoundingSieve Y Q a P hP).totalMass * (1 / G) +
@@ -2814,8 +2804,8 @@ theorem progressionPrimeCount_le_truncatedOptimal_selberg_explicit_error {Y Q a 
   have hZpos : 0 ≤ (z : ℝ) * (z + 1 : ℕ) := mul_nonneg (Nat.cast_nonneg z) (Nat.cast_nonneg (z + 1))
   have hsquare : S ^ 2 ≤ ((z : ℝ) * (z + 1 : ℕ)) ^ 2 := (sq_le_sq₀ hSpos hZpos).2 hS
   have hbase :=
-    progressionPrimeCount_le_truncatedOptimal_selberg (Y := Y) (Q := Q) (a := a) (z := z) (P := P)
-      hP hQ hPQ hz G hG hPsmall
+    progressionPrimes_le_truncatedOptimal_selberg (Y := Y) (Q := Q) (a := a) (z := z) (P := P) hP hQ
+      hPQ hz G hG hPsmall
   change
     (primeCountInProgression Y Q a : ℝ) ≤
       ((Finset.range (z + 1)).filter Nat.Prime).card +

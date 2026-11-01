@@ -20,8 +20,8 @@ namespace PseudoPrime.PseudoSquare
 A nonnegative joint margin using the signed-variation principal cap gives an
 odd-prime negative Jacobi witness through 99x/40. Transfer absence to the even
 quadratic character. Role: connect the improved principal error to witness extraction. -/
-theorem exists_prime_neg_one_witness_of_signed_principal_separation {n Q : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hQ : 20000 ≤ Q) (hnQ : 4 * n ≤ Q)
+theorem exists_prime_negOne_signedPrincipalAmbient_GRH {n Q : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hQ : 20000 ≤ Q) (hnQ : 4 * n ≤ Q)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x b : ℝ} (hx : 2 ≤ x)
     (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hgap :
@@ -44,7 +44,7 @@ theorem exists_prime_neg_one_witness_of_signed_principal_separation {n Q : ℕ} 
         (p : ℝ) ≤ (99 / 40 : ℝ) * x → NumberTheory.complexQuadraticCharacter n hn p = 1 := by
     intro p hp hd hpb
     by_contra hv
-    have hm := NumberTheory.primeNegOneWitness_mem_of_complexQuadraticCharacter_ne_one n hn hp hd hv
+    have hm := NumberTheory.negOneWitness_mem_of_quadratic_ne_one n hn hp hd hv
     exact hnone ⟨p, hm.1, hm.2.1, hpb, hm.2.2⟩
   exact
     LLS.gamma_ramp_prime_trivial_false_of_principal_cap hQ hnQ
@@ -57,8 +57,8 @@ theorem exists_prime_neg_one_witness_of_signed_principal_separation {n Q : ℕ} 
 /-- Under the same analytic and arithmetic conditions and a nonempty witness
 set, the least negative odd-prime witness is at most 99x/40. Compare it with
 the constructed witness. Role: expose minimality over all odd-prime witnesses. -/
-theorem primeNegOneWitness_cast_le_of_signed_principal_separation {n Q : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hQ : 20000 ≤ Q) (hnQ : 4 * n ≤ Q)
+theorem negOneWitness_le_of_signed_principal_separation {n Q : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hQ : 20000 ≤ Q) (hnQ : 4 * n ≤ Q)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x b : ℝ} (hx : 2 ≤ x)
     (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hgap :
@@ -69,14 +69,14 @@ theorem primeNegOneWitness_cast_le_of_signed_principal_separation {n Q : ℕ} (h
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ (99 / 40 : ℝ) * x := by
   obtain ⟨p, hp, ho, hpb, hv⟩ :=
-    exists_prime_neg_one_witness_of_signed_principal_separation hn hns hQ hnQ hGRH hx hb hbx hgap
+    exists_prime_negOne_signedPrincipalAmbient_GRH hn hns hQ hnQ hGRH hx hb hbx hgap
   exact (Nat.cast_le.mpr (NumberTheory.primeNegOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hpb
 
 /-- Under the same signed-principal margin, a non-one odd-prime Jacobi witness
 exists through 99x/40. Use the negative witness. Role: export the improved
 principal subtraction to both quadratic witness predicates. -/
-theorem exists_prime_ne_one_witness_of_signed_principal_separation {n Q : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hQ : 20000 ≤ Q) (hnQ : 4 * n ≤ Q)
+theorem exists_prime_neOne_signedPrincipalAmbient_GRH {n Q : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hQ : 20000 ≤ Q) (hnQ : 4 * n ≤ Q)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x b : ℝ} (hx : 2 ≤ x)
     (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hgap :
@@ -86,7 +86,7 @@ theorem exists_prime_ne_one_witness_of_signed_principal_separation {n Q : ℕ} (
           (LLS.gammaSignedVariationPrincipalCap x)) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n p ≠ 1 := by
   obtain ⟨p, hp, ho, hpb, hv⟩ :=
-    exists_prime_neg_one_witness_of_signed_principal_separation hn hns hQ hnQ hGRH hx hb hbx hgap
+    exists_prime_negOne_signedPrincipalAmbient_GRH hn hns hQ hnQ hGRH hx hb hbx hgap
   refine ⟨p, hp, ho, hpb, ?_⟩
   rw [hv]
   norm_num only
@@ -95,8 +95,8 @@ theorem exists_prime_ne_one_witness_of_signed_principal_separation {n Q : ℕ} (
 margin with common cost 541/50 gives the stated negative or non-one witness bound.
 Use evenness and the precise common cost, then the principal-cap comparison.
 Role: export the improved fixed cost to pointwise and least witnesses. -/
-theorem exists_prime_neg_one_witness_of_retained_common_separation {n Q : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hQ : 20000 ≤ Q) (hnQ : 4 * n ≤ Q)
+theorem exists_negOneWitness_of_retainedCommon_gap {n Q : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hQ : 20000 ≤ Q) (hnQ : 4 * n ≤ Q)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x b : ℝ} (hx : 2 ≤ x)
     (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hgap :
@@ -118,7 +118,7 @@ theorem exists_prime_neg_one_witness_of_retained_common_separation {n Q : ℕ} (
         (p : ℝ) ≤ (99 / 40 : ℝ) * x → NumberTheory.complexQuadraticCharacter n hn p = 1 := by
     intro p hp hd hpb
     by_contra hv
-    have hm := NumberTheory.primeNegOneWitness_mem_of_complexQuadraticCharacter_ne_one n hn hp hd hv
+    have hm := NumberTheory.negOneWitness_mem_of_quadratic_ne_one n hn hp hd hv
     exact hnone ⟨p, hm.1, hm.2.1, hpb, hm.2.2⟩
   exact
     LLS.gamma_ramp_prime_trivial_false_of_common_cap hQ hnQ
@@ -132,8 +132,8 @@ theorem exists_prime_neg_one_witness_of_retained_common_separation {n Q : ℕ} (
 margin with common cost 541/50 gives the stated negative or non-one witness bound.
 Use evenness and the precise common cost, then the principal-cap comparison.
 Role: export the improved fixed cost to pointwise and least witnesses. -/
-theorem primeNegOneWitness_cast_le_of_retained_common_separation {n Q : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hQ : 20000 ≤ Q) (hnQ : 4 * n ≤ Q)
+theorem negOneWitness_le_of_retainedCommon_gap {n Q : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hQ : 20000 ≤ Q) (hnQ : 4 * n ≤ Q)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x b : ℝ} (hx : 2 ≤ x)
     (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hgap :
@@ -143,15 +143,15 @@ theorem primeNegOneWitness_cast_le_of_retained_common_separation {n Q : ℕ} (hn
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ (99 / 40 : ℝ) * x := by
   obtain ⟨p, hp, ho, hpb, hv⟩ :=
-    exists_prime_neg_one_witness_of_retained_common_separation hn hns hQ hnQ hGRH hx hb hbx hgap
+    exists_negOneWitness_of_retainedCommon_gap hn hns hQ hnQ hGRH hx hb hbx hgap
   exact (Nat.cast_le.mpr (NumberTheory.primeNegOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hpb
 
 /-- Under GRH and the displayed odd-nonsquare and scale conditions, the joint
 margin with common cost 541/50 gives the stated negative or non-one witness bound.
 Use evenness and the precise common cost, then the principal-cap comparison.
 Role: export the improved fixed cost to pointwise and least witnesses. -/
-theorem exists_prime_ne_one_witness_of_retained_common_separation {n Q : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hQ : 20000 ≤ Q) (hnQ : 4 * n ≤ Q)
+theorem exists_neOneWitness_of_retainedCommon_gap {n Q : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hQ : 20000 ≤ Q) (hnQ : 4 * n ≤ Q)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x b : ℝ} (hx : 2 ≤ x)
     (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hgap :
@@ -160,7 +160,7 @@ theorem exists_prime_ne_one_witness_of_retained_common_separation {n Q : ℕ} (h
           b x (541 / 50) (LLS.gammaSignedVariationPrincipalCap x)) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n p ≠ 1 := by
   obtain ⟨p, hp, ho, hpb, hv⟩ :=
-    exists_prime_neg_one_witness_of_retained_common_separation hn hns hQ hnQ hGRH hx hb hbx hgap
+    exists_negOneWitness_of_retainedCommon_gap hn hns hQ hnQ hGRH hx hb hbx hgap
   refine ⟨p, hp, ho, hpb, ?_⟩
   rw [hv]
   norm_num only
@@ -169,9 +169,9 @@ theorem exists_prime_ne_one_witness_of_retained_common_separation {n Q : ℕ} (h
 of at least 7/60 after adding 9/50 gives the stated witness or maximum bound.
 Apply the retained common-cost comparison, then minimize or maximize.
 Role: use the common saving without new input or prime-power certificates. -/
-theorem exists_prime_neg_one_witness_of_retained_common_factor_free_separation {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L b x : ℝ}
-    (hL : 10 ≤ L) (hlog : Real.log n ≤ L) (hx : 4096 ≤ x) (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
+theorem exists_prime_negOne_retainedFactorFree_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L b x : ℝ} (hL : 10 ≤ L)
+    (hlog : Real.log n ≤ L) (hx : 4096 ≤ x) (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hgap : 7 / 60 ≤ LLS.gammaSignedPrincipalFactorFreeSeparation L b x + 9 / 50) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n p = -1 := by
   let Q := max 20000 (4 * n)
@@ -185,36 +185,33 @@ theorem exists_prime_neg_one_witness_of_retained_common_factor_free_separation {
         x (541 / 50) (LLS.gammaSignedVariationPrincipalCap x) := by
     linarith only [hs, hgap]
   exact
-    exists_prime_neg_one_witness_of_retained_common_separation hn hns hQ hnQ hGRH
-      (by linarith only [hx]) hb hbx hg
+    exists_negOneWitness_of_retainedCommon_gap hn hns hQ hnQ hGRH (by linarith only [hx]) hb hbx hg
 
 /-- Under the displayed GRH, arithmetic and scale conditions, a factor-free margin
 of at least 7/60 after adding 9/50 gives the stated witness or maximum bound.
 Apply the retained common-cost comparison, then minimize or maximize.
 Role: use the common saving without new input or prime-power certificates. -/
-theorem primeNegOneWitness_cast_le_of_retained_common_factor_free_separation {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L b x : ℝ}
-    (hL : 10 ≤ L) (hlog : Real.log n ≤ L) (hx : 4096 ≤ x) (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
+theorem negOneWitness_le_retainedFactorFree_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L b x : ℝ} (hL : 10 ≤ L)
+    (hlog : Real.log n ≤ L) (hx : 4096 ≤ x) (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hgap : 7 / 60 ≤ LLS.gammaSignedPrincipalFactorFreeSeparation L b x + 9 / 50)
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ (99 / 40 : ℝ) * x := by
   obtain ⟨p, hp, ho, hpb, hv⟩ :=
-    exists_prime_neg_one_witness_of_retained_common_factor_free_separation hn hns hGRH hL hlog hx hb
-      hbx hgap
+    exists_prime_negOne_retainedFactorFree_GRH hn hns hGRH hL hlog hx hb hbx hgap
   exact (Nat.cast_le.mpr (NumberTheory.primeNegOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hpb
 
 /-- Under the displayed GRH, arithmetic and scale conditions, a factor-free margin
 of at least 7/60 after adding 9/50 gives the stated witness or maximum bound.
 Apply the retained common-cost comparison, then minimize or maximize.
 Role: use the common saving without new input or prime-power certificates. -/
-theorem exists_prime_ne_one_witness_of_retained_common_factor_free_separation {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L b x : ℝ}
-    (hL : 10 ≤ L) (hlog : Real.log n ≤ L) (hx : 4096 ≤ x) (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
+theorem exists_prime_neOne_retainedFactorFree_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L b x : ℝ} (hL : 10 ≤ L)
+    (hlog : Real.log n ≤ L) (hx : 4096 ≤ x) (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hgap : 7 / 60 ≤ LLS.gammaSignedPrincipalFactorFreeSeparation L b x + 9 / 50) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n p ≠ 1 := by
   obtain ⟨p, hp, ho, hpb, hv⟩ :=
-    exists_prime_neg_one_witness_of_retained_common_factor_free_separation hn hns hGRH hL hlog hx hb
-      hbx hgap
+    exists_prime_negOne_retainedFactorFree_GRH hn hns hGRH hL hlog hx hb hbx hgap
   refine ⟨p, hp, ho, hpb, ?_⟩
   rw [hv]
   norm_num only
@@ -223,7 +220,7 @@ theorem exists_prime_ne_one_witness_of_retained_common_factor_free_separation {n
 of at least 7/60 after adding 9/50 gives the stated witness or maximum bound.
 Apply the retained common-cost comparison, then minimize or maximize.
 Role: use the common saving without new input or prime-power certificates. -/
-theorem QNegOne_le_of_retained_common_factor_free_separation {B : ℕ}
+theorem QNegOne_le_of_retainedCommon_factorFree_gap {B : ℕ}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {b x : ℝ} (hB : 10 ≤ Real.log B)
     (hx : 4096 ≤ x) (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hgap : 7 / 60 ≤ LLS.gammaSignedPrincipalFactorFreeSeparation (Real.log B) b x + 9 / 50) :
@@ -234,21 +231,21 @@ theorem QNegOne_le_of_retained_common_factor_free_separation {B : ℕ}
   intro n hn
   have ha := NumberTheory.mem_admissibleFinset_iff.mp hn
   exact
-    primeNegOneWitness_cast_le_of_retained_common_factor_free_separation ha.odd ha.not_isSquare hGRH
-      hB (Real.log_le_log (Nat.cast_pos.mpr ha.odd.pos) (Nat.cast_le.mpr ha.le)) hx hb hbx hgap
+    negOneWitness_le_retainedFactorFree_GRH ha.odd ha.not_isSquare hGRH hB
+      (Real.log_le_log (Nat.cast_pos.mpr ha.odd.pos) (Nat.cast_le.mpr ha.le)) hx hb hbx hgap
       (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare ha.odd ha.not_isSquare)
 
 /-- Under the displayed GRH, arithmetic and scale conditions, a factor-free margin
 of at least 7/60 after adding 9/50 gives the stated witness or maximum bound.
 Apply the retained common-cost comparison, then minimize or maximize.
 Role: use the common saving without new input or prime-power certificates. -/
-theorem QNeOne_le_of_retained_common_factor_free_separation {B : ℕ}
+theorem QNeOne_le_of_retainedCommon_factorFree_gap {B : ℕ}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {b x : ℝ} (hB : 10 ≤ Real.log B)
     (hx : 4096 ≤ x) (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hgap : 7 / 60 ≤ LLS.gammaSignedPrincipalFactorFreeSeparation (Real.log B) b x + 9 / 50) :
     (QNeOne B : ℝ) ≤ (99 / 40 : ℝ) * x := by
   exact
     (Nat.cast_le.mpr (QNeOne_le_QNegOne B)).trans
-      (QNegOne_le_of_retained_common_factor_free_separation hGRH hB hx hb hbx hgap)
+      (QNegOne_le_of_retainedCommon_factorFree_gap hGRH hB hx hb hbx hgap)
 
 end PseudoPrime.PseudoSquare

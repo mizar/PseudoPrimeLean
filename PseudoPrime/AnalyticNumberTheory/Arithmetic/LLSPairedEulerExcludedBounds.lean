@@ -40,7 +40,7 @@ theorem pairedEulerPrefixWeight_nonneg (σ τ : ℝ) {c : ℝ} (hc : 0 ≤ c) (n
 
 /-- If the Mangoldt value vanishes, the combined Euler weight vanishes for any
 real parameters. This discharges the support premise in the exact defect identity. -/
-theorem pairedEulerPrefixWeight_eq_zero_of_mangoldt_eq_zero (σ τ c : ℝ) {n : ℕ}
+theorem pairedEulerWeight_eq_zero_of_mangoldt_zero (σ τ c : ℝ) {n : ℕ}
     (hn : ArithmeticFunction.vonMangoldt n = 0) : pairedEulerPrefixWeight σ τ c n = 0 := by
   simp only [pairedEulerPrefixWeight, hn, zero_div, mul_zero, add_zero]
 

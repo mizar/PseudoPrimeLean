@@ -26,8 +26,8 @@ noncomputable def excludedCharacterDefect {q : ℕ} (χ : DirichletCharacter ℂ
 /-- If all N-coprime primes through b have character value one, S lies below b
 and w vanishes off Mangoldt support, the full weighted character defect equals
 the excluded-support defect. Split coprimality and zero Mangoldt values exactly. -/
-theorem weighted_defect_eq_excluded_of_ambient_trivial {q N : ℕ} (χ : DirichletCharacter ℂ q)
-    {b : ℝ} (S : Finset ℕ) (w : ℕ → ℝ) (hS : ∀ n ∈ S, (n : ℝ) ≤ b)
+theorem weighted_defect_eq_excluded_of_trivial {q N : ℕ} (χ : DirichletCharacter ℂ q) {b : ℝ}
+    (S : Finset ℕ) (w : ℕ → ℝ) (hS : ∀ n ∈ S, (n : ℝ) ≤ b)
     (hw : ∀ n ∈ S, ArithmeticFunction.vonMangoldt n = 0 → w n = 0)
     (ht : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → Nat.Coprime p N → χ p = 1) :
     (∑ n ∈ S, w n) - (∑ n ∈ S, (χ n).re * w n) = excludedCharacterDefect χ N S w := by
@@ -39,7 +39,7 @@ theorem weighted_defect_eq_excluded_of_ambient_trivial {q N : ℕ} (χ : Dirichl
     by_cases hΛ : ArithmeticFunction.vonMangoldt n = 0
     · rw [hw n hn hΛ]
       ring
-    · rw [character_apply_one_of_ambient_mangoldt_ne_zero χ ht (hS n hn) hc hΛ, Complex.one_re]
+    · rw [character_eq_one_of_ambient_mangoldt χ ht (hS n hn) hc hΛ, Complex.one_re]
       ring
   · rw [ite_eq_left hc]
     ring
@@ -47,13 +47,12 @@ theorem weighted_defect_eq_excluded_of_ambient_trivial {q N : ℕ} (χ : Dirichl
 /-- At nonnegative Y under N-coprime prime triviality, the unsigned reciprocal
 sum minus the real character sum equals the excluded reciprocal defect.
 Apply the weighted identity; no conductor divisibility or quadraticity is needed. -/
-theorem reciprocal_defect_eq_excluded_of_ambient_trivial {q N : ℕ} (χ : DirichletCharacter ℂ q)
-    {Y : ℝ} (hY : 0 ≤ Y) (ht : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ Y → Nat.Coprime p N → χ p = 1) :
+theorem reciprocal_defect_eq_excluded_of_trivial {q N : ℕ} (χ : DirichletCharacter ℂ q) {Y : ℝ}
+    (hY : 0 ≤ Y) (ht : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ Y → Nat.Coprime p N → χ p = 1) :
     reciprocalWeightedMangoldtSum Y - (characterReciprocalWeightedSum Y χ).re =
       excludedCharacterDefect χ N (Finset.Ioc 0 ⌊Y⌋₊) (reciprocalWeightedMangoldtTerm Y) := by
   have he :=
-    weighted_defect_eq_excluded_of_ambient_trivial χ (Finset.Ioc 0 ⌊Y⌋₊)
-      (reciprocalWeightedMangoldtTerm Y)
+    weighted_defect_eq_excluded_of_trivial χ (Finset.Ioc 0 ⌊Y⌋₊) (reciprocalWeightedMangoldtTerm Y)
       (fun n hn ↦ (Nat.cast_le.mpr (Finset.mem_Ioc.mp hn).2).trans (Nat.floor_le hY))
       (fun n _ hΛ ↦ by simp only [reciprocalWeightedMangoldtTerm, hΛ, zero_div, zero_mul]) ht
   unfold reciprocalWeightedMangoldtSum characterReciprocalWeightedSum
@@ -65,12 +64,12 @@ theorem reciprocal_defect_eq_excluded_of_ambient_trivial {q N : ℕ} (χ : Diric
 /-- At nonnegative x under N-coprime prime triviality, the logarithmic character
 defect equals the excluded logarithmic defect. This retains the exact character
 values at excluded prime powers before applying any upper estimate. -/
-theorem logarithmic_defect_eq_excluded_of_ambient_trivial {q N : ℕ} (χ : DirichletCharacter ℂ q)
-    {x : ℝ} (hx : 0 ≤ x) (ht : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ x → Nat.Coprime p N → χ p = 1) :
+theorem logarithmic_defect_eq_excluded_of_trivial {q N : ℕ} (χ : DirichletCharacter ℂ q) {x : ℝ}
+    (hx : 0 ≤ x) (ht : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ x → Nat.Coprime p N → χ p = 1) :
     logWeightedMangoldtSum x - (characterLogWeightedSum x χ).re =
       excludedCharacterDefect χ N (Finset.Ioc 0 ⌊x⌋₊) (logWeightedMangoldtTerm x) := by
   have he :=
-    weighted_defect_eq_excluded_of_ambient_trivial χ (Finset.Ioc 0 ⌊x⌋₊) (logWeightedMangoldtTerm x)
+    weighted_defect_eq_excluded_of_trivial χ (Finset.Ioc 0 ⌊x⌋₊) (logWeightedMangoldtTerm x)
       (fun n hn ↦ (Nat.cast_le.mpr (Finset.mem_Ioc.mp hn).2).trans (Nat.floor_le hx))
       (fun n _ hΛ ↦ by simp only [logWeightedMangoldtTerm, hΛ, zero_mul]) ht
   unfold logWeightedMangoldtSum characterLogWeightedSum characterLogWeightedTerm

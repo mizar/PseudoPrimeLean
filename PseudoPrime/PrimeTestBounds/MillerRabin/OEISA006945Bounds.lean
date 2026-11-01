@@ -19,8 +19,7 @@ candidate for A006945(n).
 theorem a006945_candidate_prime_le_log_sq
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n a : ℕ}
     (ha : PrimeTest.A006945Candidate n a) : (Nat.nth Nat.Prime n : ℝ) ≤ (Real.log (a : ℝ)) ^ 2 := by
-  obtain ⟨p, hp, hpBound, hreject⟩ :=
-    exists_prime_strongMillerRabinWithBase_eq_false_le_log_sq hGRH ha.1 ha.2.1 ha.2.2.1
+  obtain ⟨p, hp, hpBound, hreject⟩ := exists_rejectPowers_logSq_GRH hGRH ha.1 ha.2.1 ha.2.2.1
   by_contra hnot
   have hpn : p < Nat.nth Nat.Prime n := by exact_mod_cast lt_of_le_of_lt hpBound (lt_of_not_ge hnot)
   have hindex : Nat.count Nat.Prime p < n := by

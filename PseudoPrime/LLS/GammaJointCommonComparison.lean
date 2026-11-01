@@ -157,7 +157,7 @@ theorem gammaJointFactorFreeSeparation_le_actual {n Q : ℕ} (hn : Odd n) (hns :
     gammaJointFactorFreeSeparation L b x ≤
       gammaJointCommonSeparation Q (NumberTheory.complexQuadraticCharacter n hn) b x (541 / 50) +
         7 / 60 := by
-  have hJ := gamma_joint_prefix_le_factor_free_budget_small_scale (b := b) hn hns hlog hx
+  have hJ := gammaJointPrefix_factorFree_smallScale (b := b) hn hns hlog hx
   have hN :
     ((7 / 6 : ℝ) * Real.log Q + 4) / Real.sqrt x ≤ ((7 / 6 : ℝ) * (L + 7 / 5) + 4) / Real.sqrt x :=
     div_le_div_of_nonneg_right (by linarith only [hlogQ]) (Real.sqrt_nonneg x)

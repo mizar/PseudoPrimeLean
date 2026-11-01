@@ -49,7 +49,7 @@ theorem exists_uniform_half_scale_theta_threshold :
   refine ⟨X, hX, ?_⟩
   intro q a inst ha ε L x hε hL hx hLx hhalf hbudget
   have hb :=
-    Arithmetic.sum_norm_characterLogWeightedSum_four_fifths_difference_le
+    Arithmetic.sum_norm_characterLogSum_sub_4_5_le
       ((Finset.univ : Finset (DirichletCharacter ℂ q)).erase 1) (fun _ ↦ q) (fun χ ↦ χ) hε hL hLx
       hhalf
   apply htheta q a ha x hx

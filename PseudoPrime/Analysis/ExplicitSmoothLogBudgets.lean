@@ -118,7 +118,7 @@ theorem explicit_smooth_scale_125_68_gap {L : ℝ} (hL : 10 ^ 20 ≤ L) (hz : 10
 /-- For z≥10^11, the quartic exponential lower bound absorbs 32z at
 exponent gap 1/10^6. This smaller explicit threshold supports the 74/40
 finite-fiber scale. -/
-theorem thirty_two_mul_le_exp_gap_million_of_hundred_billion {z : ℝ} (hz : 100000000000 ≤ z) :
+theorem mul_32_le_exp_gap_1000000_of_ge_100000000000 {z : ℝ} (hz : 100000000000 ≤ z) :
     32 * z ≤ Real.exp (z * (1 / 1000000 : ℝ)) := by
   have hz0 : 0 ≤ z := le_trans (by norm_num only) hz
   let x : ℝ := z * (1 / 1000000 : ℝ)
@@ -407,7 +407,7 @@ theorem thirty_two_mul_le_exp_gap_half_million {z : ℝ} (hz : 53000000 ≤ z) :
 /-- At the tightened 76697551 threshold, the double-log lower bound lets the
 prime-counting loss 32z be absorbed with exponent gap 1/2500000. The anchor
 uses the first three terms at the remaining rational part of the exponent. -/
-theorem thirty_two_mul_le_exp_gap_two_million_five_hundred_thousand {z : ℝ} (hz : 53162690 ≤ z) :
+theorem mul_32_le_exp_gap_2500000 {z : ℝ} (hz : 53162690 ≤ z) :
     32 * z ≤ Real.exp (z * (1 / 2500000 : ℝ)) := by
   let x : ℝ := z * (1 / 2500000 : ℝ)
   let x0 : ℝ := 53162690 / 2500000
@@ -611,8 +611,8 @@ theorem fourteen_mul_le_exp_gap_771_over_2_billion {z : ℝ} (hz : 53000000 ≤ 
 /-- At the 53-million double-log scale, exponent gap $3846/10^{10}$
 absorbs the refined prime-counting loss $(13381/1000)z$. The anchor is
 $20+3838/10000$, certified by finite exponential series bounds. -/
-theorem thirteen_point_three_eight_one_mul_le_exp_gap_3846_over_10_billion {z : ℝ}
-    (hz : 53000000 ≤ z) : (13381 / 1000 : ℝ) * z ≤ Real.exp (z * (3846 / 10000000000 : ℝ)) := by
+theorem mul_13381_1000_le_exp_gap_3846_d10 {z : ℝ} (hz : 53000000 ≤ z) :
+    (13381 / 1000 : ℝ) * z ≤ Real.exp (z * (3846 / 10000000000 : ℝ)) := by
   let x : ℝ := z * (3846 / 10000000000 : ℝ)
   let x0 : ℝ := 101919 / 5000
   have hx0 : x0 ≤ x := by
@@ -680,9 +680,9 @@ theorem thirteen_point_three_eight_one_mul_le_exp_gap_3846_over_10_billion {z : 
     _ = Real.exp x := hexp.symm
 
 /-- The earlier coefficient-gap estimate follows from the sharper bound above. -/
-theorem thirteen_point_five_twelve_mul_le_exp_gap_3848_over_10_billion {z : ℝ} (hz : 53000000 ≤ z) :
+theorem mul_1689_125_le_exp_gap_3848_d10 {z : ℝ} (hz : 53000000 ≤ z) :
     (1689 / 125 : ℝ) * z ≤ Real.exp (z * (3848 / 10000000000 : ℝ)) := by
-  have hnew := thirteen_point_three_eight_one_mul_le_exp_gap_3846_over_10_billion hz
+  have hnew := mul_13381_1000_le_exp_gap_3846_d10 hz
   have hdelta : (106 / 10000 : ℝ) ≤ z * (2 / 10000000000 : ℝ) := by nlinarith only [hz]
   have hextra : 1 + (106 / 10000 : ℝ) ≤ Real.exp (z * (2 / 10000000000 : ℝ)) := by
     calc
@@ -708,7 +708,7 @@ theorem thirteen_point_five_twelve_mul_le_exp_gap_3848_over_10_billion {z : ℝ}
 /-- At double-log scale 14,900,000, exponent gap 14/10,000,000 absorbs the
 prime-counting loss 32z. A rational Taylor lower bound at 20.86 proves the
 anchor, and an exponential scaling argument covers the whole half-line. -/
-theorem thirty_two_mul_le_exp_gap_fourteen_over_ten_million {z : ℝ} (hz : 14900000 ≤ z) :
+theorem mul_32_le_exp_gap_14_d7 {z : ℝ} (hz : 14900000 ≤ z) :
     32 * z ≤ Real.exp (z * (14 / 10000000 : ℝ)) := by
   let x : ℝ := z * (14 / 10000000 : ℝ)
   let x0 : ℝ := 1043 / 50
@@ -777,7 +777,7 @@ theorem thirty_two_mul_le_exp_gap_fourteen_over_ten_million {z : ℝ} (hz : 1490
 /-- At double-log scale 12,082,601, exponent gap 17/10,000,000 absorbs the
 prime-counting loss 32z. A rational Taylor lower bound at 20.5404 proves the
 anchor, and exponential scaling covers the half-line. -/
-theorem thirty_two_mul_le_exp_gap_seventeen_over_ten_million {z : ℝ} (hz : 12082601 ≤ z) :
+theorem mul_32_le_exp_gap_17_d7 {z : ℝ} (hz : 12082601 ≤ z) :
     32 * z ≤ Real.exp (z * (17 / 10000000 : ℝ)) := by
   let x : ℝ := z * (17 / 10000000 : ℝ)
   let x0 : ℝ := 205404 / 10000
@@ -990,7 +990,7 @@ theorem thirty_two_mul_le_exp_gap_401_over_billion {z : ℝ} (hz : 53000000 ≤ 
 
 /-- The earlier 20-billion form is retained as a direct corollary of the
 stronger 2-billion exponential absorption bound. -/
-theorem thirty_two_mul_le_exp_gap_million_of_twenty_billion {z : ℝ} (hz : 20000000000 ≤ z) :
+theorem mul_32_le_exp_gap_1000000_of_ge_20000000000 {z : ℝ} (hz : 20000000000 ≤ z) :
     32 * z ≤ Real.exp (z * (1 / 1000000 : ℝ)) :=
   thirty_two_mul_le_exp_gap_million_of_two_billion (le_trans (by norm_num only) hz)
 
@@ -1167,7 +1167,7 @@ theorem explicit_smooth_scale_19_10_gap {L : ℝ} (hL : 10 ^ 20 ≤ L) (hz : 300
 
 /-- At scale 19/10, the stronger double-log threshold gives a smaller smooth
 cutoff exponent and product coefficient. -/
-theorem explicit_smooth_scale_19_10_gap_of_double_log_threshold_3084 {L : ℝ} (hL : 10 ^ 20 ≤ L)
+theorem smooth_scale_19_10_gap_of_log_ge_3084000000 {L : ℝ} (hL : 10 ^ 20 ≤ L)
     (hz : 3084000000 ≤ Real.log L) :
     (999999990558 / 1000000000000 : ℝ) * (1900000016707 / 1000000000000) * L +
         (1900000016707 / 1000000000000 : ℝ) * Real.log L <
@@ -1215,7 +1215,7 @@ theorem explicit_smooth_scale_19_10_gap_of_double_log_threshold_3084 {L : ℝ} (
 
 /-- At scale 19/10, MR exponent 1.9000011 and product coefficient
 0.99999934 satisfy the smooth-size inequality once log log L≥53,000,000. -/
-theorem explicit_smooth_scale_19_10_gap_of_double_log_threshold_53m {L : ℝ} (hL : 10 ^ 12 ≤ L)
+theorem smooth_scale_19_10_gap_of_log_ge_53000000 {L : ℝ} (hL : 10 ^ 12 ≤ L)
     (hz : 53000000 ≤ Real.log L) :
     (99999934 / 100000000 : ℝ) * (19000011 / 10000000) * L +
         (19000011 / 10000000 : ℝ) * Real.log L <
@@ -1259,8 +1259,8 @@ theorem explicit_smooth_scale_19_10_gap_of_double_log_threshold_53m {L : ℝ} (h
 
 /-- A double-log lower bound z0 and a rational product margin imply the
 scale-19/10 smooth-size inequality. -/
-theorem explicit_smooth_scale_19_10_gap_of_double_log_lower_bound {L A rho z0 : ℝ}
-    (hL : 10 ^ 12 ≤ L) (hz : z0 ≤ Real.log L) (hz0 : 0 < z0) (hA : 0 ≤ A)
+theorem smooth_scale_19_10_gap_of_log_lower_bound {L A rho z0 : ℝ} (hL : 10 ^ 12 ≤ L)
+    (hz : z0 ≤ Real.log L) (hz0 : 0 < z0) (hA : 0 ≤ A)
     (hmargin : rho * A + A * (2 / z0) < 19 / 10) :
     rho * A * L + A * Real.log L < (19 / 10) * L := by
   have hLpos : 0 < L := lt_of_lt_of_le (by norm_num only) hL
@@ -1293,9 +1293,9 @@ theorem explicit_smooth_scale_19_10_gap_of_double_log_lower_bound {L A rho z0 : 
 
 /-- A double-log lower bound and a rational margin imply the smooth-size
 inequality at any positive cutoff ratio. -/
-theorem explicit_smooth_scale_gap_of_double_log_lower_bound {L A rho z0 kappa : ℝ}
-    (hL : 10 ^ 12 ≤ L) (hz : z0 ≤ Real.log L) (hz0 : 0 < z0) (hA : 0 ≤ A)
-    (hmargin : rho * A + A * (2 / z0) < kappa) : rho * A * L + A * Real.log L < kappa * L := by
+theorem smooth_scale_gap_of_log_lower_bound {L A rho z0 kappa : ℝ} (hL : 10 ^ 12 ≤ L)
+    (hz : z0 ≤ Real.log L) (hz0 : 0 < z0) (hA : 0 ≤ A) (hmargin : rho * A + A * (2 / z0) < kappa) :
+    rho * A * L + A * Real.log L < kappa * L := by
   have hLpos : 0 < L := lt_of_lt_of_le (by norm_num only) hL
   have hzpos : 0 < Real.log L :=
     Real.log_pos (lt_of_lt_of_le (by norm_num only : (1 : ℝ) < 10 ^ 12) hL)
@@ -1326,8 +1326,8 @@ theorem explicit_smooth_scale_gap_of_double_log_lower_bound {L A rho z0 kappa : 
 
 /-- If log log L≥53,000,000, then L≥10^12. Use exp(x)≥x²/2 at
 x=log L and avoid the stronger two-billion double-log hypothesis. -/
-theorem twelve_pow_le_of_double_log_ge_fifty_three_million {L : ℝ} (hLpos : 0 < L)
-    (hz : 53000000 ≤ Real.log L) : 10 ^ 12 ≤ L := by
+theorem pow_10_12_le_of_log_ge_53000000 {L : ℝ} (hLpos : 0 < L) (hz : 53000000 ≤ Real.log L) :
+    10 ^ 12 ≤ L := by
   have hz0 : 0 ≤ Real.log L := le_trans (by norm_num only) hz
   have he := Real.quadratic_le_exp_of_nonneg hz0
   rw [Real.exp_log hLpos] at he
@@ -1336,8 +1336,8 @@ theorem twelve_pow_le_of_double_log_ge_fifty_three_million {L : ℝ} (hLpos : 0 
 /-- A double-log threshold of 14,900,000 already forces L≥10^12.
 Use the quadratic lower bound for exp(log L); this weaker threshold is enough
 for the reduced 19/10 finite-fiber branch. -/
-theorem twelve_pow_le_of_double_log_ge_fourteen_nine_million {L : ℝ} (hLpos : 0 < L)
-    (hz : 14900000 ≤ Real.log L) : 10 ^ 12 ≤ L := by
+theorem pow_10_12_le_of_log_ge_14900000 {L : ℝ} (hLpos : 0 < L) (hz : 14900000 ≤ Real.log L) :
+    10 ^ 12 ≤ L := by
   have hz0 : 0 ≤ Real.log L := le_trans (by norm_num only) hz
   have he := Real.quadratic_le_exp_of_nonneg hz0
   rw [Real.exp_log hLpos] at he
@@ -1345,8 +1345,8 @@ theorem twelve_pow_le_of_double_log_ge_fourteen_nine_million {L : ℝ} (hLpos : 
 
 /-- A double-log threshold of 12,100,000 implies L≥10^12. Apply the
 quadratic lower bound for exp(log L) at the smaller explicit threshold. -/
-theorem twelve_pow_le_of_double_log_ge_twelve_million_one_hundred_thousand {L : ℝ} (hLpos : 0 < L)
-    (hz : 12100000 ≤ Real.log L) : 10 ^ 12 ≤ L := by
+theorem pow_10_12_le_of_log_ge_12100000 {L : ℝ} (hLpos : 0 < L) (hz : 12100000 ≤ Real.log L) :
+    10 ^ 12 ≤ L := by
   have hz0 : 0 ≤ Real.log L := le_trans (by norm_num only) hz
   have he := Real.quadratic_le_exp_of_nonneg hz0
   rw [Real.exp_log hLpos] at he
@@ -1354,8 +1354,8 @@ theorem twelve_pow_le_of_double_log_ge_twelve_million_one_hundred_thousand {L : 
 
 /-- A double-log lower bound of 12,082,601 implies L≥10^12. Apply the
 quadratic lower bound for exp(log L) at the reduced 28/15 threshold. -/
-theorem twelve_pow_le_of_double_log_ge_twelve_million_eighty_two_thousand_six_hundred_one {L : ℝ}
-    (hLpos : 0 < L) (hz : 12082601 ≤ Real.log L) : 10 ^ 12 ≤ L := by
+theorem pow_10_12_le_of_log_ge_12082601 {L : ℝ} (hLpos : 0 < L) (hz : 12082601 ≤ Real.log L) :
+    10 ^ 12 ≤ L := by
   have hz0 : 0 ≤ Real.log L := le_trans (by norm_num only) hz
   have he := Real.quadratic_le_exp_of_nonneg hz0
   rw [Real.exp_log hLpos] at he
@@ -1363,8 +1363,8 @@ theorem twelve_pow_le_of_double_log_ge_twelve_million_eighty_two_thousand_six_hu
 
 /-- A fourth-degree exponential lower bound upgrades the 53-million
 double-log threshold to the 10^20 input needed by the rational cutoff. -/
-theorem twenty_pow_le_of_double_log_ge_fifty_three_million {L : ℝ} (hLpos : 0 < L)
-    (hz : 53000000 ≤ Real.log L) : 10 ^ 20 ≤ L := by
+theorem pow_10_20_le_of_log_ge_53000000 {L : ℝ} (hLpos : 0 < L) (hz : 53000000 ≤ Real.log L) :
+    10 ^ 20 ≤ L := by
   have hz0 : 0 ≤ Real.log L := le_trans (by norm_num only) hz
   have hx : 0 ≤ Real.log L / 2 := by positivity
   have hq := Real.quadratic_le_exp_of_nonneg hx
@@ -1390,8 +1390,8 @@ theorem twenty_pow_le_of_double_log_ge_fifty_three_million {L : ℝ} (hLpos : 0 
 
 /-- At double-log scale 14,900,000, the input L already exceeds 10^20.
 Use the fourth-degree exponential lower bound at log L. -/
-theorem twenty_pow_le_of_double_log_ge_fourteen_nine_million {L : ℝ} (hL : 0 < L)
-    (hz : 14900000 ≤ Real.log L) : 10 ^ 20 ≤ L := by
+theorem pow_10_20_le_of_log_ge_14900000 {L : ℝ} (hL : 0 < L) (hz : 14900000 ≤ Real.log L) :
+    10 ^ 20 ≤ L := by
   have hz0 : 0 ≤ Real.log L := le_trans (by norm_num only) hz
   have hx : 0 ≤ Real.log L / 2 := by positivity
   have hq := Real.quadratic_le_exp_of_nonneg hx

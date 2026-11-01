@@ -18,34 +18,33 @@ namespace PseudoPrime.PrimeTestBounds.Selfridge
 /-- Under GRH for an odd nonsquare input with log n≥50, both factor-detecting
 Selfridge stops obey the squared 37/5 radius. Transfer the least non-one
 odd-prime witness and use the lower root bound 49 to absorb fifteen. -/
-theorem selfridgeNeOneMagnitudes_le_shifted_double_log_from_fifty {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 50 ≤ Real.log n) :
+theorem neOne_magnitudes_doubleLog50_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 50 ≤ Real.log n) :
     ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         (Real.log n - 2 * Real.log (Real.log n) + 37 / 5) ^ 2 ∧
       ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNeOne PrimeTest.isWheel30NeOneCandidate n
-                (PrimeTest.wheel30FirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.wheel30NeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         (Real.log n - 2 * Real.log (Real.log n) + 37 / 5) ^ 2 := by
   let hw :=
     NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
       (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns)
-  have hb := PseudoSquare.primeNeOneWitness_cast_le_shiftedDoubleLog_from_fifty hn hns hGRH hL hw
+  have hb := PseudoSquare.neOneWitness_cast_le_shiftedDoubleLog_from_fifty hn hns hGRH hL hw
   have hr := (LLS.PaperStatements.shiftedOddEndpointDoubleLogRoot_data_from_fifty hL).1
   dsimp only [LLS.PaperStatements.shiftedOddEndpointDoubleLogRoot] at hr
   exact
-    selfridgeNeOneMagnitudes_le_of_prime_witness_bound hn hns hw
+    selfridgeNeOneMagnitudes_le_of_primeWitness hn hns hw
       (by nlinarith only [hr, sq_nonneg (Real.log n - 2 * Real.log (Real.log n) + 37 / 5 - 49)]) hb
 
 /-- Under GRH and log B≥50, both factor-detecting Selfridge maxima through B
 are bounded by the squared 37/5 double-log radius. Apply the common ambient
 QNeOne bound, including all smaller odd nonsquare inputs, and absorb fifteen.
 This is a finite-maximum bound, not a pointwise substitution at each input. -/
-theorem selfridgeNeOneMaxima_le_shifted_double_log_from_fifty {B : ℕ}
+theorem neOne_maxima_doubleLog50_GRH {B : ℕ}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 50 ≤ Real.log B) :
     (classicalNeOneMaximum B : ℝ) ≤ (Real.log B - 2 * Real.log (Real.log B) + 37 / 5) ^ 2 ∧
       (wheel30NeOneMaximum B : ℝ) ≤ (Real.log B - 2 * Real.log (Real.log B) + 37 / 5) ^ 2 := by
@@ -58,13 +57,13 @@ theorem selfridgeNeOneMaxima_le_shifted_double_log_from_fifty {B : ℕ}
 through B is at most (T(log B)²-3)/2 for T(L)=L-2log L+37/5. Apply the
 proved common stopping maximum and the sharp generic trial conversion.
 The count is the number of Jacobi trials, not an operation count. -/
-theorem classicalNeOneTrialMaximum_le_shifted_double_log_from_fifty {B : ℕ}
+theorem classicalTrials_doubleLog50_GRH {B : ℕ}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 50 ≤ Real.log B) :
     (classicalNeOneTrialMaximum B : ℝ) ≤
       ((Real.log B - 2 * Real.log (Real.log B) + 37 / 5) ^ 2 - 3) / 2 := by
   have hr := (LLS.PaperStatements.shiftedOddEndpointDoubleLogRoot_data_from_fifty hL).1
   dsimp only [LLS.PaperStatements.shiftedOddEndpointDoubleLogRoot] at hr
-  have hb := (selfridgeNeOneMaxima_le_shifted_double_log_from_fifty hGRH hL).1
-  exact classicalTrialCountThrough_real_le_of_value_bound (by nlinarith only [hr]) hb
+  have hb := (neOne_maxima_doubleLog50_GRH hGRH hL).1
+  exact classicalTrialCount_real_bound (by nlinarith only [hr]) hb
 
 end PseudoPrime.PrimeTestBounds.Selfridge

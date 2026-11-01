@@ -21,7 +21,7 @@ GRH and scale x ≥ 2, the real Gamma sum is bounded by M log m + 211/10,
 the ambient pole allowance and 43 x^(-9/16). Combine the adaptive zero sum
 with the signed completed remainder. No positive archimedean or left
 log-conductor cost is added. This is usable for character witness comparisons. -/
-theorem gamma_primitive_sum_re_le_conductor_free_adaptive {q m : ℕ} [NeZero m] (hq : 20000 ≤ q)
+theorem gammaPrimitiveSum_re_le_conductor_free_adaptive {q m : ℕ} [NeZero m] (hq : 20000 ≤ q)
     (hm : 3 ≤ m) (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 2 ≤ x) :
@@ -42,8 +42,8 @@ theorem gamma_primitive_sum_re_le_conductor_free_adaptive {q m : ℕ} [NeZero m]
 the primitive Gamma sum satisfies the conductor-free adaptive bound.
 Primitivization supplies conductor at least three and a nonprincipal inverse.
 The actual conductor remains in the leading term, with no separate size gate. -/
-theorem gamma_primitiveCharacter_sum_re_le_conductor_free_adaptive {q : ℕ} [NeZero q]
-    (hq : 20000 ≤ q) (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
+theorem gammaCharacterSum_re_le_conductor_free_adaptive {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 2 ≤ x) :
     let : NeZero χ.conductor := ⟨χ.conductor_ne_zero⟩;
     (∑' k : ℕ, gammaMellinKernel.summand χ.primitiveCharacter x k).re ≤
@@ -55,7 +55,7 @@ theorem gamma_primitiveCharacter_sum_re_le_conductor_free_adaptive {q : ℕ} [Ne
   have hmq := Nat.le_of_dvd (Nat.pos_of_ne_zero (NeZero.ne q)) χ.conductor_dvd_level
   have hnp := AnalyticNumberTheory.Arithmetic.primitiveCharacter_ne_one χ hne
   exact
-    gamma_primitive_sum_re_le_conductor_free_adaptive hq hm hmq hGRH
+    gammaPrimitiveSum_re_le_conductor_free_adaptive hq hm hmq hGRH
       (DirichletCharacter.primitiveCharacter_isPrimitive χ) hnp (inv_ne_one.mpr hnp) hx
 
 /-- For nonprincipal level q ≥ 20000 under GRH and x ≥ 2, any certified
@@ -63,7 +63,7 @@ finite zero-error prefix below C gives the primitive arithmetic upper bound
 M log(conductor)+C plus the ambient pole and conductor-free left costs.
 Pass to the primitive character and combine its actual zero sum with the signed
 remainder. Prefix length and allowance remain parameters for later improvements. -/
-theorem gamma_primitiveCharacter_sum_re_le_conductor_free_prefix {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+theorem gammaCharacterSum_re_le_conductor_free_prefix {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
     (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 2 ≤ x)
     (prefixLen : ℕ) {C : ℝ} (hC : Analysis.gammaResolventPrefixErrorSum prefixLen < C) :

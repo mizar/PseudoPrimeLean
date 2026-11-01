@@ -83,7 +83,7 @@ theorem integrable_gammaCentralMellinWeight {x : ℝ} (hx : 0 < x) :
 Claim: the actual Gamma-weighted vertical digamma difference is the sum of the term integrals.
 Proof: apply the proved weighted exchange after discharging its actual kernel conditions.
 Role: series representation for the signed Gamma archimedean integral. -/
-theorem gamma_central_digamma_vertical_sub_integral_eq_tsum {b x : ℝ} (hb : 0 < b) (hx : 0 < x) :
+theorem gamma_digamma_sub_integral_tsum {b x : ℝ} (hb : 0 < b) (hx : 0 < x) :
     (∫ t : ℝ,
         (Complex.digamma ((b : ℂ) + Complex.I * (t / 2)) - Complex.digamma (b : ℂ)) *
           gammaCentralMellinWeight x t) =

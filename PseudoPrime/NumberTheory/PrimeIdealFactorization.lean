@@ -111,7 +111,7 @@ theorem principal_prime_eq_prod_monicFactors (K : Type) [Field K] [NumberField K
 exponent is prime to `p`, the principal ideal `(p)` is prime. Its quotient is isomorphic
 to the polynomial quotient, which is a domain. This supplies the inert ideal in the
 local splitting classification. -/
-theorem principal_prime_isPrime_of_irreducible_minpoly_mod (K : Type) [Field K] [NumberField K]
+theorem principal_prime_of_irreducible_minpoly_mod (K : Type) [Field K] [NumberField K]
     (θ : NumberField.RingOfIntegers K) (p : ℕ) [Fact p.Prime] (hp : ¬p ∣ RingOfIntegers.exponent θ)
     (hi : Irreducible ((minpoly ℤ θ).map (Int.castRingHom (ZMod p)))) :
     (Ideal.span {(p : NumberField.RingOfIntegers K)}).IsPrime := by

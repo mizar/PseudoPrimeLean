@@ -84,7 +84,7 @@ theorem exists_primorial_seed_tail_of_p2_scale {c₀ : ℝ} {J : ℕ} (hc₀ : 0
                     2 < L ∧ 3 ≤ ArithmeticFunction.carmichael L := by
   let q₀ := max (D + 1) (max X₀ (max C (max (W.sup id) (18000000 ^ 2))))
   obtain ⟨u, q, t, hu10, hq₀, hq₀u, hq, ht, hthreshold, htail, hseed, hmargin, hbox⟩ :=
-    exists_p2_full_divisor_concentration_bound_above_with_seed_margin (J := J) (w := W.card) hc₀
+    exists_powTwo_seed_concentration_above (J := J) (w := W.card) hc₀
       (lt_of_lt_of_le (by norm_num only : 0 < 2) hJ) q₀
   let N := (PseudoPrime.NumberTheory.PrimeProducts.primeSetLE (2 ^ u)).prod id
   let X := N ^ J
@@ -164,8 +164,8 @@ theorem exists_primorial_seed_tail_of_p2_scale {c₀ : ℝ} {J : ℕ} (hc₀ : 0
   · rfl
   · simpa only [T, hqX, htT, Nat.cast_add, Nat.cast_one] using hbox
   · exact
-      exists_primorial_seed_tail_modulus_of_count_margin (2 ^ u) J D X₀ X T c₀ hJ hD hfactor
-        hseedMargin hHuge hX₀ hNJ hSupply h1024
+      exists_seed_tail_modulus_of_count_margin (2 ^ u) J D X₀ X T c₀ hJ hD hfactor hseedMargin hHuge
+        hX₀ hNJ hSupply h1024
 
 /--
 Inputs: a P2 scale and its primorial seed-tail construction under fixed-scale theta supply.
@@ -177,8 +177,8 @@ then use the boxed P2 inequality in the full-divisor auxiliary constructor.
 
 Role: connects the primorial seed stage to the progression-count interface.
 -/
-theorem exists_full_divisor_auxiliary_data_of_p2_primorial_tail {c₀ : ℝ} {J : ℕ} (hc₀ : 0 < c₀)
-    (hJ : 2 ≤ J) (W : Finset ℕ) (C D X₀ : ℕ) (hfactor : c₀ * (2 : ℝ) ^ D ≤ 1 / 128)
+theorem exists_full_divisor_data_of_p2_primorial {c₀ : ℝ} {J : ℕ} (hc₀ : 0 < c₀) (hJ : 2 ≤ J)
+    (W : Finset ℕ) (C D X₀ : ℕ) (hfactor : c₀ * (2 : ℝ) ^ D ≤ 1 / 128)
     (hSupply :
       ∀ Z : ℕ,
         X₀ ≤ Z →
@@ -251,7 +251,7 @@ theorem exists_full_divisor_auxiliary_data_of_p2_primorial_tail {c₀ : ℝ} {J 
       d ≤ N := Nat.le_of_dvd hNpos hdN
       _ ≤ X := hNleX
       _ ≤ reliableProp15DivisorCutoff q := by
-        rw [show q = X ^ 5 by rfl, reliableProp15DivisorCutoff_fifth_power_eq_square X hXpos]
+        rw [show q = X ^ 5 by rfl, prop15Cutoff_fifthPower_eq_square X hXpos]
         exact Nat.le_self_pow (by norm_num only : 2 ≠ 0) X
   have hkParts := Finset.mem_filter.mp hk
   have hkInterval := Finset.mem_Icc.mp hkParts.1
@@ -274,9 +274,9 @@ theorem exists_full_divisor_auxiliary_data_of_p2_primorial_tail {c₀ : ℝ} {J 
       2 < L ∧
       3 ≤ ArithmeticFunction.carmichael L ∧
       ReliableProp15ModFourInput L q ∧ L ≤ q ^ (T + 1) ∧ ArithmeticFunction.carmichael L ≤ q ^ 2 :=
-    @seed_auxiliary_modulus_arithmetic_bounds_of_cutoff_of_N_le_x 1024
-      (by norm_num only : 60 ≤ 1024) q N T k S L hqTwo hNpos hNleq hkpos hkpow hScard hTpower
-      hSArithmetic hL hSquarefree hLprimeFactors hReciprocal' hCarmichaelDiv h1024'
+    @seed_modulus_arithmetic_cutoff 1024 (by norm_num only : 60 ≤ 1024) q N T k S L hqTwo hNpos
+      hNleq hkpos hkpow hScard hTpower hSArithmetic hL hSquarefree hLprimeFactors hReciprocal'
+      hCarmichaelDiv h1024'
   rcases hTailArithmetic with
     ⟨_hCoprimeFour, _hFactorCount, hFactorBound, hLlarge', hCarmichaelLower', hProp15Input, hLBound,
       hCarmichaelUpper⟩
@@ -301,12 +301,12 @@ theorem exists_full_divisor_auxiliary_data_of_p2_primorial_tail {c₀ : ℝ} {J 
   have hProp15InputY : ReliableProp15ModFourInput L (Y ^ 5) :=
     reliableProp15ModFourInput_mono hProp15Input hqleY5
   let aux : AGPProgressionAuxiliaryData W C c₀ X₀ :=
-    progressionAuxiliaryData_of_full_divisor_seed_with_cutoff (R := 1024) hc₀ hqTwo hLlarge'
-      (Nat.succ_pos T) hJpos rfl hYlarge hProp15InputY hReciprocal hCW hFactorBound
-      hCarmichaelLower' hScard hLprimeFactors hTailCard hLBound hCarmichaelUpper hbox
+    auxiliaryData_of_full_divisor_seed_with_cutoff (R := 1024) hc₀ hqTwo hLlarge' (Nat.succ_pos T)
+      hJpos rfl hYlarge hProp15InputY hReciprocal hCW hFactorBound hCarmichaelLower' hScard
+      hLprimeFactors hTailCard hLBound hCarmichaelUpper hbox
   refine ⟨Y, aux, hScaleLower, ?_, ?_, ?_, ?_⟩
-  · dsimp only [aux, progressionAuxiliaryData_of_full_divisor_seed_with_cutoff]
-  · dsimp only [aux, progressionAuxiliaryData_of_full_divisor_seed_with_cutoff]
+  · dsimp only [aux, auxiliaryData_of_full_divisor_seed_with_cutoff]
+  · dsimp only [aux, auxiliaryData_of_full_divisor_seed_with_cutoff]
     exact hYbounds.1
   · calc
       X₀ ≤ X := hX₀
@@ -314,7 +314,7 @@ theorem exists_full_divisor_auxiliary_data_of_p2_primorial_tail {c₀ : ℝ} {J 
         dsimp only [q]; exact Nat.le_self_pow (by norm_num only : 5 ≠ 0) X
       _ ≤ Y := hYbounds.1
   · intro d hd
-    dsimp only [aux, progressionAuxiliaryData_of_full_divisor_seed_with_cutoff] at hd ⊢
+    dsimp only [aux, auxiliaryData_of_full_divisor_seed_with_cutoff] at hd ⊢
     exact hYbounds.2.2 d hd
 
 end PseudoPrime.AnalyticNumberTheory.AGP

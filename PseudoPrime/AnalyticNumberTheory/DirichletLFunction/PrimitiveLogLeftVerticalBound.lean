@@ -35,8 +35,8 @@ denominator lower
 bound `1 + t² ≤ ‖s‖²` (`General.one_add_sq_le_normSq_leftVertical`).
 Role: the log-kernel pointwise bound (K), feeding the absolute-integrability argument.
 -/
-theorem norm_dirichletLogContourKernel_leftVertical_le {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} {x : ℝ} (hx : 0 < x) {A : ℕ} (hA : 2 ≤ A) {t D : ℝ}
+theorem norm_logKernel_leftVertical_le {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} {x : ℝ}
+    (hx : 0 < x) {A : ℕ} (hA : 2 ≤ A) {t D : ℝ}
     (hL :
       ‖logDeriv (DirichletCharacter.LFunction χ)
             (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
@@ -78,12 +78,12 @@ Input/assumptions: `x > 0`, `A ≥ 2`, `D ≥ 0` with the pointwise `L'/L` bound
 `‖logDeriv (LFunction χ) (s_A(t))‖ ≤ D ((A + 5)² + 1 + log(|t| + 2))` for every `t`.
 Conclusion: `‖K_x(s_A(t))‖ ≤ D x^{-A-1/2} ((A + 5)² + 1) · General.logQuadraticEnvelope t`.
 Content: same algebra as
-`DirichletLFunction.norm_dirichletReciprocalContourKernel_leftVertical_envelope_le`,
+`DirichletLFunction.reciprocalKernel_left_envelope`,
 substituting the log-kernel pointwise bound `(K)` and its `x^{-A-1/2}` power factor.
 Role: the log-kernel envelope bound, using the integrable function `logQuadraticEnvelope`.
 -/
-theorem norm_dirichletLogContourKernel_leftVertical_envelope_le {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} {x : ℝ} (hx : 0 < x) {A : ℕ} (hA : 2 ≤ A) {D : ℝ} (hDnn : 0 ≤ D)
+theorem logKernel_left_envelope {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} {x : ℝ} (hx : 0 < x)
+    {A : ℕ} (hA : 2 ≤ A) {D : ℝ} (hDnn : 0 ≤ D)
     (hLbound :
       ∀ t : ℝ,
         ‖logDeriv (DirichletCharacter.LFunction χ)
@@ -92,7 +92,7 @@ theorem norm_dirichletLogContourKernel_leftVertical_envelope_le {N : ℕ} [NeZer
     (t : ℝ) :
     ‖dirichletLogContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
       D * x ^ (-(A : ℝ) - 1 / 2) * (((A : ℝ) + 5) ^ 2 + 1) * General.logQuadraticEnvelope t := by
-  have hK := norm_dirichletLogContourKernel_leftVertical_le hx hA (hLbound t)
+  have hK := norm_logKernel_leftVertical_le hx hA (hLbound t)
   set BA : ℝ := ((A : ℝ) + 5) ^ 2 + 1 with hBA_def
   have hBA1 : (1 : ℝ) ≤ BA := by
     rw [hBA_def]

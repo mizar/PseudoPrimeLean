@@ -138,7 +138,7 @@ theorem reflected_logDeriv_integral {q : ℕ} [NeZero q] (χ : DirichletCharacte
       ((-x ^ (-1 / 2 - h) / h : ℝ) : ℂ) * logDeriv χ.LFunction ((1 + h : ℝ) : ℂ) := by
   let f := fun n : ℕ ↦ χ (n : ZMod q) * (ArithmeticFunction.vonMangoldt n : ℂ)
   have he {s : ℂ} (hr : 1 < s.re) : logDeriv χ.LFunction s = -LSeries f s := by
-    have hv := lSeries_twist_vonMangoldt_eq_neg_logDeriv_dirichletLFunction_of_one_lt_re χ hr
+    have hv := LSeries_mangoldt_eq_neg_logDeriv χ hr
     change LSeries f s = -deriv χ.LFunction s / χ.LFunction s at hv
     change deriv χ.LFunction s / χ.LFunction s = -LSeries f s
     rw [hv]

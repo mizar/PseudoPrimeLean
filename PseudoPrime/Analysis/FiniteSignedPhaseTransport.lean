@@ -67,7 +67,7 @@ theorem gammaHalf_phase_majorant_of_log_distance {x y : ℝ} (hx : 0 < x) (hy : 
 
 /-- The extended common Euler weight is the old weight plus
 2*delta*u^(-3/2). Unfold the one added node. This keeps the arithmetic cost exact. -/
-theorem finiteSignedEulerWeight_logarithmicPhaseExtension (l : List (ℚ × ℚ)) (δ : ℚ) (u : ℝ) :
+theorem signedEulerWeight_logarithmicPhaseExtension (l : List (ℚ × ℚ)) (δ : ℚ) (u : ℝ) :
     finiteSignedEulerWeight (logarithmicPhaseExtension l δ) u =
       finiteSignedEulerWeight l u + 2 * (δ : ℝ) * u ^ (-3 / 2 : ℝ) := by
   simp only [logarithmicPhaseExtension, finiteSignedEulerWeight, List.map_append, List.sum_append,
@@ -80,7 +80,7 @@ remains nonnegative after extension. The added power weight is nonnegative. -/
 theorem logarithmicPhaseExtension_euler_nonneg {l : List (ℚ × ℚ)} {δ : ℚ} (hd : 0 ≤ δ) {u : ℝ}
     (hu : 0 ≤ u) (hW : 0 ≤ finiteSignedEulerWeight l u) :
     0 ≤ finiteSignedEulerWeight (logarithmicPhaseExtension l δ) u := by
-  rw [finiteSignedEulerWeight_logarithmicPhaseExtension]
+  rw [signedEulerWeight_logarithmicPhaseExtension]
   exact
     add_nonneg hW
       (mul_nonneg (mul_nonneg (by norm_num only) ((Rat.cast_nonneg (K := ℝ)).mpr hd))

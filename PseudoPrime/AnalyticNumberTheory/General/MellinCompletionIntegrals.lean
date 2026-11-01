@@ -24,7 +24,7 @@ namespace PseudoPrime.AnalyticNumberTheory.General
 /-- For an even smooth compact test, its Mellin transform on any vertical line
 has normalized integral g(0). Evaluate the proved Mellin inversion at one.
 This is the mass identity for height-independent terms in the explicit formula. -/
-theorem normalized_integral_mellin_logarithmicTestWeight (g : ℝ → ℂ) (he : ∀ u : ℝ, g (-u) = g u)
+theorem normalized_mellin_integral (g : ℝ → ℂ) (he : ∀ u : ℝ, g (-u) = g u)
     (hc : HasCompactSupport g) (hg : ContDiff ℝ (↑(⊤ : ℕ∞)) g) (σ : ℝ) :
     (1 / (2 * Real.pi) : ℝ) •
         (∫ T : ℝ, mellin (logarithmicTestWeight g) ((σ : ℂ) + T * Complex.I)) =
@@ -36,14 +36,12 @@ theorem normalized_integral_mellin_logarithmicTestWeight (g : ℝ → ℂ) (he :
 /-- For any complex constant and an even smooth compact test, its normalized
 weighted Mellin integral equals that constant times g(0). Factor the constant
 out of the integral and apply inversion at one. This evaluates conductor terms. -/
-theorem normalized_integral_const_mul_mellin_logarithmicTestWeight (c : ℂ) (g : ℝ → ℂ)
-    (he : ∀ u : ℝ, g (-u) = g u) (hc : HasCompactSupport g) (hg : ContDiff ℝ (↑(⊤ : ℕ∞)) g)
-    (σ : ℝ) :
+theorem normalized_const_mellin_integral (c : ℂ) (g : ℝ → ℂ) (he : ∀ u : ℝ, g (-u) = g u)
+    (hc : HasCompactSupport g) (hg : ContDiff ℝ (↑(⊤ : ℕ∞)) g) (σ : ℝ) :
     (1 / (2 * Real.pi) : ℝ) •
         (∫ T : ℝ, c * mellin (logarithmicTestWeight g) ((σ : ℂ) + T * Complex.I)) =
       c * g 0 := by
-  rw [MeasureTheory.integral_const_mul, ← mul_smul_comm,
-    normalized_integral_mellin_logarithmicTestWeight g he hc hg σ]
+  rw [MeasureTheory.integral_const_mul, ← mul_smul_comm, normalized_mellin_integral g he hc hg σ]
 
 /-- For a natural conductor and an even smooth compact test, the original and
 dual conductor terms together contribute log(q)*g(0) on any vertical line.
@@ -59,8 +57,8 @@ theorem normalized_integral_paired_conductor_mellin (q : ℕ) (g : ℝ → ℂ) 
             star (((Real.log q : ℝ) : ℂ) / 2) *
               mellin (logarithmicTestWeight g) ((σ : ℂ) + T * Complex.I))) =
       ((Real.log q : ℝ) : ℂ) * g 0 := by
-  rw [smul_add, normalized_integral_const_mul_mellin_logarithmicTestWeight _ g he hc hg σ,
-    normalized_integral_const_mul_mellin_logarithmicTestWeight _ g he hc hg σ]
+  rw [smul_add, normalized_const_mellin_integral _ g he hc hg σ,
+    normalized_const_mellin_integral _ g he hc hg σ]
   simp only [Complex.star_def, map_div₀, Complex.conj_ofReal, map_ofNat]
   ring
 
@@ -106,9 +104,9 @@ vertical line avoiding the endpoints, the weighted completed logarithmic
 integral splits into its non-arithmetic and ordinary contributions. Derive
 integrability of the remainder from the two given integrals, then integrate
 the product-rule identity. This connects completion zeros to arithmetic evaluation. -/
-theorem integral_logDeriv_completion_eq_nonArithmetic_add {F G L : ℂ → ℂ} {q : ℂ} (hq : q ≠ 0)
-    (k : ℤ) (hreg : ∀ z, z ≠ 0 → z ≠ 1 → F z = (z * (1 - z)) ^ k * (q ^ (z / 2) * G z * L z))
-    (σ : ℝ) (W : ℂ → ℂ) (hs : ∀ T : ℝ, (σ : ℂ) + T * Complex.I ≠ 0)
+theorem completion_logDeriv_integral_split {F G L : ℂ → ℂ} {q : ℂ} (hq : q ≠ 0) (k : ℤ)
+    (hreg : ∀ z, z ≠ 0 → z ≠ 1 → F z = (z * (1 - z)) ^ k * (q ^ (z / 2) * G z * L z)) (σ : ℝ)
+    (W : ℂ → ℂ) (hs : ∀ T : ℝ, (σ : ℂ) + T * Complex.I ≠ 0)
     (h1 : ∀ T : ℝ, (σ : ℂ) + T * Complex.I ≠ 1) (hG : ∀ T : ℝ, G ((σ : ℂ) + T * Complex.I) ≠ 0)
     (hL : ∀ T : ℝ, L ((σ : ℂ) + T * Complex.I) ≠ 0)
     (hdG : ∀ T : ℝ, DifferentiableAt ℂ G ((σ : ℂ) + T * Complex.I))
@@ -140,7 +138,7 @@ completion derivative, its normalized integral splits into log(q)*g(0)/2
 and the endpoint-plus-gamma integral. The remainder is integrable by subtracting
 the constant conductor contribution. Inversion at one evaluates that constant.
 This removes the conductor integral before evaluating the remaining factors. -/
-theorem normalized_integral_nonArithmetic_eq_conductor_add (q : ℂ) (k : ℤ) (G : ℂ → ℂ) (g : ℝ → ℂ)
+theorem nonArithmetic_integral_conductor (q : ℂ) (k : ℤ) (G : ℂ → ℂ) (g : ℝ → ℂ)
     (he : ∀ u : ℝ, g (-u) = g u) (hc : HasCompactSupport g) (hg : ContDiff ℝ (↑(⊤ : ℕ∞)) g) (σ : ℝ)
     (hi :
       MeasureTheory.Integrable
@@ -170,8 +168,8 @@ theorem normalized_integral_nonArithmetic_eq_conductor_add (q : ℂ) (k : ℤ) (
       MeasureTheory.ae_of_all _ fun T ↦ by
         dsimp only [Pi.sub_apply, completionNonArithmeticLogDerivative]
         ring
-  rw [← normalized_integral_const_mul_mellin_logarithmicTestWeight (Complex.log q / 2) g he hc hg σ,
-    ← smul_add, ← MeasureTheory.integral_add hconst hrem]
+  rw [← normalized_const_mellin_integral (Complex.log q / 2) g he hc hg σ, ← smul_add, ←
+    MeasureTheory.integral_add hconst hrem]
   congr 1
   apply MeasureTheory.integral_congr_ae
   exact
@@ -184,8 +182,8 @@ weighted values of R, subtracting a constant c from both factors removes
 (c+conjugate(c))*g(0) from their normalized paired integral. Constant-weight
 integrability follows from Mellin decay, and inversion at one evaluates the
 two subtracted constants. This isolates the conductor from a completion pair. -/
-theorem normalized_integral_paired_eq_const_add_remainder (R : ℂ → ℂ) (c : ℂ) (g : ℝ → ℂ)
-    (he : ∀ u : ℝ, g (-u) = g u) (hc : HasCompactSupport g) (hg : ContDiff ℝ (↑(⊤ : ℕ∞)) g) (σ : ℝ)
+theorem pairedIntegral_const_remainder (R : ℂ → ℂ) (c : ℂ) (g : ℝ → ℂ) (he : ∀ u : ℝ, g (-u) = g u)
+    (hc : HasCompactSupport g) (hg : ContDiff ℝ (↑(⊤ : ℕ∞)) g) (σ : ℝ)
     (hi :
       MeasureTheory.Integrable
         (fun T : ℝ ↦
@@ -214,9 +212,8 @@ theorem normalized_integral_paired_eq_const_add_remainder (R : ℂ → ℂ) (c :
   have hc₂ := (verticalIntegrable_mellin_logarithmicTestWeight g he hc hg σ).const_mul (star c)
   simp only [star_sub, sub_mul, MeasureTheory.integral_sub hi hc₁,
     MeasureTheory.integral_sub hd hc₂]
-  rw [smul_add, smul_add, smul_sub, smul_sub,
-    normalized_integral_const_mul_mellin_logarithmicTestWeight c g he hc hg σ,
-    normalized_integral_const_mul_mellin_logarithmicTestWeight (star c) g he hc hg σ, add_mul]
+  rw [smul_add, smul_add, smul_sub, smul_sub, normalized_const_mellin_integral c g he hc hg σ,
+    normalized_const_mellin_integral (star c) g he hc hg σ, add_mul]
   abel
 
 end PseudoPrime.AnalyticNumberTheory.General

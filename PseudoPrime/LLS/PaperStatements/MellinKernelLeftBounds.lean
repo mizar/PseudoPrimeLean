@@ -26,8 +26,8 @@ It works for every primitive nonprincipal character with nonprincipal inverse an
 positive scale. Reflect the completed logarithmic derivative, isolate the conductor term,
 and integrate its uniform logarithmic majorant against the kernel's quadratic decay.
 This supplies the conductor error in the arithmetic Mellin formula. -/
-theorem exists_norm_left_completedIntegral_le_log_rpow (K : MellinKernel) {a : ℝ}
-    (ha : -1 / 2 - K.delta < a) (hal : a < -1 / 2) (ha2 : -3 / 2 ≤ a) :
+theorem exists_leftCompleted_log_rpow (K : MellinKernel) {a : ℝ} (ha : -1 / 2 - K.delta < a)
+    (hal : a < -1 / 2) (ha2 : -3 / 2 ≤ a) :
     ∃ C : ℝ,
       0 < C ∧
         ∀ (N : ℕ) [NeZero N] (χ : DirichletCharacter ℂ N),
@@ -44,7 +44,7 @@ theorem exists_norm_left_completedIntegral_le_log_rpow (K : MellinKernel) {a : �
                             (x : ℂ) ^ ((a : ℂ) + Complex.I * t)))‖ ≤
                   C * (Real.log N + 1) * x ^ a := by
   obtain ⟨A, hA, hbA⟩ :=
-    exists_uniform_norm_completed_vertical_left_le_log (σ := a + 1 / 2) (by linarith only [hal])
+    uniform_completedLogDeriv_left (σ := a + 1 / 2) (by linarith only [hal])
       (by linarith only [ha2])
   have hu : a ≤ 1 / 2 + K.delta := by linarith only [hal, K.delta_pos]
   obtain ⟨B, hB, hbB⟩ := exists_norm_line_le_inverseSquare K ha hu hal.ne
@@ -119,8 +119,8 @@ nonprincipal data has norm at most C log N / sqrt x for N at least two and x at 
 The positive constant depends only on the kernel and line. Absorb the constant part into
 log N using log 2, and compare x^a with the inverse square root. This is the conductor
 error required in the general Mellin explicit formula. -/
-theorem exists_norm_left_completedIntegral_le_log_div_sqrt (K : MellinKernel) {a : ℝ}
-    (ha : -1 / 2 - K.delta < a) (hal : a < -1 / 2) (ha2 : -3 / 2 ≤ a) :
+theorem exists_leftCompleted_log_sqrt (K : MellinKernel) {a : ℝ} (ha : -1 / 2 - K.delta < a)
+    (hal : a < -1 / 2) (ha2 : -3 / 2 ≤ a) :
     ∃ C : ℝ,
       0 < C ∧
         ∀ (N : ℕ) [NeZero N] (χ : DirichletCharacter ℂ N),
@@ -136,7 +136,7 @@ theorem exists_norm_left_completedIntegral_le_log_div_sqrt (K : MellinKernel) {a
                           (K.function ((a : ℂ) + Complex.I * t) *
                             (x : ℂ) ^ ((a : ℂ) + Complex.I * t)))‖ ≤
                   C * Real.log N / Real.sqrt x := by
-  obtain ⟨C, hC, hb⟩ := exists_norm_left_completedIntegral_le_log_rpow K ha hal ha2
+  obtain ⟨C, hC, hb⟩ := exists_leftCompleted_log_rpow K ha hal ha2
   have h2 : 0 < Real.log 2 := Real.log_pos (by norm_num only)
   refine
     ⟨C * (1 + 1 / Real.log 2),

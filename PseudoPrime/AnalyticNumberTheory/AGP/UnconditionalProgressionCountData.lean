@@ -20,6 +20,6 @@ Apply the unconditional narrow theta supply to the existing primorial seed and c
 bridge. This is the final analytic input to the finite-base Carmichael construction. -/
 theorem agp_progression_count_data_exists_unconditional : AGPProgressionCountDataExists := by
   obtain ⟨J, D, Xtheta, hJ, hSupply⟩ := exists_unconditional_narrow_theta_supply
-  exact agp_progression_count_data_exists_of_primorial_p2_and_theta_supply J D Xtheta hJ hSupply
+  exact countData_of_primorial_powTwo_theta J D Xtheta hJ hSupply
 
 end PseudoPrime.AnalyticNumberTheory.AGP

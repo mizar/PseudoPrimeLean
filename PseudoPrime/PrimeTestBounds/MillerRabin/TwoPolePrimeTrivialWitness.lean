@@ -20,10 +20,9 @@ separation yields a prime failing the strong Miller-Rabin test through the cutof
 Universal prime passage forces a nonprincipal quotient character to be trivial on
 every small prime, contradicting the scalar criterion. No uniform character budget
 is left as a hypothesis. -/
-theorem exists_prime_strong_witness_of_twoPolePrimeTrivialSeparation {n : ℕ} [NeZero n] (hn : 1 < n)
-    (hnOdd : Odd n) (hnComposite : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 ≤ x)
-    (S : Finset ℕ) (hS : ∀ k ∈ S, (k : ℝ) ≤ (99 / 40 : ℝ) * x)
+theorem exists_prime_twoPoleTrivialSeparation_GRH {n : ℕ} [NeZero n] (hn : 1 < n) (hnOdd : Odd n)
+    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ}
+    (hx : 1 ≤ x) (S : Finset ℕ) (hS : ∀ k ∈ S, (k : ℝ) ≤ (99 / 40 : ℝ) * x)
     (hgap : 0 < LLS.twoPolePrimeTrivialSeparation n S x) :
     ∃ p : ℕ,
       p.Prime ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
@@ -33,14 +32,13 @@ theorem exists_prime_strong_witness_of_twoPolePrimeTrivialSeparation {n : ℕ} [
     ∀ p : ℕ,
       p.Prime → (p : ℝ) ≤ (99 / 40 : ℝ) * x → PrimeTest.StrongMillerRabinPass n (p : ZMod n) :=
     fun p hp hb ↦ Classical.byContradiction (fun hf ↦ h ⟨p, hp, hb, hf⟩)
-  obtain ⟨H, hH, hHpass⟩ :=
-    PrimeTest.exists_proper_subgroup_containing_strongMillerRabinPass hn hnOdd hnComposite
+  obtain ⟨H, hH, hHpass⟩ := PrimeTest.exists_proper_subgroup_strongMR hn hnOdd hnComposite
   have : H.Normal := H.normal_of_isMulCommutative
   have : Nontrivial ((ZMod n)ˣ ⧸ H) := QuotientGroup.nontrivial_iff.mpr hH
   obtain ⟨z, hz⟩ := exists_ne (1 : (ZMod n)ˣ ⧸ H)
   obtain ⟨χ', hχz⟩ := MulChar.exists_apply_ne_one_of_hasEnoughRootsOfUnity ((ZMod n)ˣ ⧸ H) ℂ hz
   apply
-    LLS.prime_trivial_false_of_twoPolePrimeTrivialSeparation (LLS.pullbackCharacter χ')
+    LLS.not_primeTrivial_twoPoleSeparation_GRH (LLS.pullbackCharacter χ')
       (LLS.pullbackCharacter_ne_one_of_ne_one χ' hχz) hGRH hx S hS hgap
   intro p hp hb
   obtain ⟨u, hu, he⟩ := hHpass p (hpass p hp hb)

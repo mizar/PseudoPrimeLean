@@ -20,9 +20,9 @@ open AnalyticNumberTheory.Arithmetic in
 finite T obey the logarithmic tail bound and the resulting scalar separation is
 negative. Then an odd negative Jacobi prime exists below x and is coprime to n.
 Apply the structural prime-budget bound before the established Jacobi criterion. -/
-theorem exists_odd_prime_jacobi_neg_one_of_quadratic_prime_budget {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ}
-    (hx : 64 ≤ x) (T : Finset ℕ) {a : ℝ} (ha : 0 ≤ a)
+theorem exists_oddPrime_negOne_quadPrimeBudget_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 64 ≤ x)
+    (T : Finset ℕ) {a : ℝ} (ha : 0 ≤ a)
     (htail :
       ∀ p ∈ (4 * n).primeFactors,
         p ∉ T →
@@ -47,16 +47,16 @@ theorem exists_odd_prime_jacobi_neg_one_of_quadratic_prime_budget {n : ℕ} (hn 
       (NumberTheory.complexQuadraticCharacter n hn).conductor hx0
       (LLS.PaperStatements.excludedEndpointWeight x)
       (fun _ h ↦ LLS.PaperStatements.excludedEndpointWeight_eq_zero_of_not_primePow x h) T ha htail
-  apply exists_odd_prime_jacobi_neg_one_of_quadratic_excluded_budget hn hns hGRH hx
+  apply exists_oddPrime_negOne_quadExcluded_GRH hn hns hGRH hx
   linarith only [hb, hsep]
 
 open AnalyticNumberTheory.Arithmetic in
 /-- With the same GRH, odd nonsquare and prime-budget hypotheses, the least odd
 negative Jacobi prime is at most x. The nonempty-set input supplies the existing
 least-witness definition; apply leastness to the prime constructed by the criterion. -/
-theorem primeNegOneWitness_cast_le_of_quadratic_prime_budget {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ}
-    (hx : 64 ≤ x) (T : Finset ℕ) {a : ℝ} (ha : 0 ≤ a)
+theorem negOneWitness_cast_le_of_quadratic_prime_budget {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 64 ≤ x)
+    (T : Finset ℕ) {a : ℝ} (ha : 0 ≤ a)
     (htail :
       ∀ p ∈ (4 * n).primeFactors,
         p ∉ T →
@@ -76,7 +76,7 @@ theorem primeNegOneWitness_cast_le_of_quadratic_prime_budget {n : ℕ} (hn : Odd
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ x := by
   obtain ⟨p, hp, ho, hpx, _, hv⟩ :=
-    exists_odd_prime_jacobi_neg_one_of_quadratic_prime_budget hn hns hGRH hx T ha htail hsep
+    exists_oddPrime_negOne_quadPrimeBudget_GRH hn hns hGRH hx T ha htail hsep
   exact (Nat.cast_le.mpr (NumberTheory.primeNegOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hpx
 
 open AnalyticNumberTheory.Arithmetic in

@@ -19,11 +19,11 @@ namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 /-- For nonzero level and positive scale, the logarithmic character sum differs
 from its primitive source by at most `omega(q) log(x)^2/2`. Majorize the level-quotient
 prime factors by those of the level. This gives one correction uniform in the character. -/
-theorem norm_characterLogWeightedSum_sub_primitive_le_level {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) {x : ℝ} (hx : 0 < x) :
+theorem norm_characterLogSum_sub_primitive_le_level {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    {x : ℝ} (hx : 0 < x) :
     ‖characterLogWeightedSum x χ - characterLogWeightedSum x χ.primitiveCharacter‖ ≤
       (1 / 2 : ℝ) * q.primeFactors.card * (Real.log x) ^ 2 := by
-  have hb := norm_characterLogWeightedSum_sub_primitive_le x χ hx
+  have hb := norm_characterLogSum_sub_primitive_le x χ hx
   have hc : ((q / χ.conductor).primeFactors.card : ℝ) ≤ q.primeFactors.card := by
     exact_mod_cast
       Finset.card_le_card
@@ -37,8 +37,8 @@ theorem norm_characterLogWeightedSum_sub_primitive_le_level {q : ℕ} [NeZero q]
 bounded by its primitive half-scale norm plus `omega(q) log(x)^2`. Apply the two
 endpoint level-change bounds, compare their nonnegative logarithms, and use the
 triangle inequality. This transfers the exact half-scale error to primitive characters. -/
-theorem norm_characterLogWeightedSum_half_le_primitive_add_level_error {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) {x : ℝ} (hx : 2 ≤ x) :
+theorem norm_characterLogSum_half_le_primitive_add {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    {x : ℝ} (hx : 2 ≤ x) :
     ‖characterLogWeightedSum x χ - characterLogWeightedSum (x / 2) χ‖ ≤
       ‖characterLogWeightedSum x χ.primitiveCharacter -
             characterLogWeightedSum (x / 2) χ.primitiveCharacter‖ +
@@ -48,8 +48,8 @@ theorem norm_characterLogWeightedSum_half_le_primitive_add_level_error {q : ℕ}
   have hlogy : 0 ≤ Real.log (x / 2) := Real.log_nonneg (by linarith only [hx])
   have hlog := Real.log_le_log hypos (by linarith only [hx] : x / 2 ≤ x)
   have hlogsq : (Real.log (x / 2)) ^ 2 ≤ (Real.log x) ^ 2 := by nlinarith only [hlogy, hlog]
-  have hb := norm_characterLogWeightedSum_sub_primitive_le_level χ hxpos
-  have hc := norm_characterLogWeightedSum_sub_primitive_le_level χ hypos
+  have hb := norm_characterLogSum_sub_primitive_le_level χ hxpos
+  have hc := norm_characterLogSum_sub_primitive_le_level χ hypos
   have hm :=
     mul_le_mul_of_nonneg_left hlogsq
       (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 1 / 2) (Nat.cast_nonneg q.primeFactors.card))
@@ -77,16 +77,14 @@ open Classical in
 sum of half-scale norms is bounded by the primitive-label norm sum plus the family
 cardinality times `omega(q) log(x)^2`. Sum the pointwise transfer and use injectivity
 of conductor-character labels. The primitive error sum has no extra family factor. -/
-theorem sum_norm_characterLogWeightedSum_half_le_primitive_labels {q : ℕ} [NeZero q]
+theorem sum_norm_characterLogSum_half_le_labels {q : ℕ} [NeZero q]
     (S : Finset (DirichletCharacter ℂ q)) {x : ℝ} (hx : 2 ≤ x) :
     ∑ χ ∈ S, ‖characterLogWeightedSum x χ - characterLogWeightedSum (x / 2) χ‖ ≤
       (∑ p ∈ S.image primitiveCharacterLabel,
           ‖characterLogWeightedSum x p.2 - characterLogWeightedSum (x / 2) p.2‖) +
         (S.card : ℝ) * ((q.primeFactors.card : ℝ) * (Real.log x) ^ 2) := by
   classical
-  have hb :=
-    Finset.sum_le_sum (s := S)
-      (fun χ _ ↦ norm_characterLogWeightedSum_half_le_primitive_add_level_error χ hx)
+  have hb := Finset.sum_le_sum (s := S) (fun χ _ ↦ norm_characterLogSum_half_le_primitive_add χ hx)
   rw [Finset.sum_add_distrib, Finset.sum_const, nsmul_eq_mul] at hb
   rw [Finset.sum_image (fun χ _ ψ _ h ↦ primitiveCharacterLabel_injective q h)]
   exact hb
@@ -96,13 +94,13 @@ open Classical in
 norm sum is bounded by the sum over bounded primitive labels plus the explicit
 level-change correction. Use the exact reindexing identity after primitive transfer.
 This supplies the family type consumed by the occurrence-ledger density estimates. -/
-theorem sum_norm_characterLogWeightedSum_half_le_bounded_primitive_labels {q Q : ℕ} [NeZero q]
-    (hq : q ≤ Q) (S : Finset (DirichletCharacter ℂ q)) {x : ℝ} (hx : 2 ≤ x) :
+theorem sum_norm_logCharSum_half_le_boundedLabels {q Q : ℕ} [NeZero q] (hq : q ≤ Q)
+    (S : Finset (DirichletCharacter ℂ q)) {x : ℝ} (hx : 2 ≤ x) :
     ∑ χ ∈ S, ‖characterLogWeightedSum x χ - characterLogWeightedSum (x / 2) χ‖ ≤
       (∑ p ∈ S.image (boundedPrimitiveCharacterLabel hq),
           ‖characterLogWeightedSum x p.2 - characterLogWeightedSum (x / 2) p.2‖) +
         (S.card : ℝ) * ((q.primeFactors.card : ℝ) * (Real.log x) ^ 2) := by
-  have hb := sum_norm_characterLogWeightedSum_half_le_primitive_labels S hx
+  have hb := sum_norm_characterLogSum_half_le_labels S hx
   rw [sum_primitiveCharacterLabel_eq_bounded hq S
       (fun p ↦ ‖characterLogWeightedSum x p.2 - characterLogWeightedSum (x / 2) p.2‖)] at hb
   exact hb

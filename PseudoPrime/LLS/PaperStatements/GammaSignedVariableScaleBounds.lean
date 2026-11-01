@@ -24,10 +24,9 @@ the real Gamma remainder is bounded by the pole cost and the sharp left cost.
 The exact completed formula and the nonpositive archimedean integral remove
 the positive 64/9 allowance from this one-sided bound. The complex norm
 estimate remains a separate API. -/
-theorem re_gamma_primitive_remainder_le_variable_scale_sharp {q m : ℕ} [NeZero m]
-    {χ : DirichletCharacter ℂ m} (hq : 20000 ≤ q) (hm : 3 ≤ m) (hmq : m ≤ q) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {x : ℝ} (hx : 2 ≤ x) :
+theorem gammaRemainder_re_le_variable_scale_sharp {q m : ℕ} [NeZero m] {χ : DirichletCharacter ℂ m}
+    (hq : 20000 ≤ q) (hm : 3 ≤ m) (hmq : m ≤ q) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 2 ≤ x) :
     ((∑' n : ℕ, gammaMellinKernel.summand χ x n) +
           (∑' ρ : ℂ, gammaMellinKernel.oscillatingZeroTerm χ x ρ)).re ≤
       ((7 / 6 : ℝ) * Real.log q + 4) / Real.sqrt x +

@@ -22,8 +22,8 @@ Claim: prime triviality through the finer Part 2 squared radius is impossible.
 Proof: use only the reciprocal explicit formula, its low-cutoff parity errors,
 and the monotone negative scalar gap. No finite modulus enumeration is used.
 Role: provide the low branch for an entirely analytic entrance from five. -/
-theorem not_characterTrivialBelow_finerPart2Root_small_analytic {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1) (hq : 5 ≤ q) (hQ : q ≤ 500)
+theorem not_trivialBelow_finerPart2_small_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hne : χ ≠ 1) (hq : 5 ≤ q) (hQ : q ≤ 500)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ¬LLSCharacterTrivialBelow χ ((Analysis.finerPart2CutoffRoot (Real.log q)) ^ 2) := by
   intro ht
@@ -33,8 +33,7 @@ theorem not_characterTrivialBelow_finerPart2Root_small_analytic {q : ℕ} [NeZer
   have hf : 2 ≤ χ.conductor :=
     Nat.succ_le_iff.mpr
       (Nat.lt_of_le_of_ne (NeZero.pos χ.conductor)
-        (Ne.symm
-          (AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hnp)))
+        (Ne.symm (AnalyticNumberTheory.DirichletLFunction.character_level_ne_one_of_ne_one hnp)))
   have hL : 0 < Real.log (q : ℝ) :=
     Real.log_pos (by exact_mod_cast (lt_of_lt_of_le (by norm_num only : (1 : ℕ) < 5) hq))
   have htlow := Analysis.finerPart2Root_ge_51571_div_10000 hL
@@ -43,15 +42,14 @@ theorem not_characterTrivialBelow_finerPart2Root_small_analytic {q : ℕ} [NeZer
   have hx1 : (1 : ℝ) < (Analysis.finerPart2CutoffRoot (Real.log q)) ^ 2 := by linarith only [hx]
   have hraw :=
     primitiveReciprocalRaw_of_mainErrors hf hGRH hp hnp (inv_ne_one.mpr hnp) hx1
-      (primitiveReciprocalOddMainError_le_fixed_of_ge_twenty_six_half hx)
-      (primitiveReciprocalEvenMainError_le_fixed_of_ge_twenty_six_half hx)
+      (primitiveRecipOddError_le_neg_1_4_of_ge_53_2 hx) (primitiveReciprocalEvenError_le_neg_1_4 hx)
   have hd :=
     weightedReciprocalDefect_eq_zero_of_trivialBelow (zero_lt_one.trans hx1)
       (characterTrivialBelow_primitiveCharacter ht)
   have hr :=
-    re_characterReciprocalWeightedSum_ge_of_pointwise_lower χ.primitiveCharacter
-      (AnalyticNumberTheory.RiemannZeta.reciprocalWeightedMangoldtSum_ge_log_sub_31551_div_20000
-        hGRH.riemann (by linarith only [hx]))
+    re_characterReciprocalSum_ge_of_pointwise_lower χ.primitiveCharacter
+      (AnalyticNumberTheory.RiemannZeta.reciprocalMangoldt_ge_log_sub_31551_20000 hGRH.riemann
+        (by linarith only [hx]))
       hd.le
   simp only [sub_zero] at hr
   rw [Real.log_pow] at hr
@@ -79,7 +77,7 @@ theorem not_characterTrivialBelow_finerPart2Root_small_analytic {q : ℕ} [NeZer
     mul_nonneg (sq_nonneg (1 - 1 / Real.sqrt ((Analysis.finerPart2CutoffRoot (Real.log q)) ^ 2)))
       (abs_nonneg (AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter))
   have hneg :=
-    Analysis.finerPart2ReciprocalOnlyGap_neg_of_le_five_hundred hL
+    Analysis.finerPart2RecipGap_neg_of_le_log_500 hL
       (Real.log_le_log (by exact_mod_cast NeZero.pos q) (Nat.cast_le.mpr hQ))
   dsimp only [Analysis.finerPart2ReciprocalOnlyGap] at hneg
   nlinarith only [hr, hraw, hprod, hloss, hb, hneg]
@@ -88,12 +86,12 @@ theorem not_characterTrivialBelow_finerPart2Root_small_analytic {q : ℕ} [NeZer
 Claim: a prime through the finer squared radius has value different from one.
 Proof: negate prime triviality and use the reciprocal-only analytic contradiction.
 Role: expose the low analytic branch as a witness theorem. -/
-theorem exists_prime_not_one_le_finerPart2Root_small_analytic {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1) (hq : 5 ≤ q) (hQ : q ≤ 500)
+theorem exists_prime_neOne_finerPart2_small_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hne : χ ≠ 1) (hq : 5 ≤ q) (hQ : q ≤ 500)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ (Analysis.finerPart2CutoffRoot (Real.log q)) ^ 2 ∧ χ p ≠ 1 := by
   by_contra! hn
-  apply not_characterTrivialBelow_finerPart2Root_small_analytic χ hne hq hQ hGRH
+  apply not_trivialBelow_finerPart2_small_GRH χ hne hq hQ hGRH
   intro p hp hb
   exact hn p hp hb.le
 

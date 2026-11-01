@@ -146,9 +146,7 @@ theorem gammaSignedLeftIntegrand_reflection {q : ℕ} [NeZero q] {χ : Dirichlet
     simp only [r, Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.ofReal_im,
       Complex.I_re, Complex.I_im, zero_mul, mul_zero, sub_zero, add_zero]
     norm_num only
-  have h :=
-    completedLFunction_logDeriv_functionalEquation_at hp hne
-      (completedLFunction_ne_zero_of_one_le_re hinv hr)
+  have h := completedLogDeriv_functionalEq hp hne (completed_ne_zero_of_one_le_re hinv hr)
   have he : 1 - r = ((-1 / 16 : ℝ) : ℂ) + t * Complex.I := by
     dsimp only [r]
     norm_num only [Complex.ofReal_div, Complex.ofReal_neg, Complex.ofReal_one, Complex.ofReal_ofNat]
@@ -178,7 +176,7 @@ theorem gammaSignedLeftRemainder_bound {q : ℕ} [NeZero q] {χ : DirichletChara
         (28 * PseudoPrime.Analysis.gammaRefinedZeroEnvelope t +
           PseudoPrime.Analysis.gammaRefinedFirstEnvelope t) := by
   rw [gammaSignedLeftIntegrand_reflection hp hne hinv, add_mul, add_sub_cancel_left]
-  have hd := norm_logDeriv_completed_seventeen_sixteenths_le_refined hinv (-t)
+  have hd := completedLogDeriv_17_16_refined hinv (-t)
   rw [abs_neg] at hd
   let z : ℂ := ((-1 / 16 : ℝ) : ℂ) + t * Complex.I
   have hz : z.re = -1 / 16 := by
@@ -188,7 +186,7 @@ theorem gammaSignedLeftRemainder_bound {q : ℕ} [NeZero q] {χ : DirichletChara
     simp only [z, Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re,
       Complex.I_re, Complex.I_im, zero_mul, mul_one, zero_add, add_zero]
   have h0 := PseudoPrime.Analysis.norm_Gamma_le_gammaRefinedZeroEnvelope hz
-  have h1 := PseudoPrime.Analysis.norm_Gamma_mul_height_le_gammaRefinedFirstEnvelope hz
+  have h1 := PseudoPrime.Analysis.norm_Gamma_mul_height_le_refinedEnvelope hz
   rw [hi] at h0 h1
   change ‖Complex.Gamma z‖ ≤ PseudoPrime.Analysis.gammaRefinedZeroEnvelope t at h0
   change ‖Complex.Gamma z‖ * |t| ≤ PseudoPrime.Analysis.gammaRefinedFirstEnvelope t at h1
@@ -257,9 +255,8 @@ theorem gammaSignedLeftIntegral_eq_original {q : ℕ} [NeZero q] (χ : Dirichlet
 /-- Split the actual normalized completed left integral into its exactly evaluated
 signed conductor contribution and the integrable reflected remainder. Integral linearity
 is justified by both actual integrability proofs. -/
-theorem gammaSignedLeftIntegral_eq_conductor_add_remainder {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ}
-    (hx : 0 < x) :
+theorem gammaLeft_eq_conductor_remainder {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) :
     gammaSignedLeftIntegral χ x =
       (PseudoPrime.Analysis.gammaNegativeConductorTerm (Real.log q) x : ℂ) +
         ((1 / (2 * Real.pi) : ℝ) : ℂ) *
@@ -291,8 +288,7 @@ theorem re_gammaSignedLeftIntegral_le_conductor_add {q : ℕ} [NeZero q] {χ : D
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) :
     (gammaSignedLeftIntegral χ x).re ≤
       PseudoPrime.Analysis.gammaNegativeConductorTerm (Real.log q) x + 43 * x ^ (-9 / 16 : ℝ) := by
-  rw [gammaSignedLeftIntegral_eq_conductor_add_remainder hp hne hinv hx, Complex.add_re,
-    Complex.ofReal_re]
+  rw [gammaLeft_eq_conductor_remainder hp hne hinv hx, Complex.add_re, Complex.ofReal_re]
   have hr :=
     Complex.re_le_norm
       (((1 / (2 * Real.pi) : ℝ) : ℂ) *

@@ -35,8 +35,8 @@ theorem positiveFundamentalDiscriminant_eq_four_mul {d : ℕ} (hdmod : ¬d % 4 =
   simp only [positiveFundamentalDiscriminant, hdmod, ↓reduceIte]
 
 /-- The positive representative is a Mathlib fundamental discriminant. -/
-theorem positiveFundamentalDiscriminant_isFundamentalDiscr {d : ℕ} (hdodd : Odd d)
-    (hdsq : Squarefree d) : (positiveFundamentalDiscriminant d : ℤ).IsFundamentalDiscr := by
+theorem positiveFundamentalDiscr_isFundamental {d : ℕ} (hdodd : Odd d) (hdsq : Squarefree d) :
+    (positiveFundamentalDiscriminant d : ℤ).IsFundamentalDiscr := by
   dsimp only [positiveFundamentalDiscriminant]
   split_ifs with hdmod
   · rw [Int.isFundamentalDiscr_iff_squarefree]
@@ -118,8 +118,8 @@ theorem exists_nat_one_modEq_and_jacobiSym_eq_neg_one {d c : ℕ} (hdodd : Odd d
 
 /-- A prime in the same residue class removes the square-factor obstruction: the
 representative can additionally be chosen coprime to any positive square factor. -/
-theorem exists_nat_odd_one_modEq_and_jacobiSym_eq_neg_one_coprime {d c s : ℕ} (hdodd : Odd d)
-    (hdsq : Squarefree d) (hc : c ∣ d) (hnot : ¬d ∣ c) (hs : 0 < s) :
+theorem exists_odd_modEq_jacobi_neg_one_coprime {d c s : ℕ} (hdodd : Odd d) (hdsq : Squarefree d)
+    (hc : c ∣ d) (hnot : ¬d ∣ c) (hs : 0 < s) :
     ∃ a : ℕ, Odd a ∧ a ≡ 1 [MOD c] ∧ jacobiSym a d = -1 ∧ Nat.Coprime a s := by
   obtain ⟨k, hk, hj⟩ := exists_nat_one_modEq_and_jacobiSym_eq_neg_one hdodd hdsq hc hnot
   have hcopd : Nat.Coprime k d := by
@@ -146,8 +146,8 @@ theorem exists_nat_odd_one_modEq_and_jacobiSym_eq_neg_one_coprime {d c s : ℕ} 
 
 /-- When the odd part of a proper divisor of `4*d` is proper, a prime-AP lift gives
 an odd representative that is `1` modulo the full divisor and has Jacobi value `-1`. -/
-theorem exists_nat_odd_one_modEq_and_jacobiSym_eq_neg_one_of_dvd_four_mul_coprime {d c s : ℕ}
-    (hdodd : Odd d) (hdsq : Squarefree d) (hs : 0 < s) (hc4 : c ∣ 4 * d) (hdnot : ¬d ∣ c) :
+theorem exists_mod4_modEq_jacobi_neg_one_coprime {d c s : ℕ} (hdodd : Odd d) (hdsq : Squarefree d)
+    (hs : 0 < s) (hc4 : c ∣ 4 * d) (hdnot : ¬d ∣ c) :
     ∃ a : ℕ, Odd a ∧ a ≡ 1 [MOD 4] ∧ a ≡ 1 [MOD c] ∧ jacobiSym a d = -1 ∧ Nat.Coprime a s := by
   let e := Nat.gcd c d
   have hed : e ∣ d := Nat.gcd_dvd_right c d
@@ -207,8 +207,8 @@ theorem exists_nat_odd_one_modEq_and_jacobiSym_eq_neg_one_of_dvd_four_mul_coprim
 
 /-- For the remaining proper divisors `d` and `2*d`, the Jacobi value is `1` while
 the residue is `3` modulo `4`, so the `χ₄` factor supplies the required sign. -/
-theorem exists_nat_odd_one_modEq_and_jacobiSym_eq_one_of_eq_d_or_two_mul {d c s : ℕ} (hdodd : Odd d)
-    (hd4 : d % 4 = 3) (hs : 0 < s) (hc : c = d ∨ c = 2 * d) :
+theorem exists_odd_one_modEq_jacobi_one_of_d_or_two_d {d c s : ℕ} (hdodd : Odd d) (hd4 : d % 4 = 3)
+    (hs : 0 < s) (hc : c = d ∨ c = 2 * d) :
     ∃ a : ℕ, Odd a ∧ a ≡ 1 [MOD c] ∧ jacobiSym a d = 1 ∧ a % 4 = 3 ∧ Nat.Coprime a s := by
   rcases hc with hc | hc
   · subst c
@@ -296,8 +296,8 @@ theorem exists_nat_odd_one_modEq_and_jacobiSym_eq_one_of_eq_d_or_two_mul {d c s 
 /-- A divisor `c` of `4 * d` that contains the odd part `d`, but not all of `4 * d`, is `d` or
 `2 * d`. Cancel positive `d` and enumerate the divisors of four; this isolates the two conductor
 obstruction cases in which the `χ₄` factor must supply the sign. -/
-theorem eq_squarefreePart_or_two_mul_of_dvd_four_mul_of_dvd {d c : ℕ} (hdodd : Odd d)
-    (hc4 : c ∣ 4 * d) (hdc : d ∣ c) (hproper : ¬4 * d ∣ c) : c = d ∨ c = 2 * d := by
+theorem eq_or_two_mul_of_dvd_four_mul_of_dvd {d c : ℕ} (hdodd : Odd d) (hc4 : c ∣ 4 * d)
+    (hdc : d ∣ c) (hproper : ¬4 * d ∣ c) : c = d ∨ c = 2 * d := by
   have hdpos : 0 < d := Odd.pos hdodd
   obtain ⟨k, hkc⟩ := hdc
   obtain ⟨l, hl⟩ := hc4

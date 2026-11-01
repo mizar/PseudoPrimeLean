@@ -43,25 +43,25 @@ Input/assumptions: `N ≥ 2`, `χ` primitive nontrivial mod `N`, GRH, `χ⁻¹ �
 Conclusion: `Re Σ_{ρ ∈ (S.erase 1).erase 0} r(ρ) ≤ 2|Re B(χ)|/√x`, where `S` is the primitive
 singularity ledger of any rectangle `z, w`.
 Content: `Complex.re_sum` splits the real part of the sum; on the erased ledger,
-`DirichletLFunction.dirichletReciprocalResidueAt_eq_zeroContribution_of_mem_erase` identifies each
+`DirichletLFunction.reciprocalResidue_eq_erased_zeroTerm` identifies each
 residue with
 its zero contribution and gives `ρ ≠ 0`; the pointwise bound
-(`DirichletLFunction.dirichletLFunctionReciprocalZeroContribution_re_le_completedTerm_norm`)
+(`DirichletLFunction.reciprocalZero_re_le_completedNorm`)
 dominates each summand
 by the completed-zero term's norm; `Finset.sum_le_sum` plus the finite subset bound
-(`sum_norm_completedReciprocalZeroTerm_le_abs_BRe`) finishes.
+(`reciprocalZero_normSum_abs_BRe_GRH`) finishes.
 Role: **the zero-contribution completion** — the boxed `(Z)` bound `Re Σ_{ρ≠0,1} r(ρ) ≤ 2b/√x`,
 with an
 `A`,`k`-independent right-hand side, closing off the need for any infinite zero-ledger `Tendsto`
 machinery.
 -/
-theorem re_sum_erased_primitiveReciprocalResidues_le {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem reciprocal_erasedResidues_re_le_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) {z w : ℂ} :
-    (∑ ρ ∈ ((dirichletLFunctionSingularitiesInRectangle χ hne z w).erase 1).erase 0,
+    (∑ ρ ∈ ((LFunctionSingularitiesInRectangle χ hne z w).erase 1).erase 0,
           dirichletReciprocalResidueAt hne x ρ).re ≤
       2 * |primitiveBRe χ| / Real.sqrt x := by
-  set S := ((dirichletLFunctionSingularitiesInRectangle χ hne z w).erase 1).erase 0 with hS_def
+  set S := ((LFunctionSingularitiesInRectangle χ hne z w).erase 1).erase 0 with hS_def
   rw [Complex.re_sum]
   have hstep :
     ∀ ρ ∈ S,
@@ -70,9 +70,9 @@ theorem re_sum_erased_primitiveReciprocalResidues_le {N : ℕ} [NeZero N] (hN2 :
               (x : ℂ) ^ (ρ - 1) /
             (ρ * (ρ - 1))‖ := by
     intro ρ hρ
-    rw [dirichletReciprocalResidueAt_eq_zeroContribution_of_mem_erase x hne (hS_def ▸ hρ)]
+    rw [reciprocalResidue_eq_erased_zeroTerm x hne (hS_def ▸ hρ)]
     have hρ0 : ρ ≠ 0 := (Finset.mem_erase.mp hρ).1
-    exact dirichletLFunctionReciprocalZeroContribution_re_le_completedTerm_norm hne hx hρ0
+    exact reciprocalZero_re_le_completedNorm hne hx hρ0
   calc
     ∑ ρ ∈ S, (dirichletReciprocalResidueAt hne x ρ).re ≤
         ∑ ρ ∈ S,
@@ -81,6 +81,6 @@ theorem re_sum_erased_primitiveReciprocalResidues_le {N : ℕ} [NeZero N] (hN2 :
               (ρ * (ρ - 1))‖ :=
       Finset.sum_le_sum hstep
     _ ≤ 2 * |primitiveBRe χ| / Real.sqrt x :=
-      sum_norm_completedReciprocalZeroTerm_le_abs_BRe hN2 hGRH hprimitive hne hinv hx S
+      reciprocalZero_normSum_abs_BRe_GRH hN2 hGRH hprimitive hne hinv hx S
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

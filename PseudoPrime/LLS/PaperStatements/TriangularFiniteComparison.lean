@@ -35,8 +35,7 @@ theorem triangular18_finite_primitive_difference_norm_le {q : ℕ} [NeZero q]
     Summable.sum_le_tsum s
       (fun n _ ↦ norm_nonneg (K.summand χ x n - K.summand χ.primitiveCharacter x n)) hs
   rw [← Finset.sum_sub_distrib]
-  exact
-    (norm_sum_le _ _).trans (ht.trans (triangular18_primitive_correction_norm_sum_le_precise χ hx))
+  exact (norm_sum_le _ _).trans (ht.trans (triangular18_primitive_correction_sum χ hx))
 
 /-- Under RH at positive scale and nonzero level, the finite principal sum
 through x has the level-one cutoff lower bound minus the exact level-prime budget.
@@ -94,14 +93,13 @@ theorem triangular18_finite_principal_comparison {q : ℕ} [NeZero q] (H : Subgr
     mul_le_mul_of_nonneg_left
       (triangular18_finite_principal_lower_of_rh (q := q) hGRH.riemann (zero_lt_one.trans_le hx))
       (Nat.cast_nonneg H.index)
-  exact hl.trans (triangular18_principal_sum_le_conductor_sum_numeric H hGRH hx hsmall)
+  exact hl.trans (triangular18_principal_numeric_GRH H hGRH hx hsmall)
 
 /-- Under GRH, nonzero level and x >= 1, a strict numerical alpha-18 gap
 implies an eligible prime outside the subgroup through x.
 Contradict the explicit finite comparison; the gap remains a separate numerical condition. -/
-theorem exists_prime_outside_subgroup_of_triangular18_gap {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ}
-    (hx : 1 ≤ x)
+theorem exists_prime_outside_of_triangular18_gap_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 ≤ x)
     (hgap :
       300000000 * Real.sqrt x + 1300000 * x ^ (1 / 4 : ℝ) +
           (36 + 4000000000000 * x ^ (-9 / 16 : ℝ)) * subgroupConductorLogSum H +
@@ -123,8 +121,7 @@ theorem exists_prime_outside_subgroup_of_triangular18_gap {q : ℕ} [NeZero q]
 error coefficient 1456 is nonpositive. Bound x^(1/4) by 15 and the cutoff
 mass by 72. This identifies a quantitative obstacle to using this budget
 at small scales, without making a claim about the actual arithmetic sum. -/
-theorem triangular18_cutoff_lower_budget_nonpos_of_le_40000 {x : ℝ} (hx : 0 < x)
-    (hsmall : x ≤ 40000) :
+theorem triangular18_lower_nonpos_of_le_40000 {x : ℝ} (hx : 0 < x) (hsmall : x ≤ 40000) :
     Real.sqrt x * (68 + 4 * Real.exp (-18)) - 1456 * x ^ (1 / 4 : ℝ) ≤ 0 := by
   have hb : x ≤ (15 : ℝ) ^ (4 : ℕ) :=
     hsmall.trans (by norm_num only : (40000 : ℝ) ≤ (15 : ℝ) ^ (4 : ℕ))

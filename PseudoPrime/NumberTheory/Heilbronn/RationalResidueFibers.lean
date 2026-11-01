@@ -146,8 +146,8 @@ theorem boundedRationalResidue_fiber_card_mul_modulus_le {M U : ℕ} (S : Finset
 cardinality times M is at most the index count times M+4U². Choose one residue
 per fraction and sum the proved fiber bounds. No injectivity of the residue
 family is required; this is the interface for finite multiplicative subgroups. -/
-theorem boundedRationalResidue_family_card_mul_modulus_le {ι : Type*} [Fintype ι] {M U : ℕ}
-    (S : Finset ℚ) (v : ι → ZMod M) (hS : ∀ q ∈ S, ∃ i, boundedRationalResidue M U q (v i)) :
+theorem rationalResidue_family_card_mul_modulus_le {ι : Type*} [Fintype ι] {M U : ℕ} (S : Finset ℚ)
+    (v : ι → ZMod M) (hS : ∀ q ∈ S, ∃ i, boundedRationalResidue M U q (v i)) :
     S.card * M ≤ Fintype.card ι * (M + 4 * U ^ 2) := by
   classical
   choose f hf using (fun q : S ↦ hS q.val q.property)

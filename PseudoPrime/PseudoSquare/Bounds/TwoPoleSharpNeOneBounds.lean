@@ -25,8 +25,8 @@ noncomputable def sharpSignedTwoPoleNeOneRadius (L : ℝ) : ℝ :=
 with non-one Jacobi value lies below the common two-pole radius at B. Apply the
 character theorem with ambient level 4B, including small input conductors, and
 convert the value by quadratic reciprocity. No lower bound on log n is required. -/
-theorem exists_odd_prime_ne_one_le_sharpSignedTwoPole_ambient {n B : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hnB : n ≤ B) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem exists_oddPrime_neOne_sharpSignedAmbient_GRH {n B : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hnB : n ≤ B) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : 1000 ≤ Real.log B) :
     ∃ p : ℕ,
       p.Prime ∧
@@ -73,12 +73,11 @@ theorem exists_odd_prime_ne_one_le_sharpSignedTwoPole_ambient {n B : ℕ} (hn : 
 /-- Under the same common-ambient assumptions, the least odd-prime non-one Jacobi
 witness for n is bounded by the two-pole radius at B. Apply leastness to the
 constructed prime. This is the input to the full finite-maximum theorem. -/
-theorem primeNeOneWitness_cast_le_sharpSignedTwoPole_ambient {n B : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hnB : n ≤ B) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem neOneWitness_cast_le_sharpSignedTwoPole_ambient {n B : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hnB : n ≤ B) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : 1000 ≤ Real.log B) (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤ sharpSignedTwoPoleNeOneRadius (Real.log B) := by
-  obtain ⟨p, hp, ho, hb, hv⟩ :=
-    exists_odd_prime_ne_one_le_sharpSignedTwoPole_ambient hn hns hnB hGRH hL
+  obtain ⟨p, hp, ho, hb, hv⟩ := exists_oddPrime_neOne_sharpSignedAmbient_GRH hn hns hnB hGRH hL
   exact (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hb
 
 /-- Under GRH with log B at least 1000, QNeOne(B) is bounded by the affine two-pole
@@ -91,7 +90,7 @@ theorem QNeOne_le_sharpSignedTwoPole {B : ℕ} (hL : 1000 ≤ Real.log B)
   intro n hn
   have ha := NumberTheory.mem_admissibleFinset_iff.mp hn
   exact
-    primeNeOneWitness_cast_le_sharpSignedTwoPole_ambient ha.odd ha.not_isSquare ha.le hGRH hL
+    neOneWitness_cast_le_sharpSignedTwoPole_ambient ha.odd ha.not_isSquare ha.le hGRH hL
       (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
         (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare ha.odd ha.not_isSquare))
 
@@ -111,12 +110,12 @@ theorem sharpSignedTwoPoleNeOneRadius_lt_log_square {L : ℝ} (hL : 1000 ≤ L) 
 /-- For odd nonsquare n under GRH with log n at least 1000, an odd prime non-one
 Jacobi witness lies below the affine two-pole radius at n. Specialize the common
 ambient endpoint to B=n. Character value zero remains an allowed witness. -/
-theorem exists_prime_ne_one_witness_le_sharpSignedTwoPole {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+theorem exists_neOneWitness_le_sharpSignedTwoPole {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 1000 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         Odd p ∧ (p : ℝ) ≤ sharpSignedTwoPoleNeOneRadius (Real.log n) ∧ jacobiSym n p ≠ 1 := by
-  exact exists_odd_prime_ne_one_le_sharpSignedTwoPole_ambient hn hns le_rfl hGRH hL
+  exact exists_oddPrime_neOne_sharpSignedAmbient_GRH hn hns le_rfl hGRH hL
 
 /-- Under the same pointwise assumptions, bound the least odd-prime non-one Jacobi
 witness by the affine two-pole radius. Specialize the common ambient leastness
@@ -125,6 +124,6 @@ theorem primeNeOneWitness_cast_le_sharpSignedTwoPole {n : ℕ} (hn : Odd n) (hns
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 1000 ≤ Real.log n)
     (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤ sharpSignedTwoPoleNeOneRadius (Real.log n) := by
-  exact primeNeOneWitness_cast_le_sharpSignedTwoPole_ambient hn hns le_rfl hGRH hL hw
+  exact neOneWitness_cast_le_sharpSignedTwoPole_ambient hn hns le_rfl hGRH hL hw
 
 end PseudoPrime.PseudoSquare

@@ -73,8 +73,7 @@ theorem exists_prime_witness_of_signed_prefix_gap {n Q : ℕ} (hn : 1 < n) (hnOd
     intro p hp hb
     by_contra hf
     exact hnone ⟨p, hp, hb, hf⟩
-  obtain ⟨H, hH, hHpass⟩ :=
-    PrimeTest.exists_proper_subgroup_containing_strongMillerRabinPass hn hnOdd hnComposite
+  obtain ⟨H, hH, hHpass⟩ := PrimeTest.exists_proper_subgroup_strongMR hn hnOdd hnComposite
   have hsmall :
     ∀ p : ℕ, p.Prime → (p : ℝ) ≤ (99 / 40 : ℝ) * x → NumberTheory.residueInSubgroup n H p :=
     fun p hp hpb ↦ hHpass (p : ZMod n) (hpass p hp hpb)
@@ -84,7 +83,7 @@ theorem exists_prime_witness_of_signed_prefix_gap {n Q : ℕ} (hn : 1 < n) (hnOd
       (fun p hp hpb ↦ hsmall p hp (hpb.trans hbX))
   have hr :=
     LLS.PaperStatements.gamma_ramp_subgroup_comparison H hx0 (fun p hp _ hpb ↦ hsmall p hp hpb)
-  have hz := commonFactorExponentialSum_eq_zero_of_prime_passes hn hnOdd hpass x
+  have hz := commonExpSum_zero_of_prime_passes hn hnOdd hpass x
   rw [hz, zero_div, mul_zero, add_zero] at hr
   have hi : (2 : ℝ) ≤ H.index := by exact_mod_cast Subgroup.one_lt_index_of_ne_top hH
   have hc :=
@@ -98,8 +97,8 @@ index at least four. If the signed-prefix budget is below one third of the
 index-four ramp-minus-principal margin, some prime through `99x/40` rejects
 the strong test. The subgroup is supplied so the analytic consumer can be
 reused for the index-four classification of odd composites. -/
-theorem exists_prime_witness_of_signed_prefix_gap_index_four {n : ℕ} [NeZero n] (hn : 1 < n)
-    (hnOdd : Odd n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hQ : 20000 ≤ n)
+theorem exists_prime_signedPrefix_indexFour_GRH {n : ℕ} [NeZero n] (hn : 1 < n) (hnOdd : Odd n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hQ : 20000 ≤ n)
     (H : Subgroup (ZMod n)ˣ) (hi : 4 ≤ H.index)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
@@ -130,7 +129,7 @@ theorem exists_prime_witness_of_signed_prefix_gap_index_four {n : ℕ} [NeZero n
   have hx0 : 0 < x := by linarith only [hx]
   have hr :=
     LLS.PaperStatements.gamma_ramp_subgroup_comparison H hx0 (fun p hp _ hpb ↦ hsmall p hp hpb)
-  have hz := commonFactorExponentialSum_eq_zero_of_prime_passes hn hnOdd hpass x
+  have hz := commonExpSum_zero_of_prime_passes hn hnOdd hpass x
   rw [hz, zero_div, mul_zero, add_zero] at hr
   have hidx : (4 : ℝ) ≤ H.index := by exact_mod_cast hi
   have hc :=
@@ -143,8 +142,8 @@ theorem exists_prime_witness_of_signed_prefix_gap_index_four {n : ℕ} [NeZero n
 pass-containing subgroup of index at least four. A signed-prefix gap below one
 third of the index-four ramp margin then yields a prime rejecting base through
 `99x/40`, with no subgroup-index hypothesis in the resulting interface. -/
-theorem exists_prime_witness_of_signed_prefix_gap_all_inputs {n : ℕ} [NeZero n] (hn : 1 < n)
-    (hnOdd : Odd n) (hnComposite : ¬n.Prime) (hn9 : n ≠ 9)
+theorem exists_prime_signedPrefix_allInputs_GRH {n : ℕ} [NeZero n] (hn : 1 < n) (hnOdd : Odd n)
+    (hnComposite : ¬n.Prime) (hn9 : n ≠ 9)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hQ : 20000 ≤ n) {x b : ℝ}
     (hx : 2 ≤ x) (hb : 0 ≤ b) (hbX : b ≤ (99 / 40 : ℝ) * x)
     (hgap :
@@ -156,11 +155,8 @@ theorem exists_prime_witness_of_signed_prefix_gap_all_inputs {n : ℕ} [NeZero n
           3) :
     ∃ p : ℕ,
       p.Prime ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
-  obtain ⟨H, hi, hHpass⟩ :=
-    PrimeTest.exists_index_ge_four_subgroup_containing_strongMillerRabinPass hn hnOdd hnComposite
-      hn9
-  exact
-    exists_prime_witness_of_signed_prefix_gap_index_four hn hnOdd hGRH hQ H hi hHpass hx hb hbX hgap
+  obtain ⟨H, hi, hHpass⟩ := PrimeTest.exists_index_four_subgroup_strongMR hn hnOdd hnComposite hn9
+  exact exists_prime_signedPrefix_indexFour_GRH hn hnOdd hGRH hQ H hi hHpass hx hb hbX hgap
 
 /-- For odd composite n>1, any common upper bound U for all nonprincipal
 primitive Gamma sums at positive x yields a prime MR witness through 99x/40
@@ -189,8 +185,7 @@ theorem exists_prime_witness_of_common_primitive_upper {n : ℕ} (hn : 1 < n) (h
     intro p hp hb
     by_contra hf
     exact hnone ⟨p, hp, hb, hf⟩
-  obtain ⟨H, hH, hHpass⟩ :=
-    PrimeTest.exists_proper_subgroup_containing_strongMillerRabinPass hn hnOdd hnComposite
+  obtain ⟨H, hH, hHpass⟩ := PrimeTest.exists_proper_subgroup_strongMR hn hnOdd hnComposite
   let F := fun χ : NumberTheory.subgroupAnnihilator H ↦
     (∑' k : ℕ, LLS.PaperStatements.gammaMellinKernel.summand χ.val.primitiveCharacter x k).re
   have h1 :
@@ -209,7 +204,7 @@ theorem exists_prime_witness_of_common_primitive_upper {n : ℕ} (hn : 1 < n) (h
   have hr :=
     LLS.PaperStatements.gamma_ramp_subgroup_comparison H hx
       (fun p hp _ hpb ↦ hHpass (p : ZMod n) (hpass p hp hpb))
-  have hz := commonFactorExponentialSum_eq_zero_of_prime_passes hn hnOdd hpass x
+  have hz := commonExpSum_zero_of_prime_passes hn hnOdd hpass x
   rw [hz, zero_div, mul_zero, add_zero] at hr
   have hi : (2 : ℝ) ≤ H.index := by exact_mod_cast Subgroup.one_lt_index_of_ne_top hH
   have hc :=

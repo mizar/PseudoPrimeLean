@@ -19,8 +19,8 @@ and a character equal to one on every prime at most `b`.
 Claim: the character defect of the whole finite Mangoldt-weighted sum vanishes.
 Proof: nonzero Mangoldt terms are prime powers; their base prime lies below the same bound.
 Role: preserve exact prime-power savings for every signed resolvent candidate. -/
-theorem finiteSigned_prefix_defect_eq_zero_of_prime_one {q : ℕ} (χ : DirichletCharacter ℂ q)
-    (l : List (ℚ × ℚ)) (B : Finset ℕ) {b : ℝ} (hB : ∀ k ∈ B, (k : ℝ) ≤ b)
+theorem signedPrefixDefect_zero_of_prime_one {q : ℕ} (χ : DirichletCharacter ℂ q) (l : List (ℚ × ℚ))
+    (B : Finset ℕ) {b : ℝ} (hB : ∀ k ∈ B, (k : ℝ) ≤ b)
     (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → χ p = 1) :
     (∑ k ∈ B, (1 - (χ k).re) * Analysis.finiteSignedMangoldtWeight l k) = 0 := by
   apply Finset.sum_eq_zero

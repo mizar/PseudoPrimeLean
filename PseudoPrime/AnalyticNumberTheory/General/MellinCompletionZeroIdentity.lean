@@ -97,8 +97,8 @@ difference of the paired completed and ordinary logarithmic integrals.
 Coefficient bounds and the reference-line identity establish the zero formula;
 absolute convergence and the right-line coefficient identity evaluate arithmetic.
 This retains the completion factors for their separate evaluation. -/
-theorem mellin_zero_sum_add_arithmetic_eq_integral_difference {F L : ℂ → ℂ} {ε : ℂ} {q d : ℕ}
-    (hq : 1 ≤ q) (k : ℤ) (κ : Fin d → ℂ) (hκ : ∀ j, -1 < (κ j).re)
+theorem mellin_explicit_formula_integral_difference {F L : ℂ → ℂ} {ε : ℂ} {q d : ℕ} (hq : 1 ≤ q)
+    (k : ℤ) (κ : Fin d → ℂ) (hκ : ∀ j, -1 < (κ j).re)
     (hreg :
       ∀ z,
         z ≠ 0 →
@@ -132,8 +132,8 @@ theorem mellin_zero_sum_add_arithmetic_eq_integral_difference {F L : ℂ → ℂ
             (∫ T : ℝ,
               star (logDeriv L (((2 : ℝ) : ℂ) + (-T) * Complex.I)) *
                 mellin (logarithmicTestWeight g) (((2 : ℝ) : ℂ) + T * Complex.I)))) := by
-  rw [mellin_zero_sum_eq_reflected_right_integrals_of_completion hq k κ hκ hreg hε hfe hright hF h0
-      horder ha hL hdL hlog g he hc hg,
+  rw [mellin_zero_sum_eq_reflected_integrals hq k κ hκ hreg hε hfe hright hF h0 horder ha hL hdL
+      hlog g he hc hg,
     paired_sqrt_sum_eq_neg_logDeriv_integrals L a ha0 g he hc hg 2 hs2 hlog2]
   simp only [Complex.real_smul, Complex.ofReal_neg, Complex.ofReal_div, Complex.ofReal_one,
     Complex.ofReal_mul, Complex.ofReal_ofNat]
@@ -146,8 +146,8 @@ term by functional reflection and of the ordinary dual term by conjugating
 coefficients. The proved integrated identities and integral subtraction then
 place both differences inside the integrals. The remaining integrands are the
 endpoint, conductor and gamma contributions of the completion. -/
-theorem mellin_zero_sum_add_arithmetic_eq_integrated_difference {F L : ℂ → ℂ} {ε : ℂ} {q d : ℕ}
-    (hq : 1 ≤ q) (k : ℤ) (κ : Fin d → ℂ) (hκ : ∀ j, -1 < (κ j).re)
+theorem mellin_explicit_formula_logDeriv_difference {F L : ℂ → ℂ} {ε : ℂ} {q d : ℕ} (hq : 1 ≤ q)
+    (k : ℤ) (κ : Fin d → ℂ) (hκ : ∀ j, -1 < (κ j).re)
     (hreg :
       ∀ z,
         z ≠ 0 →
@@ -185,8 +185,8 @@ theorem mellin_zero_sum_add_arithmetic_eq_integrated_difference {F L : ℂ → �
     integrable_paired_logDeriv_mellin_of_LSeries L a 2 (mellin (logarithmicTestWeight g)) hs2
       (verticalIntegrable_mellin_logarithmicTestWeight g he hc hg 2) hlog2
   simp only [sub_mul, MeasureTheory.integral_sub hFr hLr, MeasureTheory.integral_sub hFd hLd]
-  rw [mellin_zero_sum_add_arithmetic_eq_integral_difference hq k κ hκ hreg hε hfe hright hF h0
-      horder ha hL hdL hlog g he hc hg ha0 hs2 hlog2]
+  rw [mellin_explicit_formula_integral_difference hq k κ hκ hreg hε hfe hright hF h0 horder ha hL
+      hdL hlog g he hc hg ha0 hs2 hlog2]
   congr 1
   abel
 
@@ -196,8 +196,8 @@ between completed and ordinary logarithmic derivatives is exactly the
 endpoint, conductor and gamma contribution. Recover ordinary differentiability
 and nonvanishing from the completion product, then apply its logarithmic rule.
 This identifies the remaining integrands without extra ordinary-factor premises. -/
-theorem logDeriv_sub_eq_completionNonArithmetic_of_right {F L : ℂ → ℂ} {q d : ℕ} (hq : 1 ≤ q)
-    (k : ℤ) (κ : Fin d → ℂ) (hκ : ∀ j, -1 < (κ j).re)
+theorem logDeriv_sub_eq_nonArithmetic_of_re_gt_one {F L : ℂ → ℂ} {q d : ℕ} (hq : 1 ≤ q) (k : ℤ)
+    (κ : Fin d → ℂ) (hκ : ∀ j, -1 < (κ j).re)
     (hreg :
       ∀ z,
         z ≠ 0 →
@@ -222,8 +222,8 @@ non-arithmetic completion integrals. Substitute the right-half-plane
 completion decomposition into the proved integrated difference, retaining
 the reflected conjugate dual term. This isolates endpoint, conductor and
 gamma terms for evaluating the general explicit formula. -/
-theorem mellin_zero_sum_add_arithmetic_eq_nonArithmetic_integrals {F L : ℂ → ℂ} {ε : ℂ} {q d : ℕ}
-    (hq : 1 ≤ q) (k : ℤ) (κ : Fin d → ℂ) (hκ : ∀ j, -1 < (κ j).re)
+theorem mellin_explicit_formula_nonArithmetic {F L : ℂ → ℂ} {ε : ℂ} {q d : ℕ} (hq : 1 ≤ q) (k : ℤ)
+    (κ : Fin d → ℂ) (hκ : ∀ j, -1 < (κ j).re)
     (hreg :
       ∀ z,
         z ≠ 0 →
@@ -254,8 +254,8 @@ theorem mellin_zero_sum_add_arithmetic_eq_nonArithmetic_integrals {F L : ℂ →
                 (completionNonArithmeticLogDerivative q k (archimedeanGammaFactor κ)
                   (((2 : ℝ) : ℂ) + (-T) * Complex.I)) *
               mellin (logarithmicTestWeight g) (((2 : ℝ) : ℂ) + T * Complex.I))) := by
-  rw [mellin_zero_sum_add_arithmetic_eq_integrated_difference hq k κ hκ hreg hε hfe hright hF h0
-      horder ha hL hdL hlog g he hc hg ha0 hs2 hlog2]
+  rw [mellin_explicit_formula_logDeriv_difference hq k κ hκ hreg hε hfe hright hF h0 horder ha hL
+      hdL hlog g he hc hg ha0 hs2 hlog2]
   have hre : ∀ T : ℝ, 1 < ((((2 : ℝ) : ℂ) + T * Complex.I)).re := by
     intro T
     simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.ofReal_im, Complex.I_re,
@@ -267,15 +267,14 @@ theorem mellin_zero_sum_add_arithmetic_eq_nonArithmetic_integrals {F L : ℂ →
     exact
       MeasureTheory.ae_of_all _ fun T ↦ by
         dsimp only
-        rw [logDeriv_sub_eq_completionNonArithmetic_of_right hq k κ hκ hreg hF hright (hre T)]
+        rw [logDeriv_sub_eq_nonArithmetic_of_re_gt_one hq k κ hκ hreg hF hright (hre T)]
   · apply MeasureTheory.integral_congr_ae
     exact
       MeasureTheory.ae_of_all _ fun T ↦ by
         dsimp only
         have hs : 1 < ((((2 : ℝ) : ℂ) + (-T) * Complex.I)).re := by
           simpa only [Complex.ofReal_neg] using hre (-T)
-        rw [← star_sub,
-          logDeriv_sub_eq_completionNonArithmetic_of_right hq k κ hκ hreg hF hright hs]
+        rw [← star_sub, logDeriv_sub_eq_nonArithmetic_of_re_gt_one hq k κ hκ hreg hF hright hs]
 
 /-- For the entire order-one completion and convergent coefficient data,
 both the original and reflected dual non-arithmetic Mellin integrands are
@@ -330,8 +329,7 @@ theorem integrable_paired_nonArithmetic_of_completion {F L : ℂ → ℂ} {ε : 
     exact
       MeasureTheory.ae_of_all _ fun T ↦ by
         dsimp only [Pi.sub_apply]
-        rw [← sub_mul,
-          logDeriv_sub_eq_completionNonArithmetic_of_right hq k κ hκ hreg hF hright (hre T)]
+        rw [← sub_mul, logDeriv_sub_eq_nonArithmetic_of_re_gt_one hq k κ hκ hreg hF hright (hre T)]
   · apply (hFd.sub hLd).congr
     exact
       MeasureTheory.ae_of_all _ fun T ↦ by
@@ -339,7 +337,7 @@ theorem integrable_paired_nonArithmetic_of_completion {F L : ℂ → ℂ} {ε : 
         have hs : 1 < ((((2 : ℝ) : ℂ) + (-T) * Complex.I)).re := by
           simpa only [Complex.ofReal_neg] using hre (-T)
         rw [← sub_mul, ← star_sub,
-          logDeriv_sub_eq_completionNonArithmetic_of_right hq k κ hκ hreg hF hright hs]
+          logDeriv_sub_eq_nonArithmetic_of_re_gt_one hq k κ hκ hreg hF hright hs]
 
 /-- For the proved completion and coefficient hypotheses, the zero sum plus
 the positive-index arithmetic sum equals log(q)*g(0) plus the paired completion
@@ -348,8 +346,8 @@ integrability statements, subtract and evaluate their constants by Mellin
 inversion, and use reality of the natural conductor logarithm.
 The remainders contain only endpoint regularization and gamma terms,
 which must still be evaluated to obtain the general explicit formula. -/
-theorem mellin_zero_sum_add_arithmetic_eq_conductor_add_remainder {F L : ℂ → ℂ} {ε : ℂ} {q d : ℕ}
-    (hq : 1 ≤ q) (k : ℤ) (κ : Fin d → ℂ) (hκ : ∀ j, -1 < (κ j).re)
+theorem mellin_explicit_formula_conductor_remainder {F L : ℂ → ℂ} {ε : ℂ} {q d : ℕ} (hq : 1 ≤ q)
+    (k : ℤ) (κ : Fin d → ℂ) (hκ : ∀ j, -1 < (κ j).re)
     (hreg :
       ∀ z,
         z ≠ 0 →
@@ -386,9 +384,9 @@ theorem mellin_zero_sum_add_arithmetic_eq_conductor_add_remainder {F L : ℂ →
   obtain ⟨hi, hd⟩ :=
     integrable_paired_nonArithmetic_of_completion hq k κ hκ hreg hε hfe hright hF h0 horder ha hL
       hdL hlog g he hc hg hs2 hlog2
-  rw [mellin_zero_sum_add_arithmetic_eq_nonArithmetic_integrals hq k κ hκ hreg hε hfe hright hF h0
-      horder ha hL hdL hlog g he hc hg ha0 hs2 hlog2,
-    normalized_integral_paired_eq_const_add_remainder
+  rw [mellin_explicit_formula_nonArithmetic hq k κ hκ hreg hε hfe hright hF h0 horder ha hL hdL hlog
+      g he hc hg ha0 hs2 hlog2,
+    pairedIntegral_const_remainder
       (completionNonArithmeticLogDerivative q k (archimedeanGammaFactor κ))
       (Complex.log (q : ℂ) / 2) g he hc hg 2 hi hd]
   have hqlog : Complex.log (q : ℂ) = ((Real.log q : ℝ) : ℂ) := by

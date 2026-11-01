@@ -23,7 +23,7 @@ the conductor-free comparison with any certified prefix error C yields
 a non-one prime below (4/5)L² for L ≥ 30000 when the explicit scalar
 budget is at most L/795. All actual sums and errors are retained before
 the strict main gap is applied. This is the reusable prefix-profile theorem. -/
-theorem exists_odd_prime_ne_one_of_conductor_free_prefix_profile {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+theorem exists_oddPrime_neOne_conductorFree_GRH {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
     (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (h2 : 2 ∣ q)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L : ℝ} (hL : 30000 ≤ L)
     (hlogq : Real.log q ≤ L + 7 / 5) (prefixLen : ℕ) {C : ℝ}
@@ -54,8 +54,7 @@ theorem exists_odd_prime_ne_one_of_conductor_free_prefix_profile {q : ℕ} [NeZe
   have hT := gamma_ramp_sum_lower_variable hGRH.riemann hx1
   have hmain := Analysis.nonOne_main_term_gap hL0
   have hnp :=
-    PaperStatements.gamma_primitiveCharacter_sum_re_le_conductor_free_prefix hq χ hne hGRH hx
-      prefixLen hC
+    PaperStatements.gammaCharacterSum_re_le_conductor_free_prefix hq χ hne hGRH hx prefixLen hC
   have hactual :
     (∑' k : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re +
         (∑' k : ℕ, PaperStatements.gammaMellinKernel.summand χ.primitiveCharacter x k).re +
@@ -84,7 +83,7 @@ theorem exists_odd_prime_ne_one_of_gamma_log_30000 {q : ℕ} [NeZero q] (hq : 20
     (hlogq : Real.log q ≤ L + 7 / 5) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * L ^ 2 ∧ χ p ≠ 1 := by
   exact
-    exists_odd_prime_ne_one_of_conductor_free_prefix_profile hq χ hquad hne h2 hGRH hL hlogq 32
+    exists_oddPrime_neOne_conductorFree_GRH hq χ hquad hne h2 hGRH hL hlogq 32
       Analysis.gammaResolvent_thirtyTwo_error_lt (by linarith only [hL])
 
 /-- Under GRH, a nonprincipal quadratic character at even level q ≥ 20000

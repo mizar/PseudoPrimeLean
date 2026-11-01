@@ -130,17 +130,17 @@ theorem exists_prime_neg_one_of_finite_excluded_taper {q N : ℕ} [NeZero q] (hq
         0) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ x ∧ Nat.Coprime p N ∧ χ p = -1 := by
   have hb := quadraticEndpointBudget_le_sub_log_two q hN2 (by linarith only [hx] : 2 ≤ x) hC
-  apply exists_odd_prime_neg_one_of_quadratic_excluded_budget hq hqN hN2 hGRH hp hne hquad hx
+  apply exists_oddPrime_negOne_excluded_GRH hq hqN hN2 hGRH hp hne hquad hx
   linarith only [hb, hsep]
 
 /-- Off prime powers, the untapered endpoint weight vanishes. Both Mangoldt
 terms vanish. This supplies the support condition for the generic prime-factor
 budget and keeps certification in the prime variable rather than in input moduli. -/
-theorem untaperedExcludedEndpointWeight_eq_zero_of_not_primePow (x : ℝ) {n : ℕ}
-    (hn : ¬IsPrimePow n) : untaperedExcludedEndpointWeight x n = 0 := by
+theorem untaperedEndpointWeight_zero_of_not_primePow (x : ℝ) {n : ℕ} (hn : ¬IsPrimePow n) :
+    untaperedExcludedEndpointWeight x n = 0 := by
   dsimp only [untaperedExcludedEndpointWeight]
   rw [ArithmeticFunction.vonMangoldt_eq_zero_iff.mpr hn,
-    AnalyticNumberTheory.Arithmetic.logWeightedMangoldtTerm_eq_zero_of_not_primePow hn]
+    AnalyticNumberTheory.Arithmetic.logMangoldtTerm_eq_zero_of_not_primePow hn]
   simp only [zero_div, mul_zero, add_zero]
 
 open AnalyticNumberTheory.Arithmetic in
@@ -149,7 +149,7 @@ x>=64 and a nonnegative logarithmic tail rate, a prime-budget upper bound on
 the untapered weight with the retained log-two saving yields an odd negative
 N-coprime prime. Apply the generic prime-factor budget before subtracting the
 finite taper contribution. Tail and exceptional costs remain explicit obligations. -/
-theorem exists_prime_neg_one_of_finite_taper_prime_budget {q N : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem exists_negOnePrime_of_finite_taper_prime_budget {q N : ℕ} [NeZero q] (hq : 2 ≤ q)
     (hN : N ≠ 0) (hqN : q ∣ N) (hN2 : 2 ∣ N) {χ : DirichletCharacter ℂ q}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hquad : χ.IsQuadratic) {x : ℝ} (hx : 64 ≤ x) (T : Finset ℕ) {a : ℝ} (ha : 0 ≤ a)
@@ -169,7 +169,7 @@ theorem exists_prime_neg_one_of_finite_taper_prime_budget {q N : ℕ} [NeZero q]
   have hb :=
     quadraticExcludedBudget_le_primeBudget hN q (by linarith only [hx] : 0 ≤ x)
       (untaperedExcludedEndpointWeight x)
-      (fun _ hn ↦ untaperedExcludedEndpointWeight_eq_zero_of_not_primePow x hn) T ha htail
+      (fun _ hn ↦ untaperedEndpointWeight_zero_of_not_primePow x hn) T ha htail
   exact
     exists_prime_neg_one_of_finite_excluded_taper hq hqN hN2 hGRH hp hne hquad hx hb
       (by linarith only [hsep])
@@ -180,8 +180,8 @@ untapered budget C and any lower structural Mangoldt budget m yield an odd
 negative N-coprime prime when their retained-taper separation is negative.
 Use the exact budget identity and coefficient positivity. Taking m equal to
 the full Mangoldt budget retains every excluded prime-power contribution. -/
-theorem exists_prime_neg_one_of_finite_taper_mangoldt_budget {q N : ℕ} [NeZero q] (hq : 2 ≤ q)
-    (hqN : q ∣ N) (hN2 : 2 ∣ N) {χ : DirichletCharacter ℂ q}
+theorem exists_negOnePrime_taperMangoldt_GRH {q N : ℕ} [NeZero q] (hq : 2 ≤ q) (hqN : q ∣ N)
+    (hN2 : 2 ∣ N) {χ : DirichletCharacter ℂ q}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hquad : χ.IsQuadratic) {x C m : ℝ} (hx : 64 ≤ x)
     (hC : quadraticExcludedBudget q N (Finset.Ioc 0 ⌊x⌋₊) (untaperedExcludedEndpointWeight x) ≤ C)
@@ -192,7 +192,7 @@ theorem exists_prime_neg_one_of_finite_taper_mangoldt_budget {q N : ℕ} [NeZero
   have hs :=
     mul_le_mul_of_nonneg_left hm
       (div_nonneg (excludedReciprocalCoefficient_pos hx1).le (zero_lt_one.trans hx1).le)
-  apply exists_odd_prime_neg_one_of_quadratic_excluded_budget hq hqN hN2 hGRH hp hne hquad hx
+  apply exists_oddPrime_negOne_excluded_GRH hq hqN hN2 hGRH hp hne hquad hx
   rw [quadraticEndpointBudget_eq_untapered_sub]
   linarith only [hs, hC, hsep]
 

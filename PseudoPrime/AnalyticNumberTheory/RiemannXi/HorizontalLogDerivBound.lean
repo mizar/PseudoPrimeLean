@@ -91,7 +91,7 @@ theorem exists_norm_logDeriv_le_pole_gamma_zeta :
             riemannZeta ((σ : ℂ) + T * Complex.I) ≠ 0 →
             ‖logDeriv riemannXi ((σ : ℂ) + T * Complex.I)‖ ≤
               1 + C * (T + 1) + ‖logDeriv riemannZeta ((σ : ℂ) + T * Complex.I)‖ := by
-  obtain ⟨C, hC, hg⟩ := DirichletLFunction.exists_norm_logDeriv_gammaFactor_fixed_strip_le 3
+  obtain ⟨C, hC, hg⟩ := DirichletLFunction.gammaLogDeriv_fixed_strip_bound 3
   exact ⟨C, hC, norm_logDeriv_le_pole_gamma_zeta C (hg (1 : DirichletCharacter ℂ 1))⟩
 
 /-- At zeta good heights, a uniform bound for ξ consists of a linear gamma term and

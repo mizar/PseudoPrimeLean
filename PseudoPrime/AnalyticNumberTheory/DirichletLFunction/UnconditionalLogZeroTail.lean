@@ -20,8 +20,8 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 at least one, the half-scale zero term is bounded by `4x` times divisor multiplicity
 over the quadratic ordinate weight. Subtract the two full-scale terms and compare
 norm square with ordinate square. This gives an unconditional high-zero majorant. -/
-theorem norm_completedLogHalfZeroTerm_le_quadratic_unconditionally {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hne : χ ≠ 1) {x : ℝ} (hx : 2 ≤ x) {ρ : ℂ} (hρ : 1 ≤ |ρ.im|) :
+theorem logHalfZeroTerm_quadratic_bound {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hne : χ ≠ 1) {x : ℝ} (hx : 2 ≤ x) {ρ : ℂ} (hρ : 1 ≤ |ρ.im|) :
     ‖completedLogHalfZeroTerm χ x ρ‖ ≤
       4 * x * (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) / (1 + ρ.im ^ 2) := by
   let D : ℝ := MeromorphicOn.divisor χ.completedLFunction Set.univ ρ
@@ -41,9 +41,8 @@ theorem norm_completedLogHalfZeroTerm_le_quadratic_unconditionally {q : ℕ} [Ne
     have h1 := mul_nonneg hD (by linarith only [hi] : 0 ≤ ρ.im ^ 2 - 1)
     have h2 := mul_nonneg hD (sq_nonneg ρ.re)
     nlinarith only [h1, h2]
-  have hfirst := norm_completedLogZeroTerm_le_unconditionally hne (by linarith only [hx] : 1 ≤ x) ρ
-  have hsecond :=
-    norm_completedLogZeroTerm_le_unconditionally hne (by linarith only [hx] : 1 ≤ x / 2) ρ
+  have hfirst := norm_logZeroTerm_le_unconditionally hne (by linarith only [hx] : 1 ≤ x) ρ
+  have hsecond := norm_logZeroTerm_le_unconditionally hne (by linarith only [hx] : 1 ≤ x / 2) ρ
   have hx0 : 0 ≤ x := by linarith only [hx]
   rw [completedLogHalfZeroTerm_eq_sub χ hx0]
   have hr := mul_le_mul_of_nonneg_left hratio hx0
@@ -61,8 +60,8 @@ theorem norm_completedLogHalfZeroTerm_le_quadratic_unconditionally {q : ℕ} [Ne
 absolute height one has an explicit quadratic-weight bound. The scale is at least
 two and the character is nonprincipal. Compare each zero term with its bin weight
 and sum multiplicities; this is the finite-bin input to the high-zero tail. -/
-theorem sum_norm_completedLogHalfZeroTerm_bin_unconditionally {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hne : χ ≠ 1) {K x : ℝ} (hx : 2 ≤ x)
+theorem logHalfZeroTerm_bin_sum_bound {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hne : χ ≠ 1)
+    {K x : ℝ} (hx : 2 ≤ x)
     (hcount :
       ∀ (t : ℝ) (S : Finset ℂ),
         (∀ ρ ∈ S, |ρ.im - t| ≤ 1) →
@@ -93,7 +92,7 @@ theorem sum_norm_completedLogHalfZeroTerm_bin_unconditionally {q : ℕ} [NeZero 
     have hf := mul_le_mul_of_nonneg_right hratio (mul_nonneg hx0 hD)
     calc
       _ ≤ 4 * x * (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) / (1 + ρ.im ^ 2) :=
-        norm_completedLogHalfZeroTerm_le_quadratic_unconditionally hne hx (hh ρ hρ)
+        logHalfZeroTerm_quadratic_bound hne hx (hh ρ hρ)
       _ ≤ _ := by convert hf using 1 <;> ring
   calc
     _ ≤
@@ -113,8 +112,8 @@ theorem sum_norm_completedLogHalfZeroTerm_bin_unconditionally {q : ℕ} [NeZero 
 a positive local multiplicity constant gives an explicit high-zero finite-sum bound.
 Partition by integer ordinate bins and sum the inverse-quadratic and logarithmic
 tails. Multiplicities and both signs of the ordinate are retained. -/
-theorem sum_norm_completedLogHalfZeroTerm_tail_unconditionally {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hne : χ ≠ 1) {K x : ℝ} (hK : 0 < K) (hx : 2 ≤ x)
+theorem logHalfZeroTerm_tail_sum_bound {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hne : χ ≠ 1) {K x : ℝ} (hK : 0 < K) (hx : 2 ≤ x)
     (hcount :
       ∀ (t : ℝ) (S : Finset ℂ),
         (∀ ρ ∈ S, |ρ.im - t| ≤ 1) →
@@ -157,9 +156,7 @@ theorem sum_norm_completedLogHalfZeroTerm_tail_unconditionally {q : ℕ} [NeZero
         (12 * x * K / (1 + (k : ℝ) ^ 2)) * (Real.log q + (Real.log (4 + |(k : ℝ)|) + 1)) := by
     intro k hk
     rw [← add_assoc]
-    apply
-      sum_norm_completedLogHalfZeroTerm_bin_unconditionally hne hx hcount k
-        (S.filter (fun ρ ↦ (⌊ρ.im⌋ : ℤ) = k))
+    apply logHalfZeroTerm_bin_sum_bound hne hx hcount k (S.filter (fun ρ ↦ (⌊ρ.im⌋ : ℤ) = k))
     · intro ρ hρ
       exact (Finset.mem_filter.mp hρ).2
     · intro ρ hρ
@@ -216,7 +213,7 @@ zero tail for every primitive nonprincipal character and its nonprincipal invers
 For moduli and scales at least two, the bound decays as logarithmic height over
 height. Apply the unconditional local count to finite filtered sums and pass to
 the nonnegative tsum. This discharges the local counting input without RH. -/
-theorem exists_tsum_norm_completedLogHalfZeroTerm_tail_bound_unconditionally :
+theorem logHalfZeroTerm_tail_tsum_bound :
     ∃ K : ℝ,
       0 < K ∧
         ∀ (q : ℕ) [NeZero q],
@@ -233,14 +230,14 @@ theorem exists_tsum_norm_completedLogHalfZeroTerm_tail_bound_unconditionally :
                             if (H + 1 : ℕ) ≤ |ρ.im| then ‖completedLogHalfZeroTerm χ x ρ‖ else 0) ≤
                           24 * x * K * Real.log q / ((H - 1 : ℕ) : ℝ) +
                             192 * x * K * (Real.log ((H + 3 : ℕ) : ℝ) + 2) / (H + 3) := by
-  obtain ⟨K, hK, hcount⟩ := exists_uniform_local_zeroMultiplicity_bound_unconditionally
+  obtain ⟨K, hK, hcount⟩ := uniform_localMultiplicity_bound
   refine ⟨K, hK, ?_⟩
   intro q _ hq χ hp hne hinv x hx H hH
   apply Real.tsum_le_of_sum_le (fun ρ ↦ ite_nonneg (norm_nonneg _) le_rfl)
   intro S
   have hs :=
-    sum_norm_completedLogHalfZeroTerm_tail_unconditionally hq hne hK hx (hcount q hq χ hp hne hinv)
-      H hH (S.filter (fun ρ ↦ (H + 1 : ℕ) ≤ |ρ.im|)) (fun ρ hρ ↦ (Finset.mem_filter.mp hρ).2)
+    logHalfZeroTerm_tail_sum_bound hq hne hK hx (hcount q hq χ hp hne hinv) H hH
+      (S.filter (fun ρ ↦ (H + 1 : ℕ) ≤ |ρ.im|)) (fun ρ hρ ↦ (Finset.mem_filter.mp hρ).2)
   simpa only [Finset.sum_filter] using hs
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

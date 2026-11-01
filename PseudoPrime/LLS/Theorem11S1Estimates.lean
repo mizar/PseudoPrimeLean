@@ -46,7 +46,7 @@ theorem llsPart1PrimitiveWeightedUpperAt_of_grh_generic {q : ℕ} [NeZero q]
     exact inv_eq_one.mp hinvone
   have hN2 : 2 ≤ χ.conductor := by
     have hN1 : χ.conductor ≠ 1 :=
-      AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hprimne
+      AnalyticNumberTheory.DirichletLFunction.character_level_ne_one_of_ne_one hprimne
     have hNpos : 0 < χ.conductor := NeZero.pos χ.conductor
     exact Nat.succ_le_iff.mpr (Nat.lt_of_le_of_ne hNpos (Ne.symm hN1))
   have hy : (8 : ℝ) < llsTheorem11S1RadiusRoot q := eight_lt_llsTheorem11S1RadiusRoot hq
@@ -70,8 +70,8 @@ Content: specialize `primitiveReciprocalRaw` at `x = y²`, with `y` the Part 1 r
 and rewrite `sqrt (y²) = y`.
 Role: supplies the raw reciprocal bound before exact level/conductor absorption.
 -/
-theorem llsPart1PrimitiveReciprocalExplicitFormulaRawAt_of_grh_generic {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hq : 3000 ≤ q) (hne : χ ≠ 1)
+theorem part1PrimitiveReciprocalRaw_of_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    [NeZero χ.conductor] (hq : 3000 ≤ q) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     LLSPart1PrimitiveReciprocalExplicitFormulaRawAt χ
       |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| := by
@@ -97,7 +97,7 @@ theorem llsPart1PrimitiveReciprocalExplicitFormulaRawAt_of_grh_generic {q : ℕ}
       (show 2 ≤ χ.conductor
         by
         have hN1 : χ.conductor ≠ 1 :=
-          AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hprimne
+          AnalyticNumberTheory.DirichletLFunction.character_level_ne_one_of_ne_one hprimne
         have hNpos : 0 < χ.conductor := NeZero.pos χ.conductor
         exact Nat.succ_le_iff.mpr (Nat.lt_of_le_of_ne hNpos (Ne.symm hN1)))
       hGRH hprimitive hprimne hinv hx64
@@ -150,16 +150,16 @@ GRH and the Riemann reciprocal lower bound give the full-level raw zero-mass est
 Combine the generic reciprocal formula with the exact level-change lower bound, then absorb
 its signed correction into the conductor logarithm. This eliminates the quotient loss.
 -/
-theorem llsPart1PrimitiveZeroMassFullLevelRawAt_of_grh_generic {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hq : 3000 ≤ q) (hne : χ ≠ 1)
+theorem part1ZeroMassFullLevelRaw_of_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    [NeZero χ.conductor] (hq : 3000 ≤ q) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (h24 : LLSRiemannReciprocalLowerBound) (hsmall : llsTheorem11S1NoSmallPrime χ) :
     LLSPart1PrimitiveZeroMassFullLevelRawAt χ
       |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| := by
-  have hraw := llsPart1PrimitiveReciprocalExplicitFormulaRawAt_of_grh_generic χ hq hne hGRH
+  have hraw := part1PrimitiveReciprocalRaw_of_GRH χ hq hne hGRH
   unfold LLSPart1PrimitiveReciprocalExplicitFormulaRawAt at hraw
-  have hlevelchange := llsPart1PrimitiveReciprocalLowerWithLevelChangeAt_of_riemann h24 χ hq hsmall
-  rw [LLSPart1PrimitiveReciprocalLowerWithLevelChangeAt] at hlevelchange
+  have hlevelchange := part1ReciprocalLevelChange_of_riemann h24 χ hq hsmall
+  rw [Part1ReciprocalLevelChangeLower] at hlevelchange
   have hy : (8 : ℝ) < llsTheorem11S1RadiusRoot q := eight_lt_llsTheorem11S1RadiusRoot hq
   have hx2 : (2 : ℝ) ≤ (llsTheorem11S1RadiusRoot q) ^ 2 := by
     have h64 := Analysis.sq_ge_64_of_ge_8 hy.le
@@ -228,7 +228,7 @@ The generic full-level logarithmic upper bound.  This combines the generic log w
 the generic reciprocal zero-mass raw bound, the exact primitive/level identity, and the generic
 logarithmic conductor absorption without any quadratic hypothesis.
 -/
-theorem characterLogWeightedSum_re_le_fullLevel_of_grh_generic {q : ℕ} [NeZero q]
+theorem characterLogSum_re_le_fullLevel_of_grh_generic {q : ℕ} [NeZero q]
     (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hq : 3000 ≤ q) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (h24 : LLSRiemannReciprocalLowerBound) (hsmall : llsTheorem11S1NoSmallPrime χ) :
@@ -236,11 +236,9 @@ theorem characterLogWeightedSum_re_le_fullLevel_of_grh_generic {q : ℕ} [NeZero
       llsPart1PrimitiveFullLevelUpperBound q := by
   have hweighted := llsPart1PrimitiveWeightedUpperAt_of_grh_generic χ hq hne hGRH
   unfold LLSPart1PrimitiveWeightedUpperAt at hweighted
-  have hzeromass := llsPart1PrimitiveZeroMassFullLevelRawAt_of_grh_generic χ hq hne hGRH h24 hsmall
+  have hzeromass := part1ZeroMassFullLevelRaw_of_GRH χ hq hne hGRH h24 hsmall
   unfold LLSPart1PrimitiveZeroMassFullLevelRawAt at hzeromass
-  have hexact :=
-    characterLogWeightedSum_re_primitive_eq_add_levelChangeCorrection
-      ((llsTheorem11S1RadiusRoot q) ^ 2) χ
+  have hexact := characterLogSum_re_primitive_eq_add ((llsTheorem11S1RadiusRoot q) ^ 2) χ
   have hy8 : (8 : ℝ) < llsTheorem11S1RadiusRoot q := eight_lt_llsTheorem11S1RadiusRoot hq
   have hypos : (0 : ℝ) < llsTheorem11S1RadiusRoot q := lt_trans (by norm_num only) hy8
   have hqd : q / χ.conductor ≠ 0 := by
@@ -410,15 +408,15 @@ The exact generic full-level logarithmic estimate now consumes the existing nume
 The intermediate expressions depend only on the level; the proved coarsening bridge supplies
 the standard Part 1 upper bound without a quotient slack hypothesis.
 -/
-theorem characterLogWeightedSum_re_le_upper_of_grh_generic {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hq : 3000 ≤ q) (hne : χ ≠ 1)
+theorem characterLogSum_re_le_upper_of_grh_generic {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    [NeZero χ.conductor] (hq : 3000 ≤ q) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (h24 : LLSRiemannReciprocalLowerBound) (hsmall : llsTheorem11S1NoSmallPrime χ) :
     (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum ((llsTheorem11S1RadiusRoot q) ^ 2)
           χ).re ≤
       llsTheorem11S1UpperBound q := by
-  have hfull := characterLogWeightedSum_re_le_fullLevel_of_grh_generic χ hq hne hGRH h24 hsmall
-  have hcoarse := llsPart1PrimitiveFullLevelUpperBound_le_fullLevel hq
+  have hfull := characterLogSum_re_le_fullLevel_of_grh_generic χ hq hne hGRH h24 hsmall
+  have hcoarse := part1PrimitiveFullLevel_le_fullLevel hq
   have hinter := llsPart1FullLevelUpperBound_le_intermediate hq
   have hupper := llsPart1IntermediateUpperBound_le_upper hq
   exact hfull.trans (hcoarse.trans (hinter.trans hupper))
@@ -428,8 +426,8 @@ Coefficient bridge for the quotient raw interface.  It isolates the only extra n
 needed beyond the reciprocal explicit formula: the max-defined auxiliary term must equal its
 untruncated expression (which may be zero), and `log(conductor/π)` must be nonnegative.
 -/
-theorem llsPart1PrimitiveZeroMassRawUpperWithQuotientAt_of_explicit {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (b : ℝ) (hq : 3000 ≤ q)
+theorem part1ZeroMassRawQuotient_of_explicit {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    [NeZero χ.conductor] (b : ℝ) (hq : 3000 ≤ q)
     (hraw : LLSPart1PrimitiveReciprocalExplicitFormulaRawAt χ b)
     (hlower : LLSPart1PrimitiveReciprocalLowerAtWithQuotient χ)
     (haux :
@@ -649,16 +647,16 @@ theorem llsPart1PrimitiveZeroMassRawUpperWithQuotientAt_of_explicit {q : ℕ} [N
 Conductor-specialized wrapper for the generic quotient raw bridge.  It removes the conductor-log
 sign hypothesis from the caller; only the auxiliary-term branch condition remains explicit.
 -/
-theorem llsPart1PrimitiveZeroMassRawUpperWithQuotientAt_of_explicit_of_conductor_ge_four {q : ℕ}
-    [NeZero q] (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (b : ℝ) (hq : 3000 ≤ q)
-    (hconductor : 4 ≤ χ.conductor) (hraw : LLSPart1PrimitiveReciprocalExplicitFormulaRawAt χ b)
+theorem part1ZeroMassRawQuotient_conductor_ge_four {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    [NeZero χ.conductor] (b : ℝ) (hq : 3000 ≤ q) (hconductor : 4 ≤ χ.conductor)
+    (hraw : LLSPart1PrimitiveReciprocalExplicitFormulaRawAt χ b)
     (hlower : LLSPart1PrimitiveReciprocalLowerAtWithQuotient χ)
     (haux :
       llsAuxiliaryTerm q ≤
         2 * Real.log (Real.log q) - 8 / 5 - AnalyticNumberTheory.Arithmetic.primeFactorLogSum q) :
     LLSPart1PrimitiveZeroMassRawUpperWithQuotientAt χ b := by
   exact
-    llsPart1PrimitiveZeroMassRawUpperWithQuotientAt_of_explicit χ b hq hraw hlower haux
+    part1ZeroMassRawQuotient_of_explicit χ b hq hraw hlower haux
       (AnalyticNumberTheory.Arithmetic.log_conductor_div_pi_nonneg_of_four_le hconductor)
 
 /--
@@ -666,7 +664,7 @@ Restricted raw shared-witness core for the branch where both numerical side cond
 available.  Keeping these conditions in the interface makes the remaining conductor-two/three
 and auxiliary-max branches explicit rather than silently assuming them.
 -/
-def LLSPart1PrimitiveRawCoreBoundsWithQuotientOfLargeConductor : Prop :=
+def Part1RawCoreQuotientLargeConductor : Prop :=
   ∀ (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q),
     3000 ≤ q →
       χ ≠ 1 →
@@ -684,21 +682,20 @@ def LLSPart1PrimitiveRawCoreBoundsWithQuotientOfLargeConductor : Prop :=
 The generic analytic estimates construct the restricted quotient raw core with the same
 `|PseudoPrime.AnalyticNumberTheory.DirichletLFunction.primitiveBRe|` witness.
 -/
-theorem llsPart1PrimitiveRawCoreBoundsWithQuotientOfLargeConductor_of_grh_generic
+theorem part1RawCoreQuotientLargeConductor_of_GRH
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (h24 : LLSRiemannReciprocalLowerBound) :
-    LLSPart1PrimitiveRawCoreBoundsWithQuotientOfLargeConductor := by
+    (h24 : LLSRiemannReciprocalLowerBound) : Part1RawCoreQuotientLargeConductor := by
   intro q _ χ hq hne hsmall hconductor haux
   let _ : NeZero χ.conductor := ⟨χ.conductor_ne_zero⟩
   refine
     ⟨|AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter|, abs_nonneg _, ?_,
       ?_, ?_⟩
   · exact llsPart1PrimitiveWeightedUpperAt_of_grh_generic χ hq hne hGRH
-  · exact llsPart1PrimitiveReciprocalLowerAtWithQuotient_of_riemann h24 χ hq hsmall
-  · have hraw := llsPart1PrimitiveReciprocalExplicitFormulaRawAt_of_grh_generic χ hq hne hGRH
-    have hlower := llsPart1PrimitiveReciprocalLowerAtWithQuotient_of_riemann h24 χ hq hsmall
+  · exact part1ReciprocalQuotient_of_riemann h24 χ hq hsmall
+  · have hraw := part1PrimitiveReciprocalRaw_of_GRH χ hq hne hGRH
+    have hlower := part1ReciprocalQuotient_of_riemann h24 χ hq hsmall
     exact
-      llsPart1PrimitiveZeroMassRawUpperWithQuotientAt_of_explicit_of_conductor_ge_four χ
+      part1ZeroMassRawQuotient_conductor_ge_four χ
         |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| hq hconductor
         hraw hlower haux
 
@@ -706,7 +703,7 @@ theorem llsPart1PrimitiveRawCoreBoundsWithQuotientOfLargeConductor_of_grh_generi
 The simplified large-conductor core obtained from the raw core. This consumes
 the existing elementary reciprocal-correction simplification and retains the same witness.
 -/
-def LLSPart1PrimitiveCoreBoundsWithQuotientOfLargeConductor : Prop :=
+def Part1CoreQuotientLargeConductor : Prop :=
   ∀ (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q),
     3000 ≤ q →
       χ ≠ 1 →
@@ -721,22 +718,19 @@ def LLSPart1PrimitiveCoreBoundsWithQuotientOfLargeConductor : Prop :=
 /--
 The generic large-conductor raw core feeds the simplified core without changing its witness.
 -/
-theorem llsPart1PrimitiveCoreBoundsWithQuotientOfLargeConductor_of_grh_generic
+theorem part1CoreQuotientLargeConductor_of_GRH
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (h24 : LLSRiemannReciprocalLowerBound) :
-    LLSPart1PrimitiveCoreBoundsWithQuotientOfLargeConductor := by
+    (h24 : LLSRiemannReciprocalLowerBound) : Part1CoreQuotientLargeConductor := by
   intro q _ χ hq hne hsmall hconductor haux
-  have hraw :=
-    llsPart1PrimitiveRawCoreBoundsWithQuotientOfLargeConductor_of_grh_generic hGRH h24 q χ hq hne
-      hsmall hconductor haux
+  have hraw := part1RawCoreQuotientLargeConductor_of_GRH hGRH h24 q χ hq hne hsmall hconductor haux
   obtain ⟨b, hb, hweighted, _, hzero⟩ := hraw
-  exact ⟨b, hb, hweighted, llsPart1PrimitiveZeroMassSimplificationWithQuotient χ b hq hb hzero⟩
+  exact ⟨b, hb, hweighted, part1ZeroMass_simplify_quotient χ b hq hb hzero⟩
 
 /--
 The combined estimate for the large-conductor branch. The primitive logarithmic comparison
 now consumes the generic analytic estimates without reopening the witness construction.
 -/
-theorem llsPrimitiveLogWeightedSum_re_le_comparisonUpperWithQuotient_of_large_conductor
+theorem primitiveLogWeighted_largeConductor_GRH
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (h24 : LLSRiemannReciprocalLowerBound) {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
     (hq : 3000 ≤ q) (hne : χ ≠ 1) (hsmall : llsTheorem11S1NoSmallPrime χ)
@@ -749,18 +743,16 @@ theorem llsPrimitiveLogWeightedSum_re_le_comparisonUpperWithQuotient_of_large_co
       llsTheorem11S1PrimitiveUpperBound χ +
         (2 * llsTheorem11S1RadiusRoot q + 2 + Real.log ((llsTheorem11S1RadiusRoot q) ^ 2)) *
           llsPart1PrimitiveReciprocalQuotientCorrection χ := by
-  have hcore :=
-    llsPart1PrimitiveCoreBoundsWithQuotientOfLargeConductor_of_grh_generic hGRH h24 q χ hq hne
-      hsmall hconductor haux
+  have hcore := part1CoreQuotientLargeConductor_of_GRH hGRH h24 q χ hq hne hsmall hconductor haux
   obtain ⟨b, _, hweighted, hzero⟩ := hcore
-  exact llsPrimitiveLogWeightedSum_re_le_comparisonUpperWithQuotient hq hweighted hzero
+  exact primitiveLogWeighted_le_quotientComparison hq hweighted hzero
 
 /--
 Original-character comparison for the large-conductor branch. This adds the existing
 finite level-to-conductor norm comparison to the generic primitive estimate without introducing a
 second witness or a quadratic hypothesis.
 -/
-theorem characterLogWeightedSum_re_le_comparisonUpperWithQuotient_of_large_conductor
+theorem characterLogWeighted_largeConductor_GRH
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (h24 : LLSRiemannReciprocalLowerBound) {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
     (hq : 3000 ≤ q) (hne : χ ≠ 1) (hsmall : llsTheorem11S1NoSmallPrime χ)
@@ -772,12 +764,11 @@ theorem characterLogWeightedSum_re_le_comparisonUpperWithQuotient_of_large_condu
           χ).re ≤
       llsTheorem11S1ComparisonUpperBoundWithQuotient χ := by
   have hprimitive :=
-    llsPrimitiveLogWeightedSum_re_le_comparisonUpperWithQuotient_of_large_conductor hGRH h24 χ hq
-      hne hsmall hconductor haux
+    primitiveLogWeighted_largeConductor_GRH hGRH h24 χ hq hne hsmall hconductor haux
   have hy : 0 < llsTheorem11S1RadiusRoot q :=
     (eight_lt_llsTheorem11S1RadiusRoot hq).trans' (by norm_num only)
   have hcomparison :=
-    AnalyticNumberTheory.Arithmetic.norm_characterLogWeightedSum_sub_primitive_le
+    AnalyticNumberTheory.Arithmetic.norm_characterLogSum_sub_primitive_le
       ((llsTheorem11S1RadiusRoot q) ^ 2) χ (sq_pos_of_pos hy)
   have hre :=
     Complex.re_le_norm
@@ -827,8 +818,8 @@ Conditional numerical comparison for the quotient correction. The numerical chai
 inequality needed to pass from the quotient-corrected comparison bound to
 `llsTheorem11S1UpperBound`.
 -/
-theorem llsTheorem11S1ComparisonUpperBoundWithQuotient_le_upper_of_correction {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hq : 3000 ≤ q)
+theorem comparisonQuotient_le_upper_of_correction {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hq : 3000 ≤ q)
     (hcorrection :
       (2 * llsTheorem11S1RadiusRoot q + 2 + Real.log ((llsTheorem11S1RadiusRoot q) ^ 2)) *
           llsPart1PrimitiveReciprocalQuotientCorrection χ ≤
@@ -857,8 +848,7 @@ The reciprocal quotient correction inherits the preceding logarithmic bound afte
 nonnegative radius factor is restored. This is the input for the
 Part 1 slack estimate.
 -/
-theorem llsPart1PrimitiveReciprocalQuotientCorrection_le_log_quotient_factor {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) :
+theorem part1QuotientCorrection_le_log_factor {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) :
     llsPart1PrimitiveReciprocalQuotientCorrection χ ≤
       (1 - 1 / llsTheorem11S1RadiusRoot q)⁻¹ ^ 2 * Real.log (q / χ.conductor : ℕ) := by
   unfold llsPart1PrimitiveReciprocalQuotientCorrection
@@ -870,8 +860,8 @@ theorem llsPart1PrimitiveReciprocalQuotientCorrection_le_log_quotient_factor {q 
 The arithmetic bounds feed the conditional numerical comparison. The remaining hypothesis is
 now stated only as a logarithmic quotient slack, with no prime-factor sum or inverse-square factor.
 -/
-theorem llsTheorem11S1ComparisonUpperBoundWithQuotient_le_upper_of_log_quotient_slack {q : ℕ}
-    [NeZero q] (χ : DirichletCharacter ℂ q) (hq : 3000 ≤ q)
+theorem comparisonQuotient_le_upper_logSlack {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hq : 3000 ≤ q)
     (hslack :
       (2 * llsTheorem11S1RadiusRoot q + 2 + Real.log ((llsTheorem11S1RadiusRoot q) ^ 2)) *
           (64 / 49 : ℝ) *
@@ -889,8 +879,8 @@ theorem llsTheorem11S1ComparisonUpperBoundWithQuotient_le_upper_of_log_quotient_
         (add_nonneg (mul_nonneg (by norm_num only) (le_trans (by norm_num only) hroot.le))
           (by norm_num only))
         hlogx
-  have hcorr := llsPart1PrimitiveReciprocalQuotientCorrection_le_log_quotient_factor χ
-  have hfactor := llsPart1RadiusInverseSq_le_sixtyFour_div_fortyNine hq
+  have hcorr := part1QuotientCorrection_le_log_factor χ
+  have hfactor := part1RadiusInverseSq_le_64_49 hq
   have hcorr' := mul_le_mul_of_nonneg_left hcorr hcoefficient
   have hcorr'' :
     (2 * llsTheorem11S1RadiusRoot q + 2 + Real.log ((llsTheorem11S1RadiusRoot q) ^ 2)) *
@@ -903,7 +893,7 @@ theorem llsTheorem11S1ComparisonUpperBoundWithQuotient_le_upper_of_log_quotient_
             ((1 - 1 / llsTheorem11S1RadiusRoot q)⁻¹ ^ 2 * Real.log (q / χ.conductor : ℕ)) :=
         hcorr'
       _ ≤ _ := by gcongr
-  apply llsTheorem11S1ComparisonUpperBoundWithQuotient_le_upper_of_correction χ hq
+  apply comparisonQuotient_le_upper_of_correction χ hq
   calc
     _ ≤
         (2 * llsTheorem11S1RadiusRoot q + 2 + Real.log ((llsTheorem11S1RadiusRoot q) ^ 2)) *

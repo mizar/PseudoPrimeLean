@@ -31,7 +31,7 @@ theorem log_origin_half_even_re_eq {N : ℕ} [NeZero N] (hN : 2 ≤ N) {χ : Dir
     Real.log_div hx.ne' (by norm_num only : (2 : ℝ) ≠ 0)]
   simp only [Complex.sub_re, Complex.add_re, Complex.neg_re, Complex.mul_re, Complex.ofReal_re,
     Complex.ofReal_im, mul_zero, sub_zero]
-  rw [completedLFunction_logDeriv_zero_re_eq_neg_abs_BRe_sub_half_log hN hGRH hp hne hinv]
+  rw [completedLogDeriv_zero_abs_BRe_GRH hN hGRH hp hne hinv]
   ring
 
 /-- Under primitive GRH, compute the real origin-residue difference for an
@@ -48,7 +48,7 @@ theorem log_origin_half_odd_re_eq {N : ℕ} [NeZero N] (hN : 2 ≤ N) {χ : Diri
     Real.log_div hx.ne' (by norm_num only : (2 : ℝ) ≠ 0)]
   simp only [Complex.sub_re, Complex.add_re, Complex.neg_re, Complex.mul_re, Complex.ofReal_re,
     Complex.ofReal_im, mul_zero, sub_zero]
-  rw [completedLFunction_logDeriv_zero_re_eq_neg_abs_BRe_sub_half_log hN hGRH hp hne hinv]
+  rw [completedLogDeriv_zero_abs_BRe_GRH hN hGRH hp hne hinv]
   ring
 
 /-- Under primitive GRH and x≥1, bound the real origin difference in terms

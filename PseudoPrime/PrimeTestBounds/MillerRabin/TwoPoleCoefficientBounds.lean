@@ -28,7 +28,7 @@ theorem exists_prime_strong_witness_le_twoPole_affine {n : ℕ} [NeZero n] (hn :
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   have hx := (LLS.twoPole_affine_data hL).1
   exact
-    exists_prime_strong_witness_of_twoPolePrimeTrivialSeparation hn hnOdd hnComposite hGRH hx ∅
+    exists_prime_twoPoleTrivialSeparation_GRH hn hnOdd hnComposite hGRH hx ∅
       (fun k hk ↦ False.elim ((Finset.notMem_empty k) hk))
       (LLS.twoPolePrimeTrivialSeparation_affine_pos hL)
 
@@ -59,7 +59,7 @@ theorem exists_prime_witness_le_twoPole_affine_log_1500 {n : ℕ} (hnOdd : Odd n
 /-- Under the same hypotheses, the least prime rejecting base obeys the affine
 two-pole bound. Minimize the unbounded rejection predicate and compare with the
 explicit witness. Leastness ranges over all prime rejecting bases. -/
-theorem exists_least_prime_witness_le_twoPole_affine_log_1500 {n : ℕ} (hnOdd : Odd n)
+theorem exists_leastWitness_le_twoPole_affine_log_1500 {n : ℕ} (hnOdd : Odd n)
     (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : 1500 ≤ Real.log n) :
     ∃ p : ℕ,
@@ -80,9 +80,8 @@ theorem exists_least_prime_witness_le_twoPole_affine_log_1500 {n : ℕ} (hnOdd :
 the initial power equality and every negative-one equality in the canonical binary
 decomposition of n-1. Apply the exact strong-test rejection equivalence.
 This exposes the actual power conditions of the rejecting witness. -/
-theorem exists_prime_rejecting_powers_le_twoPole_affine_log_1500 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 1500 ≤ Real.log n) :
+theorem exists_rejectPowers_twoPole_log1500_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 1500 ≤ Real.log n) :
     let (s, d) := Nat.maxPowDvdDiv 2 (n - 1);
     ∃ p : ℕ,
       p.Prime ∧

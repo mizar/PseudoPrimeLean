@@ -77,8 +77,8 @@ theorem cutoff_prime_power_weight_antitone {p : ℕ} {Y : ℝ} (hY : 1 ≤ Y) (w
 the quadratic exclusion cost is bounded by the principal power prefix plus the first weight
 when p is unramified. Pair odd and even powers; ramified primes have coefficient one. This is
 the local estimate used before summing over level primes. -/
-theorem quadraticExcludedPrimeCost_le_principal_add_first {q p : ℕ} (hp : p.Prime) {Y : ℝ}
-    (hY : 1 ≤ Y) (w : ℕ → ℝ) (hw : ∀ n, 0 ≤ w n) (ha : Antitone (fun j : ℕ ↦ w (p ^ (j + 1)))) :
+theorem quadraticPrimeCost_le_principal_add_first {q p : ℕ} (hp : p.Prime) {Y : ℝ} (hY : 1 ≤ Y)
+    (w : ℕ → ℝ) (hw : ∀ n, 0 ≤ w n) (ha : Antitone (fun j : ℕ ↦ w (p ^ (j + 1)))) :
     quadraticExcludedPrimeCost q Y w p ≤
       (∑ k ∈ Finset.Icc 1 ⌊Real.log Y / Real.log 2⌋₊,
           if p ≤ ⌊Y ^ ((1 : ℝ) / k)⌋₊ then w (p ^ k) else 0) +
@@ -144,8 +144,8 @@ theorem quadraticExcludedBudget_zero_le_prefix (N : ℕ) (S : Finset ℕ) (w : �
 decreasing on positive powers, the quadratic exclusion budget is at most the full prefix plus
 the first weight at each unramified level prime. Sum the alternating local estimate and compare
 the conductor-zero budget with the full prefix. This bound retains square-power cancellation. -/
-theorem quadraticExcludedBudget_le_prefix_add_unramified {N : ℕ} (hN : N ≠ 0) (q : ℕ) {Y : ℝ}
-    (hY : 1 ≤ Y) (w : ℕ → ℝ) (hw : ∀ n, 0 ≤ w n) (hs : ∀ n : ℕ, ¬IsPrimePow n → w n = 0)
+theorem quadraticBudget_le_prefix_add_unramified {N : ℕ} (hN : N ≠ 0) (q : ℕ) {Y : ℝ} (hY : 1 ≤ Y)
+    (w : ℕ → ℝ) (hw : ∀ n, 0 ≤ w n) (hs : ∀ n : ℕ, ¬IsPrimePow n → w n = 0)
     (ha : ∀ p : ℕ, p.Prime → Antitone (fun j : ℕ ↦ w (p ^ (j + 1)))) :
     quadraticExcludedBudget q N (Finset.Ioc 0 ⌊Y⌋₊) w ≤
       (∑ n ∈ Finset.Ioc 0 ⌊Y⌋₊, w n) +
@@ -159,7 +159,7 @@ theorem quadraticExcludedBudget_le_prefix_add_unramified {N : ℕ} (hN : N ≠ 0
     have hprime := Nat.prime_of_mem_primeFactors hp
     have hc0 : ¬Nat.Coprime p 0 := fun hc ↦ hprime.ne_one ((Nat.coprime_zero_right p).mp hc)
     rw [quadraticExcludedPrimeCost_of_not_coprime hc0]
-    exact quadraticExcludedPrimeCost_le_principal_add_first hprime hY w hw (ha p hprime)
+    exact quadraticPrimeCost_le_principal_add_first hprime hY w hw (ha p hprime)
   have hsum := Finset.sum_le_sum hb
   rw [Finset.sum_add_distrib, ←
     quadraticExcludedBudget_eq_sum_primeFactors hN q (zero_le_one.trans hY) w hs, ←

@@ -14,7 +14,7 @@ public import PseudoPrime.AnalyticNumberTheory.RectangleGeometry.GridCutConstruc
 This file generalizes the "singular cell → centered square" shrink machinery used by an
 explicit-formula contour over an arbitrary finite singularity set `S : Finset ℂ`.
 
-The end result, `RectangleGeometry.SingularCellAssignment.parent_boundaryIntegral_eq_of_shrink`,
+The end result, `RectangleGeometry.CellAssignment.integral_eq_shrink`,
 lifts a local
 residue certificate (valid on a small centered square around an assigned singularity) up to the
 *entire singular parent cell's* boundary integral — the missing bridge between the analytic assembly
@@ -38,8 +38,8 @@ A subrectangle of a singular cell is disjoint from `S` when it excludes the cell
 singularity: every point of `S` inside the parent cell equals the assigned point, so excluding
 that one point from the subrectangle excludes all of `S`.
 -/
-theorem SingularCellAssignment.subcell_disjoint {S : Finset ℂ} {cells : Finset (ℂ × ℂ)}
-    (assignment : SingularCellAssignment S cells) {parent child : ℂ × ℂ}
+theorem CellAssignment.subcell_disjoint {S : Finset ℂ} {cells : Finset (ℂ × ℂ)}
+    (assignment : CellAssignment S cells) {parent child : ℂ × ℂ}
     (hparent : parent ∈ finiteSingularCells S cells)
     (hchildSubset :
       Rectangle.rectangleClosedBox child.1 child.2 ⊆ Rectangle.rectangleClosedBox parent.1 parent.2)
@@ -53,12 +53,12 @@ theorem SingularCellAssignment.subcell_disjoint {S : Finset ℂ} {cells : Finset
 /--
 Every noncentral cell of a `3 × 3` subdivision of a singular parent cell (split around a square
 `[a, b]` containing the assigned singularity) is disjoint from `S`: it excludes the assigned point
-by `RectangleGeometry.not_mem_noncentral_threeByThreeGridCell`, and `subcell_disjoint` upgrades
+by `RectangleGeometry.not_mem_noncentral_3x3Cell`, and `subcell_disjoint` upgrades
 that exclusion to
 full disjointness from `S`.
 -/
-theorem SingularCellAssignment.threeByThree_noncentral_disjoint {S : Finset ℂ}
-    {cells : Finset (ℂ × ℂ)} (assignment : SingularCellAssignment S cells) {parent : ℂ × ℂ}
+theorem CellAssignment.noncentral_disjoint {S : Finset ℂ} {cells : Finset (ℂ × ℂ)}
+    (assignment : CellAssignment S cells) {parent : ℂ × ℂ}
     (hparent : parent ∈ finiteSingularCells S cells) {a b : ℂ} (hzare : parent.1.re < a.re)
     (habre : a.re < b.re) (hbwre : b.re < parent.2.re) (hzaim : parent.1.im < a.im)
     (habim : a.im < b.im) (hbwim : b.im < parent.2.im)
@@ -80,12 +80,11 @@ theorem SingularCellAssignment.threeByThree_noncentral_disjoint {S : Finset ℂ}
     · exact Set.mem_uIcc_of_le (hzaim.trans habim).le hbwim.le
   have hchildSubset := rectangleGridCells_closedBox_subset hxcuts hycuts child hchild
   apply assignment.subcell_disjoint hparent hchildSubset
-  exact
-    not_mem_noncentral_threeByThreeGridCell hzare habre hbwre hzaim habim hbwim hpoint hchild hne
+  exact not_mem_noncentral_3x3Cell hzare habre hbwre hzaim habim hbwim hpoint hchild hne
 
 /-- The noncentral-disjointness theorem in the finite-set form used by contour contraction. -/
-theorem SingularCellAssignment.threeByThree_surrounding_disjoint {S : Finset ℂ}
-    {cells : Finset (ℂ × ℂ)} (assignment : SingularCellAssignment S cells) {parent : ℂ × ℂ}
+theorem CellAssignment.surrounding_disjoint {S : Finset ℂ} {cells : Finset (ℂ × ℂ)}
+    (assignment : CellAssignment S cells) {parent : ℂ × ℂ}
     (hparent : parent ∈ finiteSingularCells S cells) {a b : ℂ} (hzare : parent.1.re < a.re)
     (habre : a.re < b.re) (hbwre : b.re < parent.2.re) (hzaim : parent.1.im < a.im)
     (habim : a.im < b.im) (hbwim : b.im < parent.2.im)
@@ -94,12 +93,12 @@ theorem SingularCellAssignment.threeByThree_surrounding_disjoint {S : Finset ℂ
       child ≠ (a, b) → Disjoint (Rectangle.rectangleClosedBox child.1 child.2) (S : Set ℂ) := by
   intro child hchild hne
   exact
-    assignment.threeByThree_noncentral_disjoint hparent hzare habre hbwre hzaim habim hbwim hpoint
+    assignment.noncentral_disjoint hparent hzare habre hbwre hzaim habim hbwim hpoint
       (by simpa only [List.mem_toFinset] using hchild) hne
 
 /-- Interior separation places each assigned singularity in its cell's open rectangle. -/
-theorem GridInteriorSeparation.pointOfCell_mem_open {S : Finset ℂ} {cells : Finset (ℂ × ℂ)}
-    (interior : GridInteriorSeparation S cells) {cell : ℂ × ℂ}
+theorem InteriorSeparation.assigned_mem_open {S : Finset ℂ} {cells : Finset (ℂ × ℂ)}
+    (interior : InteriorSeparation S cells) {cell : ℂ × ℂ}
     (hcell : cell ∈ finiteSingularCells S cells) :
     interior.toAssignment.pointOfCell cell ∈ rectangleOpenBox cell.1 cell.2 := by
   apply interior.point_mem_open
@@ -108,26 +107,26 @@ theorem GridInteriorSeparation.pointOfCell_mem_open {S : Finset ℂ} {cells : Fi
   · exact interior.toAssignment.point_mem_cell cell hcell
 
 /-- Every assigned singularity has a positive closed ball contained in its open cell. -/
-theorem GridInteriorSeparation.exists_closedBall_pointOfCell_subset_open {S : Finset ℂ}
-    {cells : Finset (ℂ × ℂ)} (interior : GridInteriorSeparation S cells) {cell : ℂ × ℂ}
+theorem InteriorSeparation.exists_point_ball {S : Finset ℂ} {cells : Finset (ℂ × ℂ)}
+    (interior : InteriorSeparation S cells) {cell : ℂ × ℂ}
     (hcell : cell ∈ finiteSingularCells S cells) :
     ∃ ε : ℝ,
       0 < ε ∧
         Metric.closedBall (interior.toAssignment.pointOfCell cell) ε ⊆
           rectangleOpenBox cell.1 cell.2 :=
-  exists_closedBall_subset_rectangleOpenBox (interior.pointOfCell_mem_open hcell)
+  exists_closedBall_subset_openBox (interior.assigned_mem_open hcell)
 
 /-- All assigned singularities admit one common positive radius contained in their open cells. -/
-theorem GridInteriorSeparation.exists_common_cell_radius {S : Finset ℂ} {cells : Finset (ℂ × ℂ)}
-    (interior : GridInteriorSeparation S cells) :
+theorem InteriorSeparation.exists_radius_all {S : Finset ℂ} {cells : Finset (ℂ × ℂ)}
+    (interior : InteriorSeparation S cells) :
     ∃ ε : ℝ,
       0 < ε ∧
         ∀ cell ∈ finiteSingularCells S cells,
           Metric.closedBall (interior.toAssignment.pointOfCell cell) ε ⊆
             rectangleOpenBox cell.1 cell.2 := by
-  apply Finset.exists_common_closedBall_subset
+  apply Finset.exists_common_ball
   intro cell hcell
-  exact interior.exists_closedBall_pointOfCell_subset_open hcell
+  exact interior.exists_point_ball hcell
 
 /--
 **The shrink theorem**: a singular parent cell's *entire* boundary integral equals the boundary
@@ -141,11 +140,11 @@ the caller). Combined
 with a local residue certificate on that centered square, this identifies the parent cell's
 boundary integral with `2πi · res`.
 -/
-theorem SingularCellAssignment.parent_boundaryIntegral_eq_of_shrink {S : Finset ℂ}
-    {cells : Finset (ℂ × ℂ)} (assignment : SingularCellAssignment S cells) (f : ℂ → ℂ)
-    {parent : ℂ × ℂ} (hparent : parent ∈ finiteSingularCells S cells) {a b : ℂ}
-    (hzare : parent.1.re < a.re) (habre : a.re < b.re) (hbwre : b.re < parent.2.re)
-    (hzaim : parent.1.im < a.im) (habim : a.im < b.im) (hbwim : b.im < parent.2.im)
+theorem CellAssignment.integral_eq_shrink {S : Finset ℂ} {cells : Finset (ℂ × ℂ)}
+    (assignment : CellAssignment S cells) (f : ℂ → ℂ) {parent : ℂ × ℂ}
+    (hparent : parent ∈ finiteSingularCells S cells) {a b : ℂ} (hzare : parent.1.re < a.re)
+    (habre : a.re < b.re) (hbwre : b.re < parent.2.re) (hzaim : parent.1.im < a.im)
+    (habim : a.im < b.im) (hbwim : b.im < parent.2.im)
     (hpoint : assignment.pointOfCell parent ∈ rectangleOpenBox a b)
     (hdiff : ∀ x ∈ Rectangle.rectangleClosedBox parent.1 parent.2, x ∉ S → DifferentiableAt ℂ f x)
     (hgrid : RectangleGridSubdivisionIntegrable f parent.1 parent.2 [a.re, b.re] [a.im, b.im]) :
@@ -163,16 +162,16 @@ theorem SingularCellAssignment.parent_boundaryIntegral_eq_of_shrink {S : Finset 
     · exact Set.mem_uIcc_of_le hzaim.le (habim.trans hbwim).le
     · exact Set.mem_uIcc_of_le (hzaim.trans habim).le hbwim.le
   apply
-    rectangleBoundaryIntegral_eq_innerRectangle f parent.1 parent.2 a b hgrid
+    boundaryIntegral_eq_innerRectangle f parent.1 parent.2 a b hgrid
       (threeByThreeGrid_nodup hzare habre hbwre hzaim habim hbwim)
   intro cell hcell hne
   have hdisjoint :=
-    assignment.threeByThree_surrounding_disjoint hparent hzare habre hbwre hzaim habim hbwim hpoint
-      cell hcell hne
+    assignment.surrounding_disjoint hparent hzare habre hbwre hzaim habim hbwim hpoint cell hcell
+      hne
   have hcellSubset :=
     rectangleGridCells_closedBox_subset hxcuts hycuts cell
       (by simpa only [List.mem_toFinset] using hcell)
-  apply rectangleBoundaryIntegral_eq_zero_of_differentiableOn
+  apply boundaryIntegral_zero_of_holomorphic
   intro x hx
   apply (hdiff x (hcellSubset hx) ?_).differentiableWithinAt
   intro hxS
@@ -181,14 +180,14 @@ theorem SingularCellAssignment.parent_boundaryIntegral_eq_of_shrink {S : Finset 
 /--
 Coordinate-line integrability of `f` on any two lists of real/imaginary coordinates confined to a
 singular parent cell and avoiding the cell's assigned point — the ingredient
-`parent_boundaryIntegral_eq_of_shrink`'s `hgrid` hypothesis needs, via
-`RectangleGeometry.RectangleGridCoordinateIntegrable.gridSubdivision`. A segment
+`integral_eq_shrink`'s `hgrid` hypothesis needs, via
+`RectangleGeometry.GridLineIntegrable.gridSubdivision`. A segment
 between two `xcoordinates`/`ycoordinates` at a third coordinate is itself a degenerate rectangle
 inside the parent cell, so `subcell_disjoint` applies to it exactly as to any other subcell. As in
-`parent_boundaryIntegral_eq_of_shrink`, `hdiff` is localized to the parent cell rather than global.
+`integral_eq_shrink`, `hdiff` is localized to the parent cell rather than global.
 -/
-theorem SingularCellAssignment.kernelCoordinateIntegrable {S : Finset ℂ} {cells : Finset (ℂ × ℂ)}
-    (assignment : SingularCellAssignment S cells) (f : ℂ → ℂ) {parent : ℂ × ℂ}
+theorem CellAssignment.kernel_integrable {S : Finset ℂ} {cells : Finset (ℂ × ℂ)}
+    (assignment : CellAssignment S cells) (f : ℂ → ℂ) {parent : ℂ × ℂ}
     (hparent : parent ∈ finiteSingularCells S cells)
     (hdiff : ∀ x ∈ Rectangle.rectangleClosedBox parent.1 parent.2, x ∉ S → DifferentiableAt ℂ f x)
     (xcoordinates ycoordinates : List ℝ)
@@ -196,7 +195,7 @@ theorem SingularCellAssignment.kernelCoordinateIntegrable {S : Finset ℂ} {cell
     (hymem : ∀ c ∈ ycoordinates, c ∈ Set.uIcc parent.1.im parent.2.im)
     (hxavoid : ∀ c ∈ xcoordinates, (assignment.pointOfCell parent).re ≠ c)
     (hyavoid : ∀ c ∈ ycoordinates, (assignment.pointOfCell parent).im ≠ c) :
-    RectangleGridCoordinateIntegrable f xcoordinates ycoordinates := by
+    GridLineIntegrable f xcoordinates ycoordinates := by
   have hre (u v : ℝ) : ((u : ℂ) + v * Complex.I).re = u := by
     simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
       Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero]
@@ -205,7 +204,7 @@ theorem SingularCellAssignment.kernelCoordinateIntegrable {S : Finset ℂ} {cell
       mul_one, Complex.I_re, mul_zero, add_zero, zero_add]
   constructor
   · intro c hc a ha b hb
-    apply intervalIntegrable_horizontal_of_continuousAt
+    apply intervalIntegrable_horizontal_cont
     intro t ht
     have hchildSubset :
       Rectangle.rectangleClosedBox ((a : ℂ) + c * Complex.I) ((b : ℂ) + c * Complex.I) ⊆
@@ -243,7 +242,7 @@ theorem SingularCellAssignment.kernelCoordinateIntegrable {S : Finset ℂ} {cell
       exact Set.disjoint_left.mp hdisjoint hseg hxS
     exact hdiffAt.continuousAt
   · intro c hc a ha b hb
-    apply intervalIntegrable_vertical_of_continuousAt
+    apply intervalIntegrable_vertical_cont
     intro t ht
     have hchildSubset :
       Rectangle.rectangleClosedBox ((c : ℂ) + a * Complex.I) ((c : ℂ) + b * Complex.I) ⊆

@@ -38,8 +38,7 @@ theorem primitive_quotient_support_sum_eq_level_support {q : ℕ} (χ : Dirichle
         (DirichletCharacter.apply_eq_zero_iff χ (n : ℤ)).mpr
           (by simpa only [Nat.isCoprime_iff_coprime] using h.2)
     have hp : χ.primitiveCharacter n = 0 :=
-      (AnalyticNumberTheory.Arithmetic.apply_eq_primitiveCharacter_of_coprime_quotient χ
-            hquot).symm.trans
+      (AnalyticNumberTheory.Arithmetic.apply_eq_primitive_of_coprime_quotient χ hquot).symm.trans
         hχzero
     rw [hp, Complex.zero_re, mul_zero]
 
@@ -184,9 +183,9 @@ the single-support ledger without inspecting their character values. -/
 theorem evenCoprimeSupportTerm_of_not_primePow {q n : ℕ} (χ : DirichletCharacter ℂ q) (y : ℝ)
     (hn : ¬IsPrimePow n) : evenCoprimeSupportTerm χ y n = 0 := by
   rw [evenCoprimeSupportTerm, evenCoprimeSupportWeight,
-    AnalyticNumberTheory.Arithmetic.logWeightedMangoldtTerm_eq_zero_of_not_primePow hn,
-    AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtTerm_eq_zero_of_not_primePow hn,
-    mul_zero, zero_add, zero_mul]
+    AnalyticNumberTheory.Arithmetic.logMangoldtTerm_eq_zero_of_not_primePow hn,
+    AnalyticNumberTheory.Arithmetic.recipMangoldtTerm_eq_zero_of_not_primePow hn, mul_zero,
+    zero_add, zero_mul]
 
 /-- For arbitrary character and root, reindex the exact coupled local cost
 by positive exponents and primes dividing the level. Only prime powers contribute.

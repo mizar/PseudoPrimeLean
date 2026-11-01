@@ -22,7 +22,7 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 /-- Under primitive nonprincipal individual RH, each certified resolvent node obeys its
  m-term centered error allowance. Combine the real Gamma prefix bound with the Euler ratio
  and dyadic denominator certificate. The proof applies to any natural prefix length. -/
-theorem completed_poissonSum_centered_le_resolvent_with_prefix {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem poissonSum_resolvent_with_prefix_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (ab : ℚ × ℚ) (hab : ab ∈ Gamma.gammaResolventCoefficients)
     (m : ℕ) :
@@ -41,7 +41,7 @@ theorem completed_poissonSum_centered_le_resolvent_with_prefix {q : ℕ} [NeZero
   have hs : 1 ≤ 1 / 2 + (ab.1 : ℝ) := by linarith only [halR]
   have hsu : 1 / 2 + (ab.1 : ℝ) ≤ 15 / 2 := by linarith only [hauR]
   have hb :=
-    completed_poissonSum_centered_le_ordinary_prefix hq hRH hp hne hinv hs hsu
+    poissonSum_centered_prefix_RH hq hRH hp hne hinv hs hsu
       (show 1 / 2 ≤ (1 / 2 + (ab.1 : ℝ)) / 2 by linarith only [hs]) (le_refl _) m
   have hn : 1 / 2 + (ab.1 : ℝ) - 1 / 2 = (ab.1 : ℝ) := by ring
   rw [hn] at hb
@@ -69,15 +69,14 @@ theorem completed_poissonSum_centered_le_resolvent_with_prefix {q : ℕ} [NeZero
  bounds the actual signed resolvent zero mass by Mlog(q)+C.
  Use its exact Poisson identity and the variable node comparison.
  This removes the fixed eight-term requirement from the mass interface. -/
-theorem gammaResolvent_zeroMass_lt_of_prefix_error {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (m : ℕ) {C : ℝ}
-    (hC : Analysis.gammaResolventPrefixErrorSum m < C) :
+theorem gammaMass_lt_of_prefixError_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    (m : ℕ) {C : ℝ} (hC : Analysis.gammaResolventPrefixErrorSum m < C) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
           Gamma.gammaResolventMajorant ρ.im) <
       (11783423 / 25000000 : ℝ) * Real.log q + C := by
-  rw [gammaResolvent_zeroMass_eq_poissonSum hq hRH hp hne hinv]
+  rw [gammaMass_eq_poissonSum_RH hq hRH hp hne hinv]
   apply
     Analysis.gammaResolvent_weighted_lt_of_variable_prefix
       (fun a : ℚ ↦
@@ -86,7 +85,7 @@ theorem gammaResolvent_zeroMass_lt_of_prefix_error {q : ℕ} [NeZero q] (hq : 2 
             ((a : ℝ) / Complex.normSq ((((1 / 2 : ℝ) + (a : ℝ)) : ℂ) - ρ)))
       (Real.log q) m hC
   intro ab hab
-  exact completed_poissonSum_centered_le_resolvent_with_prefix hq hRH hp hne hinv ab hab m
+  exact poissonSum_resolvent_with_prefix_RH hq hRH hp hne hinv ab hab m
 
 /-- Under primitive nonprincipal individual RH, any certified m-term error sum below C
  gives actual Gamma zero mass below Mlog(q)+C. Use the established global Gamma majorant,
@@ -110,8 +109,7 @@ theorem gamma_zeroMass_lt_of_prefix_error {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     by_cases hD : MeromorphicOn.divisor χ.completedLFunction Set.univ ρ = 0
     · simp only [hD, Int.cast_zero, zero_mul, le_refl]
     · have hr :=
-        completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv
-          (completed_zero_of_divisor_ne_zero hne hD)
+        completed_zero_re_eq_half_of_RH hRH hp hinv (completed_zero_of_divisor_ne_zero hne hD)
       have he : ρ = (1 / 2 : ℂ) + Complex.I * ρ.im := by
         calc
           ρ = (ρ.re : ℂ) + (ρ.im : ℂ) * Complex.I := (Complex.re_add_im ρ).symm
@@ -120,11 +118,9 @@ theorem gamma_zeroMass_lt_of_prefix_error {q : ℕ} [NeZero q] (hq : 2 ≤ q)
             norm_num only [Complex.ofReal_div, Complex.ofReal_one, Complex.ofReal_ofNat]
             ring
       exact mul_le_mul_of_nonneg_left (by simpa only [← he] using hΓ ρ.im) (hn ρ)
-  have hg := summable_completed_gammaResolvent_terms hq hRH hp hne hinv
+  have hg := summable_gammaResolvent_mass_RH hq hRH hp hne hinv
   have hsum := hg.of_nonneg_of_le (fun ρ ↦ mul_nonneg (hn ρ) (norm_nonneg _)) hb
-  exact
-    (hsum.tsum_le_tsum hb hg).trans_lt
-      (gammaResolvent_zeroMass_lt_of_prefix_error hq hRH hp hne hinv m hC)
+  exact (hsum.tsum_le_tsum hb hg).trans_lt (gammaMass_lt_of_prefixError_RH hq hRH hp hne hinv m hC)
 
 /-- Under primitive nonprincipal individual RH and nonprincipal inverse, the actual Gamma
  zero mass is below Mlog(q)+99/5. Apply the variable interface to the sixteen-term certificate.

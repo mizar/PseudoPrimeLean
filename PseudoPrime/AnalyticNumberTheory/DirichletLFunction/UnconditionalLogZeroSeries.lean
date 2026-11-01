@@ -19,7 +19,7 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 completed-zero term is bounded by the scale times its inverse-square divisor mass.
 The zero-free right half-plane bounds the complex-power norm by the scale.
 This supplies an unconditional summable majorant. -/
-theorem norm_completedLogZeroTerm_le_unconditionally {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+theorem norm_logZeroTerm_le_unconditionally {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
     (hne : χ ≠ 1) {x : ℝ} (hx : 1 ≤ x) (ρ : ℂ) :
     ‖completedLogZeroTerm χ x ρ‖ ≤
       x * ((MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) / Complex.normSq ρ) := by
@@ -48,19 +48,18 @@ theorem norm_completedLogZeroTerm_le_unconditionally {q : ℕ} [NeZero q] {χ : 
 completed logarithmic zero contributions are absolutely summable without RH.
 Dominate their norms by the scale times the unconditional inverse-square mass.
 This justifies passage from finite logarithmic residue sums to the full zero sum. -/
-theorem summable_norm_completedLogZeroTerm_unconditionally {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ}
-    (hx : 1 ≤ x) : Summable (fun ρ : ℂ ↦ ‖completedLogZeroTerm χ x ρ‖) :=
-  Summable.of_nonneg_of_le (fun _ ↦ norm_nonneg _)
-    (norm_completedLogZeroTerm_le_unconditionally hne hx)
-    ((summable_divisor_div_normSq_unconditionally hq hp hne hinv).mul_left x)
+theorem summable_norm_completedLogTerm {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) :
+    Summable (fun ρ : ℂ ↦ ‖completedLogZeroTerm χ x ρ‖) :=
+  Summable.of_nonneg_of_le (fun _ ↦ norm_nonneg _) (norm_logZeroTerm_le_unconditionally hne hx)
+    ((summable_invNormSq_unconditional hq hp hne hinv).mul_left x)
 
 /-- A nonzero completed logarithmic zero term comes from a zero in the open critical
 strip, distinct from zero and one, with nonvanishing gamma factor and vanishing
 ordinary L-value. Use the unconditional zero-free half-planes and gamma nonvanishing.
 This identifies the support used in finite contour ledgers without RH. -/
-theorem completedLogZeroTerm_ne_zero_facts_unconditionally {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} {ρ : ℂ}
+theorem logZeroTerm_ne_zero_facts {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} {ρ : ℂ}
     (hnz : completedLogZeroTerm χ x ρ ≠ 0) :
     0 < ρ.re ∧
       ρ.re < 1 ∧ ρ ≠ 0 ∧ ρ ≠ 1 ∧ DirichletCharacter.gammaFactor χ ρ ≠ 0 ∧ χ.LFunction ρ = 0 := by
@@ -80,28 +79,27 @@ theorem completedLogZeroTerm_ne_zero_facts_unconditionally {q : ℕ} [NeZero q]
     rw [h, Complex.one_re] at hlt
     exact (lt_irrefl 1) hlt
   refine ⟨hpos, hlt, hzero, hone, gammaFactor_ne_zero_of_pos_re hpos, ?_⟩
-  rw [dirichletLFunction_eq_completed_div_gammaFactor χ ρ (Or.inl hzero), hz, zero_div]
+  rw [L_eq_completed_div_gammaFactor χ ρ (Or.inl hzero), hz, zero_div]
 
 /-- Every nonzero completed logarithmic zero term eventually belongs to the finite
 ledger on any cofinal symmetric height sequence with fixed negative half-integer
 left edge and right edge two. Use its open-critical-strip support and the height
 bound. This retains the existing residue ledger and analytic multiplicities. -/
-theorem eventually_completedLogZeroTerm_mem_unconditional_height_ledger {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (T : ℕ → ℝ)
+theorem eventually_logZeroTerm_height_ledger {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (T : ℕ → ℝ)
     (hT : Filter.Tendsto T Filter.atTop Filter.atTop) (A : ℕ) {x : ℝ} {ρ : ℂ}
     (hnz : completedLogZeroTerm χ x ρ ≠ 0) :
     ∀ᶠ k : ℕ in Filter.atTop,
       ρ ∈
         completedLogRectangleLedger χ hne (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) - T k * Complex.I)
           (((2 : ℝ) : ℂ) + T k * Complex.I) := by
-  obtain ⟨hrpos, hrlt, hzero, hone, hgamma, hLzero⟩ :=
-    completedLogZeroTerm_ne_zero_facts_unconditionally hp hne hinv hnz
+  obtain ⟨hrpos, hrlt, hzero, hone, hgamma, hLzero⟩ := logZeroTerm_ne_zero_facts hp hne hinv hnz
   filter_upwards [hT.eventually_ge_atTop (|ρ.im| + 1)] with k hk
   apply Finset.mem_filter.mpr
   refine ⟨Finset.mem_erase.mpr ⟨hzero, Finset.mem_erase.mpr ⟨hone, ?_⟩⟩, hgamma⟩
-  apply mem_dirichletLFunctionSingularitiesInRectangle_iff.mpr
+  apply mem_LSingularitiesInRectangle_iff.mpr
   refine ⟨?_, Or.inr (Or.inr hLzero)⟩
-  rw [dirichletCompletedLFunctionRectangleBox, Rectangle.rectangleClosedBox, Complex.mem_reProdIm]
+  rw [completedRectangleBox, Rectangle.rectangleClosedBox, Complex.mem_reProdIm]
   simp only [Complex.sub_re, Complex.ofReal_re, Complex.mul_re, Complex.ofReal_im, Complex.I_re,
     mul_zero, sub_zero, Complex.add_re, add_zero, Complex.sub_im, Complex.mul_im, Complex.I_im,
     mul_one, zero_sub, Complex.add_im, zero_add]
@@ -115,8 +113,8 @@ theorem eventually_completedLogZeroTerm_mem_unconditional_height_ledger {q : ℕ
 edge, and real scale at least one, finite completed logarithmic zero ledgers converge
 to the full zero sum. Combine unconditional absolute convergence with eventual
 support membership. This removes RH from the zero-sum exhaustion step. -/
-theorem tendsto_completedLogZero_unconditional_height_sum {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (T : ℕ → ℝ)
+theorem tendsto_logZero_height_sum {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (T : ℕ → ℝ)
     (hT : Filter.Tendsto T Filter.atTop Filter.atTop) (A : ℕ) {x : ℝ} (hx : 1 ≤ x) :
     Filter.Tendsto
       (fun k : ℕ ↦
@@ -127,8 +125,7 @@ theorem tendsto_completedLogZero_unconditional_height_sum {q : ℕ} [NeZero q] (
           completedLogZeroTerm χ x ρ)
       Filter.atTop (nhds (∑' ρ : ℂ, completedLogZeroTerm χ x ρ)) :=
   Analysis.tendsto_sum_of_eventually_mem_support _
-    (summable_norm_completedLogZeroTerm_unconditionally hq hp hne hinv hx) _
-    (fun _ hnz ↦
-      eventually_completedLogZeroTerm_mem_unconditional_height_ledger hp hne hinv T hT A hnz)
+    (summable_norm_completedLogTerm hq hp hne hinv hx) _
+    (fun _ hnz ↦ eventually_logZeroTerm_height_ledger hp hne hinv T hT A hnz)
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

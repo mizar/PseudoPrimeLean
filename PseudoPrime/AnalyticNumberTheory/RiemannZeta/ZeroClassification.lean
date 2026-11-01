@@ -24,7 +24,7 @@ namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 Nonnegative real part excludes the negative even trivial zeros, while zeta's nonzero
 totalized value at one excludes that point. This supplies the critical-line form for zero weights.
 -/
-theorem riemannZeta_zero_re_eq_half_of_riemannHypothesis (hRH : RiemannHypothesis) {ρ : ℂ}
+theorem zeta_zero_re_eq_half_of_riemannHypothesis (hRH : RiemannHypothesis) {ρ : ℂ}
     (hρ : riemannZeta ρ = 0) (hre : 0 ≤ ρ.re) : ρ.re = 1 / 2 := by
   have hne1 : ρ ≠ 1 := by
     intro h
@@ -43,9 +43,9 @@ theorem riemannZeta_zero_re_eq_half_of_riemannHypothesis (hRH : RiemannHypothesi
 /-- Assuming RH, a zeta zero with nonnegative real part satisfies
 `normSq (ρ - 1) = normSq ρ`. Expand both squared norms and substitute `Re ρ = 1/2`.
 This identifies the two denominator sizes in reciprocal contour zero contributions. -/
-theorem normSq_riemannZeta_zero_sub_one_eq_of_riemannHypothesis (hRH : RiemannHypothesis) {ρ : ℂ}
-    (hρ : riemannZeta ρ = 0) (hre : 0 ≤ ρ.re) : Complex.normSq (ρ - 1) = Complex.normSq ρ := by
-  have hhalf := riemannZeta_zero_re_eq_half_of_riemannHypothesis hRH hρ hre
+theorem normSq_zero_sub_one_eq_RH (hRH : RiemannHypothesis) {ρ : ℂ} (hρ : riemannZeta ρ = 0)
+    (hre : 0 ≤ ρ.re) : Complex.normSq (ρ - 1) = Complex.normSq ρ := by
+  have hhalf := zeta_zero_re_eq_half_of_riemannHypothesis hRH hρ hre
   simp only [Complex.normSq_apply, Complex.sub_re, Complex.sub_im, Complex.one_re, Complex.one_im]
   rw [hhalf]
   ring
@@ -53,8 +53,8 @@ theorem normSq_riemannZeta_zero_sub_one_eq_of_riemannHypothesis (hRH : RiemannHy
 /-- If `Re w < 0` and `ζ(w) = 0`, then `w = -2*(n+1)` for some natural `n`.
 Otherwise the zero-free negative-half-plane theorem away from trivial zeros contradicts
 the zero assertion. This separates the trivial-zero branch of finite residue ledgers. -/
-theorem exists_nat_eq_neg_two_mul_add_one_of_riemannZeta_zero_re_neg {w : ℂ} (hw : w.re < 0)
-    (hz : riemannZeta w = 0) : ∃ n : ℕ, w = -2 * ((n : ℂ) + 1) := by
+theorem exists_neg_even_of_zeta_zero_re_neg {w : ℂ} (hw : w.re < 0) (hz : riemannZeta w = 0) :
+    ∃ n : ℕ, w = -2 * ((n : ℂ) + 1) := by
   by_contra h
   push Not at h
   exact riemannZeta_ne_zero_of_re_neg hw h hz

@@ -24,8 +24,8 @@ namespace PseudoPrime.LLS.PaperStatements
 triangular cutoff main term at x=(283/1000)L². Bound x between one and 46000 to
 verify 0≤log x≤11, then apply the budget obstruction. This is an interval certificate
 for the current comparison, not a lower bound on any least witness. -/
-theorem triangular18_dual_interior_ambient_budget_ge_main_of_small_log {L h : ℝ} (hL : 100 ≤ L)
-    (hLupper : L ≤ 400) (hh : 4 ≤ h) :
+theorem triangular18_dualBudget_ge_main_smallLog {L h : ℝ} (hL : 100 ≤ L) (hLupper : L ≤ 400)
+    (hh : 4 ≤ h) :
     let x := (283 / 1000) * L ^ 2
     h * (Real.sqrt x * (68 + 4 * Real.exp (-18))) ≤
       (h - 1) * ((72 - Real.log x) * L - 81 + (3 / 2) * Real.log x) := by
@@ -41,13 +41,13 @@ theorem triangular18_dual_interior_ambient_budget_ge_main_of_small_log {L h : �
     nlinarith only [hl]
   have hlog :=
     (Real.log_le_log (zero_lt_one.trans_le hx1) hxupper).trans Analysis.log_46000_lt_eleven.le
-  exact triangular18_dual_interior_ambient_budget_ge_main hL hh rfl (Real.log_nonneg hx1) hlog
+  exact triangular18_dualInterior_budget_ge_main hL hh rfl (Real.log_nonneg hx1) hlog
 
 /-- At the exact anchor L=141 log(10) and every h≥4, the ambient conductor
 budget exceeds the ideal coefficient-0.283 triangular cutoff main term. Certify
 100≤L≤400 using logarithmic bounds for ten, then apply the interval obstruction.
 Thus reducing cutoff error alone cannot certify N141 through this ambient budget. -/
-theorem triangular18_dual_interior_ambient_budget_ge_main_at_N141 {h : ℝ} (hh : 4 ≤ h) :
+theorem triangular18_dualBudget_ge_main_N141 {h : ℝ} (hh : 4 ≤ h) :
     let L := (141 : ℝ) * Real.log 10
     let x := (283 / 1000) * L ^ 2
     h * (Real.sqrt x * (68 + 4 * Real.exp (-18))) ≤
@@ -61,6 +61,6 @@ theorem triangular18_dual_interior_ambient_budget_ge_main_at_N141 {h : ℝ} (hh 
     norm_num only at hm
     linarith only [h2, h5, hm]
   have hupper : (141 : ℝ) * Real.log 10 ≤ 400 := by linarith only [hten]
-  exact triangular18_dual_interior_ambient_budget_ge_main_of_small_log hlower hupper hh
+  exact triangular18_dualBudget_ge_main_smallLog hlower hupper hh
 
 end PseudoPrime.LLS.PaperStatements

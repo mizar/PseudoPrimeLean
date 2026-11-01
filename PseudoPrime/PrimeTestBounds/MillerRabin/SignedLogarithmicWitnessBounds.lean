@@ -30,14 +30,13 @@ private theorem one_lt_of_decimal_power {n d : ℕ} (hd : d ≠ 0) (hn : 10 ^ d 
 a prime Miller–Rabin witness through B. Choose a proper subgroup containing all
 passing residues and apply the outside-prime bound.
 This transfers a pointwise LLS bound without changing its expression. -/
-theorem exists_prime_witness_of_uniform_unit_subgroup_cutoff {n : ℕ} {B : ℝ} (hn : 1 < n)
-    (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+theorem exists_prime_uniformUnitSubgroup {n : ℕ} {B : ℝ} (hn : 1 < n) (hnOdd : Odd n)
+    (hnComposite : ¬n.Prime)
     (hbound :
       ∀ H : Subgroup (ZMod n)ˣ,
         H ≠ ⊤ → ∃ p : ℕ, p.Prime ∧ ¬p ∣ n ∧ ¬NumberTheory.residueInSubgroup n H p ∧ (p : ℝ) ≤ B) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ B ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
-  obtain ⟨H, hH, hpass⟩ :=
-    PrimeTest.exists_proper_subgroup_containing_strongMillerRabinPass hn hnOdd hnComposite
+  obtain ⟨H, hH, hpass⟩ := PrimeTest.exists_proper_subgroup_strongMR hn hnOdd hnComposite
   obtain ⟨p, hp, _hd, hout, hb⟩ := hbound H hH
   exact ⟨p, hp, hb, PrimeTest.not_pass_of_outside_subgroup hpass hout⟩
 
@@ -45,9 +44,8 @@ theorem exists_prime_witness_of_uniform_unit_subgroup_cutoff {n : ℕ} {B : ℝ}
 witness at most (4/5)(log n+29)^2. Transfer the natural-log subgroup theorem
 to the subgroup of bases that pass the strong test. This exposes the analytic
 entrance independently of its decimal-threshold corollary. -/
-theorem exists_prime_witness_le_gamma_four_fifths_plus_twentyNine_log_34971 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 34971 ≤ Real.log n) :
+theorem primeWitness_4_5_shift_29_log34971_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 34971 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log n + 29) ^ 2 ∧
@@ -61,17 +59,14 @@ theorem exists_prime_witness_le_gamma_four_fifths_plus_twentyNine_log_34971 {n :
     have hlog := Real.log_le_sub_one_of_pos hn0
     linarith only [hlog, hL, hnR]
   exact
-    exists_prime_witness_of_uniform_unit_subgroup_cutoff hn hnOdd hnComposite
-      (fun H hH ↦
-        LLS.PaperStatements.exists_prime_outside_le_gamma_four_fifths_log_plus_twentyNine H hH hGRH
-          hL)
+    exists_prime_uniformUnitSubgroup hn hnOdd hnComposite
+      (fun H hH ↦ LLS.PaperStatements.exists_prime_outside_4_5_shift_29_GRH H hH hGRH hL)
 
 /-- Under GRH, every odd composite with log n at least 46330 has a prime MR
 witness at most (4/5)(log n-2)^2. Transfer the natural-log subgroup theorem
 to the subgroup of bases that pass the strong test. -/
-theorem exists_prime_witness_le_gamma_four_fifths_minus_two_log_46330 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 46330 ≤ Real.log n) :
+theorem primeWitness_4_5_shift_neg_2_log46330_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 46330 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log n - 2) ^ 2 ∧
@@ -85,16 +80,14 @@ theorem exists_prime_witness_le_gamma_four_fifths_minus_two_log_46330 {n : ℕ} 
     have hlog := Real.log_le_sub_one_of_pos hn0
     linarith only [hlog, hL, hnR]
   exact
-    exists_prime_witness_of_uniform_unit_subgroup_cutoff hn hnOdd hnComposite
-      (fun H hH ↦
-        LLS.PaperStatements.exists_prime_outside_le_gamma_four_fifths_log_minus_two H hH hGRH hL)
+    exists_prime_uniformUnitSubgroup hn hnOdd hnComposite
+      (fun H hH ↦ LLS.PaperStatements.exists_prime_outside_4_5_shift_neg_2_GRH H hH hGRH hL)
 
 /-- Under GRH, every odd composite with log n at least 50880 has a prime MR
 witness at most (4/5)(log n-log log n)^2. Transfer the natural-log subgroup
 theorem to the subgroup of bases that pass the strong test. -/
-theorem exists_prime_witness_le_gamma_four_fifths_minus_loglog_log_50880 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 50880 ≤ Real.log n) :
+theorem primeWitness_4_5_sub_loglog_log50880_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 50880 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log n - Real.log (Real.log n)) ^ 2 ∧
@@ -108,58 +101,49 @@ theorem exists_prime_witness_le_gamma_four_fifths_minus_loglog_log_50880 {n : �
     have hlog := Real.log_le_sub_one_of_pos hn0
     linarith only [hlog, hL, hnR]
   exact
-    exists_prime_witness_of_uniform_unit_subgroup_cutoff hn hnOdd hnComposite
-      (fun H hH ↦
-        LLS.PaperStatements.exists_prime_outside_le_gamma_four_fifths_log_minus_loglog H hH hGRH hL)
+    exists_prime_uniformUnitSubgroup hn hnOdd hnComposite
+      (fun H hH ↦ LLS.PaperStatements.exists_prime_outside_4_5_sub_loglog_GRH H hH hGRH hL)
 
 /-- Under GRH, every odd composite n ≥ 10^15188 has a prime Miller–Rabin
 witness at most (4/5)(log n+29)². Apply the signed LLS profile to the subgroup
 containing passing residues. No further factorization or index hypothesis is needed. -/
-theorem exists_prime_witness_le_gamma_four_fifths_plus_twentyNine_15188 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hn : 10 ^ 15188 ≤ n) :
+theorem primeWitness_4_5_shift_29_15188_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hn : 10 ^ 15188 ≤ n) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log n + 29) ^ 2 ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   have hn1 : 1 < n := one_lt_of_decimal_power (by decide : (15188 : ℕ) ≠ 0) hn
   exact
-    exists_prime_witness_of_uniform_unit_subgroup_cutoff hn1 hnOdd hnComposite
-      (fun H hH ↦
-        LLS.PaperStatements.exists_prime_outside_le_gamma_four_fifths_plus_twentyNine_15188 H hH
-          hGRH hn)
+    exists_prime_uniformUnitSubgroup hn1 hnOdd hnComposite
+      (fun H hH ↦ LLS.PaperStatements.exists_prime_outside_4_5_shift_29_15188_GRH H hH hGRH hn)
 
 /-- Under GRH, every odd composite n ≥ 10^20121 has a prime Miller–Rabin
 witness at most (4/5)(log n-2)². Apply the signed LLS profile to the subgroup
 containing passing residues. No further factorization or index hypothesis is needed. -/
-theorem exists_prime_witness_le_gamma_four_fifths_minus_two_20121 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hn : 10 ^ 20121 ≤ n) :
+theorem primeWitness_4_5_shift_neg_2_20121_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hn : 10 ^ 20121 ≤ n) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log n - 2) ^ 2 ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   have hn1 : 1 < n := one_lt_of_decimal_power (by decide : (20121 : ℕ) ≠ 0) hn
   exact
-    exists_prime_witness_of_uniform_unit_subgroup_cutoff hn1 hnOdd hnComposite
-      (fun H hH ↦
-        LLS.PaperStatements.exists_prime_outside_le_gamma_four_fifths_minus_two_20121 H hH hGRH hn)
+    exists_prime_uniformUnitSubgroup hn1 hnOdd hnComposite
+      (fun H hH ↦ LLS.PaperStatements.exists_prime_outside_4_5_shift_neg_2_20121_GRH H hH hGRH hn)
 
 /-- Under GRH, every odd composite n ≥ 10^22097 has a prime Miller–Rabin
 witness at most (4/5)(log n-log log n)². Apply the signed LLS profile to the subgroup
 containing passing residues. No further factorization or index hypothesis is needed. -/
-theorem exists_prime_witness_le_gamma_four_fifths_minus_loglog_22097 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hn : 10 ^ 22097 ≤ n) :
+theorem primeWitness_4_5_sub_loglog_22097_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hn : 10 ^ 22097 ≤ n) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log n - Real.log (Real.log n)) ^ 2 ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   have hn1 : 1 < n := one_lt_of_decimal_power (by decide : (22097 : ℕ) ≠ 0) hn
   exact
-    exists_prime_witness_of_uniform_unit_subgroup_cutoff hn1 hnOdd hnComposite
-      (fun H hH ↦
-        LLS.PaperStatements.exists_prime_outside_le_gamma_four_fifths_minus_loglog_22097 H hH hGRH
-          hn)
+    exists_prime_uniformUnitSubgroup hn1 hnOdd hnComposite
+      (fun H hH ↦ LLS.PaperStatements.exists_prime_outside_4_5_sub_loglog_22097_GRH H hH hGRH hn)
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

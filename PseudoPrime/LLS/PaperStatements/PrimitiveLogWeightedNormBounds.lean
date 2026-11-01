@@ -66,8 +66,8 @@ its logarithmic sum by the primitive explicit estimate plus the common-factor er
 The latter is one half the number of distinct prime factors of the level-conductor
 quotient times the squared logarithm. Combine the primitive norm estimate with the
 level-change norm bound. This gives equations (4.4) and (4.5) for imprimitive data. -/
-theorem norm_characterLogWeightedSum_le_primitive_explicit {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hq : 3 ≤ χ.conductor)
+theorem characterLogSum_norm_le_primitive_explicit {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    [NeZero χ.conductor] (hq : 3 ≤ χ.conductor)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 < x) :
     ‖AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x χ‖ ≤
       |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ.primitiveCharacter| *
@@ -83,8 +83,7 @@ theorem norm_characterLogWeightedSum_le_primitive_explicit {q : ℕ} [NeZero q]
       (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x χ.primitiveCharacter)
   rw [sub_add_cancel] at h
   have he :=
-    AnalyticNumberTheory.Arithmetic.norm_characterLogWeightedSum_sub_primitive_le x χ
-      (zero_lt_one.trans hx)
+    AnalyticNumberTheory.Arithmetic.norm_characterLogSum_sub_primitive_le x χ (zero_lt_one.trans hx)
   have hp :=
     norm_characterLogWeightedSum_le_explicit hq
       (DirichletCharacter.primitiveCharacter_isPrimitive χ) hGRH hx

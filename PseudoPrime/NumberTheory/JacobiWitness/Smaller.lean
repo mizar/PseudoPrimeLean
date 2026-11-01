@@ -40,8 +40,8 @@ For a prime `r` congruent to `1` modulo `4`, there is a positive odd nonsquare r
 strictly below `r`.  If the representative supplied by the finite-field theorem is even, its
 negative is odd; multiplication by the square `-1` preserves nonsquareness.
 -/
-theorem exists_odd_neg_one_numerator_lt_of_prime_mod_four_one {r : ℕ} (hr : r.Prime)
-    (hr4 : r % 4 = 1) : ∃ m : ℕ, Odd m ∧ 0 < m ∧ m < r ∧ jacobiSym m r = -1 := by
+theorem exists_odd_jacobi_neg_one_lt_of_mod_four_one {r : ℕ} (hr : r.Prime) (hr4 : r % 4 = 1) :
+    ∃ m : ℕ, Odd m ∧ 0 < m ∧ m < r ∧ jacobiSym m r = -1 := by
   let _ : Fact r.Prime := ⟨hr⟩
   obtain ⟨a, ha⟩ :=
     FiniteField.exists_nonsquare (F := ZMod r)
@@ -168,8 +168,8 @@ theorem exists_odd_neg_one_numerator_lt_of_mod_four_one {r : ℕ} (hrodd : Odd r
 For an odd `r` congruent to `1` modulo `4`, existence of one Jacobi `-1` numerator implies
 existence of a smaller odd-prime denominator with `J(r | q) = -1`.
 -/
-theorem exists_smaller_neg_one_witness_of_mod_four_one_of_exists_numerator {r : ℕ} (hrodd : Odd r)
-    (hr4 : r % 4 = 1) (ha : ∃ a : ZMod r, jacobiSym a.val r = -1) :
+theorem exists_smaller_neg_one_of_mod_four_one {r : ℕ} (hrodd : Odd r) (hr4 : r % 4 = 1)
+    (ha : ∃ a : ZMod r, jacobiSym a.val r = -1) :
     ∃ q : ℕ, q.Prime ∧ Odd q ∧ q < r ∧ jacobiSym r q = -1 := by
   obtain ⟨m, hmodd, hmpos, hmlt, hmvalue⟩ :=
     exists_odd_neg_one_numerator_lt_of_mod_four_one hrodd hr4 ha
@@ -269,8 +269,8 @@ Every odd nonsquare `r > 3` has a smaller odd-prime denominator with Jacobi valu
 The proof combines the CRT numerator construction with quadratic reciprocity in the `1 mod 4`
 branch, and explicit denominators in the `3 mod 4` branch.
 -/
-theorem exists_smaller_prime_jacobiSym_eq_neg_one_of_odd_nonsquare {r : ℕ} (hrodd : Odd r)
-    (hr3 : 3 < r) (hns : ¬IsSquare r) : ∃ q : ℕ, q.Prime ∧ Odd q ∧ q < r ∧ jacobiSym r q = -1 := by
+theorem exists_smaller_jacobi_neg_one_nonsquare {r : ℕ} (hrodd : Odd r) (hr3 : 3 < r)
+    (hns : ¬IsSquare r) : ∃ q : ℕ, q.Prime ∧ Odd q ∧ q < r ∧ jacobiSym r q = -1 := by
   have hr4 : r % 4 = 1 ∨ r % 4 = 3 := by
     have hlt := Nat.mod_lt r (by norm_num only : 0 < 4)
     have hoddmod : Odd (r % 4) := hrodd.mod_even ⟨2, by norm_num only⟩
@@ -286,18 +286,17 @@ theorem exists_smaller_prime_jacobiSym_eq_neg_one_of_odd_nonsquare {r : ℕ} (hr
       | exact Or.inr rfl
   rcases hr4 with hr4 | hr4
   · exact
-      exists_smaller_neg_one_witness_of_mod_four_one_of_exists_numerator hrodd hr4
-        (exists_zmod_jacobiSym_eq_neg_one_of_odd_nonsquare hrodd hns)
+      exists_smaller_neg_one_of_mod_four_one hrodd hr4
+        (exists_jacobi_neg_one_of_odd_nonsquare hrodd hns)
   · exact exists_smaller_neg_one_witness_of_mod_four_three hr4 hr3
 
 /--
 A prime `r` congruent to `1` modulo `4` has a smaller odd-prime Jacobi `-1` witness.  The odd
 nonsquare representative above is transferred by quadratic reciprocity and then factored.
 -/
-theorem exists_smaller_neg_one_witness_of_prime_mod_four_one {r : ℕ} (hr : r.Prime)
-    (hr4 : r % 4 = 1) : ∃ q : ℕ, q.Prime ∧ Odd q ∧ q < r ∧ jacobiSym r q = -1 := by
-  obtain ⟨m, hmodd, hmpos, hmlt, hmvalue⟩ :=
-    exists_odd_neg_one_numerator_lt_of_prime_mod_four_one hr hr4
+theorem exists_smaller_neg_one_of_prime_mod_four_one {r : ℕ} (hr : r.Prime) (hr4 : r % 4 = 1) :
+    ∃ q : ℕ, q.Prime ∧ Odd q ∧ q < r ∧ jacobiSym r q = -1 := by
+  obtain ⟨m, hmodd, hmpos, hmlt, hmvalue⟩ := exists_odd_jacobi_neg_one_lt_of_mod_four_one hr hr4
   have hvalue : jacobiSym r m = -1 := by
     rw [jacobiSym.quadratic_reciprocity_one_mod_four hr4 hmodd]
     exact hmvalue
@@ -308,7 +307,7 @@ Every prime above `3` has a strictly smaller odd-prime denominator at which its 
 `-1`.  Oddness of `r` follows from primality and the lower bound, so no separate oddness premise
 is needed.
 -/
-theorem exists_smaller_prime_jacobiSym_eq_neg_one_of_prime {r : ℕ} (hr : r.Prime) (hr3 : 3 < r) :
+theorem exists_smaller_jacobi_neg_one_prime {r : ℕ} (hr : r.Prime) (hr3 : 3 < r) :
     ∃ q : ℕ, q.Prime ∧ Odd q ∧ q < r ∧ jacobiSym r q = -1 := by
   have hrodd : Odd r := hr.odd_iff.mpr (Nat.le_of_lt hr3)
   have hr4 : r % 4 = 1 ∨ r % 4 = 3 := by
@@ -325,7 +324,7 @@ theorem exists_smaller_prime_jacobiSym_eq_neg_one_of_prime {r : ℕ} (hr : r.Pri
       | exact Or.inl rfl
       | exact Or.inr rfl
   rcases hr4 with hr4 | hr4
-  · exact exists_smaller_neg_one_witness_of_prime_mod_four_one hr hr4
+  · exact exists_smaller_neg_one_of_prime_mod_four_one hr hr4
   · exact exists_smaller_neg_one_witness_of_mod_four_three hr4 hr3
 
 end PseudoPrime.NumberTheory

@@ -65,7 +65,7 @@ theorem exists_prime_reflected_gap_four {n : ℕ} [NeZero n] (hn : 1 < n) (hnOdd
   have hx0 : 0 < x := by linarith only [hx]
   have hr :=
     LLS.PaperStatements.gamma_ramp_subgroup_comparison H hx0 (fun p hp _ hpb ↦ hsmall p hp hpb)
-  have hz := commonFactorExponentialSum_eq_zero_of_prime_passes hn hnOdd hpass x
+  have hz := commonExpSum_zero_of_prime_passes hn hnOdd hpass x
   rw [hz, zero_div, mul_zero, add_zero] at hr
   have hidx : (4 : ℝ) ≤ H.index := by exact_mod_cast hi
   have hc :=
@@ -91,9 +91,7 @@ theorem exists_prime_reflected_gap_all {n : ℕ} [NeZero n] (hn : 1 < n) (hnOdd 
           3) :
     ∃ p : ℕ,
       p.Prime ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
-  obtain ⟨H, hi, hHpass⟩ :=
-    PrimeTest.exists_index_ge_four_subgroup_containing_strongMillerRabinPass hn hnOdd hnComposite
-      hn9
+  obtain ⟨H, hi, hHpass⟩ := PrimeTest.exists_index_four_subgroup_strongMR hn hnOdd hnComposite hn9
   exact exists_prime_reflected_gap_four hn hnOdd hGRH hQ H hi hHpass hx hb hbX hgap
 
 /-- Under RH, the reflected MR budget is strictly below the precise common

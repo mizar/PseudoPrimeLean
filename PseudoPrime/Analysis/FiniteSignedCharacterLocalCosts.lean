@@ -31,7 +31,7 @@ theorem summable_finiteSignedMangoldtWeight_progression (l : List (ℚ × ℚ))
 Claim: its exact sum is log(p) times the signed finite progression cost.
 Proof: evaluate Mangoldt on prime powers and use the geometric cost identity.
 Role: preserve coefficient cancellation in actual local corrections. -/
-theorem tsum_finiteSignedMangoldtWeight_progression_eq_cost (l : List (ℚ × ℚ))
+theorem tsum_signedMangoldt_progression_eq_cost (l : List (ℚ × ℚ))
     (ha : ∀ ab ∈ l, 0 < (1 / 2 : ℝ) + (ab.1 : ℝ)) {p : ℕ} (hp : p.Prime) {d r : ℕ} (hd : 0 < d)
     (hr : 0 < r) :
     (∑' k : ℕ, finiteSignedMangoldtWeight l (p ^ (d * k + r))) =
@@ -92,7 +92,7 @@ theorem finiteSigned_minus_one_positive_series_eq_cost {q p : ℕ} (χ : Dirichl
   change (∑' k : ℕ, F k) = _
   rw [← tsum_even_add_odd he ho]
   simp only [heq, hoq, tsum_zero, add_zero, tsum_mul_left,
-    tsum_finiteSignedMangoldtWeight_progression_eq_cost l ha hp (by norm_num only : 0 < (2 : ℕ))
+    tsum_signedMangoldt_progression_eq_cost l ha hp (by norm_num only : 0 < (2 : ℕ))
         (by norm_num only : 0 < (1 : ℕ))]
 
 /-- Input: the minus-one local hypotheses and nonnegative combined Euler weight.

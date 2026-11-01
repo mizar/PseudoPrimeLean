@@ -32,7 +32,7 @@ the nonnegative factors, and use Euler's product formula for `φ(Q)`.
 Role: bounds the reciprocal weight lost when squarefree integers are reduced
 to those coprime to `Q`.
 -/
-theorem primeFactor_one_add_inv_prod_le_div_totient {Q : ℕ} (hQ : 0 < Q) :
+theorem primeFactor_prod_one_add_inv_le_totient {Q : ℕ} (hQ : 0 < Q) :
     (∏ p ∈ Q.primeFactors, (1 + (p : ℝ)⁻¹)) ≤ (Q : ℝ) / (Nat.totient Q : ℝ) := by
   have hfactor : ∀ p ∈ Q.primeFactors, 1 + (p : ℝ)⁻¹ ≤ (1 - (p : ℝ)⁻¹)⁻¹ := by
     intro p hp
@@ -145,7 +145,7 @@ totient.
 Role: converts divisor sums with a totient denominator into reciprocal
 divisor sums.
 -/
-theorem one_div_totient_le_two_pow_primeFactorsCard_div {n : ℕ} (hn : 0 < n) :
+theorem inv_totient_le_two_pow_factors_div {n : ℕ} (hn : 0 < n) :
     1 / (Nat.totient n : ℝ) ≤ (2 : ℝ) ^ n.primeFactors.card / (n : ℝ) := by
   have hnR : 0 < (n : ℝ) := by exact_mod_cast hn
   have hphi : 0 < (Nat.totient n : ℝ) := by exact_mod_cast Nat.totient_pos.mpr hn

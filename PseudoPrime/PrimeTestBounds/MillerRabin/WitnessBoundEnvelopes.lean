@@ -34,7 +34,7 @@ noncomputable def analysis13GammaPrefixEnvelope (L : ℝ) : ℝ :=
 
 /-- From logarithmic scale 300, the retained-prefix index-100 envelope is
 strictly above the constant-6 Gaussian coefficient bound. -/
-theorem gaussianMR6_coefficient_lt_gammaIndex100PrefixUpper {L : ℝ} (hL : 300 ≤ L) :
+theorem gaussianMR6_coefficient_lt_gamma100PrefixUpper {L : ℝ} (hL : 300 ≤ L) :
     (15123 / 25000 : ℝ) * L ^ 2 < gammaIndex100PrefixUpper L := by
   let c : ℝ := (11783423 / 25000000) / (91 / 100)
   have hLpos : 0 < L := by linarith only [hL]
@@ -80,18 +80,16 @@ theorem gaussianMR6_coefficient_lt_gammaIndex100PrefixUpper {L : ℝ} (hL : 300 
 
 /-- From scale 300, the constant-6 Gaussian cutoff is strictly below both
 retained-prefix index-100 Gamma and constant-18 Gaussian candidates. -/
-theorem gaussianMR6Bound_lt_min_prefixUpper_gaussianMR18Bound {L : ℝ} (hL : 300 ≤ L) :
+theorem gaussian6_lt_prefix_gaussian18 {L : ℝ} (hL : 300 ≤ L) :
     gaussian6Bound L < min (gammaIndex100PrefixUpper L) (gaussian18Bound L) := by
   have h6U : gaussian6Bound L < gammaIndex100PrefixUpper L :=
-    lt_trans (gaussian6Bound_lt_060492_sq hL)
-      (gaussianMR6_coefficient_lt_gammaIndex100PrefixUpper hL)
+    lt_trans (gaussian6Bound_lt_060492_sq hL) (gaussianMR6_coefficient_lt_gamma100PrefixUpper hL)
   exact lt_min h6U (gaussian6Bound_lt_gaussian18Bound hL)
 
 /-- From scale 240, combine the existing clipped Gamma and the extended
 two-prefix index-100 candidates. -/
-theorem exists_least_prime_witness_le_analysis13GammaPrefixEnvelope {n : ℕ} (hnOdd : Odd n)
-    (hcomp : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 240 ≤ Real.log n) :
+theorem exists_least_prime_analysis13Prefix_GRH {n : ℕ} (hnOdd : Odd n) (hcomp : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 240 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
@@ -101,7 +99,7 @@ theorem exists_least_prime_witness_le_analysis13GammaPrefixEnvelope {n : ℕ} (h
   obtain ⟨pOld, hpOld, hboundOld, hfailOld, hminOld⟩ :=
     exists_least_prime_witness_le_gammaClippedUpper hn hnOdd hcomp hGRH (by linarith only [hL])
   obtain ⟨pNew, hpNew, hboundNew, hfailNew, hminNew⟩ :=
-    exists_least_prime_witness_le_gammaIndex100PrefixUpper hnOdd hcomp hGRH hL
+    exists_leastWitness_le_gammaIndex100PrefixUpper hnOdd hcomp hGRH hL
   exact
     least_prime_witness_bound_min ⟨pOld, hpOld, hfailOld, hboundOld, hminOld⟩
       ⟨pNew, hpNew, hfailNew, hboundNew, hminNew⟩
@@ -121,16 +119,15 @@ noncomputable def analysis13GammaGaussianEnvelope (L : ℝ) : ℝ :=
 /-- From logarithmic scale 300, the least rejecting prime is bounded by the
 minimum of the two analysis13 candidates. Take the least witness from the
 candidate whose bound is smaller. -/
-theorem exists_least_prime_witness_le_analysis13GammaGaussianEnvelope {n : ℕ} (hnOdd : Odd n)
-    (hcomp : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 300 ≤ Real.log n) :
+theorem exists_least_prime_analysis13Gaussian_GRH {n : ℕ} (hnOdd : Odd n) (hcomp : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 300 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
         (p : ℝ) ≤ analysis13GammaGaussianEnvelope (Real.log n) ∧
         ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
   obtain ⟨p₁, hp₁, hf₁, hb₁, hm₁⟩ :=
-    exists_least_prime_witness_le_gammaIndex100PrefixUpper hnOdd hcomp hGRH (by linarith only [hL])
+    exists_leastWitness_le_gammaIndex100PrefixUpper hnOdd hcomp hGRH (by linarith only [hL])
   obtain ⟨p₂, hp₂, hb₂, hf₂, hm₂⟩ := exists_least_prime_witness_le_gaussianMR18 hnOdd hcomp hGRH hL
   by_cases hmin : gammaIndex100PrefixUpper (Real.log n) ≤ gaussian18Bound (Real.log n)
   · refine ⟨p₁, hp₁, hb₁, ?_, hm₁⟩
@@ -149,7 +146,7 @@ noncomputable def analysis13ClippedGammaEnvelope (L : ℝ) : ℝ :=
 
 /-- From scale 300 onward, the constant-18 Gaussian candidate is below the
 clipped Gamma bound, so the combined envelope reduces to the two new branches. -/
-theorem analysis13ClippedGammaEnvelope_eq_gammaGaussianEnvelope {L : ℝ} (hL : 300 ≤ L) :
+theorem analysis13Clipped_eq_gammaGaussian {L : ℝ} (hL : 300 ≤ L) :
     analysis13ClippedGammaEnvelope L = analysis13GammaGaussianEnvelope L := by
   have h18Clip := gaussianMR18Bound_lt_gammaClippedUpper hL
   have hnewClip : analysis13GammaGaussianEnvelope L ≤ gammaClippedUpper L := by
@@ -160,9 +157,8 @@ theorem analysis13ClippedGammaEnvelope_eq_gammaGaussianEnvelope {L : ℝ} (hL : 
 
 /-- The clipped Gamma candidate remains available from scale 300, so combine
 it with the minimum of the new prefix-Gamma and constant-18 Gaussian bounds. -/
-theorem exists_least_prime_witness_le_analysis13ClippedGammaEnvelope {n : ℕ} (hnOdd : Odd n)
-    (hcomp : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 300 ≤ Real.log n) :
+theorem exists_least_prime_analysis13Clipped_GRH {n : ℕ} (hnOdd : Odd n) (hcomp : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 300 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
@@ -172,7 +168,7 @@ theorem exists_least_prime_witness_le_analysis13ClippedGammaEnvelope {n : ℕ} (
   obtain ⟨pOld, hpOld, hboundOld, hfailOld, hminOld⟩ :=
     exists_least_prime_witness_le_gammaClippedUpper hn hnOdd hcomp hGRH (by linarith only [hL])
   obtain ⟨pNew, hpNew, hfailNew, hboundNew, hminNew⟩ :=
-    exists_least_prime_witness_le_analysis13GammaGaussianEnvelope hnOdd hcomp hGRH hL
+    exists_least_prime_analysis13Gaussian_GRH hnOdd hcomp hGRH hL
   exact
     least_prime_witness_bound_min ⟨pOld, hpOld, hfailOld, hboundOld, hminOld⟩
       ⟨pNew, hpNew, hfailNew, hboundNew, hminNew⟩
@@ -183,7 +179,7 @@ noncomputable def analysis13Index100Envelope (L : ℝ) : ℝ :=
 
 /-- From scale 330 onward, the constant-18 branch is below the old index-100
 Gamma bound, so this candidate minimum reduces to the two analysis13 bounds. -/
-theorem analysis13Index100Envelope_eq_gammaGaussianEnvelope {L : ℝ} (hL : 330 ≤ L) :
+theorem analysis13Index100_eq_gammaGaussian {L : ℝ} (hL : 330 ≤ L) :
     analysis13Index100Envelope L = analysis13GammaGaussianEnvelope L := by
   have h18Index := gaussianMR18Bound_lt_gammaIndex100Bound hL
   have hnewIndex : analysis13GammaGaussianEnvelope L ≤ gammaIndex100Bound L := by
@@ -194,17 +190,15 @@ theorem analysis13Index100Envelope_eq_gammaGaussianEnvelope {L : ℝ} (hL : 330 
 
 /-- From logarithmic scale 330, include the existing index-100 bound in the
 pointwise minimum with the clipped Gamma and analysis13 candidates. -/
-theorem exists_least_prime_witness_le_analysis13Index100Envelope {n : ℕ} (hnOdd : Odd n)
-    (hcomp : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 330 ≤ Real.log n) :
+theorem exists_least_prime_analysis13Index100_GRH {n : ℕ} (hnOdd : Odd n) (hcomp : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 330 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
         (p : ℝ) ≤ analysis13Index100Envelope (Real.log n) ∧
         ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
   obtain ⟨pOld, hpOld, hfailOld, hboundOld, hminOld⟩ :=
-    exists_least_prime_witness_le_analysis13GammaGaussianEnvelope hnOdd hcomp hGRH
-      (by linarith only [hL])
+    exists_least_prime_analysis13Gaussian_GRH hnOdd hcomp hGRH (by linarith only [hL])
   obtain ⟨pNew, hpNew, hboundNew, hfailNew, hminNew⟩ :=
     exists_least_prime_witness_le_gammaIndex100 hnOdd hcomp hGRH hL
   exact
@@ -218,7 +212,7 @@ noncomputable def analysis13SixFifthsEnvelope (L : ℝ) : ℝ :=
 
 /-- From scale 500 onward, all later legacy candidates are dominated by the
 constant-18 Gaussian, so the nested envelope reduces to the two new branches. -/
-theorem analysis13SixFifthsEnvelope_eq_gammaGaussianEnvelope {L : ℝ} (hL : 500 ≤ L) :
+theorem analysis13SixFifths_eq_gammaGaussian {L : ℝ} (hL : 500 ≤ L) :
     analysis13SixFifthsEnvelope L = analysis13GammaGaussianEnvelope L := by
   have h18Index := gaussianMR18Bound_lt_gammaIndex100Bound (by linarith only [hL])
   have h18Six := gaussian18Bound_lt_gaussian6FifthsBound hL
@@ -233,17 +227,15 @@ theorem analysis13SixFifthsEnvelope_eq_gammaGaussianEnvelope {L : ℝ} (hL : 500
 
 /-- From logarithmic scale 500, the pointwise minimum also includes the
 established 6/5 Gaussian bound. -/
-theorem exists_least_prime_witness_le_analysis13SixFifthsEnvelope {n : ℕ} (hnOdd : Odd n)
-    (hcomp : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 500 ≤ Real.log n) :
+theorem exists_least_prime_analysis13SixFifths_GRH {n : ℕ} (hnOdd : Odd n) (hcomp : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 500 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
         (p : ℝ) ≤ analysis13SixFifthsEnvelope (Real.log n) ∧
         ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
   obtain ⟨pOld, hpOld, hfailOld, hboundOld, hminOld⟩ :=
-    exists_least_prime_witness_le_analysis13Index100Envelope hnOdd hcomp hGRH
-      (by linarith only [hL])
+    exists_least_prime_analysis13Index100_GRH hnOdd hcomp hGRH (by linarith only [hL])
   obtain ⟨pNew, hpNew, hfailNew, hboundNew, hminNew⟩ :=
     exists_least_prime_witness_le_gaussian6fifths hnOdd hcomp hGRH hL
   exact
@@ -257,7 +249,7 @@ noncomputable def analysis13LargeScaleEnvelope (L : ℝ) : ℝ :=
 
 /-- The two-candidate Gamma-Gaussian envelope retains the local three-tenths
 quadratic lower bound from scale 300 onward. -/
-theorem analysis13GammaGaussianEnvelope_lower_three_tenths {L : ℝ} (hL : 300 ≤ L) :
+theorem analysis13GammaGaussianEnvelope_ge_3_10_sq {L : ℝ} (hL : 300 ≤ L) :
     (3 / 10 : ℝ) * L ^ 2 ≤ analysis13GammaGaussianEnvelope L := by
   have hPrefix := local_three_tenths_le_gammaIndex100PrefixUpper (by linarith only [hL])
   have hGaussian := gaussian18Bound_gt_local_three_tenths hL
@@ -271,17 +263,16 @@ theorem analysis13LargeScaleEnvelope_eq_coefficient {L : ℝ} (hL : 500 ≤ L) :
   have hcoef : (282924 / 1000000 : ℝ) < 3 / 10 := by norm_num only
   have hLpos : 0 < L := by linarith only [hL]
   have hscale := mul_lt_mul_of_pos_right hcoef (sq_pos_of_pos hLpos)
-  have hlower := analysis13GammaGaussianEnvelope_lower_three_tenths (by linarith only [hL])
+  have hlower := analysis13GammaGaussianEnvelope_ge_3_10_sq (by linarith only [hL])
   have hsmall := lt_of_lt_of_le hscale hlower
-  rw [analysis13LargeScaleEnvelope, analysis13SixFifthsEnvelope_eq_gammaGaussianEnvelope hL]
+  rw [analysis13LargeScaleEnvelope, analysis13SixFifths_eq_gammaGaussian hL]
   exact min_eq_right hsmall.le
 
 /-- For odd composites above the coefficient theorem's decimal threshold, the
 least rejecting prime obeys the minimum of the Gamma, Gaussian, and quadratic
 coefficient candidates. -/
-theorem exists_least_prime_witness_le_analysis13LargeScaleEnvelope {n : ℕ} (hnOdd : Odd n)
-    (hcomp : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hN : 10 ^ 9565217391305 ≤ n) :
+theorem exists_least_prime_analysis13LargeScale_GRH {n : ℕ} (hnOdd : Odd n) (hcomp : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hN : 10 ^ 9565217391305 ≤ n) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧

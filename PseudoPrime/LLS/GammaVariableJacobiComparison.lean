@@ -69,10 +69,10 @@ theorem gamma_jacobi_no_negative_actual_comparison {n : ℕ} {hn : Odd n} {hns :
     rw [bridge.character_quadratic.inv]
     exact bridge.character_ne_one
   have hc :=
-    PaperStatements.gamma_primitive_sum_re_le_resolvent_signed_conductor hq hm hmq hGRH
-      bridge.character_primitive bridge.character_ne_one hinv hx
+    PaperStatements.gammaSum_signedResolvent_conductor_GRH hq hm hmq hGRH bridge.character_primitive
+      bridge.character_ne_one hinv hx
   have hz :=
-    AnalyticNumberTheory.DirichletLFunction.gammaResolvent_zeroMass_le_signed_prefix
+    AnalyticNumberTheory.DirichletLFunction.gammaMass_le_signedPrefix_RH
       (le_trans (by norm_num only : (2 : ℕ) ≤ 3) hm)
       (hGRH _ bridge.character bridge.character_primitive) bridge.character_primitive
       bridge.character_ne_one hinv B
@@ -111,7 +111,7 @@ max(20000,m), where m is the actual conductor. At x ≥ 2, a strict actual-budge
 gap implies a negative odd-prime Jacobi witness through 99x/40.
 The ambient inequalities follow from max; the input has no extra lower bound.
 This supplies a uniform interface for small analytic starting points. -/
-theorem exists_odd_prime_negative_of_canonical_actual_gap {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+theorem exists_oddPrime_negJacobi_actualGap_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 2 ≤ x)
     (B : Finset ℕ)
@@ -150,8 +150,7 @@ theorem exists_odd_prime_negative_log_sq_of_actual_gap {n : ℕ} {hn : Odd n} {h
         Odd p ∧
         jacobiSym n p = -1 ∧
         (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log n) ^ 2 ∧ (p : ℝ) < (Real.log n) ^ 2 := by
-  obtain ⟨p, hp, hodd, hbound, hj⟩ :=
-    exists_odd_prime_negative_of_canonical_actual_gap bridge hGRH hx B hgap
+  obtain ⟨p, hp, hodd, hbound, hj⟩ := exists_oddPrime_negJacobi_actualGap_GRH bridge hGRH hx B hgap
   refine ⟨p, hp, hodd, hj, ?_, ?_⟩
   · nlinarith only [hbound]
   · nlinarith only [hbound, hx]
@@ -161,7 +160,7 @@ combine into prime-local costs whenever no negative Jacobi odd-prime witness
 occurs up to the prefix endpoint b ≥ 1. Transfer to unit-prime character value one
 and use the existing full-power prefix identity. No RH or input-size gate is needed.
 This is the local-cost interface for the actual variable-scale budget. -/
-theorem gamma_jacobi_prefix_add_ambient_ramp_eq_local_cost {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+theorem gammaJacobi_prefixRamp_eq_localCost {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns) {b : ℝ} (hb : 1 ≤ b)
     (hno : ∀ p : ℕ, p.Prime → Odd p → (p : ℝ) ≤ b → jacobiSym n p ≠ -1) (x : ℝ) :
     (∑ k ∈ Finset.Ioc 0 ⌊b⌋₊,
@@ -171,8 +170,8 @@ theorem gamma_jacobi_prefix_add_ambient_ramp_eq_local_cost {n : ℕ} {hn : Odd n
         Analysis.gammaActualPrimeLocalCost bridge.character p
           (AnalyticNumberTheory.DirichletLFunction.gammaPrefixPowerIndices b p) x := by
   exact
-    AnalyticNumberTheory.DirichletLFunction.gamma_character_prefix_add_ambient_ramp_eq_local_cost
-      bridge.character (mul_pos (by norm_num only : (0 : ℕ) < 4) hn.pos) hb
+    AnalyticNumberTheory.DirichletLFunction.gammaPrefix_add_ramp_eq_cost bridge.character
+      (mul_pos (by norm_num only : (0 : ℕ) < 4) hn.pos) hb
       (gamma_jacobi_no_negative_prefix_prime_one bridge hno) x
 
 /-- For an odd nonsquare input under GRH, x ≥ 2 and prefix 1 ≤ b ≤ 99x/40,
@@ -207,7 +206,7 @@ theorem gamma_jacobi_no_negative_local_upper_comparison {n : ℕ} {hn : Odd n} {
   have hc :=
     gamma_jacobi_no_negative_actual_comparison bridge hGRH hq hmq hx (Finset.Ioc 0 ⌊b⌋₊) hno
   have he :=
-    gamma_jacobi_prefix_add_ambient_ramp_eq_local_cost bridge hb
+    gammaJacobi_prefixRamp_eq_localCost bridge hb
       (fun p hp hodd hpb ↦ hno p hp hodd (hpb.trans hbX)) x
   dsimp only [gammaJacobiActualBudget] at hc
   linarith only [hc, he, hU]

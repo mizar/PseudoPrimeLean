@@ -24,36 +24,30 @@ monotonicity of `Nat.ceil`.
 Role: turns the explicit local count into the uniform multiplicity input needed for an
 `exp(-C₃K)` detector on bounded conductor-height ranges.
 -/
-theorem completedLFunction_local_zero_multiplicity_cap_le_fixed {q : ℕ} {η : ℝ} {t : ℝ} {C : ℕ}
+theorem localCap_fixed_le {q : ℕ} {η : ℝ} {t : ℝ} {C : ℕ}
     (hscale : η * Real.log ((q : ℝ) * (|t| + 3)) ≤ 3)
-    (hC :
-      C =
-        Nat.ceil
-          (completedZeroLocalLogBoundConstant * (1 + 644 * η * Real.log ((q : ℝ) * (|t| + 3))))) :
-    C ≤ Nat.ceil (1933 * completedZeroLocalLogBoundConstant) := by
+    (hC : C = Nat.ceil (localLogConstant * (1 + 644 * η * Real.log ((q : ℝ) * (|t| + 3))))) :
+    C ≤ Nat.ceil (1933 * localLogConstant) := by
   rw [hC]
   apply Nat.ceil_le_ceil
   calc
-    completedZeroLocalLogBoundConstant * (1 + 644 * η * Real.log ((q : ℝ) * (|t| + 3))) ≤
-        completedZeroLocalLogBoundConstant * 1933 :=
-      mul_le_mul_of_nonneg_left (by nlinarith only [hscale])
-        completedZeroLocalLogBoundConstant_pos.le
-    _ = 1933 * completedZeroLocalLogBoundConstant := by ring
+    localLogConstant * (1 + 644 * η * Real.log ((q : ℝ) * (|t| + 3))) ≤ localLogConstant * 1933 :=
+      mul_le_mul_of_nonneg_left (by nlinarith only [hscale]) localLogConstant_pos.le
+    _ = 1933 * localLogConstant := by ring
 
 /-- The fixed multiplicity cap valid when `η * log(q * (|t| + 3)) ≤ 3`. -/
-noncomputable def completedLFunctionNearOneDetectorMultiplicityCap : ℕ :=
-  Nat.ceil (1933 * completedZeroLocalLogBoundConstant)
+noncomputable def localMultiplicityCap : ℕ :=
+  Nat.ceil (1933 * localLogConstant)
 
 /--
 A fixed natural upper bound for the remote-tail order under a bounded scaled conductor-height
 logarithm.
 -/
-noncomputable def completedGenusRemoteTailUniformOrderBound : ℕ :=
+noncomputable def remoteTailOrderBound : ℕ :=
   Nat.ceil
       (72 *
-        (((Nat.ceil (1933 * completedZeroLocalLogBoundConstant) + 1 : ℕ) : ℝ) *
-          (4 * completedGenusMassShiftConstant + 11 +
-            completedGenusMassCenterConstant * (Real.log 4 + 1)))) +
+        (((Nat.ceil (1933 * localLogConstant) + 1 : ℕ) : ℝ) *
+          (4 * genusMassShift + 11 + genusMassCenter * (Real.log 4 + 1)))) +
     3
 
 /--
@@ -65,21 +59,16 @@ Proof: bound the local cutoff by its fixed multiplicity cap, then scale the inve
 expression by `η^2` and use the conductor-height logarithm bound.
 Role: makes the remote-tail order uniform on the ranges used by the near-one zero detector.
 -/
-theorem completedGenusRemoteTailUniformCutoff_le_fixed {q : ℕ} [NeZero q] (hq : 2 ≤ q) {η : ℝ}
-    (hη : 0 < η) (hηsmall : η ≤ 1 / 1288) (t : ℝ) (hscale : η * Real.log ((q : ℝ) * (|t| + 3)) ≤ 3)
-    (C Kmin : ℕ)
-    (hC :
-      C =
-        Nat.ceil
-          (completedZeroLocalLogBoundConstant * (1 + 644 * η * Real.log ((q : ℝ) * (|t| + 3))))) :
-    completedGenusRemoteTailUniformCutoff q η t ((C + 1 : ℕ) : ℝ) Kmin ≤
-      max completedGenusRemoteTailUniformOrderBound Kmin := by
+theorem remoteCutoff_fixed_le {q : ℕ} [NeZero q] (hq : 2 ≤ q) {η : ℝ} (hη : 0 < η)
+    (hηsmall : η ≤ 1 / 1288) (t : ℝ) (hscale : η * Real.log ((q : ℝ) * (|t| + 3)) ≤ 3) (C Kmin : ℕ)
+    (hC : C = Nat.ceil (localLogConstant * (1 + 644 * η * Real.log ((q : ℝ) * (|t| + 3))))) :
+    uniformRemoteCutoff q η t ((C + 1 : ℕ) : ℝ) Kmin ≤ max remoteTailOrderBound Kmin := by
   let X : ℝ := (q : ℝ) * (|t| + 3)
   let U : ℝ := |t|
   let W : ℝ :=
-    4 / η + completedGenusMassShiftConstant * (Real.log (4 + U) + 1) + Real.log q + 4 +
-      completedGenusMassCenterConstant * (Real.log 4 + 1)
-  let cap : ℕ := Nat.ceil (1933 * completedZeroLocalLogBoundConstant)
+    4 / η + genusMassShift * (Real.log (4 + U) + 1) + Real.log q + 4 +
+      genusMassCenter * (Real.log 4 + 1)
+  let cap : ℕ := Nat.ceil (1933 * localLogConstant)
   let Nbound : ℝ := ((cap + 1 : ℕ) : ℝ)
   have hηle : η ≤ 1 := by nlinarith only [hηsmall]
   have hqcast : (2 : ℝ) ≤ (q : ℝ) := by exact_mod_cast hq
@@ -119,39 +108,30 @@ theorem completedGenusRemoteTailUniformCutoff_le_fixed {q : ℕ} [NeZero q] (hq 
     nlinarith only [hlogplus, hscale, hηle]
   have hCcap : C ≤ cap := by
     dsimp only [cap]
-    exact completedLFunction_local_zero_multiplicity_cap_le_fixed hscale hC
+    exact localCap_fixed_le hscale hC
   have hN : ((C + 1 : ℕ) : ℝ) ≤ Nbound := by
     dsimp only [Nbound, cap]
     exact_mod_cast Nat.add_le_add_right hCcap 1
-  have hA : 0 < completedGenusMassShiftConstant := by
+  have hA : 0 < genusMassShift := by
+    rw [show genusMassShift = Classical.choose uniform_completedLogDeriv_smallShift by rfl]
+    exact (Classical.choose_spec uniform_completedLogDeriv_smallShift).1
+  have hB : 0 < genusMassCenter := by
     rw [show
-        completedGenusMassShiftConstant =
-          Classical.choose exists_uniform_norm_completed_logDeriv_small_shift_bound
-        by rfl]
-    exact (Classical.choose_spec exists_uniform_norm_completed_logDeriv_small_shift_bound).1
-  have hB : 0 < completedGenusMassCenterConstant := by
-    rw [show
-        completedGenusMassCenterConstant =
+        genusMassCenter =
           Classical.choose
-            (exists_norm_completed_logDeriv_small_shift_bound (r := 1) (by norm_num only)
-              (by norm_num only))
+            (completedLogDeriv_smallShift_bound (r := 1) (by norm_num only) (by norm_num only))
         by rfl]
     exact
       (Classical.choose_spec
-          (exists_norm_completed_logDeriv_small_shift_bound (r := 1) (by norm_num only)
-            (by norm_num only))).1
-  have hAterm :
-    completedGenusMassShiftConstant * (η * Real.log (4 + U) + η) ≤
-      completedGenusMassShiftConstant * 4 :=
+          (completedLogDeriv_smallShift_bound (r := 1) (by norm_num only) (by norm_num only))).1
+  have hAterm : genusMassShift * (η * Real.log (4 + U) + η) ≤ genusMassShift * 4 :=
     mul_le_mul_of_nonneg_left (by nlinarith only [hηlog4]) hA.le
   have hlog4nonneg : 0 ≤ Real.log 4 + 1 := by
     have h := Real.log_nonneg (by norm_num : (1 : ℝ) ≤ 4)
     linarith only [h]
   have hBfactor : η * (Real.log 4 + 1) ≤ Real.log 4 + 1 := by
     simpa only [one_mul] using mul_le_mul_of_nonneg_right hηle hlog4nonneg
-  have hBterm :
-    completedGenusMassCenterConstant * (η * (Real.log 4 + 1)) ≤
-      completedGenusMassCenterConstant * (Real.log 4 + 1) :=
+  have hBterm : genusMassCenter * (η * (Real.log 4 + 1)) ≤ genusMassCenter * (Real.log 4 + 1) :=
     mul_le_mul_of_nonneg_left hBfactor hB.le
   have hfour : η * (4 / η) = 4 := by
     rw [div_eq_mul_inv]
@@ -160,16 +140,11 @@ theorem completedGenusRemoteTailUniformCutoff_le_fixed {q : ℕ} [NeZero q] (hq 
       _ = 4 := by rw [mul_inv_cancel₀ (ne_of_gt hη), mul_one]
   have hidentity :
     η * W =
-      η * (4 / η) + completedGenusMassShiftConstant * (η * Real.log (4 + U) + η) +
-        η * Real.log (q : ℝ) +
-        4 * η +
-        completedGenusMassCenterConstant * (η * (Real.log 4 + 1)) := by
+      η * (4 / η) + genusMassShift * (η * Real.log (4 + U) + η) + η * Real.log (q : ℝ) + 4 * η +
+        genusMassCenter * (η * (Real.log 4 + 1)) := by
     dsimp only [W]
     ring
-  have hmassη :
-    η * W ≤
-      4 * completedGenusMassShiftConstant + 11 +
-        completedGenusMassCenterConstant * (Real.log 4 + 1) := by
+  have hmassη : η * W ≤ 4 * genusMassShift + 11 + genusMassCenter * (Real.log 4 + 1) := by
     rw [hidentity, hfour]
     nlinarith only [hAterm, hBterm, hηlogq, hηle]
   have hcancel : η ^ 2 * ((1 / η) * W) = η * W := by
@@ -181,41 +156,24 @@ theorem completedGenusRemoteTailUniformCutoff_le_fixed {q : ℕ} [NeZero q] (hq 
         exact (mul_assoc _ _ _).symm
       _ = η * W := by rw [mul_inv_cancel₀ (ne_of_gt hη), one_mul]
   have hscaled :
-    η ^ 2 * ((1 / η) * W) ≤
-      4 * completedGenusMassShiftConstant + 11 +
-        completedGenusMassCenterConstant * (Real.log 4 + 1) := by
+    η ^ 2 * ((1 / η) * W) ≤ 4 * genusMassShift + 11 + genusMassCenter * (Real.log 4 + 1) := by
     rw [hcancel]
     exact hmassη
-  have hHnonneg :
-    0 ≤
-      4 * completedGenusMassShiftConstant + 11 +
-        completedGenusMassCenterConstant * (Real.log 4 + 1) := by
-    positivity
+  have hHnonneg : 0 ≤ 4 * genusMassShift + 11 + genusMassCenter * (Real.log 4 + 1) := by positivity
   have hbase :
     72 * ((C + 1 : ℕ) : ℝ) * ((1 / η) * W) * η ^ 2 ≤
-      72 * Nbound *
-        (4 * completedGenusMassShiftConstant + 11 +
-          completedGenusMassCenterConstant * (Real.log 4 + 1)) := by
+      72 * Nbound * (4 * genusMassShift + 11 + genusMassCenter * (Real.log 4 + 1)) := by
     calc
       72 * ((C + 1 : ℕ) : ℝ) * ((1 / η) * W) * η ^ 2 =
           72 * ((C + 1 : ℕ) : ℝ) * (η ^ 2 * ((1 / η) * W)) :=
         by ring
-      _ ≤
-          72 * ((C + 1 : ℕ) : ℝ) *
-            (4 * completedGenusMassShiftConstant + 11 +
-              completedGenusMassCenterConstant * (Real.log 4 + 1)) :=
+      _ ≤ 72 * ((C + 1 : ℕ) : ℝ) * (4 * genusMassShift + 11 + genusMassCenter * (Real.log 4 + 1)) :=
         mul_le_mul_of_nonneg_left hscaled (by positivity)
-      _ ≤
-          72 * Nbound *
-            (4 * completedGenusMassShiftConstant + 11 +
-              completedGenusMassCenterConstant * (Real.log 4 + 1)) :=
+      _ ≤ 72 * Nbound * (4 * genusMassShift + 11 + genusMassCenter * (Real.log 4 + 1)) :=
         mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hN (by norm_num)) hHnonneg
   have hceil :
     Nat.ceil (max (72 * ((C + 1 : ℕ) : ℝ) * ((1 / η) * W) * η ^ 2) 0) ≤
-      Nat.ceil
-        (72 * Nbound *
-          (4 * completedGenusMassShiftConstant + 11 +
-            completedGenusMassCenterConstant * (Real.log 4 + 1))) := by
+      Nat.ceil (72 * Nbound * (4 * genusMassShift + 11 + genusMassCenter * (Real.log 4 + 1))) := by
     apply Nat.ceil_le_ceil
     exact max_le hbase (by positivity)
   have hfinal :
@@ -223,15 +181,11 @@ theorem completedGenusRemoteTailUniformCutoff_le_fixed {q : ℕ} [NeZero q] (hq 
       Nat.ceil
           (72 *
             (((cap + 1 : ℕ) : ℝ) *
-              (4 * completedGenusMassShiftConstant + 11 +
-                completedGenusMassCenterConstant * (Real.log 4 + 1)))) +
+              (4 * genusMassShift + 11 + genusMassCenter * (Real.log 4 + 1)))) +
         3 := by
     calc
       _ ≤
-          Nat.ceil
-              (72 * Nbound *
-                (4 * completedGenusMassShiftConstant + 11 +
-                  completedGenusMassCenterConstant * (Real.log 4 + 1))) +
+          Nat.ceil (72 * Nbound * (4 * genusMassShift + 11 + genusMassCenter * (Real.log 4 + 1))) +
             3 :=
         Nat.add_le_add_right hceil 3
       _ = _ := by
@@ -241,21 +195,19 @@ theorem completedGenusRemoteTailUniformCutoff_le_fixed {q : ℕ} [NeZero q] (hq 
       max
         (Nat.ceil
             (72 *
-              (((Nat.ceil (1933 * completedZeroLocalLogBoundConstant) + 1 : ℕ) : ℝ) *
-                (4 * completedGenusMassShiftConstant + 11 +
-                  completedGenusMassCenterConstant * (Real.log 4 + 1)))) +
+              (((Nat.ceil (1933 * localLogConstant) + 1 : ℕ) : ℝ) *
+                (4 * genusMassShift + 11 + genusMassCenter * (Real.log 4 + 1)))) +
           3)
         Kmin
   exact max_le_max hfinal le_rfl
 
 /-- The fixed exponential loss associated with the completed near-one detector cap. -/
-noncomputable def completedLFunctionNearOneDetectorExponent : ℝ :=
-  (completedLFunctionNearOneDetectorMultiplicityCap : ℝ) * Real.log 3 +
-    Real.log (8 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1))
+noncomputable def genusDetectorExponent : ℝ :=
+  (localMultiplicityCap : ℝ) * Real.log 3 + Real.log (8 * ((localMultiplicityCap : ℝ) + 1))
 
 /-- The fixed exponential loss after transferring the detector to the ordinary `L` function. -/
-noncomputable def ordinaryLFunctionNearOneDetectorExponent : ℝ :=
-  completedLFunctionNearOneDetectorExponent + Real.log 2 / 2
+noncomputable def eulerDetectorExponent : ℝ :=
+  genusDetectorExponent + Real.log 2 / 2
 
 /--
 Inputs: a nonnegative order-independent constant in the gamma-factor derivative estimate.
@@ -265,14 +217,10 @@ Proof: the ratio is bounded by a fixed multiple of `(3 / 322)^n`, which tends to
 Role: supplies the order threshold needed to absorb the gamma factor in the ordinary `L`-function
 detector.
 -/
-theorem exists_order_threshold_for_uniform_gamma_absorption (G : ℝ) :
+theorem exists_gammaThreshold (G : ℝ) :
     ∃ n₀ : ℕ,
-      ∀ n : ℕ,
-        n₀ ≤ n →
-          192 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1) * G *
-              ((3 : ℝ) / 322) ^ n <
-            1 := by
-  let A : ℝ := 192 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1) * G
+      ∀ n : ℕ, n₀ ≤ n → 192 * ((localMultiplicityCap : ℝ) + 1) * G * ((3 : ℝ) / 322) ^ n < 1 := by
+  let A : ℝ := 192 * ((localMultiplicityCap : ℝ) + 1) * G
   have hpow : Filter.Tendsto (fun n : ℕ => ((3 : ℝ) / 322) ^ n) Filter.atTop (nhds 0) :=
     tendsto_pow_atTop_nhds_zero_of_lt_one (by norm_num) (by norm_num)
   have hlim : Filter.Tendsto (fun n : ℕ => A * ((3 : ℝ) / 322) ^ n) Filter.atTop (nhds 0) := by
@@ -285,10 +233,8 @@ theorem exists_order_threshold_for_uniform_gamma_absorption (G : ℝ) :
   simpa only [A] using h
 
 /-- The explicit order cutoff that absorbs the uniform gamma-factor correction. -/
-noncomputable def uniformGammaAbsorptionOrderCutoff (G : ℝ) : ℕ :=
-  Nat.ceil
-      (max (3 * (192 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1) * G) / 319) 0) +
-    1
+noncomputable def gammaAbsorptionCutoff (G : ℝ) : ℕ :=
+  Nat.ceil (max (3 * (192 * ((localMultiplicityCap : ℝ) + 1) * G) / 319) 0) + 1
 
 /--
 Inputs: the nonnegative-order-independent gamma-factor constant and an order above the cutoff.
@@ -297,20 +243,17 @@ Proof: Bernoulli's inequality bounds `(3/322)^n` by the reciprocal of a linear f
 the ceiling cutoff makes its denominator larger than the correction coefficient.
 Role: makes the gamma-absorption order in the ordinary derivative detector explicit.
 -/
-theorem explicit_uniform_gamma_absorption_order_bound (G : ℝ) :
+theorem gammaAbsorption_order (G : ℝ) :
     ∀ n : ℕ,
-      uniformGammaAbsorptionOrderCutoff G ≤ n →
-        192 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1) * G *
-            ((3 : ℝ) / 322) ^ n <
-          1 := by
-  let A : ℝ := 192 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1) * G
+      gammaAbsorptionCutoff G ≤ n →
+        192 * ((localMultiplicityCap : ℝ) + 1) * G * ((3 : ℝ) / 322) ^ n < 1 := by
+  let A : ℝ := 192 * ((localMultiplicityCap : ℝ) + 1) * G
   let B : ℝ := 3 * A / 319
   let Bpos : ℝ := max B 0
   intro n hn
   have hceil : Bpos ≤ (Nat.ceil Bpos : ℝ) := Nat.le_ceil Bpos
   have hnceil : (Nat.ceil Bpos : ℝ) < n := by
-    have hn' : Nat.ceil Bpos + 1 ≤ n := by
-      simpa only [uniformGammaAbsorptionOrderCutoff, A, B, Bpos] using hn
+    have hn' : Nat.ceil Bpos + 1 ≤ n := by simpa only [gammaAbsorptionCutoff, A, B, Bpos] using hn
     exact_mod_cast (show Nat.ceil Bpos < n by omega)
   have hBposn : Bpos < (n : ℝ) := lt_of_le_of_lt hceil hnceil
   have hB : B ≤ Bpos := le_max_left _ _
@@ -355,15 +298,12 @@ Proof: compare `log (4 * |t| + 4)` with the conductor-height logarithm, then use
 `12 * η ≤ 3 / 322` and the threshold inequality.
 Role: converts the order threshold into a positive ordinary `L`-function derivative bound.
 -/
-theorem normalized_gamma_correction_le_half_detector {η t G : ℝ} {q : ℕ} (hq : 2 ≤ q) (hη : 0 < η)
-    (hηsmall : η ≤ 1 / 1288) (hscale : η * Real.log ((q : ℝ) * (|t| + 3)) ≤ 3) (hG : 0 ≤ G) (n : ℕ)
-    (hthreshold :
-      192 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1) * G * ((3 : ℝ) / 322) ^ n <
-        1) :
+theorem gamma_halfDetector_le {η t G : ℝ} {q : ℕ} (hq : 2 ≤ q) (hη : 0 < η) (hηsmall : η ≤ 1 / 1288)
+    (hscale : η * Real.log ((q : ℝ) * (|t| + 3)) ≤ 3) (hG : 0 ≤ G) (n : ℕ)
+    (hthreshold : 192 * ((localMultiplicityCap : ℝ) + 1) * G * ((3 : ℝ) / 322) ^ n < 1) :
     G * η ^ (n + 1) * (Real.log (4 * |t| + 4) + 1) * 4 ^ n ≤
-      (1 / (16 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1))) *
-        (1 / (3 : ℝ)) ^ (n + 1) := by
-  let cap : ℝ := completedLFunctionNearOneDetectorMultiplicityCap
+      (1 / (16 * ((localMultiplicityCap : ℝ) + 1))) * (1 / (3 : ℝ)) ^ (n + 1) := by
+  let cap : ℝ := localMultiplicityCap
   let u : ℝ := |t|
   have hu : 0 ≤ u := by
     dsimp only [u]; positivity
@@ -452,8 +392,7 @@ parameter.
 Proof: take logarithms of the reciprocal scale and use the cap and exponent bounds.
 Role: supplies the exponential form required by the positive zero-detection contract.
 -/
-theorem local_detector_scale_ge_exp_neg {Cmax C K m : ℕ} (hC : C ≤ Cmax) (hK : 1 ≤ K)
-    (hm : m ≤ K * C) :
+theorem localSignal_exp_ge {Cmax C K m : ℕ} (hC : C ≤ Cmax) (hK : 1 ≤ K) (hm : m ≤ K * C) :
     Real.exp (-((Cmax : ℝ) * Real.log 3 + Real.log (8 * ((Cmax : ℝ) + 1))) * (K : ℝ)) ≤
       (1 / (8 * ((C : ℝ) + 1))) * (1 / 3 : ℝ) ^ m := by
   have htargetPos : 0 < (1 / (8 * ((C : ℝ) + 1))) * (1 / 3 : ℝ) ^ m := by positivity
@@ -503,10 +442,9 @@ and the logarithmic conversion of its reciprocal scale into an exponential.
 Role: gives the completed-function exponential detector under the bounded conductor-height
 condition used by the later zero-density argument.
 -/
-theorem exists_completedLFunction_logDeriv_exp_detector_on_log_scale {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hq : 2 ≤ q) (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1)
-    {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 1288) {c ρ : ℂ} (hcre : c.re = 1 + η)
-    (hcim : c.im = ρ.im) (hρre : |ρ.re - 1| ≤ η)
+theorem completed_logDetector {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hq : 2 ≤ q)
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 1288)
+    {c ρ : ℂ} (hcre : c.re = 1 + η) (hcim : c.im = ρ.im) (hρre : |ρ.re - 1| ≤ η)
     (hzero : DirichletCharacter.completedLFunction χ ρ = 0)
     (hc : DirichletCharacter.completedLFunction χ c ≠ 0)
     (hscale : η * Real.log ((q : ℝ) * (|ρ.im| + 3)) ≤ 3) :
@@ -515,24 +453,19 @@ theorem exists_completedLFunction_logDeriv_exp_detector_on_log_scale {q : ℕ} [
         0 < n ∧
         n + 1 = m ∧
         K ≤ m ∧
-        m ≤ K * completedLFunctionNearOneDetectorMultiplicityCap ∧
-        Real.exp (-(completedLFunctionNearOneDetectorExponent * (K : ℝ))) ≤
+        m ≤ K * localMultiplicityCap ∧
+        Real.exp (-(genusDetectorExponent * (K : ℝ))) ≤
           (η ^ (n + 1) / (n.factorial : ℝ)) *
             ‖iteratedDeriv n (fun z : ℂ => logDeriv χ.completedLFunction z) c‖ := by
   obtain ⟨_, _, _, _, C, K, m, n, _, _, hK, _, hn, hnm, hmK, hmKC, hraw, hnorm, hCeq⟩ :=
-    exists_completedLFunction_iteratedDeriv_logDeriv_lower_bound_near_one_zero hq hχ hp hinv hη
-      hηsmall 2 (by norm_num) hcre hcim hρre hzero hc
-  have hCcap := completedLFunction_local_zero_multiplicity_cap_le_fixed hscale hCeq
-  have hmCap : m ≤ K * completedLFunctionNearOneDetectorMultiplicityCap :=
-    hmKC.trans (Nat.mul_le_mul_left K hCcap)
-  have hscaleExp := local_detector_scale_ge_exp_neg hCcap (by omega) hmKC
+    completed_iter_lower hq hχ hp hinv hη hηsmall 2 (by norm_num) hcre hcim hρre hzero hc
+  have hCcap := localCap_fixed_le hscale hCeq
+  have hmCap : m ≤ K * localMultiplicityCap := hmKC.trans (Nat.mul_le_mul_left K hCcap)
+  have hscaleExp := localSignal_exp_ge hCcap (by omega) hmKC
   refine ⟨K, m, n, hK, hn, hnm, hmK, hmCap, ?_⟩
   calc
-    Real.exp (-(completedLFunctionNearOneDetectorExponent * (K : ℝ))) ≤
-        (1 / (8 * ((C : ℝ) + 1))) * (1 / 3 : ℝ) ^ m :=
-      by
-      simpa only [completedLFunctionNearOneDetectorExponent,
-        completedLFunctionNearOneDetectorMultiplicityCap, neg_mul] using hscaleExp
+    Real.exp (-(genusDetectorExponent * (K : ℝ))) ≤ (1 / (8 * ((C : ℝ) + 1))) * (1 / 3 : ℝ) ^ m :=
+      by simpa only [genusDetectorExponent, localMultiplicityCap, neg_mul] using hscaleExp
     _ ≤
         (η ^ (n + 1) / (n.factorial : ℝ)) *
           ‖iteratedDeriv n (fun z : ℂ => logDeriv χ.completedLFunction z) c‖ :=
@@ -547,10 +480,9 @@ iterated derivatives of the gamma factor.
 Role: expresses the detector in the ordinary derivative form used by Euler-series estimates,
 while keeping the correction term visible for its later quantitative absorption.
 -/
-theorem exists_completedLFunction_detector_transfer_to_LFunction {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hq : 2 ≤ q) (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1)
-    {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 1288) (Kmin : ℕ) (hKmin : 2 ≤ Kmin) {c ρ : ℂ}
-    (hcre : c.re = 1 + η) (hcim : c.im = ρ.im) (hρre : |ρ.re - 1| ≤ η)
+theorem ordinary_transfer {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hq : 2 ≤ q) (hχ : χ ≠ 1)
+    (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 1288) (Kmin : ℕ)
+    (hKmin : 2 ≤ Kmin) {c ρ : ℂ} (hcre : c.re = 1 + η) (hcim : c.im = ρ.im) (hρre : |ρ.re - 1| ≤ η)
     (hzero : DirichletCharacter.completedLFunction χ ρ = 0)
     (hc : DirichletCharacter.completedLFunction χ c ≠ 0)
     (hscale : η * Real.log ((q : ℝ) * (|ρ.im| + 3)) ≤ 3) (G : ℝ)
@@ -574,28 +506,23 @@ theorem exists_completedLFunction_detector_transfer_to_LFunction {q : ℕ} [NeZe
         0 < massConstB ∧
         ∃ C K m n : ℕ,
           Kmin ≤ K ∧
-            K ≤ completedGenusRemoteTailUniformCutoff q η ρ.im ((C : ℝ) + 1) Kmin ∧
-            K ≤ max completedGenusRemoteTailUniformOrderBound Kmin ∧
+            K ≤ uniformRemoteCutoff q η ρ.im ((C : ℝ) + 1) Kmin ∧
+            K ≤ max remoteTailOrderBound Kmin ∧
             2 ≤ K ∧
             0 < n ∧
             n + 1 = m ∧
             K ≤ m ∧
-            m ≤ K * completedLFunctionNearOneDetectorMultiplicityCap ∧
-            C =
-              Nat.ceil
-                (completedZeroLocalLogBoundConstant *
-                  (1 + 644 * η * Real.log ((q : ℝ) * (|ρ.im| + 3)))) ∧
+            m ≤ K * localMultiplicityCap ∧
+            C = Nat.ceil (localLogConstant * (1 + 644 * η * Real.log ((q : ℝ) * (|ρ.im| + 3)))) ∧
             ((1 / (8 * ((C : ℝ) + 1))) * (1 / (3 * η)) ^ m * (n.factorial : ℝ) -
                 (n.factorial : ℝ) * G * (Real.log (4 * T + 4) + 1) / (1 / 4 : ℝ) ^ n) ≤
               ‖iteratedDeriv n (logDeriv (DirichletCharacter.LFunction χ)) c‖ := by
   obtain
     ⟨massConstA, massConstB, hmassConstA, hmassConstB, C, K, m, n, hKmin', hKupper, hK, _, hn, hnm,
       hmK, hmKC, hraw, _, hCeq⟩ :=
-    exists_completedLFunction_iteratedDeriv_logDeriv_lower_bound_near_one_zero hq hχ hp hinv hη
-      hηsmall Kmin hKmin hcre hcim hρre hzero hc
-  have hCcap := completedLFunction_local_zero_multiplicity_cap_le_fixed hscale hCeq
-  have hmCap : m ≤ K * completedLFunctionNearOneDetectorMultiplicityCap :=
-    hmKC.trans (Nat.mul_le_mul_left K hCcap)
+    completed_iter_lower hq hχ hp hinv hη hηsmall Kmin hKmin hcre hcim hρre hzero hc
+  have hCcap := localCap_fixed_le hscale hCeq
+  have hmCap : m ≤ K * localMultiplicityCap := hmKC.trans (Nat.mul_le_mul_left K hCcap)
   have hheight' : |c.im| ≤ T := by simpa only [hcim] using hheight
   have hcreLo : 1 ≤ c.re := by
     rw [hcre]; linarith only [hη]
@@ -610,11 +537,9 @@ theorem exists_completedLFunction_detector_transfer_to_LFunction {q : ℕ} [NeZe
       (by
         rw [hcre]; linarith only [hη])
       hcreLo hcreHi hT hheight' (A := A) hA
-  have hKupper' : K ≤ completedGenusRemoteTailUniformCutoff q η ρ.im ((C + 1 : ℕ) : ℝ) Kmin := by
+  have hKupper' : K ≤ uniformRemoteCutoff q η ρ.im ((C + 1 : ℕ) : ℝ) Kmin := by
     simpa only [Nat.cast_add, Nat.cast_one] using hKupper
-  have hKupperFixed :=
-    hKupper'.trans
-      (completedGenusRemoteTailUniformCutoff_le_fixed hq hη hηsmall ρ.im hscale C Kmin hCeq)
+  have hKupperFixed := hKupper'.trans (remoteCutoff_fixed_le hq hη hηsmall ρ.im hscale C Kmin hCeq)
   refine
     ⟨massConstA, massConstB, hmassConstA, hmassConstB, C, K, m, n, hKmin', hKupper, hKupperFixed,
       hK, hn, hnm, hmK, hmCap, hCeq, ?_⟩
@@ -632,10 +557,10 @@ threshold, then transfer the completed zero signal to the ordinary `L` function 
 factor of one half into the exponential loss.
 Role: supplies a scale-selectable positive ordinary-derivative detector for later density work.
 -/
-theorem exists_completedLFunction_positive_LFunction_logDeriv_iterate {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hq : 2 ≤ q) (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1)
-    {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 1288) (Krequested : ℕ) (hKrequested : 2 ≤ Krequested)
-    {c ρ : ℂ} (hcre : c.re = 1 + η) (hcim : c.im = ρ.im) (hρre : |ρ.re - 1| ≤ η)
+theorem ordinary_posDetector {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hq : 2 ≤ q)
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 1288)
+    (Krequested : ℕ) (hKrequested : 2 ≤ Krequested) {c ρ : ℂ} (hcre : c.re = 1 + η)
+    (hcim : c.im = ρ.im) (hρre : |ρ.re - 1| ≤ η)
     (hzero : DirichletCharacter.completedLFunction χ ρ = 0)
     (hc : DirichletCharacter.completedLFunction χ c ≠ 0)
     (hscale : η * Real.log ((q : ℝ) * (|ρ.im| + 3)) ≤ 3) :
@@ -645,34 +570,31 @@ theorem exists_completedLFunction_positive_LFunction_logDeriv_iterate {q : ℕ} 
         ∃ Kmin : ℕ,
           ∃ C K m n : ℕ,
             Krequested ≤ K ∧
-              K ≤ completedGenusRemoteTailUniformCutoff q η ρ.im ((C : ℝ) + 1) Kmin ∧
-              K ≤ max completedGenusRemoteTailUniformOrderBound Kmin ∧
+              K ≤ uniformRemoteCutoff q η ρ.im ((C : ℝ) + 1) Kmin ∧
+              K ≤ max remoteTailOrderBound Kmin ∧
               Kmin ≤ K ∧
               2 ≤ K ∧
               0 < n ∧
               n + 1 = m ∧
               K ≤ m ∧
-              m ≤ K * completedLFunctionNearOneDetectorMultiplicityCap ∧
-              C =
-                Nat.ceil
-                  (completedZeroLocalLogBoundConstant *
-                    (1 + 644 * η * Real.log ((q : ℝ) * (|ρ.im| + 3)))) ∧
+              m ≤ K * localMultiplicityCap ∧
+              C = Nat.ceil (localLogConstant * (1 + 644 * η * Real.log ((q : ℝ) * (|ρ.im| + 3)))) ∧
               0 < ‖iteratedDeriv n (logDeriv (DirichletCharacter.LFunction χ)) c‖ ∧
-              Real.exp (-(ordinaryLFunctionNearOneDetectorExponent * (K : ℝ))) ≤
+              Real.exp (-(eulerDetectorExponent * (K : ℝ))) ≤
                 (η ^ (n + 1) / (n.factorial : ℝ)) *
                   ‖iteratedDeriv n (logDeriv (DirichletCharacter.LFunction χ)) c‖ := by
-  obtain ⟨G, hG, hgamma⟩ := exists_uniform_gamma_subtraction_for_ordinary_LFunction_derivative_all
-  let n₀ := uniformGammaAbsorptionOrderCutoff G
-  have hn₀ := explicit_uniform_gamma_absorption_order_bound G
+  obtain ⟨G, hG, hgamma⟩ := L_logDeriv_all_deriv_sub_gamma
+  let n₀ := gammaAbsorptionCutoff G
+  have hn₀ := gammaAbsorption_order G
   let Kmin : ℕ := max (n₀ + 1) Krequested
   have hKmin : 2 ≤ Kmin := by
     dsimp only [Kmin]; omega
   obtain
     ⟨massConstA, massConstB, hmassConstA, hmassConstB, C, K, m, n, hKmin', hKupper, hKupperFixed,
       hK, hn, hnm, hmK, hmCap, hCeq, hordinary⟩ :=
-    exists_completedLFunction_detector_transfer_to_LFunction hq hχ hp hinv hη hηsmall Kmin hKmin
-      hcre hcim hρre hzero hc hscale G hgamma (T := |ρ.im|) (abs_nonneg ρ.im) (le_rfl)
-  have hCcap := completedLFunction_local_zero_multiplicity_cap_le_fixed hscale hCeq
+    ordinary_transfer hq hχ hp hinv hη hηsmall Kmin hKmin hcre hcim hρre hzero hc hscale G hgamma
+      (T := |ρ.im|) (abs_nonneg ρ.im) (le_rfl)
+  have hCcap := localCap_fixed_le hscale hCeq
   have hKlarge : n₀ ≤ n := by
     have hthreshold : n₀ + 1 ≤ K := by exact le_trans (le_max_left _ _) hKmin'
     omega
@@ -720,41 +642,30 @@ theorem exists_completedLFunction_positive_LFunction_logDeriv_iterate {q : ℕ} 
   have hη12 : 0 ≤ 12 * η := by positivity
   have hη12le : 12 * η ≤ (3 : ℝ) / 322 := by nlinarith only [hηsmall]
   have hpow : (12 * η) ^ n ≤ ((3 : ℝ) / 322) ^ n := pow_le_pow_left₀ hη12 hη12le n
-  have hCcast : (C : ℝ) + 1 ≤ (completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1 := by
+  have hCcast : (C : ℝ) + 1 ≤ (localMultiplicityCap : ℝ) + 1 := by
     exact_mod_cast Nat.add_le_add_right hCcap 1
   have hcoeff :
     24 * ((C : ℝ) + 1) * G * (η * (Real.log (4 * |ρ.im| + 4) + 1)) ≤
-      96 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1) * G := by
-    have hbase :
-      24 * ((C : ℝ) + 1) * G ≤
-        24 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1) * G := by
+      96 * ((localMultiplicityCap : ℝ) + 1) * G := by
+    have hbase : 24 * ((C : ℝ) + 1) * G ≤ 24 * ((localMultiplicityCap : ℝ) + 1) * G := by
       exact mul_le_mul_of_nonneg_right (by nlinarith only [hCcast]) (by positivity)
     calc
       _ = (24 * ((C : ℝ) + 1) * G) * (η * (Real.log (4 * |ρ.im| + 4) + 1)) := by ring
-      _ ≤
-          (24 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1) * G) *
-            (η * (Real.log (4 * |ρ.im| + 4) + 1)) :=
+      _ ≤ (24 * ((localMultiplicityCap : ℝ) + 1) * G) * (η * (Real.log (4 * |ρ.im| + 4) + 1)) :=
         mul_le_mul_of_nonneg_right hbase hηL
-      _ ≤ (24 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1) * G) * 4 :=
+      _ ≤ (24 * ((localMultiplicityCap : ℝ) + 1) * G) * 4 :=
         mul_le_mul_of_nonneg_left hηlog (by positivity)
       _ = _ := by ring
   have hratio : R ≤ 1 / 2 := by
     have hsmall := hn₀ n hKlarge
-    have hsmall' :
-      96 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1) * G * ((3 : ℝ) / 322) ^ n ≤
-        1 / 2 := by
+    have hsmall' : 96 * ((localMultiplicityCap : ℝ) + 1) * G * ((3 : ℝ) / 322) ^ n ≤ 1 / 2 := by
       nlinarith only [hsmall]
     calc
-      R ≤
-          96 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1) * G *
-            ((3 : ℝ) / 322) ^ n :=
-        by
+      R ≤ 96 * ((localMultiplicityCap : ℝ) + 1) * G * ((3 : ℝ) / 322) ^ n := by
         dsimp only [R]
         calc
-          _ ≤
-              (96 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1) * G) *
-                (12 * η) ^ n :=
-            by apply mul_le_mul_of_nonneg_right hcoeff (pow_nonneg hη12 n)
+          _ ≤ (96 * ((localMultiplicityCap : ℝ) + 1) * G) * (12 * η) ^ n := by
+            apply mul_le_mul_of_nonneg_right hcoeff (pow_nonneg hη12 n)
           _ ≤ _ := mul_le_mul_of_nonneg_left hpow (by positivity)
       _ ≤ 1 / 2 := hsmall'
   have hpowSignal : (12 * η) ^ n * (1 / 3 : ℝ) ^ (n + 1) = (4 * η) ^ n / 3 := by
@@ -850,18 +761,13 @@ theorem exists_completedLFunction_positive_LFunction_logDeriv_iterate {q : ℕ} 
       _ ≤ A * ‖iteratedDeriv n (logDeriv (DirichletCharacter.LFunction χ)) c‖ :=
         mul_le_mul_of_nonneg_left hordinary hA.le
   have hcompletedExp :=
-    local_detector_scale_ge_exp_neg (C := completedLFunctionNearOneDetectorMultiplicityCap) (Cmax :=
-      completedLFunctionNearOneDetectorMultiplicityCap) (K := K) (m := m) (Nat.le_refl _) (by omega)
-      hmCap
-  let Sbase : ℝ :=
-    (1 / (8 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1))) * (1 / 3 : ℝ) ^ m
+    localSignal_exp_ge (C := localMultiplicityCap) (Cmax := localMultiplicityCap) (K := K) (m := m)
+      (Nat.le_refl _) (by omega) hmCap
+  let Sbase : ℝ := (1 / (8 * ((localMultiplicityCap : ℝ) + 1))) * (1 / 3 : ℝ) ^ m
   have hSbase : Sbase ≤ S := by
-    have hden :
-      8 * ((C : ℝ) + 1) ≤ 8 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1) := by
+    have hden : 8 * ((C : ℝ) + 1) ≤ 8 * ((localMultiplicityCap : ℝ) + 1) := by
       nlinarith only [hCcast]
-    have hinv :
-      1 / (8 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1)) ≤
-        1 / (8 * ((C : ℝ) + 1)) :=
+    have hinv : 1 / (8 * ((localMultiplicityCap : ℝ) + 1)) ≤ 1 / (8 * ((C : ℝ) + 1)) :=
       one_div_le_one_div_of_le (by positivity) hden
     dsimp only [Sbase, S]
     exact mul_le_mul_of_nonneg_right hinv (by positivity)
@@ -876,25 +782,23 @@ theorem exists_completedLFunction_positive_LFunction_logDeriv_iterate {q : ℕ} 
     rw [hExpLog] at h
     exact h
   have hExpIdentity :
-    Real.exp (-(ordinaryLFunctionNearOneDetectorExponent * (K : ℝ))) =
-      Real.exp (-(completedLFunctionNearOneDetectorExponent * (K : ℝ))) *
-        Real.exp (-((Real.log 2 / 2) * (K : ℝ))) := by
-    change Real.exp (-((completedLFunctionNearOneDetectorExponent + Real.log 2 / 2) * (K : ℝ))) = _
+    Real.exp (-(eulerDetectorExponent * (K : ℝ))) =
+      Real.exp (-(genusDetectorExponent * (K : ℝ))) * Real.exp (-((Real.log 2 / 2) * (K : ℝ))) := by
+    change Real.exp (-((genusDetectorExponent + Real.log 2 / 2) * (K : ℝ))) = _
     rw [add_mul, neg_add, Real.exp_add]
   have hnormalized :
-    Real.exp (-(ordinaryLFunctionNearOneDetectorExponent * (K : ℝ))) ≤
+    Real.exp (-(eulerDetectorExponent * (K : ℝ))) ≤
       A * ‖iteratedDeriv n (logDeriv (DirichletCharacter.LFunction χ)) c‖ := by
     rw [hExpIdentity]
     calc
       _ ≤ Sbase * (1 / 2 : ℝ) := by
-        have hcompletedExp' :
-          Real.exp (-(completedLFunctionNearOneDetectorExponent * (K : ℝ))) ≤ Sbase := by
+        have hcompletedExp' : Real.exp (-(genusDetectorExponent * (K : ℝ))) ≤ Sbase := by
           have harg :
-            -(completedLFunctionNearOneDetectorExponent * (K : ℝ)) =
-              -((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) * Real.log 3 +
-                    Real.log (8 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1))) *
+            -(genusDetectorExponent * (K : ℝ)) =
+              -((localMultiplicityCap : ℝ) * Real.log 3 +
+                    Real.log (8 * ((localMultiplicityCap : ℝ) + 1))) *
                 (K : ℝ) := by
-            dsimp only [completedLFunctionNearOneDetectorExponent]
+            dsimp only [genusDetectorExponent]
             ring
           rw [harg]
           simpa only [Sbase] using hcompletedExp
@@ -915,11 +819,11 @@ Proof: apply the completed zero detector with the supplied gamma estimate and ab
 above the corresponding uniform order cutoff.
 Role: exposes a zero-independent order envelope for choosing one mesh across a family of zeros.
 -/
-theorem exists_completedLFunction_positive_LFunction_logDeriv_iterate_with_fixed_gamma {q : ℕ}
-    [NeZero q] {χ : DirichletCharacter ℂ q} (hq : 2 ≤ q) (hχ : χ ≠ 1) (hp : χ.IsPrimitive)
-    (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 1288) (Krequested : ℕ)
-    (hKrequested : 2 ≤ Krequested) {c ρ : ℂ} (hcre : c.re = 1 + η) (hcim : c.im = ρ.im)
-    (hρre : |ρ.re - 1| ≤ η) (hzero : DirichletCharacter.completedLFunction χ ρ = 0)
+theorem ordinary_fixedGamma {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hq : 2 ≤ q)
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 1288)
+    (Krequested : ℕ) (hKrequested : 2 ≤ Krequested) {c ρ : ℂ} (hcre : c.re = 1 + η)
+    (hcim : c.im = ρ.im) (hρre : |ρ.re - 1| ≤ η)
+    (hzero : DirichletCharacter.completedLFunction χ ρ = 0)
     (hc : DirichletCharacter.completedLFunction χ c ≠ 0)
     (hscale : η * Real.log ((q : ℝ) * (|ρ.im| + 3)) ≤ 3) (G : ℝ) (hG : 0 ≤ G)
     (hgamma :
@@ -942,36 +846,31 @@ theorem exists_completedLFunction_positive_LFunction_logDeriv_iterate_with_fixed
         ∃ Kmin : ℕ,
           ∃ C K m n : ℕ,
             Krequested ≤ K ∧
-              K ≤ completedGenusRemoteTailUniformCutoff q η ρ.im ((C : ℝ) + 1) Kmin ∧
-              K ≤ max completedGenusRemoteTailUniformOrderBound Kmin ∧
-              K ≤
-                max completedGenusRemoteTailUniformOrderBound
-                  (max (uniformGammaAbsorptionOrderCutoff G + 1) Krequested) ∧
+              K ≤ uniformRemoteCutoff q η ρ.im ((C : ℝ) + 1) Kmin ∧
+              K ≤ max remoteTailOrderBound Kmin ∧
+              K ≤ max remoteTailOrderBound (max (gammaAbsorptionCutoff G + 1) Krequested) ∧
               Kmin ≤ K ∧
               2 ≤ K ∧
               0 < n ∧
               n + 1 = m ∧
               K ≤ m ∧
-              m ≤ K * completedLFunctionNearOneDetectorMultiplicityCap ∧
-              C =
-                Nat.ceil
-                  (completedZeroLocalLogBoundConstant *
-                    (1 + 644 * η * Real.log ((q : ℝ) * (|ρ.im| + 3)))) ∧
+              m ≤ K * localMultiplicityCap ∧
+              C = Nat.ceil (localLogConstant * (1 + 644 * η * Real.log ((q : ℝ) * (|ρ.im| + 3)))) ∧
               0 < ‖iteratedDeriv n (logDeriv (DirichletCharacter.LFunction χ)) c‖ ∧
-              Real.exp (-(ordinaryLFunctionNearOneDetectorExponent * (K : ℝ))) ≤
+              Real.exp (-(eulerDetectorExponent * (K : ℝ))) ≤
                 (η ^ (n + 1) / (n.factorial : ℝ)) *
                   ‖iteratedDeriv n (logDeriv (DirichletCharacter.LFunction χ)) c‖ := by
-  let n₀ := uniformGammaAbsorptionOrderCutoff G
-  have hn₀ := explicit_uniform_gamma_absorption_order_bound G
+  let n₀ := gammaAbsorptionCutoff G
+  have hn₀ := gammaAbsorption_order G
   let Kmin : ℕ := max (n₀ + 1) Krequested
   have hKmin : 2 ≤ Kmin := by
     dsimp only [Kmin]; omega
   obtain
     ⟨massConstA, massConstB, hmassConstA, hmassConstB, C, K, m, n, hKmin', hKupper, hKupperFixed,
       hK, hn, hnm, hmK, hmCap, hCeq, hordinary⟩ :=
-    exists_completedLFunction_detector_transfer_to_LFunction hq hχ hp hinv hη hηsmall Kmin hKmin
-      hcre hcim hρre hzero hc hscale G hgamma (T := |ρ.im|) (abs_nonneg ρ.im) (le_rfl)
-  have hCcap := completedLFunction_local_zero_multiplicity_cap_le_fixed hscale hCeq
+    ordinary_transfer hq hχ hp hinv hη hηsmall Kmin hKmin hcre hcim hρre hzero hc hscale G hgamma
+      (T := |ρ.im|) (abs_nonneg ρ.im) (le_rfl)
+  have hCcap := localCap_fixed_le hscale hCeq
   have hKlarge : n₀ ≤ n := by
     have hthreshold : n₀ + 1 ≤ K := by exact le_trans (le_max_left _ _) hKmin'
     omega
@@ -1019,41 +918,30 @@ theorem exists_completedLFunction_positive_LFunction_logDeriv_iterate_with_fixed
   have hη12 : 0 ≤ 12 * η := by positivity
   have hη12le : 12 * η ≤ (3 : ℝ) / 322 := by nlinarith only [hηsmall]
   have hpow : (12 * η) ^ n ≤ ((3 : ℝ) / 322) ^ n := pow_le_pow_left₀ hη12 hη12le n
-  have hCcast : (C : ℝ) + 1 ≤ (completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1 := by
+  have hCcast : (C : ℝ) + 1 ≤ (localMultiplicityCap : ℝ) + 1 := by
     exact_mod_cast Nat.add_le_add_right hCcap 1
   have hcoeff :
     24 * ((C : ℝ) + 1) * G * (η * (Real.log (4 * |ρ.im| + 4) + 1)) ≤
-      96 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1) * G := by
-    have hbase :
-      24 * ((C : ℝ) + 1) * G ≤
-        24 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1) * G := by
+      96 * ((localMultiplicityCap : ℝ) + 1) * G := by
+    have hbase : 24 * ((C : ℝ) + 1) * G ≤ 24 * ((localMultiplicityCap : ℝ) + 1) * G := by
       exact mul_le_mul_of_nonneg_right (by nlinarith only [hCcast]) (by positivity)
     calc
       _ = (24 * ((C : ℝ) + 1) * G) * (η * (Real.log (4 * |ρ.im| + 4) + 1)) := by ring
-      _ ≤
-          (24 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1) * G) *
-            (η * (Real.log (4 * |ρ.im| + 4) + 1)) :=
+      _ ≤ (24 * ((localMultiplicityCap : ℝ) + 1) * G) * (η * (Real.log (4 * |ρ.im| + 4) + 1)) :=
         mul_le_mul_of_nonneg_right hbase hηL
-      _ ≤ (24 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1) * G) * 4 :=
+      _ ≤ (24 * ((localMultiplicityCap : ℝ) + 1) * G) * 4 :=
         mul_le_mul_of_nonneg_left hηlog (by positivity)
       _ = _ := by ring
   have hratio : R ≤ 1 / 2 := by
     have hsmall := hn₀ n hKlarge
-    have hsmall' :
-      96 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1) * G * ((3 : ℝ) / 322) ^ n ≤
-        1 / 2 := by
+    have hsmall' : 96 * ((localMultiplicityCap : ℝ) + 1) * G * ((3 : ℝ) / 322) ^ n ≤ 1 / 2 := by
       nlinarith only [hsmall]
     calc
-      R ≤
-          96 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1) * G *
-            ((3 : ℝ) / 322) ^ n :=
-        by
+      R ≤ 96 * ((localMultiplicityCap : ℝ) + 1) * G * ((3 : ℝ) / 322) ^ n := by
         dsimp only [R]
         calc
-          _ ≤
-              (96 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1) * G) *
-                (12 * η) ^ n :=
-            by apply mul_le_mul_of_nonneg_right hcoeff (pow_nonneg hη12 n)
+          _ ≤ (96 * ((localMultiplicityCap : ℝ) + 1) * G) * (12 * η) ^ n := by
+            apply mul_le_mul_of_nonneg_right hcoeff (pow_nonneg hη12 n)
           _ ≤ _ := mul_le_mul_of_nonneg_left hpow (by positivity)
       _ ≤ 1 / 2 := hsmall'
   have hpowSignal : (12 * η) ^ n * (1 / 3 : ℝ) ^ (n + 1) = (4 * η) ^ n / 3 := by
@@ -1149,18 +1037,13 @@ theorem exists_completedLFunction_positive_LFunction_logDeriv_iterate_with_fixed
       _ ≤ A * ‖iteratedDeriv n (logDeriv (DirichletCharacter.LFunction χ)) c‖ :=
         mul_le_mul_of_nonneg_left hordinary hA.le
   have hcompletedExp :=
-    local_detector_scale_ge_exp_neg (C := completedLFunctionNearOneDetectorMultiplicityCap) (Cmax :=
-      completedLFunctionNearOneDetectorMultiplicityCap) (K := K) (m := m) (Nat.le_refl _) (by omega)
-      hmCap
-  let Sbase : ℝ :=
-    (1 / (8 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1))) * (1 / 3 : ℝ) ^ m
+    localSignal_exp_ge (C := localMultiplicityCap) (Cmax := localMultiplicityCap) (K := K) (m := m)
+      (Nat.le_refl _) (by omega) hmCap
+  let Sbase : ℝ := (1 / (8 * ((localMultiplicityCap : ℝ) + 1))) * (1 / 3 : ℝ) ^ m
   have hSbase : Sbase ≤ S := by
-    have hden :
-      8 * ((C : ℝ) + 1) ≤ 8 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1) := by
+    have hden : 8 * ((C : ℝ) + 1) ≤ 8 * ((localMultiplicityCap : ℝ) + 1) := by
       nlinarith only [hCcast]
-    have hinv :
-      1 / (8 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1)) ≤
-        1 / (8 * ((C : ℝ) + 1)) :=
+    have hinv : 1 / (8 * ((localMultiplicityCap : ℝ) + 1)) ≤ 1 / (8 * ((C : ℝ) + 1)) :=
       one_div_le_one_div_of_le (by positivity) hden
     dsimp only [Sbase, S]
     exact mul_le_mul_of_nonneg_right hinv (by positivity)
@@ -1175,35 +1058,30 @@ theorem exists_completedLFunction_positive_LFunction_logDeriv_iterate_with_fixed
     rw [hExpLog] at h
     exact h
   have hExpIdentity :
-    Real.exp (-(ordinaryLFunctionNearOneDetectorExponent * (K : ℝ))) =
-      Real.exp (-(completedLFunctionNearOneDetectorExponent * (K : ℝ))) *
-        Real.exp (-((Real.log 2 / 2) * (K : ℝ))) := by
-    change Real.exp (-((completedLFunctionNearOneDetectorExponent + Real.log 2 / 2) * (K : ℝ))) = _
+    Real.exp (-(eulerDetectorExponent * (K : ℝ))) =
+      Real.exp (-(genusDetectorExponent * (K : ℝ))) * Real.exp (-((Real.log 2 / 2) * (K : ℝ))) := by
+    change Real.exp (-((genusDetectorExponent + Real.log 2 / 2) * (K : ℝ))) = _
     rw [add_mul, neg_add, Real.exp_add]
   have hnormalized :
-    Real.exp (-(ordinaryLFunctionNearOneDetectorExponent * (K : ℝ))) ≤
+    Real.exp (-(eulerDetectorExponent * (K : ℝ))) ≤
       A * ‖iteratedDeriv n (logDeriv (DirichletCharacter.LFunction χ)) c‖ := by
     rw [hExpIdentity]
     calc
       _ ≤ Sbase * (1 / 2 : ℝ) := by
-        have hcompletedExp' :
-          Real.exp (-(completedLFunctionNearOneDetectorExponent * (K : ℝ))) ≤ Sbase := by
+        have hcompletedExp' : Real.exp (-(genusDetectorExponent * (K : ℝ))) ≤ Sbase := by
           have harg :
-            -(completedLFunctionNearOneDetectorExponent * (K : ℝ)) =
-              -((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) * Real.log 3 +
-                    Real.log (8 * ((completedLFunctionNearOneDetectorMultiplicityCap : ℝ) + 1))) *
+            -(genusDetectorExponent * (K : ℝ)) =
+              -((localMultiplicityCap : ℝ) * Real.log 3 +
+                    Real.log (8 * ((localMultiplicityCap : ℝ) + 1))) *
                 (K : ℝ) := by
-            dsimp only [completedLFunctionNearOneDetectorExponent]
+            dsimp only [genusDetectorExponent]
             ring
           rw [harg]
           simpa only [Sbase] using hcompletedExp
         exact mul_le_mul hcompletedExp' hexpHalf (by positivity) (by positivity)
       _ ≤ S / 2 := by linarith only [hSbase]
       _ ≤ A * ‖iteratedDeriv n (logDeriv (DirichletCharacter.LFunction χ)) c‖ := hscaledLower
-  have hKglobal :
-    K ≤
-      max completedGenusRemoteTailUniformOrderBound
-        (max (uniformGammaAbsorptionOrderCutoff G + 1) Krequested) := by
+  have hKglobal : K ≤ max remoteTailOrderBound (max (gammaAbsorptionCutoff G + 1) Krequested) := by
     simpa only [Kmin, n₀] using hKupperFixed
   exact
     ⟨massConstA, massConstB, hmassConstA, hmassConstB, Kmin, C, K, m, n, hKrequested', hKupper,
@@ -1218,10 +1096,9 @@ Proof: apply the explicit positive lower bound and use that a norm with a positi
 nonzero.
 Role: retains the qualitative nonvanishing interface for existing callers.
 -/
-theorem exists_completedLFunction_nonzero_iteratedDerivWithin_logDeriv_near_one_zero {q : ℕ}
-    [NeZero q] {χ : DirichletCharacter ℂ q} (hq : 2 ≤ q) (hχ : χ ≠ 1) (hp : χ.IsPrimitive)
-    (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 1288) {c ρ : ℂ} (hcre : c.re = 1 + η)
-    (hcim : c.im = ρ.im) (hρre : |ρ.re - 1| ≤ η)
+theorem completed_iter_ne {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hq : 2 ≤ q) (hχ : χ ≠ 1)
+    (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 1288) {c ρ : ℂ}
+    (hcre : c.re = 1 + η) (hcim : c.im = ρ.im) (hρre : |ρ.re - 1| ≤ η)
     (hzero : DirichletCharacter.completedLFunction χ ρ = 0)
     (hc : DirichletCharacter.completedLFunction χ c ≠ 0) :
     ∃ n : ℕ,
@@ -1229,8 +1106,7 @@ theorem exists_completedLFunction_nonzero_iteratedDerivWithin_logDeriv_near_one_
         iteratedDerivWithin n (fun z : ℂ => logDeriv χ.completedLFunction z) {z : ℂ | 1 < z.re} c ≠
           0 := by
   obtain ⟨_, _, _, _, C, K, m, n, _, _, _, _, hn, hnm, hmK, hmKC, hbound, _⟩ :=
-    exists_completedLFunction_iteratedDerivWithin_logDeriv_lower_bound_near_one_zero hq hχ hp hinv
-      hη hηsmall 2 (by norm_num) hcre hcim hρre hzero hc
+    completed_within_ge hq hχ hp hinv hη hηsmall 2 (by norm_num) hcre hcim hρre hzero hc
   refine ⟨n, hn, ?_⟩
   exact (norm_pos_iff.mp (lt_of_lt_of_le (by positivity) hbound))
 
@@ -1243,13 +1119,12 @@ Proof: enclose the support in a rectangle within `9 * (1 - σ)` of `1 + i * c.im
 local multiplicity estimate with scale `36 * (1 - σ)`, and absorb the factor 36 into `C`.
 Role: supplies a local support-size bound at the near-one scale used by the Turán detection step.
 -/
-theorem exists_completedLFunction_explicit_local_divisor_support_card_le_scaled_log_bound {q : ℕ}
-    [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive)
-    (hinv : χ⁻¹ ≠ 1) {σ : ℝ} (hσ : (71 / 72 : ℝ) ≤ σ) (hσlt : σ < 1) {c : ℂ} (hcre : c.re = 2 - σ) :
+theorem exists_localScaledCap {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {σ : ℝ} (hσ : (71 / 72 : ℝ) ≤ σ)
+    (hσlt : σ < 1) {c : ℂ} (hcre : c.re = 2 - σ) :
     ∃ C : ℝ,
       0 < C ∧
-        (((completedLFunction_local_zero_support_finite χ hχ c (4 * (1 - σ))).toFinset.card : ℕ) :
-            ℝ) ≤
+        (((completedSupport_fin χ hχ c (4 * (1 - σ))).toFinset.card : ℕ) : ℝ) ≤
           C * (1 + (1 - σ) * Real.log ((q : ℝ) * (|c.im| + 3))) := by
   let δ : ℝ := 1 - σ
   let R : ℝ := 4 * δ
@@ -1282,7 +1157,7 @@ theorem exists_completedLFunction_explicit_local_divisor_support_card_le_scaled_
       u ∈
           (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
               (Metric.ball c |R|)).support →
-        u ∈ dirichletCompletedLFunctionRectangleBox z w := by
+        u ∈ completedRectangleBox z w := by
     intro u hu
     have hu' :
       u ∈
@@ -1290,12 +1165,10 @@ theorem exists_completedLFunction_explicit_local_divisor_support_card_le_scaled_
             (Metric.ball c R)).support := by
       rw [← hRabs]
       exact hu
-    have hmem := completedLFunction_local_divisor_support_mem_centered_square χ c hRpos hu'
+    have hmem := localSupport_square χ c hRpos hu'
     simpa only [z, w] using hmem
   have hboxCenter :
-    ∀ u,
-      u ∈ dirichletCompletedLFunctionRectangleBox z w →
-        ‖u - ((1 : ℂ) + (c.im : ℂ) * Complex.I)‖ ≤ η / 4 := by
+    ∀ u, u ∈ completedRectangleBox z w → ‖u - ((1 : ℂ) + (c.im : ℂ) * Complex.I)‖ ≤ η / 4 := by
     intro u hu
     change u.re ∈ Set.uIcc (c.re - R) (c.re + R) ∧ u.im ∈ Set.uIcc (c.im - R) (c.im + R) at hu
     have hcoords := hu
@@ -1333,10 +1206,8 @@ theorem exists_completedLFunction_explicit_local_divisor_support_card_le_scaled_
       _ = η / 4 := by
         dsimp only [η]
         ring
-  obtain ⟨C, hC, hcount⟩ :=
-    exists_completedZeroMultiplicityCountInRectangle_le_local_log_bound hq hχ hp hinv hηpos hηle z w
-      hboxCenter
-  have hcard := completedLFunction_local_divisor_support_card_le_rectangle_count χ hχ c R z w hbox
+  obtain ⟨C, hC, hcount⟩ := exists_rectLocalLog hq hχ hp hinv hηpos hηle z w hboxCenter
+  have hcard := localSupport_card_le χ hχ c R z w hbox
   have hqreal : 1 ≤ (q : ℝ) := by
     have hq' : 1 ≤ q := by omega
     exact_mod_cast hq'
@@ -1352,8 +1223,8 @@ theorem exists_completedLFunction_explicit_local_divisor_support_card_le_scaled_
     nlinarith only [hlog]
   refine ⟨36 * C, mul_pos (by norm_num) hC, ?_⟩
   calc
-    (((completedLFunction_local_zero_support_finite χ hχ c (4 * (1 - σ))).toFinset.card : ℕ) : ℝ) ≤
-        completedZeroMultiplicityCountInRectangle χ hχ z w :=
+    (((completedSupport_fin χ hχ c (4 * (1 - σ))).toFinset.card : ℕ) : ℝ) ≤
+        completedMultiplicityCount χ hχ z w :=
       by simpa only [R, δ] using hcard
     _ ≤ C * (1 + η * Real.log ((q : ℝ) * (|c.im| + 3))) := hcount
     _ = C * (1 + 36 * δ * Real.log ((q : ℝ) * (|c.im| + 3))) := by rw [show η = 36 * δ from rfl]
@@ -1374,9 +1245,9 @@ Proof: obtain the local derivative data from the zero count, then apply the scal
 at its center and rewrite the center height using the selected zero.
 Role: joins local zero detection, its finite derivative cost, and the local multiplicity estimate.
 -/
-theorem exists_primitive_zeroCount_local_derivative_with_scaled_card_of_pos {q : ℕ} [NeZero q]
-    (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1)
-    {σ T : ℝ} (hσlower : (71 / 72 : ℝ) ≤ σ) (hσupper : σ ≤ 1) (hT : 0 ≤ T)
+theorem count_scaledLocalData {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {σ T : ℝ} (hσlower : (71 / 72 : ℝ) ≤ σ)
+    (hσupper : σ ≤ 1) (hT : 0 ≤ T)
     (hcount : 0 < PseudoPrime.AnalyticNumberTheory.DirichletLFunction.completedZeroCount χ hχ σ T)
     (M : ℕ) (remainder : ℕ → ℝ)
     (hremainder :
@@ -1397,23 +1268,19 @@ theorem exists_primitive_zeroCount_local_derivative_with_scaled_card_of_pos {q :
               c.re = 2 - σ ∧
               c.im = ρ.im ∧
               DirichletCharacter.completedLFunction χ c ≠ 0 ∧
-              CompletedLFunctionLocalDerivativeLowerBoundData χ c R M remainder ∧
+              LocalDerivLowerBound χ c R M remainder ∧
               ∃ C : ℝ,
                 0 < C ∧
-                  (((completedLFunction_local_zero_support_finite χ hχ c R).toFinset.card : ℕ) :
-                      ℝ) ≤
+                  (((completedSupport_fin χ hχ c R).toFinset.card : ℕ) : ℝ) ≤
                     C * (1 + (1 - σ) * Real.log ((q : ℝ) * (|ρ.im| + 3))) := by
   obtain ⟨ρ, hσρ, hρ1, himLower, himUpper, hzero, c, R, hRdef, hR, hRle, hcre, hcim, hc, hdata⟩ :=
-    exists_completedZeroCount_explicit_local_derivative_lower_bound_of_pos χ hχ
-      (le_trans (by norm_num only : (3 / 4 : ℝ) ≤ 71 / 72) hσlower) hσupper hT hcount M remainder
-      hremainder
+    count_explicitDeriv χ hχ (le_trans (by norm_num only : (3 / 4 : ℝ) ≤ 71 / 72) hσlower) hσupper
+      hT hcount M remainder hremainder
   have hσlt : σ < 1 := by
     have hRpos : 0 < 4 * (1 - σ) := by
       rw [← hRdef]; exact hR
     nlinarith only [hRpos]
-  obtain ⟨C, hC, hscaled⟩ :=
-    exists_completedLFunction_explicit_local_divisor_support_card_le_scaled_log_bound hq hχ hp hinv
-      hσlower hσlt hcre
+  obtain ⟨C, hC, hscaled⟩ := exists_localScaledCap hq hχ hp hinv hσlower hσlt hcre
   rw [← hRdef, hcim] at hscaled
   exact
     ⟨ρ, hσρ, hρ1, himLower, himUpper, hzero, c, R, hRdef, hR, hRle, hcre, hcim, hc, hdata, C, hC,
@@ -1428,9 +1295,9 @@ Proof: combine the existing local derivative and support-count output with the n
 specialization, retaining the same zero and center throughout.
 Role: joins the completed local zero analysis to the multiplicity-aware Turán detection input.
 -/
-theorem exists_primitive_zeroCount_local_derivative_and_power_block_of_pos {q : ℕ} [NeZero q]
-    (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1)
-    {σ T : ℝ} (hσlower : (1287 / 1288 : ℝ) ≤ σ) (hσupper : σ ≤ 1) (hT : 0 ≤ T)
+theorem count_localPowerBlock {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {σ T : ℝ} (hσlower : (1287 / 1288 : ℝ) ≤ σ)
+    (hσupper : σ ≤ 1) (hT : 0 ≤ T)
     (hcount : 0 < PseudoPrime.AnalyticNumberTheory.DirichletLFunction.completedZeroCount χ hχ σ T)
     (M : ℕ) (remainder : ℕ → ℝ)
     (hremainder :
@@ -1452,26 +1319,23 @@ theorem exists_primitive_zeroCount_local_derivative_and_power_block_of_pos {q : 
               c.re = 2 - σ ∧
               c.im = ρ.im ∧
               DirichletCharacter.completedLFunction χ c ≠ 0 ∧
-              CompletedLFunctionLocalDerivativeLowerBoundData χ c R M remainder ∧
+              LocalDerivLowerBound χ c R M remainder ∧
               (∃ C : ℝ,
                 0 < C ∧
-                  (((completedLFunction_local_zero_support_finite χ hχ c R).toFinset.card : ℕ) :
-                      ℝ) ≤
+                  (((completedSupport_fin χ hχ c R).toFinset.card : ℕ) : ℝ) ≤
                     C * (1 + (1 - σ) * Real.log ((q : ℝ) * (|ρ.im| + 3)))) ∧
               (∃ Cblock : ℕ,
-                completedZeroMultiplicityCountInRectangle χ hχ
-                      ⟨c.re - 80 * (1 - σ), c.im - 80 * (1 - σ)⟩
+                completedMultiplicityCount χ hχ ⟨c.re - 80 * (1 - σ), c.im - 80 * (1 - σ)⟩
                       ⟨c.re + 80 * (1 - σ), c.im + 80 * (1 - σ)⟩ ≤
                     (Cblock : ℝ) ∧
-                  CompletedLFunctionLocalZeroPowerSumBlockData χ c (1 - σ) ρ K Cblock) := by
+                  LocalPowerSumBlock χ c (1 - σ) ρ K Cblock) := by
   have hσlowerOld : (71 / 72 : ℝ) ≤ σ := by
     have hnum : (71 / 72 : ℝ) ≤ (1287 / 1288 : ℝ) := by norm_num
     exact le_trans hnum hσlower
   obtain
     ⟨ρ, hσρ, hρ1, himLower, himUpper, hzero, c, R, hRdef, hR, hRle, hcre, hcim, hc, hdata, C, hC,
       hscaled⟩ :=
-    exists_primitive_zeroCount_local_derivative_with_scaled_card_of_pos hq hχ hp hinv hσlowerOld
-      hσupper hT hcount M remainder hremainder
+    count_scaledLocalData hq hχ hp hinv hσlowerOld hσupper hT hcount M remainder hremainder
   have hηpos : 0 < 1 - σ := by
     have hRpos : 0 < 4 * (1 - σ) := by
       rw [← hRdef]; exact hR
@@ -1484,8 +1348,7 @@ theorem exists_primitive_zeroCount_local_derivative_and_power_block_of_pos {q : 
     apply abs_le.mpr
     constructor <;> linarith only [hσρ, hρ1]
   obtain ⟨Cblock, hblockCount, hblock, _hblockCap⟩ :=
-    exists_completedLFunction_local_zero_power_sum_block_of_near_one_zero hq hχ hp hinv hηpos
-      hηsmall hcreNear hcim hρre hzero hc K
+    localBlock_nearOne hq hχ hp hinv hηpos hηsmall hcreNear hcim hρre hzero hc K
   exact
     ⟨ρ, hσρ, hρ1, himLower, himUpper, hzero, c, R, hRdef, hR, hRle, hcre, hcim, hc, hdata,
       ⟨C, hC, hscaled⟩, ⟨Cblock, hblockCount, hblock⟩⟩
@@ -1499,8 +1362,8 @@ the iterated-derivative sum rule and transfer derivatives from within the half-p
 Role: exposes the exact correction term that must be quantitatively bounded before using the
 ordinary finite Euler-series approximation on the completed-function detector.
 -/
-theorem iteratedDeriv_logDeriv_completed_eq_LFunction_add_gammaFactor_of_one_lt_re {q : ℕ}
-    [NeZero q] {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) {c : ℂ} (hc : 1 < c.re) (n : ℕ) :
+theorem completed_iter_split {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) {c : ℂ}
+    (hc : 1 < c.re) (n : ℕ) :
     iteratedDeriv n (logDeriv χ.completedLFunction) c =
       iteratedDeriv n (logDeriv χ.LFunction) c + iteratedDeriv n (logDeriv χ.gammaFactor) c := by
   let U : Set ℂ := {z : ℂ | 1 < z.re}
@@ -1512,13 +1375,13 @@ theorem iteratedDeriv_logDeriv_completed_eq_LFunction_add_gammaFactor_of_one_lt_
   have hgammaA : AnalyticAt ℂ (fun z : ℂ => χ.gammaFactor z) c :=
     analyticAt_gammaFactor_of_re_pos χ (by linarith only [hc])
   have hcompNZ : χ.completedLFunction c ≠ 0 :=
-    completedLFunction_ne_zero_of_one_le_re hχ (by linarith only [hc])
+    completed_ne_zero_of_one_le_re hχ (by linarith only [hc])
   have hgammaNZ : χ.gammaFactor c ≠ 0 := gammaFactor_ne_zero_of_re_pos χ (by linarith only [hc])
-  have hlevel : q ≠ 1 := dirichletCharacter_level_ne_one_of_ne_one hχ
+  have hlevel : q ≠ 1 := character_level_ne_one_of_ne_one hχ
   have hLfun :
     (fun z : ℂ => χ.LFunction z) = fun z => χ.completedLFunction z / χ.gammaFactor z := by
     funext z
-    exact dirichletLFunction_eq_completed_div_gammaFactor χ z (Or.inr hlevel)
+    exact L_eq_completed_div_gammaFactor χ z (Or.inr hlevel)
   have hLA : AnalyticAt ℂ (fun z : ℂ => χ.LFunction z) c := by
     rw [hLfun]
     exact hcompA.div hgammaA hgammaNZ
@@ -1535,11 +1398,11 @@ theorem iteratedDeriv_logDeriv_completed_eq_LFunction_add_gammaFactor_of_one_lt_
     intro z hz
     change 1 < z.re at hz
     have hzre : 1 ≤ z.re := le_of_lt hz
-    have hF : χ.completedLFunction z ≠ 0 := completedLFunction_ne_zero_of_one_le_re hχ hzre
+    have hF : χ.completedLFunction z ≠ 0 := completed_ne_zero_of_one_le_re hχ hzre
     have hG : χ.gammaFactor z ≠ 0 := gammaFactor_ne_zero_of_re_pos χ (by linarith only [hz])
     have hdG : DifferentiableAt ℂ (fun w : ℂ => χ.gammaFactor w) z :=
       (analyticAt_gammaFactor_of_re_pos χ (by linarith only [hz])).differentiableAt
-    have hbridge := logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hχ hF hG hdG
+    have hbridge := L_logDeriv_sub_gamma_of_regular hχ hF hG hdG
     change logDeriv χ.completedLFunction z = logDeriv χ.LFunction z + logDeriv χ.gammaFactor z
     rw [hbridge]
     ring
@@ -1572,14 +1435,13 @@ and simplify the factorial and radius factors.
 Role: quantifies one error term in transferring the completed-function detector to the ordinary
 logarithmic derivative.
 -/
-theorem exists_scaled_gammaFactor_iteratedDeriv_bound {η T : ℝ} (hη : 0 < η) (hT : 0 ≤ T) {q : ℕ}
-    (χ : DirichletCharacter ℂ q) {c : ℂ} (hcLo : 1 ≤ c.re) (hcHi : c.re ≤ 5 / 4) (hcT : |c.im| ≤ T)
-    (n : ℕ) :
+theorem exists_scaledGamma {η T : ℝ} (hη : 0 < η) (hT : 0 ≤ T) {q : ℕ} (χ : DirichletCharacter ℂ q)
+    {c : ℂ} (hcLo : 1 ≤ c.re) (hcHi : c.re ≤ 5 / 4) (hcT : |c.im| ≤ T) (n : ℕ) :
     ∃ C : ℝ,
       0 ≤ C ∧
         (η ^ (n + 1) / (n.factorial : ℝ)) * ‖iteratedDeriv n (logDeriv χ.gammaFactor) c‖ ≤
           C * η * (Real.log (4 * T + 4) + 1) * (4 * η) ^ n := by
-  obtain ⟨C, hC, hgamma⟩ := exists_uniform_norm_iteratedDeriv_gammaFactor_vertical_le n
+  obtain ⟨C, hC, hgamma⟩ := gammaLogDeriv_deriv_bound n
   refine ⟨C, hC, ?_⟩
   have hbound := hgamma χ hcLo hcHi hT hcT
   have hscale : 0 ≤ η ^ (n + 1) / (n.factorial : ℝ) := by positivity

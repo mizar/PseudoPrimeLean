@@ -25,7 +25,7 @@ namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 
 /-- For `x > 0` and any real `t`, bound the logarithmic contour kernel on
 `Re s=-(2m+1)`. Its numerator norm is the constant `x^(-(2m+1))` along this line. -/
-theorem norm_riemannZetaLogContourKernel_leftVertical_le {x : ℝ} (hx : 0 < x) {m : ℕ} {t : ℝ} :
+theorem norm_logKernel_left_le {x : ℝ} (hx : 0 < x) {m : ℕ} {t : ℝ} :
     ‖riemannZetaLogContourKernel x (-(2 * m + 1 : ℂ) + (t : ℂ) * Complex.I)‖ ≤
       leftVerticalZetaLogDerivBound m t * x ^ (-(2 * (m : ℝ) + 1)) / (2 * (m : ℝ) + 1) ^ 2 := by
   set z : ℂ := -(2 * m + 1 : ℂ) + (t : ℂ) * Complex.I with hz_def
@@ -35,7 +35,7 @@ theorem norm_riemannZetaLogContourKernel_leftVertical_le {x : ℝ} (hx : 0 < x) 
       Complex.re_ofNat, Complex.natCast_re, Complex.im_ofNat, Complex.natCast_im, mul_zero,
       sub_zero, Complex.ofReal_re, Complex.I_re, Complex.ofReal_im, Complex.I_im, mul_one, sub_self,
       add_zero]
-  have hderiv_bound := norm_logDeriv_riemannZeta_neg_odd_add_mul_I_le_uniform m t
+  have hderiv_bound := norm_logDeriv_neg_odd_le_bound m t
   have hlogDeriv_eq : ‖deriv riemannZeta z / riemannZeta z‖ = ‖logDeriv riemannZeta z‖ := by
     rw [logDeriv_apply]
   have hxz : ‖(x : ℂ) ^ z‖ = x ^ (-(2 * (m : ℝ) + 1)) := by
@@ -68,12 +68,11 @@ theorem norm_riemannZetaLogContourKernel_leftVertical_le {x : ℝ} (hx : 0 < x) 
       apply div_le_div_of_nonneg_right h1 (by positivity)
 
 /-- The reciprocal-kernel analogue of
-`PseudoPrime.AnalyticNumberTheory.RiemannZeta.norm_riemannZetaLogContourKernel_leftVertical_le`.
+`PseudoPrime.AnalyticNumberTheory.RiemannZeta.norm_logKernel_left_le`.
 Since `PseudoPrime.AnalyticNumberTheory.RiemannZeta.riemannZetaReciprocalContourKernel` carries
 `x ^ (s - 1) / (s * (s - 1))`, the denominator's second
 factor uses `‖z - 1‖ ≥ |Re(z) - 1| = 2m + 2`. -/
-theorem norm_riemannZetaReciprocalContourKernel_leftVertical_le {x : ℝ} (hx : 0 < x) {m : ℕ}
-    {t : ℝ} :
+theorem norm_reciprocalKernel_left_le {x : ℝ} (hx : 0 < x) {m : ℕ} {t : ℝ} :
     ‖riemannZetaReciprocalContourKernel x (-(2 * m + 1 : ℂ) + (t : ℂ) * Complex.I)‖ ≤
       leftVerticalZetaLogDerivBound m t * x ^ (-(2 * (m : ℝ) + 2)) /
         ((2 * (m : ℝ) + 1) * (2 * (m : ℝ) + 2)) := by
@@ -87,7 +86,7 @@ theorem norm_riemannZetaReciprocalContourKernel_leftVertical_le {x : ℝ} (hx : 
   have hz1re : (z - 1).re = -(2 * (m : ℝ) + 2) := by
     rw [Complex.sub_re, hzre, Complex.one_re]
     ring
-  have hderiv_bound := norm_logDeriv_riemannZeta_neg_odd_add_mul_I_le_uniform m t
+  have hderiv_bound := norm_logDeriv_neg_odd_le_bound m t
   have hlogDeriv_eq : ‖deriv riemannZeta z / riemannZeta z‖ = ‖logDeriv riemannZeta z‖ := by
     rw [logDeriv_apply]
   have hxz : ‖(x : ℂ) ^ (z - 1)‖ = x ^ (-(2 * (m : ℝ) + 2)) := by
@@ -127,8 +126,7 @@ theorem norm_riemannZetaReciprocalContourKernel_leftVertical_le {x : ℝ} (hx : 
       by apply div_le_div_of_nonneg_right h1 (by positivity)
 
 /-- The pointwise kernel bound, integrated over the vertical segment `t ∈ [-T, T]`. -/
-theorem norm_intervalIntegral_riemannZetaLogContourKernel_leftVertical_le {x : ℝ} (hx : 0 < x)
-    {m : ℕ} {T : ℝ} (hT : 0 ≤ T) :
+theorem norm_integral_logKernel_left_le {x : ℝ} (hx : 0 < x) {m : ℕ} {T : ℝ} (hT : 0 ≤ T) :
     ‖∫ t in (-T)..T, riemannZetaLogContourKernel x (-(2 * m + 1 : ℂ) + (t : ℂ) * Complex.I)‖ ≤
       leftVerticalZetaLogDerivBound m T * x ^ (-(2 * (m : ℝ) + 1)) / (2 * (m : ℝ) + 1) ^ 2 *
         (2 * T) := by
@@ -139,7 +137,7 @@ theorem norm_intervalIntegral_riemannZetaLogContourKernel_leftVertical_le {x : �
       (by
         rw [Set.uIoc_of_le (by linarith only [hT] : -T ≤ T)]
         rintro t ⟨ht1, ht2⟩
-        have hbase := norm_riemannZetaLogContourKernel_leftVertical_le (x := x) hx (m := m) (t := t)
+        have hbase := norm_logKernel_left_le (x := x) hx (m := m) (t := t)
         have htabs : |t| ≤ T := abs_le.mpr ⟨ht1.le, ht2⟩
         have hle : leftVerticalZetaLogDerivBound m t ≤ leftVerticalZetaLogDerivBound m T := by
           unfold leftVerticalZetaLogDerivBound
@@ -160,10 +158,9 @@ theorem norm_intervalIntegral_riemannZetaLogContourKernel_leftVertical_le {x : �
 
 /-- The reciprocal-kernel analogue of
 `PseudoPrime.AnalyticNumberTheory.RiemannZeta.`
-`norm_intervalIntegral_riemannZetaLogContourKernel_leftVertical_le`.
+`norm_integral_logKernel_left_le`.
 -/
-theorem norm_intervalIntegral_riemannZetaReciprocalContourKernel_leftVertical_le {x : ℝ}
-    (hx : 0 < x) {m : ℕ} {T : ℝ} (hT : 0 ≤ T) :
+theorem norm_integral_reciprocalKernel_left_le {x : ℝ} (hx : 0 < x) {m : ℕ} {T : ℝ} (hT : 0 ≤ T) :
     ‖∫ t in (-T)..T,
           riemannZetaReciprocalContourKernel x (-(2 * m + 1 : ℂ) + (t : ℂ) * Complex.I)‖ ≤
       leftVerticalZetaLogDerivBound m T * x ^ (-(2 * (m : ℝ) + 2)) /
@@ -177,8 +174,7 @@ theorem norm_intervalIntegral_riemannZetaReciprocalContourKernel_leftVertical_le
       (by
         rw [Set.uIoc_of_le (by linarith only [hT] : -T ≤ T)]
         rintro t ⟨ht1, ht2⟩
-        have hbase :=
-          norm_riemannZetaReciprocalContourKernel_leftVertical_le (x := x) hx (m := m) (t := t)
+        have hbase := norm_reciprocalKernel_left_le (x := x) hx (m := m) (t := t)
         have htabs : |t| ≤ T := abs_le.mpr ⟨ht1.le, ht2⟩
         have hle : leftVerticalZetaLogDerivBound m t ≤ leftVerticalZetaLogDerivBound m T := by
           unfold leftVerticalZetaLogDerivBound

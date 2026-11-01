@@ -38,7 +38,7 @@ zero. Primitivity and GRH are unnecessary. Split the parity definition and
 apply the preceding existence theorems; this validates the excluded set. -/
 theorem LFunction_eq_zero_of_mem_trivialZeros {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
     (hne : χ ≠ 1) {z : ℤ} (hz : z ∈ dirichletTrivialZeros χ) : χ.LFunction (z : ℂ) = 0 := by
-  have hN := DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hne
+  have hN := DirichletLFunction.character_level_ne_one_of_ne_one hne
   simp only [dirichletTrivialZeros, ite_eq_right hN] at hz
   by_cases ho : χ.Odd
   · rw [ite_eq_left ho] at hz

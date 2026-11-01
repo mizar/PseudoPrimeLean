@@ -26,12 +26,12 @@ multiple of each local half exponent, its index is four and it contains all
 strong passes. Construct the three annihilator characters and their conductors;
 no character enumeration or conductor-saving hypothesis is supplied externally.
 Canonical exponent arithmetic and branch classification remain explicit inputs. -/
-theorem exists_prime_witness_le_gaussian_0283_of_three_prime_sign_subgroup {n p q r E kp kq kr : ℕ}
-    [NeZero n] [Fact p.Prime] [Fact q.Prime] [Fact r.Prime] [Fact (2 < p)] [Fact (2 < q)]
-    [Fact (2 < r)] (hnOdd : Odd n) (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r) (hpn : p ∣ n)
-    (hqn : q ∣ n) (hrn : r ∣ n) (hkp : Odd kp) (hkq : Odd kq) (hkr : Odd kr)
-    (hEp : E = (p / 2) * kp) (hEq : E = (q / 2) * kq) (hEr : E = (r / 2) * kr) (hpq : p ≠ q)
-    (hpr : p ≠ r) (hqr : q ≠ r) (hn : n = p * q * r) (hi : (PrimeTest.signSubgroup n E).index = 4)
+theorem exists_prime_gaussian_0282924_signTriple_GRH {n p q r E kp kq kr : ℕ} [NeZero n]
+    [Fact p.Prime] [Fact q.Prime] [Fact r.Prime] [Fact (2 < p)] [Fact (2 < q)] [Fact (2 < r)]
+    (hnOdd : Odd n) (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r) (hpn : p ∣ n) (hqn : q ∣ n)
+    (hrn : r ∣ n) (hkp : Odd kp) (hkq : Odd kq) (hkr : Odd kr) (hEp : E = (p / 2) * kp)
+    (hEq : E = (q / 2) * kq) (hEr : E = (r / 2) * kr) (hpq : p ≠ q) (hpr : p ≠ r) (hqr : q ≠ r)
+    (hn : n = p * q * r) (hi : (PrimeTest.signSubgroup n E).index = 4)
     (hpass :
       ∀ z : ZMod n,
         PrimeTest.StrongMillerRabinPass n z →
@@ -48,20 +48,18 @@ theorem exists_prime_witness_le_gaussian_0283_of_three_prime_sign_subgroup {n p 
   obtain ⟨c, hc⟩ :=
     PrimeTest.exists_paired_sign_annihilator_with_conductor hqOdd hrOdd hqn hrn hkq hkr hEq hEr hqr
   exact
-    exists_prime_witness_le_gaussian_0283_of_three_annihilator_members hnOdd
-      (PrimeTest.signSubgroup n E) hi hpass hGRH a b c ha hb hc Fact.out Fact.out Fact.out hpq hpr
-      hqr hn hN
+    exists_prime_gaussian_threeAnnihilators_GRH hnOdd (PrimeTest.signSubgroup n E) hi hpass hGRH a b
+      c ha hb hc Fact.out Fact.out Fact.out hpq hpr hqr hn hN
 
 /-- Under GRH at logarithmic scale `600`, a common-sign index-four subgroup
 with three pairwise product conductors gives the classified Gaussian star
 witness. The threshold only supplies the comparison's elementary size bound. -/
-theorem exists_prime_witness_le_gaussian_star_of_three_prime_sign_subgroup {n p q r E kp kq kr : ℕ}
-    [NeZero n] [Fact p.Prime] [Fact q.Prime] [Fact r.Prime] [Fact (2 < p)] [Fact (2 < q)]
-    [Fact (2 < r)] (hnOdd : Odd n) (hnlarge : 20000 ≤ n) (hpOdd : Odd p) (hqOdd : Odd q)
-    (hrOdd : Odd r) (hpn : p ∣ n) (hqn : q ∣ n) (hrn : r ∣ n) (hkp : Odd kp) (hkq : Odd kq)
-    (hkr : Odd kr) (hEp : E = (p / 2) * kp) (hEq : E = (q / 2) * kq) (hEr : E = (r / 2) * kr)
-    (hpq : p ≠ q) (hpr : p ≠ r) (hqr : q ≠ r) (hn : n = p * q * r)
-    (hi : (PrimeTest.signSubgroup n E).index = 4)
+theorem exists_prime_gaussianStar_signTriple_GRH {n p q r E kp kq kr : ℕ} [NeZero n] [Fact p.Prime]
+    [Fact q.Prime] [Fact r.Prime] [Fact (2 < p)] [Fact (2 < q)] [Fact (2 < r)] (hnOdd : Odd n)
+    (hnlarge : 20000 ≤ n) (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r) (hpn : p ∣ n)
+    (hqn : q ∣ n) (hrn : r ∣ n) (hkp : Odd kp) (hkq : Odd kq) (hkr : Odd kr)
+    (hEp : E = (p / 2) * kp) (hEq : E = (q / 2) * kq) (hEr : E = (r / 2) * kr) (hpq : p ≠ q)
+    (hpr : p ≠ r) (hqr : q ≠ r) (hn : n = p * q * r) (hi : (PrimeTest.signSubgroup n E).index = 4)
     (hpass :
       ∀ z : ZMod n,
         PrimeTest.StrongMillerRabinPass n z →
@@ -78,19 +76,17 @@ theorem exists_prime_witness_le_gaussian_star_of_three_prime_sign_subgroup {n p 
   obtain ⟨c, hc⟩ :=
     PrimeTest.exists_paired_sign_annihilator_with_conductor hqOdd hrOdd hqn hrn hkq hkr hEq hEr hqr
   exact
-    exists_prime_witness_le_gaussian_star_of_three_annihilator_prime_members hnlarge hnOdd
-      (PrimeTest.signSubgroup n E) hpass hGRH hL hi a b c ha hb hc Fact.out Fact.out Fact.out hpq
-      hpr hqr hn
+    exists_prime_gaussianStar_threePrimeMembers_GRH hnlarge hnOdd (PrimeTest.signSubgroup n E) hpass
+      hGRH hL hi a b c ha hb hc Fact.out Fact.out Fact.out hpq hpr hqr hn
 
 /-- The common-sign subgroup and its three pairwise product conductors feed
 the Gamma index-100 cutoff from logarithmic scale 330. -/
-theorem exists_prime_witness_le_gammaIndex100_of_three_prime_sign_subgroup {n p q r E kp kq kr : ℕ}
-    [NeZero n] [Fact p.Prime] [Fact q.Prime] [Fact r.Prime] [Fact (2 < p)] [Fact (2 < q)]
-    [Fact (2 < r)] (hnOdd : Odd n) (hnlarge : 20000 ≤ n) (hpOdd : Odd p) (hqOdd : Odd q)
-    (hrOdd : Odd r) (hpn : p ∣ n) (hqn : q ∣ n) (hrn : r ∣ n) (hkp : Odd kp) (hkq : Odd kq)
-    (hkr : Odd kr) (hEp : E = (p / 2) * kp) (hEq : E = (q / 2) * kq) (hEr : E = (r / 2) * kr)
-    (hpq : p ≠ q) (hpr : p ≠ r) (hqr : q ≠ r) (hn : n = p * q * r)
-    (hi : (PrimeTest.signSubgroup n E).index = 4)
+theorem exists_prime_gamma100_signTriple_GRH {n p q r E kp kq kr : ℕ} [NeZero n] [Fact p.Prime]
+    [Fact q.Prime] [Fact r.Prime] [Fact (2 < p)] [Fact (2 < q)] [Fact (2 < r)] (hnOdd : Odd n)
+    (hnlarge : 20000 ≤ n) (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r) (hpn : p ∣ n)
+    (hqn : q ∣ n) (hrn : r ∣ n) (hkp : Odd kp) (hkq : Odd kq) (hkr : Odd kr)
+    (hEp : E = (p / 2) * kp) (hEq : E = (q / 2) * kq) (hEr : E = (r / 2) * kr) (hpq : p ≠ q)
+    (hpr : p ≠ r) (hqr : q ≠ r) (hn : n = p * q * r) (hi : (PrimeTest.signSubgroup n E).index = 4)
     (hpass :
       ∀ z : ZMod n,
         PrimeTest.StrongMillerRabinPass n z →
@@ -107,19 +103,17 @@ theorem exists_prime_witness_le_gammaIndex100_of_three_prime_sign_subgroup {n p 
   obtain ⟨c, hc⟩ :=
     PrimeTest.exists_paired_sign_annihilator_with_conductor hqOdd hrOdd hqn hrn hkq hkr hEq hEr hqr
   exact
-    exists_prime_witness_le_gammaIndex100_of_three_annihilator_prime_members hnlarge hnOdd
-      (PrimeTest.signSubgroup n E) hpass hGRH hL hi a b c ha hb hc Fact.out Fact.out Fact.out hpq
-      hpr hqr hn
+    exists_prime_gamma100_threePrimeMembers_GRH hnlarge hnOdd (PrimeTest.signSubgroup n E) hpass
+      hGRH hL hi a b c ha hb hc Fact.out Fact.out Fact.out hpq hpr hqr hn
 
 /-- The same pairwise conductor construction feeds the 6/5 Gaussian witness
 bound from logarithmic scale 500. -/
-theorem exists_prime_witness_le_gaussian6fifths_of_three_prime_sign_subgroup
-    {n p q r E kp kq kr : ℕ} [NeZero n] [Fact p.Prime] [Fact q.Prime] [Fact r.Prime] [Fact (2 < p)]
-    [Fact (2 < q)] [Fact (2 < r)] (hnOdd : Odd n) (hnlarge : 20000 ≤ n) (hpOdd : Odd p)
-    (hqOdd : Odd q) (hrOdd : Odd r) (hpn : p ∣ n) (hqn : q ∣ n) (hrn : r ∣ n) (hkp : Odd kp)
-    (hkq : Odd kq) (hkr : Odd kr) (hEp : E = (p / 2) * kp) (hEq : E = (q / 2) * kq)
-    (hEr : E = (r / 2) * kr) (hpq : p ≠ q) (hpr : p ≠ r) (hqr : q ≠ r) (hn : n = p * q * r)
-    (hi : (PrimeTest.signSubgroup n E).index = 4)
+theorem gaussian6_5_primeWitness_sign_triple_GRH {n p q r E kp kq kr : ℕ} [NeZero n] [Fact p.Prime]
+    [Fact q.Prime] [Fact r.Prime] [Fact (2 < p)] [Fact (2 < q)] [Fact (2 < r)] (hnOdd : Odd n)
+    (hnlarge : 20000 ≤ n) (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r) (hpn : p ∣ n)
+    (hqn : q ∣ n) (hrn : r ∣ n) (hkp : Odd kp) (hkq : Odd kq) (hkr : Odd kr)
+    (hEp : E = (p / 2) * kp) (hEq : E = (q / 2) * kq) (hEr : E = (r / 2) * kr) (hpq : p ≠ q)
+    (hpr : p ≠ r) (hqr : q ≠ r) (hn : n = p * q * r) (hi : (PrimeTest.signSubgroup n E).index = 4)
     (hpass :
       ∀ z : ZMod n,
         PrimeTest.StrongMillerRabinPass n z →
@@ -136,8 +130,7 @@ theorem exists_prime_witness_le_gaussian6fifths_of_three_prime_sign_subgroup
   obtain ⟨c, hc⟩ :=
     PrimeTest.exists_paired_sign_annihilator_with_conductor hqOdd hrOdd hqn hrn hkq hkr hEq hEr hqr
   exact
-    exists_prime_witness_le_gaussian6fifths_of_three_annihilator_prime_members hnlarge hnOdd
-      (PrimeTest.signSubgroup n E) hpass hGRH hL hi a b c ha hb hc Fact.out Fact.out Fact.out hpq
-      hpr hqr hn
+    gaussian6_5_primeWitness_prime_members_GRH hnlarge hnOdd (PrimeTest.signSubgroup n E) hpass hGRH
+      hL hi a b c ha hb hc Fact.out Fact.out Fact.out hpq hpr hqr hn
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

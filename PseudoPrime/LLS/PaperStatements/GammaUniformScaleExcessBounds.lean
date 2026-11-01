@@ -79,7 +79,7 @@ theorem gamma_primitiveCharacter_sum_re_le_signed_scale {q : ℕ} [NeZero q] (hq
       _ ≤ _ := add_le_add_left hleft0 _
   have hlead := mul_le_mul_of_nonneg_left hlogf (by norm_num only : (0 : ℝ) ≤ 11783423 / 25000000)
   have hu :=
-    gamma_primitiveCharacter_sum_re_le_variable_prefix_scale hq χ hne hGRH hx 32
+    gammaCharacterSum_re_le_variable_prefix_scale hq χ hne hGRH hx 32
       Analysis.gammaResolvent_thirtyTwo_error_lt
   have he :
     gammaScaleExcess (Real.log q) T =
@@ -223,7 +223,7 @@ theorem gamma_ramp_subgroup_comparison_signed_scale {q : ℕ} [NeZero q] (hq : 2
 a prime coprime to q outside any proper unit subgroup through (4/5)T².
 Contradict the signed-scale comparison and certified main-term gap.
 This interface accepts any real logarithmic or constant corrections satisfying the budget. -/
-theorem exists_prime_outside_le_gamma_four_fifths_signed_scale {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+theorem exists_prime_outside_4_5_signedScale_GRH {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
     (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {T : ℝ} (hT : 35000 ≤ T)
     (hbudget :

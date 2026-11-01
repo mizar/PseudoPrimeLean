@@ -54,8 +54,8 @@ private theorem exists_prime_reject_of_even_character_bound {N : ℕ} [NeZero N]
 
 /-- In the first shifted logarithmic interval, every odd composite has a
 rejecting prime bounded by the translated `64/81` quadratic. -/
-theorem exists_prime_reject_le_sixtyFourEightyFirst_shifted_log_sq {N : ℕ} [NeZero N] (hn : 1 < N)
-    (ho : Odd N) (hc : ¬N.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem exists_prime_reject_64_81_shifted_sq_GRH {N : ℕ} [NeZero N] (hn : 1 < N) (ho : Odd N)
+    (hc : ¬N.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hLlo : 523 / 50 ≤ Real.log N) (hLhi : Real.log N ≤ 2171 / 100) :
     let (s, a) := Nat.maxPowDvdDiv 2 (N - 1)
     ∃ p : ℕ,
@@ -65,8 +65,7 @@ theorem exists_prime_reject_le_sixtyFourEightyFirst_shifted_log_sq {N : ℕ} [Ne
   exact
     exists_prime_reject_of_even_character_bound hn ho hc
       (fun χ hne heven =>
-        LLS.PaperStatements.exists_prime_ne_one_le_sixtyFourEightyFirst_shifted_log_sq χ hne heven
-          hGRH hLlo hLhi)
+        LLS.PaperStatements.exists_prime_ne_one_64_81_shifted_sq_GRH χ hne heven hGRH hLlo hLhi)
 
 /-- On the second shifted interval, every odd composite has a rejecting prime
 bounded by the translated `81/100` quadratic. -/
@@ -94,14 +93,13 @@ theorem exists_prime_reject_le_576_exact_even {N : ℕ} [NeZero N] (hn : 1 < N) 
       p.Prime ∧
         (p : ℕ) ≤ 576 ∧
         (p : ZMod N) ^ a ≠ 1 ∧ ∀ j : ℕ, j < s → (p : ZMod N) ^ (2 ^ j * a) ≠ -1 := by
-  obtain ⟨p, hp, hb, hpow, hrest⟩ :=
-    exists_prime_reject_le_even_shifted_fiveHundredSeventySix hn ho hc hGRH hL
+  obtain ⟨p, hp, hb, hpow, hrest⟩ := exists_prime_reject_le_576_GRH hn ho hc hGRH hL
   have hnat : p ≤ 576 := by exact_mod_cast hb
   exact ⟨p, hp, hnat, hpow, hrest⟩
 
 /-- On the translated five-piece interval, every odd composite has a rejecting
 prime bounded by the shifted midscale radius. -/
-theorem exists_prime_reject_le_shifted_midscale_radius_sq {N : ℕ} [NeZero N] (hn : 1 < N)
+theorem exists_primeReject_le_shifted_midscale_radius_sq {N : ℕ} [NeZero N] (hn : 1 < N)
     (ho : Odd N) (hc : ¬N.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hLlo : 706 / 25 ≤ Real.log N) (hLhi : Real.log N ≤ 5283 / 20) :
     let y := LLS.PaperStatements.midscaleEndpointRadius (Real.log N - 73 / 50)
@@ -114,13 +112,13 @@ theorem exists_prime_reject_le_shifted_midscale_radius_sq {N : ℕ} [NeZero N] (
     exists_prime_reject_of_even_character_bound hn ho hc
       (fun χ hne heven => by
         obtain ⟨p, hp, hb, hv⟩ :=
-          LLS.PaperStatements.exists_prime_ne_one_le_shifted_midscale_radius_sq χ hne heven hGRH
-            hLlo hLhi
+          LLS.PaperStatements.exists_neOnePrime_le_shifted_midscale_radius_sq χ hne heven hGRH hLlo
+            hLhi
         exact ⟨p, hp, hb, hv⟩)
 
 /-- The least rejecting prime also satisfies the exact-even radius-eight bound. -/
-theorem exists_least_prime_reject_le_sixty_one_exact_even {N : ℕ} [NeZero N] (hn : 1 < N)
-    (ho : Odd N) (hc : ¬N.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem exists_least_prime_reject_le_61_GRH {N : ℕ} [NeZero N] (hn : 1 < N) (ho : Odd N)
+    (hc : ¬N.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : Real.log N ≤ 56 / 5) :
     ∃ p : ℕ,
       p.Prime ∧
@@ -136,24 +134,23 @@ theorem exists_least_prime_reject_le_sixty_one_exact_even {N : ℕ} [NeZero N] (
   exact ⟨p, hp, hnat, hreject, hmin⟩
 
 /-- Least-prime version of the first exact-even shifted quadratic bound. -/
-theorem exists_least_prime_reject_le_sixtyFourEightyFirst_shifted_log_sq {N : ℕ} [NeZero N]
-    (hn : 1 < N) (ho : Odd N) (hc : ¬N.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hLlo : 523 / 50 ≤ Real.log N)
-    (hLhi : Real.log N ≤ 2171 / 100) :
+theorem exists_least_prime_reject_64_81_shift_GRH {N : ℕ} [NeZero N] (hn : 1 < N) (ho : Odd N)
+    (hc : ¬N.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hLlo : 523 / 50 ≤ Real.log N) (hLhi : Real.log N ≤ 2171 / 100) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (64 / 81 : ℝ) * (Real.log N - 73 / 50) ^ 2 ∧
         ¬PrimeTest.StrongMillerRabinPass N (p : ZMod N) ∧
         ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass N (q : ZMod N) → p ≤ q := by
   obtain ⟨p, hp, hb, hpow, hrest⟩ :=
-    exists_prime_reject_le_sixtyFourEightyFirst_shifted_log_sq hn ho hc hGRH hLlo hLhi
+    exists_prime_reject_64_81_shifted_sq_GRH hn ho hc hGRH hLlo hLhi
   exact
     exists_least_prime_reject_of_exists_prime_reject
       ⟨p, hp, hb, PrimeTest.not_strongMillerRabinPass_iff.mpr ⟨hpow, hrest⟩⟩
 
 /-- Least-prime version of the second exact-even shifted quadratic bound. -/
-theorem exists_least_prime_reject_le_eightyOne_shifted_log_sq {N : ℕ} [NeZero N] (hn : 1 < N)
-    (ho : Odd N) (hc : ¬N.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem exists_leastReject_le_eightyOne_shifted_log_sq {N : ℕ} [NeZero N] (hn : 1 < N) (ho : Odd N)
+    (hc : ¬N.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hLlo : 523 / 50 ≤ Real.log N) (hLhi : Real.log N ≤ 1373 / 50) :
     ∃ p : ℕ,
       p.Prime ∧
@@ -184,7 +181,7 @@ theorem exists_least_prime_reject_le_576_exact_even {N : ℕ} [NeZero N] (hn : 1
   exact ⟨p, hp, hnat, hreject, hmin⟩
 
 /-- Least-prime version of the exact-even shifted midscale radius bound. -/
-theorem exists_least_prime_reject_le_shifted_midscale_radius_sq {N : ℕ} [NeZero N] (hn : 1 < N)
+theorem exists_leastReject_le_shifted_midscale_radius_sq {N : ℕ} [NeZero N] (hn : 1 < N)
     (ho : Odd N) (hc : ¬N.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hLlo : 706 / 25 ≤ Real.log N) (hLhi : Real.log N ≤ 5283 / 20) :
     let y := LLS.PaperStatements.midscaleEndpointRadius (Real.log N - 73 / 50)
@@ -195,7 +192,7 @@ theorem exists_least_prime_reject_le_shifted_midscale_radius_sq {N : ℕ} [NeZer
         ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass N (q : ZMod N) → p ≤ q := by
   dsimp only
   obtain ⟨p, hp, hb, hpow, hrest⟩ :=
-    exists_prime_reject_le_shifted_midscale_radius_sq hn ho hc hGRH hLlo hLhi
+    exists_primeReject_le_shifted_midscale_radius_sq hn ho hc hGRH hLlo hLhi
   exact
     exists_least_prime_reject_of_exists_prime_reject
       ⟨p, hp, hb, PrimeTest.not_strongMillerRabinPass_iff.mpr ⟨hpow, hrest⟩⟩
@@ -203,8 +200,8 @@ theorem exists_least_prime_reject_le_shifted_midscale_radius_sq {N : ℕ} [NeZer
 /-- The five-piece endpoint radius with shift `7/4` gives a rejecting prime
 through its square for levels from `144/5` to `13517/100`. The upper endpoint
 keeps the radius at most 128, where the three-band transfer applies. -/
-theorem exists_prime_reject_le_7over4_shifted_midscale_radius_sq {N : ℕ} [NeZero N] (hn : 1 < N)
-    (ho : Odd N) (hc : ¬N.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem exists_prime_shift7_4_midscale_GRH {N : ℕ} [NeZero N] (hn : 1 < N) (ho : Odd N)
+    (hc : ¬N.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hLlo : 144 / 5 ≤ Real.log N) (hLhi : Real.log N ≤ 13517 / 100) :
     ∃ p : ℕ,
       p.Prime ∧
@@ -214,62 +211,56 @@ theorem exists_prime_reject_le_7over4_shifted_midscale_radius_sq {N : ℕ} [NeZe
     exists_prime_reject_of_even_character_bound hn ho hc
       (fun χ hne heven => by
         obtain ⟨p, hp, hb, hv⟩ :=
-          LLS.PaperStatements.exists_prime_ne_one_le_7over4_shifted_midscale_radius_sq χ hne heven
-            hGRH hLlo hLhi
+          LLS.PaperStatements.exists_neOnePrime_even_shift7_4_mid_GRH χ hne heven hGRH hLlo hLhi
         exact ⟨p, hp, hb, hv⟩)
   exact ⟨p, hp, hb, PrimeTest.not_strongMillerRabinPass_iff.mpr ⟨hpow, hrest⟩⟩
 
 /-- Least-prime version of the `7/4` shifted five-piece endpoint bound. -/
-theorem exists_least_prime_reject_le_7over4_shifted_midscale_radius_sq {N : ℕ} [NeZero N]
-    (hn : 1 < N) (ho : Odd N) (hc : ¬N.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hLlo : 144 / 5 ≤ Real.log N)
-    (hLhi : Real.log N ≤ 13517 / 100) :
+theorem exists_least_prime_shift7_4_midscale_GRH {N : ℕ} [NeZero N] (hn : 1 < N) (ho : Odd N)
+    (hc : ¬N.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hLlo : 144 / 5 ≤ Real.log N) (hLhi : Real.log N ≤ 13517 / 100) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (LLS.PaperStatements.midscaleEndpointRadius (Real.log N - 7 / 4)) ^ 2 ∧
         ¬PrimeTest.StrongMillerRabinPass N (p : ZMod N) ∧
         ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass N (q : ZMod N) → p ≤ q := by
-  obtain ⟨p, hp, hb, hreject⟩ :=
-    exists_prime_reject_le_7over4_shifted_midscale_radius_sq hn ho hc hGRH hLlo hLhi
+  obtain ⟨p, hp, hb, hreject⟩ := exists_prime_shift7_4_midscale_GRH hn ho hc hGRH hLlo hLhi
   exact exists_least_prime_reject_of_exists_prime_reject ⟨p, hp, hb, hreject⟩
 
 /-- Every odd composite from logarithmic scale `43/4` through `22` has a
 rejecting prime below the `64/81` quadratic shifted by `7/4`. -/
-theorem exists_prime_reject_le_7over4_shifted_eightNinths_log_sq {N : ℕ} [NeZero N] (hn : 1 < N)
-    (ho : Odd N) (hc : ¬N.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hLlo : 43 / 4 ≤ Real.log N) (hLhi : Real.log N ≤ 22) :
-    ∃ p : ℕ,
-      p.Prime ∧
-        (p : ℝ) ≤ (64 / 81 : ℝ) * (Real.log N - 7 / 4) ^ 2 ∧
-        ¬PrimeTest.StrongMillerRabinPass N (p : ZMod N) := by
-  obtain ⟨p, hp, hb, hpow, hrest⟩ :=
-    exists_prime_reject_of_even_character_bound hn ho hc
-      (fun χ hne heven => by
-        obtain ⟨p, hp, hb, hv⟩ :=
-          LLS.PaperStatements.exists_prime_ne_one_le_7over4_shifted_eightNinths_log_sq χ hne heven
-            hGRH hLlo hLhi
-        exact ⟨p, hp, hb, hv⟩)
-  exact ⟨p, hp, hb, PrimeTest.not_strongMillerRabinPass_iff.mpr ⟨hpow, hrest⟩⟩
-
-/-- The least rejecting prime inherits the `64/81` seven-fourths shifted
-quadratic bound on the interval `43/4 ≤ log N ≤ 22`. -/
-theorem exists_least_prime_reject_le_7over4_shifted_eightNinths_log_sq {N : ℕ} [NeZero N]
-    (hn : 1 < N) (ho : Odd N) (hc : ¬N.Prime)
+theorem exists_prime_shift7_4_64_81_GRH {N : ℕ} [NeZero N] (hn : 1 < N) (ho : Odd N) (hc : ¬N.Prime)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hLlo : 43 / 4 ≤ Real.log N)
     (hLhi : Real.log N ≤ 22) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (64 / 81 : ℝ) * (Real.log N - 7 / 4) ^ 2 ∧
+        ¬PrimeTest.StrongMillerRabinPass N (p : ZMod N) := by
+  obtain ⟨p, hp, hb, hpow, hrest⟩ :=
+    exists_prime_reject_of_even_character_bound hn ho hc
+      (fun χ hne heven => by
+        obtain ⟨p, hp, hb, hv⟩ :=
+          LLS.PaperStatements.exists_neOnePrime_even_64_81_shift7_4_GRH χ hne heven hGRH hLlo hLhi
+        exact ⟨p, hp, hb, hv⟩)
+  exact ⟨p, hp, hb, PrimeTest.not_strongMillerRabinPass_iff.mpr ⟨hpow, hrest⟩⟩
+
+/-- The least rejecting prime inherits the `64/81` seven-fourths shifted
+quadratic bound on the interval `43/4 ≤ log N ≤ 22`. -/
+theorem exists_least_prime_shift7_4_64_81_GRH {N : ℕ} [NeZero N] (hn : 1 < N) (ho : Odd N)
+    (hc : ¬N.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hLlo : 43 / 4 ≤ Real.log N) (hLhi : Real.log N ≤ 22) :
+    ∃ p : ℕ,
+      p.Prime ∧
+        (p : ℝ) ≤ (64 / 81 : ℝ) * (Real.log N - 7 / 4) ^ 2 ∧
         ¬PrimeTest.StrongMillerRabinPass N (p : ZMod N) ∧
         ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass N (q : ZMod N) → p ≤ q := by
-  obtain ⟨p, hp, hb, hreject⟩ :=
-    exists_prime_reject_le_7over4_shifted_eightNinths_log_sq hn ho hc hGRH hLlo hLhi
+  obtain ⟨p, hp, hb, hreject⟩ := exists_prime_shift7_4_64_81_GRH hn ho hc hGRH hLlo hLhi
   exact exists_least_prime_reject_of_exists_prime_reject ⟨p, hp, hb, hreject⟩
 
 /-- Every odd composite from logarithmic scale `43/4` through `111/4` has a
 rejecting prime below the `81/100` quadratic shifted by `7/4`. -/
-theorem exists_prime_reject_le_7over4_shifted_eightyOne_log_sq {N : ℕ} [NeZero N] (hn : 1 < N)
-    (ho : Odd N) (hc : ¬N.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem exists_prime_shift7_4_81_100_GRH {N : ℕ} [NeZero N] (hn : 1 < N) (ho : Odd N)
+    (hc : ¬N.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hLlo : 43 / 4 ≤ Real.log N) (hLhi : Real.log N ≤ 111 / 4) :
     ∃ p : ℕ,
       p.Prime ∧
@@ -279,23 +270,21 @@ theorem exists_prime_reject_le_7over4_shifted_eightyOne_log_sq {N : ℕ} [NeZero
     exists_prime_reject_of_even_character_bound hn ho hc
       (fun χ hne heven => by
         obtain ⟨p, hp, hb, hv⟩ :=
-          LLS.PaperStatements.exists_prime_ne_one_le_7over4_shifted_eightyOne_log_sq χ hne heven
-            hGRH hLlo hLhi
+          LLS.PaperStatements.exists_neOnePrime_even_81_100_shift7_4_GRH χ hne heven hGRH hLlo hLhi
         exact ⟨p, hp, hb, hv⟩)
   exact ⟨p, hp, hb, PrimeTest.not_strongMillerRabinPass_iff.mpr ⟨hpow, hrest⟩⟩
 
 /-- The least rejecting prime inherits the `81/100` seven-fourths shifted
 quadratic bound on the interval `43/4 ≤ log N ≤ 111/4`. -/
-theorem exists_least_prime_reject_le_7over4_shifted_eightyOne_log_sq {N : ℕ} [NeZero N] (hn : 1 < N)
-    (ho : Odd N) (hc : ¬N.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem exists_least_prime_shift7_4_81_100_GRH {N : ℕ} [NeZero N] (hn : 1 < N) (ho : Odd N)
+    (hc : ¬N.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hLlo : 43 / 4 ≤ Real.log N) (hLhi : Real.log N ≤ 111 / 4) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (81 / 100 : ℝ) * (Real.log N - 7 / 4) ^ 2 ∧
         ¬PrimeTest.StrongMillerRabinPass N (p : ZMod N) ∧
         ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass N (q : ZMod N) → p ≤ q := by
-  obtain ⟨p, hp, hb, hreject⟩ :=
-    exists_prime_reject_le_7over4_shifted_eightyOne_log_sq hn ho hc hGRH hLlo hLhi
+  obtain ⟨p, hp, hb, hreject⟩ := exists_prime_shift7_4_81_100_GRH hn ho hc hGRH hLlo hLhi
   exact exists_least_prime_reject_of_exists_prime_reject ⟨p, hp, hb, hreject⟩
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

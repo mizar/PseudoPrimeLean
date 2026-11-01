@@ -24,28 +24,26 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 /-- For a non-principal character away from the real axis, completed nonvanishing implies
 ordinary L-function nonvanishing. Divide by the nonzero gamma factor in the continuation
 identity; this transfers good-height certificates to the shifted contour boundary. -/
-theorem LFunction_ne_zero_of_completed_ne_zero_of_im_ne_zero {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hne : χ ≠ 1) {s : ℂ} (hF : χ.completedLFunction s ≠ 0)
-    (him : s.im ≠ 0) : χ.LFunction s ≠ 0 := by
-  rw [dirichletLFunction_eq_completed_div_gammaFactor χ s
-      (Or.inr (dirichletCharacter_level_ne_one_of_ne_one hne))]
+theorem L_ne_zero_of_completed_of_im_ne_zero {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hne : χ ≠ 1) {s : ℂ} (hF : χ.completedLFunction s ≠ 0) (him : s.im ≠ 0) :
+    χ.LFunction s ≠ 0 := by
+  rw [L_eq_completed_div_gammaFactor χ s (Or.inr (character_level_ne_one_of_ne_one hne))]
   exact div_ne_zero hF (gammaFactor_ne_zero_of_im_ne_zero him)
 
 /-- At scale n>=1, scaled good-height data give ordinary L-function nonvanishing at both
 signed heights across the growing strip. The positive height excludes gamma poles, so the
 completed nonvanishing fields transfer through the continuation identity. -/
-theorem PrimitiveScaledHorizontalStripData.LFunction_nonzero {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hne : χ ≠ 1) {n : ℝ} (hn : 1 ≤ n)
-    (d : PrimitiveScaledHorizontalStripData χ n) {v : ℝ} (hv : |v| ≤ 2 * n) :
+theorem ScaledHorizontalData.L_nonzero {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hne : χ ≠ 1)
+    {n : ℝ} (hn : 1 ≤ n) (d : ScaledHorizontalData χ n) {v : ℝ} (hv : |v| ≤ 2 * n) :
     χ.LFunction ((v : ℂ) + d.T * Complex.I) ≠ 0 ∧ χ.LFunction ((v : ℂ) - d.T * Complex.I) ≠ 0 := by
   have hT : 0 < d.T := zero_lt_one.trans_le (hn.trans d.T_mem.1)
   have hp := (d.nonzero v hv).1
   have hm := (d.nonzero v hv).2
   constructor
-  · apply LFunction_ne_zero_of_completed_ne_zero_of_im_ne_zero hne hp
+  · apply L_ne_zero_of_completed_of_im_ne_zero hne hp
     simpa only [Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re, Complex.I_im,
       Complex.I_re, mul_one, mul_zero, add_zero, zero_add] using hT.ne'
-  · apply LFunction_ne_zero_of_completed_ne_zero_of_im_ne_zero hne hm
+  · apply L_ne_zero_of_completed_of_im_ne_zero hne hm
     simpa only [Complex.sub_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re, Complex.I_im,
       Complex.I_re, mul_one, mul_zero, add_zero, zero_sub] using neg_ne_zero.mpr hT.ne'
 
@@ -53,9 +51,9 @@ theorem PrimitiveScaledHorizontalStripData.LFunction_nonzero {N : ℕ} [NeZero N
 heights tending to infinity, a vanishing ordinary derivative envelope, and nonvanishing on
 both horizontal edges of any fixed strip. Shift the scaled family and retain its nonzero
 fields together with the gamma-corrected envelope for finite residue assembly. -/
-theorem exists_fixedStrip_LLogDeriv_envelope_nonzero_of_dirichletRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (A : ℕ) :
+theorem exists_fixedStrip_L_nonzero_RH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    (A : ℕ) :
     ∃ T η : ℕ → ℝ,
       Filter.Tendsto T Filter.atTop Filter.atTop ∧
         (∀ k, 1 ≤ T k) ∧
@@ -67,9 +65,8 @@ theorem exists_fixedStrip_LLogDeriv_envelope_nonzero_of_dirichletRH {N : ℕ} [N
               ‖logDeriv χ.LFunction ((v : ℂ) - T k * Complex.I)‖ / (T k) ^ 2 ≤ η k ∧
               χ.LFunction ((v : ℂ) + T k * Complex.I) ≠ 0 ∧
               χ.LFunction ((v : ℂ) - T k * Complex.I) ≠ 0 := by
-  let data := primitiveScaledHorizontalStripDataSeq_of_dirichletRH hN2 hRH hp hne hinv
-  obtain ⟨η, hη, hbound⟩ :=
-    exists_envelope_scaledHorizontalStrip_LLogDeriv_small hN2 data A hp hne hinv
+  let data := scaledHorizontalDataSeq_of_RH hN2 hRH hp hne hinv
+  obtain ⟨η, hη, hbound⟩ := scaledStrip_L_logDeriv_envelope hN2 data A hp hne hinv
   have hT : Filter.Tendsto (fun k => (data k).T) Filter.atTop Filter.atTop :=
     Filter.tendsto_atTop_mono (fun k => (data k).T_mem.1)
       (Filter.tendsto_atTop_add_const_right Filter.atTop 1 tendsto_natCast_atTop_atTop)
@@ -88,29 +85,28 @@ theorem exists_fixedStrip_LLogDeriv_envelope_nonzero_of_dirichletRH {N : ℕ} [N
       constructor <;> linarith only [hk, hlo, hhi, (Nat.cast_nonneg A : (0 : ℝ) ≤ (A : ℝ))]
     have hn : (1 : ℝ) ≤ ((k + A + 1 : ℕ) : ℝ) + 1 := le_add_of_nonneg_left (Nat.cast_nonneg _)
     have hb := hbound (k + A + 1) v hv hlo hhi
-    have hz := (data (k + A + 1)).LFunction_nonzero hne hn hv
+    have hz := (data (k + A + 1)).L_nonzero hne hn hv
     exact ⟨hb.1, hb.2, hz⟩
 
 /-- An ordered rectangle containing the origin in its interior has an interior shifted
 ledger when L is nonzero on its boundary. Origin entries use the interior premise; zero
 entries cannot lie on any edge. This prepares the finite shifted contour identity. -/
-theorem shiftedLogSingularities_mem_open_of_boundary_nonzero {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hne : χ ≠ 1) {σ : ℝ} {z w : ℂ} (hre : z.re < w.re)
-    (him : z.im < w.im) (h0 : (0 : ℂ) ∈ RectangleGeometry.rectangleOpenBox z w)
+theorem shiftedLogSing_mem_open_of_boundary {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hne : χ ≠ 1) {σ : ℝ} {z w : ℂ} (hre : z.re < w.re) (him : z.im < w.im)
+    (h0 : (0 : ℂ) ∈ RectangleGeometry.rectangleOpenBox z w)
     (hboundary :
       ∀ s ∈ Rectangle.rectangleClosedBox z w,
         s.re = z.re ∨ s.re = w.re ∨ s.im = z.im ∨ s.im = w.im → χ.LFunction ((σ : ℂ) + s) ≠ 0) :
     ∀ s ∈ shiftedLogSingularitiesInRectangle χ hne σ z w,
       s ∈ RectangleGeometry.rectangleOpenBox z w := by
   intro s hs
-  obtain ⟨hrect, hs0 | hz⟩ := mem_shiftedLogSingularitiesInRectangle.mp hs
+  obtain ⟨hrect, hs0 | hz⟩ := mem_shiftedLogSingularities_iff.mp hs
   · exact hs0 ▸ h0
   · have hzl : s.re ≠ z.re := fun h => hboundary s hrect (Or.inl h) hz
     have hzr : s.re ≠ w.re := fun h => hboundary s hrect (Or.inr (Or.inl h)) hz
     have hzb : s.im ≠ z.im := fun h => hboundary s hrect (Or.inr (Or.inr (Or.inl h))) hz
     have hzt : s.im ≠ w.im := fun h => hboundary s hrect (Or.inr (Or.inr (Or.inr h))) hz
-    exact
-      RectangleGeometry.mem_rectangleOpenBox_of_mem_closedBox_of_ne hre him hrect hzl hzr hzb hzt
+    exact RectangleGeometry.mem_openBox_of_closed_of_ne_sides hre him hrect hzl hzr hzb hzt
 
 /-- For a primitive non-principal character and inverse, sigma>=1, tau>0, positive height
 and A>=2, horizontal nonvanishing puts the shifted ledger strictly inside the rectangle.
@@ -159,7 +155,7 @@ theorem shiftedRectangle_ledger_mem_open {N : ℕ} [NeZero N] {χ : DirichletCha
       max_eq_right (ha.trans hτ).le, min_eq_left (by linarith only [hT] : -T ≤ T),
       max_eq_right (by linarith only [hT] : -T ≤ T), Set.mem_Ioo]
     exact ⟨⟨ha, hτ⟩, ⟨neg_lt_zero.mpr hT, hT⟩⟩
-  apply shiftedLogSingularities_mem_open_of_boundary_nonzero hne hre him h0
+  apply shiftedLogSing_mem_open_of_boundary hne hre him h0
   intro s hs hside
   have hrepr : (σ : ℂ) + s = ((σ + s.re : ℝ) : ℂ) + s.im * Complex.I := by
     rw [Complex.ofReal_add, add_assoc, Complex.re_add_im]
@@ -172,7 +168,7 @@ theorem shiftedRectangle_ledger_mem_open {N : ℕ} [NeZero N] {χ : DirichletCha
   · have hev : σ + s.re = -(A : ℝ) - 1 / 2 := by
       rw [hl, hzre]; dsimp only [a]; ring
     rw [hrepr, hev]
-    exact dirichletLFunction_ne_zero_leftVertical hp hne hinv A hA s.im
+    exact LFunction_ne_zero_leftVertical hp hne hinv A hA s.im
   · apply χ.LFunction_ne_zero_of_one_le_re (Or.inl hne)
     rw [Complex.add_re, Complex.ofReal_re, hr, hwre]
     linarith only [hσ, hτ]
@@ -186,7 +182,7 @@ x>=1, sigma>=1, tau>0 and A>=2, choose positive heights tending to infinity so t
 shifted residue sums converge to the arithmetic sum minus the left integral. Retain the
 good-height nonvanishing, assemble each finite contour, and apply the proved edge limits.
 This removes the finite-contour identity as an external premise of the logarithmic formula. -/
-theorem exists_tendsto_shiftedLogResidueSum_of_dirichletRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem exists_shiftedLogResidue_limit_RH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x σ τ : ℝ} (hx : 1 ≤ x) (hσ : 1 ≤ σ) (hτ : 0 < τ) {A : ℕ}
     (hA : 2 ≤ A) :
@@ -213,8 +209,7 @@ theorem exists_tendsto_shiftedLogResidueSum_of_dirichletRH {N : ℕ} [NeZero N] 
   obtain ⟨B, hB⟩ := exists_nat_gt (max (A : ℝ) (σ + τ))
   have hAB : (A : ℝ) ≤ (B : ℝ) := (le_max_left _ _).trans hB.le
   have hright : σ + τ ≤ (B : ℝ) := (le_max_right _ _).trans hB.le
-  obtain ⟨T, η, hT, hT1, hη, hb⟩ :=
-    exists_fixedStrip_LLogDeriv_envelope_nonzero_of_dirichletRH hN2 hRH hp hne hinv B
+  obtain ⟨T, η, hT, hT1, hη, hb⟩ := exists_fixedStrip_L_nonzero_RH hN2 hRH hp hne hinv B
   have hbounds :
     ∀ k v,
       -(A : ℝ) - 1 / 2 ≤ v →
@@ -226,7 +221,7 @@ theorem exists_tendsto_shiftedLogResidueSum_of_dirichletRH {N : ℕ} [NeZero N] 
     intro k v hlo hhi
     exact hb k v (by linarith only [hlo, hAB]) (by linarith only [hhi, hright])
   have hboundary :=
-    tendsto_normalized_shiftedLogBoundary_of_envelopes hp hne hinv hx hσ hτ hA T η η hT
+    tendsto_shiftedLogBoundary_envelopes hp hne hinv hx hσ hτ hA T η η hT
       (fun k => ne_of_gt (zero_lt_one.trans_le (hT1 k))) hη hη
       (by
         intro k u hu
@@ -244,7 +239,7 @@ theorem exists_tendsto_shiftedLogResidueSum_of_dirichletRH {N : ℕ} [NeZero N] 
   have hopen :=
     shiftedRectangle_ledger_mem_open hp hne hinv hσ hτ hTk A hA
       (fun v hlo hhi => (hbounds k v hlo hhi).2.2)
-  apply shiftedLogFiniteContourIdentity_normalized hne (zero_lt_one.trans_le hx) hσ _ _ hopen
+  apply shiftedLogContour_normalized hne (zero_lt_one.trans_le hx) hσ _ _ hopen
   · simp only [Complex.sub_re, Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re,
       Complex.ofReal_im, mul_zero, zero_mul, sub_zero, add_zero]
     linarith only [hσ, hτ, (Nat.cast_nonneg A : (0 : ℝ) ≤ (A : ℝ))]
@@ -257,7 +252,7 @@ arithmetic logarithmic sum by first taking good heights to infinity, then moving
 edge to minus infinity. Primitive non-principal character and inverse, sigma>=1 and tau>0
 supply the contour hypotheses. Choose the good-height sequences for A+2 and remove the
 remaining left integrals with their proved decay. No contour limit is an extra premise. -/
-theorem exists_iteratedLimit_shiftedLogResidueSum_of_dirichletRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem shiftedLogResidue_iteratedLimit_RH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x σ τ : ℝ} (hx : 1 < x) (hσ : 1 ≤ σ) (hτ : 0 < τ) :
     ∃ (T : ℕ → ℕ → ℝ) (F : ℕ → ℂ),
@@ -279,8 +274,7 @@ theorem exists_iteratedLimit_shiftedLogResidueSum_of_dirichletRH {N : ℕ} [NeZe
                 (fun n => χ (n : ZMod N) * (ArithmeticFunction.vonMangoldt n : ℂ)) σ)
               x)) := by
   choose T hT hT1 hlimit using fun A : ℕ =>
-    exists_tendsto_shiftedLogResidueSum_of_dirichletRH hN2 hRH hp hne hinv hx.le hσ hτ
-      (Nat.le_add_left 2 A)
+    exists_shiftedLogResidue_limit_RH hN2 hRH hp hne hinv hx.le hσ hτ (Nat.le_add_left 2 A)
   let F : ℕ → ℂ := fun A =>
     General.logarithmicWeightedSum
         (General.shiftedLSeriesCoefficient
@@ -291,7 +285,7 @@ theorem exists_iteratedLimit_shiftedLogResidueSum_of_dirichletRH {N : ℕ} [NeZe
           shiftedLogContourKernel χ x σ (((-((A + 2 : ℕ) : ℝ) - 1 / 2 - σ : ℝ) : ℂ) + t * Complex.I)
   refine ⟨T, F, fun A => ⟨hT A, hT1 A⟩, hlimit, ?_⟩
   have hl :=
-    (tendsto_shiftedLogContourKernel_left_integral hp hne hinv hx (zero_le_one.trans hσ)).comp
+    (tendsto_shiftedLog_left_integral hp hne hinv hx (zero_le_one.trans hσ)).comp
       (Filter.tendsto_add_atTop_nat 2)
   have hc :
     Filter.Tendsto F Filter.atTop
@@ -307,7 +301,7 @@ theorem exists_iteratedLimit_shiftedLogResidueSum_of_dirichletRH {N : ℕ} [NeZe
 /-- If a finite ledger contains the origin, its residue sum is the origin coefficient
 minus the positive-signed shifted zero sum on the erased ledger. Separate the origin and
 unfold the nonzero branch; this connects contour residues to zero-series estimates. -/
-theorem shiftedLogResidueSum_eq_origin_sub_zeroSum {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
+theorem shiftedLogResidue_origin_sub_zeroSum {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
     (x σ : ℝ) (S : Finset ℂ) (h0 : (0 : ℂ) ∈ S) :
     ∑ s ∈ S, shiftedLogResidueAt χ x σ s =
       shiftedLogResidueAt χ x σ 0 -
@@ -334,7 +328,7 @@ theorem zero_mem_shiftedLogRectangleLedger {N : ℕ} [NeZero N] {χ : DirichletC
     (0 : ℂ) ∈
       shiftedLogSingularitiesInRectangle χ hne σ (((-(A : ℝ) - 1 / 2 - σ : ℝ) : ℂ) - T * Complex.I)
         ((τ : ℂ) + T * Complex.I) := by
-  apply mem_shiftedLogSingularitiesInRectangle.mpr
+  apply mem_shiftedLogSingularities_iff.mpr
   refine ⟨?_, Or.inl rfl⟩
   rw [Rectangle.rectangleClosedBox, Complex.mem_reProdIm]
   simp only [Complex.zero_re, Complex.zero_im, Complex.sub_re, Complex.add_re, Complex.ofReal_re,
@@ -351,7 +345,7 @@ sigma>=1 and tau>0, the iterated finite shifted L-zero sums converge to the orig
 minus the arithmetic sum. Remove the origin from each ledger and subtract the already
 proved residue limits. This isolates the zero contribution before splitting completed
 zeros from gamma-induced trivial zeros and integrating in sigma. -/
-theorem exists_iteratedLimit_shiftedLZeroSum_of_dirichletRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem shiftedLZeroSum_iteratedLimit_RH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x σ τ : ℝ} (hx : 1 < x) (hσ : 1 ≤ σ) (hτ : 0 < τ) :
     ∃ (T : ℕ → ℕ → ℝ) (G : ℕ → ℂ),
@@ -375,8 +369,7 @@ theorem exists_iteratedLimit_shiftedLZeroSum_of_dirichletRH {N : ℕ} [NeZero N]
                   (fun n => χ (n : ZMod N) * (ArithmeticFunction.vonMangoldt n : ℂ)) σ)
                 x)) := by
   classical
-  obtain ⟨T, F, hT, hlim, hF⟩ :=
-    exists_iteratedLimit_shiftedLogResidueSum_of_dirichletRH hN2 hRH hp hne hinv hx hσ hτ
+  obtain ⟨T, F, hT, hlim, hF⟩ := shiftedLogResidue_iteratedLimit_RH hN2 hRH hp hne hinv hx hσ hτ
   let G : ℕ → ℂ := fun A => shiftedLogResidueAt χ x σ 0 - F A
   refine ⟨T, G, hT, ?_, tendsto_const_nhds.sub hF⟩
   intro A
@@ -394,7 +387,7 @@ theorem exists_iteratedLimit_shiftedLZeroSum_of_dirichletRH {N : ℕ} [NeZero N]
     tendsto_const_nhds.sub (hlim A)
   apply Filter.Tendsto.congr' (Filter.Eventually.of_forall ?_) hc
   intro k
-  rw [shiftedLogResidueSum_eq_origin_sub_zeroSum χ x σ _
+  rw [shiftedLogResidue_origin_sub_zeroSum χ x σ _
       (zero_mem_shiftedLogRectangleLedger hne hσ hτ (zero_lt_one.trans_le ((hT A).2 k)) (A + 2)),
     sub_sub_cancel]
 

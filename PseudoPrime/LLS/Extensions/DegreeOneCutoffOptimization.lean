@@ -100,8 +100,7 @@ error to the idealized majorant preserves its strict excess over the degree-one 
 Use monotonicity of the exponential and the positive cutoff logarithm.
 This includes the nonnegative error bounds supplied by the second-order arithmetic inputs;
 it does not imply that the actual L-value violates the endpoint. -/
-theorem idealDegreeOne_logCutoff_with_error_gt_endpoint {C x b : ℝ} (hC : 1 < C) (hx : 1 < x)
-    (hb : 0 ≤ b) :
+theorem idealDegreeOne_cutoff_gt_endpoint {C x b : ℝ} (hC : 1 < C) (hx : 1 < x) (hb : 0 ≤ b) :
     2 * (Real.log (Real.log C) - (Real.log 2 - 1 / 2)) <
       Real.log x * Real.exp ((Real.log C / Real.sqrt x - 1) / Real.log x + b) := by
   apply lt_of_lt_of_le (idealDegreeOne_logCutoff_gt_endpoint hC hx)

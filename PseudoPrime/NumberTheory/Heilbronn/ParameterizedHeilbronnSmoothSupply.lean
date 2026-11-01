@@ -37,8 +37,7 @@ theorem eventually_smooth_count_at_cutoff_of_exponent {A : ℝ} (hA : (28 / 15 :
   have hgap := hratio.eventually_lt_const (div_pos (sub_pos.mpr hcA) hAp)
   have hM :=
     hL.eventually
-      (NumberTheory.eventually_const_mul_rpow_le_primeCounting_floor_rpow (C := 2)
-        (zero_lt_one.trans hb) hbA)
+      (NumberTheory.eventually_rpow_le_primeCounting_floor (C := 2) (zero_lt_one.trans hb) hbA)
   have hBfloor :=
     hL.eventually (NumberTheory.eventually_rpow_le_nat_floor_rpow (b := 0) (by norm_num only) hAp)
   have hCfloor :=
@@ -47,9 +46,8 @@ theorem eventually_smooth_count_at_cutoff_of_exponent {A : ℝ} (hA : (28 / 15 :
         hbetap)
   have hlogc := hL.eventually (Real.tendsto_log_atTop.eventually_ge_atTop (2 * c))
   filter_upwards [hM, hBfloor, hCfloor, hlogc, hL.eventually hgap, hL.eventually_ge_atTop 2,
-    Filter.eventually_gt_atTop (0 : ℕ),
-    Analysis.eventually_cutoff_le_prime_mul_floor_power_of_exponent hbeta] with p hMp hBf hCf hcL hg
-    hLp hp henv
+    Filter.eventually_gt_atTop (0 : ℕ), Analysis.eventually_cutoff_28_15_le_prime_floor hbeta] with
+    p hMp hBf hCf hcL hg hLp hp henv
   intro k hk hlo hhi
   let L := Real.log (p : ℝ)
   let B := Nat.floor (L ^ A)

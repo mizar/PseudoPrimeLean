@@ -19,7 +19,7 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 ordinate below a natural height, belongs to the corresponding closed rectangle.
 Construct the real and imaginary coordinate bounds. This supplies finite-ledger
 membership without a boundary-zero avoidance hypothesis. -/
-theorem completed_zero_mem_rectangle_of_bounds {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+theorem completed_zero_mem_rectangle_bounds {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
     (hne : χ ≠ 1) {ρ : ℂ} (hz : χ.completedLFunction ρ = 0) {σ : ℝ} (hlo : σ ≤ ρ.re)
     (hhi : ρ.re ≤ 1) (H : ℕ) (hh : |ρ.im| ≤ H) :
     ρ ∈
@@ -27,7 +27,7 @@ theorem completed_zero_mem_rectangle_of_bounds {q : ℕ} [NeZero q] {χ : Dirich
         ((1 : ℂ) + (H : ℝ) * Complex.I) := by
   apply mem_completedZerosInRectangle_iff.mpr
   refine ⟨?_, hz⟩
-  rw [dirichletCompletedLFunctionRectangleBox, Rectangle.rectangleClosedBox, Complex.mem_reProdIm]
+  rw [completedRectangleBox, Rectangle.rectangleClosedBox, Complex.mem_reProdIm]
   simp only [Complex.sub_re, Complex.ofReal_re, Complex.mul_re, Complex.ofReal_im, Complex.I_re,
     mul_zero, sub_zero, Complex.add_re, add_zero, Complex.sub_im, Complex.mul_im, Complex.I_im,
     mul_one, zero_sub, Complex.add_im, zero_add, Complex.one_re, Complex.one_im]
@@ -40,7 +40,7 @@ tail. These sets cover every actual divisor occurrence; overlaps on boundaries
 are harmless for nonnegative norms. Use absolute summability and finite indicators.
 This gives the truncation needed to combine local counting, weighted family
 density, and the unconditional tail bound without leaving an uncounted height gap. -/
-theorem tsum_norm_regularizedLogHalfZeroTerm_le_truncated_parts {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem regularizedHalfTerm_truncated_bound {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ}
     (hx : 2 ≤ x) (σ : ℝ) (H : ℕ) :
     (∑' ρ : ℂ, ‖regularizedLogHalfZeroTerm χ x ρ‖) ≤
@@ -65,8 +65,7 @@ theorem tsum_norm_regularizedLogHalfZeroTerm_le_truncated_parts {q : ℕ} [NeZer
   let T :=
     completedZerosInRectangle χ hne ((σ : ℂ) - (H : ℝ) * Complex.I) ((1 : ℂ) + (H : ℝ) * Complex.I)
   let U : Set ℂ := {ρ | (H : ℝ) ≤ |ρ.im|}
-  have hs : Summable f :=
-    (summable_regularizedLogHalfZeroTerm_unconditionally hq hp hne hinv hx).norm
+  have hs : Summable f := (summable_regularizedHalfTerm hq hp hne hinv hx).norm
   have hpoint (ρ : ℂ) :
     f ρ ≤ (S : Set ℂ).indicator f ρ + (T : Set ℂ).indicator f ρ + U.indicator f ρ := by
     have hn : 0 ≤ f ρ := norm_nonneg _
@@ -88,12 +87,11 @@ theorem tsum_norm_regularizedLogHalfZeroTerm_le_truncated_parts {q : ℕ} [NeZer
         have hhi := (completedLFunction_zero_re_lt_one hne hz).le
         by_cases hr : ρ.re ≤ σ
         · have hS : ρ ∈ S :=
-            Finset.mem_filter.mpr
-              ⟨completed_zero_mem_rectangle_of_bounds hne hz hlo hhi H hheight, hr⟩
+            Finset.mem_filter.mpr ⟨completed_zero_mem_rectangle_bounds hne hz hlo hhi H hheight, hr⟩
           rw [Set.indicator_of_mem hS]
           linarith only [htn, hun]
         · have hT : ρ ∈ T :=
-            completed_zero_mem_rectangle_of_bounds hne hz (lt_of_not_ge hr).le hhi H hheight
+            completed_zero_mem_rectangle_bounds hne hz (lt_of_not_ge hr).le hhi H hheight
           rw [Set.indicator_of_mem hT]
           linarith only [hsn, hun]
   have hb :=

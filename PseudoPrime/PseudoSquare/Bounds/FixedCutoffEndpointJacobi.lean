@@ -45,8 +45,8 @@ theorem exists_prime_neg_one_of_fixed_cost_cutoff_search {n : ℕ} (hn : Odd n) 
           (NumberTheory.complexQuadraticCharacter n hn).conductor hq hx hc).mp
       hsearch
   exact
-    exists_odd_prime_jacobi_neg_one_of_excluded_endpoint hn hns hGRH (by linarith only [hx]) hx
-      le_rfl hC hD hlim
+    exists_oddPrime_negOne_excludedEndpoint_GRH hn hns hGRH (by linarith only [hx]) hx le_rfl hC hD
+      hlim
 
 open AnalyticNumberTheory.Arithmetic in
 /-- Under GRH, fixed uniform costs at x and a successful cutoff search at

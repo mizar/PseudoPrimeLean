@@ -39,8 +39,8 @@ theorem pair_count_le_congruencePolynomialHeightExponent (m n r : ℕ) :
 balance and height injectivity at b+d=2a must satisfy 13a<7b. Drop only
 nonnegative height losses, cancel nr and apply the leading-budget barrier.
 Thus allowing arbitrary m,n,r cannot bypass the same exponent gap. -/
-theorem thirteen_sevenths_gap_of_polynomial_energy_balance {a b d m n r : ℕ}
-    (hscale : b + d = 2 * a) (hinj : d * (2 * m) < 2 * a)
+theorem thirteen_sevenths_gap {a b d m n r : ℕ} (hscale : b + d = 2 * a)
+    (hinj : d * (2 * m) < 2 * a)
     (hbalance :
       a * (7 * (n * m * r)) + d * congruencePolynomialHeightExponent m n r + a * (n * r) <
         b * (4 * (n * m * r))) :
@@ -67,8 +67,7 @@ theorem exists_polynomial_energy_parameters_iff {a b : ℕ} (hsmall : b < 2 * a)
       13 * a < 7 * b := by
   constructor
   · rintro ⟨m, n, r, _, _, _, hinj, hbalance⟩
-    exact
-      thirteen_sevenths_gap_of_polynomial_energy_balance (Nat.add_sub_of_le hsmall.le) hinj hbalance
+    exact thirteen_sevenths_gap (Nat.add_sub_of_le hsmall.le) hinj hbalance
   · intro hgap
     obtain ⟨n, r, hn, hr, hinj, hbalance⟩ := exists_rational_energy_parameters hgap hsmall
     exact ⟨7, n, r, by decide, hn, hr, hinj, hbalance⟩

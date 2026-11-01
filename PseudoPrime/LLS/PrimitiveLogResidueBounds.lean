@@ -13,7 +13,7 @@ public import PseudoPrime.LLS.PrimitiveLogMainErrorBounds
 # Combined parity-common upper bound for the `s = 0` log-kernel residue
 
 Substitutes the completed-side derivative bound
-(`DirichletLFunction.neg_re_deriv_logDeriv_completedLFunction_zero_le_abs_BRe`
+(`DirichletLFunction.completedLogDeriv_neg_re_abs_BRe_GRH`
 in `AnalyticNumberTheory/DirichletLFunction/PrimitiveFunctionalEquation.lean`)
 and the numerical main-error bounds
 (`PrimitiveLogMainErrorBounds.lean`) into the odd/even raw closed forms
@@ -32,18 +32,17 @@ satisfies the displayed upper bound for the even-zero regularization coefficient
 The closed form combines the completed logarithmic derivative bound with the explicit
 even main-error estimate `-11/4`. This supplies the even branch of the residue ledger;
 the inequality itself does not require an evenness assumption. -/
-theorem re_iteratedDeriv_two_llsPrimitiveLogEvenZeroRegularization_zero_div_two_le {N : ℕ}
-    [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hprimitive : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 64 ≤ x) :
+theorem logEvenRegularization_second_re_bound_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 64 ≤ x) :
     (iteratedDeriv 2 (dirichletLogEvenZeroRegularization x 1 (dirichletEvenZeroLocalFactor χ)) 0 /
           2).re ≤
       (2 + Real.log x) * |primitiveBRe χ| + (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x -
         11 / 4 := by
-  rw [re_iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_div_two hN2 hGRH hprimitive hne
-      hinv (show (0 : ℝ) < x from lt_of_lt_of_le (show (0 : ℝ) < 64 by norm_num only) hx)]
-  have hD := neg_re_deriv_logDeriv_completedLFunction_zero_le_abs_BRe hGRH hprimitive hne hinv hN2
-  have hE := llsPrimitiveLogEvenMainError_le_neg_eleven_fourths hx
+  rw [re_logEvenReg_deriv2_div2_GRH hN2 hGRH hprimitive hne hinv
+      (show (0 : ℝ) < x from lt_of_lt_of_le (show (0 : ℝ) < 64 by norm_num only) hx)]
+  have hD := completedLogDeriv_neg_re_abs_BRe_GRH hGRH hprimitive hne hinv hN2
+  have hE := primitiveLogEvenError_le_neg_11_4 hx
   unfold Analysis.primitiveLogEvenMainError at hE
   have hsum := add_le_add hD hE
   calc
@@ -81,17 +80,17 @@ open PseudoPrime.AnalyticNumberTheory.DirichletLFunction in
 derivative of the Mellin zero regularization by the displayed conductor and zero-mass terms.
 The odd closed form, completed logarithmic derivative estimate, and odd main-error bound
 give the constant `-11/4`. This is the odd branch of the logarithmic residue estimate. -/
-theorem re_deriv_llsPrimitiveLogMellinZeroRegularization_zero_of_odd_le {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hprimitive : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hodd : χ.Odd) {x : ℝ} (hx : 64 ≤ x) :
+theorem logMellinRegularization_odd_deriv_bound_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hodd : χ.Odd) {x : ℝ}
+    (hx : 64 ≤ x) :
     (deriv (dirichletLogMellinZeroRegularization x χ) 0).re ≤
       (2 + Real.log x) * |primitiveBRe χ| + (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x -
         11 / 4 := by
-  rw [re_deriv_dirichletLogMellinZeroRegularization_zero_of_odd hN2 hGRH hprimitive hne hinv hodd
+  rw [re_logMellinReg_deriv_zero_odd_GRH hN2 hGRH hprimitive hne hinv hodd
       (show (0 : ℝ) < x from lt_of_lt_of_le (show (0 : ℝ) < 64 by norm_num only) hx)]
-  have hD := neg_re_deriv_logDeriv_completedLFunction_zero_le_abs_BRe hGRH hprimitive hne hinv hN2
-  have hE := llsPrimitiveLogOddMainError_le_neg_eleven_fourths hx
+  have hD := completedLogDeriv_neg_re_abs_BRe_GRH hGRH hprimitive hne hinv hN2
+  have hE := primitiveLogOddError_le_neg_11_4 hx
   unfold Analysis.primitiveLogOddMainError at hE
   have hsum := add_le_add hD hE
   calc

@@ -29,7 +29,7 @@ The range `Fin T` with modulus `q.val + 1` includes each positive modulus at mos
 
 Role: fixes the family and multiplicity conventions before proving a uniform density bound.
 -/
-noncomputable def primitiveCharacterFamilyZeroCount (T : ℕ) (σ : ℝ) : ℝ := by
+noncomputable def familyZeros (T : ℕ) (σ : ℝ) : ℝ := by
   classical
     exact
     ∑ q : Fin T,
@@ -55,7 +55,7 @@ character's zero set.
 
 Role: separates selected near-one zeros from the ordinary zeros in a finite density estimate.
 -/
-noncomputable def primitiveCharacterFamilyZeroCountExcept (T : ℕ) (σ : ℝ)
+noncomputable def familyZerosExcept (T : ℕ) (σ : ℝ)
     (ρ : ∀ q : Fin T, DirichletCharacter ℂ (q.val + 1) → ℂ) : ℝ := by
   classical
     exact
@@ -63,7 +63,7 @@ noncomputable def primitiveCharacterFamilyZeroCountExcept (T : ℕ) (σ : ℝ)
       ∑ χ : DirichletCharacter ℂ (q.val + 1),
         if hχ : χ ≠ 1 then
           if hprim : χ.IsPrimitive then
-            completedZeroMultiplicityCountInRectangleExcept χ hχ ((σ : ℂ) - (T : ℝ) * Complex.I)
+            completedMultiplicityCountExcept χ hχ ((σ : ℂ) - (T : ℝ) * Complex.I)
               ((1 : ℂ) + (T : ℝ) * Complex.I) (ρ q χ)
           else 0
         else 0
@@ -81,9 +81,9 @@ Output: the total analytic multiplicity contributed by selected points that are 
 in their corresponding rectangles.
 
 Role: records the exact exceptional-zero contribution separated by
-primitiveCharacterFamilyZeroCountExcept.
+familyZerosExcept.
 -/
-noncomputable def primitiveCharacterFamilySelectedZeroCount (T : ℕ) (σ : ℝ)
+noncomputable def selectedZeros (T : ℕ) (σ : ℝ)
     (ρ : ∀ q : Fin T, DirichletCharacter ℂ (q.val + 1) → ℂ) : ℝ := by
   classical
     exact
@@ -113,18 +113,16 @@ distribute the nested finite sums.
 Role: makes the exceptional-zero correction explicit in the family count, preserving analytic
 multiplicity and the primitive-character filtering.
 -/
-theorem primitiveCharacterFamilyZeroCount_eq_except_add_selected (T : ℕ) (σ : ℝ)
+theorem family_split_selected (T : ℕ) (σ : ℝ)
     (ρ : ∀ q : Fin T, DirichletCharacter ℂ (q.val + 1) → ℂ) :
-    primitiveCharacterFamilyZeroCount T σ =
-      primitiveCharacterFamilyZeroCountExcept T σ ρ +
-        primitiveCharacterFamilySelectedZeroCount T σ ρ := by
+    familyZeros T σ = familyZerosExcept T σ ρ + selectedZeros T σ ρ := by
   classical
   let f : ∀ q : Fin T, DirichletCharacter ℂ (q.val + 1) → ℝ := fun q χ =>
     if hχ : χ ≠ 1 then if hprim : χ.IsPrimitive then completedZeroCount χ hχ σ (T : ℝ) else 0 else 0
   let g : ∀ q : Fin T, DirichletCharacter ℂ (q.val + 1) → ℝ := fun q χ =>
     if hχ : χ ≠ 1 then
       if hprim : χ.IsPrimitive then
-        completedZeroMultiplicityCountInRectangleExcept χ hχ ((σ : ℂ) - (T : ℝ) * Complex.I)
+        completedMultiplicityCountExcept χ hχ ((σ : ℂ) - (T : ℝ) * Complex.I)
           ((1 : ℂ) + (T : ℝ) * Complex.I) (ρ q χ)
       else 0
     else 0
@@ -152,8 +150,8 @@ theorem primitiveCharacterFamilyZeroCount_eq_except_add_selected (T : ℕ) (σ :
       · simp only [dite_eq_left hprim]
         rw [completedZeroCount]
         exact
-          completedZeroMultiplicityCountInRectangle_eq_except_add_if_mem χ hχ
-            ((σ : ℂ) - (T : ℝ) * Complex.I) ((1 : ℂ) + (T : ℝ) * Complex.I) (ρ q χ)
+          completedCount_eq_except_add χ hχ ((σ : ℂ) - (T : ℝ) * Complex.I)
+            ((1 : ℂ) + (T : ℝ) * Complex.I) (ρ q χ)
       · simp only [dite_eq_right hprim, add_zero]
     · simp only [dite_eq_right hχ, add_zero]
   calc
@@ -176,17 +174,16 @@ over zeros, characters, and moduli.
 
 Role: lets upper bounds on the full family count pass to the family with selected zeros removed.
 -/
-theorem primitiveCharacterFamilyZeroCountExcept_nonneg (T : ℕ) (σ : ℝ)
-    (ρ : ∀ q : Fin T, DirichletCharacter ℂ (q.val + 1) → ℂ) :
-    0 ≤ primitiveCharacterFamilyZeroCountExcept T σ ρ := by
+theorem familyExcept_nonneg (T : ℕ) (σ : ℝ)
+    (ρ : ∀ q : Fin T, DirichletCharacter ℂ (q.val + 1) → ℂ) : 0 ≤ familyZerosExcept T σ ρ := by
   classical
-  unfold primitiveCharacterFamilyZeroCountExcept
+  unfold familyZerosExcept
   apply Finset.sum_nonneg
   intro q hq
   apply Finset.sum_nonneg
   intro χ hχmem
   split_ifs with hχ hprim
-  · unfold completedZeroMultiplicityCountInRectangleExcept
+  · unfold completedMultiplicityCountExcept
     apply Finset.sum_nonneg
     intro ξ hξ
     exact Nat.cast_nonneg _
@@ -203,11 +200,10 @@ Proof: every selected contribution is either zero or the cast of a natural analy
 
 Role: treats the exceptional contribution as a nonnegative correction in the family identity.
 -/
-theorem primitiveCharacterFamilySelectedZeroCount_nonneg (T : ℕ) (σ : ℝ)
-    (ρ : ∀ q : Fin T, DirichletCharacter ℂ (q.val + 1) → ℂ) :
-    0 ≤ primitiveCharacterFamilySelectedZeroCount T σ ρ := by
+theorem selectedZeros_nonneg (T : ℕ) (σ : ℝ)
+    (ρ : ∀ q : Fin T, DirichletCharacter ℂ (q.val + 1) → ℂ) : 0 ≤ selectedZeros T σ ρ := by
   classical
-  unfold primitiveCharacterFamilySelectedZeroCount
+  unfold selectedZeros
   apply Finset.sum_nonneg
   intro q hq
   apply Finset.sum_nonneg
@@ -231,7 +227,7 @@ modulus sum and then include the finite set into the full family.
 
 Role: converts exceptional-modulus counts into a lower bound for the selected-zero correction.
 -/
-theorem finiteSet_card_le_selectedZeroCount_of_witness (T : ℕ) (σ : ℝ)
+theorem card_le_selectedZeros (T : ℕ) (σ : ℝ)
     (ρ : ∀ q : Fin T, DirichletCharacter ℂ (q.val + 1) → ℂ) (E : Finset (Fin T))
     (hzero :
       ∀ q ∈ E,
@@ -239,7 +235,7 @@ theorem finiteSet_card_le_selectedZeroCount_of_witness (T : ℕ) (σ : ℝ)
           ρ q χ ∈
             completedZerosInRectangle χ hχ ((σ : ℂ) - (T : ℝ) * Complex.I)
               ((1 : ℂ) + (T : ℝ) * Complex.I)) :
-    (E.card : ℝ) ≤ primitiveCharacterFamilySelectedZeroCount T σ ρ := by
+    (E.card : ℝ) ≤ selectedZeros T σ ρ := by
   classical
   let f : ∀ q : Fin T, DirichletCharacter ℂ (q.val + 1) → ℝ := fun q χ =>
     if hχ : χ ≠ 1 then
@@ -256,7 +252,7 @@ theorem finiteSet_card_le_selectedZeroCount_of_witness (T : ℕ) (σ : ℝ)
     intro q hq
     obtain ⟨χ, hχ, hprim, hmem⟩ := hzero q hq
     have hzero' := (mem_completedZerosInRectangle_iff.mp hmem).2
-    have hmult := analyticOrderNatAt_pos_of_completedLFunction_zero χ hχ hzero'
+    have hmult := completed_zero_orderNat_pos χ hχ hzero'
     have hsingle :=
       Finset.single_le_sum (s := Finset.univ) (f := f q)
         (fun ψ hψ => by
@@ -303,13 +299,12 @@ theorem finiteSet_card_le_selectedZeroCount_of_witness (T : ℕ) (σ : ℝ)
       · exact le_of_eq rfl
       · exact le_of_eq rfl
   have hfamily :
-    primitiveCharacterFamilySelectedZeroCount T σ ρ =
-      ∑ q : Fin T, ∑ χ : DirichletCharacter ℂ (q.val + 1), f q χ := by
-    unfold primitiveCharacterFamilySelectedZeroCount
+    selectedZeros T σ ρ = ∑ q : Fin T, ∑ χ : DirichletCharacter ℂ (q.val + 1), f q χ := by
+    unfold selectedZeros
     rfl
   calc
     (E.card : ℝ) ≤ ∑ q ∈ E, ∑ χ : DirichletCharacter ℂ (q.val + 1), f q χ := hrestricted
-    _ ≤ primitiveCharacterFamilySelectedZeroCount T σ ρ := by
+    _ ≤ selectedZeros T σ ρ := by
       rw [hfamily]
       exact hall
 
@@ -327,30 +322,24 @@ full count and nonnegativity of the count with selected points erased.
 Role: connects an exceptional-modulus count directly to any later upper bound for the family zero
 count.
 -/
-theorem finiteSet_card_le_primitiveCharacterFamilyZeroCount_of_witness (T : ℕ) (σ : ℝ)
-    (ρ : ∀ q : Fin T, DirichletCharacter ℂ (q.val + 1) → ℂ) (E : Finset (Fin T))
+theorem card_le_familyZeros (T : ℕ) (σ : ℝ) (ρ : ∀ q : Fin T, DirichletCharacter ℂ (q.val + 1) → ℂ)
+    (E : Finset (Fin T))
     (hzero :
       ∀ q ∈ E,
         ∃ (χ : DirichletCharacter ℂ (q.val + 1)) (hχ : χ ≠ 1) (_hprim : χ.IsPrimitive),
           ρ q χ ∈
             completedZerosInRectangle χ hχ ((σ : ℂ) - (T : ℝ) * Complex.I)
               ((1 : ℂ) + (T : ℝ) * Complex.I)) :
-    (E.card : ℝ) ≤ primitiveCharacterFamilyZeroCount T σ := by
+    (E.card : ℝ) ≤ familyZeros T σ := by
   classical
-  have hcard := finiteSet_card_le_selectedZeroCount_of_witness T σ ρ E hzero
-  have hdecomp := primitiveCharacterFamilyZeroCount_eq_except_add_selected T σ ρ
-  have hexcept := primitiveCharacterFamilyZeroCountExcept_nonneg T σ ρ
-  have hselected :
-    primitiveCharacterFamilySelectedZeroCount T σ ρ ≤ primitiveCharacterFamilyZeroCount T σ := by
+  have hcard := card_le_selectedZeros T σ ρ E hzero
+  have hdecomp := family_split_selected T σ ρ
+  have hexcept := familyExcept_nonneg T σ ρ
+  have hselected : selectedZeros T σ ρ ≤ familyZeros T σ := by
     rw [hdecomp]
     calc
-      primitiveCharacterFamilySelectedZeroCount T σ ρ =
-          0 + primitiveCharacterFamilySelectedZeroCount T σ ρ :=
-        by rw [zero_add]
-      _ ≤
-          primitiveCharacterFamilyZeroCountExcept T σ ρ +
-            primitiveCharacterFamilySelectedZeroCount T σ ρ :=
-        add_le_add_left hexcept _
+      selectedZeros T σ ρ = 0 + selectedZeros T σ ρ := by rw [zero_add]
+      _ ≤ familyZerosExcept T σ ρ + selectedZeros T σ ρ := add_le_add_left hexcept _
   exact hcard.trans hselected
 
 /--
@@ -363,10 +352,9 @@ nonnegativity first to characters and then to moduli.
 
 Role: supplies positivity for subsequent upper bounds on the family sum.
 -/
-theorem primitiveCharacterFamilyZeroCount_nonneg (T : ℕ) (σ : ℝ) :
-    0 ≤ primitiveCharacterFamilyZeroCount T σ := by
+theorem familyZeros_nonneg (T : ℕ) (σ : ℝ) : 0 ≤ familyZeros T σ := by
   classical
-  unfold primitiveCharacterFamilyZeroCount
+  unfold familyZeros
   apply Finset.sum_nonneg
   intro q hq
   apply Finset.sum_nonneg
@@ -390,10 +378,10 @@ from the outer finite sum; all other summands are nonnegative.
 Role: converts a family density bound into the corresponding fixed-modulus bound without changing
 the analytic multiplicity convention.
 -/
-theorem completedZeroCount_le_primitiveCharacterFamilyZeroCount {T : ℕ} (j : Fin T)
-    {χ : DirichletCharacter ℂ (j.val + 1)} (hχ : χ ≠ 1) (hprim : χ.IsPrimitive) (σ : ℝ) :
+theorem completed_family_le {T : ℕ} (j : Fin T) {χ : DirichletCharacter ℂ (j.val + 1)} (hχ : χ ≠ 1)
+    (hprim : χ.IsPrimitive) (σ : ℝ) :
     PseudoPrime.AnalyticNumberTheory.DirichletLFunction.completedZeroCount χ hχ σ (T : ℝ) ≤
-      primitiveCharacterFamilyZeroCount T σ := by
+      familyZeros T σ := by
   classical
   let term := fun (ψ : DirichletCharacter ℂ (j.val + 1)) =>
     if hψ : ψ ≠ 1 then
@@ -446,8 +434,8 @@ theorem completedZeroCount_le_primitiveCharacterFamilyZeroCount {T : ℕ} (j : F
       · exact le_of_eq rfl
       · exact le_of_eq rfl
     · exact Finset.mem_univ j
-  have hFamily : primitiveCharacterFamilyZeroCount T σ = ∑ k : Fin T, inner k := by
-    unfold primitiveCharacterFamilyZeroCount
+  have hFamily : familyZeros T σ = ∑ k : Fin T, inner k := by
+    unfold familyZeros
     dsimp only [inner]
   rw [hFamily]
   have hterm : inner j = ∑ ψ : DirichletCharacter ℂ (j.val + 1), term ψ := by
@@ -467,20 +455,19 @@ Claim: the character's multiplicity-weighted zero count at the requested height 
 the primitive family count at the common cutoff.
 
 Proof: enlarge the zero-count height to the family cutoff, then apply
-`completedZeroCount_le_primitiveCharacterFamilyZeroCount`.
+`completed_family_le`.
 
 Role: provides the fixed-modulus consequence needed when a family estimate is used at a common
 modulus and height scale.
 -/
-theorem completedZeroCount_le_primitiveCharacterFamilyZeroCount_of_height_le {T : ℕ} (j : Fin T)
-    {χ : DirichletCharacter ℂ (j.val + 1)} (hχ : χ ≠ 1) (hprim : χ.IsPrimitive) {σ t : ℝ}
-    (hσ : σ ≤ 1) (ht : 0 ≤ t) (htT : t ≤ (T : ℝ)) :
+theorem completed_height_le {T : ℕ} (j : Fin T) {χ : DirichletCharacter ℂ (j.val + 1)} (hχ : χ ≠ 1)
+    (hprim : χ.IsPrimitive) {σ t : ℝ} (hσ : σ ≤ 1) (ht : 0 ≤ t) (htT : t ≤ (T : ℝ)) :
     PseudoPrime.AnalyticNumberTheory.DirichletLFunction.completedZeroCount χ hχ σ t ≤
-      primitiveCharacterFamilyZeroCount T σ := by
+      familyZeros T σ := by
   have hmono :=
     PseudoPrime.AnalyticNumberTheory.DirichletLFunction.completedZeroCount_mono_height χ hχ hσ ht
       htT
-  exact hmono.trans (completedZeroCount_le_primitiveCharacterFamilyZeroCount j hχ hprim σ)
+  exact hmono.trans (completed_family_le j hχ hprim σ)
 
 /--
 Purpose: count zeros of all nonprincipal primitive characters at one modulus.
@@ -494,7 +481,7 @@ Output: the multiplicity-weighted zero count at the selected modulus.
 
 Role: isolates the fixed-modulus contribution that appears inside a family density sum.
 -/
-noncomputable def primitiveCharacterModulusZeroCount (T : ℕ) (j : Fin T) (σ : ℝ) : ℝ := by
+noncomputable def primitiveModZeros (T : ℕ) (j : Fin T) (σ : ℝ) : ℝ := by
   classical
     exact
     ∑ χ : DirichletCharacter ℂ (j.val + 1),
@@ -515,8 +502,8 @@ nonnegative.
 
 Role: gives the fixed-modulus form of a family log-free estimate for use in the explicit formula.
 -/
-theorem primitiveCharacterModulusZeroCount_le_family (T : ℕ) (j : Fin T) (σ : ℝ) :
-    primitiveCharacterModulusZeroCount T j σ ≤ primitiveCharacterFamilyZeroCount T σ := by
+theorem modulus_le_family (T : ℕ) (j : Fin T) (σ : ℝ) :
+    primitiveModZeros T j σ ≤ familyZeros T σ := by
   classical
   let inner : Fin T → ℝ := fun k =>
     ∑ χ : DirichletCharacter ℂ (k.val + 1),
@@ -549,11 +536,10 @@ pointwise inequalities.
 
 Role: supports real-part interval decompositions of a fixed-modulus density estimate.
 -/
-theorem primitiveCharacterModulusZeroCount_antitone_sigma (T : ℕ) (j : Fin T) {σ₁ σ₂ : ℝ}
-    (hσ : σ₁ ≤ σ₂) (h₂ : σ₂ ≤ 1) :
-    primitiveCharacterModulusZeroCount T j σ₂ ≤ primitiveCharacterModulusZeroCount T j σ₁ := by
+theorem modulus_antitone (T : ℕ) (j : Fin T) {σ₁ σ₂ : ℝ} (hσ : σ₁ ≤ σ₂) (h₂ : σ₂ ≤ 1) :
+    primitiveModZeros T j σ₂ ≤ primitiveModZeros T j σ₁ := by
   classical
-  unfold primitiveCharacterModulusZeroCount
+  unfold primitiveModZeros
   apply Finset.sum_le_sum
   intro χ hχmem
   split_ifs with hχ hprim
@@ -577,7 +563,7 @@ Output: the multiplicity-weighted fixed-modulus zero count up to height `t`.
 
 Role: separates the modulus and height parameters when applying a common family density bound.
 -/
-noncomputable def primitiveCharacterModulusZeroCountAtHeight (T : ℕ) (j : Fin T) (σ t : ℝ) : ℝ := by
+noncomputable def primitiveHeightZeros (T : ℕ) (j : Fin T) (σ t : ℝ) : ℝ := by
   classical
     exact
     ∑ χ : DirichletCharacter ℂ (j.val + 1),
@@ -597,12 +583,10 @@ Proof: apply height monotonicity to each nonprincipal primitive character and su
 
 Role: permits a fixed-modulus count to use a common family height cutoff.
 -/
-theorem primitiveCharacterModulusZeroCount_mono_height (T : ℕ) (j : Fin T) (σ : ℝ) (hσ : σ ≤ 1)
-    {t₁ t₂ : ℝ} (ht₁ : 0 ≤ t₁) (ht : t₁ ≤ t₂) :
-    primitiveCharacterModulusZeroCountAtHeight T j σ t₁ ≤
-      primitiveCharacterModulusZeroCountAtHeight T j σ t₂ := by
+theorem modulus_height_mono (T : ℕ) (j : Fin T) (σ : ℝ) (hσ : σ ≤ 1) {t₁ t₂ : ℝ} (ht₁ : 0 ≤ t₁)
+    (ht : t₁ ≤ t₂) : primitiveHeightZeros T j σ t₁ ≤ primitiveHeightZeros T j σ t₂ := by
   classical
-  unfold primitiveCharacterModulusZeroCountAtHeight
+  unfold primitiveHeightZeros
   apply Finset.sum_le_sum
   intro χ hχmem
   split_ifs with hχ hprim
@@ -625,14 +609,11 @@ fixed-modulus family extraction theorem.
 Role: provides the primitive fixed-modulus estimate used when the explicit-formula height differs
 from the modulus range.
 -/
-theorem primitiveCharacterModulusZeroCountAtHeight_le_family (T : ℕ) (j : Fin T) (σ t : ℝ)
-    (hσ : σ ≤ 1) (ht : 0 ≤ t) (htT : t ≤ (T : ℝ)) :
-    primitiveCharacterModulusZeroCountAtHeight T j σ t ≤ primitiveCharacterFamilyZeroCount T σ := by
+theorem modulusHeight_family (T : ℕ) (j : Fin T) (σ t : ℝ) (hσ : σ ≤ 1) (ht : 0 ≤ t)
+    (htT : t ≤ (T : ℝ)) : primitiveHeightZeros T j σ t ≤ familyZeros T σ := by
   classical
-  have hmono :
-    primitiveCharacterModulusZeroCountAtHeight T j σ t ≤
-      primitiveCharacterModulusZeroCount T j σ := by
-    unfold primitiveCharacterModulusZeroCountAtHeight primitiveCharacterModulusZeroCount
+  have hmono : primitiveHeightZeros T j σ t ≤ primitiveModZeros T j σ := by
+    unfold primitiveHeightZeros primitiveModZeros
     apply Finset.sum_le_sum
     intro χ hχmem
     split_ifs with hχ hprim
@@ -641,7 +622,7 @@ theorem primitiveCharacterModulusZeroCountAtHeight_le_family (T : ℕ) (j : Fin 
           ht htT
     · exact le_of_eq rfl
     · exact le_of_eq rfl
-  exact hmono.trans (primitiveCharacterModulusZeroCount_le_family T j σ)
+  exact hmono.trans (modulus_le_family T j σ)
 
 /--
 Inputs: a natural cutoff `T` and real thresholds `σ₁ ≤ σ₂ ≤ 1`.
@@ -653,11 +634,10 @@ the pointwise inequalities over characters and moduli.
 
 Role: controls the family count when dividing the zero region into real-part intervals.
 -/
-theorem primitiveCharacterFamilyZeroCount_antitone_sigma (T : ℕ) {σ₁ σ₂ : ℝ} (hσ : σ₁ ≤ σ₂)
-    (h₂ : σ₂ ≤ 1) :
-    primitiveCharacterFamilyZeroCount T σ₂ ≤ primitiveCharacterFamilyZeroCount T σ₁ := by
+theorem family_antitone_sigma (T : ℕ) {σ₁ σ₂ : ℝ} (hσ : σ₁ ≤ σ₂) (h₂ : σ₂ ≤ 1) :
+    familyZeros T σ₂ ≤ familyZeros T σ₁ := by
   classical
-  unfold primitiveCharacterFamilyZeroCount
+  unfold familyZeros
   apply Finset.sum_le_sum
   intro q hq
   apply Finset.sum_le_sum
@@ -681,10 +661,10 @@ the nonnegative contribution from the new modulus.
 
 Role: supplies the successor step for enlarging both finite ranges in the family density sum.
 -/
-theorem primitiveCharacterFamilyZeroCount_succ (T : ℕ) (σ : ℝ) (hσ : σ ≤ 1) :
-    primitiveCharacterFamilyZeroCount T σ ≤ primitiveCharacterFamilyZeroCount (T + 1) σ := by
+theorem familyZeros_succ (T : ℕ) (σ : ℝ) (hσ : σ ≤ 1) :
+    familyZeros T σ ≤ familyZeros (T + 1) σ := by
   classical
-  unfold primitiveCharacterFamilyZeroCount
+  unfold familyZeros
   rw [Fin.sum_univ_castSucc]
   calc
     (∑ q : Fin T,
@@ -751,12 +731,12 @@ Proof: induct over the cutoff interval, applying the successor estimate at each 
 
 Role: lets the density argument enlarge a finite family cutoff while preserving an upper bound.
 -/
-theorem primitiveCharacterFamilyZeroCount_mono_cutoff (T U : ℕ) (hTU : T ≤ U) (σ : ℝ) (hσ : σ ≤ 1) :
-    primitiveCharacterFamilyZeroCount T σ ≤ primitiveCharacterFamilyZeroCount U σ := by
+theorem family_mono_cutoff (T U : ℕ) (hTU : T ≤ U) (σ : ℝ) (hσ : σ ≤ 1) :
+    familyZeros T σ ≤ familyZeros U σ := by
   classical
     induction U, hTU using Nat.le_induction with
   | base => exact le_rfl
-  | succ n htn ih => exact le_trans ih (primitiveCharacterFamilyZeroCount_succ n σ hσ)
+  | succ n htn ih => exact le_trans ih (familyZeros_succ n σ hσ)
 
 /--
 Inputs: an exponent `δ ≤ 1/2` and a dyadic height index `j`.
@@ -768,7 +748,7 @@ Proof: bound `2^δ` by `sqrt 2 ≤ 3/2`, then use monotonicity of natural powers
 Role: converts the high-real-part range of a power-shaped log-free density estimate into the
 geometric envelope used by the inverse-height block sum.
 -/
-theorem dyadic_rpow_le_two_mul_three_halves (δ : ℝ) (hδ : δ ≤ 1 / 2) (j : ℕ) :
+theorem dyadic_rpow_3_2_bound (δ : ℝ) (hδ : δ ≤ 1 / 2) (j : ℕ) :
     Real.rpow 2 (δ * ((j + 1 : ℕ) : ℝ)) ≤ 2 * (3 / 2 : ℝ) ^ j := by
   have hbase : Real.rpow 2 δ ≤ (3 / 2 : ℝ) := by
     calc
@@ -808,7 +788,7 @@ series using its exact infinite sum.
 Role: converts a log-free zero-count estimate on dyadic height intervals into a uniformly bounded
 inverse-height zero sum in the high-real-part range.
 -/
-theorem finite_dyadic_inverse_height_sum_le_eight (J : ℕ) (C : ℝ) (hC : 0 ≤ C) (count : ℕ → ℝ)
+theorem dyadic_sum_le_eight (J : ℕ) (C : ℝ) (hC : 0 ≤ C) (count : ℕ → ℝ)
     (hcount : ∀ j < J, count j ≤ 2 * C * (3 / 2 : ℝ) ^ j) :
     (∑ j ∈ Finset.range J, count j * (1 / 2 : ℝ) ^ j) ≤ 8 * C := by
   have hgeom :=
@@ -846,25 +826,21 @@ Claim: the analytic-multiplicity zero counts in the dyadic height bands have inv
 sum at most eight times the constant.
 
 Proof: each band count is bounded by its cumulative endpoint count; apply
-`finite_dyadic_inverse_height_sum_le_eight`.
+`dyadic_sum_le_eight`.
 
-Role: converts a prospective log-free density estimate for `primitiveCharacterFamilyZeroCount`
+Role: converts a prospective log-free density estimate for `familyZeros`
 into the high-real-part zero sum used by the explicit formula.
 -/
-theorem primitiveCharacterFamilyZeroCount_dyadic_inverse_height_sum_le_eight (σ C : ℝ) (hσ : σ ≤ 1)
-    (hC : 0 ≤ C) (J : ℕ)
-    (hdensity :
-      ∀ j < J, primitiveCharacterFamilyZeroCount (2 ^ (j + 1)) σ ≤ 2 * C * (3 / 2 : ℝ) ^ j) :
+theorem family_dyadic_le (σ C : ℝ) (hσ : σ ≤ 1) (hC : 0 ≤ C) (J : ℕ)
+    (hdensity : ∀ j < J, familyZeros (2 ^ (j + 1)) σ ≤ 2 * C * (3 / 2 : ℝ) ^ j) :
     (∑ j ∈ Finset.range J,
-        (primitiveCharacterFamilyZeroCount (2 ^ (j + 1)) σ -
-            primitiveCharacterFamilyZeroCount (2 ^ j) σ) *
-          (1 / 2 : ℝ) ^ j) ≤
+        (familyZeros (2 ^ (j + 1)) σ - familyZeros (2 ^ j) σ) * (1 / 2 : ℝ) ^ j) ≤
       8 * C := by
-  apply finite_dyadic_inverse_height_sum_le_eight J C hC
+  apply dyadic_sum_le_eight J C hC
   intro j hj
   have hscale : 2 ^ j ≤ 2 ^ (j + 1) := Nat.pow_le_pow_right (by decide : 1 ≤ 2) (Nat.le_succ j)
-  have hmono := primitiveCharacterFamilyZeroCount_mono_cutoff (2 ^ j) (2 ^ (j + 1)) hscale σ hσ
-  have hnonneg := primitiveCharacterFamilyZeroCount_nonneg (2 ^ j) σ
+  have hmono := family_mono_cutoff (2 ^ j) (2 ^ (j + 1)) hscale σ hσ
+  have hnonneg := familyZeros_nonneg (2 ^ j) σ
   exact le_trans (sub_le_self _ hnonneg) (hdensity j hj)
 
 /--
@@ -874,32 +850,25 @@ power-shaped upper bound for the cumulative family zero count at every dyadic he
 Claim: the dyadic-band zero counts have inverse-height weighted sum at most eight times the density
 constant.
 
-Proof: apply `dyadic_rpow_le_two_mul_three_halves` to each endpoint bound, then use
-`primitiveCharacterFamilyZeroCount_dyadic_inverse_height_sum_le_eight`.
+Proof: apply `dyadic_rpow_3_2_bound` to each endpoint bound, then use
+`family_dyadic_le`.
 
 Role: provides the high-real-part height-summation step from a power-form log-free density estimate.
 -/
-theorem primitiveCharacterFamilyZeroCount_dyadic_inverse_height_sum_le_eight_of_rpow_density
-    (σ C δ : ℝ) (hσ : σ ≤ 1) (hC : 0 ≤ C) (hδ : δ ≤ 1 / 2) (J : ℕ)
-    (hdensity :
-      ∀ j < J,
-        primitiveCharacterFamilyZeroCount (2 ^ (j + 1)) σ ≤
-          C * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) δ) :
+theorem family_dyadic_rpow_le (σ C δ : ℝ) (hσ : σ ≤ 1) (hC : 0 ≤ C) (hδ : δ ≤ 1 / 2) (J : ℕ)
+    (hdensity : ∀ j < J, familyZeros (2 ^ (j + 1)) σ ≤ C * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) δ) :
     (∑ j ∈ Finset.range J,
-        (primitiveCharacterFamilyZeroCount (2 ^ (j + 1)) σ -
-            primitiveCharacterFamilyZeroCount (2 ^ j) σ) *
-          (1 / 2 : ℝ) ^ j) ≤
+        (familyZeros (2 ^ (j + 1)) σ - familyZeros (2 ^ j) σ) * (1 / 2 : ℝ) ^ j) ≤
       8 * C := by
-  apply primitiveCharacterFamilyZeroCount_dyadic_inverse_height_sum_le_eight σ C hσ hC J
+  apply family_dyadic_le σ C hσ hC J
   intro j hj
   calc
-    primitiveCharacterFamilyZeroCount (2 ^ (j + 1)) σ ≤ C * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) δ :=
-      hdensity j hj
+    familyZeros (2 ^ (j + 1)) σ ≤ C * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) δ := hdensity j hj
     _ = C * Real.rpow 2 (δ * ((j + 1 : ℕ) : ℝ)) := by rw [dyadic_height_rpow_eq]
     _ ≤ 2 * C * (3 / 2 : ℝ) ^ j := by
       calc
         C * Real.rpow 2 (δ * ((j + 1 : ℕ) : ℝ)) ≤ C * (2 * (3 / 2 : ℝ) ^ j) :=
-          mul_le_mul_of_nonneg_left (dyadic_rpow_le_two_mul_three_halves δ hδ j) hC
+          mul_le_mul_of_nonneg_left (dyadic_rpow_3_2_bound δ hδ j) hC
         _ = 2 * C * (3 / 2 : ℝ) ^ j := by ring
 
 /--
@@ -910,26 +879,20 @@ Claim: if `A(1-σ) ≤ 1/2`, the dyadic-band inverse-height sum is at most eight
 constant.
 
 Proof: specialize
-`primitiveCharacterFamilyZeroCount_dyadic_inverse_height_sum_le_eight_of_rpow_density` to
+`family_dyadic_rpow_le` to
 `δ = A(1-σ)`.
 
 Role: states the high-real-part consequence directly in the parameters of the log-free density
 theorem sought for the AGP theta argument.
 -/
-theorem primitiveCharacterFamilyZeroCount_dyadic_inverse_height_sum_le_eight_of_log_free_density
-    (A σ C : ℝ) (hσone : σ ≤ 1) (hδ : A * (1 - σ) ≤ 1 / 2) (hC : 0 ≤ C) (J : ℕ)
+theorem family_dyadic_log_le (A σ C : ℝ) (hσone : σ ≤ 1) (hδ : A * (1 - σ) ≤ 1 / 2) (hC : 0 ≤ C)
+    (J : ℕ)
     (hdensity :
-      ∀ j < J,
-        primitiveCharacterFamilyZeroCount (2 ^ (j + 1)) σ ≤
-          C * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) (A * (1 - σ))) :
+      ∀ j < J, familyZeros (2 ^ (j + 1)) σ ≤ C * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) (A * (1 - σ))) :
     (∑ j ∈ Finset.range J,
-        (primitiveCharacterFamilyZeroCount (2 ^ (j + 1)) σ -
-            primitiveCharacterFamilyZeroCount (2 ^ j) σ) *
-          (1 / 2 : ℝ) ^ j) ≤
+        (familyZeros (2 ^ (j + 1)) σ - familyZeros (2 ^ j) σ) * (1 / 2 : ℝ) ^ j) ≤
       8 * C := by
-  exact
-    primitiveCharacterFamilyZeroCount_dyadic_inverse_height_sum_le_eight_of_rpow_density σ C
-      (A * (1 - σ)) hσone hC hδ J hdensity
+  exact family_dyadic_rpow_le σ C (A * (1 - σ)) hσone hC hδ J hdensity
 
 /--
 Inputs: a real-part threshold, a nonnegative density constant, an exponent at most `1/2`, and a
@@ -943,37 +906,26 @@ power estimate dominate each weighted term by `2*C*(3/4)^j`.
 Role: supplies the convergent high-real-part height sum needed when passing from finite truncations
 of the explicit formula to an unbounded zero sum.
 -/
-theorem summable_primitiveCharacterFamilyZeroCount_dyadic_inverse_height_bands_of_rpow_density
-    (σ C δ : ℝ) (hσ : σ ≤ 1) (hC : 0 ≤ C) (hδ : δ ≤ 1 / 2)
-    (hdensity :
-      ∀ j : ℕ,
-        primitiveCharacterFamilyZeroCount (2 ^ (j + 1)) σ ≤
-          C * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) δ) :
+theorem summable_family_bands (σ C δ : ℝ) (hσ : σ ≤ 1) (hC : 0 ≤ C) (hδ : δ ≤ 1 / 2)
+    (hdensity : ∀ j : ℕ, familyZeros (2 ^ (j + 1)) σ ≤ C * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) δ) :
     Summable
-      (fun j : ℕ =>
-        (primitiveCharacterFamilyZeroCount (2 ^ (j + 1)) σ -
-            primitiveCharacterFamilyZeroCount (2 ^ j) σ) *
-          (1 / 2 : ℝ) ^ j) := by
+      (fun j : ℕ => (familyZeros (2 ^ (j + 1)) σ - familyZeros (2 ^ j) σ) * (1 / 2 : ℝ) ^ j) := by
   apply Summable.of_nonneg_of_le
   · intro j
     have hscale : 2 ^ j ≤ 2 ^ (j + 1) := Nat.pow_le_pow_right (by decide : 1 ≤ 2) (Nat.le_succ j)
-    have hmono := primitiveCharacterFamilyZeroCount_mono_cutoff (2 ^ j) (2 ^ (j + 1)) hscale σ hσ
-    have hband :
-      0 ≤
-        primitiveCharacterFamilyZeroCount (2 ^ (j + 1)) σ -
-          primitiveCharacterFamilyZeroCount (2 ^ j) σ :=
-      sub_nonneg.mpr hmono
+    have hmono := family_mono_cutoff (2 ^ j) (2 ^ (j + 1)) hscale σ hσ
+    have hband : 0 ≤ familyZeros (2 ^ (j + 1)) σ - familyZeros (2 ^ j) σ := sub_nonneg.mpr hmono
     exact mul_nonneg hband (by positivity)
   · intro j
-    have hlow := primitiveCharacterFamilyZeroCount_nonneg (2 ^ j) σ
-    have hband := sub_le_self (primitiveCharacterFamilyZeroCount (2 ^ (j + 1)) σ) hlow
+    have hlow := familyZeros_nonneg (2 ^ j) σ
+    have hband := sub_le_self (familyZeros (2 ^ (j + 1)) σ) hlow
     calc
       _ ≤ (C * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) δ) * (1 / 2 : ℝ) ^ j :=
         mul_le_mul_of_nonneg_right (le_trans hband (hdensity j)) (by positivity)
       _ = C * Real.rpow 2 (δ * ((j + 1 : ℕ) : ℝ)) * (1 / 2 : ℝ) ^ j := by rw [dyadic_height_rpow_eq]
       _ ≤ (C * (2 * (3 / 2 : ℝ) ^ j)) * (1 / 2 : ℝ) ^ j := by
         apply mul_le_mul_of_nonneg_right
-        · exact mul_le_mul_of_nonneg_left (dyadic_rpow_le_two_mul_three_halves δ hδ j) hC
+        · exact mul_le_mul_of_nonneg_left (dyadic_rpow_3_2_bound δ hδ j) hC
         · positivity
       _ = 2 * C * (3 / 4 : ℝ) ^ j := by
         calc
@@ -987,20 +939,12 @@ theorem summable_primitiveCharacterFamilyZeroCount_dyadic_inverse_height_bands_o
         (2 * C)
 
 /-- Log-free density with `A(1-σ) ≤ 1/2` implies summability of the dyadic inverse-height bands. -/
-theorem summable_primitiveCharacterFamilyZeroCount_dyadic_inverse_height_bands_of_log_free_density
-    (A σ C : ℝ) (hσone : σ ≤ 1) (hδ : A * (1 - σ) ≤ 1 / 2) (hC : 0 ≤ C)
+theorem summable_log_bands (A σ C : ℝ) (hσone : σ ≤ 1) (hδ : A * (1 - σ) ≤ 1 / 2) (hC : 0 ≤ C)
     (hdensity :
-      ∀ j : ℕ,
-        primitiveCharacterFamilyZeroCount (2 ^ (j + 1)) σ ≤
-          C * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) (A * (1 - σ))) :
+      ∀ j : ℕ, familyZeros (2 ^ (j + 1)) σ ≤ C * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) (A * (1 - σ))) :
     Summable
-      (fun j : ℕ =>
-        (primitiveCharacterFamilyZeroCount (2 ^ (j + 1)) σ -
-            primitiveCharacterFamilyZeroCount (2 ^ j) σ) *
-          (1 / 2 : ℝ) ^ j) := by
-  exact
-    summable_primitiveCharacterFamilyZeroCount_dyadic_inverse_height_bands_of_rpow_density σ C
-      (A * (1 - σ)) hσone hC hδ hdensity
+      (fun j : ℕ => (familyZeros (2 ^ (j + 1)) σ - familyZeros (2 ^ j) σ) * (1 / 2 : ℝ) ^ j) := by
+  exact summable_family_bands σ C (A * (1 - σ)) hσone hC hδ hdensity
 
 /--
 Inputs: a real-part threshold at most one, a nonnegative constant, an exponent at most `1/2`, and
@@ -1014,27 +958,14 @@ and evaluate its sum.
 Role: gives an untruncated inverse-height estimate for the high-real-part zero contribution used
 with the explicit formula.
 -/
-theorem primitiveCharacterFamilyZeroCount_tsum_dyadic_inverse_height_bands_le_eight_of_rpow_density
-    (σ C δ : ℝ) (hσ : σ ≤ 1) (hC : 0 ≤ C) (hδ : δ ≤ 1 / 2)
-    (hdensity :
-      ∀ j : ℕ,
-        primitiveCharacterFamilyZeroCount (2 ^ (j + 1)) σ ≤
-          C * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) δ) :
-    ∑' j : ℕ,
-        (primitiveCharacterFamilyZeroCount (2 ^ (j + 1)) σ -
-            primitiveCharacterFamilyZeroCount (2 ^ j) σ) *
-          (1 / 2 : ℝ) ^ j ≤
-      8 * C := by
-  let f : ℕ → ℝ := fun j =>
-    (primitiveCharacterFamilyZeroCount (2 ^ (j + 1)) σ -
-        primitiveCharacterFamilyZeroCount (2 ^ j) σ) *
-      (1 / 2 : ℝ) ^ j
+theorem family_bands_tsum_le (σ C δ : ℝ) (hσ : σ ≤ 1) (hC : 0 ≤ C) (hδ : δ ≤ 1 / 2)
+    (hdensity : ∀ j : ℕ, familyZeros (2 ^ (j + 1)) σ ≤ C * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) δ) :
+    ∑' j : ℕ, (familyZeros (2 ^ (j + 1)) σ - familyZeros (2 ^ j) σ) * (1 / 2 : ℝ) ^ j ≤ 8 * C := by
+  let f : ℕ → ℝ := fun j => (familyZeros (2 ^ (j + 1)) σ - familyZeros (2 ^ j) σ) * (1 / 2 : ℝ) ^ j
   let g : ℕ → ℝ := fun j => 2 * C * (3 / 4 : ℝ) ^ j
   have hf : Summable f := by
     dsimp only [f]
-    exact
-      summable_primitiveCharacterFamilyZeroCount_dyadic_inverse_height_bands_of_rpow_density σ C δ
-        hσ hC hδ hdensity
+    exact summable_family_bands σ C δ hσ hC hδ hdensity
   have hg : Summable g := by
     dsimp only [g]
     exact
@@ -1044,15 +975,15 @@ theorem primitiveCharacterFamilyZeroCount_tsum_dyadic_inverse_height_bands_le_ei
   have hle : ∀ j, f j ≤ g j := by
     intro j
     dsimp only [f, g]
-    have hlow := primitiveCharacterFamilyZeroCount_nonneg (2 ^ j) σ
-    have hband := sub_le_self (primitiveCharacterFamilyZeroCount (2 ^ (j + 1)) σ) hlow
+    have hlow := familyZeros_nonneg (2 ^ j) σ
+    have hband := sub_le_self (familyZeros (2 ^ (j + 1)) σ) hlow
     calc
       _ ≤ (C * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) δ) * (1 / 2 : ℝ) ^ j :=
         mul_le_mul_of_nonneg_right (le_trans hband (hdensity j)) (by positivity)
       _ = C * Real.rpow 2 (δ * ((j + 1 : ℕ) : ℝ)) * (1 / 2 : ℝ) ^ j := by rw [dyadic_height_rpow_eq]
       _ ≤ (C * (2 * (3 / 2 : ℝ) ^ j)) * (1 / 2 : ℝ) ^ j := by
         apply mul_le_mul_of_nonneg_right
-        · exact mul_le_mul_of_nonneg_left (dyadic_rpow_le_two_mul_three_halves δ hδ j) hC
+        · exact mul_le_mul_of_nonneg_left (dyadic_rpow_3_2_bound δ hδ j) hC
         · positivity
       _ = 2 * C * (3 / 4 : ℝ) ^ j := by
         calc
@@ -1072,20 +1003,11 @@ theorem primitiveCharacterFamilyZeroCount_tsum_dyadic_inverse_height_bands_le_ei
     _ = 8 * C := by ring
 
 /-- Log-free density with `A(1-σ) ≤ 1/2` bounds the full dyadic inverse-height sum by `8*C`. -/
-theorem primitiveCharacterFamilyZeroCount_tsum_inverse_height_le_eight_of_density (A σ C : ℝ)
-    (hσone : σ ≤ 1) (hδ : A * (1 - σ) ≤ 1 / 2) (hC : 0 ≤ C)
+theorem family_log_tsum_le (A σ C : ℝ) (hσone : σ ≤ 1) (hδ : A * (1 - σ) ≤ 1 / 2) (hC : 0 ≤ C)
     (hdensity :
-      ∀ j : ℕ,
-        primitiveCharacterFamilyZeroCount (2 ^ (j + 1)) σ ≤
-          C * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) (A * (1 - σ))) :
-    ∑' j : ℕ,
-        (primitiveCharacterFamilyZeroCount (2 ^ (j + 1)) σ -
-            primitiveCharacterFamilyZeroCount (2 ^ j) σ) *
-          (1 / 2 : ℝ) ^ j ≤
-      8 * C := by
-  exact
-    primitiveCharacterFamilyZeroCount_tsum_dyadic_inverse_height_bands_le_eight_of_rpow_density σ C
-      (A * (1 - σ)) hσone hC hδ hdensity
+      ∀ j : ℕ, familyZeros (2 ^ (j + 1)) σ ≤ C * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) (A * (1 - σ))) :
+    ∑' j : ℕ, (familyZeros (2 ^ (j + 1)) σ - familyZeros (2 ^ j) σ) * (1 / 2 : ℝ) ^ j ≤ 8 * C := by
+  exact family_bands_tsum_le σ C (A * (1 - σ)) hσone hC hδ hdensity
 
 /--
 Inputs: a real sequence indexed by the natural numbers and a finite cutoff.
@@ -1099,7 +1021,7 @@ weights at each step.
 Role: provides the discrete summation-by-parts formula used to estimate zero sums by cumulative
 zero counts.
 -/
-theorem finite_sum_differences_div_succ_eq (a : ℕ → ℝ) (N : ℕ) :
+theorem sum_diff_div_succ_eq (a : ℕ → ℝ) (N : ℕ) :
     (∑ k ∈ Finset.range N, (a (k + 1) - a k) / (k + 1 : ℝ)) =
       a N / (N + 1 : ℝ) - a 0 + ∑ k ∈ Finset.range N, a (k + 1) / ((k + 1 : ℝ) * (k + 2 : ℝ)) := by
   induction N with
@@ -1120,27 +1042,25 @@ Claim: the sum of successive dyadic-independent height-count increments divided 
 at most the terminal count divided by the cutoff plus the sum of cumulative counts divided by
 squared heights.
 
-Proof: apply `finite_sum_differences_div_succ_eq`, use the zero count at height zero, and bound
+Proof: apply `sum_diff_div_succ_eq`, use the zero count at height zero, and bound
 `1/(n(n+1))` by `1/n^2` termwise.
 
 Role: bounds increments of the family sum when both its modulus and height cutoffs vary together.
 -/
-theorem primitiveCharacterFamilyZeroCount_partial_summation_le (T : ℕ) (hT : 1 ≤ T) (σ : ℝ) :
-    (∑ k ∈ Finset.range T,
-        (primitiveCharacterFamilyZeroCount (k + 1) σ - primitiveCharacterFamilyZeroCount k σ) /
-          (k + 1 : ℝ)) ≤
-      primitiveCharacterFamilyZeroCount T σ / (T : ℝ) +
-        ∑ k ∈ Finset.range T, primitiveCharacterFamilyZeroCount (k + 1) σ / (k + 1 : ℝ) ^ 2 := by
-  let a : ℕ → ℝ := fun n => primitiveCharacterFamilyZeroCount n σ
+theorem family_partial_sum_le (T : ℕ) (hT : 1 ≤ T) (σ : ℝ) :
+    (∑ k ∈ Finset.range T, (familyZeros (k + 1) σ - familyZeros k σ) / (k + 1 : ℝ)) ≤
+      familyZeros T σ / (T : ℝ) +
+        ∑ k ∈ Finset.range T, familyZeros (k + 1) σ / (k + 1 : ℝ) ^ 2 := by
+  let a : ℕ → ℝ := fun n => familyZeros n σ
   have ha0 : a 0 = 0 := by
     dsimp only [a]
-    classical simp only [primitiveCharacterFamilyZeroCount, Finset.univ_eq_empty, Finset.sum_empty]
-  have hid := finite_sum_differences_div_succ_eq a T
+    classical simp only [familyZeros, Finset.univ_eq_empty, Finset.sum_empty]
+  have hid := sum_diff_div_succ_eq a T
   have hTposNat : 0 < T := lt_of_lt_of_le Nat.zero_lt_one hT
   have hTpos : 0 < (T : ℝ) := by exact_mod_cast hTposNat
   have hTden : (T : ℝ) ≤ (T : ℝ) + 1 := by linarith only
   have hterminal : a T / ((T : ℝ) + 1) ≤ a T / (T : ℝ) :=
-    div_le_div_of_nonneg_left (primitiveCharacterFamilyZeroCount_nonneg T σ) hTpos hTden
+    div_le_div_of_nonneg_left (familyZeros_nonneg T σ) hTpos hTden
   have hsum :
     (∑ k ∈ Finset.range T, a (k + 1) / ((k + 1 : ℝ) * (k + 2 : ℝ))) ≤
       ∑ k ∈ Finset.range T, a (k + 1) / (k + 1 : ℝ) ^ 2 := by
@@ -1148,7 +1068,7 @@ theorem primitiveCharacterFamilyZeroCount_partial_summation_le (T : ℕ) (hT : 1
     intro k hk
     have hkpos : 0 < (k + 1 : ℝ) := by positivity
     have hden : (k + 1 : ℝ) ^ 2 ≤ (k + 1 : ℝ) * (k + 2 : ℝ) := by nlinarith only [hkpos]
-    have hcount := primitiveCharacterFamilyZeroCount_nonneg (k + 1) σ
+    have hcount := familyZeros_nonneg (k + 1) σ
     exact div_le_div_of_nonneg_left hcount (sq_pos_of_pos hkpos) (by nlinarith only [hkpos])
   calc
     _ = a T / ((T : ℝ) + 1) + ∑ k ∈ Finset.range T, a (k + 1) / ((k + 1 : ℝ) * (k + 2 : ℝ)) := by
@@ -1159,19 +1079,19 @@ theorem primitiveCharacterFamilyZeroCount_partial_summation_le (T : ℕ) (hT : 1
       add_le_add hterminal hsum
 
 /-- Convert a real height bound on a completed zero count to an integer height endpoint. -/
-noncomputable def completedZeroCountAtNatHeight {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
-    (hχ : χ ≠ 1) (σ : ℝ) (n : ℕ) : ℝ :=
+noncomputable def zeroCountAtNatHeight {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1)
+    (σ : ℝ) (n : ℕ) : ℝ :=
   PseudoPrime.AnalyticNumberTheory.DirichletLFunction.completedZeroCount χ hχ σ (n : ℝ)
 
 /-- A completed zero count at an integer height is nonnegative with analytic multiplicity. -/
-theorem completedZeroCountAtNatHeight_nonneg {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
-    (hχ : χ ≠ 1) (σ : ℝ) (n : ℕ) : 0 ≤ completedZeroCountAtNatHeight χ hχ σ n :=
+theorem natZeros_nonneg {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (σ : ℝ)
+    (n : ℕ) : 0 ≤ zeroCountAtNatHeight χ hχ σ n :=
   PseudoPrime.AnalyticNumberTheory.DirichletLFunction.completedZeroCount_nonneg χ hχ σ (n : ℝ)
 
 /-- Increasing the integer height cutoff cannot decrease a fixed completed zero count. -/
-theorem completedZeroCountAtNatHeight_mono {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
-    (hχ : χ ≠ 1) {σ : ℝ} (hσ : σ ≤ 1) {n m : ℕ} (hnm : n ≤ m) :
-    completedZeroCountAtNatHeight χ hχ σ n ≤ completedZeroCountAtNatHeight χ hχ σ m := by
+theorem natZeros_mono {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {σ : ℝ}
+    (hσ : σ ≤ 1) {n m : ℕ} (hnm : n ≤ m) :
+    zeroCountAtNatHeight χ hχ σ n ≤ zeroCountAtNatHeight χ hχ σ m := by
   exact
     PseudoPrime.AnalyticNumberTheory.DirichletLFunction.completedZeroCount_mono_height χ hχ hσ
       (Nat.cast_nonneg n) (by exact_mod_cast hnm)
@@ -1188,20 +1108,19 @@ Proof: apply finite summation by parts, discard the nonnegative count at height 
 
 Role: gives the fixed-character integer-height estimate used in the AGP explicit-formula argument.
 -/
-theorem completedZeroCountAtNatHeight_partial_summation_le {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (σ : ℝ) (T : ℕ) (hT : 1 ≤ T) :
+theorem natZeros_sum_le {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (σ : ℝ) (T : ℕ)
+    (hT : 1 ≤ T) :
     (∑ k ∈ Finset.range T,
-        (completedZeroCountAtNatHeight χ hχ σ (k + 1) - completedZeroCountAtNatHeight χ hχ σ k) /
-          (k + 1 : ℝ)) ≤
-      completedZeroCountAtNatHeight χ hχ σ T / (T : ℝ) +
-        ∑ k ∈ Finset.range T, completedZeroCountAtNatHeight χ hχ σ (k + 1) / (k + 1 : ℝ) ^ 2 := by
-  let a : ℕ → ℝ := fun n => completedZeroCountAtNatHeight χ hχ σ n
-  have hid := finite_sum_differences_div_succ_eq a T
+        (zeroCountAtNatHeight χ hχ σ (k + 1) - zeroCountAtNatHeight χ hχ σ k) / (k + 1 : ℝ)) ≤
+      zeroCountAtNatHeight χ hχ σ T / (T : ℝ) +
+        ∑ k ∈ Finset.range T, zeroCountAtNatHeight χ hχ σ (k + 1) / (k + 1 : ℝ) ^ 2 := by
+  let a : ℕ → ℝ := fun n => zeroCountAtNatHeight χ hχ σ n
+  have hid := sum_diff_div_succ_eq a T
   have hTposNat : 0 < T := lt_of_lt_of_le Nat.zero_lt_one hT
   have hTpos : 0 < (T : ℝ) := by exact_mod_cast hTposNat
   have hTden : (T : ℝ) ≤ (T : ℝ) + 1 := by linarith only
   have hterminal : a T / ((T : ℝ) + 1) ≤ a T / (T : ℝ) :=
-    div_le_div_of_nonneg_left (completedZeroCountAtNatHeight_nonneg χ hχ σ T) hTpos hTden
+    div_le_div_of_nonneg_left (natZeros_nonneg χ hχ σ T) hTpos hTden
   have hsum :
     (∑ k ∈ Finset.range T, a (k + 1) / ((k + 1 : ℝ) * (k + 2 : ℝ))) ≤
       ∑ k ∈ Finset.range T, a (k + 1) / (k + 1 : ℝ) ^ 2 := by
@@ -1210,9 +1129,9 @@ theorem completedZeroCountAtNatHeight_partial_summation_le {q : ℕ} [NeZero q]
     have hkpos : 0 < (k + 1 : ℝ) := by positivity
     have hden : (k + 1 : ℝ) ^ 2 ≤ (k + 1 : ℝ) * (k + 2 : ℝ) := by nlinarith only [hkpos]
     exact
-      div_le_div_of_nonneg_left (completedZeroCountAtNatHeight_nonneg χ hχ σ (k + 1))
-        (sq_pos_of_pos hkpos) (by nlinarith only [hkpos])
-  have ha0 : 0 ≤ a 0 := completedZeroCountAtNatHeight_nonneg χ hχ σ 0
+      div_le_div_of_nonneg_left (natZeros_nonneg χ hχ σ (k + 1)) (sq_pos_of_pos hkpos)
+        (by nlinarith only [hkpos])
+  have ha0 : 0 ≤ a 0 := natZeros_nonneg χ hχ σ 0
   have hid' :
     (∑ k ∈ Finset.range T, (a (k + 1) - a k) / (k + 1 : ℝ)) =
       a T / ((T : ℝ) + 1) - a 0 + ∑ k ∈ Finset.range T, a (k + 1) / ((k + 1 : ℝ) * (k + 2 : ℝ)) :=
@@ -1242,10 +1161,10 @@ bound `1/(n(n+1))` by `1/n^2` termwise.
 Role: packages the height estimate for application to individual characters and finite character
 families.
 -/
-theorem finite_sum_differences_div_succ_le (a : ℕ → ℝ) (T : ℕ) (hT : 1 ≤ T) (ha : ∀ n, 0 ≤ a n) :
+theorem sum_diff_div_succ_le (a : ℕ → ℝ) (T : ℕ) (hT : 1 ≤ T) (ha : ∀ n, 0 ≤ a n) :
     (∑ k ∈ Finset.range T, (a (k + 1) - a k) / (k + 1 : ℝ)) ≤
       a T / (T : ℝ) + ∑ k ∈ Finset.range T, a (k + 1) / (k + 1 : ℝ) ^ 2 := by
-  have hid := finite_sum_differences_div_succ_eq a T
+  have hid := sum_diff_div_succ_eq a T
   have hTposNat : 0 < T := lt_of_lt_of_le Nat.zero_lt_one hT
   have hTpos : 0 < (T : ℝ) := by exact_mod_cast hTposNat
   have hTden : (T : ℝ) ≤ (T : ℝ) + 1 := by linarith only
@@ -1284,49 +1203,40 @@ zero so its pole is not included in the zero sum.
 Role: gives the fixed-modulus family required by the explicit formula without varying the modulus
 cutoff as the height changes.
 -/
-noncomputable def fixedModulusNonprincipalZeroCountAtNatHeight (q : ℕ) [NeZero q] (σ : ℝ) (n : ℕ) :
-    ℝ := by
+noncomputable def nontrivialModZeros (q : ℕ) [NeZero q] (σ : ℝ) (n : ℕ) : ℝ := by
   classical
-    exact
-    ∑ χ : DirichletCharacter ℂ q, if hχ : χ ≠ 1 then completedZeroCountAtNatHeight χ hχ σ n else 0
+    exact ∑ χ : DirichletCharacter ℂ q, if hχ : χ ≠ 1 then zeroCountAtNatHeight χ hχ σ n else 0
 
 /-- The fixed-modulus nonprincipal completed zero count is nonnegative. -/
-theorem fixedModulusNonprincipalZeroCountAtNatHeight_nonneg (q : ℕ) [NeZero q] (σ : ℝ) (n : ℕ) :
-    0 ≤ fixedModulusNonprincipalZeroCountAtNatHeight q σ n := by
+theorem fixedNatZeros_nonneg (q : ℕ) [NeZero q] (σ : ℝ) (n : ℕ) : 0 ≤ nontrivialModZeros q σ n := by
   classical
-  unfold fixedModulusNonprincipalZeroCountAtNatHeight
+  unfold nontrivialModZeros
   apply Finset.sum_nonneg
   intro χ hχmem
   split_ifs with hχ
-  · exact completedZeroCountAtNatHeight_nonneg χ hχ σ n
+  · exact natZeros_nonneg χ hχ σ n
   · exact le_of_eq rfl
 
 /-- The fixed-modulus zero count increases with the integer height when `σ ≤ 1`. -/
-theorem fixedModulusNonprincipalZeroCountAtNatHeight_mono (q : ℕ) [NeZero q] {σ : ℝ} (hσ : σ ≤ 1)
-    {n m : ℕ} (hnm : n ≤ m) :
-    fixedModulusNonprincipalZeroCountAtNatHeight q σ n ≤
-      fixedModulusNonprincipalZeroCountAtNatHeight q σ m := by
+theorem fixedNatZeros_mono (q : ℕ) [NeZero q] {σ : ℝ} (hσ : σ ≤ 1) {n m : ℕ} (hnm : n ≤ m) :
+    nontrivialModZeros q σ n ≤ nontrivialModZeros q σ m := by
   classical
-  unfold fixedModulusNonprincipalZeroCountAtNatHeight
+  unfold nontrivialModZeros
   apply Finset.sum_le_sum
   intro χ hχmem
   split_ifs with hχ
-  · exact completedZeroCountAtNatHeight_mono χ hχ hσ hnm
+  · exact natZeros_mono χ hχ hσ hnm
   · exact le_rfl
 
 /-- Summation by parts for the fixed-modulus family of nonprincipal completed zeros. -/
-theorem fixedModulusNonprincipalZeroCountAtNatHeight_partial_summation_le (q : ℕ) [NeZero q] (σ : ℝ)
-    (T : ℕ) (hT : 1 ≤ T) :
+theorem fixedZeros_sum_le (q : ℕ) [NeZero q] (σ : ℝ) (T : ℕ) (hT : 1 ≤ T) :
     (∑ k ∈ Finset.range T,
-        (fixedModulusNonprincipalZeroCountAtNatHeight q σ (k + 1) -
-            fixedModulusNonprincipalZeroCountAtNatHeight q σ k) /
-          (k + 1 : ℝ)) ≤
-      fixedModulusNonprincipalZeroCountAtNatHeight q σ T / (T : ℝ) +
-        ∑ k ∈ Finset.range T,
-          fixedModulusNonprincipalZeroCountAtNatHeight q σ (k + 1) / (k + 1 : ℝ) ^ 2 := by
+        (nontrivialModZeros q σ (k + 1) - nontrivialModZeros q σ k) / (k + 1 : ℝ)) ≤
+      nontrivialModZeros q σ T / (T : ℝ) +
+        ∑ k ∈ Finset.range T, nontrivialModZeros q σ (k + 1) / (k + 1 : ℝ) ^ 2 := by
   exact
-    finite_sum_differences_div_succ_le (fun n => fixedModulusNonprincipalZeroCountAtNatHeight q σ n)
-      T hT (fun n => fixedModulusNonprincipalZeroCountAtNatHeight_nonneg q σ n)
+    sum_diff_div_succ_le (fun n => nontrivialModZeros q σ n) T hT
+      (fun n => fixedNatZeros_nonneg q σ n)
 
 /--
 Purpose: aggregate the analytic-multiplicity zero counts of nonprincipal characters over all
@@ -1338,44 +1248,35 @@ Output: the finite sum of the fixed-modulus counts for moduli `1` through `Q`.
 
 Role: supplies a fixed-conductor-cutoff family for estimates whose height cutoff varies separately.
 -/
-noncomputable def fixedModulusFamilyNonprincipalZeroCountAtNatHeight (Q : ℕ) (σ : ℝ) (n : ℕ) :
-    ℝ := by
-  classical exact ∑ q ∈ Finset.range Q, fixedModulusNonprincipalZeroCountAtNatHeight (q + 1) σ n
+noncomputable def nontrivialFamilyZeros (Q : ℕ) (σ : ℝ) (n : ℕ) : ℝ := by
+  classical exact ∑ q ∈ Finset.range Q, nontrivialModZeros (q + 1) σ n
 
 /-- The fixed-cutoff family count is nonnegative. -/
-theorem fixedModulusFamilyNonprincipalZeroCountAtNatHeight_nonneg (Q : ℕ) (σ : ℝ) (n : ℕ) :
-    0 ≤ fixedModulusFamilyNonprincipalZeroCountAtNatHeight Q σ n := by
+theorem fixedFamily_nonneg (Q : ℕ) (σ : ℝ) (n : ℕ) : 0 ≤ nontrivialFamilyZeros Q σ n := by
   classical
-  unfold fixedModulusFamilyNonprincipalZeroCountAtNatHeight
+  unfold nontrivialFamilyZeros
   apply Finset.sum_nonneg
   intro q hq
-  exact fixedModulusNonprincipalZeroCountAtNatHeight_nonneg (q + 1) σ n
+  exact fixedNatZeros_nonneg (q + 1) σ n
 
 /-- The fixed-cutoff family count increases with height when `σ ≤ 1`. -/
-theorem fixedModulusFamilyNonprincipalZeroCountAtNatHeight_mono (Q : ℕ) {σ : ℝ} (hσ : σ ≤ 1)
-    {n m : ℕ} (hnm : n ≤ m) :
-    fixedModulusFamilyNonprincipalZeroCountAtNatHeight Q σ n ≤
-      fixedModulusFamilyNonprincipalZeroCountAtNatHeight Q σ m := by
+theorem fixedFamily_mono (Q : ℕ) {σ : ℝ} (hσ : σ ≤ 1) {n m : ℕ} (hnm : n ≤ m) :
+    nontrivialFamilyZeros Q σ n ≤ nontrivialFamilyZeros Q σ m := by
   classical
-  unfold fixedModulusFamilyNonprincipalZeroCountAtNatHeight
+  unfold nontrivialFamilyZeros
   apply Finset.sum_le_sum
   intro q hq
-  exact fixedModulusNonprincipalZeroCountAtNatHeight_mono (q + 1) hσ hnm
+  exact fixedNatZeros_mono (q + 1) hσ hnm
 
 /-- Summation by parts for the family with a fixed modulus cutoff. -/
-theorem fixedModulusFamilyNonprincipalZeroCountAtNatHeight_partial_summation_le (Q : ℕ) (σ : ℝ)
-    (T : ℕ) (hT : 1 ≤ T) :
+theorem fixedFamily_sum_le (Q : ℕ) (σ : ℝ) (T : ℕ) (hT : 1 ≤ T) :
     (∑ k ∈ Finset.range T,
-        (fixedModulusFamilyNonprincipalZeroCountAtNatHeight Q σ (k + 1) -
-            fixedModulusFamilyNonprincipalZeroCountAtNatHeight Q σ k) /
-          (k + 1 : ℝ)) ≤
-      fixedModulusFamilyNonprincipalZeroCountAtNatHeight Q σ T / (T : ℝ) +
-        ∑ k ∈ Finset.range T,
-          fixedModulusFamilyNonprincipalZeroCountAtNatHeight Q σ (k + 1) / (k + 1 : ℝ) ^ 2 := by
+        (nontrivialFamilyZeros Q σ (k + 1) - nontrivialFamilyZeros Q σ k) / (k + 1 : ℝ)) ≤
+      nontrivialFamilyZeros Q σ T / (T : ℝ) +
+        ∑ k ∈ Finset.range T, nontrivialFamilyZeros Q σ (k + 1) / (k + 1 : ℝ) ^ 2 := by
   exact
-    finite_sum_differences_div_succ_le
-      (fun n => fixedModulusFamilyNonprincipalZeroCountAtNatHeight Q σ n) T hT
-      (fun n => fixedModulusFamilyNonprincipalZeroCountAtNatHeight_nonneg Q σ n)
+    sum_diff_div_succ_le (fun n => nontrivialFamilyZeros Q σ n) T hT
+      (fun n => fixedFamily_nonneg Q σ n)
 
 /--
 Purpose: count zeros of primitive nonprincipal characters up to a fixed modulus cutoff and an
@@ -1388,14 +1289,12 @@ whose positive moduli do not exceed the cutoff.
 
 Role: separates the conductor and height parameters in the family used by log-free density.
 -/
-noncomputable def primitiveCharacterFamilyZeroCountAtNatHeight (Q : ℕ) (σ : ℝ) (n : ℕ) : ℝ := by
+noncomputable def familyNatZeros (Q : ℕ) (σ : ℝ) (n : ℕ) : ℝ := by
   classical
     exact
     ∑ q : Fin Q,
       ∑ χ : DirichletCharacter ℂ (q.val + 1),
-        if hχ : χ ≠ 1 then
-          if hprim : χ.IsPrimitive then completedZeroCountAtNatHeight χ hχ σ n else 0
-        else 0
+        if hχ : χ ≠ 1 then if hprim : χ.IsPrimitive then zeroCountAtNatHeight χ hχ σ n else 0 else 0
 
 /--
 Purpose: express the primitive family zero count as a sum of finite zero occurrence counts.
@@ -1410,8 +1309,7 @@ indices.
 
 Role: exposes a finite occurrence representation for the family count used by density estimates.
 -/
-noncomputable def primitiveCharacterFamilyZeroOccurrenceCountAtNatHeight (Q : ℕ) (σ : ℝ) (n : ℕ) :
-    ℝ := by
+noncomputable def occurrenceNatCount (Q : ℕ) (σ : ℝ) (n : ℕ) : ℝ := by
   classical
     exact
     ∑ q : Fin Q,
@@ -1433,12 +1331,10 @@ cardinality of its occurrence ledger.
 
 Role: verifies that the finite family representation preserves analytic multiplicity exactly.
 -/
-theorem primitiveCharacterFamilyZeroCountAtNatHeight_eq_occurrenceCount (Q : ℕ) (σ : ℝ) (n : ℕ) :
-    primitiveCharacterFamilyZeroCountAtNatHeight Q σ n =
-      primitiveCharacterFamilyZeroOccurrenceCountAtNatHeight Q σ n := by
+theorem familyNat_occurrences (Q : ℕ) (σ : ℝ) (n : ℕ) :
+    familyNatZeros Q σ n = occurrenceNatCount Q σ n := by
   classical
-  unfold primitiveCharacterFamilyZeroCountAtNatHeight
-    primitiveCharacterFamilyZeroOccurrenceCountAtNatHeight
+  unfold familyNatZeros occurrenceNatCount
   apply Finset.sum_congr rfl
   intro q hq
   apply Finset.sum_congr rfl
@@ -1446,10 +1342,10 @@ theorem primitiveCharacterFamilyZeroCountAtNatHeight_eq_occurrenceCount (Q : ℕ
   by_cases hχ : χ ≠ 1
   · by_cases hprim : χ.IsPrimitive
     · simp only [dite_eq_left hχ, dite_eq_left hprim]
-      rw [completedZeroCountAtNatHeight, completedZeroCount]
+      rw [zeroCountAtNatHeight, completedZeroCount]
       exact
-        completedZeroMultiplicityCountInRectangle_eq_occurrence_card χ hχ
-          ((σ : ℂ) - (n : ℝ) * Complex.I) ((1 : ℂ) + (n : ℝ) * Complex.I)
+        completedMultiplicityCount_eq_card χ hχ ((σ : ℂ) - (n : ℝ) * Complex.I)
+          ((1 : ℂ) + (n : ℝ) * Complex.I)
     · simp only [dite_eq_left hχ, dite_eq_right hprim]
   · simp only [dite_eq_right hχ]
 
@@ -1466,7 +1362,7 @@ when different characters share a zero value.
 
 Role: supplies a single finite counting domain for multiplicity-preserving family arguments.
 -/
-noncomputable def primitiveCharacterFamilyZeroOccurrenceLedger (Q : ℕ) (σ : ℝ) (n : ℕ) :
+noncomputable def occurrenceLedger (Q : ℕ) (σ : ℝ) (n : ℕ) :
     Finset
       (Σ q : Fin Q,
         Σ χ : DirichletCharacter ℂ (q.val + 1),
@@ -1493,12 +1389,12 @@ nonprimitive or principal characters.
 
 Role: exposes the analytic zero represented by a ledger entry to later derivative estimates.
 -/
-theorem primitiveCharacterFamilyZeroOccurrenceLedger_mem_extract {Q : ℕ} {σ : ℝ} {n : ℕ}
+theorem ledger_mem_extract {Q : ℕ} {σ : ℝ} {n : ℕ}
     {x :
       Σ q : Fin Q,
         Σ χ : DirichletCharacter ℂ (q.val + 1),
           Σ ρ : ℂ, Fin (analyticOrderNatAt (DirichletCharacter.completedLFunction χ) ρ)}
-    (hx : x ∈ primitiveCharacterFamilyZeroOccurrenceLedger Q σ n) :
+    (hx : x ∈ occurrenceLedger Q σ n) :
     ∃ q χ ρ i,
       ∃ hχ : χ ≠ 1,
         x = ⟨q, ⟨χ, ⟨ρ, i⟩⟩⟩ ∧
@@ -1508,7 +1404,7 @@ theorem primitiveCharacterFamilyZeroOccurrenceLedger_mem_extract {Q : ℕ} {σ :
               ((1 : ℂ) + (n : ℝ) * Complex.I) := by
   classical
   rcases x with ⟨q, χ, ρ, i⟩
-  simp only [primitiveCharacterFamilyZeroOccurrenceLedger, Finset.mem_sigma] at hx
+  simp only [occurrenceLedger, Finset.mem_sigma] at hx
   rcases hx with ⟨_, ⟨_, hxi⟩⟩
   by_cases hχ : χ ≠ 1
   · by_cases hprim : χ.IsPrimitive
@@ -1531,18 +1427,17 @@ nonempty, then rewrite its cardinality as the analytic-multiplicity count.
 
 Role: supplies the positive-count input for the scaled Turán derivative estimate.
 -/
-theorem primitiveCharacterFamilyZeroOccurrenceLedger_mem_positive_count {Q : ℕ} {σ : ℝ} {n : ℕ}
+theorem ledger_mem_count_pos {Q : ℕ} {σ : ℝ} {n : ℕ}
     {x :
       Σ q : Fin Q,
         Σ χ : DirichletCharacter ℂ (q.val + 1),
           Σ ρ : ℂ, Fin (analyticOrderNatAt (DirichletCharacter.completedLFunction χ) ρ)}
-    (hx : x ∈ primitiveCharacterFamilyZeroOccurrenceLedger Q σ n) :
+    (hx : x ∈ occurrenceLedger Q σ n) :
     ∃ q χ,
       ∃ hχ : χ ≠ 1,
         χ.IsPrimitive ∧
           1 < q.val + 1 ∧ ∃ ρ i, x = ⟨q, ⟨χ, ⟨ρ, i⟩⟩⟩ ∧ 0 < completedZeroCount χ hχ σ (n : ℝ) := by
-  obtain ⟨q, χ, ρ, i, hχ, hxEq, hprim, hρ⟩ :=
-    primitiveCharacterFamilyZeroOccurrenceLedger_mem_extract hx
+  obtain ⟨q, χ, ρ, i, hχ, hxEq, hprim, hρ⟩ := ledger_mem_extract hx
   subst x
   let z : ℂ := (σ : ℂ) - (n : ℝ) * Complex.I
   let w : ℂ := (1 : ℂ) + (n : ℝ) * Complex.I
@@ -1562,7 +1457,7 @@ theorem primitiveCharacterFamilyZeroOccurrenceLedger_mem_positive_count {Q : ℕ
   have hcard : 0 < (completedZeroMultiplicityOccurrences χ hχ z w).card :=
     Finset.card_pos.mpr ⟨⟨ρ, i⟩, hocc⟩
   refine ⟨q, χ, hχ, hprim, hmod, ρ, i, rfl, ?_⟩
-  rw [completedZeroCount, completedZeroMultiplicityCountInRectangle_eq_occurrence_card]
+  rw [completedZeroCount, completedMultiplicityCount_eq_card]
   exact_mod_cast hcard
 
 /--
@@ -1577,12 +1472,10 @@ and nonprincipal conditions in each summand.
 Role: realizes the existing family zero count as the cardinality of a finite type without losing
 analytic multiplicity or character identity.
 -/
-theorem primitiveCharacterFamilyZeroOccurrenceLedger_card (Q : ℕ) (σ : ℝ) (n : ℕ) :
-    ((primitiveCharacterFamilyZeroOccurrenceLedger Q σ n).card : ℝ) =
-      primitiveCharacterFamilyZeroOccurrenceCountAtNatHeight Q σ n := by
+theorem occurrenceLedger_card (Q : ℕ) (σ : ℝ) (n : ℕ) :
+    ((occurrenceLedger Q σ n).card : ℝ) = occurrenceNatCount Q σ n := by
   classical
-  simp only [primitiveCharacterFamilyZeroOccurrenceLedger, Finset.card_sigma, Nat.cast_sum,
-    primitiveCharacterFamilyZeroOccurrenceCountAtNatHeight]
+  simp only [occurrenceLedger, Finset.card_sigma, Nat.cast_sum, occurrenceNatCount]
   apply Finset.sum_congr rfl
   intro q hq
   apply Finset.sum_congr rfl
@@ -1594,47 +1487,40 @@ theorem primitiveCharacterFamilyZeroOccurrenceLedger_card (Q : ℕ) (σ : ℝ) (
   · simp only [dite_eq_right hχ, Finset.card_empty, Nat.cast_zero]
 
 /-- The primitive-family zero count is exactly the cardinality of its occurrence ledger. -/
-theorem primitiveCharacterFamilyZeroCountAtNatHeight_eq_occurrenceLedger_card (Q : ℕ) (σ : ℝ)
-    (n : ℕ) :
-    primitiveCharacterFamilyZeroCountAtNatHeight Q σ n =
-      (primitiveCharacterFamilyZeroOccurrenceLedger Q σ n).card := by
-  rw [primitiveCharacterFamilyZeroCountAtNatHeight_eq_occurrenceCount]
-  exact (primitiveCharacterFamilyZeroOccurrenceLedger_card Q σ n).symm
+theorem familyNat_ledger_card (Q : ℕ) (σ : ℝ) (n : ℕ) :
+    familyNatZeros Q σ n = (occurrenceLedger Q σ n).card := by
+  rw [familyNat_occurrences]
+  exact (occurrenceLedger_card Q σ n).symm
 
 /-- The separated primitive-family zero count is nonnegative. -/
-theorem primitiveCharacterFamilyZeroCountAtNatHeight_nonneg (Q : ℕ) (σ : ℝ) (n : ℕ) :
-    0 ≤ primitiveCharacterFamilyZeroCountAtNatHeight Q σ n := by
+theorem familyNatZeros_nonneg (Q : ℕ) (σ : ℝ) (n : ℕ) : 0 ≤ familyNatZeros Q σ n := by
   classical
-  unfold primitiveCharacterFamilyZeroCountAtNatHeight
+  unfold familyNatZeros
   apply Finset.sum_nonneg
   intro q hq
   apply Finset.sum_nonneg
   intro χ hχmem
   split_ifs with hχ hprim
-  · exact completedZeroCountAtNatHeight_nonneg χ hχ σ n
+  · exact natZeros_nonneg χ hχ σ n
   · exact le_of_eq rfl
   · exact le_of_eq rfl
 
 /-- The separated primitive-family zero count increases with height when `σ ≤ 1`. -/
-theorem primitiveCharacterFamilyZeroCountAtNatHeight_mono (Q : ℕ) {σ : ℝ} (hσ : σ ≤ 1) {n m : ℕ}
-    (hnm : n ≤ m) :
-    primitiveCharacterFamilyZeroCountAtNatHeight Q σ n ≤
-      primitiveCharacterFamilyZeroCountAtNatHeight Q σ m := by
+theorem familyNatZeros_mono (Q : ℕ) {σ : ℝ} (hσ : σ ≤ 1) {n m : ℕ} (hnm : n ≤ m) :
+    familyNatZeros Q σ n ≤ familyNatZeros Q σ m := by
   classical
-  unfold primitiveCharacterFamilyZeroCountAtNatHeight
+  unfold familyNatZeros
   apply Finset.sum_le_sum
   intro q hq
   apply Finset.sum_le_sum
   intro χ hχmem
   split_ifs with hχ hprim
-  · exact completedZeroCountAtNatHeight_mono χ hχ hσ hnm
+  · exact natZeros_mono χ hχ hσ hnm
   · exact le_rfl
   · exact le_rfl
 
 /-- At height `Q`, the separated family agrees definitionally with the original joint cutoff. -/
-theorem primitiveCharacterFamilyZeroCountAtNatHeight_eq (Q : ℕ) (σ : ℝ) :
-    primitiveCharacterFamilyZeroCountAtNatHeight Q σ Q = primitiveCharacterFamilyZeroCount Q σ := by
-  rfl
+theorem familyNatZeros_eq (Q : ℕ) (σ : ℝ) : familyNatZeros Q σ Q = familyZeros Q σ := by rfl
 
 /--
 Inputs: a fixed conductor cutoff `Q`, a larger common cutoff `T`, a height `n ≤ T`, and a real-part
@@ -1649,19 +1535,16 @@ nonnegative contributions from the remaining moduli.
 Role: lets a diagonal log-free density estimate control independently chosen conductor and height
 cutoffs whenever both fit below a common endpoint.
 -/
-theorem primitiveCharacterFamilyZeroCountAtNatHeight_le_diagonal (Q T n : ℕ) (σ : ℝ) (hσ : σ ≤ 1)
-    (hQT : Q ≤ T) (hnT : n ≤ T) :
-    primitiveCharacterFamilyZeroCountAtNatHeight Q σ n ≤ primitiveCharacterFamilyZeroCount T σ := by
+theorem familyNat_le_diagonal (Q T n : ℕ) (σ : ℝ) (hσ : σ ≤ 1) (hQT : Q ≤ T) (hnT : n ≤ T) :
+    familyNatZeros Q σ n ≤ familyZeros T σ := by
   classical
   let e : Fin Q ↪ Fin T := Fin.castLEEmb hQT
   let f : Fin T → ℝ := fun j =>
     ∑ χ : DirichletCharacter ℂ (j.val + 1),
-      if hχ : χ ≠ 1 then if hprim : χ.IsPrimitive then completedZeroCountAtNatHeight χ hχ σ T else 0
-      else 0
+      if hχ : χ ≠ 1 then if hprim : χ.IsPrimitive then zeroCountAtNatHeight χ hχ σ T else 0 else 0
   have hterm (j : Fin Q) :
     (∑ χ : DirichletCharacter ℂ (j.val + 1),
-        if hχ : χ ≠ 1 then
-          if hprim : χ.IsPrimitive then completedZeroCountAtNatHeight χ hχ σ n else 0
+        if hχ : χ ≠ 1 then if hprim : χ.IsPrimitive then zeroCountAtNatHeight χ hχ σ n else 0
         else 0) ≤
       f (e j) := by
     dsimp only [f]
@@ -1670,20 +1553,18 @@ theorem primitiveCharacterFamilyZeroCountAtNatHeight_le_diagonal (Q T n : ℕ) (
     apply Finset.sum_le_sum
     intro χ hχmem
     split_ifs with hχ hprim
-    · exact completedZeroCountAtNatHeight_mono χ hχ hσ hnT
+    · exact natZeros_mono χ hχ hσ hnT
     · exact le_rfl
     · exact le_rfl
-  unfold primitiveCharacterFamilyZeroCountAtNatHeight
+  unfold familyNatZeros
   change
     (∑ j : Fin Q,
         ∑ χ : DirichletCharacter ℂ (j.val + 1),
-          if hχ : χ ≠ 1 then
-            if hprim : χ.IsPrimitive then completedZeroCountAtNatHeight χ hχ σ n else 0
+          if hχ : χ ≠ 1 then if hprim : χ.IsPrimitive then zeroCountAtNatHeight χ hχ σ n else 0
           else 0) ≤
       ∑ j : Fin T,
         ∑ χ : DirichletCharacter ℂ (j.val + 1),
-          if hχ : χ ≠ 1 then
-            if hprim : χ.IsPrimitive then completedZeroCountAtNatHeight χ hχ σ T else 0
+          if hχ : χ ≠ 1 then if hprim : χ.IsPrimitive then zeroCountAtNatHeight χ hχ σ T else 0
           else 0
   calc
     _ ≤ ∑ j : Fin Q, f (e j) := by
@@ -1700,23 +1581,17 @@ theorem primitiveCharacterFamilyZeroCountAtNatHeight_le_diagonal (Q T n : ℕ) (
         apply Finset.sum_nonneg
         intro χ hχmem
         split_ifs with hχ hprim
-        · exact completedZeroCountAtNatHeight_nonneg χ hχ σ T
+        · exact natZeros_nonneg χ hχ σ T
         · exact le_of_eq rfl
         · exact le_of_eq rfl
 
 /-- Summation by parts for the primitive-character family with independent cutoffs. -/
-theorem primitiveCharacterFamilyZeroCountAtNatHeight_partial_summation_le (Q : ℕ) (σ : ℝ) (T : ℕ)
-    (hT : 1 ≤ T) :
-    (∑ k ∈ Finset.range T,
-        (primitiveCharacterFamilyZeroCountAtNatHeight Q σ (k + 1) -
-            primitiveCharacterFamilyZeroCountAtNatHeight Q σ k) /
-          (k + 1 : ℝ)) ≤
-      primitiveCharacterFamilyZeroCountAtNatHeight Q σ T / (T : ℝ) +
-        ∑ k ∈ Finset.range T,
-          primitiveCharacterFamilyZeroCountAtNatHeight Q σ (k + 1) / (k + 1 : ℝ) ^ 2 := by
+theorem familyNat_sum_le (Q : ℕ) (σ : ℝ) (T : ℕ) (hT : 1 ≤ T) :
+    (∑ k ∈ Finset.range T, (familyNatZeros Q σ (k + 1) - familyNatZeros Q σ k) / (k + 1 : ℝ)) ≤
+      familyNatZeros Q σ T / (T : ℝ) +
+        ∑ k ∈ Finset.range T, familyNatZeros Q σ (k + 1) / (k + 1 : ℝ) ^ 2 := by
   exact
-    finite_sum_differences_div_succ_le (fun n => primitiveCharacterFamilyZeroCountAtNatHeight Q σ n)
-      T hT (fun n => primitiveCharacterFamilyZeroCountAtNatHeight_nonneg Q σ n)
+    sum_diff_div_succ_le (fun n => familyNatZeros Q σ n) T hT (fun n => familyNatZeros_nonneg Q σ n)
 
 /--
 Inputs: a fixed conductor cutoff, a real-part threshold at most one, a nonnegative constant, and
@@ -1730,21 +1605,16 @@ dyadic summation estimate.
 
 Role: aggregates zeros in height while keeping the conductor cutoff fixed.
 -/
-theorem primitiveCharacterFamilyZeroCountAtNatHeight_dyadic_inverse_height_sum_le_eight (Q : ℕ)
-    (σ C : ℝ) (hσ : σ ≤ 1) (hC : 0 ≤ C) (J : ℕ)
-    (hdensity :
-      ∀ j < J,
-        primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ (j + 1)) ≤ 2 * C * (3 / 2 : ℝ) ^ j) :
+theorem familyNat_dyadic_le (Q : ℕ) (σ C : ℝ) (hσ : σ ≤ 1) (hC : 0 ≤ C) (J : ℕ)
+    (hdensity : ∀ j < J, familyNatZeros Q σ (2 ^ (j + 1)) ≤ 2 * C * (3 / 2 : ℝ) ^ j) :
     (∑ j ∈ Finset.range J,
-        (primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ (j + 1)) -
-            primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ j)) *
-          (1 / 2 : ℝ) ^ j) ≤
+        (familyNatZeros Q σ (2 ^ (j + 1)) - familyNatZeros Q σ (2 ^ j)) * (1 / 2 : ℝ) ^ j) ≤
       8 * C := by
-  apply finite_dyadic_inverse_height_sum_le_eight J C hC
+  apply dyadic_sum_le_eight J C hC
   intro j hj
   have hscale : 2 ^ j ≤ 2 ^ (j + 1) := Nat.pow_le_pow_right (by decide : 1 ≤ 2) (Nat.le_succ j)
-  have hmono := primitiveCharacterFamilyZeroCountAtNatHeight_mono Q hσ hscale
-  have hnonneg := primitiveCharacterFamilyZeroCountAtNatHeight_nonneg Q σ (2 ^ j)
+  have hmono := familyNatZeros_mono Q hσ hscale
+  have hnonneg := familyNatZeros_nonneg Q σ (2 ^ j)
   exact le_trans (sub_le_self _ hnonneg) (hdensity j hj)
 
 /--
@@ -1764,39 +1634,29 @@ theorem
   primitiveCharacterFamilyZeroCountAtNatHeight_dyadic_inverse_height_sum_le_eight_of_rpow_density
     (Q : ℕ) (σ C δ : ℝ) (hσ : σ ≤ 1) (hC : 0 ≤ C) (hδ : δ ≤ 1 / 2) (J : ℕ)
     (hdensity :
-      ∀ j < J,
-        primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ (j + 1)) ≤
-          C * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) δ) :
+      ∀ j < J, familyNatZeros Q σ (2 ^ (j + 1)) ≤ C * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) δ) :
     (∑ j ∈ Finset.range J,
-        (primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ (j + 1)) -
-            primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ j)) *
-          (1 / 2 : ℝ) ^ j) ≤
+        (familyNatZeros Q σ (2 ^ (j + 1)) - familyNatZeros Q σ (2 ^ j)) * (1 / 2 : ℝ) ^ j) ≤
       8 * C := by
-  apply
-    primitiveCharacterFamilyZeroCountAtNatHeight_dyadic_inverse_height_sum_le_eight Q σ C hσ hC J
+  apply familyNat_dyadic_le Q σ C hσ hC J
   intro j hj
   calc
-    primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ (j + 1)) ≤
-        C * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) δ :=
-      hdensity j hj
+    familyNatZeros Q σ (2 ^ (j + 1)) ≤ C * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) δ := hdensity j hj
     _ = C * Real.rpow 2 (δ * ((j + 1 : ℕ) : ℝ)) := by rw [dyadic_height_rpow_eq]
     _ ≤ 2 * C * (3 / 2 : ℝ) ^ j := by
       calc
         C * Real.rpow 2 (δ * ((j + 1 : ℕ) : ℝ)) ≤ C * (2 * (3 / 2 : ℝ) ^ j) :=
-          mul_le_mul_of_nonneg_left (dyadic_rpow_le_two_mul_three_halves δ hδ j) hC
+          mul_le_mul_of_nonneg_left (dyadic_rpow_3_2_bound δ hδ j) hC
         _ = 2 * C * (3 / 2 : ℝ) ^ j := by ring
 
 /-- The fixed-cutoff dyadic inverse-height estimate under a log-free density bound. -/
-theorem primitiveCharacterFamilyZeroCountAtNatHeight_dyadic_sum_le_eight_of_log_free_density (Q : ℕ)
-    (A σ C : ℝ) (hσ : σ ≤ 1) (hδ : A * (1 - σ) ≤ 1 / 2) (hC : 0 ≤ C) (J : ℕ)
+theorem familyNat_dyadic_log (Q : ℕ) (A σ C : ℝ) (hσ : σ ≤ 1) (hδ : A * (1 - σ) ≤ 1 / 2)
+    (hC : 0 ≤ C) (J : ℕ)
     (hdensity :
       ∀ j < J,
-        primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ (j + 1)) ≤
-          C * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) (A * (1 - σ))) :
+        familyNatZeros Q σ (2 ^ (j + 1)) ≤ C * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) (A * (1 - σ))) :
     (∑ j ∈ Finset.range J,
-        (primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ (j + 1)) -
-            primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ j)) *
-          (1 / 2 : ℝ) ^ j) ≤
+        (familyNatZeros Q σ (2 ^ (j + 1)) - familyNatZeros Q σ (2 ^ j)) * (1 / 2 : ℝ) ^ j) ≤
       8 * C := by
   exact
     primitiveCharacterFamilyZeroCountAtNatHeight_dyadic_inverse_height_sum_le_eight_of_rpow_density
@@ -1820,11 +1680,9 @@ multiplicativity of real powers for a nonnegative exponent.
 Role: supplies the fixed-cutoff input for dyadic height summation directly from the diagonal family
 density theorem.
 -/
-theorem primitiveCharacterFamilyZeroCountAtNatHeight_le_rpow_of_diagonal_rpow_density (Q n : ℕ)
-    (σ C δ : ℝ) (hσ : σ ≤ 1) (hC : 0 ≤ C) (hδ : 0 ≤ δ) (hn2 : 2 ≤ n)
-    (hdensity : ∀ T : ℕ, 2 ≤ T → primitiveCharacterFamilyZeroCount T σ ≤ C * Real.rpow (T : ℝ) δ) :
-    primitiveCharacterFamilyZeroCountAtNatHeight Q σ n ≤
-      (C * Real.rpow ((Q + 1 : ℕ) : ℝ) δ) * Real.rpow (n : ℝ) δ := by
+theorem familyNat_rpow_le (Q n : ℕ) (σ C δ : ℝ) (hσ : σ ≤ 1) (hC : 0 ≤ C) (hδ : 0 ≤ δ) (hn2 : 2 ≤ n)
+    (hdensity : ∀ T : ℕ, 2 ≤ T → familyZeros T σ ≤ C * Real.rpow (T : ℝ) δ) :
+    familyNatZeros Q σ n ≤ (C * Real.rpow ((Q + 1 : ℕ) : ℝ) δ) * Real.rpow (n : ℝ) δ := by
   let T : ℕ := max Q n
   have hT2 : 2 ≤ T := by
     dsimp only [T]
@@ -1853,10 +1711,9 @@ theorem primitiveCharacterFamilyZeroCountAtNatHeight_le_rpow_of_diagonal_rpow_de
       _ = Real.rpow (((Q + 1 : ℕ) : ℝ) * (n : ℝ)) δ := by rw [Nat.cast_mul]
       _ = Real.rpow ((Q + 1 : ℕ) : ℝ) δ * Real.rpow (n : ℝ) δ :=
         Real.mul_rpow (by exact_mod_cast Nat.zero_le (Q + 1)) (by exact_mod_cast Nat.zero_le n)
-  have hdiagonal := primitiveCharacterFamilyZeroCountAtNatHeight_le_diagonal Q T n σ hσ hQT hnT
+  have hdiagonal := familyNat_le_diagonal Q T n σ hσ hQT hnT
   calc
-    primitiveCharacterFamilyZeroCountAtNatHeight Q σ n ≤ primitiveCharacterFamilyZeroCount T σ := by
-      simpa only [T] using hdiagonal
+    familyNatZeros Q σ n ≤ familyZeros T σ := by simpa only [T] using hdiagonal
     _ ≤ C * Real.rpow (T : ℝ) δ := hdensity T hT2
     _ ≤ C * (Real.rpow ((Q + 1 : ℕ) : ℝ) δ * Real.rpow (n : ℝ) δ) :=
       mul_le_mul_of_nonneg_left hpow hC
@@ -1875,26 +1732,20 @@ summation bound.
 Role: converts the joint conductor-height density interface into the separated-height estimate
 used when summing explicit-formula zero contributions.
 -/
-theorem primitiveCharacterFamilyZeroCountAtNatHeight_dyadic_sum_le_eight_of_diagonal_rpow_density
-    (Q J : ℕ) (σ C δ : ℝ) (hσ : σ ≤ 1) (hC : 0 ≤ C) (hδ : 0 ≤ δ) (hδhalf : δ ≤ 1 / 2)
-    (hdensity : ∀ T : ℕ, 2 ≤ T → primitiveCharacterFamilyZeroCount T σ ≤ C * Real.rpow (T : ℝ) δ) :
+theorem familyNat_dyadic_diag (Q J : ℕ) (σ C δ : ℝ) (hσ : σ ≤ 1) (hC : 0 ≤ C) (hδ : 0 ≤ δ)
+    (hδhalf : δ ≤ 1 / 2) (hdensity : ∀ T : ℕ, 2 ≤ T → familyZeros T σ ≤ C * Real.rpow (T : ℝ) δ) :
     (∑ j ∈ Finset.range J,
-        (primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ (j + 1)) -
-            primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ j)) *
-          (1 / 2 : ℝ) ^ j) ≤
+        (familyNatZeros Q σ (2 ^ (j + 1)) - familyNatZeros Q σ (2 ^ j)) * (1 / 2 : ℝ) ^ j) ≤
       8 * (C * Real.rpow ((Q + 1 : ℕ) : ℝ) δ) := by
   let C' : ℝ := C * Real.rpow ((Q + 1 : ℕ) : ℝ) δ
   have hC' : 0 ≤ C' := by
     dsimp only [C']
     exact mul_nonneg hC (Real.rpow_nonneg (by exact_mod_cast Nat.zero_le (Q + 1)) _)
   have hdensityQ :
-    ∀ j < J,
-      primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ (j + 1)) ≤
-        C' * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) δ := by
+    ∀ j < J, familyNatZeros Q σ (2 ^ (j + 1)) ≤ C' * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) δ := by
     intro j hj
     have hcount :=
-      primitiveCharacterFamilyZeroCountAtNatHeight_le_rpow_of_diagonal_rpow_density Q (2 ^ (j + 1))
-        σ C δ hσ hC hδ (Nat.le_pow (Nat.succ_pos j)) hdensity
+      familyNat_rpow_le Q (2 ^ (j + 1)) σ C δ hσ hC hδ (Nat.le_pow (Nat.succ_pos j)) hdensity
     simpa only [C'] using hcount
   have hsum :=
     primitiveCharacterFamilyZeroCountAtNatHeight_dyadic_inverse_height_sum_le_eight_of_rpow_density
@@ -1913,27 +1764,19 @@ series, and compare its sum with the geometric majorant.
 
 Role: is the infinite-height counterpart of the finite fixed-cutoff summation estimate.
 -/
-theorem primitiveCharacterFamilyZeroCountAtNatHeight_tsum_inverse_height_le_eight_of_rpow_density
-    (Q : ℕ) (σ C δ : ℝ) (hσ : σ ≤ 1) (hC : 0 ≤ C) (hδ : δ ≤ 1 / 2)
+theorem familyNat_tsum_rpow (Q : ℕ) (σ C δ : ℝ) (hσ : σ ≤ 1) (hC : 0 ≤ C) (hδ : δ ≤ 1 / 2)
     (hdensity :
-      ∀ j : ℕ,
-        primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ (j + 1)) ≤
-          C * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) δ) :
-    ∑' j : ℕ,
-        (primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ (j + 1)) -
-            primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ j)) *
-          (1 / 2 : ℝ) ^ j ≤
+      ∀ j : ℕ, familyNatZeros Q σ (2 ^ (j + 1)) ≤ C * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) δ) :
+    ∑' j : ℕ, (familyNatZeros Q σ (2 ^ (j + 1)) - familyNatZeros Q σ (2 ^ j)) * (1 / 2 : ℝ) ^ j ≤
       8 * C := by
   let f : ℕ → ℝ := fun j =>
-    (primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ (j + 1)) -
-        primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ j)) *
-      (1 / 2 : ℝ) ^ j
+    (familyNatZeros Q σ (2 ^ (j + 1)) - familyNatZeros Q σ (2 ^ j)) * (1 / 2 : ℝ) ^ j
   let g : ℕ → ℝ := fun j => 2 * C * (3 / 4 : ℝ) ^ j
   have hle : ∀ j, f j ≤ g j := by
     intro j
     dsimp only [f, g]
-    have hlow := primitiveCharacterFamilyZeroCountAtNatHeight_nonneg Q σ (2 ^ j)
-    have hband := sub_le_self (primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ (j + 1))) hlow
+    have hlow := familyNatZeros_nonneg Q σ (2 ^ j)
+    have hband := sub_le_self (familyNatZeros Q σ (2 ^ (j + 1))) hlow
     calc
       _ ≤ (C * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) δ) * (1 / 2 : ℝ) ^ j :=
         mul_le_mul_of_nonneg_right (le_trans hband (hdensity j))
@@ -1941,7 +1784,7 @@ theorem primitiveCharacterFamilyZeroCountAtNatHeight_tsum_inverse_height_le_eigh
       _ = C * Real.rpow 2 (δ * ((j + 1 : ℕ) : ℝ)) * (1 / 2 : ℝ) ^ j := by rw [dyadic_height_rpow_eq]
       _ ≤ (C * (2 * (3 / 2 : ℝ) ^ j)) * (1 / 2 : ℝ) ^ j := by
         apply mul_le_mul_of_nonneg_right
-        · exact mul_le_mul_of_nonneg_left (dyadic_rpow_le_two_mul_three_halves δ hδ j) hC
+        · exact mul_le_mul_of_nonneg_left (dyadic_rpow_3_2_bound δ hδ j) hC
         · exact pow_nonneg (by norm_num only : (0 : ℝ) ≤ 1 / 2) j
       _ = 2 * C * (3 / 4 : ℝ) ^ j := by
         calc
@@ -1960,11 +1803,8 @@ theorem primitiveCharacterFamilyZeroCountAtNatHeight_tsum_inverse_height_le_eigh
     · intro j
       dsimp only [f]
       have hscale : 2 ^ j ≤ 2 ^ (j + 1) := Nat.pow_le_pow_right (by decide : 1 ≤ 2) (Nat.le_succ j)
-      have hmono := primitiveCharacterFamilyZeroCountAtNatHeight_mono Q hσ hscale
-      have hband :
-        0 ≤
-          primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ (j + 1)) -
-            primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ j) :=
+      have hmono := familyNatZeros_mono Q hσ hscale
+      have hband : 0 ≤ familyNatZeros Q σ (2 ^ (j + 1)) - familyNatZeros Q σ (2 ^ j) :=
         sub_nonneg.mpr hmono
       exact mul_nonneg hband (pow_nonneg (by norm_num only : (0 : ℝ) ≤ 1 / 2) j)
     · exact hle
@@ -1993,30 +1833,21 @@ polynomial cutoff comparison, and invoke the infinite dyadic summation estimate.
 Role: connects a diagonal family density theorem to the all-height zero sum for any fixed modulus
 range.
 -/
-theorem primitiveCharacterFamilyZeroCountAtNatHeight_tsum_le_eight_of_diagonal_density (Q : ℕ)
-    (σ C δ : ℝ) (hσ : σ ≤ 1) (hC : 0 ≤ C) (hδ : 0 ≤ δ) (hδhalf : δ ≤ 1 / 2)
-    (hdensity : ∀ T : ℕ, 2 ≤ T → primitiveCharacterFamilyZeroCount T σ ≤ C * Real.rpow (T : ℝ) δ) :
-    ∑' j : ℕ,
-        (primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ (j + 1)) -
-            primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ j)) *
-          (1 / 2 : ℝ) ^ j ≤
+theorem familyNat_tsum_diag (Q : ℕ) (σ C δ : ℝ) (hσ : σ ≤ 1) (hC : 0 ≤ C) (hδ : 0 ≤ δ)
+    (hδhalf : δ ≤ 1 / 2) (hdensity : ∀ T : ℕ, 2 ≤ T → familyZeros T σ ≤ C * Real.rpow (T : ℝ) δ) :
+    ∑' j : ℕ, (familyNatZeros Q σ (2 ^ (j + 1)) - familyNatZeros Q σ (2 ^ j)) * (1 / 2 : ℝ) ^ j ≤
       8 * (C * Real.rpow ((Q + 1 : ℕ) : ℝ) δ) := by
   let C' : ℝ := C * Real.rpow ((Q + 1 : ℕ) : ℝ) δ
   have hC' : 0 ≤ C' := by
     dsimp only [C']
     exact mul_nonneg hC (Real.rpow_nonneg (by exact_mod_cast Nat.zero_le (Q + 1)) _)
   have hdensityQ :
-    ∀ j : ℕ,
-      primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ (j + 1)) ≤
-        C' * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) δ := by
+    ∀ j : ℕ, familyNatZeros Q σ (2 ^ (j + 1)) ≤ C' * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) δ := by
     intro j
     have hcount :=
-      primitiveCharacterFamilyZeroCountAtNatHeight_le_rpow_of_diagonal_rpow_density Q (2 ^ (j + 1))
-        σ C δ hσ hC hδ (Nat.le_pow (Nat.succ_pos j)) hdensity
+      familyNat_rpow_le Q (2 ^ (j + 1)) σ C δ hσ hC hδ (Nat.le_pow (Nat.succ_pos j)) hdensity
     simpa only [C'] using hcount
-  have hsum :=
-    primitiveCharacterFamilyZeroCountAtNatHeight_tsum_inverse_height_le_eight_of_rpow_density Q σ C'
-      δ hσ hC' hδhalf hdensityQ
+  have hsum := familyNat_tsum_rpow Q σ C' δ hσ hC' hδhalf hdensityQ
   simpa only [C'] using hsum
 
 /--
@@ -2032,16 +1863,11 @@ the inverse-height weight, each band contributes at most `2*C`.
 Role: gives the logarithmic-in-height bound used for the intermediate real-part range of a
 log-free density argument.
 -/
-theorem primitiveCharacterFamilyZeroCountAtNatHeight_dyadic_sum_le_two_mul_of_rpow_density (Q J : ℕ)
-    (σ C δ : ℝ) (hC : 0 ≤ C) (hδ : δ ≤ 1)
+theorem familyNat_dyadic_two (Q J : ℕ) (σ C δ : ℝ) (hC : 0 ≤ C) (hδ : δ ≤ 1)
     (hdensity :
-      ∀ j < J,
-        primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ (j + 1)) ≤
-          C * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) δ) :
+      ∀ j < J, familyNatZeros Q σ (2 ^ (j + 1)) ≤ C * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) δ) :
     (∑ j ∈ Finset.range J,
-        (primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ (j + 1)) -
-            primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ j)) *
-          (1 / 2 : ℝ) ^ j) ≤
+        (familyNatZeros Q σ (2 ^ (j + 1)) - familyNatZeros Q σ (2 ^ j)) * (1 / 2 : ℝ) ^ j) ≤
       2 * C * J := by
   have hconst : (∑ j ∈ Finset.range J, (2 * C : ℝ)) = 2 * C * J := by
     simp only [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
@@ -2050,9 +1876,8 @@ theorem primitiveCharacterFamilyZeroCountAtNatHeight_dyadic_sum_le_two_mul_of_rp
     _ ≤ ∑ j ∈ Finset.range J, (2 * C : ℝ) := by
       apply Finset.sum_le_sum
       intro j hj
-      have hlow := primitiveCharacterFamilyZeroCountAtNatHeight_nonneg Q σ (2 ^ j)
-      have hband :=
-        sub_le_self (primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ (j + 1))) hlow
+      have hlow := familyNatZeros_nonneg Q σ (2 ^ j)
+      have hband := sub_le_self (familyNatZeros Q σ (2 ^ (j + 1))) hlow
       have hpower : Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) δ ≤ (2 ^ (j + 1) : ℕ) := by
         calc
           Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) δ = Real.rpow 2 (δ * ((j + 1 : ℕ) : ℝ)) :=
@@ -2062,8 +1887,7 @@ theorem primitiveCharacterFamilyZeroCountAtNatHeight_dyadic_sum_le_two_mul_of_rp
               (mul_le_mul_of_nonneg_right hδ (Nat.cast_nonneg (j + 1)))
           _ = Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) 1 := (dyadic_height_rpow_eq 1 j).symm
           _ = (2 ^ (j + 1) : ℕ) := Real.rpow_one _
-      have hcount :
-        primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ (j + 1)) ≤ C * (2 ^ (j + 1) : ℕ) := by
+      have hcount : familyNatZeros Q σ (2 ^ (j + 1)) ≤ C * (2 ^ (j + 1) : ℕ) := by
         calc
           _ ≤ C * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) δ := hdensity j (Finset.mem_range.mp hj)
           _ ≤ C * (2 ^ (j + 1) : ℕ) := mul_le_mul_of_nonneg_left hpower hC
@@ -2080,30 +1904,22 @@ theorem primitiveCharacterFamilyZeroCountAtNatHeight_dyadic_sum_le_two_mul_of_rp
     _ = 2 * C * J := hconst
 
 /-- The finite logarithmic height bound under a diagonal density estimate. -/
-theorem primitiveCharacterFamilyZeroCountAtNatHeight_dyadic_sum_le_two_mul_of_diagonal_density
-    (Q J : ℕ) (σ C δ : ℝ) (hσ : σ ≤ 1) (hC : 0 ≤ C) (hδ : 0 ≤ δ) (hδone : δ ≤ 1)
-    (hdensity : ∀ T : ℕ, 2 ≤ T → primitiveCharacterFamilyZeroCount T σ ≤ C * Real.rpow (T : ℝ) δ) :
+theorem familyNat_two_diag (Q J : ℕ) (σ C δ : ℝ) (hσ : σ ≤ 1) (hC : 0 ≤ C) (hδ : 0 ≤ δ)
+    (hδone : δ ≤ 1) (hdensity : ∀ T : ℕ, 2 ≤ T → familyZeros T σ ≤ C * Real.rpow (T : ℝ) δ) :
     (∑ j ∈ Finset.range J,
-        (primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ (j + 1)) -
-            primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ j)) *
-          (1 / 2 : ℝ) ^ j) ≤
+        (familyNatZeros Q σ (2 ^ (j + 1)) - familyNatZeros Q σ (2 ^ j)) * (1 / 2 : ℝ) ^ j) ≤
       2 * (C * Real.rpow ((Q + 1 : ℕ) : ℝ) δ) * J := by
   let C' : ℝ := C * Real.rpow ((Q + 1 : ℕ) : ℝ) δ
   have hC' : 0 ≤ C' := by
     dsimp only [C']
     exact mul_nonneg hC (Real.rpow_nonneg (by exact_mod_cast Nat.zero_le (Q + 1)) _)
   have hdensityQ :
-    ∀ j < J,
-      primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ (j + 1)) ≤
-        C' * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) δ := by
+    ∀ j < J, familyNatZeros Q σ (2 ^ (j + 1)) ≤ C' * Real.rpow ((2 ^ (j + 1) : ℕ) : ℝ) δ := by
     intro j hj
     have hcount :=
-      primitiveCharacterFamilyZeroCountAtNatHeight_le_rpow_of_diagonal_rpow_density Q (2 ^ (j + 1))
-        σ C δ hσ hC hδ (Nat.le_pow (Nat.succ_pos j)) hdensity
+      familyNat_rpow_le Q (2 ^ (j + 1)) σ C δ hσ hC hδ (Nat.le_pow (Nat.succ_pos j)) hdensity
     simpa only [C'] using hcount
-  have hsum :=
-    primitiveCharacterFamilyZeroCountAtNatHeight_dyadic_sum_le_two_mul_of_rpow_density Q J σ C' δ
-      hC' hδone hdensityQ
+  have hsum := familyNat_dyadic_two Q J σ C' δ hC' hδone hdensityQ
   simpa only [C'] using hsum
 
 /--
@@ -2119,19 +1935,13 @@ the nonnegative-exponent condition.
 Role: gives the intermediate real-part range estimate in the parameters used by the log-free
 family density theorem.
 -/
-theorem primitiveCharacterFamilyZeroCountAtNatHeight_dyadic_sum_le_two_mul_of_log_free_density
-    (Q J : ℕ) (A σ C : ℝ) (hA : 0 ≤ A) (hσ : σ ≤ 1) (hC : 0 ≤ C) (hδone : A * (1 - σ) ≤ 1)
-    (hdensity :
-      ∀ T : ℕ,
-        2 ≤ T → primitiveCharacterFamilyZeroCount T σ ≤ C * Real.rpow (T : ℝ) (A * (1 - σ))) :
+theorem familyNat_two_log (Q J : ℕ) (A σ C : ℝ) (hA : 0 ≤ A) (hσ : σ ≤ 1) (hC : 0 ≤ C)
+    (hδone : A * (1 - σ) ≤ 1)
+    (hdensity : ∀ T : ℕ, 2 ≤ T → familyZeros T σ ≤ C * Real.rpow (T : ℝ) (A * (1 - σ))) :
     (∑ j ∈ Finset.range J,
-        (primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ (j + 1)) -
-            primitiveCharacterFamilyZeroCountAtNatHeight Q σ (2 ^ j)) *
-          (1 / 2 : ℝ) ^ j) ≤
+        (familyNatZeros Q σ (2 ^ (j + 1)) - familyNatZeros Q σ (2 ^ j)) * (1 / 2 : ℝ) ^ j) ≤
       2 * (C * Real.rpow ((Q + 1 : ℕ) : ℝ) (A * (1 - σ))) * J := by
   have hδnonneg : 0 ≤ A * (1 - σ) := mul_nonneg hA (sub_nonneg.mpr hσ)
-  exact
-    primitiveCharacterFamilyZeroCountAtNatHeight_dyadic_sum_le_two_mul_of_diagonal_density Q J σ C
-      (A * (1 - σ)) hσ hC hδnonneg hδone hdensity
+  exact familyNat_two_diag Q J σ C (A * (1 - σ)) hσ hC hδnonneg hδone hdensity
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LogFreeDensity

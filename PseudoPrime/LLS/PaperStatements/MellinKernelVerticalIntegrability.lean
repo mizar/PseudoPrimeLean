@@ -109,14 +109,14 @@ theorem integrable_gammaFactor_power_line (K : MellinKernel) {N : ℕ} (χ : Dir
           (x : ℂ) ^ ((c : ℂ) + Complex.I * t)) := by
   have hσ : 0 < c + 1 / 2 := by linarith only [hc]
   have hσ' : c + 1 / 2 ≤ 2 := by linarith only [hc2]
-  obtain ⟨A, _, hb⟩ := exists_norm_logDeriv_gammaFactor_vertical_le_log χ hσ hσ'
+  obtain ⟨A, _, hb⟩ := gammaLogDeriv_vertical_log χ hσ hσ'
   have hl : -1 / 2 - K.delta < c := by linarith only [hc, K.delta_pos]
   have he (t : ℝ) : ((c + 1 / 2 : ℝ) : ℂ) + Complex.I * t = ((c : ℂ) + Complex.I * t) + 1 / 2 := by
     simp only [Complex.ofReal_add, Complex.ofReal_div, Complex.ofReal_one, Complex.ofReal_ofNat]
     ring
   have hi :=
     integrable_logWeighted_power_line K hl hc' (ne_of_gt hc) hx
-      (continuous_logDeriv_gammaFactor_vertical χ hσ).aestronglyMeasurable hb
+      (continuous_gammaLogDeriv_vertical χ hσ).aestronglyMeasurable hb
   simpa only [he] using hi
 
 open AnalyticNumberTheory.DirichletLFunction in
@@ -146,9 +146,8 @@ theorem integrable_completed_right_line (K : MellinKernel) {N : ℕ} [NeZero N]
     linarith only [hc]
   have hp : 0 < (((c : ℂ) + Complex.I * t) + 1 / 2).re := zero_lt_one.trans_le hr
   have he :=
-    logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne
-      (completedLFunction_ne_zero_of_one_le_re hne hr) (gammaFactor_ne_zero_of_re_pos χ hp)
-      (analyticAt_gammaFactor_of_re_pos χ hp).differentiableAt
+    L_logDeriv_sub_gamma_of_regular hne (completed_ne_zero_of_one_le_re hne hr)
+      (gammaFactor_ne_zero_of_re_pos χ hp) (analyticAt_gammaFactor_of_re_pos χ hp).differentiableAt
   simp only [Pi.sub_apply]
   rw [he]
   ring
@@ -168,14 +167,14 @@ theorem integrable_completed_left_line (K : MellinKernel) {N : ℕ} [NeZero N]
           (K.function ((c : ℂ) + Complex.I * t) * (x : ℂ) ^ ((c : ℂ) + Complex.I * t))) := by
   have hσ : c + 1 / 2 < 0 := by linarith only [hc']
   have hσ' : -1 ≤ c + 1 / 2 := by linarith only [hc2]
-  obtain ⟨A, _, hb⟩ := exists_norm_completed_vertical_left_le_log hp hne hinv hσ hσ'
+  obtain ⟨A, _, hb⟩ := completedLogDeriv_vertical_left hp hne hinv hσ hσ'
   have hu : c ≤ 1 / 2 + K.delta := by linarith only [hc', K.delta_pos]
   have he (t : ℝ) : ((c + 1 / 2 : ℝ) : ℂ) + Complex.I * t = ((c : ℂ) + Complex.I * t) + 1 / 2 := by
     simp only [Complex.ofReal_add, Complex.ofReal_div, Complex.ofReal_one, Complex.ofReal_ofNat]
     ring
   have hi :=
     integrable_logWeighted_power_line K hc hu (ne_of_lt hc') hx
-      (continuous_completed_logDeriv_vertical_left hp hne hinv hσ).aestronglyMeasurable hb
+      (continuous_completedLogDeriv_left hp hne hinv hσ).aestronglyMeasurable hb
   simpa only [he, Pi.neg_def, neg_mul, mul_assoc] using hi.neg
 
 /-- On a kernel strip line avoiding both its own pole and a real pole `p`, the

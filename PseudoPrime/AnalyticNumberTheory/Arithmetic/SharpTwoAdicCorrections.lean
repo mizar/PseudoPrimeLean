@@ -49,10 +49,10 @@ theorem odd_affine_sum_le_half_sq (a L : ℝ) (K : ℕ) :
 /-- For a nonzero real cutoff and primitive value minus one at two, the exact odd
 affine formula bounds the logarithmic defect by half the squared logarithm.
 This removes the positive linear loss from the previous branch envelope. -/
-theorem twoAdicLogCorrection_le_half_log_sq_of_apply_two_eq_neg_one {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hx : x ≠ 0) (h2 : χ.primitiveCharacter 2 = -1) :
+theorem logTwoCorrection_le_half_sq_of_neg_one {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
+    (hx : x ≠ 0) (h2 : χ.primitiveCharacter 2 = -1) :
     twoAdicLogCorrection x χ ≤ (Real.log x) ^ 2 / 2 := by
-  rw [twoAdicLogCorrection_eq_odd_sum_of_apply_two_eq_neg_one x χ hx h2]
+  rw [logTwoCorrection_eq_odd_sum_of_neg_one x χ hx h2]
   exact odd_affine_sum_le_half_sq (Real.log 2) (Real.log x) _
 
 /-- For real weights and any natural cutoff, retain the negative half-step shift
@@ -66,8 +66,8 @@ theorem affine_sum_le_shifted_half_sq (a L : ℝ) (K : ℕ) :
 /-- For a nonzero cutoff and primitive value zero at two, the logarithmic correction
 is bounded by the half-square with a half-log-two shift. Evaluate the zero powers
 and use the exact affine-sum inequality. This retains the negative linear saving. -/
-theorem twoAdicLogCorrection_le_shifted_half_log_sq_of_apply_two_eq_zero {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hx : x ≠ 0) (h2 : χ.primitiveCharacter 2 = 0) :
+theorem logTwoCorrection_le_shifted_sq_of_zero {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
+    (hx : x ≠ 0) (h2 : χ.primitiveCharacter 2 = 0) :
     twoAdicLogCorrection x χ ≤ (Real.log x - Real.log 2 / 2) ^ 2 / 2 := by
   rw [twoAdicLogCorrection_eq_sum x χ hx]
   calc
@@ -82,12 +82,12 @@ theorem twoAdicLogCorrection_le_shifted_half_log_sq_of_apply_two_eq_zero {q : �
 /-- For a quadratic primitive associate and a nonzero cutoff, every value at two
 has correction at most half the squared logarithm. Split its three possible values.
 This uniform envelope removes the old positive linear loss in the negative branch. -/
-theorem twoAdicLogCorrection_le_half_log_sq_of_isQuadratic {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hx : x ≠ 0) (hquad : χ.primitiveCharacter.IsQuadratic) :
+theorem logTwoCorrection_le_half_sq_of_quadratic {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
+    (hx : x ≠ 0) (hquad : χ.primitiveCharacter.IsQuadratic) :
     twoAdicLogCorrection x χ ≤ (Real.log x) ^ 2 / 2 := by
   rcases hquad (2 : ZMod χ.conductor) with h0 | h1 | hm
-  · exact twoAdicLogCorrection_le_half_log_sq_of_apply_two_eq_zero x χ hx h0
-  · exact twoAdicLogCorrection_le_half_log_sq_of_apply_two_eq_one x χ hx h1
-  · exact twoAdicLogCorrection_le_half_log_sq_of_apply_two_eq_neg_one x χ hx hm
+  · exact logTwoCorrection_le_half_sq_of_zero x χ hx h0
+  · exact logTwoCorrection_le_half_sq_of_one x χ hx h1
+  · exact logTwoCorrection_le_half_sq_of_neg_one x χ hx hm
 
 end PseudoPrime.AnalyticNumberTheory.Arithmetic

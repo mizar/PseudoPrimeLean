@@ -26,9 +26,9 @@ Either a proper local subgroup receives every ambient strong-MR pass at a
 divisor modulus whose square is at most `J * n`, or `n` is a squarefree
 uniform Korselt triple. This classification does not use GRH or a witness
 coefficient. -/
-theorem finite_index_local_subgroup_or_uniform_korselt_triple {n J : ℕ} [NeZero n] (hn1 : 1 < n)
-    (hnOdd : Odd n) (hcomp : ¬n.Prime) (H : Subgroup (ZMod n)ˣ)
-    (hH : H ≤ PrimeTest.fermatSubgroup n) (hJ : 1 ≤ J) (hJ3 : J ^ 3 ≤ n) (hi : H.index ≤ J) :
+theorem localSubgroup_or_uniformKorseltTriple {n J : ℕ} [NeZero n] (hn1 : 1 < n) (hnOdd : Odd n)
+    (hcomp : ¬n.Prime) (H : Subgroup (ZMod n)ˣ) (hH : H ≤ PrimeTest.fermatSubgroup n) (hJ : 1 ≤ J)
+    (hJ3 : J ^ 3 ≤ n) (hi : H.index ≤ J) :
     (∃ q : ℕ,
         2 ≤ q ∧
           q ∣ n ∧
@@ -56,7 +56,7 @@ theorem finite_index_local_subgroup_or_uniform_korselt_triple {n J : ℕ} [NeZer
       intro hm
       exact hdiv (by simpa only [hm, mul_one] using (dvd_refl (p - 1)))
     have hm1 : 1 < m := lt_of_le_of_ne (Nat.succ_le_of_lt hmpos) (Ne.symm hmne)
-    have hlocalSize := PrimeTest.prime_factor_square_le_local_powerKernel_index_mul (p := p) hm1
+    have hlocalSize := PrimeTest.primeFactor_sq_le_powerKernel_index (p := p) hm1
     have hlocalIndex := PrimeTest.local_powerKernel_index_le_of_le_fermat (dvd_mul_right p m) H hH
     have hsize : p ^ 2 ≤ J * (p * m) := by
       exact hlocalSize.trans (Nat.mul_le_mul_right (p * m) (hlocalIndex.trans hi))
@@ -67,8 +67,7 @@ theorem finite_index_local_subgroup_or_uniform_korselt_triple {n J : ℕ} [NeZer
         PrimeTest.StrongMillerRabinPass (p * m) (a : ZMod (p * m)) →
           ∃ u : (ZMod p)ˣ, u ∈ K ∧ (u : ZMod p) = (a : ZMod p) := by
       intro a ha
-      exact
-        PrimeTest.strongMillerRabinPass_mem_local_prime_powerKernel hn1 hnOdd (dvd_mul_right p m) ha
+      exact PrimeTest.strongMR_local_primeKernel hn1 hnOdd (dvd_mul_right p m) ha
     exact Or.inl ⟨p, hp.two_le, dvd_mul_right p m, hsize, ⟨K, hproper, hcontain⟩⟩
   have hK : ∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1 := by
     intro p hp hpn
@@ -101,7 +100,7 @@ theorem finite_index_local_subgroup_or_uniform_korselt_triple {n J : ℕ} [NeZer
         PrimeTest.StrongMillerRabinPass n (a : ZMod n) →
           ∃ u : (ZMod (p ^ 2))ˣ, u ∈ K ∧ (u : ZMod (p ^ 2)) = (a : ZMod (p ^ 2)) := by
       intro a ha
-      exact PrimeTest.strongMillerRabinPass_mem_local_divisor_powerKernel hn1 hnOdd hsq ha
+      exact PrimeTest.strongMR_local_divisorKernel hn1 hnOdd hsq ha
     exact
       Or.inl
         ⟨p ^ 2, hp.two_le.trans (Nat.le_self_pow (by decide : 2 ≠ 0) p), hsq, hsize,
@@ -126,8 +125,7 @@ theorem finite_index_local_subgroup_or_uniform_korselt_triple {n J : ℕ} [NeZer
           ∃ u : (ZMod p)ˣ, u ∈ K ∧ (u : ZMod p) = (a : ZMod p) := by
       intro a ha
       exact
-        PrimeTest.strongMillerRabinPass_mem_local_half_kernel_of_twoAdic_lt hn1 hnOdd hpOdd hqOdd
-          hpn hqn hv ha
+        PrimeTest.strongPass_mem_local_half_kernel_of_twoAdic_lt hn1 hnOdd hpOdd hqOdd hpn hqn hv ha
     exact Or.inl ⟨p, hp.two_le, hpn, hsize, ⟨K, hproper, hcontain⟩⟩
   have hU :
     ∀ p q : ℕ,
@@ -187,10 +185,9 @@ theorem finite_index_local_subgroup_or_uniform_korselt_triple {n J : ℕ} [NeZer
 either a local LLS witness below `0.3 (log n)^2` or the remaining uniform
 Korselt triple. The finite-index structure itself is supplied by the
 coefficient-free dichotomy above. -/
-theorem finite_index_witness_or_uniform_korselt_triple_log250 {n : ℕ} [NeZero n] (hnOdd : Odd n)
-    (hcomp : ¬n.Prime) (H : Subgroup (ZMod n)ˣ) (hH : H ≤ PrimeTest.fermatSubgroup n)
-    (hi : H.index ≤ 10 ^ 9) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 250 ≤ Real.log n) :
+theorem witness_or_uniformKorselt_log250_GRH {n : ℕ} [NeZero n] (hnOdd : Odd n) (hcomp : ¬n.Prime)
+    (H : Subgroup (ZMod n)ˣ) (hH : H ≤ PrimeTest.fermatSubgroup n) (hi : H.index ≤ 10 ^ 9)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 250 ≤ Real.log n) :
     (∃ p : ℕ,
         p.Prime ∧
           (p : ℝ) ≤ (3 / 10 : ℝ) * (Real.log n) ^ 2 ∧
@@ -210,7 +207,7 @@ theorem finite_index_witness_or_uniform_korselt_triple_log250 {n : ℕ} [NeZero 
       J ^ 3 = 10 ^ 27 := by norm_num only [J]
       _ ≤ n := hN27
   rcases
-    finite_index_local_subgroup_or_uniform_korselt_triple hn1 hnOdd hcomp H hH hJ hJ3
+    localSubgroup_or_uniformKorseltTriple hn1 hnOdd hcomp H hH hJ hJ3
       (by simpa only [J] using hi) with
     hlocal | htriple
   · obtain ⟨q, hq, hqn, hsize, K, hproper, hpass⟩ := hlocal
@@ -229,10 +226,9 @@ theorem finite_index_witness_or_uniform_korselt_triple_log250 {n : ℕ} [NeZero 
 either a local LLS witness below `0.3 (log n)^2` or the remaining uniform
 Korselt triple. The finite-index structure itself is supplied by the
 coefficient-free dichotomy above. -/
-theorem finite_index_witness_or_uniform_korselt_triple_log240 {n : ℕ} [NeZero n] (hnOdd : Odd n)
-    (hcomp : ¬n.Prime) (H : Subgroup (ZMod n)ˣ) (hH : H ≤ PrimeTest.fermatSubgroup n)
-    (hi : H.index ≤ 10 ^ 9) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 240 ≤ Real.log n) :
+theorem witness_or_uniformKorselt_log240_GRH {n : ℕ} [NeZero n] (hnOdd : Odd n) (hcomp : ¬n.Prime)
+    (H : Subgroup (ZMod n)ˣ) (hH : H ≤ PrimeTest.fermatSubgroup n) (hi : H.index ≤ 10 ^ 9)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 240 ≤ Real.log n) :
     (∃ p : ℕ,
         p.Prime ∧
           (p : ℝ) ≤ (3 / 10 : ℝ) * (Real.log n) ^ 2 ∧
@@ -252,7 +248,7 @@ theorem finite_index_witness_or_uniform_korselt_triple_log240 {n : ℕ} [NeZero 
       J ^ 3 = 10 ^ 27 := by norm_num only [J]
       _ ≤ n := hN27
   rcases
-    finite_index_local_subgroup_or_uniform_korselt_triple hn1 hnOdd hcomp H hH hJ hJ3
+    localSubgroup_or_uniformKorseltTriple hn1 hnOdd hcomp H hH hJ hJ3
       (by simpa only [J] using hi) with
     hlocal | htriple
   · obtain ⟨q, hq, hqn, hsize, K, hproper, hpass⟩ := hlocal
@@ -272,10 +268,9 @@ with index at most 10^9 yields a coefficient-0.282924 witness unless n is a squa
 Korselt triple with uniform predecessor two-adic valuations. Apply the four
 local witness branches and Korselt's criterion to exhaust the remaining cases.
 This isolates the only finite-index branch still needing a smaller start. -/
-theorem coefficient_0283_witness_or_uniform_korselt_triple {n : ℕ} [NeZero n] (hnOdd : Odd n)
-    (hcomp : ¬n.Prime) (H : Subgroup (ZMod n)ˣ) (hH : H ≤ PrimeTest.fermatSubgroup n)
-    (hi : H.index ≤ 10 ^ 9) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hn : 10 ^ 142 ≤ n) :
+theorem witness_0282924_or_uniformKorselt_GRH {n : ℕ} [NeZero n] (hnOdd : Odd n) (hcomp : ¬n.Prime)
+    (H : Subgroup (ZMod n)ˣ) (hH : H ≤ PrimeTest.fermatSubgroup n) (hi : H.index ≤ 10 ^ 9)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hn : 10 ^ 142 ≤ n) :
     (∃ r : ℕ,
         r.Prime ∧
           (r : ℝ) ≤ (282924 / 1000000 : ℝ) * (Real.log n) ^ 2 ∧
@@ -294,7 +289,7 @@ theorem coefficient_0283_witness_or_uniform_korselt_triple {n : ℕ} [NeZero n] 
       _ ≤ 10 ^ 142 := by norm_num only
       _ ≤ n := hn
   rcases
-    finite_index_local_subgroup_or_uniform_korselt_triple hn1 hnOdd hcomp H hH hJ hJ3
+    localSubgroup_or_uniformKorseltTriple hn1 hnOdd hcomp H hH hJ hJ3
       (by simpa only [J] using hi) with
     hlocal | htriple
   · obtain ⟨q, hq, hqn, hsize, K, hproper, hpass⟩ := hlocal
@@ -309,9 +304,8 @@ theorem coefficient_0283_witness_or_uniform_korselt_triple {n : ℕ} [NeZero n] 
 divisibility, and uniform predecessor valuations has a coefficient-0.282924
 witness for n at least 10^434782608696. Enumerate its prime factors and apply
 the existing Gaussian triple theorem. This consumes the classification output. -/
-theorem exists_prime_witness_le_0283_of_uniform_korselt_triple_card {n : ℕ} (hnOdd : Odd n)
-    (hsf : Squarefree n) (hc : n.primeFactors.card = 3)
-    (hK : ∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1)
+theorem exists_prime_0282924_korseltTriple_GRH {n : ℕ} (hnOdd : Odd n) (hsf : Squarefree n)
+    (hc : n.primeFactors.card = 3) (hK : ∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1)
     (hU :
       ∀ p q : ℕ, p.Prime → q.Prime → p ∣ n → q ∣ n → padicValNat 2 (p - 1) = padicValNat 2 (q - 1))
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hn : 10 ^ 434782608696 ≤ n) :
@@ -336,7 +330,7 @@ theorem exists_prime_witness_le_0283_of_uniform_korselt_triple_card {n : ℕ} (h
     simpa only [Finset.prod_insert, Finset.prod_singleton, Finset.mem_insert, Finset.mem_singleton,
       hpq, hpr, hqr, or_self, not_false_eq_true, mul_assoc] using hprod
   exact
-    exists_prime_witness_le_gaussian_0283_of_three_prime_korselt hp hq hr
+    exists_prime_gaussian_0282924_korselt_GRH hp hq hr
       (hp.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hpn))
       (hq.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hqn))
       (hr.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hrn)) hpq hpr hqr hnprod (hK p hp hpn)
@@ -347,7 +341,7 @@ base at most (282924/1000000)log(n)^2 if a subgroup inside its Fermat subgroup h
 at most 10^9. Exhaust the local branches and apply the Gaussian triple result
 to the sole remaining case. The subgroup need not contain all strong passes.
 This closes the finite-index side at the current triple start. -/
-theorem exists_prime_witness_le_0283_of_small_fermat_index {n : ℕ} [NeZero n] (hnOdd : Odd n)
+theorem exists_prime_0282924_smallFermatIndex_GRH {n : ℕ} [NeZero n] (hnOdd : Odd n)
     (hcomp : ¬n.Prime) (H : Subgroup (ZMod n)ˣ) (hH : H ≤ PrimeTest.fermatSubgroup n)
     (hi : H.index ≤ 10 ^ 9) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hn : 10 ^ 434782608696 ≤ n) :
@@ -357,12 +351,9 @@ theorem exists_prime_witness_le_0283_of_small_fermat_index {n : ℕ} [NeZero n] 
         ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
   have hn142 : 10 ^ 142 ≤ n :=
     (pow_le_pow_right₀ (by decide : (1 : ℕ) ≤ 10) (by decide : (142 : ℕ) ≤ 434782608696)).trans hn
-  rcases coefficient_0283_witness_or_uniform_korselt_triple hnOdd hcomp H hH hi hGRH hn142 with hw |
-    ht
+  rcases witness_0282924_or_uniformKorselt_GRH hnOdd hcomp H hH hi hGRH hn142 with hw | ht
   · obtain ⟨r, hr, hb, hfail⟩ := hw
     exact ⟨r, hr, hb, hfail⟩
-  · exact
-      exists_prime_witness_le_0283_of_uniform_korselt_triple_card hnOdd ht.1 ht.2.1 ht.2.2.1
-        ht.2.2.2 hGRH hn
+  · exact exists_prime_0282924_korseltTriple_GRH hnOdd ht.1 ht.2.1 ht.2.2.1 ht.2.2.2 hGRH hn
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

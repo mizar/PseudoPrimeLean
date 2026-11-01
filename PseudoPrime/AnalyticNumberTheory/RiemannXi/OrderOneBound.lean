@@ -90,7 +90,7 @@ with the three factor-wise bounds `norm_cpow_eq_rpow_re_of_pos`
 point `s = 1` is excluded from the closed form and handled directly via
 `AnalyticNumberTheory.RiemannXi.riemannXi_one` and
 `AnalyticNumberTheory.RiemannXi.one_le_xiOrderOneBound`. -/
-theorem norm_riemannXi_le_xiOrderOneBound_of_one_half_le_re {s : ℂ} (hs : 1 / 2 ≤ s.re) :
+theorem norm_xi_le_xiOrderOneBound_of_one_half_le_re {s : ℂ} (hs : 1 / 2 ≤ s.re) :
     ‖riemannXi s‖ ≤ xiOrderOneBound ‖s‖ := by
   rcases eq_or_ne s 1 with rfl | hs1
   · rw [riemannXi_one]
@@ -183,11 +183,11 @@ monotonicity of the envelope, and reflection `s ↦ 1-s`.
 It supplies the growth input for finite-radius canonical-decomposition estimates. -/
 theorem norm_riemannXi_le_xiOrderOneBound (s : ℂ) : ‖riemannXi s‖ ≤ xiOrderOneBound (‖s‖ + 1) :=
   norm_riemannXi_le_of_forall_one_half_le_re xiOrderOneBound_monotoneOn
-    (fun _ ht => norm_riemannXi_le_xiOrderOneBound_of_one_half_le_re ht) s
+    (fun _ ht => norm_xi_le_xiOrderOneBound_of_one_half_le_re ht) s
 
 /-- The order-one envelope bounds xi uniformly on a closed ball of nonnegative
 radius. This supplies the boundary growth input for canonical factor estimates. -/
-theorem norm_riemannXi_le_xiOrderOneBound_on_closedBall {R : ℝ} (hR : 0 ≤ R) {s : ℂ}
+theorem norm_xi_le_xiOrderOneBound_on_closedBall {R : ℝ} (hR : 0 ≤ R) {s : ℂ}
     (hs : s ∈ Metric.closedBall (0 : ℂ) R) : ‖riemannXi s‖ ≤ xiOrderOneBound (R + 1) := by
   have hnorm := norm_riemannXi_le_xiOrderOneBound s
   rw [Metric.mem_closedBall, dist_zero_right] at hs

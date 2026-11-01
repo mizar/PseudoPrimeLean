@@ -26,7 +26,7 @@ open AnalyticNumberTheory.DirichletLFunction in
 at height at least one, the alpha-18 kernel term has norm at most eight times its
 Poisson term at three halves. Use critical-line location and the height-square bound.
 This supplies an explicit tail majorant without a local-count existence constant. -/
-theorem triangular18_zero_norm_le_eight_poisson_of_height {q : ℕ} [NeZero q]
+theorem triangular18_zero_norm_le_poisson_of_height_RH {q : ℕ} [NeZero q]
     {χ : DirichletCharacter ℂ q} (hRH : AnalyticNumberTheory.GRH.DirichletRiemannHypothesis χ)
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {ρ : ℂ} (hheight : 1 ≤ |ρ.im|) :
     let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
@@ -40,8 +40,7 @@ theorem triangular18_zero_norm_le_eight_poisson_of_height {q : ℕ} [NeZero q]
     simp only [MellinKernel.kernelZeroTerm, hD, Int.cast_zero, zero_mul, norm_zero, mul_zero,
       le_refl]
   · have hr :=
-      completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv
-        (completed_zero_of_divisor_ne_zero hne hD)
+      completed_zero_re_eq_half_of_RH hRH hp hinv (completed_zero_of_divisor_ne_zero hne hD)
     have ha : AnalyticOnNhd ℂ χ.completedLFunction Set.univ := fun z _ ↦
       (DirichletCharacter.differentiable_completedLFunction hne).analyticAt z
     have hn : (0 : ℝ) ≤ D := by exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg ha ρ
@@ -70,9 +69,9 @@ open AnalyticNumberTheory.DirichletLFunction in
 scale, the alpha-18 oscillating zero series restricted to heights at least one has norm
 at most 4 log q+96. Dominate by eight Poisson terms and use the numerical centered
 Poisson bound at three halves. The constant is independent of the scale. -/
-theorem triangular18_oscillating_zero_tail_norm_le_explicit {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : AnalyticNumberTheory.GRH.DirichletRiemannHypothesis χ)
-    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) :
+theorem triangular18_zeroTail_bound_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : AnalyticNumberTheory.GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1)
+    (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) :
     let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
     ‖∑' ρ : ℂ, if 1 ≤ |ρ.im| then K.oscillatingZeroTerm χ x ρ else 0‖ ≤ 4 * Real.log q + 96 := by
   classical
@@ -97,7 +96,7 @@ theorem triangular18_oscillating_zero_tail_norm_le_explicit {q : ℕ} [NeZero q]
     dsimp only [F]
     by_cases hh : 1 ≤ |ρ.im|
     · rw [ite_eq_left hh, MellinKernel.norm_oscillatingZeroTerm K χ hx]
-      exact triangular18_zero_norm_le_eight_poisson_of_height hRH hp hne hinv hh
+      exact triangular18_zero_norm_le_poisson_of_height_RH hRH hp hne hinv hh
     · rw [ite_eq_right hh, norm_zero]
       exact mul_nonneg (by norm_num only) (hP0 ρ)
   have hmajor := hP.mul_left (8 : ℝ)
@@ -106,7 +105,7 @@ theorem triangular18_oscillating_zero_tail_norm_le_explicit {q : ℕ} [NeZero q]
   have hsum := Summable.tsum_le_tsum hb hnorm hmajor
   rw [tsum_mul_left] at hsum
   have he :=
-    completed_poissonSum_centered_le_inv_gap hq hRH hp hne hinv (σ := 3 / 2) (by norm_num only)
+    poissonSum_centered_inv_gap_RH hq hRH hp hne hinv (σ := 3 / 2) (by norm_num only)
       (by norm_num only)
   norm_num only at he
   have hu : (∑' ρ : ℂ, P ρ) ≤ Real.log q / 2 + 12 := by
@@ -120,7 +119,7 @@ theorem triangular18_oscillating_zero_tail_norm_le_explicit {q : ℕ} [NeZero q]
 zero real part is at least its height-below-one part minus 4 log q+96. Split two
 absolutely convergent series and apply the explicit tail norm bound. This isolates
 the compact-height cancellation still required for the target comparison. -/
-theorem triangular18_oscillating_zero_re_lower_by_low_height {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem triangular18_zero_re_lowHeight_GRH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) :
     let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
@@ -153,7 +152,7 @@ theorem triangular18_oscillating_zero_re_lower_by_low_height {q : ℕ} [NeZero q
     · rw [ite_eq_right hh, ite_eq_left (le_of_not_gt hh), zero_add]
   have hsum : (∑' ρ : ℂ, F ρ) = (∑' ρ : ℂ, Lo ρ) + ∑' ρ : ℂ, Hi ρ := by
     rw [tsum_congr he, hlo.tsum_add hhi]
-  have ht := triangular18_oscillating_zero_tail_norm_le_explicit hq (hGRH q χ hp) hp hne hinv hx
+  have ht := triangular18_zeroTail_bound_RH hq (hGRH q χ hp) hp hne hinv hx
   have hr := Complex.re_le_norm (-(∑' ρ : ℂ, Hi ρ))
   rw [Complex.neg_re, norm_neg] at hr
   change (∑' ρ : ℂ, Lo ρ).re - _ ≤ (∑' ρ : ℂ, F ρ).re
@@ -180,9 +179,8 @@ noncomputable def triangular18_annihilator_lowZeroRealSum {q : ℕ} [NeZero q]
 is at least its height-below-one part minus four times the exact conductor logarithm
 sum and 96 per nonprincipal character. Sum the individual tail lower bounds and
 identify the annihilator cardinality. This retains exact conductor costs. -/
-theorem triangular18_annihilator_zeroRealSum_lower_by_low_height {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ}
-    (hx : 0 < x) :
+theorem triangular18_annihilator_lowHeight_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 0 < x) :
     triangular18_annihilator_lowZeroRealSum H x - 4 * subgroupConductorLogSum H -
         96 * ((H.index : ℝ) - 1) ≤
       triangular18_annihilator_zeroRealSum H x := by
@@ -191,7 +189,7 @@ theorem triangular18_annihilator_zeroRealSum_lower_by_low_height {q : ℕ} [NeZe
   let A := NumberTheory.subgroupAnnihilator H
   let : ∀ χ : A, NeZero χ.val.conductor := fun χ ↦ ⟨χ.val.conductor_ne_zero⟩
   have hpoint (χ : A) (hχ : χ ∈ Finset.univ.erase (1 : A)) :=
-    triangular18_oscillating_zero_re_lower_by_low_height
+    triangular18_zero_re_lowHeight_GRH
       ((by norm_num only : 2 ≤ 3).trans
         (NumberTheory.three_le_conductor_of_ne_one χ.val
           (fun he ↦ (Finset.mem_erase.mp hχ).1 (Subtype.ext he))))
@@ -226,9 +224,9 @@ theorem triangular18_annihilator_zeroRealSum_lower_by_low_height {q : ℕ} [NeZe
 zero aggregate, a prime at most x divides the level or lies outside the subgroup.
 Bound the explicit tail by the ambient conductor sum and apply the zero-retained gap.
 The conductor coefficient is 40-log x; the compact zero contribution remains explicit. -/
-theorem exists_prime_factor_or_outside_of_triangular18_low_height_gap {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ}
-    (hx : 1 < x) (hlog : Real.log x ≤ 36)
+theorem exists_prime_factorOrOutside_tri18_low_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 < x)
+    (hlog : Real.log x ≤ 36)
     (hgap :
       300000000 * (Real.sqrt x + Real.sqrt x⁻¹) +
           1300000 * (x ^ (1 / 4 : ℝ) + (x⁻¹) ^ (1 / 4 : ℝ)) +
@@ -238,10 +236,10 @@ theorem exists_prime_factor_or_outside_of_triangular18_low_height_gap {q : ℕ} 
               36 * Real.log q / (Real.sqrt x - 1)) +
           triangular18_annihilator_lowZeroRealSum H x) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ x ∧ (p ∣ q ∨ ¬NumberTheory.residueInSubgroup q H p) := by
-  have hz := triangular18_annihilator_zeroRealSum_lower_by_low_height H hGRH (zero_lt_one.trans hx)
+  have hz := triangular18_annihilator_lowHeight_GRH H hGRH (zero_lt_one.trans hx)
   have hc :=
     mul_le_mul_of_nonneg_left (subgroupConductorLogSum_le H) (by norm_num only : (0 : ℝ) ≤ 4)
-  apply exists_prime_factor_or_outside_of_triangular18_zero_retained_gap H hGRH hx hlog
+  apply exists_prime_factorOrOutside_zeroGap_GRH H hGRH hx hlog
   nlinarith only [hgap, hz, hc]
 
 end PseudoPrime.LLS.PaperStatements

@@ -45,8 +45,7 @@ theorem gammaSharpFourT_lower (hRH : RiemannHypothesis) {r : ℝ} (hr : 1 ≤ r)
   have hvar := (abs_le.mp (gammaClippedError_variation_bound hRH hx hh hhx)).1
   rw [hs] at hvar
   have hraw := gammaClippedRawError_variation_eq hx
-  have hnorm :=
-    AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum_normalized_eq_main_add_error hx0
+  have hnorm := AnalyticNumberTheory.Arithmetic.expRampMangoldt_div_sqrt_eq_main_add_error hx0
   rw [hs] at hnorm
   have hmass : (293 / 320 : ℝ) ≤ ∫ u in (0 : ℝ)..(99 / 40), Analysis.exponentialRampWeight u := by
     linarith only [Analysis.gamma_ramp_mass_lower]
@@ -322,7 +321,7 @@ theorem exists_prime_gammaSharp {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Pr
     rw [hs]
     exact hbudget.trans_le hmain
   exact
-    exists_prime_witness_of_signed_prefix_gap_all_inputs hn ho hc hn9 hGRH hQ hx (by norm_num only)
+    exists_prime_signedPrefix_allInputs_GRH hn ho hc hn9 hGRH hQ hx (by norm_num only)
       (by nlinarith only [hr60]) hactual
 
 /-- Under the sharper Gamma assumptions, the least rejecting prime is within gammaSharpBound.

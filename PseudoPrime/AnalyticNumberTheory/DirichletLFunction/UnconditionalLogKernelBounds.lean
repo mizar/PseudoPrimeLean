@@ -18,8 +18,8 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 `a * ‖z‖ ≤ 1` has a quadratically bounded exponential difference after subtracting
 its linear term. Apply the exponential Taylor bound twice and divide by `z²`.
 This gives a bound uniform as the argument approaches zero. -/
-theorem norm_exp_difference_linear_remainder_le_small {a b : ℝ} (hb : 0 ≤ b) (hba : b ≤ a) {z : ℂ}
-    (hz : z ≠ 0) (hsmall : a * ‖z‖ ≤ 1) :
+theorem exp_diff_linear_remainder_small {a b : ℝ} (hb : 0 ≤ b) (hba : b ≤ a) {z : ℂ} (hz : z ≠ 0)
+    (hsmall : a * ‖z‖ ≤ 1) :
     ‖(Complex.exp ((a : ℂ) * z) - Complex.exp ((b : ℂ) * z) - ((a - b : ℝ) : ℂ) * z) / z ^ 2‖ ≤
       2 * a ^ 2 := by
   have ha : 0 ≤ a := hb.trans hba
@@ -69,7 +69,7 @@ theorem half_power_difference_eq {x : ℝ} (hx : 0 ≤ x) (z : ℂ) :
 the half-power difference minus its linear term, divided by `z²`, is bounded
 by twice `log² x`. Rewrite both powers as exponentials and apply the small
 argument Taylor estimate. This controls the origin neighborhood. -/
-theorem norm_half_power_linear_remainder_le_small {x : ℝ} (hx : 2 ≤ x) {z : ℂ} (hz : z ≠ 0)
+theorem half_power_linear_remainder_small {x : ℝ} (hx : 2 ≤ x) {z : ℂ} (hz : z ≠ 0)
     (hsmall : Real.log x * ‖z‖ ≤ 1) :
     ‖(((1 - (2 : ℂ) ^ (-z)) * (x : ℂ) ^ z - (Real.log 2 : ℂ) * z) / z ^ 2)‖ ≤
       2 * (Real.log x) ^ 2 := by
@@ -85,7 +85,7 @@ theorem norm_half_power_linear_remainder_le_small {x : ℝ} (hx : 2 ≤ x) {z : 
   rw [half_power_difference_eq hxpos.le, Complex.cpow_def_of_ne_zero hxne,
     Complex.cpow_def_of_ne_zero hhne, ← Complex.ofReal_log hxpos.le, ← Complex.ofReal_log hhalf.le,
     ← hsub]
-  exact norm_exp_difference_linear_remainder_le_small hloghalf hba hz hsmall
+  exact exp_diff_linear_remainder_small hloghalf hba hz hsmall
 
 /-- For scale at least two and real part between zero and one half, the
 half-power factor is bounded by twice the square root of the scale. Bound both
@@ -111,7 +111,7 @@ theorem norm_half_power_le_two_sqrt {x : ℝ} (hx : 2 ≤ x) {z : ℂ} (hzlo : 0
 and `1 ≤ log x * ‖z‖`, the linear-subtracted half-power quotient has a square-root
 and logarithmic bound. Use the power norms and the lower bound on the argument.
 This complements the Taylor estimate near zero. -/
-theorem norm_half_power_linear_remainder_le_large {x : ℝ} (hx : 2 ≤ x) {z : ℂ} (hzlo : 0 ≤ z.re)
+theorem half_power_linear_remainder_large {x : ℝ} (hx : 2 ≤ x) {z : ℂ} (hzlo : 0 ≤ z.re)
     (hzhi : z.re ≤ 1 / 2) (hz : z ≠ 0) (hlarge : 1 ≤ Real.log x * ‖z‖) :
     ‖(((1 - (2 : ℂ) ^ (-z)) * (x : ℂ) ^ z - (Real.log 2 : ℂ) * z) / z ^ 2)‖ ≤
       2 * Real.sqrt x * (Real.log x) ^ 2 + Real.log 2 * Real.log x := by
@@ -141,7 +141,7 @@ theorem norm_half_power_linear_remainder_le_large {x : ℝ} (hx : 2 ≤ x) {z : 
 and one half, the regularized half-power kernel has a uniform square-root and
 logarithmic bound. Combine the small and large argument estimates and bound the
 regular correction at two. No inverse distance from zero remains. -/
-theorem norm_regularized_half_kernel_le_low_re {x : ℝ} (hx : 2 ≤ x) {z : ℂ} (hzlo : 0 ≤ z.re)
+theorem regularizedHalfKernel_low_bound {x : ℝ} (hx : 2 ≤ x) {z : ℂ} (hzlo : 0 ≤ z.re)
     (hzhi : z.re ≤ 1 / 2) (hz : z ≠ 0) :
     ‖(((1 - (2 : ℂ) ^ (-z)) * (x : ℂ) ^ z - (Real.log 2 : ℂ) * z) / z ^ 2) -
           (Real.log 2 : ℂ) / ((2 : ℂ) - z)‖ ≤
@@ -155,12 +155,11 @@ theorem norm_regularized_half_kernel_le_low_re {x : ℝ} (hx : 2 ≤ x) {z : ℂ
     ‖(((1 - (2 : ℂ) ^ (-z)) * (x : ℂ) ^ z - (Real.log 2 : ℂ) * z) / z ^ 2)‖ ≤
       2 * Real.sqrt x * (Real.log x) ^ 2 + Real.log 2 * Real.log x := by
     by_cases hsmall : Real.log x * ‖z‖ ≤ 1
-    · have hb := norm_half_power_linear_remainder_le_small hx hz hsmall
+    · have hb := half_power_linear_remainder_small hx hz hsmall
       have hprod :=
         mul_nonneg (by linarith only [hsqrt] : 0 ≤ Real.sqrt x - 1) (sq_nonneg (Real.log x))
       nlinarith only [hb, hprod, mul_nonneg hl ha]
-    · exact
-        norm_half_power_linear_remainder_le_large hx hzlo hzhi hz (le_of_lt (lt_of_not_ge hsmall))
+    · exact half_power_linear_remainder_large hx hzlo hzhi hz (le_of_lt (lt_of_not_ge hsmall))
   have hden : 1 ≤ ‖(2 : ℂ) - z‖ := by
     have hb := Complex.re_le_norm ((2 : ℂ) - z)
     rw [Complex.sub_re, Complex.re_ofNat] at hb
@@ -175,7 +174,7 @@ regularized completed-zero term with real part at most one half is bounded by
 its divisor multiplicity times an explicit square-root and logarithmic factor.
 The zero-free half-planes and quadratic cancellation remove the origin singularity.
 This permits summing the left-strip terms using unconditional local counts. -/
-theorem norm_regularizedLogHalfZeroTerm_le_low_re {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+theorem norm_regularHalfTerm_le_low_re {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 2 ≤ x) {ρ : ℂ}
     (hre : ρ.re ≤ 1 / 2) :
     ‖regularizedLogHalfZeroTerm χ x ρ‖ ≤
@@ -189,13 +188,13 @@ theorem norm_regularizedLogHalfZeroTerm_le_low_re {q : ℕ} [NeZero q] {χ : Dir
   · have hz := completed_zero_of_divisor_ne_zero hne hD
     have hρ : ρ ≠ 0 := by
       intro he
-      exact dirichletCompletedLFunction_zero_ne_zero_of_primitive hp hne (he ▸ hz)
+      exact completed_zero_ne_zero_of_primitive hp hne (he ▸ hz)
     have hlo := completedLFunction_zero_re_pos hp hinv hz
     have hAn : AnalyticOnNhd ℂ χ.completedLFunction Set.univ := fun z _ ↦
       (χ.differentiable_completedLFunction hne).analyticAt z
     have hDn : (0 : ℝ) ≤ D := by exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg hAn ρ
-    rw [regularizedLogHalfZeroTerm_eq_cancelled_kernel χ x hρ, norm_mul, Complex.norm_intCast,
+    rw [regularHalfTerm_eq_cancelled_kernel χ x hρ, norm_mul, Complex.norm_intCast,
       abs_of_nonneg hDn]
-    exact mul_le_mul_of_nonneg_left (norm_regularized_half_kernel_le_low_re hx hlo.le hre hρ) hDn
+    exact mul_le_mul_of_nonneg_left (regularizedHalfKernel_low_bound hx hlo.le hre hρ) hDn
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

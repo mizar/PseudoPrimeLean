@@ -66,8 +66,8 @@ theorem logarithmic_phase64_budget_le_numerical {n : ℕ} {hn : Odd n} {hns : ¬
 cap and a strict transported numerical gap give an odd-prime negative Jacobi witness
 through 99*x/40 at the new scale. All original local and Euler numerical caps are proved;
 selecting a wider target interval still requires proving the displayed scalar gap. -/
-theorem exists_odd_prime_negative_of_transported_phase64_numerical_gap {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem exists_oddPrime_negJacobi_transport1660_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {q : ℕ} (hq : 20000 ≤ q)
     (hmq : (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ q) {x b L : ℝ} (hlo : 1600 ≤ x)
     (hhi : x ≤ 1660) (hb : 500 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x) (hLlo : 64 ≤ L)
@@ -83,7 +83,7 @@ theorem exists_odd_prime_negative_of_transported_phase64_numerical_gap {n : ℕ}
       ((abs_nonneg (Real.log x - Real.log (L ^ 2 / (99 / 40)))).trans hd)
   have hc := logarithmic_phase64_budget_le_numerical bridge hGRH.riemann hmq hlo hhi hb hd0
   exact
-    exists_odd_prime_negative_of_transported_phase64_gap bridge hGRH hq hmq
+    exists_oddPrime_negJacobi_transport64_GRH bridge hGRH hq hmq
       ((by norm_num only : (2 : ℝ) ≤ 1600).trans hlo) ((by norm_num only : (1 : ℝ) ≤ 500).trans hb)
       hbx hLlo hLhi δ hd (hc.trans_lt hgap)
 

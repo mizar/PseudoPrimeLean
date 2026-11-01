@@ -41,13 +41,13 @@ theorem reciprocalGap_pole_re_le_coprime_prefix {h r x : ℝ} (hh : 0 < h) (hr :
     (MellinKernel.weightedResidue (reciprocalGapMellinKernel h hh)
           (fun z : ℂ ↦ χ.completedLFunction (z + 1 / 2)) x (-1 / 2)).re ≤
       reciprocalGapCoprimePoleBudget h r q x M G B := by
-  have hpi := DirichletCharacter.isPrimitive_inv hp
+  have hpi := AnalyticNumberTheory.DirichletLFunction.character_isPrimitive_inv hp
   have hni : χ⁻¹⁻¹ ≠ 1 := by simpa only [inv_inv] using hne
-  have hc :=
-    completedLogDeriv_endpoint_le_positive_prefix hq (hGRH q χ⁻¹ hpi) hpi hinv hni hr B hM hG
-  simp only [DirichletCharacter.inv_apply_eq_conj, Complex.conj_re] at hc
+  have hc := completedLogDeriv_prefix_bound_RH hq (hGRH q χ⁻¹ hpi) hpi hinv hni hr B hM hG
+  simp only [AnalyticNumberTheory.DirichletLFunction.character_inv_apply_eq_conj,
+    Complex.conj_re] at hc
   have hpre :=
-    AnalyticNumberTheory.Arithmetic.character_positive_mangoldt_prefix_eq_coprime χ B
+    AnalyticNumberTheory.Arithmetic.character_positive_prefix_eq_coprime χ B
       (fun n ↦ ((n : ℝ) ^ (1 + r))⁻¹) hB hsmall
   have he :
     (∑ n ∈ B, (1 + (χ n).re) * ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ (1 + r)) =
@@ -79,7 +79,7 @@ theorem reciprocalGap_remainder_re_le_coprime_prefix {h r : ℝ} (hh : 0 < h) (h
       reciprocalGapCoprimePoleBudget h r q x M₁ G₁ B + reciprocalGapRealAxisBudget h q x M₂ G₂ +
         reciprocalGapSignedGammaBudget h x := by
   have hx0 := zero_lt_one.trans_le hx
-  have hΓ := reciprocalGap_remainder_gamma_re_le_signed_budget hh hx χ
+  have hΓ := reciprocalGap_gamma_re_le_signedBudget hh hx χ
   have hP :=
     reciprocalGap_pole_re_le_coprime_prefix hh hr hx0 hq hp hne hinv hGRH B hB hsmall hM₁ hG₁
   have hL := reciprocalGap_leftIntegral_re_eq_realAxis hh hp hne hinv hx
@@ -94,8 +94,8 @@ separation against a selected unit-supported principal sum gives a coprime prime
 where the character is not one. Retain the exact full-plus-coprime positive prefixes
 under witness nonexistence and compare the selected character lower sum.
 The six Euler and Gamma inputs remain arbitrary certified scalar bounds. -/
-theorem exists_prime_coprime_not_one_of_reciprocalGap_separation {h r c : ℝ} (hh : 0 < h)
-    (hr : 0 < r) {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+theorem exists_prime_neOne_coprimeGap_GRH {h r c : ℝ} (hh : 0 < h) (hr : 0 < r) {q : ℕ} [NeZero q]
+    (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hc : (1 / 2 : ℝ) < c) (hbound : c ^ 2 ≤ 1 / 4 + h / 2) {x : ℝ}
     (hx : 1 ≤ x) (B₀ B₁ B : Finset ℕ) (hB₀ : ∀ n ∈ B₀, (n : ℝ) ≤ x) (hB₁ : ∀ n ∈ B₁, (n : ℝ) ≤ x)
@@ -125,7 +125,7 @@ theorem exists_prime_coprime_not_one_of_reciprocalGap_separation {h r c : ℝ} (
     reciprocalGap_remainder_re_le_coprime_prefix hh hr hq hGRH hp hne hinv hx B₁ hB₁ hsmall hM₁ hG₁
       hM₂ hG₂
   have hpre :=
-    AnalyticNumberTheory.Arithmetic.character_positive_mangoldt_prefix_eq_coprime χ B₀
+    AnalyticNumberTheory.Arithmetic.character_positive_prefix_eq_coprime χ B₀
       (fun n ↦ ((n : ℝ) ^ (1 / 2 + c))⁻¹) hB₀ hsmall
   have he :
     (∑ n ∈ B₀, (1 + (χ n).re) * ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ (1 / 2 + c)) =
@@ -148,8 +148,7 @@ theorem exists_prime_coprime_not_one_of_reciprocalGap_separation {h r c : ℝ} (
       (div_nonneg zero_le_one (lt_trans (by norm_num only : (0 : ℝ) < 1 / 2) hc).le)
   have hupper := hU.trans (add_le_add hZ hR)
   have hlower :=
-    sum_reciprocalGapPrincipalWeight_le_of_coprime_trivial hh.le (zero_lt_one.trans_le hx) χ hsmall
-      B hB hcop
+    reciprocalGap_sum_le_char_of_trivial hh.le (zero_lt_one.trans_le hx) χ hsmall B hB hcop
   exact (not_lt_of_ge (hlower.trans hupper)) hgap
 
 /-- The fixed h=7/10,r=1/5,c=77/100 separation budget with certified rational
@@ -168,10 +167,9 @@ noncomputable def reciprocalGapCoprimeRationalSeparation (q : ℕ) (x : ℝ) (B�
 the fixed rational separation against a selected unit-supported sum produces a
 coprime prime where the character is not one. Supply all Euler and Gamma bounds
 from the kernel-certified scalar lemmas. The conclusion excludes character value zero. -/
-theorem exists_prime_coprime_not_one_of_reciprocalGap_rational_separation {q : ℕ} [NeZero q]
-    (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) (B₀ B₁ B : Finset ℕ)
+theorem exists_prime_neOne_rationalGap_GRH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+    {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) (B₀ B₁ B : Finset ℕ)
     (hB₀ : ∀ n ∈ B₀, (n : ℝ) ≤ x) (hB₁ : ∀ n ∈ B₁, (n : ℝ) ≤ x) (hB : B ⊆ Finset.Ioc 0 ⌊x⌋₊)
     (hcop : ∀ n ∈ B, Nat.Coprime n q)
     (hgap :
@@ -179,13 +177,12 @@ theorem exists_prime_coprime_not_one_of_reciprocalGap_rational_separation {q : �
         ∑ n ∈ B, reciprocalGapPrincipalWeight (7 / 10) x n) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ x ∧ Nat.Coprime p q ∧ χ p ≠ 1 := by
   refine
-    exists_prime_coprime_not_one_of_reciprocalGap_separation (h := 7 / 10) (r := 1 / 5) (c :=
-      77 / 100) (by norm_num only) (by norm_num only) hq hGRH hp hne hinv (by norm_num only)
-      (by norm_num only) hx B₀ B₁ B hB₀ hB₁ hB hcop (1597 / 500) (-(759 / 1000)) (4481 / 1000)
-      (-(784 / 1000)) (97 / 100) (-(1001 / 1000)) ?_ ?_ ?_ ?_ ?_ ?_ ?_
+    exists_prime_neOne_coprimeGap_GRH (h := 7 / 10) (r := 1 / 5) (c := 77 / 100) (by norm_num only)
+      (by norm_num only) hq hGRH hp hne hinv (by norm_num only) (by norm_num only) hx B₀ B₁ B hB₀
+      hB₁ hB hcop (1597 / 500) (-(759 / 1000)) (4481 / 1000) (-(784 / 1000)) (97 / 100)
+      (-(1001 / 1000)) ?_ ?_ ?_ ?_ ?_ ?_ ?_
   · exact
-      AnalyticNumberTheory.Arithmetic.tsum_vonMangoldt_le_hundredTwentySeven_hundredths_certified
-        (by norm_num only)
+      AnalyticNumberTheory.Arithmetic.tsum_vonMangoldt_le_of_ge_127_100_certified (by norm_num only)
   · have hg :=
       (reciprocalGapGamma_re_le_odd (by norm_num only : (0 : ℝ) < 127 / 100) χ).trans
         reciprocalGapOddGammaUpper_at_127_div_100
@@ -199,8 +196,7 @@ theorem exists_prime_coprime_not_one_of_reciprocalGap_rational_separation {q : �
     norm_num only [Complex.ofReal_div, Complex.ofReal_ofNat, Complex.ofReal_one] at hg ⊢
     exact hg
   · exact
-      AnalyticNumberTheory.Arithmetic.tsum_vonMangoldt_le_seventeen_tenths_certified
-        (by norm_num only)
+      AnalyticNumberTheory.Arithmetic.tsum_vonMangoldt_le_of_ge_17_10_certified (by norm_num only)
   · have hg :=
       reciprocalGapEvenGammaLower_at_seventeen_tenths.trans
         (reciprocalGapEvenGammaLower_le (by norm_num only : (0 : ℝ) < 17 / 10) χ⁻¹)
@@ -213,9 +209,9 @@ theorem exists_prime_coprime_not_one_of_reciprocalGap_rational_separation {q : �
 certificate, rational separation produces a coprime non-one prime witness below x.
 Compare certified lower endpoints with the selected weights, then apply the fixed-gap
 coprime witness theorem. The finite supports remain independently selectable. -/
-theorem exists_prime_coprime_not_one_of_reciprocalGap_coprime_lower {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) (B₀ B₁ B : Finset ℕ)
+theorem exists_prime_neOne_lowerGap_GRH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
+    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) (B₀ B₁ B : Finset ℕ)
     (hB₀ : ∀ n ∈ B₀, (n : ℝ) ≤ x) (hB₁ : ∀ n ∈ B₁, (n : ℝ) ≤ x) (hB : B ⊆ Finset.Ioc 0 ⌊x⌋₊)
     (hcop : ∀ n ∈ B, Nat.Coprime n q) (lo u : ℕ → ℝ)
     (hlo : ∀ n ∈ B, lo n ≤ ArithmeticFunction.vonMangoldt n)
@@ -224,9 +220,7 @@ theorem exists_prime_coprime_not_one_of_reciprocalGap_coprime_lower {q : ℕ} [N
       reciprocalGapCoprimeRationalSeparation q x B₀ B₁ <
         ∑ n ∈ B, (lo n / Real.sqrt x) * ((1 - u n) / (7 / 10 : ℝ))) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ x ∧ Nat.Coprime p q ∧ χ p ≠ 1 := by
-  apply
-    exists_prime_coprime_not_one_of_reciprocalGap_rational_separation hq hGRH hp hne hinv hx B₀ B₁ B
-      hB₀ hB₁ hB hcop
+  apply exists_prime_neOne_rationalGap_GRH hq hGRH hp hne hinv hx B₀ B₁ B hB₀ hB₁ hB hcop
   exact
     hgap.trans_le
       (sum_lower_le_reciprocalGap_selectedWeight (by norm_num only : (0 : ℝ) ≤ 7 / 10) B lo u hlo hu
@@ -236,7 +230,7 @@ theorem exists_prime_coprime_not_one_of_reciprocalGap_coprime_lower {q : ℕ} [N
 lower certificate produces a prime p<=x with chi(p)=-1. Quadraticity identifies the
 inverse with the character and excludes zero on the coprime witness.
 The prime two is allowed; this is not yet an odd-prime Jacobi bound for arbitrary input n. -/
-theorem exists_prime_neg_one_of_reciprocalGap_coprime_lower {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem exists_prime_negOne_lowerGap_GRH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hquad : χ.IsQuadratic) {x : ℝ} (hx : 1 ≤ x)
     (B₀ B₁ B : Finset ℕ) (hB₀ : ∀ n ∈ B₀, (n : ℝ) ≤ x) (hB₁ : ∀ n ∈ B₁, (n : ℝ) ≤ x)
@@ -251,11 +245,10 @@ theorem exists_prime_neg_one_of_reciprocalGap_coprime_lower {q : ℕ} [NeZero q]
     rw [hquad.inv]
     exact hne
   obtain ⟨p, hprime, hpx, hpc, hv⟩ :=
-    exists_prime_coprime_not_one_of_reciprocalGap_coprime_lower hq hGRH hp hne hinv hx B₀ B₁ B hB₀
-      hB₁ hB hcop lo u hlo hu hu1 hgap
+    exists_prime_neOne_lowerGap_GRH hq hGRH hp hne hinv hx B₀ B₁ B hB₀ hB₁ hB hcop lo u hlo hu hu1
+      hgap
   exact
     ⟨p, hprime, hpx, hpc,
-      AnalyticNumberTheory.Arithmetic.quadratic_character_apply_neg_one_of_coprime_ne_one χ hquad
-        hpc hv⟩
+      AnalyticNumberTheory.Arithmetic.quadraticChar_eq_neg_one_of_coprime_ne_one χ hquad hpc hv⟩
 
 end PseudoPrime.LLS.PaperStatements

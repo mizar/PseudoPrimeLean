@@ -25,9 +25,9 @@ namespace PseudoPrime.LLS.PaperStatements
 /-- Under GRH, nonzero q, log q ≥ 34971 and H proper, a prime coprime to q
 outside H exists through (4/5)(log q+29)². Apply the independent-scale witness
 with the certified local allowance. This retains coefficient 0.8 at a smaller entrance. -/
-theorem exists_prime_outside_le_gamma_four_fifths_log_plus_twentyNine {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 34971 ≤ Real.log q) :
+theorem exists_prime_outside_4_5_shift_29_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hH : H ≠ ⊤) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hL : 34971 ≤ Real.log q) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬p ∣ q ∧
@@ -47,9 +47,9 @@ theorem exists_prime_outside_le_gamma_four_fifths_log_plus_twentyNine {q : ℕ} 
 outside H exists through (4/5)(log q-log log q)². Use the signed-scale witness,
 actual local allowance, scale excess and affine logarithm majorant.
 This gives a strictly smaller upper bound on the entire stated half-line. -/
-theorem exists_prime_outside_le_gamma_four_fifths_log_minus_loglog {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 50880 ≤ Real.log q) :
+theorem exists_prime_outside_4_5_sub_loglog_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hH : H ≠ ⊤) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hL : 50880 ≤ Real.log q) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬p ∣ q ∧
@@ -60,7 +60,7 @@ theorem exists_prime_outside_le_gamma_four_fifths_log_minus_loglog {q : ℕ} [Ne
   have hq : 20000 ≤ q := by exact_mod_cast (show (20000 : ℝ) ≤ q by linarith only [ht, hL])
   obtain ⟨hT, hlocal, hexcess⟩ :=
     gamma_log_minus_loglog_scale_bounds (show 44739 ≤ Real.log q by linarith only [hL])
-  apply exists_prime_outside_le_gamma_four_fifths_signed_scale hq H hH hGRH hT
+  apply exists_prime_outside_4_5_signedScale_GRH hq H hH hGRH hT
   have hlog := log_le_linear_tenThousand (show 0 < Real.log q by linarith only [hL])
   linarith only [hlocal, hexcess, hlog, hL]
 

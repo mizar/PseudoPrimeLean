@@ -90,8 +90,8 @@ theorem psi_error_le_of_log_shift_stencil {t h b E c : ℝ} (hc : 0 ≤ c) (hh :
 the actual uncorrected smoothed-error increment satisfies the displayed bound.
 Apply the corrected stencil to the two Chebyshev endpoints and the existing increment
 comparison. This connects deterministic logarithmic cancellation to the short-ramp consumer. -/
-theorem logWeighted_error_increment_le_of_log_shift_stencil {a b h E c : ℝ} (hc : 0 ≤ c)
-    (hh : 0 < h) (ha : 0 < a - h) (hab : a ≤ b)
+theorem logWeighted_increment_le_of_log_shift {a b h E c : ℝ} (hc : 0 ≤ c) (hh : 0 < h)
+    (ha : 0 < a - h) (hab : a ≤ b)
     (hE :
       ∀ t ∈ Set.Icc a b,
         |logWeightedMangoldtSum (t - h) - (t - h) + c * Real.log (t - h)| ≤ E ∧

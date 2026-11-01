@@ -26,7 +26,7 @@ and uniform in the modulus and character, including principal characters. -/
 theorem norm_logDeriv_le_inv_gap {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) {σ : ℝ}
     (hσ : 1 < σ) (t : ℝ) :
     ‖logDeriv χ.LFunction ((σ : ℂ) + t * Complex.I)‖ ≤ (σ - 1)⁻¹ ^ 2 + (σ - 1)⁻¹ := by
-  have hn := norm_neg_deriv_div_dirichletLFunction_le_vonMangoldt_tsum χ hσ t
+  have hn := norm_logDeriv_L_le_mangoldt_tsum χ hσ t
   simp only [neg_div, norm_neg] at hn
   exact hn.trans (Arithmetic.tsum_vonMangoldt_div_rpow_le hσ)
 
@@ -46,7 +46,7 @@ theorem norm_logDeriv_real_le_euler_ratio {q : ℕ} [NeZero q] (χ : DirichletCh
     ‖logDeriv χ.LFunction ((1 + r : ℝ) : ℂ)‖ ≤
       (r⁻¹ ^ 2 + (r + 1)⁻¹) / (1 + (2 : ℝ) ^ (-r) / r) := by
   have hs : 1 < 1 + r := by linarith only [hr]
-  have hn := norm_neg_deriv_div_dirichletLFunction_le_vonMangoldt_tsum χ hs 0
+  have hn := norm_logDeriv_L_le_mangoldt_tsum χ hs 0
   simp only [neg_div, norm_neg, Complex.ofReal_zero, zero_mul, add_zero] at hn
   exact hn.trans (Arithmetic.tsum_vonMangoldt_le_euler_ratio hr)
 

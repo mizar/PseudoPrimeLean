@@ -73,7 +73,7 @@ theorem quarterPrimeDeficit_prime {p : ℕ} (hp : p.Prime) :
 /-- For positive q at most A, the number of distinct prime factors is at most
 13/2+(1/4)log A. Sum the per-prime charges and the eighteen fixed deficits.
 No RH, parity, or finite input-range certificate is required. This sharpens local witness costs. -/
-theorem primeFactors_card_le_thirteen_halves_add_quarter_log {q A : ℕ} (hq : 0 < q) (hqA : q ≤ A) :
+theorem primeFactors_card_le_13_2_add_1_4_log {q A : ℕ} (hq : 0 < q) (hqA : q ≤ A) :
     (q.primeFactors.card : ℝ) ≤ 13 / 2 + (1 / 4 : ℝ) * Real.log A := by
   have h :=
     primeFactors_card_le_log_deficit hq hqA (by norm_num only : (0 : ℝ) ≤ 1 / 4)

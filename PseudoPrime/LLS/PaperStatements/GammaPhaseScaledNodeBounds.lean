@@ -20,7 +20,7 @@ and scaled rational lower bounds with certified phase enclosures at its endpoint
 Claim: the actual Gamma sum satisfies the signed-prefix and certified-remainder bound.
 Proof: transfer each finite endpoint lower bound to the rounded phase cover theorem.
 Role: expose only scaled rational node computations and logarithmic enclosures to a certificate. -/
-theorem gamma_primitive_sum_re_le_phase64_of_scaled_nodes {ι : Type*} {q m : ℕ} [NeZero m]
+theorem gammaPrimitiveSum_re_le_phase64_of_scaled_nodes {ι : Type*} {q m : ℕ} [NeZero m]
     (hq : 20000 ≤ q) (hm : 3 ≤ m) (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 2 ≤ x) (hlog : |Real.log x| ≤ 8) (B : Finset ℕ)
@@ -41,8 +41,8 @@ theorem gamma_primitive_sum_re_le_phase64_of_scaled_nodes {ι : Type*} {q m : �
         ((7 / 6 : ℝ) * Real.log q + 4) / Real.sqrt x +
         43 * x ^ (-9 / 16 : ℝ) := by
   apply
-    gamma_primitive_sum_re_le_phase64_of_rounded_cover hq hm hmq hGRH hp hne hinv hx hlog B hG S a b
-      _ hcover
+    gammaPrimitiveSum_re_le_phase64_of_rounded_cover hq hm hmq hGRH hp hne hinv hx hlog B hG S a b _
+      hcover
   intro i hi
   obtain ⟨hab, hw, ha, hb⟩ := hshape i hi
   have hA := hnodes i hi (a i) List.mem_cons_self

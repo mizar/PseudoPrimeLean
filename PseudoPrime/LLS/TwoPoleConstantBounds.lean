@@ -55,8 +55,8 @@ theorem gamma_primitive_re_le_twoPoleConstant_ambient {q A : ℕ} [NeZero q]
 /-- For a quadratic nonprincipal character under GRH, bound the primitive sum plus its local
 correction at scale at least four. Absorb the conductor saving into the local term and retain
 the prime-factor cost for negative witnesses. -/
-theorem gamma_primitive_add_local_le_twoPoleConstant_ambient {q A : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hqA : q ≤ A)
+theorem gammaPrimitive_local_twoPoleAmbient_GRH {q A : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hqA : q ≤ A)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x C : ℝ} (hx : 4 ≤ x)
     (hC : AnalyticNumberTheory.DirichletLFunction.twoPoleGammaConstant χ.primitiveCharacter ≤ C) :
     (∑' n : ℕ, PaperStatements.gammaMellinKernel.summand χ.primitiveCharacter x n).re +
@@ -214,7 +214,7 @@ theorem prime_trivial_false_of_twoPoleConstantGap {q A : ℕ} [NeZero q] (χ : D
   have hx0 : 0 < x := by linarith only [hx]
   have hb := gamma_primitive_re_le_twoPoleConstant_ambient χ hne hqA hGRH hx hC
   have hl :=
-    gammaLocalCorrection_nonpos_of_level_primes_above χ hx0
+    gammaLocalCorrection_nonpos_of_large_primes χ hx0
       (fun p hp ↦ (level_prime_above_cutoff_of_all_prime_trivial χ ht hp).le)
   have hP := gamma_level_one_sum_upper_variable hGRH.riemann (by linarith only [hx] : 1 ≤ x)
   have hT := gamma_ramp_sum_lower_paired hGRH.riemann (by linarith only [hx] : 1 ≤ x)
@@ -235,7 +235,7 @@ theorem unit_prime_trivial_false_of_twoPoleConstantGap {q A : ℕ} [NeZero q]
         twoPoleConstantGap A C x) :
     ¬(∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ (99 / 40 : ℝ) * x → χ p = 1) := by
   intro ht
-  have hb := gamma_primitive_add_local_le_twoPoleConstant_ambient χ hquad hne hqA hGRH hx hC
+  have hb := gammaPrimitive_local_twoPoleAmbient_GRH χ hquad hne hqA hGRH hx hC
   have hP := gamma_level_one_sum_upper_variable hGRH.riemann (by linarith only [hx] : 1 ≤ x)
   have hT := gamma_ramp_sum_lower_paired hGRH.riemann (by linarith only [hx] : 1 ≤ x)
   have hN := gamma_ramp_no_witness_comparison χ hquad (by linarith only [hx] : 0 < x) ht
@@ -298,8 +298,8 @@ theorem exists_odd_prime_ne_one_le_twoPoleConstant_even {q A : ℕ} [NeZero q]
     have ht := Real.log_le_sub_one_of_pos (by norm_num only : (0 : ℝ) < 2)
     linarith only [hroot, hlog, ht, hL]
   have hc :=
-    AnalyticNumberTheory.DirichletLFunction.twoPoleGammaConstant_le_signed_of_even
-      χ.primitiveCharacter ((NumberTheory.primitiveCharacter_even_iff χ).mpr heven)
+    AnalyticNumberTheory.DirichletLFunction.twoPoleGamma_le_112_25_of_even χ.primitiveCharacter
+      ((NumberTheory.primitiveCharacter_even_iff χ).mpr heven)
   have hsep :=
     twoPoleConstantGap_affine_margin hL (c := 271 / 20) (C := 112 / 25) (by norm_num only)
       (by norm_num only)

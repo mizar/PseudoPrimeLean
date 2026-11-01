@@ -30,7 +30,7 @@ namespace PseudoPrime.Analysis
 Input/assumptions: `x ≥ 64`.
 Conclusion: `PseudoPrime.Analysis.primitiveReciprocalOddMainError x ≤ -1/4`.
 Content: `1/x ≤ 1/64` and `1 - 1/x ≥ 63/64`; combined with `γ > 27/50`
-(`twenty_seven_fiftieths_lt_eulerMascheroniConstant`) and `log 2 < 7/10`
+(`eulerMascheroniConstant_gt_27_50`) and `log 2 < 7/10`
 (`Real.log_two_lt_d9`),
 `-(γ/2)(1-1/x) + log2/x ≤ -(1/2)(27/50)(63/64) + (7/10)(1/64) = -1631/6400 < -1/4`.
 Role: the odd half of the reciprocal main-error estimate.
@@ -43,7 +43,7 @@ theorem primitiveReciprocalOddMainError_le_neg_quarter {x : ℝ} (hx : 64 ≤ x)
   have hinv_nn : (0 : ℝ) ≤ 1 / x := div_nonneg (by norm_num only) hxpos.le
   have h1mx_ge : (63 / 64 : ℝ) ≤ 1 - 1 / x := by linarith only [hinv_le]
   have h1mx_nn : (0 : ℝ) ≤ 1 - 1 / x := by linarith only [hinv_le]
-  have hγ := twenty_seven_fiftieths_lt_eulerMascheroniConstant
+  have hγ := eulerMascheroniConstant_gt_27_50
   have hlog2 := Real.log_two_lt_d9
   have hterm1 : (27 / 50 : ℝ) * (1 - 1 / x) ≤ Real.eulerMascheroniConstant * (1 - 1 / x) :=
     mul_le_mul_of_nonneg_right hγ.le h1mx_nn

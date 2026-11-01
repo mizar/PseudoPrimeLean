@@ -41,8 +41,8 @@ in a height window bounded by the analytic conductor at real part three.
 The coefficient bound and logarithmic derivative series identity control the
 arithmetic term; the uniform digamma estimate controls the gamma term.
 The endpoint correction remains explicit as 20 times the absolute order. -/
-theorem localZeroCount_le_log_analyticConductor_at_three {F L : ℂ → ℂ} {ε : ℂ} {q d : ℕ}
-    (hq : 1 ≤ q) (k : ℤ) (κ : Fin d → ℂ) (hκ : ∀ j, -1 < (κ j).re)
+theorem localZeroCount_le_logConductor_at_three {F L : ℂ → ℂ} {ε : ℂ} {q d : ℕ} (hq : 1 ≤ q) (k : ℤ)
+    (κ : Fin d → ℂ) (hκ : ∀ j, -1 < (κ j).re)
     (hreg :
       ∀ z,
         z ≠ 0 →
@@ -69,7 +69,7 @@ theorem localZeroCount_le_log_analyticConductor_at_three {F L : ℂ → ℂ} {ε
     localZeroCount_le_completedProductBound hq k hreg hε hfe hright hF h0 horder ha T
       (archimedeanGammaFactor_ne_zero hs hκ) hL (differentiableAt_archimedeanGammaFactor hs hκ) hdL
       hlog
-  have hg := norm_logDeriv_archimedeanGammaFactor_at_three_le hs3 hκ
+  have hg := gammaFactor_logDeriv_three_le hs3 hκ
   have hb :=
     hc.trans
       (mul_le_mul_of_nonneg_left (add_le_add (add_le_add le_rfl hg) le_rfl)
@@ -130,8 +130,8 @@ theorem localZeroCount_le_log_analyticConductor {F L : ℂ → ℂ} {ε : ℂ} {
             5 * (‖Complex.log (Real.pi : ℂ)‖ + Real.pi + Gamma.digammaLogErrorBound) +
             10 * ∑' n : ℕ, Real.log n / (n : ℝ) ^ 2) := by
   have hb :=
-    localZeroCount_le_log_analyticConductor_at_three hq k κ hκ hreg hε hfe hright hF h0 horder ha T
-      hL hdL hlog
+    localZeroCount_le_logConductor_at_three hq k κ hκ hreg hε hfe hright hF h0 horder ha T hL hdL
+      hlog
   have ht := log_analyticConductor_add_three_le q hq κ ((T : ℂ) * Complex.I)
   rw [show ((T : ℂ) * Complex.I + 3) = (((3 : ℝ) : ℂ) + T * Complex.I) from by
       change (T : ℂ) * Complex.I + (3 : ℂ) = (3 : ℂ) + (T : ℂ) * Complex.I
@@ -164,7 +164,7 @@ theorem norm_logDeriv_le_log_analyticConductor_at_three {F L : ℂ → ℂ} {q d
     norm_logDeriv_regularizedCompletion_at_three_le hq k hreg ha hs3
       (archimedeanGammaFactor_ne_zero hs hκ) hL (differentiableAt_archimedeanGammaFactor hs hκ) hdL
       hlog
-  have hg := norm_logDeriv_archimedeanGammaFactor_at_three_le hs3 hκ
+  have hg := gammaFactor_logDeriv_three_le hs3 hκ
   have hb := hc.trans (add_le_add (add_le_add le_rfl hg) le_rfl)
   convert hb using 1
   rw [log_analyticConductor q hq κ]

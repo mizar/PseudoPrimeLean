@@ -24,8 +24,8 @@ theorem gammaFactor_eq_zero_of_LFunction_zero_re_nonpos {N : ℕ} [NeZero N]
     (hs : s.re ≤ 0) : χ.gammaFactor s = 0 := by
   by_contra hΓ
   have he :=
-    DirichletLFunction.dirichletLFunction_eq_completed_div_gammaFactor χ s
-      (Or.inr (DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hne))
+    DirichletLFunction.L_eq_completed_div_gammaFactor χ s
+      (Or.inr (DirichletLFunction.character_level_ne_one_of_ne_one hne))
   have hc : χ.completedLFunction s = 0 := (div_eq_zero_iff.mp (he.symm.trans hz)).resolve_right hΓ
   exact
     (not_lt_of_ge hs) (DirichletLFunction.completedLFunction_zero_re_pos hp (inv_ne_one.mpr hne) hc)
@@ -36,7 +36,7 @@ parity and use the exact zeros of GammaR; no primitivity is required. -/
 theorem mem_trivialZeros_of_gammaFactor_eq_zero {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
     (hne : χ ≠ 1) {s : ℂ} (hΓ : χ.gammaFactor s = 0) :
     s ∈ (Int.cast : ℤ → ℂ) '' dirichletTrivialZeros χ := by
-  have hN := DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hne
+  have hN := DirichletLFunction.character_level_ne_one_of_ne_one hne
   rcases χ.even_or_odd with he | ho
   · rw [he.gammaFactor_def, Complex.Gammaℝ_eq_zero_iff] at hΓ
     obtain ⟨n, rfl⟩ := hΓ

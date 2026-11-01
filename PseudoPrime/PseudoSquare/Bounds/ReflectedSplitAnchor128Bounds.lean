@@ -37,13 +37,13 @@ theorem exists_odd_prime_neg_one_of_anchor128_gap {n B : ℕ} (hn : Odd n) (hns 
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n p = -1 := by
   let : NeZero (4 * n) := ⟨Nat.mul_ne_zero (by norm_num only) hn.pos.ne'⟩
   have hcard :=
-    AnalyticNumberTheory.Arithmetic.primeFactors_card_le_five_halves_add_three_eighths_log
+    AnalyticNumberTheory.Arithmetic.primeFactors_card_le_5_2_add_3_8_log
       (Nat.mul_pos (by norm_num only : 0 < 4) hn.pos) (Nat.mul_le_mul_left 4 hnB)
   have hlog : 0 ≤ Real.log ((99 / 40 : ℝ) * x) := Real.log_nonneg (by linarith only [hx])
   have hcost :=
     div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_right hcard hlog) (Real.sqrt_nonneg x)
   have hC :=
-    AnalyticNumberTheory.DirichletLFunction.twoPoleGammaConstant_le_signed_of_even
+    AnalyticNumberTheory.DirichletLFunction.twoPoleGamma_le_112_25_of_even
       (NumberTheory.complexQuadraticCharacter n hn).primitiveCharacter
       ((NumberTheory.primitiveCharacter_even_iff _).mpr
         (NumberTheory.complexQuadraticCharacter_isEven n hn))
@@ -61,7 +61,7 @@ theorem exists_odd_prime_neg_one_of_anchor128_gap {n B : ℕ} (hn : Odd n) (hns 
       (NumberTheory.complexQuadraticCharacter_ne_one_of_not_square n hn hns)
       (Nat.mul_le_mul_left 4 hnB) hGRH hx hh hhx hb hcut hC (hcost.trans_lt hsep)
   have hw :=
-    NumberTheory.primeNegOneWitness_mem_of_complexQuadraticCharacter_ne_one n hn hp hd
+    NumberTheory.negOneWitness_mem_of_quadratic_ne_one n hn hp hd
       (by
         rw [hv]; norm_num only)
   exact ⟨p, hp, hw.2.1, hpbound, hw.2.2⟩

@@ -82,7 +82,7 @@ theorem tsum_completedLogHalfZeroTerm_eq_sub {N : ℕ} [NeZero N] (hN : 2 ≤ N)
 Erase 0 and 1, then filter the finite rectangle singularities; this matches completed zeros. -/
 noncomputable def completedLogRectangleLedger {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
     (hne : χ ≠ 1) (z w : ℂ) : Finset ℂ :=
-  (((dirichletLFunctionSingularitiesInRectangle χ hne z w).erase 1).erase 0).filter
+  (((LFunctionSingularitiesInRectangle χ hne z w).erase 1).erase 0).filter
     (fun ρ ↦ DirichletCharacter.gammaFactor χ ρ ≠ 0)
 
 /-- A positive real part ensures a nonzero character gamma factor.
@@ -121,11 +121,11 @@ theorem completedLogZeroTerm_ne_zero_facts {N : ℕ} [NeZero N] {χ : DirichletC
     rw [h, Complex.one_re] at hr
     norm_num only at hr
   refine ⟨hr, h0, h1, gammaFactor_ne_zero_of_pos_re (by linarith only [hr]), ?_⟩
-  rw [dirichletLFunction_eq_completed_div_gammaFactor χ ρ (Or.inl h0), hz, zero_div]
+  rw [L_eq_completed_div_gammaFactor χ ρ (Or.inl h0), hz, zero_div]
 
 /-- Every nonzero completed term eventually belongs to the height rectangle
 ledger. The GRH critical-line support and the cofinal height sequence give membership. -/
-theorem eventually_completedLogZeroTerm_mem_height_ledger {N : ℕ} [NeZero N] (hN : 2 ≤ N)
+theorem eventually_logZeroTerm_mem_ledger {N : ℕ} [NeZero N] (hN : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} {ρ : ℂ} (hnz : completedLogZeroTerm χ x ρ ≠ 0) (A : ℕ)
     (hA : 2 ≤ A) :
@@ -134,18 +134,15 @@ theorem eventually_completedLogZeroTerm_mem_height_ledger {N : ℕ} [NeZero N] (
         completedLogRectangleLedger χ hne (primitiveHeightSeqLowerCorner hN hGRH hp hne hinv A k)
           (primitiveHeightSeqUpperCorner hN hGRH hp hne hinv k) := by
   obtain ⟨hr, h0, h1, hΓ, hz⟩ := completedLogZeroTerm_ne_zero_facts hGRH hp hne hinv hnz
-  have hT :=
-    (tendsto_primitiveHorizontalHeightSeq_atTop hN hGRH hp hne hinv).eventually_ge_atTop
-      (|ρ.im| + 1)
+  have hT := (tendsto_horizontalHeightSeq_GRH hN hGRH hp hne hinv).eventually_ge_atTop (|ρ.im| + 1)
   filter_upwards [hT] with k hk
   obtain ⟨hzr, hzi, hwr, hwi, _, _⟩ := primitiveHeightSeqRectangleFacts hN hGRH hp hne hinv A k hA
   have hAR : (2 : ℝ) ≤ A := by exact_mod_cast hA
   apply Finset.mem_filter.mpr
   refine ⟨Finset.mem_erase.mpr ⟨h0, Finset.mem_erase.mpr ⟨h1, ?_⟩⟩, hΓ⟩
-  apply mem_dirichletLFunctionSingularitiesInRectangle_iff.mpr
+  apply mem_LSingularitiesInRectangle_iff.mpr
   refine ⟨?_, Or.inr (Or.inr hz)⟩
-  rw [dirichletCompletedLFunctionRectangleBox, Rectangle.rectangleClosedBox, Complex.mem_reProdIm,
-    hzr, hzi, hwr, hwi]
+  rw [completedRectangleBox, Rectangle.rectangleClosedBox, Complex.mem_reProdIm, hzr, hzi, hwr, hwi]
   refine ⟨Set.Icc_subset_uIcc ⟨?_, ?_⟩, Set.Icc_subset_uIcc ⟨?_, ?_⟩⟩
   · dsimp only [primitiveReciprocalLeftRe]
     linarith only [hr, hAR]
@@ -170,7 +167,7 @@ theorem tendsto_completedLogZero_height_sum {N : ℕ} [NeZero N] (hN : 2 ≤ N)
   exact
     Analysis.tendsto_sum_of_eventually_mem_support _
       (summable_norm_completedLogZeroTerm hN hGRH hp hne hinv hx) _
-      (fun _ hnz ↦ eventually_completedLogZeroTerm_mem_height_ledger hN hGRH hp hne hinv hnz A hA)
+      (fun _ hnz ↦ eventually_logZeroTerm_mem_ledger hN hGRH hp hne hinv hnz A hA)
 
 /-- The completed half-scale coefficient multiplied by exp(i Im(ρ)v).
 Under GRH its product with sqrt(x) equals the half-zero term at v=log(x). -/
@@ -185,9 +182,9 @@ character and its inverse being nonprincipal. The estimate feeds local zero coun
 an absolute tail bound; the divisor-zero case vanishes directly, while supported terms
 lie on the critical line. The factor eight absorbs both the half-scale coefficient and
 the denominator comparison. -/
-theorem norm_completedLogHalfPhaseTerm_le_eight_quadratic_weight {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (v : ℝ) (ρ : ℂ) :
+theorem halfPhaseTerm_norm_le_weight_RH {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    (v : ℝ) (ρ : ℂ) :
     ‖completedLogHalfPhaseTerm χ v ρ‖ ≤
       8 * (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) / (1 + ρ.im ^ 2) := by
   let D := MeromorphicOn.divisor χ.completedLFunction Set.univ ρ
@@ -195,8 +192,7 @@ theorem norm_completedLogHalfPhaseTerm_le_eight_quadratic_weight {N : ℕ} [NeZe
   · simp only [completedLogHalfPhaseTerm, D, hD₀, Int.cast_zero, zero_mul, zero_div, norm_zero]
     exact div_nonneg (by norm_num only) (by nlinarith only [sq_nonneg ρ.im])
   · have hr :=
-      completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv
-        (completed_zero_of_divisor_ne_zero hne hD₀)
+      completed_zero_re_eq_half_of_RH hRH hp hinv (completed_zero_of_divisor_ne_zero hne hD₀)
     have hD : 0 ≤ (D : ℝ) := by
       have ha : AnalyticOnNhd ℂ χ.completedLFunction Set.univ := fun z _ ↦
         (DirichletCharacter.differentiable_completedLFunction hne).analyticAt z
@@ -257,7 +253,7 @@ theorem cpow_eq_sqrt_mul_phase_of_re_half {x : ℝ} (hx : 0 < x) {ρ : ℂ} (hr 
 
 /-- Under primitive GRH each completed half-zero term factors as sqrt(x)
 times its phase term. Off the divisor support both sides vanish. -/
-theorem completedLogHalfZeroTerm_eq_sqrt_mul_phase {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+theorem halfZeroTerm_eq_sqrt_mul_phase {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     (hGRH : GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
     {x : ℝ} (hx : 0 < x) (ρ : ℂ) :
     completedLogHalfZeroTerm χ x ρ =
@@ -281,8 +277,7 @@ theorem summable_completedLogHalfPhaseTerm {N : ℕ} [NeZero N] (hN : 2 ≤ N)
       ((Real.sqrt (Real.exp v) : ℂ)⁻¹)
   apply hs.congr
   intro ρ
-  rw [completedLogHalfZeroTerm_eq_sqrt_mul_phase hGRH hp hne hinv (Real.exp_pos v), Real.log_exp, ←
-    mul_assoc,
+  rw [halfZeroTerm_eq_sqrt_mul_phase hGRH hp hne hinv (Real.exp_pos v), Real.log_exp, ← mul_assoc,
     inv_mul_cancel₀ (Complex.ofReal_ne_zero.mpr (Real.sqrt_pos.mpr (Real.exp_pos v)).ne'), one_mul]
 
 /-- The signed real completed-zero phase at logarithmic scale v.

@@ -21,9 +21,9 @@ centered logarithmic derivative and nonvanishing on the growing real strip.
 The genus estimate uses the finite unconditional inverse-square mass instead of
 the RH-specific closed form. This supplies the good-height witnesses needed for
 unconditional horizontal contour limits on every fixed rectangle. -/
-theorem exists_primitiveHorizontalScaledStripLogDerivBound_unconditionally {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
-    (hinv : χ⁻¹ ≠ 1) {n : ℝ} (hn : 1 ≤ n) :
+theorem exists_scaledStripLogDeriv_bound {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {n : ℝ}
+    (hn : 1 ≤ n) :
     ∃ T ∈ Set.Icc n (2 * n),
       ∃ R ∈ Set.Icc (8 * n) (16 * n),
         ∃ δ : ℝ,
@@ -82,7 +82,7 @@ theorem exists_primitiveHorizontalScaledStripLogDerivBound_unconditionally {N : 
                   DirichletCharacter.completedLFunction χ ((σ : ℂ) - T * Complex.I) ≠ 0 := by
   have hN1 : 1 < N := Nat.lt_of_lt_of_le (by norm_num only) hN2
   obtain ⟨T, hT, hTgood⟩ :=
-    exists_primitiveGoodHeightRadius_twoSided hN1 hprimitive hne hinv hn
+    exists_goodHeightRadius_twoSided hN1 hprimitive hne hinv hn
       (show 2 * n ≤ 16 * n by nlinarith only [hn])
   obtain ⟨R, hR, hRgood⟩ :=
     exists_primitiveGoodRadius hN1 hprimitive hne hinv (show (1 : ℝ) ≤ 8 * n by nlinarith only [hn])
@@ -211,10 +211,10 @@ theorem exists_primitiveHorizontalScaledStripLogDerivBound_unconditionally {N : 
       _ = |((σ : ℂ) - T * Complex.I - ρ).im| := by simp only [Complex.sub_im]
       _ ≤ ‖(σ : ℂ) - T * Complex.I - ρ‖ := Complex.abs_im_le_norm _
   exact
-    ⟨norm_centeredLogDeriv_le_of_separation_unconditionally hN2 hprimitive hne hinv hRge1 hzf
-        hplus_le hplus_sne hδ_pos hplus_sep,
-      norm_centeredLogDeriv_le_of_separation_unconditionally hN2 hprimitive hne hinv hRge1 hzf
-        hminus_le hminus_sne hδ_pos hminus_sep,
+    ⟨centeredLogDeriv_separation hN2 hprimitive hne hinv hRge1 hzf hplus_le hplus_sne hδ_pos
+        hplus_sep,
+      centeredLogDeriv_separation hN2 hprimitive hne hinv hRge1 hzf hminus_le hminus_sne hδ_pos
+        hminus_sep,
       hplus_sne, hminus_sne⟩
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

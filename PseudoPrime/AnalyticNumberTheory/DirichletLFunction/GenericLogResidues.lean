@@ -29,7 +29,7 @@ Content: expand the four rectangle edges, then combine generic horizontal decay,
 interval exhaustion, and the generic left-vertical height-sequence limit.
 Role: fixed-`A` normalized boundary interface for the generic logarithmic raw bound.
 -/
-theorem tendsto_normalized_dirichletLogBoundary_heightSeq_of_grh {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem tendsto_logBoundary_heightSeq_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) (A : ℕ)
     (hA : 2 ≤ A) :
@@ -98,16 +98,11 @@ theorem tendsto_normalized_dirichletLogBoundary_heightSeq_of_grh {N : ℕ} [NeZe
             dirichletLogContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)) *
           hcoeffI
   apply Filter.Tendsto.congr (fun k => (heq k).symm)
-  have hhoriz :=
-    tendsto_primitiveHorizontalHeightSeq_logKernel_horizontal_integral A hA hN2 hGRH hprimitive hne
-      hinv hx
+  have hhoriz := tendsto_logKernel_horizontal_GRH A hA hN2 hGRH hprimitive hne hinv hx
   have hright :=
-    (tendsto_intervalIntegral_dirichletLogContourKernel hxpos χ hne
-          (show (1 : ℝ) < 2 by norm_num only)).comp
-      (tendsto_primitiveHorizontalHeightSeq_atTop hN2 hGRH hprimitive hne hinv)
-  have hleft :=
-    tendsto_primitiveHorizontalHeightSeq_log_leftVertical_intervalIntegral hN2 hGRH hprimitive hne
-      hinv hxpos hA
+    (tendsto_intervalIntegral_logKernel hxpos χ hne (show (1 : ℝ) < 2 by norm_num only)).comp
+      (tendsto_horizontalHeightSeq_GRH hN2 hGRH hprimitive hne hinv)
+  have hleft := tendsto_logKernel_left_heightSeq_GRH hN2 hGRH hprimitive hne hinv hxpos hA
   have hweighted := characterLogWeightedSum_eq_integral χ hxpos (show (1 : ℝ) < 2 by norm_num only)
   have htarget :
     Filter.Tendsto

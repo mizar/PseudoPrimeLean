@@ -38,7 +38,7 @@ theorem exists_uniform_finite_fiber_congruence_bound {eta : ℝ} (heta : 0 < eta
   have hp1 : (1 : ℝ) ≤ p := Nat.one_le_cast.mpr (Fact.out : p.Prime).pos
   have hp0 : (0 : ℝ) < p := Nat.cast_pos.mpr (Fact.out : p.Prime).pos
   have hcount :=
-    boundedCongruenceCount_le_of_uniform_height_ratios hodd hHp hK.le
+    congruenceCount_le_of_uniform_height_ratios hodd hHp hK.le
       (fun T hT ↦ hR p H T hHp ((Nat.cast_le.mpr hT).trans htop))
   have hpow := Real.rpow_le_rpow (Nat.cast_nonneg H) (Nat.cast_le.mpr hHp.le) hdelta.le
   have hlog :=

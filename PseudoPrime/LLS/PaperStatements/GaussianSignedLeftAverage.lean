@@ -61,9 +61,8 @@ logarithmic Gaussian average of `gammaSignedLeftIntegral` at `x * exp v`.
 The generic Fubini transfer applies to the integrable unsmoothed integrand, and
 the positive-base complex-power identity identifies its shifted scale. This
 preserves the signed real-part estimate needed by the MR `B_6` argument. -/
-theorem gaussian_signed_left_integral_eq_logGaussianAverage {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ}
-    (hx : 0 < x) :
+theorem gaussianSignedLeft_logAverage {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) :
     ((1 / (2 * Real.pi) : ℝ) : ℂ) *
         (∫ t : ℝ,
           -logDeriv χ.completedLFunction (((-9 / 16 : ℝ) : ℂ) + Complex.I * t + 1 / 2) *
@@ -111,7 +110,7 @@ theorem gaussian_signed_left_integral_eq_logGaussianAverage {q : ℕ} [NeZero q]
               (∫ t : ℝ,
                 Complex.exp ((((-9 / 16 : ℝ) : ℂ) + Complex.I * (t : ℂ)) * (v : ℂ)) * F t)) :=
       congrArg (fun z : ℂ ↦ ((1 / (2 * Real.pi) : ℝ) : ℂ) * z)
-        (integral_gaussianMultiplier_eq_logGaussianAverage (c := -9 / 16) hF)
+        (gaussianMultiplier_integral_average (c := -9 / 16) hF)
     _ =
         ∫ v : ℝ,
           (PseudoPrime.Analysis.normalizedGaussianWeight v : ℂ) *

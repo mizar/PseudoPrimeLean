@@ -105,8 +105,8 @@ theorem exists_nat_jacobiSym_eq_neg_one_of_odd_nonsquare {r : ℕ} (hrodd : Odd 
   · exact fun hp₀not => (hp₀not hp₀mem).elim
 
 /-- Every odd nonsquare modulus has a residue-class representative of Jacobi value `-1`. -/
-theorem exists_zmod_jacobiSym_eq_neg_one_of_odd_nonsquare {r : ℕ} (hrodd : Odd r)
-    (hns : ¬IsSquare r) : ∃ a : ZMod r, jacobiSym a.val r = -1 := by
+theorem exists_jacobi_neg_one_of_odd_nonsquare {r : ℕ} (hrodd : Odd r) (hns : ¬IsSquare r) :
+    ∃ a : ZMod r, jacobiSym a.val r = -1 := by
   obtain ⟨a, havalue⟩ := exists_nat_jacobiSym_eq_neg_one_of_odd_nonsquare hrodd hns
   refine ⟨(a : ZMod r), ?_⟩
   rw [ZMod.val_natCast]

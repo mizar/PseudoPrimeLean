@@ -59,9 +59,8 @@ theorem exists_prime_reject_of_character_even_ambient {N : ℕ} [NeZero N]
         Nat.Coprime p N ∧
         (p : ZMod N) ^ d ≠ 1 ∧ ∀ j : ℕ, j < s → (p : ZMod N) ^ (2 ^ j * d) ≠ -1 := by
   obtain ⟨p, hp, hpx, hpc, hv⟩ :=
-    exists_prime_original_character_ne_one_of_reciprocalGap_even_ambient χ
-      (character_even_of_trivial_on_pass hn ho hpass) hne hGRH hx B₀ B₁ B hB₀ hB₁ hB hcop lo u hlo
-      hu hu1 hgap
+    exists_prime_neOne_originalEvenGap_GRH χ (character_even_of_trivial_on_pass hn ho hpass) hne
+      hGRH hx B₀ B₁ B hB₀ hB₁ hB hcop lo u hlo hu hu1 hgap
   refine ⟨p, hp, hpx, hpc, ?_⟩
   exact PrimeTest.not_strongMillerRabinPass_iff.mp (fun ha ↦ hv (hpass p ha))
 
@@ -70,11 +69,11 @@ open PseudoPrime.LLS.PaperStatements in
 q>=2 of N yields a coprime prime rejecting the canonical strong test below x.
 Choose the existing nonprincipal character trivial on passing residues, infer its even
 parity, and apply the sharper separation at its conductor. Numeric gaps remain premises. -/
-theorem exists_prime_reject_of_even_ambient_divisor_separation {N : ℕ} [NeZero N] (hn : 1 < N)
-    (ho : Odd N) (hc : ¬N.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {x : ℝ} (hx : 1 ≤ x) (B₀ B₁ B : Finset ℕ) (hB₀ : ∀ a ∈ B₀, (a : ℝ) ≤ x)
-    (hB₁ : ∀ a ∈ B₁, (a : ℝ) ≤ x) (hB : B ⊆ Finset.Ioc 0 ⌊x⌋₊) (hcop : ∀ a ∈ B, Nat.Coprime a N)
-    (lo u : ℕ → ℝ) (hlo : ∀ a ∈ B, lo a ≤ ArithmeticFunction.vonMangoldt a)
+theorem exists_rejectPowers_evenAmbientDivisor_GRH {N : ℕ} [NeZero N] (hn : 1 < N) (ho : Odd N)
+    (hc : ¬N.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ}
+    (hx : 1 ≤ x) (B₀ B₁ B : Finset ℕ) (hB₀ : ∀ a ∈ B₀, (a : ℝ) ≤ x) (hB₁ : ∀ a ∈ B₁, (a : ℝ) ≤ x)
+    (hB : B ⊆ Finset.Ioc 0 ⌊x⌋₊) (hcop : ∀ a ∈ B, Nat.Coprime a N) (lo u : ℕ → ℝ)
+    (hlo : ∀ a ∈ B, lo a ≤ ArithmeticFunction.vonMangoldt a)
     (hu : ∀ a ∈ B, ((a : ℝ) / x) ^ (7 / 10 : ℝ) ≤ u a) (hu1 : ∀ a ∈ B, u a ≤ 1)
     (hgap :
       ∀ d : ℕ,

@@ -21,7 +21,7 @@ errors give simultaneous norm and reciprocal bounds with the zeta-at-two recipro
 Insert the arithmetic majorant error into the existing exponential bounds using nonnegative
 degree. The analytic prime-sum inputs remain explicit;
 no prime number theorem is assumed implicitly. -/
-theorem norm_L_one_and_reciprocal_le_of_mangoldt_errors (f : GeneralLFunction) (hf : f.IsAdmissible)
+theorem norm_L_one_inv_le_of_mangoldt_errors_RH (f : GeneralLFunction) (hf : f.IsAdmissible)
     (hRH : f.RiemannHypothesis) {x a b : ℝ} (hx : 100 ≤ x)
     (ha :
       |(∑ n ∈ Finset.Ioc 0 ⌊x⌋₊, ArithmeticFunction.vonMangoldt n / ((n : ℝ) * Real.log n)) -
@@ -55,7 +55,7 @@ theorem norm_L_one_and_reciprocal_le_of_mangoldt_errors (f : GeneralLFunction) (
   have hd := Nat.cast_nonneg (α := ℝ) f.degree
   constructor
   · refine
-      (norm_L_one_and_reciprocal_le_exp_truncated_majorants f hf hRH
+      (norm_L_one_pair_le_exp_majorants_RH f hf hRH
             (le_trans (by norm_num only : (2 : ℝ) ≤ 100) hx)).1.trans
         ?_
     apply Real.exp_le_exp.mpr

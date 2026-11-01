@@ -303,7 +303,7 @@ theorem log_ge_elementaryU_of_pow_mul_factorial_le {n m : ℕ} (hm1 : 1 ≤ m)
 /-- Identify the arithmetic-function count of distinct prime factors with the
 cardinality of `Nat.primeFactors`, using the list-to-finset factor identity.
 This connects the character-modulus counting lemma to the tail parameter. -/
-theorem distinctPrimeFactorCount_eq_primeFactors_card (n : ℕ) :
+theorem distinctPrimeFactorCount_eq_card (n : ℕ) :
     distinctPrimeFactorCount n = n.primeFactors.card := by
   rw [distinctPrimeFactorCount, ArithmeticFunction.cardDistinctFactors_apply, ← List.card_toFinset,
     Nat.toFinset_factors]
@@ -385,8 +385,7 @@ theorem elementaryOmegaStatement_tail {n : ℕ} (hn : Odd n) (hm163 : 163 ≤ n.
     linarith only [hstep1, hFmono, hF163]
   have homega_eq : (NumberTheory.characterModulus n).primeFactors.card = m + 1 := by
     have h1 := distinctPrimeFactorCount_characterModulus hn
-    rwa [distinctPrimeFactorCount_eq_primeFactors_card,
-      distinctPrimeFactorCount_eq_primeFactors_card, ← hm_def] at h1
+    rwa [distinctPrimeFactorCount_eq_card, distinctPrimeFactorCount_eq_card, ← hm_def] at h1
   rw [homega_eq]
   unfold elementaryOmegaConstant
   push_cast
@@ -407,7 +406,7 @@ theorem elementaryOmegaStatement_tail {n : ℕ} (hn : Odd n) (hm163 : 163 ≤ n.
 
 /-- The finite part of the factor-count bound: odd `n ≥ 750` with `ω(n) < 163` satisfies
 `ω(4n) ≤ (7/5) * log(4n) / loglog(4n)`. These hypotheses imply `1 ≤ ω(n)`.
-`elementaryOmegaFiniteStatement_of_certificates` reduces it to primorial-anchor certificates,
+`elementaryOmegaFinite_of_certificates` reduces it to primorial-anchor certificates,
 which are supplied in `ElementaryOmegaFiniteCertificates`. -/
 def ElementaryOmegaFiniteStatement : Prop :=
   ∀ n : ℕ,

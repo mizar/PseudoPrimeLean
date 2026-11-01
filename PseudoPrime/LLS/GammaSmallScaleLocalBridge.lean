@@ -158,7 +158,7 @@ theorem gamma_jacobi_no_negative_small_scale_comparison {n : ℕ} {hn : Odd n} {
     gamma_jacobi_no_negative_actual_comparison bridge hGRH hq hmq
       (by linarith only [hx] : (2 : ℝ) ≤ x) (Finset.Ioc 0 ⌊b⌋₊) hno
   have he :=
-    gamma_jacobi_prefix_add_ambient_ramp_eq_local_cost bridge hb
+    gammaJacobi_prefixRamp_eq_localCost bridge hb
       (fun p hp hodd hpb ↦ hno p hp hodd (hpb.trans hbX)) x
   have hu :=
     gamma_jacobi_all_local_small_scale bridge

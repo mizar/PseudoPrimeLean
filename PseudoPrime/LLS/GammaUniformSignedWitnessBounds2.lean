@@ -28,8 +28,8 @@ namespace PseudoPrime.LLS
 every nonprincipal character has a coprime prime with non-one value through B.
 Apply the subgroup bound to the unit kernel and recover the non-one value.
 This transfers any certified cutoff without changing its expression or entrance. -/
-theorem exists_prime_character_ne_one_of_uniform_subgroup_cutoff {q : ℕ} {B : ℝ}
-    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
+theorem exists_prime_neOne_uniformSubgroup {q : ℕ} {B : ℝ} (χ : DirichletCharacter ℂ q)
+    (hne : χ ≠ 1)
     (hbound :
       ∀ H : Subgroup (ZMod q)ˣ,
         H ≠ ⊤ → ∃ p : ℕ, p.Prime ∧ ¬p ∣ q ∧ ¬NumberTheory.residueInSubgroup q H p ∧ (p : ℝ) ≤ B) :
@@ -66,21 +66,18 @@ theorem exists_least_prime_outside_of_subgroup_cutoff {q : ℕ} {B : ℝ} (H : S
 /-- Under GRH, q ≥ 10^15188 and χ nonprincipal, a coprime prime with χ(p) ≠ 1
 exists through (4/5)(log q+29)². Apply the uniform subgroup bound to the unit kernel.
 This is the general-character interface with the same decimal entrance. -/
-theorem exists_prime_character_ne_one_le_gamma_four_fifths_plus_twentyNine_15188 {q : ℕ}
-    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hq : 10 ^ 15188 ≤ q) :
+theorem exists_prime_ne_one_4_5_shift_29_15188_GRH {q : ℕ} (χ : DirichletCharacter ℂ q)
+    (hne : χ ≠ 1) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hq : 10 ^ 15188 ≤ q) :
     ∃ p : ℕ, p.Prime ∧ ¬p ∣ q ∧ χ p ≠ 1 ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log q + 29) ^ 2 := by
   exact
-    exists_prime_character_ne_one_of_uniform_subgroup_cutoff χ hne
-      (fun H hH ↦
-        PaperStatements.exists_prime_outside_le_gamma_four_fifths_plus_twentyNine_15188 H hH hGRH
-          hq)
+    exists_prime_neOne_uniformSubgroup χ hne
+      (fun H hH ↦ PaperStatements.exists_prime_outside_4_5_shift_29_15188_GRH H hH hGRH hq)
 
 /-- Under GRH, q ≥ 10^15188 and H proper, the least coprime outside prime is
 at most (4/5)(log q+29)². Minimize the bounded subgroup witness.
 Minimality is among all eligible primes and retains the same entrance and cutoff. -/
-theorem exists_least_prime_outside_le_gamma_four_fifths_plus_twentyNine_15188 {q : ℕ}
-    (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
+theorem exists_least_outside_4_5_shift_29_15188_GRH {q : ℕ} (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hq : 10 ^ 15188 ≤ q) :
     ∃ p : ℕ,
       PrimeOutsideSubgroup q H p ∧
@@ -88,59 +85,56 @@ theorem exists_least_prime_outside_le_gamma_four_fifths_plus_twentyNine_15188 {q
         ∀ r, PrimeOutsideSubgroup q H r → p ≤ r := by
   exact
     exists_least_prime_outside_of_subgroup_cutoff H
-      (PaperStatements.exists_prime_outside_le_gamma_four_fifths_plus_twentyNine_15188 H hH hGRH hq)
+      (PaperStatements.exists_prime_outside_4_5_shift_29_15188_GRH H hH hGRH hq)
 
 /-- Under GRH, q ≥ 10^20121 and χ nonprincipal, a coprime prime with χ(p) ≠ 1
 exists through (4/5)(log q-2)². Apply the uniform subgroup bound to the unit kernel.
 This is the general-character interface with the same decimal entrance. -/
-theorem exists_prime_character_ne_one_le_gamma_four_fifths_minus_two_20121 {q : ℕ}
-    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hq : 10 ^ 20121 ≤ q) :
+theorem exists_prime_ne_one_4_5_shift_neg_2_20121_GRH {q : ℕ} (χ : DirichletCharacter ℂ q)
+    (hne : χ ≠ 1) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hq : 10 ^ 20121 ≤ q) :
     ∃ p : ℕ, p.Prime ∧ ¬p ∣ q ∧ χ p ≠ 1 ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log q - 2) ^ 2 := by
   exact
-    exists_prime_character_ne_one_of_uniform_subgroup_cutoff χ hne
-      (fun H hH ↦
-        PaperStatements.exists_prime_outside_le_gamma_four_fifths_minus_two_20121 H hH hGRH hq)
+    exists_prime_neOne_uniformSubgroup χ hne
+      (fun H hH ↦ PaperStatements.exists_prime_outside_4_5_shift_neg_2_20121_GRH H hH hGRH hq)
 
 /-- Under GRH, q ≥ 10^20121 and H proper, the least coprime outside prime is
 at most (4/5)(log q-2)². Minimize the bounded subgroup witness.
 Minimality is among all eligible primes and retains the same entrance and cutoff. -/
-theorem exists_least_prime_outside_le_gamma_four_fifths_minus_two_20121 {q : ℕ}
-    (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
+theorem exists_least_outside_4_5_shift_neg_2_20121_GRH {q : ℕ} (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hq : 10 ^ 20121 ≤ q) :
     ∃ p : ℕ,
       PrimeOutsideSubgroup q H p ∧
         (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log q - 2) ^ 2 ∧ ∀ r, PrimeOutsideSubgroup q H r → p ≤ r := by
   exact
     exists_least_prime_outside_of_subgroup_cutoff H
-      (PaperStatements.exists_prime_outside_le_gamma_four_fifths_minus_two_20121 H hH hGRH hq)
+      (PaperStatements.exists_prime_outside_4_5_shift_neg_2_20121_GRH H hH hGRH hq)
 
 /-- Under GRH, q ≥ 10^22097 and χ nonprincipal, a coprime prime with χ(p) ≠ 1
 exists through (4/5)(log q-log log q)². Apply the uniform subgroup bound to the unit kernel.
 This is the general-character interface with the same decimal entrance. -/
-theorem exists_prime_character_ne_one_le_gamma_four_fifths_minus_loglog_22097 {q : ℕ}
-    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hq : 10 ^ 22097 ≤ q) :
+theorem exists_prime_ne_one_4_5_minus_loglog_22097_GRH {q : ℕ} (χ : DirichletCharacter ℂ q)
+    (hne : χ ≠ 1) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hq : 10 ^ 22097 ≤ q) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬p ∣ q ∧ χ p ≠ 1 ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log q - Real.log (Real.log q)) ^ 2 := by
   exact
-    exists_prime_character_ne_one_of_uniform_subgroup_cutoff χ hne
-      (fun H hH ↦
-        PaperStatements.exists_prime_outside_le_gamma_four_fifths_minus_loglog_22097 H hH hGRH hq)
+    exists_prime_neOne_uniformSubgroup χ hne
+      (fun H hH ↦ PaperStatements.exists_prime_outside_4_5_sub_loglog_22097_GRH H hH hGRH hq)
 
 /-- Under GRH, q ≥ 10^22097 and H proper, the least coprime outside prime is
 at most (4/5)(log q-log log q)². Minimize the bounded subgroup witness.
 Minimality is among all eligible primes and retains the same entrance and cutoff. -/
-theorem exists_least_prime_outside_le_gamma_four_fifths_minus_loglog_22097 {q : ℕ}
-    (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hq : 10 ^ 22097 ≤ q) :
+theorem exists_least_outside_4_5_minus_loglog_22097_GRH {q : ℕ} (H : Subgroup (ZMod q)ˣ)
+    (hH : H ≠ ⊤) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hq : 10 ^ 22097 ≤ q) :
     ∃ p : ℕ,
       PrimeOutsideSubgroup q H p ∧
         (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log q - Real.log (Real.log q)) ^ 2 ∧
         ∀ r, PrimeOutsideSubgroup q H r → p ≤ r := by
   exact
     exists_least_prime_outside_of_subgroup_cutoff H
-      (PaperStatements.exists_prime_outside_le_gamma_four_fifths_minus_loglog_22097 H hH hGRH hq)
+      (PaperStatements.exists_prime_outside_4_5_sub_loglog_22097_GRH H hH hGRH hq)
 
 end PseudoPrime.LLS

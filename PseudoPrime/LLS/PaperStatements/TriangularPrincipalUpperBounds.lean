@@ -144,8 +144,7 @@ theorem triangular18_level_one_arithmetic_eq_split {x : ℝ} (hx : 0 < x) :
 /-- Under RH, the whole level-one principal series is bounded by the exact
 full mass times sqrt x and an explicit x^(1/4) error. Combine both finite
 support bounds and normalize by the positive square root. -/
-theorem triangular18_level_one_arithmetic_upper_precise_of_rh (hRH : RiemannHypothesis) {x : ℝ}
-    (hx : 0 < x) :
+theorem triangular18_level_one_upper_precise_of_RH (hRH : RiemannHypothesis) {x : ℝ} (hx : 0 < x) :
     (∑' n : ℕ,
           (triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)).summand
             (1 : DirichletCharacter ℂ 1) x n).re ≤
@@ -212,7 +211,7 @@ theorem triangular18_level_one_arithmetic_upper_of_rh (hRH : RiemannHypothesis) 
           (triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)).summand
             (1 : DirichletCharacter ℂ 1) x n).re ≤
       300000000 * Real.sqrt x + 1300000 * x ^ (1 / 4 : ℝ) := by
-  have h := triangular18_level_one_arithmetic_upper_precise_of_rh hRH hx
+  have h := triangular18_level_one_upper_precise_of_RH hRH hx
   rw [triangular18_full_mass_eq_half_value] at h
   have hm := mul_le_mul_of_nonneg_left triangular18_half_value_lt.le (Real.sqrt_nonneg x)
   have he :=

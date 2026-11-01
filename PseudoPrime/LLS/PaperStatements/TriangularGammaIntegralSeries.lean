@@ -39,7 +39,7 @@ theorem gamma_central_eq_complex_digamma {q : ℕ} (χ : DirichletCharacter ℂ 
         Complex.ofReal_re, Complex.ofReal_im, zero_mul, mul_zero, sub_zero]
       norm_num only [Complex.one_re]
     have he :=
-      logDeriv_gammaFactor_eq_of_even_of_half_ne_neg_nat hχ
+      gammaLogDeriv_even_eq_digamma hχ
         (fun n ↦ AnalyticNumberTheory.Gamma.not_neg_nat_of_re_pos hp n)
     rw [he, hz]
     ring
@@ -54,7 +54,7 @@ theorem gamma_central_eq_complex_digamma {q : ℕ} (χ : DirichletCharacter ℂ 
         Complex.ofReal_re, Complex.ofReal_im, zero_mul, mul_zero, sub_zero]
       norm_num only [Complex.one_re]
     have he :=
-      logDeriv_gammaFactor_eq_of_odd_of_half_ne_neg_nat hχ
+      gammaLogDeriv_odd_eq_digamma hχ
         (fun n ↦ AnalyticNumberTheory.Gamma.not_neg_nat_of_re_pos hp n)
     rw [he, hz]
     ring
@@ -64,8 +64,7 @@ central triangular Gamma integral as its real-axis baseline times the triangular
 plus the convergent vertical reciprocal-difference integral series. The triangular parameter
 and scale may be any positive reals. Split integrable terms and use the proved digamma
 series-integral exchange. No GRH is needed. This preserves signs for subsequent pole inversion. -/
-theorem triangular_central_gammaIntegral_eq_vertical_resolvent_series {q : ℕ}
-    (χ : DirichletCharacter ℂ q) :
+theorem triangular_gamma_eq_resolventSeries {q : ℕ} (χ : DirichletCharacter ℂ q) :
     ∃ b : ℝ,
       1 / 4 ≤ b ∧
         b ≤ 1 ∧

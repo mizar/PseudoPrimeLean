@@ -63,7 +63,7 @@ theorem heilbronnLevelWeight_pair_mass {p : ℕ} [Fact p.Prime] (P : ℕ → Pro
     intro x _
     exact Finset.sum_coe_sort (heilbronnElements p) (fun y ↦ heilbronnLevelWeight p P (x - y))
   rw [hpairs, PseudoPrime.Analysis.finite_pair_sum_eq_correlation]
-  simp only [← heilbronn_correlation_eq_finiteDifferenceCorrelation, heilbronnLevelWeight, ite_mul,
-    zero_mul, ← pow_two, Finset.sum_ite_mem, Finset.univ_inter]
+  simp only [← correlation_eq_finiteDifferenceCorrelation, heilbronnLevelWeight, ite_mul, zero_mul,
+    ← pow_two, Finset.sum_ite_mem, Finset.univ_inter]
 
 end PseudoPrime.NumberTheory.Heilbronn

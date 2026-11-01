@@ -51,8 +51,8 @@ theorem not_strongMillerRabinPass_of_unbalanced_product {p q b : ℕ} (hp : 1 < 
 /-- For odd p>1 and odd prime q>2^(p-1)-1, base two rejects modulo p*q.
 Specialize the general small-base lemma; primality of p is unnecessary.
 This proves the unbalanced-product family without GRH. -/
-theorem not_strongMillerRabinPass_two_of_unbalanced_product {p q : ℕ} (hp : 1 < p) (hpo : Odd p)
-    (hq : q.Prime) (hq2 : q ≠ 2) (hsize : 2 ^ (p - 1) - 1 < q) :
+theorem not_strongPass_two_of_unbalanced_product {p q : ℕ} (hp : 1 < p) (hpo : Odd p) (hq : q.Prime)
+    (hq2 : q ≠ 2) (hsize : 2 ^ (p - 1) - 1 < q) :
     ¬PrimeTest.StrongMillerRabinPass (p * q) (2 : ZMod (p * q)) := by
   exact
     not_strongMillerRabinPass_of_unbalanced_product hp hpo hq (hq.odd_of_ne_two hq2) (by decide)
@@ -67,8 +67,8 @@ theorem two_is_least_prime_witness_of_unbalanced_product {p q : ℕ} (hp : 1 < p
       ¬PrimeTest.StrongMillerRabinPass (p * q) (2 : ZMod (p * q)) ∧
       ∀ r : ℕ, r.Prime → ¬PrimeTest.StrongMillerRabinPass (p * q) (r : ZMod (p * q)) → 2 ≤ r := by
   exact
-    ⟨Nat.prime_two, not_strongMillerRabinPass_two_of_unbalanced_product hp hpo hq hq2 hsize,
-      fun r hr _ ↦ hr.two_le⟩
+    ⟨Nat.prime_two, not_strongPass_two_of_unbalanced_product hp hpo hq hq2 hsize, fun r hr _ ↦
+      hr.two_le⟩
 
 /-- For every prime q>3, the least prime MR witness for 3q is two.
 The general product-size condition reduces to q>3.

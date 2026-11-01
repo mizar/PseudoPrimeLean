@@ -22,8 +22,8 @@ x>=2 and an admissible prefix. Claim: the strict variable-budget gap yields
 a negative odd-prime Jacobi witness through 99x/40.
 Proof: supply the arithmetic bridge and bound its conductor by 4n.
 Role: export the local comparison without a scale-4096 gate. -/
-theorem exists_prime_neg_one_witness_of_variable_scale_gap {n Q : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hQ : 20000 ≤ Q) (hnQ : 4 * n ≤ Q)
+theorem exists_negOneWitness_of_variable_scale_gap {n Q : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hQ : 20000 ≤ Q) (hnQ : 4 * n ≤ Q)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x b : ℝ} (hx : 2 ≤ x)
     (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hgap :
@@ -42,7 +42,7 @@ theorem exists_prime_neg_one_witness_of_variable_scale_gap {n Q : ℕ} (hn : Odd
 /-- Under the displayed variable-budget gap, a non-one odd-prime witness
 also lies through 99x/40. Proof: use the negative witness.
 Role: expose the second quadratic witness predicate at the same scale. -/
-theorem exists_prime_ne_one_witness_of_variable_scale_gap {n Q : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+theorem exists_neOneWitness_of_variable_scale_gap {n Q : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hQ : 20000 ≤ Q) (hnQ : 4 * n ≤ Q)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x b : ℝ} (hx : 2 ≤ x)
     (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
@@ -53,7 +53,7 @@ theorem exists_prime_ne_one_witness_of_variable_scale_gap {n Q : ℕ} (hn : Odd 
               LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n p ≠ 1 := by
   obtain ⟨p, hp, ho, hbound, hv⟩ :=
-    exists_prime_neg_one_witness_of_variable_scale_gap hn hns hQ hnQ hGRH hx hb hbx hgap
+    exists_negOneWitness_of_variable_scale_gap hn hns hQ hnQ hGRH hx hb hbx hgap
   exact
     ⟨p, hp, ho, hbound, by
       rw [hv]; norm_num only⟩
@@ -73,7 +73,7 @@ theorem primeNegOneWitness_cast_le_of_variable_scale_gap {n Q : ℕ} (hn : Odd n
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ (99 / 40 : ℝ) * x := by
   obtain ⟨p, hp, ho, hbound, hv⟩ :=
-    exists_prime_neg_one_witness_of_variable_scale_gap hn hns hQ hnQ hGRH hx hb hbx hgap
+    exists_negOneWitness_of_variable_scale_gap hn hns hQ hnQ hGRH hx hb hbx hgap
   exact (Nat.cast_le.mpr (NumberTheory.primeNegOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hbound
 
 /-- Under the displayed variable-budget gap and nonempty witness set,
@@ -91,7 +91,7 @@ theorem primeNeOneWitness_cast_le_of_variable_scale_gap {n Q : ℕ} (hn : Odd n)
     (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤ (99 / 40 : ℝ) * x := by
   obtain ⟨p, hp, ho, hbound, hv⟩ :=
-    exists_prime_ne_one_witness_of_variable_scale_gap hn hns hQ hnQ hGRH hx hb hbx hgap
+    exists_neOneWitness_of_variable_scale_gap hn hns hQ hnQ hGRH hx hb hbx hgap
   exact (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hbound
 
 /-- Input: GRH, an ambient modulus bounding 4B, x>=2, admissible prefix
@@ -139,10 +139,9 @@ prefix, variable effective credit, a signed dual cap and the shared polynomial.
 Claim: a negative odd-prime witness lies through 99x/40.
 Proof: compare the variable budget with the common-cost polynomial margin.
 Role: expose the lower-scale analytic criterion without local-cost hypotheses. -/
-theorem exists_prime_neg_one_witness_of_variable_scale_polynomial {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {L b x C D : ℝ} (hL : 10 ≤ L) (hlog : Real.log n ≤ L) (hx : 2 ≤ x) (hb : 1 ≤ b)
-    (hbx : b ≤ (99 / 40 : ℝ) * x)
+theorem exists_prime_negOne_variableScalePoly_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L b x C D : ℝ} (hL : 10 ≤ L)
+    (hlog : Real.log n ≤ L) (hx : 2 ≤ x) (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hcredit :
       C +
           ((LLS.gammaVariableSquareMass x - 11783423 / 25000000) * (L + 7 / 5) +
@@ -154,19 +153,18 @@ theorem exists_prime_neg_one_witness_of_variable_scale_polynomial {n : ℕ} (hn 
     (hpoly : LLS.GammaPairedPolynomialCondition (L + 7 / 5) x C) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n p = -1 := by
   have hg :=
-    LLS.gamma_common_margin_pos_of_variable_scale_polynomial hn hns hlog (by linarith only [hx])
+    LLS.gamma_common_margin_pos_of_variable_polynomial hn hns hlog (by linarith only [hx])
       (LLS.gamma_log_pole_level_le_of_common_endpoint hn hL hlog) hcredit hdual hpoly
   exact
-    exists_prime_neg_one_witness_of_retained_common_separation hn hns (le_max_left _ _)
-      (le_max_right _ _) hGRH hx hb hbx hg.le
+    exists_negOneWitness_of_retainedCommon_gap hn hns (le_max_left _ _) (le_max_right _ _) hGRH hx
+      hb hbx hg.le
 
 /-- Under the displayed variable-cost polynomial criterion, a non-one
 odd-prime witness lies through 99x/40. Proof: use the negative witness.
 Role: connect the lower-scale criterion to the second quadratic predicate. -/
-theorem exists_prime_ne_one_witness_of_variable_scale_polynomial {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {L b x C D : ℝ} (hL : 10 ≤ L) (hlog : Real.log n ≤ L) (hx : 2 ≤ x) (hb : 1 ≤ b)
-    (hbx : b ≤ (99 / 40 : ℝ) * x)
+theorem exists_neOneWitness_of_variable_scale_polynomial {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L b x C D : ℝ} (hL : 10 ≤ L)
+    (hlog : Real.log n ≤ L) (hx : 2 ≤ x) (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hcredit :
       C +
           ((LLS.gammaVariableSquareMass x - 11783423 / 25000000) * (L + 7 / 5) +
@@ -178,8 +176,7 @@ theorem exists_prime_ne_one_witness_of_variable_scale_polynomial {n : ℕ} (hn :
     (hpoly : LLS.GammaPairedPolynomialCondition (L + 7 / 5) x C) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n p ≠ 1 := by
   obtain ⟨p, hp, ho, hbound, hv⟩ :=
-    exists_prime_neg_one_witness_of_variable_scale_polynomial hn hns hGRH hL hlog hx hb hbx hcredit
-      hdual hpoly
+    exists_prime_negOne_variableScalePoly_GRH hn hns hGRH hL hlog hx hb hbx hcredit hdual hpoly
   exact
     ⟨p, hp, ho, hbound, by
       rw [hv]; norm_num only⟩
@@ -187,10 +184,9 @@ theorem exists_prime_ne_one_witness_of_variable_scale_polynomial {n : ℕ} (hn :
 /-- Under the displayed variable-cost polynomial criterion and nonempty
 witness set, the least witness is at most 99x/40. Proof: compare it with the
 constructed witness. Role: retain minimality over the complete witness set. -/
-theorem primeNegOneWitness_cast_le_of_variable_scale_polynomial {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {L b x C D : ℝ} (hL : 10 ≤ L) (hlog : Real.log n ≤ L) (hx : 2 ≤ x) (hb : 1 ≤ b)
-    (hbx : b ≤ (99 / 40 : ℝ) * x)
+theorem negOneWitness_le_of_variable_scale_polynomial {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L b x C D : ℝ} (hL : 10 ≤ L)
+    (hlog : Real.log n ≤ L) (hx : 2 ≤ x) (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hcredit :
       C +
           ((LLS.gammaVariableSquareMass x - 11783423 / 25000000) * (L + 7 / 5) +
@@ -203,17 +199,15 @@ theorem primeNegOneWitness_cast_le_of_variable_scale_polynomial {n : ℕ} (hn : 
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ (99 / 40 : ℝ) * x := by
   obtain ⟨p, hp, ho, hbound, hv⟩ :=
-    exists_prime_neg_one_witness_of_variable_scale_polynomial hn hns hGRH hL hlog hx hb hbx hcredit
-      hdual hpoly
+    exists_prime_negOne_variableScalePoly_GRH hn hns hGRH hL hlog hx hb hbx hcredit hdual hpoly
   exact (Nat.cast_le.mpr (NumberTheory.primeNegOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hbound
 
 /-- Under the displayed variable-cost polynomial criterion and nonempty
 witness set, the least witness is at most 99x/40. Proof: compare it with the
 constructed witness. Role: retain minimality over the complete witness set. -/
-theorem primeNeOneWitness_cast_le_of_variable_scale_polynomial {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {L b x C D : ℝ} (hL : 10 ≤ L) (hlog : Real.log n ≤ L) (hx : 2 ≤ x) (hb : 1 ≤ b)
-    (hbx : b ≤ (99 / 40 : ℝ) * x)
+theorem neOneWitness_le_of_variable_scale_polynomial {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L b x C D : ℝ} (hL : 10 ≤ L)
+    (hlog : Real.log n ≤ L) (hx : 2 ≤ x) (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hcredit :
       C +
           ((LLS.gammaVariableSquareMass x - 11783423 / 25000000) * (L + 7 / 5) +
@@ -226,8 +220,8 @@ theorem primeNeOneWitness_cast_le_of_variable_scale_polynomial {n : ℕ} (hn : O
     (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤ (99 / 40 : ℝ) * x := by
   obtain ⟨p, hp, ho, hbound, hv⟩ :=
-    exists_prime_ne_one_witness_of_variable_scale_polynomial hn hns hGRH hL hlog hx hb hbx hcredit
-      hdual hpoly
+    exists_neOneWitness_of_variable_scale_polynomial hn hns hGRH hL hlog hx hb hbx hcredit hdual
+      hpoly
   exact (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hbound
 
 /-- Input: GRH, log B>=10, x>=2 and the displayed uniform variable-cost
@@ -253,7 +247,7 @@ theorem QNegOne_le_of_variable_scale_polynomial {B : ℕ}
   intro n hn
   have ha := NumberTheory.mem_admissibleFinset_iff.mp hn
   exact
-    primeNegOneWitness_cast_le_of_variable_scale_polynomial ha.odd ha.not_isSquare hGRH hB
+    negOneWitness_le_of_variable_scale_polynomial ha.odd ha.not_isSquare hGRH hB
       (Real.log_le_log (Nat.cast_pos.mpr ha.odd.pos) (Nat.cast_le.mpr ha.le)) hx hb hbx hcredit
       hdual hpoly
       (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare ha.odd ha.not_isSquare)
@@ -283,10 +277,10 @@ and the displayed analytic-block, dual and polynomial conditions. Claim:
 both full quadratic witness maxima are at most (99/40)x. Use asymmetric
 Chebyshev differences before polynomial extraction. Role: remove the fixed
 large-scale entrance from the short-block witness interface. -/
-theorem Q_witness_maxima_le_of_variable_scale_asymmetric_block_polynomial {B a b : ℕ}
-    {x C D P s t : ℝ} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hB : 10 ≤ Real.log B) (hx : 2 ≤ x) (hab : a ≤ b) (hs : 1 < s) (hsb : s < b) (ha : (1 : ℝ) < a)
-    (hat : (a : ℝ) < t) (hbx : (b : ℝ) ≤ (99 / 40 : ℝ) * x)
+theorem Q_maxima_variableAsymmetricPoly_GRH {B a b : ℕ} {x C D P s t : ℝ}
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hB : 10 ≤ Real.log B)
+    (hx : 2 ≤ x) (hab : a ≤ b) (hs : 1 < s) (hsb : s < b) (ha : (1 : ℝ) < a) (hat : (a : ℝ) < t)
+    (hbx : (b : ℝ) ≤ (99 / 40 : ℝ) * x)
     (hP : P ≤ ∑ j ∈ Finset.Ioc 0 a, Analysis.gammaResolventMangoldtWeight j)
     (hcredit :
       C +
@@ -298,8 +292,7 @@ theorem Q_witness_maxima_le_of_variable_scale_asymmetric_block_polynomial {B a b
     (hdual : LLS.gammaScaleSignedDualBudget (Real.log B) x ≤ D)
     (hpoly : LLS.GammaPairedPolynomialCondition (Real.log B + 7 / 5) x C) :
     (QNegOne B : ℝ) ≤ (99 / 40 : ℝ) * x ∧ (QNeOne B : ℝ) ≤ (99 / 40 : ℝ) * x := by
-  have hg :=
-    LLS.gamma_euler_prefix_lower_growth_of_asymmetric_rh_errors hGRH.riemann hab hs hsb ha hat hP
+  have hg := LLS.gammaEulerPrefix_growth_asymmetric_RH hGRH.riemann hab hs hsb ha hat hP
   have hp :
     C +
         ((LLS.gammaVariableSquareMass x - 11783423 / 25000000) * (Real.log B + 7 / 5) +
@@ -319,7 +312,7 @@ and the displayed analytic-block, dual and polynomial conditions. Claim:
 both full quadratic witness maxima are at most (99/40)x. Use asymmetric
 Chebyshev differences before polynomial extraction. Role: remove the fixed
 large-scale entrance from the short-block witness interface. -/
-theorem Q_witness_maxima_le_of_leading_variable_scale_asymmetric_block {B a b : ℕ} {x C D P s t : ℝ}
+theorem Q_maxima_leadingVariableAsymmetric_GRH {B a b : ℕ} {x C D P s t : ℝ}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hB : 10 ≤ Real.log B)
     (hx : 2 ≤ x) (hab : a ≤ b) (hs : 1 < s) (hsb : s < b) (ha : 3 ≤ a) (hat : (a : ℝ) < t)
     (hbx : (b : ℝ) ≤ (99 / 40 : ℝ) * x)
@@ -336,8 +329,7 @@ theorem Q_witness_maxima_le_of_leading_variable_scale_asymmetric_block {B a b : 
     (hdual : LLS.gammaScaleSignedDualBudget (Real.log B) x ≤ D)
     (hpoly : LLS.GammaPairedPolynomialCondition (Real.log B + 7 / 5) x C) :
     (QNegOne B : ℝ) ≤ (99 / 40 : ℝ) * x ∧ (QNeOne B : ℝ) ≤ (99 / 40 : ℝ) * x := by
-  have hg :=
-    LLS.gamma_euler_prefix_lower_growth_leading_asymmetric hGRH.riemann ha hab hs hsb hat hP
+  have hg := LLS.gammaEulerPrefix_growth_leadingAsym_RH hGRH.riemann ha hab hs hsb hat hP
   have hp :
     C +
         ((LLS.gammaVariableSquareMass x - 11783423 / 25000000) * (Real.log B + 7 / 5) +

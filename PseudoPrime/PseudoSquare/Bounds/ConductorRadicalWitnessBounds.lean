@@ -96,8 +96,8 @@ theorem exists_prime_neg_one_le_squarefree_square_budget {n : ℕ} {hn : Odd n} 
     ⟨bridge.squareFactor ^ 2, by simpa only [mul_comm] using bridge.squarefreePart_sq_mul.symm⟩
   have hf :
     (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ 4 * bridge.squarefreePart := by
-    rw [NumberTheory.complexQuadraticCharacter_conductor_eq_discriminant bridge hdiv]
-    exact bridge.discriminant_le_four_mul_squarefreePart
+    rw [NumberTheory.complexQuadratic_conductor_eq_discriminant bridge hdiv]
+    exact bridge.discr_le_four_squarefreePart
   have hflog :=
     Real.log_le_log
       (Nat.cast_pos.mpr
@@ -159,8 +159,8 @@ theorem primeNeOneWitness_le_squarefree_square_budget {n : ℕ} {hn : Odd n} {hn
 square-factor prime logarithm budget produce a negative odd-prime witness at
 most log(n)^(2-epsilon). Square the radius condition and add the radical cost.
 This is a structured-input exponent improvement, not a uniform one. -/
-theorem exists_prime_neg_one_le_log_power_of_squarefree_budget {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem exists_prime_negOne_squarefreeLogPower_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {epsilon : ℝ}
     (hA :
       12 * Real.log ((4 * bridge.squarefreePart : ℕ) : ℝ) + 201 ≤

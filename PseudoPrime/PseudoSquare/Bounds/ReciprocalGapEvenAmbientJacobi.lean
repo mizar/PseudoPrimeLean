@@ -21,9 +21,9 @@ separation at the canonical primitive conductor with exclusion level 4*n gives a
 prime p<=x coprime to n with Jacobi(n,p)=-1. Build the canonical primitive quadratic
 character, retain the additional-nonunit losses and transfer its odd-prime evaluation.
 No nonzero-conductor or arithmetic-bridge hypothesis is required from the caller. -/
-theorem exists_odd_prime_jacobi_neg_one_of_reciprocalGap_even_ambient {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ}
-    (hx : 1 ≤ x) (B₀ B₁ B : Finset ℕ) (hB₀ : ∀ a ∈ B₀, (a : ℝ) ≤ x) (hB₁ : ∀ a ∈ B₁, (a : ℝ) ≤ x)
+theorem exists_oddPrime_negOne_evenAmbientGap_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 ≤ x)
+    (B₀ B₁ B : Finset ℕ) (hB₀ : ∀ a ∈ B₀, (a : ℝ) ≤ x) (hB₁ : ∀ a ∈ B₁, (a : ℝ) ≤ x)
     (hB : B ⊆ Finset.Ioc 0 ⌊x⌋₊) (hcop : ∀ a ∈ B, Nat.Coprime a (4 * n)) (lo u : ℕ → ℝ)
     (hlo : ∀ a ∈ B, lo a ≤ ArithmeticFunction.vonMangoldt a)
     (hu : ∀ a ∈ B, ((a : ℝ) / x) ^ (7 / 10 : ℝ) ≤ u a) (hu1 : ∀ a ∈ B, u a ≤ 1)
@@ -47,9 +47,9 @@ theorem exists_odd_prime_jacobi_neg_one_of_reciprocalGap_even_ambient {n : ℕ} 
   have hdiv := (NumberTheory.complexQuadraticCharacter n hn).conductor_dvd_level
   have htwo : 2 ∣ 4 * n := ⟨2 * n, by ring⟩
   obtain ⟨p, hprime, hodd, hpx, hpc, hv⟩ :=
-    LLS.PaperStatements.exists_odd_prime_neg_one_of_reciprocalGap_even_ambient_lower hq hdiv htwo
-      hGRH (NumberTheory.primitiveQuadraticCharacter_isEven n hn) hp hne hquad hx B₀ B₁ B hB₀ hB₁ hB
-      hcop lo u hlo hu hu1 hgap
+    LLS.PaperStatements.exists_oddPrime_negOne_evenAmbientGap_GRH hq hdiv htwo hGRH
+      (NumberTheory.primitiveQuadraticCharacter_isEven n hn) hp hne hquad hx B₀ B₁ B hB₀ hB₁ hB hcop
+      lo u hlo hu hu1 hgap
   have hcp : Nat.Coprime p n := hpc.of_dvd_right (show n ∣ 4 * n from ⟨4, by ring⟩)
   have he :=
     NumberTheory.primitiveQuadraticCharacter_apply_odd_prime hn hprime hodd
@@ -66,7 +66,7 @@ namespace PseudoPrime.PseudoSquare
 least odd-prime non-one and negative Jacobi witnesses are at most x after real casting.
 Extract the actual negative witness, use its leastness and compare both witness sets.
 This connects the analytic certificate interface to the public pointwise witness bounds. -/
-theorem primeWitness_cast_le_of_reciprocalGap_even_ambient {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+theorem primeWitness_le_of_reciprocalGap_even_ambient {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 ≤ x)
     (B₀ B₁ B : Finset ℕ) (hB₀ : ∀ a ∈ B₀, (a : ℝ) ≤ x) (hB₁ : ∀ a ∈ B₁, (a : ℝ) ≤ x)
     (hB : B ⊆ Finset.Ioc 0 ⌊x⌋₊) (hcop : ∀ a ∈ B, Nat.Coprime a (4 * n)) (lo u : ℕ → ℝ)
@@ -86,8 +86,8 @@ theorem primeWitness_cast_le_of_reciprocalGap_even_ambient {n : ℕ} (hn : Odd n
           ℝ) ≤
         x := by
   obtain ⟨p, hprime, hodd, hpx, _, hj⟩ :=
-    exists_odd_prime_jacobi_neg_one_of_reciprocalGap_even_ambient hn hns hGRH hx B₀ B₁ B hB₀ hB₁ hB
-      hcop lo u hlo hu hu1 hgap
+    exists_oddPrime_negOne_evenAmbientGap_GRH hn hns hGRH hx B₀ B₁ B hB₀ hB₁ hB hcop lo u hlo hu hu1
+      hgap
   let hneg := NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns
   have hmem : p ∈ NumberTheory.primeNegOneWitnessSet n := ⟨hprime, hodd, hj⟩
   have hb := (Nat.cast_le.mpr (NumberTheory.primeNegOneWitness_le n hneg hmem)).trans hpx

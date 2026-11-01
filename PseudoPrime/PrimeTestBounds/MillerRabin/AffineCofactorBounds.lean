@@ -50,8 +50,8 @@ theorem SmallCofactorOrGap.smallAffineCofactor {n : ℕ} {τ : ℝ} (h : SmallCo
 /-- For fixed 0<tau<1 and A>1/(1-tau), sufficiently large odd n>1
 in the affine family have least prime MR witness at most log(n)^A.
 Apply the proved small-kernel theorem. Its threshold is uniform in k. -/
-theorem eventually_exists_least_prime_witness_of_small_affine_cofactor {τ A : ℝ} (hτ0 : 0 < τ)
-    (hτ1 : τ < 1) (hA : 1 / (1 - τ) < A) :
+theorem eventually_least_prime_smallAffine {τ A : ℝ} (hτ0 : 0 < τ) (hτ1 : τ < 1)
+    (hA : 1 / (1 - τ) < A) :
     ∀ᶠ n : ℕ in Filter.atTop,
       1 < n →
         Odd n →
@@ -61,15 +61,15 @@ theorem eventually_exists_least_prime_witness_of_small_affine_cofactor {τ A : �
             ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) ∧
             (q : ℝ) ≤ (Real.log n) ^ A ∧
             ∀ r : ℕ, r.Prime → ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) → q ≤ r := by
-  apply (eventually_exists_least_prime_witness_of_prime_small_kernel hτ0 hτ1 hA).mono
+  apply (eventually_least_prime_smallKernel hτ0 hτ1 hA).mono
   intro n h hn ho hf
   exact h hn ho hf.small_kernel
 
 /-- If A<2, the same affine-family bound is eventually strictly below
 log(n)^2. Keep the least witness and compare real exponents at log(n)>1.
 This transfers the strict analytic saving to arbitrary affine multipliers. -/
-theorem eventually_exists_least_prime_witness_strict_of_small_affine_cofactor {τ A : ℝ}
-    (hτ0 : 0 < τ) (hτ1 : τ < 1) (hA : 1 / (1 - τ) < A) (hA2 : A < 2) :
+theorem eventually_least_prime_smallAffine_strict {τ A : ℝ} (hτ0 : 0 < τ) (hτ1 : τ < 1)
+    (hA : 1 / (1 - τ) < A) (hA2 : A < 2) :
     ∀ᶠ n : ℕ in Filter.atTop,
       1 < n →
         Odd n →
@@ -82,8 +82,8 @@ theorem eventually_exists_least_prime_witness_strict_of_small_affine_cofactor {�
             ∀ r : ℕ, r.Prime → ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) → q ≤ r := by
   have ht : Filter.Tendsto (fun n : ℕ ↦ Real.log n) Filter.atTop Filter.atTop :=
     Real.tendsto_log_atTop.comp tendsto_natCast_atTop_atTop
-  filter_upwards [eventually_exists_least_prime_witness_of_small_affine_cofactor hτ0 hτ1 hA,
-    ht.eventually_gt_atTop 1] with n h hL hn ho hf
+  filter_upwards [eventually_least_prime_smallAffine hτ0 hτ1 hA, ht.eventually_gt_atTop 1] with n h
+    hL hn ho hf
   obtain ⟨q, hq, hfail, hb, hleast⟩ := h hn ho hf
   have hs : (Real.log n) ^ A < (Real.log n) ^ 2 := by
     simpa only [Real.rpow_two] using Real.rpow_lt_rpow_of_exponent_lt hL hA2
@@ -116,8 +116,7 @@ theorem smallAffineCofactor_of_remainder {p m : ℕ} {τ : ℝ} (hp : p.Prime) (
 /-- For fixed 0<tau<1/2, the affine family admits a fixed exponent A<2
 and an eventual least-prime MR bound strictly below log(n)^2. Choose A
 between 1/(1-tau) and two. The unrestricted multiplier is uniform. -/
-theorem exists_subquadratic_exponent_of_small_affine_cofactor {τ : ℝ} (hτ0 : 0 < τ)
-    (hτhalf : τ < 1 / 2) :
+theorem exists_subquadratic_smallAffine {τ : ℝ} (hτ0 : 0 < τ) (hτhalf : τ < 1 / 2) :
     ∃ A : ℝ,
       0 < A ∧
         A < 2 ∧
@@ -139,7 +138,7 @@ theorem exists_subquadratic_exponent_of_small_affine_cofactor {τ : ℝ} (hτ0 :
   obtain ⟨A, hA, hA2⟩ := exists_between hb
   exact
     ⟨A, (div_pos zero_lt_one hd).trans hA, hA2,
-      eventually_exists_least_prime_witness_strict_of_small_affine_cofactor hτ0 hτ1 hA hA2⟩
+      eventually_least_prime_smallAffine_strict hτ0 hτ1 hA hA2⟩
 
 /-- For every prime p>3 and every natural k, the least prime MR witness
 of p(k(p-1)+3) is two. The local kernel divides two, and 2^2-1=3<p.

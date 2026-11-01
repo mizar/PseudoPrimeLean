@@ -21,7 +21,7 @@ namespace PseudoPrime.AnalyticNumberTheory.RectangleGeometry
 rectangles with heights tending to infinity converge to I times the difference of the
 whole-line right and left integrals. Expand the oriented edges and exhaust the real lines.
 This assembles shifted contours without assuming any residue formula. -/
-theorem tendsto_rectangleBoundaryIntegral_of_horizontal_limits {K : ℂ → ℂ} {a b : ℝ} (T : ℕ → ℝ)
+theorem tendsto_boundaryIntegral {K : ℂ → ℂ} {a b : ℝ} (T : ℕ → ℝ)
     (hT : Filter.Tendsto T Filter.atTop Filter.atTop)
     (hbottom :
       Filter.Tendsto (fun k ↦ ∫ u in a..b, K ((u : ℂ) - T k * Complex.I)) Filter.atTop (nhds 0))
@@ -112,8 +112,7 @@ theorem integral_vertical_eq_of_strip_decay {f : ℂ → ℂ} (hf : Differentiab
           (tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := ℝ)).const_mul C
       simpa only [zero_mul] using hlim.mul_const |d - c|
   have ht :=
-    tendsto_rectangleBoundaryIntegral_of_horizontal_limits (fun n : ℕ ↦ (n : ℝ))
-      tendsto_natCast_atTop_atTop
+    tendsto_boundaryIntegral (fun n : ℕ ↦ (n : ℝ)) tendsto_natCast_atTop_atTop
       (by
         simpa only [neg_one_mul, Complex.ofReal_neg, neg_mul, sub_eq_add_neg, one_mul] using
           hhor (-1) (Or.inr rfl))

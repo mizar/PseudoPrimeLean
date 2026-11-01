@@ -20,9 +20,8 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 to every odd nonsquarefree n>1 with P at most log(n)^alpha. A square prime divisor
 below P is itself a bounded rejecting base; larger square divisors use the assumed
 estimate. This removes small local primes without a finite certificate. -/
-theorem exists_prime_witness_le_log_power_of_uniform_fermat_quotient_bound {n P : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hns : ¬Squarefree n) (alpha : ℝ) (halpha : 0 ≤ alpha)
-    (hP : (P : ℝ) ≤ (Real.log n) ^ alpha)
+theorem exists_prime_logPower_uniformFermat {n P : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (alpha : ℝ) (halpha : 0 ≤ alpha) (hP : (P : ℝ) ≤ (Real.log n) ^ alpha)
     (hF :
       ∀ p : ℕ,
         p.Prime →
@@ -41,9 +40,7 @@ theorem exists_prime_witness_le_log_power_of_uniform_fermat_quotient_bound {n P 
   have hpn : p ∣ n := (dvd_mul_right p p).trans hd
   have hp2 : p ≠ 2 := fun he ↦ ho.not_two_dvd_nat (he ▸ hpn)
   by_cases hlarge : P ≤ p
-  · exact
-      exists_prime_witness_le_log_power_of_fermat_quotient_bound hn ho hp hp2 hsq alpha halpha
-        (hF p hp hp2 hlarge)
+  · exact exists_prime_logPower_fermatQuotient hn ho hp hp2 hsq alpha halpha (hF p hp hp2 hlarge)
   · exact
       ⟨p, hp, (Nat.cast_le.mpr (Nat.le_of_lt (Nat.lt_of_not_ge hlarge))).trans hP,
         PrimeTest.strongMillerRabinPass_not_of_prime_dvd hn ho hp hpn⟩
@@ -52,8 +49,7 @@ theorem exists_prime_witness_le_log_power_of_uniform_fermat_quotient_bound {n P 
 eventual prime MR witness bound log(n)^alpha on all odd nonsquarefree inputs.
 Extract the prime threshold and let log(n)^alpha grow beyond it, then apply the
 uniform arithmetic transfer. The external analytic bound is retained as a hypothesis. -/
-theorem eventually_exists_prime_witness_le_log_power_of_fermat_quotient_bound {alpha : ℝ}
-    (ha : 0 < alpha)
+theorem eventually_prime_logPower_fermatQuotient {alpha : ℝ} (ha : 0 < alpha)
     (hF :
       Filter.Eventually
         (fun p : ℕ ↦
@@ -76,7 +72,7 @@ theorem eventually_exists_prime_witness_le_log_power_of_fermat_quotient_bound {a
   apply (ht.eventually_ge_atTop (P : ℝ)).mono
   intro n hn hng ho hns
   exact
-    exists_prime_witness_le_log_power_of_uniform_fermat_quotient_bound hng ho hns alpha ha.le hn
+    exists_prime_logPower_uniformFermat hng ho hns alpha ha.le hn
       (fun p hp hp2 hlarge ↦ hP p hlarge hp hp2)
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

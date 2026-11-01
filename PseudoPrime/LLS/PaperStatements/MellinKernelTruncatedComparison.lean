@@ -26,8 +26,8 @@ namespace PseudoPrime.LLS.PaperStatements.MellinKernel
 finite Mangoldt sum with the comparison weight eventually exceeds its full integral minus
 that allowance. First use a positive lower cutoff, then pass it to zero and enlarge the
 finite sum using nonnegativity. This supplies the lower estimate in Proposition 6.1. -/
-theorem eventually_integral_le_weighted_mangoldt_sum (K : MellinKernel) (hRH : RiemannHypothesis)
-    {b ε : ℝ} (hb : 0 < b) (hε : 0 < ε) :
+theorem eventually_integral_le_mangoldt_RH (K : MellinKernel) (hRH : RiemannHypothesis) {b ε : ℝ}
+    (hb : 0 < b) (hε : 0 < ε) :
     ∀ᶠ x : ℝ in Filter.atTop,
       (∫ u in 0..b, (K.transform u).re / Real.sqrt u) - ε ≤
         (∑ n ∈ Finset.Ioc 0 ⌊b * x⌋₊,
@@ -109,7 +109,7 @@ theorem eventually_level_one_sum_ge_integral (K : MellinKernel) (hRH : RiemannHy
     ∀ᶠ x : ℝ in Filter.atTop,
       Real.sqrt x * ((∫ u in 0..b, (K.transform u).re / Real.sqrt u) - ε) ≤
         ∑ n ∈ Finset.Ioc 0 ⌊b * x⌋₊, (K.summand (1 : DirichletCharacter ℂ 1) x n).re := by
-  filter_upwards [eventually_integral_le_weighted_mangoldt_sum K hRH hb hε,
+  filter_upwards [eventually_integral_le_mangoldt_RH K hRH hb hε,
     Filter.eventually_gt_atTop (0 : ℝ)] with x hxlower hx
   have h :=
     (le_div_iff₀ (Real.sqrt_pos.mpr hx)).mp
@@ -136,7 +136,7 @@ theorem exists_principal_finite_difference_le (K : MellinKernel) :
             (∑ n ∈ Finset.Ioc 0 ⌊y⌋₊, (K.summand (1 : DirichletCharacter ℂ 1) x n).re) -
                 (∑ n ∈ Finset.Ioc 0 ⌊y⌋₊, (K.summand (1 : DirichletCharacter ℂ q) x n).re) ≤
               C * Real.log q * Real.log x / Real.sqrt x := by
-  obtain ⟨C, hC, hb⟩ := exists_sum_norm_summand_sub_primitive_le_log K
+  obtain ⟨C, hC, hb⟩ := exists_primitiveDiff_sumNorm_log K
   refine ⟨C, hC, ?_⟩
   intro q _ x y hx hy
   have he :

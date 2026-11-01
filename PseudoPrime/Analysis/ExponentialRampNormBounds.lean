@@ -31,8 +31,8 @@ theorem one_add_pow_re_bounds_of_norm_le_one {c : ℂ} (hc : ‖c‖ ≤ 1) (k :
 /-- For a local value of norm at most one, every signed ramp term has absolute value
 at most twice its exponential envelope. Use the paired coefficient interval and
 both ramp bounds. This supplies absolute convergence for nonquadratic characters. -/
-theorem norm_exponentialRampLocalCorrection_le_exp_of_norm_le_one {c : ℂ} (hc : ‖c‖ ≤ 1) (u : ℝ)
-    (k : ℕ) : ‖exponentialRampLocalCorrection c u k‖ ≤ 2 * Real.exp (-u) := by
+theorem norm_expRampCorrection_le_of_norm_le_one {c : ℂ} (hc : ‖c‖ ≤ 1) (u : ℝ) (k : ℕ) :
+    ‖exponentialRampLocalCorrection c u k‖ ≤ 2 * Real.exp (-u) := by
   have h := one_add_pow_re_bounds_of_norm_le_one hc k
   have h0 := mul_nonneg h.1 (Real.exp_pos (-u)).le
   have h2 := mul_le_mul_of_nonneg_right h.2 (Real.exp_pos (-u)).le
@@ -46,7 +46,7 @@ theorem norm_exponentialRampLocalCorrection_le_exp_of_norm_le_one {c : ℂ} (hc 
 /-- Above the ramp cutoff, every local term with coefficient in the unit disk is
 nonpositive. The ramp vanishes and the paired real coefficient is nonnegative.
 This allows general characters in the prime-triviality comparison. -/
-theorem exponentialRampLocalCorrection_tail_nonpos_of_norm_le_one {c : ℂ} (hc : ‖c‖ ≤ 1) {u : ℝ}
+theorem expRampCorrection_tail_nonpos_of_norm_le_one {c : ℂ} (hc : ‖c‖ ≤ 1) {u : ℝ}
     (hu : 99 / 40 ≤ u) (k : ℕ) : exponentialRampLocalCorrection c u k ≤ 0 := by
   rw [exponentialRampLocalCorrection, exponentialRampWeight_eq_zero hu, mul_zero, zero_sub]
   exact
@@ -55,8 +55,8 @@ theorem exponentialRampLocalCorrection_tail_nonpos_of_norm_le_one {c : ℂ} (hc 
 /-- For a unit-disk value, positive scale and heights growing at least linearly,
 the local correction series converges absolutely. Dominate its norm by a geometric
 exponential. No real-valued or quadratic hypothesis is required. -/
-theorem summable_exponentialRampLocalCorrection_of_norm_le_one {c : ℂ} (hc : ‖c‖ ≤ 1) {x : ℝ}
-    (hx : 0 < x) (u : ℕ → ℝ) (hu : ∀ k, ((k + 1 : ℕ) : ℝ) / x ≤ u k) :
+theorem summable_expRampCorrection_of_norm_le_one {c : ℂ} (hc : ‖c‖ ≤ 1) {x : ℝ} (hx : 0 < x)
+    (u : ℕ → ℝ) (hu : ∀ k, ((k + 1 : ℕ) : ℝ) / x ≤ u k) :
     Summable (fun k ↦ exponentialRampLocalCorrection c (u k) (k + 1)) := by
   have hr : ‖Real.exp (-1 / x)‖ < 1 := by
     rw [Real.norm_eq_abs, abs_of_pos (Real.exp_pos _), Real.exp_lt_one_iff]
@@ -71,7 +71,7 @@ theorem summable_exponentialRampLocalCorrection_of_norm_le_one {c : ℂ} (hc : �
     rw [neg_div]
     exact neg_le_neg (hu k)
   calc
-    _ ≤ 2 * Real.exp (-(u k)) := norm_exponentialRampLocalCorrection_le_exp_of_norm_le_one hc _ _
+    _ ≤ 2 * Real.exp (-(u k)) := norm_expRampCorrection_le_of_norm_le_one hc _ _
     _ ≤ 2 * Real.exp (-((k + 1 : ℕ) : ℝ) / x) := mul_le_mul_of_nonneg_left he (by norm_num only)
     _ = _ := by rw [exp_neg_div_nat_eq_power]
 

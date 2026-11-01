@@ -33,8 +33,8 @@ the zero-comparison constraint and r<=kappa*h, ambient coupled separation agains
 a finite selected lower certificate produces an N-coprime non-one prime below x.
 Use witness nonexistence to bound both positive prefixes and the principal sum.
 The Euler/Gamma endpoints remain explicit, rather than fixed numerical constants. -/
-theorem exists_prime_coprime_not_one_of_reciprocalGap_coupled_ambient {h r c κ : ℝ} (hh : 0 < h)
-    (hr : 0 < r) {q N : ℕ} [NeZero q] (hq : 2 ≤ q) (hqN : q ∣ N) {χ : DirichletCharacter ℂ q}
+theorem exists_prime_neOne_coupledGap_GRH {h r c κ : ℝ} (hh : 0 < h) (hr : 0 < r) {q N : ℕ}
+    [NeZero q] (hq : 2 ≤ q) (hqN : q ∣ N) {χ : DirichletCharacter ℂ q}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hc : (1 / 2 : ℝ) < c) (hbound : c ^ 2 ≤ 1 / 4 + h / 2)
     (hκ : r ≤ κ * h) {x : ℝ} (hx : 1 ≤ x) (B₀ B₁ B : Finset ℕ) (hB₀ : ∀ n ∈ B₀, (n : ℝ) ≤ x)
@@ -70,8 +70,8 @@ theorem exists_prime_coprime_not_one_of_reciprocalGap_coupled_ambient {h r c κ 
     reciprocalGapCharacterSum_re_le_coupled_scalar hh hr hq hGRH hp hne hinv hc hbound hκ hx B₀ B₁
       M₀ G₀ M₁ G₁ M₂ G₂ _ _ hM₀ hG₀ hM₁ hG₁ hM₂ hG₂ hK₀ hK₁
   have hL :=
-    selected_reciprocalGap_lower_sub_loss_le_character hqN hh.le (zero_lt_one.trans_le hx) χ hsmall
-      B hB hcop lo u hlo hu hu1
+    reciprocalGap_selected_lower_le_char hqN hh.le (zero_lt_one.trans_le hx) χ hsmall B hB hcop lo u
+      hlo hu hu1
   unfold reciprocalGapCoupledAmbientSeparation at hgap
   linarith only [hL, hU, hgap]
 
@@ -79,13 +79,13 @@ theorem exists_prime_coprime_not_one_of_reciprocalGap_coupled_ambient {h r c κ 
 primitive nonprincipal quadratic character and 2 dividing N yield an odd N-coprime
 prime below x with value minus one. Obtain the coprime non-one witness, rule out two,
 and use the quadratic value classification. Even parity is not assumed. -/
-theorem exists_odd_prime_neg_one_of_reciprocalGap_coupled_ambient {h r c κ : ℝ} (hh : 0 < h)
-    (hr : 0 < r) {q N : ℕ} [NeZero q] (hq : 2 ≤ q) (hqN : q ∣ N) (hN2 : 2 ∣ N)
-    {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hquad : χ.IsQuadratic) (hc : (1 / 2 : ℝ) < c)
-    (hbound : c ^ 2 ≤ 1 / 4 + h / 2) (hκ : r ≤ κ * h) {x : ℝ} (hx : 1 ≤ x) (B₀ B₁ B : Finset ℕ)
-    (hB₀ : ∀ n ∈ B₀, (n : ℝ) ≤ x) (hB₁ : ∀ n ∈ B₁, (n : ℝ) ≤ x) (hB : B ⊆ Finset.Ioc 0 ⌊x⌋₊)
-    (hcop : ∀ n ∈ B, Nat.Coprime n N) (M₀ G₀ M₁ G₁ M₂ G₂ : ℝ)
+theorem exists_oddPrime_negOne_coupledGap_GRH {h r c κ : ℝ} (hh : 0 < h) (hr : 0 < r) {q N : ℕ}
+    [NeZero q] (hq : 2 ≤ q) (hqN : q ∣ N) (hN2 : 2 ∣ N) {χ : DirichletCharacter ℂ q}
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
+    (hne : χ ≠ 1) (hquad : χ.IsQuadratic) (hc : (1 / 2 : ℝ) < c) (hbound : c ^ 2 ≤ 1 / 4 + h / 2)
+    (hκ : r ≤ κ * h) {x : ℝ} (hx : 1 ≤ x) (B₀ B₁ B : Finset ℕ) (hB₀ : ∀ n ∈ B₀, (n : ℝ) ≤ x)
+    (hB₁ : ∀ n ∈ B₁, (n : ℝ) ≤ x) (hB : B ⊆ Finset.Ioc 0 ⌊x⌋₊) (hcop : ∀ n ∈ B, Nat.Coprime n N)
+    (M₀ G₀ M₁ G₁ M₂ G₂ : ℝ)
     (hM₀ : (∑' n : ℕ, ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ (1 / 2 + c)) ≤ M₀)
     (hG₀ : (logDeriv χ.gammaFactor (((1 / 2 : ℝ) + c) : ℂ)).re ≤ G₀)
     (hM₁ : (∑' n : ℕ, ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ (1 + r)) ≤ M₁)
@@ -102,16 +102,15 @@ theorem exists_odd_prime_neg_one_of_reciprocalGap_coupled_ambient {h r c κ : �
     rw [hquad.inv]
     exact hne
   obtain ⟨p, hprime, hpx, hpc, hv⟩ :=
-    exists_prime_coprime_not_one_of_reciprocalGap_coupled_ambient hh hr hq hqN hGRH hp hne hi hc
-      hbound hκ hx B₀ B₁ B hB₀ hB₁ hB hcop M₀ G₀ M₁ G₁ M₂ G₂ hM₀ hG₀ hM₁ hG₁ hM₂ hG₂ lo u hlo hu hu1
-      hgap
+    exists_prime_neOne_coupledGap_GRH hh hr hq hqN hGRH hp hne hi hc hbound hκ hx B₀ B₁ B hB₀ hB₁ hB
+      hcop M₀ G₀ M₁ G₁ M₂ G₂ hM₀ hG₀ hM₁ hG₁ hM₂ hG₂ lo u hlo hu hu1 hgap
   have hne2 : p ≠ 2 := by
     intro he
     subst p
     exact (Nat.prime_two.coprime_iff_not_dvd.mp hpc) hN2
   exact
     ⟨p, hprime, hprime.odd_of_ne_two hne2, hpx, hpc,
-      AnalyticNumberTheory.Arithmetic.quadratic_character_apply_neg_one_of_coprime_ne_one χ hquad
+      AnalyticNumberTheory.Arithmetic.quadraticChar_eq_neg_one_of_coprime_ne_one χ hquad
         (hpc.of_dvd_right hqN) hv⟩
 
 end PseudoPrime.LLS.PaperStatements

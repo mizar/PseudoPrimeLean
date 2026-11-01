@@ -75,13 +75,12 @@ noncomputable def gammaPrefixPowerIndices (b : ℝ) (p : ℕ) : Finset ℕ :=
 positive-power prefixes indexed by prime. Apply the exact prime-power
 decomposition, shift to k+1, and interchange finite rows. The resulting
 index sets match the actual local Euler and ramp cost interfaces. -/
-theorem gamma_character_prefix_eq_prime_indexed {q : ℕ} (χ : DirichletCharacter ℂ q) {b : ℝ}
-    (hb : 0 ≤ b) :
+theorem gammaPrefix_eq_primeIndexed {q : ℕ} (χ : DirichletCharacter ℂ q) {b : ℝ} (hb : 0 ≤ b) :
     (∑ n ∈ Finset.Ioc 0 ⌊b⌋₊, (1 - (χ n).re) * Analysis.gammaResolventMangoldtWeight n) =
       ∑ p ∈ gammaPrefixPrimeSet b,
         ∑ k ∈ gammaPrefixPowerIndices b p,
           (1 - (χ (p ^ (k + 1))).re) * Analysis.gammaResolventMangoldtWeight (p ^ (k + 1)) := by
-  rw [gamma_character_prefix_eq_prime_power_sum χ hb, gamma_positive_exponent_sum_eq_range]
+  rw [gammaPrefix_eq_primePowerSum χ hb, gamma_positive_exponent_sum_eq_range]
   exact
     gamma_prefix_rows_eq_prime_sums (Finset.range (gammaPrefixExponentCount b))
       (gammaPrefixRowPrimes b)
@@ -113,7 +112,7 @@ theorem gamma_prefix_prime_data {b : ℝ} (hb : 1 ≤ b) {p : ℕ} (hp : p ∈ g
 under the prime no-witness assumption. The actual prefix prime bound and
 prime coprimality transfer that assumption without requiring primitivity
 or coprimality with the smaller character conductor. -/
-theorem gamma_prefix_prime_value_one_of_not_dvd {q a : ℕ} (χ : DirichletCharacter ℂ q) {b : ℝ}
+theorem gamma_prefix_prime_one_of_not_dvd {q a : ℕ} (χ : DirichletCharacter ℂ q) {b : ℝ}
     (hb : 1 ≤ b) (hone : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → Nat.Coprime p a → χ p = 1) {p : ℕ}
     (hp : p ∈ gammaPrefixPrimeSet b) (hpa : ¬p ∣ a) : χ p = 1 := by
   have hdata := gamma_prefix_prime_data hb hp
@@ -123,13 +122,13 @@ theorem gamma_prefix_prime_value_one_of_not_dvd {q a : ℕ} (χ : DirichletChara
 power Euler prefix at a prime outside the ambient modulus is zero.
 All powers of its local value one remain one. This removes only justified
 zero terms from the prime-indexed integer prefix. -/
-theorem gamma_prefix_euler_sum_eq_zero_of_not_dvd {q a : ℕ} (χ : DirichletCharacter ℂ q) {b : ℝ}
-    (hb : 1 ≤ b) (hone : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → Nat.Coprime p a → χ p = 1) {p : ℕ}
+theorem gamma_prefix_sum_zero_of_not_dvd {q a : ℕ} (χ : DirichletCharacter ℂ q) {b : ℝ} (hb : 1 ≤ b)
+    (hone : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → Nat.Coprime p a → χ p = 1) {p : ℕ}
     (hp : p ∈ gammaPrefixPrimeSet b) (hpa : ¬p ∣ a) :
     (∑ k ∈ gammaPrefixPowerIndices b p,
         (1 - (χ (p ^ (k + 1))).re) * Analysis.gammaResolventMangoldtWeight (p ^ (k + 1))) =
       0 := by
-  have hv := gamma_prefix_prime_value_one_of_not_dvd χ hb hone hp hpa
+  have hv := gamma_prefix_prime_one_of_not_dvd χ hb hone hp hpa
   simp only [map_pow, hv, one_pow, Complex.one_re, sub_self, zero_mul, Finset.sum_const_zero]
 
 /-- A prime outside the common prefix universe has no retained power
@@ -146,9 +145,8 @@ character correction equals the sum of finite Euler prefixes over all
 ambient prime factors. Outside primes have value one; unretained ambient
 primes have empty index sets. This preserves minus-one values at primes
 omitted by the smaller primitive conductor. -/
-theorem gamma_character_prefix_eq_ambient_prime_sum {q a : ℕ} (χ : DirichletCharacter ℂ q)
-    (ha : 0 < a) {b : ℝ} (hb : 1 ≤ b)
-    (hone : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → Nat.Coprime p a → χ p = 1) :
+theorem gammaPrefix_eq_ambient_sum {q a : ℕ} (χ : DirichletCharacter ℂ q) (ha : 0 < a) {b : ℝ}
+    (hb : 1 ≤ b) (hone : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → Nat.Coprime p a → χ p = 1) :
     (∑ n ∈ Finset.Ioc 0 ⌊b⌋₊, (1 - (χ n).re) * Analysis.gammaResolventMangoldtWeight n) =
       ∑ p ∈ a.primeFactors,
         ∑ k ∈ gammaPrefixPowerIndices b p,
@@ -164,7 +162,7 @@ theorem gamma_character_prefix_eq_ambient_prime_sum {q a : ℕ} (χ : DirichletC
   have he0 : (∑ p ∈ S, F p) = ∑ p ∈ gammaPrefixPrimeSet b, F p :=
     Finset.sum_subset (Finset.filter_subset _ _)
       (fun p hp hnot ↦
-        gamma_prefix_euler_sum_eq_zero_of_not_dvd χ hb hone hp
+        gamma_prefix_sum_zero_of_not_dvd χ hb hone hp
           (fun hd ↦ hnot (Finset.mem_filter.mpr ⟨hp, hd⟩)))
   have he1 : (∑ p ∈ S, F p) = ∑ p ∈ a.primeFactors, F p := by
     apply Finset.sum_subset hsub
@@ -173,16 +171,15 @@ theorem gamma_character_prefix_eq_ambient_prime_sum {q a : ℕ} (χ : DirichletC
       hnot (Finset.mem_filter.mpr ⟨hP, Nat.dvd_of_mem_primeFactors hp⟩)
     dsimp only [F]
     rw [gamma_prefix_power_indices_eq_empty hnotP, Finset.sum_empty]
-  rw [gamma_character_prefix_eq_prime_indexed χ (zero_le_one.trans hb)]
+  rw [gammaPrefix_eq_primeIndexed χ (zero_le_one.trans hb)]
   exact he0.symm.trans he1
 
 /-- The actual integer Euler correction and the full ambient local ramp
 sum combine exactly into the existing actual local costs. Use the prime
 no-witness transfer and sum the Euler and ramp terms over the same factors.
 This connects the integer prefix to the shared conductor budget interface. -/
-theorem gamma_character_prefix_add_ambient_ramp_eq_local_cost {q a : ℕ} (χ : DirichletCharacter ℂ q)
-    (ha : 0 < a) {b : ℝ} (hb : 1 ≤ b)
-    (hone : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → Nat.Coprime p a → χ p = 1) (x : ℝ) :
+theorem gammaPrefix_add_ramp_eq_cost {q a : ℕ} (χ : DirichletCharacter ℂ q) (ha : 0 < a) {b : ℝ}
+    (hb : 1 ≤ b) (hone : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → Nat.Coprime p a → χ p = 1) (x : ℝ) :
     (∑ n ∈ Finset.Ioc 0 ⌊b⌋₊, (1 - (χ n).re) * Analysis.gammaResolventMangoldtWeight n) +
         (∑ p ∈ a.primeFactors,
           Real.log p *
@@ -191,7 +188,7 @@ theorem gamma_character_prefix_add_ambient_ramp_eq_local_cost {q a : ℕ} (χ : 
               Real.sqrt x)) =
       ∑ p ∈ a.primeFactors,
         Analysis.gammaActualPrimeLocalCost χ p (gammaPrefixPowerIndices b p) x := by
-  rw [gamma_character_prefix_eq_ambient_prime_sum χ ha hb hone]
+  rw [gammaPrefix_eq_ambient_sum χ ha hb hone]
   simp only [Analysis.gammaActualPrimeLocalCost, Finset.sum_add_distrib]
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

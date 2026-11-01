@@ -17,7 +17,7 @@ namespace PseudoPrime.NumberTheory.Heilbronn
 /-- For every sufficiently large odd prime p there is a prime q<=log(p)^(15/8)
 with q^(p-1) nontrivial modulo p^2. Combine the proved interval bound with the
 quantitative smooth-number supply. No GRH or external Fermat estimate is assumed. -/
-theorem eventually_exists_prime_nontrivial_power_le_log_power :
+theorem eventually_exists_prime_pow_ne_one_log_15_8 :
     Filter.Eventually
       (fun p : ℕ ↦
         p.Prime →
@@ -30,8 +30,7 @@ theorem eventually_exists_prime_nontrivial_power_le_log_power :
     hp hp2
   let : Fact p.Prime := ⟨hp⟩
   obtain ⟨k, hk, hkp, hlo, hhi, hcount⟩ := hP p (hp.odd_of_ne_two hp2) hlarge
-  obtain ⟨q, hq, hqB, hpow⟩ :=
-    exists_prime_nontrivial_power_of_interval_and_smooth hcount (hsm k hk hlo hhi)
+  obtain ⟨q, hq, hqB, hpow⟩ := exists_prime_pow_ne_one_of_interval_smooth hcount (hsm k hk hlo hhi)
   have hB := Nat.lt_add_one_iff.mp hqB
   have hle : (q : ℝ) ≤ (Real.log p) ^ (15 / 8 : ℝ) :=
     (Nat.cast_le.mpr hB).trans

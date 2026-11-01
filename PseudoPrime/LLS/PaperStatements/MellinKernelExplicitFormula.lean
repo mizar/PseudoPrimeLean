@@ -33,9 +33,8 @@ theorem arithmetic_logDeriv_eq_completed_add_gamma {q : ℕ} [NeZero q] {χ : Di
     -logDeriv (DirichletCharacter.LFunction χ) s * w =
       -logDeriv χ.completedLFunction s * w + logDeriv (DirichletCharacter.gammaFactor χ) s * w := by
   have hp : 0 < s.re := zero_lt_one.trans_le hs
-  rw [logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne
-      (completedLFunction_ne_zero_of_one_le_re hne hs) (gammaFactor_ne_zero_of_re_pos χ hp)
-      (analyticAt_gammaFactor_of_re_pos χ hp).differentiableAt]
+  rw [L_logDeriv_sub_gamma_of_regular hne (completed_ne_zero_of_one_le_re hne hs)
+      (gammaFactor_ne_zero_of_re_pos χ hp) (analyticAt_gammaFactor_of_re_pos χ hp).differentiableAt]
   ring
 
 /-- The real Mellin normalization, cast to the complex numbers, cancels the nonzero
@@ -159,8 +158,8 @@ of norm at most C(1 + log q / sqrt x). The positive constant depends only on the
 and left line and works for all moduli, characters, scales at least one and allowed right
 lines. Combine the exact formula with the uniform gamma and left completed integral
 bounds. This removes both vertical integral error inputs from the primitive formula. -/
-theorem exists_norm_summand_residue_remainder_le_of_left_line (K : MellinKernel) {a : ℝ}
-    (ha : -1 / 2 - K.delta < a) (hal : a < -1 / 2) (ha2 : -3 / 2 ≤ a) :
+theorem exists_summand_residue_left_error_GRH (K : MellinKernel) {a : ℝ} (ha : -1 / 2 - K.delta < a)
+    (hal : a < -1 / 2) (ha2 : -3 / 2 ≤ a) :
     ∃ C : ℝ,
       0 < C ∧
         ∀ {q : ℕ} [NeZero q],
@@ -181,7 +180,7 @@ theorem exists_norm_summand_residue_remainder_le_of_left_line (K : MellinKernel)
                             (∑' ρ : ℂ, K.oscillatingZeroTerm χ x ρ))‖ ≤
                       C * (1 + Real.log q / Real.sqrt x) := by
   obtain ⟨Cg, hCg, hg⟩ := exists_norm_summand_completed_remainder_le K
-  obtain ⟨Cl, hCl, hl⟩ := exists_norm_left_completedIntegral_le_log_div_sqrt K ha hal ha2
+  obtain ⟨Cl, hCl, hl⟩ := exists_leftCompleted_log_sqrt K ha hal ha2
   refine ⟨Cg + Cl, add_pos hCg hCl, ?_⟩
   intro q _ hq χ hGRH hp hne hinv b x hb hb2 hx hbr
   have hab : a < b := by linarith only [hal, hbr]
@@ -244,7 +243,7 @@ theorem exists_norm_summand_residue_remainder_le (K : MellinKernel) :
                             (∑' ρ : ℂ, K.oscillatingZeroTerm χ x ρ))‖ ≤
                       C * (1 + Real.log q / Real.sqrt x) := by
   obtain ⟨a, b, ha, hal, ha2, hb, hb2, hbr⟩ := exists_admissible_explicitFormula_lines K
-  obtain ⟨C, hC, hbound⟩ := exists_norm_summand_residue_remainder_le_of_left_line K ha hal ha2
+  obtain ⟨C, hC, hbound⟩ := exists_summand_residue_left_error_GRH K ha hal ha2
   refine ⟨C, hC, ?_⟩
   intro q _ hq χ hGRH hp hne hinv x hx
   exact hbound hq hGRH hp hne hinv hb hb2 hx hbr
@@ -255,7 +254,7 @@ at least one. The positive constant depends only on the kernel. Combine the prim
 explicit formula's remainder with the endpoint bound for the possible kernel pole.
 No integral or pole estimates remain as assumptions. This is the primitive-character
 input for the real zero-mass representation in Lemma 6.1. -/
-theorem exists_norm_summand_add_oscillatingZeroSum_le (K : MellinKernel) :
+theorem exists_summand_oscillating_error_GRH (K : MellinKernel) :
     ∃ C : ℝ,
       0 < C ∧
         ∀ {q : ℕ} [NeZero q],
@@ -270,7 +269,7 @@ theorem exists_norm_summand_add_oscillatingZeroSum_le (K : MellinKernel) :
                     ‖(∑' n : ℕ, K.summand χ x n) + (∑' ρ : ℂ, K.oscillatingZeroTerm χ x ρ)‖ ≤
                       C * (1 + Real.log q / Real.sqrt x) := by
   obtain ⟨Ca, hCa, ha⟩ := exists_norm_summand_residue_remainder_le K
-  obtain ⟨Cp, hCp, hpole⟩ := exists_norm_completed_poleResidue_le_log_div_sqrt K
+  obtain ⟨Cp, hCp, hpole⟩ := exists_completedResidue_log_sqrt_GRH K
   refine ⟨Ca + Cp, add_pos hCa hCp, ?_⟩
   intro q _ hq χ hGRH hp hne hinv x hx
   let S := ∑' n : ℕ, K.summand χ x n
@@ -311,7 +310,7 @@ theorem exists_real_summand_formula_zeroMass (K : MellinKernel) :
                         |r| ≤ C * (1 + Real.log q / Real.sqrt x) ∧
                         (∑' n : ℕ, K.summand χ x n).re =
                           θ * (∑' ρ : ℂ, ‖K.kernelZeroTerm χ ρ‖) + r := by
-  obtain ⟨C, hC, hb⟩ := exists_norm_summand_add_oscillatingZeroSum_le K
+  obtain ⟨C, hC, hb⟩ := exists_summand_oscillating_error_GRH K
   refine ⟨C, hC, ?_⟩
   intro q _ hq χ hGRH hp hne hinv x hx
   have hq2 : 2 ≤ q := (by norm_num only : 2 ≤ 8).trans hq
@@ -330,7 +329,7 @@ modulus q at least 20000, the arithmetic sum plus oscillatory zero sum has norm 
 C(1 + log q / sqrt x) for x at least one, with C depending only on the kernel. Enlarge
 the contour remainder's conductor logarithm and apply the ambient pole bound. This
 prepares the general-character estimate even when the primitive conductor is small. -/
-theorem exists_norm_summand_add_oscillatingZeroSum_le_ambient (K : MellinKernel) :
+theorem exists_oscillating_ambient_error_GRH (K : MellinKernel) :
     ∃ C : ℝ,
       0 < C ∧
         ∀ {q m : ℕ} [NeZero m],
@@ -347,7 +346,7 @@ theorem exists_norm_summand_add_oscillatingZeroSum_le_ambient (K : MellinKernel)
                     ‖(∑' n : ℕ, K.summand χ x n) + (∑' ρ : ℂ, K.oscillatingZeroTerm χ x ρ)‖ ≤
                       C * (1 + Real.log q / Real.sqrt x) := by
   obtain ⟨Ca, hCa, ha⟩ := exists_norm_summand_residue_remainder_le K
-  obtain ⟨Cp, hCp, hpole⟩ := exists_norm_completed_poleResidue_le_ambient_log_div_sqrt K
+  obtain ⟨Cp, hCp, hpole⟩ := exists_ambientResidue_log_sqrt_GRH K
   refine ⟨Ca + Cp, add_pos hCa hCp, ?_⟩
   intro q m _ hq hm hmq χ hGRH hp hne hinv x hx
   let S := ∑' n : ℕ, K.summand χ x n
@@ -378,7 +377,7 @@ coefficient of absolute value at most one and a real error bounded by
 C(1 + log q / sqrt x) for x at least one. The constant depends only on the kernel.
 Take real parts of the ambient completed formula and normalize the oscillatory zero sum.
 This supplies the primitive part of Lemma 6.1 after a level change. -/
-theorem exists_real_summand_formula_zeroMass_ambient (K : MellinKernel) :
+theorem exists_summand_ambient_zeroMass_GRH (K : MellinKernel) :
     ∃ C : ℝ,
       0 < C ∧
         ∀ {q m : ℕ} [NeZero m],
@@ -397,7 +396,7 @@ theorem exists_real_summand_formula_zeroMass_ambient (K : MellinKernel) :
                         |r| ≤ C * (1 + Real.log q / Real.sqrt x) ∧
                         (∑' n : ℕ, K.summand χ x n).re =
                           θ * (∑' ρ : ℂ, ‖K.kernelZeroTerm χ ρ‖) + r := by
-  obtain ⟨C, hC, hb⟩ := exists_norm_summand_add_oscillatingZeroSum_le_ambient K
+  obtain ⟨C, hC, hb⟩ := exists_oscillating_ambient_error_GRH K
   refine ⟨C, hC, ?_⟩
   intro q m _ hq hm hmq χ hGRH hp hne hinv x hx
   have hm2 : 2 ≤ m := (by norm_num only : 2 ≤ 3).trans hm

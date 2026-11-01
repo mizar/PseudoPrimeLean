@@ -19,7 +19,7 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 integer with character value neither zero nor one gives a prime MR witness
 at most that integer, coprime to the character modulus. Extract a prime divisor
 and use the pass-containment hypothesis. No analytic estimate is supplied here. -/
-theorem exists_prime_witness_of_integer_character_witness {R : Type*} [CommMonoidWithZero R]
+theorem exists_primeWitness_of_integer_character_witness {R : Type*} [CommMonoidWithZero R]
     [Nontrivial R] {n q a : ℕ} (χ : DirichletCharacter R q)
     (hpass : ∀ b : ℕ, PrimeTest.StrongMillerRabinPass n (b : ZMod n) → χ (b : ZMod q) = 1)
     (ha : 0 < a) (hz : χ (a : ZMod q) ≠ 0) (hne : χ (a : ZMod q) ≠ 1) :
@@ -37,7 +37,7 @@ theorem exists_prime_witness_of_integer_character_witness {R : Type*} [CommMonoi
 most the integer witness. Minimize over all MR rejecting prime bases.
 The minimum need not be coprime to the character modulus, so no such claim
 is included for the least witness. The larger extracted witness is coprime. -/
-theorem exists_least_prime_witness_of_integer_character_witness {R : Type*} [CommMonoidWithZero R]
+theorem exists_leastWitness_of_integer_character_witness {R : Type*} [CommMonoidWithZero R]
     [Nontrivial R] {n q a : ℕ} (χ : DirichletCharacter R q)
     (hpass : ∀ b : ℕ, PrimeTest.StrongMillerRabinPass n (b : ZMod n) → χ (b : ZMod q) = 1)
     (ha : 0 < a) (hz : χ (a : ZMod q) ≠ 0) (hne : χ (a : ZMod q) ≠ 1) :
@@ -47,7 +47,7 @@ theorem exists_least_prime_witness_of_integer_character_witness {R : Type*} [Com
         p ≤ a ∧ ∀ r : ℕ, r.Prime → ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) → p ≤ r := by
   classical
   obtain ⟨p, hp, hpa, _, _, _, hf⟩ :=
-    exists_prime_witness_of_integer_character_witness χ hpass ha hz hne
+    exists_primeWitness_of_integer_character_witness χ hpass ha hz hne
   have hex : ∃ r : ℕ, r.Prime ∧ ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := ⟨p, hp, hf⟩
   exact
     ⟨Nat.find hex, (Nat.find_spec hex).1, (Nat.find_spec hex).2,

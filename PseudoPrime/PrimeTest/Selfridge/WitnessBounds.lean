@@ -37,7 +37,7 @@ theorem primeNeOneWitness_le_classicalFirstStop {n : ℕ} (hn : Odd n)
       have hi5 := hstop.1.1
       exact lt_of_lt_of_le (by decide : 0 < 5) hi5
     obtain ⟨p, hprime, hodd, _, hplt, hvalue⟩ :=
-      exists_odd_prime_lt_of_composite_mem_firstStopNeOneSet isClassicalCandidate_odd hn hi hp hstop
+      firstStopNeOne_smaller_prime isClassicalCandidate_odd hn hi hp hstop
     exact (primeNeOneWitness_le n hw (p := p) ⟨hprime, hodd, hvalue⟩).trans hplt.le
 
 /--
@@ -55,8 +55,7 @@ theorem primeNegOneWitness_le_classicalFirstStop {n : ℕ} (hn : Odd n)
       have hi5 := hstop.1.1
       exact lt_of_lt_of_le (by decide : 0 < 5) hi5
     obtain ⟨p, hprime, hodd, _, hplt, hvalue⟩ :=
-      exists_odd_prime_lt_of_composite_mem_firstStopNegOneSet isClassicalCandidate_odd hn hi hp
-        hstop
+      firstStopNegOne_smaller_prime isClassicalCandidate_odd hn hi hp hstop
     exact (primeNegOneWitness_le n hw (p := p) ⟨hprime, hodd, hvalue⟩).trans hplt.le
 
 /--
@@ -64,7 +63,7 @@ The classical pure `-1` first-stop is at most the larger of `27` and the least o
 `-1` witness.  If that witness is at least `5`, it is itself a classical candidate; if it is
 `3`, multiplicativity makes candidate `27` a stopping point.
 -/
-theorem classicalFirstStopNegOne_le_max_twenty_seven_primeWitness {n : ℕ} (hn : Odd n)
+theorem classicalFirstNegOne_le_max_27_primeWitness {n : ℕ} (hn : Odd n)
     (hw : (primeNegOneWitnessSet n).Nonempty)
     (hs : (FirstStopNegOneSet isClassicalCandidate n).Nonempty) :
     firstStopNegOne isClassicalCandidate n hs ≤ max 27 (primeNegOneWitness n hw) := by
@@ -112,7 +111,7 @@ theorem primeNegOneWitness_le_classicalFirstStop_le_max {n : ℕ} (hn : Odd n)
       firstStopNegOne isClassicalCandidate n hs ≤ max 27 (primeNegOneWitness n hw) := by
   exact
     ⟨primeNegOneWitness_le_classicalFirstStop hn hw hs,
-      classicalFirstStopNegOne_le_max_twenty_seven_primeWitness hn hw hs⟩
+      classicalFirstNegOne_le_max_27_primeWitness hn hw hs⟩
 
 /--
 For a nonsquare input, a least `≠ 1` prime witness above `3` is not divisible by the input.
@@ -127,7 +126,7 @@ theorem not_dvd_primeNeOneWitness_of_three_lt {n : ℕ} (hns : ¬IsSquare n)
   rcases hp.1.eq_one_or_self_of_dvd n hdiv with hn1 | hnp
   · exact hns ⟨1, by rw [hn1]⟩
   · obtain ⟨q, hqprime, hqodd, hqlt, hqvalue⟩ :=
-      NumberTheory.exists_smaller_prime_jacobiSym_eq_neg_one_of_prime hp.1 hp3
+      NumberTheory.exists_smaller_jacobi_neg_one_prime hp.1 hp3
     have hqmem : q ∈ primeNeOneWitnessSet n := by
       exact
         ⟨hqprime, hqodd, by
@@ -140,7 +139,7 @@ For an odd nonsquare input, if the least `≠ 1` prime witness is above `3`, the
 factor-detecting first-stop is no larger than that witness itself. The proof uses the
 smaller-witness theorem to exclude divisibility by the input.
 -/
-theorem classicalFirstStopNeOne_le_primeWitness_of_three_lt {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+theorem classicalNeOne_le_witness_of_three_lt {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hw : (primeNeOneWitnessSet n).Nonempty)
     (hs : (FirstStopNeOneSet isClassicalCandidate n).Nonempty) (hp3 : 3 < primeNeOneWitness n hw) :
     firstStopNeOne isClassicalCandidate n hs ≤ primeNeOneWitness n hw := by
@@ -161,14 +160,14 @@ theorem classicalFirstStopNeOne_le_primeWitness_of_three_lt {n : ℕ} (hn : Odd 
 Equivalent convenient form of the preceding bound: for an odd-prime witness, being different
 from `3` forces it above `3`.
 -/
-theorem classicalFirstStopNeOne_le_primeWitness_of_ne_three {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+theorem classicalNeOne_le_witness_of_ne_three {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hw : (primeNeOneWitnessSet n).Nonempty)
     (hs : (FirstStopNeOneSet isClassicalCandidate n).Nonempty) (hp3 : primeNeOneWitness n hw ≠ 3) :
     firstStopNeOne isClassicalCandidate n hs ≤ primeNeOneWitness n hw := by
   have hp := primeNeOneWitness_mem n hw
   have hp2 := hp.1.two_le
   have hpmod : primeNeOneWitness n hw % 2 = 1 := Nat.odd_iff.mp hp.2.1
-  apply classicalFirstStopNeOne_le_primeWitness_of_three_lt hn hns hw hs
+  apply classicalNeOne_le_witness_of_three_lt hn hns hw hs
   have hpne2 : primeNeOneWitness n hw ≠ 2 := by
     intro heq
     rw [heq] at hpmod
@@ -182,8 +181,8 @@ If the least odd-prime `≠ 1` witness is `3`, the classical factor-detecting fi
 most `15`.  Divisibility exceptions among `5`, `9`, and `15` reduce to the positive divisors of
 these fixed numbers; nonsquareness or the concrete candidate `7` handles every exception.
 -/
-theorem classicalFirstStopNeOne_le_fifteen_of_primeWitness_eq_three {n : ℕ} (hnpos : 0 < n)
-    (hn : Odd n) (hns : ¬IsSquare n) (hw : (primeNeOneWitnessSet n).Nonempty)
+theorem classicalNeOne_le_15_of_primeWitness_eq_3 {n : ℕ} (hnpos : 0 < n) (hn : Odd n)
+    (hns : ¬IsSquare n) (hw : (primeNeOneWitnessSet n).Nonempty)
     (hs : (FirstStopNeOneSet isClassicalCandidate n).Nonempty) (hp3 : primeNeOneWitness n hw = 3) :
     firstStopNeOne isClassicalCandidate n hs ≤ 15 := by
   have hp := primeNeOneWitness_mem n hw
@@ -219,8 +218,7 @@ theorem classicalFirstStopNeOne_le_fifteen_of_primeWitness_eq_three {n : ℕ} (h
                 norm_num only).trans
             (by norm_num only)
     · by_cases hndvd15 : n ∣ 15
-      · rcases Internal.eq_one_or_three_or_five_or_fifteen_of_dvd_fifteen hnpos hndvd15 with rfl |
-          rfl | rfl | rfl
+      · rcases Internal.eq_1_or_3_or_5_or_15_of_dvd_15 hnpos hndvd15 with rfl | rfl | rfl | rfl
         · exact False.elim (hns ⟨1, by norm_num only⟩)
         · have hz : jacobiSym (3 : ℤ) 3 = 0 := by
             rw [NumberTheory.jacobi_eq_zero_iff_not_coprime]
@@ -240,7 +238,7 @@ theorem classicalFirstStopNeOne_le_fifteen_of_primeWitness_eq_three {n : ℕ} (h
           change jacobiSym (15 : ℤ) 5 = 1 at h51
           rw [hz] at h51
           norm_num only at h51
-      · exact firstStopNeOne_le_fifteen_of_jacobi_three_eq_neg_one hn hndvd15 h3m h51 hs
+      · exact firstStopNeOne_le_15_of_jacobi_three_neg_one hn hndvd15 h3m h51 hs
     · by_cases hndvd5 : n ∣ 5
       · rcases (Nat.prime_five.eq_one_or_self_of_dvd n hndvd5) with rfl | rfl
         · exact False.elim (hns ⟨1, by norm_num only⟩)
@@ -259,16 +257,16 @@ theorem classicalFirstStopNeOne_le_fifteen_of_primeWitness_eq_three {n : ℕ} (h
 /-- The classical factor-detecting first-stop is at most the maximum of `15` and the least
 odd-prime `≠ 1` witness.
 -/
-theorem classicalFirstStopNeOne_le_max_fifteen_primeWitness {n : ℕ} (hnpos : 0 < n) (hn : Odd n)
-    (hns : ¬IsSquare n) (hw : (primeNeOneWitnessSet n).Nonempty)
+theorem classicalNeOne_le_max15_witness {n : ℕ} (hnpos : 0 < n) (hn : Odd n) (hns : ¬IsSquare n)
+    (hw : (primeNeOneWitnessSet n).Nonempty)
     (hs : (FirstStopNeOneSet isClassicalCandidate n).Nonempty) :
     firstStopNeOne isClassicalCandidate n hs ≤ max 15 (primeNeOneWitness n hw) := by
   by_cases hp3 : primeNeOneWitness n hw = 3
   · exact
-      (classicalFirstStopNeOne_le_fifteen_of_primeWitness_eq_three hnpos hn hns hw hs hp3).trans
+      (classicalNeOne_le_15_of_primeWitness_eq_3 hnpos hn hns hw hs hp3).trans
         (Nat.le_max_left 15 (primeNeOneWitness n hw))
   · exact
-      (classicalFirstStopNeOne_le_primeWitness_of_ne_three hn hns hw hs hp3).trans
+      (classicalNeOne_le_witness_of_ne_three hn hns hw hs hp3).trans
         (Nat.le_max_right 15 (primeNeOneWitness n hw))
 
 /--
@@ -284,7 +282,7 @@ theorem primeNeOneWitness_le_classicalFirstStop_le_max {n : ℕ} (hnpos : 0 < n)
       firstStopNeOne isClassicalCandidate n hs ≤ max 15 (primeNeOneWitness n hw) := by
   exact
     ⟨primeNeOneWitness_le_classicalFirstStop hn hw hs,
-      classicalFirstStopNeOne_le_max_fifteen_primeWitness hnpos hn hns hw hs⟩
+      classicalNeOne_le_max15_witness hnpos hn hns hw hs⟩
 
 /--
 Under positive odd nonsquare input and both nonemptiness hypotheses, restate the
@@ -292,8 +290,8 @@ proved factor-detecting pointwise comparison with exceptional constant 15.
 Apply the preceding theorem directly; this compatibility entry has identical hypotheses
 and conclusion, with no additional smaller-witness assumption.
 -/
-theorem primeNeOneWitness_le_classicalFirstStop_le_max_unconditional {n : ℕ} (hnpos : 0 < n)
-    (hn : Odd n) (hns : ¬IsSquare n) (hw : (primeNeOneWitnessSet n).Nonempty)
+theorem neOneWitness_classicalStop_bounds {n : ℕ} (hnpos : 0 < n) (hn : Odd n) (hns : ¬IsSquare n)
+    (hw : (primeNeOneWitnessSet n).Nonempty)
     (hs : (FirstStopNeOneSet isClassicalCandidate n).Nonempty) :
     primeNeOneWitness n hw ≤ firstStopNeOne isClassicalCandidate n hs ∧
       firstStopNeOne isClassicalCandidate n hs ≤ max 15 (primeNeOneWitness n hw) := by
@@ -307,10 +305,10 @@ Proof: obtain the smaller pure `-1` witness from the canonical NumberTheory theo
 also different from `1`, so witness minimality gives the strict bound.
 Role: supplies the direct `g_{\ne1}` finite argument.
 -/
-theorem primeNeOneWitness_lt_of_odd_nonsquare_of_three_lt {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+theorem primeNeOneWitness_lt_of_odd_nonsquare_gt_3 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hn3 : 3 < n) (hw : (primeNeOneWitnessSet n).Nonempty) : primeNeOneWitness n hw < n := by
   obtain ⟨q, hqprime, hqodd, hq_lt, hqvalue⟩ :=
-    NumberTheory.exists_smaller_prime_jacobiSym_eq_neg_one_of_odd_nonsquare hn hn3 hns
+    NumberTheory.exists_smaller_jacobi_neg_one_nonsquare hn hn3 hns
   have hqmem : q ∈ primeNeOneWitnessSet n := by
     exact
       ⟨hqprime, hqodd, by
@@ -326,18 +324,15 @@ Proof: the exceptional least witness `3` is handled by the established bound `15
 canonical smaller-witness bound makes the least witness a valid classical candidate below `n`.
 Role: provides the `g_{\ne1}` analogue of the direct finite Selfridge improvement.
 -/
-theorem classicalFirstStopNeOne_lt_of_odd_nonsquare_of_fifteen_lt {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hn15 : 15 < n) (hw : (primeNeOneWitnessSet n).Nonempty)
+theorem classicalNeOne_lt_of_odd_nonsquare_gt_15 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hn15 : 15 < n) (hw : (primeNeOneWitnessSet n).Nonempty)
     (hs : (FirstStopNeOneSet isClassicalCandidate n).Nonempty) :
     firstStopNeOne isClassicalCandidate n hs < n := by
   have hp := primeNeOneWitness_mem n hw
   by_cases hp3 : primeNeOneWitness n hw = 3
-  · exact
-      (classicalFirstStopNeOne_le_fifteen_of_primeWitness_eq_three (Odd.pos hn) hn hns hw hs
-            hp3).trans_lt
-        hn15
+  · exact (classicalNeOne_le_15_of_primeWitness_eq_3 (Odd.pos hn) hn hns hw hs hp3).trans_lt hn15
   · have hn3 : 3 < n := lt_trans (by decide : 3 < 15) hn15
-    have hp_lt := primeNeOneWitness_lt_of_odd_nonsquare_of_three_lt hn hns hn3 hw
+    have hp_lt := primeNeOneWitness_lt_of_odd_nonsquare_gt_3 hn hns hn3 hw
     have hp5 : 5 ≤ primeNeOneWitness n hw := by
       have hp2 := hp.1.two_le
       have hpmod := Nat.odd_iff.mp hp.2.1

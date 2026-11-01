@@ -55,8 +55,8 @@ theorem norm_gamma_primitive_remainder_le_smoothed {q m : ℕ} [NeZero m] {χ : 
     norm_num only at hx
     linarith only [hx]
   have hr : ‖S - (P - Z + J)‖ ≤ 64 / 9 :=
-    norm_gamma_completed_remainder_le_sixty_four_ninths (by linarith only [hm]) hGRH hp hne hinv
-      (a := -9 / 16) (b := 9 / 16) (by norm_num only)
+    norm_gamma_completed_remainder_le_64_9_GRH (by linarith only [hm]) hGRH hp hne hinv (a :=
+      -9 / 16) (b := 9 / 16) (by norm_num only)
       (by
         change (-1 / 2 - 1 / 8 : ℝ) < -9 / 16; norm_num only)
       (by
@@ -123,8 +123,8 @@ theorem gamma_primitiveCharacter_sum_re_le_smoothed {q : ℕ} [NeZero q] (hq : 2
 Gamma sum at x=(32/99)L² is bounded by Mlog(conductor)+24+64/9+21/10+2.
 The fixed-scale gates follow from the proved square and square-root bounds.
 This is the nonprincipal upper contract for the smoothed witness comparison. -/
-theorem gamma_primitiveCharacter_sum_re_le_smoothed_at_ramp_scale {q : ℕ} [NeZero q]
-    (hq : 20000 ≤ q) (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
+theorem gammaCharacterSum_re_le_smoothed_at_ramp_scale {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L : ℝ} (hL : 46000 ≤ L)
     (hlogq : Real.log q ≤ L + 2) :
     let : NeZero χ.conductor := ⟨χ.conductor_ne_zero⟩;

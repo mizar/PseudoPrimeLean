@@ -61,7 +61,7 @@ nonvanishing criterion.
 Role: supplies the nonzero correction factor for the change-of-level formula of Dirichlet
 L-functions.
 -/
-theorem dirichletLFactorProduct_ne_zero_of_re_pos {q N : ℕ} (χ : DirichletCharacter ℂ q) {s : ℂ}
+theorem LFactorProduct_ne_zero_of_re_pos {q N : ℕ} (χ : DirichletCharacter ℂ q) {s : ℂ}
     (hs : 0 < s.re) : (∏ p ∈ N.primeFactors, (1 - χ (p : ZMod q) * (p : ℂ) ^ (-s))) ≠ 0 := by
   classical
   apply Finset.prod_ne_zero_iff.mpr
@@ -79,8 +79,8 @@ factor.
 
 Role: transfers zero counting from characters of arbitrary level to primitive characters.
 -/
-theorem LFunction_zero_iff_primitive_of_re_pos {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
-    (hχ : χ ≠ 1) {s : ℂ} (hs : 0 < s.re) :
+theorem L_zero_iff_primitive_of_re_pos {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1)
+    {s : ℂ} (hs : 0 < s.re) :
     letI : NeZero χ.conductor := ⟨χ.conductor_ne_zero⟩
     DirichletCharacter.LFunction χ s = 0 ↔
       DirichletCharacter.LFunction χ.primitiveCharacter s = 0 := by
@@ -97,7 +97,7 @@ theorem LFunction_zero_iff_primitive_of_re_pos {q : ℕ} [NeZero q] {χ : Dirich
     @DirichletCharacter.LFunction_changeLevel χ.conductor q ⟨DirichletCharacter.conductor_ne_zero χ⟩
       (inferInstance : NeZero q) χ.conductor_dvd_level χ.primitiveCharacter (s := s) (Or.inl hprim)
   rw [DirichletCharacter.changeLevel_primitiveCharacter] at heuler
-  have hprod := dirichletLFactorProduct_ne_zero_of_re_pos (N := q) χ.primitiveCharacter hs
+  have hprod := LFactorProduct_ne_zero_of_re_pos (N := q) χ.primitiveCharacter hs
   constructor
   · intro hzero
     rw [heuler] at hzero
@@ -116,8 +116,8 @@ real part.
 Role: lets zero counting pass between the completed and ordinary Dirichlet L-functions in the
 region used by the density estimate.
 -/
-theorem dirichletCharacter_gammaFactor_ne_zero_of_pos_re {q : ℕ} (χ : DirichletCharacter ℂ q)
-    {s : ℂ} (hs : 0 < s.re) : DirichletCharacter.gammaFactor χ s ≠ 0 := by
+theorem gammaFactor_ne_zero_on_re_pos {q : ℕ} (χ : DirichletCharacter ℂ q) {s : ℂ} (hs : 0 < s.re) :
+    DirichletCharacter.gammaFactor χ s ≠ 0 := by
   rcases χ.even_or_odd with he | ho
   · rw [he.gammaFactor_def]
     exact Complex.Gammaℝ_ne_zero_of_re_pos hs
@@ -138,8 +138,8 @@ Proof: use the completed-to-ordinary identity and the nonzero gamma factor.
 
 Role: converts the ordinary zero transfer under change of level into a completed-zero transfer.
 -/
-theorem completedLFunction_zero_iff_LFunction_of_re_pos {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) {s : ℂ} (hs : 0 < s.re) :
+theorem completed_zero_iff_L_of_re_pos {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) {s : ℂ}
+    (hs : 0 < s.re) :
     DirichletCharacter.completedLFunction χ s = 0 ↔ DirichletCharacter.LFunction χ s = 0 := by
   classical
   have hs0 : s ≠ 0 := by
@@ -148,7 +148,7 @@ theorem completedLFunction_zero_iff_LFunction_of_re_pos {q : ℕ} [NeZero q]
     simp only [Complex.zero_re] at hre
     exact (ne_of_gt hs) hre
   have hdiv := DirichletCharacter.LFunction_eq_completed_div_gammaFactor χ s (Or.inl hs0)
-  have hgamma := dirichletCharacter_gammaFactor_ne_zero_of_pos_re χ hs
+  have hgamma := gammaFactor_ne_zero_on_re_pos χ hs
   constructor
   · intro hz
     rw [hdiv, hz, zero_div]
@@ -168,19 +168,18 @@ then apply the change-of-level zero equivalence.
 
 Role: reduces completed zero counting for nontrivial characters to the primitive family.
 -/
-theorem completedLFunction_zero_iff_primitive_of_re_pos {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) {s : ℂ} (hs : 0 < s.re) :
+theorem completed_zero_iff_primitive_re_pos {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hχ : χ ≠ 1) {s : ℂ} (hs : 0 < s.re) :
     letI : NeZero χ.conductor := ⟨χ.conductor_ne_zero⟩
     DirichletCharacter.completedLFunction χ s = 0 ↔
       DirichletCharacter.completedLFunction χ.primitiveCharacter s = 0 := by
   classical
   have hcond : NeZero χ.conductor := ⟨χ.conductor_ne_zero⟩
-  have hprimCompleted :=
-    @completedLFunction_zero_iff_LFunction_of_re_pos χ.conductor hcond χ.primitiveCharacter s hs
+  have hprimCompleted := @completed_zero_iff_L_of_re_pos χ.conductor hcond χ.primitiveCharacter s hs
   calc
-    _ ↔ DirichletCharacter.LFunction χ s = 0 := completedLFunction_zero_iff_LFunction_of_re_pos χ hs
+    _ ↔ DirichletCharacter.LFunction χ s = 0 := completed_zero_iff_L_of_re_pos χ hs
     _ ↔ DirichletCharacter.LFunction χ.primitiveCharacter s = 0 :=
-      LFunction_zero_iff_primitive_of_re_pos hχ hs
+      L_zero_iff_primitive_of_re_pos hχ hs
     _ ↔ DirichletCharacter.completedLFunction χ.primitiveCharacter s = 0 := hprimCompleted.symm
 
 /--
@@ -194,8 +193,8 @@ analytic unit.
 
 Role: reduces completed zero multiplicities to ordinary L-function multiplicities.
 -/
-theorem completedLFunction_analyticOrderAt_eq_LFunction_of_re_pos {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {s : ℂ} (hs : 0 < s.re) :
+theorem completed_order_eq_L_of_re_pos {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1)
+    {s : ℂ} (hs : 0 < s.re) :
     analyticOrderAt (DirichletCharacter.completedLFunction χ) s =
       analyticOrderAt (DirichletCharacter.LFunction χ) s := by
   classical
@@ -208,7 +207,7 @@ theorem completedLFunction_analyticOrderAt_eq_LFunction_of_re_pos {q : ℕ} [NeZ
         Complex.differentiable_Gammaℝ_inv.comp hshift
       simpa only [G, ho.gammaFactor_def] using hgammaInv
   have hGanalytic : AnalyticAt ℂ G s := hGdiff.analyticAt s
-  have hGzero : G s ≠ 0 := inv_ne_zero (dirichletCharacter_gammaFactor_ne_zero_of_pos_re χ hs)
+  have hGzero : G s ≠ 0 := inv_ne_zero (gammaFactor_ne_zero_on_re_pos χ hs)
   have hGorder : analyticOrderAt G s = 0 := hGanalytic.analyticOrderAt_eq_zero.mpr hGzero
   have hs0 : s ≠ 0 := by
     intro h
@@ -244,8 +243,8 @@ analytic order is zero.
 
 Role: transfers analytic multiplicity, rather than only zero locations, to the primitive family.
 -/
-theorem LFunction_analyticOrderAt_eq_primitive_of_re_pos {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) [NeZero χ.conductor] {s : ℂ} (hs : 0 < s.re) :
+theorem L_order_eq_primitive_of_re_pos {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1)
+    [NeZero χ.conductor] {s : ℂ} (hs : 0 < s.re) :
     analyticOrderAt (DirichletCharacter.LFunction χ) s =
       analyticOrderAt (DirichletCharacter.LFunction χ.primitiveCharacter) s := by
   classical
@@ -283,8 +282,7 @@ theorem LFunction_analyticOrderAt_eq_primitive_of_re_pos {q : ℕ} [NeZero q]
     dsimp only [F]
     exact hprod q.primeFactors hfactor
   have hFzero : F s ≠ 0 := by
-    simpa only [F, factor] using
-      dirichletLFactorProduct_ne_zero_of_re_pos (N := q) χ.primitiveCharacter hs
+    simpa only [F, factor] using LFactorProduct_ne_zero_of_re_pos (N := q) χ.primitiveCharacter hs
   have hForder : analyticOrderAt F s = 0 := hFanalytic.analyticOrderAt_eq_zero.mpr hFzero
   have hprim : χ.primitiveCharacter ≠ 1 := by
     intro h
@@ -321,8 +319,8 @@ then use the nonvanishing analytic Euler product in the change-of-level formula.
 
 Role: preserves multiplicity when reducing the completed zero count to primitive characters.
 -/
-theorem completedLFunction_analyticOrderAt_eq_primitive_of_re_pos {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) [NeZero χ.conductor] {s : ℂ} (hs : 0 < s.re) :
+theorem completed_order_eq_primitive_re_pos {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hχ : χ ≠ 1) [NeZero χ.conductor] {s : ℂ} (hs : 0 < s.re) :
     analyticOrderAt (DirichletCharacter.completedLFunction χ) s =
       analyticOrderAt (DirichletCharacter.completedLFunction χ.primitiveCharacter) s := by
   have hprim : χ.primitiveCharacter ≠ 1 := by
@@ -334,12 +332,11 @@ theorem completedLFunction_analyticOrderAt_eq_primitive_of_re_pos {q : ℕ} [NeZ
       _ = DirichletCharacter.changeLevel χ.conductor_dvd_level 1 := congrArg _ h
       _ = 1 := (DirichletCharacter.changeLevel_eq_one_iff χ.conductor_dvd_level).mpr rfl
   calc
-    _ = analyticOrderAt (DirichletCharacter.LFunction χ) s :=
-      completedLFunction_analyticOrderAt_eq_LFunction_of_re_pos χ hχ hs
+    _ = analyticOrderAt (DirichletCharacter.LFunction χ) s := completed_order_eq_L_of_re_pos χ hχ hs
     _ = analyticOrderAt (DirichletCharacter.LFunction χ.primitiveCharacter) s :=
-      LFunction_analyticOrderAt_eq_primitive_of_re_pos hχ hs
+      L_order_eq_primitive_of_re_pos hχ hs
     _ = analyticOrderAt (DirichletCharacter.completedLFunction χ.primitiveCharacter) s :=
-      (completedLFunction_analyticOrderAt_eq_LFunction_of_re_pos χ.primitiveCharacter hprim hs).symm
+      (completed_order_eq_L_of_re_pos χ.primitiveCharacter hprim hs).symm
 
 /--
 Inputs: a nonprincipal character, a nonzero conductor instance, and a complex point with positive
@@ -352,12 +349,12 @@ Proof: apply `ENat.toNat` to their equality of analytic orders.
 
 Role: provides the exact multiplicity equality used by finite completed-zero counts.
 -/
-theorem completedLFunction_analyticOrderNatAt_eq_primitive_of_re_pos {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) [NeZero χ.conductor] {s : ℂ} (hs : 0 < s.re) :
+theorem completed_orderNat_eq_primitive {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1)
+    [NeZero χ.conductor] {s : ℂ} (hs : 0 < s.re) :
     analyticOrderNatAt (DirichletCharacter.completedLFunction χ) s =
       analyticOrderNatAt (DirichletCharacter.completedLFunction χ.primitiveCharacter) s := by
   unfold analyticOrderNatAt
-  exact congrArg ENat.toNat (completedLFunction_analyticOrderAt_eq_primitive_of_re_pos hχ hs)
+  exact congrArg ENat.toNat (completed_order_eq_primitive_re_pos hχ hs)
 
 /--
 Inputs: a nonprincipal character, its primitive character, and parameters for a standard zero
@@ -371,7 +368,7 @@ region has positive real part, where the natural analytic multiplicities are equ
 
 Role: reduces finite zero counts over arbitrary levels to the corresponding primitive character.
 -/
-theorem completedZeroCount_eq_primitive_of_pos {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+theorem completedCount_eq_primitive_of_pos {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
     (hχ : χ ≠ 1) [NeZero χ.conductor] (hprim : χ.primitiveCharacter ≠ 1) {σ T : ℝ} (hσ : 0 < σ)
     (hσ1 : σ ≤ 1) (hT : 0 ≤ T) :
     PseudoPrime.AnalyticNumberTheory.DirichletLFunction.completedZeroCount χ hχ σ T =
@@ -392,13 +389,13 @@ theorem completedZeroCount_eq_primitive_of_pos {q : ℕ} [NeZero q] {χ : Dirich
     · rintro ⟨hlo, hhi, himlo, himhi, hz⟩
       exact
         ⟨hlo, hhi, himlo, himhi,
-          (completedLFunction_zero_iff_primitive_of_re_pos hχ (lt_of_lt_of_le hσ hlo)).mp hz⟩
+          (completed_zero_iff_primitive_re_pos hχ (lt_of_lt_of_le hσ hlo)).mp hz⟩
     · rintro ⟨hlo, hhi, himlo, himhi, hz⟩
       exact
         ⟨hlo, hhi, himlo, himhi,
-          (completedLFunction_zero_iff_primitive_of_re_pos hχ (lt_of_lt_of_le hσ hlo)).mpr hz⟩
+          (completed_zero_iff_primitive_re_pos hχ (lt_of_lt_of_le hσ hlo)).mpr hz⟩
   unfold PseudoPrime.AnalyticNumberTheory.DirichletLFunction.completedZeroCount
-    PseudoPrime.AnalyticNumberTheory.DirichletLFunction.completedZeroMultiplicityCountInRectangle
+    PseudoPrime.AnalyticNumberTheory.DirichletLFunction.completedMultiplicityCount
   change
     (∑ ρ ∈ Sχ, (analyticOrderNatAt (DirichletCharacter.completedLFunction χ) ρ : ℝ)) =
       ∑ ρ ∈ Sprim,
@@ -409,6 +406,6 @@ theorem completedZeroCount_eq_primitive_of_pos {q : ℕ} [NeZero q] {χ : Dirich
   have hm :=
     (PseudoPrime.AnalyticNumberTheory.DirichletLFunction.mem_completedZeroCountRegion_iff hσ1 hT).mp
       hρ
-  rw [completedLFunction_analyticOrderNatAt_eq_primitive_of_re_pos hχ (lt_of_lt_of_le hσ hm.1)]
+  rw [completed_orderNat_eq_primitive hχ (lt_of_lt_of_le hσ hm.1)]
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

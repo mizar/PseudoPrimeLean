@@ -153,9 +153,9 @@ the ambient modulus has endpoint norm at most `(2/3) log(q/pi) + 4` when
 `log(q/pi) ≥ 3`. Larger conductors use the sharp endpoint estimate; smaller
 conductors use the uniform bound six. The explicit logarithmic condition
 allows the coset argument to use a smaller modulus threshold. -/
-theorem norm_logDeriv_xi_zero_le_log_ambient_of_log_lower_bound {q m : ℕ} [NeZero m]
-    {χ : DirichletCharacter ℂ m} (hL : 3 ≤ Real.log ((q : ℝ) / Real.pi)) (hm : 3 ≤ m) (hmq : m ≤ q)
-    (hp : χ.IsPrimitive) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
+theorem norm_logDeriv_xi_zero_le_ambient_of_GRH {q m : ℕ} [NeZero m] {χ : DirichletCharacter ℂ m}
+    (hL : 3 ≤ Real.log ((q : ℝ) / Real.pi)) (hm : 3 ≤ m) (hmq : m ≤ q) (hp : χ.IsPrimitive)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ‖logDeriv (xi χ) 0‖ ≤ (2 / 3 : ℝ) * Real.log ((q : ℝ) / Real.pi) + 4 := by
   by_cases hm8 : 8 ≤ m
   · have hb := norm_logDeriv_xi_zero_le_log_level hm8 hp hGRH
@@ -176,7 +176,7 @@ theorem norm_logDeriv_xi_zero_le_log_ambient_level {q m : ℕ} [NeZero m] {χ : 
     (hq : 20000 ≤ q) (hm : 3 ≤ m) (hmq : m ≤ q) (hp : χ.IsPrimitive)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ‖logDeriv (xi χ) 0‖ ≤ (2 / 3 : ℝ) * Real.log ((q : ℝ) / Real.pi) + 4 := by
-  apply norm_logDeriv_xi_zero_le_log_ambient_of_log_lower_bound ?_ hm hmq hp hGRH
+  apply norm_logDeriv_xi_zero_le_ambient_of_GRH ?_ hm hmq hp hGRH
   have hl := Analysis.eight_lt_log_level ((by decide : 3000 ≤ 20000).trans hq)
   have hq0 : (0 : ℝ) < q := Nat.cast_pos.mpr (lt_of_lt_of_le (by decide : 0 < 20000) hq)
   have hpi := Real.log_le_log Real.pi_pos Real.pi_lt_four.le

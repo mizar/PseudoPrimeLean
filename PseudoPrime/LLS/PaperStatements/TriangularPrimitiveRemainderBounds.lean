@@ -24,9 +24,8 @@ alpha-18 completed left integral is at most 4*10^12*(norm(log q)+284)*x^(-9/16)
 for positive x. Reflect the logarithmic derivative, keep the scale factor,
 and apply the explicit fixed-line decay and logarithmic integral budgets.
 This is the scale-decaying left contribution to the primitive contour remainder. -/
-theorem triangular18_left_completedIntegral_norm_le_scaled {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ}
-    (hx : 0 < x) :
+theorem triangular18_completedLeft_scaled_bound {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) :
     let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
     ‖((1 / (2 * Real.pi) : ℝ) : ℂ) *
           (∫ t : ℝ,
@@ -43,9 +42,7 @@ theorem triangular18_left_completedIntegral_norm_le_scaled {q : ℕ} [NeZero q]
     mul_nonneg (add_nonneg (norm_nonneg _) (by norm_num only)) (Real.rpow_nonneg hx.le _)
   have hF (t : ℝ) : ‖F t‖ ≤ A * (Real.log (4 + |t|) + 1) := by
     have hr := triangular18_completed_left_reflection hp hne hinv t
-    have hi :=
-      AnalyticNumberTheory.DirichletLFunction.norm_logDeriv_completed_seventeen_sixteenths_le_log
-        hinv (-t)
+    have hi := AnalyticNumberTheory.DirichletLFunction.completedLogDeriv_17_16_log_bound hinv (-t)
     simp only [Complex.ofReal_neg, mul_neg, abs_neg, ← sub_eq_add_neg] at hi
     have hb :=
       norm_add_le (Complex.log (q : ℂ))
@@ -116,7 +113,7 @@ theorem triangular18_primitive_remainder_norm_le_precise {q : ℕ} [NeZero q] (h
           (K.function (((9 / 16 : ℝ) : ℂ) + Complex.I * t) *
             (x : ℂ) ^ (((9 / 16 : ℝ) : ℂ) + Complex.I * t)))
   have hR : ‖R‖ ≤ 4000000000000 * (‖Complex.log q‖ + 284) * x ^ (-9 / 16 : ℝ) :=
-    triangular18_left_completedIntegral_norm_le_scaled hp hne hinv (zero_lt_one.trans_le hx)
+    triangular18_completedLeft_scaled_bound hp hne hinv (zero_lt_one.trans_le hx)
   have hqR : (1 : ℝ) ≤ q := by
     simpa only [Nat.cast_one] using
       (Nat.cast_le.mpr ((by decide : 1 ≤ 2).trans hq) : ((1 : ℕ) : ℝ) ≤ (q : ℝ))
@@ -176,7 +173,7 @@ inverse and x>=1, the actual alpha-18 arithmetic sum plus oscillating zero sum
 has norm at most U18*(1+log(q)/sqrt(x)) with U18=1200000000000000.
 Convert the proved precise contour remainder; no pole, integral, or kernel
 budget remains as an extra premise. This is the standard primitive remainder API. -/
-theorem triangular18_primitive_remainder_norm_le_explicit {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem triangular18_primitive_remainder_GRH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) :
     let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
@@ -193,7 +190,7 @@ inverse and x>=1, the actual alpha-18 arithmetic sum is bounded by the explicit
 finite-conductor zero mass plus the precise scale-decaying remainder.
 Write the arithmetic sum as its zero-sum-corrected value minus the zero sum
 and use the two proved norm estimates. This is the primitive input for averaging. -/
-theorem triangular18_primitive_arithmetic_norm_le_explicit {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem triangular18_primitive_arithmetic_GRH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) :
     let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)

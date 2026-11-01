@@ -75,8 +75,8 @@ terms using `AddMonoidAlgebra.prod_single`.
 Role: this expansion identifies the identity coefficient needed for the
 contradiction in paper95 Theorem 1.1.
 -/
-theorem characterKillingProduct_eq_sum_powerset {G : Type} [AddCommGroup G] (S : Finset ℕ)
-    (g : ℕ → G) (a : ℕ → ℂ) :
+theorem killingProduct_eq_sum_powerset {G : Type} [AddCommGroup G] (S : Finset ℕ) (g : ℕ → G)
+    (a : ℕ → ℂ) :
     characterKillingProduct S g a =
       ∑ t ∈ S.powerset,
         AddMonoidAlgebra.single (∑ i ∈ t, g i) ((-1 : ℂ) ^ t.card * ∏ i ∈ S \ t, a i) := by
@@ -99,11 +99,11 @@ basis coefficient at zero.
 Role: this is the coefficient formula used with Fourier inversion in the
 subset-product theorem.
 -/
-theorem coeff_zero_characterKillingProduct {G : Type} [AddCommGroup G] [DecidableEq G]
-    (S : Finset ℕ) (g : ℕ → G) (a : ℕ → ℂ) :
+theorem coeff_zero_killingProduct {G : Type} [AddCommGroup G] [DecidableEq G] (S : Finset ℕ)
+    (g : ℕ → G) (a : ℕ → ℂ) :
     (characterKillingProduct S g a).coeff 0 =
       ∑ t ∈ S.powerset, if (∑ i ∈ t, g i) = 0 then (-1 : ℂ) ^ t.card * ∏ i ∈ S \ t, a i else 0 := by
-  rw [characterKillingProduct_eq_sum_powerset]
+  rw [killingProduct_eq_sum_powerset]
   rw [AddMonoidAlgebra.coeff_sum]
   rw [Finset.sum_apply' (0 : G)]
   simp only [AddMonoidAlgebra.coeff_single, Finsupp.single_apply]
@@ -118,17 +118,17 @@ of all scalar coefficients.
 Content: under the hypothesis, only the empty subset contributes to the
 coefficient formula.
 
-Proof: use `coeff_zero_characterKillingProduct` and retain only the empty
+Proof: use `coeff_zero_killingProduct` and retain only the empty
 subset in its powerset sum.
 
 Role: this is the coefficient value compared with the Fourier character sum in
 the proof of paper95 Theorem 1.1.
 -/
-theorem coeff_zero_characterKillingProduct_eq_prod_of_no_nonempty {G : Type} [AddCommGroup G]
-    (S : Finset ℕ) (g : ℕ → G) (a : ℕ → ℂ) (hNo : ∀ t ∈ S.powerset, (∑ i ∈ t, g i) = 0 → t = ∅) :
+theorem killingProduct_coeff_zero_prod {G : Type} [AddCommGroup G] (S : Finset ℕ) (g : ℕ → G)
+    (a : ℕ → ℂ) (hNo : ∀ t ∈ S.powerset, (∑ i ∈ t, g i) = 0 → t = ∅) :
     (characterKillingProduct S g a).coeff 0 = ∏ i ∈ S, a i := by
   classical
-  rw [coeff_zero_characterKillingProduct]
+  rw [coeff_zero_killingProduct]
   rw [Finset.sum_eq_single_of_mem ∅ (by simp only [Finset.mem_powerset, Finset.empty_subset])]
   · simp only [Finset.sum_empty, Finset.card_empty, pow_zero, one_mul, Finset.sdiff_empty,
       ite_eq_left]
@@ -155,8 +155,7 @@ combine basis terms with `AddMonoidAlgebra.prod_single`.
 Role: this is the combinatorial coefficient interpretation needed to extract
 zero-sum subsets from the identity coefficient.
 -/
-theorem subsetGeneratingFunction_eq_sum_powerset {G : Type} [AddCommGroup G] (S : Finset ℕ)
-    (g : ℕ → G) :
+theorem subsetGenerator_eq_sum_powerset {G : Type} [AddCommGroup G] (S : Finset ℕ) (g : ℕ → G) :
     subsetGeneratingFunction S g =
       ∑ t ∈ S.powerset, AddMonoidAlgebra.single (∑ i ∈ t, g i) (1 : ℂ) := by
   rw [subsetGeneratingFunction]
@@ -174,17 +173,17 @@ complex cast of the number of subsets whose group sum is zero.
 Content: every subset contributes one basis term in the expanded group-algebra
 sum, so subsets with the same sum contribute with their multiplicities.
 
-Proof: use `subsetGeneratingFunction_eq_sum_powerset`, evaluate each basis
+Proof: use `subsetGenerator_eq_sum_powerset`, evaluate each basis
 coefficient, and rewrite the resulting Boolean sum as a cardinality.
 
 Role: this identifies the identity coefficient that certifies a nonempty
 zero-sum subset in the Davenport argument.
 -/
-theorem coeff_zero_subsetGeneratingFunction {G : Type} [AddCommGroup G] [DecidableEq G]
-    (S : Finset ℕ) (g : ℕ → G) :
+theorem coeff_zero_subsetGenerator {G : Type} [AddCommGroup G] [DecidableEq G] (S : Finset ℕ)
+    (g : ℕ → G) :
     (subsetGeneratingFunction S g).coeff 0 =
       (Finset.card {t ∈ S.powerset | (∑ i ∈ t, g i) = 0} : ℂ) := by
-  rw [subsetGeneratingFunction_eq_sum_powerset]
+  rw [subsetGenerator_eq_sum_powerset]
   rw [AddMonoidAlgebra.coeff_sum]
   rw [Finset.sum_apply' (0 : G)]
   simp only [AddMonoidAlgebra.coeff_single, Finsupp.single_apply]
@@ -204,12 +203,12 @@ Proof: use `Finset.one_lt_card_iff`; in one direction, distinguish the empty
 subset from another member, and in the other, pair the empty subset with the
 given nonempty one.
 
-Role: together with `coeff_zero_subsetGeneratingFunction`, this characterizes
+Role: together with `coeff_zero_subsetGenerator`, this characterizes
 when the identity coefficient of the generating function exceeds its empty
 subset contribution.
 -/
-theorem exists_nonempty_zeroSum_subset_iff_one_lt_card {G : Type} [AddCommGroup G] [DecidableEq G]
-    (S : Finset ℕ) (g : ℕ → G) :
+theorem exists_zeroSum_iff_card_gt_one {G : Type} [AddCommGroup G] [DecidableEq G] (S : Finset ℕ)
+    (g : ℕ → G) :
     1 < Finset.card {t ∈ S.powerset | (∑ i ∈ t, g i) = 0} ↔
       ∃ t ∈ S.powerset, t.Nonempty ∧ (∑ i ∈ t, g i) = 0 := by
   classical
@@ -245,8 +244,8 @@ the empty subset is the unique member of the filtered powerset.
 Role: this gives the no-subsequence condition used to identify the identity
 coefficient in the paper's group-ring contradiction.
 -/
-theorem card_zeroSumSubsets_eq_one_iff_no_nonempty {G : Type} [AddCommGroup G] [DecidableEq G]
-    (S : Finset ℕ) (g : ℕ → G) :
+theorem zeroSum_card_one_iff_none {G : Type} [AddCommGroup G] [DecidableEq G] (S : Finset ℕ)
+    (g : ℕ → G) :
     Finset.card {t ∈ S.powerset | (∑ i ∈ t, g i) = 0} = 1 ↔
       ∀ t ∈ S.powerset, (∑ i ∈ t, g i) = 0 → t = ∅ := by
   classical
@@ -254,7 +253,7 @@ theorem card_zeroSumSubsets_eq_one_iff_no_nonempty {G : Type} [AddCommGroup G] [
   · intro hcard t ht hsum
     by_contra hne
     have hnonempty : t.Nonempty := (Finset.nonempty_iff_ne_empty).2 hne
-    have hgt := (exists_nonempty_zeroSum_subset_iff_one_lt_card S g).2 ⟨t, ht, hnonempty, hsum⟩
+    have hgt := (exists_zeroSum_iff_card_gt_one S g).2 ⟨t, ht, hnonempty, hsum⟩
     rw [hcard] at hgt
     exact Nat.lt_irrefl 1 hgt
   · intro hnone
@@ -275,18 +274,17 @@ when no nonempty subset has group sum zero.
 Content: the coefficient counts zero-sum subsets, including the empty subset.
 
 Proof: rewrite the coefficient as that count and apply
-`card_zeroSumSubsets_eq_one_iff_no_nonempty`.
+`zeroSum_card_one_iff_none`.
 
 Role: this is the coefficient form of the no-subsequence hypothesis used in
 the finite-field group-ring argument.
 -/
-theorem coeff_zero_subsetGeneratingFunction_eq_one_iff_no_nonempty {G : Type} [AddCommGroup G]
-    (S : Finset ℕ) (g : ℕ → G) :
+theorem subsetGenerator_one_iff_none {G : Type} [AddCommGroup G] (S : Finset ℕ) (g : ℕ → G) :
     (subsetGeneratingFunction S g).coeff 0 = (1 : ℂ) ↔
       ∀ t ∈ S.powerset, (∑ i ∈ t, g i) = 0 → t = ∅ := by
   classical
-  rw [coeff_zero_subsetGeneratingFunction, Nat.cast_eq_one]
-  exact card_zeroSumSubsets_eq_one_iff_no_nonempty S g
+  rw [coeff_zero_subsetGenerator, Nat.cast_eq_one]
+  exact zeroSum_card_one_iff_none S g
 
 open PseudoPrime.Data.Finset in
 /--
@@ -305,8 +303,8 @@ then apply the finite-fiber bound to this codomain.
 Role: this is the character-specific choice step in the greedy proof of
 paper95 Theorem 1.1.
 -/
-theorem exists_large_character_value_class {G : Type} [AddCommGroup G] (S : Finset (AddChar G ℂ))
-    (g : G) (m : ℕ) [NeZero m] (hzero : ∀ x : G, m • x = 0) (hS : 0 < S.card) :
+theorem exists_large_value_class {G : Type} [AddCommGroup G] (S : Finset (AddChar G ℂ)) (g : G)
+    (m : ℕ) [NeZero m] (hzero : ∀ x : G, m • x = 0) (hS : 0 < S.card) :
     ∃ z : rootsOfUnity m ℂ,
       (S.filter fun ψ =>
             rootsOfUnity.mkOfPowEq (ψ g)
@@ -350,9 +348,8 @@ contraction theorem.
 
 Role: this is the step iterated over the coordinates in paper95 Theorem 1.1.
 -/
-theorem exists_character_value_complement_mul_card_le {G : Type} [AddCommGroup G]
-    (S : Finset (AddChar G ℂ)) (g : G) (m : ℕ) [NeZero m] (hzero : ∀ x : G, m • x = 0)
-    (hS : 0 < S.card) :
+theorem exists_value_complement_bound {G : Type} [AddCommGroup G] (S : Finset (AddChar G ℂ)) (g : G)
+    (m : ℕ) [NeZero m] (hzero : ∀ x : G, m • x = 0) (hS : 0 < S.card) :
     ∃ z : rootsOfUnity m ℂ,
       m *
           (S.filter fun ψ =>
@@ -437,13 +434,13 @@ in the nonempty case.
 Role: this total one-step choice supports recursive construction of the
 greedy coordinate prefix.
 -/
-theorem exists_greedy_character_coordinate {G : Type} [AddCommGroup G] (S : Finset (AddChar G ℂ))
-    (g : G) (m : ℕ) [NeZero m] (hzero : ∀ x : G, m • x = 0) :
+theorem exists_greedy_coordinate {G : Type} [AddCommGroup G] (S : Finset (AddChar G ℂ)) (g : G)
+    (m : ℕ) [NeZero m] (hzero : ∀ x : G, m • x = 0) :
     ∃ z : rootsOfUnity m ℂ,
       m * (S.filter fun ψ => characterRootValue m hzero ψ g ≠ z).card ≤ (m - 1) * S.card := by
   classical
   by_cases hS : 0 < S.card
-  · obtain ⟨z, hz⟩ := exists_character_value_complement_mul_card_le S g m hzero hS
+  · obtain ⟨z, hz⟩ := exists_value_complement_bound S g m hzero hS
     refine ⟨z, ?_⟩
     exact hz
   · refine ⟨1, ?_⟩
@@ -546,7 +543,7 @@ place the character in the final residual set.
 
 Role: this gives the prefix half of the coefficient matching argument.
 -/
-theorem exists_greedy_prefix_match_of_not_residual {G : Type} [AddCommGroup G] (m : ℕ) [NeZero m]
+theorem greedy_match_of_not_residual {G : Type} [AddCommGroup G] (m : ℕ) [NeZero m]
     (hzero : ∀ x : G, m • x = 0) (S : Finset (AddChar G ℂ)) (choices : List (G × rootsOfUnity m ℂ))
     (ψ : AddChar G ℂ) (hψ : ψ ∈ S) (hnot : ψ ∉ greedyResidualCharacters m hzero S choices) :
     ∃ choice ∈ choices, characterRootValue m hzero ψ choice.1 = choice.2 := by
@@ -588,7 +585,7 @@ theorem exists_greedy_character_prefix {G : Type} [AddCommGroup G] (m : ℕ) [Ne
         List.foldl_nil]
       exact Nat.le_refl _
   | cons g gs ih =>
-    obtain ⟨z, hz⟩ := exists_greedy_character_coordinate S g m hzero
+    obtain ⟨z, hz⟩ := exists_greedy_coordinate S g m hzero
     let T := S.filter fun ψ => characterRootValue m hzero ψ g ≠ z
     obtain ⟨tail, htailMap, htailBound⟩ := ih T
     refine ⟨(g, z) :: tail, ?_, ?_⟩
@@ -732,7 +729,7 @@ the positive real number `N`.
 Role: this is the real inequality needed to finish the residual cardinality
 bound for paper95 Theorem 1.1.
 -/
-theorem one_sub_inv_floor_log_ratio_pow_mul_lt (m N : ℕ) (hm : 0 < m) (hmN : m ≤ N) :
+theorem floor_log_decay_lt (m N : ℕ) (hm : 0 < m) (hmN : m ≤ N) :
     (1 - 1 / (m : ℝ)) ^ (Nat.floor ((m : ℝ) * Real.log ((N : ℝ) / m)) + 1) * N < m := by
   have hmR : (0 : ℝ) < (m : ℝ) := Nat.cast_pos.mpr hm
   have hNR : (0 : ℝ) < (N : ℝ) := Nat.cast_pos.mpr (lt_of_lt_of_le hm hmN)
@@ -785,7 +782,7 @@ theorem geometric_product_log_bound (m N r : ℕ) (hm : 0 < m) (hmN : m ≤ N)
       _ = (((m : ℝ) - 1) / m) ^ k * N := by rw [← div_pow]
       _ = (1 - 1 / m) ^ k * N := by rw [hsub]
   rw [hfactor] at hratio
-  have hsmall := one_sub_inv_floor_log_ratio_pow_mul_lt m N hm hmN
+  have hsmall := floor_log_decay_lt m N hm hmN
   exact_mod_cast hratio.trans_lt hsmall
 
 /--
@@ -833,7 +830,7 @@ theorem geometric_contraction_log_bound (m N : ℕ) (hm : 0 < m) (hmN : m ≤ N)
       _ = (((m : ℝ) - 1) / m) ^ k * N := by rw [← div_pow]
       _ = (1 - 1 / m) ^ k * N := by rw [hsub]
   rw [hfactor] at hratio
-  have hsmall := one_sub_inv_floor_log_ratio_pow_mul_lt m N hm hmN
+  have hsmall := floor_log_decay_lt m N hm hmN
   change r k < m
   exact_mod_cast hratio.trans_lt hsmall
 
@@ -847,13 +844,13 @@ Claim: some value of that element among the characters occurs more than
 Content: the group exponent annihilates every element, so the preceding
 character-value class bound applies with `m = AddMonoid.exponent G`.
 
-Proof: apply `exists_large_character_value_class` with
+Proof: apply `exists_large_value_class` with
 `AddMonoid.exponent_nsmul_eq_zero`.
 
 Role: this instantiates the greedy fiber choice at the canonical exponent of
 the finite abelian group.
 -/
-theorem exists_large_character_value_class_of_exponent {G : Type} [AddCommGroup G] [Finite G]
+theorem exists_large_class_exponent {G : Type} [AddCommGroup G] [Finite G]
     (S : Finset (AddChar G ℂ)) (g : G) (hS : 0 < S.card) :
     ∃ z : rootsOfUnity (AddMonoid.exponent G) ℂ,
       (S.filter fun ψ =>
@@ -865,9 +862,7 @@ theorem exists_large_character_value_class_of_exponent {G : Type} [AddCommGroup 
                     _ = 1 := by rw [AddMonoid.exponent_nsmul_eq_zero, ψ.map_zero_eq_one]) =
               z).card >
         (S.card - 1) / AddMonoid.exponent G := by
-  exact
-    exists_large_character_value_class S g (AddMonoid.exponent G) AddMonoid.exponent_nsmul_eq_zero
-      hS
+  exact exists_large_value_class S g (AddMonoid.exponent G) AddMonoid.exponent_nsmul_eq_zero hS
 
 /--
 Inputs: a finite indexed family in an additive commutative group and a complex
@@ -967,8 +962,8 @@ homomorphism.
 Role: this bridges abstract group-algebra elements to the coefficient
 extraction results in this file.
 -/
-theorem addMonoidAlgebra_lift_eq_character_sum {G : Type} [AddCommGroup G] [Fintype G]
-    (x : AddMonoidAlgebra ℂ G) (ψ : AddChar G ℂ) :
+theorem lift_eq_character_sum {G : Type} [AddCommGroup G] [Fintype G] (x : AddMonoidAlgebra ℂ G)
+    (ψ : AddChar G ℂ) :
     AddMonoidAlgebra.lift ℂ ℂ G ψ.toMonoidHom x =
       ∑ g ∈ (Finset.univ : Finset G), x.coeff g * ψ g := by
   rw [AddMonoidAlgebra.lift_apply]
@@ -993,7 +988,7 @@ cardinality of a finite group is nonzero in `ℂ`.
 Role: this lets the AGP group-ring argument detect a nonzero coefficient by at
 least one character evaluation.
 -/
-theorem eq_zero_of_all_character_sums_eq_zero {G : Type} [AddCommGroup G] [Fintype G] (f : G → ℂ)
+theorem zero_of_character_sums_zero {G : Type} [AddCommGroup G] [Fintype G] (f : G → ℂ)
     (h : ∀ ψ : AddChar G ℂ, ∑ g ∈ (Finset.univ : Finset G), f g * ψ g = 0) : f = 0 := by
   funext a
   change f a = (0 : ℂ)
@@ -1022,12 +1017,12 @@ function. Thus the preceding coefficient-vanishing theorem gives injectivity
 of the family of character evaluations.
 
 Proof: rewrite each algebra evaluation as a finite sum of coefficients and
-apply `eq_zero_of_all_character_sums_eq_zero`.
+apply `zero_of_character_sums_zero`.
 
 Role: this is the group-algebra form of coefficient detection used in the
 finite abelian-group argument.
 -/
-theorem eq_zero_of_all_character_evaluations_eq_zero {G : Type} [AddCommGroup G] [Finite G]
+theorem zero_of_character_evals_zero {G : Type} [AddCommGroup G] [Finite G]
     (x : AddMonoidAlgebra ℂ G)
     (h : ∀ ψ : AddChar G ℂ, AddMonoidAlgebra.lift ℂ ℂ G ψ.toMonoidHom x = 0) : x = 0 := by
   classical
@@ -1036,10 +1031,10 @@ theorem eq_zero_of_all_character_evaluations_eq_zero {G : Type} [AddCommGroup G]
   ext a
   change x.coeff a = 0
   have hfun : (fun g : G => x.coeff g) = 0 :=
-    @eq_zero_of_all_character_sums_eq_zero G inferInstance fintypeG (fun g : G => x.coeff g)
+    @zero_of_character_sums_zero G inferInstance fintypeG (fun g : G => x.coeff g)
       (by
         intro ψ
-        rw [← @addMonoidAlgebra_lift_eq_character_sum G inferInstance fintypeG x ψ]
+        rw [← @lift_eq_character_sum G inferInstance fintypeG x ψ]
         exact h ψ)
   exact congrFun hfun a
 
@@ -1059,17 +1054,17 @@ product of nonzero complex numbers is nonzero.
 Role: this is the Fourier contradiction interface for the subset-product
 theorem.
 -/
-theorem exists_character_eval_ne_zero_of_no_nonempty {G : Type} [AddCommGroup G] [Finite G]
-    (S : Finset ℕ) (g : ℕ → G) (a : ℕ → ℂ) (hNo : ∀ t ∈ S.powerset, (∑ i ∈ t, g i) = 0 → t = ∅)
+theorem exists_killing_eval_ne_zero {G : Type} [AddCommGroup G] [Finite G] (S : Finset ℕ)
+    (g : ℕ → G) (a : ℕ → ℂ) (hNo : ∀ t ∈ S.powerset, (∑ i ∈ t, g i) = 0 → t = ∅)
     (ha : ∀ i ∈ S, a i ≠ 0) :
     ∃ ψ : AddChar G ℂ,
       AddMonoidAlgebra.lift ℂ ℂ G ψ.toMonoidHom (characterKillingProduct S g a) ≠ 0 := by
   classical
   apply not_forall.mp
   intro hall
-  have hz := eq_zero_of_all_character_evaluations_eq_zero (characterKillingProduct S g a) hall
+  have hz := zero_of_character_evals_zero (characterKillingProduct S g a) hall
   have hc := congrArg (fun x : AddMonoidAlgebra ℂ G => x.coeff 0) hz
-  rw [coeff_zero_characterKillingProduct_eq_prod_of_no_nonempty S g a hNo] at hc
+  rw [killingProduct_coeff_zero_prod S g a hNo] at hc
   simp only [AddMonoidAlgebra.coeff_zero] at hc
   have hprod : ∏ i ∈ S, a i ≠ 0 := Finset.prod_ne_zero_iff.mpr ha
   exact hprod hc

@@ -53,8 +53,7 @@ theorem summable_shifted_inverse_squares {a : ℝ} (ha : 0 < a) :
 digamma correction term is integrable and has raw integral at most pi/r^2.
 Apply the Cauchy moment estimate after the exact term identity.
 This supplies the norm-summability budget for interchanging the series and integral. -/
-theorem triangular_digamma_correction_term_integrable_and_bound {a r : ℝ} (ha : a ≠ 0)
-    (hr : 0 < r) :
+theorem triangular_digamma_integrable_and_bound {a r : ℝ} (ha : a ≠ 0) (hr : 0 < r) :
     let F := fun t : ℝ ↦
       (1 / 2 : ℝ) * ((t / 2) ^ 2 / (r * (r ^ 2 + (t / 2) ^ 2))) *
         ‖triangularMellinFunction a (Complex.I * t)‖
@@ -111,9 +110,9 @@ theorem triangular_digamma_correction_integral_le_series {a b : ℝ} (ha : a ≠
             (mul_nonneg (hp n).le (add_nonneg (sq_nonneg _) (sq_nonneg _)))))
         (norm_nonneg _)
   have hf (n : ℕ) : MeasureTheory.Integrable (F n) :=
-    (triangular_digamma_correction_term_integrable_and_bound ha (hp n)).1
+    (triangular_digamma_integrable_and_bound ha (hp n)).1
   have hbound (n : ℕ) : (∫ t : ℝ, F n t) ≤ Real.pi * ((b + n) ^ 2)⁻¹ :=
-    (triangular_digamma_correction_term_integrable_and_bound ha (hp n)).2
+    (triangular_digamma_integrable_and_bound ha (hp n)).2
   have heNorm (n : ℕ) : (∫ t : ℝ, ‖F n t‖) = ∫ t : ℝ, F n t :=
     MeasureTheory.integral_congr_ae
       (Filter.Eventually.of_forall (fun t ↦ Real.norm_of_nonneg (hF0 n t)))

@@ -107,7 +107,7 @@ theorem exists_non_one_prime_witness_le_iff_nonresidue {p : ℕ} [Fact p.Prime] 
 
 /-- If the least non-one witness is below prime p=1 mod 8, it equals the least negative witness.
 Use the negative membership criterion and minimality in both directions. -/
-theorem primeNeOneWitness_eq_primeNegOneWitness_of_lt_prime {p : ℕ} [Fact p.Prime] (hp8 : p % 8 = 1)
+theorem neOneWitness_eq_negOne_of_lt_prime {p : ℕ} [Fact p.Prime] (hp8 : p % 8 = 1)
     (hneg : (primeNegOneWitnessSet p).Nonempty)
     (hsmall : primeNeOneWitness p (primeNeOneWitnessSet_nonempty_of_negOne hneg) < p) :
     primeNeOneWitness p (primeNeOneWitnessSet_nonempty_of_negOne hneg) =

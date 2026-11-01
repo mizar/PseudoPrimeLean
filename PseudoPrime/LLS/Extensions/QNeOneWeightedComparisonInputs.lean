@@ -42,7 +42,7 @@ theorem weightedComparisonCore_even_of_grh {q : ℕ} (χ : DirichletCharacter �
   have hp := AnalyticNumberTheory.Arithmetic.primitiveCharacter_ne_one χ hne
   have hf : 2 ≤ χ.conductor := by
     have h0 := NeZero.pos χ.conductor
-    have h1 := AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hp
+    have h1 := AnalyticNumberTheory.DirichletLFunction.character_level_ne_one_of_ne_one hp
     exact Nat.succ_le_iff.mpr (Nat.lt_of_le_of_ne h0 (Ne.symm h1))
   have hi : χ.primitiveCharacter⁻¹ ≠ 1 := inv_ne_one.mpr hp
   refine ⟨hdS, hdR, ?_, ?_⟩
@@ -51,7 +51,7 @@ theorem weightedComparisonCore_even_of_grh {q : ℕ} (χ : DirichletCharacter �
     rw [Real.log_div (by exact_mod_cast NeZero.ne χ.conductor) Real.pi_ne_zero]
     linarith only [h]
   · have h :=
-      AnalyticNumberTheory.DirichletLFunction.primitiveLogWeightedUpper_of_grh_even_exact hf hGRH
+      AnalyticNumberTheory.DirichletLFunction.logWeighted_upper_even_GRH hf hGRH
         (DirichletCharacter.primitiveCharacter_isPrimitive χ) hp hi heven hX
     rwa [Real.log_div (by exact_mod_cast NeZero.ne χ.conductor) Real.pi_ne_zero]
 
@@ -70,23 +70,16 @@ theorem weightedLogDefect_le_of_apply_two_eq_zero {q : ℕ} (x : ℝ) (χ : Diri
     [NeZero χ.conductor] (hx : 2 ≤ x) (hodd : OddPrimeTrivial χ x)
     (h2 : χ.primitiveCharacter 2 = 0) :
     LLS.weightedLogDefect χ.primitiveCharacter x ≤ (Real.log x) ^ 2 / 2 := by
-  rw [LLS.weightedLogDefect,
-    logWeightedMangoldtSum_sub_characterLogWeightedSum_re_eq_twoAdicCorrection_of_eq_one x χ hx
-      hodd]
-  exact
-    twoAdicLogCorrection_le_half_log_sq_of_apply_two_eq_zero x χ
-      (ne_of_gt (lt_of_lt_of_le (by norm_num only) hx)) h2
+  rw [LLS.weightedLogDefect, logMangoldt_sub_re_eq_twoCorrection_of_one x χ hx hodd]
+  exact logTwoCorrection_le_half_sq_of_zero x χ (ne_of_gt (lt_of_lt_of_le (by norm_num only) hx)) h2
 
 /-- `χ̃(2) = 0` branch: the reciprocal-weighted defect is at most `log 2`, supplying `dR`. -/
 theorem weightedReciprocalDefect_le_of_apply_two_eq_zero {q : ℕ} (x : ℝ)
     (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hx : 2 ≤ x) (hodd : OddPrimeTrivial χ x)
     (h2 : χ.primitiveCharacter 2 = 0) :
     LLS.weightedReciprocalDefect χ.primitiveCharacter x ≤ Real.log 2 := by
-  rw [LLS.weightedReciprocalDefect,
-    reciprocalWeightedSum_sub_re_eq_twoAdicCorrection_of_eq_one x χ hx hodd]
-  exact
-    twoAdicReciprocalCorrection_le_log_two_of_apply_two_eq_zero x χ
-      (lt_of_lt_of_le (by norm_num only) hx) h2
+  rw [LLS.weightedReciprocalDefect, recipMangoldt_sub_re_eq_twoCorrection_of_one x χ hx hodd]
+  exact recipTwoCorrection_le_log_two_of_zero x χ (lt_of_lt_of_le (by norm_num only) hx) h2
 
 /-- `χ̃(2) = 1` branch: the log-weighted defect is at most `(log x)² / 2` (kept alongside the
 `c = 0` branch's shared envelope), even though the two-adic correction itself is exactly `0`. -/
@@ -94,28 +87,23 @@ theorem weightedLogDefect_le_of_apply_two_eq_one {q : ℕ} (x : ℝ) (χ : Diric
     [NeZero χ.conductor] (hx : 2 ≤ x) (hodd : OddPrimeTrivial χ x)
     (h2 : χ.primitiveCharacter 2 = 1) :
     LLS.weightedLogDefect χ.primitiveCharacter x ≤ (Real.log x) ^ 2 / 2 := by
-  rw [LLS.weightedLogDefect,
-    logWeightedMangoldtSum_sub_characterLogWeightedSum_re_eq_twoAdicCorrection_of_eq_one x χ hx
-      hodd]
-  exact
-    twoAdicLogCorrection_le_half_log_sq_of_apply_two_eq_one x χ
-      (ne_of_gt (lt_of_lt_of_le (by norm_num only) hx)) h2
+  rw [LLS.weightedLogDefect, logMangoldt_sub_re_eq_twoCorrection_of_one x χ hx hodd]
+  exact logTwoCorrection_le_half_sq_of_one x χ (ne_of_gt (lt_of_lt_of_le (by norm_num only) hx)) h2
 
 /--
 Input/assumptions: `χ̃(2) = 1` for any primitive source.
 Conclusion: the reciprocal-weighted defect is exactly `0`.
-Content: `twoAdicReciprocalCorrection_eq_zero_of_apply_two_eq_one` gives the local correction
+Content: `recipTwoCorrection_eq_zero_of_one` gives the local correction
 itself vanishes, distinguishing this branch's exact `dR = 0` from the coarser bounds on the other
 two branches.
 Role: supplies the sharpest possible `dR` for `LLSWeightedComparisonCore` on the `c = 1` branch.
 -/
-theorem weightedReciprocalDefect_eq_zero_of_apply_two_eq_one {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hx : 2 ≤ x) (hodd : OddPrimeTrivial χ x)
+theorem weightedReciprocalDefect_zero_of_two_one {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
+    [NeZero χ.conductor] (hx : 2 ≤ x) (hodd : OddPrimeTrivial χ x)
     (h2 : χ.primitiveCharacter 2 = 1) :
     LLS.weightedReciprocalDefect χ.primitiveCharacter x = 0 := by
-  rw [LLS.weightedReciprocalDefect,
-    reciprocalWeightedSum_sub_re_eq_twoAdicCorrection_of_eq_one x χ hx hodd,
-    twoAdicReciprocalCorrection_eq_zero_of_apply_two_eq_one x χ h2]
+  rw [LLS.weightedReciprocalDefect, recipMangoldt_sub_re_eq_twoCorrection_of_one x χ hx hodd,
+    recipTwoCorrection_eq_zero_of_one x χ h2]
 
 /-- `χ̃(2) = -1` branch: the log-weighted defect is at most `(log x)² / 2 + log 2 * (log x -
 log 2)`, the sharpened envelope (valid for `x ≥ 4`) used by the corrected odd branch instead of
@@ -126,19 +114,16 @@ theorem weightedLogDefect_le_of_apply_two_eq_neg_one {q : ℕ} (x : ℝ) (χ : D
     LLS.weightedLogDefect χ.primitiveCharacter x ≤
       (Real.log x) ^ 2 / 2 + Real.log 2 * (Real.log x - Real.log 2) := by
   rw [LLS.weightedLogDefect,
-    logWeightedMangoldtSum_sub_characterLogWeightedSum_re_eq_twoAdicCorrection_of_eq_one x χ
-      ((by norm_num only : (2 : ℝ) ≤ 4).trans hx) hodd]
-  exact
-    twoAdicLogCorrection_le_half_log_sq_add_log_two_mul_log_half_of_apply_two_eq_neg_one x χ hx h2
+    logMangoldt_sub_re_eq_twoCorrection_of_one x χ ((by norm_num only : (2 : ℝ) ≤ 4).trans hx) hodd]
+  exact logTwoCorrection_le_half_sq_add_of_neg_one x χ hx h2
 
 /-- `χ̃(2) = -1` branch: the reciprocal-weighted defect is at most `(4/3) log 2`. -/
-theorem weightedReciprocalDefect_le_of_apply_two_eq_neg_one {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hx : 2 ≤ x) (hodd : OddPrimeTrivial χ x)
+theorem weightedReciprocalDefect_le_of_two_neg_one {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
+    [NeZero χ.conductor] (hx : 2 ≤ x) (hodd : OddPrimeTrivial χ x)
     (h2 : χ.primitiveCharacter 2 = -1) :
     LLS.weightedReciprocalDefect χ.primitiveCharacter x ≤ (4 / 3) * Real.log 2 := by
-  rw [LLS.weightedReciprocalDefect,
-    reciprocalWeightedSum_sub_re_eq_twoAdicCorrection_of_eq_one x χ hx hodd]
-  exact twoAdicReciprocalCorrection_le_four_thirds_log_two_of_apply_two_eq_neg_one x χ hx h2
+  rw [LLS.weightedReciprocalDefect, recipMangoldt_sub_re_eq_twoCorrection_of_one x χ hx hodd]
+  exact recipTwoCorrection_le_4_3_log_two_of_neg_one x χ hx h2
 
 /-- The even `χ̃(2)=0` branch supplies every field of the common comparison core.
 At `X ≥ 64`, its defects are bounded by `(log X)^2/2` and `log 2`, while the
@@ -170,7 +155,7 @@ theorem weightedComparisonCore_even_one {q : ℕ} (χ : DirichletCharacter ℂ q
   exact
     weightedComparisonCore_even_of_grh χ hne heven hGRH hX
       (weightedLogDefect_le_of_apply_two_eq_one X χ hx hodd h2)
-      (weightedReciprocalDefect_eq_zero_of_apply_two_eq_one X χ hx hodd h2).le
+      (weightedReciprocalDefect_zero_of_two_one X χ hx hodd h2).le
 
 /-- The even `χ̃(2)=-1` branch supplies the sharpened logarithmic defect and
 the reciprocal defect `(4/3) log 2`. The resulting common core retains the exact
@@ -186,7 +171,6 @@ theorem weightedComparisonCore_even_neg_one {q : ℕ} (χ : DirichletCharacter �
   exact
     weightedComparisonCore_even_of_grh χ hne heven hGRH hX
       (weightedLogDefect_le_of_apply_two_eq_neg_one X χ (le_trans (by norm_num only) hX) hodd h2)
-      (weightedReciprocalDefect_le_of_apply_two_eq_neg_one X χ (le_trans (by norm_num only) hX) hodd
-        h2)
+      (weightedReciprocalDefect_le_of_two_neg_one X χ (le_trans (by norm_num only) hX) hodd h2)
 
 end PseudoPrime.LLS.Extensions

@@ -58,7 +58,7 @@ Over a field, a nonsquare discriminant P*P-4*Q makes X^2-P*X+Q irreducible.
 A root x would express the discriminant as (2*x-P)^2; the degree-two criterion excludes it.
 This supplies the field structure of the quadratic adjoined-root extension.
 -/
-theorem lucasQuadraticPolynomial_irreducible_of_not_isSquare {K : Type*} [Field K] (P Q : K)
+theorem lucasQuadratic_irreducible_of_nonsquare {K : Type*} [Field K] (P Q : K)
     (hdisc : ¬IsSquare (P * P - 4 * Q)) : Irreducible (lucasQuadraticPolynomial P Q) := by
   have hdeg := Polynomial.isMonicOfDegree_sub_add_two P Q
   apply Polynomial.irreducible_of_degree_le_three_of_not_isRoot
@@ -80,10 +80,10 @@ For field coefficients with nonsquare discriminant, the quadratic AdjoinRoot is 
 Use the proved irreducibility and AdjoinRoot field criterion.
 This permits zero-product cancellation in Frobenius and Lucas completeness proofs.
 -/
-theorem adjoinRoot_lucasQuadratic_isField_of_not_isSquare {K : Type*} [Field K] (P Q : K)
+theorem adjoinRoot_lucas_isField_of_nonsquare {K : Type*} [Field K] (P Q : K)
     (hdisc : ¬IsSquare (P * P - 4 * Q)) : IsField (AdjoinRoot (lucasQuadraticPolynomial P Q)) := by
   have hI : Fact (Irreducible (lucasQuadraticPolynomial P Q)) :=
-    ⟨lucasQuadraticPolynomial_irreducible_of_not_isSquare P Q hdisc⟩
+    ⟨lucasQuadratic_irreducible_of_nonsquare P Q hdisc⟩
   exact AdjoinRoot.isField_iff_irreducible.mpr hI.out
 
 /--
@@ -95,7 +95,7 @@ theorem adjoinRoot_lucasQuadratic_roots {K : Type*} [Field K] (P Q : K)
     (hdisc : ¬IsSquare (P * P - 4 * Q)) :
     ∃ α β : AdjoinRoot (lucasQuadraticPolynomial P Q), α + β = P ∧ α * β = Q := by
   have hI : Fact (Irreducible (lucasQuadraticPolynomial P Q)) :=
-    ⟨lucasQuadraticPolynomial_irreducible_of_not_isSquare P Q hdisc⟩
+    ⟨lucasQuadratic_irreducible_of_nonsquare P Q hdisc⟩
   let α : AdjoinRoot (lucasQuadraticPolynomial P Q) :=
     AdjoinRoot.root (lucasQuadraticPolynomial P Q)
   let β : AdjoinRoot (lucasQuadraticPolynomial P Q) := P - α
@@ -264,7 +264,7 @@ theorem adjoinRoot_lucasQuadratic_frobenius_root {K : Type*} [Field K] (p : ℕ)
         (Q : AdjoinRoot (lucasQuadraticPolynomial P Q)) =
       0 := by
   have hI : Fact (Irreducible (lucasQuadraticPolynomial P Q)) :=
-    ⟨lucasQuadraticPolynomial_irreducible_of_not_isSquare P Q hdisc⟩
+    ⟨lucasQuadratic_irreducible_of_nonsquare P Q hdisc⟩
   let E := AdjoinRoot (lucasQuadraticPolynomial P Q)
   have hchar : Function.Injective (algebraMap K E) := by
     rw [AdjoinRoot.algebraMap_eq]
@@ -287,8 +287,8 @@ theorem adjoinRoot_lucasQuadratic_frobenius_root {K : Type*} [Field K] (p : ℕ)
       (adjoinRoot_lucasQuadratic_root_eq_zero P Q)
 
 /-- If the canonical root is not Frobenius-fixed, its image is the trace-complement root. -/
-theorem adjoinRoot_lucasQuadratic_frobenius_eq_complement {K : Type*} [Field K] (p : ℕ) [CharP K p]
-    [Fact p.Prime] (P Q : K) (hdisc : ¬IsSquare (P * P - 4 * Q)) (hP : P ^ p = P) (hQ : Q ^ p = Q)
+theorem lucasRoot_frobenius_complement {K : Type*} [Field K] (p : ℕ) [CharP K p] [Fact p.Prime]
+    (P Q : K) (hdisc : ¬IsSquare (P * P - 4 * Q)) (hP : P ^ p = P) (hQ : Q ^ p = Q)
     (hne :
       (AdjoinRoot.root (lucasQuadraticPolynomial P Q)) ^ p -
           AdjoinRoot.root (lucasQuadraticPolynomial P Q) ≠
@@ -297,7 +297,7 @@ theorem adjoinRoot_lucasQuadratic_frobenius_eq_complement {K : Type*} [Field K] 
       (P : AdjoinRoot (lucasQuadraticPolynomial P Q)) -
         AdjoinRoot.root (lucasQuadraticPolynomial P Q) := by
   have hI : Fact (Irreducible (lucasQuadraticPolynomial P Q)) :=
-    ⟨lucasQuadraticPolynomial_irreducible_of_not_isSquare P Q hdisc⟩
+    ⟨lucasQuadratic_irreducible_of_nonsquare P Q hdisc⟩
   have hroot := adjoinRoot_lucasQuadratic_frobenius_root p P Q hdisc hP hQ
   have hprod :
     AdjoinRoot.root (lucasQuadraticPolynomial P Q) *
@@ -353,7 +353,7 @@ theorem adjoinRoot_lucasQuadratic_frobenius_swap {K : Type*} [Field K] (p : ℕ)
             AdjoinRoot.root (lucasQuadraticPolynomial P Q)) ^
           p =
         AdjoinRoot.root (lucasQuadraticPolynomial P Q) := by
-  have hα := adjoinRoot_lucasQuadratic_frobenius_eq_complement p P Q hdisc hP hQ hne
+  have hα := lucasRoot_frobenius_complement p P Q hdisc hP hQ hne
   constructor
   · exact hα
   · have hP' :
@@ -362,7 +362,7 @@ theorem adjoinRoot_lucasQuadratic_frobenius_swap {K : Type*} [Field K] (p : ℕ)
       simpa only [map_pow] using
         congrArg (fun z : K => (z : AdjoinRoot (lucasQuadraticPolynomial P Q))) hP
     have hI : Fact (Irreducible (lucasQuadraticPolynomial P Q)) :=
-      ⟨lucasQuadraticPolynomial_irreducible_of_not_isSquare P Q hdisc⟩
+      ⟨lucasQuadratic_irreducible_of_nonsquare P Q hdisc⟩
     let E := AdjoinRoot (lucasQuadraticPolynomial P Q)
     have hchar : Function.Injective (algebraMap K E) := by
       rw [AdjoinRoot.algebraMap_eq]
@@ -377,8 +377,8 @@ is not fixed by pth power. Fixedness would make its irreducible degree-two polyn
 divide X^p-X, forcing degree two to divide one. This contradiction supplies
 the nonfixedness needed by both Frobenius-exchange identities.
 -/
-theorem adjoinRoot_lucasQuadratic_frobenius_ne_self_of_not_isSquare (p : ℕ) [Fact p.Prime]
-    (P Q : ZMod p) (hdisc : ¬IsSquare (P * P - 4 * Q)) :
+theorem lucasRoot_frobenius_ne_self_of_nonsquare (p : ℕ) [Fact p.Prime] (P Q : ZMod p)
+    (hdisc : ¬IsSquare (P * P - 4 * Q)) :
     (AdjoinRoot.root (lucasQuadraticPolynomial P Q)) ^ p -
         AdjoinRoot.root (lucasQuadraticPolynomial P Q) ≠
       0 := by
@@ -388,7 +388,7 @@ theorem adjoinRoot_lucasQuadratic_frobenius_ne_self_of_not_isSquare (p : ℕ) [F
       AdjoinRoot.root (lucasQuadraticPolynomial P Q) :=
     sub_eq_zero.mp hzero
   have hI : Irreducible (lucasQuadraticPolynomial P Q) :=
-    lucasQuadraticPolynomial_irreducible_of_not_isSquare P Q hdisc
+    lucasQuadratic_irreducible_of_nonsquare P Q hdisc
   let _ : Fact (Irreducible (lucasQuadraticPolynomial P Q)) := ⟨hI⟩
   have hdiv :
     lucasQuadraticPolynomial P Q ∣ Polynomial.X ^ (Nat.card (ZMod p)) ^ 1 - Polynomial.X := by
@@ -408,8 +408,8 @@ theorem adjoinRoot_lucasQuadratic_frobenius_ne_self_of_not_isSquare (p : ℕ) [F
   exact (by decide : ¬(2 : ℕ) ∣ 1) htwo
 
 /-- Over `ZMod p`, a nonsquare quadratic has Frobenius exchanging its two roots. -/
-theorem adjoinRoot_lucasQuadratic_frobenius_swap_of_not_isSquare (p : ℕ) [Fact p.Prime]
-    (P Q : ZMod p) (hdisc : ¬IsSquare (P * P - 4 * Q)) :
+theorem lucasRoot_frobenius_swap (p : ℕ) [Fact p.Prime] (P Q : ZMod p)
+    (hdisc : ¬IsSquare (P * P - 4 * Q)) :
     (AdjoinRoot.root (lucasQuadraticPolynomial P Q)) ^ p =
         (P : AdjoinRoot (lucasQuadraticPolynomial P Q)) -
           AdjoinRoot.root (lucasQuadraticPolynomial P Q) ∧
@@ -419,23 +419,22 @@ theorem adjoinRoot_lucasQuadratic_frobenius_swap_of_not_isSquare (p : ℕ) [Fact
         AdjoinRoot.root (lucasQuadraticPolynomial P Q) := by
   exact
     adjoinRoot_lucasQuadratic_frobenius_swap p P Q hdisc (ZMod.pow_card P) (ZMod.pow_card Q)
-      (adjoinRoot_lucasQuadratic_frobenius_ne_self_of_not_isSquare p P Q hdisc)
+      (lucasRoot_frobenius_ne_self_of_nonsquare p P Q hdisc)
 
 /-- The `ZMod p` Frobenius exchange gives the Lucas `U` zero identity. -/
-theorem lucasU_add_one_eq_zero_of_adjoinRoot_frobenius_swap (p : ℕ) [Fact p.Prime] (P Q : ℤ)
+theorem lucasU_add_one_zero_of_nonsquare (p : ℕ) [Fact p.Prime] (P Q : ℤ)
     (hdisc : ¬IsSquare ((P : ZMod p) * (P : ZMod p) - 4 * (Q : ZMod p))) :
     (lucasU P Q (p + 1) : AdjoinRoot (lucasQuadraticPolynomial (P : ZMod p) (Q : ZMod p))) = 0 := by
   let E := AdjoinRoot (lucasQuadraticPolynomial (P : ZMod p) (Q : ZMod p))
   have hI : Irreducible (lucasQuadraticPolynomial (P : ZMod p) (Q : ZMod p)) :=
-    lucasQuadraticPolynomial_irreducible_of_not_isSquare (P : ZMod p) (Q : ZMod p) hdisc
+    lucasQuadratic_irreducible_of_nonsquare (P : ZMod p) (Q : ZMod p) hdisc
   let _ : Fact (Irreducible (lucasQuadraticPolynomial (P : ZMod p) (Q : ZMod p))) := ⟨hI⟩
   let α : E := AdjoinRoot.root (lucasQuadraticPolynomial (P : ZMod p) (Q : ZMod p))
   let β : E := (P : ZMod p) - α
   have hcast (z : ℤ) : (z : E) = ((z : ZMod p) : E) := by
     change (z : E) = algebraMap (ZMod p) E (z : ZMod p)
     exact (map_intCast (algebraMap (ZMod p) E) z).symm
-  have hswap :=
-    adjoinRoot_lucasQuadratic_frobenius_swap_of_not_isSquare p (P : ZMod p) (Q : ZMod p) hdisc
+  have hswap := lucasRoot_frobenius_swap p (P : ZMod p) (Q : ZMod p) hdisc
   have hα : α ^ p = β := by simpa only [α, β] using hswap.1
   have hβ : β ^ p = α := by simpa only [α, β] using hswap.2
   have hsum : α + β = (P : E) := by
@@ -460,8 +459,7 @@ theorem lucasU_add_one_eq_zero_of_adjoinRoot_frobenius_swap (p : ℕ) [Fact p.Pr
       _ = (Q : E) := by rw [hrootE, sub_zero]
   have hne : α ^ p - α ≠ 0 := by
     simpa only [α] using
-      (adjoinRoot_lucasQuadratic_frobenius_ne_self_of_not_isSquare p (P : ZMod p) (Q : ZMod p)
-        hdisc)
+      (lucasRoot_frobenius_ne_self_of_nonsquare p (P : ZMod p) (Q : ZMod p) hdisc)
   have hαβ : α - β ≠ 0 := by
     intro hzero
     apply hne
@@ -484,31 +482,30 @@ theorem lucasUZMod_prime_eq_zero (p : ℕ) [Fact p.Prime] (P Q : ℤ)
   rw [lucasUZMod_eq_cast]
   let E := AdjoinRoot (lucasQuadraticPolynomial (P : ZMod p) (Q : ZMod p))
   have hI : Irreducible (lucasQuadraticPolynomial (P : ZMod p) (Q : ZMod p)) :=
-    lucasQuadraticPolynomial_irreducible_of_not_isSquare (P : ZMod p) (Q : ZMod p) hdisc
+    lucasQuadratic_irreducible_of_nonsquare (P : ZMod p) (Q : ZMod p) hdisc
   let _ : Fact (Irreducible (lucasQuadraticPolynomial (P : ZMod p) (Q : ZMod p))) := ⟨hI⟩
   have hinj : Function.Injective (algebraMap (ZMod p) E) := by
     rw [AdjoinRoot.algebraMap_eq]
     exact AdjoinRoot.coe_injective'
   apply hinj
-  have hU := lucasU_add_one_eq_zero_of_adjoinRoot_frobenius_swap p P Q hdisc
+  have hU := lucasU_add_one_zero_of_nonsquare p P Q hdisc
   simpa only [map_intCast, map_zero] using hU
 
 /-- The `ZMod p` Frobenius exchange gives the Lucas `V` value `2 * Q`. -/
-theorem lucasV_add_one_eq_two_mul_of_adjoinRoot_frobenius_swap (p : ℕ) [Fact p.Prime] (P Q : ℤ)
+theorem lucasV_add_one_eq_two_mul_of_nonsquare (p : ℕ) [Fact p.Prime] (P Q : ℤ)
     (hdisc : ¬IsSquare ((P : ZMod p) * (P : ZMod p) - 4 * (Q : ZMod p))) :
     (lucasV P Q (p + 1) : AdjoinRoot (lucasQuadraticPolynomial (P : ZMod p) (Q : ZMod p))) =
       2 * (Q : AdjoinRoot (lucasQuadraticPolynomial (P : ZMod p) (Q : ZMod p))) := by
   let E := AdjoinRoot (lucasQuadraticPolynomial (P : ZMod p) (Q : ZMod p))
   have hI : Irreducible (lucasQuadraticPolynomial (P : ZMod p) (Q : ZMod p)) :=
-    lucasQuadraticPolynomial_irreducible_of_not_isSquare (P : ZMod p) (Q : ZMod p) hdisc
+    lucasQuadratic_irreducible_of_nonsquare (P : ZMod p) (Q : ZMod p) hdisc
   let _ : Fact (Irreducible (lucasQuadraticPolynomial (P : ZMod p) (Q : ZMod p))) := ⟨hI⟩
   let α : E := AdjoinRoot.root (lucasQuadraticPolynomial (P : ZMod p) (Q : ZMod p))
   let β : E := (P : ZMod p) - α
   have hcast (z : ℤ) : (z : E) = ((z : ZMod p) : E) := by
     change (z : E) = algebraMap (ZMod p) E (z : ZMod p)
     exact (map_intCast (algebraMap (ZMod p) E) z).symm
-  have hswap :=
-    adjoinRoot_lucasQuadratic_frobenius_swap_of_not_isSquare p (P : ZMod p) (Q : ZMod p) hdisc
+  have hswap := lucasRoot_frobenius_swap p (P : ZMod p) (Q : ZMod p) hdisc
   have hα : α ^ p = β := by simpa only [α, β] using hswap.1
   have hβ : β ^ p = α := by simpa only [α, β] using hswap.2
   have hsum : α + β = (P : E) := by
@@ -544,13 +541,13 @@ theorem lucasVZMod_prime_eq_two_mul (p : ℕ) [Fact p.Prime] (P Q : ℤ)
   rw [lucasVZMod_eq_cast]
   let E := AdjoinRoot (lucasQuadraticPolynomial (P : ZMod p) (Q : ZMod p))
   have hI : Irreducible (lucasQuadraticPolynomial (P : ZMod p) (Q : ZMod p)) :=
-    lucasQuadraticPolynomial_irreducible_of_not_isSquare (P : ZMod p) (Q : ZMod p) hdisc
+    lucasQuadratic_irreducible_of_nonsquare (P : ZMod p) (Q : ZMod p) hdisc
   let _ : Fact (Irreducible (lucasQuadraticPolynomial (P : ZMod p) (Q : ZMod p))) := ⟨hI⟩
   have hinj : Function.Injective (algebraMap (ZMod p) E) := by
     rw [AdjoinRoot.algebraMap_eq]
     exact AdjoinRoot.coe_injective'
   apply hinj
-  have hV := lucasV_add_one_eq_two_mul_of_adjoinRoot_frobenius_swap p P Q hdisc
+  have hV := lucasV_add_one_eq_two_mul_of_nonsquare p P Q hdisc
   have htwo : algebraMap (ZMod p) E (2 : ZMod p) = (2 : E) := map_natCast (algebraMap (ZMod p) E) 2
   rw [map_mul, htwo]
   simpa only [map_intCast] using hV

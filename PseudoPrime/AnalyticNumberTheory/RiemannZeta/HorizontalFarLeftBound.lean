@@ -39,7 +39,7 @@ theorem norm_riemannZetaLogContourKernel_farLeft_le {x : ℝ} (hx : 1 < x) {m : 
   have hzre : z.re = σ := by
     simp only [hz_def, Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
       Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero]
-  have hderiv_bound := norm_logDeriv_riemannZeta_neg_add_mul_I_le_of_mem_Icc hσ ht
+  have hderiv_bound := norm_logDeriv_le_farLeftBound hσ ht
   have hlogDeriv_eq : ‖deriv riemannZeta z / riemannZeta z‖ = ‖logDeriv riemannZeta z‖ := by
     rw [logDeriv_apply]
   have hxpos : (0 : ℝ) < x := lt_trans zero_lt_one hx
@@ -74,7 +74,7 @@ theorem norm_riemannZetaLogContourKernel_farLeft_le {x : ℝ} (hx : 1 < x) {m : 
 `PseudoPrime.AnalyticNumberTheory.RiemannZeta.riemannZetaReciprocalContourKernel` carries
 `x ^ (s - 1) / (s * (s - 1))`, the exponent shifts to
 `σ - 1 ≤ -3/2`, still bounded (for `x > 1`) by the fixed value `x ^ (-3/2)`. -/
-theorem norm_riemannZetaReciprocalContourKernel_farLeft_le {x : ℝ} (hx : 1 < x) {m : ℕ} {σ t : ℝ}
+theorem norm_reciprocalKernel_farLeft_le {x : ℝ} (hx : 1 < x) {m : ℕ} {σ t : ℝ}
     (hσ : σ ∈ Set.Icc (-(2 * (m : ℝ) + 1)) (-1 / 2)) (ht : t ≠ 0) :
     ‖riemannZetaReciprocalContourKernel x ((σ : ℂ) + (t : ℂ) * Complex.I)‖ ≤
       farLeftZetaLogDerivBound m t * x ^ (-(3 : ℝ) / 2) / t ^ 2 := by
@@ -89,7 +89,7 @@ theorem norm_riemannZetaReciprocalContourKernel_farLeft_le {x : ℝ} (hx : 1 < x
     simp only [hz_def, Complex.sub_im, Complex.add_im, Complex.ofReal_im, Complex.mul_im,
       Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add,
       Complex.one_im, sub_zero]
-  have hderiv_bound := norm_logDeriv_riemannZeta_neg_add_mul_I_le_of_mem_Icc hσ ht
+  have hderiv_bound := norm_logDeriv_le_farLeftBound hσ ht
   have hlogDeriv_eq : ‖deriv riemannZeta z / riemannZeta z‖ = ‖logDeriv riemannZeta z‖ := by
     rw [logDeriv_apply]
   have hxpos : (0 : ℝ) < x := by linarith only [hx]
@@ -131,8 +131,7 @@ theorem norm_riemannZetaReciprocalContourKernel_farLeft_le {x : ℝ} (hx : 1 < x
 
 /-- The pointwise kernel bound, integrated over the full far-left segment `[-(2m+1), -1/2]` at a
 fixed height `t ≠ 0`. -/
-theorem norm_intervalIntegral_riemannZetaLogContourKernel_farLeft_le {x : ℝ} (hx : 1 < x) {m : ℕ}
-    {t : ℝ} (ht : t ≠ 0) :
+theorem norm_integral_logKernel_farLeft_le {x : ℝ} (hx : 1 < x) {m : ℕ} {t : ℝ} (ht : t ≠ 0) :
     ‖∫ σ in (-(2 * (m : ℝ) + 1))..(-1 / 2),
           riemannZetaLogContourKernel x ((σ : ℂ) + (t : ℂ) * Complex.I)‖ ≤
       farLeftZetaLogDerivBound m t * x ^ (-(1 : ℝ) / 2) / t ^ 2 *
@@ -153,9 +152,9 @@ theorem norm_intervalIntegral_riemannZetaLogContourKernel_farLeft_le {x : ℝ} (
 
 /-- The reciprocal-kernel analogue of
 `PseudoPrime.AnalyticNumberTheory.RiemannZeta.`
-`norm_intervalIntegral_riemannZetaLogContourKernel_farLeft_le`. -/
-theorem norm_intervalIntegral_riemannZetaReciprocalContourKernel_farLeft_le {x : ℝ} (hx : 1 < x)
-    {m : ℕ} {t : ℝ} (ht : t ≠ 0) :
+`norm_integral_logKernel_farLeft_le`. -/
+theorem norm_integral_reciprocalKernel_farLeft_le {x : ℝ} (hx : 1 < x) {m : ℕ} {t : ℝ}
+    (ht : t ≠ 0) :
     ‖∫ σ in (-(2 * (m : ℝ) + 1))..(-1 / 2),
           riemannZetaReciprocalContourKernel x ((σ : ℂ) + (t : ℂ) * Complex.I)‖ ≤
       farLeftZetaLogDerivBound m t * x ^ (-(3 : ℝ) / 2) / t ^ 2 *
@@ -170,7 +169,7 @@ theorem norm_intervalIntegral_riemannZetaReciprocalContourKernel_farLeft_le {x :
       (by
         rw [Set.uIoc_of_le hlamtau]
         rintro σ ⟨hσ1, hσ2⟩
-        exact norm_riemannZetaReciprocalContourKernel_farLeft_le hx ⟨hσ1.le, hσ2⟩ ht)
+        exact norm_reciprocalKernel_farLeft_le hx ⟨hσ1.le, hσ2⟩ ht)
   rwa [abs_of_nonneg (by linarith only [hlamtau] : (0 : ℝ) ≤ -1 / 2 - (-(2 * (m : ℝ) + 1)))] at
     hbound
 

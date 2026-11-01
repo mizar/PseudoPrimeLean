@@ -28,9 +28,8 @@ Content: transfer the centered difference estimate to the closed disk of radius 
 Cauchy's estimate to the function with its center value subtracted.
 Role: bounds the analytic-factor error separated from the local zero sum.
 -/
-theorem norm_iteratedDeriv_ecanonicalDecomp_logDeriv_le {N : ℕ} [NeZero N] (hN1 : 1 < N)
-    {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {R : ℝ}
-    (hR : 1 ≤ R) {g : ℂ → ℂ}
+theorem decomp_logDeriv_bound {N : ℕ} [NeZero N] (hN1 : 1 < N) {χ : DirichletCharacter ℂ N}
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {R : ℝ} (hR : 1 ≤ R) {g : ℂ → ℂ}
     (D : Complex.ECanonicalDecomp (DirichletCharacter.completedLFunction χ) g R)
     (hzf : ∀ ρ : ℂ, ‖ρ‖ = R → DirichletCharacter.completedLFunction χ ρ ≠ 0) (n : ℕ) (hn : 0 < n) :
     ‖iteratedDeriv n (logDeriv g) 0‖ ≤
@@ -70,7 +69,7 @@ theorem norm_iteratedDeriv_ecanonicalDecomp_logDeriv_le {N : ℕ} [NeZero N] (hN
     intro z hz
     have hzNorm : ‖z‖ ≤ R / 4 := by simpa only [Metric.mem_closedBall, dist_zero_right] using hz
     have hzHalf : ‖z‖ ≤ R / 2 := by linarith only [hzNorm, hR]
-    have hv := norm_logDeriv_ecanonicalDecomp_sub_le hN1 hprimitive hne hinv hR D hzf hzHalf
+    have hv := ecanonical_logDeriv_sub_bound hN1 hprimitive hne hinv hR D hzf hzHalf
     have hA : A ≤ |A| := le_abs_self A
     have hden : 0 < R ^ 2 := pow_pos hRpos 2
     calc
@@ -85,19 +84,19 @@ theorem norm_iteratedDeriv_ecanonicalDecomp_logDeriv_le {N : ℕ} [NeZero N] (hN
             (abs_nonneg A)
       _ = C := rfl
   change ‖iteratedDeriv n (logDeriv g) 0‖ ≤ n.factorial * C / (R / 4) ^ n
-  exact norm_iteratedDeriv_le_of_forall_ball_norm_sub_center_le n hn hrpos hloganalytic hC
+  exact iterDeriv_center_le n hn hrpos hloganalytic hC
 
 /--
 Inputs: a nonzero point $u$ in the disk of positive radius $R$ and a derivative order $n$.
 Claim: the centered iterated derivative of the canonical factor's logarithmic derivative is the
 difference of inverse-distance powers at $u$ and its reflection $R^2/\overline{u}$.
 Content: split the logarithmic derivative into two simple reciprocals and use
-`iteratedDeriv_sub_const_inv`.
+`iteratedDeriv_sub_inv`.
 Role: separates higher derivatives of a finite Hadamard product into a local zero sum and a
 boundary correction.
 -/
-theorem iteratedDeriv_logDeriv_canonicalFactor_at_zero {R : ℝ} {u : ℂ}
-    (hu : u ∈ Metric.ball (0 : ℂ) R) (hu0 : u ≠ 0) (n : ℕ) :
+theorem factor_logDeriv_iter {R : ℝ} {u : ℂ} (hu : u ∈ Metric.ball (0 : ℂ) R) (hu0 : u ≠ 0)
+    (n : ℕ) :
     iteratedDeriv n (logDeriv (Complex.canonicalFactor R u)) 0 =
       (-1 : ℂ) ^ n * (n.factorial : ℂ) *
           ((0 : ℂ) - (R : ℂ) ^ 2 / (starRingEnd ℂ u)) ^ (-1 - n : ℤ) -
@@ -161,7 +160,7 @@ theorem iteratedDeriv_logDeriv_canonicalFactor_at_zero {R : ℝ} {u : ℂ}
   rw [hcenter]
   change iteratedDeriv n ((fun z : ℂ => (z - v)⁻¹) - (fun z : ℂ => (z - u)⁻¹)) 0 = _
   rw [iteratedDeriv_sub hV.contDiffAt hU.contDiffAt]
-  rw [iteratedDeriv_sub_const_inv v n, iteratedDeriv_sub_const_inv u n]
+  rw [iteratedDeriv_sub_inv v n, iteratedDeriv_sub_inv u n]
 
 /--
 Inputs: a finitely supported coefficient function $m$, a family $f_u$ analytic at the center on
@@ -172,8 +171,7 @@ the constant-multiple formula.
 Role: distributes canonical-factor terms over the finite divisor support in higher Hadamard
 identities.
 -/
-theorem iteratedDeriv_finsum_const_mul {m : ℂ → ℂ} {f : ℂ → ℂ → ℂ}
-    (hm : (Function.support m).Finite) (n : ℕ)
+theorem iteratedDeriv_finsum {m : ℂ → ℂ} {f : ℂ → ℂ → ℂ} (hm : (Function.support m).Finite) (n : ℕ)
     (hf : ∀ u ∈ Function.support m, AnalyticAt ℂ (f u) 0) :
     iteratedDeriv n (fun z => ∑ᶠ u, m u * f u z) 0 = ∑ᶠ u, m u * iteratedDeriv n (f u) 0 := by
   let s := hm.toFinset
@@ -231,7 +229,7 @@ Claim: the associated finite weighted `finsum` is analytic at the center.
 Content: rewrite the finitely supported sum as a finite sum and apply analyticity of finite sums.
 Role: supplies the regularity needed to differentiate the Hadamard center identity repeatedly.
 -/
-theorem analyticAt_finsum_const_mul {m : ℂ → ℂ} {f : ℂ → ℂ → ℂ} (hm : (Function.support m).Finite)
+theorem analytic_finsum_mul {m : ℂ → ℂ} {f : ℂ → ℂ → ℂ} (hm : (Function.support m).Finite)
     (hf : ∀ u ∈ Function.support m, AnalyticAt ℂ (f u) 0) :
     AnalyticAt ℂ (fun z => ∑ᶠ u, m u * f u z) 0 := by
   let s := hm.toFinset
@@ -264,12 +262,11 @@ Content: establish analyticity and nonvanishing at the center for each supported
 interchange differentiation with the finite sum.
 Role: computes the zero term in higher Hadamard identities with divisor multiplicities.
 -/
-theorem iteratedDeriv_finsum_canonicalFactor_logDeriv {R : ℝ} {m : ℂ → ℂ}
-    (hm : (Function.support m).Finite) (hR : 0 < R)
+theorem canonical_finsum_iter {R : ℝ} {m : ℂ → ℂ} (hm : (Function.support m).Finite) (hR : 0 < R)
     (hsupport : ∀ u ∈ Function.support m, u ∈ Metric.ball (0 : ℂ) R ∧ u ≠ 0) (n : ℕ) :
     iteratedDeriv n (fun z => ∑ᶠ u, m u * logDeriv (Complex.canonicalFactor R u) z) 0 =
       ∑ᶠ u, m u * iteratedDeriv n (logDeriv (Complex.canonicalFactor R u)) 0 := by
-  apply iteratedDeriv_finsum_const_mul hm n
+  apply iteratedDeriv_finsum hm n
   intro u hu
   obtain ⟨huball, hu0⟩ := hsupport u hu
   have hcan : AnalyticAt ℂ (Complex.canonicalFactor R u) 0 :=
@@ -297,8 +294,8 @@ support avoids the center, then apply the finite-support interchange lemma.
 Role: connects local inverse-distance zero sums to higher identities from the Hadamard
 factorization.
 -/
-theorem iteratedDeriv_divisor_canonicalFactor_logDeriv_at_zero {F : ℂ → ℂ} (hF : Differentiable ℂ F)
-    (h0 : F 0 ≠ 0) {R : ℝ} (hR : 0 < R) (n : ℕ) :
+theorem divisor_finsum_iter {F : ℂ → ℂ} (hF : Differentiable ℂ F) (h0 : F 0 ≠ 0) {R : ℝ}
+    (hR : 0 < R) (n : ℕ) :
     iteratedDeriv n
         (fun z =>
           ∑ᶠ u : ℂ,
@@ -350,14 +347,11 @@ theorem iteratedDeriv_divisor_canonicalFactor_logDeriv_at_zero {F : ℂ → ℂ}
       rw [hz]
       simp only [Int.cast_zero, neg_zero]
     have huball := (MeromorphicOn.divisor F (Metric.ball (0 : ℂ) R)).supportWithinDomain hdiv
-    exact
-      ⟨huball,
-        AnalyticNumberTheory.General.ne_of_mem_divisorBallSupport_of_entire_value_ne_zero
-          hF hdiv h0⟩
+    exact ⟨huball, AnalyticNumberTheory.General.ne_of_mem_divisor_of_value_ne_zero hF hdiv h0⟩
   change
     iteratedDeriv n (fun z => ∑ᶠ u, m u * logDeriv (Complex.canonicalFactor R u) z) 0 =
       ∑ᶠ u, m u * iteratedDeriv n (logDeriv (Complex.canonicalFactor R u)) 0
-  exact iteratedDeriv_finsum_canonicalFactor_logDeriv hm hR hsupport n
+  exact canonical_finsum_iter hm hR hsupport n
 
 /--
 Inputs: a primitive nontrivial character, a positive finite Hadamard radius, and a derivative
@@ -369,8 +363,8 @@ for each canonical factor.
 Role: expresses the zero term of the Hadamard factorization as the higher zero sum used in the
 log-free density estimate.
 -/
-theorem iteratedDeriv_divisor_canonicalFactorSum_formula_at_zero {F : ℂ → ℂ}
-    (hF : Differentiable ℂ F) (h0 : F 0 ≠ 0) {R : ℝ} (hR : 0 < R) (n : ℕ) :
+theorem divisor_iter_formula {F : ℂ → ℂ} (hF : Differentiable ℂ F) (h0 : F 0 ≠ 0) {R : ℝ}
+    (hR : 0 < R) (n : ℕ) :
     iteratedDeriv n
         (fun z =>
           ∑ᶠ u : ℂ,
@@ -382,7 +376,7 @@ theorem iteratedDeriv_divisor_canonicalFactorSum_formula_at_zero {F : ℂ → �
           (((-1 : ℂ) ^ n * (n.factorial : ℂ) *
               ((0 : ℂ) - (R : ℂ) ^ 2 / starRingEnd ℂ u) ^ (-1 - n : ℤ)) -
             (-1 : ℂ) ^ n * (n.factorial : ℂ) * ((0 : ℂ) - u) ^ (-1 - n : ℤ)) := by
-  rw [iteratedDeriv_divisor_canonicalFactor_logDeriv_at_zero hF h0 hR n]
+  rw [divisor_finsum_iter hF h0 hR n]
   apply finsum_congr
   intro u
   let c : ℂ := ((-MeromorphicOn.divisor F (Metric.ball (0 : ℂ) R) u : ℤ) : ℂ)
@@ -401,10 +395,9 @@ theorem iteratedDeriv_divisor_canonicalFactorSum_formula_at_zero {F : ℂ → �
       rw [hz]
       simp only [Int.cast_zero, neg_zero]
     have hu0 :=
-      PseudoPrime.AnalyticNumberTheory.General.ne_of_mem_divisorBallSupport_of_entire_value_ne_zero
-        hF hdiv h0
+      PseudoPrime.AnalyticNumberTheory.General.ne_of_mem_divisor_of_value_ne_zero hF hdiv h0
     have huball := (MeromorphicOn.divisor F (Metric.ball (0 : ℂ) R)).supportWithinDomain hdiv
-    rw [iteratedDeriv_logDeriv_canonicalFactor_at_zero huball hu0 n]
+    rw [factor_logDeriv_iter huball hu0 n]
 
 /--
 Inputs: a primitive nontrivial character, a zero-free finite Hadamard boundary, a factorization
@@ -416,9 +409,9 @@ the established formula for the canonical-factor sum.
 Role: connects the finite-radius analytic remainder estimate to the Turán lower bound for a zero
 power sum.
 -/
-theorem iteratedDeriv_ecanonicalDecomp_logDeriv_at_zero_of_entire {F : ℂ → ℂ}
-    (hF : Differentiable ℂ F) (h0 : F 0 ≠ 0) {R : ℝ} (hR : 0 < R) {g : ℂ → ℂ}
-    (D : Complex.ECanonicalDecomp F g R) (hzf : ∀ ρ : ℂ, ‖ρ‖ = R → F ρ ≠ 0) (n : ℕ) (hn : 0 < n) :
+theorem entireLogDeriv_at0 {F : ℂ → ℂ} (hF : Differentiable ℂ F) (h0 : F 0 ≠ 0) {R : ℝ} (hR : 0 < R)
+    {g : ℂ → ℂ} (D : Complex.ECanonicalDecomp F g R) (hzf : ∀ ρ : ℂ, ‖ρ‖ = R → F ρ ≠ 0) (n : ℕ)
+    (hn : 0 < n) :
     iteratedDeriv n (logDeriv F) 0 =
       (∑ᶠ u : ℂ,
           ((-MeromorphicOn.divisor F (Metric.ball (0 : ℂ) R) u : ℤ) : ℂ) *
@@ -477,13 +470,10 @@ theorem iteratedDeriv_ecanonicalDecomp_logDeriv_at_zero_of_entire {F : ℂ → �
       rw [hz]
       simp only [Int.cast_zero, neg_zero]
     have huball := (MeromorphicOn.divisor F (Metric.ball (0 : ℂ) R)).supportWithinDomain hdiv
-    exact
-      ⟨huball,
-        AnalyticNumberTheory.General.ne_of_mem_divisorBallSupport_of_entire_value_ne_zero
-          hF hdiv h0ne⟩
+    exact ⟨huball, AnalyticNumberTheory.General.ne_of_mem_divisor_of_value_ne_zero hF hdiv h0ne⟩
   have hSanalytic : AnalyticAt ℂ S 0 := by
     change AnalyticAt ℂ (fun z => ∑ᶠ u : ℂ, m u * logDeriv (Complex.canonicalFactor R u) z) 0
-    apply analyticAt_finsum_const_mul hm
+    apply analytic_finsum_mul hm
     intro u hu
     obtain ⟨huball, hu0⟩ := hsupport u hu
     have hcan : AnalyticAt ℂ (Complex.canonicalFactor R u) 0 :=
@@ -511,8 +501,7 @@ theorem iteratedDeriv_ecanonicalDecomp_logDeriv_at_zero_of_entire {F : ℂ → �
       hFanalytic.continuousAt.eventually_ne h0ne] with z hzball hzne
     have hzclosed : z ∈ Metric.closedBall (0 : ℂ) R := Metric.ball_subset_closedBall hzball
     have hcenter :=
-      AnalyticNumberTheory.General.ecanonicalDecomp_centered_logDeriv_eq h0 hF hR D hzf
-        hzclosed hzne
+      AnalyticNumberTheory.General.ecanonical_centered_logDeriv_eq h0 hF hR D hzf hzclosed hzne
     change logDeriv F z = S z + G z + c
     linear_combination hcenter
   have hderivEq := hEq.iteratedDeriv n
@@ -527,7 +516,7 @@ theorem iteratedDeriv_ecanonicalDecomp_logDeriv_at_zero_of_entire {F : ℂ → �
       rw [iteratedDeriv_const_add hn]
       change iteratedDeriv n (S + G) 0 = _
       exact hadd
-    _ = _ := by rw [iteratedDeriv_divisor_canonicalFactorSum_formula_at_zero hF h0 hR n]
+    _ = _ := by rw [divisor_iter_formula hF h0 hR n]
 
 /--
 Inputs: a primitive nontrivial character, a zero-free finite Hadamard boundary, a factorization
@@ -538,9 +527,9 @@ Content: apply the centered identity for entire functions to the completed L-fun
 Role: connects the finite-radius analytic remainder estimate to the Turán lower bound for a zero
 power sum.
 -/
-theorem iteratedDeriv_ecanonicalDecomp_logDeriv_at_zero {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) {R : ℝ} (hR : 0 < R)
-    {g : ℂ → ℂ} (D : Complex.ECanonicalDecomp (DirichletCharacter.completedLFunction χ) g R)
+theorem completedLogDeriv_at0 {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) {R : ℝ} (hR : 0 < R) {g : ℂ → ℂ}
+    (D : Complex.ECanonicalDecomp (DirichletCharacter.completedLFunction χ) g R)
     (hzf : ∀ ρ : ℂ, ‖ρ‖ = R → DirichletCharacter.completedLFunction χ ρ ≠ 0) (n : ℕ) (hn : 0 < n) :
     iteratedDeriv n (logDeriv (DirichletCharacter.completedLFunction χ)) 0 =
       (∑ᶠ u : ℂ,
@@ -553,8 +542,8 @@ theorem iteratedDeriv_ecanonicalDecomp_logDeriv_at_zero {N : ℕ} [NeZero N]
               (-1 : ℂ) ^ n * (n.factorial : ℂ) * ((0 : ℂ) - u) ^ (-1 - n : ℤ))) +
         iteratedDeriv n (logDeriv g) 0 := by
   have hF := DirichletCharacter.differentiable_completedLFunction hne
-  have h0 := dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne
-  exact iteratedDeriv_ecanonicalDecomp_logDeriv_at_zero_of_entire hF h0 hR D hzf n hn
+  have h0 := completed_zero_ne_zero_of_primitive hprimitive hne
+  exact entireLogDeriv_at0 hF h0 hR D hzf n hn
 
 /--
 Inputs: a primitive nontrivial character, a zero-free Hadamard boundary, a positive derivative
@@ -565,9 +554,8 @@ Content: combine the center identity for the canonical factorization with the ex
 bound for the analytic factor using the norm triangle inequality.
 Role: connects local Turán detection to the zero sum from the global Hadamard factorization.
 -/
-theorem norm_ecanonicalDecomp_zero_difference_sum_lower_bound {N : ℕ} [NeZero N] (hN1 : 1 < N)
-    {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {R : ℝ}
-    (hR : 1 ≤ R) {g : ℂ → ℂ}
+theorem zeroDifference_ge {N : ℕ} [NeZero N] (hN1 : 1 < N) {χ : DirichletCharacter ℂ N}
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {R : ℝ} (hR : 1 ≤ R) {g : ℂ → ℂ}
     (D : Complex.ECanonicalDecomp (DirichletCharacter.completedLFunction χ) g R)
     (hzf : ∀ ρ : ℂ, ‖ρ‖ = R → DirichletCharacter.completedLFunction χ ρ ≠ 0) (n : ℕ) (hn : 0 < n)
     (lower : ℝ)
@@ -604,14 +592,13 @@ theorem norm_ecanonicalDecomp_zero_difference_sum_lower_bound {N : ℕ} [NeZero 
         intro u
         ring
       _ = _ := by rw [← mul_finsum]
-  have hdecomp := iteratedDeriv_ecanonicalDecomp_logDeriv_at_zero hprimitive hne hRpos D hzf n hn
+  have hdecomp := completedLogDeriv_at0 hprimitive hne hRpos D hzf n hn
   change
     iteratedDeriv n (logDeriv (DirichletCharacter.completedLFunction χ)) 0 =
       (∑ᶠ u : ℂ, m u * (a * f u - a * k u)) + iteratedDeriv n (logDeriv g) 0 at hdecomp
   rw [hzeroFactor] at hdecomp
-  have herror :=
-    norm_iteratedDeriv_ecanonicalDecomp_logDeriv_le hN1 hprimitive hne hinv hR D hzf n hn
-  have hnorm := norm_zero_sum_lower_bound_of_derivative_decomposition hdecomp hlower herror
+  have herror := decomp_logDeriv_bound hN1 hprimitive hne hinv hR D hzf n hn
+  have hnorm := zeroSum_from_deriv hdecomp hlower herror
   simpa only [S, m, f, k] using hnorm
 
 /--
@@ -621,7 +608,7 @@ Content: show that the reflected point has norm at least $R$, then use monotonic
 powers.
 Role: bounds reflected zero terms before applying Jensen's zero-count estimate.
 -/
-theorem norm_reflected_inverse_zpow_le {R : ℝ} {u : ℂ} (n : ℕ) (hR : 0 < R) (hu : ‖u‖ ≤ R) :
+theorem reflected_zpow_le {R : ℝ} {u : ℂ} (n : ℕ) (hR : 0 < R) (hu : ‖u‖ ≤ R) :
     ‖((0 : ℂ) - (R : ℂ) ^ 2 / starRingEnd ℂ u) ^ (-1 - (n : ℤ) : ℤ)‖ ≤ (1 / R) ^ (n + 1) := by
   by_cases hu0 : u = 0
   · subst u
@@ -629,7 +616,7 @@ theorem norm_reflected_inverse_zpow_le {R : ℝ} {u : ℂ} (n : ℕ) (hR : 0 < R
     simp only [map_zero, div_zero, sub_zero, zpow_negSucc]
     rw [zero_pow (Nat.succ_ne_zero n), inv_zero, norm_zero]
     exact pow_nonneg (le_of_lt (one_div_pos.mpr hR)) _
-  · rw [zpow_neg_one_sub_nat_eq_inv_pow, norm_pow]
+  · rw [zpow_neg_succ_inv_pow, norm_pow]
     have huPos : 0 < ‖u‖ := norm_pos_iff.mpr hu0
     have hpoint : ‖(0 : ℂ) - (R : ℂ) ^ 2 / starRingEnd ℂ u‖ = R ^ 2 / ‖u‖ := by
       rw [norm_sub_rev, sub_zero]
@@ -667,9 +654,8 @@ one, and compare the open-disk multiplicity sum with the closed-disk Jensen coun
 Role: supplies the correction-term estimate needed to transfer a canonical-factor remainder to a
 local zero-factor remainder for scaled ordinary $L$ functions.
 -/
-theorem norm_reflection_sum_le_of_boundary_bound {F : ℂ → ℂ} (hF : Differentiable ℂ F)
-    (h0 : F 0 ≠ 0) {M : ℝ} (hM : 1 ≤ M) (hbound : ∀ z ∈ Metric.sphere (0 : ℂ) 2, ‖F z‖ ≤ M)
-    (n : ℕ) :
+theorem reflection_boundary {F : ℂ → ℂ} (hF : Differentiable ℂ F) (h0 : F 0 ≠ 0) {M : ℝ}
+    (hM : 1 ≤ M) (hbound : ∀ z ∈ Metric.sphere (0 : ℂ) 2, ‖F z‖ ≤ M) (n : ℕ) :
     ‖∑ᶠ u : ℂ,
           ((-MeromorphicOn.divisor F (Metric.ball (0 : ℂ) 1) u : ℤ) : ℂ) *
             ((0 : ℂ) - (1 : ℂ) ^ 2 / starRingEnd ℂ u) ^ (-1 - (n : ℤ) : ℤ)‖ ≤
@@ -726,7 +712,7 @@ theorem norm_reflection_sum_le_of_boundary_bound {F : ℂ → ℂ} (hF : Differe
       change ‖((0 : ℂ) - (1 : ℂ) ^ 2 / starRingEnd ℂ u) ^ (-1 - (n : ℤ) : ℤ)‖ ≤ 1
       calc
         ‖((0 : ℂ) - (1 : ℂ) ^ 2 / starRingEnd ℂ u) ^ (-1 - (n : ℤ) : ℤ)‖ ≤ (1 / 1) ^ (n + 1) :=
-          norm_reflected_inverse_zpow_le n (by norm_num only) huNorm.le
+          reflected_zpow_le n (by norm_num only) huNorm.le
         _ = 1 := by rw [one_div_one, one_pow]
     calc
       ‖m u * f u‖ = ‖m u‖ * ‖f u‖ := norm_mul _ _
@@ -791,9 +777,9 @@ direct zero sums cancel, leaving only the reflected correction.
 Role: transfers the Jensen reflection estimate to the zero-free analytic factor used by local
 Turán detection.
 -/
-theorem norm_local_logDeriv_remainder_le_of_ecanonical_of_local_decomposition {F : ℂ → ℂ}
-    (hF : Differentiable ℂ F) {g : ℂ → ℂ} (D : Complex.ECanonicalDecomp F g 1) (h0 : F 0 ≠ 0)
-    (hzf : ∀ ρ : ℂ, ‖ρ‖ = 1 → F ρ ≠ 0) (n : ℕ) (gLocal : ℂ → ℂ)
+theorem localRemainder_le {F : ℂ → ℂ} (hF : Differentiable ℂ F) {g : ℂ → ℂ}
+    (D : Complex.ECanonicalDecomp F g 1) (h0 : F 0 ≠ 0) (hzf : ∀ ρ : ℂ, ‖ρ‖ = 1 → F ρ ≠ 0) (n : ℕ)
+    (gLocal : ℂ → ℂ)
     (hLocalEq :
       iteratedDeriv n (logDeriv F) 0 =
         (∑ᶠ u : ℂ,
@@ -820,9 +806,7 @@ theorem norm_local_logDeriv_remainder_le_of_ecanonical_of_local_decomposition {F
     iteratedDeriv n (logDeriv F) 0 =
       (∑ᶠ u : ℂ, ((d u : ℤ) : ℂ) * (a * direct u)) + iteratedDeriv n (logDeriv gLocal) 0 := by
     simpa only [d, a, direct] using hLocalEq0
-  have hGlobalEq :=
-    iteratedDeriv_ecanonicalDecomp_logDeriv_at_zero_of_entire hF h0 (R := 1)
-      (by norm_num only : (0 : ℝ) < 1) D hzf n hn
+  have hGlobalEq := entireLogDeriv_at0 hF h0 (R := 1) (by norm_num only : (0 : ℝ) < 1) D hzf n hn
   have hcastOne : ((1 : ℝ) : ℂ) = (1 : ℂ) := Complex.ofReal_one
   rw [hcastOne] at hGlobalEq
   have hGlobalEq' :
@@ -938,10 +922,10 @@ Content: construct the local factorization and apply the estimate for an arbitra
 factorization.
 Role: provides an existential error bound for local Turán detection.
 -/
-theorem norm_local_logDeriv_remainder_le_of_ecanonical {F : ℂ → ℂ}
-    (hFglobal : AnalyticOnNhd ℂ F Set.univ) (hF : Differentiable ℂ F) {g : ℂ → ℂ}
-    (D : Complex.ECanonicalDecomp F g 1) (h0 : F 0 ≠ 0) (hzf : ∀ ρ : ℂ, ‖ρ‖ = 1 → F ρ ≠ 0)
-    {K E : ℕ → ℝ} (hglobal : ∀ n, 0 < n → ‖iteratedDeriv n (logDeriv g) 0‖ ≤ K n)
+theorem exists_localRemainder {F : ℂ → ℂ} (hFglobal : AnalyticOnNhd ℂ F Set.univ)
+    (hF : Differentiable ℂ F) {g : ℂ → ℂ} (D : Complex.ECanonicalDecomp F g 1) (h0 : F 0 ≠ 0)
+    (hzf : ∀ ρ : ℂ, ‖ρ‖ = 1 → F ρ ≠ 0) {K E : ℕ → ℝ}
+    (hglobal : ∀ n, 0 < n → ‖iteratedDeriv n (logDeriv g) 0‖ ≤ K n)
     (hreflect :
       ∀ n : ℕ,
         ‖∑ᶠ u : ℂ,
@@ -954,17 +938,14 @@ theorem norm_local_logDeriv_remainder_le_of_ecanonical {F : ℂ → ℂ}
         (∀ u : Metric.ball (0 : ℂ) 1, gLocal u ≠ 0) ∧
         ‖iteratedDeriv n (logDeriv gLocal) 0‖ ≤ K n + n.factorial * E n := by
   obtain ⟨gLocal, hLocal, hLocalNe, hLocalEq⟩ :=
-    exists_analytic_local_iterated_logDeriv_decomposition_at_center hFglobal 0 h0 (R := 1)
-      (by norm_num only : (0 : ℝ) < |(1 : ℝ)|) h0 n
+    exists_entireCenter hFglobal 0 h0 (R := 1) (by norm_num only : (0 : ℝ) < |(1 : ℝ)|) h0 n
   refine ⟨gLocal, ?_, ?_, ?_⟩
   · simpa only [abs_of_pos (by norm_num only : (0 : ℝ) < 1)] using hLocal
   · intro u
     have hu : u.1 ∈ Metric.ball (0 : ℂ) |(1 : ℝ)| := by
       simpa only [abs_of_pos (by norm_num only : (0 : ℝ) < 1)] using u.2
     exact hLocalNe ⟨u.1, hu⟩
-  · exact
-      norm_local_logDeriv_remainder_le_of_ecanonical_of_local_decomposition hF D h0 hzf n gLocal
-        hLocalEq hglobal hreflect hn
+  · exact localRemainder_le hF D h0 hzf n gLocal hLocalEq hglobal hreflect hn
 
 /--
 Inputs: the center identity for the local Turán decomposition on the unit disk.
@@ -974,8 +955,7 @@ Content: use the inverse-power identity and factor a constant out of the `finsum
 Role: enables the global reflection-sum bound to be applied to the analytic factor in the local
 Turán decomposition.
 -/
-theorem iteratedDeriv_local_equation_of_turan_decomposition_at_zero {F : ℂ → ℂ} (g : ℂ → ℂ)
-    (M l : ℕ)
+theorem local_turan_equation {F : ℂ → ℂ} (g : ℂ → ℂ) (M l : ℕ)
     (hcenter :
       iteratedDeriv (M + l) (logDeriv F) 0 =
         ((-1 : ℂ) ^ (M + l) * ((M + l).factorial : ℂ)) *
@@ -996,7 +976,7 @@ theorem iteratedDeriv_local_equation_of_turan_decomposition_at_zero {F : ℂ →
       ∑ᶠ u : ℂ, m u * (0 - u)⁻¹ ^ (M + 1 + l) := by
     apply finsum_congr
     intro u
-    rw [zpow_neg_one_sub_add_eq_inv_pow]
+    rw [zpow_neg_add_inv_pow]
   have hfactor :
     (∑ᶠ u : ℂ, m u * (a * (0 - u) ^ (-1 - (M + l : ℕ) : ℤ))) =
       a * (∑ᶠ u : ℂ, m u * (0 - u) ^ (-1 - (M + l : ℕ) : ℤ)) := by
@@ -1016,9 +996,8 @@ theorem iteratedDeriv_local_equation_of_turan_decomposition_at_zero {F : ℂ →
       by rw [← hpower]
     _ = _ := by rw [← hfactor]
 
-theorem norm_ecanonicalDecomp_reflection_sum_le {N : ℕ} [NeZero N] (hN1 : 1 < N)
-    {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {R : ℝ}
-    (hR : 0 < R) (n : ℕ) :
+theorem reflectionSum_le {N : ℕ} [NeZero N] (hN1 : 1 < N) {χ : DirichletCharacter ℂ N}
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {R : ℝ} (hR : 0 < R) (n : ℕ) :
     ‖∑ᶠ u : ℂ,
           ((-MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) (Metric.ball (0 : ℂ) R)
                     u :
@@ -1037,7 +1016,7 @@ theorem norm_ecanonicalDecomp_reflection_sum_le {N : ℕ} [NeZero N] (hN1 : 1 < 
   let d := MeromorphicOn.divisor F U
   let m : ℂ → ℂ := fun u => ((-d u : ℤ) : ℂ)
   let f : ℂ → ℂ := fun u => ((0 : ℂ) - (R : ℂ) ^ 2 / starRingEnd ℂ u) ^ (-1 - (n : ℤ) : ℤ)
-  have hfiniteD0 := completedLFunction_local_zero_support_finite χ hne 0 R
+  have hfiniteD0 := completedSupport_fin χ hne 0 R
   have hfiniteD : d.support.Finite := by
     dsimp only [d, F, U]
     rw [← abs_of_pos hR]
@@ -1089,8 +1068,7 @@ theorem norm_ecanonicalDecomp_reflection_sum_le {N : ℕ} [NeZero N] (hN1 : 1 < 
       _ ≤ (d u : ℝ) * (1 / R) ^ (n + 1) := by
         rw [hcoef]
         exact
-          mul_le_mul_of_nonneg_left (norm_reflected_inverse_zpow_le n hR huNorm)
-            (by exact_mod_cast hdNonneg u)
+          mul_le_mul_of_nonneg_left (reflected_zpow_le n hR huNorm) (by exact_mod_cast hdNonneg u)
   have hsumBound : ‖∑ᶠ u : ℂ, m u * f u‖ ≤ (∑ u ∈ s, (d u : ℝ)) * (1 / R) ^ (n + 1) := by
     rw [hsum]
     calc
@@ -1114,8 +1092,8 @@ theorem norm_ecanonicalDecomp_reflection_sum_le {N : ℕ} [NeZero N] (hN1 : 1 < 
     push_cast
     ring
   have hJensen :=
-    PseudoPrime.AnalyticNumberTheory.DirichletLFunction.finsum_divisor_ball_completedLFunction_le
-      hN1 hprimitive hne hinv hR
+    PseudoPrime.AnalyticNumberTheory.DirichletLFunction.finsum_divisor_ball_completed_le hN1
+      hprimitive hne hinv hR
   rw [← hsumDcast, hsumD] at hsumBound
   calc
     ‖∑ᶠ u : ℂ, m u * f u‖ ≤ (↑(∑ᶠ u : ℂ, d u) : ℝ) * (1 / R) ^ (n + 1) := hsumBound
@@ -1131,7 +1109,7 @@ theorem norm_ecanonicalDecomp_reflection_sum_le {N : ℕ} [NeZero N] (hN1 : 1 < 
     _ = _ := by ring
 
 /--
-Inputs: the hypotheses of `norm_ecanonicalDecomp_zero_difference_sum_lower_bound` and an upper
+Inputs: the hypotheses of `zeroDifference_ge` and an upper
 bound for the reflection correction sum.
 Claim: the inverse-distance power sum over disk zeros has a lower bound after subtracting the
 derivative error and reflection correction.
@@ -1139,9 +1117,8 @@ Content: split the difference sum over the finite divisor support and remove the
 using the triangle inequality.
 Role: converts the global Hadamard identity into the ordinary zero-detection power sum.
 -/
-theorem norm_ecanonicalDecomp_direct_zero_sum_lower_bound {N : ℕ} [NeZero N] (hN1 : 1 < N)
-    {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {R : ℝ}
-    (hR : 1 ≤ R) {g : ℂ → ℂ}
+theorem directZeroSum_ge {N : ℕ} [NeZero N] (hN1 : 1 < N) {χ : DirichletCharacter ℂ N}
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {R : ℝ} (hR : 1 ≤ R) {g : ℂ → ℂ}
     (D : Complex.ECanonicalDecomp (DirichletCharacter.completedLFunction χ) g R)
     (hzf : ∀ ρ : ℂ, ‖ρ‖ = R → DirichletCharacter.completedLFunction χ ρ ≠ 0) (n : ℕ) (hn : 0 < n)
     (lower reflectionBound : ℝ)
@@ -1180,7 +1157,7 @@ theorem norm_ecanonicalDecomp_direct_zero_sum_lower_bound {N : ℕ} [NeZero N] (
   let Sreflect : ℂ := ∑ᶠ u : ℂ, m u * f u
   let Sdirect : ℂ := ∑ᶠ u : ℂ, m u * k u
   have hRpos : 0 < R := lt_of_lt_of_le (by norm_num only) hR
-  have hfiniteD := completedLFunction_local_zero_support_finite χ hne 0 R
+  have hfiniteD := completedSupport_fin χ hne 0 R
   have hfiniteD' :
     (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
         (Metric.ball (0 : ℂ) R)).support.Finite := by
@@ -1215,9 +1192,7 @@ theorem norm_ecanonicalDecomp_direct_zero_sum_lower_bound {N : ℕ} [NeZero N] (
         intro u hu
         ring
       _ = (∑ u ∈ s, m u * f u) - ∑ u ∈ s, m u * k u := by rw [Finset.sum_sub_distrib]
-  have hdiff :=
-    norm_ecanonicalDecomp_zero_difference_sum_lower_bound hN1 hprimitive hne hinv hR D hzf n hn
-      lower hlower
+  have hdiff := zeroDifference_ge hN1 hprimitive hne hinv hR D hzf n hn lower hlower
   have hdiff' :
     (lower -
           n.factorial *
@@ -1239,13 +1214,12 @@ Inputs: a canonical Hadamard factorization, a zero-free boundary circle, and a l
 higher derivative at the center.
 Claim: Jensen's zero-count estimate gives an explicit lower bound for the inverse-distance power
 sum over ordinary zeros in the disk.
-Content: bound the reflection correction with `norm_ecanonicalDecomp_reflection_sum_le` and apply
+Content: bound the reflection correction with `reflectionSum_le` and apply
 the theorem that removes the reflected terms from the difference sum.
 Role: connects the derivative lower bound from local zero detection to the ordinary zero sum.
 -/
-theorem norm_ecanonicalDecomp_direct_zero_sum_lower_bound_of_jensen {N : ℕ} [NeZero N] (hN1 : 1 < N)
-    {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {R : ℝ}
-    (hR : 1 ≤ R) {g : ℂ → ℂ}
+theorem directZeroSum_jensen {N : ℕ} [NeZero N] (hN1 : 1 < N) {χ : DirichletCharacter ℂ N}
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {R : ℝ} (hR : 1 ≤ R) {g : ℂ → ℂ}
     (D : Complex.ECanonicalDecomp (DirichletCharacter.completedLFunction χ) g R)
     (hzf : ∀ ρ : ℂ, ‖ρ‖ = R → DirichletCharacter.completedLFunction χ ρ ≠ 0) (n : ℕ) (hn : 0 < n)
     (lower : ℝ)
@@ -1274,7 +1248,7 @@ theorem norm_ecanonicalDecomp_direct_zero_sum_lower_bound_of_jensen {N : ℕ} [N
             ((0 : ℂ) - u) ^ (-1 - n : ℤ)‖ := by
   have hRpos : 0 < R := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1) hR
   exact
-    norm_ecanonicalDecomp_direct_zero_sum_lower_bound hN1 hprimitive hne hinv hR D hzf n hn lower
+    directZeroSum_ge hN1 hprimitive hne hinv hR D hzf n hn lower
       ((1 / R) ^ (n + 1) *
         (Real.log
             (max 1
@@ -1285,7 +1259,7 @@ theorem norm_ecanonicalDecomp_direct_zero_sum_lower_bound_of_jensen {N : ℕ} [N
       hlower
       (by
         simpa only [show (-1 - n : ℤ) = -1 - (n : ℤ) by rfl] using
-          norm_ecanonicalDecomp_reflection_sum_le hN1 hprimitive hne hinv hRpos n)
+          reflectionSum_le hN1 hprimitive hne hinv hRpos n)
 
 /--
 Inputs: an entire function nonzero at the center, a zero-free Hadamard factorization on the disk
@@ -1297,9 +1271,8 @@ $R/2$, then apply Cauchy's estimate at radius $R/4$.
 Role: supplies a higher-derivative analytic remainder bound that also applies to translated
 completed L-functions.
 -/
-theorem norm_iteratedDeriv_ecanonicalDecomp_logDeriv_le_of_boundary_bound {F g : ℂ → ℂ}
-    (hF : Differentiable ℂ F) (h0 : F 0 ≠ 0) {R M : ℝ} (hR : 1 ≤ R)
-    (D : Complex.ECanonicalDecomp F g R) (hzf : ∀ ρ : ℂ, ‖ρ‖ = R → F ρ ≠ 0)
+theorem decomp_boundary_bound {F g : ℂ → ℂ} (hF : Differentiable ℂ F) (h0 : F 0 ≠ 0) {R M : ℝ}
+    (hR : 1 ≤ R) (D : Complex.ECanonicalDecomp F g R) (hzf : ∀ ρ : ℂ, ‖ρ‖ = R → F ρ ≠ 0)
     (hbound : ∀ ρ : ℂ, ‖ρ‖ = R → ‖F ρ‖ ≤ Real.exp M) (n : ℕ) (hn : 0 < n) :
     ‖iteratedDeriv n (logDeriv g) 0‖ ≤
       n.factorial * (192 * (R / 4) * (M - Real.log ‖F 0‖ + 1) / R ^ 2) / (R / 4) ^ n := by
@@ -1348,7 +1321,7 @@ theorem norm_iteratedDeriv_ecanonicalDecomp_logDeriv_le_of_boundary_bound {F g :
       _ ≤ 192 * (R / 4) * A / R ^ 2 := by
         apply (div_le_div_iff_of_pos_right hden).2
         exact mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hzNorm (by positivity)) hA
-  exact norm_iteratedDeriv_le_of_forall_ball_norm_sub_center_le n hn hrpos hloganalytic hC
+  exact iterDeriv_center_le n hn hrpos hloganalytic hC
 
 /--
 Inputs: boundary bounds on the circles of radii 1 and 2, a canonical factorization on the unit
@@ -1359,10 +1332,9 @@ Content: use the radius-1 bound for the Cauchy estimate of the global canonical 
 radius-2 bound with Jensen's estimate for the reflection correction.
 Role: supplies the analytic-factor error required by local Turán detection.
 -/
-theorem exists_local_logDeriv_remainder_le_of_two_sphere_bounds {F g : ℂ → ℂ}
-    (hF : Differentiable ℂ F) (h0 : F 0 ≠ 0) (D : Complex.ECanonicalDecomp F g 1)
-    (hzf : ∀ ρ : ℂ, ‖ρ‖ = 1 → F ρ ≠ 0) {M₁ M₂ : ℝ} (hM₂ : 1 ≤ M₂)
-    (hbound₁ : ∀ ρ : ℂ, ‖ρ‖ = 1 → ‖F ρ‖ ≤ Real.exp M₁)
+theorem exists_twoSphereLocal {F g : ℂ → ℂ} (hF : Differentiable ℂ F) (h0 : F 0 ≠ 0)
+    (D : Complex.ECanonicalDecomp F g 1) (hzf : ∀ ρ : ℂ, ‖ρ‖ = 1 → F ρ ≠ 0) {M₁ M₂ : ℝ}
+    (hM₂ : 1 ≤ M₂) (hbound₁ : ∀ ρ : ℂ, ‖ρ‖ = 1 → ‖F ρ‖ ≤ Real.exp M₁)
     (hbound₂ : ∀ z ∈ Metric.sphere (0 : ℂ) 2, ‖F z‖ ≤ M₂) (n : ℕ) (hn : 0 < n) :
     ∃ gLocal : ℂ → ℂ,
       AnalyticOnNhd ℂ gLocal (Metric.ball (0 : ℂ) 1) ∧
@@ -1376,8 +1348,7 @@ theorem exists_local_logDeriv_remainder_le_of_two_sphere_bounds {F g : ℂ → �
   have hglobal : ∀ k, 0 < k → ‖iteratedDeriv k (logDeriv g) 0‖ ≤ K k := by
     intro k hk
     simpa only [K] using
-      norm_iteratedDeriv_ecanonicalDecomp_logDeriv_le_of_boundary_bound hF h0
-        (by norm_num only : (1 : ℝ) ≤ 1) D hzf hbound₁ k hk
+      decomp_boundary_bound hF h0 (by norm_num only : (1 : ℝ) ≤ 1) D hzf hbound₁ k hk
   have hreflect :
     ∀ k : ℕ,
       ‖∑ᶠ u : ℂ,
@@ -1385,9 +1356,9 @@ theorem exists_local_logDeriv_remainder_le_of_two_sphere_bounds {F g : ℂ → �
               ((0 : ℂ) - (1 : ℂ) ^ 2 / starRingEnd ℂ u) ^ (-1 - (k : ℤ) : ℤ)‖ ≤
         Real.log (M₂ / ‖F 0‖) / Real.log 2 := by
     intro k
-    exact norm_reflection_sum_le_of_boundary_bound hF h0 hM₂ hbound₂ k
+    exact reflection_boundary hF h0 hM₂ hbound₂ k
   obtain ⟨gLocal, hLocal, hLocalNe, hLocalBound⟩ :=
-    norm_local_logDeriv_remainder_le_of_ecanonical hFglobal hF D h0 hzf hglobal hreflect n hn
+    exists_localRemainder hFglobal hF D h0 hzf hglobal hreflect n hn
   refine ⟨gLocal, hLocal, hLocalNe, ?_⟩
   simpa only [K] using hLocalBound
 
@@ -1400,10 +1371,9 @@ Content: rewrite the Turán center identity as a local factorization equation an
 local remainder estimate.
 Role: connects the boundary estimates to the derivative lower bound used for zero detection.
 -/
-theorem norm_turan_local_logDeriv_remainder_le_of_two_sphere_bounds {F g : ℂ → ℂ}
-    (hF : Differentiable ℂ F) (h0 : F 0 ≠ 0) (D : Complex.ECanonicalDecomp F g 1)
-    (hzf : ∀ ρ : ℂ, ‖ρ‖ = 1 → F ρ ≠ 0) {M₁ M₂ : ℝ} (hM₂ : 1 ≤ M₂)
-    (hbound₁ : ∀ ρ : ℂ, ‖ρ‖ = 1 → ‖F ρ‖ ≤ Real.exp M₁)
+theorem turanRemainder_bound {F g : ℂ → ℂ} (hF : Differentiable ℂ F) (h0 : F 0 ≠ 0)
+    (D : Complex.ECanonicalDecomp F g 1) (hzf : ∀ ρ : ℂ, ‖ρ‖ = 1 → F ρ ≠ 0) {M₁ M₂ : ℝ}
+    (hM₂ : 1 ≤ M₂) (hbound₁ : ∀ ρ : ℂ, ‖ρ‖ = 1 → ‖F ρ‖ ≤ Real.exp M₁)
     (hbound₂ : ∀ z ∈ Metric.sphere (0 : ℂ) 2, ‖F z‖ ≤ M₂) (M l : ℕ) (hn : 0 < M + l)
     (gLocal : ℂ → ℂ)
     (hcenter :
@@ -1422,8 +1392,7 @@ theorem norm_turan_local_logDeriv_remainder_le_of_two_sphere_bounds {F g : ℂ �
   have hglobal : ∀ k, 0 < k → ‖iteratedDeriv k (logDeriv g) 0‖ ≤ K k := by
     intro k hk
     simpa only [K] using
-      norm_iteratedDeriv_ecanonicalDecomp_logDeriv_le_of_boundary_bound hF h0
-        (by norm_num only : (1 : ℝ) ≤ 1) D hzf hbound₁ k hk
+      decomp_boundary_bound hF h0 (by norm_num only : (1 : ℝ) ≤ 1) D hzf hbound₁ k hk
   have hreflect :
     ∀ k : ℕ,
       ‖∑ᶠ u : ℂ,
@@ -1431,11 +1400,9 @@ theorem norm_turan_local_logDeriv_remainder_le_of_two_sphere_bounds {F g : ℂ �
               ((0 : ℂ) - (1 : ℂ) ^ 2 / starRingEnd ℂ u) ^ (-1 - (k : ℤ) : ℤ)‖ ≤
         E k := by
     intro k
-    exact norm_reflection_sum_le_of_boundary_bound hF h0 hM₂ hbound₂ k
-  have hlocal := iteratedDeriv_local_equation_of_turan_decomposition_at_zero gLocal M l hcenter
-  have hrem :=
-    norm_local_logDeriv_remainder_le_of_ecanonical_of_local_decomposition hF D h0 hzf (M + l) gLocal
-      hlocal hglobal hreflect hn
+    exact reflection_boundary hF h0 hM₂ hbound₂ k
+  have hlocal := local_turan_equation gLocal M l hcenter
+  have hrem := localRemainder_le hF D h0 hzf (M + l) gLocal hlocal hglobal hreflect hn
   simpa only [K, E] using hrem
 
 /--
@@ -1448,9 +1415,8 @@ then use the general remainder estimate.
 Role: supplies the analytic-factor error needed to obtain a local Turán bound for ordinary L
 functions from completed zeros.
 -/
-theorem norm_turan_scaled_LFunction_local_remainder_le {q : ℕ} [NeZero q] (hq : 1 < q)
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ} {R : ℝ} (hR : 0 < R) (hRle : R ≤ 1 / 4)
-    (hcRe : 1 ≤ c.re) {g : ℂ → ℂ}
+theorem scaledRemainder_bound {q : ℕ} [NeZero q] (hq : 1 < q) (χ : DirichletCharacter ℂ q)
+    (hχ : χ ≠ 1) {c : ℂ} {R : ℝ} (hR : 0 < R) (hRle : R ≤ 1 / 4) (hcRe : 1 ≤ c.re) {g : ℂ → ℂ}
     (D :
       Complex.ECanonicalDecomp (fun z : ℂ => DirichletCharacter.LFunction χ (z * (R : ℂ) + c)) g 1)
     (hzf : ∀ ρ : ℂ, ‖ρ‖ = 1 → DirichletCharacter.LFunction χ (ρ * (R : ℂ) + c) ≠ 0) (M l : ℕ)
@@ -1556,8 +1522,7 @@ theorem norm_turan_scaled_LFunction_local_remainder_le {q : ℕ} [NeZero q] (hq 
       ‖F z‖ ≤ 2 * (q : ℝ) * (‖c‖ + 2 * R) := hpoly
       _ ≤ M₂ := le_max_right _ _
   simpa only [F, M₁, M₂, zero_mul, zero_add] using
-    norm_turan_local_logDeriv_remainder_le_of_two_sphere_bounds hF h0 D hzfF hM₂ hbound₁ hbound₂ M l
-      hn gLocal hcenter
+    turanRemainder_bound hF h0 D hzfF hM₂ hbound₁ hbound₂ M l hn gLocal hcenter
 
 /--
 Inputs: a nonzero center value and a zero inside the unit disk for a translated ordinary L-function.
@@ -1566,9 +1531,8 @@ Content: establish finite analytic order at the center and propagate finiteness 
 connected complex plane.
 Role: converts an ordinary L-function zero into the local support input required by Turán detection.
 -/
-theorem scaled_LFunction_zero_mem_local_divisor_support {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ} {R : ℝ} {z : ℂ}
-    (hc : DirichletCharacter.LFunction χ c ≠ 0)
+theorem scaledZero_in_support {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ}
+    {R : ℝ} {z : ℂ} (hc : DirichletCharacter.LFunction χ c ≠ 0)
     (hzf : ∀ ρ : ℂ, ‖ρ‖ = 1 → DirichletCharacter.LFunction χ (ρ * (R : ℂ) + c) ≠ 0) (hz : ‖z‖ < 1)
     (hzero : DirichletCharacter.LFunction χ (z * (R : ℂ) + c) = 0) :
     z ∈
@@ -1615,9 +1579,9 @@ then transfer the resulting lower bound to the derivative by the triangle inequa
 Role: passes zero detection for a scaled ordinary L-function to the family log-free
 density estimate.
 -/
-theorem exists_scaled_LFunction_turan_derivative_lower_bound {q : ℕ} [NeZero q] (hq : 1 < q)
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ} {R : ℝ} (hR : 0 < R) (hRle : R ≤ 1 / 4)
-    (hcRe : 1 ≤ c.re) (hc : DirichletCharacter.LFunction χ c ≠ 0) {g : ℂ → ℂ}
+theorem exists_scaledTuran {q : ℕ} [NeZero q] (hq : 1 < q) (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1)
+    {c : ℂ} {R : ℝ} (hR : 0 < R) (hRle : R ≤ 1 / 4) (hcRe : 1 ≤ c.re)
+    (hc : DirichletCharacter.LFunction χ c ≠ 0) {g : ℂ → ℂ}
     (D :
       Complex.ECanonicalDecomp (fun z : ℂ => DirichletCharacter.LFunction χ (z * (R : ℂ) + c)) g 1)
     (hzf : ∀ ρ : ℂ, ‖ρ‖ = 1 → DirichletCharacter.LFunction χ (ρ * (R : ℂ) + c) ≠ 0) {z : ℂ}
@@ -1675,10 +1639,10 @@ theorem exists_scaled_LFunction_turan_derivative_lower_bound {q : ℕ} [NeZero q
   have h1norm : ‖(1 : ℂ)‖ = 1 := norm_one
   have h1nz : F 1 ≠ 0 := hzf 1 h1norm
   have hzeros : ∃ u, u ∈ (MeromorphicOn.divisor F (Metric.ball (0 : ℂ) |(1 : ℝ)|)).support :=
-    ⟨z, scaled_LFunction_zero_mem_local_divisor_support χ hχ hc hzf hz hzero⟩
+    ⟨z, scaledZero_in_support χ hχ hc hzf hz hzero⟩
   obtain ⟨s, l, hl, gLocal, hs, hspos, hdomain, hg, hgn, hsumBound, hcenter⟩ :=
-    exists_analytic_local_zero_turan_derivative_decomposition hFglobal 1 h1nz (R := 1)
-      (by norm_num only : 0 < |(1 : ℝ)|) (by norm_num only : |(1 : ℝ)| ≤ 1) h0 hzeros M
+    exists_turanIter hFglobal 1 h1nz (R := 1) (by norm_num only : 0 < |(1 : ℝ)|)
+      (by norm_num only : |(1 : ℝ)| ≤ 1) h0 hzeros M
   let d : ℂ → ℤ := MeromorphicOn.divisor F (Metric.ball (0 : ℂ) |(1 : ℝ)|)
   have hden : 0 < ∑ k ∈ Finset.range s.card, (Nat.choose (k + M) k : ℝ) * 2 ^ k :=
     PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LogFreeDensity.turan_factor_pos s.card M
@@ -1690,9 +1654,8 @@ theorem exists_scaled_LFunction_turan_derivative_lower_bound {q : ℕ} [NeZero q
             (0 - u)⁻¹ ^ (M + 1 + l)‖ := by
     simpa only [d] using hsumBound
   have hrem :=
-    norm_turan_scaled_LFunction_local_remainder_le hq χ hχ hR hRle hcRe D hzf M l
-      (Nat.add_pos_left hM l) gLocal hcenter
-  have hderiv := norm_derivative_lower_bound_of_zero_sum_decomposition hcenter hsumLower hrem
+    scaledRemainder_bound hq χ hχ hR hRle hcRe D hzf M l (Nat.add_pos_left hM l) gLocal hcenter
+  have hderiv := derivNorm_from_sum hcenter hsumLower hrem
   refine ⟨s, l, hl, gLocal, ?_, hspos, ?_, hg, hgn, ?_⟩
   · intro v
     simpa only [d, F] using hs v
@@ -1707,7 +1670,7 @@ Claim: beyond some exponent, the scaled power with base `80 / 3` strictly exceed
 Proof: factor out `4^n` and use that `(20 / 3)^n` tends to infinity.
 Role: supplies the exponent threshold needed to absorb both errors in the shifted derivative bound.
 -/
-theorem exists_nat_ge_scaled_power_margin {m : ℕ} (hm : 0 < m) {A B : ℝ} (hB : 0 ≤ B) :
+theorem exists_scaledMargin {m : ℕ} (hm : 0 < m) {A B : ℝ} (hB : 0 ≤ B) :
     ∃ K : ℕ,
       ∀ n : ℕ, K ≤ n → 48 * A * (4 : ℝ) ^ n + B < (1 / (4 * (m : ℝ))) * (80 / 3 : ℝ) ^ (n + 1) := by
   let α : ℝ := (1 / (4 * (m : ℝ))) * (80 / 3 : ℝ)
@@ -1754,9 +1717,9 @@ factorization form, and apply the existing two-sphere remainder estimate.
 Role: gives an explicit scaled-`L` detection bound that no longer takes the local remainder as an
 unproved input.
 -/
-theorem exists_scaled_LFunction_shifted_block_derivative_lower_bound {q : ℕ} [NeZero q] (hq : 1 < q)
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ} {R : ℝ} (hR : 0 < R) (hRle : R ≤ 1 / 4)
-    (hcRe : 1 ≤ c.re) (hc : DirichletCharacter.LFunction χ c ≠ 0) {g : ℂ → ℂ}
+theorem exists_scaledBlock {q : ℕ} [NeZero q] (hq : 1 < q) (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1)
+    {c : ℂ} {R : ℝ} (hR : 0 < R) (hRle : R ≤ 1 / 4) (hcRe : 1 ≤ c.re)
+    (hc : DirichletCharacter.LFunction χ c ≠ 0) {g : ℂ → ℂ}
     (D :
       Complex.ECanonicalDecomp (fun z : ℂ => DirichletCharacter.LFunction χ (z * (R : ℂ) + c)) g 1)
     (hzf : ∀ ρ : ℂ, ‖ρ‖ = 1 → DirichletCharacter.LFunction χ (ρ * (R : ℂ) + c) ≠ 0) {z : ℂ}
@@ -1809,9 +1772,7 @@ theorem exists_scaled_LFunction_shifted_block_derivative_lower_bound {q : ℕ} [
   have hFglobal : AnalyticOnNhd ℂ F Set.univ := fun w _ => hF.analyticAt w
   have h1nz : F 1 ≠ 0 := hzf 1 norm_one
   have hρraw : z ∈ (MeromorphicOn.divisor F (Metric.ball (0 : ℂ) |(1 : ℝ)|)).support := by
-    simpa only [F] using
-      scaled_LFunction_zero_mem_local_divisor_support χ hχ hc hzf (lt_of_le_of_lt hz (by norm_num))
-        hzero
+    simpa only [F] using scaledZero_in_support χ hχ hc hzf (lt_of_le_of_lt hz (by norm_num)) hzero
   have hρ : z ∈ (MeromorphicOn.divisor F (Metric.ball (0 : ℂ) |(1 : ℝ)|)).support := by exact hρraw
   have hclose : ‖(0 : ℂ) - z‖ ≤ 3 * (1 / 80 : ℝ) := by
     calc
@@ -1826,15 +1787,14 @@ theorem exists_scaled_LFunction_shifted_block_derivative_lower_bound {q : ℕ} [
       exact hρ
     simpa only [Function.mem_support] using hρ'
   obtain ⟨s, hs, hρmem, hdomain, n, hnK, hnMass, hsumLower, gLocal, hg, hgn, hdecomp⟩ :=
-    exists_analytic_local_zero_power_sum_block_derivative_decomposition_of_near hFglobal 1 h1nz
-      (by norm_num only : (0 : ℝ) < 1 / 80) (by simpa only [F, zero_mul, zero_add] using hc) z hρ'
-      hclose K (by omega)
+    exists_powerBlockIter hFglobal 1 h1nz (by norm_num only : (0 : ℝ) < 1 / 80)
+      (by simpa only [F, zero_mul, zero_add] using hc) z hρ' hclose K (by omega)
   let d : ℂ → ℤ := MeromorphicOn.divisor F (Metric.ball (0 : ℂ) |80 * (1 / 80 : ℝ)|)
   let m : ℂ → ℂ := fun v => (d v : ℂ)
   have hpower : (∑ᶠ v, m v * (0 - v) ^ (-1 - (n : ℕ) : ℤ)) = ∑ᶠ v, m v * (0 - v)⁻¹ ^ (n + 1) := by
     apply finsum_congr
     intro v
-    rw [zpow_neg_one_sub_nat_eq_inv_pow]
+    rw [zpow_neg_succ_inv_pow]
   have hcenter :
     iteratedDeriv n (logDeriv F) 0 =
       ((-1 : ℂ) ^ n * (n.factorial : ℂ)) * (∑ᶠ v, m v * (0 - v)⁻¹ ^ (n + 1)) +
@@ -1867,12 +1827,10 @@ theorem exists_scaled_LFunction_shifted_block_derivative_lower_bound {q : ℕ} [
     exact hcenter''
   have hnpos : 0 < n := by omega
   have hc' : DirichletCharacter.LFunction χ c ≠ 0 := hc
-  have hrem :=
-    norm_turan_scaled_LFunction_local_remainder_le hq χ hχ hR hRle hcRe D hzf n 0 hnpos gLocal
-      hcenter'
+  have hrem := scaledRemainder_bound hq χ hχ hR hRle hcRe D hzf n 0 hnpos gLocal hcenter'
   have hsumLower' := hsumLower
   rw [hRdisk'] at hsumLower'
-  have hderiv := norm_derivative_lower_bound_of_zero_sum_decomposition hcenter' hsumLower' hrem
+  have hderiv := derivNorm_from_sum hcenter' hsumLower' hrem
   have hs' : ∀ v, v ∈ s ↔ (MeromorphicOn.divisor F (Metric.ball (0 : ℂ) |(1 : ℝ)|)) v ≠ 0 := by
     have hs'' := hs
     rw [hRdisk'] at hs''
@@ -1934,9 +1892,9 @@ Proof: use the total local zero multiplicity to choose a block beyond the error-
 threshold.
 Role: turns the explicit derivative lower bound into a positive zero-detection statement.
 -/
-theorem exists_scaled_LFunction_shifted_block_derivative_pos {q : ℕ} [NeZero q] (hq : 1 < q)
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ} {R : ℝ} (hR : 0 < R) (hRle : R ≤ 1 / 4)
-    (hcRe : 1 ≤ c.re) (hc : DirichletCharacter.LFunction χ c ≠ 0) {g : ℂ → ℂ}
+theorem exists_scaledDerivPos {q : ℕ} [NeZero q] (hq : 1 < q) (χ : DirichletCharacter ℂ q)
+    (hχ : χ ≠ 1) {c : ℂ} {R : ℝ} (hR : 0 < R) (hRle : R ≤ 1 / 4) (hcRe : 1 ≤ c.re)
+    (hc : DirichletCharacter.LFunction χ c ≠ 0) {g : ℂ → ℂ}
     (D :
       Complex.ECanonicalDecomp (fun z : ℂ => DirichletCharacter.LFunction χ (z * (R : ℂ) + c)) g 1)
     (hzf : ∀ ρ : ℂ, ‖ρ‖ = 1 → DirichletCharacter.LFunction χ (ρ * (R : ℂ) + c) ≠ 0) {z : ℂ}
@@ -1952,14 +1910,11 @@ theorem exists_scaled_LFunction_shifted_block_derivative_pos {q : ℕ} [NeZero q
         ((differentiable_id.mul_const (R : ℂ)).add_const c)
   have hFglobal : AnalyticOnNhd ℂ F Set.univ := fun w _ => hF.analyticAt w
   obtain ⟨s, hs, _, _, _, _⟩ :=
-    exists_scaled_LFunction_shifted_block_derivative_lower_bound hq χ hχ hR hRle hcRe hc D hzf hz
-      hzero 2 (by norm_num only)
+    exists_scaledBlock hq χ hχ hR hRle hcRe hc D hzf hz hzero 2 (by norm_num only)
   let d : ℂ → ℤ := MeromorphicOn.divisor F (Metric.ball (0 : ℂ) |(1 : ℝ)|)
   have hρraw : z ∈ d.support := by
     dsimp only [d]
-    simpa only [F] using
-      scaled_LFunction_zero_mem_local_divisor_support χ hχ hc hzf (lt_of_le_of_lt hz (by norm_num))
-        hzero
+    simpa only [F] using scaledZero_in_support χ hχ hc hzf (lt_of_le_of_lt hz (by norm_num)) hzero
   have hρdiv : d z ≠ 0 := Function.mem_support.mp hρraw
   have hρmem : z ∈ s := (hs z).mpr hρdiv
   have hρnonneg : 0 ≤ d z := by
@@ -1993,12 +1948,11 @@ theorem exists_scaled_LFunction_shifted_block_derivative_pos {q : ℕ} [NeZero q
   have hB : 0 ≤ B := by
     dsimp only [B]
     exact div_nonneg (Real.log_nonneg hratio) (Real.log_pos (by norm_num only : (1 : ℝ) < 2)).le
-  obtain ⟨Kpos, hKpos⟩ := exists_nat_ge_scaled_power_margin (A := A) (B := B) hm hB
+  obtain ⟨Kpos, hKpos⟩ := exists_scaledMargin (A := A) (B := B) hm hB
   let Kblock : ℕ := max 2 (Kpos + 1)
   have hKblock : 2 ≤ Kblock := le_max_left _ _
   obtain ⟨s', hs', n, hnK, _, hderiv⟩ :=
-    exists_scaled_LFunction_shifted_block_derivative_lower_bound hq χ hχ hR hRle hcRe hc D hzf hz
-      hzero Kblock hKblock
+    exists_scaledBlock hq χ hχ hR hRle hcRe hc D hzf hz hzero Kblock hKblock
   have hsEq : s' = s := by
     apply Finset.ext
     intro v
@@ -2075,8 +2029,8 @@ use the general remainder estimate.
 Role: provides the explicit analytic-factor remainder needed by the explicit-center Turán
 decomposition.
 -/
-theorem norm_iteratedDeriv_scaled_LFunction_factor_le {q : ℕ} [NeZero q] (hq : 1 < q)
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ} {R : ℝ} (hR : 0 < R) {g : ℂ → ℂ}
+theorem scaledFactor_deriv_le {q : ℕ} [NeZero q] (hq : 1 < q) (χ : DirichletCharacter ℂ q)
+    (hχ : χ ≠ 1) {c : ℂ} {R : ℝ} (hR : 0 < R) {g : ℂ → ℂ}
     (D :
       Complex.ECanonicalDecomp (fun z : ℂ => DirichletCharacter.LFunction χ (z * (R : ℂ) + c)) g 1)
     (hzf : ∀ ρ : ℂ, ‖ρ‖ = 1 → DirichletCharacter.LFunction χ (ρ * (R : ℂ) + c) ≠ 0)
@@ -2122,8 +2076,7 @@ theorem norm_iteratedDeriv_scaled_LFunction_factor_le {q : ℕ} [NeZero q] (hq :
     intro ρ hρ
     simpa only [F] using hzf ρ hρ
   simpa only [F, M, zero_mul, zero_add] using
-    norm_iteratedDeriv_ecanonicalDecomp_logDeriv_le_of_boundary_bound hF h0
-      (by norm_num only : (1 : ℝ) ≤ 1) D hzfF hbound n hn
+    decomp_boundary_bound hF h0 (by norm_num only : (1 : ℝ) ≤ 1) D hzfF hbound n hn
 
 /--
 Inputs: a nontrivial character and an arbitrary center.
@@ -2134,8 +2087,7 @@ distances to the center.
 Role: provides a larger disk containing the local zeros on which the canonical-factor estimate
 can be applied.
 -/
-theorem exists_shifted_LFunction_zeroFree_sphere_radius {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (c : ℂ) :
+theorem exists_zeroFreeRadius {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (c : ℂ) :
     ∃ R : ℝ,
       1 / 8 < R ∧ R < 1 / 4 ∧ ∀ ρ : ℂ, ‖ρ‖ = R → DirichletCharacter.LFunction χ (c + ρ) ≠ 0 := by
   classical
@@ -2168,9 +2120,8 @@ bound for the ordinary L-function to the canonical factorization.
 Role: supplies a uniform bound for the analytic-factor term in the explicit-center Turán
 decomposition.
 -/
-theorem exists_scaled_LFunction_canonical_remainder {q : ℕ} [NeZero q] (hq : 1 < q)
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (c : ℂ) (hc : DirichletCharacter.LFunction χ c ≠ 0)
-    (hcRe : 1 ≤ c.re) :
+theorem exists_scaledFactor {q : ℕ} [NeZero q] (hq : 1 < q) (χ : DirichletCharacter ℂ q)
+    (hχ : χ ≠ 1) (c : ℂ) (hc : DirichletCharacter.LFunction χ c ≠ 0) (hcRe : 1 ≤ c.re) :
     ∃ R : ℝ,
       1 / 8 < R ∧
         R < 1 / 4 ∧
@@ -2189,7 +2140,7 @@ theorem exists_scaled_LFunction_canonical_remainder {q : ℕ} [NeZero q] (hq : 1
                             1) /
                         1 ^ 2) /
                     (1 / 4) ^ n := by
-  obtain ⟨R, hRlo, hRhi, hzfActual⟩ := exists_shifted_LFunction_zeroFree_sphere_radius χ hχ c
+  obtain ⟨R, hRlo, hRhi, hzfActual⟩ := exists_zeroFreeRadius χ hχ c
   have hRpos : 0 < R := lt_trans (by norm_num only : (0 : ℝ) < 1 / 8) hRlo
   have hF : Differentiable ℂ (fun z : ℂ => DirichletCharacter.LFunction χ (z * (R : ℂ) + c)) := by
     exact
@@ -2218,7 +2169,7 @@ theorem exists_scaled_LFunction_canonical_remainder {q : ℕ} [NeZero q] (hq : 1
     nlinarith only [hcRe, hRhi, hreal]
   refine ⟨R, hRlo, hRhi, g, D, hzf, hcircle, ?_⟩
   intro n hn
-  exact norm_iteratedDeriv_scaled_LFunction_factor_le hq χ hχ hRpos D hzf hcircle hc n hn
+  exact scaledFactor_deriv_le hq χ hχ hRpos D hzf hcircle hc n hn
 
 /--
 Inputs: a zero with `29/30 ≤ σ ≤ 1`, its explicit center, and a scaling radius `R > 1/15`.
@@ -2229,8 +2180,8 @@ disk, then transfer the zero in the right half-plane.
 Role: passes zeros counted for the completed function to the Turán power-sum input for the
 ordinary L-function.
 -/
-theorem completed_zero_enters_scaled_LFunction_disk {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
-    {σ : ℝ} {ρ c : ℂ} {R : ℝ} (hσlower : (29 / 30 : ℝ) ≤ σ) (hσupper : σ ≤ 1) (hρlower : σ ≤ ρ.re)
+theorem completed_to_scaled {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) {σ : ℝ} {ρ c : ℂ}
+    {R : ℝ} (hσlower : (29 / 30 : ℝ) ≤ σ) (hσupper : σ ≤ 1) (hρlower : σ ≤ ρ.re)
     (hρupper : ρ.re ≤ 1) (hcre : c.re = 2 - σ) (hcim : c.im = ρ.im) (hR : 1 / 15 < R)
     (hzero : DirichletCharacter.completedLFunction χ ρ = 0) :
     ∃ z : ℂ, ‖z‖ < 1 ∧ DirichletCharacter.LFunction χ (z * (R : ℂ) + c) = 0 := by
@@ -2261,7 +2212,7 @@ theorem completed_zero_enters_scaled_LFunction_disk {q : ℕ} [NeZero q] (χ : D
     rw [div_mul_cancel₀ _ hRcomplex]
     exact sub_add_cancel _ _
   have hLzero :=
-    (completedLFunction_zero_iff_LFunction_of_re_pos χ
+    (completed_zero_iff_L_of_re_pos χ
           (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 29 / 30) (le_trans hσlower hρlower))).mp
       hzero
   exact
@@ -2278,9 +2229,8 @@ scaled remainder theorem.
 Role: passes the zero count to the Turán-detection stage of the unconditional log-free family
 density argument.
 -/
-theorem exists_scaled_LFunction_data_of_completedZeroCount {q : ℕ} [NeZero q] (hq : 1 < q)
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {σ T : ℝ} (hσlower : (29 / 30 : ℝ) ≤ σ)
-    (hσupper : σ ≤ 1) (hT : 0 ≤ T)
+theorem count_scaledData {q : ℕ} [NeZero q] (hq : 1 < q) (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1)
+    {σ T : ℝ} (hσlower : (29 / 30 : ℝ) ≤ σ) (hσupper : σ ≤ 1) (hT : 0 ≤ T)
     (hcount : 0 < PseudoPrime.AnalyticNumberTheory.DirichletLFunction.completedZeroCount χ hχ σ T) :
     ∃ ρ : ℂ,
       σ ≤ ρ.re ∧
@@ -2317,20 +2267,19 @@ theorem exists_scaled_LFunction_data_of_completedZeroCount {q : ℕ} [NeZero q] 
   obtain
     ⟨ρ, hρσ, hρone, hρlower, hρupper, hzero, c, Rlocal, hRlocaldef, hRlocal, hRlocalle, hcre, hcim,
       hccompleted, _⟩ :=
-    exists_completedZeroCount_explicit_local_support_of_pos χ hχ
-      (le_trans (by norm_num only : (3 / 4 : ℝ) ≤ 29 / 30) hσlower) hσupper hT hcount
+    count_explicitSupport χ hχ (le_trans (by norm_num only : (3 / 4 : ℝ) ≤ 29 / 30) hσlower) hσupper
+      hT hcount
   have hcRe : 1 ≤ c.re := by
     rw [hcre]
     linarith only [hσupper]
   have hcL : DirichletCharacter.LFunction χ c ≠ 0 := by
     intro hcLzero
     have hcRePos : 0 < c.re := lt_of_lt_of_le (by norm_num only) hcRe
-    have hcompletedZero := (completedLFunction_zero_iff_LFunction_of_re_pos χ hcRePos).2 hcLzero
+    have hcompletedZero := (completed_zero_iff_L_of_re_pos χ hcRePos).2 hcLzero
     exact hccompleted hcompletedZero
-  obtain ⟨R, hRlo, hRhi, g, hD, hzf, hcircle, hrem⟩ :=
-    exists_scaled_LFunction_canonical_remainder hq χ hχ c hcL hcRe
+  obtain ⟨R, hRlo, hRhi, g, hD, hzf, hcircle, hrem⟩ := exists_scaledFactor hq χ hχ c hcL hcRe
   obtain ⟨z, hz, hLzero⟩ :=
-    completed_zero_enters_scaled_LFunction_disk χ hσlower hσupper hρσ hρone hcre hcim
+    completed_to_scaled χ hσlower hσupper hρσ hρone hcre hcim
       (lt_trans (by norm_num only : (1 / 15 : ℝ) < 1 / 8) hRlo) hzero
   exact
     ⟨ρ, hρσ, hρone, hρlower, hρupper, hzero, c, hcre, hcim, hcL, R, hRlo, hRhi, z, hz, hLzero, g,
@@ -2345,9 +2294,8 @@ Content: use that the zero has real part less than 1 to obtain `1 - σ > 0`, the
 uniform center-value estimate.
 Role: provides a lower bound for the center value used in the canonical-factor remainder.
 -/
-theorem exists_completedZeroCount_center_LFunction_lower_bound {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {σ T : ℝ} (hσlower : (29 / 30 : ℝ) ≤ σ)
-    (hσupper : σ ≤ 1) (hT : 0 ≤ T)
+theorem count_center_lower {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {σ T : ℝ}
+    (hσlower : (29 / 30 : ℝ) ≤ σ) (hσupper : σ ≤ 1) (hT : 0 ≤ T)
     (hcount : 0 < PseudoPrime.AnalyticNumberTheory.DirichletLFunction.completedZeroCount χ hχ σ T) :
     ∃ ρ : ℂ,
       σ ≤ ρ.re ∧
@@ -2368,8 +2316,8 @@ theorem exists_completedZeroCount_center_LFunction_lower_bound {q : ℕ} [NeZero
   obtain
     ⟨ρ, hρσ, hρone, hρlower, hρupper, hzero, c, Rlocal, hRlocaldef, hRlocal, hRlocalle, hcre, hcim,
       hccompleted, _⟩ :=
-    exists_completedZeroCount_explicit_local_support_of_pos χ hχ
-      (le_trans (by norm_num only : (3 / 4 : ℝ) ≤ 29 / 30) hσlower) hσupper hT hcount
+    count_explicitSupport χ hχ (le_trans (by norm_num only : (3 / 4 : ℝ) ≤ 29 / 30) hσlower) hσupper
+      hT hcount
   have hρlt :=
     PseudoPrime.AnalyticNumberTheory.DirichletLFunction.completedLFunction_zero_re_lt_one hχ hzero
   have hσlt : σ < 1 := lt_of_le_of_lt hρσ hρlt
@@ -2389,7 +2337,7 @@ theorem exists_completedZeroCount_center_LFunction_lower_bound {q : ℕ} [NeZero
       ‖c‖ ≤ c.re + |c.im| := hnorm
       _ ≤ 31 / 30 + T := add_le_add hcReTight hcimAbs
       _ ≤ T + 4 / 3 := by nlinarith only
-  obtain ⟨C, ε, hC, hε, hεle, hbound⟩ := exists_norm_LFunction_lower_bound_one_add (N := q) χ
+  obtain ⟨C, ε, hC, hε, hεle, hbound⟩ := exists_LFunctionLower (N := q) χ
   have hcenter : c = 1 + (((1 - σ : ℝ) : ℂ)) + Complex.I * ρ.im := by
     apply Complex.ext
     · simp only [Complex.add_re, Complex.one_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re,
@@ -2414,8 +2362,8 @@ Proof: apply the boundary estimate, use monotonicity of `log` on both terms, the
 positive derivative coefficient.
 Role: supplies the quantitative analytic error needed by a local Turán argument.
 -/
-theorem norm_iteratedDeriv_scaled_LFunction_factor_le_of_center_lower_bound {q : ℕ} [NeZero q]
-    (hq : 1 < q) (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ} {R : ℝ} (hR : 0 < R) {g : ℂ → ℂ}
+theorem scaledFactor_lower_le {q : ℕ} [NeZero q] (hq : 1 < q) (χ : DirichletCharacter ℂ q)
+    (hχ : χ ≠ 1) {c : ℂ} {R : ℝ} (hR : 0 < R) {g : ℂ → ℂ}
     (D :
       Complex.ECanonicalDecomp (fun z : ℂ => DirichletCharacter.LFunction χ (z * (R : ℂ) + c)) g 1)
     (hzf : ∀ ρ : ℂ, ‖ρ‖ = 1 → DirichletCharacter.LFunction χ (ρ * (R : ℂ) + c) ≠ 0)
@@ -2462,7 +2410,7 @@ theorem norm_iteratedDeriv_scaled_LFunction_factor_le_of_center_lower_bound {q :
   have hK : 0 ≤ K := by
     dsimp only [K]
     positivity
-  have hbase := norm_iteratedDeriv_scaled_LFunction_factor_le hq χ hχ hR D hzf hcircle hc n hn
+  have hbase := scaledFactor_deriv_le hq χ hχ hR D hzf hcircle hc n hn
   have hbase' : ‖iteratedDeriv n (logDeriv g) 0‖ ≤ K * A := by
     calc
       ‖iteratedDeriv n (logDeriv g) 0‖ ≤ n.factorial * (192 * (1 / 4) * A / 1 ^ 2) / (1 / 4) ^ n :=
@@ -2489,9 +2437,8 @@ Content: combine zero transfer, the polynomial right-half-plane bound, and the h
 center-value estimate.
 Role: provides the local analytic input for the unconditional log-free density argument.
 -/
-theorem exists_completedZeroCount_scaled_LFunction_canonical_remainder_bound {q : ℕ} [NeZero q]
-    (hq : 1 < q) (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {σ T : ℝ} (hσlower : (29 / 30 : ℝ) ≤ σ)
-    (hσupper : σ ≤ 1) (hT : 0 ≤ T)
+theorem count_scaledFactor {q : ℕ} [NeZero q] (hq : 1 < q) (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1)
+    {σ T : ℝ} (hσlower : (29 / 30 : ℝ) ≤ σ) (hσupper : σ ≤ 1) (hT : 0 ≤ T)
     (hcount : 0 < PseudoPrime.AnalyticNumberTheory.DirichletLFunction.completedZeroCount χ hχ σ T) :
     ∃ ρ : ℂ,
       σ ≤ ρ.re ∧
@@ -2533,7 +2480,7 @@ theorem exists_completedZeroCount_scaled_LFunction_canonical_remainder_bound {q 
   obtain
     ⟨ρ, hρσ, hρone, hρlower, hρupper, hzero, c, hcre, hcim, hcNorm, C, ε, hC, hε, hεle,
       hcenterLower⟩ :=
-    exists_completedZeroCount_center_LFunction_lower_bound χ hχ hσlower hσupper hT hcount
+    count_center_lower χ hχ hσlower hσupper hT hcount
   have hcRe : 1 ≤ c.re := by
     rw [hcre]
     linarith only [hσupper]
@@ -2541,16 +2488,14 @@ theorem exists_completedZeroCount_scaled_LFunction_canonical_remainder_bound {q 
     rw [hcre]
     linarith only [hσupper]
   have hcCompleted : DirichletCharacter.completedLFunction χ c ≠ 0 :=
-    PseudoPrime.AnalyticNumberTheory.DirichletLFunction.completedLFunction_ne_zero_of_one_le_re hχ
-      hcReOne
+    PseudoPrime.AnalyticNumberTheory.DirichletLFunction.completed_ne_zero_of_one_le_re hχ hcReOne
   have hcL : DirichletCharacter.LFunction χ c ≠ 0 := by
     intro hcLzero
     have hcRePos : 0 < c.re := lt_of_lt_of_le (by norm_num only) hcRe
-    exact hcCompleted ((completedLFunction_zero_iff_LFunction_of_re_pos χ hcRePos).2 hcLzero)
-  obtain ⟨R, hRlo, hRhi, g, hD, hzf, hcircle, hrem⟩ :=
-    exists_scaled_LFunction_canonical_remainder hq χ hχ c hcL hcRe
+    exact hcCompleted ((completed_zero_iff_L_of_re_pos χ hcRePos).2 hcLzero)
+  obtain ⟨R, hRlo, hRhi, g, hD, hzf, hcircle, hrem⟩ := exists_scaledFactor hq χ hχ c hcL hcRe
   obtain ⟨z, hz, hLzero⟩ :=
-    completed_zero_enters_scaled_LFunction_disk χ hσlower hσupper hρσ hρone hcre hcim
+    completed_to_scaled χ hσlower hσupper hρσ hρone hcre hcim
       (lt_trans (by norm_num only : (1 / 15 : ℝ) < 1 / 8) hRlo) hzero
   have hRpos : 0 < R := lt_trans (by norm_num only : (0 : ℝ) < 1 / 8) hRlo
   have hsize : ‖c‖ + R ≤ T + 2 := by
@@ -2562,8 +2507,7 @@ theorem exists_completedZeroCount_scaled_LFunction_canonical_remainder_bound {q 
       hD, hzf, hcircle, C, ε, hC, hε, hεle, ?_⟩
   intro hx hxε n hn
   exact
-    norm_iteratedDeriv_scaled_LFunction_factor_le_of_center_lower_bound hq χ hχ hRpos hD hzf hcircle
-      hcL hx hT hC hsize (hcenterLower hx hxε) n hn
+    scaledFactor_lower_le hq χ hχ hRpos hD hzf hcircle hcL hx hT hC hsize (hcenterLower hx hxε) n hn
 
 /--
 Inputs: a differentiable complex-valued function and an affine map with slope `R`.
@@ -2598,8 +2542,8 @@ Proof: apply the within-disk chain rule on the open disk, then identify within-d
 ordinary derivatives at the origin using analyticity.
 Role: converts local derivatives in a scaled coordinate to derivatives at the original center.
 -/
-theorem iteratedDeriv_affine_at_of_analytic {f : ℂ → ℂ} {c R : ℂ} {δ : ℝ} (n : ℕ) (hδ : 0 < δ)
-    (hR : ‖R‖ ≤ 1) (hf : AnalyticOnNhd ℂ f (Metric.closedBall c δ)) :
+theorem iteratedDeriv_affine {f : ℂ → ℂ} {c R : ℂ} {δ : ℝ} (n : ℕ) (hδ : 0 < δ) (hR : ‖R‖ ≤ 1)
+    (hf : AnalyticOnNhd ℂ f (Metric.closedBall c δ)) :
     iteratedDeriv n (fun z : ℂ => f (c + R * z)) 0 = R ^ n * iteratedDeriv n f c := by
   let s := Metric.ball (0 : ℂ) δ
   let g : ℂ → ℂ := fun z => f (c + z)
@@ -2648,8 +2592,8 @@ Proof: the L-function is analytic and has no zeros there, so its logarithmic der
 analytic at every point of the disk.
 Role: supplies the local regularity hypothesis for converting scaled derivatives to central ones.
 -/
-theorem analyticOnNhd_logDeriv_LFunction_closedBall {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
-    (hχ : χ ≠ 1) {c : ℂ} {δ : ℝ} (hcδ : δ < c.re - 1) :
+theorem analytic_logDeriv_L {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ}
+    {δ : ℝ} (hcδ : δ < c.re - 1) :
     AnalyticOnNhd ℂ (logDeriv (DirichletCharacter.LFunction χ)) (Metric.closedBall c δ) := by
   intro z hz
   have hdist : ‖z - c‖ ≤ δ := by simpa only [Metric.mem_closedBall, dist_eq_norm] using hz
@@ -2663,9 +2607,7 @@ theorem analyticOnNhd_logDeriv_LFunction_closedBall {q : ℕ} [NeZero q] (χ : D
     have hbridge : c.re - δ ≤ c.re - ‖z - c‖ := by linarith only [hdist]
     exact le_of_lt (lt_of_lt_of_le hstrict (le_trans hbridge hlow))
   have hnonzero := DirichletCharacter.LFunction_ne_zero_of_one_le_re χ (Or.inl hχ) hre
-  exact
-    analyticAt_logDeriv_of_ne_zero ((DirichletCharacter.differentiable_LFunction hχ).analyticAt z)
-      hnonzero
+  exact analyticAt_logDeriv ((DirichletCharacter.differentiable_LFunction hχ).analyticAt z) hnonzero
 
 /--
 Inputs: a differentiable function, an affine scale, and analyticity of its logarithmic derivative
@@ -2677,9 +2619,8 @@ iterated-derivative scaling formula.
 Role: converts the Turán lower bound in scaled coordinates to a lower bound at the ordinary
 Dirichlet L-function center.
 -/
-theorem iteratedDeriv_logDeriv_scaled_affine_of_analytic {f : ℂ → ℂ} (hf : Differentiable ℂ f)
-    {c R : ℂ} {δ : ℝ} (n : ℕ) (hδ : 0 < δ) (hR : ‖R‖ ≤ 1)
-    (hlog : AnalyticOnNhd ℂ (logDeriv f) (Metric.closedBall c δ)) :
+theorem logDeriv_affine_iter {f : ℂ → ℂ} (hf : Differentiable ℂ f) {c R : ℂ} {δ : ℝ} (n : ℕ)
+    (hδ : 0 < δ) (hR : ‖R‖ ≤ 1) (hlog : AnalyticOnNhd ℂ (logDeriv f) (Metric.closedBall c δ)) :
     iteratedDeriv n (logDeriv (fun z : ℂ => f (z * R + c))) 0 =
       R ^ (n + 1) * iteratedDeriv n (logDeriv f) c := by
   have hcomp := logDeriv_comp_mul_add hf R c
@@ -2690,7 +2631,7 @@ theorem iteratedDeriv_logDeriv_scaled_affine_of_analytic {f : ℂ → ℂ} (hf :
     ring
   rw [hcomp']
   rw [iteratedDeriv_const_mul_field]
-  rw [iteratedDeriv_affine_at_of_analytic n hδ hR hlog]
+  rw [iteratedDeriv_affine n hδ hR hlog]
   ring
 
 /--
@@ -2702,9 +2643,8 @@ Proof: obtain the zero, center, scale, and canonical factor from the completed-z
 then apply the scaled local Turán derivative estimate.
 Role: connects completed zero counts to the large-value family estimate for logarithmic derivatives.
 -/
-theorem exists_completedZeroCount_scaled_turan_derivative_lower_bound {q : ℕ} [NeZero q]
-    (hq : 1 < q) (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {σ T : ℝ} (hσlower : (29 / 30 : ℝ) ≤ σ)
-    (hσupper : σ ≤ 1) (hT : 0 ≤ T)
+theorem count_scaledTuran {q : ℕ} [NeZero q] (hq : 1 < q) (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1)
+    {σ T : ℝ} (hσlower : (29 / 30 : ℝ) ≤ σ) (hσupper : σ ≤ 1) (hT : 0 ≤ T)
     (hcount : 0 < PseudoPrime.AnalyticNumberTheory.DirichletLFunction.completedZeroCount χ hχ σ T)
     (M : ℕ) (hM : 0 < M) :
     ∃ (ρ c : ℂ) (R : ℝ) (z : ℂ) (s : Finset ℂ) (l : ℕ) (gLocal : ℂ → ℂ),
@@ -2763,14 +2703,13 @@ theorem exists_completedZeroCount_scaled_turan_derivative_lower_bound {q : ℕ} 
   obtain
     ⟨ρ, hρσ, hρone, hρlower, hρupper, hzero, c, hcre, hcim, hcL, R, hRlo, hRhi, z, hz, hLzero, g,
       hD, hzf, hcircle, hrem⟩ :=
-    exists_scaled_LFunction_data_of_completedZeroCount hq χ hχ hσlower hσupper hT hcount
+    count_scaledData hq χ hχ hσlower hσupper hT hcount
   have hcRe : 1 ≤ c.re := by
     rw [hcre]
     linarith only [hσupper]
   have hRpos : 0 < R := lt_trans (by norm_num only : (0 : ℝ) < 1 / 8) hRlo
   obtain ⟨s, l, hl, gLocal, hs, hspos, hdomain, hg, hgn, hbound⟩ :=
-    exists_scaled_LFunction_turan_derivative_lower_bound hq χ hχ hRpos (le_of_lt hRhi) hcRe hcL hD
-      hzf hz hLzero M hM
+    exists_scaledTuran hq χ hχ hRpos (le_of_lt hRhi) hcRe hcL hD hzf hz hLzero M hM
   have hρlt :=
     PseudoPrime.AnalyticNumberTheory.DirichletLFunction.completedLFunction_zero_re_lt_one hχ hzero
   have hσlt : σ < 1 := lt_of_le_of_lt hρσ hρlt
@@ -2787,11 +2726,10 @@ theorem exists_completedZeroCount_scaled_turan_derivative_lower_bound {q : ℕ} 
   have hRnorm : ‖(R : ℂ)‖ ≤ 1 := by
     rw [Complex.norm_real, Real.norm_eq_abs, abs_of_pos hRpos]
     exact le_trans (le_of_lt hRhi) (by norm_num only)
-  have hlog := analyticOnNhd_logDeriv_LFunction_closedBall χ hχ hδlt
+  have hlog := analytic_logDeriv_L χ hχ hδlt
   have hscale :=
-    iteratedDeriv_logDeriv_scaled_affine_of_analytic
-      (DirichletCharacter.differentiable_LFunction hχ) (c := c) (R := (R : ℂ)) (n := M + l) hδpos
-      hRnorm hlog
+    logDeriv_affine_iter (DirichletCharacter.differentiable_LFunction hχ) (c := c) (R := (R : ℂ))
+      (n := M + l) hδpos hRnorm hlog
   exact
     ⟨ρ, c, R, z, s, l, gLocal, hρσ, hρone, hρlower, hρupper, hzero, hcre, hcim, hRlo, hRhi, hz,
       hLzero, hl, hspos, hs, hdomain, hg, hgn, hbound, hscale⟩
@@ -2808,13 +2746,13 @@ scaled Turán derivative theorem.
 
 Role: connects multiplicity-indexed family zero data to the local zero selected by Turán detection.
 -/
-theorem exists_primitiveFamilyOccurrence_scaled_LFunction_zero {Q : ℕ} {σ : ℝ} {n : ℕ}
-    (hσlower : (29 / 30 : ℝ) ≤ σ) (hσupper : σ ≤ 1)
+theorem occurrence_scaledZero {Q : ℕ} {σ : ℝ} {n : ℕ} (hσlower : (29 / 30 : ℝ) ≤ σ)
+    (hσupper : σ ≤ 1)
     {x :
       Σ q : Fin Q,
         Σ χ : DirichletCharacter ℂ (q.val + 1),
           Σ ρ : ℂ, Fin (analyticOrderNatAt (DirichletCharacter.completedLFunction χ) ρ)}
-    (hx : x ∈ primitiveCharacterFamilyZeroOccurrenceLedger Q σ n) (M : ℕ) (hM : 0 < M) :
+    (hx : x ∈ occurrenceLedger Q σ n) (M : ℕ) (hM : 0 < M) :
     ∃ q : Fin Q,
       ∃ χ : DirichletCharacter ℂ (q.val + 1),
         ∃ hχ : χ ≠ 1,
@@ -2828,15 +2766,13 @@ theorem exists_primitiveFamilyOccurrence_scaled_LFunction_zero {Q : ℕ} {σ : �
                 (1 / 8 : ℝ) < R ∧
                 R < (1 / 4 : ℝ) ∧
                 ‖z‖ < 1 ∧ DirichletCharacter.LFunction χ (z * (R : ℂ) + c) = 0 := by
-  obtain ⟨q, χ, hχ, hprim, hmod, ρ₀, i, hxEq, hcount⟩ :=
-    primitiveCharacterFamilyZeroOccurrenceLedger_mem_positive_count hx
+  obtain ⟨q, χ, hχ, hprim, hmod, ρ₀, i, hxEq, hcount⟩ := ledger_mem_count_pos hx
   subst x
   obtain
     ⟨ρ, c, R, z, s, l, gLocal, hρσ, hρone, hρlower, hρupper, hzero, hcre, hcim, hRlo, hRhi, hz,
       hLzero, hrest⟩ :=
-    @exists_completedZeroCount_scaled_turan_derivative_lower_bound (q.val + 1)
-      ⟨Nat.ne_of_gt (lt_trans Nat.zero_lt_one hmod)⟩ hmod χ hχ σ (n : ℝ) hσlower hσupper
-      (by exact_mod_cast Nat.zero_le n) hcount M hM
+    @count_scaledTuran (q.val + 1) ⟨Nat.ne_of_gt (lt_trans Nat.zero_lt_one hmod)⟩ hmod χ hχ σ
+      (n : ℝ) hσlower hσupper (by exact_mod_cast Nat.zero_le n) hcount M hM
   exact ⟨q, χ, hχ, hprim, hmod, hcount, ρ, c, R, z, hzero, hcre, hcim, hRlo, hRhi, hz, hLzero⟩
 
 /--
@@ -2852,13 +2788,13 @@ and retain its lower-bound and affine-scaling conclusions.
 Role: provides the derivative data needed to transfer family zero occurrences to finite-height
 large-derivative counts.
 -/
-theorem exists_primitiveFamilyOccurrence_scaled_turan_derivative_bound {Q : ℕ} {σ : ℝ} {n : ℕ}
-    (hσlower : (29 / 30 : ℝ) ≤ σ) (hσupper : σ ≤ 1)
+theorem occurrence_turanBound {Q : ℕ} {σ : ℝ} {n : ℕ} (hσlower : (29 / 30 : ℝ) ≤ σ)
+    (hσupper : σ ≤ 1)
     {x :
       Σ q : Fin Q,
         Σ χ : DirichletCharacter ℂ (q.val + 1),
           Σ ρ : ℂ, Fin (analyticOrderNatAt (DirichletCharacter.completedLFunction χ) ρ)}
-    (hx : x ∈ primitiveCharacterFamilyZeroOccurrenceLedger Q σ n) (M : ℕ) (hM : 0 < M) :
+    (hx : x ∈ occurrenceLedger Q σ n) (M : ℕ) (hM : 0 < M) :
     ∃ q : Fin Q,
       ∃ χ : DirichletCharacter ℂ (q.val + 1),
         ∃ hχ : χ ≠ 1,
@@ -2909,15 +2845,13 @@ theorem exists_primitiveFamilyOccurrence_scaled_turan_derivative_bound {Q : ℕ}
                         0 =
                       (R : ℂ) ^ (M + l + 1) *
                         iteratedDeriv (M + l) (logDeriv (DirichletCharacter.LFunction χ)) c := by
-  obtain ⟨q, χ, hχ, hprim, hmod, ρ₀, i, hxEq, hcount⟩ :=
-    primitiveCharacterFamilyZeroOccurrenceLedger_mem_positive_count hx
+  obtain ⟨q, χ, hχ, hprim, hmod, ρ₀, i, hxEq, hcount⟩ := ledger_mem_count_pos hx
   subst x
   obtain
     ⟨ρ, c, R, z, s, l, gLocal, hρσ, hρone, hρlower, hρupper, hzero, hcre, hcim, hRlo, hRhi, hz,
       hLzero, hrest⟩ :=
-    @exists_completedZeroCount_scaled_turan_derivative_lower_bound (q.val + 1)
-      ⟨Nat.ne_of_gt (lt_trans Nat.zero_lt_one hmod)⟩ hmod χ hχ σ (n : ℝ) hσlower hσupper
-      (by exact_mod_cast Nat.zero_le n) hcount M hM
+    @count_scaledTuran (q.val + 1) ⟨Nat.ne_of_gt (lt_trans Nat.zero_lt_one hmod)⟩ hmod χ hχ σ
+      (n : ℝ) hσlower hσupper (by exact_mod_cast Nat.zero_le n) hcount M hM
   rcases hrest with ⟨hl, hspos, _, _, _, _, hbound, hscale⟩
   have hρlt :=
     PseudoPrime.AnalyticNumberTheory.DirichletLFunction.completedLFunction_zero_re_lt_one hχ hzero
@@ -2938,9 +2872,8 @@ containment and nonnegativity then compare the finite divisor sums.
 Role: transfers short-strip completed-zero counts to the local zero mass appearing in the Turán
 lower bound.
 -/
-theorem completed_local_divisor_mass_le_LFunction_openBall_mass {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (c : ℂ) {r R : ℝ} (hrR : r < R)
-    (hinner : ∀ u ∈ Metric.closedBall c r, 0 < u.re) :
+theorem completedMass_le_ball {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (c : ℂ)
+    {r R : ℝ} (hrR : r < R) (hinner : ∀ u ∈ Metric.closedBall c r, 0 < u.re) :
     ((∑ᶠ u : ℂ,
             MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) (Metric.closedBall c r)
               u :
@@ -2976,7 +2909,7 @@ theorem completed_local_divisor_mass_le_LFunction_openBall_mass {q : ℕ} [NeZer
       have huL : u ∈ Ul := by
         change dist u c < R
         exact lt_of_le_of_lt huDist hrR
-      have horder := completedLFunction_analyticOrderAt_eq_LFunction_of_re_pos χ hχ (hinner u hu)
+      have horder := completed_order_eq_L_of_re_pos χ hχ (hinner u hu)
       have hdiv : dC u = dL u := by
         rw [show dC = MeromorphicOn.divisor Fc Uc from rfl,
           show dL = MeromorphicOn.divisor Fl Ul from rfl,
@@ -3044,11 +2977,10 @@ radius `1/8`; transfer its completed divisor mass to the ordinary `L`-function o
 Role: connects short-slab family zero counts to the multiplicity weight retained by the local
 Turán derivative bound.
 -/
-theorem completedZeroMultiplicityCountInShortSlab_le_scaledLFunction_openBall_mass {q : ℕ}
-    [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {σ t v R : ℝ} (hσlower : (29 / 30 : ℝ) ≤ σ)
-    (hσupper : σ ≤ 1) (hv : 0 ≤ v) (hvsmall : v ≤ 1 / 16) (hR : 1 / 8 < R) (c : ℂ)
-    (hcre : c.re = 2 - σ) (hcim : c.im = t) :
-    completedZeroMultiplicityCountInRectangle χ hχ (⟨σ, t - v⟩ : ℂ) (⟨1, t + v⟩ : ℂ) ≤
+theorem slabMass_le_ball {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {σ t v R : ℝ}
+    (hσlower : (29 / 30 : ℝ) ≤ σ) (hσupper : σ ≤ 1) (hv : 0 ≤ v) (hvsmall : v ≤ 1 / 16)
+    (hR : 1 / 8 < R) (c : ℂ) (hcre : c.re = 2 - σ) (hcim : c.im = t) :
+    completedMultiplicityCount χ hχ (⟨σ, t - v⟩ : ℂ) (⟨1, t + v⟩ : ℂ) ≤
       ((∑ᶠ u : ℂ, MeromorphicOn.divisor (DirichletCharacter.LFunction χ) (Metric.ball c R) u : ℤ) :
         ℝ) := by
   have hyord : t - v ≤ t + v := by nlinarith only [hv]
@@ -3072,9 +3004,7 @@ theorem completedZeroMultiplicityCountInShortSlab_le_scaledLFunction_openBall_ma
       rw [hcim]
       linarith only [hy'.2, hvsmall]
     nlinarith only [hxl, hxu, hyl, hyu]
-  have hcount :=
-    completedZeroMultiplicityCountInRectangle_le_ball_divisor_sum_of_coordinates χ hχ _ _ c (1 / 8)
-      (by norm_num only) hcoord
+  have hcount := rectMass_ball_coords χ hχ _ _ c (1 / 8) (by norm_num only) hcoord
   have hcRe : 1 ≤ c.re := by
     rw [hcre]
     linarith only [hσupper]
@@ -3087,9 +3017,7 @@ theorem completedZeroMultiplicityCountInShortSlab_le_scaledLFunction_openBall_ma
     have hreal := Complex.abs_re_le_norm (u - c)
     rw [Complex.sub_re, abs_le] at hreal
     linarith only [hreal.1, hcRe, hnorm]
-  have hmass :=
-    completed_local_divisor_mass_le_LFunction_openBall_mass (r := (1 / 8 : ℝ)) (R := R) χ hχ c hR
-      hinner
+  have hmass := completedMass_le_ball (r := (1 / 8 : ℝ)) (R := R) χ hχ c hR hinner
   exact hcount.trans hmass
 
 /--
@@ -3103,8 +3031,8 @@ Role: records why the one-zero weakening of the existing Turán estimate cannot 
 large-value threshold; the live theorem's stronger multiplicity numerator requires a separate
 quantitative upper bound before drawing the same conclusion for its full output.
 -/
-theorem single_zero_turan_lower_bound_is_negative (n : ℕ) {D A B : ℝ} (hD : 1 ≤ D) (hA : 1 ≤ A)
-    (hB : 0 ≤ B) : (n.factorial : ℝ) * (D⁻¹ - 48 * A * (4 : ℝ) ^ n - B) < 0 := by
+theorem singleTuran_negative (n : ℕ) {D A B : ℝ} (hD : 1 ≤ D) (hA : 1 ≤ A) (hB : 0 ≤ B) :
+    (n.factorial : ℝ) * (D⁻¹ - 48 * A * (4 : ℝ) ^ n - B) < 0 := by
   have hfrac : (1 : ℝ) / D ≤ 1 / 1 := one_div_le_one_div_of_le (by norm_num only) hD
   have hinv' : D⁻¹ ≤ (1 : ℝ)⁻¹ := by simpa only [one_div] using hfrac
   have hinv : D⁻¹ ≤ 1 := by
@@ -3129,8 +3057,8 @@ Role: verifies the failure of the one-zero threshold using the live unconditiona
 The mass-retaining output of the full Turán theorem is stronger and needs a separate upper bound on
 the local divisor mass before this sign conclusion can be transferred to that full output.
 -/
-theorem scaled_LFunction_single_zero_turan_bound_negative {q : ℕ} [NeZero q] (hq : 1 < q)
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ} {R : ℝ} (hR : 0 < R) (hcRe : 1 ≤ c.re)
+theorem scaledTuran_negative {q : ℕ} [NeZero q] (hq : 1 < q) (χ : DirichletCharacter ℂ q)
+    (hχ : χ ≠ 1) {c : ℂ} {R : ℝ} (hR : 0 < R) (hcRe : 1 ≤ c.re)
     (hc : DirichletCharacter.LFunction χ c ≠ 0) (n : ℕ) (D : ℝ) (hD : 1 ≤ D) :
     (n.factorial : ℝ) *
         (D⁻¹ -
@@ -3177,7 +3105,7 @@ theorem scaled_LFunction_single_zero_turan_bound_negative {q : ℕ} [NeZero q] (
   have hB : 0 ≤ B := by
     dsimp only [B]
     exact div_nonneg (Real.log_nonneg hratio) hlog2.le
-  exact single_zero_turan_lower_bound_is_negative n hD hA hB
+  exact singleTuran_negative n hD hA hB
 
 /--
 Inputs: a nontrivial Dirichlet character, a scaled center with real part at least one, a scale at
@@ -3191,9 +3119,9 @@ compare the open-ball divisor sum with the closed-ball Jensen sum.
 
 Role: bounds the retained multiplicity in the full Turán derivative lower bound.
 -/
-theorem scaled_LFunction_openBall_divisor_mass_le {q : ℕ} [NeZero q] (hq : 1 < q)
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ} {R : ℝ} (hR : 0 < R) (hRle : R ≤ 1 / 4)
-    (hcRe : 1 ≤ c.re) (hc : DirichletCharacter.LFunction χ c ≠ 0) :
+theorem scaledBall_mass_le {q : ℕ} [NeZero q] (hq : 1 < q) (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1)
+    {c : ℂ} {R : ℝ} (hR : 0 < R) (hRle : R ≤ 1 / 4) (hcRe : 1 ≤ c.re)
+    (hc : DirichletCharacter.LFunction χ c ≠ 0) :
     ((∑ᶠ u : ℂ,
             MeromorphicOn.divisor (fun z : ℂ => DirichletCharacter.LFunction χ (z * (R : ℂ) + c))
               (Metric.ball (0 : ℂ) 1) u :
@@ -3303,8 +3231,7 @@ sum over the disk.
 Role: transfers Jensen's bound for total zero multiplicity to the numerator used in the Turán
 estimate.
 -/
-theorem norm_sum_local_divisor_le_finsum {F : ℂ → ℂ} (hFglobal : AnalyticOnNhd ℂ F Set.univ)
-    (s : Finset ℂ)
+theorem localDivisor_norm_le {F : ℂ → ℂ} (hFglobal : AnalyticOnNhd ℂ F Set.univ) (s : Finset ℂ)
     (hs : ∀ u, u ∈ s ↔ (MeromorphicOn.divisor F (Metric.ball (0 : ℂ) |(1 : ℝ)|)) u ≠ 0) :
     ‖∑ u ∈ s, ((MeromorphicOn.divisor F (Metric.ball (0 : ℂ) |(1 : ℝ)|) u : ℤ) : ℂ)‖ ≤
       ((∑ᶠ u : ℂ, MeromorphicOn.divisor F (Metric.ball (0 : ℂ) |(1 : ℝ)|) u : ℤ) : ℝ) := by
@@ -3344,9 +3271,9 @@ Proof: Jensen's zero-mass bound controls the divisor numerator, the Turán denom
 one, and the `48 A 4^n` term dominates after subtracting the matching reflection error.
 Role: confirms that the existing formula cannot provide a positive zero-detection threshold.
 -/
-theorem exists_scaled_LFunction_turan_lower_bound_is_negative {q : ℕ} [NeZero q] (hq : 1 < q)
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ} {R : ℝ} (hR : 0 < R) (hRle : R ≤ 1 / 4)
-    (hcRe : 1 ≤ c.re) (hc : DirichletCharacter.LFunction χ c ≠ 0) {g : ℂ → ℂ}
+theorem exists_turanNegative {q : ℕ} [NeZero q] (hq : 1 < q) (χ : DirichletCharacter ℂ q)
+    (hχ : χ ≠ 1) {c : ℂ} {R : ℝ} (hR : 0 < R) (hRle : R ≤ 1 / 4) (hcRe : 1 ≤ c.re)
+    (hc : DirichletCharacter.LFunction χ c ≠ 0) {g : ℂ → ℂ}
     (D :
       Complex.ECanonicalDecomp (fun z : ℂ => DirichletCharacter.LFunction χ (z * (R : ℂ) + c)) g 1)
     (hzf : ∀ ρ : ℂ, ‖ρ‖ = 1 → DirichletCharacter.LFunction χ (ρ * (R : ℂ) + c) ≠ 0) {z : ℂ}
@@ -3377,17 +3304,17 @@ theorem exists_scaled_LFunction_turan_lower_bound_is_negative {q : ℕ} [NeZero 
         ((differentiable_id.mul_const (R : ℂ)).add_const c)
   have hFglobal : AnalyticOnNhd ℂ F Set.univ := fun w _ => hF.analyticAt w
   obtain ⟨s, l, hl, gLocal, hs, hspos, _, _, _, _⟩ :=
-    exists_scaled_LFunction_turan_derivative_lower_bound hq χ hχ hR hRle hcRe hc D hzf hz hzero M hM
+    exists_scaledTuran hq χ hχ hR hRle hcRe hc D hzf hz hzero M hM
   have hRadius : Metric.ball (0 : ℂ) |(1 : ℝ)| = Metric.ball (0 : ℂ) 1 := by
     congr 1
     norm_num only [abs_of_pos (by norm_num only : (0 : ℝ) < 1)]
   let d : ℂ → ℤ := MeromorphicOn.divisor F (Metric.ball (0 : ℂ) |(1 : ℝ)|)
   have hsum :=
-    norm_sum_local_divisor_le_finsum hFglobal s
+    localDivisor_norm_le hFglobal s
       (by
         intro u
         exact hs u)
-  have hmass := scaled_LFunction_openBall_divisor_mass_le hq χ hχ hR hRle hcRe hc
+  have hmass := scaledBall_mass_le hq χ hχ hR hRle hcRe hc
   have hmass' :
     ((∑ᶠ u : ℂ, MeromorphicOn.divisor F (Metric.ball (0 : ℂ) |(1 : ℝ)|) u : ℤ) : ℝ) ≤
       Real.log (max 1 (2 * (q : ℝ) * (‖c‖ + 2 * R)) / ‖DirichletCharacter.LFunction χ c‖) /

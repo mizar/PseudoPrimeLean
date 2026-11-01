@@ -26,9 +26,9 @@ and sum the fiber bounds.
 Role: supplies the combinatorial incidence estimate needed to retain multiplicity when zero
 occurrences are mapped to finitely many derivative-detection events.
 -/
-theorem card_le_card_mul_of_fiber_bound {α β : Type*} [DecidableEq β] (s : Finset α) (t : Finset β)
-    (f : α → β) (B : ℕ) (hmap : ∀ x ∈ s, f x ∈ t)
-    (hfiber : ∀ y ∈ t, (s.filter fun x => f x = y).card ≤ B) : s.card ≤ t.card * B := by
+theorem card_le_card_mul {α β : Type*} [DecidableEq β] (s : Finset α) (t : Finset β) (f : α → β)
+    (B : ℕ) (hmap : ∀ x ∈ s, f x ∈ t) (hfiber : ∀ y ∈ t, (s.filter fun x => f x = y).card ≤ B) :
+    s.card ≤ t.card * B := by
   classical
     calc
     s.card ≤ (t.biUnion fun y => s.filter fun x => f x = y).card := by
@@ -54,8 +54,8 @@ Proof: count the finite set of incident occurrence-window pairs by each coordina
 
 Role: transfers multiplicity-preserving zero-window incidence into an integrated family estimate.
 -/
-theorem card_mul_le_card_mul_of_incidence {α β : Type*} (s : Finset α) (t : Finset β)
-    (inc : α → β → Bool) (L U : ℕ) (hlower : ∀ a ∈ s, L ≤ (t.filter fun b => inc a b = true).card)
+theorem card_mul_le_card_mul {α β : Type*} (s : Finset α) (t : Finset β) (inc : α → β → Bool)
+    (L U : ℕ) (hlower : ∀ a ∈ s, L ≤ (t.filter fun b => inc a b = true).card)
     (hupper : ∀ b ∈ t, (s.filter fun a => inc a b = true).card ≤ U) : s.card * L ≤ t.card * U := by
   classical
   let r : Finset (α × β) := (s ×ˢ t).filter fun p => inc p.1 p.2 = true
@@ -152,9 +152,8 @@ pointwise upper bounds.
 Role: keeps conductor- and height-dependent local multiplicity bounds inside the window sum
 instead of replacing them with an unproved global maximum.
 -/
-theorem card_mul_le_sum_window_fiber_bounds {α β : Type*} (s : Finset α) (t : Finset β)
-    (inc : α → β → Bool) (L : ℕ) (fiberBound : β → ℕ)
-    (hlower : ∀ a ∈ s, L ≤ (t.filter fun b => inc a b = true).card)
+theorem card_mul_fiber_le {α β : Type*} (s : Finset α) (t : Finset β) (inc : α → β → Bool) (L : ℕ)
+    (fiberBound : β → ℕ) (hlower : ∀ a ∈ s, L ≤ (t.filter fun b => inc a b = true).card)
     (hupper : ∀ b ∈ t, (s.filter fun a => inc a b = true).card ≤ fiberBound b) :
     s.card * L ≤ ∑ b ∈ t, fiberBound b := by
   classical
@@ -240,7 +239,7 @@ theorem card_mul_le_sum_window_fiber_bounds {α β : Type*} (s : Finset α) (t :
 its cardinality is at most its cardinality bound times the number of active orders.
 Use one active order in the nonempty case and the zero cardinality otherwise.
 This turns local multiplicity bounds into detector-event incidence bounds. -/
-theorem card_le_bound_mul_order_event_sum {α : Type*} (s : Finset α) (B nmax : ℕ) (event : ℕ → Prop)
+theorem card_orderEvents_le {α : Type*} (s : Finset α) (B nmax : ℕ) (event : ℕ → Prop)
     [DecidablePred event] (hbound : s.card ≤ B) (hactivate : s.Nonempty → ∃ n ≤ nmax, event n) :
     s.card ≤ B * (∑ n ∈ Finset.range (nmax + 1), if event n then 1 else 0) := by
   by_cases hs : s.Nonempty

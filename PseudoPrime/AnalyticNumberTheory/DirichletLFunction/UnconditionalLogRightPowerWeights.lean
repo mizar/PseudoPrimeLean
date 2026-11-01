@@ -18,9 +18,8 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 half-strip, the regularized norm is at most `(8+4 log 2)` times its divisor-weighted
 power term. Since `x^Re(rho) >= 1`, the same power weight absorbs the genus
 correction. This avoids a second unweighted family-mass error. -/
-theorem norm_regularizedLogHalfZeroTerm_le_right_power_weight {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hne : χ ≠ 1) {x : ℝ} (hx : 2 ≤ x) {ρ : ℂ} (hlo : 1 / 2 ≤ ρ.re)
-    (hhi : ρ.re ≤ 1) :
+theorem regularizedHalfTerm_right_bound {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hne : χ ≠ 1) {x : ℝ} (hx : 2 ≤ x) {ρ : ℂ} (hlo : 1 / 2 ≤ ρ.re) (hhi : ρ.re ≤ 1) :
     ‖regularizedLogHalfZeroTerm χ x ρ‖ ≤
       (8 + 4 * Real.log 2) *
         ((MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
@@ -38,7 +37,7 @@ theorem norm_regularizedLogHalfZeroTerm_le_right_power_weight {q : ℕ} [NeZero 
         (8 * x ^ ρ.re + 4 * Real.log 2) *
             (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) /
           (1 + ρ.im ^ 2) :=
-      norm_regularizedLogHalfZeroTerm_le_right_re hne hx hlo hhi
+      norm_regularHalfTerm_le_right_re hne hx hlo hhi
     _ ≤
         ((8 + 4 * Real.log 2) * x ^ ρ.re) *
             (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) /
@@ -50,16 +49,15 @@ theorem norm_regularizedLogHalfZeroTerm_le_right_power_weight {q : ℕ} [NeZero 
 /-- A completed zero in a rectangle from real threshold at most one to real part
 one has its real part between those endpoints. Extract the rectangle coordinates.
 This provides the pointwise hypotheses for right-strip kernel estimates. -/
-theorem completedZerosInRectangle_halfStrip_realpart_bounds {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hne : χ ≠ 1) {σ : ℝ} (hσ : σ ≤ 1) (H : ℕ) {ρ : ℂ}
+theorem rectangleZero_halfStrip_re_bounds {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hne : χ ≠ 1) {σ : ℝ} (hσ : σ ≤ 1) (H : ℕ) {ρ : ℂ}
     (hρ :
       ρ ∈
         completedZerosInRectangle χ hne ((σ : ℂ) - (H : ℝ) * Complex.I)
           ((1 : ℂ) + (H : ℝ) * Complex.I)) :
     σ ≤ ρ.re ∧ ρ.re ≤ 1 := by
   have hb := (mem_completedZerosInRectangle_iff.mp hρ).1
-  rw [dirichletCompletedLFunctionRectangleBox, Rectangle.rectangleClosedBox,
-    Complex.mem_reProdIm] at hb
+  rw [completedRectangleBox, Rectangle.rectangleClosedBox, Complex.mem_reProdIm] at hb
   have hre := hb.1
   simp only [Complex.sub_re, Complex.ofReal_re, Complex.mul_re, Complex.ofReal_im, Complex.I_re,
     mul_zero, zero_mul, sub_zero, Complex.add_re, add_zero, Complex.one_re] at hre
@@ -69,9 +67,8 @@ theorem completedZerosInRectangle_halfStrip_realpart_bounds {q : ℕ} [NeZero q]
 between one half and one, the finite regularized norm sum is bounded by its actual
 divisor-weighted power sum times `8+4 log 2`. Sum the pointwise estimate after
 extracting real-part bounds. This connects regularized kernels to weighted density. -/
-theorem sum_norm_regularizedLogHalfZeroTerm_rectangle_le_right_power_weight {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hne : χ ≠ 1) {x σ : ℝ} (hx : 2 ≤ x) (hσlo : 1 / 2 ≤ σ)
-    (hσhi : σ ≤ 1) (H : ℕ) :
+theorem regularizedHalfTerm_rectangle_bound {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hne : χ ≠ 1) {x σ : ℝ} (hx : 2 ≤ x) (hσlo : 1 / 2 ≤ σ) (hσhi : σ ≤ 1) (H : ℕ) :
     (∑
         ρ ∈
           completedZerosInRectangle χ hne ((σ : ℂ) - (H : ℝ) * Complex.I)
@@ -87,7 +84,7 @@ theorem sum_norm_regularizedLogHalfZeroTerm_rectangle_le_right_power_weight {q :
   rw [Finset.mul_sum]
   apply Finset.sum_le_sum
   intro ρ hρ
-  have hre := completedZerosInRectangle_halfStrip_realpart_bounds hne hσhi H hρ
-  exact norm_regularizedLogHalfZeroTerm_le_right_power_weight hne hx (hσlo.trans hre.1) hre.2
+  have hre := rectangleZero_halfStrip_re_bounds hne hσhi H hρ
+  exact regularizedHalfTerm_right_bound hne hx (hσlo.trans hre.1) hre.2
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

@@ -29,8 +29,8 @@ theorem gaussian_zeroMass_tail_lt_prefix50000 {q : ℕ} [NeZero q] (hq : 2 ≤ q
       (20115621 / 50000000 : ℝ) * Real.log q + 159169 / 50000 := by
   let B := Finset.Ioc 0 (50000 : ℕ)
   have h :=
-    AnalyticNumberTheory.DirichletLFunction.gaussian_zeroMass_add_pairedTail_lt_principal_prefix hq
-      hRH hRiemann hp hne hinv B
+    AnalyticNumberTheory.DirichletLFunction.gaussianNormMass_tail_principal_RH hq hRH hRiemann hp
+      hne hinv B
   have hprefix := gaussian_prefix50000_lower hRiemann (le_refl (50000 : ℝ))
   have hfloor : ⌊(50000 : ℝ)⌋₊ = (50000 : ℕ) := Nat.floor_natCast 50000
   rw [hfloor] at hprefix
@@ -75,8 +75,8 @@ theorem gaussian_zeroMass_tail_lt_prefix1000 {q : ℕ} [NeZero q] (hq : 2 ≤ q)
       (20115621 / 50000000 : ℝ) * Real.log q + 5969 / 1000 := by
   let B := Finset.Ioc 0 (1000 : ℕ)
   have h :=
-    AnalyticNumberTheory.DirichletLFunction.gaussian_zeroMass_add_pairedTail_lt_principal_prefix hq
-      hRH hRiemann hp hne hinv B
+    AnalyticNumberTheory.DirichletLFunction.gaussianNormMass_tail_principal_RH hq hRH hRiemann hp
+      hne hinv B
   have hprefix := gaussian_prefix1000_lower hRiemann (le_refl (1000 : ℝ))
   have hfloor : ⌊(1000 : ℝ)⌋₊ = (1000 : ℕ) := Nat.floor_natCast 1000
   rw [hfloor] at hprefix

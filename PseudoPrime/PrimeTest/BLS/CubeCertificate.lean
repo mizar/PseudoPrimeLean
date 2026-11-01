@@ -65,9 +65,6 @@ theorem prime_of_valid_cube_certificate (c : CubeCertificate)
     Nat.zero_lt_of_lt (checkPartialFactorization_eq_true_iff c.n c.factorization |>.mp hfactor).1
   have hlarge :=
     primeDivisorsAbove_of_valid_bls_data hn c.factorization c.witnesses hfactor hwitness
-  exact
-    (prime_iff_cubeDiscriminantIsSquare_false_or_quotient_zero_of_primeDivisorsAbove hn hFpos
-          hdecomp hbound hlarge).2
-      harithmetic
+  exact (prime_iff_cubeCriterion_of_divisorsAbove hn hFpos hdecomp hbound hlarge).2 harithmetic
 
 end PseudoPrime.PrimeTest.BLS

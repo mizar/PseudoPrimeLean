@@ -44,7 +44,7 @@ theorem gamma_ramp_prime_trivial_false_of_principal_cap {q Q : ℕ} [NeZero q] (
   intro hsmall
   have hone : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → Nat.Coprime p q → χ p = 1 := fun p hp hpb hcop ↦
     hsmall p hp (hp.coprime_iff_not_dvd.mp hcop) (hpb.trans hbx)
-  have hC := gamma_primitive_sum_add_local_lt_joint_prefix_cap hQ hqQ χ hne hGRH hx hb hone hA
+  have hC := gammaPrimitive_local_jointPrefixCap_GRH hQ hqQ χ hne hGRH hx hb hone hA
   have hx1 : 1 ≤ x := le_trans (by norm_num only) hx
   have hT := gamma_ramp_sum_lower_paired hGRH.riemann hx1
   have hN := gamma_ramp_no_witness_comparison χ hquad (zero_lt_one.trans_le hx1) hsmall

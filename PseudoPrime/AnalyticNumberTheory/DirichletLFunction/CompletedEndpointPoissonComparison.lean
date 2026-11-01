@@ -21,7 +21,7 @@ nonprincipal inverse and nonnegative shift h, the centered completed derivative 
 is at most 1+2h times its centered value at 1+h. Compare positive Poisson kernels
 termwise on the critical line and sum using nonnegative multiplicities.
 This transfers endpoint estimates to an absolutely convergent Euler half-plane. -/
-theorem completedLogDeriv_endpoint_le_shifted {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem completedLogDeriv_shift_bound_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {h : ℝ} (hh : 0 ≤ h) :
     (logDeriv χ.completedLFunction 1).re + Real.log q / 2 ≤
@@ -44,8 +44,7 @@ theorem completedLogDeriv_endpoint_le_shifted {q : ℕ} [NeZero q] (hq : 2 ≤ q
     by_cases hD : MeromorphicOn.divisor χ.completedLFunction Set.univ ρ = 0
     · simp only [P, hD, Int.cast_zero, zero_mul, mul_zero, le_refl]
     · have hr :=
-        completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv
-          (completed_zero_of_divisor_ne_zero hne hD)
+        completed_zero_re_eq_half_of_RH hRH hp hinv (completed_zero_of_divisor_ne_zero hne hD)
       have hn (σ : ℝ) : Complex.normSq ((σ : ℂ) - ρ) = (σ - 1 / 2) ^ 2 + ρ.im ^ 2 := by
         rw [Complex.normSq_apply]
         simp only [Complex.sub_re, Complex.sub_im, Complex.ofReal_re, Complex.ofReal_im, hr]
@@ -72,7 +71,7 @@ Gamma upper bound G and any finite index set B, the real completed derivative at
 is at most r*log(q)+(1+2r)*(G+M-positiveEulerPrefix(B,1+r)).
 Apply horizontal Poisson comparison and the nonnegative Euler-series prefix bound.
 This preserves arithmetic savings in first-pole residue estimates. -/
-theorem completedLogDeriv_endpoint_le_positive_prefix {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem completedLogDeriv_prefix_bound_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {r M G : ℝ} (hr : 0 < r) (B : Finset ℕ)
     (hM : (∑' n : ℕ, ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ (1 + r)) ≤ M)
@@ -82,14 +81,14 @@ theorem completedLogDeriv_endpoint_le_positive_prefix {q : ℕ} [NeZero q] (hq :
         (1 + 2 * r) *
           (G + M -
             ∑ n ∈ B, (1 + (χ n).re) * ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ (1 + r)) := by
-  have hcmp := completedLogDeriv_endpoint_le_shifted hq hRH hp hne hinv hr.le
+  have hcmp := completedLogDeriv_shift_bound_RH hq hRH hp hne hinv hr.le
   have hσ : 1 < 1 + r := by linarith only [hr]
   have hs : 1 ≤ (((1 + r : ℝ) : ℂ)).re := by
     rw [Complex.ofReal_re]; linarith only [hr]
   have hs0 := zero_lt_one.trans_le hs
   have hd :=
-    logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne
-      (completedLFunction_ne_zero_of_one_le_re hne hs) (gammaFactor_ne_zero_of_re_pos χ hs0)
+    L_logDeriv_sub_gamma_of_regular hne (completed_ne_zero_of_one_le_re hne hs)
+      (gammaFactor_ne_zero_of_re_pos χ hs0)
       (analyticAt_gammaFactor_of_re_pos χ hs0).differentiableAt
   have he :
     (logDeriv χ.completedLFunction ((1 + r : ℝ) : ℂ)).re =
@@ -97,7 +96,7 @@ theorem completedLogDeriv_endpoint_le_positive_prefix {q : ℕ} [NeZero q] (hq :
         (logDeriv χ.gammaFactor ((1 + r : ℝ) : ℂ)).re := by
     rw [hd, Complex.sub_re]
     ring
-  have hpref := re_logDeriv_le_principal_sub_positive_prefix χ hσ B
+  have hpref := re_L_logDeriv_le_positivePrefix χ hσ B
   have hcap :
     (logDeriv χ.completedLFunction ((1 + r : ℝ) : ℂ)).re ≤
       G + M - ∑ n ∈ B, (1 + (χ n).re) * ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ (1 + r) := by

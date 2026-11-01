@@ -18,7 +18,7 @@ namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 2d costs at most log(4d). Bound the contribution at two by twice log two
 and the ramified support by log d. This is independent of primitivity and
 of any additional square factors in a later input. -/
-theorem characterExclusionCost_two_mul_le_log_four_mul {f d : ℕ} (χ : DirichletCharacter ℂ f)
+theorem characterExclusionCost_two_mul_le_log_four {f d : ℕ} (χ : DirichletCharacter ℂ f)
     (hd : d ≠ 0) (hz : ∀ p ∈ d.primeFactors, χ p = 0) :
     characterExclusionCost χ (2 * d) ≤ Real.log ((4 * d : ℕ) : ℝ) := by
   have hm := characterExclusionCost_mul_le χ (by norm_num only : (2 : ℕ) ≠ 0) hd

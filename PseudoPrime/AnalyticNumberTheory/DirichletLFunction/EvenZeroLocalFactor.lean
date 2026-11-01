@@ -63,18 +63,18 @@ Conclusion: `AnalyticAt ℂ (dirichletEvenZeroLocalFactor χ) 0` and
 Content: `completedLFunction χ` is entire (globally differentiable); the denominator
 `2π · Γ_ℝ(s + 2)` is analytic and nonzero at `0` (`analyticAt_evenZeroLocalFactor_denom`); the
 numerator at `0` is `completedLFunction χ 0 ≠ 0`
-(`DirichletLFunction.dirichletCompletedLFunction_zero_ne_zero_of_primitive`).
+(`DirichletLFunction.completed_zero_ne_zero_of_primitive`).
 Role: the regularity input for `G_χ` feeding both the multiplicity-one identification and the
 generic local derivative formula.
 -/
-theorem analyticAt_and_ne_zero_dirichletEvenZeroLocalFactor {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) :
+theorem evenZeroFactor_analytic_ne_zero {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) :
     AnalyticAt ℂ (dirichletEvenZeroLocalFactor χ) 0 ∧ dirichletEvenZeroLocalFactor χ 0 ≠ 0 := by
   obtain ⟨hdenomAnalytic, hdenomNe⟩ := analyticAt_evenZeroLocalFactor_denom
   have hFanalytic : AnalyticAt ℂ (DirichletCharacter.completedLFunction χ) 0 :=
     (DirichletCharacter.differentiable_completedLFunction hne).analyticAt 0
   have hF0ne : DirichletCharacter.completedLFunction χ 0 ≠ 0 :=
-    dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne
+    completed_zero_ne_zero_of_primitive hprimitive hne
   refine ⟨hFanalytic.div hdenomAnalytic hdenomNe, ?_⟩
   unfold dirichletEvenZeroLocalFactor
   exact div_ne_zero hF0ne hdenomNe
@@ -89,8 +89,8 @@ sides vanish
 Role: the local factorization identity used to identify the multiplicity as one and to compare
 other analytic local factors with the canonical one.
 -/
-theorem eventuallyEq_dirichletLFunction_evenZeroLocalFactor {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (_hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (heven : χ.Even) :
+theorem eventuallyEq_L_evenZeroLocalFactor {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (_hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (heven : χ.Even) :
     Filter.EventuallyEq (nhds (0 : ℂ)) (DirichletCharacter.LFunction χ)
       (fun s => s * dirichletEvenZeroLocalFactor χ s) := by
   have hΓ2ne : Complex.Gammaℝ (2 : ℂ) ≠ 0 := Gammaℝ_two_ne_zero
@@ -110,8 +110,7 @@ theorem eventuallyEq_dirichletLFunction_evenZeroLocalFactor {N : ℕ} [NeZero N]
   rcases eq_or_ne s 0 with rfl | hs0
   · simp only [hL0, zero_mul]
   · unfold dirichletEvenZeroLocalFactor
-    rw [dirichletLFunction_eq_completed_div_gammaFactor χ s
-        (Or.inr (dirichletCharacter_level_ne_one_of_ne_one hne)),
+    rw [L_eq_completed_div_gammaFactor χ s (Or.inr (character_level_ne_one_of_ne_one hne)),
       heven.gammaFactor_def]
     have hGE := Complex.Gammaℝ_add_two (s := s) hs0
     have hΓsne' : Complex.Gammaℝ s ≠ 0 := by
@@ -131,19 +130,19 @@ Input/assumptions: `N ≥ 1`, `χ` primitive nontrivial even mod `N`.
 Conclusion: `PseudoPrime.AnalyticNumberTheory.DirichletLFunction.dirichletLFunctionZeroMultiplicity
 χ 0 = 1`.
 Content: `AnalyticAt.analyticOrderAt_eq_natCast` (mathlib, an iff) applied with `n := 1` and witness
-`G_χ` (`eventuallyEq_dirichletLFunction_evenZeroLocalFactor`, `analyticAt_and_ne_zero_
+`G_χ` (`eventuallyEq_L_evenZeroLocalFactor`, `analyticAt_and_ne_zero_
 dirichletEvenZeroLocalFactor`) directly gives `analyticOrderAt (LFunction χ) 0 = 1`; unfolding
 `DirichletLFunction.dirichletLFunctionZeroMultiplicity`/`analyticOrderNatAt`
 (`.toNat`) finishes.
 Role: identifies the trivial zero at the origin as simple, for local expansions and residues.
 -/
-theorem dirichletLFunctionZeroMultiplicity_zero_of_primitive_even_eq_one {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (heven : χ.Even) :
+theorem zeroMultiplicity_zero_even_eq_one {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (heven : χ.Even) :
     dirichletLFunctionZeroMultiplicity χ 0 = 1 := by
   have hLanalytic : AnalyticAt ℂ (DirichletCharacter.LFunction χ) 0 :=
     (DirichletCharacter.differentiable_LFunction hne).analyticAt 0
-  obtain ⟨hGanalytic, hG0⟩ := analyticAt_and_ne_zero_dirichletEvenZeroLocalFactor hprimitive hne
-  have heq := eventuallyEq_dirichletLFunction_evenZeroLocalFactor hprimitive hne heven
+  obtain ⟨hGanalytic, hG0⟩ := evenZeroFactor_analytic_ne_zero hprimitive hne
+  have heq := eventuallyEq_L_evenZeroLocalFactor hprimitive hne heven
   have horder : analyticOrderAt (DirichletCharacter.LFunction χ) 0 = ((1 : ℕ) : ℕ∞) := by
     rw [hLanalytic.analyticOrderAt_eq_natCast]
     refine ⟨dirichletEvenZeroLocalFactor χ, hGanalytic, hG0, ?_⟩
@@ -164,7 +163,7 @@ drops the constant (`logDeriv_const_mul`), and `logDeriv (Γ_ℝ ∘ (· + 2)) 0
 at `2`, `Complex.digamma_one`).
 Role: supplies the local-factor special value used in the even residue formula.
 -/
-theorem logDeriv_dirichletEvenZeroLocalFactor_zero {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+theorem logDeriv_evenZeroLocalFactor_zero {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) :
     logDeriv (dirichletEvenZeroLocalFactor χ) 0 =
       logDeriv (DirichletCharacter.completedLFunction χ) 0 +
@@ -178,7 +177,7 @@ theorem logDeriv_dirichletEvenZeroLocalFactor_zero {N : ℕ} [NeZero N] {χ : Di
       Complex.neg_re, Complex.natCast_re] at him
     linarith only [him, hmnn]
   have hΓdiff : DifferentiableAt ℂ Complex.Gammaℝ (2 : ℂ) :=
-    differentiableAt_Gammaℝ_of_half_ne_neg_nat hΓhalf
+    differentiableAt_Gammaℝ_of_nonpole hΓhalf
   have hshiftDeriv : HasDerivAt (fun s : ℂ => s + 2) 1 0 := by
     simpa only [hasDerivAt_add_const_iff, id_eq] using (hasDerivAt_id (0 : ℂ)).add_const (2 : ℂ)
   have hΓshiftDiff : DifferentiableAt ℂ (fun s : ℂ => Complex.Gammaℝ (s + 2)) 0 := by
@@ -192,7 +191,7 @@ theorem logDeriv_dirichletEvenZeroLocalFactor_zero {N : ℕ} [NeZero N] {χ : Di
   have hFanalytic : AnalyticAt ℂ (DirichletCharacter.completedLFunction χ) 0 :=
     (DirichletCharacter.differentiable_completedLFunction hne).analyticAt 0
   have hF0ne : DirichletCharacter.completedLFunction χ 0 ≠ 0 :=
-    dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne
+    completed_zero_ne_zero_of_primitive hprimitive hne
   have hDdiff : DifferentiableAt ℂ (fun s : ℂ => 2 * (Real.pi : ℂ) * Complex.Gammaℝ (s + 2)) 0 :=
     (differentiableAt_const _).mul hΓshiftDiff
   have hπne : (2 : ℂ) * (Real.pi : ℂ) ≠ 0 :=
@@ -241,7 +240,7 @@ theorem logDeriv_dirichletEvenZeroLocalFactor_zero {N : ℕ} [NeZero N] {χ : Di
 /--
 Input/assumptions: `N ≥ 1`, `χ` primitive nontrivial mod `N`.
 Conclusion: `(logDeriv G_χ)'(0) = (logDeriv F)'(0) - π² / 24`.
-Content: mirrors `logDeriv_dirichletEvenZeroLocalFactor_zero`'s value computation, upgraded to an
+Content: mirrors `logDeriv_evenZeroLocalFactor_zero`'s value computation, upgraded to an
 eventual (not just pointwise-at-`0`) identity `logDeriv G_χ =ᶠ[𝓝 0] logDeriv F - logDeriv D`
 (`D(s) := 2π·Γ_ℝ(s + 2)`, nonzero eventually near `0` by continuity from `Γ_ℝ(2) ≠ 0`) so
 `Filter.EventuallyEq.deriv_eq` applies; `deriv (logDeriv D) 0 = deriv (logDeriv Γ_ℝ) 2` (chain rule,
@@ -253,8 +252,8 @@ differentiated at `s = 2` (chain rule, inner derivative
 Role: supplies the local-factor derivative used in the even residue formula. The odd gamma
 factor instead contributes `π²/8`, through digamma at `1/2`.
 -/
-theorem deriv_logDeriv_dirichletEvenZeroLocalFactor_zero {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) :
+theorem deriv_logDeriv_evenZeroFactor_zero {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) :
     deriv (logDeriv (dirichletEvenZeroLocalFactor χ)) 0 =
       deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0 - (Real.pi : ℂ) ^ 2 / 24 := by
   have hhalf_near : ∀ᶠ s : ℂ in nhds (0 : ℂ), ∀ m : ℕ, (s + 2) / 2 ≠ -(m : ℂ) := by
@@ -276,7 +275,7 @@ theorem deriv_logDeriv_dirichletEvenZeroLocalFactor_zero {N : ℕ} [NeZero N]
   have hΓdiff :
     ∀ᶠ s in nhds (0 : ℂ), DifferentiableAt ℂ (fun t : ℂ => Complex.Gammaℝ (t + 2)) s := by
     filter_upwards [hhalf_near] with s hs
-    exact (differentiableAt_Gammaℝ_of_half_ne_neg_nat hs).comp s ((differentiableAt_id).add_const 2)
+    exact (differentiableAt_Gammaℝ_of_nonpole hs).comp s ((differentiableAt_id).add_const 2)
   have hπne : (2 : ℂ) * (Real.pi : ℂ) ≠ 0 :=
     mul_ne_zero two_ne_zero (Complex.ofReal_ne_zero.mpr Real.pi_ne_zero)
   have hDne : ∀ᶠ s in nhds (0 : ℂ), 2 * (Real.pi : ℂ) * Complex.Gammaℝ (s + 2) ≠ 0 := by
@@ -288,7 +287,7 @@ theorem deriv_logDeriv_dirichletEvenZeroLocalFactor_zero {N : ℕ} [NeZero N]
     filter_upwards [hΓdiff] with s hs
     exact (differentiableAt_const _).mul hs
   have hFdiff := DirichletCharacter.differentiable_completedLFunction hne
-  have hF0ne := dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne
+  have hF0ne := completed_zero_ne_zero_of_primitive hprimitive hne
   have hFne_ev : ∀ᶠ s in nhds (0 : ℂ), DirichletCharacter.completedLFunction χ s ≠ 0 :=
     hFdiff.continuous.continuousAt.eventually_ne hF0ne
   have hqeq :
@@ -330,7 +329,7 @@ theorem deriv_logDeriv_dirichletEvenZeroLocalFactor_zero {N : ℕ} [NeZero N]
     filter_upwards [hΓne] with s hs
     exact logDeriv_const_mul s (2 * (Real.pi : ℂ)) hπne
   have hFqdiff : DifferentiableAt ℂ (logDeriv (DirichletCharacter.completedLFunction χ)) 0 :=
-    differentiableAt_logDeriv_completedLFunction_zero hprimitive hne
+    differentiableAt_completedLogDeriv hprimitive hne
   have hDqdiff :
     DifferentiableAt ℂ
       (fun s => logDeriv (fun t : ℂ => 2 * (Real.pi : ℂ) * Complex.Gammaℝ (t + 2)) s) 0 := by
@@ -404,7 +403,7 @@ theorem deriv_logDeriv_dirichletEvenZeroLocalFactor_zero {N : ℕ} [NeZero N]
     filter_upwards [hhalf_near] with s hs
     have hcomp :=
       logDeriv_comp (f := Complex.Gammaℝ) (g := fun t : ℂ => t + 2) (x := s)
-        (differentiableAt_Gammaℝ_of_half_ne_neg_nat hs) ((differentiableAt_id).add_const 2)
+        (differentiableAt_Gammaℝ_of_nonpole hs) ((differentiableAt_id).add_const 2)
     have heqfun : (fun t : ℂ => Complex.Gammaℝ (t + 2)) = Complex.Gammaℝ ∘ fun t : ℂ => t + 2 := rfl
     rw [heqfun, hcomp]
     have hshiftDerivS : deriv (fun t : ℂ => t + 2) s = 1 := by
@@ -431,7 +430,7 @@ theorem deriv_logDeriv_dirichletEvenZeroLocalFactor_zero {N : ℕ} [NeZero N]
 Input/assumptions: `χ.Even`.
 Conclusion: `(logDeriv (gammaFactor χ) 1).re = -log π / 2 - γ / 2 - log 2`.
 Content:
-`DirichletLFunction.logDeriv_gammaFactor_eq_of_even_of_half_ne_neg_nat`
+`DirichletLFunction.gammaLogDeriv_even_eq_digamma`
 at `s = 1` gives `-log π / 2 +
 digamma (1/2) / 2`; `Complex.digamma_one_half` evaluates `digamma (1/2) = -2 log 2 - γ`. The exact
 mirror of `logDeriv_gammaFactor_zero_re_of_odd` (odd `s = 0` and even `s = 1` both land on
@@ -448,7 +447,7 @@ theorem logDeriv_gammaFactor_one_re_of_even {N : ℕ} {χ : DirichletCharacter �
     simp only [one_div, Complex.inv_re, Complex.re_ofNat, Complex.normSq_ofNat, div_self_mul_self',
       Complex.neg_re, Complex.natCast_re] at him
     linarith only [him, hmnn]
-  rw [logDeriv_gammaFactor_eq_of_even_of_half_ne_neg_nat heven hhalf, Complex.digamma_one_half]
+  rw [gammaLogDeriv_even_eq_digamma heven hhalf, Complex.digamma_one_half]
   have heq :
     -Complex.log (Real.pi : ℂ) / 2 + (-2 * Complex.log 2 - (Real.eulerMascheroniConstant : ℂ)) / 2 =
       ((-Real.log Real.pi / 2 - Real.eulerMascheroniConstant / 2 - Real.log 2 : ℝ) : ℂ) := by

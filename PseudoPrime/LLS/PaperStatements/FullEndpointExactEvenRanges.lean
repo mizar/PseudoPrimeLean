@@ -23,8 +23,7 @@ theorem exists_prime_ne_one_le_sixty_one_exact_even {q : ℕ} [NeZero q] (χ : D
     (hne : χ ≠ 1) (heven : χ.Even) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : Real.log q ≤ 523 / 50) : ∃ p : ℕ, p.Prime ∧ p ≤ 61 ∧ χ p ≠ 1 := by
   obtain ⟨p, hp, hb, hv⟩ :=
-    exists_prime_ne_one_of_exact_even_endpoint_polynomial χ hne heven hGRH
-      (by norm_num only : (8 : ℝ) ≤ 8)
+    exists_prime_ne_one_of_evenExactPolynomial χ hne heven hGRH (by norm_num only : (8 : ℝ) ≤ 8)
       (fullEndpoint_polynomial_pos_at_eight (by linarith only [hL]))
   have hp64 : p ≤ 64 := by exact_mod_cast hb
   have hsmall : ∀ p ∈ Finset.range 65, p.Prime → p ≤ 61 := by decide +kernel
@@ -32,10 +31,9 @@ theorem exists_prime_ne_one_le_sixty_one_exact_even {q : ℕ} [NeZero q] (χ : D
 
 /-- On the translated interval `523/50 <= log q <= 2171/100`, use the
 `8/9` radius and the exact even endpoint criterion. -/
-theorem exists_prime_ne_one_le_sixtyFourEightyFirst_shifted_log_sq {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1) (heven : χ.Even)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hLlo : 523 / 50 ≤ Real.log q)
-    (hLhi : Real.log q ≤ 2171 / 100) :
+theorem exists_prime_ne_one_64_81_shifted_sq_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hne : χ ≠ 1) (heven : χ.Even) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hLlo : 523 / 50 ≤ Real.log q) (hLhi : Real.log q ≤ 2171 / 100) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ (64 / 81 : ℝ) * (Real.log q - 73 / 50) ^ 2 ∧ χ p ≠ 1 := by
   let L := Real.log q - 73 / 50
   have hL9 : 9 ≤ L := by
@@ -44,8 +42,8 @@ theorem exists_prime_ne_one_le_sixtyFourEightyFirst_shifted_log_sq {q : ℕ} [Ne
     dsimp only [L]; linarith only [hLhi]
   have hy : (8 : ℝ) ≤ (8 / 9 : ℝ) * L := by nlinarith only [hL9]
   obtain ⟨p, hp, hb, hv⟩ :=
-    exists_prime_ne_one_of_exact_even_endpoint_polynomial χ hne heven hGRH hy
-      (fullEndpoint_polynomial_pos_eightNinths_log_interval hL9 hL21)
+    exists_prime_ne_one_of_evenExactPolynomial χ hne heven hGRH hy
+      (fullPoly_pos_eightNinths_interval hL9 hL21)
   refine ⟨p, hp, ?_, hv⟩
   dsimp only [L] at hb ⊢
   nlinarith only [hb]
@@ -64,8 +62,8 @@ theorem exists_prime_ne_one_le_eightyOne_shifted_log_sq {q : ℕ} [NeZero q]
     dsimp only [L]; linarith only [hLhi]
   have hy : (8 : ℝ) ≤ (9 / 10 : ℝ) * L := by nlinarith only [hL9]
   obtain ⟨p, hp, hb, hv⟩ :=
-    exists_prime_ne_one_of_exact_even_endpoint_polynomial χ hne heven hGRH hy
-      (fullEndpoint_polynomial_pos_eightyOne_log_interval hL9 hL26)
+    exists_prime_ne_one_of_evenExactPolynomial χ hne heven hGRH hy
+      (fullPoly_pos_nineTenths_interval hL9 hL26)
   refine ⟨p, hp, ?_, hv⟩
   dsimp only [L] at hb ⊢
   nlinarith only [hb]
@@ -77,15 +75,14 @@ theorem exists_prime_ne_one_le_576_exact_even {q : ℕ} [NeZero q] (χ : Dirichl
     (hL : Real.log q ≤ 706 / 25) : ∃ p : ℕ, p.Prime ∧ p ≤ 576 ∧ χ p ≠ 1 := by
   have hlevel : Real.log q - 73 / 50 ≤ 1339 / 50 := by linarith only [hL]
   obtain ⟨p, hp, hb, hv⟩ :=
-    exists_prime_ne_one_of_exact_even_endpoint_polynomial χ hne heven hGRH
-      (by norm_num only : (8 : ℝ) ≤ 24)
-      (fullEndpoint_polynomial_pos_at_twentyFour_of_level_le hlevel)
+    exists_prime_ne_one_of_evenExactPolynomial χ hne heven hGRH (by norm_num only : (8 : ℝ) ≤ 24)
+      (fullEndpoint_polynomial_pos_at_24_of_level_le hlevel)
   have hp576 : p ≤ 576 := by exact_mod_cast hb
   exact ⟨p, hp, hp576, hv⟩
 
 /-- On the translated midscale interval, the certified radius function gives
 the exact even endpoint witness bound without rebuilding its affine certificates. -/
-theorem exists_prime_ne_one_le_shifted_midscale_radius_sq {q : ℕ} [NeZero q]
+theorem exists_neOnePrime_le_shifted_midscale_radius_sq {q : ℕ} [NeZero q]
     (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1) (heven : χ.Even)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hLlo : 706 / 25 ≤ Real.log q)
     (hLhi : Real.log q ≤ 5283 / 20) :
@@ -97,8 +94,7 @@ theorem exists_prime_ne_one_le_shifted_midscale_radius_sq {q : ℕ} [NeZero q]
     dsimp only [L]; linarith only [hLhi]
   obtain ⟨hy, hpoly⟩ := midscaleEndpointRadius_data hLlo' hLhi'
   obtain ⟨p, hp, hb, hv⟩ :=
-    exists_prime_ne_one_of_exact_even_endpoint_polynomial χ hne heven hGRH (by linarith only [hy])
-      hpoly
+    exists_prime_ne_one_of_evenExactPolynomial χ hne heven hGRH (by linarith only [hy]) hpoly
   exact ⟨p, hp, hb, hv⟩
 
 end PseudoPrime.LLS.PaperStatements

@@ -119,9 +119,7 @@ theorem prime_trivial_false_of_closedAnchoredEulerPrefix {q A : ℕ} [NeZero q]
           2 * closedAnchoredEulerPrefix a b) :
     ¬(∀ p : ℕ, p.Prime → (p : ℝ) ≤ (99 / 40 : ℝ) * x → χ p = 1) := by
   rw [closedAnchoredEulerPrefix_eq (zero_lt_one.trans ha) hab] at hgap
-  exact
-    prime_trivial_false_of_anchoredEulerPrefix_variable_width χ hne hqA hGRH hx hh hhx ha hab hb hC
-      hgap
+  exact not_primeTrivial_anchoredVariable_GRH χ hne hqA hGRH hx hh hhx ha hab hb hC hgap
 
 /-- At a positive upper endpoint, the primitive plus the smoothed boundary simplifies
 to three rational powers, with complete cancellation of log b. Align product powers

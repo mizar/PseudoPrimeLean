@@ -99,7 +99,7 @@ Proof: split the progression primes at `z`. A prime above `z` cannot divide
 Role: reduces an arithmetic progression prime bound to a sifted-set bound,
 which can then be estimated by Selberg sieve inputs.
 -/
-theorem primeCountInProgression_le_small_primes_add_coprime (Y Q a P z : ℕ)
+theorem progressionCount_le_small_primes_add_coprime (Y Q a P z : ℕ)
     (hPsmall : ∀ p : ℕ, Nat.Prime p → p ∣ P → p ≤ z) :
     primeCountInProgression Y Q a ≤
       ((Finset.range (z + 1)).filter Nat.Prime).card +
@@ -417,8 +417,8 @@ prime set. Injectivity follows from `0 < d`.
 Role: this exposes a bounded parameter range for the finite averaging used in
 the AGP prime-supply argument.
 -/
-theorem primeCountInProgression_eq_card_good_parameters_of_cutoff (x d m l K : ℕ)
-    (hdm : Nat.Coprime d m) (hlm : Nat.Coprime l m) (hd : 0 < d) (hcut : x ≤ d * K + 1) :
+theorem progressionCount_card_good_parameters (x d m l K : ℕ) (hdm : Nat.Coprime d m)
+    (hlm : Nat.Coprime l m) (hd : 0 < d) (hcut : x ≤ d * K + 1) :
     primeCountInProgression x (d * m) (progressionCoprimeResidue d m l hdm) =
       ((Finset.range (K + 1)).filter
           (fun k => Nat.Prime (d * k + 1) ∧ d * k + 1 ≤ x ∧ (d * k + 1) % m = l % m)).card := by
@@ -491,7 +491,7 @@ Content: each local cutoff satisfies `x d ≤ d*K+1`, so its progression count
 has exactly the bounded parameter range. `D.attach` retains the membership
 proofs needed to construct the CRT residue for each divisor.
 
-Proof: apply `primeCountInProgression_eq_card_good_parameters_of_cutoff` at
+Proof: apply `progressionCount_card_good_parameters` at
 each attached divisor, then remove the attachment on the parameter-count sum.
 
 Role: this converts a family of arithmetic-progression estimates into the
@@ -519,8 +519,8 @@ theorem sum_progression_counts_eq_good_parameter_pairs (D : Finset ℕ) (x : ℕ
       apply Finset.sum_congr rfl
       intro d hdD
       exact
-        primeCountInProgression_eq_card_good_parameters_of_cutoff (x d.val) d.val m l K
-          (hdm d.val d.property) hlm (hpos d.val d.property) (hcut d.val d.property)
+        progressionCount_card_good_parameters (x d.val) d.val m l K (hdm d.val d.property) hlm
+          (hpos d.val d.property) (hcut d.val d.property)
     _ = _ :=
       Finset.sum_attach D
         (fun d =>
@@ -558,8 +558,8 @@ Proof: apply `progressionCoprimeResidue_modEq_iff` to the two congruences.
 Role: this lets arithmetic-progression estimates be stated using one CRT
 residue while retaining the source's restriction on the parameter.
 -/
-theorem primeCountInProgressionWithCoprimeQuotient_eq_crt_filter (x d m l L : ℕ)
-    (hdm : Nat.Coprime d m) (hlm : Nat.Coprime l m) :
+theorem coprimeProgressionCount_eq_crt_filter (x d m l L : ℕ) (hdm : Nat.Coprime d m)
+    (hlm : Nat.Coprime l m) :
     primeCountInProgressionWithCoprimeQuotient x d m l L =
       ((Finset.range (x + 1)).filter
           (fun p =>
@@ -594,8 +594,8 @@ prime set. The map `k ↦ d*k+1` is injective since `d > 0`.
 Role: this preserves the coprimality condition required by the AGP
 Carmichael-number construction.
 -/
-theorem primeCountInProgressionWithCoprimeQuotient_eq_card_good_parameters (x d m l L K : ℕ)
-    (hd : 0 < d) (hcut : x ≤ d * K + 1) :
+theorem coprimeProgressionCount_eq_card_good_parameters (x d m l L K : ℕ) (hd : 0 < d)
+    (hcut : x ≤ d * K + 1) :
     primeCountInProgressionWithCoprimeQuotient x d m l L =
       ((Finset.range (K + 1)).filter
           (fun k =>
@@ -686,8 +686,8 @@ Proof: apply the fixed-divisor parameter-count identity term by term and sum.
 Role: this is the finite counting interface for the coprime-parameter
 restriction used in reliable, Proposition 1.5.
 -/
-theorem sum_progression_counts_with_coprime_quotient_eq_good_pairs (D : Finset ℕ) (x : ℕ → ℕ)
-    (K m l L : ℕ) (hpos : ∀ d ∈ D, 0 < d) (hcut : ∀ d ∈ D, x d ≤ d * K + 1) :
+theorem coprimeProgression_sum_good_pairs (D : Finset ℕ) (x : ℕ → ℕ) (K m l L : ℕ)
+    (hpos : ∀ d ∈ D, 0 < d) (hcut : ∀ d ∈ D, x d ≤ d * K + 1) :
     (∑ d ∈ D, primeCountInProgressionWithCoprimeQuotient (x d) d m l L) =
       ∑ d ∈ D,
         ((Finset.range (K + 1)).filter
@@ -696,9 +696,7 @@ theorem sum_progression_counts_with_coprime_quotient_eq_good_pairs (D : Finset �
                 (d * k + 1 ≤ x d ∧ (d * k + 1) % m = l % m) ∧ Nat.Coprime k L)).card := by
   apply Finset.sum_congr rfl
   intro d hdD
-  exact
-    primeCountInProgressionWithCoprimeQuotient_eq_card_good_parameters (x d) d m l L K (hpos d hdD)
-      (hcut d hdD)
+  exact coprimeProgressionCount_eq_card_good_parameters (x d) d m l L K (hpos d hdD) (hcut d hdD)
 
 /--
 Purpose: select positive parameters at most `K` that are coprime to `L`.
@@ -788,13 +786,13 @@ zero parameter, which cannot produce a prime.
 Role: this gives the positive parameter set required by finite averaging and
 preserves the coprimality condition from reliable, Proposition 1.5.
 -/
-theorem sum_progression_counts_with_coprime_quotient_eq_positive_good_pairs (D : Finset ℕ)
-    (x : ℕ → ℕ) (K m l L : ℕ) (hpos : ∀ d ∈ D, 0 < d) (hcut : ∀ d ∈ D, x d ≤ d * K + 1) :
+theorem coprimeProgression_sum_positive_pairs (D : Finset ℕ) (x : ℕ → ℕ) (K m l L : ℕ)
+    (hpos : ∀ d ∈ D, 0 < d) (hcut : ∀ d ∈ D, x d ≤ d * K + 1) :
     (∑ d ∈ D, primeCountInProgressionWithCoprimeQuotient (x d) d m l L) =
       ∑ d ∈ D,
         ((positiveCoprimeParameters L K).filter
             (fun k => Nat.Prime (d * k + 1) ∧ d * k + 1 ≤ x d ∧ (d * k + 1) % m = l % m)).card := by
-  rw [sum_progression_counts_with_coprime_quotient_eq_good_pairs D x K m l L hpos hcut]
+  rw [coprimeProgression_sum_good_pairs D x K m l L hpos hcut]
   apply Finset.sum_congr rfl
   intro d hdD
   exact card_good_parameters_eq_positive_coprime_filter (x d) d m l L K
@@ -907,7 +905,7 @@ the result bounds contributions that are removed before averaging over
 Role: this is the finite sum interface for the elementary large-prime-factor
 error estimate used alongside the Brun–Titchmarsh bound.
 -/
-theorem sum_prime_progression_count_le_sum_integer_progression_bound (Q : Finset ℕ) (x D a : ℕ) :
+theorem sum_progressionCounts_le_integer_bound (Q : Finset ℕ) (x D a : ℕ) :
     (∑ q ∈ Q, primeCountInProgression x (D * q) a) ≤ ∑ q ∈ Q, (x / (D * q) + 1) := by
   exact Finset.sum_le_sum (fun q hq => primeCountInProgression_le x (D * q) a)
 
@@ -1135,7 +1133,7 @@ apply `exists_prime_set_from_divisor_pair_count`.
 Role: this is the bridge from the real-valued sieve estimates in reliable,
 Proposition 1.5, to the finite prime set used by the AGP construction.
 -/
-theorem exists_prime_set_from_real_divisor_pair_lower_bound (D K : Finset ℕ) (x m a T : ℕ) (c : ℝ)
+theorem exists_prime_set_of_real_pair_bound (D K : Finset ℕ) (x m a T : ℕ) (c : ℝ)
     (hK : ∀ k ∈ K, 0 < k) (hlower : ((K.card * T : ℕ) : ℝ) < c * (D.card : ℝ))
     (hanalytic :
       c * (D.card : ℝ) ≤
@@ -1169,8 +1167,8 @@ the real-valued finite averaging theorem.
 Role: this connects progression estimates with varying cutoffs to the prime
 set interface consumed by the AGP construction.
 -/
-theorem exists_prime_set_from_variable_coprime_progression_lower_bound (D : Finset ℕ) (x : ℕ → ℕ)
-    (xmax Kmax m a L T : ℕ) (c : ℝ) (hpos : ∀ d ∈ D, 0 < d) (hcut : ∀ d ∈ D, x d ≤ d * Kmax + 1)
+theorem exists_prime_set_of_variable_coprime (D : Finset ℕ) (x : ℕ → ℕ) (xmax Kmax m a L T : ℕ)
+    (c : ℝ) (hpos : ∀ d ∈ D, 0 < d) (hcut : ∀ d ∈ D, x d ≤ d * Kmax + 1)
     (hcommon : ∀ d ∈ D, x d ≤ xmax)
     (hlower : ((positiveCoprimeParameters L Kmax).card * T : ℕ) < c * (D.card : ℝ))
     (hanalytic :
@@ -1195,8 +1193,7 @@ theorem exists_prime_set_from_variable_coprime_progression_lower_bound (D : Fins
     exact
       Finset.mem_filter.mpr
         ⟨(Finset.mem_filter.mp hk).1, ⟨hk'.1, le_trans hk'.2.1 (hcommon d hdD), hk'.2.2⟩⟩
-  have hsum_eq :=
-    sum_progression_counts_with_coprime_quotient_eq_positive_good_pairs D x Kmax m a L hpos hcut
+  have hsum_eq := coprimeProgression_sum_positive_pairs D x Kmax m a L hpos hcut
   have hreal :
     (↑(∑ d ∈ D,
             ((positiveCoprimeParameters L Kmax).filter
@@ -1210,8 +1207,8 @@ theorem exists_prime_set_from_variable_coprime_progression_lower_bound (D : Fins
     intro k hk
     exact Nat.zero_lt_of_lt (Nat.succ_le_iff.mp (mem_positiveCoprimeParameters.mp hk).1)
   exact
-    exists_prime_set_from_real_divisor_pair_lower_bound D (positiveCoprimeParameters L Kmax) xmax m
-      a T c hKpos hlower hreal
+    exists_prime_set_of_real_pair_bound D (positiveCoprimeParameters L Kmax) xmax m a T c hKpos
+      hlower hreal
 
 /--
 Purpose: select the divisors of `L` below a prescribed cutoff.
@@ -1313,9 +1310,8 @@ divisor-count formula.
 Role: this turns the first Proposition 1.5 lower bound into an exponential
 factor-count lower bound when the cutoff covers `L`.
 -/
-theorem card_restrictedDivisors_eq_two_pow_primeFactors_card {L y : ℕ} (hL : L ≠ 0)
-    (hSquarefree : Squarefree L) (hLy : L ≤ y) :
-    (restrictedDivisors L y).card = 2 ^ L.primeFactors.card := by
+theorem restrictedDivisors_card_eq_two_pow {L y : ℕ} (hL : L ≠ 0) (hSquarefree : Squarefree L)
+    (hLy : L ≤ y) : (restrictedDivisors L y).card = 2 ^ L.primeFactors.card := by
   rw [restrictedDivisors_eq_divisors_of_le hL hLy]
   exact card_divisors_eq_two_pow_primeFactors_card hL hSquarefree
 
@@ -1375,8 +1371,7 @@ give the lower bound without requiring the cutoff to contain all divisors.
 Role: this supplies the initial Proposition 1.5 count at the square-root
 cutoff used by reliable, §2.
 -/
-theorem two_pow_primeFactors_card_le_twice_restrictedDivisors_sqrt {L : ℕ} (hL : L ≠ 0)
-    (hSquarefree : Squarefree L) :
+theorem two_pow_factors_le_twice_sqrt_divisors {L : ℕ} (hL : L ≠ 0) (hSquarefree : Squarefree L) :
     2 ^ L.primeFactors.card ≤ 2 * (restrictedDivisors L (Nat.sqrt L)).card := by
   rw [← card_divisors_eq_two_pow_primeFactors_card hL hSquarefree]
   exact card_divisors_le_twice_restrictedDivisors_sqrt hL
@@ -1492,8 +1487,8 @@ translate membership using `mem_restrictedDivisors`.
 Role: this exposes the source-shaped finite conclusion for the later analytic
 estimate and the application in reliable, Proposition 1.5.
 -/
-theorem exists_prime_set_from_restricted_divisor_pair_count (L y : ℕ) (hL : L ≠ 0) (K : Finset ℕ)
-    (x m a T : ℕ) (hK : ∀ k ∈ K, 0 < k)
+theorem exists_prime_set_of_restricted_pairs (L y : ℕ) (hL : L ≠ 0) (K : Finset ℕ) (x m a T : ℕ)
+    (hK : ∀ k ∈ K, 0 < k)
     (h :
       K.card * T <
         ∑ d ∈ restrictedDivisors L y,
@@ -1526,8 +1521,8 @@ Proof: specialize the variable-cutoff averaging theorem to
 Role: this is the finite output interface shaped like reliable, Proposition
 1.5, conditional on its analytic prime-count lower bound.
 -/
-theorem exists_prime_set_from_restricted_coprime_progression_lower_bound (L y : ℕ) (hL : L ≠ 0)
-    (x : ℕ → ℕ) (xmax Kmax m a T : ℕ) (c : ℝ) (hpos : ∀ d ∈ restrictedDivisors L y, 0 < d)
+theorem exists_prime_set_of_restricted_coprime (L y : ℕ) (hL : L ≠ 0) (x : ℕ → ℕ)
+    (xmax Kmax m a T : ℕ) (c : ℝ) (hpos : ∀ d ∈ restrictedDivisors L y, 0 < d)
     (hcut : ∀ d ∈ restrictedDivisors L y, x d ≤ d * Kmax + 1)
     (hcommon : ∀ d ∈ restrictedDivisors L y, x d ≤ xmax)
     (hlower :
@@ -1541,8 +1536,8 @@ theorem exists_prime_set_from_restricted_coprime_progression_lower_bound (L y : 
         T < P.card ∧
           ∀ p ∈ P, Nat.Prime p ∧ p ≤ xmax ∧ p % m = a % m ∧ ∃ d, d ∣ L ∧ d ≤ y ∧ p = d * k + 1 := by
   obtain ⟨k, hk, P, hPcard, hP⟩ :=
-    exists_prime_set_from_variable_coprime_progression_lower_bound (restrictedDivisors L y) x xmax
-      Kmax m a L T c hpos hcut hcommon hlower hanalytic
+    exists_prime_set_of_variable_coprime (restrictedDivisors L y) x xmax Kmax m a L T c hpos hcut
+      hcommon hlower hanalytic
   refine ⟨k, hk, P, hPcard, ?_⟩
   intro p hp
   rcases hP p hp with ⟨hpPrime, hpx, hpm, d, hd, hpeq⟩
@@ -1565,9 +1560,9 @@ factor bound then excludes every prime divisor of `L` from the output prime.
 Role: this separates the paper's analytic estimate from the final finite
 filters needed by `AGPProgressionPrimeSupply`.
 -/
-theorem exists_prime_set_from_large_restricted_coprime_progression_lower_bound (L y q C : ℕ)
-    (hL : L ≠ 0) (hqL : ∀ r, r ∣ L → Nat.Prime r → r ≤ q) (hC : C ≤ q) (x : ℕ → ℕ)
-    (xmax Kmax m a T : ℕ) (c : ℝ) (hcut : ∀ d ∈ largeRestrictedDivisors L y q, x d ≤ d * Kmax + 1)
+theorem exists_large_prime_set_of_coprime (L y q C : ℕ) (hL : L ≠ 0)
+    (hqL : ∀ r, r ∣ L → Nat.Prime r → r ≤ q) (hC : C ≤ q) (x : ℕ → ℕ) (xmax Kmax m a T : ℕ) (c : ℝ)
+    (hcut : ∀ d ∈ largeRestrictedDivisors L y q, x d ≤ d * Kmax + 1)
     (hcommon : ∀ d ∈ largeRestrictedDivisors L y q, x d ≤ xmax)
     (hlower :
       ((positiveCoprimeParameters L Kmax).card * T : ℕ) <
@@ -1589,8 +1584,8 @@ theorem exists_prime_set_from_large_restricted_coprime_progression_lower_bound (
     intro d hd
     exact Nat.pos_of_dvd_of_pos ((mem_largeRestrictedDivisors hL).mp hd).1 (Nat.pos_of_ne_zero hL)
   obtain ⟨k, hk, P, hPcard, hP⟩ :=
-    exists_prime_set_from_variable_coprime_progression_lower_bound (largeRestrictedDivisors L y q) x
-      xmax Kmax m a L T c hpos hcut hcommon hlower hanalytic
+    exists_prime_set_of_variable_coprime (largeRestrictedDivisors L y q) x xmax Kmax m a L T c hpos
+      hcut hcommon hlower hanalytic
   have hkpos : 0 < k := by
     exact Nat.zero_lt_of_lt (Nat.succ_le_iff.mp (mem_positiveCoprimeParameters.mp hk).1)
   have hkone : 1 ≤ k := Nat.succ_le_iff.mpr hkpos
@@ -1631,8 +1626,7 @@ injective, and `mem_restrictedDivisors` recovers the divisor conditions.
 Role: this connects a pointwise analytic divisor count directly to the finite
 prime-set input used by the AGP construction.
 -/
-theorem exists_prime_set_of_many_restricted_divisors_in_progression (L y k x m a T : ℕ) (hL : L ≠ 0)
-    (hk : 0 < k)
+theorem exists_prime_set_of_many_divisors (L y k x m a T : ℕ) (hL : L ≠ 0) (hk : 0 < k)
     (h :
       T <
         ((restrictedDivisors L y).filter
@@ -1665,8 +1659,8 @@ Proof: combine the two real inequalities, cast the strict inequality back to
 Role: this is the interface for inserting the real lower bound from paper95,
 Theorem 3.1, once its analytic estimate is formalized.
 -/
-theorem exists_prime_set_of_real_restricted_divisor_lower_bound (L y k x m a T : ℕ) (hL : L ≠ 0)
-    (hk : 0 < k) (c : ℝ) (hlower : (T : ℝ) < c * ((restrictedDivisors L y).card : ℝ))
+theorem exists_prime_set_of_real_restricted (L y k x m a T : ℕ) (hL : L ≠ 0) (hk : 0 < k) (c : ℝ)
+    (hlower : (T : ℝ) < c * ((restrictedDivisors L y).card : ℝ))
     (hanalytic :
       c * ((restrictedDivisors L y).card : ℝ) ≤
         ((((restrictedDivisors L y).filter
@@ -1681,7 +1675,7 @@ theorem exists_prime_set_of_real_restricted_divisor_lower_bound (L y k x m a T :
       ((restrictedDivisors L y).filter
           (fun d => Nat.Prime (d * k + 1) ∧ d * k + 1 ≤ x ∧ (d * k + 1) % m = a % m)).card :=
     Nat.cast_lt.mp (lt_of_lt_of_le hlower hanalytic)
-  exact exists_prime_set_of_many_restricted_divisors_in_progression L y k x m a T hL hk hcount
+  exact exists_prime_set_of_many_divisors L y k x m a T hL hk hcount
 
 /--
 Inputs: a finite divisor set, a positive parameter, a prime bound, a
@@ -1696,8 +1690,8 @@ good divisors injectively to prime values.
 Role: this generalizes the pointwise restricted-divisor conversion so that
 additional divisor filters can express the analytic hypotheses directly.
 -/
-theorem exists_prime_set_from_real_divisor_count_lower_bound (D : Finset ℕ) (k x m a T : ℕ) (c : ℝ)
-    (hk : 0 < k) (hlower : (T : ℝ) < c * (D.card : ℝ))
+theorem exists_prime_set_of_real_divisors (D : Finset ℕ) (k x m a T : ℕ) (c : ℝ) (hk : 0 < k)
+    (hlower : (T : ℝ) < c * (D.card : ℝ))
     (hanalytic :
       c * (D.card : ℝ) ≤
         ((((D.filter
@@ -1730,8 +1724,7 @@ Proof: map the retained good divisors to their prime values. Positivity of
 Role: this removes small prime values after applying the full divisor-count
 estimate, without requiring a separate density estimate for small divisors.
 -/
-theorem exists_prime_set_from_real_divisor_count_lower_bound_above (D : Finset ℕ) (k x m a q T : ℕ)
-    (hk : 0 < k)
+theorem exists_prime_set_above_of_divisor_count (D : Finset ℕ) (k x m a q T : ℕ) (hk : 0 < k)
     (hcount :
       T <
         (D.filter
@@ -1773,7 +1766,7 @@ the strict margin and the assumed discarded-count bound.
 Role: this transfers the full small-divisor estimate in reliable,
 Proposition 1.5 to the divisors above the prime-factor cutoff.
 -/
-theorem real_card_filter_lower_bound_of_discarded_count_bound (D : Finset ℕ) {keep good : ℕ → Prop}
+theorem real_card_filter_lower_of_discarded_bound (D : Finset ℕ) {keep good : ℕ → Prop}
     [DecidablePred keep] [DecidablePred good] (c : ℝ) (T R : ℕ)
     (hfull : ((T + R : ℕ) : ℝ) < c * (D.card : ℝ))
     (hgood : c * (D.card : ℝ) ≤ (((D.filter good).card : ℕ) : ℝ))
@@ -1858,8 +1851,8 @@ gives `d < d*k+1`; the factor bound then proves the prime is coprime to `L`.
 Role: this is the pointwise analytic-count interface for reliable,
 Proposition 1.5 with the exclusions needed by the AGP construction.
 -/
-theorem exists_prime_set_from_large_restricted_divisor_real_lower_bound (L y q C k x m a T : ℕ)
-    (hL : L ≠ 0) (hqL : ∀ r, r ∣ L → Nat.Prime r → r ≤ q) (hC : C ≤ q) (hk : 0 < k) (c : ℝ)
+theorem exists_large_prime_set_of_real_divisors (L y q C k x m a T : ℕ) (hL : L ≠ 0)
+    (hqL : ∀ r, r ∣ L → Nat.Prime r → r ≤ q) (hC : C ≤ q) (hk : 0 < k) (c : ℝ)
     (hlower : (T : ℝ) < c * ((largeRestrictedDivisors L y q).card : ℝ))
     (hanalytic :
       c * ((largeRestrictedDivisors L y q).card : ℝ) ≤
@@ -1875,8 +1868,8 @@ theorem exists_prime_set_from_large_restricted_divisor_real_lower_bound (L y q C
             p % m = a % m ∧
             C < p ∧ Nat.Coprime p L ∧ ∃ d, d ∣ L ∧ d ≤ y ∧ q < d ∧ p = d * k + 1 := by
   obtain ⟨P, hPcard, hP⟩ :=
-    exists_prime_set_from_real_divisor_count_lower_bound (largeRestrictedDivisors L y q) k x m a T c
-      hk hlower hanalytic
+    exists_prime_set_of_real_divisors (largeRestrictedDivisors L y q) k x m a T c hk hlower
+      hanalytic
   have hkone : 1 ≤ k := Nat.succ_le_iff.mpr hk
   refine ⟨P, hPcard, ?_⟩
   intro p hp

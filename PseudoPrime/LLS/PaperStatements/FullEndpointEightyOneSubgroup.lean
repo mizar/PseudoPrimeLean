@@ -37,8 +37,7 @@ nine-tenths comparison. This certifies the new interval in the public best-bound
 theorem fullEndpoint_eightyOne_lt_adaptive {L : ℝ} (hL : 9 ≤ L) :
     (81 / 100 : ℝ) * L ^ 2 < Analysis.adaptivePart2CutoffRoot L ^ 2 := by
   have ht :=
-    Analysis.finerPart2Root_ge_thirty_six_fifths_of_639_div_100_le
-      (by linarith only [hL] : (639 / 100 : ℝ) ≤ L)
+    Analysis.finerPart2Root_ge_36_5_of_639_100_le (by linarith only [hL] : (639 / 100 : ℝ) ≤ L)
   have hb :=
     Analysis.adaptivePart2Root_bounds
       (show 7 ≤ Analysis.finerPart2CutoffRoot L by linarith only [ht])
@@ -54,10 +53,9 @@ theorem fullEndpoint_eightyOne_lt_adaptive {L : ℝ} (hL : 9 ≤ L) :
 /-- Under GRH, a proper unit subgroup at 9<=log q<=26 has a prime outside its
 image through (81/100)(log q)^2. Pull back a nonprincipal quotient character and use the
 continuous endpoint certificate. Nonunit primes remain valid subgroup-image witnesses. -/
-theorem exists_prime_outside_subgroup_le_eightyOne_log_sq {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL9 : 9 ≤ Real.log q)
-    (hL26 : Real.log q ≤ 26) :
+theorem exists_primeOutsideSubgroup_81_100_logSq_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hH : H ≠ ⊤) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hL9 : 9 ≤ Real.log q) (hL26 : Real.log q ≤ 26) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (81 / 100 : ℝ) * (Real.log q) ^ 2 ∧ ¬∃ u ∈ H, (u : ZMod q) = (p : ZMod q) := by

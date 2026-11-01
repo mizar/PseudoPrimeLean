@@ -50,14 +50,14 @@ theorem shifted_logarithmic_sum_eq_integral {N : ℕ} [NeZero N] (χ : Dirichlet
     hsum
   have ha' : χ ((0 : ℕ) : ZMod N) * (ArithmeticFunction.vonMangoldt 0 : ℂ) = 0 := by
     rw [ArithmeticFunction.map_zero, Complex.ofReal_zero, mul_zero]
-  rw [General.logarithmicWeightedSum_shifted_eq_integral_LSeries _ ha' σ hx hτ hsum']
+  rw [General.logWeightedSum_shifted_integral _ ha' σ hx hτ hsum']
   congr 1
   apply MeasureTheory.integral_congr_ae
   filter_upwards with y
   have hs : 1 < (((σ + τ : ℝ) : ℂ) + y * Complex.I).re := by
     simpa only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, Complex.ofReal_im,
       mul_zero, zero_mul, sub_zero, add_zero] using hστ
-  rw [lSeries_twist_vonMangoldt_eq_neg_logDeriv_dirichletLFunction_of_one_lt_re χ hs]
+  rw [LSeries_mangoldt_eq_neg_logDeriv χ hs]
   simp only [shiftedLogContourKernel, Complex.ofReal_add, add_assoc]
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

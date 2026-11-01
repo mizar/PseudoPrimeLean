@@ -71,8 +71,8 @@ admit a cutoff with the strict energy budget at height floor(p²/k).
 Use the proved global height-layer count, exact root selection, and the fixed
 parameter choice. This improves the former 13/7 energy range without a count
 hypothesis or GRH. -/
-theorem exists_uniform_height_layer_rational_energy_budget {a b : ℕ} (ha : 0 < a)
-    (hgap : 116 * a < 63 * b) (hsmall : b < 2 * a) :
+theorem exists_uniform_layer_energy_budget {a b : ℕ} (ha : 0 < a) (hgap : 116 * a < 63 * b)
+    (hsmall : b < 2 * a) :
     ∃ P : ℕ,
       ∀ (p : ℕ) [Fact p.Prime],
         Odd p →
@@ -116,8 +116,8 @@ theorem exists_uniform_height_layer_rational_energy_budget {a b : ℕ} (ha : 0 <
 odd primes, an initial subgroup count less than 256k/p. Transfer the global
 height-layer energy budget to the smaller Fourier height and use the
 nonnegative interval kernel. No GRH is required. -/
-theorem exists_uniform_height_layer_heilbronn_interval_bound {a b : ℕ} (ha : 0 < a)
-    (hgap : 116 * a < 63 * b) (hsmall : b < 2 * a) :
+theorem exists_uniform_height_layer_interval_bound {a b : ℕ} (ha : 0 < a) (hgap : 116 * a < 63 * b)
+    (hsmall : b < 2 * a) :
     ∃ P : ℕ,
       ∀ (p : ℕ) [Fact p.Prime],
         Odd p →
@@ -126,7 +126,7 @@ theorem exists_uniform_height_layer_heilbronn_interval_bound {a b : ℕ} (ha : 0
             0 < k ∧
               k < p ^ 2 ∧
               p ^ b ≤ k ^ a ∧ k ^ a ≤ 2 ^ a * p ^ b ∧ p * heilbronnInitialCount p k < 256 * k := by
-  obtain ⟨P, hP⟩ := exists_uniform_height_layer_rational_energy_budget ha hgap hsmall
+  obtain ⟨P, hP⟩ := exists_uniform_layer_energy_budget ha hgap hsmall
   refine ⟨max P (32 ^ a * 2 ^ a + 1), ?_⟩
   intro p hp hodd hlarge
   have hPp := (max_le_iff.mp hlarge).1

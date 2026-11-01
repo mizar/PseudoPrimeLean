@@ -75,8 +75,8 @@ open AnalyticNumberTheory.Arithmetic in
 reciprocal lower bound and strict scalar separation produce an N-coprime non-one
 prime at most x. Compare the selected principal lower sum, with its exact exclusion
 loss, against the endpoint-mass upper sum. No Euler offset or Euler caps are needed. -/
-theorem exists_prime_coprime_not_one_of_reciprocalGap_endpoint_mass {h : ℝ} (hh : 0 < h) {q N : ℕ}
-    [NeZero q] (hq : 2 ≤ q) (hqN : q ∣ N) {χ : DirichletCharacter ℂ q}
+theorem exists_prime_neOne_massGap_GRH {h : ℝ} (hh : 0 < h) {q N : ℕ} [NeZero q] (hq : 2 ≤ q)
+    (hqN : q ∣ N) {χ : DirichletCharacter ℂ q}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x Y R : ℝ} (hx : 1 ≤ x) (hY : 64 ≤ Y)
     (hR : R ≤ (characterReciprocalWeightedSum Y χ).re) (B : Finset ℕ) (hB : B ⊆ Finset.Ioc 0 ⌊x⌋₊)
@@ -98,8 +98,8 @@ theorem exists_prime_coprime_not_one_of_reciprocalGap_endpoint_mass {h : ℝ} (h
   have hm := reciprocalGap_mass_le_reciprocal_cap hq hGRH hp hne hinv hY hR
   have hU := reciprocalGapCharacterSum_re_le_endpoint_mass hh hq hGRH hp hne hinv hx hm
   have hL :=
-    selected_reciprocalGap_lower_sub_loss_le_character hqN hh.le (zero_lt_one.trans_le hx) χ hsmall
-      B hB hcop lo u hlo hu hu1
+    reciprocalGap_selected_lower_le_char hqN hh.le (zero_lt_one.trans_le hx) χ hsmall B hB hcop lo u
+      hlo hu hu1
   linarith only [hU, hL, hgap]
 
 open AnalyticNumberTheory.Arithmetic in
@@ -107,8 +107,8 @@ open AnalyticNumberTheory.Arithmetic in
 and 2 dividing N produce an odd N-coprime prime at most x with value minus one.
 Apply the coprime non-one theorem and classify quadratic values; exclusion of two
 gives oddness. This is the negative-witness interface for quadratic characters. -/
-theorem exists_odd_prime_neg_one_of_reciprocalGap_endpoint_mass {h : ℝ} (hh : 0 < h) {q N : ℕ}
-    [NeZero q] (hq : 2 ≤ q) (hqN : q ∣ N) (hN2 : 2 ∣ N) {χ : DirichletCharacter ℂ q}
+theorem exists_oddPrime_negOne_massGap_GRH {h : ℝ} (hh : 0 < h) {q N : ℕ} [NeZero q] (hq : 2 ≤ q)
+    (hqN : q ∣ N) (hN2 : 2 ∣ N) {χ : DirichletCharacter ℂ q}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hquad : χ.IsQuadratic) {x Y R : ℝ} (hx : 1 ≤ x) (hY : 64 ≤ Y)
     (hR : R ≤ (characterReciprocalWeightedSum Y χ).re) (B : Finset ℕ) (hB : B ⊆ Finset.Ioc 0 ⌊x⌋₊)
@@ -126,14 +126,13 @@ theorem exists_odd_prime_neg_one_of_reciprocalGap_endpoint_mass {h : ℝ} (hh : 
     rw [hquad.inv]
     exact hne
   obtain ⟨p, hprime, hpx, hpc, hv⟩ :=
-    exists_prime_coprime_not_one_of_reciprocalGap_endpoint_mass hh hq hqN hGRH hp hne hi hx hY hR B
-      hB hcop lo u hlo hu hu1 hgap
+    exists_prime_neOne_massGap_GRH hh hq hqN hGRH hp hne hi hx hY hR B hB hcop lo u hlo hu hu1 hgap
   have hne2 : p ≠ 2 := by
     intro he
     subst p
     exact (Nat.prime_two.coprime_iff_not_dvd.mp hpc) hN2
   exact
     ⟨p, hprime, hprime.odd_of_ne_two hne2, hpx, hpc,
-      quadratic_character_apply_neg_one_of_coprime_ne_one χ hquad (hpc.of_dvd_right hqN) hv⟩
+      quadraticChar_eq_neg_one_of_coprime_ne_one χ hquad (hpc.of_dvd_right hqN) hv⟩
 
 end PseudoPrime.LLS.PaperStatements

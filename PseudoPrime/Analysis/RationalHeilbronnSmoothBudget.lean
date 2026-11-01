@@ -59,7 +59,7 @@ theorem rational_cutoff_le_two_rpow {p k a b : ℕ} (ha : 0 < a) (hcut : k ^ a �
 /-- For a positive and 1<b/a<beta+1, the fixed cutoff constant is eventually
 absorbed in p floor(p^beta), uniformly over all rational cutoffs. Retain the
 floor error through an intermediate real exponent. This is the count budget. -/
-theorem eventually_rational_cutoff_le_prime_mul_floor_power {a b : ℕ} {beta : ℝ} (ha : 0 < a)
+theorem eventually_rational_cutoff_le_prime_floor {a b : ℕ} {beta : ℝ} (ha : 0 < a)
     (hκ : 1 < (b : ℝ) / a) (hbeta : (b : ℝ) / a - 1 < beta) :
     Filter.Eventually
       (fun p : ℕ ↦ ∀ k : ℕ, k ^ a ≤ 2 ^ a * p ^ b → 256 * k ≤ p * Nat.floor ((p : ℝ) ^ beta))

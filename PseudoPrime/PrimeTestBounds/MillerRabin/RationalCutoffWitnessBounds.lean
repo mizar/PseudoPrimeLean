@@ -27,10 +27,8 @@ theorem exists_prime_witness_le_rationalCutoff_of_large {n : ℕ} (hn : 1 < n) (
         (p : ℝ) ≤ min ((Real.log n) ^ 2) ((Analysis.rationalPart2CutoffRoot (Real.log n)) ^ 2) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   let : NeZero n := ⟨(zero_lt_one.trans hn).ne'⟩
-  obtain ⟨H, hH, hpass⟩ :=
-    PrimeTest.exists_proper_subgroup_containing_strongMillerRabinPass hn hnOdd hnComposite
-  obtain ⟨p, hp, hb, hout⟩ :=
-    LLS.exists_prime_outside_subgroup_image_le_rationalPart2Cutoff hnLarge H hH hGRH
+  obtain ⟨H, hH, hpass⟩ := PrimeTest.exists_proper_subgroup_strongMR hn hnOdd hnComposite
+  obtain ⟨p, hp, hb, hout⟩ := LLS.exists_prime_outside_rationalPart2_GRH hnLarge H hH hGRH
   exact ⟨p, hp, hb, PrimeTest.not_pass_of_outside_subgroup hpass hout⟩
 
 /-- For 1 < n < 3000, the rational minimum cutoff equals (log n)².
@@ -65,8 +63,7 @@ theorem exists_prime_witness_le_rationalCutoff
         (p : ℝ) ≤ min ((Real.log n) ^ 2) ((Analysis.rationalPart2CutoffRoot (Real.log n)) ^ 2) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   by_cases hsmall : n < 3000
-  · obtain ⟨p, hp, hb, hf⟩ :=
-      exists_prime_millerRabin_witness_le_log_sq_of_lt_3000 hn hnOdd hnComposite hsmall
+  · obtain ⟨p, hp, hb, hf⟩ := exists_primeWitness_lt_3000 hn hnOdd hnComposite hsmall
     refine ⟨p, hp, ?_, PrimeTest.not_strongMillerRabinPass_iff.mpr hf⟩
     rw [rationalCutoff_eq_log_sq_of_lt_3000 hn hsmall]
     exact hb
@@ -78,7 +75,7 @@ theorem exists_prime_witness_le_rationalCutoff
 the rational minimum cutoff passes Miller–Rabin.
 Use the witness for a composite and the existing pure-cutoff prime acceptance otherwise.
 This is the public primality criterion for the improved rational cutoff. -/
-theorem prime_iff_millerRabin_for_all_primes_le_rationalCutoff
+theorem prime_iff_pass_primes_rationalCutoff_GRH
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : 1 < n)
     (hnOdd : Odd n) :
     (∀ p : ℕ,

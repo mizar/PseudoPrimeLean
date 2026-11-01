@@ -73,7 +73,7 @@ theorem boundedCongruenceCount_le_sum_restricted_card {p H : ℕ} [Fact p.Prime]
 bound with only the harmonic loss 1+log H. For odd p and H<p, apply the exact
 scale exchange and the existing divisor-sum inequality. The ratio premise is
 kept explicit for subsequent uniform eight-degree estimates. -/
-theorem boundedCongruenceCount_le_of_uniform_height_ratios {p H : ℕ} [Fact p.Prime] {C beta : ℝ}
+theorem congruenceCount_le_of_uniform_height_ratios {p H : ℕ} [Fact p.Prime] {C beta : ℝ}
     (hodd : Odd p) (hHp : H < p) (hC : 0 ≤ C)
     (hR : ∀ T : ℕ, T ≤ H → ((heightRestrictedRatioSet p H T).card : ℝ) ≤ C * T * (p : ℝ) ^ beta) :
     (boundedCongruenceCount p H : ℝ) ≤ 4 * C * H * (1 + Real.log H) * (p : ℝ) ^ beta := by

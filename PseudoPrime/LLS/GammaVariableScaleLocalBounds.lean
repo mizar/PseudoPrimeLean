@@ -189,7 +189,7 @@ theorem gamma_actual_dyadic_minus_one_cost_variable {f : ℕ} (χ : DirichletCha
     (hχ : χ 2 = -1) (K : Finset ℕ) {x : ℝ} (hx : 1 ≤ x) :
     Analysis.gammaActualPrimeLocalCost χ 2 K x - (11783423 / 25000000 : ℝ) * Real.log 4 ≤
       3 / 10 + gammaVariableRampAllowance x := by
-  have he := Analysis.gamma_minus_one_positive_prime_correction_le_cost χ Nat.prime_two hχ K
+  have he := Analysis.gamma_neg_one_prime_correction_le_cost χ Nat.prime_two hχ K
   have hr := gamma_dyadic_minus_one_ramp_le_variable hx
   have hc := gamma_dyadic_weighted_euler_bounds.2
   norm_num only [Nat.cast_ofNat] at he
@@ -235,7 +235,7 @@ Role: supply the even-conductor branch at arbitrary scales. -/
 theorem gamma_actual_dyadic_zero_cost_variable {f : ℕ} (χ : DirichletCharacter ℂ f) (hχ : χ 2 = 0)
     (K : Finset ℕ) {x : ℝ} (hx : 1 ≤ x) :
     Analysis.gammaActualPrimeLocalCost χ 2 K x ≤ gammaVariableDyadicAllowance x := by
-  have he := Analysis.sum_gammaResolventMangoldtWeight_primePowers_le_cost Nat.prime_two K
+  have he := Analysis.sum_gammaMangoldt_primePowers_le_cost Nat.prime_two K
   have hr := gamma_dyadic_zero_ramp_le_variable hx
   have hc := gamma_dyadic_weighted_euler_bounds.1
   norm_num only [Nat.cast_ofNat] at he

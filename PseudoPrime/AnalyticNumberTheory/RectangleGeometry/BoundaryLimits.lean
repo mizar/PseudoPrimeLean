@@ -23,7 +23,7 @@ lower horizontal integrals tend to zero and the rectangle boundary integrals
 tend to L, the oriented vertical difference also tends to L. Subtract the
 horizontal difference from the defining four-edge expression. This isolates
 the vertical side of a contour limit without extra integrability premises. -/
-theorem tendsto_vertical_difference_of_boundary_limit (f : ℂ → ℂ) (a b : ℝ) (U B : ℕ → ℝ) (L : ℂ)
+theorem tendsto_vertical_sub_of_boundary (f : ℂ → ℂ) (a b : ℝ) (U B : ℕ → ℝ) (L : ℂ)
     (hupper :
       Filter.Tendsto (fun n ↦ ∫ x in a..b, f ((x : ℂ) + U n * Complex.I)) Filter.atTop (nhds 0))
     (hlower :

@@ -18,8 +18,8 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 genus kernel centered at two is at most `4/(1+Im(z)^2)`. Combine reciprocals
 before estimating norms and compare the squared distances. This bounds both
 halves of the critical strip and preserves quadratic ordinate decay. -/
-theorem norm_two_center_genus_kernel_le_quadratic_of_large_im {z : ℂ} (hzhi : z.re ≤ 1)
-    (hheight : 1 ≤ |z.im|) : ‖1 / ((2 : ℂ) - z) + 1 / z‖ ≤ 4 / (1 + z.im ^ 2) := by
+theorem twoCenter_kernel_quadratic_bound {z : ℂ} (hzhi : z.re ≤ 1) (hheight : 1 ≤ |z.im|) :
+    ‖1 / ((2 : ℂ) - z) + 1 / z‖ ≤ 4 / (1 + z.im ^ 2) := by
   have him : 1 ≤ z.im ^ 2 := by nlinarith only [hheight, sq_abs z.im, sq_nonneg (|z.im| - 1)]
   have hden : 0 < 1 + z.im ^ 2 := by nlinarith only [sq_nonneg z.im]
   have hzsq : (1 + z.im ^ 2) / 4 ≤ ‖z‖ ^ 2 := by
@@ -45,7 +45,7 @@ theorem norm_two_center_genus_kernel_le_quadratic_of_large_im {z : ℂ} (hzhi : 
 weight is at most four times the inverse-square distance from three halves.
 Compare the two denominators explicitly. This connects ordinate weights to the
 unconditional shifted genus-mass estimate. -/
-theorem inverse_quadratic_im_le_four_shifted_mass {z : ℂ} (hzlo : 0 ≤ z.re) (hzhi : z.re ≤ 1) :
+theorem invQuadratic_le_shiftedMass {z : ℂ} (hzlo : 0 ≤ z.re) (hzhi : z.re ≤ 1) :
     1 / (1 + z.im ^ 2) ≤ 4 * ‖(((3 / 2 : ℝ) : ℂ) - z)⁻¹‖ ^ 2 := by
   have hden : 0 < 1 + z.im ^ 2 := by nlinarith only [sq_nonneg z.im]
   have hs : ‖((3 / 2 : ℝ) : ℂ) - z‖ ^ 2 = (3 / 2 - z.re) ^ 2 + z.im ^ 2 := by
@@ -68,11 +68,11 @@ theorem inverse_quadratic_im_le_four_shifted_mass {z : ℂ} (hzlo : 0 ≤ z.re) 
 the combined genus kernel is at most sixteen times its shifted inverse-square
 mass. Compose the quadratic kernel and distance comparisons. This removes any
 need for a zero gap when estimating the remote genus correction. -/
-theorem norm_two_center_genus_kernel_le_shifted_mass_of_large_im {z : ℂ} (hzlo : 0 ≤ z.re)
-    (hzhi : z.re ≤ 1) (hheight : 1 ≤ |z.im|) :
+theorem twoCenter_kernel_shiftedMass_bound {z : ℂ} (hzlo : 0 ≤ z.re) (hzhi : z.re ≤ 1)
+    (hheight : 1 ≤ |z.im|) :
     ‖1 / ((2 : ℂ) - z) + 1 / z‖ ≤ 16 * ‖(((3 / 2 : ℝ) : ℂ) - z)⁻¹‖ ^ 2 := by
-  have hk := norm_two_center_genus_kernel_le_quadratic_of_large_im hzhi hheight
-  have hm := inverse_quadratic_im_le_four_shifted_mass hzlo hzhi
+  have hk := twoCenter_kernel_quadratic_bound hzhi hheight
+  have hm := invQuadratic_le_shiftedMass hzlo hzhi
   simp only [div_eq_mul_inv, one_mul] at hk hm ⊢
   linarith only [hk, hm]
 
@@ -81,9 +81,8 @@ genus term of absolute ordinate at least one is at most sixteen times its actual
 shifted multiplicity mass. Nonzero divisor multiplicity places the zero in the
 open critical strip; analyticity makes the multiplicity nonnegative. This is
 the pointwise input for the unconditional correction-tail bound. -/
-theorem norm_completed_genus_term_le_shifted_mass_of_large_im {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {ρ : ℂ}
-    (hheight : 1 ≤ |ρ.im|) :
+theorem completed_genusTerm_shiftedMass_le {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {ρ : ℂ} (hheight : 1 ≤ |ρ.im|) :
     ‖(MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℂ) * (1 / ((2 : ℂ) - ρ) + 1 / ρ)‖ ≤
       16 * (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
         ‖(((3 / 2 : ℝ) : ℂ) - ρ)⁻¹‖ ^ 2 := by
@@ -98,8 +97,7 @@ theorem norm_completed_genus_term_le_shifted_mass_of_large_im {q : ℕ} [NeZero 
       exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg hAn ρ
     rw [norm_mul, Complex.norm_intCast, abs_of_nonneg hnonneg]
     have hb :=
-      mul_le_mul_of_nonneg_left
-        (norm_two_center_genus_kernel_le_shifted_mass_of_large_im hlo hhi hheight) hnonneg
+      mul_le_mul_of_nonneg_left (twoCenter_kernel_shiftedMass_bound hlo hhi hheight) hnonneg
     nlinarith only [hb]
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

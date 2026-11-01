@@ -43,8 +43,8 @@ theorem weighted_energy_budget_twenty_eight_fifteenths {p H M k r : ℕ} [Fact p
 /-- For odd prime p, r at least 16185 and p^28 at most k^15 with k at most p^2,
 coefficient absorption gives the weighted energy comparison at floor(p^2/k).
 Its fifteenth power is at most p^2, so its 120-th power is at most p^16 and hence p^17. -/
-theorem weighted_energy_budget_floor_twenty_eight_fifteenths {p M k r : ℕ} [Fact p.Prime]
-    (hodd : Odd p) (hr : 16185 ≤ r) (hcut : p ^ 28 ≤ k ^ 15) (hsmall : k ≤ p ^ 2)
+theorem weighted_energy_floor_28_15 {p M k r : ℕ} [Fact p.Prime] (hodd : Odd p) (hr : 16185 ≤ r)
+    (hcut : p ^ 28 ≤ k ^ 15) (hsmall : k ≤ p ^ 2)
     (hcoefficient : weightedCongruenceEnergyCoefficient M 7 24 r ^ 120 < p) :
     (M * p) * heilbronnEnergy p * boundedCongruenceCount p (p ^ 2 / k) < k ^ 2 := by
   have hp : 0 < p := (Fact.out : p.Prime).pos
@@ -84,9 +84,7 @@ theorem exists_weighted_short_congruence_energy_budget {p M r : ℕ} [Fact p.Pri
     exists_power_cutoff_or_base (U := p ^ 2) (Nat.pow_pos (n := 28) hp)
       (by norm_num only : 0 < 15) with
     ⟨k, hk, hkp, hlow, hhigh⟩ | hbase
-  · refine
-      ⟨k, hk, hkp, hlow, ?_,
-        weighted_energy_budget_floor_twenty_eight_fifteenths hodd hr hlow hkp hcoefficient⟩
+  · refine ⟨k, hk, hkp, hlow, ?_, weighted_energy_floor_28_15 hodd hr hlow hkp hcoefficient⟩
     simpa only [Nat.reducePow] using hhigh
   · exact (not_le_of_gt hmass hbase).elim
 
@@ -95,7 +93,7 @@ every odd prime beyond it admits the proved 28/15-scale cutoff and weighted ener
 Choose weightedCongruenceEnergyCoefficient(M,7,24,r)^120+1 without evaluating it.
 This closes the numerical comparison, with space below the target Fermat exponent 15/8;
 it does not yet prove the Fourier interval bound or extract a nonzero Fermat quotient. -/
-theorem exists_uniform_weighted_short_congruence_energy_budget {M r : ℕ} (hr : 16185 ≤ r) :
+theorem exists_uniform_short_energy_budget {M r : ℕ} (hr : 16185 ≤ r) :
     ∃ P : ℕ,
       ∀ (p : ℕ) [Fact p.Prime],
         Odd p →

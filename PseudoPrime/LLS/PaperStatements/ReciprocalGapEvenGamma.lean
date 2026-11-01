@@ -23,7 +23,7 @@ theorem reciprocalGapGamma_re_eq_even {q : ℕ} {χ : DirichletCharacter ℂ q} 
   have hp : 0 < ((r : ℂ) / 2).re := by
     rw [complex_div_two_re, Complex.ofReal_re]
     linarith only [hr]
-  rw [AnalyticNumberTheory.DirichletLFunction.logDeriv_gammaFactor_eq_of_even_of_half_ne_neg_nat he
+  rw [AnalyticNumberTheory.DirichletLFunction.gammaLogDeriv_even_eq_digamma he
       (fun n ↦ AnalyticNumberTheory.Gamma.not_neg_nat_of_re_pos hp n)]
   rw [← Complex.ofReal_log Real.pi_pos.le]
   unfold reciprocalGapEvenGammaLower

@@ -33,7 +33,7 @@ lies in `Q`.
 Proof: Expand the indicator as a filtered finite sum and cast each weight.
 Role: Connects weighted incidence bounds to natural-valued correlation sums.
 -/
-theorem weightedResidueDifferenceIncidence_eq_filtered_sum {N : ℕ} [NeZero N] (w : ZMod N → ℕ)
+theorem weightedIncidence_eq_filtered_sum {N : ℕ} [NeZero N] (w : ZMod N → ℕ)
     (Q : Finset (ZMod N)) :
     weightedResidueDifferenceIncidence w Q =
       (∑ x : ZMod N, ∑ y ∈ Finset.univ.filter (fun y ↦ x - y ∈ Q), w x * w y : ℕ) := by
@@ -63,7 +63,7 @@ Claim: The Fourier sum of `Q` against the weighted squared transform equals
 Proof: Expand the weighted norm square, interchange finite sums, and apply
 the unweighted Fourier inversion formula to each difference.
 Role: Provides the exact identity before separating the zero frequency. -/
-theorem weightedResidueDifferenceIncidence_fourier_complex {N : ℕ} [NeZero N] (w : ZMod N → ℕ)
+theorem weightedIncidence_fourier_complex {N : ℕ} [NeZero N] (w : ZMod N → ℕ)
     (Q : Finset (ZMod N)) :
     (∑ l : ZMod N,
         residueCharacterSum Q (-l) * (Complex.normSq (weightedResidueCharacterSum w l) : ℂ)) =
@@ -113,7 +113,7 @@ theorem weightedResidueDifferenceIncidence_fourier_re {N : ℕ} [NeZero N] (w : 
     (∑ l : ZMod N,
         (residueCharacterSum Q (-l)).re * Complex.normSq (weightedResidueCharacterSum w l)) =
       (N : ℝ) * weightedResidueDifferenceIncidence w Q := by
-  have h := congrArg Complex.re (weightedResidueDifferenceIncidence_fourier_complex w Q)
+  have h := congrArg Complex.re (weightedIncidence_fourier_complex w Q)
   simp only [Complex.re_sum, Complex.mul_re, Complex.mul_im, Complex.ofReal_re, Complex.ofReal_im,
     mul_zero, zero_mul, add_zero, sub_zero, Complex.natCast_re, Complex.natCast_im] at h
   have hIndicator :
@@ -167,8 +167,8 @@ Claim: `N * incidence` is at most the exact main term plus `N * M * sum(w^2)`.
 Proof: Separate frequency zero, bound the remaining terms by `M`, and apply
 the weighted Parseval identity to the total squared mass.
 Role: This is the weighted counterpart of the finite-set incidence bound. -/
-theorem weightedResidueDifferenceIncidence_mul_le_of_fourier_bound {N : ℕ} [NeZero N]
-    (w : ZMod N → ℕ) (Q : Finset (ZMod N)) {M : ℝ} (hM : 0 ≤ M)
+theorem weightedIncidence_mul_le_of_fourier_bound {N : ℕ} [NeZero N] (w : ZMod N → ℕ)
+    (Q : Finset (ZMod N)) {M : ℝ} (hM : 0 ≤ M)
     (hQ : ∀ l : ZMod N, l ≠ 0 → ‖residueCharacterSum Q l‖ ≤ M) :
     (N : ℝ) * weightedResidueDifferenceIncidence w Q ≤
       (Q.card : ℝ) * (weightedResidueMass w : ℝ) ^ 2 +
@@ -202,7 +202,7 @@ Input: The same Fourier-envelope hypotheses as the scaled estimate.
 Claim: Incidence is at most `card(Q) * mass(w)^2 / N + M * sum(w^2)`.
 Proof: Divide by the positive real cast of `N`.
 Role: Gives the form used when summing the dyadic correlation levels. -/
-theorem weightedResidueDifferenceIncidence_le_of_fourier_bound {N : ℕ} [NeZero N] (w : ZMod N → ℕ)
+theorem weightedIncidence_le_of_fourier_bound {N : ℕ} [NeZero N] (w : ZMod N → ℕ)
     (Q : Finset (ZMod N)) {M : ℝ} (hM : 0 ≤ M)
     (hQ : ∀ l : ZMod N, l ≠ 0 → ‖residueCharacterSum Q l‖ ≤ M) :
     weightedResidueDifferenceIncidence w Q ≤
@@ -213,7 +213,7 @@ theorem weightedResidueDifferenceIncidence_le_of_fourier_bound {N : ℕ} [NeZero
     (N : ℝ) * weightedResidueDifferenceIncidence w Q ≤
         (Q.card : ℝ) * (weightedResidueMass w : ℝ) ^ 2 +
           (N : ℝ) * M * ∑ x : ZMod N, (w x : ℝ) ^ 2 :=
-      weightedResidueDifferenceIncidence_mul_le_of_fourier_bound w Q hM hQ
+      weightedIncidence_mul_le_of_fourier_bound w Q hM hQ
     _ =
         (N : ℝ) *
           ((Q.card : ℝ) * (weightedResidueMass w : ℝ) ^ 2 / N + M * ∑ x : ZMod N, (w x : ℝ) ^ 2) :=

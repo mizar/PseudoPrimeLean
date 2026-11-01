@@ -43,10 +43,9 @@ theorem euler_ratio_sixteenth_le_seventeen :
 Claim: the ordinary derivative norm on real part seventeen sixteenths is at most seventeen.
 Proof: specialize the uniform Euler-ratio theorem and its rational allowance.
 Role: supply the improved right-line input to completed reflection. -/
-theorem norm_logDeriv_seventeen_sixteenths_le_seventeen {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (t : ℝ) :
+theorem norm_L_logDeriv_17_16_le_17 {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (t : ℝ) :
     ‖logDeriv χ.LFunction (((17 / 16 : ℝ) : ℂ) + t * Complex.I)‖ ≤ 17 := by
-  have h := norm_logDeriv_vertical_le_euler_ratio χ (by norm_num only : (0 : ℝ) < 1 / 16) t
+  have h := norm_L_logDeriv_le_euler_ratio χ (by norm_num only : (0 : ℝ) < 1 / 16) t
   have he : (1 + 1 / 16 : ℝ) = 17 / 16 := by norm_num only
   rw [he] at h
   exact h.trans euler_ratio_sixteenth_le_seventeen
@@ -55,8 +54,8 @@ theorem norm_logDeriv_seventeen_sixteenths_le_seventeen {q : ℕ} [NeZero q]
 Claim: the completed derivative uses constant twenty-eight on the fixed line.
 Proof: retain the Euler denominator and reflect without changing conductor normalization.
 Role: replace the coarse constant in the left Gamma integral. -/
-theorem norm_logDeriv_completed_seventeen_sixteenths_le_refined {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hne : χ ≠ 1) (t : ℝ) :
+theorem completedLogDeriv_17_16_refined {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hne : χ ≠ 1) (t : ℝ) :
     ‖logDeriv χ.completedLFunction (((17 / 16 : ℝ) : ℂ) + Complex.I * t)‖ ≤ 28 + |t| := by
   let s : ℂ := ((17 / 16 : ℝ) : ℂ) + Complex.I * t
   have hr : s.re = 17 / 16 := by
@@ -69,12 +68,11 @@ theorem norm_logDeriv_completed_seventeen_sixteenths_le_refined {q : ℕ} [NeZer
     rw [hr]; norm_num only
   have hp : 0 < s.re := zero_lt_one.trans_le hr1
   have he :=
-    logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne
-      (completedLFunction_ne_zero_of_one_le_re hne hr1) (gammaFactor_ne_zero_of_re_pos χ hp)
-      (analyticAt_gammaFactor_of_re_pos χ hp).differentiableAt
-  have ho := norm_logDeriv_seventeen_sixteenths_le_seventeen χ t
+    L_logDeriv_sub_gamma_of_regular hne (completed_ne_zero_of_one_le_re hne hr1)
+      (gammaFactor_ne_zero_of_re_pos χ hp) (analyticAt_gammaFactor_of_re_pos χ hp).differentiableAt
+  have ho := norm_L_logDeriv_17_16_le_17 χ t
   rw [mul_comm (t : ℂ) Complex.I] at ho
-  have hg := norm_logDeriv_gammaFactor_seventeen_sixteenths_le χ hr
+  have hg := gammaLogDeriv_17_16_linear_bound χ hr
   rw [hi] at hg
   have hc :
     logDeriv χ.completedLFunction s = logDeriv χ.LFunction s + logDeriv χ.gammaFactor s := by
@@ -88,8 +86,8 @@ theorem norm_logDeriv_completed_seventeen_sixteenths_le_refined {q : ℕ} [NeZer
 Claim: the completed derivative uses constant twenty-eight on the fixed line.
 Proof: retain the Euler denominator and reflect without changing conductor normalization.
 Role: replace the coarse constant in the left Gamma integral. -/
-theorem norm_logDeriv_completed_neg_one_sixteenth_le_refined {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (t : ℝ) :
+theorem completedLogDeriv_neg_1_16_refined {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (t : ℝ) :
     ‖logDeriv χ.completedLFunction (((-1 / 16 : ℝ) : ℂ) + Complex.I * t)‖ ≤
       ‖Complex.log (q : ℂ)‖ + 28 + |t| := by
   let s : ℂ := ((17 / 16 : ℝ) : ℂ) + Complex.I * ((-t : ℝ) : ℂ)
@@ -97,9 +95,7 @@ theorem norm_logDeriv_completed_neg_one_sixteenth_le_refined {q : ℕ} [NeZero q
     simp only [s, Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, Complex.I_im,
       Complex.ofReal_im, zero_mul, mul_zero, sub_zero, add_zero]
     norm_num only
-  have he :=
-    completedLFunction_logDeriv_functionalEquation_at hp hne
-      (completedLFunction_ne_zero_of_one_le_re hinv hr)
+  have he := completedLogDeriv_functionalEq hp hne (completed_ne_zero_of_one_le_re hinv hr)
   have hs_eq : 1 - s = ((-1 / 16 : ℝ) : ℂ) + Complex.I * t := by
     dsimp only [s]
     simp only [Complex.ofReal_div, Complex.ofReal_neg, Complex.ofReal_one, Complex.ofReal_ofNat]
@@ -107,7 +103,7 @@ theorem norm_logDeriv_completed_neg_one_sixteenth_le_refined {q : ℕ} [NeZero q
   rw [hs_eq] at he
   have hn := norm_add_le (Complex.log (q : ℂ)) (logDeriv χ⁻¹.completedLFunction s)
   rw [← he, norm_neg] at hn
-  have hb := norm_logDeriv_completed_seventeen_sixteenths_le_refined hinv (-t)
+  have hb := completedLogDeriv_17_16_refined hinv (-t)
   rw [abs_neg] at hb
   exact hn.trans (by linarith only [hb])
 

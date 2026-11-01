@@ -145,7 +145,7 @@ theorem loweredPrimeAllowance_dual_cap (c : GammaLocalCellData) (rows : ℕ → 
   have hloR : (1 : ℝ) ≤ lo := by exact_mod_cast hlo
   have hcR : (lo : ℝ) ≤ c.lo := Rat.cast_le.mpr hlc
   have h :=
-    gamma_scale_signed_dual_budget_le_lowered_window_rows_base_ratio c rows hc hL hloR hcR hlox hxhi
+    gammaSignedDual_loweredRows_baseRatio c rows hc hL hloR hcR hlox hxhi
       (fun p hm ↦ hcheck p (hsub hm)) he hsum
   have hrR : (0 : ℝ) < root := Rat.cast_pos.mpr hr
   have hsq : (root : ℝ) ^ 2 ≤ lo := by exact_mod_cast hrlo

@@ -114,8 +114,8 @@ theorem characterLogWeightedSum_re_ge_rationalRadius {q : ℕ} [NeZero q] (χ : 
     lt_of_lt_of_le (lt_trans (by norm_num only : (0 : ℝ) < 8) hL) hroot
   have hx : (1 : ℝ) < (rationalRadiusRoot q) ^ 2 := by nlinarith only [hL, hroot]
   have h :=
-    characterLogWeightedSum_re_ge_riemann_of_prime_trivial ((rationalRadiusRoot q) ^ 2) χ hx
-      hGRH.riemann htrivial
+    characterLogSum_re_ge_of_prime_trivial_RH ((rationalRadiusRoot q) ^ 2) χ hx hGRH.riemann
+      htrivial
   rw [Real.sqrt_sq hy.le] at h
   have hloss := log_sq_rationalRadius_le_level_ratio hq
   have hw : (0 : ℝ) ≤ (1 / 2 : ℝ) * q.primeFactors.card :=
@@ -146,9 +146,7 @@ theorem exists_prime_character_ne_one_le_rationalRadius {q : ℕ} [NeZero q]
   have hN : 2 ≤ χ.conductor :=
     Nat.succ_le_iff.mpr
       (Nat.lt_of_le_of_ne (NeZero.pos χ.conductor)
-        (Ne.symm
-          (AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one
-            hprim)))
+        (Ne.symm (AnalyticNumberTheory.DirichletLFunction.character_level_ne_one_of_ne_one hprim)))
   have hu := characterLogWeightedSum_re_le_rationalRadius χ hq hN hprim hGRH htrivial
   have hl := characterLogWeightedSum_re_ge_rationalRadius χ hq hGRH htrivial
   have hP : (57 / 50 : ℝ) ≤ Real.log Real.pi := by
@@ -164,8 +162,8 @@ theorem exists_prime_character_ne_one_le_rationalRadius {q : ℕ} [NeZero q]
     rw [add_sub_cancel_left]
     exact le_max_right _ _
   exact
-    Analysis.refinedPart1_bounds_incompatible_fourNinetyNine_twoFiftieths
-      (Analysis.eight_lt_log_level hq) (le_add_of_nonneg_right (le_max_left _ _)) (le_max_left _ _)
+    Analysis.refinedPart1_incompatible_499_250 (Analysis.eight_lt_log_level hq)
+      (le_add_of_nonneg_right (le_max_left _ _)) (le_max_left _ _)
       AnalyticNumberTheory.RiemannXi.riemannZeroMass_le_one_fortieth hP
       Analysis.log_two_mul_pi_lt.le hB hu hl
 

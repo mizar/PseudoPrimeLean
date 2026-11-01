@@ -132,7 +132,7 @@ theorem gamma_dyadic_ramified_actual_cost_le (K : Finset ℕ) {x : ℝ} (hx : 20
           ((∑' k : ℕ, Analysis.exponentialRampLocalCorrection 0 ((2 : ℝ) ^ (k + 1) / x) (k + 1)) /
             Real.sqrt x) ≤
       (3 / 4 : ℝ) := by
-  have he := Analysis.sum_gammaResolventMangoldtWeight_primePowers_le_cost Nat.prime_two K
+  have he := Analysis.sum_gammaMangoldt_primePowers_le_cost Nat.prime_two K
   have hc := gamma_dyadic_weighted_euler_bounds.1
   have hr := gamma_dyadic_ramified_actual_ramp_le hx
   norm_num only [Nat.cast_ofNat] at he

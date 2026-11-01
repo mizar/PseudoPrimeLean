@@ -70,8 +70,7 @@ theorem reciprocalGapCharacterSum_three_re_le_rational {q : ℕ} [NeZero q] (hq 
         (by norm_num only) hx ∅ ∅ (97 / 100) 0 (4481 / 1000) (-(784 / 1000)) (97 / 100) (-(11 / 10))
         0 0 ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
     · exact
-        AnalyticNumberTheory.Arithmetic.tsum_vonMangoldt_le_seventeen_tenths_certified
-          (by norm_num only)
+        AnalyticNumberTheory.Arithmetic.tsum_vonMangoldt_le_of_ge_17_10_certified (by norm_num only)
     · have hg :=
         (reciprocalGapGamma_re_le_odd (by norm_num only : (0 : ℝ) < 9 / 5) χ).trans
           cubicGapOddGammaUpper_nonpos
@@ -86,8 +85,7 @@ theorem reciprocalGapCharacterSum_three_re_le_rational {q : ℕ} [NeZero q] (hq 
       norm_num only [Complex.ofReal_div, Complex.ofReal_ofNat, Complex.ofReal_one] at hg ⊢
       exact hg
     · exact
-        AnalyticNumberTheory.Arithmetic.tsum_vonMangoldt_le_seventeen_tenths_certified
-          (by norm_num only)
+        AnalyticNumberTheory.Arithmetic.tsum_vonMangoldt_le_of_ge_17_10_certified (by norm_num only)
     · have hg :=
         cubicGapEvenGammaLower_ge.trans
           (reciprocalGapEvenGammaLower_le (by norm_num only : (0 : ℝ) < 4) χ⁻¹)

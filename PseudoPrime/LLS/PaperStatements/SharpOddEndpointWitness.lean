@@ -20,7 +20,7 @@ open AnalyticNumberTheory.Arithmetic in
 has an odd non-one prime through x if the endpoint limit is negative. Inputs satisfy
 64 ≤ Y ≤ x, with a reciprocal cost bound and any logarithmic defect bound valid under
 odd-prime triviality. The right-limit comparison separates arithmetic from analysis. -/
-theorem exists_odd_prime_of_twoCostLimit_neg_of_defect_bound {N : ℕ} (χ : DirichletCharacter ℂ N)
+theorem exists_odd_prime_of_twoCost_defect_gap_GRH {N : ℕ} (χ : DirichletCharacter ℂ N)
     [NeZero χ.conductor] (hq : 2 ≤ χ.conductor) (hne : χ.primitiveCharacter ≠ 1)
     (hquad : χ.primitiveCharacter.IsQuadratic)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x Y c D : ℝ} (hx : 1 < x)
@@ -101,11 +101,10 @@ theorem log_defect_le_half_log_sq_of_quadratic {N : ℕ} (χ : DirichletCharacte
         p ∈ Finset.Ioc 0 ⌊x ^ ((1 : ℝ) / k)⌋₊ → p.Prime → Odd p → χ.primitiveCharacter p = 1 := by
     intro k p hk hp hprime hodd
     exact ht p hprime hodd (cast_le_of_mem_root_cutoff hx1 (Finset.mem_Icc.mp hk).1 hp)
-  rw [logWeightedMangoldtSum_sub_characterLogWeightedSum_re_eq_twoAdicCorrection_of_eq_one x χ hx
-      ho]
+  rw [logMangoldt_sub_re_eq_twoCorrection_of_one x χ hx ho]
   exact
-    twoAdicLogCorrection_le_half_log_sq_of_isQuadratic x χ
-      ((by norm_num only : (0 : ℝ) < 2).trans_le hx).ne' hquad
+    logTwoCorrection_le_half_sq_of_quadratic x χ ((by norm_num only : (0 : ℝ) < 2).trans_le hx).ne'
+      hquad
 
 /-- Under GRH and the quadratic conductor hypotheses, a negative endpoint limit
 with logarithmic cost half the squared logarithm yields an odd non-one prime.
@@ -120,7 +119,7 @@ theorem exists_odd_prime_of_sharp_twoCostLimit_neg {N : ℕ} (χ : DirichletChar
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ x ∧ χ.primitiveCharacter p ≠ 1 := by
   have hx2 : 2 ≤ x := by linarith only [hY, hYx]
   exact
-    exists_odd_prime_of_twoCostLimit_neg_of_defect_bound χ hq hne hquad hGRH hx hY hYx hC
+    exists_odd_prime_of_twoCost_defect_gap_GRH χ hq hne hquad hGRH hx hY hYx hC
       (fun ht ↦ log_defect_le_half_log_sq_of_quadratic χ hx2 hquad ht) hlim
 
 /-- Under the same conductor and GRH hypotheses, a positive rational endpoint
@@ -143,7 +142,7 @@ theorem exists_odd_prime_of_sharp_twoCostPolynomial_pos {N : ℕ} (χ : Dirichle
   have he : (Real.log (y ^ 2)) ^ 2 / 2 = 2 * (Real.log y) ^ 2 := by
     rw [Real.log_pow]
     ring
-  have hl := oddEndpointTwoCostLimit_neg_of_rational_polynomial_pos χ.conductor hy1 hP
+  have hl := oddEndpointTwoCost_neg_of_rational_poly χ.conductor hy1 hP
   apply exists_odd_prime_of_sharp_twoCostLimit_neg χ hq hne hquad hGRH hx hy64 (le_refl _) hC
   rw [he]
   exact hl

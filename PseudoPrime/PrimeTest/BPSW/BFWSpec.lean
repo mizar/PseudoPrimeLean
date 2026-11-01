@@ -43,7 +43,7 @@ Termination, scan minimality, and Wheel30/classical equality remove the executab
 theorem bfwScan_some {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hc : (FirstStopNeOneSet isClassicalCandidate n).Nonempty) :
     selfridgeNeOneJump n 5 (2 * n) = some (firstStopNeOne isClassicalCandidate n hc) := by
-  have hw := wheel30FirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns
+  have hw := wheel30NeOneSet_nonempty_of_odd_nonsquare hn hns
   obtain ⟨i, hi⟩ := Option.isSome_iff_exists.mp (selfridgeNeOneScan_total hn hns)
   have he := selfridgeNeOneScan_firstStop hi hw
   rw [selfridgeNeOneJump_eq, hi, he, firstStopNeOne_wheel30_eq_classical hn.pos hn hns hc hw]
@@ -96,7 +96,7 @@ def BFWPass (n : ℕ) : Prop :=
       if hn : Odd n then
         if hns : ¬IsSquare n then
           IsStrongMillerRabinProbablePrime n 2 ∧
-            BFWSelectedConditions n (classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns)
+            BFWSelectedConditions n (classicalNeOneSet_nonempty_of_odd_nonsquare hn hns)
         else False
       else False
 
@@ -105,7 +105,7 @@ Boolean conjunction separates the MR comparison from the independently specified
 theorem bfwOddNonsquare_iff {n : ℕ} (hl : ¬n < 2) (ht : n ≠ 2) (hn : Odd n) (hns : ¬IsSquare n) :
     strengthenedBPSWWheel30 n = true ↔ BFWPass n := by
   have he := Nat.not_even_iff_odd.mpr hn
-  have hc := classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns
+  have hc := classicalNeOneSet_nonempty_of_odd_nonsquare hn hns
   simp only [strengthenedBPSWWheel30, bpswWheel30, BFWPass, hl, ht, hn, he, hns, ↓reduceIte,
     ↓reduceDIte, natIsSquare_false_of_not_isSquare hns, Bool.false_eq_true, not_false_eq_true,
     SelfridgeScanResult.acceptedOdd_eq]

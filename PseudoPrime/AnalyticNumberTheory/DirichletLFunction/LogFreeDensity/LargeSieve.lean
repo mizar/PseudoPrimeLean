@@ -47,7 +47,7 @@ Proof: the frequency is reduced modulo `r` inside each standard additive charact
 
 Role: makes the periodicity of the finite additive-frequency weight explicit.
 -/
-theorem ramanujanSum_add_modulus_multiple (r n k : ℕ) [NeZero r] :
+theorem ramanujan_mod_shift (r n k : ℕ) [NeZero r] :
     ramanujanSum r (n + k * r) = ramanujanSum r n := by
   classical
   unfold ramanujanSum
@@ -82,8 +82,7 @@ one; the number of terms is `Nat.totient r`.
 
 Role: controls the size of the Ramanujan weight in Selberg's finite character transform.
 -/
-theorem norm_ramanujanSum_le_totient (r n : ℕ) [NeZero r] :
-    ‖ramanujanSum r n‖ ≤ (Nat.totient r : ℝ) := by
+theorem ramanujan_norm_bound (r n : ℕ) [NeZero r] : ‖ramanujanSum r n‖ ≤ (Nat.totient r : ℝ) := by
   classical
     calc
     ‖ramanujanSum r n‖ ≤ ∑ u : (ZMod r)ˣ, ‖ZMod.stdAddChar ((n : ZMod r) * (u : ZMod r))‖ :=
@@ -134,7 +133,7 @@ Proof: coprimality makes `n` a unit modulo `r`, so apply `ramanujanSum_mul_unit`
 Role: makes the Ramanujan coefficient constant on integers sifted away from the prime factors of
 its modulus.
 -/
-theorem ramanujanSum_eq_one_of_coprime {r n : ℕ} [NeZero r] (h : Nat.Coprime n r) :
+theorem ramanujan_eq_at_one {r n : ℕ} [NeZero r] (h : Nat.Coprime n r) :
     ramanujanSum r n = ramanujanSum r 1 := by
   have hm : IsUnit (n : ZMod r) := (ZMod.isUnit_iff_coprime n r).2 h
   calc
@@ -151,7 +150,7 @@ the sum over nonzero residues, which is the sum over units.
 
 Role: supplies the prime factor in the squarefree Ramanujan norm calculation.
 -/
-theorem ramanujanSum_prime_one {p : ℕ} [NeZero p] [Fact p.Prime] : ramanujanSum p 1 = -1 := by
+theorem ramanujan_prime_one {p : ℕ} [NeZero p] [Fact p.Prime] : ramanujanSum p 1 = -1 := by
   classical
   have hchar : ZMod.stdAddChar ≠ (1 : AddChar (ZMod p) ℂ) := by
     intro h
@@ -197,7 +196,7 @@ sums by the resulting equivalence.
 Role: provides the finite-domain decomposition needed to factor the character-weighted additive
 sum in Selberg's Theorem 7A.
 -/
-theorem sum_units_zmod_mul_coprime {q r : ℕ} [NeZero q] [NeZero r] (h : Nat.Coprime q r)
+theorem sum_units_coprime_mul {q r : ℕ} [NeZero q] [NeZero r] (h : Nat.Coprime q r)
     (f : (ZMod (q * r))ˣ → ℂ) :
     (∑ u : (ZMod (q * r))ˣ, f u) =
       ∑ a : (ZMod q)ˣ,
@@ -226,8 +225,8 @@ identities.
 Role: gives an explicit representative for splitting standard additive characters after CRT
 reindexing.
 -/
-theorem chineseRemainder_symm_apply_nat {q r : ℕ} [NeZero q] [NeZero r] (h : Nat.Coprime q r)
-    (a : ZMod q) (b : ZMod r) :
+theorem chineseRemainder_symm {q r : ℕ} [NeZero q] [NeZero r] (h : Nat.Coprime q r) (a : ZMod q)
+    (b : ZMod r) :
     (ZMod.chineseRemainder h).symm (a, b) =
       ((r * (((ZMod.isUnit_iff_coprime r q).2 h.symm).unit⁻¹ * a).val +
             q * (((ZMod.isUnit_iff_coprime q r).2 h).unit⁻¹ * b).val :
@@ -298,8 +297,8 @@ orthogonality to the two unit residues.
 
 Role: provides the exact finite-modulus orthogonality identity used in mean-square arguments.
 -/
-theorem dirichletCharacter_bilinear_orthogonality {q : ℕ} [NeZero q] (S : Finset (ZMod q))
-    (hS : ∀ a ∈ S, IsUnit a) (f g : ZMod q → ℂ) :
+theorem bilinear_char_sum {q : ℕ} [NeZero q] (S : Finset (ZMod q)) (hS : ∀ a ∈ S, IsUnit a)
+    (f g : ZMod q → ℂ) :
     (∑ χ : DirichletCharacter ℂ q, (∑ a ∈ S, f a * χ a⁻¹) * (∑ b ∈ S, g b * χ b)) =
       (Nat.totient q : ℂ) * ∑ a ∈ S, f a * g a := by
   classical
@@ -348,8 +347,8 @@ the multiplicative inverse.
 
 Role: converts the bilinear character orthogonality identity into a sum of squared norms.
 -/
-theorem dirichletCharacter_inv_eq_star {q : ℕ} (χ : DirichletCharacter ℂ q) {a : ZMod q}
-    (ha : IsUnit a) : χ (a⁻¹) = star (χ a) := by
+theorem character_inv_eq_star {q : ℕ} (χ : DirichletCharacter ℂ q) {a : ZMod q} (ha : IsUnit a) :
+    χ (a⁻¹) = star (χ a) := by
   have hnorm : ‖χ a‖ = 1 := by
     rw [← ha.unit_spec]
     exact DirichletCharacter.unit_norm_eq_one χ ha.unit
@@ -379,17 +378,17 @@ Inputs: a finite set of unit residues and a complex-valued function on the resid
 Claim: the sum over Dirichlet characters of the squared transform norm equals the totient times
 the sum of the pointwise squared norms.
 
-Proof: rewrite one transform as the conjugate transform using `dirichletCharacter_inv_eq_star`,
+Proof: rewrite one transform as the conjugate transform using `character_inv_eq_star`,
 then apply finite bilinear character orthogonality.
 
 Role: supplies exact fixed-modulus Parseval orthogonality for later large-sieve estimates.
 -/
-theorem dirichletCharacter_parseval {q : ℕ} [NeZero q] (S : Finset (ZMod q))
-    (hS : ∀ a ∈ S, IsUnit a) (f : ZMod q → ℂ) :
+theorem character_parseval {q : ℕ} [NeZero q] (S : Finset (ZMod q)) (hS : ∀ a ∈ S, IsUnit a)
+    (f : ZMod q → ℂ) :
     (∑ χ : DirichletCharacter ℂ q, star (∑ a ∈ S, f a * χ a) * (∑ a ∈ S, f a * χ a)) =
       (Nat.totient q : ℂ) * ∑ a ∈ S, star (f a) * f a := by
   classical
-  have hbil := dirichletCharacter_bilinear_orthogonality S hS (fun a => star (f a)) f
+  have hbil := bilinear_char_sum S hS (fun a => star (f a)) f
   have hfirst (χ : DirichletCharacter ℂ q) :
     (∑ a ∈ S, star (f a) * χ (a⁻¹)) = star (∑ a ∈ S, f a * χ a) := by
     calc
@@ -398,7 +397,7 @@ theorem dirichletCharacter_parseval {q : ℕ} [NeZero q] (S : Finset (ZMod q))
         intro a ha
         calc
           star (f a) * χ (a⁻¹) = star (f a) * star (χ a) :=
-            congrArg (fun z : ℂ => star (f a) * z) (dirichletCharacter_inv_eq_star χ (hS a ha))
+            congrArg (fun z : ℂ => star (f a) * z) (character_inv_eq_star χ (hS a ha))
           _ = star (f a * χ a) := by rw [star_mul, mul_comm]
       _ = star (∑ a ∈ S, f a * χ a) := (map_sum (starRingEnd ℂ) (fun a => f a * χ a) S).symm
   calc
@@ -536,7 +535,7 @@ by `ZMod.card_units_eq_totient`.
 
 Role: supplies the character-side mass needed to normalize primitive Fourier transforms.
 -/
-theorem dirichletCharacter_normSq_sum {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) :
+theorem character_normSq_sum {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) :
     (∑ x : ZMod q, Complex.normSq (χ x)) = Nat.totient q := by
   classical
   let U : Finset (ZMod q) := Finset.univ.image (fun u : (ZMod q)ˣ => (u : ZMod q))
@@ -586,9 +585,8 @@ primitive-character formula, and cancel the positive totient using the character
 
 Role: gives the exact Gauss-sum normalization used in cross-modulus mean-square estimates.
 -/
-theorem primitive_gaussSum_normSq_eq_modulus {q : ℕ} [NeZero q] (hq : 1 < q)
-    (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive) :
-    Complex.normSq (gaussSum χ ZMod.stdAddChar) = q := by
+theorem gaussSum_normSq_eq_q {q : ℕ} [NeZero q] (hq : 1 < q) (χ : DirichletCharacter ℂ q)
+    (hχ : χ.IsPrimitive) : Complex.normSq (gaussSum χ ZMod.stdAddChar) = q := by
   have hparseval := zmod_dft_parseval (fun x : ZMod q => χ x)
   have hformula (k : ZMod q) :
     Complex.normSq (ZMod.dft (fun x : ZMod q => χ x) k) =
@@ -613,8 +611,8 @@ theorem primitive_gaussSum_normSq_eq_modulus {q : ℕ} [NeZero q] (hq : 1 < q)
             (by
               intro k
               simp only [Equiv.neg_apply])
-      _ = Nat.totient q := dirichletCharacter_normSq_sum χ⁻¹
-  have hchiNorm := dirichletCharacter_normSq_sum χ
+      _ = Nat.totient q := character_normSq_sum χ⁻¹
+  have hchiNorm := character_normSq_sum χ
   have hpos : 0 < q := lt_trans Nat.zero_lt_one hq
   have htot : Nat.totient q ≠ 0 := Nat.ne_of_gt (Nat.totient_pos.mpr hpos)
   have hmain := hsumformula.symm.trans hparseval
@@ -639,8 +637,8 @@ Fourier transform, and remove nonunit residues where the character vanishes.
 
 Role: converts primitive Dirichlet polynomial sums into sums over reduced additive frequencies.
 -/
-theorem primitive_character_fourier_inversion {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
-    (hχ : χ.IsPrimitive) (n : ℕ) :
+theorem primitive_fourier_eq {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive)
+    (n : ℕ) :
     gaussSum χ⁻¹ ZMod.stdAddChar * χ (n : ZMod q) =
       ∑ x ∈ (Finset.univ.filter (fun x : ZMod q => IsUnit x)),
         ZMod.stdAddChar (x * (n : ZMod q)) * χ⁻¹ x := by
@@ -687,14 +685,14 @@ coefficients.
 Claim: the Dirichlet polynomial multiplied by the inverse character's Gauss sum is the additive
 Fourier polynomial over unit residues, weighted by the inverse character.
 
-Proof: apply `primitive_character_fourier_inversion` termwise, exchange the two finite sums, and
+Proof: apply `primitive_fourier_eq` termwise, exchange the two finite sums, and
 factor the character value out of the inner sum.
 
 Role: reduces a primitive-character mean square to additive exponential sums over reduced
 fractions, the input needed for the large-sieve spacing estimate.
 -/
-theorem primitive_character_polynomial_additive_transform {q : ℕ} [NeZero q] (S : Finset ℕ)
-    (a : ℕ → ℂ) (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive) :
+theorem char_poly_fourier_eq {q : ℕ} [NeZero q] (S : Finset ℕ) (a : ℕ → ℂ)
+    (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive) :
     gaussSum χ⁻¹ ZMod.stdAddChar * (∑ n ∈ S, a n * χ (n : ZMod q)) =
       ∑ x ∈ (Finset.univ.filter (fun x : ZMod q => IsUnit x)),
         χ⁻¹ x * (∑ n ∈ S, a n * ZMod.stdAddChar (x * (n : ZMod q))) := by
@@ -709,7 +707,7 @@ theorem primitive_character_polynomial_additive_transform {q : ℕ} [NeZero q] (
     _ = ∑ n ∈ S, a n * (∑ x ∈ U, ZMod.stdAddChar (x * (n : ZMod q)) * χ⁻¹ x) := by
       apply Finset.sum_congr rfl
       intro n hn
-      rw [primitive_character_fourier_inversion χ hχ n]
+      rw [primitive_fourier_eq χ hχ n]
     _ = ∑ n ∈ S, ∑ x ∈ U, a n * (ZMod.stdAddChar (x * (n : ZMod q)) * χ⁻¹ x) := by
       apply Finset.sum_congr rfl
       intro n hn
@@ -735,7 +733,7 @@ the modulus itself.
 Role: indexes primitive-character mean-square estimates without introducing an additional
 unproved predicate or a computability assumption.
 -/
-noncomputable def primitiveDirichletCharacterSet (q : ℕ) : Finset (DirichletCharacter ℂ q) := by
+noncomputable def primitiveCharacters (q : ℕ) : Finset (DirichletCharacter ℂ q) := by
   classical exact Finset.univ.filter (fun χ => χ.IsPrimitive)
 
 /--
@@ -751,16 +749,14 @@ characters.
 Role: reduces the required cross-modulus large sieve estimate to the additive large sieve for
 fractions with reduced numerator and denominator.
 -/
-theorem primitive_character_mean_square_additive_le {q : ℕ} [NeZero q] (hq : 1 < q) (S : Finset ℕ)
-    (a : ℕ → ℂ) :
-    (q : ℝ) *
-        (∑ χ ∈ primitiveDirichletCharacterSet q, Complex.normSq (∑ n ∈ S, a n * χ (n : ZMod q))) ≤
+theorem char_energy_le_add {q : ℕ} [NeZero q] (hq : 1 < q) (S : Finset ℕ) (a : ℕ → ℂ) :
+    (q : ℝ) * (∑ χ ∈ primitiveCharacters q, Complex.normSq (∑ n ∈ S, a n * χ (n : ZMod q))) ≤
       (Nat.totient q : ℝ) *
         ∑ x ∈ (Finset.univ.filter (fun x : ZMod q => IsUnit x)),
           Complex.normSq (∑ n ∈ S, a n * ZMod.stdAddChar (x * (n : ZMod q))) := by
   classical
   let U : Finset (ZMod q) := Finset.univ.filter (fun x => IsUnit x)
-  let P : Finset (DirichletCharacter ℂ q) := primitiveDirichletCharacterSet q
+  let P : Finset (DirichletCharacter ℂ q) := primitiveCharacters q
   let f : ZMod q → ℂ := fun x => ∑ n ∈ S, a n * ZMod.stdAddChar (x * (n : ZMod q))
   let D : DirichletCharacter ℂ q → ℂ := fun χ => ∑ x ∈ U, χ⁻¹ x * f x
   have hU : ∀ x ∈ U, IsUnit x := by
@@ -769,7 +765,7 @@ theorem primitive_character_mean_square_additive_le {q : ℕ} [NeZero q] (hq : 1
   have hnorm (z : ℂ) : (Complex.normSq z : ℂ) = star z * z := by
     rw [← Complex.mul_conj z]
     exact mul_comm _ _
-  have hparseval := dirichletCharacter_parseval U hU f
+  have hparseval := character_parseval U hU f
   have hfull :
     (∑ χ : DirichletCharacter ℂ q, Complex.normSq (D χ)) =
       Nat.totient q * ∑ x ∈ U, Complex.normSq (f x) := by
@@ -812,8 +808,8 @@ theorem primitive_character_mean_square_additive_le {q : ℕ} [NeZero q] (hq : 1
       rw [DirichletCharacter.isPrimitive_def] at hχ ⊢
       rw [DirichletCharacter.conductor_inv]
       exact hχ
-    have htau := primitive_gaussSum_normSq_eq_modulus hq χ⁻¹ hprimInv
-    have htransform := primitive_character_polynomial_additive_transform S a χ hχ
+    have htau := gaussSum_normSq_eq_q hq χ⁻¹ hprimInv
+    have htransform := char_poly_fourier_eq S a χ hχ
     have hnormTransform := congrArg Complex.normSq htransform
     rw [Complex.normSq_mul, htau] at hnormTransform
     simpa only [D, f, U] using hnormTransform
@@ -824,8 +820,7 @@ theorem primitive_character_mean_square_additive_le {q : ℕ} [NeZero q] (hq : 1
     apply Finset.sum_congr rfl
     intro χ hχ
     have hprimitive : χ.IsPrimitive := by
-      simpa only [P, primitiveDirichletCharacterSet, Finset.mem_filter, Finset.mem_univ,
-        true_and] using hχ
+      simpa only [P, primitiveCharacters, Finset.mem_filter, Finset.mem_univ, true_and] using hχ
     exact hpoint χ hprimitive
   have hPsub : P ⊆ Finset.univ := Finset.subset_univ _
   have hPbound :
@@ -852,16 +847,16 @@ Proof: apply the fixed-modulus character-to-additive estimate to the coefficient
 Role: supplies the fixed-modulus weighted estimate used in the character decomposition of
 Selberg's Theorem 7A.
 -/
-theorem primitive_character_ramanujan_weighted_mean_square_additive_le {q r : ℕ} [NeZero q]
-    [NeZero r] (hq : 1 < q) (S : Finset ℕ) (a : ℕ → ℂ) :
+theorem ramanujan_energy_le {q r : ℕ} [NeZero q] [NeZero r] (hq : 1 < q) (S : Finset ℕ)
+    (a : ℕ → ℂ) :
     (q : ℝ) *
-        (∑ χ ∈ primitiveDirichletCharacterSet q,
+        (∑ χ ∈ primitiveCharacters q,
           Complex.normSq (∑ n ∈ S, (a n * ramanujanSum r n) * χ (n : ZMod q))) ≤
       (Nat.totient q : ℝ) *
         ∑ x ∈ (Finset.univ.filter (fun x : ZMod q => IsUnit x)),
           Complex.normSq
             (∑ n ∈ S, (a n * ramanujanSum r n) * ZMod.stdAddChar (x * (n : ZMod q))) := by
-  exact primitive_character_mean_square_additive_le hq S (fun n => a n * ramanujanSum r n)
+  exact char_energy_le_add hq S (fun n => a n * ramanujanSum r n)
 
 /--
 Inputs: a modulus greater than one, a finite set of indices, and complex coefficients.
@@ -872,11 +867,10 @@ finite type structure.
 
 Role: packages one modulus' primitive-character mean square for finite family estimates.
 -/
-noncomputable def primitiveCharacterPolynomialMeanSquare (q : ℕ) (_hq : 1 < q) (S : Finset ℕ)
-    (a : ℕ → ℂ) : ℝ := by
+noncomputable def polyMeanSquare (q : ℕ) (_hq : 1 < q) (S : Finset ℕ) (a : ℕ → ℂ) : ℝ := by
   classical
   letI : NeZero q := ⟨Nat.ne_of_gt (lt_trans Nat.zero_lt_one _hq)⟩
-  exact ∑ χ ∈ primitiveDirichletCharacterSet q, Complex.normSq (∑ n ∈ S, a n * χ (n : ZMod q))
+  exact ∑ χ ∈ primitiveCharacters q, Complex.normSq (∑ n ∈ S, a n * χ (n : ZMod q))
 
 /--
 Inputs: a modulus greater than one, a finite polynomial index set, complex coefficients, and a
@@ -890,16 +884,13 @@ Proof: factor the constant out of each finite character sum and use multiplicati
 
 Role: removes constant Ramanujan weights from mean squares on a pre-sifted support.
 -/
-theorem primitiveCharacterPolynomialMeanSquare_mul_const {q : ℕ} (hq : 1 < q) (S : Finset ℕ)
-    (a : ℕ → ℂ) (c : ℂ) :
-    primitiveCharacterPolynomialMeanSquare q hq S (fun n => a n * c) =
-      Complex.normSq c * primitiveCharacterPolynomialMeanSquare q hq S a := by
+theorem polyMeanSquare_mul {q : ℕ} (hq : 1 < q) (S : Finset ℕ) (a : ℕ → ℂ) (c : ℂ) :
+    polyMeanSquare q hq S (fun n => a n * c) = Complex.normSq c * polyMeanSquare q hq S a := by
   classical
-  simp only [primitiveCharacterPolynomialMeanSquare]
+  simp only [polyMeanSquare]
   calc
-    (∑ χ ∈ primitiveDirichletCharacterSet q, Complex.normSq (∑ n ∈ S, a n * c * χ (n : ZMod q))) =
-        ∑ χ ∈ primitiveDirichletCharacterSet q,
-          Complex.normSq (c * ∑ n ∈ S, a n * χ (n : ZMod q)) :=
+    (∑ χ ∈ primitiveCharacters q, Complex.normSq (∑ n ∈ S, a n * c * χ (n : ZMod q))) =
+        ∑ χ ∈ primitiveCharacters q, Complex.normSq (c * ∑ n ∈ S, a n * χ (n : ZMod q)) :=
       by
       apply Finset.sum_congr rfl
       intro χ hχ
@@ -911,7 +902,7 @@ theorem primitiveCharacterPolynomialMeanSquare_mul_const {q : ℕ} (hq : 1 < q) 
           ring
         _ = _ := (Finset.mul_sum S (fun n => a n * χ (n : ZMod q)) c).symm
     _ =
-        ∑ χ ∈ primitiveDirichletCharacterSet q,
+        ∑ χ ∈ primitiveCharacters q,
           Complex.normSq c * Complex.normSq (∑ n ∈ S, a n * χ (n : ZMod q)) :=
       by
       apply Finset.sum_congr rfl
@@ -919,7 +910,7 @@ theorem primitiveCharacterPolynomialMeanSquare_mul_const {q : ℕ} (hq : 1 < q) 
       rw [Complex.normSq_mul]
     _ =
         Complex.normSq c *
-          ∑ χ ∈ primitiveDirichletCharacterSet q, Complex.normSq (∑ n ∈ S, a n * χ (n : ZMod q)) :=
+          ∑ χ ∈ primitiveCharacters q, Complex.normSq (∑ n ∈ S, a n * χ (n : ZMod q)) :=
       by rw [Finset.mul_sum]
 
 /--
@@ -930,8 +921,7 @@ residues modulo the modulus.
 
 Role: packages one modulus' reduced-frequency contribution to the additive large sieve.
 -/
-noncomputable def reducedAdditivePolynomialMeanSquare (q : ℕ) (_hq : 1 < q) (S : Finset ℕ)
-    (a : ℕ → ℂ) : ℝ := by
+noncomputable def reducedPolyEnergy (q : ℕ) (_hq : 1 < q) (S : Finset ℕ) (a : ℕ → ℂ) : ℝ := by
   classical
   letI : NeZero q := ⟨Nat.ne_of_gt (lt_trans Nat.zero_lt_one _hq)⟩
   exact
@@ -947,7 +937,7 @@ Output: the reduced additive frequencies used in the mean-square sum.
 
 Role: provides the finite index type for the vector-valued form of the additive large sieve.
 -/
-def reducedUnitFrequencySet (q : ℕ) [NeZero q] : Finset (ZMod q) :=
+def reducedFrequencies (q : ℕ) [NeZero q] : Finset (ZMod q) :=
   Finset.univ.filter (fun x => IsUnit x)
 
 /--
@@ -961,7 +951,7 @@ Output: a Euclidean-space vector representing one reduced additive frequency.
 Role: its inner products give the cross-frequency kernels, and its inner product with the
 coefficient vector gives the corresponding additive Fourier polynomial.
 -/
-noncomputable def reducedUnitFrequencyVector {q : ℕ} [NeZero q] (S : Finset ℕ) (x : ZMod q) :
+noncomputable def reducedFreqVector {q : ℕ} [NeZero q] (S : Finset ℕ) (x : ZMod q) :
     EuclideanSpace ℂ (↥S) :=
   WithLp.toLp 2 (fun n : ↥S => star (ZMod.stdAddChar (x * (n.val : ZMod q))))
 
@@ -974,7 +964,7 @@ Output: the corresponding point on the unit circle.
 
 Role: represents reduced additive frequencies uniformly across different moduli.
 -/
-noncomputable def rationalAdditiveCharacter (α : ℚ) (n : ℕ) : ℂ :=
+noncomputable def rationalAddChar (α : ℚ) (n : ℕ) : ℂ :=
   Complex.exp (Complex.I * ((2 * Real.pi * (α : ℝ) * n : ℝ) : ℂ))
 
 /--
@@ -988,10 +978,10 @@ Proof: conjugate the second exponential, combine the exponentials, and normalize
 Role: converts Gram entries of rational-frequency vectors into the Fourier kernels used in the
 separated-frequency estimate.
 -/
-theorem rationalAdditiveCharacter_cross_eq_exp_difference (α β : ℚ) (n : ℕ) :
-    rationalAdditiveCharacter α n * star (rationalAdditiveCharacter β n) =
+theorem rationalAddChar_cross (α β : ℚ) (n : ℕ) :
+    rationalAddChar α n * star (rationalAddChar β n) =
       Complex.exp (Complex.I * ((2 * Real.pi * ((α : ℝ) - β) * n : ℝ) : ℂ)) := by
-  rw [rationalAdditiveCharacter, rationalAdditiveCharacter]
+  rw [rationalAddChar, rationalAddChar]
   rw [show
       star (Complex.exp (Complex.I * ((2 * Real.pi * (β : ℝ) * n : ℝ) : ℂ))) =
         (starRingEnd ℂ) (Complex.exp (Complex.I * ((2 * Real.pi * (β : ℝ) * n : ℝ) : ℂ)))
@@ -1013,9 +1003,8 @@ Output: a finite rational-frequency mean square.
 Role: is the additive large-sieve quantity for a family of reduced fractions with varying
 denominators.
 -/
-noncomputable def rationalAdditivePolynomialMeanSquare (F : Finset ℚ) (S : Finset ℕ) (a : ℕ → ℂ) :
-    ℝ :=
-  ∑ α ∈ F, Complex.normSq (∑ n ∈ S, a n * rationalAdditiveCharacter α n)
+noncomputable def rationalPolyEnergy (F : Finset ℚ) (S : Finset ℕ) (a : ℕ → ℂ) : ℝ :=
+  ∑ α ∈ F, Complex.normSq (∑ n ∈ S, a n * rationalAddChar α n)
 
 /--
 Inputs: a rational frequency and two natural indices.
@@ -1026,10 +1015,9 @@ Proof: combine the two complex exponentials and normalize the real casts.
 
 Role: factors the phase introduced by translating a finite exponential polynomial.
 -/
-theorem rationalAdditiveCharacter_add (α : ℚ) (m n : ℕ) :
-    rationalAdditiveCharacter α (m + n) =
-      rationalAdditiveCharacter α m * rationalAdditiveCharacter α n := by
-  rw [rationalAdditiveCharacter, rationalAdditiveCharacter, rationalAdditiveCharacter]
+theorem rationalAddChar_add (α : ℚ) (m n : ℕ) :
+    rationalAddChar α (m + n) = rationalAddChar α m * rationalAddChar α n := by
+  rw [rationalAddChar, rationalAddChar, rationalAddChar]
   rw [Nat.cast_add, ← Complex.exp_add]
   congr 1
   push_cast
@@ -1044,9 +1032,8 @@ Proof: its exponent is purely imaginary, so the complex exponential has norm one
 
 Role: shows that translating a polynomial changes its value only by a unit phase.
 -/
-theorem rationalAdditiveCharacter_normSq (α : ℚ) (n : ℕ) :
-    Complex.normSq (rationalAdditiveCharacter α n) = 1 := by
-  rw [Complex.normSq_eq_norm_sq, rationalAdditiveCharacter]
+theorem ratAddChar_normSq (α : ℚ) (n : ℕ) : Complex.normSq (rationalAddChar α n) = 1 := by
+  rw [Complex.normSq_eq_norm_sq, rationalAddChar]
   rw [Complex.norm_exp_I_mul_ofReal]
   norm_num only [one_pow]
 
@@ -1055,23 +1042,23 @@ Inputs: a finite index set, complex coefficients, a natural shift, and a rationa
 
 Claim: translating every index by `c` multiplies the exponential polynomial by the phase at `c`.
 
-Proof: reindex the image sum and use the additive law for `rationalAdditiveCharacter`.
+Proof: reindex the image sum and use the additive law for `rationalAddChar`.
 
 Role: transfers polynomial estimates between coefficient intervals without changing their shape.
 -/
-theorem rationalAdditivePolynomial_shift_eq_phase_mul (S : Finset ℕ) (a : ℕ → ℂ) (c : ℕ) (α : ℚ) :
-    (∑ m ∈ S.image (fun n => n + c), a (m - c) * rationalAdditiveCharacter α m) =
-      (∑ n ∈ S, a n * rationalAdditiveCharacter α n) * rationalAdditiveCharacter α c := by
+theorem rationalPoly_shift_eq (S : Finset ℕ) (a : ℕ → ℂ) (c : ℕ) (α : ℚ) :
+    (∑ m ∈ S.image (fun n => n + c), a (m - c) * rationalAddChar α m) =
+      (∑ n ∈ S, a n * rationalAddChar α n) * rationalAddChar α c := by
   rw [Finset.sum_image]
   · rw [Finset.sum_mul]
     apply Finset.sum_congr rfl
     intro n hn
     change
-      a ((n + c) - c) * rationalAdditiveCharacter α (n + c) =
-        (a n * rationalAdditiveCharacter α n) * rationalAdditiveCharacter α c
+      a ((n + c) - c) * rationalAddChar α (n + c) =
+        (a n * rationalAddChar α n) * rationalAddChar α c
     rw [Nat.add_sub_cancel_right]
-    rw [rationalAdditiveCharacter_add]
-    exact (mul_assoc (a n) (rationalAdditiveCharacter α n) (rationalAdditiveCharacter α c)).symm
+    rw [rationalAddChar_add]
+    exact (mul_assoc (a n) (rationalAddChar α n) (rationalAddChar α c)).symm
   · intro x hx y hy hxy
     exact Nat.add_right_cancel hxy
 
@@ -1085,7 +1072,7 @@ Proof: reindex the image sum by the injective translation and simplify `(n + c) 
 
 Role: keeps the coefficient side of a finite large-sieve estimate unchanged under translation.
 -/
-theorem sum_normSq_coefficients_shift_eq (S : Finset ℕ) (a : ℕ → ℂ) (c : ℕ) :
+theorem sum_normSq_shift_eq (S : Finset ℕ) (a : ℕ → ℂ) (c : ℕ) :
     (∑ m ∈ S.image (fun n => n + c), ‖a (m - c)‖ ^ 2) = ∑ n ∈ S, ‖a n‖ ^ 2 := by
   rw [Finset.sum_image]
   · apply Finset.sum_congr rfl
@@ -1104,15 +1091,13 @@ Proof: each polynomial acquires a unit-modulus phase, so `Complex.normSq` is unc
 Role: moves arbitrary finite support into the central interval required by the triangular-window
 large-sieve estimate.
 -/
-theorem rationalAdditivePolynomialMeanSquare_shift_eq (F : Finset ℚ) (S : Finset ℕ) (a : ℕ → ℂ)
-    (c : ℕ) :
-    rationalAdditivePolynomialMeanSquare F (S.image (fun n => n + c)) (fun m => a (m - c)) =
-      rationalAdditivePolynomialMeanSquare F S a := by
-  unfold rationalAdditivePolynomialMeanSquare
+theorem ratPolyEnergy_shift (F : Finset ℚ) (S : Finset ℕ) (a : ℕ → ℂ) (c : ℕ) :
+    rationalPolyEnergy F (S.image (fun n => n + c)) (fun m => a (m - c)) =
+      rationalPolyEnergy F S a := by
+  unfold rationalPolyEnergy
   apply Finset.sum_congr rfl
   intro α hα
-  rw [rationalAdditivePolynomial_shift_eq_phase_mul, Complex.normSq_mul,
-    rationalAdditiveCharacter_normSq, mul_one]
+  rw [rationalPoly_shift_eq, Complex.normSq_mul, ratAddChar_normSq, mul_one]
 
 /--
 Inputs: a finite polynomial index set and a rational frequency.
@@ -1124,8 +1109,8 @@ polynomial.
 
 Role: applies Gram-row estimates uniformly to rational frequencies from different moduli.
 -/
-noncomputable def rationalFrequencyVector (S : Finset ℕ) (α : ℚ) : EuclideanSpace ℂ (↥S) :=
-  WithLp.toLp 2 (fun n : ↥S => star (rationalAdditiveCharacter α n.val))
+noncomputable def rationalFreqVector (S : Finset ℕ) (α : ℚ) : EuclideanSpace ℂ (↥S) :=
+  WithLp.toLp 2 (fun n : ↥S => star (rationalAddChar α n.val))
 
 /--
 Inputs: a finite index set and two rational frequencies.
@@ -1136,11 +1121,11 @@ Proof: expand the Euclidean-space inner product by coordinates.
 
 Role: expresses the family Gram matrix directly in terms of rational-frequency correlations.
 -/
-theorem rationalFrequencyVector_inner_eq_cross_sum (S : Finset ℕ) (α β : ℚ) :
-    inner ℂ (rationalFrequencyVector S α) (rationalFrequencyVector S β) =
-      ∑ n ∈ S, rationalAdditiveCharacter α n * star (rationalAdditiveCharacter β n) := by
+theorem inner_ratFreq_eq_sum (S : Finset ℕ) (α β : ℚ) :
+    inner ℂ (rationalFreqVector S α) (rationalFreqVector S β) =
+      ∑ n ∈ S, rationalAddChar α n * star (rationalAddChar β n) := by
   rw [PiLp.inner_apply]
-  simp only [rationalFrequencyVector, WithLp.ofLp_toLp, RCLike.inner_apply', starRingEnd_apply,
+  simp only [rationalFreqVector, WithLp.ofLp_toLp, RCLike.inner_apply', starRingEnd_apply,
     star_star]
   rw [Finset.sum_subtype S (fun _ => Iff.rfl)]
 
@@ -1155,7 +1140,7 @@ Output: a real weight in `[0, 1]` on the extension interval and zero outside it.
 Role: its Fourier sum factors into two finite geometric sums, which provides the decay needed for
 the separated-frequency Gram row bound.
 -/
-noncomputable def triangleOverlapWindowWeight (N L n : ℕ) : ℝ :=
+noncomputable def triangleOverlapWeight (N L n : ℕ) : ℝ :=
   if n < N + 2 * L - 1 then
     (((Finset.range L).filter (fun j => L ≤ n + j + 1 ∧ n + j + 1 < N + 2 * L)).card : ℝ) / L
   else 0
@@ -1163,13 +1148,13 @@ noncomputable def triangleOverlapWindowWeight (N L n : ℕ) : ℝ :=
 /--
 Inputs: an interval length, a positive taper length, and an extended index.
 
-Definition: the square root of `triangleOverlapWindowWeight`, used as the coordinate amplitude
+Definition: the square root of `triangleOverlapWeight`, used as the coordinate amplitude
 of a frequency vector.
 
 Role: squaring this amplitude recovers the overlap weight in the Fourier Gram kernel.
 -/
 noncomputable def triangleOverlapWindow (N L n : ℕ) : ℝ :=
-  Real.sqrt (triangleOverlapWindowWeight N L n)
+  Real.sqrt (triangleOverlapWeight N L n)
 
 /--
 Inputs: a positive taper length and an index in the central coefficient interval.
@@ -1180,9 +1165,8 @@ Proof: both overlaps in the defining minimum are at least `L`, so the minimum is
 
 Role: ensures that the extended frequency vectors reproduce the original polynomial.
 -/
-theorem triangleOverlapWindow_eq_one {N L n : ℕ} (hL : 0 < L) (hnlo : L - 1 ≤ n)
-    (hnhi : n ≤ N + L - 1) :
-    triangleOverlapWindowWeight N L n = 1 ∧ triangleOverlapWindow N L n = 1 := by
+theorem overlapWindow_eq_one {N L n : ℕ} (hL : 0 < L) (hnlo : L - 1 ≤ n) (hnhi : n ≤ N + L - 1) :
+    triangleOverlapWeight N L n = 1 ∧ triangleOverlapWindow N L n = 1 := by
   have hncond : n < N + 2 * L - 1 := by omega
   have hLcast : (L : ℝ) ≠ 0 := by exact_mod_cast Nat.ne_of_gt hL
   have hfilter :
@@ -1192,9 +1176,9 @@ theorem triangleOverlapWindow_eq_one {N L n : ℕ} (hL : 0 < L) (hnlo : L - 1 �
     have hjL : j < L := Finset.mem_range.mp hj
     constructor <;> omega
   constructor
-  · rw [triangleOverlapWindowWeight, ite_eq_left hncond, hfilter, Finset.card_range]
+  · rw [triangleOverlapWeight, ite_eq_left hncond, hfilter, Finset.card_range]
     exact div_self hLcast
-  · rw [triangleOverlapWindow, triangleOverlapWindowWeight, ite_eq_left hncond, hfilter,
+  · rw [triangleOverlapWindow, triangleOverlapWeight, ite_eq_left hncond, hfilter,
       Finset.card_range, div_self hLcast, Real.sqrt_one]
 
 /--
@@ -1207,8 +1191,8 @@ the support it is zero.
 
 Role: permits squaring the square-root window to recover the overlap weight exactly.
 -/
-theorem triangleOverlapWindowWeight_nonneg (N L n : ℕ) : 0 ≤ triangleOverlapWindowWeight N L n := by
-  rw [triangleOverlapWindowWeight]
+theorem overlapWeight_nonneg (N L n : ℕ) : 0 ≤ triangleOverlapWeight N L n := by
+  rw [triangleOverlapWeight]
   by_cases hn : n < N + 2 * L - 1
   · rw [ite_eq_left hn]
     exact div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)
@@ -1223,10 +1207,10 @@ Proof: apply the real square-root identity to the nonnegative overlap weight.
 
 Role: identifies the Gram kernel of the windowed frequencies with the finite overlap convolution.
 -/
-theorem triangleOverlapWindow_sq_eq_weight (N L n : ℕ) :
-    triangleOverlapWindow N L n ^ 2 = triangleOverlapWindowWeight N L n := by
+theorem overlapWindow_sq_eq (N L n : ℕ) :
+    triangleOverlapWindow N L n ^ 2 = triangleOverlapWeight N L n := by
   rw [triangleOverlapWindow]
-  exact Real.sq_sqrt (triangleOverlapWindowWeight_nonneg N L n)
+  exact Real.sq_sqrt (overlapWeight_nonneg N L n)
 
 /--
 Inputs: an interval length, a taper length, and an index beyond the extension interval.
@@ -1237,10 +1221,10 @@ Proof: the defining overlap weight is zero there, and the real square root of ze
 
 Role: identifies the finite index set needed for the extended frequency vectors.
 -/
-theorem triangleOverlapWindow_eq_zero_of_le {N L n : ℕ} (hn : N + 2 * L - 1 ≤ n) :
+theorem overlapWindow_zero_ge {N L n : ℕ} (hn : N + 2 * L - 1 ≤ n) :
     triangleOverlapWindow N L n = 0 := by
   have hnot : ¬n < N + 2 * L - 1 := Nat.not_lt.mpr hn
-  rw [triangleOverlapWindow, triangleOverlapWindowWeight, ite_eq_right hnot, Real.sqrt_zero]
+  rw [triangleOverlapWindow, triangleOverlapWeight, ite_eq_right hnot, Real.sqrt_zero]
 
 /--
 Inputs: an interval length, a positive taper length, and an index.
@@ -1252,9 +1236,8 @@ weight is zero.
 
 Role: bounds diagonal entries of the extended frequency Gram matrix.
 -/
-theorem triangleOverlapWindowWeight_le_one {N L n : ℕ} (hL : 0 < L) :
-    triangleOverlapWindowWeight N L n ≤ 1 := by
-  rw [triangleOverlapWindowWeight]
+theorem overlapWeight_le_one {N L n : ℕ} (hL : 0 < L) : triangleOverlapWeight N L n ≤ 1 := by
+  rw [triangleOverlapWeight]
   by_cases hn : n < N + 2 * L - 1
   · rw [ite_eq_left hn]
     have hcard :
@@ -1281,10 +1264,9 @@ Proof: use monotonicity of the real square root and the overlap weight bound.
 
 Role: provides a pointwise bound for the extended frequency vectors.
 -/
-theorem triangleOverlapWindow_le_one {N L n : ℕ} (hL : 0 < L) :
-    triangleOverlapWindow N L n ≤ 1 := by
+theorem overlapWindow_le_one {N L n : ℕ} (hL : 0 < L) : triangleOverlapWindow N L n ≤ 1 := by
   rw [triangleOverlapWindow, ← Real.sqrt_one]
-  exact Real.sqrt_le_sqrt (triangleOverlapWindowWeight_le_one hL)
+  exact Real.sqrt_le_sqrt (overlapWeight_le_one hL)
 
 /--
 Inputs: an interval length, a taper length, and a complex ratio.
@@ -1297,8 +1279,8 @@ their first index.
 
 Role: is the first step in factoring the window kernel into two geometric sums.
 -/
-theorem triangleOverlapWindowWeight_fourier_eq_pair_sum (N L : ℕ) (z : ℂ) :
-    ∑ n ∈ Finset.range (N + 2 * L - 1), (triangleOverlapWindowWeight N L n : ℂ) * z ^ n =
+theorem overlap_fourier_pairs (N L : ℕ) (z : ℂ) :
+    ∑ n ∈ Finset.range (N + 2 * L - 1), (triangleOverlapWeight N L n : ℂ) * z ^ n =
       (L : ℂ)⁻¹ *
         ∑ n ∈ Finset.range (N + 2 * L - 1),
           ∑ j ∈ Finset.range L, if L ≤ n + j + 1 ∧ n + j + 1 < N + 2 * L then z ^ n else 0 := by
@@ -1307,7 +1289,7 @@ theorem triangleOverlapWindowWeight_fourier_eq_pair_sum (N L : ℕ) (z : ℂ) :
   apply Finset.sum_congr rfl
   intro n hn
   have hnlt : n < N + 2 * L - 1 := Finset.mem_range.mp hn
-  rw [triangleOverlapWindowWeight, ite_eq_left hnlt]
+  rw [triangleOverlapWeight, ite_eq_left hnlt]
   rw [Complex.ofReal_div, Complex.ofReal_natCast, Finset.natCast_card_filter (R := ℂ)]
   have hsum :
     (∑ j ∈ Finset.range L, if L ≤ n + j + 1 ∧ n + j + 1 < N + 2 * L then (1 : ℂ) else 0) * z ^ n =
@@ -1337,7 +1319,7 @@ coordinates in the product of finite sums.
 
 Role: gives the explicit Fourier kernel needed to bound the extended Gram rows.
 -/
-theorem triangleOverlapWindow_pair_sum_eq_geometric_product (N L : ℕ) (z : ℂ) :
+theorem overlap_pair_sum_prod (N L : ℕ) (z : ℂ) :
     ∑ n ∈ Finset.range (N + 2 * L - 1),
         ∑ j ∈ Finset.range L, (if L ≤ n + j + 1 ∧ n + j + 1 < N + 2 * L then z ^ n else 0) =
       (∑ i ∈ Finset.range (N + L), z ^ i) * ∑ j ∈ Finset.range L, z ^ (L - 1 - j) := by
@@ -1390,11 +1372,10 @@ Proof: apply the overlap-pair expansion and its finite reindexing factorization.
 
 Role: expresses the concrete window Gram kernel in a form suitable for frequency separation.
 -/
-theorem triangleOverlapWindowWeight_fourier_eq_geometric_product (N L : ℕ) (z : ℂ) :
-    ∑ n ∈ Finset.range (N + 2 * L - 1), (triangleOverlapWindowWeight N L n : ℂ) * z ^ n =
+theorem overlap_fourier_prod (N L : ℕ) (z : ℂ) :
+    ∑ n ∈ Finset.range (N + 2 * L - 1), (triangleOverlapWeight N L n : ℂ) * z ^ n =
       (L : ℂ)⁻¹ * (∑ i ∈ Finset.range (N + L), z ^ i) * ∑ j ∈ Finset.range L, z ^ (L - 1 - j) := by
-  rw [triangleOverlapWindowWeight_fourier_eq_pair_sum,
-    triangleOverlapWindow_pair_sum_eq_geometric_product]
+  rw [overlap_fourier_pairs, overlap_pair_sum_prod]
   ring
 
 /--
@@ -1407,19 +1388,19 @@ respective intervals, and the normalization cancels the taper length.
 
 Role: gives the diagonal entry of each windowed Gram row.
 -/
-theorem triangleOverlapWindowWeight_sum_eq (N L : ℕ) (hL : 0 < L) :
-    ∑ n ∈ Finset.range (N + 2 * L - 1), triangleOverlapWindowWeight N L n = N + L := by
+theorem overlapWeight_sum_eq (N L : ℕ) (hL : 0 < L) :
+    ∑ n ∈ Finset.range (N + 2 * L - 1), triangleOverlapWeight N L n = N + L := by
   apply Complex.ofReal_injective
   rw [Complex.ofReal_sum, Complex.ofReal_add, Complex.ofReal_natCast, Complex.ofReal_natCast]
   calc
-    ∑ n ∈ Finset.range (N + 2 * L - 1), (triangleOverlapWindowWeight N L n : ℂ) =
-        ∑ n ∈ Finset.range (N + 2 * L - 1), (triangleOverlapWindowWeight N L n : ℂ) * (1 : ℂ) ^ n :=
+    ∑ n ∈ Finset.range (N + 2 * L - 1), (triangleOverlapWeight N L n : ℂ) =
+        ∑ n ∈ Finset.range (N + 2 * L - 1), (triangleOverlapWeight N L n : ℂ) * (1 : ℂ) ^ n :=
       by
       apply Finset.sum_congr rfl
       intro n hn
       simp only [one_pow, mul_one]
     _ = ((N + L : ℕ) : ℂ) := by
-      rw [triangleOverlapWindowWeight_fourier_eq_geometric_product]
+      rw [overlap_fourier_prod]
       simp only [one_pow, Finset.sum_const, nsmul_eq_mul, Finset.card_range]
       field_simp [Nat.cast_ne_zero.mpr (Nat.ne_of_gt hL)]
     _ = (N : ℂ) + (L : ℂ) := by rw [Nat.cast_add]
@@ -1433,9 +1414,8 @@ Output: a vector whose Gram kernel is the Fourier sum of the squared window.
 
 Role: supplies the extended test vectors used in the separated-frequency large sieve.
 -/
-noncomputable def rationalWindowFrequencyVector (T : Finset ℕ) (w : ℕ → ℝ) (α : ℚ) :
-    EuclideanSpace ℂ (↥T) :=
-  WithLp.toLp 2 (fun n : ↥T => star (rationalAdditiveCharacter α n.val) * (w n.val : ℂ))
+noncomputable def windowFreqVector (T : Finset ℕ) (w : ℕ → ℝ) (α : ℚ) : EuclideanSpace ℂ (↥T) :=
+  WithLp.toLp 2 (fun n : ↥T => star (rationalAddChar α n.val) * (w n.val : ℂ))
 
 /--
 Inputs: a finite coefficient set, a finite extended index set containing it, and complex
@@ -1446,8 +1426,7 @@ coefficient set.
 
 Role: tests windowed rational-frequency vectors while preserving the original coefficient norm.
 -/
-noncomputable def rationalWindowCoefficientVector (S T : Finset ℕ) (a : ℕ → ℂ) :
-    EuclideanSpace ℂ (↥T) :=
+noncomputable def windowCoeffVector (S T : Finset ℕ) (a : ℕ → ℂ) : EuclideanSpace ℂ (↥T) :=
   WithLp.toLp 2 (fun n : ↥T => if n.val ∈ S then a n.val else 0)
 
 /--
@@ -1462,18 +1441,18 @@ vector vanishes outside it.
 
 Role: realizes the original polynomial as a sample of the smoothed, extended frequency family.
 -/
-theorem rationalWindowFrequencyVector_inner_eq_polynomial (S T : Finset ℕ) (hST : S ⊆ T) (w : ℕ → ℝ)
-    (hw : ∀ n ∈ S, w n = 1) (α : ℚ) (a : ℕ → ℂ) :
-    inner ℂ (rationalWindowFrequencyVector T w α) (rationalWindowCoefficientVector S T a) =
-      ∑ n ∈ S, a n * rationalAdditiveCharacter α n := by
+theorem inner_window_poly_eq (S T : Finset ℕ) (hST : S ⊆ T) (w : ℕ → ℝ) (hw : ∀ n ∈ S, w n = 1)
+    (α : ℚ) (a : ℕ → ℂ) :
+    inner ℂ (windowFreqVector T w α) (windowCoeffVector S T a) =
+      ∑ n ∈ S, a n * rationalAddChar α n := by
   rw [PiLp.inner_apply]
-  simp only [rationalWindowFrequencyVector, rationalWindowCoefficientVector, WithLp.ofLp_toLp,
-    RCLike.inner_apply', starRingEnd_apply, star_mul, star_star]
+  simp only [windowFreqVector, windowCoeffVector, WithLp.ofLp_toLp, RCLike.inner_apply',
+    starRingEnd_apply, star_mul, star_star]
   rw [Finset.sum_coe_sort T
-      (fun n : ℕ => star (w n : ℂ) * rationalAdditiveCharacter α n * if n ∈ S then a n else 0)]
+      (fun n : ℕ => star (w n : ℂ) * rationalAddChar α n * if n ∈ S then a n else 0)]
   calc
-    (∑ n ∈ T, star (w n : ℂ) * rationalAdditiveCharacter α n * if n ∈ S then a n else 0) =
-        ∑ n ∈ T, if n ∈ S then a n * rationalAdditiveCharacter α n else 0 :=
+    (∑ n ∈ T, star (w n : ℂ) * rationalAddChar α n * if n ∈ S then a n else 0) =
+        ∑ n ∈ T, if n ∈ S then a n * rationalAddChar α n else 0 :=
       by
       apply Finset.sum_congr rfl
       intro n hn
@@ -1485,9 +1464,9 @@ theorem rationalWindowFrequencyVector_inner_eq_polynomial (S T : Finset ℕ) (hS
         exact mul_comm _ _
       · rw [ite_eq_right hs, ite_eq_right hs]
         simp only [mul_zero]
-    _ = ∑ n ∈ S, a n * rationalAdditiveCharacter α n := by
+    _ = ∑ n ∈ S, a n * rationalAddChar α n := by
       calc
-        _ = ∑ n ∈ S, if n ∈ S then a n * rationalAdditiveCharacter α n else 0 :=
+        _ = ∑ n ∈ S, if n ∈ S then a n * rationalAddChar α n else 0 :=
           (Finset.sum_subset hST
               (by
                 intro n hn hnot
@@ -1509,14 +1488,13 @@ inner-product identity applies.
 
 Role: instantiates the abstract extension interface with the explicit finite overlap window.
 -/
-theorem rationalTriangleOverlapFrequencyVector_inner_eq_polynomial (S T : Finset ℕ) (hST : S ⊆ T)
-    (N L : ℕ) (hL : 0 < L) (hcentral : ∀ n ∈ S, L - 1 ≤ n ∧ n ≤ N + L - 1) (α : ℚ) (a : ℕ → ℂ) :
-    inner ℂ (rationalWindowFrequencyVector T (triangleOverlapWindow N L) α)
-        (rationalWindowCoefficientVector S T a) =
-      ∑ n ∈ S, a n * rationalAdditiveCharacter α n := by
+theorem inner_overlap_poly_eq (S T : Finset ℕ) (hST : S ⊆ T) (N L : ℕ) (hL : 0 < L)
+    (hcentral : ∀ n ∈ S, L - 1 ≤ n ∧ n ≤ N + L - 1) (α : ℚ) (a : ℕ → ℂ) :
+    inner ℂ (windowFreqVector T (triangleOverlapWindow N L) α) (windowCoeffVector S T a) =
+      ∑ n ∈ S, a n * rationalAddChar α n := by
   exact
-    rationalWindowFrequencyVector_inner_eq_polynomial S T hST (triangleOverlapWindow N L)
-      (fun n hn => (triangleOverlapWindow_eq_one hL (hcentral n hn).1 (hcentral n hn).2).2) α a
+    inner_window_poly_eq S T hST (triangleOverlapWindow N L)
+      (fun n hn => (overlapWindow_eq_one hL (hcentral n hn).1 (hcentral n hn).2).2) α a
 
 /--
 Inputs: a finite index set, two rational frequencies, and a real-valued window.
@@ -1529,14 +1507,12 @@ Proof: expand the Euclidean-space inner product by coordinates and simplify the 
 Role: converts row bounds for smoothed frequencies into the Gram-row hypothesis of the
 large-sieve estimate.
 -/
-theorem rationalWindowFrequencyVector_inner_eq_weighted_cross_sum (T : Finset ℕ) (w : ℕ → ℝ)
-    (α β : ℚ) :
-    inner ℂ (rationalWindowFrequencyVector T w α) (rationalWindowFrequencyVector T w β) =
-      ∑ n ∈ T,
-        (w n : ℂ) ^ 2 * rationalAdditiveCharacter α n * star (rationalAdditiveCharacter β n) := by
+theorem inner_window_cross_eq (T : Finset ℕ) (w : ℕ → ℝ) (α β : ℚ) :
+    inner ℂ (windowFreqVector T w α) (windowFreqVector T w β) =
+      ∑ n ∈ T, (w n : ℂ) ^ 2 * rationalAddChar α n * star (rationalAddChar β n) := by
   rw [PiLp.inner_apply]
-  simp only [rationalWindowFrequencyVector, WithLp.ofLp_toLp, RCLike.inner_apply',
-    starRingEnd_apply, star_mul, star_star]
+  simp only [windowFreqVector, WithLp.ofLp_toLp, RCLike.inner_apply', starRingEnd_apply, star_mul,
+    star_star]
   rw [Finset.sum_subtype T (fun _ => Iff.rfl)]
   apply Finset.sum_congr rfl
   intro n hn
@@ -1557,15 +1533,14 @@ for `Complex.exp`.
 Role: converts the vector Gram row into the Fourier kernel estimated by the separated-frequency
 argument.
 -/
-theorem rationalWindowFrequencyVector_inner_eq_fourier_difference (T : Finset ℕ) (w : ℕ → ℝ)
-    (α β : ℚ) :
-    inner ℂ (rationalWindowFrequencyVector T w α) (rationalWindowFrequencyVector T w β) =
+theorem inner_window_fourier (T : Finset ℕ) (w : ℕ → ℝ) (α β : ℚ) :
+    inner ℂ (windowFreqVector T w α) (windowFreqVector T w β) =
       ∑ n ∈ T,
         (w n : ℂ) ^ 2 * Complex.exp (Complex.I * ((2 * Real.pi * ((α : ℝ) - β) : ℝ) : ℂ)) ^ n := by
-  rw [rationalWindowFrequencyVector_inner_eq_weighted_cross_sum]
+  rw [inner_window_cross_eq]
   apply Finset.sum_congr rfl
   intro n hn
-  rw [mul_assoc, rationalAdditiveCharacter_cross_eq_exp_difference]
+  rw [mul_assoc, rationalAddChar_cross]
   congr 1
   rw [← Complex.exp_nat_mul]
   congr 1
@@ -1584,17 +1559,16 @@ weight.
 Role: identifies the rational-frequency Gram kernel with the kernel bounded by the separated
 frequency row estimate.
 -/
-theorem rationalTriangleOverlapFrequencyVector_inner_eq_weight_fourier (N L : ℕ) (T : Finset ℕ)
-    (α β : ℚ) :
-    inner ℂ (rationalWindowFrequencyVector T (triangleOverlapWindow N L) α)
-        (rationalWindowFrequencyVector T (triangleOverlapWindow N L) β) =
+theorem inner_overlap_fourier (N L : ℕ) (T : Finset ℕ) (α β : ℚ) :
+    inner ℂ (windowFreqVector T (triangleOverlapWindow N L) α)
+        (windowFreqVector T (triangleOverlapWindow N L) β) =
       ∑ n ∈ T,
-        (triangleOverlapWindowWeight N L n : ℂ) *
+        (triangleOverlapWeight N L n : ℂ) *
           Complex.exp (Complex.I * ((2 * Real.pi * ((α : ℝ) - β) : ℝ) : ℂ)) ^ n := by
-  rw [rationalWindowFrequencyVector_inner_eq_fourier_difference]
+  rw [inner_window_fourier]
   apply Finset.sum_congr rfl
   intro n hn
-  rw [← Complex.ofReal_pow, triangleOverlapWindow_sq_eq_weight]
+  rw [← Complex.ofReal_pow, overlapWindow_sq_eq]
 
 /--
 Inputs: finite coefficient and extended index sets with inclusion, and complex coefficients.
@@ -1607,10 +1581,10 @@ and use that the coefficient set is contained in the extended set.
 Role: supplies the norm identity needed to apply the abstract Gram-row estimate to windowed
 frequencies.
 -/
-theorem rationalWindowCoefficientVector_norm_sq_eq (S T : Finset ℕ) (hST : S ⊆ T) (a : ℕ → ℂ) :
-    ‖rationalWindowCoefficientVector S T a‖ ^ 2 = ∑ n ∈ S, ‖a n‖ ^ 2 := by
+theorem windowCoeff_normSq (S T : Finset ℕ) (hST : S ⊆ T) (a : ℕ → ℂ) :
+    ‖windowCoeffVector S T a‖ ^ 2 = ∑ n ∈ S, ‖a n‖ ^ 2 := by
   rw [EuclideanSpace.norm_sq_eq]
-  dsimp only [rationalWindowCoefficientVector]
+  dsimp only [windowCoeffVector]
   rw [Finset.sum_coe_sort T (fun n : ℕ => ‖if n ∈ S then a n else 0‖ ^ 2)]
   calc
     (∑ n ∈ T, ‖if n ∈ S then a n else 0‖ ^ 2) = ∑ n ∈ T, if n ∈ S then ‖a n‖ ^ 2 else 0 := by
@@ -1644,13 +1618,11 @@ Proof: expand the Euclidean-space inner product by coordinates and simplify the 
 Role: converts Gram row bounds for the frequency vectors into bounds on additive character
 correlation sums.
 -/
-theorem reducedUnitFrequencyVector_inner_eq_cross_sum {q : ℕ} [NeZero q] (S : Finset ℕ)
-    (x y : ZMod q) :
-    inner ℂ (reducedUnitFrequencyVector S x) (reducedUnitFrequencyVector S y) =
+theorem inner_reduced_cross {q : ℕ} [NeZero q] (S : Finset ℕ) (x y : ZMod q) :
+    inner ℂ (reducedFreqVector S x) (reducedFreqVector S y) =
       ∑ n ∈ S, ZMod.stdAddChar (x * (n : ZMod q)) * star (ZMod.stdAddChar (y * (n : ZMod q))) := by
   rw [PiLp.inner_apply]
-  simp only [reducedUnitFrequencyVector, WithLp.ofLp_toLp, RCLike.inner_apply', starRingEnd_apply,
-    star_star]
+  simp only [reducedFreqVector, WithLp.ofLp_toLp, RCLike.inner_apply', starRingEnd_apply, star_star]
   rw [Finset.sum_subtype S (fun _ => Iff.rfl)]
 
 /--
@@ -1665,16 +1637,15 @@ use symmetry of the two index sums.
 Role: exposes the diagonal and cross-frequency contributions needed to aggregate the additive
 mean squares across a family of moduli.
 -/
-theorem reducedAdditivePolynomialMeanSquare_gram {q : ℕ} [NeZero q] (hq : 1 < q) (S : Finset ℕ)
-    (a : ℕ → ℂ) :
-    ((reducedAdditivePolynomialMeanSquare q hq S a : ℝ) : ℂ) =
+theorem reducedEnergy_gram {q : ℕ} [NeZero q] (hq : 1 < q) (S : Finset ℕ) (a : ℕ → ℂ) :
+    ((reducedPolyEnergy q hq S a : ℝ) : ℂ) =
       ∑ x ∈ (Finset.univ.filter (fun x : ZMod q => IsUnit x)),
         ∑ n ∈ S,
           ∑ m ∈ S,
             star (a n * ZMod.stdAddChar (x * (n : ZMod q))) *
               (a m * ZMod.stdAddChar (x * (m : ZMod q))) := by
   classical
-  rw [reducedAdditivePolynomialMeanSquare, Complex.ofReal_sum]
+  rw [reducedPolyEnergy, Complex.ofReal_sum]
   have hnorm (z : ℂ) : (Complex.normSq z : ℂ) = star z * z := by
     rw [← Complex.mul_conj z]
     exact mul_comm _ _
@@ -1690,21 +1661,20 @@ Inputs: a modulus greater than one, a finite polynomial index set, and complex c
 Claim: the reduced additive mean square is the polynomial's Gram sum over ordered pairs of
 indices, with each pair weighted by its summed cross-frequency kernel.
 
-Proof: start from `reducedAdditivePolynomialMeanSquare_gram`, interchange the finite sums, swap
+Proof: start from `reducedEnergy_gram`, interchange the finite sums, swap
 the two polynomial indices, and factor their coefficients from the frequency sum.
 
 Role: exposes the exact cross-kernel form used to seek a collective bound across denominators.
 -/
-theorem reducedAdditivePolynomialMeanSquare_kernel {q : ℕ} [NeZero q] (hq : 1 < q) (S : Finset ℕ)
-    (a : ℕ → ℂ) :
-    ((reducedAdditivePolynomialMeanSquare q hq S a : ℝ) : ℂ) =
+theorem reducedEnergy_kernel {q : ℕ} [NeZero q] (hq : 1 < q) (S : Finset ℕ) (a : ℕ → ℂ) :
+    ((reducedPolyEnergy q hq S a : ℝ) : ℂ) =
       ∑ n ∈ S,
         ∑ m ∈ S,
           a n * star (a m) *
             ∑ x ∈ (Finset.univ.filter (fun x : ZMod q => IsUnit x)),
               ZMod.stdAddChar (x * (n : ZMod q)) * star (ZMod.stdAddChar (x * (m : ZMod q))) := by
   classical
-  rw [reducedAdditivePolynomialMeanSquare_gram]
+  rw [reducedEnergy_gram]
   calc
     _ =
         ∑ n ∈ S,
@@ -1747,7 +1717,7 @@ with the filtered residue subtype and count them by `ZMod.card_units_eq_totient`
 Role: gives the exact diagonal contribution in the Gram expansion of the reduced additive mean
 square.
 -/
-theorem additive_unit_frequency_selfKernel_eq_totient {q : ℕ} [NeZero q] (k : ZMod q) :
+theorem unit_selfKernel_eq {q : ℕ} [NeZero q] (k : ZMod q) :
     (∑ x ∈ (Finset.univ.filter (fun x : ZMod q => IsUnit x)),
         ZMod.stdAddChar (x * k) * star (ZMod.stdAddChar (x * k))) =
       (Nat.totient q : ℂ) := by
@@ -1801,7 +1771,7 @@ out of the finite sum.
 
 Role: isolates the exact diagonal contribution before estimating the off-diagonal correlations.
 -/
-theorem reducedAdditivePolynomialMeanSquare_diagonal {q : ℕ} [NeZero q] (S : Finset ℕ) (a : ℕ → ℂ) :
+theorem reducedEnergy_diag {q : ℕ} [NeZero q] (S : Finset ℕ) (a : ℕ → ℂ) :
     (∑ n ∈ S,
         a n * star (a n) *
           ∑ x ∈ (Finset.univ.filter (fun x : ZMod q => IsUnit x)),
@@ -1812,7 +1782,7 @@ theorem reducedAdditivePolynomialMeanSquare_diagonal {q : ℕ} [NeZero q] (S : F
     _ = ∑ n ∈ S, (a n * star (a n) * (Nat.totient q : ℂ)) := by
       apply Finset.sum_congr rfl
       intro n hn
-      rw [additive_unit_frequency_selfKernel_eq_totient]
+      rw [unit_selfKernel_eq]
     _ = _ := by
       rw [← Finset.sum_mul]
       exact mul_comm _ _
@@ -1830,28 +1800,23 @@ Gram-row estimate to the coefficient vector.
 Role: provides the common-frequency-family interface needed to combine additive frequencies
 coming from different moduli.
 -/
-theorem rationalAdditivePolynomialMeanSquare_le_of_innerProduct_representation {E : Type*}
-    [NormedAddCommGroup E] [InnerProductSpace ℂ E] (F : Finset ℚ) (S : Finset ℕ) (a : ℕ → ℂ)
-    (φ : { α : ℚ // α ∈ F } → E) (x : E) (R : ℝ) (hR : 0 ≤ R)
-    (hrow : ∀ α, ∑ β, ‖inner ℂ (φ α) (φ β)‖ ≤ R)
-    (heval : ∀ α, inner ℂ (φ α) x = ∑ n ∈ S, a n * rationalAdditiveCharacter α.val n)
-    (hnorm : ‖x‖ ^ 2 = ∑ n ∈ S, ‖a n‖ ^ 2) :
-    rationalAdditivePolynomialMeanSquare F S a ≤ R * ∑ n ∈ S, ‖a n‖ ^ 2 := by
+theorem ratEnergy_le_of_inner {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
+    (F : Finset ℚ) (S : Finset ℕ) (a : ℕ → ℂ) (φ : { α : ℚ // α ∈ F } → E) (x : E) (R : ℝ)
+    (hR : 0 ≤ R) (hrow : ∀ α, ∑ β, ‖inner ℂ (φ α) (φ β)‖ ≤ R)
+    (heval : ∀ α, inner ℂ (φ α) x = ∑ n ∈ S, a n * rationalAddChar α.val n)
+    (hnorm : ‖x‖ ^ 2 = ∑ n ∈ S, ‖a n‖ ^ 2) : rationalPolyEnergy F S a ≤ R * ∑ n ∈ S, ‖a n‖ ^ 2 := by
   classical
   have hBessel : (∑ α : { α : ℚ // α ∈ F }, ‖inner ℂ (φ α) x‖ ^ 2) ≤ R * ‖x‖ ^ 2 := by
     exact
       PseudoPrime.Analysis.FiniteGramBounds.sum_inner_product_norm_sq_le_of_gram_row_bound φ R hR
         hrow x
-  have hmean :
-    rationalAdditivePolynomialMeanSquare F S a =
-      ∑ α : { α : ℚ // α ∈ F }, ‖inner ℂ (φ α) x‖ ^ 2 := by
-    rw [rationalAdditivePolynomialMeanSquare, Finset.sum_subtype F (fun _ => Iff.rfl)]
+  have hmean : rationalPolyEnergy F S a = ∑ α : { α : ℚ // α ∈ F }, ‖inner ℂ (φ α) x‖ ^ 2 := by
+    rw [rationalPolyEnergy, Finset.sum_subtype F (fun _ => Iff.rfl)]
     apply Finset.sum_congr rfl
     intro α hα
     rw [← heval α, Complex.normSq_eq_norm_sq]
   calc
-    rationalAdditivePolynomialMeanSquare F S a = ∑ α : { α : ℚ // α ∈ F }, ‖inner ℂ (φ α) x‖ ^ 2 :=
-      hmean
+    rationalPolyEnergy F S a = ∑ α : { α : ℚ // α ∈ F }, ‖inner ℂ (φ α) x‖ ^ 2 := hmean
     _ ≤ R * ‖x‖ ^ 2 := hBessel
     _ = R * ∑ n ∈ S, ‖a n‖ ^ 2 := by rw [hnorm]
 
@@ -1868,37 +1833,32 @@ Gram-row estimate to the coefficient vector.
 Role: provides the common-frequency-family interface needed to combine additive frequencies
 coming from different moduli.
 -/
-theorem rationalAdditivePolynomialMeanSquare_le_of_gram_row_bound (F : Finset ℚ) (S : Finset ℕ)
-    (a : ℕ → ℂ) (R : ℝ) (hR : 0 ≤ R)
+theorem ratEnergy_le_gram (F : Finset ℚ) (S : Finset ℕ) (a : ℕ → ℂ) (R : ℝ) (hR : 0 ≤ R)
     (hrow :
       ∀ α : { α : ℚ // α ∈ F },
         ∑ β : { α : ℚ // α ∈ F },
-            ‖∑ n ∈ S,
-                rationalAdditiveCharacter α.val n * star (rationalAdditiveCharacter β.val n)‖ ≤
+            ‖∑ n ∈ S, rationalAddChar α.val n * star (rationalAddChar β.val n)‖ ≤
           R) :
-    rationalAdditivePolynomialMeanSquare F S a ≤ R * ∑ n ∈ S, ‖a n‖ ^ 2 := by
+    rationalPolyEnergy F S a ≤ R * ∑ n ∈ S, ‖a n‖ ^ 2 := by
   classical
   let I := { α : ℚ // α ∈ F }
-  let φ : I → EuclideanSpace ℂ (↥S) := fun α => rationalFrequencyVector S α.val
+  let φ : I → EuclideanSpace ℂ (↥S) := fun α => rationalFreqVector S α.val
   let b : EuclideanSpace ℂ (↥S) := WithLp.toLp 2 (fun n : ↥S => a n.val)
   have hrowVec : ∀ α : I, (∑ β : I, ‖inner ℂ (φ α) (φ β)‖) ≤ R := by
     intro α
     calc
       (∑ β : I, ‖inner ℂ (φ α) (φ β)‖) =
-          ∑ β : I,
-            ‖∑ n ∈ S,
-                rationalAdditiveCharacter α.val n * star (rationalAdditiveCharacter β.val n)‖ :=
+          ∑ β : I, ‖∑ n ∈ S, rationalAddChar α.val n * star (rationalAddChar β.val n)‖ :=
         by
         apply Finset.sum_congr rfl
         intro β hβ
-        rw [show φ α = rationalFrequencyVector S α.val by rfl,
-          show φ β = rationalFrequencyVector S β.val by rfl,
-          rationalFrequencyVector_inner_eq_cross_sum]
+        rw [show φ α = rationalFreqVector S α.val by rfl,
+          show φ β = rationalFreqVector S β.val by rfl, inner_ratFreq_eq_sum]
       _ ≤ R := hrow α
-  have heval (α : I) : inner ℂ (φ α) b = ∑ n ∈ S, a n * rationalAdditiveCharacter α.val n := by
+  have heval (α : I) : inner ℂ (φ α) b = ∑ n ∈ S, a n * rationalAddChar α.val n := by
     rw [PiLp.inner_apply]
-    simp only [φ, rationalFrequencyVector, b, WithLp.ofLp_toLp, RCLike.inner_apply',
-      starRingEnd_apply, star_star]
+    simp only [φ, rationalFreqVector, b, WithLp.ofLp_toLp, RCLike.inner_apply', starRingEnd_apply,
+      star_star]
     rw [Finset.sum_subtype S (fun _ => Iff.rfl)]
     apply Finset.sum_congr rfl
     intro n hn
@@ -1907,9 +1867,7 @@ theorem rationalAdditivePolynomialMeanSquare_le_of_gram_row_bound (F : Finset �
     rw [EuclideanSpace.norm_sq_eq]
     dsimp only [b]
     exact Finset.sum_coe_sort S (fun n => ‖a n‖ ^ 2)
-  exact
-    rationalAdditivePolynomialMeanSquare_le_of_innerProduct_representation F S a φ b R hR hrowVec
-      heval hbNorm
+  exact ratEnergy_le_of_inner F S a φ b R hR hrowVec heval hbNorm
 
 /--
 Inputs: finite rational frequencies, coefficient and extended index sets, a window equal to one
@@ -1924,30 +1882,24 @@ then apply the abstract inner-product estimate.
 Role: connects a smooth extension of the coefficient interval to the rational large-sieve mean
 square.
 -/
-theorem rationalAdditivePolynomialMeanSquare_le_of_window_gram_row_bound (F : Finset ℚ)
-    (S T : Finset ℕ) (hST : S ⊆ T) (w : ℕ → ℝ) (hw : ∀ n ∈ S, w n = 1) (a : ℕ → ℂ) (R : ℝ)
-    (hR : 0 ≤ R)
+theorem ratEnergy_le_window (F : Finset ℚ) (S T : Finset ℕ) (hST : S ⊆ T) (w : ℕ → ℝ)
+    (hw : ∀ n ∈ S, w n = 1) (a : ℕ → ℂ) (R : ℝ) (hR : 0 ≤ R)
     (hrow :
       ∀ α : { α : ℚ // α ∈ F },
         ∑ β : { α : ℚ // α ∈ F },
-            ‖inner ℂ (rationalWindowFrequencyVector T w α.val)
-                (rationalWindowFrequencyVector T w β.val)‖ ≤
+            ‖inner ℂ (windowFreqVector T w α.val) (windowFreqVector T w β.val)‖ ≤
           R) :
-    rationalAdditivePolynomialMeanSquare F S a ≤ R * ∑ n ∈ S, ‖a n‖ ^ 2 := by
+    rationalPolyEnergy F S a ≤ R * ∑ n ∈ S, ‖a n‖ ^ 2 := by
   classical
   let I := { α : ℚ // α ∈ F }
-  let φ : I → EuclideanSpace ℂ (↥T) := fun α => rationalWindowFrequencyVector T w α.val
-  let x : EuclideanSpace ℂ (↥T) := rationalWindowCoefficientVector S T a
-  have heval (α : I) : inner ℂ (φ α) x = ∑ n ∈ S, a n * rationalAdditiveCharacter α.val n := by
-    rw [show φ α = rationalWindowFrequencyVector T w α.val by rfl,
-      show x = rationalWindowCoefficientVector S T a by rfl,
-      rationalWindowFrequencyVector_inner_eq_polynomial S T hST w hw α.val a]
+  let φ : I → EuclideanSpace ℂ (↥T) := fun α => windowFreqVector T w α.val
+  let x : EuclideanSpace ℂ (↥T) := windowCoeffVector S T a
+  have heval (α : I) : inner ℂ (φ α) x = ∑ n ∈ S, a n * rationalAddChar α.val n := by
+    rw [show φ α = windowFreqVector T w α.val by rfl, show x = windowCoeffVector S T a by rfl,
+      inner_window_poly_eq S T hST w hw α.val a]
   have hnorm : ‖x‖ ^ 2 = ∑ n ∈ S, ‖a n‖ ^ 2 := by
-    rw [show x = rationalWindowCoefficientVector S T a by rfl,
-      rationalWindowCoefficientVector_norm_sq_eq S T hST a]
-  exact
-    rationalAdditivePolynomialMeanSquare_le_of_innerProduct_representation F S a φ x R hR hrow heval
-      hnorm
+    rw [show x = windowCoeffVector S T a by rfl, windowCoeff_normSq S T hST a]
+  exact ratEnergy_le_of_inner F S a φ x R hR hrow heval hnorm
 
 /--
 Inputs: a modulus greater than one, a finite polynomial index set, complex coefficients, and a
@@ -1962,20 +1914,20 @@ Gram-row estimate to the coefficient vector.
 Role: turns the abstract row-sum estimate into the additive large-sieve inequality for one
 modulus.
 -/
-theorem reducedAdditivePolynomialMeanSquare_le_of_gram_row_bound {q : ℕ} [NeZero q] (hq : 1 < q)
-    (S : Finset ℕ) (a : ℕ → ℂ) (R : ℝ) (hR : 0 ≤ R)
+theorem reducedEnergy_le_gram {q : ℕ} [NeZero q] (hq : 1 < q) (S : Finset ℕ) (a : ℕ → ℂ) (R : ℝ)
+    (hR : 0 ≤ R)
     (hrow :
-      ∀ x : { x : ZMod q // x ∈ reducedUnitFrequencySet q },
-        ∑ y : { x : ZMod q // x ∈ reducedUnitFrequencySet q },
+      ∀ x : { x : ZMod q // x ∈ reducedFrequencies q },
+        ∑ y : { x : ZMod q // x ∈ reducedFrequencies q },
             ‖∑ n ∈ S,
                 ZMod.stdAddChar (x.val * (n : ZMod q)) *
                   star (ZMod.stdAddChar (y.val * (n : ZMod q)))‖ ≤
           R) :
-    reducedAdditivePolynomialMeanSquare q hq S a ≤ R * ∑ n ∈ S, ‖a n‖ ^ 2 := by
+    reducedPolyEnergy q hq S a ≤ R * ∑ n ∈ S, ‖a n‖ ^ 2 := by
   classical
-  let U := reducedUnitFrequencySet q
+  let U := reducedFrequencies q
   let I := { x : ZMod q // x ∈ U }
-  let φ : I → EuclideanSpace ℂ (↥S) := fun x => reducedUnitFrequencyVector S x.val
+  let φ : I → EuclideanSpace ℂ (↥S) := fun x => reducedFreqVector S x.val
   let b : EuclideanSpace ℂ (↥S) := WithLp.toLp 2 (fun n : ↥S => a n.val)
   have hrowVec : ∀ x : I, (∑ y : I, ‖inner ℂ (φ x) (φ y)‖) ≤ R := by
     intro x
@@ -1988,9 +1940,8 @@ theorem reducedAdditivePolynomialMeanSquare_le_of_gram_row_bound {q : ℕ} [NeZe
         by
         apply Finset.sum_congr rfl
         intro y hy
-        rw [show φ x = reducedUnitFrequencyVector S x.val by rfl,
-          show φ y = reducedUnitFrequencyVector S y.val by rfl,
-          reducedUnitFrequencyVector_inner_eq_cross_sum]
+        rw [show φ x = reducedFreqVector S x.val by rfl,
+          show φ y = reducedFreqVector S y.val by rfl, inner_reduced_cross]
       _ ≤ R := hrow x
   have hBessel : (∑ x : I, ‖inner ℂ (φ x) b‖ ^ 2) ≤ R * ‖b‖ ^ 2 := by
     exact
@@ -1998,8 +1949,8 @@ theorem reducedAdditivePolynomialMeanSquare_le_of_gram_row_bound {q : ℕ} [NeZe
         hrowVec b
   have heval (x : I) : inner ℂ (φ x) b = ∑ n ∈ S, a n * ZMod.stdAddChar (x.val * (n : ZMod q)) := by
     rw [PiLp.inner_apply]
-    simp only [φ, reducedUnitFrequencyVector, b, WithLp.ofLp_toLp, RCLike.inner_apply',
-      starRingEnd_apply, star_star]
+    simp only [φ, reducedFreqVector, b, WithLp.ofLp_toLp, RCLike.inner_apply', starRingEnd_apply,
+      star_star]
     rw [Finset.sum_subtype S (fun _ => Iff.rfl)]
     apply Finset.sum_congr rfl
     intro n hn
@@ -2008,15 +1959,15 @@ theorem reducedAdditivePolynomialMeanSquare_le_of_gram_row_bound {q : ℕ} [NeZe
     rw [EuclideanSpace.norm_sq_eq]
     dsimp only [b]
     exact Finset.sum_coe_sort S (fun n => ‖a n‖ ^ 2)
-  have hmean : reducedAdditivePolynomialMeanSquare q hq S a = ∑ x : I, ‖inner ℂ (φ x) b‖ ^ 2 := by
-    rw [reducedAdditivePolynomialMeanSquare]
+  have hmean : reducedPolyEnergy q hq S a = ∑ x : I, ‖inner ℂ (φ x) b‖ ^ 2 := by
+    rw [reducedPolyEnergy]
     change (∑ x ∈ U, Complex.normSq (∑ n ∈ S, a n * ZMod.stdAddChar (x * (n : ZMod q)))) = _
     rw [Finset.sum_subtype U (fun _ => Iff.rfl)]
     apply Finset.sum_congr rfl
     intro x hx
     rw [← heval x, Complex.normSq_eq_norm_sq]
   calc
-    reducedAdditivePolynomialMeanSquare q hq S a = ∑ x : I, ‖inner ℂ (φ x) b‖ ^ 2 := hmean
+    reducedPolyEnergy q hq S a = ∑ x : I, ‖inner ℂ (φ x) b‖ ^ 2 := hmean
     _ ≤ R * ‖b‖ ^ 2 := hBessel
     _ = R * ∑ n ∈ S, ‖a n‖ ^ 2 := by rw [hbNorm]
 
@@ -2032,8 +1983,8 @@ by the positive denominator product.
 Role: supplies the elementary spacing estimate for distinct reduced fractions in the additive
 large-sieve argument.
 -/
-theorem rational_frequency_separation {q r x y : ℕ} (hq : 0 < q) (hr : 0 < r)
-    (hxy : x * r ≠ y * q) : (1 : ℚ) / ((q : ℚ) * r) ≤ |(x : ℚ) / q - (y : ℚ) / r| := by
+theorem ratFreq_separation {q r x y : ℕ} (hq : 0 < q) (hr : 0 < r) (hxy : x * r ≠ y * q) :
+    (1 : ℚ) / ((q : ℚ) * r) ≤ |(x : ℚ) / q - (y : ℚ) / r| := by
   have hq0 : (q : ℚ) ≠ 0 := by exact_mod_cast (Nat.ne_of_gt hq)
   have hr0 : (r : ℚ) ≠ 0 := by exact_mod_cast (Nat.ne_of_gt hr)
   have hxyZ : (x : ℤ) * r ≠ (y : ℤ) * q := by exact_mod_cast hxy
@@ -2060,9 +2011,8 @@ the common positive denominator.
 
 Role: identifies reduced rational frequencies uniquely when combining additive sums across moduli.
 -/
-theorem rational_reduced_fraction_unique {q r x y : ℕ} (hq : 0 < q) (hr : 0 < r)
-    (hx : Nat.Coprime x q) (hy : Nat.Coprime y r) (hxy : (x : ℚ) / q = (y : ℚ) / r) :
-    q = r ∧ x = y := by
+theorem reducedRat_unique {q r x y : ℕ} (hq : 0 < q) (hr : 0 < r) (hx : Nat.Coprime x q)
+    (hy : Nat.Coprime y r) (hxy : (x : ℚ) / q = (y : ℚ) / r) : q = r ∧ x = y := by
   have hq0 : (q : ℚ) ≠ 0 := by exact_mod_cast (Nat.ne_of_gt hq)
   have hr0 : (r : ℚ) ≠ 0 := by exact_mod_cast (Nat.ne_of_gt hr)
   have hcross : x * r = y * q := by
@@ -2090,8 +2040,8 @@ differences; the numerator in the complementary gap is also a positive integer.
 
 Role: gives the circular spacing needed for an additive large sieve on reduced fractions.
 -/
-theorem rational_frequency_separation_circular {q r x y : ℕ} (hq : 0 < q) (hr : 0 < r) (hx : 0 < x)
-    (hxq : x < q) (hy : 0 < y) (hyr : y < r) (hxy : x * r ≠ y * q) :
+theorem ratFreq_circle_sep {q r x y : ℕ} (hq : 0 < q) (hr : 0 < r) (hx : 0 < x) (hxq : x < q)
+    (hy : 0 < y) (hyr : y < r) (hxy : x * r ≠ y * q) :
     min |(x : ℚ) / q - (y : ℚ) / r| (1 - |(x : ℚ) / q - (y : ℚ) / r|) ≥ 1 / ((q : ℚ) * r) := by
   have hq0 : (q : ℚ) ≠ 0 := by exact_mod_cast (Nat.ne_of_gt hq)
   have hr0 : (r : ℚ) ≠ 0 := by exact_mod_cast (Nat.ne_of_gt hr)
@@ -2142,7 +2092,7 @@ Inputs: two real representatives in `[0, 1)`.
 Role: gives a signed coordinate for placing frequencies into positive and negative distance
 shells.
 -/
-noncomputable def signedCircularDifference (α β : ℝ) : ℝ :=
+noncomputable def signedCircleDiff (α β : ℝ) : ℝ :=
   if β - α < -1 / 2 then β - α + 1 else if β - α ≤ 1 / 2 then β - α else β - α - 1
 
 /--
@@ -2167,9 +2117,9 @@ Proof: unfold both piecewise definitions and check each of their three branches.
 
 Role: converts equality of signed differences into equality up to an integer shift.
 -/
-theorem signedCircularDifference_eq_difference_add_shift (α β : ℝ) :
-    signedCircularDifference α β = (β - α) + (signedCircularShift α β : ℝ) := by
-  unfold signedCircularDifference signedCircularShift
+theorem signedCircleDiff_add (α β : ℝ) :
+    signedCircleDiff α β = (β - α) + (signedCircularShift α β : ℝ) := by
+  unfold signedCircleDiff signedCircularShift
   split_ifs with hlow hhigh
   · norm_num only [Int.cast_one]
   · rw [Int.cast_zero, add_zero]
@@ -2184,7 +2134,7 @@ Proof: apply the integer-period form of `Complex.exp_periodic`.
 
 Role: justifies replacing rational frequency differences by signed circular representatives.
 -/
-theorem complexExp_add_integer_period (z : ℂ) (k : ℤ) :
+theorem exp_add_int_period (z : ℂ) (k : ℤ) :
     Complex.exp (z + (k : ℂ) * (2 * (Real.pi : ℂ) * Complex.I)) = Complex.exp z := by
   have h := (Complex.exp_periodic.int_mul k).sub_eq (z + (k : ℂ) * (2 * (Real.pi : ℂ) * Complex.I))
   simpa only [add_sub_cancel_right] using h.symm
@@ -2198,7 +2148,7 @@ Proof: the exponent change is the integer multiple `(k * n)` of the period `2πi
 
 Role: transfers a character evaluated at a rational difference to its signed representative.
 -/
-theorem complexExp_real_frequency_int_shift (x : ℝ) (k : ℤ) (n : ℕ) :
+theorem exp_freq_int_shift (x : ℝ) (k : ℤ) (n : ℕ) :
     Complex.exp (Complex.I * ((2 * Real.pi * (x + (k : ℝ)) * n : ℝ) : ℂ)) =
       Complex.exp (Complex.I * ((2 * Real.pi * x * n : ℝ) : ℂ)) := by
   have harg :
@@ -2208,7 +2158,7 @@ theorem complexExp_real_frequency_int_shift (x : ℝ) (k : ℤ) (n : ℕ) :
     push_cast
     ring
   rw [harg]
-  exact complexExp_add_integer_period _ _
+  exact exp_add_int_period _ _
 
 /--
 Inputs: a real frequency.
@@ -2220,7 +2170,7 @@ Proof: conjugate the purely imaginary exponent and normalize the real negation.
 
 Role: shows that the Fourier kernel norm is unchanged when the signed coordinate changes sign.
 -/
-theorem complexExp_real_frequency_neg (x : ℝ) :
+theorem exp_freq_neg (x : ℝ) :
     star (Complex.exp (Complex.I * ((2 * Real.pi * x : ℝ) : ℂ))) =
       Complex.exp (Complex.I * ((2 * Real.pi * (-x) : ℝ) : ℂ)) := by
   rw [show
@@ -2243,7 +2193,7 @@ Proof: conjugation preserves real coefficients and distributes over finite sums 
 
 Role: transfers a row estimate proved for signed coordinates to the opposite Gram orientation.
 -/
-theorem realWeightedFourierSum_neg_eq_star (T : Finset ℕ) (w : ℕ → ℝ) (x : ℝ) :
+theorem fourierSum_neg_star (T : Finset ℕ) (w : ℕ → ℝ) (x : ℝ) :
     (∑ n ∈ T, (w n : ℂ) * Complex.exp (Complex.I * ((2 * Real.pi * (-x) : ℝ) : ℂ)) ^ n) =
       star (∑ n ∈ T, (w n : ℂ) * Complex.exp (Complex.I * ((2 * Real.pi * x : ℝ) : ℂ)) ^ n) := by
   rw [star_sum]
@@ -2258,7 +2208,7 @@ theorem realWeightedFourierSum_neg_eq_star (T : Finset ℕ) (w : ℕ → ℝ) (x
       (starRingEnd ℂ) (Complex.exp (Complex.I * ((2 * Real.pi * x : ℝ) : ℂ))) =
         star (Complex.exp (Complex.I * ((2 * Real.pi * x : ℝ) : ℂ)))
       by rfl]
-  rw [← complexExp_real_frequency_neg]
+  rw [← exp_freq_neg]
 
 /--
 Inputs: a finite index set, real coefficients, and a real frequency.
@@ -2269,10 +2219,10 @@ Proof: use conjugacy of the sums and invariance of the complex norm under conjug
 
 Role: removes the orientation difference between a Gram cross term and its signed coordinate.
 -/
-theorem realWeightedFourierSum_norm_neg_eq (T : Finset ℕ) (w : ℕ → ℝ) (x : ℝ) :
+theorem fourierSum_norm_neg (T : Finset ℕ) (w : ℕ → ℝ) (x : ℝ) :
     ‖∑ n ∈ T, (w n : ℂ) * Complex.exp (Complex.I * ((2 * Real.pi * (-x) : ℝ) : ℂ)) ^ n‖ =
       ‖∑ n ∈ T, (w n : ℂ) * Complex.exp (Complex.I * ((2 * Real.pi * x : ℝ) : ℂ)) ^ n‖ := by
-  rw [realWeightedFourierSum_neg_eq_star]
+  rw [fourierSum_neg_star]
   exact norm_star _
 
 /--
@@ -2286,22 +2236,20 @@ exponential periodicity.
 Role: aligns rational-frequency Gram entries with the centered frequency coordinates in the
 large-sieve row estimate.
 -/
-theorem rationalAdditiveCharacter_cross_eq_signed (α β : ℚ) (n : ℕ) :
-    rationalAdditiveCharacter α n * star (rationalAdditiveCharacter β n) =
+theorem ratAddChar_cross_sign (α β : ℚ) (n : ℕ) :
+    rationalAddChar α n * star (rationalAddChar β n) =
       Complex.exp
-        (Complex.I *
-          ((2 * Real.pi * (-signedCircularDifference (α : ℝ) (β : ℝ)) * n : ℝ) : ℂ)) := by
-  rw [rationalAdditiveCharacter_cross_eq_exp_difference]
-  have hshift := signedCircularDifference_eq_difference_add_shift (α : ℝ) (β : ℝ)
+        (Complex.I * ((2 * Real.pi * (-signedCircleDiff (α : ℝ) (β : ℝ)) * n : ℝ) : ℂ)) := by
+  rw [rationalAddChar_cross]
+  have hshift := signedCircleDiff_add (α : ℝ) (β : ℝ)
   have hdiff :
     (α : ℝ) - β =
-      -signedCircularDifference (α : ℝ) (β : ℝ) + (signedCircularShift (α : ℝ) (β : ℝ) : ℝ) := by
+      -signedCircleDiff (α : ℝ) (β : ℝ) + (signedCircularShift (α : ℝ) (β : ℝ) : ℝ) := by
     rw [hshift]
     ring
   rw [hdiff]
   exact
-    complexExp_real_frequency_int_shift (-signedCircularDifference (α : ℝ) (β : ℝ))
-      (signedCircularShift (α : ℝ) (β : ℝ)) n
+    exp_freq_int_shift (-signedCircleDiff (α : ℝ) (β : ℝ)) (signedCircularShift (α : ℝ) (β : ℝ)) n
 
 /--
 Inputs: a real representative.
@@ -2312,8 +2260,8 @@ Proof: the middle branch of the centered representative definition applies to th
 
 Role: identifies the base frequency as the origin of its signed-coordinate family.
 -/
-theorem signedCircularDifference_self (α : ℝ) : signedCircularDifference α α = 0 := by
-  unfold signedCircularDifference
+theorem signedCircleDiff_self (α : ℝ) : signedCircleDiff α α = 0 := by
+  unfold signedCircleDiff
   norm_num only [sub_self]
   simp only [ite_false, ite_true]
 
@@ -2326,7 +2274,7 @@ Proof: simplify the integer-valued branches of the definition.
 
 Role: bounds the shift difference when proving injectivity on representatives in `[0, 1)`.
 -/
-theorem signedCircularShift_bounds (α β : ℝ) :
+theorem circleShift_bounds (α β : ℝ) :
     -1 ≤ signedCircularShift α β ∧ signedCircularShift α β ≤ 1 := by
   unfold signedCircularShift
   split_ifs with hlow hhigh
@@ -2347,10 +2295,9 @@ unit interval, then use the representative bounds.
 
 Role: provides the bounded coordinate range needed for the shell partition.
 -/
-theorem signedCircularDifference_bounds {α β : ℝ} (hα0 : 0 ≤ α) (hα1 : α < 1) (hβ0 : 0 ≤ β)
-    (hβ1 : β < 1) :
-    -1 / 2 ≤ signedCircularDifference α β ∧ signedCircularDifference α β ≤ 1 / 2 := by
-  unfold signedCircularDifference
+theorem circleDiff_bounds {α β : ℝ} (hα0 : 0 ≤ α) (hα1 : α < 1) (hβ0 : 0 ≤ β) (hβ1 : β < 1) :
+    -1 / 2 ≤ signedCircleDiff α β ∧ signedCircleDiff α β ≤ 1 / 2 := by
+  unfold signedCircleDiff
   split_ifs with hlow hhigh
   · constructor <;> linarith only [hα0, hα1, hβ0, hβ1, hlow]
   · constructor <;> linarith only [hα0, hα1, hβ0, hβ1, hlow, hhigh]
@@ -2366,13 +2313,11 @@ minimum; in the middle branch the difference is unchanged.
 
 Role: transfers rational-frequency separation to the signed coordinate used by the shells.
 -/
-theorem signedCircularDifference_circularDistance {α β : ℝ} (hα0 : 0 ≤ α) (hα1 : α < 1)
-    (hβ0 : 0 ≤ β) (hβ1 : β < 1) :
-    min |signedCircularDifference α β| (1 - |signedCircularDifference α β|) =
-      min |β - α| (1 - |β - α|) := by
+theorem circleDiff_distance {α β : ℝ} (hα0 : 0 ≤ α) (hα1 : α < 1) (hβ0 : 0 ≤ β) (hβ1 : β < 1) :
+    min |signedCircleDiff α β| (1 - |signedCircleDiff α β|) = min |β - α| (1 - |β - α|) := by
   have hdlo : -1 < β - α := by linarith only [hα1, hβ0]
   have hdhi : β - α < 1 := by linarith only [hβ1, hα0]
-  unfold signedCircularDifference
+  unfold signedCircleDiff
   split_ifs with hlow hhigh
   · have hneg : β - α < 0 := by linarith only [hlow]
     have hpos : 0 < β - α + 1 := by linarith only [hdlo]
@@ -2397,8 +2342,8 @@ zero circular distance.
 
 Role: transfers circular separation between original frequencies to their signed coordinates.
 -/
-theorem circularDistance_eq_of_integer_translate {d e : ℝ} (k : ℤ) (hd : |d| ≤ 1) (he : |e| ≤ 1)
-    (h : e = d + (k : ℝ)) : min |e| (1 - |e|) = min |d| (1 - |d|) := by
+theorem circularDistance_eq {d e : ℝ} (k : ℤ) (hd : |d| ≤ 1) (he : |e| ≤ 1) (h : e = d + (k : ℝ)) :
+    min |e| (1 - |e|) = min |d| (1 - |d|) := by
   have hdlo : -1 ≤ d := (abs_le.mp hd).1
   have hdhi : d ≤ 1 := (abs_le.mp hd).2
   have helo : -1 ≤ e := (abs_le.mp he).1
@@ -2443,25 +2388,24 @@ Claim: subtracting the same base and choosing centered representatives preserves
 distance between the other two frequencies.
 
 Proof: express both signed differences using their integer branch shifts and apply
-`circularDistance_eq_of_integer_translate`.
+`circularDistance_eq`.
 
 Role: establishes pairwise separation for the finite family of signed coordinates.
 -/
-theorem signedCircularDifference_pairwiseDistance {α β γ : ℝ} (hα0 : 0 ≤ α) (hα1 : α < 1)
-    (hβ0 : 0 ≤ β) (hβ1 : β < 1) (hγ0 : 0 ≤ γ) (hγ1 : γ < 1) :
-    min |signedCircularDifference α β - signedCircularDifference α γ|
-        (1 - |signedCircularDifference α β - signedCircularDifference α γ|) =
+theorem circleDiff_pairDist {α β γ : ℝ} (hα0 : 0 ≤ α) (hα1 : α < 1) (hβ0 : 0 ≤ β) (hβ1 : β < 1)
+    (hγ0 : 0 ≤ γ) (hγ1 : γ < 1) :
+    min |signedCircleDiff α β - signedCircleDiff α γ|
+        (1 - |signedCircleDiff α β - signedCircleDiff α γ|) =
       min |β - γ| (1 - |β - γ|) := by
-  have hβcoord := signedCircularDifference_bounds hα0 hα1 hβ0 hβ1
-  have hγcoord := signedCircularDifference_bounds hα0 hα1 hγ0 hγ1
+  have hβcoord := circleDiff_bounds hα0 hα1 hβ0 hβ1
+  have hγcoord := circleDiff_bounds hα0 hα1 hγ0 hγ1
   have hdiff :
-    signedCircularDifference α β - signedCircularDifference α γ =
+    signedCircleDiff α β - signedCircleDiff α γ =
       (β - γ) + (signedCircularShift α β - signedCircularShift α γ : ℝ) := by
-    rw [signedCircularDifference_eq_difference_add_shift α β,
-      signedCircularDifference_eq_difference_add_shift α γ]
+    rw [signedCircleDiff_add α β, signedCircleDiff_add α γ]
     ring
   have hdiff' :
-    signedCircularDifference α β - signedCircularDifference α γ =
+    signedCircleDiff α β - signedCircleDiff α γ =
       (β - γ) + ((signedCircularShift α β - signedCircularShift α γ : ℤ) : ℝ) := by
     calc
       _ = (β - γ) + ((signedCircularShift α β : ℤ) - signedCircularShift α γ) := hdiff
@@ -2469,12 +2413,10 @@ theorem signedCircularDifference_pairwiseDistance {α β γ : ℝ} (hα0 : 0 ≤
   have hβγ : |β - γ| ≤ 1 := by
     rw [abs_le]
     constructor <;> linarith only [hβ0, hβ1, hγ0, hγ1]
-  have hsigned : |signedCircularDifference α β - signedCircularDifference α γ| ≤ 1 := by
+  have hsigned : |signedCircleDiff α β - signedCircleDiff α γ| ≤ 1 := by
     rw [abs_le]
     constructor <;> linarith only [hβcoord.1, hβcoord.2, hγcoord.1, hγcoord.2]
-  exact
-    circularDistance_eq_of_integer_translate (signedCircularShift α β - signedCircularShift α γ) hβγ
-      hsigned hdiff'
+  exact circularDistance_eq (signedCircularShift α β - signedCircularShift α γ) hβγ hsigned hdiff'
 
 /--
 Inputs: two representatives `β` and `γ` in `[0, 1)`, with a common base `α`.
@@ -2487,16 +2429,15 @@ Proof: express each difference using its integer shift; the difference of the sh
 Role: permits counting the finite image of frequencies in signed distance shells without losing
 elements to collisions.
 -/
-theorem signedCircularDifference_injective {α β γ : ℝ} (hβ0 : 0 ≤ β) (hβ1 : β < 1) (hγ0 : 0 ≤ γ)
-    (hγ1 : γ < 1) (h : signedCircularDifference α β = signedCircularDifference α γ) : β = γ := by
+theorem circleDiff_injective {α β γ : ℝ} (hβ0 : 0 ≤ β) (hβ1 : β < 1) (hγ0 : 0 ≤ γ) (hγ1 : γ < 1)
+    (h : signedCircleDiff α β = signedCircleDiff α γ) : β = γ := by
   let kb := signedCircularShift α β
   let kg := signedCircularShift α γ
-  have hkb := signedCircularShift_bounds α β
-  have hkg := signedCircularShift_bounds α γ
+  have hkb := circleShift_bounds α β
+  have hkg := circleShift_bounds α γ
   have hshift : β - γ = (kg - kb : ℤ) := by
     dsimp only [kb, kg]
-    rw [signedCircularDifference_eq_difference_add_shift α β,
-      signedCircularDifference_eq_difference_add_shift α γ] at h
+    rw [signedCircleDiff_add α β, signedCircleDiff_add α γ] at h
     exact_mod_cast
       (by linarith only [h] : (β - γ : ℝ) = (signedCircularShift α γ : ℝ) - signedCircularShift α β)
   let k : ℤ := kg - kb
@@ -2521,7 +2462,7 @@ Invariant: `Fin (Q + 1)` bounds the denominator, and the second subtype enforces
 Role: provides a finite index type for all reduced frequencies used in the denominator-bounded
 additive large sieve.
 -/
-abbrev ReducedUnitFrequencyIndex (Q : ℕ) :=
+abbrev ReducedFreqIndex (Q : ℕ) :=
   Σ q : { q : Fin (Q + 1) // 1 < q.val }, { x : Fin q.val // Nat.Coprime x.val q.val }
 
 /--
@@ -2529,11 +2470,11 @@ Definition: the finite set of all reduced frequency indices with denominator at 
 
 Inputs: a natural denominator cutoff.
 
-Output: every index in `ReducedUnitFrequencyIndex Q`.
+Output: every index in `ReducedFreqIndex Q`.
 
 Role: supplies the complete finite frequency family for Gram row estimates.
 -/
-noncomputable def reducedUnitFrequencyIndexSet (Q : ℕ) : Finset (ReducedUnitFrequencyIndex Q) :=
+noncomputable def reducedFreqIndexSet (Q : ℕ) : Finset (ReducedFreqIndex Q) :=
   Finset.univ
 
 /--
@@ -2545,19 +2486,19 @@ Output: the ratio of its canonical numerator and denominator.
 
 Role: supplies real coordinates for circular separation and the signed shell partition.
 -/
-noncomputable def reducedUnitFrequencyCoordinate {Q : ℕ} (f : ReducedUnitFrequencyIndex Q) : ℝ :=
+noncomputable def reducedFreqCoord {Q : ℕ} (f : ReducedFreqIndex Q) : ℝ :=
   (f.2.1.val : ℝ) / f.1.1.val
 
 /--
 Definition: the reduced rational frequency represented by an indexed numerator and denominator.
 
-Inputs: a member of `ReducedUnitFrequencyIndex Q`.
+Inputs: a member of `ReducedFreqIndex Q`.
 
 Output: the numerator divided by the denominator in `ℚ`.
 
-Role: provides the exact rational frequency used by `rationalAdditiveCharacter`.
+Role: provides the exact rational frequency used by `rationalAddChar`.
 -/
-noncomputable def reducedUnitFrequencyRational {Q : ℕ} (f : ReducedUnitFrequencyIndex Q) : ℚ :=
+noncomputable def reducedFreqRat {Q : ℕ} (f : ReducedFreqIndex Q) : ℚ :=
   (f.2.1.val : ℚ) / f.1.1.val
 
 /--
@@ -2567,13 +2508,12 @@ Proof: cast the numerator and denominator through rational division.
 
 Role: transfers real-coordinate separation results to the rational-frequency index family.
 -/
-theorem reducedUnitFrequencyRational_cast {Q : ℕ} (f : ReducedUnitFrequencyIndex Q) :
-    (reducedUnitFrequencyRational f : ℝ) = reducedUnitFrequencyCoordinate f := by
-  simp only [reducedUnitFrequencyRational, reducedUnitFrequencyCoordinate, Rat.cast_div,
-    Rat.cast_natCast]
+theorem reducedFreqRat_cast {Q : ℕ} (f : ReducedFreqIndex Q) :
+    (reducedFreqRat f : ℝ) = reducedFreqCoord f := by
+  simp only [reducedFreqRat, reducedFreqCoord, Rat.cast_div, Rat.cast_natCast]
 
 /--
-Inputs: an index from `ReducedUnitFrequencyIndex Q`.
+Inputs: an index from `ReducedFreqIndex Q`.
 
 Claim: its real frequency coordinate lies in `[0, 1)`.
 
@@ -2582,17 +2522,17 @@ denominator in the real numbers.
 
 Role: provides the representative bounds required by the signed-coordinate lemmas.
 -/
-theorem reducedUnitFrequencyCoordinate_bounds {Q : ℕ} (f : ReducedUnitFrequencyIndex Q) :
-    0 ≤ reducedUnitFrequencyCoordinate f ∧ reducedUnitFrequencyCoordinate f < 1 := by
+theorem reducedCoord_bounds {Q : ℕ} (f : ReducedFreqIndex Q) :
+    0 ≤ reducedFreqCoord f ∧ reducedFreqCoord f < 1 := by
   obtain ⟨⟨q, hq⟩, ⟨x, hx⟩⟩ := f
-  dsimp only [reducedUnitFrequencyCoordinate]
+  dsimp only [reducedFreqCoord]
   have hqpos : 0 < (q.val : ℝ) := by exact_mod_cast Nat.zero_lt_of_lt hq
   have hxnonneg : 0 ≤ (x.val : ℝ) := by exact_mod_cast Nat.zero_le x.val
   have hxlt : (x.val : ℝ) < q.val := by exact_mod_cast x.is_lt
   exact ⟨div_nonneg hxnonneg hqpos.le, (div_lt_one hqpos).2 hxlt⟩
 
 /--
-Inputs: two indices from `ReducedUnitFrequencyIndex Q` with equal real coordinates.
+Inputs: two indices from `ReducedFreqIndex Q` with equal real coordinates.
 
 Claim: the indices are equal.
 
@@ -2602,8 +2542,7 @@ fractions, then use extensionality of the denominator and numerator subtypes.
 Role: ensures that passing from the finite index family to its rational-coordinate image loses no
 frequencies.
 -/
-theorem reducedUnitFrequencyCoordinate_injective {Q : ℕ} :
-    Function.Injective (reducedUnitFrequencyCoordinate (Q := Q)) := by
+theorem reducedCoord_inj {Q : ℕ} : Function.Injective (reducedFreqCoord (Q := Q)) := by
   intro f g hfg
   obtain ⟨⟨q, hq⟩, ⟨x, hx⟩⟩ := f
   obtain ⟨⟨r, hr⟩, ⟨y, hy⟩⟩ := g
@@ -2616,8 +2555,7 @@ theorem reducedUnitFrequencyCoordinate_injective {Q : ℕ} :
   have hr0Q : (r.val : ℚ) ≠ 0 := by exact_mod_cast (Nat.ne_of_gt (Nat.zero_lt_of_lt hr))
   have hcrossQ : (x.val : ℚ) * r.val = (y.val : ℚ) * q.val := by exact_mod_cast hcross
   have hrat := (div_eq_div_iff hq0Q hr0Q).2 hcrossQ
-  obtain ⟨hqr, hxy⟩ :=
-    rational_reduced_fraction_unique (Nat.zero_lt_of_lt hq) (Nat.zero_lt_of_lt hr) hx hy hrat
+  obtain ⟨hqr, hxy⟩ := reducedRat_unique (Nat.zero_lt_of_lt hq) (Nat.zero_lt_of_lt hr) hx hy hrat
   have hqrFin : q = r := Fin.ext hqr
   subst r
   have hxyFin : x = y := Fin.ext hxy
@@ -2631,15 +2569,13 @@ Proof: cast a rational-frequency equality to `ℝ` and use injectivity of the re
 
 Role: allows finite sums over indexed frequencies to be transported to their rational image.
 -/
-theorem reducedUnitFrequencyRational_injective {Q : ℕ} :
-    Function.Injective (reducedUnitFrequencyRational (Q := Q)) := by
+theorem reducedRat_injective {Q : ℕ} : Function.Injective (reducedFreqRat (Q := Q)) := by
   intro f g h
-  apply reducedUnitFrequencyCoordinate_injective
+  apply reducedCoord_inj
   calc
-    reducedUnitFrequencyCoordinate f = (reducedUnitFrequencyRational f : ℝ) :=
-      (reducedUnitFrequencyRational_cast f).symm
-    _ = (reducedUnitFrequencyRational g : ℝ) := congrArg Rat.cast h
-    _ = reducedUnitFrequencyCoordinate g := reducedUnitFrequencyRational_cast g
+    reducedFreqCoord f = (reducedFreqRat f : ℝ) := (reducedFreqRat_cast f).symm
+    _ = (reducedFreqRat g : ℝ) := congrArg Rat.cast h
+    _ = reducedFreqCoord g := reducedFreqRat_cast g
 
 /--
 Definition: locate a reduced frequency relative to a fixed base in the centered circular
@@ -2651,9 +2587,8 @@ Output: its signed circular difference from the base.
 
 Role: assigns each finite frequency index to a signed distance shell.
 -/
-noncomputable def reducedUnitFrequencySignedCoordinate {Q : ℕ} (α : ℝ)
-    (f : ReducedUnitFrequencyIndex Q) : ℝ :=
-  signedCircularDifference α (reducedUnitFrequencyCoordinate f)
+noncomputable def signedReducedCoord {Q : ℕ} (α : ℝ) (f : ReducedFreqIndex Q) : ℝ :=
+  signedCircleDiff α (reducedFreqCoord f)
 
 /--
 Inputs: a denominator cutoff, two indexed reduced frequencies, and an interval length.
@@ -2666,45 +2601,36 @@ to change the negative signed coordinate to the positive one.
 
 Role: transfers the real signed-coordinate row bound to the rational windowed frequency vectors.
 -/
-theorem reducedUnitFrequencyWindowGramTerm_norm_eq_signed_kernel_norm {Q : ℕ}
-    (f₀ f : ReducedUnitFrequencyIndex Q) (N : ℕ) :
+theorem windowGram_norm_eq {Q : ℕ} (f₀ f : ReducedFreqIndex Q) (N : ℕ) :
     ‖inner ℂ
-          (rationalWindowFrequencyVector (Finset.range (N + 2 * (Q * Q) - 1))
-            (triangleOverlapWindow N (Q * Q)) (reducedUnitFrequencyRational f₀))
-          (rationalWindowFrequencyVector (Finset.range (N + 2 * (Q * Q) - 1))
-            (triangleOverlapWindow N (Q * Q)) (reducedUnitFrequencyRational f))‖ =
+          (windowFreqVector (Finset.range (N + 2 * (Q * Q) - 1)) (triangleOverlapWindow N (Q * Q))
+            (reducedFreqRat f₀))
+          (windowFreqVector (Finset.range (N + 2 * (Q * Q) - 1)) (triangleOverlapWindow N (Q * Q))
+            (reducedFreqRat f))‖ =
       ‖∑ n ∈ Finset.range (N + 2 * (Q * Q) - 1),
-          (triangleOverlapWindowWeight N (Q * Q) n : ℂ) *
+          (triangleOverlapWeight N (Q * Q) n : ℂ) *
             Complex.exp
-                (Complex.I *
-                  ((2 * Real.pi *
-                        reducedUnitFrequencySignedCoordinate (reducedUnitFrequencyCoordinate f₀) f :
-                      ℝ) :
-                    ℂ)) ^
+                (Complex.I * ((2 * Real.pi * signedReducedCoord (reducedFreqCoord f₀) f : ℝ) : ℂ)) ^
               n‖ := by
   have hsum :
     inner ℂ
-        (rationalWindowFrequencyVector (Finset.range (N + 2 * (Q * Q) - 1))
-          (triangleOverlapWindow N (Q * Q)) (reducedUnitFrequencyRational f₀))
-        (rationalWindowFrequencyVector (Finset.range (N + 2 * (Q * Q) - 1))
-          (triangleOverlapWindow N (Q * Q)) (reducedUnitFrequencyRational f)) =
+        (windowFreqVector (Finset.range (N + 2 * (Q * Q) - 1)) (triangleOverlapWindow N (Q * Q))
+          (reducedFreqRat f₀))
+        (windowFreqVector (Finset.range (N + 2 * (Q * Q) - 1)) (triangleOverlapWindow N (Q * Q))
+          (reducedFreqRat f)) =
       ∑ n ∈ Finset.range (N + 2 * (Q * Q) - 1),
-        (triangleOverlapWindowWeight N (Q * Q) n : ℂ) *
+        (triangleOverlapWeight N (Q * Q) n : ℂ) *
           Complex.exp
               (Complex.I *
-                ((2 * Real.pi *
-                      (-reducedUnitFrequencySignedCoordinate (reducedUnitFrequencyCoordinate f₀)
-                          f) :
-                    ℝ) :
-                  ℂ)) ^
+                ((2 * Real.pi * (-signedReducedCoord (reducedFreqCoord f₀) f) : ℝ) : ℂ)) ^
             n := by
-    rw [rationalWindowFrequencyVector_inner_eq_weighted_cross_sum]
+    rw [inner_window_cross_eq]
     apply Finset.sum_congr rfl
     intro n hn
-    rw [mul_assoc, ← Complex.ofReal_pow, triangleOverlapWindow_sq_eq_weight]
-    rw [rationalAdditiveCharacter_cross_eq_signed]
-    rw [reducedUnitFrequencyRational_cast f₀, reducedUnitFrequencyRational_cast f]
-    rw [reducedUnitFrequencySignedCoordinate]
+    rw [mul_assoc, ← Complex.ofReal_pow, overlapWindow_sq_eq]
+    rw [ratAddChar_cross_sign]
+    rw [reducedFreqRat_cast f₀, reducedFreqRat_cast f]
+    rw [signedReducedCoord]
     congr 1
     rw [← Complex.exp_nat_mul]
     congr 1
@@ -2713,23 +2639,18 @@ theorem reducedUnitFrequencyWindowGramTerm_norm_eq_signed_kernel_norm {Q : ℕ}
   calc
     _ =
         ‖∑ n ∈ Finset.range (N + 2 * (Q * Q) - 1),
-            (triangleOverlapWindowWeight N (Q * Q) n : ℂ) *
+            (triangleOverlapWeight N (Q * Q) n : ℂ) *
               Complex.exp
                   (Complex.I *
-                    ((2 * Real.pi *
-                          (-reducedUnitFrequencySignedCoordinate (reducedUnitFrequencyCoordinate f₀)
-                              f) :
-                        ℝ) :
-                      ℂ)) ^
+                    ((2 * Real.pi * (-signedReducedCoord (reducedFreqCoord f₀) f) : ℝ) : ℂ)) ^
                 n‖ :=
       congrArg norm hsum
     _ = _ :=
-      realWeightedFourierSum_norm_neg_eq (Finset.range (N + 2 * (Q * Q) - 1))
-        (triangleOverlapWindowWeight N (Q * Q))
-        (reducedUnitFrequencySignedCoordinate (reducedUnitFrequencyCoordinate f₀) f)
+      fourierSum_norm_neg (Finset.range (N + 2 * (Q * Q) - 1)) (triangleOverlapWeight N (Q * Q))
+        (signedReducedCoord (reducedFreqCoord f₀) f)
 
 /--
-Inputs: two distinct indices from `ReducedUnitFrequencyIndex Q` and a base in `[0, 1)`.
+Inputs: two distinct indices from `ReducedFreqIndex Q` and a base in `[0, 1)`.
 
 Claim: their signed coordinates have circular distance at least `1 / Q^2`.
 
@@ -2738,29 +2659,19 @@ bound and transfer it to the pair of signed coordinates.
 
 Role: establishes the separation hypothesis for the full finite signed-frequency family.
 -/
-theorem reducedUnitFrequencySignedCoordinate_pairwiseSeparation {Q : ℕ} (α : ℝ) (hα0 : 0 ≤ α)
-    (hα1 : α < 1) (f g : ReducedUnitFrequencyIndex Q) (hfg : f ≠ g) :
+theorem signedCoord_sep {Q : ℕ} (α : ℝ) (hα0 : 0 ≤ α) (hα1 : α < 1) (f g : ReducedFreqIndex Q)
+    (hfg : f ≠ g) :
     1 / ((Q : ℝ) * Q) ≤
-      min |reducedUnitFrequencySignedCoordinate α f - reducedUnitFrequencySignedCoordinate α g|
-        (1 -
-          |reducedUnitFrequencySignedCoordinate α f -
-              reducedUnitFrequencySignedCoordinate α g|) := by
-  have hxrange := reducedUnitFrequencyCoordinate_bounds f
-  have hyrange := reducedUnitFrequencyCoordinate_bounds g
-  have hpair :=
-    signedCircularDifference_pairwiseDistance hα0 hα1 hxrange.1 hxrange.2 hyrange.1 hyrange.2
-  rw [show
-      reducedUnitFrequencySignedCoordinate α f =
-        signedCircularDifference α (reducedUnitFrequencyCoordinate f)
-      by rfl,
-    show
-      reducedUnitFrequencySignedCoordinate α g =
-        signedCircularDifference α (reducedUnitFrequencyCoordinate g)
-      by rfl,
-    hpair]
-  have hcoordNe : reducedUnitFrequencyCoordinate f ≠ reducedUnitFrequencyCoordinate g := by
+      min |signedReducedCoord α f - signedReducedCoord α g|
+        (1 - |signedReducedCoord α f - signedReducedCoord α g|) := by
+  have hxrange := reducedCoord_bounds f
+  have hyrange := reducedCoord_bounds g
+  have hpair := circleDiff_pairDist hα0 hα1 hxrange.1 hxrange.2 hyrange.1 hyrange.2
+  rw [show signedReducedCoord α f = signedCircleDiff α (reducedFreqCoord f) by rfl,
+    show signedReducedCoord α g = signedCircleDiff α (reducedFreqCoord g) by rfl, hpair]
+  have hcoordNe : reducedFreqCoord f ≠ reducedFreqCoord g := by
     intro hcoord
-    exact hfg (reducedUnitFrequencyCoordinate_injective hcoord)
+    exact hfg (reducedCoord_inj hcoord)
   obtain ⟨⟨q, hq⟩, ⟨x, hx⟩⟩ := f
   obtain ⟨⟨r, hr⟩, ⟨y, hy⟩⟩ := g
   change (x.val : ℝ) / q.val ≠ (y.val : ℝ) / r.val at hcoordNe
@@ -2790,8 +2701,8 @@ theorem reducedUnitFrequencySignedCoordinate_pairwiseSeparation {Q : ℕ} (α : 
   have hqpos := Nat.zero_lt_of_lt hq
   have hrpos := Nat.zero_lt_of_lt hr
   have hspacingqr :=
-    rational_frequency_separation_circular hqpos hrpos (Nat.pos_of_ne_zero hxne) x.is_lt
-      (Nat.pos_of_ne_zero hyne) y.is_lt hcross
+    ratFreq_circle_sep hqpos hrpos (Nat.pos_of_ne_zero hxne) x.is_lt (Nat.pos_of_ne_zero hyne)
+      y.is_lt hcross
   have hQpos : 0 < (Q : ℚ) * Q := by
     have hQ : 0 < Q := hqpos.trans_le hqQ
     exact mul_pos (by exact_mod_cast hQ) (by exact_mod_cast hQ)
@@ -2816,12 +2727,12 @@ denominator at most `Q`, measured from a fixed base frequency.
 
 Inputs: a denominator cutoff and a real base frequency.
 
-Output: the image of `reducedUnitFrequencyIndexSet Q` under the signed-coordinate map.
+Output: the image of `reducedFreqIndexSet Q` under the signed-coordinate map.
 
 Role: provides the finite point set to partition into circular-distance shells.
 -/
-noncomputable def reducedUnitFrequencySignedCoordinates {Q : ℕ} (α : ℝ) : Finset ℝ :=
-  (reducedUnitFrequencyIndexSet Q).image (reducedUnitFrequencySignedCoordinate α)
+noncomputable def signedReducedCoords {Q : ℕ} (α : ℝ) : Finset ℝ :=
+  (reducedFreqIndexSet Q).image (signedReducedCoord α)
 
 /--
 Inputs: a reduced frequency index.
@@ -2834,11 +2745,11 @@ zero.
 
 Role: supplies the origin against which every off-diagonal frequency in a Gram row is separated.
 -/
-theorem reducedUnitFrequencySignedCoordinates_zero_mem {Q : ℕ} (f : ReducedUnitFrequencyIndex Q) :
-    0 ∈ reducedUnitFrequencySignedCoordinates (Q := Q) (reducedUnitFrequencyCoordinate f) := by
+theorem signedCoords_zero {Q : ℕ} (f : ReducedFreqIndex Q) :
+    0 ∈ signedReducedCoords (Q := Q) (reducedFreqCoord f) := by
   apply Finset.mem_image.mpr
   refine ⟨f, Finset.mem_univ _, ?_⟩
-  exact signedCircularDifference_self (reducedUnitFrequencyCoordinate f)
+  exact signedCircleDiff_self (reducedFreqCoord f)
 
 /--
 Inputs: two distinct values in the signed-coordinate set for cutoff `Q`, and a base in `[0, 1)`.
@@ -2849,10 +2760,9 @@ Proof: lift the two image memberships to frequency indices and apply their pairw
 
 Role: supplies the spacing bound needed to count the points in each shell.
 -/
-theorem reducedUnitFrequencySignedCoordinates_separated {Q : ℕ} (α : ℝ) (hα0 : 0 ≤ α) (hα1 : α < 1)
-    (u v : ℝ) (hu : u ∈ reducedUnitFrequencySignedCoordinates (Q := Q) α)
-    (hv : v ∈ reducedUnitFrequencySignedCoordinates (Q := Q) α) (huv : u ≠ v) :
-    1 / ((Q : ℝ) * Q) ≤ min |u - v| (1 - |u - v|) := by
+theorem signedCoords_sep {Q : ℕ} (α : ℝ) (hα0 : 0 ≤ α) (hα1 : α < 1) (u v : ℝ)
+    (hu : u ∈ signedReducedCoords (Q := Q) α) (hv : v ∈ signedReducedCoords (Q := Q) α)
+    (huv : u ≠ v) : 1 / ((Q : ℝ) * Q) ≤ min |u - v| (1 - |u - v|) := by
   classical
   obtain ⟨f, hf, hfu⟩ := Finset.mem_image.mp hu
   obtain ⟨g, hg, hgv⟩ := Finset.mem_image.mp hv
@@ -2860,11 +2770,11 @@ theorem reducedUnitFrequencySignedCoordinates_separated {Q : ℕ} (α : ℝ) (h�
     intro hfg
     apply huv
     calc
-      u = reducedUnitFrequencySignedCoordinate α f := hfu.symm
-      _ = reducedUnitFrequencySignedCoordinate α g := by rw [hfg]
+      u = signedReducedCoord α f := hfu.symm
+      _ = signedReducedCoord α g := by rw [hfg]
       _ = v := hgv
   rw [← hfu, ← hgv]
-  exact reducedUnitFrequencySignedCoordinate_pairwiseSeparation α hα0 hα1 f g hfg
+  exact signedCoord_sep α hα0 hα1 f g hfg
 
 /--
 Inputs: a member of a signed-coordinate family and a base in `[0, 1)`.
@@ -2875,17 +2785,14 @@ Proof: lift membership through the finite image and apply the signed-difference 
 
 Role: ensures that the shell radius controls both sides of the circular distance.
 -/
-theorem reducedUnitFrequencySignedCoordinates_mem_bounds {Q : ℕ} (α : ℝ) (hα0 : 0 ≤ α) (hα1 : α < 1)
-    (x : ℝ) (hx : x ∈ reducedUnitFrequencySignedCoordinates (Q := Q) α) :
-    -(1 / 2 : ℝ) ≤ x ∧ x ≤ 1 / 2 := by
+theorem signedCoords_bounds {Q : ℕ} (α : ℝ) (hα0 : 0 ≤ α) (hα1 : α < 1) (x : ℝ)
+    (hx : x ∈ signedReducedCoords (Q := Q) α) : -(1 / 2 : ℝ) ≤ x ∧ x ≤ 1 / 2 := by
   obtain ⟨f, _, rfl⟩ := Finset.mem_image.mp hx
-  have h :=
-    signedCircularDifference_bounds hα0 hα1 (reducedUnitFrequencyCoordinate_bounds f).1
-      (reducedUnitFrequencyCoordinate_bounds f).2
-  simpa only [reducedUnitFrequencySignedCoordinate] using
+  have h := circleDiff_bounds hα0 hα1 (reducedCoord_bounds f).1 (reducedCoord_bounds f).2
+  simpa only [signedReducedCoord] using
     (show
-      -(1 / 2 : ℝ) ≤ signedCircularDifference α (reducedUnitFrequencyCoordinate f) ∧
-        signedCircularDifference α (reducedUnitFrequencyCoordinate f) ≤ 1 / 2
+      -(1 / 2 : ℝ) ≤ signedCircleDiff α (reducedFreqCoord f) ∧
+        signedCircleDiff α (reducedFreqCoord f) ≤ 1 / 2
       from ⟨by linarith only [h.1], h.2⟩)
 
 /--
@@ -2898,17 +2805,15 @@ gives a value at most `Q²`; apply the natural-floor bound.
 
 Role: gives a finite range containing every shell needed for the reduced-frequency Gram row.
 -/
-theorem reducedUnitFrequencySignedCoordinates_floor_shell_index_le {Q : ℕ} (hQ : 0 < Q) (α : ℝ)
-    (hα0 : 0 ≤ α) (hα1 : α < 1) (x : ℝ)
-    (hx : x ∈ reducedUnitFrequencySignedCoordinates (Q := Q) α) :
-    ⌊|x| / (1 / ((Q : ℝ) * Q))⌋₊ ≤ Q * Q := by
+theorem signedCoords_floor {Q : ℕ} (hQ : 0 < Q) (α : ℝ) (hα0 : 0 ≤ α) (hα1 : α < 1) (x : ℝ)
+    (hx : x ∈ signedReducedCoords (Q := Q) α) : ⌊|x| / (1 / ((Q : ℝ) * Q))⌋₊ ≤ Q * Q := by
   have hQR : 0 < (Q : ℝ) := by exact_mod_cast hQ
   have hQsq : 0 < (Q : ℝ) * Q := mul_pos hQR hQR
   have hδ : 0 < 1 / ((Q : ℝ) * Q) := div_pos (by norm_num only) hQsq
   have hproduct : ((Q * Q : ℕ) : ℝ) * (1 / ((Q : ℝ) * Q)) = 1 := by
     rw [Nat.cast_mul, one_div]
     exact mul_inv_cancel₀ (ne_of_gt hQsq)
-  have hcenter := reducedUnitFrequencySignedCoordinates_mem_bounds α hα0 hα1 x hx
+  have hcenter := signedCoords_bounds α hα0 hα1 x hx
   have habs : |x| ≤ 1 := by
     rw [abs_le]
     exact ⟨by linarith only [hcenter.1], by linarith only [hcenter.2]⟩
@@ -2928,14 +2833,13 @@ given member.
 
 Role: supplies the base spacing needed to bound every off-diagonal term in a Gram row.
 -/
-theorem reducedUnitFrequencySignedCoordinates_separated_from_zero {Q : ℕ}
-    (f₀ : ReducedUnitFrequencyIndex Q) (x : ℝ)
-    (hx : x ∈ reducedUnitFrequencySignedCoordinates (Q := Q) (reducedUnitFrequencyCoordinate f₀))
-    (hx0 : x ≠ 0) : 1 / ((Q : ℝ) * Q) ≤ min |x| (1 - |x|) := by
-  have hf₀ := reducedUnitFrequencyCoordinate_bounds f₀
+theorem signedCoords_ne_zero {Q : ℕ} (f₀ : ReducedFreqIndex Q) (x : ℝ)
+    (hx : x ∈ signedReducedCoords (Q := Q) (reducedFreqCoord f₀)) (hx0 : x ≠ 0) :
+    1 / ((Q : ℝ) * Q) ≤ min |x| (1 - |x|) := by
+  have hf₀ := reducedCoord_bounds f₀
   simpa only [zero_sub, abs_neg] using
-    reducedUnitFrequencySignedCoordinates_separated (Q := Q) (reducedUnitFrequencyCoordinate f₀)
-      hf₀.1 hf₀.2 0 x (reducedUnitFrequencySignedCoordinates_zero_mem f₀) hx (Ne.symm hx0)
+    signedCoords_sep (Q := Q) (reducedFreqCoord f₀) hf₀.1 hf₀.2 0 x (signedCoords_zero f₀) hx
+      (Ne.symm hx0)
 
 /--
 Inputs: a signed-coordinate family for cutoff `Q` covered by two half-open intervals of width
@@ -2948,17 +2852,16 @@ lemma.
 
 Role: bounds the population of an individual positive-and-negative distance shell.
 -/
-theorem reducedUnitFrequencySignedCoordinates_card_le_two_of_two_intervals {Q : ℕ} (α a b : ℝ)
-    (hα0 : 0 ≤ α) (hα1 : α < 1)
+theorem signedCoords_card_le2 {Q : ℕ} (α a b : ℝ) (hα0 : 0 ≤ α) (hα1 : α < 1)
     (hcover :
-      ∀ x ∈ reducedUnitFrequencySignedCoordinates (Q := Q) α,
+      ∀ x ∈ signedReducedCoords (Q := Q) α,
         (a ≤ x ∧ x < a + 1 / ((Q : ℝ) * Q)) ∨ (b ≤ x ∧ x < b + 1 / ((Q : ℝ) * Q))) :
-    (reducedUnitFrequencySignedCoordinates (Q := Q) α).card ≤ 2 := by
+    (signedReducedCoords (Q := Q) α).card ≤ 2 := by
   apply
     PseudoPrime.Analysis.FiniteSeparatedSetBounds.finset_card_le_two_of_circular_separation
-      (reducedUnitFrequencySignedCoordinates (Q := Q) α) a b (1 / ((Q : ℝ) * Q))
+      (signedReducedCoords (Q := Q) α) a b (1 / ((Q : ℝ) * Q))
   · intro x hx y hy hxy
-    exact reducedUnitFrequencySignedCoordinates_separated (Q := Q) α hα0 hα1 x y hx hy hxy
+    exact signedCoords_sep (Q := Q) α hα0 hα1 x y hx hy hxy
   · exact hcover
 
 /--
@@ -2985,7 +2888,7 @@ two-interval cardinal bound.
 
 Role: controls the number of reduced frequencies contributing to each shell.
 -/
-theorem signedDistanceShell_card_le_two (S : Finset ℝ) (δ : ℝ) (k : ℕ)
+theorem signedShell_card_le2 (S : Finset ℝ) (δ : ℝ) (k : ℕ)
     (hsep : ∀ x ∈ S, ∀ y ∈ S, x ≠ y → δ ≤ min |x - y| (1 - |x - y|)) :
     (signedDistanceShell S δ k).card ≤ 2 := by
   apply
@@ -3017,14 +2920,11 @@ generic signed-shell cardinal bound.
 
 Role: provides the shell population bound used in the reduced-frequency Gram row estimate.
 -/
-theorem reducedUnitFrequencySignedCoordinates_shell_card_le_two {Q : ℕ} (α : ℝ) (hα0 : 0 ≤ α)
-    (hα1 : α < 1) (k : ℕ) :
-    (signedDistanceShell (reducedUnitFrequencySignedCoordinates (Q := Q) α) (1 / ((Q : ℝ) * Q))
-          k).card ≤
-      2 := by
-  apply signedDistanceShell_card_le_two
+theorem coordShell_card_le2 {Q : ℕ} (α : ℝ) (hα0 : 0 ≤ α) (hα1 : α < 1) (k : ℕ) :
+    (signedDistanceShell (signedReducedCoords (Q := Q) α) (1 / ((Q : ℝ) * Q)) k).card ≤ 2 := by
+  apply signedShell_card_le2
   intro x hx y hy hxy
-  exact reducedUnitFrequencySignedCoordinates_separated (Q := Q) α hα0 hα1 x y hx hy hxy
+  exact signedCoords_sep (Q := Q) α hα0 hα1 x y hx hy hxy
 
 /--
 Inputs: a point in a signed distance shell of positive width `δ` and a shell index `k`.
@@ -3036,7 +2936,7 @@ negative interval.
 
 Role: converts shell membership into a lower bound on the phase distance for the kernel estimate.
 -/
-theorem signedDistanceShell_abs_ge {S : Finset ℝ} {δ : ℝ} {k : ℕ} {x : ℝ} (hδ : 0 < δ)
+theorem signedShell_abs_ge {S : Finset ℝ} {δ : ℝ} {k : ℕ} {x : ℝ} (hδ : 0 < δ)
     (hx : x ∈ signedDistanceShell S δ k) : (k : ℝ) * δ ≤ |x| := by
   have hk : 0 ≤ (k : ℝ) * δ := mul_nonneg (by exact_mod_cast Nat.zero_le k) hδ.le
   rcases Finset.mem_filter.mp hx with ⟨_, hshell⟩
@@ -3059,7 +2959,7 @@ negative interval.
 
 Role: identifies the exact floor index of every shell member.
 -/
-theorem signedDistanceShell_abs_lt_succ {S : Finset ℝ} {δ : ℝ} {k : ℕ} {x : ℝ} (hδ : 0 < δ)
+theorem signedShell_abs_lt {S : Finset ℝ} {δ : ℝ} {k : ℕ} {x : ℝ} (hδ : 0 < δ)
     (hx : x ∈ signedDistanceShell S δ k) : |x| < ((k : ℝ) + 1) * δ := by
   have hk : 0 ≤ (k : ℝ) * δ := mul_nonneg (by exact_mod_cast Nat.zero_le k) hδ.le
   rcases Finset.mem_filter.mp hx with ⟨_, hshell⟩
@@ -3081,7 +2981,7 @@ Proof: take the natural floor of its absolute value divided by the shell width a
 
 Role: partitions every finite signed-coordinate family into the shells used by the kernel sum.
 -/
-theorem mem_signedDistanceShell_floor_of_mem {S : Finset ℝ} {δ x : ℝ} (hδ : 0 < δ) (hx : x ∈ S) :
+theorem mem_shell_floor {S : Finset ℝ} {δ x : ℝ} (hδ : 0 < δ) (hx : x ∈ S) :
     x ∈ signedDistanceShell S δ ⌊|x| / δ⌋₊ := by
   let k : ℕ := ⌊|x| / δ⌋₊
   change x ∈ signedDistanceShell S δ k
@@ -3113,7 +3013,7 @@ then identifies the index. The reverse direction is the floor-indexed membership
 
 Role: proves that different shell indices have disjoint point sets, enabling finite shell summation.
 -/
-theorem signedDistanceShell_mem_iff_floor_eq {S : Finset ℝ} {δ x : ℝ} {k : ℕ} (hδ : 0 < δ) :
+theorem mem_shell_iff_floor {S : Finset ℝ} {δ x : ℝ} {k : ℕ} (hδ : 0 < δ) :
     x ∈ signedDistanceShell S δ k ↔ x ∈ S ∧ ⌊|x| / δ⌋₊ = k := by
   constructor
   · intro hx
@@ -3121,11 +3021,11 @@ theorem signedDistanceShell_mem_iff_floor_eq {S : Finset ℝ} {δ x : ℝ} {k : 
     have hratio0 : 0 ≤ |x| / δ := div_nonneg (abs_nonneg x) hδ.le
     apply (Nat.floor_eq_iff hratio0).2
     constructor
-    · exact (le_div_iff₀ hδ).2 (signedDistanceShell_abs_ge hδ hx)
-    · exact (div_lt_iff₀ hδ).2 (signedDistanceShell_abs_lt_succ hδ hx)
+    · exact (le_div_iff₀ hδ).2 (signedShell_abs_ge hδ hx)
+    · exact (div_lt_iff₀ hδ).2 (signedShell_abs_lt hδ hx)
   · rintro ⟨hxS, hfloor⟩
     rw [← hfloor]
-    exact mem_signedDistanceShell_floor_of_mem hδ hxS
+    exact mem_shell_floor hδ hxS
 
 /--
 Inputs: a positive shell width and two distinct shell indices.
@@ -3136,12 +3036,12 @@ Proof: each shell member's floor index is unique, so membership in both forces t
 
 Role: permits summing over the finite family of shells without overcounting coordinates.
 -/
-theorem signedDistanceShell_disjoint_of_ne {S : Finset ℝ} {δ : ℝ} (hδ : 0 < δ) {k l : ℕ}
-    (hkl : k ≠ l) : Disjoint (signedDistanceShell S δ k) (signedDistanceShell S δ l) := by
+theorem signedShell_disjoint {S : Finset ℝ} {δ : ℝ} (hδ : 0 < δ) {k l : ℕ} (hkl : k ≠ l) :
+    Disjoint (signedDistanceShell S δ k) (signedDistanceShell S δ l) := by
   apply Finset.disjoint_left.mpr
   intro x hxk hxl
-  have hfloor_k := (signedDistanceShell_mem_iff_floor_eq hδ).mp hxk
-  have hfloor_l := (signedDistanceShell_mem_iff_floor_eq hδ).mp hxl
+  have hfloor_k := (mem_shell_iff_floor hδ).mp hxk
+  have hfloor_l := (mem_shell_iff_floor hδ).mp hxl
   exact hkl (hfloor_k.2.symm.trans hfloor_l.2)
 
 /--
@@ -3156,13 +3056,13 @@ summation.
 
 Role: collects the per-shell kernel bounds into a bound for a full Gram row.
 -/
-theorem sum_signedDistanceShells_eq_sum {S : Finset ℝ} {δ : ℝ} {K : Finset ℕ} (hδ : 0 < δ)
+theorem sum_signedShells_eq {S : Finset ℝ} {δ : ℝ} {K : Finset ℕ} (hδ : 0 < δ)
     (hindex : ∀ x ∈ S, ⌊|x| / δ⌋₊ ∈ K) {β : Type} [AddCommMonoid β] (f : ℝ → β) :
     ∑ k ∈ K, ∑ x ∈ signedDistanceShell S δ k, f x = ∑ x ∈ S, f x := by
   classical
   have hshell_filter (k : ℕ) : signedDistanceShell S δ k = S.filter (fun x => ⌊|x| / δ⌋₊ = k) := by
     ext x
-    rw [signedDistanceShell_mem_iff_floor_eq hδ]
+    rw [mem_shell_iff_floor hδ]
     simp only [Finset.mem_filter]
   calc
     ∑ k ∈ K, ∑ x ∈ signedDistanceShell S δ k, f x =
@@ -3184,12 +3084,12 @@ pointwise bound within each shell.
 
 Role: reduces the Gram row estimate to an explicit finite sum of radial kernel envelopes.
 -/
-theorem sum_le_two_shell_bounds {S : Finset ℝ} {δ : ℝ} {K : Finset ℕ} (hδ : 0 < δ)
+theorem sum_le_shell_bounds {S : Finset ℝ} {δ : ℝ} {K : Finset ℕ} (hδ : 0 < δ)
     (hsep : ∀ x ∈ S, ∀ y ∈ S, x ≠ y → δ ≤ min |x - y| (1 - |x - y|))
     (hindex : ∀ x ∈ S, ⌊|x| / δ⌋₊ ∈ K) (f : ℝ → ℝ) (B : ℕ → ℝ) (hB : ∀ k ∈ K, 0 ≤ B k)
     (hbound : ∀ k ∈ K, ∀ x ∈ signedDistanceShell S δ k, f x ≤ B k) :
     ∑ x ∈ S, f x ≤ ∑ k ∈ K, 2 * B k := by
-  rw [← sum_signedDistanceShells_eq_sum hδ hindex f]
+  rw [← sum_signedShells_eq hδ hindex f]
   apply Finset.sum_le_sum
   intro k hk
   calc
@@ -3200,9 +3100,7 @@ theorem sum_le_two_shell_bounds {S : Finset ℝ} {δ : ℝ} {K : Finset ℕ} (h�
     _ = ((signedDistanceShell S δ k).card : ℝ) * B k := by
       simp only [Finset.sum_const, nsmul_eq_mul]
     _ ≤ 2 * B k := by
-      exact
-        mul_le_mul_of_nonneg_right (by exact_mod_cast signedDistanceShell_card_le_two S δ k hsep)
-          (hB k hk)
+      exact mul_le_mul_of_nonneg_right (by exact_mod_cast signedShell_card_le2 S δ k hsep) (hB k hk)
 
 /--
 Inputs: a positive denominator cutoff, a base in `[0, 1)`, and a signed coordinate in the reduced
@@ -3215,20 +3113,17 @@ embed it in the finite range.
 
 Role: supplies the finite shell index set for summing the reduced-frequency Gram row.
 -/
-theorem reducedUnitFrequencySignedCoordinates_mem_finite_shell {Q : ℕ} (hQ : 0 < Q) (α : ℝ)
-    (hα0 : 0 ≤ α) (hα1 : α < 1) (x : ℝ)
-    (hx : x ∈ reducedUnitFrequencySignedCoordinates (Q := Q) α) :
+theorem signedCoords_shell {Q : ℕ} (hQ : 0 < Q) (α : ℝ) (hα0 : 0 ≤ α) (hα1 : α < 1) (x : ℝ)
+    (hx : x ∈ signedReducedCoords (Q := Q) α) :
     ∃ k ∈ Finset.range (Q * Q + 1),
-      x ∈
-        signedDistanceShell (reducedUnitFrequencySignedCoordinates (Q := Q) α) (1 / ((Q : ℝ) * Q))
-          k := by
+      x ∈ signedDistanceShell (signedReducedCoords (Q := Q) α) (1 / ((Q : ℝ) * Q)) k := by
   let k : ℕ := ⌊|x| / (1 / ((Q : ℝ) * Q))⌋₊
   have hQR : 0 < (Q : ℝ) := by exact_mod_cast hQ
   have hQsq : 0 < (Q : ℝ) * Q := mul_pos hQR hQR
   have hδ : 0 < 1 / ((Q : ℝ) * Q) := div_pos (by norm_num only) hQsq
-  have hkbound := reducedUnitFrequencySignedCoordinates_floor_shell_index_le hQ α hα0 hα1 x hx
+  have hkbound := signedCoords_floor hQ α hα0 hα1 x hx
   refine ⟨k, Finset.mem_range.mpr (Nat.lt_succ_of_le hkbound), ?_⟩
-  simpa only [k] using mem_signedDistanceShell_floor_of_mem hδ hx
+  simpa only [k] using mem_shell_floor hδ hx
 
 /--
 Inputs: two fractions with positive denominators bounded by a common positive natural cutoff,
@@ -3237,14 +3132,13 @@ strictly interior numerators, and distinct cross-products.
 Claim: their circular distance is at least the reciprocal square of the cutoff.
 
 Proof: compare the product of the denominators with the square of the cutoff, then apply
-`rational_frequency_separation_circular`.
+`ratFreq_circle_sep`.
 
 Role: states the uniform spacing parameter used by the additive large sieve for denominators up
 to a fixed bound.
 -/
-theorem rational_frequency_separation_circular_of_le {q r Q x y : ℕ} (hq : 0 < q) (hr : 0 < r)
-    (hx : 0 < x) (hxq : x < q) (hy : 0 < y) (hyr : y < r) (hxy : x * r ≠ y * q) (hqQ : q ≤ Q)
-    (hrQ : r ≤ Q) :
+theorem ratFreq_circle_sep_le {q r Q x y : ℕ} (hq : 0 < q) (hr : 0 < r) (hx : 0 < x) (hxq : x < q)
+    (hy : 0 < y) (hyr : y < r) (hxy : x * r ≠ y * q) (hqQ : q ≤ Q) (hrQ : r ≤ Q) :
     1 / ((Q : ℚ) * Q) ≤ min |(x : ℚ) / q - (y : ℚ) / r| (1 - |(x : ℚ) / q - (y : ℚ) / r|) := by
   have hQR : 0 < (Q : ℚ) * Q := by
     have hQ : 0 < Q := hq.trans_le hqQ
@@ -3254,7 +3148,7 @@ theorem rational_frequency_separation_circular_of_le {q r Q x y : ℕ} (hq : 0 <
   have hscale : 1 / ((Q : ℚ) * Q) ≤ 1 / ((q : ℚ) * r) := by
     apply (div_le_div_iff₀ hQR hqr).2
     simpa only [one_mul] using hprod
-  exact le_trans hscale (rational_frequency_separation_circular hq hr hx hxq hy hyr hxy)
+  exact le_trans hscale (ratFreq_circle_sep hq hr hx hxq hy hyr hxy)
 
 /--
 Inputs: a nontrivial `ZMod q`, a unit residue, and a modulus greater than one.
@@ -3267,7 +3161,7 @@ when the modulus exceeds one; the upper bound is `ZMod.val_lt`.
 
 Role: places reduced additive frequencies in the open unit interval.
 -/
-theorem zmod_unit_value_bounds {q : ℕ} [NeZero q] (hq : 1 < q) (x : ZMod q) (hx : IsUnit x) :
+theorem unit_val_bounds {q : ℕ} [NeZero q] (hq : 1 < q) (x : ZMod q) (hx : IsUnit x) :
     0 < x.val ∧ x.val < q := by
   have hx' : IsUnit ((x.val : ℕ) : ZMod q) := by simpa only [ZMod.natCast_zmod_val] using hx
   have hcop : Nat.Coprime x.val q := (ZMod.isUnit_iff_coprime x.val q).mp hx'
@@ -3288,8 +3182,7 @@ unit characterization for `ZMod`.
 
 Role: supplies the reducedness hypothesis needed for uniqueness of rational frequencies.
 -/
-theorem zmod_unit_value_coprime {q : ℕ} [NeZero q] (x : ZMod q) (hx : IsUnit x) :
-    Nat.Coprime x.val q := by
+theorem unit_val_coprime {q : ℕ} [NeZero q] (x : ZMod q) (hx : IsUnit x) : Nat.Coprime x.val q := by
   have hx' : IsUnit ((x.val : ℕ) : ZMod q) := by simpa only [ZMod.natCast_zmod_val] using hx
   exact (ZMod.isUnit_iff_coprime x.val q).mp hx'
 
@@ -3305,13 +3198,13 @@ representations; the reverse implication follows by substitution.
 Role: identifies the frequency index with its reduced fraction, allowing pairwise spacing to be
 used across the family of moduli.
 -/
-theorem reducedUnitFrequency_eq_iff {q r : ℕ} [NeZero q] [NeZero r] (x : ZMod q) (hx : IsUnit x)
-    (y : ZMod r) (hy : IsUnit y) : (x.val : ℚ) / q = (y.val : ℚ) / r ↔ q = r ∧ x.val = y.val := by
+theorem reducedFreq_eq_iff {q r : ℕ} [NeZero q] [NeZero r] (x : ZMod q) (hx : IsUnit x) (y : ZMod r)
+    (hy : IsUnit y) : (x.val : ℚ) / q = (y.val : ℚ) / r ↔ q = r ∧ x.val = y.val := by
   constructor
   · intro h
     exact
-      rational_reduced_fraction_unique (NeZero.pos q) (NeZero.pos r) (zmod_unit_value_coprime x hx)
-        (zmod_unit_value_coprime y hy) h
+      reducedRat_unique (NeZero.pos q) (NeZero.pos r) (unit_val_coprime x hx)
+        (unit_val_coprime y hy) h
   · rintro ⟨rfl, hxy⟩
     simp only [hxy]
 
@@ -3326,15 +3219,15 @@ have unequal cross-products, so apply the denominator-uniform circular spacing e
 Role: transfers the rational spacing result to the reduced residue frequencies used in the
 primitive-character mean-square reduction.
 -/
-theorem reducedUnitFrequency_circularSeparation {q r Q : ℕ} [NeZero q] [NeZero r] (hq : 1 < q)
-    (hr : 1 < r) (hqQ : q ≤ Q) (hrQ : r ≤ Q) (x : ZMod q) (hx : IsUnit x) (y : ZMod r)
-    (hy : IsUnit y) (hfrac : (x.val : ℚ) / q ≠ (y.val : ℚ) / r) :
+theorem reducedFreq_sep {q r Q : ℕ} [NeZero q] [NeZero r] (hq : 1 < q) (hr : 1 < r) (hqQ : q ≤ Q)
+    (hrQ : r ≤ Q) (x : ZMod q) (hx : IsUnit x) (y : ZMod r) (hy : IsUnit y)
+    (hfrac : (x.val : ℚ) / q ≠ (y.val : ℚ) / r) :
     1 / ((Q : ℚ) * Q) ≤
       min |(x.val : ℚ) / q - (y.val : ℚ) / r| (1 - |(x.val : ℚ) / q - (y.val : ℚ) / r|) := by
   have hqpos : 0 < q := Nat.zero_lt_of_lt hq
   have hrpos : 0 < r := Nat.zero_lt_of_lt hr
-  obtain ⟨hxpos, hxq⟩ := zmod_unit_value_bounds hq x hx
-  obtain ⟨hypos, hyr⟩ := zmod_unit_value_bounds hr y hy
+  obtain ⟨hxpos, hxq⟩ := unit_val_bounds hq x hx
+  obtain ⟨hypos, hyr⟩ := unit_val_bounds hr y hy
   have hq0 : (q : ℚ) ≠ 0 := by exact_mod_cast hqpos.ne'
   have hr0 : (r : ℚ) ≠ 0 := by exact_mod_cast hrpos.ne'
   have hcross : x.val * r ≠ y.val * q := by
@@ -3342,7 +3235,7 @@ theorem reducedUnitFrequency_circularSeparation {q r Q : ℕ} [NeZero q] [NeZero
     have h' : (x.val : ℚ) * r = (y.val : ℚ) * q := by exact_mod_cast h
     apply hfrac
     exact (div_eq_div_iff hq0 hr0).2 h'
-  exact rational_frequency_separation_circular_of_le hqpos hrpos hxpos hxq hypos hyr hcross hqQ hrQ
+  exact ratFreq_circle_sep_le hqpos hrpos hxpos hxq hypos hyr hcross hqQ hrQ
 
 /--
 Inputs: distinct reduced unit frequencies with denominators at most `Q`.
@@ -3351,17 +3244,17 @@ Claim: their signed circular differences are separated by at least `1 / Q^2` in 
 distance.
 
 Proof: transfer the rational frequency spacing to real representatives, then use preservation of
-circular distance by `signedCircularDifference`.
+circular distance by `signedCircleDiff`.
 
 Role: supplies the separation hypothesis for counting finite signed-frequency shells.
 -/
-theorem reducedUnitFrequency_signedCircularSeparation {q r Q : ℕ} [NeZero q] [NeZero r] (hq : 1 < q)
-    (hr : 1 < r) (hqQ : q ≤ Q) (hrQ : r ≤ Q) (x : ZMod q) (hx : IsUnit x) (y : ZMod r)
-    (hy : IsUnit y) (hfrac : (x.val : ℚ) / q ≠ (y.val : ℚ) / r) :
+theorem reducedFreq_signedSep {q r Q : ℕ} [NeZero q] [NeZero r] (hq : 1 < q) (hr : 1 < r)
+    (hqQ : q ≤ Q) (hrQ : r ≤ Q) (x : ZMod q) (hx : IsUnit x) (y : ZMod r) (hy : IsUnit y)
+    (hfrac : (x.val : ℚ) / q ≠ (y.val : ℚ) / r) :
     1 / ((Q : ℝ) * Q) ≤
-      min |signedCircularDifference ((x.val : ℝ) / q) ((y.val : ℝ) / r)|
-        (1 - |signedCircularDifference ((x.val : ℝ) / q) ((y.val : ℝ) / r)|) := by
-  have hsep := reducedUnitFrequency_circularSeparation hq hr hqQ hrQ x hx y hy hfrac
+      min |signedCircleDiff ((x.val : ℝ) / q) ((y.val : ℝ) / r)|
+        (1 - |signedCircleDiff ((x.val : ℝ) / q) ((y.val : ℝ) / r)|) := by
+  have hsep := reducedFreq_sep hq hr hqQ hrQ x hx y hy hfrac
   have hsepR :
     1 / ((Q : ℝ) * Q) ≤
       min |(x.val : ℝ) / q - (y.val : ℝ) / r| (1 - |(x.val : ℝ) / q - (y.val : ℝ) / r|) := by
@@ -3371,15 +3264,15 @@ theorem reducedUnitFrequency_signedCircularSeparation {q r Q : ℕ} [NeZero q] [
     1 / ((Q : ℝ) * Q) ≤
       min |(y.val : ℝ) / r - (x.val : ℝ) / q| (1 - |(y.val : ℝ) / r - (x.val : ℝ) / q|) := by
     simpa only [abs_sub_comm] using hsepR
-  obtain ⟨hx0, hx1⟩ := zmod_unit_value_bounds hq x hx
-  obtain ⟨hy0, hy1⟩ := zmod_unit_value_bounds hr y hy
+  obtain ⟨hx0, hx1⟩ := unit_val_bounds hq x hx
+  obtain ⟨hy0, hy1⟩ := unit_val_bounds hr y hy
   have hqpos : 0 < (q : ℝ) := by exact_mod_cast (Nat.zero_lt_of_lt hq)
   have hrpos : 0 < (r : ℝ) := by exact_mod_cast (Nat.zero_lt_of_lt hr)
   have hα0 : 0 ≤ (x.val : ℝ) / q := div_nonneg (by exact_mod_cast hx0.le) hqpos.le
   have hα1 : (x.val : ℝ) / q < 1 := (div_lt_one hqpos).2 (by exact_mod_cast hx1)
   have hβ0 : 0 ≤ (y.val : ℝ) / r := div_nonneg (by exact_mod_cast hy0.le) hrpos.le
   have hβ1 : (y.val : ℝ) / r < 1 := (div_lt_one hrpos).2 (by exact_mod_cast hy1)
-  rw [signedCircularDifference_circularDistance hα0 hα1 hβ0 hβ1]
+  rw [circleDiff_distance hα0 hα1 hβ0 hβ1]
   exact hsepR'
 
 /--
@@ -3391,7 +3284,7 @@ Proof: reindex the interval by the involution `j ↦ L - 1 - j`.
 
 Role: transfers the geometric-sum norm bound to the reversed factor in the overlap kernel.
 -/
-theorem reverse_geometric_sum_eq {z : ℂ} (L : ℕ) :
+theorem geom_sum_reverse {z : ℂ} (L : ℕ) :
     ∑ j ∈ Finset.range L, z ^ (L - 1 - j) = ∑ i ∈ Finset.range L, z ^ i := by
   classical
   refine Finset.sum_bij' (i := fun j _ => L - 1 - j) (j := fun i _ => L - 1 - i) ?_ ?_ ?_ ?_ ?_
@@ -3424,7 +3317,7 @@ nonzero denominator.
 Role: bounds the off-diagonal kernel that appears when squaring finite exponential sums in a
 large-sieve estimate.
 -/
-theorem unit_circle_geometric_sum_norm_le {z : ℂ} (hz : ‖z‖ = 1) (hneq : z ≠ 1) (N : ℕ) :
+theorem geom_sum_norm_le {z : ℂ} (hz : ‖z‖ = 1) (hneq : z ≠ 1) (N : ℕ) :
     ‖∑ n ∈ Finset.range N, z ^ n‖ ≤ 2 / ‖1 - z‖ := by
   have hgeom : (1 - z) * ∑ n ∈ Finset.range N, z ^ n = 1 - z ^ N := by
     induction N with
@@ -3458,7 +3351,7 @@ Proof: use the triangle inequality for the length bound and the telescoping esti
 
 Role: supplies both regimes needed for the tapered Gram-kernel estimate.
 -/
-theorem unit_circle_geometric_sum_norm_le_min {z : ℂ} (hz : ‖z‖ = 1) (hneq : z ≠ 1) (N : ℕ) :
+theorem geom_sum_norm_le_min {z : ℂ} (hz : ‖z‖ = 1) (hneq : z ≠ 1) (N : ℕ) :
     ‖∑ n ∈ Finset.range N, z ^ n‖ ≤ min (N : ℝ) (2 / ‖1 - z‖) := by
   apply le_min
   · calc
@@ -3466,21 +3359,21 @@ theorem unit_circle_geometric_sum_norm_le_min {z : ℂ} (hz : ‖z‖ = 1) (hneq
       _ = N := by
         simp only [norm_pow, hz, one_pow, Finset.sum_const, Finset.card_range, nsmul_eq_mul,
           mul_one]
-  · exact unit_circle_geometric_sum_norm_le hz hneq N
+  · exact geom_sum_norm_le hz hneq N
 
 /--
 Inputs: a unit-circle ratio distinct from one and a natural taper length.
 
 Claim: the reversed geometric sum has the same length-and-decay bound as the forward sum.
 
-Proof: reindex its terms in reverse order and apply `unit_circle_geometric_sum_norm_le_min`.
+Proof: reindex its terms in reverse order and apply `geom_sum_norm_le_min`.
 
 Role: bounds the second geometric factor in the overlap Fourier kernel.
 -/
-theorem reverse_unit_circle_geometric_sum_norm_le_min {z : ℂ} (hz : ‖z‖ = 1) (hneq : z ≠ 1)
-    (L : ℕ) : ‖∑ j ∈ Finset.range L, z ^ (L - 1 - j)‖ ≤ min (L : ℝ) (2 / ‖1 - z‖) := by
-  rw [reverse_geometric_sum_eq]
-  exact unit_circle_geometric_sum_norm_le_min hz hneq L
+theorem rev_geom_norm_le_min {z : ℂ} (hz : ‖z‖ = 1) (hneq : z ≠ 1) (L : ℕ) :
+    ‖∑ j ∈ Finset.range L, z ^ (L - 1 - j)‖ ≤ min (L : ℝ) (2 / ‖1 - z‖) := by
+  rw [geom_sum_reverse]
+  exact geom_sum_norm_le_min hz hneq L
 
 /--
 Inputs: an interval length, taper length, and unit-circle ratio distinct from one.
@@ -3493,14 +3386,13 @@ multiplicativity.
 
 Role: is the pointwise off-diagonal estimate used in summing separated-frequency Gram rows.
 -/
-theorem triangleOverlapWindowWeight_fourier_norm_le (N L : ℕ) (z : ℂ) (hz : ‖z‖ = 1)
-    (hneq : z ≠ 1) :
-    ‖∑ n ∈ Finset.range (N + 2 * L - 1), (triangleOverlapWindowWeight N L n : ℂ) * z ^ n‖ ≤
+theorem overlap_fourier_bound (N L : ℕ) (z : ℂ) (hz : ‖z‖ = 1) (hneq : z ≠ 1) :
+    ‖∑ n ∈ Finset.range (N + 2 * L - 1), (triangleOverlapWeight N L n : ℂ) * z ^ n‖ ≤
       ‖(L : ℂ)⁻¹‖ * min ((N + L : ℕ) : ℝ) (2 / ‖1 - z‖) * min (L : ℝ) (2 / ‖1 - z‖) := by
-  rw [triangleOverlapWindowWeight_fourier_eq_geometric_product]
+  rw [overlap_fourier_prod]
   rw [norm_mul, norm_mul]
-  have hfirst := unit_circle_geometric_sum_norm_le_min hz hneq (N + L)
-  have hsecond := reverse_unit_circle_geometric_sum_norm_le_min hz hneq L
+  have hfirst := geom_sum_norm_le_min hz hneq (N + L)
+  have hsecond := rev_geom_norm_le_min hz hneq L
   have hminNonneg : 0 ≤ min ((N + L : ℕ) : ℝ) (2 / ‖1 - z‖) := le_trans (norm_nonneg _) hfirst
   calc
     ‖(L : ℂ)⁻¹‖ * ‖∑ i ∈ Finset.range (N + L), z ^ i‖ * ‖∑ j ∈ Finset.range L, z ^ (L - 1 - j)‖ ≤
@@ -3523,7 +3415,7 @@ Proof: unfold the character as the coercion of `ZMod.toCircle` and use its expli
 Role: connects finite additive Fourier sums to the rational frequencies used in the spacing
 estimates.
 -/
-theorem zmod_stdAddChar_exp_val {q : ℕ} [NeZero q] (x : ZMod q) :
+theorem stdAddChar_exp_val {q : ℕ} [NeZero q] (x : ZMod q) :
     ZMod.stdAddChar x = Complex.exp (2 * Real.pi * Complex.I * (x.val : ℂ) / q) := by
   rw [ZMod.stdAddChar_apply, ZMod.toCircle_apply]
 
@@ -3538,7 +3430,7 @@ character's `nsmul`-to-power identity.
 
 Role: expresses each additive Fourier polynomial as a polynomial in its frequency phase.
 -/
-theorem zmod_stdAddChar_mul_nat_eq_pow {q : ℕ} [NeZero q] (x : ZMod q) (n : ℕ) :
+theorem stdAddChar_mul_nat {q : ℕ} [NeZero q] (x : ZMod q) (n : ℕ) :
     ZMod.stdAddChar (x * (n : ZMod q)) = (ZMod.stdAddChar x) ^ n := by
   calc
     _ = ZMod.stdAddChar (n • x) := by
@@ -3559,11 +3451,10 @@ and combine the exponent into the rational-frequency definition.
 Role: allows reduced residue frequencies from different moduli to share the rational-frequency
 large-sieve interface.
 -/
-theorem zmod_stdAddChar_mul_nat_eq_rationalAdditiveCharacter {q : ℕ} [NeZero q] (x : ZMod q)
-    (n : ℕ) :
-    ZMod.stdAddChar (x * (n : ZMod q)) = rationalAdditiveCharacter ((x.val : ℚ) / q) n := by
-  rw [zmod_stdAddChar_mul_nat_eq_pow, zmod_stdAddChar_exp_val]
-  rw [rationalAdditiveCharacter, ← Complex.exp_nat_mul]
+theorem stdAddChar_eq_rat {q : ℕ} [NeZero q] (x : ZMod q) (n : ℕ) :
+    ZMod.stdAddChar (x * (n : ZMod q)) = rationalAddChar ((x.val : ℚ) / q) n := by
+  rw [stdAddChar_mul_nat, stdAddChar_exp_val]
+  rw [rationalAddChar, ← Complex.exp_nat_mul]
   congr 1
   have hq : (q : ℂ) ≠ 0 := by exact_mod_cast (NeZero.ne q)
   push_cast
@@ -3578,13 +3469,12 @@ Proof: use uniqueness of reduced fractions and injectivity of the canonical `ZMo
 
 Role: proves injectivity when a modulus' unit frequencies are reindexed by rational numbers.
 -/
-theorem reducedUnitFrequency_rational_injective {q : ℕ} [NeZero q] :
-    Set.InjOn (fun x : ZMod q => (x.val : ℚ) / q)
-      (↑(reducedUnitFrequencySet q) : Set (ZMod q)) := by
+theorem reducedRat_injOn {q : ℕ} [NeZero q] :
+    Set.InjOn (fun x : ZMod q => (x.val : ℚ) / q) (↑(reducedFrequencies q) : Set (ZMod q)) := by
   intro x hx y hy hxy
   have hxunit : IsUnit x := (Finset.mem_filter.mp hx).2
   have hyunit : IsUnit y := (Finset.mem_filter.mp hy).2
-  exact ZMod.val_injective q ((reducedUnitFrequency_eq_iff x hxunit y hyunit).mp hxy).2
+  exact ZMod.val_injective q ((reducedFreq_eq_iff x hxunit y hyunit).mp hxy).2
 
 /--
 Inputs: a nonzero modulus, a residue frequency, a finite index set, and complex coefficients.
@@ -3592,17 +3482,16 @@ Inputs: a nonzero modulus, a residue frequency, a finite index set, and complex 
 Claim: the additive Fourier polynomial at the residue equals the rational exponential polynomial
 at its canonical fraction.
 
-Proof: rewrite each character value by `zmod_stdAddChar_mul_nat_eq_rationalAdditiveCharacter`.
+Proof: rewrite each character value by `stdAddChar_eq_rat`.
 
 Role: transfers the polynomial evaluation before reindexing a modulus' mean square.
 -/
-theorem reducedUnitFrequency_polynomial_eq_rational {q : ℕ} [NeZero q] (x : ZMod q) (S : Finset ℕ)
-    (a : ℕ → ℂ) :
+theorem reducedPoly_eq_rat {q : ℕ} [NeZero q] (x : ZMod q) (S : Finset ℕ) (a : ℕ → ℂ) :
     (∑ n ∈ S, a n * ZMod.stdAddChar (x * (n : ZMod q))) =
-      ∑ n ∈ S, a n * rationalAdditiveCharacter ((x.val : ℚ) / q) n := by
+      ∑ n ∈ S, a n * rationalAddChar ((x.val : ℚ) / q) n := by
   apply Finset.sum_congr rfl
   intro n hn
-  exact congrArg (fun z : ℂ => a n * z) (zmod_stdAddChar_mul_nat_eq_rationalAdditiveCharacter x n)
+  exact congrArg (fun z : ℂ => a n * z) (stdAddChar_eq_rat x n)
 
 /--
 Inputs: a modulus greater than one, a finite polynomial index set, and complex coefficients.
@@ -3616,30 +3505,28 @@ exponential identity.
 
 Role: transfers one modulus' additive contribution into the common rational-frequency family.
 -/
-theorem reducedAdditivePolynomialMeanSquare_eq_rational {q : ℕ} [NeZero q] (hq : 1 < q)
-    (S : Finset ℕ) (a : ℕ → ℂ) :
-    reducedAdditivePolynomialMeanSquare q hq S a =
-      rationalAdditivePolynomialMeanSquare
-        ((reducedUnitFrequencySet q).image (fun x => (x.val : ℚ) / q)) S a := by
+theorem reducedEnergy_eq_rat {q : ℕ} [NeZero q] (hq : 1 < q) (S : Finset ℕ) (a : ℕ → ℂ) :
+    reducedPolyEnergy q hq S a =
+      rationalPolyEnergy ((reducedFrequencies q).image (fun x => (x.val : ℚ) / q)) S a := by
   classical
-  let U := reducedUnitFrequencySet q
+  let U := reducedFrequencies q
   let f : ZMod q → ℚ := fun x => (x.val : ℚ) / q
-  have hInjective : Set.InjOn f (↑U : Set (ZMod q)) := reducedUnitFrequency_rational_injective
-  rw [reducedAdditivePolynomialMeanSquare, rationalAdditivePolynomialMeanSquare]
+  have hInjective : Set.InjOn f (↑U : Set (ZMod q)) := reducedRat_injOn
+  rw [reducedPolyEnergy, rationalPolyEnergy]
   change
     (∑ x ∈ U, Complex.normSq (∑ n ∈ S, a n * ZMod.stdAddChar (x * (n : ZMod q)))) =
-      ∑ α ∈ U.image f, Complex.normSq (∑ n ∈ S, a n * rationalAdditiveCharacter α n)
+      ∑ α ∈ U.image f, Complex.normSq (∑ n ∈ S, a n * rationalAddChar α n)
   calc
     (∑ x ∈ U, Complex.normSq (∑ n ∈ S, a n * ZMod.stdAddChar (x * (n : ZMod q)))) =
-        ∑ x ∈ U, Complex.normSq (∑ n ∈ S, a n * rationalAdditiveCharacter (f x) n) :=
+        ∑ x ∈ U, Complex.normSq (∑ n ∈ S, a n * rationalAddChar (f x) n) :=
       by
       apply Finset.sum_congr rfl
       intro x hx
       apply congrArg Complex.normSq
-      exact reducedUnitFrequency_polynomial_eq_rational x S a
-    _ = ∑ α ∈ U.image f, Complex.normSq (∑ n ∈ S, a n * rationalAdditiveCharacter α n) :=
+      exact reducedPoly_eq_rat x S a
+    _ = ∑ α ∈ U.image f, Complex.normSq (∑ n ∈ S, a n * rationalAddChar α n) :=
       (Finset.sum_image (s := U) (g := f) (f := fun α : ℚ =>
-          Complex.normSq (∑ n ∈ S, a n * rationalAdditiveCharacter α n)) hInjective).symm
+          Complex.normSq (∑ n ∈ S, a n * rationalAddChar α n)) hInjective).symm
 
 /--
 Inputs: positive natural moduli `q,r` and a natural frequency `n`.
@@ -3652,7 +3539,7 @@ nonzero factor `r` in the phase denominator.
 
 Role: identifies the additive phase of the `r`-multiple component in the CRT decomposition.
 -/
-theorem zmod_stdAddChar_mul_factor_eq {q r : ℕ} [NeZero q] [NeZero r] (n : ℕ) :
+theorem stdAddChar_mul_factor {q r : ℕ} [NeZero q] [NeZero r] (n : ℕ) :
     ZMod.stdAddChar ((r * n : ℕ) : ZMod (q * r)) = ZMod.stdAddChar (n : ZMod q) := by
   rw [show ((r * n : ℕ) : ZMod (q * r)) = ((r * n : ℤ) : ZMod (q * r)) by
       simp only [Nat.cast_mul, Int.cast_mul, Int.cast_natCast]]
@@ -3677,7 +3564,7 @@ nonzero factor `q` in the phase denominator.
 
 Role: identifies the additive phase of the `q`-multiple component in the CRT decomposition.
 -/
-theorem zmod_stdAddChar_mul_left_factor_eq {q r : ℕ} [NeZero q] [NeZero r] (n : ℕ) :
+theorem stdAddChar_mul_left {q r : ℕ} [NeZero q] [NeZero r] (n : ℕ) :
     ZMod.stdAddChar ((q * n : ℕ) : ZMod (q * r)) = ZMod.stdAddChar (n : ZMod r) := by
   rw [show ((q * n : ℕ) : ZMod (q * r)) = ((q * n : ℤ) : ZMod (q * r)) by
       simp only [Nat.cast_mul, Int.cast_mul, Int.cast_natCast]]
@@ -3701,11 +3588,10 @@ Proof: use additivity of the standard character and the two modulus-factor ident
 
 Role: factors each term after reindexing the units modulo `q*r` by the Chinese-remainder theorem.
 -/
-theorem zmod_stdAddChar_add_factor_eq {q r : ℕ} [NeZero q] [NeZero r] (a b : ℕ) :
+theorem stdAddChar_add_factor {q r : ℕ} [NeZero q] [NeZero r] (a b : ℕ) :
     ZMod.stdAddChar ((r * a + q * b : ℕ) : ZMod (q * r)) =
       ZMod.stdAddChar (a : ZMod q) * ZMod.stdAddChar (b : ZMod r) := by
-  rw [Nat.cast_add, AddChar.map_add_eq_mul, zmod_stdAddChar_mul_factor_eq,
-    zmod_stdAddChar_mul_left_factor_eq]
+  rw [Nat.cast_add, AddChar.map_add_eq_mul, stdAddChar_mul_factor, stdAddChar_mul_left]
 
 /--
 Inputs: coprime positive moduli `q,r`, residues `a,b`, and a natural frequency `n`.
@@ -3719,14 +3605,14 @@ components.
 
 Role: factors each additive phase after reindexing a unit sum by the Chinese-remainder equivalence.
 -/
-theorem stdAddChar_mul_chineseRemainder_symm {q r : ℕ} [NeZero q] [NeZero r] (h : Nat.Coprime q r)
-    (a : ZMod q) (b : ZMod r) (n : ℕ) :
+theorem stdAddChar_crt {q r : ℕ} [NeZero q] [NeZero r] (h : Nat.Coprime q r) (a : ZMod q)
+    (b : ZMod r) (n : ℕ) :
     let A : ℕ := (((ZMod.isUnit_iff_coprime r q).2 h.symm).unit⁻¹ * a).val
     let B : ℕ := (((ZMod.isUnit_iff_coprime q r).2 h).unit⁻¹ * b).val
     ZMod.stdAddChar ((n : ZMod (q * r)) * ((ZMod.chineseRemainder h).symm (a, b))) =
       ZMod.stdAddChar ((n * A : ℕ) : ZMod q) * ZMod.stdAddChar ((n * B : ℕ) : ZMod r) := by
   dsimp only
-  rw [chineseRemainder_symm_apply_nat]
+  rw [chineseRemainder_symm]
   let A : ℕ := (((ZMod.isUnit_iff_coprime r q).2 h.symm).unit⁻¹ * a).val
   let B : ℕ := (((ZMod.isUnit_iff_coprime q r).2 h).unit⁻¹ * b).val
   have hmul :
@@ -3734,7 +3620,7 @@ theorem stdAddChar_mul_chineseRemainder_symm {q r : ℕ} [NeZero q] [NeZero r] (
       ((r * (n * A) + q * (n * B) : ℕ) : ZMod (q * r)) := by
     push_cast
     ring
-  rw [hmul, zmod_stdAddChar_add_factor_eq]
+  rw [hmul, stdAddChar_add_factor]
 
 /--
 Inputs: a positive modulus `q`, a frequency `n`, and a unit `u` modulo `q`.
@@ -3745,7 +3631,7 @@ Proof: reindex the finite sum by the equivalence given by left multiplication by
 
 Role: removes the inverse twists introduced by the explicit CRT representative.
 -/
-theorem sum_stdAddChar_mul_unit_eq_ramanujanSum {q : ℕ} [NeZero q] (n : ℕ) (u : (ZMod q)ˣ) :
+theorem sum_units_mul_char {q : ℕ} [NeZero q] (n : ℕ) (u : (ZMod q)ˣ) :
     (∑ a : (ZMod q)ˣ, ZMod.stdAddChar ((n : ZMod q) * ((u * a : (ZMod q)ˣ) : ZMod q))) =
       ramanujanSum q n := by
   classical
@@ -3763,7 +3649,7 @@ then remove the inverse twists by finite-sum reindexing.
 Role: supplies the multiplicative normalization for Ramanujan weights in the finite character
 decomposition.
 -/
-theorem ramanujanSum_mul_coprime {q r : ℕ} [NeZero q] [NeZero r] (h : Nat.Coprime q r) (n : ℕ) :
+theorem ramanujan_mul_coprime {q r : ℕ} [NeZero q] [NeZero r] (h : Nat.Coprime q r) (n : ℕ) :
     ramanujanSum (q * r) n = ramanujanSum q n * ramanujanSum r n := by
   classical
   let ur : (ZMod q)ˣ := (ZMod.isUnit_iff_coprime r q).2 h.symm |>.unit
@@ -3778,7 +3664,7 @@ theorem ramanujanSum_mul_coprime {q r : ℕ} [NeZero q] [NeZero r] (h : Nat.Copr
         apply Finset.sum_congr rfl
         intro a ha
         simp only [Nat.cast_mul, ZMod.natCast_zmod_val, Units.val_mul]
-      _ = ramanujanSum q n := sum_stdAddChar_mul_unit_eq_ramanujanSum n ur⁻¹
+      _ = ramanujanSum q n := sum_units_mul_char n ur⁻¹
   have hr :
     (∑ b : (ZMod r)ˣ, ZMod.stdAddChar ((n * (uq⁻¹ * (b : ZMod r)).val : ℕ) : ZMod r)) =
       ramanujanSum r n := by
@@ -3787,14 +3673,14 @@ theorem ramanujanSum_mul_coprime {q r : ℕ} [NeZero q] [NeZero r] (h : Nat.Copr
         apply Finset.sum_congr rfl
         intro b hb
         simp only [Nat.cast_mul, ZMod.natCast_zmod_val, Units.val_mul]
-      _ = ramanujanSum r n := sum_stdAddChar_mul_unit_eq_ramanujanSum n uq⁻¹
+      _ = ramanujanSum r n := sum_units_mul_char n uq⁻¹
   calc
     ramanujanSum (q * r) n =
         ∑ a : (ZMod q)ˣ,
           ∑ b : (ZMod r)ˣ, ZMod.stdAddChar ((n : ZMod (q * r)) * (e.symm (a, b) : ZMod (q * r))) :=
       by
       unfold ramanujanSum
-      rw [sum_units_zmod_mul_coprime h]
+      rw [sum_units_coprime_mul h]
     _ =
         ∑ a : (ZMod q)ˣ,
           ∑ b : (ZMod r)ˣ,
@@ -3806,7 +3692,7 @@ theorem ramanujanSum_mul_coprime {q r : ℕ} [NeZero q] [NeZero r] (h : Nat.Copr
       apply Finset.sum_congr rfl
       intro b hb
       change ZMod.stdAddChar ((n : ZMod (q * r)) * ((ZMod.chineseRemainder h).symm (a, b))) = _
-      exact stdAddChar_mul_chineseRemainder_symm h a b n
+      exact stdAddChar_crt h a b n
     _ = ramanujanSum q n * ramanujanSum r n := by rw [← Finset.sum_mul_sum, hq, hr]
 
 /--
@@ -3819,7 +3705,7 @@ and induct on `r`; the prime factor contributes `-1`.
 
 Role: shows that the constant Ramanujan coefficient on a pre-sifted support has unit squared norm.
 -/
-theorem ramanujanSum_one_normSq_eq_one (r : ℕ) (hr : 0 < r) (hsq : Squarefree r) :
+theorem ramanujan_one_normSq (r : ℕ) (hr : 0 < r) (hsq : Squarefree r) :
     ‖@ramanujanSum r 1 ⟨Nat.ne_of_gt hr⟩‖ ^ 2 = 1 := by
   revert hr hsq
   induction r using Nat.strong_induction_on with
@@ -3830,7 +3716,7 @@ theorem ramanujanSum_one_normSq_eq_one (r : ℕ) (hr : 0 < r) (hsq : Squarefree 
       have hsum : ramanujanSum 1 1 = 1 := by
         calc
           ramanujanSum 1 1 = ramanujanSum 1 (0 + 1 * 1) := by norm_num only
-          _ = ramanujanSum 1 0 := ramanujanSum_add_modulus_multiple 1 0 1
+          _ = ramanujanSum 1 0 := ramanujan_mod_shift 1 0 1
           _ = 1 := by
             rw [ramanujanSum_zero]; norm_num only [Nat.totient_one]
       rw [hsum]
@@ -3854,9 +3740,9 @@ theorem ramanujanSum_one_normSq_eq_one (r : ℕ) (hr : 0 < r) (hsq : Squarefree 
       have hih := ih m hlt hm hmsq
       have hpNe : NeZero p := ⟨hp.ne_zero⟩
       have hpFact : Fact p.Prime := ⟨hp⟩
-      have hprime : @ramanujanSum p 1 hpNe = -1 := ramanujanSum_prime_one
+      have hprime : @ramanujanSum p 1 hpNe = -1 := ramanujan_prime_one
       have hmNe : NeZero m := ⟨Nat.ne_of_gt hm⟩
-      have hmul := @ramanujanSum_mul_coprime p m hpNe hmNe hcop 1
+      have hmul := @ramanujan_mul_coprime p m hpNe hmNe hcop 1
       have hfactorSum : @ramanujanSum r 1 ⟨Nat.ne_of_gt hr⟩ = -@ramanujanSum m 1 hmNe := by
         calc
           _ = @ramanujanSum (p * m) 1 ⟨Nat.ne_of_gt (Nat.mul_pos hp.pos hm)⟩ := by
@@ -3880,29 +3766,27 @@ that this constant has squared norm one.
 Role: identifies each squarefree term in the reciprocal-totient lower bound with the same
 unweighted primitive-character mean square.
 -/
-theorem primitiveCharacterPolynomialMeanSquare_eq_of_squarefree_ramanujan {q r : ℕ} [NeZero r]
-    (hq : 1 < q) (S : Finset ℕ) (a : ℕ → ℂ) (hr : 0 < r) (hsq : Squarefree r)
-    (hcop : ∀ n ∈ S, Nat.Coprime n r) :
-    primitiveCharacterPolynomialMeanSquare q hq S (fun n => a n * ramanujanSum r n) =
-      primitiveCharacterPolynomialMeanSquare q hq S a := by
+theorem charEnergy_ramanujan {q r : ℕ} [NeZero r] (hq : 1 < q) (S : Finset ℕ) (a : ℕ → ℂ)
+    (hr : 0 < r) (hsq : Squarefree r) (hcop : ∀ n ∈ S, Nat.Coprime n r) :
+    polyMeanSquare q hq S (fun n => a n * ramanujanSum r n) = polyMeanSquare q hq S a := by
   have hnorm : Complex.normSq (ramanujanSum r 1) = 1 := by
     rw [Complex.normSq_eq_norm_sq]
-    exact ramanujanSum_one_normSq_eq_one r hr hsq
+    exact ramanujan_one_normSq r hr hsq
   have hsum :
-    primitiveCharacterPolynomialMeanSquare q hq S (fun n => a n * ramanujanSum r n) =
-      primitiveCharacterPolynomialMeanSquare q hq S (fun n => a n * ramanujanSum r 1) := by
+    polyMeanSquare q hq S (fun n => a n * ramanujanSum r n) =
+      polyMeanSquare q hq S (fun n => a n * ramanujanSum r 1) := by
     classical
-    unfold primitiveCharacterPolynomialMeanSquare
+    unfold polyMeanSquare
     apply Finset.sum_congr rfl
     intro χ hχ
     apply congrArg Complex.normSq
     apply Finset.sum_congr rfl
     intro n hn
     change a n * ramanujanSum r n * χ (n : ZMod q) = a n * ramanujanSum r 1 * χ (n : ZMod q)
-    rw [ramanujanSum_eq_one_of_coprime (hcop n hn)]
+    rw [ramanujan_eq_at_one (hcop n hn)]
   calc
     _ = _ := hsum
-    _ = _ := primitiveCharacterPolynomialMeanSquare_mul_const hq S a (ramanujanSum r 1)
+    _ = _ := polyMeanSquare_mul hq S a (ramanujanSum r 1)
     _ = _ := by
       rw [hnorm]; simp only [one_mul]
 
@@ -3917,7 +3801,7 @@ then evaluate each raised character through its modulus cast.
 
 Role: separates the multiplicative character factor in the CRT factorization of unit Gauss sums.
 -/
-theorem changeLevel_mul_apply_crt_units {q r : ℕ} [NeZero q] [NeZero r] (h : Nat.Coprime q r)
+theorem changeLevel_mul_crt {q r : ℕ} [NeZero q] [NeZero r] (h : Nat.Coprime q r)
     (χ : DirichletCharacter ℂ q) (ψ : DirichletCharacter ℂ r) (a : (ZMod q)ˣ) (b : (ZMod r)ˣ) :
     (DirichletCharacter.changeLevel (Nat.dvd_mul_right q r) χ *
           DirichletCharacter.changeLevel (Nat.dvd_mul_left r q) ψ)
@@ -3966,7 +3850,7 @@ nonunits, and use that a Dirichlet character vanishes on nonunits.
 
 Role: lets CRT factorizations of unit sums feed directly into the standard Gauss sum API.
 -/
-theorem unitGaussSum_eq_gaussSum {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (n : ℕ) :
+theorem unitGauss_eq_gauss {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (n : ℕ) :
     unitGaussSum χ n = gaussSum χ (ZMod.stdAddChar.mulShift (n : ZMod q)) := by
   classical
   let f : ZMod q → ℂ := fun a => χ a * ZMod.stdAddChar ((n : ZMod q) * a)
@@ -4006,10 +3890,10 @@ leaving exactly the defining additive-character sum.
 
 Role: identifies the second CRT Gauss factor in Selberg's Theorem 7A with its Ramanujan weight.
 -/
-theorem gaussSum_one_eq_ramanujanSum {r : ℕ} [NeZero r] (n : ℕ) :
+theorem gauss_one_ramanujan {r : ℕ} [NeZero r] (n : ℕ) :
     gaussSum (1 : DirichletCharacter ℂ r) (ZMod.stdAddChar.mulShift (n : ZMod r)) =
       ramanujanSum r n := by
-  rw [← unitGaussSum_eq_gaussSum]
+  rw [← unitGauss_eq_gauss]
   unfold unitGaussSum ramanujanSum
   apply Finset.sum_congr rfl
   intro u hu
@@ -4029,7 +3913,7 @@ component by multiplication by the inverse of the opposite modulus.
 Role: is the CRT Gauss-sum factorization needed to pass the weighted character expression in
 Selberg's Theorem 7A to separate moduli.
 -/
-theorem unitGaussSum_changeLevel_mul_crt {q r : ℕ} [NeZero q] [NeZero r] (h : Nat.Coprime q r)
+theorem unitGauss_crt {q r : ℕ} [NeZero q] [NeZero r] (h : Nat.Coprime q r)
     (χ : DirichletCharacter ℂ q) (ψ : DirichletCharacter ℂ r) (n : ℕ) :
     unitGaussSum
         (DirichletCharacter.changeLevel (Nat.dvd_mul_right q r) χ *
@@ -4093,12 +3977,12 @@ theorem unitGaussSum_changeLevel_mul_crt {q r : ℕ} [NeZero q] [NeZero r] (h : 
               (ψ (b : ZMod r) * ZMod.stdAddChar ((n * (uq⁻¹ * (b : ZMod r)).val : ℕ) : ZMod r)) :=
       by
       unfold unitGaussSum
-      rw [sum_units_zmod_mul_coprime h]
+      rw [sum_units_coprime_mul h]
       apply Finset.sum_congr rfl
       intro a ha
       apply Finset.sum_congr rfl
       intro b hb
-      rw [changeLevel_mul_apply_crt_units h χ ψ a b]
+      rw [changeLevel_mul_crt h χ ψ a b]
       simp only [Nat.cast_mul, ZMod.natCast_zmod_val]
       have huval : (e.symm (a, b) : ZMod (q * r)) = (ZMod.chineseRemainder h).symm (a, b) := rfl
       rw [huval]
@@ -4109,7 +3993,7 @@ theorem unitGaussSum_changeLevel_mul_crt {q r : ℕ} [NeZero q] [NeZero r] (h : 
             ZMod.stdAddChar ((n : ZMod q) * (((ur⁻¹ : (ZMod q)ˣ) : ZMod q) * (a : ZMod q))) *
             (ψ (b : ZMod r) *
               ZMod.stdAddChar ((n : ZMod r) * (((uq⁻¹ : (ZMod r)ˣ) : ZMod r) * (b : ZMod r))))
-      rw [stdAddChar_mul_chineseRemainder_symm h (a : ZMod q) (b : ZMod r) n]
+      rw [stdAddChar_crt h (a : ZMod q) (b : ZMod r) n]
       simp only [Nat.cast_mul, ZMod.natCast_zmod_val]
       rw [show
           (n : ZMod q) * (((ur⁻¹ : (ZMod q)ˣ) : ZMod q) * (a : ZMod q)) =
@@ -4144,7 +4028,7 @@ Proof: rewrite each ordinary Gauss sum as its unit-restricted form and apply the
 Role: gives the standard Gauss-sum interface for the weighted character estimates used in
 Selberg's Theorem 7A.
 -/
-theorem gaussSum_changeLevel_mul_crt {q r : ℕ} [NeZero q] [NeZero r] (h : Nat.Coprime q r)
+theorem gaussSum_crt {q r : ℕ} [NeZero q] [NeZero r] (h : Nat.Coprime q r)
     (χ : DirichletCharacter ℂ q) (ψ : DirichletCharacter ℂ r) (n : ℕ) :
     gaussSum
         (DirichletCharacter.changeLevel (Nat.dvd_mul_right q r) χ *
@@ -4154,8 +4038,7 @@ theorem gaussSum_changeLevel_mul_crt {q r : ℕ} [NeZero q] [NeZero r] (h : Nat.
           gaussSum χ (ZMod.stdAddChar.mulShift (n : ZMod q))) *
         (ψ (((ZMod.isUnit_iff_coprime q r).2 h).unit : ZMod r) *
           gaussSum ψ (ZMod.stdAddChar.mulShift (n : ZMod r))) := by
-  rw [← unitGaussSum_eq_gaussSum, unitGaussSum_changeLevel_mul_crt h χ ψ n,
-    unitGaussSum_eq_gaussSum, unitGaussSum_eq_gaussSum]
+  rw [← unitGauss_eq_gauss, unitGauss_crt h χ ψ n, unitGauss_eq_gauss, unitGauss_eq_gauss]
 
 /--
 Inputs: coprime positive moduli `q,r`, a Dirichlet character modulo `q`, and a natural frequency.
@@ -4163,13 +4046,13 @@ Inputs: coprime positive moduli `q,r`, a Dirichlet character modulo `q`, and a n
 Claim: the Gauss sum modulo `q*r` of the product of the raised character and the raised principal
 character is the component Gauss sum modulo `q` times `ramanujanSum r n`, with the CRT unit factor.
 
-Proof: specialize `gaussSum_changeLevel_mul_crt` to the principal character modulo `r` and rewrite
-its shifted Gauss sum using `gaussSum_one_eq_ramanujanSum`.
+Proof: specialize `gaussSum_crt` to the principal character modulo `r` and rewrite
+its shifted Gauss sum using `gauss_one_ramanujan`.
 
 Role: gives the explicit Ramanujan-weighted Gauss identity required to turn primitive-character
 sums into the weighted family in Selberg's Theorem 7A.
 -/
-theorem gaussSum_changeLevel_mul_principal_crt {q r : ℕ} [NeZero q] [NeZero r] (h : Nat.Coprime q r)
+theorem gauss_principal_crt {q r : ℕ} [NeZero q] [NeZero r] (h : Nat.Coprime q r)
     (χ : DirichletCharacter ℂ q) (n : ℕ) :
     gaussSum
         (DirichletCharacter.changeLevel (Nat.dvd_mul_right q r) χ *
@@ -4181,8 +4064,7 @@ theorem gaussSum_changeLevel_mul_principal_crt {q r : ℕ} [NeZero q] [NeZero r]
   have hu : IsUnit (q : ZMod r) := (ZMod.isUnit_iff_coprime q r).2 h
   have htriv : (1 : DirichletCharacter ℂ r) (hu.unit : ZMod r) = 1 :=
     MulChar.one_apply hu.unit.isUnit
-  rw [gaussSum_changeLevel_mul_crt h χ (1 : DirichletCharacter ℂ r) n, gaussSum_one_eq_ramanujanSum,
-    htriv, one_mul]
+  rw [gaussSum_crt h χ (1 : DirichletCharacter ℂ r) n, gauss_one_ramanujan, htriv, one_mul]
 
 /--
 Inputs: coprime positive moduli `q,r`, a primitive character modulo `q`, and a natural frequency.
@@ -4196,8 +4078,8 @@ Ramanujan sum, and apply the primitive Gauss-sum shift identity to `χ⁻¹`.
 Role: supplies the frequency-by-frequency identity used to transform Ramanujan-weighted
 primitive-character polynomials into additive sums modulo `q*r`.
 -/
-theorem unitGaussSum_changeLevel_mul_principal_of_primitive {q r : ℕ} [NeZero q] [NeZero r]
-    (h : Nat.Coprime q r) (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive) (n : ℕ) :
+theorem unitGauss_primitive {q r : ℕ} [NeZero q] [NeZero r] (h : Nat.Coprime q r)
+    (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive) (n : ℕ) :
     unitGaussSum
         (DirichletCharacter.changeLevel (Nat.dvd_mul_right q r) χ⁻¹ *
           DirichletCharacter.changeLevel (Nat.dvd_mul_left r q) (1 : DirichletCharacter ℂ r))
@@ -4212,9 +4094,9 @@ theorem unitGaussSum_changeLevel_mul_principal_of_primitive {q r : ℕ} [NeZero 
     MulChar.one_apply huq.unit.isUnit
   have hur : IsUnit (r : ZMod q) := (ZMod.isUnit_iff_coprime r q).2 h.symm
   have hurval : (hur.unit : ZMod q) = (r : ZMod q) := hur.unit_spec
-  rw [unitGaussSum_changeLevel_mul_crt h χ⁻¹ (1 : DirichletCharacter ℂ r) n,
-    unitGaussSum_eq_gaussSum, unitGaussSum_eq_gaussSum, gaussSum_one_eq_ramanujanSum, htriv,
-    one_mul, gaussSum_mulShift_of_isPrimitive ZMod.stdAddChar hχinv (n : ZMod q), inv_inv, hurval]
+  rw [unitGauss_crt h χ⁻¹ (1 : DirichletCharacter ℂ r) n, unitGauss_eq_gauss, unitGauss_eq_gauss,
+    gauss_one_ramanujan, htriv, one_mul,
+    gaussSum_mulShift_of_isPrimitive ZMod.stdAddChar hχinv (n : ZMod q), inv_inv, hurval]
   ring
 
 /--
@@ -4225,14 +4107,13 @@ Claim: the Ramanujan-weighted primitive-character polynomial, multiplied by its 
 equals the additive Fourier polynomial over unit residues modulo `q*r`, weighted by the raised
 inverse character.
 
-Proof: apply `unitGaussSum_changeLevel_mul_principal_of_primitive` termwise, expand the unit Gauss
+Proof: apply `unitGauss_primitive` termwise, expand the unit Gauss
 sums, exchange the finite sums, and factor the character value out of each inner polynomial.
 
 Role: gives the polynomial form of Selberg's Theorem 7A for one coprime modulus pair.
 -/
-theorem primitive_ramanujan_weighted_polynomial_additive_transform {q r : ℕ} [NeZero q] [NeZero r]
-    (h : Nat.Coprime q r) (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive) (S : Finset ℕ)
-    (a : ℕ → ℂ) :
+theorem ramanujan_fourier_eq {q r : ℕ} [NeZero q] [NeZero r] (h : Nat.Coprime q r)
+    (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive) (S : Finset ℕ) (a : ℕ → ℂ) :
     (χ⁻¹ (r : ZMod q) * gaussSum χ⁻¹ ZMod.stdAddChar) *
         (∑ n ∈ S, a n * (χ (n : ZMod q) * ramanujanSum r n)) =
       ∑ b : (ZMod (q * r))ˣ,
@@ -4258,7 +4139,7 @@ theorem primitive_ramanujan_weighted_polynomial_additive_transform {q r : ℕ} [
       apply Finset.sum_congr rfl
       intro n hn
       dsimp [χr]
-      rw [unitGaussSum_changeLevel_mul_principal_of_primitive h χ hχ n]
+      rw [unitGauss_primitive h χ hχ n]
     _ =
         ∑ n ∈ S,
           a n *
@@ -4311,15 +4192,14 @@ modulo `q`, a finite index set, and complex coefficients.
 Claim: `q` times the squared norm of the Ramanujan-weighted character polynomial equals the
 squared norm of its additive transform over units modulo `q*r`.
 
-Proof: take squared norms in `primitive_ramanujan_weighted_polynomial_additive_transform`; the
+Proof: take squared norms in `ramanujan_fourier_eq`; the
 normalizing factor has squared norm `q` by the primitive Gauss-sum norm identity and unit norm.
 
 Role: gives the exact fixed-character identity needed to sum Selberg's Theorem 7A over primitive
 characters.
 -/
-theorem primitive_ramanujan_weighted_polynomial_normSq_eq {q r : ℕ} [NeZero q] [NeZero r]
-    (hq : 1 < q) (h : Nat.Coprime q r) (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive)
-    (S : Finset ℕ) (a : ℕ → ℂ) :
+theorem ramanujanPoly_normSq {q r : ℕ} [NeZero q] [NeZero r] (hq : 1 < q) (h : Nat.Coprime q r)
+    (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive) (S : Finset ℕ) (a : ℕ → ℂ) :
     (q : ℝ) * Complex.normSq (∑ n ∈ S, a n * (χ (n : ZMod q) * ramanujanSum r n)) =
       Complex.normSq
         (∑ b : (ZMod (q * r))ˣ,
@@ -4337,11 +4217,11 @@ theorem primitive_ramanujan_weighted_polynomial_normSq_eq {q r : ℕ} [NeZero q]
   have hchar : Complex.normSq (χ⁻¹ (r : ZMod q)) = 1 := by
     rw [← hurval, Complex.normSq_eq_norm_sq, DirichletCharacter.unit_norm_eq_one χ⁻¹ hur.unit]
     norm_num only
-  have hgauss := primitive_gaussSum_normSq_eq_modulus hq χ⁻¹ hχinv
+  have hgauss := gaussSum_normSq_eq_q hq χ⁻¹ hχinv
   have hconstant : Complex.normSq (χ⁻¹ (r : ZMod q) * gaussSum χ⁻¹ ZMod.stdAddChar) = q := by
     rw [Complex.normSq_mul, hchar, hgauss]
     norm_num only [one_mul]
-  have htransform := primitive_ramanujan_weighted_polynomial_additive_transform h χ hχ S a
+  have htransform := ramanujan_fourier_eq h χ hχ S a
   calc
     _ =
         Complex.normSq (χ⁻¹ (r : ZMod q) * gaussSum χ⁻¹ ZMod.stdAddChar) *
@@ -4362,8 +4242,8 @@ respective original moduli.
 
 Role: proves disjointness of lifted primitive-character images from distinct conductors.
 -/
-theorem primitive_level_lifts_equal_imply_moduli_eq {q q' h : ℕ} [NeZero h] (hq : q ∣ h)
-    (hq' : q' ∣ h) (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive) (ψ : DirichletCharacter ℂ q')
+theorem primitive_lift_mod_eq {q q' h : ℕ} [NeZero h] (hq : q ∣ h) (hq' : q' ∣ h)
+    (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive) (ψ : DirichletCharacter ℂ q')
     (hψ : ψ.IsPrimitive)
     (heq : DirichletCharacter.changeLevel hq χ = DirichletCharacter.changeLevel hq' ψ) :
     q = q' := by
@@ -4383,8 +4263,8 @@ inverse characters.
 Role: separates the product-modulus character images used by the Ramanujan-weighted Parseval
 identity.
 -/
-theorem primitive_inverse_level_lifts_equal_imply_moduli_eq {q q' h : ℕ} [NeZero h] (hq : q ∣ h)
-    (hq' : q' ∣ h) (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive) (ψ : DirichletCharacter ℂ q')
+theorem inv_lift_mod_eq {q q' h : ℕ} [NeZero h] (hq : q ∣ h) (hq' : q' ∣ h)
+    (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive) (ψ : DirichletCharacter ℂ q')
     (hψ : ψ.IsPrimitive)
     (heq : DirichletCharacter.changeLevel hq χ⁻¹ = DirichletCharacter.changeLevel hq' ψ⁻¹) :
     q = q' := by
@@ -4394,7 +4274,7 @@ theorem primitive_inverse_level_lifts_equal_imply_moduli_eq {q q' h : ℕ} [NeZe
   have hψinv : ψ⁻¹.IsPrimitive := by
     rw [DirichletCharacter.isPrimitive_def, DirichletCharacter.conductor_inv]
     exact hψ
-  exact primitive_level_lifts_equal_imply_moduli_eq hq hq' χ⁻¹ hχinv ψ⁻¹ hψinv heq
+  exact primitive_lift_mod_eq hq hq' χ⁻¹ hχinv ψ⁻¹ hψinv heq
 
 /--
 Inputs: distinct moduli dividing a positive common level.
@@ -4407,26 +4287,22 @@ conductor invariance under level raising.
 Role: ensures that Parseval counts each lifted primitive character only once at a fixed product
 modulus.
 -/
-theorem primitive_levelLift_images_disjoint_of_ne {h q q' : ℕ} [NeZero h]
-    [DecidableEq (DirichletCharacter ℂ h)] (hq : q ∣ h) (hq' : q' ∣ h) (hne : q ≠ q') :
-    Disjoint
-      ((primitiveDirichletCharacterSet q).image (fun χ => DirichletCharacter.changeLevel hq χ⁻¹))
-      ((primitiveDirichletCharacterSet q').image
-        (fun χ => DirichletCharacter.changeLevel hq' χ⁻¹)) := by
+theorem liftImages_disjoint {h q q' : ℕ} [NeZero h] [DecidableEq (DirichletCharacter ℂ h)]
+    (hq : q ∣ h) (hq' : q' ∣ h) (hne : q ≠ q') :
+    Disjoint ((primitiveCharacters q).image (fun χ => DirichletCharacter.changeLevel hq χ⁻¹))
+      ((primitiveCharacters q').image (fun χ => DirichletCharacter.changeLevel hq' χ⁻¹)) := by
   classical
   apply Finset.disjoint_left.mpr
   intro ψ hψ hψ'
   rcases Finset.mem_image.mp hψ with ⟨χ, hχ, hχψ⟩
   rcases Finset.mem_image.mp hψ' with ⟨χ', hχ', hχ'ψ⟩
   have hχprim : χ.IsPrimitive := by
-    simpa only [primitiveDirichletCharacterSet, Finset.mem_filter, Finset.mem_univ, true_and] using
-      hχ
+    simpa only [primitiveCharacters, Finset.mem_filter, Finset.mem_univ, true_and] using hχ
   have hχ'prim : χ'.IsPrimitive := by
-    simpa only [primitiveDirichletCharacterSet, Finset.mem_filter, Finset.mem_univ, true_and] using
-      hχ'
+    simpa only [primitiveCharacters, Finset.mem_filter, Finset.mem_univ, true_and] using hχ'
   have hlift : DirichletCharacter.changeLevel hq χ⁻¹ = DirichletCharacter.changeLevel hq' χ'⁻¹ :=
     hχψ.trans hχ'ψ.symm
-  have hmod := primitive_inverse_level_lifts_equal_imply_moduli_eq hq hq' χ hχprim χ' hχ'prim hlift
+  have hmod := inv_lift_mod_eq hq hq' χ hχprim χ' hχ'prim hlift
   exact hne hmod
 
 /--
@@ -4437,32 +4313,32 @@ characters inverted as in the Ramanujan-weighted additive transform.
 
 Role: packages the conductor-indexed image sets used in collective Parseval estimates.
 -/
-noncomputable def primitiveCharacterLevelLiftImage {q h : ℕ} [NeZero h]
-    [DecidableEq (DirichletCharacter ℂ h)] (hq : q ∣ h) : Finset (DirichletCharacter ℂ h) :=
-  (primitiveDirichletCharacterSet q).image (fun χ => DirichletCharacter.changeLevel hq χ⁻¹)
+noncomputable def primitiveLiftImage {q h : ℕ} [NeZero h] [DecidableEq (DirichletCharacter ℂ h)]
+    (hq : q ∣ h) : Finset (DirichletCharacter ℂ h) :=
+  (primitiveCharacters q).image (fun χ => DirichletCharacter.changeLevel hq χ⁻¹)
 
 /--
 Inputs: a finite set of moduli dividing a positive common level.
 
 Claim: their primitive-character level-lift images are pairwise disjoint.
 
-Proof: distinct moduli give disjoint images by `primitive_levelLift_images_disjoint_of_ne`.
+Proof: distinct moduli give disjoint images by `liftImages_disjoint`.
 
 Role: allows the image sums for all selected conductors to be joined before applying Parseval.
 -/
-theorem primitiveCharacterLevelLiftImages_pairwiseDisjoint {h : ℕ} [NeZero h]
-    [DecidableEq (DirichletCharacter ℂ h)] (Q : Finset ℕ) (hQ : ∀ q, q ∣ h) :
+theorem liftImages_pairwise {h : ℕ} [NeZero h] [DecidableEq (DirichletCharacter ℂ h)] (Q : Finset ℕ)
+    (hQ : ∀ q, q ∣ h) :
     (Q : Set ℕ).PairwiseDisjoint
-      (fun q => (primitiveCharacterLevelLiftImage (hQ q) : Set (DirichletCharacter ℂ h))) := by
+      (fun q => (primitiveLiftImage (hQ q) : Set (DirichletCharacter ℂ h))) := by
   rw [Set.pairwiseDisjoint_iff]
   intro q hq q' hq' hinter
   by_contra hne
   rcases hinter with ⟨ψ, hψ⟩
   rw [Set.mem_inter_iff] at hψ
   rcases hψ with ⟨hψq, hψq'⟩
-  have hd := primitive_levelLift_images_disjoint_of_ne (hQ q) (hQ q') hne
-  change ψ ∈ primitiveCharacterLevelLiftImage (hQ q) at hψq
-  change ψ ∈ primitiveCharacterLevelLiftImage (hQ q') at hψq'
+  have hd := liftImages_disjoint (hQ q) (hQ q') hne
+  change ψ ∈ primitiveLiftImage (hQ q) at hψq
+  change ψ ∈ primitiveLiftImage (hQ q') at hψq'
   exact (Finset.disjoint_left.mp hd hψq) hψq'
 
 /--
@@ -4476,15 +4352,11 @@ Proof: apply the finite disjoint-union sum identity to the pairwise-disjoint ima
 
 Role: collects all primitive-conductor contributions before one application of Parseval.
 -/
-theorem sum_primitiveCharacterLevelLiftImage_biUnion {h : ℕ} [NeZero h]
-    [DecidableEq (DirichletCharacter ℂ h)] (Q : Finset ℕ) (hQ : ∀ q, q ∣ h)
-    (f : DirichletCharacter ℂ h → ℝ) :
-    (∑ ψ ∈ Q.biUnion fun q => primitiveCharacterLevelLiftImage (hQ q), f ψ) =
-      ∑ q ∈ Q, ∑ ψ ∈ primitiveCharacterLevelLiftImage (hQ q), f ψ := by
-  exact
-    Finset.sum_biUnion
-      (Finset.pairwiseDisjoint_coe.mp
-        (primitiveCharacterLevelLiftImages_pairwiseDisjoint (h := h) Q hQ))
+theorem sum_liftImages_union {h : ℕ} [NeZero h] [DecidableEq (DirichletCharacter ℂ h)]
+    (Q : Finset ℕ) (hQ : ∀ q, q ∣ h) (f : DirichletCharacter ℂ h → ℝ) :
+    (∑ ψ ∈ Q.biUnion fun q => primitiveLiftImage (hQ q), f ψ) =
+      ∑ q ∈ Q, ∑ ψ ∈ primitiveLiftImage (hQ q), f ψ := by
+  exact Finset.sum_biUnion (Finset.pairwiseDisjoint_coe.mp (liftImages_pairwise (h := h) Q hQ))
 
 /--
 Inputs: a finite set of moduli dividing a positive common level and a complex-valued function on
@@ -4497,12 +4369,11 @@ Proof: join the pairwise-disjoint images, then enlarge their union to the full c
 
 Role: supplies the one-Parseval upper bound after conductor-indexed images have been aggregated.
 -/
-theorem sum_primitiveCharacterLevelLiftImage_normSq_le_all {h : ℕ} [NeZero h]
-    [DecidableEq (DirichletCharacter ℂ h)] (Q : Finset ℕ) (hQ : ∀ q, q ∣ h)
-    (f : DirichletCharacter ℂ h → ℂ) :
-    (∑ q ∈ Q, ∑ ψ ∈ primitiveCharacterLevelLiftImage (hQ q), Complex.normSq (f ψ)) ≤
+theorem liftNormSq_le_all {h : ℕ} [NeZero h] [DecidableEq (DirichletCharacter ℂ h)] (Q : Finset ℕ)
+    (hQ : ∀ q, q ∣ h) (f : DirichletCharacter ℂ h → ℂ) :
+    (∑ q ∈ Q, ∑ ψ ∈ primitiveLiftImage (hQ q), Complex.normSq (f ψ)) ≤
       ∑ ψ : DirichletCharacter ℂ h, Complex.normSq (f ψ) := by
-  rw [← sum_primitiveCharacterLevelLiftImage_biUnion (h := h) Q hQ (fun ψ => Complex.normSq (f ψ))]
+  rw [← sum_liftImages_union (h := h) Q hQ (fun ψ => Complex.normSq (f ψ))]
   apply Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _)
   intro ψ hψ hψnot
   exact Complex.normSq_nonneg (f ψ)
@@ -4519,18 +4390,14 @@ subset of the full character set.
 
 Role: supports collective Parseval when divisibility is known only for members of the finite set.
 -/
-theorem sum_primitiveCharacterLevelLiftImage_normSq_le_all_attached {h : ℕ} [NeZero h]
-    [DecidableEq (DirichletCharacter ℂ h)] (Q : Finset ℕ) (hQ : ∀ q, q ∈ Q → q ∣ h)
-    (f : DirichletCharacter ℂ h → ℂ) :
-    (∑ q ∈ Q.attach,
-        ∑ ψ ∈ primitiveCharacterLevelLiftImage (hQ q.val q.property), Complex.normSq (f ψ)) ≤
+theorem liftNormSq_attach_le {h : ℕ} [NeZero h] [DecidableEq (DirichletCharacter ℂ h)]
+    (Q : Finset ℕ) (hQ : ∀ q, q ∈ Q → q ∣ h) (f : DirichletCharacter ℂ h → ℂ) :
+    (∑ q ∈ Q.attach, ∑ ψ ∈ primitiveLiftImage (hQ q.val q.property), Complex.normSq (f ψ)) ≤
       ∑ ψ : DirichletCharacter ℂ h, Complex.normSq (f ψ) := by
   classical
   have hdisjoint :
     (Q.attach : Set { q : ℕ // q ∈ Q }).PairwiseDisjoint
-      (fun q =>
-        (primitiveCharacterLevelLiftImage (hQ q.val q.property) :
-          Set (DirichletCharacter ℂ h))) := by
+      (fun q => (primitiveLiftImage (hQ q.val q.property) : Set (DirichletCharacter ℂ h))) := by
     rw [Set.pairwiseDisjoint_iff]
     intro q hq q' hq' hinter
     by_contra hne
@@ -4541,10 +4408,9 @@ theorem sum_primitiveCharacterLevelLiftImage_normSq_le_all_attached {h : ℕ} [N
     rcases hinter with ⟨ψ, hψ⟩
     rw [Set.mem_inter_iff] at hψ
     rcases hψ with ⟨hψq, hψq'⟩
-    have hd :=
-      primitive_levelLift_images_disjoint_of_ne (hQ q.val q.property) (hQ q'.val q'.property) hval
-    change ψ ∈ primitiveCharacterLevelLiftImage (hQ q.val q.property) at hψq
-    change ψ ∈ primitiveCharacterLevelLiftImage (hQ q'.val q'.property) at hψq'
+    have hd := liftImages_disjoint (hQ q.val q.property) (hQ q'.val q'.property) hval
+    change ψ ∈ primitiveLiftImage (hQ q.val q.property) at hψq
+    change ψ ∈ primitiveLiftImage (hQ q'.val q'.property) at hψq'
     exact (Finset.disjoint_left.mp hd hψq) hψq'
   rw [← Finset.sum_biUnion (Finset.pairwiseDisjoint_coe.mp hdisjoint)]
   apply Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _)
@@ -4563,8 +4429,8 @@ under level change then reduces the claim to primitivity of the original charact
 Role: distinguishes the images arising from different primitive conductors when aggregating
 Parseval over a fixed product modulus.
 -/
-theorem primitive_ramanujan_weighted_levelLift_conductor_eq {q r : ℕ} [NeZero q] [NeZero r]
-    (χ : DirichletCharacter ℂ q) (hχ : χ.IsPrimitive) :
+theorem lift_conductor_eq {q r : ℕ} [NeZero q] [NeZero r] (χ : DirichletCharacter ℂ q)
+    (hχ : χ.IsPrimitive) :
     (DirichletCharacter.changeLevel (Nat.dvd_mul_right q r) χ⁻¹ *
           DirichletCharacter.changeLevel (Nat.dvd_mul_left r q)
             (1 : DirichletCharacter ℂ r)).conductor =
@@ -4586,7 +4452,7 @@ and injectivity of change of level, and reindex the finite sum by the image.
 Role: isolates the primitive-character contribution before bounding it by Parseval over all
 characters modulo `q*r`.
 -/
-theorem primitive_ramanujan_weighted_polynomial_image_normSq_eq {q r : ℕ} [NeZero q] [NeZero r]
+theorem ramanujanImage_normSq {q r : ℕ} [NeZero q] [NeZero r]
     [DecidableEq (DirichletCharacter ℂ (q * r))] (hq : 1 < q) (h : Nat.Coprime q r) (S : Finset ℕ)
     (a : ℕ → ℂ) :
     let F : DirichletCharacter ℂ q → DirichletCharacter ℂ (q * r) := fun χ =>
@@ -4596,9 +4462,9 @@ theorem primitive_ramanujan_weighted_polynomial_image_normSq_eq {q r : ℕ} [NeZ
       ∑ b : (ZMod (q * r))ˣ,
         ψ b * (∑ n ∈ S, a n * ZMod.stdAddChar ((n * (b : ZMod (q * r)).val : ℕ) : ZMod (q * r)))
     (q : ℝ) *
-        ∑ χ ∈ primitiveDirichletCharacterSet q,
+        ∑ χ ∈ primitiveCharacters q,
           Complex.normSq (∑ n ∈ S, a n * (χ (n : ZMod q) * ramanujanSum r n)) =
-      ∑ ψ ∈ (primitiveDirichletCharacterSet q).image F, Complex.normSq (A ψ) := by
+      ∑ ψ ∈ (primitiveCharacters q).image F, Complex.normSq (A ψ) := by
   classical
   let F : DirichletCharacter ℂ q → DirichletCharacter ℂ (q * r) := fun χ =>
     DirichletCharacter.changeLevel (Nat.dvd_mul_right q r) χ⁻¹ *
@@ -4617,14 +4483,13 @@ theorem primitive_ramanujan_weighted_polynomial_image_normSq_eq {q r : ℕ} [NeZ
     exact inv_injective hinv
   rw [Finset.mul_sum]
   calc
-    _ = ∑ χ ∈ primitiveDirichletCharacterSet q, Complex.normSq (A (F χ)) := by
+    _ = ∑ χ ∈ primitiveCharacters q, Complex.normSq (A (F χ)) := by
       apply Finset.sum_congr rfl
       intro χ hχ
       have hprim : χ.IsPrimitive := by
-        simpa only [primitiveDirichletCharacterSet, Finset.mem_filter, Finset.mem_univ,
-          true_and] using hχ
-      exact primitive_ramanujan_weighted_polynomial_normSq_eq hq h χ hprim S a
-    _ = ∑ ψ ∈ (primitiveDirichletCharacterSet q).image F, Complex.normSq (A ψ) := by
+        simpa only [primitiveCharacters, Finset.mem_filter, Finset.mem_univ, true_and] using hχ
+      exact ramanujanPoly_normSq hq h χ hprim S a
+    _ = ∑ ψ ∈ (primitiveCharacters q).image F, Complex.normSq (A ψ) := by
       symm
       exact Finset.sum_image hF.injOn
 
@@ -4636,18 +4501,18 @@ Claim: the Ramanujan-weighted primitive-character mean square equals the additiv
 norm-square sum over the primitive-character level-lift image modulo `q*r`.
 
 Proof: simplify the lift of the trivial character modulo `r` in
-`primitive_ramanujan_weighted_polynomial_image_normSq_eq`.
+`ramanujanImage_normSq`.
 
 Role: identifies the pair-indexed Ramanujan contribution with the conductor-indexed image used by
 the collective Parseval estimate.
 -/
-theorem primitive_ramanujan_weighted_polynomial_levelLiftImage_normSq_eq {q r : ℕ} [NeZero q]
-    [NeZero r] [DecidableEq (DirichletCharacter ℂ (q * r))] (hq : 1 < q) (h : Nat.Coprime q r)
-    (S : Finset ℕ) (a : ℕ → ℂ) :
+theorem ramanujanLift_normSq {q r : ℕ} [NeZero q] [NeZero r]
+    [DecidableEq (DirichletCharacter ℂ (q * r))] (hq : 1 < q) (h : Nat.Coprime q r) (S : Finset ℕ)
+    (a : ℕ → ℂ) :
     (q : ℝ) *
-        ∑ χ ∈ primitiveDirichletCharacterSet q,
+        ∑ χ ∈ primitiveCharacters q,
           Complex.normSq (∑ n ∈ S, a n * (χ (n : ZMod q) * ramanujanSum r n)) =
-      ∑ ψ ∈ primitiveCharacterLevelLiftImage (Nat.dvd_mul_right q r),
+      ∑ ψ ∈ primitiveLiftImage (Nat.dvd_mul_right q r),
         Complex.normSq
           (∑ b : (ZMod (q * r))ˣ,
             ψ b * (∑ n ∈ S, a n * ZMod.stdAddChar ((b : ZMod (q * r)) * (n : ZMod (q * r))))) := by
@@ -4666,19 +4531,19 @@ theorem primitive_ramanujan_weighted_polynomial_levelLiftImage_normSq_eq {q r : 
     simp only [hphase]
   have hbase :
     (q : ℝ) *
-        ∑ χ ∈ primitiveDirichletCharacterSet q,
+        ∑ χ ∈ primitiveCharacters q,
           Complex.normSq (∑ n ∈ S, a n * (χ (n : ZMod q) * ramanujanSum r n)) =
-      ∑ ψ ∈ primitiveCharacterLevelLiftImage (Nat.dvd_mul_right q r),
+      ∑ ψ ∈ primitiveLiftImage (Nat.dvd_mul_right q r),
         Complex.normSq
           (∑ b : (ZMod (q * r))ˣ,
             ψ b *
               ∑ n ∈ S,
                 a n * ZMod.stdAddChar ((n * (b : ZMod (q * r)).val : ℕ) : ZMod (q * r))) := by
-    simpa only [primitiveCharacterLevelLiftImage, DirichletCharacter.changeLevel_one, mul_one] using
-      primitive_ramanujan_weighted_polynomial_image_normSq_eq hq h S a
+    simpa only [primitiveLiftImage, DirichletCharacter.changeLevel_one, mul_one] using
+      ramanujanImage_normSq hq h S a
   calc
     _ =
-        ∑ ψ ∈ primitiveCharacterLevelLiftImage (Nat.dvd_mul_right q r),
+        ∑ ψ ∈ primitiveLiftImage (Nat.dvd_mul_right q r),
           Complex.normSq
             (∑ b : (ZMod (q * r))ˣ,
               ψ b *
@@ -4699,19 +4564,19 @@ Proof: transport the fixed-product identity along the supplied equality `q*r = h
 
 Role: gives a uniform-level form of the pair identity for finite families with fixed product.
 -/
-theorem primitive_ramanujan_weighted_commonLevelImage_normSq_eq {q r h : ℕ} [NeZero q] [NeZero r]
-    [NeZero h] [DecidableEq (DirichletCharacter ℂ h)] (hqr : q * r = h) (hqdiv : q ∣ h) (hq : 1 < q)
+theorem ramanujanCommon_sq {q r h : ℕ} [NeZero q] [NeZero r] [NeZero h]
+    [DecidableEq (DirichletCharacter ℂ h)] (hqr : q * r = h) (hqdiv : q ∣ h) (hq : 1 < q)
     (hcop : Nat.Coprime q r) (S : Finset ℕ) (a : ℕ → ℂ) :
     (q : ℝ) *
-        ∑ χ ∈ primitiveDirichletCharacterSet q,
+        ∑ χ ∈ primitiveCharacters q,
           Complex.normSq (∑ n ∈ S, a n * (χ (n : ZMod q) * ramanujanSum r n)) =
-      ∑ ψ ∈ primitiveCharacterLevelLiftImage hqdiv,
+      ∑ ψ ∈ primitiveLiftImage hqdiv,
         Complex.normSq
           (∑ b : (ZMod h)ˣ,
             ψ b * ∑ n ∈ S, a n * ZMod.stdAddChar ((b : ZMod h) * (n : ZMod h))) := by
   classical
   subst h
-  exact primitive_ramanujan_weighted_polynomial_levelLiftImage_normSq_eq hq hcop S a
+  exact ramanujanLift_normSq hq hcop S a
 
 /--
 Inputs: a finite set of residues consisting exactly of the units modulo `q`, a Dirichlet
@@ -4725,8 +4590,8 @@ then reindex the finite sum.
 
 Role: converts sums over the unit group into the finite-set form used by character Parseval.
 -/
-theorem dirichletCharacter_units_sum_eq_finset {q : ℕ} [NeZero q] (S : Finset (ZMod q))
-    (hS : ∀ x, x ∈ S ↔ IsUnit x) (χ : DirichletCharacter ℂ q) (f : ZMod q → ℂ) :
+theorem char_units_sum_finset {q : ℕ} [NeZero q] (S : Finset (ZMod q)) (hS : ∀ x, x ∈ S ↔ IsUnit x)
+    (χ : DirichletCharacter ℂ q) (f : ZMod q → ℂ) :
     (∑ u : (ZMod q)ˣ, χ u * f u) = ∑ x ∈ S, f x * χ x := by
   classical
   let e : (ZMod q)ˣ ≃ { x : ZMod q // x ∈ S } :=
@@ -4755,13 +4620,13 @@ function on those residues.
 Claim: the sum of squared norms of the character-weighted unit sums equals the totient times the
 sum of squared norms of the function on the finite set.
 
-Proof: reindex unit sums over the finite set, apply `dirichletCharacter_parseval`, and convert
+Proof: reindex unit sums over the finite set, apply `character_parseval`, and convert
 the resulting complex identity to real norms.
 
 Role: supplies Parseval for the unit-group polynomial used in the lifted-character estimate.
 -/
-theorem dirichletCharacter_units_polynomial_parseval {q : ℕ} [NeZero q] (S : Finset (ZMod q))
-    (hS : ∀ x, x ∈ S ↔ IsUnit x) (f : ZMod q → ℂ) :
+theorem char_units_parseval {q : ℕ} [NeZero q] (S : Finset (ZMod q)) (hS : ∀ x, x ∈ S ↔ IsUnit x)
+    (f : ZMod q → ℂ) :
     (∑ χ : DirichletCharacter ℂ q, Complex.normSq (∑ u : (ZMod q)ˣ, χ u * f u)) =
       (Nat.totient q : ℝ) * ∑ x ∈ S, Complex.normSq (f x) := by
   classical
@@ -4769,11 +4634,11 @@ theorem dirichletCharacter_units_polynomial_parseval {q : ℕ} [NeZero q] (S : F
     rw [← Complex.mul_conj z]
     exact mul_comm _ _
   have htrans (χ : DirichletCharacter ℂ q) : (∑ u : (ZMod q)ˣ, χ u * f u) = ∑ x ∈ S, f x * χ x :=
-    dirichletCharacter_units_sum_eq_finset S hS χ f
+    char_units_sum_finset S hS χ f
   have hS' : ∀ x ∈ S, IsUnit x := by
     intro x hx
     exact (hS x).1 hx
-  have hparseval := dirichletCharacter_parseval S hS' f
+  have hparseval := character_parseval S hS' f
   have hC :
     ((∑ χ : DirichletCharacter ℂ q, Complex.normSq (∑ u : (ZMod q)ˣ, χ u * f u) : ℝ) : ℂ) =
       (Nat.totient q : ℂ) * ∑ x ∈ S, star (f x) * f x := by
@@ -4808,15 +4673,14 @@ reduced additive mean square.
 Role: provides the fixed-product-modulus collective Parseval estimate for the pre-sifted large
 sieve.
 -/
-theorem sum_primitiveCharacterLevelLiftImage_additiveParseval_le {h : ℕ} [NeZero h] (hh : 1 < h)
-    [DecidableEq (DirichletCharacter ℂ h)] (Q : Finset ℕ) (hQ : ∀ q, q ∣ h) (S : Finset ℕ)
-    (a : ℕ → ℂ) :
+theorem liftParseval_le {h : ℕ} [NeZero h] (hh : 1 < h) [DecidableEq (DirichletCharacter ℂ h)]
+    (Q : Finset ℕ) (hQ : ∀ q, q ∣ h) (S : Finset ℕ) (a : ℕ → ℂ) :
     (∑ q ∈ Q,
-        ∑ ψ ∈ primitiveCharacterLevelLiftImage (hQ q),
+        ∑ ψ ∈ primitiveLiftImage (hQ q),
           Complex.normSq
             (∑ b : (ZMod h)ˣ,
               ψ b * (∑ n ∈ S, a n * ZMod.stdAddChar ((b : ZMod h) * (n : ZMod h))))) ≤
-      (Nat.totient h : ℝ) * reducedAdditivePolynomialMeanSquare h hh S a := by
+      (Nat.totient h : ℝ) * reducedPolyEnergy h hh S a := by
   classical
   let U : Finset (ZMod h) := Finset.univ.filter fun x => IsUnit x
   let f : ZMod h → ℂ := fun x => ∑ n ∈ S, a n * ZMod.stdAddChar (x * (n : ZMod h))
@@ -4824,11 +4688,11 @@ theorem sum_primitiveCharacterLevelLiftImage_additiveParseval_le {h : ℕ} [NeZe
   have hU : ∀ x, x ∈ U ↔ IsUnit x := by
     intro x
     simp only [U, Finset.mem_filter, Finset.mem_univ, true_and]
-  have hparseval := dirichletCharacter_units_polynomial_parseval U hU f
-  have hred : reducedAdditivePolynomialMeanSquare h hh S a = ∑ x ∈ U, Complex.normSq (f x) := by rfl
+  have hparseval := char_units_parseval U hU f
+  have hred : reducedPolyEnergy h hh S a = ∑ x ∈ U, Complex.normSq (f x) := by rfl
   calc
     _ ≤ ∑ ψ : DirichletCharacter ℂ h, Complex.normSq (A ψ) := by
-      simpa only [A, f] using sum_primitiveCharacterLevelLiftImage_normSq_le_all (h := h) Q hQ A
+      simpa only [A, f] using liftNormSq_le_all (h := h) Q hQ A
     _ = _ := by rw [hred, hparseval]
 
 /--
@@ -4842,15 +4706,14 @@ Proof: apply the attached disjoint-image bound and unit-group character Parseval
 
 Role: supplies the one-Parseval estimate for selected conductor families at a fixed product level.
 -/
-theorem sum_primitiveCharacterLevelLiftImage_additiveParseval_le_attached {h : ℕ} [NeZero h]
-    (hh : 1 < h) [DecidableEq (DirichletCharacter ℂ h)] (Q : Finset ℕ) (hQ : ∀ q, q ∈ Q → q ∣ h)
-    (S : Finset ℕ) (a : ℕ → ℂ) :
+theorem liftParseval_attach {h : ℕ} [NeZero h] (hh : 1 < h) [DecidableEq (DirichletCharacter ℂ h)]
+    (Q : Finset ℕ) (hQ : ∀ q, q ∈ Q → q ∣ h) (S : Finset ℕ) (a : ℕ → ℂ) :
     (∑ q ∈ Q.attach,
-        ∑ ψ ∈ primitiveCharacterLevelLiftImage (hQ q.val q.property),
+        ∑ ψ ∈ primitiveLiftImage (hQ q.val q.property),
           Complex.normSq
             (∑ b : (ZMod h)ˣ,
               ψ b * (∑ n ∈ S, a n * ZMod.stdAddChar ((b : ZMod h) * (n : ZMod h))))) ≤
-      (Nat.totient h : ℝ) * reducedAdditivePolynomialMeanSquare h hh S a := by
+      (Nat.totient h : ℝ) * reducedPolyEnergy h hh S a := by
   classical
   let U : Finset (ZMod h) := Finset.univ.filter fun x => IsUnit x
   let f : ZMod h → ℂ := fun x => ∑ n ∈ S, a n * ZMod.stdAddChar (x * (n : ZMod h))
@@ -4858,12 +4721,11 @@ theorem sum_primitiveCharacterLevelLiftImage_additiveParseval_le_attached {h : �
   have hU : ∀ x, x ∈ U ↔ IsUnit x := by
     intro x
     simp only [U, Finset.mem_filter, Finset.mem_univ, true_and]
-  have hparseval := dirichletCharacter_units_polynomial_parseval U hU f
-  have hred : reducedAdditivePolynomialMeanSquare h hh S a = ∑ x ∈ U, Complex.normSq (f x) := by rfl
+  have hparseval := char_units_parseval U hU f
+  have hred : reducedPolyEnergy h hh S a = ∑ x ∈ U, Complex.normSq (f x) := by rfl
   calc
     _ ≤ ∑ ψ : DirichletCharacter ℂ h, Complex.normSq (A ψ) := by
-      simpa only [A, f] using
-        sum_primitiveCharacterLevelLiftImage_normSq_le_all_attached (h := h) Q hQ A
+      simpa only [A, f] using liftNormSq_attach_le (h := h) Q hQ A
     _ = _ := by rw [hred, hparseval]
 
 /--
@@ -4878,40 +4740,33 @@ apply Parseval once over the characters modulo `h`.
 
 Role: removes repeated full-character Parseval sums from fixed-product families.
 -/
-theorem primitive_ramanujan_weighted_fixedProduct_family_parseval_le {h : ℕ} [NeZero h] (hh : 1 < h)
-    (Q : Finset ℕ) (r : ℕ → ℕ) (hQ : ∀ q, q ∈ Q → q ∣ h) (hprod : ∀ q, q ∈ Q → q * r q = h)
-    (hq : ∀ q, q ∈ Q → 1 < q) (hr : ∀ q, q ∈ Q → 0 < r q) (hcop : ∀ q, q ∈ Q → Nat.Coprime q (r q))
-    (S : Finset ℕ) (a : ℕ → ℂ) :
+theorem ramanujanFamily_le {h : ℕ} [NeZero h] (hh : 1 < h) (Q : Finset ℕ) (r : ℕ → ℕ)
+    (hQ : ∀ q, q ∈ Q → q ∣ h) (hprod : ∀ q, q ∈ Q → q * r q = h) (hq : ∀ q, q ∈ Q → 1 < q)
+    (hr : ∀ q, q ∈ Q → 0 < r q) (hcop : ∀ q, q ∈ Q → Nat.Coprime q (r q)) (S : Finset ℕ)
+    (a : ℕ → ℂ) :
     (∑ q ∈ Q.attach,
         (q.val : ℝ) *
-          primitiveCharacterPolynomialMeanSquare q.val (hq q.val q.property) S
+          polyMeanSquare q.val (hq q.val q.property) S
             (fun n => a n * @ramanujanSum (r q.val) n ⟨Nat.ne_of_gt (hr q.val q.property)⟩)) ≤
-      (Nat.totient h : ℝ) * reducedAdditivePolynomialMeanSquare h hh S a := by
+      (Nat.totient h : ℝ) * reducedPolyEnergy h hh S a := by
   classical
   let A : DirichletCharacter ℂ h → ℂ := fun ψ =>
     ∑ b : (ZMod h)ˣ, ψ b * ∑ n ∈ S, a n * ZMod.stdAddChar ((b : ZMod h) * (n : ZMod h))
   calc
-    _ =
-        ∑ q ∈ Q.attach,
-          ∑ ψ ∈ primitiveCharacterLevelLiftImage (hQ q.val q.property), Complex.normSq (A ψ) :=
-      by
+    _ = ∑ q ∈ Q.attach, ∑ ψ ∈ primitiveLiftImage (hQ q.val q.property), Complex.normSq (A ψ) := by
       apply Finset.sum_congr rfl
       intro q hqQ
       have hqpos : 1 < q.val := hq q.val q.property
       have hterm :=
-        @primitive_ramanujan_weighted_commonLevelImage_normSq_eq q.val (r q.val) h
-          ⟨Nat.ne_of_gt (lt_trans Nat.zero_lt_one hqpos)⟩ ⟨Nat.ne_of_gt (hr q.val q.property)⟩
-          inferInstance inferInstance (hprod q.val q.property) (hQ q.val q.property) hqpos
-          (hcop q.val q.property) S a
-      simpa only [primitiveCharacterPolynomialMeanSquare, A, mul_assoc, mul_comm,
-        mul_left_comm] using hterm
-    _ ≤ _ := by
-      simpa only [A] using
-        sum_primitiveCharacterLevelLiftImage_additiveParseval_le_attached (h := h) hh Q hQ S a
+        @ramanujanCommon_sq q.val (r q.val) h ⟨Nat.ne_of_gt (lt_trans Nat.zero_lt_one hqpos)⟩
+          ⟨Nat.ne_of_gt (hr q.val q.property)⟩ inferInstance inferInstance (hprod q.val q.property)
+          (hQ q.val q.property) hqpos (hcop q.val q.property) S a
+      simpa only [polyMeanSquare, A, mul_assoc, mul_comm, mul_left_comm] using hterm
+    _ ≤ _ := by simpa only [A] using liftParseval_attach (h := h) hh Q hQ S a
 
 /--
 Inputs: the fixed-product family from
-`primitive_ramanujan_weighted_fixedProduct_family_parseval_le`.
+`ramanujanFamily_le`.
 
 Claim: after dividing by `φ(h)`, its normalized Ramanujan-primitive mean-square sum is bounded by
 the reduced additive mean square at level `h`.
@@ -4920,27 +4775,27 @@ Proof: divide the collective bound by the positive totient of `h`.
 
 Role: gives the exact fixed-product input for summing the reduced additive large sieve over levels.
 -/
-theorem primitive_ramanujan_weighted_fixedProduct_family_normalized_le {h : ℕ} [NeZero h]
-    (hh : 1 < h) (Q : Finset ℕ) (r : ℕ → ℕ) (hQ : ∀ q, q ∈ Q → q ∣ h)
-    (hprod : ∀ q, q ∈ Q → q * r q = h) (hq : ∀ q, q ∈ Q → 1 < q) (hr : ∀ q, q ∈ Q → 0 < r q)
-    (hcop : ∀ q, q ∈ Q → Nat.Coprime q (r q)) (S : Finset ℕ) (a : ℕ → ℂ) :
+theorem ramanujanFamily_norm {h : ℕ} [NeZero h] (hh : 1 < h) (Q : Finset ℕ) (r : ℕ → ℕ)
+    (hQ : ∀ q, q ∈ Q → q ∣ h) (hprod : ∀ q, q ∈ Q → q * r q = h) (hq : ∀ q, q ∈ Q → 1 < q)
+    (hr : ∀ q, q ∈ Q → 0 < r q) (hcop : ∀ q, q ∈ Q → Nat.Coprime q (r q)) (S : Finset ℕ)
+    (a : ℕ → ℂ) :
     (∑ q ∈ Q.attach,
         (q.val : ℝ) / (Nat.totient h : ℝ) *
-          primitiveCharacterPolynomialMeanSquare q.val (hq q.val q.property) S
+          polyMeanSquare q.val (hq q.val q.property) S
             (fun n => a n * @ramanujanSum (r q.val) n ⟨Nat.ne_of_gt (hr q.val q.property)⟩)) ≤
-      reducedAdditivePolynomialMeanSquare h hh S a := by
+      reducedPolyEnergy h hh S a := by
   classical
   have hφ : 0 < (Nat.totient h : ℝ) := by
     exact_mod_cast Nat.totient_pos.mpr (lt_trans Nat.zero_lt_one hh)
   have hsum :
     (∑ q ∈ Q.attach,
           (q.val : ℝ) *
-            primitiveCharacterPolynomialMeanSquare q.val (hq q.val q.property) S
+            polyMeanSquare q.val (hq q.val q.property) S
               (fun n => a n * @ramanujanSum (r q.val) n ⟨Nat.ne_of_gt (hr q.val q.property)⟩)) /
         (Nat.totient h : ℝ) =
       ∑ q ∈ Q.attach,
         ((q.val : ℝ) *
-            primitiveCharacterPolynomialMeanSquare q.val (hq q.val q.property) S
+            polyMeanSquare q.val (hq q.val q.property) S
               (fun n => a n * @ramanujanSum (r q.val) n ⟨Nat.ne_of_gt (hr q.val q.property)⟩)) /
           (Nat.totient h : ℝ) := by
     rw [Finset.sum_div]
@@ -4948,7 +4803,7 @@ theorem primitive_ramanujan_weighted_fixedProduct_family_normalized_le {h : ℕ}
     _ =
         ∑ q ∈ Q.attach,
           ((q.val : ℝ) *
-              primitiveCharacterPolynomialMeanSquare q.val (hq q.val q.property) S
+              polyMeanSquare q.val (hq q.val q.property) S
                 (fun n => a n * @ramanujanSum (r q.val) n ⟨Nat.ne_of_gt (hr q.val q.property)⟩)) /
             (Nat.totient h : ℝ) :=
       by
@@ -4959,10 +4814,9 @@ theorem primitive_ramanujan_weighted_fixedProduct_family_normalized_le {h : ℕ}
     _ ≤ _ := by
       apply (div_le_iff₀ hφ).2
       calc
-        _ ≤ (Nat.totient h : ℝ) * reducedAdditivePolynomialMeanSquare h hh S a :=
-          primitive_ramanujan_weighted_fixedProduct_family_parseval_le hh Q r hQ hprod hq hr hcop S
-            a
-        _ = reducedAdditivePolynomialMeanSquare h hh S a * (Nat.totient h : ℝ) := mul_comm _ _
+        _ ≤ (Nat.totient h : ℝ) * reducedPolyEnergy h hh S a :=
+          ramanujanFamily_le hh Q r hQ hprod hq hr hcop S a
+        _ = reducedPolyEnergy h hh S a * (Nat.totient h : ℝ) := mul_comm _ _
 
 /--
 Inputs: coprime positive moduli `q,r`, a finite polynomial, and its complex coefficients.
@@ -4976,13 +4830,13 @@ enlarge that image to all characters modulo `q*r`, and apply unit-group Parseval
 Role: transfers the fixed-pair weighted character estimate to the additive side before the
 collective large-sieve bound.
 -/
-theorem primitive_ramanujan_weighted_polynomial_parseval_le {q r : ℕ} [NeZero q] [NeZero r]
-    (hq : 1 < q) (h : Nat.Coprime q r) (S : Finset ℕ) (a : ℕ → ℂ) :
+theorem ramanujanParseval_le {q r : ℕ} [NeZero q] [NeZero r] (hq : 1 < q) (h : Nat.Coprime q r)
+    (S : Finset ℕ) (a : ℕ → ℂ) :
     let U : Finset (ZMod (q * r)) := Finset.univ.filter (fun x => IsUnit x)
     let f : ZMod (q * r) → ℂ := fun x =>
       ∑ n ∈ S, a n * ZMod.stdAddChar ((n * x.val : ℕ) : ZMod (q * r))
     (q : ℝ) *
-        ∑ χ ∈ primitiveDirichletCharacterSet q,
+        ∑ χ ∈ primitiveCharacters q,
           Complex.normSq (∑ n ∈ S, a n * (χ (n : ZMod q) * ramanujanSum r n)) ≤
       (Nat.totient (q * r) : ℝ) * ∑ x ∈ U, Complex.normSq (f x) := by
   classical
@@ -4998,18 +4852,18 @@ theorem primitive_ramanujan_weighted_polynomial_parseval_le {q r : ℕ} [NeZero 
   have hU : ∀ x, x ∈ U ↔ IsUnit x := by
     intro x
     simp only [U, Finset.mem_filter, Finset.mem_univ, true_and]
-  have himage := primitive_ramanujan_weighted_polynomial_image_normSq_eq hq h S a
-  have hparseval := dirichletCharacter_units_polynomial_parseval U hU f
-  have hsubset : (primitiveDirichletCharacterSet q).image F ⊆ Finset.univ := Finset.subset_univ _
+  have himage := ramanujanImage_normSq hq h S a
+  have hparseval := char_units_parseval U hU f
+  have hsubset : (primitiveCharacters q).image F ⊆ Finset.univ := Finset.subset_univ _
   have hbound :
-    (∑ ψ ∈ (primitiveDirichletCharacterSet q).image F, Complex.normSq (A ψ)) ≤
+    (∑ ψ ∈ (primitiveCharacters q).image F, Complex.normSq (A ψ)) ≤
       ∑ ψ : DirichletCharacter ℂ (q * r), Complex.normSq (A ψ) :=
     Finset.sum_le_sum_of_subset_of_nonneg hsubset
       (by
         intro ψ hψ hψnot
         exact Complex.normSq_nonneg (A ψ))
   calc
-    _ = ∑ ψ ∈ (primitiveDirichletCharacterSet q).image F, Complex.normSq (A ψ) := himage
+    _ = ∑ ψ ∈ (primitiveCharacters q).image F, Complex.normSq (A ψ) := himage
     _ ≤ _ := hbound
     _ = _ := hparseval
 
@@ -5022,14 +4876,14 @@ bounded by the reduced additive mean square modulo `q*r`, multiplied by its toti
 
 Proof: rewrite the primitive-character polynomial using the weighted coefficient function, match
 the additive phases through `ZMod.natCast_zmod_val`, and apply
-`primitive_ramanujan_weighted_polynomial_parseval_le`.
+`ramanujanParseval_le`.
 
 Role: expresses the fixed-pair estimate through the existing reduced additive mean-square API.
 -/
-theorem primitive_ramanujan_weighted_polynomial_reducedMeanSquare_le {q r : ℕ} [NeZero q] [NeZero r]
-    (hq : 1 < q) (hqr : 1 < q * r) (h : Nat.Coprime q r) (S : Finset ℕ) (a : ℕ → ℂ) :
-    (q : ℝ) * primitiveCharacterPolynomialMeanSquare q hq S (fun n => a n * ramanujanSum r n) ≤
-      (Nat.totient (q * r) : ℝ) * reducedAdditivePolynomialMeanSquare (q * r) hqr S a := by
+theorem ramanujanEnergy_le {q r : ℕ} [NeZero q] [NeZero r] (hq : 1 < q) (hqr : 1 < q * r)
+    (h : Nat.Coprime q r) (S : Finset ℕ) (a : ℕ → ℂ) :
+    (q : ℝ) * polyMeanSquare q hq S (fun n => a n * ramanujanSum r n) ≤
+      (Nat.totient (q * r) : ℝ) * reducedPolyEnergy (q * r) hqr S a := by
   classical
   let U : Finset (ZMod (q * r)) := Finset.univ.filter (fun x => IsUnit x)
   let f : ZMod (q * r) → ℂ := fun x =>
@@ -5046,11 +4900,11 @@ theorem primitive_ramanujan_weighted_polynomial_reducedMeanSquare_le {q r : ℕ}
     intro n hn
     rw [hphase]
   have hleft :
-    (q : ℝ) * primitiveCharacterPolynomialMeanSquare q hq S (fun n => a n * ramanujanSum r n) =
+    (q : ℝ) * polyMeanSquare q hq S (fun n => a n * ramanujanSum r n) =
       (q : ℝ) *
-        ∑ χ ∈ primitiveDirichletCharacterSet q,
+        ∑ χ ∈ primitiveCharacters q,
           Complex.normSq (∑ n ∈ S, a n * (χ (n : ZMod q) * ramanujanSum r n)) := by
-    simp only [primitiveCharacterPolynomialMeanSquare]
+    simp only [polyMeanSquare]
     congr 1
     apply Finset.sum_congr rfl
     intro χ hχ
@@ -5059,9 +4913,9 @@ theorem primitive_ramanujan_weighted_polynomial_reducedMeanSquare_le {q r : ℕ}
     intro n hn
     ring
   have hright :
-    (Nat.totient (q * r) : ℝ) * reducedAdditivePolynomialMeanSquare (q * r) hqr S a =
+    (Nat.totient (q * r) : ℝ) * reducedPolyEnergy (q * r) hqr S a =
       (Nat.totient (q * r) : ℝ) * ∑ x ∈ U, Complex.normSq (f x) := by
-    rw [reducedAdditivePolynomialMeanSquare]
+    rw [reducedPolyEnergy]
     congr 1
     apply Finset.sum_congr rfl
     intro x hx
@@ -5069,11 +4923,10 @@ theorem primitive_ramanujan_weighted_polynomial_reducedMeanSquare_le {q r : ℕ}
   calc
     _ =
         (q : ℝ) *
-          ∑ χ ∈ primitiveDirichletCharacterSet q,
+          ∑ χ ∈ primitiveCharacters q,
             Complex.normSq (∑ n ∈ S, a n * (χ (n : ZMod q) * ramanujanSum r n)) :=
       hleft
-    _ ≤ (Nat.totient (q * r) : ℝ) * ∑ x ∈ U, Complex.normSq (f x) :=
-      primitive_ramanujan_weighted_polynomial_parseval_le hq h S a
+    _ ≤ (Nat.totient (q * r) : ℝ) * ∑ x ∈ U, Complex.normSq (f x) := ramanujanParseval_le hq h S a
     _ = _ := hright.symm
 
 /--
@@ -5084,21 +4937,19 @@ Claim: the sum over `q` of the `q`-weighted Ramanujan-twisted primitive-characte
 bounded by the corresponding sum of totient-weighted reduced additive mean squares modulo `q*r`.
 
 Proof: derive `q*r > 1` for every family member and sum
-`primitive_ramanujan_weighted_polynomial_reducedMeanSquare_le` termwise.
+`ramanujanEnergy_le` termwise.
 
 Role: provides the fixed-`r` family estimate with product moduli, extending the existing
 fixed-modulus family bounds toward the `q*r` range in Selberg's Theorem 7A.
 -/
-theorem primitive_ramanujan_weighted_family_reducedMeanSquare_le (Q : Finset ℕ)
-    (hQ : ∀ q ∈ Q, 1 < q) (r : ℕ) [NeZero r] (hcop : ∀ q ∈ Q, Nat.Coprime q r) (S : Finset ℕ)
-    (a : ℕ → ℂ) :
+theorem ramanujanModFamily_le (Q : Finset ℕ) (hQ : ∀ q ∈ Q, 1 < q) (r : ℕ) [NeZero r]
+    (hcop : ∀ q ∈ Q, Nat.Coprime q r) (S : Finset ℕ) (a : ℕ → ℂ) :
     (∑ q ∈ Q.attach,
         (q.val : ℝ) *
-          primitiveCharacterPolynomialMeanSquare q.val (hQ q.val q.property) S
-            (fun n => a n * ramanujanSum r n)) ≤
+          polyMeanSquare q.val (hQ q.val q.property) S (fun n => a n * ramanujanSum r n)) ≤
       ∑ q ∈ Q.attach,
         (Nat.totient (q.val * r) : ℝ) *
-          reducedAdditivePolynomialMeanSquare (q.val * r)
+          reducedPolyEnergy (q.val * r)
             (by
               have hq : 1 < q.val := hQ q.val q.property
               exact
@@ -5111,8 +4962,8 @@ theorem primitive_ramanujan_weighted_family_reducedMeanSquare_le (Q : Finset ℕ
   have hqr : 1 < q.val * r :=
     lt_of_lt_of_le hq (Nat.le_mul_of_pos_right _ (Nat.pos_of_ne_zero (NeZero.ne r)))
   exact
-    @primitive_ramanujan_weighted_polynomial_reducedMeanSquare_le q.val r
-      ⟨Nat.ne_of_gt (lt_trans Nat.zero_lt_one hq)⟩ inferInstance hq hqr (hcop q.val q.property) S a
+    @ramanujanEnergy_le q.val r ⟨Nat.ne_of_gt (lt_trans Nat.zero_lt_one hq)⟩ inferInstance hq hqr
+      (hcop q.val q.property) S a
 
 /--
 Inputs: a finite family of pairs of natural moduli whose first components exceed one, whose
@@ -5122,21 +4973,20 @@ polynomial with complex coefficients.
 Claim: summing the Ramanujan-weighted primitive-character estimate over the pair family is
 bounded by the corresponding sum of reduced additive mean squares modulo each product modulus.
 
-Proof: apply `primitive_ramanujan_weighted_polynomial_reducedMeanSquare_le` to each attached pair.
+Proof: apply `ramanujanEnergy_le` to each attached pair.
 
 Role: handles finite families cut by product-modulus conditions such as `q * r ≤ Q`, without
 requiring the second modulus to be fixed across the family.
 -/
-theorem primitive_ramanujan_weighted_pair_family_reducedMeanSquare_le (P : Finset (ℕ × ℕ))
-    (hPq : ∀ p ∈ P, 1 < p.1) (hPr : ∀ p ∈ P, 0 < p.2) (hPcop : ∀ p ∈ P, Nat.Coprime p.1 p.2)
-    (S : Finset ℕ) (a : ℕ → ℂ) :
+theorem ramanujanPairs_le (P : Finset (ℕ × ℕ)) (hPq : ∀ p ∈ P, 1 < p.1) (hPr : ∀ p ∈ P, 0 < p.2)
+    (hPcop : ∀ p ∈ P, Nat.Coprime p.1 p.2) (S : Finset ℕ) (a : ℕ → ℂ) :
     (∑ p ∈ P.attach,
         (p.val.1 : ℝ) *
-          primitiveCharacterPolynomialMeanSquare p.val.1 (hPq p.val p.property) S
+          polyMeanSquare p.val.1 (hPq p.val p.property) S
             (fun n => a n * @ramanujanSum p.val.2 n ⟨Nat.ne_of_gt (hPr p.val p.property)⟩)) ≤
       ∑ p ∈ P.attach,
         (Nat.totient (p.val.1 * p.val.2) : ℝ) *
-          reducedAdditivePolynomialMeanSquare (p.val.1 * p.val.2)
+          reducedPolyEnergy (p.val.1 * p.val.2)
             (by
               have hq := hPq p.val p.property
               exact lt_of_lt_of_le hq (Nat.le_mul_of_pos_right _ (hPr p.val p.property)))
@@ -5148,9 +4998,8 @@ theorem primitive_ramanujan_weighted_pair_family_reducedMeanSquare_le (P : Finse
   have hr : 0 < p.val.2 := hPr p.val p.property
   have hqr : 1 < p.val.1 * p.val.2 := lt_of_lt_of_le hq (Nat.le_mul_of_pos_right _ hr)
   exact
-    @primitive_ramanujan_weighted_polynomial_reducedMeanSquare_le p.val.1 p.val.2
-      ⟨Nat.ne_of_gt (lt_trans Nat.zero_lt_one hq)⟩ ⟨Nat.ne_of_gt hr⟩ hq hqr (hPcop p.val p.property)
-      S a
+    @ramanujanEnergy_le p.val.1 p.val.2 ⟨Nat.ne_of_gt (lt_trans Nat.zero_lt_one hq)⟩
+      ⟨Nat.ne_of_gt hr⟩ hq hqr (hPcop p.val p.property) S a
 
 /--
 Inputs: residues modulo two nonzero natural moduli.
@@ -5164,10 +5013,10 @@ the addition law for `Complex.exp`.
 Role: identifies cross-modulus additive correlations with the geometric kernels bounded by the
 large-sieve spacing estimates.
 -/
-theorem zmod_stdAddChar_phase_ratio {q r : ℕ} [NeZero q] [NeZero r] (x : ZMod q) (y : ZMod r) :
+theorem stdAddChar_phase {q r : ℕ} [NeZero q] [NeZero r] (x : ZMod q) (y : ZMod r) :
     ZMod.stdAddChar x * star (ZMod.stdAddChar y) =
       Complex.exp (Complex.I * ((2 * Real.pi * ((x.val : ℝ) / q - (y.val : ℝ) / r) : ℝ) : ℂ)) := by
-  rw [zmod_stdAddChar_exp_val, zmod_stdAddChar_exp_val]
+  rw [stdAddChar_exp_val, stdAddChar_exp_val]
   rw [show
       star (Complex.exp (2 * Real.pi * Complex.I * (y.val : ℂ) / r)) =
         (starRingEnd ℂ) (Complex.exp (2 * Real.pi * Complex.I * (y.val : ℂ) / r))
@@ -5190,7 +5039,7 @@ Proof: use the linear lower bound for sine on `[0, π/2]`, reducing phases above
 Role: converts circular separation of rational frequencies into a lower bound for the complex
 distance between their exponential phases.
 -/
-theorem abs_sin_pi_mul_ge_circular {d : ℝ} (hd : |d| ≤ 1) :
+theorem sin_pi_circle_bound {d : ℝ} (hd : |d| ≤ 1) :
     2 * min |d| (1 - |d|) ≤ |Real.sin (Real.pi * d)| := by
   have ha : 0 ≤ |d| := abs_nonneg d
   have hs : |Real.sin (Real.pi * d)| = |Real.sin (Real.pi * |d|)| := by
@@ -5235,15 +5084,14 @@ Claim: the corresponding complex exponential is separated from one by at least f
 distance lower bound.
 
 Proof: express the chord length through `2 |sin (π d)|` and apply
-`abs_sin_pi_mul_ge_circular`.
+`sin_pi_circle_bound`.
 
 Role: turns the reduced-fraction spacing theorem into a denominator bound for the finite
 geometric-sum kernel.
 -/
-theorem complex_exp_distance_ge_of_circular_separation {d ε : ℝ} (hd : |d| ≤ 1)
-    (hsep : ε ≤ min |d| (1 - |d|)) :
+theorem exp_dist_circle_bound {d ε : ℝ} (hd : |d| ≤ 1) (hsep : ε ≤ min |d| (1 - |d|)) :
     4 * ε ≤ ‖1 - Complex.exp (Complex.I * ((2 * Real.pi * d : ℝ) : ℂ))‖ := by
-  have hsin := abs_sin_pi_mul_ge_circular hd
+  have hsin := sin_pi_circle_bound hd
   have hmul : 4 * ε ≤ 2 * |Real.sin (Real.pi * d)| := by
     calc
       4 * ε ≤ 4 * min |d| (1 - |d|) := mul_le_mul_of_nonneg_left hsep (by norm_num only)
@@ -5266,18 +5114,18 @@ integer, and the interval and taper lengths.
 Claim: the overlap Fourier kernel decays according to that circular-distance lower bound.
 
 Proof: the sine chord estimate gives phase separation at least `4 * ε`; insert this into the two
-geometric-sum bounds in `triangleOverlapWindowWeight_fourier_norm_le`.
+geometric-sum bounds in `overlap_fourier_bound`.
 
 Role: supplies a distance-sensitive kernel estimate for summing the separated-frequency shells.
 -/
-theorem triangleOverlapWindowWeight_fourier_norm_le_of_circular_separation (N L : ℕ) (d ε : ℝ)
-    (hd : |d| ≤ 1) (hε : 0 < ε) (hsep : ε ≤ min |d| (1 - |d|)) :
+theorem overlap_fourier_sep (N L : ℕ) (d ε : ℝ) (hd : |d| ≤ 1) (hε : 0 < ε)
+    (hsep : ε ≤ min |d| (1 - |d|)) :
     ‖∑ n ∈ Finset.range (N + 2 * L - 1),
-          (triangleOverlapWindowWeight N L n : ℂ) *
+          (triangleOverlapWeight N L n : ℂ) *
             Complex.exp (Complex.I * ((2 * Real.pi * d : ℝ) : ℂ)) ^ n‖ ≤
       ‖(L : ℂ)⁻¹‖ * min ((N + L : ℕ) : ℝ) (1 / (2 * ε)) * min (L : ℝ) (1 / (2 * ε)) := by
   let z : ℂ := Complex.exp (Complex.I * ((2 * Real.pi * d : ℝ) : ℂ))
-  have hphase := complex_exp_distance_ge_of_circular_separation hd hsep
+  have hphase := exp_dist_circle_bound hd hsep
   have hden : 0 < ‖1 - z‖ := by
     have hpos : 0 < 4 * ε := mul_pos (by norm_num only) hε
     exact lt_of_lt_of_le hpos (by simpa only [z] using hphase)
@@ -5291,14 +5139,14 @@ theorem triangleOverlapWindowWeight_fourier_norm_le_of_circular_separation (N L 
   have hscale : 2 / ‖1 - z‖ ≤ 1 / (2 * ε) := by
     apply (div_le_div_iff₀ hden (mul_pos (by norm_num only : (0 : ℝ) < 2) hε)).2
     nlinarith only [hphase]
-  have hfirst := unit_circle_geometric_sum_norm_le_min hz hzne (N + L)
-  have hsecond := reverse_unit_circle_geometric_sum_norm_le_min hz hzne L
+  have hfirst := geom_sum_norm_le_min hz hzne (N + L)
+  have hsecond := rev_geom_norm_le_min hz hzne L
   have hfirst' := min_le_min_left ((N + L : ℕ) : ℝ) hscale
   have hsecond' := min_le_min_left (L : ℝ) hscale
   have hfirstNonneg : 0 ≤ min ((N + L : ℕ) : ℝ) (2 / ‖1 - z‖) := le_trans (norm_nonneg _) hfirst
   calc
     _ ≤ ‖(L : ℂ)⁻¹‖ * min ((N + L : ℕ) : ℝ) (2 / ‖1 - z‖) * min (L : ℝ) (2 / ‖1 - z‖) :=
-      triangleOverlapWindowWeight_fourier_norm_le N L z hz hzne
+      overlap_fourier_bound N L z hz hzne
     _ ≤ _ := by
       calc
         _ ≤ (‖(L : ℂ)⁻¹‖ * min ((N + L : ℕ) : ℝ) (1 / (2 * ε))) * min (L : ℝ) (2 / ‖1 - z‖) :=
@@ -5320,26 +5168,24 @@ the centered coordinate range bounds the complementary circular distance.
 
 Role: turns the shell population estimate into a summable kernel estimate for the Gram row.
 -/
-theorem triangleOverlapWindowWeight_fourier_norm_le_of_signed_shell (N L : ℕ) (S : Finset ℝ)
-    (δ d : ℝ) (k : ℕ) (hδ : 0 < δ) (hd : -(1 / 2 : ℝ) ≤ d ∧ d ≤ 1 / 2)
-    (hbase : δ ≤ min |d| (1 - |d|)) (hshell : d ∈ signedDistanceShell S δ k) :
+theorem overlap_fourier_shell (N L : ℕ) (S : Finset ℝ) (δ d : ℝ) (k : ℕ) (hδ : 0 < δ)
+    (hd : -(1 / 2 : ℝ) ≤ d ∧ d ≤ 1 / 2) (hbase : δ ≤ min |d| (1 - |d|))
+    (hshell : d ∈ signedDistanceShell S δ k) :
     ‖∑ n ∈ Finset.range (N + 2 * L - 1),
-          (triangleOverlapWindowWeight N L n : ℂ) *
+          (triangleOverlapWeight N L n : ℂ) *
             Complex.exp (Complex.I * ((2 * Real.pi * d : ℝ) : ℂ)) ^ n‖ ≤
       ‖(L : ℂ)⁻¹‖ * min ((N + L : ℕ) : ℝ) (1 / (2 * max δ ((k : ℝ) * δ))) *
         min (L : ℝ) (1 / (2 * max δ ((k : ℝ) * δ))) := by
   have hεpos : 0 < max δ ((k : ℝ) * δ) := lt_of_lt_of_le hδ (le_max_left _ _)
   have habs : |d| ≤ 1 / 2 := abs_le.mpr hd
   have hεlower : max δ ((k : ℝ) * δ) ≤ |d| :=
-    max_le (le_trans hbase (min_le_left _ _)) (signedDistanceShell_abs_ge hδ hshell)
+    max_le (le_trans hbase (min_le_left _ _)) (signedShell_abs_ge hδ hshell)
   have hεupper : max δ ((k : ℝ) * δ) ≤ 1 - |d| := by
     have hcomp : |d| ≤ 1 - |d| := by linarith only [habs]
     exact le_trans hεlower hcomp
   have hεsep : max δ ((k : ℝ) * δ) ≤ min |d| (1 - |d|) := le_min hεlower hεupper
   have hdabs : |d| ≤ 1 := by exact le_trans habs (by norm_num only)
-  exact
-    triangleOverlapWindowWeight_fourier_norm_le_of_circular_separation N L d (max δ ((k : ℝ) * δ))
-      hdabs hεpos hεsep
+  exact overlap_fourier_sep N L d (max δ ((k : ℝ) * δ)) hdabs hεpos hεsep
 
 /--
 Inputs: a base reduced frequency, a nonzero member of its signed-coordinate family, a shell index,
@@ -5352,18 +5198,15 @@ generic shell kernel estimate.
 
 Role: gives the off-diagonal kernel estimate for an individual reduced-frequency Gram row entry.
 -/
-theorem reducedUnitFrequencySignedCoordinates_shell_kernel_bound {Q : ℕ}
-    (f₀ : ReducedUnitFrequencyIndex Q) (x : ℝ) (k : ℕ) (hQ : 0 < Q)
-    (hx : x ∈ reducedUnitFrequencySignedCoordinates (Q := Q) (reducedUnitFrequencyCoordinate f₀))
-    (hx0 : x ≠ 0)
+theorem coordShell_fourier {Q : ℕ} (f₀ : ReducedFreqIndex Q) (x : ℝ) (k : ℕ) (hQ : 0 < Q)
+    (hx : x ∈ signedReducedCoords (Q := Q) (reducedFreqCoord f₀)) (hx0 : x ≠ 0)
     (hshell :
       x ∈
-        signedDistanceShell
-          (reducedUnitFrequencySignedCoordinates (Q := Q) (reducedUnitFrequencyCoordinate f₀))
-          (1 / ((Q : ℝ) * Q)) k)
+        signedDistanceShell (signedReducedCoords (Q := Q) (reducedFreqCoord f₀)) (1 / ((Q : ℝ) * Q))
+          k)
     (N L : ℕ) :
     ‖∑ n ∈ Finset.range (N + 2 * L - 1),
-          (triangleOverlapWindowWeight N L n : ℂ) *
+          (triangleOverlapWeight N L n : ℂ) *
             Complex.exp (Complex.I * ((2 * Real.pi * x : ℝ) : ℂ)) ^ n‖ ≤
       ‖(L : ℂ)⁻¹‖ *
         min ((N + L : ℕ) : ℝ) (1 / (2 * max (1 / ((Q : ℝ) * Q)) ((k : ℝ) * (1 / ((Q : ℝ) * Q))))) *
@@ -5371,13 +5214,11 @@ theorem reducedUnitFrequencySignedCoordinates_shell_kernel_bound {Q : ℕ}
   have hQR : 0 < (Q : ℝ) := by exact_mod_cast hQ
   have hQsq : 0 < (Q : ℝ) * Q := mul_pos hQR hQR
   have hδ : 0 < 1 / ((Q : ℝ) * Q) := div_pos (by norm_num only) hQsq
-  have hbase := reducedUnitFrequencySignedCoordinates_separated_from_zero f₀ x hx hx0
+  have hbase := signedCoords_ne_zero f₀ x hx hx0
   have hcenter :=
-    reducedUnitFrequencySignedCoordinates_mem_bounds (reducedUnitFrequencyCoordinate f₀)
-      (reducedUnitFrequencyCoordinate_bounds f₀).1 (reducedUnitFrequencyCoordinate_bounds f₀).2 x hx
-  exact
-    triangleOverlapWindowWeight_fourier_norm_le_of_signed_shell N L _ (1 / ((Q : ℝ) * Q)) x k hδ
-      hcenter hbase hshell
+    signedCoords_bounds (reducedFreqCoord f₀) (reducedCoord_bounds f₀).1 (reducedCoord_bounds f₀).2
+      x hx
+  exact overlap_fourier_shell N L _ (1 / ((Q : ℝ) * Q)) x k hδ hcenter hbase hshell
 
 /--
 Inputs: a natural upper cutoff for positive integer indices.
@@ -5390,8 +5231,7 @@ estimate from mathlib.
 Role: bounds the total contribution of the nonzero frequency shells by an absolute multiple of
 `Q^2`.
 -/
-theorem reciprocal_square_sum_Ico_le_two (n : ℕ) :
-    ∑ k ∈ Finset.Ico 1 (n + 1), ((k : ℝ) ^ 2)⁻¹ ≤ 2 := by
+theorem sum_inv_sq_Ico_le_two (n : ℕ) : ∑ k ∈ Finset.Ico 1 (n + 1), ((k : ℝ) ^ 2)⁻¹ ≤ 2 := by
   have hset : Finset.Ico 1 (n + 1) = Finset.Ioo 0 (n + 1) := by
     ext k
     simp only [Finset.mem_Ico, Finset.mem_Ioo]
@@ -5409,7 +5249,7 @@ reciprocal-square estimate to the remaining finite sum.
 
 Role: evaluates the explicit radial envelope in the separated-frequency Gram-row estimate.
 -/
-theorem radial_overlap_envelope_sum_le (m : ℕ) {M N : ℝ} (hM : 0 < M) (hN : 0 ≤ N) :
+theorem radial_overlap_sum (m : ℕ) {M N : ℝ} (hM : 0 < M) (hN : 0 ≤ N) :
     ∑ k ∈ Finset.range (m + 1),
         2 * (M⁻¹ * min (N + M) (M / (2 * max 1 (k : ℝ))) * min M (M / (2 * max 1 (k : ℝ)))) ≤
       N + 2 * M := by
@@ -5497,15 +5337,10 @@ apply the general shell-summation bound and the individual kernel estimate.
 
 Role: supplies the radial finite-sum estimate needed for the additive large-sieve Gram row.
 -/
-theorem reducedUnitFrequencySignedCoordinates_offdiag_kernel_row_le {Q : ℕ} (hQ : 0 < Q)
-    (f₀ : ReducedUnitFrequencyIndex Q) (N L : ℕ) :
-    ∑
-        x ∈
-          (reducedUnitFrequencySignedCoordinates (Q := Q)
-                (reducedUnitFrequencyCoordinate f₀)).filter
-            (fun x => x ≠ 0),
+theorem coordKernel_offdiag {Q : ℕ} (hQ : 0 < Q) (f₀ : ReducedFreqIndex Q) (N L : ℕ) :
+    ∑ x ∈ (signedReducedCoords (Q := Q) (reducedFreqCoord f₀)).filter (fun x => x ≠ 0),
         ‖∑ n ∈ Finset.range (N + 2 * L - 1),
-            (triangleOverlapWindowWeight N L n : ℂ) *
+            (triangleOverlapWeight N L n : ℂ) *
               Complex.exp (Complex.I * ((2 * Real.pi * x : ℝ) : ℂ)) ^ n‖ ≤
       ∑ k ∈ Finset.range (Q * Q + 1),
         2 *
@@ -5514,12 +5349,12 @@ theorem reducedUnitFrequencySignedCoordinates_offdiag_kernel_row_le {Q : ℕ} (h
               (1 / (2 * max (1 / ((Q : ℝ) * Q)) ((k : ℝ) * (1 / ((Q : ℝ) * Q))))) *
             min (L : ℝ) (1 / (2 * max (1 / ((Q : ℝ) * Q)) ((k : ℝ) * (1 / ((Q : ℝ) * Q)))))) := by
   classical
-  let α := reducedUnitFrequencyCoordinate f₀
-  let T := reducedUnitFrequencySignedCoordinates (Q := Q) α
+  let α := reducedFreqCoord f₀
+  let T := signedReducedCoords (Q := Q) α
   let S := T.filter (fun x => x ≠ 0)
   let δ := 1 / ((Q : ℝ) * Q)
   let K := Finset.range (Q * Q + 1)
-  have hα := reducedUnitFrequencyCoordinate_bounds f₀
+  have hα := reducedCoord_bounds f₀
   have hQR : 0 < (Q : ℝ) := by exact_mod_cast hQ
   have hQsq : 0 < (Q : ℝ) * Q := mul_pos hQR hQR
   have hδ : 0 < δ := by
@@ -5529,15 +5364,15 @@ theorem reducedUnitFrequencySignedCoordinates_offdiag_kernel_row_le {Q : ℕ} (h
     intro x hx y hy hxy
     have hxT := (Finset.mem_filter.mp hx).1
     have hyT := (Finset.mem_filter.mp hy).1
-    exact reducedUnitFrequencySignedCoordinates_separated α hα.1 hα.2 x y hxT hyT hxy
+    exact signedCoords_sep α hα.1 hα.2 x y hxT hyT hxy
   have hindex : ∀ x ∈ S, ⌊|x| / δ⌋₊ ∈ K := by
     intro x hx
     have hxT := (Finset.mem_filter.mp hx).1
-    have hk := reducedUnitFrequencySignedCoordinates_floor_shell_index_le hQ α hα.1 hα.2 x hxT
+    have hk := signedCoords_floor hQ α hα.1 hα.2 x hxT
     exact Finset.mem_range.mpr (Nat.lt_succ_of_le hk)
   let f : ℝ → ℝ := fun x =>
     ‖∑ n ∈ Finset.range (N + 2 * L - 1),
-        (triangleOverlapWindowWeight N L n : ℂ) *
+        (triangleOverlapWeight N L n : ℂ) *
           Complex.exp (Complex.I * ((2 * Real.pi * x : ℝ) : ℂ)) ^ n‖
   let B : ℕ → ℝ := fun k =>
     ‖(L : ℂ)⁻¹‖ * min ((N + L : ℕ) : ℝ) (1 / (2 * max δ ((k : ℝ) * δ))) *
@@ -5559,10 +5394,8 @@ theorem reducedUnitFrequencySignedCoordinates_offdiag_kernel_row_le {Q : ℕ} (h
     have hxST : x ∈ T.filter (fun x => x ≠ 0) := by simpa only [S] using hxS
     rcases Finset.mem_filter.mp hxST with ⟨hxT, hx0⟩
     have hfull : x ∈ signedDistanceShell T δ k := by exact Finset.mem_filter.mpr ⟨hxT, hshell⟩
-    exact
-      reducedUnitFrequencySignedCoordinates_shell_kernel_bound f₀ x k hQ hxT hx0
-        (by simpa only [T, α, δ] using hfull) N L
-  have hsum := sum_le_two_shell_bounds hδ hsep hindex f B hB hbound
+    exact coordShell_fourier f₀ x k hQ hxT hx0 (by simpa only [T, α, δ] using hfull) N L
+  have hsum := sum_le_shell_bounds hδ hsep hindex f B hB hbound
   simpa only [f, B, S, K, T, α, δ] using hsum
 
 /--
@@ -5571,19 +5404,14 @@ Inputs: a positive denominator cutoff, a base reduced frequency, and an interval
 Claim: with taper length `Q^2`, the off-diagonal overlap-kernel row is at most `N + 2 Q^2`.
 
 Proof: apply the finite-shell row estimate and evaluate its radial envelope using
-`radial_overlap_envelope_sum_le`.
+`radial_overlap_sum`.
 
 Role: provides the uniform Gram-row bound needed by the windowed additive large sieve.
 -/
-theorem reducedUnitFrequencySignedCoordinates_offdiag_kernel_row_le_square {Q : ℕ} (hQ : 0 < Q)
-    (f₀ : ReducedUnitFrequencyIndex Q) (N : ℕ) :
-    ∑
-        x ∈
-          (reducedUnitFrequencySignedCoordinates (Q := Q)
-                (reducedUnitFrequencyCoordinate f₀)).filter
-            (fun x => x ≠ 0),
+theorem coordKernel_offdiagSq {Q : ℕ} (hQ : 0 < Q) (f₀ : ReducedFreqIndex Q) (N : ℕ) :
+    ∑ x ∈ (signedReducedCoords (Q := Q) (reducedFreqCoord f₀)).filter (fun x => x ≠ 0),
         ‖∑ n ∈ Finset.range (N + 2 * (Q * Q) - 1),
-            (triangleOverlapWindowWeight N (Q * Q) n : ℂ) *
+            (triangleOverlapWeight N (Q * Q) n : ℂ) *
               Complex.exp (Complex.I * ((2 * Real.pi * x : ℝ) : ℂ)) ^ n‖ ≤
       (N : ℝ) + 2 * ((Q * Q : ℕ) : ℝ) := by
   classical
@@ -5621,8 +5449,8 @@ theorem reducedUnitFrequencySignedCoordinates_offdiag_kernel_row_le_square {Q : 
             (M⁻¹ * min ((N : ℝ) + M) (M / (2 * max 1 (k : ℝ))) * min M (M / (2 * max 1 (k : ℝ)))) :=
       by
       simpa only [hnorm, hrec, δ, Nat.cast_add, Nat.cast_mul, M, m] using
-        (reducedUnitFrequencySignedCoordinates_offdiag_kernel_row_le hQ f₀ N m)
-    _ ≤ (N : ℝ) + 2 * M := radial_overlap_envelope_sum_le m hMpos (Nat.cast_nonneg N)
+        (coordKernel_offdiag hQ f₀ N m)
+    _ ≤ (N : ℝ) + 2 * M := radial_overlap_sum m hMpos (Nat.cast_nonneg N)
     _ = (N : ℝ) + 2 * ((Q * Q : ℕ) : ℝ) := by simp only [M, m]
 
 /--
@@ -5636,23 +5464,22 @@ off-diagonal estimate `N + 2Q^2` to the remaining coordinates.
 
 Role: gives the complete uniform Gram-row bound for the finite reduced-frequency family.
 -/
-theorem reducedUnitFrequencySignedCoordinates_full_kernel_row_le_square {Q : ℕ} (hQ : 0 < Q)
-    (f₀ : ReducedUnitFrequencyIndex Q) (N : ℕ) :
-    ∑ x ∈ reducedUnitFrequencySignedCoordinates (Q := Q) (reducedUnitFrequencyCoordinate f₀),
+theorem coordKernel_rowSq {Q : ℕ} (hQ : 0 < Q) (f₀ : ReducedFreqIndex Q) (N : ℕ) :
+    ∑ x ∈ signedReducedCoords (Q := Q) (reducedFreqCoord f₀),
         ‖∑ n ∈ Finset.range (N + 2 * (Q * Q) - 1),
-            (triangleOverlapWindowWeight N (Q * Q) n : ℂ) *
+            (triangleOverlapWeight N (Q * Q) n : ℂ) *
               Complex.exp (Complex.I * ((2 * Real.pi * x : ℝ) : ℂ)) ^ n‖ ≤
       2 * (N : ℝ) + 3 * ((Q * Q : ℕ) : ℝ) := by
   classical
-  let α := reducedUnitFrequencyCoordinate f₀
-  let T := reducedUnitFrequencySignedCoordinates (Q := Q) α
+  let α := reducedFreqCoord f₀
+  let T := signedReducedCoords (Q := Q) α
   let m : ℕ := Q * Q
   let M : ℝ := (m : ℝ)
   let f : ℝ → ℝ := fun x =>
     ‖∑ n ∈ Finset.range (N + 2 * m - 1),
-        (triangleOverlapWindowWeight N m n : ℂ) *
+        (triangleOverlapWeight N m n : ℂ) *
           Complex.exp (Complex.I * ((2 * Real.pi * x : ℝ) : ℂ)) ^ n‖
-  have hzero : 0 ∈ T := by exact reducedUnitFrequencySignedCoordinates_zero_mem f₀
+  have hzero : 0 ∈ T := by exact signedCoords_zero f₀
   have hfilter : T.filter (fun x => ¬x ≠ 0) = {0} := by
     ext x
     simp only [Finset.mem_filter, Finset.mem_singleton]
@@ -5664,18 +5491,18 @@ theorem reducedUnitFrequencySignedCoordinates_full_kernel_row_le_square {Q : ℕ
       exact ⟨hzero, fun h => h rfl⟩
   have hdiagComplex :
     ∑ n ∈ Finset.range (N + 2 * m - 1),
-        (triangleOverlapWindowWeight N m n : ℂ) *
+        (triangleOverlapWeight N m n : ℂ) *
           Complex.exp (Complex.I * ((2 * Real.pi * (0 : ℝ) : ℝ) : ℂ)) ^ n =
       ((N + m : ℕ) : ℂ) := by
     calc
-      _ = ∑ n ∈ Finset.range (N + 2 * m - 1), (triangleOverlapWindowWeight N m n : ℂ) := by
+      _ = ∑ n ∈ Finset.range (N + 2 * m - 1), (triangleOverlapWeight N m n : ℂ) := by
         apply Finset.sum_congr rfl
         intro n hn
         simp only [mul_zero, Complex.ofReal_zero, Complex.exp_zero, one_pow, mul_one]
-      _ = ((∑ n ∈ Finset.range (N + 2 * m - 1), triangleOverlapWindowWeight N m n : ℝ) : ℂ) := by
+      _ = ((∑ n ∈ Finset.range (N + 2 * m - 1), triangleOverlapWeight N m n : ℝ) : ℂ) := by
         rw [← Complex.ofReal_sum]
       _ = ((N + m : ℕ) : ℂ) := by
-        rw [triangleOverlapWindowWeight_sum_eq N m
+        rw [overlapWeight_sum_eq N m
             (by
               dsimp only [m]
               exact Nat.mul_pos hQ hQ),
@@ -5696,8 +5523,7 @@ theorem reducedUnitFrequencySignedCoordinates_full_kernel_row_le_square {Q : ℕ
       ∑ x ∈ T, f x :=
     Finset.sum_filter_add_sum_filter_not T (fun x => x ≠ 0) f
   have hOff : ∑ x ∈ T.filter (fun x => x ≠ 0), f x ≤ (N : ℝ) + 2 * M := by
-    simpa only [f, T, α, m, M] using
-      (reducedUnitFrequencySignedCoordinates_offdiag_kernel_row_le_square hQ f₀ N)
+    simpa only [f, T, α, m, M] using (coordKernel_offdiagSq hQ f₀ N)
   calc
     _ = (∑ x ∈ T.filter (fun x => x ≠ 0), f x) + f 0 := by rw [← hdecomp, hdiagSum]
     _ ≤ ((N : ℝ) + 2 * M) + ((N : ℝ) + M) := add_le_add hOff (le_of_eq hdiag)
@@ -5715,60 +5541,57 @@ apply the real Fourier-kernel row bound.
 
 Role: supplies the concrete Gram-row hypothesis for the one-modulus additive large sieve.
 -/
-theorem reducedUnitFrequencyRationalWindowGramRow_le_square {Q : ℕ} (hQ : 0 < Q)
-    (f₀ : ReducedUnitFrequencyIndex Q) (N : ℕ) :
-    ∑ f ∈ reducedUnitFrequencyIndexSet Q,
+theorem windowGram_row_sq {Q : ℕ} (hQ : 0 < Q) (f₀ : ReducedFreqIndex Q) (N : ℕ) :
+    ∑ f ∈ reducedFreqIndexSet Q,
         ‖inner ℂ
-            (rationalWindowFrequencyVector (Finset.range (N + 2 * (Q * Q) - 1))
-              (triangleOverlapWindow N (Q * Q)) (reducedUnitFrequencyRational f₀))
-            (rationalWindowFrequencyVector (Finset.range (N + 2 * (Q * Q) - 1))
-              (triangleOverlapWindow N (Q * Q)) (reducedUnitFrequencyRational f))‖ ≤
+            (windowFreqVector (Finset.range (N + 2 * (Q * Q) - 1)) (triangleOverlapWindow N (Q * Q))
+              (reducedFreqRat f₀))
+            (windowFreqVector (Finset.range (N + 2 * (Q * Q) - 1)) (triangleOverlapWindow N (Q * Q))
+              (reducedFreqRat f))‖ ≤
       2 * (N : ℝ) + 3 * ((Q * Q : ℕ) : ℝ) := by
   classical
-  let α := reducedUnitFrequencyCoordinate f₀
-  let U := reducedUnitFrequencyIndexSet Q
-  let φ : ReducedUnitFrequencyIndex Q → ℝ := fun f => reducedUnitFrequencySignedCoordinate α f
+  let α := reducedFreqCoord f₀
+  let U := reducedFreqIndexSet Q
+  let φ : ReducedFreqIndex Q → ℝ := fun f => signedReducedCoord α f
   let K : ℝ → ℝ := fun x =>
     ‖∑ n ∈ Finset.range (N + 2 * (Q * Q) - 1),
-        (triangleOverlapWindowWeight N (Q * Q) n : ℂ) *
+        (triangleOverlapWeight N (Q * Q) n : ℂ) *
           Complex.exp (Complex.I * ((2 * Real.pi * x : ℝ) : ℂ)) ^ n‖
   have hφ : Function.Injective φ := by
     intro f g hfg
     dsimp only [φ] at hfg
-    apply reducedUnitFrequencyCoordinate_injective
+    apply reducedCoord_inj
     exact
-      signedCircularDifference_injective (reducedUnitFrequencyCoordinate_bounds f).1
-        (reducedUnitFrequencyCoordinate_bounds f).2 (reducedUnitFrequencyCoordinate_bounds g).1
-        (reducedUnitFrequencyCoordinate_bounds g).2 hfg
+      circleDiff_injective (reducedCoord_bounds f).1 (reducedCoord_bounds f).2
+        (reducedCoord_bounds g).1 (reducedCoord_bounds g).2 hfg
   have hsum :
     (∑ f ∈ U,
         ‖inner ℂ
-            (rationalWindowFrequencyVector (Finset.range (N + 2 * (Q * Q) - 1))
-              (triangleOverlapWindow N (Q * Q)) (reducedUnitFrequencyRational f₀))
-            (rationalWindowFrequencyVector (Finset.range (N + 2 * (Q * Q) - 1))
-              (triangleOverlapWindow N (Q * Q)) (reducedUnitFrequencyRational f))‖) =
-      ∑ x ∈ reducedUnitFrequencySignedCoordinates (Q := Q) α, K x := by
+            (windowFreqVector (Finset.range (N + 2 * (Q * Q) - 1)) (triangleOverlapWindow N (Q * Q))
+              (reducedFreqRat f₀))
+            (windowFreqVector (Finset.range (N + 2 * (Q * Q) - 1)) (triangleOverlapWindow N (Q * Q))
+              (reducedFreqRat f))‖) =
+      ∑ x ∈ signedReducedCoords (Q := Q) α, K x := by
     calc
       _ = ∑ f ∈ U, K (φ f) := by
         apply Finset.sum_congr rfl
         intro f hf
-        simpa only [K, φ, α] using
-          reducedUnitFrequencyWindowGramTerm_norm_eq_signed_kernel_norm f₀ f N
+        simpa only [K, φ, α] using windowGram_norm_eq f₀ f N
       _ = _ := (Finset.sum_image (s := U) (g := φ) (f := K) hφ.injOn).symm
   rw [hsum]
-  simpa only [K, α] using (reducedUnitFrequencySignedCoordinates_full_kernel_row_le_square hQ f₀ N)
+  simpa only [K, α] using (coordKernel_rowSq hQ f₀ N)
 
 /--
 Definition: the finite set of all reduced rational frequencies with denominator at most `Q`.
 
 Inputs: a natural denominator cutoff.
 
-Output: the rational-coordinate image of `reducedUnitFrequencyIndexSet Q`.
+Output: the rational-coordinate image of `reducedFreqIndexSet Q`.
 
 Role: provides the common frequency set for the denominator-bounded additive large sieve.
 -/
-noncomputable def reducedUnitFrequencyRationalSet (Q : ℕ) : Finset ℚ :=
-  (reducedUnitFrequencyIndexSet Q).image reducedUnitFrequencyRational
+noncomputable def reducedRationalSet (Q : ℕ) : Finset ℚ :=
+  (reducedFreqIndexSet Q).image reducedFreqRat
 
 /--
 Inputs: a positive denominator cutoff, an interval length, and a frequency in the reduced
@@ -5781,36 +5604,34 @@ bound.
 
 Role: supplies the uniform Gram-row condition for the rational additive large-sieve estimate.
 -/
-theorem reducedUnitFrequencyRationalSet_window_gram_row_le_square {Q : ℕ} (hQ : 0 < Q) (N : ℕ) :
-    ∀ α : { α : ℚ // α ∈ reducedUnitFrequencyRationalSet Q },
-      ∑ β : { α : ℚ // α ∈ reducedUnitFrequencyRationalSet Q },
+theorem ratSet_gram_row_sq {Q : ℕ} (hQ : 0 < Q) (N : ℕ) :
+    ∀ α : { α : ℚ // α ∈ reducedRationalSet Q },
+      ∑ β : { α : ℚ // α ∈ reducedRationalSet Q },
           ‖inner ℂ
-              (rationalWindowFrequencyVector (Finset.range (N + 2 * (Q * Q) - 1))
+              (windowFreqVector (Finset.range (N + 2 * (Q * Q) - 1))
                 (triangleOverlapWindow N (Q * Q)) α.val)
-              (rationalWindowFrequencyVector (Finset.range (N + 2 * (Q * Q) - 1))
+              (windowFreqVector (Finset.range (N + 2 * (Q * Q) - 1))
                 (triangleOverlapWindow N (Q * Q)) β.val)‖ ≤
         2 * (N : ℝ) + 3 * ((Q * Q : ℕ) : ℝ) := by
   classical
   intro α
-  let U := reducedUnitFrequencyIndexSet Q
-  let F := reducedUnitFrequencyRationalSet Q
+  let U := reducedFreqIndexSet Q
+  let F := reducedRationalSet Q
   obtain ⟨f₀, hf₀, hα⟩ := Finset.mem_image.mp α.property
   let G : ℚ → ℝ := fun β =>
     ‖inner ℂ
-        (rationalWindowFrequencyVector (Finset.range (N + 2 * (Q * Q) - 1))
-          (triangleOverlapWindow N (Q * Q)) (reducedUnitFrequencyRational f₀))
-        (rationalWindowFrequencyVector (Finset.range (N + 2 * (Q * Q) - 1))
-          (triangleOverlapWindow N (Q * Q)) β)‖
-  have hInjective : Function.Injective (reducedUnitFrequencyRational (Q := Q)) :=
-    reducedUnitFrequencyRational_injective
+        (windowFreqVector (Finset.range (N + 2 * (Q * Q) - 1)) (triangleOverlapWindow N (Q * Q))
+          (reducedFreqRat f₀))
+        (windowFreqVector (Finset.range (N + 2 * (Q * Q) - 1)) (triangleOverlapWindow N (Q * Q)) β)‖
+  have hInjective : Function.Injective (reducedFreqRat (Q := Q)) := reducedRat_injective
   have hsum :
     (∑ β : { β : ℚ // β ∈ F },
         ‖inner ℂ
-            (rationalWindowFrequencyVector (Finset.range (N + 2 * (Q * Q) - 1))
-              (triangleOverlapWindow N (Q * Q)) α.val)
-            (rationalWindowFrequencyVector (Finset.range (N + 2 * (Q * Q) - 1))
-              (triangleOverlapWindow N (Q * Q)) β.val)‖) =
-      ∑ f ∈ U, G (reducedUnitFrequencyRational f) := by
+            (windowFreqVector (Finset.range (N + 2 * (Q * Q) - 1)) (triangleOverlapWindow N (Q * Q))
+              α.val)
+            (windowFreqVector (Finset.range (N + 2 * (Q * Q) - 1)) (triangleOverlapWindow N (Q * Q))
+              β.val)‖) =
+      ∑ f ∈ U, G (reducedFreqRat f) := by
     calc
       _ = ∑ β ∈ F, G β := by
         rw [Finset.sum_subtype F (fun _ => Iff.rfl)]
@@ -5819,10 +5640,10 @@ theorem reducedUnitFrequencyRationalSet_window_gram_row_le_square {Q : ℕ} (hQ 
         dsimp only [G]
         rw [hα]
       _ = _ := by
-        simpa only [F, reducedUnitFrequencyRationalSet] using
-          (Finset.sum_image (s := U) (g := reducedUnitFrequencyRational) (f := G) hInjective.injOn)
+        simpa only [F, reducedRationalSet] using
+          (Finset.sum_image (s := U) (g := reducedFreqRat) (f := G) hInjective.injOn)
   rw [hsum]
-  simpa only [G] using (reducedUnitFrequencyRationalWindowGramRow_le_square hQ f₀ N)
+  simpa only [G] using (windowGram_row_sq hQ f₀ N)
 
 /--
 Inputs: a positive denominator cutoff, an interval length, a coefficient set inside the flat
@@ -5836,22 +5657,19 @@ Gram-row estimate.
 
 Role: connects the completed reduced-frequency row bound to the additive large-sieve interface.
 -/
-theorem reducedUnitFrequencyRationalSet_mean_square_le_window_row {Q : ℕ} (hQ : 0 < Q) (N : ℕ)
-    (S : Finset ℕ) (hST : S ⊆ Finset.range (N + 2 * (Q * Q) - 1))
+theorem ratSet_energy_window {Q : ℕ} (hQ : 0 < Q) (N : ℕ) (S : Finset ℕ)
+    (hST : S ⊆ Finset.range (N + 2 * (Q * Q) - 1))
     (hcentral : ∀ n ∈ S, Q * Q - 1 ≤ n ∧ n ≤ N + Q * Q - 1) (a : ℕ → ℂ) :
-    rationalAdditivePolynomialMeanSquare (reducedUnitFrequencyRationalSet Q) S a ≤
+    rationalPolyEnergy (reducedRationalSet Q) S a ≤
       (2 * (N : ℝ) + 3 * ((Q * Q : ℕ) : ℝ)) * ∑ n ∈ S, ‖a n‖ ^ 2 := by
   have hR : 0 ≤ 2 * (N : ℝ) + 3 * ((Q * Q : ℕ) : ℝ) :=
     add_nonneg (mul_nonneg (by norm_num only) (Nat.cast_nonneg N))
       (mul_nonneg (by norm_num only) (Nat.cast_nonneg (Q * Q)))
   exact
-    rationalAdditivePolynomialMeanSquare_le_of_window_gram_row_bound
-      (reducedUnitFrequencyRationalSet Q) S (Finset.range (N + 2 * (Q * Q) - 1)) hST
+    ratEnergy_le_window (reducedRationalSet Q) S (Finset.range (N + 2 * (Q * Q) - 1)) hST
       (triangleOverlapWindow N (Q * Q))
-      (fun n hn =>
-        (triangleOverlapWindow_eq_one (Nat.mul_pos hQ hQ) (hcentral n hn).1 (hcentral n hn).2).2)
-      a (2 * (N : ℝ) + 3 * ((Q * Q : ℕ) : ℝ)) hR
-      (reducedUnitFrequencyRationalSet_window_gram_row_le_square hQ N)
+      (fun n hn => (overlapWindow_eq_one (Nat.mul_pos hQ hQ) (hcentral n hn).1 (hcentral n hn).2).2)
+      a (2 * (N : ℝ) + 3 * ((Q * Q : ℕ) : ℝ)) hR (ratSet_gram_row_sq hQ N)
 
 /--
 Inputs: a positive denominator cutoff, an interval length, a finite support inside `[0,N)`, and
@@ -5865,9 +5683,9 @@ norm invariance under translation.
 
 Role: supplies the usual finite-support interface needed by the unconditional large sieve.
 -/
-theorem reducedUnitFrequencyRationalSet_mean_square_le_window_row_of_range {Q : ℕ} (hQ : 0 < Q)
-    (N : ℕ) (S : Finset ℕ) (hSN : S ⊆ Finset.range N) (a : ℕ → ℂ) :
-    rationalAdditivePolynomialMeanSquare (reducedUnitFrequencyRationalSet Q) S a ≤
+theorem ratSet_energy_range {Q : ℕ} (hQ : 0 < Q) (N : ℕ) (S : Finset ℕ) (hSN : S ⊆ Finset.range N)
+    (a : ℕ → ℂ) :
+    rationalPolyEnergy (reducedRationalSet Q) S a ≤
       (2 * (N : ℝ) + 3 * ((Q * Q : ℕ) : ℝ)) * ∑ n ∈ S, ‖a n‖ ^ 2 := by
   let c : ℕ := Q * Q
   let T : Finset ℕ := S.image (fun n => n + c)
@@ -5896,20 +5714,14 @@ theorem reducedUnitFrequencyRationalSet_mean_square_le_window_row_of_range {Q : 
     · exact le_trans (Nat.sub_le _ _) (Nat.le_add_left _ _)
     · exact Nat.le_sub_one_of_lt (Nat.add_lt_add_right hnN (Q * Q))
   calc
-    rationalAdditivePolynomialMeanSquare (reducedUnitFrequencyRationalSet Q) S a =
-        rationalAdditivePolynomialMeanSquare (reducedUnitFrequencyRationalSet Q) T b :=
+    rationalPolyEnergy (reducedRationalSet Q) S a = rationalPolyEnergy (reducedRationalSet Q) T b :=
       by
       dsimp [T, b]
-      exact
-        (rationalAdditivePolynomialMeanSquare_shift_eq (reducedUnitFrequencyRationalSet Q) S a
-            c).symm
+      exact (ratPolyEnergy_shift (reducedRationalSet Q) S a c).symm
     _ ≤ (2 * (N : ℝ) + 3 * ((Q * Q : ℕ) : ℝ)) * ∑ m ∈ T, ‖b m‖ ^ 2 := by
       dsimp [T, b]
-      exact
-        reducedUnitFrequencyRationalSet_mean_square_le_window_row hQ N T hTN hcentral
-          (fun m => a (m - c))
-    _ = (2 * (N : ℝ) + 3 * ((Q * Q : ℕ) : ℝ)) * ∑ n ∈ S, ‖a n‖ ^ 2 := by
-      rw [sum_normSq_coefficients_shift_eq]
+      exact ratSet_energy_window hQ N T hTN hcentral (fun m => a (m - c))
+    _ = (2 * (N : ℝ) + 3 * ((Q * Q : ℕ) : ℝ)) * ∑ n ∈ S, ‖a n‖ ^ 2 := by rw [sum_normSq_shift_eq]
 
 /--
 Inputs: a positive denominator cutoff, a finite coefficient support contained in the interval
@@ -5923,9 +5735,9 @@ translation invariance of the additive mean square and coefficient energy.
 
 Role: gives the support interval interface used by the pre-sifted hybrid large sieve.
 -/
-theorem reducedUnitFrequencyRationalSet_mean_square_le_of_support_Ico {Q : ℕ} (hQ : 0 < Q) (M N : ℕ)
-    (S : Finset ℕ) (hS : S ⊆ Finset.Ico M (M + N)) (a : ℕ → ℂ) :
-    rationalAdditivePolynomialMeanSquare (reducedUnitFrequencyRationalSet Q) S a ≤
+theorem ratSet_energy_Ico {Q : ℕ} (hQ : 0 < Q) (M N : ℕ) (S : Finset ℕ)
+    (hS : S ⊆ Finset.Ico M (M + N)) (a : ℕ → ℂ) :
+    rationalPolyEnergy (reducedRationalSet Q) S a ≤
       (2 * (N : ℝ) + 3 * ((Q * Q : ℕ) : ℝ)) * ∑ n ∈ S, ‖a n‖ ^ 2 := by
   let T : Finset ℕ := S.image (fun n => n - M)
   let b : ℕ → ℂ := fun m => a (m + M)
@@ -5952,42 +5764,40 @@ theorem reducedUnitFrequencyRationalSet_mean_square_le_of_support_Ico {Q : ℕ} 
     dsimp [b]
     rw [Nat.sub_add_cancel hnI.1]
   have hmean :
-    rationalAdditivePolynomialMeanSquare (reducedUnitFrequencyRationalSet Q) S a =
-      rationalAdditivePolynomialMeanSquare (reducedUnitFrequencyRationalSet Q) T b := by
+    rationalPolyEnergy (reducedRationalSet Q) S a =
+      rationalPolyEnergy (reducedRationalSet Q) T b := by
     calc
-      rationalAdditivePolynomialMeanSquare (reducedUnitFrequencyRationalSet Q) S a =
-          rationalAdditivePolynomialMeanSquare (reducedUnitFrequencyRationalSet Q) S
-            (fun m => b (m - M)) :=
+      rationalPolyEnergy (reducedRationalSet Q) S a =
+          rationalPolyEnergy (reducedRationalSet Q) S (fun m => b (m - M)) :=
         by
-        unfold rationalAdditivePolynomialMeanSquare
+        unfold rationalPolyEnergy
         apply Finset.sum_congr rfl
         intro α hα
         congr 1
         apply Finset.sum_congr rfl
         intro n hn
-        change a n * rationalAdditiveCharacter α n = b (n - M) * rationalAdditiveCharacter α n
+        change a n * rationalAddChar α n = b (n - M) * rationalAddChar α n
         rw [hcoef n hn]
       _ =
-          rationalAdditivePolynomialMeanSquare (reducedUnitFrequencyRationalSet Q)
-            (T.image (fun n => n + M)) (fun m => b (m - M)) :=
+          rationalPolyEnergy (reducedRationalSet Q) (T.image (fun n => n + M))
+            (fun m => b (m - M)) :=
         by rw [hTimage]
-      _ = rationalAdditivePolynomialMeanSquare (reducedUnitFrequencyRationalSet Q) T b :=
-        rationalAdditivePolynomialMeanSquare_shift_eq (reducedUnitFrequencyRationalSet Q) T b M
+      _ = rationalPolyEnergy (reducedRationalSet Q) T b :=
+        ratPolyEnergy_shift (reducedRationalSet Q) T b M
   have henergy : (∑ m ∈ T, ‖b m‖ ^ 2) = ∑ n ∈ S, ‖a n‖ ^ 2 := by
     calc
       (∑ m ∈ T, ‖b m‖ ^ 2) = ∑ m ∈ T.image (fun n => n + M), ‖b (m - M)‖ ^ 2 :=
-        (sum_normSq_coefficients_shift_eq T b M).symm
+        (sum_normSq_shift_eq T b M).symm
       _ = ∑ n ∈ S, ‖a n‖ ^ 2 := by
         rw [hTimage]
         apply Finset.sum_congr rfl
         intro n hn
         rw [hcoef n hn]
   calc
-    rationalAdditivePolynomialMeanSquare (reducedUnitFrequencyRationalSet Q) S a =
-        rationalAdditivePolynomialMeanSquare (reducedUnitFrequencyRationalSet Q) T b :=
+    rationalPolyEnergy (reducedRationalSet Q) S a = rationalPolyEnergy (reducedRationalSet Q) T b :=
       hmean
     _ ≤ (2 * (N : ℝ) + 3 * ((Q * Q : ℕ) : ℝ)) * ∑ m ∈ T, ‖b m‖ ^ 2 :=
-      reducedUnitFrequencyRationalSet_mean_square_le_window_row_of_range hQ N T hTN b
+      ratSet_energy_range hQ N T hTN b
     _ = (2 * (N : ℝ) + 3 * ((Q * Q : ℕ) : ℝ)) * ∑ n ∈ S, ‖a n‖ ^ 2 := by rw [henergy]
 
 set_option linter.style.haveILetI false
@@ -6005,31 +5815,30 @@ denominators, and include these layers in the full reduced-frequency set.
 
 Role: separates the support-independent frequency comparison from the range large-sieve bound.
 -/
-theorem primitive_ramanujan_weighted_fixedProduct_levels_le_rationalMeanSquare (H : Finset ℕ)
-    (hH : ∀ h, h ∈ H → 1 < h) (Q : ℕ → Finset ℕ) (r : ℕ → ℕ → ℕ)
-    (hQ : ∀ h, h ∈ H → ∀ q, q ∈ Q h → q ∣ h) (hprod : ∀ h, h ∈ H → ∀ q, q ∈ Q h → q * r h q = h)
-    (hq : ∀ h, h ∈ H → ∀ q, q ∈ Q h → 1 < q) (hr : ∀ h, h ∈ H → ∀ q, q ∈ Q h → 0 < r h q)
+theorem ramanujanLevels_rat (H : Finset ℕ) (hH : ∀ h, h ∈ H → 1 < h) (Q : ℕ → Finset ℕ)
+    (r : ℕ → ℕ → ℕ) (hQ : ∀ h, h ∈ H → ∀ q, q ∈ Q h → q ∣ h)
+    (hprod : ∀ h, h ∈ H → ∀ q, q ∈ Q h → q * r h q = h) (hq : ∀ h, h ∈ H → ∀ q, q ∈ Q h → 1 < q)
+    (hr : ∀ h, h ∈ H → ∀ q, q ∈ Q h → 0 < r h q)
     (hcop : ∀ h, h ∈ H → ∀ q, q ∈ Q h → Nat.Coprime q (r h q)) (Qmax : ℕ)
     (hHmax : ∀ h, h ∈ H → h ≤ Qmax) (S : Finset ℕ) (a : ℕ → ℂ) :
     (∑ h ∈ H.attach,
         ∑ q ∈ (Q h.val).attach,
           (q.val : ℝ) / (Nat.totient h.val : ℝ) *
-            primitiveCharacterPolynomialMeanSquare q.val (hq h.val h.property q.val q.property) S
+            polyMeanSquare q.val (hq h.val h.property q.val q.property) S
               (fun n =>
                 a n *
                   @ramanujanSum (r h.val q.val) n
                     ⟨Nat.ne_of_gt (hr h.val h.property q.val q.property)⟩)) ≤
-      rationalAdditivePolynomialMeanSquare (reducedUnitFrequencyRationalSet Qmax) S a := by
+      rationalPolyEnergy (reducedRationalSet Qmax) S a := by
   classical
   let F : { h // h ∈ H } → Finset ℚ := fun h => by
     letI : NeZero h.val := ⟨Nat.ne_of_gt (lt_trans Nat.zero_lt_one (hH h.val h.property))⟩
-    exact (reducedUnitFrequencySet h.val).image (fun x => (x.val : ℚ) / h.val)
+    exact (reducedFrequencies h.val).image (fun x => (x.val : ℚ) / h.val)
   have hdisj : Set.PairwiseDisjoint (H.attach : Set { h // h ∈ H }) F := by
     intro h₁ hh₁ h₂ hh₂ hne
     letI : NeZero h₁.val := ⟨Nat.ne_of_gt (lt_trans Nat.zero_lt_one (hH h₁.val h₁.property))⟩
     letI : NeZero h₂.val := ⟨Nat.ne_of_gt (lt_trans Nat.zero_lt_one (hH h₂.val h₂.property))⟩
-    change
-      Disjoint ((reducedUnitFrequencySet h₁.val).image _) ((reducedUnitFrequencySet h₂.val).image _)
+    change Disjoint ((reducedFrequencies h₁.val).image _) ((reducedFrequencies h₂.val).image _)
     apply Finset.disjoint_left.mpr
     intro α hα₁ hα₂
     rcases Finset.mem_image.mp hα₁ with ⟨x, hx, hαx⟩
@@ -6046,38 +5855,38 @@ theorem primitive_ramanujan_weighted_fixedProduct_levels_le_rationalMeanSquare (
     have hycop : Nat.Coprime y.val h₂.val := (ZMod.isUnit_iff_coprime y.val h₂.val).mp hycast
     have hfrac : (x.val : ℚ) / h₁.val = (y.val : ℚ) / h₂.val := hαx.trans hαy.symm
     have hden :=
-      (rational_reduced_fraction_unique (Nat.zero_lt_of_lt (hH h₁.val h₁.property))
+      (reducedRat_unique (Nat.zero_lt_of_lt (hH h₁.val h₁.property))
           (Nat.zero_lt_of_lt (hH h₂.val h₂.property)) hxcop hycop hfrac).1
     exact hne (Subtype.ext hden)
   have hmean :
     (∑ h ∈ H.attach,
         ∑ q ∈ (Q h.val).attach,
           (q.val : ℝ) / (Nat.totient h.val : ℝ) *
-            primitiveCharacterPolynomialMeanSquare q.val (hq h.val h.property q.val q.property) S
+            polyMeanSquare q.val (hq h.val h.property q.val q.property) S
               (fun n =>
                 a n *
                   @ramanujanSum (r h.val q.val) n
                     ⟨Nat.ne_of_gt (hr h.val h.property q.val q.property)⟩)) ≤
-      ∑ h ∈ H.attach, reducedAdditivePolynomialMeanSquare h.val (hH h.val h.property) S a := by
+      ∑ h ∈ H.attach, reducedPolyEnergy h.val (hH h.val h.property) S a := by
     apply Finset.sum_le_sum
     intro h hh
     letI : NeZero h.val := ⟨Nat.ne_of_gt (lt_trans Nat.zero_lt_one (hH h.val h.property))⟩
     exact
-      primitive_ramanujan_weighted_fixedProduct_family_normalized_le (hH h.val h.property) (Q h.val)
-        (r h.val) (hQ h.val h.property) (hprod h.val h.property) (hq h.val h.property)
-        (hr h.val h.property) (hcop h.val h.property) S a
+      ramanujanFamily_norm (hH h.val h.property) (Q h.val) (r h.val) (hQ h.val h.property)
+        (hprod h.val h.property) (hq h.val h.property) (hr h.val h.property) (hcop h.val h.property)
+        S a
   have hEq :
-    (∑ h ∈ H.attach, reducedAdditivePolynomialMeanSquare h.val (hH h.val h.property) S a) =
-      ∑ h ∈ H.attach, rationalAdditivePolynomialMeanSquare (F h) S a := by
+    (∑ h ∈ H.attach, reducedPolyEnergy h.val (hH h.val h.property) S a) =
+      ∑ h ∈ H.attach, rationalPolyEnergy (F h) S a := by
     apply Finset.sum_congr rfl
     intro h hh
     letI : NeZero h.val := ⟨Nat.ne_of_gt (lt_trans Nat.zero_lt_one (hH h.val h.property))⟩
-    exact reducedAdditivePolynomialMeanSquare_eq_rational (hH h.val h.property) S a
-  have hsubset : H.attach.biUnion F ⊆ reducedUnitFrequencyRationalSet Qmax := by
+    exact reducedEnergy_eq_rat (hH h.val h.property) S a
+  have hsubset : H.attach.biUnion F ⊆ reducedRationalSet Qmax := by
     intro α hα
     rcases Finset.mem_biUnion.mp hα with ⟨h, hh, hα⟩
     letI : NeZero h.val := ⟨Nat.ne_of_gt (lt_trans Nat.zero_lt_one (hH h.val h.property))⟩
-    change α ∈ (reducedUnitFrequencySet h.val).image _ at hα
+    change α ∈ (reducedFrequencies h.val).image _ at hα
     rcases Finset.mem_image.mp hα with ⟨x, hx, rfl⟩
     have hxunit : IsUnit x := (Finset.mem_filter.mp hx).2
     have hxcast : IsUnit ((x.val : ℕ) : ZMod h.val) := by
@@ -6085,20 +5894,20 @@ theorem primitive_ramanujan_weighted_fixedProduct_levels_le_rationalMeanSquare (
       exact hxunit
     have hcop : Nat.Coprime x.val h.val := (ZMod.isUnit_iff_coprime x.val h.val).mp hxcast
     have hhmax := hHmax h.val h.property
-    let f : ReducedUnitFrequencyIndex Qmax :=
+    let f : ReducedFreqIndex Qmax :=
       ⟨⟨⟨h.val, Nat.lt_succ_of_le hhmax⟩, by simpa using hH h.val h.property⟩,
         ⟨⟨x.val, ZMod.val_lt x⟩, hcop⟩⟩
     apply Finset.mem_image.mpr
     refine ⟨f, Finset.mem_univ _, ?_⟩
-    dsimp [reducedUnitFrequencyRational, f]
+    dsimp [reducedFreqRat, f]
   calc
-    _ ≤ ∑ h ∈ H.attach, reducedAdditivePolynomialMeanSquare h.val (hH h.val h.property) S a := hmean
-    _ = rationalAdditivePolynomialMeanSquare (H.attach.biUnion F) S a := by
+    _ ≤ ∑ h ∈ H.attach, reducedPolyEnergy h.val (hH h.val h.property) S a := hmean
+    _ = rationalPolyEnergy (H.attach.biUnion F) S a := by
       rw [hEq]
-      unfold rationalAdditivePolynomialMeanSquare
+      unfold rationalPolyEnergy
       rw [Finset.sum_biUnion hdisj]
-    _ ≤ rationalAdditivePolynomialMeanSquare (reducedUnitFrequencyRationalSet Qmax) S a := by
-      unfold rationalAdditivePolynomialMeanSquare
+    _ ≤ rationalPolyEnergy (reducedRationalSet Qmax) S a := by
+      unfold rationalPolyEnergy
       apply Finset.sum_le_sum_of_subset_of_nonneg hsubset
       intro α hα hnot
       exact Complex.normSq_nonneg _
@@ -6115,27 +5924,26 @@ the additive large sieve.
 
 Role: preserves the range-supported API for callers that need an explicit numerical bound.
 -/
-theorem primitive_ramanujan_weighted_fixedProduct_levels_le_additive_large_sieve (H : Finset ℕ)
-    (hH : ∀ h, h ∈ H → 1 < h) (Q : ℕ → Finset ℕ) (r : ℕ → ℕ → ℕ)
-    (hQ : ∀ h, h ∈ H → ∀ q, q ∈ Q h → q ∣ h) (hprod : ∀ h, h ∈ H → ∀ q, q ∈ Q h → q * r h q = h)
-    (hq : ∀ h, h ∈ H → ∀ q, q ∈ Q h → 1 < q) (hr : ∀ h, h ∈ H → ∀ q, q ∈ Q h → 0 < r h q)
+theorem ramanujanLevels_sieve (H : Finset ℕ) (hH : ∀ h, h ∈ H → 1 < h) (Q : ℕ → Finset ℕ)
+    (r : ℕ → ℕ → ℕ) (hQ : ∀ h, h ∈ H → ∀ q, q ∈ Q h → q ∣ h)
+    (hprod : ∀ h, h ∈ H → ∀ q, q ∈ Q h → q * r h q = h) (hq : ∀ h, h ∈ H → ∀ q, q ∈ Q h → 1 < q)
+    (hr : ∀ h, h ∈ H → ∀ q, q ∈ Q h → 0 < r h q)
     (hcop : ∀ h, h ∈ H → ∀ q, q ∈ Q h → Nat.Coprime q (r h q)) (Qmax : ℕ) (hQmaxPos : 0 < Qmax)
     (hHmax : ∀ h, h ∈ H → h ≤ Qmax) (N : ℕ) (S : Finset ℕ) (hSN : S ⊆ Finset.range N) (a : ℕ → ℂ) :
     (∑ h ∈ H.attach,
         ∑ q ∈ (Q h.val).attach,
           (q.val : ℝ) / (Nat.totient h.val : ℝ) *
-            primitiveCharacterPolynomialMeanSquare q.val (hq h.val h.property q.val q.property) S
+            polyMeanSquare q.val (hq h.val h.property q.val q.property) S
               (fun n =>
                 a n *
                   @ramanujanSum (r h.val q.val) n
                     ⟨Nat.ne_of_gt (hr h.val h.property q.val q.property)⟩)) ≤
       (2 * (N : ℝ) + 3 * ((Qmax * Qmax : ℕ) : ℝ)) * ∑ n ∈ S, ‖a n‖ ^ 2 := by
   calc
-    _ ≤ rationalAdditivePolynomialMeanSquare (reducedUnitFrequencyRationalSet Qmax) S a :=
-      primitive_ramanujan_weighted_fixedProduct_levels_le_rationalMeanSquare H hH Q r hQ hprod hq hr
-        hcop Qmax hHmax S a
+    _ ≤ rationalPolyEnergy (reducedRationalSet Qmax) S a :=
+      ramanujanLevels_rat H hH Q r hQ hprod hq hr hcop Qmax hHmax S a
     _ ≤ (2 * (N : ℝ) + 3 * ((Qmax * Qmax : ℕ) : ℝ)) * ∑ n ∈ S, ‖a n‖ ^ 2 :=
-      reducedUnitFrequencyRationalSet_mean_square_le_window_row_of_range hQmaxPos N S hSN a
+      ratSet_energy_range hQmaxPos N S hSN a
 
 set_option linter.style.haveILetI true
 
@@ -6158,8 +5966,7 @@ injective because the first modulus is positive.
 
 Role: justifies regrouping an arbitrary pair family before applying the fixed-product estimate.
 -/
-theorem sum_productLevel_pairFamily_eq {P : Finset (ℕ × ℕ)} (hPq : ∀ p, p ∈ P → 0 < p.1)
-    (f : ℕ × ℕ → ℝ) :
+theorem sum_productLevel_eq {P : Finset (ℕ × ℕ)} (hPq : ∀ p, p ∈ P → 0 < p.1) (f : ℕ × ℕ → ℝ) :
     (∑ h ∈ (P.image fun p => p.1 * p.2).attach,
         ∑ q ∈ ((P.filter fun p => p.1 * p.2 = h.val).image Prod.fst).attach, f (h.val, q.val)) =
       ∑ p ∈ P.attach, f (p.val.1 * p.val.2, p.val.1) := by
@@ -6244,15 +6051,14 @@ disjoint rational-frequency layers in the common reduced-frequency set.
 
 Role: separates the support-independent frequency comparison from the range large-sieve bound.
 -/
-theorem primitive_ramanujan_weighted_pair_family_le_rationalMeanSquare (P : Finset (ℕ × ℕ))
-    (hPq : ∀ p, p ∈ P → 1 < p.1) (hPr : ∀ p, p ∈ P → 0 < p.2)
-    (hPcop : ∀ p, p ∈ P → Nat.Coprime p.1 p.2) (Qmax : ℕ) (hPmax : ∀ p, p ∈ P → p.1 * p.2 ≤ Qmax)
-    (S : Finset ℕ) (a : ℕ → ℂ) :
+theorem ramanujanPairs_rat (P : Finset (ℕ × ℕ)) (hPq : ∀ p, p ∈ P → 1 < p.1)
+    (hPr : ∀ p, p ∈ P → 0 < p.2) (hPcop : ∀ p, p ∈ P → Nat.Coprime p.1 p.2) (Qmax : ℕ)
+    (hPmax : ∀ p, p ∈ P → p.1 * p.2 ≤ Qmax) (S : Finset ℕ) (a : ℕ → ℂ) :
     (∑ p ∈ P.attach,
         (p.val.1 : ℝ) / (Nat.totient (p.val.1 * p.val.2) : ℝ) *
-          primitiveCharacterPolynomialMeanSquare p.val.1 (hPq p.val p.property) S
+          polyMeanSquare p.val.1 (hPq p.val p.property) S
             (fun n => a n * @ramanujanSum p.val.2 n ⟨Nat.ne_of_gt (hPr p.val p.property)⟩)) ≤
-      rationalAdditivePolynomialMeanSquare (reducedUnitFrequencyRationalSet Qmax) S a := by
+      rationalPolyEnergy (reducedRationalSet Qmax) S a := by
   classical
   let H : Finset ℕ := P.image fun p => p.1 * p.2
   let Q : ℕ → Finset ℕ := fun h => (P.filter fun p => p.1 * p.2 = h).image Prod.fst
@@ -6303,14 +6109,13 @@ theorem primitive_ramanujan_weighted_pair_family_le_rationalMeanSquare (P : Fins
     if hqz : 1 < z.2 then
       if hrz : 0 < z.1 / z.2 then
         (z.2 : ℝ) / (Nat.totient z.1 : ℝ) *
-          primitiveCharacterPolynomialMeanSquare z.2 hqz S
-            (fun n => a n * @ramanujanSum (z.1 / z.2) n ⟨Nat.ne_of_gt hrz⟩)
+          polyMeanSquare z.2 hqz S (fun n => a n * @ramanujanSum (z.1 / z.2) n ⟨Nat.ne_of_gt hrz⟩)
       else 0
     else 0
   have hpair :
     (∑ p ∈ P.attach,
         (p.val.1 : ℝ) / (Nat.totient (p.val.1 * p.val.2) : ℝ) *
-          primitiveCharacterPolynomialMeanSquare p.val.1 (hPq p.val p.property) S
+          polyMeanSquare p.val.1 (hPq p.val p.property) S
             (fun n => a n * @ramanujanSum p.val.2 n ⟨Nat.ne_of_gt (hPr p.val p.property)⟩)) =
       ∑ p ∈ P.attach, f (p.val.1 * p.val.2, p.val.1) := by
     apply Finset.sum_congr rfl
@@ -6327,13 +6132,13 @@ theorem primitive_ramanujan_weighted_pair_family_le_rationalMeanSquare (P : Fins
     (∑ h ∈ H.attach, ∑ q ∈ (Q h.val).attach, f (h.val, q.val)) =
       ∑ p ∈ P.attach, f (p.val.1 * p.val.2, p.val.1) := by
     simpa only [H, Q] using
-      (sum_productLevel_pairFamily_eq (P := P) (fun p hp => Nat.zero_lt_of_lt (hPq p hp)) f)
+      (sum_productLevel_eq (P := P) (fun p hp => Nat.zero_lt_of_lt (hPq p hp)) f)
   have hlevel :
     (∑ h ∈ H.attach, ∑ q ∈ (Q h.val).attach, f (h.val, q.val)) =
       ∑ h ∈ H.attach,
         ∑ q ∈ (Q h.val).attach,
           (q.val : ℝ) / (Nat.totient h.val : ℝ) *
-            primitiveCharacterPolynomialMeanSquare q.val (hq h.val h.property q.val q.property) S
+            polyMeanSquare q.val (hq h.val h.property q.val q.property) S
               (fun n =>
                 a n *
                   @ramanujanSum (r h.val q.val) n
@@ -6346,9 +6151,7 @@ theorem primitive_ramanujan_weighted_pair_family_le_rationalMeanSquare (P : Fins
     have hrval := hr h.val h.property q.val q.property
     dsimp only [f]
     rw [dite_eq_left hqval, dite_eq_left hrval]
-  have hbase :=
-    primitive_ramanujan_weighted_fixedProduct_levels_le_rationalMeanSquare H hH Q r hQ hprod hq hr
-      hcop Qmax hHmax S a
+  have hbase := ramanujanLevels_rat H hH Q r hQ hprod hq hr hcop Qmax hHmax S a
   calc
     _ = ∑ p ∈ P.attach, f (p.val.1 * p.val.2, p.val.1) := hpair
     _ = ∑ h ∈ H.attach, ∑ q ∈ (Q h.val).attach, f (h.val, q.val) := hgroup.symm
@@ -6356,7 +6159,7 @@ theorem primitive_ramanujan_weighted_pair_family_le_rationalMeanSquare (P : Fins
         ∑ h ∈ H.attach,
           ∑ q ∈ (Q h.val).attach,
             (q.val : ℝ) / (Nat.totient h.val : ℝ) *
-              primitiveCharacterPolynomialMeanSquare q.val (hq h.val h.property q.val q.property) S
+              polyMeanSquare q.val (hq h.val h.property q.val q.property) S
                 (fun n =>
                   a n *
                     @ramanujanSum (r h.val q.val) n
@@ -6377,21 +6180,20 @@ pair-family reindexing and common rational-frequency large sieve once.
 
 Role: supplies the arbitrary finite-pair form of the pre-sifted Selberg large-sieve bound.
 -/
-theorem primitive_ramanujan_weighted_pair_family_le_additive_large_sieve (P : Finset (ℕ × ℕ))
-    (hPq : ∀ p, p ∈ P → 1 < p.1) (hPr : ∀ p, p ∈ P → 0 < p.2)
-    (hPcop : ∀ p, p ∈ P → Nat.Coprime p.1 p.2) (Qmax : ℕ) (hQmaxPos : 0 < Qmax)
-    (hPmax : ∀ p, p ∈ P → p.1 * p.2 ≤ Qmax) (N : ℕ) (S : Finset ℕ) (hSN : S ⊆ Finset.range N)
-    (a : ℕ → ℂ) :
+theorem ramanujanPairs_sieve (P : Finset (ℕ × ℕ)) (hPq : ∀ p, p ∈ P → 1 < p.1)
+    (hPr : ∀ p, p ∈ P → 0 < p.2) (hPcop : ∀ p, p ∈ P → Nat.Coprime p.1 p.2) (Qmax : ℕ)
+    (hQmaxPos : 0 < Qmax) (hPmax : ∀ p, p ∈ P → p.1 * p.2 ≤ Qmax) (N : ℕ) (S : Finset ℕ)
+    (hSN : S ⊆ Finset.range N) (a : ℕ → ℂ) :
     (∑ p ∈ P.attach,
         (p.val.1 : ℝ) / (Nat.totient (p.val.1 * p.val.2) : ℝ) *
-          primitiveCharacterPolynomialMeanSquare p.val.1 (hPq p.val p.property) S
+          polyMeanSquare p.val.1 (hPq p.val p.property) S
             (fun n => a n * @ramanujanSum p.val.2 n ⟨Nat.ne_of_gt (hPr p.val p.property)⟩)) ≤
       (2 * (N : ℝ) + 3 * ((Qmax * Qmax : ℕ) : ℝ)) * ∑ n ∈ S, ‖a n‖ ^ 2 := by
   calc
-    _ ≤ rationalAdditivePolynomialMeanSquare (reducedUnitFrequencyRationalSet Qmax) S a :=
-      primitive_ramanujan_weighted_pair_family_le_rationalMeanSquare P hPq hPr hPcop Qmax hPmax S a
+    _ ≤ rationalPolyEnergy (reducedRationalSet Qmax) S a :=
+      ramanujanPairs_rat P hPq hPr hPcop Qmax hPmax S a
     _ ≤ (2 * (N : ℝ) + 3 * ((Qmax * Qmax : ℕ) : ℝ)) * ∑ n ∈ S, ‖a n‖ ^ 2 :=
-      reducedUnitFrequencyRationalSet_mean_square_le_window_row_of_range hQmaxPos N S hSN a
+      ratSet_energy_range hQmaxPos N S hSN a
 
 /--
 Inputs: distinct reduced unit frequencies modulo two moduli bounded by `Q`.
@@ -6404,17 +6206,17 @@ separation, and apply the sine lower bound for the chord between unit-circle poi
 Role: bounds the denominator of every off-diagonal geometric kernel in the reduced-frequency
 large-sieve sum.
 -/
-theorem reducedUnitFrequency_complexPhase_distance {q r Q : ℕ} [NeZero q] [NeZero r] (hq : 1 < q)
-    (hr : 1 < r) (hqQ : q ≤ Q) (hrQ : r ≤ Q) (x : ZMod q) (hx : IsUnit x) (y : ZMod r)
-    (hy : IsUnit y) (hfrac : (x.val : ℚ) / q ≠ (y.val : ℚ) / r) :
+theorem reducedPhase_distance {q r Q : ℕ} [NeZero q] [NeZero r] (hq : 1 < q) (hr : 1 < r)
+    (hqQ : q ≤ Q) (hrQ : r ≤ Q) (x : ZMod q) (hx : IsUnit x) (y : ZMod r) (hy : IsUnit y)
+    (hfrac : (x.val : ℚ) / q ≠ (y.val : ℚ) / r) :
     4 / ((Q : ℝ) * Q) ≤
       ‖1 -
           Complex.exp
             (Complex.I * ((2 * Real.pi * ((x.val : ℝ) / q - (y.val : ℝ) / r) : ℝ) : ℂ))‖ := by
   have hqpos : 0 < q := Nat.zero_lt_of_lt hq
   have hrpos : 0 < r := Nat.zero_lt_of_lt hr
-  obtain ⟨hxpos, hxq⟩ := zmod_unit_value_bounds hq x hx
-  obtain ⟨hypos, hyr⟩ := zmod_unit_value_bounds hr y hy
+  obtain ⟨hxpos, hxq⟩ := unit_val_bounds hq x hx
+  obtain ⟨hypos, hyr⟩ := unit_val_bounds hr y hy
   have hqR : 0 < (q : ℝ) := by exact_mod_cast hqpos
   have hrR : 0 < (r : ℝ) := by exact_mod_cast hrpos
   have hxposR : 0 < (x.val : ℝ) / q := div_pos (by exact_mod_cast hxpos) hqR
@@ -6429,12 +6231,12 @@ theorem reducedUnitFrequency_complexPhase_distance {q r Q : ℕ} [NeZero q] [NeZ
   have hd : |d| ≤ 1 := by
     apply abs_le.mpr
     constructor <;> dsimp [d] <;> linarith only [hxposR, hyposR, hxltR, hyltR]
-  have hsepQ := reducedUnitFrequency_circularSeparation hq hr hqQ hrQ x hx y hy hfrac
+  have hsepQ := reducedFreq_sep hq hr hqQ hrQ x hx y hy hfrac
   have hsep : 1 / ((Q : ℝ) * Q) ≤ min |d| (1 - |d|) := by
     dsimp [d]
     simpa only [Rat.cast_div, Rat.cast_mul, Rat.cast_one, Rat.cast_abs, Rat.cast_min, Rat.cast_sub,
       Rat.cast_natCast] using (Rat.cast_le (K := ℝ)).2 hsepQ
-  have h := complex_exp_distance_ge_of_circular_separation hd hsep
+  have h := exp_dist_circle_bound hd hsep
   calc
     4 / ((Q : ℝ) * Q) = 4 * (1 / ((Q : ℝ) * Q)) := by ring
     _ ≤ ‖1 - Complex.exp (Complex.I * ((2 * Real.pi * d : ℝ) : ℂ))‖ := h
@@ -6451,20 +6253,19 @@ value at most one; apply the distance-sensitive phase-kernel estimate.
 
 Role: preserves the decay by frequency shell needed for the large-sieve Gram row sum.
 -/
-theorem reducedUnitFrequency_overlapKernel_norm_le_of_circular_separation {q r : ℕ} [NeZero q]
-    [NeZero r] (hq : 1 < q) (hr : 1 < r) (x : ZMod q) (hx : IsUnit x) (y : ZMod r) (hy : IsUnit y)
-    (ε : ℝ) (hε : 0 < ε)
+theorem reducedOverlap_sep {q r : ℕ} [NeZero q] [NeZero r] (hq : 1 < q) (hr : 1 < r) (x : ZMod q)
+    (hx : IsUnit x) (y : ZMod r) (hy : IsUnit y) (ε : ℝ) (hε : 0 < ε)
     (hsep : ε ≤ min |(x.val : ℝ) / q - (y.val : ℝ) / r| (1 - |(x.val : ℝ) / q - (y.val : ℝ) / r|))
     (N L : ℕ) :
     ‖∑ n ∈ Finset.range (N + 2 * L - 1),
-          (triangleOverlapWindowWeight N L n : ℂ) *
+          (triangleOverlapWeight N L n : ℂ) *
             Complex.exp
                 (Complex.I * ((2 * Real.pi * ((x.val : ℝ) / q - (y.val : ℝ) / r) : ℝ) : ℂ)) ^
               n‖ ≤
       ‖(L : ℂ)⁻¹‖ * min ((N + L : ℕ) : ℝ) (1 / (2 * ε)) * min (L : ℝ) (1 / (2 * ε)) := by
   let d : ℝ := (x.val : ℝ) / q - (y.val : ℝ) / r
-  have hxpos := zmod_unit_value_bounds hq x hx
-  have hypos := zmod_unit_value_bounds hr y hy
+  have hxpos := unit_val_bounds hq x hx
+  have hypos := unit_val_bounds hr y hy
   have hqpos : 0 < (q : ℝ) := by exact_mod_cast (Nat.zero_lt_of_lt hq)
   have hrpos : 0 < (r : ℝ) := by exact_mod_cast (Nat.zero_lt_of_lt hr)
   have hxlower : 0 ≤ (x.val : ℝ) / q := div_nonneg (by exact_mod_cast hxpos.1.le) hqpos.le
@@ -6476,8 +6277,7 @@ theorem reducedUnitFrequency_overlapKernel_norm_le_of_circular_separation {q r :
     rw [abs_le]
     constructor <;> linarith only [hxlower, hxupper, hylower, hyupper]
   have hsep' : ε ≤ min |d| (1 - |d|) := by simpa only [d] using hsep
-  simpa only [d] using
-    triangleOverlapWindowWeight_fourier_norm_le_of_circular_separation N L d ε hd hε hsep'
+  simpa only [d] using overlap_fourier_sep N L d ε hd hε hsep'
 
 /--
 Inputs: distinct reduced unit frequencies with denominators at most `Q`, an interval length, and
@@ -6491,11 +6291,11 @@ kernel estimate and monotonicity of each minimum.
 
 Role: gives a denominator-only off-diagonal bound for the tapered Gram matrix.
 -/
-theorem reducedUnitFrequency_overlapKernel_norm_le {q r Q : ℕ} [NeZero q] [NeZero r] (hq : 1 < q)
-    (hr : 1 < r) (hqQ : q ≤ Q) (hrQ : r ≤ Q) (x : ZMod q) (hx : IsUnit x) (y : ZMod r)
-    (hy : IsUnit y) (hfrac : (x.val : ℚ) / q ≠ (y.val : ℚ) / r) (N L : ℕ) :
+theorem reducedOverlap_bound {q r Q : ℕ} [NeZero q] [NeZero r] (hq : 1 < q) (hr : 1 < r)
+    (hqQ : q ≤ Q) (hrQ : r ≤ Q) (x : ZMod q) (hx : IsUnit x) (y : ZMod r) (hy : IsUnit y)
+    (hfrac : (x.val : ℚ) / q ≠ (y.val : ℚ) / r) (N L : ℕ) :
     ‖∑ n ∈ Finset.range (N + 2 * L - 1),
-          (triangleOverlapWindowWeight N L n : ℂ) *
+          (triangleOverlapWeight N L n : ℂ) *
             Complex.exp
                 (Complex.I * ((2 * Real.pi * ((x.val : ℝ) / q - (y.val : ℝ) / r) : ℝ) : ℂ)) ^
               n‖ ≤
@@ -6505,7 +6305,7 @@ theorem reducedUnitFrequency_overlapKernel_norm_le {q r Q : ℕ} [NeZero q] [NeZ
   let z : ℂ :=
     Complex.exp (Complex.I * ((2 * Real.pi * ((x.val : ℝ) / q - (y.val : ℝ) / r) : ℝ) : ℂ))
   have hQpos : 0 < (Q : ℝ) := by exact_mod_cast (Nat.zero_lt_of_lt hq).trans_le hqQ
-  have hphase := reducedUnitFrequency_complexPhase_distance hq hr hqQ hrQ x hx y hy hfrac
+  have hphase := reducedPhase_distance hq hr hqQ hrQ x hx y hy hfrac
   have hden : 0 < ‖1 - z‖ := by
     have hpos : 0 < 4 / ((Q : ℝ) * Q) := div_pos (by norm_num only) (mul_pos hQpos hQpos)
     have h := lt_of_lt_of_le hpos hphase
@@ -6524,8 +6324,8 @@ theorem reducedUnitFrequency_overlapKernel_norm_le {q r Q : ℕ} [NeZero q] [NeZ
   have hscale : 2 / ‖1 - z‖ ≤ ((Q : ℝ) * Q) / 2 := by
     apply (div_le_div_iff₀ hden (by norm_num only : (0 : ℝ) < 2)).2
     nlinarith only [hmul]
-  have hfirst := unit_circle_geometric_sum_norm_le_min hz hzne (N + L)
-  have hsecond := reverse_unit_circle_geometric_sum_norm_le_min hz hzne L
+  have hfirst := geom_sum_norm_le_min hz hzne (N + L)
+  have hsecond := rev_geom_norm_le_min hz hzne L
   have hfirst' := min_le_min_left ((N + L : ℕ) : ℝ) hscale
   have hsecond' := min_le_min_left (L : ℝ) hscale
   have hfirstNonneg : 0 ≤ min ((N + L : ℕ) : ℝ) (2 / ‖1 - z‖) := le_trans (norm_nonneg _) hfirst
@@ -6533,9 +6333,9 @@ theorem reducedUnitFrequency_overlapKernel_norm_le {q r Q : ℕ} [NeZero q] [NeZ
   have hfirstBound :
     min ((N + L : ℕ) : ℝ) (2 / ‖1 - z‖) ≤ min ((N + L : ℕ) : ℝ) (((Q : ℝ) * Q) / 2) := hfirst'
   have hsecondBound : min (L : ℝ) (2 / ‖1 - z‖) ≤ min (L : ℝ) (((Q : ℝ) * Q) / 2) := hsecond'
-  have hkernel := triangleOverlapWindowWeight_fourier_norm_le N L z hz hzne
+  have hkernel := overlap_fourier_bound N L z hz hzne
   calc
-    ‖∑ n ∈ Finset.range (N + 2 * L - 1), (triangleOverlapWindowWeight N L n : ℂ) * z ^ n‖ ≤
+    ‖∑ n ∈ Finset.range (N + 2 * L - 1), (triangleOverlapWeight N L n : ℂ) * z ^ n‖ ≤
         ‖(L : ℂ)⁻¹‖ * min ((N + L : ℕ) : ℝ) (2 / ‖1 - z‖) * min (L : ℝ) (2 / ‖1 - z‖) :=
       hkernel
     _ ≤ ‖(L : ℂ)⁻¹‖ * min ((N + L : ℕ) : ℝ) (((Q : ℝ) * Q) / 2) * min (L : ℝ) (((Q : ℝ) * Q) / 2) :=
@@ -6561,9 +6361,9 @@ denominator.
 
 Role: gives a uniform off-diagonal kernel bound for the additive large sieve.
 -/
-theorem reducedUnitFrequency_geometricSum_norm_le {q r Q : ℕ} [NeZero q] [NeZero r] (hq : 1 < q)
-    (hr : 1 < r) (hqQ : q ≤ Q) (hrQ : r ≤ Q) (x : ZMod q) (hx : IsUnit x) (y : ZMod r)
-    (hy : IsUnit y) (hfrac : (x.val : ℚ) / q ≠ (y.val : ℚ) / r) (N : ℕ) :
+theorem reducedGeom_bound {q r Q : ℕ} [NeZero q] [NeZero r] (hq : 1 < q) (hr : 1 < r) (hqQ : q ≤ Q)
+    (hrQ : r ≤ Q) (x : ZMod q) (hx : IsUnit x) (y : ZMod r) (hy : IsUnit y)
+    (hfrac : (x.val : ℚ) / q ≠ (y.val : ℚ) / r) (N : ℕ) :
     ‖∑ n ∈ Finset.range N,
           Complex.exp (Complex.I * ((2 * Real.pi * ((x.val : ℝ) / q - (y.val : ℝ) / r) : ℝ) : ℂ)) ^
             n‖ ≤
@@ -6571,7 +6371,7 @@ theorem reducedUnitFrequency_geometricSum_norm_le {q r Q : ℕ} [NeZero q] [NeZe
   let z : ℂ :=
     Complex.exp (Complex.I * ((2 * Real.pi * ((x.val : ℝ) / q - (y.val : ℝ) / r) : ℝ) : ℂ))
   have hQpos : 0 < (Q : ℝ) := by exact_mod_cast (Nat.zero_lt_of_lt hq).trans_le hqQ
-  have hphase := reducedUnitFrequency_complexPhase_distance hq hr hqQ hrQ x hx y hy hfrac
+  have hphase := reducedPhase_distance hq hr hqQ hrQ x hx y hy hfrac
   have hden : 0 < ‖1 - z‖ := by
     have hpos : 0 < 4 / ((Q : ℝ) * Q) := div_pos (by norm_num only) (mul_pos hQpos hQpos)
     have h := lt_of_lt_of_le hpos hphase
@@ -6583,7 +6383,7 @@ theorem reducedUnitFrequency_geometricSum_norm_le {q r Q : ℕ} [NeZero q] [NeZe
     intro heq
     have hz0 : ‖1 - z‖ = 0 := by rw [heq, sub_self, norm_zero]
     exact (ne_of_gt hden) hz0
-  have hgeom := unit_circle_geometric_sum_norm_le hz hzne N
+  have hgeom := geom_sum_norm_le hz hzne N
   have hmul : 4 ≤ ((Q : ℝ) * Q) * ‖1 - z‖ := by
     calc
       4 = ((Q : ℝ) * Q) * (4 / ((Q : ℝ) * Q)) := by field_simp [ne_of_gt (mul_pos hQpos hQpos)]
@@ -6605,9 +6405,9 @@ exponential of the rational frequency difference, and apply the geometric-kernel
 
 Role: supplies the off-diagonal correlation estimate for the finite additive large sieve.
 -/
-theorem reducedUnitFrequency_stdAddChar_crossSum_norm_le {q r Q : ℕ} [NeZero q] [NeZero r]
-    (hq : 1 < q) (hr : 1 < r) (hqQ : q ≤ Q) (hrQ : r ≤ Q) (x : ZMod q) (hx : IsUnit x) (y : ZMod r)
-    (hy : IsUnit y) (hfrac : (x.val : ℚ) / q ≠ (y.val : ℚ) / r) (N : ℕ) :
+theorem reducedCross_bound {q r Q : ℕ} [NeZero q] [NeZero r] (hq : 1 < q) (hr : 1 < r) (hqQ : q ≤ Q)
+    (hrQ : r ≤ Q) (x : ZMod q) (hx : IsUnit x) (y : ZMod r) (hy : IsUnit y)
+    (hfrac : (x.val : ℚ) / q ≠ (y.val : ℚ) / r) (N : ℕ) :
     ‖∑ n ∈ Finset.range N, (ZMod.stdAddChar x) ^ n * star ((ZMod.stdAddChar y) ^ n)‖ ≤
       ((Q : ℝ) * Q) / 2 := by
   have hsum :
@@ -6618,8 +6418,8 @@ theorem reducedUnitFrequency_stdAddChar_crossSum_norm_le {q r Q : ℕ} [NeZero q
     have hstar : star (ZMod.stdAddChar y ^ n) = (star (ZMod.stdAddChar y)) ^ n :=
       map_pow (starRingEnd ℂ) _ _
     rw [hstar, ← mul_pow]
-  rw [hsum, zmod_stdAddChar_phase_ratio]
-  exact reducedUnitFrequency_geometricSum_norm_le hq hr hqQ hrQ x hx y hy hfrac N
+  rw [hsum, stdAddChar_phase]
+  exact reducedGeom_bound hq hr hqQ hrQ x hx y hy hfrac N
 
 /--
 Inputs: a modulus greater than one, a finite polynomial index set, and complex coefficients.
@@ -6632,20 +6432,16 @@ Proof: divide the fixed-modulus Gauss-sum and Parseval inequality by the positiv
 Role: matches the standard additive large sieve, whose sum over reduced frequencies has no
 additional totient weight.
 -/
-theorem primitive_character_mean_square_scaled_additive_le {q : ℕ} [NeZero q] (hq : 1 < q)
-    (S : Finset ℕ) (a : ℕ → ℂ) :
-    (q : ℝ) / (Nat.totient q : ℝ) * primitiveCharacterPolynomialMeanSquare q hq S a ≤
-      reducedAdditivePolynomialMeanSquare q hq S a := by
-  have h := primitive_character_mean_square_additive_le hq S a
+theorem charEnergy_scaled_le {q : ℕ} [NeZero q] (hq : 1 < q) (S : Finset ℕ) (a : ℕ → ℂ) :
+    (q : ℝ) / (Nat.totient q : ℝ) * polyMeanSquare q hq S a ≤ reducedPolyEnergy q hq S a := by
+  have h := char_energy_le_add hq S a
   have hφ : 0 < (Nat.totient q : ℝ) := by
     exact_mod_cast Nat.totient_pos.mpr (lt_trans Nat.zero_lt_one hq)
   rw [div_mul_eq_mul_div]
   apply (div_le_iff₀ hφ).2
   calc
-    (q : ℝ) * primitiveCharacterPolynomialMeanSquare q hq S a ≤
-        (Nat.totient q : ℝ) * reducedAdditivePolynomialMeanSquare q hq S a :=
-      h
-    _ = reducedAdditivePolynomialMeanSquare q hq S a * Nat.totient q := by ring
+    (q : ℝ) * polyMeanSquare q hq S a ≤ (Nat.totient q : ℝ) * reducedPolyEnergy q hq S a := h
+    _ = reducedPolyEnergy q hq S a * Nat.totient q := by ring
 
 /--
 Inputs: a finite set of moduli greater than one, a finite polynomial index set, and complex
@@ -6659,19 +6455,16 @@ Proof: apply the normalized fixed-modulus inequality at each modulus in the atta
 Role: reduces the family large-sieve target to the classical additive large sieve with its
 standard unweighted frequency sum.
 -/
-theorem primitiveCharacterFamilyMeanSquare_scaled_additive_le (Q : Finset ℕ) (hQ : ∀ q ∈ Q, 1 < q)
-    (S : Finset ℕ) (a : ℕ → ℂ) :
+theorem charFamily_scaled_le (Q : Finset ℕ) (hQ : ∀ q ∈ Q, 1 < q) (S : Finset ℕ) (a : ℕ → ℂ) :
     (∑ q ∈ Q.attach,
-        (q.val : ℝ) / (Nat.totient q.val : ℝ) *
-          primitiveCharacterPolynomialMeanSquare q.val (hQ q.val q.property) S a) ≤
-      ∑ q ∈ Q.attach, reducedAdditivePolynomialMeanSquare q.val (hQ q.val q.property) S a := by
+        (q.val : ℝ) / (Nat.totient q.val : ℝ) * polyMeanSquare q.val (hQ q.val q.property) S a) ≤
+      ∑ q ∈ Q.attach, reducedPolyEnergy q.val (hQ q.val q.property) S a := by
   classical
   apply Finset.sum_le_sum
   intro q hqQ
   have hq : 1 < q.val := hQ q.val q.property
   have hnz : NeZero q.val := ⟨Nat.ne_of_gt (lt_trans Nat.zero_lt_one hq)⟩
-  simpa only [primitiveCharacterPolynomialMeanSquare, reducedAdditivePolynomialMeanSquare] using
-    (@primitive_character_mean_square_scaled_additive_le q.val hnz hq S a)
+  simpa only [polyMeanSquare, reducedPolyEnergy] using (@charEnergy_scaled_le q.val hnz hq S a)
 
 /--
 Inputs: a modulus greater than one, a finite polynomial index set, and complex coefficients.
@@ -6682,10 +6475,10 @@ Proof: each summand is the squared norm of a complex number.
 
 Role: permits removal of the factor `q / φ(q)`, which is at least one, from the family estimate.
 -/
-theorem primitiveCharacterPolynomialMeanSquare_nonneg {q : ℕ} (hq : 1 < q) (S : Finset ℕ)
-    (a : ℕ → ℂ) : 0 ≤ primitiveCharacterPolynomialMeanSquare q hq S a := by
+theorem polyMeanSquare_nonneg {q : ℕ} (hq : 1 < q) (S : Finset ℕ) (a : ℕ → ℂ) :
+    0 ≤ polyMeanSquare q hq S a := by
   classical
-  unfold primitiveCharacterPolynomialMeanSquare
+  unfold polyMeanSquare
   apply Finset.sum_nonneg
   intro χ hχ
   exact Complex.normSq_nonneg _
@@ -6702,7 +6495,7 @@ modulus and therefore at most `Z`, contradicting the support condition.
 Role: turns the least-prime-factor restriction in the pre-sifted large sieve into the coprimality
 condition required by the Ramanujan coefficient lemmas.
 -/
-theorem Nat.coprime_of_prime_factors_gt {n r Z : ℕ} (hr : 0 < r) (hrZ : r ≤ Z)
+theorem coprime_of_factors_gt {n r Z : ℕ} (hr : 0 < r) (hrZ : r ≤ Z)
     (hprime : ∀ p, Nat.Prime p → p ∣ n → Z < p) : Nat.Coprime n r := by
   by_contra hnot
   obtain ⟨p, hp, hpn, hpr⟩ := Nat.Prime.not_coprime_iff_dvd.mp hnot
@@ -6724,24 +6517,22 @@ Proof: on the support, each squarefree Ramanujan weight is constant with squared
 Role: supplies the arithmetic `log (Z/q)` gain needed to pass from the pair-family estimate to a
 pre-sifted large-sieve bound.
 -/
-theorem primitiveCharacterPolynomialMeanSquare_preSifted_weighted_lower (q Z : ℕ) (hq : 0 < q)
-    (hZ : q ≤ Z) (hq1 : 1 < q) (S : Finset ℕ) (a : ℕ → ℂ)
+theorem preSifted_lower (q Z : ℕ) (hq : 0 < q) (hZ : q ≤ Z) (hq1 : 1 < q) (S : Finset ℕ) (a : ℕ → ℂ)
     (hprime : ∀ n ∈ S, ∀ p, Nat.Prime p → p ∣ n → Z < p) :
-    Real.log ((Z : ℝ) / (q : ℝ)) / 2 * primitiveCharacterPolynomialMeanSquare q hq1 S a ≤
+    Real.log ((Z : ℝ) / (q : ℝ)) / 2 * polyMeanSquare q hq1 S a ≤
       ∑
         r ∈
           ((Finset.range (Z / q + 1)).filter
               (fun r : ℕ => 0 < r ∧ Squarefree r ∧ Nat.Coprime r q)).attach,
         (q : ℝ) / (Nat.totient (q * r.val) : ℝ) *
-          primitiveCharacterPolynomialMeanSquare q hq1 S
+          polyMeanSquare q hq1 S
             (fun n =>
               a n *
                 @ramanujanSum r.val n ⟨Nat.ne_of_gt ((Finset.mem_filter.mp r.property).2.1)⟩) := by
   classical
   let R := (Finset.range (Z / q + 1)).filter (fun r : ℕ => 0 < r ∧ Squarefree r ∧ Nat.Coprime r q)
-  have hrecip := squarefree_coprime_reciprocal_totient_sum_ge_log_ratio_div_two Z q hq hZ
-  have hMnonneg : 0 ≤ primitiveCharacterPolynomialMeanSquare q hq1 S a :=
-    primitiveCharacterPolynomialMeanSquare_nonneg hq1 S a
+  have hrecip := log_ratio_le_squarefree_coprime_inv_totient Z q hq hZ
+  have hMnonneg : 0 ≤ polyMeanSquare q hq1 S a := polyMeanSquare_nonneg hq1 S a
   have hsumAttach :
     (∑ r ∈ R.attach, 1 / (Nat.totient r.val : ℝ)) = ∑ r ∈ R, 1 / (Nat.totient r : ℝ) :=
     Finset.sum_attach R (fun r => 1 / (Nat.totient r : ℝ))
@@ -6753,16 +6544,16 @@ theorem primitiveCharacterPolynomialMeanSquare_preSifted_weighted_lower (q Z : �
   have hweighted :
     (∑ r ∈ R.attach,
         (q : ℝ) / (Nat.totient (q * r.val) : ℝ) *
-          primitiveCharacterPolynomialMeanSquare q hq1 S
+          polyMeanSquare q hq1 S
             (fun n =>
               a n * @ramanujanSum r.val n ⟨Nat.ne_of_gt ((Finset.mem_filter.mp r.property).2.1)⟩)) =
       ((q : ℝ) / (Nat.totient q : ℝ) * ∑ r ∈ R.attach, 1 / (Nat.totient r.val : ℝ)) *
-        primitiveCharacterPolynomialMeanSquare q hq1 S a := by
+        polyMeanSquare q hq1 S a := by
     calc
       _ =
           ∑ r ∈ R.attach,
             ((q : ℝ) / (Nat.totient q : ℝ)) * (1 / (Nat.totient r.val : ℝ)) *
-              primitiveCharacterPolynomialMeanSquare q hq1 S a :=
+              polyMeanSquare q hq1 S a :=
         by
         apply Finset.sum_congr rfl
         intro r hrR
@@ -6775,8 +6566,8 @@ theorem primitiveCharacterPolynomialMeanSquare_preSifted_weighted_lower (q Z : �
         have hrZdiv : r.val ≤ Z / q := Nat.le_of_lt_succ (Finset.mem_range.mp hrprop.1)
         have hrZ : r.val ≤ Z := le_trans hrZdiv (Nat.div_le_self Z q)
         have hrMean :=
-          @primitiveCharacterPolynomialMeanSquare_eq_of_squarefree_ramanujan q r.val hrNe hq1 S a
-            hrpos hrsq (fun n hn => Nat.coprime_of_prime_factors_gt hrpos hrZ (hprime n hn))
+          @charEnergy_ramanujan q r.val hrNe hq1 S a hrpos hrsq
+            (fun n hn => coprime_of_factors_gt hrpos hrZ (hprime n hn))
         have hphiQ : 0 < Nat.totient q := Nat.totient_pos.mpr hq
         have hphiR : 0 < Nat.totient r.val := Nat.totient_pos.mpr hrpos
         rw [hrMean]
@@ -6788,19 +6579,18 @@ theorem primitiveCharacterPolynomialMeanSquare_preSifted_weighted_lower (q Z : �
         calc
           (∑ r ∈ R.attach,
                 ((q : ℝ) / (Nat.totient q : ℝ)) * (1 / (Nat.totient r.val : ℝ)) *
-                  primitiveCharacterPolynomialMeanSquare q hq1 S a) =
+                  polyMeanSquare q hq1 S a) =
               (∑ r ∈ R.attach, ((q : ℝ) / (Nat.totient q : ℝ)) * (1 / (Nat.totient r.val : ℝ))) *
-                primitiveCharacterPolynomialMeanSquare q hq1 S a :=
+                polyMeanSquare q hq1 S a :=
             (Finset.sum_mul R.attach
                 (fun r => ((q : ℝ) / (Nat.totient q : ℝ)) * (1 / (Nat.totient r.val : ℝ)))
-                (primitiveCharacterPolynomialMeanSquare q hq1 S a)).symm
+                (polyMeanSquare q hq1 S a)).symm
           _ = _ := by rw [Finset.mul_sum]
   calc
-    _ = (Real.log ((Z : ℝ) / (q : ℝ)) / 2) * primitiveCharacterPolynomialMeanSquare q hq1 S a := by
-      ring
+    _ = (Real.log ((Z : ℝ) / (q : ℝ)) / 2) * polyMeanSquare q hq1 S a := by ring
     _ ≤
         ((q : ℝ) / (Nat.totient q : ℝ) * ∑ r ∈ R.attach, 1 / (Nat.totient r.val : ℝ)) *
-          primitiveCharacterPolynomialMeanSquare q hq1 S a :=
+          polyMeanSquare q hq1 S a :=
       mul_le_mul_of_nonneg_right hrecipAttach hMnonneg
     _ = _ := hweighted.symm
 
@@ -6816,15 +6606,13 @@ fixed-modulus family estimate.
 
 Role: gives the direct input required by the standard additive large-sieve inequality.
 -/
-theorem primitiveCharacterFamilyMeanSquare_unweighted_additive_le (Q : Finset ℕ)
-    (hQ : ∀ q ∈ Q, 1 < q) (S : Finset ℕ) (a : ℕ → ℂ) :
-    (∑ q ∈ Q.attach, primitiveCharacterPolynomialMeanSquare q.val (hQ q.val q.property) S a) ≤
-      ∑ q ∈ Q.attach, reducedAdditivePolynomialMeanSquare q.val (hQ q.val q.property) S a := by
+theorem charFamily_le_add (Q : Finset ℕ) (hQ : ∀ q ∈ Q, 1 < q) (S : Finset ℕ) (a : ℕ → ℂ) :
+    (∑ q ∈ Q.attach, polyMeanSquare q.val (hQ q.val q.property) S a) ≤
+      ∑ q ∈ Q.attach, reducedPolyEnergy q.val (hQ q.val q.property) S a := by
   calc
     _ ≤
         ∑ q ∈ Q.attach,
-          (q.val : ℝ) / (Nat.totient q.val : ℝ) *
-            primitiveCharacterPolynomialMeanSquare q.val (hQ q.val q.property) S a :=
+          (q.val : ℝ) / (Nat.totient q.val : ℝ) * polyMeanSquare q.val (hQ q.val q.property) S a :=
       by
       apply Finset.sum_le_sum
       intro q hqQ
@@ -6835,10 +6623,9 @@ theorem primitiveCharacterFamilyMeanSquare_unweighted_additive_le (Q : Finset �
         rw [le_div_iff₀ hφ]
         simpa only [one_mul] using
           (show (Nat.totient q.val : ℝ) ≤ (q.val : ℝ) by exact_mod_cast (Nat.totient_le q.val))
-      simpa only [one_mul] using
-        (mul_le_mul_of_nonneg_right hratio (primitiveCharacterPolynomialMeanSquare_nonneg hq S a))
-    _ ≤ ∑ q ∈ Q.attach, reducedAdditivePolynomialMeanSquare q.val (hQ q.val q.property) S a :=
-      primitiveCharacterFamilyMeanSquare_scaled_additive_le Q hQ S a
+      simpa only [one_mul] using (mul_le_mul_of_nonneg_right hratio (polyMeanSquare_nonneg hq S a))
+    _ ≤ ∑ q ∈ Q.attach, reducedPolyEnergy q.val (hQ q.val q.property) S a :=
+      charFamily_scaled_le Q hQ S a
 
 /--
 Inputs: a finite set of moduli greater than one, a finite set of polynomial indices, and complex
@@ -6847,26 +6634,22 @@ coefficients.
 Claim: the sum of the modulus-weighted primitive-character mean squares is bounded by the sum of
 the totient-weighted additive Fourier mean squares over reduced residues.
 
-Proof: apply `primitive_character_mean_square_additive_le` separately at each modulus in the
+Proof: apply `char_energy_le_add` separately at each modulus in the
 attached finite set.
 
 Role: makes the remaining analytic task explicit: bound the combined reduced additive sums by the
 classical additive large sieve.
 -/
-theorem primitiveCharacterFamilyMeanSquare_additive_le (Q : Finset ℕ) (hQ : ∀ q ∈ Q, 1 < q)
-    (S : Finset ℕ) (a : ℕ → ℂ) :
-    (∑ q ∈ Q.attach,
-        (q.val : ℝ) * primitiveCharacterPolynomialMeanSquare q.val (hQ q.val q.property) S a) ≤
+theorem charFamily_weight_le (Q : Finset ℕ) (hQ : ∀ q ∈ Q, 1 < q) (S : Finset ℕ) (a : ℕ → ℂ) :
+    (∑ q ∈ Q.attach, (q.val : ℝ) * polyMeanSquare q.val (hQ q.val q.property) S a) ≤
       ∑ q ∈ Q.attach,
-        (Nat.totient q.val : ℝ) *
-          reducedAdditivePolynomialMeanSquare q.val (hQ q.val q.property) S a := by
+        (Nat.totient q.val : ℝ) * reducedPolyEnergy q.val (hQ q.val q.property) S a := by
   classical
   apply Finset.sum_le_sum
   intro q hqQ
   have hq : 1 < q.val := hQ q.val q.property
   have hnz : NeZero q.val := ⟨Nat.ne_of_gt (lt_trans Nat.zero_lt_one hq)⟩
-  simpa only [primitiveCharacterPolynomialMeanSquare, reducedAdditivePolynomialMeanSquare] using
-    (@primitive_character_mean_square_additive_le q.val hnz hq S a)
+  simpa only [polyMeanSquare, reducedPolyEnergy] using (@char_energy_le_add q.val hnz hq S a)
 
 /--
 Inputs: a finite family of moduli greater than one, a Ramanujan-sum modulus, a finite polynomial
@@ -6876,23 +6659,21 @@ Claim: the family sum of modulus-weighted primitive-character mean squares with 
 `a n * ramanujanSum r n` is bounded by the corresponding totient-weighted reduced additive
 Fourier sums.
 
-Proof: apply `primitiveCharacterFamilyMeanSquare_additive_le` to the Ramanujan-weighted
+Proof: apply `charFamily_weight_le` to the Ramanujan-weighted
 coefficient function.
 
 Role: gives the fixed-Ramanujan-weight family estimate needed before summing the coprime modulus
 pairs in Selberg's Theorem 7A.
 -/
-theorem primitiveCharacterRamanujanWeightedFamilyMeanSquare_additive_le (Q : Finset ℕ)
-    (hQ : ∀ q ∈ Q, 1 < q) (r : ℕ) [NeZero r] (S : Finset ℕ) (a : ℕ → ℂ) :
+theorem ramanujanWeighted_le (Q : Finset ℕ) (hQ : ∀ q ∈ Q, 1 < q) (r : ℕ) [NeZero r] (S : Finset ℕ)
+    (a : ℕ → ℂ) :
     (∑ q ∈ Q.attach,
         (q.val : ℝ) *
-          primitiveCharacterPolynomialMeanSquare q.val (hQ q.val q.property) S
-            (fun n => a n * ramanujanSum r n)) ≤
+          polyMeanSquare q.val (hQ q.val q.property) S (fun n => a n * ramanujanSum r n)) ≤
       ∑ q ∈ Q.attach,
         (Nat.totient q.val : ℝ) *
-          reducedAdditivePolynomialMeanSquare q.val (hQ q.val q.property) S
-            (fun n => a n * ramanujanSum r n) := by
-  exact primitiveCharacterFamilyMeanSquare_additive_le Q hQ S (fun n => a n * ramanujanSum r n)
+          reducedPolyEnergy q.val (hQ q.val q.property) S (fun n => a n * ramanujanSum r n) := by
+  exact charFamily_weight_le Q hQ S (fun n => a n * ramanujanSum r n)
 
 /--
 Inputs: a positive modulus, a finite set of natural-number indices, and complex coefficients.
@@ -6907,7 +6688,7 @@ and apply the fixed-modulus character Parseval identity.
 Role: provides an exact mean-square formula that can be combined with estimates for the residue
 class sums when building a cross-modulus large sieve bound.
 -/
-theorem dirichletCharacter_polynomial_mean_square {q : ℕ} [NeZero q] (S : Finset ℕ) (a : ℕ → ℂ) :
+theorem charPoly_parseval {q : ℕ} [NeZero q] (S : Finset ℕ) (a : ℕ → ℂ) :
     (∑ χ : DirichletCharacter ℂ q,
         star (∑ n ∈ S, a n * χ (n : ZMod q)) * (∑ n ∈ S, a n * χ (n : ZMod q))) =
       (Nat.totient q : ℂ) *
@@ -6956,7 +6737,7 @@ theorem dirichletCharacter_polynomial_mean_square {q : ℕ} [NeZero q] (S : Fins
       apply Finset.sum_congr rfl
       intro χ hχ
       rw [htrans χ]
-    _ = (Nat.totient q : ℂ) * ∑ x ∈ U, star (f x) * f x := dirichletCharacter_parseval U hS f
+    _ = (Nat.totient q : ℂ) * ∑ x ∈ U, star (f x) * f x := character_parseval U hS f
 
 /-
 Inputs: a modulus `q ≤ Q` greater than one, and a polynomial supported on a finite set.
@@ -6970,12 +6751,10 @@ frequency in the common denominator-bounded set, and use nonnegativity of every 
 Role: provides the finite-family interface needed to combine the fixed-modulus character estimate
 with the cross-modulus additive large sieve.
 -/
-theorem reducedAdditivePolynomialMeanSquare_le_rationalSet {Q q : ℕ} [NeZero q] (hq : 1 < q)
-    (hqQ : q ≤ Q) (S : Finset ℕ) (a : ℕ → ℂ) :
-    reducedAdditivePolynomialMeanSquare q hq S a ≤
-      rationalAdditivePolynomialMeanSquare (reducedUnitFrequencyRationalSet Q) S a := by
-  rw [reducedAdditivePolynomialMeanSquare_eq_rational hq S a]
-  unfold rationalAdditivePolynomialMeanSquare
+theorem reducedEnergy_rat_le {Q q : ℕ} [NeZero q] (hq : 1 < q) (hqQ : q ≤ Q) (S : Finset ℕ)
+    (a : ℕ → ℂ) : reducedPolyEnergy q hq S a ≤ rationalPolyEnergy (reducedRationalSet Q) S a := by
+  rw [reducedEnergy_eq_rat hq S a]
+  unfold rationalPolyEnergy
   apply Finset.sum_le_sum_of_subset_of_nonneg
   · intro α hα
     rcases Finset.mem_image.mp hα with ⟨x, hx, rfl⟩
@@ -6986,7 +6765,7 @@ theorem reducedAdditivePolynomialMeanSquare_le_rationalSet {Q q : ℕ} [NeZero q
       rw [ZMod.natCast_zmod_val]
       exact hxunit
     have hcop : x.val.Coprime q := (ZMod.isUnit_iff_coprime x.val q).mp hcast
-    let f : ReducedUnitFrequencyIndex Q :=
+    let f : ReducedFreqIndex Q :=
       ⟨⟨⟨q, by omega⟩, by simpa using hq⟩, ⟨⟨x.val, ZMod.val_lt x⟩, hcop⟩⟩
     apply Finset.mem_image.mpr
     refine ⟨f, Finset.mem_univ _, ?_⟩
@@ -7006,36 +6785,27 @@ the common denominator-bounded set, then use the finite additive large-sieve bou
 
 Role: supplies an explicit cross-modulus mean-square estimate for later zero detection.
 -/
-theorem primitiveCharacterFamilyMeanSquare_le_additive_large_sieve (Q : Finset ℕ)
-    (hQ : ∀ q ∈ Q, 1 < q) (Qmax : ℕ) (hQpos : 0 < Qmax) (hQmax : ∀ q ∈ Q, q ≤ Qmax) (N : ℕ)
-    (S : Finset ℕ) (hSN : S ⊆ Finset.range N) (a : ℕ → ℂ) :
-    (∑ q ∈ Q.attach, primitiveCharacterPolynomialMeanSquare q.val (hQ q.val q.property) S a) ≤
+theorem charFamily_sieve_card (Q : Finset ℕ) (hQ : ∀ q ∈ Q, 1 < q) (Qmax : ℕ) (hQpos : 0 < Qmax)
+    (hQmax : ∀ q ∈ Q, q ≤ Qmax) (N : ℕ) (S : Finset ℕ) (hSN : S ⊆ Finset.range N) (a : ℕ → ℂ) :
+    (∑ q ∈ Q.attach, polyMeanSquare q.val (hQ q.val q.property) S a) ≤
       (Q.card : ℝ) * (2 * (N : ℝ) + 3 * ((Qmax * Qmax : ℕ) : ℝ)) * ∑ n ∈ S, ‖a n‖ ^ 2 := by
-  have hcommon := primitiveCharacterFamilyMeanSquare_unweighted_additive_le Q hQ S a
+  have hcommon := charFamily_le_add Q hQ S a
   have hstep :
-    (∑ q ∈ Q.attach, reducedAdditivePolynomialMeanSquare q.val (hQ q.val q.property) S a) ≤
-      (Q.card : ℝ) *
-        rationalAdditivePolynomialMeanSquare (reducedUnitFrequencyRationalSet Qmax) S a := by
+    (∑ q ∈ Q.attach, reducedPolyEnergy q.val (hQ q.val q.property) S a) ≤
+      (Q.card : ℝ) * rationalPolyEnergy (reducedRationalSet Qmax) S a := by
     calc
-      _ ≤
-          ∑ q ∈ Q.attach,
-            rationalAdditivePolynomialMeanSquare (reducedUnitFrequencyRationalSet Qmax) S a :=
-        by
+      _ ≤ ∑ q ∈ Q.attach, rationalPolyEnergy (reducedRationalSet Qmax) S a := by
         apply Finset.sum_le_sum
         intro q hq
         have hqbig : 1 < q.val := hQ q.val q.property
         exact
-          @reducedAdditivePolynomialMeanSquare_le_rationalSet Qmax q.val
-            ⟨Nat.ne_of_gt (lt_trans Nat.zero_lt_one hqbig)⟩ hqbig (hQmax q.val q.property) S a
+          @reducedEnergy_rat_le Qmax q.val ⟨Nat.ne_of_gt (lt_trans Nat.zero_lt_one hqbig)⟩ hqbig
+            (hQmax q.val q.property) S a
       _ = _ := by simp only [Finset.sum_const, Finset.card_attach, nsmul_eq_mul]
-  have hlarge := reducedUnitFrequencyRationalSet_mean_square_le_window_row_of_range hQpos N S hSN a
+  have hlarge := ratSet_energy_range hQpos N S hSN a
   calc
-    _ ≤ ∑ q ∈ Q.attach, reducedAdditivePolynomialMeanSquare q.val (hQ q.val q.property) S a :=
-      hcommon
-    _ ≤
-        (Q.card : ℝ) *
-          rationalAdditivePolynomialMeanSquare (reducedUnitFrequencyRationalSet Qmax) S a :=
-      hstep
+    _ ≤ ∑ q ∈ Q.attach, reducedPolyEnergy q.val (hQ q.val q.property) S a := hcommon
+    _ ≤ (Q.card : ℝ) * rationalPolyEnergy (reducedRationalSet Qmax) S a := hstep
     _ ≤ (Q.card : ℝ) * ((2 * (N : ℝ) + 3 * ((Qmax * Qmax : ℕ) : ℝ)) * ∑ n ∈ S, ‖a n‖ ^ 2) := by
       exact mul_le_mul_of_nonneg_left hlarge (by positivity)
     _ = _ := by ring
@@ -7055,21 +6825,19 @@ additive large-sieve estimate.
 
 Role: removes the extraneous modulus-count factor from the family mean-square bound.
 -/
-theorem primitiveCharacterFamilyMeanSquare_le_additive_large_sieve_without_modulus_factor
-    (Q : Finset ℕ) (hQ : ∀ q ∈ Q, 1 < q) (Qmax : ℕ) (hQpos : 0 < Qmax) (hQmax : ∀ q ∈ Q, q ≤ Qmax)
-    (N : ℕ) (S : Finset ℕ) (hSN : S ⊆ Finset.range N) (a : ℕ → ℂ) :
-    (∑ q ∈ Q.attach, primitiveCharacterPolynomialMeanSquare q.val (hQ q.val q.property) S a) ≤
+theorem charFamily_sieve (Q : Finset ℕ) (hQ : ∀ q ∈ Q, 1 < q) (Qmax : ℕ) (hQpos : 0 < Qmax)
+    (hQmax : ∀ q ∈ Q, q ≤ Qmax) (N : ℕ) (S : Finset ℕ) (hSN : S ⊆ Finset.range N) (a : ℕ → ℂ) :
+    (∑ q ∈ Q.attach, polyMeanSquare q.val (hQ q.val q.property) S a) ≤
       (2 * (N : ℝ) + 3 * ((Qmax * Qmax : ℕ) : ℝ)) * ∑ n ∈ S, ‖a n‖ ^ 2 := by
   classical
   let F : { q // q ∈ Q } → Finset ℚ := fun q => by
     letI : NeZero q.val := ⟨Nat.ne_of_gt (lt_trans Nat.zero_lt_one (hQ q.val q.property))⟩
-    exact (reducedUnitFrequencySet q.val).image (fun x => (x.val : ℚ) / q.val)
+    exact (reducedFrequencies q.val).image (fun x => (x.val : ℚ) / q.val)
   have hdisj : Set.PairwiseDisjoint (Q.attach : Set { q // q ∈ Q }) F := by
     intro q hq r hr hne
     letI : NeZero q.val := ⟨Nat.ne_of_gt (lt_trans Nat.zero_lt_one (hQ q.val q.property))⟩
     letI : NeZero r.val := ⟨Nat.ne_of_gt (lt_trans Nat.zero_lt_one (hQ r.val r.property))⟩
-    change
-      Disjoint ((reducedUnitFrequencySet q.val).image _) ((reducedUnitFrequencySet r.val).image _)
+    change Disjoint ((reducedFrequencies q.val).image _) ((reducedFrequencies r.val).image _)
     apply Finset.disjoint_left.mpr
     intro α hαq hαr
     rcases Finset.mem_image.mp hαq with ⟨x, hx, hαx⟩
@@ -7086,22 +6854,22 @@ theorem primitiveCharacterFamilyMeanSquare_le_additive_large_sieve_without_modul
     have hycop : Nat.Coprime y.val r.val := (ZMod.isUnit_iff_coprime y.val r.val).mp hycast
     have hfrac : (x.val : ℚ) / q.val = (y.val : ℚ) / r.val := hαx.trans hαy.symm
     have hden :=
-      (rational_reduced_fraction_unique (Nat.zero_lt_of_lt (hQ q.val q.property))
+      (reducedRat_unique (Nat.zero_lt_of_lt (hQ q.val q.property))
           (Nat.zero_lt_of_lt (hQ r.val r.property)) hxcop hycop hfrac).1
     exact hne (Subtype.ext hden)
-  have hmean := primitiveCharacterFamilyMeanSquare_unweighted_additive_le Q hQ S a
+  have hmean := charFamily_le_add Q hQ S a
   have hEq :
-    (∑ q ∈ Q.attach, reducedAdditivePolynomialMeanSquare q.val (hQ q.val q.property) S a) =
-      ∑ q ∈ Q.attach, rationalAdditivePolynomialMeanSquare (F q) S a := by
+    (∑ q ∈ Q.attach, reducedPolyEnergy q.val (hQ q.val q.property) S a) =
+      ∑ q ∈ Q.attach, rationalPolyEnergy (F q) S a := by
     apply Finset.sum_congr rfl
     intro q hq
     letI : NeZero q.val := ⟨Nat.ne_of_gt (lt_trans Nat.zero_lt_one (hQ q.val q.property))⟩
-    exact reducedAdditivePolynomialMeanSquare_eq_rational (hQ q.val q.property) S a
-  have hsubset : Q.attach.biUnion F ⊆ reducedUnitFrequencyRationalSet Qmax := by
+    exact reducedEnergy_eq_rat (hQ q.val q.property) S a
+  have hsubset : Q.attach.biUnion F ⊆ reducedRationalSet Qmax := by
     intro α hα
     rcases Finset.mem_biUnion.mp hα with ⟨q, hq, hα⟩
     letI : NeZero q.val := ⟨Nat.ne_of_gt (lt_trans Nat.zero_lt_one (hQ q.val q.property))⟩
-    change α ∈ (reducedUnitFrequencySet q.val).image _ at hα
+    change α ∈ (reducedFrequencies q.val).image _ at hα
     rcases Finset.mem_image.mp hα with ⟨x, hx, rfl⟩
     have hxunit : IsUnit x := (Finset.mem_filter.mp hx).2
     have hxcast : IsUnit ((x.val : ℕ) : ZMod q.val) := by
@@ -7109,25 +6877,25 @@ theorem primitiveCharacterFamilyMeanSquare_le_additive_large_sieve_without_modul
       exact hxunit
     have hcop : Nat.Coprime x.val q.val := (ZMod.isUnit_iff_coprime x.val q.val).mp hxcast
     have hqmax := hQmax q.val q.property
-    let f : ReducedUnitFrequencyIndex Qmax :=
+    let f : ReducedFreqIndex Qmax :=
       ⟨⟨⟨q.val, Nat.lt_succ_of_le hqmax⟩, by simpa using hQ q.val q.property⟩,
         ⟨⟨x.val, ZMod.val_lt x⟩, hcop⟩⟩
     apply Finset.mem_image.mpr
     refine ⟨f, Finset.mem_univ _, ?_⟩
-    dsimp [reducedUnitFrequencyRational, f]
+    dsimp [reducedFreqRat, f]
   calc
-    _ ≤ ∑ q ∈ Q.attach, reducedAdditivePolynomialMeanSquare q.val (hQ q.val q.property) S a := hmean
-    _ = rationalAdditivePolynomialMeanSquare (Q.attach.biUnion F) S a := by
+    _ ≤ ∑ q ∈ Q.attach, reducedPolyEnergy q.val (hQ q.val q.property) S a := hmean
+    _ = rationalPolyEnergy (Q.attach.biUnion F) S a := by
       rw [hEq]
-      unfold rationalAdditivePolynomialMeanSquare
+      unfold rationalPolyEnergy
       rw [Finset.sum_biUnion hdisj]
-    _ ≤ rationalAdditivePolynomialMeanSquare (reducedUnitFrequencyRationalSet Qmax) S a := by
-      unfold rationalAdditivePolynomialMeanSquare
+    _ ≤ rationalPolyEnergy (reducedRationalSet Qmax) S a := by
+      unfold rationalPolyEnergy
       apply Finset.sum_le_sum_of_subset_of_nonneg hsubset
       intro α hα hnot
       exact Complex.normSq_nonneg _
     _ ≤ (2 * (N : ℝ) + 3 * ((Qmax * Qmax : ℕ) : ℝ)) * ∑ n ∈ S, ‖a n‖ ^ 2 :=
-      reducedUnitFrequencyRationalSet_mean_square_le_window_row_of_range hQpos N S hSN a
+      ratSet_energy_range hQpos N S hSN a
 
 set_option linter.style.haveILetI true
 
@@ -7142,15 +6910,13 @@ Proof: specialize the family estimate without a modulus-count factor to `Finset.
 
 Role: supplies the all-moduli form of the stronger cross-modulus large-sieve bound.
 -/
-theorem primitiveCharacterFamilyMeanSquare_le_additive_large_sieve_Ioc (Qmax : ℕ) (hQmax : 0 < Qmax)
-    (N : ℕ) (S : Finset ℕ) (hSN : S ⊆ Finset.range N) (a : ℕ → ℂ) :
+theorem charFamily_sieve_Ioc (Qmax : ℕ) (hQmax : 0 < Qmax) (N : ℕ) (S : Finset ℕ)
+    (hSN : S ⊆ Finset.range N) (a : ℕ → ℂ) :
     (∑ q ∈ (Finset.Ioc 1 Qmax).attach,
-        primitiveCharacterPolynomialMeanSquare q.val
-          (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) S a) ≤
+        polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) S a) ≤
       (2 * (N : ℝ) + 3 * ((Qmax * Qmax : ℕ) : ℝ)) * ∑ n ∈ S, ‖a n‖ ^ 2 := by
   exact
-    primitiveCharacterFamilyMeanSquare_le_additive_large_sieve_without_modulus_factor
-      (Finset.Ioc 1 Qmax)
+    charFamily_sieve (Finset.Ioc 1 Qmax)
       (by
         intro q hq
         exact (Finset.mem_Ioc.mp hq).1)
@@ -7174,11 +6940,10 @@ cross-modulus additive large-sieve estimate.
 Role: converts a mean-square estimate into a count of characters with large polynomial values,
 the counting form needed by a zero-detection argument.
 -/
-theorem primitiveCharacterLargeValueCount_mul_le_additive_large_sieve_Ioc (Qmax : ℕ)
-    (hQmax : 0 < Qmax) (N : ℕ) (S : Finset ℕ) (hSN : S ⊆ Finset.range N) (a : ℕ → ℂ)
-    (threshold : ℝ) :
+theorem charCount_sieve_Ioc (Qmax : ℕ) (hQmax : 0 < Qmax) (N : ℕ) (S : Finset ℕ)
+    (hSN : S ⊆ Finset.range N) (a : ℕ → ℂ) (threshold : ℝ) :
     (∑ q ∈ (Finset.Ioc 1 Qmax).attach,
-          (((primitiveDirichletCharacterSet q.val).filter
+          (((primitiveCharacters q.val).filter
                 (fun χ => threshold ≤ Complex.normSq (∑ n ∈ S, a n * χ (n : ZMod q.val)))).card :
             ℝ)) *
         threshold ≤
@@ -7186,17 +6951,16 @@ theorem primitiveCharacterLargeValueCount_mul_le_additive_large_sieve_Ioc (Qmax 
   let U : Finset ℕ := Finset.Ioc 1 Qmax
   have hmarkov :
     (∑ q ∈ U.attach,
-          (((primitiveDirichletCharacterSet q.val).filter
+          (((primitiveCharacters q.val).filter
                 (fun χ => threshold ≤ Complex.normSq (∑ n ∈ S, a n * χ (n : ZMod q.val)))).card :
             ℝ)) *
         threshold ≤
       ∑ q ∈ U.attach,
-        primitiveCharacterPolynomialMeanSquare q.val
-          (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) S a := by
+        polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) S a := by
     rw [Finset.sum_mul]
     apply Finset.sum_le_sum
     intro q hq
-    let P := primitiveDirichletCharacterSet q.val
+    let P := primitiveCharacters q.val
     let V := P.filter (fun χ => threshold ≤ Complex.normSq (∑ n ∈ S, a n * χ (n : ZMod q.val)))
     have hconstant : (V.card : ℝ) * threshold = ∑ _χ ∈ V, threshold := by
       simp only [Finset.sum_const, nsmul_eq_mul]
@@ -7216,14 +6980,11 @@ theorem primitiveCharacterLargeValueCount_mul_le_additive_large_sieve_Ioc (Qmax 
       _ = ∑ _χ ∈ V, threshold := hconstant
       _ ≤ ∑ χ ∈ V, Complex.normSq (∑ n ∈ S, a n * χ (n : ZMod q.val)) := hselected
       _ ≤ ∑ χ ∈ P, Complex.normSq (∑ n ∈ S, a n * χ (n : ZMod q.val)) := hsubset
-      _ =
-          primitiveCharacterPolynomialMeanSquare q.val
-            (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) S a :=
-        by rfl
+      _ = polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) S a := by rfl
   calc
     _ =
         (∑ q ∈ U.attach,
-            (((primitiveDirichletCharacterSet q.val).filter
+            (((primitiveCharacters q.val).filter
                   (fun χ => threshold ≤ Complex.normSq (∑ n ∈ S, a n * χ (n : ZMod q.val)))).card :
               ℝ)) *
           threshold :=
@@ -7231,7 +6992,7 @@ theorem primitiveCharacterLargeValueCount_mul_le_additive_large_sieve_Ioc (Qmax 
     _ ≤ _ := hmarkov
     _ ≤ _ := by
       dsimp only [U]
-      exact primitiveCharacterFamilyMeanSquare_le_additive_large_sieve_Ioc Qmax hQmax N S hSN a
+      exact charFamily_sieve_Ioc Qmax hQmax N S hSN a
 
 /--
 Inputs: `Qmax ≥ 2`, a dyadic interval `[N, 2N)`, and arbitrary complex coefficients.
@@ -7244,19 +7005,16 @@ length and modulus factors using the two scale hypotheses.
 
 Role: gives the interval estimate used to average the differentiated Euler-series tail.
 -/
-theorem primitiveCharacterFamilyMeanSquare_le_dyadic_large_sieve (Qmax N : ℕ) (hQ : 2 ≤ Qmax)
-    (hN : Qmax * Qmax ≤ N) (a : ℕ → ℂ) :
+theorem charFamily_dyadic (Qmax N : ℕ) (hQ : 2 ≤ Qmax) (hN : Qmax * Qmax ≤ N) (a : ℕ → ℂ) :
     (∑ q ∈ (Finset.Ioc 1 Qmax).attach,
-        primitiveCharacterPolynomialMeanSquare q.val
-          (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) (Finset.Ico N (2 * N)) a) ≤
+        polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1)
+          (Finset.Ico N (2 * N)) a) ≤
       (21 / 2 : ℝ) * (Qmax : ℝ) * (N : ℝ) * ∑ n ∈ Finset.Ico N (2 * N), ‖a n‖ ^ 2 := by
   have hsupport : Finset.Ico N (2 * N) ⊆ Finset.range (2 * N) := by
     intro n hn
     exact Finset.mem_range.mpr (Finset.mem_Ico.mp hn).2
   have hQpos : 0 < Qmax := lt_of_lt_of_le (by norm_num only) hQ
-  have hbase :=
-    primitiveCharacterFamilyMeanSquare_le_additive_large_sieve_Ioc Qmax hQpos (2 * N)
-      (Finset.Ico N (2 * N)) hsupport a
+  have hbase := charFamily_sieve_Ioc Qmax hQpos (2 * N) (Finset.Ico N (2 * N)) hsupport a
   have hQreal : (2 : ℝ) ≤ (Qmax : ℝ) := by exact_mod_cast hQ
   have hQreal1 : (1 : ℝ) ≤ (Qmax : ℝ) := le_trans (by norm_num only) hQreal
   have hN' : (Qmax : ℝ) * (Qmax : ℝ) ≤ (N : ℝ) := by exact_mod_cast hN
@@ -7297,7 +7055,7 @@ theorem primitiveCharacterFamilyMeanSquare_le_dyadic_large_sieve (Qmax N : ℕ) 
       mul_le_mul_of_nonneg_right hfactor hsum
 
 /--
-Inputs: the hypotheses of `primitiveCharacterFamilyMeanSquare_le_dyadic_large_sieve`, a coefficient
+Inputs: the hypotheses of `charFamily_dyadic`, a coefficient
 sequence, and a real threshold.
 
 Claim: the number of primitive characters whose dyadic polynomial has squared norm at least the
@@ -7309,10 +7067,10 @@ using `Qmax² ≤ N`.
 
 Role: bounds the number of characters with a large derivative-series block at any fixed height.
 -/
-theorem primitiveCharacterLargeValueCount_mul_le_dyadic_large_sieve (Qmax N : ℕ) (hQ : 2 ≤ Qmax)
-    (hN : Qmax * Qmax ≤ N) (a : ℕ → ℂ) (threshold : ℝ) :
+theorem charCount_dyadic (Qmax N : ℕ) (hQ : 2 ≤ Qmax) (hN : Qmax * Qmax ≤ N) (a : ℕ → ℂ)
+    (threshold : ℝ) :
     (∑ q ∈ (Finset.Ioc 1 Qmax).attach,
-          (((primitiveDirichletCharacterSet q.val).filter
+          (((primitiveCharacters q.val).filter
                 (fun χ =>
                   threshold ≤
                     Complex.normSq (∑ n ∈ Finset.Ico N (2 * N), a n * χ (n : ZMod q.val)))).card :
@@ -7323,8 +7081,8 @@ theorem primitiveCharacterLargeValueCount_mul_le_dyadic_large_sieve (Qmax N : �
     intro n hn
     exact Finset.mem_range.mpr (Finset.mem_Ico.mp hn).2
   have hbase :=
-    primitiveCharacterLargeValueCount_mul_le_additive_large_sieve_Ioc Qmax
-      (Nat.lt_of_lt_of_le (by norm_num only) hQ) (2 * N) (Finset.Ico N (2 * N)) hsupport a threshold
+    charCount_sieve_Ioc Qmax (Nat.lt_of_lt_of_le (by norm_num only) hQ) (2 * N)
+      (Finset.Ico N (2 * N)) hsupport a threshold
   have hQreal : (2 : ℝ) ≤ (Qmax : ℝ) := by exact_mod_cast hQ
   have hQreal1 : (1 : ℝ) ≤ (Qmax : ℝ) := le_trans (by norm_num only) hQreal
   have hN' : (Qmax : ℝ) * (Qmax : ℝ) ≤ (N : ℝ) := by exact_mod_cast hN

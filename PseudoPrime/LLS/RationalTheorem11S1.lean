@@ -21,8 +21,8 @@ namespace PseudoPrime.LLS
 with non-one value through (log q+(1791/250)log log q+499/250)².
 Compare the nonnegative rational radius roots and transfer the existing witness.
 This realizes the rational triple (1,1791/250,499/250) at starting value 3000. -/
-theorem exists_prime_character_ne_one_le_rationalProfile3000 {q : ℕ} (χ : DirichletCharacter ℂ q)
-    (hne : χ ≠ 1) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hq : 3000 ≤ q) :
+theorem exists_prime_neOne_rational3000_GRH {q : ℕ} (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hq : 3000 ≤ q) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬p ∣ q ∧

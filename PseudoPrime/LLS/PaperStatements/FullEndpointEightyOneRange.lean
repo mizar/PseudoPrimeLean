@@ -97,7 +97,7 @@ theorem fullEndpoint_eightyOne_polynomial_pos {y z : ℝ} (hya : (81 / 10 : ℝ)
 /-- For every real 9<=L<=26, the endpoint polynomial at y=(9/10)L,z=log y
 is positive. Supply the radius interval and logarithmic chord. This certifies a continuous
 coefficient-81/100 witness interval without enumerating input moduli. -/
-theorem fullEndpoint_polynomial_pos_eightyOne_log_interval {L : ℝ} (hL9 : 9 ≤ L) (hL26 : L ≤ 26) :
+theorem fullPoly_pos_nineTenths_interval {L : ℝ} (hL9 : 9 ≤ L) (hL26 : L ≤ 26) :
     0 <
       fullEndpointPolynomial L (2096 / 1831) ((9 / 10 : ℝ) * L) (Real.log ((9 / 10 : ℝ) * L)) := by
   let y := (9 / 10 : ℝ) * L
@@ -135,7 +135,7 @@ theorem fullEndpoint_polynomial_pos_at_eight {L : ℝ} (hL9 : L ≤ 9) :
 endpoint polynomial at its original level, a non-one prime lies through the squared radius.
 Use conductor monotonicity and the primitive witness, then transfer value one back by contradiction.
 Nonunit primes remain valid; no primitivity premise is required from callers. -/
-theorem exists_prime_ne_one_of_fullEndpointPolynomial_original {q : ℕ} [NeZero q]
+theorem exists_prime_ne_one_of_fullEndpointPoly_original {q : ℕ} [NeZero q]
     (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y : ℝ} (hy : 8 ≤ y)
     (hpoly : 0 < fullEndpointPolynomial (Real.log q) (2096 / 1831) y (Real.log y)) :
@@ -168,9 +168,9 @@ theorem exists_prime_ne_one_le_eightyOne_log_sq {q : ℕ} [NeZero q] (χ : Diric
     (hL9 : 9 ≤ Real.log q) (hL26 : Real.log q ≤ 26) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ (81 / 100 : ℝ) * (Real.log q) ^ 2 ∧ χ p ≠ 1 := by
   obtain ⟨p, hp, hb, hv⟩ :=
-    exists_prime_ne_one_of_fullEndpointPolynomial_original χ hne hGRH
+    exists_prime_ne_one_of_fullEndpointPoly_original χ hne hGRH
       (by linarith only [hL9] : (8 : ℝ) ≤ (9 / 10 : ℝ) * Real.log q)
-      (fullEndpoint_polynomial_pos_eightyOne_log_interval hL9 hL26)
+      (fullPoly_pos_nineTenths_interval hL9 hL26)
   refine ⟨p, hp, ?_, hv⟩
   nlinarith only [hb]
 
@@ -182,8 +182,8 @@ theorem exists_prime_ne_one_le_sixty_one_of_log_le_nine {q : ℕ} [NeZero q]
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL9 : Real.log q ≤ 9) :
     ∃ p : ℕ, p.Prime ∧ p ≤ 61 ∧ χ p ≠ 1 := by
   obtain ⟨p, hp, hb, hv⟩ :=
-    exists_prime_ne_one_of_fullEndpointPolynomial_original χ hne hGRH
-      (by norm_num only : (8 : ℝ) ≤ 8) (fullEndpoint_polynomial_pos_at_eight hL9)
+    exists_prime_ne_one_of_fullEndpointPoly_original χ hne hGRH (by norm_num only : (8 : ℝ) ≤ 8)
+      (fullEndpoint_polynomial_pos_at_eight hL9)
   have hp64 : p ≤ 64 := by exact_mod_cast hb
   have hsmall : ∀ p ∈ Finset.range 65, p.Prime → p ≤ 61 := by decide +kernel
   exact ⟨p, hp, hsmall p (Finset.mem_range.mpr (Nat.lt_succ_of_le hp64)) hp, hv⟩

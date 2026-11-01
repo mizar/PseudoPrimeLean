@@ -22,9 +22,9 @@ strong test at most x. Choose a character trivial on passing residues and apply
 the primitive full-prime theorem. Acceptance would imply coprimality, allowing
 primitive values to be transferred back. Prime factors remain allowed witnesses.
 No arithmetic supports, prefix certificates or additional nonunit losses occur. -/
-theorem exists_prime_reject_of_full_endpoint_divisor_separation {N : ℕ} [NeZero N] (hn : 1 < N)
-    (ho : Odd N) (hc : ¬N.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {h x Y : ℝ} (hh : 0 < h) (hx : 1 < x) (hY : 64 ≤ Y) (hYx : Y ≤ x)
+theorem exists_rejectPowers_fullEndpointDivisor_GRH {N : ℕ} [NeZero N] (hn : 1 < N) (ho : Odd N)
+    (hc : ¬N.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {h x Y : ℝ}
+    (hh : 0 < h) (hx : 1 < x) (hY : 64 ≤ Y) (hYx : Y ≤ x)
     (hgap :
       ∀ d : ℕ,
         2 ≤ d → d ∣ N → LLS.PaperStatements.reciprocalGapFullEndpointSeparation h d x Y < 0) :
@@ -43,9 +43,8 @@ theorem exists_prime_reject_of_full_endpoint_divisor_separation {N : ℕ} [NeZer
     (Nat.two_le_iff _).mpr
       ⟨χ.conductor_ne_zero, fun he ↦ hχ (DirichletCharacter.eq_one_iff_conductor_eq_one.mpr he)⟩
   obtain ⟨p, hp, hpx, hv⟩ :=
-    LLS.PaperStatements.exists_prime_not_one_of_reciprocalGap_full_endpoint hh hq hGRH
-      χ.primitiveCharacter_isPrimitive hψ (fun hi ↦ hψ (inv_eq_one.mp hi)) hx hY hYx
-      (hgap χ.conductor hq χ.conductor_dvd_level)
+    LLS.PaperStatements.exists_prime_neOne_fullGap_GRH hh hq hGRH χ.primitiveCharacter_isPrimitive
+      hψ (fun hi ↦ hψ (inv_eq_one.mp hi)) hx hY hYx (hgap χ.conductor hq χ.conductor_dvd_level)
   refine ⟨p, hp, hpx, PrimeTest.not_strongMillerRabinPass_iff.mp ?_⟩
   intro ha
   have hcop := (ZMod.isUnit_iff_coprime p N).mp (PrimeTest.strongMillerRabinPass_isUnit hn ho ha)
@@ -65,7 +64,7 @@ theorem exists_prime_reject_of_full_endpoint_separation {N : ℕ} [NeZero N] (hn
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ x ∧ (p : ZMod N) ^ a ≠ 1 ∧ ∀ j : ℕ, j < s → (p : ZMod N) ^ (2 ^ j * a) ≠ -1 := by
-  apply exists_prime_reject_of_full_endpoint_divisor_separation hn ho hc hGRH hh hx hY hYx
+  apply exists_rejectPowers_fullEndpointDivisor_GRH hn ho hc hGRH hh hx hY hYx
   intro d hd hdN
   have hd0 : 0 < d := lt_of_lt_of_le (by norm_num only : (0 : ℕ) < 2) hd
   have hdle := Nat.le_of_dvd (NeZero.pos N) hdN

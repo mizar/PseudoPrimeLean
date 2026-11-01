@@ -19,7 +19,7 @@ the finite nonunit exponential sum is zero. Every retained positive noncoprime
 index would have a common prime divisor below the cutoff, a contradiction.
 No RH or positivity of the scale is needed. This removes finite modulus loss
 under universal passage of small Miller-Rabin prime bases. -/
-theorem commonFactorExponentialSum_eq_zero_of_prime_divisors_gt {q : ℕ} {X : ℝ}
+theorem commonExpSum_eq_zero_of_prime_divisors_gt {q : ℕ} {X : ℝ}
     (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊X⌋₊ < p) (x : ℝ) :
     commonFactorExponentialSum x X q = 0 := by
   apply Finset.sum_eq_zero

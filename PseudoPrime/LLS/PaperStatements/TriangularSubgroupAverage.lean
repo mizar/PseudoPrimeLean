@@ -21,9 +21,8 @@ namespace PseudoPrime.LLS.PaperStatements
 times the finite alpha-18 principal sum is bounded by the primitive conductor
 budgets, with the principal primitive series left exact. Signed aggregate
 positivity removes absolute level-change corrections before applying the analytic bounds. -/
-theorem triangular18_principal_sum_le_primitive_budgets_of_noSmallPrimes {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {x X : ℝ} (hx : 1 ≤ x)
+theorem triangular18_principal_le_primitive_noSmall_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x X : ℝ} (hx : 1 ≤ x)
     (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     letI := Classical.propDecidable;
     (H.index : ℝ) *
@@ -40,9 +39,7 @@ theorem triangular18_principal_sum_le_primitive_budgets_of_noSmallPrimes {q : �
             (4000000000000 * (Real.log χ.val.conductor + 284) * x ^ (-9 / 16 : ℝ) + 55000) := by
   classical
   let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
-  have hc :=
-    MellinKernel.principal_sum_le_primitive_average_of_noSmallPrimes K H (zero_lt_one.trans_le hx)
-      hsmall
+  have hc := MellinKernel.principal_sum_le_primitive_of_noSmall K H (zero_lt_one.trans_le hx) hsmall
   apply hc.trans
   apply Finset.sum_le_sum
   intro χ _
@@ -53,7 +50,7 @@ theorem triangular18_principal_sum_le_primitive_budgets_of_noSmallPrimes {q : �
     have hp := AnalyticNumberTheory.Arithmetic.primitiveCharacter_ne_one χ.val hn
     have hq := NumberTheory.three_le_conductor_of_ne_one χ.val hn
     have hb :=
-      triangular18_primitive_arithmetic_norm_le_explicit ((by norm_num only : 2 ≤ 3).trans hq) hGRH
+      triangular18_primitive_arithmetic_GRH ((by norm_num only : 2 ≤ 3).trans hq) hGRH
         (DirichletCharacter.primitiveCharacter_isPrimitive χ.val) hp (inv_ne_one.mpr hp) hx
     exact (Complex.re_le_norm _).trans hb
 
@@ -91,9 +88,8 @@ theorem triangular18_split_principal_budget_sum {q : ℕ} [NeZero q] (H : Subgro
 the index times the finite principal sum is at most the level-one series
 plus explicit nonprincipal conductor budgets. This is the alpha-18 finite
 comparison interface for subsequent conductor aggregation and numerical refinement. -/
-theorem triangular18_principal_sum_le_conductor_budgets_of_noSmallPrimes {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {x X : ℝ} (hx : 1 ≤ x)
+theorem triangular18_principal_le_conductor_noSmall_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x X : ℝ} (hx : 1 ≤ x)
     (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     letI := Classical.propDecidable;
     (H.index : ℝ) *
@@ -107,7 +103,7 @@ theorem triangular18_principal_sum_le_conductor_budgets_of_noSmallPrimes {q : �
           (36 * Real.log χ.val.conductor + 1350000000000000 +
             (4000000000000 * (Real.log χ.val.conductor + 284) * x ^ (-9 / 16 : ℝ) + 55000)) := by
   classical
-  have h := triangular18_principal_sum_le_primitive_budgets_of_noSmallPrimes H hGRH hx hsmall
+  have h := triangular18_principal_le_primitive_noSmall_GRH H hGRH hx hsmall
   rw [triangular18_split_principal_budget_sum] at h
   exact h
 

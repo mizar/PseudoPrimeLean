@@ -34,8 +34,7 @@ theorem exists_prime_strong_witness_le_clippedAffine {n : ℕ} [NeZero n] (hn : 
         (p : ℝ) ≤ (99 / 40 : ℝ) * LLS.clippedAffineRoot (Real.log n) ^ 2 →
         PrimeTest.StrongMillerRabinPass n (p : ZMod n) :=
     fun p hp hb ↦ Classical.byContradiction (fun hf ↦ h ⟨p, hp, hb, hf⟩)
-  obtain ⟨H, hH, hHpass⟩ :=
-    PrimeTest.exists_proper_subgroup_containing_strongMillerRabinPass hn hnOdd hnComposite
+  obtain ⟨H, hH, hHpass⟩ := PrimeTest.exists_proper_subgroup_strongMR hn hnOdd hnComposite
   have : H.Normal := H.normal_of_isMulCommutative
   have : Nontrivial ((ZMod n)ˣ ⧸ H) := QuotientGroup.nontrivial_iff.mpr hH
   obtain ⟨z, hz⟩ := exists_ne (1 : (ZMod n)ˣ ⧸ H)
@@ -71,7 +70,7 @@ theorem exists_prime_witness_le_clippedAffine_log_300 {n : ℕ} (hnOdd : Odd n)
 /-- Under the odd-composite GRH hypotheses with logarithm at least 300, the least
 prime rejecting base is at most (99/40)((500/821)log n+3)^2. Minimize over all prime
 rejecting bases and compare with the constructed witness. Leastness is unrestricted. -/
-theorem exists_least_prime_witness_le_clippedAffine_log_300 {n : ℕ} (hnOdd : Odd n)
+theorem exists_leastWitness_le_clippedAffine_log_300 {n : ℕ} (hnOdd : Odd n)
     (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : 300 ≤ Real.log n) :
     ∃ p : ℕ,
@@ -92,7 +91,7 @@ theorem exists_least_prime_witness_le_clippedAffine_log_300 {n : ℕ} (hnOdd : O
 within the clipped affine cutoff fails every required strong-MR power equality.
 Unfold rejection using the canonical two-adic decomposition of n-1. This exposes the
 actual modular-power certificate behind the prime witness bound. -/
-theorem exists_prime_rejecting_powers_le_clippedAffine_log_300 {n : ℕ} (hnOdd : Odd n)
+theorem exists_rejectPowers_clippedAffine_log300_GRH {n : ℕ} (hnOdd : Odd n)
     (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : 300 ≤ Real.log n) :
     let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)

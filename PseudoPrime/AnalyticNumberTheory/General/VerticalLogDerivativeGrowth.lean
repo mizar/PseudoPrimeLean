@@ -145,8 +145,8 @@ outer contour lines. Coefficient bounds and the arithmetic logarithmic
 derivative series at real part three first bound that reference line; transfer
 the bound to two and minus one. No independent outer-line growth premise
 or Riemann hypothesis is required. -/
-theorem exists_vertical_logDeriv_linear_bound_of_completion {F L : ℂ → ℂ} {ε : ℂ} {q d : ℕ}
-    (hq : 1 ≤ q) (k : ℤ) (κ : Fin d → ℂ) (hκ : ∀ j, -1 < (κ j).re)
+theorem exists_vertical_logDeriv_linear_bound {F L : ℂ → ℂ} {ε : ℂ} {q d : ℕ} (hq : 1 ≤ q) (k : ℤ)
+    (κ : Fin d → ℂ) (hκ : ∀ j, -1 < (κ j).re)
     (hreg :
       ∀ z,
         z ≠ 0 →

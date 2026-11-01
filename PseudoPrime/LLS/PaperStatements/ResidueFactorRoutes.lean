@@ -91,7 +91,7 @@ theorem leastPrime_of_smallResidueAnalyticCondition {q : ℕ} [NeZero q] (a : (Z
 Recover the queried modulus and its actual prime-count bound from the checked
 factorization, then apply the shared interval theorem.
 This connects generated factor data to the public finite-range proof. -/
-theorem exists_least_prime_in_residue_le_of_factor_route_lookup {primes : BinaryTree ℕ}
+theorem exists_least_residue_factorLookup_GRH {primes : BinaryTree ℕ}
     (hp : NumberTheory.primeTreeChecked primes) {routes : BinaryTree (ℕ × List ℕ)}
     (ht : NumberTheory.certificateTreeAllCheck (residueFactorRouteCheck primes) routes = true)
     {q : ℕ} [NeZero q] {e : ℕ × List ℕ}

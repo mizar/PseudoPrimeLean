@@ -51,8 +51,7 @@ theorem norm_gamma_oscillatingZeroSum_le_resolvent {m : ℕ} [NeZero m] (hm : 2 
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
           AnalyticNumberTheory.Gamma.gammaResolventMajorant ρ.im := by
   have hg :=
-    AnalyticNumberTheory.DirichletLFunction.summable_completed_gammaResolvent_terms hm hRH hp hne
-      hinv
+    AnalyticNumberTheory.DirichletLFunction.summable_gammaResolvent_mass_RH hm hRH hp hne hinv
   have hb := norm_gamma_oscillatingZeroTerm_le_resolvent hne hx
   have hs := hg.of_norm_bounded hb
   exact (norm_tsum_le_tsum_norm hs.norm).trans (hs.norm.tsum_le_tsum hb hg)
@@ -71,7 +70,7 @@ theorem gamma_primitive_sum_re_le_resolvent_sharp {q m : ℕ} [NeZero m] (hq : 2
             AnalyticNumberTheory.Gamma.gammaResolventMajorant ρ.im) +
         ((7 / 6 : ℝ) * Real.log q + 4) / Real.sqrt x +
         x ^ (-9 / 16 : ℝ) * ((3 / 2) * (Real.log m + 28) + 1) := by
-  have hr := re_gamma_primitive_remainder_le_variable_scale_sharp hq hm hmq hp hne hinv hGRH hx
+  have hr := gammaRemainder_re_le_variable_scale_sharp hq hm hmq hp hne hinv hGRH hx
   have hz :=
     norm_gamma_oscillatingZeroSum_le_resolvent (le_trans (by norm_num only : (2 : ℕ) ≤ 3) hm)
       (hGRH m χ hp) hp hne hinv (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 2) hx)

@@ -21,8 +21,8 @@ Assume the even joint-prefix separation margin is nonnegative.
 Claim: an odd-prime negative Jacobi witness exists through 99x/40.
 Proof: transfer witness absence to unit-prime triviality of the even quadratic character.
 Role: use new finite-scale budget estimates without a prescribed logarithmic profile. -/
-theorem exists_prime_neg_one_witness_of_joint_prefix_separation {n Q : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hQ : 20000 ≤ Q) (hnQ : 4 * n ≤ Q)
+theorem exists_negOneWitness_of_joint_prefix_separation {n Q : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hQ : 20000 ≤ Q) (hnQ : 4 * n ≤ Q)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x b : ℝ} (hx : 2 ≤ x)
     (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hgap :
@@ -44,7 +44,7 @@ theorem exists_prime_neg_one_witness_of_joint_prefix_separation {n Q : ℕ} (hn 
         (p : ℝ) ≤ (99 / 40 : ℝ) * x → NumberTheory.complexQuadraticCharacter n hn p = 1 := by
     intro p hp hd hpb
     by_contra hv
-    have hm := NumberTheory.primeNegOneWitness_mem_of_complexQuadraticCharacter_ne_one n hn hp hd hv
+    have hm := NumberTheory.negOneWitness_mem_of_quadratic_ne_one n hn hp hd hv
     exact hnone ⟨p, hm.1, hm.2.1, hpb, hm.2.2⟩
   exact
     LLS.gamma_ramp_prime_trivial_false_joint_prefix hQ hnQ
@@ -55,8 +55,8 @@ theorem exists_prime_neg_one_witness_of_joint_prefix_separation {n Q : ℕ} (hn 
 Claim: the least odd-prime negative witness is at most 99x/40.
 Proof: minimize the witness supplied by the separation theorem.
 Role: expose the arbitrary-scale comparison to least-witness consumers. -/
-theorem primeNegOneWitness_cast_le_of_joint_prefix_separation {n Q : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hQ : 20000 ≤ Q) (hnQ : 4 * n ≤ Q)
+theorem negOneWitness_cast_le_of_joint_prefix_separation {n Q : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hQ : 20000 ≤ Q) (hnQ : 4 * n ≤ Q)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x b : ℝ} (hx : 2 ≤ x)
     (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hgap :
@@ -65,15 +65,15 @@ theorem primeNegOneWitness_cast_le_of_joint_prefix_separation {n Q : ℕ} (hn : 
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ (99 / 40 : ℝ) * x := by
   obtain ⟨p, hp, ho, hpb, hv⟩ :=
-    exists_prime_neg_one_witness_of_joint_prefix_separation hn hns hQ hnQ hGRH hx hb hbx hgap
+    exists_negOneWitness_of_joint_prefix_separation hn hns hQ hnQ hGRH hx hb hbx hgap
   exact (Nat.cast_le.mpr (NumberTheory.primeNegOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hpb
 
 /-- Input: the same joint-prefix data and separation margin.
 Claim: an odd-prime non-one Jacobi witness exists through 99x/40.
 Proof: the constructed negative value is different from one.
 Role: connect the joint analytic criterion to the non-one witness interface. -/
-theorem exists_prime_ne_one_witness_of_joint_prefix_separation {n Q : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hQ : 20000 ≤ Q) (hnQ : 4 * n ≤ Q)
+theorem exists_neOneWitness_of_joint_prefix_separation {n Q : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hQ : 20000 ≤ Q) (hnQ : 4 * n ≤ Q)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x b : ℝ} (hx : 2 ≤ x)
     (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hgap :
@@ -82,7 +82,7 @@ theorem exists_prime_ne_one_witness_of_joint_prefix_separation {n Q : ℕ} (hn :
           (-3 / 2)) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n p ≠ 1 := by
   obtain ⟨p, hp, ho, hpb, hv⟩ :=
-    exists_prime_neg_one_witness_of_joint_prefix_separation hn hns hQ hnQ hGRH hx hb hbx hgap
+    exists_negOneWitness_of_joint_prefix_separation hn hns hQ hnQ hGRH hx hb hbx hgap
   refine ⟨p, hp, ho, hpb, ?_⟩
   rw [hv]
   norm_num only

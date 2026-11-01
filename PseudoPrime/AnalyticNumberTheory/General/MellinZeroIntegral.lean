@@ -30,8 +30,8 @@ Coefficient bounds and the reference-line series supply all contour growth
 estimates. The finite residue limit and the whole-line integral limit coincide
 by uniqueness; no contour identity or convergence premise remains.
 This is the zero-side identity before evaluating the ordinary L and gamma factors. -/
-theorem mellin_zero_sum_eq_vertical_integral_difference_of_completion {F L : ℂ → ℂ} {ε : ℂ}
-    {q d : ℕ} (hq : 1 ≤ q) (k : ℤ) (κ : Fin d → ℂ) (hκ : ∀ j, -1 < (κ j).re)
+theorem mellin_zero_sum_eq_vertical_difference {F L : ℂ → ℂ} {ε : ℂ} {q d : ℕ} (hq : 1 ≤ q) (k : ℤ)
+    (κ : Fin d → ℂ) (hκ : ∀ j, -1 < (κ j).re)
     (hreg :
       ∀ z,
         z ≠ 0 →
@@ -138,8 +138,8 @@ Arithmetic coefficient bounds and the reference-line series discharge growth
 and convergence. Combine the actual residue-limit identity with reflection.
 Both integrals are now in the right half-plane for subsequent arithmetic
 and archimedean evaluation. -/
-theorem mellin_zero_sum_eq_reflected_right_integrals_of_completion {F L : ℂ → ℂ} {ε : ℂ} {q d : ℕ}
-    (hq : 1 ≤ q) (k : ℤ) (κ : Fin d → ℂ) (hκ : ∀ j, -1 < (κ j).re)
+theorem mellin_zero_sum_eq_reflected_integrals {F L : ℂ → ℂ} {ε : ℂ} {q d : ℕ} (hq : 1 ≤ q) (k : ℤ)
+    (κ : Fin d → ℂ) (hκ : ∀ j, -1 < (κ j).re)
     (hreg :
       ∀ z,
         z ≠ 0 →
@@ -162,8 +162,8 @@ theorem mellin_zero_sum_eq_reflected_right_integrals_of_completion {F L : ℂ �
             star (logDeriv F (((2 : ℝ) : ℂ) + (-T) * Complex.I)) *
               mellin (logarithmicTestWeight g) (((2 : ℝ) : ℂ) + T * Complex.I))) /
         (2 * Real.pi : ℂ) := by
-  rw [mellin_zero_sum_eq_vertical_integral_difference_of_completion hq k κ hκ hreg hε hfe hright hF
-      h0 horder ha hL hdL hlog g he hc hg,
+  rw [mellin_zero_sum_eq_vertical_difference hq k κ hκ hreg hε hfe hright hF h0 horder ha hL hdL
+      hlog g he hc hg,
     left_vertical_integral_eq_neg_reflected hε hfe hF g he, sub_neg_eq_add]
 
 end PseudoPrime.AnalyticNumberTheory.General

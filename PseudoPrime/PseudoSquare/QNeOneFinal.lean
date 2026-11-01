@@ -30,7 +30,7 @@ cutoff; transfer the finite squarefree witness back to `n`.
 Proof: the analytic branch is obtained by contradiction from the no-witness hypothesis.
 Role: the interface consumed by the later `QNeOne` maximum theorem.
 -/
-theorem exists_primeNeOneWitness_cast_le_log_sq_of_odd_nonsquare
+theorem exists_neOneWitness_le_log_sq_of_odd_nonsquare
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : Odd n)
     (hns : ¬IsSquare n) (hn11 : 11 ≤ n) :
     ∃ hdn : (NumberTheory.primeNeOneWitnessSet n).Nonempty,
@@ -43,9 +43,7 @@ theorem exists_primeNeOneWitness_cast_le_log_sq_of_odd_nonsquare
   have hb2pos : 0 < bridge.squareFactor ^ 2 := pow_pos hbpos 2
   by_cases hdsmall :
     bridge.squarefreePart = 3 ∨ bridge.squarefreePart = 5 ∨ bridge.squarefreePart = 7
-  · exact
-      NumberTheory.exists_primeNeOneWitness_cast_le_log_sq_of_small_squarefreePart bridge hn11
-        hdsmall
+  · exact NumberTheory.exists_primeNeOne_log_sq_of_small_part bridge hn11 hdsmall
   by_cases hdbig : 1000000 ≤ bridge.squarefreePart
   · by_contra hbound
     have hno :
@@ -96,7 +94,7 @@ theorem exists_primeNeOneWitness_cast_le_log_sq_of_odd_nonsquare
     exact qNeOneAnalyticFalse_of_bridge_of_explicit_cutoff bridge hGRH hdbig hno
   · have hdbelow : bridge.squarefreePart < 1000000 := Nat.lt_of_not_ge hdbig
     have hd11 : 11 ≤ bridge.squarefreePart :=
-      NumberTheory.JacobiCharacterArithmeticData.squarefreePart_ge_eleven_of_not_small bridge
+      NumberTheory.JacobiCharacterArithmeticData.squarefreePart_ge_11_of_not_small bridge
         (by
           intro heq; exact hdsmall (Or.inl heq))
         (by
@@ -118,8 +116,8 @@ theorem exists_primeNeOneWitness_cast_le_log_sq_of_odd_nonsquare
         (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare bridge.squarefreePart_odd
           hnsd)
     have hwd :=
-      primeNeOneWitness_cast_le_log_sq_of_eleven_le_of_lt_million (n := bridge.squarefreePart)
-        bridge.squarefreePart_odd hnsd hd11 hdbelow
+      neOneWitness_le_logSq_eleven_to_million (n := bridge.squarefreePart) bridge.squarefreePart_odd
+        hnsd hd11 hdbelow
     let hdnN : (NumberTheory.primeNeOneWitnessSet n).Nonempty := by
       obtain ⟨p, hp⟩ := hdn
       exact ⟨p, NumberTheory.primeNeOneWitness_mem_of_squarefreePart_mem bridge hp⟩

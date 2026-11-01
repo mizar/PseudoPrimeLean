@@ -84,7 +84,7 @@ theorem ofDirichletCharacter_riemannHypothesis {q : ℕ} [NeZero q] (χ : Dirich
     (ofDirichletCharacter χ).RiemannHypothesis := by
   intro ρ
   exact
-    AnalyticNumberTheory.DirichletLFunction.completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp
+    AnalyticNumberTheory.DirichletLFunction.completed_zero_re_eq_half_of_RH hRH hp
       (inv_ne_one.mpr hne) ((ofDirichletCharacter_completed_eq_zero_iff χ ρ).mp ρ.property)
 
 /-- The normalization factor is entire, since its complex-power base is nonzero.
@@ -101,8 +101,8 @@ private theorem differentiable_completionScale {q : ℕ} [NeZero q] (χ : Dirich
 /-- For a nontrivial character, normalization preserves analytic multiplicity at every point.
 Its factor is an analytic unit of order zero, so additivity of order gives the equality.
 This identifies the actual multiplicities used in the generalized zero mass. -/
-theorem ofDirichletCharacter_analyticOrderNatAt_completed {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1) (s : ℂ) :
+theorem dirichlet_completed_order {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
+    (s : ℂ) :
     analyticOrderNatAt (ofDirichletCharacter χ).completed s =
       analyticOrderNatAt χ.completedLFunction s := by
   change
@@ -124,8 +124,8 @@ theorem ofDirichletCharacter_analyticOrderNatAt_completed {q : ℕ} [NeZero q]
 /-- For a nontrivial character, the normalized zero mass is the original completed-zero sum.
 Reindex by the unchanged zero set and use equality of analytic multiplicities.
 This is the subtype form of the mass needed to specialize the generalized formula. -/
-theorem ofDirichletCharacter_zeroMass_eq_subtype_tsum {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1) :
+theorem dirichlet_zeroMass_subtype_tsum {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hne : χ ≠ 1) :
     (ofDirichletCharacter χ).zeroMass =
       ∑' ρ : { z : ℂ // χ.completedLFunction z = 0 },
         (analyticOrderNatAt χ.completedLFunction (ρ : ℂ) : ℝ) / ‖(ρ : ℂ)‖ ^ 2 := by
@@ -137,17 +137,17 @@ theorem ofDirichletCharacter_zeroMass_eq_subtype_tsum {q : ℕ} [NeZero q]
   change
     (analyticOrderNatAt (ofDirichletCharacter χ).completed (ρ : ℂ) : ℝ) / ‖(ρ : ℂ)‖ ^ 2 =
       (analyticOrderNatAt χ.completedLFunction (ρ : ℂ) : ℝ) / ‖(ρ : ℂ)‖ ^ 2
-  rw [ofDirichletCharacter_analyticOrderNatAt_completed χ hne]
+  rw [dirichlet_completed_order χ hne]
 
 /-- The normalized mass equals the divisor-weighted mass of the character's completed function.
 Extend the zero-subtype sum by zero, convert analytic order to divisor multiplicity,
 and identify squared norm with `Complex.normSq`. This connects the general mass to `primitiveBRe`.
 Only nontriviality is needed; the equality does not assume RH or convergence. -/
-theorem ofDirichletCharacter_zeroMass_eq_divisor_tsum {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1) :
+theorem dirichlet_zeroMass_divisor_tsum {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hne : χ ≠ 1) :
     (ofDirichletCharacter χ).zeroMass =
       ∑' z : ℂ, (MeromorphicOn.divisor χ.completedLFunction Set.univ z : ℝ) / Complex.normSq z := by
-  rw [ofDirichletCharacter_zeroMass_eq_subtype_tsum χ hne]
+  rw [dirichlet_zeroMass_subtype_tsum χ hne]
   exact
     AnalyticNumberTheory.General.tsum_zeroMultiplicity_eq_divisor
       (DirichletCharacter.differentiable_completedLFunction hne)
@@ -157,22 +157,22 @@ open PseudoPrime.AnalyticNumberTheory.DirichletLFunction in
 the degree-one zero mass equals `2 * |primitiveBRe χ|`. Convert the normalized mass to the
 completed function's divisor sum and apply the single-character mass identity.
 This supplies the zero-mass substitution in Lemma 2.5 without RH for other characters. -/
-theorem ofDirichletCharacter_zeroMass_eq_two_mul_abs_BRe_of_dirichletRH {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hq : 2 ≤ q) (hp : χ.IsPrimitive) (hne : χ ≠ 1)
+theorem dirichlet_zeroMass_two_BRe_RH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hq : 2 ≤ q)
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1)
     (hRH : AnalyticNumberTheory.GRH.DirichletRiemannHypothesis χ) :
     (ofDirichletCharacter χ).zeroMass =
       2 * |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ| := by
-  rw [ofDirichletCharacter_zeroMass_eq_divisor_tsum χ hne]
-  exact tsum_divisor_inv_normSq_eq_two_mul_abs_BRe_of_dirichletRH hq hRH hp hne (inv_ne_one.mpr hne)
+  rw [dirichlet_zeroMass_divisor_tsum χ hne]
+  exact tsum_invNormSq_eq_abs_BRe_RH hq hRH hp hne (inv_ne_one.mpr hne)
 
 /-- Under GRH, the degree-one mass is twice the absolute real Hadamard constant.
 The modulus is at least two and the character is primitive and nontrivial.
 Use the divisor-mass identity after normalization. This supplies the mass term for Theorem 1.5. -/
-theorem ofDirichletCharacter_zeroMass_eq_two_mul_abs_BRe {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hq : 2 ≤ q) (hp : χ.IsPrimitive) (hne : χ ≠ 1)
+theorem dirichlet_zeroMass_two_BRe_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hq : 2 ≤ q)
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     (ofDirichletCharacter χ).zeroMass =
       2 * |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ| := by
-  exact ofDirichletCharacter_zeroMass_eq_two_mul_abs_BRe_of_dirichletRH χ hq hp hne (hGRH q χ hp)
+  exact dirichlet_zeroMass_two_BRe_RH χ hq hp hne (hGRH q χ hp)
 
 end PseudoPrime.LLS.Extensions.GeneralLFunction

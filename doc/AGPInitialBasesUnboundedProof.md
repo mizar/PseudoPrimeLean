@@ -420,7 +420,7 @@ $$
 
 **場所：** [`PseudoPrime/PrimeTest/MillerRabin/AGP/UnitSubsetProduct.lean`](../PseudoPrime/PrimeTest/MillerRabin/AGP/UnitSubsetProduct.lean#L282)
 
-中心となる宣言は `exists_two_or_more_unit_product_eq_one_of_progression` である。
+中心となる宣言は `exists_two_or_more_unit_prod_one_of_progression` である。
 
 **主な前提：** $L > 2$、 $\lambda(L)\ge3$、 $\gcd(k,L)=1$、
 各候補が $L$ と互いに素で $p=e_pk+1$、 $e_p\mid L$ と表せること、
@@ -439,14 +439,14 @@ $$r=\left\lfloor m\log\frac Lm\right\rfloor+m
 
 である。最後の不等式には $m\ge3$ を使う。
 $|Q| > m\log L$ なら、一要素を除いても少なくともこの長さが残る。
-この処理は `exists_nonempty_unit_product_eq_one_of_card_gt_carmichael_log_erase` にある。
+この処理は `exists_nonempty_unitProd_one_erase` にある。
 
 異なる素数が法 $L$ で同じ剰余類になる場合も、元の素数のラベルは保持される。
 像の集合を取って重複を消すのではない。
 元の有限集合から各素数を一度ずつ選ぶため、次段階の平方自由性が保たれる。
 
 零和定理そのものは、[`PseudoPrime/Combinatorics/Additive/FiniteAbelianZeroSum.lean`](../PseudoPrime/Combinatorics/Additive/FiniteAbelianZeroSum.lean#L1238) の
-`exists_nonempty_zero_sum_label_subset_of_segmented_length`。
+`exists_nonempty_labels_segment`。
 証明の仕組みは[第7節](#zero-sum)で補足する。
 
 </details>
@@ -507,7 +507,7 @@ $p\equiv3\pmod4$ から従うわけではない。
 定理の型は次のとおりである。
 
 ```lean
-theorem isCarmichael_finset_prime_product_of_progression_unit_product {S : Finset ℕ} (L k : ℕ)
+theorem carmichael_primeProduct_of_progression {S : Finset ℕ} (L k : ℕ)
     (hkL : Nat.Coprime k L) (hprime : ∀ p ∈ S, Nat.Prime p) (hcard : 2 ≤ S.card)
     (hprogression : ∀ p ∈ S, ∃ d, d ∣ L ∧ p = d * k + 1) (hproductL : (∏ p ∈ S, (p : ZMod L)) = 1) :
     Nat.IsCarmichael (∏ p ∈ S, p) ∧ (∀ p ∈ S, p - 1 ∣ k * L) ∧ k * L ∣ (∏ p ∈ S, p) - 1
@@ -634,7 +634,7 @@ $a\equiv1\pmod4$ でも、 $j=0$ による同じ議論を使える。
 ```lean
 theorem agp_initial_bases_unbounded :
     AGPInitialBasesUnbounded :=
-  agp_initial_bases_unbounded_of_progression_count_data
+  initialBasesUnbounded_of_countData
     AnalyticNumberTheory.AGP.agp_progression_count_data_exists_unconditional
 ```
 
@@ -651,7 +651,7 @@ theorem agp_initial_bases_unbounded :
 初期底と下限への適用
   agp_initial_bases_unbounded_of_prime_supply
     └─ 有限構成を呼び出す
-       exists_carmichael_strongMillerRabin_pass_all_of_large_progression_primes
+       exists_carmichael_strongPass_all_of_progression
     ↓
 主命題 AGPInitialBasesUnbounded
 ```
@@ -662,9 +662,9 @@ theorem agp_initial_bases_unbounded :
 |---|---|---|
 | 最終的に何を述べているか | `AGPInitialBasesUnbounded` | [1.1](#statement) |
 | 解析部分から何を受け取るか | `AGPProgressionPrimeSupply` | [4.1](#prime-supply) |
-| 有限構成全体に何が必要か | `exists_carmichael_strongMillerRabin_pass_all_of_large_progression_primes` | この節の次の折り畳み欄 |
-| 合成数であることをどう保証するか | `exists_two_or_more_unit_product_eq_one_of_progression` | [4.3](#subset-product) |
-| Korselt 条件の整除性をどう作るか | `isCarmichael_finset_prime_product_of_progression_unit_product` | [4.4](#carmichael-proof) |
+| 有限構成全体に何が必要か | `exists_carmichael_strongPass_all_of_progression` | この節の次の折り畳み欄 |
+| 合成数であることをどう保証するか | `exists_two_or_more_unit_prod_one_of_progression` | [4.3](#subset-product) |
+| Korselt 条件の整除性をどう作るか | `carmichael_primeProduct_of_progression` | [4.4](#carmichael-proof) |
 | 共通符号から強い通過条件がどう従うか | `strongMillerRabinPass_of_common_legendre_sign` | [4.5](#mr-proof) |
 | 計数データの存在を何から導くか | `agp_progression_count_data_exists_unconditional` | [6.1](#count-data) |
 
@@ -674,7 +674,7 @@ theorem agp_initial_bases_unbounded :
 **場所：** [`PseudoPrime/PrimeTest/MillerRabin/AGP/LegendreSignature.lean`](../PseudoPrime/PrimeTest/MillerRabin/AGP/LegendreSignature.lean#L256)
 
 ```lean
-theorem exists_carmichael_strongMillerRabin_pass_all_of_large_progression_primes (L : ℕ) [NeZero L]
+theorem exists_carmichael_strongPass_all_of_progression (L : ℕ) [NeZero L]
     (hL : 2 < L) (hlambda : 3 ≤ ArithmeticFunction.carmichael L)
     [NeZero (ArithmeticFunction.carmichael L)] (W P : Finset ℕ) (k : ℕ) (hkL : Nat.Coprime k L)
     (hprime : ∀ p ∈ P, Nat.Prime p) (hcoprime : ∀ p ∈ P, Nat.Coprime p L)
@@ -720,7 +720,7 @@ theorem exists_carmichael_strongMillerRabin_pass_all_of_large_progression_primes
 | `hpC` と続く `calc` | $C < p\le a$ により積の下限を確認 |
 | `hbW` と `hpass b hbW` | $0 < b\le B$ を集合への所属に戻し、通過性を返す |
 
-同ファイルの `agp_initial_bases_unbounded_of_progression_count_data` は、
+同ファイルの `initialBasesUnbounded_of_countData` は、
 計数データから素数供給へ変換して、この定理を適用する中継である。
 
 途中の定理の前提を読むときは、それを**呼出し側のどの定理が満たしているか**も確認するとよい。
@@ -751,7 +751,7 @@ theorem exists_carmichael_strongMillerRabin_pass_all_of_large_progression_primes
 ```lean
 theorem agp_progression_count_data_exists_unconditional : AGPProgressionCountDataExists := by
   obtain ⟨J, D, Xtheta, hJ, hSupply⟩ := exists_unconditional_narrow_theta_supply
-  exact agp_progression_count_data_exists_of_primorial_p2_and_theta_supply J D Xtheta hJ hSupply
+  exact countData_of_primorial_powTwo_theta J D Xtheta hJ hSupply
 ```
 
 最初の定理が算術級数の素数下界を与え、次の定理がそれを使って必要な計数データを組み立てる。
@@ -840,7 +840,7 @@ $$\theta(eZ^3;M,r)\ge\frac{eZ^3}{2\varphi(M)}$$
 
 零点密度の入口は、
 [`PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/FamilyDensity.lean`](../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/FamilyDensity.lean#L210) の
-`exists_primitiveCharacterFamily_log_free_density` である。
+`exists_familyDensity` である。
 ここでは、ある定数 $A_*,C_* > 0$ が存在し、整数 $R\ge2$、 $1/2\le\sigma\le1$ に対して
 
 $$N_{\mathrm{fam}}(R,\sigma)\le C_*R^{A_*(1-\sigma)}$$
@@ -854,7 +854,7 @@ $\log R\ge2$ となる十分大きい $R$ で $\sigma=1-1/\log R$ とすると�
 これにより、実部が $1$ に近い零点を持つ導手を、スケールに依存しない個数の例外にまとめられる。
 対応する個数評価は、
 [`PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/FamilyExceptionalConductors.lean`](../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/FamilyExceptionalConductors.lean#L64) の
-`exists_uniform_exceptionalFamilyConductors_card_bound` で確認できる。
+`exists_exceptionalCap` で確認できる。
 
 例外を避けた零点和の評価は [`PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/FamilyExceptionalWeightedGap.lean`](../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/FamilyExceptionalWeightedGap.lean)、
 素数下界への接続は [`PseudoPrime/AnalyticNumberTheory/AGP/UniformPolynomialThetaSupply.lean`](../PseudoPrime/AnalyticNumberTheory/AGP/UniformPolynomialThetaSupply.lean#L50) の
@@ -891,10 +891,10 @@ $L$ の約数 $e$ を使い、 $p=ek+1\equiv3\pmod4$ となる素数を数える
 <summary>専門向け：二段階のスケールと個数の余裕</summary>
 
 一段目の入口は、[`PseudoPrime/AnalyticNumberTheory/AGP/PrimorialSeedCount.lean`](../PseudoPrime/AnalyticNumberTheory/AGP/PrimorialSeedCount.lean#L901) の
-`exists_primorial_seed_tail_modulus_of_count_margin` である。
+`exists_seed_tail_modulus_of_count_margin` である。
 全体のスケール選択は、
 [`PseudoPrime/AnalyticNumberTheory/AGP/P2SeedScale.lean`](../PseudoPrime/AnalyticNumberTheory/AGP/P2SeedScale.lean#L1056) の
-`exists_p2_full_divisor_concentration_bound_above_with_seed_margin` にある。
+`exists_powTwo_seed_concentration_above` にある。
 
 十分大きい $u$ に対して
 
@@ -944,15 +944,15 @@ $$\left(\frac12-10^{-6}\right)-\frac{640}{3}\cdot\frac1{1024}=\frac7{24}-10^{-6}
 
 と評価する。
 係数計算は、[`PseudoPrime/AnalyticNumberTheory/AGP/ProgressionTheta.lean`](../PseudoPrime/AnalyticNumberTheory/AGP/ProgressionTheta.lean#L1465) の
-`agp_fifth_power_average_coefficient_640_1024_value` と
-`agp_fifth_power_average_coefficient_640_1024_gt_quarter` にある。
+`fifth_power_average_coefficient_640_1024_value` と
+`fifthPowerAverage_640_1024_gt_quarter` にある。
 
 共通係数を $c_0=1/(128\cdot2^D)$ と選ぶため、
 $16\cdot2^D c_0=1/8 < 1/4$ となり、例外による損失などを吸収する余裕が残る。
 この余裕を使って有限平均を取り、 $\gcd(k,L)=1$ を満たす一つの $k$ で必要な素数個数を得る。
 最後にデータを組み立てる定義は、
 [`PseudoPrime/AnalyticNumberTheory/AGP/ProgressionTheta.lean`](../PseudoPrime/AnalyticNumberTheory/AGP/ProgressionTheta.lean#L3624) の
-`agpProgressionCountData_of_fifth_power_theta_and_brun_titchmarsh` である。
+`countData_fifthPower_brunTitchmarsh` である。
 
 この二段構成では、狭い範囲への約数の集中を別途仮定するのではなく、
 二段目で全約数を含む範囲を選んで、その個数を利用している。
@@ -963,16 +963,16 @@ $16\cdot2^D c_0=1/8 < 1/4$ となり、例外による損失などを吸収す�
 <summary>さらに零点密度の証明を追う場合の入口</summary>
 
 主定理の理解にはこの段階まで下る必要はないが、解析的な前提の由来を確認する場合は、
-まず `exists_primitiveCharacterFamily_log_free_density` から依存先へ進む。
+まず `exists_familyDensity` から依存先へ進む。
 
 **零点数から平均二乗の下界へ：**
 [`PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/GeneralScaleIncidence.lean`](../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/GeneralScaleIncidence.lean#L276) の
-`exists_uniform_general_scale_occurrence_meanSquare_bound`。
+`exists_scaleGridBound`。
 零点の出現と重複度を保って、共通の族・高さ格子の計数へつなぐ部分である。
 
 **同じ平均二乗の上界：**
 [`PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/HighPrimeIncidence.lean`](../PseudoPrime/AnalyticNumberTheory/DirichletLFunction/LogFreeDensity/HighPrimeIncidence.lean#L822) の
-`highPrimeFamilyGridMeanSquareSum_hybrid_bound`。
+`highEnergy_hybrid_le`。
 族全体の hybrid 大篩評価により上から抑える部分である。
 
 **密度評価への合成：**
@@ -1032,11 +1032,11 @@ $$F=\prod_{i}(c_i[0]-[g_i])$$
 
 | 宣言 | 役割 |
 |---|---|
-| `exists_greedy_character_prefix_residual_lt` | 前半の座標で未処理の指標を減らす |
-| `exists_nonempty_zero_sum_of_log_prefix_and_tail` | 残りの指標も処理して零和部分集合を得る |
-| `exists_nonempty_zero_sum_of_character_matches` | 指標と群環の議論による矛盾 |
-| `log_length_with_tail_le_floor_log` | 必要な長さを評価する |
-| `exists_nonempty_zero_sum_label_subset_of_segmented_length` | 元のラベルを保つ形で部分集合を返す |
+| `exists_greedy_residual_lt` | 前半の座標で未処理の指標を減らす |
+| `exists_nonempty_zeroSum_logTail` | 残りの指標も処理して零和部分集合を得る |
+| `exists_nonempty_zeroSum_match` | 指標と群環の議論による矛盾 |
+| `log_with_tail_le_floor_log` | 必要な長さを評価する |
+| `exists_nonempty_labels_segment` | 元のラベルを保つ形で部分集合を返す |
 
 </details>
 

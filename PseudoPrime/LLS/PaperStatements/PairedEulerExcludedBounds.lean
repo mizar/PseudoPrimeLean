@@ -21,7 +21,7 @@ open AnalyticNumberTheory.DirichletLFunction AnalyticNumberTheory.Arithmetic in
 triviality gives a Gamma arithmetic upper bound with one combined exclusion cost.
 Use the retained-prefix comparison and the same-modulus explicit remainder.
 This supplies the upper side of a finite-scale witness contradiction. -/
-theorem gamma_primitive_sum_re_le_twoPole_quadratic_budget {q N : ℕ} [NeZero q] (hq : 8 ≤ q)
+theorem gammaPrimitiveSum_re_le_twoPole_quadratic_budget {q N : ℕ} [NeZero q] (hq : 8 ≤ q)
     {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hquad : χ.IsQuadratic) {x b : ℝ}
     (hx : 1 ≤ x) (S : Finset ℕ) (hS : ∀ n ∈ S, (n : ℝ) ≤ b)
@@ -38,7 +38,7 @@ theorem gamma_primitive_sum_re_le_twoPole_quadratic_budget {q N : ℕ} [NeZero q
   have hb :=
     paired_weighted_sum_ge_quadratic_budget χ hquad S
       (pairedEulerPrefixWeight (5 / 4) (11 / 4) (3 / 4)) hS
-      (fun n _ hn ↦ pairedEulerPrefixWeight_eq_zero_of_mangoldt_eq_zero _ _ _ hn)
+      (fun n _ hn ↦ pairedEulerWeight_eq_zero_of_mangoldt_zero _ _ _ hn)
       (fun n _ ↦ pairedEulerPrefixWeight_nonneg _ _ (by norm_num only) n) ht
   linarith only [h, he, hb]
 

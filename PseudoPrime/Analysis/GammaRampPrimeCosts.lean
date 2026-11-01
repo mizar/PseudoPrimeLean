@@ -76,7 +76,7 @@ theorem gamma_ramified_actual_prime_cost_le {p : ℕ} (hp : p.Prime) (K : Finset
             Real.sqrt x) ≤
       Real.log p * gammaRamifiedCombinedCost p x := by
   have hl : 0 ≤ Real.log p := Real.log_nonneg (by exact_mod_cast hp.one_le)
-  have he := sum_gammaResolventMangoldtWeight_primePowers_le_cost hp K
+  have he := sum_gammaMangoldt_primePowers_le_cost hp K
   have hr := mul_le_mul_of_nonneg_left (gamma_ramp_zero_series_le_count hp.one_lt hx) hl
   dsimp only [gammaRamifiedCombinedCost]
   rw [mul_add]

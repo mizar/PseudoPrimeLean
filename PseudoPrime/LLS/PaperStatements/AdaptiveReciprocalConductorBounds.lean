@@ -18,8 +18,7 @@ namespace PseudoPrime.LLS.PaperStatements
 /-- Under RH at x ≥ 64, the principal reciprocal Mangoldt sum is at most log(x).
 Use its explicit formula, the Euler constant lower bound and the zeta zero-mass cap.
 This removes the finite sum from the adaptive Hadamard estimate. -/
-theorem reciprocalWeightedMangoldtSum_le_log_of_ge_sixtyFour (hRH : RiemannHypothesis) {x : ℝ}
-    (hx : 64 ≤ x) :
+theorem recipMangoldtSum_le_log_of_ge_64_RH (hRH : RiemannHypothesis) {x : ℝ} (hx : 64 ≤ x) :
     AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtSum x ≤ Real.log x := by
   have hx0 : 0 < x := by linarith only [hx]
   have hs : (8 : ℝ) ≤ Real.sqrt x :=
@@ -81,7 +80,7 @@ theorem reciprocalHadamardCap_adaptive_le (q : ℕ) (hRH : RiemannHypothesis) {�
   have hy0 : 0 < Real.log q + 8 := by linarith only [hy]
   have hx : 64 ≤ (Real.log q + 8) ^ 2 := by nlinarith only [hy]
   have hx0 : 0 < (Real.log q + 8) ^ 2 := by linarith only [hx]
-  have hr := reciprocalWeightedMangoldtSum_le_log_of_ge_sixtyFour hRH hx
+  have hr := recipMangoldtSum_le_log_of_ge_64_RH hRH hx
   rw [Real.log_pow] at hr
   norm_num only [Nat.cast_ofNat] at hr
   have hi : 1 / (Real.log q + 8) ^ 2 ≤ (1 : ℝ) := by
@@ -121,9 +120,9 @@ theorem abs_primitiveBRe_le_adaptive_reciprocal {q : ℕ} [NeZero q] {χ : Diric
 /-- Under primitive GRH at q ≥ 3 and x ≥ 100, bound the actual logarithmic sum
 by ((101/60)log(q)+(22/5)log(log(q)+8)+203/20)sqrt(x).
 Pass the adaptive Hadamard cap and independent xi endpoint cap to the norm interface. -/
-theorem norm_characterLogWeightedSum_le_adaptive_reciprocal {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hq : 3 ≤ q) (hp : χ.IsPrimitive)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 100 ≤ x) :
+theorem characterLogSum_norm_le_adaptive_reciprocal {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hq : 3 ≤ q) (hp : χ.IsPrimitive) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {x : ℝ} (hx : 100 ≤ x) :
     ‖AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x χ‖ ≤
       ((101 / 60 : ℝ) * Real.log q + (22 / 5) * Real.log (Real.log q + 8) + 203 / 20) *
         Real.sqrt x := by
@@ -169,7 +168,7 @@ theorem exists_prime_ne_one_le_adaptive_reciprocal_root {q m : ℕ} [NeZero q]
     exists_prime_ne_one_le_norm_cap_root χ hGRH.riemann hm (F :=
       (101 / 60 : ℝ) * Real.log q + (22 / 5) * Real.log (Real.log q + 8) + 203 / 20)
       (by linarith only [hL, hl])
-      (fun _ hx ↦ norm_characterLogWeightedSum_le_adaptive_reciprocal hq hp hGRH hx)
+      (fun _ hx ↦ characterLogSum_norm_le_adaptive_reciprocal hq hp hGRH hx)
   have he :
     (7 / 4 : ℝ) * ((101 / 60 : ℝ) * Real.log q + (22 / 5) * Real.log (Real.log q + 8) + 203 / 20) +
         267 / 10 =
@@ -182,7 +181,7 @@ theorem exists_prime_ne_one_le_adaptive_reciprocal_root {q m : ℕ} [NeZero q]
 /-- For L ≥ 100, the adaptive radius plus 77/20 is at most the preceding fixed
 even radius. Use the logarithm tangent at 108 and log(108) < 5.
 This certifies a domain where the new structural bound improves even the parity-refined one. -/
-theorem adaptiveReciprocalRadius_le_even_fixed_of_ge_hundred {L : ℝ} (hL : 100 ≤ L) :
+theorem adaptiveRecipRadius_le_even_fixed_of_ge_100 {L : ℝ} (hL : 100 ≤ L) :
     adaptiveReciprocalRadius L + 77 / 20 ≤ (2429 / 720 : ℝ) * L + 17939 / 400 := by
   have ht :=
     Analysis.log_le_log_add_sub_div (a := (108 : ℝ)) (by norm_num only)
@@ -210,7 +209,7 @@ theorem adaptiveReciprocalWitnessBound_le_even_fixed {f m : ℕ} (hL : 100 ≤ R
   apply root_radius_sq_mono
   · dsimp only [adaptiveReciprocalRadius]
     linarith only [hL, hl]
-  · linarith only [adaptiveReciprocalRadius_le_even_fixed_of_ge_hundred hL]
+  · linarith only [adaptiveRecipRadius_le_even_fixed_of_ge_100 hL]
   · exact le_rfl
 
 /-- For L ≥ 0, the adaptive radius is at least (707/240)L+3557/80.

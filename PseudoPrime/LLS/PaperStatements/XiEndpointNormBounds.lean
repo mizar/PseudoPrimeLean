@@ -25,15 +25,13 @@ This allows both endpoints in the reciprocal formula to use one norm. -/
 theorem logDeriv_xi_inv_zero_eq_conj {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) :
     logDeriv (xi χ⁻¹) 0 = starRingEnd ℂ (logDeriv (xi χ) 0) := by
-  have hv := AnalyticNumberTheory.DirichletLFunction.DirichletCharacter.completedLFunction_conj χ 0
+  have hv := AnalyticNumberTheory.DirichletLFunction.completed_conj χ 0
   simp only [map_zero] at hv
-  have hd :=
-    AnalyticNumberTheory.DirichletLFunction.DirichletCharacter.deriv_completedLFunction_zero_conj
-      hne
+  have hd := AnalyticNumberTheory.DirichletLFunction.deriv_completed_zero_conj hne
   have hc :
     logDeriv χ⁻¹.completedLFunction 0 = starRingEnd ℂ (logDeriv χ.completedLFunction 0) := by
     rw [logDeriv_apply, logDeriv_apply, ← hv, ← hd, ← map_div₀]
-  have hpi := AnalyticNumberTheory.DirichletLFunction.DirichletCharacter.isPrimitive_inv hp
+  have hpi := AnalyticNumberTheory.DirichletLFunction.character_isPrimitive_inv hp
   have hl : Complex.log (q : ℂ) = (Real.log (q : ℝ) : ℂ) :=
     (Complex.ofReal_log (Nat.cast_nonneg q)).symm
   rw [logDeriv_xi_zero_eq hpi (inv_ne_one.mpr hne), logDeriv_xi_zero_eq hp hne, hc, hl]

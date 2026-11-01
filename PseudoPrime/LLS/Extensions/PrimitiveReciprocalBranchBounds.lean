@@ -56,13 +56,12 @@ theorem primitiveBRe_le_of_qneOne_one_branch {N : ℕ} [NeZero N] (χ : Dirichle
       (show 2 ≤ χ.conductor
         by
         have hN1 : χ.conductor ≠ 1 :=
-          AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hprimne
+          AnalyticNumberTheory.DirichletLFunction.character_level_ne_one_of_ne_one hprimne
         have hNpos : 0 < χ.conductor := NeZero.pos χ.conductor
         exact Nat.succ_le_iff.mpr (Nat.one_lt_iff_ne_zero_and_ne_one.mpr ⟨Nat.ne_of_gt hNpos, hN1⟩))
       hGRH hprimitive hprimne hinv heven hx
   have hlower :=
-    characterReciprocalWeightedSum_re_ge_log_sub_eight_fifths_of_eq_one x χ hriemann
-      (by exact le_trans (by norm_num only) hx) hodd h2
+    primitiveReciprocal_lower_two_one x χ hriemann (by exact le_trans (by norm_num only) hx) hodd h2
   have hsqrt : 1 < Real.sqrt x := by
     have hxone : (1 : ℝ) < x := by linarith only [hx]
     have hsqrt_nonneg : 0 ≤ Real.sqrt x := Real.sqrt_nonneg x
@@ -111,13 +110,13 @@ theorem primitiveBRe_le_of_qneOne_zero_branch_even {N : ℕ} [NeZero N] (χ : Di
       (show 2 ≤ χ.conductor
         by
         have hN1 : χ.conductor ≠ 1 :=
-          AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hprimne
+          AnalyticNumberTheory.DirichletLFunction.character_level_ne_one_of_ne_one hprimne
         have hNpos : 0 < χ.conductor := NeZero.pos χ.conductor
         exact Nat.succ_le_iff.mpr (Nat.one_lt_iff_ne_zero_and_ne_one.mpr ⟨Nat.ne_of_gt hNpos, hN1⟩))
       hGRH hprimitive hprimne hinv heven hx
   have hlower :=
-    characterReciprocalWeightedSum_re_ge_log_sub_eight_fifths_sub_log_two_of_eq_zero x χ hriemann
-      (by exact le_trans (by norm_num only) hx) hodd h2
+    primitiveReciprocal_lower_two_zero x χ hriemann (by exact le_trans (by norm_num only) hx) hodd
+      h2
   have hsqrt : 1 < Real.sqrt x := by
     have hxone : (1 : ℝ) < x := by linarith only [hx]
     have hsqrt_nonneg : 0 ≤ Real.sqrt x := Real.sqrt_nonneg x
@@ -147,11 +146,10 @@ Q-ne-one upper bound.
 Content: the proof reuses the c=1 retained-π estimate and the same elementary coefficient
 comparison as the zero branch.
 Proof: clear the positive denominator and apply the logarithmic and numerical bounds.
-Role: input to `primitiveLogWeightedBounds_of_qneOne_one_branch_even_exact`.
+Role: input to `logBounds_even_one_exact_GRH`.
 -/
-theorem primitiveBRe_le_of_qneOne_one_branch_at_square_simple {N : ℕ} [NeZero N]
-    (χ : DirichletCharacter ℂ N) [NeZero χ.conductor] (hne : χ ≠ 1)
-    (heven : χ.primitiveCharacter.Even)
+theorem primitiveBRe_even_one_square_GRH {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
+    [NeZero χ.conductor] (hne : χ ≠ 1) (heven : χ.primitiveCharacter.Even)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y : ℝ} (hy : 8 ≤ y)
     (hlogD : Real.log χ.conductor ≤ y) (hriemann : LLSRiemannReciprocalLowerBound)
     (hodd :
@@ -287,9 +285,8 @@ The even c=0 reciprocal bound at `X = y²`, with `y ≥ 8` and
 Specialize the even raw bound and multiply the conductor inequality by its nonnegative
 coefficient. This supplies the B₀* input for the numerical bound comparison.
 -/
-theorem primitiveBRe_le_of_qneOne_zero_branch_even_at_square_log_four_strong {N : ℕ} [NeZero N]
-    (χ : DirichletCharacter ℂ N) [NeZero χ.conductor] (hne : χ ≠ 1)
-    (heven : χ.primitiveCharacter.Even)
+theorem primitiveBRe_even_zero_log4_GRH {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
+    [NeZero χ.conductor] (hne : χ ≠ 1) (heven : χ.primitiveCharacter.Even)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y : ℝ} (hy : 8 ≤ y)
     (hlogD : Real.log χ.conductor ≤ y + Real.log 4) (hriemann : LLSRiemannReciprocalLowerBound)
     (hodd :
@@ -364,12 +361,12 @@ theorem primitiveBRe_le_of_qneOne_neg_one_branch {N : ℕ} [NeZero N] (χ : Diri
       (show 2 ≤ χ.conductor
         by
         have hN1 : χ.conductor ≠ 1 :=
-          AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hprimne
+          AnalyticNumberTheory.DirichletLFunction.character_level_ne_one_of_ne_one hprimne
         have hNpos : 0 < χ.conductor := NeZero.pos χ.conductor
         exact Nat.succ_le_iff.mpr (Nat.one_lt_iff_ne_zero_and_ne_one.mpr ⟨Nat.ne_of_gt hNpos, hN1⟩))
       hGRH hprimitive hprimne hinv heven hx
   have hlower :=
-    characterReciprocalWeightedSum_re_ge_log_sub_cneg_one x χ hriemann
+    characterReciprocalSum_re_ge_log_sub_cneg_one x χ hriemann
       (by exact le_trans (by norm_num only) hx) hodd h2
   have hsqrt : 1 < Real.sqrt x := by
     have hxone : (1 : ℝ) < x := by linarith only [hx]
@@ -398,9 +395,8 @@ Conclusion: the reciprocal `B` bound is expressed in the new-radius conductor sc
 Content: use the existing odd-tail raw bound and trade the conductor term directly for `y`.
 Role: supplies the adapter applicable to `D = d`, before the correction comparison.
 -/
-theorem primitiveBRe_le_of_qneOne_neg_one_branch_at_square_le {N : ℕ} [NeZero N]
-    (χ : DirichletCharacter ℂ N) [NeZero χ.conductor] (hne : χ ≠ 1)
-    (heven : χ.primitiveCharacter.Even)
+theorem primitiveBRe_even_negOne_square_GRH {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
+    [NeZero χ.conductor] (hne : χ ≠ 1) (heven : χ.primitiveCharacter.Even)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y : ℝ} (hy : 8 ≤ y)
     (hlogD : Real.log χ.conductor ≤ y) (hriemann : LLSRiemannReciprocalLowerBound)
     (hodd :

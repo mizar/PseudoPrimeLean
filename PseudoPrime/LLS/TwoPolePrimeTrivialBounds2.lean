@@ -34,8 +34,8 @@ theorem level_prime_above_cutoff_of_all_prime_trivial {q p : ℕ} (χ : Dirichle
 local correction is nonpositive for any complex character. All positive powers
 remain beyond the cutoff, where unit-disk positivity gives the sign. Sum the local
 terms without replacing them by absolute-value costs. -/
-theorem gammaLocalCorrection_nonpos_of_level_primes_above {q : ℕ} (χ : DirichletCharacter ℂ q)
-    {x : ℝ} (hx : 0 < x) (ht : ∀ p ∈ q.primeFactors, (99 / 40 : ℝ) * x ≤ p) :
+theorem gammaLocalCorrection_nonpos_of_large_primes {q : ℕ} (χ : DirichletCharacter ℂ q) {x : ℝ}
+    (hx : 0 < x) (ht : ∀ p ∈ q.primeFactors, (99 / 40 : ℝ) * x ≤ p) :
     gammaQuadraticLocalCorrection χ x ≤ 0 := by
   apply div_nonpos_of_nonpos_of_nonneg ?_ (Real.sqrt_nonneg x)
   apply Finset.sum_nonpos
@@ -45,9 +45,7 @@ theorem gammaLocalCorrection_nonpos_of_level_primes_above {q : ℕ} (χ : Dirich
       (Real.log_nonneg (by exact_mod_cast (Nat.prime_of_mem_primeFactors hp).one_le))
   apply tsum_nonpos
   intro k
-  apply
-    Analysis.exponentialRampLocalCorrection_tail_nonpos_of_norm_le_one
-      (χ.primitiveCharacter.norm_le_one p)
+  apply Analysis.expRampCorrection_tail_nonpos_of_norm_le_one (χ.primitiveCharacter.norm_le_one p)
   apply (le_div_iff₀ hx).mpr
   have hpow : (p : ℝ) ≤ (p : ℝ) ^ (k + 1) := by
     exact_mod_cast Nat.le_self_pow (Nat.succ_ne_zero k) p

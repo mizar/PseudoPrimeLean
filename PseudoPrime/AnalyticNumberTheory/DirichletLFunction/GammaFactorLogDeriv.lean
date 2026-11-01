@@ -58,9 +58,8 @@ Role: the even-parity regular-point nonvanishing fact, needed at the left-vertic
 point where `s.im = 0` yet `s / 2` still avoids every pole (the left-vertical step's
 quarter-lattice separation).
 -/
-theorem gammaFactor_ne_zero_of_even_of_half_ne_neg_nat {N : ℕ} {χ : DirichletCharacter ℂ N}
-    (hχ : χ.Even) {s : ℂ} (hhalf : ∀ m : ℕ, s / 2 ≠ -(m : ℂ)) :
-    DirichletCharacter.gammaFactor χ s ≠ 0 := by
+theorem gammaFactor_even_ne_zero_nonpole {N : ℕ} {χ : DirichletCharacter ℂ N} (hχ : χ.Even) {s : ℂ}
+    (hhalf : ∀ m : ℕ, s / 2 ≠ -(m : ℂ)) : DirichletCharacter.gammaFactor χ s ≠ 0 := by
   rw [hχ.gammaFactor_def]
   exact Gammaℝ_ne_zero_of_half_ne_neg_nat hhalf
 
@@ -70,9 +69,8 @@ every nonpositive integer.
 Conclusion: `gammaFactor χ s ≠ 0`.
 Role: the odd-parity regular-point nonvanishing fact.
 -/
-theorem gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat {N : ℕ} {χ : DirichletCharacter ℂ N}
-    (hχ : χ.Odd) {s : ℂ} (hhalf : ∀ m : ℕ, (s + 1) / 2 ≠ -(m : ℂ)) :
-    DirichletCharacter.gammaFactor χ s ≠ 0 := by
+theorem gammaFactor_odd_ne_zero_nonpole {N : ℕ} {χ : DirichletCharacter ℂ N} (hχ : χ.Odd) {s : ℂ}
+    (hhalf : ∀ m : ℕ, (s + 1) / 2 ≠ -(m : ℂ)) : DirichletCharacter.gammaFactor χ s ≠ 0 := by
   rw [hχ.gammaFactor_def]
   exact Gammaℝ_ne_zero_of_half_ne_neg_nat hhalf
 
@@ -80,7 +78,7 @@ theorem gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat {N : ℕ} {χ : DirichletC
 Input/assumptions: a complex Dirichlet character `χ`, a point `s` with `s.im ≠ 0`.
 Conclusion: `gammaFactor χ s ≠ 0`.
 Content: parity dispatch to
-`DirichletLFunction.gammaFactor_ne_zero_of_even_of_half_ne_neg_nat`/`_odd_`,
+`DirichletLFunction.gammaFactor_even_ne_zero_nonpole`/`_odd_`,
 using
 `PseudoPrime.AnalyticNumberTheory.DirichletLFunction.half_ne_neg_nat_of_im_ne_zero` (`(s+1).im =
 s.im ≠ 0` in the odd case too) to supply `hhalf`.
@@ -91,9 +89,9 @@ completed-to-ordinary bridge, off the real axis (in particular on every horizont
 theorem gammaFactor_ne_zero_of_im_ne_zero {N : ℕ} {χ : DirichletCharacter ℂ N} {s : ℂ}
     (hs : s.im ≠ 0) : DirichletCharacter.gammaFactor χ s ≠ 0 := by
   rcases χ.even_or_odd with heven | hodd
-  · exact gammaFactor_ne_zero_of_even_of_half_ne_neg_nat heven (half_ne_neg_nat_of_im_ne_zero hs)
+  · exact gammaFactor_even_ne_zero_nonpole heven (half_ne_neg_nat_of_im_ne_zero hs)
   · exact
-      gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat hodd
+      gammaFactor_odd_ne_zero_nonpole hodd
         (half_ne_neg_nat_of_im_ne_zero
           (by simpa only [Complex.add_im, Complex.one_im, add_zero, ne_eq] using hs))
 
@@ -104,7 +102,7 @@ If `s/2` avoids every nonpositive integer, `Complex.Gammaℝ` is differentiable
 at `s`. Differentiate the product of the entire power of π with `Gamma(s/2)`
 away from its poles. This supports the regular-point logarithmic derivative formula.
 -/
-theorem differentiableAt_Gammaℝ_of_half_ne_neg_nat {s : ℂ} (hhalf : ∀ m : ℕ, s / 2 ≠ -(m : ℂ)) :
+theorem differentiableAt_Gammaℝ_of_nonpole {s : ℂ} (hhalf : ∀ m : ℕ, s / 2 ≠ -(m : ℂ)) :
     DifferentiableAt ℂ Complex.Gammaℝ s := by
   change DifferentiableAt ℂ (fun z : ℂ => (Real.pi : ℂ) ^ (-z / 2) * Complex.Gamma (z / 2)) s
   refine DifferentiableAt.mul ?_ ?_
@@ -114,41 +112,38 @@ theorem differentiableAt_Gammaℝ_of_half_ne_neg_nat {s : ℂ} (hhalf : ∀ m : 
   · exact (Complex.differentiableAt_Gamma (s / 2) hhalf).comp s (differentiableAt_id.div_const 2)
 
 /-- The even-parity regular-point differentiability fact for `gammaFactor`. -/
-theorem differentiableAt_gammaFactor_of_even_of_half_ne_neg_nat {N : ℕ} {χ : DirichletCharacter ℂ N}
-    (hχ : χ.Even) {s : ℂ} (hhalf : ∀ m : ℕ, s / 2 ≠ -(m : ℂ)) :
+theorem differentiableAt_gammaFactor_even {N : ℕ} {χ : DirichletCharacter ℂ N} (hχ : χ.Even) {s : ℂ}
+    (hhalf : ∀ m : ℕ, s / 2 ≠ -(m : ℂ)) :
     DifferentiableAt ℂ (DirichletCharacter.gammaFactor χ) s := by
   have heq : DirichletCharacter.gammaFactor χ = Complex.Gammaℝ := by
     funext z
     exact hχ.gammaFactor_def z
   rw [heq]
-  exact differentiableAt_Gammaℝ_of_half_ne_neg_nat hhalf
+  exact differentiableAt_Gammaℝ_of_nonpole hhalf
 
 /-- The odd-parity regular-point differentiability fact for `gammaFactor`. -/
-theorem differentiableAt_gammaFactor_of_odd_of_half_ne_neg_nat {N : ℕ} {χ : DirichletCharacter ℂ N}
-    (hχ : χ.Odd) {s : ℂ} (hhalf : ∀ m : ℕ, (s + 1) / 2 ≠ -(m : ℂ)) :
+theorem differentiableAt_gammaFactor_odd {N : ℕ} {χ : DirichletCharacter ℂ N} (hχ : χ.Odd) {s : ℂ}
+    (hhalf : ∀ m : ℕ, (s + 1) / 2 ≠ -(m : ℂ)) :
     DifferentiableAt ℂ (DirichletCharacter.gammaFactor χ) s := by
   have heq : DirichletCharacter.gammaFactor χ = fun z => Complex.Gammaℝ (z + 1) := by
     funext z
     exact hχ.gammaFactor_def z
   rw [heq]
-  exact
-    (differentiableAt_Gammaℝ_of_half_ne_neg_nat hhalf).comp s ((differentiableAt_id).add_const 1)
+  exact (differentiableAt_Gammaℝ_of_nonpole hhalf).comp s ((differentiableAt_id).add_const 1)
 
 /--
 Input/assumptions: a complex Dirichlet character `χ`, a point `s` with `s.im ≠ 0`.
 Conclusion: `gammaFactor χ` is complex-differentiable at `s`.
 Content: parity dispatch to
-`DirichletLFunction.differentiableAt_gammaFactor_of_even_of_half_ne_neg_nat`/`_odd_`.
+`DirichletLFunction.differentiableAt_gammaFactor_even`/`_odd_`.
 Role: the denominator-differentiability side condition `logDeriv_div` needs.
 -/
-theorem differentiableAt_gammaFactor_of_im_ne_zero {N : ℕ} {χ : DirichletCharacter ℂ N} {s : ℂ}
+theorem differentiableAt_gammaFactor_nonreal {N : ℕ} {χ : DirichletCharacter ℂ N} {s : ℂ}
     (hs : s.im ≠ 0) : DifferentiableAt ℂ (DirichletCharacter.gammaFactor χ) s := by
   rcases χ.even_or_odd with heven | hodd
+  · exact differentiableAt_gammaFactor_even heven (half_ne_neg_nat_of_im_ne_zero hs)
   · exact
-      differentiableAt_gammaFactor_of_even_of_half_ne_neg_nat heven
-        (half_ne_neg_nat_of_im_ne_zero hs)
-  · exact
-      differentiableAt_gammaFactor_of_odd_of_half_ne_neg_nat hodd
+      differentiableAt_gammaFactor_odd hodd
         (half_ne_neg_nat_of_im_ne_zero
           (by simpa only [Complex.add_im, Complex.one_im, add_zero, ne_eq] using hs))
 
@@ -210,8 +205,8 @@ theorem logDeriv_Gammaℝ_of_half_ne_neg_nat {s : ℂ} (hhalf : ∀ m : ℕ, s /
 /-- Even-character regular-point case of
 `PseudoPrime.AnalyticNumberTheory.DirichletLFunction.logDeriv_Gammaℝ_of_half_ne_neg_nat` for
 `gammaFactor`. -/
-theorem logDeriv_gammaFactor_eq_of_even_of_half_ne_neg_nat {N : ℕ} {χ : DirichletCharacter ℂ N}
-    (hχ : χ.Even) {s : ℂ} (hhalf : ∀ m : ℕ, s / 2 ≠ -(m : ℂ)) :
+theorem gammaLogDeriv_even_eq_digamma {N : ℕ} {χ : DirichletCharacter ℂ N} (hχ : χ.Even) {s : ℂ}
+    (hhalf : ∀ m : ℕ, s / 2 ≠ -(m : ℂ)) :
     logDeriv (DirichletCharacter.gammaFactor χ) s =
       -(Complex.log (Real.pi : ℂ)) / 2 + Complex.digamma (s / 2) / 2 := by
   have hgf : DirichletCharacter.gammaFactor χ = Complex.Gammaℝ := by
@@ -222,8 +217,8 @@ theorem logDeriv_gammaFactor_eq_of_even_of_half_ne_neg_nat {N : ℕ} {χ : Diric
 
 /-- Odd-character regular-point case: the argument shifts by `1`, and the outer chain-rule factor
 `deriv (· + 1) = 1` leaves the formula unchanged in shape. -/
-theorem logDeriv_gammaFactor_eq_of_odd_of_half_ne_neg_nat {N : ℕ} {χ : DirichletCharacter ℂ N}
-    (hχ : χ.Odd) {s : ℂ} (hhalf : ∀ m : ℕ, (s + 1) / 2 ≠ -(m : ℂ)) :
+theorem gammaLogDeriv_odd_eq_digamma {N : ℕ} {χ : DirichletCharacter ℂ N} (hχ : χ.Odd) {s : ℂ}
+    (hhalf : ∀ m : ℕ, (s + 1) / 2 ≠ -(m : ℂ)) :
     logDeriv (DirichletCharacter.gammaFactor χ) s =
       -(Complex.log (Real.pi : ℂ)) / 2 + Complex.digamma ((s + 1) / 2) / 2 := by
   have hgf : DirichletCharacter.gammaFactor χ = fun z => Complex.Gammaℝ (z + 1) := by
@@ -232,7 +227,7 @@ theorem logDeriv_gammaFactor_eq_of_odd_of_half_ne_neg_nat {N : ℕ} {χ : Dirich
   rw [hgf]
   have hcomp :=
     logDeriv_comp (f := Complex.Gammaℝ) (g := fun z : ℂ => z + 1) (x := s)
-      (differentiableAt_Gammaℝ_of_half_ne_neg_nat hhalf) (differentiableAt_id.add_const 1)
+      (differentiableAt_Gammaℝ_of_nonpole hhalf) (differentiableAt_id.add_const 1)
   rw [show (fun z : ℂ => Complex.Gammaℝ (z + 1)) = Complex.Gammaℝ ∘ fun z : ℂ => z + 1 from rfl,
     hcomp]
   have hderiv1 : deriv (fun z : ℂ => z + 1) s = 1 := by
@@ -249,7 +244,7 @@ theorem logDeriv_gammaFactor_eq_of_even {N : ℕ} {χ : DirichletCharacter ℂ N
     (hs : s.im ≠ 0) :
     logDeriv (DirichletCharacter.gammaFactor χ) s =
       -(Complex.log (Real.pi : ℂ)) / 2 + Complex.digamma (s / 2) / 2 :=
-  logDeriv_gammaFactor_eq_of_even_of_half_ne_neg_nat hχ (half_ne_neg_nat_of_im_ne_zero hs)
+  gammaLogDeriv_even_eq_digamma hχ (half_ne_neg_nat_of_im_ne_zero hs)
 
 /--
 For an odd character and `Im s ≠ 0`, the gamma-factor logarithmic derivative
@@ -260,7 +255,7 @@ theorem logDeriv_gammaFactor_eq_of_odd {N : ℕ} {χ : DirichletCharacter ℂ N}
     (hs : s.im ≠ 0) :
     logDeriv (DirichletCharacter.gammaFactor χ) s =
       -(Complex.log (Real.pi : ℂ)) / 2 + Complex.digamma ((s + 1) / 2) / 2 :=
-  logDeriv_gammaFactor_eq_of_odd_of_half_ne_neg_nat hχ
+  gammaLogDeriv_odd_eq_digamma hχ
     (half_ne_neg_nat_of_im_ne_zero
       (by simpa only [Complex.add_im, Complex.one_im, add_zero, ne_eq] using hs))
 
@@ -272,22 +267,21 @@ and `gammaFactor χ` differentiable at `s`.
 Conclusion: `logDeriv (LFunction χ) s = logDeriv (completedLFunction χ) s -
 logDeriv (gammaFactor χ) s`.
 Content:
-`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hne`
+`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.character_level_ne_one_of_ne_one hne`
 gives `N ≠ 1`, so mathlib's
-`DirichletLFunction.dirichletLFunction_eq_completed_div_gammaFactor`
+`DirichletLFunction.L_eq_completed_div_gammaFactor`
 applies at every `s` (not just `s ≠ 0`),
 identifying `LFunction χ` with `completedLFunction χ / gammaFactor χ` as functions; `logDeriv_div`
 then splits the quotient's log-derivative into a difference.
 Role: the regular-point body of
-`DirichletLFunction.logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor`
+`DirichletLFunction.L_logDeriv_eq_completed_sub_gamma`
 — the
 `im ≠ 0` hypothesis was only ever used to derive the two nonvanishing/differentiability
 side-conditions given here directly, so this version also covers the left-vertical line's `t = 0`
 point (the left-vertical step).
 -/
-theorem logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hne : χ ≠ 1) {s : ℂ}
-    (hF : DirichletCharacter.completedLFunction χ s ≠ 0)
+theorem L_logDeriv_sub_gamma_of_regular {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hne : χ ≠ 1) {s : ℂ} (hF : DirichletCharacter.completedLFunction χ s ≠ 0)
     (hΓ : DirichletCharacter.gammaFactor χ s ≠ 0)
     (hdΓ : DifferentiableAt ℂ (DirichletCharacter.gammaFactor χ) s) :
     logDeriv (DirichletCharacter.LFunction χ) s =
@@ -297,9 +291,7 @@ theorem logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular {N :
     DirichletCharacter.LFunction χ = fun z =>
       DirichletCharacter.completedLFunction χ z / DirichletCharacter.gammaFactor χ z := by
     funext z
-    exact
-      dirichletLFunction_eq_completed_div_gammaFactor χ z
-        (Or.inr (dirichletCharacter_level_ne_one_of_ne_one hne))
+    exact L_eq_completed_div_gammaFactor χ z (Or.inr (character_level_ne_one_of_ne_one hne))
   rw [hfun]
   exact logDeriv_div s hF hΓ (DirichletCharacter.differentiable_completedLFunction hne s) hdΓ
 
@@ -308,22 +300,21 @@ Input/assumptions: `χ ≠ 1`, a point `s` with `completedLFunction χ s ≠ 0` 
 Conclusion: `logDeriv (LFunction χ) s = logDeriv (completedLFunction χ) s -
 logDeriv (gammaFactor χ) s`.
 Content: thin wrapper over
-`DirichletLFunction.logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular`,
+`DirichletLFunction.L_logDeriv_sub_gamma_of_regular`,
 using
 `DirichletLFunction.gammaFactor_ne_zero_of_im_ne_zero`/
-`DirichletLFunction.differentiableAt_gammaFactor_of_im_ne_zero`
+`DirichletLFunction.differentiableAt_gammaFactor_nonreal`
 for the
 denominator side.
 Role: the bridge: converts the bound on `logDeriv (completedLFunction χ)` into a
 bound on `logDeriv (LFunction χ)`, the quantity the reciprocal contour kernel actually uses.
 -/
-theorem logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hne : χ ≠ 1) {s : ℂ}
-    (hF : DirichletCharacter.completedLFunction χ s ≠ 0) (hs : s.im ≠ 0) :
+theorem L_logDeriv_eq_completed_sub_gamma {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hne : χ ≠ 1) {s : ℂ} (hF : DirichletCharacter.completedLFunction χ s ≠ 0) (hs : s.im ≠ 0) :
     logDeriv (DirichletCharacter.LFunction χ) s =
       logDeriv (DirichletCharacter.completedLFunction χ) s -
         logDeriv (DirichletCharacter.gammaFactor χ) s :=
-  logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne hF
-    (gammaFactor_ne_zero_of_im_ne_zero hs) (differentiableAt_gammaFactor_of_im_ne_zero hs)
+  L_logDeriv_sub_gamma_of_regular hne hF (gammaFactor_ne_zero_of_im_ne_zero hs)
+    (differentiableAt_gammaFactor_nonreal hs)
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

@@ -131,7 +131,7 @@ theorem phase64_jacobi_local_budget_le_ramified {n : ℕ} {hn : Odd n} {hns : ¬
 ramified-only phase budget gives an odd-prime negative Jacobi witness through L^2.
 The conductor and minus-one local numerical premises have been discharged; the
 remaining scalar gap is an explicit hypothesis. -/
-theorem exists_odd_prime_negative_of_phase64_ramified_gap {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+theorem exists_oddPrime_negJacobi_phase64_ramified_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {q : ℕ} (hq : 20000 ≤ q)
     (hmq : (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ q) {L : ℝ} (hlo : 64 ≤ L)

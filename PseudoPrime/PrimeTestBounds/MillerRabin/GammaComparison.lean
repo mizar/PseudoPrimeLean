@@ -50,9 +50,7 @@ theorem gamma_inequality_of_prime_passes_in_subgroup {n : ℕ} [NeZero n] (hnlar
         13 * ((H.index : ℝ) + 1) * x ^ (1 / 4 : ℝ) +
         ((H.index - 1 : ℕ) : ℝ) * (39 + (10002 * Real.log n + 10004) / Real.sqrt x) := by
   have hn : 1 < n := by linarith only [hnlarge]
-  apply
-    LLS.PaperStatements.gamma_noSmallPrimes_explicit_inequality_of_no_small_divisor hnlarge H hGRH
-      hx hl
+  apply LLS.PaperStatements.gamma_noSmallPrimes_of_noSmallDivisor_GRH hnlarge H hGRH hx hl
   · exact prime_divisor_gt_cutoff_of_strong_pass hn hnOdd hpass
   · intro p hp _ hpX
     exact hHpass (p : ZMod n) (hpass p hp hpX)
@@ -63,8 +61,8 @@ conductor inequality without a finite modulus-loss term, for x≥1 and lambda≥
 Choose the proper subgroup containing all strong passes; prime-divisor exclusion
 eliminates the level correction and pass containment supplies the no-small-prime condition.
 This connects the numerical Gamma comparison to the Miller–Rabin contradiction. -/
-theorem exists_proper_subgroup_gamma_inequality_of_prime_passes {n : ℕ} [NeZero n]
-    (hnlarge : 20000 ≤ n) (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+theorem exists_proper_gamma_bound_of_passes_GRH {n : ℕ} [NeZero n] (hnlarge : 20000 ≤ n)
+    (hnOdd : Odd n) (hnComposite : ¬n.Prime)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x lambda : ℝ} (hx : 1 ≤ x)
     (hl : 0 ≤ lambda)
     (hpass :
@@ -76,12 +74,9 @@ theorem exists_proper_subgroup_gamma_inequality_of_prime_passes {n : ℕ} [NeZer
             13 * ((H.index : ℝ) + 1) * x ^ (1 / 4 : ℝ) +
             ((H.index - 1 : ℕ) : ℝ) * (39 + (10002 * Real.log n + 10004) / Real.sqrt x) := by
   have hn : 1 < n := by linarith only [hnlarge]
-  obtain ⟨H, hH, hHpass⟩ :=
-    PrimeTest.exists_proper_subgroup_containing_strongMillerRabinPass hn hnOdd hnComposite
+  obtain ⟨H, hH, hHpass⟩ := PrimeTest.exists_proper_subgroup_strongMR hn hnOdd hnComposite
   refine ⟨H, hH, ?_⟩
-  apply
-    LLS.PaperStatements.gamma_noSmallPrimes_explicit_inequality_of_no_small_divisor hnlarge H hGRH
-      hx hl
+  apply LLS.PaperStatements.gamma_noSmallPrimes_of_noSmallDivisor_GRH hnlarge H hGRH hx hl
   · exact prime_divisor_gt_cutoff_of_strong_pass hn hnOdd hpass
   · intro p hp _ hpX
     exact hHpass (p : ZMod n) (hpass p hp hpX)
@@ -91,8 +86,8 @@ prime-base passage up to lambda*x forces the Gamma inequality for its Fermat sub
 whose index is at least four. The exact prime-power index excludes the exceptional
 modulus 9, and Fermat containment supplies the analytic no-witness hypothesis.
 This connects the prime-power branch to the uniform coefficient-0.66 comparison. -/
-theorem fermatSubgroup_index_and_gamma_inequality_of_prime_pow_passes {p a : ℕ} [NeZero (p ^ a)]
-    (hp : p.Prime) (hp2 : p ≠ 2) (ha : 2 ≤ a) (hnlarge : 20000 ≤ p ^ a)
+theorem fermatSubgroup_index_gamma_of_pow_passes_GRH {p a : ℕ} [NeZero (p ^ a)] (hp : p.Prime)
+    (hp2 : p ≠ 2) (ha : 2 ≤ a) (hnlarge : 20000 ≤ p ^ a)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x lambda : ℝ} (hx : 1 ≤ x)
     (hl : 0 ≤ lambda)
     (hpass :
@@ -124,10 +119,10 @@ universal prime-base passage up to lambda*x yields an index-at-least-four subgro
 satisfying the Gamma inequality. Use the minimum-two-adic sign subgroup and its
 pass containment, then apply the comparison for a specified subgroup.
 This connects the squarefree two-prime branch to the uniform MR coefficient comparison. -/
-theorem exists_index_ge_four_subgroup_gamma_inequality_of_two_prime_passes {p q : ℕ}
-    [NeZero (p * q)] (hp : p.Prime) (hq : q.Prime) (hp2 : p ≠ 2) (hq2 : q ≠ 2) (hpq : p < q)
-    (hnlarge : 20000 ≤ p * q) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {x lambda : ℝ} (hx : 1 ≤ x) (hl : 0 ≤ lambda)
+theorem exists_index4_gamma_of_two_prime_passes_GRH {p q : ℕ} [NeZero (p * q)] (hp : p.Prime)
+    (hq : q.Prime) (hp2 : p ≠ 2) (hq2 : q ≠ 2) (hpq : p < q) (hnlarge : 20000 ≤ p * q)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x lambda : ℝ} (hx : 1 ≤ x)
+    (hl : 0 ≤ lambda)
     (hpass :
       ∀ r : ℕ,
         r.Prime →
@@ -139,8 +134,7 @@ theorem exists_index_ge_four_subgroup_gamma_inequality_of_two_prime_passes {p q 
             13 * ((H.index : ℝ) + 1) * x ^ (1 / 4 : ℝ) +
             ((H.index - 1 : ℕ) : ℝ) *
               (39 + (10002 * Real.log ((p * q : ℕ) : ℝ) + 10004) / Real.sqrt x) := by
-  obtain ⟨H, hi, hHpass⟩ :=
-    PrimeTest.exists_index_ge_four_subgroup_containing_passes_two_primes hp hq hp2 hq2 hpq
+  obtain ⟨H, hi, hHpass⟩ := PrimeTest.exists_index_four_subgroup_two_primes hp hq hp2 hq2 hpq
   exact
     ⟨H, hi,
       gamma_inequality_of_prime_passes_in_subgroup hnlarge

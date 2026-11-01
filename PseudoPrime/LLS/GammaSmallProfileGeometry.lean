@@ -135,7 +135,7 @@ theorem gamma_profile_dual_small_cell (a b C : ℚ) (K : ℕ) (ha : (16 : ℝ) �
     gamma_signed_excess_le_of_profile_certificate (gammaProfileEnvelopeCell a b) K C hc rfl hcap
       hrows hsum hlox hxhi
   have hp := gamma_quadratic_profile_price_le_two (show 0 < L by linarith only [ha, hlo])
-  rw [gamma_scale_signed_dual_budget_eq_anchored_support L hx]
+  rw [gammaSignedDual_eq_anchorSupport L hx]
   linarith only [hp, he]
 
 /-- Input: L>=290. Claim: the quadratic-profile pole allowance is at most 191/100.

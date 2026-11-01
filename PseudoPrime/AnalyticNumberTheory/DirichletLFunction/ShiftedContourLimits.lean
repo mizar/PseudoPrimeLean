@@ -23,8 +23,8 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 on Re s = tau. The translated line lies strictly right of one, where L is analytic
 and nonzero and hence its logarithmic derivative is analytic. The Mellin denominator
 also does not vanish. This gives measurability for the truncated-to-full right-edge limit. -/
-theorem continuous_shiftedLogContourKernel_vertical {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
-    {x σ τ : ℝ} (hx : 0 < x) (hσ : 1 ≤ σ) (hτ : 0 < τ) :
+theorem continuous_shiftedLog_vertical {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) {x σ τ : ℝ}
+    (hx : 0 < x) (hσ : 1 ≤ σ) (hτ : 0 < τ) :
     Continuous (fun y : ℝ ↦ shiftedLogContourKernel χ x σ ((τ : ℂ) + y * Complex.I)) := by
   have hline : Continuous (fun y : ℝ ↦ (τ : ℂ) + y * Complex.I) :=
     continuous_const.add (Complex.continuous_ofReal.mul continuous_const)
@@ -73,17 +73,15 @@ theorem continuous_shiftedLogContourKernel_vertical {N : ℕ} [NeZero N] (χ : D
 integrable over the real height. Absolute convergence bounds L'/L by the Mangoldt series,
 while the inverse-square Mellin kernel is integrable. No primitivity or RH is required.
 This removes the right-edge integrability assumption from shifted rectangle limits. -/
-theorem integrable_shiftedLogContourKernel_vertical {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
-    {x σ τ : ℝ} (hx : 0 < x) (hσ : 1 ≤ σ) (hτ : 0 < τ) :
+theorem integrable_shiftedLog_vertical {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) {x σ τ : ℝ}
+    (hx : 0 < x) (hσ : 1 ≤ σ) (hτ : 0 < τ) :
     MeasureTheory.Integrable
       (fun y : ℝ ↦ shiftedLogContourKernel χ x σ ((τ : ℂ) + y * Complex.I)) := by
   let C : ℝ := ∑' n : ℕ, ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ (σ + τ)
   have hi := (Analysis.verticalIntegrable_mellinLogKernel hτ.ne').norm.const_mul (C * x ^ τ)
-  apply hi.mono' (continuous_shiftedLogContourKernel_vertical χ hx hσ hτ).aestronglyMeasurable
+  apply hi.mono' (continuous_shiftedLog_vertical χ hx hσ hτ).aestronglyMeasurable
   filter_upwards with y
-  have hbound :=
-    norm_neg_deriv_div_dirichletLFunction_le_vonMangoldt_tsum χ
-      (show 1 < σ + τ by linarith only [hσ, hτ]) y
+  have hbound := norm_logDeriv_L_le_mangoldt_tsum χ (show 1 < σ + τ by linarith only [hσ, hτ]) y
   have heq : (σ : ℂ) + ((τ : ℂ) + y * Complex.I) = ((σ + τ : ℝ) : ℂ) + y * Complex.I := by
     rw [Complex.ofReal_add, add_assoc]
   have hre : ((τ : ℂ) + y * Complex.I).re = τ := by
@@ -102,23 +100,22 @@ theorem integrable_shiftedLogContourKernel_vertical {N : ℕ} [NeZero N] (χ : D
 /-- Under positive scale and vertical abscissa with sigma>=1, the symmetric truncated
 right-edge integral tends to the whole-line integral. Apply interval exhaustion to the
 proved integrability. This supports the height limit before shifting the left edge. -/
-theorem tendsto_intervalIntegral_shiftedLogContourKernel {N : ℕ} [NeZero N]
-    (χ : DirichletCharacter ℂ N) {x σ τ : ℝ} (hx : 0 < x) (hσ : 1 ≤ σ) (hτ : 0 < τ) :
+theorem tendsto_shiftedLog_truncated {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) {x σ τ : ℝ}
+    (hx : 0 < x) (hσ : 1 ≤ σ) (hτ : 0 < τ) :
     Filter.Tendsto
       (fun T : ℝ ↦ ∫ y in (-T)..T, shiftedLogContourKernel χ x σ ((τ : ℂ) + y * Complex.I))
       Filter.atTop (nhds (∫ y : ℝ, shiftedLogContourKernel χ x σ ((τ : ℂ) + y * Complex.I))) := by
   exact
-    MeasureTheory.intervalIntegral_tendsto_integral
-      (integrable_shiftedLogContourKernel_vertical χ hx hσ hτ) Analysis.tendsto_neg_atTop_atBot'
-      Filter.tendsto_id
+    MeasureTheory.intervalIntegral_tendsto_integral (integrable_shiftedLog_vertical χ hx hσ hτ)
+      Analysis.tendsto_neg_atTop_atBot' Filter.tendsto_id
 
 /-- For x>0, sigma>=1, and tau>0, assume heights tending to infinity, vanishing horizontal
 integrals, and an integrable left edge. The normalized shifted rectangle boundary tends
 to the shifted arithmetic logarithmic sum minus the normalized whole-line left integral.
 Assemble the geometric limit and apply shifted Mellin inversion on the right. Horizontal
 height selection and left-edge control remain explicit; no residue or RH assumption is hidden. -/
-theorem tendsto_normalized_shiftedLogBoundary {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
-    {x σ τ a : ℝ} (hx : 0 < x) (hσ : 1 ≤ σ) (hτ : 0 < τ) (T : ℕ → ℝ)
+theorem tendsto_shiftedLogBoundary {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) {x σ τ a : ℝ}
+    (hx : 0 < x) (hσ : 1 ≤ σ) (hτ : 0 < τ) (T : ℕ → ℝ)
     (hT : Filter.Tendsto T Filter.atTop Filter.atTop)
     (hbottom :
       Filter.Tendsto
@@ -145,8 +142,8 @@ theorem tendsto_normalized_shiftedLogBoundary {N : ℕ} [NeZero N] (χ : Dirichl
           (2 * Real.pi : ℝ)⁻¹ •
             ∫ y : ℝ, shiftedLogContourKernel χ x σ ((a : ℂ) + y * Complex.I))) := by
   have hb :=
-    (RectangleGeometry.tendsto_rectangleBoundaryIntegral_of_horizontal_limits T hT hbottom htop
-          hleft (integrable_shiftedLogContourKernel_vertical χ hx hσ hτ)).const_mul
+    (RectangleGeometry.tendsto_boundaryIntegral T hT hbottom htop hleft
+          (integrable_shiftedLog_vertical χ hx hσ hτ)).const_mul
       (-Complex.I / (2 * (Real.pi : ℂ)))
   have hcoeff : (-Complex.I / (2 * (Real.pi : ℂ))) * Complex.I = ((2 * Real.pi : ℝ)⁻¹ : ℂ) := by
     rw [div_mul_eq_mul_div, neg_mul, Complex.I_mul_I, neg_neg, one_div]

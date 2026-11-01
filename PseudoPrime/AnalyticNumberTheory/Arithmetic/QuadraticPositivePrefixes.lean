@@ -38,7 +38,7 @@ theorem ambient_coprimality_partition {q N n : ℕ} (hqN : q ∣ N) (v : ℝ) :
 and triviality at N-coprime primes through b, add twice the excluded square prefix to
 the old positive-prefix lower bound. Combine the restored main-term inequality with
 the exact coprimality partition. This strengthens both the zero and pole comparisons. -/
-theorem quadratic_ambientPositiveMangoldtPrefix_le_character {q N : ℕ} (hqN : q ∣ N)
+theorem quadratic_ambientMangoldtPrefix_le_character {q N : ℕ} (hqN : q ∣ N)
     (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) {b : ℝ} (S : Finset ℕ) (w : ℕ → ℝ)
     (hS : ∀ n ∈ S, (n : ℝ) ≤ b) (hw : ∀ n ∈ S, 0 ≤ w n)
     (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → Nat.Coprime p N → χ p = 1) :
@@ -55,7 +55,7 @@ theorem quadratic_ambientPositiveMangoldtPrefix_le_character {q N : ℕ} (hqN : 
 bounds gives a lower bound on the full square prefix. Other weights are nonnegative.
 No character, divisibility or analytic hypothesis is needed. This supplies sparse
 inputs for the zero and pole positive-prefix savings. -/
-theorem selected_additionalSquareMangoldtPrefix_lower_le (q N : ℕ) (S C : Finset ℕ) (w lo : ℕ → ℝ)
+theorem selected_squareMangoldtPrefix_lower_le (q N : ℕ) (S C : Finset ℕ) (w lo : ℕ → ℝ)
     (hC : C ⊆ S) (hcop : ∀ n ∈ C, Nat.Coprime n q ∧ ¬Nat.Coprime n N ∧ IsSquare n)
     (hw : ∀ n ∈ S, 0 ≤ w n) (hlo : ∀ n ∈ C, lo n ≤ ArithmeticFunction.vonMangoldt n * w n) :
     ∑ n ∈ C, lo n ≤ additionalSquareMangoldtPrefix q N S w := by

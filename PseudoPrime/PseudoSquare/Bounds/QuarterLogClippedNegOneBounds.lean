@@ -25,8 +25,8 @@ noncomputable def quarterClippedTwoPoleNegOneRadius (L : ℝ) : ℝ :=
 prime negative Jacobi witness lies below the quarter-logarithm clipped radius at log B.
 Apply the even quadratic character theorem and monotonicity of the common ambient root.
 This improves the earlier fixed-anchor radius without a finite input certificate. -/
-theorem exists_odd_prime_neg_one_le_quarterClippedTwoPole_log_ambient {n B : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hnB : n ≤ B) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem exists_oddPrime_negOne_quarterAmbient_GRH {n B : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hnB : n ≤ B) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : 500 ≤ Real.log B) :
     ∃ p : ℕ,
       p.Prime ∧
@@ -38,7 +38,7 @@ theorem exists_odd_prime_neg_one_le_quarterClippedTwoPole_log_ambient {n B : ℕ
     nlinarith only [(Nat.cast_nonneg B : (0 : ℝ) ≤ B)]
   have hLA : 500 ≤ Real.log (4 * B : ℕ) := hL.trans (Real.log_le_log (Nat.cast_pos.mpr hBpos) hBA)
   obtain ⟨p, hp, hd, hb, hv⟩ :=
-    LLS.exists_prime_neg_one_le_quarterClipped_log_ambient
+    LLS.exists_negOnePrime_le_quarterClipped_log_ambient
       (NumberTheory.complexQuadraticCharacter n hn)
       (NumberTheory.complexQuadraticCharacter_isQuadratic n hn)
       (NumberTheory.complexQuadraticCharacter_isEven n hn)
@@ -58,7 +58,7 @@ theorem exists_odd_prime_neg_one_le_quarterClippedTwoPole_log_ambient {n B : ℕ
     LLS.quarterClippedNegativeRoot_mono (by linarith only [hLA] : 0 < Real.log (4 * B : ℕ)) hlog
   have hs := mul_self_le_mul_self hr hu
   have hw :=
-    NumberTheory.primeNegOneWitness_mem_of_complexQuadraticCharacter_ne_one n hn hp hd
+    NumberTheory.negOneWitness_mem_of_quadratic_ne_one n hn hp hd
       (by
         rw [hv]; norm_num only)
   refine ⟨p, hp, hw.2.1, ?_, hw.2.2⟩
@@ -68,13 +68,12 @@ theorem exists_odd_prime_neg_one_le_quarterClippedTwoPole_log_ambient {n B : ℕ
 /-- Under the common-ambient GRH assumptions, the least odd-prime negative
 Jacobi witness is bounded by the new radius. Apply leastness to the constructed witness.
 This is the interface used for the finite maximum. -/
-theorem primeNegOneWitness_cast_le_quarterClippedTwoPole_log_ambient {n B : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hnB : n ≤ B) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 500 ≤ Real.log B) (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
+theorem negOneWitness_le_quarterAmbient_GRH {n B : ℕ} (hn : Odd n) (hns : ¬IsSquare n) (hnB : n ≤ B)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 500 ≤ Real.log B)
+    (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤
       quarterClippedTwoPoleNegOneRadius (Real.log B) := by
-  obtain ⟨p, hp, ho, hb, hv⟩ :=
-    exists_odd_prime_neg_one_le_quarterClippedTwoPole_log_ambient hn hns hnB hGRH hL
+  obtain ⟨p, hp, ho, hb, hv⟩ := exists_oddPrime_negOne_quarterAmbient_GRH hn hns hnB hGRH hL
   exact (Nat.cast_le.mpr (NumberTheory.primeNegOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hb
 
 /-- Under GRH and log B at least 500, QNegOne(B) is bounded by the new radius.
@@ -87,29 +86,28 @@ theorem QNegOne_le_quarterClippedTwoPole_logarithmic {B : ℕ} (hL : 500 ≤ Rea
   intro n hn
   have ha := NumberTheory.mem_admissibleFinset_iff.mp hn
   exact
-    primeNegOneWitness_cast_le_quarterClippedTwoPole_log_ambient ha.odd ha.not_isSquare ha.le hGRH
-      hL (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare ha.odd ha.not_isSquare)
+    negOneWitness_le_quarterAmbient_GRH ha.odd ha.not_isSquare ha.le hGRH hL
+      (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare ha.odd ha.not_isSquare)
 
 /-- For odd nonsquare n under GRH with log n at least 500, a negative odd-prime
 Jacobi witness lies below the new radius at log n. Specialize the ambient bound to B=n.
 This is the pointwise public logarithmic bound. -/
-theorem exists_prime_neg_one_witness_le_quarterClippedTwoPole_logarithmic {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 500 ≤ Real.log n) :
+theorem exists_prime_negOne_quarterLog_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 500 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         Odd p ∧ (p : ℝ) ≤ quarterClippedTwoPoleNegOneRadius (Real.log n) ∧ jacobiSym n p = -1 := by
-  exact exists_odd_prime_neg_one_le_quarterClippedTwoPole_log_ambient hn hns le_rfl hGRH hL
+  exact exists_oddPrime_negOne_quarterAmbient_GRH hn hns le_rfl hGRH hL
 
 /-- Under the pointwise GRH and logarithmic-size assumptions, bound the least
 negative odd-prime witness by the new radius. Specialize the common ambient leastness theorem.
 This keeps the pointwise and finite-maximum claims separate. -/
-theorem primeNegOneWitness_cast_le_quarterClippedTwoPole_logarithmic {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 500 ≤ Real.log n) (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
+theorem negOneWitness_le_quarterLog_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 500 ≤ Real.log n)
+    (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤
       quarterClippedTwoPoleNegOneRadius (Real.log n) := by
-  exact primeNegOneWitness_cast_le_quarterClippedTwoPole_log_ambient hn hns le_rfl hGRH hL hw
+  exact negOneWitness_le_quarterAmbient_GRH hn hns le_rfl hGRH hL hw
 
 /-- For real L at least 500, the new radius is strictly smaller than the old
 fixed-anchor radius. Compare the positive roots and their squares.

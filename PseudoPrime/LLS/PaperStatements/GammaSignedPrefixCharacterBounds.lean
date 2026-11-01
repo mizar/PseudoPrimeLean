@@ -87,8 +87,8 @@ theorem gamma_character_prefix_loss_eq_zero_of_prime_one {q : ℕ} (χ : Dirichl
 be combined with prime triviality, the common Euler prefix and the signed remainder.
 The ambient pole level Q is independent of the original level q.
 This is the parity-independent common implementation for sharper parity caps. -/
-theorem gamma_primitiveCharacter_sum_re_le_signed_prefix_gamma_cap {q Q : ℕ} [NeZero q]
-    (hQ : 20000 ≤ Q) (hqQ : q ≤ Q) (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
+theorem gammaCharacterSum_re_le_signed_prefix_gamma_cap {q Q : ℕ} [NeZero q] (hQ : 20000 ≤ Q)
+    (hqQ : q ≤ Q) (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x b : ℝ} (hx : 2 ≤ x)
     (hb : 0 ≤ b) (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → χ p = 1) {A : ℝ}
     (hgamma : gammaSignedGammaCost χ.primitiveCharacter.gammaFactor ≤ A) :
@@ -105,7 +105,7 @@ theorem gamma_primitiveCharacter_sum_re_le_signed_prefix_gamma_cap {q Q : ℕ} [
   have hp := DirichletCharacter.primitiveCharacter_isPrimitive χ
   have hnp := AnalyticNumberTheory.Arithmetic.primitiveCharacter_ne_one χ hne
   have hz :=
-    AnalyticNumberTheory.DirichletLFunction.gammaResolvent_zeroMass_le_signed_prefix
+    AnalyticNumberTheory.DirichletLFunction.gammaMass_le_signedPrefix_RH
       (le_trans (by norm_num only : (2 : ℕ) ≤ 3) hm) (hGRH _ χ.primitiveCharacter hp) hp hnp
       (inv_ne_one.mpr hnp) (Finset.Ioc 0 ⌊b⌋₊)
   have he :=
@@ -113,7 +113,7 @@ theorem gamma_primitiveCharacter_sum_re_le_signed_prefix_gamma_cap {q Q : ℕ} [
       (fun p hp hpb ↦ primitiveCharacter_apply_one_of_apply_one χ (hsmall p hp hpb))
   rw [he, add_zero] at hz
   have hu :=
-    gamma_primitive_sum_re_le_resolvent_conductor_free hQ hm (hmq.trans hqQ) hGRH hp hnp
+    gammaPrimitiveSum_re_le_resolvent_conductor_free hQ hm (hmq.trans hqQ) hGRH hp hnp
       (inv_ne_one.mpr hnp) hx
   have hf : (0 : ℝ) < χ.conductor := by exact_mod_cast Nat.pos_of_ne_zero χ.conductor_ne_zero
   have hmqR : (χ.conductor : ℝ) ≤ q := by exact_mod_cast hmq
@@ -127,8 +127,8 @@ theorem gamma_primitiveCharacter_sum_re_le_signed_prefix_gamma_cap {q Q : ℕ} [
 GRH, x ≥ 2 and prime triviality through b ≥ 0, the signed prefix budget
 retains log q while the pole uses log Q. This includes small original levels.
 Apply the actual primitive-conductor bound at Q before prefix cancellation. -/
-theorem gamma_primitiveCharacter_sum_re_le_signed_prime_prefix_ambient {q Q : ℕ} [NeZero q]
-    (hQ : 20000 ≤ Q) (hqQ : q ≤ Q) (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
+theorem gammaCharSum_signedPrefix_ambient_GRH {q Q : ℕ} [NeZero q] (hQ : 20000 ≤ Q) (hqQ : q ≤ Q)
+    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x b : ℝ} (hx : 2 ≤ x)
     (hb : 0 ≤ b) (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → χ p = 1) :
     let : NeZero χ.conductor := ⟨χ.conductor_ne_zero⟩;
@@ -136,7 +136,7 @@ theorem gamma_primitiveCharacter_sum_re_le_signed_prime_prefix_ambient {q Q : �
       gammaSignedPrefixBudget q b + ((7 / 6 : ℝ) * Real.log Q + 4) / Real.sqrt x +
         43 * x ^ (-9 / 16 : ℝ) := by
   simpa only [gammaSignedPrefixBudget] using
-    gamma_primitiveCharacter_sum_re_le_signed_prefix_gamma_cap hQ hqQ χ hne hGRH hx hb hsmall
+    gammaCharacterSum_re_le_signed_prefix_gamma_cap hQ hqQ χ hne hGRH hx hb hsmall
       (gammaSignedGammaCost_le_parity_upper χ.primitiveCharacter)
 
 /-- Under GRH for nonprincipal q ≥ 20000 and x ≥ 2, if all primes through b ≥ 0
@@ -144,7 +144,7 @@ have character value one, the primitive Gamma arithmetic sum is bounded by the
 signed parity/Euler-prefix budget plus the pole and conductor-free left costs.
 Transfer to the primitive character, cancel its prefix loss exactly, and apply
 the actual resolvent zero bound. No logarithmic lower entrance is imposed. -/
-theorem gamma_primitiveCharacter_sum_re_le_signed_prime_prefix {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+theorem gammaCharacterSum_re_le_signed_prime_prefix {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
     (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x b : ℝ} (hx : 2 ≤ x)
     (hb : 0 ≤ b) (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → χ p = 1) :
@@ -152,16 +152,14 @@ theorem gamma_primitiveCharacter_sum_re_le_signed_prime_prefix {q : ℕ} [NeZero
     (∑' k : ℕ, gammaMellinKernel.summand χ.primitiveCharacter x k).re ≤
       gammaSignedPrefixBudget q b + ((7 / 6 : ℝ) * Real.log q + 4) / Real.sqrt x +
         43 * x ^ (-9 / 16 : ℝ) := by
-  exact
-    gamma_primitiveCharacter_sum_re_le_signed_prime_prefix_ambient hq (le_refl _) χ hne hGRH hx hb
-      hsmall
+  exact gammaCharSum_signedPrefix_ambient_GRH hq (le_refl _) χ hne hGRH hx hb hsmall
 
 /-- For an even nonprincipal character, use the exact even signed Gamma cost
 instead of the parity maximum in the arbitrary-scale prefix comparison.
 Primitive normalization preserves evenness, and equality of Gamma factors
 supplies the generic cap. This sharper bound is used by Miller-Rabin annihilators. -/
-theorem gamma_primitiveCharacter_sum_re_le_even_signed_prime_prefix {q Q : ℕ} [NeZero q]
-    (hQ : 20000 ≤ Q) (hqQ : q ≤ Q) (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1) (heven : χ.Even)
+theorem gammaCharacterSum_re_le_even_signed_prime_prefix {q Q : ℕ} [NeZero q] (hQ : 20000 ≤ Q)
+    (hqQ : q ≤ Q) (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1) (heven : χ.Even)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x b : ℝ} (hx : 2 ≤ x)
     (hb : 0 ≤ b) (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → χ p = 1) :
     let : NeZero χ.conductor := ⟨χ.conductor_ne_zero⟩;
@@ -173,7 +171,7 @@ theorem gamma_primitiveCharacter_sum_re_le_even_signed_prime_prefix {q Q : ℕ} 
         43 * x ^ (-9 / 16 : ℝ) := by
   have hp := (NumberTheory.primitiveCharacter_even_iff χ).mpr heven
   have hf : χ.primitiveCharacter.gammaFactor = Complex.Gammaℝ := funext hp.gammaFactor_def
-  apply gamma_primitiveCharacter_sum_re_le_signed_prefix_gamma_cap hQ hqQ χ hne hGRH hx hb hsmall
+  apply gammaCharacterSum_re_le_signed_prefix_gamma_cap hQ hqQ χ hne hGRH hx hb hsmall
   rw [hf]
 
 end PseudoPrime.LLS.PaperStatements

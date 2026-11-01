@@ -101,8 +101,7 @@ theorem truncatedEulerUpper_le_euler_ratio {r : ℝ} (hr : 0 < r) {N : ℕ} (hN 
     truncatedEulerUpper r N ≤ (r⁻¹ ^ 2 + (r + 1)⁻¹) / (1 + (2 : ℝ) ^ (-r) / r) := by
   have hA := Analysis.truncatedLogDirichletUpper_le_euler_numerator hr hN
   have hB :=
-    Analysis.euler_denominator_le_truncatedPowerDirichletLower hr
-      ((by norm_num only : 1 ≤ 3).trans hN)
+    Analysis.euler_denominator_le_truncatedDirichlet hr ((by norm_num only : 1 ≤ 3).trans hN)
   have hB0 : 0 < 1 + (2 : ℝ) ^ (-r) / r :=
     add_pos_of_pos_of_nonneg zero_lt_one
       (div_nonneg (Real.rpow_nonneg (by norm_num only : (0 : ℝ) ≤ 2) _) hr.le)

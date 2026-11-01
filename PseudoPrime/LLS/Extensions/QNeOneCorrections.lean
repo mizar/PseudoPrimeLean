@@ -25,8 +25,8 @@ In the `χ̃(2)=0` branch the only additional loss is the `log 2` correction.
 -/
 
 /-- The `χ̃(2)=0` branch gives the reciprocal lower bound after the 2-adic correction. -/
-theorem characterReciprocalWeightedSum_re_ge_log_sub_eight_fifths_sub_log_two_of_eq_zero {q : ℕ}
-    (x : ℝ) (χ : DirichletCharacter ℂ q) (hriemann : LLSRiemannReciprocalLowerBound) (hx : 2 ≤ x)
+theorem primitiveReciprocal_lower_two_zero {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
+    (hriemann : LLSRiemannReciprocalLowerBound) (hx : 2 ≤ x)
     (hodd :
       ∀ {k p : ℕ},
         k ∈ Finset.Icc 1 ⌊Real.log x / Real.log 2⌋₊ →
@@ -37,10 +37,9 @@ theorem characterReciprocalWeightedSum_re_ge_log_sub_eight_fifths_sub_log_two_of
           χ.primitiveCharacter).re := by
   have hζ := hriemann x hx
   have hexact :=
-    AnalyticNumberTheory.Arithmetic.reciprocalWeightedSum_sub_re_eq_twoAdicCorrection_of_eq_one x χ
-      hx hodd
+    AnalyticNumberTheory.Arithmetic.recipMangoldt_sub_re_eq_twoCorrection_of_one x χ hx hodd
   have hcorr :=
-    AnalyticNumberTheory.Arithmetic.twoAdicReciprocalCorrection_le_log_two_of_apply_two_eq_zero x χ
+    AnalyticNumberTheory.Arithmetic.recipTwoCorrection_le_log_two_of_zero x χ
       (lt_of_lt_of_le (by norm_num only) hx) h2
   linarith only [hζ, hexact, hcorr]
 
@@ -50,8 +49,8 @@ theorem characterReciprocalWeightedSum_re_ge_log_sub_eight_fifths_sub_log_two_of
 specified odd primes inherits the Riemann reciprocal lower bound `log x - 8/5`.
 The exact two-adic decomposition has zero correction in this branch, supplying its sharp
 reciprocal input to the three-branch comparison. -/
-theorem characterReciprocalWeightedSum_re_ge_log_sub_eight_fifths_of_eq_one {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hriemann : LLSRiemannReciprocalLowerBound) (hx : 2 ≤ x)
+theorem primitiveReciprocal_lower_two_one {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
+    (hriemann : LLSRiemannReciprocalLowerBound) (hx : 2 ≤ x)
     (hodd :
       ∀ {k p : ℕ},
         k ∈ Finset.Icc 1 ⌊Real.log x / Real.log 2⌋₊ →
@@ -62,10 +61,8 @@ theorem characterReciprocalWeightedSum_re_ge_log_sub_eight_fifths_of_eq_one {q :
           χ.primitiveCharacter).re := by
   have hζ := hriemann x hx
   have hexact :=
-    AnalyticNumberTheory.Arithmetic.reciprocalWeightedSum_sub_re_eq_twoAdicCorrection_of_eq_one x χ
-      hx hodd
-  have hcorr :=
-    AnalyticNumberTheory.Arithmetic.twoAdicReciprocalCorrection_eq_zero_of_apply_two_eq_one x χ h2
+    AnalyticNumberTheory.Arithmetic.recipMangoldt_sub_re_eq_twoCorrection_of_one x χ hx hodd
+  have hcorr := AnalyticNumberTheory.Arithmetic.recipTwoCorrection_eq_zero_of_one x χ h2
   rw [hcorr] at hexact
   linarith only [hζ, hexact]
 
@@ -76,8 +73,8 @@ open PseudoPrime.AnalyticNumberTheory.Arithmetic in
 branch with primitive-character value `-1` at two admits the displayed `3(log x)²/2` loss.
 The exact defect identity and a two-adic correction bounded by `(log x)²` imply this
 coarser envelope by nonnegativity of the additional half-square. -/
-theorem characterLogWeightedSum_re_ge_riemann_lower_sub_three_half_log_sq_of_eq_neg_one {q : ℕ}
-    (x : ℝ) (χ : DirichletCharacter ℂ q) (hriemann : LLSRiemannWeightedLowerBound) (hx : 2 ≤ x)
+theorem characterLogSum_lower_negOne {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
+    (hriemann : LLSRiemannWeightedLowerBound) (hx : 2 ≤ x)
     (hodd :
       ∀ {k p : ℕ},
         k ∈ Finset.Icc 1 ⌊Real.log x / Real.log 2⌋₊ →
@@ -88,9 +85,8 @@ theorem characterLogWeightedSum_re_ge_riemann_lower_sub_three_half_log_sq_of_eq_
         (3 / 2) * (Real.log x) ^ 2 ≤
       (characterLogWeightedSum x χ.primitiveCharacter).re := by
   have hζ := hriemann x (by exact lt_of_lt_of_le (by norm_num only : (1 : ℝ) < 2) hx)
-  have hexact :=
-    logWeightedMangoldtSum_sub_characterLogWeightedSum_re_eq_twoAdicCorrection_of_eq_one x χ hx hodd
-  have hcorr := twoAdicLogCorrection_le_log_sq_of_apply_two_eq_neg_one x χ hx h2
+  have hexact := logMangoldt_sub_re_eq_twoCorrection_of_one x χ hx hodd
+  have hcorr := logTwoCorrection_le_sq_of_neg_one x χ hx h2
   have hlognonneg : 0 ≤ (Real.log x) ^ 2 := sq_nonneg _
   linarith only [hζ, hexact, hcorr, hlognonneg]
 
@@ -101,8 +97,8 @@ open PseudoPrime.AnalyticNumberTheory.Arithmetic in
 triviality loses at most `(4/3) log 2` from the Riemann reciprocal bound.
 Combine the exact two-adic decomposition with its odd-tail estimate; this supplies the
 reciprocal lower input to the corrected negative-one branch. -/
-theorem characterReciprocalWeightedSum_re_ge_log_sub_cneg_one {q : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hriemann : LLSRiemannReciprocalLowerBound) (hx : 2 ≤ x)
+theorem characterReciprocalSum_re_ge_log_sub_cneg_one {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
+    (hriemann : LLSRiemannReciprocalLowerBound) (hx : 2 ≤ x)
     (hodd :
       ∀ {k p : ℕ},
         k ∈ Finset.Icc 1 ⌊Real.log x / Real.log 2⌋₊ →
@@ -111,8 +107,8 @@ theorem characterReciprocalWeightedSum_re_ge_log_sub_cneg_one {q : ℕ} (x : ℝ
     Real.log x - 8 / 5 - (4 / 3) * Real.log 2 ≤
       (characterReciprocalWeightedSum x χ.primitiveCharacter).re := by
   have hζ := hriemann x hx
-  have hexact := reciprocalWeightedSum_sub_re_eq_twoAdicCorrection_of_eq_one x χ hx hodd
-  have hcorr := twoAdicReciprocalCorrection_le_four_thirds_log_two_of_apply_two_eq_neg_one x χ hx h2
+  have hexact := recipMangoldt_sub_re_eq_twoCorrection_of_one x χ hx hodd
+  have hcorr := recipTwoCorrection_le_4_3_log_two_of_neg_one x χ hx h2
   linarith only [hζ, hexact, hcorr]
 
 end PseudoPrime.LLS.Extensions

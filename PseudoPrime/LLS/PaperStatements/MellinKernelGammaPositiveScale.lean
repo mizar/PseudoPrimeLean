@@ -22,7 +22,7 @@ namespace PseudoPrime.LLS.PaperStatements.MellinKernel
 /-- For a positive scale at most one and a nonnegative strip interval, the complex
 power has norm at most one. Absorb it into the input function and apply the existing
 horizontal decay theorem at unit scale. This supplies the small-scale contour limit. -/
-theorem tendsto_nonnegative_horizontalIntegral_of_le_one (K : MellinKernel) {b x : ℝ} (hb : 0 ≤ b)
+theorem tendsto_nonneg_horizontal_of_le_one (K : MellinKernel) {b x : ℝ} (hb : 0 ≤ b)
     (hbK : b ≤ 1 / 2 + K.delta) (hx : 0 < x) (hx1 : x ≤ 1) (T ε : ℕ → ℝ) (ht : ∀ n, 1 ≤ |T n|)
     (hε : ∀ n, 0 ≤ ε n) (hlim : Filter.Tendsto ε Filter.atTop (nhds 0)) (F : ℂ → ℂ)
     (hF : ∀ n, ∀ σ ∈ Set.uIoc 0 b, ‖F ((σ : ℂ) + T n * Complex.I)‖ ≤ ε n * (T n) ^ 2) :
@@ -78,7 +78,7 @@ theorem tendsto_gamma_horizontalIntegral_of_le_one (K : MellinKernel) {N : ℕ}
   have hT : Filter.Tendsto T Filter.atTop Filter.atTop :=
     Filter.tendsto_atTop_add_const_right _ 1 tendsto_natCast_atTop_atTop
   apply
-    tendsto_nonnegative_horizontalIntegral_of_le_one K hb hbK hx hx1 (fun n => e * T n)
+    tendsto_nonneg_horizontal_of_le_one K hb hbK hx hx1 (fun n => e * T n)
       (fun n => (Real.log (T n) + D) / (T n) ^ 2)
       (fun n => by
         rw [heabs]; exact ht n)
@@ -155,8 +155,7 @@ theorem gammaIntegral_eq_central_of_pos (K : MellinKernel) {N : ℕ} (χ : Diric
   have htop := tendsto_gamma_horizontalIntegral_of_pos K χ hb hbK hb2 hx 1 (Or.inl rfl)
   have hbot := tendsto_gamma_horizontalIntegral_of_pos K χ hb hbK hb2 hx (-1) (Or.inr rfl)
   have ht :=
-    AnalyticNumberTheory.RectangleGeometry.tendsto_rectangleBoundaryIntegral_of_horizontal_limits
-      (K := F) (a := 0) (b := b) T
+    AnalyticNumberTheory.RectangleGeometry.tendsto_boundaryIntegral (K := F) (a := 0) (b := b) T
       (Filter.tendsto_atTop_add_const_right _ 1 tendsto_natCast_atTop_atTop)
       (by
         simpa only [F, T, neg_one_mul, Complex.ofReal_neg, neg_mul, sub_eq_add_neg, one_mul] using
@@ -167,8 +166,7 @@ theorem gammaIntegral_eq_central_of_pos (K : MellinKernel) {N : ℕ} (χ : Diric
     AnalyticNumberTheory.RectangleGeometry.rectangleBoundaryIntegral F ((0 : ℂ) - T n * Complex.I)
         ((b : ℂ) + T n * Complex.I) =
       0 := by
-    apply
-      AnalyticNumberTheory.RectangleGeometry.rectangleBoundaryIntegral_eq_zero_of_differentiableOn
+    apply AnalyticNumberTheory.RectangleGeometry.boundaryIntegral_zero_of_holomorphic
     intro s hs
     have hsr : 0 ≤ s.re ∧ s.re ≤ b := by
       have hs' := hs.1

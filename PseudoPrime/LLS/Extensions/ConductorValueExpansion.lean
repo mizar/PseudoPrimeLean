@@ -115,8 +115,7 @@ polynomial norm and reciprocal bounds with correction `d log d + d(log 2-1/2) + 
 Use the conductor-cutoff logarithm, factor the exponential and insert the normalized
 polynomial identity. The reciprocal prefactor is `(12 exp gamma/pi^2)^d`.
 The arithmetic estimates remain explicit inputs; no new public theorem assumption is added. -/
-theorem eventually_value_bounds_with_correction_of_mangoldt_errors {d : ℕ} (hd : 0 < d) {A B : ℝ}
-    (hB : 0 ≤ B)
+theorem eventually_value_bounds_of_mangoldt_errors {d : ℕ} (hd : 0 < d) {A B : ℝ} (hB : 0 ≤ B)
     (hH :
       ∀ᶠ x : ℝ in Filter.atTop,
         |(∑ n ∈ Finset.Ioc 0 ⌊x⌋₊, ArithmeticFunction.vonMangoldt n / ((n : ℝ) * Real.log n)) -
@@ -143,8 +142,7 @@ theorem eventually_value_bounds_with_correction_of_mangoldt_errors {d : ℕ} (hd
     Filter.Tendsto (fun f : FixedDegreeFamily d ↦ f.val.analyticConductor) (conductorFilter d)
       Filter.atTop :=
     Filter.tendsto_comap
-  filter_upwards [eventually_norm_L_one_and_reciprocal_le_of_secondOrder_mangoldt_errors hd hB hH
-      hψ,
+  filter_upwards [eventually_L_one_inv_le_of_mangoldt_errors hd hB hH hψ,
     ht.eventually (Filter.eventually_gt_atTop (0 : ℝ)),
     ht.eventually (Filter.eventually_gt_atTop (Real.log (2 * (d : ℝ)))),
     hC.eventually (Filter.eventually_gt_atTop (1 : ℝ))] with f hb ht0 hta hCf
@@ -175,7 +173,7 @@ theorem eventually_value_bounds_with_correction_of_mangoldt_errors {d : ℕ} (hd
 /-- For fixed degree, shift and coefficient, the correction tends to zero uniformly
 on the conductor filter. Compose its real-variable limit with `log log C` tending to infinity.
 This establishes the family-wide vanishing error required by the general L-value claim. -/
-theorem tendsto_valueUpperCorrection_on_conductorFilter (d : ℕ) (a K : ℝ) :
+theorem valueCorrection_tendsto (d : ℕ) (a K : ℝ) :
     Filter.Tendsto
       (fun f : FixedDegreeFamily d ↦
         valueUpperCorrection d a K (Real.log (Real.log f.val.analyticConductor)))
@@ -247,19 +245,18 @@ theorem isBigO_valueUpperCorrection (d : ℕ) (a K : ℝ) :
 
 /-- The fixed-degree correction is little-o of one on the conductor filter.
 Translate its zero limit to the little-o condition. This supplies the public error contract. -/
-theorem isLittleO_valueUpperCorrection_on_conductorFilter (d : ℕ) (a K : ℝ) :
+theorem valueCorrection_isLittleO (d : ℕ) (a K : ℝ) :
     Asymptotics.IsLittleO (conductorFilter d)
       (fun f : FixedDegreeFamily d ↦
         valueUpperCorrection d a K (Real.log (Real.log f.val.analyticConductor)))
       (fun _ ↦ (1 : ℝ)) := by
-  exact
-    (Asymptotics.isLittleO_one_iff ℝ).mpr (tendsto_valueUpperCorrection_on_conductorFilter d a K)
+  exact (Asymptotics.isLittleO_one_iff ℝ).mpr (valueCorrection_tendsto d a K)
 
 /-- For degree greater than one, the correction is `O(d^2(log d)^2/log log C)`
 on the conductor filter. Compose the reciprocal-variable bound and multiply its scale by
 the nonzero fixed-degree factor. This proves the public quantitative error scale for these
 degrees; the factor vanishes at degree one, so this argument does not cover that case. -/
-theorem isBigO_valueUpperCorrection_on_conductorFilter {d : ℕ} (hd : 1 < d) (a K : ℝ) :
+theorem valueCorrection_isBigO_degree {d : ℕ} (hd : 1 < d) (a K : ℝ) :
     Asymptotics.IsBigO (conductorFilter d)
       (fun f : FixedDegreeFamily d ↦
         valueUpperCorrection d a K (Real.log (Real.log f.val.analyticConductor)))
@@ -284,7 +281,7 @@ theorem isBigO_valueUpperCorrection_on_conductorFilter {d : ℕ} (hd : 1 < d) (a
 `O(1/log log C)` on the conductor filter. Compose the reciprocal-variable estimate
 with the double logarithm tending to infinity. Unlike the public degree-dependent
 scale, this rate does not vanish at degree one. -/
-theorem isBigO_valueUpperCorrection_reciprocal_on_conductorFilter (d : ℕ) (a K : ℝ) :
+theorem valueCorrection_isBigO_reciprocal (d : ℕ) (a K : ℝ) :
     Asymptotics.IsBigO (conductorFilter d)
       (fun f : FixedDegreeFamily d ↦
         valueUpperCorrection d a K (Real.log (Real.log f.val.analyticConductor)))
@@ -299,7 +296,7 @@ theorem isBigO_valueUpperCorrection_reciprocal_on_conductorFilter (d : ℕ) (a K
 `O(d²(1+log d)²/log log C)`. The fixed-degree multiplier is positive, including at
 degree one. Multiply the reciprocal-logarithm estimate by this nonzero constant.
 This supplies a rate usable for all degrees without altering the public proposition. -/
-theorem isBigO_valueUpperCorrection_nonvanishing_on_conductorFilter {d : ℕ} (hd : 0 < d) (a K : ℝ) :
+theorem valueCorrection_isBigO_positive_degree {d : ℕ} (hd : 0 < d) (a K : ℝ) :
     Asymptotics.IsBigO (conductorFilter d)
       (fun f : FixedDegreeFamily d ↦
         valueUpperCorrection d a K (Real.log (Real.log f.val.analyticConductor)))
@@ -308,7 +305,7 @@ theorem isBigO_valueUpperCorrection_nonvanishing_on_conductorFilter {d : ℕ} (h
   have hl : 0 ≤ Real.log (d : ℝ) := Real.log_nonneg (Nat.one_le_cast.mpr hd)
   have hp : 0 < 1 + Real.log (d : ℝ) := add_pos_of_pos_of_nonneg (by norm_num only) hl
   have hn := mul_ne_zero (pow_ne_zero 2 (Nat.cast_pos.mpr hd).ne') (pow_ne_zero 2 hp.ne')
-  have hb := (isBigO_valueUpperCorrection_reciprocal_on_conductorFilter d a K).const_mul_right hn
+  have hb := (valueCorrection_isBigO_reciprocal d a K).const_mul_right hn
   simpa only [mul_one_div] using hb
 
 end PseudoPrime.LLS.Extensions.GeneralLFunction

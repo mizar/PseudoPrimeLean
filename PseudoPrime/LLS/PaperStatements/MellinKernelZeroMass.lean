@@ -26,7 +26,7 @@ characters. Then the full absolute zero mass is eventually at most (1+epsilon) K
 Choose delta = epsilon K.mass / 2, apply the proved uniform tail bound, and add the two
 absolutely convergent complementary series. The compact-truncation estimate remains an
 explicit hypothesis; this reduction removes the tail from the remaining analytic task. -/
-theorem exists_uniform_kernelZeroSum_le_mass_of_truncations (K : MellinKernel)
+theorem exists_zeroSum_mass_of_truncations_GRH (K : MellinKernel)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hcompact :
       ∀ T : ℝ,

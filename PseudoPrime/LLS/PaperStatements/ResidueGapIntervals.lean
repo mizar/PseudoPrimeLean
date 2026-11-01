@@ -191,8 +191,8 @@ and sign guards, lower totient and radius bounds, upper logarithm and prime-coun
 bounds, and a normalized prime-free Mangoldt estimate. A majorant below 1.719
 implies the strict analytic gap. Apply the normalized least-prime theorem.
 This is the consumer for shared interval certificates in Corollary 1.2. -/
-theorem exists_least_prime_in_residue_le_of_parity_interval {q : ℕ} [NeZero q] (a : (ZMod q)ˣ)
-    (hq : 64 ≤ q) (hu : q ≤ 20000) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem exists_least_residue_parityInterval_GRH {q : ℕ} [NeZero q] (a : (ZMod q)ˣ) (hq : 64 ≤ q)
+    (hu : q ≤ 20000) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     {h₀ s₀ s L₁ T T₁ U A W : ℝ} (hh : (2 : ℝ) ≤ q.totient) (hh₀ : 0 < h₀) (hhh : h₀ ≤ q.totient)
     (hs₀ : 0 < s₀) (hss : s₀ ≤ s) (hs : (q.totient : ℝ) * Real.log q = s) (hx : 65536 ≤ s ^ 2)
     (hL : 1719 / 1000 ≤ Real.log q) (hLL : Real.log q ≤ L₁) (hT : 0 ≤ T)
@@ -215,7 +215,7 @@ theorem exists_least_prime_in_residue_le_of_parity_interval {q : ℕ} [NeZero q]
   have hm : 1719 / 1000 ≤ 1719 / 1000 + (Real.log q - 1719 / 1000) / q.totient :=
     le_add_of_nonneg_right (div_nonneg (sub_nonneg.mpr hL) (hh₀.le.trans hhh))
   exact
-    exists_least_prime_in_residue_le_of_normalized_parity_gap a hq hu hGRH hh (hs₀.trans_le hss) hs
-      hx hTx hC hR hfree (((he.trans hn).trans_lt hg).trans_le hm)
+    exists_least_residue_normalizedParity_GRH a hq hu hGRH hh (hs₀.trans_le hss) hs hx hTx hC hR
+      hfree (((he.trans hn).trans_lt hg).trans_le hm)
 
 end PseudoPrime.LLS.PaperStatements

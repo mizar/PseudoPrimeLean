@@ -20,8 +20,8 @@ namespace PseudoPrime.LLS
 is at most sqrt(x)/20+(5517/4000)log(x)+2469/800. Use the affine RH envelope
 and the exact sign change of the exponential variation density.
 Role: replace the coarse absolute-variation allowance without finite computation. -/
-theorem logWeighted_error_exponential_integral_le_signed_variation (hRH : RiemannHypothesis)
-    {x y : ℝ} (hx : 1 ≤ x) (hy : 0 ≤ y) :
+theorem logWeighted_exp_error_signedVariation_RH (hRH : RiemannHypothesis) {x y : ℝ} (hx : 1 ≤ x)
+    (hy : 0 ≤ y) :
     |∫ u in (0 : ℝ)..y,
           (AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum (x * u) - x * u) *
             ((u - 1) * Real.exp (-u))| ≤
@@ -47,7 +47,7 @@ theorem logWeighted_error_exponential_integral_le_signed_variation (hRH : Rieman
 Claim: the arithmetic variation integral is at most x plus that cap. Split off
 the linear main term and evaluate its primitive. Role: share the finite-cutoff
 transfer independently of the numerical error formula. -/
-theorem logWeighted_exponential_integral_upper_of_error_cap {x y E : ℝ} (hx : 0 < x) (hy : 0 ≤ y)
+theorem logWeighted_exp_upper_of_errorCap {x y E : ℝ} (hx : 0 < x) (hy : 0 ≤ y)
     (hE :
       |∫ u in (0 : ℝ)..y,
             (AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum (x * u) - x * u) *
@@ -101,8 +101,7 @@ theorem logWeighted_exponential_integral_upper_of_error_cap {x y E : ℝ} (hx : 
 Claim: every finite exponential Mangoldt sum is at most x plus the cap.
 Keep the boundary term and let it decay at infinity. Role: pass to the principal
 series without exchanging an infinite sum with an integral. -/
-theorem exponentialMangoldtSum_upper_uniform_of_integral_cap (hRH : RiemannHypothesis) {x E : ℝ}
-    (hx : 1 ≤ x)
+theorem exponentialMangoldt_uniform_integralCap_RH (hRH : RiemannHypothesis) {x E : ℝ} (hx : 1 ≤ x)
     (hI :
       ∀ y : ℝ,
         0 ≤ y →
@@ -126,7 +125,7 @@ theorem exponentialMangoldtSum_upper_uniform_of_integral_cap (hRH : RiemannHypot
   have hb :
     AnalyticNumberTheory.Arithmetic.exponentialMangoldtSum x (x * y) ≤
       x + E + ((4 * x + x ^ 2) * y ^ 2 + 4 * y) * Real.exp (-y) := by
-    rw [AnalyticNumberTheory.Arithmetic.exponentialMangoldtSum_eq_logWeighted_integral hx0 hy.1]
+    rw [AnalyticNumberTheory.Arithmetic.expMangoldtSum_eq_logWeighted_integral hx0 hy.1]
     have ht := mul_nonneg hx0.le hy.1
     have hA :=
       mul_le_mul_of_nonneg_left (logWeightedMangoldtSum_le_four_add_four hRH ht)
@@ -145,10 +144,10 @@ theorem exponentialMangoldtSum_upper_signed_variation (hRH : RiemannHypothesis) 
     AnalyticNumberTheory.Arithmetic.exponentialMangoldtSum x (N : ℝ) ≤
       x + Real.sqrt x / 20 + (5517 / 4000 : ℝ) * Real.log x + 2469 / 800 := by
   have h :=
-    exponentialMangoldtSum_upper_uniform_of_integral_cap hRH hx
+    exponentialMangoldt_uniform_integralCap_RH hRH hx
       (fun y hy ↦
-        logWeighted_exponential_integral_upper_of_error_cap (zero_lt_one.trans_le hx) hy
-          (logWeighted_error_exponential_integral_le_signed_variation hRH hx hy))
+        logWeighted_exp_upper_of_errorCap (zero_lt_one.trans_le hx) hy
+          (logWeighted_exp_error_signedVariation_RH hRH hx hy))
       N
   exact h.trans_eq (by ring)
 

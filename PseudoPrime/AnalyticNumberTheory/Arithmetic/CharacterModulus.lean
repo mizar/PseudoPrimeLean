@@ -27,8 +27,8 @@ theorem distinctPrimeFactorCount_characterModulus {n : ℕ} (hn : Odd n) :
   have hfour : ArithmeticFunction.cardDistinctFactors 4 = 1 := by
     rw [show 4 = 2 ^ 2 by norm_num only,
       ArithmeticFunction.cardDistinctFactors_apply_prime_pow Nat.prime_two (by norm_num only)]
-  rw [distinctPrimeFactorCount_eq_cardDistinctFactors,
-    distinctPrimeFactorCount_eq_cardDistinctFactors, NumberTheory.characterModulus,
+  rw [distinctPrimeFactorCount_eq_cardFactors, distinctPrimeFactorCount_eq_cardFactors,
+    NumberTheory.characterModulus,
     ArithmeticFunction.cardDistinctFactors_mul (NumberTheory.four_coprime_of_odd hn), hfour]
   exact Nat.add_comm 1 (ArithmeticFunction.cardDistinctFactors n)
 

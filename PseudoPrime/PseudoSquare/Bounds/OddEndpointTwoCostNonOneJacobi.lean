@@ -20,7 +20,7 @@ namespace PseudoPrime.PseudoSquare
 condition at 4*n gives an odd non-one Jacobi prime at most x. Use the uniform
 reciprocal cost (4/3)log 2 and refined principal envelope, transfer from the
 canonical primitive character, and allow divisors of n as zero witnesses. -/
-theorem exists_odd_prime_jacobi_ne_one_of_twoCostLimit_neg {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+theorem exists_oddPrime_neOne_twoCostLimit_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x Y : ℝ} (hx : 1 < x)
     (hY : 64 ≤ Y) (hYx : Y ≤ x)
     (hlim :
@@ -46,11 +46,10 @@ theorem exists_odd_prime_jacobi_ne_one_of_twoCostLimit_neg {n : ℕ} (hn : Odd n
       (Nat.pos_of_ne_zero χ.conductor_ne_zero) hqle hx.le hY
   have hx4 : 4 ≤ x := le_trans (by linarith only [hY] : 4 ≤ Y) hYx
   obtain ⟨p, hp, ho, hpx, hv⟩ :=
-    LLS.PaperStatements.exists_odd_prime_inducing_ne_one_of_twoCostLimit_neg χ hq hne hquad hGRH hx
-      hY hYx (LLS.PaperStatements.quadraticTwoReciprocalCost_le_four_thirds _)
+    LLS.PaperStatements.exists_oddPrime_inducing_twoCost_GRH χ hq hne hquad hGRH hx hY hYx
+      (LLS.PaperStatements.quadraticTwoReciprocalCost_le_four_thirds _)
       (LLS.PaperStatements.quadraticTwoLogCost_le_envelope hx4 _) (hm.trans_lt hlim)
-  exact
-    ⟨p, hp, ho, hpx, NumberTheory.jacobi_ne_one_of_primitiveQuadraticCharacter_ne_one hn hp ho hv⟩
+  exact ⟨p, hp, ho, hpx, NumberTheory.jacobi_ne_one_of_primitive_ne_one hn hp ho hv⟩
 
 /-- Under the same two-cost endpoint condition, the least odd-prime non-one
 Jacobi witness is at most x. The nonempty-set input defines the existing least
@@ -64,8 +63,7 @@ theorem primeNeOneWitness_cast_le_of_twoCostLimit_neg {n : ℕ} (hn : Odd n) (hn
         0)
     (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤ x := by
-  obtain ⟨p, hp, ho, hpx, hv⟩ :=
-    exists_odd_prime_jacobi_ne_one_of_twoCostLimit_neg hn hns hGRH hx hY hYx hlim
+  obtain ⟨p, hp, ho, hpx, hv⟩ := exists_oddPrime_neOne_twoCostLimit_GRH hn hns hGRH hx hY hYx hlim
   exact (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hpx
 
 /-- Under GRH,64<=Y<=x and the two-cost condition at 4*B, the finite maximum

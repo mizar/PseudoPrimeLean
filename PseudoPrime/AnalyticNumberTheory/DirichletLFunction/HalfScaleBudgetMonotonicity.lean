@@ -18,10 +18,7 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 of the correction budget. The modulus dependence remains a separate `log q` term.
 This fixed positive constant is used in scalar tail and remainder estimates. -/
 noncomputable def genusCorrectionBudgetConstant : ℝ :=
-  12 +
-    (LogFreeDensity.completedGenusMassShiftConstant +
-        LogFreeDensity.completedGenusMassCenterConstant) *
-      (Real.log 4 + 1)
+  12 + (LogFreeDensity.genusMassShift + LogFreeDensity.genusMassCenter) * (Real.log 4 + 1)
 
 /-- The fixed genus-correction budget constant is positive. Use positivity of
 the two existing mass constants and `log 4`. This certifies nonnegativity of the
@@ -31,8 +28,7 @@ theorem genusCorrectionBudgetConstant_pos : 0 < genusCorrectionBudgetConstant :=
   exact
     add_pos_of_pos_of_nonneg (by norm_num only)
       (mul_nonneg
-        (add_nonneg LogFreeDensity.completedGenusMassShiftConstant_pos.le
-          LogFreeDensity.completedGenusMassCenterConstant_pos.le)
+        (add_nonneg LogFreeDensity.genusMassShift_pos.le LogFreeDensity.genusMassCenter_pos.le)
         (by linarith only [hlog]))
 
 /-- Rewrite the high-zero budget as its two original tail terms plus the fixed
@@ -49,8 +45,8 @@ theorem regularizedHighZeroTailMajorant_eq (q : ℕ) (x : ℝ) (H : ℕ) (K : �
 /-- For positive natural modulus, nonnegative scale, and nonnegative local-count
 constant, the high-zero budget is nonnegative at every natural cutoff. Check its
 three terms separately. This allows replacing a family size by an upper bound. -/
-theorem regularizedHighZeroTailMajorant_nonneg {q H : ℕ} {x K : ℝ} (hq : 1 ≤ q) (hx : 0 ≤ x)
-    (hK : 0 ≤ K) : 0 ≤ regularizedHighZeroTailMajorant q x H K := by
+theorem regularizedHighTail_nonneg {q H : ℕ} {x K : ℝ} (hq : 1 ≤ q) (hx : 0 ≤ x) (hK : 0 ≤ K) :
+    0 ≤ regularizedHighZeroTailMajorant q x H K := by
   have hqlog : 0 ≤ Real.log q := Real.log_nonneg (by exact_mod_cast hq)
   have hhlog : 0 ≤ Real.log ((H + 3 : ℕ) : ℝ) :=
     Real.log_nonneg
@@ -72,8 +68,8 @@ theorem regularizedHighZeroTailMajorant_nonneg {q H : ℕ} {x K : ℝ} (hq : 1 �
 /-- At fixed cutoff and nonnegative scale and tail constant, the high-zero budget
 is monotone in positive modulus. Only `log q` varies; its coefficients are
 nonnegative. This supplies one tail majorant for all primitive conductors. -/
-theorem regularizedHighZeroTailMajorant_mono_modulus {q r H : ℕ} {x K : ℝ} (hq : 0 < q)
-    (hqr : q ≤ r) (hx : 0 ≤ x) (hK : 0 ≤ K) :
+theorem regularizedHighTail_mono_modulus {q r H : ℕ} {x K : ℝ} (hq : 0 < q) (hqr : q ≤ r)
+    (hx : 0 ≤ x) (hK : 0 ≤ K) :
     regularizedHighZeroTailMajorant q x H K ≤ regularizedHighZeroTailMajorant r x H K := by
   have hl := Real.log_le_log (Nat.cast_pos.mpr hq) (Nat.cast_le.mpr hqr)
   rw [regularizedHighZeroTailMajorant_eq, regularizedHighZeroTailMajorant_eq]
@@ -91,9 +87,8 @@ theorem regularizedHighZeroTailMajorant_mono_modulus {q r H : ℕ} {x K : ℝ} (
 /-- At positive modulus and scale at least two, nonnegative budget constants make
 the full primitive remainder nonnegative. Combine the low-height and high-tail
 positivity bounds. This permits cardinality majorization of finite remainder sums. -/
-theorem primitiveHalfScaleRemainderBudget_nonneg {q H : ℕ} {x σ C K T : ℝ} (hq : 1 ≤ q) (hx : 2 ≤ x)
-    (hC : 0 ≤ C) (hK : 0 ≤ K) (hT : 0 ≤ T) :
-    0 ≤ primitiveHalfScaleRemainderBudget q x σ H C K T := by
+theorem halfScaleRemainder_nonneg {q H : ℕ} {x σ C K T : ℝ} (hq : 1 ≤ q) (hx : 2 ≤ x) (hC : 0 ≤ C)
+    (hK : 0 ≤ K) (hT : 0 ≤ T) : 0 ≤ primitiveHalfScaleRemainderBudget q x σ H C K T := by
   have hqlog : 0 ≤ Real.log q := Real.log_nonneg (by exact_mod_cast hq)
   have hxlog : 0 ≤ Real.log x := Real.log_nonneg (by linarith only [hx])
   have hhlog : 0 ≤ Real.log (4 + ((H + 1 : ℕ) : ℝ)) :=
@@ -106,15 +101,15 @@ theorem primitiveHalfScaleRemainderBudget_nonneg {q H : ℕ} {x σ C K T : ℝ} 
   exact
     add_nonneg
       (add_nonneg (mul_nonneg hcount (regularizedLowHeightMajorant_nonneg hx))
-        (regularizedHighZeroTailMajorant_nonneg hq (by linarith only [hx]) hT))
+        (regularizedHighTail_nonneg hq (by linarith only [hx]) hT))
       (mul_nonneg hC (by linarith only [hxlog]))
 
 /-- At scale at least two with nonnegative local and tail constants, the primitive
 remainder is monotone in positive modulus. Compare logarithms, multiply by the
 nonnegative low-height majorant, and use high-tail monotonicity. The arithmetic
 remainder constant is unchanged. This reduces conductor-dependent sums to one level. -/
-theorem primitiveHalfScaleRemainderBudget_mono_modulus {q r H : ℕ} {x σ C K T : ℝ} (hq : 0 < q)
-    (hqr : q ≤ r) (hx : 2 ≤ x) (hK : 0 ≤ K) (hT : 0 ≤ T) :
+theorem halfScaleRemainder_mono_modulus {q r H : ℕ} {x σ C K T : ℝ} (hq : 0 < q) (hqr : q ≤ r)
+    (hx : 2 ≤ x) (hK : 0 ≤ K) (hT : 0 ≤ T) :
     primitiveHalfScaleRemainderBudget q x σ H C K T ≤
       primitiveHalfScaleRemainderBudget r x σ H C K T := by
   have hl := Real.log_le_log (Nat.cast_pos.mpr hq) (Nat.cast_le.mpr hqr)
@@ -127,8 +122,7 @@ theorem primitiveHalfScaleRemainderBudget_mono_modulus {q r H : ℕ} {x σ C K T
   have hm :=
     mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hadd hc)
       (regularizedLowHeightMajorant_nonneg (σ := σ) hx)
-  have ht :=
-    regularizedHighZeroTailMajorant_mono_modulus (H := H) hq hqr (by linarith only [hx] : 0 ≤ x) hT
+  have ht := regularizedHighTail_mono_modulus (H := H) hq hqr (by linarith only [hx] : 0 ≤ x) hT
   exact add_le_add (add_le_add hm ht) le_rfl
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

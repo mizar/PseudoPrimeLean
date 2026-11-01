@@ -31,8 +31,8 @@ Termwise Mellin inversion and a summable integral-norm majorant justify intercha
 the twisted von Mangoldt Dirichlet series then identifies `-L'/L`.
 This supplies the integral identity before collapsing the weight to a finite sum.
 -/
-theorem characterReciprocalWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N]
-    (χ : DirichletCharacter ℂ N) {x : ℝ} (hx : 0 < x) {τ : ℝ} (hτ : 1 < τ) :
+theorem reciprocalTerm_tsum_eq_integral {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) {x : ℝ}
+    (hx : 0 < x) {τ : ℝ} (hτ : 1 < τ) :
     ∑' n : ℕ,
         (ArithmeticFunction.vonMangoldt n : ℂ) / (n : ℂ) * χ (n : ZMod N) *
           Analysis.mellinWeightOne ((n : ℝ) / x) =
@@ -258,7 +258,7 @@ theorem characterReciprocalWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N]
       simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, mul_zero,
         Complex.ofReal_im, Complex.I_im, mul_one, sub_self, add_zero]
       exact hτ
-    have hLS := lSeries_twist_vonMangoldt_eq_neg_logDeriv_dirichletLFunction_of_one_lt_re χ hs
+    have hLS := LSeries_mangoldt_eq_neg_logDeriv χ hs
     have hsum :
       ∑' n : ℕ,
           (ArithmeticFunction.vonMangoldt n : ℂ) * χ (n : ZMod N) *
@@ -316,15 +316,15 @@ theorem characterReciprocalWeightedTerm_tsum_eq_integral {N : ℕ} [NeZero N]
 /--
 For any character of nonzero level, `x > 0`, and `τ > 1`, the finite reciprocal
 weighted character sum equals `(2π)⁻¹` times the right-vertical kernel integral.
-Combine the finite-sum collapse with `characterReciprocalWeightedTerm_tsum_eq_integral`.
+Combine the finite-sum collapse with `reciprocalTerm_tsum_eq_integral`.
 This identifies the right edge in the reciprocal contour limit.
 -/
-theorem characterReciprocalWeightedSum_eq_integral {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
-    {x : ℝ} (hx : 0 < x) {τ : ℝ} (hτ : 1 < τ) :
+theorem reciprocalWeightedSum_eq_integral {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) {x : ℝ}
+    (hx : 0 < x) {τ : ℝ} (hτ : 1 < τ) :
     (Arithmetic.characterReciprocalWeightedSum x χ : ℂ) =
       (2 * Real.pi : ℝ)⁻¹ •
         ∫ y : ℝ, dirichletReciprocalContourKernel x χ ((τ : ℂ) + y * Complex.I) := by
   rw [← Arithmetic.characterReciprocalWeightedTerm_tsum_eq χ hx,
-    characterReciprocalWeightedTerm_tsum_eq_integral χ hx hτ]
+    reciprocalTerm_tsum_eq_integral χ hx hτ]
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

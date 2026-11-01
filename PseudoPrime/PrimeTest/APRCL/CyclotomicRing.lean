@@ -1515,9 +1515,8 @@ theorem cyclotomicRoot_power_step_sub_one_isUnit (n p k : ℕ) (hcp : Nat.Coprim
 /-- If `u` is coprime to `p`, then the denominator required by the power
 substitution is a unit. The inverse exponent modulo `p` expresses the powered
 root as a power of the canonical unit-difference root. -/
-theorem cyclotomicRoot_power_substitution_denominator_isUnit (n : ℕ) {p k u : ℕ} (hp : Nat.Prime p)
-    (hcp : Nat.Coprime p n) (hup : Nat.Coprime u p) :
-    IsUnit ((cyclotomicRoot n p k ^ u) ^ (p ^ k) - 1) := by
+theorem rootPower_denominator_isUnit (n : ℕ) {p k u : ℕ} (hp : Nat.Prime p) (hcp : Nat.Coprime p n)
+    (hup : Nat.Coprime u p) : IsUnit ((cyclotomicRoot n p k ^ u) ^ (p ^ k) - 1) := by
   obtain ⟨v, _, hmod⟩ := Nat.exists_mul_mod_eq_one_of_coprime hup hp.one_lt
   let t := u * v / p
   have hprod : u * v = p * t + 1 := by
@@ -1560,8 +1559,8 @@ theorem primePowerCyclotomic_eval_eq_zero_of_unit {R S : Type*} [CommRing R] [Co
 
 /-- Substituting a power of the quotient root preserves the defining relation
 whenever the corresponding geometric denominator is a unit. -/
-theorem cyclotomicRoot_power_substitution_relation_of_unit (n : ℕ) {p k : ℕ} (hp : Nat.Prime p)
-    (u : ℕ) (hunit : IsUnit ((cyclotomicRoot n p k ^ u) ^ (p ^ k) - 1)) :
+theorem cyclotomicRoot_substitution_of_unit (n : ℕ) {p k : ℕ} (hp : Nat.Prime p) (u : ℕ)
+    (hunit : IsUnit ((cyclotomicRoot n p k ^ u) ^ (p ^ k) - 1)) :
     Polynomial.eval₂ (AdjoinRoot.of (primePowerCyclotomic p k (ZMod n))) (cyclotomicRoot n p k ^ u)
         (primePowerCyclotomic p k (ZMod n)) =
       0 := by
@@ -1581,7 +1580,7 @@ def cyclotomicRootPowerSubstitutionHom (n : ℕ) {p k : ℕ} (hp : Nat.Prime p) 
     (hunit : IsUnit ((cyclotomicRoot n p k ^ u) ^ (p ^ k) - 1)) :
     cyclotomicQuotient n p k →+* cyclotomicQuotient n p k :=
   AdjoinRoot.lift (AdjoinRoot.of (primePowerCyclotomic p k (ZMod n))) (cyclotomicRoot n p k ^ u)
-    (cyclotomicRoot_power_substitution_relation_of_unit n hp u hunit)
+    (cyclotomicRoot_substitution_of_unit n hp u hunit)
 
 /-- The induced quotient homomorphism realizes the coefficient-array power substitution. -/
 theorem cyclotomicRootPowerSubstitutionHom_class (n : ℕ) {p k : ℕ} (hp : Nat.Prime p) (u : ℕ)
@@ -1590,7 +1589,7 @@ theorem cyclotomicRootPowerSubstitutionHom_class (n : ℕ) {p k : ℕ} (hp : Nat
       cyclotomicFixedArrayClass n p k (cyclotomicFixedArraySubstitutePower n hp a u) := by
   change
     (AdjoinRoot.lift (AdjoinRoot.of (primePowerCyclotomic p k (ZMod n))) (cyclotomicRoot n p k ^ u)
-          (cyclotomicRoot_power_substitution_relation_of_unit n hp u hunit))
+          (cyclotomicRoot_substitution_of_unit n hp u hunit))
         ((AdjoinRoot.mk (primePowerCyclotomic p k (ZMod n)))
           (cyclotomicFixedArrayPolynomial n p k a)) =
       _
@@ -1602,18 +1601,16 @@ proves the defining-relation denominator is a unit. -/
 def cyclotomicRootPowerSubstitutionHom_of_coprime (n : ℕ) {p k u : ℕ} (hp : Nat.Prime p)
     (hpn : Nat.Coprime p n) (hup : Nat.Coprime u p) :
     cyclotomicQuotient n p k →+* cyclotomicQuotient n p k :=
-  cyclotomicRootPowerSubstitutionHom n hp u
-    (cyclotomicRoot_power_substitution_denominator_isUnit n hp hpn hup)
+  cyclotomicRootPowerSubstitutionHom n hp u (rootPower_denominator_isUnit n hp hpn hup)
 
 /-- The coprimality-derived homomorphism acts on coefficient arrays by the
 period-reduced executable substitution. -/
-theorem cyclotomicRootPowerSubstitutionHom_of_coprime_class (n : ℕ) {p k u : ℕ} (hp : Nat.Prime p)
-    (hpn : Nat.Coprime p n) (hup : Nat.Coprime u p) (a : cyclotomicFixedArray n p k) :
+theorem rootPowerHom_of_coprime_class (n : ℕ) {p k u : ℕ} (hp : Nat.Prime p) (hpn : Nat.Coprime p n)
+    (hup : Nat.Coprime u p) (a : cyclotomicFixedArray n p k) :
     cyclotomicRootPowerSubstitutionHom_of_coprime n hp hpn hup (cyclotomicFixedArrayClass n p k a) =
       cyclotomicFixedArrayClass n p k (cyclotomicFixedArraySubstitutePower n hp a u) := by
   exact
-    cyclotomicRootPowerSubstitutionHom_class n hp u
-      (cyclotomicRoot_power_substitution_denominator_isUnit n hp hpn hup) a
+    cyclotomicRootPowerSubstitutionHom_class n hp u (rootPower_denominator_isUnit n hp hpn hup) a
 
 /-- Two conditional power substitutions compose to the identity when their exponents
 multiply to one modulo the root period. This gives the inverse law before proving the
@@ -1631,23 +1628,20 @@ theorem cyclotomicRootPowerSubstitutionHom_comp_eq_id (n : ℕ) {p k : ℕ} (hp 
       RingHom.id_apply]
   · change
       (AdjoinRoot.lift (AdjoinRoot.of (primePowerCyclotomic p k (ZMod n)))
-            (cyclotomicRoot n p k ^ u)
-            (cyclotomicRoot_power_substitution_relation_of_unit n hp u hu))
+            (cyclotomicRoot n p k ^ u) (cyclotomicRoot_substitution_of_unit n hp u hu))
           ((AdjoinRoot.lift (AdjoinRoot.of (primePowerCyclotomic p k (ZMod n)))
-              (cyclotomicRoot n p k ^ v)
-              (cyclotomicRoot_power_substitution_relation_of_unit n hp v hv))
+              (cyclotomicRoot n p k ^ v) (cyclotomicRoot_substitution_of_unit n hp v hv))
             (AdjoinRoot.root (primePowerCyclotomic p k (ZMod n)))) =
         AdjoinRoot.root (primePowerCyclotomic p k (ZMod n))
-    rw [AdjoinRoot.lift_root (cyclotomicRoot_power_substitution_relation_of_unit n hp v hv)]
+    rw [AdjoinRoot.lift_root (cyclotomicRoot_substitution_of_unit n hp v hv)]
     rw [map_pow]
     change
       (AdjoinRoot.lift (AdjoinRoot.of (primePowerCyclotomic p k (ZMod n)))
-            (cyclotomicRoot n p k ^ u)
-            (cyclotomicRoot_power_substitution_relation_of_unit n hp u hu)
+            (cyclotomicRoot n p k ^ u) (cyclotomicRoot_substitution_of_unit n hp u hu)
             (AdjoinRoot.root (primePowerCyclotomic p k (ZMod n)))) ^
           v =
         AdjoinRoot.root (primePowerCyclotomic p k (ZMod n))
-    rw [AdjoinRoot.lift_root (cyclotomicRoot_power_substitution_relation_of_unit n hp u hu)]
+    rw [AdjoinRoot.lift_root (cyclotomicRoot_substitution_of_unit n hp u hu)]
     rw [← pow_mul]
     rw [hprod, pow_add, pow_mul, cyclotomicRoot_pow_index_eq_one n hp]
     simp only [one_pow, one_mul, pow_one]
@@ -1735,7 +1729,7 @@ theorem cyclotomicRootPowerSubstitutionEquiv_map_root (n : ℕ) {p k : ℕ} (hp 
         (AdjoinRoot.root (primePowerCyclotomic p k (ZMod n))) =
       _
   rw [cyclotomicRootPowerSubstitutionHom,
-    AdjoinRoot.lift_root (cyclotomicRoot_power_substitution_relation_of_unit n hp u hu)]
+    AdjoinRoot.lift_root (cyclotomicRoot_substitution_of_unit n hp u hu)]
 
 /-- Construct the power-substitution ring equivalence from the arithmetic input
 conditions. Coprimality of `p` and `n` makes the base denominator a unit, while
@@ -1753,14 +1747,13 @@ noncomputable def cyclotomicRootPowerSubstitutionEquiv_of_coprime (n : ℕ) {p k
   have hcopu : Nat.Coprime u p := Nat.Coprime.of_dvd_right hpdiv hcop
   have hcopv : Nat.Coprime v p := inverse_exponent_coprime_to_prime hp hprod
   exact
-    cyclotomicRootPowerSubstitutionEquiv n hp u v t
-      (cyclotomicRoot_power_substitution_denominator_isUnit n hp hpn hcopu)
-      (cyclotomicRoot_power_substitution_denominator_isUnit n hp hpn hcopv) hprod
+    cyclotomicRootPowerSubstitutionEquiv n hp u v t (rootPower_denominator_isUnit n hp hpn hcopu)
+      (rootPower_denominator_isUnit n hp hpn hcopv) hprod
 
 /-- The automatically constructed coprime power equivalence sends the canonical root
 to the chosen exponent power. -/
-theorem cyclotomicRootPowerSubstitutionEquiv_of_coprime_map_root (n : ℕ) {p k u : ℕ}
-    (hp : Nat.Prime p) (hpn : Nat.Coprime p n) (hcop : Nat.Coprime u (primePowerIndex p k)) :
+theorem rootPowerEquiv_of_coprime_map_root (n : ℕ) {p k u : ℕ} (hp : Nat.Prime p)
+    (hpn : Nat.Coprime p n) (hcop : Nat.Coprime u (primePowerIndex p k)) :
     cyclotomicRootPowerSubstitutionEquiv_of_coprime n hp hpn hcop (cyclotomicRoot n p k) =
       cyclotomicRoot n p k ^ u := by
   have hpdiv : p ∣ primePowerIndex p k := by
@@ -1768,15 +1761,13 @@ theorem cyclotomicRootPowerSubstitutionEquiv_of_coprime_map_root (n : ℕ) {p k 
     exact dvd_pow_self p (Nat.succ_ne_zero k)
   change
     cyclotomicRootPowerSubstitutionHom n hp u
-        (cyclotomicRoot_power_substitution_denominator_isUnit n hp hpn
-          (Nat.Coprime.of_dvd_right hpdiv hcop))
+        (rootPower_denominator_isUnit n hp hpn (Nat.Coprime.of_dvd_right hpdiv hcop))
         (AdjoinRoot.root (primePowerCyclotomic p k (ZMod n))) =
       _
   rw [cyclotomicRootPowerSubstitutionHom,
     AdjoinRoot.lift_root
-      (cyclotomicRoot_power_substitution_relation_of_unit n hp u
-        (cyclotomicRoot_power_substitution_denominator_isUnit n hp hpn
-          (Nat.Coprime.of_dvd_right hpdiv hcop)))]
+      (cyclotomicRoot_substitution_of_unit n hp u
+        (rootPower_denominator_isUnit n hp hpn (Nat.Coprime.of_dvd_right hpdiv hcop)))]
 
 /-- The ring equivalence acts on fixed-array representatives by the executable
 coefficient-level power substitution. -/
@@ -1791,7 +1782,7 @@ theorem cyclotomicRootPowerSubstitutionEquiv_class (n : ℕ) {p k : ℕ} (hp : N
 
 /-- The automatically constructed coprime-exponent equivalence acts on coefficient
 arrays by the period-reduced power substitution. -/
-theorem cyclotomicRootPowerSubstitutionEquiv_of_coprime_class (n : ℕ) {p k u : ℕ} (hp : Nat.Prime p)
+theorem rootPowerEquiv_of_coprime_class (n : ℕ) {p k u : ℕ} (hp : Nat.Prime p)
     (hpn : Nat.Coprime p n) (hcop : Nat.Coprime u (primePowerIndex p k))
     (a : cyclotomicFixedArray n p k) :
     cyclotomicRootPowerSubstitutionEquiv_of_coprime n hp hpn hcop
@@ -1807,19 +1798,17 @@ theorem cyclotomicRootPowerSubstitutionEquiv_of_coprime_class (n : ℕ) {p k u :
   have hcopu : Nat.Coprime u p := Nat.Coprime.of_dvd_right hpdiv hcop
   have hcopv : Nat.Coprime v p := inverse_exponent_coprime_to_prime hp hprod
   change
-    cyclotomicRootPowerSubstitutionEquiv n hp u v t
-        (cyclotomicRoot_power_substitution_denominator_isUnit n hp hpn hcopu)
-        (cyclotomicRoot_power_substitution_denominator_isUnit n hp hpn hcopv) hprod
-        (cyclotomicFixedArrayClass n p k a) =
+    cyclotomicRootPowerSubstitutionEquiv n hp u v t (rootPower_denominator_isUnit n hp hpn hcopu)
+        (rootPower_denominator_isUnit n hp hpn hcopv) hprod (cyclotomicFixedArrayClass n p k a) =
       _
   exact
     cyclotomicRootPowerSubstitutionEquiv_class n hp u v t
-      (cyclotomicRoot_power_substitution_denominator_isUnit n hp hpn hcopu)
-      (cyclotomicRoot_power_substitution_denominator_isUnit n hp hpn hcopv) hprod a
+      (rootPower_denominator_isUnit n hp hpn hcopu) (rootPower_denominator_isUnit n hp hpn hcopv)
+      hprod a
 
 /-- A unit modulo the full APR-CL modulus induces the cyclotomic power
 equivalence for every auxiliary prime block. -/
-theorem cyclotomicRootPowerSubstitutionEquiv_class_of_modulus_coprime (n t q k u : ℕ) (ht : t ≠ 0)
+theorem rootPowerEquiv_class_of_modulus_coprime (n t q k u : ℕ) (ht : t ≠ 0)
     (hq : q ∈ auxiliaryPrimes t) (hn : Nat.Coprime n (modulus t)) (hu : Nat.Coprime u (modulus t))
     (a : cyclotomicFixedArray n q k) :
     cyclotomicRootPowerSubstitutionEquiv_of_coprime n (u := u)
@@ -1839,14 +1828,14 @@ theorem cyclotomicRootPowerSubstitutionEquiv_class_of_modulus_coprime (n t q k u
   have hperiod : Nat.Coprime u (primePowerIndex q k) := by
     rw [primePowerIndex]
     exact hqu.pow_right (k + 1)
-  exact cyclotomicRootPowerSubstitutionEquiv_of_coprime_class n hqprime hqn hperiod a
+  exact rootPowerEquiv_of_coprime_class n hqprime hqn hperiod a
 
 /-- The input residue acts by a cyclotomic power equivalence on every auxiliary-prime block.
 The full-modulus coprimality hypothesis supplies both the quotient characteristic condition and
 the invertibility of the input exponent modulo each prime-power period.
 -/
-theorem cyclotomicRootPowerSubstitutionEquiv_class_of_input_unit (n t q k : ℕ) (ht : t ≠ 0)
-    (hq : q ∈ auxiliaryPrimes t) (hn : Nat.Coprime n (modulus t)) (a : cyclotomicFixedArray n q k) :
+theorem rootPowerEquiv_class_of_input_unit (n t q k : ℕ) (ht : t ≠ 0) (hq : q ∈ auxiliaryPrimes t)
+    (hn : Nat.Coprime n (modulus t)) (a : cyclotomicFixedArray n q k) :
     cyclotomicRootPowerSubstitutionEquiv_of_coprime n (u := n)
         ((mem_auxiliaryPrimes_iff_prime_sub_dvd ht).mp hq |>.1)
         (auxiliaryPrime_coprime_left_of_modulus hq hn)
@@ -1858,7 +1847,7 @@ theorem cyclotomicRootPowerSubstitutionEquiv_class_of_input_unit (n t q k : ℕ)
       cyclotomicFixedArrayClass n q k
         (cyclotomicFixedArraySubstitutePower n
           ((mem_auxiliaryPrimes_iff_prime_sub_dvd ht).mp hq |>.1) a n) := by
-  exact cyclotomicRootPowerSubstitutionEquiv_class_of_modulus_coprime n t q k n ht hq hn hn a
+  exact rootPowerEquiv_class_of_modulus_coprime n t q k n ht hq hn hn a
 
 /--
 For any natural divisor `ℓ` of `n`, with nonzero `t`, auxiliary prime `q`, and `n`
@@ -1866,7 +1855,7 @@ coprime to the APR-CL modulus, the input-power equivalence over `ZMod ℓ` agree
 substitution by `n`. Divisor coprimality supplies the general substitution theorem. Primality
 of `ℓ` is unnecessary here; later prime-factor orbit arguments specialize this interface.
 -/
-theorem cyclotomicRootPowerSubstitutionEquiv_class_of_prime_factor (n ℓ t q k : ℕ) (ht : t ≠ 0)
+theorem rootPowerEquiv_class_of_prime_factor (n ℓ t q k : ℕ) (ht : t ≠ 0)
     (hq : q ∈ auxiliaryPrimes t) (hℓn : ℓ ∣ n) (hn : Nat.Coprime n (modulus t))
     (a : cyclotomicFixedArray ℓ q k) :
     cyclotomicRootPowerSubstitutionEquiv_of_coprime ℓ (u := n)
@@ -1881,7 +1870,7 @@ theorem cyclotomicRootPowerSubstitutionEquiv_class_of_prime_factor (n ℓ t q k 
         (cyclotomicFixedArraySubstitutePower ℓ
           ((mem_auxiliaryPrimes_iff_prime_sub_dvd ht).mp hq |>.1) a n) := by
   have hℓM : Nat.Coprime ℓ (modulus t) := Nat.Coprime.of_dvd_left hℓn hn
-  exact cyclotomicRootPowerSubstitutionEquiv_class_of_modulus_coprime ℓ t q k n ht hq hℓM hn a
+  exact rootPowerEquiv_class_of_modulus_coprime ℓ t q k n ht hq hℓM hn a
 
 /--
 For any natural divisor `ℓ` of `n`, the induced input-power equivalence over `ZMod ℓ`
@@ -1889,7 +1878,7 @@ sends the canonical root to its `n`-th power. Nonzero `t`, auxiliary-prime membe
 coprimality with the fixed modulus supply the needed unit indices. No primality premise on
 `ℓ` is required by this root-action identity.
 -/
-theorem cyclotomicRootPowerSubstitutionEquiv_map_root_of_prime_factor (n ℓ t q k : ℕ) (ht : t ≠ 0)
+theorem rootPowerEquiv_map_root_of_prime_factor (n ℓ t q k : ℕ) (ht : t ≠ 0)
     (hq : q ∈ auxiliaryPrimes t) (hℓn : ℓ ∣ n) (hn : Nat.Coprime n (modulus t)) :
     cyclotomicRootPowerSubstitutionEquiv_of_coprime ℓ (u := n)
         ((mem_auxiliaryPrimes_iff_prime_sub_dvd ht).mp hq |>.1)
@@ -1907,8 +1896,8 @@ theorem cyclotomicRootPowerSubstitutionEquiv_map_root_of_prime_factor (n ℓ t q
     rw [primePowerIndex]
     exact hnq.symm.pow_right (k + 1)
   exact
-    cyclotomicRootPowerSubstitutionEquiv_of_coprime_map_root ℓ
-      ((mem_auxiliaryPrimes_iff_prime_sub_dvd ht).mp hq |>.1) hqℓ hperiod
+    rootPowerEquiv_of_coprime_map_root ℓ ((mem_auxiliaryPrimes_iff_prime_sub_dvd ht).mp hq |>.1) hqℓ
+      hperiod
 
 /-- The fixed-array root returns to the array unit after its prime-power period.
 This connects the abstract quotient-root period to the executable coefficient-array power API.
@@ -1924,8 +1913,7 @@ theorem cyclotomicFixedArrayRoot_pow_index_eq_one (n : ℕ) (hn : 1 < n) {p k : 
   rw [cyclotomicFixedArrayOne_class n hp]
 
 /-- The optimized squaring implementation has the same certified prime-power root period. -/
-theorem cyclotomicFixedArrayRoot_pow_index_eq_one_squaring (n : ℕ) (hn : 1 < n) {p k : ℕ}
-    (hp : Nat.Prime p) :
+theorem arrayRoot_pow_index_eq_one_squaring (n : ℕ) (hn : 1 < n) {p k : ℕ} (hp : Nat.Prime p) :
     cyclotomicFixedArrayPowBySquaring n hp (cyclotomicFixedArrayRoot n hp) (primePowerIndex p k) =
       cyclotomicFixedArrayOne n p k := by
   rw [cyclotomicFixedArrayPowBySquaring_eq_powByMul n hn hp]

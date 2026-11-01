@@ -25,7 +25,7 @@ the genus correction into the power weight and apply the proved multiplicity-
 preserving family density estimate. The total leading error acquires no extra
 factor from the number of characters, and neither RH nor an unproved density
 input is assumed. This is the near-one contribution to the half-scale family budget. -/
-theorem exists_character_family_regularized_zero_norm_sum_off_exceptional_conductors :
+theorem family_regularOff_le :
     ∃ A C : ℝ,
       0 < A ∧
         0 < C ∧
@@ -41,9 +41,7 @@ theorem exists_character_family_regularized_zero_norm_sum_off_exceptional_conduc
                     2 * A * Real.log ((R + 1 : ℕ) : ℝ) ≤ Real.log x →
                     ∀ S : Finset (FamilyCharacterLabel R),
                       (∀ p ∈ S, p.1.val + 1 ≠ 4) →
-                        (∀ p ∈ S,
-                          p.1.val + 1 ∉
-                            exceptionalFamilyConductorsAwayFromFour R (1 - c / Real.log R)) →
+                        (∀ p ∈ S, p.1.val + 1 ∉ exceptionalExceptFour R (1 - c / Real.log R)) →
                         (∑ p ∈ S,
                             if hne : p.2 ≠ 1 then
                               if _hp : p.2.IsPrimitive then
@@ -56,8 +54,7 @@ theorem exists_character_family_regularized_zero_norm_sum_off_exceptional_conduc
                               else 0
                             else 0) ≤
                           C * x * Real.exp (-(c / Real.log R) * Real.log x / 2) := by
-  obtain ⟨A, C, hA, hC, hbound⟩ :=
-    exists_character_family_weighted_zero_sum_off_exceptional_conductors
+  obtain ⟨A, C, hA, hC, hbound⟩ := family_weightedOff
   let K : ℝ := 8 + 4 * Real.log 2
   have hK : 0 < K := by
     dsimp only [K]
@@ -96,7 +93,7 @@ theorem exists_character_family_regularized_zero_norm_sum_off_exceptional_conduc
     · rw [dite_eq_left hne, dite_eq_left hne]
       by_cases hp : p.2.IsPrimitive
       · rw [dite_eq_left hp, dite_eq_left hp]
-        exact sum_norm_regularizedLogHalfZeroTerm_rectangle_le_right_power_weight hne hx hσlo hσhi R
+        exact regularizedHalfTerm_rectangle_bound hne hx hσlo hσhi R
       · rw [dite_eq_right hp, dite_eq_right hp, mul_zero]
     · rw [dite_eq_right hne, dite_eq_right hne, mul_zero]
   calc

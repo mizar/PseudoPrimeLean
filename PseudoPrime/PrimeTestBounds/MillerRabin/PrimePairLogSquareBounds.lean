@@ -96,7 +96,7 @@ theorem exists_prime_witness_le_prime_pair_log_sq {n p q : ℕ} (hn : 1 < n) (ho
       exact (not_le_of_gt hp.one_lt) hi
     exact
       transfer (p * p) (le_trans (by decide : 5 ≤ 9) hpair9) hpqdiv (le_refl _) _ hproper
-        (fun a ha ↦ PrimeTest.strongMillerRabinPass_mem_local_divisor_powerKernel hn ho hpqdiv ha)
+        (fun a ha ↦ PrimeTest.strongMR_local_divisorKernel hn ho hpqdiv ha)
   by_cases hpK : p - 1 ∣ n - 1
   · by_cases hqK : q - 1 ∣ n - 1
     · rcases lt_trichotomy (padicValNat 2 (p - 1)) (padicValNat 2 (q - 1)) with hv | hv | hv
@@ -104,8 +104,8 @@ theorem exists_prime_witness_le_prime_pair_log_sq {n p q : ℕ} (hn : 1 < n) (ho
           transfer q hq5 hqn (Nat.le_mul_of_pos_left q hp.pos) _
             (PrimeTest.local_half_powerKernel_ne_top hqOdd)
             (fun a ha ↦
-              PrimeTest.strongMillerRabinPass_mem_local_half_kernel_of_twoAdic_lt hn ho hqOdd hpOdd
-                hqn hpn hv ha)
+              PrimeTest.strongPass_mem_local_half_kernel_of_twoAdic_lt hn ho hqOdd hpOdd hqn hpn hv
+                ha)
       · let E := 2 ^ (padicValNat 2 (p - 1) - 1) * Nat.divMaxPow (n - 1) 2
         obtain ⟨kp, hkp, hEp⟩ :=
           PrimeTest.canonical_sign_exponent_local_half hp.one_lt hpOdd hn ho hpK
@@ -126,15 +126,15 @@ theorem exists_prime_witness_le_prime_pair_log_sq {n p q : ℕ} (hn : 1 < n) (ho
           transfer p hp5 hpn (Nat.le_mul_of_pos_right p hq.pos) _
             (PrimeTest.local_half_powerKernel_ne_top hpOdd)
             (fun a ha ↦
-              PrimeTest.strongMillerRabinPass_mem_local_half_kernel_of_twoAdic_lt hn ho hpOdd hqOdd
-                hpn hqn hv ha)
+              PrimeTest.strongPass_mem_local_half_kernel_of_twoAdic_lt hn ho hpOdd hqOdd hpn hqn hv
+                ha)
     · exact
         transfer q hq5 hqn (Nat.le_mul_of_pos_left q hp.pos) _
           (PrimeTest.local_prime_powerKernel_ne_top_of_not_dvd hqK)
-          (fun a ha ↦ PrimeTest.strongMillerRabinPass_mem_local_prime_powerKernel hn ho hqn ha)
+          (fun a ha ↦ PrimeTest.strongMR_local_primeKernel hn ho hqn ha)
   · exact
       transfer p hp5 hpn (Nat.le_mul_of_pos_right p hq.pos) _
         (PrimeTest.local_prime_powerKernel_ne_top_of_not_dvd hpK)
-        (fun a ha ↦ PrimeTest.strongMillerRabinPass_mem_local_prime_powerKernel hn ho hpn ha)
+        (fun a ha ↦ PrimeTest.strongMR_local_primeKernel hn ho hpn ha)
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

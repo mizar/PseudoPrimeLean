@@ -157,7 +157,7 @@ theorem exists_uniform_short_fourier_budget {M r : ℕ} (hr : 16185 ≤ r) :
                       ‖heilbronnCharacterSum p (z : ZMod (p ^ 2))‖) ^
                     4 <
                 8 * ((p ^ 2 / k : ℕ) : ℝ) ^ 2 * (k : ℝ) ^ 2 := by
-  obtain ⟨P, hP⟩ := exists_uniform_weighted_short_congruence_energy_budget (M := M) hr
+  obtain ⟨P, hP⟩ := exists_uniform_short_energy_budget (M := M) hr
   refine ⟨P, ?_⟩
   intro p hp hodd hlarge
   obtain ⟨k, hk, hkp, hlo, hhi, hb⟩ := hP p hodd hlarge

@@ -17,8 +17,8 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LogFreeDensity
 /-- For a natural order envelope, its summed coefficient energy is at most
 `3(log 4+4)(n+1)^2 4^n`. Bound every summand by the last-order majorant and sum
 the constant over the finite range. This gives an explicit exponential order bound. -/
-theorem highPrimeOrderEnvelopeEnergy_le (n : ℕ) :
-    highPrimeOrderEnvelopeEnergy n ≤ (3 * (Real.log 4 + 4)) * (n + 1 : ℝ) ^ 2 * (4 : ℝ) ^ n := by
+theorem highOrderBudget_le (n : ℕ) :
+    highPrimeOrderBudget n ≤ (3 * (Real.log 4 + 4)) * (n + 1 : ℝ) ^ 2 * (4 : ℝ) ^ n := by
   have hH : 0 ≤ Real.log 4 + 4 := add_nonneg (Real.log_nonneg (by norm_num only)) (by norm_num only)
   have hterm (r : ℕ) (hr : r ∈ Finset.range (n + 1)) :
     ((r + 1 : ℝ) * (2 : ℝ) ^ (2 * r + 1)) * ((3 / 2 : ℝ) * (Real.log 4 + 4)) ≤
@@ -49,7 +49,7 @@ theorem highPrimeOrderEnvelopeEnergy_le (n : ℕ) :
 /-- For a real exponential signal parameter, the squared inverse signal and sampling
 exponential combine to `256 exp(3x)`. Expand inverses and combine exponentials.
 This isolates the exponential loss in the normalized zero-count estimate. -/
-theorem exponential_signal_sampling_factor (x : ℝ) :
+theorem signal_sampling_exp (x : ℝ) :
     (1 / (Real.exp (-x) / 16) ^ 2) * Real.exp x = 256 * Real.exp (3 * x) := by
   rw [div_pow, Real.exp_neg, inv_pow, one_div_div, div_inv_eq_mul]
   rw [mul_assoc]
@@ -64,58 +64,57 @@ theorem exponential_signal_sampling_factor (x : ℝ) :
 and signal and order caps, collect the explicit hybrid zero-count upper bound.
 The factors are coefficient energy, squared inverse signal, and physical-window
 sampling loss. This separates numerical envelope estimates from actual zero counting. -/
-noncomputable def highPrimeGeneralScaleCountEnvelope (D c L : ℝ) (K n : ℕ) : ℝ :=
-  (L * (4096 * (1 + (c * K / 8) ^ 2 / 2) * highPrimeOrderEnvelopeEnergy n) /
+noncomputable def highPrimeCountBound (D c L : ℝ) (K n : ℕ) : ℝ :=
+  (L * (4096 * (1 + (c * K / 8) ^ 2 / 2) * highPrimeOrderBudget n) /
       (Real.exp (-(D * K)) / 16) ^ 2) *
-    (32 * primeLogPowerVariationBound n * Real.exp (D * K))
+    (32 * primeLogVariation n * Real.exp (D * K))
 
 /-- For a nonnegative local weight, the numerical count envelope is bounded by a
 polynomial in the order and support coefficient times one exponential in the order.
 Insert the coefficient-energy bound, expand the variation constant, and combine
 inverse-signal exponentials. This exposes all order dependence for scale comparison. -/
-theorem highPrimeGeneralScaleCountEnvelope_le (D c L : ℝ) (K n : ℕ) (hL : 0 ≤ L) :
-    highPrimeGeneralScaleCountEnvelope D c L K n ≤
+theorem highCountBound_le (D c L : ℝ) (K n : ℕ) (hL : 0 ≤ L) :
+    highPrimeCountBound D c L K n ≤
       603979776 * (Real.log 4 + 4) ^ 2 * L * (n + 1 : ℝ) ^ 3 * (1 + (c * K / 8) ^ 2 / 2) *
         Real.exp (3 * D * K + Real.log 8 * n) := by
   have hH : 0 ≤ Real.log 4 + 4 := add_nonneg (Real.log_nonneg (by norm_num only)) (by norm_num only)
   have hfactor :
     0 ≤
       L * (4096 * (1 + (c * K / 8) ^ 2 / 2)) / (Real.exp (-(D * K)) / 16) ^ 2 *
-        (32 * primeLogPowerVariationBound n * Real.exp (D * K)) :=
+        (32 * primeLogVariation n * Real.exp (D * K)) :=
     mul_nonneg
       (div_nonneg
         (mul_nonneg hL
           (mul_nonneg (by norm_num only)
             (add_nonneg zero_le_one (div_nonneg (sq_nonneg _) (by norm_num only)))))
         (sq_nonneg _))
-      (mul_nonneg (mul_nonneg (by norm_num only) (primeLogPowerVariationBound_pos _).le)
-        (Real.exp_nonneg _))
-  have hbound := mul_le_mul_of_nonneg_right (highPrimeOrderEnvelopeEnergy_le n) hfactor
+      (mul_nonneg (mul_nonneg (by norm_num only) (primeLogVariation_pos _).le) (Real.exp_nonneg _))
+  have hbound := mul_le_mul_of_nonneg_right (highOrderBudget_le n) hfactor
   have hpower : (4 : ℝ) ^ n * (2 : ℝ) ^ (n + 1) = 2 * (8 : ℝ) ^ n := by
     rw [pow_succ, ← mul_assoc, ← mul_pow]
     norm_num only [show (4 : ℝ) * 2 = 8 by norm_num only]
     ring
   have hexp : (8 : ℝ) ^ n = Real.exp (Real.log 8 * n) := by
     rw [mul_comm, Real.exp_nat_mul, Real.exp_log (by norm_num only)]
-  have hsignal := exponential_signal_sampling_factor (D * K)
+  have hsignal := signal_sampling_exp (D * K)
   have hexpjoin :
     Real.exp (3 * D * K) * Real.exp (Real.log 8 * n) = Real.exp (3 * D * K + Real.log 8 * n) :=
     (Real.exp_add _ _).symm
   calc
     _ =
-        highPrimeOrderEnvelopeEnergy n *
+        highPrimeOrderBudget n *
           (L * (4096 * (1 + (c * K / 8) ^ 2 / 2)) / (Real.exp (-(D * K)) / 16) ^ 2 *
-            (32 * primeLogPowerVariationBound n * Real.exp (D * K))) :=
+            (32 * primeLogVariation n * Real.exp (D * K))) :=
       by
-      dsimp only [highPrimeGeneralScaleCountEnvelope]
+      dsimp only [highPrimeCountBound]
       ring
     _ ≤
         ((3 * (Real.log 4 + 4)) * (n + 1 : ℝ) ^ 2 * (4 : ℝ) ^ n) *
           (L * (4096 * (1 + (c * K / 8) ^ 2 / 2)) / (Real.exp (-(D * K)) / 16) ^ 2 *
-            (32 * primeLogPowerVariationBound n * Real.exp (D * K))) :=
+            (32 * primeLogVariation n * Real.exp (D * K))) :=
       hbound
     _ = _ := by
-      dsimp only [primeLogPowerVariationBound]
+      dsimp only [primeLogVariation]
       have hsignal' :
         (1 / (Real.exp (-(D * K)) / 16) ^ 2) * Real.exp (D * K) = 256 * Real.exp (3 * D * K) := by
         simpa only [mul_assoc] using hsignal
@@ -134,10 +133,10 @@ theorem highPrimeGeneralScaleCountEnvelope_le (D c L : ℝ) (K n : ℕ) (hL : 0 
 in a real scale at least one, their count envelope grows at most exponentially in
 that scale. Bound its polynomial factors by the eighth power of the scale and
 absorb that power into an exponential. This supplies the finite-exponent log-free bound. -/
-theorem highPrimeGeneralScaleCountEnvelope_le_exp (D c L b c₀ l x : ℝ) (N : ℕ) (hD : 0 ≤ D)
-    (hc : 0 ≤ c) (hL : 0 ≤ L) (hb : 0 ≤ b) (hc₀ : 0 ≤ c₀) (hl : 0 ≤ l) (hx : 1 ≤ x)
-    (hN : (N : ℝ) ≤ b * x) (hcupper : c ≤ c₀ * x) (hLupper : L ≤ l * x) :
-    highPrimeGeneralScaleCountEnvelope D c L N (4 * N) ≤
+theorem highCountBound_exp_le (D c L b c₀ l x : ℝ) (N : ℕ) (hD : 0 ≤ D) (hc : 0 ≤ c) (hL : 0 ≤ L)
+    (hb : 0 ≤ b) (hc₀ : 0 ≤ c₀) (hl : 0 ≤ l) (hx : 1 ≤ x) (hN : (N : ℝ) ≤ b * x)
+    (hcupper : c ≤ c₀ * x) (hLupper : L ≤ l * x) :
+    highPrimeCountBound D c L N (4 * N) ≤
       (603979776 * (Real.log 4 + 4) ^ 2 * l * (4 * b + 1) ^ 3 * (1 + (c₀ * b) ^ 2)) *
         Real.exp ((3 * D * b + 4 * Real.log 8 * b + 8) * x) := by
   have hxnonneg : 0 ≤ x := zero_le_one.trans hx
@@ -194,7 +193,7 @@ theorem highPrimeGeneralScaleCountEnvelope_le_exp (D c L b c₀ l x : ℝ) (N : 
         603979776 * (Real.log 4 + 4) ^ 2 * L * ((4 * N : ℕ) + 1 : ℝ) ^ 3 *
           (1 + (c * N / 8) ^ 2 / 2) *
           Real.exp (3 * D * N + Real.log 8 * (4 * N : ℕ)) :=
-      highPrimeGeneralScaleCountEnvelope_le D c L N (4 * N) hL
+      highCountBound_le D c L N (4 * N) hL
     _ ≤ C * x ^ 8 * Real.exp ((3 * D * b + 4 * Real.log 8 * b) * x) := by
       convert hfinal using 1
       · norm_num only [Nat.cast_mul, Nat.cast_ofNat]
@@ -211,7 +210,7 @@ theorem highPrimeGeneralScaleCountEnvelope_le_exp (D c L b c₀ l x : ℝ) (N : 
 conductor-height logarithm is at most three times the scale logarithm. Bound its
 argument by the cube of the scale and use logarithmic monotonicity.
 This compares all family budgets with the density exponent. -/
-theorem log_conductor_height_product_le_three (R T : ℕ) (hR : 3 ≤ R) (hT : T ≤ R) :
+theorem logConductorHeight_le (R T : ℕ) (hR : 3 ≤ R) (hT : T ≤ R) :
     Real.log ((R : ℝ) * ((T : ℝ) + 3)) ≤ 3 * Real.log (R : ℝ) := by
   have hRreal : (3 : ℝ) ≤ R := by exact_mod_cast hR
   have hTreal : (T : ℝ) ≤ R := by exact_mod_cast hT
@@ -230,7 +229,7 @@ Discharge the detector cap, support length, and local multiplicity weight, inser
 hybrid mean square, and absorb the order envelope into the exponential. No detector
 or numerical budget remains as an input. This proves the general-scale small-shift
 part of the log-free zero-density estimate. -/
-theorem exists_primitiveFamily_small_shift_exponential_count_bound :
+theorem exists_shiftCount :
     ∃ C A η₀ : ℝ,
       0 < C ∧
         0 < A ∧
@@ -245,17 +244,14 @@ theorem exists_primitiveFamily_small_shift_exponential_count_bound :
                 0 < η →
                 η ≤ η₀ →
                 1 ≤ η * Real.log (R : ℝ) →
-                primitiveCharacterFamilyZeroOccurrenceCountAtNatHeight R σ T ≤
-                  C * Real.exp (A * (η * Real.log (R : ℝ))) := by
-  obtain ⟨B, η₁, hB, hη₁, R₁, hR₁, hdetector⟩ :=
-    exists_uniform_general_scale_occurrence_meanSquare_bound
-  obtain ⟨η₂, hη₂, hηsmall, _, R₂, hR₂, henergy⟩ :=
-    eventually_general_scale_prime_energy_budget B hB
+                occurrenceNatCount R σ T ≤ C * Real.exp (A * (η * Real.log (R : ℝ))) := by
+  obtain ⟨B, η₁, hB, hη₁, R₁, hR₁, hdetector⟩ := exists_scaleGridBound
+  obtain ⟨η₂, hη₂, hηsmall, _, R₂, hR₂, henergy⟩ := eventual_scaleBudget B hB
   let D := Real.log 414720
   let b := 4 * B
   let H := Real.log (24 * (Real.log 4 + 4))
   let c₀ := 2 * ((4 + D) * b + H) + 6 + Real.log 3
-  let l := 49 * completedZeroLocalLogBoundConstant + 1
+  let l := 49 * localLogConstant + 1
   let C := 603979776 * (Real.log 4 + 4) ^ 2 * l * (4 * b + 1) ^ 3 * (1 + (c₀ * b) ^ 2)
   let A := 3 * D * b + 4 * Real.log 8 * b + 8
   have hD : 0 ≤ D := Real.log_nonneg (by norm_num only)
@@ -273,7 +269,7 @@ theorem exists_primitiveFamily_small_shift_exponential_count_bound :
     linarith only [h, hH, hlog3]
   have hl : 0 ≤ l := by
     dsimp only [l]
-    linarith only [completedZeroLocalLogBoundConstant_pos]
+    linarith only [localLogConstant_pos]
   have hC : 0 ≤ C :=
     mul_nonneg
       (mul_nonneg (mul_nonneg (mul_nonneg (by norm_num only) (sq_nonneg _)) hl)
@@ -299,17 +295,12 @@ theorem exists_primitiveFamily_small_shift_exponential_count_bound :
   obtain ⟨N, cutoff, M, W, hN, hNupper, hcutoff, hpos, _, hM, hwidth, hgain, hlog, hcount⟩ :=
     hdetector R T σ η 1 hRone hT hσ hση hη (hηbound.trans (min_le_left _ _))
   have hlarge := henergy R hRtwo η hη.le hη₂bound N hNupper
-  have hglobal :=
-    mul_le_mul_of_nonneg_left (log_conductor_height_product_le_three R R hRthree (le_refl R)) hη.le
+  have hglobal := mul_le_mul_of_nonneg_left (logConductorHeight_le R R hRthree (le_refl R)) hη.le
   have hNlinear : (N : ℝ) ≤ b * S := by
     dsimp only [b, S]
     nlinarith only [hNupper, hglobal, hS, hB]
-  have hheight :=
-    mul_le_mul_of_nonneg_left (log_conductor_height_product_le_three R T hRthree hT) hη.le
-  let L :=
-    (Nat.ceil
-        (completedZeroLocalLogBoundConstant * (1 + 16 * η * Real.log ((R : ℝ) * ((T : ℝ) + 3)))) :
-      ℝ)
+  have hheight := mul_le_mul_of_nonneg_left (logConductorHeight_le R T hRthree hT) hη.le
+  let L := (Nat.ceil (localLogConstant * (1 + 16 * η * Real.log ((R : ℝ) * ((T : ℝ) + 3)))) : ℝ)
   have hL : 0 ≤ L := Nat.cast_nonneg _
   have hLlinear : L ≤ l * S := by
     have hlognonneg : 0 ≤ Real.log ((R : ℝ) * ((T : ℝ) + 3)) := by
@@ -318,7 +309,7 @@ theorem exists_primitiveFamily_small_shift_exponential_count_bound :
       nlinarith only [hRreal, (Nat.cast_nonneg T : (0 : ℝ) ≤ T)]
     have hceil :=
       (Nat.ceil_lt_add_one
-          (mul_nonneg completedZeroLocalLogBoundConstant_pos.le
+          (mul_nonneg localLogConstant_pos.le
             (add_nonneg zero_le_one
               (mul_nonneg (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 16) hη.le) hlognonneg)))).le
     have hweight :=
@@ -327,7 +318,7 @@ theorem exists_primitiveFamily_small_shift_exponential_count_bound :
           by
           dsimp only [S]
           nlinarith only [hheight, hS])
-        completedZeroLocalLogBoundConstant_pos.le
+        localLogConstant_pos.le
     dsimp only [L, l]
     nlinarith only [hceil, hweight, hS]
   have hsupport : η * Real.log ((cutoff : ℝ) + 1) ≤ (c₀ * S) * N := by
@@ -346,16 +337,13 @@ theorem exists_primitiveFamily_small_shift_exponential_count_bound :
         (le_mul_of_one_le_right (mul_nonneg hc₀ hSnonneg)
           (by exact_mod_cast ((by norm_num only : 1 ≤ 4).trans hN)))
   have hraw :=
-    highPrime_general_scale_count_le_of_meanSquare
-      (primitiveCharacterFamilyZeroOccurrenceCountAtNatHeight R σ T) η D (c₀ * S) L N (4 * N) R
-      cutoff T M W ((by norm_num only : 2 ≤ 3).trans hRthree) hT hM hη (by linarith only [hηdet])
+    highScale_count_le (occurrenceNatCount R σ T) η D (c₀ * S) L N (4 * N) R cutoff T M W
+      ((by norm_num only : 2 ≤ 3).trans hRthree) hT hM hη (by linarith only [hηdet])
       (mul_nonneg hc₀ hSnonneg) hL hwidth hS hgain hsupport hlarge hcount
   have henvelope :=
-    highPrimeGeneralScaleCountEnvelope_le_exp D (c₀ * S) L b c₀ l S N hD (mul_nonneg hc₀ hSnonneg)
-      hL hb hc₀ hl hS hNlinear (le_refl _) hLlinear
-  have hcount' :
-    primitiveCharacterFamilyZeroOccurrenceCountAtNatHeight R σ T ≤ C * Real.exp (A * S) :=
-    hraw.trans henvelope
+    highCountBound_exp_le D (c₀ * S) L b c₀ l S N hD (mul_nonneg hc₀ hSnonneg) hL hb hc₀ hl hS
+      hNlinear (le_refl _) hLlinear
+  have hcount' : occurrenceNatCount R σ T ≤ C * Real.exp (A * S) := hraw.trans henvelope
   exact
     hcount'.trans (mul_le_mul_of_nonneg_right (by linarith only : C ≤ C + 1) (Real.exp_nonneg _))
 
@@ -365,7 +353,7 @@ bound throughout that strip, for every sufficiently large cutoff. Use the shift
 equal to the maximum of the strip distance and the reciprocal logarithm, and absorb
 the latter into the absolute constant. This includes the boundary line and arbitrarily
 narrow strips, with no scaled-logarithm restriction in the theorem statement. -/
-theorem exists_primitiveCharacterFamily_near_one_log_free_density :
+theorem exists_nearOneDensity :
     ∃ C A η₀ : ℝ,
       0 < C ∧
         0 < A ∧
@@ -374,11 +362,8 @@ theorem exists_primitiveCharacterFamily_near_one_log_free_density :
           3 ≤ R₀ ∧
             ∀ (R : ℕ) (σ : ℝ),
               R₀ ≤ R →
-                1 - η₀ ≤ σ →
-                σ ≤ 1 →
-                primitiveCharacterFamilyZeroCount R σ ≤ C * Real.rpow (R : ℝ) (A * (1 - σ)) := by
-  obtain ⟨C, A, η₀, hC, hA, hη₀, R₁, hR₁, hcount⟩ :=
-    exists_primitiveFamily_small_shift_exponential_count_bound
+                1 - η₀ ≤ σ → σ ≤ 1 → familyZeros R σ ≤ C * Real.rpow (R : ℝ) (A * (1 - σ)) := by
+  obtain ⟨C, A, η₀, hC, hA, hη₀, R₁, hR₁, hcount⟩ := exists_shiftCount
   have hlog : Filter.Tendsto (fun R : ℕ ↦ Real.log (R : ℝ)) Filter.atTop Filter.atTop :=
     Real.tendsto_log_atTop.comp tendsto_natCast_atTop_atTop
   obtain ⟨R₂, hR₂⟩ :=
@@ -410,10 +395,8 @@ theorem exists_primitiveCharacterFamily_near_one_log_free_density :
     rw [add_mul, one_div_mul_cancel (ne_of_gt hlogR)] at h
     nlinarith only [h]
   have hraw := hcount R R σ η hRone (le_refl R) hσ (le_max_left _ _) hη hηsmall hscaled
-  have hcount' :
-    primitiveCharacterFamilyZeroCount R σ ≤ C * Real.exp (A * (η * Real.log (R : ℝ))) := by
-    rw [← primitiveCharacterFamilyZeroCountAtNatHeight_eq,
-      primitiveCharacterFamilyZeroCountAtNatHeight_eq_occurrenceCount]
+  have hcount' : familyZeros R σ ≤ C * Real.exp (A * (η * Real.log (R : ℝ))) := by
+    rw [← familyNatZeros_eq, familyNat_occurrences]
     exact hraw
   calc
     _ ≤ C * Real.exp (A * (η * Real.log (R : ℝ))) := hcount'

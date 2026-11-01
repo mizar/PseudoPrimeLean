@@ -116,7 +116,7 @@ def eightDegreeFiberCoefficient (c : ℕ) : ℕ :=
 ratios below p^(5/28), with height exponent 1+1/c and prime loss 1/84.
 Apply the exponent covering and the explicit band bounds, using the trivial
 count below the smallest band. No existential coefficient is selected. -/
-theorem heightRestrictedRatioSet_le_explicit_eight_degree_bound {c : ℕ} (hc : 0 < c) :
+theorem heightRatios_le_eight_degree_bound {c : ℕ} (hc : 0 < c) :
     ∀ (p H T : ℕ) [Fact p.Prime],
       H < p →
         (T : ℝ) ≤ (p : ℝ) ^ (5 / 28 : ℝ) →
@@ -132,7 +132,7 @@ theorem heightRestrictedRatioSet_le_explicit_eight_degree_bound {c : ℕ} (hc : 
     all_goals rw [h]; decide
   let C : D → ℝ := fun m ↦ fiberBandCoefficient m c
   have hC (m : D) : 0 < C m := Nat.cast_pos.mpr (fiberBandCoefficient_pos m c)
-  have hbound (m : D) := heightRestrictedRatioSet_le_explicit_fiber_band_bound (hD m) hc
+  have hbound (m : D) := heightRatios_le_fiber_band_bound (hD m) hc
   let K : ℝ := 1 + ∑ m : D, C m
   have hsum : 0 ≤ ∑ m : D, C m := Finset.sum_nonneg (fun m _ ↦ (hC m).le)
   have hK : 1 ≤ K := by
@@ -220,12 +220,12 @@ theorem exists_uniform_eight_degree_ratio_bound {c : ℕ} (hc : 0 < c) :
               K * (T : ℝ) ^ (1 + 1 / (c : ℝ)) * (p : ℝ) ^ (1 / 84 : ℝ) := by
   exact
     ⟨eightDegreeFiberCoefficient c, Nat.cast_pos.mpr (eightDegreeFiberCoefficient_pos c),
-      heightRestrictedRatioSet_le_explicit_eight_degree_bound hc⟩
+      heightRatios_le_eight_degree_bound hc⟩
 
 /-- With a prescribed precision 1/c≤eta, the explicit degree sum controls
 R(T) by K_c T p^(1/84+eta). Absorb the height power using T≤p and compare
 the prime exponents. This retains the coefficient for effective counts. -/
-theorem heightRestrictedRatioSet_le_explicit_finite_fiber_ratio_bound {eta : ℝ} {c : ℕ} (hc : 0 < c)
+theorem heightRatios_le_fiber_ratio_bound {eta : ℝ} {c : ℕ} (hc : 0 < c)
     (hprec : 1 / (c : ℝ) ≤ eta) :
     ∀ (p H T : ℕ) [Fact p.Prime],
       H < p →
@@ -234,7 +234,7 @@ theorem heightRestrictedRatioSet_le_explicit_finite_fiber_ratio_bound {eta : ℝ
           eightDegreeFiberCoefficient c * T * (p : ℝ) ^ (1 / 84 + eta) := by
   let K : ℝ := eightDegreeFiberCoefficient c
   have hK : 0 < K := Nat.cast_pos.mpr (eightDegreeFiberCoefficient_pos c)
-  have hbound := heightRestrictedRatioSet_le_explicit_eight_degree_bound hc
+  have hbound := heightRatios_le_eight_degree_bound hc
   intro p H T hp hHp htop
   have hp1 : (1 : ℝ) ≤ p := Nat.one_le_cast.mpr (Fact.out : p.Prime).pos
   have hp0 : (0 : ℝ) < p := Nat.cast_pos.mpr (Fact.out : p.Prime).pos
@@ -279,7 +279,7 @@ theorem exists_uniform_finite_fiber_ratio_bound {eta : ℝ} (heta : 0 < eta) :
             ((heightRestrictedRatioSet p H T).card : ℝ) ≤ K * T * (p : ℝ) ^ (1 / 84 + eta) := by
   obtain ⟨c, hc, hprec⟩ := Real.exists_nat_pos_inv_lt heta
   refine ⟨eightDegreeFiberCoefficient c, Nat.cast_pos.mpr (eightDegreeFiberCoefficient_pos c), ?_⟩
-  apply heightRestrictedRatioSet_le_explicit_finite_fiber_ratio_bound hc
+  apply heightRatios_le_fiber_ratio_bound hc
   simpa only [one_div] using hprec.le
 
 end PseudoPrime.NumberTheory.Heilbronn

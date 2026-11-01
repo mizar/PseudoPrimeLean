@@ -26,8 +26,7 @@ theorem exists_character_trivial_on_pass {n : ℕ} [NeZero n] (hn : 1 < n) (ho :
     (hc : ¬n.Prime) :
     ∃ χ : DirichletCharacter ℂ n,
       χ ≠ 1 ∧ ∀ a : ZMod n, PrimeTest.StrongMillerRabinPass n a → χ a = 1 := by
-  obtain ⟨H, hH, hpass⟩ :=
-    PrimeTest.exists_proper_subgroup_containing_strongMillerRabinPass hn ho hc
+  obtain ⟨H, hH, hpass⟩ := PrimeTest.exists_proper_subgroup_strongMR hn ho hc
   have : H.Normal := H.normal_of_isMulCommutative
   have : Nontrivial ((ZMod n)ˣ ⧸ H) := QuotientGroup.nontrivial_iff.mpr hH
   obtain ⟨x, hx⟩ := exists_ne (1 : (ZMod n)ˣ ⧸ H)
@@ -60,8 +59,8 @@ theorem exists_prime_reject_of_character_ambient {N : ℕ} [NeZero N] (χ : Diri
         Nat.Coprime p N ∧
         (p : ZMod N) ^ d ≠ 1 ∧ ∀ j : ℕ, j < s → (p : ZMod N) ^ (2 ^ j * d) ≠ -1 := by
   obtain ⟨p, hp, hpx, hpc, hv⟩ :=
-    exists_prime_original_character_ne_one_of_reciprocalGap_ambient χ hne hGRH hx B₀ B₁ B hB₀ hB₁ hB
-      hcop lo u hlo hu hu1 hgap
+    exists_prime_neOne_originalAmbientGap_GRH χ hne hGRH hx B₀ B₁ B hB₀ hB₁ hB hcop lo u hlo hu hu1
+      hgap
   refine ⟨p, hp, hpx, hpc, ?_⟩
   exact PrimeTest.not_strongMillerRabinPass_iff.mp (fun ha ↦ hv (hpass p ha))
 
@@ -70,7 +69,7 @@ open PseudoPrime.LLS.PaperStatements in
 yields a coprime prime rejecting the canonical strong test below x. Choose a character
 trivial on passing residues and apply the separation at its conductor. The finite
 supports are arbitrary; this is a sufficient analytic criterion, not a numeric cutoff. -/
-theorem exists_prime_reject_of_ambient_divisor_separation {N : ℕ} [NeZero N] (hn : 1 < N)
+theorem exists_primeReject_of_ambient_divisor_separation {N : ℕ} [NeZero N] (hn : 1 < N)
     (ho : Odd N) (hc : ¬N.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     {x : ℝ} (hx : 1 ≤ x) (B₀ B₁ B : Finset ℕ) (hB₀ : ∀ a ∈ B₀, (a : ℝ) ≤ x)
     (hB₁ : ∀ a ∈ B₁, (a : ℝ) ≤ x) (hB : B ⊆ Finset.Ioc 0 ⌊x⌋₊) (hcop : ∀ a ∈ B, Nat.Coprime a N)

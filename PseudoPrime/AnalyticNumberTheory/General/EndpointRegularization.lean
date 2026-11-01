@@ -73,7 +73,7 @@ logarithmic zero expansion of L away from its zeros and endpoints.
 Apply the centered Hadamard identity and remove the integer endpoint factors.
 No hypothesis on the real parts of the zeros or Riemann hypothesis is used.
 This supplies the meromorphic endpoint correction in equation (5.24). -/
-theorem neg_logDeriv_eq_genusSum_of_endpointRegularization {L F : ℂ → ℂ} (k : ℤ)
+theorem neg_logDeriv_eq_genusSum_of_regularization {L F : ℂ → ℂ} (k : ℤ)
     (hreg : ∀ z, z ≠ 0 → z ≠ 1 → F z = (z * (1 - z)) ^ k * L z) (hF : Differentiable ℂ F)
     (h0 : F 0 ≠ 0) {C r : ℝ} (hC : 0 < C) (hr0 : 0 ≤ r) (hr2 : r < 2)
     (hg : ∀ z : ℂ, ‖F z‖ ≤ Real.exp (C * (‖z‖ + 1) ^ r)) {s : ℂ} (hs : s ≠ 0) (h1 : s ≠ 1)
@@ -112,10 +112,8 @@ theorem neg_logDeriv_sub_eq_resolventSum {L F : ℂ → ℂ} (k : ℤ)
     rw [← hgs.tsum_sub hgt]
     exact tsum_congr (fun ρ ↦ by ring)
   rw [he]
-  have hss :=
-    neg_logDeriv_eq_genusSum_of_endpointRegularization k hreg hF h0 hC hr0 hr2 hg hs hs1 hLs hds
-  have htt :=
-    neg_logDeriv_eq_genusSum_of_endpointRegularization k hreg hF h0 hC hr0 hr2 hg ht ht1 hLt hdt
+  have hss := neg_logDeriv_eq_genusSum_of_regularization k hreg hF h0 hC hr0 hr2 hg hs hs1 hLs hds
+  have htt := neg_logDeriv_eq_genusSum_of_regularization k hreg hF h0 hC hr0 hr2 hg ht ht1 hLt hdt
   linear_combination hss - htt
 
 /-- An entire endpoint regularization of order at most one has the logarithmic
@@ -131,10 +129,9 @@ theorem neg_logDeriv_eq_genusSum_of_orderAtMostOne {L F : ℂ → ℂ} (k : ℤ)
       (k : ℂ) * (1 / s + 1 / (s - 1)) - logDeriv F 0 -
         ∑' ρ : ℂ, (analyticOrderNatAt F ρ : ℂ) * (1 / (s - ρ) + 1 / ρ) := by
   obtain ⟨C, hC, hg⟩ :=
-    exists_global_exponential_bound_of_orderAtMostOne hF.continuous horder (r := 3 / 2)
-      (by norm_num only)
+    exists_exp_bound_of_orderAtMostOne hF.continuous horder (r := 3 / 2) (by norm_num only)
   exact
-    neg_logDeriv_eq_genusSum_of_endpointRegularization k hreg hF h0 hC
-      (by norm_num only : (0 : ℝ) ≤ 3 / 2) (by norm_num only : (3 / 2 : ℝ) < 2) hg hs h1 hL hd
+    neg_logDeriv_eq_genusSum_of_regularization k hreg hF h0 hC (by norm_num only : (0 : ℝ) ≤ 3 / 2)
+      (by norm_num only : (3 / 2 : ℝ) < 2) hg hs h1 hL hd
 
 end PseudoPrime.AnalyticNumberTheory.General

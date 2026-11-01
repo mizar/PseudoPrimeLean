@@ -657,8 +657,7 @@ Conclusion: the absolute value of the corresponding `g_{-1}` value is at most `3
 Proof: transport the first-stop bound through `selfridgeD_natAbs`.
 Role: this is the explicit finite `g_{-1}` bound before any analytic estimate.
 -/
-theorem classicalSelfridgeD_firstStopNegOne_natAbs_le_31_of_lt_750 {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hn750 : n < 750)
+theorem classicalD_natAbs_le_31_of_lt_750 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n) (hn750 : n < 750)
     (hs : (FirstStopNegOneSet isClassicalCandidate n).Nonempty) :
     (selfridgeD (firstStopNegOne isClassicalCandidate n hs)).natAbs ≤ 31 := by
   simpa only [selfridgeD_natAbs] using classicalFirstStopNegOne_le_31_of_lt_750 hn hns hn750 hs

@@ -71,7 +71,7 @@ theorem gamma_joint_prefix_le_small_signed_support {n : ℕ} (hn : Odd n) (hns :
                   max (gammaRamifiedSignedCombinedCost p x - gammaRamifiedDualParameter x) 0) -
           2 * (∑ k ∈ Finset.Ioc 0 ⌊b⌋₊, Analysis.gammaResolventMangoldtWeight k) +
         7 / 60 := by
-  have h := gamma_joint_prefix_le_factor_free_budget_small_scale (b := b) hn hns hlog hx
+  have h := gammaJointPrefix_factorFree_smallScale (b := b) hn hns hlog hx
   rw [gammaFactorFreeJointBudget,
     gamma_scale_signed_dual_budget_eq_small_support L (by linarith only [hx])] at h
   exact h

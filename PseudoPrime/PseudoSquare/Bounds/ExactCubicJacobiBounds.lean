@@ -42,7 +42,7 @@ private theorem exact_conductor_le_level {n : ℕ} {hn : Odd n} {hns : ¬IsSquar
         (Nat.pos_of_ne_zero (NumberTheory.complexQuadraticCharacter n hn).conductor_ne_zero))
       (Nat.cast_le.mpr
         (Nat.le_of_dvd (Nat.mul_pos (by norm_num only) b.squarefreePart_pos)
-          (NumberTheory.complexQuadraticCharacter_conductor_dvd_four_mul_squarefreePart b hdvd)))
+          (NumberTheory.complexQuadratic_conductor_dvd_four_part b hdvd)))
 
 /-- At least one exact quadratic budget is strictly below the former uniform budget.
 For d=1 modulo four the conductor drops from 4d to d; for d=3 modulo four,
@@ -60,8 +60,7 @@ private theorem exact_quadratic_budget_saving {n : ℕ} {hn : Odd n} {hns : ¬Is
   · left
     have hdvd : b.squarefreePart ∣ n :=
       ⟨b.squareFactor ^ 2, by simpa only [mul_comm] using b.squarefreePart_sq_mul.symm⟩
-    rw [NumberTheory.complexQuadraticCharacter_conductor_eq_squarefreePart_of_mod_four_eq_one b hdvd
-        h1]
+    rw [NumberTheory.complexQuadratic_conductor_eq_mod4_one b hdvd h1]
     apply Real.log_lt_log (Nat.cast_pos.mpr b.squarefreePart_pos)
     norm_num only [Nat.cast_mul, Nat.cast_ofNat]
     have hdR : (0 : ℝ) < b.squarefreePart := Nat.cast_pos.mpr b.squarefreePart_pos
@@ -93,8 +92,7 @@ theorem cubicExactConductorBound_lt_uniform {n : ℕ} {hn : Odd n} {hns : ¬IsSq
       (NumberTheory.primitiveQuadraticCharacter n hn) (2 * n)
   have hr :=
     LLS.PaperStatements.tightCubicRadius_strict hG hE (exact_conductor_le_level b)
-      (primitiveQuadraticExclusionCost_le_negative_square_factor b)
-      (exact_quadratic_budget_saving b)
+      (quadraticExclusionCost_le_negative_square_factor b) (exact_quadratic_budget_saving b)
   have ha :=
     LLS.PaperStatements.tightCubicExclusionRadius_le_square_factor2434
       (Real.log_natCast_nonneg (4 * b.squarefreePart))
@@ -133,7 +131,7 @@ theorem exists_prime_neg_one_le_cubic_exact {n : ℕ} {hn : Odd n} {hns : ¬IsSq
     ∃ p : ℕ,
       p.Prime ∧
         Odd p ∧ Nat.Coprime p n ∧ jacobiSym n p = -1 ∧ (p : ℝ) ≤ cubicExactConductorBound b := by
-  exact exists_prime_neg_one_le_tight_cubic_sensitive_radius (hns := hns) hg le_rfl le_rfl
+  exact exists_prime_negOne_tightCubicSensitive_GRH (hns := hns) hg le_rfl le_rfl
 
 /-- Under GRH, the least negative odd-prime witness obeys the exact conductor bound.
 Minimize the actual odd-prime witness supplied above and transfer its real bound.

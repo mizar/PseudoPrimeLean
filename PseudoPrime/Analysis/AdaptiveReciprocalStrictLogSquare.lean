@@ -36,7 +36,7 @@ Proof: retain the sharper bridge cap below level ten and use the old root bound 
 Role: prove one global comparison for the same explicit adaptive radius. -/
 theorem adaptivePart2Root_lt_level_of_log_entrance {L : ℝ} (hentry : (639 / 100 : ℝ) ≤ L)
     (hlogL : (227 / 100 : ℝ) ≤ Real.log L) : adaptivePart2CutoffRoot L < L := by
-  have ht := finerPart2Root_ge_thirty_six_fifths_of_639_div_100_le hentry
+  have ht := finerPart2Root_ge_36_5_of_639_100_le hentry
   have ht7 : 7 ≤ finerPart2CutoffRoot L := le_trans (by norm_num only) ht
   by_cases h10 : L ≤ 10
   · have htupper : finerPart2CutoffRoot L ≤ (21 / 2 : ℝ) := by
@@ -84,7 +84,7 @@ theorem adaptivePart2Root_sq_lt_log_sq_of_16000_le {q : ℕ} (hq : 16000 ≤ q) 
     (adaptivePart2CutoffRoot (Real.log q)) ^ 2 < (Real.log q) ^ 2 := by
   have hentry :=
     log_level_ge_adaptivePart2_entrance (le_trans (by norm_num only : (600 : ℕ) ≤ 16000) hq)
-  have ht := finerPart2Root_ge_thirty_six_fifths_of_639_div_100_le hentry
+  have ht := finerPart2Root_ge_36_5_of_639_100_le hentry
   have hypos := (adaptivePart2Root_height_and_cutoff ht).1
   exact
     (sq_lt_sq₀ (by linarith only [hypos]) (by linarith only [hentry])).mpr

@@ -59,8 +59,7 @@ theorem log_analyticConductor (f : GeneralLFunction) (hf : f.IsAdmissible) :
 is the sum of real digamma values minus logarithms of gamma-argument norms. Expand the
 endpoint and conductor logarithms and cancel the arithmetic term. This identifies the
 precise complex digamma estimate needed for a degree-uniform endpoint bound. -/
-theorem twice_gammaLogDerivativeAtOne_sub_log_conductor (f : GeneralLFunction)
-    (hf : f.IsAdmissible) :
+theorem gammaLog_one_sub_logConductor (f : GeneralLFunction) (hf : f.IsAdmissible) :
     2 * f.gammaLogDerivativeAtOne - Real.log f.analyticConductor =
       ∑ j : Fin f.degree,
         ((logDeriv Complex.Gamma ((1 + f.shift j) / 2)).re - Real.log ‖(1 + f.shift j) / 2‖) := by
@@ -71,11 +70,10 @@ theorem twice_gammaLogDerivativeAtOne_sub_log_conductor (f : GeneralLFunction)
 the logarithmic analytic conductor is at most the degree times a universal constant.
 The gamma arguments have real part at least one half; sum their uniform digamma errors.
 This removes dependence on individual shifts from the archimedean endpoint error. -/
-theorem abs_twice_gammaLogDerivativeAtOne_sub_log_conductor_le (f : GeneralLFunction)
-    (hf : f.IsAdmissible) :
+theorem gammaLog_one_conductor_error_le (f : GeneralLFunction) (hf : f.IsAdmissible) :
     |2 * f.gammaLogDerivativeAtOne - Real.log f.analyticConductor| ≤
       (f.degree : ℝ) * AnalyticNumberTheory.Gamma.digammaLogErrorBound := by
-  rw [twice_gammaLogDerivativeAtOne_sub_log_conductor f hf]
+  rw [gammaLog_one_sub_logConductor f hf]
   apply (Finset.abs_sum_le_sum_abs _ _).trans
   have hb (j : Fin f.degree) :
     |(logDeriv Complex.Gamma ((1 + f.shift j) / 2)).re - Real.log ‖(1 + f.shift j) / 2‖| ≤

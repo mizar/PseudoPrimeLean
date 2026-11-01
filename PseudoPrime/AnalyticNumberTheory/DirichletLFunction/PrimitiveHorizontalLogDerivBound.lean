@@ -19,7 +19,7 @@ This is a coarse bound on
 enough (`O(T^{3/2}(log T)^{3/2})`, not the sharp `O((log T)²)` ζ-side bound) to make the horizontal
 contour edge vanish as `T → ∞`.
 
-`DirichletLFunction.norm_centeredLogDeriv_sub_truncatedGenus_le` theorem only bounds the
+`DirichletLFunction.centeredLogDeriv_truncatedGenus_le` theorem only bounds the
 *difference* between the centered log-derivative and the truncated genus sum
 `DirichletLFunction.completedLFunctionTruncatedGenusSum χ R s`; the genus sum itself is bounded
 here via a weighted
@@ -47,8 +47,8 @@ radius and positive ordinate separation that control both signed completed logar
 derivatives and nonvanishing on the growing strip |Re s|<=2n. The inverse-square mass
 requires only this character's RH; good-height and radius selection require no RH.
 This covers every fixed shifted rectangle once n is sufficiently large. -/
-theorem exists_primitiveHorizontalScaledStripLogDerivBound_of_dirichletRH {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hRH : GRH.DirichletRiemannHypothesis χ)
+theorem exists_scaledStripLogDeriv_bound_RH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (hRH : GRH.DirichletRiemannHypothesis χ)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {n : ℝ} (hn : 1 ≤ n) :
     ∃ T ∈ Set.Icc n (2 * n),
       ∃ R ∈ Set.Icc (8 * n) (16 * n),
@@ -106,7 +106,7 @@ theorem exists_primitiveHorizontalScaledStripLogDerivBound_of_dirichletRH {N : �
                   DirichletCharacter.completedLFunction χ ((σ : ℂ) - T * Complex.I) ≠ 0 := by
   have hN1 : 1 < N := Nat.lt_of_lt_of_le (by norm_num only) hN2
   obtain ⟨T, hT, hTgood⟩ :=
-    exists_primitiveGoodHeightRadius_twoSided hN1 hprimitive hne hinv hn
+    exists_goodHeightRadius_twoSided hN1 hprimitive hne hinv hn
       (show 2 * n ≤ 16 * n by nlinarith only [hn])
   obtain ⟨R, hR, hRgood⟩ :=
     exists_primitiveGoodRadius hN1 hprimitive hne hinv (show (1 : ℝ) ≤ 8 * n by nlinarith only [hn])
@@ -233,10 +233,10 @@ theorem exists_primitiveHorizontalScaledStripLogDerivBound_of_dirichletRH {N : �
       _ = |((σ : ℂ) - T * Complex.I - ρ).im| := by simp only [Complex.sub_im]
       _ ≤ ‖(σ : ℂ) - T * Complex.I - ρ‖ := Complex.abs_im_le_norm _
   exact
-    ⟨norm_centeredLogDeriv_le_of_separation_of_dirichletRH hN2 hRH hprimitive hne hinv hRge1 hzf
-        hplus_le hplus_sne hδ_pos hplus_sep,
-      norm_centeredLogDeriv_le_of_separation_of_dirichletRH hN2 hRH hprimitive hne hinv hRge1 hzf
-        hminus_le hminus_sne hδ_pos hminus_sep,
+    ⟨centeredLogDeriv_separation_RH hN2 hRH hprimitive hne hinv hRge1 hzf hplus_le hplus_sne hδ_pos
+        hplus_sep,
+      centeredLogDeriv_separation_RH hN2 hRH hprimitive hne hinv hRge1 hzf hminus_le hminus_sne
+        hδ_pos hminus_sep,
       hplus_sne, hminus_sne⟩
 
 /--
@@ -248,7 +248,7 @@ Proof: two-sided good-height selection protects both signs of zero ordinates up 
 `‖σ±Ti‖ ≤ R/2`, and each ordinate margin bounds the corresponding complex distance.
 Role: retains a common height and nonvanishing for integration along both horizontal edges.
 -/
-theorem exists_primitiveHorizontalStripLogDerivBound_with_nonzero {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem exists_stripLogDeriv_nonzero_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {n : ℝ} (hn : 1 ≤ n) :
     ∃ T ∈ Set.Icc n (2 * n),
@@ -306,8 +306,7 @@ theorem exists_primitiveHorizontalStripLogDerivBound_with_nonzero {N : ℕ} [NeZ
                   DirichletCharacter.completedLFunction χ ((σ : ℂ) + T * Complex.I) ≠ 0 ∧
                   DirichletCharacter.completedLFunction χ ((σ : ℂ) - T * Complex.I) ≠ 0 := by
   obtain ⟨T, hT, R, hR, δ, hδpos, hδeq, hall⟩ :=
-    exists_primitiveHorizontalScaledStripLogDerivBound_of_dirichletRH hN2 (hGRH N χ hprimitive)
-      hprimitive hne hinv hn
+    exists_scaledStripLogDeriv_bound_RH hN2 (hGRH N χ hprimitive) hprimitive hne hinv hn
   refine ⟨T, hT, R, hR, δ, hδpos, hδeq, ?_⟩
   intro σ hσ
   exact hall σ (by linarith only [hσ, hn])
@@ -405,7 +404,7 @@ noncomputable def primitiveHorizontalStripData {N : ℕ} [NeZero N] (hN2 : 2 ≤
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {n : ℝ} (hn : 1 ≤ n) :
     PrimitiveHorizontalStripData χ n := by
   choose T hT R hR δ hδpos hδeq hall using
-    exists_primitiveHorizontalStripLogDerivBound_with_nonzero hN2 hGRH hprimitive hne hinv hn
+    exists_stripLogDeriv_nonzero_GRH hN2 hGRH hprimitive hne hinv hn
   exact
     ⟨T, R, δ, hT, hR, hδpos, hδeq, fun σ hσ => ⟨(hall σ hσ).1, (hall σ hσ).2.1⟩, fun σ hσ =>
       (hall σ hσ).2.2⟩
@@ -442,7 +441,7 @@ theorem H2LogBound_le_explicit {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : Dirich
           Real.log ‖DirichletCharacter.completedLFunction χ 0‖) /
         Real.log 2 := by
   have hF0pos : (0 : ℝ) < ‖DirichletCharacter.completedLFunction χ 0‖ :=
-    norm_pos_iff.mpr (dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne)
+    norm_pos_iff.mpr (completed_zero_ne_zero_of_primitive hprimitive hne)
   have hlogX3nonneg : 0 ≤ Real.log (X + 3) := Real.log_nonneg (by nlinarith only [hX])
   have hexpnonneg : (0 : ℝ) ≤ (4 * (N : ℝ) + 3) * ((X + 3) * Real.log (X + 3)) := by positivity
   have hexp_ge1 : (1 : ℝ) ≤ Real.exp ((4 * (N : ℝ) + 3) * ((X + 3) * Real.log (X + 3))) := by
@@ -489,8 +488,8 @@ constant (once `n` is large enough that the main term dominates it) finishes it.
 Role: bounds the zero-count expression at radius `32n` in the
 `K n log n` shape `General.tendsto_sqrt_mul_add_one_div_sq_atTop` consumes.
 -/
-theorem exists_K_forall_H2LogBound_thirtyTwo_le {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) :
+theorem eventually_ballCount_32_bound {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) :
     ∃ K : ℝ,
       0 < K ∧
         ∀ᶠ n : ℝ in Filter.atTop,
@@ -499,7 +498,7 @@ theorem exists_K_forall_H2LogBound_thirtyTwo_le {N : ℕ} [NeZero N] (hN2 : 2 �
               Real.log 2 ≤
             K * n * Real.log n := by
   have hF0pos : (0 : ℝ) < ‖DirichletCharacter.completedLFunction χ 0‖ :=
-    norm_pos_iff.mpr (dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne)
+    norm_pos_iff.mpr (completed_zero_ne_zero_of_primitive hprimitive hne)
   have hlog2pos : 0 < Real.log 2 := Real.log_pos (by norm_num only)
   set C₁ : ℝ := Real.log 35 + 1 with hC1_def
   have hC1pos : 0 < C₁ := by
@@ -568,7 +567,7 @@ theorem exists_K_forall_H2LogBound_thirtyTwo_le {N : ℕ} [NeZero N] (hN2 : 2 �
 /-- the intermediate bound's error coefficient `(4N+3)(R+3)log(R+3) - log‖F 0‖ + 1` (appearing in
 the finite-radius estimate / the strip argument strip
 bound's first term) is always positive, not just eventually: comparing `‖F 0‖` to the ball bound
-at radius `R` (as inside `DirichletLFunction.norm_logDeriv_ecanonicalDecomp_sub_le`'s own proof)
+at radius `R` (as inside `DirichletLFunction.ecanonical_logDeriv_sub_bound`'s own proof)
 gives
 `log‖F 0‖ ≤ (4N+3)(R+3)log(R+3)`, so adding `1` keeps it strictly positive. -/
 theorem hadamardHorizontalErrorCoeff_pos {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
@@ -580,13 +579,13 @@ theorem hadamardHorizontalErrorCoeff_pos {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
         1 := by
   have hN1 : 1 < N := hN2
   have hF0pos : (0 : ℝ) < ‖DirichletCharacter.completedLFunction χ 0‖ :=
-    norm_pos_iff.mpr (dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne)
+    norm_pos_iff.mpr (completed_zero_ne_zero_of_primitive hprimitive hne)
   have h0R : ‖(0 : ℂ)‖ ≤ R := by
     rw [norm_zero]
     exact le_trans (by norm_num only) hR
   have hboundge : ‖DirichletCharacter.completedLFunction χ 0‖ ≤ completedLFunctionBallBound N R :=
-    norm_completedLFunction_le_completedLFunctionBallBound hN1 hprimitive hne hinv
-      (le_trans (by norm_num only) hR) h0R
+    norm_completed_le_completedBallBound hN1 hprimitive hne hinv (le_trans (by norm_num only) hR)
+      h0R
   have hboundpos : (0 : ℝ) < completedLFunctionBallBound N R := hF0pos.trans_le hboundge
   have hbound_exp := completedLFunctionBallBound_le_exp (N := N) hN2 hR
   have hlog_bound_le :
@@ -662,7 +661,7 @@ are at most `primitiveHorizontalStripEpsilon`. Bound the evaluation-point norm
 by the selected height scale and use nonnegativity of each coefficient.
 This gives the uniform error bounds needed for the horizontal limit.
 -/
-theorem primitiveHorizontalStripEpsilon_bound {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem horizontalStripEpsilon_bound_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (k : ℕ) {σ : ℝ} (hσ : |σ| ≤ 2) :
     ‖logDeriv (DirichletCharacter.completedLFunction χ)
@@ -987,22 +986,22 @@ The explicit `n`-dependent majorant for the height-normalized strip error.
 Its terms result from bounding the ball-count expression by `K*n*log n` and using
 the chosen height and radius ranges. For fixed `K > 0` it tends to zero.
 -/
-noncomputable def primitiveHorizontalStripCleanEnvelope {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (K : ℝ) (n : ℝ) : ℝ :=
+noncomputable def horizontalStripCleanEnvelope {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (K : ℝ) (n : ℝ) : ℝ :=
   12 * Real.log 2 * K * Real.log n / n ^ 2 + 12 / n ^ 3 + K / 8 * Real.log n / n ^ 2 +
     32 * Real.sqrt (2 * |primitiveBRe χ|) *
         (Real.sqrt (K * n * Real.log n) * (K * n * Real.log n + 1)) /
       n ^ 2
 
-/-- **The clean envelope's limit**: `primitiveHorizontalStripCleanEnvelope K n → 0` as `n → ∞`, for
+/-- **The clean envelope's limit**: `horizontalStripCleanEnvelope K n → 0` as `n → ∞`, for
 any fixed `K > 0`. Each of the four additive terms `→ 0`: the first three via
 `General.tendsto_log_div_sq_atTop`/`n⁻³ → 0`, the fourth (genus term) via the core new asymptotic
 fact
 `PseudoPrime.AnalyticNumberTheory.General.tendsto_sqrt_mul_add_one_div_sq_atTop`. -/
-theorem tendsto_primitiveHorizontalStripCleanEnvelope_atTop {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} {K : ℝ} (hK : 0 < K) :
-    Filter.Tendsto (fun n : ℝ => primitiveHorizontalStripCleanEnvelope (N := N) (χ := χ) K n)
-      Filter.atTop (nhds 0) := by
+theorem tendsto_horizontalStripEnvelope {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} {K : ℝ}
+    (hK : 0 < K) :
+    Filter.Tendsto (fun n : ℝ => horizontalStripCleanEnvelope (N := N) (χ := χ) K n) Filter.atTop
+      (nhds 0) := by
   have hinv3 : Filter.Tendsto (fun n : ℝ => (n ^ 3)⁻¹) Filter.atTop (nhds 0) :=
     tendsto_inv_atTop_zero.comp (Filter.tendsto_pow_atTop (by norm_num only))
   have hterm1 :
@@ -1030,33 +1029,33 @@ theorem tendsto_primitiveHorizontalStripCleanEnvelope_atTop {N : ℕ} [NeZero N]
   rw [show (0 : ℝ) + 0 + 0 + 0 = 0 from by ring] at hsum
   refine hsum.congr' ?_
   filter_upwards with n
-  unfold primitiveHorizontalStripCleanEnvelope
+  unfold horizontalStripCleanEnvelope
   ring
 
 /-! ### Eventual comparison with the explicit envelope -/
 
 /--
-Input/assumptions: same as `primitiveHorizontalStripEpsilon_bound`.
+Input/assumptions: same as `horizontalStripEpsilon_bound_GRH`.
 Conclusion: there is a fixed `K > 0` such that eventually (`k → ∞`),
-`primitiveHorizontalStripEpsilon ... k ≤ primitiveHorizontalStripCleanEnvelope K (k + 1)`.
+`primitiveHorizontalStripEpsilon ... k ≤ horizontalStripCleanEnvelope K (k + 1)`.
 Content: worst-cases `B_R := H2LogBound(2R)` and `B₃₂ := H2LogBound(32n)` (`d.δ`'s underlying
 bound) both by `K n log n` (via `H2LogBound_le_explicit` +
 `General.add_three_mul_log_add_three_mono` +
-`exists_K_forall_H2LogBound_thirtyTwo_le`'s eventual bound, composed from `ℝ` to `ℕ` via
+`eventually_ballCount_32_bound`'s eventual bound, composed from `ℝ` to `ℕ` via
 `Filter.Tendsto.eventually`), and `A_R` by `(log 2) K n log n + 1`; substitutes these into
 `primitiveHorizontalStripEpsilon`'s three terms using `R ≥ 8n`, `T ≥ n`.
 Role: supplies the eventual comparison for the generic-character squeeze argument.
 -/
-theorem eventually_primitiveHorizontalStripEpsilon_le_cleanEnvelope {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem eventually_stripEpsilon_le_envelope {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     ∃ K : ℝ,
       0 < K ∧
         ∀ᶠ k : ℕ in Filter.atTop,
           primitiveHorizontalStripEpsilon hN2 hGRH hprimitive hne hinv k ≤
-            primitiveHorizontalStripCleanEnvelope (χ := χ) K ((k : ℝ) + 1) := by
+            horizontalStripCleanEnvelope (χ := χ) K ((k : ℝ) + 1) := by
   have hN1 : 1 < N := Nat.lt_of_lt_of_le (by norm_num only) hN2
-  obtain ⟨K, hKpos, hKevent⟩ := exists_K_forall_H2LogBound_thirtyTwo_le hN2 hprimitive hne
+  obtain ⟨K, hKpos, hKevent⟩ := eventually_ballCount_32_bound hN2 hprimitive hne
   refine ⟨K, hKpos, ?_⟩
   have hnn_tendsto : Filter.Tendsto (fun k : ℕ => (k : ℝ) + 1) Filter.atTop Filter.atTop :=
     Filter.tendsto_atTop_add_const_right Filter.atTop 1 tendsto_natCast_atTop_atTop
@@ -1363,7 +1362,7 @@ theorem eventually_primitiveHorizontalStripEpsilon_le_cleanEnvelope {N : ℕ} [N
 
 /-- `primitiveHorizontalStripEpsilon` is always `≥ 0` (each of its three terms is a
 nonnegative numerator over a positive denominator). -/
-theorem primitiveHorizontalStripEpsilon_nonneg {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem horizontalStripEpsilon_nonneg_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (k : ℕ) :
     0 ≤ primitiveHorizontalStripEpsilon hN2 hGRH hprimitive hne hinv k := by
@@ -1441,28 +1440,25 @@ theorem primitiveHorizontalStripEpsilon_nonneg {N : ℕ} [NeZero N] (hN2 : 2 ≤
 /-- **The generic horizontal estimate limit**: `primitiveHorizontalStripEpsilon ... k → 0`
 as `k → ∞`.
 Combines the eventual clean-envelope domination
-(`eventually_primitiveHorizontalStripEpsilon_le_cleanEnvelope`), the clean envelope's own
-limit (`tendsto_primitiveHorizontalStripCleanEnvelope_atTop`), and nonnegativity, via
+(`eventually_stripEpsilon_le_envelope`), the clean envelope's own
+limit (`tendsto_horizontalStripEnvelope`), and nonnegativity, via
 `tendsto_of_tendsto_of_tendsto_of_le_of_le'` (squeeze with `Eventually` bounds on both sides). -/
-theorem tendsto_primitiveHorizontalStripEpsilon_atTop {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem tendsto_horizontalStripEpsilon_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     Filter.Tendsto (primitiveHorizontalStripEpsilon hN2 hGRH hprimitive hne hinv) Filter.atTop
       (nhds 0) := by
-  obtain ⟨K, hKpos, hKle⟩ :=
-    eventually_primitiveHorizontalStripEpsilon_le_cleanEnvelope hN2 hGRH hprimitive hne hinv
-  have hq := tendsto_primitiveHorizontalStripCleanEnvelope_atTop (N := N) (χ := χ) hKpos
+  obtain ⟨K, hKpos, hKle⟩ := eventually_stripEpsilon_le_envelope hN2 hGRH hprimitive hne hinv
+  have hq := tendsto_horizontalStripEnvelope (N := N) (χ := χ) hKpos
   have hnn_tendsto : Filter.Tendsto (fun k : ℕ => (k : ℝ) + 1) Filter.atTop Filter.atTop :=
     Filter.tendsto_atTop_add_const_right Filter.atTop 1 tendsto_natCast_atTop_atTop
   have hqk :
-    Filter.Tendsto
-      (fun k : ℕ => primitiveHorizontalStripCleanEnvelope (N := N) (χ := χ) K ((k : ℝ) + 1))
+    Filter.Tendsto (fun k : ℕ => horizontalStripCleanEnvelope (N := N) (χ := χ) K ((k : ℝ) + 1))
       Filter.atTop (nhds 0) :=
     hq.comp hnn_tendsto
   exact
     tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds hqk
-      (Filter.Eventually.of_forall
-        (primitiveHorizontalStripEpsilon_nonneg hN2 hGRH hprimitive hne hinv))
+      (Filter.Eventually.of_forall (horizontalStripEpsilon_nonneg_GRH hN2 hGRH hprimitive hne hinv))
       hKle
 
 /-! ### General-character height-sequence limit -/
@@ -1496,7 +1492,7 @@ Under GRH, `2 ≤ N`, primitive nontrivial `χ`, and `χ⁻¹ ≠ 1`, the named 
 tends to infinity. Compare it pointwise with the diverging sequence `k+1`.
 Role: supplies the heights used in the general-character horizontal contour limit.
 -/
-theorem tendsto_primitiveHorizontalHeightSeq_atTop {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem tendsto_horizontalHeightSeq_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     Filter.Tendsto (primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv) Filter.atTop
@@ -1512,7 +1508,7 @@ For the primitive-character GRH data and `|σ| ≤ 2`, the completed function is
 both `σ ± T_k i`. Project the chosen strip data's `nonzero` field.
 Role: permits logarithmic-derivative identities on both horizontal contour edges.
 -/
-theorem primitiveHorizontalHeightSeq_completedLFunction_ne_zero {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem horizontalHeight_completed_ne_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (k : ℕ) {σ : ℝ} (hσ : |σ| ≤ 2) :
     DirichletCharacter.completedLFunction χ
@@ -1529,7 +1525,7 @@ derivative at both `σ ± T_k i`, divided by `T_k²`, is bounded by the general 
 Proof: unfold the named height and apply the general epsilon bound.
 Role: supplies the uniform bound whose envelope tends to zero in the horizontal contour limit.
 -/
-theorem primitiveHorizontalHeightSeq_completedLogDeriv_bound {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem horizontalHeight_logDeriv_bound_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (k : ℕ) {σ : ℝ} (hσ : |σ| ≤ 2) :
     ‖logDeriv (DirichletCharacter.completedLFunction χ)
@@ -1544,6 +1540,6 @@ theorem primitiveHorizontalHeightSeq_completedLogDeriv_bound {N : ℕ} [NeZero N
               logDeriv (DirichletCharacter.completedLFunction χ) 0‖ /
           (primitiveHorizontalHeightSeq hN2 hGRH hprimitive hne hinv k) ^ 2 ≤
         primitiveHorizontalStripEpsilon hN2 hGRH hprimitive hne hinv k :=
-  primitiveHorizontalStripEpsilon_bound hN2 hGRH hprimitive hne hinv k hσ
+  horizontalStripEpsilon_bound_GRH hN2 hGRH hprimitive hne hinv k hσ
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

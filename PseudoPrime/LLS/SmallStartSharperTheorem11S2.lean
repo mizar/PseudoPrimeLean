@@ -19,9 +19,9 @@ namespace PseudoPrime.LLS
 when t exceeds eight and satisfies the precise coupled level inequality.
 Apply the arbitrary-cutoff weighted comparison, retaining the conductor term.
 This removes the fixed modulus entrance from the analytic core. -/
-theorem not_characterTrivialBelow_of_precisePart2CoupledRoot {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {t : ℝ} (ht8 : 8 < t)
+theorem not_trivialBelow_precisePart2Root_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hne : χ ≠ 1) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {t : ℝ}
+    (ht8 : 8 < t)
     (hlevel : (t - 2) * Real.log q ≤ (t - 2) * t + t * (2 * Real.log t - 2301 / 500)) :
     ¬LLSCharacterTrivialBelow χ (t ^ 2) := by
   intro ht
@@ -30,10 +30,9 @@ theorem not_characterTrivialBelow_of_precisePart2CoupledRoot {q : ℕ} [NeZero q
   have hx := Analysis.sq_ge_64_of_ge_8 ht8.le
   have hcore := weightedComparisonCore_of_trivialBelow χ hne hGRH hx ht
   obtain ⟨hS, hR, hb, hu⟩ :=
-    re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le
-      (llsRiemannWeightedLowerBound_of_riemannHypothesis hGRH.riemann)
-      (llsRiemannReciprocalLowerBound_of_riemannHypothesis hGRH.riemann)
-      (lt_of_lt_of_le (by norm_num only) hx) (le_trans (by norm_num only) hx) hcore
+    weightedComparison_core_bounds (riemannWeightedLower_of_RH hGRH.riemann)
+      (riemannReciprocalLower_of_RH hGRH.riemann) (lt_of_lt_of_le (by norm_num only) hx)
+      (le_trans (by norm_num only) hx) hcore
   have hsqrt : Real.sqrt (t ^ 2) = t := Real.sqrt_sq ht0.le
   simp only [sub_zero] at hS hR
   rw [Real.log_pow] at hR
@@ -67,7 +66,7 @@ theorem exists_prime_not_one_of_precisePart2CoupledRoot {q : ℕ} [NeZero q]
     (hlevel : (t - 2) * Real.log q ≤ (t - 2) * t + t * (2 * Real.log t - 2301 / 500)) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ t ^ 2 ∧ χ p ≠ 1 := by
   by_contra hh
-  apply not_characterTrivialBelow_of_precisePart2CoupledRoot χ hne hGRH ht8 hlevel
+  apply not_trivialBelow_precisePart2Root_GRH χ hne hGRH ht8 hlevel
   intro p hp hpx
   by_contra hv
   exact hh ⟨p, hp, hpx.le, hv⟩
@@ -76,9 +75,8 @@ theorem exists_prime_not_one_of_precisePart2CoupledRoot {q : ℕ} [NeZero q]
 prime non-one value through the precise Part 2 radius squared.
 Use the logarithmic entrance 14803/2000 in the generic coupled-root theorem.
 This is an analytic half-line result and uses no finite modulus table. -/
-theorem exists_prime_not_one_le_sharperPart2Root_of_1639_le {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1) (hq : 1639 ≤ q)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
+theorem exists_prime_neOne_sharperPart2_1639_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hne : χ ≠ 1) (hq : 1639 ≤ q) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ (Analysis.sharperPart2CutoffRoot (Real.log q)) ^ 2 ∧ χ p ≠ 1 := by
   have hL := Analysis.log_level_ge_precisePart2_entrance hq
   exact
@@ -89,8 +87,8 @@ theorem exists_prime_not_one_le_sharperPart2Root_of_1639_le {q : ℕ} [NeZero q]
 /-- Under GRH at q at least 1639, each proper unit subgroup misses a
 prime through the precise Part 2 radius squared. Pull back a nonprincipal
 character from the quotient. Nonunit primes are allowed in this image bound. -/
-theorem exists_prime_outside_subgroup_image_le_sharperPart2Root_of_1639_le {q : ℕ} [NeZero q]
-    (hq : 1639 ≤ q) (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
+theorem exists_prime_outside_sharperPart2_1639_GRH {q : ℕ} [NeZero q] (hq : 1639 ≤ q)
+    (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ,
       p.Prime ∧
@@ -101,7 +99,7 @@ theorem exists_prime_outside_subgroup_image_le_sharperPart2Root_of_1639_le {q : 
   obtain ⟨x, hx⟩ := exists_ne (1 : (ZMod q)ˣ ⧸ H)
   obtain ⟨χ', hχ⟩ := MulChar.exists_apply_ne_one_of_hasEnoughRootsOfUnity ((ZMod q)ˣ ⧸ H) ℂ hx
   obtain ⟨p, hp, hb, hv⟩ :=
-    exists_prime_not_one_le_sharperPart2Root_of_1639_le (pullbackCharacter χ')
+    exists_prime_neOne_sharperPart2_1639_GRH (pullbackCharacter χ')
       (pullbackCharacter_ne_one_of_ne_one χ' hχ) hq hGRH
   refine ⟨p, hp, hb, ?_⟩
   rintro ⟨u, hu, he⟩

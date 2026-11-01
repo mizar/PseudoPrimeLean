@@ -48,10 +48,10 @@ theorem gamma_left_integrand_bound_moments_refined {q : ℕ} [NeZero q] {χ : Di
   have hlog : 0 ≤ Real.log q := Real.log_nonneg hq1
   have hnlog : ‖Complex.log (q : ℂ)‖ = Real.log q := by
     rw [← Complex.natCast_log, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg hlog]
-  have hd := norm_logDeriv_completed_neg_one_sixteenth_le_refined hp hne hinv t
+  have hd := completedLogDeriv_neg_1_16_refined hp hne hinv t
   rw [hnlog, ← he] at hd
   have h0 := Analysis.norm_Gamma_neg_one_sixteenth_le_zeroEnvelope hs
-  have h1 := Analysis.norm_Gamma_neg_one_sixteenth_mul_height_le_firstEnvelope hs
+  have h1 := Analysis.norm_Gamma_neg_1_16_mul_height_le_envelope hs
   rw [hi] at h0 h1
   have hC : 0 ≤ Real.log q + 28 := by linarith only [hlog]
   have hB := add_le_add (mul_le_mul_of_nonneg_left h0 hC) h1

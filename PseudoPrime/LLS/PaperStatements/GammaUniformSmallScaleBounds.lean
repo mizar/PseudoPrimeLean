@@ -43,7 +43,7 @@ theorem gamma_primitiveCharacter_sum_re_le_small_scale {q : ℕ} [NeZero q] (hq 
       (show Real.log χ.conductor ≤ T by linarith only [hlogf, hambient])
   have hlead := mul_le_mul_of_nonneg_left hlogf (by norm_num only : (0 : ℝ) ≤ 11783423 / 25000000)
   have hu :=
-    gamma_primitiveCharacter_sum_re_le_variable_prefix_scale hq χ hne hGRH hx 32
+    gammaCharacterSum_re_le_variable_prefix_scale hq χ hne hGRH hx 32
       Analysis.gammaResolvent_thirtyTwo_error_lt
   linarith only [hu, hpole, hleft, hlead]
 
@@ -191,7 +191,7 @@ theorem gamma_ramp_subgroup_comparison_small_scale {q : ℕ} [NeZero q] (hq : 20
 budget gives a coprime outside prime through (4/5)T².
 Contradict the smaller-scale comparison using the certified main-term gap.
 This is the existence interface for modest shifted scales. -/
-theorem exists_prime_outside_le_gamma_four_fifths_small_scale {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+theorem exists_prime_outside_4_5_smallScale_GRH {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
     (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {T : ℝ} (hT : 224 ≤ T)
     (hambient : Real.log q ≤ T)

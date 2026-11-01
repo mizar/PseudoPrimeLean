@@ -20,7 +20,7 @@ an odd prime with value different from one below (99/100)L² whenever
 L ≥ 1000 and log q ≤ L+7/5. Combine the certified actual principal/ramp
 bounds with the uniform primitive sum and dyadic correction. The strict
 gap is proved on the entire half-line and is not an additional assumption. -/
-theorem exists_odd_prime_ne_one_of_nearSquare_gamma_endpoint {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+theorem exists_oddPrime_neOne_nearSquare_GRH {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
     (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (h2 : 2 ∣ q)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L : ℝ} (hL : 1000 ≤ L)
     (hlogq : Real.log q ≤ L + 7 / 5) :
@@ -32,8 +32,7 @@ theorem exists_odd_prime_ne_one_of_nearSquare_gamma_endpoint {q : ℕ} [NeZero q
   have hx0 := zero_lt_one.trans_le hx
   have he := PaperStatements.nearSquare_gamma_error_budgets hL
   have htwo := (PaperStatements.nearSquare_gamma_dyadic_pole_budgets hL hlogq).1
-  have hu :=
-    PaperStatements.gamma_primitiveCharacter_sum_re_le_nearSquare_endpoint hq χ hne hGRH hL hlogq
+  have hu := PaperStatements.gammaCharacterSum_re_le_nearSquare_endpoint hq χ hne hGRH hL hlogq
   have hP := gamma_level_one_sum_upper_variable hGRH.riemann hx
   have hT := gamma_ramp_sum_lower_variable hGRH.riemann hx
   have hgap :

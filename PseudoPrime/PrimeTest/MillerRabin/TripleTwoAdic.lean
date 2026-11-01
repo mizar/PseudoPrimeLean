@@ -52,8 +52,8 @@ theorem twoAdic_triple_pred_of_odd_parts {p q r t dp dq dr : ℕ} (ht : 0 < t)
 valuations have product predecessor of the same valuation. Apply their
 canonical odd decompositions and the odd-part polynomial identity.
 This identifies the ambient MR exponent with all three local sign exponents. -/
-theorem twoAdic_triple_pred_eq_of_equal_predecessor_valuations {p q r : ℕ} (hp : 1 < p) (hq : 1 < q)
-    (hr : 1 < r) (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r)
+theorem twoAdic_triple_pred_eq_of_pred_valuations {p q r : ℕ} (hp : 1 < p) (hq : 1 < q) (hr : 1 < r)
+    (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r)
     (hpq : padicValNat 2 (p - 1) = padicValNat 2 (q - 1))
     (hpr : padicValNat 2 (p - 1) = padicValNat 2 (r - 1)) :
     padicValNat 2 (p * q * r - 1) = padicValNat 2 (p - 1) := by

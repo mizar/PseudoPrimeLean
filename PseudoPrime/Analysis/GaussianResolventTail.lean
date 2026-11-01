@@ -150,7 +150,7 @@ theorem norm_gaussianGammaFunction_le_Gamma (t : ℝ) :
 
 /-- For |t|≥16, the scaled Gaussian kernel norm is below 1/40000.
 Apply Gaussian damping to the existing unweighted Gamma tail bound. -/
-theorem scaled_gaussianGammaFunction_lt_of_abs_ge_sixteen {t : ℝ} (ht : 16 ≤ |t|) :
+theorem scaled_gaussianGamma_lt_of_abs_ge_16 {t : ℝ} (ht : 16 ≤ |t|) :
     (1 + t ^ 2) * ‖gaussianGammaFunction (Complex.I * (t : ℂ))‖ < 1 / 40000 := by
   exact
     (mul_le_mul_of_nonneg_left (norm_gaussianGammaFunction_le_Gamma t)
@@ -159,24 +159,23 @@ theorem scaled_gaussianGammaFunction_lt_of_abs_ge_sixteen {t : ℝ} (ht : 16 ≤
 
 /-- For |t|≥16, the rational majorant strictly dominates the actual Gaussian
 kernel norm. Compare their scaled bounds and cancel the positive factor 1+t². -/
-theorem norm_gaussianGammaFunction_lt_gaussianResolvent_of_abs_ge_sixteen {t : ℝ} (ht : 16 ≤ |t|) :
+theorem norm_gaussianGamma_lt_resolvent_of_abs_ge_16 {t : ℝ} (ht : 16 ≤ |t|) :
     ‖gaussianGammaFunction (Complex.I * (t : ℂ))‖ < gaussianResolventMajorant t := by
   have hs : (256 : ℝ) ≤ t ^ 2 := by nlinarith only [ht, sq_abs t]
   have h :=
-    (scaled_gaussianGammaFunction_lt_of_abs_ge_sixteen ht).trans
-      (gaussianResolvent_scaled_gt_of_sq_ge_256 hs)
+    (scaled_gaussianGamma_lt_of_abs_ge_16 ht).trans (gaussianResolvent_scaled_gt_of_sq_ge_256 hs)
   exact (mul_lt_mul_iff_right₀ (by nlinarith only [sq_nonneg t] : 0 < 1 + t ^ 2)).mp h
 
 /-- A domination certificate on |t|≤16 extends to every real height.
 The proved rational and analytic tail covers the complementary interval.
 This transfers the remaining compact certificate to the global zero-mass input. -/
-theorem norm_gaussianGammaFunction_le_gaussianResolvent_of_compact
+theorem norm_gaussianGamma_le_resolvent_of_compact
     (h :
       ∀ t : ℝ,
         |t| ≤ 16 → ‖gaussianGammaFunction (Complex.I * (t : ℂ))‖ ≤ gaussianResolventMajorant t)
     (t : ℝ) : ‖gaussianGammaFunction (Complex.I * (t : ℂ))‖ ≤ gaussianResolventMajorant t := by
   by_cases ht : |t| ≤ 16
   · exact h t ht
-  · exact (norm_gaussianGammaFunction_lt_gaussianResolvent_of_abs_ge_sixteen (le_of_not_ge ht)).le
+  · exact (norm_gaussianGamma_lt_resolvent_of_abs_ge_16 (le_of_not_ge ht)).le
 
 end PseudoPrime.Analysis

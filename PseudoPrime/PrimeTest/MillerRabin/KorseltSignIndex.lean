@@ -58,11 +58,11 @@ of every local half exponent has sign-subgroup index exactly four. Combine
 local negative roots by CRT and multiply the three two-element power images;
 the global sign fiber contributes one factor of two. This is the exact
 arithmetic index needed by the Gaussian three-prime witness branch. -/
-theorem index_signSubgroup_three_primes_eq_four_of_local_half_odd {p q r E kp kq kr : ℕ}
-    [Fact p.Prime] [Fact q.Prime] [Fact r.Prime] [Fact (2 < p)] [Fact (2 < q)] [Fact (2 < r)]
-    (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r) (hkp : Odd kp) (hkq : Odd kq) (hkr : Odd kr)
-    (hEp : E = (p / 2) * kp) (hEq : E = (q / 2) * kq) (hEr : E = (r / 2) * kr) (hpq : p.Coprime q)
-    (hpr : p.Coprime r) (hqr : q.Coprime r) : (signSubgroup (p * q * r) E).index = 4 := by
+theorem signSubgroup_index_three_primes_eq_four {p q r E kp kq kr : ℕ} [Fact p.Prime] [Fact q.Prime]
+    [Fact r.Prime] [Fact (2 < p)] [Fact (2 < q)] [Fact (2 < r)] (hpOdd : Odd p) (hqOdd : Odd q)
+    (hrOdd : Odd r) (hkp : Odd kp) (hkq : Odd kq) (hkr : Odd kr) (hEp : E = (p / 2) * kp)
+    (hEq : E = (q / 2) * kq) (hEr : E = (r / 2) * kr) (hpq : p.Coprime q) (hpr : p.Coprime r)
+    (hqr : q.Coprime r) : (signSubgroup (p * q * r) E).index = 4 := by
   let : NeZero (p * q) := ⟨mul_ne_zero (NeZero.ne p) (NeZero.ne q)⟩
   let : NeZero (p * q * r) := ⟨mul_ne_zero (NeZero.ne (p * q)) (NeZero.ne r)⟩
   have hp : p.Prime := Fact.out

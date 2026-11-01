@@ -129,8 +129,7 @@ theorem half_le_primeCounting_mul_log {B : ℕ} (hB : 64 ^ 4 ≤ B) :
 /-- For $B=w^4$ and $w\ge64$, the Chebyshev lower expression gives
 $(568/1000)B\le\pi(B)\log B$. Bound the logarithmic and square-root errors
 separately by $513B/4096$. -/
-theorem seventy_one_one_hundred_twentyfifths_le_primeCounting_mul_log_of_fourth_power {B : ℕ}
-    {w : ℝ} (hw : 64 ≤ w) (hB : w ^ 4 = B) :
+theorem primeCounting_log_lower_71_125_pow_four {B : ℕ} {w : ℝ} (hw : 64 ≤ w) (hB : w ^ 4 = B) :
     (568 / 1000 : ℝ) * B ≤ (B.primeCounting : ℝ) * Real.log B := by
   have hw0 : 0 ≤ w := le_trans (by norm_num only) hw
   have hBp : (0 : ℝ) < B := hB ▸ pow_pos (lt_of_lt_of_le (by norm_num only) hw) 4
@@ -172,7 +171,7 @@ theorem seventy_one_one_hundred_twentyfifths_le_primeCounting_mul_log_of_fourth_
 /-- For every $B\ge64^4$, $(568/1000)B\le\pi(B)\log B$. Take two square
 roots and apply the fourth-power estimate. This supplies the prime-count
 input for the sharper floor-cutoff theorem below. -/
-theorem seventy_one_one_hundred_twentyfifths_le_primeCounting_mul_log {B : ℕ} (hB : 64 ^ 4 ≤ B) :
+theorem primeCounting_log_lower_71_125 {B : ℕ} (hB : 64 ^ 4 ≤ B) :
     (568 / 1000 : ℝ) * B ≤ (B.primeCounting : ℝ) * Real.log B := by
   let w := Real.sqrt (Real.sqrt (B : ℝ))
   have hw0 : 0 ≤ w := Real.sqrt_nonneg _
@@ -184,12 +183,12 @@ theorem seventy_one_one_hundred_twentyfifths_le_primeCounting_mul_log {B : ℕ} 
     apply (pow_le_pow_iff_left₀ (by norm_num only : (0 : ℝ) ≤ 64) hw0 (by decide : 4 ≠ 0)).mp
     rw [hw4]
     exact_mod_cast hB
-  exact seventy_one_one_hundred_twentyfifths_le_primeCounting_mul_log_of_fourth_power hw hw4
+  exact primeCounting_log_lower_71_125_pow_four hw hw4
 
 /-- The earlier $9/16$ form follows from the stronger $568/1000$ estimate. -/
-theorem nine_sixteenths_le_primeCounting_mul_log_of_fourth_power {B : ℕ} {w : ℝ} (hw : 64 ≤ w)
-    (hB : w ^ 4 = B) : (9 / 16 : ℝ) * B ≤ (B.primeCounting : ℝ) * Real.log B := by
-  have h := seventy_one_one_hundred_twentyfifths_le_primeCounting_mul_log_of_fourth_power hw hB
+theorem primeCounting_log_lower_9_16_pow_four {B : ℕ} {w : ℝ} (hw : 64 ≤ w) (hB : w ^ 4 = B) :
+    (9 / 16 : ℝ) * B ≤ (B.primeCounting : ℝ) * Real.log B := by
+  have h := primeCounting_log_lower_71_125_pow_four hw hB
   have hB0 : 0 ≤ (B : ℝ) := Nat.cast_nonneg B
   nlinarith only [h, hB0]
 
@@ -197,7 +196,7 @@ theorem nine_sixteenths_le_primeCounting_mul_log_of_fourth_power {B : ℕ} {w : 
 stronger $568/1000$ estimate. -/
 theorem nine_sixteenths_le_primeCounting_mul_log {B : ℕ} (hB : 64 ^ 4 ≤ B) :
     (9 / 16 : ℝ) * B ≤ (B.primeCounting : ℝ) * Real.log B := by
-  have h := seventy_one_one_hundred_twentyfifths_le_primeCounting_mul_log hB
+  have h := primeCounting_log_lower_71_125 hB
   have hB0 : 0 ≤ (B : ℝ) := Nat.cast_nonneg B
   nlinarith only [h, hB0]
 
@@ -254,8 +253,8 @@ theorem two_mul_rpow_le_primeCounting_floor_of_half_gap {L A b : ℝ} (hL : 1 < 
 /-- If $0<A\le1900001/1000000$, $L>1$, the cutoff exceeds $64^4$, and
 $L^{A-b}\ge(13381/1000)\log L$, then $\pi(\lfloor L^A\rfloor)\ge2L^b$.
 The coefficient uses the $568/1000$ prime-count bound and retains the floor loss. -/
-theorem two_mul_rpow_le_primeCounting_floor_of_13381_over_1000_gap {L A b : ℝ} (hL : 1 < L)
-    (hA : 0 < A) (hA2 : A ≤ 1900001 / 1000000) (hB : 64 ^ 4 ≤ Nat.floor (L ^ A))
+theorem two_mul_rpow_le_primeCount_of_exp_gap {L A b : ℝ} (hL : 1 < L) (hA : 0 < A)
+    (hA2 : A ≤ 1900001 / 1000000) (hB : 64 ^ 4 ≤ Nat.floor (L ^ A))
     (hgap : (13381 / 1000 : ℝ) * Real.log L ≤ L ^ (A - b)) :
     2 * L ^ b ≤ ((Nat.floor (L ^ A)).primeCounting : ℝ) := by
   have hLp : 0 < L := zero_lt_one.trans hL
@@ -267,8 +266,7 @@ theorem two_mul_rpow_le_primeCounting_floor_of_13381_over_1000_gap {L A b : ℝ}
   have hlogB :=
     Real.log_le_log (lt_of_lt_of_le zero_lt_one hB1) (Nat.floor_le (Real.rpow_nonneg hLp.le A))
   rw [Real.log_rpow hLp A] at hlogB
-  have hpi :=
-    seventy_one_one_hundred_twentyfifths_le_primeCounting_mul_log (B := Nat.floor (L ^ A)) hB
+  have hpi := primeCounting_log_lower_71_125 (B := Nat.floor (L ^ A)) hB
   have hm :=
     mul_le_mul_of_nonneg_left hlogB
       (Nat.cast_nonneg ((Nat.floor (L ^ A)).primeCounting) : (0 : ℝ) ≤ _)

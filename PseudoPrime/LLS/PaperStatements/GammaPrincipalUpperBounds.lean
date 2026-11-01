@@ -28,7 +28,7 @@ theorem gamma_level_one_finite_sum_upper_thirteen (hRH : RiemannHypothesis) {x :
     ∑ n ∈ Finset.Ioc 0 N, (gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x n).re ≤
       Real.sqrt x + 13 * x ^ (1 / 4 : ℝ) := by
   have h :=
-    AnalyticNumberTheory.Arithmetic.exponentialMangoldtSum_div_sqrt_upper_of_psi_error
+    AnalyticNumberTheory.Arithmetic.expMangoldtSum_div_sqrt_upper_of_psi_error
       (by norm_num only : (0 : ℝ) ≤ 13) hx (Nat.cast_nonneg N)
       (fun t ht ↦ LLS.psi_error_le_thirteen hRH ht)
   rw [← gamma_level_one_sum_eq_exponential hx] at h

@@ -36,8 +36,8 @@ theorem triangular18_central_decay_scaled (t : ℝ) :
 is at most 34848. Bound its phase by one, use the rescaled kernel decay,
 and change height by a factor eighteen in the logarithmic integral.
 This improves the previous bound obtained with an unscaled decay envelope. -/
-theorem triangular18_central_gammaIntegral_norm_le_scaled_decay {q : ℕ} (χ : DirichletCharacter ℂ q)
-    {x : ℝ} (hx : 0 < x) :
+theorem triangular18_centralGamma_norm_le_34848 {q : ℕ} (χ : DirichletCharacter ℂ q) {x : ℝ}
+    (hx : 0 < x) :
     ‖∫ t : ℝ,
           logDeriv χ.gammaFactor (Complex.I * t + 1 / 2) *
             (Analysis.triangularMellinFunction 18 (Complex.I * t) * (x : ℂ) ^ (Complex.I * t))‖ ≤
@@ -108,7 +108,7 @@ theorem triangular18_gammaIntegral_norm_le_six_thousand {q : ℕ} (χ : Dirichle
       (by linarith only [hbK]) hx
   change ‖((1 / (2 * Real.pi) : ℝ) : ℂ) * _‖ ≤ _
   rw [he]
-  have hraw := triangular18_central_gammaIntegral_norm_le_scaled_decay χ (zero_lt_one.trans_le hx)
+  have hraw := triangular18_centralGamma_norm_le_34848 χ (zero_lt_one.trans_le hx)
   have hn := norm_mellinNormalization_mul_le_sixth hraw
   exact hn.trans (by norm_num only : (34848 : ℝ) / 6 ≤ 6000)
 
@@ -117,7 +117,7 @@ and scale at least one, the arithmetic plus oscillating zero sum has norm at mos
 4 times ten to the twelfth times (log q plus 284) times the scale to minus nine sixteenths,
 plus 6000. Apply the exact contour formula and the improved uniform Gamma bound.
 This retains the existing left-contour decay while reducing the Gamma cost. -/
-theorem triangular18_primitive_remainder_norm_le_scaled_gamma {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem triangular18_remainder_scaledGamma_GRH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) :
     let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
@@ -137,7 +137,7 @@ theorem triangular18_primitive_remainder_norm_le_scaled_gamma {q : ℕ} [NeZero 
           (K.function (((9 / 16 : ℝ) : ℂ) + Complex.I * t) *
             (x : ℂ) ^ (((9 / 16 : ℝ) : ℂ) + Complex.I * t)))
   have hR : ‖R‖ ≤ 4000000000000 * (‖Complex.log q‖ + 284) * x ^ (-9 / 16 : ℝ) :=
-    triangular18_left_completedIntegral_norm_le_scaled hp hne hinv (zero_lt_one.trans_le hx)
+    triangular18_completedLeft_scaled_bound hp hne hinv (zero_lt_one.trans_le hx)
   have hqR : (1 : ℝ) ≤ q := by
     simpa only [Nat.cast_one] using
       (Nat.cast_le.mpr ((by decide : 1 ≤ 2).trans hq) : ((1 : ℕ) : ℝ) ≤ (q : ℝ))

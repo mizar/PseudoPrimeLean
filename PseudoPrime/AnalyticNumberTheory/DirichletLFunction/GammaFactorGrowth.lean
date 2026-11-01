@@ -93,7 +93,7 @@ Content: shifts to `z + 2` (real part in `[1, 7/2]`, matching
 constant `M_Γ := max Γ(1/2) Γ(4)` (both `r + 1/2, r + 3/2 ∈ [1/2, 4]`, via
 `PseudoPrime.AnalyticNumberTheory.RiemannZeta.Real.Gamma_le_max_of_mem_Icc'`) and the
 `-log‖Γ(1+r+it)‖` term by
-`RiemannZeta.exists_neg_log_norm_Gamma_one_add_add_mul_I_le_uniform`'s
+`RiemannZeta.exists_neg_log_Gamma_shift_bound`'s
 `O(t)` bound, then undoes the shift via
 `PseudoPrime.AnalyticNumberTheory.DirichletLFunction.norm_digamma_le_shift_two_add_four`.
 Role: the pointwise central-strip ingredient, applied at `z := s/2` or `z := (s+1)/2` to bound
@@ -105,7 +105,7 @@ theorem exists_norm_digamma_central_strip_le :
         ∀ z : ℂ,
           -1 ≤ z.re →
             z.re ≤ 3 / 2 → (1 : ℝ) / 2 ≤ |z.im| → ‖Complex.digamma z‖ ≤ C * (|z.im| + 1) := by
-  obtain ⟨C₁, hC₁⟩ := RiemannZeta.exists_neg_log_norm_Gamma_one_add_add_mul_I_le_uniform
+  obtain ⟨C₁, hC₁⟩ := RiemannZeta.exists_neg_log_Gamma_shift_bound
   set MΓ := max (Real.Gamma (1 / 2)) (Real.Gamma 4) with hMΓ_def
   have hMΓpos : 0 < MΓ := lt_max_of_lt_left (Real.Gamma_pos_of_pos (by norm_num only))
   set C : ℝ := 8 * Real.log (MΓ + 1) + 8 * max C₁ 0 + 4 + 20 * Real.pi with hC_def
@@ -180,7 +180,7 @@ the gamma-factor logarithmic derivative by `C * (|T|+1)` when `|σ| ≤ 2`
 and `|T| ≥ 1`. Split by parity, express each derivative through digamma, and
 apply its central-strip estimate. This is the gamma contribution to horizontal bounds.
 -/
-theorem exists_norm_logDeriv_gammaFactor_horizontal_le :
+theorem gammaLogDeriv_horizontal_bound :
     ∃ C : ℝ,
       0 ≤ C ∧
         ∀ {N : ℕ} (χ : DirichletCharacter ℂ N) (σ T : ℝ),
@@ -354,7 +354,7 @@ an arbitrary strip pushed into `Re ≥ 1` by a shift `m`: shifts to `z + m` (rea
 `M_Γ := max Γ(1/2) Γ(b - 1 + m + 3/2)` (via
 `PseudoPrime.AnalyticNumberTheory.RiemannZeta.Real.Gamma_le_max_of_mem_Icc'`, using
 `r := z.re + m - 1 ∈ [0, b - 1 + m]`) and the `-log‖Γ(1 + r + it)‖` term by
-`RiemannZeta.exists_neg_log_norm_Gamma_one_add_add_mul_I_le_uniform`'s
+`RiemannZeta.exists_neg_log_Gamma_shift_bound`'s
 `O(t)` bound, then undoes the shift via
 `PseudoPrime.AnalyticNumberTheory.DirichletLFunction.norm_digamma_le_shift_nat_add`.
 Role: the pointwise digamma ingredient on a fixed but arbitrary strip, feeding the
@@ -366,7 +366,7 @@ theorem exists_norm_digamma_strip_le (a b : ℝ) (hab : a ≤ b) (m : ℕ) (hm :
         ∀ z : ℂ,
           a ≤ z.re → z.re ≤ b → (1 : ℝ) / 2 ≤ |z.im| → ‖Complex.digamma z‖ ≤ C * (|z.im| + 1) := by
   have hbm : (1 : ℝ) ≤ b + m := le_trans hm (by linarith only [hab])
-  obtain ⟨C₁, hC₁⟩ := RiemannZeta.exists_neg_log_norm_Gamma_one_add_add_mul_I_le_uniform
+  obtain ⟨C₁, hC₁⟩ := RiemannZeta.exists_neg_log_Gamma_shift_bound
   set MΓ := max (Real.Gamma (1 / 2)) (Real.Gamma (b - 1 + m + 3 / 2)) with hMΓ_def
   have hMΓpos : 0 < MΓ := lt_max_of_lt_left (Real.Gamma_pos_of_pos (by norm_num only))
   set C : ℝ := 8 * Real.log (MΓ + 1) + 8 * max C₁ 0 + (4 + 2 * m) + 20 * Real.pi with hC_def
@@ -450,7 +450,7 @@ Conclusion: there is a fixed `C ≥ 0` (depending on `A`) such that for every ch
 modulus, either parity) and every `σ T : ℝ` with `-A - 1/2 ≤ σ ≤ A + 3/2` and `1 ≤ |T|`,
 `‖logDeriv (gammaFactor χ) (σ + T i)‖ ≤ C * (|T| + 1)`.
 Content: generalizes
-`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.exists_norm_logDeriv_gammaFactor_horizontal_le`
+`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.gammaLogDeriv_horizontal_bound`
 (the `A = 2`-ish central-strip
 case) via `PseudoPrime.AnalyticNumberTheory.DirichletLFunction.exists_norm_digamma_strip_le` on the
 strip `[-A - 1, A + 2]` (shift `m := A + 2`, chosen
@@ -459,7 +459,7 @@ so `a + m = 1`), which contains both parities' digamma argument range `σ/2` / `
 Role: the fixed-strip gamma ingredient, applied at both `s` and `1 - s` in the far-left
 `L'/L` reflection bound.
 -/
-theorem exists_norm_logDeriv_gammaFactor_fixed_strip_le (A : ℕ) :
+theorem gammaLogDeriv_fixed_strip_bound (A : ℕ) :
     ∃ C : ℝ,
       0 ≤ C ∧
         ∀ {N : ℕ} (χ : DirichletCharacter ℂ N) (σ T : ℝ),

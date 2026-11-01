@@ -74,9 +74,7 @@ theorem gamma_prime_euler_cost_le_dyadic_anchor {a : ℕ} (ha : a ∈ gammaDyadi
   have hpos : (0 : ℚ) < a := (of_decide_eq_true hc.1).1
   have hposR := Rat.cast_pos (K := ℝ).mpr hpos
   norm_num only [Rat.cast_natCast] at hposR
-  exact
-    gamma_prime_euler_cost_le_of_anchored_coefficient hposR hp hap
-      (gamma_dyadic_anchor_coefficient_le ha)
+  exact gamma_prime_cost_le_of_anchor hposR hp hap (gamma_dyadic_anchor_coefficient_le ha)
 
 /-- Input: a natural prime candidate. Definition: use the largest certified dyadic anchor
 below it, falling back to the existing mixed bound below 40. Output: rational Euler allowance.

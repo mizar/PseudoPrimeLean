@@ -77,8 +77,8 @@ theorem exists_riemannZeta_zero_ledger_of_compact {D : Set ℂ} (hD : IsCompact 
 /-- On an analytic compact ledger, the divisor multiplicity is exactly the global analytic
 zero multiplicity of zeta. This identifies Jensen's local multiplicity certificates with the
 multiplicities used by the explicit formula. -/
-theorem riemannZetaZeroMultiplicity_eq_divisor_toNat_of_mem_compact_ledger {D : Set ℂ}
-    (hAn : AnalyticOnNhd ℂ riemannZeta D) {u : ℂ} (hu : u ∈ D) (hzero : riemannZeta u = 0) :
+theorem zeroMultiplicity_eq_divisor_toNat {D : Set ℂ} (hAn : AnalyticOnNhd ℂ riemannZeta D) {u : ℂ}
+    (hu : u ∈ D) (hzero : riemannZeta u = 0) :
     riemannZetaZeroMultiplicity u = (MeromorphicOn.divisor riemannZeta D u).toNat := by
   have hu1 : u ≠ 1 := by
     intro h
@@ -95,7 +95,7 @@ theorem riemannZetaZeroMultiplicity_eq_divisor_toNat_of_mem_compact_ledger {D : 
 /-- The Jensen-ball ledger may use the global analytic zero multiplicity directly. Its total
 multiplicity retains the explicit Jensen bound, so it is suitable for a multiplicity-aware
 Hadamard construction. -/
-theorem exists_jensenBall_zero_ledger_with_analyticMultiplicity {T : ℝ} (hT : 8 ≤ T) :
+theorem exists_jensen_zeroLedger_multiplicity {T : ℝ} (hT : 8 ≤ T) :
     ∃ S : Finset ℂ,
       (∀ u ∈ S, 0 < riemannZetaZeroMultiplicity u) ∧
         (∀ u ∈ S, u ∈ Metric.closedBall (jensenCenter T) (37 / 10)) ∧
@@ -110,9 +110,7 @@ theorem exists_jensenBall_zero_ledger_with_analyticMultiplicity {T : ℝ} (hT : 
     exists_riemannZeta_zero_ledger_of_compact (isCompact_closedBall _ _) hAn
   have hmult : ∀ u ∈ S, riemannZetaZeroMultiplicity u = m u := by
     intro u hu
-    have hdiv :=
-      riemannZetaZeroMultiplicity_eq_divisor_toNat_of_mem_compact_ledger hAn (hSD u hu)
-        (hSzero u hu)
+    have hdiv := zeroMultiplicity_eq_divisor_toNat hAn (hSD u hu) (hSzero u hu)
     rw [← hmeq u hu] at hdiv
     exact hdiv
   refine ⟨S, ?_, hSD, hSzero, hDzero, ?_⟩
@@ -137,12 +135,11 @@ theorem exists_jensenBall_zero_ledger_with_analyticMultiplicity {T : ℝ} (hT : 
 /-- Any finite family of zeta-zeros inside a positive-height Jensen ball has total global
 analytic multiplicity bounded by the Jensen certificate. This is the reusable height-band
 estimate for the forthcoming multiplicity-weighted summability argument. -/
-theorem sum_riemannZetaZeroMultiplicity_le_jensenBall_bound {T : ℝ} (hT : 8 ≤ T) {U : Finset ℂ}
+theorem sum_zeroMultiplicity_le_jensen {T : ℝ} (hT : 8 ≤ T) {U : Finset ℂ}
     (hU : ∀ u ∈ U, u ∈ Metric.closedBall (jensenCenter T) (37 / 10))
     (hzero : ∀ u ∈ U, riemannZeta u = 0) :
     ((∑ u ∈ U, riemannZetaZeroMultiplicity u : ℕ) : ℝ) ≤ jensenLogConst * Real.log (T + 2) := by
-  obtain ⟨S, hmpos, hSD, hSzero, hDzero, hbound⟩ :=
-    exists_jensenBall_zero_ledger_with_analyticMultiplicity hT
+  obtain ⟨S, hmpos, hSD, hSzero, hDzero, hbound⟩ := exists_jensen_zeroLedger_multiplicity hT
   have hsub : U ⊆ S := by
     intro u hu
     exact hDzero u (hU u hu) (hzero u hu)
@@ -158,7 +155,7 @@ theorem sum_riemannZetaZeroMultiplicity_le_jensenBall_bound {T : ℝ} (hT : 8 �
 
 /-- The negative-height Jensen ledger also carries global analytic zeta multiplicities with the
 same explicit local bound. -/
-theorem exists_jensenBall_zero_ledger_neg_with_analyticMultiplicity {T : ℝ} (hT : T ≤ -8) :
+theorem exists_jensen_neg_zeroLedger_multiplicity {T : ℝ} (hT : T ≤ -8) :
     ∃ S : Finset ℂ,
       (∀ u ∈ S, 0 < riemannZetaZeroMultiplicity u) ∧
         (∀ u ∈ S, u ∈ Metric.closedBall (jensenCenter T) (37 / 10)) ∧
@@ -177,9 +174,7 @@ theorem exists_jensenBall_zero_ledger_neg_with_analyticMultiplicity {T : ℝ} (h
     exists_riemannZeta_zero_ledger_of_compact (isCompact_closedBall _ _) hAn
   have hmult : ∀ u ∈ S, riemannZetaZeroMultiplicity u = m u := by
     intro u hu
-    have hdiv :=
-      riemannZetaZeroMultiplicity_eq_divisor_toNat_of_mem_compact_ledger hAn (hSD u hu)
-        (hSzero u hu)
+    have hdiv := zeroMultiplicity_eq_divisor_toNat hAn (hSD u hu) (hSzero u hu)
     rw [← hmeq u hu] at hdiv
     exact hdiv
   refine ⟨S, ?_, hSD, hSzero, hDzero, ?_⟩
@@ -203,12 +198,11 @@ theorem exists_jensenBall_zero_ledger_neg_with_analyticMultiplicity {T : ℝ} (h
 
 /-- Any finite family of zeta-zeros inside a negative-height Jensen ball has total global
 analytic multiplicity bounded by the mirrored Jensen certificate. -/
-theorem sum_riemannZetaZeroMultiplicity_le_jensenBall_bound_neg {T : ℝ} (hT : T ≤ -8) {U : Finset ℂ}
+theorem sum_zeroMultiplicity_le_jensen_neg {T : ℝ} (hT : T ≤ -8) {U : Finset ℂ}
     (hU : ∀ u ∈ U, u ∈ Metric.closedBall (jensenCenter T) (37 / 10))
     (hzero : ∀ u ∈ U, riemannZeta u = 0) :
     ((∑ u ∈ U, riemannZetaZeroMultiplicity u : ℕ) : ℝ) ≤ jensenLogConst * Real.log (-T + 2) := by
-  obtain ⟨S, hmpos, hSD, hSzero, hDzero, hbound⟩ :=
-    exists_jensenBall_zero_ledger_neg_with_analyticMultiplicity hT
+  obtain ⟨S, hmpos, hSD, hSzero, hDzero, hbound⟩ := exists_jensen_neg_zeroLedger_multiplicity hT
   have hsub : U ⊆ S := by
     intro u hu
     exact hDzero u (hU u hu) (hzero u hu)
@@ -284,8 +278,7 @@ theorem summable_jensenLogConst_mul_log_div_sq :
 
 /-- A positive high-height band has a multiplicity-weighted reciprocal-square
 bound. This supplies the local estimate for summing over height bands. -/
-theorem sum_riemannZetaZeroMultiplicity_div_one_add_im_sq_le_jensenBand {j : ℕ} (hj : 8 ≤ j)
-    {U : Finset ℂ}
+theorem sum_zeroWeight_le_jensenBand {j : ℕ} (hj : 8 ≤ j) {U : Finset ℂ}
     (hU : ∀ s ∈ U, riemannZeta s = 0 ∧ 0 ≤ s.re ∧ s.re ≤ 1 ∧ 0 ≤ s.im ∧ ⌊s.im⌋₊ = j) :
     ∑ s ∈ U, (riemannZetaZeroMultiplicity s : ℝ) / (1 + s.im ^ 2) ≤
       jensenLogConst * Real.log ((j : ℝ) + 2) / (1 + (j : ℝ) ^ 2) := by
@@ -300,7 +293,7 @@ theorem sum_riemannZetaZeroMultiplicity_div_one_add_im_sq_le_jensenBand {j : ℕ
     rw [abs_le]
     constructor <;> linarith only [hfloor_le, hfloor_lt]
   have hzero : ∀ s ∈ U, riemannZeta s = 0 := fun s hs => (hU s hs).1
-  have hsum := sum_riemannZetaZeroMultiplicity_le_jensenBall_bound hjR hball hzero
+  have hsum := sum_zeroMultiplicity_le_jensen hjR hball hzero
   have hterm :
     ∀ s ∈ U,
       (riemannZetaZeroMultiplicity s : ℝ) / (1 + s.im ^ 2) ≤
@@ -332,8 +325,7 @@ theorem sum_riemannZetaZeroMultiplicity_div_one_add_im_sq_le_jensenBand {j : ℕ
 
 /-- A negative high-height band of nontrivial zeta-zeros has the corresponding
 multiplicity-weighted reciprocal-square bound, obtained from the mirrored Jensen certificate. -/
-theorem sum_riemannZetaZeroMultiplicity_div_one_add_im_sq_le_jensenBand_neg {j : ℕ} (hj : 8 ≤ j)
-    {U : Finset ℂ}
+theorem sum_zeroWeight_le_jensenBand_neg {j : ℕ} (hj : 8 ≤ j) {U : Finset ℂ}
     (hU : ∀ s ∈ U, riemannZeta s = 0 ∧ 0 ≤ s.re ∧ s.re ≤ 1 ∧ s.im < 0 ∧ ⌊-s.im⌋₊ = j) :
     ∑ s ∈ U, (riemannZetaZeroMultiplicity s : ℝ) / (1 + s.im ^ 2) ≤
       jensenLogConst * Real.log ((j : ℝ) + 2) / (1 + (j : ℝ) ^ 2) := by
@@ -348,9 +340,7 @@ theorem sum_riemannZetaZeroMultiplicity_div_one_add_im_sq_le_jensenBand_neg {j :
     rw [abs_le]
     constructor <;> linarith only [hfloor_le, hfloor_lt]
   have hzero : ∀ s ∈ U, riemannZeta s = 0 := fun s hs => (hU s hs).1
-  have hsum :=
-    sum_riemannZetaZeroMultiplicity_le_jensenBall_bound_neg (T := -(j : ℝ)) (neg_le_neg hjR) hball
-      hzero
+  have hsum := sum_zeroMultiplicity_le_jensen_neg (T := -(j : ℝ)) (neg_le_neg hjR) hball hzero
   simp only [neg_neg] at hsum
   have hterm :
     ∀ s ∈ U,
@@ -462,8 +452,7 @@ noncomputable def nontrivialZetaZeroMultiplicityWeightNeg (s : ℂ) : ℝ :=
   else 0
 
 /-- The negative-height multiplicity weight is nonnegative. -/
-theorem nontrivialZetaZeroMultiplicityWeightNeg_nonneg (s : ℂ) :
-    0 ≤ nontrivialZetaZeroMultiplicityWeightNeg s := by
+theorem nontrivialZeroWeightNeg_nonneg (s : ℂ) : 0 ≤ nontrivialZetaZeroMultiplicityWeightNeg s := by
   unfold nontrivialZetaZeroMultiplicityWeightNeg
   split
   · exact
@@ -476,8 +465,7 @@ theorem nontrivialZetaZeroMultiplicityWeightNeg_nonneg (s : ℂ) :
 /-- The positive-height nontrivial zeta-zero series remains summable when each zero is weighted
 by its analytic multiplicity. The proof reuses the zeta-side estimate height decomposition and the
 multiplicity-aware Jensen-band estimate. -/
-theorem summable_nontrivialZetaZeroMultiplicityWeight :
-    Summable nontrivialZetaZeroMultiplicityWeight := by
+theorem summable_nontrivialZeroWeight : Summable nontrivialZetaZeroMultiplicityWeight := by
   classical
   set L : ℝ := ∑ s ∈ lowBand_zeros_finite.toFinset, riemannZetaZeroMultiplicity s with hL_def
   set g : ℕ → ℝ := fun n => jensenLogConst * Real.log ((n : ℝ) + 2) / (1 + (n : ℝ) ^ 2) with hg_def
@@ -591,7 +579,7 @@ theorem summable_nontrivialZetaZeroMultiplicityWeight :
           exact
             ite_eq_left (by exact ⟨(hU s hs).1, (hU s hs).2.1, (hU s hs).2.2.1, (hU s hs).2.2.2.1⟩)
         _ ≤ jensenLogConst * Real.log ((j : ℝ) + 2) / (1 + (j : ℝ) ^ 2) :=
-          sum_riemannZetaZeroMultiplicity_div_one_add_im_sq_le_jensenBand hj8 hU
+          sum_zeroWeight_le_jensenBand hj8 hU
         _ = g j := by simp only [hg_def]
     calc
       ∑ s ∈ uh, nontrivialZetaZeroMultiplicityWeight s =
@@ -602,9 +590,8 @@ theorem summable_nontrivialZetaZeroMultiplicityWeight :
   exact add_le_add hlow hhigh
 
 /-- The negative-height mirror of
-`PseudoPrime.AnalyticNumberTheory.RiemannZeta.summable_nontrivialZetaZeroMultiplicityWeight`. -/
-theorem summable_nontrivialZetaZeroMultiplicityWeightNeg :
-    Summable nontrivialZetaZeroMultiplicityWeightNeg := by
+`PseudoPrime.AnalyticNumberTheory.RiemannZeta.summable_nontrivialZeroWeight`. -/
+theorem summable_nontrivialZeroWeightNeg : Summable nontrivialZetaZeroMultiplicityWeightNeg := by
   classical
   set L : ℝ := ∑ s ∈ lowBand_zeros_finite_neg.toFinset, riemannZetaZeroMultiplicity s with hL_def
   set g : ℕ → ℝ := fun n => jensenLogConst * Real.log ((n : ℝ) + 2) / (1 + (n : ℝ) ^ 2) with hg_def
@@ -620,9 +607,7 @@ theorem summable_nontrivialZetaZeroMultiplicityWeightNeg :
               (le_add_of_nonneg_left (Nat.cast_nonneg (α := ℝ) n)))
     simp only [hg_def]
     exact div_nonneg (mul_nonneg h1 h2) (add_nonneg (by norm_num only) (sq_nonneg _))
-  refine
-    summable_of_sum_le nontrivialZetaZeroMultiplicityWeightNeg_nonneg (c := L + ∑' n, g n) fun u =>
-      ?_
+  refine summable_of_sum_le nontrivialZeroWeightNeg_nonneg (c := L + ∑' n, g n) fun u => ?_
   rw [← Finset.sum_filter_add_sum_filter_not u (fun s => -8 < s.im)]
   have hlow :
     ∑ s ∈ u.filter (fun s => -8 < s.im), nontrivialZetaZeroMultiplicityWeightNeg s ≤ L := by
@@ -725,7 +710,7 @@ theorem summable_nontrivialZetaZeroMultiplicityWeightNeg :
           exact
             ite_eq_left (by exact ⟨(hU s hs).1, (hU s hs).2.1, (hU s hs).2.2.1, (hU s hs).2.2.2.1⟩)
         _ ≤ jensenLogConst * Real.log ((j : ℝ) + 2) / (1 + (j : ℝ) ^ 2) :=
-          sum_riemannZetaZeroMultiplicity_div_one_add_im_sq_le_jensenBand_neg hj8 hU
+          sum_zeroWeight_le_jensenBand_neg hj8 hU
         _ = g j := by simp only [hg_def]
     calc
       ∑ s ∈ uh, nontrivialZetaZeroMultiplicityWeightNeg s =
@@ -747,8 +732,7 @@ noncomputable def nontrivialZetaZeroMultiplicityWeightFull (s : ℂ) : ℝ :=
 
 /-- The full multiplicity-weighted zeta zero series is summable. This supplies the zero-series
 input required to pass from finite xi Hadamard products to an infinite product. -/
-theorem summable_nontrivialZetaZeroMultiplicityWeightFull :
-    Summable nontrivialZetaZeroMultiplicityWeightFull := by
+theorem summable_nontrivialZeroWeightFull : Summable nontrivialZetaZeroMultiplicityWeightFull := by
   have heq :
     nontrivialZetaZeroMultiplicityWeightFull = fun s =>
       nontrivialZetaZeroMultiplicityWeight s + nontrivialZetaZeroMultiplicityWeightNeg s := by
@@ -767,8 +751,6 @@ theorem summable_nontrivialZetaZeroMultiplicityWeightFull :
       · simp only [hre0, false_and, and_false, ↓reduceIte, add_zero]
     · simp only [hz, false_and, ↓reduceIte, add_zero]
   rw [heq]
-  exact
-    Summable.add summable_nontrivialZetaZeroMultiplicityWeight
-      summable_nontrivialZetaZeroMultiplicityWeightNeg
+  exact Summable.add summable_nontrivialZeroWeight summable_nontrivialZeroWeightNeg
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

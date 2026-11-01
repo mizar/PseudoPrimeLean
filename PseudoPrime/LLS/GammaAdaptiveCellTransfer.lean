@@ -147,7 +147,7 @@ theorem gamma_scaled_adaptive_dual_le (s rlo rhi a b C : ℚ) (K : ℕ) (hs : (0
   have hx100 : (100 : ℝ) ≤ x := hm.trans hlox
   have hp := gamma_scaled_profile_price_le (show 0 < x by linarith only [hx100]) hr hroot
   change gammaScaleSignedDualBudget L x ≤ (5 / 4 : ℝ) / (rlo : ℝ) + (C : ℝ)
-  rw [gamma_scale_signed_dual_budget_eq_anchored_support L hx100]
+  rw [gammaSignedDual_eq_anchorSupport L hx100]
   linarith only [hp, he]
 
 end PseudoPrime.LLS

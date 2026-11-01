@@ -18,7 +18,7 @@ The development has two independent layers:
 
 * **Geometry**: `PseudoPrime.AnalyticNumberTheory.RectangleGeometry.CellContainsSingularity`,
   `RectangleGeometry.finiteRegularCells`/`RectangleGeometry.finiteSingularCells`, and
-`RectangleGeometry.SingularCellAssignment` — a finite bijection
+`RectangleGeometry.CellAssignment` — a finite bijection
   between `S` and the "singular" grid cells that each catalogue exactly one point of `S`. None of
   this mentions an analytic function.
 * **Analytic assembly**: `RectangleGeometry.rectangleBoundaryIntegral_eq_sum_res` — given such an
@@ -30,8 +30,8 @@ The development has two independent layers:
 Grid *construction* (choosing cuts, proving `Nodup`, proving
 `RectangleGeometry.RectangleGridSubdivisionIntegrable`)
 is deliberately left to the caller via the existing generic
-`PseudoPrime.AnalyticNumberTheory.RectangleGeometry.rectangleBoundaryIntegral_eq_gridSubdivision` /
-`RectangleGeometry.rectangleGridSubdivision_eq_sum_toFinset`; the assembly theorem
+`PseudoPrime.AnalyticNumberTheory.RectangleGeometry.boundaryIntegral_eq_gridSubdivision` /
+`RectangleGeometry.gridSubdivision_eq_sum_toFinset`; the assembly theorem
 only consumes the resulting cell-sum decomposition as a hypothesis.
 -/
 
@@ -62,8 +62,8 @@ theorem mem_singularCells_iff {S : Finset ℂ} {cells : Finset (ℂ × ℂ)} {ce
   classical simp only [finiteSingularCells, Finset.mem_filter]
 
 /-- The regular and singular filters partition any finite cell sum. -/
-theorem sum_finiteRegularCells_add_sum_finiteSingularCells {M : Type*} [AddCommMonoid M]
-    (S : Finset ℂ) (cells : Finset (ℂ × ℂ)) (value : ℂ × ℂ → M) :
+theorem sum_regular_add_singular {M : Type*} [AddCommMonoid M] (S : Finset ℂ)
+    (cells : Finset (ℂ × ℂ)) (value : ℂ × ℂ → M) :
     (∑ cell ∈ finiteRegularCells S cells, value cell) +
         ∑ cell ∈ finiteSingularCells S cells, value cell =
       ∑ cell ∈ cells, value cell := by
@@ -78,7 +78,7 @@ that this is the unique point of `S` inside that cell, `distinct_points` prevent
 cells from sharing an assigned point, and `point_covered` ensures every point of `S` is assigned
 to some cell.
 -/
-structure SingularCellAssignment (S : Finset ℂ) (cells : Finset (ℂ × ℂ)) where
+structure CellAssignment (S : Finset ℂ) (cells : Finset (ℂ × ℂ)) where
   /-- Assigned point; values outside the singular-cell filter are unconstrained. -/
   pointOfCell : ℂ × ℂ → ℂ
   /-- Each singular cell's assigned point belongs to the finite singularity ledger. -/
@@ -104,7 +104,7 @@ Geometric separation conditions making grid cells and singularities correspond b
 point of `S` belongs to at most one listed cell (excluding placement on shared grid edges);
 `point_covered` places every point of `S` in a listed cell.
 -/
-structure GridSingularitySeparation (S : Finset ℂ) (cells : Finset (ℂ × ℂ)) where
+structure GridSeparation (S : Finset ℂ) (cells : Finset (ℂ × ℂ)) where
   /-- At most one ledger point lies in each listed closed cell. -/
   cell_point_unique :
     ∀ cell ∈ cells,
@@ -125,7 +125,7 @@ Interior geometric conditions sufficient for grid/singularity separation: each c
 most one point of `S`, every such point lies in the open (not just closed) rectangle of its cell,
 distinct listed open rectangles are disjoint, and every point of `S` is covered.
 -/
-structure GridInteriorSeparation (S : Finset ℂ) (cells : Finset (ℂ × ℂ)) where
+structure InteriorSeparation (S : Finset ℂ) (cells : Finset (ℂ × ℂ)) where
   /-- At most one ledger point lies in each listed closed cell. -/
   cell_point_unique :
     ∀ cell ∈ cells,
@@ -146,8 +146,8 @@ structure GridInteriorSeparation (S : Finset ℂ) (cells : Finset (ℂ × ℂ)) 
   point_covered : ∀ s ∈ S, ∃ cell ∈ cells, s ∈ Rectangle.rectangleClosedBox cell.1 cell.2
 
 /-- Interior separation conditions imply the abstract grid/singularity separation certificate. -/
-theorem GridInteriorSeparation.toSeparation {S : Finset ℂ} {cells : Finset (ℂ × ℂ)}
-    (interior : GridInteriorSeparation S cells) : GridSingularitySeparation S cells := by
+theorem InteriorSeparation.toSeparation {S : Finset ℂ} {cells : Finset (ℂ × ℂ)}
+    (interior : InteriorSeparation S cells) : GridSeparation S cells := by
   refine ⟨interior.cell_point_unique, ?_, interior.point_covered⟩
   intro s hs cell hcell hscell other hother hsother
   by_contra hne
@@ -157,8 +157,8 @@ theorem GridInteriorSeparation.toSeparation {S : Finset ℂ} {cells : Finset (�
       (interior.point_mem_open s hs other hother hsother)
 
 /-- Geometric cell/singularity separation induces the singular-cell assignment ledger. -/
-noncomputable def GridSingularitySeparation.toAssignment {S : Finset ℂ} {cells : Finset (ℂ × ℂ)}
-    (separation : GridSingularitySeparation S cells) : SingularCellAssignment S cells := by
+noncomputable def GridSeparation.toAssignment {S : Finset ℂ} {cells : Finset (ℂ × ℂ)}
+    (separation : GridSeparation S cells) : CellAssignment S cells := by
   classical
   let pointOfCell : ℂ × ℂ → ℂ := fun cell ↦
     Classical.epsilon fun s ↦ s ∈ S ∧ s ∈ Rectangle.rectangleClosedBox cell.1 cell.2
@@ -190,13 +190,13 @@ noncomputable def GridSingularitySeparation.toAssignment {S : Finset ℂ} {cells
           (point_spec cell hcontains).1 (point_spec cell hcontains).2).symm
 
 /-- Interior grid separation directly supplies the singular-cell assignment. -/
-noncomputable def GridInteriorSeparation.toAssignment {S : Finset ℂ} {cells : Finset (ℂ × ℂ)}
-    (interior : GridInteriorSeparation S cells) : SingularCellAssignment S cells :=
+noncomputable def InteriorSeparation.toAssignment {S : Finset ℂ} {cells : Finset (ℂ × ℂ)}
+    (interior : InteriorSeparation S cells) : CellAssignment S cells :=
   interior.toSeparation.toAssignment
 
 /-- The set of points of `S` assigned to singular cells is exactly `S` itself. -/
-theorem SingularCellAssignment.image_pointOfCell_eq {S : Finset ℂ} {cells : Finset (ℂ × ℂ)}
-    (assignment : SingularCellAssignment S cells) :
+theorem CellAssignment.image_pointOfCell_eq {S : Finset ℂ} {cells : Finset (ℂ × ℂ)}
+    (assignment : CellAssignment S cells) :
     (finiteSingularCells S cells).image assignment.pointOfCell = S := by
   apply Finset.Subset.antisymm
   · intro s hs
@@ -210,19 +210,19 @@ theorem SingularCellAssignment.image_pointOfCell_eq {S : Finset ℂ} {cells : Fi
 **the finite residue theorem**: the finite punctured-rectangle residue theorem. Given a
 grid-subdivision decomposition
 of the outer rectangle boundary integral into cell boundary integrals (`hsum`, produced by the
-caller from `RectangleGeometry.rectangleBoundaryIntegral_eq_gridSubdivision` and
-`RectangleGeometry.rectangleGridSubdivision_eq_sum_toFinset`), a kernel `f` differentiable off `S`
+caller from `RectangleGeometry.boundaryIntegral_eq_gridSubdivision` and
+`RectangleGeometry.gridSubdivision_eq_sum_toFinset`), a kernel `f` differentiable off `S`
 *within each
 listed cell* (a local hypothesis, not global: `f` need not be differentiable anywhere outside the
 outer rectangle, which matters once `S` is a rectangle-relative ledger like
-`DirichletLFunction.dirichletLFunctionSingularitiesInRectangle` that says nothing about
+`DirichletLFunction.LFunctionSingularitiesInRectangle` that says nothing about
 singularities elsewhere in the
 plane), a singular-cell assignment, and each singular cell's boundary integral already identified
 with `res` at its assigned point, the outer boundary integral is `Σ s ∈ S, res s`. (Any `2πi`
 factor is folded into `res` by the caller.)
 -/
 theorem rectangleBoundaryIntegral_eq_sum_res (f res : ℂ → ℂ) (S : Finset ℂ) (cells : Finset (ℂ × ℂ))
-    (z w : ℂ) (assignment : SingularCellAssignment S cells)
+    (z w : ℂ) (assignment : CellAssignment S cells)
     (hsum :
       rectangleBoundaryIntegral f z w = ∑ cell ∈ cells, rectangleBoundaryIntegral f cell.1 cell.2)
     (hdiff :
@@ -237,14 +237,13 @@ theorem rectangleBoundaryIntegral_eq_sum_res (f res : ℂ → ℂ) (S : Finset �
     intro cell hcell
     have hcell' := mem_regularCells_iff.mp hcell
     have hdisjoint : ¬CellContainsSingularity S cell := hcell'.2
-    apply rectangleBoundaryIntegral_eq_zero_of_differentiableOn
+    apply boundaryIntegral_zero_of_holomorphic
     intro x hx
     apply (hdiff cell hcell'.1 x hx ?_).differentiableWithinAt
     intro hxS
     exact hdisjoint ⟨x, hxS, hx⟩
   have hcombine :=
-    sum_finiteRegularCells_add_sum_finiteSingularCells S cells
-      (fun cell ↦ rectangleBoundaryIntegral f cell.1 cell.2)
+    sum_regular_add_singular S cells (fun cell ↦ rectangleBoundaryIntegral f cell.1 cell.2)
   rw [Finset.sum_congr rfl hregular_zero, Finset.sum_const_zero, zero_add,
     Finset.sum_congr rfl hsingular_res] at hcombine
   rw [hsum, ← hcombine, ← Finset.sum_image assignment.distinct_points,

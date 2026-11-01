@@ -46,8 +46,8 @@ theorem not_oddPrimeTrivial_of_sharp {q : ℕ} [NeZero q] (χ : DirichletCharact
   intro hodd
   have h8 : 8 ≤ y := by linarith only [hy]
   have hx := Analysis.sq_ge_64_of_ge_8 h8
-  have hriemann := llsRiemannWeightedLowerBound_of_riemannHypothesis hGRH.riemann
-  have hreciprocal := llsRiemannReciprocalLowerBound_of_riemannHypothesis hGRH.riemann
+  have hriemann := riemannWeightedLower_of_RH hGRH.riemann
+  have hreciprocal := riemannReciprocalLower_of_RH hGRH.riemann
   have hsep := qNeOneCommonUpperBound_lt_sharp hy
   rcases hcases with h2 | h2 | h2
   · have hcore := weightedComparisonCore_even_zero χ hne heven hGRH hx hodd h2
@@ -55,8 +55,7 @@ theorem not_oddPrimeTrivial_of_sharp {q : ℕ} [NeZero q] (χ : DirichletCharact
       qNeOneSharpLowerBound_le_corrected_sum χ.primitiveCharacter hriemann h8 (c := 0)
         (by simpa only [add_zero] using hcore.logDefect_le)
     have hu :=
-      (primitiveLogWeightedBounds_of_qneOne_zero_branch_even_star χ hne heven hGRH h8 hlog4 hriemann
-          hreciprocal hodd h2).2
+      (logBounds_even_zero_star_GRH χ hne heven hGRH h8 hlog4 hriemann hreciprocal hodd h2).2
     simp only [add_zero] at hl
     exact (not_lt_of_ge (hl.trans (hu.trans (le_max_left _ _)))) hsep
   · have hcore := weightedComparisonCore_even_one χ hne heven hGRH hx hodd h2
@@ -68,8 +67,7 @@ theorem not_oddPrimeTrivial_of_sharp {q : ℕ} [NeZero q] (χ : DirichletCharact
         (by
           rw [h2]; norm_num only)
     have hu :=
-      (primitiveLogWeightedBounds_of_qneOne_one_branch_even_common χ hne heven hGRH h8 hlog hriemann
-          hreciprocal hodd h2).2
+      (logBounds_even_one_common_GRH χ hne heven hGRH h8 hlog hriemann hreciprocal hodd h2).2
     simp only [add_zero] at hl
     exact (not_lt_of_ge (hl.trans hu)) hsep
   · have hcore := weightedComparisonCore_even_neg_one χ hne heven hGRH hx hodd h2
@@ -84,8 +82,7 @@ theorem not_oddPrimeTrivial_of_sharp {q : ℕ} [NeZero q] (χ : DirichletCharact
         (by
           rw [h2]; norm_num only)
     have hu :=
-      (primitiveLogWeightedBounds_of_qneOne_neg_one_branch_corrected_star χ hne heven hGRH h8 hlog
-          hriemann hreciprocal hodd h2).2
+      (logBounds_negOne_corrected_star_GRH χ hne heven hGRH h8 hlog hriemann hreciprocal hodd h2).2
     exact (not_lt_of_ge (hl.trans (hu.trans (le_max_left _ _)))) hsep
 
 end PseudoPrime.LLS.Extensions

@@ -29,9 +29,8 @@ theorem summable_gammaSignedMangoldtCorrection_general {q : ℕ} [NeZero q]
             (AnalyticNumberTheory.Arithmetic.commonFactorPrimePowerIndex q (p, k))‖) := by
     have hp := (Nat.prime_of_mem_primeFactors p.property).one_lt
     have hs :=
-      Analysis.summable_exponentialRampLocalCorrection_of_norm_le_one
-        (χ.primitiveCharacter.norm_le_one (p : ℕ)) hx (fun k ↦ ((p : ℕ) : ℝ) ^ (k + 1) / x)
-        (Analysis.prime_power_div_scale_ge_linear hp hx)
+      Analysis.summable_expRampCorrection_of_norm_le_one (χ.primitiveCharacter.norm_le_one (p : ℕ))
+        hx (fun k ↦ ((p : ℕ) : ℝ) ^ (k + 1) / x) (Analysis.prime_power_div_scale_ge_linear hp hx)
     simpa only [gammaSignedMangoldtCorrection_prime_power] using
       (hs.mul_left (Real.log (p : ℕ) / Real.sqrt x)).norm
   have hnorm :
@@ -42,7 +41,7 @@ theorem summable_gammaSignedMangoldtCorrection_general {q : ℕ} [NeZero q]
     apply (summable_prod_of_nonneg (fun _ ↦ norm_nonneg _)).mpr
     exact ⟨hslice, (hasSum_fintype _).summable⟩
   have hsupp :=
-    AnalyticNumberTheory.Arithmetic.commonFactorPrimePowerIndex_support_of_vanishing
+    AnalyticNumberTheory.Arithmetic.support_subset_common_prime_powers
       (gammaSignedMangoldtCorrection χ x) (NeZero.ne q)
       (fun n hn ↦ gammaSignedMangoldtCorrection_not_prime_pow χ x hn)
       (fun n hn ↦ gammaSignedMangoldtCorrection_unit χ x hn)
@@ -58,8 +57,8 @@ theorem summable_gammaSignedMangoldtCorrection_general {q : ℕ} [NeZero q]
 /-- For every character at a nonzero level and positive scale, the signed Mangoldt
 series equals its exact local prime-power correction. Reindex the absolutely
 convergent series. The existing local-correction definition accepts general characters. -/
-theorem tsum_gammaSignedMangoldtCorrection_eq_localCorrection_general {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) {x : ℝ} (hx : 0 < x) :
+theorem tsum_gammaSignedCorrection_eq_local_general {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    {x : ℝ} (hx : 0 < x) :
     (∑' n : ℕ, gammaSignedMangoldtCorrection χ x n) = gammaQuadraticLocalCorrection χ x := by
   have hs := summable_gammaSignedMangoldtCorrection_general χ hx
   rw [AnalyticNumberTheory.Arithmetic.tsum_common_factor_eq_sum_prime_powers
@@ -102,7 +101,7 @@ theorem signed_local_term_le_Mangoldt_correction_general {q : ℕ} [NeZero q]
             apply (le_div_iff₀ hx).mpr
             exact (lt_of_not_ge hcut).le
           exact
-            Analysis.exponentialRampLocalCorrection_tail_nonpos_of_norm_le_one
+            Analysis.expRampCorrection_tail_nonpos_of_norm_le_one
               (χ.primitiveCharacter.norm_le_one n) hu 1
       exact
         mul_nonpos_of_nonneg_of_nonpos
@@ -154,7 +153,7 @@ theorem gamma_ramp_no_witness_comparison_general {q : ℕ} [NeZero q] (χ : Diri
     Summable.tsum_add ((Complex.reCLM.summable hP).add (Complex.reCLM.summable hC)) hE,
     Summable.tsum_add (Complex.reCLM.summable hP) (Complex.reCLM.summable hC), ←
     Complex.reCLM.map_tsum hP, ← Complex.reCLM.map_tsum hC,
-    tsum_gammaSignedMangoldtCorrection_eq_localCorrection_general χ hx] at h
+    tsum_gammaSignedCorrection_eq_local_general χ hx] at h
   exact h
 
 end PseudoPrime.LLS

@@ -26,8 +26,8 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 subgroup cannot satisfy the actual fixed-cutoff comparison when its normalized
 error is at most log(n)/800. Retain the conductor sum until bounding it by
 (index-1)log(n), and use the certified actual denominator and strict rational margin. -/
-private theorem gaussian_inequality_contradiction_of_index_ge_four {n : ℕ} [NeZero n]
-    (H : Subgroup (ZMod n)ˣ) (hi : 4 ≤ H.index) (hL : 0 < Real.log n) :
+private theorem gaussian_contradiction_of_index_ge_4 {n : ℕ} [NeZero n] (H : Subgroup (ZMod n)ˣ)
+    (hi : 4 ≤ H.index) (hL : 0 < Real.log n) :
     let x := gaussianScale (Real.log n)
     let R := (70 / 3 : ℝ) * x ^ (1 / 4 : ℝ) + LLS.PaperStatements.gaussianAmbientError n x
     R ≤ Real.log n / 800 →
@@ -49,7 +49,7 @@ private theorem gaussian_inequality_contradiction_of_index_ge_four {n : ℕ} [Ne
   have hCM := mul_le_mul_of_nonneg_left hC (by norm_num only : (0 : ℝ) ≤ 161 / 400)
   have hs := Real.sqrt_nonneg x
   have hr : 0 ≤ x ^ (1 / 4 : ℝ) := Real.rpow_nonneg (gaussianScale_nonneg (Real.log n)) _
-  have hd := LLS.gaussian_kernel_normalized_denominator_le_of_four_le_index hiR
+  have hd := LLS.gaussian_normalizedDenominator_index_ge_four hiR
   have he :
     (LLS.PaperStatements.gaussianGammaMellinKernel.function (1 / 2)).re = Real.exp (1 / 16 : ℝ) :=
     Analysis.gaussianGammaFunction_endpoint
@@ -83,7 +83,7 @@ private theorem gaussian_inequality_contradiction_of_index_ge_four {n : ℕ} [Ne
 containing every strong pass gives a prime failing base at most (16/25)log(n)².
 The decimal cutoff certifies log(n)≥225000000, the actual Gaussian scale and all
 error budgets. Universal prime-base passage would contradict the actual comparison. -/
-theorem exists_prime_witness_le_gaussian_of_index_ge_four {n : ℕ} [NeZero n] (hnOdd : Odd n)
+theorem exists_primeWitness_le_gaussian_of_index_ge_four {n : ℕ} [NeZero n] (hnOdd : Odd n)
     (H : Subgroup (ZMod n)ˣ) (hi : 4 ≤ H.index)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
@@ -118,7 +118,7 @@ theorem exists_prime_witness_le_gaussian_of_index_ge_four {n : ℕ} [NeZero n] (
     gaussian_inequality_of_prime_passes_in_subgroup hnlarge hnOdd H hHpass hGRH hx
       (by norm_num only : (0 : ℝ) ≤ 21 / 10) hpass
   have hR := gaussian_error_budget hL (le_refl (Real.log n))
-  exact gaussian_inequality_contradiction_of_index_ge_four H hi hpos hR hcmp
+  exact gaussian_contradiction_of_index_ge_4 H hi hpos hR hcmp
 
 /-- A decimal exponent at least five gives a modulus cutoff at least 20000.
 Keep the exponent variable when comparing powers to avoid evaluating huge integers. -/
@@ -144,17 +144,15 @@ theorem exists_prime_witness_le_gaussian {n : ℕ} (hnOdd : Odd n) (hnComposite 
     intro h
     rw [h] at hnlarge
     exact (by decide : ¬20000 ≤ 9) hnlarge
-  obtain ⟨H, hi, hHpass⟩ :=
-    PrimeTest.exists_index_ge_four_subgroup_containing_strongMillerRabinPass hn1 hnOdd hnComposite
-      hn9
-  exact exists_prime_witness_le_gaussian_of_index_ge_four hnOdd H hi hHpass hGRH hn
+  obtain ⟨H, hi, hHpass⟩ := PrimeTest.exists_index_four_subgroup_strongMR hn1 hnOdd hnComposite hn9
+  exact exists_primeWitness_le_gaussian_of_index_ge_four hnOdd H hi hHpass hGRH hn
 
 /-- Under GRH for odd n≥10^97826087, passage of the canonical strong test
 for every prime base at most (16/25)log(n)² is equivalent to primality.
 The composite direction uses the explicit Gaussian prime witness; the prime
 direction restricts the existing log-squared criterion to the smaller cutoff.
 This is the public coefficient 0.64 criterion at the same decimal threshold. -/
-theorem prime_iff_millerRabin_for_all_primes_le_gaussian_log_sq {n : ℕ} (hnOdd : Odd n)
+theorem prime_iff_pass_primes_gaussianLogSq_GRH {n : ℕ} (hnOdd : Odd n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hn : 10 ^ 97826087 ≤ n) :
     (∀ r : ℕ,
         r.Prime →

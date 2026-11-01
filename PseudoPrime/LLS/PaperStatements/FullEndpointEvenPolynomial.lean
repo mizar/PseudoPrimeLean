@@ -256,7 +256,7 @@ theorem fullEndpointEvenCorrectionQ0_pos {y : ℝ} (hy : 2 ≤ y) :
 
 /-- The derivative numerator is strictly positive for the actual logarithmic
 variable on radii from eight onward, using `log y ≥ 0` and `(log y)^2 ≤ y`. -/
-theorem fullEndpointEvenCorrectionDerivativeNumerator_pos {y : ℝ} (hy : 8 ≤ y) (hz : 0 ≤ Real.log y)
+theorem fullEvenCorrectionDerivNumerator_pos {y : ℝ} (hy : 8 ≤ y) (hz : 0 ≤ Real.log y)
     (hzsq : (Real.log y) ^ 2 ≤ y) :
     0 < fullEndpointEvenCorrectionDerivativeNumerator y (Real.log y) := by
   have hypos : 0 < y := by linarith only [hy]
@@ -306,7 +306,7 @@ theorem fullEndpointEvenGapDenominator_differentiableAt {y : ℝ} (hy : 8 ≤ y)
 
 /-- The diagonal direct gap is the collected numerator divided by the exact
 scale factor. This normal form simplifies the subsequent derivative identity. -/
-theorem fullEndpointEvenExactComparisonGap_diagonal_eq_correctionNumerator {y : ℝ} (hy : 8 ≤ y) :
+theorem fullEvenExactGap_diagonal_eq_correctionNumerator {y : ℝ} (hy : 8 ≤ y) :
     fullEndpointEvenExactComparisonGap y (2096 / 1831) y (Real.log y) =
       fullEndpointEvenGapCorrectionNumerator y / 18310000 := by
   have hyne : y ≠ 0 := ne_of_gt (by linarith only [hy])
@@ -362,7 +362,7 @@ theorem fullEndpointEvenGapDenominator_pos {y : ℝ} (hy : 8 ≤ y) :
   exact mul_pos hfirst hsecond
 
 /-- Derivative of the normalized endpoint correction. Its numerator is the
-positive expression already bounded in `fullEndpointEvenCorrectionDerivativeNumerator_pos`. -/
+positive expression already bounded in `fullEvenCorrectionDerivNumerator_pos`. -/
 theorem deriv_fullEndpointEvenGapCorrection {y : ℝ} (hy : 8 ≤ y) :
     deriv (fun x : ℝ => fullEndpointEvenGapCorrection x) y =
       fullEndpointEvenCorrectionDerivativeNumerator y (Real.log y) /
@@ -435,7 +435,7 @@ theorem fullEndpointEvenGapCorrection_deriv_pos {y : ℝ} (hy : 8 ≤ y) :
     0 < deriv (fun x : ℝ => fullEndpointEvenGapCorrection x) y := by
   rw [deriv_fullEndpointEvenGapCorrection hy]
   have hz : 0 ≤ Real.log y := Real.log_nonneg (by linarith only [hy])
-  have hn := fullEndpointEvenCorrectionDerivativeNumerator_pos hy hz (log_sq_le_self_of_eight_le hy)
+  have hn := fullEvenCorrectionDerivNumerator_pos hy hz (log_sq_le_self_of_eight_le hy)
   have hypos : 0 < y := by linarith only [hy]
   have hDpos := fullEndpointEvenGapDenominator_pos hy
   have hden : 0 < y * fullEndpointEvenGapDenominator y ^ 2 := mul_pos hypos (sq_pos_of_pos hDpos)
@@ -455,7 +455,7 @@ theorem fullEndpointEvenGapCorrection_strictMonoOn :
 /-- The direct gap is affine in the logarithmic level with slope equal to the
 negative denominator. Consequently the normalized diagonal gap gives an exact
 cutoff correction at every level. -/
-theorem fullEndpointEvenExactComparisonGap_eq_denominator_correction {L y : ℝ} (hy : 8 ≤ y) :
+theorem fullEvenExactGap_eq_denominator_correction {L y : ℝ} (hy : 8 ≤ y) :
     fullEndpointEvenExactComparisonGap L (2096 / 1831) y (Real.log y) =
       fullEndpointEvenGapDenominator y * (y + fullEndpointEvenGapCorrection y - L) := by
   have hy0 : y ≠ 0 := ne_of_gt (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 8) hy)
@@ -471,15 +471,15 @@ theorem fullEndpointEvenExactComparisonGap_eq_denominator_correction {L y : ℝ}
     fullEndpointEvenGapDenominator y * fullEndpointEvenGapCorrection y =
       fullEndpointEvenExactComparisonGap y (2096 / 1831) y (Real.log y) := by
     unfold fullEndpointEvenGapCorrection
-    rw [fullEndpointEvenExactComparisonGap_diagonal_eq_correctionNumerator hy]
+    rw [fullEvenExactGap_diagonal_eq_correctionNumerator hy]
     field_simp [hD]
   linear_combination hdiff - hmul
 
 /-- The shifted even endpoint polynomial is bounded by the direct exact-log
 comparison gap. Their difference is `(y-1)^2 z (P-9/8)` plus a positive
 rational term, so the certified lower bound for `log pi` closes the comparison. -/
-theorem fullEndpointEvenStarShiftPolynomial_le_exact_comparison_gap {L P y z : ℝ} (hy : y ≠ 0)
-    (hz : 0 ≤ z) (hP : 9 / 8 ≤ P) :
+theorem fullEvenStarShiftPoly_le_exact_comparison_gap {L P y z : ℝ} (hy : y ≠ 0) (hz : 0 ≤ z)
+    (hP : 9 / 8 ≤ P) :
     fullEndpointEvenStarShiftPolynomial (L - 73 / 50) P y z ≤
       fullEndpointEvenExactComparisonGap L P y z := by
   have hd :
@@ -562,8 +562,7 @@ theorem fullEndpointEvenExactComparisonGap_mono_pi {L P Q y z : ℝ} (hy : 1 ≤
   linarith only [hdiffNonneg]
 
 /-- The direct endpoint gap is antitone in the conductor-log parameter. -/
-theorem fullEndpointEvenExactComparisonGap_antitone_level {L K P y z : ℝ} (hy : 1 ≤ y) (hz : 0 ≤ z)
-    (hLK : L ≤ K) :
+theorem fullEvenExactGap_antitone_level {L K P y z : ℝ} (hy : 1 ≤ y) (hz : 0 ≤ z) (hLK : L ≤ K) :
     fullEndpointEvenExactComparisonGap K P y z ≤ fullEndpointEvenExactComparisonGap L P y z := by
   have hdiff :
     fullEndpointEvenExactComparisonGap K P y z - fullEndpointEvenExactComparisonGap L P y z =
@@ -583,7 +582,7 @@ theorem fullEndpointEvenExactComparisonGap_antitone_level {L K P y z : ℝ} (hy 
 
 /-- At radius eight, the exact comparison gap is increasing in its log-radius
 argument from the certified lower bound `2079/1000`. -/
-theorem fullEndpointEvenExactComparisonGap_eight_mono_log {z : ℝ} (hz : 2079 / 1000 ≤ z) :
+theorem fullEvenExactGap_eight_mono_log {z : ℝ} (hz : 2079 / 1000 ≤ z) :
     fullEndpointEvenExactComparisonGap (56 / 5) (2096 / 1831) 8 (2079 / 1000) ≤
       fullEndpointEvenExactComparisonGap (56 / 5) (2096 / 1831) 8 z := by
   have hdiff :
@@ -604,7 +603,7 @@ theorem fullEndpointEvenExactComparisonGap_eight_mono_log {z : ℝ} (hz : 2079 /
 
 /-- At radius twenty-four, the exact comparison gap is increasing in its
 log-radius argument from `1589/500`. -/
-theorem fullEndpointEvenExactComparisonGap_twentyFour_mono_log {z : ℝ} (hz : 1589 / 500 ≤ z) :
+theorem fullEndpointEvenGap_24_mono_log {z : ℝ} (hz : 1589 / 500 ≤ z) :
     fullEndpointEvenExactComparisonGap (144 / 5) (2096 / 1831) 24 (1589 / 500) ≤
       fullEndpointEvenExactComparisonGap (144 / 5) (2096 / 1831) 24 z := by
   have hdiff :
@@ -634,11 +633,10 @@ theorem fullEndpointEvenExactComparisonGap_pos_at_eight {L : ℝ} (hL : L ≤ 56
     linarith only [Real.log_two_gt_d9]
   have hanchor : 0 < fullEndpointEvenExactComparisonGap (56 / 5) (2096 / 1831) 8 (2079 / 1000) := by
     norm_num only [fullEndpointEvenExactComparisonGap]
-  have hz := fullEndpointEvenExactComparisonGap_eight_mono_log hlog
+  have hz := fullEvenExactGap_eight_mono_log hlog
   have hlevel :=
-    fullEndpointEvenExactComparisonGap_antitone_level (L := L) (K := (56 / 5 : ℝ)) (P :=
-      (2096 / 1831 : ℝ)) (y := (8 : ℝ)) (z := Real.log 8) (by norm_num only)
-      (Real.log_nonneg (by norm_num only)) hL
+    fullEvenExactGap_antitone_level (L := L) (K := (56 / 5 : ℝ)) (P := (2096 / 1831 : ℝ)) (y :=
+      (8 : ℝ)) (z := Real.log 8) (by norm_num only) (Real.log_nonneg (by norm_num only)) hL
   linarith only [hanchor, hz, hlevel]
 
 /-- The normalized endpoint correction at radius eight exceeds `16/5`.
@@ -649,8 +647,7 @@ theorem fullEndpointEvenGapCorrection_eight_gt :
     (16 / 5 : ℝ) < fullEndpointEvenGapCorrection 8 := by
   have hgap := fullEndpointEvenExactComparisonGap_pos_at_eight (L := (56 / 5 : ℝ)) le_rfl
   have hid :=
-    fullEndpointEvenExactComparisonGap_eq_denominator_correction (L := (56 / 5 : ℝ)) (y := (8 : ℝ))
-      (by norm_num only)
+    fullEvenExactGap_eq_denominator_correction (L := (56 / 5 : ℝ)) (y := (8 : ℝ)) (by norm_num only)
   rw [hid, show (56 / 5 : ℝ) = 8 + 16 / 5 by norm_num only] at hgap
   have hmul :
     0 < fullEndpointEvenGapDenominator 8 * (fullEndpointEvenGapCorrection 8 - 16 / 5) := by
@@ -692,8 +689,7 @@ theorem fullEndpointEvenGapCorrection_eight_lt : fullEndpointEvenGapCorrection 8
       norm_num only [fullEndpointEvenExactComparisonGap]
     linarith only [hgap_le, hup]
   have hid :=
-    fullEndpointEvenExactComparisonGap_eq_denominator_correction (L := (23 / 2 : ℝ)) (y := (8 : ℝ))
-      (by norm_num only)
+    fullEvenExactGap_eq_denominator_correction (L := (23 / 2 : ℝ)) (y := (8 : ℝ)) (by norm_num only)
   rw [hid, show (23 / 2 : ℝ) = 8 + 7 / 2 by norm_num only] at hgap
   have hmul : fullEndpointEvenGapDenominator 8 * (fullEndpointEvenGapCorrection 8 - 7 / 2) < 0 := by
     nlinarith only [hgap]
@@ -773,7 +769,7 @@ theorem fullEndpointEvenTwoStepGap_pos {L : ℝ} (hL : 23 / 2 ≤ L) :
   have hHlt := fullEndpointEvenGapCorrection_strictMonoOn hAmem hBmem hab
   have hcor : 0 < fullEndpointEvenGapCorrection b - fullEndpointEvenGapCorrection a :=
     sub_pos.mpr hHlt
-  have hgap := fullEndpointEvenExactComparisonGap_eq_denominator_correction (L := L) (y := b) hb8
+  have hgap := fullEvenExactGap_eq_denominator_correction (L := L) (y := b) hb8
   rw [hgap]
   have hshape :
     b + fullEndpointEvenGapCorrection b - L =
@@ -809,7 +805,7 @@ theorem fullEndpointEvenCorrectionSecondRadius_lt_linear {L : ℝ} :
 
 /-- On the first certified interval, the two-step cutoff improves the shifted
 eight-ninths quadratic bound. -/
-theorem fullEndpointEvenTwoStepCutoff_lt_shifted_eightNinths {L : ℝ} (hLlo : 23 / 2 ≤ L)
+theorem fullEvenTwoStepCutoff_lt_shifted_eightNinths {L : ℝ} (hLlo : 23 / 2 ≤ L)
     (hLhi : L ≤ 428 / 25) :
     fullEndpointEvenTwoStepCutoff L < (64 / 81 : ℝ) * (L - 73 / 50) ^ 2 := by
   have hrad := fullEndpointEvenCorrectionSecondRadius_lt_linear (L := L)
@@ -830,7 +826,7 @@ theorem fullEndpointEvenTwoStepCutoff_lt_shifted_eightNinths {L : ℝ} (hLlo : 2
 
 /-- Up to level `74/5`, the two-step cutoff is also below the earlier shifted
 seven-fourths quadratic bound. -/
-theorem fullEndpointEvenTwoStepCutoff_lt_shifted_sevenFourths {L : ℝ} (hLlo : 23 / 2 ≤ L)
+theorem fullEvenTwoStepCutoff_lt_shifted_sevenFourths {L : ℝ} (hLlo : 23 / 2 ≤ L)
     (hLhi : L ≤ 74 / 5) : fullEndpointEvenTwoStepCutoff L < (64 / 81 : ℝ) * (L - 7 / 4) ^ 2 := by
   have hrad := fullEndpointEvenCorrectionSecondRadius_lt_linear (L := L)
   have hcomp : fullEndpointEvenCorrectionSecondRadius L < (8 / 9 : ℝ) * (L - 7 / 4) := by
@@ -850,7 +846,7 @@ theorem fullEndpointEvenTwoStepCutoff_lt_shifted_sevenFourths {L : ℝ} (hLlo : 
 
 /-- The direct gap at radius twenty-four is positive when the conductor
 logarithm is at most `144/5`. -/
-theorem fullEndpointEvenExactComparisonGap_pos_at_twentyFour {L : ℝ} (hL : L ≤ 144 / 5) :
+theorem fullEndpointEvenGap_24_pos {L : ℝ} (hL : L ≤ 144 / 5) :
     0 < fullEndpointEvenExactComparisonGap L (2096 / 1831) 24 (Real.log 24) := by
   have hlog : (1589 / 500 : ℝ) ≤ Real.log 24 := by
     rw [show (24 : ℝ) = 2 ^ 3 * 3 by norm_num only,
@@ -861,11 +857,10 @@ theorem fullEndpointEvenExactComparisonGap_pos_at_twentyFour {L : ℝ} (hL : L �
   have hanchor :
     0 < fullEndpointEvenExactComparisonGap (144 / 5) (2096 / 1831) 24 (1589 / 500) := by
     norm_num only [fullEndpointEvenExactComparisonGap]
-  have hz := fullEndpointEvenExactComparisonGap_twentyFour_mono_log hlog
+  have hz := fullEndpointEvenGap_24_mono_log hlog
   have hlevel :=
-    fullEndpointEvenExactComparisonGap_antitone_level (L := L) (K := (144 / 5 : ℝ)) (P :=
-      (2096 / 1831 : ℝ)) (y := (24 : ℝ)) (z := Real.log 24) (by norm_num only)
-      (Real.log_nonneg (by norm_num only)) hL
+    fullEvenExactGap_antitone_level (L := L) (K := (144 / 5 : ℝ)) (P := (2096 / 1831 : ℝ)) (y :=
+      (24 : ℝ)) (z := Real.log 24) (by norm_num only) (Real.log_nonneg (by norm_num only)) hL
   linarith only [hanchor, hz, hlevel]
 
 /-- The shifted even comparison polynomial is monotone in its pi-log parameter.
@@ -970,8 +965,8 @@ theorem fullEndpointPolynomial_lt_even_star_shift {L P y : ℝ} (hy : 8 ≤ y) :
 `29/100` to the embedded `73/50`, giving the total level shift `7/4`. The
 comparison is monotone in the logarithmic radius once its lower endpoint is at
 least two. -/
-theorem fullEndpointPolynomial_lt_even_star_shift_7over4_of_log_lower {L P y z z0 : ℝ} (hy : 8 ≤ y)
-    (hz0 : 2 ≤ z0) (hz : z0 ≤ z)
+theorem fullPoly_lt_evenStar_shift29_100_logLower {L P y z z0 : ℝ} (hy : 8 ≤ y) (hz0 : 2 ≤ z0)
+    (hz : z0 ≤ z)
     (hgap :
       0 <
         fullEndpointEvenStarShiftPolynomial (L + 29 / 100) P y z0 -
@@ -1018,8 +1013,8 @@ theorem fullEndpointPolynomial_lt_even_star_shift_7over4_of_log_lower {L P y z z
 
 /-- On radii from eight through sixteen, the rational lower bound `2079/1000`
 for the logarithm certifies the `7/4` endpoint shift. -/
-theorem fullEndpointPolynomial_lt_even_star_shift_7over4_eight_to_sixteen {L P y z : ℝ}
-    (hy8 : 8 ≤ y) (hy16 : y ≤ 16) (hz : 2079 / 1000 ≤ z) :
+theorem fullPoly_lt_evenStar_shift29_100_8_16 {L P y z : ℝ} (hy8 : 8 ≤ y) (hy16 : y ≤ 16)
+    (hz : 2079 / 1000 ≤ z) :
     fullEndpointPolynomial L P y z < fullEndpointEvenStarShiftPolynomial (L + 29 / 100) P y z := by
   let z0 : ℝ := 2079 / 1000
   let u : ℝ := y - 8
@@ -1061,7 +1056,7 @@ theorem fullEndpointPolynomial_lt_even_star_shift_7over4_eight_to_sixteen {L P y
       fullEndpointEvenStarShiftPolynomial (L + 29 / 100) P y z0 - fullEndpointPolynomial L P y z0 :=
     (mul_pos_iff_of_pos_left hy2).mp hpoly
   apply
-    fullEndpointPolynomial_lt_even_star_shift_7over4_of_log_lower hy8
+    fullPoly_lt_evenStar_shift29_100_logLower hy8
       (by
         dsimp only [z0]; norm_num only)
       (by
@@ -1070,8 +1065,8 @@ theorem fullEndpointPolynomial_lt_even_star_shift_7over4_eight_to_sixteen {L P y
 
 /-- On radii from sixteen through sixty-four, the lower estimate
 `log y >= log 32 + 1 - 32/y` certifies the `7/4` endpoint shift. -/
-theorem fullEndpointPolynomial_lt_even_star_shift_7over4_sixteen_to_sixtyFour {L P y z : ℝ}
-    (hy16 : 16 ≤ y) (hy64 : y ≤ 64) (hz : 4465 / 1000 - 32 / y ≤ z) :
+theorem fullEndpoint_lt_evenStar_16_64 {L P y z : ℝ} (hy16 : 16 ≤ y) (hy64 : y ≤ 64)
+    (hz : 4465 / 1000 - 32 / y ≤ z) :
     fullEndpointPolynomial L P y z < fullEndpointEvenStarShiftPolynomial (L + 29 / 100) P y z := by
   let z0 : ℝ := 4465 / 1000 - 32 / y
   let u : ℝ := y - 16
@@ -1118,15 +1113,15 @@ theorem fullEndpointPolynomial_lt_even_star_shift_7over4_sixteen_to_sixtyFour {L
       fullEndpointEvenStarShiftPolynomial (L + 29 / 100) P y z0 - fullEndpointPolynomial L P y z0 :=
     (mul_pos_iff_of_pos_left hy2).mp hpoly
   exact
-    fullEndpointPolynomial_lt_even_star_shift_7over4_of_log_lower (by linarith only [hy16]) hz02
+    fullPoly_lt_evenStar_shift29_100_logLower (by linarith only [hy16]) hz02
       (by
         dsimp only [z0]; linarith only [hz])
       hgap
 
 /-- On radii from sixty-four through 128, the lower estimate
 `log y >= log 128 + 1 - 128/y` certifies the `7/4` endpoint shift. -/
-theorem fullEndpointPolynomial_lt_even_star_shift_7over4_sixtyFour_to_oneTwentyEight {L P y z : ℝ}
-    (hy64 : 64 ≤ y) (hy128 : y ≤ 128) (hz : 5851 / 1000 - 128 / y ≤ z) :
+theorem fullEndpoint_lt_evenStar_64_128 {L P y z : ℝ} (hy64 : 64 ≤ y) (hy128 : y ≤ 128)
+    (hz : 5851 / 1000 - 128 / y ≤ z) :
     fullEndpointPolynomial L P y z < fullEndpointEvenStarShiftPolynomial (L + 29 / 100) P y z := by
   let z0 : ℝ := 5851 / 1000 - 128 / y
   let u : ℝ := y - 64
@@ -1178,7 +1173,7 @@ theorem fullEndpointPolynomial_lt_even_star_shift_7over4_sixtyFour_to_oneTwentyE
       fullEndpointEvenStarShiftPolynomial (L + 29 / 100) P y z0 - fullEndpointPolynomial L P y z0 :=
     (mul_pos_iff_of_pos_left hy2).mp hpoly
   exact
-    fullEndpointPolynomial_lt_even_star_shift_7over4_of_log_lower (by linarith only [hy64]) hz02
+    fullPoly_lt_evenStar_shift29_100_logLower (by linarith only [hy64]) hz02
       (by
         dsimp only [z0]; linarith only [hz])
       hgap
@@ -1213,8 +1208,7 @@ theorem log_lower_sixtyFour_to_oneTwentyEight {y : ℝ} (hy64 : 64 ≤ y) :
 
 /-- The `7/4` shifted endpoint polynomial dominates the unshifted polynomial
 throughout the certified practical radius range `8 ≤ y ≤ 128`. -/
-theorem fullEndpointPolynomial_lt_even_star_shift_7over4_of_radius_range {L P y : ℝ} (hy8 : 8 ≤ y)
-    (hy128 : y ≤ 128) :
+theorem fullPoly_lt_evenStar_shift29_100_radius {L P y : ℝ} (hy8 : 8 ≤ y) (hy128 : y ≤ 128) :
     fullEndpointPolynomial L P y (Real.log y) <
       fullEndpointEvenStarShiftPolynomial (L + 29 / 100) P y (Real.log y) := by
   by_cases hy16 : y ≤ 16
@@ -1223,17 +1217,14 @@ theorem fullEndpointPolynomial_lt_even_star_shift_7over4_of_radius_range {L P y 
       norm_num only [Nat.cast_ofNat]
       linarith only [Real.log_two_gt_d9]
     have hlogy : Real.log 8 ≤ Real.log y := Real.log_le_log (by norm_num only : (0 : ℝ) < 8) hy8
-    exact
-      fullEndpointPolynomial_lt_even_star_shift_7over4_eight_to_sixteen hy8 hy16
-        (le_trans hlog8 hlogy)
+    exact fullPoly_lt_evenStar_shift29_100_8_16 hy8 hy16 (le_trans hlog8 hlogy)
   · have hy16 : 16 ≤ y := le_of_not_ge hy16
     by_cases hy64 : y ≤ 64
     · have hlog := log_lower_sixteen_to_sixtyFour hy16
-      exact fullEndpointPolynomial_lt_even_star_shift_7over4_sixteen_to_sixtyFour hy16 hy64 hlog
+      exact fullEndpoint_lt_evenStar_16_64 hy16 hy64 hlog
     · have hy64 : 64 ≤ y := le_of_not_ge hy64
       have hlog := log_lower_sixtyFour_to_oneTwentyEight hy64
-      exact
-        fullEndpointPolynomial_lt_even_star_shift_7over4_sixtyFour_to_oneTwentyEight hy64 hy128 hlog
+      exact fullEndpoint_lt_evenStar_64_128 hy64 hy128 hlog
 
 /-- If every prime through `x` has character value one, the real logarithmic
 character sum equals the unsigned Mangoldt sum. Apply the full-prime-triviality
@@ -1265,9 +1256,8 @@ theorem logWeightedSum_re_eq_of_full_prime_trivial {q : ℕ} (χ : DirichletChar
 direct comparison gap at the rational pi-log lower bound yields a non-one prime through `y^2`.
 Assume all such primes are trivial, apply the exact reciprocal and logarithmic
 bounds, and contradict the refined Riemann lower bound directly. -/
-theorem exists_prime_not_one_of_positive_exact_even_endpoint_gap {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hq : 2 ≤ q)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
+theorem exists_prime_not_one_of_pos_evenExactGap {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hq : 2 ≤ q) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (heven : χ.Even) {y : ℝ} (hy : 8 ≤ y)
     (hgapPositive :
       0 < fullEndpointEvenExactComparisonGap (Real.log q) (2096 / 1831) y (Real.log y)) :
@@ -1283,11 +1273,11 @@ theorem exists_prime_not_one_of_positive_exact_even_endpoint_gap {q : ℕ} [NeZe
     exact hn ⟨p, hprime, hpy, hv⟩
   have hRecId := reciprocalSum_re_eq_of_full_prime_trivial χ (by positivity : 0 ≤ y ^ 2) ht
   have hRecLower :=
-    AnalyticNumberTheory.RiemannZeta.reciprocalWeightedMangoldtSum_ge_log_sub_31551_div_20000 (x :=
-      y ^ 2) hGRH.riemann (by linarith only [hy2])
+    AnalyticNumberTheory.RiemannZeta.reciprocalMangoldt_ge_log_sub_31551_20000 (x := y ^ 2)
+      hGRH.riemann (by linarith only [hy2])
   rw [← hRecId] at hRecLower
   rw [Real.log_pow] at hRecLower
-  have hError := primitiveReciprocalEvenMainError_le_exact_even_envelope hy
+  have hError := reciprocalEvenError_le_exactEnvelope hy
   have hRaw :=
     PseudoPrime.LLS.primitiveReciprocalRaw_even_le_of_mainError hq hGRH hp hne hinv heven
       (by linarith only [hx]) hError
@@ -1314,8 +1304,8 @@ theorem exists_prime_not_one_of_positive_exact_even_endpoint_gap {q : ℕ} [NeZe
     rw [Real.log_pow]
     nlinarith only [hpi2, hgamma, hz]
   have hLog :=
-    AnalyticNumberTheory.DirichletLFunction.primitiveLogWeightedUpper_of_grh_even_exact (x := y ^ 2)
-      hq hGRH hp hne hinv heven hy2
+    AnalyticNumberTheory.DirichletLFunction.logWeighted_upper_even_GRH (x := y ^ 2) hq hGRH hp hne
+      hinv heven hy2
   rw [Real.sqrt_sq (by linarith only [hy] : 0 ≤ y), Real.log_pow] at hLog
   have hLogId := logWeightedSum_re_eq_of_full_prime_trivial χ (by positivity : 0 ≤ y ^ 2) ht
   rw [hLogId] at hLog
@@ -1347,9 +1337,8 @@ theorem exists_prime_not_one_of_positive_exact_even_endpoint_gap {q : ℕ} [NeZe
 /-- The shifted even endpoint polynomial criterion is a specialization of the
 direct-gap witness consumer. The polynomial transfers to the even comparison
 polynomial, which is bounded above by the exact gap. -/
-theorem exists_prime_not_one_of_exact_even_endpoint_polynomial {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hq : 2 ≤ q)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
+theorem exists_prime_not_one_of_evenExactPolynomial {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hq : 2 ≤ q) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (heven : χ.Even) {y : ℝ} (hy : 8 ≤ y)
     (hpoly : 0 < fullEndpointPolynomial (Real.log q - 73 / 50) (2096 / 1831) y (Real.log y)) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ y ^ 2 ∧ χ p ≠ 1 := by
@@ -1360,20 +1349,20 @@ theorem exists_prime_not_one_of_exact_even_endpoint_polynomial {q : ℕ} [NeZero
     0 < fullEndpointEvenStarShiftPolynomial (Real.log q - 73 / 50) (2096 / 1831) y (Real.log y) :=
     lt_trans hpoly htransfer
   have hbridge :=
-    fullEndpointEvenStarShiftPolynomial_le_exact_comparison_gap (L := Real.log q) (P :=
-      (2096 / 1831 : ℝ)) (y := y) (z := Real.log y) (by linarith only [hy] : y ≠ 0)
+    fullEvenStarShiftPoly_le_exact_comparison_gap (L := Real.log q) (P := (2096 / 1831 : ℝ)) (y :=
+      y) (z := Real.log y) (by linarith only [hy] : y ≠ 0)
       (Real.log_nonneg (by linarith only [hy] : (1 : ℝ) ≤ y))
       (by norm_num only : (9 / 8 : ℝ) ≤ 2096 / 1831)
   have hgap : 0 < fullEndpointEvenExactComparisonGap (Real.log q) (2096 / 1831) y (Real.log y) :=
     lt_of_lt_of_le hstar hbridge
-  exact exists_prime_not_one_of_positive_exact_even_endpoint_gap χ hq hGRH hp hne hinv heven hy hgap
+  exact exists_prime_not_one_of_pos_evenExactGap χ hq hGRH hp hne hinv heven hy hgap
 
 /-- The exact even endpoint criterion applies to an arbitrary nonprincipal even
 character. Move its conductor logarithm below the ambient level in the polynomial,
 then transfer the prime witness from the primitive character. -/
-theorem exists_prime_ne_one_of_exact_even_endpoint_polynomial {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1) (heven : χ.Even)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y : ℝ} (hy : 8 ≤ y)
+theorem exists_prime_ne_one_of_evenExactPolynomial {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hne : χ ≠ 1) (heven : χ.Even) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {y : ℝ} (hy : 8 ≤ y)
     (hpoly : 0 < fullEndpointPolynomial (Real.log q - 73 / 50) (2096 / 1831) y (Real.log y)) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ y ^ 2 ∧ χ p ≠ 1 := by
   let _ : NeZero χ.conductor := ⟨χ.conductor_ne_zero⟩
@@ -1395,7 +1384,7 @@ theorem exists_prime_ne_one_of_exact_even_endpoint_polynomial {q : ℕ} [NeZero 
         (sub_le_sub_right hlog (73 / 50))
     linarith only [hpoly, hm]
   obtain ⟨p, hp, hpy, hv⟩ :=
-    exists_prime_not_one_of_exact_even_endpoint_polynomial χ.primitiveCharacter hq hGRH
+    exists_prime_not_one_of_evenExactPolynomial χ.primitiveCharacter hq hGRH
       χ.primitiveCharacter_isPrimitive hψ (inv_ne_one.mpr hψ)
       (reciprocalGap_primitiveCharacter_even heven) hy hpoly'
   refine ⟨p, hp, hpy, ?_⟩
@@ -1405,9 +1394,9 @@ theorem exists_prime_ne_one_of_exact_even_endpoint_polynomial {q : ℕ} [NeZero 
 /-- A positive direct endpoint gap at the ambient level transfers to the
 primitive conductor and produces a non-one prime for any even nonprincipal
 character. -/
-theorem exists_prime_ne_one_of_positive_exact_even_endpoint_gap {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1) (heven : χ.Even)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y : ℝ} (hy : 8 ≤ y)
+theorem exists_prime_ne_one_of_pos_evenExactGap {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hne : χ ≠ 1) (heven : χ.Even) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {y : ℝ} (hy : 8 ≤ y)
     (hgap : 0 < fullEndpointEvenExactComparisonGap (Real.log q) (2096 / 1831) y (Real.log y)) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ y ^ 2 ∧ χ p ≠ 1 := by
   let _ : NeZero χ.conductor := ⟨χ.conductor_ne_zero⟩
@@ -1425,11 +1414,11 @@ theorem exists_prime_ne_one_of_positive_exact_even_endpoint_gap {q : ℕ} [NeZer
   have hgapCond :
     0 < fullEndpointEvenExactComparisonGap (Real.log χ.conductor) (2096 / 1831) y (Real.log y) := by
     have hmono :=
-      fullEndpointEvenExactComparisonGap_antitone_level (L := Real.log χ.conductor) (K :=
-        Real.log q) (P := (2096 / 1831 : ℝ)) (y := y) (z := Real.log y) hy1 hz hlog
+      fullEvenExactGap_antitone_level (L := Real.log χ.conductor) (K := Real.log q) (P :=
+        (2096 / 1831 : ℝ)) (y := y) (z := Real.log y) hy1 hz hlog
     exact lt_of_lt_of_le hgap hmono
   obtain ⟨p, hp, hpy, hv⟩ :=
-    exists_prime_not_one_of_positive_exact_even_endpoint_gap χ.primitiveCharacter hq hGRH
+    exists_prime_not_one_of_pos_evenExactGap χ.primitiveCharacter hq hGRH
       χ.primitiveCharacter_isPrimitive hψ (inv_ne_one.mpr hψ)
       (reciprocalGap_primitiveCharacter_even heven) hy hgapCond
   refine ⟨p, hp, hpy, ?_⟩
@@ -1439,15 +1428,14 @@ theorem exists_prime_ne_one_of_positive_exact_even_endpoint_gap {q : ℕ} [NeZer
 /-- A positive ordinary endpoint polynomial at level `log q - 7/4` gives a
 non-one prime through `y^2` when `8 ≤ y ≤ 128`. The three certified scale bands
 transfer that polynomial to the direct exact gap at the ambient level. -/
-theorem exists_prime_ne_one_of_7over4_shifted_endpoint_polynomial {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1) (heven : χ.Even)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y : ℝ} (hy : 8 ≤ y)
-    (hy128 : y ≤ 128)
+theorem exists_neOnePrime_even_shift7_4_poly_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hne : χ ≠ 1) (heven : χ.Even) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {y : ℝ} (hy : 8 ≤ y) (hy128 : y ≤ 128)
     (hpoly : 0 < fullEndpointPolynomial (Real.log q - 7 / 4) (2096 / 1831) y (Real.log y)) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ y ^ 2 ∧ χ p ≠ 1 := by
   have htransfer :=
-    fullEndpointPolynomial_lt_even_star_shift_7over4_of_radius_range (L := Real.log q - 7 / 4) (P :=
-      (2096 / 1831 : ℝ)) hy hy128
+    fullPoly_lt_evenStar_shift29_100_radius (L := Real.log q - 7 / 4) (P := (2096 / 1831 : ℝ)) hy
+      hy128
   have hstar :
     0 <
       fullEndpointEvenStarShiftPolynomial (Real.log q - 73 / 50) (2096 / 1831) y (Real.log y) := by
@@ -1455,20 +1443,19 @@ theorem exists_prime_ne_one_of_7over4_shifted_endpoint_polynomial {q : ℕ} [NeZ
     rw [← heq]
     exact lt_trans hpoly htransfer
   have hbridge :=
-    fullEndpointEvenStarShiftPolynomial_le_exact_comparison_gap (L := Real.log q) (P :=
-      (2096 / 1831 : ℝ)) (y := y) (z := Real.log y) (by linarith only [hy] : y ≠ 0)
+    fullEvenStarShiftPoly_le_exact_comparison_gap (L := Real.log q) (P := (2096 / 1831 : ℝ)) (y :=
+      y) (z := Real.log y) (by linarith only [hy] : y ≠ 0)
       (Real.log_nonneg (by linarith only [hy] : (1 : ℝ) ≤ y))
       (by norm_num only : (9 / 8 : ℝ) ≤ 2096 / 1831)
   have hgap : 0 < fullEndpointEvenExactComparisonGap (Real.log q) (2096 / 1831) y (Real.log y) :=
     lt_of_lt_of_le hstar hbridge
-  exact exists_prime_ne_one_of_positive_exact_even_endpoint_gap χ hne heven hGRH hy hgap
+  exact exists_prime_ne_one_of_pos_evenExactGap χ hne heven hGRH hy hgap
 
 /-- On the certified five-piece interval while its radius is at most 128, the
 seven-fourths shifted level yields the improved affine-radius witness bound. -/
-theorem exists_prime_ne_one_le_7over4_shifted_midscale_radius_sq {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1) (heven : χ.Even)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hLlo : 144 / 5 ≤ Real.log q)
-    (hLhi : Real.log q ≤ 13517 / 100) :
+theorem exists_neOnePrime_even_shift7_4_mid_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hne : χ ≠ 1) (heven : χ.Even) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hLlo : 144 / 5 ≤ Real.log q) (hLhi : Real.log q ≤ 13517 / 100) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ (midscaleEndpointRadius (Real.log q - 7 / 4)) ^ 2 ∧ χ p ≠ 1 := by
   let L := Real.log q - 7 / 4
   have hLlo' : 1339 / 50 ≤ L := by
@@ -1479,15 +1466,14 @@ theorem exists_prime_ne_one_le_7over4_shifted_midscale_radius_sq {q : ℕ} [NeZe
   have hy128 := midscaleEndpointRadius_le_128 hLhi'
   have hy8 : 8 ≤ midscaleEndpointRadius L := by linarith only [hdata.1]
   obtain ⟨p, hp, hb, hv⟩ :=
-    exists_prime_ne_one_of_7over4_shifted_endpoint_polynomial χ hne heven hGRH hy8 hy128 hdata.2
+    exists_neOnePrime_even_shift7_4_poly_GRH χ hne heven hGRH hy8 hy128 hdata.2
   exact ⟨p, hp, hb, hv⟩
 
 /-- The bounded seven-fourths transfer gives the `64/81` quadratic witness
 bound from logarithmic scale `43/4` through `22`. -/
-theorem exists_prime_ne_one_le_7over4_shifted_eightNinths_log_sq {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1) (heven : χ.Even)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hLlo : 43 / 4 ≤ Real.log q)
-    (hLhi : Real.log q ≤ 22) :
+theorem exists_neOnePrime_even_64_81_shift7_4_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hne : χ ≠ 1) (heven : χ.Even) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hLlo : 43 / 4 ≤ Real.log q) (hLhi : Real.log q ≤ 22) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ (64 / 81 : ℝ) * (Real.log q - 7 / 4) ^ 2 ∧ χ p ≠ 1 := by
   let X := Real.log q - 7 / 4
   have hXlo : 9 ≤ X := by
@@ -1497,18 +1483,17 @@ theorem exists_prime_ne_one_le_7over4_shifted_eightNinths_log_sq {q : ℕ} [NeZe
   have hy : (8 : ℝ) ≤ (8 / 9 : ℝ) * X := by nlinarith only [hXlo]
   have hy128 : (8 / 9 : ℝ) * X ≤ 128 := by nlinarith only [hXhi]
   obtain ⟨p, hp, hb, hv⟩ :=
-    exists_prime_ne_one_of_7over4_shifted_endpoint_polynomial χ hne heven hGRH hy hy128
-      (fullEndpoint_polynomial_pos_eightNinths_log_interval hXlo hXhi)
+    exists_neOnePrime_even_shift7_4_poly_GRH χ hne heven hGRH hy hy128
+      (fullPoly_pos_eightNinths_interval hXlo hXhi)
   refine ⟨p, hp, ?_, hv⟩
   dsimp only [X] at hb ⊢
   nlinarith only [hb]
 
 /-- The bounded seven-fourths transfer gives the `81/100` quadratic witness
 bound from logarithmic scale `43/4` through `111/4`. -/
-theorem exists_prime_ne_one_le_7over4_shifted_eightyOne_log_sq {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1) (heven : χ.Even)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hLlo : 43 / 4 ≤ Real.log q)
-    (hLhi : Real.log q ≤ 111 / 4) :
+theorem exists_neOnePrime_even_81_100_shift7_4_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hne : χ ≠ 1) (heven : χ.Even) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hLlo : 43 / 4 ≤ Real.log q) (hLhi : Real.log q ≤ 111 / 4) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ (81 / 100 : ℝ) * (Real.log q - 7 / 4) ^ 2 ∧ χ p ≠ 1 := by
   let X := Real.log q - 7 / 4
   have hXlo : 9 ≤ X := by
@@ -1518,8 +1503,8 @@ theorem exists_prime_ne_one_le_7over4_shifted_eightyOne_log_sq {q : ℕ} [NeZero
   have hy : (8 : ℝ) ≤ (9 / 10 : ℝ) * X := by nlinarith only [hXlo]
   have hy128 : (9 / 10 : ℝ) * X ≤ 128 := by nlinarith only [hXhi]
   obtain ⟨p, hp, hb, hv⟩ :=
-    exists_prime_ne_one_of_7over4_shifted_endpoint_polynomial χ hne heven hGRH hy hy128
-      (fullEndpoint_polynomial_pos_eightyOne_log_interval hXlo hXhi)
+    exists_neOnePrime_even_shift7_4_poly_GRH χ hne heven hGRH hy hy128
+      (fullPoly_pos_nineTenths_interval hXlo hXhi)
   refine ⟨p, hp, ?_, hv⟩
   dsimp only [X] at hb ⊢
   nlinarith only [hb]
@@ -1527,7 +1512,7 @@ theorem exists_prime_ne_one_le_7over4_shifted_eightyOne_log_sq {q : ℕ} [NeZero
 /-- The ordinary endpoint polynomial at radius 24 stays positive below the
 midscale entrance level. Anchor the inequality at the certified radius 24 and
 use antitonicity in the conductor logarithm. -/
-theorem fullEndpoint_polynomial_pos_at_twentyFour_of_level_le {L : ℝ} (hL : L ≤ 1339 / 50) :
+theorem fullEndpoint_polynomial_pos_at_24_of_level_le {L : ℝ} (hL : L ≤ 1339 / 50) :
     0 < fullEndpointPolynomial L (2096 / 1831) 24 (Real.log 24) := by
   have hbase :=
     midscaleEndpointRadius_data (L := (1339 / 50 : ℝ)) (by norm_num only) (by norm_num only)
@@ -1545,7 +1530,7 @@ theorem fullEndpoint_polynomial_pos_at_twentyFour_of_level_le {L : ℝ} (hL : L 
 /-- A positive shifted ordinary polynomial gives a negative even endpoint limit.
 The uniform radius transfer pays a level shift of `9/8`; monotonicity in the
 pi-log parameter then replaces the certified rational lower bound by `log pi`. -/
-theorem fullEndpointEvenLimit_neg_of_shifted_rational_polynomial_pos (q : ℕ) {y : ℝ} (hy : 8 ≤ y)
+theorem fullEndpointEvenLimit_neg_of_rational_poly (q : ℕ) {y : ℝ} (hy : 8 ≤ y)
     (hpoly : 0 < fullEndpointPolynomial (Real.log q - 9 / 8) (2096 / 1831) y (Real.log y)) :
     reciprocalGapFullEndpointEvenLimit q (y ^ 2) (y ^ 2) < 0 := by
   have htransfer :=
@@ -1573,9 +1558,9 @@ theorem fullEndpointEvenLimit_neg_of_shifted_rational_polynomial_pos (q : ℕ) {
 /-- For primitive even nonprincipal GRH data, the shifted polynomial criterion
 produces a non-one prime through `y^2`. Pass to the primitive character, preserve
 evenness at `-1`, and use conductor monotonicity of the even endpoint limit. -/
-theorem exists_prime_ne_one_of_shifted_even_endpoint_polynomial {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1) (heven : χ.Even)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y : ℝ} (hy : 8 ≤ y)
+theorem exists_prime_ne_one_of_shiftedEvenPolynomial {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hne : χ ≠ 1) (heven : χ.Even) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {y : ℝ} (hy : 8 ≤ y)
     (hpoly : 0 < fullEndpointPolynomial (Real.log q - 9 / 8) (2096 / 1831) y (Real.log y)) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ y ^ 2 ∧ χ p ≠ 1 := by
   let _ : NeZero χ.conductor := ⟨χ.conductor_ne_zero⟩
@@ -1586,13 +1571,12 @@ theorem exists_prime_ne_one_of_shifted_even_endpoint_polynomial {q : ℕ} [NeZer
       ⟨χ.conductor_ne_zero, fun he ↦ hne (DirichletCharacter.eq_one_iff_conductor_eq_one.mpr he)⟩
   have hx : 1 < y ^ 2 := by nlinarith only [hy]
   have hY : 64 ≤ y ^ 2 := by nlinarith only [hy]
-  have hlim := fullEndpointEvenLimit_neg_of_shifted_rational_polynomial_pos q hy hpoly
+  have hlim := fullEndpointEvenLimit_neg_of_rational_poly q hy hpoly
   have hm :=
     reciprocalGapFullEndpointEvenLimit_mono_level (le_of_lt hx) hY
       (Nat.pos_of_ne_zero χ.conductor_ne_zero) (Nat.le_of_dvd (NeZero.pos q) χ.conductor_dvd_level)
   obtain ⟨p, hp, hb, hv⟩ :=
-    exists_prime_not_one_of_reciprocalGapFullEndpointEvenLimit_neg hq hGRH
-      χ.primitiveCharacter_isPrimitive hψ (inv_ne_one.mpr hψ)
+    exists_prime_neOne_evenLimit_GRH hq hGRH χ.primitiveCharacter_isPrimitive hψ (inv_ne_one.mpr hψ)
       (reciprocalGap_primitiveCharacter_even heven) hx hY le_rfl (hm.trans_lt hlim)
   refine ⟨p, hp, hb, ?_⟩
   intro hone

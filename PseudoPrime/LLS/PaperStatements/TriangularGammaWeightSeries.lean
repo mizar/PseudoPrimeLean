@@ -75,7 +75,7 @@ theorem gamma_half_reciprocal_eq_resolvent {c : ℝ} (hc : 0 < c) (t : ℝ) :
 /-- For positive parameter, pole coordinate and scale, the normalized reciprocal
 difference integral equals its profile divided by c minus twice three translated weights.
 Split integrable terms and apply central resolvent inversion. This evaluates each Gamma term. -/
-theorem triangular_vertical_reciprocalIntegral_eq_weights {a c x : ℝ} (ha : 0 < a) (hc : 0 < c)
+theorem triangular_resolvent_integral_eq_weights {a c x : ℝ} (ha : 0 < a) (hc : 0 < c)
     (hx : 0 < x) :
     ((1 / (2 * Real.pi) : ℝ) : ℂ) *
         (∫ t : ℝ,
@@ -116,8 +116,7 @@ theorem triangular_vertical_reciprocalIntegral_eq_weights {a c x : ℝ} (ha : 0 
     rw [Complex.ofReal_re]
     linarith only [hc]
   have hm :=
-    AnalyticNumberTheory.General.mellinInv_triangular_resolvent_central_weight_combination hα ha
-      (inv_pos.mpr hx)
+    AnalyticNumberTheory.General.mellinInv_triangular_central_resolvent hα ha (inv_pos.mpr hx)
   unfold mellinInv at hm
   simp only [Complex.real_smul, smul_eq_mul, Complex.ofReal_zero, zero_add, Complex.ofReal_inv,
     Complex.cpow_neg, Complex.inv_cpow_ofReal_nonneg hx.le, inv_inv] at hm
@@ -159,7 +158,7 @@ noncomputable def triangularGammaReciprocalTerm (a c x : ℝ) : ℂ :=
 triangular Gamma integral at any positive parameter and scale as a baseline profile plus
 half the explicit reciprocal-weight series. Replace the integrals term by term with their
 proved values. No GRH is required. This removes the unevaluated pole integrals. -/
-theorem triangular_central_gammaIntegral_eq_weight_series {q : ℕ} (χ : DirichletCharacter ℂ q) :
+theorem triangular_gamma_eq_weightSeries {q : ℕ} (χ : DirichletCharacter ℂ q) :
     ∃ b : ℝ,
       1 / 4 ≤ b ∧
         b ≤ 1 ∧
@@ -174,7 +173,7 @@ theorem triangular_central_gammaIntegral_eq_weight_series {q : ℕ} (χ : Dirich
               ((-Complex.log Real.pi + Complex.digamma (b : ℂ)) / 2) *
                   (triangularKernelProfile a x : ℂ) +
                 (1 / 2 : ℂ) * ∑' n : ℕ, triangularGammaReciprocalTerm a (b + n) x := by
-  obtain ⟨b, hb, hb1, hg⟩ := triangular_central_gammaIntegral_eq_vertical_resolvent_series χ
+  obtain ⟨b, hb, hb1, hg⟩ := triangular_gamma_eq_resolventSeries χ
   refine ⟨b, hb, hb1, ?_⟩
   intro a x ha hx
   have he :
@@ -189,7 +188,7 @@ theorem triangular_central_gammaIntegral_eq_weight_series {q : ℕ} (χ : Dirich
     apply tsum_congr
     intro n
     exact
-      (triangular_vertical_reciprocalIntegral_eq_weights ha
+      (triangular_resolvent_integral_eq_weights ha
           (add_pos_of_pos_of_nonneg (lt_of_lt_of_le (by norm_num only) hb) (Nat.cast_nonneg n))
           hx).symm
   rw [hg a x ha hx, he]
@@ -200,12 +199,11 @@ series is summable. Bound each term's norm by the normalized integral norm and u
 proved integrated absolute convergence. This certifies convergence of the evaluated series. -/
 theorem summable_triangularGammaReciprocalTerm {a b x : ℝ} (ha : 0 < a) (hb : 0 < b) (hx : 0 < x) :
     Summable (fun n : ℕ ↦ triangularGammaReciprocalTerm a (b + n) x) := by
-  have hs := summable_triangular_vertical_resolvent_integral_norm ha hb hx
+  have hs := summable_triangular_resolvent_norm ha hb hx
   apply hs.of_norm_bounded
   intro n
   have he :=
-    triangular_vertical_reciprocalIntegral_eq_weights ha
-      (add_pos_of_pos_of_nonneg hb (Nat.cast_nonneg n)) hx
+    triangular_resolvent_integral_eq_weights ha (add_pos_of_pos_of_nonneg hb (Nat.cast_nonneg n)) hx
   change ((1 / (2 * Real.pi) : ℝ) : ℂ) * _ = triangularGammaReciprocalTerm a (b + n) x at he
   rw [← he, norm_mul, Complex.norm_real, Real.norm_eq_abs,
     abs_of_pos (one_div_pos.mpr (mul_pos (by norm_num only) Real.pi_pos))]
@@ -233,7 +231,7 @@ theorem triangular_profile_eq_zero_of_small_scale {a x : ℝ} (ha : 0 < a) (hx :
 /-- For positive parameter and scale below exp(-2a), every reciprocal-weight term
 vanishes, for any real pole coordinate. All translated weights lie outside their support.
 This supplies termwise vanishing in the exterior Gamma branch. -/
-theorem triangularGammaReciprocalTerm_eq_zero_of_small_scale {a c x : ℝ} (ha : 0 < a) (hx : 0 < x)
+theorem triangularGammaRecipTerm_zero_of_small {a c x : ℝ} (ha : 0 < a) (hx : 0 < x)
     (hsmall : x < Real.exp (-2 * a)) : triangularGammaReciprocalTerm a c x = 0 := by
   have hu : Real.exp (2 * a) < x⁻¹ := by
     have h := (inv_lt_inv₀ (Real.exp_pos (-2 * a)) hx).mpr hsmall
@@ -253,16 +251,16 @@ theorem triangularGammaReciprocalTerm_eq_zero_of_small_scale {a c x : ℝ} (ha :
 /-- For every character, positive parameter and scale below exp(-2a), the normalized
 central Gamma integral vanishes. Its profile and every explicit reciprocal term vanish.
 No GRH is needed. This evaluates the exterior branch before transferring to a right line. -/
-theorem triangular_central_gammaIntegral_eq_zero_of_small_scale {q : ℕ} (χ : DirichletCharacter ℂ q)
-    {a x : ℝ} (ha : 0 < a) (hx : 0 < x) (hsmall : x < Real.exp (-2 * a)) :
+theorem triangular_central_gamma_zero_of_small {q : ℕ} (χ : DirichletCharacter ℂ q) {a x : ℝ}
+    (ha : 0 < a) (hx : 0 < x) (hsmall : x < Real.exp (-2 * a)) :
     ((1 / (2 * Real.pi) : ℝ) : ℂ) *
         (∫ t : ℝ,
           logDeriv χ.gammaFactor (Complex.I * t + 1 / 2) *
             (Analysis.triangularMellinFunction a (Complex.I * t) * (x : ℂ) ^ (Complex.I * t))) =
       0 := by
-  obtain ⟨b, hb, _, hg⟩ := triangular_central_gammaIntegral_eq_weight_series χ
+  obtain ⟨b, hb, _, hg⟩ := triangular_gamma_eq_weightSeries χ
   have hs : (∑' n : ℕ, triangularGammaReciprocalTerm a (b + n) x) = 0 := by
-    simp only [triangularGammaReciprocalTerm_eq_zero_of_small_scale ha hx hsmall, tsum_zero]
+    simp only [triangularGammaRecipTerm_zero_of_small ha hx hsmall, tsum_zero]
   rw [hg a x ha hx, triangular_profile_eq_zero_of_small_scale ha hx hsmall, Complex.ofReal_zero,
     mul_zero, hs, mul_zero, add_zero]
 

@@ -74,11 +74,10 @@ endpoint separation produces a prime at most x with character value different
 from one. Under nonexistence both weighted sums become unsigned, so the existing
 RH bounds give the contradiction. A prime dividing the level is an allowed witness.
 This removes the ambient exclusion costs in MR-type applications. -/
-theorem exists_prime_not_one_of_reciprocalGap_full_endpoint {h : ℝ} (hh : 0 < h) {q : ℕ} [NeZero q]
-    (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x Y : ℝ} (hx : 1 < x) (hY : 64 ≤ Y) (hYx : Y ≤ x)
-    (hgap : reciprocalGapFullEndpointSeparation h q x Y < 0) :
+theorem exists_prime_neOne_fullGap_GRH {h : ℝ} (hh : 0 < h) {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+    {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x Y : ℝ} (hx : 1 < x) (hY : 64 ≤ Y)
+    (hYx : Y ≤ x) (hgap : reciprocalGapFullEndpointSeparation h q x Y < 0) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ x ∧ χ p ≠ 1 := by
   by_contra hn
   have ht : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ x → χ p = 1 := by
@@ -89,7 +88,7 @@ theorem exists_prime_not_one_of_reciprocalGap_full_endpoint {h : ℝ} (hh : 0 < 
   have he :=
     reciprocalSum_re_eq_of_full_prime_trivial χ (by linarith only [hy2] : 0 ≤ Y)
       (fun p hp hpy ↦ ht p hp (hpy.trans hYx))
-  have hR := reciprocalWeightedMangoldtSum_ge_log_sub_31551_div_20000 hGRH.riemann hy2
+  have hR := reciprocalMangoldt_ge_log_sub_31551_20000 hGRH.riemann hy2
   rw [← he] at hR
   have hm := reciprocalGap_mass_le_reciprocal_cap hq hGRH hp hne hinv hY hR
   have hU := reciprocalGapCharacterSum_re_le_endpoint_mass hh hq hGRH hp hne hinv hx.le hm

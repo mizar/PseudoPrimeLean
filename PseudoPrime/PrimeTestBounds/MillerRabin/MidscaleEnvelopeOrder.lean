@@ -35,7 +35,7 @@ theorem twoStep_lt_endpoint {L : ℝ} (hL : 23 / 2 ≤ L) (hU : L ≤ 122) :
   by_cases h8 : L ≤ 22
   · rw [endpointMidscaleBase, ite_eq_left h8]
     by_cases h14 : L ≤ 74 / 5
-    · exact LLS.PaperStatements.fullEndpointEvenTwoStepCutoff_lt_shifted_sevenFourths hL h14
+    · exact LLS.PaperStatements.fullEvenTwoStepCutoff_lt_shifted_sevenFourths hL h14
     · have h :=
         twoStep_lt_sq hL
           (LLS.PaperStatements.endpointOrderBand0_sound (L := L) (le_of_not_ge h14) h8)

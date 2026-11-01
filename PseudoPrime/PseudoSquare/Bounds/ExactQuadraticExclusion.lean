@@ -39,7 +39,7 @@ theorem primitiveQuadratic_ramified_cost {n : ℕ} {hn : Odd n} {hns : ¬IsSquar
     _ = ∑ p ∈ b.squarefreePart.primeFactors, Real.log p := by
       apply Finset.sum_congr rfl
       intro p hp
-      rw [primitiveQuadraticCharacter_zero_on_squarefreePart b hp, Complex.zero_re]
+      rw [primitiveQuadratic_zero_on_squarefreePart b hp, Complex.zero_re]
       ring
     _ = _ := squarefree_prime_log_sum_eq b.squarefreePart_squarefree
 

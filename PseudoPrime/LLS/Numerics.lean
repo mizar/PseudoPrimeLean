@@ -72,10 +72,8 @@ proved `ω ≤ log(q / conductor) / log 2` estimate.
 theorem llsTheorem11S1ComparisonUpperBound_le_fullLevel (htradeoff : LLSPart1TradeoffCondition)
     {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hq : 3000 ≤ q) :
     llsTheorem11S1ComparisonUpperBound χ ≤ llsPart1FullLevelUpperBound q := by
-  have homega :=
-    AnalyticNumberTheory.DirichletLFunction.card_primeFactors_quotient_le_log_div_log_two χ
-  rw [AnalyticNumberTheory.DirichletLFunction.log_quotient_eq_log_level_sub_log_conductor
-      χ] at homega
+  have homega := AnalyticNumberTheory.DirichletLFunction.quotient_primeFactors_card_le_log χ
+  rw [AnalyticNumberTheory.DirichletLFunction.log_quotient_eq_level_sub_conductor χ] at homega
   have hcore :=
     AnalyticNumberTheory.DirichletLFunction.conductor_primeFactor_tradeoff (Real.log_pos one_lt_two)
       (AnalyticNumberTheory.DirichletLFunction.log_conductor_le_log_level χ) homega (htradeoff q hq)
@@ -95,7 +93,7 @@ theorem eight_lt_llsTheorem11S1RadiusRoot {q : ℕ} (hq : 3000 ≤ q) :
     (Analysis.eight_lt_log_level hq).trans_le (le_add_of_nonneg_right (llsCorrectionTerm_nonneg q))
 
 /-- At the Part 1 radius, the inverse-square factor is uniformly bounded by `64 / 49`. -/
-theorem llsPart1RadiusInverseSq_le_sixtyFour_div_fortyNine {q : ℕ} (hq : 3000 ≤ q) :
+theorem part1RadiusInverseSq_le_64_49 {q : ℕ} (hq : 3000 ≤ q) :
     (1 - 1 / llsTheorem11S1RadiusRoot q)⁻¹ ^ 2 ≤ (64 / 49 : ℝ) := by
   have hr : (8 : ℝ) ≤ llsTheorem11S1RadiusRoot q := (eight_lt_llsTheorem11S1RadiusRoot hq).le
   have hrpos : 0 < llsTheorem11S1RadiusRoot q := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 8) hr

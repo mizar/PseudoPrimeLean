@@ -140,8 +140,8 @@ theorem inverse_mellin_rectangle (K : MellinKernel) {u : ℝ} (hu : 0 < u) {z w 
               ⟨hsub hp', by simpa only [Set.mem_singleton_iff] using hn⟩)).mul
         (hd p)
   have hb :=
-    AnalyticNumberTheory.RectangleGeometry.rectangleBoundaryIntegral_eq_of_simple_regularization
-      (ho'.1.1.trans ho'.1.2) (ho'.2.1.trans ho'.2.2) ho hdiff ha heq
+    AnalyticNumberTheory.RectangleGeometry.boundaryIntegral_simple_pole (ho'.1.1.trans ho'.1.2)
+      (ho'.2.1.trans ho'.2.2) ho hdiff ha heq
   simpa only [h, show -(-1 / 2 : ℂ) = (1 / 2 : ℂ) by ring] using hb
 
 /-- Uniform quadratic decay of the inverse-Mellin integrand on a bounded
@@ -293,8 +293,8 @@ private theorem inverse_line_residue (K : MellinKernel) {c u : ℝ} (hc : -1 / 2
       (by linarith only [K.delta_pos] : (0 : ℝ) ≤ 1 / 2 + K.delta)
       (by norm_num only : (0 : ℝ) ≠ -1 / 2) hu
   have hlim :=
-    AnalyticNumberTheory.RectangleGeometry.tendsto_rectangleBoundaryIntegral_of_horizontal_limits
-      (K := fun s : ℂ ↦ K.function s * (u : ℂ) ^ (-s)) (a := c) (b := 0) (fun n : ℕ ↦ (n : ℝ) + 1)
+    AnalyticNumberTheory.RectangleGeometry.tendsto_boundaryIntegral (K := fun s : ℂ ↦
+      K.function s * (u : ℂ) ^ (-s)) (a := c) (b := 0) (fun n : ℕ ↦ (n : ℝ) + 1)
       (Filter.tendsto_atTop_add_const_right Filter.atTop 1 tendsto_natCast_atTop_atTop)
       (by
         simpa only [neg_one_mul, one_mul, Complex.ofReal_neg, neg_mul, sub_eq_add_neg] using

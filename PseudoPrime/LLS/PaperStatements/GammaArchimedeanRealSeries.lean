@@ -20,8 +20,7 @@ normalized archimedean integral has the signed real scalar series representation
 The proof substitutes the certified reciprocal inversions into the absolutely
 convergent series before taking real parts. This connects the actual integral
 to the scalar upper bound without adding an inversion hypothesis. -/
-theorem gamma_central_archimedean_integral_re_eq_scalar_series {q : ℕ}
-    (χ : DirichletCharacter ℂ q) :
+theorem gammaArchimedeanIntegral_re_eq_scalar_series {q : ℕ} (χ : DirichletCharacter ℂ q) :
     ∃ b : ℝ,
       1 / 4 ≤ b ∧
         b ≤ 1 ∧
@@ -37,7 +36,7 @@ theorem gamma_central_archimedean_integral_re_eq_scalar_series {q : ℕ}
                   (∑' n : ℕ,
                     (Real.sqrt x⁻¹ * Real.exp (-x⁻¹) / (b + n) -
                       ∫ r : ℝ in Set.Ioi 0, gammaResolventScalarDensity (b + n) x r)) := by
-  obtain ⟨b, hb, hb1, h⟩ := gamma_central_archimedean_integral_eq_density_series χ
+  obtain ⟨b, hb, hb1, h⟩ := gammaArchimedeanIntegral_eq_density_series χ
   refine ⟨b, hb, hb1, ?_⟩
   intro x hx
   have hb0 : 0 < b := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1 / 4) hb
@@ -53,8 +52,7 @@ theorem gamma_central_archimedean_integral_re_eq_scalar_series {q : ℕ}
     apply tsum_congr
     intro n
     simpa only [C, J, F, K, mul_div_assoc] using
-      gamma_central_resolvent_difference_integral_eq_real
-        (add_pos_of_pos_of_nonneg hb0 (Nat.cast_nonneg n)) hx
+      gammaResolvent_diff_integral_real (add_pos_of_pos_of_nonneg hb0 (Nat.cast_nonneg n)) hx
   have he := h x hx
   have he' :
     C * (∫ t : ℝ, logDeriv χ.gammaFactor (Complex.I * t + 1 / 2) * gammaCentralMellinWeight x t) =
@@ -91,7 +89,7 @@ theorem gamma_central_archimedean_integral_re_le_scalar {q : ℕ} (χ : Dirichle
                       (Complex.digamma ((b + 3 / 4 : ℝ) : ℂ) -
                           Complex.digamma ((b + 1 / 4 : ℝ) : ℂ)).re) -
                 (1 / 2 : ℝ) * (∫ r : ℝ in Set.Ioi 0, gammaResolventScalarDensity b x r) := by
-  obtain ⟨b, hb, hb1, h⟩ := gamma_central_archimedean_integral_re_eq_scalar_series χ
+  obtain ⟨b, hb, hb1, h⟩ := gammaArchimedeanIntegral_re_eq_scalar_series χ
   refine ⟨b, hb, hb1, ?_⟩
   intro x hx
   rw [h x hx]

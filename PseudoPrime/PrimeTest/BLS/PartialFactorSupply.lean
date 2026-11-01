@@ -65,13 +65,12 @@ abbrev partialPrimeFactorSupplyByTreeRounds
     params
 
 /-- Actual Floyd rounds at every reached node sum to no more than all allowances in the tree. -/
-theorem partialPrimeFactorSupplyByTreeRounds_le
-    (params : NumberTheory.Factorization.PollardRho.Params)
+theorem partialFactorSupply_rounds_le_fuel (params : NumberTheory.Factorization.PollardRho.Params)
     (tree : NumberTheory.Factorization.PollardRho.RhoBudgetTree) (n : ℕ) :
     partialPrimeFactorSupplyByTreeRounds params tree n ≤ tree.totalFuel := by
   exact
-    NumberTheory.Factorization.PollardRho.partialPrimeFactorSupplyByTreeRounds_le
-      exactPrimeLeafPolicy params tree n
+    NumberTheory.Factorization.PollardRho.partialFactorSupply_rounds_le_fuel exactPrimeLeafPolicy
+      params tree n
 
 /-- Convert retained prime leaves to BLS prime-power data when their product exceeds one.
 If no nontrivial certified part is known, return `none` instead of claiming a useful factorization.

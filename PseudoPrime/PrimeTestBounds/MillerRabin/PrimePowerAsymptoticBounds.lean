@@ -20,7 +20,7 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 odd n>1 divisible by p^a has a prime MR witness at most log(p)^A. Choose a natural
 cutoff floor(log(p)^A) and k=ceil(c log(p)/log log(p)); unconditional Chebyshev
 prime counts and two strict scale margins force a prime outside the local kernel. -/
-theorem eventually_exists_prime_witness_le_log_prime_of_prime_pow {a : ℕ} (ha : 2 ≤ a) {A : ℝ}
+theorem eventually_prime_witness_log_prime_pow {a : ℕ} (ha : 2 ≤ a) {A : ℝ}
     (hA : (a : ℝ) / ((a : ℝ) - 1) < A) :
     Filter.Eventually
       (fun p : ℕ ↦
@@ -43,8 +43,7 @@ theorem eventually_exists_prime_witness_le_log_prime_of_prime_pow {a : ℕ} (ha 
     Real.tendsto_log_atTop.comp tendsto_natCast_atTop_atTop
   have hM :=
     hL.eventually
-      (NumberTheory.eventually_const_mul_rpow_le_primeCounting_floor_rpow (C := 2)
-        (zero_lt_one.trans hb) hbA)
+      (NumberTheory.eventually_rpow_le_primeCounting_floor (C := 2) (zero_lt_one.trans hb) hbA)
   have hfloor :=
     hL.eventually (NumberTheory.eventually_rpow_le_nat_floor_rpow (b := 0) (by norm_num only) hAp)
   have hlogc := hL.eventually (Real.tendsto_log_atTop.eventually_ge_atTop (2 * c))
@@ -83,8 +82,8 @@ theorem eventually_exists_prime_witness_le_log_prime_of_prime_pow {a : ℕ} (ha 
 divisor has a prime MR witness at most log(n)^A, without GRH. Large local primes
 use the preceding log(p) bound; small ones are themselves bounded rejecting bases.
 This gives a fixed exponent below two when a>=3 and A is chosen below two. -/
-theorem eventually_exists_prime_witness_le_log_power_of_prime_pow_divisor {a : ℕ} (ha : 2 ≤ a)
-    {A : ℝ} (hA : (a : ℝ) / ((a : ℝ) - 1) < A) :
+theorem eventually_prime_logPower_primePow {a : ℕ} (ha : 2 ≤ a) {A : ℝ}
+    (hA : (a : ℝ) / ((a : ℝ) - 1) < A) :
     Filter.Eventually
       (fun n : ℕ ↦
         1 < n →
@@ -95,8 +94,7 @@ theorem eventually_exists_prime_witness_le_log_power_of_prime_pow_divisor {a : �
       Filter.atTop := by
   have haR : (1 : ℝ) < a := by exact_mod_cast (lt_of_lt_of_le (by decide : 1 < 2) ha)
   have hAp : 0 < A := (div_pos (zero_lt_one.trans haR) (sub_pos.mpr haR)).trans hA
-  obtain ⟨P, hP⟩ :=
-    Filter.eventually_atTop.mp (eventually_exists_prime_witness_le_log_prime_of_prime_pow ha hA)
+  obtain ⟨P, hP⟩ := Filter.eventually_atTop.mp (eventually_prime_witness_log_prime_pow ha hA)
   have ht : Filter.Tendsto (fun n : ℕ ↦ (Real.log n) ^ A) Filter.atTop Filter.atTop :=
     (tendsto_rpow_atTop hAp).comp (Real.tendsto_log_atTop.comp tendsto_natCast_atTop_atTop)
   filter_upwards [ht.eventually_ge_atTop (P : ℝ)] with n hnb hn ho hdiv
@@ -117,8 +115,8 @@ theorem eventually_exists_prime_witness_le_log_power_of_prime_pow_divisor {a : �
 /-- For fixed a>=2 and A>a/(a-1), the preceding unconditional eventual bound
 also holds for the least prime MR rejecting base, including two. Minimize the
 full prime-failure predicate for each input. No finite certificate or GRH is used. -/
-theorem eventually_exists_least_prime_witness_le_log_power_of_prime_pow_divisor {a : ℕ} (ha : 2 ≤ a)
-    {A : ℝ} (hA : (a : ℝ) / ((a : ℝ) - 1) < A) :
+theorem eventually_least_logPower_primePow {a : ℕ} (ha : 2 ≤ a) {A : ℝ}
+    (hA : (a : ℝ) / ((a : ℝ) - 1) < A) :
     Filter.Eventually
       (fun n : ℕ ↦
         1 < n →
@@ -131,7 +129,7 @@ theorem eventually_exists_least_prime_witness_le_log_power_of_prime_pow_divisor 
               ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → r ≤ s)
       Filter.atTop := by
   classical
-  apply (eventually_exists_prime_witness_le_log_power_of_prime_pow_divisor ha hA).mono
+  apply (eventually_prime_logPower_primePow ha hA).mono
   intro n hn hng ho hdiv
   obtain ⟨r, hr, hb, hf⟩ := hn hng ho hdiv
   have hex : ∃ s : ℕ, s.Prime ∧ ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := ⟨r, hr, hf⟩

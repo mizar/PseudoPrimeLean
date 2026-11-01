@@ -28,7 +28,7 @@ def HasOrderAtMostOne (F : ℂ → ℂ) : Prop :=
 /-- A continuous function of order at most one admits a global exponential
 power bound for every exponent greater than one. Absorb the compact inner ball's
 bound into the growth constant. This permits Jensen estimates at every radius. -/
-theorem exists_global_exponential_bound_of_orderAtMostOne {F : ℂ → ℂ} (hF : Continuous F)
+theorem exists_exp_bound_of_orderAtMostOne {F : ℂ → ℂ} (hF : Continuous F)
     (horder : HasOrderAtMostOne F) {r : ℝ} (hr : 1 < r) :
     ∃ C : ℝ, 0 < C ∧ ∀ z : ℂ, ‖F z‖ ≤ Real.exp (C * (‖z‖ + 1) ^ r) := by
   obtain ⟨A, R, hA, hR, hg⟩ := horder r hr

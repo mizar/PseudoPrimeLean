@@ -18,7 +18,7 @@ namespace PseudoPrime.NumberTheory
 the complex quadratic character is induced from that of the squarefree part.
 Compare the integer-valued characters on units and compose with the complex cast.
 This allows primitive values to be compared at every integer, not only at units. -/
-theorem complexQuadraticCharacter_eq_squarefree_changeLevel {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+theorem complexQuadratic_eq_squarefree_changeLevel {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : JacobiCharacterArithmeticData n hn hns) (hdvd : 4 * bridge.squarefreePart ∣ 4 * n) :
     complexQuadraticCharacter n hn =
       DirichletCharacter.changeLevel hdvd
@@ -32,7 +32,7 @@ theorem complexQuadraticCharacter_eq_squarefree_changeLevel {n : ℕ} {hn : Odd 
     simp only [a, ZMod.natCast_val, ZMod.intCast_zmod_cast]
   rw [← hu, DirichletCharacter.changeLevel_eq_cast_of_dvd' _ hdvd hc.isCoprime,
     complexQuadraticCharacter_apply, complexQuadraticCharacter_apply]
-  have he := quadraticCharacter_eq_squarefreePart_changeLevel_apply_of_coprime bridge hdvd hc
+  have he := quadratic_eq_squarefree_changeLevel bridge hdvd hc
   rw [DirichletCharacter.changeLevel_eq_cast_of_dvd' _ hdvd hc.isCoprime] at he
   exact congrArg (fun z : ℤ ↦ (z : ℂ)) he
 
@@ -48,15 +48,15 @@ theorem primitiveQuadraticCharacter_eq_squarefree_apply {n : ℕ} {hn : Odd n} {
     ⟨bridge.squareFactor ^ 2, by simpa only [mul_comm] using bridge.squarefreePart_sq_mul.symm⟩
   have hdvd := Nat.mul_dvd_mul_left 4 hd
   change (complexQuadraticCharacter n hn).primitiveCharacter a = _
-  rw [complexQuadraticCharacter_eq_squarefree_changeLevel bridge hdvd]
+  rw [complexQuadratic_eq_squarefree_changeLevel bridge hdvd]
   exact DirichletCharacter.primitiveCharacter_changeLevel_apply hdvd _ a
 
 /-- At an odd prime not dividing the squarefree part, the primitive character
 has the Jacobi value of that part, even if the prime divides the original input.
 Transfer the primitive value to the squarefree input and use its prime evaluation. -/
-theorem primitiveQuadraticCharacter_apply_squarefree_odd_prime {n p : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : JacobiCharacterArithmeticData n hn hns) (hp : p.Prime)
-    (ho : Odd p) (hd : ¬p ∣ bridge.squarefreePart) :
+theorem primitiveQuadratic_apply_squarefree_odd_prime {n p : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : JacobiCharacterArithmeticData n hn hns) (hp : p.Prime) (ho : Odd p)
+    (hd : ¬p ∣ bridge.squarefreePart) :
     primitiveQuadraticCharacter n hn (p : ℤ) = (jacobiSym bridge.squarefreePart p : ℂ) := by
   rw [primitiveQuadraticCharacter_eq_squarefree_apply bridge]
   exact primitiveQuadraticCharacter_apply_odd_prime bridge.squarefreePart_odd hp ho hd

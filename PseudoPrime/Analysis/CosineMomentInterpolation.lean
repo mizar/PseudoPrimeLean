@@ -46,7 +46,7 @@ Role: keep the common density inside the pointwise comparison. -/
 theorem concaveOn_weightedCos_quadratic {w : ℝ} (hw : 0 ≤ w) (l a b : ℝ) :
     ConcaveOn ℝ (Set.Icc a b) (fun t ↦ w * Real.cos (t * l) - (w * l ^ 2) / 2 * t ^ 2) := by
   apply
-    concaveOn_quadratic_correction_of_second_deriv_le (fun t _ ↦ hasDerivAt_weightedCos w l t)
+    concaveOn_quadratic_correction (fun t _ ↦ hasDerivAt_weightedCos w l t)
       (fun t _ ↦ hasDerivAt_weightedCosDeriv w l t)
   intro t _
   have h :=

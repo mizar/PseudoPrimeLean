@@ -133,8 +133,8 @@ and apply the existing finite prime-product Korselt theorem.
 Role: turns Proposition 1.3's subgroup product into the Carmichael product
 used by the strong Miller-Rabin construction.
 -/
-theorem isCarmichael_finset_prime_product_of_progression_unit_product {S : Finset ℕ} (L k : ℕ)
-    (hkL : Nat.Coprime k L) (hprime : ∀ p ∈ S, Nat.Prime p) (hcard : 2 ≤ S.card)
+theorem carmichael_primeProduct_of_progression {S : Finset ℕ} (L k : ℕ) (hkL : Nat.Coprime k L)
+    (hprime : ∀ p ∈ S, Nat.Prime p) (hcard : 2 ≤ S.card)
     (hprogression : ∀ p ∈ S, ∃ d, d ∣ L ∧ p = d * k + 1) (hproductL : (∏ p ∈ S, (p : ZMod L)) = 1) :
     Nat.IsCarmichael (∏ p ∈ S, p) ∧ (∀ p ∈ S, p - 1 ∣ k * L) ∧ k * L ∣ (∏ p ∈ S, p) - 1 := by
   have hmodK : (∏ p ∈ S, p) ≡ 1 [MOD k] := by
@@ -182,7 +182,7 @@ and apply the finite-base criterion from P1.
 Role: this connects the P2 prime-product construction to the P1 Miller–Rabin
 criterion once the common-sign subset has been supplied.
 -/
-theorem strongMillerRabinPass_all_of_finset_prime_product {S : Finset ℕ} {K : ℕ} (W : Finset ℕ)
+theorem strongPass_all_of_finset_prime_product {S : Finset ℕ} {K : ℕ} (W : Finset ℕ)
     (hprime : ∀ p ∈ S, Nat.Prime p) (hcard : 2 ≤ S.card) (horder : ∀ p ∈ S, p - 1 ∣ K)
     (hproductMod : K ∣ (∏ p ∈ S, p) - 1) (hpMod : ∀ p ∈ S, p % 4 = 3) (hbase : ∀ b ∈ W, 0 < b)
     (hbp : ∀ b ∈ W, ∀ p ∈ S, ¬p ∣ b)
@@ -231,7 +231,6 @@ theorem strongMillerRabinPass_all_of_finset_prime_product {S : Finset ℕ} {K : 
     exact hleg p hp (hprime p hp)
   change ∀ b ∈ W, PrimeTest.StrongMillerRabinPass a (b : ZMod a)
   exact
-    strongMillerRabinPass_all_of_common_legendre_sign W ha1 hoddProduct hsq hzero hmod' hK' hbase
-      hbp' hcommon'
+    strongPass_all_of_common_legendre_sign W ha1 hoddProduct hsq hzero hmod' hK' hbase hbp' hcommon'
 
 end PseudoPrime.PrimeTest.MillerRabin.AGP

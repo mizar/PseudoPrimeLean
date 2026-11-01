@@ -36,8 +36,8 @@ Assume unit-prime triviality through b and a signed primitive Gamma cap A.
 Claim: the actual primitive sum plus local correction obeys the joint prefix budget.
 Proof: regroup the original integer correction and ramp by the same ambient primes.
 Role: preserve conductor and ramified losses in one arbitrary-scale analytic comparison. -/
-theorem gamma_primitive_sum_add_local_lt_joint_prefix_cap {q Q : ℕ} [NeZero q] (hQ : 20000 ≤ Q)
-    (hqQ : q ≤ Q) (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
+theorem gammaPrimitive_local_jointPrefixCap_GRH {q Q : ℕ} [NeZero q] (hQ : 20000 ≤ Q) (hqQ : q ≤ Q)
+    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x b : ℝ} (hx : 2 ≤ x)
     (hb : 1 ≤ b) (hone : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → Nat.Coprime p q → χ p = 1) {A : ℝ}
     (hA : PaperStatements.gammaSignedGammaCost χ.primitiveCharacter.gammaFactor ≤ A) :
@@ -52,15 +52,15 @@ theorem gamma_primitive_sum_add_local_lt_joint_prefix_cap {q Q : ℕ} [NeZero q]
   have hp := DirichletCharacter.primitiveCharacter_isPrimitive χ
   have hnp := AnalyticNumberTheory.Arithmetic.primitiveCharacter_ne_one χ hne
   have hz :=
-    AnalyticNumberTheory.DirichletLFunction.gammaResolvent_zeroMass_le_signed_prefix
+    AnalyticNumberTheory.DirichletLFunction.gammaMass_le_signedPrefix_RH
       (le_trans (by norm_num only : (2 : ℕ) ≤ 3) hm) (hGRH _ χ.primitiveCharacter hp) hp hnp
       (inv_ne_one.mpr hnp) (Finset.Ioc 0 ⌊b⌋₊)
   have hu :=
-    PaperStatements.gamma_primitive_sum_re_le_resolvent_conductor_free hQ hm (hmq.trans hqQ) hGRH hp
+    PaperStatements.gammaPrimitiveSum_re_le_resolvent_conductor_free hQ hm (hmq.trans hqQ) hGRH hp
       hnp (inv_ne_one.mpr hnp) hx
   have he :=
-    AnalyticNumberTheory.DirichletLFunction.gamma_character_prefix_add_ambient_ramp_eq_local_cost
-      χ.primitiveCharacter (Nat.pos_of_ne_zero (NeZero.ne q)) hb
+    AnalyticNumberTheory.DirichletLFunction.gammaPrefix_add_ramp_eq_cost χ.primitiveCharacter
+      (Nat.pos_of_ne_zero (NeZero.ne q)) hb
       (fun p hp hpb hcop ↦
         PaperStatements.primitiveCharacter_apply_one_of_apply_one χ (hone p hp hpb hcop))
       x
@@ -93,15 +93,15 @@ theorem gamma_primitive_sum_add_local_lt_joint_prefix {q Q : ℕ} [NeZero q] (hQ
         43 * x ^ (-9 / 16 : ℝ) := by
   have hA :=
     AnalyticNumberTheory.DirichletLFunction.gammaResolvent_gammaFactor_le χ.primitiveCharacter
-  have h := gamma_primitive_sum_add_local_lt_joint_prefix_cap hQ hqQ χ hne hGRH hx hb hone hA
+  have h := gammaPrimitive_local_jointPrefixCap_GRH hQ hqQ χ hne hGRH hx hb hone hA
   linarith only [h]
 
 /-- Input: the arbitrary-scale data, an even character and unit-prime triviality through b.
 Claim: the primitive sum plus local correction has fixed allowance 11.
 Proof: primitive normalization preserves parity, so the even Gamma cap applies.
 Role: retain the sharper constant for even quadratic characters. -/
-theorem gamma_primitive_sum_add_local_lt_even_joint_prefix {q Q : ℕ} [NeZero q] (hQ : 20000 ≤ Q)
-    (hqQ : q ≤ Q) (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1) (heven : χ.Even)
+theorem gammaPrimitive_local_evenJointPrefix_GRH {q Q : ℕ} [NeZero q] (hQ : 20000 ≤ Q) (hqQ : q ≤ Q)
+    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1) (heven : χ.Even)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x b : ℝ} (hx : 2 ≤ x)
     (hb : 1 ≤ b) (hone : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → Nat.Coprime p q → χ p = 1) :
     (∑' k : ℕ, PaperStatements.gammaMellinKernel.summand χ.primitiveCharacter x k).re +
@@ -110,7 +110,7 @@ theorem gamma_primitive_sum_add_local_lt_even_joint_prefix {q Q : ℕ} [NeZero q
         43 * x ^ (-9 / 16 : ℝ) := by
   have hp := (NumberTheory.primitiveCharacter_even_iff χ).mpr heven
   have hA := AnalyticNumberTheory.DirichletLFunction.gammaResolvent_gammaFactor_0_le hp
-  have h := gamma_primitive_sum_add_local_lt_joint_prefix_cap hQ hqQ χ hne hGRH hx hb hone hA
+  have h := gammaPrimitive_local_jointPrefixCap_GRH hQ hqQ χ hne hGRH hx hb hone hA
   linarith only [h]
 
 /-- Input: ambient Q, a character, prefix b, scale x and signed Gamma cap A.
@@ -142,7 +142,7 @@ theorem gamma_ramp_prime_trivial_false_joint_prefix {q Q : ℕ} [NeZero q] (hQ :
   intro hsmall
   have hone : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → Nat.Coprime p q → χ p = 1 := fun p hp hpb hcop ↦
     hsmall p hp (hp.coprime_iff_not_dvd.mp hcop) (hpb.trans hbx)
-  have hC := gamma_primitive_sum_add_local_lt_joint_prefix_cap hQ hqQ χ hne hGRH hx hb hone hA
+  have hC := gammaPrimitive_local_jointPrefixCap_GRH hQ hqQ χ hne hGRH hx hb hone hA
   have hx1 : 1 ≤ x := le_trans (by norm_num only) hx
   have hT := gamma_ramp_sum_lower_paired hGRH.riemann hx1
   have hP := gamma_level_one_sum_upper_variable hGRH.riemann hx1

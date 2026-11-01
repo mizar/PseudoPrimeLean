@@ -19,12 +19,11 @@ namespace PseudoPrime.LLS.PaperStatements
 separation at its conductor yields an N-coprime non-one prime at most x.
 Apply the primitive selected endpoint theorem and transfer values back on coprime
 inputs. Neither primitivity nor a conductor nonzero premise is needed from callers. -/
-theorem exists_prime_original_character_ne_one_of_reciprocalGap_endpoint_selected {N : ℕ} [NeZero N]
-    (χ : DirichletCharacter ℂ N) (hne : χ ≠ 1)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {h x Y : ℝ} (hh : 0 < h)
-    (hx : 1 ≤ x) (hY : 64 ≤ Y) (hYx : Y ≤ x) (C : Finset ℕ) (hC : C ⊆ Finset.Ioc 0 ⌊Y⌋₊)
-    (hcopC : ∀ a ∈ C, Nat.Coprime a N) (B : Finset ℕ) (hB : B ⊆ Finset.Ioc 0 ⌊x⌋₊)
-    (hcop : ∀ a ∈ B, Nat.Coprime a N) (lo u : ℕ → ℝ)
+theorem exists_prime_neOne_originalGap_GRH {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
+    (hne : χ ≠ 1) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {h x Y : ℝ}
+    (hh : 0 < h) (hx : 1 ≤ x) (hY : 64 ≤ Y) (hYx : Y ≤ x) (C : Finset ℕ)
+    (hC : C ⊆ Finset.Ioc 0 ⌊Y⌋₊) (hcopC : ∀ a ∈ C, Nat.Coprime a N) (B : Finset ℕ)
+    (hB : B ⊆ Finset.Ioc 0 ⌊x⌋₊) (hcop : ∀ a ∈ B, Nat.Coprime a N) (lo u : ℕ → ℝ)
     (hlo : ∀ a ∈ B, lo a ≤ ArithmeticFunction.vonMangoldt a) (hu : ∀ a ∈ B, ((a : ℝ) / x) ^ h ≤ u a)
     (hu1 : ∀ a ∈ B, u a ≤ 1)
     (hgap :
@@ -47,8 +46,8 @@ theorem exists_prime_original_character_ne_one_of_reciprocalGap_endpoint_selecte
     have hh := congrArg (fun ξ : DirichletCharacter ℂ χ.conductor ↦ ξ⁻¹) hv
     exact hψ (by simpa only [inv_inv, inv_one] using hh)
   obtain ⟨p, hprime, hpx, hpc, hv⟩ :=
-    exists_prime_coprime_not_one_of_reciprocalGap_endpoint_selected hh hq χ.conductor_dvd_level hGRH
-      hp hψ hi hx hY hYx C hC hcopC B hB hcop lo u hlo hu hu1 hgap
+    exists_prime_neOne_selectedGap_GRH hh hq χ.conductor_dvd_level hGRH hp hψ hi hx hY hYx C hC
+      hcopC B hB hcop lo u hlo hu hu1 hgap
   have he := DirichletCharacter.primitiveCharacter_apply_of_isCoprime χ hpc.isCoprime
   simp only [Int.cast_natCast] at he
   refine ⟨p, hprime, hpx, hpc, ?_⟩

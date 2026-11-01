@@ -54,7 +54,7 @@ theorem exists_prime_witness_le_mrRegion_of_lt_3000 {n : ℕ} (hn : 1 < n) (hnOd
 lies below the same fitted expression at log B, without GRH.
 Transfer the pointwise witness by envelope monotonicity within its checked domain.
 This is the finite-range interface with no weaker maximum formula. -/
-theorem exists_prime_witness_le_mrRegion_envelope_of_lt_3000 {n B : ℕ} (hn : 1 < n) (hnOdd : Odd n)
+theorem exists_prime_witness_envelope_of_lt_3000 {n B : ℕ} (hn : 1 < n) (hnOdd : Odd n)
     (hnComposite : ¬n.Prime) (hlt : n < 3000) (hnB : n ≤ B) (hB : B ≤ 100000) :
     ∃ p : ℕ,
       p.Prime ∧

@@ -58,8 +58,8 @@ theorem reciprocalGap_poleResidue_eq_realAxis {h : ℝ} (hh : 0 < h) {q : ℕ} [
       ((1 / (h * Real.sqrt x) : ℝ) : ℂ) * (Complex.log q + logDeriv χ⁻¹.completedLFunction 1) := by
   rw [reciprocalGap_poleResidue_eq_endpoint hh hne hx]
   have he :=
-    completedLFunction_logDeriv_functionalEquation_at hp hne (s := 1)
-      (completedLFunction_ne_zero_of_one_le_re hinv (by norm_num only [Complex.one_re]))
+    completedLogDeriv_functionalEq hp hne (s := 1)
+      (completed_ne_zero_of_one_le_re hinv (by norm_num only [Complex.one_re]))
   rw [sub_self] at he
   rw [he]
 
@@ -121,7 +121,7 @@ theorem reciprocalGap_remainder_re_le_pole_left_value {h : ℝ} (hh : 0 < h) {q 
     (hx : 1 ≤ x) :
     (reciprocalGapCompletedRemainder h hh χ x).re ≤
       reciprocalGapPoleLeftValue h χ x + reciprocalGapSignedGammaBudget h x := by
-  have hΓ := reciprocalGap_remainder_gamma_re_le_signed_budget hh hx χ
+  have hΓ := reciprocalGap_gamma_re_le_signedBudget hh hx χ
   have hP := reciprocalGap_pole_add_left_re_eq_realAxis hh hp hne hinv hx
   simp only [Complex.sub_re] at hΓ
   simp only [Complex.add_re] at hP
@@ -131,11 +131,10 @@ theorem reciprocalGap_remainder_re_le_pole_left_value {h : ℝ} (hh : 0 < h) {q 
 zero-test coordinate and x>=1, separation with the exact joint pole-and-left value
 produces a non-one prime witness. Use the signed remainder bound in the existing exact
 zero comparison. Concrete uniform cutoffs still require quantitative endpoint estimates. -/
-theorem exists_prime_not_one_of_reciprocalGap_pole_left_separation {h c : ℝ} (hh : 0 < h) {q : ℕ}
-    [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hc : (1 / 2 : ℝ) < c) (hbound : c ^ 2 ≤ 1 / 4 + h / 2) {x : ℝ}
-    (hx : 1 ≤ x) (B : Finset ℕ)
+theorem exists_prime_neOne_poleLeftGap_GRH {h c : ℝ} (hh : 0 < h) {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+    {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hc : (1 / 2 : ℝ) < c)
+    (hbound : c ^ 2 ≤ 1 / 4 + h / 2) {x : ℝ} (hx : 1 ≤ x) (B : Finset ℕ)
     (hgap :
       (1 / c) *
             (Real.log q / 2 + (logDeriv χ.gammaFactor (((1 / 2 : ℝ) + c) : ℂ)).re +

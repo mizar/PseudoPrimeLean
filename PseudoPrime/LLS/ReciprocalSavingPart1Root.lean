@@ -40,18 +40,16 @@ theorem characterReciprocalWeightedSum_re_ge_root_saving {q : ℕ} [NeZero q]
     rw [Real.log_pow]
     norm_num only [Nat.cast_ofNat]
     exact max_le_max (le_refl _) (by linarith only [hl])
-  exact
-    hmono.trans
-      (characterReciprocalWeightedSum_re_ge_of_reciprocal_lower χ (sq_pos_of_pos hy0) hR ht)
+  exact hmono.trans (characterRecipSum_re_ge_of_recip_lower χ (sq_pos_of_pos hy0) hR ht)
 
 /-- Input: GRH, nonprincipality, an arbitrary reciprocal loss, and a nonnegative factor-cost cap.
 The root increment satisfies the corresponding retained-saving inequality.
 Claim: a coprime prime with non-one character value exists through the squared root.
 Proof: combine the arbitrary-saving upper bound with the exact common-factor lower bound.
 Role: support uniform or cutoff-dependent reciprocal refinements without new separation proofs. -/
-theorem exists_prime_character_ne_one_of_reciprocal_saving_root {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hq : 3000 ≤ q) (hne : χ ≠ 1)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y r w : ℝ} (hy : Real.log q ≤ y)
+theorem exists_prime_neOne_reciprocalSaving_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hq : 3000 ≤ q) (hne : χ ≠ 1) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {y r w : ℝ} (hy : Real.log q ≤ y)
     (hR :
       Real.log (y ^ 2) - r ≤ AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtSum (y ^ 2))
     (hw : 0 ≤ w)
@@ -71,16 +69,14 @@ theorem exists_prime_character_ne_one_of_reciprocal_saving_root {q : ℕ} [NeZer
   have hN : 2 ≤ χ.conductor :=
     Nat.succ_le_iff.mpr
       (Nat.lt_of_le_of_ne (NeZero.pos χ.conductor)
-        (Ne.symm
-          (AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one
-            hprim)))
+        (Ne.symm (AnalyticNumberTheory.DirichletLFunction.character_level_ne_one_of_ne_one hprim)))
   have hL := Analysis.eight_lt_log_level hq
   have hy0 : 0 < y := by linarith only [hL, hy]
   have hx : (64 : ℝ) ≤ y ^ 2 := by nlinarith only [hL, hy]
   have hs : Real.sqrt (y ^ 2) = y := Real.sqrt_sq hy0.le
   have hrecip := characterReciprocalWeightedSum_re_ge_root_saving χ hq hy hR htrivial
   have hu :=
-    characterLogWeightedSum_re_le_fullLevel_of_saving χ hN hprim hGRH hx hL
+    characterLogSum_re_le_fullLevel_of_saving_GRH χ hN hprim hGRH hx hL
       (by
         rw [hs]; exact hy)
       (le_max_left _ _) hrecip

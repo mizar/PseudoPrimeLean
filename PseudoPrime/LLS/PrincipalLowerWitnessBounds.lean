@@ -40,8 +40,8 @@ theorem prime_trivial_false_of_principalLower_prefix {q A : ℕ} [NeZero q]
   have ht' : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ (99 / 40 : ℝ) * x → χ.primitiveCharacter p = 1 :=
     fun p hp hb ↦ PaperStatements.primitiveCharacter_apply_one_of_apply_one χ (ht p hp hb)
   have he :=
-    AnalyticNumberTheory.Arithmetic.pairedEulerPrefix_eq_twice_of_coprime_support
-      χ.primitiveCharacter S hS (fun n _ ↦ Nat.coprime_one_right n) (fun p hp hb _ ↦ ht' p hp hb)
+    AnalyticNumberTheory.Arithmetic.pairedEulerPrefix_eq_twice_of_coprime χ.primitiveCharacter S hS
+      (fun n _ ↦ Nat.coprime_one_right n) (fun p hp hb _ ↦ ht' p hp hb)
   have hd :
     g ≤
       ∑ n ∈ S,
@@ -52,7 +52,7 @@ theorem prime_trivial_false_of_principalLower_prefix {q A : ℕ} [NeZero q]
   have hb := gamma_primitive_re_le_reflectedSplit_of_prefix χ hne hqA hGRH hx hC S hd
   have hx0 : 0 < x := by linarith only [hx]
   have hl :=
-    gammaLocalCorrection_nonpos_of_level_primes_above χ hx0
+    gammaLocalCorrection_nonpos_of_large_primes χ hx0
       (fun p hp ↦ (level_prime_above_cutoff_of_all_prime_trivial χ ht hp).le)
   have hN := gamma_ramp_no_witness_comparison_general χ hx0 (fun p hp _ hb0 ↦ ht p hp hb0)
   dsimp only [principalLowerGap, reflectedSplitUpper] at hgap hb
@@ -85,8 +85,8 @@ theorem exists_odd_prime_ne_one_of_principalLower_prefix {q A : ℕ} [NeZero q]
     PaperStatements.primitiveCharacter_apply_one_of_apply_one χ
       (ht p hp (Nat.coprime_two_right.mp hc) hb)
   have he :=
-    AnalyticNumberTheory.Arithmetic.pairedEulerPrefix_eq_twice_of_coprime_support
-      χ.primitiveCharacter S hS (fun n hn ↦ Nat.coprime_two_right.mpr (hodd n hn)) ht'
+    AnalyticNumberTheory.Arithmetic.pairedEulerPrefix_eq_twice_of_coprime χ.primitiveCharacter S hS
+      (fun n hn ↦ Nat.coprime_two_right.mpr (hodd n hn)) ht'
   have hd :
     g ≤
       ∑ n ∈ S,
@@ -106,8 +106,8 @@ theorem exists_odd_prime_ne_one_of_principalLower_prefix {q A : ℕ} [NeZero q]
 cap with gap above the level-prime cost gives a negative unit-prime witness. Retain the
 full Euler prefix and conductor cancellation, then use quadraticity and coprimality.
 This accepts improved principal comparisons without repeating the arithmetic proof. -/
-theorem exists_prime_neg_one_of_principalLower_conductor_prefix {q A : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hqA : q ≤ A)
+theorem exists_prime_negOne_principalConductor_GRH {q A : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hqA : q ≤ A)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x C Y g a d P : ℝ} (hx : 2 ≤ x)
     (hP :
       P ≤
@@ -132,8 +132,8 @@ theorem exists_prime_neg_one_of_principalLower_conductor_prefix {q A : ℕ} [NeZ
     have ht : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ (99 / 40 : ℝ) * x → χ p = 1 := fun p hp hd hb ↦
       Classical.byContradiction (fun hv ↦ hnone ⟨p, hp, hd, hb, hv⟩)
     have hb :=
-      gamma_primitive_add_local_le_reflectedSplit_conductor_prefix χ hquad hne hqA hGRH hx hY ha hd
-        hscale hprime hYcut hC ht
+      gammaPrimitive_local_reflectedPrefix_GRH χ hquad hne hqA hGRH hx hY ha hd hscale hprime hYcut
+        hC ht
     have hN := gamma_ramp_no_witness_comparison χ hquad (by linarith only [hx] : 0 < x) ht
     dsimp only [principalLowerGap, reflectedSplitUpper] at hgap hb
     linarith only [hb, hP, hN, hgap, hg]

@@ -61,7 +61,7 @@ private theorem two_mul_squareCorrectionTerm_eq (x : ℝ) (m : ℕ) :
 /-- The sum of Lambda(n)/(n^2 log n) equals log(pi^2/6). Identify its complex
 L-series with the logarithm of the zeta Euler product, take real parts of the exponential
 identity, and use zeta(2)=pi^2/6. This fixes the constant in the reciprocal L-value bound. -/
-theorem tsum_mangoldtLogSquareTerm_eq_log_pi_sq_div_six :
+theorem tsum_mangoldtLogSquare_eq_log_pi_sq_div_six :
     ∑' n : ℕ, mangoldtLogSquareTerm n = Real.log (Real.pi ^ 2 / 6) := by
   change
     (∑' n : ℕ, ArithmeticFunction.vonMangoldt n / ((n : ℝ) ^ 2 * Real.log n)) =
@@ -96,7 +96,7 @@ theorem two_mul_squareCorrection_sum_eq (x : ℝ) (s : Finset ℕ) :
       Real.log (Real.pi ^ 2 / 6) - (∑' m : { m : ℕ // m ∉ s }, mangoldtLogSquareTerm m) -
         2 * (∑ m ∈ s, ArithmeticFunction.vonMangoldt m) / (x * Real.log x) := by
   have h := summable_mangoldtLogSquareTerm.sum_add_tsum_compl (s := s)
-  rw [tsum_mangoldtLogSquareTerm_eq_log_pi_sq_div_six] at h
+  rw [tsum_mangoldtLogSquare_eq_log_pi_sq_div_six] at h
   change
     (∑ m ∈ s, mangoldtLogSquareTerm m) + (∑' m : { m : ℕ // m ∉ s }, mangoldtLogSquareTerm m) =
       Real.log (Real.pi ^ 2 / 6) at h

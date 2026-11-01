@@ -44,8 +44,8 @@ Conclusion: the associated analytic multiplicity is positive.
 Content: a zero has nonzero analytic order, while global nontriviality makes that order finite.
 Role: records the positive integer coefficient of a primitive zero residue.
 -/
-theorem dirichletLFunctionZeroMultiplicity_pos {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
-    (hχ : χ ≠ 1) {ρ : ℂ} (hzero : DirichletCharacter.LFunction χ ρ = 0) :
+theorem LFunctionZeroMultiplicity_pos {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ : χ ≠ 1)
+    {ρ : ℂ} (hzero : DirichletCharacter.LFunction χ ρ = 0) :
     0 < dirichletLFunctionZeroMultiplicity χ ρ := by
   have hanalytic : AnalyticAt ℂ (DirichletCharacter.LFunction χ) ρ :=
     (DirichletCharacter.differentiable_LFunction hχ).analyticAt ρ
@@ -55,8 +55,7 @@ theorem dirichletLFunctionZeroMultiplicity_pos {N : ℕ} [NeZero N] {χ : Dirich
     intro htop
     have hmero := hanalytic.meromorphicOrderAt_eq
     rw [htop] at hmero
-    exact
-      meromorphicOrderAt_dirichletLFunction_ne_top χ hχ ρ (by simpa only [ENat.map_top] using hmero)
+    exact meromorphicOrderAt_LFunction_ne_top χ hχ ρ (by simpa only [ENat.map_top] using hmero)
   have hcast := Nat.cast_analyticOrderNatAt hfinite
   apply Nat.pos_of_ne_zero
   intro hmult
@@ -70,8 +69,8 @@ Conclusion: a local analytic factorization of its continued `L`-function at that
 Content: finite analytic order extracts a nonvanishing analytic factor after the vanishing power.
 Role: this is the local input for proving the logarithmic-derivative residue formula at a zero.
 -/
-theorem exists_dirichletLFunction_localFactor {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
-    (hχ : χ ≠ 1) (ρ : ℂ) :
+theorem exists_LFunction_localFactor {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hχ : χ ≠ 1)
+    (ρ : ℂ) :
     ∃ g : ℂ → ℂ,
       AnalyticAt ℂ g ρ ∧
         g ρ ≠ 0 ∧
@@ -83,8 +82,7 @@ theorem exists_dirichletLFunction_localFactor {N : ℕ} [NeZero N] {χ : Dirichl
     intro htop
     have hmero := hanalytic.meromorphicOrderAt_eq
     rw [htop] at hmero
-    exact
-      meromorphicOrderAt_dirichletLFunction_ne_top χ hχ ρ (by simpa only [ENat.map_top] using hmero)
+    exact meromorphicOrderAt_LFunction_ne_top χ hχ ρ (by simpa only [ENat.map_top] using hmero)
   simpa only [dirichletLFunctionZeroMultiplicity] using hanalytic.analyticOrderAt_ne_top.mp hfinite
 
 /--
@@ -95,9 +93,8 @@ Content: differentiate the finite-order local factorization and use product loga
 rules away from the center.
 Role: the local identity from which a contour kernel's principal part at an `L`-zero is obtained.
 -/
-theorem exists_eventuallyEq_logDeriv_dirichletLFunction_at_zero {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hχ : χ ≠ 1) {ρ : ℂ}
-    (hzero : DirichletCharacter.LFunction χ ρ = 0) :
+theorem exists_L_logDeriv_zero_expansion {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hχ : χ ≠ 1) {ρ : ℂ} (hzero : DirichletCharacter.LFunction χ ρ = 0) :
     ∃ g : ℂ → ℂ,
       0 < dirichletLFunctionZeroMultiplicity χ ρ ∧
         AnalyticAt ℂ g ρ ∧
@@ -105,8 +102,8 @@ theorem exists_eventuallyEq_logDeriv_dirichletLFunction_at_zero {N : ℕ} [NeZer
         Filter.EventuallyEq (nhdsWithin ρ ({ρ}ᶜ : Set ℂ))
           (logDeriv (DirichletCharacter.LFunction χ))
           (fun s ↦ (dirichletLFunctionZeroMultiplicity χ ρ : ℂ) / (s - ρ) + logDeriv g s) := by
-  obtain ⟨g, hganalytic, hgzero, hfactor⟩ := exists_dirichletLFunction_localFactor hχ ρ
-  refine ⟨g, dirichletLFunctionZeroMultiplicity_pos hχ hzero, hganalytic, hgzero, ?_⟩
+  obtain ⟨g, hganalytic, hgzero, hfactor⟩ := exists_LFunction_localFactor hχ ρ
+  refine ⟨g, LFunctionZeroMultiplicity_pos hχ hzero, hganalytic, hgzero, ?_⟩
   have hlog :
     Filter.EventuallyEq (nhdsWithin ρ ({ρ}ᶜ : Set ℂ)) (logDeriv (DirichletCharacter.LFunction χ))
       (logDeriv fun s ↦ (s - ρ) ^ dirichletLFunctionZeroMultiplicity χ ρ • g s) :=

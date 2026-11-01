@@ -21,7 +21,7 @@ a critical-line Gamma majorant by a signed Poisson pair gives convergence and
 a retained-prefix upper bound for the actual Gamma zero mass. RH places each
 nonzero-divisor zero on the critical line. Transfer the height-kernel result
 without changing the multiplicity or taking separate endpoint norms. -/
-theorem gamma_zeroMass_le_of_poissonDifferenceWeight_majorant {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem gamma_zeroMass_le_of_majorant_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {σ τ u v : ℝ} (hs : 1 < σ) (hst : σ ≤ τ) (hv : 0 ≤ v)
     (hvu : v ≤ u) (A B : Finset ℕ)
@@ -43,7 +43,7 @@ theorem gamma_zeroMass_le_of_poissonDifferenceWeight_majorant {q : ℕ} [NeZero 
               (logDeriv (1 : DirichletCharacter ℂ 1).LFunction (σ : ℂ)).re -
               (τ - σ) * (∑ m ∈ B, Real.log m * realPairedEulerTerm χ τ m)) := by
   have h :=
-    zeroMass_le_of_poissonDifferenceWeight_majorant hq hRH hp hne hinv hs hst hv hvu A B
+    zeroMass_le_of_poisson_majorant_RH hq hRH hp hne hinv hs hst hv hvu A B
       (fun t ↦ ‖Complex.Gamma ((1 / 2 : ℂ) + Complex.I * t)‖) (fun _ ↦ norm_nonneg _) hmajorant
   have he (ρ : ℂ) :
     (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) * ‖Complex.Gamma ρ‖ =
@@ -52,8 +52,7 @@ theorem gamma_zeroMass_le_of_poissonDifferenceWeight_majorant {q : ℕ} [NeZero 
     by_cases hD : MeromorphicOn.divisor χ.completedLFunction Set.univ ρ = 0
     · simp only [hD, Int.cast_zero, zero_mul]
     · have hr :=
-        completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv
-          (completed_zero_of_divisor_ne_zero hne hD)
+        completed_zero_re_eq_half_of_RH hRH hp hinv (completed_zero_of_divisor_ne_zero hne hD)
       have hρ : ρ = (1 / 2 : ℂ) + Complex.I * ρ.im := by
         calc
           ρ = (ρ.re : ℂ) + (ρ.im : ℂ) * Complex.I := (Complex.re_add_im ρ).symm
@@ -80,7 +79,7 @@ noncomputable def twoPoleGammaConstant {q : ℕ} (χ : DirichletCharacter ℂ q)
 /-- For primitive nonprincipal individual-RH data, the two-pole profile bounds the
 Gamma zero mass, including convergence. Specialize the signed Poisson theorem and
 retain both finite Euler prefixes for later witness-absence comparisons. -/
-theorem gamma_zeroMass_le_twoPole_retained_prefixes {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem gammaNormMass_twoPole_prefixes_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (A B : Finset ℕ) :
     Summable
@@ -90,9 +89,8 @@ theorem gamma_zeroMass_le_twoPole_retained_prefixes {q : ℕ} [NeZero q] (hq : 2
         Real.log q / 2 + twoPoleGammaConstant χ - (∑ m ∈ A, realPairedEulerTerm χ (5 / 4) m) -
           (3 / 4 : ℝ) * (∑ m ∈ B, Real.log m * realPairedEulerTerm χ (11 / 4) m) := by
   have h :=
-    gamma_zeroMass_le_of_poissonDifferenceWeight_majorant hq hRH hp hne hinv (σ := 5 / 4) (τ :=
-      11 / 4) (u := 3 / 2) (v := 1 / 2) (by norm_num only) (by norm_num only) (by norm_num only)
-      (by norm_num only) A B
+    gamma_zeroMass_le_of_majorant_RH hq hRH hp hne hinv (σ := 5 / 4) (τ := 11 / 4) (u := 3 / 2)
+      (v := 1 / 2) (by norm_num only) (by norm_num only) (by norm_num only) (by norm_num only) A B
       (by
         intro t
         norm_num only
@@ -105,7 +103,7 @@ theorem gamma_zeroMass_le_twoPole_retained_prefixes {q : ℕ} [NeZero q] (hq : 2
 /-- The principal logarithmic derivative at five fourths has norm at most four.
 Use the Euler-ratio estimate and the rational quarter-power lower bound.
 This bounds the principal contribution to the two-pole remainder. -/
-theorem norm_principal_logDeriv_five_fourths_le_four :
+theorem principal_logDeriv_5_4_le_four :
     ‖logDeriv (1 : DirichletCharacter ℂ 1).LFunction ((5 / 4 : ℝ) : ℂ)‖ ≤ 4 := by
   have h :=
     norm_logDeriv_real_le_euler_ratio (1 : DirichletCharacter ℂ 1) (r := 1 / 4) (by norm_num only)
@@ -139,8 +137,8 @@ Evaluate eight reciprocal-prefix terms rationally; use the result in the two-pol
 theorem abs_re_gammaFactor_five_fourths_le {q : ℕ} (χ : DirichletCharacter ℂ q) :
     |(logDeriv χ.gammaFactor ((5 / 4 : ℝ) : ℂ)).re| ≤ 27 / 20 := by
   have h :=
-    abs_re_logDeriv_gammaFactor_le_prefix χ (σ := 5 / 4) (R := 5 / 8) (by norm_num only)
-      (by norm_num only) (by norm_num only) (by norm_num only) 8
+    gammaLogDeriv_re_le_prefix χ (σ := 5 / 4) (R := 5 / 8) (by norm_num only) (by norm_num only)
+      (by norm_num only) (by norm_num only) 8
   have hb : Gamma.gammaPrefixAllowance (5 / 8) 8 ≤ (27 / 20 : ℝ) := by
     norm_num only [Gamma.gammaPrefixAllowance, Finset.sum_range_succ, Finset.sum_range_zero,
       max_def, ite_true, ite_false]
@@ -151,8 +149,8 @@ Evaluate eight reciprocal-prefix terms rationally; use the result in the two-pol
 theorem abs_re_gammaFactor_eleven_fourths_le {q : ℕ} (χ : DirichletCharacter ℂ q) :
     |(logDeriv χ.gammaFactor ((11 / 4 : ℝ) : ℂ)).re| ≤ 71 / 100 := by
   have h :=
-    abs_re_logDeriv_gammaFactor_le_prefix χ (σ := 11 / 4) (R := 11 / 8) (by norm_num only)
-      (by norm_num only) (by norm_num only) (by norm_num only) 8
+    gammaLogDeriv_re_le_prefix χ (σ := 11 / 4) (R := 11 / 8) (by norm_num only) (by norm_num only)
+      (by norm_num only) (by norm_num only) 8
   have hb : Gamma.gammaPrefixAllowance (11 / 8) 8 ≤ (71 / 100 : ℝ) := by
     norm_num only [Gamma.gammaPrefixAllowance, Finset.sum_range_succ, Finset.sum_range_zero,
       max_def, ite_true, ite_false]
@@ -170,14 +168,14 @@ theorem twoPoleGammaConstant_le {q : ℕ} (χ : DirichletCharacter ℂ q) :
     (abs_le.mp
         ((Complex.abs_re_le_norm
               (logDeriv (1 : DirichletCharacter ℂ 1).LFunction ((5 / 4 : ℝ) : ℂ))).trans
-          norm_principal_logDeriv_five_fourths_le_four)).1
+          principal_logDeriv_5_4_le_four)).1
   unfold twoPoleGammaConstant
   linarith only [(abs_le.mp hA).2, (abs_le.mp hB).1, hZ, hlow]
 
 /-- For primitive nonprincipal individual-RH data, bound the convergent Gamma zero
 mass by half the conductor logarithm plus 419/50, retaining both Euler prefixes.
 Insert the rational remainder estimate into the signed-profile inequality. -/
-theorem gamma_zeroMass_le_twoPole_rational_retained {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem gammaNormMass_twoPole_rational_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (A B : Finset ℕ) :
     Summable
@@ -186,7 +184,7 @@ theorem gamma_zeroMass_le_twoPole_rational_retained {q : ℕ} [NeZero q] (hq : 2
       (∑' ρ : ℂ, (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) * ‖Complex.Gamma ρ‖) ≤
         Real.log q / 2 + 419 / 50 - (∑ m ∈ A, realPairedEulerTerm χ (5 / 4) m) -
           (3 / 4 : ℝ) * (∑ m ∈ B, Real.log m * realPairedEulerTerm χ (11 / 4) m) := by
-  have h := gamma_zeroMass_le_twoPole_retained_prefixes hq hRH hp hne hinv A B
+  have h := gammaNormMass_twoPole_prefixes_RH hq hRH hp hne hinv A B
   have hc := twoPoleGammaConstant_le χ
   refine ⟨h.1, ?_⟩
   linarith only [h.2, hc]
@@ -194,7 +192,7 @@ theorem gamma_zeroMass_le_twoPole_rational_retained {q : ℕ} [NeZero q] (hq : 2
 /-- For primitive nonprincipal individual-RH data, the Gamma zero mass converges and
 is at most half the conductor logarithm plus 419/50. Choose empty Euler prefixes.
 This supplies a finite-scale alternative to the existing prefix mass estimate. -/
-theorem gamma_zeroMass_le_half_log_add_419_fiftieths {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem gammaNormMass_half_log_419_50_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     Summable
@@ -202,13 +200,13 @@ theorem gamma_zeroMass_le_half_log_add_419_fiftieths {q : ℕ} [NeZero q] (hq : 
           (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) * ‖Complex.Gamma ρ‖) ∧
       (∑' ρ : ℂ, (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) * ‖Complex.Gamma ρ‖) ≤
         Real.log q / 2 + 419 / 50 := by
-  have h := gamma_zeroMass_le_twoPole_rational_retained hq hRH hp hne hinv ∅ ∅
+  have h := gammaNormMass_twoPole_rational_RH hq hRH hp hne hinv ∅ ∅
   simpa only [Finset.sum_empty, mul_zero, sub_zero] using h
 
 /-- Below the stated logarithmic threshold, the two-pole rational mass bound is
 strictly smaller than the earlier prefix mass bound. Rational arithmetic proves
 the comparison; this statement compares zero-mass bounds, not witness bounds. -/
-theorem twoPole_rational_upper_lt_prefix_upper {L : ℝ} (hL : L < 288000000 / 716577) :
+theorem twoPole_upper_lt_prefix_upper {L : ℝ} (hL : L < 288000000 / 716577) :
     L / 2 + 419 / 50 < (11783423 / 25000000 : ℝ) * L + 199 / 10 := by linarith only [hL]
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

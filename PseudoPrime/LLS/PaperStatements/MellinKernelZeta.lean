@@ -37,7 +37,7 @@ identity permits the kernel denominator comparison. This majorizes the zeta zero
 theorem norm_zetaKernelZeroTerm_le (K : MellinKernel) (hRH : RiemannHypothesis) {C : ℝ} (hC : 0 < C)
     (hb : ∀ t : ℝ, ‖K.function (Complex.I * t)‖ ≤ C / (1 + t ^ 2)) (ρ : Zero) :
     ‖K.zetaKernelZeroTerm ρ‖ ≤ C * ((riemannXiZeroMultiplicity (ρ : ℂ) : ℝ) / ‖(ρ : ℂ)‖ ^ 2) := by
-  have hr := riemannXi_zero_re_eq_half_of_riemannHypothesis hRH ρ.property
+  have hr := xi_zero_re_eq_half_of_riemannHypothesis hRH ρ.property
   have hk := norm_kernel_le_inv_normSq K hC hb hr
   rw [Complex.normSq_eq_norm_sq] at hk
   rw [zetaKernelZeroTerm, norm_mul, Complex.norm_natCast]
@@ -53,7 +53,7 @@ This permits the infinite zero sum in the principal-character explicit formula. 
 theorem summable_zetaKernelZeroTerm (K : MellinKernel) (hRH : RiemannHypothesis) :
     Summable K.zetaKernelZeroTerm := by
   obtain ⟨C, hC, hb⟩ := exists_vertical_decay_bound K
-  have hs := summable_inverse_square_mass_of_riemannHypothesis hRH
+  have hs := summable_inverse_square_mass_RH hRH
   exact (hs.mul_left C).of_norm_bounded (norm_zetaKernelZeroTerm_le K hRH hC hb)
 
 open AnalyticNumberTheory.RiemannXi in
@@ -102,7 +102,7 @@ theorem exists_norm_tsum_zetaOscillatingZeroTerm_le (K : MellinKernel) (hRH : Ri
 /-- To the right of one, the weighted negative zeta logarithmic derivative splits
 into the xi part and the pole and shifted-gamma terms. Rewrite the existing xi
 completion identity and distribute the weight. This identifies the principal contour. -/
-theorem zeta_arithmetic_logDeriv_eq_xi_add_pole_gamma {s : ℂ} (hs : 1 < s.re) (w : ℂ) :
+theorem zeta_logDeriv_xi_pole_gamma {s : ℂ} (hs : 1 < s.re) (w : ℂ) :
     -logDeriv riemannZeta s * w =
       -logDeriv PseudoPrime.AnalyticNumberTheory.RiemannXi.riemannXi s * w +
         (1 / (s - 1) - Complex.log (Real.pi : ℂ) / 2 + Complex.digamma (s / 2 + 1) / 2) * w := by
@@ -113,8 +113,8 @@ theorem zeta_arithmetic_logDeriv_eq_xi_add_pole_gamma {s : ℂ} (hs : 1 < s.re) 
 principal arithmetic sum is the normalized weighted zeta logarithmic derivative
 integral. Identify the level-one L-function with zeta in the general arithmetic
 Mellin formula. This is the starting contour for the principal estimate. -/
-theorem tsum_level_one_summand_eq_integral_zeta_logDeriv (K : MellinKernel) {x c : ℝ} (hx : 0 < x)
-    (hc : 1 / 2 < c) (hc' : c ≤ 1 / 2 + K.delta) :
+theorem levelOne_summand_integral_zeta (K : MellinKernel) {x c : ℝ} (hx : 0 < x) (hc : 1 / 2 < c)
+    (hc' : c ≤ 1 / 2 + K.delta) :
     (∑' n : ℕ, K.summand (1 : DirichletCharacter ℂ 1) x n) =
       ((1 / (2 * Real.pi) : ℝ) : ℂ) *
         ∫ t : ℝ,
@@ -128,11 +128,11 @@ open AnalyticNumberTheory.RiemannXi in
 oscillatory zeta zero term for any real scale. Translation preserves analytic order,
 and RH identifies the shifted zero with its imaginary height. This matches finite
 xi contour residues to the absolutely convergent zeta zero series. -/
-theorem weightedResidue_xi_zero_eq_neg_zetaOscillatingZeroTerm (K : MellinKernel)
-    (hRH : RiemannHypothesis) (x : ℝ) (ρ : Zero) :
+theorem xi_zero_residue_zetaTerm_RH (K : MellinKernel) (hRH : RiemannHypothesis) (x : ℝ)
+    (ρ : Zero) :
     weightedResidue K (fun z : ℂ => riemannXi (z + 1 / 2)) x ((ρ : ℂ) - 1 / 2) =
       -K.zetaOscillatingZeroTerm x ρ := by
-  have hr := riemannXi_zero_re_eq_half_of_riemannHypothesis hRH ρ.property
+  have hr := xi_zero_re_eq_half_of_riemannHypothesis hRH ρ.property
   have he : (ρ : ℂ) - 1 / 2 = Complex.I * (ρ : ℂ).im := by
     apply Complex.ext
     · simp only [Complex.sub_re, Complex.div_ofNat_re, Complex.one_re, hr, Complex.mul_re,

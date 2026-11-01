@@ -71,10 +71,10 @@ belong to H, its primitive aggregate is bounded by the exact principal sum
 plus the signed prefix budget and contour costs for every nonidentity character.
 Use the common nonnegative Euler weight and retain twice the full finite prefix.
 No logarithmic entrance or numerical Gamma-parity cap is assumed. -/
-theorem gamma_primitive_average_re_le_signed_prime_prefix {q Q : ℕ} [NeZero q] (hQ : 20000 ≤ Q)
-    (hqQ : q ≤ Q) (H : Subgroup (ZMod q)ˣ)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x b : ℝ} (hx : 2 ≤ x)
-    (hb : 0 ≤ b) (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → NumberTheory.residueInSubgroup q H p) :
+theorem gammaAverage_re_le_signed_prime_prefix {q Q : ℕ} [NeZero q] (hQ : 20000 ≤ Q) (hqQ : q ≤ Q)
+    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {x b : ℝ} (hx : 2 ≤ x) (hb : 0 ≤ b)
+    (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → NumberTheory.residueInSubgroup q H p) :
     (∑ χ : NumberTheory.subgroupAnnihilator H,
         (∑' k : ℕ, gammaMellinKernel.summand χ.val.primitiveCharacter x k).re) ≤
       (∑' k : ℕ, gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re +
@@ -96,8 +96,7 @@ theorem gamma_primitive_average_re_le_signed_prime_prefix {q Q : ℕ} [NeZero q]
             43 * x ^ (-9 / 16 : ℝ) := by
     intro χ hχ
     exact
-      gamma_primitiveCharacter_sum_re_le_signed_prime_prefix_ambient hQ hqQ χ.val
-        (fun he ↦ hχ (Subtype.ext he)) hGRH hx hb
+      gammaCharSum_signedPrefix_ambient_GRH hQ hqQ χ.val (fun he ↦ hχ (Subtype.ext he)) hGRH hx hb
         (fun p hp hpb ↦ annihilator_apply_one_of_residue_mem H χ (hsmall p hp hpb))
   have h := sum_le_distinguished_and_common (1 : NumberTheory.subgroupAnnihilator H) F h1 hrest
   rw [NumberTheory.card_subgroupAnnihilator] at h
@@ -139,8 +138,8 @@ theorem gamma_primitive_average_re_le_even_prime_prefix {q Q : ℕ} [NeZero q] (
             43 * x ^ (-9 / 16 : ℝ) := by
     intro χ hχ
     exact
-      gamma_primitiveCharacter_sum_re_le_even_signed_prime_prefix hQ hqQ χ.val
-        (fun he ↦ hχ (Subtype.ext he)) (heven χ) hGRH hx hb
+      gammaCharacterSum_re_le_even_signed_prime_prefix hQ hqQ χ.val (fun he ↦ hχ (Subtype.ext he))
+        (heven χ) hGRH hx hb
         (fun p hp hpb ↦ annihilator_apply_one_of_residue_mem H χ (hsmall p hp hpb))
   have h := sum_le_distinguished_and_common (1 : NumberTheory.subgroupAnnihilator H) F h1 hrest
   rw [NumberTheory.card_subgroupAnnihilator] at h

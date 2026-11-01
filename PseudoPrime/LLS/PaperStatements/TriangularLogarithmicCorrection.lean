@@ -90,8 +90,8 @@ theorem triangular18_primitive_correction_norm_sum_le {q : ℕ} [NeZero q]
 
 /-- For a nonzero level and positive scale, primitive arithmetic series differ
 in norm by at most 108 log q. Summability permits subtraction and the norm sum bound. -/
-theorem triangular18_primitive_arithmetic_difference_norm_le {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) {x : ℝ} (hx : 0 < x) :
+theorem triangular18_primitive_diff_bound {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) {x : ℝ}
+    (hx : 0 < x) :
     ‖(∑' n : ℕ, (triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)).summand χ x n) -
           (∑' n : ℕ,
             (triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)).summand χ.primitiveCharacter
@@ -116,7 +116,7 @@ theorem triangular18_principal_arithmetic_lower_of_rh {q : ℕ} [NeZero q] (hRH 
           (triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)).summand
             (1 : DirichletCharacter ℂ q) x n).re := by
   let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
-  have he := triangular18_primitive_arithmetic_difference_norm_le (1 : DirichletCharacter ℂ q) hx
+  have he := triangular18_primitive_diff_bound (1 : DirichletCharacter ℂ q) hx
   rw [tsum_congr (MellinKernel.principal_primitive_summand_eq_level_one K x)] at he
   have hr := (Complex.abs_re_le_norm _).trans he
   rw [Complex.sub_re] at hr

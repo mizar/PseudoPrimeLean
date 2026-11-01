@@ -36,8 +36,8 @@ theorem gamma_majorant_at_log_distance {x y : ℝ} (hx : 0 < x) (hy : 0 < y) (l 
 majorant transports to a nearby scale with the exact paired Euler tail retained.
 Append the one admissible node and apply the existing full explicit formula. No new
 spectral grid is needed at the target scale. -/
-theorem gamma_primitive_sum_re_le_logarithmic_phase_prefix_tail {q m : ℕ} [NeZero m]
-    (hq : 20000 ≤ q) (hm : 3 ≤ m) (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
+theorem gammaSum_phasePrefixTail_GRH {q m : ℕ} [NeZero m] (hq : 20000 ≤ q) (hm : 3 ≤ m)
+    (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x y : ℝ} (hx : 2 ≤ x) (hy : 0 < y) (l : List (ℚ × ℚ))
     (hl : ∀ ab ∈ l, (1 / 2 : ℚ) < ab.1) (δ : ℚ) (hd : |Real.log x - Real.log y| ≤ (δ : ℝ))
@@ -63,7 +63,7 @@ theorem gamma_primitive_sum_re_le_logarithmic_phase_prefix_tail {q m : ℕ} [NeZ
 /-- Under the transported-phase hypotheses and original Euler nonnegativity,
 the actual primitive Gamma sum obeys the extended prefix budget with certified
 remainder. Infer delta>=0 and preserve nonnegative Mangoldt weights. -/
-theorem gamma_primitive_sum_re_le_logarithmic_phase_prefix {q m : ℕ} [NeZero m] (hq : 20000 ≤ q)
+theorem gammaPrimitiveSum_re_le_logarithmic_phase_prefix {q m : ℕ} [NeZero m] (hq : 20000 ≤ q)
     (hm : 3 ≤ m) (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x y : ℝ} (hx : 2 ≤ x) (hy : 0 < y) (l : List (ℚ × ℚ))
@@ -115,18 +115,18 @@ theorem gamma_primitive_sum_re_le_anchor_prefix {q m : ℕ} [NeZero m] (hq : 200
   have hpos : ∀ ab ∈ l, (0 : ℚ) < ab.1 := fun ab hab ↦
     (by norm_num only : (0 : ℚ) < 1 / 2).trans (hl ab hab)
   have hz :=
-    gammaMellinKernel.neg_re_oscillatingZeroSum_le_finiteResolvent hm2 hGRH hp hne hinv
-      (by linarith only [hx]) (Analysis.logarithmicPhaseExtension l δ)
+    gammaMellinKernel.negRe_zeroSum_le_resolvent_GRH hm2 hGRH hp hne hinv (by linarith only [hx])
+      (Analysis.logarithmicPhaseExtension l δ)
       (fun ab hab ↦
         (by norm_num only : (0 : ℚ) < 1 / 2).trans
           (Analysis.logarithmicPhaseExtension_admissible hl δ ab hab))
       (gamma_majorant_at_log_distance (by linarith only [hx]) hy l δ hd hyphase)
   have hmz :=
-    AnalyticNumberTheory.DirichletLFunction.logarithmicPhaseExtension_zeroMass_le hm2 (hGRH m χ hp)
-      hp hne hinv l hpos hd0
+    AnalyticNumberTheory.DirichletLFunction.logPhaseExtension_mass_le_RH hm2 (hGRH m χ hp) hp hne
+      hinv l hpos hd0
   have hb :=
-    AnalyticNumberTheory.DirichletLFunction.finiteSignedResolvent_zeroMass_le_prefix hm2
-      (hGRH m χ hp) hp hne hinv l hl (Analysis.finiteSignedMangoldtWeight_nonneg l hW) B
+    AnalyticNumberTheory.DirichletLFunction.signedResolvent_mass_le_prefix_RH hm2 (hGRH m χ hp) hp
+      hne hinv l hl (Analysis.finiteSignedMangoldtWeight_nonneg l hW) B
   have hr := re_gamma_primitive_remainder_le_conductor_free hq hm hmq hp hne hinv hGRH hx
   simp only [Complex.add_re] at hr
   dsimp only [AnalyticNumberTheory.DirichletLFunction.finiteSignedPrefixBudget]

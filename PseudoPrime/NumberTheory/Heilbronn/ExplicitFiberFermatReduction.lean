@@ -19,9 +19,9 @@ namespace PseudoPrime.NumberTheory.Heilbronn
 give a prime q≤log(p)^(1838239/1000000) with nontrivial Fermat quotient modulo p².
 Use the proved explicit interval cutoff and then extract a prime factor.
 The quantitative prime-supply and floor budgets remain explicit hypotheses. -/
-theorem exists_prime_nontrivial_power_of_explicit_fiber_smooth_bounds {p : ℕ} [Fact p.Prime]
-    (hodd : Odd p) (hlarge : explicitFiniteFiberPrimeThreshold (1388714689827) ≤ p)
-    (hL : 2 ≤ Real.log p) (hB : 0 < Nat.floor ((Real.log p) ^ (1838239 / 1000000 : ℝ)))
+theorem exists_prime_pow_ne_one_1838239_d6_smooth {p : ℕ} [Fact p.Prime] (hodd : Odd p)
+    (hlarge : explicitFiniteFiberPrimeThreshold (1388714689827) ≤ p) (hL : 2 ≤ Real.log p)
+    (hB : 0 < Nat.floor ((Real.log p) ^ (1838239 / 1000000 : ℝ)))
     (hC : 0 < Nat.floor ((p : ℝ) ^ (8382354 / 10000000 : ℝ)))
     (hcL : 2 * (999997 / 1000000 : ℝ) ≤ Real.log (Real.log p))
     (hMp :
@@ -41,7 +41,7 @@ theorem exists_prime_nontrivial_power_of_explicit_fiber_smooth_bounds {p : ℕ} 
   have hsmooth :=
     fixed_smooth_count_at_rational_cutoff_of_bounds (Fact.out : p.Prime).pos hk hL hB hC hcL hMp
       hgap (henv k hhi) hlo
-  obtain ⟨q, hq, hqB, hpow⟩ := exists_prime_nontrivial_power_of_interval_and_smooth hcount hsmooth
+  obtain ⟨q, hq, hqB, hpow⟩ := exists_prime_pow_ne_one_of_interval_smooth hcount hsmooth
   exact
     ⟨q, hq,
       (Nat.cast_le.mpr (Nat.lt_add_one_iff.mp hqB)).trans
@@ -51,9 +51,9 @@ theorem exists_prime_nontrivial_power_of_explicit_fiber_smooth_bounds {p : ℕ} 
 /-- At scale 70/38, pointwise smooth budgets yield a prime q≤log(p)^(184211/100000)
 whose Fermat quotient is nontrivial modulo p². Apply the explicit interval
 cutoff and extract a prime factor from its smooth inputs. -/
-theorem exists_prime_nontrivial_power_of_explicit_fiber_smooth_bounds_74_40 {p : ℕ} [Fact p.Prime]
-    (hodd : Odd p) (hlarge : explicitFiniteFiberPrimeThreshold 283000007562 ≤ p)
-    (hL : 2 ≤ Real.log p) (hB : 0 < Nat.floor ((Real.log p) ^ (1850004 / 1000000 : ℝ)))
+theorem exists_prime_pow_ne_one_1850004_d6_smooth {p : ℕ} [Fact p.Prime] (hodd : Odd p)
+    (hlarge : explicitFiniteFiberPrimeThreshold 283000007562 ≤ p) (hL : 2 ≤ Real.log p)
+    (hB : 0 < Nat.floor ((Real.log p) ^ (1850004 / 1000000 : ℝ)))
     (hC : 0 < Nat.floor ((p : ℝ) ^ (8500002 / 10000000 : ℝ)))
     (hcL : 2 * (999997 / 1000000 : ℝ) ≤ Real.log (Real.log p))
     (hMp :
@@ -71,9 +71,8 @@ theorem exists_prime_nontrivial_power_of_explicit_fiber_smooth_bounds_74_40 {p :
         (q : ℝ) ≤ (Real.log p) ^ (1850004 / 1000000 : ℝ) ∧ (q : ZMod (p ^ 2)) ^ (p - 1) ≠ 1 := by
   obtain ⟨k, hk, _, hlo, hhi, hcount⟩ := exists_fixed_finite_fiber_interval_bound_40_74 hodd hlarge
   have hsmooth :=
-    fixed_smooth_count_at_rational_cutoff_74_40_of_bounds (Fact.out : p.Prime).pos hk hL hB hC hcL
-      hMp hgap (henv k hhi) hlo
-  obtain ⟨q, hq, hqB, hpow⟩ := exists_prime_nontrivial_power_of_interval_and_smooth hcount hsmooth
+    smooth_count_at_cutoff_74_40 (Fact.out : p.Prime).pos hk hL hB hC hcL hMp hgap (henv k hhi) hlo
+  obtain ⟨q, hq, hqB, hpow⟩ := exists_prime_pow_ne_one_of_interval_smooth hcount hsmooth
   exact
     ⟨q, hq,
       (Nat.cast_le.mpr (Nat.lt_add_one_iff.mp hqB)).trans
@@ -83,9 +82,9 @@ theorem exists_prime_nontrivial_power_of_explicit_fiber_smooth_bounds_74_40 {p :
 /-- At scale 74/40, pointwise smooth budgets yield a prime q≤log(p)^(1.850004)
 whose Fermat quotient is nontrivial modulo p². Apply the explicit interval
 cutoff and extract a prime factor from its smooth inputs. -/
-theorem exists_prime_nontrivial_power_of_explicit_fiber_smooth_bounds_38_70 {p : ℕ} [Fact p.Prime]
-    (hodd : Odd p) (hlarge : explicitFiniteFiberPrimeThreshold 242591045876 ≤ p)
-    (hL : 2 ≤ Real.log p) (hB : 0 < Nat.floor ((Real.log p) ^ (184211 / 100000 : ℝ)))
+theorem exists_prime_pow_ne_one_184211_d5_smooth {p : ℕ} [Fact p.Prime] (hodd : Odd p)
+    (hlarge : explicitFiniteFiberPrimeThreshold 242591045876 ≤ p) (hL : 2 ≤ Real.log p)
+    (hB : 0 < Nat.floor ((Real.log p) ^ (184211 / 100000 : ℝ)))
     (hC : 0 < Nat.floor ((p : ℝ) ^ (160000019 / 190000000 : ℝ)))
     (hcL : 2 * (999997 / 1000000 : ℝ) ≤ Real.log (Real.log p))
     (hMp :
@@ -104,9 +103,8 @@ theorem exists_prime_nontrivial_power_of_explicit_fiber_smooth_bounds_38_70 {p :
         (q : ℝ) ≤ (Real.log p) ^ (184211 / 100000 : ℝ) ∧ (q : ZMod (p ^ 2)) ^ (p - 1) ≠ 1 := by
   obtain ⟨k, hk, _, hlo, hhi, hcount⟩ := exists_fixed_finite_fiber_interval_bound_38_70 hodd hlarge
   have hsmooth :=
-    fixed_smooth_count_at_rational_cutoff_70_38_of_bounds (Fact.out : p.Prime).pos hk hL hB hC hcL
-      hMp hgap (henv k hhi) hlo
-  obtain ⟨q, hq, hqB, hpow⟩ := exists_prime_nontrivial_power_of_interval_and_smooth hcount hsmooth
+    smooth_count_at_cutoff_70_38 (Fact.out : p.Prime).pos hk hL hB hC hcL hMp hgap (henv k hhi) hlo
+  obtain ⟨q, hq, hqB, hpow⟩ := exists_prime_pow_ne_one_of_interval_smooth hcount hsmooth
   exact
     ⟨q, hq,
       (Nat.cast_le.mpr (Nat.lt_add_one_iff.mp hqB)).trans
@@ -116,9 +114,9 @@ theorem exists_prime_nontrivial_power_of_explicit_fiber_smooth_bounds_38_70 {p :
 /-- At scale 59/32, pointwise smooth budgets yield a prime q≤log(p)^(1.843755)
 whose Fermat quotient is nontrivial modulo p². Apply the explicit interval
 cutoff and extract a prime factor from its smooth inputs. -/
-theorem exists_prime_nontrivial_power_of_explicit_fiber_smooth_bounds_32_59 {p : ℕ} [Fact p.Prime]
-    (hodd : Odd p) (hlarge : explicitFiniteFiberPrimeThreshold 145000006050 ≤ p)
-    (hL : 2 ≤ Real.log p) (hB : 0 < Nat.floor ((Real.log p) ^ (1843755 / 1000000 : ℝ)))
+theorem exists_prime_pow_ne_one_1843755_d6_smooth {p : ℕ} [Fact p.Prime] (hodd : Odd p)
+    (hlarge : explicitFiniteFiberPrimeThreshold 145000006050 ≤ p) (hL : 2 ≤ Real.log p)
+    (hB : 0 < Nat.floor ((Real.log p) ^ (1843755 / 1000000 : ℝ)))
     (hC : 0 < Nat.floor ((p : ℝ) ^ (8437505 / 10000000 : ℝ)))
     (hcL : 2 * (999997 / 1000000 : ℝ) ≤ Real.log (Real.log p))
     (hMp :
@@ -136,9 +134,8 @@ theorem exists_prime_nontrivial_power_of_explicit_fiber_smooth_bounds_32_59 {p :
         (q : ℝ) ≤ (Real.log p) ^ (1843755 / 1000000 : ℝ) ∧ (q : ZMod (p ^ 2)) ^ (p - 1) ≠ 1 := by
   obtain ⟨k, hk, _, hlo, hhi, hcount⟩ := exists_fixed_finite_fiber_interval_bound_32_59 hodd hlarge
   have hsmooth :=
-    fixed_smooth_count_at_rational_cutoff_59_32_of_bounds (Fact.out : p.Prime).pos hk hL hB hC hcL
-      hMp hgap (henv k hhi) hlo
-  obtain ⟨q, hq, hqB, hpow⟩ := exists_prime_nontrivial_power_of_interval_and_smooth hcount hsmooth
+    smooth_count_at_cutoff_59_32 (Fact.out : p.Prime).pos hk hL hB hC hcL hMp hgap (henv k hhi) hlo
+  obtain ⟨q, hq, hqB, hpow⟩ := exists_prime_pow_ne_one_of_interval_smooth hcount hsmooth
   exact
     ⟨q, hq,
       (Nat.cast_le.mpr (Nat.lt_add_one_iff.mp hqB)).trans
@@ -148,8 +145,8 @@ theorem exists_prime_nontrivial_power_of_explicit_fiber_smooth_bounds_32_59 {p :
 /-- At scale 19/10, pointwise smooth budgets yield a prime q≤log(p)^1.900002716
 whose Fermat quotient is nontrivial modulo p². Apply the explicit interval
 cutoff and extract a prime factor from its smooth inputs. -/
-theorem exists_prime_nontrivial_power_of_explicit_fiber_smooth_bounds_10_19 {p : ℕ} [Fact p.Prime]
-    (hodd : Odd p) (hlarge : explicitFiniteFiberPrimeThreshold 4449271510 ≤ p) (hL : 2 ≤ Real.log p)
+theorem exists_prime_pow_ne_one_1900000016707_d12_smooth {p : ℕ} [Fact p.Prime] (hodd : Odd p)
+    (hlarge : explicitFiniteFiberPrimeThreshold 4449271510 ≤ p) (hL : 2 ≤ Real.log p)
     (hB : 0 < Nat.floor ((Real.log p) ^ (1900000016707 / 1000000000000 : ℝ)))
     (hC : 0 < Nat.floor ((p : ℝ) ^ (900000000000000001 / 1000000000000000000 : ℝ)))
     (hcL : 2 * (999999990558 / 1000000000000 : ℝ) ≤ Real.log (Real.log p))
@@ -172,9 +169,8 @@ theorem exists_prime_nontrivial_power_of_explicit_fiber_smooth_bounds_10_19 {p :
     exists_fixed_finite_fiber_interval_bound_10_19 hodd (by norm_num only : 76598623 ≤ 4449271510)
       hlarge
   have hsmooth :=
-    fixed_smooth_count_at_rational_cutoff_19_10_of_bounds (Fact.out : p.Prime).pos hk hL hB hC hcL
-      hMp hgap (henv k hhi) hlo
-  obtain ⟨q, hq, hqB, hpow⟩ := exists_prime_nontrivial_power_of_interval_and_smooth hcount hsmooth
+    smooth_count_at_cutoff_19_10 (Fact.out : p.Prime).pos hk hL hB hC hcL hMp hgap (henv k hhi) hlo
+  obtain ⟨q, hq, hqB, hpow⟩ := exists_prime_pow_ne_one_of_interval_smooth hcount hsmooth
   exact
     ⟨q, hq,
       (Nat.cast_le.mpr (Nat.lt_add_one_iff.mp hqB)).trans
@@ -183,9 +179,8 @@ theorem exists_prime_nontrivial_power_of_explicit_fiber_smooth_bounds_10_19 {p :
 
 /-- At scale 19/10, the sharper threshold-specific smooth budgets yield a
 prime q at most (log p)^1.9000007986 with nontrivial Fermat quotient modulo p². -/
-theorem exists_prime_nontrivial_power_of_explicit_fiber_smooth_bounds_10_19_53m {p u : ℕ}
-    [Fact p.Prime] (hodd : Odd p) (hu : 76598623 ≤ u)
-    (hlarge : explicitFiniteFiberPrimeThreshold u ≤ p) (hL : 2 ≤ Real.log p)
+theorem exists_prime_pow_ne_one_19000007986_d10_smooth {p u : ℕ} [Fact p.Prime] (hodd : Odd p)
+    (hu : 76598623 ≤ u) (hlarge : explicitFiniteFiberPrimeThreshold u ≤ p) (hL : 2 ≤ Real.log p)
     (hB : 0 < Nat.floor ((Real.log p) ^ (19000007986 / 10000000000 : ℝ)))
     (hC : 0 < Nat.floor ((p : ℝ) ^ (900000000000000001 / 1000000000000000000 : ℝ)))
     (hcL : 2 * (99999954008 / 100000000000 : ℝ) ≤ Real.log (Real.log p))
@@ -223,7 +218,7 @@ theorem exists_prime_nontrivial_power_of_explicit_fiber_smooth_bounds_10_19_53m 
           (99999954008 / 100000000000) * (1900000414 / 1000000000 - 1))
       hcL hMp (Nat.floor_le (Real.rpow_nonneg (by linarith only [hL]) _)) hgap hlogC (henv k hhi)
       hlo
-  obtain ⟨q, hq, hqB, hpow⟩ := exists_prime_nontrivial_power_of_interval_and_smooth hcount hsmooth
+  obtain ⟨q, hq, hqB, hpow⟩ := exists_prime_pow_ne_one_of_interval_smooth hcount hsmooth
   exact
     ⟨q, hq,
       (Nat.cast_le.mpr (Nat.lt_add_one_iff.mp hqB)).trans

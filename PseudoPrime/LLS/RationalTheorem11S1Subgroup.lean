@@ -41,7 +41,7 @@ theorem exists_prime_outside_subgroup_le_rationalRadius {q : ℕ} [NeZero q] (hq
 /-- Under GRH, q ≥ 3000 and H proper, the least coprime outside prime is
 at most the rational Part 1 radius squared. Minimize the bounded existence witness.
 Minimality is among all eligible primes and retains the pointwise expression. -/
-theorem exists_least_prime_outside_subgroup_le_rationalRadius {q : ℕ} [NeZero q] (hq : 3000 ≤ q)
+theorem exists_least_outside_rationalRadius_GRH {q : ℕ} [NeZero q] (hq : 3000 ≤ q)
     (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p,
@@ -57,9 +57,8 @@ theorem exists_least_prime_outside_subgroup_le_rationalRadius {q : ℕ} [NeZero 
 /-- Under GRH, q ≥ 3000 and H proper, a coprime outside prime lies through
 (log q+(1791/250)log log q+499/250)². Bound the nonnegative rational-radius root.
 This realizes the universal rational triple at the same starting value. -/
-theorem exists_prime_outside_subgroup_le_rationalProfile3000 {q : ℕ} (hq : 3000 ≤ q)
-    (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
+theorem exists_prime_outside_rational3000_GRH {q : ℕ} (hq : 3000 ≤ q) (H : Subgroup (ZMod q)ˣ)
+    (hH : H ≠ ⊤) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ,
       PrimeOutsideSubgroup q H p ∧
         (p : ℝ) ≤ (Real.log q + (1791 / 250 : ℝ) * Real.log (Real.log q) + 499 / 250) ^ 2 := by
@@ -77,15 +76,14 @@ theorem exists_prime_outside_subgroup_le_rationalProfile3000 {q : ℕ} (hq : 300
 /-- Under GRH, q ≥ 3000 and H proper, the least coprime outside prime is
 at most (log q+(1791/250)log log q+499/250)². Minimize the bounded subgroup witness.
 This preserves the rational triple and starting value in the least-prime interface. -/
-theorem exists_least_prime_outside_subgroup_le_rationalProfile3000 {q : ℕ} (hq : 3000 ≤ q)
-    (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
+theorem exists_least_outside_rational3000_GRH {q : ℕ} (hq : 3000 ≤ q) (H : Subgroup (ZMod q)ˣ)
+    (hH : H ≠ ⊤) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ,
       PrimeOutsideSubgroup q H p ∧
         (p : ℝ) ≤ (Real.log q + (1791 / 250 : ℝ) * Real.log (Real.log q) + 499 / 250) ^ 2 ∧
         ∀ r, PrimeOutsideSubgroup q H r → p ≤ r := by
   classical
-  obtain ⟨p, hp, hb⟩ := exists_prime_outside_subgroup_le_rationalProfile3000 hq H hH hGRH
+  obtain ⟨p, hp, hb⟩ := exists_prime_outside_rational3000_GRH hq H hH hGRH
   have hex : ∃ r, PrimeOutsideSubgroup q H r := ⟨p, hp⟩
   exact
     ⟨Nat.find hex, Nat.find_spec hex, (Nat.cast_le.mpr (Nat.find_min' hex hp)).trans hb, fun _ hr ↦

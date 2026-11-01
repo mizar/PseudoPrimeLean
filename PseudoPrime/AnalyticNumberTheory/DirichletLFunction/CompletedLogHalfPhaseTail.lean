@@ -27,7 +27,7 @@ multiplicity bound times an inverse quadratic weight. The hypotheses are individ
 primitivity, and nonprincipality of the character and its inverse. The floor condition
 places the set in the radius-one window used by the uniform local zero-count theorem.
 This is the finite-bin input for quantitative tails of the actual completed zero series. -/
-theorem sum_norm_completedLogHalfPhaseTerm_le_bin_bound :
+theorem sum_norm_halfPhaseTerm_le_bin_bound :
     ∃ A : ℝ,
       0 < A ∧
         ∀ (q : ℕ) [NeZero q],
@@ -42,7 +42,7 @@ theorem sum_norm_completedLogHalfPhaseTerm_le_bin_bound :
                     ∑ ρ ∈ S, ‖completedLogHalfPhaseTerm χ v ρ‖ ≤
                       (24 / (1 + (k : ℝ) ^ 2)) *
                         (Real.log q + 2 * A * (Real.log (4 + |(k : ℝ)|) + 1)) := by
-  obtain ⟨A, hA, hcount⟩ := exists_uniform_local_zeroMultiplicity_bound
+  obtain ⟨A, hA, hcount⟩ := uniform_localMultiplicity_bound_RH
   refine ⟨A, hA, ?_⟩
   intro q hqInst hq χ hRH hp hne hinv v k S hS
   have hwindow : ∀ ρ ∈ S, |ρ.im - (k : ℝ)| ≤ 1 := by
@@ -74,7 +74,7 @@ theorem sum_norm_completedLogHalfPhaseTerm_le_bin_bound :
         (DirichletCharacter.differentiable_completedLFunction hne).analyticAt z
       have hD : 0 ≤ (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) := by
         exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg ha ρ
-      have hterm := norm_completedLogHalfPhaseTerm_le_eight_quadratic_weight hRH hp hne hinv v ρ
+      have hterm := halfPhaseTerm_norm_le_weight_RH hRH hp hne hinv v ρ
       have hfactor :
         (8 / (1 + ρ.im ^ 2)) * (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) ≤
           (24 / (1 + (k : ℝ) ^ 2)) * (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) :=
@@ -96,7 +96,7 @@ theorem sum_norm_completedLogHalfPhaseTerm_le_bin_bound :
 /-- A finite set of zeros with ordinates of absolute value below three meets at most six
 integer floor bins. The local zero-count estimate gives a uniform bound for the complete
 low-height portion, including the central zero. -/
-theorem exists_sum_norm_completedLogHalfPhaseTerm_belowThree_bound :
+theorem halfPhaseTerm_sum_below_3_RH :
     ∃ A : ℝ,
       0 < A ∧
         ∀ (q : ℕ) [NeZero q],
@@ -110,7 +110,7 @@ theorem exists_sum_norm_completedLogHalfPhaseTerm_belowThree_bound :
                   (∀ ρ ∈ S, |ρ.im| < 3) →
                     ∑ ρ ∈ S, ‖completedLogHalfPhaseTerm χ v ρ‖ ≤
                       144 * (Real.log q + 2 * A * (Real.log 7 + 1)) := by
-  obtain ⟨A, hA, hbin⟩ := sum_norm_completedLogHalfPhaseTerm_le_bin_bound
+  obtain ⟨A, hA, hbin⟩ := sum_norm_halfPhaseTerm_le_bin_bound
   refine ⟨A, hA, ?_⟩
   intro q hqInst hq χ hRH hp hne hinv v S hS
   let J := S.image (fun ρ : ℂ ↦ (⌊ρ.im⌋ : ℤ))
@@ -197,7 +197,7 @@ theorem exists_sum_norm_completedLogHalfPhaseTerm_belowThree_bound :
 
 /-- A finite set with ordinates between absolute heights two and three is covered by
 the uniform estimate for all heights below three. -/
-theorem exists_sum_norm_completedLogHalfPhaseTerm_lowBand_bound :
+theorem halfPhaseTerm_sum_lowBand_RH :
     ∃ A : ℝ,
       0 < A ∧
         ∀ (q : ℕ) [NeZero q],
@@ -211,7 +211,7 @@ theorem exists_sum_norm_completedLogHalfPhaseTerm_lowBand_bound :
                   (∀ ρ ∈ S, 2 ≤ |ρ.im| ∧ |ρ.im| < 3) →
                     ∑ ρ ∈ S, ‖completedLogHalfPhaseTerm χ v ρ‖ ≤
                       144 * (Real.log q + 2 * A * (Real.log 7 + 1)) := by
-  obtain ⟨A, hA, hbelow⟩ := exists_sum_norm_completedLogHalfPhaseTerm_belowThree_bound
+  obtain ⟨A, hA, hbelow⟩ := halfPhaseTerm_sum_below_3_RH
   refine ⟨A, hA, ?_⟩
   intro q hqInst hq χ hRH hp hne hinv v S hS
   exact hbelow q hq χ hRH hp hne hinv v S (fun ρ hρ ↦ (hS ρ hρ).2)
@@ -220,7 +220,7 @@ theorem exists_sum_norm_completedLogHalfPhaseTerm_lowBand_bound :
 conductor and logarithmic-height bound. Partition the set by the floor of each ordinate,
 apply the local bin estimate, and sum the inverse-quadratic and logarithmic tails. The
 cutoff is H+1 so every occupied bin has absolute index at least H. -/
-theorem exists_sum_norm_completedLogHalfPhaseTerm_tail_bound :
+theorem halfPhaseTerm_sum_tail_bound_RH :
     ∃ A : ℝ,
       0 < A ∧
         ∀ (q : ℕ) [NeZero q],
@@ -237,7 +237,7 @@ theorem exists_sum_norm_completedLogHalfPhaseTerm_tail_bound :
                         ∑ ρ ∈ S, ‖completedLogHalfPhaseTerm χ v ρ‖ ≤
                           48 * Real.log q / ((H - 1 : ℕ) : ℝ) +
                             768 * A * (Real.log ((H + 3 : ℕ) : ℝ) + 2) / (H + 3) := by
-  obtain ⟨A, hA, hbin⟩ := sum_norm_completedLogHalfPhaseTerm_le_bin_bound
+  obtain ⟨A, hA, hbin⟩ := sum_norm_halfPhaseTerm_le_bin_bound
   refine ⟨A, hA, ?_⟩
   intro q hqInst hq χ hRH hp hne hinv H hH v S hheight
   let J := S.image (fun ρ : ℂ ↦ (⌊ρ.im⌋ : ℤ))
@@ -320,7 +320,7 @@ theorem exists_sum_norm_completedLogHalfPhaseTerm_tail_bound :
 /-- The full absolute completed-L zero tail above H+1 obeys the finite-set bound with
 the same uniform constant. Apply the nonnegative tsum criterion to finite filtered sets.
 This is a quantitative tail estimate for the actual completed zero series. -/
-theorem exists_tsum_norm_completedLogHalfPhaseTerm_tail_bound :
+theorem halfPhaseTerm_tsum_tail_bound_RH :
     ∃ A : ℝ,
       0 < A ∧
         ∀ (q : ℕ) [NeZero q],
@@ -337,7 +337,7 @@ theorem exists_tsum_norm_completedLogHalfPhaseTerm_tail_bound :
                           if (H + 1 : ℕ) ≤ |ρ.im| then ‖completedLogHalfPhaseTerm χ v ρ‖ else 0) ≤
                         48 * Real.log q / ((H - 1 : ℕ) : ℝ) +
                           768 * A * (Real.log ((H + 3 : ℕ) : ℝ) + 2) / (H + 3) := by
-  obtain ⟨A, hA, hfinite⟩ := exists_sum_norm_completedLogHalfPhaseTerm_tail_bound
+  obtain ⟨A, hA, hfinite⟩ := halfPhaseTerm_sum_tail_bound_RH
   refine ⟨A, hA, ?_⟩
   intro q hqInst hq χ hRH hp hne hinv H hH v
   apply Real.tsum_le_of_sum_le (fun ρ ↦ ite_nonneg (norm_nonneg _) le_rfl)
@@ -350,7 +350,7 @@ theorem exists_tsum_norm_completedLogHalfPhaseTerm_tail_bound :
 /-- Under an individual Dirichlet GRH hypothesis, the completed half-phase terms are
 absolutely summable. Split finite sums at height three, use the bounded low-height bins
 and the integer tail estimate, then apply the finite-sum criterion for summability. -/
-theorem exists_summable_norm_completedLogHalfPhaseTerm :
+theorem exists_summable_norm_halfPhaseTerm :
     ∃ K : ℝ,
       0 < K ∧
         ∀ (q : ℕ) [NeZero q],
@@ -360,8 +360,8 @@ theorem exists_summable_norm_completedLogHalfPhaseTerm :
                 χ.IsPrimitive →
                 χ ≠ 1 →
                 χ⁻¹ ≠ 1 → ∀ v : ℝ, Summable (fun ρ : ℂ ↦ ‖completedLogHalfPhaseTerm χ v ρ‖) := by
-  obtain ⟨Alo, hAlo, hlow⟩ := exists_sum_norm_completedLogHalfPhaseTerm_belowThree_bound
-  obtain ⟨Ahi, hAhi, hhigh⟩ := exists_sum_norm_completedLogHalfPhaseTerm_tail_bound
+  obtain ⟨Alo, hAlo, hlow⟩ := halfPhaseTerm_sum_below_3_RH
+  obtain ⟨Ahi, hAhi, hhigh⟩ := halfPhaseTerm_sum_tail_bound_RH
   let K := 192 + 288 * Alo * (Real.log 7 + 1) + 768 * Ahi * (Real.log 5 + 2) / 5
   have hK : 0 < K := by
     dsimp only [K]; positivity
@@ -413,7 +413,7 @@ series by a uniform constant times `log q + 1`. Combine the finite low-height
 estimate with the quantitative tail at height three. This records the scale
 available from absolute values alone; it does not estimate cancellation in the
 signed phase. -/
-theorem exists_tsum_norm_completedLogHalfPhaseTerm_log_bound :
+theorem halfPhaseTerm_tsum_log_bound_RH :
     ∃ K : ℝ,
       0 < K ∧
         ∀ (q : ℕ) [NeZero q],
@@ -424,8 +424,8 @@ theorem exists_tsum_norm_completedLogHalfPhaseTerm_log_bound :
                 χ ≠ 1 →
                 χ⁻¹ ≠ 1 →
                 ∀ v : ℝ, (∑' ρ : ℂ, ‖completedLogHalfPhaseTerm χ v ρ‖) ≤ K * (Real.log q + 1) := by
-  obtain ⟨Alo, hAlo, hlow⟩ := exists_sum_norm_completedLogHalfPhaseTerm_belowThree_bound
-  obtain ⟨Ahi, hAhi, hhigh⟩ := exists_sum_norm_completedLogHalfPhaseTerm_tail_bound
+  obtain ⟨Alo, hAlo, hlow⟩ := halfPhaseTerm_sum_below_3_RH
+  obtain ⟨Ahi, hAhi, hhigh⟩ := halfPhaseTerm_sum_tail_bound_RH
   let K := 192 + 288 * Alo * (Real.log 7 + 1) + 768 * Ahi * (Real.log 5 + 2) / 5
   have hK : 0 < K := by
     dsimp only [K]; positivity
@@ -547,7 +547,7 @@ theorem real_cutoff_tail_arithmetic_bound (A q : ℝ) (H : ℕ) (T : ℝ) (hA : 
 conductor and logarithmic-height bound. Take the integer bin immediately below `T`,
 use the finite tail estimate on each finite filtered set, and then apply the cutoff
 comparison. -/
-theorem exists_tsum_norm_completedLogHalfPhaseTerm_real_tail_bound :
+theorem halfPhaseTerm_real_tail_bound_RH :
     ∃ A : ℝ,
       0 < A ∧
         ∀ (q : ℕ) [NeZero q],
@@ -562,7 +562,7 @@ theorem exists_tsum_norm_completedLogHalfPhaseTerm_real_tail_bound :
                     ∀ (v : ℝ),
                       (∑' ρ : ℂ, if T ≤ |ρ.im| then ‖completedLogHalfPhaseTerm χ v ρ‖ else 0) ≤
                         (192 + 1536 * A) * (Real.log q + Real.log (T + 4) + 1) / T := by
-  obtain ⟨A, hA, hfinite⟩ := exists_sum_norm_completedLogHalfPhaseTerm_tail_bound
+  obtain ⟨A, hA, hfinite⟩ := halfPhaseTerm_sum_tail_bound_RH
   refine ⟨A, hA, ?_⟩
   intro q hqInst hq χ hRH hp hne hinv T hT v
   let floorT : ℤ := ⌊T⌋
@@ -621,9 +621,8 @@ theorem exists_tsum_norm_completedLogHalfPhaseTerm_real_tail_bound :
 /-- The central completed half-phase term has nonnegative real part for every nonprincipal
 character. Its negative contribution to the signed phase is therefore nonpositive. Analyticity
 gives nonnegative central multiplicity, and the norm of `2^(-1/2)` is at most one. -/
-theorem nonneg_re_completedLogHalfPhaseTerm_at_center {N : ℕ} [NeZero N]
-    (χ : DirichletCharacter ℂ N) (hne : χ ≠ 1) (v : ℝ) :
-    0 ≤ (completedLogHalfPhaseTerm χ v ((1 / 2 : ℝ) : ℂ)).re := by
+theorem nonneg_re_halfPhaseTerm_at_center {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
+    (hne : χ ≠ 1) (v : ℝ) : 0 ≤ (completedLogHalfPhaseTerm χ v ((1 / 2 : ℝ) : ℂ)).re := by
   let ρ : ℂ := ((1 / 2 : ℝ) : ℂ)
   let D := MeromorphicOn.divisor χ.completedLFunction Set.univ ρ
   have hD : 0 ≤ (D : ℝ) := by
@@ -667,8 +666,7 @@ theorem nonneg_re_completedLogHalfPhaseTerm_at_center {N : ℕ} [NeZero N]
 $4(1-2^{-1/2})m_0$, where $m_0$ is the completed-function divisor at $1/2$.
 The phase is one there, the denominator is $1/4$, and the positive real base power
 reduces to the real power $2^{-1/2}$. -/
-theorem re_completedLogHalfPhaseTerm_at_center_eq_multiplicity_formula {N : ℕ} [NeZero N]
-    (χ : DirichletCharacter ℂ N) (v : ℝ) :
+theorem halfPhaseTerm_re_center_eq {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (v : ℝ) :
     (completedLogHalfPhaseTerm χ v ((1 / 2 : ℝ) : ℂ)).re =
       4 * (MeromorphicOn.divisor χ.completedLFunction Set.univ ((1 / 2 : ℝ) : ℂ) : ℝ) *
         (1 - (2 : ℝ) ^ (-1 / 2 : ℝ)) := by
@@ -718,26 +716,26 @@ theorem re_completedLogHalfPhaseTerm_at_center_eq_multiplicity_formula {N : ℕ}
 /-- Under only the individual Dirichlet GRH, the signed phase is at most the real part
 of the negative sum over the complement of the central point. Absolute summability follows
 from the low-height and tail bounds, so no global GRH assumption is needed. -/
-theorem logarithmicHalfPhase_le_complement_of_dirichletRH {N : ℕ} [NeZero N] (hN : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (v : ℝ) :
+theorem logHalfPhase_le_complement_RH {N : ℕ} [NeZero N] (hN : 2 ≤ N) {χ : DirichletCharacter ℂ N}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    (v : ℝ) :
     logarithmicHalfPhase χ v ≤
       -(∑' ρ : ↑((({((1 / 2 : ℝ) : ℂ)} : Finset ℂ) : Set ℂ)ᶜ),
             completedLogHalfPhaseTerm χ v ρ).re := by
-  obtain ⟨K, hK, hnorm⟩ := exists_summable_norm_completedLogHalfPhaseTerm
+  obtain ⟨K, hK, hnorm⟩ := exists_summable_norm_halfPhaseTerm
   have hs := (hnorm N hN χ hRH hp hne hinv v).of_norm
   have hsplit := hs.sum_add_tsum_compl (s := ({((1 / 2 : ℝ) : ℂ)} : Finset ℂ))
   rw [Finset.sum_singleton] at hsplit
   unfold logarithmicHalfPhase
   rw [← hsplit]
   simp only [Complex.add_re]
-  have hc := nonneg_re_completedLogHalfPhaseTerm_at_center χ hne v
+  have hc := nonneg_re_halfPhaseTerm_at_center χ hne v
   linarith only [hc]
 
 /-- Under individual Dirichlet GRH, split the absolutely convergent sum over the complement
 of the central point at any real height. The two summands contain terms below and above
 the cutoff, respectively. -/
-theorem tsum_completedLogHalfPhaseTerm_complement_eq_low_add_high {N : ℕ} [NeZero N] (hN : 2 ≤ N)
+theorem halfPhaseTerm_tsum_low_add_high_RH {N : ℕ} [NeZero N] (hN : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (v T : ℝ) :
     (∑' ρ : { ρ : ℂ // ρ ∈ (({((1 / 2 : ℝ) : ℂ)} : Finset ℂ) : Set ℂ)ᶜ },
@@ -746,7 +744,7 @@ theorem tsum_completedLogHalfPhaseTerm_complement_eq_low_add_high {N : ℕ} [NeZ
           if |ρ.val.im| < T then completedLogHalfPhaseTerm χ v ρ.val else 0) +
         (∑' ρ : { ρ : ℂ // ρ ∈ (({((1 / 2 : ℝ) : ℂ)} : Finset ℂ) : Set ℂ)ᶜ },
           if T ≤ |ρ.val.im| then completedLogHalfPhaseTerm χ v ρ.val else 0) := by
-  obtain ⟨_, _, hnorm⟩ := exists_summable_norm_completedLogHalfPhaseTerm
+  obtain ⟨_, _, hnorm⟩ := exists_summable_norm_halfPhaseTerm
   have hfull := (hnorm N hN χ hRH hp hne hinv v).of_norm
   let S : Set ℂ := (({((1 / 2 : ℝ) : ℂ)} : Finset ℂ) : Set ℂ)ᶜ
   let α := { ρ : ℂ // ρ ∈ S }
@@ -789,7 +787,7 @@ theorem tsum_completedLogHalfPhaseTerm_complement_eq_low_add_high {N : ℕ} [NeZ
 $T \ge 2$. For $T \ge 4$ use the integer-bin tail estimate. For $2 \le T < 4$, split
 the tail at height three and bound the remaining height bins by the local zero count.
 The constant depends only on the uniform local zero-multiplicity constant. -/
-theorem exists_tsum_norm_completedLogHalfPhaseTerm_all_real_tail_bound :
+theorem halfPhaseTerm_all_tail_bound_RH :
     ∃ C : ℝ,
       0 < C ∧
         ∀ (q : ℕ) [NeZero q],
@@ -804,9 +802,9 @@ theorem exists_tsum_norm_completedLogHalfPhaseTerm_all_real_tail_bound :
                     ∀ (v : ℝ),
                       (∑' ρ : ℂ, if T ≤ |ρ.im| then ‖completedLogHalfPhaseTerm χ v ρ‖ else 0) ≤
                         C * (Real.log q + Real.log (T + 4) + 1) / T := by
-  obtain ⟨Ar, hAr, hreal⟩ := exists_tsum_norm_completedLogHalfPhaseTerm_real_tail_bound
-  obtain ⟨Ai, hAi, hfinite⟩ := exists_sum_norm_completedLogHalfPhaseTerm_tail_bound
-  obtain ⟨Al, hAl, hlow⟩ := exists_sum_norm_completedLogHalfPhaseTerm_lowBand_bound
+  obtain ⟨Ar, hAr, hreal⟩ := halfPhaseTerm_real_tail_bound_RH
+  obtain ⟨Ai, hAi, hfinite⟩ := halfPhaseTerm_sum_tail_bound_RH
+  obtain ⟨Al, hAl, hlow⟩ := halfPhaseTerm_sum_lowBand_RH
   let K := 192 + 768 * Ai * (Real.log 5 + 2) / 5 + 288 * Al * (Real.log 7 + 1)
   let C := (192 + 1536 * Ar) + 4 * K
   have hK : 0 < K := by
@@ -921,25 +919,25 @@ theorem exists_tsum_norm_completedLogHalfPhaseTerm_all_real_tail_bound :
 complement sum plus the conductor-uniform absolute tail. The low sum remains an absolutely
 convergent series here; the next finite-ledger step identifies it with the finite zero set
 inside the cutoff. -/
-theorem exists_logarithmicHalfPhase_le_low_add_tail_bound {N : ℕ} [NeZero N] (hN : 2 ≤ N)
-    {χ : DirichletCharacter ℂ N} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (T v : ℝ) (hT : 2 ≤ T) :
+theorem logHalfPhase_low_tail_bound_RH {N : ℕ} [NeZero N] (hN : 2 ≤ N) {χ : DirichletCharacter ℂ N}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    (T v : ℝ) (hT : 2 ≤ T) :
     ∃ C : ℝ,
       0 < C ∧
         logarithmicHalfPhase χ v ≤
           -(∑' ρ : { ρ : ℂ // ρ ∈ (({((1 / 2 : ℝ) : ℂ)} : Finset ℂ) : Set ℂ)ᶜ },
                   if |ρ.val.im| < T then completedLogHalfPhaseTerm χ v ρ.val else 0).re +
             C * (Real.log N + Real.log (T + 4) + 1) / T := by
-  obtain ⟨C, hC, hbound⟩ := exists_tsum_norm_completedLogHalfPhaseTerm_all_real_tail_bound
+  obtain ⟨C, hC, hbound⟩ := halfPhaseTerm_all_tail_bound_RH
   refine ⟨C, hC, ?_⟩
-  have hphase := logarithmicHalfPhase_le_complement_of_dirichletRH hN hRH hp hne hinv v
-  have hsplit := tsum_completedLogHalfPhaseTerm_complement_eq_low_add_high hN hRH hp hne hinv v T
+  have hphase := logHalfPhase_le_complement_RH hN hRH hp hne hinv v
+  have hsplit := halfPhaseTerm_tsum_low_add_high_RH hN hRH hp hne hinv v T
   rw [hsplit] at hphase
   simp only [Complex.add_re] at hphase
   let S : Set ℂ := (({((1 / 2 : ℝ) : ℂ)} : Finset ℂ) : Set ℂ)ᶜ
   let α := { ρ : ℂ // ρ ∈ S }
   let hi : α → ℂ := fun ρ => if T ≤ |ρ.val.im| then completedLogHalfPhaseTerm χ v ρ.val else 0
-  obtain ⟨_, _, hnorm⟩ := exists_summable_norm_completedLogHalfPhaseTerm
+  obtain ⟨_, _, hnorm⟩ := exists_summable_norm_halfPhaseTerm
   have hbase : Summable (fun ρ : α => ‖completedLogHalfPhaseTerm χ v ρ.val‖) := by
     exact (hnorm N hN χ hRH hp hne hinv v).subtype S
   have hhiNorm : Summable (fun ρ : α => ‖hi ρ‖) :=
@@ -1003,17 +1001,17 @@ theorem exists_logarithmicHalfPhase_le_low_add_tail_bound {N : ℕ} [NeZero N] (
 uniform tail into a bound of order $L^{1-\delta}$. The assumptions $0<\delta<1$ record the
 proper power scale, while $T\ge2$ keeps the cutoff inside the range of the absolute-tail
 theorem. -/
-theorem exists_tsum_norm_completedLogHalfPhaseTerm_power_cutoff_bound {N : ℕ} [NeZero N]
-    (hN : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hRH : GRH.DirichletRiemannHypothesis χ)
-    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (L δ : ℝ) (hL : 4 ≤ L)
-    (hlogN : Real.log N ≤ L) (hδ : 0 < δ) (hδlt : δ < 1) (hcut : 2 ≤ L ^ δ) (v : ℝ) :
+theorem halfPhaseTerm_power_cutoff_bound_RH {N : ℕ} [NeZero N] (hN : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
+    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (L δ : ℝ) (hL : 4 ≤ L) (hlogN : Real.log N ≤ L) (hδ : 0 < δ)
+    (hδlt : δ < 1) (hcut : 2 ≤ L ^ δ) (v : ℝ) :
     ∃ C : ℝ,
       0 < C ∧
         0 < 1 - δ ∧
         1 - δ < 1 ∧
         (∑' ρ : ℂ, if L ^ δ ≤ |ρ.im| then ‖completedLogHalfPhaseTerm χ v ρ‖ else 0) ≤
           3 * C * L ^ (1 - δ) := by
-  obtain ⟨C, hC, htail⟩ := exists_tsum_norm_completedLogHalfPhaseTerm_all_real_tail_bound
+  obtain ⟨C, hC, htail⟩ := halfPhaseTerm_all_tail_bound_RH
   refine ⟨C, hC, ?_, ?_, ?_⟩
   · linarith only [hδlt]
   · linarith only [hδ]
@@ -1051,9 +1049,9 @@ theorem exists_tsum_norm_completedLogHalfPhaseTerm_power_cutoff_bound {N : ℕ} 
 form a finite set. Translating each zero by minus one half places it in a compact disk,
 and the shifted completed function has finite zero support there. This is the finite
 low-height ledger needed to replace the low part of the global zero series by a finite sum. -/
-theorem finite_completed_divisor_support_below_height {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hp : χ.IsPrimitive) (hne : χ ≠ 1)
-    (hRH : GRH.DirichletRiemannHypothesis χ) (hinv : χ⁻¹ ≠ 1) (T : ℝ) :
+theorem finite_completed_divisor_below_RH {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hRH : GRH.DirichletRiemannHypothesis χ) (hinv : χ⁻¹ ≠ 1)
+    (T : ℝ) :
     {ρ : ℂ | |ρ.im| < T ∧ MeromorphicOn.divisor χ.completedLFunction Set.univ ρ ≠ 0}.Finite := by
   let U : Set ℂ := Metric.closedBall 0 (T + 1)
   have hU : IsCompact U := isCompact_closedBall 0 (T + 1)
@@ -1062,7 +1060,7 @@ theorem finite_completed_divisor_support_below_height {N : ℕ} [NeZero N]
   apply Set.Finite.subset (hf.image f)
   intro ρ hρ
   have hz := completed_zero_of_divisor_ne_zero hne hρ.2
-  have hr := completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv hz
+  have hr := completed_zero_re_eq_half_of_RH hRH hp hinv hz
   rw [Set.mem_image]
   refine ⟨ρ - ((1 / 2 : ℝ) : ℂ), ?_, ?_⟩
   · constructor
@@ -1087,11 +1085,10 @@ theorem finite_completed_divisor_support_below_height {N : ℕ} [NeZero N]
 /-- Under individual GRH, primitivity, and nonprincipality of the character and its inverse,
 the completed half-phase terms below height `T` have finite support. A nonzero term must
 have nonzero divisor multiplicity, so the compact zero ledger above contains its support. -/
-theorem finite_completedLogHalfPhaseTerm_support_below_height {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hp : χ.IsPrimitive) (hne : χ ≠ 1)
-    (hRH : GRH.DirichletRiemannHypothesis χ) (hinv : χ⁻¹ ≠ 1) (T v : ℝ) :
-    {ρ : ℂ | |ρ.im| < T ∧ completedLogHalfPhaseTerm χ v ρ ≠ 0}.Finite := by
-  apply (finite_completed_divisor_support_below_height hp hne hRH hinv T).subset
+theorem finite_halfPhaseTerm_below_RH {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hRH : GRH.DirichletRiemannHypothesis χ) (hinv : χ⁻¹ ≠ 1)
+    (T v : ℝ) : {ρ : ℂ | |ρ.im| < T ∧ completedLogHalfPhaseTerm χ v ρ ≠ 0}.Finite := by
+  apply (finite_completed_divisor_below_RH hp hne hRH hinv T).subset
   intro ρ hρ
   refine ⟨hρ.1, ?_⟩
   by_contra hD
@@ -1102,15 +1099,15 @@ theorem finite_completedLogHalfPhaseTerm_support_below_height {N : ℕ} [NeZero 
 noncentral zeros below height `T` is a finite sum. The finite support is pulled back to
 the subtype excluding the center and `tsum_eq_sum'` replaces the infinite sum by its
 finite support ledger. -/
-theorem exists_finite_center_complement_low_completedLogHalfPhaseTerm_sum {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hp : χ.IsPrimitive) (hne : χ ≠ 1)
-    (hRH : GRH.DirichletRiemannHypothesis χ) (hinv : χ⁻¹ ≠ 1) (T v : ℝ) :
+theorem halfPhaseTerm_complement_finite_RH {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hRH : GRH.DirichletRiemannHypothesis χ) (hinv : χ⁻¹ ≠ 1)
+    (T v : ℝ) :
     ∃ S : Finset { ρ : ℂ // ρ ≠ ((1 / 2 : ℝ) : ℂ) },
       (∑' ρ : { ρ : ℂ // ρ ≠ ((1 / 2 : ℝ) : ℂ) },
           if |ρ.val.im| < T then completedLogHalfPhaseTerm χ v ρ.val else 0) =
         ∑ ρ ∈ S, if |ρ.val.im| < T then completedLogHalfPhaseTerm χ v ρ.val else 0 := by
   let A : Set ℂ := {ρ | |ρ.im| < T ∧ completedLogHalfPhaseTerm χ v ρ ≠ 0}
-  have hA := finite_completedLogHalfPhaseTerm_support_below_height hp hne hRH hinv T v
+  have hA := finite_halfPhaseTerm_below_RH hp hne hRH hinv T v
   let α := { ρ : ℂ // ρ ≠ ((1 / 2 : ℝ) : ℂ) }
   let f : α → ℂ := fun ρ => if |ρ.val.im| < T then completedLogHalfPhaseTerm χ v ρ.val else 0
   have hs : {ρ : α | f ρ ≠ 0}.Finite := by
@@ -1138,7 +1135,7 @@ theorem exists_finite_center_complement_low_completedLogHalfPhaseTerm_sum {N : �
 /-- Under individual GRH, the low-height complement in the logarithmic half-phase bound
 can be taken as an explicit finite sum. The absolute tail estimate is unchanged; this
 corollary packages the finite support ledger with the signed phase inequality. -/
-theorem exists_logarithmicHalfPhase_le_finite_low_add_tail_bound {N : ℕ} [NeZero N] (hN : 2 ≤ N)
+theorem logHalfPhase_finite_tail_bound_RH {N : ℕ} [NeZero N] (hN : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (T v : ℝ) (hT : 2 ≤ T) :
     ∃ C : ℝ,
@@ -1147,9 +1144,8 @@ theorem exists_logarithmicHalfPhase_le_finite_low_add_tail_bound {N : ℕ} [NeZe
           logarithmicHalfPhase χ v ≤
             -(∑ ρ ∈ S, if |ρ.val.im| < T then completedLogHalfPhaseTerm χ v ρ.val else 0).re +
               C * (Real.log N + Real.log (T + 4) + 1) / T := by
-  obtain ⟨C, hC, hbound⟩ :=
-    exists_logarithmicHalfPhase_le_low_add_tail_bound hN hRH hp hne hinv T v hT
-  have hA := finite_completedLogHalfPhaseTerm_support_below_height hp hne hRH hinv T v
+  obtain ⟨C, hC, hbound⟩ := logHalfPhase_low_tail_bound_RH hN hRH hp hne hinv T v hT
+  have hA := finite_halfPhaseTerm_below_RH hp hne hRH hinv T v
   let S : Set ℂ := (({((1 / 2 : ℝ) : ℂ)} : Finset ℂ) : Set ℂ)ᶜ
   let α := { ρ : ℂ // ρ ∈ S }
   let f : α → ℂ := fun ρ => if |ρ.val.im| < T then completedLogHalfPhaseTerm χ v ρ.val else 0

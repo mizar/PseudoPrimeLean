@@ -48,8 +48,8 @@ theorem triangular18_completed_left_reflection {q : ℕ} [NeZero q] {χ : Dirich
       Complex.ofReal_im, zero_mul, mul_zero, sub_zero]
     norm_num only
   have he :=
-    AnalyticNumberTheory.DirichletLFunction.completedLFunction_logDeriv_functionalEquation_at hp hne
-      (AnalyticNumberTheory.DirichletLFunction.completedLFunction_ne_zero_of_one_le_re hinv hr)
+    AnalyticNumberTheory.DirichletLFunction.completedLogDeriv_functionalEq hp hne
+      (AnalyticNumberTheory.DirichletLFunction.completed_ne_zero_of_one_le_re hinv hr)
   have hs :
     (1 : ℂ) - (((17 / 16 : ℝ) : ℂ) - Complex.I * t) =
       (((-9 / 16 : ℝ) : ℂ) + Complex.I * t + 1 / 2) := by
@@ -63,8 +63,8 @@ alpha-18 completed left integral equals 36*log(q) plus the reflected inverse
 logarithmic-derivative integral. Prove integrability of the difference, split the
 integral using the functional equation, and evaluate the kernel's integral.
 This identifies the conductor coefficient without an asymptotic or mass assumption. -/
-theorem triangular18_left_completedIntegral_eq_conductor_add_reflected {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
+theorem triangular18_left_eq_conductor_reflected {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
     ((1 / (2 * Real.pi) : ℝ) : ℂ) *
         (∫ t : ℝ,
@@ -150,7 +150,7 @@ theorem triangular18_absoluteMass_conductor_formula {q : ℕ} [NeZero q] (hq : 2
               K.function (((9 / 16 : ℝ) : ℂ) + Complex.I * t)) := by
   have he := triangular18_absoluteMass_explicit_formula hq hGRH hp hne hinv
   dsimp only at he ⊢
-  rw [triangular18_left_completedIntegral_eq_conductor_add_reflected hp hne hinv] at he
+  rw [triangular18_left_eq_conductor_reflected hp hne hinv] at he
   linear_combination he
 
 end PseudoPrime.LLS.PaperStatements

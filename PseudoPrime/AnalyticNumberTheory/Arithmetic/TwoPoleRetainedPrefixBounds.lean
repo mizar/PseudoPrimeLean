@@ -18,7 +18,7 @@ namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 support coprime to N make the paired prefix exactly twice the principal prefix. Use the exact
 excluded-defect identity and the empty excluded support; this covers both full-prime and
 odd-prime contradictions. -/
-theorem pairedEulerPrefix_eq_twice_of_coprime_support {q N : ℕ} (χ : DirichletCharacter ℂ q) {b : ℝ}
+theorem pairedEulerPrefix_eq_twice_of_coprime {q N : ℕ} (χ : DirichletCharacter ℂ q) {b : ℝ}
     (S : Finset ℕ) (hS : ∀ n ∈ S, (n : ℝ) ≤ b) (hcop : ∀ n ∈ S, Nat.Coprime n N)
     (ht : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → Nat.Coprime p N → χ p = 1) :
     (∑ n ∈ S, (1 + (χ n).re) * pairedEulerPrefixWeight (5 / 4) (11 / 4) (3 / 4) n) =
@@ -26,7 +26,7 @@ theorem pairedEulerPrefix_eq_twice_of_coprime_support {q N : ℕ} (χ : Dirichle
   classical
   have he :=
     paired_weighted_sum_eq_of_ambient_trivial χ S (pairedEulerPrefixWeight (5 / 4) (11 / 4) (3 / 4))
-      hS (fun n _ hn ↦ pairedEulerPrefixWeight_eq_zero_of_mangoldt_eq_zero _ _ _ hn) ht
+      hS (fun n _ hn ↦ pairedEulerWeight_eq_zero_of_mangoldt_zero _ _ _ hn) ht
   have hz :
     excludedCharacterDefect χ N S (pairedEulerPrefixWeight (5 / 4) (11 / 4) (3 / 4)) = 0 := by
     apply Finset.sum_eq_zero

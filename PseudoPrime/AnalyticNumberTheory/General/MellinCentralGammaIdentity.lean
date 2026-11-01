@@ -28,8 +28,8 @@ as conductor and endpoint contributions plus both central-line gamma integrals.
 Apply the right-line completion identity and the original and dual residue-free
 line shifts. This supplies the central gamma term used by LLS; conversion to
 ordinary L-function zeros and the source pole normalization remain separate. -/
-theorem mellin_zero_sum_add_arithmetic_eq_conductor_endpoints_central_gamma {F L : ℂ → ℂ} {ε : ℂ}
-    {q d : ℕ} (hq : 1 ≤ q) (k : ℤ) (κ : Fin d → ℂ) (hκ : ∀ j, 0 ≤ (κ j).re)
+theorem mellin_explicit_formula_central {F L : ℂ → ℂ} {ε : ℂ} {q d : ℕ} (hq : 1 ≤ q) (k : ℤ)
+    (κ : Fin d → ℂ) (hκ : ∀ j, 0 ≤ (κ j).re)
     (hreg :
       ∀ z,
         z ≠ 0 →
@@ -59,13 +59,12 @@ theorem mellin_zero_sum_add_arithmetic_eq_conductor_endpoints_central_gamma {F L
               star (logDeriv (archimedeanGammaFactor κ) (((1 / 2 : ℝ) : ℂ) + (-T) * Complex.I)) *
                 mellin (logarithmicTestWeight g) (((1 / 2 : ℝ) : ℂ) + T * Complex.I))) := by
   have hh :=
-    mellin_zero_sum_add_arithmetic_eq_conductor_endpoints_gamma hq k κ
-      (fun j ↦ lt_of_lt_of_le neg_one_lt_zero (hκ j)) hreg hε hfe hright hF h0 horder ha hL hdL hlog
-      g he hc hg ha0 hs2 hlog2
-  rw [mellin_archimedeanGamma_vertical_integral_eq_of_smooth_nonneg κ hκ (1 / 2) 2
-      (by norm_num only) (by norm_num only) g he hc hg,
-    mellin_reflected_archimedeanGamma_vertical_integral_eq_of_smooth_nonneg κ hκ (1 / 2) 2
-      (by norm_num only) (by norm_num only) g he hc hg] at hh
+    mellin_explicit_formula_right hq k κ (fun j ↦ lt_of_lt_of_le neg_one_lt_zero (hκ j)) hreg hε hfe
+      hright hF h0 horder ha hL hdL hlog g he hc hg ha0 hs2 hlog2
+  rw [gammaMellin_vertical_eq_smooth κ hκ (1 / 2) 2 (by norm_num only) (by norm_num only) g he hc
+      hg,
+    reflectedGammaMellin_vertical_eq_smooth κ hκ (1 / 2) 2 (by norm_num only) (by norm_num only) g
+      he hc hg] at hh
   exact hh
 
 end PseudoPrime.AnalyticNumberTheory.General

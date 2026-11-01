@@ -65,8 +65,8 @@ open AnalyticNumberTheory.Arithmetic in
 and x>=64, negativity of the zero-cost endpoint limit plus one structural budget
 gives an odd N-coprime negative prime. Bound the exact combined defect and apply
 the established two-cost witness theorem. No character values occur in the budget. -/
-theorem exists_odd_prime_neg_one_of_quadratic_excluded_budget {q N : ℕ} [NeZero q] (hq : 2 ≤ q)
-    (hqN : q ∣ N) (hN2 : 2 ∣ N) {χ : DirichletCharacter ℂ q}
+theorem exists_oddPrime_negOne_excluded_GRH {q N : ℕ} [NeZero q] (hq : 2 ≤ q) (hqN : q ∣ N)
+    (hN2 : 2 ∣ N) {χ : DirichletCharacter ℂ q}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hquad : χ.IsQuadratic) {x : ℝ} (hx : 64 ≤ x)
     (hsep :
@@ -86,7 +86,7 @@ theorem exists_odd_prime_neg_one_of_quadratic_excluded_budget {q N : ℕ} [NeZer
       0 := by
     linarith only [he, hm, hsep]
   exact
-    exists_odd_prime_neg_one_of_excluded_two_cost_limit_neg hq hqN hN2 hGRH hp hne hquad hx1 hx
-      (le_refl _) (le_refl _) (le_refl _) hlim
+    exists_oddNegOne_twoCost_GRH hq hqN hN2 hGRH hp hne hquad hx1 hx (le_refl _) (le_refl _)
+      (le_refl _) hlim
 
 end PseudoPrime.LLS.PaperStatements

@@ -21,9 +21,9 @@ at the canonical primitive conductor, an odd prime p<=x has Jacobi(n,p) differen
 from one. Apply the odd character witness theorem. If p divides n the Jacobi
 value is zero; otherwise transfer the primitive value. No exclusion of n's
 prime factors or arithmetic bridge is assumed. This is not a negative-witness claim. -/
-theorem exists_odd_prime_jacobi_ne_one_of_oddEndpointLimit_neg {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x Y : ℝ}
-    (hx : 1 < x) (hY : 64 ≤ Y) (hYx : Y ≤ x)
+theorem exists_oddPrime_neOne_endpointLimit_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x Y : ℝ} (hx : 1 < x)
+    (hY : 64 ≤ Y) (hYx : Y ≤ x)
     (hlim :
       LLS.PaperStatements.oddEndpointLimit (NumberTheory.complexQuadraticCharacter n hn).conductor x
           Y <
@@ -56,7 +56,7 @@ theorem exists_odd_prime_jacobi_ne_one_of_oddEndpointLimit_neg {n : ℕ} (hn : O
 odd-prime non-one Jacobi witness is at most x after real casting. The nonempty
 set argument defines the existing least-witness function. Obtain an actual witness
 and apply leastness. No corresponding negative-witness conclusion is inferred. -/
-theorem primeNeOneWitness_cast_le_of_oddEndpointLimit_neg {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+theorem neOneWitness_cast_le_of_oddEndpointLimit_neg {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x Y : ℝ} (hx : 1 < x)
     (hY : 64 ≤ Y) (hYx : Y ≤ x)
     (hlim :
@@ -65,17 +65,16 @@ theorem primeNeOneWitness_cast_le_of_oddEndpointLimit_neg {n : ℕ} (hn : Odd n)
         0)
     (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤ x := by
-  obtain ⟨p, hp, ho, hpx, hv⟩ :=
-    exists_odd_prime_jacobi_ne_one_of_oddEndpointLimit_neg hn hns hGRH hx hY hYx hlim
+  obtain ⟨p, hp, ho, hpx, hv⟩ := exists_oddPrime_neOne_endpointLimit_GRH hn hns hGRH hx hY hYx hlim
   exact (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hpx
 
 /-- For odd nonsquare n under GRH and 64<=Y<=x, a negative elementary odd
 endpoint limit evaluated at 4*n yields an odd non-one Jacobi prime at most x.
 Bound the canonical conductor by 4*n using monotonicity and apply the exact
 criterion. No finite sums, conductor calculation or factorization is required. -/
-theorem exists_odd_prime_jacobi_ne_one_of_oddEndpointElementaryLimit_neg {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x Y : ℝ}
-    (hx : 1 < x) (hY : 64 ≤ Y) (hYx : Y ≤ x)
+theorem exists_oddPrime_neOne_elementaryLimit_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x Y : ℝ} (hx : 1 < x)
+    (hY : 64 ≤ Y) (hYx : Y ≤ x)
     (hlim : LLS.PaperStatements.oddEndpointElementaryLimit (4 * n) x Y < 0) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ x ∧ jacobiSym n p ≠ 1 := by
   let _ : NeZero (4 * n) := ⟨Nat.mul_ne_zero (by norm_num only) (Odd.pos hn).ne'⟩
@@ -88,22 +87,20 @@ theorem exists_odd_prime_jacobi_ne_one_of_oddEndpointElementaryLimit_neg {n : �
   have he :=
     LLS.PaperStatements.oddEndpointLimit_le_elementary
       (NumberTheory.complexQuadraticCharacter n hn).conductor hx.le hy0
-  exact
-    exists_odd_prime_jacobi_ne_one_of_oddEndpointLimit_neg hn hns hGRH hx hY hYx
-      ((he.trans hm).trans_lt hlim)
+  exact exists_oddPrime_neOne_endpointLimit_GRH hn hns hGRH hx hY hYx ((he.trans hm).trans_lt hlim)
 
 /-- Under the same elementary odd endpoint condition at 4*n, the least odd-prime
 non-one Jacobi witness is at most x. The nonempty-set argument supplies the public
 least-witness definition. Apply leastness to the actual prime from the elementary
 criterion. Zero-valued witnesses are included. -/
-theorem primeNeOneWitness_cast_le_of_oddEndpointElementaryLimit_neg {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x Y : ℝ}
-    (hx : 1 < x) (hY : 64 ≤ Y) (hYx : Y ≤ x)
+theorem neOneWitness_le_elementaryLimit_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x Y : ℝ} (hx : 1 < x)
+    (hY : 64 ≤ Y) (hYx : Y ≤ x)
     (hlim : LLS.PaperStatements.oddEndpointElementaryLimit (4 * n) x Y < 0)
     (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤ x := by
   obtain ⟨p, hp, ho, hpx, hv⟩ :=
-    exists_odd_prime_jacobi_ne_one_of_oddEndpointElementaryLimit_neg hn hns hGRH hx hY hYx hlim
+    exists_oddPrime_neOne_elementaryLimit_GRH hn hns hGRH hx hY hYx hlim
   exact (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hpx
 
 end PseudoPrime.PseudoSquare

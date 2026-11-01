@@ -257,7 +257,7 @@ theorem continuous_neg_log_norm_Gamma_one_add_mul_I :
 
 /-- Continuity gives a fixed upper bound for `-log ‖Γ(1+it)‖` on `|t| ≤ 1`
 by compactness. The constant is existential, not an evaluated numerical bound. -/
-theorem exists_forall_neg_log_norm_Gamma_one_add_mul_I_le_of_abs_le_one :
+theorem exists_neg_log_Gamma_one_small_bound :
     ∃ C₀ : ℝ, ∀ t : ℝ, |t| ≤ 1 → -Real.log ‖Complex.Gamma (1 + (t : ℂ) * Complex.I)‖ ≤ C₀ := by
   have hcont := continuous_neg_log_norm_Gamma_one_add_mul_I.continuousOn (s := Set.Icc (-1 : ℝ) 1)
   obtain ⟨t₀, -, ht₀max⟩ :=
@@ -267,10 +267,10 @@ theorem exists_forall_neg_log_norm_Gamma_one_add_mul_I_le_of_abs_le_one :
 
 /-- A fixed constant `C₀` bounds `-log ‖Γ(1+it)‖` by `C₀+π|t|/2` for all
 real `t`. Combine compactness on `|t| ≤ 1` with the hyperbolic-sine estimate outside. -/
-theorem exists_neg_log_norm_Gamma_one_add_mul_I_le_uniform :
+theorem exists_neg_log_Gamma_one_linear_bound :
     ∃ C₀ : ℝ,
       ∀ t : ℝ, -Real.log ‖Complex.Gamma (1 + (t : ℂ) * Complex.I)‖ ≤ C₀ + Real.pi * |t| / 2 := by
-  obtain ⟨C₀, hC₀⟩ := exists_forall_neg_log_norm_Gamma_one_add_mul_I_le_of_abs_le_one
+  obtain ⟨C₀, hC₀⟩ := exists_neg_log_Gamma_one_small_bound
   refine ⟨max C₀ 0, fun t => ?_⟩
   by_cases ht : |t| ≤ 1
   · have h1 := hC₀ t ht
@@ -296,7 +296,7 @@ theorem exists_neg_log_norm_Gamma_one_add_mul_I_le_uniform :
 agrees with `log ‖Γ‖` everywhere on the disk.  This avoids the branch cut of `Complex.log`,
 which is unsound to compose directly with `Γ` on a fixed-radius disk once `Γ`'s phase winds
 fast enough (which happens for large imaginary part). -/
-theorem exists_hasDerivAt_digamma_re_eq_log_norm_Gamma {c : ℂ} {r : ℝ} (hr : 0 < r)
+theorem exists_digamma_primitive_re_logGamma {c : ℂ} {r : ℝ} (hr : 0 < r)
     (hball : ∀ w ∈ Metric.ball c r, 0 < w.re) :
     ∃ g : ℂ → ℂ,
       (∀ w ∈ Metric.ball c r, HasDerivAt g (Complex.digamma w) w) ∧
@@ -433,7 +433,7 @@ Combined with `Γ(n+it) = Γ(1+it) * ∏_{k=1}^{n-1}(k+it)` (so `‖Γ(n+it)‖ 
 `n ≥ 1`, via `PseudoPrime.AnalyticNumberTheory.RiemannZeta.norm_Gamma_le_Gamma_add_nat`),
 applying this at `a := n` for the nearest integer `n` to `1+r`
 covers *every* real part `1 + r` (`r ≥ 0`), not just `r ∈ [0, 1/2]` from a single center. -/
-theorem neg_log_norm_Gamma_add_add_mul_I_le_of_abs_le_half {a : ℝ} (ha : 1 ≤ a) {f t : ℝ}
+theorem neg_log_norm_Gamma_shift_le_of_abs_le_half {a : ℝ} (ha : 1 ≤ a) {f t : ℝ}
     (hf : |f| ≤ 1 / 2) :
     -Real.log ‖Complex.Gamma ((a : ℂ) + (f : ℂ) + (t : ℂ) * Complex.I)‖ ≤
       -Real.log ‖Complex.Gamma ((a : ℂ) + (t : ℂ) * Complex.I)‖ +
@@ -455,7 +455,7 @@ theorem neg_log_norm_Gamma_add_add_mul_I_le_of_abs_le_half {a : ℝ} (ha : 1 ≤
     have := (abs_lt.mp (hre_bound w hw)).1
     linarith only [this, ha]
   obtain ⟨g, hg', hgRe⟩ :=
-    exists_hasDerivAt_digamma_re_eq_log_norm_Gamma (by norm_num only : (0 : ℝ) < 3 / 4) hball
+    exists_digamma_primitive_re_logGamma (by norm_num only : (0 : ℝ) < 3 / 4) hball
   set Gbound : ℝ := max (Real.Gamma (a - 3 / 4)) (Real.Gamma (a + 3 / 4)) + 1 with hGbound_def
   have hRe_le : ∀ w ∈ Metric.ball c (3 / 4 : ℝ), (g w).re ≤ Real.log Gbound := by
     intro w hw
@@ -557,7 +557,7 @@ Use the radius-three-quarter primitive estimate at center one when `f≤1/2`, an
 at center two otherwise; recurrence compares the second center with the first.
 This supplies a bound for fractional shifts before extending to arbitrary nonnegative shifts.
 -/
-theorem neg_log_norm_Gamma_one_add_add_mul_I_le_of_lt_one {f t : ℝ} (hf0 : 0 ≤ f) (hf1 : f < 1) :
+theorem neg_log_Gamma_shift_lt_one_bound {f t : ℝ} (hf0 : 0 ≤ f) (hf1 : f < 1) :
     -Real.log ‖Complex.Gamma (1 + (f : ℂ) + (t : ℂ) * Complex.I)‖ ≤
       5 * (-Real.log ‖Complex.Gamma (1 + (t : ℂ) * Complex.I)‖) +
         4 *
@@ -598,7 +598,7 @@ theorem neg_log_norm_Gamma_one_add_add_mul_I_le_of_lt_one {f t : ℝ} (hf0 : 0 �
     linarith only [this]
   by_cases hf : f ≤ 1 / 2
   · have hbound :=
-      neg_log_norm_Gamma_add_add_mul_I_le_of_abs_le_half (a := 1) (le_refl 1) (f := f) (t := t)
+      neg_log_norm_Gamma_shift_le_of_abs_le_half (a := 1) (le_refl 1) (f := f) (t := t)
         (by
           rw [abs_of_nonneg hf0]
           exact hf)
@@ -614,8 +614,8 @@ theorem neg_log_norm_Gamma_one_add_add_mul_I_le_of_lt_one {f t : ℝ} (hf0 : 0 �
       rw [abs_of_nonpos (by linarith only [hf1, hf'_def]), hf'_def]
       linarith only [hf]
     have hbound :=
-      neg_log_norm_Gamma_add_add_mul_I_le_of_abs_le_half (a := 2) (by norm_num only) (f := f') (t :=
-        t) hf'abs
+      neg_log_norm_Gamma_shift_le_of_abs_le_half (a := 2) (by norm_num only) (f := f') (t := t)
+        hf'abs
     push_cast at hbound
     norm_num only at hbound
     have heq : (2 : ℂ) + (f' : ℂ) + (t : ℂ) * Complex.I = 1 + (f : ℂ) + (t : ℂ) * Complex.I := by
@@ -668,7 +668,7 @@ theorem neg_log_norm_Gamma_one_add_add_mul_I_le_of_lt_one {f t : ℝ} (hf0 : 0 �
 /-- For nonnegative `r`, split `r` into its natural and fractional parts.
 Gamma recurrence transfers the lower norm bound on fractional shifts to `1+r+it`,
 with a bound independent of `r`. -/
-theorem neg_log_norm_Gamma_one_add_add_mul_I_le_of_nonneg {r t : ℝ} (hr : 0 ≤ r) :
+theorem neg_log_Gamma_shift_nonneg_bound {r t : ℝ} (hr : 0 ≤ r) :
     -Real.log ‖Complex.Gamma (1 + (r : ℂ) + (t : ℂ) * Complex.I)‖ ≤
       5 * (-Real.log ‖Complex.Gamma (1 + (t : ℂ) * Complex.I)‖) +
         4 *
@@ -713,17 +713,17 @@ theorem neg_log_norm_Gamma_one_add_add_mul_I_le_of_nonneg {r t : ℝ} (hr : 0 �
       -Real.log ‖Complex.Gamma (1 + (f : ℂ) + (t : ℂ) * Complex.I)‖ := by
     have := Real.log_le_log (norm_pos_iff.mpr hGammaf_ne) hstep
     linarith only [this]
-  linarith only [hneg_log_ge, neg_log_norm_Gamma_one_add_add_mul_I_le_of_lt_one (t := t) hf0 hf1]
+  linarith only [hneg_log_ge, neg_log_Gamma_shift_lt_one_bound (t := t) hf0 hf1]
 
 /-- There are constants giving an affine-in-`|t|` upper bound for
 `-log ‖Γ(1+r+it)‖`, simultaneously for all `r ≥ 0` and real `t`. -/
-theorem exists_neg_log_norm_Gamma_one_add_add_mul_I_le_uniform :
+theorem exists_neg_log_Gamma_shift_bound :
     ∃ C₁ : ℝ,
       ∀ r t : ℝ,
         0 ≤ r →
           -Real.log ‖Complex.Gamma (1 + (r : ℂ) + (t : ℂ) * Complex.I)‖ ≤
             C₁ + 5 * Real.pi * |t| / 2 := by
-  obtain ⟨C₀, hC₀⟩ := exists_neg_log_norm_Gamma_one_add_mul_I_le_uniform
+  obtain ⟨C₀, hC₀⟩ := exists_neg_log_Gamma_one_linear_bound
   refine
     ⟨5 * C₀ +
         4 *
@@ -732,7 +732,7 @@ theorem exists_neg_log_norm_Gamma_one_add_add_mul_I_le_uniform :
                 (max (Real.Gamma (5 / 4)) (Real.Gamma (11 / 4))) +
               1),
       fun r t hr => ?_⟩
-  have h1 := neg_log_norm_Gamma_one_add_add_mul_I_le_of_nonneg (r := r) (t := t) hr
+  have h1 := neg_log_Gamma_shift_nonneg_bound (r := r) (t := t) hr
   have h2 := hC₀ t
   linarith only [h1, h2]
 
@@ -764,7 +764,7 @@ theorem norm_digamma_shift_add_mul_I_le (r : ℝ) (hr : 0 ≤ r) (t : ℝ) :
     have := (abs_lt.mp (hre_bound w hw)).1
     linarith only [this, hr]
   obtain ⟨g, hg', hgRe⟩ :=
-    exists_hasDerivAt_digamma_re_eq_log_norm_Gamma (by norm_num only : (0 : ℝ) < 1 / 2) hball
+    exists_digamma_primitive_re_logGamma (by norm_num only : (0 : ℝ) < 1 / 2) hball
   set Gbound : ℝ := max (Real.Gamma (r + 1 / 2)) (Real.Gamma (r + 3 / 2)) + 1 with hGbound_def
   have hRe_le : ∀ w ∈ Metric.ball c (1 / 2 : ℝ), (g w).re ≤ Real.log Gbound := by
     intro w hw
@@ -902,7 +902,7 @@ theorem norm_digamma_one_add_mul_I_le (t : ℝ) :
     have := (abs_lt.mp (hre_bound w hw)).1
     linarith only [this]
   obtain ⟨g, hg', hgRe⟩ :=
-    exists_hasDerivAt_digamma_re_eq_log_norm_Gamma (by norm_num only : (0 : ℝ) < 1 / 2) hball
+    exists_digamma_primitive_re_logGamma (by norm_num only : (0 : ℝ) < 1 / 2) hball
   have hRe_le : ∀ w ∈ Metric.ball c (1 / 2 : ℝ), (g w).re ≤ Real.log (Real.sqrt Real.pi) := by
     intro w hw
     have hwre_mem : w.re ∈ Set.Icc (1 / 2 : ℝ) (3 / 2 : ℝ) := by
@@ -1249,7 +1249,7 @@ theorem logDeriv_riemannZeta_one_sub {s : ℂ} (hs : 1 < s.re)
 
 /-- `cos(πs/2) ≠ 0` at `s = (2m+2) - it`, since `π(m+1)` (an integer multiple of `π`) is never
 an odd multiple of `π/2`, and the imaginary shift `-πt/2` can only vanish when `t = 0`. -/
-theorem cos_pi_mul_two_mul_add_two_sub_mul_I_div_two_ne_zero (m : ℕ) (t : ℝ) :
+theorem cos_even_vertical_ne_zero (m : ℕ) (t : ℝ) :
     Complex.cos ((Real.pi : ℂ) * ((2 * m + 2 : ℂ) - (t : ℂ) * Complex.I) / 2) ≠ 0 := by
   have hrw :
     (Real.pi : ℂ) * ((2 * m + 2 : ℂ) - (t : ℂ) * Complex.I) / 2 =
@@ -1288,7 +1288,7 @@ theorem cos_pi_mul_two_mul_add_two_sub_mul_I_div_two_ne_zero (m : ℕ) (t : ℝ)
 /-- `‖tan(πs/2)‖ ≤ 1` at `s = (2m+2) - it`: the integer-multiple-of-`π` real part makes
 `sin`/`cos` collapse to `∓sinh(πt/2)·I`/`±cosh(πt/2)`, whose ratio is a bounded hyperbolic
 tangent. -/
-theorem norm_tan_pi_mul_two_mul_add_two_sub_mul_I_div_two_le (m : ℕ) (t : ℝ) :
+theorem norm_tan_even_vertical_le_one (m : ℕ) (t : ℝ) :
     ‖Complex.tan ((Real.pi : ℂ) * ((2 * m + 2 : ℂ) - (t : ℂ) * Complex.I) / 2)‖ ≤ 1 := by
   have hrw :
     (Real.pi : ℂ) * ((2 * m + 2 : ℂ) - (t : ℂ) * Complex.I) / 2 =
@@ -1342,7 +1342,7 @@ theorem norm_tan_pi_mul_two_mul_add_two_sub_mul_I_div_two_le (m : ℕ) (t : ℝ)
 
 /-- At `z=-(2m+1)+it`, the functional equation bounds `‖ζ'/ζ(z)‖`
 by fixed constants, a bounded tangent term, and the shifted digamma estimate. -/
-theorem norm_logDeriv_riemannZeta_neg_odd_add_mul_I_le (m : ℕ) (t : ℝ) :
+theorem norm_logDeriv_zeta_neg_odd_add_mul_I_le (m : ℕ) (t : ℝ) :
     ‖logDeriv riemannZeta (-(2 * m + 1 : ℂ) + (t : ℂ) * Complex.I)‖ ≤
       Real.log (2 * Real.pi) +
         (8 * (Real.log (Real.sqrt Real.pi) - Real.log ‖Complex.Gamma (1 - (t : ℂ) * Complex.I)‖) +
@@ -1362,13 +1362,13 @@ theorem norm_logDeriv_riemannZeta_neg_odd_add_mul_I_le (m : ℕ) (t : ℝ) :
         Complex.im_ofNat, Complex.natCast_im, mul_zero, sub_zero]
     rw [this]
     linarith only [(Nat.cast_nonneg m : (0 : ℝ) ≤ (m : ℝ))]
-  have hcos_ne := cos_pi_mul_two_mul_add_two_sub_mul_I_div_two_ne_zero m t
+  have hcos_ne := cos_even_vertical_ne_zero m t
   rw [← hs_def] at hcos_ne
   have hident := logDeriv_riemannZeta_one_sub hs_re hcos_ne
   rw [hzs] at hident
   have hdigamma_le := norm_digamma_two_mul_add_two_sub_mul_I_le m t
   rw [← hs_def] at hdigamma_le
-  have htan_le := norm_tan_pi_mul_two_mul_add_two_sub_mul_I_div_two_le m t
+  have htan_le := norm_tan_even_vertical_le_one m t
   rw [← hs_def] at htan_le
   have hzeta_le :
     ‖logDeriv riemannZeta s‖ ≤
@@ -1530,7 +1530,7 @@ tangent estimate to bound `ζ'/ζ` at nonzero height and any negative real part.
 
 /-- `cos(πs/2) ≠ 0` whenever `Im s ≠ 0`: a zero would force `s` to be an odd integer
 (`Complex.cos_eq_zero_iff`), which is real, contradicting `Im s ≠ 0`. Generalizes
-`PseudoPrime.AnalyticNumberTheory.RiemannZeta.cos_pi_mul_two_mul_add_two_sub_mul_I_div_two_ne_zero`
+`PseudoPrime.AnalyticNumberTheory.RiemannZeta.cos_even_vertical_ne_zero`
 away from the integer-real-part case. -/
 theorem cos_pi_mul_div_two_ne_zero_of_im_ne_zero {s : ℂ} (hs : s.im ≠ 0) :
     Complex.cos ((Real.pi : ℂ) * s / 2) ≠ 0 := by

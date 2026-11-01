@@ -53,7 +53,7 @@ theorem boundedCongruenceCount_le_explicit_finite_fiber {a c : ℕ} (ha : 0 < a)
   have hdelta : 0 < eta / 2 := half_pos heta
   let K : ℝ := eightDegreeFiberCoefficient c
   have hK : 0 < K := Nat.cast_pos.mpr (eightDegreeFiberCoefficient_pos c)
-  have hR := heightRestrictedRatioSet_le_explicit_finite_fiber_ratio_bound hc hprec
+  have hR := heightRatios_le_fiber_ratio_bound hc hprec
   let C : ℝ := 4 * K * (1 + 1 / (eta / 2))
   intro p H hp hodd hHp htop
   rw [finiteFiberCountCoefficient_cast]
@@ -61,7 +61,7 @@ theorem boundedCongruenceCount_le_explicit_finite_fiber {a c : ℕ} (ha : 0 < a)
   have hp1 : (1 : ℝ) ≤ p := Nat.one_le_cast.mpr (Fact.out : p.Prime).pos
   have hp0 : (0 : ℝ) < p := Nat.cast_pos.mpr (Fact.out : p.Prime).pos
   have hcount :=
-    boundedCongruenceCount_le_of_uniform_height_ratios hodd hHp hK.le
+    congruenceCount_le_of_uniform_height_ratios hodd hHp hK.le
       (fun T hT ↦ hR p H T hHp ((Nat.cast_le.mpr hT).trans htop))
   have hpow := Real.rpow_le_rpow (Nat.cast_nonneg H) (Nat.cast_le.mpr hHp.le) hdelta.le
   have hlog :=

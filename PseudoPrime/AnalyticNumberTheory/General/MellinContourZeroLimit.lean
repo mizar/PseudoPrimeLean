@@ -120,8 +120,7 @@ theorem exists_goodHeight_mellin_boundary_limit {F : ℂ → ℂ} {ε : ℂ} {C 
           (nhds
             (-(2 * Real.pi * Complex.I) *
               ∑' ρ : ℂ, (analyticOrderNatAt F ρ : ℂ) * mellin (logarithmicTestWeight g) ρ)) := by
-  obtain ⟨U, B, hu, hb', hseq, htop, hbot⟩ :=
-    exists_goodHeight_sequences_with_horizontal_integrals_zero hC hb g he hc hg
+  obtain ⟨U, B, hu, hb', hseq, htop, hbot⟩ := exists_goodHeights_horizontal_zero hC hb g he hc hg
   refine ⟨U, B, hu, hb', htop, hbot, ?_⟩
   apply tendsto_mellin_boundary hF h0 horder hε hfe hright g he hc hg U B hu hb'
   · intro n
@@ -191,8 +190,7 @@ theorem tendsto_mellin_vertical_difference {F : ℂ → ℂ} (g : ℝ → ℂ) (
       Filter.atTop (nhds 0) := by
     simpa only [neg_mul, intervalIntegral.integral_neg, neg_zero] using hlower.neg
   have ht :=
-    (RectangleGeometry.tendsto_vertical_difference_of_boundary_limit _ (-1) 2 U B _ hu hb
-          hboundary).const_mul
+    (RectangleGeometry.tendsto_vertical_sub_of_boundary _ (-1) 2 U B _ hu hb hboundary).const_mul
       Complex.I
   have heq (n : ℕ) :
     Complex.I *
@@ -304,8 +302,7 @@ theorem exists_mellin_vertical_difference_of_completion {F L : ℂ → ℂ} {ε 
             ((2 * Real.pi : ℂ) *
               ∑' ρ : ℂ, (analyticOrderNatAt F ρ : ℂ) * mellin (logarithmicTestWeight g) ρ)) := by
   obtain ⟨C, hC, hb⟩ :=
-    exists_height_with_quadratic_bound_of_completion hq k κ hκ hreg hε hfe hright hF h0 horder ha hL
-      hdL hlog
+    exists_goodHeight_of_completion hq k κ hκ hreg hε hfe hright hF h0 horder ha hL hdL hlog
   exact exists_goodHeight_mellin_vertical_difference hF h0 horder hε hfe hright hC hb g he hc hg
 
 end PseudoPrime.AnalyticNumberTheory.General

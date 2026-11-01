@@ -40,14 +40,14 @@ theorem gammaResolvent_poissonSum_lt {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : D
                   ((ab.1 : ℝ) / Complex.normSq ((((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ) - ρ)))).sum <
       (11783423 / 25000000 : ℝ) * Real.log q + 24 := by
   apply
-    Analysis.gammaResolvent_weighted_lt_of_euler_centered_bounds
+    Analysis.gammaResolvent_weighted_lt_of_centered_bounds
       (fun a : ℚ ↦
         ∑' ρ : ℂ,
           (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
             ((a : ℝ) / Complex.normSq ((((1 / 2 : ℝ) + (a : ℝ)) : ℂ) - ρ)))
       (Real.log q)
   intro ab hab
-  exact completed_poissonSum_centered_le_resolvent_euler hq hRH hp hne hinv ab hab
+  exact poissonSum_resolvent_euler_RH hq hRH hp hne hinv ab hab
 
 /-- Under individual RH for a primitive nonprincipal character with nonprincipal inverse,
 a divisor-weighted real resolvent term equals its real Poisson term. A nonzero divisor
@@ -62,8 +62,7 @@ theorem completed_resolventTerm_eq_poisson {q : ℕ} [NeZero q] {χ : DirichletC
   by_cases hD : MeromorphicOn.divisor χ.completedLFunction Set.univ ρ = 0
   · simp only [hD, Int.cast_zero, zero_mul]
   · have hr :=
-      completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv
-        (completed_zero_of_divisor_ne_zero hne hD)
+      completed_zero_re_eq_half_of_RH hRH hp hinv (completed_zero_of_divisor_ne_zero hne hD)
     have hn : Complex.normSq ((((1 / 2 : ℝ) + a) : ℂ) - ρ) = a ^ 2 + ρ.im ^ 2 := by
       simp only [Complex.normSq_apply, Complex.sub_re, Complex.add_re, Complex.ofReal_re,
         Complex.sub_im, Complex.add_im, Complex.ofReal_im, hr]
@@ -129,9 +128,8 @@ theorem summable_gammaResolvent_node_terms {q : ℕ} [NeZero q] (hq : 2 ≤ q)
 /-- For a primitive nonprincipal character under individual RH with nonprincipal inverse,
 the divisor-weighted signed Gamma resolvent is summable. Sum the convergent node series
 and use the pointwise finite-sum identity. This permits comparison with a dominated Gamma kernel. -/
-theorem summable_completed_gammaResolvent_terms {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
+theorem summable_gammaResolvent_mass_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     Summable
       (fun ρ : ℂ ↦
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
@@ -145,9 +143,8 @@ theorem summable_completed_gammaResolvent_terms {q : ℕ} [NeZero q] (hq : 2 ≤
 the divisor-weighted Gamma resolvent mass equals the finite signed combination of real Poisson
 sums. Each resolvent series is summable; interchange the finite and infinite sums and
 identify the ordinate-only kernels on the critical line. This exposes the exact conductor term. -/
-theorem gammaResolvent_zeroMass_eq_poissonSum {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
+theorem gammaMass_eq_poissonSum_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
           Gamma.gammaResolventMajorant ρ.im) =
@@ -177,7 +174,7 @@ theorem gammaResolvent_zeroMass_lt {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : Dir
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
           Gamma.gammaResolventMajorant ρ.im) <
       (11783423 / 25000000 : ℝ) * Real.log q + 24 := by
-  rw [gammaResolvent_zeroMass_eq_poissonSum hq hRH hp hne hinv]
+  rw [gammaMass_eq_poissonSum_RH hq hRH hp hne hinv]
   exact gammaResolvent_poissonSum_lt hq hRH hp hne hinv
 
 /-- If the real Gamma critical-line norm is globally dominated by the certified resolvent,
@@ -185,7 +182,7 @@ a primitive nonprincipal character under individual RH has Gamma zero mass stric
 11783423/25000000 times log q plus 24. Nonnegative divisor multiplicities permit the
 pointwise comparison, and resolvent summability also establishes Gamma mass summability.
 The comparison isolates the domination certificate from the Poisson mass calculation. -/
-theorem gamma_zeroMass_lt_of_resolvent_majorant
+theorem gammaNormMass_lt_of_majorant_RH
     (hΓ : ∀ t : ℝ, ‖Complex.Gamma ((1 / 2 : ℂ) + Complex.I * t)‖ ≤ Gamma.gammaResolventMajorant t)
     {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
     (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
@@ -202,8 +199,7 @@ theorem gamma_zeroMass_lt_of_resolvent_majorant
     by_cases hD : MeromorphicOn.divisor χ.completedLFunction Set.univ ρ = 0
     · simp only [hD, Int.cast_zero, zero_mul, le_refl]
     · have hr :=
-        completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv
-          (completed_zero_of_divisor_ne_zero hne hD)
+        completed_zero_re_eq_half_of_RH hRH hp hinv (completed_zero_of_divisor_ne_zero hne hD)
       have he : ρ = (1 / 2 : ℂ) + Complex.I * ρ.im := by
         calc
           ρ = (ρ.re : ℂ) + (ρ.im : ℂ) * Complex.I := (Complex.re_add_im ρ).symm
@@ -212,7 +208,7 @@ theorem gamma_zeroMass_lt_of_resolvent_majorant
             norm_num only [Complex.ofReal_div, Complex.ofReal_one, Complex.ofReal_ofNat]
             ring
       exact mul_le_mul_of_nonneg_left (by simpa only [← he] using hΓ ρ.im) (hn ρ)
-  have hg := summable_completed_gammaResolvent_terms hq hRH hp hne hinv
+  have hg := summable_gammaResolvent_mass_RH hq hRH hp hne hinv
   have hsum := hg.of_nonneg_of_le (fun ρ ↦ mul_nonneg (hn ρ) (norm_nonneg _)) hb
   exact (hsum.tsum_le_tsum hb hg).trans_lt (gammaResolvent_zeroMass_lt hq hRH hp hne hinv)
 
@@ -220,7 +216,7 @@ theorem gamma_zeroMass_lt_of_resolvent_majorant
 for the explicit Gamma zero-mass bound of a primitive nonprincipal character under
 individual RH. The proved rational-exponential tail extends the certificate globally,
 and the centered Poisson comparison gives the conductor coefficient and constant 24. -/
-theorem gamma_zeroMass_lt_of_compact_resolvent_majorant
+theorem gammaNormMass_lt_of_compact_RH
     (hΓ :
       ∀ t : ℝ,
         |t| ≤ 16 → ‖Complex.Gamma ((1 / 2 : ℂ) + Complex.I * t)‖ ≤ Gamma.gammaResolventMajorant t)
@@ -229,8 +225,8 @@ theorem gamma_zeroMass_lt_of_compact_resolvent_majorant
     (∑' ρ : ℂ, (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) * ‖Complex.Gamma ρ‖) <
       (11783423 / 25000000 : ℝ) * Real.log q + 24 := by
   exact
-    gamma_zeroMass_lt_of_resolvent_majorant
-      (Analysis.norm_Gamma_half_add_I_le_gammaResolvent_of_compact hΓ) hq hRH hp hne hinv
+    gammaNormMass_lt_of_majorant_RH (Analysis.norm_Gamma_half_le_resolvent_of_compact hΓ) hq hRH hp
+      hne hinv
 
 /-- For a primitive nonprincipal character under individual RH, with nonprincipal
 inverse and modulus at least two, the Gamma zero mass is below
@@ -241,7 +237,7 @@ theorem gamma_zeroMass_lt {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCha
     (∑' ρ : ℂ, (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) * ‖Complex.Gamma ρ‖) <
       (11783423 / 25000000 : ℝ) * Real.log q + 24 := by
   exact
-    gamma_zeroMass_lt_of_resolvent_majorant Analysis.norm_Gamma_half_add_I_le_gammaResolvent hq hRH
-      hp hne hinv
+    gammaNormMass_lt_of_majorant_RH Analysis.norm_Gamma_half_add_I_le_gammaResolvent hq hRH hp hne
+      hinv
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

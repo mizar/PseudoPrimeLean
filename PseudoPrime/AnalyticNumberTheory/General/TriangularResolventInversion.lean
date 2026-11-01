@@ -112,8 +112,8 @@ theorem integrable_resolvent_inverse_of_pos {α : ℂ} (hα : α.re < 0) {c u : 
 and positive argument, the triangular resolvent inverse transform equals three translated
 regularized weights. Split integrable terms and invert each scalar resolvent.
 This evaluates individual Gamma-pole contributions before summing the digamma series. -/
-theorem mellinInv_triangular_resolvent_weight_combination {α : ℂ} (hα : α.re < 0) {a c u : ℝ}
-    (ha : a ≠ 0) (hc : 0 < c) (hu : 0 < u) :
+theorem mellinInv_triangular_resolvent {α : ℂ} (hα : α.re < 0) {a c u : ℝ} (ha : a ≠ 0) (hc : 0 < c)
+    (hu : 0 < u) :
     mellinInv c (fun s : ℂ ↦ Analysis.triangularMellinFunction a s / (s - α)) u =
       mellinResolventWeight α (u / Real.exp (2 * a)) +
           mellinResolventWeight α (u / Real.exp (-2 * a)) -
@@ -159,13 +159,13 @@ theorem mellinInv_triangular_resolvent_weight_combination {α : ℂ} (hα : α.r
 /-- For positive parameter and line and a pole with negative real part, the inverse
 transform vanishes beyond exp(2a). All three translated regularized weights are outside
 their support. This supplies the exterior branch of the Gamma-pole evaluation. -/
-theorem mellinInv_triangular_resolvent_eq_zero_of_large_argument {α : ℂ} (hα : α.re < 0) {a c u : ℝ}
+theorem mellinInv_triangular_resolvent_zero_of_large {α : ℂ} (hα : α.re < 0) {a c u : ℝ}
     (ha : 0 < a) (hc : 0 < c) (hu : Real.exp (2 * a) < u) :
     mellinInv c (fun s : ℂ ↦ Analysis.triangularMellinFunction a s / (s - α)) u = 0 := by
   have hu0 : 0 < u := (Real.exp_pos _).trans hu
   have he : Real.exp (-2 * a) ≤ Real.exp (2 * a) := Real.exp_le_exp.mpr (by linarith only [ha])
   have h0 : 1 < u := (Real.one_le_exp (by linarith only [ha] : 0 ≤ 2 * a)).trans_lt hu
-  rw [mellinInv_triangular_resolvent_weight_combination hα ha.ne' hc hu0,
+  rw [mellinInv_triangular_resolvent hα ha.ne' hc hu0,
     mellinResolventWeight_eq_zero_of_one_lt α ((one_lt_div (Real.exp_pos _)).mpr hu),
     mellinResolventWeight_eq_zero_of_one_lt α ((one_lt_div (Real.exp_pos _)).mpr (he.trans_lt hu)),
     mellinResolventWeight_eq_zero_of_one_lt α h0]

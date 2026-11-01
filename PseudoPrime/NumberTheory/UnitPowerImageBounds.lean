@@ -34,7 +34,7 @@ theorem two_dvd_card_unitPowerImage_prime_pow {p a E : ℕ} (hp : p.Prime) (hp2 
 /-- An even power image modulo an odd prime power contains -1. The unit group is
 cyclic and its signs are distinct, so the order-two subgroup lies in the image.
 This produces a negative fiber which can be combined with other CRT factors. -/
-theorem exists_unit_pow_eq_neg_one_prime_pow_of_even_image {p a E : ℕ} (hp : p.Prime) (hp2 : p ≠ 2)
+theorem exists_pow_neg_one_of_prime_pow_even_image {p a E : ℕ} (hp : p.Prime) (hp2 : p ≠ 2)
     (ha : 0 < a) (he : 2 ∣ Nat.card (powMonoidHom E : (ZMod (p ^ a))ˣ →* (ZMod (p ^ a))ˣ).range) :
     ∃ u : (ZMod (p ^ a))ˣ, u ^ E = -1 := by
   let : NeZero (p ^ a) := ⟨pow_ne_zero a hp.ne_zero⟩
@@ -67,9 +67,8 @@ theorem two_mul_primePower_le_card_unitPowerImage {p a E : ℕ} (hp : p.Prime) (
 than p-1 at every prime divisor, -1 has a global E-power preimage and the image
 cardinality is even. Induct on prime powers and coprime products, preserving
 one common negative sign through CRT. This supplies the global two-fiber count. -/
-theorem exists_negative_root_and_even_image_of_local_twoAdic_lt {n E : ℕ} (hn1 : 1 < n)
-    (hnOdd : Odd n) (hE : E ≠ 0)
-    (hv : ∀ p : ℕ, p.Prime → p ∣ n → padicValNat 2 E < padicValNat 2 (p - 1)) :
+theorem exists_neg_root_even_image_of_twoAdic_lt {n E : ℕ} (hn1 : 1 < n) (hnOdd : Odd n)
+    (hE : E ≠ 0) (hv : ∀ p : ℕ, p.Prime → p ∣ n → padicValNat 2 E < padicValNat 2 (p - 1)) :
     (∃ u : (ZMod n)ˣ, u ^ E = -1) ∧
       2 ∣ Nat.card (powMonoidHom E : (ZMod n)ˣ →* (ZMod n)ˣ).range := by
   revert hn1 hnOdd hv
@@ -86,7 +85,7 @@ theorem exists_negative_root_and_even_image_of_local_twoAdic_lt {n E : ℕ} (hn1
     have hpd : p ∣ p ^ a := dvd_pow_self p ha.ne'
     have hp2 := ho.ne_two_of_dvd_nat hpd
     have he := two_dvd_card_unitPowerImage_prime_pow hp hp2 ha hE (hv p hp hpd)
-    exact ⟨exists_unit_pow_eq_neg_one_prime_pow_of_even_image hp hp2 ha he, he⟩
+    exact ⟨exists_pow_neg_one_of_prime_pow_even_image hp hp2 ha he, he⟩
   | coprime m n hm hn hc ihm ihn =>
     intro _ ho hv
     let : NeZero m := ⟨Nat.ne_zero_of_lt hm⟩
@@ -134,10 +133,10 @@ theorem prime_of_card_unitPowerImage_lt_four {n E : ℕ} (hn1 : 1 < n) (hnOdd : 
     let : NeZero m := ⟨Nat.ne_zero_of_lt hm⟩
     let : NeZero n := ⟨Nat.ne_zero_of_lt hn⟩
     have hem :=
-      (exists_negative_root_and_even_image_of_local_twoAdic_lt hm (Nat.odd_mul.mp ho).1 hE
+      (exists_neg_root_even_image_of_twoAdic_lt hm (Nat.odd_mul.mp ho).1 hE
           (fun p hp hd ↦ hv p hp (hd.trans (dvd_mul_right m n)))).2
     have hen :=
-      (exists_negative_root_and_even_image_of_local_twoAdic_lt hn (Nat.odd_mul.mp ho).2 hE
+      (exists_neg_root_even_image_of_twoAdic_lt hn (Nat.odd_mul.mp ho).2 hE
           (fun p hp hd ↦ hv p hp (hd.trans (dvd_mul_left n m)))).2
     rw [card_unitPowerImage_coprime_mul hc] at hsmall
     have h4 := Nat.mul_le_mul (Nat.le_of_dvd Nat.card_pos hem) (Nat.le_of_dvd Nat.card_pos hen)
@@ -147,9 +146,8 @@ theorem prime_of_card_unitPowerImage_lt_four {n E : ℕ} (hn1 : 1 < n) (hnOdd : 
 with fewer than eight image elements is a prime or 9. The surviving p^(a-1)
 factor leaves only 3^2 among composite prime powers. This handles the exceptional
 local branch in the general small-image classification. -/
-private theorem prime_or_nine_of_card_unitPowerImage_prime_pow_lt_eight {p a E : ℕ} (hp : p.Prime)
-    (hp2 : p ≠ 2) (ha : 0 < a) (hE : E ≠ 0) (hpE : ¬p ∣ E)
-    (hv : padicValNat 2 E < padicValNat 2 (p - 1))
+private theorem prime_or_nine_of_powImage_card_lt_8 {p a E : ℕ} (hp : p.Prime) (hp2 : p ≠ 2)
+    (ha : 0 < a) (hE : E ≠ 0) (hpE : ¬p ∣ E) (hv : padicValNat 2 E < padicValNat 2 (p - 1))
     (hsmall : Nat.card (powMonoidHom E : (ZMod (p ^ a))ˣ →* (ZMod (p ^ a))ˣ).range < 8) :
     (p ^ a).Prime ∨ p ^ a = 9 := by
   by_cases ha1 : a = 1
@@ -180,8 +178,8 @@ valuation imply that a power image with fewer than eight elements occurs only
 at a prime, at 9, or at a product of two distinct primes. In a coprime product
 both images must have fewer than four elements and hence prime moduli.
 This reduces the remaining low-index MR case to the two-prime divisibility contradiction. -/
-theorem prime_or_nine_or_two_primes_of_card_unitPowerImage_lt_eight {n E : ℕ} (hn1 : 1 < n)
-    (hnOdd : Odd n) (hE : E ≠ 0) (hpE : ∀ p : ℕ, p.Prime → p ∣ n → ¬p ∣ E)
+theorem prime_or_9_or_two_primes_of_powImage_card_lt_8 {n E : ℕ} (hn1 : 1 < n) (hnOdd : Odd n)
+    (hE : E ≠ 0) (hpE : ∀ p : ℕ, p.Prime → p ∣ n → ¬p ∣ E)
     (hv : ∀ p : ℕ, p.Prime → p ∣ n → padicValNat 2 E < padicValNat 2 (p - 1))
     (hsmall : Nat.card (powMonoidHom E : (ZMod n)ˣ →* (ZMod n)ˣ).range < 8) :
     n.Prime ∨ n = 9 ∨ ∃ p q : ℕ, p.Prime ∧ q.Prime ∧ p ≠ q ∧ n = p * q := by
@@ -198,8 +196,8 @@ theorem prime_or_nine_or_two_primes_of_card_unitPowerImage_lt_eight {n E : ℕ} 
         exact (lt_irrefl 1) hn
     have hpd : p ∣ p ^ a := dvd_pow_self p ha.ne'
     have hclass :=
-      prime_or_nine_of_card_unitPowerImage_prime_pow_lt_eight hp (ho.ne_two_of_dvd_nat hpd) ha hE
-        (hpE p hp hpd) (hv p hp hpd) hsmall
+      prime_or_nine_of_powImage_card_lt_8 hp (ho.ne_two_of_dvd_nat hpd) ha hE (hpE p hp hpd)
+        (hv p hp hpd) hsmall
     exact hclass.elim Or.inl (fun h ↦ Or.inr (Or.inl h))
   | coprime m n hm hn hc _ _ =>
     intro _ ho hpE hv hsmall
@@ -207,10 +205,8 @@ theorem prime_or_nine_or_two_primes_of_card_unitPowerImage_lt_eight {n E : ℕ} 
     let : NeZero n := ⟨Nat.ne_zero_of_lt hn⟩
     have hvm := fun (p : ℕ) (hp : p.Prime) (hd : p ∣ m) ↦ hv p hp (hd.trans (dvd_mul_right m n))
     have hvn := fun (p : ℕ) (hp : p.Prime) (hd : p ∣ n) ↦ hv p hp (hd.trans (dvd_mul_left n m))
-    have hem :=
-      (exists_negative_root_and_even_image_of_local_twoAdic_lt hm (Nat.odd_mul.mp ho).1 hE hvm).2
-    have hen :=
-      (exists_negative_root_and_even_image_of_local_twoAdic_lt hn (Nat.odd_mul.mp ho).2 hE hvn).2
+    have hem := (exists_neg_root_even_image_of_twoAdic_lt hm (Nat.odd_mul.mp ho).1 hE hvm).2
+    have hen := (exists_neg_root_even_image_of_twoAdic_lt hn (Nat.odd_mul.mp ho).2 hE hvn).2
     have hA := Nat.le_of_dvd Nat.card_pos hem
     have hB := Nat.le_of_dvd Nat.card_pos hen
     rw [card_unitPowerImage_coprime_mul hc] at hsmall

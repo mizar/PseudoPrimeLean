@@ -165,8 +165,8 @@ theorem exists_odd_prime_ne_one_le_twoPoleRetained_even {q A : ℕ} [NeZero q]
     dsimp only [r]
     linarith only [hlog, ht, hL]
   have hc :=
-    AnalyticNumberTheory.DirichletLFunction.twoPoleGammaConstant_le_signed_of_even
-      χ.primitiveCharacter ((NumberTheory.primitiveCharacter_even_iff χ).mpr heven)
+    AnalyticNumberTheory.DirichletLFunction.twoPoleGamma_le_112_25_of_even χ.primitiveCharacter
+      ((NumberTheory.primitiveCharacter_even_iff χ).mpr heven)
   have hsep :=
     twoPoleRetainedGap_affine_margin hL (c := 61 / 5) (C := 112 / 25) (by norm_num only)
       (by norm_num only) (by norm_num only)

@@ -138,7 +138,7 @@ Content: `hurwitzEvenFEPair a` has real `f := ofReal ∘ evenKernel a`, `g := of
 `s / 2`.
 Role: the even-parity half of the completed-`L` conjugation symmetry.
 -/
-theorem HurwitzZeta.completedHurwitzZetaEven_conj (a : UnitAddCircle) (s : ℂ) :
+theorem completedHurwitzZetaEven_conj (a : UnitAddCircle) (s : ℂ) :
     (starRingEnd ℂ) (HurwitzZeta.completedHurwitzZetaEven a s) =
       HurwitzZeta.completedHurwitzZetaEven a (starRingEnd ℂ s) := by
   unfold HurwitzZeta.completedHurwitzZetaEven
@@ -180,7 +180,7 @@ Content: identical strategy to `completedHurwitzZetaEven_conj`, using `hurwitzOd
 (`k := 3/2`, `f₀ = g₀ = 0`) and `WeakFEPair.Λ_conj` at `(s + 1) / 2`.
 Role: the odd-parity half of the completed-`L` conjugation symmetry.
 -/
-theorem HurwitzZeta.completedHurwitzZetaOdd_conj (a : UnitAddCircle) (s : ℂ) :
+theorem completedHurwitzZetaOdd_conj (a : UnitAddCircle) (s : ℂ) :
     (starRingEnd ℂ) (HurwitzZeta.completedHurwitzZetaOdd a s) =
       HurwitzZeta.completedHurwitzZetaOdd a (starRingEnd ℂ s) := by
   unfold HurwitzZeta.completedHurwitzZetaOdd
@@ -244,32 +244,31 @@ s) + N^{-s} · Σ_j Φ(j) · completedHurwitzZetaOdd(toAddCircle j, s)` (a **fin
 Role: lifts the even/odd conjugation symmetry to the level of `ZMod.completedLFunction`, the
 building block `DirichletCharacter.completedLFunction` is literally defined to equal.
 -/
-theorem ZMod.completedLFunction_conj {N : ℕ} [NeZero N] (Φ : ZMod N → ℂ) (s : ℂ) :
+theorem zmodCompleted_conj {N : ℕ} [NeZero N] (Φ : ZMod N → ℂ) (s : ℂ) :
     (starRingEnd ℂ) (ZMod.completedLFunction Φ s) =
       ZMod.completedLFunction (fun j => (starRingEnd ℂ) (Φ j)) (starRingEnd ℂ s) := by
   unfold ZMod.completedLFunction
   rw [map_add, map_mul, map_mul, Complex.conj_cpow_natCast N (-s), map_neg]
   congr 2
   · rw [map_sum]
-    exact Finset.sum_congr rfl fun j _ => by rw [map_mul, HurwitzZeta.completedHurwitzZetaEven_conj]
+    exact Finset.sum_congr rfl fun j _ => by rw [map_mul, completedHurwitzZetaEven_conj]
   · rw [map_sum]
-    exact Finset.sum_congr rfl fun j _ => by rw [map_mul, HurwitzZeta.completedHurwitzZetaOdd_conj]
+    exact Finset.sum_congr rfl fun j _ => by rw [map_mul, completedHurwitzZetaOdd_conj]
 
 /--
 Input/assumptions: a positive level `N`, a complex Dirichlet character `χ` of level `N`, and
 `s : ℂ`.
 Conclusion: `conj (completedLFunction χ s) = completedLFunction χ⁻¹ (conj s)`.
 Content: `DirichletCharacter.completedLFunction χ s := ZMod.completedLFunction (⇑χ) s`;
-`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ZMod.completedLFunction_conj`
+`zmodCompleted_conj`
 reduces the claim to `(fun j => conj (χ j)) = ⇑χ⁻¹`, which is
 `MulChar.star_apply'` (the conjugation step) pointwise.
 Role: supplies the value symmetry used by `primitiveBRe_inv_eq` in `PrimitiveFunctionalEquation`.
 -/
-theorem DirichletCharacter.completedLFunction_conj {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
-    (s : ℂ) :
+theorem completed_conj {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (s : ℂ) :
     (starRingEnd ℂ) (DirichletCharacter.completedLFunction χ s) =
       DirichletCharacter.completedLFunction χ⁻¹ (starRingEnd ℂ s) := by
-  rw [DirichletCharacter.completedLFunction, ZMod.completedLFunction_conj,
+  rw [DirichletCharacter.completedLFunction, zmodCompleted_conj,
     DirichletCharacter.completedLFunction]
   congr 1
   funext j
@@ -282,7 +281,7 @@ Input/assumptions: a positive level `N`, a complex Dirichlet character `χ` of l
 `χ ≠ 1`.
 Conclusion: `conj (deriv (completedLFunction χ) 0) = deriv (completedLFunction χ⁻¹) 0`.
 Content: differentiate
-`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.DirichletCharacter.completedLFunction_conj`
+`completed_conj`
 at `s := 0` via
 `HasDerivAt.conj_conj` (`HasDerivAt f f' x → HasDerivAt (conj ∘ f ∘ conj) (conj f') (conj x)`):
 since `conj ∘ F(χ) ∘ conj = F(χ⁻¹)` (pointwise, from the value identity) and `conj 0 = 0`, the
@@ -290,8 +289,7 @@ resulting `HasDerivAt F(χ⁻¹) (conj (deriv F(χ) 0)) 0` must agree with `F(χ
 `0` by uniqueness.
 Role: supplies derivative conjugation at zero for the completed logarithmic derivative.
 -/
-theorem DirichletCharacter.deriv_completedLFunction_zero_conj {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hne : χ ≠ 1) :
+theorem deriv_completed_zero_conj {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} (hne : χ ≠ 1) :
     (starRingEnd ℂ) (deriv (DirichletCharacter.completedLFunction χ) 0) =
       deriv (DirichletCharacter.completedLFunction χ⁻¹) 0 := by
   have hinvne : χ⁻¹ ≠ 1 := fun h => hne (by rw [← inv_inv χ, h, inv_one])
@@ -307,7 +305,7 @@ theorem DirichletCharacter.deriv_completedLFunction_zero_conj {N : ℕ} [NeZero 
       DirichletCharacter.completedLFunction χ⁻¹ := by
     funext z
     simp only [Function.comp_apply]
-    rw [DirichletCharacter.completedLFunction_conj, Complex.conj_conj]
+    rw [completed_conj, Complex.conj_conj]
   rw [heqfun, map_zero] at hcc
   exact ((hdiffinv 0).hasDerivAt.unique hcc).symm
 

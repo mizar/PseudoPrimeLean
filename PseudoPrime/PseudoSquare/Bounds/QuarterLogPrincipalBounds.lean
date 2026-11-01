@@ -26,9 +26,9 @@ noncomputable def quarterPrincipalNegOneGap (B : ℕ) (x P : ℝ) : ℝ :=
 quarter-budget gap give an odd prime negative Jacobi witness below (99/40)x.
 Apply the conductor comparison with the unconditional quarter-logarithm factor count.
 This is the pointwise consumer for improved principal profiles. -/
-theorem exists_odd_prime_neg_one_of_quarterPrincipalLower_gap {n B : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hnB : n ≤ B) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {x P : ℝ} (hx : 25 ≤ x)
+theorem exists_odd_prime_neg_one_of_quarter_gap_GRH {n B : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hnB : n ≤ B) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x P : ℝ}
+    (hx : 25 ≤ x)
     (hP :
       P ≤
         2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
@@ -38,12 +38,12 @@ theorem exists_odd_prime_neg_one_of_quarterPrincipalLower_gap {n B : ℕ} (hn : 
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n p = -1 := by
   let : NeZero (4 * n) := ⟨Nat.mul_ne_zero (by norm_num only) hn.pos.ne'⟩
   have hC :=
-    AnalyticNumberTheory.DirichletLFunction.twoPoleGammaConstant_le_signed_of_even
+    AnalyticNumberTheory.DirichletLFunction.twoPoleGamma_le_112_25_of_even
       (NumberTheory.complexQuadraticCharacter n hn).primitiveCharacter
       ((NumberTheory.primitiveCharacter_even_iff _).mpr
         (NumberTheory.complexQuadraticCharacter_isEven n hn))
   have hcard :=
-    AnalyticNumberTheory.Arithmetic.primeFactors_card_le_thirteen_halves_add_quarter_log
+    AnalyticNumberTheory.Arithmetic.primeFactors_card_le_13_2_add_1_4_log
       (Nat.mul_pos (by norm_num only : 0 < 4) hn.pos) (Nat.mul_le_mul_left 4 hnB)
   have hc :=
     div_le_div_of_nonneg_right
@@ -69,27 +69,25 @@ theorem exists_odd_prime_neg_one_of_quarterPrincipalLower_gap {n B : ℕ} (hn : 
     norm_num only [Nat.floor_ofNat]
     exact LLS.twoPoleEulerPrefixMass_thirteen_saving_one
   obtain ⟨p, hp, hd, hb, hv⟩ :=
-    LLS.exists_prime_neg_one_of_principalLower_conductor_prefix
-      (NumberTheory.complexQuadraticCharacter n hn)
+    LLS.exists_prime_negOne_principalConductor_GRH (NumberTheory.complexQuadraticCharacter n hn)
       (NumberTheory.complexQuadraticCharacter_isQuadratic n hn)
       (NumberTheory.complexQuadraticCharacter_ne_one_of_not_square n hn hns)
       (Nat.mul_le_mul_left 4 hnB) hGRH (by linarith only [hx]) hP (Y := 13) (by norm_num only) (a :=
       3 / 10) (d := (1 / 5 : ℝ) * Real.log 2) (by norm_num only)
       (mul_nonneg (by norm_num only) (Real.log_natCast_nonneg 2)) (by linarith only [hs])
-      (fun p hp ↦
-        AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight_prime_upper_three_tenths hp)
-      hY hC (g := 1) hSaving (hc.trans_lt hg)
+      (fun p hp ↦ AnalyticNumberTheory.Arithmetic.pairedEulerWeight_prime_le_three_tenths hp) hY hC
+      (g := 1) hSaving (hc.trans_lt hg)
   have hw :=
-    NumberTheory.primeNegOneWitness_mem_of_complexQuadraticCharacter_ne_one n hn hp hd
+    NumberTheory.negOneWitness_mem_of_quadratic_ne_one n hn hp hd
       (by
         rw [hv]; norm_num only)
   exact ⟨p, hp, hw.2.1, hb, hw.2.2⟩
 
 /-- Under the quarter-budget gap assumptions, the least odd-prime negative witness
 is at most (99/40)x. Apply leastness to the pointwise witness. This supplies the finite maximum. -/
-theorem primeNegOneWitness_cast_le_of_quarterPrincipalLower_gap {n B : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hnB : n ≤ B) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {x P : ℝ} (hx : 25 ≤ x)
+theorem negOneWitness_le_of_quarterPrincipalLower_gap {n B : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hnB : n ≤ B) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x P : ℝ}
+    (hx : 25 ≤ x)
     (hP :
       P ≤
         2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
@@ -99,7 +97,7 @@ theorem primeNegOneWitness_cast_le_of_quarterPrincipalLower_gap {n B : ℕ} (hn 
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ (99 / 40 : ℝ) * x := by
   obtain ⟨p, hp, ho, hb, hv⟩ :=
-    exists_odd_prime_neg_one_of_quarterPrincipalLower_gap hn hns hnB hGRH hx hP hgap
+    exists_odd_prime_neg_one_of_quarter_gap_GRH hn hns hnB hGRH hx hP hgap
   exact (Nat.cast_le.mpr (NumberTheory.primeNegOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hb
 
 /-- Under GRH, scale at least 25 and a positive quarter-budget gap for a certified
@@ -119,8 +117,8 @@ theorem QNegOne_le_of_quarterPrincipalLower_gap {B : ℕ}
   intro n hn
   have ha := NumberTheory.mem_admissibleFinset_iff.mp hn
   exact
-    primeNegOneWitness_cast_le_of_quarterPrincipalLower_gap ha.odd ha.not_isSquare ha.le hGRH hx hP
-      hgap (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare ha.odd ha.not_isSquare)
+    negOneWitness_le_of_quarterPrincipalLower_gap ha.odd ha.not_isSquare ha.le hGRH hx hP hgap
+      (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare ha.odd ha.not_isSquare)
 
 /-- Under GRH, an admissible width and positive quarter-budget gap for the clipped
 principal profile bound QNegOne(B) by (99/40)x. Insert the proved principal lower cap.

@@ -30,7 +30,7 @@ theorem gaussian_zeroMass_prefix_lt
         Analysis.gaussianPairedEulerTail χ (Finset.Ioc 0 (N : ℕ)) <
       (20115621 / 50000000 : ℝ) * Real.log q + (12871 / 1000 - 2 * P) := by
   let B := Finset.Ioc 0 (N : ℕ)
-  have h := gaussian_zeroMass_add_pairedTail_lt_principal_prefix hq hRH hRiemann hp hne hinv B
+  have h := gaussianNormMass_tail_principal_RH hq hRH hRiemann hp hne hinv B
   have htrivB : ∑ m ∈ B, (1 - (χ m).re) * Analysis.gaussianResolventMangoldtWeight m = 0 := by
     apply Finset.sum_eq_zero
     intro m hm

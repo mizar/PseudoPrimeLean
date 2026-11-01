@@ -30,8 +30,8 @@ all odd n>1 divisible by p^a with gcd(p-1,n-1)≤p^τ have a prime MR rejecting
 base through log(p^a)^A. Use the exact kernel cardinality and the uniform
 small-subgroup theorem, then transfer local nonmembership to ambient MR failure.
 The threshold is independent of n and no GRH is assumed. -/
-theorem eventually_exists_prime_witness_le_local_log_of_small_fermat_kernel {a : ℕ} (ha : 2 ≤ a)
-    {τ A : ℝ} (hτ : 0 < τ) (hτa : τ < a) (hA : (a : ℝ) / ((a : ℝ) - τ) < A) :
+theorem eventually_prime_witness_log_small_fermat {a : ℕ} (ha : 2 ≤ a) {τ A : ℝ} (hτ : 0 < τ)
+    (hτa : τ < a) (hA : (a : ℝ) / ((a : ℝ) - τ) < A) :
     ∀ᶠ p : ℕ in Filter.atTop,
       p.Prime →
         p ≠ 2 →
@@ -46,8 +46,7 @@ theorem eventually_exists_prime_witness_le_local_log_of_small_fermat_kernel {a :
                 ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
   obtain ⟨hb0, hb1, hbA⟩ := small_kernel_power_parameters ha hτ hτa hA
   obtain ⟨Q, hQ⟩ :=
-    Filter.eventually_atTop.mp
-      (LLS.eventually_exists_prime_outside_le_log_power_of_card_rpow hb0 hb1 hbA)
+    Filter.eventually_atTop.mp (LLS.eventually_prime_outside_logPower_cardRpow hb0 hb1 hbA)
   filter_upwards [Filter.eventually_ge_atTop Q] with p hpQ hp hp2
   intro n hn ho hdiv hcard
   have ha0 : 0 < a := lt_of_lt_of_le (by decide : 0 < 2) ha
@@ -64,14 +63,14 @@ theorem eventually_exists_prime_witness_le_local_log_of_small_fermat_kernel {a :
   obtain ⟨r, hr, _, hb, hout⟩ := hQ (p ^ a) (hpQ.trans hpq) H hH
   refine ⟨r, hr, hb, ?_⟩
   intro hpass
-  exact hout (PrimeTest.strongMillerRabinPass_mem_local_divisor_powerKernel hn ho hdiv hpass)
+  exact hout (PrimeTest.strongMR_local_divisorKernel hn ho hdiv hpass)
 
 /-- Fix a≥2, 0<τ<a and A>a/(a-τ). Eventually every odd n>1 with a prime-power
 divisor p^a and gcd(p-1,n-1)≤p^τ has a prime MR rejecting base through log(n)^A.
 Large local primes use the uniform local bound and p^a≤n; bounded local primes
 are themselves small rejecting bases. The start is uniform over n and p. -/
-theorem eventually_exists_prime_witness_le_log_power_of_small_fermat_kernel {a : ℕ} (ha : 2 ≤ a)
-    {τ A : ℝ} (hτ : 0 < τ) (hτa : τ < a) (hA : (a : ℝ) / ((a : ℝ) - τ) < A) :
+theorem eventually_prime_logPower_smallFermatKernel {a : ℕ} (ha : 2 ≤ a) {τ A : ℝ} (hτ : 0 < τ)
+    (hτa : τ < a) (hA : (a : ℝ) / ((a : ℝ) - τ) < A) :
     ∀ᶠ n : ℕ in Filter.atTop,
       1 < n →
         Odd n →
@@ -82,8 +81,7 @@ theorem eventually_exists_prime_witness_le_log_power_of_small_fermat_kernel {a :
   have haR : (0 : ℝ) < a := by exact_mod_cast (lt_of_lt_of_le (by decide : 0 < 2) ha)
   have hAp : 0 < A := (div_pos haR (sub_pos.mpr hτa)).trans hA
   obtain ⟨P, hP⟩ :=
-    Filter.eventually_atTop.mp
-      (eventually_exists_prime_witness_le_local_log_of_small_fermat_kernel ha hτ hτa hA)
+    Filter.eventually_atTop.mp (eventually_prime_witness_log_small_fermat ha hτ hτa hA)
   have ht : Filter.Tendsto (fun n : ℕ ↦ (Real.log n) ^ A) Filter.atTop Filter.atTop :=
     (tendsto_rpow_atTop hAp).comp (Real.tendsto_log_atTop.comp tendsto_natCast_atTop_atTop)
   filter_upwards [ht.eventually_ge_atTop (P : ℝ)] with n hnb hn ho hex
@@ -104,8 +102,8 @@ theorem eventually_exists_prime_witness_le_log_power_of_small_fermat_kernel {a :
 the stated prime-power divisor and small exact local kernel has a least prime
 MR rejecting base at most log(n)^A. Minimize the complete prime-failure predicate.
 This connects the unconditional family bound to the actual least MR witness. -/
-theorem eventually_exists_least_prime_witness_le_log_power_of_small_fermat_kernel {a : ℕ}
-    (ha : 2 ≤ a) {τ A : ℝ} (hτ : 0 < τ) (hτa : τ < a) (hA : (a : ℝ) / ((a : ℝ) - τ) < A) :
+theorem eventually_least_logPower_smallFermatKernel {a : ℕ} (ha : 2 ≤ a) {τ A : ℝ} (hτ : 0 < τ)
+    (hτa : τ < a) (hA : (a : ℝ) / ((a : ℝ) - τ) < A) :
     ∀ᶠ n : ℕ in Filter.atTop,
       1 < n →
         Odd n →
@@ -116,7 +114,7 @@ theorem eventually_exists_least_prime_witness_le_log_power_of_small_fermat_kerne
             (r : ℝ) ≤ (Real.log n) ^ A ∧
             ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → r ≤ s := by
   classical
-  apply (eventually_exists_prime_witness_le_log_power_of_small_fermat_kernel ha hτ hτa hA).mono
+  apply (eventually_prime_logPower_smallFermatKernel ha hτ hτa hA).mono
   intro n hn hng ho hdiv
   obtain ⟨r, hr, hb, hf⟩ := hn hng ho hdiv
   have hex : ∃ s : ℕ, s.Prime ∧ ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := ⟨r, hr, hf⟩
@@ -129,8 +127,8 @@ theorem eventually_exists_least_prime_witness_le_log_power_of_small_fermat_kerne
 and gcd(p-1,n-1)≤p^(1-σ), the least prime MR rejecting base is at most log(n)^A.
 Specialize the uniform prime-power theorem to a=2 and τ=1-σ.
 This permits exponents below two for a family of square-divisible inputs. -/
-theorem eventually_exists_least_prime_witness_le_log_power_of_square_small_kernel {σ A : ℝ}
-    (hσ0 : 0 < σ) (hσ1 : σ < 1) (hA : 2 / (1 + σ) < A) :
+theorem eventually_least_logPower_squareSmallKernel {σ A : ℝ} (hσ0 : 0 < σ) (hσ1 : σ < 1)
+    (hA : 2 / (1 + σ) < A) :
     ∀ᶠ n : ℕ in Filter.atTop,
       1 < n →
         Odd n →
@@ -140,9 +138,7 @@ theorem eventually_exists_least_prime_witness_le_log_power_of_square_small_kerne
             ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) ∧
             (r : ℝ) ≤ (Real.log n) ^ A ∧
             ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → r ≤ s := by
-  apply
-    eventually_exists_least_prime_witness_le_log_power_of_small_fermat_kernel (a := 2) (τ := 1 - σ)
-      (by decide)
+  apply eventually_least_logPower_smallFermatKernel (a := 2) (τ := 1 - σ) (by decide)
   · linarith only [hσ1]
   · norm_num only [Nat.cast_ofNat]
     linarith only [hσ0]
@@ -154,8 +150,7 @@ theorem eventually_exists_least_prime_witness_le_log_power_of_square_small_kerne
 log(n)^A eventually on the stated square-divisible small-kernel family.
 Choose A strictly between 2/(1+σ) and 2 and apply the uniform square theorem.
 No GRH, external Fermat-quotient theorem or finite certificate is used. -/
-theorem exists_subquadratic_exponent_for_square_small_fermat_kernel {σ : ℝ} (hσ0 : 0 < σ)
-    (hσ1 : σ < 1) :
+theorem exists_subquadratic_squareSmallFermatKernel {σ : ℝ} (hσ0 : 0 < σ) (hσ1 : σ < 1) :
     ∃ A : ℝ,
       0 < A ∧
         A < 2 ∧
@@ -175,6 +170,6 @@ theorem exists_subquadratic_exponent_for_square_small_fermat_kernel {σ : ℝ} (
   obtain ⟨A, hA, hA2⟩ := exists_between hb
   exact
     ⟨A, (div_pos (by norm_num only : (0 : ℝ) < 2) hd).trans hA, hA2,
-      eventually_exists_least_prime_witness_le_log_power_of_square_small_kernel hσ0 hσ1 hA⟩
+      eventually_least_logPower_squareSmallKernel hσ0 hσ1 hA⟩
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

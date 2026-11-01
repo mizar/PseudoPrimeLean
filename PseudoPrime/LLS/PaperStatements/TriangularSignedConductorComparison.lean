@@ -22,9 +22,8 @@ principal finite sum is bounded by the exact conductor logarithm sum, fixed
 cost 165000 per nonprincipal character, and two level-one arithmetic sums.
 The nonprincipal scale-one terms are removed using primitive aggregate
 positivity. This eliminates the old absolute zero-mass constant from averaging. -/
-theorem triangular18_principal_sum_le_signed_conductor_explicit {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {x X : ℝ} (hx : 1 ≤ x)
+theorem triangular18_principal_signedExplicit_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x X : ℝ} (hx : 1 ≤ x)
     (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
     (H.index : ℝ) * (∑ n ∈ Finset.Icc 1 ⌊X⌋₊, (K.summand (1 : DirichletCharacter ℂ q) x n).re) ≤
@@ -58,7 +57,7 @@ theorem triangular18_principal_sum_le_signed_conductor_explicit {q : ℕ} [NeZer
     rw [Finset.card_erase_of_mem (Finset.mem_univ _), Finset.card_univ]
     rw [Nat.cast_sub (Nat.one_le_iff_ne_zero.mpr (Nat.ne_of_gt (Fintype.card_pos_iff.mpr ⟨1⟩))),
       Nat.cast_one, NumberTheory.card_subgroupAnnihilator]
-  have hb := triangular18_principal_sum_le_signed_budgets_of_noSmallPrimes H hGRH hx hsmall
+  have hb := triangular18_principal_le_signed_of_noSmall_GRH H hGRH hx hsmall
   simp only [sub_sub] at hb
   change
     (H.index : ℝ) * (∑ n ∈ Finset.Icc 1 ⌊X⌋₊, (K.summand (1 : DirichletCharacter ℂ q) x n).re) ≤
@@ -91,7 +90,7 @@ theorem triangular18_principal_sum_le_signed_conductor_explicit {q : ℕ} [NeZer
         · intro χ _
           rfl
   rw [hs] at hb
-  have ha := triangular18_nonprincipal_arithmetic_pair_sum_lower H (x := 1) (by norm_num only)
+  have ha := triangular18_nonprincipal_pair_lower H (x := 1) (by norm_num only)
   change
     -(2 : ℝ) * (∑' n : ℕ, K.summand (1 : DirichletCharacter ℂ 1) 1 n).re ≤
       ∑ χ ∈ Finset.univ.erase (1 : S), A χ at ha
@@ -106,9 +105,8 @@ namespace PseudoPrime.LLS.PaperStatements
 bounds. The scale-one pair costs 602600000 independently of the subgroup index.
 The per-character fixed cost is 165000, with the precise scale-decaying
 remainder retained. This is the numerical entry point for the improved gap. -/
-theorem triangular18_principal_sum_le_signed_conductor_numeric {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {x X : ℝ} (hx : 1 ≤ x)
+theorem triangular18_principal_signedNumeric_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x X : ℝ} (hx : 1 ≤ x)
     (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     (H.index : ℝ) *
         (∑ n ∈ Finset.Icc 1 ⌊X⌋₊,
@@ -117,7 +115,7 @@ theorem triangular18_principal_sum_le_signed_conductor_numeric {q : ℕ} [NeZero
       300000000 * Real.sqrt x + 1300000 * x ^ (1 / 4 : ℝ) + 602600000 +
         (36 + 4000000000000 * x ^ (-9 / 16 : ℝ)) * subgroupConductorLogSum H +
         ((H.index : ℝ) - 1) * (165000 + 4000000000000 * 284 * x ^ (-9 / 16 : ℝ)) := by
-  have hb := triangular18_principal_sum_le_signed_conductor_explicit H hGRH hx hsmall
+  have hb := triangular18_principal_signedExplicit_GRH H hGRH hx hsmall
   have hp := triangular18_level_one_arithmetic_upper_of_rh hGRH.riemann (zero_lt_one.trans_le hx)
   have h1 := triangular18_level_one_arithmetic_upper_of_rh hGRH.riemann (x := 1) (by norm_num only)
   simp only [Real.sqrt_one, Real.one_rpow, mul_one] at h1

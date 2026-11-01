@@ -59,7 +59,7 @@ theorem coprime_level_of_coprime_conductor_quotient {q n : ℕ} (χ : DirichletC
 When `n` is coprime to the conductor, it is coprime to the level and the induction formula
 applies; otherwise both characters vanish. This confines level-change errors to the quotient
 common-factor support. -/
-theorem apply_eq_primitiveCharacter_of_coprime_quotient {q n : ℕ} (χ : DirichletCharacter ℂ q)
+theorem apply_eq_primitive_of_coprime_quotient {q n : ℕ} (χ : DirichletCharacter ℂ q)
     (hquotient : Nat.Coprime n (q / χ.conductor)) : χ n = χ.primitiveCharacter n := by
   by_cases hconductor : Nat.Coprime n χ.conductor
   · have hlevel := coprime_level_of_coprime_conductor_quotient χ hconductor hquotient
@@ -86,7 +86,7 @@ theorem weightedTerm_sub_eq_zero_of_coprime_quotient {q n : ℕ} (x : ℝ) (χ :
     (hquotient : Nat.Coprime n (q / χ.conductor)) :
     characterLogWeightedTerm x χ n - characterLogWeightedTerm x χ.primitiveCharacter n = 0 := by
   rw [characterLogWeightedTerm, characterLogWeightedTerm,
-    apply_eq_primitiveCharacter_of_coprime_quotient χ hquotient, sub_self]
+    apply_eq_primitive_of_coprime_quotient χ hquotient, sub_self]
 
 /-- If `x > 0` and `0 < n ≤ floor x`, then `Λ(n) * log(x/n)` is nonnegative.
 The quotient is at least one and the Mangoldt function is nonnegative.
@@ -141,9 +141,8 @@ theorem norm_weightedTerm_sub_primitive_le {q n : ℕ} (x : ℝ) (χ : Dirichlet
 /-- For any real `x`, if `n` shares a factor with `q / χ.conductor`, its logarithmic term
 for `χ` vanishes. The quotient divides the level, so `n` is not coprime to `q` and the
 character value is zero. This identifies the correction as primitive contributions alone. -/
-theorem characterLogWeightedTerm_eq_zero_of_not_coprime_quotient {q n : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hquotient : ¬Nat.Coprime n (q / χ.conductor)) :
-    characterLogWeightedTerm x χ n = 0 := by
+theorem logCharTerm_eq_zero_of_not_coprime_quotient {q n : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
+    (hquotient : ¬Nat.Coprime n (q / χ.conductor)) : characterLogWeightedTerm x χ n = 0 := by
   have hlevel : ¬Nat.Coprime n q := by
     intro hcoprime
     exact hquotient (hcoprime.of_dvd_right (Nat.div_dvd_of_dvd χ.conductor_dvd_level))
@@ -174,7 +173,7 @@ at `p^k` for the primitive character is
 `log p * (log x - k * log p) * Re (χ.primitiveCharacter p ^ k)`.
 Use the Mangoldt prime-power formula and multiplicativity of the character.
 This reduces prime-power corrections to affine logarithmic weights. -/
-theorem characterLogWeightedTerm_primitive_re_prime_pow {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
+theorem characterLogTerm_primitive_re_prime_pow {q : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
     {p k : ℕ} (hx : x ≠ 0) (hp : p.Prime) (hk : k ≠ 0) :
     (characterLogWeightedTerm x χ.primitiveCharacter (p ^ k)).re =
       Real.log p * (Real.log x - k * Real.log p) * (χ.primitiveCharacter p ^ k).re := by
@@ -186,7 +185,7 @@ sum's change to the primitive source is at most
 `(1/2) * (q / χ.conductor).primeFactors.card * (log x)²`.
 Restrict to quotient support, bound each term by its nonnegative weight, and apply the
 common-factor sum bound. This is the coarse logarithmic comparison estimate. -/
-theorem norm_characterLogWeightedSum_sub_primitive_le {q : ℕ} [NeZero q] (x : ℝ)
+theorem norm_characterLogSum_sub_primitive_le {q : ℕ} [NeZero q] (x : ℝ)
     (χ : DirichletCharacter ℂ q) (hx : 0 < x) :
     ‖characterLogWeightedSum x χ - characterLogWeightedSum x χ.primitiveCharacter‖ ≤
       (1 / 2 : ℝ) * (q / χ.conductor).primeFactors.card * (Real.log x) ^ 2 := by
@@ -214,9 +213,8 @@ theorem norm_characterLogWeightedSum_sub_primitive_le {q : ℕ} [NeZero q] (x : 
 /-- For any real cutoff `x`, if `n` is not coprime to the level quotient, the reciprocal
 weighted term for `χ` is zero. Noncoprimality also holds at the level, forcing the character
 value to vanish. This separates primitive contributions on the correction support. -/
-theorem characterReciprocalWeightedTerm_eq_zero_of_not_coprime_quotient {q n : ℕ} (x : ℝ)
-    (χ : DirichletCharacter ℂ q) (hquotient : ¬Nat.Coprime n (q / χ.conductor)) :
-    characterReciprocalWeightedTerm x χ n = 0 := by
+theorem recipCharTerm_zero_of_not_coprime_quotient {q n : ℕ} (x : ℝ) (χ : DirichletCharacter ℂ q)
+    (hquotient : ¬Nat.Coprime n (q / χ.conductor)) : characterReciprocalWeightedTerm x χ n = 0 := by
   have hlevel : ¬Nat.Coprime n q := by
     intro hcoprime
     exact hquotient (hcoprime.of_dvd_right (Nat.div_dvd_of_dvd χ.conductor_dvd_level))
@@ -238,7 +236,7 @@ theorem norm_reciprocalTerm_sub_primitive_le {q n : ℕ} (x : ℝ) (χ : Dirichl
   have hweight := reciprocalWeightedMangoldtTerm_nonneg hx hn0 hnx
   by_cases hconductor : Nat.Coprime n χ.conductor
   · by_cases hquotient : Nat.Coprime n (q / χ.conductor)
-    · have heq := apply_eq_primitiveCharacter_of_coprime_quotient χ hquotient
+    · have heq := apply_eq_primitive_of_coprime_quotient χ hquotient
       rw [characterReciprocalWeightedTerm, characterReciprocalWeightedTerm, heq, sub_self,
         norm_zero]
       exact hweight
@@ -271,7 +269,7 @@ theorem norm_reciprocalTerm_sub_primitive_le {q n : ℕ} (x : ℝ) (χ : Dirichl
 to the primitive source is at most `commonFactorReciprocalWeightedSum x (q / χ.conductor)`.
 The triangle inequality and termwise weight bound apply on quotient support, while all
 other differences vanish. This is the finite-sum estimate before further arithmetic coarsening. -/
-theorem norm_characterReciprocalWeightedSum_sub_primitive_le {q : ℕ} [NeZero q] (x : ℝ)
+theorem norm_characterRecipSum_sub_primitive_le {q : ℕ} [NeZero q] (x : ℝ)
     (χ : DirichletCharacter ℂ q) (hx : 0 < x) :
     ‖characterReciprocalWeightedSum x χ - characterReciprocalWeightedSum x χ.primitiveCharacter‖ ≤
       commonFactorReciprocalWeightedSum x (q / χ.conductor) := by
@@ -292,7 +290,7 @@ theorem norm_characterReciprocalWeightedSum_sub_primitive_le {q : ℕ} [NeZero q
       intro n hn
       by_cases hcop : Nat.Coprime n (q / χ.conductor)
       · rw [ite_eq_right (not_not.mpr hcop)]
-        have heq := apply_eq_primitiveCharacter_of_coprime_quotient χ hcop
+        have heq := apply_eq_primitive_of_coprime_quotient χ hcop
         rw [characterReciprocalWeightedTerm, characterReciprocalWeightedTerm, heq, sub_self,
           norm_zero]
       · rw [ite_eq_left hcop]

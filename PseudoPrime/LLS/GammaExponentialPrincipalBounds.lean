@@ -177,7 +177,7 @@ theorem exponentialMangoldtSum_upper_with_boundary (hRH : RiemannHypothesis) {x 
     AnalyticNumberTheory.Arithmetic.exponentialMangoldtSum x (x * y) ≤
       x + Real.sqrt x / 8 + (1839 / 1000 : ℝ) * (2 * Real.log x + 3) + 21 / 10 +
         ((4 * x + x ^ 2) * y ^ 2 + 4 * y) * Real.exp (-y) := by
-  rw [AnalyticNumberTheory.Arithmetic.exponentialMangoldtSum_eq_logWeighted_integral
+  rw [AnalyticNumberTheory.Arithmetic.expMangoldtSum_eq_logWeighted_integral
       (zero_lt_one.trans_le hx) hy]
   have hI := logWeighted_exponential_integral_upper hRH hx hy
   have ht : 0 ≤ x * y := mul_nonneg (zero_le_one.trans hx) hy

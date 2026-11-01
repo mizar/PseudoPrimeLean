@@ -29,7 +29,7 @@ theorem gammaResolvent_zeroMass_lt_adaptive {q : ℕ} [NeZero q] (hq : 2 ≤ q)
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
           Gamma.gammaResolventMajorant ρ.im) <
       (11783423 / 25000000 : ℝ) * Real.log q + 211 / 10 := by
-  rw [gammaResolvent_zeroMass_eq_poissonSum hq hRH hp hne hinv]
+  rw [gammaMass_eq_poissonSum_RH hq hRH hp hne hinv]
   apply
     Analysis.gammaResolvent_weighted_lt_of_adaptive_bounds
       (fun a : ℚ ↦
@@ -38,7 +38,7 @@ theorem gammaResolvent_zeroMass_lt_adaptive {q : ℕ} [NeZero q] (hq : 2 ≤ q)
             ((a : ℝ) / Complex.normSq ((((1 / 2 : ℝ) + (a : ℝ)) : ℂ) - ρ)))
       (Real.log q)
   intro ab hab
-  exact completed_poissonSum_centered_le_resolvent_adaptive hq hRH hp hne hinv ab hab
+  exact poissonSum_resolvent_adaptive_RH hq hRH hp hne hinv ab hab
 
 /-- Under primitive nonprincipal individual RH and nonprincipal inverse, the actual
  Gamma zero mass is below Mlog(q)+211/10. Nonnegative zero multiplicities and the proved
@@ -60,8 +60,7 @@ theorem gamma_zeroMass_lt_adaptive {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : Dir
     by_cases hD : MeromorphicOn.divisor χ.completedLFunction Set.univ ρ = 0
     · simp only [hD, Int.cast_zero, zero_mul, le_refl]
     · have hr :=
-        completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv
-          (completed_zero_of_divisor_ne_zero hne hD)
+        completed_zero_re_eq_half_of_RH hRH hp hinv (completed_zero_of_divisor_ne_zero hne hD)
       have he : ρ = (1 / 2 : ℂ) + Complex.I * ρ.im := by
         calc
           ρ = (ρ.re : ℂ) + (ρ.im : ℂ) * Complex.I := (Complex.re_add_im ρ).symm
@@ -70,7 +69,7 @@ theorem gamma_zeroMass_lt_adaptive {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : Dir
             norm_num only [Complex.ofReal_div, Complex.ofReal_one, Complex.ofReal_ofNat]
             ring
       exact mul_le_mul_of_nonneg_left (by simpa only [← he] using hΓ ρ.im) (hn ρ)
-  have hg := summable_completed_gammaResolvent_terms hq hRH hp hne hinv
+  have hg := summable_gammaResolvent_mass_RH hq hRH hp hne hinv
   have hsum := hg.of_nonneg_of_le (fun ρ ↦ mul_nonneg (hn ρ) (norm_nonneg _)) hb
   exact (hsum.tsum_le_tsum hb hg).trans_lt (gammaResolvent_zeroMass_lt_adaptive hq hRH hp hne hinv)
 

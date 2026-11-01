@@ -106,8 +106,8 @@ theorem finerPart2ReciprocalOnlyGap_log_five_hundred_neg :
 Claim: its reciprocal-only gap is strictly negative.
 Proof: apply monotonicity and the certified endpoint obstruction.
 Role: close the scalar low-range contradiction. -/
-theorem finerPart2ReciprocalOnlyGap_neg_of_le_five_hundred {L : ℝ} (hL : 0 < L)
-    (hupper : L ≤ Real.log 500) : finerPart2ReciprocalOnlyGap L < 0 := by
+theorem finerPart2RecipGap_neg_of_le_log_500 {L : ℝ} (hL : 0 < L) (hupper : L ≤ Real.log 500) :
+    finerPart2ReciprocalOnlyGap L < 0 := by
   exact
     (finerPart2ReciprocalOnlyGap_mono hL hupper).trans_lt
       finerPart2ReciprocalOnlyGap_log_five_hundred_neg

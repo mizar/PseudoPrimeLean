@@ -184,7 +184,7 @@ theorem tsum_arithmeticMellinTerm_eq_logDeriv (K : MellinKernel) {q : ℕ} [NeZe
       -logDeriv (DirichletCharacter.LFunction χ) (((c : ℂ) + Complex.I * t) + 1 / 2) *
         (K.function ((c : ℂ) + Complex.I * t) * (x : ℂ) ^ ((c : ℂ) + Complex.I * t)) := by
   rw [tsum_arithmeticMellinTerm K χ hx c t,
-    lSeries_twist_vonMangoldt_eq_neg_logDeriv_dirichletLFunction_of_one_lt_re χ
+    LSeries_mangoldt_eq_neg_logDeriv χ
       (by
         simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, Complex.I_im,
           Complex.ofReal_im, zero_mul, mul_zero, sub_zero, add_zero, Complex.div_ofNat_re,

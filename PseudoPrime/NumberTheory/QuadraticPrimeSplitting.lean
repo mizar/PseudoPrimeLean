@@ -148,7 +148,7 @@ theorem quadraticPrimeSplittingAt_of_irreducible (K : Type) [Field K] [NumberFie
   refine Or.inr (Or.inl ⟨hc, Ideal.span {(p : NumberField.RingOfIntegers K)}, ?_, rfl, ?_⟩)
   · exact
       Ideal.prime_of_isPrime (mt Ideal.span_singleton_eq_bot.mp hn)
-        (principal_prime_isPrime_of_irreducible_minpoly_mod K θ p hp hi)
+        (principal_prime_of_irreducible_minpoly_mod K θ p hp hi)
   · exact
       (Ideal.absNorm_span_natCast p).trans
         (congrArg (p ^ ·) ((NumberField.RingOfIntegers.rank K).trans hdeg))
@@ -243,9 +243,9 @@ has value one at `p`, with `p` not dividing the generator's exponent, the princi
 ideal splits into two coprime prime ideals of norm `p`.
 Distinct factors give distinct maximal ideals, and their multiplicities are one.
 This supplies the split input to ideal counting. -/
-theorem quadraticPrimeSplittingAt_of_reduced_distinct_linear_factors (K : Type) [Field K]
-    [NumberField K] {q : ℕ} (χ : DirichletCharacter ℂ q) (θ : NumberField.RingOfIntegers K) (p : ℕ)
-    [Fact p.Prime] (hp : ¬p ∣ RingOfIntegers.exponent θ) (r s : ZMod p) (hrs : r ≠ s)
+theorem quadraticSplitting_of_distinct_linear (K : Type) [Field K] [NumberField K] {q : ℕ}
+    (χ : DirichletCharacter ℂ q) (θ : NumberField.RingOfIntegers K) (p : ℕ) [Fact p.Prime]
+    (hp : ¬p ∣ RingOfIntegers.exponent θ) (r s : ZMod p) (hrs : r ≠ s)
     (hf :
       (minpoly ℤ θ).map (Int.castRingHom (ZMod p)) =
         (Polynomial.X - Polynomial.C r) * (Polynomial.X - Polynomial.C s))

@@ -32,8 +32,8 @@ theorem tendsto_height_log_div_sqrt :
 
 /-- For positive decay exponent and nonnegative budget constants, a height threshold absorbs the
 remainder uniformly under the stated power balance. The proof combines two vanishing weights. -/
-theorem exists_uniform_remainder_absorption_of_power_balance {σ δ C K T ε : ℝ} (hσ : 1 / 2 ≤ σ)
-    (hδ : 0 < δ) (hbalance : σ + 2 * δ ≤ 1) (hC : 0 ≤ C) (hK : 0 ≤ K) (hT : 0 ≤ T) (hε : 0 < ε) :
+theorem exists_uniform_remainder_absorption {σ δ C K T ε : ℝ} (hσ : 1 / 2 ≤ σ) (hδ : 0 < δ)
+    (hbalance : σ + 2 * δ ≤ 1) (hC : 0 ≤ C) (hK : 0 ≤ K) (hT : 0 ≤ T) (hε : 0 < ε) :
     ∃ R₀ : ℝ,
       4 ≤ R₀ ∧
         ∀ (H : ℕ),
@@ -66,9 +66,7 @@ theorem exists_uniform_remainder_absorption_of_power_balance {σ δ C K T ε : �
   have hr :=
     hR₁ ((H + 1 : ℕ) : ℝ) ((le_max_left R₁ X₁).trans ((le_max_right 4 (max R₁ X₁)).trans hR))
   have ht := hX₁ x (((le_max_right R₁ X₁).trans ((le_max_right 4 (max R₁ X₁)).trans hR)).trans hRx)
-  have hb :=
-    weighted_primitive_remainder_le_normalized_majorant hq hH hqr hsqrt hx hRx hpow hσ hbalance hC
-      hK hT
+  have hb := weightedRemainder_normalized_bound hq hH hqr hsqrt hx hRx hpow hσ hbalance hC hK hT
   have hm := mul_le_mul_of_nonneg_left (add_le_add hr.le ht.le) (by linarith only [hx] : 0 ≤ x)
   nlinarith only [hb, hm]
 
@@ -88,8 +86,8 @@ theorem polynomial_scale_gives_power_balance {R x δ : ℝ} (hR : 1 ≤ R) (hδ 
 /-- For a fixed strip strictly below one and nonnegative budget constants, choose the exponent
 and height threshold before the modulus and time. Every larger polynomial exponent absorbs
 the arithmetic remainder into the prescribed positive multiple of time. -/
-theorem exists_uniform_remainder_absorption_above_polynomial_scale {σ C K T ε : ℝ}
-    (hσlo : 1 / 2 ≤ σ) (hσhi : σ < 1) (hC : 0 ≤ C) (hK : 0 ≤ K) (hT : 0 ≤ T) (hε : 0 < ε) :
+theorem uniform_remainder_absorption {σ C K T ε : ℝ} (hσlo : 1 / 2 ≤ σ) (hσhi : σ < 1) (hC : 0 ≤ C)
+    (hK : 0 ≤ K) (hT : 0 ≤ T) (hε : 0 < ε) :
     ∃ b₀ : ℕ,
       1 ≤ b₀ ∧
         ∃ R₀ : ℝ,
@@ -113,8 +111,7 @@ theorem exists_uniform_remainder_absorption_above_polynomial_scale {σ C K T ε 
     dsimp only [δ]; linarith only [hσhi]
   have hbalance : σ + 2 * δ ≤ 1 := by
     dsimp only [δ]; linarith only []
-  obtain ⟨R₀, hR₀, hbound⟩ :=
-    exists_uniform_remainder_absorption_of_power_balance hσlo hδ hbalance hC hK hT hε
+  obtain ⟨R₀, hR₀, hbound⟩ := exists_uniform_remainder_absorption hσlo hδ hbalance hC hK hT hε
   obtain ⟨b₀, hb₀⟩ := exists_nat_gt (max 1 (2 / δ))
   have hbpos : 1 ≤ b₀ := by exact_mod_cast (le_max_left 1 (2 / δ)).trans hb₀.le
   have hbδ : 2 ≤ (b₀ : ℝ) * δ := (div_le_iff₀ hδ).mp ((le_max_right 1 (2 / δ)).trans hb₀.le)

@@ -40,14 +40,14 @@ theorem twoAdicReciprocalCorrection_le_tapered {N : ℕ} (χ : DirichletCharacte
   · have hn0 : χ.primitiveCharacter 2 ≠ 0 := by
       rw [h1]; exact one_ne_zero
     rw [taperedTwoReciprocalCost, ite_eq_right hn0, ite_eq_left h1]
-    exact (twoAdicReciprocalCorrection_eq_zero_of_apply_two_eq_one Y χ h1).le
+    exact (recipTwoCorrection_eq_zero_of_one Y χ h1).le
   · have hn0 : χ.primitiveCharacter 2 ≠ 0 := by
       rw [hm]
       exact neg_ne_zero.mpr one_ne_zero
     have hn1 : χ.primitiveCharacter 2 ≠ 1 := by
       rw [hm]; norm_num only
     rw [taperedTwoReciprocalCost, ite_eq_right hn0, ite_eq_right hn1]
-    exact twoAdicReciprocalCorrection_le_tapered_neg_one Y χ hm
+    exact recipTwoCorrection_le_tapered_neg_one Y χ hm
 
 /-- At Y>=2, every non-one value at two saves at least log 2/Y over the old
 constant cost. Exponent one belongs to both the full and odd exponent sets.
@@ -94,8 +94,8 @@ theorem reciprocalSum_re_ge_of_twoAdicCorrection_le {N : ℕ} (χ : DirichletCha
         p ∈ Finset.Ioc 0 ⌊Y ^ ((1 : ℝ) / k)⌋₊ → p.Prime → Odd p → χ.primitiveCharacter p = 1 := by
     intro k p hk hp hprime hodd
     exact ht p hprime hodd (cast_le_of_mem_root_cutoff hy1 (Finset.mem_Icc.mp hk).1 hp)
-  have he := reciprocalWeightedSum_sub_re_eq_twoAdicCorrection_of_eq_one Y χ hY ho
-  have hr := reciprocalWeightedMangoldtSum_ge_log_sub_31551_div_20000 hRH hY
+  have he := recipMangoldt_sub_re_eq_twoCorrection_of_one Y χ hY ho
+  have hr := reciprocalMangoldt_ge_log_sub_31551_20000 hRH hY
   linarith only [he, hr, hC]
 
 /-- For x>=1,Y>=2 and a non-one value at two, substituting the tapered cost

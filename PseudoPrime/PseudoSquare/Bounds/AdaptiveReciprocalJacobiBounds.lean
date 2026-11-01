@@ -19,8 +19,8 @@ namespace PseudoPrime.PseudoSquare
 /-- Under GRH for an odd nonsquare n, an odd coprime negative prime lies below
 the explicit adaptive root in the actual quadratic conductor and the cost of 2n.
 Exclude input primes and two, then transfer the primitive non-one value to Jacobi -1. -/
-theorem exists_prime_neg_one_le_adaptive_reciprocal_conductor_root {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
+theorem exists_prime_negOne_adaptiveConductor_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ,
       p.Prime ∧
         Odd p ∧
@@ -68,27 +68,27 @@ theorem exists_prime_neg_one_le_adaptive_reciprocal_conductor_root {n : ℕ} {hn
 /-- Under GRH for odd nonsquare n, bound the least negative odd-prime witness
 by the explicit adaptive conductor root. Apply leastness to the actual prime.
 This exposes the analytic bound at the least-witness interface. -/
-theorem primeNegOneWitness_le_adaptive_reciprocal_conductor_root {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem negOneWitness_le_adaptiveConductor_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤
       LLS.PaperStatements.adaptiveReciprocalWitnessBound
         (NumberTheory.complexQuadraticCharacter n hn).conductor (2 * n) := by
   obtain ⟨p, hp, ho, _, hj, hb⟩ :=
-    exists_prime_neg_one_le_adaptive_reciprocal_conductor_root (hn := hn) (hns := hns) hGRH
+    exists_prime_negOne_adaptiveConductor_GRH (hn := hn) (hns := hns) hGRH
   exact (Nat.cast_le.mpr (NumberTheory.primeNegOneWitness_le n hw ⟨hp, ho, hj⟩)).trans hb
 
 /-- Under GRH for odd nonsquare n, bound the least non-one odd-prime witness
 by the explicit adaptive conductor root. A negative Jacobi value is non-one,
 so the actual negative prime also supplies this least-witness bound. -/
-theorem primeNeOneWitness_le_adaptive_reciprocal_conductor_root {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem neOneWitness_le_adaptiveConductor_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤
       LLS.PaperStatements.adaptiveReciprocalWitnessBound
         (NumberTheory.complexQuadraticCharacter n hn).conductor (2 * n) := by
   obtain ⟨p, hp, ho, _, hj, hb⟩ :=
-    exists_prime_neg_one_le_adaptive_reciprocal_conductor_root (hn := hn) (hns := hns) hGRH
+    exists_prime_negOne_adaptiveConductor_GRH (hn := hn) (hns := hns) hGRH
   have hne : jacobiSym n p ≠ 1 := by
     rw [hj]; norm_num only
   exact (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hp, ho, hne⟩)).trans hb
@@ -96,8 +96,8 @@ theorem primeNeOneWitness_le_adaptive_reciprocal_conductor_root {n : ℕ} {hn : 
 /-- Under GRH and the canonical n=s²d decomposition, an odd coprime negative
 prime is at most 4(A(log(4d))+1)²+(28/5)E(s), with adaptive radius A.
 Compare conductors, bound the positive root polynomially, and absorb the d and two costs. -/
-theorem exists_prime_neg_one_le_adaptive_reciprocal_squarefree_budget {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem exists_prime_negOne_adaptiveSquarefree_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ,
       p.Prime ∧
@@ -113,7 +113,7 @@ theorem exists_prime_neg_one_le_adaptive_reciprocal_squarefree_budget {n : ℕ} 
             (28 / 5 : ℝ) * (∑ r ∈ bridge.squareFactor.primeFactors, Real.log r) := by
   let : NeZero (4 * n) := ⟨mul_ne_zero (by norm_num only) hn.pos.ne'⟩
   obtain ⟨p, hp, ho, hcop, hj, hb⟩ :=
-    exists_prime_neg_one_le_adaptive_reciprocal_conductor_root (hn := hn) (hns := hns) hGRH
+    exists_prime_negOne_adaptiveConductor_GRH (hn := hn) (hns := hns) hGRH
   have hd := bridge.squarefreePart_pos.ne'
   have hs : bridge.squareFactor ≠ 0 := by
     intro hz
@@ -124,8 +124,8 @@ theorem exists_prime_neg_one_le_adaptive_reciprocal_squarefree_budget {n : ℕ} 
     ⟨bridge.squareFactor ^ 2, by simpa only [mul_comm] using bridge.squarefreePart_sq_mul.symm⟩
   have hf :
     (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ 4 * bridge.squarefreePart := by
-    rw [NumberTheory.complexQuadraticCharacter_conductor_eq_discriminant bridge hdiv]
-    exact bridge.discriminant_le_four_mul_squarefreePart
+    rw [NumberTheory.complexQuadratic_conductor_eq_discriminant bridge hdiv]
+    exact bridge.discr_le_four_squarefreePart
   have hflog :=
     Real.log_le_log
       (Nat.cast_pos.mpr
@@ -162,8 +162,8 @@ theorem exists_prime_neg_one_le_adaptive_reciprocal_squarefree_budget {n : ℕ} 
 /-- Under GRH and n=s²d, bound the least negative odd-prime witness by the
 adaptive squarefree radius and square-factor prime cost. Apply leastness to
 the actual prime theorem. This improves the large-squarefree-part structural bound. -/
-theorem primeNegOneWitness_le_adaptive_reciprocal_squarefree_budget {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem negOneWitness_le_adaptiveSquarefree_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤
@@ -173,15 +173,14 @@ theorem primeNegOneWitness_le_adaptive_reciprocal_squarefree_budget {n : ℕ} {h
               1) ^
             2 +
         (28 / 5 : ℝ) * (∑ r ∈ bridge.squareFactor.primeFactors, Real.log r) := by
-  obtain ⟨p, hp, ho, _, hj, hb⟩ :=
-    exists_prime_neg_one_le_adaptive_reciprocal_squarefree_budget bridge hGRH
+  obtain ⟨p, hp, ho, _, hj, hb⟩ := exists_prime_negOne_adaptiveSquarefree_GRH bridge hGRH
   exact (Nat.cast_le.mpr (NumberTheory.primeNegOneWitness_le n hw ⟨hp, ho, hj⟩)).trans hb
 
 /-- Under GRH and n=s²d, bound the least non-one odd-prime witness by the
 adaptive squarefree radius and square-factor prime cost. Transfer the actual
 negative prime to non-one membership, then use leastness. -/
-theorem primeNeOneWitness_le_adaptive_reciprocal_squarefree_budget {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem neOneWitness_le_adaptiveSquarefree_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤
@@ -191,8 +190,7 @@ theorem primeNeOneWitness_le_adaptive_reciprocal_squarefree_budget {n : ℕ} {hn
               1) ^
             2 +
         (28 / 5 : ℝ) * (∑ r ∈ bridge.squareFactor.primeFactors, Real.log r) := by
-  obtain ⟨p, hp, ho, _, hj, hb⟩ :=
-    exists_prime_neg_one_le_adaptive_reciprocal_squarefree_budget bridge hGRH
+  obtain ⟨p, hp, ho, _, hj, hb⟩ := exists_prime_negOne_adaptiveSquarefree_GRH bridge hGRH
   have hne : jacobiSym n p ≠ 1 := by
     rw [hj]; norm_num only
   exact (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hp, ho, hne⟩)).trans hb
@@ -200,8 +198,8 @@ theorem primeNeOneWitness_le_adaptive_reciprocal_squarefree_budget {n : ℕ} {hn
 /-- Under GRH and n=s²d, replace the square-factor prime cost in the least
 negative witness bound by log(n)/2. This gives a logarithm-linear envelope
 for fixed d, using the already proved square-factor cost estimate. -/
-theorem primeNegOneWitness_le_adaptive_reciprocal_squarefree_log_budget {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem negOneWitness_le_adaptiveSquarefreeLog_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤
@@ -211,16 +209,16 @@ theorem primeNegOneWitness_le_adaptive_reciprocal_squarefree_log_budget {n : ℕ
               1) ^
             2 +
         (14 / 5 : ℝ) * Real.log n := by
-  apply (primeNegOneWitness_le_adaptive_reciprocal_squarefree_budget bridge hGRH hw).trans
+  apply (negOneWitness_le_adaptiveSquarefree_GRH bridge hGRH hw).trans
   linarith only [squareFactor_prime_log_sum_le_half_log bridge]
 
 /-- For G ≥ 100 and any real prime cost E, the adaptive squarefree polynomial
 bound is at most the preceding direct even Hadamard polynomial bound.
 Compare the positive radii, add the common unit saving and square. -/
-theorem adaptive_reciprocal_squarefree_budget_le_previous {G E : ℝ} (hG : 100 ≤ G) :
+theorem adaptiveSquarefree_le_previous {G E : ℝ} (hG : 100 ≤ G) :
     4 * (LLS.PaperStatements.adaptiveReciprocalRadius G + 1) ^ 2 + (28 / 5 : ℝ) * E ≤
       4 * ((2429 / 720 : ℝ) * G + 18339 / 400) ^ 2 + (28 / 5 : ℝ) * E := by
-  have h := LLS.PaperStatements.adaptiveReciprocalRadius_le_even_fixed_of_ge_hundred hG
+  have h := LLS.PaperStatements.adaptiveRecipRadius_le_even_fixed_of_ge_100 hG
   have h0 := LLS.PaperStatements.adaptiveReciprocalRadius_nonneg (show 0 ≤ G by linarith only [hG])
   have hs :=
     pow_le_pow_left₀

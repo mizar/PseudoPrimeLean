@@ -150,7 +150,7 @@ theorem gamma_ramp_no_witness_comparison {q : ℕ} [NeZero q] (χ : DirichletCha
     Summable.tsum_add ((Complex.reCLM.summable hP).add (Complex.reCLM.summable hC)) hE,
     Summable.tsum_add (Complex.reCLM.summable hP) (Complex.reCLM.summable hC), ←
     Complex.reCLM.map_tsum hP, ← Complex.reCLM.map_tsum hC,
-    tsum_gammaSignedMangoldtCorrection_eq_localCorrection χ hquad hx] at h
+    tsum_gammaSignedCorrection_eq_quadLocal χ hquad hx] at h
   exact h
 
 /-- Under GRH, for odd n with log(n)≥46000 and original level 4n≥20000,
@@ -173,9 +173,8 @@ theorem gamma_ramp_prime_trivial_false {n : ℕ} (hn : Odd n) (χ : DirichletCha
   have hQ := gamma_ramp_no_witness_comparison χ hquad hx hsmall
   have hlo := gamma_ramp_sum_lower_seven hGRH.riemann hL
   have hP := PaperStatements.gamma_level_one_sum_upper_one_fifth hGRH.riemann hL
-  have hC :=
-    PaperStatements.gamma_primitiveCharacter_sum_re_le_smoothed_at_ramp_scale hq χ hne hGRH hL hlogq
-  have hE := gammaQuadraticLocalCorrection_absorbed_at_ramp_scale hn χ hquad hL
+  have hC := PaperStatements.gammaCharacterSum_re_le_smoothed_at_ramp_scale hq χ hne hGRH hL hlogq
+  have hE := gammaQuadLocal_absorbed_rampScale hn χ hquad hL
   apply Analysis.gamma_ramp_inequality_false_of_log_ge hL
   nlinarith only [hQ, hlo, hP, hC, hE]
 

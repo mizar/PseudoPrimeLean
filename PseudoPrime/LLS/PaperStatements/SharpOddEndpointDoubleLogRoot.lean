@@ -19,7 +19,7 @@ namespace PseudoPrime.LLS.PaperStatements
 and tangent-coupled level relation with constant 149/20 imply positivity of the
 zero-value endpoint polynomial. Expand its numerator into nonnegative pieces.
 This separates numerical certification from the actual logarithmic radius. -/
-theorem sharpOddEndpoint_zero_polynomial_pos_of_remainder {L y z : ℝ} (hy : 94 ≤ y) (hz : 0 ≤ z)
+theorem sharpOddEndpoint_poly_pos_of_remainder {L y z : ℝ} (hy : 94 ≤ y) (hz : 0 ≤ z)
     (hF : 0 < (17 / 200 : ℝ) * y + 14 + (69 / 10 : ℝ) * z - 2 * z ^ 2)
     (hlink : (y - 2) * L ≤ (y - 2) * y + y * (2 * z - 149 / 20)) :
     0 < oddEndpointTwoCostPolynomial (L + 7 / 5) (2096 / 1831) y z (7 / 10) (2 * z ^ 2) := by
@@ -112,8 +112,7 @@ theorem sharpOddEndpointDoubleLogRoot_data {L : ℝ} (hL : 96 ≤ L) :
 the double-logarithm root are positive. Apply the uniform remainder, conductor-cost
 correlation and cost monotonicity. Substituting b=log two gives the actual Jacobi
 non-one criteria without independent numerical gap assumptions. -/
-theorem sharpOddEndpoint_doubleLog_branch_polynomials_pos {L b : ℝ} (hL : 96 ≤ L)
-    (hb : b ≤ 7 / 10) :
+theorem sharpOdd_doubleLog_branchPolys_pos {L b : ℝ} (hL : 96 ≤ L) (hb : b ≤ 7 / 10) :
     let y := sharpOddEndpointDoubleLogRoot L
     0 <
         oddEndpointTwoCostPolynomial (L + 2 * b) (2096 / 1831) y (Real.log y) b
@@ -126,7 +125,7 @@ theorem sharpOddEndpoint_doubleLog_branch_polynomials_pos {L b : ℝ} (hL : 96 �
   have hy1 : 1 ≤ y := by linarith only [hd.1]
   have hz : 0 ≤ Real.log y := Real.log_nonneg hy1
   have hp :=
-    sharpOddEndpoint_zero_polynomial_pos_of_remainder hd.1 hz
+    sharpOddEndpoint_poly_pos_of_remainder hd.1 hz
       (Analysis.sharpLogQuadraticRemainder_pos_of_94 hd.1) hd.2
   have hlevel :=
     oddEndpointTwoCostPolynomial_antitone_level (P := (2096 / 1831 : ℝ)) (c := (7 / 10 : ℝ)) (D :=

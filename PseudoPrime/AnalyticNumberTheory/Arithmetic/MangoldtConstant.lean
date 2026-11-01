@@ -85,8 +85,8 @@ theorem mangoldtLogSum_error_bound (hψ : PsiSecondOrderBound) :
         field_simp (disch := simp only [hx0.ne', hl0.ne', ne_eq, not_false_eq_true])
       _ ≤ B / (Real.log x) ^ 2 := div_le_self (div_nonneg hB (sq_nonneg _)) hl
   have htail :=
-    abs_integral_psiLogErrorKernel_Ioi_le_of_bound hB ((by norm_num only : (1 : ℝ) < 2).trans_le hx)
-      hl (fun t ht ↦ ha t (hxa.trans ht))
+    abs_integral_psiLogErrorKernel_Ioi_le hB ((by norm_num only : (1 : ℝ) < 2).trans_le hx) hl
+      (fun t ht ↦ ha t (hxa.trans ht))
   rw [sub_add_eq_sub_sub, mangoldtLogSum_error_eq_tail ⟨B, hB, hb⟩ hx]
   calc
     _ ≤ _ := abs_sub _ _

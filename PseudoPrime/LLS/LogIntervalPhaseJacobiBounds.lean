@@ -53,7 +53,7 @@ theorem jacobi_no_negative_log_interval_comparison {n : ℕ} {hn : Odd n} {hns :
       bridge.character_ne_one hinv hx l hl r0 r1 hlo hhi hW (Finset.Ioc 0 ⌊b⌋₊) ha hbphase
   have ha := gamma_jacobi_no_negative_ramp_comparison bridge (by linarith only [hx]) hno
   have he :=
-    finiteSigned_character_prefix_add_ambient_ramp_eq_local_cost l bridge.character
+    signedPrefix_add_ramp_eq_cost l bridge.character
       (Nat.mul_pos (by norm_num only : (0 : ℕ) < 4) hn.pos) hb
       (gamma_jacobi_no_negative_prefix_prime_one bridge
         (fun p hp ho hpb ↦ hno p hp ho (hpb.trans hbx)))

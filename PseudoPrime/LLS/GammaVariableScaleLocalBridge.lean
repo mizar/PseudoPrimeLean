@@ -148,7 +148,7 @@ x>=2 and prefix, and absence of negative odd-prime witnesses.
 Claim: ramp minus principal is at most the variable arithmetic budget.
 Proof: combine the actual comparison, exact prefix identity and all-local bound.
 Role: replace the old scale-4096 gate by an explicit scale-dependent budget. -/
-theorem gamma_jacobi_no_negative_variable_scale_comparison {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+theorem gammaJacobi_noNeg_variableScale_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {q : ℕ} (hq : 20000 ≤ q)
     (hmq : (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ q) {x b : ℝ} (hx : 2 ≤ x)
@@ -161,7 +161,7 @@ theorem gamma_jacobi_no_negative_variable_scale_comparison {n : ℕ} {hn : Odd n
     gamma_jacobi_no_negative_actual_comparison bridge hGRH hq hmq
       (by linarith only [hx] : (2 : ℝ) ≤ x) (Finset.Ioc 0 ⌊b⌋₊) hno
   have he :=
-    gamma_jacobi_prefix_add_ambient_ramp_eq_local_cost bridge hb
+    gammaJacobi_prefixRamp_eq_localCost bridge hb
       (fun p hp hodd hpb ↦ hno p hp hodd (hpb.trans hbX)) x
   have hu :=
     gamma_jacobi_all_local_variable_scale bridge
@@ -192,9 +192,7 @@ theorem exists_odd_prime_negative_of_variable_scale_gap {n : ℕ} {hn : Odd n} {
   by_contra hnot
   have hno : ∀ p : ℕ, p.Prime → Odd p → (p : ℝ) ≤ (99 / 40 : ℝ) * x → jacobiSym n p ≠ -1 :=
     fun p hp hodd hcut hj ↦ hnot ⟨p, hp, hodd, hcut, hj⟩
-  exact
-    (not_le_of_gt hgap)
-      (gamma_jacobi_no_negative_variable_scale_comparison bridge hGRH hq hmq hx hb hbX hno)
+  exact (not_le_of_gt hgap) (gammaJacobi_noNeg_variableScale_GRH bridge hGRH hq hmq hx hb hbX hno)
 
 /-- Input: x>=4096. Claim: the variable arithmetic budget saves at least
 149/10000 against the previous fixed budget. Proof: the square mass agrees
@@ -275,9 +273,8 @@ and scale conditions, variable effective credit and the shared polynomial.
 Claim: the actual common-cost separation is positive.
 Proof: combine the variable budget with the existing paired comparison.
 Role: remove the fixed local scale gate from the polynomial witness interface. -/
-theorem gamma_common_margin_pos_of_variable_scale_polynomial {n Q : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) {L b x C D : ℝ} (hlog : Real.log n ≤ L) (hx : 1 ≤ x)
-    (hlogQ : Real.log Q ≤ L + 7 / 5)
+theorem gamma_common_margin_pos_of_variable_polynomial {n Q : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    {L b x C D : ℝ} (hlog : Real.log n ≤ L) (hx : 1 ≤ x) (hlogQ : Real.log Q ≤ L + 7 / 5)
     (hcredit :
       C +
           ((gammaVariableSquareMass x - 11783423 / 25000000) * (L + 7 / 5) +
@@ -292,8 +289,8 @@ theorem gamma_common_margin_pos_of_variable_scale_polynomial {n Q : ℕ} (hn : O
         (541 / 50) (gammaSignedVariationPrincipalCap x) := by
   obtain ⟨R, u, hroot, hlogu, hcoef, hp⟩ := hpoly
   exact
-    gamma_joint_prefix_common_margin_pos_of_polynomial (NumberTheory.complexQuadraticCharacter n hn)
-      hx hroot hlogu hlogQ
+    gamma_joint_common_margin_pos_of_polynomial (NumberTheory.complexQuadraticCharacter n hn) hx
+      hroot hlogu hlogQ
       (gamma_joint_prefix_le_of_variable_scale_credit hn hns hlog hx hcredit hdual) hcoef hp
 
 /-- Input: effective credit C<=123901/10000. Claim: the current paired

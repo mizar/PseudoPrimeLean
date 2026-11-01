@@ -109,7 +109,7 @@ theorem signedTwoPoleNeOneRadius_lt_log_square {L : ℝ} (hL : 1500 ≤ L) :
 /-- For odd nonsquare n under GRH with log n at least 1500, an odd prime non-one
 Jacobi witness lies below the affine two-pole radius at n. Specialize the common
 ambient endpoint to B=n. Character value zero remains an allowed witness. -/
-theorem exists_prime_ne_one_witness_le_signedTwoPole_affine {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+theorem exists_neOneWitness_le_signedTwoPole_affine {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 1500 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧ Odd p ∧ (p : ℝ) ≤ signedTwoPoleNeOneRadius (Real.log n) ∧ jacobiSym n p ≠ 1 := by

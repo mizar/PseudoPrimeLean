@@ -45,10 +45,10 @@ theorem reciprocalFormula_eq_theta (f : GeneralLFunction) (hf : f.IsAdmissible)
         -(logDeriv f.L 1).re =
           (f.reciprocalWeightedSum x).re + (θ / Real.sqrt x - 1 / (2 * x)) * f.zeroMass +
             f.reciprocalRemainder x := by
-  obtain ⟨θ, hθ, hI⟩ := re_integral_completedReciprocalMellin_eq_theta f hf hRH zero_lt_one hx
+  obtain ⟨θ, hθ, hI⟩ := completedReciprocal_real_theta_RH f hf hRH zero_lt_one hx
   refine ⟨-θ, ?_, ?_⟩
   · simpa only [abs_neg] using hθ
-  · rw [re_logDeriv_ordinary_one_eq_half_zeroMass_sub_gamma f hf hRH]
+  · rw [ordinary_logDeriv_one_real_RH f hf hRH]
     unfold reciprocalRemainder
     rw [hI]
     ring
@@ -57,8 +57,8 @@ theorem reciprocalFormula_eq_theta (f : GeneralLFunction) (hf : f.IsAdmissible)
 integrand minus the completion-factor integrand. Individual RH excludes completed zeros
 on this vertical line, so the logarithmic product rule applies. This connects the
 arithmetic Mellin formula with the completed zero expansion. -/
-theorem completedReciprocalMellinIntegrand_eq_ordinary_sub (f : GeneralLFunction)
-    (hf : f.IsAdmissible) (hRH : f.RiemannHypothesis) {x τ : ℝ} (hτ : 0 < τ) (y : ℝ) :
+theorem completedReciprocal_ordinary_sub_RH (f : GeneralLFunction) (hf : f.IsAdmissible)
+    (hRH : f.RiemannHypothesis) {x τ : ℝ} (hτ : 0 < τ) (y : ℝ) :
     f.completedReciprocalMellinIntegrand x τ y =
       -logDeriv f.L (((1 + τ : ℝ) : ℂ) + y * Complex.I) * (x : ℂ) ^ ((τ : ℂ) + y * Complex.I) /
           (((τ : ℂ) + y * Complex.I) * ((τ : ℂ) + y * Complex.I + 1)) -
@@ -82,16 +82,16 @@ theorem completedReciprocalMellinIntegrand_eq_ordinary_sub (f : GeneralLFunction
 smoothed arithmetic sum minus the completion endpoint contribution, plus the gamma residue
 sum. Integrate the ordinary/completion decomposition using absolute integrability and the
 two Mellin evaluations. This eliminates the remaining unevaluated vertical integral. -/
-theorem normalized_integral_completedReciprocal_eq_arithmetic_sub (f : GeneralLFunction)
-    (hf : f.IsAdmissible) (hRH : f.RiemannHypothesis) {x τ : ℝ} (hτ : 0 < τ) (hx : 1 < x) :
+theorem completedReciprocal_arithmetic_sub_RH (f : GeneralLFunction) (hf : f.IsAdmissible)
+    (hRH : f.RiemannHypothesis) {x τ : ℝ} (hτ : 0 < τ) (hx : 1 < x) :
     (2 * Real.pi)⁻¹ • (∫ y : ℝ, f.completedReciprocalMellinIntegrand x τ y) =
       f.reciprocalWeightedSum x -
         (logDeriv f.completionFactor 1 * (1 - (x : ℂ)⁻¹) - f.reciprocalGammaSum x) := by
-  rw [funext (completedReciprocalMellinIntegrand_eq_ordinary_sub f hf hRH (x := x) hτ),
+  rw [funext (completedReciprocal_ordinary_sub_RH f hf hRH (x := x) hτ),
     MeasureTheory.integral_sub (integrable_reciprocalMellin_logDeriv f hf (zero_lt_one.trans hx) hτ)
-      (integrable_completionReciprocalMellinIntegrand f hf hτ hx),
+      (integrable_completionReciprocal f hf hτ hx),
     smul_sub, ← reciprocalWeightedSum_eq_integral_logDeriv f hf (zero_lt_one.trans hx) hτ,
-    normalized_integral_completionReciprocalMellin_eq f hf hτ hx]
+    completionReciprocal_integral f hf hτ hx]
 
 /-- For admissible RH data and `x > 1`, the reciprocal remainder is the gamma residue sum's
 real part plus `(gamma endpoint + zero mass)/x`. Substitute the arithmetic/completion
@@ -102,7 +102,7 @@ theorem reciprocalRemainder_eq_gammaResidues (f : GeneralLFunction) (hf : f.IsAd
     f.reciprocalRemainder x =
       (f.gammaLogDerivativeAtOne + f.zeroMass) / x + (f.reciprocalGammaSum x).re := by
   unfold reciprocalRemainder
-  rw [normalized_integral_completedReciprocal_eq_arithmetic_sub f hf hRH zero_lt_one hx]
+  rw [completedReciprocal_arithmetic_sub_RH f hf hRH zero_lt_one hx]
   have hk : 1 - (x : ℂ)⁻¹ = ((1 - x⁻¹ : ℝ) : ℂ) := by
     rw [Complex.ofReal_sub, Complex.ofReal_one, Complex.ofReal_inv]
   rw [hk]

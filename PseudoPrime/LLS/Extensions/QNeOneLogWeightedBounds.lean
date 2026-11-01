@@ -67,9 +67,8 @@ Proof: transfer primitivity and nontriviality to the primitive character, then m
 conductor inequality by the nonnegative factor `log y`.
 Role: supplies the refined c=0 interface for the B-bound and numerical comparison.
 -/
-theorem primitiveLogWeightedBounds_of_qneOne_zero_branch_log_four_even_exact {q : ℕ}
-    (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hne : χ ≠ 1)
-    (heven : χ.primitiveCharacter.Even)
+theorem logBounds_even_zero_log4_exact_GRH {q : ℕ} (χ : DirichletCharacter ℂ q) [NeZero χ.conductor]
+    (hne : χ ≠ 1) (heven : χ.primitiveCharacter.Even)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y : ℝ} (hy : 8 ≤ y)
     (hlogD : Real.log χ.conductor ≤ y + Real.log 4) (hriemann : LLSRiemannWeightedLowerBound)
     (hodd :
@@ -93,8 +92,7 @@ theorem primitiveLogWeightedBounds_of_qneOne_zero_branch_log_four_even_exact {q 
     norm_num only
   have hcore := weightedComparisonCore_even_zero χ hne heven hGRH hx64 hodd h2
   have hbounds :=
-    re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le hriemann
-      (llsRiemannReciprocalLowerBound_of_riemannHypothesis hGRH.riemann)
+    weightedComparison_core_bounds hriemann (riemannReciprocalLower_of_RH hGRH.riemann)
       (lt_of_lt_of_le (by norm_num only) hx64) (le_trans (by norm_num only) hx64) hcore
   have hupper := hbounds.2.2.2
   rw [Real.log_div (by exact_mod_cast NeZero.ne χ.conductor) Real.pi_ne_zero] at hupper
@@ -143,9 +141,8 @@ by the negative-one analytic envelope and above by the exact even contour expres
 containing `|primitiveBRe|`. Apply the branch lower estimate and the general-character
 contour upper estimate, then enlarge the conductor term using `log y ≥ 0`.
 This is the input to the reciprocal substitution and correction comparison. -/
-theorem primitiveLogWeightedBounds_of_qneOne_neg_one_branch_even_exact_le {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hne : χ ≠ 1)
-    (heven : χ.primitiveCharacter.Even)
+theorem logBounds_even_negOne_exact_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    [NeZero χ.conductor] (hne : χ ≠ 1) (heven : χ.primitiveCharacter.Even)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y : ℝ} (hy : 8 ≤ y)
     (hlogD : Real.log χ.conductor ≤ y) (hriemann : LLSRiemannWeightedLowerBound)
     (hodd :
@@ -168,13 +165,11 @@ theorem primitiveLogWeightedBounds_of_qneOne_neg_one_branch_even_exact_le {q : �
     rw [Real.log_pow]
     norm_num only
   have hlower :=
-    characterLogWeightedSum_re_ge_riemann_lower_sub_three_half_log_sq_of_eq_neg_one (y ^ 2) χ
-      hriemann (le_trans (by norm_num only) hx64) hodd h2
+    characterLogSum_lower_negOne (y ^ 2) χ hriemann (le_trans (by norm_num only) hx64) hodd h2
   rw [hsqrt, hlogsq] at hlower
   have hcore := weightedComparisonCore_even_neg_one χ hne heven hGRH hx64 hodd h2
   have hbounds :=
-    re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le hriemann
-      (llsRiemannReciprocalLowerBound_of_riemannHypothesis hGRH.riemann)
+    weightedComparison_core_bounds hriemann (riemannReciprocalLower_of_RH hGRH.riemann)
       (lt_of_lt_of_le (by norm_num only) hx64) (le_trans (by norm_num only) hx64) hcore
   have hupper := hbounds.2.2.2
   rw [Real.log_div (by exact_mod_cast NeZero.ne χ.conductor) Real.pi_ne_zero] at hupper
@@ -380,15 +375,15 @@ theorem qNeOneUpperBoundZeroStar_lt_of_affine_B {y C : ℝ} (hy : 12 ≤ y)
 envelope. Bound the reciprocal term by its affine estimate and `log y` by the affine
 lower estimate anchored at twelve, then verify the resulting polynomial inequality.
 This is the first compact-interval separation certificate. -/
-theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_twelve_thirteen {y : ℝ} (hy : 12 ≤ y)
-    (hy13 : y ≤ 13) : qNeOneUpperBoundZeroStar y < qNeOneAnalyticLowerBound y := by
+theorem qNeOne_zeroStar_lt_lower_12_13 {y : ℝ} (hy : 12 ≤ y) (hy13 : y ≤ 13) :
+    qNeOneUpperBoundZeroStar y < qNeOneAnalyticLowerBound y := by
   have hloglower : (247 : ℝ) / 100 + 2 / 25 * (y - 12) ≤ Real.log y := by
     have h :=
       Analysis.log_gt_affine_of_anchor (a := (12 : ℝ)) (b := 13) (y := y) (L := 247 / 100)
         (by norm_num only) (by norm_num only) hy hy13 Analysis.log_twelve_gt
     norm_num only at h ⊢
     exact h.le
-  have hB := qNeOneBUpperBoundZeroStar_le_affine_twelve_thirteen hy hy13
+  have hB := qNeOne_BzeroStar_affine_12_13 hy hy13
   apply qNeOneUpperBoundZeroStar_lt_of_affine_B hy hB
   unfold qNeOneAnalyticLowerBound
   ring_nf at ⊢
@@ -401,8 +396,8 @@ theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_twelve_thirteen {y 
 envelope. Obtain the logarithm bound at thirteen from those at two and three, extend it
 by an affine lower bound, and combine it with the reciprocal affine estimate.
 The resulting polynomial inequality supplies the second compact separation certificate. -/
-theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_thirteen_sixteen {y : ℝ} (hy : 13 ≤ y)
-    (hy16 : y ≤ 16) : qNeOneUpperBoundZeroStar y < qNeOneAnalyticLowerBound y := by
+theorem qNeOne_zeroStar_lt_lower_13_16 {y : ℝ} (hy : 13 ≤ y) (hy16 : y ≤ 16) :
+    qNeOneUpperBoundZeroStar y < qNeOneAnalyticLowerBound y := by
   have hlog13 : (256 : ℝ) / 100 < Real.log 13 := by
     have h12 : (248 : ℝ) / 100 < Real.log 12 := by
       rw [show (12 : ℝ) = 3 * 4 by norm_num only,
@@ -428,7 +423,7 @@ theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_thirteen_sixteen {y
         (by norm_num only) (by norm_num only) hy hy16 hlog13
     norm_num only at h ⊢
     exact h.le
-  have hB := qNeOneBUpperBoundZeroStar_le_affine_thirteen_sixteen hy hy16
+  have hB := qNeOne_BzeroStar_affine_13_16 hy hy16
   apply qNeOneUpperBoundZeroStar_lt_of_affine_B (le_trans (by norm_num only) hy) hB
   unfold qNeOneAnalyticLowerBound
   ring_nf at ⊢
@@ -441,8 +436,8 @@ theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_thirteen_sixteen {y
 /-- On `[16,24]`, the zero-branch exact upper envelope is strictly below the common lower.
 Use the reciprocal affine bound with constant `23/10` and the logarithm lower bound
 anchored at sixteen; the resulting polynomial certificate closes the compact comparison. -/
-theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_sixteen_twenty_four {y : ℝ}
-    (hy : 16 ≤ y) (hy24 : y ≤ 24) : qNeOneUpperBoundZeroStar y < qNeOneAnalyticLowerBound y := by
+theorem qNeOneZeroStar_lt_lower_16_24 {y : ℝ} (hy : 16 ≤ y) (hy24 : y ≤ 24) :
+    qNeOneUpperBoundZeroStar y < qNeOneAnalyticLowerBound y := by
   have hlog16 : (277 : ℝ) / 100 < Real.log 16 := by
     rw [show (16 : ℝ) = 2 ^ 4 by norm_num only, Real.log_pow]
     have h2 : (693 : ℝ) / 1000 < Real.log 2 := lt_trans (by norm_num only) Real.log_two_gt_d9
@@ -456,7 +451,7 @@ theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_sixteen_twenty_four
         (by norm_num only) (by norm_num only) hy hy24 hlog16
     norm_num only at h ⊢
     exact h.le
-  have hB := qNeOneBUpperBoundZeroStar_le_affine_sixteen_twenty_four hy hy24
+  have hB := qNeOneBZeroStar_affine_16_24 hy hy24
   apply qNeOneUpperBoundZeroStar_lt_of_affine_B (le_trans (by norm_num only) hy) hB
   unfold qNeOneAnalyticLowerBound
   ring_nf at ⊢
@@ -469,8 +464,8 @@ theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_sixteen_twenty_four
 /-- On `[24,32]`, separate the exact zero-branch upper and common lower envelopes.
 The reciprocal affine bound with constant `12/5` and logarithm bound anchored at twenty-four
 reduce the relaxed gap to the displayed nonnegative polynomial data. -/
-theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_twenty_four_thirty_two {y : ℝ}
-    (hy : 24 ≤ y) (hy32 : y ≤ 32) : qNeOneUpperBoundZeroStar y < qNeOneAnalyticLowerBound y := by
+theorem qNeOneZeroStar_lt_lower_24_32 {y : ℝ} (hy : 24 ≤ y) (hy32 : y ≤ 32) :
+    qNeOneUpperBoundZeroStar y < qNeOneAnalyticLowerBound y := by
   have hlog24 : (317 : ℝ) / 100 < Real.log 24 := by
     rw [show (24 : ℝ) = 3 * 2 ^ 3 by norm_num only,
       Real.log_mul (by norm_num only) (by norm_num only), Real.log_pow]
@@ -487,7 +482,7 @@ theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_twenty_four_thirty_
         (by norm_num only) (by norm_num only) hy hy32 hlog24
     norm_num only at h ⊢
     exact h.le
-  have hB := qNeOneBUpperBoundZeroStar_le_affine_twenty_four_thirty_two hy hy32
+  have hB := qNeOneBZeroStar_affine_24_32 hy hy32
   apply qNeOneUpperBoundZeroStar_lt_of_affine_B (le_trans (by norm_num only) hy) hB
   unfold qNeOneAnalyticLowerBound
   ring_nf at ⊢
@@ -500,8 +495,8 @@ theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_twenty_four_thirty_
 /-- On `[32,48]`, the zero-branch upper envelope lies strictly below the common lower.
 Lift the reciprocal affine bound with constant `12/5`; `log y ≥ 3` controls the quadratic
 and mixed logarithm terms, leaving a strict linear gap. This closes the final compact interval. -/
-theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_thirty_two_forty_eight {y : ℝ}
-    (hy : 32 ≤ y) (hy48 : y ≤ 48) : qNeOneUpperBoundZeroStar y < qNeOneAnalyticLowerBound y := by
+theorem qNeOne_zeroStar_lt_lower_32_48 {y : ℝ} (hy : 32 ≤ y) (hy48 : y ≤ 48) :
+    qNeOneUpperBoundZeroStar y < qNeOneAnalyticLowerBound y := by
   have hlog32 : (346 : ℝ) / 100 < Real.log 32 := by
     rw [show (32 : ℝ) = 2 ^ 5 by norm_num only, Real.log_pow]
     have h2 : (693 : ℝ) / 1000 < Real.log 2 := lt_trans (by norm_num only) Real.log_two_gt_d9
@@ -515,7 +510,7 @@ theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_thirty_two_forty_ei
         (by norm_num only) (by norm_num only) hy hy48 hlog32
     norm_num only at h ⊢
     exact h.le
-  have hB := qNeOneBUpperBoundZeroStar_le_affine_thirty_two_forty_eight hy hy48
+  have hB := qNeOne_BzeroStar_affine_32_48 hy hy48
   apply qNeOneUpperBoundZeroStar_lt_of_affine_B (le_trans (by norm_num only) hy) hB
   unfold qNeOneAnalyticLowerBound
   ring_nf at ⊢
@@ -606,29 +601,19 @@ theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_thirty_two_forty_ei
   exact sub_pos.mp hdiff''
 
 /-- The five compact c=0 certificates combine with the c=1 bound on `[12,48]`. -/
-theorem qNeOneAnalyticLowerBound_gt_qNeOneCommonUpperBound_twelve_forty_eight {y : ℝ} (hy : 12 ≤ y)
-    (hy48 : y ≤ 48) : qNeOneCommonUpperBound y < qNeOneAnalyticLowerBound y := by
-  have hone :=
-    qNeOneAnalyticUpperBoundOne_lt_qNeOneAnalyticLowerBound (y := y)
-      (by exact (le_trans (by norm_num only) hy))
+theorem qNeOne_common_lt_lower_12_48 {y : ℝ} (hy : 12 ≤ y) (hy48 : y ≤ 48) :
+    qNeOneCommonUpperBound y < qNeOneAnalyticLowerBound y := by
+  have hone := qNeOne_oneUpper_lt_lower (y := y) (by exact (le_trans (by norm_num only) hy))
   have hzero : qNeOneUpperBoundZeroStar y < qNeOneAnalyticLowerBound y := by
     by_cases hy13 : y ≤ 13
-    · exact qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_twelve_thirteen hy hy13
+    · exact qNeOne_zeroStar_lt_lower_12_13 hy hy13
     by_cases hy16 : y ≤ 16
-    · exact
-        qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_thirteen_sixteen (le_of_not_ge hy13)
-          hy16
+    · exact qNeOne_zeroStar_lt_lower_13_16 (le_of_not_ge hy13) hy16
     by_cases hy24 : y ≤ 24
-    · exact
-        qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_sixteen_twenty_four (le_of_not_ge hy16)
-          hy24
+    · exact qNeOneZeroStar_lt_lower_16_24 (le_of_not_ge hy16) hy24
     by_cases hy32 : y ≤ 32
-    · exact
-        qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_twenty_four_thirty_two
-          (le_of_not_ge hy24) hy32
-    · exact
-        qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound_thirty_two_forty_eight
-          (le_of_not_ge hy32) hy48
+    · exact qNeOneZeroStar_lt_lower_24_32 (le_of_not_ge hy24) hy32
+    · exact qNeOne_zeroStar_lt_lower_32_48 (le_of_not_ge hy32) hy48
   unfold qNeOneCommonUpperBound
   exact max_lt hzero hone
 
@@ -657,7 +642,7 @@ end QNeOneZeroStar
 /-- For `48 ≤ y`, the zero-branch upper bound is below the analytic lower envelope.
 The numerator and affine separation follow from explicit nonnegative polynomial certificates.
 This supplies the zero branch of the common-upper-bound separation. -/
-theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound {y : ℝ} (hy : 48 ≤ y) :
+theorem qNeOneZeroStarUpper_lt_qNeOneAnalyticLower {y : ℝ} (hy : 48 ≤ y) :
     qNeOneUpperBoundZeroStar y < qNeOneAnalyticLowerBound y := by
   exact
     qNeOneUpperBoundZeroStar_lt_of_affine_B (le_trans (by norm_num only) hy)
@@ -666,32 +651,28 @@ theorem qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound {y : ℝ} (hy : 48 
 /-- For `y ≥ 48`, the common upper envelope is strictly below the analytic lower envelope.
 Combine strict separation of its zero-branch and one-branch components with the maximum
 inequality. This supplies the unbounded part of the common sandwich contradiction. -/
-theorem qNeOneAnalyticLowerBound_gt_qNeOneCommonUpperBound {y : ℝ} (hy : 48 ≤ y) :
+theorem qNeOneAnalyticLower_gt_qNeOneCommonUpperBound {y : ℝ} (hy : 48 ≤ y) :
     qNeOneCommonUpperBound y < qNeOneAnalyticLowerBound y := by
-  have hzero := qNeOneUpperBoundZeroStar_lt_qNeOneAnalyticLowerBound hy
-  have hone :=
-    qNeOneAnalyticUpperBoundOne_lt_qNeOneAnalyticLowerBound (y := y)
-      (le_trans (by norm_num only : (8 : ℝ) ≤ 48) hy)
+  have hzero := qNeOneZeroStarUpper_lt_qNeOneAnalyticLower hy
+  have hone := qNeOne_oneUpper_lt_lower (y := y) (le_trans (by norm_num only : (8 : ℝ) ≤ 48) hy)
   unfold qNeOneCommonUpperBound
   exact max_lt hzero hone
 
 /-- For `y ≥ 12`, the common upper envelope is strictly below the analytic lower envelope.
 Use the five compact-interval certificates for `y ≤ 48` and the unbounded certificate
 otherwise. This is the numerical separation needed for all three character branches. -/
-theorem qNeOneAnalyticLowerBound_gt_qNeOneCommonUpperBound_of_twelve {y : ℝ} (hy : 12 ≤ y) :
+theorem qNeOne_common_lt_lower_from12 {y : ℝ} (hy : 12 ≤ y) :
     qNeOneCommonUpperBound y < qNeOneAnalyticLowerBound y := by
   by_cases hy48 : y ≤ 48
-  · exact qNeOneAnalyticLowerBound_gt_qNeOneCommonUpperBound_twelve_forty_eight hy hy48
-  · exact qNeOneAnalyticLowerBound_gt_qNeOneCommonUpperBound (le_of_lt (lt_of_not_ge hy48))
+  · exact qNeOne_common_lt_lower_12_48 hy hy48
+  · exact qNeOneAnalyticLower_gt_qNeOneCommonUpperBound (le_of_lt (lt_of_not_ge hy48))
 
 /-- For `y ≥ 12`, a real value cannot lie between the analytic lower envelope and the common
 upper envelope. Compose the two assumed non-strict bounds and contradict strict numerical
 separation. This interface applies both to weighted sums and to the corrected sum at two. -/
 theorem qNeOne_common_sandwich_false_of_twelve {y z : ℝ} (hy : 12 ≤ y)
     (hlower : qNeOneAnalyticLowerBound y ≤ z) (hupper : z ≤ qNeOneCommonUpperBound y) : False := by
-  exact
-    (not_lt_of_ge (hlower.trans hupper))
-      (qNeOneAnalyticLowerBound_gt_qNeOneCommonUpperBound_of_twelve hy)
+  exact (not_lt_of_ge (hlower.trans hupper)) (qNeOne_common_lt_lower_from12 hy)
 
 /-- Under the even zero-branch hypotheses, GRH, both Riemann lower bounds, `y ≥ 8`,
 `log conductor ≤ y + log 4`, and primitive value one on the specified odd primes,
@@ -699,9 +680,8 @@ the real weighted sum at `y²` lies between the analytic lower envelope and the 
 upper envelope. Substitute the strong reciprocal Hadamard-constant bound into the exact
 contour upper estimate; its multiplying coefficient is nonnegative.
 This retains the exact even main error for the corrected negative-one comparison. -/
-theorem primitiveLogWeightedBounds_of_qneOne_zero_branch_even_star {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hne : χ ≠ 1)
-    (heven : χ.primitiveCharacter.Even)
+theorem logBounds_even_zero_star_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    [NeZero χ.conductor] (hne : χ ≠ 1) (heven : χ.primitiveCharacter.Even)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y : ℝ} (hy : 8 ≤ y)
     (hlogD : Real.log χ.conductor ≤ y + Real.log 4) (hriemann : LLSRiemannWeightedLowerBound)
     (hriemannReciprocal : LLSRiemannReciprocalLowerBound)
@@ -715,12 +695,8 @@ theorem primitiveLogWeightedBounds_of_qneOne_zero_branch_even_star {q : ℕ} [Ne
         (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ∧
       (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ≤
         qNeOneUpperBoundZeroStar y := by
-  have hbounds :=
-    primitiveLogWeightedBounds_of_qneOne_zero_branch_log_four_even_exact χ hne heven hGRH hy hlogD
-      hriemann hodd h2
-  have hB :=
-    primitiveBRe_le_of_qneOne_zero_branch_even_at_square_log_four_strong χ hne heven hGRH hy hlogD
-      hriemannReciprocal hodd h2
+  have hbounds := logBounds_even_zero_log4_exact_GRH χ hne heven hGRH hy hlogD hriemann hodd h2
+  have hB := primitiveBRe_even_zero_log4_GRH χ hne heven hGRH hy hlogD hriemannReciprocal hodd h2
   have hlogy : 0 ≤ Real.log y := Real.log_nonneg (le_trans (by norm_num only : (1 : ℝ) ≤ 8) hy)
   have hcoef : 0 ≤ 2 * y + 2 + 2 * Real.log y := by linarith only [hy, hlogy]
   have hmul := mul_le_mul_of_nonneg_left hB hcoef
@@ -747,9 +723,8 @@ theorem primitiveLogWeightedBounds_of_qneOne_zero_branch_even_star {q : ℕ} [Ne
 the real weighted sum at `y²` lies between the analytic lower and common upper envelopes.
 Apply the zero-branch estimate and enlarge its upper bound to the maximum.
 This connects the branch to the common numerical contradiction. -/
-theorem primitiveLogWeightedBounds_of_qneOne_zero_branch_even_common {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hne : χ ≠ 1)
-    (heven : χ.primitiveCharacter.Even)
+theorem logBounds_even_zero_common_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    [NeZero χ.conductor] (hne : χ ≠ 1) (heven : χ.primitiveCharacter.Even)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y : ℝ} (hy : 8 ≤ y)
     (hlogD : Real.log χ.conductor ≤ y + Real.log 4) (hriemann : LLSRiemannWeightedLowerBound)
     (hriemannReciprocal : LLSRiemannReciprocalLowerBound)
@@ -764,8 +739,7 @@ theorem primitiveLogWeightedBounds_of_qneOne_zero_branch_even_common {q : ℕ} [
       (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ≤
         qNeOneCommonUpperBound y := by
   have h :=
-    primitiveLogWeightedBounds_of_qneOne_zero_branch_even_star χ hne heven hGRH hy hlogD hriemann
-      hriemannReciprocal hodd h2
+    logBounds_even_zero_star_GRH χ hne heven hGRH hy hlogD hriemann hriemannReciprocal hodd h2
   constructor
   · exact h.1
   · exact
@@ -781,9 +755,8 @@ the real weighted sum at `y²` lies between the negative-one analytic lower enve
 and its explicit upper envelope. Multiply the reciprocal Hadamard-constant bound by the
 nonnegative contour coefficient and preserve the exact even main error.
 This supplies the upper estimate before adding the correction at two. -/
-theorem primitiveLogWeightedBounds_of_qneOne_neg_one_branch_even_star {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hne : χ ≠ 1)
-    (heven : χ.primitiveCharacter.Even)
+theorem logBounds_even_negOne_star_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    [NeZero χ.conductor] (hne : χ ≠ 1) (heven : χ.primitiveCharacter.Even)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y : ℝ} (hy : 8 ≤ y)
     (hlogD : Real.log χ.conductor ≤ y) (hriemann : LLSRiemannWeightedLowerBound)
     (hriemannReciprocal : LLSRiemannReciprocalLowerBound)
@@ -797,12 +770,9 @@ theorem primitiveLogWeightedBounds_of_qneOne_neg_one_branch_even_star {q : ℕ} 
         (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ∧
       (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ≤
         qNeOneUpperBoundNegOneStar y := by
-  have hbounds :=
-    primitiveLogWeightedBounds_of_qneOne_neg_one_branch_even_exact_le χ hne heven hGRH hy hlogD
-      hriemann hodd h2
+  have hbounds := logBounds_even_negOne_exact_GRH χ hne heven hGRH hy hlogD hriemann hodd h2
   have hB :=
-    primitiveBRe_le_of_qneOne_neg_one_branch_at_square_le χ hne heven hGRH hy hlogD
-      hriemannReciprocal hodd h2
+    primitiveBRe_even_negOne_square_GRH χ hne heven hGRH hy hlogD hriemannReciprocal hodd h2
   have hlogy : 0 ≤ Real.log y := Real.log_nonneg (le_trans (by norm_num only : (1 : ℝ) ≤ 8) hy)
   have hcoef : 0 ≤ 2 * y + 2 + 2 * Real.log y := by linarith only [hy, hlogy]
   have hmul := mul_le_mul_of_nonneg_left hB hcoef
@@ -829,7 +799,7 @@ negative-one upper envelope plus `logTwoSquareCorrection y`. The result is
 `(2y + 2 + 2 log y) * log 2 * (2/3 - 1/y²)/(1 - 1/y)² + (log 2)²`.
 Cancel the common exact even main error and use the reciprocal-envelope difference.
 Its nonnegative terms permit comparison of the corrected branch with the zero branch. -/
-theorem qNeOneUpperBoundZeroStar_sub_negOneStar_add_delta_eq {y : ℝ} (hy : 8 ≤ y) :
+theorem qNeOneZeroStarUpper_sub_negOneStar_add_delta_eq {y : ℝ} (hy : 8 ≤ y) :
     qNeOneUpperBoundZeroStar y -
         (qNeOneUpperBoundNegOneStar y + Analysis.logTwoSquareCorrection y) =
       (2 * y + 2 + 2 * Real.log y) * (Real.log 2 * (2 / 3 - 1 / y ^ 2) / (1 - 1 / y) ^ 2) +
@@ -861,9 +831,8 @@ the corrected weighted value `Re S + logTwoSquareCorrection y` lies between the 
 analytic lower envelope and the zero-branch upper envelope. The corrected arithmetic lower
 estimate supplies the first inequality; the explicit nonnegative envelope gap supplies
 the second. This places the negative-one branch in the same comparison as the zero branch. -/
-theorem primitiveLogWeightedBounds_of_qneOne_neg_one_branch_corrected_star {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hne : χ ≠ 1)
-    (heven : χ.primitiveCharacter.Even)
+theorem logBounds_negOne_corrected_star_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    [NeZero χ.conductor] (hne : χ ≠ 1) (heven : χ.primitiveCharacter.Even)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y : ℝ} (hy : 8 ≤ y)
     (hlogD : Real.log χ.conductor ≤ y) (hriemann : LLSRiemannWeightedLowerBound)
     (hriemannReciprocal : LLSRiemannReciprocalLowerBound)
@@ -882,7 +851,7 @@ theorem primitiveLogWeightedBounds_of_qneOne_neg_one_branch_corrected_star {q : 
   have hx := Analysis.sq_ge_64_of_ge_8 hy
   have hcore := weightedComparisonCore_even_neg_one χ hne heven hGRH hx hodd h2
   have hc :=
-    re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le hriemann hriemannReciprocal
+    weightedComparison_core_bounds hriemann hriemannReciprocal
       (lt_of_lt_of_le (by norm_num only) hx) (le_trans (by norm_num only) hx) hcore
   have hlow :
     qNeOneAnalyticLowerBound y - Analysis.logTwoSquareCorrection y ≤
@@ -895,9 +864,8 @@ theorem primitiveLogWeightedBounds_of_qneOne_neg_one_branch_corrected_star {q : 
     norm_num only at hl hs
     linarith only [hl, hs]
   have hupp :=
-    primitiveLogWeightedBounds_of_qneOne_neg_one_branch_even_star χ hne heven hGRH hy hlogD hriemann
-      hriemannReciprocal hodd h2
-  have hdiff := qNeOneUpperBoundZeroStar_sub_negOneStar_add_delta_eq hy
+    logBounds_even_negOne_star_GRH χ hne heven hGRH hy hlogD hriemann hriemannReciprocal hodd h2
+  have hdiff := qNeOneZeroStarUpper_sub_negOneStar_add_delta_eq hy
   constructor
   · exact sub_le_iff_le_add.mp hlow
   · have hypos : 0 < y := lt_of_lt_of_le (by norm_num only) hy
@@ -943,9 +911,8 @@ theorem primitiveLogWeightedBounds_of_qneOne_neg_one_branch_corrected_star {q : 
 the corrected value `Re S + logTwoSquareCorrection y` lies between the analytic lower
 and common upper envelopes. First compare it with the zero-branch upper envelope, then
 enlarge to the maximum. This supplies the corrected branch's common sandwich. -/
-theorem primitiveLogWeightedBounds_of_qneOne_neg_one_branch_corrected_common {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hne : χ ≠ 1)
-    (heven : χ.primitiveCharacter.Even)
+theorem logBounds_negOne_corrected_common_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    [NeZero χ.conductor] (hne : χ ≠ 1) (heven : χ.primitiveCharacter.Even)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y : ℝ} (hy : 8 ≤ y)
     (hlogD : Real.log χ.conductor ≤ y) (hriemann : LLSRiemannWeightedLowerBound)
     (hriemannReciprocal : LLSRiemannReciprocalLowerBound)
@@ -962,8 +929,8 @@ theorem primitiveLogWeightedBounds_of_qneOne_neg_one_branch_corrected_common {q 
           Analysis.logTwoSquareCorrection y ≤
         qNeOneCommonUpperBound y := by
   have h :=
-    primitiveLogWeightedBounds_of_qneOne_neg_one_branch_corrected_star χ hne heven hGRH hy hlogD
-      hriemann hriemannReciprocal hodd h2
+    logBounds_negOne_corrected_star_GRH χ hne heven hGRH hy hlogD hriemann hriemannReciprocal hodd
+      h2
   constructor
   · exact h.1
   · exact
@@ -981,9 +948,8 @@ bound and the retained even main-error term.
 Content: normalize the existing c=1 lower estimate and specialize the exact generic upper.
 Role: supplies the exact c=1 interface before the reciprocal B substitution.
 -/
-theorem primitiveLogWeightedBounds_of_qneOne_one_branch_even_exact {q : ℕ}
-    (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hne : χ ≠ 1)
-    (heven : χ.primitiveCharacter.Even)
+theorem logBounds_even_one_exact_GRH {q : ℕ} (χ : DirichletCharacter ℂ q) [NeZero χ.conductor]
+    (hne : χ ≠ 1) (heven : χ.primitiveCharacter.Even)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y : ℝ} (hy : 8 ≤ y)
     (hlogD : Real.log χ.conductor ≤ y) (hriemann : LLSRiemannWeightedLowerBound)
     (hodd :
@@ -1007,8 +973,7 @@ theorem primitiveLogWeightedBounds_of_qneOne_one_branch_even_exact {q : ℕ}
     norm_num only
   have hcore := weightedComparisonCore_even_one χ hne heven hGRH hx64 hodd h2
   have hbounds :=
-    re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le hriemann
-      (llsRiemannReciprocalLowerBound_of_riemannHypothesis hGRH.riemann)
+    weightedComparison_core_bounds hriemann (riemannReciprocalLower_of_RH hGRH.riemann)
       (lt_of_lt_of_le (by norm_num only) hx64) (le_trans (by norm_num only) hx64) hcore
   have hupper := hbounds.2.2.2
   rw [Real.log_div (by exact_mod_cast NeZero.ne χ.conductor) Real.pi_ne_zero] at hupper
@@ -1047,9 +1012,8 @@ the real weighted sum at `y²` lies between the analytic lower envelope and the 
 one-branch upper envelope. Substitute the square-radius reciprocal Hadamard-constant bound
 into the exact upper estimate, using the nonnegative contour coefficient.
 This supplies the one branch of the common envelope comparison. -/
-theorem primitiveLogWeightedBounds_of_qneOne_one_branch_even_analytic {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hne : χ ≠ 1)
-    (heven : χ.primitiveCharacter.Even)
+theorem logBounds_even_one_analytic_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    [NeZero χ.conductor] (hne : χ ≠ 1) (heven : χ.primitiveCharacter.Even)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y : ℝ} (hy : 8 ≤ y)
     (hlogD : Real.log χ.conductor ≤ y) (hriemann : LLSRiemannWeightedLowerBound)
     (hriemannReciprocal : LLSRiemannReciprocalLowerBound)
@@ -1063,12 +1027,8 @@ theorem primitiveLogWeightedBounds_of_qneOne_one_branch_even_analytic {q : ℕ} 
         (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ∧
       (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ≤
         qNeOneAnalyticUpperBoundOne y := by
-  have hbounds :=
-    primitiveLogWeightedBounds_of_qneOne_one_branch_even_exact χ hne heven hGRH hy hlogD hriemann
-      hodd h2
-  have hB :=
-    primitiveBRe_le_of_qneOne_one_branch_at_square_simple χ hne heven hGRH hy hlogD
-      hriemannReciprocal hodd h2
+  have hbounds := logBounds_even_one_exact_GRH χ hne heven hGRH hy hlogD hriemann hodd h2
+  have hB := primitiveBRe_even_one_square_GRH χ hne heven hGRH hy hlogD hriemannReciprocal hodd h2
   have hlogy : 0 ≤ Real.log y := Real.log_nonneg (le_trans (by norm_num only : (1 : ℝ) ≤ 8) hy)
   have hcoef : 0 ≤ 2 * y + 2 + 2 * Real.log y := by linarith only [hy, hlogy]
   have hmul := mul_le_mul_of_nonneg_left hB hcoef
@@ -1095,9 +1055,8 @@ theorem primitiveLogWeightedBounds_of_qneOne_one_branch_even_analytic {q : ℕ} 
 the real weighted sum at `y²` lies between the analytic lower and common upper envelopes.
 Apply the one-branch analytic estimate and enlarge its upper bound to the maximum.
 This connects the one branch to the common numerical contradiction. -/
-theorem primitiveLogWeightedBounds_of_qneOne_one_branch_even_common {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hne : χ ≠ 1)
-    (heven : χ.primitiveCharacter.Even)
+theorem logBounds_even_one_common_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    [NeZero χ.conductor] (hne : χ ≠ 1) (heven : χ.primitiveCharacter.Even)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y : ℝ} (hy : 8 ≤ y)
     (hlogD : Real.log χ.conductor ≤ y) (hriemann : LLSRiemannWeightedLowerBound)
     (hriemannReciprocal : LLSRiemannReciprocalLowerBound)
@@ -1112,8 +1071,7 @@ theorem primitiveLogWeightedBounds_of_qneOne_one_branch_even_common {q : ℕ} [N
       (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y ^ 2) χ.primitiveCharacter).re ≤
         qNeOneCommonUpperBound y := by
   have h :=
-    primitiveLogWeightedBounds_of_qneOne_one_branch_even_analytic χ hne heven hGRH hy hlogD hriemann
-      hriemannReciprocal hodd h2
+    logBounds_even_one_analytic_GRH χ hne heven hGRH hy hlogD hriemann hriemannReciprocal hodd h2
   constructor
   · exact h.1
   · exact

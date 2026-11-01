@@ -54,10 +54,9 @@ theorem agp_initial_bases_unbounded_of_prime_supply
   have hNeZeroLambda : NeZero (ArithmeticFunction.carmichael L) :=
     ⟨Nat.ne_of_gt (lt_of_lt_of_le (by decide : 0 < 3) hlambda)⟩
   obtain ⟨U, hUP, hUcard, hUcar, hpass⟩ :=
-    @exists_carmichael_strongMillerRabin_pass_all_of_large_progression_primes L hNeZeroL hL hlambda
-      hNeZeroLambda W P k hkL (fun p hp => (hP p hp).1) (fun p hp => (hP p hp).2.1)
-      (fun p hp => (hP p hp).2.2.1) (fun p hp => (hP p hp).2.2.2.1) hWpos
-      (fun p hp b hb => (hP p hp).2.2.2.2.2 b hb) hsize
+    @exists_carmichael_strongPass_all_of_progression L hNeZeroL hL hlambda hNeZeroLambda W P k hkL
+      (fun p hp => (hP p hp).1) (fun p hp => (hP p hp).2.1) (fun p hp => (hP p hp).2.2.1)
+      (fun p hp => (hP p hp).2.2.2.1) hWpos (fun p hp b hb => (hP p hp).2.2.2.2.2 b hb) hsize
   refine ⟨∏ p ∈ U, p, ?_, hUcar, ?_⟩
   · have hUpos : 0 < U.card := lt_of_lt_of_le (by decide : 0 < 2) hUcard
     obtain ⟨p, hpU⟩ := Finset.card_pos.mp hUpos
@@ -90,7 +89,7 @@ construction.
 Role: this records the unbounded initial-base theorem with its remaining
 analytic hypothesis isolated explicitly.
 -/
-theorem agp_initial_bases_unbounded_of_progression_count_data
+theorem initialBasesUnbounded_of_countData
     (hdata : PseudoPrime.AnalyticNumberTheory.AGP.AGPProgressionCountDataExists) :
     AGPInitialBasesUnbounded :=
   agp_initial_bases_unbounded_of_prime_supply
@@ -114,9 +113,8 @@ these data to prime supply and then to a finite Carmichael product.
 Role: expose `AGPInitialBasesUnbounded` unconditionally, so callers need not
 provide progression-count data or a prime-supply hypothesis.
 -/
-theorem agp_initial_bases_unbounded :
-    AGPInitialBasesUnbounded :=
-  agp_initial_bases_unbounded_of_progression_count_data
+theorem agp_initial_bases_unbounded : AGPInitialBasesUnbounded :=
+  initialBasesUnbounded_of_countData
     AnalyticNumberTheory.AGP.agp_progression_count_data_exists_unconditional
 
 end PseudoPrime.PrimeTest.MillerRabin.AGP

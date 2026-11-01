@@ -63,7 +63,7 @@ theorem gammaSignedPrefixMRBudget_doubling_block_gain (hRH : RiemannHypothesis) 
     gammaSignedPrefixMRBudget n Q x b + ((a : ℝ) / 4) * (b : ℝ) ^ (-21 / 20 : ℝ) ≤
       gammaSignedPrefixMRBudget n Q x a := by
   have hp :=
-    LLS.gamma_euler_prefix_lower_growth_of_doubling_block hRH ha hratio
+    LLS.gammaEulerPrefix_growth_doubling_RH hRH ha hratio
       (le_refl (∑ j ∈ Finset.Ioc 0 a, Analysis.gammaResolventMangoldtWeight j))
   dsimp only [gammaSignedPrefixMRBudget]
   simp only [Nat.floor_natCast]
@@ -98,12 +98,12 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 /-- Input: RH, a>=10000, b>=5a/4 and arbitrary n,Q,x. Claim: the
 actual MR budget gains at least (a/100)b^(-21/20). Use twice the positive
 Euler block gain. Role: retain analytic savings at arbitrary admissible cutoffs. -/
-theorem gammaSignedPrefixMRBudget_five_fourths_block_gain (hRH : RiemannHypothesis) {a b : ℕ}
-    (ha : 10000 ≤ a) (hratio : (5 / 4 : ℝ) * a ≤ b) (n Q : ℕ) (x : ℝ) :
+theorem gammaSignedBudget_block_gain_5_4_RH (hRH : RiemannHypothesis) {a b : ℕ} (ha : 10000 ≤ a)
+    (hratio : (5 / 4 : ℝ) * a ≤ b) (n Q : ℕ) (x : ℝ) :
     gammaSignedPrefixMRBudget n Q x b + ((a : ℝ) / 100) * (b : ℝ) ^ (-21 / 20 : ℝ) ≤
       gammaSignedPrefixMRBudget n Q x a := by
   have hp :=
-    LLS.gamma_euler_prefix_lower_growth_of_five_fourths_block hRH ha hratio
+    LLS.gamma_euler_prefix_growth_5_4_RH hRH ha hratio
       (le_refl (∑ j ∈ Finset.Ioc 0 a, Analysis.gammaResolventMangoldtWeight j))
   dsimp only [gammaSignedPrefixMRBudget]
   simp only [Nat.floor_natCast]
@@ -125,7 +125,7 @@ theorem exists_prime_witness_of_five_fourths_block_gap {n a b : ℕ} {x : ℝ} (
           ((a : ℝ) / 100) * (b : ℝ) ^ (-21 / 20 : ℝ)) :
     ∃ p : ℕ,
       p.Prime ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
-  have hd := gammaSignedPrefixMRBudget_five_fourths_block_gain hGRH.riemann ha hratio n n x
+  have hd := gammaSignedBudget_block_gain_5_4_RH hGRH.riemann ha hratio n n x
   apply
     exists_prime_witness_of_signed_prefix_gap hn hnOdd hnComposite hGRH hnlarge (le_refl n) hx
       (by exact_mod_cast (Nat.zero_le b)) hbx
@@ -177,9 +177,8 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 base is at most (4/5)log(n)^2 and strictly below log(n)^2. Combine the retained
 Euler prefix with the variable ramp bounds on the whole half-line.
 Role: lower the coefficient-four-fifths entrance without finite input checks. -/
-theorem exists_prime_witness_le_retained_four_fifths_gamma_log_12800 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 12800 ≤ Real.log n) :
+theorem exists_prime_witness_4_5_log12800_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 12800 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log n) ^ 2 ∧
@@ -215,17 +214,15 @@ theorem exists_prime_witness_le_retained_four_fifths_gamma_log_12800 {n : ℕ} (
 /-- Under the same GRH, odd-composite and log(n) >= 12800 hypotheses, a least
 prime MR rejecting base satisfies the displayed bound. Minimize the unbounded
 prime rejection predicate. Role: expose a least-witness version of the half-line bound. -/
-theorem exists_least_prime_witness_le_retained_four_fifths_gamma_log_12800 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 12800 ≤ Real.log n) :
+theorem exists_least_prime_witness_4_5_log12800_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 12800 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
         (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log n) ^ 2 ∧
         ∀ r : ℕ, r.Prime → ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) → p ≤ r := by
   classical
-  obtain ⟨p, hp, hb, _, hf⟩ :=
-    exists_prime_witness_le_retained_four_fifths_gamma_log_12800 hnOdd hnComposite hGRH hL
+  obtain ⟨p, hp, hb, _, hf⟩ := exists_prime_witness_4_5_log12800_GRH hnOdd hnComposite hGRH hL
   have hex : ∃ r : ℕ, r.Prime ∧ ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := ⟨p, hp, hf⟩
   exact
     ⟨Nat.find hex, (Nat.find_spec hex).1, (Nat.find_spec hex).2,
@@ -235,16 +232,14 @@ theorem exists_least_prime_witness_le_retained_four_fifths_gamma_log_12800 {n : 
 /-- Under the same hypotheses, a prime below the stated bound fails the initial
 power equality and every negative-one equality in the standard binary decomposition
 of n-1. Apply the characterization of MR rejection. Role: expose the actual power tests. -/
-theorem exists_prime_rejecting_powers_le_retained_four_fifths_gamma_log_12800 {n : ℕ}
-    (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+theorem exists_prime_powers_ne_4_5_log12800_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 12800 ≤ Real.log n) :
     let (s, d) := Nat.maxPowDvdDiv 2 (n - 1);
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log n) ^ 2 ∧
         (p : ZMod n) ^ d ≠ 1 ∧ ∀ j : ℕ, j < s → (p : ZMod n) ^ (2 ^ j * d) ≠ -1 := by
-  obtain ⟨p, hp, hb, _, hf⟩ :=
-    exists_prime_witness_le_retained_four_fifths_gamma_log_12800 hnOdd hnComposite hGRH hL
+  obtain ⟨p, hp, hb, _, hf⟩ := exists_prime_witness_4_5_log12800_GRH hnOdd hnComposite hGRH hL
   exact ⟨p, hp, hb, PrimeTest.not_strongMillerRabinPass_iff.mp hf⟩
 
 end PseudoPrime.PrimeTestBounds.MillerRabin
@@ -299,8 +294,8 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 is below the actual ramp-principal gap at x=(32/99)L². Use nine symbolic
 Euler-prefix doublings and the retained uniform errors. Role: connect the
 positive Euler block gain to a smaller analytic entrance without finite input checks. -/
-theorem gammaSignedPrefixMRBudget_gap_four_fifths_growing_prefix (hRH : RiemannHypothesis) {n : ℕ}
-    {L : ℝ} (hL : 11800 ≤ L) (hlogn : Real.log n ≤ L) :
+theorem gammaBudget_gap_prefix_102400000_RH (hRH : RiemannHypothesis) {n : ℕ} {L : ℝ}
+    (hL : 11800 ≤ L) (hlogn : Real.log n ≤ L) :
     let x := (32 / 99 : ℝ) * L ^ 2
     gammaSignedPrefixMRBudget n n x 102400000 <
       2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
@@ -337,9 +332,8 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 base is at most (4/5)log(n)^2 and strictly below log(n)^2. Combine the retained
 Euler prefix with the variable ramp bounds on the whole half-line.
 Role: lower the coefficient-four-fifths entrance without finite input checks. -/
-theorem exists_prime_witness_le_growing_four_fifths_gamma_log_11800 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 11800 ≤ Real.log n) :
+theorem exists_prime_witness_4_5_log11800_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 11800 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log n) ^ 2 ∧
@@ -358,7 +352,7 @@ theorem exists_prime_witness_le_growing_four_fifths_gamma_log_11800 {n : ℕ} (h
   have hx : 2 ≤ x := by
     dsimp only [x]
     nlinarith only [hL, sq_nonneg (Real.log n - 11800)]
-  have hgap := gammaSignedPrefixMRBudget_gap_four_fifths_growing_prefix hGRH.riemann hL (le_refl _)
+  have hgap := gammaBudget_gap_prefix_102400000_RH hGRH.riemann hL (le_refl _)
   obtain ⟨p, hp, hb, hf⟩ :=
     exists_prime_witness_of_signed_prefix_gap hn hnOdd hnComposite hGRH hq (le_refl n) hx
       (by norm_num only : (0 : ℝ) ≤ 102400000)
@@ -376,17 +370,15 @@ theorem exists_prime_witness_le_growing_four_fifths_gamma_log_11800 {n : ℕ} (h
 /-- Under the same GRH, odd-composite and log(n) >= 11800 hypotheses, a least
 prime MR rejecting base satisfies the displayed bound. Minimize the unbounded
 prime rejection predicate. Role: expose a least-witness version of the half-line bound. -/
-theorem exists_least_prime_witness_le_growing_four_fifths_gamma_log_11800 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 11800 ≤ Real.log n) :
+theorem exists_least_prime_witness_4_5_log11800_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 11800 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
         (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log n) ^ 2 ∧
         ∀ r : ℕ, r.Prime → ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) → p ≤ r := by
   classical
-  obtain ⟨p, hp, hb, _, hf⟩ :=
-    exists_prime_witness_le_growing_four_fifths_gamma_log_11800 hnOdd hnComposite hGRH hL
+  obtain ⟨p, hp, hb, _, hf⟩ := exists_prime_witness_4_5_log11800_GRH hnOdd hnComposite hGRH hL
   have hex : ∃ r : ℕ, r.Prime ∧ ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := ⟨p, hp, hf⟩
   exact
     ⟨Nat.find hex, (Nat.find_spec hex).1, (Nat.find_spec hex).2,
@@ -396,16 +388,14 @@ theorem exists_least_prime_witness_le_growing_four_fifths_gamma_log_11800 {n : �
 /-- Under the same hypotheses, a prime below the stated bound fails the initial
 power equality and every negative-one equality in the standard binary decomposition
 of n-1. Apply the characterization of MR rejection. Role: expose the actual power tests. -/
-theorem exists_prime_rejecting_powers_le_growing_four_fifths_gamma_log_11800 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 11800 ≤ Real.log n) :
+theorem exists_prime_powers_ne_4_5_log11800_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 11800 ≤ Real.log n) :
     let (s, d) := Nat.maxPowDvdDiv 2 (n - 1);
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log n) ^ 2 ∧
         (p : ZMod n) ^ d ≠ 1 ∧ ∀ j : ℕ, j < s → (p : ZMod n) ^ (2 ^ j * d) ≠ -1 := by
-  obtain ⟨p, hp, hb, _, hf⟩ :=
-    exists_prime_witness_le_growing_four_fifths_gamma_log_11800 hnOdd hnComposite hGRH hL
+  obtain ⟨p, hp, hb, _, hf⟩ := exists_prime_witness_4_5_log11800_GRH hnOdd hnComposite hGRH hL
   exact ⟨p, hp, hb, PrimeTest.not_strongMillerRabinPass_iff.mp hf⟩
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

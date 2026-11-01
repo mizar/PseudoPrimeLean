@@ -19,8 +19,8 @@ namespace PseudoPrime.PseudoSquare
 there is an odd-prime Jacobi non-one witness at most (4/5)L².
 Apply the improved character theorem at level 4n and transfer prime values,
 including nonunits. This is the large-level endpoint existence interface. -/
-theorem exists_prime_ne_one_witness_le_gamma_endpoint_conductor_free {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hq : 20000 ≤ 4 * n) {L : ℝ} (hL : 30000 ≤ L) (hlogn : Real.log n ≤ L)
+theorem exists_prime_neOne_gammaConductorFree_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hq : 20000 ≤ 4 * n) {L : ℝ} (hL : 30000 ≤ L) (hlogn : Real.log n ≤ L)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * L ^ 2 ∧ jacobiSym n p ≠ 1 := by
   let : NeZero (4 * n) := ⟨Nat.mul_ne_zero (by norm_num only) (Odd.pos hn).ne'⟩
@@ -49,14 +49,13 @@ the least odd-prime non-one Jacobi witness is at most (4/5)L².
 Use the conductor-free Gamma theorem at large levels and the established global
 log-square envelope at smaller levels. All inputs share the same endpoint.
 The witness-set nonemptiness proof is explicit for finite-maximum consumers. -/
-theorem primeNeOneWitness_cast_le_gamma_endpoint_conductor_free
+theorem neOneWitness_le_gamma_endpoint_conductor_free
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : Odd n)
     (hns : ¬IsSquare n) {L : ℝ} (hL : 30000 ≤ L) (hlogn : Real.log n ≤ L)
     (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤ (4 / 5 : ℝ) * L ^ 2 := by
   by_cases hq : 20000 ≤ 4 * n
-  · obtain ⟨p, hp, ho, hb, hv⟩ :=
-      exists_prime_ne_one_witness_le_gamma_endpoint_conductor_free hn hns hq hL hlogn hGRH
+  · obtain ⟨p, hp, ho, hb, hv⟩ := exists_prime_neOne_gammaConductorFree_GRH hn hns hq hL hlogn hGRH
     exact (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hb
   · have hnsmall : n ≤ 46000 := by
       have ht := lt_of_not_ge hq
@@ -89,7 +88,7 @@ theorem exists_prime_ne_one_witness_le_gamma_log_30000
   have hm := NumberTheory.primeNeOneWitness_mem n hw
   exact
     ⟨NumberTheory.primeNeOneWitness n hw, hm.1, hm.2.1,
-      primeNeOneWitness_cast_le_gamma_endpoint_conductor_free hGRH hn hns hL (le_refl _) hw, hm.2.2⟩
+      neOneWitness_le_gamma_endpoint_conductor_free hGRH hn hns hL (le_refl _) hw, hm.2.2⟩
 
 /-- Under GRH and log B ≥ 30000, the finite maximum of least non-one
 Jacobi witnesses through B is at most (4/5)(log B)².
@@ -104,7 +103,7 @@ theorem QNeOne_le_gamma_log_30000 {B : ℕ} (hB : 30000 ≤ Real.log B)
   have hn0 : (0 : ℝ) < n := by exact_mod_cast Odd.pos ha.odd
   have hnB : (n : ℝ) ≤ B := by exact_mod_cast ha.le
   exact
-    primeNeOneWitness_cast_le_gamma_endpoint_conductor_free hGRH ha.odd ha.not_isSquare hB
+    neOneWitness_le_gamma_endpoint_conductor_free hGRH ha.odd ha.not_isSquare hB
       (Real.log_le_log hn0 hnB)
       (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
         (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare ha.odd ha.not_isSquare))

@@ -29,7 +29,7 @@ theorem reciprocalWeightedMangoldtSum_eq_integral {x : ℝ} (hx : 0 < x) {τ : �
     (Arithmetic.reciprocalWeightedMangoldtSum x : ℂ) =
       (2 * Real.pi : ℝ)⁻¹ •
         ∫ y : ℝ, riemannZetaReciprocalContourKernel x ((τ : ℂ) + y * Complex.I) := by
-  rw [← Arithmetic.mellinWeightOne_vonMangoldt_div_tsum_eq_ofReal hx,
+  rw [← Arithmetic.mellinWeightOne_mangoldt_tsum_eq_ofReal hx,
     mellinWeightOne_vonMangoldt_div_tsum_eq hx hτ]
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

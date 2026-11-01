@@ -24,22 +24,22 @@ theorem classicalSelfridgeD_cubic_exact_bound {n : ℕ} {hn : Odd n} {hns : ¬Is
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ∧
       ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         PseudoSquare.cubicExactConductorBound bridge := by
   let hw := NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns
   have hb := PseudoSquare.primeNegOneWitness_le_cubic_exact bridge hGRH hw
   exact
-    ⟨classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_firstStopNegOne_natAbs_cast hn hns,
-      classicalSelfridgeD_neg_natAbs_le_of_prime_witness_bound hn hns hw
+    ⟨classicalD_neOne_le_negOne hn hns,
+      classicalD_neg_natAbs_le_of_primeWitness hn hns hw
         (PseudoSquare.cubicExactConductorBound_ge27 bridge) hb⟩
 
 /-- Under GRH, both Wheel30 stopping magnitudes obey the same exact cubic bound.
@@ -50,23 +50,23 @@ theorem wheel30SelfridgeD_cubic_exact_bound {n : ℕ} {hn : Odd n} {hns : ¬IsSq
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNeOne PrimeTest.isWheel30NeOneCandidate n
-                (PrimeTest.wheel30FirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.wheel30NeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNegOne PrimeTest.isWheel30NegOneCandidate n
-                (PrimeTest.wheel30FirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.wheel30NegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ∧
       ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNegOne PrimeTest.isWheel30NegOneCandidate n
-                (PrimeTest.wheel30FirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.wheel30NegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         PseudoSquare.cubicExactConductorBound bridge := by
   simpa only [PrimeTest.firstStopNeOne_wheel30_eq_classical hn.pos hn hns
-        (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns)
-        (PrimeTest.wheel30FirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns),
+        (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns)
+        (PrimeTest.wheel30NeOneSet_nonempty_of_odd_nonsquare hn hns),
     PrimeTest.firstStopNegOne_wheel30_eq_classical hn
-        (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns)
-        (PrimeTest.wheel30FirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns)] using
+        (PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn hns)
+        (PrimeTest.wheel30NegOneSet_nonempty_of_odd_nonsquare hn hns)] using
     classicalSelfridgeD_cubic_exact_bound bridge hGRH
 
 end PseudoPrime.PrimeTestBounds.Selfridge

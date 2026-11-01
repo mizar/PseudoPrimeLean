@@ -53,8 +53,7 @@ theorem norm_characterLogLValueSum_le {q : ℕ} [NeZero q] (χ : DirichletCharac
   have h :=
     Extensions.GeneralLFunction.norm_finiteWeightedSum_le_of_bound
       (Extensions.GeneralLFunction.ofDirichletCharacter χ)
-      (Extensions.GeneralLFunction.ofDirichletCharacter_mangoldtCoefficient_norm_le χ)
-      (Finset.Ioc 0 ⌊x⌋₊) w
+      (Extensions.GeneralLFunction.dirichlet_mangoldt_norm_le χ) (Finset.Ioc 0 ⌊x⌋₊) w
   have hs : (∑ n ∈ Finset.Ioc 0 ⌊x⌋₊, |w n|) = logLValueSum x := by
     apply Finset.sum_congr rfl
     intro n hn

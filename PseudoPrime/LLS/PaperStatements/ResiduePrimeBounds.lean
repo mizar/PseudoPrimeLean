@@ -211,7 +211,7 @@ has its least prime at most the square of the totient times the modulus logarith
 At this cutoff the normalized square and odd-prime-power upper bounds, together
 with the nonprincipal estimate, lie strictly below the principal lower estimate.
 Apply the proved residue gap criterion. This proves the large-modulus part of Corollary 1.2. -/
-theorem exists_least_prime_in_residue_le_totient_log_sq_of_large {q : ℕ} [NeZero q] (a : (ZMod q)ˣ)
+theorem exists_least_residue_totientLog_large_GRH {q : ℕ} [NeZero q] (a : (ZMod q)ˣ)
     (hq : 20000 ≤ q) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ,
       IsLeast {r : ℕ | r.Prime ∧ (r : ZMod q) = (a : ZMod q)} p ∧

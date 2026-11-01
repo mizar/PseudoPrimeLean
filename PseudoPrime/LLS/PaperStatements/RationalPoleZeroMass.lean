@@ -53,10 +53,10 @@ theorem rationalPole_four_zeroMass_le {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : 
             ‖Analysis.rationalPoleFunction 2 (13 / 25) c (Complex.I * ρ.im)‖) ≤
         rationalPoleFourEulerBudget χ A B := by
   apply
-    AnalyticNumberTheory.DirichletLFunction.zeroMass_le_of_poissonDifferenceWeight_majorant hq hRH
-      hp hne hinv (σ := 1 / 2 + poleFourAlpha) (τ := 1 / 2 + poleFourBeta)
-      (by norm_num only [poleFourAlpha]) (by norm_num only [poleFourAlpha, poleFourBeta])
-      poleFour_node_data.2.2.1 poleFour_node_data.2.2.2 A B
+    AnalyticNumberTheory.DirichletLFunction.zeroMass_le_of_poisson_majorant_RH hq hRH hp hne hinv
+      (σ := 1 / 2 + poleFourAlpha) (τ := 1 / 2 + poleFourBeta) (by norm_num only [poleFourAlpha])
+      (by norm_num only [poleFourAlpha, poleFourBeta]) poleFour_node_data.2.2.1
+      poleFour_node_data.2.2.2 A B
       (fun t ↦ ‖Analysis.rationalPoleFunction 2 (13 / 25) c (Complex.I * t)‖)
       (fun t ↦ norm_nonneg _)
   intro t

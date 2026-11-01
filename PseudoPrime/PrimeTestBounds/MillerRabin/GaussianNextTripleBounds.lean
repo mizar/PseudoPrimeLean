@@ -43,7 +43,7 @@ private theorem gaussianNextTriple_contradiction {n : ℕ} [NeZero n] (H : Subgr
     False := by
   rw [hi] at hcmp
   norm_num only [Nat.cast_ofNat] at hcmp
-  have hd := LLS.gaussian_kernel_triple_denominator_le_at_fixed_cutoff
+  have hd := LLS.gaussian_tripleDenominator_fixedCutoff
   have hd' :
     (10971611 / 5000000 : ℝ) ≤
       4 *

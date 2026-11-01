@@ -18,8 +18,7 @@ namespace PseudoPrime.NumberTheory.Heilbronn
 off-diagonal sum. The diagonal is (p-1) times the g²-weighted correlation
 mass. Isolate one summation term and group the remaining pair sum by its
 difference. No estimate or discarded contribution is hidden in this identity. -/
-theorem weightedHeilbronnTriple_eq_diagonal_add_offDiagonal {p : ℕ} [Fact p.Prime]
-    (g : ZMod (p ^ 2) → ℕ) :
+theorem weightedTriple_eq_diagonal_add_offDiagonal {p : ℕ} [Fact p.Prime] (g : ZMod (p ^ 2) → ℕ) :
     weightedHeilbronnTriple p g =
       (p - 1) * (∑ a : ZMod (p ^ 2), g a ^ 2 * Nat.card (cosetDifferenceAt p 0 0 a)) +
         weightedHeilbronnOffDiagonal p g := by
@@ -41,7 +40,7 @@ theorem weightedHeilbronnTriple_eq_diagonal_add_offDiagonal {p : ℕ} [Fact p.Pr
   rw [PseudoPrime.Analysis.finite_subtype_pair_sum_eq_correlation (heilbronnElements p)
       (fun a ↦ g a ^ 2)] at h
   simpa only [weightedHeilbronnTriple, weightedHeilbronnOffDiagonal,
-    ← heilbronn_correlation_eq_finiteDifferenceCorrelation, mul_comm (p - 1)] using h
+    ← correlation_eq_finiteDifferenceCorrelation, mul_comm (p - 1)] using h
 
 /-- On a selected level of height at most Δ, the diagonal moment of g²
 is at most Δ times the retained energy B. Expand the support and compare
@@ -68,7 +67,7 @@ theorem level_weight_triple_le_diagonal_add_offDiagonal {p : ℕ} [Fact p.Prime]
     weightedHeilbronnTriple p (heilbronnLevelWeight p P) ≤
       (p - 1) * Δ * heilbronnLevelEnergy p P +
         weightedHeilbronnOffDiagonal p (heilbronnLevelWeight p P) := by
-  rw [weightedHeilbronnTriple_eq_diagonal_add_offDiagonal]
+  rw [weightedTriple_eq_diagonal_add_offDiagonal]
   have h :=
     Nat.add_le_add_right
       (Nat.mul_le_mul_left (p - 1) (level_weight_diagonal_moment_le (p := p) P Δ hP))

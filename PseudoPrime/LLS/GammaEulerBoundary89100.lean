@@ -152,7 +152,7 @@ theorem gamma_joint_prefix89100_bound_halfline (hRH : RiemannHypothesis) {n : �
     gammaJointPrefixLocalBudget (NumberTheory.complexQuadraticCharacter n hn) b x ≤
       (11783423 / 25000000 : ℝ) * (L + 7 / 5) + 3 / 4 + D - 28923 / 2500 + 7 / 60 := by
   have hp := gamma_prefix89100_lower_halfline hRH hb
-  have hj := gamma_joint_prefix_le_factor_free_budget_small_scale (b := b) hn hns hlog hx
+  have hj := gammaJointPrefix_factorFree_smallScale (b := b) hn hns hlog hx
   dsimp only [gammaFactorFreeJointBudget] at hj
   linarith only [hp, hj, hD]
 

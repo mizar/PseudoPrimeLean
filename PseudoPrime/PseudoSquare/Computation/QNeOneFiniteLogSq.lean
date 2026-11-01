@@ -44,8 +44,8 @@ cast to the reals, is at most `(log n)^2`. The proof casts the million-wheel bou
 and composes it with the logarithmic lower bound at `1024`. This is the large finite
 branch of the unconditional logarithmic-square estimate.
 -/
-theorem primeNeOneWitness_cast_le_log_sq_of_1024_le_of_lt_million {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hlo : 1024 ≤ n) (hhi : n < 1000000) :
+theorem primeNeOneWitness_le_log_sq_of_1024_lt_1000000 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hlo : 1024 ≤ n) (hhi : n < 1000000) :
     (NumberTheory.primeNeOneWitness n
           (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
             (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns)) :
@@ -159,8 +159,8 @@ to the reals, is at most `(log n)^2`. Split at `16`: below it use witness bound 
 and above it use bound `7`, with the corresponding logarithmic lower bounds.
 This covers the first finite branch without GRH.
 -/
-theorem primeNeOneWitness_cast_le_log_sq_of_eleven_le_of_lt_sixtyFour {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hlo : 11 ≤ n) (hhi : n < 64) :
+theorem primeNeOneWitness_le_log_sq_11_64 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n) (hlo : 11 ≤ n)
+    (hhi : n < 64) :
     (NumberTheory.primeNeOneWitness n
           (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
             (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns)) :
@@ -330,7 +330,7 @@ is at most `19`. The proof supplies the finite square exclusions to the interval
 certificate and applies minimality to each concrete prime alternative.
 This is the pointwise finite bound used by the corresponding logarithmic-square adapter.
 -/
-theorem primeNeOneWitness_le_nineteen_of_1001_le_of_le_1125 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+theorem primeNeOneWitness_le_19_of_1001_1125 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hn1001 : 1001 ≤ n) (hn1125 : n ≤ 1125) :
     NumberTheory.primeNeOneWitness n
         (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
@@ -373,14 +373,14 @@ cast to the reals, is at most `(log n)^2`. The proof casts the finite bound `19`
 composes it with the logarithmic lower bound absorbing that constant.
 This connects the interval certificate to the unconditional logarithmic witness interface.
 -/
-theorem primeNeOneWitness_cast_le_log_sq_of_1001_le_of_le_1125 {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hn1001 : 1001 ≤ n) (hn1125 : n ≤ 1125) :
+theorem primeNeOneWitness_le_log_sq_of_1001_1125 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hn1001 : 1001 ≤ n) (hn1125 : n ≤ 1125) :
     (NumberTheory.primeNeOneWitness n
           (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
             (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns)) :
         ℝ) ≤
       Real.log (n : ℝ) ^ 2 := by
-  have hw := primeNeOneWitness_le_nineteen_of_1001_le_of_le_1125 hn hns hn1001 hn1125
+  have hw := primeNeOneWitness_le_19_of_1001_1125 hn hns hn1001 hn1125
   have hwR :
     (NumberTheory.primeNeOneWitness n
           (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
@@ -546,7 +546,7 @@ is at most `19`. The proof supplies the finite square exclusions to the interval
 certificate and applies minimality to each concrete prime alternative.
 This is the pointwise finite bound used by the corresponding logarithmic-square adapter.
 -/
-theorem primeNeOneWitness_le_nineteen_of_1126_le_of_le_1250 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+theorem primeNeOneWitness_le_19_of_1126_1250 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hn1126 : 1126 ≤ n) (hn1250 : n ≤ 1250) :
     NumberTheory.primeNeOneWitness n
         (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
@@ -570,14 +570,14 @@ cast to the reals, is at most `(log n)^2`. The proof casts the finite bound `19`
 composes it with the logarithmic lower bound absorbing that constant.
 This connects the interval certificate to the unconditional logarithmic witness interface.
 -/
-theorem primeNeOneWitness_cast_le_log_sq_of_1126_le_of_le_1250 {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hn1126 : 1126 ≤ n) (hn1250 : n ≤ 1250) :
+theorem primeNeOneWitness_le_log_sq_of_1126_1250 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hn1126 : 1126 ≤ n) (hn1250 : n ≤ 1250) :
     (NumberTheory.primeNeOneWitness n
           (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
             (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns)) :
         ℝ) ≤
       Real.log (n : ℝ) ^ 2 := by
-  have hw := primeNeOneWitness_le_nineteen_of_1126_le_of_le_1250 hn hns hn1126 hn1250
+  have hw := primeNeOneWitness_le_19_of_1126_1250 hn hns hn1126 hn1250
   have hwR :
     (NumberTheory.primeNeOneWitness n
           (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
@@ -743,7 +743,7 @@ is at most `19`. The proof supplies the finite square exclusions to the interval
 certificate and applies minimality to each concrete prime alternative.
 This is the pointwise finite bound used by the corresponding logarithmic-square adapter.
 -/
-theorem primeNeOneWitness_le_nineteen_of_1251_le_of_le_1375 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+theorem primeNeOneWitness_le_19_of_1251_1375 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hn1251 : 1251 ≤ n) (hn1375 : n ≤ 1375) :
     NumberTheory.primeNeOneWitness n
         (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
@@ -767,14 +767,14 @@ cast to the reals, is at most `(log n)^2`. The proof casts the finite bound `19`
 composes it with the logarithmic lower bound absorbing that constant.
 This connects the interval certificate to the unconditional logarithmic witness interface.
 -/
-theorem primeNeOneWitness_cast_le_log_sq_of_1251_le_of_le_1375 {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hn1251 : 1251 ≤ n) (hn1375 : n ≤ 1375) :
+theorem primeNeOneWitness_le_log_sq_of_1251_1375 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hn1251 : 1251 ≤ n) (hn1375 : n ≤ 1375) :
     (NumberTheory.primeNeOneWitness n
           (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
             (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns)) :
         ℝ) ≤
       Real.log (n : ℝ) ^ 2 := by
-  have hw := primeNeOneWitness_le_nineteen_of_1251_le_of_le_1375 hn hns hn1251 hn1375
+  have hw := primeNeOneWitness_le_19_of_1251_1375 hn hns hn1251 hn1375
   have hwR :
     (NumberTheory.primeNeOneWitness n
           (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
@@ -950,7 +950,7 @@ is at most `19`. The proof supplies the finite square exclusions to the interval
 certificate and applies minimality to each concrete prime alternative.
 This is the pointwise finite bound used by the corresponding logarithmic-square adapter.
 -/
-theorem primeNeOneWitness_le_nineteen_of_1376_le_of_le_1500 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+theorem primeNeOneWitness_le_19_of_1376_1500 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hn1376 : 1376 ≤ n) (hn1500 : n ≤ 1500) :
     NumberTheory.primeNeOneWitness n
         (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
@@ -974,14 +974,14 @@ cast to the reals, is at most `(log n)^2`. The proof casts the finite bound `19`
 composes it with the logarithmic lower bound absorbing that constant.
 This connects the interval certificate to the unconditional logarithmic witness interface.
 -/
-theorem primeNeOneWitness_cast_le_log_sq_of_1376_le_of_le_1500 {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hn1376 : 1376 ≤ n) (hn1500 : n ≤ 1500) :
+theorem primeNeOneWitness_le_log_sq_of_1376_1500 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hn1376 : 1376 ≤ n) (hn1500 : n ≤ 1500) :
     (NumberTheory.primeNeOneWitness n
           (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
             (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns)) :
         ℝ) ≤
       Real.log (n : ℝ) ^ 2 := by
-  have hw := primeNeOneWitness_le_nineteen_of_1376_le_of_le_1500 hn hns hn1376 hn1500
+  have hw := primeNeOneWitness_le_19_of_1376_1500 hn hns hn1376 hn1500
   have hwR :
     (NumberTheory.primeNeOneWitness n
           (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
@@ -1033,7 +1033,7 @@ is at most `17`. The proof supplies the finite square exclusions to the interval
 certificate and applies minimality to each concrete prime alternative.
 This is the pointwise finite bound used by the corresponding logarithmic-square adapter.
 -/
-theorem primeNeOneWitness_le_seventeen_of_751_le_of_le_1000 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+theorem primeNeOneWitness_le_17_of_751_1000 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hn751 : 751 ≤ n) (hn1000 : n ≤ 1000) :
     NumberTheory.primeNeOneWitness n
         (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
@@ -1083,14 +1083,14 @@ cast to the reals, is at most `(log n)^2`. The proof casts the finite bound `17`
 composes it with the logarithmic lower bound absorbing that constant.
 This connects the interval certificate to the unconditional logarithmic witness interface.
 -/
-theorem primeNeOneWitness_cast_le_log_sq_of_751_le_of_le_1000 {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hn751 : 751 ≤ n) (hn1000 : n ≤ 1000) :
+theorem primeNeOneWitness_le_log_sq_of_751_1000 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hn751 : 751 ≤ n) (hn1000 : n ≤ 1000) :
     (NumberTheory.primeNeOneWitness n
           (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
             (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns)) :
         ℝ) ≤
       Real.log (n : ℝ) ^ 2 := by
-  have hw := primeNeOneWitness_le_seventeen_of_751_le_of_le_1000 hn hns hn751 hn1000
+  have hw := primeNeOneWitness_le_17_of_751_1000 hn hns hn751 hn1000
   have hwR :
     (NumberTheory.primeNeOneWitness n
           (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
@@ -1107,29 +1107,28 @@ cast to the reals, is at most `(log n)^2`, without GRH. The proof splits at `64`
 the million-wheel bound `47` with logarithmic lower bounds. This is the finite branch
 used in the integrated GRH theorem after reduction to the squarefree part.
 -/
-theorem primeNeOneWitness_cast_le_log_sq_of_eleven_le_of_lt_million {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hlo : 11 ≤ n) (hhi : n < 1000000) :
+theorem neOneWitness_le_logSq_eleven_to_million {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hlo : 11 ≤ n) (hhi : n < 1000000) :
     (NumberTheory.primeNeOneWitness n
           (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
             (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns)) :
         ℝ) ≤
       Real.log (n : ℝ) ^ 2 := by
   by_cases h1024 : 1024 ≤ n
-  · exact primeNeOneWitness_cast_le_log_sq_of_1024_le_of_lt_million hn hns h1024 hhi
+  · exact primeNeOneWitness_le_log_sq_of_1024_lt_1000000 hn hns h1024 hhi
   by_cases h1001 : 1001 ≤ n
   · exact
-      primeNeOneWitness_cast_le_log_sq_of_1001_le_of_le_1125 hn hns h1001
+      primeNeOneWitness_le_log_sq_of_1001_1125 hn hns h1001
         (Nat.le_trans (Nat.le_of_lt_succ (lt_of_not_ge h1024)) (by decide))
   by_cases h751 : 751 ≤ n
   · exact
-      primeNeOneWitness_cast_le_log_sq_of_751_le_of_le_1000 hn hns h751
-        (Nat.le_of_lt_succ (lt_of_not_ge h1001))
+      primeNeOneWitness_le_log_sq_of_751_1000 hn hns h751 (Nat.le_of_lt_succ (lt_of_not_ge h1001))
   by_cases h64 : 64 ≤ n
   · exact
       (Nat.cast_le.mpr
             (primeNeOneWitness_le_thirteen_of_le_750 hn hns
               (Nat.le_of_lt_succ (lt_of_not_ge h751)))).trans
         (thirteen_le_log_sq_of_sixtyFour_le h64)
-  exact primeNeOneWitness_cast_le_log_sq_of_eleven_le_of_lt_sixtyFour hn hns hlo (lt_of_not_ge h64)
+  exact primeNeOneWitness_le_log_sq_11_64 hn hns hlo (lt_of_not_ge h64)
 
 end PseudoPrime.PseudoSquare

@@ -34,9 +34,7 @@ theorem exists_prime_neg_one_witness_of_polynomial {n : ℕ} (hn : Odd n) (hns :
     (hpoly : LLS.GammaPairedPolynomialCondition (L + 7 / 5) x C) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n p = -1 := by
   have hg := LLS.gamma_retained_margin_gt_of_polynomial (by linarith only [hx]) hcredit hdual hpoly
-  exact
-    exists_prime_neg_one_witness_of_retained_common_factor_free_separation hn hns hGRH hL hlog hx hb
-      hbx hg.le
+  exact exists_prime_negOne_retainedFactorFree_GRH hn hns hGRH hL hlog hx hb hbx hg.le
 
 /-- Input: GRH, the displayed arithmetic and scale bounds, effective prefix
 credit, signed dual cap and shared polynomial condition. Claim: an odd-prime witness
@@ -107,7 +105,7 @@ theorem QNegOne_le_of_polynomial {B : ℕ}
     (hpoly : LLS.GammaPairedPolynomialCondition (Real.log B + 7 / 5) x C) :
     (QNegOne B : ℝ) ≤ (99 / 40 : ℝ) * x := by
   have hg := LLS.gamma_retained_margin_gt_of_polynomial (by linarith only [hx]) hcredit hdual hpoly
-  exact QNegOne_le_of_retained_common_factor_free_separation hGRH hB hx hb hbx hg.le
+  exact QNegOne_le_of_retainedCommon_factorFree_gap hGRH hB hx hb hbx hg.le
 
 /-- Input: GRH, the displayed arithmetic and scale bounds, effective prefix
 credit, signed dual cap and shared polynomial condition. Claim: the full finite maximum
@@ -143,7 +141,7 @@ theorem Q_witness_maxima_le_of_doubling_block_polynomial {B a b : ℕ} {x C D P 
     (hdual : LLS.gammaScaleSignedDualBudget (Real.log B) x ≤ D)
     (hpoly : LLS.GammaPairedPolynomialCondition (Real.log B + 7 / 5) x C) :
     (QNegOne B : ℝ) ≤ (99 / 40 : ℝ) * x ∧ (QNeOne B : ℝ) ≤ (99 / 40 : ℝ) * x := by
-  have hg := LLS.gamma_euler_prefix_lower_growth_of_doubling_block hGRH.riemann ha hratio hP
+  have hg := LLS.gammaEulerPrefix_growth_doubling_RH hGRH.riemann ha hratio hP
   have hp :
     C + (3 / 4 + D + 7 / 60) / 2 ≤
       ∑ j ∈ Finset.Ioc 0 ⌊(b : ℝ)⌋₊, Analysis.gammaResolventMangoldtWeight j := by
@@ -163,7 +161,7 @@ the displayed initial-credit, dual and polynomial conditions. Claim: both
 full quadratic witness maxima are at most (99/40)x. Apply the uniform
 analytic block gain before extraction. Role: expose short-block growth
 without four auxiliary real endpoints or a finite psi table. -/
-theorem Q_witness_maxima_le_of_five_fourths_block_polynomial {B a b : ℕ} {x C D P : ℝ}
+theorem Q_witness_maxima_5_4_block_GRH {B a b : ℕ} {x C D P : ℝ}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hB : 10 ≤ Real.log B)
     (hx : 4096 ≤ x) (ha : 10000 ≤ a) (hratio : (5 / 4 : ℝ) * a ≤ b)
     (hbx : (b : ℝ) ≤ (99 / 40 : ℝ) * x)
@@ -172,7 +170,7 @@ theorem Q_witness_maxima_le_of_five_fourths_block_polynomial {B a b : ℕ} {x C 
     (hdual : LLS.gammaScaleSignedDualBudget (Real.log B) x ≤ D)
     (hpoly : LLS.GammaPairedPolynomialCondition (Real.log B + 7 / 5) x C) :
     (QNegOne B : ℝ) ≤ (99 / 40 : ℝ) * x ∧ (QNeOne B : ℝ) ≤ (99 / 40 : ℝ) * x := by
-  have hg := LLS.gamma_euler_prefix_lower_growth_of_five_fourths_block hGRH.riemann ha hratio hP
+  have hg := LLS.gamma_euler_prefix_growth_5_4_RH hGRH.riemann ha hratio hP
   have hp :
     C + (3 / 4 + D + 7 / 60) / 2 ≤
       ∑ j ∈ Finset.Ioc 0 ⌊(b : ℝ)⌋₊, Analysis.gammaResolventMangoldtWeight j := by
@@ -192,7 +190,7 @@ and the displayed analytic-block, dual and polynomial conditions. Claim:
 both full quadratic witness maxima are at most (99/40)x. Use asymmetric
 Chebyshev differences before polynomial extraction. Role: remove the fixed
 large-scale entrance from the short-block witness interface. -/
-theorem Q_witness_maxima_le_of_asymmetric_block_polynomial {B a b : ℕ} {x C D P s t : ℝ}
+theorem Q_maxima_asymmetricBlockPoly_GRH {B a b : ℕ} {x C D P s t : ℝ}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hB : 10 ≤ Real.log B)
     (hx : 4096 ≤ x) (hab : a ≤ b) (hs : 1 < s) (hsb : s < b) (ha : (1 : ℝ) < a) (hat : (a : ℝ) < t)
     (hbx : (b : ℝ) ≤ (99 / 40 : ℝ) * x)
@@ -203,8 +201,7 @@ theorem Q_witness_maxima_le_of_asymmetric_block_polynomial {B a b : ℕ} {x C D 
     (hdual : LLS.gammaScaleSignedDualBudget (Real.log B) x ≤ D)
     (hpoly : LLS.GammaPairedPolynomialCondition (Real.log B + 7 / 5) x C) :
     (QNegOne B : ℝ) ≤ (99 / 40 : ℝ) * x ∧ (QNeOne B : ℝ) ≤ (99 / 40 : ℝ) * x := by
-  have hg :=
-    LLS.gamma_euler_prefix_lower_growth_of_asymmetric_rh_errors hGRH.riemann hab hs hsb ha hat hP
+  have hg := LLS.gammaEulerPrefix_growth_asymmetric_RH hGRH.riemann hab hs hsb ha hat hP
   have hp :
     C + (3 / 4 + D + 7 / 60) / 2 ≤
       ∑ j ∈ Finset.Ioc 0 ⌊(b : ℝ)⌋₊, Analysis.gammaResolventMangoldtWeight j := by
@@ -274,8 +271,8 @@ theorem Q_witness_maxima_le_of_lowered_window_polynomial (c : LLS.GammaLocalCell
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     (QNegOne B : ℝ) ≤ (99 / 40 : ℝ) * x ∧ (QNeOne B : ℝ) ≤ (99 / 40 : ℝ) * x := by
   have hd :=
-    LLS.gamma_scale_signed_dual_budget_le_lowered_window_rows c rows hcell (by linarith only [hB])
-      (by linarith only [hlo]) hab hlox hxhi hcheck he hrows
+    LLS.gammaSignedDual_loweredRows c rows hcell (by linarith only [hB]) (by linarith only [hlo])
+      hab hlox hxhi hcheck he hrows
   have hx := hlo.trans hlox
   exact
     ⟨QNegOne_le_of_polynomial hGRH hB hx hb hbx hcredit hd hpoly,
@@ -290,7 +287,7 @@ the displayed prefix credit and polynomial condition under GRH.
 Claim: both finite witness maxima are at most (99/40)x. Apply the downward
 window dual estimate with its base-sensitive correction.
 Role: connect reused rows to witness bounds. -/
-theorem Q_witness_maxima_le_of_lowered_window_polynomial_base_ratio (c : LLS.GammaLocalCellData)
+theorem Q_maxima_loweredRows_baseRatio_GRH (c : LLS.GammaLocalCellData)
     (rows : ℕ → LLS.GammaLocalPrimeRow) (hcell : c.check = true) {B : ℕ} {b lo x C E : ℝ}
     (hB : 10 ≤ Real.log B) (hlo : 4096 ≤ lo) (hab : lo ≤ (c.lo : ℝ)) (hlox : lo ≤ x)
     (hxhi : x ≤ (c.hi : ℝ)) (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
@@ -314,8 +311,8 @@ theorem Q_witness_maxima_le_of_lowered_window_polynomial_base_ratio (c : LLS.Gam
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     (QNegOne B : ℝ) ≤ (99 / 40 : ℝ) * x ∧ (QNeOne B : ℝ) ≤ (99 / 40 : ℝ) * x := by
   have hd :=
-    LLS.gamma_scale_signed_dual_budget_le_lowered_window_rows_base_ratio c rows hcell
-      (by linarith only [hB]) (by linarith only [hlo]) hab hlox hxhi hcheck he hrows
+    LLS.gammaSignedDual_loweredRows_baseRatio c rows hcell (by linarith only [hB])
+      (by linarith only [hlo]) hab hlox hxhi hcheck he hrows
   have hx := hlo.trans hlox
   exact
     ⟨QNegOne_le_of_polynomial hGRH hB hx hb hbx hcredit hd hpoly,
@@ -376,8 +373,7 @@ theorem Q_witness_maxima_le_of_anchored_polynomial {B : ℕ}
     (hpoly : LLS.GammaPairedPolynomialCondition (Real.log B + 7 / 5) x C) :
     (QNegOne B : ℝ) ≤ (99 / 40 : ℝ) * x ∧ (QNeOne B : ℝ) ≤ (99 / 40 : ℝ) * x := by
   have hd :=
-    LLS.gamma_scale_signed_dual_budget_le_of_anchored_rows (L := Real.log B) (by linarith only [hx])
-      hrows
+    LLS.gamma_signed_dual_budget_le_of_anchor (L := Real.log B) (by linarith only [hx]) hrows
   exact
     ⟨QNegOne_le_of_polynomial hGRH hB hx hb hbx hcredit hd hpoly,
       QNeOne_le_of_polynomial hGRH hB hx hb hbx hcredit hd hpoly⟩
@@ -390,7 +386,7 @@ namespace PseudoPrime.PseudoSquare
 the displayed prefix credit and polynomial condition under GRH.
 Claim: both finite witness maxima are at most (99/40)x. Apply the downward
 window dual estimate with correction coefficient 3. Role: connect reused rows to witness bounds. -/
-theorem Q_witness_maxima_le_of_lowered_window_polynomial_three (c : LLS.GammaLocalCellData)
+theorem Q_maxima_loweredRows_three_GRH (c : LLS.GammaLocalCellData)
     (rows : ℕ → LLS.GammaLocalPrimeRow) (hcell : c.check = true) {B : ℕ} {b lo x C E : ℝ}
     (hB : 10 ≤ Real.log B) (hlo : 4096 ≤ lo) (hab : lo ≤ (c.lo : ℝ)) (hlox : lo ≤ x)
     (hxhi : x ≤ (c.hi : ℝ)) (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
@@ -413,8 +409,8 @@ theorem Q_witness_maxima_le_of_lowered_window_polynomial_three (c : LLS.GammaLoc
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     (QNegOne B : ℝ) ≤ (99 / 40 : ℝ) * x ∧ (QNeOne B : ℝ) ≤ (99 / 40 : ℝ) * x := by
   have hd :=
-    LLS.gamma_scale_signed_dual_budget_le_lowered_window_rows_three c rows hcell
-      (by linarith only [hB]) (by linarith only [hlo]) hab hlox hxhi hcheck he hrows
+    LLS.gammaSignedDual_loweredRows_three c rows hcell (by linarith only [hB])
+      (by linarith only [hlo]) hab hlox hxhi hcheck he hrows
   have hx := hlo.trans hlox
   exact
     ⟨QNegOne_le_of_polynomial hGRH hB hx hb hbx hcredit hd hpoly,
@@ -438,9 +434,7 @@ theorem Q_witness_maxima_le_of_doubling_polynomial {B a k : ℕ} {x C D P r : �
     (hdual : LLS.gammaScaleSignedDualBudget (Real.log B) x ≤ D)
     (hpoly : LLS.GammaPairedPolynomialCondition (Real.log B + 7 / 5) x C) :
     (QNegOne B : ℝ) ≤ (99 / 40 : ℝ) * x ∧ (QNeOne B : ℝ) ≤ (99 / 40 : ℝ) * x := by
-  have hg :=
-    LLS.gamma_euler_prefix_lower_doublings_of_power_lower hGRH.riemann ha hr hP k
-      (le_refl (a * 2 ^ k))
+  have hg := LLS.gammaEulerPrefix_doublings_power_RH hGRH.riemann ha hr hP k (le_refl (a * 2 ^ k))
   have hp :
     C + (3 / 4 + D + 7 / 60) / 2 ≤
       ∑ j ∈ Finset.Ioc 0 ⌊((a * 2 ^ k : ℕ) : ℝ)⌋₊, Analysis.gammaResolventMangoldtWeight j := by

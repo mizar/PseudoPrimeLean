@@ -27,8 +27,7 @@ theorem exists_prime_witness_le_finerPart2Root {n : ℕ} (hnOdd : Odd n) (hnComp
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   have hn : 1 < n := (by norm_num only : (1 : ℕ) < 5).trans_le hnLarge
   let : NeZero n := ⟨(zero_lt_one.trans hn).ne'⟩
-  obtain ⟨H, hH, hpass⟩ :=
-    PrimeTest.exists_proper_subgroup_containing_strongMillerRabinPass hn hnOdd hnComposite
+  obtain ⟨H, hH, hpass⟩ := PrimeTest.exists_proper_subgroup_strongMR hn hnOdd hnComposite
   obtain ⟨p, hp, hb, hout⟩ := LLS.exists_prime_outside_finerPart2_from_five hGRH hnLarge H hH
   exact ⟨p, hp, hb, PrimeTest.not_pass_of_outside_subgroup hpass hout⟩
 
@@ -71,9 +70,8 @@ theorem exists_prime_rejecting_powers_le_finerPart2Root {n : ℕ} (hnOdd : Odd n
 Claim: the same prime witness obeys the finer radius and is strictly below log(n)^2.
 Proof: apply the proved strict radius comparison to the bounded witness.
 Role: lower the strict logarithmic-square comparison entrance without a minimum formula. -/
-theorem exists_prime_witness_le_finerPart2Root_and_lt_log_sq {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hnLarge : 17400 ≤ n)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
+theorem exists_prime_finer_strictLogSq_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hnLarge : 17400 ≤ n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (Analysis.finerPart2CutoffRoot (Real.log n)) ^ 2 ∧

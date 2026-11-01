@@ -68,7 +68,7 @@ Use the triangular kernel for indices at least twenty-eight and the gamma-kernel
 comparison for indices seven through twenty-seven, as combined in the index bound. -/
 theorem lls_theorem13_of_index_ge_seven_proof : lls_theorem13_of_index_ge_seven := by
   intro hGRH h hh ε hε
-  exact triangular_asymptotic_prime_bound_of_index_ge_seven hGRH h hh ε hε
+  exact triangular_prime_bound_of_index_ge_7_GRH hGRH h hh ε hε
 
 /-- Under GRH, the least prime in every proper coset satisfies Theorem 1.4 for
 moduli at least twenty thousand. The character comparison gives a coarse bound

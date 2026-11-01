@@ -89,7 +89,7 @@ theorem eventually_valueCutoff_ge_hundred {d : ℕ} (hd : 0 < d) :
 on the conductor filter at the common cutoff, retaining the truncated arithmetic majorant
 and error. Apply admissibility and RH from the family, use the uniform cutoff threshold,
 and evaluate the leading conductor term. This connects pointwise bounds to the generalL family. -/
-theorem eventually_norm_L_one_and_reciprocal_le_valueCutoff {d : ℕ} (hd : 0 < d) :
+theorem eventually_normL_pair_le_cutoff {d : ℕ} (hd : 0 < d) :
     ∀ᶠ f in conductorFilter d,
       ‖f.val.L 1‖ ≤
           Real.exp
@@ -114,7 +114,7 @@ theorem eventually_norm_L_one_and_reciprocal_le_valueCutoff {d : ℕ} (hd : 0 < 
   filter_upwards [eventually_valueCutoff_ge_hundred hd,
     ht.eventually (Filter.eventually_gt_atTop (1 : ℝ))] with f hx hC
   have h1 :=
-    (norm_L_one_and_reciprocal_le_exp_truncated_majorants f.val f.property.2.1 f.property.2.2
+    (norm_L_one_pair_le_exp_majorants_RH f.val f.property.2.1 f.property.2.2
         (le_trans (by norm_num only : (2 : ℝ) ≤ 100) hx)).1
   have h2 := reciprocal_norm_L_one_le_square_corrected f.val f.property.2.1 f.property.2.2 hx
   rw [f.property.1, conductor_term_at_valueCutoff hd hC] at h1 h2

@@ -103,7 +103,7 @@ theorem exists_prime_ne_one_le_of_signed_half_window {q m : ℕ} (χ : Dirichlet
 power budget, the signed power-window hypothesis yields a prime outside m≠0
 through CL^a. Increase square roots only after keeping the signed upper bound.
 This is the finite-scale transfer of the proposed analytic estimate. -/
-theorem exists_prime_ne_one_le_of_signed_half_power_window {q m : ℕ} (χ : DirichletCharacter ℂ q)
+theorem exists_neOnePrime_le_of_signed_half_power_window {q m : ℕ} (χ : DirichletCharacter ℂ q)
     (hRH : RiemannHypothesis) (hm : m ≠ 0) {L a δ C θ C₁ C₂ Cₘ : ℝ} (hL : 0 ≤ L) (hC₁ : 0 ≤ C₁)
     (hC₂ : 0 ≤ C₂) (hsmall : 200 ≤ θ * (C * L ^ a))
     (hE : (∑ p ∈ m.primeFactors, Real.log p) ≤ Cₘ * L)
@@ -140,8 +140,8 @@ theorem exists_prime_ne_one_le_of_signed_half_power_window {q m : ℕ} (χ : Dir
 works for every character, level and nonzero exclusion m with E(m)≤CₘL:
 the explicit signed-window hypothesis gives a non-one prime through CL^a.
 Combine the scalar eventual budget and the finite transfer; the phase hypothesis remains. -/
-theorem eventually_exists_prime_ne_one_of_signed_half_power_window {a δ C θ C₁ C₂ Cₘ : ℝ}
-    (ha : 1 < a) (hδ : 1 - δ < a / 2) (hC : 0 < C) (hθ : 0 < θ) (hC₁ : 0 ≤ C₁) (hC₂ : 0 ≤ C₂)
+theorem eventually_prime_neOne_signedHalf_RH {a δ C θ C₁ C₂ Cₘ : ℝ} (ha : 1 < a)
+    (hδ : 1 - δ < a / 2) (hC : 0 < C) (hθ : 0 < θ) (hC₁ : 0 ≤ C₁) (hC₂ : 0 ≤ C₂)
     (hRH : RiemannHypothesis) :
     ∀ᶠ L : ℝ in Filter.atTop,
       ∀ (q m : ℕ) (χ : DirichletCharacter ℂ q),
@@ -160,7 +160,7 @@ theorem eventually_exists_prime_ne_one_of_signed_half_power_window {a δ C θ C�
   filter_upwards [hb, Filter.eventually_ge_atTop (0 : ℝ)] with L hbudget hL
   intro q m χ hm hE hwindow
   exact
-    exists_prime_ne_one_le_of_signed_half_power_window χ hRH hm hL hC₁ hC₂ hbudget.1 hE hbudget.2
+    exists_neOnePrime_le_of_signed_half_power_window χ hRH hm hL hC₁ hC₂ hbudget.1 hE hbudget.2
       hwindow
 
 end PseudoPrime.LLS.PaperStatements

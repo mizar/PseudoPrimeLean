@@ -36,14 +36,14 @@ Role: this connects the initial Proposition 1.5 count and paper95 Theorem 2.1
 to the AGP prime-supply construction. The initial count and theta supply remain
 analytic hypotheses.
 -/
-theorem agp_progression_count_data_exists_of_initial_count_and_fixed_theta (c₂ : ℝ) (xSeed : ℕ)
-    (hc₂ : 0 < c₂) (hseed : ReliableProp15UniformCount c₂ 1 1 xSeed)
-    (hTheta : AGPFixedThetaSupply) : AGPProgressionCountDataExists := by
+theorem countData_of_initialCount_fixedTheta (c₂ : ℝ) (xSeed : ℕ) (hc₂ : 0 < c₂)
+    (hseed : ReliableProp15UniformCount c₂ 1 1 xSeed) (hTheta : AGPFixedThetaSupply) :
+    AGPProgressionCountDataExists := by
   classical
   obtain ⟨Dexc, Xtheta, hThetaFour⟩ := agpFixedThetaSupply_four hTheta
-  let beta : ℝ := agpFifthPowerAverageCoefficientOfProgressionBound (640 / 3) (1 / 1024)
+  let beta : ℝ := fifthPowerProgressionAverageCoeff (640 / 3) (1 / 1024)
   have hbetaQuarter : (1 / 4 : ℝ) < beta := by
-    simpa only [beta] using agp_fifth_power_average_coefficient_640_1024_gt_quarter
+    simpa only [beta] using fifthPowerAverage_640_1024_gt_quarter
   have hbeta : 0 < beta := lt_trans (by norm_num only : (0 : ℝ) < 1 / 4) hbetaQuarter
   have hpowPos : 0 < (2 ^ Dexc : ℝ) := by exact_mod_cast Nat.pow_pos (by norm_num only : 0 < 2)
   let c₁ : ℝ := min c₂ (beta / (32 * (2 ^ Dexc : ℝ)))
@@ -69,7 +69,7 @@ theorem agp_progression_count_data_exists_of_initial_count_and_fixed_theta (c₂
   have hx₀ : 2 ≤ x₀ := le_max_left _ _
   have hseed' : ReliableProp15UniformCount c₁ 1 1 xSeed :=
     reliableProp15UniformCount_mono hc₁c₂ hseed
-  have hauxExists := agp_progression_auxiliary_data_exists_of_uniform_count c₁ xSeed x₀
+  have hauxExists := progression_auxiliary_data_exists c₁ xSeed x₀
   refine ⟨c₁, hc₁, x₀, hx₀, ?_⟩
   intro W C hWpos
   obtain ⟨X, aux, hX, hScale, hqleX⟩ := hauxExists hc₁ hseed' W C hWpos
@@ -92,8 +92,7 @@ theorem agp_progression_count_data_exists_of_initial_count_and_fixed_theta (c₂
     (exceptionalFreePartForModulus_properties aux.L E 4 hLne aux.hProp15Input.1).2.2.1
   have hL'pos : 0 < exceptionalFreePartForModulus aux.L E 4 := Nat.pos_of_dvd_of_pos hL'div hLpos
   have hL'ne : exceptionalFreePartForModulus aux.L E 4 ≠ 0 := Nat.ne_of_gt hL'pos
-  have hEconditions :=
-    paper95_exceptional_moduli_conditions_for_four_of_nat_fifth_power_scale E X hX hElog
+  have hEconditions := paper95_exceptional_conditions_of_fifth_power E X hX hElog
   have hDmem :
     ∀ d,
       d ∈ largeRestrictedDivisors (exceptionalFreePartForModulus aux.L E 4) y aux.q →
@@ -107,7 +106,7 @@ theorem agp_progression_count_data_exists_of_initial_count_and_fixed_theta (c₂
   have hd :
     ∀ d ∈ largeRestrictedDivisors (exceptionalFreePartForModulus aux.L E 4) y aux.q, d ≤ X ^ 2 := by
     intro d hdD
-    exact le_trans ((hDmem d hdD).2.1) (reliableProp15DivisorCutoff_fifth_power_le_square X)
+    exact le_trans ((hDmem d hdD).2.1) (prop15Cutoff_fifthPower_le_square X)
   have hdm :
     ∀ d ∈ largeRestrictedDivisors (exceptionalFreePartForModulus aux.L E 4) y aux.q,
       Nat.Coprime d 4 := by
@@ -126,8 +125,7 @@ theorem agp_progression_count_data_exists_of_initial_count_and_fixed_theta (c₂
     exact hthetaAll d (hdm d hdD) (hpos d hdD) (hd d hdD) havoid
   have hrecip : (∑ r ∈ aux.L.primeFactors, (r : ℝ)⁻¹) ≤ (1 / 1024 : ℝ) := aux.hReciprocal1024
   have hcoeffmargin :
-    16 * (2 ^ Dexc : ℝ) * c₁ <
-      agpFifthPowerAverageCoefficientOfProgressionBound (640 / 3) (1 / 1024) := by
+    16 * (2 ^ Dexc : ℝ) * c₁ < fifthPowerProgressionAverageCoeff (640 / 3) (1 / 1024) := by
     simpa only [beta] using hmargin
   have hBTbound :
     ∀ d,
@@ -153,9 +151,9 @@ theorem agp_progression_count_data_exists_of_initial_count_and_fixed_theta (c₂
         (le_trans (aux.hfactor r.val hrprop.2.1 hrprop.1) hqleX)
         (Nat.Coprime.of_dvd_left hrprop.2.1 aux.hProp15Input.2.1) hclass.2.2
   let data :=
-    agpProgressionCountData_of_fifth_power_theta_and_brun_titchmarsh W C c₁ x₀ X 2 y Dexc T E
-      (640 / 3) (1 / 1024) (by norm_num only) aux hX hx₀ hbeta hEconditions hEcard hScale rfl rfl
-      hpos hd hdm htheta hrecip hBTbound hcoeffmargin
+    countData_fifthPower_brunTitchmarsh W C c₁ x₀ X 2 y Dexc T E (640 / 3) (1 / 1024)
+      (by norm_num only) aux hX hx₀ hbeta hEconditions hEcard hScale rfl rfl hpos hd hdm htheta
+      hrecip hBTbound hcoeffmargin
   refine ⟨X, data, hX, ?_, ?_⟩
   · rfl
   · change aux.q ≤ X

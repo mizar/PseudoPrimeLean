@@ -29,8 +29,7 @@ progression-count construction.
 Role: joins the proposed narrow theta interface to the final finite progression data.
 The theta supply itself remains the analytic input to be proved unconditionally.
 -/
-theorem agp_progression_count_data_exists_of_primorial_p2_and_theta_supply (J D Xtheta : ℕ)
-    (hJ : 2 ≤ J)
+theorem countData_of_primorial_powTwo_theta (J D Xtheta : ℕ) (hJ : 2 ≤ J)
     (hSupply :
       ∀ Z : ℕ,
         Xtheta ≤ Z →
@@ -58,21 +57,19 @@ theorem agp_progression_count_data_exists_of_primorial_p2_and_theta_supply (J D 
     dsimp only [c₀]
     field_simp [ne_of_gt hpowPos]
     norm_num only
-  have hbetaQuarter :
-    (1 / 4 : ℝ) < agpFifthPowerAverageCoefficientOfProgressionBound (640 / 3) (1 / 1024) :=
-    agp_fifth_power_average_coefficient_640_1024_gt_quarter
-  have hbeta : 0 < agpFifthPowerAverageCoefficientOfProgressionBound (640 / 3) (1 / 1024) :=
+  have hbetaQuarter : (1 / 4 : ℝ) < fifthPowerProgressionAverageCoeff (640 / 3) (1 / 1024) :=
+    fifthPowerAverage_640_1024_gt_quarter
+  have hbeta : 0 < fifthPowerProgressionAverageCoeff (640 / 3) (1 / 1024) :=
     lt_trans (by norm_num only : (0 : ℝ) < 1 / 4) hbetaQuarter
   have hcoeffmargin :
-    16 * (2 ^ D : ℝ) * c₀ <
-      agpFifthPowerAverageCoefficientOfProgressionBound (640 / 3) (1 / 1024) := by
+    16 * (2 ^ D : ℝ) * c₀ < fifthPowerProgressionAverageCoeff (640 / 3) (1 / 1024) := by
     calc
       16 * (2 ^ D : ℝ) * c₀ = 1 / 8 := by
         dsimp only [c₀]
         field_simp [ne_of_gt hpowPos]
         norm_num only
       _ < 1 / 4 := by norm_num only
-      _ < agpFifthPowerAverageCoefficientOfProgressionBound (640 / 3) (1 / 1024) := hbetaQuarter
+      _ < fifthPowerProgressionAverageCoeff (640 / 3) (1 / 1024) := hbetaQuarter
   have hXtheta : Xtheta ≤ x₀ := le_max_right _ _
   have hSupply' :
     ∀ Z : ℕ,
@@ -95,7 +92,7 @@ theorem agp_progression_count_data_exists_of_primorial_p2_and_theta_supply (J D 
   refine ⟨c₀, hc₀, x₀, le_max_left _ _, ?_⟩
   intro W C hWpos
   obtain ⟨Y, aux, hY, hAuxScale, hqleY, hx₀Y, hdivisorScale⟩ :=
-    exists_full_divisor_auxiliary_data_of_p2_primorial_tail hc₀ hJ W C D x₀ hfactor hSupply'
+    exists_full_divisor_data_of_p2_primorial hc₀ hJ W C D x₀ hfactor hSupply'
   obtain ⟨E, hEcard, hEindividual, hTheta⟩ := hSupply' Y hx₀Y
   have hEconditions : (∀ e ∈ E, 1 < e) ∧ ∀ e ∈ E, ¬e ∣ 4 := by
     constructor
@@ -127,7 +124,7 @@ theorem agp_progression_count_data_exists_of_primorial_p2_and_theta_supply (J D 
       d ∈ largeRestrictedDivisors (exceptionalFreePartForModulus aux.L E 4) y aux.q →
         d ≤ Y ^ 2 := by
     intro d hdD
-    exact le_trans ((hDmem d hdD).2.1) (reliableProp15DivisorCutoff_fifth_power_le_square Y)
+    exact le_trans ((hDmem d hdD).2.1) (prop15Cutoff_fifthPower_le_square Y)
   have hdm :
     ∀ d,
       d ∈ largeRestrictedDivisors (exceptionalFreePartForModulus aux.L E 4) y aux.q →
@@ -181,11 +178,11 @@ theorem agp_progression_count_data_exists_of_primorial_p2_and_theta_supply (J D 
       agp_coarse_sieve_bound hY32 (hpos d hdD) hrprop.1
         (le_trans (aux.hfactor r.val hrprop.2.1 hrprop.1) hqleY)
         (Nat.Coprime.of_dvd_left hrprop.2.1 aux.hProp15Input.2.1) hclass.2.2
-  have hcoeff : 0 < agpFifthPowerAverageCoefficientOfProgressionBound (640 / 3) (1 / 1024) := hbeta
+  have hcoeff : 0 < fifthPowerProgressionAverageCoeff (640 / 3) (1 / 1024) := hbeta
   let data :=
-    agpProgressionCountData_of_fifth_power_theta_and_brun_titchmarsh W C c₀ x₀ Y x₀ y D T E
-      (640 / 3) (1 / 1024) (by norm_num only) aux hY (by rfl) hcoeff hEconditions hEcard hAuxScale
-      rfl rfl hpos hd hdm htheta hrecip hBT hcoeffmargin
+    countData_fifthPower_brunTitchmarsh W C c₀ x₀ Y x₀ y D T E (640 / 3) (1 / 1024)
+      (by norm_num only) aux hY (by rfl) hcoeff hEconditions hEcard hAuxScale rfl rfl hpos hd hdm
+      htheta hrecip hBT hcoeffmargin
   refine ⟨Y, data, hY, ?_, ?_⟩
   · rfl
   · change aux.q ≤ Y

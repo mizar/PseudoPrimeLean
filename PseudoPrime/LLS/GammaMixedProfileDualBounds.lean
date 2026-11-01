@@ -106,7 +106,7 @@ theorem gamma_profile_dual_le_300_310 {L : ℝ} (hlo : 300 ≤ L) (hhi : L ≤ 3
   have hxhi : (2 / 5 : ℝ) * L ^ 2 ≤ 38440 := by nlinarith only [hupp]
   have hp := gamma_quadratic_profile_price_le_two (show 0 < L by linarith only [hlo])
   have he := gamma_profile_excess_le_300_310 hxlo hxhi
-  rw [gamma_scale_signed_dual_budget_eq_anchored_support L (by linarith only [hxlo])]
+  rw [gammaSignedDual_eq_anchorSupport L (by linarith only [hxlo])]
   linarith only [hp, he]
 
 /-- Input: RH, odd nonsquare n, log n<=L and 300<=L<=310.

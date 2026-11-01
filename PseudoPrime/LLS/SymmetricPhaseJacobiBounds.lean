@@ -47,12 +47,12 @@ theorem jacobi_no_negative_symmetric_phase_comparison {n : ℕ} {hn : Odd n} {hn
     rw [bridge.character_quadratic.inv]
     exact bridge.character_ne_one
   have hc :=
-    PaperStatements.gamma_primitive_sum_re_le_symmetric_anchor_prefix hq
+    PaperStatements.gammaPrimitiveSum_re_le_symmetric_anchor_prefix hq
       (gamma_jacobi_modulus_ge_three bridge) hmq hGRH bridge.character_primitive
       bridge.character_ne_one hinv hx l hl d hW (Finset.Ioc 0 ⌊b⌋₊) hminus hplus
   have ha := gamma_jacobi_no_negative_ramp_comparison bridge (by linarith only [hx]) hno
   have he :=
-    finiteSigned_character_prefix_add_ambient_ramp_eq_local_cost l bridge.character
+    signedPrefix_add_ramp_eq_cost l bridge.character
       (Nat.mul_pos (by norm_num only : (0 : ℕ) < 4) hn.pos) hb
       (gamma_jacobi_no_negative_prefix_prime_one bridge
         (fun p hp ho hpb ↦ hno p hp ho (hpb.trans hbx)))

@@ -68,10 +68,8 @@ theorem triangular18_finite_principal_le_dual_signed {q : ℕ} [NeZero q] (H : S
   have hp : F (1 : A) = (∑' n : ℕ, K.summand (1 : DirichletCharacter ℂ 1) x n).re :=
     congrArg Complex.re (tsum_congr (MellinKernel.principal_primitive_summand_eq_level_one K x))
   rw [hp] at hs
-  have hc :=
-    MellinKernel.principal_sum_le_primitive_average_of_noSmallPrimes K H (zero_lt_one.trans_le hx)
-      hsmall
-  have hb := triangular18_annihilator_arithmetic_upper_dual_signed H hGRH hx
+  have hc := MellinKernel.principal_sum_le_primitive_of_noSmall K H (zero_lt_one.trans_le hx) hsmall
+  have hb := triangular18_arithmetic_dual_signed_GRH H hGRH hx
   have hP := triangular18_level_one_arithmetic_upper_of_rh hGRH.riemann (zero_lt_one.trans_le hx)
   dsimp only at hb ⊢
   rw [hf] at hb ⊢

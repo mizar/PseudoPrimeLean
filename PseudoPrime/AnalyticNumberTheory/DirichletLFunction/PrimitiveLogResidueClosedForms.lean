@@ -36,19 +36,18 @@ Content: product rule (`HasDerivAt.mul`) on
 `PseudoPrime.AnalyticNumberTheory.DirichletLFunction.dirichletLogMellinZeroRegularization x χ s =
 -(logDeriv L s) * x^s`, with `deriv (x^·) 0 = log x` (`HasDerivAt.const_cpow`) and `x^0 = 1`.
 `logDeriv L` is differentiable at `0` since `L` is entire and `L(0,χ) ≠ 0` for odd `χ`
-(`DirichletLFunction.dirichletLFunction_zero_ne_zero_of_primitive_odd`).
+(`DirichletLFunction.L_zero_ne_zero_of_primitive_odd`).
 Role: the product-rule half of the odd `s = 0` log-kernel residue — the "hard" completed-`L`
 substitution is deferred to the next theorem.
 -/
-theorem deriv_dirichletLogMellinZeroRegularization_zero_of_odd_eq {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hodd : χ.Odd) {x : ℝ}
-    (hx : 0 < x) :
+theorem deriv_logMellinReg_zero_odd_eq {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hodd : χ.Odd) {x : ℝ} (hx : 0 < x) :
     deriv (dirichletLogMellinZeroRegularization x χ) 0 =
       -(deriv (logDeriv (DirichletCharacter.LFunction χ)) 0) -
         logDeriv (DirichletCharacter.LFunction χ) 0 * Complex.log x := by
   have hxne : (x : ℂ) ≠ 0 := by exact_mod_cast hx.ne'
   have hL0ne : DirichletCharacter.LFunction χ 0 ≠ 0 :=
-    dirichletLFunction_zero_ne_zero_of_primitive_odd hprimitive hne hodd
+    L_zero_ne_zero_of_primitive_odd hprimitive hne hodd
   have hLanalytic : AnalyticAt ℂ (DirichletCharacter.LFunction χ) 0 :=
     (DirichletCharacter.differentiable_LFunction hne).analyticAt 0
   have hLdiff : DifferentiableAt ℂ (logDeriv (DirichletCharacter.LFunction χ)) 0 :=
@@ -87,23 +86,23 @@ Input/assumptions: `N ≥ 1`, `χ` primitive nontrivial even mod `N`, `x : ℝ`.
 Conclusion: `(s - 0) ^ 3 * K_log(s) =ᶠ[𝓝[≠] 0]
 PseudoPrime.AnalyticNumberTheory.DirichletLFunction.dirichletLogEvenZeroRegularization x 1 G_χ`.
 Content: mirrors
-`DirichletLFunction.eventuallyEq_dirichletReciprocalEvenZeroRegularization_canonical`
+`DirichletLFunction.reciprocal_even_regularization_eq`
 exactly:
 `logDeriv_congr_nhds` on `L =ᶠ[𝓝 0] fun s ↦ s · G_χ(s)`
-(`eventuallyEq_dirichletLFunction_evenZeroLocalFactor`) plus `logDeriv_mul` gives `L'/L(s) = 1/s +
+(`eventuallyEq_L_evenZeroLocalFactor`) plus `logDeriv_mul` gives `L'/L(s) = 1/s +
 logDeriv G_χ(s)` on a punctured neighborhood; substituting into `s³ K_log(s) = -s·(L'/L)(s)·x^s`
 and clearing denominators (`field_simp`) gives `-(1 + s·logDeriv G_χ(s))·x^s`, matching the
 regularization at `m = 1` exactly (no `s - 1` factor, unlike the reciprocal kernel).
 Role: the canonical-factor identity, letting the even log residue be computed directly from `G_χ`
 without ever inspecting the witness selected by `Classical.choose`.
 -/
-theorem eventuallyEq_dirichletLogEvenZeroRegularization_canonical {N : ℕ} [NeZero N] {x : ℝ}
-    {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (heven : χ.Even) :
+theorem logEven_regularization_canonical {N : ℕ} [NeZero N] {x : ℝ} {χ : DirichletCharacter ℂ N}
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (heven : χ.Even) :
     Filter.EventuallyEq (nhdsWithin (0 : ℂ) ({0}ᶜ : Set ℂ))
       (fun s => (s - 0) ^ 3 * dirichletLogContourKernel x χ s)
       (dirichletLogEvenZeroRegularization x 1 (dirichletEvenZeroLocalFactor χ)) := by
-  obtain ⟨hGanalytic, hG0⟩ := analyticAt_and_ne_zero_dirichletEvenZeroLocalFactor hprimitive hne
-  have heq := eventuallyEq_dirichletLFunction_evenZeroLocalFactor hprimitive hne heven
+  obtain ⟨hGanalytic, hG0⟩ := evenZeroFactor_analytic_ne_zero hprimitive hne
+  have heq := eventuallyEq_L_evenZeroLocalFactor hprimitive hne heven
   have hlogeq := logDeriv_congr_nhds heq
   have hGnear : ∀ᶠ s in nhds (0 : ℂ), dirichletEvenZeroLocalFactor χ s ≠ 0 :=
     hGanalytic.continuousAt.eventually_ne hG0
@@ -142,9 +141,8 @@ and nonzero there); `B(s) := x^s` has `HasDerivAt B (x^s·log x) s`
 Role: the pointwise (general-`s`) first-derivative formula, feeding both the `s = 0` evaluation and
 (via `Filter.EventuallyEq.deriv_eq`) the second derivative at `0`.
 -/
-theorem hasDerivAt_dirichletLogEvenZeroRegularization {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} {x : ℝ} (hx : 0 < x) {s : ℂ}
-    (hganalytic : AnalyticAt ℂ (dirichletEvenZeroLocalFactor χ) s)
+theorem hasDerivAt_logEvenZeroRegularization {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} {x : ℝ}
+    (hx : 0 < x) {s : ℂ} (hganalytic : AnalyticAt ℂ (dirichletEvenZeroLocalFactor χ) s)
     (hgne : dirichletEvenZeroLocalFactor χ s ≠ 0) :
     HasDerivAt (dirichletLogEvenZeroRegularization x 1 (dirichletEvenZeroLocalFactor χ))
       (-((logDeriv (dirichletEvenZeroLocalFactor χ) s +
@@ -196,13 +194,13 @@ Differentiate the local first-derivative identity by the product rule. The canon
 factor is analytic and nonzero at zero without an evenness assumption. Its interpretation
 as the local factor of `L(s)/s`, and hence as a cubic-pole residue, uses evenness separately.
 -/
-theorem iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_eq {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) {x : ℝ} (hx : 0 < x) :
+theorem iteratedDeriv_2_logEvenReg_zero {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) {x : ℝ} (hx : 0 < x) :
     iteratedDeriv 2 (dirichletLogEvenZeroRegularization x 1 (dirichletEvenZeroLocalFactor χ)) 0 =
       -(2 * deriv (logDeriv (dirichletEvenZeroLocalFactor χ)) 0 +
           2 * logDeriv (dirichletEvenZeroLocalFactor χ) 0 * Complex.log x +
           Complex.log x ^ 2) := by
-  obtain ⟨hganalytic0, hg0ne⟩ := analyticAt_and_ne_zero_dirichletEvenZeroLocalFactor hprimitive hne
+  obtain ⟨hganalytic0, hg0ne⟩ := evenZeroFactor_analytic_ne_zero hprimitive hne
   have hqanalytic0 : AnalyticAt ℂ (logDeriv (dirichletEvenZeroLocalFactor χ)) 0 := by
     rw [logDeriv]
     exact hganalytic0.deriv.div hganalytic0 hg0ne
@@ -227,7 +225,7 @@ theorem iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_eq {N : ℕ} [
       HasDerivAt (dirichletLogEvenZeroRegularization x 1 (dirichletEvenZeroLocalFactor χ)) (H1 s)
         s := by
     filter_upwards [hganalytic0.eventually_analyticAt, hGnear] with s hganalytic hgne
-    exact hasDerivAt_dirichletLogEvenZeroRegularization hx hganalytic hgne
+    exact hasDerivAt_logEvenZeroRegularization hx hganalytic hgne
   have hderiveq :
     deriv (dirichletLogEvenZeroRegularization x 1 (dirichletEvenZeroLocalFactor χ)) =ᶠ[nhds (0 : ℂ)]
       H1 :=
@@ -297,9 +295,9 @@ Generic replacement for the even zero-contribution closed form.  The regularizat
 calculation is character-generic; only the completed-L value at zero is supplied by
 the pair-system functional equation API.
 -/
-theorem re_iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_div_two {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
-    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) :
+theorem re_logEvenReg_deriv2_div2_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
+    (hGRH : GRH.GeneralizedRiemannHypothesis) (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1)
+    (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) :
     (iteratedDeriv 2 (dirichletLogEvenZeroRegularization x 1 (dirichletEvenZeroLocalFactor χ)) 0 /
           2).re =
       -(deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0).re +
@@ -308,11 +306,10 @@ theorem re_iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_div_two {N 
           (Real.pi : ℝ) ^ 2 / 24 -
         (Real.eulerMascheroniConstant / 2) * Real.log x -
         (1 / 2) * Real.log x ^ 2 := by
-  rw [iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_eq hprimitive hne hx,
-    deriv_logDeriv_dirichletEvenZeroLocalFactor_zero hprimitive hne,
-    logDeriv_dirichletEvenZeroLocalFactor_zero hprimitive hne]
-  have hF0re :=
-    completedLFunction_logDeriv_zero_re_eq_neg_abs_BRe_sub_half_log hN2 hGRH hprimitive hne hinv
+  rw [iteratedDeriv_2_logEvenReg_zero hprimitive hne hx,
+    deriv_logDeriv_evenZeroFactor_zero hprimitive hne,
+    logDeriv_evenZeroLocalFactor_zero hprimitive hne]
+  have hF0re := completedLogDeriv_zero_abs_BRe_GRH hN2 hGRH hprimitive hne hinv
   have hlogxC : Complex.log (x : ℂ) = ((Real.log x : ℝ) : ℂ) := (Complex.ofReal_log hx.le).symm
   have hcomplex :
     (-(2 * (deriv (logDeriv (DirichletCharacter.completedLFunction χ)) 0 - (Real.pi : ℂ) ^ 2 / 24) +
@@ -361,7 +358,7 @@ theorem re_iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_div_two {N 
 
 /-- For an odd primitive nontrivial character under GRH and `x > 0`, the exact real part
 of the logarithmic Mellin regularization's derivative at zero. -/
-theorem re_deriv_dirichletLogMellinZeroRegularization_zero_of_odd {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem re_logMellinReg_deriv_zero_odd_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hodd : χ.Odd) {x : ℝ}
     (hx : 0 < x) :
@@ -371,10 +368,10 @@ theorem re_deriv_dirichletLogMellinZeroRegularization_zero_of_odd {N : ℕ} [NeZ
           (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x +
           (Real.pi : ℝ) ^ 2 / 8 -
         (Real.log 2 + Real.eulerMascheroniConstant / 2) * Real.log x := by
-  rw [deriv_dirichletLogMellinZeroRegularization_zero_of_odd_eq hprimitive hne hodd hx,
+  rw [deriv_logMellinReg_zero_odd_eq hprimitive hne hodd hx,
     deriv_logDeriv_LFunction_zero_of_odd hprimitive hne hodd]
   have hΓ0ne : DirichletCharacter.gammaFactor χ 0 ≠ 0 :=
-    gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat hodd
+    gammaFactor_odd_ne_zero_nonpole hodd
       (by
         intro m hm
         have him := congrArg Complex.re hm
@@ -389,7 +386,7 @@ theorem re_deriv_dirichletLogMellinZeroRegularization_zero_of_odd {N : ℕ} [NeZ
           norm_num only [Complex.one_re, one_mul]
         exact (not_lt_of_ge hmneg) (him' ▸ hhalf))
   have hdΓ0 : DifferentiableAt ℂ (DirichletCharacter.gammaFactor χ) 0 :=
-    differentiableAt_gammaFactor_of_odd_of_half_ne_neg_nat hodd
+    differentiableAt_gammaFactor_odd hodd
       (by
         intro m hm
         have him := congrArg Complex.re hm
@@ -403,12 +400,10 @@ theorem re_deriv_dirichletLogMellinZeroRegularization_zero_of_odd {N : ℕ} [NeZ
           convert him using 1
           norm_num only [Complex.one_re, one_mul]
         exact (not_lt_of_ge hmneg) (him' ▸ hhalf))
-  have hF0ne := dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne
-  have hbridge0 :=
-    logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne hF0ne hΓ0ne hdΓ0
+  have hF0ne := completed_zero_ne_zero_of_primitive hprimitive hne
+  have hbridge0 := L_logDeriv_sub_gamma_of_regular hne hF0ne hΓ0ne hdΓ0
   rw [hbridge0]
-  have hF0re :=
-    completedLFunction_logDeriv_zero_re_eq_neg_abs_BRe_sub_half_log hN2 hGRH hprimitive hne hinv
+  have hF0re := completedLogDeriv_zero_abs_BRe_GRH hN2 hGRH hprimitive hne hinv
   have hG0re := logDeriv_gammaFactor_zero_re_of_odd hodd
   have hlogxC : Complex.log (x : ℂ) = ((Real.log x : ℝ) : ℂ) := (Complex.ofReal_log hx.le).symm
   have hAre :

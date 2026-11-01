@@ -76,8 +76,7 @@ theorem gamma_joint_prefix_le_signed_cell_budget {n : ℕ} (hn : Odd n) (hns : �
       (11783423 / 25000000 : ℝ) * (L + 7 / 5) + 3 / 4 + gammaSignedCellDualBudget L lo hi -
           2 * (∑ k ∈ Finset.Ioc 0 ⌊b⌋₊, Analysis.gammaResolventMangoldtWeight k) +
         7 / 60 := by
-  have hj :=
-    gamma_joint_prefix_le_factor_free_budget_small_scale (b := b) hn hns hlog (hlo.trans hlox)
+  have hj := gammaJointPrefix_factorFree_smallScale (b := b) hn hns hlog (hlo.trans hlox)
   have hd :=
     gamma_scale_signed_dual_budget_le_cell hL (show 1 ≤ lo by linarith only [hlo]) hlox hxhi
   dsimp only [gammaFactorFreeJointBudget] at hj

@@ -72,7 +72,7 @@ theorem point_le_weighted_rows_height {ι : Type*} (s : Finset ι) (γ m : ι �
   have he := energy_le_weighted_rows s γ m a hm hR
   have hd := derivative_energy_le_weighted_rows_height s γ m a hR0 hH hm hheight hR
   have hp :=
-    exponentialSum_point_le_of_energy_derivative_bound s γ (fun i ↦ (m i : ℂ) * a i) (A :=
+    exponentialSum_point_le_of_energy s γ (fun i ↦ (m i : ℂ) * a i) (A :=
       (R * ∑ i ∈ s, m i * ‖a i‖ ^ 2) / 4) (div_nonneg hA (by norm_num only)) hH
       (by nlinarith only [he]) (by nlinarith only [hd])
   nlinarith only [hp]

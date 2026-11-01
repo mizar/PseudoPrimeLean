@@ -147,7 +147,7 @@ theorem tsum_norm_kernelZeroTerm_le_BRe (K : MellinKernel) {q : ℕ} [NeZero q] 
     (hb : ∀ t : ℝ, ‖K.function (Complex.I * t)‖ ≤ C / (1 + t ^ 2)) :
     ∑' ρ : ℂ, ‖K.kernelZeroTerm χ ρ‖ ≤ C * (2 * |primitiveBRe χ|) := by
   have h := tsum_norm_kernelZeroTerm_le K hq hGRH hp hne hinv hC hb
-  rw [tsum_divisor_inv_normSq_eq_two_mul_abs_BRe hq hGRH hp hne hinv] at h
+  rw [tsum_invNormSq_eq_abs_BRe_GRH hq hGRH hp hne hinv] at h
   exact h
 
 /-- The divisor-weighted kernel value at `i Im ρ`, multiplied by the phase `x^(i Im ρ)`.

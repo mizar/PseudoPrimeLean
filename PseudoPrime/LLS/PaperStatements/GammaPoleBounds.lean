@@ -51,8 +51,8 @@ theorem gamma_poleResidue_le_ambient {q m : ℕ} [NeZero m] {χ : DirichletChara
       ((7 / 6 : ℝ) * Real.log q + 4) / Real.sqrt x := by
   rw [gamma_poleResidue_norm hne hx]
   exact
-    div_le_div_of_nonneg_right
-      (norm_completedLogDeriv_zero_le_ambient_affine_log hq hm hmq hp hne hGRH) (Real.sqrt_nonneg x)
+    div_le_div_of_nonneg_right (norm_completedLogDeriv_zero_ambient_GRH hq hm hmq hp hne hGRH)
+      (Real.sqrt_nonneg x)
 
 /-- Under GRH and primitive nonprincipal data of modulus q≥8, the Gamma pole
 residue is bounded by ((7/6)log(q)+4)/sqrt(x) at every positive scale.

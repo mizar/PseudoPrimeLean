@@ -34,7 +34,7 @@ Role: the key step for `χ.IsPrimitive → χ⁻¹.IsPrimitive`, needed to state
 `DirichletLFunction.primitiveBRe`
 conclusion for the pair `(χ, χ⁻¹)` without an extra primitivity hypothesis on `χ⁻¹`.
 -/
-theorem DirichletCharacter.factorsThrough_inv {R : Type*} [CommMonoidWithZero R] {n : ℕ}
+theorem character_factorsThrough_inv {R : Type*} [CommMonoidWithZero R] {n : ℕ}
     {χ : DirichletCharacter R n} {d : ℕ} (h : χ.FactorsThrough d) : χ⁻¹.FactorsThrough d := by
   obtain ⟨hd, χ₀, hχeq⟩ := h
   exact ⟨hd, χ₀⁻¹, by rw [hχeq, map_inv]⟩
@@ -42,33 +42,33 @@ theorem DirichletCharacter.factorsThrough_inv {R : Type*} [CommMonoidWithZero R]
 /--
 Input/assumptions: a Dirichlet character valued in a commutative monoid with zero.
 Conclusion: `χ⁻¹` and `χ` have the same conductor set, hence the same conductor.
-Content: `DirichletLFunction.DirichletCharacter.factorsThrough_inv` applied to both `χ` and `χ⁻¹`
+Content: `character_factorsThrough_inv` applied to both `χ` and `χ⁻¹`
 (with `inv_inv`)
 gives the conductor-set equality termwise; `conductor` is `sInf` of the conductor set.
 -/
-theorem DirichletCharacter.conductor_inv_eq {R : Type*} [CommMonoidWithZero R] {n : ℕ}
+theorem character_conductor_inv_eq {R : Type*} [CommMonoidWithZero R] {n : ℕ}
     (χ : DirichletCharacter R n) : χ⁻¹.conductor = χ.conductor := by
   have hset : χ⁻¹.conductorSet = χ.conductorSet := by
     ext d
     simp only [DirichletCharacter.mem_conductorSet_iff]
     exact
-      ⟨fun h => by simpa only [inv_inv] using DirichletCharacter.factorsThrough_inv h,
-        DirichletCharacter.factorsThrough_inv⟩
+      ⟨fun h => by simpa only [inv_inv] using character_factorsThrough_inv h,
+        character_factorsThrough_inv⟩
   unfold DirichletCharacter.conductor
   rw [hset]
 
 /--
 Input/assumptions: a primitive Dirichlet character valued in a commutative monoid with zero.
 Conclusion: `χ⁻¹` is also primitive.
-Content: `IsPrimitive` unfolds to `conductor = n`; `conductor_inv_eq` transports this from `χ` to
-`χ⁻¹`.
+Content: `IsPrimitive` unfolds to `conductor = n`;
+`character_conductor_inv_eq` transports this from `χ` to `χ⁻¹`.
 Role: removes the need for a separate `χ⁻¹.IsPrimitive` hypothesis wherever the pair `(χ, χ⁻¹)`
 must both be treated as primitive characters of the same level.
 -/
-theorem DirichletCharacter.isPrimitive_inv {R : Type*} [CommMonoidWithZero R] {n : ℕ}
+theorem character_isPrimitive_inv {R : Type*} [CommMonoidWithZero R] {n : ℕ}
     {χ : DirichletCharacter R n} (hprimitive : χ.IsPrimitive) : χ⁻¹.IsPrimitive := by
   rw [DirichletCharacter.isPrimitive_def] at hprimitive ⊢
-  rwa [DirichletCharacter.conductor_inv_eq]
+  rwa [character_conductor_inv_eq]
 
 /--
 Input/assumptions: a positive level `N` and a complex Dirichlet character `χ` of level `N`.
@@ -78,23 +78,23 @@ specialized to `R := ZMod N` (finite units since `NeZero N`), noting `star = sta
 Role: the algebraic conjugation identity feeding parity invariance and, eventually, the
 completed-`L` conjugation symmetry at `s = 0`.
 -/
-theorem DirichletCharacter.inv_apply_eq_conj {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
-    (a : ZMod N) : χ⁻¹ a = starRingEnd ℂ (χ a) :=
+theorem character_inv_apply_eq_conj {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (a : ZMod N) :
+    χ⁻¹ a = starRingEnd ℂ (χ a) :=
   (MulChar.star_apply' χ a).symm
 
 /--
 Input/assumptions: a positive level `N` and a complex Dirichlet character `χ` of level `N`.
 Conclusion: `χ⁻¹.Even ↔ χ.Even`.
-Content: `χ.Even` unfolds to `χ (-1) = 1`; applying `inv_apply_eq_conj` at `a := -1` turns
+Content: `χ.Even` unfolds to `χ (-1) = 1`; applying `character_inv_apply_eq_conj` at `a := -1` turns
 `χ⁻¹ (-1) = 1` into `conj (χ (-1)) = 1`, equivalent to `χ (-1) = 1` since `conj` is injective and
 fixes `1`.
-Role: feeds `gammaFactor_inv_eq` (the conjugation step), since `gammaFactor` depends on `χ` only
-through parity.
+Role: feeds `gammaFactor_character_inv_eq` (the conjugation step),
+since `gammaFactor` depends on `χ` only through parity.
 -/
-theorem DirichletCharacter.even_inv_iff {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} :
+theorem character_even_inv_iff {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} :
     χ⁻¹.Even ↔ χ.Even := by
   unfold DirichletCharacter.Even
-  rw [DirichletCharacter.inv_apply_eq_conj]
+  rw [character_inv_apply_eq_conj]
   constructor
   · intro h
     have := congrArg (starRingEnd ℂ) h
@@ -106,12 +106,12 @@ theorem DirichletCharacter.even_inv_iff {N : ℕ} [NeZero N] {χ : DirichletChar
 /--
 Input/assumptions: a positive level `N` and a complex Dirichlet character `χ` of level `N`.
 Conclusion: `χ⁻¹.Odd ↔ χ.Odd`.
-Content: identical to `even_inv_iff`, using `χ (-1) = -1` instead of `= 1`.
+Content: identical to `character_even_inv_iff`, using `χ (-1) = -1` instead of `= 1`.
 -/
-theorem DirichletCharacter.odd_inv_iff {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} :
+theorem character_odd_inv_iff {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} :
     χ⁻¹.Odd ↔ χ.Odd := by
   unfold DirichletCharacter.Odd
-  rw [DirichletCharacter.inv_apply_eq_conj]
+  rw [character_inv_apply_eq_conj]
   constructor
   · intro h
     have := congrArg (starRingEnd ℂ) h

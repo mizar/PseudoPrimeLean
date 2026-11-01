@@ -39,8 +39,7 @@ theorem exists_unconditional_narrow_theta_supply :
                     (((d * Z ^ 3 : ℕ) : ℝ) / (2 * (Nat.totient (d * m) : ℝ))) ≤
                       thetaInProgressionReal ((d * Z ^ 3 : ℕ) : ℝ) (d * m) a := by
   obtain ⟨b, hb, R₀, X, hR₀, hX, htheta⟩ := exists_uniform_polynomial_theta_supply
-  obtain ⟨A, C, hA, hC, hexcept⟩ :=
-    DirichletLFunction.LogFreeDensity.exists_bounded_exceptionalFamilyConductorsAwayFromFour
+  obtain ⟨A, C, hA, hC, hexcept⟩ := DirichletLFunction.LogFreeDensity.exists_exceptFourCap
   obtain ⟨D, hD⟩ := hexcept 1 (by norm_num only)
   let n := 4 * b
   have hn : 0 < n := Nat.mul_pos (by norm_num only) (Nat.zero_lt_of_lt hb)
@@ -72,8 +71,7 @@ theorem exists_unconditional_narrow_theta_supply :
     have hl := Real.log_le_log (Real.exp_pos 2) he
     simpa only [Real.log_exp] using hl
   refine
-    ⟨DirichletLFunction.LogFreeDensity.exceptionalFamilyConductorsAwayFromFour R
-        (1 - 1 / Real.log R),
+    ⟨DirichletLFunction.LogFreeDensity.exceptionalExceptFour R (1 - 1 / Real.log R),
       (hD R hR2 (by simpa only [mul_one] using hlog)).1,
       (hD R hR2 (by simpa only [mul_one] using hlog)).2, ?_⟩
   intro m d a _hm hd _hcop hq hqpow ha havoid

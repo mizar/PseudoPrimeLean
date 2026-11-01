@@ -108,10 +108,9 @@ theorem twoPolePrincipalPrefix_gap_gt_odd_allowance {A : ℕ} {C : ℝ} (hL : 50
 at least 500, has an odd non-one prime below the affine two-pole cutoff of constant 213/20.
 Retain the Euler saving 7/8 on three and five and use the joint principal bound. This is the
 character theorem used by the improved pointwise and finite-maximum Jacobi bounds. -/
-theorem exists_odd_prime_ne_one_le_twoPolePrincipalPrefix_even {q A : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (heven : χ.Even) (hne : χ ≠ 1) (h2 : 2 ∣ q)
-    (hqA : q ≤ A) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 500 ≤ Real.log A) :
+theorem exists_oddPrime_neOne_twoPoleEven_GRH {q A : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hquad : χ.IsQuadratic) (heven : χ.Even) (hne : χ ≠ 1) (h2 : 2 ∣ q) (hqA : q ≤ A)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 500 ≤ Real.log A) :
     ∃ p : ℕ,
       p.Prime ∧
         Odd p ∧
@@ -120,12 +119,12 @@ theorem exists_odd_prime_ne_one_le_twoPolePrincipalPrefix_even {q A : ℕ} [NeZe
   have hd := twoPolePrincipalPrefix_root_data hL
   have hx4 : 4 ≤ x := hd.2.1
   have hc :=
-    AnalyticNumberTheory.DirichletLFunction.twoPoleGammaConstant_le_signed_of_even
-      χ.primitiveCharacter ((NumberTheory.primitiveCharacter_even_iff χ).mpr heven)
+    AnalyticNumberTheory.DirichletLFunction.twoPoleGamma_le_112_25_of_even χ.primitiveCharacter
+      ((NumberTheory.primitiveCharacter_even_iff χ).mpr heven)
   have hm :=
     twoPolePrincipalPrefix_gap_gt_odd_allowance hL (C := 112 / 25 - 7 / 8) (by norm_num only)
   apply
-    exists_odd_prime_ne_one_of_jointRampPrincipal_prefix χ hquad hne h2 hqA hGRH
+    exists_oddPrime_neOne_jointRampPrefix_GRH χ hquad hne h2 hqA hGRH
       (by linarith only [hx4] : 2 ≤ x) hc ({3,5} : Finset ℕ)
   · intro n hn
     have hs : ∀ m ∈ ({3,5} : Finset ℕ), m ≤ 5 := by decide

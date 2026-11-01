@@ -95,7 +95,7 @@ theorem exists_radius_shiftedLogarithmicKernel_origin {F : ℂ → ℂ} {x : ℝ
               2 * Real.pi * Complex.I *
                 (-deriv (logDeriv F) σ - logDeriv F σ * (Real.log x : ℂ)) := by
   obtain ⟨R, hR, hr⟩ :=
-    RectangleGeometry.exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul_deriv
+    RectangleGeometry.exists_radius_integral_deriv
       (analyticAt_shiftedLogarithmicRegularization hF hne hx)
       (eventuallyEq_shiftedLogarithmicRegularization F x σ)
   refine ⟨R, hR, fun r hpos hle ↦ ?_⟩
@@ -147,8 +147,7 @@ theorem analyticAt_shiftedLogarithmicZeroRegularization {g : ℂ → ℂ} {m : �
 /-- A local logarithmic-derivative expansion at rho gives the shifted kernel's simple-pole
  certificate at rho-sigma, provided this point is nonzero. Transfer the expansion along the
  shift and clear the punctured denominator. -/
-theorem eventuallyEq_shiftedLogarithmicZeroRegularization {F g : ℂ → ℂ} {m : ℕ} {x : ℝ} {σ ρ : ℂ}
-    (hρ : ρ - σ ≠ 0)
+theorem shiftedLogZero_eventuallyEq {F g : ℂ → ℂ} {m : ℕ} {x : ℝ} {σ ρ : ℂ} (hρ : ρ - σ ≠ 0)
     (hlog :
       Filter.EventuallyEq (nhdsWithin ρ ({ρ}ᶜ : Set ℂ)) (logDeriv F)
         (fun z ↦ (m : ℂ) / (z - ρ) + logDeriv g z)) :
@@ -185,9 +184,9 @@ theorem exists_radius_shiftedLogarithmicKernel_zero {F g : ℂ → ℂ} {m : ℕ
                 (RectangleGeometry.centeredSquareUpper (ρ - σ) r) =
               2 * Real.pi * Complex.I * (-(m : ℂ) * (x : ℂ) ^ (ρ - σ) / (ρ - σ) ^ 2) := by
   obtain ⟨R, hR, hr⟩ :=
-    RectangleGeometry.exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul
+    RectangleGeometry.exists_radius_integral_residue
       (analyticAt_shiftedLogarithmicZeroRegularization hg hg0 hx hρ)
-      (eventuallyEq_shiftedLogarithmicZeroRegularization hρ hlog)
+      (shiftedLogZero_eventuallyEq hρ hlog)
   refine ⟨R, hR, fun r hpos hle ↦ ?_⟩
   rw [hr r hpos hle]
   simp only [shiftedLogarithmicZeroRegularization, sub_self, zero_mul, add_zero]

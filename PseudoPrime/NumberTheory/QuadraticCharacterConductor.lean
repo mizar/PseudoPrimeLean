@@ -55,8 +55,8 @@ theorem complexJacobiNumeratorCharacter_isPrimitive (n : ℕ) (hn : Odd n) (hsq 
   apply Nat.dvd_antisymm (DirichletCharacter.conductor_dvd_level χ)
   by_contra hnot
   obtain ⟨a, _haodd, ha, hj, hcop⟩ :=
-    exists_nat_odd_one_modEq_and_jacobiSym_eq_neg_one_coprime hn hsq
-      (DirichletCharacter.conductor_dvd_level χ) hnot (Odd.pos hn)
+    exists_odd_modEq_jacobi_neg_one_coprime hn hsq (DirichletCharacter.conductor_dvd_level χ) hnot
+      (Odd.pos hn)
   have hone :=
     factorsThrough_apply_eq_one_of_one_modEq (DirichletCharacter.factorsThrough_conductor χ) ha hcop
   have hval : χ (a : ℤ) = (-1 : ℂ) := by
@@ -135,7 +135,7 @@ theorem complexJacobiNumeratorCharacter_isQuadratic (n : ℕ) (hn : Odd n) :
 /-- A negative odd fundamental discriminant supplies a primitive odd quadratic character
 whose exact conductor is its absolute value. Construct the Jacobi numerator character,
 then use squarefreeness for primitivity and the residue modulo four for odd parity. -/
-theorem exists_primitive_odd_quadratic_character_of_negative_fundamental (n : ℕ) (hn : Odd n)
+theorem exists_primitive_odd_quadratic_negative (n : ℕ) (hn : Odd n)
     (hf : Int.IsFundamentalDiscr (-(n : ℤ))) :
     ∃ χ : DirichletCharacter ℂ n, χ.IsPrimitive ∧ χ.IsQuadratic ∧ χ.Odd := by
   refine
@@ -270,8 +270,8 @@ private theorem jacobi_negative_reciprocity {q p : ℕ} (hq : Odd q) (hmod : q %
 `q ≡ 3 mod 4` has value `legendreSym p (-q)`. Its integer evaluation and quadratic
 reciprocity identify the value, including zero at primes dividing `q`.
 This connects the character of a negative odd discriminant to its square class modulo `p`. -/
-theorem complexJacobiNumeratorCharacter_apply_prime_negative_discr (q : ℕ) (hq : Odd q)
-    (hmod : q % 4 = 3) (p : ℕ) [Fact p.Prime] (hp2 : p ≠ 2) :
+theorem complexJacobi_prime_negative_discr (q : ℕ) (hq : Odd q) (hmod : q % 4 = 3) (p : ℕ)
+    [Fact p.Prime] (hp2 : p ≠ 2) :
     complexJacobiNumeratorCharacter q hq (p : ℕ) = (legendreSym p (-(q : ℤ)) : ℂ) := by
   have hp : Odd p := (Fact.out : p.Prime).eq_two_or_odd'.resolve_left hp2
   have h := complexJacobiNumeratorCharacter_apply_int q hq (p : ℤ)
@@ -282,7 +282,7 @@ theorem complexJacobiNumeratorCharacter_apply_prime_negative_discr (q : ℕ) (hq
 The supplementary law for two and evenness of the character modulo eight identify
 these values for any odd `q`, without squarefreeness or fundamental-discriminant assumptions.
 This supplies the dyadic character value needed by quadratic prime splitting. -/
-theorem complexJacobiNumeratorCharacter_apply_two_negative_discr (q : ℕ) (hq : Odd q) :
+theorem complexJacobi_two_negative_discr (q : ℕ) (hq : Odd q) :
     complexJacobiNumeratorCharacter q hq (2 : ℕ) = (ZMod.χ₈ (-(q : ℤ)) : ℂ) := by
   have h := complexJacobiNumeratorCharacter_apply_int q hq 2
   rw [jacobiSym.at_two hq] at h
@@ -296,7 +296,7 @@ whose values match its Legendre symbols at odd primes and its character-modulo-e
 value at two. Use the same Jacobi numerator character for primitivity, parity, and
 all evaluations. This joint construction ensures that the character used in quadratic
 ideal counting is the character of the actual discriminant. -/
-theorem exists_primitive_character_values_of_negative_odd_fundamental (q : ℕ) (hq : Odd q)
+theorem exists_primitive_values_odd_negative (q : ℕ) (hq : Odd q)
     (hf : Int.IsFundamentalDiscr (-(q : ℤ))) :
     ∃ χ : DirichletCharacter ℂ q,
       χ.IsPrimitive ∧
@@ -310,10 +310,8 @@ theorem exists_primitive_character_values_of_negative_odd_fundamental (q : ℕ) 
         (negative_fundamental_odd_squarefree q hq hf),
       complexJacobiNumeratorCharacter_isQuadratic q hq,
       complexJacobiNumeratorCharacter_odd q hq (negative_fundamental_odd_mod_four q hq hf), ?_,
-      complexJacobiNumeratorCharacter_apply_two_negative_discr q hq⟩
+      complexJacobi_two_negative_discr q hq⟩
   intro p hp hp2
-  exact
-    complexJacobiNumeratorCharacter_apply_prime_negative_discr q hq
-      (negative_fundamental_odd_mod_four q hq hf) p hp2
+  exact complexJacobi_prime_negative_discr q hq (negative_fundamental_odd_mod_four q hq hf) p hp2
 
 end PseudoPrime.NumberTheory

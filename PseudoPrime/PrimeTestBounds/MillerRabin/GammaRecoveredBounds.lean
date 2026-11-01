@@ -44,7 +44,7 @@ theorem gammaFixedError_variation_bound (hRH : RiemannHypothesis) {x : ℝ} (hx 
     rw [hleft, hright]
     exact hinc
   have hv :=
-    AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional_abs_le_of_increment
+    AnalyticNumberTheory.Arithmetic.expRampVariation_abs_le_of_increment
       (gammaClippedErrorExtension_continuous hx0) hbound hD
   rw [AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional_congr
       gammaClippedErrorExtension_eqOn] at hv
@@ -76,8 +76,7 @@ theorem gammaRecoveredFourT_lower (hRH : RiemannHypothesis) {r : ℝ} (hr : 1 �
   have hvar := (abs_le.mp (gammaFixedError_variation_bound hRH hx)).1
   rw [hs] at hvar
   have hraw := gammaClippedRawError_variation_eq hx
-  have hnorm :=
-    AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum_normalized_eq_main_add_error hx0
+  have hnorm := AnalyticNumberTheory.Arithmetic.expRampMangoldt_div_sqrt_eq_main_add_error hx0
   rw [hs] at hnorm
   have hmass : (293 / 320 : ℝ) ≤ ∫ u in (0 : ℝ)..(99 / 40), Analysis.exponentialRampWeight u := by
     linarith only [Analysis.gamma_ramp_mass_lower]

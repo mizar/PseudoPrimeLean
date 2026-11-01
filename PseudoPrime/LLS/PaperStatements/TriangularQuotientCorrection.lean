@@ -19,8 +19,8 @@ namespace PseudoPrime.LLS.PaperStatements
 
 /-- For positive scale at a nonzero level, correction norms on a prime's
 positive powers sum to at most 36 log p/(sqrt p-1). Retain the exact geometric budget. -/
-theorem triangular18_prime_power_correction_norm_sum_le_precise {q p : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) {x : ℝ} (hx : 0 < x) (hp : p.Prime) :
+theorem triangular18_primePower_correction_sum {q p : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    {x : ℝ} (hx : 0 < x) (hp : p.Prime) :
     (∑' k : ℕ,
         ‖(triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)).summand χ x (p ^ (k + 1)) -
             (triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)).summand χ.primitiveCharacter
@@ -48,8 +48,8 @@ theorem triangular18_prime_power_correction_norm_sum_le_precise {q p : ℕ} [NeZ
 /-- For positive scale at a nonzero level, the correction norm sum is bounded
 by the geometric budgets of primes dividing the level-to-conductor quotient.
 Reindex precisely on quotient nonunits, rather than all original-level primes. -/
-theorem triangular18_primitive_correction_norm_sum_le_precise {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) {x : ℝ} (hx : 0 < x) :
+theorem triangular18_primitive_correction_sum {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    {x : ℝ} (hx : 0 < x) :
     (∑' n : ℕ,
         ‖(triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)).summand χ x n -
             (triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)).summand χ.primitiveCharacter
@@ -79,15 +79,14 @@ theorem triangular18_primitive_correction_norm_sum_le_precise {q : ℕ} [NeZero 
   have hb :=
     Finset.sum_le_sum
       (fun p (hp : p ∈ (q / χ.conductor).primeFactors) ↦
-        triangular18_prime_power_correction_norm_sum_le_precise χ hx
-          (Nat.prime_of_mem_primeFactors hp))
+        triangular18_primePower_correction_sum χ hx (Nat.prime_of_mem_primeFactors hp))
   exact hb
 
 /-- For positive scale at a nonzero level, the arithmetic series difference
 from its primitive source has norm bounded by the quotient prime budgets.
 Apply the norm triangle inequality to the summable correction. -/
-theorem triangular18_primitive_arithmetic_difference_norm_le_precise {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) {x : ℝ} (hx : 0 < x) :
+theorem triangular18_primitive_diff_precise {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) {x : ℝ}
+    (hx : 0 < x) :
     ‖(∑' n : ℕ, (triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)).summand χ x n) -
           (∑' n : ℕ,
             (triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)).summand χ.primitiveCharacter
@@ -98,17 +97,15 @@ theorem triangular18_primitive_arithmetic_difference_norm_le_precise {q : ℕ} [
   have h1 := MellinKernel.summable_summand K χ hx
   have h2 := MellinKernel.summable_summand K χ.primitiveCharacter hx
   rw [← h1.tsum_sub h2]
-  exact
-    (norm_tsum_le_tsum_norm (h1.sub h2).norm).trans
-      (triangular18_primitive_correction_norm_sum_le_precise χ hx)
+  exact (norm_tsum_le_tsum_norm (h1.sub h2).norm).trans (triangular18_primitive_correction_sum χ hx)
 
 /-- Under GRH, for a nonprincipal character at nonzero level and x >= 1,
 the actual arithmetic sum is bounded by the primitive conductor estimate
 plus the precise quotient prime correction. Derive all primitive hypotheses
 from nonprincipality and keep the scale-decaying remainder for comparison. -/
-theorem triangular18_nonprincipal_arithmetic_norm_le_precise {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hne : χ ≠ 1)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 ≤ x) :
+theorem triangular18_nonprincipal_precise_GRH {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hne : χ ≠ 1) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ}
+    (hx : 1 ≤ x) :
     ‖∑' n : ℕ, (triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)).summand χ x n‖ ≤
       36 * Real.log χ.conductor + 1350000000000000 +
         (4000000000000 * (Real.log χ.conductor + 284) * x ^ (-9 / 16 : ℝ) + 55000) +
@@ -118,10 +115,9 @@ theorem triangular18_nonprincipal_arithmetic_norm_le_precise {q : ℕ} [NeZero q
   have hn := AnalyticNumberTheory.Arithmetic.primitiveCharacter_ne_one χ hne
   have hq := NumberTheory.three_le_conductor_of_ne_one χ hne
   have hp :=
-    triangular18_primitive_arithmetic_norm_le_explicit ((by norm_num only : 2 ≤ 3).trans hq) hGRH
+    triangular18_primitive_arithmetic_GRH ((by norm_num only : 2 ≤ 3).trans hq) hGRH
       (DirichletCharacter.primitiveCharacter_isPrimitive χ) hn (inv_ne_one.mpr hn) hx
-  have hc :=
-    triangular18_primitive_arithmetic_difference_norm_le_precise χ (zero_lt_one.trans_le hx)
+  have hc := triangular18_primitive_diff_precise χ (zero_lt_one.trans_le hx)
   let S := ∑' n : ℕ, K.summand χ x n
   let P := ∑' n : ℕ, K.summand χ.primitiveCharacter x n
   have he : S = (S - P) + P := by ring
@@ -133,16 +129,15 @@ theorem triangular18_nonprincipal_arithmetic_norm_le_precise {q : ℕ} [NeZero q
 /-- Under RH at nonzero level and positive scale, the principal arithmetic
 sum has the level-one cutoff lower bound minus the exact prime geometric budgets.
 The principal conductor is one; use the primitive series identity and real-part bound. -/
-theorem triangular18_principal_arithmetic_lower_of_rh_precise {q : ℕ} [NeZero q]
-    (hRH : RiemannHypothesis) {x : ℝ} (hx : 0 < x) :
+theorem triangular18_principal_lower_precise_of_RH {q : ℕ} [NeZero q] (hRH : RiemannHypothesis)
+    {x : ℝ} (hx : 0 < x) :
     Real.sqrt x * (68 + 4 * Real.exp (-18)) - 1456 * x ^ (1 / 4 : ℝ) -
         (∑ p ∈ q.primeFactors, 36 * (Real.log p / (Real.sqrt p - 1))) ≤
       (∑' n : ℕ,
           (triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)).summand
             (1 : DirichletCharacter ℂ q) x n).re := by
   let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
-  have he :=
-    triangular18_primitive_arithmetic_difference_norm_le_precise (1 : DirichletCharacter ℂ q) hx
+  have he := triangular18_primitive_diff_precise (1 : DirichletCharacter ℂ q) hx
   rw [tsum_congr (MellinKernel.principal_primitive_summand_eq_level_one K x),
     DirichletCharacter.conductor_one, Nat.div_one] at he
   have hr := (Complex.abs_re_le_norm _).trans he

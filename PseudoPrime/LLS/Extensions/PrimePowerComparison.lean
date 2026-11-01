@@ -104,7 +104,7 @@ theorem neg_log_norm_L_one_le_alternating (f : GeneralLFunction) (hf : f.IsAdmis
         f.truncatedConductorErrorBound x := by
   have hx2 : 2 ≤ x := le_trans (by norm_num only : (2 : ℝ) ≤ 100) hx
   have hx1 : 1 < x := lt_of_lt_of_le (by norm_num only : (1 : ℝ) < 100) hx
-  obtain ⟨θ, hθ, he⟩ := exists_truncatedValue_conductor_error_le_uniform f hf hRH hx2
+  obtain ⟨θ, hθ, he⟩ := truncatedValue_error_theta_RH f hf hRH hx2
   have hT := degree_mul_alternatingPrimePowerSum_le f hf hx
   have hθC :
     |θ * Real.log f.analyticConductor / (Real.sqrt x * Real.log x)| ≤

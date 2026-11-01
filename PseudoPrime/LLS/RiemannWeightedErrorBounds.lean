@@ -22,7 +22,7 @@ needed for double partial summation with the exponential ramp. -/
 theorem logWeightedMangoldtSum_ge_rational_refined {x : ℝ} (hRH : RiemannHypothesis) (hx : 1 < x) :
     x - Real.sqrt x / 20 - (1839 / 1000 : ℝ) * Real.log x - 21 / 20 ≤
       AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum x := by
-  have hlo := llsRiemannWeightedLowerBound_of_riemannHypothesis hRH x hx
+  have hlo := riemannWeightedLower_of_RH hRH x hx
   have hm :=
     mul_le_mul_of_nonneg_right AnalyticNumberTheory.RiemannXi.riemannZeroMass_le_one_fortieth
       (add_nonneg (Real.sqrt_nonneg x) zero_le_one)

@@ -75,7 +75,7 @@ theorem primeNegOneWitnessSet_nonempty_of_odd_nonsquare {n : ℕ} (hn : Odd n) (
   rcases hn3 with rfl | hn3
   · exact ⟨5, Nat.prime_five, by decide, Internal.jacobiSym_three_five_eq_neg_one⟩
   · obtain ⟨q, hqprime, hqodd, _, hqvalue⟩ :=
-      NumberTheory.exists_smaller_prime_jacobiSym_eq_neg_one_of_odd_nonsquare hn hn3 hns
+      NumberTheory.exists_smaller_jacobi_neg_one_nonsquare hn hn3 hns
     exact ⟨q, hqprime, hqodd, hqvalue⟩
 
 /-- A candidate containing `27` and every odd prime at least `5` admits a pure `-1` stop. -/
@@ -92,12 +92,12 @@ theorem firstStopNegOneSet_nonempty_of_primeWitness {C : ℕ → Prop} {n : ℕ}
   · have hp5 : 5 ≤ p := by exact Internal.oddPrime_ge_five_of_ne_three hpprime hpodd hp3
     exact
       ⟨p,
-        mem_firstStopNegOneSet_of_mem_primeNegOneWitnessSet hn (hprime hpprime hpodd hp5)
+        mem_firstStopNegOne_of_primeNegOneWitness hn (hprime hpprime hpodd hp5)
           ⟨hpprime, hpodd, hpvalue⟩⟩
 
 /-- The classical pure `-1` stopping set is nonempty for every odd nonsquare. -/
-theorem classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) : (FirstStopNegOneSet isClassicalCandidate n).Nonempty := by
+theorem classicalNegOneSet_nonempty_of_odd_nonsquare {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n) :
+    (FirstStopNegOneSet isClassicalCandidate n).Nonempty := by
   apply firstStopNegOneSet_nonempty_of_primeWitness hn ⟨by norm_num only, by decide⟩
   · intro p hp hpodd hp5
     exact ⟨hp5, hpodd⟩
@@ -110,13 +110,11 @@ Conclusion: the classical pure `-1` first stop is strictly below `n`.
 Proof: use the smaller Jacobi witness construction, then apply first-stop minimality.
 Role: supplies the finite Selfridge search with a bound independent of the analytic `Q` bound.
 -/
-theorem classicalFirstStopNegOne_lt_of_odd_nonsquare_of_twenty_seven_lt {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hn27 : 27 < n)
-    (hs : (FirstStopNegOneSet isClassicalCandidate n).Nonempty) :
+theorem classicalNegOne_lt_of_odd_nonsquare_gt_27 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hn27 : 27 < n) (hs : (FirstStopNegOneSet isClassicalCandidate n).Nonempty) :
     firstStopNegOne isClassicalCandidate n hs < n := by
   obtain ⟨p, hp, hpodd, hplt, hpvalue⟩ :=
-    NumberTheory.exists_smaller_prime_jacobiSym_eq_neg_one_of_odd_nonsquare hn
-      (lt_trans (by decide : 3 < 27) hn27) hns
+    NumberTheory.exists_smaller_jacobi_neg_one_nonsquare hn (lt_trans (by decide : 3 < 27) hn27) hns
   by_cases hp3 : p = 3
   · subst p
     have hmem : 27 ∈ FirstStopNegOneSet isClassicalCandidate n := by
@@ -127,13 +125,13 @@ theorem classicalFirstStopNegOne_lt_of_odd_nonsquare_of_twenty_seven_lt {n : ℕ
     exact (firstStopNegOne_le isClassicalCandidate n hs hmem).trans_lt hn27
   · have hp5 : 5 ≤ p := by exact Internal.oddPrime_ge_five_of_ne_three hp hpodd hp3
     have hmem : p ∈ FirstStopNegOneSet isClassicalCandidate n :=
-      mem_firstStopNegOneSet_of_mem_primeNegOneWitnessSet (C := isClassicalCandidate) (p := p) hn
-        ⟨hp5, hpodd⟩ ⟨hp, hpodd, hpvalue⟩
+      mem_firstStopNegOne_of_primeNegOneWitness (C := isClassicalCandidate) (p := p) hn ⟨hp5, hpodd⟩
+        ⟨hp, hpodd, hpvalue⟩
     exact (firstStopNegOne_le isClassicalCandidate n hs hmem).trans_lt hplt
 
 /-- The Wheel30 pure `-1` stopping set is nonempty for every odd nonsquare. -/
-theorem wheel30FirstStopNegOneSet_nonempty_of_odd_nonsquare {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) : (FirstStopNegOneSet isWheel30NegOneCandidate n).Nonempty := by
+theorem wheel30NegOneSet_nonempty_of_odd_nonsquare {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n) :
+    (FirstStopNegOneSet isWheel30NegOneCandidate n).Nonempty := by
   apply firstStopNegOneSet_nonempty_of_primeWitness hn
   · norm_num only [isWheel30NegOneCandidate, isWheel30NegOneInitial, isWheel30TailResidue, false_or,
       true_or, false_and, or_false]
@@ -142,8 +140,8 @@ theorem wheel30FirstStopNegOneSet_nonempty_of_odd_nonsquare {n : ℕ} (hn : Odd 
   · exact primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns
 
 /-- The standard factor-detecting Wheel30 stopping set is nonempty for every odd nonsquare. -/
-theorem wheel30FirstStopNeOneSet_nonempty_of_odd_nonsquare {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) : (FirstStopNeOneSet isWheel30NeOneCandidate n).Nonempty := by
+theorem wheel30NeOneSet_nonempty_of_odd_nonsquare {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n) :
+    (FirstStopNeOneSet isWheel30NeOneCandidate n).Nonempty := by
   have hnpos := Odd.pos hn
   have hclass : (FirstStopNeOneSet isClassicalCandidate n).Nonempty := by
     apply firstStopNeOneSet_nonempty_of_negOne
@@ -152,7 +150,7 @@ theorem wheel30FirstStopNeOneSet_nonempty_of_odd_nonsquare {n : ℕ} (hn : Odd n
         subst n
         exact hns ⟨1, by norm_num only⟩
       exact Nat.one_lt_iff_ne_zero_and_ne_one.mpr ⟨ne_of_gt hnpos, hn1⟩
-    · exact classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns
+    · exact classicalNegOneSet_nonempty_of_odd_nonsquare hn hns
   have hstop := firstStopNeOne_mem isClassicalCandidate n hclass
   have hcand : isWheel30NeOneCandidate (firstStopNeOne isClassicalCandidate n hclass) := by
     by_cases hp : (firstStopNeOne isClassicalCandidate n hclass).Prime
@@ -165,8 +163,7 @@ theorem wheel30FirstStopNeOneSet_nonempty_of_odd_nonsquare {n : ℕ} (hn : Odd n
           j ∉ FirstStopNeOneSet isClassicalCandidate n := by
         intro j hj
         exact not_mem_firstStopNeOneSet_of_lt isClassicalCandidate n hclass hj
-      rcases composite_minimal_classical_neOne_eq_nine_or_fifteen hnpos hn hns hi hp hstop hmin with
-        h | h
+      rcases classicalNeOne_composite_9_15 hnpos hn hns hi hp hstop hmin with h | h
       · rw [h]
         norm_num only [isWheel30NeOneCandidate, isWheel30NeOneInitial, isWheel30TailResidue,
           false_or, true_or, false_and, or_false]
@@ -176,8 +173,8 @@ theorem wheel30FirstStopNeOneSet_nonempty_of_odd_nonsquare {n : ℕ} (hn : Odd n
   exact ⟨firstStopNeOne isClassicalCandidate n hclass, hcand, hstop.2.1, hstop.2.2⟩
 
 /-- The classical factor-detecting stopping set is nonempty for every odd nonsquare. -/
-theorem classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) : (FirstStopNeOneSet isClassicalCandidate n).Nonempty := by
+theorem classicalNeOneSet_nonempty_of_odd_nonsquare {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n) :
+    (FirstStopNeOneSet isClassicalCandidate n).Nonempty := by
   apply firstStopNeOneSet_nonempty_of_negOne
   · have hn1 : n ≠ 1 := by
       intro h
@@ -185,6 +182,6 @@ theorem classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare {n : ℕ} (hn : Odd
       exact hns ⟨1, by norm_num only⟩
     have hnpos := Odd.pos hn
     exact Nat.one_lt_iff_ne_zero_and_ne_one.mpr ⟨ne_of_gt hnpos, hn1⟩
-  · exact classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns
+  · exact classicalNegOneSet_nonempty_of_odd_nonsquare hn hns
 
 end PseudoPrime.PrimeTest

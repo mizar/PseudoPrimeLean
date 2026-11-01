@@ -30,8 +30,7 @@ theorem triangular_kernelZeroTerm_eq_ofReal_norm {a : ℝ} (ha : 0 < a) {q : ℕ
       ((‖(triangularMellinKernel ha).kernelZeroTerm χ ρ‖ : ℝ) : ℂ) := by
   rw [MellinKernel.norm_kernelZeroTerm_eq_order_mul _ hne]
   rw [MellinKernel.kernelZeroTerm,
-    AnalyticNumberTheory.DirichletLFunction.completed_divisor_eq_analyticOrderNatAt hne,
-    Int.cast_natCast]
+    AnalyticNumberTheory.DirichletLFunction.completed_divisor_eq_orderNat hne, Int.cast_natCast]
   change
     (analyticOrderNatAt χ.completedLFunction ρ : ℂ) *
         Analysis.triangularMellinFunction a (Complex.I * ρ.im) =
@@ -56,8 +55,8 @@ theorem triangular_kernelZeroSum_eq_ofReal_absoluteMass {a : ℝ} (ha : 0 < a) {
 /-- At scale one, the triangular oscillating zero sum equals the complex
 cast of the absolute zero mass. The phase is one and all zero terms are
 nonnegative real casts. This connects the zero ledger to the explicit formula. -/
-theorem triangular_oscillatingZeroSum_one_eq_ofReal_absoluteMass {a : ℝ} (ha : 0 < a) {q : ℕ}
-    [NeZero q] {χ : DirichletCharacter ℂ q} (hne : χ ≠ 1) :
+theorem triangular_zeroSum_one_eq_absoluteMass {a : ℝ} (ha : 0 < a) {q : ℕ} [NeZero q]
+    {χ : DirichletCharacter ℂ q} (hne : χ ≠ 1) :
     (∑' ρ : ℂ, (triangularMellinKernel ha).oscillatingZeroTerm χ 1 ρ) =
       ((∑' ρ : ℂ, ‖(triangularMellinKernel ha).kernelZeroTerm χ ρ‖ : ℝ) : ℂ) := by
   simp only [MellinKernel.oscillatingZeroTerm, Complex.ofReal_one, Complex.one_cpow, mul_one]
@@ -93,8 +92,7 @@ theorem triangular18_absoluteMass_explicit_formula {q : ℕ} [NeZero q] (hq : 2 
         change (9 / 16 : ℝ) ≤ 1 / 2 + 1 / 8; norm_num only)
       (by norm_num only) (by norm_num only) le_rfl (by norm_num only) (by norm_num only)
   simp only [Complex.ofReal_one, Complex.one_cpow, mul_one] at he
-  rw [triangular_oscillatingZeroSum_one_eq_ofReal_absoluteMass (by norm_num only : (0 : ℝ) < 18)
-      hne] at he
+  rw [triangular_zeroSum_one_eq_absoluteMass (by norm_num only : (0 : ℝ) < 18) hne] at he
   linear_combination he
 
 end PseudoPrime.LLS.PaperStatements

@@ -22,8 +22,8 @@ with the explicit approximation allowance throughout the compact frequency inter
 Claim: the actual Gamma arithmetic sum obeys its certified prefix-plus-remainder bound.
 Proof: transfer the corrected-product certificate to Gamma and apply the compact comparison.
 Role: avoid leaving a special-function approximation as an unproved assumption. -/
-theorem gamma_primitive_sum_re_le_phase64_of_correctedEuler {q m : ℕ} [NeZero m] (hq : 20000 ≤ q)
-    (hm : 3 ≤ m) (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
+theorem gammaSum_phase64_correctedEuler_GRH {q m : ℕ} [NeZero m] (hq : 20000 ≤ q) (hm : 3 ≤ m)
+    (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 2 ≤ x) (B : Finset ℕ) {n : ℕ} (hn : n ≠ 0)
     (hc :
@@ -54,8 +54,8 @@ with error 1/25000 on |t|<=5, and a middle-frequency Gamma norm comparison.
 Claim: the actual arithmetic sum obeys the prefix-plus-remainder upper bound.
 Proof: transfer the certified corrected phase and apply the compact comparison.
 Role: expose a fixed short-product entry point for the finite-scale analytic bound. -/
-theorem gamma_primitive_sum_re_le_phase64_of_correctedEuler256_split {q m : ℕ} [NeZero m]
-    (hq : 20000 ≤ q) (hm : 3 ≤ m) (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
+theorem gammaSum_phase64_Euler256_split_GRH {q m : ℕ} [NeZero m] (hq : 20000 ≤ q) (hm : 3 ≤ m)
+    (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 2 ≤ x) (B : Finset ℕ)
     (hc :
@@ -95,8 +95,8 @@ and a Gamma norm comparison on 5<=|t|<=16.
 Claim: the actual Gamma arithmetic sum obeys the same prefix-plus-remainder bound.
 Proof: combine the low-frequency approximation with the middle norm bound and the proved tail.
 Role: avoid paying a uniform absolute approximation error on the decaying spectral tail. -/
-theorem gamma_primitive_sum_re_le_phase64_of_correctedEuler_split {q m : ℕ} [NeZero m]
-    (hq : 20000 ≤ q) (hm : 3 ≤ m) (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
+theorem gammaSum_phase64_Euler_split_GRH {q m : ℕ} [NeZero m] (hq : 20000 ≤ q) (hm : 3 ≤ m)
+    (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 2 ≤ x) (B : Finset ℕ) {n : ℕ} (hn : n ≠ 0)
     (hc :

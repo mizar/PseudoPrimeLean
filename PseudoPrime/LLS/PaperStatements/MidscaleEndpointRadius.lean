@@ -181,6 +181,6 @@ theorem exists_prime_ne_one_le_midscale_radius_sq {q : ℕ} [NeZero q] (χ : Dir
     (hlo : 1339 / 50 ≤ Real.log q) (hhi : Real.log q ≤ 26269 / 100) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ (midscaleEndpointRadius (Real.log q)) ^ 2 ∧ χ p ≠ 1 := by
   obtain ⟨hy, hp⟩ := midscaleEndpointRadius_data hlo hhi
-  exact exists_prime_ne_one_of_fullEndpointPolynomial_original χ hne hGRH (by linarith only [hy]) hp
+  exact exists_prime_ne_one_of_fullEndpointPoly_original χ hne hGRH (by linarith only [hy]) hp
 
 end PseudoPrime.LLS.PaperStatements

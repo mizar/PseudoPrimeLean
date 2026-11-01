@@ -19,7 +19,7 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 a prime MR rejecting base at most log(n)^A. Transfer the proved nonzero
 Fermat quotient bound, handling small square prime divisors uniformly.
 The threshold depends only on A, and GRH is not assumed. -/
-theorem eventually_exists_prime_witness_of_thirteen_sevenths {A : ℝ} (hA : (13 / 7 : ℝ) < A) :
+theorem eventually_prime_thirteenSevenths {A : ℝ} (hA : (13 / 7 : ℝ) < A) :
     Filter.Eventually
       (fun n : ℕ ↦
         1 < n →
@@ -29,9 +29,8 @@ theorem eventually_exists_prime_witness_of_thirteen_sevenths {A : ℝ} (hA : (13
             q.Prime ∧ (q : ℝ) ≤ (Real.log n) ^ A ∧ ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n))
       Filter.atTop := by
   have hAp : 0 < A := lt_trans (by norm_num only : (0 : ℝ) < 13 / 7) hA
-  apply eventually_exists_prime_witness_le_log_power_of_fermat_quotient_bound hAp
-  apply
-    (NumberTheory.Heilbronn.eventually_exists_prime_nontrivial_power_of_thirteen_sevenths hA).mono
+  apply eventually_prime_logPower_fermatQuotient hAp
+  apply (NumberTheory.Heilbronn.eventually_exists_prime_pow_ne_one_gt_13_7 hA).mono
   intro p h hp hp2
   obtain ⟨q, hq, hb, hpow⟩ := h hp hp2
   exact ⟨q, hq.pos, hb, hpow⟩
@@ -39,7 +38,7 @@ theorem eventually_exists_prime_witness_of_thirteen_sevenths {A : ℝ} (hA : (13
 /-- For fixed A>13/7, the least prime MR witness on every sufficiently large
 odd nonsquarefree input is at most log(n)^A. Minimize the proved rejecting
 prime predicate. This is a bound on the least witness, not just one selected base. -/
-theorem eventually_exists_least_prime_witness_of_thirteen_sevenths {A : ℝ} (hA : (13 / 7 : ℝ) < A) :
+theorem eventually_least_prime_thirteenSevenths {A : ℝ} (hA : (13 / 7 : ℝ) < A) :
     Filter.Eventually
       (fun n : ℕ ↦
         1 < n →
@@ -52,7 +51,7 @@ theorem eventually_exists_least_prime_witness_of_thirteen_sevenths {A : ℝ} (hA
               ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → q ≤ s)
       Filter.atTop := by
   classical
-  apply (eventually_exists_prime_witness_of_thirteen_sevenths hA).mono
+  apply (eventually_prime_thirteenSevenths hA).mono
   intro n h hn ho hns
   obtain ⟨q, hq, hb, hf⟩ := h hn ho hns
   have hex : ∃ s : ℕ, s.Prime ∧ ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := ⟨q, hq, hf⟩
@@ -64,8 +63,8 @@ theorem eventually_exists_least_prime_witness_of_thirteen_sevenths {A : ℝ} (hA
 /-- For each fixed 0<epsilon<1/7, the least prime MR witness on all sufficiently
 large odd nonsquarefree inputs is at most log(n)^(2-epsilon), strictly below
 log(n)^2. The starting threshold may depend on epsilon; no endpoint is asserted. -/
-theorem eventually_exists_least_prime_witness_of_epsilon_lt_one_seventh {epsilon : ℝ}
-    (he0 : 0 < epsilon) (he1 : epsilon < 1 / 7) :
+theorem eventually_least_epsilon_lt_oneSeventh {epsilon : ℝ} (he0 : 0 < epsilon)
+    (he1 : epsilon < 1 / 7) :
     Filter.Eventually
       (fun n : ℕ ↦
         1 < n →
@@ -81,8 +80,8 @@ theorem eventually_exists_least_prime_witness_of_epsilon_lt_one_seventh {epsilon
   have hA : (13 / 7 : ℝ) < 2 - epsilon := by linarith only [he1]
   have hL : Filter.Tendsto (fun n : ℕ ↦ Real.log n) Filter.atTop Filter.atTop :=
     Real.tendsto_log_atTop.comp tendsto_natCast_atTop_atTop
-  filter_upwards [eventually_exists_least_prime_witness_of_thirteen_sevenths hA,
-    hL.eventually_gt_atTop 1] with n h hLn hn ho hns
+  filter_upwards [eventually_least_prime_thirteenSevenths hA, hL.eventually_gt_atTop 1] with n h hLn
+    hn ho hns
   obtain ⟨q, hq, hf, hb, hleast⟩ := h hn ho hns
   have ht : (Real.log n) ^ (2 - epsilon) < (Real.log n) ^ 2 := by
     simpa only [Real.rpow_two] using
@@ -93,8 +92,7 @@ theorem eventually_exists_least_prime_witness_of_epsilon_lt_one_seventh {epsilon
 equivalent to its restriction to squarefree odd composites. Combine that
 restriction with the newly proved nonsquarefree bound using a common threshold.
 This identifies the remaining input family without assuming its bound. -/
-theorem eventually_least_prime_witness_iff_squarefree_of_thirteen_sevenths {A : ℝ}
-    (hA : (13 / 7 : ℝ) < A) :
+theorem eventually_least_iff_squarefree_13_7 {A : ℝ} (hA : (13 / 7 : ℝ) < A) :
     (Filter.Eventually
         (fun n : ℕ ↦
           1 < n →
@@ -122,8 +120,7 @@ theorem eventually_least_prime_witness_iff_squarefree_of_thirteen_sevenths {A : 
   · intro h
     exact h.mono (fun n hn hng ho hcomp _ ↦ hn hng ho hcomp)
   · intro hs
-    filter_upwards [hs, eventually_exists_least_prime_witness_of_thirteen_sevenths hA] with n hsq
-      hns hn ho hcomp
+    filter_upwards [hs, eventually_least_prime_thirteenSevenths hA] with n hsq hns hn ho hcomp
     by_cases hsf : Squarefree n
     · exact hsq hn ho hcomp hsf
     · exact hns hn ho hsf

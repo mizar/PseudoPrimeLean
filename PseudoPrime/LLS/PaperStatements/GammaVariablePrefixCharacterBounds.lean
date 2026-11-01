@@ -102,7 +102,7 @@ theorem gamma_primitive_sum_re_le_variable_prefix_scale {q m : ℕ} [NeZero m] (
 /-- For a nonprincipal character at q≥20000 under GRH and x≥1, a certified prefix error
  sum below C gives the primitive Gamma arithmetic upper bound with conductor retained.
  Transfer to the primitive source and its inverse. This is the common consumer API. -/
-theorem gamma_primitiveCharacter_sum_re_le_variable_prefix_scale {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+theorem gammaCharacterSum_re_le_variable_prefix_scale {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
     (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 ≤ x)
     (prefixLen : ℕ) {C : ℝ} (hC : Analysis.gammaResolventPrefixErrorSum prefixLen < C) :
@@ -130,7 +130,7 @@ theorem gamma_primitiveCharacter_sum_re_le_sixteen_scale {q : ℕ} [NeZero q] (h
         ((7 / 6 : ℝ) * Real.log q + 4) / Real.sqrt x +
         x ^ (-9 / 16 : ℝ) * ((16 / 5) * (Real.log χ.conductor + 283) + 5 / 3) := by
   exact
-    gamma_primitiveCharacter_sum_re_le_variable_prefix_scale hq χ hne hGRH hx 16
+    gammaCharacterSum_re_le_variable_prefix_scale hq χ hne hGRH hx 16
       Analysis.gammaResolvent_sixteen_error_lt
 
 end PseudoPrime.LLS.PaperStatements

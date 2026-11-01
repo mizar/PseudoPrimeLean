@@ -105,8 +105,8 @@ open Classical in
 nonprincipal norms is a lower bound for the index times the coset Mangoldt sum.
 Split off the principal character in the exact average and bound the remaining
 real parts by negative norms. This is the lower comparison used in Section 4. -/
-theorem principal_logWeightedSum_le_coset_add_nonprincipal_norms {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (a : (ZMod q)ˣ) (x : ℝ) :
+theorem principalLogSum_le_coset_add_nonprincipal_norms {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (a : (ZMod q)ˣ) (x : ℝ) :
     (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x (1 : DirichletCharacter ℂ q)).re ≤
       (H.index : ℝ) * cosetLogWeightedSum q H a x +
         ∑ χ ∈ Finset.univ.erase (1 : NumberTheory.subgroupAnnihilator H),
@@ -150,7 +150,7 @@ theorem exists_least_prime_in_coset_le_of_principal_gap {q : ℕ} [NeZero q] (H 
         (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x
             (1 : DirichletCharacter ℂ q)).re) :
     ∃ p : ℕ, IsLeast (NumberTheory.primesInCoset q H a) p ∧ (p : ℝ) ≤ x := by
-  have h := principal_logWeightedSum_le_coset_add_nonprincipal_norms H a x
+  have h := principalLogSum_le_coset_add_nonprincipal_norms H a x
   have hg :
     AnalyticNumberTheory.Arithmetic.compositePrimePowerLogWeightedSum x <
       cosetLogWeightedSum q H a x := by

@@ -32,8 +32,8 @@ a certified lower saving g on the full Euler prefix minus d.
 Combine the split reflected upper cap with the actual principal lower bound, then exclude
 zero by coprimality and one by contradiction. This connects both error improvements to
 the negative-witness consumer. -/
-theorem exists_prime_neg_one_of_fixedRamp_reflectedSplit_conductor_prefix {q A : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hqA : q ≤ A)
+theorem exists_prime_negOne_fixedRamp_prefix_GRH {q A : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hqA : q ≤ A)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x C Y g a d : ℝ} (hx : 2 ≤ x)
     (hY : 1 ≤ Y) (ha : 0 ≤ a) (hd : 0 ≤ d) (hscale : 1 ≤ (1 / 2 - a) * Real.sqrt x)
     (hprime :
@@ -54,8 +54,8 @@ theorem exists_prime_neg_one_of_fixedRamp_reflectedSplit_conductor_prefix {q A :
     have ht : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ (99 / 40 : ℝ) * x → χ p = 1 := fun p hp hd hb ↦
       Classical.byContradiction (fun hv ↦ hnone ⟨p, hp, hd, hb, hv⟩)
     have hb :=
-      gamma_primitive_add_local_le_reflectedSplit_conductor_prefix χ hquad hne hqA hGRH hx hY ha hd
-        hscale hprime hYcut hC ht
+      gammaPrimitive_local_reflectedPrefix_GRH χ hquad hne hqA hGRH hx hY ha hd hscale hprime hYcut
+        hC ht
     have hJ := jointRampPrincipalLower_le_actual hGRH.riemann (by linarith only [hx] : 1 ≤ x)
     have hN := gamma_ramp_no_witness_comparison χ hquad (by linarith only [hx] : 0 < x) ht
     dsimp only [reflectedSplitUpper] at hgap hb
@@ -92,12 +92,10 @@ theorem exists_prime_neg_one_of_fixedAnchor128_mass133 {q A : ℕ} [NeZero q]
   have hp := pairedEulerPrefix_ge_anchor128 hGRH.riemann hb
   have hl := jointRampPrincipalLower_ge_133_160 x
   apply
-    exists_prime_neg_one_of_fixedRamp_reflectedSplit_conductor_prefix χ hquad hne hqA hGRH
-      (by linarith only [hx]) (Y := b) (by linarith only [hb]) (a := 3 / 10) (d :=
-      (1 / 5 : ℝ) * Real.log 2) (by norm_num only)
+    exists_prime_negOne_fixedRamp_prefix_GRH χ hquad hne hqA hGRH (by linarith only [hx]) (Y := b)
+      (by linarith only [hb]) (a := 3 / 10) (d := (1 / 5 : ℝ) * Real.log 2) (by norm_num only)
       (mul_nonneg (by norm_num only) (Real.log_natCast_nonneg 2)) (by linarith only [hs])
-      (fun p hp ↦
-        AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight_prime_upper_three_tenths hp)
+      (fun p hp ↦ AnalyticNumberTheory.Arithmetic.pairedEulerWeight_prime_le_three_tenths hp)
       (fun n hn ↦
         (Nat.cast_le.mpr (Finset.mem_Ioc.mp hn).2).trans
           ((Nat.floor_le (by linarith only [hb] : 0 ≤ b)).trans hcut))
@@ -326,10 +324,10 @@ theorem exists_prime_neg_one_le_fixedAnchor_log_ambient {q A : ℕ} [NeZero q]
   have hd := fixedAnchorNegativeRoot_data hL
   have hx : 25 ≤ r ^ 2 := by nlinarith only [hd.1, sq_nonneg (r - 320)]
   have hc :=
-    AnalyticNumberTheory.DirichletLFunction.twoPoleGammaConstant_le_signed_of_even
-      χ.primitiveCharacter ((NumberTheory.primitiveCharacter_even_iff χ).mpr heven)
+    AnalyticNumberTheory.DirichletLFunction.twoPoleGamma_le_112_25_of_even χ.primitiveCharacter
+      ((NumberTheory.primitiveCharacter_even_iff χ).mpr heven)
   have hcard :=
-    AnalyticNumberTheory.Arithmetic.primeFactors_card_le_five_halves_add_three_eighths_log
+    AnalyticNumberTheory.Arithmetic.primeFactors_card_le_5_2_add_3_8_log
       (Nat.pos_of_ne_zero (NeZero.ne q)) hqA
   have hlog : 0 ≤ Real.log ((99 / 40 : ℝ) * r ^ 2) := Real.log_nonneg (by linarith only [hx])
   have hcost :=

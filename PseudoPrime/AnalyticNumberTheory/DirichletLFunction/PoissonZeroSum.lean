@@ -24,9 +24,9 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 divisor-weighted genus term splits into its shifted Poisson weight and inverse-zero term.
 Nonzero multiplicity forces Re rho = 1/2; the complex inverse formula then gives the equality.
 This pointwise identity separates the centered Hadamard series into two convergent real masses. -/
-theorem completed_genusTerm_re_eq_poisson_add_inverse {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (s ρ : ℂ) :
+theorem genusTerm_re_poisson_inverse_RH {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    (s ρ : ℂ) :
     ((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℂ) *
           (1 / (s - ρ) + 1 / ρ)).re =
       (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℝ) *
@@ -36,8 +36,7 @@ theorem completed_genusTerm_re_eq_poisson_add_inverse {q : ℕ} [NeZero q]
   · change ((D : ℂ) * _).re = (D : ℝ) * _
     simp only [hD, Int.cast_zero, zero_mul, Complex.zero_re]
   · have hr :=
-      completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv
-        (completed_zero_of_divisor_ne_zero hne hD)
+      completed_zero_re_eq_half_of_RH hRH hp hinv (completed_zero_of_divisor_ne_zero hne hD)
     change ((D : ℂ) * _).re = (D : ℝ) * _
     rw [← Complex.ofReal_intCast, Complex.re_ofReal_mul, Complex.add_re, one_div (s - ρ),
       Complex.inv_re, Complex.sub_re, hr]
@@ -45,7 +44,7 @@ theorem completed_genusTerm_re_eq_poisson_add_inverse {q : ℕ} [NeZero q]
 /-- For a primitive nonprincipal character satisfying individual RH, the real inverse-zero
 term equals half the inverse-square divisor mass. Zero multiplicities vanish; at each zero,
 Re rho = 1/2 identifies the real part of its inverse. This supplies a summable central mass. -/
-theorem completed_inverseTerm_eq_half_inverseSquare {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+theorem inverseTerm_eq_half_invSquare_RH {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
     (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
     (ρ : ℂ) :
     (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℝ) * (1 / ρ).re =
@@ -57,8 +56,7 @@ theorem completed_inverseTerm_eq_half_inverseSquare {q : ℕ} [NeZero q] {χ : D
   · change (D : ℝ) * _ = _ * ((D : ℝ) / _)
     simp only [hD, Int.cast_zero, zero_mul, zero_div, mul_zero]
   · have hr :=
-      completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv
-        (completed_zero_of_divisor_ne_zero hne hD)
+      completed_zero_re_eq_half_of_RH hRH hp hinv (completed_zero_of_divisor_ne_zero hne hD)
     rw [one_div ρ, Complex.inv_re, hr]
     ring
 
@@ -74,12 +72,12 @@ theorem summable_completed_poisson_terms {q : ℕ} [NeZero q] (hq : 2 ≤ q)
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
           ((s.re - 1 / 2) / Complex.normSq (s - ρ))) := by
   have hz :=
-    ((summable_divisor_div_normSq_of_dirichletRH hq hRH hp hne hinv).mul_left (1 / 2 : ℝ)).congr
-      (fun ρ ↦ (completed_inverseTerm_eq_half_inverseSquare hRH hp hne hinv ρ).symm)
+    ((summable_divisor_div_normSq_of_RH hq hRH hp hne hinv).mul_left (1 / 2 : ℝ)).congr
+      (fun ρ ↦ (inverseTerm_eq_half_invSquare_RH hRH hp hne hinv ρ).symm)
   have hg := Complex.reCLM.summable (summable_completed_genus_terms hq hRH hp hne hinv hs)
   apply (hg.sub hz).congr
   intro ρ
-  rw [Complex.reCLM_apply, completed_genusTerm_re_eq_poisson_add_inverse hRH hp hne hinv]
+  rw [Complex.reCLM_apply, genusTerm_re_poisson_inverse_RH hRH hp hne hinv]
   rw [mul_add, add_sub_cancel_right]
 
 /-- For modulus at least two, a primitive nonprincipal character with nonprincipal inverse
@@ -99,8 +97,8 @@ theorem completed_poissonSum_eq_logDeriv_re {q : ℕ} [NeZero q] (hq : 2 ≤ q)
   let P : ℂ → ℝ := fun ρ ↦ D ρ * ((s.re - 1 / 2) / Complex.normSq (s - ρ))
   let Z : ℂ → ℝ := fun ρ ↦ D ρ * (1 / ρ).re
   have hz : Summable Z :=
-    ((summable_divisor_div_normSq_of_dirichletRH hq hRH hp hne hinv).mul_left (1 / 2 : ℝ)).congr
-      (fun ρ ↦ (completed_inverseTerm_eq_half_inverseSquare hRH hp hne hinv ρ).symm)
+    ((summable_divisor_div_normSq_of_RH hq hRH hp hne hinv).mul_left (1 / 2 : ℝ)).congr
+      (fun ρ ↦ (inverseTerm_eq_half_invSquare_RH hRH hp hne hinv ρ).symm)
   have he :
     ∀ ρ : ℂ,
       Complex.reCLM
@@ -108,14 +106,14 @@ theorem completed_poissonSum_eq_logDeriv_re {q : ℕ} [NeZero q] (hq : 2 ≤ q)
             (1 / (s - ρ) + 1 / ρ)) =
         P ρ + Z ρ :=
     fun ρ ↦ by
-    rw [Complex.reCLM_apply, completed_genusTerm_re_eq_poisson_add_inverse hRH hp hne hinv]
+    rw [Complex.reCLM_apply, genusTerm_re_poisson_inverse_RH hRH hp hne hinv]
     change D ρ * (_ + _) = D ρ * _ + D ρ * _
     exact mul_add _ _ _
   have hps : Summable P := summable_completed_poisson_terms hq hRH hp hne hinv hs
-  have hi := congrArg Complex.reCLM (completed_centered_logDeriv_eq_genusSum hq hRH hp hne hinv hs)
+  have hi := congrArg Complex.reCLM (completedLogDeriv_genus_eq_RH hq hRH hp hne hinv hs)
   rw [map_sub, Complex.reCLM.map_tsum (summable_completed_genus_terms hq hRH hp hne hinv hs),
     tsum_congr he, hps.tsum_add hz] at hi
-  have hb := primitiveBRe_eq_neg_zeroMass_of_dirichletRH hq hRH hp hne hinv
+  have hb := primitiveBRe_eq_neg_zeroMass_of_RH hq hRH hp hne hinv
   rw [primitiveBRe, (hp : χ.conductor = q)] at hb
   change (∑' ρ, P ρ) = _
   change
@@ -129,7 +127,7 @@ character satisfying individual RH differs from log q / 2 by a logarithmic heigh
 The positive constant is independent of the modulus and character. Substitute the real
 Hadamard identity and apply the uniform completed logarithmic-derivative estimate.
 This is the conductor-uniform resolvent input for sharp kernel-mass asymptotics. -/
-theorem exists_uniform_poissonSum_error_le_log {σ : ℝ} (hσ : 1 < σ) (hσ' : σ ≤ 2) :
+theorem uniform_poissonError_log_bound_RH {σ : ℝ} (hσ : 1 < σ) (hσ' : σ ≤ 2) :
     ∃ A : ℝ,
       0 < A ∧
         ∀ (q : ℕ) [NeZero q],
@@ -145,7 +143,7 @@ theorem exists_uniform_poissonSum_error_le_log {σ : ℝ} (hσ : 1 < σ) (hσ' :
                             ((σ - 1 / 2) / Complex.normSq (((σ : ℂ) + Complex.I * t) - ρ))) -
                         Real.log q / 2| ≤
                     A * (Real.log (4 + |t|) + 1) := by
-  obtain ⟨A, hA, hb⟩ := exists_uniform_norm_completed_vertical_right_le_log hσ hσ'
+  obtain ⟨A, hA, hb⟩ := uniform_completedLogDeriv_right hσ hσ'
   refine ⟨A, hA, ?_⟩
   intro q _ hq χ hRH hp hne hinv t
   have hr : ((σ : ℂ) + Complex.I * t).re = σ := by

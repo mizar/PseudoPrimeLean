@@ -105,7 +105,7 @@ theorem endpointPointwiseGap_mono_pi {L P Q y z : ℝ} (hy : 1 ≤ y) (hz : 0 �
 The added reciprocal correction is independent of the conductor parameter. -/
 theorem endpointPointwiseGap_antitone {L K P y z : ℝ} (hy : 1 ≤ y) (hz : 0 ≤ z) (hLK : L ≤ K) :
     endpointPointwiseGap K P y z ≤ endpointPointwiseGap L P y z := by
-  exact add_le_add (fullEndpointEvenExactComparisonGap_antitone_level hy hz hLK) le_rfl
+  exact add_le_add (fullEvenExactGap_antitone_level hy hz hLK) le_rfl
 
 /-- For radius y>=2, the exact even pointwise comparison applies.
 Retain the existing gap and use the generalized reciprocal and logarithmic bounds.
@@ -126,8 +126,8 @@ theorem primitive_pointwise_ne_one {q : ℕ} [NeZero q] (χ : DirichletCharacter
     exact hn ⟨p, hprime, hpy, hv⟩
   have hRecId := reciprocalSum_re_eq_of_full_prime_trivial χ (sq_nonneg y) ht
   have hRecLower :=
-    AnalyticNumberTheory.RiemannZeta.reciprocalWeightedMangoldtSum_ge_pointwise_loss hGRH.riemann
-      hypos (by linarith only [hy2])
+    AnalyticNumberTheory.RiemannZeta.reciprocalMangoldt_ge_pointwise_loss hGRH.riemann hypos
+      (by linarith only [hy2])
   rw [← hRecId] at hRecLower
   rw [Real.log_pow] at hRecLower
   norm_num only [Nat.cast_ofNat] at hRecLower

@@ -21,24 +21,19 @@ explicit local multiplicity ceiling, select a local reciprocal moment at order
 support and analytic multiplicities, expand them into repeated nodes, and apply
 the zero-padded consecutive power-sum estimate. This replaces the product of
 block scale and multiplicity by an order linear in the shared count cap. -/
-theorem exists_completedLFunction_local_consecutive_moment_of_cap {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hq : 2 ≤ q) (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1)
-    {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 1288) {c ρ : ℂ} (hcre : c.re = 1 + η)
-    (hcim : c.im = ρ.im) (hρre : |ρ.re - 1| ≤ η) (hzero : χ.completedLFunction ρ = 0)
-    (hc : χ.completedLFunction c ≠ 0) (N : ℕ)
-    (hcap :
-      Nat.ceil
-          (completedZeroLocalLogBoundConstant * (1 + 644 * η * Real.log ((q : ℝ) * (|ρ.im| + 3)))) ≤
-        N) :
+theorem exists_cappedMoment {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hq : 2 ≤ q)
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 1288)
+    {c ρ : ℂ} (hcre : c.re = 1 + η) (hcim : c.im = ρ.im) (hρre : |ρ.re - 1| ≤ η)
+    (hzero : χ.completedLFunction ρ = 0) (hc : χ.completedLFunction c ≠ 0) (N : ℕ)
+    (hcap : Nat.ceil (localLogConstant * (1 + 644 * η * Real.log ((q : ℝ) * (|ρ.im| + 3)))) ≤ N) :
     ∃ j ∈ Finset.range N,
       (1 / (8 * (160 : ℝ) ^ N)) * (1 / (3 * η)) ^ (3 * N + 1 + j) ≤
-        ‖completedLFunctionLocalReciprocalMoment χ hχ c η (3 * N + 1 + j)‖ := by
+        ‖localInverseMoment χ hχ c η (3 * N + 1 + j)‖ := by
   classical
   obtain ⟨_, _, _, _, C, _, _, _, _, _, hmass, hblock, _, hCeq⟩ :=
-    exists_completedLFunction_local_zero_block_with_remote_tail_matching_scale hq hχ hp hinv hη
-      hηsmall 2 (le_refl 2) hcre hcim hρre hzero hc
+    localBlock_remoteSame hq hχ hp hinv hη hηsmall 2 (le_refl 2) hcre hcim hρre hzero hc
   obtain ⟨s, hs, hρs, _⟩ := hblock
-  let S := (completedLFunction_local_zero_support_finite χ hχ c (80 * η)).toFinset
+  let S := (completedSupport_fin χ hχ c (80 * η)).toFinset
   let d := MeromorphicOn.divisor χ.completedLFunction (Metric.ball c |80 * η|)
   let mult := fun v : ℂ ↦ (d v).toNat
   let node := fun v : ℂ ↦ (c - v)⁻¹
@@ -72,15 +67,15 @@ theorem exists_completedLFunction_local_consecutive_moment_of_cap {q : ℕ} [NeZ
     rw [show node ρ = (c - ρ)⁻¹ by rfl, norm_inv]
     simpa only [one_div] using one_div_le_one_div_of_le (norm_pos_iff.mpr hρneq) hdist
   obtain ⟨j, hj, hbound⟩ :=
-    exists_finset_weighted_power_sum_norm_ge_consecutive_triple_block_of_cap S mult node N hcap' ρ
-      hρS hmult (1 / (3 * η)) (one_div_pos.mpr (mul_pos (by norm_num only) hη)) hnear
+    weighted_tripleCap S mult node N hcap' ρ hρS hmult (1 / (3 * η))
+      (one_div_pos.mpr (mul_pos (by norm_num only) hη)) hnear
   refine ⟨j, hj, ?_⟩
   have hcast : ∀ v ∈ S, (mult v : ℂ) = (d v : ℂ) := by
     intro v hv
     exact_mod_cast Int.toNat_of_nonneg (hnonneg v)
   have heq :
     (∑ v ∈ S, (mult v : ℂ) * node v ^ (3 * N + 1 + j)) =
-      completedLFunctionLocalReciprocalMoment χ hχ c η (3 * N + 1 + j) := by
+      localInverseMoment χ hχ c η (3 * N + 1 + j) := by
     apply Finset.sum_congr rfl
     intro v hv
     rw [hcast v hv]
@@ -90,8 +85,7 @@ theorem exists_completedLFunction_local_consecutive_moment_of_cap {q : ℕ} [NeZ
 /-- Above count cap four, the rapidly decaying geometric factor absorbs the
 linear mass prefactor. Prove the base case numerically and monotonicity by induction.
 This supplies a coarse absolute budget for the remote tail in a linear-order block. -/
-theorem scaled_geometric_mass_le_one (N : ℕ) (hN : 4 ≤ N) :
-    102400 * (N : ℝ) * (1 / 64 : ℝ) ^ N ≤ 1 := by
+theorem scaledGeom_mass_le (N : ℕ) (hN : 4 ≤ N) : 102400 * (N : ℝ) * (1 / 64 : ℝ) ^ N ≤ 1 := by
   induction N, hN using Nat.le_induction with
   | base => norm_num only
   | succ n hn ih =>
@@ -110,7 +104,7 @@ theorem scaled_geometric_mass_le_one (N : ℕ) (hN : 4 ≤ N) :
 the selector coefficient loss with the remote-radius ratio and mass prefactor.
 The product is at most one. This keeps remote absorption exponential in the cap
 rather than requiring a cap times a separate block threshold. -/
-theorem consecutive_block_remote_geometric_budget (N m : ℕ) (hN : 4 ≤ N) (hm : 3 * N ≤ m) :
+theorem blockRemote_budget (N m : ℕ) (hN : 4 ≤ N) (hm : 3 * N ≤ m) :
     (102400 * (N : ℝ)) * ((160 : ℝ) ^ N * (3 / 80 : ℝ) ^ m) ≤ 1 := by
   have hpow : (3 / 80 : ℝ) ^ m ≤ (3 / 80 : ℝ) ^ (3 * N) :=
     pow_le_pow_of_le_one (by norm_num only) (by norm_num only) hm
@@ -122,12 +116,12 @@ theorem consecutive_block_remote_geometric_budget (N m : ℕ) (hN : 4 ≤ N) (hm
       (hcombine.le.trans (pow_le_pow_left₀ (by norm_num only) hbase N))
   exact
     (mul_le_mul_of_nonneg_left hsmall (mul_nonneg (by norm_num only) (Nat.cast_nonneg N))).trans
-      (scaled_geometric_mass_le_one N hN)
+      (scaledGeom_mass_le N hN)
 
 /-- For a nonzero positive-order scale, factorial-free normalization of the
 remote-radius power leaves the scaled inverse-square mass divided by `80^(m-2)`.
 Factor the two base powers and cancel the scale. This isolates the dimensionless mass. -/
-theorem normalized_remote_radius_power (η M : ℝ) (m : ℕ) (hη : η ≠ 0) (hm : 2 ≤ m) :
+theorem scaledRemote_radius (η M : ℝ) (m : ℕ) (hη : η ≠ 0) (hm : 2 ≤ m) :
     η ^ m * ((80 * η)⁻¹ ^ (m - 2) * M) = (η ^ 2 * M) / (80 : ℝ) ^ (m - 2) := by
   have hscale : η * (80 * η)⁻¹ = (1 / 80 : ℝ) := by
     rw [mul_inv_rev, ← mul_assoc, mul_inv_cancel₀ hη, one_mul]
@@ -145,13 +139,13 @@ theorem normalized_remote_radius_power (η M : ℝ) (m : ℕ) (hη : η ≠ 0) (
 /-- For a cap at least four and power at least three times the cap, the normalized
 remote mass is at most half the consecutive local signal. Apply the geometric
 budget and clear a positive denominator. This is the scalar remote absorption step. -/
-theorem normalized_remote_mass_budget (N m : ℕ) (hN : 4 ≤ N) (hm : 3 * N ≤ m) :
+theorem scaledRemote_budget (N m : ℕ) (hN : 4 ≤ N) (hm : 3 * N ≤ m) :
     (N : ℝ) / (80 : ℝ) ^ (m - 2) ≤ 1 / (16 * (160 : ℝ) ^ N * (3 : ℝ) ^ m) := by
   have hmTwo : 2 ≤ m := (by norm_num only : 2 ≤ 3 * 4).trans ((Nat.mul_le_mul_left 3 hN).trans hm)
   have h80 : (80 : ℝ) ^ m = (80 : ℝ) ^ (m - 2) * 6400 := by
     conv_lhs => rw [← Nat.sub_add_cancel hmTwo, pow_add]
     norm_num only
-  have hsmall := consecutive_block_remote_geometric_budget N m hN hm
+  have hsmall := blockRemote_budget N m hN hm
   apply
     (le_div_iff₀
         (mul_pos (mul_pos (by norm_num only) (pow_pos (by norm_num only) _))
@@ -166,23 +160,22 @@ theorem normalized_remote_mass_budget (N m : ℕ) (hN : 4 ≤ N) (hm : 3 * N ≤
 majorant by multiplying the fixed completed-genus mass bound by `η^2`.
 The formula retains the conductor-height dependence. A natural upper bound for this
 quantity can be shared with the local multiplicity cap in a linear-order detector. -/
-noncomputable def completedGenusScaledMassUpperBound (q : ℕ) (η t : ℝ) : ℝ :=
+noncomputable def scaledGenusMassBound (q : ℕ) (η t : ℝ) : ℝ :=
   η ^ 2 *
     ((1 / η) *
-      (4 / η + completedGenusMassShiftConstant * (Real.log (4 + |t|) + 1) + Real.log q + 4 +
-        completedGenusMassCenterConstant * (Real.log 4 + 1)))
+      (4 / η + genusMassShift * (Real.log (4 + |t|) + 1) + Real.log q + 4 +
+        genusMassCenter * (Real.log 4 + 1)))
 
 /-- For a primitive nonprincipal character and a right-of-one center, if the
 explicit dimensionless mass majorant is at most `N ≥ 4`, every remote moment at
 order at least `3N` is below half the consecutive local signal after normalization.
 Use the actual radius `80η`, the unconditional inverse-square mass bound, and the
 geometric budget. No bounded scaled conductor-height assumption is used. -/
-theorem normalized_completed_remote_moment_le_linear_cap {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {η : ℝ}
-    (hη : 0 < η) (hηsmall : η ≤ 1 / 2) {c : ℂ} (t : ℝ) (hcre : c.re = 1 + η) (hcim : c.im = t)
-    (N m : ℕ) (hN : 4 ≤ N) (hm : 3 * N ≤ m) (hcap : completedGenusScaledMassUpperBound q η t ≤ N) :
-    η ^ m * ‖completedLFunctionRemoteReciprocalMoment χ c η m‖ ≤
-      1 / (16 * (160 : ℝ) ^ N * (3 : ℝ) ^ m) := by
+theorem remoteMoment_cap_le {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 2)
+    {c : ℂ} (t : ℝ) (hcre : c.re = 1 + η) (hcim : c.im = t) (N m : ℕ) (hN : 4 ≤ N) (hm : 3 * N ≤ m)
+    (hcap : scaledGenusMassBound q η t ≤ N) :
+    η ^ m * ‖remoteInverseMoment χ c η m‖ ≤ 1 / (16 * (160 : ℝ) ^ N * (3 : ℝ) ^ m) := by
   classical
   have hcRight : 1 < c.re := by
     rw [hcre]; linarith only [hη]
@@ -192,47 +185,45 @@ theorem normalized_completed_remote_moment_le_linear_cap {q : ℕ} [NeZero q] (h
         Complex.ofReal_im, zero_mul, mul_zero, sub_zero, add_zero] using hcre
     · simpa only [Complex.add_im, Complex.ofReal_re, Complex.mul_im, Complex.I_re, Complex.I_im,
         Complex.ofReal_im, zero_mul, zero_add, one_mul] using hcim
-  obtain ⟨A, B, hA, hB, _, _, hglobal⟩ :=
-    exists_completed_genus_inverse_square_mass_le_uniform_bound hq hχ hp hinv hη hηsmall t
+  obtain ⟨A, B, hA, hB, _, _, hglobal⟩ := exists_genusMassBound hq hχ hp hinv hη hηsmall t
   let M :=
     (1 / η) *
-      (4 / η + completedGenusMassShiftConstant * (Real.log (4 + |t|) + 1) + Real.log q + 4 +
-        completedGenusMassCenterConstant * (Real.log 4 + 1))
+      (4 / η + genusMassShift * (Real.log (4 + |t|) + 1) + Real.log q + 4 +
+        genusMassCenter * (Real.log 4 + 1))
   have hglobal' :
     ∑' v : ℂ, (MeromorphicOn.divisor χ.completedLFunction Set.univ v : ℝ) * ‖(c - v)⁻¹‖ ^ 2 ≤
       M := by
     simpa only [M, hcenter, hA, hB] using hglobal
   let S : Set ℂ := {v | 80 * η ≤ ‖c - v‖}
-  have hsubset :=
-    (completed_genus_inverse_square_subset_mass_le hq hχ hp hinv S hcRight).trans hglobal'
+  have hsubset := (genusSubset_mass_le hq hχ hp hinv S hcRight).trans hglobal'
   have hremote : ∀ v ∈ S, 8 * (10 * η) ≤ ‖c - v‖ := by
     intro v hv
     simpa only [S, Set.mem_ofPred_eq, show (8 : ℝ) * (10 * η) = 80 * η by ring] using hv
   have hmTwo : 2 ≤ m := (by norm_num only : 2 ≤ 3 * 4).trans ((Nat.mul_le_mul_left 3 hN).trans hm)
   have htail :=
-    (norm_tsum_completed_genus_remote_reciprocal_power_le hq hχ hp hinv S hcRight
-        (mul_pos (by norm_num only : (0 : ℝ) < 10) hη) hremote m hmTwo).2
-  have htail' : ‖completedLFunctionRemoteReciprocalMoment χ c η m‖ ≤ (80 * η)⁻¹ ^ (m - 2) * M := by
+    (remoteSum_norm_le hq hχ hp hinv S hcRight (mul_pos (by norm_num only : (0 : ℝ) < 10) hη)
+        hremote m hmTwo).2
+  have htail' : ‖remoteInverseMoment χ c η m‖ ≤ (80 * η)⁻¹ ^ (m - 2) * M := by
     have hpow : 0 ≤ (8 * (10 * η))⁻¹ ^ (m - 2) :=
       pow_nonneg
         (inv_nonneg.mpr (mul_nonneg (by norm_num only) (mul_nonneg (by norm_num only) hη.le)))
         (m - 2)
     have h := htail.trans (mul_le_mul_of_nonneg_left hsubset hpow)
-    simpa only [completedLFunctionRemoteReciprocalMoment, S, Set.mem_ofPred_eq,
+    simpa only [remoteInverseMoment, S, Set.mem_ofPred_eq,
       show (8 : ℝ) * (10 * η) = 80 * η by ring] using h
   have hscaled := mul_le_mul_of_nonneg_left htail' (pow_nonneg hη.le m)
-  rw [normalized_remote_radius_power η M m (ne_of_gt hη) hmTwo] at hscaled
+  rw [scaledRemote_radius η M m (ne_of_gt hη) hmTwo] at hscaled
   exact
     (hscaled.trans (div_le_div_of_nonneg_right hcap (pow_nonneg (by norm_num only) _))).trans
-      (normalized_remote_mass_budget N m hN hm)
+      (scaledRemote_budget N m hN hm)
 
 /-- For nonzero scale, normalize the consecutive local reciprocal-power lower
 bound to `1/(8 * 160^N * 3^m)`. Reuse factorial cancellation at order zero and
 combine denominators. This aligns the local and remote signals. -/
-theorem normalized_local_consecutive_signal (η : ℝ) (N m : ℕ) (hη : η ≠ 0) :
+theorem scaledLocal_signal (η : ℝ) (N m : ℕ) (hη : η ≠ 0) :
     η ^ m * ((1 / (8 * (160 : ℝ) ^ N)) * (1 / (3 * η)) ^ m) =
       1 / (8 * (160 : ℝ) ^ N * (3 : ℝ) ^ m) := by
-  have h := factorial_normalized_reciprocal_signal η (1 / (8 * (160 : ℝ) ^ N)) 0 m hη
+  have h := normalized_invSignal η (1 / (8 * (160 : ℝ) ^ N)) 0 m hη
   simp only [Nat.factorial_zero, Nat.cast_one, div_one, mul_one] at h
   rw [h, div_pow, one_pow, div_mul_div_comm, one_mul]
 
@@ -242,16 +233,13 @@ mass gives a completed logarithmic-derivative detector with `3N ≤ n < 4N` and
 normalized signal at least `1/(16 * 160^N * 3^(n+1))`. Combine the consecutive
 local moment with the radius-sensitive remote estimate and the exact derivative
 factorization. This removes the product order loss from the general-scale detector. -/
-theorem exists_completedLFunction_linear_order_detector_of_cap {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hq : 2 ≤ q) (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1)
-    {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 1288) {c ρ : ℂ} (hcre : c.re = 1 + η)
-    (hcim : c.im = ρ.im) (hρre : |ρ.re - 1| ≤ η) (hzero : χ.completedLFunction ρ = 0)
-    (hc : χ.completedLFunction c ≠ 0) (N : ℕ) (hN : 4 ≤ N)
+theorem completed_linearCap {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hq : 2 ≤ q)
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) (hηsmall : η ≤ 1 / 1288)
+    {c ρ : ℂ} (hcre : c.re = 1 + η) (hcim : c.im = ρ.im) (hρre : |ρ.re - 1| ≤ η)
+    (hzero : χ.completedLFunction ρ = 0) (hc : χ.completedLFunction c ≠ 0) (N : ℕ) (hN : 4 ≤ N)
     (hlocalcap :
-      Nat.ceil
-          (completedZeroLocalLogBoundConstant * (1 + 644 * η * Real.log ((q : ℝ) * (|ρ.im| + 3)))) ≤
-        N)
-    (hmasscap : completedGenusScaledMassUpperBound q η ρ.im ≤ N) :
+      Nat.ceil (localLogConstant * (1 + 644 * η * Real.log ((q : ℝ) * (|ρ.im| + 3)))) ≤ N)
+    (hmasscap : scaledGenusMassBound q η ρ.im ≤ N) :
     ∃ n : ℕ,
       3 * N ≤ n ∧
         n + 1 ≤ 4 * N ∧
@@ -259,8 +247,7 @@ theorem exists_completedLFunction_linear_order_detector_of_cap {q : ℕ} [NeZero
           (η ^ (n + 1) / (n.factorial : ℝ)) *
             ‖iteratedDeriv n (fun z : ℂ ↦ logDeriv χ.completedLFunction z) c‖ := by
   obtain ⟨j, hj, hlocal⟩ :=
-    exists_completedLFunction_local_consecutive_moment_of_cap hq hχ hp hinv hη hηsmall hcre hcim
-      hρre hzero hc N hlocalcap
+    exists_cappedMoment hq hχ hp hinv hη hηsmall hcre hcim hρre hzero hc N hlocalcap
   let n := 3 * N + j
   have hnm : n + 1 = 3 * N + 1 + j := by
     dsimp only [n]; ring
@@ -277,12 +264,12 @@ theorem exists_completedLFunction_linear_order_detector_of_cap {q : ℕ} [NeZero
   have hm : 3 * N ≤ n + 1 := hnlow.trans (Nat.le_succ n)
   rw [← hnm] at hlocal
   have hlocal' := mul_le_mul_of_nonneg_left hlocal (pow_nonneg hη.le (n + 1))
-  rw [normalized_local_consecutive_signal η N (n + 1) (ne_of_gt hη)] at hlocal'
+  rw [scaledLocal_signal η N (n + 1) (ne_of_gt hη)] at hlocal'
   have hremote :=
-    normalized_completed_remote_moment_le_linear_cap hq hχ hp hinv hη (by linarith only [hηsmall])
-      ρ.im hcre hcim N (n + 1) hN hm hmasscap
-  let L := completedLFunctionLocalReciprocalMoment χ hχ c η (n + 1)
-  let R := completedLFunctionRemoteReciprocalMoment χ c η (n + 1)
+    remoteMoment_cap_le hq hχ hp hinv hη (by linarith only [hηsmall]) ρ.im hcre hcim N (n + 1) hN hm
+      hmasscap
+  let L := localInverseMoment χ hχ c η (n + 1)
+  let R := remoteInverseMoment χ c η (n + 1)
   have htriangle : ‖L‖ ≤ ‖L + R‖ + ‖R‖ := by
     have h := norm_sub_le (L + R) R
     simpa only [add_sub_cancel_right] using h
@@ -300,9 +287,8 @@ theorem exists_completedLFunction_linear_order_detector_of_cap {q : ℕ} [NeZero
     linarith only [hlocal', hremote, htriangle']
   have hcRight : 1 < c.re := by
     rw [hcre]; linarith only [hη]
-  have hnorm :=
-    norm_completedLFunction_logDeriv_eq_local_remote_moment hq hχ hp hinv hη hcRight n hnpos
-  rw [completedLFunction_logDeriv_iteratedDerivWithin_eq hχ hcRight hc n] at hnorm
+  have hnorm := completed_iter_norm hq hχ hp hinv hη hcRight n hnpos
+  rw [completed_within_eq hχ hcRight hc n] at hnorm
   refine ⟨n, hnlow, hnupper, ?_⟩
   rw [hnorm, ← mul_assoc, div_mul_cancel₀ _ (Nat.cast_ne_zero.mpr (Nat.factorial_ne_zero n))]
   exact hcombined
@@ -311,8 +297,8 @@ theorem exists_completedLFunction_linear_order_detector_of_cap {q : ℕ} [NeZero
 at least `3N` absorbs the gamma correction into half the linear-cap signal.
 Compare its geometric ratio with the radius-sensitive remote-tail budget.
 This preserves a linear order envelope when transferring to the ordinary L-function. -/
-theorem normalized_gamma_le_linear_cap_signal (η G H : ℝ) (N n : ℕ) (hη : 0 ≤ η)
-    (hηsmall : 12 * η ≤ 3 / 80) (hcap : η * G * H ≤ N) (hN : 4 ≤ N) (hn : 3 * N ≤ n) :
+theorem gamma_linearSignal_le (η G H : ℝ) (N n : ℕ) (hη : 0 ≤ η) (hηsmall : 12 * η ≤ 3 / 80)
+    (hcap : η * G * H ≤ N) (hN : 4 ≤ N) (hn : 3 * N ≤ n) :
     η * G * H * (4 * η) ^ n ≤ 1 / (32 * (160 : ℝ) ^ N * (3 : ℝ) ^ (n + 1)) := by
   have hpow :=
     mul_le_mul_of_nonneg_left (pow_le_pow_left₀ (mul_nonneg (by norm_num only) hη) hηsmall n)
@@ -324,7 +310,7 @@ theorem normalized_gamma_le_linear_cap_signal (η G H : ℝ) (N n : ℕ) (hη : 
           (mul_nonneg (pow_nonneg (by norm_num only) N)
             (pow_nonneg (mul_nonneg (by norm_num only) hη) n))
           (mul_nonneg (by norm_num only) (Nat.cast_nonneg N))).trans
-      (consecutive_block_remote_geometric_budget N n hN hn)
+      (blockRemote_budget N n hN hn)
   apply
     (le_div_iff₀
         (mul_pos (mul_pos (by norm_num only) (pow_pos (by norm_num only) _))
@@ -350,7 +336,7 @@ gamma growth yields an ordinary logarithmic-derivative detector with `3N ≤ n <
 and normalized signal at least `1/(32 * 160^N * 3^(n+1))`. Apply the completed
 linear-order detector and subtract the normalized gamma correction. The remaining
 cap conditions are explicit numerical bounds, with no unproved analytic input. -/
-theorem exists_ordinary_LFunction_linear_order_detector_of_cap :
+theorem ordinary_linearCap :
     ∃ G : ℝ,
       0 ≤ G ∧
         ∀ {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q},
@@ -370,10 +356,9 @@ theorem exists_ordinary_LFunction_linear_order_detector_of_cap :
                     ∀ N : ℕ,
                       4 ≤ N →
                         Nat.ceil
-                            (completedZeroLocalLogBoundConstant *
-                              (1 + 644 * η * Real.log ((q : ℝ) * (|ρ.im| + 3)))) ≤
+                            (localLogConstant * (1 + 644 * η * Real.log ((q : ℝ) * (|ρ.im| + 3)))) ≤
                           N →
-                        completedGenusScaledMassUpperBound q η ρ.im ≤ N →
+                        scaledGenusMassBound q η ρ.im ≤ N →
                         η * G * (Real.log (4 * |ρ.im| + 4) + 1) ≤ N →
                         ∃ n : ℕ,
                           3 * N ≤ n ∧
@@ -381,16 +366,15 @@ theorem exists_ordinary_LFunction_linear_order_detector_of_cap :
                             1 / (32 * (160 : ℝ) ^ N * (3 : ℝ) ^ (n + 1)) ≤
                               (η ^ (n + 1) / (n.factorial : ℝ)) *
                                 ‖iteratedDeriv n (fun z : ℂ ↦ logDeriv χ.LFunction z) c‖ := by
-  obtain ⟨G, hG, hgamma⟩ := exists_uniform_gamma_subtraction_for_ordinary_LFunction_derivative_all
+  obtain ⟨G, hG, hgamma⟩ := L_logDeriv_all_deriv_sub_gamma
   refine ⟨G, hG, ?_⟩
   intro q _ χ hq hχ hp hinv η hη hηsmall c ρ hcre hcim hρre hzero hc N hN hlocalcap hmasscap
     hgammacap
   obtain ⟨n, hnlow, hnupper, hcompleted⟩ :=
-    exists_completedLFunction_linear_order_detector_of_cap hq hχ hp hinv hη hηsmall hcre hcim hρre
-      hzero hc N hN hlocalcap hmasscap
+    completed_linearCap hq hχ hp hinv hη hηsmall hcre hcim hρre hzero hc N hN hlocalcap hmasscap
   have hbudget :=
-    normalized_gamma_le_linear_cap_signal η G (Real.log (4 * |ρ.im| + 4) + 1) N n hη.le
-      (by linarith only [hηsmall]) hgammacap hN hnlow
+    gamma_linearSignal_le η G (Real.log (4 * |ρ.im| + 4) + 1) N n hη.le (by linarith only [hηsmall])
+      hgammacap hN hnlow
   have hcRight : 1 < c.re := by
     rw [hcre]; linarith only [hη]
   have hcHi : c.re ≤ 5 / 4 := by
@@ -401,7 +385,7 @@ theorem exists_ordinary_LFunction_linear_order_detector_of_cap :
   have hscaled :=
     mul_le_mul_of_nonneg_left hordinary
       (div_nonneg (pow_nonneg hη.le (n + 1)) (Nat.cast_nonneg n.factorial))
-  rw [mul_sub, factorial_normalized_gamma_correction] at hscaled
+  rw [mul_sub, normalized_gamma] at hscaled
   have hsignal :
     1 / (16 * (160 : ℝ) ^ N * (3 : ℝ) ^ (n + 1)) =
       2 * (1 / (32 * (160 : ℝ) ^ N * (3 : ℝ) ^ (n + 1))) := by
@@ -415,20 +399,19 @@ theorem exists_ordinary_LFunction_linear_order_detector_of_cap :
 
 /-- The fixed shifted genus-mass constant is positive by its defining uniform
 logarithmic-derivative bound. This permits scaling conductor-height comparisons. -/
-theorem completedGenusMassShiftConstant_pos : 0 < completedGenusMassShiftConstant :=
-  (Classical.choose_spec exists_uniform_norm_completed_logDeriv_small_shift_bound).1
+theorem genusMassShift_pos : 0 < genusMassShift :=
+  (Classical.choose_spec uniform_completedLogDeriv_smallShift).1
 
 /-- The fixed center genus-mass constant is positive by its defining center bound.
 This permits scaling the dimensionless mass estimate. -/
-theorem completedGenusMassCenterConstant_pos : 0 < completedGenusMassCenterConstant :=
+theorem genusMassCenter_pos : 0 < genusMassCenter :=
   (Classical.choose_spec
-      (exists_norm_completed_logDeriv_small_shift_bound (r := 1) (by norm_num only)
-        (by norm_num only))).1
+      (completedLogDeriv_smallShift_bound (r := 1) (by norm_num only) (by norm_num only))).1
 
 /-- For conductor at least two, compare the conductor, local height, and gamma
 height logarithms with `log(q(|t|+3))`. Use positive-argument monotonicity and the
 factor-four logarithm identity. This aligns all detector budgets to one scale. -/
-theorem conductor_height_log_comparisons (q : ℕ) (hq : 2 ≤ q) (t : ℝ) :
+theorem conductorHeight_logs (q : ℕ) (hq : 2 ≤ q) (t : ℝ) :
     0 ≤ Real.log ((q : ℝ) * (|t| + 3)) ∧
       Real.log (q : ℝ) ≤ Real.log ((q : ℝ) * (|t| + 3)) ∧
       Real.log (4 + |t|) ≤ Real.log ((q : ℝ) * (|t| + 3)) ∧
@@ -455,20 +438,17 @@ theorem conductor_height_log_comparisons (q : ℕ) (hq : 2 ≤ q) (t : ℝ) :
 bounded by an absolute affine function of `η log(q(|t|+3))`. Cancel the shift and
 compare the height logarithms. This makes the remote-tail count cap linear in the
 same scale as the local multiplicity cap. -/
-theorem completedGenusScaledMassUpperBound_le_affine (q : ℕ) (hq : 2 ≤ q) (η t : ℝ) (hη : 0 < η)
-    (hηone : η ≤ 1) :
-    completedGenusScaledMassUpperBound q η t ≤
-      8 + completedGenusMassShiftConstant + completedGenusMassCenterConstant * (Real.log 4 + 1) +
-        (completedGenusMassShiftConstant + 1) * (η * Real.log ((q : ℝ) * (|t| + 3))) := by
-  obtain ⟨_, hqlog, htlog, _⟩ := conductor_height_log_comparisons q hq t
+theorem scaledGenus_affine_le (q : ℕ) (hq : 2 ≤ q) (η t : ℝ) (hη : 0 < η) (hηone : η ≤ 1) :
+    scaledGenusMassBound q η t ≤
+      8 + genusMassShift + genusMassCenter * (Real.log 4 + 1) +
+        (genusMassShift + 1) * (η * Real.log ((q : ℝ) * (|t| + 3))) := by
+  obtain ⟨_, hqlog, htlog, _⟩ := conductorHeight_logs q hq t
   have hqscale := mul_le_mul_of_nonneg_left hqlog hη.le
   have htscale := mul_le_mul_of_nonneg_left htlog hη.le
-  have hA :=
-    mul_le_mul_of_nonneg_left (add_le_add htscale hηone) completedGenusMassShiftConstant_pos.le
+  have hA := mul_le_mul_of_nonneg_left (add_le_add htscale hηone) genusMassShift_pos.le
   have hlog4 : 0 ≤ Real.log 4 + 1 := add_nonneg (Real.log_nonneg (by norm_num only)) zero_le_one
   have hB :=
-    mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right hηone hlog4)
-      completedGenusMassCenterConstant_pos.le
+    mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_right hηone hlog4) genusMassCenter_pos.le
   have hcancel : η ^ 2 * (1 / η) = η := by
     rw [pow_two, one_div, mul_assoc, mul_inv_cancel₀ (ne_of_gt hη), mul_one]
   have hfour : η * (4 / η) = 4 := by
@@ -476,15 +456,13 @@ theorem completedGenusScaledMassUpperBound_le_affine (q : ℕ) (hq : 2 ≤ q) (�
       _ = 4 * (η * η⁻¹) := by
         rw [div_eq_mul_inv]; ring
       _ = _ := by rw [mul_inv_cancel₀ (ne_of_gt hη), mul_one]
-  rw [completedGenusScaledMassUpperBound, ← mul_assoc, hcancel]
+  rw [scaledGenusMassBound, ← mul_assoc, hcancel]
   have hidentity :
     η *
-        (4 / η + completedGenusMassShiftConstant * (Real.log (4 + |t|) + 1) + Real.log q + 4 +
-          completedGenusMassCenterConstant * (Real.log 4 + 1)) =
-      η * (4 / η) + completedGenusMassShiftConstant * (η * Real.log (4 + |t|) + η) +
-        η * Real.log q +
-        4 * η +
-        completedGenusMassCenterConstant * (η * (Real.log 4 + 1)) := by
+        (4 / η + genusMassShift * (Real.log (4 + |t|) + 1) + Real.log q + 4 +
+          genusMassCenter * (Real.log 4 + 1)) =
+      η * (4 / η) + genusMassShift * (η * Real.log (4 + |t|) + η) + η * Real.log q + 4 * η +
+        genusMassCenter * (η * (Real.log 4 + 1)) := by
     ring
   rw [hidentity, hfour]
   nlinarith only [hA, hB, hqscale, hηone]
@@ -493,11 +471,11 @@ theorem completedGenusScaledMassUpperBound_le_affine (q : ℕ) (hq : 2 ≤ q) (�
 height factor is at most an absolute coefficient times `1+η log(q(|t|+3))`.
 Compare the gamma height logarithm with the conductor-height logarithm.
 This supplies the third numerical budget for the linear-order detector. -/
-theorem scaled_gamma_growth_le_linear_scale (q : ℕ) (hq : 2 ≤ q) (η t G : ℝ) (hη : 0 ≤ η)
-    (hηone : η ≤ 1) (hG : 0 ≤ G) :
+theorem scaledGamma_linear_le (q : ℕ) (hq : 2 ≤ q) (η t G : ℝ) (hη : 0 ≤ η) (hηone : η ≤ 1)
+    (hG : 0 ≤ G) :
     η * G * (Real.log (4 * |t| + 4) + 1) ≤
       (G * (Real.log 4 + 2)) * (1 + η * Real.log ((q : ℝ) * (|t| + 3))) := by
-  obtain ⟨hXlog, _, _, hlog⟩ := conductor_height_log_comparisons q hq t
+  obtain ⟨hXlog, _, _, hlog⟩ := conductorHeight_logs q hq t
   have hlog4 : 0 ≤ Real.log 4 := Real.log_nonneg (by norm_num only)
   have hscale := mul_le_mul_of_nonneg_left (add_le_add_right hlog 1) hη
   have hconst := mul_le_mul_of_nonneg_right hηone (add_nonneg hlog4 zero_le_one)
@@ -513,10 +491,8 @@ theorem scaled_gamma_growth_le_linear_scale (q : ℕ) (hq : 2 ≤ q) (η t G : �
 and gamma-growth coefficients with the minimum cap four. Multiplying this
 coefficient by `1+η log(q(|t|+3))` and taking a ceiling yields one shared natural
 cap. This discharges all numerical inputs of the linear-order detector. -/
-noncomputable def linearOrderDetectorCapCoefficient (G : ℝ) : ℝ :=
-  4 + 644 * completedZeroLocalLogBoundConstant +
-    (9 + 2 * completedGenusMassShiftConstant +
-      completedGenusMassCenterConstant * (Real.log 4 + 1)) +
+noncomputable def linearDetectorCoeff (G : ℝ) : ℝ :=
+  4 + 644 * localLogConstant + (9 + 2 * genusMassShift + genusMassCenter * (Real.log 4 + 1)) +
     G * (Real.log 4 + 2)
 
 /-- For conductor at least two, positive shift at most one, and nonnegative gamma
@@ -524,76 +500,62 @@ constant, the explicit ceiling cap dominates four, local multiplicity, scaled
 genus mass, and scaled gamma growth. Its size is bounded linearly by the same
 conductor-height scale. Apply the three budget comparisons and ceiling bounds.
 This removes the numerical cap assumptions from the actual zero detector. -/
-theorem linear_order_detector_numeric_caps (q : ℕ) (hq : 2 ≤ q) (η t G : ℝ) (hη : 0 < η)
-    (hηone : η ≤ 1) (hG : 0 ≤ G) :
-    let D := linearOrderDetectorCapCoefficient G
+theorem linearDetector_caps (q : ℕ) (hq : 2 ≤ q) (η t G : ℝ) (hη : 0 < η) (hηone : η ≤ 1)
+    (hG : 0 ≤ G) :
+    let D := linearDetectorCoeff G
     let L := 1 + η * Real.log ((q : ℝ) * (|t| + 3))
     let N := Nat.ceil (D * L)
     4 ≤ N ∧
-      Nat.ceil
-          (completedZeroLocalLogBoundConstant * (1 + 644 * η * Real.log ((q : ℝ) * (|t| + 3)))) ≤
-        N ∧
-      completedGenusScaledMassUpperBound q η t ≤ N ∧
+      Nat.ceil (localLogConstant * (1 + 644 * η * Real.log ((q : ℝ) * (|t| + 3)))) ≤ N ∧
+      scaledGenusMassBound q η t ≤ N ∧
       η * G * (Real.log (4 * |t| + 4) + 1) ≤ N ∧ (N : ℝ) ≤ (D + 1) * L := by
   dsimp only
   let S := η * Real.log ((q : ℝ) * (|t| + 3))
-  let D := linearOrderDetectorCapCoefficient G
-  let B :=
-    9 + 2 * completedGenusMassShiftConstant + completedGenusMassCenterConstant * (Real.log 4 + 1)
-  have hS : 0 ≤ S := mul_nonneg hη.le (conductor_height_log_comparisons q hq t).1
+  let D := linearDetectorCoeff G
+  let B := 9 + 2 * genusMassShift + genusMassCenter * (Real.log 4 + 1)
+  have hS : 0 ≤ S := mul_nonneg hη.le (conductorHeight_logs q hq t).1
   have hL : 1 ≤ 1 + S := le_add_of_nonneg_right hS
   have hlog4 : 0 ≤ Real.log 4 := Real.log_nonneg (by norm_num only)
-  have hBterm : 0 ≤ completedGenusMassCenterConstant * (Real.log 4 + 1) :=
-    mul_nonneg completedGenusMassCenterConstant_pos.le (add_nonneg hlog4 zero_le_one)
+  have hBterm : 0 ≤ genusMassCenter * (Real.log 4 + 1) :=
+    mul_nonneg genusMassCenter_pos.le (add_nonneg hlog4 zero_le_one)
   have hGterm : 0 ≤ G * (Real.log 4 + 2) := mul_nonneg hG (add_nonneg hlog4 (by norm_num only))
   have hDfour : 4 ≤ D := by
-    dsimp only [D, linearOrderDetectorCapCoefficient]
-    linarith only [completedZeroLocalLogBoundConstant_pos, completedGenusMassShiftConstant_pos,
-      hBterm, hGterm]
-  have hDC : 644 * completedZeroLocalLogBoundConstant ≤ D := by
-    dsimp only [D, linearOrderDetectorCapCoefficient]
-    linarith only [completedGenusMassShiftConstant_pos, hBterm, hGterm]
+    dsimp only [D, linearDetectorCoeff]
+    linarith only [localLogConstant_pos, genusMassShift_pos, hBterm, hGterm]
+  have hDC : 644 * localLogConstant ≤ D := by
+    dsimp only [D, linearDetectorCoeff]
+    linarith only [genusMassShift_pos, hBterm, hGterm]
   have hDB : B ≤ D := by
-    dsimp only [D, B, linearOrderDetectorCapCoefficient]
-    linarith only [completedZeroLocalLogBoundConstant_pos, hGterm]
+    dsimp only [D, B, linearDetectorCoeff]
+    linarith only [localLogConstant_pos, hGterm]
   have hDG : G * (Real.log 4 + 2) ≤ D := by
-    dsimp only [D, linearOrderDetectorCapCoefficient]
-    linarith only [completedZeroLocalLogBoundConstant_pos, completedGenusMassShiftConstant_pos,
-      hBterm]
+    dsimp only [D, linearDetectorCoeff]
+    linarith only [localLogConstant_pos, genusMassShift_pos, hBterm]
   have hD : 0 ≤ D := (by norm_num only : (0 : ℝ) ≤ 4).trans hDfour
   have hceil := Nat.le_ceil (D * (1 + S))
   have hNfour : 4 ≤ Nat.ceil (D * (1 + S)) := by
     have hfour : (4 : ℝ) ≤ (Nat.ceil (D * (1 + S)) : ℝ) :=
       (hDfour.trans (le_mul_of_one_le_right hD hL)).trans hceil
     exact_mod_cast hfour
-  have hlocal : completedZeroLocalLogBoundConstant * (1 + 644 * S) ≤ D * (1 + S) := by
+  have hlocal : localLogConstant * (1 + 644 * S) ≤ D * (1 + S) := by
     have h := mul_le_mul_of_nonneg_right hDC (add_nonneg zero_le_one hS)
-    nlinarith only [h, completedZeroLocalLogBoundConstant_pos]
-  have haff := completedGenusScaledMassUpperBound_le_affine q hq η t hη hηone
-  have hmasslinear : completedGenusScaledMassUpperBound q η t ≤ B * (1 + S) := by
-    have hprod :
-      0 ≤
-        (8 + completedGenusMassShiftConstant +
-            completedGenusMassCenterConstant * (Real.log 4 + 1)) *
-          S :=
-      mul_nonneg
-        (add_nonneg (add_nonneg (by norm_num only) completedGenusMassShiftConstant_pos.le) hBterm)
-        hS
+    nlinarith only [h, localLogConstant_pos]
+  have haff := scaledGenus_affine_le q hq η t hη hηone
+  have hmasslinear : scaledGenusMassBound q η t ≤ B * (1 + S) := by
+    have hprod : 0 ≤ (8 + genusMassShift + genusMassCenter * (Real.log 4 + 1)) * S :=
+      mul_nonneg (add_nonneg (add_nonneg (by norm_num only) genusMassShift_pos.le) hBterm) hS
     dsimp only [B]
     change
-      _ ≤
-        8 + completedGenusMassShiftConstant + completedGenusMassCenterConstant * (Real.log 4 + 1) +
-          (completedGenusMassShiftConstant + 1) * S at haff
-    nlinarith only [haff, hprod, completedGenusMassShiftConstant_pos]
+      _ ≤ 8 + genusMassShift + genusMassCenter * (Real.log 4 + 1) + (genusMassShift + 1) * S at haff
+    nlinarith only [haff, hprod, genusMassShift_pos]
   have hmass :=
     hmasslinear.trans ((mul_le_mul_of_nonneg_right hDB (add_nonneg zero_le_one hS)).trans hceil)
   have hgamma :=
-    (scaled_gamma_growth_le_linear_scale q hq η t G hη.le hηone hG).trans
+    (scaledGamma_linear_le q hq η t G hη.le hηone hG).trans
       ((mul_le_mul_of_nonneg_right hDG (add_nonneg zero_le_one hS)).trans hceil)
   have hupper := (Nat.ceil_lt_add_one (mul_nonneg hD (add_nonneg zero_le_one hS))).le
   have hlocal' :
-    completedZeroLocalLogBoundConstant * (1 + 644 * η * Real.log ((q : ℝ) * (|t| + 3))) ≤
-      D * (1 + S) := by
+    localLogConstant * (1 + 644 * η * Real.log ((q : ℝ) * (|t| + 3))) ≤ D * (1 + S) := by
     simpa only [S, mul_assoc] using hlocal
   refine ⟨hNfour, Nat.ceil_le_ceil hlocal', hmass, hgamma, ?_⟩
   nlinarith only [hupper, hL]
@@ -603,7 +565,7 @@ zero at an admissibly small positive shift has a count cap bounded by that
 coefficient times `1+η log(q(|t|+3))`, and an ordinary logarithmic-derivative signal
 at order `3N` through `4N-1`. Construct the explicit ceiling cap and apply the
 linear-order detector. No unproved analytic or numerical cap hypothesis remains. -/
-theorem exists_ordinary_LFunction_linear_scale_detector :
+theorem ordinary_linearScale :
     ∃ D : ℝ,
       0 < D ∧
         ∀ {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q},
@@ -628,20 +590,19 @@ theorem exists_ordinary_LFunction_linear_scale_detector :
                         1 / (32 * (160 : ℝ) ^ N * (3 : ℝ) ^ (n + 1)) ≤
                           (η ^ (n + 1) / (n.factorial : ℝ)) *
                             ‖iteratedDeriv n (fun z : ℂ ↦ logDeriv χ.LFunction z) c‖ := by
-  obtain ⟨G, hG, hdetector⟩ := exists_ordinary_LFunction_linear_order_detector_of_cap
-  let D := linearOrderDetectorCapCoefficient G
+  obtain ⟨G, hG, hdetector⟩ := ordinary_linearCap
+  let D := linearDetectorCoeff G
   have hD : 0 < D + 1 := by
     have hlog : 0 ≤ Real.log 4 := Real.log_nonneg (by norm_num only)
-    have hB := mul_nonneg completedGenusMassCenterConstant_pos.le (add_nonneg hlog zero_le_one)
+    have hB := mul_nonneg genusMassCenter_pos.le (add_nonneg hlog zero_le_one)
     have hG' := mul_nonneg hG (add_nonneg hlog (by norm_num only : (0 : ℝ) ≤ 2))
-    dsimp only [D, linearOrderDetectorCapCoefficient]
-    linarith only [completedZeroLocalLogBoundConstant_pos, completedGenusMassShiftConstant_pos, hB,
-      hG']
+    dsimp only [D, linearDetectorCoeff]
+    linarith only [localLogConstant_pos, genusMassShift_pos, hB, hG']
   refine ⟨D + 1, hD, ?_⟩
   intro q _ χ hq hχ hp hinv η hη hηsmall c ρ hcre hcim hρre hzero hc
   let N := Nat.ceil (D * (1 + η * Real.log ((q : ℝ) * (|ρ.im| + 3))))
   obtain ⟨hN, hlocalcap, hmasscap, hgammacap, hNupper⟩ :=
-    linear_order_detector_numeric_caps q hq η ρ.im G hη (hηsmall.trans (by norm_num only)) hG
+    linearDetector_caps q hq η ρ.im G hη (hηsmall.trans (by norm_num only)) hG
   obtain ⟨n, hnlow, hnupper, hsignal⟩ :=
     hdetector hq hχ hp hinv hη hηsmall hcre hcim hρre hzero hc N hN hlocalcap hmasscap hgammacap
   exact ⟨N, n, hN, hNupper, hnlow, hnupper, hsignal⟩
@@ -649,7 +610,7 @@ theorem exists_ordinary_LFunction_linear_scale_detector :
 /-- For a positive count cap and order at most four times it, the explicit linear
 cap signal is at least `exp(-log(414720) N)`. Bound the denominator by one absolute
 base to the cap power. This converts the contour constants to an exponential loss. -/
-theorem linear_cap_signal_ge_exp_neg (N m : ℕ) (hN : 1 ≤ N) (hm : m ≤ 4 * N) :
+theorem linearSignal_exp_ge (N m : ℕ) (hN : 1 ≤ N) (hm : m ≤ 4 * N) :
     Real.exp (-(Real.log 414720 * (N : ℝ))) ≤ 1 / (32 * (160 : ℝ) ^ N * (3 : ℝ) ^ m) := by
   have h32 : (32 : ℝ) ≤ (32 : ℝ) ^ N := by
     simpa only [pow_one] using pow_le_pow_right₀ (by norm_num only : (1 : ℝ) ≤ 32) hN
@@ -681,7 +642,7 @@ absolute multiple of `1+η log(q(|t|+3))`, and the signal is at least the expone
 of minus another absolute multiple of that scale. Use the explicit cap construction
 and exponential denominator bound. This removes the bounded scaled-height and
 product-order losses before the finite high-prime detector is constructed. -/
-theorem exists_ordinary_LFunction_general_scale_exponential_detector :
+theorem ordinary_scaleExp :
     ∃ A D : ℝ,
       0 < A ∧
         0 < D ∧
@@ -705,7 +666,7 @@ theorem exists_ordinary_LFunction_general_scale_exponential_detector :
                         Real.exp (-(A * (1 + η * Real.log ((q : ℝ) * (|ρ.im| + 3))))) ≤
                           (η ^ (n + 1) / (n.factorial : ℝ)) *
                             ‖iteratedDeriv n (fun z : ℂ ↦ logDeriv χ.LFunction z) c‖ := by
-  obtain ⟨D, hD, hdetector⟩ := exists_ordinary_LFunction_linear_scale_detector
+  obtain ⟨D, hD, hdetector⟩ := ordinary_linearScale
   have hlog : 0 < Real.log 414720 := Real.log_pos (by norm_num only)
   refine ⟨Real.log 414720 * D, 4 * D, mul_pos hlog hD, mul_pos (by norm_num only) hD, ?_⟩
   intro q _ χ hq hχ hp hinv η hη hηsmall c ρ hcre hcim hρre hzero hc
@@ -723,8 +684,7 @@ theorem exists_ordinary_LFunction_general_scale_exponential_detector :
   refine ⟨n, hnpos, ?_, ?_⟩
   · nlinarith only [hnreal, hNupper]
   · exact
-      (hexp.trans
-            (linear_cap_signal_ge_exp_neg N (n + 1) ((by decide : 1 ≤ 4).trans hN) hnupper)).trans
+      (hexp.trans (linearSignal_exp_ge N (n + 1) ((by decide : 1 ≤ 4).trans hN) hnupper)).trans
         hsignal
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LogFreeDensity

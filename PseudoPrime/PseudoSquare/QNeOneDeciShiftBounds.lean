@@ -37,16 +37,14 @@ theorem qNeOneAnalyticFalse_of_deci_shift {n : ℕ} {hn : Odd n} {hns : ¬IsSqua
             hc)⟩
   have hroot : (8 : ℝ) ≤ bridge.y - 1 / 10 := by linarith only [hy]
   have hodd : LLS.Extensions.OddPrimeTrivial bridge.character ((bridge.y - 1 / 10) ^ 2) :=
-    bridge.primitiveCharacter_eq_one_in_log_square_range
-      (show 1 ≤ bridge.y - 1 / 10 by linarith only [hroot]) hno
+    bridge.primitive_eq_one_log_square (show 1 ≤ bridge.y - 1 / 10 by linarith only [hroot]) hno
   have hcases :=
     NumberTheory.isQuadratic_primitiveCharacter bridge.character bridge.character_quadratic
       (2 : ZMod bridge.character.conductor)
   exact
-    LLS.Extensions.not_oddPrimeTrivial_of_deci_shift_reciprocal_entrance bridge.character
-      bridge.character_ne_one bridge.primitiveCharacter_even hGRH hroot
-      (by linarith only : bridge.y ≤ bridge.y - 1 / 10 + 1 / 10)
-      bridge.log_character_conductor_le_y_add_log_four
+    LLS.Extensions.not_oddPrimeTrivial_deciEntrance_GRH bridge.character bridge.character_ne_one
+      bridge.primitiveCharacter_even hGRH hroot
+      (by linarith only : bridge.y ≤ bridge.y - 1 / 10 + 1 / 10) bridge.log_conductor_le
       (qNeOne_log_conductor_le_y_of_two_ne_zero bridge) hcases hodd
 
 /-- Under the analytic bridge assumptions, an actual odd prime with Jacobi
@@ -78,8 +76,8 @@ theorem log_ge_deci_shift_entrance {d : ℕ} (hd : 3295 ≤ d) : (81 / 10 : ℝ)
 /-- Under GRH, an odd nonsquare bridge with squarefree part at least 3295
 has an odd-prime non-one witness below the shifted squarefree logarithmic square.
 Apply the certified log entrance to the analytic existence theorem. -/
-theorem exists_prime_ne_one_witness_le_deci_shift_of_ge_3295 {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} [NeZero (NumberTheory.complexQuadraticCharacter n hn).conductor]
+theorem exists_neOneWitness_le_deci_shift_of_ge_3295 {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    [NeZero (NumberTheory.complexQuadraticCharacter n hn).conductor]
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hd : 3295 ≤ bridge.squarefreePart) :
@@ -111,8 +109,7 @@ theorem exists_prime_ne_one_witness_le_deci_endpoint {n : ℕ} (hn : Odd n) (hns
     ⟨NumberTheory.complexQuadraticCharacter_conductor_ne_zero n hn⟩
   obtain ⟨bridge⟩ := NumberTheory.exists_jacobiCharacterArithmeticData (Odd.pos hn) hn hns
   by_cases hd : 3295 ≤ bridge.squarefreePart
-  · obtain ⟨p, hp, ho, hb, hv⟩ :=
-      exists_prime_ne_one_witness_le_deci_shift_of_ge_3295 bridge hGRH hd
+  · obtain ⟨p, hp, ho, hb, hv⟩ := exists_neOneWitness_le_deci_shift_of_ge_3295 bridge hGRH hd
     have hy := log_ge_deci_shift_entrance hd
     have hlev := (qNeOne_bridge_y_le_log_input bridge).trans hlogn
     have hroot : 0 ≤ bridge.y - 1 / 10 := by
@@ -158,7 +155,7 @@ theorem primeNeOneWitness_cast_le_deci_endpoint
 non-one witness through (log n-1/10)^2 and strictly below log(n)^2.
 Use the common endpoint at log n. Small squarefree parts reuse the earlier
 pointwise theorem, while large parts use the new analytic comparison. -/
-theorem exists_prime_ne_one_witness_le_deci_shift_and_lt_log_sq_of_ge_3295
+theorem exists_prime_neOne_deciShift_3295_GRH
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : Odd n)
     (hns : ¬IsSquare n) (hlarge : 3295 ≤ n) :
     ∃ p : ℕ,

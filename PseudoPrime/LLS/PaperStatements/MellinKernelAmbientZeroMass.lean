@@ -35,7 +35,7 @@ theorem exists_uniform_kernelZeroSum_le_log_add (K : MellinKernel) :
                 χ.IsPrimitive →
                 χ ≠ 1 → χ⁻¹ ≠ 1 → (∑' ρ : ℂ, ‖K.kernelZeroTerm χ ρ‖) ≤ D * Real.log q + B := by
   classical
-  obtain ⟨C, A, hC, hA, hb⟩ := exists_uniform_finite_kernelZeroSum_height_bins K
+  obtain ⟨C, A, hC, hA, hb⟩ := exists_zeroSum_heightBins_RH K
   let U := ∑' k : ℤ, 1 / (1 + (k : ℝ) ^ 2)
   let V := ∑' k : ℤ, (Real.log (4 + |(k : ℝ)|) + 1) / (1 + (k : ℝ) ^ 2)
   have hden (k : ℤ) : 0 ≤ 1 + (k : ℝ) ^ 2 := by nlinarith only [sq_nonneg (k : ℝ)]
@@ -82,7 +82,7 @@ bounded by (1+epsilon) K.mass log q, uniformly in m and the character. For large
 use the sharp conductor bound and monotonicity of log. For the remaining m, use the
 coarse bound and let log q absorb its fixed maximum. This supplies the mass estimate
 for the primitive character inducing a character of ambient modulus q in Lemma 6.1. -/
-theorem exists_uniform_kernelZeroSum_le_mass_ambient (K : MellinKernel)
+theorem exists_zeroSum_mass_ambient_GRH (K : MellinKernel)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {ε : ℝ} (hε : 0 < ε) :
     ∃ Q : ℕ,
       2 ≤ Q ∧

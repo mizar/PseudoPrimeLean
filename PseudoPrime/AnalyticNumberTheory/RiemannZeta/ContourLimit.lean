@@ -45,8 +45,7 @@ theorem continuous_riemannZetaLogContourKernel_line {x : ℝ} (hx : 0 < x) {τ :
       linarith only [hs]
     have hszeta : riemannZeta s ≠ 0 := riemannZeta_ne_zero_of_one_lt_re hs
     exact
-      ContinuousAt.continuousWithinAt
-        (differentiableAt_riemannZetaLogContourKernel hx hs0 hs1 hszeta).continuousAt
+      ContinuousAt.continuousWithinAt (differentiableAt_logKernel hx hs0 hs1 hszeta).continuousAt
   have hg : Continuous (fun y : ℝ ↦ (τ : ℂ) + y * Complex.I) := by fun_prop
   exact
     hOn.comp_continuous hg
@@ -56,8 +55,7 @@ theorem continuous_riemannZetaLogContourKernel_line {x : ℝ} (hx : 0 < x) {τ :
           add_zero] using hτ)
 
 /-- The reciprocal contour kernel is continuous along any vertical line with `Re s = τ > 1`. -/
-theorem continuous_riemannZetaReciprocalContourKernel_line {x : ℝ} (hx : 0 < x) {τ : ℝ}
-    (hτ : 1 < τ) :
+theorem continuous_reciprocalKernel_line {x : ℝ} (hx : 0 < x) {τ : ℝ} (hτ : 1 < τ) :
     Continuous (fun y : ℝ ↦ riemannZetaReciprocalContourKernel x ((τ : ℂ) + y * Complex.I)) := by
   have hOn : ContinuousOn (riemannZetaReciprocalContourKernel x) {s : ℂ | 1 < s.re} := by
     intro s hs
@@ -73,7 +71,7 @@ theorem continuous_riemannZetaReciprocalContourKernel_line {x : ℝ} (hx : 0 < x
     have hszeta : riemannZeta s ≠ 0 := riemannZeta_ne_zero_of_one_lt_re hs
     exact
       ContinuousAt.continuousWithinAt
-        (differentiableAt_riemannZetaReciprocalContourKernel hx hs0 hs1 hszeta).continuousAt
+        (differentiableAt_reciprocalKernel hx hs0 hs1 hszeta).continuousAt
   have hg : Continuous (fun y : ℝ ↦ (τ : ℂ) + y * Complex.I) := by fun_prop
   exact
     hOn.comp_continuous hg
@@ -111,7 +109,7 @@ theorem integrable_riemannZetaLogContourKernel {x : ℝ} (hx : 0 < x) {τ : ℝ}
 
 /-- The reciprocal contour kernel is integrable along any vertical line with `Re s = τ > 1`,
 with no growth theory beyond absolute convergence of the von Mangoldt Dirichlet series. -/
-theorem integrable_riemannZetaReciprocalContourKernel {x : ℝ} (hx : 0 < x) {τ : ℝ} (hτ : 1 < τ) :
+theorem integrable_reciprocalKernel {x : ℝ} (hx : 0 < x) {τ : ℝ} (hτ : 1 < τ) :
     MeasureTheory.Integrable
       (fun y : ℝ ↦ riemannZetaReciprocalContourKernel x ((τ : ℂ) + y * Complex.I)) := by
   set C : ℝ := ∑' n : ℕ, ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ τ with hC_def
@@ -128,7 +126,7 @@ theorem integrable_riemannZetaReciprocalContourKernel {x : ℝ} (hx : 0 < x) {τ
   apply
     MeasureTheory.Integrable.mono'
       (((Analysis.verticalIntegrable_mellinReciprocalKernel hσ0 hσ1).norm).const_mul (C * x ^ σ))
-  · exact (continuous_riemannZetaReciprocalContourKernel_line hx hτ).aestronglyMeasurable
+  · exact (continuous_reciprocalKernel_line hx hτ).aestronglyMeasurable
   · filter_upwards with y
     set s : ℂ := (τ : ℂ) + y * Complex.I with hs_def
     set s' : ℂ := (σ : ℂ) + y * Complex.I with hs'_def
@@ -161,8 +159,7 @@ converge to the full vertical integral as `T → ∞`. Absolute-convergence boun
 integrability, and the general interval-integral limit applies to endpoints tending to
 negative and positive infinity. This supplies the right-edge limit in contour passage.
 -/
-theorem tendsto_intervalIntegral_riemannZetaLogContourKernel {x : ℝ} (hx : 0 < x) {τ : ℝ}
-    (hτ : 1 < τ) :
+theorem tendsto_integral_logKernel {x : ℝ} (hx : 0 < x) {τ : ℝ} (hτ : 1 < τ) :
     Filter.Tendsto
       (fun T : ℝ ↦ ∫ y in (-T)..T, riemannZetaLogContourKernel x ((τ : ℂ) + y * Complex.I))
       Filter.atTop (nhds (∫ y : ℝ, riemannZetaLogContourKernel x ((τ : ℂ) + y * Complex.I))) :=
@@ -175,14 +172,12 @@ converge to the full vertical integral as `T → ∞`. Apply the general interva
 to the established kernel integrability and the two escaping endpoints. This supplies the
 reciprocal contour argument with its right-edge limit.
 -/
-theorem tendsto_intervalIntegral_riemannZetaReciprocalContourKernel {x : ℝ} (hx : 0 < x) {τ : ℝ}
-    (hτ : 1 < τ) :
+theorem tendsto_integral_reciprocalKernel {x : ℝ} (hx : 0 < x) {τ : ℝ} (hτ : 1 < τ) :
     Filter.Tendsto
       (fun T : ℝ ↦ ∫ y in (-T)..T, riemannZetaReciprocalContourKernel x ((τ : ℂ) + y * Complex.I))
       Filter.atTop
       (nhds (∫ y : ℝ, riemannZetaReciprocalContourKernel x ((τ : ℂ) + y * Complex.I))) :=
-  MeasureTheory.intervalIntegral_tendsto_integral
-    (integrable_riemannZetaReciprocalContourKernel hx hτ) Analysis.tendsto_neg_atTop_atBot'
-    Filter.tendsto_id
+  MeasureTheory.intervalIntegral_tendsto_integral (integrable_reciprocalKernel hx hτ)
+    Analysis.tendsto_neg_atTop_atBot' Filter.tendsto_id
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

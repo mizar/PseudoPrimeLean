@@ -52,7 +52,7 @@ theorem triangular18_dual_scale_signed_formula_central {q : ℕ} [NeZero q] (hq 
 has two explicit convergent Gamma weight series and no unevaluated Gamma integrals.
 Choose the parity bases for the character and its inverse, then evaluate both central
 terms. This is the exact interface for signed numerical bounds in the target range. -/
-theorem triangular18_dual_scale_signed_formula_weight_series {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem triangular18_dual_weightSeries_GRH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) :
     ∃ β γ : ℝ,
@@ -70,8 +70,8 @@ theorem triangular18_dual_scale_signed_formula_weight_series {q : ℕ} [NeZero q
                   (((-Complex.log Real.pi + Complex.digamma (γ : ℂ)) / 2) *
                       (triangularKernelProfile 18 x⁻¹ : ℂ) +
                     (1 / 2 : ℂ) * ∑' n : ℕ, triangularGammaReciprocalTerm 18 (γ + n) x⁻¹) := by
-  obtain ⟨β, hβ, hβ1, hg⟩ := triangular_central_gammaIntegral_eq_weight_series χ
-  obtain ⟨γ, hγ, hγ1, hgi⟩ := triangular_central_gammaIntegral_eq_weight_series χ⁻¹
+  obtain ⟨β, hβ, hβ1, hg⟩ := triangular_gamma_eq_weightSeries χ
+  obtain ⟨γ, hγ, hγ1, hgi⟩ := triangular_gamma_eq_weightSeries χ⁻¹
   refine ⟨β, γ, hβ, hβ1, hγ, hγ1, ?_⟩
   have h := triangular18_dual_scale_signed_formula_central hq hGRH hp hne hinv hx
   dsimp only at h ⊢

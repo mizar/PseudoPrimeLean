@@ -25,7 +25,7 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 
 /-- The image under imaginary part of the finite divisor support in `closedBall 0 R`.
 For primitive nontrivial characters this records all zero ordinates, without multiplicity,
-as verified by `completedLFunction_zero_mem_divisorSupport`. -/
+as verified by `completed_zero_mem_divisorSupport`. -/
 noncomputable def primitiveZeroOrdinatesInBall {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
     (R : ℝ) : Finset ℝ :=
   ((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
@@ -93,11 +93,11 @@ theorem card_primitiveZeroOrdinatesInBall_le {N : ℕ} [NeZero N] (hN1 : 1 < N)
 
 /-- `completedLFunction χ` is not eventually zero at any point of `closedBall 0 R`: it is entire
 and nonzero at the center `0`
-(`DirichletLFunction.dirichletCompletedLFunction_zero_ne_zero_of_primitive`), so the
+(`DirichletLFunction.completed_zero_ne_zero_of_primitive`), so the
 identity theorem on the preconnected ball rules out vanishing identically near any point
 of the closed ball, including its boundary. This ensures finite zero orders in the divisor ledger.
 -/
-theorem completedLFunction_analyticOrderAt_ne_top {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+theorem completed_analyticOrderAt_ne_top {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) {R : ℝ} (hR : 0 < R) {u : ℂ}
     (hu : u ∈ Metric.closedBall (0 : ℂ) R) :
     analyticOrderAt (DirichletCharacter.completedLFunction χ) u ≠ ⊤ := by
@@ -111,11 +111,11 @@ theorem completedLFunction_analyticOrderAt_ne_top {N : ℕ} [NeZero N] {χ : Dir
   have hcenter : (0 : ℂ) ∈ Metric.closedBall (0 : ℂ) R := Metric.mem_closedBall_self hR.le
   have heq0 : Set.EqOn (DirichletCharacter.completedLFunction χ) 0 (Metric.closedBall (0 : ℂ) R) :=
     hAn.eqOn_zero_of_preconnected_of_eventuallyEq_zero hUconv hu (analyticOrderAt_eq_top.mp htop)
-  exact dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne (heq0 hcenter)
+  exact completed_zero_ne_zero_of_primitive hprimitive hne (heq0 hcenter)
 
 /-- Any zero of `completedLFunction χ` inside `closedBall 0 R` is genuinely counted by `divisor`
 (order `≠ 0`, `≠ ⊤`). -/
-theorem completedLFunction_zero_mem_divisorSupport {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+theorem completed_zero_mem_divisorSupport {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) {R : ℝ} (hR : 0 < R) {u : ℂ}
     (hu : u ∈ Metric.closedBall (0 : ℂ) R) (hzero : DirichletCharacter.completedLFunction χ u = 0) :
     MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) (Metric.closedBall (0 : ℂ) R)
@@ -128,7 +128,7 @@ theorem completedLFunction_zero_mem_divisorSupport {N : ℕ} [NeZero N] {χ : Di
   have hordne0 : analyticOrderAt (DirichletCharacter.completedLFunction χ) u ≠ 0 := by
     rw [Ne, (hAn u hu).analyticOrderAt_eq_zero]
     exact fun h => h hzero
-  have hordnetop := completedLFunction_analyticOrderAt_ne_top hprimitive hne hR hu
+  have hordnetop := completed_analyticOrderAt_ne_top hprimitive hne hR hu
   have hmap_eq_top_iff :
     ENat.map (Nat.cast : ℕ → ℤ) (analyticOrderAt (DirichletCharacter.completedLFunction χ) u) =
         (⊤ : WithTop ℤ) ↔
@@ -147,7 +147,7 @@ noncomputable def primitiveZeroOrdinatesInBallSymm {N : ℕ} [NeZero N] (χ : Di
   primitiveZeroOrdinatesInBall χ R ∪ (primitiveZeroOrdinatesInBall χ R).image (fun x => -x)
 
 /-- The symmetrized ledger has cardinality at most twice the Jensen bound for one ledger. -/
-theorem card_primitiveZeroOrdinatesInBallSymm_le {N : ℕ} [NeZero N] (hN1 : 1 < N)
+theorem card_primitiveOrdinates_symm_le {N : ℕ} [NeZero N] (hN1 : 1 < N)
     {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {R : ℝ}
     (hR : 0 < R) :
     (primitiveZeroOrdinatesInBallSymm χ R).card ≤
@@ -178,7 +178,7 @@ both signs of every zero ordinate in the radius-`Rmax` closed ball. Apply
 the finite avoiding-point argument to the symmetric ordinate ledger and its
 Jensen cardinality bound. This controls both horizontal contour edges at one height.
 -/
-theorem exists_primitiveGoodHeightRadius_twoSided {N : ℕ} [NeZero N] (hN1 : 1 < N)
+theorem exists_goodHeightRadius_twoSided {N : ℕ} [NeZero N] (hN1 : 1 < N)
     {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {n : ℝ}
     (hn : 1 ≤ n) {Rmax : ℝ} (hRmax : 2 * n ≤ Rmax) :
     ∃ T ∈ Set.Icc n (2 * n),
@@ -210,7 +210,7 @@ theorem exists_primitiveGoodHeightRadius_twoSided {N : ℕ} [NeZero N] (hN1 : 1 
   set c : ℝ := n / (8 * (B + 1)) with hc_def
   have hRmaxpos : (0 : ℝ) < Rmax := by linarith only [hn, hRmax]
   have hcard_le : ((primitiveZeroOrdinatesInBallSymm χ Rmax).card : ℝ) ≤ 2 * B :=
-    card_primitiveZeroOrdinatesInBallSymm_le hN1 hprimitive hne hinv hRmaxpos
+    card_primitiveOrdinates_symm_le hN1 hprimitive hne hinv hRmaxpos
   have hBnonneg : (0 : ℝ) ≤ B :=
     le_trans (Nat.cast_nonneg _)
       (card_primitiveZeroOrdinatesInBall_le hN1 hprimitive hne hinv hRmaxpos)
@@ -231,7 +231,7 @@ theorem exists_primitiveGoodHeightRadius_twoSided {N : ℕ} [NeZero N] (hN1 : 1 
   have hu : ρ ∈ Metric.closedBall (0 : ℂ) Rmax := by
     rw [Metric.mem_closedBall, dist_zero_right]
     exact hρ
-  have hordne := completedLFunction_zero_mem_divisorSupport hprimitive hne hRmaxpos hu hζ
+  have hordne := completed_zero_mem_divisorSupport hprimitive hne hRmaxpos hu hζ
   have hsupp :
     ρ ∈
       (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
@@ -367,7 +367,7 @@ theorem exists_primitiveGoodRadius {N : ℕ} [NeZero N] (hN1 : 1 < N) {χ : Diri
   have hu : ρ ∈ Metric.closedBall (0 : ℂ) (2 * n) := by
     rw [Metric.mem_closedBall, dist_zero_right]
     exact hρ
-  have hordne := completedLFunction_zero_mem_divisorSupport hprimitive hne hR2n hu hζ
+  have hordne := completed_zero_mem_divisorSupport hprimitive hne hR2n hu hζ
   have hsupp :
     ρ ∈
       (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)

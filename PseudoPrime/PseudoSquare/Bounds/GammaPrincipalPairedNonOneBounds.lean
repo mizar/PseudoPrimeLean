@@ -18,27 +18,25 @@ namespace PseudoPrime.PseudoSquare
 with log n at most L, the least non-one witness is at most (99/100)L squared.
 Compare it with the negative witness at that same endpoint.
 This covers small inputs and supplies full-domain finite maxima. -/
-theorem primeNeOneWitness_cast_le_principal_paired_nearSquare_endpoint
+theorem neOneWitness_le_principalPaired_GRH
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : Odd n)
     (hns : ¬IsSquare n) {L : ℝ} (hL : 550 ≤ L) (hlogn : Real.log n ≤ L)
     (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤ (99 / 100 : ℝ) * L ^ 2 := by
   let hneg := NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns
   have hc := NumberTheory.primeNeOneWitness_le_primeNegOneWitness n hneg
-  have hb :=
-    primeNegOneWitness_cast_le_principal_paired_nearSquare_endpoint hGRH hn hns hL hlogn hneg
+  have hb := negOneWitness_le_principalPaired_GRH hGRH hn hns hL hlogn hneg
   exact (Nat.cast_le.mpr hc).trans hb
 
 /-- Under GRH, every odd nonsquare n with log n at least 550 has an odd
 prime non-one witness through (99/100)(log n) squared.
 Use the proved negative witness and its value -1.
 This strengthens the coefficient entrance without a new dyadic split. -/
-theorem exists_prime_ne_one_witness_le_nearSquare_gamma_log_550
+theorem exists_neOneWitness_le_nearSquare_gamma_log_550
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : Odd n)
     (hns : ¬IsSquare n) (hL : 550 ≤ Real.log n) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 100 : ℝ) * (Real.log n) ^ 2 ∧ jacobiSym n p ≠ 1 := by
-  obtain ⟨p, hp, ho, hb, hv⟩ :=
-    exists_prime_neg_one_witness_le_nearSquare_gamma_log_550 hGRH hn hns hL
+  obtain ⟨p, hp, ho, hb, hv⟩ := exists_negOneWitness_le_nearSquare_gamma_log_550 hGRH hn hns hL
   refine ⟨p, hp, ho, hb, ?_⟩
   rw [hv]
   norm_num only

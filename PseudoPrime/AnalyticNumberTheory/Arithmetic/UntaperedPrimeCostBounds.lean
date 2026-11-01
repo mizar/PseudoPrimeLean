@@ -79,7 +79,7 @@ specialize the existing prime-power estimate to the singleton prime support. -/
 theorem quadraticPrimeCost_zero_logarithmic_le {p : ℕ} (hp : p.Prime) {x : ℝ} (hx : 0 < x) :
     quadraticExcludedPrimeCost 0 x (logWeightedMangoldtTerm x) p ≤ (Real.log x) ^ 2 / 2 := by
   rw [quadraticPrimeCost_zero_eq_common hp hx.le _
-      (fun _ hn ↦ logWeightedMangoldtTerm_eq_zero_of_not_primePow hn)]
+      (fun _ hn ↦ logMangoldtTerm_eq_zero_of_not_primePow hn)]
   change commonFactorLogWeightedSum x p ≤ _
   have h := commonFactorLogWeightedSum_le hp.ne_zero hx
   have hpf : p.primeFactors = {p} := by

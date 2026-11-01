@@ -39,7 +39,7 @@ theorem polynomial_scale_log_bounds {R x A : ℝ} {b : ℕ} (hR : 2 ≤ R) (hA :
 
 /-- For positive amplitude and tolerance, choose a natural polynomial exponent above any
 prescribed lower bound whose exponential error is below the tolerance. -/
-theorem exists_small_exponential_at_nat_scale {B ε : ℝ} (hB : 0 < B) (hε : 0 < ε) (L : ℝ) :
+theorem exists_small_exp_nat_scale {B ε : ℝ} (hB : 0 < B) (hε : 0 < ε) (L : ℝ) :
     ∃ b : ℕ, L ≤ (b : ℝ) ∧ B * Real.exp (-(b : ℝ) / 2) ≤ ε := by
   obtain ⟨b, hb⟩ := exists_nat_gt (max L (2 * Real.log (B / ε)))
   refine ⟨b, (le_max_left _ _).trans hb.le, ?_⟩

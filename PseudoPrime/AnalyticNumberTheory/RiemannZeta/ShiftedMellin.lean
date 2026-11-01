@@ -113,7 +113,7 @@ theorem normalized_integral_centered_zeta_eq (hRH : RiemannHypothesis) {σ τ x 
   have haZ : ∀ ρ : RiemannXi.Zero, ((ρ : ℂ) - (σ : ℂ)).re < 0 := by
     intro ρ
     rw [Complex.sub_re, Complex.ofReal_re,
-      RiemannXi.riemannXi_zero_re_eq_half_of_riemannHypothesis hRH ρ.property]
+      RiemannXi.xi_zero_re_eq_half_of_riemannHypothesis hRH ρ.property]
     linarith only [hσ]
   have haG : ∀ n : ℕ, (-((σ : ℂ) + 2 + 2 * (n : ℂ))).re < 0 := by
     intro n
@@ -128,7 +128,7 @@ theorem normalized_integral_centered_zeta_eq (hRH : RiemannHypothesis) {σ τ x 
       (zero_lt_one.trans hx)
       (by
         simpa only [RiemannXi.riemannXiZeroMultiplicity] using
-          RiemannXi.summable_shifted_power_mass_of_riemannHypothesis hRH hσ.le
+          RiemannXi.summable_shifted_power_mass_RH hRH hσ.le
             (show (1 : ℝ) < 3 / 2 by norm_num only))
   have hG : MeasureTheory.Integrable G := by
     have h :=
@@ -173,7 +173,7 @@ theorem normalized_integral_centered_zeta_eq (hRH : RiemannHypothesis) {σ τ x 
     MeasureTheory.integral_sub (f := P) (g := Z) hP hZ, smul_sub, smul_sub]
   dsimp only [P, Z, G]
   rw [General.integral_centeredResolventKernel_eq haP hτ hx,
-    RiemannXi.normalized_integral_zeroResolvent_eq_of_riemannHypothesis hRH hσ.le hτ hx,
+    RiemannXi.normalized_integral_zeroResolvent_eq_RH hRH hσ.le hτ hx,
     Gamma.normalized_integral_gammaPoleResolvent_eq
       (show (0 : ℝ) ≤ (2 : ℂ).re by norm_num only [Complex.re_ofNat]) hσ.le hτ hx]
 
@@ -182,8 +182,8 @@ logarithmic derivative's Mellin integral is the pole residue minus its derivativ
 nontrivial-zero residues and trivial-zero residues. Collect the xi, pole and gamma
 origin terms using the differentiated completion identity. This gives the centered
 shifted explicit formula used before integrating sigma in Lemma 2.6. -/
-theorem normalized_integral_centered_zeta_eq_residues (hRH : RiemannHypothesis) {σ τ x : ℝ}
-    (hσ : 1 < σ) (hτ : 0 < τ) (hx : 1 < x) :
+theorem centered_integral_eq_residues_RH (hRH : RiemannHypothesis) {σ τ x : ℝ} (hσ : 1 < σ)
+    (hτ : 0 < τ) (hx : 1 < x) :
     (2 * Real.pi)⁻¹ •
         (∫ y : ℝ,
           -(logDeriv riemannZeta ((σ : ℂ) + ((τ : ℂ) + y * Complex.I)) -
@@ -227,7 +227,7 @@ theorem shifted_logarithmicWeightedSum_eq_residues (hRH : RiemannHypothesis) {σ
   let V := fun y : ℝ ↦ logDeriv riemannZeta (σ : ℂ) * K y
   have hU : MeasureTheory.Integrable U := by
     have h :=
-      DirichletLFunction.integrable_shiftedLogContourKernel_vertical (1 : DirichletCharacter ℂ 1)
+      DirichletLFunction.integrable_shiftedLog_vertical (1 : DirichletCharacter ℂ 1)
         (zero_lt_one.trans hx) hσ.le hτ
     simpa only [U, DirichletLFunction.shiftedLogContourKernel,
       DirichletCharacter.LFunction_modOne_eq, logDeriv_apply, neg_div] using h
@@ -239,7 +239,7 @@ theorem shifted_logarithmicWeightedSum_eq_residues (hRH : RiemannHypothesis) {σ
     rw [MeasureTheory.integral_const_mul, Complex.real_smul]
     rw [Complex.real_smul] at hKI
     rw [← mul_assoc, mul_comm _ (logDeriv riemannZeta (σ : ℂ)), mul_assoc, hKI]
-  have hM := normalized_integral_centered_zeta_eq_residues hRH hσ hτ hx
+  have hM := centered_integral_eq_residues_RH hRH hσ hτ hx
   have he :
     ∀ y : ℝ,
       -(logDeriv riemannZeta ((σ : ℂ) + ((τ : ℂ) + y * Complex.I)) - logDeriv riemannZeta (σ : ℂ)) *

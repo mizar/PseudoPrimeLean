@@ -17,8 +17,8 @@ namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 /-- If a character is one at primes coprime to an ambient N through b, it is one
 at any n<=b coprime to N with nonzero Mangoldt value. The character level q is independent.
 Reduce to a positive prime power. This transfers restricted witness nonexistence. -/
-theorem character_apply_one_of_ambient_mangoldt_ne_zero {q N n : ℕ} (χ : DirichletCharacter ℂ q)
-    {b : ℝ} (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → Nat.Coprime p N → χ p = 1) (hn : (n : ℝ) ≤ b)
+theorem character_eq_one_of_ambient_mangoldt {q N n : ℕ} (χ : DirichletCharacter ℂ q) {b : ℝ}
+    (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → Nat.Coprime p N → χ p = 1) (hn : (n : ℝ) ≤ b)
     (hcop : Nat.Coprime n N) (hΛ : ArithmeticFunction.vonMangoldt n ≠ 0) : χ n = 1 := by
   obtain ⟨p, r, hp, hr, rfl⟩ :=
     (isPrimePow_nat_iff (n := n)).mp (ArithmeticFunction.vonMangoldt_ne_zero_iff.mp hΛ)
@@ -85,7 +85,7 @@ theorem ambientPositiveMangoldtPrefix_le_character {q N : ℕ} (hqN : q ∣ N)
   · simp only [hΛ, mul_zero, zero_mul, ite_self, add_zero, le_refl]
   · by_cases hq : Nat.Coprime n q
     · by_cases hN : Nat.Coprime n N
-      · rw [character_apply_one_of_ambient_mangoldt_ne_zero χ hsmall (hS n hn) hN hΛ]
+      · rw [character_eq_one_of_ambient_mangoldt χ hsmall (hS n hn) hN hΛ]
         simp only [ite_eq_left hN, ite_eq_right (not_not_intro hq), Complex.one_re]
         nlinarith only []
       · have hr := (abs_le.mp ((Complex.abs_re_le_norm (χ n)).trans (χ.norm_le_one n))).1
@@ -113,8 +113,7 @@ theorem allowed_mangoldt_term_le_character_add_loss {q N n : ℕ} (hqN : q ∣ N
   · by_cases hN : Nat.Coprime n N
     · have hq := hN.of_dvd_right hqN
       have hbad : ¬(Nat.Coprime n q ∧ ¬Nat.Coprime n N) := fun h ↦ h.2 hN
-      rw [ite_eq_left hN, ite_eq_right hbad,
-        character_apply_one_of_ambient_mangoldt_ne_zero χ hsmall hn hN hΛ]
+      rw [ite_eq_left hN, ite_eq_right hbad, character_eq_one_of_ambient_mangoldt χ hsmall hn hN hΛ]
       simp only [Complex.one_re, one_mul, add_zero, le_refl]
     · by_cases hq : Nat.Coprime n q
       · have hr := (abs_le.mp ((Complex.abs_re_le_norm (χ n)).trans (χ.norm_le_one n))).1

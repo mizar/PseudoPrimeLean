@@ -30,9 +30,9 @@ theorem invariantFourierEnvelope_nonneg {p : ℕ} [Fact p.Prime] (Q : Finset (ZM
 /-- Every nonzero Fourier coefficient of an invariant unit set is bounded
 by its explicit fourth-root envelope. Compare fourth powers and divide by
 the positive p-1. The underlying fourth-power estimate includes nonunits. -/
-theorem norm_residueCharacterSum_le_invariantFourierEnvelope {p : ℕ} [Fact p.Prime]
-    (Q : Finset (ZMod (p ^ 2))) (hinv : IsHeilbronnInvariant Q) (hQ : ∀ x ∈ Q, IsUnit x)
-    {l : ZMod (p ^ 2)} (hl : l ≠ 0) : ‖residueCharacterSum Q l‖ ≤ invariantFourierEnvelope p Q := by
+theorem norm_characterSum_le_invariantEnvelope {p : ℕ} [Fact p.Prime] (Q : Finset (ZMod (p ^ 2)))
+    (hinv : IsHeilbronnInvariant Q) (hQ : ∀ x ∈ Q, IsUnit x) {l : ZMod (p ^ 2)} (hl : l ≠ 0) :
+    ‖residueCharacterSum Q l‖ ≤ invariantFourierEnvelope p Q := by
   have ht : (0 : ℝ) < (p - 1 : ℕ) :=
     Nat.cast_pos.mpr (Nat.sub_pos_of_lt (Nat.Prime.one_lt Fact.out))
   have hK : 0 ≤ (p : ℝ) ^ 2 * heilbronnEnergy p * (Q.card : ℝ) ^ 3 :=
@@ -56,7 +56,7 @@ theorem residueDifferenceIncidence_le_invariant {p : ℕ} [Fact p.Prime] (S Q : 
       (S.card : ℝ) ^ 2 * Q.card / (p : ℝ) ^ 2 + invariantFourierEnvelope p Q * S.card := by
   have h :=
     residueDifferenceIncidence_le_of_fourier_bound S Q (invariantFourierEnvelope_nonneg Q)
-      (fun l hl ↦ norm_residueCharacterSum_le_invariantFourierEnvelope Q hinv hQ hl)
+      (fun l hl ↦ norm_characterSum_le_invariantEnvelope Q hinv hQ hl)
   simpa only [Nat.cast_pow] using h
 
 /-- Every correlation level excluding correlation zero satisfies the

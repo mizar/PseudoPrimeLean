@@ -35,19 +35,19 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 /--
 Input/assumptions: a character `χ` (any modulus), and `s : ℂ` with `3 ≤ s.re`.
 Conclusion: `‖logDeriv (LFunction χ) s‖ ≤ M₃ := ∑' n, Λ(n) / n ^ 3`.
-Content: `DirichletLFunction.norm_neg_deriv_div_dirichletLFunction_le_vonMangoldt_tsum` (existing,
+Content: `DirichletLFunction.norm_logDeriv_L_le_mangoldt_tsum` (existing,
 `‖logDeriv L(s)‖ ≤
 ∑' n, Λ(n) / n ^ (s.re)`) combined with `RiemannZeta.tsum_vonMangoldt_div_rpow_antitone` (existing,
 χ-free
 monotonicity of the von Mangoldt Dirichlet series in the exponent) to replace `s.re ≥ 3` by the
 fixed value `3`.
 -/
-theorem norm_logDeriv_dirichletLFunction_le_of_three_le_re {N : ℕ} [NeZero N]
-    (χ : DirichletCharacter ℂ N) {s : ℂ} (hs : 3 ≤ s.re) :
+theorem norm_logDeriv_LFunction_le_re_ge_3 {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) {s : ℂ}
+    (hs : 3 ≤ s.re) :
     ‖logDeriv (DirichletCharacter.LFunction χ) s‖ ≤
       ∑' n : ℕ, ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ (3 : ℝ) := by
   have h1 :=
-    norm_neg_deriv_div_dirichletLFunction_le_vonMangoldt_tsum χ (τ := s.re)
+    norm_logDeriv_L_le_mangoldt_tsum χ (τ := s.re)
       (lt_of_lt_of_le (by norm_num only : (1 : ℝ) < 3) hs) s.im
   have hseq : (s.re : ℂ) + (s.im : ℂ) * Complex.I = s := by
     apply Complex.ext <;> simp only [Complex.re_add_im]
@@ -72,9 +72,8 @@ theorem completedLFunction_ne_zero_farLeft {N : ℕ} [NeZero N] {χ : DirichletC
     DirichletCharacter.completedLFunction χ s ≠ 0 := by
   intro hFs
   have hNne : (N : ℂ) ≠ 0 := by exact_mod_cast NeZero.ne N
-  have hrootne : DirichletCharacter.rootNumber χ ≠ 0 :=
-    dirichletCharacter_rootNumber_ne_zero_of_isPrimitive hprimitive
-  have hfeq := dirichletCompletedLFunction_one_sub_of_isPrimitive hprimitive (1 - s)
+  have hrootne : DirichletCharacter.rootNumber χ ≠ 0 := rootNumber_ne_zero_of_primitive hprimitive
+  have hfeq := completed_one_sub_of_isPrimitive hprimitive (1 - s)
   rw [show (1 : ℂ) - (1 - s) = s from by ring, hFs] at hfeq
   have hfactne : (N : ℂ) ^ ((1 - s) - 1 / 2) ≠ 0 := Complex.cpow_ne_zero_iff.mpr (Or.inl hNne)
   have hgroupne : (N : ℂ) ^ ((1 - s) - 1 / 2) * DirichletCharacter.rootNumber χ ≠ 0 :=
@@ -83,7 +82,7 @@ theorem completedLFunction_ne_zero_farLeft {N : ℕ} [NeZero N] {χ : DirichletC
     rcases mul_eq_zero.mp hfeq.symm with h | h
     · exact absurd h hgroupne
     · exact h
-  exact completedLFunction_ne_zero_of_one_le_re hinv hs hF1sne0
+  exact completed_ne_zero_of_one_le_re hinv hs hF1sne0
 
 /--
 For a primitive nontrivial character with nontrivial inverse, `Re(1-s) ≥ 1`,
@@ -92,7 +91,7 @@ the reflected inverse-character derivative and the two gamma-factor derivatives.
 Combine the completed functional equation with the completed-to-ordinary bridge;
 this identity supplies far-left contour bounds.
 -/
-theorem logDeriv_dirichletLFunction_reflection {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+theorem logDeriv_LFunction_reflection {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {s : ℂ} (hs : 1 ≤ (1 - s).re)
     (hsim : s.im ≠ 0) :
     logDeriv (DirichletCharacter.LFunction χ) s =
@@ -102,14 +101,14 @@ theorem logDeriv_dirichletLFunction_reflection {N : ℕ} [NeZero N] {χ : Dirich
   have hFsne : DirichletCharacter.completedLFunction χ s ≠ 0 :=
     completedLFunction_ne_zero_farLeft hprimitive hne hinv hs
   have hF1sne : DirichletCharacter.completedLFunction χ⁻¹ (1 - s) ≠ 0 :=
-    completedLFunction_ne_zero_of_one_le_re hinv hs
+    completed_ne_zero_of_one_le_re hinv hs
   have h1sim_ne : (1 - s).im ≠ 0 := by
     rw [Complex.sub_im, Complex.one_im, zero_sub]
     exact neg_ne_zero.mpr hsim
-  have hFE := completedLFunction_logDeriv_functionalEquation_at hprimitive hne (s := 1 - s) hF1sne
+  have hFE := completedLogDeriv_functionalEq hprimitive hne (s := 1 - s) hF1sne
   rw [show (1 : ℂ) - (1 - s) = s from by ring] at hFE
-  have hbridge_s := logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor hne hFsne hsim
-  have hbridge_1s := logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor hinv hF1sne h1sim_ne
+  have hbridge_s := L_logDeriv_eq_completed_sub_gamma hne hFsne hsim
+  have hbridge_1s := L_logDeriv_eq_completed_sub_gamma hinv hF1sne h1sim_ne
   have hFeq :
     logDeriv (DirichletCharacter.completedLFunction χ) s =
       -Complex.log N - logDeriv (DirichletCharacter.completedLFunction χ⁻¹) (1 - s) := by
@@ -122,9 +121,8 @@ height `t`, reflect the ordinary logarithmic derivative at `s = -A-1/2 + it` to 
 inverse character at `1-s`, with the conductor and both gamma logarithmic derivatives.
 The functional equation and regular-point bridges apply because parity-specific gamma
 arguments avoid all poles, including at `t = 0`. This supplies the all-height left-line bound. -/
-theorem logDeriv_dirichletLFunction_reflection_leftVertical {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (A : ℕ)
-    (hA : 2 ≤ A) (t : ℝ) :
+theorem logDeriv_L_reflection_leftVertical {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (A : ℕ) (hA : 2 ≤ A) (t : ℝ) :
     logDeriv (DirichletCharacter.LFunction χ) (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I) =
       -Complex.log N -
         logDeriv (DirichletCharacter.LFunction χ⁻¹)
@@ -146,72 +144,48 @@ theorem logDeriv_dirichletLFunction_reflection_leftVertical {N : ℕ} [NeZero N]
     rw [h1, hsre]
     linarith only [hA']
   have hFsne := completedLFunction_ne_zero_farLeft hprimitive hne hinv hs1re
-  have hF1sne := completedLFunction_ne_zero_of_one_le_re hinv hs1re
-  have hFE := completedLFunction_logDeriv_functionalEquation_at hprimitive hne (s := 1 - s) hF1sne
+  have hF1sne := completed_ne_zero_of_one_le_re hinv hs1re
+  have hFE := completedLogDeriv_functionalEq hprimitive hne (s := 1 - s) hF1sne
   rw [show (1 : ℂ) - (1 - s) = s by ring] at hFE
   have hFeq :
     logDeriv (DirichletCharacter.completedLFunction χ) s =
       -Complex.log N - logDeriv (DirichletCharacter.completedLFunction χ⁻¹) (1 - s) := by
     linear_combination -hFE
   rcases χ.even_or_odd with heven | hodd
-  · have hΓs :=
-      gammaFactor_ne_zero_of_even_of_half_ne_neg_nat heven (leftVertical_even_half_ne_neg_nat A t)
-    have hdΓs :=
-      differentiableAt_gammaFactor_of_even_of_half_ne_neg_nat heven
-        (leftVertical_even_half_ne_neg_nat A t)
+  · have hΓs := gammaFactor_even_ne_zero_nonpole heven (leftVertical_even_half_ne_neg_nat A t)
+    have hdΓs := differentiableAt_gammaFactor_even heven (leftVertical_even_half_ne_neg_nat A t)
     rcases χ⁻¹.even_or_odd with heven' | hodd'
     · have hΓ1s :=
-        gammaFactor_ne_zero_of_even_of_half_ne_neg_nat heven'
-          (reflectedLeftVertical_even_half_ne_neg_nat A hA t)
+        gammaFactor_even_ne_zero_nonpole heven' (reflectedLeft_even_half_ne_neg_nat A hA t)
       have hdΓ1s :=
-        differentiableAt_gammaFactor_of_even_of_half_ne_neg_nat heven'
-          (reflectedLeftVertical_even_half_ne_neg_nat A hA t)
-      have hbridge_s :=
-        logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne hFsne hΓs hdΓs
-      have hbridge_1s :=
-        logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hinv hF1sne hΓ1s hdΓ1s
+        differentiableAt_gammaFactor_even heven' (reflectedLeft_even_half_ne_neg_nat A hA t)
+      have hbridge_s := L_logDeriv_sub_gamma_of_regular hne hFsne hΓs hdΓs
+      have hbridge_1s := L_logDeriv_sub_gamma_of_regular hinv hF1sne hΓ1s hdΓ1s
       rw [hbridge_s, hFeq, hbridge_1s]
       ring
-    · have hΓ1s :=
-        gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat hodd'
-          (reflectedLeftVertical_odd_half_ne_neg_nat A hA t)
+    · have hΓ1s := gammaFactor_odd_ne_zero_nonpole hodd' (reflectedLeft_odd_half_ne_neg_nat A hA t)
       have hdΓ1s :=
-        differentiableAt_gammaFactor_of_odd_of_half_ne_neg_nat hodd'
-          (reflectedLeftVertical_odd_half_ne_neg_nat A hA t)
-      have hbridge_s :=
-        logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne hFsne hΓs hdΓs
-      have hbridge_1s :=
-        logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hinv hF1sne hΓ1s hdΓ1s
+        differentiableAt_gammaFactor_odd hodd' (reflectedLeft_odd_half_ne_neg_nat A hA t)
+      have hbridge_s := L_logDeriv_sub_gamma_of_regular hne hFsne hΓs hdΓs
+      have hbridge_1s := L_logDeriv_sub_gamma_of_regular hinv hF1sne hΓ1s hdΓ1s
       rw [hbridge_s, hFeq, hbridge_1s]
       ring
-  · have hΓs :=
-      gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat hodd (leftVertical_odd_half_ne_neg_nat A t)
-    have hdΓs :=
-      differentiableAt_gammaFactor_of_odd_of_half_ne_neg_nat hodd
-        (leftVertical_odd_half_ne_neg_nat A t)
+  · have hΓs := gammaFactor_odd_ne_zero_nonpole hodd (leftVertical_odd_half_ne_neg_nat A t)
+    have hdΓs := differentiableAt_gammaFactor_odd hodd (leftVertical_odd_half_ne_neg_nat A t)
     rcases χ⁻¹.even_or_odd with heven' | hodd'
     · have hΓ1s :=
-        gammaFactor_ne_zero_of_even_of_half_ne_neg_nat heven'
-          (reflectedLeftVertical_even_half_ne_neg_nat A hA t)
+        gammaFactor_even_ne_zero_nonpole heven' (reflectedLeft_even_half_ne_neg_nat A hA t)
       have hdΓ1s :=
-        differentiableAt_gammaFactor_of_even_of_half_ne_neg_nat heven'
-          (reflectedLeftVertical_even_half_ne_neg_nat A hA t)
-      have hbridge_s :=
-        logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne hFsne hΓs hdΓs
-      have hbridge_1s :=
-        logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hinv hF1sne hΓ1s hdΓ1s
+        differentiableAt_gammaFactor_even heven' (reflectedLeft_even_half_ne_neg_nat A hA t)
+      have hbridge_s := L_logDeriv_sub_gamma_of_regular hne hFsne hΓs hdΓs
+      have hbridge_1s := L_logDeriv_sub_gamma_of_regular hinv hF1sne hΓ1s hdΓ1s
       rw [hbridge_s, hFeq, hbridge_1s]
       ring
-    · have hΓ1s :=
-        gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat hodd'
-          (reflectedLeftVertical_odd_half_ne_neg_nat A hA t)
+    · have hΓ1s := gammaFactor_odd_ne_zero_nonpole hodd' (reflectedLeft_odd_half_ne_neg_nat A hA t)
       have hdΓ1s :=
-        differentiableAt_gammaFactor_of_odd_of_half_ne_neg_nat hodd'
-          (reflectedLeftVertical_odd_half_ne_neg_nat A hA t)
-      have hbridge_s :=
-        logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne hFsne hΓs hdΓs
-      have hbridge_1s :=
-        logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hinv hF1sne hΓ1s hdΓ1s
+        differentiableAt_gammaFactor_odd hodd' (reflectedLeft_odd_half_ne_neg_nat A hA t)
+      have hbridge_s := L_logDeriv_sub_gamma_of_regular hne hFsne hΓs hdΓs
+      have hbridge_1s := L_logDeriv_sub_gamma_of_regular hinv hF1sne hΓ1s hdΓ1s
       rw [hbridge_s, hFeq, hbridge_1s]
       ring
 
@@ -221,8 +195,8 @@ there is `D ≥ 0` bounding the ordinary logarithmic derivative by `D * (|T|+1)`
 on `-A-1/2 ≤ σ ≤ -2`, `|T| ≥ 1`. Reflect to the inverse character in the
 right half-plane and bound both gamma terms. This controls horizontal far-left edges.
 -/
-theorem exists_norm_logDeriv_dirichletLFunction_farLeft_le_general (A : ℕ) {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
+theorem norm_L_logDeriv_farLeft_bound (A : ℕ) {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     ∃ D : ℝ,
       0 ≤ D ∧
         ∀ σ T : ℝ,
@@ -231,7 +205,7 @@ theorem exists_norm_logDeriv_dirichletLFunction_farLeft_le_general (A : ℕ) {N 
             1 ≤ |T| →
             ‖logDeriv (DirichletCharacter.LFunction χ) ((σ : ℂ) + (T : ℂ) * Complex.I)‖ ≤
               D * (|T| + 1) := by
-  obtain ⟨CΓ, hCΓnonneg, hCΓ⟩ := exists_norm_logDeriv_gammaFactor_fixed_strip_le A
+  obtain ⟨CΓ, hCΓnonneg, hCΓ⟩ := gammaLogDeriv_fixed_strip_bound A
   set M3 : ℝ := ∑' n : ℕ, ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ (3 : ℝ) with hM3_def
   have hM3nonneg : 0 ≤ M3 :=
     tsum_nonneg fun n => div_nonneg ArithmeticFunction.vonMangoldt_nonneg (by positivity)
@@ -262,7 +236,7 @@ theorem exists_norm_logDeriv_dirichletLFunction_farLeft_le_general (A : ℕ) {N 
   have h1s_re1 : 1 ≤ (1 - s).re := by
     rw [h1s_re_eq]
     linarith only [hσ2]
-  have hrefl := logDeriv_dirichletLFunction_reflection hprimitive hne hinv h1s_re1 hsim_ne
+  have hrefl := logDeriv_LFunction_reflection hprimitive hne hinv h1s_re1 hsim_ne
   have h1s_im_abs : |(1 - s).im| = |T| := by rw [h1s_im_eq, abs_neg]
   have h1s_re_le : (1 - s).re ≤ (A : ℝ) + 3 / 2 := by
     rw [h1s_re_eq]
@@ -290,7 +264,7 @@ theorem exists_norm_logDeriv_dirichletLFunction_farLeft_le_general (A : ℕ) {N 
     have h := hCΓ χ σ T hσ1 hσ2' hT
     rwa [← hs_def] at h
   have hLone : ‖logDeriv (DirichletCharacter.LFunction χ⁻¹) (1 - s)‖ ≤ M3 :=
-    norm_logDeriv_dirichletLFunction_le_of_three_le_re χ⁻¹
+    norm_logDeriv_LFunction_le_re_ge_3 χ⁻¹
       (by
         rw [h1s_re_eq]
         linarith only [hσ2])

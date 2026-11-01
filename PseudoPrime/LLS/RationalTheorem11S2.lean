@@ -31,10 +31,9 @@ theorem not_characterTrivialBelow_rationalPart2Root {q : ℕ} [NeZero q] (χ : D
   have hx := Analysis.sq_ge_64_of_ge_8 ht8.le
   have hcore := weightedComparisonCore_of_trivialBelow χ hne hGRH hx ht
   obtain ⟨hS, hR, hb, hu⟩ :=
-    re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le
-      (llsRiemannWeightedLowerBound_of_riemannHypothesis hGRH.riemann)
-      (llsRiemannReciprocalLowerBound_of_riemannHypothesis hGRH.riemann)
-      (lt_of_lt_of_le (by norm_num only) hx) (le_trans (by norm_num only) hx) hcore
+    weightedComparison_core_bounds (riemannWeightedLower_of_RH hGRH.riemann)
+      (riemannReciprocalLower_of_RH hGRH.riemann) (lt_of_lt_of_le (by norm_num only) hx)
+      (le_trans (by norm_num only) hx) hcore
   have hsqrt :
     Real.sqrt ((Analysis.rationalPart2CutoffRoot (Real.log q)) ^ 2) =
       Analysis.rationalPart2CutoffRoot (Real.log q) :=
@@ -101,8 +100,8 @@ theorem exists_prime_not_one_le_rationalPart2Cutoff {q : ℕ} [NeZero q] (χ : D
 lies through the minimum of the pure and rational Part 2 cutoffs.
 Pull back a nonprincipal quotient character and apply its witness theorem.
 Nonunit primes are allowed, as required by the Miller–Rabin transfer. -/
-theorem exists_prime_outside_subgroup_image_le_rationalPart2Cutoff {q : ℕ} [NeZero q]
-    (hq : 3000 ≤ q) (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
+theorem exists_prime_outside_rationalPart2_GRH {q : ℕ} [NeZero q] (hq : 3000 ≤ q)
+    (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ,
       p.Prime ∧

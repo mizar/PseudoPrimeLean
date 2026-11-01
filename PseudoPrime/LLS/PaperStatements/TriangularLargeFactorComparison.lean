@@ -18,7 +18,7 @@ namespace PseudoPrime.LLS.PaperStatements
 /-- At nonzero level and scale x > 1, if every level prime is at least x,
 the exact geometric correction budget is at most 36 log q/(sqrt x-1).
 Compare denominators and sum the prime logarithms. -/
-theorem triangular18_level_prime_budget_le_of_large_factors {q : ℕ} [NeZero q] {x : ℝ} (hx : 1 < x)
+theorem triangular18_prime_budget_le_of_large {q : ℕ} [NeZero q] {x : ℝ} (hx : 1 < x)
     (hlarge : ∀ p ∈ q.primeFactors, x ≤ (p : ℝ)) :
     (∑ p ∈ q.primeFactors, 36 * (Real.log p / (Real.sqrt p - 1))) ≤
       36 * Real.log q / (Real.sqrt x - 1) := by
@@ -57,7 +57,7 @@ theorem triangular18_comparison_of_large_prime_factors {q : ℕ} [NeZero q] (H :
         ((H.index : ℝ) - 1) *
           (36 * Real.log q + 1350000000000000 + 55000 +
             4000000000000 * (Real.log q + 284) * x ^ (-9 / 16 : ℝ)) := by
-  have hb := triangular18_level_prime_budget_le_of_large_factors hx hlarge
+  have hb := triangular18_prime_budget_le_of_large hx hlarge
   have hl :=
     mul_le_mul_of_nonneg_left
       (sub_le_sub_left hb (Real.sqrt x * (68 + 4 * Real.exp (-18)) - 1456 * x ^ (1 / 4 : ℝ)))
@@ -73,9 +73,8 @@ theorem triangular18_comparison_of_large_prime_factors {q : ℕ} [NeZero q] (H :
 produces a prime through x that divides the level or lies outside the subgroup.
 If neither exists, all level factors are large and the finite comparison contradicts the gap.
 The gap is a numerical condition still to be certified at the chosen scale. -/
-theorem exists_prime_factor_or_outside_of_triangular18_gap {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ}
-    (hx : 1 < x)
+theorem exists_prime_factorOrOutside_tri18_gap_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 < x)
     (hgap :
       300000000 * Real.sqrt x + 1300000 * x ^ (1 / 4 : ℝ) +
           ((H.index : ℝ) - 1) *

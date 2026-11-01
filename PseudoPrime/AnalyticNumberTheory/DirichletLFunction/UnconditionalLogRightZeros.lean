@@ -32,7 +32,7 @@ theorem norm_half_power_le_two_rpow {x : ℝ} (hx : 2 ≤ x) {z : ℂ} (hzlo : 0
 at two is bounded by four times the inverse quadratic ordinate weight. Combine
 the two reciprocals before taking norms and compare squared distances.
 This preserves quadratic high-ordinate decay without RH. -/
-theorem norm_two_center_genus_kernel_le_quadratic {z : ℂ} (hzlo : 1 / 2 ≤ z.re) (hzhi : z.re ≤ 1) :
+theorem twoCenter_kernel_quadratic_right {z : ℂ} (hzlo : 1 / 2 ≤ z.re) (hzhi : z.re ≤ 1) :
     ‖1 / ((2 : ℂ) - z) + 1 / z‖ ≤ 4 / (1 + z.im ^ 2) := by
   have hden : 0 < 1 + z.im ^ 2 := by nlinarith only [sq_nonneg z.im]
   have hzsq : (1 + z.im ^ 2) / 4 ≤ ‖z‖ ^ 2 := by
@@ -62,7 +62,7 @@ half of the critical strip, the regularized zero term is bounded by its divisor
 multiplicity times `(8x^Re z + 4 log 2)/(1 + Im z²)`. Bound the original half-power
 term and the combined genus correction separately. This is the pointwise input
 for density-weighted zero sums, retaining both real part and ordinate decay. -/
-theorem norm_regularizedLogHalfZeroTerm_le_right_re {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+theorem norm_regularHalfTerm_le_right_re {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
     (hne : χ ≠ 1) {x : ℝ} (hx : 2 ≤ x) {ρ : ℂ} (hlo : 1 / 2 ≤ ρ.re) (hhi : ρ.re ≤ 1) :
     ‖regularizedLogHalfZeroTerm χ x ρ‖ ≤
       (8 * x ^ ρ.re + 4 * Real.log 2) *
@@ -100,7 +100,7 @@ theorem norm_regularizedLogHalfZeroTerm_le_right_re {q : ℕ} [NeZero q] {χ : D
   have hl : 0 ≤ Real.log 2 := Real.log_nonneg (by norm_num only)
   have hlnorm : ‖(Real.log 2 : ℂ)‖ = Real.log 2 := by
     rw [Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg hl]
-  have hg := norm_two_center_genus_kernel_le_quadratic hlo hhi
+  have hg := twoCenter_kernel_quadratic_right hlo hhi
   have hgm := mul_le_mul_of_nonneg_left hg (mul_nonneg hl hD)
   have hn :=
     norm_sub_le (completedLogHalfZeroTerm χ x ρ)
@@ -116,9 +116,9 @@ theorem norm_regularizedLogHalfZeroTerm_le_right_re {q : ℕ} [NeZero q] {χ : D
 kernel bound while retaining actual divisor multiplicity, the factor `x^Re z`,
 and the inverse quadratic ordinate weight. The character is nonprincipal and the
 scale is at least two. This exposes the precise weighted sums needed from density. -/
-theorem sum_norm_regularizedLogHalfZeroTerm_le_right_weighted_sum {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hne : χ ≠ 1) {x : ℝ} (hx : 2 ≤ x) (S : Finset ℂ)
-    (hlo : ∀ ρ ∈ S, 1 / 2 ≤ ρ.re) (hhi : ∀ ρ ∈ S, ρ.re ≤ 1) :
+theorem regularizedHalfTerm_weighted_sum {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hne : χ ≠ 1) {x : ℝ} (hx : 2 ≤ x) (S : Finset ℂ) (hlo : ∀ ρ ∈ S, 1 / 2 ≤ ρ.re)
+    (hhi : ∀ ρ ∈ S, ρ.re ≤ 1) :
     ∑ ρ ∈ S, ‖regularizedLogHalfZeroTerm χ x ρ‖ ≤
       8 *
           (∑ ρ ∈ S,
@@ -133,8 +133,7 @@ theorem sum_norm_regularizedLogHalfZeroTerm_le_right_weighted_sum {q : ℕ} [NeZ
           (8 * x ^ ρ.re + 4 * Real.log 2) *
               (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) /
             (1 + ρ.im ^ 2) :=
-      Finset.sum_le_sum
-        (fun ρ hρ ↦ norm_regularizedLogHalfZeroTerm_le_right_re hne hx (hlo ρ hρ) (hhi ρ hρ))
+      Finset.sum_le_sum (fun ρ hρ ↦ norm_regularHalfTerm_le_right_re hne hx (hlo ρ hρ) (hhi ρ hρ))
     _ = _ := by
       rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
       exact Finset.sum_congr rfl (fun ρ _ ↦ by ring)

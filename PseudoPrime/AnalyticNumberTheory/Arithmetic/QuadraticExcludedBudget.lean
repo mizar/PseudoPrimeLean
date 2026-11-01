@@ -49,8 +49,8 @@ theorem excludedCharacterDefect_le_quadratic_budget {q : ℕ} (χ : DirichletCha
   by_cases hc : Nat.Coprime n q
   · rw [ite_eq_left hc]
     by_cases hs : IsSquare n
-    · rw [ite_eq_left hs, quadratic_character_apply_one_of_coprime_square χ hquad hc hs,
-        Complex.one_re, sub_self]
+    · rw [ite_eq_left hs, quadraticChar_eq_one_of_coprime_sq χ hquad hc hs, Complex.one_re,
+        sub_self]
     · rw [ite_eq_right hs]
       have hr := (abs_le.mp ((Complex.abs_re_le_norm (χ n)).trans (χ.norm_le_one n))).1
       exact mul_le_mul_of_nonneg_right (by linarith only [hr]) hw0

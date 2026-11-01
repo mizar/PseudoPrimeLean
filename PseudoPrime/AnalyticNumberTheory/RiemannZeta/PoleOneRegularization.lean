@@ -22,7 +22,7 @@ noncomputable def riemannZetaOneLogDerivativeRegularization (s : ℂ) : ℂ :=
   1 - (s - 1) * (deriv riemannZeta₁ s / riemannZeta₁ s)
 
 /-- Near one, multiplying the negative zeta logarithmic derivative by `s-1` gives its extension. -/
-theorem eventuallyEq_riemannZetaOneLogDerivativeRegularization :
+theorem eventuallyEq_oneLogDerivRegularization :
     Filter.EventuallyEq (nhdsWithin (1 : ℂ) ({1}ᶜ : Set ℂ))
       (fun s : ℂ ↦ (s - 1) * (-(deriv riemannZeta s / riemannZeta s)))
       riemannZetaOneLogDerivativeRegularization := by
@@ -37,7 +37,7 @@ theorem eventuallyEq_riemannZetaOneLogDerivativeRegularization :
     _ = 1 - (s - 1) * (deriv riemannZeta₁ s / riemannZeta₁ s) := by rw [mul_inv_cancel₀ hsub]
 
 /-- The regularized negative logarithmic derivative is differentiable at one. -/
-theorem differentiableAt_riemannZetaOneLogDerivativeRegularization :
+theorem differentiableAt_oneLogDerivRegularization :
     DifferentiableAt ℂ riemannZetaOneLogDerivativeRegularization 1 := by
   have hzetaOne : riemannZeta₁ 1 ≠ 0 := by
     simp only [riemannZeta₁_one, ne_eq, one_ne_zero, not_false_eq_true]
@@ -45,7 +45,7 @@ theorem differentiableAt_riemannZetaOneLogDerivativeRegularization :
   fun_prop (disch := assumption)
 
 /-- The regularized negative logarithmic derivative is analytic near one. -/
-theorem analyticAt_riemannZetaOneLogDerivativeRegularization :
+theorem analyticAt_oneLogDerivRegularization :
     AnalyticAt ℂ riemannZetaOneLogDerivativeRegularization 1 := by
   have hzetaOne : riemannZeta₁ 1 ≠ 0 := by
     simp only [riemannZeta₁_one, ne_eq, one_ne_zero, not_false_eq_true]
@@ -56,13 +56,13 @@ theorem analyticAt_riemannZetaOneLogDerivativeRegularization :
   fun_prop
 
 /-- The regularized negative logarithmic derivative has value one at one. -/
-theorem riemannZetaOneLogDerivativeRegularization_one :
+theorem zetaOneLogDerivativeRegularization_one :
     riemannZetaOneLogDerivativeRegularization 1 = 1 := by
   simp only [riemannZetaOneLogDerivativeRegularization, sub_self, deriv_riemannZeta₁_one,
     riemannZeta₁_one, div_one, zero_mul, sub_zero]
 
 /-- The derivative of the regularized negative zeta logarithmic derivative at one is `-γ`. -/
-theorem deriv_riemannZetaOneLogDerivativeRegularization_one :
+theorem deriv_oneLogDerivRegularization_one :
     deriv riemannZetaOneLogDerivativeRegularization 1 = -Real.eulerMascheroniConstant := by
   have hzetaOne : riemannZeta₁ 1 ≠ 0 := by
     simp only [riemannZeta₁_one, ne_eq, one_ne_zero, not_false_eq_true]

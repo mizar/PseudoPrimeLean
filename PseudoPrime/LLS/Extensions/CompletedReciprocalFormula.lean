@@ -114,7 +114,7 @@ theorem reciprocalResolventResidue_eq_mass (f : GeneralLFunction) (hRH : f.Riema
 zero-resolvent integral is zeroMass/x minus reciprocalZeroSum. Power-mass convergence
 justifies termwise Mellin inversion; sum the mass and oscillatory parts separately.
 This evaluates the completed-zero contribution without a contour-shift assumption. -/
-theorem normalized_integral_reciprocalZeroResolvent_eq (f : GeneralLFunction) (hf : f.IsAdmissible)
+theorem reciprocalZero_integral_RH (f : GeneralLFunction) (hf : f.IsAdmissible)
     (hRH : f.RiemannHypothesis) {τ x : ℝ} (hτ : 0 < τ) (hx : 1 < x) :
     (2 * Real.pi)⁻¹ •
         (∫ y : ℝ,
@@ -127,8 +127,8 @@ theorem normalized_integral_reciprocalZeroResolvent_eq (f : GeneralLFunction) (h
     (Complex.hasSum_ofReal.mpr hm.hasSum).summable
   have hz := summable_reciprocalZeroTerms f hRH hm (zero_lt_one.trans hx)
   have he :=
-    AnalyticNumberTheory.General.normalized_integral_tsum_reciprocalResolventKernel
-      (fun ρ : f.Zero ↦ (ρ : ℂ) - 1) (fun ρ ↦ analyticOrderNatAt f.completed (ρ : ℂ))
+    AnalyticNumberTheory.General.reciprocalResolvent_integral_tsum (fun ρ : f.Zero ↦ (ρ : ℂ) - 1)
+      (fun ρ ↦ analyticOrderNatAt f.completed (ρ : ℂ))
       (fun ρ ↦ by
         rw [Complex.sub_re, Complex.one_re, hRH ρ]; norm_num only)
       (fun ρ h ↦ by
@@ -200,8 +200,8 @@ theorem completedReciprocalMellinIntegrand_eq (f : GeneralLFunction) (hf : f.IsA
 Mellin integral equals -ξ'/ξ(1)*(1-1/x)-zeroMass/x+reciprocalZeroSum.
 Integrate the endpoint and zero-series decomposition using absolute integrability.
 This proves the exact completed-function side of the generalized reciprocal formula. -/
-theorem normalized_integral_completedReciprocalMellin_eq (f : GeneralLFunction)
-    (hf : f.IsAdmissible) (hRH : f.RiemannHypothesis) {τ x : ℝ} (hτ : 0 < τ) (hx : 1 < x) :
+theorem completedReciprocal_integral_RH (f : GeneralLFunction) (hf : f.IsAdmissible)
+    (hRH : f.RiemannHypothesis) {τ x : ℝ} (hτ : 0 < τ) (hx : 1 < x) :
     (2 * Real.pi)⁻¹ • (∫ y : ℝ, f.completedReciprocalMellinIntegrand x τ y) =
       -logDeriv f.completed 1 * (1 - (x : ℂ)⁻¹) -
         ((f.zeroMass : ℂ) / (x : ℂ) - f.reciprocalZeroSum x) := by
@@ -219,13 +219,13 @@ theorem normalized_integral_completedReciprocalMellin_eq (f : GeneralLFunction)
   have he := funext (completedReciprocalMellinIntegrand_eq f hf hRH (τ := τ) (x := x) hτ)
   rw [he, MeasureTheory.integral_sub (hG.const_mul (-logDeriv f.completed 1)) hZ, smul_sub,
     MeasureTheory.integral_const_mul, ← mul_smul_comm, hGI,
-    normalized_integral_reciprocalZeroResolvent_eq f hf hRH hτ hx]
+    reciprocalZero_integral_RH f hf hRH hτ hx]
 
 /-- For admissible RH data, τ > 0 and x > 1, the real completed reciprocal
 Mellin integral is -zeroMass/2+(θ/sqrt x-1/(2x))*zeroMass with |θ| ≤ 1.
 Use the functional-equation endpoint identity and the reciprocal zero norm bound.
 This is the zero-side estimate needed for the generalized smoothed logarithmic derivative. -/
-theorem re_integral_completedReciprocalMellin_eq_theta (f : GeneralLFunction) (hf : f.IsAdmissible)
+theorem completedReciprocal_real_theta_RH (f : GeneralLFunction) (hf : f.IsAdmissible)
     (hRH : f.RiemannHypothesis) {τ x : ℝ} (hτ : 0 < τ) (hx : 1 < x) :
     ∃ θ : ℝ,
       |θ| ≤ 1 ∧
@@ -235,7 +235,7 @@ theorem re_integral_completedReciprocalMellin_eq_theta (f : GeneralLFunction) (h
     reciprocalZeroSum_eq_theta f hRH (summable_zeroMassTerm_of_admissible f hf hRH)
       (zero_lt_one.trans hx)
   refine ⟨θ, hθ, ?_⟩
-  rw [normalized_integral_completedReciprocalMellin_eq f hf hRH hτ hx]
+  rw [completedReciprocal_integral_RH f hf hRH hτ hx]
   rw [← Complex.ofReal_inv, ← Complex.ofReal_div]
   simp only [Complex.sub_re, Complex.mul_re, Complex.neg_re, Complex.one_re, Complex.ofReal_re,
     Complex.sub_im, Complex.one_im, Complex.ofReal_im, sub_zero, mul_zero]

@@ -41,8 +41,8 @@ theorem summable_positiveEuler {q : ℕ} (χ : DirichletCharacter ℂ q) {σ : �
 Claim: the real L logarithmic derivative is at most principal Euler mass minus the positive prefix.
 Proof: use the exact twisted Euler identity and the nonnegative full-series comparison.
 Role: supply a kernel-independent form of the retained real-axis Euler gain. -/
-theorem re_logDeriv_le_principal_sub_positive_prefix {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
-    {σ : ℝ} (hσ : 1 < σ) (B : Finset ℕ) :
+theorem re_L_logDeriv_le_positivePrefix {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) {σ : ℝ}
+    (hσ : 1 < σ) (B : Finset ℕ) :
     (logDeriv χ.LFunction (σ : ℂ)).re ≤
       (∑' n : ℕ, ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ σ) -
         ∑ n ∈ B, (1 + (χ n).re) * ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ σ := by

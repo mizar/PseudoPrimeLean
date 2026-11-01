@@ -51,11 +51,10 @@ open AnalyticNumberTheory.RiemannZeta in
 endpoint separation produces an odd non-one prime at most x. Under nonexistence
 use only two-power losses in both arithmetic lower bounds, then compare the mass
 upper bound. Zero-valued primes are allowed; coprimality is not required. -/
-theorem exists_odd_prime_not_one_of_oddEndpointSeparation_neg {h : ℝ} (hh : 0 < h) {q : ℕ}
-    [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x Y : ℝ} (hx : 1 < x) (hY : 64 ≤ Y) (hYx : Y ≤ x)
-    (hgap : oddEndpointSeparation h q x Y < 0) :
+theorem exists_oddPrime_neOne_separation_GRH {h : ℝ} (hh : 0 < h) {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+    {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x Y : ℝ} (hx : 1 < x) (hY : 64 ≤ Y)
+    (hYx : Y ≤ x) (hgap : oddEndpointSeparation h q x Y < 0) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ x ∧ χ p ≠ 1 := by
   by_contra hn
   have ht : ∀ p : ℕ, p.Prime → Odd p → (p : ℝ) ≤ x → χ p = 1 := by
@@ -66,7 +65,7 @@ theorem exists_odd_prime_not_one_of_oddEndpointSeparation_neg {h : ℝ} (hh : 0 
   have hy0 : 0 < Y := by linarith only [hY]
   have hr :=
     reciprocalSum_re_ge_of_odd_prime_trivial χ hy0 (fun p hp ho hpy ↦ ht p hp ho (hpy.trans hYx))
-  have hr0 := reciprocalWeightedMangoldtSum_ge_log_sub_31551_div_20000 hGRH.riemann hy2
+  have hr0 := reciprocalMangoldt_ge_log_sub_31551_20000 hGRH.riemann hy2
   have hlo :
     Real.log Y - (31551 / 20000 : ℝ) - 2 * commonFactorReciprocalWeightedSum Y 2 ≤
       (characterReciprocalWeightedSum Y χ).re := by
@@ -127,7 +126,7 @@ theorem tendsto_oddEndpointSeparation_right (q : ℕ) {x : ℝ} (hx : 1 ≤ x) (
         (by norm_num only : (1 : ℝ) ≠ 0))
   dsimp only [oddEndpointSeparation, oddEndpointLimit]
   exact
-    ((tendsto_reciprocalGapFullEndpointSeparation_right q hx Y).add
+    ((tendsto_reciprocalGapFullEndpoint q hx Y).add
           (((hc.div_const (Real.sqrt x)).const_add 2).mul_const
             (oddEndpointMassCorrection Y))).add_const
       _
@@ -144,6 +143,6 @@ theorem exists_odd_prime_not_one_of_oddEndpointLimit_neg {q : ℕ} [NeZero q] (h
     (tendsto_oddEndpointSeparation_right q hx.le Y).eventually (Iio_mem_nhds hlim)
   have hp0 : ∀ᶠ h : ℝ in nhdsWithin 0 (Set.Ioi 0), 0 < h := self_mem_nhdsWithin
   obtain ⟨h, hh, hs⟩ := (hp0.and hn).exists
-  exact exists_odd_prime_not_one_of_oddEndpointSeparation_neg hh hq hGRH hp hne hinv hx hY hYx hs
+  exact exists_oddPrime_neOne_separation_GRH hh hq hGRH hp hne hinv hx hY hYx hs
 
 end PseudoPrime.LLS.PaperStatements

@@ -28,12 +28,12 @@ theorem unit_resolvent_zeroMass_le {m : ℕ} [NeZero m] (hm : 2 ≤ m) {χ : Dir
     rw [List.mem_singleton] at hab
     rw [hab]
     norm_num only
-  have he := finiteSignedResolvent_zeroMass_eq_nodes hm hRH hp hne hinv [(1, 1)] ha
+  have he := signedResolvent_mass_eq_nodes_RH hm hRH hp hne hinv [(1, 1)] ha
   simp only [Analysis.finiteSignedResolvent, List.map_cons, List.map_nil, List.sum_cons,
     List.sum_nil, Rat.cast_one, one_mul, one_pow, add_zero] at he
   norm_num only [← Complex.ofReal_add] at he
   have hf :=
-    abs_re_logDeriv_gammaFactor_le_eight_fifths χ (by norm_num only : (1 : ℝ) ≤ 3 / 2)
+    gammaLogDeriv_re_le_8_5 χ (by norm_num only : (1 : ℝ) ≤ 3 / 2)
       (by norm_num only : (3 / 2 : ℝ) ≤ 15 / 2)
   have ho := norm_logDeriv_real_le_inv_gap χ (by norm_num only : (1 : ℝ) < 3 / 2)
   norm_num only at ho
@@ -44,9 +44,9 @@ theorem unit_resolvent_zeroMass_le {m : ℕ} [NeZero m] (hm : 2 ≤ m) {χ : Dir
 /-- Under individual RH and positive original nodes, adjoining (1,2*delta)
 adds exactly twice delta times the unit-resolvent zero mass. Prove summability before
 splitting the full zero series. This preserves the original arithmetic budget. -/
-theorem logarithmicPhaseExtension_zeroMass_eq {m : ℕ} [NeZero m] (hm : 2 ≤ m)
-    {χ : DirichletCharacter ℂ m} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (l : List (ℚ × ℚ)) (hl : ∀ ab ∈ l, (0 : ℚ) < ab.1) (δ : ℚ) :
+theorem logPhaseExtension_mass_eq_RH {m : ℕ} [NeZero m] (hm : 2 ≤ m) {χ : DirichletCharacter ℂ m}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    (l : List (ℚ × ℚ)) (hl : ∀ ab ∈ l, (0 : ℚ) < ab.1) (δ : ℚ) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
           Analysis.finiteSignedResolvent (Analysis.logarithmicPhaseExtension l δ) ρ.im) =
@@ -78,10 +78,9 @@ theorem logarithmicPhaseExtension_zeroMass_eq {m : ℕ} [NeZero m] (hm : 2 ≤ m
 /-- Under the same hypotheses and nonnegative delta, the extended zero mass
 is at most the original plus delta*(log(m)+76/5). Apply the unit-node estimate to
 the exact splitting. This quantifies scale transport without new Euler data. -/
-theorem logarithmicPhaseExtension_zeroMass_le {m : ℕ} [NeZero m] (hm : 2 ≤ m)
-    {χ : DirichletCharacter ℂ m} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (l : List (ℚ × ℚ)) (hl : ∀ ab ∈ l, (0 : ℚ) < ab.1) {δ : ℚ}
-    (hd : 0 ≤ δ) :
+theorem logPhaseExtension_mass_le_RH {m : ℕ} [NeZero m] (hm : 2 ≤ m) {χ : DirichletCharacter ℂ m}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    (l : List (ℚ × ℚ)) (hl : ∀ ab ∈ l, (0 : ℚ) < ab.1) {δ : ℚ} (hd : 0 ≤ δ) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
           Analysis.finiteSignedResolvent (Analysis.logarithmicPhaseExtension l δ) ρ.im) ≤
@@ -89,7 +88,7 @@ theorem logarithmicPhaseExtension_zeroMass_le {m : ℕ} [NeZero m] (hm : 2 ≤ m
           (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
             Analysis.finiteSignedResolvent l ρ.im) +
         (δ : ℝ) * (Real.log m + 76 / 5) := by
-  rw [logarithmicPhaseExtension_zeroMass_eq hm hRH hp hne hinv l hl δ]
+  rw [logPhaseExtension_mass_eq_RH hm hRH hp hne hinv l hl δ]
   have h :=
     mul_le_mul_of_nonneg_left (unit_resolvent_zeroMass_le hm hRH hp hne hinv)
       (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 2) ((Rat.cast_nonneg (K := ℝ)).mpr hd))

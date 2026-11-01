@@ -43,10 +43,9 @@ theorem exists_prime_ne_one_of_tapered_two_endpoint {n : ℕ} (hn : Odd n) (hns 
     NumberTheory.isQuadratic_primitiveCharacter χ
       (NumberTheory.complexQuadraticCharacter_isQuadratic n hn)
   obtain ⟨p, hp, ho, hpx, hv⟩ :=
-    LLS.PaperStatements.exists_odd_prime_inducing_ne_one_of_tapered_limit χ hq hne hquad hGRH hx hY
-      hYx (le_refl _) hlim
-  exact
-    ⟨p, hp, ho, hpx, NumberTheory.jacobi_ne_one_of_primitiveQuadraticCharacter_ne_one hn hp ho hv⟩
+    LLS.PaperStatements.exists_oddPrime_inducing_tapered_GRH χ hq hne hquad hGRH hx hY hYx
+      (le_refl _) hlim
+  exact ⟨p, hp, ho, hpx, NumberTheory.jacobi_ne_one_of_primitive_ne_one hn hp ho hv⟩
 
 /-- Under the same analytic and arithmetic assumptions, the least odd-prime
 non-one witness is at most x. Apply leastness to the actual tapered-endpoint

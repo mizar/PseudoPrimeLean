@@ -101,10 +101,9 @@ noncomputable def reciprocalGapCompletedRemainder {q : ℕ} [NeZero q] (h : ℝ)
 /-- Under GRH for a primitive nonprincipal character, the finite sum is minus the zero sum
 plus the completed contour remainder, at scales at least one.
 Apply the admissible kernel contour formula on its interior lines and collect terms. -/
-theorem reciprocalGapCharacterSum_eq_zeroSum_add_remainder {h : ℝ} (hh : 0 < h) {q : ℕ} [NeZero q]
-    (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) :
+theorem reciprocalGap_eq_zeroSum_remainder_GRH {h : ℝ} (hh : 0 < h) {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+    {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) :
     reciprocalGapCharacterSum h χ x =
       -(∑' ρ : ℂ, (reciprocalGapMellinKernel h hh).oscillatingZeroTerm χ x ρ) +
         reciprocalGapCompletedRemainder h hh χ x := by
@@ -164,7 +163,7 @@ theorem reciprocalGapCharacterSum_re_le_positive_prefix {h c : ℝ} (hh : 0 < h)
   have hr :=
     Complex.re_le_norm (-(∑' ρ : ℂ, (reciprocalGapMellinKernel h hh).oscillatingZeroTerm χ x ρ))
   simp only [Complex.neg_re, norm_neg] at hr
-  rw [reciprocalGapCharacterSum_eq_zeroSum_add_remainder hh hq hGRH hp hne hinv hx, Complex.add_re,
+  rw [reciprocalGap_eq_zeroSum_remainder_GRH hh hq hGRH hp hne hinv hx, Complex.add_re,
     Complex.neg_re]
   linarith only [hz.2, hr]
 

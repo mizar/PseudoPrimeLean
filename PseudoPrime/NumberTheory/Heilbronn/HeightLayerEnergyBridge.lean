@@ -173,9 +173,8 @@ theorem exists_global_shiftedHeightSmallTerm_rpow_bound {theta delta eta : ℝ} 
 uniformly for every prime p and every `H<p`. Each degree-specific ratio estimate
 has a uniform constant; sum those constants and use the exponent comparison
 `1/j≤1/6` to obtain the common exponent `1/42+eta`. -/
-theorem exists_global_shiftedHeightLayers_weighted_sum_bound {theta delta eta : ℝ}
-    (hdelta : 0 < delta) (htheta0 : 0 < theta) (htheta : theta < 1 / 42)
-    (hbudget : theta + delta / 6 ≤ eta) :
+theorem exists_global_heightLayer_sum_bound {theta delta eta : ℝ} (hdelta : 0 < delta)
+    (htheta0 : 0 < theta) (htheta : theta < 1 / 42) (hbudget : theta + delta / 6 ≤ eta) :
     ∃ C : ℝ,
       0 < C ∧
         ∀ (p H : ℕ) [Fact p.Prime],
@@ -283,12 +282,11 @@ large-prime inequality holds, the Heilbronn energy budget follows. Proof: obtain
 uniform count estimate, rewrite its exponent as `g/a`, round its constant to a natural
 coefficient, and invoke `height_layer_count_energy_budget`. Role: join the proved layer
 estimate to the energy method without concealing the remaining coefficient absorption. -/
-theorem exists_height_layer_count_energy_budget_of_rpow_bound {p H k a b g : ℕ} [Fact p.Prime]
-    {theta delta eta : ℝ} (hodd : Odd p) (hHp : H < p) (htop : H ≤ shiftedHeightCutoff p theta 6)
-    (hdelta : 0 < delta) (htheta0 : 0 < theta) (htheta : theta < 1 / 42)
-    (hbudget : theta + delta / 6 ≤ eta) (ha : 0 < a) (hratio : (g : ℝ) / a = 1 / 42 + eta)
-    (hb : b ≤ 2 * a) (hslack : 11 * a + 2 * g < 6 * b) (hcut : p ^ b ≤ k ^ a)
-    (hheight : H ^ a ≤ p ^ (2 * a - b)) :
+theorem exists_layer_energy_of_rpow_bound {p H k a b g : ℕ} [Fact p.Prime] {theta delta eta : ℝ}
+    (hodd : Odd p) (hHp : H < p) (htop : H ≤ shiftedHeightCutoff p theta 6) (hdelta : 0 < delta)
+    (htheta0 : 0 < theta) (htheta : theta < 1 / 42) (hbudget : theta + delta / 6 ≤ eta) (ha : 0 < a)
+    (hratio : (g : ℝ) / a = 1 / 42 + eta) (hb : b ≤ 2 * a) (hslack : 11 * a + 2 * g < 6 * b)
+    (hcut : p ^ b ≤ k ^ a) (hheight : H ^ a ≤ p ^ (2 * a - b)) :
     ∃ D : ℕ,
       boundedCongruenceCount p H ^ a ≤ D ^ a * H ^ a * p ^ g ∧
         (18874370 ^ a * D ^ (2 * a) < p ^ (6 * b - 11 * a - 2 * g) →
@@ -317,8 +315,7 @@ theorem exists_global_boundedCongruenceCount_rpow_bound {theta delta eta : ℝ} 
             H ≤ shiftedHeightCutoff p theta 6 →
             (boundedCongruenceCount p H : ℝ) ≤ C * H * (p : ℝ) ^ (1 / 42 + eta) := by
   obtain ⟨Cs, hCs, hs⟩ := exists_global_shiftedHeightSmallTerm_rpow_bound hdelta htheta0 hbudget
-  obtain ⟨Ct, hCt, ht⟩ :=
-    exists_global_shiftedHeightLayers_weighted_sum_bound hdelta htheta0 htheta hbudget
+  obtain ⟨Ct, hCt, ht⟩ := exists_global_heightLayer_sum_bound hdelta htheta0 htheta hbudget
   refine ⟨4 * (Cs + Ct), mul_pos (by norm_num only) (add_pos hCs hCt), ?_⟩
   intro p H hpPrime hodd hHp htop
   have hp := (Fact.out : Nat.Prime p).one_lt

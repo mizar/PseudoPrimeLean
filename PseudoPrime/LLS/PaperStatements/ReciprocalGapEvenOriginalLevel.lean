@@ -19,12 +19,11 @@ ambient separation at its conductor with exclusion modulus N yields a coprime pr
 p<=x where the original character is not one. Pass to the canonical primitive character,
 retain the exact additional-prime losses, and transfer values back on N-coprime inputs.
 The character need not be primitive and no conductor nonzero premise is required. -/
-theorem exists_prime_original_character_ne_one_of_reciprocalGap_even_ambient {N : ℕ} [NeZero N]
-    (χ : DirichletCharacter ℂ N) (he : χ.Even) (hne : χ ≠ 1)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 ≤ x)
-    (B₀ B₁ B : Finset ℕ) (hB₀ : ∀ a ∈ B₀, (a : ℝ) ≤ x) (hB₁ : ∀ a ∈ B₁, (a : ℝ) ≤ x)
-    (hB : B ⊆ Finset.Ioc 0 ⌊x⌋₊) (hcop : ∀ a ∈ B, Nat.Coprime a N) (lo u : ℕ → ℝ)
-    (hlo : ∀ a ∈ B, lo a ≤ ArithmeticFunction.vonMangoldt a)
+theorem exists_prime_neOne_originalEvenGap_GRH {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N)
+    (he : χ.Even) (hne : χ ≠ 1) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {x : ℝ} (hx : 1 ≤ x) (B₀ B₁ B : Finset ℕ) (hB₀ : ∀ a ∈ B₀, (a : ℝ) ≤ x)
+    (hB₁ : ∀ a ∈ B₁, (a : ℝ) ≤ x) (hB : B ⊆ Finset.Ioc 0 ⌊x⌋₊) (hcop : ∀ a ∈ B, Nat.Coprime a N)
+    (lo u : ℕ → ℝ) (hlo : ∀ a ∈ B, lo a ≤ ArithmeticFunction.vonMangoldt a)
     (hu : ∀ a ∈ B, ((a : ℝ) / x) ^ (7 / 10 : ℝ) ≤ u a) (hu1 : ∀ a ∈ B, u a ≤ 1)
     (hgap :
       reciprocalGapEvenAmbientRationalSeparation χ.conductor N x B₀ B₁ <
@@ -46,7 +45,7 @@ theorem exists_prime_original_character_ne_one_of_reciprocalGap_even_ambient {N 
     have hh := congrArg (fun ξ : DirichletCharacter ℂ χ.conductor ↦ ξ⁻¹) hv
     exact hψ (by simpa only [inv_inv, inv_one] using hh)
   obtain ⟨p, hprime, hpx, hpc, hv⟩ :=
-    exists_prime_coprime_not_one_of_reciprocalGap_even_ambient_lower hq χ.conductor_dvd_level hGRH
+    exists_prime_neOne_evenAmbientGap_GRH hq χ.conductor_dvd_level hGRH
       (reciprocalGap_primitiveCharacter_even he) hp hψ hi hx B₀ B₁ B hB₀ hB₁ hB hcop lo u hlo hu hu1
       hgap
   have he := DirichletCharacter.primitiveCharacter_apply_of_isCoprime χ hpc.isCoprime

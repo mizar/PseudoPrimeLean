@@ -68,8 +68,7 @@ theorem gammaCentralArchimedeanIntegral_logScale {q : ℕ} (χ : DirichletCharac
 /-- The Gaussian central Gamma term is the logarithmic Gaussian average of
 the unsmoothed central term. Fubini applies to the absolutely integrable
 vertical Gamma integrand. -/
-theorem gaussianCentralArchimedeanIntegral_eq_logGaussianAverage {q : ℕ}
-    (χ : DirichletCharacter ℂ q) {x : ℝ} (hx : 0 < x) :
+theorem gaussianArchIntegral_logAverage {q : ℕ} (χ : DirichletCharacter ℂ q) {x : ℝ} (hx : 0 < x) :
     gaussianCentralArchimedeanIntegral χ x =
       ∫ v : ℝ,
         (Analysis.normalizedGaussianWeight v : ℂ) *
@@ -111,7 +110,7 @@ theorem gaussianCentralArchimedeanIntegral_eq_logGaussianAverage {q : ℕ}
             (Analysis.normalizedGaussianWeight v : ℂ) *
               (∫ t : ℝ, Complex.exp ((Complex.I * (t : ℂ)) * (v : ℂ)) * F t)) :=
       by
-      have havg := integral_gaussianMultiplier_eq_logGaussianAverage (c := 0) hF
+      have havg := gaussianMultiplier_integral_average (c := 0) hF
       simpa only [Complex.ofReal_zero, zero_add] using congrArg _ havg
     _ =
         ∫ v : ℝ,
@@ -165,7 +164,7 @@ theorem re_gammaCentralArchimedeanIntegral_le_inv {q : ℕ} (χ : DirichletChara
 averaging the pointwise sign and norm bounds. -/
 theorem re_gaussianCentralArchimedeanIntegral_le_inv {q : ℕ} (χ : DirichletCharacter ℂ q) {x : ℝ}
     (hx : 0 < x) : (gaussianCentralArchimedeanIntegral χ x).re ≤ (512 / 27 : ℝ) / x := by
-  rw [gaussianCentralArchimedeanIntegral_eq_logGaussianAverage χ hx]
+  rw [gaussianArchIntegral_logAverage χ hx]
   let G : ℝ → ℂ := fun v =>
     (Analysis.normalizedGaussianWeight v : ℂ) * gammaCentralArchimedeanIntegral χ (x * Real.exp v)
   let F : ℝ → ℂ := fun t =>

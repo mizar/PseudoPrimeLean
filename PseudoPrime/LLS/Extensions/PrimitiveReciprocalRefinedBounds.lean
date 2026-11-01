@@ -22,7 +22,7 @@ public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveGener
 
 Assembles the whole primitive singularity ledger's residue sum real-part bound, uniform in the
 choice of rectangle (in particular `A`, `k`-independent): splits off `r₀ + r₁`
-(`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.dirichletSplitReciprocalSingularitySum`),
+(`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.splitReciprocalSingularitySum`),
 bounds it by parity dispatch (the odd/even closed
 forms plus the bounds in `LLS/PrimitiveReciprocalMainErrorBounds.lean`), and combines with the
 erased-ledger zero-mass bound from `PrimitiveMultiplicityBridge.lean`.
@@ -41,7 +41,7 @@ keeps that improvement separate so the existing generic raw API remains unchange
 reciprocal residues at zero and one have the displayed strict upper bound with remainder
 `-4/5`. Rewrite the even closed form and apply the stronger even main-error estimate.
 This sharpens the parity-uniform residue input without requiring quadraticity. -/
-theorem re_add_llsPrimitiveReciprocalResidues_zero_one_even_lt {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem reciprocalResidues01_even_lt_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (heven : χ.Even) {x : ℝ}
     (hx : 64 ≤ x) :
@@ -52,9 +52,9 @@ theorem re_add_llsPrimitiveReciprocalResidues_zero_one_even_lt {N : ℕ} [NeZero
         4 / 5 := by
   have hxpos : (0 : ℝ) < x := (by norm_num only : (0 : ℝ) < 64).trans_le hx
   have hraw :=
-    AnalyticNumberTheory.DirichletLFunction.re_add_dirichletReciprocalResidues_zero_one_of_even_raw
-      hN2 hGRH hprimitive hne hinv heven hxpos
-  have herr := llsPrimitiveReciprocalEvenMainError_lt_neg_four_fifths hx
+    AnalyticNumberTheory.DirichletLFunction.reciprocalResidues_even_raw_GRH hN2 hGRH hprimitive hne
+      hinv heven hxpos
+  have herr := primitiveReciprocalEvenError_lt_neg_4_5 hx
   unfold Analysis.primitiveReciprocalEvenMainError at herr
   rw [hraw]
   nlinarith only [herr]
@@ -67,8 +67,7 @@ open PseudoPrime.AnalyticNumberTheory.DirichletLFunction in
 `A ≥ 2`, the fixed-left-edge reciprocal expression satisfies the displayed non-strict
 bound with remainder `-4/5`. Split the residue ledger, complete the zero-mass square,
 and pass to the height limit. The limiting conclusion is non-strict despite the name. -/
-theorem re_characterReciprocalWeightedSum_sub_leftVertical_lt_of_even {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
+theorem reciprocalSum_even_left_le_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hprimitive : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (heven : χ.Even) {x : ℝ} (hx : 64 ≤ x) (A : ℕ) (hA : 2 ≤ A) :
     (characterReciprocalWeightedSum x χ).re -
@@ -79,8 +78,7 @@ theorem re_characterReciprocalWeightedSum_sub_leftVertical_lt_of_even {N : ℕ} 
       (1 / 2) * (1 - 1 / x) * (Real.log N - Real.log Real.pi) - 4 / 5 -
         (1 - 1 / Real.sqrt x) ^ 2 * |primitiveBRe χ| := by
   have hx1 : (1 : ℝ) ≤ x := (by norm_num only : (1 : ℝ) ≤ 64).trans hx
-  have htend :=
-    tendsto_normalized_dirichletReciprocalBoundary_heightSeq hN2 hGRH hprimitive hne hinv hx1 A hA
+  have htend := tendsto_reciprocal_boundary_GRH hN2 hGRH hprimitive hne hinv hx1 A hA
   have htendRe := (Complex.continuous_re.tendsto _).comp htend
   have hev :
     ∀ᶠ k : ℕ in Filter.atTop,
@@ -93,21 +91,18 @@ theorem re_characterReciprocalWeightedSum_sub_leftVertical_lt_of_even {N : ℕ} 
           (1 - 1 / Real.sqrt x) ^ 2 * |primitiveBRe χ| := by
     filter_upwards with k
     have hid :=
-      dirichletReciprocalFiniteContourIdentity_heightSeq_normalized hN2 hGRH hprimitive hne hinv
+      reciprocalContour_heightSeq_GRH hN2 hGRH hprimitive hne hinv
         (show (0 : ℝ) < x from (by norm_num only : (0 : ℝ) < 64).trans_le hx) A k hA
-        (primitiveHeightSeq_singularities_mem_open hN2 hGRH hprimitive hne hinv A k hA)
-    obtain ⟨h0, h1⟩ :=
-      primitiveReciprocalMellinPoints_mem_singularities_heightSeq hN2 hGRH hprimitive hne hinv A k
-        hA
-    have hbound :=
-      re_add_llsPrimitiveReciprocalResidues_zero_one_even_lt hN2 hGRH hprimitive hne hinv heven hx
+        (heightSeq_singularities_open_GRH hN2 hGRH hprimitive hne hinv A k hA)
+    obtain ⟨h0, h1⟩ := heightSeq_zero_one_singular_GRH hN2 hGRH hprimitive hne hinv A k hA
+    have hbound := reciprocalResidues01_even_lt_GRH hN2 hGRH hprimitive hne hinv heven hx
     rw [hid]
     have hsum :=
-      re_sum_erased_primitiveReciprocalResidues_le hN2 hGRH hprimitive hne hinv
+      reciprocal_erasedResidues_re_le_GRH hN2 hGRH hprimitive hne hinv
         (show (0 : ℝ) < x from (by norm_num only : (0 : ℝ) < 64).trans_le hx) (z :=
         primitiveHeightSeqLowerCorner hN2 hGRH hprimitive hne hinv A k) (w :=
         primitiveHeightSeqUpperCorner hN2 hGRH hprimitive hne hinv k)
-    rw [dirichletSplitReciprocalSingularitySum x hne h1 h0]
+    rw [splitReciprocalSingularitySum x hne h1 h0]
     rw [Complex.add_re, Complex.add_re]
     have hsqrtx_pos : (0 : ℝ) < Real.sqrt x :=
       Real.sqrt_pos.mpr ((by norm_num only : (0 : ℝ) < 64).trans_le hx)
@@ -126,7 +121,7 @@ theorem re_characterReciprocalWeightedSum_sub_leftVertical_lt_of_even {N : ℕ} 
       (dirichletReciprocalResidueAt hne x 1).re + (dirichletReciprocalResidueAt hne x 0).re +
             (∑
                 ρ ∈
-                  ((dirichletLFunctionSingularitiesInRectangle χ hne
+                  ((LFunctionSingularitiesInRectangle χ hne
                             (primitiveHeightSeqLowerCorner hN2 hGRH hprimitive hne hinv A k)
                             (primitiveHeightSeqUpperCorner hN2 hGRH hprimitive hne hinv k)).erase
                         1).erase
@@ -180,8 +175,7 @@ theorem primitiveReciprocalRaw_even_le {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ 
       (1 / 2) * (1 - 1 / x) * (Real.log N - Real.log Real.pi) - 4 / 5 -
         (1 - 1 / Real.sqrt x) ^ 2 * |primitiveBRe χ| := by
   have hx1 : (1 : ℝ) < x := (by norm_num only : (1 : ℝ) < 64).trans_le hx
-  have htend :=
-    tendsto_dirichletReciprocalContourKernel_leftVertical_integral_atTop hprimitive hne hinv hx1
+  have htend := tendsto_reciprocal_left_integral hprimitive hne hinv hx1
   have htendRe := (Complex.continuous_re.tendsto _).comp htend
   simp only [Complex.zero_re] at htendRe
   have htendScaled :
@@ -205,9 +199,7 @@ theorem primitiveReciprocalRaw_even_le {N : ℕ} [NeZero N] (hN2 : 2 ≤ N) {χ 
         (1 / 2) * (1 - 1 / x) * (Real.log N - Real.log Real.pi) - 4 / 5 -
           (1 - 1 / Real.sqrt x) ^ 2 * |primitiveBRe χ| := by
     filter_upwards [Filter.eventually_ge_atTop 2] with A hA
-    exact
-      re_characterReciprocalWeightedSum_sub_leftVertical_lt_of_even hN2 hGRH hprimitive hne hinv
-        heven hx A hA
+    exact reciprocalSum_even_left_le_GRH hN2 hGRH hprimitive hne hinv heven hx A hA
   exact le_of_tendsto htendScaled hev
 
 end PseudoPrime.LLS.Extensions

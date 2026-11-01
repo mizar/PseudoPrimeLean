@@ -59,8 +59,8 @@ theorem integrable_vertical_logDeriv_mellin {F : ℂ → ℂ} (hF : Differentiab
       (fun T : ℝ ↦
         logDeriv F ((σ : ℂ) + T * Complex.I) *
           mellin (logarithmicTestWeight g) ((σ : ℂ) + T * Complex.I)) := by
-  obtain ⟨D₀, _, h₀⟩ := mellin_logarithmicTestWeight_uniform_power_bound g he hc hg σ σ 0
-  obtain ⟨D₃, _, h₃⟩ := mellin_logarithmicTestWeight_uniform_power_bound g he hc hg σ σ 3
+  obtain ⟨D₀, _, h₀⟩ := logTest_mellin_uniform_power_bound g he hc hg σ σ 0
+  obtain ⟨D₃, _, h₃⟩ := logTest_mellin_uniform_power_bound g he hc hg σ σ 3
   have hline : Continuous (fun T : ℝ ↦ (σ : ℂ) + T * Complex.I) :=
     continuous_const.add (Complex.continuous_ofReal.mul continuous_const)
   have hlog : Continuous (fun T : ℝ ↦ logDeriv F ((σ : ℂ) + T * Complex.I)) := by
@@ -113,8 +113,7 @@ theorem integrable_outer_logDeriv_mellin_of_completion {F L : ℂ → ℂ} {ε :
           logDeriv F (((-1 : ℝ) : ℂ) + T * Complex.I) *
             mellin (logarithmicTestWeight g) (((-1 : ℝ) : ℂ) + T * Complex.I)) := by
   obtain ⟨A, hA, hb⟩ :=
-    exists_vertical_logDeriv_linear_bound_of_completion hq k κ hκ hreg hε hfe hright hF h0 horder ha
-      hL hdL hlog
+    exists_vertical_logDeriv_linear_bound hq k κ hκ hreg hε hfe hright hF h0 horder ha hL hdL hlog
   have hzero : ∀ T : ℝ, F (((2 : ℝ) : ℂ) + T * Complex.I) ≠ 0 := by
     intro T
     apply hright

@@ -27,7 +27,7 @@ Proof: compare the norm products by adjoining the omitted factors, each of which
 Role: bounds each normalized elementary-symmetric term in the interpolation polynomial used by
 Turán's power-sum estimate.
 -/
-theorem normalized_product_subset_norm_le_one {ι : Type} (s t : Finset ι) (z : ι → ℂ) (hts : t ⊆ s)
+theorem normalizedSubset_le {ι : Type} (s t : Finset ι) (z : ι → ℂ) (hts : t ⊆ s)
     (hz : ∀ i ∈ s, (1 : ℝ) ≤ ‖z i‖) : ‖(∏ i ∈ t, -z i) / (∏ i ∈ s, z i)‖ ≤ 1 := by
   classical
   have hnum : ∏ i ∈ t, ‖z i‖ ≤ ∏ i ∈ s, ‖z i‖ :=
@@ -51,8 +51,8 @@ at most one, and there are `choose |s| k` terms.
 Role: supplies the coefficient bound for the finite interpolation proof of Turán's first main
 theorem.
 -/
-theorem normalized_prod_X_sub_C_coeff_norm_le_choose {ι : Type} (s : Finset ι) (z : ι → ℂ)
-    (hz : ∀ i ∈ s, (1 : ℝ) ≤ ‖z i‖) {k : ℕ} (hk : k ≤ s.card) :
+theorem rootCoeff_choose_le {ι : Type} (s : Finset ι) (z : ι → ℂ) (hz : ∀ i ∈ s, (1 : ℝ) ≤ ‖z i‖)
+    {k : ℕ} (hk : k ≤ s.card) :
     ‖(∏ i ∈ s, (Polynomial.X - Polynomial.C (z i))).coeff k / (∏ i ∈ s, z i)‖ ≤
       (Nat.choose s.card k : ℝ) := by
   classical
@@ -69,7 +69,7 @@ theorem normalized_prod_X_sub_C_coeff_norm_le_choose {ι : Type} (s : Finset ι)
     _ ≤ ∑ _t ∈ s.powersetCard (s.card - k), (1 : ℝ) := by
       apply Finset.sum_le_sum
       intro t ht
-      exact normalized_product_subset_norm_le_one s t z (Finset.mem_powersetCard.mp ht).1 hz
+      exact normalizedSubset_le s t z (Finset.mem_powersetCard.mp ht).1 hz
     _ = (Nat.choose s.card k : ℝ) := by
       simp only [Finset.sum_const, Finset.card_powersetCard, nsmul_eq_mul, mul_one]
       rw [Nat.choose_symm hk]
@@ -86,14 +86,14 @@ Proof: the norm of the additional factor enlarges the denominator by a factor at
 Role: allows the interpolation coefficient estimate to include the extra node in a divided
 difference.
 -/
-theorem normalized_prod_X_sub_C_coeff_div_extra_norm_le_choose {ι : Type} (s : Finset ι) (z : ι → ℂ)
-    (c : ℂ) (hz : ∀ i ∈ s, (1 : ℝ) ≤ ‖z i‖) (hc : (1 : ℝ) ≤ ‖c‖) {k : ℕ} (hk : k ≤ s.card) :
+theorem rootCoeff_div_le {ι : Type} (s : Finset ι) (z : ι → ℂ) (c : ℂ)
+    (hz : ∀ i ∈ s, (1 : ℝ) ≤ ‖z i‖) (hc : (1 : ℝ) ≤ ‖c‖) {k : ℕ} (hk : k ≤ s.card) :
     ‖(∏ i ∈ s, (Polynomial.X - Polynomial.C (z i))).coeff k / ((∏ i ∈ s, z i) * c)‖ ≤
       (Nat.choose s.card k : ℝ) := by
   have hden : (1 : ℝ) ≤ ‖∏ i ∈ s, z i‖ := by
     rw [Complex.norm_prod]
     exact Finset.one_le_prod₀ (fun i hi => hz i hi)
-  have hcoeff := normalized_prod_X_sub_C_coeff_norm_le_choose s z hz hk
+  have hcoeff := rootCoeff_choose_le s z hz hk
   rw [norm_div] at hcoeff
   rw [norm_div, Complex.norm_mul]
   apply le_trans ?_ hcoeff
@@ -112,8 +112,7 @@ nonzero constant coefficient.
 
 Role: gives an interpolation identity for the initial block of pure power sums.
 -/
-theorem exists_polynomial_inverse_on_prod_X_sub_C_roots {ι : Type} (s : Finset ι) (z : ι → ℂ)
-    (hz : ∀ i ∈ s, (1 : ℝ) ≤ ‖z i‖) :
+theorem exists_rootInverse {ι : Type} (s : Finset ι) (z : ι → ℂ) (hz : ∀ i ∈ s, (1 : ℝ) ≤ ‖z i‖) :
     ∃ p : Polynomial ℂ,
       (∀ i ∈ s, z i * p.eval (z i) = 1) ∧
         ∀ k < s.card, ‖p.coeff k‖ ≤ (Nat.choose s.card (k + 1) : ℝ) := by
@@ -172,7 +171,7 @@ theorem exists_polynomial_inverse_on_prod_X_sub_C_roots {ι : Type} (s : Finset 
         ‖p.coeff k‖ = ‖q.coeff (k + 1)‖ * ‖c‖⁻¹ := by rw [hpcoeff, norm_mul, norm_neg, norm_inv]
         _ = ‖q.coeff (k + 1)‖ / ‖∏ i ∈ s, z i‖ := by rw [hcNorm, div_eq_mul_inv]
         _ = ‖q.coeff (k + 1) / (∏ i ∈ s, z i)‖ := (norm_div _ _).symm
-    have hbound := normalized_prod_X_sub_C_coeff_norm_le_choose s z hz (Nat.succ_le_of_lt hk)
+    have hbound := rootCoeff_choose_le s z hz (Nat.succ_le_of_lt hk)
     change ‖q.coeff (k + 1) / (∏ i ∈ s, z i)‖ ≤ _ at hbound
     rw [hpNorm]
     exact hbound
@@ -189,9 +188,8 @@ determinant is nonzero for distinct frequencies, so the matrix is invertible.
 Role: gives the qualitative finite-power-sum separation needed before proving quantitative
 Turán-type lower bounds.
 -/
-theorem exists_nonzero_power_sum_of_distinct_frequencies {n : ℕ} (z : Fin n → ℂ)
-    (hz : Function.Injective z) (a : Fin n → ℂ) (ha : ∃ i, a i ≠ 0) :
-    ∃ k : Fin n, (∑ i : Fin n, a i * z i ^ k.val) ≠ 0 := by
+theorem exists_powerSum_ne {n : ℕ} (z : Fin n → ℂ) (hz : Function.Injective z) (a : Fin n → ℂ)
+    (ha : ∃ i, a i ≠ 0) : ∃ k : Fin n, (∑ i : Fin n, a i * z i ^ k.val) ≠ 0 := by
   have hdet : (Matrix.vandermonde z).det ≠ 0 := Matrix.det_vandermonde_ne_zero_iff.mpr hz
   have hunit : IsUnit (Matrix.vandermonde z) :=
     (Matrix.isUnit_iff_isUnit_det _).mpr (isUnit_iff_ne_zero.mpr hdet)
@@ -222,14 +220,13 @@ result.
 Role: provides the consecutive-block form used when a zero detector selects a short range of
 exponents.
 -/
-theorem exists_nonzero_power_sum_in_consecutive_block_of_distinct_nonzero_frequencies {n : ℕ}
-    (z : Fin n → ℂ) (hz : Function.Injective z) (hz0 : ∀ i, z i ≠ 0) (a : Fin n → ℂ)
-    (ha : ∃ i, a i ≠ 0) (m : ℕ) : ∃ j : Fin n, (∑ i : Fin n, a i * z i ^ (m + j.val)) ≠ 0 := by
+theorem exists_blockSum_ne {n : ℕ} (z : Fin n → ℂ) (hz : Function.Injective z) (hz0 : ∀ i, z i ≠ 0)
+    (a : Fin n → ℂ) (ha : ∃ i, a i ≠ 0) (m : ℕ) :
+    ∃ j : Fin n, (∑ i : Fin n, a i * z i ^ (m + j.val)) ≠ 0 := by
   have hweights : ∃ i, a i * z i ^ m ≠ 0 := by
     obtain ⟨i, hai⟩ := ha
     exact ⟨i, mul_ne_zero hai (pow_ne_zero m (hz0 i))⟩
-  obtain ⟨j, hj⟩ :=
-    exists_nonzero_power_sum_of_distinct_frequencies z hz (fun i => a i * z i ^ m) hweights
+  obtain ⟨j, hj⟩ := exists_powerSum_ne z hz (fun i => a i * z i ^ m) hweights
   refine ⟨j, ?_⟩
   calc
     (∑ i : Fin n, a i * z i ^ (m + j.val)) = ∑ i : Fin n, (a i * z i ^ m) * z i ^ j.val := by
@@ -249,8 +246,8 @@ Proof: expand the evaluation, exchange the two finite sums, and collect powers.
 
 Role: transfers interpolation identities and root-polynomial identities to weighted power sums.
 -/
-theorem weighted_polynomial_eval_eq_power_sum {ι : Type} (s : Finset ι) (z a : ι → ℂ)
-    (p : Polynomial ℂ) {n : ℕ} (hp : p.natDegree < n) (m : ℕ) :
+theorem weightedEval_powerSum {ι : Type} (s : Finset ι) (z a : ι → ℂ) (p : Polynomial ℂ) {n : ℕ}
+    (hp : p.natDegree < n) (m : ℕ) :
     (∑ i ∈ s, a i * z i ^ m * p.eval (z i)) =
       ∑ k ∈ Finset.range n, p.coeff k * (∑ i ∈ s, a i * z i ^ (m + k)) := by
   simp only [Polynomial.eval_eq_sum_range' hp, Finset.mul_sum, pow_add]
@@ -271,13 +268,13 @@ Proof: apply the finite evaluation identity; each evaluation contains a zero fac
 
 Role: supplies the exact recurrence underlying quantitative power-sum interpolation.
 -/
-theorem power_sum_root_polynomial_recurrence {ι : Type} (s : Finset ι) (z a : ι → ℂ) (m : ℕ) :
+theorem rootPoly_recurrence {ι : Type} (s : Finset ι) (z a : ι → ℂ) (m : ℕ) :
     ∑ k ∈ Finset.range (s.card + 1),
         (∏ i ∈ s, (Polynomial.X - Polynomial.C (z i))).coeff k * (∑ i ∈ s, a i * z i ^ (m + k)) =
       0 := by
   classical
   rw [←
-    weighted_polynomial_eval_eq_power_sum s z a _
+    weightedEval_powerSum s z a _
       (by
         rw [Polynomial.natDegree_finsetProd_X_sub_C_eq_card]; exact Nat.lt_succ_self _)
       m]
@@ -303,7 +300,7 @@ norm, and apply the normalized coefficient bounds and the triangle inequality.
 Role: connects the normalized polynomial estimates to a quantitative consecutive-block
 inequality; iterating it alone does not give the required uniform Turán estimate.
 -/
-theorem power_sum_norm_le_binomial_sum {ι : Type} (s : Finset ι) (z a : ι → ℂ) (m : ℕ)
+theorem powerSum_binomial_le {ι : Type} (s : Finset ι) (z a : ι → ℂ) (m : ℕ)
     (hz : ∀ i ∈ s, (1 : ℝ) ≤ ‖z i‖) :
     ‖∑ i ∈ s, a i * z i ^ m‖ ≤
       ∑ k ∈ Finset.range s.card,
@@ -316,7 +313,7 @@ theorem power_sum_norm_le_binomial_sum {ι : Type} (s : Finset ι) (z a : ι →
   have hqpos : 0 < ‖q.coeff 0‖ := by
     rw [hqnorm, Complex.norm_prod]
     exact lt_of_lt_of_le zero_lt_one (Finset.one_le_prod₀ hz)
-  have hrec := power_sum_root_polynomial_recurrence s z a m
+  have hrec := rootPoly_recurrence s z a m
   change (∑ k ∈ Finset.range (s.card + 1), q.coeff k * (∑ i ∈ s, a i * z i ^ (m + k))) = 0 at hrec
   rw [Finset.sum_range_succ'] at hrec
   simp only [Nat.add_zero] at hrec
@@ -338,13 +335,12 @@ theorem power_sum_norm_le_binomial_sum {ι : Type} (s : Finset ι) (z a : ι →
   intro k hk
   rw [norm_mul, mul_div_right_comm]
   apply mul_le_mul_of_nonneg_right _ (norm_nonneg _)
-  have hb :=
-    normalized_prod_X_sub_C_coeff_norm_le_choose s z hz (Nat.succ_le_of_lt (Finset.mem_range.mp hk))
+  have hb := rootCoeff_choose_le s z hz (Nat.succ_le_of_lt (Finset.mem_range.mp hk))
   rw [norm_div] at hb
   rw [hqnorm]
   exact hb
 
-private theorem sum_shifted_choose_real (n : ℕ) :
+private theorem sum_shiftChoose_real (n : ℕ) :
     (∑ k ∈ Finset.range n, (Nat.choose n (k + 1) : ℝ)) = 2 ^ n - 1 := by
   have h := Nat.sum_range_choose n
   rw [Finset.sum_range_succ', Nat.choose_zero_right] at h
@@ -361,12 +357,12 @@ Proof: use the binomial recurrence and sum its nonnegative coefficient bounds.
 
 Role: supplies the maximum-norm form of the consecutive-block estimate, including repeated nodes.
 -/
-theorem power_sum_norm_le_block_bound {ι : Type} (s : Finset ι) (z a : ι → ℂ) (m : ℕ)
+theorem powerSum_block_le {ι : Type} (s : Finset ι) (z a : ι → ℂ) (m : ℕ)
     (hz : ∀ i ∈ s, (1 : ℝ) ≤ ‖z i‖) (B : ℝ)
     (hB : ∀ k < s.card, ‖∑ i ∈ s, a i * z i ^ (m + (k + 1))‖ ≤ B) :
     ‖∑ i ∈ s, a i * z i ^ m‖ ≤ (2 ^ s.card - 1) * B := by
-  rw [← sum_shifted_choose_real]
-  apply le_trans (power_sum_norm_le_binomial_sum s z a m hz)
+  rw [← sum_shiftChoose_real]
+  apply le_trans (powerSum_binomial_le s z a m hz)
   rw [Finset.sum_mul]
   exact
     Finset.sum_le_sum
@@ -384,15 +380,13 @@ Proof: choose a maximum norm in the next block and apply the common-bound estima
 Role: yields a quantitative block witness without a distinctness hypothesis; at `m = 0` its
 left side is the norm of the total weight.
 -/
-theorem exists_power_sum_norm_ge_of_previous {ι : Type} (s : Finset ι) (hs : s.Nonempty)
-    (z a : ι → ℂ) (m : ℕ) (hz : ∀ i ∈ s, (1 : ℝ) ≤ ‖z i‖) :
+theorem exists_powerSum_ge {ι : Type} (s : Finset ι) (hs : s.Nonempty) (z a : ι → ℂ) (m : ℕ)
+    (hz : ∀ i ∈ s, (1 : ℝ) ≤ ‖z i‖) :
     ∃ k ∈ Finset.range s.card,
       ‖∑ i ∈ s, a i * z i ^ m‖ ≤ (2 ^ s.card - 1) * ‖∑ i ∈ s, a i * z i ^ (m + (k + 1))‖ := by
   obtain ⟨k, hk, hmax⟩ :=
     (Finset.range s.card).exists_max_image (fun j ↦ ‖∑ i ∈ s, a i * z i ^ (m + (j + 1))‖)
       (Finset.nonempty_range_iff.mpr (ne_of_gt (Finset.card_pos.mpr hs)))
-  exact
-    ⟨k, hk,
-      power_sum_norm_le_block_bound s z a m hz _ (fun j hj ↦ hmax j (Finset.mem_range.mpr hj))⟩
+  exact ⟨k, hk, powerSum_block_le s z a m hz _ (fun j hj ↦ hmax j (Finset.mem_range.mpr hj))⟩
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LogFreeDensity

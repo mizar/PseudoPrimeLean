@@ -23,7 +23,7 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 /-- A real point belongs to the generic rectangle precisely when its real
 coordinate lies between the left edge and two. The positive height contains
 the real axis; the orientation excludes the reversed closed intervals. -/
-theorem real_mem_primitiveHeightRectangle_iff {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem real_mem_heightRectangle_iff_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (A k : ℕ) (hA : 2 ≤ A) (r : ℝ) :
     (r : ℂ) ∈
@@ -50,7 +50,7 @@ theorem real_mem_primitiveHeightRectangle_iff {N : ℕ} [NeZero N] (hN2 : 2 ≤ 
 m >= 1 and parity parameter a <= 1, the location -2(j+1)+a is in the selected rectangle
 with left edge -2m-1/2 exactly when j < m. Positive height reduces membership to the
 real coordinate inequalities. This gives a common cutoff for both parity series. -/
-theorem trivialLocation_mem_primitiveHeightRectangle_iff {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem trivial_mem_heightRectangle_iff_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (m k j a : ℕ) (hm : 1 ≤ m) (ha : a ≤ 1) :
     (-2 * ((j : ℂ) + 1) + (a : ℂ)) ∈
@@ -61,7 +61,7 @@ theorem trivialLocation_mem_primitiveHeightRectangle_iff {N : ℕ} [NeZero N] (h
   have hc : (-2 * ((j : ℂ) + 1) + (a : ℂ)) = ((-2 * ((j : ℝ) + 1) + (a : ℝ) : ℝ) : ℂ) := by
     simp only [Complex.ofReal_add, Complex.ofReal_mul, Complex.ofReal_neg, Complex.ofReal_ofNat,
       Complex.ofReal_natCast, Complex.ofReal_one]
-  rw [hc, real_mem_primitiveHeightRectangle_iff hN2 hGRH hp hne hinv (2 * m) k hA]
+  rw [hc, real_mem_heightRectangle_iff_GRH hN2 hGRH hp hne hinv (2 * m) k hA]
   simp only [Nat.cast_mul, Nat.cast_ofNat]
   have han : (0 : ℝ) ≤ a := Nat.cast_nonneg a
   have ha1 : (a : ℝ) ≤ 1 := by
@@ -104,7 +104,7 @@ theorem exists_nat_trivial_location_of_odd {N : ℕ} {χ : DirichletCharacter �
 /-- The nonzero gamma-forced zero ledger for an even character is exactly the
 image of `range m` at the negative even locations. Rectangle membership and
 the totalized completed-to-ordinary identity prove both inclusions. -/
-theorem even_trivialZeros_primitiveRectangle_eq_image {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem evenTrivialZeros_rectangle_image_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (he : χ.Even) (m k : ℕ) (hm : 1 ≤ m) :
     (dirichletLFunctionZerosInRectangle χ hne
@@ -118,13 +118,10 @@ theorem even_trivialZeros_primitiveRectangle_eq_image {N : ℕ} [NeZero N] (hN2 
   · intro h
     obtain ⟨hZ, hΓ, hρ⟩ := Finset.mem_filter.mp h
     obtain ⟨j, hj⟩ := exists_nat_trivial_location_of_even he hΓ hρ
-    have hb := (mem_dirichletLFunctionZerosInRectangle_iff.mp hZ).1
+    have hb := (mem_LFunctionZerosInRectangle_iff.mp hZ).1
     have hmem :=
-      (trivialLocation_mem_primitiveHeightRectangle_iff hN2 hGRH hp hne hinv m k j 0 hm
-            (Nat.zero_le 1)).mp
-        (by
-          simpa only [dirichletCompletedLFunctionRectangleBox, Nat.cast_zero, add_zero, ← hj] using
-            hb)
+      (trivial_mem_heightRectangle_iff_GRH hN2 hGRH hp hne hinv m k j 0 hm (Nat.zero_le 1)).mp
+        (by simpa only [completedRectangleBox, Nat.cast_zero, add_zero, ← hj] using hb)
     exact Finset.mem_image.mpr ⟨j, Finset.mem_range.mpr hmem, hj.symm⟩
   · intro h
     obtain ⟨j, hj, rfl⟩ := Finset.mem_image.mp h
@@ -133,19 +130,17 @@ theorem even_trivialZeros_primitiveRectangle_eq_image {N : ℕ} [NeZero N] (hN2 
       exact ⟨j + 1, by rw [Nat.cast_add, Nat.cast_one, neg_mul]⟩
     have hz : -2 * ((j : ℂ) + 1) ≠ 0 :=
       mul_ne_zero (neg_ne_zero.mpr two_ne_zero) (Nat.cast_add_one_ne_zero j)
-    refine Finset.mem_filter.mpr ⟨mem_dirichletLFunctionZerosInRectangle_iff.mpr ⟨?_, ?_⟩, hΓ, hz⟩
-    · simpa only [dirichletCompletedLFunctionRectangleBox, Nat.cast_zero, add_zero] using
-        (trivialLocation_mem_primitiveHeightRectangle_iff hN2 hGRH hp hne hinv m k j 0 hm
-              (Nat.zero_le 1)).mpr
+    refine Finset.mem_filter.mpr ⟨mem_LFunctionZerosInRectangle_iff.mpr ⟨?_, ?_⟩, hΓ, hz⟩
+    · simpa only [completedRectangleBox, Nat.cast_zero, add_zero] using
+        (trivial_mem_heightRectangle_iff_GRH hN2 hGRH hp hne hinv m k j 0 hm (Nat.zero_le 1)).mpr
           (Finset.mem_range.mp hj)
-    · rw [dirichletLFunction_eq_completed_div_gammaFactor χ _
-          (Or.inr (dirichletCharacter_level_ne_one_of_ne_one hne)),
-        hΓ, div_zero]
+    · rw [L_eq_completed_div_gammaFactor χ _ (Or.inr (character_level_ne_one_of_ne_one hne)), hΓ,
+        div_zero]
 
 /-- The gamma-forced zero ledger for an odd character is exactly the image of
 `range m` at the negative odd locations. It contains no zero at the origin,
 so this is the complete trivial-zero contribution to either Mellin kernel. -/
-theorem odd_trivialZeros_primitiveRectangle_eq_image {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem oddTrivialZeros_rectangle_image_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (ho : χ.Odd) (m k : ℕ) (hm : 1 ≤ m) :
     (dirichletLFunctionZerosInRectangle χ hne
@@ -159,11 +154,10 @@ theorem odd_trivialZeros_primitiveRectangle_eq_image {N : ℕ} [NeZero N] (hN2 :
   · intro h
     obtain ⟨hZ, hΓ, _⟩ := Finset.mem_filter.mp h
     obtain ⟨j, hj⟩ := exists_nat_trivial_location_of_odd ho hΓ
-    have hb := (mem_dirichletLFunctionZerosInRectangle_iff.mp hZ).1
+    have hb := (mem_LFunctionZerosInRectangle_iff.mp hZ).1
     have hmem :=
-      (trivialLocation_mem_primitiveHeightRectangle_iff hN2 hGRH hp hne hinv m k j 1 hm
-            (Nat.le_refl 1)).mp
-        (by simpa only [dirichletCompletedLFunctionRectangleBox, Nat.cast_one, ← hj] using hb)
+      (trivial_mem_heightRectangle_iff_GRH hN2 hGRH hp hne hinv m k j 1 hm (Nat.le_refl 1)).mp
+        (by simpa only [completedRectangleBox, Nat.cast_one, ← hj] using hb)
     exact Finset.mem_image.mpr ⟨j, Finset.mem_range.mpr hmem, hj.symm⟩
   · intro h
     obtain ⟨j, hj, rfl⟩ := Finset.mem_image.mp h
@@ -176,14 +170,12 @@ theorem odd_trivialZeros_primitiveRectangle_eq_image {N : ℕ} [NeZero N] (hN2 :
       simp only [Complex.add_re, Complex.mul_re, Complex.neg_re, Complex.re_ofNat, Complex.im_ofNat,
         Complex.natCast_re, Complex.one_re, Complex.zero_re, Complex.neg_im] at hre
       linarith only [hre, Nat.cast_nonneg (α := ℝ) j]
-    refine Finset.mem_filter.mpr ⟨mem_dirichletLFunctionZerosInRectangle_iff.mpr ⟨?_, ?_⟩, hΓ, hz⟩
-    · simpa only [dirichletCompletedLFunctionRectangleBox, Nat.cast_one] using
-        (trivialLocation_mem_primitiveHeightRectangle_iff hN2 hGRH hp hne hinv m k j 1 hm
-              (Nat.le_refl 1)).mpr
+    refine Finset.mem_filter.mpr ⟨mem_LFunctionZerosInRectangle_iff.mpr ⟨?_, ?_⟩, hΓ, hz⟩
+    · simpa only [completedRectangleBox, Nat.cast_one] using
+        (trivial_mem_heightRectangle_iff_GRH hN2 hGRH hp hne hinv m k j 1 hm (Nat.le_refl 1)).mpr
           (Finset.mem_range.mp hj)
-    · rw [dirichletLFunction_eq_completed_div_gammaFactor χ _
-          (Or.inr (dirichletCharacter_level_ne_one_of_ne_one hne)),
-        hΓ, div_zero]
+    · rw [L_eq_completed_div_gammaFactor χ _ (Or.inr (character_level_ne_one_of_ne_one hne)), hΓ,
+        div_zero]
 
 /-- At a negative integer, the logarithmic kernel equals the real inverse-power
 summand for every real `x`, using totalized division and integer complex powers.
@@ -213,34 +205,34 @@ one. This connects the multiplicity theorem to the correction-series summand. -/
 theorem log_trivialZeroContribution_neg_nat {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (x : ℝ) (n : ℕ)
     (hΓ : DirichletCharacter.gammaFactor χ (-(n : ℂ)) = 0) :
-    dirichletLFunctionLogZeroContribution x χ (-(n : ℂ)) = -((x⁻¹ ^ n / (n : ℝ) ^ 2 : ℝ) : ℂ) := by
+    LFunctionLogZeroContribution x χ (-(n : ℂ)) = -((x⁻¹ ^ n / (n : ℝ) ^ 2 : ℝ) : ℂ) := by
   have hre : (-(n : ℂ)).re ≤ 0 := by
     simpa only [Complex.neg_re, Complex.natCast_re] using
       neg_nonpos.mpr (Nat.cast_nonneg (α := ℝ) n)
-  rw [dirichletLFunctionLogZeroContribution_of_gamma_zero hp hne hre hΓ]
+  rw [logZeroContribution_of_gamma_zero hp hne hre hΓ]
   exact log_kernel_neg_nat x n
 
 /-- At a gamma-forced negative integer, the reciprocal contribution has its
 exact natural inverse-power form. The result includes the coefficient-one
 multiplicity and serves the finite reciprocal correction sums. -/
-theorem reciprocal_trivialZeroContribution_neg_nat {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+theorem reciprocalTrivialTerm_neg_nat {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (x : ℝ) (n : ℕ)
     (hΓ : DirichletCharacter.gammaFactor χ (-(n : ℂ)) = 0) :
-    dirichletLFunctionReciprocalZeroContribution x χ (-(n : ℂ)) =
+    LFunctionReciprocalZeroContribution x χ (-(n : ℂ)) =
       -((x⁻¹ ^ (n + 1) / ((n : ℝ) * ((n : ℝ) + 1)) : ℝ) : ℂ) := by
   have hre : (-(n : ℂ)).re ≤ 0 := by
     simpa only [Complex.neg_re, Complex.natCast_re] using
       neg_nonpos.mpr (Nat.cast_nonneg (α := ℝ) n)
-  rw [dirichletLFunctionReciprocalZeroContribution_of_gamma_zero hp hne hre hΓ]
+  rw [reciprocalZeroTerm_of_gammaZero hp hne hre hΓ]
   exact reciprocal_kernel_neg_nat x n
 
 /-- Summing gamma-forced logarithmic residues over negative natural locations
 gives exactly the negative real partial series. Injectivity removes duplicate
 locations, and the multiplicity-one formula fixes every coefficient. -/
-theorem sum_log_trivialZeroContributions_neg_nat {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+theorem sum_logTrivialTerms_neg_nat {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (x : ℝ) (S : Finset ℕ)
     (hΓ : ∀ n ∈ S, DirichletCharacter.gammaFactor χ (-(n : ℂ)) = 0) :
-    (∑ ρ ∈ S.image (fun n : ℕ => -(n : ℂ)), dirichletLFunctionLogZeroContribution x χ ρ) =
+    (∑ ρ ∈ S.image (fun n : ℕ => -(n : ℂ)), LFunctionLogZeroContribution x χ ρ) =
       -((∑ n ∈ S, x⁻¹ ^ n / (n : ℝ) ^ 2 : ℝ) : ℂ) := by
   classical
   rw [Finset.sum_image (fun a _ b _ h => Nat.cast_injective (R := ℂ) (neg_injective h)),
@@ -250,17 +242,15 @@ theorem sum_log_trivialZeroContributions_neg_nat {N : ℕ} [NeZero N] {χ : Diri
 /-- The reciprocal residue sum at negative natural locations is exactly its
 negative real partial series. This finite identity preserves the full
 correction before taking any height or left-edge limit. -/
-theorem sum_reciprocal_trivialZeroContributions_neg_nat {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (x : ℝ) (S : Finset ℕ)
+theorem sum_reciprocalTrivialTerms_neg_nat {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (x : ℝ) (S : Finset ℕ)
     (hΓ : ∀ n ∈ S, DirichletCharacter.gammaFactor χ (-(n : ℂ)) = 0) :
-    (∑ ρ ∈ S.image (fun n : ℕ => -(n : ℂ)), dirichletLFunctionReciprocalZeroContribution x χ ρ) =
+    (∑ ρ ∈ S.image (fun n : ℕ => -(n : ℂ)), LFunctionReciprocalZeroContribution x χ ρ) =
       -((∑ n ∈ S, x⁻¹ ^ (n + 1) / ((n : ℝ) * ((n : ℝ) + 1)) : ℝ) : ℂ) := by
   classical
   rw [Finset.sum_image (fun a _ b _ h => Nat.cast_injective (R := ℂ) (neg_injective h)),
     Complex.ofReal_sum, ← Finset.sum_neg_distrib]
-  exact
-    Finset.sum_congr rfl
-      (fun n hn => reciprocal_trivialZeroContribution_neg_nat hp hne x n (hΓ n hn))
+  exact Finset.sum_congr rfl (fun n hn => reciprocalTrivialTerm_neg_nat hp hne x n (hΓ n hn))
 
 /-- The logarithmic inverse-power terms over all natural exponents are summable
 for `x > 1`. Their nonnegative denominator-weighted terms are bounded by the
@@ -309,9 +299,9 @@ theorem summable_reciprocal_inversePower_nat {x : ℝ} (hx : 1 < x) :
 /-- Removing the two Mellin points from the singularity ledger leaves exactly
 the nonzero ordinary gamma-forced zeros in its trivial part. Gamma zeros
 have nonpositive real part, so one cannot contribute to this filter. -/
-theorem erased_gammaZeros_eq_trivialZeroFilter {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+theorem erasedGammaZeros_eq_trivialFilter {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     (hne : χ ≠ 1) (z w : ℂ) :
-    (((dirichletLFunctionSingularitiesInRectangle χ hne z w).erase 1).erase 0).filter
+    (((LFunctionSingularitiesInRectangle χ hne z w).erase 1).erase 0).filter
         (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0) =
       (dirichletLFunctionZerosInRectangle χ hne z w).filter
         (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0) := by
@@ -322,13 +312,13 @@ theorem erased_gammaZeros_eq_trivialZeroFilter {N : ℕ} [NeZero N] {χ : Dirich
     obtain ⟨hmem, hΓ⟩ := Finset.mem_filter.mp h
     obtain ⟨hρ0, hmem⟩ := Finset.mem_erase.mp hmem
     obtain ⟨hρ1, hmem⟩ := Finset.mem_erase.mp hmem
-    obtain ⟨hb, hzero | hone | hL⟩ := mem_dirichletLFunctionSingularitiesInRectangle_iff.mp hmem
+    obtain ⟨hb, hzero | hone | hL⟩ := mem_LSingularitiesInRectangle_iff.mp hmem
     · exact False.elim (hρ0 hzero)
     · exact False.elim (hρ1 hone)
-    · exact Finset.mem_filter.mpr ⟨mem_dirichletLFunctionZerosInRectangle_iff.mpr ⟨hb, hL⟩, hΓ, hρ0⟩
+    · exact Finset.mem_filter.mpr ⟨mem_LFunctionZerosInRectangle_iff.mpr ⟨hb, hL⟩, hΓ, hρ0⟩
   · intro h
     obtain ⟨hZ, hΓ, hρ0⟩ := Finset.mem_filter.mp h
-    obtain ⟨hb, hL⟩ := mem_dirichletLFunctionZerosInRectangle_iff.mp hZ
+    obtain ⟨hb, hL⟩ := mem_LFunctionZerosInRectangle_iff.mp hZ
     have hρ1 : ρ ≠ 1 := by
       intro h1
       have hre := gammaFactor_zero_re_nonpos hΓ
@@ -339,14 +329,13 @@ theorem erased_gammaZeros_eq_trivialZeroFilter {N : ℕ} [NeZero N] {χ : Dirich
         ⟨Finset.mem_erase.mpr
             ⟨hρ0,
               Finset.mem_erase.mpr
-                ⟨hρ1,
-                  mem_dirichletLFunctionSingularitiesInRectangle_iff.mpr ⟨hb, Or.inr (Or.inr hL)⟩⟩⟩,
+                ⟨hρ1, mem_LSingularitiesInRectangle_iff.mpr ⟨hb, Or.inr (Or.inr hL)⟩⟩⟩,
           hΓ⟩
 
 /-- The even logarithmic trivial-zero sum in the common rectangle is exactly
 the negative complex cast of the first `m` even inverse-power terms. The
 support theorem and multiplicity-one summands keep the full correction. -/
-theorem sum_even_log_trivialZeros_primitiveRectangle_eq {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem sum_evenLogTrivial_rectangle_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (he : χ.Even) (x : ℝ) (m k : ℕ) (hm : 1 ≤ m) :
     (∑
@@ -355,10 +344,10 @@ theorem sum_even_log_trivialZeros_primitiveRectangle_eq {N : ℕ} [NeZero N] (hN
                 (primitiveHeightSeqLowerCorner hN2 hGRH hp hne hinv (2 * m) k)
                 (primitiveHeightSeqUpperCorner hN2 hGRH hp hne hinv k)).filter
             (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0),
-        dirichletLFunctionLogZeroContribution x χ ρ) =
+        LFunctionLogZeroContribution x χ ρ) =
       -((∑ j ∈ Finset.range m, x⁻¹ ^ (2 * (j + 1)) / ((2 * (j + 1) : ℕ) : ℝ) ^ 2 : ℝ) : ℂ) := by
   classical
-  rw [even_trivialZeros_primitiveRectangle_eq_image hN2 hGRH hp hne hinv he m k hm,
+  rw [evenTrivialZeros_rectangle_image_GRH hN2 hGRH hp hne hinv he m k hm,
     Finset.sum_image
       (fun a _ b _ h =>
         Nat.cast_injective (R := ℂ)
@@ -377,7 +366,7 @@ theorem sum_even_log_trivialZeros_primitiveRectangle_eq {N : ℕ} [NeZero N] (hN
 /-- The odd logarithmic trivial-zero sum is the negative complex cast of the
 first `m` odd inverse-power terms. The exact support and simple-zero theorem
 determine every term, independently of the height index. -/
-theorem sum_odd_log_trivialZeros_primitiveRectangle_eq {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem sum_oddLogTrivial_rectangle_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (ho : χ.Odd) (x : ℝ) (m k : ℕ) (hm : 1 ≤ m) :
     (∑
@@ -386,10 +375,10 @@ theorem sum_odd_log_trivialZeros_primitiveRectangle_eq {N : ℕ} [NeZero N] (hN2
                 (primitiveHeightSeqLowerCorner hN2 hGRH hp hne hinv (2 * m) k)
                 (primitiveHeightSeqUpperCorner hN2 hGRH hp hne hinv k)).filter
             (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0),
-        dirichletLFunctionLogZeroContribution x χ ρ) =
+        LFunctionLogZeroContribution x χ ρ) =
       -((∑ j ∈ Finset.range m, x⁻¹ ^ (2 * j + 1) / ((2 * j + 1 : ℕ) : ℝ) ^ 2 : ℝ) : ℂ) := by
   classical
-  rw [odd_trivialZeros_primitiveRectangle_eq_image hN2 hGRH hp hne hinv ho m k hm,
+  rw [oddTrivialZeros_rectangle_image_GRH hN2 hGRH hp hne hinv ho m k hm,
     Finset.sum_image
       (fun a _ b _ h =>
         Nat.cast_injective (R := ℂ)
@@ -411,7 +400,7 @@ theorem sum_odd_log_trivialZeros_primitiveRectangle_eq {N : ℕ} [NeZero N] (hN2
 /-- As the left edge expands, the even logarithmic trivial-zero ledger
 converges to its full correction series for `x > 1`, along any height-index
 selection. The exact finite support and summable even subsequence give the limit. -/
-theorem tendsto_sum_even_log_trivialZeros_primitiveRectangle {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem tendsto_evenLogTrivial_rectangle_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (he : χ.Even) {x : ℝ} (hx : 1 < x) (g : ℕ → ℕ) :
     Filter.Tendsto
@@ -422,7 +411,7 @@ theorem tendsto_sum_even_log_trivialZeros_primitiveRectangle {N : ℕ} [NeZero N
                   (primitiveHeightSeqLowerCorner hN2 hGRH hp hne hinv (2 * m) (g m))
                   (primitiveHeightSeqUpperCorner hN2 hGRH hp hne hinv (g m))).filter
               (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0),
-          dirichletLFunctionLogZeroContribution x χ ρ)
+          LFunctionLogZeroContribution x χ ρ)
       Filter.atTop
       (nhds (-((∑' j : ℕ, x⁻¹ ^ (2 * (j + 1)) / ((2 * (j + 1) : ℕ) : ℝ) ^ 2 : ℝ) : ℂ))) := by
   have hi : Function.Injective (fun j : ℕ => 2 * (j + 1)) := by
@@ -441,15 +430,13 @@ theorem tendsto_sum_even_log_trivialZeros_primitiveRectangle {N : ℕ} [NeZero N
     ht.congr'
       (by
         filter_upwards [Filter.eventually_ge_atTop 1] with m hm
-        exact
-          (sum_even_log_trivialZeros_primitiveRectangle_eq hN2 hGRH hp hne hinv he x m (g m)
-              hm).symm)
+        exact (sum_evenLogTrivial_rectangle_GRH hN2 hGRH hp hne hinv he x m (g m) hm).symm)
 
 /-- Under GRH for a primitive nonprincipal odd character and its nonprincipal inverse,
 and for x > 1, the odd logarithmic trivial-zero ledger converges to the complete odd
 correction series along any height-index selection. Geometric domination proves summability;
 the finite support theorem identifies the partial sums independently of height. -/
-theorem tendsto_sum_odd_log_trivialZeros_primitiveRectangle {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem tendsto_oddLogTrivial_rectangle_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (ho : χ.Odd) {x : ℝ} (hx : 1 < x) (g : ℕ → ℕ) :
     Filter.Tendsto
@@ -460,7 +447,7 @@ theorem tendsto_sum_odd_log_trivialZeros_primitiveRectangle {N : ℕ} [NeZero N]
                   (primitiveHeightSeqLowerCorner hN2 hGRH hp hne hinv (2 * m) (g m))
                   (primitiveHeightSeqUpperCorner hN2 hGRH hp hne hinv (g m))).filter
               (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0),
-          dirichletLFunctionLogZeroContribution x χ ρ)
+          LFunctionLogZeroContribution x χ ρ)
       Filter.atTop
       (nhds (-((∑' j : ℕ, x⁻¹ ^ (2 * j + 1) / ((2 * j + 1 : ℕ) : ℝ) ^ 2 : ℝ) : ℂ))) := by
   have hi : Function.Injective (fun j : ℕ => 2 * j + 1) := by
@@ -478,14 +465,12 @@ theorem tendsto_sum_odd_log_trivialZeros_primitiveRectangle {N : ℕ} [NeZero N]
     ht.congr'
       (by
         filter_upwards [Filter.eventually_ge_atTop 1] with m hm
-        exact
-          (sum_odd_log_trivialZeros_primitiveRectangle_eq hN2 hGRH hp hne hinv ho x m (g m)
-              hm).symm)
+        exact (sum_oddLogTrivial_rectangle_GRH hN2 hGRH hp hne hinv ho x m (g m) hm).symm)
 
 /-- The even reciprocal trivial-zero sum in the common rectangle is exactly
 the negative complex cast of the first `m` even inverse-power terms. The
 support theorem and multiplicity-one summands keep the full correction. -/
-theorem sum_even_reciprocal_trivialZeros_primitiveRectangle_eq {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem sum_evenRecipTrivial_rectangle_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (he : χ.Even) (x : ℝ) (m k : ℕ) (hm : 1 ≤ m) :
     (∑
@@ -494,13 +479,13 @@ theorem sum_even_reciprocal_trivialZeros_primitiveRectangle_eq {N : ℕ} [NeZero
                 (primitiveHeightSeqLowerCorner hN2 hGRH hp hne hinv (2 * m) k)
                 (primitiveHeightSeqUpperCorner hN2 hGRH hp hne hinv k)).filter
             (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0),
-        dirichletLFunctionReciprocalZeroContribution x χ ρ) =
+        LFunctionReciprocalZeroContribution x χ ρ) =
       -((∑ j ∈ Finset.range m,
               x⁻¹ ^ (2 * (j + 1) + 1) / (((2 * (j + 1) : ℕ) : ℝ) * (((2 * (j + 1) : ℕ) : ℝ) + 1)) :
             ℝ) :
           ℂ) := by
   classical
-  rw [even_trivialZeros_primitiveRectangle_eq_image hN2 hGRH hp hne hinv he m k hm,
+  rw [evenTrivialZeros_rectangle_image_GRH hN2 hGRH hp hne hinv he m k hm,
     Finset.sum_image
       (fun a _ b _ h =>
         Nat.cast_injective (R := ℂ)
@@ -514,12 +499,12 @@ theorem sum_even_reciprocal_trivialZeros_primitiveRectangle_eq {N : ℕ} [NeZero
     rw [he.gammaFactor_def, Complex.Gammaℝ_eq_zero_iff]
     exact ⟨j + 1, by rw [Nat.cast_mul, Nat.cast_ofNat]⟩
   rw [hloc]
-  exact reciprocal_trivialZeroContribution_neg_nat hp hne x (2 * (j + 1)) hΓ
+  exact reciprocalTrivialTerm_neg_nat hp hne x (2 * (j + 1)) hΓ
 
 /-- The odd reciprocal trivial-zero sum is the negative complex cast of the
 first `m` odd inverse-power terms. The exact support and simple-zero theorem
 determine every term, independently of the height index. -/
-theorem sum_odd_reciprocal_trivialZeros_primitiveRectangle_eq {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem sum_oddRecipTrivial_rectangle_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (ho : χ.Odd) (x : ℝ) (m k : ℕ) (hm : 1 ≤ m) :
     (∑
@@ -528,13 +513,13 @@ theorem sum_odd_reciprocal_trivialZeros_primitiveRectangle_eq {N : ℕ} [NeZero 
                 (primitiveHeightSeqLowerCorner hN2 hGRH hp hne hinv (2 * m) k)
                 (primitiveHeightSeqUpperCorner hN2 hGRH hp hne hinv k)).filter
             (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0),
-        dirichletLFunctionReciprocalZeroContribution x χ ρ) =
+        LFunctionReciprocalZeroContribution x χ ρ) =
       -((∑ j ∈ Finset.range m,
               x⁻¹ ^ (2 * j + 1 + 1) / (((2 * j + 1 : ℕ) : ℝ) * (((2 * j + 1 : ℕ) : ℝ) + 1)) :
             ℝ) :
           ℂ) := by
   classical
-  rw [odd_trivialZeros_primitiveRectangle_eq_image hN2 hGRH hp hne hinv ho m k hm,
+  rw [oddTrivialZeros_rectangle_image_GRH hN2 hGRH hp hne hinv ho m k hm,
     Finset.sum_image
       (fun a _ b _ h =>
         Nat.cast_injective (R := ℂ)
@@ -551,12 +536,12 @@ theorem sum_odd_reciprocal_trivialZeros_primitiveRectangle_eq {N : ℕ} [NeZero 
       ⟨j, by
         rw [Nat.cast_add, Nat.cast_mul, Nat.cast_ofNat, Nat.cast_one]; ring⟩
   rw [hloc]
-  exact reciprocal_trivialZeroContribution_neg_nat hp hne x (2 * j + 1) hΓ
+  exact reciprocalTrivialTerm_neg_nat hp hne x (2 * j + 1) hΓ
 
 /-- As the left edge expands, the even reciprocal trivial-zero ledger
 converges to its full correction series for `x > 1`, along any height-index
 selection. The exact finite support and summable even subsequence give the limit. -/
-theorem tendsto_sum_even_reciprocal_trivialZeros_primitiveRectangle {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem tendsto_evenRecipTrivial_rect_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (he : χ.Even) {x : ℝ} (hx : 1 < x) (g : ℕ → ℕ) :
     Filter.Tendsto
@@ -567,7 +552,7 @@ theorem tendsto_sum_even_reciprocal_trivialZeros_primitiveRectangle {N : ℕ} [N
                   (primitiveHeightSeqLowerCorner hN2 hGRH hp hne hinv (2 * m) (g m))
                   (primitiveHeightSeqUpperCorner hN2 hGRH hp hne hinv (g m))).filter
               (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0),
-          dirichletLFunctionReciprocalZeroContribution x χ ρ)
+          LFunctionReciprocalZeroContribution x χ ρ)
       Filter.atTop
       (nhds
         (-((∑' j : ℕ,
@@ -600,15 +585,13 @@ theorem tendsto_sum_even_reciprocal_trivialZeros_primitiveRectangle {N : ℕ} [N
     ht.congr'
       (by
         filter_upwards [Filter.eventually_ge_atTop 1] with m hm
-        exact
-          (sum_even_reciprocal_trivialZeros_primitiveRectangle_eq hN2 hGRH hp hne hinv he x m (g m)
-              hm).symm)
+        exact (sum_evenRecipTrivial_rectangle_GRH hN2 hGRH hp hne hinv he x m (g m) hm).symm)
 
 /-- Under GRH for a primitive nonprincipal odd character and its nonprincipal inverse,
 and for x > 1, the odd reciprocal trivial-zero ledger converges to the complete odd
 correction series along any height-index selection. Geometric domination proves summability;
 the finite support theorem identifies the partial sums independently of height. -/
-theorem tendsto_sum_odd_reciprocal_trivialZeros_primitiveRectangle {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem tendsto_oddRecipTrivial_rect_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (ho : χ.Odd) {x : ℝ} (hx : 1 < x) (g : ℕ → ℕ) :
     Filter.Tendsto
@@ -619,7 +602,7 @@ theorem tendsto_sum_odd_reciprocal_trivialZeros_primitiveRectangle {N : ℕ} [Ne
                   (primitiveHeightSeqLowerCorner hN2 hGRH hp hne hinv (2 * m) (g m))
                   (primitiveHeightSeqUpperCorner hN2 hGRH hp hne hinv (g m))).filter
               (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0),
-          dirichletLFunctionReciprocalZeroContribution x χ ρ)
+          LFunctionReciprocalZeroContribution x χ ρ)
       Filter.atTop
       (nhds
         (-((∑' j : ℕ,
@@ -649,8 +632,6 @@ theorem tendsto_sum_odd_reciprocal_trivialZeros_primitiveRectangle {N : ℕ} [Ne
     ht.congr'
       (by
         filter_upwards [Filter.eventually_ge_atTop 1] with m hm
-        exact
-          (sum_odd_reciprocal_trivialZeros_primitiveRectangle_eq hN2 hGRH hp hne hinv ho x m (g m)
-              hm).symm)
+        exact (sum_oddRecipTrivial_rectangle_GRH hN2 hGRH hp hne hinv ho x m (g m) hm).symm)
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

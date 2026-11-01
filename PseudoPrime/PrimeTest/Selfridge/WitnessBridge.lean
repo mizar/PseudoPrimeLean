@@ -42,7 +42,7 @@ Stopping-set membership and signed reciprocity place `p` in the neutral prime-wi
 its least-element property proves the bound. The primality of the stop is essential here:
 this theorem does not identify a general composite stopping candidate with a prime witness.
 -/
-theorem primeNegOneWitness_le_classicalFirstStop_of_prime {n : ℕ} (hn : Odd n)
+theorem negOneWitness_le_classicalStop_prime {n : ℕ} (hn : Odd n)
     (hw : (primeNegOneWitnessSet n).Nonempty)
     (hs : (FirstStopNegOneSet isClassicalCandidate n).Nonempty) {p : ℕ} (hp : p.Prime)
     (hstop : p = firstStopNegOne isClassicalCandidate n hs) : primeNegOneWitness n hw ≤ p := by
@@ -61,12 +61,10 @@ place `i` in its stopping set. Applying leastness supplies a direct candidate-to
 -/
 theorem firstStopNeOne_le_candidate {n i : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hi : isClassicalCandidate i) (hndvd : ¬n ∣ i) (hvalue : jacobiSym (selfridgeD i) n ≠ 1) :
-    firstStopNeOne isClassicalCandidate n
-        (classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns) ≤
+    firstStopNeOne isClassicalCandidate n (classicalNeOneSet_nonempty_of_odd_nonsquare hn hns) ≤
       i := by
   apply
-    firstStopNeOne_le isClassicalCandidate n
-      (classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns)
+    firstStopNeOne_le isClassicalCandidate n (classicalNeOneSet_nonempty_of_odd_nonsquare hn hns)
   exact ⟨hi, hndvd, hvalue⟩
 
 end PseudoPrime.PrimeTest

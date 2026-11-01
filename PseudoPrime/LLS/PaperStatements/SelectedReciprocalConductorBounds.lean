@@ -18,8 +18,7 @@ namespace PseudoPrime.LLS.PaperStatements
 /-- Under RH and x≥64, the principal reciprocal Mangoldt sum is at most
 log(x)-7/5. Retain the Euler constant saving in its explicit formula and bound
 the two positive errors. This supplies the selected-cutoff Hadamard numerator. -/
-theorem reciprocalWeightedMangoldtSum_le_log_sub_seven_fifths (hRH : RiemannHypothesis) {x : ℝ}
-    (hx : 64 ≤ x) :
+theorem reciprocalMangoldt_le_log_sub_7_5_RH (hRH : RiemannHypothesis) {x : ℝ} (hx : 64 ≤ x) :
     AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtSum x ≤ Real.log x - 7 / 5 := by
   have hx0 : 0 < x := by linarith only [hx]
   have hs : (8 : ℝ) ≤ Real.sqrt x :=
@@ -83,7 +82,7 @@ theorem reciprocalHadamardCap_half_conductor_le {q : ℕ} (hL : 16 ≤ Real.log 
   have hy0 : 0 < Real.log q / 2 := by linarith only [hy]
   have hx : 64 ≤ (Real.log q / 2) ^ 2 := by nlinarith only [hy]
   have hx0 : 0 < (Real.log q / 2) ^ 2 := by linarith only [hx]
-  have hr := reciprocalWeightedMangoldtSum_le_log_sub_seven_fifths hRH hx
+  have hr := reciprocalMangoldt_le_log_sub_7_5_RH hRH hx
   rw [Real.log_pow] at hr
   norm_num only [Nat.cast_ofNat] at hr
   have hi : 1 / (Real.log q / 2) ^ 2 ≤ (1 : ℝ) := by
@@ -181,10 +180,9 @@ theorem selected_reciprocal_root_le_fixed {q m : ℕ} [NeZero q] {χ : Dirichlet
 /-- Under primitive GRH, log(q)≤G, G≥16 and x≥100, the logarithmic-sum norm
 is at most ((101/60)G+(22/5)log(G)+23/4)sqrt(x). Pass the selected Hadamard cap
 to the independent endpoint interface, then increase the remaining log(q) terms to G. -/
-theorem norm_characterLogWeightedSum_le_selected_envelope {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hq : 3 ≤ q) (hp : χ.IsPrimitive)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {G x : ℝ} (hG : 16 ≤ G)
-    (hlog : Real.log q ≤ G) (hx : 100 ≤ x) :
+theorem characterLogSum_norm_le_selected_envelope {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hq : 3 ≤ q) (hp : χ.IsPrimitive) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {G x : ℝ} (hG : 16 ≤ G) (hlog : Real.log q ≤ G) (hx : 100 ≤ x) :
     ‖AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x χ‖ ≤
       ((101 / 60 : ℝ) * G + (22 / 5) * Real.log G + 23 / 4) * Real.sqrt x := by
   have h :=
@@ -226,7 +224,7 @@ theorem exists_prime_ne_one_le_selected_envelope_root {q m : ℕ} [NeZero q]
   obtain ⟨p, hp', hb, hd, hv⟩ :=
     exists_prime_ne_one_le_norm_cap_root χ hGRH.riemann hm (F :=
       (101 / 60 : ℝ) * G + (22 / 5) * Real.log G + 23 / 4) (by linarith only [hG, hl])
-      (fun _ hx ↦ norm_characterLogWeightedSum_le_selected_envelope hq hp hGRH hG hlog hx)
+      (fun _ hx ↦ characterLogSum_norm_le_selected_envelope hq hp hGRH hG hlog hx)
   have he :
     (7 / 4 : ℝ) * ((101 / 60 : ℝ) * G + (22 / 5) * Real.log G + 23 / 4) + 267 / 10 =
       selectedReciprocalRadius G := by

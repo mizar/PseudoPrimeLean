@@ -170,7 +170,7 @@ theorem norm_Gamma_le_gammaRefinedZeroProfile {s : ℂ} (hs : s.re = -1 / 16) :
 Claim: the combined first profile bounds the actual height-weighted Gamma norm.
 Proof: use the curved compact estimate and the refined inverse-square weighted tail.
 Role: connect the first moment integral to the actual left-line integrand. -/
-theorem norm_Gamma_mul_height_le_gammaRefinedFirstProfile {s : ℂ} (hs : s.re = -1 / 16) :
+theorem norm_Gamma_mul_height_le_refinedProfile {s : ℂ} (hs : s.re = -1 / 16) :
     ‖Complex.Gamma s‖ * |s.im| ≤
       gammaRefinedProfile (fun u ↦ u * gammaRefinedCompactZero u) (31 / 16) |s.im| := by
   apply
@@ -182,8 +182,7 @@ theorem norm_Gamma_mul_height_le_gammaRefinedFirstProfile {s : ℂ} (hs : s.re =
       mul_le_mul_of_nonneg_right (norm_Gamma_le_gammaRefinedCompactZero hs) (abs_nonneg s.im)
     simpa only [gammaRefinedCompactZero_abs, mul_comm] using h
   · intro ha
-    have hb :=
-      norm_Gamma_neg_one_sixteenth_mul_height_le_refined_tail hs (abs_pos.mp (zero_lt_one.trans ha))
+    have hb := norm_Gamma_neg_1_16_mul_height_le_refined_tail hs (abs_pos.mp (zero_lt_one.trans ha))
     simpa only [Real.rpow_neg (abs_nonneg s.im), Real.rpow_two, sq_abs, div_eq_mul_inv] using hb
 
 /-- Input: real part minus one sixteenth.
@@ -203,11 +202,11 @@ theorem norm_Gamma_le_gammaRefinedZeroEnvelope {s : ℂ} (hs : s.re = -1 / 16) :
 Claim: the height-weighted Gamma norm is bounded by the symmetric first envelope.
 Proof: combine the actual first-profile bound with nonnegative reflection.
 Role: majorant for the first whole-line Gamma moment. -/
-theorem norm_Gamma_mul_height_le_gammaRefinedFirstEnvelope {s : ℂ} (hs : s.re = -1 / 16) :
+theorem norm_Gamma_mul_height_le_refinedEnvelope {s : ℂ} (hs : s.re = -1 / 16) :
     ‖Complex.Gamma s‖ * |s.im| ≤
       gammaRefinedEnvelope (fun u ↦ u * gammaRefinedCompactZero u) (31 / 16) s.im := by
   exact
-    (norm_Gamma_mul_height_le_gammaRefinedFirstProfile hs).trans
+    (norm_Gamma_mul_height_le_refinedProfile hs).trans
       (profile_abs_le_symmetric
         (gammaRefinedProfile_nonneg (fun u ↦ u * gammaRefinedCompactZero u)
           (by norm_num only : (0 : ℝ) ≤ 31 / 16)

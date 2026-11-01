@@ -33,7 +33,7 @@ theorem for squarefree integers.
 
 Role: supplies the concrete normalizer lower bound for the Selberg sieve.
 -/
-theorem selbergTruncatedTotientSum_primorial_ge_squarefree_reciprocal_sum (z : ℕ) :
+theorem selbergTotient_primorial_ge_squarefree (z : ℕ) :
     (∑ n ∈ (Finset.range (z + 1)).filter (fun n => 0 < n ∧ Squarefree n), 1 / (n : ℝ)) ≤
       selbergTruncatedTotientSum ((primeSetLE z).prod id) z := by
   exact
@@ -165,11 +165,11 @@ divisibility comparison.
 Role: supplies an explicit lower bound for the main term in the finite
 Selberg-sieve estimate.
 -/
-theorem selbergTruncatedTotientSum_primorial_ge_log_div_two (z : ℕ) (hz : 1 ≤ z) :
+theorem selbergTotientSum_primorial_ge_log_div_two (z : ℕ) (hz : 1 ≤ z) :
     Real.log ((z + 1 : ℕ) : ℝ) / 2 ≤ selbergTruncatedTotientSum ((primeSetLE z).prod id) z := by
   exact
     le_trans (squarefreeReciprocalSum_ge_log_div_two z hz)
-      (selbergTruncatedTotientSum_primorial_ge_squarefree_reciprocal_sum z)
+      (selbergTotient_primorial_ge_squarefree z)
 
 open PseudoPrime.NumberTheory.PrimeProducts in
 /--
@@ -183,7 +183,7 @@ squarefree integer through `z` divides the primorial.
 
 Role: identifies the index set of primorial divisor-mass sums.
 -/
-theorem primeProductLE_divisors_filter_le_eq_squarefree_range (z : ℕ) :
+theorem primorial_divisors_eq_squarefree (z : ℕ) :
     ((primeSetLE z).prod id).divisors.filter (fun k => k ≤ z) =
       (Finset.range (z + 1)).filter (fun k : ℕ => 0 < k ∧ Squarefree k) := by
   let P : ℕ := (primeSetLE z).prod id
@@ -217,13 +217,11 @@ filtered sum, and apply the divisor-set identity above.
 Role: exposes the finite arithmetic sum that remains to be bounded in the
 Brun–Titchmarsh estimate.
 -/
-theorem selbergTruncatedOptimalWeightDivisorMass_primorial_eq_squarefree_divisor_sum (z : ℕ)
-    (G : ℝ) :
+theorem selbergMass_primorial_eq_squarefree (z : ℕ) (G : ℝ) :
     selbergTruncatedOptimalWeightDivisorMass ((primeSetLE z).prod id) z G =
       ∑ k ∈ (Finset.range (z + 1)).filter (fun k : ℕ => 0 < k ∧ Squarefree k),
         (∑ d ∈ k.divisors, (d : ℝ)) / ((Nat.totient k : ℝ) * G) := by
-  rw [selbergTruncatedOptimalWeightDivisorMass_eq_divisor_sum, ← Finset.sum_filter,
-    primeProductLE_divisors_filter_le_eq_squarefree_range]
+  rw [selbergDivisorMass_eq_divisor_sum, ← Finset.sum_filter, primorial_divisors_eq_squarefree]
 
 open PseudoPrime.NumberTheory.PrimeProducts in
 /--
@@ -239,11 +237,11 @@ Selberg normalizer comparison for coprime squarefree divisors.
 Role: provides the normalizer interface for a progression sieve that omits
 prime factors of its modulus.
 -/
-theorem selbergTruncatedTotientSum_coprime_primorial_ge_squarefree_sum (z Q : ℕ) :
+theorem selbergTotient_coprime_ge_squarefree (z Q : ℕ) :
     (∑ n ∈ (Finset.range (z + 1)).filter (fun n => 0 < n ∧ Squarefree n ∧ Nat.Coprime n Q),
         1 / (n : ℝ)) ≤
       selbergTruncatedTotientSum ((primeSetLECoprime z Q).prod id) z := by
-  apply selbergTruncatedTotientSum_ge_coprime_reciprocal_sum
+  apply selbergTotientSum_ge_coprime_reciprocal_sum
   · exact (primeProductLECoprime_data z Q).1
   · intro n hn1 hnz hsq hcop
     exact primeProductLECoprime_dvd_of_squarefree_le hsq hnz hcop
@@ -261,7 +259,7 @@ coprimality; conversely, the restricted primorial divisibility lemma applies.
 Role: identifies the exact summation range for the restricted Selberg
 normalizer and its weight error.
 -/
-theorem primeProductLECoprime_divisors_filter_le_eq_squarefree_range (z Q : ℕ) :
+theorem coprimePrimorial_divisors_eq_squarefree (z Q : ℕ) :
     ((primeSetLECoprime z Q).prod id).divisors.filter (fun k => k ≤ z) =
       (Finset.range (z + 1)).filter (fun k : ℕ => 0 < k ∧ Squarefree k ∧ Nat.Coprime k Q) := by
   let P : ℕ := (primeSetLECoprime z Q).prod id
@@ -298,13 +296,13 @@ identity.
 Role: expresses the weight error as an explicit arithmetic sum with the
 modulus-dependent exclusions visible.
 -/
-theorem selbergTruncatedOptimalWeightDivisorMass_coprime_primorial_eq_sum (z Q : ℕ) (G : ℝ) :
+theorem selbergDivisorMass_coprime_primorial_eq_sum (z Q : ℕ) (G : ℝ) :
     selbergTruncatedOptimalWeightDivisorMass ((primeSetLECoprime z Q).prod id) z G =
       ∑ k ∈ (Finset.range (z + 1)).filter (fun k : ℕ => 0 < k ∧ Squarefree k ∧ Nat.Coprime k Q),
         (∑ d ∈ k.divisors, (d : ℝ)) / ((Nat.totient k : ℝ) * G) := by
   classical
-    rw [selbergTruncatedOptimalWeightDivisorMass_eq_divisor_sum, ← Finset.sum_filter,
-    primeProductLECoprime_divisors_filter_le_eq_squarefree_range]
+    rw [selbergDivisorMass_eq_divisor_sum, ← Finset.sum_filter,
+    coprimePrimorial_divisors_eq_squarefree]
 
 /--
 Inputs: a positive integer `k`.
@@ -374,7 +372,7 @@ theorem selberg_inner_divisor_ratio_sum_le_four_pow {k : ℕ} (hk : 0 < k) (hsq 
     · intro hd
       refine ⟨hd, ?_⟩
       exact Squarefree.squarefree_of_dvd (Nat.mem_divisors.mp hd).1 hsq
-  have hcount := squarefree_divisor_count_eq_two_pow_cardDistinctFactors k hk
+  have hcount := squarefree_card_eq_two_pow_factors k hk
   have hdivcard : k.divisors.card = 2 ^ k.primeFactors.card := by
     calc
       k.divisors.card = (k.divisors.filter (fun d => Squarefree d)).card :=
@@ -422,7 +420,7 @@ Proof: apply the squarefree antidiagonal cardinality identity to each index.
 Role: rewrites the outer weight sum as one finite set of indexed factor
 tuples, ready for an injection into the unrestricted product region.
 -/
-theorem four_pow_primeFactorsCard_sum_eq_finMulAntidiag_card_sum (z Q : ℕ) :
+theorem four_pow_factors_sum_eq_antidiag_card (z Q : ℕ) :
     (∑ k ∈ (Finset.range (z + 1)).filter (fun k : ℕ => 0 < k ∧ Squarefree k ∧ Nat.Coprime k Q),
         (4 : ℝ) ^ k.primeFactors.card) =
       ∑ k ∈ (Finset.range (z + 1)).filter (fun k : ℕ => 0 < k ∧ Squarefree k ∧ Nat.Coprime k Q),
@@ -444,12 +442,11 @@ inner-sum estimate termwise, and divide by the positive normalizer.
 
 Role: isolates the remaining outer squarefree sum needed for the mass bound.
 -/
-theorem selbergTruncatedOptimalWeightDivisorMass_coprime_primorial_le_four_pow_sum (z Q : ℕ) (G : ℝ)
-    (hG : 0 < G) :
+theorem selbergMass_coprime_le_four_pow (z Q : ℕ) (G : ℝ) (hG : 0 < G) :
     selbergTruncatedOptimalWeightDivisorMass ((primeSetLECoprime z Q).prod id) z G ≤
       ∑ k ∈ (Finset.range (z + 1)).filter (fun k : ℕ => 0 < k ∧ Squarefree k ∧ Nat.Coprime k Q),
         (4 : ℝ) ^ k.primeFactors.card / G := by
-  rw [selbergTruncatedOptimalWeightDivisorMass_coprime_primorial_eq_sum]
+  rw [selbergDivisorMass_coprime_primorial_eq_sum]
   apply Finset.sum_le_sum
   intro k hk
   rcases Finset.mem_filter.mp hk with ⟨_, ⟨hkpos, hsq, _⟩⟩
@@ -476,8 +473,7 @@ the finite sigma-cardinality formula.
 Role: packages the outer sum as a single finite set for the forthcoming
 factor-tuple count.
 -/
-theorem selbergTruncatedOptimalWeightDivisorMass_coprime_primorial_le_sigma_card (z Q : ℕ) (G : ℝ)
-    (hG : 0 < G) :
+theorem selbergMass_coprime_le_sigma_card (z Q : ℕ) (G : ℝ) (hG : 0 < G) :
     selbergTruncatedOptimalWeightDivisorMass ((primeSetLECoprime z Q).prod id) z G ≤
       ((((Finset.range (z + 1)).filter (fun k : ℕ => 0 < k ∧ Squarefree k ∧ Nat.Coprime k Q)).sigma
               (fun k => (4 : ℕ).finMulAntidiag k)).card :
@@ -487,12 +483,12 @@ theorem selbergTruncatedOptimalWeightDivisorMass_coprime_primorial_le_sigma_card
   have houter :
     (∑ k ∈ D, (4 : ℝ) ^ k.primeFactors.card) =
       ((D.sigma (fun k => (4 : ℕ).finMulAntidiag k)).card : ℝ) := by
-    rw [four_pow_primeFactorsCard_sum_eq_finMulAntidiag_card_sum]
+    rw [four_pow_factors_sum_eq_antidiag_card]
     exact_mod_cast (Finset.card_sigma D (fun k => (4 : ℕ).finMulAntidiag k)).symm
   calc
     selbergTruncatedOptimalWeightDivisorMass ((primeSetLECoprime z Q).prod id) z G ≤
         ∑ k ∈ D, (4 : ℝ) ^ k.primeFactors.card / G :=
-      by exact selbergTruncatedOptimalWeightDivisorMass_coprime_primorial_le_four_pow_sum z Q G hG
+      by exact selbergMass_coprime_le_four_pow z Q G hG
     _ = (∑ k ∈ D, (4 : ℝ) ^ k.primeFactors.card) / G := by rw [← Finset.sum_div]
     _ = ((D.sigma (fun k => (4 : ℕ).finMulAntidiag k)).card : ℝ) / G :=
       congrArg (fun x : ℝ => x / G) houter
@@ -651,7 +647,7 @@ then factor the triple finite sum as a cube.
 Role: prepares the product-region count for the harmonic bound and the sieve
 error estimate.
 -/
-theorem four_factor_product_region_card_le_z_mul_reciprocal_sum_cube (z : ℕ) :
+theorem fourFactor_card_le_reciprocal_cube (z : ℕ) :
     (((((Finset.Icc 1 z).product (Finset.Icc 1 z)).product (Finset.Icc 1 z)).product
               (Finset.Icc 1 z)).filter
           (fun q => q.2 * (q.1.1.1 * q.1.1.2 * q.1.2) ≤ z)).card ≤
@@ -733,7 +729,7 @@ Proof: apply the reciprocal-sum estimate and bound the harmonic sum by
 
 Role: gives the explicit logarithmic form used in the Selberg mass estimate.
 -/
-theorem four_factor_product_region_card_le_z_mul_one_add_log_cube (z : ℕ) :
+theorem fourFactor_card_le_log_cube (z : ℕ) :
     (((((Finset.Icc 1 z).product (Finset.Icc 1 z)).product (Finset.Icc 1 z)).product
               (Finset.Icc 1 z)).filter
           (fun q => q.2 * (q.1.1.1 * q.1.1.2 * q.1.2) ≤ z)).card ≤
@@ -774,7 +770,7 @@ theorem four_factor_product_region_card_le_z_mul_one_add_log_cube (z : ℕ) :
         mul_le_mul hSsq hharm hSnonneg (sq_nonneg (1 + Real.log z))
       _ = (1 + Real.log z) ^ 3 := by ring
   calc
-    _ ≤ (z : ℝ) * S ^ 3 := four_factor_product_region_card_le_z_mul_reciprocal_sum_cube z
+    _ ≤ (z : ℝ) * S ^ 3 := fourFactor_card_le_reciprocal_cube z
     _ ≤ (z : ℝ) * (1 + Real.log z) ^ 3 := mul_le_mul_of_nonneg_left hScube (Nat.cast_nonneg z)
 
 open PseudoPrime.NumberTheory.PrimeProducts in
@@ -790,8 +786,7 @@ the product region, then divide by the positive normalizer.
 Role: reduces the remaining Selberg mass estimate to an unrestricted
 four-tuple count.
 -/
-theorem selbergTruncatedOptimalWeightDivisorMass_coprime_primorial_le_product_region_card (z Q : ℕ)
-    (G : ℝ) (hG : 0 < G) :
+theorem selbergMass_coprime_le_product_region (z Q : ℕ) (G : ℝ) (hG : 0 < G) :
     selbergTruncatedOptimalWeightDivisorMass ((primeSetLECoprime z Q).prod id) z G ≤
       ((((((Finset.Icc 1 z).product (Finset.Icc 1 z)).product (Finset.Icc 1 z)).product
                   (Finset.Icc 1 z)).filter
@@ -815,7 +810,7 @@ theorem selbergTruncatedOptimalWeightDivisorMass_coprime_primorial_le_product_re
                 (fun k => (4 : ℕ).finMulAntidiag k)).card :
             ℝ) /
           G :=
-      selbergTruncatedOptimalWeightDivisorMass_coprime_primorial_le_sigma_card z Q G hG
+      selbergMass_coprime_le_sigma_card z Q G hG
     _ ≤
         ((((((Finset.Icc 1 z).product (Finset.Icc 1 z)).product (Finset.Icc 1 z)).product
                     (Finset.Icc 1 z)).filter
@@ -836,8 +831,7 @@ cardinality bound, then divide by `G > 0`.
 
 Role: gives an explicit logarithmic upper bound for the finite sieve error.
 -/
-theorem selbergTruncatedOptimalWeightDivisorMass_coprime_primorial_le_log_cube (z Q : ℕ) (G : ℝ)
-    (hG : 0 < G) :
+theorem selbergDivisorMass_coprime_primorial_le_log_cube (z Q : ℕ) (G : ℝ) (hG : 0 < G) :
     selbergTruncatedOptimalWeightDivisorMass ((primeSetLECoprime z Q).prod id) z G ≤
       (z : ℝ) * (1 + Real.log z) ^ 3 / G := by
   calc
@@ -847,10 +841,9 @@ theorem selbergTruncatedOptimalWeightDivisorMass_coprime_primorial_le_log_cube (
                 (fun q => q.2 * (q.1.1.1 * q.1.1.2 * q.1.2) ≤ z)).card :
             ℝ) /
           G :=
-      selbergTruncatedOptimalWeightDivisorMass_coprime_primorial_le_product_region_card z Q G hG
+      selbergMass_coprime_le_product_region z Q G hG
     _ ≤ (z : ℝ) * (1 + Real.log z) ^ 3 / G :=
-      (div_le_div_iff_of_pos_right hG).mpr
-        (four_factor_product_region_card_le_z_mul_one_add_log_cube z)
+      (div_le_div_iff_of_pos_right hG).mpr (fourFactor_card_le_log_cube z)
 
 open PseudoPrime.NumberTheory.PrimeProducts in
 /--
@@ -864,8 +857,7 @@ the normalizer.
 
 Role: gives the squared error term a form with the modulus dependence exposed.
 -/
-theorem selbergTruncatedOptimalWeightDivisorMass_coprime_primorial_le_totient_ratio_bound (z Q : ℕ)
-    (hQ : 0 < Q) (hz : 1 ≤ z)
+theorem selbergMass_coprime_le_totient_ratio (z Q : ℕ) (hQ : 0 < Q) (hz : 1 ≤ z)
     (hNormLower :
       (Nat.totient Q : ℝ) / (Q : ℝ) * (Real.log ((z + 1 : ℕ) : ℝ) / 2) ≤
         selbergTruncatedTotientSum ((primeSetLECoprime z Q).prod id) z) :
@@ -899,8 +891,7 @@ theorem selbergTruncatedOptimalWeightDivisorMass_coprime_primorial_le_totient_ra
         (pow_nonneg (add_nonneg (by norm_num only : (0 : ℝ) ≤ 1) hlogz) 3)
   calc
     selbergTruncatedOptimalWeightDivisorMass ((primeSetLECoprime z Q).prod id) z G ≤ A / G := by
-      simpa only [A, G, P] using
-        selbergTruncatedOptimalWeightDivisorMass_coprime_primorial_le_log_cube z Q G hG
+      simpa only [A, G, P] using selbergDivisorMass_coprime_primorial_le_log_cube z Q G hG
     _ = A * (1 / G) := by ring
     _ ≤ A * (2 * (Q : ℝ) / ((Nat.totient Q : ℝ) * Real.log ((z + 1 : ℕ) : ℝ))) :=
       mul_le_mul_of_nonneg_left hrecip hAnonneg
@@ -924,8 +915,7 @@ sharing a factor with `Q`.
 
 Role: extends the explicit finite sieve bound to arbitrary progression moduli.
 -/
-theorem progressionPrimeCount_le_coprime_primorial_divisor_mass_bound {Y Q a z : ℕ} (hQ : 0 < Q)
-    (hz : 1 ≤ z) :
+theorem progressionPrimes_le_coprime_mass {Y Q a z : ℕ} (hQ : 0 < Q) (hz : 1 ≤ z) :
     (primeCountInProgression Y Q a : ℝ) ≤
       ((Finset.range (z + 1)).filter Nat.Prime).card +
         ((progressionBoundingSieve Y Q a ((primeSetLECoprime z Q).prod id)
@@ -935,8 +925,8 @@ theorem progressionPrimeCount_le_coprime_primorial_divisor_mass_bound {Y Q a z :
               (selbergTruncatedTotientSum ((primeSetLECoprime z Q).prod id) z)) ^
             2) := by
   exact
-    progressionPrimeCount_le_truncatedOptimal_selberg_divisor_mass_error
-      (primeProductLECoprime_data z Q).1 hQ (primeProductLECoprime_coprime z Q) hz
+    progressionPrimes_le_optimal_mass_error (primeProductLECoprime_data z Q).1 hQ
+      (primeProductLECoprime_coprime z Q) hz
       (selbergTruncatedTotientSum ((primeSetLECoprime z Q).prod id) z) rfl
       (primeProductLECoprime_small z Q)
 
@@ -950,7 +940,7 @@ small-prime count, a total-mass term with factor `2 / log (z + 1)`, and the
 explicit error `(z * (z + 1)) ^ 2`.
 
 Proof: apply the truncated-optimal-weight sieve estimate and replace the
-reciprocal normalizer by the bound from `selbergTruncatedTotientSum_primorial_ge_log_div_two`.
+reciprocal normalizer by the bound from `selbergTotientSum_primorial_ge_log_div_two`.
 
 Role: connects the explicit normalizer lower bound to the finite progression
 prime-count estimate.
@@ -983,14 +973,14 @@ theorem progressionPrimeCount_le_primorial_log_bound {Y Q a z : ℕ} (hQ : 0 < Q
   have hhalfpos : 0 < Real.log ((z + 1 : ℕ) : ℝ) / 2 :=
     div_pos hlogpos (by norm_num only : (0 : ℝ) < 2)
   have hGlower : Real.log ((z + 1 : ℕ) : ℝ) / 2 ≤ G := by
-    simpa only [G, P] using selbergTruncatedTotientSum_primorial_ge_log_div_two z hz
+    simpa only [G, P] using selbergTotientSum_primorial_ge_log_div_two z hz
   have hrecip : 1 / G ≤ 2 / Real.log ((z + 1 : ℕ) : ℝ) := by
     calc
       1 / G ≤ 1 / (Real.log ((z + 1 : ℕ) : ℝ) / 2) := one_div_le_one_div_of_le hhalfpos hGlower
       _ = 2 / Real.log ((z + 1 : ℕ) : ℝ) := by field_simp [ne_of_gt hlogpos]
   have hbase :=
-    progressionPrimeCount_le_truncatedOptimal_selberg_explicit_error (Y := Y) (Q := Q) (a := a)
-      (z := z) (P := P) hP hQ hPQ hz G (by rfl) hPsmall
+    progressionPrimes_le_optimal_explicit (Y := Y) (Q := Q) (a := a) (z := z) (P := P) hP hQ hPQ hz
+      G (by rfl) hPsmall
   have hmass : 0 ≤ (progressionBoundingSieve Y Q a P hP).totalMass := by exact Nat.cast_nonneg _
   have hmain :
     (progressionBoundingSieve Y Q a P hP).totalMass * (1 / G) + ((z : ℝ) * (z + 1 : ℕ)) ^ 2 ≤
@@ -1020,7 +1010,7 @@ normalizer by its logarithmic lower bound.
 
 Role: exposes a refined error expression for subsequent uniform estimates.
 -/
-theorem progressionPrimeCount_le_primorial_log_divisor_mass_bound {Y Q a z : ℕ} (hQ : 0 < Q)
+theorem progressionPrimes_le_primorial_log_mass {Y Q a z : ℕ} (hQ : 0 < Q)
     (hPQ : Nat.Coprime ((primeSetLE z).prod id) Q) (hz : 1 ≤ z) :
     (primeCountInProgression Y Q a : ℝ) ≤
       ((Finset.range (z + 1)).filter Nat.Prime).card +
@@ -1051,14 +1041,14 @@ theorem progressionPrimeCount_le_primorial_log_divisor_mass_bound {Y Q a z : ℕ
   have hhalfpos : 0 < Real.log ((z + 1 : ℕ) : ℝ) / 2 :=
     div_pos hlogpos (by norm_num only : (0 : ℝ) < 2)
   have hGlower : Real.log ((z + 1 : ℕ) : ℝ) / 2 ≤ G := by
-    simpa only [G, P] using selbergTruncatedTotientSum_primorial_ge_log_div_two z hz
+    simpa only [G, P] using selbergTotientSum_primorial_ge_log_div_two z hz
   have hrecip : 1 / G ≤ 2 / Real.log ((z + 1 : ℕ) : ℝ) := by
     calc
       1 / G ≤ 1 / (Real.log ((z + 1 : ℕ) : ℝ) / 2) := one_div_le_one_div_of_le hhalfpos hGlower
       _ = 2 / Real.log ((z + 1 : ℕ) : ℝ) := by field_simp [ne_of_gt hlogpos]
   have hbase :=
-    progressionPrimeCount_le_truncatedOptimal_selberg_divisor_mass_error (Y := Y) (Q := Q) (a := a)
-      (z := z) (P := P) hP hQ hPQ hz G (by rfl) hPsmall
+    progressionPrimes_le_optimal_mass_error (Y := Y) (Q := Q) (a := a) (z := z) (P := P) hP hQ hPQ
+      hz G (by rfl) hPsmall
   have hmass : 0 ≤ (progressionBoundingSieve Y Q a P hP).totalMass := by exact Nat.cast_nonneg _
   have hmain :
     (progressionBoundingSieve Y Q a P hP).totalMass * (1 / G) + B ^ 2 ≤
@@ -1086,7 +1076,7 @@ integers, which in turn dominates the divergent reciprocal-prime sum.
 Role: this supplies an unbounded main-term factor for the Selberg sieve
 estimate.
 -/
-theorem selbergTruncatedTotientSum_primorial_tendsto_atTop :
+theorem selbergTotientSum_primorial_tendsto_atTop :
     Filter.Tendsto (fun z : ℕ => selbergTruncatedTotientSum ((primeSetLE z).prod id) z) Filter.atTop
       Filter.atTop := by
   have hle :
@@ -1094,7 +1084,7 @@ theorem selbergTruncatedTotientSum_primorial_tendsto_atTop :
       (∑ n ∈ (Finset.range (z + 1)).filter (fun n : ℕ => 0 < n ∧ Squarefree n), 1 / (n : ℝ)) ≤
         selbergTruncatedTotientSum ((primeSetLE z).prod id) z := by
     intro z
-    exact selbergTruncatedTotientSum_primorial_ge_squarefree_reciprocal_sum z
+    exact selbergTotient_primorial_ge_squarefree z
   exact
     Filter.tendsto_atTop_mono' Filter.atTop (Filter.Eventually.of_forall hle)
       squarefreeReciprocalSum_tendsto_atTop
@@ -1111,12 +1101,11 @@ Proof: use the arithmetic lower bound for squarefree integers coprime to `Q`.
 
 Role: supplies the normalizer lower bound for the coprime Selberg sieve.
 -/
-theorem squarefree_coprime_reciprocal_sum_ge_totient_ratio_log_div_two (z Q : ℕ) (hQ : 0 < Q)
-    (hz : 1 ≤ z) :
+theorem totient_log_le_squarefree_coprime_recip_sum (z Q : ℕ) (hQ : 0 < Q) (hz : 1 ≤ z) :
     (Nat.totient Q : ℝ) / (Q : ℝ) * (Real.log ((z + 1 : ℕ) : ℝ) / 2) ≤
       ∑ n ∈ (Finset.range (z + 1)).filter (fun n : ℕ => 0 < n ∧ Squarefree n ∧ Nat.Coprime n Q),
         1 / (n : ℝ) :=
-  Arithmetic.squarefree_coprime_reciprocal_sum_ge_totient_ratio_log_div_two z Q hQ hz
+  Arithmetic.totient_log_le_squarefree_coprime_recip_sum z Q hQ hz
 
 open PseudoPrime.NumberTheory.PrimeProducts in
 /--
@@ -1131,13 +1120,12 @@ normalizer comparison for the restricted primorial.
 Role: supplies the explicit main-term denominator for the coprime sieve
 estimate.
 -/
-theorem selbergTruncatedTotientSum_coprime_primorial_ge_totient_ratio_log_div_two (z Q : ℕ)
-    (hQ : 0 < Q) (hz : 1 ≤ z) :
+theorem selbergTotient_coprime_ge_totient_log (z Q : ℕ) (hQ : 0 < Q) (hz : 1 ≤ z) :
     (Nat.totient Q : ℝ) / (Q : ℝ) * (Real.log ((z + 1 : ℕ) : ℝ) / 2) ≤
       selbergTruncatedTotientSum ((primeSetLECoprime z Q).prod id) z := by
   exact
-    le_trans (squarefree_coprime_reciprocal_sum_ge_totient_ratio_log_div_two z Q hQ hz)
-      (selbergTruncatedTotientSum_coprime_primorial_ge_squarefree_sum z Q)
+    le_trans (totient_log_le_squarefree_coprime_recip_sum z Q hQ hz)
+      (selbergTotient_coprime_ge_squarefree z Q)
 
 open PseudoPrime.NumberTheory.PrimeProducts in
 /--
@@ -1150,14 +1138,12 @@ Proof: apply the normalizer lower bound to the general mass estimate.
 
 Role: gives the squared sieve error an explicit modulus-dependent bound.
 -/
-theorem selbergTruncatedOptimalWeightDivisorMass_coprime_primorial_le_totient_ratio_log_cube
-    (z Q : ℕ) (hQ : 0 < Q) (hz : 1 ≤ z) :
+theorem selbergMass_coprime_le_totient_log_cube (z Q : ℕ) (hQ : 0 < Q) (hz : 1 ≤ z) :
     selbergTruncatedOptimalWeightDivisorMass ((primeSetLECoprime z Q).prod id) z
         (selbergTruncatedTotientSum ((primeSetLECoprime z Q).prod id) z) ≤
       2 * (Q : ℝ) * (z : ℝ) * (1 + Real.log z) ^ 3 /
         ((Nat.totient Q : ℝ) * Real.log ((z + 1 : ℕ) : ℝ)) :=
-  selbergTruncatedOptimalWeightDivisorMass_coprime_primorial_le_totient_ratio_bound z Q hQ hz
-    (selbergTruncatedTotientSum_coprime_primorial_ge_totient_ratio_log_div_two z Q hQ hz)
+  selbergMass_coprime_le_totient_ratio z Q hQ hz (selbergTotient_coprime_ge_totient_log z Q hQ hz)
 
 open PseudoPrime.NumberTheory.PrimeProducts in
 /--
@@ -1172,8 +1158,7 @@ totient-ratio logarithmic bound.
 
 Role: makes the finite counting error explicit before its AGP-scale absorption.
 -/
-theorem progressionPrimeCount_le_coprime_primorial_explicit_log_cube_error {Y Q a z : ℕ}
-    (hQ : 0 < Q) (hz : 1 ≤ z) :
+theorem progressionPrimes_le_coprime_log_cube {Y Q a z : ℕ} (hQ : 0 < Q) (hz : 1 ≤ z) :
     (primeCountInProgression Y Q a : ℝ) ≤
       ((Finset.range (z + 1)).filter Nat.Prime).card +
         ((progressionBoundingSieve Y Q a ((primeSetLECoprime z Q).prod id)
@@ -1195,14 +1180,12 @@ theorem progressionPrimeCount_le_coprime_primorial_explicit_log_cube_error {Y Q 
   have hQR : 0 < (Q : ℝ) := by exact_mod_cast hQ
   have hphi : 0 < (Nat.totient Q : ℝ) := by exact_mod_cast Nat.totient_pos.mpr hQ
   have hNormLower : (Nat.totient Q : ℝ) / (Q : ℝ) * (Real.log ((z + 1 : ℕ) : ℝ) / 2) ≤ G := by
-    simpa only [G, P] using
-      selbergTruncatedTotientSum_coprime_primorial_ge_totient_ratio_log_div_two z Q hQ hz
+    simpa only [G, P] using selbergTotient_coprime_ge_totient_log z Q hQ hz
   have hNormPos : 0 < (Nat.totient Q : ℝ) / (Q : ℝ) * (Real.log ((z + 1 : ℕ) : ℝ) / 2) :=
     mul_pos (div_pos hphi hQR) (div_pos hlogpos (by norm_num only : (0 : ℝ) < 2))
   have hG : 0 < G := lt_of_lt_of_le hNormPos hNormLower
   have hBupper : B ≤ E := by
-    simpa only [B, G, P, E] using
-      selbergTruncatedOptimalWeightDivisorMass_coprime_primorial_le_totient_ratio_log_cube z Q hQ hz
+    simpa only [B, G, P, E] using selbergMass_coprime_le_totient_log_cube z Q hQ hz
   have hBnonneg : 0 ≤ B := by
     dsimp only [B, P, G]
     unfold selbergTruncatedOptimalWeightDivisorMass
@@ -1246,9 +1229,7 @@ theorem progressionPrimeCount_le_coprime_primorial_explicit_log_cube_error {Y Q 
           (2 * (Q : ℝ) / ((Nat.totient Q : ℝ) * Real.log ((z + 1 : ℕ) : ℝ))) +
         B ^ 2 := by
     exact add_le_add_left (mul_le_mul_of_nonneg_left hrecip hmass) _
-  have hbase :=
-    progressionPrimeCount_le_coprime_primorial_divisor_mass_bound (Y := Y) (Q := Q) (a := a) (z :=
-      z) hQ hz
+  have hbase := progressionPrimes_le_coprime_mass (Y := Y) (Q := Q) (a := a) (z := z) hQ hz
   calc
     (primeCountInProgression Y Q a : ℝ) ≤
         ((Finset.range (z + 1)).filter Nat.Prime).card +
@@ -1296,8 +1277,7 @@ normalizer using the totient-ratio logarithmic lower bound.
 
 Role: exposes the expected `Q/φ(Q)` factor for later Brun–Titchmarsh estimates.
 -/
-theorem progressionPrimeCount_le_coprime_primorial_totient_ratio_log_divisor_mass_bound
-    {Y Q a z : ℕ} (hQ : 0 < Q) (hz : 1 ≤ z) :
+theorem progressionPrimes_le_totient_log_mass {Y Q a z : ℕ} (hQ : 0 < Q) (hz : 1 ≤ z) :
     (primeCountInProgression Y Q a : ℝ) ≤
       ((Finset.range (z + 1)).filter Nat.Prime).card +
         ((progressionBoundingSieve Y Q a ((primeSetLECoprime z Q).prod id)
@@ -1322,8 +1302,7 @@ theorem progressionPrimeCount_le_coprime_primorial_totient_ratio_log_divisor_mas
   have hQR : 0 < (Q : ℝ) := by exact_mod_cast hQ
   have hphi : 0 < (Nat.totient Q : ℝ) := by exact_mod_cast Nat.totient_pos.mpr hQ
   have hNormLower : (Nat.totient Q : ℝ) / (Q : ℝ) * (Real.log ((z + 1 : ℕ) : ℝ) / 2) ≤ G := by
-    simpa only [G, P] using
-      selbergTruncatedTotientSum_coprime_primorial_ge_totient_ratio_log_div_two z Q hQ hz
+    simpa only [G, P] using selbergTotient_coprime_ge_totient_log z Q hQ hz
   have hNormPos : 0 < (Nat.totient Q : ℝ) / (Q : ℝ) * (Real.log ((z + 1 : ℕ) : ℝ) / 2) :=
     mul_pos (div_pos hphi hQR) hhalfpos
   have hrecip : 1 / G ≤ 2 * (Q : ℝ) / ((Nat.totient Q : ℝ) * Real.log ((z + 1 : ℕ) : ℝ)) := by
@@ -1333,8 +1312,8 @@ theorem progressionPrimeCount_le_coprime_primorial_totient_ratio_log_divisor_mas
       _ = 2 * (Q : ℝ) / ((Nat.totient Q : ℝ) * Real.log ((z + 1 : ℕ) : ℝ)) := by
         field_simp [ne_of_gt hQR, ne_of_gt hphi, ne_of_gt hlogpos]
   have hbase :=
-    progressionPrimeCount_le_truncatedOptimal_selberg_divisor_mass_error (Y := Y) (Q := Q) (a := a)
-      (z := z) (P := P) hP hQ (primeProductLECoprime_coprime z Q) hz G (by rfl) hPsmall
+    progressionPrimes_le_optimal_mass_error (Y := Y) (Q := Q) (a := a) (z := z) (P := P) hP hQ
+      (primeProductLECoprime_coprime z Q) hz G (by rfl) hPsmall
   have hmass : 0 ≤ (progressionBoundingSieve Y Q a P hP).totalMass := by exact Nat.cast_nonneg _
   have hmain :
     (progressionBoundingSieve Y Q a P hP).totalMass * (1 / G) + B ^ 2 ≤

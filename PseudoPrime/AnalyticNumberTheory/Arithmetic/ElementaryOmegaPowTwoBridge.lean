@@ -23,36 +23,34 @@ inequality in `m`, `e`, and a split parameter `k`.
 
 namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 
-namespace ElementaryOmegaPowTwoBridgeInternal
-
 /-- The rational constant `693/1000`, strictly below `log 2` as proved below.
 It gives an exact arithmetic lower estimate for `log (2^e)` in finite anchor certificates. -/
-noncomputable def logTwoLower : ℝ :=
+noncomputable def elementaryOmegaLogTwoLower : ℝ :=
   693 / 1000
 
 /-- The rational constant `347/500`, strictly above `log 2` as proved below.
 It bounds the logarithmic tangent estimate by an exact rational expression in certificates. -/
-noncomputable def logTwoUpper : ℝ :=
+noncomputable def elementaryOmegaLogTwoUpper : ℝ :=
   347 / 500
 
 /-- The lower logarithm bound `693/1000` is positive, by rational arithmetic.
 This establishes the positive base needed in power-of-two logarithm comparisons. -/
-theorem logTwoLower_pos : (0 : ℝ) < logTwoLower := by
-  unfold logTwoLower
+theorem elementaryOmegaLogTwoLower_pos : (0 : ℝ) < elementaryOmegaLogTwoLower := by
+  unfold elementaryOmegaLogTwoLower
   norm_num only
 
 /-- The rational lower constant `693/1000` is strictly below `log 2`.
 The sharper mathlib decimal bound implies the comparison by linear arithmetic.
 This supplies the lower side of the finite anchor certificate inequality. -/
-theorem logTwoLower_lt_logTwo : logTwoLower < Real.log 2 := by
-  unfold logTwoLower
+theorem elementaryOmegaLogTwoLower_lt_logTwo : elementaryOmegaLogTwoLower < Real.log 2 := by
+  unfold elementaryOmegaLogTwoLower
   linarith only [Real.log_two_gt_d9]
 
 /-- The logarithm of two is strictly below the rational upper constant `347/500`.
 The sharper mathlib decimal bound gives the inequality by linear arithmetic.
 This supplies the upper coefficient in the rational logarithmic tangent bound. -/
-theorem logTwo_lt_logTwoUpper : Real.log 2 < logTwoUpper := by
-  unfold logTwoUpper
+theorem logTwo_lt_elementaryOmegaLogTwoUpper : Real.log 2 < elementaryOmegaLogTwoUpper := by
+  unfold elementaryOmegaLogTwoUpper
   linarith only [Real.log_two_lt_d9]
 
 /-- `exp (exp 1) < 16`, a sharper form of
@@ -80,11 +78,11 @@ theorem exp_exp_one_le_two_pow {e : ℕ} (he : 4 ≤ e) : Real.exp (Real.exp 1) 
   linarith only [h16, hmono]
 
 /-- The elementary tangent bound `Real.log x ≤ x - 1`, applied at `x = u / 2 ^ k` and combined with
-`Real.log (2 ^ k) ≤ k * logTwoUpper`, gives every positive `u` an explicit upper bound on
-`log u` in terms of a free natural split parameter `k`.
+`Real.log (2 ^ k) ≤ k * elementaryOmegaLogTwoUpper`, gives every positive `u` an explicit
+upper bound on `log u` in terms of a free natural split parameter `k`.
 This bound is rational when `u` is rational. -/
-theorem log_le_powTwo_tangent {u : ℝ} (hu : 0 < u) (k : ℕ) :
-    Real.log u ≤ (k : ℝ) * logTwoUpper + u / 2 ^ k - 1 := by
+theorem log_le_elementaryOmega_tangent {u : ℝ} (hu : 0 < u) (k : ℕ) :
+    Real.log u ≤ (k : ℝ) * elementaryOmegaLogTwoUpper + u / 2 ^ k - 1 := by
   have hueq : u = (2 : ℝ) ^ k * (u / 2 ^ k) := by
     have hpow : (2 : ℝ) ^ k ≠ 0 := pow_ne_zero k (by norm_num only)
     calc
@@ -98,11 +96,9 @@ theorem log_le_powTwo_tangent {u : ℝ} (hu : 0 < u) (k : ℕ) :
       Real.log_pow]
   have htangent : Real.log (u / 2 ^ k) ≤ u / 2 ^ k - 1 :=
     Real.log_le_sub_one_of_pos (div_pos hu (pow_pos (by norm_num only) k))
-  have hklog : (k : ℝ) * Real.log 2 ≤ (k : ℝ) * logTwoUpper :=
-    mul_le_mul_of_nonneg_left logTwo_lt_logTwoUpper.le (Nat.cast_nonneg k)
+  have hklog : (k : ℝ) * Real.log 2 ≤ (k : ℝ) * elementaryOmegaLogTwoUpper :=
+    mul_le_mul_of_nonneg_left logTwo_lt_elementaryOmegaLogTwoUpper.le (Nat.cast_nonneg k)
   linarith only [hlogu, htangent, hklog]
-
-end ElementaryOmegaPowTwoBridgeInternal
 
 /--
 Input/assumptions: natural numbers `m, e, k` with `4 ≤ e`, a power-of-two lower bound
@@ -110,7 +106,7 @@ Input/assumptions: natural numbers `m, e, k` with `4 ≤ e`, a power-of-two lowe
   numeric inequality `hnum` comparing the tangent-bound upper estimate of
   `(m + 1) * log (log (2 ^ e))` against
   `PseudoPrime.AnalyticNumberTheory.Arithmetic.elementaryOmegaConstant * log (2 ^ e)`'s
-  rational lower bound `elementaryOmegaConstant * e * logTwoLower`.
+  rational lower bound `elementaryOmegaConstant * e * elementaryOmegaLogTwoLower`.
 Conclusion: `(m + 1 : ℝ) ≤ PseudoPrime.AnalyticNumberTheory.Arithmetic.elementaryOmegaRhsReal`
   `(PseudoPrime.AnalyticNumberTheory.Arithmetic.elementaryAnchor m)`.
 Content: `PseudoPrime.AnalyticNumberTheory.Arithmetic.elementaryOmegaRhsReal (2 ^ e)`
@@ -127,54 +123,44 @@ theorem certificate_of_powTwo_le_anchor {m e k : ℕ} (he4 : 4 ≤ e)
     (he : (2 : ℝ) ^ e ≤ elementaryAnchor m)
     (hnum :
       ((m + 1 : ℕ) : ℝ) *
-          ((k : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoUpper +
-              (e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoUpper / 2 ^ k -
+          ((k : ℝ) * elementaryOmegaLogTwoUpper + (e : ℝ) * elementaryOmegaLogTwoUpper / 2 ^ k -
             1) ≤
-        elementaryOmegaConstant * ((e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoLower)) :
+        elementaryOmegaConstant * ((e : ℝ) * elementaryOmegaLogTwoLower)) :
     (m : ℝ) + 1 ≤ elementaryOmegaRhsReal (elementaryAnchor m) := by
   rw [show (m : ℝ) + 1 = ((m + 1 : ℕ) : ℝ) by
       push_cast
       ring]
-  have hdom : Real.exp (Real.exp 1) ≤ (2 : ℝ) ^ e :=
-    ElementaryOmegaPowTwoBridgeInternal.exp_exp_one_le_two_pow he4
+  have hdom : Real.exp (Real.exp 1) ≤ (2 : ℝ) ^ e := exp_exp_one_le_two_pow he4
   have hmono := elementaryOmegaRhsReal_mono hdom he
   have hepos : (0 : ℝ) < (e : ℝ) := by exact_mod_cast (Nat.lt_of_lt_of_le (by decide : 0 < 4) he4)
-  have hlog2e :
-    (e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoLower ≤ Real.log ((2 : ℝ) ^ e) := by
+  have hlog2e : (e : ℝ) * elementaryOmegaLogTwoLower ≤ Real.log ((2 : ℝ) ^ e) := by
     rw [Real.log_pow]
-    exact
-      mul_le_mul_of_nonneg_left ElementaryOmegaPowTwoBridgeInternal.logTwoLower_lt_logTwo.le
-        hepos.le
-  have he_lower : (1 : ℝ) < (e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoLower := by
+    exact mul_le_mul_of_nonneg_left elementaryOmegaLogTwoLower_lt_logTwo.le hepos.le
+  have he_lower : (1 : ℝ) < (e : ℝ) * elementaryOmegaLogTwoLower := by
     have he4' : (4 : ℝ) ≤ (e : ℝ) := by exact_mod_cast he4
-    unfold ElementaryOmegaPowTwoBridgeInternal.logTwoLower
+    unfold elementaryOmegaLogTwoLower
     nlinarith only [he4']
   have hlog2e_gt1 : (1 : ℝ) < Real.log ((2 : ℝ) ^ e) := he_lower.trans_le hlog2e
   have hLLpos : (0 : ℝ) < Real.log (Real.log ((2 : ℝ) ^ e)) := Real.log_pos hlog2e_gt1
   have hloglog : Real.log (Real.log ((2 : ℝ) ^ e)) = Real.log ((e : ℝ) * Real.log 2) := by
     rw [Real.log_pow]
-  have hstep1 : (e : ℝ) * Real.log 2 ≤ (e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoUpper :=
-    mul_le_mul_of_nonneg_left ElementaryOmegaPowTwoBridgeInternal.logTwo_lt_logTwoUpper.le hepos.le
+  have hstep1 : (e : ℝ) * Real.log 2 ≤ (e : ℝ) * elementaryOmegaLogTwoUpper :=
+    mul_le_mul_of_nonneg_left logTwo_lt_elementaryOmegaLogTwoUpper.le hepos.le
   have hstep1pos : (0 : ℝ) < (e : ℝ) * Real.log 2 := by
     have hlog2pos : (0 : ℝ) < Real.log 2 :=
-      ElementaryOmegaPowTwoBridgeInternal.logTwoLower_pos.trans
-        ElementaryOmegaPowTwoBridgeInternal.logTwoLower_lt_logTwo
+      elementaryOmegaLogTwoLower_pos.trans elementaryOmegaLogTwoLower_lt_logTwo
     exact mul_pos hepos hlog2pos
-  have hstep2 :
-    Real.log ((e : ℝ) * Real.log 2) ≤
-      Real.log ((e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoUpper) :=
+  have hstep2 : Real.log ((e : ℝ) * Real.log 2) ≤ Real.log ((e : ℝ) * elementaryOmegaLogTwoUpper) :=
     Real.log_le_log hstep1pos hstep1
-  have hUpos : (0 : ℝ) < ElementaryOmegaPowTwoBridgeInternal.logTwoUpper := by
-    unfold ElementaryOmegaPowTwoBridgeInternal.logTwoUpper
+  have hUpos : (0 : ℝ) < elementaryOmegaLogTwoUpper := by
+    unfold elementaryOmegaLogTwoUpper
     norm_num only
   have hstep3 :=
-    ElementaryOmegaPowTwoBridgeInternal.log_le_powTwo_tangent (u :=
-      (e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoUpper) (mul_pos hepos hUpos) k
+    log_le_elementaryOmega_tangent (u := (e : ℝ) * elementaryOmegaLogTwoUpper) (mul_pos hepos hUpos)
+      k
   have hLLupper :
     Real.log (Real.log ((2 : ℝ) ^ e)) ≤
-      (k : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoUpper +
-          (e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoUpper / 2 ^ k -
-        1 := by
+      (k : ℝ) * elementaryOmegaLogTwoUpper + (e : ℝ) * elementaryOmegaLogTwoUpper / 2 ^ k - 1 := by
     rw [hloglog]
     linarith only [hstep2, hstep3]
   have hfinal2e : ((m + 1 : ℕ) : ℝ) ≤ elementaryOmegaRhsReal ((2 : ℝ) ^ e) := by
@@ -183,12 +169,10 @@ theorem certificate_of_powTwo_le_anchor {m e k : ℕ} (he4 : 4 ≤ e)
     calc
       ((m + 1 : ℕ) : ℝ) * Real.log (Real.log ((2 : ℝ) ^ e)) ≤
           ((m + 1 : ℕ) : ℝ) *
-            ((k : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoUpper +
-                (e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoUpper / 2 ^ k -
+            ((k : ℝ) * elementaryOmegaLogTwoUpper + (e : ℝ) * elementaryOmegaLogTwoUpper / 2 ^ k -
               1) :=
         mul_le_mul_of_nonneg_left hLLupper (Nat.cast_nonneg (m + 1))
-      _ ≤ elementaryOmegaConstant * ((e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoLower) :=
-        hnum
+      _ ≤ elementaryOmegaConstant * ((e : ℝ) * elementaryOmegaLogTwoLower) := hnum
       _ ≤ elementaryOmegaConstant * Real.log ((2 : ℝ) ^ e) :=
         mul_le_mul_of_nonneg_left hlog2e
           (by
@@ -207,7 +191,7 @@ Input/assumptions: natural numbers `m, e, k, P` with
 Conclusion: `(m : ℝ) + 1 ≤ PseudoPrime.AnalyticNumberTheory.Arithmetic.elementaryOmegaRhsReal`
   `(PseudoPrime.AnalyticNumberTheory.Arithmetic.elementaryAnchor m)`.
 Content: `4 * PseudoPrime.AnalyticNumberTheory.Arithmetic.oddPrimorial m = 2 * P`
-  (`PseudoPrime.AnalyticNumberTheory.Arithmetic.primePrimorialCount_succ_eq_two_mul_oddPrimorial`),
+  (`PseudoPrime.AnalyticNumberTheory.Arithmetic.primorialCount_succ_eq_two_mul_odd`),
   so
   `2 ^ e ≤ 2 * P = 4 * PseudoPrime.AnalyticNumberTheory.Arithmetic.oddPrimorial m`
   `≤ PseudoPrime.AnalyticNumberTheory.Arithmetic.elementaryAnchor m` via `le_max_left`;
@@ -222,13 +206,12 @@ theorem certificate_of_primorial {m e k P : ℕ} (hP : NumberTheory.primePrimori
     (he4 : 4 ≤ e) (heP : (2 : ℝ) ^ e ≤ 2 * (P : ℝ))
     (hnum :
       ((m + 1 : ℕ) : ℝ) *
-          ((k : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoUpper +
-              (e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoUpper / 2 ^ k -
+          ((k : ℝ) * elementaryOmegaLogTwoUpper + (e : ℝ) * elementaryOmegaLogTwoUpper / 2 ^ k -
             1) ≤
-        elementaryOmegaConstant * ((e : ℝ) * ElementaryOmegaPowTwoBridgeInternal.logTwoLower)) :
+        elementaryOmegaConstant * ((e : ℝ) * elementaryOmegaLogTwoLower)) :
     (m : ℝ) + 1 ≤ elementaryOmegaRhsReal (elementaryAnchor m) := by
   apply certificate_of_powTwo_le_anchor he4 _ hnum
-  have h := primePrimorialCount_succ_eq_two_mul_oddPrimorial m
+  have h := primorialCount_succ_eq_two_mul_odd m
   rw [hP] at h
   have hR : (P : ℝ) = 2 * (oddPrimorial m : ℝ) := by exact_mod_cast h
   unfold elementaryAnchor

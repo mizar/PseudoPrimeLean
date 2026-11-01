@@ -44,8 +44,8 @@ theorem logDeriv_xi_zero_eq {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
   have hp0 : (q : ℂ) ^ ((0 : ℂ) / 2) ≠ 0 := by
     simp only [zero_div, Complex.cpow_zero, ne_eq, one_ne_zero, not_false_eq_true]
   unfold PaperStatements.xi
-  rw [logDeriv_fun_mul 0 hp0 (dirichletCompletedLFunction_zero_ne_zero_of_primitive hp hne)
-      hpow.differentiableAt (DirichletCharacter.differentiable_completedLFunction hne 0)]
+  rw [logDeriv_fun_mul 0 hp0 (completed_zero_ne_zero_of_primitive hp hne) hpow.differentiableAt
+      (DirichletCharacter.differentiable_completedLFunction hne 0)]
   congr 1
   rw [logDeriv_apply, hpow.deriv]
   simp only [zero_div, Complex.cpow_zero, one_mul, div_one]
@@ -60,9 +60,7 @@ theorem re_logDeriv_xi_zero_eq_neg_abs_BRe {q : ℕ} [NeZero q] {χ : DirichletC
     (logDeriv (PaperStatements.xi χ) 0).re = -|primitiveBRe χ| := by
   have hne := primitiveCharacter_ne_one_of_three_le hq hp
   have hq2 : 2 ≤ q := (of_decide_eq_true rfl : 2 ≤ 3).trans hq
-  have hB :=
-    completedLFunction_logDeriv_zero_re_eq_neg_abs_BRe_sub_half_log hq2 hGRH hp hne
-      (inv_ne_one.mpr hne)
+  have hB := completedLogDeriv_zero_abs_BRe_GRH hq2 hGRH hp hne (inv_ne_one.mpr hne)
   rw [logDeriv_xi_zero_eq hp hne, ← Complex.ofReal_natCast, ←
     Complex.ofReal_log (Nat.cast_nonneg q), ← Complex.ofReal_ofNat 2, ← Complex.ofReal_div,
     Complex.add_re, Complex.ofReal_re, hB]
@@ -78,7 +76,9 @@ theorem re_logDeriv_xi_inv_zero_eq_neg_abs_BRe {q : ℕ} [NeZero q] {χ : Dirich
     (hq : 3 ≤ q) (hp : χ.IsPrimitive)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     (logDeriv (PaperStatements.xi χ⁻¹) 0).re = -|primitiveBRe χ| :=
-  Eq.trans (re_logDeriv_xi_zero_eq_neg_abs_BRe hq (DirichletCharacter.isPrimitive_inv hp) hGRH)
+  Eq.trans
+    (re_logDeriv_xi_zero_eq_neg_abs_BRe hq
+      (AnalyticNumberTheory.DirichletLFunction.character_isPrimitive_inv hp) hGRH)
     (congrArg (fun b : ℝ ↦ -|b|)
       (primitiveBRe_inv_eq (primitiveCharacter_ne_one_of_three_le hq hp)))
 
@@ -202,21 +202,20 @@ are controlled by the completed finite-subset estimate. -/
 theorem norm_log_residue_sum_sub_trivial_le {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) (z w : ℂ)
-    (h0 : (0 : ℂ) ∈ dirichletLFunctionSingularitiesInRectangle χ hne z w)
-    (h1 : (1 : ℂ) ∈ dirichletLFunctionSingularitiesInRectangle χ hne z w) :
-    ‖(∑ ρ ∈ dirichletLFunctionSingularitiesInRectangle χ hne z w, dirichletLogResidueAt hne x ρ) -
+    (h0 : (0 : ℂ) ∈ LFunctionSingularitiesInRectangle χ hne z w)
+    (h1 : (1 : ℂ) ∈ LFunctionSingularitiesInRectangle χ hne z w) :
+    ‖(∑ ρ ∈ LFunctionSingularitiesInRectangle χ hne z w, dirichletLogResidueAt hne x ρ) -
           dirichletLogResidueAt hne x 0 -
           (∑
             ρ ∈
               (dirichletLFunctionZerosInRectangle χ hne z w).filter
                 (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0),
-            dirichletLFunctionLogZeroContribution x χ ρ)‖ ≤
+            LFunctionLogZeroContribution x χ ρ)‖ ≤
       2 * Real.sqrt x * |primitiveBRe χ| := by
   classical
-  let E := ((dirichletLFunctionSingularitiesInRectangle χ hne z w).erase 1).erase 0
+  let E := ((LFunctionSingularitiesInRectangle χ hne z w).erase 1).erase 0
   have he :
-    (∑ ρ ∈ E, dirichletLogResidueAt hne x ρ) =
-      ∑ ρ ∈ E, dirichletLFunctionLogZeroContribution x χ ρ := by
+    (∑ ρ ∈ E, dirichletLogResidueAt hne x ρ) = ∑ ρ ∈ E, LFunctionLogZeroContribution x χ ρ := by
     refine Finset.sum_congr rfl ?_
     intro ρ hρ
     exact
@@ -224,22 +223,22 @@ theorem norm_log_residue_sum_sub_trivial_le {q : ℕ} [NeZero q] (hq : 2 ≤ q)
         (Finset.mem_erase.mp (Finset.mem_erase.mp hρ).2).1
   have hs :=
     Finset.sum_filter_add_sum_filter_not E (fun ρ : ℂ => DirichletCharacter.gammaFactor χ ρ = 0)
-      (dirichletLFunctionLogZeroContribution x χ)
-  have ht := erased_gammaZeros_eq_trivialZeroFilter hne z w
+      (LFunctionLogZeroContribution x χ)
+  have ht := erasedGammaZeros_eq_trivialFilter hne z w
   have hb :=
-    norm_sum_logZeroContribution_of_gamma_ne_zero_le hq hGRH hp hne hinv hx
+    norm_sum_logZeroTerm_le_of_gamma_RH hq hGRH hp hne hinv hx
       (E.filter (fun ρ => ¬DirichletCharacter.gammaFactor χ ρ = 0))
       (fun ρ hρ => (Finset.mem_filter.mp hρ).2)
   have hid :
-    (∑ ρ ∈ dirichletLFunctionSingularitiesInRectangle χ hne z w, dirichletLogResidueAt hne x ρ) -
+    (∑ ρ ∈ LFunctionSingularitiesInRectangle χ hne z w, dirichletLogResidueAt hne x ρ) -
         dirichletLogResidueAt hne x 0 -
         (∑
           ρ ∈
             (dirichletLFunctionZerosInRectangle χ hne z w).filter
               (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0),
-          dirichletLFunctionLogZeroContribution x χ ρ) =
+          LFunctionLogZeroContribution x χ ρ) =
       ∑ ρ ∈ E.filter (fun ρ => ¬DirichletCharacter.gammaFactor χ ρ = 0),
-        dirichletLFunctionLogZeroContribution x χ ρ := by
+        LFunctionLogZeroContribution x χ ρ := by
     rw [dirichletSplitLogSingularitySum x hne h1 h0, dirichletLogResidueAt_one hne x, zero_add, he,
       ← hs, ht]
     ring
@@ -250,7 +249,7 @@ open PseudoPrime.AnalyticNumberTheory.DirichletLFunction in
 /-- For a fixed expanding left edge, a height-independent exact trivial sum
 passes through the generic contour limit. Under GRH and `x > 1`, the weighted
 sum minus the left integral and origin residue retains the completed-zero norm bound. -/
-theorem norm_logWeightedSum_sub_left_sub_origin_sub_trivial_le {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem norm_logWeighted_contour_error_GRH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 < x) (m : ℕ) (hm : 1 ≤ m)
     (T : ℂ)
@@ -262,7 +261,7 @@ theorem norm_logWeightedSum_sub_left_sub_origin_sub_trivial_le {q : ℕ} [NeZero
                     (primitiveHeightSeqLowerCorner hq hGRH hp hne hinv (2 * m) k)
                     (primitiveHeightSeqUpperCorner hq hGRH hp hne hinv k)).filter
                 (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0),
-            dirichletLFunctionLogZeroContribution x χ ρ) =
+            LFunctionLogZeroContribution x χ ρ) =
           T) :
     ‖AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x χ -
           (((2 * Real.pi)⁻¹ : ℝ) : ℂ) *
@@ -273,16 +272,13 @@ theorem norm_logWeightedSum_sub_left_sub_origin_sub_trivial_le {q : ℕ} [NeZero
           T‖ ≤
       2 * Real.sqrt x * |primitiveBRe χ| := by
   have hA : 2 ≤ 2 * m := Nat.mul_le_mul_left 2 hm
-  have ht :=
-    tendsto_normalized_dirichletLogBoundary_heightSeq_of_grh hq hGRH hp hne hinv hx.le (2 * m) hA
+  have ht := tendsto_logBoundary_heightSeq_GRH hq hGRH hp hne hinv hx.le (2 * m) hA
   have hn := ((ht.sub_const (dirichletLogResidueAt hne x 0)).sub_const T).norm
   simp only [← Complex.ofReal_inv] at hn
   refine le_of_tendsto hn ?_
   filter_upwards with k
-  rw [dirichletLogFiniteContourIdentity_heightSeq_normalized hq hGRH hp hne hinv
-      (zero_lt_one.trans hx) (2 * m) k hA]
-  obtain ⟨h0, h1⟩ :=
-    primitiveReciprocalMellinPoints_mem_singularities_heightSeq hq hGRH hp hne hinv (2 * m) k hA
+  rw [logContour_heightSeq_normalized_GRH hq hGRH hp hne hinv (zero_lt_one.trans hx) (2 * m) k hA]
+  obtain ⟨h0, h1⟩ := heightSeq_zero_one_singular_GRH hq hGRH hp hne hinv (2 * m) k hA
   have hb :=
     norm_log_residue_sum_sub_trivial_le hq hGRH hp hne hinv (zero_lt_one.trans hx)
       (primitiveHeightSeqLowerCorner hq hGRH hp hne hinv (2 * m) k)
@@ -307,7 +303,7 @@ theorem norm_logWeightedSum_sub_origin_sub_trivial_le {q : ℕ} [NeZero q] (hq :
                         (primitiveHeightSeqLowerCorner hq hGRH hp hne hinv (2 * m) k)
                         (primitiveHeightSeqUpperCorner hq hGRH hp hne hinv k)).filter
                     (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0),
-                dirichletLFunctionLogZeroContribution x χ ρ) =
+                LFunctionLogZeroContribution x χ ρ) =
               T m)
     (hL : Filter.Tendsto T Filter.atTop (nhds L)) :
     ‖AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x χ - dirichletLogResidueAt hne x 0 -
@@ -318,8 +314,7 @@ theorem norm_logWeightedSum_sub_origin_sub_trivial_le {q : ℕ} [NeZero q] (hq :
       (fun m => by
         simpa only [one_mul, id_eq] using (Nat.mul_le_mul_right m (of_decide_eq_true rfl : 1 ≤ 2)))
       Filter.tendsto_id
-  have hleft :=
-    (tendsto_dirichletLogContourKernel_leftVertical_integral_atTop hp hne hinv hx).comp hA
+  have hleft := (tendsto_logKernel_left_integral hp hne hinv hx).comp hA
   have hS :
     Filter.Tendsto (fun _ : ℕ => AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x χ)
       Filter.atTop (nhds (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x χ)) :=
@@ -331,15 +326,13 @@ theorem norm_logWeightedSum_sub_origin_sub_trivial_le {q : ℕ} [NeZero q] (hq :
   simp only [mul_zero, sub_zero] at ht
   refine le_of_tendsto ht ?_
   filter_upwards [Filter.eventually_ge_atTop 1] with m hm
-  exact
-    norm_logWeightedSum_sub_left_sub_origin_sub_trivial_le hq hGRH hp hne hinv hx m hm (T m)
-      (hT m hm)
+  exact norm_logWeighted_contour_error_GRH hq hGRH hp hne hinv hx m hm (T m) (hT m hm)
 
 open PseudoPrime.AnalyticNumberTheory.DirichletLFunction in
 /-- For an even primitive nonprincipal character under GRH, the complete
 logarithmic sum with its origin and even correction series removed has the
 sharp nontrivial-zero norm bound. Both contour limits retain the exact series. -/
-theorem norm_even_logWeightedSum_sub_origin_add_series_le {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem norm_even_logWeighted_series_error_GRH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (he : χ.Even) {x : ℝ} (hx : 1 < x) :
     ‖AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x χ - dirichletLogResidueAt hne x 0 +
@@ -353,7 +346,7 @@ theorem norm_even_logWeightedSum_sub_origin_add_series_le {q : ℕ} [NeZero q] (
               (primitiveHeightSeqLowerCorner hq hGRH hp hne hinv (2 * m) 0)
               (primitiveHeightSeqUpperCorner hq hGRH hp hne hinv 0)).filter
           (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0),
-      dirichletLFunctionLogZeroContribution x χ ρ
+      LFunctionLogZeroContribution x χ ρ
   have hT :
     ∀ m : ℕ,
       1 ≤ m →
@@ -364,15 +357,15 @@ theorem norm_even_logWeightedSum_sub_origin_add_series_le {q : ℕ} [NeZero q] (
                       (primitiveHeightSeqLowerCorner hq hGRH hp hne hinv (2 * m) k)
                       (primitiveHeightSeqUpperCorner hq hGRH hp hne hinv k)).filter
                   (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0),
-              dirichletLFunctionLogZeroContribution x χ ρ) =
+              LFunctionLogZeroContribution x χ ρ) =
             T m := by
     intro m hm k
     exact
-      (sum_even_log_trivialZeros_primitiveRectangle_eq hq hGRH hp hne hinv he x m k hm).trans
-        (sum_even_log_trivialZeros_primitiveRectangle_eq hq hGRH hp hne hinv he x m 0 hm).symm
+      (sum_evenLogTrivial_rectangle_GRH hq hGRH hp hne hinv he x m k hm).trans
+        (sum_evenLogTrivial_rectangle_GRH hq hGRH hp hne hinv he x m 0 hm).symm
   have hb :=
     norm_logWeightedSum_sub_origin_sub_trivial_le hq hGRH hp hne hinv hx T _ hT
-      (tendsto_sum_even_log_trivialZeros_primitiveRectangle hq hGRH hp hne hinv he hx (fun _ => 0))
+      (tendsto_evenLogTrivial_rectangle_GRH hq hGRH hp hne hinv he hx (fun _ => 0))
   simpa only [sub_neg_eq_add] using hb
 
 open PseudoPrime.AnalyticNumberTheory.DirichletLFunction in
@@ -393,7 +386,7 @@ theorem norm_odd_logWeightedSum_sub_origin_add_series_le {q : ℕ} [NeZero q] (h
               (primitiveHeightSeqLowerCorner hq hGRH hp hne hinv (2 * m) 0)
               (primitiveHeightSeqUpperCorner hq hGRH hp hne hinv 0)).filter
           (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0),
-      dirichletLFunctionLogZeroContribution x χ ρ
+      LFunctionLogZeroContribution x χ ρ
   have hT :
     ∀ m : ℕ,
       1 ≤ m →
@@ -404,15 +397,15 @@ theorem norm_odd_logWeightedSum_sub_origin_add_series_le {q : ℕ} [NeZero q] (h
                       (primitiveHeightSeqLowerCorner hq hGRH hp hne hinv (2 * m) k)
                       (primitiveHeightSeqUpperCorner hq hGRH hp hne hinv k)).filter
                   (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0),
-              dirichletLFunctionLogZeroContribution x χ ρ) =
+              LFunctionLogZeroContribution x χ ρ) =
             T m := by
     intro m hm k
     exact
-      (sum_odd_log_trivialZeros_primitiveRectangle_eq hq hGRH hp hne hinv ho x m k hm).trans
-        (sum_odd_log_trivialZeros_primitiveRectangle_eq hq hGRH hp hne hinv ho x m 0 hm).symm
+      (sum_oddLogTrivial_rectangle_GRH hq hGRH hp hne hinv ho x m k hm).trans
+        (sum_oddLogTrivial_rectangle_GRH hq hGRH hp hne hinv ho x m 0 hm).symm
   have hb :=
     norm_logWeightedSum_sub_origin_sub_trivial_le hq hGRH hp hne hinv hx T _ hT
-      (tendsto_sum_odd_log_trivialZeros_primitiveRectangle hq hGRH hp hne hinv ho hx (fun _ => 0))
+      (tendsto_oddLogTrivial_rectangle_GRH hq hGRH hp hne hinv ho hx (fun _ => 0))
   simpa only [sub_neg_eq_add] using hb
 
 /-- The natural inverse-power logarithmic series equals the paper's denominator
@@ -458,7 +451,7 @@ theorem norm_characterLogWeightedSum_error_le {q : ℕ} [NeZero q] (hq : 3 ≤ q
   have hne := primitiveCharacter_ne_one_of_three_le hq hp
   have hinv : χ⁻¹ ≠ 1 := inv_ne_one.mpr hne
   have hq2 : 2 ≤ q := (of_decide_eq_true rfl : 2 ≤ 3).trans hq
-  have hd := norm_deriv_logDeriv_completedLFunction_zero_le_two_mul_zeroMass hGRH hp hne hinv hq2
+  have hd := completedLogDeriv_deriv_mass_GRH hGRH hp hne hinv hq2
   rw [← abs_primitiveBRe_eq_zeroMass hq2 hGRH hp hne hinv] at hd
   have hxi := logDeriv_xi_zero_eq hp hne
   have hlq : Complex.log (q : ℂ) = (Real.log (q : ℝ) : ℂ) :=
@@ -472,7 +465,7 @@ theorem norm_characterLogWeightedSum_error_le {q : ℕ} [NeZero q] (hq : 3 ≤ q
   have hE : ∃ E : ℂ, ‖E‖ ≤ 2 * Real.sqrt x * |primitiveBRe χ| ∧ y = E - D := by
     rcases χ.even_or_odd with he | ho
     · let t := ∑' j : ℕ, x⁻¹ ^ (2 * (j + 1)) / ((2 * (j + 1) : ℕ) : ℝ) ^ 2
-      refine ⟨_, norm_even_logWeightedSum_sub_origin_add_series_le hq2 hGRH hp hne hinv he hx, ?_⟩
+      refine ⟨_, norm_even_logWeighted_series_error_GRH hq2 hGRH hp hne hinv he hx, ?_⟩
       have ht : t = ∑' j : ℕ, 1 / (x ^ (2 * (j + 1)) * (2 * ((j : ℝ) + 1)) ^ 2) := by
         rw [show t = _ from log_inversePower_nat_series_eq x (fun j => 2 * (j + 1))]
         apply tsum_congr
@@ -540,49 +533,47 @@ uniform in the rectangle and is preserved by the contour limits. -/
 theorem norm_reciprocal_residue_sum_sub_trivial_le {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) (z w : ℂ)
-    (h0 : (0 : ℂ) ∈ dirichletLFunctionSingularitiesInRectangle χ hne z w)
-    (h1 : (1 : ℂ) ∈ dirichletLFunctionSingularitiesInRectangle χ hne z w) :
-    ‖(∑ ρ ∈ dirichletLFunctionSingularitiesInRectangle χ hne z w,
-            dirichletReciprocalResidueAt hne x ρ) -
+    (h0 : (0 : ℂ) ∈ LFunctionSingularitiesInRectangle χ hne z w)
+    (h1 : (1 : ℂ) ∈ LFunctionSingularitiesInRectangle χ hne z w) :
+    ‖(∑ ρ ∈ LFunctionSingularitiesInRectangle χ hne z w, dirichletReciprocalResidueAt hne x ρ) -
           dirichletReciprocalResidueAt hne x 0 -
           dirichletReciprocalResidueAt hne x 1 -
           (∑
             ρ ∈
               (dirichletLFunctionZerosInRectangle χ hne z w).filter
                 (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0),
-            dirichletLFunctionReciprocalZeroContribution x χ ρ)‖ ≤
+            LFunctionReciprocalZeroContribution x χ ρ)‖ ≤
       2 * |primitiveBRe χ| / Real.sqrt x := by
   classical
-  let E := ((dirichletLFunctionSingularitiesInRectangle χ hne z w).erase 1).erase 0
+  let E := ((LFunctionSingularitiesInRectangle χ hne z w).erase 1).erase 0
   have he :
     (∑ ρ ∈ E, dirichletReciprocalResidueAt hne x ρ) =
-      ∑ ρ ∈ E, dirichletLFunctionReciprocalZeroContribution x χ ρ := by
+      ∑ ρ ∈ E, LFunctionReciprocalZeroContribution x χ ρ := by
     refine Finset.sum_congr rfl ?_
     intro ρ hρ
     exact
-      dirichletReciprocalResidueAt_zero_ne_one hne x (Finset.mem_erase.mp hρ).1
+      reciprocalResidueAt_zero_ne_one hne x (Finset.mem_erase.mp hρ).1
         (Finset.mem_erase.mp (Finset.mem_erase.mp hρ).2).1
   have hs :=
     Finset.sum_filter_add_sum_filter_not E (fun ρ : ℂ => DirichletCharacter.gammaFactor χ ρ = 0)
-      (dirichletLFunctionReciprocalZeroContribution x χ)
-  have ht := erased_gammaZeros_eq_trivialZeroFilter hne z w
+      (LFunctionReciprocalZeroContribution x χ)
+  have ht := erasedGammaZeros_eq_trivialFilter hne z w
   have hb :=
-    norm_sum_reciprocalZeroContribution_of_gamma_ne_zero_le hq hGRH hp hne hinv hx
+    norm_sum_recipZero_le_of_gamma_RH hq hGRH hp hne hinv hx
       (E.filter (fun ρ => ¬DirichletCharacter.gammaFactor χ ρ = 0))
       (fun ρ hρ => (Finset.mem_filter.mp hρ).2)
   have hid :
-    (∑ ρ ∈ dirichletLFunctionSingularitiesInRectangle χ hne z w,
-          dirichletReciprocalResidueAt hne x ρ) -
+    (∑ ρ ∈ LFunctionSingularitiesInRectangle χ hne z w, dirichletReciprocalResidueAt hne x ρ) -
         dirichletReciprocalResidueAt hne x 0 -
         dirichletReciprocalResidueAt hne x 1 -
         (∑
           ρ ∈
             (dirichletLFunctionZerosInRectangle χ hne z w).filter
               (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0),
-          dirichletLFunctionReciprocalZeroContribution x χ ρ) =
+          LFunctionReciprocalZeroContribution x χ ρ) =
       ∑ ρ ∈ E.filter (fun ρ => ¬DirichletCharacter.gammaFactor χ ρ = 0),
-        dirichletLFunctionReciprocalZeroContribution x χ ρ := by
-    rw [dirichletSplitReciprocalSingularitySum x hne h1 h0, he, ← hs, ht]
+        LFunctionReciprocalZeroContribution x χ ρ := by
+    rw [splitReciprocalSingularitySum x hne h1 h0, he, ← hs, ht]
     ring
   rw [hid]
   exact hb
@@ -594,10 +585,10 @@ complex value `T` at every height. The reciprocal weighted sum minus the normali
 integral, the residues at zero and one, and `T` has norm at most
 `2*|primitiveBRe χ|/sqrt x`. Pass the finite residue estimate through the height limit.
 This supplies the fixed-left-edge step before sending the left edge to infinity. -/
-theorem norm_reciprocalWeightedSum_sub_left_sub_origin_sub_trivial_le {q : ℕ} [NeZero q]
-    (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 < x) (m : ℕ) (hm : 1 ≤ m) (T : ℂ)
+theorem norm_reciprocalWeighted_contour_error_GRH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+    {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 < x) (m : ℕ) (hm : 1 ≤ m)
+    (T : ℂ)
     (hT :
       ∀ k : ℕ,
         (∑
@@ -606,7 +597,7 @@ theorem norm_reciprocalWeightedSum_sub_left_sub_origin_sub_trivial_le {q : ℕ} 
                     (primitiveHeightSeqLowerCorner hq hGRH hp hne hinv (2 * m) k)
                     (primitiveHeightSeqUpperCorner hq hGRH hp hne hinv k)).filter
                 (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0),
-            dirichletLFunctionReciprocalZeroContribution x χ ρ) =
+            LFunctionReciprocalZeroContribution x χ ρ) =
           T) :
     ‖AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum x χ -
           (((2 * Real.pi)⁻¹ : ℝ) : ℂ) *
@@ -618,8 +609,7 @@ theorem norm_reciprocalWeightedSum_sub_left_sub_origin_sub_trivial_le {q : ℕ} 
           T‖ ≤
       2 * |primitiveBRe χ| / Real.sqrt x := by
   have hA : 2 ≤ 2 * m := Nat.mul_le_mul_left 2 hm
-  have ht :=
-    tendsto_normalized_dirichletReciprocalBoundary_heightSeq hq hGRH hp hne hinv hx.le (2 * m) hA
+  have ht := tendsto_reciprocal_boundary_GRH hq hGRH hp hne hinv hx.le (2 * m) hA
   have hn :=
     (((ht.sub_const (dirichletReciprocalResidueAt hne x 0)).sub_const
             (dirichletReciprocalResidueAt hne x 1)).sub_const
@@ -627,11 +617,9 @@ theorem norm_reciprocalWeightedSum_sub_left_sub_origin_sub_trivial_le {q : ℕ} 
   simp only [← Complex.ofReal_inv] at hn
   refine le_of_tendsto hn ?_
   filter_upwards with k
-  rw [dirichletReciprocalFiniteContourIdentity_heightSeq_normalized hq hGRH hp hne hinv
-      (zero_lt_one.trans hx) (2 * m) k hA
-      (primitiveHeightSeq_singularities_mem_open hq hGRH hp hne hinv (2 * m) k hA)]
-  obtain ⟨h0, h1⟩ :=
-    primitiveReciprocalMellinPoints_mem_singularities_heightSeq hq hGRH hp hne hinv (2 * m) k hA
+  rw [reciprocalContour_heightSeq_GRH hq hGRH hp hne hinv (zero_lt_one.trans hx) (2 * m) k hA
+      (heightSeq_singularities_open_GRH hq hGRH hp hne hinv (2 * m) k hA)]
+  obtain ⟨h0, h1⟩ := heightSeq_zero_one_singular_GRH hq hGRH hp hne hinv (2 * m) k hA
   have hb :=
     norm_reciprocal_residue_sum_sub_trivial_le hq hGRH hp hne hinv (zero_lt_one.trans hx)
       (primitiveHeightSeqLowerCorner hq hGRH hp hne hinv (2 * m) k)
@@ -646,7 +634,7 @@ and convergence `T m → L`. After subtracting the residues at zero and one and 
 the reciprocal weighted sum has norm at most `2*|primitiveBRe χ|/sqrt x`.
 The height limit gives the fixed-edge bound; the left integral then vanishes as the edge
 expands. This retains the exact trivial-zero limit in the full reciprocal formula. -/
-theorem norm_reciprocalWeightedSum_sub_origin_sub_trivial_le {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem norm_reciprocalSum_sub_origin_sub_trivial_le {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 < x) (T : ℕ → ℂ) (L : ℂ)
     (hT :
@@ -659,7 +647,7 @@ theorem norm_reciprocalWeightedSum_sub_origin_sub_trivial_le {q : ℕ} [NeZero q
                         (primitiveHeightSeqLowerCorner hq hGRH hp hne hinv (2 * m) k)
                         (primitiveHeightSeqUpperCorner hq hGRH hp hne hinv k)).filter
                     (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0),
-                dirichletLFunctionReciprocalZeroContribution x χ ρ) =
+                LFunctionReciprocalZeroContribution x χ ρ) =
               T m)
     (hL : Filter.Tendsto T Filter.atTop (nhds L)) :
     ‖AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum x χ -
@@ -672,8 +660,7 @@ theorem norm_reciprocalWeightedSum_sub_origin_sub_trivial_le {q : ℕ} [NeZero q
       (fun m => by
         simpa only [one_mul, id_eq] using (Nat.mul_le_mul_right m (of_decide_eq_true rfl : 1 ≤ 2)))
       Filter.tendsto_id
-  have hleft :=
-    (tendsto_dirichletReciprocalContourKernel_leftVertical_integral_atTop hp hne hinv hx).comp hA
+  have hleft := (tendsto_reciprocal_left_integral hp hne hinv hx).comp hA
   have hS :
     Filter.Tendsto (fun _ : ℕ => AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum x χ)
       Filter.atTop (nhds (AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum x χ)) :=
@@ -686,9 +673,7 @@ theorem norm_reciprocalWeightedSum_sub_origin_sub_trivial_le {q : ℕ} [NeZero q
   simp only [mul_zero, sub_zero] at ht
   refine le_of_tendsto ht ?_
   filter_upwards [Filter.eventually_ge_atTop 1] with m hm
-  exact
-    norm_reciprocalWeightedSum_sub_left_sub_origin_sub_trivial_le hq hGRH hp hne hinv hx m hm (T m)
-      (hT m hm)
+  exact norm_reciprocalWeighted_contour_error_GRH hq hGRH hp hne hinv hx m hm (T m) (hT m hm)
 
 open PseudoPrime.AnalyticNumberTheory.DirichletLFunction in
 /-- For an even primitive nonprincipal character of level at least two under
@@ -697,7 +682,7 @@ even trivial-zero correction series to the reciprocal weighted sum. Its norm is 
 `2*|primitiveBRe χ|/sqrt x`. Identify the height-independent finite trivial-zero sums
 and pass their exact series limit through the two contour limits. This is the even
 branch of the complete reciprocal error estimate. -/
-theorem norm_even_reciprocalWeightedSum_sub_origin_add_series_le {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem norm_even_reciprocalSum_sub_origin_add_series_le {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (he : χ.Even) {x : ℝ} (hx : 1 < x) :
     ‖AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum x χ -
@@ -717,7 +702,7 @@ theorem norm_even_reciprocalWeightedSum_sub_origin_add_series_le {q : ℕ} [NeZe
               (primitiveHeightSeqLowerCorner hq hGRH hp hne hinv (2 * m) 0)
               (primitiveHeightSeqUpperCorner hq hGRH hp hne hinv 0)).filter
           (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0),
-      dirichletLFunctionReciprocalZeroContribution x χ ρ
+      LFunctionReciprocalZeroContribution x χ ρ
   have hT :
     ∀ m : ℕ,
       1 ≤ m →
@@ -728,24 +713,22 @@ theorem norm_even_reciprocalWeightedSum_sub_origin_add_series_le {q : ℕ} [NeZe
                       (primitiveHeightSeqLowerCorner hq hGRH hp hne hinv (2 * m) k)
                       (primitiveHeightSeqUpperCorner hq hGRH hp hne hinv k)).filter
                   (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0),
-              dirichletLFunctionReciprocalZeroContribution x χ ρ) =
+              LFunctionReciprocalZeroContribution x χ ρ) =
             T m := by
     intro m hm k
     exact
-      (sum_even_reciprocal_trivialZeros_primitiveRectangle_eq hq hGRH hp hne hinv he x m k hm).trans
-        (sum_even_reciprocal_trivialZeros_primitiveRectangle_eq hq hGRH hp hne hinv he x m 0
-            hm).symm
+      (sum_evenRecipTrivial_rectangle_GRH hq hGRH hp hne hinv he x m k hm).trans
+        (sum_evenRecipTrivial_rectangle_GRH hq hGRH hp hne hinv he x m 0 hm).symm
   have hb :=
-    norm_reciprocalWeightedSum_sub_origin_sub_trivial_le hq hGRH hp hne hinv hx T _ hT
-      (tendsto_sum_even_reciprocal_trivialZeros_primitiveRectangle hq hGRH hp hne hinv he hx
-        (fun _ => 0))
+    norm_reciprocalSum_sub_origin_sub_trivial_le hq hGRH hp hne hinv hx T _ hT
+      (tendsto_evenRecipTrivial_rect_GRH hq hGRH hp hne hinv he hx (fun _ => 0))
   simpa only [sub_neg_eq_add] using hb
 
 open PseudoPrime.AnalyticNumberTheory.DirichletLFunction in
 /-- The odd primitive-character reciprocal formula keeps the entire odd
 correction series. Height and left-edge limits transfer the finite completed
 zero bound to the full weighted sum under GRH and `x > 1`. -/
-theorem norm_odd_reciprocalWeightedSum_sub_origin_add_series_le {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem norm_odd_reciprocalSum_sub_origin_add_series_le {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (ho : χ.Odd) {x : ℝ} (hx : 1 < x) :
     ‖AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum x χ -
@@ -764,7 +747,7 @@ theorem norm_odd_reciprocalWeightedSum_sub_origin_add_series_le {q : ℕ} [NeZer
               (primitiveHeightSeqLowerCorner hq hGRH hp hne hinv (2 * m) 0)
               (primitiveHeightSeqUpperCorner hq hGRH hp hne hinv 0)).filter
           (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0),
-      dirichletLFunctionReciprocalZeroContribution x χ ρ
+      LFunctionReciprocalZeroContribution x χ ρ
   have hT :
     ∀ m : ℕ,
       1 ≤ m →
@@ -775,16 +758,15 @@ theorem norm_odd_reciprocalWeightedSum_sub_origin_add_series_le {q : ℕ} [NeZer
                       (primitiveHeightSeqLowerCorner hq hGRH hp hne hinv (2 * m) k)
                       (primitiveHeightSeqUpperCorner hq hGRH hp hne hinv k)).filter
                   (fun ρ => DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0),
-              dirichletLFunctionReciprocalZeroContribution x χ ρ) =
+              LFunctionReciprocalZeroContribution x χ ρ) =
             T m := by
     intro m hm k
     exact
-      (sum_odd_reciprocal_trivialZeros_primitiveRectangle_eq hq hGRH hp hne hinv ho x m k hm).trans
-        (sum_odd_reciprocal_trivialZeros_primitiveRectangle_eq hq hGRH hp hne hinv ho x m 0 hm).symm
+      (sum_oddRecipTrivial_rectangle_GRH hq hGRH hp hne hinv ho x m k hm).trans
+        (sum_oddRecipTrivial_rectangle_GRH hq hGRH hp hne hinv ho x m 0 hm).symm
   have hb :=
-    norm_reciprocalWeightedSum_sub_origin_sub_trivial_le hq hGRH hp hne hinv hx T _ hT
-      (tendsto_sum_odd_reciprocal_trivialZeros_primitiveRectangle hq hGRH hp hne hinv ho hx
-        (fun _ => 0))
+    norm_reciprocalSum_sub_origin_sub_trivial_le hq hGRH hp hne hinv hx T _ hT
+      (tendsto_oddRecipTrivial_rect_GRH hq hGRH hp hne hinv ho hx (fun _ => 0))
   simpa only [sub_neg_eq_add] using hb
 
 open PseudoPrime.AnalyticNumberTheory.DirichletLFunction in
@@ -800,10 +782,9 @@ theorem reciprocal_residue_zero_even_eq {q : ℕ} [NeZero q] {χ : DirichletChar
       (1 / (x : ℂ)) *
         (logDeriv χ.completedLFunction 0 +
           ((Real.log Real.pi + Real.eulerMascheroniConstant) / 2 + Real.log x + 1 : ℝ)) := by
-  obtain ⟨hg, hg0⟩ := analyticAt_and_ne_zero_dirichletEvenZeroLocalFactor hp hne
-  rw [dirichletReciprocalResidueAt_zero_of_primitive_even_eq hp hne he,
-    deriv_dirichletReciprocalEvenZeroRegularization_zero hx 1 hg hg0,
-    logDeriv_dirichletEvenZeroLocalFactor_zero hp hne, ← Complex.ofReal_log Real.pi_nonneg, ←
+  obtain ⟨hg, hg0⟩ := evenZeroFactor_analytic_ne_zero hp hne
+  rw [reciprocalResidue_zero_even_eq hp hne he, deriv_reciprocalEvenReg_zero hx 1 hg hg0,
+    logDeriv_evenZeroLocalFactor_zero hp hne, ← Complex.ofReal_log Real.pi_nonneg, ←
     Complex.ofReal_log hx.le]
   simp only [Nat.cast_one, one_mul, Complex.ofReal_add, Complex.ofReal_div, Complex.ofReal_one,
     Complex.ofReal_ofNat]
@@ -822,25 +803,23 @@ theorem logDeriv_LFunction_one_eq {q : ℕ} [NeZero q] {χ : DirichletCharacter 
               (if χ (-1) = 1 then Real.log 2 else 0) :
             ℝ) :
           ℂ) := by
-  have hF := completedLFunction_ne_zero_of_one_le_re (w := (1 : ℂ)) hne (le_refl 1)
+  have hF := completed_ne_zero_of_one_le_re (w := (1 : ℂ)) hne (le_refl 1)
   have hl2 : Complex.log 2 = (Real.log 2 : ℂ) := by
     simpa only [Complex.ofReal_ofNat] using (Complex.ofReal_log (zero_le_two : (0 : ℝ) ≤ 2)).symm
   rcases χ.even_or_odd with he | ho
   · have hh : ∀ m : ℕ, (1 : ℂ) / 2 ≠ -(m : ℂ) := AnalyticNumberTheory.Gamma.half_ne_neg_nat
-    rw [logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne hF
-        (gammaFactor_ne_zero_of_even_of_half_ne_neg_nat he hh)
-        (differentiableAt_gammaFactor_of_even_of_half_ne_neg_nat he hh),
-      logDeriv_gammaFactor_eq_of_even_of_half_ne_neg_nat he hh, Complex.digamma_one_half,
+    rw [L_logDeriv_sub_gamma_of_regular hne hF (gammaFactor_even_ne_zero_nonpole he hh)
+        (differentiableAt_gammaFactor_even he hh),
+      gammaLogDeriv_even_eq_digamma he hh, Complex.digamma_one_half,
       ite_eq_left (show χ (-1) = 1 from he), ← Complex.ofReal_log Real.pi_nonneg, hl2]
     simp only [Complex.ofReal_neg, Complex.ofReal_sub, Complex.ofReal_div, Complex.ofReal_ofNat]
     ring
   · have hh : ∀ m : ℕ, ((1 : ℂ) + 1) / 2 ≠ -(m : ℂ) := by
       simpa only [add_self_div_two] using AnalyticNumberTheory.Gamma.one_ne_neg_nat
-    rw [logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne hF
-        (gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat ho hh)
-        (differentiableAt_gammaFactor_of_odd_of_half_ne_neg_nat ho hh),
-      logDeriv_gammaFactor_eq_of_odd_of_half_ne_neg_nat ho hh, add_self_div_two,
-      Complex.digamma_one, ite_eq_right (show χ (-1) ≠ 1 from ho.not_even), sub_zero, ←
+    rw [L_logDeriv_sub_gamma_of_regular hne hF (gammaFactor_odd_ne_zero_nonpole ho hh)
+        (differentiableAt_gammaFactor_odd ho hh),
+      gammaLogDeriv_odd_eq_digamma ho hh, add_self_div_two, Complex.digamma_one,
+      ite_eq_right (show χ (-1) ≠ 1 from ho.not_even), sub_zero, ←
       Complex.ofReal_log Real.pi_nonneg]
     simp only [Complex.ofReal_neg, Complex.ofReal_sub, Complex.ofReal_div, Complex.ofReal_ofNat]
     ring
@@ -864,12 +843,13 @@ theorem norm_characterReciprocalWeightedSum_error_le {q : ℕ} [NeZero q] (hq : 
   have hinv : χ⁻¹ ≠ 1 := inv_ne_one.mpr hne
   have hq2 : 2 ≤ q := (of_decide_eq_true rfl : 2 ≤ 3).trans hq
   have hxi := logDeriv_xi_zero_eq hp hne
-  have hxii := logDeriv_xi_zero_eq (DirichletCharacter.isPrimitive_inv hp) hinv
-  have hFE := completedLFunction_logDeriv_functionalEquation_at_zero hp hne hinv
+  have hxii :=
+    logDeriv_xi_zero_eq (AnalyticNumberTheory.DirichletLFunction.character_isPrimitive_inv hp) hinv
+  have hFE := completedLogDeriv_functionalEq_zero hp hne hinv
   have hlq : Complex.log (q : ℂ) = (Real.log (q : ℝ) : ℂ) :=
     (Complex.ofReal_log (Nat.cast_nonneg q)).symm
   have hlqp := Real.log_div (Nat.cast_ne_zero.mpr (NeZero.ne q) : (q : ℝ) ≠ 0) Real.pi_ne_zero
-  have h1 := dirichletReciprocalResidueAt_one_eq_neg_logDeriv hne x
+  have h1 := reciprocalResidue_one_eq hne x
   rw [logDeriv_LFunction_one_eq hne, neg_sub, sub_eq_add_neg, hFE, hlq] at h1
   rcases χ.even_or_odd with he | ho
   · let t :=
@@ -882,7 +862,7 @@ theorem norm_characterReciprocalWeightedSum_error_le {q : ℕ} [NeZero q] (hq : 
       simp only [Nat.cast_mul, Nat.cast_add, Nat.cast_ofNat, Nat.cast_one, inv_pow, div_eq_mul_inv,
         mul_inv_rev, one_mul]
       ring
-    have hb := norm_even_reciprocalWeightedSum_sub_origin_add_series_le hq2 hGRH hp hne hinv he hx
+    have hb := norm_even_reciprocalSum_sub_origin_add_series_le hq2 hGRH hp hne hinv he hx
     have hid :
       AnalyticNumberTheory.Arithmetic.characterReciprocalWeightedSum x χ -
           logDeriv (PaperStatements.xi χ⁻¹) 0 -
@@ -912,15 +892,15 @@ theorem norm_characterReciprocalWeightedSum_error_le {q : ℕ} [NeZero q] (hq : 
         show ∀ a : ℝ, a + 1 + 1 = a + 2 from fun a => by ring, inv_pow, div_eq_mul_inv, mul_inv_rev,
         one_mul]
       ring
-    have hb := norm_odd_reciprocalWeightedSum_sub_origin_add_series_le hq2 hGRH hp hne hinv ho hx
+    have hb := norm_odd_reciprocalSum_sub_origin_add_series_le hq2 hGRH hp hne hinv ho hx
     have h0 :
       dirichletReciprocalResidueAt hne x 0 =
         (1 / (x : ℂ)) *
           (logDeriv χ.completedLFunction 0 - logDeriv (DirichletCharacter.gammaFactor χ) 0) := by
-      rw [dirichletReciprocalResidueAt_zero_of_odd_eq hne (zero_lt_one.trans hx) ho]
+      rw [reciprocalResidueAt_zero_of_odd_eq hne (zero_lt_one.trans hx) ho]
       exact
         congrArg (fun z : ℂ => (1 / (x : ℂ)) * z)
-          (eventuallyEq_logDeriv_LFunction_zero_of_odd hp hne ho).self_of_nhds
+          (eventuallyEq_logDeriv_L_zero_of_odd hp hne ho).self_of_nhds
     have hl2 : Complex.log 2 = (Real.log 2 : ℂ) := by
       simpa only [Complex.ofReal_ofNat] using (Complex.ofReal_log (zero_le_two : (0 : ℝ) ≤ 2)).symm
     have hid :

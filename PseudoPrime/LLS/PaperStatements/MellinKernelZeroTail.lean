@@ -73,7 +73,7 @@ primitive nonprincipal characters satisfying individual RH at modulus q >= 2, ea
 absolute kernel zero sum is bounded by its occupied integer-bin estimates.
 Partition by the floor of the imaginary part, compare kernel terms with multiplicities,
 and apply the uniform local zero-count theorem. Both constants are independent of q and chi. -/
-theorem exists_uniform_finite_kernelZeroSum_height_bins (K : MellinKernel) :
+theorem exists_zeroSum_heightBins_RH (K : MellinKernel) :
     ∃ C A : ℝ,
       0 < C ∧
         0 < A ∧
@@ -91,8 +91,7 @@ theorem exists_uniform_finite_kernelZeroSum_height_bins (K : MellinKernel) :
                         (Real.log q + 2 * A * (Real.log (4 + |(k : ℝ)|) + 1)) := by
   classical
   obtain ⟨C, hC, hbC⟩ := exists_vertical_decay_bound K
-  obtain ⟨A, hA, hbA⟩ :=
-    AnalyticNumberTheory.DirichletLFunction.exists_uniform_local_zeroMultiplicity_bound
+  obtain ⟨A, hA, hbA⟩ := AnalyticNumberTheory.DirichletLFunction.uniform_localMultiplicity_bound_RH
   refine ⟨C, A, hC, hA, ?_⟩
   intro q _ hq χ hRH hp hne hinv S
   have he :=
@@ -133,7 +132,7 @@ theorem exists_uniform_finite_kernelZeroSum_tail_le (K : MellinKernel) {ε : ℝ
                 ∀ S : Finset ℂ,
                   (∀ ρ ∈ S, T ≤ |ρ.im|) → ∑ ρ ∈ S, ‖K.kernelZeroTerm χ ρ‖ ≤ ε * Real.log q + B := by
   classical
-  obtain ⟨C, A, hC, hA, hb⟩ := exists_uniform_finite_kernelZeroSum_height_bins K
+  obtain ⟨C, A, hC, hA, hb⟩ := exists_zeroSum_heightBins_RH K
   have h3C : 0 < 3 * C := mul_pos (by norm_num only) hC
   obtain ⟨I, hI⟩ := Analysis.exists_int_quadratic_finite_tail_lt (div_pos hε h3C)
   let T : ℝ := 2 + ∑ k ∈ I, |(k : ℝ)|

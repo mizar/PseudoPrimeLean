@@ -42,7 +42,7 @@ theorem endpoint_gap_from_quad {L L₀ y z₀ a b : ℝ} (hL : L ≤ L₀) (hy :
   have hident := hpoly (Real.log y)
   have hgap : 0 < fullEndpointEvenExactComparisonGap L₀ (2096 / 1831) y (Real.log y) := by
     linarith only [hanchor, hident, h1, h2]
-  exact hgap.trans_le (fullEndpointEvenExactComparisonGap_antitone_level hy hzpos hL)
+  exact hgap.trans_le (fullEvenExactGap_antitone_level hy hzpos hL)
 
 /-- The logarithm at 1637/200 is at least 1051/500.
 Combine the reciprocal logarithm lower bound with the certified bound for log two. -/

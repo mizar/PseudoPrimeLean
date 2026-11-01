@@ -28,7 +28,7 @@ noncomputable def reciprocalGapEvenScalarRationalSeparation (q : ℕ) (x K₀ K�
 lower scalars yield the sharper even rational upper bound on the real character sum.
 Use the exact even Gamma identity for the character and its inverse.
 This is the analytic input for parity-sensitive ambient witness theorems. -/
-theorem reciprocalGapCharacterSum_re_le_even_scalar_rational {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem reciprocalGap_evenScalar_bound_GRH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (he : χ.Even) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x K₀ K₁ : ℝ} (hx : 1 ≤ x)
     (B₀ B₁ : Finset ℕ)
@@ -50,7 +50,7 @@ theorem reciprocalGapCharacterSum_re_le_even_scalar_rational {q : ℕ} [NeZero q
         (by norm_num only) hx B₀ B₁ (1597 / 500) (-(1281 / 1000)) (4481 / 1000) (-(1342 / 1000))
         (97 / 100) (-(1001 / 1000)) K₀ K₁ ?_ ?_ ?_ ?_ ?_ ?_ ?_ ?_
     · exact
-        AnalyticNumberTheory.Arithmetic.tsum_vonMangoldt_le_hundredTwentySeven_hundredths_certified
+        AnalyticNumberTheory.Arithmetic.tsum_vonMangoldt_le_of_ge_127_100_certified
           (by norm_num only)
     · have hg :=
         (reciprocalGapGamma_re_eq_even he (by norm_num only : (0 : ℝ) < 127 / 100)).le.trans
@@ -66,8 +66,7 @@ theorem reciprocalGapCharacterSum_re_le_even_scalar_rational {q : ℕ} [NeZero q
       norm_num only [Complex.ofReal_div, Complex.ofReal_ofNat, Complex.ofReal_one] at hg ⊢
       exact hg
     · exact
-        AnalyticNumberTheory.Arithmetic.tsum_vonMangoldt_le_seventeen_tenths_certified
-          (by norm_num only)
+        AnalyticNumberTheory.Arithmetic.tsum_vonMangoldt_le_of_ge_17_10_certified (by norm_num only)
     · have hg :=
         reciprocalGapEvenGammaLower_at_seventeen_tenths.trans
           (reciprocalGapEvenGammaLower_le (by norm_num only : (0 : ℝ) < 17 / 10) χ⁻¹)
@@ -83,7 +82,7 @@ theorem reciprocalGapCharacterSum_re_le_even_scalar_rational {q : ℕ} [NeZero q
 /-- For x>0, retaining even parity lowers the previous scalar budget by exactly
 261/385+279/(250*sqrt(x)). Expand the two Gamma coefficients and simplify the rational
 identity. This quantifies a strict saving independent of the positive-prefix inputs. -/
-theorem reciprocalGapEvenScalarRationalSeparation_eq_saving {q : ℕ} {x K₀ K₁ : ℝ} (hx : 0 < x) :
+theorem reciprocalGap_evenScalar_eq_saving {q : ℕ} {x K₀ K₁ : ℝ} (hx : 0 < x) :
     reciprocalGapEvenScalarRationalSeparation q x K₀ K₁ =
       reciprocalGapScalarRationalSeparation q x K₀ K₁ - 261 / 385 - 279 / (250 * Real.sqrt x) := by
   have hs : Real.sqrt x ≠ 0 := (Real.sqrt_pos.mpr hx).ne'

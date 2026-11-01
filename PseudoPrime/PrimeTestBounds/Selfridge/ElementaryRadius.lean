@@ -23,7 +23,7 @@ Under GRH, for odd nonsquare `n ≥ 3`, the absolute classical `≠1` stopping v
 the absolute pure `-1` stopping value, and the latter is at most
 `(log(4n) + (24/5)*loglog(4n) + 3)²`.
 The proof pairs the preceding absolute-value comparison with
-`classicalSelfridgeD_firstStopNegOne_natAbs_cast_le_log_sq_of_3_le`, providing both pointwise
+`classicalD_negOne_elementary_GRH`, providing both pointwise
 inequalities in one public theorem. Nonemptiness of the stopping sets is supplied internally.
 -/
 theorem classicalSelfridgeD_elementary_bound_explicit
@@ -31,35 +31,35 @@ theorem classicalSelfridgeD_elementary_bound_explicit
     (hn : Odd n) (hns : ¬IsSquare n) :
     ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ∧
       ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         (Real.log (4 * (n : ℝ)) + (24 / 5 : ℝ) * Real.log (Real.log (4 * (n : ℝ))) + 3) ^ 2 := by
-  have hleft := classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_firstStopNegOne_natAbs_cast hn hns
-  have hright := classicalSelfridgeD_firstStopNegOne_natAbs_cast_le_log_sq_of_3_le hGRH hn3 hn hns
+  have hleft := classicalD_neOne_le_negOne hn hns
+  have hright := classicalD_negOne_elementary_GRH hGRH hn3 hn hns
   exact ⟨hleft, hright⟩
 
 /-- Under GRH and odd nonsquare n≥3, the classical negative stopping magnitude
 is at most the refined elementary radius. Compare the stop with max(27,least negative witness)
 and absorb 27 into the radius. This transfers the improved quadratic bound to Selfridge. -/
-theorem classicalSelfridgeD_firstStopNegOne_natAbs_cast_le_refinedRadius
+theorem classicalD_negOne_refinedRadius_GRH
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn3 : 3 ≤ n)
     (hn : Odd n) (hns : ¬IsSquare n) :
     ((PrimeTest.selfridgeD
             (PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n
-              (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+              (PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
         ℝ) ≤
       PseudoSquare.refinedElementaryRadius n := by
   let hw := PrimeTest.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns
-  let hs := PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns
-  have hstop := PrimeTest.classicalFirstStopNegOne_le_max_twenty_seven_primeWitness hn hw hs
+  let hs := PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn hns
+  have hstop := PrimeTest.classicalFirstNegOne_le_max_27_primeWitness hn hw hs
   have hb := PseudoSquare.primeNegOneWitness_le_refinedElementaryRadius hn3 hn hns hGRH hw
   have hroot := PseudoSquare.refinedElementaryRoot_gt hn3
   have h27 : (27 : ℝ) ≤ PseudoSquare.refinedElementaryRadius n := by
@@ -76,24 +76,22 @@ theorem classicalSelfridgeD_firstStopNegOne_natAbs_cast_le_refinedRadius
 is no larger than the negative stopping magnitude, and the latter is bounded by
 (log(4n)+(24/5)log(log(4n))+2)². Combine the stopping-value comparison with the
 refined negative-witness estimate. This is the explicit refined Selfridge envelope. -/
-theorem classicalSelfridgeD_refined_elementary_bound_explicit
+theorem classicalD_refined_elementary_GRH
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn3 : 3 ≤ n)
     (hn : Odd n) (hns : ¬IsSquare n) :
     ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ∧
       ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         (Real.log (4 * (n : ℝ)) + (24 / 5 : ℝ) * Real.log (Real.log (4 * (n : ℝ))) + 2) ^ 2 := by
-  exact
-    ⟨classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_firstStopNegOne_natAbs_cast hn hns,
-      classicalSelfridgeD_firstStopNegOne_natAbs_cast_le_refinedRadius hGRH hn3 hn hns⟩
+  exact ⟨classicalD_neOne_le_negOne hn hns, classicalD_negOne_refinedRadius_GRH hGRH hn3 hn hns⟩
 
 end PseudoPrime.PrimeTestBounds.Selfridge

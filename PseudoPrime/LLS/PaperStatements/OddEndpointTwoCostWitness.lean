@@ -45,7 +45,7 @@ open AnalyticNumberTheory.Arithmetic in
 limit yield an odd non-one prime. Under witness nonexistence bound the reciprocal
 sum and logarithmic defect, transfer the latter to the gap sum, and pass the
 nonnegative separation to its right limit. Both value-at-two savings are retained. -/
-theorem exists_odd_prime_inducing_ne_one_of_twoCostLimit_neg {N : ℕ} (χ : DirichletCharacter ℂ N)
+theorem exists_oddPrime_inducing_twoCost_GRH {N : ℕ} (χ : DirichletCharacter ℂ N)
     [NeZero χ.conductor] (hq : 2 ≤ χ.conductor) (hne : χ.primitiveCharacter ≠ 1)
     (hquad : χ.primitiveCharacter.IsQuadratic)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x Y c D : ℝ} (hx : 1 < x)

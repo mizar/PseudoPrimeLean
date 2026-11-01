@@ -23,9 +23,9 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
  Poisson sum is bounded by the ordinary derivative norm plus the adaptive Gamma correction.
  Use the exact completed Poisson identity and both Gamma-factor intervals.
  This preserves the conductor term while reducing errors at later nodes. -/
-theorem completed_poissonSum_centered_le_ordinary_adaptive {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {σ : ℝ} (hσ : 1 ≤ σ) (hσu : σ ≤ 15 / 2) :
+theorem poissonSum_centered_adaptive_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    {σ : ℝ} (hσ : 1 ≤ σ) (hσu : σ ≤ 15 / 2) :
     |(∑' ρ : ℂ,
             (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
               ((σ - 1 / 2) / Complex.normSq ((σ : ℂ) - ρ))) -
@@ -38,9 +38,8 @@ theorem completed_poissonSum_centered_le_ordinary_adaptive {q : ℕ} [NeZero q] 
   have he := completed_poissonSum_eq_logDeriv_re hq hRH hp hne hinv hs
   simp only [Complex.ofReal_re] at he
   have hd :=
-    logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne
-      (completedLFunction_ne_zero_of_one_le_re hne hσ) (gammaFactor_ne_zero_of_re_pos χ hr)
-      (analyticAt_gammaFactor_of_re_pos χ hr).differentiableAt
+    L_logDeriv_sub_gamma_of_regular hne (completed_ne_zero_of_one_le_re hne hσ)
+      (gammaFactor_ne_zero_of_re_pos χ hr) (analyticAt_gammaFactor_of_re_pos χ hr).differentiableAt
   have hf :
     logDeriv χ.completedLFunction (σ : ℂ) =
       logDeriv χ.LFunction (σ : ℂ) + logDeriv χ.gammaFactor (σ : ℂ) := by
@@ -53,15 +52,15 @@ theorem completed_poissonSum_centered_le_ordinary_adaptive {q : ℕ} [NeZero q] 
         (by
           by_cases hs2 : (2 : ℝ) ≤ σ
           · rw [ite_eq_left hs2]
-            exact abs_re_logDeriv_gammaFactor_le_nine_tenths χ hs2 hσu
+            exact gammaLogDeriv_re_le_9_10 χ hs2 hσu
           · rw [ite_eq_right hs2]
-            exact abs_re_logDeriv_gammaFactor_le_eight_fifths χ hσ hσu))
+            exact gammaLogDeriv_re_le_8_5 χ hσ hσu))
 
 /-- For each certified resolvent node, the centered Poisson sum is at most its adaptive
  Euler error under primitive nonprincipal individual RH. Combine the ordinary Euler ratio,
  dyadic denominator certificate and adaptive Gamma-factor bound.
  This supplies the analytic inputs for the improved finite mass certificate. -/
-theorem completed_poissonSum_centered_le_resolvent_adaptive {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem poissonSum_resolvent_adaptive_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (ab : ℚ × ℚ) (hab : ab ∈ Gamma.gammaResolventCoefficients) :
     |(∑' ρ : ℂ,
@@ -78,7 +77,7 @@ theorem completed_poissonSum_centered_le_resolvent_adaptive {q : ℕ} [NeZero q]
   have hr : 0 < (ab.1 : ℝ) - 1 / 2 := sub_pos.mpr halR
   have hs : 1 ≤ 1 / 2 + (ab.1 : ℝ) := by linarith only [halR]
   have hsu : 1 / 2 + (ab.1 : ℝ) ≤ 15 / 2 := by linarith only [hauR]
-  have hb := completed_poissonSum_centered_le_ordinary_adaptive hq hRH hp hne hinv hs hsu
+  have hb := poissonSum_centered_adaptive_RH hq hRH hp hne hinv hs hsu
   have hn : 1 / 2 + (ab.1 : ℝ) - 1 / 2 = (ab.1 : ℝ) := by ring
   rw [hn] at hb
   have hL := norm_logDeriv_real_le_euler_ratio χ hr

@@ -155,8 +155,8 @@ theorem gamma_log_pole_level_le_of_common_endpoint {n : ℕ} (hn : Odd n) {L : �
 Claim: the actual joint budget is below the scalar budget plus 7/60.
 Proof: use the existing 13/15 small-scale allowance and enlarge the logarithmic terms.
 Role: extend factor-independent comparison below the sharper scale-20000 gate. -/
-theorem gamma_joint_prefix_le_factor_free_budget_small_scale {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) {L b x : ℝ} (hlog : Real.log n ≤ L) (hx : 4096 ≤ x) :
+theorem gammaJointPrefix_factorFree_smallScale {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n) {L b x : ℝ}
+    (hlog : Real.log n ≤ L) (hx : 4096 ≤ x) :
     gammaJointPrefixLocalBudget (NumberTheory.complexQuadraticCharacter n hn) b x ≤
       gammaFactorFreeJointBudget L b x + 7 / 60 := by
   obtain ⟨bridge⟩ := NumberTheory.exists_jacobiCharacterArithmeticData hn.pos hn hns
@@ -177,13 +177,12 @@ theorem gamma_joint_prefix_le_factor_free_budget_small_scale {n : ℕ} (hn : Odd
 Claim: the scalar margin is at most the actual even-character margin plus 7/60.
 Proof: compare the local and pole budgets with their signs retained.
 Role: convert a scalar margin of at least 7/60 into actual witness separation. -/
-theorem gamma_factor_free_separation_le_joint_add_small_scale {n Q : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) {L b x : ℝ} (hlog : Real.log n ≤ L) (hx : 4096 ≤ x)
-    (hlogQ : Real.log Q ≤ L + 7 / 5) :
+theorem gammaFactorFree_joint_smallScale {n Q : ℕ} (hn : Odd n) (hns : ¬IsSquare n) {L b x : ℝ}
+    (hlog : Real.log n ≤ L) (hx : 4096 ≤ x) (hlogQ : Real.log Q ≤ L + 7 / 5) :
     gammaFactorFreeSeparation L b x ≤
       gammaJointPrefixSeparation Q (NumberTheory.complexQuadraticCharacter n hn) b x (-3 / 2) +
         7 / 60 := by
-  have hJ := gamma_joint_prefix_le_factor_free_budget_small_scale (b := b) hn hns hlog hx
+  have hJ := gammaJointPrefix_factorFree_smallScale (b := b) hn hns hlog hx
   have hN :
     ((7 / 6 : ℝ) * Real.log Q + 4) / Real.sqrt x ≤ ((7 / 6 : ℝ) * (L + 7 / 5) + 4) / Real.sqrt x :=
     div_le_div_of_nonneg_right (by linarith only [hlogQ]) (Real.sqrt_nonneg x)

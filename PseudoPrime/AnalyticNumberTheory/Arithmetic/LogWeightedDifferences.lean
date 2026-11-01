@@ -201,7 +201,7 @@ theorem mangoldt_interval_sum_eq_psi_sub {x y : ℝ} (hxy : x ≤ y) :
 /-- A nonnegative square-root smoothing constant C and the corresponding endpoint
 bounds imply error at most (1+6C)s³ at cutoff s⁴ for s≥2. Compare the two cubic-step
 intervals with the cutoff, and bound their square roots by the quadratic scale. -/
-private theorem psi_error_fourth_power_of_short_interval_bounds {C : ℝ} (hC : 0 ≤ C)
+private theorem psi_error_pow_four_of_short_intervals {C : ℝ} (hC : 0 ≤ C)
     (hb :
       ∀ {x y : ℝ},
         1 < x →
@@ -268,12 +268,12 @@ private theorem psi_error_fourth_power_of_short_interval_bounds {C : ℝ} (hC : 
 x>1, with C≥0, then psi has error at most (1+6C)sqrt(x)sqrt(sqrt(x)) for x≥16.
 Finite differences at cubic steps supply the fourth-power bound; representing x by
 its iterated square root gives the general cutoff. No RH hypothesis is used here. -/
-theorem psi_error_le_three_quarter_of_logWeighted_error {C : ℝ} (hC : 0 ≤ C)
+theorem psi_error_le_pow_3_4_of_logWeighted_error {C : ℝ} (hC : 0 ≤ C)
     (hbound : ∀ {x : ℝ}, 1 < x → |logWeightedMangoldtSum x - x| ≤ C * Real.sqrt x) {x : ℝ}
     (hx : 16 ≤ x) :
     |Chebyshev.psi x - x| ≤ (1 + 6 * C) * Real.sqrt x * Real.sqrt (Real.sqrt x) := by
   have hb : ∀ {s : ℝ}, 2 ≤ s → |Chebyshev.psi (s ^ 4) - s ^ 4| ≤ (1 + 6 * C) * s ^ 3 := by
-    apply psi_error_fourth_power_of_short_interval_bounds hC
+    apply psi_error_pow_four_of_short_intervals hC
     intro u v hu huv
     have h :=
       psi_bounds_of_logWeighted_error_without_log (zero_lt_one.trans hu) huv (hbound hu)

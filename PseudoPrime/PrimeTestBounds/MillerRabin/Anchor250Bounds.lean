@@ -34,8 +34,7 @@ theorem exists_prime_strong_witness_le_anchor250 {n : ℕ} [NeZero n] (hn : 1 < 
         (p : ℝ) ≤ (392931 / 400000 : ℝ) * (Real.log n) ^ 2 →
         PrimeTest.StrongMillerRabinPass n (p : ZMod n) :=
     fun p hp hb ↦ Classical.byContradiction (fun hf ↦ h ⟨p, hp, hb, hf⟩)
-  obtain ⟨H, hH, hHpass⟩ :=
-    PrimeTest.exists_proper_subgroup_containing_strongMillerRabinPass hn hnOdd hnComposite
+  obtain ⟨H, hH, hHpass⟩ := PrimeTest.exists_proper_subgroup_strongMR hn hnOdd hnComposite
   have : H.Normal := H.normal_of_isMulCommutative
   have : Nontrivial ((ZMod n)ˣ ⧸ H) := QuotientGroup.nontrivial_iff.mpr hH
   obtain ⟨z, hz⟩ := exists_ne (1 : (ZMod n)ˣ ⧸ H)
@@ -90,7 +89,7 @@ theorem exists_least_prime_witness_le_anchor250_log_250 {n : ℕ} (hnOdd : Odd n
 one equality and every negative-one equality in the canonical binary decomposition
 of n-1. Apply the exact strong MR rejection equivalence. This exposes the actual
 power conditions rather than a surrogate character condition. -/
-theorem exists_prime_rejecting_powers_le_anchor250_log_250 {n : ℕ} (hnOdd : Odd n)
+theorem exists_primeRejectPowers_le_anchor250_log_250 {n : ℕ} (hnOdd : Odd n)
     (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : 250 ≤ Real.log n) :
     let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)

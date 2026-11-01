@@ -19,8 +19,7 @@ namespace PseudoPrime.NumberTheory.Heilbronn
 moment order is at least four and its combined inner exponent fits B.
 Apply the symbolic quotient and power budgets before specializing B to
 a large closed natural number, avoiding kernel evaluation of that number. -/
-theorem fiberBandCoefficient_le_double_exp_of_order_budget {m c B : ℕ}
-    (hr : 4 ≤ fiberBandMomentOrder m c)
+theorem fiberBand_le_double_exp_of_order_budget {m c B : ℕ} (hr : 4 ≤ fiberBandMomentOrder m c)
     (hbudget : 4 * fiberBandMomentOrder m c + (fiberBandGrowthOrder m c) ^ 2 * (m - 1) + 4 ≤ B) :
     fiberBandCoefficient m c ≤ 2 ^ (2 ^ B) := by
   have hQ := quotientPowerBoundConstant_le_double_exp hr
@@ -34,8 +33,7 @@ theorem fiberBandCoefficient_le_double_exp_of_order_budget {m c B : ℕ}
 moment order. The combined exponent includes 2r, the bit length of
 2r (log2(2r) + 1) + 2r, the growth-order power, and four units for the
 band coefficient. -/
-theorem fiberBandCoefficient_le_double_exp_of_log_order_budget_sharp {m c B : ℕ}
-    (hr : 4 ≤ fiberBandMomentOrder m c)
+theorem fiberBand_le_double_exp_of_log_budget_sharp {m c B : ℕ} (hr : 4 ≤ fiberBandMomentOrder m c)
     (hbudget :
       2 * fiberBandMomentOrder m c +
           Nat.log2
@@ -63,7 +61,7 @@ theorem fiberBandCoefficient_le_double_exp_of_log_order_budget_sharp {m c B : �
 
 /-- Apply the quarter-range quotient estimate when the moment order is at least
 seven. The reduced coefficient budget saves one unit in its first exponent term. -/
-theorem fiberBandCoefficient_le_double_exp_of_log_order_budget_quarter {m c B : ℕ}
+theorem fiberBand_le_double_exp_of_log_budget_quarter {m c B : ℕ}
     (hr : 7 ≤ fiberBandMomentOrder m c)
     (hbudget :
       2 * fiberBandMomentOrder m c - 1 +
@@ -74,7 +72,7 @@ theorem fiberBandCoefficient_le_double_exp_of_log_order_budget_quarter {m c B : 
           4 ≤
         B) :
     fiberBandCoefficient m c ≤ 2 ^ (2 ^ B) := by
-  have hQ := quotientPowerBoundConstant_le_double_exp_log_quarter hr
+  have hQ := quotientConstant_le_double_exp_quarter hr
   have hD := pow_le_double_exp_add hQ ((fiberBandGrowthOrder m c) ^ 2 * (m - 1))
   have hC := band_coefficient_le_double_exp hD
   exact
@@ -84,8 +82,7 @@ theorem fiberBandCoefficient_le_double_exp_of_log_order_budget_quarter {m c B : 
 /-- Preserve the original logarithmic-budget interface with one spare unit.
 The sharper coefficient estimate removes that unit internally, so existing
 precision budgets continue to use the same hypothesis. -/
-theorem fiberBandCoefficient_le_double_exp_of_log_order_budget {m c B : ℕ}
-    (hr : 4 ≤ fiberBandMomentOrder m c)
+theorem fiberBand_le_double_exp_of_log_budget {m c B : ℕ} (hr : 4 ≤ fiberBandMomentOrder m c)
     (hbudget :
       2 * fiberBandMomentOrder m c +
           Nat.log2
@@ -96,7 +93,7 @@ theorem fiberBandCoefficient_le_double_exp_of_log_order_budget {m c B : ℕ}
           4 ≤
         B) :
     fiberBandCoefficient m c ≤ 2 ^ (2 ^ B) := by
-  apply fiberBandCoefficient_le_double_exp_of_log_order_budget_sharp hr
+  apply fiberBand_le_double_exp_of_log_budget_sharp hr
   nlinarith only [hbudget]
 
 /-- For degrees 2≤m≤42 at precision 136, the growth order is at most
@@ -202,7 +199,7 @@ theorem fiberBand_orders_136_improved_budget {m : ℕ} (hhi : m ≤ 42) :
 theorem fiberBandCoefficient_136_le_double_exp {m : ℕ} (hlo : 2 ≤ m) (hhi : m ≤ 42) :
     fiberBandCoefficient m 136 ≤ 2 ^ (2 ^ 1388714676973) := by
   have hrlo : 4 ≤ fiberBandMomentOrder m 136 := (fiberBand_orders_136_bounds hlo hhi).2.1
-  apply fiberBandCoefficient_le_double_exp_of_log_order_budget hrlo
+  apply fiberBand_le_double_exp_of_log_budget hrlo
   exact fiberBand_orders_136_improved_budget hhi
 
 /-- At precision 80, every degree coefficient through degree 42 fits the
@@ -294,14 +291,12 @@ theorem fiberBandCoefficient_80_le_double_exp {m : ℕ} (hlo : 2 ≤ m) (hhi : m
     simp only [fiberBandMomentOrder, fiberBandGrowthOrder,
       ite_eq_right (by norm_num only : 80 ≠ 20)]
     nlinarith only [hprod']
-  exact
-    fiberBandCoefficient_le_double_exp_of_log_order_budget hrlo
-      (fiberBand_orders_80_improved_budget hhi)
+  exact fiberBand_le_double_exp_of_log_budget hrlo (fiberBand_orders_80_improved_budget hhi)
 
 /-- A common bound 2^(2^B) for all eight degree coefficients gives
 2^(2^(B+4)) for their sum plus one. Compare sums before absorbing a
 factor sixteen, with B left symbolic throughout the arithmetic proof. -/
-theorem eightDegreeFiberCoefficient_le_double_exp_of_degree_bounds {c B : ℕ}
+theorem eightDegreeCoeff_le_double_exp_of_degrees {c B : ℕ}
     (hF : ∀ m ∈ ({6, 7, 8, 9, 11, 14, 21, 42} : Finset ℕ), fiberBandCoefficient m c ≤ 2 ^ (2 ^ B)) :
     eightDegreeFiberCoefficient c ≤ 2 ^ (2 ^ (B + 4)) := by
   let D : Finset ℕ := {6, 7, 8, 9, 11, 14, 21, 42}
@@ -315,7 +310,7 @@ theorem eightDegreeFiberCoefficient_le_double_exp_of_degree_bounds {c B : ℕ}
 /-- If the eight degree coefficients share the bound 2^(2^B) and B≥2,
 their sum plus one is below 2^(2^(B+1)). Use the exact factor nine and
 absorb it into the square of the double-exponential unit. -/
-theorem eightDegreeFiberCoefficient_le_double_exp_succ_of_degree_bounds {c B : ℕ} (hB : 2 ≤ B)
+theorem eightDegreeCoeff_le_double_exp_succ_of_degrees {c B : ℕ} (hB : 2 ≤ B)
     (hF : ∀ m ∈ ({6, 7, 8, 9, 11, 14, 21, 42} : Finset ℕ), fiberBandCoefficient m c ≤ 2 ^ (2 ^ B)) :
     eightDegreeFiberCoefficient c ≤ 2 ^ (2 ^ (B + 1)) := by
   let D : Finset ℕ := {6, 7, 8, 9, 11, 14, 21, 42}
@@ -343,7 +338,7 @@ theorem eightDegreeFiberCoefficient_le_double_exp_succ_of_degree_bounds {c B : �
 below 2^(2^(B+1)) when each degree coefficient is at most 2^(2^B) and
 36(2a+1) is smaller than that unit. Retain the factor nine from the sum
 instead of separately rounding the degree and harmonic factors. -/
-theorem finiteFiberCountCoefficient_lt_double_exp_of_degree_bounds {c a B : ℕ}
+theorem fiberCountCoeff_lt_double_exp_of_degrees {c a B : ℕ}
     (hfactor : 36 * (2 * a + 1) < 2 ^ (2 ^ B))
     (hF : ∀ m ∈ ({6, 7, 8, 9, 11, 14, 21, 42} : Finset ℕ), fiberBandCoefficient m c ≤ 2 ^ (2 ^ B)) :
     finiteFiberCountCoefficient c a < 2 ^ (2 ^ (B + 1)) := by
@@ -380,7 +375,7 @@ theorem finiteFiberCount_harmonic_factor_lt_unit {B : ℕ} (hB : 4 ≤ B) : 5796
 2^(2^(1388714676973+1)). Bound each degree coefficient and absorb their sum. -/
 theorem eightDegreeFiberCoefficient_136_le_double_exp :
     eightDegreeFiberCoefficient 136 ≤ 2 ^ (2 ^ (1388714676973 + 1)) := by
-  apply eightDegreeFiberCoefficient_le_double_exp_succ_of_degree_bounds (by decide)
+  apply eightDegreeCoeff_le_double_exp_succ_of_degrees (by decide)
   intro m hm
   simp only [Finset.mem_insert, Finset.mem_singleton] at hm
   rcases hm with h | h | h | h | h | h | h | h
@@ -390,7 +385,7 @@ theorem eightDegreeFiberCoefficient_136_le_double_exp :
 and B+k<B', the full count coefficient is smaller than 2^(2^B').
 Collect the natural product and apply symbolic double-exponential budgets.
 This permits closed numerical specialization without evaluating towers. -/
-theorem finiteFiberCountCoefficient_lt_double_exp_of_budget {c a B B' k : ℕ}
+theorem fiberCountCoeff_lt_double_exp_of_budget {c a B B' k : ℕ}
     (hK : eightDegreeFiberCoefficient c ≤ 2 ^ (2 ^ B)) (hscale : 4 * (2 * a + 1) ≤ 2 ^ k)
     (hgap : B + k < B') : finiteFiberCountCoefficient c a < 2 ^ (2 ^ B') := by
   have h : finiteFiberCountCoefficient c a ≤ (4 * (2 * a + 1)) * 2 ^ (2 ^ B) := by
@@ -408,7 +403,7 @@ than 2^(2^(1388714676973+1)). Combine the degree-sum factor nine and the
 harmonic factor 4932 before absorbing them into the double-exponential unit. -/
 theorem finiteFiberCountCoefficient_136_68_lt_double_exp :
     finiteFiberCountCoefficient 136 68 < 2 ^ (2 ^ (1388714676973 + 1)) := by
-  apply finiteFiberCountCoefficient_lt_double_exp_of_degree_bounds
+  apply fiberCountCoeff_lt_double_exp_of_degrees
   · calc
       36 * (2 * 68 + 1) = 4932 := by norm_num only
       _ < 5796 := by norm_num only
@@ -424,7 +419,7 @@ theorem finiteFiberCountCoefficient_136_68_lt_double_exp :
 absorbing them into the double-exponential unit. -/
 theorem finiteFiberCountCoefficient_80_40_lt_double_exp :
     finiteFiberCountCoefficient 80 40 < 2 ^ (2 ^ (283000000000 + 1)) := by
-  apply finiteFiberCountCoefficient_lt_double_exp_of_degree_bounds
+  apply fiberCountCoeff_lt_double_exp_of_degrees
   · calc
       36 * (2 * 40 + 1) = 2916 := by norm_num only
       _ < 5796 := by norm_num only
@@ -525,14 +520,14 @@ theorem fiberBandCoefficient_76_le_double_exp {m : ℕ} (hlo : 2 ≤ m) (hhi : m
     simp only [fiberBandMomentOrder, fiberBandGrowthOrder,
       ite_eq_right (by norm_num only : 76 ≠ 20)]
     nlinarith only [hprod']
-  apply fiberBandCoefficient_le_double_exp_of_log_order_budget hrlo
+  apply fiberBand_le_double_exp_of_log_budget hrlo
   exact fiberBand_orders_76_improved_budget hhi
 
 /-- The full count coefficient at a=38,c=76 is below
 2^(2^(242591038692+1)). Combine the degree-sum and harmonic factors first. -/
 theorem finiteFiberCountCoefficient_76_38_lt_double_exp :
     finiteFiberCountCoefficient 76 38 < 2 ^ (2 ^ (242591038692 + 1)) := by
-  apply finiteFiberCountCoefficient_lt_double_exp_of_degree_bounds
+  apply fiberCountCoeff_lt_double_exp_of_degrees
   · calc
       36 * (2 * 38 + 1) = 2772 := by norm_num only
       _ < 5796 := by norm_num only
@@ -632,14 +627,14 @@ theorem fiberBandCoefficient_64_le_double_exp {m : ℕ} (hlo : 2 ≤ m) (hhi : m
     simp only [fiberBandMomentOrder, fiberBandGrowthOrder,
       ite_eq_right (by norm_num only : 64 ≠ 20)]
     nlinarith only [hprod']
-  apply fiberBandCoefficient_le_double_exp_of_log_order_budget hrlo
+  apply fiberBand_le_double_exp_of_log_budget hrlo
   exact fiberBand_orders_64_improved_budget hhi
 
 /-- The full count coefficient at a=32,c=64 is below
 2^(2^(145000000000+1)). Combine the degree sum and harmonic factor first. -/
 theorem finiteFiberCountCoefficient_64_32_lt_double_exp :
     finiteFiberCountCoefficient 64 32 < 2 ^ (2 ^ (145000000000 + 1)) := by
-  apply finiteFiberCountCoefficient_lt_double_exp_of_degree_bounds
+  apply fiberCountCoeff_lt_double_exp_of_degrees
   · calc
       36 * (2 * 32 + 1) = 2340 := by norm_num only
       _ < 5796 := by norm_num only
@@ -785,14 +780,14 @@ theorem fiberBandCoefficient_20_le_double_exp {m : ℕ} (hlo : 2 ≤ m) (hhi : m
       (Nat.le_div_iff_mul_le hs).2 (by nlinarith only [hlow])
     change (4 * g * (g + s) ^ 2) / s + 1 ≥ 7
     omega
-  apply fiberBandCoefficient_le_double_exp_of_log_order_budget_quarter hrlo
+  apply fiberBand_le_double_exp_of_log_budget_quarter hrlo
   exact fiberBand_orders_20_quarter_budget hhi
 
 /-- The full count coefficient at a=10,c=20 is below
 2^(2^(76,596,732)). Combine the degree sum and harmonic factor. -/
 theorem finiteFiberCountCoefficient_20_10_lt_double_exp :
     finiteFiberCountCoefficient 20 10 < 2 ^ (2 ^ (76596731 + 1)) := by
-  apply finiteFiberCountCoefficient_lt_double_exp_of_degree_bounds
+  apply fiberCountCoeff_lt_double_exp_of_degrees
   · calc
       36 * (2 * 10 + 1) = 756 := by norm_num only
       _ < 5796 := by norm_num only

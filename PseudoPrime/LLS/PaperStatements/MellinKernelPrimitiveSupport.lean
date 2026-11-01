@@ -56,7 +56,7 @@ theorem sum_primitive_difference_eq_nonunit_sum (K : MellinKernel) {q : ℕ}
 the aggregate primitive-level correction is zero for any finite character set.
 Restrict to nonunits and use the Mangoldt support of kernel summands.
 This removes the finite local contribution under a coprime prime-power cutoff. -/
-theorem sum_primitive_difference_eq_zero_of_primePow_coprime (K : MellinKernel) {q : ℕ}
+theorem primitiveDiff_zero_primePow_coprime (K : MellinKernel) {q : ℕ}
     (A : Finset (DirichletCharacter ℂ q)) (I : Finset ℕ) (x : ℝ)
     (hcop : ∀ n ∈ I, IsPrimePow n → Nat.Coprime n q) :
     ∑ χ ∈ A, ∑ n ∈ I, (K.summand χ.primitiveCharacter x n - K.summand χ x n) = 0 := by
@@ -75,10 +75,10 @@ the primitive-level correction on 1≤n≤B vanishes for any finite character se
 A common prime divisor of n and q would be at most n≤B, contradicting the hypothesis.
 This supplies the finite local cancellation from the no-small-divisor condition
 used in the Miller–Rabin contradiction. -/
-theorem sum_primitive_difference_eq_zero_of_no_small_prime_divisor (K : MellinKernel) {q B : ℕ}
+theorem primitiveDiff_zero_noSmallPrimes (K : MellinKernel) {q B : ℕ}
     (A : Finset (DirichletCharacter ℂ q)) (x : ℝ) (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → B < p) :
     ∑ χ ∈ A, ∑ n ∈ Finset.Ioc 0 B, (K.summand χ.primitiveCharacter x n - K.summand χ x n) = 0 := by
-  apply sum_primitive_difference_eq_zero_of_primePow_coprime
+  apply primitiveDiff_zero_primePow_coprime
   intro n hn _
   apply Classical.byContradiction
   intro hc
@@ -105,12 +105,12 @@ theorem principal_primitive_summand_eq_level_one (K : MellinKernel) {q : ℕ} [N
 principal Mellin sum on 1≤n≤B equals the level-one sum, at any real scale.
 Apply finite primitive-correction cancellation to the singleton principal
 character and identify its primitive summands. This eliminates finite modulus loss. -/
-theorem principal_sum_eq_level_one_of_no_small_prime_divisor (K : MellinKernel) {q B : ℕ} [NeZero q]
-    (x : ℝ) (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → B < p) :
+theorem principal_sum_level_one_of_no_divisor (K : MellinKernel) {q B : ℕ} [NeZero q] (x : ℝ)
+    (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → B < p) :
     (∑ n ∈ Finset.Ioc 0 B, K.summand (1 : DirichletCharacter ℂ q) x n) =
       ∑ n ∈ Finset.Ioc 0 B, K.summand (1 : DirichletCharacter ℂ 1) x n := by
   have h :=
-    sum_primitive_difference_eq_zero_of_no_small_prime_divisor K
+    primitiveDiff_zero_noSmallPrimes K
       ({(1 : DirichletCharacter ℂ q)} : Finset (DirichletCharacter ℂ q)) x hdiv
   simp only [Finset.sum_singleton, principal_primitive_summand_eq_level_one,
     Finset.sum_sub_distrib] at h

@@ -193,7 +193,7 @@ theorem exists_real_part_le_sqrt_on_centered_interval {f : ℝ → ℂ} (hf : Co
 
 /-- For a finite exponential sum, bound one point on the centered interval by its shifted Gram
 energy. Translate the coefficients by the center phase and apply the weighted mean-square bound. -/
-theorem exists_real_part_le_sqrt_translated_exponentialSum {ι : Type*} (s : Finset ι) (γ : ι → ℝ)
+theorem exists_re_le_sqrt_translated_exponentialSum {ι : Type*} (s : Finset ι) (γ : ι → ℝ)
     (a : ι → ℂ) {v₀ d : ℝ} (hd : 0 < d) :
     ∃ w ∈ Set.Icc (-d / 2) (d / 2),
       (exponentialSum s γ a (w + v₀)).re ≤

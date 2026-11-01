@@ -88,8 +88,8 @@ and one ramp lower bound give an odd-prime negative Jacobi witness whenever
 the numerical budget is below the harmonic-chord lower bound C/R. Apply the
 interpolated principal-ramp estimate to the existing witness extraction theorem.
 Role: use compact endpoint data throughout a scale cell without new finite sums. -/
-theorem exists_odd_prime_negative_of_harmonic_transported_gap {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem exists_oddPrime_negJacobi_harmonic_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {q : ℕ} (hq : 20000 ≤ q)
     (hmq : (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ q) {x b L : ℝ} (hlo : 1600 ≤ x)
     (hhi : x ≤ 1700) (hb : 500 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x) (hLlo : 64 ≤ L)
@@ -104,7 +104,7 @@ theorem exists_odd_prime_negative_of_harmonic_transported_gap {n : ℕ} {hn : Od
   have hc :=
     principalRampDifference_lower_of_harmonic_chord ha0 ha1 ha0x hu hv huv hscale hA hP hQ hC hC0 hR
   exact
-    exists_odd_prime_negative_of_transported_phase64_numerical_gap_1700 bridge hGRH hq hmq hlo hhi
-      hb hbx hLlo hLhi δ hd (hgap.trans_le hc)
+    exists_oddPrime_negJacobi_transport1700_GRH bridge hGRH hq hmq hlo hhi hb hbx hLlo hLhi δ hd
+      (hgap.trans_le hc)
 
 end PseudoPrime.LLS

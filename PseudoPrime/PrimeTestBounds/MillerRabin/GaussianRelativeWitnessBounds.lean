@@ -74,8 +74,8 @@ theorem gaussian_relative_inequality_contradiction {n : ℕ} [NeZero n] (H : Sub
   rw [← mul_assoc] at hstrict
   exact (not_lt_of_ge (hleft.trans (hcmp.trans hright))) hstrict
 
-theorem exists_prime_witness_le_gaussian_relative_of_index_ge_four {n : ℕ} [NeZero n]
-    (hnOdd : Odd n) (H : Subgroup (ZMod n)ˣ) (hi : 4 ≤ H.index)
+theorem exists_prime_gaussianRelative_indexFour_GRH {n : ℕ} [NeZero n] (hnOdd : Odd n)
+    (H : Subgroup (ZMod n)ˣ) (hi : 4 ≤ H.index)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 350000 ≤ Real.log n) :
@@ -287,17 +287,15 @@ theorem exists_prime_witness_le_gaussian_relative {n : ℕ} (hnOdd : Odd n) (hnC
     intro h
     rw [h] at hnlarge
     exact (by decide : ¬20000 ≤ 9) hnlarge
-  obtain ⟨H, hi, hHpass⟩ :=
-    PrimeTest.exists_index_ge_four_subgroup_containing_strongMillerRabinPass hn1 hnOdd hnComposite
-      hn9
-  exact exists_prime_witness_le_gaussian_relative_of_index_ge_four hnOdd H hi hHpass hGRH hL
+  obtain ⟨H, hi, hHpass⟩ := PrimeTest.exists_index_four_subgroup_strongMR hn1 hnOdd hnComposite hn9
+  exact exists_prime_gaussianRelative_indexFour_GRH hnOdd H hi hHpass hGRH hL
 
 /-- Under GRH for odd n with log n≥350000, passage of the canonical strong test
 for every prime base at most (16/25)log(n)² is equivalent to primality.
 The composite direction uses the explicit relative-loss Gaussian prime witness; the prime
 direction restricts the existing log-squared criterion to the smaller cutoff.
 The same logarithmic threshold applies to both directions. -/
-theorem prime_iff_millerRabin_for_all_primes_le_gaussian_relative {n : ℕ} (hnOdd : Odd n)
+theorem prime_iff_pass_primes_gaussianRelative_GRH {n : ℕ} (hnOdd : Odd n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 350000 ≤ Real.log n) :
     (∀ r : ℕ,
         r.Prime →

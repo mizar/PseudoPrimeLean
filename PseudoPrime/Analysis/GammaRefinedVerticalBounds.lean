@@ -123,7 +123,7 @@ theorem norm_Gamma_neg_one_sixteenth_mul_height_cubed_le {s : ℂ} (hs : s.re = 
 Claim: the height-weighted Gamma norm is bounded by an inverse-square tail.
 Proof: divide the certified cubic envelope by the positive squared height.
 Role: directly integrable tail in the first-moment calculation. -/
-theorem norm_Gamma_neg_one_sixteenth_mul_height_le_refined_tail {s : ℂ} (hs : s.re = -1 / 16)
+theorem norm_Gamma_neg_1_16_mul_height_le_refined_tail {s : ℂ} (hs : s.re = -1 / 16)
     (hi : s.im ≠ 0) : ‖Complex.Gamma s‖ * |s.im| ≤ (31 / 16 : ℝ) / s.im ^ 2 := by
   apply (le_div_iff₀ (sq_pos_of_ne_zero hi)).mpr
   have he : (‖Complex.Gamma s‖ * |s.im|) * s.im ^ 2 = ‖Complex.Gamma s‖ * |s.im| ^ 3 := by

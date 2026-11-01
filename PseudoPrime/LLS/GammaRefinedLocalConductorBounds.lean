@@ -25,7 +25,7 @@ theorem gamma_jacobi_modulus_eq_discriminant {n : ℕ} {hn : Odd n} {hns : ¬IsS
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns) :
     (NumberTheory.complexQuadraticCharacter n hn).conductor = bridge.discriminant := by
   exact
-    NumberTheory.complexQuadraticCharacter_conductor_eq_discriminant bridge
+    NumberTheory.complexQuadratic_conductor_eq_discriminant bridge
       ⟨bridge.squareFactor ^ 2, by
         simpa only [Nat.mul_comm] using bridge.squarefreePart_sq_mul.symm⟩
 
@@ -75,7 +75,7 @@ Jacobi character of an odd nonsquare input satisfies the shared 3/4
 square-plus-dyadic budget for arbitrary positive-power prefixes. All
 arithmetic and dyadic-branch premises come from the bridge; conductor
 differences are allocated once. This feeds the ramified-prime comparison. -/
-theorem gamma_jacobi_refined_actual_square_dyadic_cost_le {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+theorem gammaJacobi_actualSquare_dyadicCost_le {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns) (S : Finset ℕ)
     (hS : S ⊆ n.primeFactors) (hχ : ∀ p ∈ S, bridge.character p = -1) (K : ℕ → Finset ℕ)
     (K2 : Finset ℕ) {L : ℝ} (hL : 100 * Real.log 10 ≤ L) :
@@ -110,7 +110,7 @@ theorem gamma_jacobi_refined_input_square_dyadic_cost_le {n : ℕ} {hn : Odd n} 
           (Analysis.gammaRefinedScale (Real.log n)) ≤
       (11783423 / 25000000 : ℝ) * Real.log (4 * (n : ℝ)) + (3 / 4 : ℝ) := by
   exact
-    gamma_jacobi_refined_actual_square_dyadic_cost_le bridge S hS hχ K K2
+    gammaJacobi_actualSquare_dyadicCost_le bridge S hS hχ K K2
       (Analysis.gamma_refined_log_range_of_decimal hlarge)
 
 /-- For the actual primitive Jacobi character, the square and dyadic
@@ -135,7 +135,7 @@ theorem gamma_jacobi_refined_actual_joint_local_cost_le {n : ℕ} {hn : Odd n} {
         ∑ p ∈ R,
           Real.log p *
             max (Analysis.gammaRamifiedCombinedCost p (Analysis.gammaRefinedScale L) - μ) 0 := by
-  have hs := gamma_jacobi_refined_actual_square_dyadic_cost_le bridge S hS hSχ K K2 hL
+  have hs := gammaJacobi_actualSquare_dyadicCost_le bridge S hS hSχ K K2 hL
   have hr :=
     gamma_actual_ramified_cost_le_input_dual hn.pos R hR bridge.character hRχ K
       (by linarith only [Analysis.gamma_refined_scale_ge_twenty_thousand hL]) hμ
@@ -172,11 +172,11 @@ theorem gamma_jacobi_refined_input_joint_local_cost_le {n : ℕ} {hn : Odd n} {h
 loss is bounded by the square-plus-dyadic allowance and a finite signed
 ramified dual sum. Its prime set depends only on the scale, not the
 input factorization; the signed ramp is retained in every finite term. -/
-theorem gamma_jacobi_refined_joint_local_cost_le_finite_signed_dual {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
-    (S R : Finset ℕ) (hS : S ⊆ n.primeFactors) (hR : R ⊆ n.primeFactors)
-    (hSχ : ∀ p ∈ S, bridge.character p = -1) (hRχ : ∀ p ∈ R, bridge.character p = 0)
-    (K : ℕ → Finset ℕ) (K2 : Finset ℕ) {L : ℝ} (hL : 100 * Real.log 10 ≤ L) :
+theorem gammaJacobi_jointLocal_finiteDual_le {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns) (S R : Finset ℕ)
+    (hS : S ⊆ n.primeFactors) (hR : R ⊆ n.primeFactors) (hSχ : ∀ p ∈ S, bridge.character p = -1)
+    (hRχ : ∀ p ∈ R, bridge.character p = 0) (K : ℕ → Finset ℕ) (K2 : Finset ℕ) {L : ℝ}
+    (hL : 100 * Real.log 10 ≤ L) :
     (11783423 / 25000000 : ℝ) * Real.log (NumberTheory.complexQuadraticCharacter n hn).conductor +
         (∑ p ∈ S,
           Analysis.gammaActualPrimeLocalCost bridge.character p (K p)
@@ -193,7 +193,7 @@ theorem gamma_jacobi_refined_joint_local_cost_le_finite_signed_dual {n : ℕ} {h
               (gammaRamifiedSignedCombinedCost p (Analysis.gammaRefinedScale L) -
                 gammaRamifiedDualParameter (Analysis.gammaRefinedScale L))
               0 := by
-  have hs := gamma_jacobi_refined_actual_square_dyadic_cost_le bridge S hS hSχ K K2 hL
+  have hs := gammaJacobi_actualSquare_dyadicCost_le bridge S hS hSχ K K2 hL
   have hr :=
     gamma_odd_signed_cost_le_finite_dual hn R hR bridge.character hRχ K
       (by linarith only [Analysis.gamma_refined_scale_ge_twenty_thousand hL])
@@ -229,9 +229,9 @@ its prime factors and the separate dyadic prime obey one finite signed
 dual comparison at L=log n. The primitive arithmetic bridge discharges
 conductor branches, quadraticity classifies every input prime, and the
 finite support removes the unknown factorization from the upper bound. -/
-theorem gamma_jacobi_refined_input_all_local_cost_le_finite_signed_dual {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
-    (K : ℕ → Finset ℕ) (K2 : Finset ℕ) (hlarge : 10 ^ 100 ≤ n) :
+theorem gammaJacobi_allLocal_finiteDual_le {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns) (K : ℕ → Finset ℕ)
+    (K2 : Finset ℕ) (hlarge : 10 ^ 100 ≤ n) :
     (11783423 / 25000000 : ℝ) * Real.log (NumberTheory.complexQuadraticCharacter n hn).conductor +
         (∑ p ∈ n.primeFactors,
           Analysis.gammaActualPrimeLocalCost bridge.character p (K p)
@@ -250,8 +250,8 @@ theorem gamma_jacobi_refined_input_all_local_cost_le_finite_signed_dual {n : ℕ
   let R := n.primeFactors.filter (fun p : ℕ ↦ bridge.character p = 0)
   have hL := Analysis.gamma_refined_log_range_of_decimal hlarge
   have hj :=
-    gamma_jacobi_refined_joint_local_cost_le_finite_signed_dual bridge S R
-      (Finset.filter_subset _ _) (Finset.filter_subset _ _) (fun p hp ↦ (Finset.mem_filter.mp hp).2)
+    gammaJacobi_jointLocal_finiteDual_le bridge S R (Finset.filter_subset _ _)
+      (Finset.filter_subset _ _) (fun p hp ↦ (Finset.mem_filter.mp hp).2)
       (fun p hp ↦ (Finset.mem_filter.mp hp).2) K K2 hL
   have hc :=
     gamma_actual_quadratic_local_sum_le_classified hn bridge.character bridge.character_quadratic K

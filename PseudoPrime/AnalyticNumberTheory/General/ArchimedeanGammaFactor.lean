@@ -236,8 +236,8 @@ derivative is bounded by a degree-proportional universal constant plus
 half the sum of log(norm(s+kappa_j)+3). Sum the individual uniform digamma
 bounds and combine them with the exact factor derivative. This gives the
 archimedean logarithmic growth term used for local zero counting. -/
-theorem norm_logDeriv_archimedeanGammaFactor_at_three_le {d : ℕ} {κ : Fin d → ℂ} {s : ℂ}
-    (hs : s.re = 3) (hκ : ∀ j, -1 < (κ j).re) :
+theorem gammaFactor_logDeriv_three_le {d : ℕ} {κ : Fin d → ℂ} {s : ℂ} (hs : s.re = 3)
+    (hκ : ∀ j, -1 < (κ j).re) :
     ‖logDeriv (archimedeanGammaFactor κ) s‖ ≤
       (d : ℝ) / 2 * (‖Complex.log (Real.pi : ℂ)‖ + Real.pi + Gamma.digammaLogErrorBound) +
         (1 / 2 : ℝ) * ∑ j : Fin d, Real.log (‖s + κ j‖ + 3) := by

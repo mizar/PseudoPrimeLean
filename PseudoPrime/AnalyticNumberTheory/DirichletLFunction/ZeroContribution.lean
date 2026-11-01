@@ -31,7 +31,7 @@ The reciprocal contribution `-mρ*x^(ρ-1)/(ρ*(ρ-1))`, where `mρ` is the ordi
 `LFunction` analytic multiplicity. Defined for every real `x`, character, and complex
 point; the residue interpretation away from the Mellin points is proved separately.
 -/
-noncomputable def dirichletLFunctionReciprocalZeroContribution {N : ℕ} [NeZero N] (x : ℝ)
+noncomputable def LFunctionReciprocalZeroContribution {N : ℕ} [NeZero N] (x : ℝ)
     (χ : DirichletCharacter ℂ N) (ρ : ℂ) : ℂ :=
   -(dirichletLFunctionZeroMultiplicity χ ρ : ℂ) * (x : ℂ) ^ (ρ - 1) / (ρ * (ρ - 1))
 
@@ -40,22 +40,21 @@ The logarithmic contribution `-mρ*x^ρ/ρ²`, where `mρ` is the ordinary
 `LFunction` analytic multiplicity. Defined for every real `x`, character, and complex
 point; the residue interpretation away from zero is proved separately.
 -/
-noncomputable def dirichletLFunctionLogZeroContribution {N : ℕ} [NeZero N] (x : ℝ)
+noncomputable def LFunctionLogZeroContribution {N : ℕ} [NeZero N] (x : ℝ)
     (χ : DirichletCharacter ℂ N) (ρ : ℂ) : ℂ :=
   -(dirichletLFunctionZeroMultiplicity χ ρ : ℂ) * (x : ℂ) ^ ρ / ρ ^ 2
 
 /--
 Input/assumptions: `N ≥ 1`, `χ`, `x > 0`, `ρ ≠ 0` with `gammaFactor χ ρ = 0`.
-Conclusion: `(dirichletLFunctionLogZeroContribution x χ ρ).re ≤ 0`.
+Conclusion: `(LFunctionLogZeroContribution x χ ρ).re ≤ 0`.
 Content: parity dispatch on `Complex.Gammaℝ_eq_zero_iff` shows `ρ` is a genuine negative real
 number; on such `ρ`, `x^ρ` is a positive real (`Complex.ofReal_cpow`) and `ρ²` a positive real, so
 `-mult · x^ρ/ρ²` is a real number `≤ 0`.
 Role: the log-kernel trivial-zero sign bound.
 -/
-theorem dirichletLFunctionLogZeroContribution_re_nonpos_of_gammaFactor_zero {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} {x : ℝ} (hx : 0 < x) {ρ : ℂ} (hρ0 : ρ ≠ 0)
-    (hΓ : DirichletCharacter.gammaFactor χ ρ = 0) :
-    (dirichletLFunctionLogZeroContribution x χ ρ).re ≤ 0 := by
+theorem logZeroTerm_gammaZero_re_nonpos {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} {x : ℝ}
+    (hx : 0 < x) {ρ : ℂ} (hρ0 : ρ ≠ 0) (hΓ : DirichletCharacter.gammaFactor χ ρ = 0) :
+    (LFunctionLogZeroContribution x χ ρ).re ≤ 0 := by
   have hreim : ρ.im = 0 ∧ ρ.re < 0 := by
     rcases χ.even_or_odd with heven | hodd
     · rw [heven.gammaFactor_def, Complex.Gammaℝ_eq_zero_iff] at hΓ
@@ -99,7 +98,7 @@ theorem dirichletLFunctionLogZeroContribution_re_nonpos_of_gammaFactor_zero {N :
   have hdenom_pos : (0 : ℝ) < σ ^ 2 := by nlinarith only [hre]
   set m : ℕ := dirichletLFunctionZeroMultiplicity χ ρ with hm_def
   have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
-  unfold dirichletLFunctionLogZeroContribution
+  unfold LFunctionLogZeroContribution
   rw [← hm_def, hxpow, hdenom,
     show -(m : ℂ) * ((x ^ σ : ℝ) : ℂ) / ((σ ^ 2 : ℝ) : ℂ) = ((-(m : ℝ) * x ^ σ / σ ^ 2 : ℝ) : ℂ)
       from by
@@ -203,7 +202,7 @@ theorem sum_norm_completedLogZeroTerm_le {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
             ((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℝ) *
               (1 / ρ).re) :=
       by
-      rw [tsum_divisor_inv_normSq_eq_two_mul_zeroMass_of_grh hN2 hGRH hprimitive hne hinv]
+      rw [tsum_invNormSq_eq_zeroMass_GRH hN2 hGRH hprimitive hne hinv]
       ring
 
 /-- Under GRH, let N ≥ 2 and let χ be primitive with χ ≠ 1 and χ⁻¹ ≠ 1.
@@ -212,7 +211,7 @@ completed-divisor logarithmic terms is at most `2 sqrt x abs (primitiveBRe χ)`.
 Rewrite the completed zero mass as the absolute Hadamard constant and apply
 the finite-subset norm bound. This expresses the logarithmic contour error
 in terms of the character's Hadamard constant. -/
-theorem sum_norm_completedLogZeroTerm_le_abs_BRe {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem sum_norm_logZeroTerm_le_abs_BRe {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x)
     (S : Finset ℂ) :
@@ -227,37 +226,34 @@ theorem sum_norm_completedLogZeroTerm_le_abs_BRe {N : ℕ} [NeZero N] (hN2 : 2 �
 /--
 Input/assumptions: `N ≥ 1`, `χ ≠ 1`, `x > 0`, and `ρ ≠ 0`; no GRH,
 primitivity, or quadraticity is required.
-Conclusion: `(dirichletLFunctionLogZeroContribution x χ ρ).re ≤ ‖D_ρ x^ρ/ρ²‖`.
+Conclusion: `(LFunctionLogZeroContribution x χ ρ).re ≤ ‖D_ρ x^ρ/ρ²‖`.
 Content: case split on `gammaFactor χ ρ`. Nonzero: the multiplicity bridge
-(`dirichletLFunctionZeroMultiplicity_eq_divisor_completedLFunction_of_gamma_ne_zero`)
+(`zeroMultiplicity_divisor_gamma_ne`)
 identifies
 the contribution with `-D_ρ x^ρ/ρ²` exactly, and `Complex.re_le_norm` bounds its real part by its
-norm. Zero: `dirichletLFunctionLogZeroContribution_re_nonpos_of_gammaFactor_zero` gives `≤ 0 ≤ ‖·‖`.
+norm. Zero: `logZeroTerm_gammaZero_re_nonpos` gives `≤ 0 ≤ ‖·‖`.
 Role: the pointwise bound letting a full erased zero ledger be dominated by the completed-zero
 term, without splitting the ledger by gamma-factor vanishing.
 -/
-theorem dirichletLFunctionLogZeroContribution_re_le_completedTerm_norm {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hne : χ ≠ 1) {x : ℝ} (hx : 0 < x) {ρ : ℂ} (hρ0 : ρ ≠ 0) :
-    (dirichletLFunctionLogZeroContribution x χ ρ).re ≤
+theorem logZeroTerm_re_le_completedNorm {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hne : χ ≠ 1) {x : ℝ} (hx : 0 < x) {ρ : ℂ} (hρ0 : ρ ≠ 0) :
+    (LFunctionLogZeroContribution x χ ρ).re ≤
       ‖((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) *
             (x : ℂ) ^ ρ /
           ρ ^ 2‖ := by
   by_cases hΓ : DirichletCharacter.gammaFactor χ ρ = 0
-  · exact
-      (dirichletLFunctionLogZeroContribution_re_nonpos_of_gammaFactor_zero hx hρ0 hΓ).trans
-        (norm_nonneg _)
-  · have hmult :=
-      dirichletLFunctionZeroMultiplicity_eq_divisor_completedLFunction_of_gamma_ne_zero hne hΓ
+  · exact (logZeroTerm_gammaZero_re_nonpos hx hρ0 hΓ).trans (norm_nonneg _)
+  · have hmult := zeroMultiplicity_divisor_gamma_ne hne hΓ
     have hmultC :
       ((dirichletLFunctionZeroMultiplicity χ ρ : ℕ) : ℂ) =
         ((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) := by
       exact_mod_cast hmult
     have heq :
-      dirichletLFunctionLogZeroContribution x χ ρ =
+      LFunctionLogZeroContribution x χ ρ =
         -(((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) *
               (x : ℂ) ^ ρ /
             ρ ^ 2) := by
-      unfold dirichletLFunctionLogZeroContribution
+      unfold LFunctionLogZeroContribution
       rw [hmultC]
       ring
     rw [heq, ← norm_neg]
@@ -265,7 +261,7 @@ theorem dirichletLFunctionLogZeroContribution_re_le_completedTerm_norm {N : ℕ}
 
 /--
 Input/assumptions: `N ≥ 1`, `χ`, `x > 0`, `ρ ≠ 0` with `gammaFactor χ ρ = 0`.
-Conclusion: `(dirichletLFunctionReciprocalZeroContribution x χ ρ).re ≤ 0`.
+Conclusion: `(LFunctionReciprocalZeroContribution x χ ρ).re ≤ 0`.
 Content: parity dispatch on `Complex.Gammaℝ_eq_zero_iff` shows `ρ` is a genuine negative real
 number (`ρ = -2m` even, `m ≠ 0` from `ρ ≠ 0`; `ρ = -2m - 1` odd, always `< 0`); on such `ρ`,
 `x ^ (ρ - 1)` is a positive real (`Complex.ofReal_cpow`) and `ρ (ρ - 1)` a positive real (product
@@ -273,10 +269,9 @@ of two negatives), so `-mult · x^(ρ-1) / (ρ(ρ-1))` is a real number `≤ 0`.
 Role: the reciprocal-kernel trivial-zero sign bound — no exact multiplicity/order classification is
 needed at gamma-factor poles, only this sign fact.
 -/
-theorem dirichletLFunctionReciprocalZeroContribution_re_nonpos_of_gammaFactor_zero {N : ℕ}
-    [NeZero N] {χ : DirichletCharacter ℂ N} {x : ℝ} (hx : 0 < x) {ρ : ℂ} (hρ0 : ρ ≠ 0)
-    (hΓ : DirichletCharacter.gammaFactor χ ρ = 0) :
-    (dirichletLFunctionReciprocalZeroContribution x χ ρ).re ≤ 0 := by
+theorem reciprocalZeroTerm_gamma_re_nonpos {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} {x : ℝ}
+    (hx : 0 < x) {ρ : ℂ} (hρ0 : ρ ≠ 0) (hΓ : DirichletCharacter.gammaFactor χ ρ = 0) :
+    (LFunctionReciprocalZeroContribution x χ ρ).re ≤ 0 := by
   have hreim : ρ.im = 0 ∧ ρ.re < 0 := by
     rcases χ.even_or_odd with heven | hodd
     · rw [heven.gammaFactor_def, Complex.Gammaℝ_eq_zero_iff] at hΓ
@@ -323,7 +318,7 @@ theorem dirichletLFunctionReciprocalZeroContribution_re_nonpos_of_gammaFactor_ze
   have hdenom_pos : (0 : ℝ) < σ * (σ - 1) := by nlinarith only [hre]
   set m : ℕ := dirichletLFunctionZeroMultiplicity χ ρ with hm_def
   have hmnn : (0 : ℝ) ≤ (m : ℝ) := Nat.cast_nonneg m
-  unfold dirichletLFunctionReciprocalZeroContribution
+  unfold LFunctionReciprocalZeroContribution
   rw [← hm_def, hxpow, hdenom,
     show
       -(m : ℂ) * ((x ^ (σ - 1) : ℝ) : ℂ) / ((σ * (σ - 1) : ℝ) : ℂ) =
@@ -343,7 +338,7 @@ norms are at most twice the completed zero mass divided by `sqrt x`.
 Use the pointwise norm identity, summability, and the inverse-norm-square
 identity. This controls arbitrary finite contour zero sums.
 -/
-theorem sum_norm_completedReciprocalZeroTerm_le {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem reciprocalZero_normSum_le_mass_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x)
     (S : Finset ℂ) :
@@ -394,7 +389,7 @@ theorem sum_norm_completedReciprocalZeroTerm_le {N : ℕ} [NeZero N] (hN2 : 2 �
                   ℝ) *
                 (1 / ρ).re) /
           Real.sqrt x :=
-      by rw [tsum_divisor_inv_normSq_eq_two_mul_zeroMass_of_grh hN2 hGRH hprimitive hne hinv]
+      by rw [tsum_invNormSq_eq_zeroMass_GRH hN2 hGRH hprimitive hne hinv]
 
 /-- Under GRH, let N ≥ 2 and let χ be primitive with χ ≠ 1 and χ⁻¹ ≠ 1.
 For x > 0 and any finite set S of complex points, the sum of norms of the
@@ -402,7 +397,7 @@ completed-divisor reciprocal terms is at most `2 abs (primitiveBRe χ) / sqrt x`
 Rewrite the completed zero mass as the absolute Hadamard constant and apply
 the finite-subset reciprocal bound. This gives the reciprocal contour estimate
 in the same Hadamard normalization as the logarithmic formula. -/
-theorem sum_norm_completedReciprocalZeroTerm_le_abs_BRe {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem reciprocalZero_normSum_abs_BRe_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x)
     (S : Finset ℂ) :
@@ -412,41 +407,38 @@ theorem sum_norm_completedReciprocalZeroTerm_le_abs_BRe {N : ℕ} [NeZero N] (hN
             (ρ * (ρ - 1))‖ ≤
       2 * |primitiveBRe χ| / Real.sqrt x := by
   rw [abs_primitiveBRe_eq_zeroMass hN2 hGRH hprimitive hne hinv]
-  exact sum_norm_completedReciprocalZeroTerm_le hN2 hGRH hprimitive hne hinv hx S
+  exact reciprocalZero_normSum_le_mass_GRH hN2 hGRH hprimitive hne hinv hx S
 
 /--
 Input/assumptions: `N ≥ 1`, `χ ≠ 1`, `x > 0`, and `ρ ≠ 0`; no GRH,
 primitivity, or quadraticity is required.
-Conclusion: `(dirichletLFunctionReciprocalZeroContribution x χ ρ).re ≤ ‖D_ρ x^{ρ-1}/(ρ(ρ-1))‖`.
+Conclusion: `(LFunctionReciprocalZeroContribution x χ ρ).re ≤ ‖D_ρ x^{ρ-1}/(ρ(ρ-1))‖`.
 Content: case split on `gammaFactor χ ρ`. Nonzero: the multiplicity bridge identifies the
 contribution with `-D_ρ x^{ρ-1}/(ρ(ρ-1))` exactly, and `Complex.re_le_norm` bounds its real part by
 its norm (`= ‖D_ρ x^{ρ-1}/(ρ(ρ-1))‖` via `norm_neg`). Zero:
-`dirichletLFunctionReciprocalZeroContribution_re_nonpos_of_gammaFactor_zero` gives `≤ 0 ≤ ‖·‖`.
+`reciprocalZeroTerm_gamma_re_nonpos` gives `≤ 0 ≤ ‖·‖`.
 Role: the pointwise bound letting a whole erased ledger (both ordinary and trivial zeros together)
 be dominated by the completed-zero term, without ever splitting `S` by gamma-factor vanishing.
 -/
-theorem dirichletLFunctionReciprocalZeroContribution_re_le_completedTerm_norm {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hne : χ ≠ 1) {x : ℝ} (hx : 0 < x) {ρ : ℂ} (hρ0 : ρ ≠ 0) :
-    (dirichletLFunctionReciprocalZeroContribution x χ ρ).re ≤
+theorem reciprocalZero_re_le_completedNorm {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hne : χ ≠ 1) {x : ℝ} (hx : 0 < x) {ρ : ℂ} (hρ0 : ρ ≠ 0) :
+    (LFunctionReciprocalZeroContribution x χ ρ).re ≤
       ‖((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) *
             (x : ℂ) ^ (ρ - 1) /
           (ρ * (ρ - 1))‖ := by
   by_cases hΓ : DirichletCharacter.gammaFactor χ ρ = 0
-  · exact
-      (dirichletLFunctionReciprocalZeroContribution_re_nonpos_of_gammaFactor_zero hx hρ0 hΓ).trans
-        (norm_nonneg _)
-  · have hmult :=
-      dirichletLFunctionZeroMultiplicity_eq_divisor_completedLFunction_of_gamma_ne_zero hne hΓ
+  · exact (reciprocalZeroTerm_gamma_re_nonpos hx hρ0 hΓ).trans (norm_nonneg _)
+  · have hmult := zeroMultiplicity_divisor_gamma_ne hne hΓ
     have hmultC :
       ((dirichletLFunctionZeroMultiplicity χ ρ : ℕ) : ℂ) =
         ((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) := by
       exact_mod_cast hmult
     have heq :
-      dirichletLFunctionReciprocalZeroContribution x χ ρ =
+      LFunctionReciprocalZeroContribution x χ ρ =
         -(((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) *
               (x : ℂ) ^ (ρ - 1) /
             (ρ * (ρ - 1))) := by
-      unfold dirichletLFunctionReciprocalZeroContribution
+      unfold LFunctionReciprocalZeroContribution
       rw [hmultC]
       ring
     rw [heq, ← norm_neg]
@@ -456,15 +448,14 @@ theorem dirichletLFunctionReciprocalZeroContribution_re_le_completedTerm_norm {N
 where the gamma factor is nonzero has norm at most `2*sqrt x*|Re B|`.
 The multiplicity bridge identifies each norm with the completed-zero term,
 and the shared finite-subset mass bound controls the sum. -/
-theorem norm_sum_logZeroContribution_of_gamma_ne_zero_le {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem norm_sum_logZeroTerm_le_of_gamma_RH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) (S : Finset ℂ)
     (hΓ : ∀ ρ ∈ S, DirichletCharacter.gammaFactor χ ρ ≠ 0) :
-    ‖∑ ρ ∈ S, dirichletLFunctionLogZeroContribution x χ ρ‖ ≤
-      2 * Real.sqrt x * |primitiveBRe χ| := by
+    ‖∑ ρ ∈ S, LFunctionLogZeroContribution x χ ρ‖ ≤ 2 * Real.sqrt x * |primitiveBRe χ| := by
   refine (norm_sum_le S _).trans ?_
   have he :
-    (∑ ρ ∈ S, ‖dirichletLFunctionLogZeroContribution x χ ρ‖) =
+    (∑ ρ ∈ S, ‖LFunctionLogZeroContribution x χ ρ‖) =
       ∑ ρ ∈ S,
         ‖((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) *
               (x : ℂ) ^ ρ /
@@ -474,25 +465,22 @@ theorem norm_sum_logZeroContribution_of_gamma_ne_zero_le {N : ℕ} [NeZero N] (h
     have hm :
       (dirichletLFunctionZeroMultiplicity χ ρ : ℂ) =
         ((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) := by
-      exact_mod_cast
-        dirichletLFunctionZeroMultiplicity_eq_divisor_completedLFunction_of_gamma_ne_zero hne
-          (hΓ ρ hρ)
-    simp only [dirichletLFunctionLogZeroContribution, hm, neg_mul, neg_div, norm_neg]
+      exact_mod_cast zeroMultiplicity_divisor_gamma_ne hne (hΓ ρ hρ)
+    simp only [LFunctionLogZeroContribution, hm, neg_mul, neg_div, norm_neg]
   rw [he]
-  exact sum_norm_completedLogZeroTerm_le_abs_BRe hN2 hGRH hp hne hinv hx S
+  exact sum_norm_logZeroTerm_le_abs_BRe hN2 hGRH hp hne hinv hx S
 
 /-- Under GRH, the reciprocal ordinary-zero sum away from gamma poles has
 norm at most `2*|Re B|/sqrt x`. Multiplicity comparison and the completed
 finite-subset estimate give a complex bound for the exact explicit formula. -/
-theorem norm_sum_reciprocalZeroContribution_of_gamma_ne_zero_le {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem norm_sum_recipZero_le_of_gamma_RH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) (S : Finset ℂ)
     (hΓ : ∀ ρ ∈ S, DirichletCharacter.gammaFactor χ ρ ≠ 0) :
-    ‖∑ ρ ∈ S, dirichletLFunctionReciprocalZeroContribution x χ ρ‖ ≤
-      2 * |primitiveBRe χ| / Real.sqrt x := by
+    ‖∑ ρ ∈ S, LFunctionReciprocalZeroContribution x χ ρ‖ ≤ 2 * |primitiveBRe χ| / Real.sqrt x := by
   refine (norm_sum_le S _).trans ?_
   have he :
-    (∑ ρ ∈ S, ‖dirichletLFunctionReciprocalZeroContribution x χ ρ‖) =
+    (∑ ρ ∈ S, ‖LFunctionReciprocalZeroContribution x χ ρ‖) =
       ∑ ρ ∈ S,
         ‖((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) *
               (x : ℂ) ^ (ρ - 1) /
@@ -502,11 +490,9 @@ theorem norm_sum_reciprocalZeroContribution_of_gamma_ne_zero_le {N : ℕ} [NeZer
     have hm :
       (dirichletLFunctionZeroMultiplicity χ ρ : ℂ) =
         ((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ : ℤ) : ℂ) := by
-      exact_mod_cast
-        dirichletLFunctionZeroMultiplicity_eq_divisor_completedLFunction_of_gamma_ne_zero hne
-          (hΓ ρ hρ)
-    simp only [dirichletLFunctionReciprocalZeroContribution, hm, neg_mul, neg_div, norm_neg]
+      exact_mod_cast zeroMultiplicity_divisor_gamma_ne hne (hΓ ρ hρ)
+    simp only [LFunctionReciprocalZeroContribution, hm, neg_mul, neg_div, norm_neg]
   rw [he]
-  exact sum_norm_completedReciprocalZeroTerm_le_abs_BRe hN2 hGRH hp hne hinv hx S
+  exact reciprocalZero_normSum_abs_BRe_GRH hN2 hGRH hp hne hinv hx S
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

@@ -122,8 +122,7 @@ theorem logDeriv_nearZero_error_le {F : ℂ → ℂ} {ε : ℂ} (hε : ε ≠ 0)
         (6 + 10 * ‖(((3 : ℝ) : ℂ) + s.im * Complex.I) - s‖) *
           ‖logDeriv F (((3 : ℝ) : ℂ) + s.im * Complex.I)‖ := by
   obtain ⟨C, hC, hg⟩ :=
-    exists_global_exponential_bound_of_orderAtMostOne hF.continuous horder (r := 3 / 2)
-      (by norm_num only)
+    exists_exp_bound_of_orderAtMostOne hF.continuous horder (r := 3 / 2) (by norm_num only)
   let t : ℂ := ((3 : ℝ) : ℂ) + s.im * Complex.I
   have ht : F t ≠ 0 := by
     apply hright
@@ -178,8 +177,8 @@ conductor error. Combine the order-one nearby-zero expansion with the
 right-line conductor norm bound. The endpoint order remains explicit; this
 is a quantitative completion estimate for contour shifts, not the full
 ordinary-L-function statement with separately removed gamma poles. -/
-theorem logDeriv_nearZero_error_le_log_analyticConductor {F L : ℂ → ℂ} {ε : ℂ} {q d : ℕ}
-    (hq : 1 ≤ q) (k : ℤ) (κ : Fin d → ℂ) (hκ : ∀ j, -1 < (κ j).re)
+theorem logDeriv_nearZero_error_le_logConductor {F L : ℂ → ℂ} {ε : ℂ} {q d : ℕ} (hq : 1 ≤ q) (k : ℤ)
+    (κ : Fin d → ℂ) (hκ : ∀ j, -1 < (κ j).re)
     (hreg :
       ∀ z,
         z ≠ 0 →

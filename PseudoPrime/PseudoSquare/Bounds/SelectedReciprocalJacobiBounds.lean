@@ -20,9 +20,9 @@ namespace PseudoPrime.PseudoSquare
 /-- Under GRH for odd nonsquare n, G≥16 and log(actual conductor)≤G, an odd
 coprime negative prime lies below the selected-envelope root with exclusion 2n.
 Apply the primitive envelope theorem and transfer the non-one value to Jacobi -1. -/
-theorem exists_prime_neg_one_le_selected_reciprocal_conductor_root {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {G : ℝ}
-    (hG : 16 ≤ G) (hlog : Real.log (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ G) :
+theorem exists_prime_negOne_selectedConductor_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {G : ℝ} (hG : 16 ≤ G)
+    (hlog : Real.log (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ G) :
     ∃ p : ℕ,
       p.Prime ∧
         Odd p ∧
@@ -68,27 +68,27 @@ theorem exists_prime_neg_one_le_selected_reciprocal_conductor_root {n : ℕ} {hn
 /-- Under GRH and the stated conductor envelope, the least negative odd-prime
 witness lies below the selected root. Apply leastness to the actual prime.
 This connects the explicit analytic estimate to the least-witness interface. -/
-theorem primeNegOneWitness_le_selected_reciprocal_conductor_root {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {G : ℝ}
-    (hG : 16 ≤ G) (hlog : Real.log (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ G)
+theorem negOneWitness_le_selectedConductor_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {G : ℝ} (hG : 16 ≤ G)
+    (hlog : Real.log (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ G)
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤
       LLS.PaperStatements.selectedReciprocalWitnessBound G (2 * n) := by
   obtain ⟨p, hp, ho, _, hj, hb⟩ :=
-    exists_prime_neg_one_le_selected_reciprocal_conductor_root (hn := hn) (hns := hns) hGRH hG hlog
+    exists_prime_negOne_selectedConductor_GRH (hn := hn) (hns := hns) hGRH hG hlog
   exact (Nat.cast_le.mpr (NumberTheory.primeNegOneWitness_le n hw ⟨hp, ho, hj⟩)).trans hb
 
 /-- Under GRH and the stated conductor envelope, the least non-one odd-prime
 witness lies below the selected root. A negative Jacobi value supplies non-one
 membership, so the actual negative prime bounds this least witness. -/
-theorem primeNeOneWitness_le_selected_reciprocal_conductor_root {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {G : ℝ}
-    (hG : 16 ≤ G) (hlog : Real.log (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ G)
+theorem neOneWitness_le_selectedConductor_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {G : ℝ} (hG : 16 ≤ G)
+    (hlog : Real.log (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ G)
     (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤
       LLS.PaperStatements.selectedReciprocalWitnessBound G (2 * n) := by
   obtain ⟨p, hp, ho, _, hj, hb⟩ :=
-    exists_prime_neg_one_le_selected_reciprocal_conductor_root (hn := hn) (hns := hns) hGRH hG hlog
+    exists_prime_negOne_selectedConductor_GRH (hn := hn) (hns := hns) hGRH hG hlog
   have hne : jacobiSym n p ≠ 1 := by
     rw [hj]; norm_num only
   exact (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hp, ho, hne⟩)).trans hb
@@ -97,8 +97,8 @@ theorem primeNeOneWitness_le_selected_reciprocal_conductor_root {n : ℕ} {hn : 
 at most 4(A(log(4d))+1)²+(28/5)E(s), using the selected radius A.
 Bound the actual conductor first, then absorb squarefree-part exclusion costs.
 Small actual conductors are covered by the primitive envelope theorem. -/
-theorem exists_prime_neg_one_le_selected_reciprocal_squarefree_budget {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem exists_prime_negOne_selectedSquarefree_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hG : 16 ≤ Real.log ((4 * bridge.squarefreePart : ℕ) : ℝ)) :
     ∃ p : ℕ,
@@ -124,15 +124,15 @@ theorem exists_prime_neg_one_le_selected_reciprocal_squarefree_budget {n : ℕ} 
     ⟨bridge.squareFactor ^ 2, by simpa only [mul_comm] using bridge.squarefreePart_sq_mul.symm⟩
   have hf :
     (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ 4 * bridge.squarefreePart := by
-    rw [NumberTheory.complexQuadraticCharacter_conductor_eq_discriminant bridge hdiv]
-    exact bridge.discriminant_le_four_mul_squarefreePart
+    rw [NumberTheory.complexQuadratic_conductor_eq_discriminant bridge hdiv]
+    exact bridge.discr_le_four_squarefreePart
   have hflog :=
     Real.log_le_log
       (Nat.cast_pos.mpr
         (Nat.pos_of_ne_zero (NumberTheory.complexQuadraticCharacter n hn).conductor_ne_zero))
       (Nat.cast_le.mpr hf)
   obtain ⟨p, hp, ho, hcop, hj, hb⟩ :=
-    exists_prime_neg_one_le_selected_reciprocal_conductor_root (hn := hn) (hns := hns) hGRH hG hflog
+    exists_prime_negOne_selectedConductor_GRH (hn := hn) (hns := hns) hGRH hG hflog
   have he2 :=
     AnalyticNumberTheory.Arithmetic.prime_factor_log_sum_mul_le (by decide : 2 ≠ 0) hn.pos.ne'
   rw [Nat.prime_two.primeFactors, Finset.sum_singleton] at he2
@@ -158,8 +158,8 @@ theorem exists_prime_neg_one_le_selected_reciprocal_squarefree_budget {n : ℕ} 
 /-- Under GRH, n=s²d and log(4d)≥16, the least negative odd-prime witness obeys
 the selected squarefree-radius and square-factor cost bound. Apply leastness
 to the actual prime. No input-integer finite certificate is used. -/
-theorem primeNegOneWitness_le_selected_reciprocal_squarefree_budget {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem negOneWitness_le_selectedSquarefree_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hG : 16 ≤ Real.log ((4 * bridge.squarefreePart : ℕ) : ℝ))
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
@@ -170,15 +170,14 @@ theorem primeNegOneWitness_le_selected_reciprocal_squarefree_budget {n : ℕ} {h
               1) ^
             2 +
         (28 / 5 : ℝ) * (∑ r ∈ bridge.squareFactor.primeFactors, Real.log r) := by
-  obtain ⟨p, hp, ho, _, hj, hb⟩ :=
-    exists_prime_neg_one_le_selected_reciprocal_squarefree_budget bridge hGRH hG
+  obtain ⟨p, hp, ho, _, hj, hb⟩ := exists_prime_negOne_selectedSquarefree_GRH bridge hGRH hG
   exact (Nat.cast_le.mpr (NumberTheory.primeNegOneWitness_le n hw ⟨hp, ho, hj⟩)).trans hb
 
 /-- Under GRH, n=s²d and log(4d)≥16, the least non-one odd-prime witness obeys
 the selected squarefree-radius and square-factor cost bound. Transfer the actual
 negative prime to non-one membership and apply leastness. -/
-theorem primeNeOneWitness_le_selected_reciprocal_squarefree_budget {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem neOneWitness_le_selectedSquarefree_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hG : 16 ≤ Real.log ((4 * bridge.squarefreePart : ℕ) : ℝ))
     (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
@@ -189,8 +188,7 @@ theorem primeNeOneWitness_le_selected_reciprocal_squarefree_budget {n : ℕ} {hn
               1) ^
             2 +
         (28 / 5 : ℝ) * (∑ r ∈ bridge.squareFactor.primeFactors, Real.log r) := by
-  obtain ⟨p, hp, ho, _, hj, hb⟩ :=
-    exists_prime_neg_one_le_selected_reciprocal_squarefree_budget bridge hGRH hG
+  obtain ⟨p, hp, ho, _, hj, hb⟩ := exists_prime_negOne_selectedSquarefree_GRH bridge hGRH hG
   have hne : jacobiSym n p ≠ 1 := by
     rw [hj]; norm_num only
   exact (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hp, ho, hne⟩)).trans hb
@@ -198,8 +196,8 @@ theorem primeNeOneWitness_le_selected_reciprocal_squarefree_budget {n : ℕ} {hn
 /-- Under GRH, n=s²d and log(4d)≥16, replace the square-factor cost by log(n)/2.
 This gives a logarithm-linear envelope for fixed d using the improved selected
 radius. Apply the proved bound and the square-factor prime-log estimate. -/
-theorem primeNegOneWitness_le_selected_reciprocal_squarefree_log_budget {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem negOneWitness_le_selectedSquarefreeLog_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hG : 16 ≤ Real.log ((4 * bridge.squarefreePart : ℕ) : ℝ))
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
@@ -210,13 +208,13 @@ theorem primeNegOneWitness_le_selected_reciprocal_squarefree_log_budget {n : ℕ
               1) ^
             2 +
         (14 / 5 : ℝ) * Real.log n := by
-  apply (primeNegOneWitness_le_selected_reciprocal_squarefree_budget bridge hGRH hG hw).trans
+  apply (negOneWitness_le_selectedSquarefree_GRH bridge hGRH hG hw).trans
   linarith only [squareFactor_prime_log_sum_le_half_log bridge]
 
 /-- For G≥16 and any real exclusion cost E, the selected squarefree polynomial
 bound is at most the previous adaptive polynomial with the same cost.
 Compare nonnegative radii and square. This certifies improvement on the full explicit domain. -/
-theorem selected_reciprocal_squarefree_budget_le_previous {G E : ℝ} (hG : 16 ≤ G) :
+theorem selectedSquarefree_le_adaptive {G E : ℝ} (hG : 16 ≤ G) :
     4 * (LLS.PaperStatements.selectedReciprocalRadius G + 1) ^ 2 + (28 / 5 : ℝ) * E ≤
       4 * (LLS.PaperStatements.adaptiveReciprocalRadius G + 1) ^ 2 + (28 / 5 : ℝ) * E := by
   have h := LLS.PaperStatements.selectedReciprocalRadius_le_previous hG
@@ -244,7 +242,7 @@ theorem primeNegOneWitness_le_selected_cutoff_root {n : ℕ} {hn : Odd n} {hns :
           (NumberTheory.complexQuadraticCharacter n hn).conductor)
         (179 / 200) (21 / 10) := by
   exact
-    primeNegOneWitness_le_variable_reciprocal_conductor_root (hn := hn) (hns := hns) hGRH hw
+    negOneWitness_le_variableConductor_GRH (hn := hn) (hns := hns) hGRH hw
       (LLS.PaperStatements.halfConductorReciprocalCutoff_ge_sixtyFour _)
 
 /-- Under GRH for odd nonsquare n, the least non-one odd-prime witness is
@@ -260,13 +258,13 @@ theorem primeNeOneWitness_le_selected_cutoff_root {n : ℕ} {hn : Odd n} {hns : 
           (NumberTheory.complexQuadraticCharacter n hn).conductor)
         (179 / 200) (21 / 10) := by
   exact
-    primeNeOneWitness_le_variable_reciprocal_conductor_root (hn := hn) (hns := hns) hGRH hw
+    neOneWitness_le_variableConductor_GRH (hn := hn) (hns := hns) hGRH hw
       (LLS.PaperStatements.halfConductorReciprocalCutoff_ge_sixtyFour _)
 
 /-- For G≥57 and any real exclusion cost E, the selected squarefree polynomial
 bound is at most the preceding direct even Hadamard polynomial. Use the certified
 radius comparison and nonnegative square monotonicity. The threshold is sufficient. -/
-theorem selected_reciprocal_squarefree_budget_le_even_fixed {G E : ℝ} (hG : 57 ≤ G) :
+theorem selectedSquarefree_le_evenFixed {G E : ℝ} (hG : 57 ≤ G) :
     4 * (LLS.PaperStatements.selectedReciprocalRadius G + 1) ^ 2 + (28 / 5 : ℝ) * E ≤
       4 * ((2429 / 720 : ℝ) * G + 18339 / 400) ^ 2 + (28 / 5 : ℝ) * E := by
   have h := LLS.PaperStatements.selectedReciprocalRadius_le_even_fixed hG

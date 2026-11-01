@@ -715,9 +715,9 @@ the bounds `k ≤ x` and `N ≤ x`.
 Role: this common arithmetic completion is shared by fixed-factor and
 all-divisor seed constructions.
 -/
-theorem seed_auxiliary_modulus_arithmetic_bounds_of_N_le_x {x N T k : ℕ} {S : Finset ℕ} {L : ℕ}
-    (hx : 2 ≤ x) (hNpos : 0 < N) (hNleX : N ≤ x) (hk : 0 < k) (hkpow : k ^ 5 ≤ x ^ 3)
-    (hScard : S.card = T + 1) (hTpower : (T + 1) ^ 4 ≤ x)
+theorem seed_modulus_arithmetic_of_N_le_x {x N T k : ℕ} {S : Finset ℕ} {L : ℕ} (hx : 2 ≤ x)
+    (hNpos : 0 < N) (hNleX : N ≤ x) (hk : 0 < k) (hkpow : k ^ 5 ≤ x ^ 3) (hScard : S.card = T + 1)
+    (hTpower : (T + 1) ^ 4 ≤ x)
     (hS :
       ∀ p ∈ S, Nat.Prime p ∧ p ≤ x ∧ ∃ d, d ∣ N ∧ d ≤ reliableProp15DivisorCutoff x ∧ p = d * k + 1)
     (hL : L = (S.filter (fun p => 60 * S.card < p)).prod id) (hLsq : Squarefree L)
@@ -820,9 +820,9 @@ reciprocal-sum field using `60 ≤ C`.
 Role: this converts the improved seed-tail output into the arithmetic input
 required by Proposition 1.5.
 -/
-theorem seed_auxiliary_modulus_arithmetic_bounds_of_cutoff_of_N_le_x (C : ℕ) (hC60 : 60 ≤ C)
-    {x N T k : ℕ} {S : Finset ℕ} {L : ℕ} (hx : 2 ≤ x) (hNpos : 0 < N) (hNleX : N ≤ x) (hk : 0 < k)
-    (hkpow : k ^ 5 ≤ x ^ 3) (hScard : S.card = T + 1) (hTpower : (T + 1) ^ 4 ≤ x)
+theorem seed_modulus_arithmetic_cutoff (C : ℕ) (hC60 : 60 ≤ C) {x N T k : ℕ} {S : Finset ℕ} {L : ℕ}
+    (hx : 2 ≤ x) (hNpos : 0 < N) (hNleX : N ≤ x) (hk : 0 < k) (hkpow : k ^ 5 ≤ x ^ 3)
+    (hScard : S.card = T + 1) (hTpower : (T + 1) ^ 4 ≤ x)
     (hS :
       ∀ p ∈ S, Nat.Prime p ∧ p ≤ x ∧ ∃ d, d ∣ N ∧ d ≤ reliableProp15DivisorCutoff x ∧ p = d * k + 1)
     (hL : L = (S.filter (fun p => C * S.card < p)).prod id) (hLsq : Squarefree L)

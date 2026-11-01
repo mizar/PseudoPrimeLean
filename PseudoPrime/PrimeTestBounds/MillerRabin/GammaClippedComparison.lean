@@ -87,7 +87,7 @@ theorem gammaClippedError_variation_bound (hRH : RiemannHypothesis) {x h : ℝ} 
     rw [hleft, hright]
     exact hinc
   have hv :=
-    AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional_abs_le_of_increment
+    AnalyticNumberTheory.Arithmetic.expRampVariation_abs_le_of_increment
       (gammaClippedErrorExtension_continuous hx0) hbound hD
   rw [AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional_congr
       gammaClippedErrorExtension_eqOn] at hv
@@ -262,8 +262,7 @@ theorem gammaClippedRampSum_lower (hRH : RiemannHypothesis) {r : ℝ} (hr : 1 �
   have hr0 : 0 < r := by linarith only [hr]
   have hx0 : 0 < r ^ 2 := by positivity
   have hs : Real.sqrt (r ^ 2) = r := Real.sqrt_sq (by linarith only [hr])
-  have hnorm :=
-    AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum_normalized_eq_main_add_error hx0
+  have hnorm := AnalyticNumberTheory.Arithmetic.expRampMangoldt_div_sqrt_eq_main_add_error hx0
   rw [hs] at hnorm
   have hvar :=
     gammaClippedError_variation_bound hRH hx (by positivity : 0 < r ^ 2 / 20)
@@ -537,7 +536,7 @@ theorem exists_prime_witness_of_gamma_index100_gap {n : ℕ} [NeZero n] (hn : 1 
   have hramp :=
     LLS.PaperStatements.gamma_ramp_subgroup_comparison H (by positivity : 0 < r ^ 2)
       (fun p hp _ hpb ↦ hsmall p hp hpb)
-  have hz := commonFactorExponentialSum_eq_zero_of_prime_passes hn hnOdd hpass (r ^ 2)
+  have hz := commonExpSum_zero_of_prime_passes hn hnOdd hpass (r ^ 2)
   rw [hz, zero_div, mul_zero, add_zero] at hramp
   have hrpos : 0 < r := by linarith only [hr]
   have hsqrt : Real.sqrt (r ^ 2) = r := Real.sqrt_sq hrpos.le
@@ -747,8 +746,7 @@ theorem exists_prime_witness_of_gammaClippedPrefixGap {n : ℕ} [NeZero n] (hn :
         3 := by
     simpa only [hs] using hbudgetGap
   exact
-    exists_prime_witness_of_signed_prefix_gap_all_inputs hn hnOdd hnComposite hn9 hGRH hQ hx hb hbX
-      hbudgetGap'
+    exists_prime_signedPrefix_allInputs_GRH hn hnOdd hnComposite hn9 hGRH hQ hx hb hbX hbudgetGap'
 
 /-- A retained-prefix lower bound yields a prime rejecting base below the
 parameterized clipped-log bound. -/
@@ -1457,8 +1455,7 @@ theorem gammaClippedUpper_le_shiftedEndpoint_sq {L : ℝ} (hL : 120 ≤ L) :
 
 /-- On the fourth affine piece, the shifted endpoint radius is the comparison
 line used by the clipped-log Gamma estimate. -/
-theorem shiftedEndpointRadius_le_midscaleEndpointRadius_piece4 {L : ℝ} (hL : 120 ≤ L)
-    (hPiece : L - 73 / 50 ≤ 6671 / 50) :
+theorem shiftedRadius_le_midscale_piece4 {L : ℝ} (hL : 120 ≤ L) (hPiece : L - 73 / 50 ≤ 6671 / 50) :
     (3200 / 3259 : ℝ) * (L - 113 / 25) ≤
       LLS.PaperStatements.midscaleEndpointRadius (L - 73 / 50) := by
   have hLow1 : ¬(L - 73 / 50 ≤ 703 / 20) := by linarith only [hL]
@@ -1471,8 +1468,7 @@ theorem shiftedEndpointRadius_le_midscaleEndpointRadius_piece4 {L : ℝ} (hL : 1
 
 /-- After the fourth affine piece, the final endpoint radius stays above its
 comparison line because its slope is larger. -/
-theorem shiftedEndpointRadius_le_midscaleEndpointRadius_final {L : ℝ} (hL : 120 ≤ L)
-    (hPiece : 6671 / 50 < L - 73 / 50) :
+theorem shiftedRadius_le_midscale_final {L : ℝ} (hL : 120 ≤ L) (hPiece : 6671 / 50 < L - 73 / 50) :
     (3200 / 3259 : ℝ) * (L - 113 / 25) ≤
       LLS.PaperStatements.midscaleEndpointRadius (L - 73 / 50) := by
   have hAbove : 3372 / 25 < L := by linarith only [hPiece]
@@ -1507,13 +1503,13 @@ theorem shiftedEndpointRadius_le_midscaleEndpointRadius {L : ℝ} (hL : 120 ≤ 
     (3200 / 3259 : ℝ) * (L - 113 / 25) ≤
       LLS.PaperStatements.midscaleEndpointRadius (L - 73 / 50) := by
   by_cases hPiece : L - 73 / 50 ≤ 6671 / 50
-  · exact shiftedEndpointRadius_le_midscaleEndpointRadius_piece4 hL hPiece
-  · exact shiftedEndpointRadius_le_midscaleEndpointRadius_final hL (lt_of_not_ge hPiece)
+  · exact shiftedRadius_le_midscale_piece4 hL hPiece
+  · exact shiftedRadius_le_midscale_final hL (lt_of_not_ge hPiece)
 
 /-- The comparison line at the new `7/4` shift lies below the five-piece
 endpoint radius for every level at least 122. At the final join the affine
 pieces agree, and the last slope is larger. -/
-theorem shiftedEndpointRadius7over4_le_midscaleEndpointRadius {L : ℝ} (hL : 122 ≤ L) :
+theorem shiftedRadius7_4_le_midscale {L : ℝ} (hL : 122 ≤ L) :
     (3200 / 3259 : ℝ) * (L - 481 / 100) ≤
       LLS.PaperStatements.midscaleEndpointRadius (L - 7 / 4) := by
   have hLow1 : ¬(L - 7 / 4 ≤ 703 / 20) := by linarith only [hL]
@@ -1550,7 +1546,7 @@ theorem shiftedEndpointRadius7over4_le_midscaleEndpointRadius {L : ℝ} (hL : 12
 /-- From level 122, the clipped-log Gamma envelope is below the endpoint
 radius with the `7/4` shift. The scalar comparison uses one anchor and a
 positive affine increment. -/
-theorem gammaClippedUpper_le_shiftedMidscaleEndpointRadius7over4 {L : ℝ} (hL : 122 ≤ L) :
+theorem gammaClipped_le_midscale_shift7_4 {L : ℝ} (hL : 122 ≤ L) :
     gammaClippedUpper L ≤ (LLS.PaperStatements.midscaleEndpointRadius (L - 7 / 4)) ^ 2 := by
   have hD : 0 ≤ 143420077 / 11856000 - 2 * (203 / 50 : ℝ) := by norm_num only
   have hgapOld := gammaClippedGap_radius7over4_positive hL
@@ -1593,7 +1589,7 @@ theorem gammaClippedUpper_le_shiftedMidscaleEndpointRadius7over4 {L : ℝ} (hL :
         ring
       _ = (440 / 441 : ℝ) * ((3200 / 3259 : ℝ) * (L - 481 / 100)) ^ 2 := by rw [hratio]
       _ ≤ _ := by nlinarith only [sq_nonneg ((3200 / 3259 : ℝ) * (L - 481 / 100))]
-  have hradius := shiftedEndpointRadius7over4_le_midscaleEndpointRadius hL
+  have hradius := shiftedRadius7_4_le_midscale hL
   have hradNew : 0 ≤ LLS.PaperStatements.midscaleEndpointRadius (L - 7 / 4) :=
     le_trans hbase hradius
   have hsqNew := (sq_le_sq₀ hbase hradNew).mpr hradius
@@ -1601,7 +1597,7 @@ theorem gammaClippedUpper_le_shiftedMidscaleEndpointRadius7over4 {L : ℝ} (hL :
 
 /-- The clipped-log Gamma envelope is no larger than the overlapping shifted
 exact-even endpoint bound. -/
-theorem gammaClippedUpper_le_shiftedMidscaleEndpointRadius_sq {L : ℝ} (hL : 120 ≤ L) :
+theorem gammaClipped_le_midscale_shift73_50 {L : ℝ} (hL : 120 ≤ L) :
     gammaClippedUpper L ≤ (LLS.PaperStatements.midscaleEndpointRadius (L - 73 / 50)) ^ 2 := by
   have hbound := gammaClippedUpper_le_shiftedEndpoint_sq hL
   have hradius := shiftedEndpointRadius_le_midscaleEndpointRadius hL

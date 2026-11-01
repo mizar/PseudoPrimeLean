@@ -88,7 +88,7 @@ theorem gamma_subgroup_comparison_log_two_thirds {q : ℕ} [NeZero q] (hq : 2000
     mul_le_mul_of_nonneg_left
       (gamma_principal_sum_lower_log_two_thirds hGRH.riemann (zero_lt_one.trans_le hx) hl hcut hL)
       (Nat.cast_nonneg H.index)
-  have hu := gamma_principal_sum_le_conductor_bound_of_noSmallPrimes hq H hGRH hx hsmall
+  have hu := gamma_principal_sum_le_conductor_of_noSmall_GRH hq H hGRH hx hsmall
   have he : Finset.Icc 1 ⌊lambda * x⌋₊ = Finset.Ioc 0 ⌊lambda * x⌋₊ := by
     ext n
     simp only [Finset.mem_Icc, Finset.mem_Ioc, Nat.succ_le_iff]

@@ -21,9 +21,8 @@ namespace PseudoPrime.LLS.PaperStatements
 principal sum is bounded by the exact conductor logarithm sum, the count of
 nonprincipal annihilator characters, and the level-one principal series.
 Aggregate the scale-decaying primitive budgets without discarding conductor savings. -/
-theorem triangular18_principal_sum_le_conductor_sum_explicit {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {x X : ℝ} (hx : 1 ≤ x)
+theorem triangular18_principal_explicit_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x X : ℝ} (hx : 1 ≤ x)
     (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     (H.index : ℝ) *
         ∑ n ∈ Finset.Icc 1 ⌊X⌋₊,
@@ -53,7 +52,7 @@ theorem triangular18_principal_sum_le_conductor_sum_explicit {q : ℕ} [NeZero q
     rw [Finset.card_erase_of_mem (Finset.mem_univ _), Finset.card_univ]
     rw [Nat.cast_sub (Nat.one_le_iff_ne_zero.mpr (Nat.ne_of_gt (Fintype.card_pos_iff.mpr ⟨1⟩))),
       Nat.cast_one, NumberTheory.card_subgroupAnnihilator]
-  have hb := triangular18_principal_sum_le_conductor_budgets_of_noSmallPrimes H hGRH hx hsmall
+  have hb := triangular18_principal_le_conductor_noSmall_GRH H hGRH hx hsmall
   erw [hf] at hb
   have hs :
     (∑ χ ∈ Finset.univ.erase (1 : S),
@@ -85,9 +84,8 @@ theorem triangular18_principal_sum_le_conductor_sum_explicit {q : ℕ} [NeZero q
 the finite principal sum has an entirely numerical alpha-18 upper estimate.
 Replace the remaining full principal series by its explicit RH upper bound;
 retain the exact conductor cost and the scale-decaying primitive remainder. -/
-theorem triangular18_principal_sum_le_conductor_sum_numeric {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {x X : ℝ} (hx : 1 ≤ x)
+theorem triangular18_principal_numeric_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x X : ℝ} (hx : 1 ≤ x)
     (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     (H.index : ℝ) *
         ∑ n ∈ Finset.Icc 1 ⌊X⌋₊,
@@ -97,7 +95,7 @@ theorem triangular18_principal_sum_le_conductor_sum_numeric {q : ℕ} [NeZero q]
         (36 + 4000000000000 * x ^ (-9 / 16 : ℝ)) * subgroupConductorLogSum H +
         ((H.index : ℝ) - 1) *
           (1350000000000000 + 55000 + 4000000000000 * 284 * x ^ (-9 / 16 : ℝ)) := by
-  have hb := triangular18_principal_sum_le_conductor_sum_explicit H hGRH hx hsmall
+  have hb := triangular18_principal_explicit_GRH H hGRH hx hsmall
   have hp := triangular18_level_one_arithmetic_upper_of_rh hGRH.riemann (zero_lt_one.trans_le hx)
   linarith only [hb, hp]
 

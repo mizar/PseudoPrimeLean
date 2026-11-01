@@ -53,9 +53,8 @@ finite principal sum by the primitive annihilator budgets while retaining both
 scale-one arithmetic real parts. Primitivization corrections are summed with
 their signs before using this upper bound. This is the subgroup comparison
 entry point for reducing the conservative zero-mass constant. -/
-theorem triangular18_principal_sum_le_signed_budgets_of_noSmallPrimes {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {x X : ℝ} (hx : 1 ≤ x)
+theorem triangular18_principal_le_signed_of_noSmall_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x X : ℝ} (hx : 1 ≤ x)
     (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     letI := Classical.propDecidable
     let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
@@ -69,9 +68,7 @@ theorem triangular18_principal_sum_le_signed_budgets_of_noSmallPrimes {q : ℕ} 
             4000000000000 * (Real.log χ.val.conductor + 284) * x ^ (-9 / 16 : ℝ) := by
   classical
   let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
-  have hc :=
-    MellinKernel.principal_sum_le_primitive_average_of_noSmallPrimes K H (zero_lt_one.trans_le hx)
-      hsmall
+  have hc := MellinKernel.principal_sum_le_primitive_of_noSmall K H (zero_lt_one.trans_le hx) hsmall
   apply hc.trans
   apply Finset.sum_le_sum
   intro χ _

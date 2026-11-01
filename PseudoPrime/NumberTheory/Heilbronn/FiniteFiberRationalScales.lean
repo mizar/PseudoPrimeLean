@@ -63,8 +63,8 @@ theorem height_le_real_power_of_power {p H a d : ℕ} {rho : ℝ} (ha : 0 < a) (
 primes admit a cutoff with the strict Heilbronn energy budget. Fix the
 finite-fiber parameters, select an exact natural cutoff, and use the uniform
 count estimate. No GRH or additional count hypothesis is required. -/
-theorem exists_uniform_finite_fiber_rational_energy_budget {a b : ℕ} (ha : 0 < a)
-    (hgap : 463 * a < 252 * b) (hsmall : b < 2 * a) :
+theorem exists_uniform_fiber_energy_budget {a b : ℕ} (ha : 0 < a) (hgap : 463 * a < 252 * b)
+    (hsmall : b < 2 * a) :
     ∃ P : ℕ,
       ∀ (p : ℕ) [Fact p.Prime],
         Odd p →
@@ -108,8 +108,8 @@ theorem exists_uniform_finite_fiber_rational_energy_budget {a b : ℕ} (ha : 0 <
 for sufficiently large odd primes, a cutoff has initial subgroup count
 less than 256k/p. Transfer the energy budget to the smaller Fourier height.
 This supplies the existing smooth-number-to-Fermat-quotient argument. -/
-theorem exists_uniform_finite_fiber_heilbronn_interval_bound {a b : ℕ} (ha : 0 < a)
-    (hgap : 463 * a < 252 * b) (hsmall : b < 2 * a) :
+theorem exists_uniform_finite_fiber_interval_bound {a b : ℕ} (ha : 0 < a) (hgap : 463 * a < 252 * b)
+    (hsmall : b < 2 * a) :
     ∃ P : ℕ,
       ∀ (p : ℕ) [Fact p.Prime],
         Odd p →
@@ -118,7 +118,7 @@ theorem exists_uniform_finite_fiber_heilbronn_interval_bound {a b : ℕ} (ha : 0
             0 < k ∧
               k < p ^ 2 ∧
               p ^ b ≤ k ^ a ∧ k ^ a ≤ 2 ^ a * p ^ b ∧ p * heilbronnInitialCount p k < 256 * k := by
-  obtain ⟨P, hP⟩ := exists_uniform_finite_fiber_rational_energy_budget ha hgap hsmall
+  obtain ⟨P, hP⟩ := exists_uniform_fiber_energy_budget ha hgap hsmall
   refine ⟨max P (32 ^ a * 2 ^ a + 1), ?_⟩
   intro p hp hodd hlarge
   have hPp := (max_le_iff.mp hlarge).1

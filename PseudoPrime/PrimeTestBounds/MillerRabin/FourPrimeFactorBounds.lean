@@ -22,8 +22,8 @@ satisfy Korselt divisibility and have equal predecessor two-adic valuations.
 Select a paired modulus no larger than sqrt(n), construct its proper sign
 subgroup using the paired quadratic character, and reduce every strong pass.
 No ambient index, local size, or supplied containment hypothesis is needed. -/
-theorem exists_prime_witness_le_0283_of_four_primeFactors_uniform_twoAdic {n : ℕ} (hnOdd : Odd n)
-    (hc : 4 ≤ n.primeFactors.card) (hK : ∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1)
+theorem exists_prime_0282924_fourFactors_GRH {n : ℕ} (hnOdd : Odd n) (hc : 4 ≤ n.primeFactors.card)
+    (hK : ∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1)
     (hv :
       ∀ p q : ℕ, p.Prime → q.Prime → p ∣ n → q ∣ n → padicValNat 2 (p - 1) = padicValNat 2 (q - 1))
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hn : 10 ^ 142 ≤ n) :

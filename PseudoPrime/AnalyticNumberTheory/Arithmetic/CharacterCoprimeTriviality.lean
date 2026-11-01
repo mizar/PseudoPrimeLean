@@ -17,8 +17,8 @@ namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 /-- If a character is one at all coprime primes through b, its value is one at
 every coprime n<=b with nonzero Mangoldt value. Reduce to a positive prime power.
 This transfers unit-prime witness nonexistence to selected Mangoldt supports. -/
-theorem character_apply_one_of_coprime_mangoldt_ne_zero {q n : ℕ} (χ : DirichletCharacter ℂ q)
-    {b : ℝ} (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → Nat.Coprime p q → χ p = 1) (hn : (n : ℝ) ≤ b)
+theorem character_eq_one_of_coprime_mangoldt {q n : ℕ} (χ : DirichletCharacter ℂ q) {b : ℝ}
+    (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → Nat.Coprime p q → χ p = 1) (hn : (n : ℝ) ≤ b)
     (hcop : Nat.Coprime n q) (hΛ : ArithmeticFunction.vonMangoldt n ≠ 0) : χ n = 1 := by
   obtain ⟨p, r, hp, hr, rfl⟩ :=
     (isPrimePow_nat_iff (n := n)).mp (ArithmeticFunction.vonMangoldt_ne_zero_iff.mp hΛ)
@@ -34,7 +34,7 @@ theorem character_apply_ite_of_coprime_trivial {q n : ℕ} (χ : DirichletCharac
     (hΛ : ArithmeticFunction.vonMangoldt n ≠ 0) : χ n = if Nat.Coprime n q then 1 else 0 := by
   by_cases hc : Nat.Coprime n q
   · rw [ite_eq_left hc]
-    exact character_apply_one_of_coprime_mangoldt_ne_zero χ hsmall hn hc hΛ
+    exact character_eq_one_of_coprime_mangoldt χ hsmall hn hc hΛ
   · rw [ite_eq_right hc]
     exact χ.map_nonunit (fun hu ↦ hc ((ZMod.isUnit_iff_coprime n q).mp hu))
 
@@ -48,7 +48,7 @@ noncomputable def coprimePositiveMangoldtPrefix (q : ℕ) (S : Finset ℕ) (w : 
 /-- For a finite support through b and arbitrary real weights, coprime prime
 triviality identifies the positive character prefix with one full copy plus one
 coprime copy. Split zero Mangoldt terms and use the exact zero-or-one values. -/
-theorem character_positive_mangoldt_prefix_eq_coprime {q : ℕ} (χ : DirichletCharacter ℂ q) {b : ℝ}
+theorem character_positive_prefix_eq_coprime {q : ℕ} (χ : DirichletCharacter ℂ q) {b : ℝ}
     (S : Finset ℕ) (w : ℕ → ℝ) (hS : ∀ n ∈ S, (n : ℝ) ≤ b)
     (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → Nat.Coprime p q → χ p = 1) :
     (∑ n ∈ S, (1 + (χ n).re) * ArithmeticFunction.vonMangoldt n * w n) =
@@ -98,7 +98,7 @@ theorem coprimePositiveMangoldtPrefix_eq_twice_sub (q : ℕ) (S : Finset ℕ) (w
 
 /-- On a support coprime to q, the full-plus-coprime prefix is twice the full prefix.
 The coprime filter is the entire support. This recovers the no-loss comparison interface. -/
-theorem coprimePositiveMangoldtPrefix_eq_twice_of_coprime (q : ℕ) (S : Finset ℕ) (w : ℕ → ℝ)
+theorem coprimeMangoldtPrefix_eq_twice_of_coprime (q : ℕ) (S : Finset ℕ) (w : ℕ → ℝ)
     (hc : ∀ n ∈ S, Nat.Coprime n q) :
     coprimePositiveMangoldtPrefix q S w = 2 * ∑ n ∈ S, ArithmeticFunction.vonMangoldt n * w n := by
   unfold coprimePositiveMangoldtPrefix
@@ -108,7 +108,7 @@ theorem coprimePositiveMangoldtPrefix_eq_twice_of_coprime (q : ℕ) (S : Finset 
 /-- For a quadratic complex character and any natural input coprime to its level,
 a value different from one is minus one. Exclude zero by the unit condition and
 split the three quadratic values. No primitivity, GRH or primality is needed. -/
-theorem quadratic_character_apply_neg_one_of_coprime_ne_one {q n : ℕ} (χ : DirichletCharacter ℂ q)
+theorem quadraticChar_eq_neg_one_of_coprime_ne_one {q n : ℕ} (χ : DirichletCharacter ℂ q)
     (hquad : χ.IsQuadratic) (hcop : Nat.Coprime n q) (hne : χ n ≠ 1) : χ n = -1 := by
   have hz : χ n ≠ 0 := MulChar.apply_ne_zero_iff.mpr ((ZMod.isUnit_iff_coprime n q).mpr hcop)
   rcases hquad (n : ZMod q) with h0 | h1 | hm

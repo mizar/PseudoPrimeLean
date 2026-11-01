@@ -52,14 +52,14 @@ theorem norm_logDeriv_GammaReal_strip_le_log {s : ℂ} (hl : 2 ≤ s.re) (hu : s
 
 /-- Both parities at real part 5/2 fit the explicit real Gamma strip. The gamma-factor
 logarithmic derivative has the same uniform logarithmic height allowance. -/
-theorem norm_logDeriv_gammaFactor_five_halves_le {q : ℕ} (χ : DirichletCharacter ℂ q) {s : ℂ}
-    (hs : s.re = 5 / 2) : ‖logDeriv χ.gammaFactor s‖ ≤ 8 + Real.log (2 + |s.im|) / 2 := by
+theorem gammaLogDeriv_5_2_bound {q : ℕ} (χ : DirichletCharacter ℂ q) {s : ℂ} (hs : s.re = 5 / 2) :
+    ‖logDeriv χ.gammaFactor s‖ ≤ 8 + Real.log (2 + |s.im|) / 2 := by
   have hp : 0 < s.re := by
     rw [hs]; norm_num only
   have hf : (1 : DirichletCharacter ℂ 1).gammaFactor = Complex.Gammaℝ := by
     funext z
     exact principal_modulus_one_even.gammaFactor_def z
-  rcases logDeriv_gammaFactor_eq_one_or_one_shift χ hp with he | he
+  rcases gammaLogDeriv_eq_one_or_shift χ hp with he | he
   · rw [he, hf]
     exact
       norm_logDeriv_GammaReal_strip_le_log
@@ -81,8 +81,8 @@ theorem norm_logDeriv_gammaFactor_five_halves_le {q : ℕ} (χ : DirichletCharac
 /-- Every nonprincipal character has completed logarithmic derivative norm at 5/2+it
 at most ten plus half log(2+|t|). Add the ordinary inverse-gap estimate to the gamma term.
 This closes the abstract derivative-budget premise in the exact Gram row bound. -/
-theorem norm_logDeriv_completed_five_halves_le {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
-    (hne : χ ≠ 1) (t : ℝ) :
+theorem completedLogDeriv_5_2_bound {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hne : χ ≠ 1)
+    (t : ℝ) :
     ‖logDeriv χ.completedLFunction (((5 / 2 : ℝ) : ℂ) + t * Complex.I)‖ ≤
       10 + Real.log (2 + |t|) / 2 := by
   let s : ℂ := ((5 / 2 : ℝ) : ℂ) + t * Complex.I
@@ -96,12 +96,11 @@ theorem norm_logDeriv_completed_five_halves_le {q : ℕ} [NeZero q] {χ : Dirich
     rw [hr]; norm_num only
   have hp : 0 < s.re := zero_lt_one.trans_le hr1
   have he :=
-    logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne
-      (completedLFunction_ne_zero_of_one_le_re hne hr1) (gammaFactor_ne_zero_of_re_pos χ hp)
-      (analyticAt_gammaFactor_of_re_pos χ hp).differentiableAt
+    L_logDeriv_sub_gamma_of_regular hne (completed_ne_zero_of_one_le_re hne hr1)
+      (gammaFactor_ne_zero_of_re_pos χ hp) (analyticAt_gammaFactor_of_re_pos χ hp).differentiableAt
   have ho := norm_logDeriv_le_inv_gap χ (by norm_num only : (1 : ℝ) < 5 / 2) t
   norm_num only at ho
-  have hg := norm_logDeriv_gammaFactor_five_halves_le χ hr
+  have hg := gammaLogDeriv_5_2_bound χ hr
   rw [hi] at hg
   have hc :
     logDeriv χ.completedLFunction s = logDeriv χ.LFunction s + logDeriv χ.gammaFactor s := by
@@ -131,7 +130,7 @@ theorem completed_logDeriv_re_le_height {q : ℕ} [NeZero q] {χ : DirichletChar
     (hne : χ ≠ 1) {t H : ℝ} (ht : |t| ≤ H) :
     (logDeriv χ.completedLFunction (((5 / 2 : ℝ) : ℂ) + t * Complex.I)).re ≤
       10 + Real.log (2 + H) / 2 := by
-  have hb := norm_logDeriv_completed_five_halves_le hne t
+  have hb := completedLogDeriv_5_2_bound hne t
   have hl :=
     Real.log_le_log (by linarith only [abs_nonneg t] : 0 < 2 + |t|)
       (by linarith only [ht] : 2 + |t| ≤ 2 + H)
@@ -140,7 +139,7 @@ theorem completed_logDeriv_re_le_height {q : ℕ} [NeZero q] {χ : DirichletChar
 
 /-- The exact finite Dirichlet zero row obeys the explicit modulus and height allowance.
 Use the proved completed derivative estimate in the exact Poisson row bound. -/
-theorem finite_completed_gram_row_le_numerical {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem finite_completedGram_row_bound_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (S : Finset ℂ) (t : ℝ) :
     ∑ ρ ∈ S,
@@ -155,7 +154,7 @@ theorem finite_completed_gram_row_le_numerical {q : ℕ} [NeZero q] (hq : 2 ≤ 
 /-- For a fixed primitive nonprincipal individual-RH character and finite height window,
 every actual prefix energy is bounded by the explicit row budget times coefficient l2 mass.
 The abstract completed-derivative bound is discharged internally. -/
-theorem completed_zero_prefix_energy_le_height {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem completedPrefix_energy_height_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (S : Finset ℂ) (a : ℂ → ℂ) {H : ℝ} (hH : 0 ≤ H)
     (hheight : ∀ ρ ∈ S, |ρ.im| ≤ H) (t : ℝ) :
@@ -199,6 +198,6 @@ theorem completed_zero_block_point_le_height {q : ℕ} [NeZero q] (hq : 2 ≤ q)
       (fun ρ ↦ ((analyticOrderNatAt χ.completedLFunction ρ : ℝ) : ℂ) * a ρ) hU hUT
       (mul_nonneg (dirichletGramRowBudget_nonneg q hH)
         (Finset.sum_nonneg (fun ρ hρ ↦ mul_nonneg (Nat.cast_nonneg _) (sq_nonneg _))))
-  exact fun t ht ↦ completed_zero_prefix_energy_le_height hq hRH hp hne hinv S a hH hheight t
+  exact fun t ht ↦ completedPrefix_energy_height_RH hq hRH hp hne hinv S a hH hheight t
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

@@ -79,9 +79,7 @@ theorem fixedStencil_raw_increment (hRH : RiemannHypothesis) {x : ℝ} (hx : 1 �
     · dsimp only [h]; nlinarith only [ht.2, hx]
     · nlinarith only [ht.2, hx]
     · dsimp only [h]; nlinarith only [ht.2, hx]
-  have he :=
-    AnalyticNumberTheory.Arithmetic.logWeighted_error_increment_le_of_log_shift_stencil hc hh ha hab
-      hE
+  have he := AnalyticNumberTheory.Arithmetic.logWeighted_increment_le_of_log_shift hc hh ha hab hE
   have hid :
     ((x * (99 / 40 : ℝ) - x * (247 / 100)) +
             (h + 2 * fixedStencilEnvelope x * (x * (99 / 40) + h) / h + Real.log (2 * Real.pi))) *
@@ -177,9 +175,9 @@ theorem fixedShift_exp_sum_upper (hRH : RiemannHypothesis) {x : ℝ} (hx : 1 ≤
               (fun u ↦ AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum (x * u) - x * u) +
           fixedShiftPrincipalError x +
           Real.log (2 * Real.pi) * Real.exp (-(1 / x))) := by
-  apply exponentialMangoldtSum_upper_of_eventual_integral_cap hRH hx (99 / 40)
+  apply expMangoldtSum_upper_of_eventual_cap_RH hRH hx (99 / 40)
   intro y hy0 hy
-  rw [logWeighted_exponential_integral_eq_main_add_error (zero_lt_one.trans_le hx) hy0]
+  rw [logWeighted_exp_integral_eq_main_error (zero_lt_one.trans_le hx) hy0]
   have hb := (abs_le.mp (fixedShift_joint_bound hRH hx hy)).1
   have he := jointFunctional_clippedShiftError_eq hx hy
   have hc : Real.log (2 * Real.pi) ≤ 2 := by linarith only [Analysis.log_two_mul_pi_lt.le]
@@ -205,8 +203,7 @@ theorem fixedShiftPrincipal_le_actual (hRH : RiemannHypothesis) {x : ℝ} (hx : 
             PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x n).re := by
   have hx0 := zero_lt_one.trans_le hx
   have hs := Real.sqrt_pos.mpr hx0
-  have hR :=
-    AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum_normalized_eq_main_add_error hx0
+  have hR := AnalyticNumberTheory.Arithmetic.expRampMangoldt_div_sqrt_eq_main_add_error hx0
   have hP :
     (∑' n : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x n).re ≤
       2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -

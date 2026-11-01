@@ -124,8 +124,8 @@ theorem gamma_joint_prefix_le_of_local_certificate {n : ℕ} (hn : Odd n) (hns :
 Claim: factor-free separation is at most actual separation plus delta-3/4.
 Proof: compare the local and pole budgets with their signs retained.
 Role: determine the exact scalar gap required for witness extraction. -/
-theorem gamma_factor_free_separation_of_local_certificate {n Q : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
-    {L b x δ : ℝ} (hlog : Real.log n ≤ L) (cert : GammaLocalBudgetCertificate x δ)
+theorem gammaFactorFree_le_localCert {n Q : ℕ} (hn : Odd n) (hns : ¬IsSquare n) {L b x δ : ℝ}
+    (hlog : Real.log n ≤ L) (cert : GammaLocalBudgetCertificate x δ)
     (hlogQ : Real.log Q ≤ L + 7 / 5) :
     gammaFactorFreeSeparation L b x ≤
       gammaJointPrefixSeparation Q (NumberTheory.complexQuadraticCharacter n hn) b x (-3 / 2) + δ -

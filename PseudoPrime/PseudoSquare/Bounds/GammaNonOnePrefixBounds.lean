@@ -25,8 +25,8 @@ namespace PseudoPrime.PseudoSquare
  Apply the non-one Gamma comparison to the complex quadratic character.
  On units use prime evaluation; on nonunits use the zero Jacobi value.
  This permits the same scale for pointwise bounds and finite maxima. -/
-theorem exists_prime_ne_one_witness_le_gamma_at_endpoint_prefix {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hq : 20000 ≤ 4 * n) {L : ℝ} (hL : 36170 ≤ L) (hlogn : Real.log n ≤ L)
+theorem exists_neOneWitness_le_gamma_at_endpoint_prefix {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hq : 20000 ≤ 4 * n) {L : ℝ} (hL : 36170 ≤ L) (hlogn : Real.log n ≤ L)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * L ^ 2 ∧ jacobiSym n p ≠ 1 := by
   let : NeZero (4 * n) := ⟨Nat.mul_ne_zero (by norm_num only) (Odd.pos hn).ne'⟩
@@ -76,8 +76,8 @@ theorem exists_prime_ne_one_witness_le_gamma_15727
   have hq : 20000 ≤ 4 * n :=
     (by norm_num only : 20000 ≤ 4 * 20000).trans (Nat.mul_le_mul_left 4 hnlarge)
   exact
-    exists_prime_ne_one_witness_le_gamma_at_endpoint_prefix hn hns hq
-      (log_nat_ge_36170_of_decimal hN) (le_refl _) hGRH
+    exists_neOneWitness_le_gamma_at_endpoint_prefix hn hns hq (log_nat_ge_36170_of_decimal hN)
+      (le_refl _) hGRH
 
 /-- Under GRH and n≥10^15727 for an odd nonsquare n, its least odd-prime non-one
  Jacobi witness is at most (4/5)log(n)². Minimize the bounded witness.
@@ -101,7 +101,7 @@ theorem primeNeOneWitness_cast_le_gamma_endpoint_prefix
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤ (4 / 5 : ℝ) * L ^ 2 := by
   by_cases hq : 20000 ≤ 4 * n
   · obtain ⟨p, hp, ho, hb, hv⟩ :=
-      exists_prime_ne_one_witness_le_gamma_at_endpoint_prefix hn hns hq hL hlogn hGRH
+      exists_neOneWitness_le_gamma_at_endpoint_prefix hn hns hq hL hlogn hGRH
     exact (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hb
   · have hnsmall : n ≤ 46000 := by
       have ht := lt_of_not_ge hq

@@ -116,8 +116,8 @@ theorem norm_gaussian_oscillatingZeroSum_lt_principal {m : ℕ} [NeZero m] (hm :
   rw [tsum_congr he] at hn
   exact
     hn.trans_lt
-      (AnalyticNumberTheory.DirichletLFunction.gaussian_zeroMass_lt_principal_uniform hm
-        (hGRH m χ hp) hGRH.riemann hp hne hinv)
+      (AnalyticNumberTheory.DirichletLFunction.gaussianNormMass_principal_RH hm (hGRH m χ hp)
+        hGRH.riemann hp hne hinv)
 
 /-- If a primitive character is trivial on the 50000 prefix, its Gaussian
 oscillating zero sum has additive constant 159169/50000. Transfer the Gamma
@@ -150,7 +150,7 @@ theorem norm_gaussian_oscillatingZeroSum_lt_prefix_gain {m : ℕ} [NeZero m] (hm
 /-- If a primitive character is trivial on the 1000 prefix, its Gaussian
 oscillating zero sum has additive constant 5969/1000. Apply the transferred
 prefix bound and discard the nonnegative paired tail. -/
-theorem norm_gaussian_oscillatingZeroSum_lt_prefix1000_gain {m : ℕ} [NeZero m] (hm : 2 ≤ m)
+theorem norm_gaussianZeroSum_prefix1000_lt_GRH {m : ℕ} [NeZero m] (hm : 2 ≤ m)
     {χ : DirichletCharacter ℂ m} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
     (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ 1000 → χ p = 1) {x : ℝ} (hx : 0 < x) :

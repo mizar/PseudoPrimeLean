@@ -51,7 +51,7 @@ theorem conductor_exclusion_refined_gap {A E : ℝ} (hA : 0 ≤ A) :
 /-- Under GRH for primitive χ of level q ≥ 3 and m ≠ 0, a non-one prime outside m
 lies below max(131072,4(12log(q)+113)²+8E(m)). Apply the scalar comparison with
 A=12log(q)+112. This separates conductor and excluded-prime costs with smaller constants. -/
-theorem exists_prime_ne_one_le_refined_conductor_exclusion {q m : ℕ} [NeZero q]
+theorem exists_neOnePrime_le_refined_conductor_exclusion {q m : ℕ} [NeZero q]
     (χ : DirichletCharacter ℂ q) (hq : 3 ≤ q) (hp : χ.IsPrimitive)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hm : m ≠ 0) :
     ∃ p : ℕ,
@@ -153,8 +153,7 @@ theorem exists_prime_ne_one_of_small_conductor_gap {q m : ℕ} [NeZero q] (χ : 
   have hno (p : ℕ) (hp : p.Prime) (hb : (p : ℝ) ≤ y) (hd : ¬p ∣ m) : χ p = 1 := by
     by_contra hne
     exact hnone ⟨p, hp, hb, hd, hne⟩
-  exact
-    (log_half_no_witness_conductor_comparison_of_ge_twoHundred χ hq hp hGRH hm hy hno).not_gt hgap
+  exact (noWitness_half_conductor_bound_200_GRH χ hq hp hGRH hm hy hno).not_gt hgap
 
 /-- For A,E ≥ 0, the squared larger root with one unit of slack satisfies the
 strict conductor comparison. Expand after the square-root identity.

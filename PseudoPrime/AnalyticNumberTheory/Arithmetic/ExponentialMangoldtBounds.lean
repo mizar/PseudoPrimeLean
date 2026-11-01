@@ -163,7 +163,7 @@ theorem exponentialMangoldtSum_lower_of_psi_error {C x y : ℝ} (hC : 0 ≤ C) (
 /-- Normalize the finite exponential lower bound by sqrt(x), for x>0 and
 y≥0. A psi error C t^(3/4) becomes a kernel truncation error C x^(1/4).
 Division and real-power identities match the principal Gamma summand normalization. -/
-theorem exponentialMangoldtSum_div_sqrt_lower_of_psi_error {C x y : ℝ} (hC : 0 ≤ C) (hx : 0 < x)
+theorem expMangoldtSum_div_sqrt_lower_of_psi_error {C x y : ℝ} (hC : 0 ≤ C) (hx : 0 < x)
     (hy : 0 ≤ y) (hpsi : ∀ t : ℝ, 0 ≤ t → |Chebyshev.psi t - t| ≤ C * t ^ (3 / 4 : ℝ)) :
     Real.sqrt x * (1 - Real.exp (-y / x)) - C * x ^ (1 / 4 : ℝ) ≤
       exponentialMangoldtSum x y / Real.sqrt x := by
@@ -266,7 +266,7 @@ theorem exponentialMangoldtSum_upper_of_psi_error {C x y : ℝ} (hC : 0 ≤ C) (
 /-- Normalize the finite exponential upper estimate by sqrt(x), for x>0 and
 y≥0. Dropping the negative exponential main term gives sqrt(x)+Cx^(1/4).
 The upper bound is independent of cutoff, so it can pass to a convergent series. -/
-theorem exponentialMangoldtSum_div_sqrt_upper_of_psi_error {C x y : ℝ} (hC : 0 ≤ C) (hx : 0 < x)
+theorem expMangoldtSum_div_sqrt_upper_of_psi_error {C x y : ℝ} (hC : 0 ≤ C) (hx : 0 < x)
     (hy : 0 ≤ y) (hpsi : ∀ t : ℝ, 0 ≤ t → |Chebyshev.psi t - t| ≤ C * t ^ (3 / 4 : ℝ)) :
     exponentialMangoldtSum x y / Real.sqrt x ≤ Real.sqrt x + C * x ^ (1 / 4 : ℝ) := by
   have h := exponentialMangoldtSum_upper_of_psi_error hC hx hy hpsi

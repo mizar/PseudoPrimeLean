@@ -85,10 +85,10 @@ private theorem nine_le_log_sq_of_twenty_nine_le {n : ℕ} (hn : 29 ≤ n) :
 `(log n)²`. Enumerate the range, certify candidates five, seven, nine, or eleven by Jacobi
 evaluation, and absorb each candidate using numerical logarithmic bounds. This is the
 unconditional finite branch of the pointwise GRH bound. -/
-theorem classicalFirstStopNeOne_cast_le_log_sq_of_13_le_of_lt_49 {n : ℕ} (_hn13 : 13 ≤ n)
-    (hn49 : n < 49) (hn : Odd n) (hns : ¬IsSquare n) :
+theorem classicalNeOne_logSq_between13_49 {n : ℕ} (_hn13 : 13 ≤ n) (hn49 : n < 49) (hn : Odd n)
+    (hns : ¬IsSquare n) :
     (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n
-          (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns) :
+          (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns) :
         ℝ) ≤
       Real.log (n : ℝ) ^ 2 := by
   interval_cases n
@@ -136,17 +136,16 @@ theorem classicalFirstStopNeOne_cast_le_log_sq_of_13_le_of_lt_49 {n : ℕ} (_hn1
 /-- For odd nonsquares `13 ≤ n < 49`, the classical factor-detecting first stop is at most fifteen.
 The least prime witness is at most seven below 64; the unconditional stop/witness comparison then
 bounds the stop by `max 15 witness`. This provides a natural-number bound independently of GRH. -/
-theorem classicalFirstStopNeOne_le_fifteen_of_13_le_of_lt_49 {n : ℕ} (_hn13 : 13 ≤ n)
-    (hn49 : n < 49) (hn : Odd n) (hns : ¬IsSquare n) :
+theorem classicalNeOne_le_15_of_13_le_lt_49 {n : ℕ} (_hn13 : 13 ≤ n) (hn49 : n < 49) (hn : Odd n)
+    (hns : ¬IsSquare n) :
     PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n
-        (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns) ≤
+        (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns) ≤
       15 := by
   let hw :=
     NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
       (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns)
-  let hs := PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns
-  have hmax :=
-    PrimeTest.primeNeOneWitness_le_classicalFirstStop_le_max_unconditional hn.pos hn hns hw hs
+  let hs := PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns
+  have hmax := PrimeTest.neOneWitness_classicalStop_bounds hn.pos hn hns hw hs
   have hw7 :=
     PseudoSquare.primeNeOneWitness_le_seven_of_lt_sixtyFour hn hns
       (hn49.trans (by norm_num only : 49 < 64))

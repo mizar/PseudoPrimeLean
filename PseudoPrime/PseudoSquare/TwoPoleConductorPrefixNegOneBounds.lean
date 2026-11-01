@@ -26,8 +26,8 @@ noncomputable def conductorPrefixTwoPoleNegOneRadius (L : ℝ) : ℝ :=
 prime negative Jacobi witness lies below the logarithmic two-pole radius at B.
 Use original level 4n and common ambient level 4B. Monotonicity of the nonlinear
 root transfers log(4B) to log B+7/5. No finite-input certificate is used. -/
-theorem exists_odd_prime_neg_one_le_conductorPrefixTwoPole_log_ambient {n B : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hnB : n ≤ B) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem exists_oddPrime_negOne_conductorAmbient_GRH {n B : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hnB : n ≤ B) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : 500 ≤ Real.log B) :
     ∃ p : ℕ,
       p.Prime ∧
@@ -39,8 +39,7 @@ theorem exists_odd_prime_neg_one_le_conductorPrefixTwoPole_log_ambient {n B : �
     nlinarith only [(Nat.cast_nonneg B : (0 : ℝ) ≤ B)]
   have hLA : 500 ≤ Real.log (4 * B : ℕ) := hL.trans (Real.log_le_log (Nat.cast_pos.mpr hBpos) hBA)
   obtain ⟨p, hp, hd, hb, hv⟩ :=
-    LLS.exists_prime_neg_one_le_conductorPrefix_log_ambient
-      (NumberTheory.complexQuadraticCharacter n hn)
+    LLS.exists_prime_negOne_conductorPrefixLog_GRH (NumberTheory.complexQuadraticCharacter n hn)
       (NumberTheory.complexQuadraticCharacter_isQuadratic n hn)
       (NumberTheory.complexQuadraticCharacter_isEven n hn)
       (NumberTheory.complexQuadraticCharacter_ne_one_of_not_square n hn hns)
@@ -59,7 +58,7 @@ theorem exists_odd_prime_neg_one_le_conductorPrefixTwoPole_log_ambient {n B : �
     LLS.conductorPrefixNegativeLogRoot_mono (by linarith only [hLA] : 0 < Real.log (4 * B : ℕ)) hlog
   have hs := mul_self_le_mul_self hr hu
   have hw :=
-    NumberTheory.primeNegOneWitness_mem_of_complexQuadraticCharacter_ne_one n hn hp hd
+    NumberTheory.negOneWitness_mem_of_quadratic_ne_one n hn hp hd
       (by
         rw [hv]; norm_num only)
   refine ⟨p, hp, hw.2.1, ?_, hw.2.2⟩
@@ -69,13 +68,12 @@ theorem exists_odd_prime_neg_one_le_conductorPrefixTwoPole_log_ambient {n B : �
 /-- Under the common-ambient assumptions, bound the least odd-prime negative
 Jacobi witness for n by the logarithmic radius at B. Apply leastness to the
 constructed prime. This is the input to the full finite-maximum theorem. -/
-theorem primeNegOneWitness_cast_le_conductorPrefixTwoPole_log_ambient {n B : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hnB : n ≤ B) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem negOneWitness_le_conductorAmbient_GRH {n B : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hnB : n ≤ B) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : 500 ≤ Real.log B) (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤
       conductorPrefixTwoPoleNegOneRadius (Real.log B) := by
-  obtain ⟨p, hp, ho, hb, hv⟩ :=
-    exists_odd_prime_neg_one_le_conductorPrefixTwoPole_log_ambient hn hns hnB hGRH hL
+  obtain ⟨p, hp, ho, hb, hv⟩ := exists_oddPrime_negOne_conductorAmbient_GRH hn hns hnB hGRH hL
   exact (Nat.cast_le.mpr (NumberTheory.primeNegOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hb
 
 /-- Under GRH with log B at least 500, QNegOne(B) is at most the logarithmic
@@ -88,13 +86,13 @@ theorem QNegOne_le_conductorPrefixTwoPole_logarithmic {B : ℕ} (hL : 500 ≤ Re
   intro n hn
   have ha := NumberTheory.mem_admissibleFinset_iff.mp hn
   exact
-    primeNegOneWitness_cast_le_conductorPrefixTwoPole_log_ambient ha.odd ha.not_isSquare ha.le hGRH
-      hL (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare ha.odd ha.not_isSquare)
+    negOneWitness_le_conductorAmbient_GRH ha.odd ha.not_isSquare ha.le hGRH hL
+      (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare ha.odd ha.not_isSquare)
 
 /-- For real L at least 915, the retained negative radius is below (99/100)L squared.
 Use the global logarithmic tangent to bound the shifted root by 3161L/5000.
 This certifies the improvement over the preceding coefficient 99/100. -/
-theorem conductorPrefixTwoPoleNegOneRadius_lt_ninety_nine {L : ℝ} (hL : 915 ≤ L) :
+theorem conductorPrefixTwoPoleNegOne_le_99_100_sq {L : ℝ} (hL : 915 ≤ L) :
     conductorPrefixTwoPoleNegOneRadius L < (99 / 100 : ℝ) * L ^ 2 := by
   let T := L + 7 / 5
   have hT : 500 ≤ T := by
@@ -140,23 +138,22 @@ theorem conductorPrefixTwoPoleNegOneRadius_lt_log_square {L : ℝ} (hL : 790 ≤
 /-- For odd nonsquare n under GRH with log n at least 500, an odd prime negative
 Jacobi witness lies below the logarithmic radius at n. Specialize the common
 ambient theorem to B=n. -/
-theorem exists_prime_neg_one_witness_le_conductorPrefixTwoPole_logarithmic {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 500 ≤ Real.log n) :
+theorem exists_prime_negOne_conductorLog_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 500 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         Odd p ∧ (p : ℝ) ≤ conductorPrefixTwoPoleNegOneRadius (Real.log n) ∧ jacobiSym n p = -1 := by
-  exact exists_odd_prime_neg_one_le_conductorPrefixTwoPole_log_ambient hn hns le_rfl hGRH hL
+  exact exists_oddPrime_negOne_conductorAmbient_GRH hn hns le_rfl hGRH hL
 
 /-- Under the pointwise assumptions, the least odd-prime negative Jacobi witness
 is bounded by the logarithmic radius. Specialize the common-ambient leastness
 interface. This is the pointwise companion of the full QNegOne bound. -/
-theorem primeNegOneWitness_cast_le_conductorPrefixTwoPole_logarithmic {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 500 ≤ Real.log n) (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
+theorem negOneWitness_le_conductorLog_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 500 ≤ Real.log n)
+    (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤
       conductorPrefixTwoPoleNegOneRadius (Real.log n) := by
-  exact primeNegOneWitness_cast_le_conductorPrefixTwoPole_log_ambient hn hns le_rfl hGRH hL hw
+  exact negOneWitness_le_conductorAmbient_GRH hn hns le_rfl hGRH hL hw
 
 /-- For L at least 500, the conductor-prefix radius is strictly smaller than the previous
 retained negative radius. The roots differ by three halves;

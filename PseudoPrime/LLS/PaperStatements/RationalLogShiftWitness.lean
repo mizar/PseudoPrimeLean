@@ -28,7 +28,7 @@ namespace PseudoPrime.LLS.PaperStatements
 a coprime outside prime through a(log q+b log log q+c)² whenever the displayed
 scale entrance and strict error budget hold. Rescale the common Gamma scale.
 This research interface separates rational coefficient selection from the actual analytic budget. -/
-theorem exists_prime_outside_le_rational_logarithmic_shift {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+theorem exists_prime_outside_rationalShift_GRH {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
     (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {a b c : ℚ} (ha : 0 < a)
     (hT :
@@ -53,8 +53,7 @@ theorem exists_prime_outside_le_rational_logarithmic_shift {q : ℕ} [NeZero q] 
     dsimp only [T, Analysis.logarithmicShiftCutoff]
     rw [mul_pow, Real.sq_sqrt haR]
     ring
-  obtain ⟨p, hp, hd, hout, hb⟩ :=
-    exists_prime_outside_le_gamma_four_fifths_signed_scale hq H hH hGRH hT hbudget
+  obtain ⟨p, hp, hd, hout, hb⟩ := exists_prime_outside_4_5_signedScale_GRH hq H hH hGRH hT hbudget
   exact ⟨p, hp, hd, hout, he ▸ hb⟩
 
 end PseudoPrime.LLS.PaperStatements

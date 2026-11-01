@@ -21,8 +21,8 @@ namespace PseudoPrime.LLS
 with sqrt x ≥ 63L/100 and log(99x/40) ≤ 2 log L has original-level
 prime-factor cost at most five. Transfer the elementary omega bound
 to L+2 and cancel the logarithms. No fixed scale or factorization is required. -/
-theorem gamma_uniform_prime_factor_cost_le_five_of_root_of_twenty_le {n : ℕ} (hn : Odd n)
-    (hq : 20000 ≤ 4 * n) {L x : ℝ} (hL : 20 ≤ L) (hlogq : Real.log (4 * n : ℕ) ≤ L + 2) (hx : 0 < x)
+theorem gamma_primeFactor_cost_le_5_of_20_le {n : ℕ} (hn : Odd n) (hq : 20000 ≤ 4 * n) {L x : ℝ}
+    (hL : 20 ≤ L) (hlogq : Real.log (4 * n : ℕ) ≤ L + 2) (hx : 0 < x)
     (hroot : (63 / 100 : ℝ) * L ≤ Real.sqrt x)
     (hcut : Real.log ((99 / 40 : ℝ) * x) ≤ 2 * Real.log L) :
     ((4 * n).primeFactors.card : ℝ) * Real.log ((99 / 40 : ℝ) * x) / Real.sqrt x ≤ 5 := by
@@ -60,16 +60,14 @@ theorem gamma_uniform_prime_factor_cost_le_five_of_root {n : ℕ} (hn : Odd n) (
     (hroot : (63 / 100 : ℝ) * L ≤ Real.sqrt x)
     (hcut : Real.log ((99 / 40 : ℝ) * x) ≤ 2 * Real.log L) :
     ((4 * n).primeFactors.card : ℝ) * Real.log ((99 / 40 : ℝ) * x) / Real.sqrt x ≤ 5 := by
-  exact
-    gamma_uniform_prime_factor_cost_le_five_of_root_of_twenty_le hn hq (by linarith only [hL]) hlogq
-      hx hroot hcut
+  exact gamma_primeFactor_cost_le_5_of_20_le hn hq (by linarith only [hL]) hlogq hx hroot hcut
 
 /-- At near-square scale x=(2/5)L², odd n, 4n ≥ 20000, L ≥ 20 and
 log(4n) ≤ L+7/5, the conductor term plus the actual signed quadratic local
 correction is at most M L+6. The logarithm of the quotient is absorbed before
 the conductor is enlarged, and the generic prime-factor cost supplies five.
 This includes the prime two and every square-part or ramified prime. -/
-theorem gammaQuadraticLocalCorrection_absorbed_nearSquare_of_twenty_le {n : ℕ} (hn : Odd n)
+theorem gammaQuadraticCorrection_nearSquare_20 {n : ℕ} (hn : Odd n)
     (χ : DirichletCharacter ℂ (4 * n)) (hquad : χ.IsQuadratic) (hq : 20000 ≤ 4 * n) {L : ℝ}
     (hL : 20 ≤ L) (hlogq : Real.log (4 * n : ℕ) ≤ L + 7 / 5) :
     let x := (2 / 5 : ℝ) * L ^ 2;
@@ -94,7 +92,7 @@ theorem gammaQuadraticLocalCorrection_absorbed_nearSquare_of_twenty_le {n : ℕ}
   rw [Real.log_pow] at hcut
   norm_num only [Nat.cast_ofNat] at hcut
   have hcost :=
-    gamma_uniform_prime_factor_cost_le_five_of_root_of_twenty_le hn hq hL
+    gamma_primeFactor_cost_le_5_of_20_le hn hq hL
       (show Real.log (4 * n : ℕ) ≤ L + 2 by linarith only [hlogq]) hx0 hroot hcut
   have hM : (1 : ℝ) ≤ (11783423 / 25000000) * Real.sqrt x := by nlinarith only [hroot, hL]
   have hcorr :=
@@ -108,24 +106,22 @@ log(4n) ≤ L+7/5, the conductor term plus the actual signed quadratic local
 correction is at most M L+6. The logarithm of the quotient is absorbed before
 the conductor is enlarged, and the generic prime-factor cost supplies five.
 This includes the prime two and every square-part or ramified prime. -/
-theorem gammaQuadraticLocalCorrection_absorbed_nearSquare_endpoint {n : ℕ} (hn : Odd n)
-    (χ : DirichletCharacter ℂ (4 * n)) (hquad : χ.IsQuadratic) (hq : 20000 ≤ 4 * n) {L : ℝ}
-    (hL : 1000 ≤ L) (hlogq : Real.log (4 * n : ℕ) ≤ L + 7 / 5) :
+theorem gammaQuadLocal_absorbed_nearSquare {n : ℕ} (hn : Odd n) (χ : DirichletCharacter ℂ (4 * n))
+    (hquad : χ.IsQuadratic) (hq : 20000 ≤ 4 * n) {L : ℝ} (hL : 1000 ≤ L)
+    (hlogq : Real.log (4 * n : ℕ) ≤ L + 7 / 5) :
     let x := (2 / 5 : ℝ) * L ^ 2;
     (11783423 / 25000000 : ℝ) * Real.log χ.conductor + gammaQuadraticLocalCorrection χ x ≤
       (11783423 / 25000000 : ℝ) * L + 6 := by
-  exact
-    gammaQuadraticLocalCorrection_absorbed_nearSquare_of_twenty_le hn χ hquad hq
-      (by linarith only [hL]) hlogq
+  exact gammaQuadraticCorrection_nearSquare_20 hn χ hquad hq (by linarith only [hL]) hlogq
 
 /-- Under GRH, a nonprincipal quadratic character at level 4n with odd n,
 4n ≥ 20000, L ≥ 1000 and log(4n) ≤ L+7/5 cannot be one at all eligible
 primes through (99/100)L². Combine the actual no-witness inequality,
 conductor-retaining primitive bound and signed local absorption. Certified
 principal/ramp errors close the strict gap on the entire half-line. -/
-theorem gamma_ramp_prime_trivial_false_nearSquare_endpoint {n : ℕ} (hn : Odd n)
-    (χ : DirichletCharacter ℂ (4 * n)) (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hq : 20000 ≤ 4 * n)
-    {L : ℝ} (hL : 1000 ≤ L) (hlogq : Real.log (4 * n : ℕ) ≤ L + 7 / 5)
+theorem not_primeTrivial_nearSquare_GRH {n : ℕ} (hn : Odd n) (χ : DirichletCharacter ℂ (4 * n))
+    (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hq : 20000 ≤ 4 * n) {L : ℝ} (hL : 1000 ≤ L)
+    (hlogq : Real.log (4 * n : ℕ) ≤ L + 7 / 5)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ¬(∀ p : ℕ,
         p.Prime → ¬p ∣ 4 * n → (p : ℝ) ≤ (99 / 40 : ℝ) * ((2 / 5 : ℝ) * L ^ 2) → χ p = 1) := by
@@ -138,9 +134,8 @@ theorem gamma_ramp_prime_trivial_false_nearSquare_endpoint {n : ℕ} (hn : Odd n
   have hQ := gamma_ramp_no_witness_comparison χ hquad (zero_lt_one.trans_le hx) hsmall
   have hP := gamma_level_one_sum_upper_variable hGRH.riemann hx
   have hT := gamma_ramp_sum_lower_variable hGRH.riemann hx
-  have hC :=
-    PaperStatements.gamma_primitiveCharacter_sum_re_le_nearSquare_conductor hq χ hne hGRH hL hlogq
-  have hE := gammaQuadraticLocalCorrection_absorbed_nearSquare_endpoint hn χ hquad hq hL hlogq
+  have hC := PaperStatements.gammaCharacterSum_re_le_nearSquare_conductor hq χ hne hGRH hL hlogq
+  have hE := gammaQuadLocal_absorbed_nearSquare hn χ hquad hq hL hlogq
   have he := PaperStatements.nearSquare_gamma_error_budgets hL
   nlinarith only [hQ, hP, hT, hC, hE, he.2.1, he.2.2.1, he.2.2.2.2, hL]
 

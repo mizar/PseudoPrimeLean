@@ -40,14 +40,12 @@ theorem local_fermat_kernel_le_prime_predecessor_kernel {n p a : ℕ} (hn : 1 < 
 /-- If b^(p-1) is not one modulo an odd prime power p^a dividing odd n>1,
 then b rejects n in MR. A pass would lie in the ambient Fermat kernel and
 therefore in the (p-1)-power kernel. No GRH or primality of b is required. -/
-theorem not_strongMillerRabinPass_of_local_prime_predecessor_power_ne_one {n p a b : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hp : p.Prime) (hp2 : p ≠ 2) (ha : 0 < a) (hdiv : p ^ a ∣ n)
-    (hbad : (b : ZMod (p ^ a)) ^ (p - 1) ≠ 1) :
+theorem not_strongPass_of_local_pow_ne_one {n p a b : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime)
+    (hp2 : p ≠ 2) (ha : 0 < a) (hdiv : p ^ a ∣ n) (hbad : (b : ZMod (p ^ a)) ^ (p - 1) ≠ 1) :
     ¬PrimeTest.StrongMillerRabinPass n (b : ZMod n) := by
   let : NeZero (p ^ a) := ⟨pow_ne_zero a hp.ne_zero⟩
   intro hpass
-  obtain ⟨u, hu, he⟩ :=
-    PrimeTest.strongMillerRabinPass_mem_local_divisor_powerKernel hn ho hdiv hpass
+  obtain ⟨u, hu, he⟩ := PrimeTest.strongMR_local_divisorKernel hn ho hdiv hpass
   have hk :=
     local_fermat_kernel_le_prime_predecessor_kernel hn hp hp2 ha hdiv u (MonoidHom.mem_ker.mp hu)
   apply hbad
@@ -58,14 +56,12 @@ theorem not_strongMillerRabinPass_of_local_prime_predecessor_power_ne_one {n p a
 /-- A positive integer b with nontrivial (p-1)-power modulo p^a gives
 an actual prime MR rejecting base at most b for every ambient odd n>1
 divisible by p^a. Extract a prime factor, then use the local kernel transfer. -/
-theorem exists_prime_witness_le_of_local_nontrivial_power {n p a b : ℕ} (hn : 1 < n) (ho : Odd n)
+theorem exists_prime_witness_of_local_pow_ne_one {n p a b : ℕ} (hn : 1 < n) (ho : Odd n)
     (hp : p.Prime) (hp2 : p ≠ 2) (ha : 0 < a) (hdiv : p ^ a ∣ n) (hb : 0 < b)
     (hbad : (b : ZMod (p ^ a)) ^ (p - 1) ≠ 1) :
     ∃ r : ℕ, r.Prime ∧ r ≤ b ∧ ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
   obtain ⟨r, hr, hle, hf⟩ := NumberTheory.exists_prime_le_of_nat_power_ne_one hb hbad
-  exact
-    ⟨r, hr, hle,
-      not_strongMillerRabinPass_of_local_prime_predecessor_power_ne_one hn ho hp hp2 ha hdiv hf⟩
+  exact ⟨r, hr, hle, not_strongPass_of_local_pow_ne_one hn ho hp hp2 ha hdiv hf⟩
 
 /-- An explicitly assumed positive integer with nontrivial local (p-1)-power
 and real bound B gives an actual prime MR witness at most B.
@@ -76,14 +72,14 @@ theorem exists_prime_witness_le_of_fermat_quotient_bound {n p a : ℕ} (hn : 1 <
     ∃ r : ℕ, r.Prime ∧ (r : ℝ) ≤ B ∧ ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
   obtain ⟨b, hb, hle, hbad⟩ := hbase
   obtain ⟨r, hr, hsmall, hf⟩ :=
-    exists_prime_witness_le_of_local_nontrivial_power hn ho hp hp2 ha hdiv hb hbad
+    exists_prime_witness_of_local_pow_ne_one hn ho hp hp2 ha hdiv hb hbad
   exact ⟨r, hr, (Nat.cast_le.mpr hsmall).trans hle, hf⟩
 
 /-- For p^2 dividing odd n>1, assume a positive nontrivial local Fermat base
 at most log(p)^alpha with alpha nonnegative. There is a prime MR witness
 at most log(n)^alpha. Transfer the base and use p at most n and rpow monotonicity. -/
-theorem exists_prime_witness_le_log_power_of_fermat_quotient_bound {n p : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hp : p.Prime) (hp2 : p ≠ 2) (hdiv : p ^ 2 ∣ n) (alpha : ℝ) (halpha : 0 ≤ alpha)
+theorem exists_prime_logPower_fermatQuotient {n p : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime)
+    (hp2 : p ≠ 2) (hdiv : p ^ 2 ∣ n) (alpha : ℝ) (halpha : 0 ≤ alpha)
     (hbase : ∃ b : ℕ, 0 < b ∧ (b : ℝ) ≤ (Real.log p) ^ alpha ∧ (b : ZMod (p ^ 2)) ^ (p - 1) ≠ 1) :
     ∃ r : ℕ,
       r.Prime ∧
@@ -99,7 +95,7 @@ theorem exists_prime_witness_le_log_power_of_fermat_quotient_bound {n p : ℕ} (
 /-- An explicitly assumed Fermat-quotient bound B also bounds the least prime
 MR rejecting base. Minimize the full prime-failure predicate after the arithmetic
 transfer. The external analytic estimate remains an explicit hypothesis. -/
-theorem exists_least_prime_witness_le_of_fermat_quotient_bound {n p a : ℕ} (hn : 1 < n) (ho : Odd n)
+theorem exists_least_prime_witness_of_fermat_bound {n p a : ℕ} (hn : 1 < n) (ho : Odd n)
     (hp : p.Prime) (hp2 : p ≠ 2) (ha : 0 < a) (hdiv : p ^ a ∣ n) (B : ℝ)
     (hbase : ∃ b : ℕ, 0 < b ∧ (b : ℝ) ≤ B ∧ (b : ZMod (p ^ a)) ^ (p - 1) ≠ 1) :
     ∃ r : ℕ,

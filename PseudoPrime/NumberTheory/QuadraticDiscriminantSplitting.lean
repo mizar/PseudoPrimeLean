@@ -58,9 +58,7 @@ theorem quadraticPrimeSplittingAt_of_odd_prime_discr (K : Type) [Field K] [Numbe
     · obtain ⟨r, s, hrs, hr⟩ :=
         quadratic_factorization_of_nonzero_square_discr (a : ZMod p) (b : ZMod p) (hD.symm ▸ hz)
           (hD ▸ hs)
-      apply
-        quadraticPrimeSplittingAt_of_reduced_distinct_linear_factors K χ θ p hp r s hrs
-          (hF.trans hr)
+      apply quadraticSplitting_of_distinct_linear K χ θ p hp r s hrs (hF.trans hr)
       rw [hc, (legendreSym.eq_one_iff p hz).mpr hs, Int.cast_one]
     · apply quadraticPrimeSplittingAt_of_irreducible K hdeg χ θ p hp
       · rw [hF]
@@ -100,7 +98,7 @@ theorem quadraticPrimeSplittingAt_at_two (K : Type) [Field K] [NumberField K]
     · rw [hf]
       simp only [Polynomial.C_0, zero_mul, sub_zero]
     · simpa only [ite_true] using hc
-  · apply quadraticPrimeSplittingAt_of_reduced_distinct_linear_factors K χ θ 2 hp 0 1 zero_ne_one
+  · apply quadraticSplitting_of_distinct_linear K χ θ 2 hp 0 1 zero_ne_one
     · rw [hf]
       simp only [Polynomial.C_0, Polynomial.C_1, one_mul, sub_zero]
       ring
@@ -176,8 +174,7 @@ theorem exists_primitive_character_splitting_of_discr (q : ℕ) (K : Type) [Fiel
       χ.IsPrimitive ∧
         χ.IsQuadratic ∧ χ.Odd ∧ ∀ p : ℕ, p.Prime → quadraticPrimeSplittingAt K χ p := by
   have hf : Int.IsFundamentalDiscr (-(q : ℤ)) := hd ▸ quadratic_discr_isFundamental K hdeg
-  obtain ⟨χ, hprim, hquad, hodd, hvals, htwo⟩ :=
-    exists_primitive_character_values_of_fundamental_discr q hf
+  obtain ⟨χ, hprim, hquad, hodd, hvals, htwo⟩ := exists_primitive_values_fundamental q hf
   obtain ⟨a, b, θ, had, hpoly, hdiscr⟩ := quadratic_exists_integral_generator_polynomial K hdeg
   have hexp : RingOfIntegers.exponent θ = 1 := RingOfIntegers.exponent_eq_one_iff.mpr had
   refine ⟨χ, hprim, hquad, hodd, ?_⟩

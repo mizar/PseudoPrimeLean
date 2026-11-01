@@ -20,8 +20,8 @@ certificate with error 1/25000 only on |t|<=5.
 Claim: the actual Gamma arithmetic sum obeys the prefix-plus-remainder upper bound.
 Proof: use the certified Gamma norm comparison for every |t|>=5.
 Role: leave only the low-frequency phase certificate as a spectral premise. -/
-theorem gamma_primitive_sum_re_le_phase64_of_correctedEuler256_low {q m : ℕ} [NeZero m]
-    (hq : 20000 ≤ q) (hm : 3 ≤ m) (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
+theorem gammaSum_phase64_Euler256_low_GRH {q m : ℕ} [NeZero m] (hq : 20000 ≤ q) (hm : 3 ≤ m)
+    (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 2 ≤ x) (B : Finset ℕ)
     (hc :
@@ -37,7 +37,7 @@ theorem gamma_primitive_sum_re_le_phase64_of_correctedEuler256_low {q m : ℕ} [
         ((7 / 6 : ℝ) * Real.log q + 4) / Real.sqrt x +
         43 * x ^ (-9 / 16 : ℝ) := by
   exact
-    gamma_primitive_sum_re_le_phase64_of_correctedEuler256_split hq hm hmq hGRH hp hne hinv hx B hc
+    gammaSum_phase64_Euler256_split_GRH hq hm hmq hGRH hp hne hinv hx B hc
       (fun _ ht _ ↦ (Analysis.phase64_norm_Gamma_lt_of_abs_ge_five ht).le)
 
 end PseudoPrime.LLS.PaperStatements

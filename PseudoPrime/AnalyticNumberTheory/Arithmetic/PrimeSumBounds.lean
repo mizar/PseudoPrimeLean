@@ -141,7 +141,7 @@ theorem abs_truncatedMangoldtMajorant_error_le {x a b : ℝ} (hx : 1 < x)
 /-- The reciprocal Mangoldt majorant multiplied by `log x / sqrt x` tends to zero.
 Use its logarithmic upper bound and the zero limits of the second and third logarithmic powers.
 This controls the arithmetic contribution after multiplying the truncation error by `log^2 x`. -/
-theorem tendsto_reciprocalMangoldtSum_mul_log_div_sqrt :
+theorem tendsto_recipMangoldt_mul_log_div_sqrt :
     Filter.Tendsto (fun x : ℝ ↦ reciprocalMangoldtSum x * Real.log x / Real.sqrt x) Filter.atTop
       (nhds 0) := by
   have hb :
@@ -192,8 +192,8 @@ theorem truncatedMangoldtTerm_nonneg {x : ℝ} (hx : 1 < x) {n : ℕ} (hn : n �
 `Q(x) <= log log x + gamma - 1/log x + (A+B)/log^2 x`.
 Cancel the psi cutoff factor and bound the extra reciprocal logarithm by one.
 This transfers the quantitative prime-sum inputs to the arithmetic main term. -/
-theorem truncatedMangoldtMajorant_le_of_secondOrder_mangoldt_errors {x A B : ℝ} (hx : 1 < x)
-    (hl : 1 ≤ Real.log x) (hB : 0 ≤ B)
+theorem truncatedMangoldtMajorant_le_of_errors {x A B : ℝ} (hx : 1 < x) (hl : 1 ≤ Real.log x)
+    (hB : 0 ≤ B)
     (hH :
       |(∑ n ∈ Finset.Ioc 0 ⌊x⌋₊, ArithmeticFunction.vonMangoldt n / ((n : ℝ) * Real.log n)) -
             (Real.log (Real.log x) + Real.eulerMascheroniConstant)| ≤

@@ -65,7 +65,7 @@ theorem gamma_central_re_eq_digamma {q : ℕ} (χ : DirichletCharacter ℂ q) :
         Complex.ofReal_re, Complex.ofReal_im, zero_mul, mul_zero, sub_zero]
       norm_num only [Complex.one_re]
     have he :=
-      logDeriv_gammaFactor_eq_of_even_of_half_ne_neg_nat hχ
+      gammaLogDeriv_even_eq_digamma hχ
         (fun n ↦ AnalyticNumberTheory.Gamma.not_neg_nat_of_re_pos hp n)
     rw [he, hz, ← Complex.ofReal_log Real.pi_pos.le]
     simp only [Complex.add_re, complex_div_two_re, Complex.neg_re, Complex.ofReal_re]
@@ -81,7 +81,7 @@ theorem gamma_central_re_eq_digamma {q : ℕ} (χ : DirichletCharacter ℂ q) :
         Complex.ofReal_re, Complex.ofReal_im, zero_mul, mul_zero, sub_zero]
       norm_num only [Complex.one_re]
     have he :=
-      logDeriv_gammaFactor_eq_of_odd_of_half_ne_neg_nat hχ
+      gammaLogDeriv_odd_eq_digamma hχ
         (fun n ↦ AnalyticNumberTheory.Gamma.not_neg_nat_of_re_pos hp n)
     rw [he, hz, ← Complex.ofReal_log Real.pi_pos.le]
     simp only [Complex.add_re, complex_div_two_re, Complex.neg_re, Complex.ofReal_re]
@@ -110,8 +110,7 @@ Split it into its real-axis baseline and positive vertical correction.
 The baseline is at most minus three quarters, the kernel mass is thirty-six,
 and the correction is at most nine. No GRH assumption is needed.
 This supplies the signed Gamma contribution in the absolute zero-mass formula. -/
-theorem triangular18_central_gamma_re_integral_le_neg_eighteen {q : ℕ}
-    (χ : DirichletCharacter ℂ q) :
+theorem triangular18_gamma_re_integral_le_neg18 {q : ℕ} (χ : DirichletCharacter ℂ q) :
     (∫ t : ℝ,
           (logDeriv χ.gammaFactor (Complex.I * t + 1 / 2) *
               Analysis.triangularMellinFunction 18 (Complex.I * t)).re) /
@@ -213,7 +212,7 @@ theorem triangular18_gammaIntegral_re_le_neg_eighteen {q : ℕ} (χ : DirichletC
           logDeriv χ.gammaFactor (Complex.I * t + 1 / 2) * K.function (Complex.I * t)).re at hr
   simp only [Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, zero_mul, sub_zero]
   rw [← hr]
-  have h := triangular18_central_gamma_re_integral_le_neg_eighteen χ
+  have h := triangular18_gamma_re_integral_le_neg18 χ
   change (1 / (2 * Real.pi)) * _ ≤ -18
   rw [one_div_mul_eq_div]
   exact h
@@ -222,10 +221,9 @@ theorem triangular18_gammaIntegral_re_le_neg_eighteen {q : ℕ} (χ : DirichletC
 the absolute zero mass is bounded by the conductor term minus both arithmetic real parts
 and thirty-six. Apply the exact signed formula and the negative scale-one Gamma bound
 for the character and its inverse. This retains arithmetic cancellation across families. -/
-theorem triangular18_absoluteMass_le_signed_arithmetic_sub_thirty_six {q : ℕ} [NeZero q]
-    (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
+theorem triangular18_mass_signed_sub36_GRH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+    {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
     (∑' ρ : ℂ, ‖K.kernelZeroTerm χ ρ‖) ≤
       36 * Real.log q - (∑' n : ℕ, K.summand χ 1 n).re - (∑' n : ℕ, K.summand χ⁻¹ 1 n).re - 36 := by
@@ -254,7 +252,7 @@ by the conductor term, both negative scale-one arithmetic real parts, and the re
 The fixed cost is 5964: combine the signed zero mass contribution minus thirty-six
 with the existing scale-dependent Gamma norm cost 6000. This is an intermediate
 bound; the scale-dependent Gamma integral is still estimated by its norm. -/
-theorem triangular18_primitive_arithmetic_norm_le_signed_sharp {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem triangular18_arithmetic_signedSharp_GRH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) :
     let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
@@ -264,7 +262,7 @@ theorem triangular18_primitive_arithmetic_norm_le_signed_sharp {q : ℕ} [NeZero
   let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
   let S := ∑' n : ℕ, K.summand χ x n
   let Z := ∑' ρ : ℂ, K.oscillatingZeroTerm χ x ρ
-  have hR := triangular18_primitive_remainder_norm_le_scaled_gamma hq hGRH hp hne hinv hx
+  have hR := triangular18_remainder_scaledGamma_GRH hq hGRH hp hne hinv hx
   have hs :=
     MellinKernel.summable_oscillatingZeroTerm K hq hGRH hp hne hinv (zero_lt_one.trans_le hx)
   have hZ : ‖Z‖ ≤ ∑' ρ : ℂ, ‖K.kernelZeroTerm χ ρ‖ := by
@@ -272,7 +270,7 @@ theorem triangular18_primitive_arithmetic_norm_le_signed_sharp {q : ℕ} [NeZero
     have he : (∑' ρ : ℂ, ‖K.oscillatingZeroTerm χ x ρ‖) = ∑' ρ : ℂ, ‖K.kernelZeroTerm χ ρ‖ :=
       tsum_congr (MellinKernel.norm_oscillatingZeroTerm K χ (zero_lt_one.trans_le hx))
     exact ht.trans_eq he
-  have hM := triangular18_absoluteMass_le_signed_arithmetic_sub_thirty_six hq hGRH hp hne hinv
+  have hM := triangular18_mass_signed_sub36_GRH hq hGRH hp hne hinv
   have ht := norm_sub_le (S + Z) Z
   have he : (S + Z) - Z = S := by ring
   rw [he] at ht
@@ -283,9 +281,8 @@ theorem triangular18_primitive_arithmetic_norm_le_signed_sharp {q : ℕ} [NeZero
 is bounded by primitive annihilator budgets with fixed cost 5964 per nonprincipal member.
 Apply the sharp primitive arithmetic norm bound after the signed primitivization comparison.
 This passes the negative scale-one Gamma contribution to the subgroup average. -/
-theorem triangular18_principal_sum_le_signed_sharp_budgets_of_noSmallPrimes {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {x X : ℝ} (hx : 1 ≤ x)
+theorem triangular18_principal_sharpBudgets_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x X : ℝ} (hx : 1 ≤ x)
     (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     letI := Classical.propDecidable
     let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
@@ -299,9 +296,7 @@ theorem triangular18_principal_sum_le_signed_sharp_budgets_of_noSmallPrimes {q :
             4000000000000 * (Real.log χ.val.conductor + 284) * x ^ (-9 / 16 : ℝ) := by
   classical
   let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
-  have hc :=
-    MellinKernel.principal_sum_le_primitive_average_of_noSmallPrimes K H (zero_lt_one.trans_le hx)
-      hsmall
+  have hc := MellinKernel.principal_sum_le_primitive_of_noSmall K H (zero_lt_one.trans_le hx) hsmall
   apply hc.trans
   apply Finset.sum_le_sum
   intro χ _
@@ -312,8 +307,8 @@ theorem triangular18_principal_sum_le_signed_sharp_budgets_of_noSmallPrimes {q :
     have hp := AnalyticNumberTheory.Arithmetic.primitiveCharacter_ne_one χ.val hn
     have hq := NumberTheory.three_le_conductor_of_ne_one χ.val hn
     have hb :=
-      triangular18_primitive_arithmetic_norm_le_signed_sharp ((by norm_num only : 2 ≤ 3).trans hq)
-        hGRH (DirichletCharacter.primitiveCharacter_isPrimitive χ.val) hp (inv_ne_one.mpr hp) hx
+      triangular18_arithmetic_signedSharp_GRH ((by norm_num only : 2 ≤ 3).trans hq) hGRH
+        (DirichletCharacter.primitiveCharacter_isPrimitive χ.val) hp (inv_ne_one.mpr hp) hx
     exact (Complex.re_le_norm _).trans hb
 
 end PseudoPrime.LLS.PaperStatements

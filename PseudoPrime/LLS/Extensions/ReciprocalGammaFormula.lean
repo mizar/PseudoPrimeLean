@@ -78,7 +78,7 @@ theorem normalized_integral_reciprocalGamma_eq (f : GeneralLFunction) (hf : f.Is
 /-- The reciprocal gamma-family integrand is the centered logarithmic gamma integrand at
 center one multiplied by `z/(z + 1)`. Extract the common multiplier from the finite and
 infinite sums. The identity is algebraic and identifies the existing digamma expansion. -/
-theorem reciprocalGammaMellinIntegrand_eq_logarithmic_mul (f : GeneralLFunction) (x τ y : ℝ) :
+theorem reciprocalGamma_logarithmic_mul (f : GeneralLFunction) (x τ y : ℝ) :
     f.reciprocalGammaMellinIntegrand x τ y =
       f.gammaResolventMellinIntegrand x 1 τ y *
         (((τ : ℂ) + y * Complex.I) / ((τ : ℂ) + y * Complex.I + 1)) := by
@@ -103,10 +103,9 @@ theorem reciprocalGammaMellinIntegrand_eq (f : GeneralLFunction) (hf : f.IsAdmis
               logDeriv f.completionFactor 1) *
           (x : ℂ) ^ ((τ : ℂ) + y * Complex.I) /
         (((τ : ℂ) + y * Complex.I) * ((τ : ℂ) + y * Complex.I + 1)) := by
-  rw [reciprocalGammaMellinIntegrand_eq_logarithmic_mul,
-    gammaResolventMellinIntegrand_eq f hf (σ := 1) le_rfl hτ]
+  rw [reciprocalGamma_logarithmic_mul, gammaResolventMellinIntegrand_eq f hf (σ := 1) le_rfl hτ]
   have hk :=
-    AnalyticNumberTheory.General.reciprocalMellinTerm_eq_logarithmicMellinTerm_mul
+    AnalyticNumberTheory.General.reciprocalMellinTerm_eq_logTerm_mul
       (fun _ ↦
         -(logDeriv f.completionFactor (1 + ((τ : ℂ) + y * Complex.I)) -
             logDeriv f.completionFactor 1))
@@ -153,8 +152,8 @@ theorem completionReciprocalMellinIntegrand_eq (f : GeneralLFunction) (hf : f.Is
 /-- For admissible data, `τ > 0` and `x > 1`, the completion-factor reciprocal integrand is
 integrable. Its endpoint part is a constant multiple of the integrable base kernel; its
 remaining gamma-family part is integrable. This justifies the ordinary/completed integral split. -/
-theorem integrable_completionReciprocalMellinIntegrand (f : GeneralLFunction) (hf : f.IsAdmissible)
-    {τ x : ℝ} (hτ : 0 < τ) (hx : 1 < x) :
+theorem integrable_completionReciprocal (f : GeneralLFunction) (hf : f.IsAdmissible) {τ x : ℝ}
+    (hτ : 0 < τ) (hx : 1 < x) :
     MeasureTheory.Integrable (f.completionReciprocalMellinIntegrand x τ) := by
   rw [funext (completionReciprocalMellinIntegrand_eq f hf (x := x) hτ)]
   exact
@@ -166,8 +165,8 @@ theorem integrable_completionReciprocalMellinIntegrand (f : GeneralLFunction) (h
 its logarithmic derivative at one times `1 - 1/x`, minus the gamma residue sum.
 Integrate the endpoint/gamma decomposition using absolute integrability. This removes the
 archimedean Mellin integral from the general reciprocal remainder. -/
-theorem normalized_integral_completionReciprocalMellin_eq (f : GeneralLFunction)
-    (hf : f.IsAdmissible) {τ x : ℝ} (hτ : 0 < τ) (hx : 1 < x) :
+theorem completionReciprocal_integral (f : GeneralLFunction) (hf : f.IsAdmissible) {τ x : ℝ}
+    (hτ : 0 < τ) (hx : 1 < x) :
     (2 * Real.pi)⁻¹ • (∫ y : ℝ, f.completionReciprocalMellinIntegrand x τ y) =
       logDeriv f.completionFactor 1 * (1 - (x : ℂ)⁻¹) - f.reciprocalGammaSum x := by
   obtain ⟨hG, hGI⟩ := AnalyticNumberTheory.General.reciprocalMellin_integrable_and_integral hτ hx

@@ -51,7 +51,7 @@ private theorem gaussian_triple_comparison_contradiction {n : ℕ} [NeZero n] (H
     False := by
   rw [hi] at hcmp
   norm_num only [Nat.cast_ofNat] at hcmp
-  have hd := LLS.gaussian_kernel_triple_denominator_le_at_fixed_cutoff
+  have hd := LLS.gaussian_tripleDenominator_fixedCutoff
   have hd' :
     (21943 / 10000 : ℝ) ≤
       4 *
@@ -77,8 +77,8 @@ base at most (282924/1000000)log(n)², provided the scale is at least four and i
 secondary error is at most log(n)/5000. These remaining hypotheses are explicit;
 arithmetic classification and a numerical starting value must discharge them
 before this branch can be used in the final all-branches theorem. -/
-theorem exists_prime_witness_le_gaussian_of_index_four_conductor_saving {n : ℕ} [NeZero n]
-    (hnlarge : 20000 ≤ n) (hnOdd : Odd n) (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
+theorem exists_prime_gaussian_conductorError_GRH {n : ℕ} [NeZero n] (hnlarge : 20000 ≤ n)
+    (hnOdd : Odd n) (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
@@ -119,7 +119,7 @@ containing all strong passes with conductor-log sum at most twice log n give
 a prime failing base at most (282924/1000000)log(n)². The decimal cutoff certifies
 scale and error conditions internally. Only the arithmetic subgroup and conductor
 conditions remain for the classification stage of the all-branches theorem. -/
-theorem exists_prime_witness_le_gaussian_0283_of_conductor_saving {n : ℕ} [NeZero n] (hnOdd : Odd n)
+theorem exists_prime_gaussian_0282924_saving_GRH {n : ℕ} [NeZero n] (hnOdd : Odd n)
     (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
@@ -144,9 +144,7 @@ theorem exists_prime_witness_le_gaussian_0283_of_conductor_saving {n : ℕ} [NeZ
   have hx :=
     (by norm_num only : (4 : ℝ) ≤ 3 ^ 16).trans (gaussianTripleScale_ge_three_pow_sixteen hsmall)
   have hE := gaussianTriple_error_budget hL (le_refl (Real.log n))
-  apply
-    exists_prime_witness_le_gaussian_of_index_four_conductor_saving hnlarge hnOdd H hi hHpass hGRH
-      hC
+  apply exists_prime_gaussian_conductorError_GRH hnlarge hnOdd H hi hHpass hGRH hC
   · dsimp only [gaussianTripleScale] at hx
     norm_num only at hx ⊢
     exact hx
@@ -160,8 +158,8 @@ classification of the nonprincipal annihilator with pairwise product conductors
 gives coefficient 282924/1000000 for a prime failing MR base. Derive index four and the
 two-log conductor sum from the classification rather than assuming these costs.
 This is the integration endpoint for the remaining common-sign subgroup arithmetic. -/
-theorem exists_prime_witness_le_gaussian_0283_of_three_conductors {n p q r : ℕ} [NeZero n]
-    (hnOdd : Odd n) (H : Subgroup (ZMod n)ˣ)
+theorem exists_prime_gaussian_threeConductors_GRH {n p q r : ℕ} [NeZero n] (hnOdd : Odd n)
+    (H : Subgroup (ZMod n)ˣ)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
@@ -175,9 +173,9 @@ theorem exists_prime_witness_le_gaussian_0283_of_three_conductors {n p q r : ℕ
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   have hi := LLS.PaperStatements.index_four_of_three_nonprincipal_annihilator H a b c hab hac hbc hs
   have hC :=
-    LLS.PaperStatements.subgroupConductorLogSum_eq_twice_log_of_three_conductors H a b c hab hac hbc
-      hs ha hb hc hp hq hr hn
-  exact exists_prime_witness_le_gaussian_0283_of_conductor_saving hnOdd H hi hHpass hGRH hC.le hN
+    LLS.PaperStatements.subgroupConductorLogSum_eq_two_log_of_three H a b c hab hac hbc hs ha hb hc
+      hp hq hr hn
+  exact exists_prime_gaussian_0282924_saving_GRH hnOdd H hi hHpass hGRH hC.le hN
 
 open Classical in
 /-- Under GRH for three distinct positive prime factors, an exact classification
@@ -185,8 +183,8 @@ of the nonprincipal annihilator and its pairwise product conductors gives the
 Gaussian coefficient 282924/1000000 witness at the explicit starting value. Derive
 character distinctness from prime distinctness and use the classified branch.
 The character enumeration and pass containment remain arithmetic inputs. -/
-theorem exists_prime_witness_le_gaussian_0283_of_three_prime_conductors {n p q r : ℕ} [NeZero n]
-    (hnOdd : Odd n) (H : Subgroup (ZMod n)ˣ)
+theorem exists_prime_gaussian_threePrimeCond_GRH {n p q r : ℕ} [NeZero n] (hnOdd : Odd n)
+    (H : Subgroup (ZMod n)ˣ)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
@@ -200,19 +198,19 @@ theorem exists_prime_witness_le_gaussian_0283_of_three_prime_conductors {n p q r
         (s : ℝ) ≤ (282924 / 1000000 : ℝ) * (Real.log n) ^ 2 ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   obtain ⟨hab, hac, hbc⟩ :=
-    LLS.PaperStatements.three_characters_ne_of_pairwise_product_conductors H a b c ha hb hc hp.pos
-      hq.pos hr.pos hpq hpr hqr
+    LLS.PaperStatements.three_characters_ne_of_product_conductors H a b c ha hb hc hp.pos hq.pos
+      hr.pos hpq hpr hqr
   exact
-    exists_prime_witness_le_gaussian_0283_of_three_conductors hnOdd H hHpass hGRH a b c hab hac hbc
-      hs ha hb hc hp.pos hq.pos hr.pos hn hN
+    exists_prime_gaussian_threeConductors_GRH hnOdd H hHpass hGRH a b c hab hac hbc hs ha hb hc
+      hp.pos hq.pos hr.pos hn hN
 
 /-- At the explicit Gaussian threshold, three annihilator members with the
 pairwise product conductors of distinct prime factors suffice for coefficient
 282924/1000000 when the containing subgroup has index four. Nonprincipality, character
 distinctness and complete enumeration follow from conductors and cardinality.
 Only subgroup membership, index and pass containment remain arithmetic inputs. -/
-theorem exists_prime_witness_le_gaussian_0283_of_three_annihilator_members {n p q r : ℕ} [NeZero n]
-    (hnOdd : Odd n) (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
+theorem exists_prime_gaussian_threeAnnihilators_GRH {n p q r : ℕ} [NeZero n] (hnOdd : Odd n)
+    (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
@@ -233,21 +231,21 @@ theorem exists_prime_witness_le_gaussian_0283_of_three_annihilator_members {n p 
   have hb1 : b ≠ 1 := hnon b (hb ▸ hp.one_lt.trans_le (Nat.le_mul_of_pos_right p hr.pos))
   have hc1 : c ≠ 1 := hnon c (hc ▸ hq.one_lt.trans_le (Nat.le_mul_of_pos_right q hr.pos))
   obtain ⟨hab, hac, hbc⟩ :=
-    LLS.PaperStatements.three_characters_ne_of_pairwise_product_conductors H a b c ha hb hc hp.pos
-      hq.pos hr.pos hpq hpr hqr
+    LLS.PaperStatements.three_characters_ne_of_product_conductors H a b c ha hb hc hp.pos hq.pos
+      hr.pos hpq hpr hqr
   have hs :=
     LLS.PaperStatements.nonprincipal_annihilator_eq_three_of_index_four H hi a b c ha1 hb1 hc1 hab
       hac hbc
   exact
-    exists_prime_witness_le_gaussian_0283_of_three_prime_conductors hnOdd H hHpass hGRH a b c hs ha
-      hb hc hp hq hr hpq hpr hqr hn hN
+    exists_prime_gaussian_threePrimeCond_GRH hnOdd H hHpass hGRH a b c hs ha hb hc hp hq hr hpq hpr
+      hqr hn hN
 
 open Classical in
 /-- Under GRH at scale `600`, three annihilator members with pairwise product
 conductors give a witness below the classified Gaussian star bound. The
 conductors determine index four and conductor cost `2 log n`. -/
-theorem exists_prime_witness_le_gaussian_star_of_three_annihilator_members {n p q r : ℕ} [NeZero n]
-    (hnlarge : 20000 ≤ n) (hnOdd : Odd n) (H : Subgroup (ZMod n)ˣ)
+theorem exists_prime_gaussianStar_threeMembers_GRH {n p q r : ℕ} [NeZero n] (hnlarge : 20000 ≤ n)
+    (hnOdd : Odd n) (H : Subgroup (ZMod n)ˣ)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 600 ≤ Real.log n)
@@ -262,15 +260,15 @@ theorem exists_prime_witness_le_gaussian_star_of_three_annihilator_members {n p 
   classical
   have hi := LLS.PaperStatements.index_four_of_three_nonprincipal_annihilator H a b c hab hac hbc hs
   have hC :=
-    LLS.PaperStatements.subgroupConductorLogSum_eq_twice_log_of_three_conductors H a b c hab hac hbc
-      hs ha hb hc hp hq hr hn
-  exact exists_prime_witness_le_gaussian_star_of_index_four hnOdd hnlarge H hi hHpass hGRH hC.le hL
+    LLS.PaperStatements.subgroupConductorLogSum_eq_two_log_of_three H a b c hab hac hbc hs ha hb hc
+      hp hq hr hn
+  exact exists_prime_gaussianStar_indexFour_GRH hnOdd hnlarge H hi hHpass hGRH hC.le hL
 
 open Classical in
 /-- Three pairwise prime-product annihilator conductors give the conductor
 cost required to apply the Gamma index-100 witness bound from `L ≥ 330`. -/
-theorem exists_prime_witness_le_gammaIndex100_of_three_annihilator_members {n p q r : ℕ} [NeZero n]
-    (hnlarge : 20000 ≤ n) (hnOdd : Odd n) (H : Subgroup (ZMod n)ˣ)
+theorem exists_prime_gamma100_threeMembers_GRH {n p q r : ℕ} [NeZero n] (hnlarge : 20000 ≤ n)
+    (hnOdd : Odd n) (H : Subgroup (ZMod n)ˣ)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 330 ≤ Real.log n)
@@ -284,17 +282,15 @@ theorem exists_prime_witness_le_gammaIndex100_of_three_annihilator_members {n p 
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   have hi := LLS.PaperStatements.index_four_of_three_nonprincipal_annihilator H a b c hab hac hbc hs
   have hC :=
-    LLS.PaperStatements.subgroupConductorLogSum_eq_twice_log_of_three_conductors H a b c hab hac hbc
-      hs ha hb hc hp hq hr hn
-  exact
-    exists_prime_witness_le_gammaIndex100_of_index_four_conductor hnlarge hnOdd H hi hHpass hGRH
-      hC.le hL
+    LLS.PaperStatements.subgroupConductorLogSum_eq_two_log_of_three H a b c hab hac hbc hs ha hb hc
+      hp hq hr hn
+  exact exists_prime_gamma100_indexFour_GRH hnlarge hnOdd H hi hHpass hGRH hC.le hL
 
 open Classical in
 /-- Pairwise product conductors identify the three nonprincipal annihilators
 and supply the exact conductor sum for the Gamma index-100 cutoff. -/
-theorem exists_prime_witness_le_gammaIndex100_of_three_annihilator_prime_members {n p q r : ℕ}
-    [NeZero n] (hnlarge : 20000 ≤ n) (hnOdd : Odd n) (H : Subgroup (ZMod n)ˣ)
+theorem exists_prime_gamma100_threePrimeMembers_GRH {n p q r : ℕ} [NeZero n] (hnlarge : 20000 ≤ n)
+    (hnOdd : Odd n) (H : Subgroup (ZMod n)ˣ)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 330 ≤ Real.log n)
@@ -313,20 +309,20 @@ theorem exists_prime_witness_le_gammaIndex100_of_three_annihilator_prime_members
   have hb1 : b ≠ 1 := hnon b (hb ▸ hp.one_lt.trans_le (Nat.le_mul_of_pos_right p hr.pos))
   have hc1 : c ≠ 1 := hnon c (hc ▸ hq.one_lt.trans_le (Nat.le_mul_of_pos_right q hr.pos))
   obtain ⟨hab, hac, hbc⟩ :=
-    LLS.PaperStatements.three_characters_ne_of_pairwise_product_conductors H a b c ha hb hc hp.pos
-      hq.pos hr.pos hpq hpr hqr
+    LLS.PaperStatements.three_characters_ne_of_product_conductors H a b c ha hb hc hp.pos hq.pos
+      hr.pos hpq hpr hqr
   have hs :=
     LLS.PaperStatements.nonprincipal_annihilator_eq_three_of_index_four H hi a b c ha1 hb1 hc1 hab
       hac hbc
   exact
-    exists_prime_witness_le_gammaIndex100_of_three_annihilator_members hnlarge hnOdd H hHpass hGRH
-      hL a b c hab hac hbc hs ha hb hc hp.pos hq.pos hr.pos hn
+    exists_prime_gamma100_threeMembers_GRH hnlarge hnOdd H hHpass hGRH hL a b c hab hac hbc hs ha hb
+      hc hp.pos hq.pos hr.pos hn
 
 open Classical in
 /-- Pairwise product conductors give the conductor cost needed by the 6/5
 Gaussian bound at scale 500. -/
-theorem exists_prime_witness_le_gaussian6fifths_of_three_annihilator_members {n p q r : ℕ}
-    [NeZero n] (hnlarge : 20000 ≤ n) (hnOdd : Odd n) (H : Subgroup (ZMod n)ˣ)
+theorem gaussian6_5_primeWitness_three_members_GRH {n p q r : ℕ} [NeZero n] (hnlarge : 20000 ≤ n)
+    (hnOdd : Odd n) (H : Subgroup (ZMod n)ˣ)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 500 ≤ Real.log n)
@@ -341,16 +337,15 @@ theorem exists_prime_witness_le_gaussian6fifths_of_three_annihilator_members {n 
   classical
   have hi := LLS.PaperStatements.index_four_of_three_nonprincipal_annihilator H a b c hab hac hbc hs
   have hC :=
-    LLS.PaperStatements.subgroupConductorLogSum_eq_twice_log_of_three_conductors H a b c hab hac hbc
-      hs ha hb hc hp hq hr hn
-  exact
-    exists_prime_witness_le_gaussian6fifths_of_index_four hnOdd hnlarge H hi hHpass hGRH hC.le hL
+    LLS.PaperStatements.subgroupConductorLogSum_eq_two_log_of_three H a b c hab hac hbc hs ha hb hc
+      hp hq hr hn
+  exact gaussian6_5_primeWitness_index_four_GRH hnOdd hnlarge H hi hHpass hGRH hC.le hL
 
 open Classical in
 /-- At index four, the pairwise prime-product conductors identify the three
 nonprincipal annihilators and supply their exact conductor sum. -/
-theorem exists_prime_witness_le_gaussian6fifths_of_three_annihilator_prime_members {n p q r : ℕ}
-    [NeZero n] (hnlarge : 20000 ≤ n) (hnOdd : Odd n) (H : Subgroup (ZMod n)ˣ)
+theorem gaussian6_5_primeWitness_prime_members_GRH {n p q r : ℕ} [NeZero n] (hnlarge : 20000 ≤ n)
+    (hnOdd : Odd n) (H : Subgroup (ZMod n)ˣ)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 500 ≤ Real.log n)
@@ -369,20 +364,20 @@ theorem exists_prime_witness_le_gaussian6fifths_of_three_annihilator_prime_membe
   have hb1 : b ≠ 1 := hnon b (hb ▸ hp.one_lt.trans_le (Nat.le_mul_of_pos_right p hr.pos))
   have hc1 : c ≠ 1 := hnon c (hc ▸ hq.one_lt.trans_le (Nat.le_mul_of_pos_right q hr.pos))
   obtain ⟨hab, hac, hbc⟩ :=
-    LLS.PaperStatements.three_characters_ne_of_pairwise_product_conductors H a b c ha hb hc hp.pos
-      hq.pos hr.pos hpq hpr hqr
+    LLS.PaperStatements.three_characters_ne_of_product_conductors H a b c ha hb hc hp.pos hq.pos
+      hr.pos hpq hpr hqr
   have hs :=
     LLS.PaperStatements.nonprincipal_annihilator_eq_three_of_index_four H hi a b c ha1 hb1 hc1 hab
       hac hbc
   exact
-    exists_prime_witness_le_gaussian6fifths_of_three_annihilator_members hnlarge hnOdd H hHpass hGRH
-      hL a b c hab hac hbc hs ha hb hc hp.pos hq.pos hr.pos hn
+    gaussian6_5_primeWitness_three_members_GRH hnlarge hnOdd H hHpass hGRH hL a b c hab hac hbc hs
+      ha hb hc hp.pos hq.pos hr.pos hn
 
 open Classical in
 /-- For distinct prime factors, pairwise product conductors determine the
 three nonprincipal annihilator characters needed by the Gaussian star branch. -/
-theorem exists_prime_witness_le_gaussian_star_of_three_annihilator_prime_members {n p q r : ℕ}
-    [NeZero n] (hnlarge : 20000 ≤ n) (hnOdd : Odd n) (H : Subgroup (ZMod n)ˣ)
+theorem exists_prime_gaussianStar_threePrimeMembers_GRH {n p q r : ℕ} [NeZero n]
+    (hnlarge : 20000 ≤ n) (hnOdd : Odd n) (H : Subgroup (ZMod n)ˣ)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 600 ≤ Real.log n)
@@ -401,13 +396,13 @@ theorem exists_prime_witness_le_gaussian_star_of_three_annihilator_prime_members
   have hb1 : b ≠ 1 := hnon b (hb ▸ hp.one_lt.trans_le (Nat.le_mul_of_pos_right p hr.pos))
   have hc1 : c ≠ 1 := hnon c (hc ▸ hq.one_lt.trans_le (Nat.le_mul_of_pos_right q hr.pos))
   obtain ⟨hab, hac, hbc⟩ :=
-    LLS.PaperStatements.three_characters_ne_of_pairwise_product_conductors H a b c ha hb hc hp.pos
-      hq.pos hr.pos hpq hpr hqr
+    LLS.PaperStatements.three_characters_ne_of_product_conductors H a b c ha hb hc hp.pos hq.pos
+      hr.pos hpq hpr hqr
   have hs :=
     LLS.PaperStatements.nonprincipal_annihilator_eq_three_of_index_four H hi a b c ha1 hb1 hc1 hab
       hac hbc
   exact
-    exists_prime_witness_le_gaussian_star_of_three_annihilator_members hnlarge hnOdd H hHpass hGRH
-      hL a b c hab hac hbc hs ha hb hc hp.pos hq.pos hr.pos hn
+    exists_prime_gaussianStar_threeMembers_GRH hnlarge hnOdd H hHpass hGRH hL a b c hab hac hbc hs
+      ha hb hc hp.pos hq.pos hr.pos hn
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

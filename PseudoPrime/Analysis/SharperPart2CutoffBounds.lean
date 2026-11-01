@@ -59,8 +59,8 @@ a contradiction with additive correction 2*r+701/500 under the displayed inputs.
 Retain the loss parameter through the exact polynomial separation.
 Its dependence is a nonnegative correction to the base case r=3/2.
 This permits sharper Riemann reciprocal estimates without repeating the proof. -/
-theorem refinedPart2_bounds_incompatible_of_reciprocal_cost {t z L F R S b r : ℝ}
-    (ht : (15 / 2 : ℝ) < t) (hz : 0 ≤ z) (hrcost : (3 / 2 : ℝ) ≤ r)
+theorem refinedPart2_incompatible_of_reciprocal {t z L F R S b r : ℝ} (ht : (15 / 2 : ℝ) < t)
+    (hz : 0 ≤ z) (hrcost : (3 / 2 : ℝ) ≤ r)
     (hL : (t - 2) * L ≤ (t - 2) * t + t * (2 * z - (2 * r + 701 / 500))) (hzupper : z ≤ t / 3)
     (hF : F ≤ L - 2096 / 1831) (hR : 2 * z - r ≤ R)
     (hb : (1 - 1 / t) ^ 2 * b ≤ (1 / 2 : ℝ) * (1 - 1 / t ^ 2) * F - R - 1 / 4)
@@ -161,15 +161,15 @@ theorem refinedPart2_bounds_incompatible_of_reciprocal_cost {t z L F R S b r : �
 condition, the raw reciprocal and logarithmic bounds are incompatible.
 The exact polynomial separation remains positive below height eight.
 This generic comparison permits numerical cutoffs below 64. -/
-theorem refinedPart2_bounds_incompatible_of_root_gt_fifteen_halves {t z L F R S b : ℝ}
-    (ht : (15 / 2 : ℝ) < t) (hz : 0 ≤ z) (hL : (t - 2) * L ≤ (t - 2) * t + t * (2 * z - 2301 / 500))
-    (hzupper : z ≤ t / 3) (hF : F ≤ L - 2096 / 1831) (hR : 2 * z - 8 / 5 ≤ R)
+theorem refinedPart2_incompatible_of_root_gt_15_2 {t z L F R S b : ℝ} (ht : (15 / 2 : ℝ) < t)
+    (hz : 0 ≤ z) (hL : (t - 2) * L ≤ (t - 2) * t + t * (2 * z - 2301 / 500)) (hzupper : z ≤ t / 3)
+    (hF : F ≤ L - 2096 / 1831) (hR : 2 * z - 8 / 5 ≤ R)
     (hb : (1 - 1 / t) ^ 2 * b ≤ (1 / 2 : ℝ) * (1 - 1 / t ^ 2) * F - R - 1 / 4)
     (hu : S ≤ (2 * t + 2 + 2 * z) * b + F * z - 11 / 4)
     (hl : t ^ 2 - (1839 / 500 : ℝ) * z - 1 - (42781 / 915500 : ℝ) * (t + 1) ≤ S) : False := by
   apply
-    refinedPart2_bounds_incompatible_of_reciprocal_cost ht hz
-      (by norm_num only : (3 / 2 : ℝ) ≤ 8 / 5) ?_ hzupper hF hR hb hu hl
+    refinedPart2_incompatible_of_reciprocal ht hz (by norm_num only : (3 / 2 : ℝ) ≤ 8 / 5) ?_
+      hzupper hF hR hb hu hl
   nlinarith only [hL]
 
 /-- For t > 8 and 0 ≤ z ≤ t/3, the raw reciprocal and logarithmic upper
@@ -184,7 +184,7 @@ theorem refinedPart2_bounds_incompatible_2301_div_500 {t z L F R S b : ℝ} (ht 
     (hu : S ≤ (2 * t + 2 + 2 * z) * b + F * z - 11 / 4)
     (hl : t ^ 2 - (1839 / 500 : ℝ) * z - 1 - (42781 / 915500 : ℝ) * (t + 1) ≤ S) : False := by
   exact
-    refinedPart2_bounds_incompatible_of_root_gt_fifteen_halves
-      (lt_trans (by norm_num only : (15 / 2 : ℝ) < 8) ht) hz hL hzupper hF hR hb hu hl
+    refinedPart2_incompatible_of_root_gt_15_2 (lt_trans (by norm_num only : (15 / 2 : ℝ) < 8) ht) hz
+      hL hzupper hF hR hb hu hl
 
 end PseudoPrime.Analysis

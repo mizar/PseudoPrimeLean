@@ -28,8 +28,6 @@ refinement needed).
 
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 
-namespace PrimitiveLFunctionGrowthInternal
-
 variable {N : ℕ} [NeZero N]
 
 /-- `N` consecutive naturals starting at `a + 1` map bijectively onto `ZMod N`. -/
@@ -59,7 +57,7 @@ theorem bijOn_natCast_add_one_add (a : ℕ) :
 
 /-- Sum over any block of `N` consecutive naturals (indices `a+1, …, a+N`) of a nontrivial
 character vanishes. -/
-theorem sum_Icc_add_one_add_eq_zero {ψ : DirichletCharacter ℂ N} (hψ : ψ ≠ 1) (a : ℕ) :
+theorem character_sum_period_eq_zero {ψ : DirichletCharacter ℂ N} (hψ : ψ ≠ 1) (a : ℕ) :
     ∑ k ∈ Finset.Icc (a + 1) (a + N), ψ k = 0 := by
   have hNpos : 0 < N := Nat.pos_of_ne_zero (NeZero.ne N)
   have hIcc : Finset.Icc (a + 1) (a + N) = (Finset.range N).image (fun j => a + 1 + j) := by
@@ -86,7 +84,7 @@ theorem sum_Icc_add_one_add_eq_zero {ψ : DirichletCharacter ℂ N} (hψ : ψ �
           _ = a + (j + 1) := by rw [Nat.add_assoc, Nat.add_comm 1 j]
           _ ≤ a + N := Nat.add_le_add_left (Nat.succ_le_of_lt hj) a
   rw [hIcc, Finset.sum_image (fun j₁ _ j₂ _ h => Nat.add_left_cancel h)]
-  have hbij := PrimitiveLFunctionGrowthInternal.bijOn_natCast_add_one_add (N := N) a
+  have hbij := bijOn_natCast_add_one_add (N := N) a
   have hreindex :
     ∑ j ∈ Finset.range N, ψ ((a + 1 + j : ℕ)) = ∑ c ∈ (Finset.univ : Finset (ZMod N)), ψ c := by
     apply Finset.sum_nbij (fun j : ℕ => ((a + 1 + j : ℕ) : ZMod N))
@@ -102,7 +100,7 @@ theorem sum_Icc_add_one_add_eq_zero {ψ : DirichletCharacter ℂ N} (hψ : ψ �
   exact MulChar.sum_eq_zero_of_ne_one hψ
 
 /-- Partial character sums are periodic with period `N`. -/
-theorem sum_Icc_one_periodic {ψ : DirichletCharacter ℂ N} (hψ : ψ ≠ 1) (n : ℕ) :
+theorem character_sum_periodic {ψ : DirichletCharacter ℂ N} (hψ : ψ ≠ 1) (n : ℕ) :
     ∑ k ∈ Finset.Icc 1 (n + N), ψ k = ∑ k ∈ Finset.Icc 1 n, ψ k := by
   have hunion : Finset.Icc 1 (n + N) = Finset.Icc 1 n ∪ Finset.Icc (n + 1) (n + N) := by
     ext k
@@ -120,10 +118,7 @@ theorem sum_Icc_one_periodic {ψ : DirichletCharacter ℂ N} (hψ : ψ ≠ 1) (n
     intro k hk1 hk2
     simp only [Finset.mem_Icc] at hk1 hk2
     exact Nat.not_succ_le_self n (Nat.le_trans hk2.1 hk1.2)
-  rw [hunion, Finset.sum_union hdisj,
-    PrimitiveLFunctionGrowthInternal.sum_Icc_add_one_add_eq_zero hψ n, add_zero]
-
-end PrimitiveLFunctionGrowthInternal
+  rw [hunion, Finset.sum_union hdisj, character_sum_period_eq_zero hψ n, add_zero]
 
 /--
 Input/assumptions: a nontrivial Dirichlet character `ψ` modulo `N`.
@@ -154,7 +149,7 @@ theorem norm_sum_Icc_one_le {N : ℕ} [NeZero N] {ψ : DirichletCharacter ℂ N}
     · have hNpos : 0 < N := Nat.pos_of_ne_zero (NeZero.ne N)
       have hm : n - N < n := Nat.sub_lt (Nat.lt_of_lt_of_le hNpos hn) hNpos
       have hmn : n - N + N = n := Nat.sub_add_cancel hn
-      have hperiodic := PrimitiveLFunctionGrowthInternal.sum_Icc_one_periodic hψ (n - N)
+      have hperiodic := character_sum_periodic hψ (n - N)
       rw [hmn] at hperiodic
       rw [hperiodic]
       exact ih (n - N) hm
@@ -271,7 +266,7 @@ Role: the integrability step, needed for the `M → ∞` limit of
 `PseudoPrime.AnalyticNumberTheory.DirichletLFunction.sum_charCpow_eq_sub_integral` giving
 the Abel/Mellin representation of `L(s, ψ)` on `Re s > 0`.
 -/
-theorem integrableOn_charCpow_mul_partialSum_Ioi {N : ℕ} [NeZero N] {ψ : DirichletCharacter ℂ N}
+theorem integrableOn_charCpow_partialSum {N : ℕ} [NeZero N] {ψ : DirichletCharacter ℂ N}
     (hψ : ψ ≠ 1) {s : ℂ} (hs : 0 < s.re) :
     MeasureTheory.IntegrableOn (fun t : ℝ => (t : ℂ) ^ (-s - 1) * (∑ k ∈ Finset.Icc 1 ⌊t⌋₊, ψ k))
       (Set.Ioi (1 : ℝ)) := by
@@ -337,8 +332,8 @@ theorem norm_charPartialSumIndicator_le {N : ℕ} [NeZero N] {ψ : DirichletChar
 
 /-- For any character and `t ≤ 1`, the partial-sum indicator is zero by its defining
 cutoff. This removes the near-zero part of its Mellin integral. -/
-theorem charPartialSumIndicator_eq_zero_of_le_one {N : ℕ} [NeZero N] {ψ : DirichletCharacter ℂ N}
-    {t : ℝ} (ht : t ≤ 1) : charPartialSumIndicator ψ t = 0 := by
+theorem partialSumIndicator_zero_of_le_one {N : ℕ} [NeZero N] {ψ : DirichletCharacter ℂ N} {t : ℝ}
+    (ht : t ≤ 1) : charPartialSumIndicator ψ t = 0 := by
   unfold charPartialSumIndicator
   rw [ite_eq_left ht]
 
@@ -353,7 +348,7 @@ theorem charPartialSumIndicator_eq_of_lt {N : ℕ} [NeZero N] {ψ : DirichletCha
 /-- For a nontrivial character, the indicator is locally integrable on the positive
 real axis. Measurability and its constant norm bound give integrability on every
 compact set of finite measure. This supplies the Mellin holomorphicity criterion. -/
-theorem locallyIntegrableOn_charPartialSumIndicator {N : ℕ} [NeZero N] {ψ : DirichletCharacter ℂ N}
+theorem locallyIntegrableOn_partialSum {N : ℕ} [NeZero N] {ψ : DirichletCharacter ℂ N}
     (hψ : ψ ≠ 1) :
     MeasureTheory.LocallyIntegrableOn (charPartialSumIndicator ψ) (Set.Ioi (0 : ℝ)) := by
   refine (MeasureTheory.locallyIntegrableOn_iff isOpen_Ioi.isLocallyClosed).mpr fun K _ hK ↦ ?_
@@ -377,30 +372,29 @@ theorem isBigO_atTop_charPartialSumIndicator {N : ℕ} [NeZero N] {ψ : Dirichle
 `t → 0` through positive values. It vanishes identically near zero, so eventual
 equality with zero proves the bound without nontriviality. This allows any
 near-zero threshold in the Mellin holomorphicity criterion. -/
-theorem isBigO_nhdsWithin_charPartialSumIndicator {N : ℕ} [NeZero N] {ψ : DirichletCharacter ℂ N}
-    (b : ℝ) :
+theorem isBigO_partialSum_near_zero {N : ℕ} [NeZero N] {ψ : DirichletCharacter ℂ N} (b : ℝ) :
     charPartialSumIndicator ψ =O[nhdsWithin (0 : ℝ) (Set.Ioi (0 : ℝ))] fun t : ℝ => t ^ (-b) := by
   have hev : charPartialSumIndicator ψ =ᶠ[nhdsWithin (0 : ℝ) (Set.Ioi (0 : ℝ))] 0 := by
     filter_upwards [nhdsWithin_le_nhds (Iio_mem_nhds (show (0 : ℝ) < 1 by norm_num only)),
       self_mem_nhdsWithin] with t ht1 ht2
-    exact charPartialSumIndicator_eq_zero_of_le_one ht1.le
+    exact partialSumIndicator_zero_of_le_one ht1.le
   exact hev.trans_isBigO (Asymptotics.isBigO_zero (fun t : ℝ => t ^ (-b)) _)
 
 /-- The Abel integral `I(s)`, as the Mellin transform of
 `PseudoPrime.AnalyticNumberTheory.DirichletLFunction.charPartialSumIndicator ψ`, is
 holomorphic in `w` throughout `Re w < 0` (no lower bound: the indicator vanishes identically
 near `0`, so the near-zero growth threshold `b` can be taken as negative as needed). -/
-theorem differentiableAt_mellin_charPartialSumIndicator {N : ℕ} [NeZero N]
-    {ψ : DirichletCharacter ℂ N} (hψ : ψ ≠ 1) {w : ℂ} (hw1 : w.re < 0) :
+theorem differentiableAt_mellin_partialSum {N : ℕ} [NeZero N] {ψ : DirichletCharacter ℂ N}
+    (hψ : ψ ≠ 1) {w : ℂ} (hw1 : w.re < 0) :
     DifferentiableAt ℂ (mellin (charPartialSumIndicator ψ)) w :=
-  mellin_differentiableAt_of_isBigO_rpow (locallyIntegrableOn_charPartialSumIndicator hψ)
+  mellin_differentiableAt_of_isBigO_rpow (locallyIntegrableOn_partialSum hψ)
     (isBigO_atTop_charPartialSumIndicator hψ) (by simpa only using hw1)
-    (isBigO_nhdsWithin_charPartialSumIndicator (w.re - 1)) (sub_lt_self w.re zero_lt_one)
+    (isBigO_partialSum_near_zero (w.re - 1)) (sub_lt_self w.re zero_lt_one)
 
 /-- `mellin (PseudoPrime.AnalyticNumberTheory.DirichletLFunction.charPartialSumIndicator ψ) w`
 agrees with the Abel integral `I` at `w = -s`,
 provided `Re s > 0` (so the integral is genuinely convergent,
-`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.integrableOn_charCpow_mul_partialSum_Ioi`). -/
+`PseudoPrime.AnalyticNumberTheory.DirichletLFunction.integrableOn_charCpow_partialSum`). -/
 theorem mellin_charPartialSumIndicator_eq {N : ℕ} [NeZero N] {ψ : DirichletCharacter ℂ N}
     (hψ : ψ ≠ 1) {s : ℂ} (hs : 0 < s.re) :
     mellin (charPartialSumIndicator ψ) (-s) =
@@ -410,7 +404,7 @@ theorem mellin_charPartialSumIndicator_eq {N : ℕ} [NeZero N] {ψ : DirichletCh
       (Set.Ioc (0 : ℝ) 1) := by
     apply MeasureTheory.integrableOn_zero.congr_fun_ae
     filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Ioc] with t ht
-    rw [charPartialSumIndicator_eq_zero_of_le_one ht.2, smul_zero]
+    rw [partialSumIndicator_zero_of_le_one ht.2, smul_zero]
   have hint2 :
     MeasureTheory.IntegrableOn (fun t : ℝ => (t : ℂ) ^ (-s - 1) • charPartialSumIndicator ψ t)
       (Set.Ioi (1 : ℝ)) := by
@@ -424,7 +418,7 @@ theorem mellin_charPartialSumIndicator_eq {N : ℕ} [NeZero N] {ψ : DirichletCh
       simp only [Set.mem_Ioi] at ht
       rw [charPartialSumIndicator_eq_of_lt ht, smul_eq_mul]
     rw [MeasureTheory.IntegrableOn, MeasureTheory.integrable_congr heq]
-    exact integrableOn_charCpow_mul_partialSum_Ioi hψ hs
+    exact integrableOn_charCpow_partialSum hψ hs
   rw [mellin,
     show Set.Ioi (0 : ℝ) = Set.Ioc (0 : ℝ) 1 ∪ Set.Ioi (1 : ℝ) from by
       ext t
@@ -439,7 +433,7 @@ theorem mellin_charPartialSumIndicator_eq {N : ℕ} [NeZero N] {ψ : DirichletCh
         · exact lt_trans zero_lt_one ht,
     MeasureTheory.setIntegral_union Set.Ioc_disjoint_Ioi_same measurableSet_Ioi hint1 hint2,
     MeasureTheory.setIntegral_congr_fun measurableSet_Ioc (g := fun _ => (0 : ℂ)) fun t ht => by
-      rw [charPartialSumIndicator_eq_zero_of_le_one ht.2, smul_zero],
+      rw [partialSumIndicator_zero_of_le_one ht.2, smul_zero],
     MeasureTheory.integral_zero, zero_add]
   apply MeasureTheory.setIntegral_congr_fun measurableSet_Ioi
   intro t ht
@@ -457,7 +451,7 @@ theorem differentiableAt_charAbelIntegral {N : ℕ} [NeZero N] {ψ : DirichletCh
       (fun s => ∫ t in Set.Ioi (1 : ℝ), (t : ℂ) ^ (-s - 1) * ∑ k ∈ Finset.Icc 1 ⌊t⌋₊, ψ k) s := by
   have hcomp : DifferentiableAt ℂ (fun s : ℂ => -s) s := by fun_prop
   have hd : DifferentiableAt ℂ (mellin (charPartialSumIndicator ψ)) (-s) :=
-    differentiableAt_mellin_charPartialSumIndicator hψ
+    differentiableAt_mellin_partialSum hψ
       (by
         simp only [Complex.neg_re]
         exact neg_lt_zero.mpr hs)
@@ -536,8 +530,7 @@ theorem lFunction_eq_mul_charAbelIntegral {N : ℕ} [NeZero N] (hN1 : 1 < N)
       Filter.atTop
       (nhds (∫ t in Set.Ioi (1 : ℝ), (t : ℂ) ^ (-s - 1) * ∑ k ∈ Finset.Icc 1 ⌊t⌋₊, ψ k)) :=
     MeasureTheory.intervalIntegral_tendsto_integral_Ioi 1
-      (integrableOn_charCpow_mul_partialSum_Ioi hψ (lt_trans zero_lt_one hs))
-      tendsto_natCast_atTop_atTop
+      (integrableOn_charCpow_partialSum hψ (lt_trans zero_lt_one hs)) tendsto_natCast_atTop_atTop
   have hI :
     Filter.Tendsto
       (fun M : ℕ =>
@@ -554,7 +547,7 @@ theorem lFunction_eq_mul_charAbelIntegral {N : ℕ} [NeZero N] (hN1 : 1 < N)
 all of `Re s > 0`, via the identity theorem: `LFunction ψ` is entire (`ψ` nontrivial) and
 `s ↦ s · I(s)` is analytic on `Re s > 0` by `differentiableAt_charAbelIntegral`,
 and they agree on the open, nonempty subset `Re s > 1` by `lFunction_eq_mul_charAbelIntegral`. -/
-theorem lFunction_eq_mul_charAbelIntegral_of_zero_lt_re {N : ℕ} [NeZero N] (hN1 : 1 < N)
+theorem L_eq_mul_abelIntegral_of_re_pos {N : ℕ} [NeZero N] (hN1 : 1 < N)
     {ψ : DirichletCharacter ℂ N} (hψ : ψ ≠ 1) {s : ℂ} (hs : 0 < s.re) :
     DirichletCharacter.LFunction ψ s =
       s * ∫ t in Set.Ioi (1 : ℝ), (t : ℂ) ^ (-s - 1) * ∑ k ∈ Finset.Icc 1 ⌊t⌋₊, ψ k := by
@@ -591,7 +584,7 @@ by bounding `I(s)` via
 `∫_1^∞ t^{-σ-1} dt = 1/σ`. -/
 theorem norm_lFunction_le {N : ℕ} [NeZero N] (hN1 : 1 < N) {ψ : DirichletCharacter ℂ N} (hψ : ψ ≠ 1)
     {s : ℂ} (hs : 0 < s.re) : ‖DirichletCharacter.LFunction ψ s‖ ≤ (N : ℝ) * ‖s‖ / s.re := by
-  rw [lFunction_eq_mul_charAbelIntegral_of_zero_lt_re hN1 hψ hs, norm_mul]
+  rw [L_eq_mul_abelIntegral_of_re_pos hN1 hψ hs, norm_mul]
   have hint : ∫ t in Set.Ioi (1 : ℝ), (N : ℝ) * t ^ (-(s.re + 1)) = (N : ℝ) / s.re := by
     rw [MeasureTheory.integral_const_mul,
       integral_Ioi_rpow_of_lt (by linarith only [hs]) zero_lt_one]

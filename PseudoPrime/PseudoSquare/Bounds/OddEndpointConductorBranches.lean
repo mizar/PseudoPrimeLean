@@ -20,9 +20,9 @@ namespace PseudoPrime.PseudoSquare
 odd-prime non-one Jacobi witness at most x. The zero-at-two branch uses conductor
 at most 4*n and smaller costs; the nonzero branch uses conductor at most n.
 Transfer the primitive witness, allowing divisors of n as zero witnesses. -/
-theorem exists_odd_prime_jacobi_ne_one_of_conductor_branch_limits_neg {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x Y : ℝ}
-    (hx : 1 < x) (hY : 64 ≤ Y) (hYx : Y ≤ x)
+theorem exists_oddPrime_neOne_conductorBranches_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x Y : ℝ} (hx : 1 < x)
+    (hY : 64 ≤ Y) (hYx : Y ≤ x)
     (hzero :
       LLS.PaperStatements.oddEndpointTwoCostLimit (4 * n) x Y (Real.log 2) ((Real.log x) ^ 2 / 2) <
         0)
@@ -67,17 +67,16 @@ theorem exists_odd_prime_jacobi_ne_one_of_conductor_branch_limits_neg {n : ℕ} 
           (Nat.pos_of_ne_zero χ.conductor_ne_zero) hqle hx.le hY
       exact (hmC.trans hmL).trans_lt hnonzero
   obtain ⟨p, hp, ho, hpx, hv⟩ :=
-    LLS.PaperStatements.exists_odd_prime_inducing_ne_one_of_twoCostLimit_neg χ hq hne hquad hGRH hx
-      hY hYx (le_refl _) (le_refl _) hsep
-  exact
-    ⟨p, hp, ho, hpx, NumberTheory.jacobi_ne_one_of_primitiveQuadraticCharacter_ne_one hn hp ho hv⟩
+    LLS.PaperStatements.exists_oddPrime_inducing_twoCost_GRH χ hq hne hquad hGRH hx hY hYx
+      (le_refl _) (le_refl _) hsep
+  exact ⟨p, hp, ho, hpx, NumberTheory.jacobi_ne_one_of_primitive_ne_one hn hp ho hv⟩
 
 /-- Under the conductor-correlated endpoint conditions, the least odd-prime
 non-one Jacobi witness is at most x. Apply leastness to the prime witness;
 the nonempty-set input supplies the existing least-witness definition. -/
-theorem primeNeOneWitness_cast_le_of_conductor_branch_limits_neg {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x Y : ℝ}
-    (hx : 1 < x) (hY : 64 ≤ Y) (hYx : Y ≤ x)
+theorem neOneWitness_le_of_conductor_branch_limits_neg {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x Y : ℝ} (hx : 1 < x)
+    (hY : 64 ≤ Y) (hYx : Y ≤ x)
     (hzero :
       LLS.PaperStatements.oddEndpointTwoCostLimit (4 * n) x Y (Real.log 2) ((Real.log x) ^ 2 / 2) <
         0)
@@ -88,8 +87,7 @@ theorem primeNeOneWitness_cast_le_of_conductor_branch_limits_neg {n : ℕ} (hn :
     (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤ x := by
   obtain ⟨p, hp, ho, hpx, hv⟩ :=
-    exists_odd_prime_jacobi_ne_one_of_conductor_branch_limits_neg hn hns hGRH hx hY hYx hzero
-      hnonzero
+    exists_oddPrime_neOne_conductorBranches_GRH hn hns hGRH hx hY hYx hzero hnonzero
   exact (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hpx
 
 /-- Under GRH and the zero/nonzero conductor branch conditions at 4*B and B,
@@ -117,7 +115,7 @@ theorem QNeOne_cast_le_of_conductor_branch_limits_neg {B : ℕ}
     LLS.PaperStatements.oddEndpointTwoCostLimit_mono_level (c := (4 / 3 : ℝ) * Real.log 2) (D :=
       (Real.log x) ^ 2 / 2 + Real.log 2 * (Real.log x - Real.log 2)) ha.odd.pos ha.le hx.le hY
   exact
-    primeNeOneWitness_cast_le_of_conductor_branch_limits_neg ha.odd ha.not_isSquare hGRH hx hY hYx
+    neOneWitness_le_of_conductor_branch_limits_neg ha.odd ha.not_isSquare hGRH hx hY hYx
       (hm0.trans_lt hzero) (hm1.trans_lt hnonzero)
       (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
         (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare ha.odd ha.not_isSquare))

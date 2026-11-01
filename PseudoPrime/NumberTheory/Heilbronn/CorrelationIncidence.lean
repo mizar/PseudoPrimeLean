@@ -53,8 +53,7 @@ noncomputable def heilbronnDifferenceIncidenceEquiv {p : ℕ} [Fact p.Prime] (d 
 /-- The existing Heilbronn correlation is exactly the generic finite-set
 difference correlation. Count the incidence equivalence by an indicator
 sum. This transfers the finite matrix amplification to the existing energy. -/
-theorem heilbronn_correlation_eq_finiteDifferenceCorrelation {p : ℕ} [Fact p.Prime]
-    (d : ZMod (p ^ 2)) :
+theorem correlation_eq_finiteDifferenceCorrelation {p : ℕ} [Fact p.Prime] (d : ZMod (p ^ 2)) :
     Nat.card (cosetDifferenceAt p 0 0 d) =
       PseudoPrime.Analysis.finiteDifferenceCorrelation (heilbronnElements p) d := by
   classical
@@ -73,8 +72,7 @@ Use the translated incidence formula and commute the two indicator factors.
 This proves evenness for every correlation weight used in amplification. -/
 theorem heilbronn_correlation_neg {p : ℕ} [Fact p.Prime] (a : ZMod (p ^ 2)) :
     Nat.card (cosetDifferenceAt p 0 0 (-a)) = Nat.card (cosetDifferenceAt p 0 0 a) := by
-  rw [heilbronn_correlation_eq_finiteDifferenceCorrelation,
-    heilbronn_correlation_eq_finiteDifferenceCorrelation]
+  rw [correlation_eq_finiteDifferenceCorrelation, correlation_eq_finiteDifferenceCorrelation]
   have h₁ := PseudoPrime.Analysis.finite_incidence_overlap (heilbronnElements p) 0 a
   have h₂ := PseudoPrime.Analysis.finite_incidence_overlap (heilbronnElements p) a 0
   rw [zero_sub] at h₁

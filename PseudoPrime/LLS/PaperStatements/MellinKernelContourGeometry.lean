@@ -33,7 +33,7 @@ theorem completed_zero_im_ne_goodHeight {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ 
   let T := primitiveHorizontalHeightSeq hq hGRH hp hne hinv n
   have hr := completedLFunction_zero_re_eq_half hGRH hp hne hinv hz
   have hb :=
-    primitiveHorizontalHeightSeq_completedLFunction_ne_zero hq hGRH hp hne hinv n (σ := 1 / 2)
+    horizontalHeight_completed_ne_GRH hq hGRH hp hne hinv n (σ := 1 / 2)
       (by norm_num only : |(1 : ℝ) / 2| ≤ 2)
   constructor
   · intro ht
@@ -73,7 +73,7 @@ real part above one half, every ledger point is interior to each good-height rec
 The kernel pole has zero ordinate and the shifted zeros have zero real part;
 the good heights avoid both signed zero ordinates. This discharges the finite
 residue formula's geometric hypothesis. -/
-theorem completedKernelSingularities_interior_goodHeight {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem singularities_interior_goodHeight_GRH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hGRH : GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (n : ℕ) {a b : ℝ} (ha : a < -1 / 2) (hb : 1 / 2 < b) :
     let T := DirichletLFunction.primitiveHorizontalHeightSeq hq hGRH hp hne hinv n
@@ -124,7 +124,7 @@ theorem completedKernelSingularities_interior_goodHeight {q : ℕ} [NeZero q] (h
       simp only [Complex.add_im, Complex.div_ofNat_im, Complex.one_im, zero_div, add_zero] at hh
       exact ⟨hh.2, hh.1⟩
   apply
-    RectangleGeometry.mem_rectangleOpenBox_of_mem_closedBox_of_ne
+    RectangleGeometry.mem_openBox_of_closed_of_ne_sides
       (by
         rw [hlr, hrr]; linarith only [ha, hb])
       (by

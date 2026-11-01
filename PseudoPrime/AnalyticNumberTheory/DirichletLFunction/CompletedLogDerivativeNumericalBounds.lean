@@ -23,8 +23,8 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 /-- On 1/2≤Re s≤3, GammaReal's full logarithmic derivative norm is at most
 11+|Im s|. Shift digamma by one and use its explicit half-plane error bound.
 The strip contains both parity arguments on the reflected fixed Mellin line. -/
-private theorem norm_logDeriv_GammaReal_strip_le_eleven {s : ℂ} (hl : 1 / 2 ≤ s.re)
-    (hu : s.re ≤ 3) : ‖logDeriv Complex.Gammaℝ s‖ ≤ 11 + |s.im| := by
+private theorem norm_logDeriv_GammaReal_strip_bound {s : ℂ} (hl : 1 / 2 ≤ s.re) (hu : s.re ≤ 3) :
+    ‖logDeriv Complex.Gammaℝ s‖ ≤ 11 + |s.im| := by
   have hp : 0 < s.re := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1 / 2) hl
   have hr : ∀ m : ℕ, s / 2 ≠ -(m : ℂ) := by
     simpa only [Complex.ofReal_zero, add_zero] using
@@ -51,17 +51,17 @@ private theorem norm_logDeriv_GammaReal_strip_le_eleven {s : ℂ} (hl : 1 / 2 �
 /-- At real part 17/16, every character's gamma-factor logarithmic derivative
 has norm at most 11+|Im s|. Parity reduces the bound to GammaReal on a fixed strip.
 This supplies a numerical archimedean term for reflecting the left Mellin line. -/
-theorem norm_logDeriv_gammaFactor_seventeen_sixteenths_le {q : ℕ} (χ : DirichletCharacter ℂ q)
-    {s : ℂ} (hs : s.re = 17 / 16) : ‖logDeriv χ.gammaFactor s‖ ≤ 11 + |s.im| := by
+theorem gammaLogDeriv_17_16_linear_bound {q : ℕ} (χ : DirichletCharacter ℂ q) {s : ℂ}
+    (hs : s.re = 17 / 16) : ‖logDeriv χ.gammaFactor s‖ ≤ 11 + |s.im| := by
   have hp : 0 < s.re := by
     rw [hs]; norm_num only
   have hf : (1 : DirichletCharacter ℂ 1).gammaFactor = Complex.Gammaℝ := by
     funext z
     exact principal_modulus_one_even.gammaFactor_def z
-  rcases logDeriv_gammaFactor_eq_one_or_one_shift χ hp with he | he
+  rcases gammaLogDeriv_eq_one_or_shift χ hp with he | he
   · rw [he, hf]
     exact
-      norm_logDeriv_GammaReal_strip_le_eleven
+      norm_logDeriv_GammaReal_strip_bound
         (by
           rw [hs]; norm_num only)
         (by
@@ -71,7 +71,7 @@ theorem norm_logDeriv_gammaFactor_seventeen_sixteenths_le {q : ℕ} (χ : Dirich
       rw [Complex.add_re, Complex.one_re, hs]
       norm_num only
     have hb :=
-      norm_logDeriv_GammaReal_strip_le_eleven (s := s + 1)
+      norm_logDeriv_GammaReal_strip_bound (s := s + 1)
         (by
           rw [hr]; norm_num only)
         (by
@@ -82,8 +82,8 @@ theorem norm_logDeriv_gammaFactor_seventeen_sixteenths_le {q : ℕ} (χ : Dirich
 derivative has norm at most 283+|t|. The ordinary inverse-gap bound gives 272
 and the gamma factor contributes 11+|t|. No RH assumption is needed.
 This is the quantitative right-line input to the primitive functional equation. -/
-theorem norm_logDeriv_completed_seventeen_sixteenths_le {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hne : χ ≠ 1) (t : ℝ) :
+theorem completedLogDeriv_17_16_bound {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hne : χ ≠ 1)
+    (t : ℝ) :
     ‖logDeriv χ.completedLFunction (((17 / 16 : ℝ) : ℂ) + Complex.I * t)‖ ≤ 283 + |t| := by
   let s : ℂ := ((17 / 16 : ℝ) : ℂ) + Complex.I * t
   have hr : s.re = 17 / 16 := by
@@ -96,13 +96,12 @@ theorem norm_logDeriv_completed_seventeen_sixteenths_le {q : ℕ} [NeZero q]
     rw [hr]; norm_num only
   have hp : 0 < s.re := zero_lt_one.trans_le hr1
   have he :=
-    logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne
-      (completedLFunction_ne_zero_of_one_le_re hne hr1) (gammaFactor_ne_zero_of_re_pos χ hp)
-      (analyticAt_gammaFactor_of_re_pos χ hp).differentiableAt
+    L_logDeriv_sub_gamma_of_regular hne (completed_ne_zero_of_one_le_re hne hr1)
+      (gammaFactor_ne_zero_of_re_pos χ hp) (analyticAt_gammaFactor_of_re_pos χ hp).differentiableAt
   have ho := norm_logDeriv_le_inv_gap χ (by norm_num only : (1 : ℝ) < 17 / 16) t
   norm_num only at ho
   rw [mul_comm (t : ℂ) Complex.I] at ho
-  have hg := norm_logDeriv_gammaFactor_seventeen_sixteenths_le χ hr
+  have hg := gammaLogDeriv_17_16_linear_bound χ hr
   rw [hi] at hg
   have hc :
     logDeriv χ.completedLFunction s = logDeriv χ.LFunction s + logDeriv χ.gammaFactor s := by
@@ -116,7 +115,7 @@ theorem norm_logDeriv_completed_seventeen_sixteenths_le {q : ℕ} [NeZero q]
 completed logarithmic derivative on Re s=-1/16 is bounded by norm(log q)+283+|t|.
 Reflect to Re s=17/16 and isolate the conductor logarithm.
 The estimate supplies a fixed numerical constant on the Gamma kernel's left line. -/
-theorem norm_logDeriv_completed_neg_one_sixteenth_le {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+theorem completedLogDeriv_neg_1_16_bound {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (t : ℝ) :
     ‖logDeriv χ.completedLFunction (((-1 / 16 : ℝ) : ℂ) + Complex.I * t)‖ ≤
       ‖Complex.log (q : ℂ)‖ + 283 + |t| := by
@@ -125,9 +124,7 @@ theorem norm_logDeriv_completed_neg_one_sixteenth_le {q : ℕ} [NeZero q] {χ : 
     simp only [s, Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, Complex.I_im,
       Complex.ofReal_im, zero_mul, mul_zero, sub_zero, add_zero]
     norm_num only
-  have he :=
-    completedLFunction_logDeriv_functionalEquation_at hp hne
-      (completedLFunction_ne_zero_of_one_le_re hinv hr)
+  have he := completedLogDeriv_functionalEq hp hne (completed_ne_zero_of_one_le_re hinv hr)
   have hs_eq : 1 - s = ((-1 / 16 : ℝ) : ℂ) + Complex.I * t := by
     dsimp only [s]
     simp only [Complex.ofReal_div, Complex.ofReal_neg, Complex.ofReal_one, Complex.ofReal_ofNat]
@@ -135,7 +132,7 @@ theorem norm_logDeriv_completed_neg_one_sixteenth_le {q : ℕ} [NeZero q] {χ : 
   rw [hs_eq] at he
   have hn := norm_add_le (Complex.log (q : ℂ)) (logDeriv χ⁻¹.completedLFunction s)
   rw [← he, norm_neg] at hn
-  have hb := norm_logDeriv_completed_seventeen_sixteenths_le hinv (-t)
+  have hb := completedLogDeriv_17_16_bound hinv (-t)
   rw [abs_neg] at hb
   exact hn.trans (by linarith only [hb])
 

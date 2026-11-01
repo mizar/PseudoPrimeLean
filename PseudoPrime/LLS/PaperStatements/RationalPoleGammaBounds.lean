@@ -83,8 +83,8 @@ theorem fourContour_gammaIntegral_lt_three {q : ℕ} (χ : DirichletCharacter �
       (fourContourKernel.function (Complex.I * t) * (x : ℂ) ^ (Complex.I * t))
   have hb (t : ℝ) : ‖F t‖ ≤ ‖fourContourKernel.function (Complex.I * t)‖ * (11 + |t|) := by
     have hg :=
-      AnalyticNumberTheory.DirichletLFunction.norm_logDeriv_gammaFactor_positive_strip_le_linear χ
-        (s := Complex.I * t + 1 / 2)
+      AnalyticNumberTheory.DirichletLFunction.gammaLogDeriv_strip_linear χ (s :=
+        Complex.I * t + 1 / 2)
         (by
           norm_num only [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im,
             Complex.ofReal_re, Complex.ofReal_im, mul_zero, zero_mul, sub_zero, zero_add,

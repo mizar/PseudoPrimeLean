@@ -26,8 +26,8 @@ and log n >= 22000000000000, there is a prime strong witness at most
 (282924/1000000)log(n)^2.
 A level prime cannot be a unit; an outside prime contradicts Fermat containment
 of every strong pass. No additional kernel error or subgroup-choice premise remains. -/
-theorem exists_prime_witness_le_0283_of_large_fermat_index {n : ℕ} [NeZero n] (hn : 1 < n)
-    (ho : Odd n) (hi : 1000000000 ≤ (PrimeTest.fermatSubgroup n).index)
+theorem exists_prime_0282924_largeFermat_GRH {n : ℕ} [NeZero n] (hn : 1 < n) (ho : Odd n)
+    (hi : 1000000000 ≤ (PrimeTest.fermatSubgroup n).index)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hlog : (22000000000000 : ℝ) ≤ Real.log n) :
     ∃ p : ℕ,
@@ -35,8 +35,8 @@ theorem exists_prime_witness_le_0283_of_large_fermat_index {n : ℕ} [NeZero n] 
         (p : ℝ) ≤ (282924 / 1000000 : ℝ) * (Real.log n) ^ 2 ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   obtain ⟨p, hp, hb, hout⟩ :=
-    LLS.PaperStatements.exists_prime_factor_or_outside_triangular18_signed_large_index
-      (PrimeTest.fermatSubgroup n) hi hGRH hlog
+    LLS.PaperStatements.exists_prime_factorOrOutside_signedLarge_GRH (PrimeTest.fermatSubgroup n) hi
+      hGRH hlog
   refine ⟨p, hp, hb, ?_⟩
   intro hpass
   rcases hout with hd | hout
@@ -79,14 +79,13 @@ theorem exists_prime_witness_le_0282924 {n : ℕ} (ho : Odd n) (hcomp : ¬n.Prim
   · have hsmall :=
       triangular_decimal_cutoff_mono (by decide : (434782608696 : ℕ) ≤ 9565217391305) hN
     exact
-      exists_prime_witness_le_0283_of_small_fermat_index ho hcomp (PrimeTest.fermatSubgroup n)
-        (le_refl _) hi hGRH hsmall
+      exists_prime_0282924_smallFermatIndex_GRH ho hcomp (PrimeTest.fermatSubgroup n) (le_refl _) hi
+        hGRH hsmall
   · have hlarge : 1000000000 ≤ (PrimeTest.fermatSubgroup n).index := by
       have h := (lt_of_not_ge hi).le
       norm_num only at h
       exact h
-    obtain ⟨p, hp, hb, hf⟩ :=
-      exists_prime_witness_le_0283_of_large_fermat_index hn ho hlarge hGRH hL
+    obtain ⟨p, hp, hb, hf⟩ := exists_prime_0282924_largeFermat_GRH hn ho hlarge hGRH hL
     exact ⟨p, hp, hb, hf⟩
 
 /-- Under GRH, the least prime strong Miller--Rabin witness for every odd
@@ -159,7 +158,7 @@ theorem exists_prime_witness_le_0283 {n : ℕ} (ho : Odd n) (hcomp : ¬n.Prime)
 strong passage for every prime base through (283/1000)log(n)^2 is equivalent
 to primality. The composite direction uses the all-branch witness theorem;
 the prime direction restricts the existing log-squared criterion. -/
-theorem prime_iff_millerRabin_for_all_primes_le_0283_log_sq {n : ℕ} (ho : Odd n)
+theorem prime_iff_pass_primes_0283_logSq_GRH {n : ℕ} (ho : Odd n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hN : 10 ^ 9565217391305 ≤ n) :
     (∀ p : ℕ,
         p.Prime →

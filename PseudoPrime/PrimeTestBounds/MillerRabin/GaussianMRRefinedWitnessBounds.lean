@@ -426,8 +426,8 @@ theorem gaussianMRRefined_witness_small {n : ℕ} [NeZero n] (hnOdd : Odd n) (hc
         (s : ℝ) ≤ gaussianMRRefinedBound (Real.log n) ∧
         ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
   rcases
-    finite_index_witness_or_uniform_korselt_triple_log240 hnOdd hcomp (PrimeTest.fermatSubgroup n)
-      le_rfl hi hGRH (by linarith only [hL]) with
+    witness_or_uniformKorselt_log240_GRH hnOdd hcomp (PrimeTest.fermatSubgroup n) le_rfl hi hGRH
+      (by linarith only [hL]) with
     hlocal | htriple
   · obtain ⟨s, hs, hbound, hfail⟩ := hlocal
     have hbound' := gaussianMRRefined_local hL

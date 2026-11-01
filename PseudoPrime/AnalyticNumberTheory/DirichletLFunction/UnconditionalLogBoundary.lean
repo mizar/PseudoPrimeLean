@@ -21,7 +21,7 @@ the normalized rectangle boundary tends to the log-weighted character sum minus
 the left vertical whole-line integral. Expand the four edges, use unconditional
 vertical exhaustion, and combine the limits. This is the boundary interface for
 an unconditional smoothed explicit formula. -/
-theorem tendsto_normalized_unconditional_logBoundary {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+theorem tendsto_unconditional_logBoundary {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (T : ℕ → ℝ)
     (hT : Filter.Tendsto T Filter.atTop Filter.atTop) (hTpos : ∀ k : ℕ, 0 < T k) (A : ℕ)
     (hA : 2 ≤ A) {x : ℝ} (hx : 1 ≤ x)
@@ -85,13 +85,8 @@ theorem tendsto_normalized_unconditional_logBoundary {q : ℕ} [NeZero q] {χ : 
   apply Filter.Tendsto.congr (fun k => (heq k).symm)
   have hhoriz := hhor
   have hright :=
-    (tendsto_intervalIntegral_dirichletLogContourKernel hxpos χ hne
-          (show (1 : ℝ) < 2 by norm_num only)).comp
-      hT
-  have hleft :=
-    (tendsto_intervalIntegral_dirichletLogContourKernel_leftVertical hprimitive hne hinv hxpos
-          hA).comp
-      hT
+    (tendsto_intervalIntegral_logKernel hxpos χ hne (show (1 : ℝ) < 2 by norm_num only)).comp hT
+  have hleft := (tendsto_logKernel_left_truncated hprimitive hne hinv hxpos hA).comp hT
   have hweighted := characterLogWeightedSum_eq_integral χ hxpos (show (1 : ℝ) < 2 by norm_num only)
   have htarget :
     Filter.Tendsto
@@ -133,8 +128,8 @@ positive height sequence with nonzero central completed edges and normalized
 boundary convergence on every fixed negative-half-integer contour, for every
 scale at least one. Apply the proved unconditional horizontal limits and vertical
 exhaustion. This discharges all horizontal-limit assumptions before residue assembly. -/
-theorem exists_unconditional_logBoundary_height_sequence {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
+theorem exists_logBoundary_heightSeq {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     ∃ T : ℕ → ℝ,
       Filter.Tendsto T Filter.atTop Filter.atTop ∧
         (∀ k : ℕ,
@@ -160,12 +155,11 @@ theorem exists_unconditional_logBoundary_height_sequence {q : ℕ} [NeZero q] (h
                         ∫ t : ℝ,
                           dirichletLogContourKernel x χ
                             (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I))) := by
-  obtain ⟨T, hT, hspec, hhorizontal⟩ :=
-    exists_unconditional_logKernel_horizontal_height_limits hq hp hne hinv
+  obtain ⟨T, hT, hspec, hhorizontal⟩ := exists_logKernel_heightLimits hq hp hne hinv
   refine ⟨T, hT, hspec, ?_⟩
   intro A hA x hx
   exact
-    tendsto_normalized_unconditional_logBoundary hp hne hinv T hT
+    tendsto_unconditional_logBoundary hp hne hinv T hT
       (fun k ↦ zero_lt_one.trans_le ((le_add_of_nonneg_left (Nat.cast_nonneg k)).trans (hspec k).1))
       A hA hx (hhorizontal A hA x hx)
 
@@ -174,7 +168,7 @@ contribution identifies the log-weighted character sum minus its left edge with
 the origin residue plus that contribution minus the full completed-zero sum.
 Compare the normalized boundary limit with the finite residue identity and
 unconditional zero-sum exhaustion. This is the fixed-left-edge explicit formula. -/
-theorem logWeightedSum_sub_left_unconditionally {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem logWeighted_sub_left_unconditional {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (T : ℕ → ℝ)
     (hT : Filter.Tendsto T Filter.atTop Filter.atTop) (hTpos : ∀ k : ℕ, 0 < T k)
     (hcentral :
@@ -191,7 +185,7 @@ theorem logWeightedSum_sub_left_unconditionally {q : ℕ} [NeZero q] (hq : 2 ≤
               (dirichletLFunctionZerosInRectangle χ hne (unconditionalHeightLowerCorner A (T k))
                     (unconditionalHeightUpperCorner (T k))).filter
                 (fun ρ ↦ DirichletCharacter.gammaFactor χ ρ = 0 ∧ ρ ≠ 0),
-            dirichletLFunctionLogZeroContribution x χ ρ) =
+            LFunctionLogZeroContribution x χ ρ) =
           c)
     (hboundary :
       Filter.Tendsto
@@ -212,7 +206,7 @@ theorem logWeightedSum_sub_left_unconditionally {q : ℕ} [NeZero q] (hq : 2 ≤
             dirichletLogContourKernel x χ
               (((primitiveReciprocalLeftRe A : ℝ) : ℂ) + (t : ℂ) * Complex.I) =
       dirichletLogResidueAt hne x 0 + c - ∑' ρ : ℂ, completedLogZeroTerm χ x ρ := by
-  have hzeros := tendsto_completedLogZero_unconditional_height_sum hq hp hne hinv T hT A hx.le
+  have hzeros := tendsto_logZero_height_sum hq hp hne hinv T hT A hx.le
   have hright := (tendsto_const_nhds (x := dirichletLogResidueAt hne x 0 + c)).sub hzeros
   have heq :
     (fun k : ℕ ↦
@@ -227,10 +221,10 @@ theorem logWeightedSum_sub_left_unconditionally {q : ℕ} [NeZero q] (hq : 2 ≤
                 (unconditionalHeightUpperCorner (T k)),
             completedLogZeroTerm χ x ρ) := by
     funext k
-    rw [unconditionalHeight_logFiniteContourIdentity_normalized hp hne hinv A hA (T k) (hTpos k)
-        (hcentral k) (zero_lt_one.trans hx)]
+    rw [logContour_unconditional_normalized hp hne hinv A hA (T k) (hTpos k) (hcentral k)
+        (zero_lt_one.trans hx)]
     obtain ⟨hzero, hone⟩ := unconditionalHeight_mellinPoints_mem hne A hA (T k) (hTpos k)
-    rw [log_residue_sum_eq_origin_add_trivial_sub_completed hne x hzero hone, hc k]
+    rw [logResidue_sum_origin_trivial_zeros hne x hzero hone, hc k]
   rw [heq] at hboundary
   exact tendsto_nhds_unique hboundary hright
 

@@ -828,7 +828,7 @@ holomorphic in `w` throughout `Re w < 0`
 (no lower bound: `PseudoPrime.AnalyticNumberTheory.RiemannZeta.zetaSawtoothIndicator` vanishes
 identically near `0`, so the "near-zero" growth threshold `b` can be taken as negative as
 needed). -/
-theorem differentiableAt_mellin_zetaSawtoothIndicator {w : ℂ} (hw1 : w.re < 0) :
+theorem differentiableAt_mellin_sawtooth {w : ℂ} (hw1 : w.re < 0) :
     DifferentiableAt ℂ (mellin zetaSawtoothIndicator) w :=
   mellin_differentiableAt_of_isBigO_rpow locallyIntegrableOn_zetaSawtoothIndicator
     isBigO_atTop_zetaSawtoothIndicator (by simpa only using hw1)
@@ -893,7 +893,7 @@ theorem differentiableAt_sawtoothRemainder {s : ℂ} (hs1 : -1 < s.re) :
       (fun s => ∫ t in Set.Ioi (1 : ℝ), (t : ℂ) ^ (-s - 2) * ((zetaSawtooth t : ℝ) : ℂ)) s := by
   have hcomp : DifferentiableAt ℂ (fun s : ℂ => -s - 1) s := by fun_prop
   have hd : DifferentiableAt ℂ (mellin zetaSawtoothIndicator) (-s - 1) := by
-    apply differentiableAt_mellin_zetaSawtoothIndicator
+    apply differentiableAt_mellin_sawtooth
     simp only [Complex.sub_re, Complex.neg_re, Complex.one_re]
     linarith only [hs1]
   have hcd := hd.comp s hcomp
@@ -917,7 +917,7 @@ theorem isOpen_reGt_neg_one_diff_one : IsOpen ({s : ℂ | -1 < s.re} \ {(1 : ℂ
 
 /-- `ζ` is analytic throughout `{Re s > -1} \ {1}` (in fact everywhere away from `s = 1`; mathlib
 already supplies this directly). -/
-theorem analyticOnNhd_riemannZeta_reGt_neg_one_diff_one :
+theorem analyticOnNhd_zeta_reGt_neg_one_diff_one :
     AnalyticOnNhd ℂ riemannZeta ({s : ℂ | -1 < s.re} \ {(1 : ℂ)}) :=
   DifferentiableOn.analyticOnNhd
     (fun _ hs => (differentiableAt_riemannZeta hs.2).differentiableWithinAt)
@@ -927,7 +927,7 @@ theorem analyticOnNhd_riemannZeta_reGt_neg_one_diff_one :
 `{Re s > -1} \ {1}`: the elementary part `s/(s-1) - 1/2` is analytic away from `s = 1`, and
 `J(s)` is analytic on `Re s > -1` by
 `PseudoPrime.AnalyticNumberTheory.RiemannZeta.differentiableAt_sawtoothRemainder`. -/
-theorem analyticOnNhd_sawtoothFormula_reGt_neg_one_diff_one :
+theorem analyticOnNhd_sawtoothFormula_punctured :
     AnalyticOnNhd ℂ
       (fun s =>
         s / (s - 1) - 1 / 2 -
@@ -1321,8 +1321,7 @@ theorem riemannZeta_eq_sawtoothFormula_of_one_lt_re {s : ℂ} (hs : 1 < s.re) :
 
 /-- The classical formula extends, via the identity theorem, from `Re s > 1` to the whole
 punctured half-plane `{Re s > -1} \ {1}`. -/
-theorem riemannZeta_eq_sawtoothFormula_reGt_neg_one_diff_one {s : ℂ}
-    (hs : s ∈ ({s : ℂ | -1 < s.re} \ {(1 : ℂ)})) :
+theorem eq_sawtoothFormula_punctured {s : ℂ} (hs : s ∈ ({s : ℂ | -1 < s.re} \ {(1 : ℂ)})) :
     riemannZeta s =
       s / (s - 1) - 1 / 2 -
         s * (s + 1) * ∫ t in Set.Ioi (1 : ℝ), (t : ℂ) ^ (-s - 2) * ((zetaSawtooth t : ℝ) : ℂ) := by
@@ -1349,9 +1348,9 @@ theorem riemannZeta_eq_sawtoothFormula_reGt_neg_one_diff_one {s : ℂ}
       s hs'
     exact riemannZeta_eq_sawtoothFormula_of_one_lt_re hs'
   exact
-    analyticOnNhd_riemannZeta_reGt_neg_one_diff_one.eqOn_of_preconnected_of_eventuallyEq
-      analyticOnNhd_sawtoothFormula_reGt_neg_one_diff_one isPreconnected_reGt_neg_one_diff_one h2mem
-      heventually hs
+    analyticOnNhd_zeta_reGt_neg_one_diff_one.eqOn_of_preconnected_of_eventuallyEq
+      analyticOnNhd_sawtoothFormula_punctured isPreconnected_reGt_neg_one_diff_one h2mem heventually
+      hs
 
 /-! ### A genuinely polynomial (`Im s`-uniform) bound on `‖ζ‖` for fixed `Re s > -1` -/
 
@@ -1428,10 +1427,9 @@ theorem sawtoothRemainderBound_antitone {a b : ℝ} (ha : -1 < a) (hab : a ≤ b
 /-- On `Re s > -1`, away from one, the zeta norm is bounded using a quadratic
 norm term and the explicit pole term `‖s‖/‖s-1‖`. The remainder coefficient
 depends only on the real part, not the imaginary part. -/
-theorem norm_riemannZeta_le_of_reGt_neg_one_diff_one {s : ℂ}
-    (hs : s ∈ ({s : ℂ | -1 < s.re} \ {(1 : ℂ)})) :
+theorem norm_zeta_le_of_reGt_neg_one_diff_one {s : ℂ} (hs : s ∈ ({s : ℂ | -1 < s.re} \ {(1 : ℂ)})) :
     ‖riemannZeta s‖ ≤ ‖s‖ / ‖s - 1‖ + 1 / 2 + ‖s‖ * (‖s‖ + 1) * sawtoothRemainderBound s.re := by
-  rw [riemannZeta_eq_sawtoothFormula_reGt_neg_one_diff_one hs]
+  rw [eq_sawtoothFormula_punctured hs]
   set J : ℂ := ∫ t in Set.Ioi (1 : ℝ), (t : ℂ) ^ (-s - 2) * ((zetaSawtooth t : ℝ) : ℂ) with hJ_def
   have hstep1 :
     ‖s / (s - 1) - 1 / 2 - s * (s + 1) * J‖ ≤ ‖s / (s - 1) - 1 / 2‖ + ‖s * (s + 1) * J‖ :=

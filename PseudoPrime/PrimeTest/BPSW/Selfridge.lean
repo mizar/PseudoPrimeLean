@@ -48,15 +48,11 @@ theorem bailliePSWClassicalWithinTwoMul_of_search {n : ℕ} {D : ℤ}
     (hsearch : selfridgeClassicalSearchWithinTwoMul n = some D) :
     bailliePSWClassicalWithinTwoMul n =
       some
-        (bailliePSWWithParams n
-          (LucasParams.methodAStar D
-              (selfridgeClassicalSearchWithinTwoMul_some_methodA_mod hsearch)).D
-          (LucasParams.methodAStar D
-              (selfridgeClassicalSearchWithinTwoMul_some_methodA_mod hsearch)).P
-          (LucasParams.methodAStar D
-              (selfridgeClassicalSearchWithinTwoMul_some_methodA_mod hsearch)).Q) := by
-  simp only [bailliePSWClassicalWithinTwoMul,
-    selfridgeClassicalMethodAStarParamsWithinTwoMul_of_search hsearch, Option.map_some]
+        (bailliePSWWithParams n (LucasParams.methodAStar D (classicalTwoMul_methodA_mod hsearch)).D
+          (LucasParams.methodAStar D (classicalTwoMul_methodA_mod hsearch)).P
+          (LucasParams.methodAStar D (classicalTwoMul_methodA_mod hsearch)).Q) := by
+  simp only [bailliePSWClassicalWithinTwoMul, classicalAStarTwoMul_of_search hsearch,
+    Option.map_some]
 
 /-- A successful elementary search supplies the bounded strengthened-BPSW result. -/
 theorem strengthenedBPSWClassicalWithinTwoMul_of_search {n : ℕ} {D : ℤ}
@@ -64,14 +60,11 @@ theorem strengthenedBPSWClassicalWithinTwoMul_of_search {n : ℕ} {D : ℤ}
     strengthenedBPSWClassicalWithinTwoMul n =
       some
         (strengthenedBPSWWithParams n
-          (LucasParams.methodAStar D
-              (selfridgeClassicalSearchWithinTwoMul_some_methodA_mod hsearch)).D
-          (LucasParams.methodAStar D
-              (selfridgeClassicalSearchWithinTwoMul_some_methodA_mod hsearch)).P
-          (LucasParams.methodAStar D
-              (selfridgeClassicalSearchWithinTwoMul_some_methodA_mod hsearch)).Q) := by
-  simp only [strengthenedBPSWClassicalWithinTwoMul,
-    selfridgeClassicalMethodAStarParamsWithinTwoMul_of_search hsearch, Option.map_some]
+          (LucasParams.methodAStar D (classicalTwoMul_methodA_mod hsearch)).D
+          (LucasParams.methodAStar D (classicalTwoMul_methodA_mod hsearch)).P
+          (LucasParams.methodAStar D (classicalTwoMul_methodA_mod hsearch)).Q) := by
+  simp only [strengthenedBPSWClassicalWithinTwoMul, classicalAStarTwoMul_of_search hsearch,
+    Option.map_some]
 
 /--
 For odd `n`, a successful bounded classical search gives the same ordinary BPSW result
@@ -79,16 +72,16 @@ with Method A parameters as with Method A*. The proof treats `D = 5` separately 
 uses equality of the parameters otherwise. This does not replace the Method A*
 parameters used by the strengthened BPSW execution API.
 -/
-theorem bailliePSWClassicalWithinTwoMul_of_search_methodA {n : ℕ} (hn : Odd n) {D : ℤ}
+theorem bailliePSW_twoMul_of_methodA {n : ℕ} (hn : Odd n) {D : ℤ}
     (hsearch : selfridgeClassicalSearchWithinTwoMul n = some D) :
     bailliePSWClassicalWithinTwoMul n = some (bailliePSWWithParams n D 1 ((1 - D) / 4)) := by
   rw [bailliePSWClassicalWithinTwoMul_of_search hsearch]
-  let hmod := selfridgeClassicalSearchWithinTwoMul_some_methodA_mod hsearch
+  let hmod := classicalTwoMul_methodA_mod hsearch
   by_cases hD : D = 5
   · subst D
     have hjacobi : jacobiSym 5 n = -1 := by
       simpa only using selfridgeClassicalSearchAscending_some_spec hsearch
-    have hfive := bailliePSWWithParams_methodAStar_eq_methodA_of_five hn hjacobi
+    have hfive := bailliePSW_AStar_eq_A_of_jacobi_five_neg_one hn hjacobi
     simpa only [LucasParams.methodAStar, ↓reduceDIte,
       show ((1 - (5 : ℤ)) / 4) = -1 by norm_num only] using congrArg some hfive
   · rw [LucasParams.methodAStar_eq_methodA_of_ne_five hmod hD]
@@ -101,10 +94,9 @@ apply fixed-parameter prime completeness. This supplies the bounded ordinary wra
 -/
 theorem bailliePSWClassicalWithinTwoMul_of_prime {n : ℕ} (hn : Nat.Prime n) (hn3 : 3 ≤ n) :
     bailliePSWClassicalWithinTwoMul n = some true := by
-  obtain ⟨D, hsearch⟩ :=
-    selfridgeClassicalSearchAscendingWithinTwoMul_some_of_prime_of_three_le hn hn3
+  obtain ⟨D, hsearch⟩ := classicalAscending_twoMul_prime hn hn3
   rw [bailliePSWClassicalWithinTwoMul_of_search hsearch, Option.some.injEq]
-  let hmod := selfridgeClassicalSearchWithinTwoMul_some_methodA_mod hsearch
+  let hmod := classicalTwoMul_methodA_mod hsearch
   let param := LucasParams.methodAStar D hmod
   have hD : param.D = D := by
     dsimp only [param, LucasParams.methodAStar]
@@ -120,10 +112,9 @@ Strong, V and Euler completeness prove the pass. This supplies the bounded stren
 -/
 theorem strengthenedBPSWClassicalWithinTwoMul_of_prime {n : ℕ} (hn : Nat.Prime n) (hn3 : 3 ≤ n) :
     strengthenedBPSWClassicalWithinTwoMul n = some true := by
-  obtain ⟨D, hsearch⟩ :=
-    selfridgeClassicalSearchAscendingWithinTwoMul_some_of_prime_of_three_le hn hn3
+  obtain ⟨D, hsearch⟩ := classicalAscending_twoMul_prime hn hn3
   rw [strengthenedBPSWClassicalWithinTwoMul_of_search hsearch, Option.some.injEq]
-  let hmod := selfridgeClassicalSearchWithinTwoMul_some_methodA_mod hsearch
+  let hmod := classicalTwoMul_methodA_mod hsearch
   let param := LucasParams.methodAStar D hmod
   have hD : param.D = D := by
     dsimp only [param, LucasParams.methodAStar]
@@ -157,8 +148,7 @@ theorem bailliePSWWheel30Ascending_of_search {n fuel : ℕ} {D : ℤ}
           (LucasParams.methodAStar D
               (selfridgeWheel30SearchAscending_some_methodA_mod (n := n) (k := 0) (fuel := fuel)
                 (by simpa only [selfridgeWheel30SearchAscending] using hsearch))).Q) := by
-  simp only [bailliePSWWheel30Ascending,
-    selfridgeWheel30MethodAStarParamsAscending_of_search hsearch, Option.map_some]
+  simp only [bailliePSWWheel30Ascending, wheel30AStarAscending_of_search hsearch, Option.map_some]
 
 /-- A prime modulus passes Wheel30 BPSW whenever its bounded search succeeds. -/
 theorem bailliePSWWheel30Ascending_of_prime_of_search {n fuel : ℕ} (hn : n.Prime) {D : ℤ}
@@ -202,8 +192,7 @@ theorem bailliePSWPrimeAscending_of_search {n fuel : ℕ} {D : ℤ}
           (LucasParams.methodAStar D
               (selfridgePrimeSearchAscending_some_methodA_mod (n := n) (k := 0) (fuel := fuel)
                 (by simpa only [selfridgePrimeSearchAscending] using hsearch))).Q) := by
-  simp only [bailliePSWPrimeAscending, selfridgePrimeMethodAStarParamsAscending_of_search hsearch,
-    Option.map_some]
+  simp only [bailliePSWPrimeAscending, primeAStarAscending_of_search hsearch, Option.map_some]
 
 /-- A prime modulus passes prime-only BPSW whenever its bounded search succeeds. -/
 theorem bailliePSWPrimeAscending_of_prime_of_search {n fuel : ℕ} (hn : n.Prime) {D : ℤ}

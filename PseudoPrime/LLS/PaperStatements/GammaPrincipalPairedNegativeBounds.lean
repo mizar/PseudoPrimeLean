@@ -22,8 +22,8 @@ L at least 550 and log q at most L+7/5, the primitive Gamma sum is at most
 M log(conductor)+277/20. Keep the actual conductor and combine the signed
 principal Euler bound, pole cost and conductor-free left cost.
 This is the conductor-retaining upper input for the paired comparison. -/
-theorem gamma_primitiveCharacter_sum_re_le_principal_paired_nearSquare_conductor {q : ℕ} [NeZero q]
-    (hq : 20000 ≤ q) (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
+theorem gammaCharSum_principalPaired_conductor_GRH {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L : ℝ} (hL : 550 ≤ L)
     (hlogq : Real.log q ≤ L + 7 / 5) :
     let x := (2 / 5 : ℝ) * L ^ 2;
@@ -55,7 +55,7 @@ theorem gamma_primitiveCharacter_sum_re_le_principal_paired_nearSquare_conductor
   have hpole : ((7 / 6 : ℝ) * Real.log q + 4) / Real.sqrt x ≤ 2 := by
     rw [div_le_iff₀ hs]
     linarith only [hlogq, hroot, hL]
-  have hu := gamma_primitiveCharacter_sum_re_lt_principal_euler hq χ hne hGRH hx
+  have hu := gammaCharacterSum_re_lt_principal_euler hq χ hne hGRH hx
   linarith only [hu, hleft, hpole]
 
 end PseudoPrime.LLS.PaperStatements

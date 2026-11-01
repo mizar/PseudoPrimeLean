@@ -21,8 +21,8 @@ a prime-two allowance d and (1/2-a)sqrt x at least one. Under unit-prime trivial
 the upper cap retains the full principal prefix minus d. Use the split reflected Euler
 remainder and discard only the nonpositive conductor term. This strengthens the arithmetic
 input to negative-witness extraction without changing the conductor allocation. -/
-theorem gamma_primitive_add_local_le_reflectedSplit_conductor_prefix {q A : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hqA : q ≤ A)
+theorem gammaPrimitive_local_reflectedPrefix_GRH {q A : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hqA : q ≤ A)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x C Y a d : ℝ} (hx : 2 ≤ x)
     (hY : 1 ≤ Y) (ha : 0 ≤ a) (hd0 : 0 ≤ d) (hscale : 1 ≤ (1 / 2 - a) * Real.sqrt x)
     (hprime :
@@ -43,7 +43,7 @@ theorem gamma_primitive_add_local_le_reflectedSplit_conductor_prefix {q A : ℕ}
   have hm := NumberTheory.three_le_conductor_of_ne_one χ hne
   have hmA := (Nat.le_of_dvd (Nat.pos_of_ne_zero (NeZero.ne q)) χ.conductor_dvd_level).trans hqA
   have hb :=
-    PaperStatements.gamma_primitive_sum_re_le_twoPole_reflected_split (le_max_left 20000 A) hm
+    PaperStatements.gammaPrimitiveSum_re_le_twoPole_reflected_split (le_max_left 20000 A) hm
       (hmA.trans (le_max_right 20000 A)) hGRH hp hnp (inv_ne_one.mpr hnp)
       (by linarith only [hx] : 2 ≤ x) hC (Finset.Ioc 0 ⌊Y⌋₊) (Finset.Ioc 0 ⌊Y⌋₊)
   have he :=
@@ -54,19 +54,18 @@ theorem gamma_primitive_add_local_le_reflectedSplit_conductor_prefix {q A : ℕ}
       (NumberTheory.isQuadratic_primitiveCharacter χ hquad) (Finset.Ioc 0 ⌊Y⌋₊)
       (AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight (5 / 4) (11 / 4) (3 / 4)) hYcut
       (fun n _ hn ↦
-        AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight_eq_zero_of_mangoldt_eq_zero _ _ _
-          hn)
+        AnalyticNumberTheory.Arithmetic.pairedEulerWeight_eq_zero_of_mangoldt_zero _ _ _ hn)
       (fun n _ ↦
         AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight_nonneg _ _ (by norm_num only) n)
       (fun p hp hb hc ↦
         PaperStatements.primitiveCharacter_apply_one_of_apply_one χ
           (ht p hp (hp.coprime_iff_not_dvd.mp hc) hb))
   have hbudget :=
-    quadraticExcludedBudget_le_prefix_add_conductor_budget χ hY
+    quadraticExcluded_le_prefix_conductor χ hY
       (AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight (5 / 4) (11 / 4) (3 / 4))
       (AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight_nonneg _ _ (by norm_num only))
       (fun n hn ↦
-        AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight_eq_zero_of_mangoldt_eq_zero _ _ _
+        AnalyticNumberTheory.Arithmetic.pairedEulerWeight_eq_zero_of_mangoldt_zero _ _ _
           (ArithmeticFunction.vonMangoldt_eq_zero_iff.mpr hn))
       (fun p hp ↦ AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight_prime_pow_antitone hp) ha
       hd0 hprime
@@ -76,8 +75,7 @@ theorem gamma_primitive_add_local_le_reflectedSplit_conductor_prefix {q A : ℕ}
       (by linarith only [hx] : 1 ≤ (99 / 40 : ℝ) * x) hscale
   have hlog :=
     Real.log_le_log (Nat.cast_pos.mpr (Nat.pos_of_ne_zero (NeZero.ne q))) (Nat.cast_le.mpr hqA)
-  have hquot :=
-    AnalyticNumberTheory.DirichletLFunction.log_level_eq_log_conductor_add_log_quotient χ
+  have hquot := AnalyticNumberTheory.DirichletLFunction.log_level_eq_conductor_add_quotient χ
   have hqa := congrArg (fun t : ℝ ↦ a * t) hquot
   rw [mul_add] at hqa
   have hc := Analysis.gammaNegativeConductorTerm_nonpos (Real.log_natCast_nonneg χ.conductor) hx0
@@ -90,8 +88,8 @@ admissible width and a certified lower saving g on the full Euler prefix minus d
 Combine the split reflected upper cap with the actual principal lower bound, then exclude
 zero by coprimality and one by contradiction. This connects both error improvements to
 the negative-witness consumer. -/
-theorem exists_prime_neg_one_of_variableRamp_reflectedSplit_conductor_prefix {q A : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hqA : q ≤ A)
+theorem exists_prime_negOne_variableRampPrefix_GRH {q A : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hqA : q ≤ A)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x C Y g a d h : ℝ} (hx : 2 ≤ x)
     (hh : 0 < h) (hhx : h ≤ x) (hY : 1 ≤ Y) (ha : 0 ≤ a) (hd : 0 ≤ d)
     (hscale : 1 ≤ (1 / 2 - a) * Real.sqrt x)
@@ -113,8 +111,8 @@ theorem exists_prime_neg_one_of_variableRamp_reflectedSplit_conductor_prefix {q 
     have ht : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ (99 / 40 : ℝ) * x → χ p = 1 := fun p hp hd hb ↦
       Classical.byContradiction (fun hv ↦ hnone ⟨p, hp, hd, hb, hv⟩)
     have hb :=
-      gamma_primitive_add_local_le_reflectedSplit_conductor_prefix χ hquad hne hqA hGRH hx hY ha hd
-        hscale hprime hYcut hC ht
+      gammaPrimitive_local_reflectedPrefix_GRH χ hquad hne hqA hGRH hx hY ha hd hscale hprime hYcut
+        hC ht
     have hJ :=
       variableRampPrincipalLower_le_actual hGRH.riemann (by linarith only [hx] : 1 ≤ x) hh hhx
     have hN := gamma_ramp_no_witness_comparison χ hquad (by linarith only [hx] : 0 < x) ht
@@ -152,12 +150,11 @@ theorem exists_prime_neg_one_of_anchor128_mass133 {q A : ℕ} [NeZero q] (χ : D
   have hp := pairedEulerPrefix_ge_anchor128 hGRH.riemann hb
   have hl := variableRampPrincipalLower_ge_133_160 x h
   apply
-    exists_prime_neg_one_of_variableRamp_reflectedSplit_conductor_prefix χ hquad hne hqA hGRH
-      (by linarith only [hx]) hh hhx (Y := b) (by linarith only [hb]) (a := 3 / 10) (d :=
-      (1 / 5 : ℝ) * Real.log 2) (by norm_num only)
-      (mul_nonneg (by norm_num only) (Real.log_natCast_nonneg 2)) (by linarith only [hs])
-      (fun p hp ↦
-        AnalyticNumberTheory.Arithmetic.pairedEulerPrefixWeight_prime_upper_three_tenths hp)
+    exists_prime_negOne_variableRampPrefix_GRH χ hquad hne hqA hGRH (by linarith only [hx]) hh hhx
+      (Y := b) (by linarith only [hb]) (a := 3 / 10) (d := (1 / 5 : ℝ) * Real.log 2)
+      (by norm_num only) (mul_nonneg (by norm_num only) (Real.log_natCast_nonneg 2))
+      (by linarith only [hs])
+      (fun p hp ↦ AnalyticNumberTheory.Arithmetic.pairedEulerWeight_prime_le_three_tenths hp)
       (fun n hn ↦
         (Nat.cast_le.mpr (Finset.mem_Ioc.mp hn).2).trans
           ((Nat.floor_le (by linarith only [hb] : 0 ≤ b)).trans hcut))

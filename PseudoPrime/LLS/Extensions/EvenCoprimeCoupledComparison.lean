@@ -43,8 +43,8 @@ theorem weightedLogDefect_eq_coprimeSupport {q : ℕ} [NeZero q] (χ : Dirichlet
     [NeZero χ.conductor] {x : ℝ} (hx : 0 < x)
     (ht : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ x → χ p = 1) :
     weightedLogDefect χ.primitiveCharacter x = coprimeLogSupportDefect χ x := by
-  have hs := characterLogWeightedSum_re_eq_sub_common_of_prime_trivial x χ hx ht
-  have hp := characterLogWeightedSum_re_primitive_eq_add_levelChangeCorrection x χ
+  have hs := characterLogSum_re_eq_sub_of_prime_trivial x χ hx ht
+  have hp := characterLogSum_re_primitive_eq_add x χ
   unfold weightedLogDefect coprimeLogSupportDefect
   linarith only [hs, hp]
 
@@ -57,9 +57,9 @@ theorem weightedReciprocalDefect_eq_coprimeSupport {q : ℕ} [NeZero q] (χ : Di
     [NeZero χ.conductor] {x : ℝ} (hx : 0 < x)
     (ht : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ x → χ p = 1) :
     weightedReciprocalDefect χ.primitiveCharacter x = coprimeReciprocalSupportDefect χ x := by
-  have hs := characterReciprocalWeightedSum_re_eq_coprime_of_prime_trivial x χ hx ht
-  have hc := reciprocalWeightedMangoldtSum_eq_coprime_add_common x q
-  have hp := characterReciprocalWeightedSum_re_primitive_eq_add_levelChangeCorrection x χ
+  have hs := characterRecipSum_re_eq_of_prime_trivial x χ hx ht
+  have hc := recipMangoldtSum_eq_coprime_add_common x q
+  have hp := characterRecipSum_re_primitive_eq_add x χ
   unfold weightedReciprocalDefect coprimeReciprocalSupportDefect
   linarith only [hs, hc, hp]
 
@@ -109,7 +109,7 @@ reciprocal main error and prime triviality outside the original level, the
 unsigned logarithmic sum is at most the exact coprime upper envelope.
 Eliminate zero mass using the retained reciprocal sum and combine both signed
 support identities. No root-versus-log-level condition or omega bound is used. -/
-theorem logWeightedMangoldtSum_le_evenCoprimeUpper_of_prime_trivial {q : ℕ} [NeZero q]
+theorem logMangoldt_le_evenCoprime_of_prime_trivial_GRH {q : ℕ} [NeZero q]
     (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hne : χ ≠ 1)
     (heven : χ.primitiveCharacter.Even)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y e : ℝ} (hy : 8 ≤ y)
@@ -121,7 +121,7 @@ theorem logWeightedMangoldtSum_le_evenCoprimeUpper_of_prime_trivial {q : ℕ} [N
   have hp := AnalyticNumberTheory.Arithmetic.primitiveCharacter_ne_one χ hne
   have hf : 2 ≤ χ.conductor := by
     have h0 := NeZero.pos χ.conductor
-    have h1 := AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one hp
+    have h1 := AnalyticNumberTheory.DirichletLFunction.character_level_ne_one_of_ne_one hp
     exact Nat.succ_le_iff.mpr (Nat.lt_of_le_of_ne h0 (Ne.symm h1))
   have hR :
     Real.log (y ^ 2) -
@@ -160,9 +160,7 @@ theorem exists_prime_coprime_ne_one_of_evenCoprimeGap {q : ℕ} [NeZero q]
     by_contra hv
     exact h ⟨p, hp, hd, hv, hb⟩
   exact
-    (not_lt_of_ge
-        (logWeightedMangoldtSum_le_evenCoprimeUpper_of_prime_trivial χ hne heven hGRH hy hE ht))
-      hgap
+    (not_lt_of_ge (logMangoldt_le_evenCoprime_of_prime_trivial_GRH χ hne heven hGRH hy hE ht)) hgap
 
 /-- For arbitrary level character and root, the coupled local cost is the
 difference of two finite sums with the same combined logarithmic/reciprocal
@@ -192,9 +190,8 @@ theorem evenCoprimeLocalCost_eq_coupled_sums {q : ℕ} (χ : DirichletCharacter 
 main error -179/200 suffice for a coprime non-one prime. Instantiate the generic
 error input with its certified even bound. This is the finite-scale public
 entry point used for negative quadratic witnesses. -/
-theorem exists_prime_coprime_ne_one_of_retainedEvenCoprimeGap {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) [NeZero χ.conductor] (hne : χ ≠ 1)
-    (heven : χ.primitiveCharacter.Even)
+theorem exists_prime_coprime_ne_one_of_even_gap_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    [NeZero χ.conductor] (hne : χ ≠ 1) (heven : χ.primitiveCharacter.Even)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y : ℝ} (hy : 8 ≤ y)
     (hgap :
       evenCoprimeUpper χ y (-(179 / 200)) <
@@ -202,7 +199,7 @@ theorem exists_prime_coprime_ne_one_of_retainedEvenCoprimeGap {q : ℕ} [NeZero 
     ∃ p : ℕ, p.Prime ∧ ¬p ∣ q ∧ χ p ≠ 1 ∧ (p : ℝ) ≤ y ^ 2 := by
   exact
     exists_prime_coprime_ne_one_of_evenCoprimeGap χ hne heven hGRH hy
-      (primitiveReciprocalEvenMainError_le_neg_179_div_200 (Analysis.sq_ge_64_of_ge_8 hy)) hgap
+      (reciprocalEvenError_le_neg_179_200 (Analysis.sq_ge_64_of_ge_8 hy)) hgap
 
 /-- For roots at least eight, the reciprocal cost multiplier is positive.
 The numerator and the squared denominator are positive in that range.

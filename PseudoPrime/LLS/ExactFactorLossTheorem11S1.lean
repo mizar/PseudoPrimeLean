@@ -44,9 +44,9 @@ theorem characterLogWeightedSum_re_ge_exact_factor_root {q : ℕ} [NeZero q]
   have hL := Analysis.eight_lt_log_level hq
   have hy0 : 0 < y := by linarith only [hL, hy]
   have hx : (1 : ℝ) < y ^ 2 := by nlinarith only [hL, hy]
-  have hr := llsRiemannWeightedLowerBound_of_riemannHypothesis hGRH.riemann (y ^ 2) hx
-  rw [AnalyticNumberTheory.Arithmetic.characterLogWeightedSum_re_eq_sub_common_of_prime_trivial
-      (y ^ 2) χ (zero_lt_one.trans hx) htrivial]
+  have hr := riemannWeightedLower_of_RH hGRH.riemann (y ^ 2) hx
+  rw [AnalyticNumberTheory.Arithmetic.characterLogSum_re_eq_sub_of_prime_trivial (y ^ 2) χ
+      (zero_lt_one.trans hx) htrivial]
   rw [Real.sqrt_sq hy0.le] at hr
   have hc :=
     mul_div_cancel₀ (AnalyticNumberTheory.Arithmetic.commonFactorLogWeightedSum (y ^ 2) q) hy0.ne'
@@ -57,9 +57,9 @@ The root increment dominates the retained-saving correction with the exact commo
 Claim: a coprime prime with non-one character value exists through the squared root.
 Proof: combine the exact lower bound with the existing arbitrary-root upper bound and separation.
 Role: expose a factorization-sensitive witness criterion without a new explicit formula. -/
-theorem exists_prime_character_ne_one_of_exact_factor_root {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hq : 3000 ≤ q) (hne : χ ≠ 1)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y : ℝ} (hy : Real.log q ≤ y)
+theorem exists_prime_neOne_exactFactor_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hq : 3000 ≤ q) (hne : χ ≠ 1) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {y : ℝ} (hy : Real.log q ≤ y)
     (hB :
       2 * Real.log (Real.log q) + 7031 / 5000 +
             AnalyticNumberTheory.Arithmetic.commonFactorLogWeightedSum (y ^ 2) q / y -
@@ -77,9 +77,7 @@ theorem exists_prime_character_ne_one_of_exact_factor_root {q : ℕ} [NeZero q]
   have hN : 2 ≤ χ.conductor :=
     Nat.succ_le_iff.mpr
       (Nat.lt_of_le_of_ne (NeZero.pos χ.conductor)
-        (Ne.symm
-          (AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one
-            hprim)))
+        (Ne.symm (AnalyticNumberTheory.DirichletLFunction.character_level_ne_one_of_ne_one hprim)))
   have hu := characterLogWeightedSum_re_le_refined_root χ hq hN hprim hGRH hy htrivial
   have hl := characterLogWeightedSum_re_ge_exact_factor_root χ hq hGRH hy htrivial
   have hP : (57 / 50 : ℝ) ≤ Real.log Real.pi := by
@@ -119,7 +117,7 @@ theorem exact_factor_cost_le_distinct_prime_cost {q : ℕ} (hq : 3000 ≤ q) {y 
 Claim: a coprime prime outside the subgroup image exists through the squared root.
 Proof: apply the character criterion to a nonprincipal quotient character.
 Role: provide the proper-subgroup form of the exact prime-power loss improvement. -/
-theorem exists_prime_outside_subgroup_of_exact_factor_root {q : ℕ} [NeZero q] (hq : 3000 ≤ q)
+theorem exists_prime_outside_subgroup_of_root_gap_GRH {q : ℕ} [NeZero q] (hq : 3000 ≤ q)
     (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y : ℝ} (hy : Real.log q ≤ y)
     (hB :
@@ -133,7 +131,7 @@ theorem exists_prime_outside_subgroup_of_exact_factor_root {q : ℕ} [NeZero q] 
   obtain ⟨x, hx⟩ := exists_ne (1 : (ZMod q)ˣ ⧸ H)
   obtain ⟨χ', hχ⟩ := MulChar.exists_apply_ne_one_of_hasEnoughRootsOfUnity ((ZMod q)ˣ ⧸ H) ℂ hx
   obtain ⟨p, hp, hd, hv, hb⟩ :=
-    exists_prime_character_ne_one_of_exact_factor_root (pullbackCharacter χ') hq
+    exists_prime_neOne_exactFactor_GRH (pullbackCharacter χ') hq
       (pullbackCharacter_ne_one_of_ne_one χ' hχ) hGRH hy hB
   refine ⟨p, hp, hd, hb, ?_⟩
   rintro ⟨u, hu, he⟩

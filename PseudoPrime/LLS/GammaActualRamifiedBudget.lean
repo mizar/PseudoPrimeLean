@@ -69,7 +69,7 @@ theorem gamma_actual_zero_prime_cost_le_signed {f p : ℕ} (χ : DirichletCharac
   dsimp only [Analysis.gammaActualPrimeLocalCost, gammaRamifiedSignedCombinedCost]
   simp only [map_pow, hχ, zero_pow (Nat.succ_ne_zero _), Complex.zero_re, sub_zero, one_mul]
   rw [mul_add]
-  exact add_le_add (Analysis.sum_gammaResolventMangoldtWeight_primePowers_le_cost hp K) le_rfl
+  exact add_le_add (Analysis.sum_gammaMangoldt_primePowers_le_cost hp K) le_rfl
 
 /-- At positive scale the signed ramified allowance is at most the
 count-based combined allowance. The actual local series is bounded by

@@ -19,8 +19,8 @@ namespace PseudoPrime.PseudoSquare
 there is an odd-prime Jacobi non-one witness at most (4/5)L².
 Apply the improved character theorem at level 4n and transfer prime values,
 including nonunits. This is the large-level endpoint existence interface. -/
-theorem exists_prime_ne_one_witness_le_gamma_endpoint_principal_euler {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hq : 20000 ≤ 4 * n) {L : ℝ} (hL : 22920 ≤ L) (hlogn : Real.log n ≤ L)
+theorem exists_prime_neOne_gammaPrincipalEuler_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hq : 20000 ≤ 4 * n) {L : ℝ} (hL : 22920 ≤ L) (hlogn : Real.log n ≤ L)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * L ^ 2 ∧ jacobiSym n p ≠ 1 := by
   let : NeZero (4 * n) := ⟨Nat.mul_ne_zero (by norm_num only) (Odd.pos hn).ne'⟩
@@ -49,14 +49,13 @@ the least odd-prime non-one Jacobi witness is at most (4/5)L².
 Use the signed principal Euler theorem at large levels and the established global
 log-square envelope at smaller levels. All inputs share the same endpoint.
 The witness-set nonemptiness proof is explicit for finite-maximum consumers. -/
-theorem primeNeOneWitness_cast_le_gamma_endpoint_principal_euler
+theorem neOneWitness_le_gamma_endpoint_principal_euler
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : Odd n)
     (hns : ¬IsSquare n) {L : ℝ} (hL : 22920 ≤ L) (hlogn : Real.log n ≤ L)
     (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤ (4 / 5 : ℝ) * L ^ 2 := by
   by_cases hq : 20000 ≤ 4 * n
-  · obtain ⟨p, hp, ho, hb, hv⟩ :=
-      exists_prime_ne_one_witness_le_gamma_endpoint_principal_euler hn hns hq hL hlogn hGRH
+  · obtain ⟨p, hp, ho, hb, hv⟩ := exists_prime_neOne_gammaPrincipalEuler_GRH hn hns hq hL hlogn hGRH
     exact (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hb
   · have hnsmall : n ≤ 46000 := by
       have ht := lt_of_not_ge hq
@@ -89,8 +88,7 @@ theorem exists_prime_ne_one_witness_le_gamma_log_22920
   have hm := NumberTheory.primeNeOneWitness_mem n hw
   exact
     ⟨NumberTheory.primeNeOneWitness n hw, hm.1, hm.2.1,
-      primeNeOneWitness_cast_le_gamma_endpoint_principal_euler hGRH hn hns hL (le_refl _) hw,
-      hm.2.2⟩
+      neOneWitness_le_gamma_endpoint_principal_euler hGRH hn hns hL (le_refl _) hw, hm.2.2⟩
 
 /-- Under GRH and log B ≥ 22920, the finite maximum of least non-one
 Jacobi witnesses through B is at most (4/5)(log B)².
@@ -105,7 +103,7 @@ theorem QNeOne_le_gamma_log_22920 {B : ℕ} (hB : 22920 ≤ Real.log B)
   have hn0 : (0 : ℝ) < n := by exact_mod_cast Odd.pos ha.odd
   have hnB : (n : ℝ) ≤ B := by exact_mod_cast ha.le
   exact
-    primeNeOneWitness_cast_le_gamma_endpoint_principal_euler hGRH ha.odd ha.not_isSquare hB
+    neOneWitness_le_gamma_endpoint_principal_euler hGRH ha.odd ha.not_isSquare hB
       (Real.log_le_log hn0 hnB)
       (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
         (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare ha.odd ha.not_isSquare))
@@ -118,8 +116,8 @@ namespace PseudoPrime.PseudoSquare
 there is an odd-prime Jacobi non-one witness at most (4/5)L².
 Apply the improved character theorem at level 4n and transfer prime values,
 including nonunits. This is the large-level endpoint existence interface. -/
-theorem exists_prime_ne_one_witness_le_gamma_endpoint_principal_euler_even {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hq : 20000 ≤ 4 * n) {L : ℝ} (hL : 22221 ≤ L) (hlogn : Real.log n ≤ L)
+theorem exists_prime_neOne_gammaPrincipalEven_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hq : 20000 ≤ 4 * n) {L : ℝ} (hL : 22221 ≤ L) (hlogn : Real.log n ≤ L)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * L ^ 2 ∧ jacobiSym n p ≠ 1 := by
   let : NeZero (4 * n) := ⟨Nat.mul_ne_zero (by norm_num only) (Odd.pos hn).ne'⟩
@@ -149,14 +147,13 @@ the least odd-prime non-one Jacobi witness is at most (4/5)L².
 Use the signed principal Euler theorem at large levels and the established global
 log-square envelope at smaller levels. All inputs share the same endpoint.
 The witness-set nonemptiness proof is explicit for finite-maximum consumers. -/
-theorem primeNeOneWitness_cast_le_gamma_endpoint_principal_euler_even
+theorem neOneWitness_le_gammaPrincipalEven_GRH
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : Odd n)
     (hns : ¬IsSquare n) {L : ℝ} (hL : 22221 ≤ L) (hlogn : Real.log n ≤ L)
     (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤ (4 / 5 : ℝ) * L ^ 2 := by
   by_cases hq : 20000 ≤ 4 * n
-  · obtain ⟨p, hp, ho, hb, hv⟩ :=
-      exists_prime_ne_one_witness_le_gamma_endpoint_principal_euler_even hn hns hq hL hlogn hGRH
+  · obtain ⟨p, hp, ho, hb, hv⟩ := exists_prime_neOne_gammaPrincipalEven_GRH hn hns hq hL hlogn hGRH
     exact (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hb
   · have hnsmall : n ≤ 46000 := by
       have ht := lt_of_not_ge hq
@@ -189,8 +186,7 @@ theorem exists_prime_ne_one_witness_le_gamma_log_22221
   have hm := NumberTheory.primeNeOneWitness_mem n hw
   exact
     ⟨NumberTheory.primeNeOneWitness n hw, hm.1, hm.2.1,
-      primeNeOneWitness_cast_le_gamma_endpoint_principal_euler_even hGRH hn hns hL (le_refl _) hw,
-      hm.2.2⟩
+      neOneWitness_le_gammaPrincipalEven_GRH hGRH hn hns hL (le_refl _) hw, hm.2.2⟩
 
 /-- Under GRH and log B ≥ 22221, the finite maximum of least non-one
 Jacobi witnesses through B is at most (4/5)(log B)².
@@ -205,8 +201,7 @@ theorem QNeOne_le_gamma_log_22221 {B : ℕ} (hB : 22221 ≤ Real.log B)
   have hn0 : (0 : ℝ) < n := by exact_mod_cast Odd.pos ha.odd
   have hnB : (n : ℝ) ≤ B := by exact_mod_cast ha.le
   exact
-    primeNeOneWitness_cast_le_gamma_endpoint_principal_euler_even hGRH ha.odd ha.not_isSquare hB
-      (Real.log_le_log hn0 hnB)
+    neOneWitness_le_gammaPrincipalEven_GRH hGRH ha.odd ha.not_isSquare hB (Real.log_le_log hn0 hnB)
       (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
         (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare ha.odd ha.not_isSquare))
 

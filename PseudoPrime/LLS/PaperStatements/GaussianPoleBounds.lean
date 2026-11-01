@@ -56,8 +56,7 @@ theorem gaussian_poleResidue_le_ambient {q m : ℕ} [NeZero m] {χ : DirichletCh
     mul_le_mul_of_nonneg_right Analysis.gaussian_endpoint_exp_le
       (norm_nonneg (logDeriv χ.completedLFunction 0))
   have h2 :=
-    mul_le_mul_of_nonneg_left
-      (norm_completedLogDeriv_zero_le_ambient_affine_log hq hm hmq hp hne hGRH)
+    mul_le_mul_of_nonneg_left (norm_completedLogDeriv_zero_ambient_GRH hq hm hmq hp hne hGRH)
       (by norm_num only : (0 : ℝ) ≤ 2129 / 2000)
   exact (div_le_div_of_nonneg_right (h1.trans h2) (Real.sqrt_nonneg x)).trans_eq (by ring)
 

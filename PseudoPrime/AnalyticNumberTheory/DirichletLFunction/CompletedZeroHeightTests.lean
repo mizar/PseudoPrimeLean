@@ -27,8 +27,7 @@ theorem completedZeroShift_eq_one_sub_I_im {q : ℕ} [NeZero q] {χ : DirichletC
     (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1)
     (ρ : CompletedZero χ) : (((3 / 2 : ℝ) : ℂ) - (ρ : ℂ)) = 1 - Complex.I * (ρ : ℂ).im := by
   apply Complex.ext
-  · rw [Complex.sub_re, Complex.ofReal_re,
-      completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv ρ.property]
+  · rw [Complex.sub_re, Complex.ofReal_re, completed_zero_re_eq_half_of_RH hRH hp hinv ρ.property]
     simp only [Complex.sub_re, Complex.one_re, Complex.mul_re, Complex.I_re, Complex.I_im,
       Complex.ofReal_re, Complex.ofReal_im, zero_mul, mul_zero, sub_zero]
     norm_num only
@@ -38,7 +37,7 @@ theorem completedZeroShift_eq_one_sub_I_im {q : ℕ} [NeZero q] {χ : DirichletC
 /-- Under the completed-zero RH hypotheses, its Cayley circle point is the real-height
 Cayley point at Im(rho). Substitute the shifted-zero coordinate identity.
 This transfers compact height tests to the existing circle functional. -/
-theorem completedZeroCayleyPoint_eq_cayleyCircle {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+theorem cayleyPoint_eq_cayleyCircle_RH {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
     (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1)
     (ρ : CompletedZero χ) :
     completedZeroCayleyPoint hRH hp hinv ρ = PseudoPrime.Analysis.cayleyCircle (ρ : ℂ).im := by
@@ -49,9 +48,9 @@ theorem completedZeroCayleyPoint_eq_cayleyCircle {q : ℕ} [NeZero q] {χ : Diri
 /-- Under the completed-zero RH hypotheses, the Poisson weight is its natural
 multiplicity divided by 1+Im(rho)^2. Compute the shifted norm square.
 This cancels the quadratic factor in the circle extension of a height test. -/
-theorem completedZeroPoissonWeight_eq_order_div_one_add_im_sq {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hinv : χ⁻¹ ≠ 1) (ρ : CompletedZero χ) :
+theorem poissonWeight_eq_order_div_RH {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1)
+    (ρ : CompletedZero χ) :
     completedZeroPoissonWeight χ ρ =
       (analyticOrderNatAt χ.completedLFunction (ρ : ℂ) : ℝ) / (1 + (ρ : ℂ).im ^ 2) := by
   rw [completedZeroPoissonWeight, completedZeroShift_eq_one_sub_I_im hRH hp hinv ρ]
@@ -65,7 +64,7 @@ theorem completedZeroPoissonWeight_eq_order_div_one_add_im_sq {q : ℕ} [NeZero 
 has completed-zero functional equal to the multiplicity-weighted height sum.
 Rewrite each Cayley point and cancel the positive denominator. This identifies
 the arithmetic zero series evaluated by the circle convergence theorem. -/
-theorem completedZeroFunctional_eq_height_test {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem zeroFunctional_eq_height_test_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (g : ℝ → ℂ) (f : C(Circle, ℂ))
     (hf : ∀ t, f (PseudoPrime.Analysis.cayleyCircle t) = ((1 + t ^ 2 : ℝ) : ℂ) * g t) :
@@ -75,9 +74,8 @@ theorem completedZeroFunctional_eq_height_test {q : ℕ} [NeZero q] (hq : 2 ≤ 
   rw [completedZeroFunctional_apply]
   apply tsum_congr
   intro ρ
-  rw [completedZeroCayleyPoint_eq_cayleyCircle hRH hp hinv ρ, hf,
-    completedZeroPoissonWeight_eq_order_div_one_add_im_sq hRH hp hinv ρ, Complex.ofReal_div,
-    Complex.ofReal_natCast]
+  rw [cayleyPoint_eq_cayleyCircle_RH hRH hp hinv ρ, hf, poissonWeight_eq_order_div_RH hRH hp hinv ρ,
+    Complex.ofReal_div, Complex.ofReal_natCast]
   rw [← mul_assoc,
     div_mul_cancel₀ _
       (Complex.ofReal_ne_zero.mpr (ne_of_gt (add_pos_of_pos_of_nonneg zero_lt_one (sq_nonneg _))))]
@@ -99,9 +97,8 @@ theorem summable_completedZero_height_test {q : ℕ} [NeZero q] (hq : 2 ≤ q)
       (summable_completedZeroPoissonWeight hq hRH hp hne hinv) f
   apply hs.congr
   intro ρ
-  rw [completedZeroCayleyPoint_eq_cayleyCircle hRH hp hinv ρ, hf,
-    completedZeroPoissonWeight_eq_order_div_one_add_im_sq hRH hp hinv ρ, Complex.ofReal_div,
-    Complex.ofReal_natCast]
+  rw [cayleyPoint_eq_cayleyCircle_RH hRH hp hinv ρ, hf, poissonWeight_eq_order_div_RH hRH hp hinv ρ,
+    Complex.ofReal_div, Complex.ofReal_natCast]
   rw [← mul_assoc,
     div_mul_cancel₀ _
       (Complex.ofReal_ne_zero.mpr (ne_of_gt (add_pos_of_pos_of_nonneg zero_lt_one (sq_nonneg _))))]
@@ -112,8 +109,8 @@ times its integral by at most error*log(q), uniformly in primitive nonprincipal
 characters satisfying individual RH. Transport through Cayley circle convergence
 and remove the logarithmic normalization. This is the compact-height input for
 kernel mass estimates, without a source explicit formula as an additional premise. -/
-theorem exists_uniform_completedZero_height_test_error_le (g : ℝ → ℂ) (hg : Continuous g)
-    (hc : HasCompactSupport g) {ε : ℝ} (hε : 0 < ε) :
+theorem uniform_zeroHeightTest_error_RH (g : ℝ → ℂ) (hg : Continuous g) (hc : HasCompactSupport g)
+    {ε : ℝ} (hε : 0 < ε) :
     ∃ Q : ℕ,
       2 ≤ Q ∧
         ∀ (q : ℕ) [NeZero q],
@@ -128,14 +125,14 @@ theorem exists_uniform_completedZero_height_test_error_le (g : ℝ → ℂ) (hg 
                       ((Real.log q / (2 * Real.pi) : ℝ) : ℂ) * (∫ t : ℝ, g t)‖ ≤
                   ε * Real.log q := by
   obtain ⟨f, hf, ha⟩ := PseudoPrime.Analysis.exists_circle_weighted_extension g hg hc
-  obtain ⟨Q, hQ, hb⟩ := exists_uniform_normalizedCompletedZeroFunctional_error_le f hε
+  obtain ⟨Q, hQ, hb⟩ := normalizedZeroFunctional_error_RH f hε
   refine ⟨Q, hQ, ?_⟩
   intro q _ hq χ hRH hp hne hinv
   have hq2 : (2 : ℝ) ≤ q := Nat.cast_le.mpr (hQ.trans hq)
   have hlog : 0 < Real.log (q : ℝ) := Real.log_pos (by linarith only [hq2])
   have hh := hb q hq χ hRH hp hne hinv
   rw [normalizedCompletedZeroFunctional, smul_apply, smul_eq_mul,
-    completedZeroFunctional_eq_height_test (hQ.trans hq) hRH hp hne hinv g f hf, ha,
+    zeroFunctional_eq_height_test_RH (hQ.trans hq) hRH hp hne hinv g f hf, ha,
     Complex.real_smul] at hh
   have hm := mul_le_mul_of_nonneg_left hh hlog.le
   have heq :
@@ -166,7 +163,7 @@ its multiplicity-weighted completed-zero sum is eventually bounded by the
 integral divided by 2*pi plus that error, times log(q), uniformly under the
 primitive nonprincipal individual-RH hypotheses. Cast to the complex estimate
 and take its real upper side. This permits nonnegative kernel majorant tests. -/
-theorem exists_uniform_completedZero_real_height_test_upper_bound (g : ℝ → ℝ) (hg : Continuous g)
+theorem uniform_realZeroHeightTest_upper_RH (g : ℝ → ℝ) (hg : Continuous g)
     (hc : HasCompactSupport g) {ε : ℝ} (hε : 0 < ε) :
     ∃ Q : ℕ,
       2 ≤ Q ∧
@@ -182,8 +179,7 @@ theorem exists_uniform_completedZero_real_height_test_upper_bound (g : ℝ → �
                   ((∫ t : ℝ, g t) / (2 * Real.pi) + ε) * Real.log q := by
   have hcc : HasCompactSupport (fun t ↦ (g t : ℂ)) := hc.comp_left Complex.ofReal_zero
   obtain ⟨Q, hQ, hb⟩ :=
-    exists_uniform_completedZero_height_test_error_le (fun t ↦ (g t : ℂ))
-      (Complex.continuous_ofReal.comp hg) hcc hε
+    uniform_zeroHeightTest_error_RH (fun t ↦ (g t : ℂ)) (Complex.continuous_ofReal.comp hg) hcc hε
   refine ⟨Q, hQ, ?_⟩
   intro q _ hq χ hRH hp hne hinv
   have hh := hb q hq χ hRH hp hne hinv

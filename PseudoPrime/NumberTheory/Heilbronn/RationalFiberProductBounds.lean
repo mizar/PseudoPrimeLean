@@ -25,7 +25,7 @@ theorem card_rational_family_mul_square_le_heilbronn {p Q : ℕ} [Fact p.Prime] 
     A.card * p ^ 2 ≤ (p - 1) * (p ^ 2 + 4 * Q ^ 2) := by
   let : Fintype (heilbronnSubgroup p) := Fintype.ofFinite _
   have hh :=
-    boundedRationalResidue_family_card_mul_modulus_le A
+    rationalResidue_family_card_mul_modulus_le A
       (fun u : heilbronnSubgroup p ↦ (u.val : ZMod (p ^ 2))) hA
   rw [← Nat.card_eq_fintype_card, card_heilbronnSubgroup] at hh
   exact hh

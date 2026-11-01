@@ -42,8 +42,8 @@ theorem psi_error_le_of_variable_stencil {t h b E : ℝ} (hh : 0 < h) (hl : 0 < 
 choose any stencil width smaller than the left endpoint. The resulting Chebyshev
 allowance controls the actual smoothed-error increment. This is the consumer of the
 variable-stencil comparison and permits scale-dependent width selection. -/
-theorem logWeighted_error_increment_le_of_variable_stencil {a b h E : ℝ} (hh : 0 < h)
-    (ha : 0 < a - h) (hab : a ≤ b)
+theorem logWeighted_increment_le_of_variable_stencil {a b h E : ℝ} (hh : 0 < h) (ha : 0 < a - h)
+    (hab : a ≤ b)
     (hE :
       ∀ t ∈ Set.Icc a b,
         |logWeightedMangoldtSum (t - h) - (t - h)| ≤ E ∧

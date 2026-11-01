@@ -28,7 +28,7 @@ namespace PseudoPrime.LLS.PaperStatements
 primitive Gamma sum at x=(32/99)(log q)^2 is at most M log q + 2755/90.
 Use the thirty-two-term certificate and common pole and left-contour budgets.
 This upper bound requires neither quadraticity nor a conductor restriction. -/
-theorem gamma_primitiveCharacter_sum_re_le_uniform_thirtyTwo {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+theorem gammaCharacterSum_re_le_uniform_thirtyTwo {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
     (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 35000 ≤ Real.log q) :
     let x := (32 / 99 : ℝ) * (Real.log q) ^ 2;
@@ -50,7 +50,7 @@ theorem gamma_primitiveCharacter_sum_re_le_uniform_thirtyTwo {q : ℕ} [NeZero q
       (show Real.log χ.conductor ≤ Real.log q + 2 by linarith only [hlogf])
   have hlead := mul_le_mul_of_nonneg_left hlogf (by norm_num only : (0 : ℝ) ≤ 11783423 / 25000000)
   have hu :=
-    gamma_primitiveCharacter_sum_re_le_variable_prefix_scale hq χ hne hGRH hx 32
+    gammaCharacterSum_re_le_variable_prefix_scale hq χ hne hGRH hx 32
       Analysis.gammaResolvent_thirtyTwo_error_lt
   linarith only [hu, hpole, hleft, hlead]
 
@@ -93,7 +93,7 @@ theorem gamma_primitive_average_re_le_uniform_thirtyTwo {q : ℕ} [NeZero q] (hq
         apply Finset.sum_le_sum
         intro χ hχ
         exact
-          gamma_primitiveCharacter_sum_re_le_uniform_thirtyTwo hq χ.val
+          gammaCharacterSum_re_le_uniform_thirtyTwo hq χ.val
             (fun he ↦ (Finset.mem_erase.mp hχ).1 (Subtype.ext he)) hGRH hL
       _ = _ := by rw [Finset.sum_const, nsmul_eq_mul]
   rw [Finset.card_erase_of_mem (Finset.mem_univ (1 : S)), Finset.card_univ] at hrest
@@ -143,8 +143,7 @@ theorem gamma_ramp_subgroup_comparison {q : ℕ} [NeZero q] (H : Subgroup (ZMod 
             Real.sqrt x) := by
   have hr := gamma_ramp_le_finite_exponential hx
   have hd := gamma_principal_sum_level_difference (q := q) (y := (99 / 40 : ℝ) * x) hx
-  have hu :=
-    MellinKernel.principal_sum_le_primitive_average_of_noSmallPrimes gammaMellinKernel H hx hsmall
+  have hu := MellinKernel.principal_sum_le_primitive_of_noSmall gammaMellinKernel H hx hsmall
   have he : Finset.Icc 1 ⌊(99 / 40 : ℝ) * x⌋₊ = Finset.Ioc 0 ⌊(99 / 40 : ℝ) * x⌋₊ := by
     ext n
     simp only [Finset.mem_Icc, Finset.mem_Ioc, Nat.succ_le_iff]

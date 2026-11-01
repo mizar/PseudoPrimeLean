@@ -40,8 +40,7 @@ theorem eventually_smooth_count_at_rational_cutoff {a t : ℕ} {A : ℝ} (ha : 0
   have hgap := hratio.eventually_lt_const (div_pos (sub_pos.mpr hcA) hAp)
   have hM :=
     hL.eventually
-      (NumberTheory.eventually_const_mul_rpow_le_primeCounting_floor_rpow (C := 2)
-        (zero_lt_one.trans hb) hbA)
+      (NumberTheory.eventually_rpow_le_primeCounting_floor (C := 2) (zero_lt_one.trans hb) hbA)
   have hBfloor :=
     hL.eventually (NumberTheory.eventually_rpow_le_nat_floor_rpow (b := 0) (by norm_num only) hAp)
   have hCfloor :=
@@ -51,8 +50,8 @@ theorem eventually_smooth_count_at_rational_cutoff {a t : ℕ} {A : ℝ} (ha : 0
   have hlogc := hL.eventually (Real.tendsto_log_atTop.eventually_ge_atTop (2 * c))
   filter_upwards [hM, hBfloor, hCfloor, hlogc, hL.eventually hgap, hL.eventually_ge_atTop 2,
     Filter.eventually_gt_atTop (0 : ℕ),
-    Analysis.eventually_rational_cutoff_le_prime_mul_floor_power ha hκ hbeta] with p hMp hBf hCf hcL
-    hg hLp hp henv
+    Analysis.eventually_rational_cutoff_le_prime_floor ha hκ hbeta] with p hMp hBf hCf hcL hg hLp hp
+    henv
   intro k hk hlo hhi
   let L := Real.log (p : ℝ)
   let B := Nat.floor (L ^ A)
@@ -117,8 +116,7 @@ theorem exists_rational_scale_above_thirteen_sevenths {A : ℝ} (hA : (13 / 7 : 
 q<=log(p)^A with q^(p-1) nontrivial modulo p². Fix a rational scale below A,
 combine its proved interval and smooth-count bounds, and extract a prime factor.
 The threshold depends only on A; GRH and external Fermat estimates are absent. -/
-theorem eventually_exists_prime_nontrivial_power_of_thirteen_sevenths {A : ℝ}
-    (hA : (13 / 7 : ℝ) < A) :
+theorem eventually_exists_prime_pow_ne_one_gt_13_7 {A : ℝ} (hA : (13 / 7 : ℝ) < A) :
     Filter.Eventually
       (fun p : ℕ ↦
         p.Prime →
@@ -132,8 +130,7 @@ theorem eventually_exists_prime_nontrivial_power_of_thirteen_sevenths {A : ℝ}
     Filter.eventually_ge_atTop P] with p hsm hlarge hp hp2
   let : Fact p.Prime := ⟨hp⟩
   obtain ⟨k, hk, hkp, hlo, hhi, hcount⟩ := hP p (hp.odd_of_ne_two hp2) hlarge
-  obtain ⟨q, hq, hqB, hpow⟩ :=
-    exists_prime_nontrivial_power_of_interval_and_smooth hcount (hsm k hk hlo hhi)
+  obtain ⟨q, hq, hqB, hpow⟩ := exists_prime_pow_ne_one_of_interval_smooth hcount (hsm k hk hlo hhi)
   have hB := Nat.lt_add_one_iff.mp hqB
   have hle : (q : ℝ) ≤ (Real.log p) ^ A :=
     (Nat.cast_le.mpr hB).trans

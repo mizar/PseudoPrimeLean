@@ -91,7 +91,7 @@ theorem gamma_odd_euler_cost_le_positive_geometric {p : ℝ} (hp : 1 < p) :
         simpa only [Real.rpow_neg_one] using
           gamma_euler_weight_le_positive_reciprocal (one_le_pow₀ hp.le : (1 : ℝ) ≤ p ^ (2 * k + 1)))
       hs
-  rw [tsum_gammaResolventEulerWeight_odd_powers_eq_cost hp, tsum_mul_left,
+  rw [tsum_gammaEulerWeight_odd_powers_eq_cost hp, tsum_mul_left,
     tsum_gamma_euler_odd_powers hp hσ] at hle
   exact hle
 
@@ -184,8 +184,8 @@ theorem gamma_large_prime_square_cost_le {p : ℕ} (hp : 11 ≤ p) {x : ℝ} (hx
 eleven are absorbed by the conductor gap with the certified coefficient.
 Apply the uniform combined-cost certificate to remove the abstract numerical
 local-cost hypothesis on the large-prime range. -/
-theorem gamma_large_prime_actual_cost_absorbed_by_conductor_gap {n d m f : ℕ} (hn : n = d * m ^ 2)
-    (hd : 0 < d) (hm : 0 < m) (hf : 0 < f) (hdf : d ∣ f) (hfd : f ≤ 4 * d) (S : Finset ℕ)
+theorem gamma_large_prime_cost_le_conductor_gap {n d m f : ℕ} (hn : n = d * m ^ 2) (hd : 0 < d)
+    (hm : 0 < m) (hf : 0 < f) (hdf : d ∣ f) (hfd : f ≤ 4 * d) (S : Finset ℕ)
     (hS : S ⊆ n.primeFactors) (χ : DirichletCharacter ℂ f) (hχ : ∀ p ∈ S, χ p = -1)
     (K : ℕ → Finset ℕ) {x : ℝ} (hx : 10000 ≤ x) (hlarge : ∀ p ∈ S, 11 ≤ p) :
     (11783423 / 25000000 : ℝ) * Real.log f +
@@ -197,8 +197,8 @@ theorem gamma_large_prime_actual_cost_absorbed_by_conductor_gap {n d m f : ℕ} 
                 Real.sqrt x))) ≤
       (11783423 / 25000000 : ℝ) * Real.log (4 * (n : ℝ)) := by
   apply
-    gamma_minus_one_actual_cost_absorbed_by_conductor_gap hn hd hm hf hdf hfd S hS χ hχ K
-      (by linarith only [hx]) (by norm_num only)
+    gamma_neg_one_cost_le_conductor_gap hn hd hm hf hdf hfd S hS χ hχ K (by linarith only [hx])
+      (by norm_num only)
   intro p hp
   exact
     (gamma_large_prime_square_cost_le (hlarge p hp) hx).trans

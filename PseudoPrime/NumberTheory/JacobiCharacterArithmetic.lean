@@ -110,7 +110,7 @@ theorem jacobiSym_eq_squarefreePart_of_coprime {n : ℕ} {hn : Odd n} {hns : ¬I
   rw [hsq, one_mul]
 
 /-- In the denominator, the square factor in `n=b²*d` is invisible to a coprime Jacobi value. -/
-theorem jacobiSym_eq_squarefreePart_denominator_of_coprime {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+theorem jacobiSym_denom_eq_squarefreePart_of_coprime {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : JacobiCharacterArithmeticData n hn hns) {a : ℕ} (hcop : Nat.Coprime a n) :
     jacobiSym a n = jacobiSym a bridge.squarefreePart := by
   have hbpos : 0 < bridge.squareFactor := by
@@ -210,7 +210,7 @@ theorem exists_jacobiCharacterArithmeticData {n : ℕ} (hnpos : 0 < n) (hn : Odd
         discriminant_eq := rfl
         discriminant_isFundamentalDiscr := by
           dsimp only [D]
-          exact positiveFundamentalDiscriminant_isFundamentalDiscr hdodd hdsquarefree
+          exact positiveFundamentalDiscr_isFundamental hdodd hdsquarefree
         discriminant_pos := hDpos
         discriminant_le := hDle
         character := χ
@@ -231,7 +231,7 @@ theorem JacobiCharacterArithmeticData.squareFactor_odd {n : ℕ} {hn : Odd n} {h
   exact (Nat.odd_mul.mp hbm).1
 
 /-- The input and its odd squarefree part have the same residue modulo `4`. -/
-theorem JacobiCharacterArithmeticData.input_mod_four_eq_squarefreePart_mod_four {n : ℕ} {hn : Odd n}
+theorem JacobiCharacterArithmeticData.input_mod4_eq_squarefree_mod4 {n : ℕ} {hn : Odd n}
     {hns : ¬IsSquare n} (bridge : JacobiCharacterArithmeticData n hn hns) :
     n % 4 = bridge.squarefreePart % 4 := by
   have hbmod : bridge.squareFactor ^ 2 % 4 = 1 := by
@@ -253,7 +253,7 @@ theorem JacobiCharacterArithmeticData.input_mod_four_eq_squarefreePart_mod_four 
 
 /-- At a unit of the original level, the quadratic character can be evaluated using the odd
 squarefree part. -/
-theorem quadraticCharacter_apply_of_squarefreePart_coprime {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+theorem quadraticChar_eq_squarefreePart_of_coprime {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : JacobiCharacterArithmeticData n hn hns) {a : ℕ} (hcop : Nat.Coprime a (4 * n)) :
     quadraticCharacter n hn ((a : ℤ) : ZMod (4 * n)) =
       if bridge.squarefreePart % 4 = 1 then jacobiSym a bridge.squarefreePart
@@ -262,22 +262,22 @@ theorem quadraticCharacter_apply_of_squarefreePart_coprime {n : ℕ} {hn : Odd n
     rw [Nat.mul_comm]
     exact Nat.dvd_mul_right n 4
   have hcopn : Nat.Coprime a n := Nat.Coprime.of_dvd_right hdiv hcop
-  have hj := jacobiSym_eq_squarefreePart_denominator_of_coprime bridge hcopn
-  have hmod := bridge.input_mod_four_eq_squarefreePart_mod_four
+  have hj := jacobiSym_denom_eq_squarefreePart_of_coprime bridge hcopn
+  have hmod := bridge.input_mod4_eq_squarefree_mod4
   rw [quadraticCharacter_apply_of_coprime n hn hcop]
   simp only [hmod, hj]
 
 /-- On units, the character agrees with the character of the squarefree part raised to level
 `4*n`. This holds for both odd residue classes of the squarefree part modulo `4`. -/
-theorem quadraticCharacter_eq_squarefreePart_changeLevel_apply_of_coprime {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : JacobiCharacterArithmeticData n hn hns)
-    (hdvd : 4 * bridge.squarefreePart ∣ 4 * n) {a : ℕ} (hcop : Nat.Coprime a (4 * n)) :
+theorem quadratic_eq_squarefree_changeLevel {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : JacobiCharacterArithmeticData n hn hns) (hdvd : 4 * bridge.squarefreePart ∣ 4 * n)
+    {a : ℕ} (hcop : Nat.Coprime a (4 * n)) :
     quadraticCharacter n hn ((a : ℤ) : ZMod (4 * n)) =
       DirichletCharacter.changeLevel hdvd
         (quadraticCharacter bridge.squarefreePart bridge.squarefreePart_odd)
         ((a : ℤ) : ZMod (4 * n)) := by
   have hcopd : Nat.Coprime a (4 * bridge.squarefreePart) := Nat.Coprime.of_dvd_right hdvd hcop
-  rw [quadraticCharacter_apply_of_squarefreePart_coprime bridge hcop]
+  rw [quadraticChar_eq_squarefreePart_of_coprime bridge hcop]
   rw [DirichletCharacter.changeLevel_eq_cast_of_dvd' _ hdvd (a := (a : ℤ))
       (Int.isCoprime_iff_nat_coprime.mpr hcop)]
   rw [quadraticCharacter_apply_of_coprime _ bridge.squarefreePart_odd hcopd]
@@ -296,7 +296,7 @@ theorem quadraticCharacter_factorsThrough_squarefreePart {n : ℕ} {hn : Odd n} 
     apply Units.ext
     simp only [ZMod.unitOfCoprime, ZMod.natCast_val, ZMod.cast_id', id_eq, ZMod.inv_coe_unit,
       Units.mk_val, a]
-  have hpoint := quadraticCharacter_eq_squarefreePart_changeLevel_apply_of_coprime bridge hdvd hcop
+  have hpoint := quadratic_eq_squarefree_changeLevel bridge hdvd hcop
   have hcandidate :
     DirichletCharacter.changeLevel hdvd
         (quadraticCharacter bridge.squarefreePart bridge.squarefreePart_odd)
@@ -327,8 +327,8 @@ theorem quadraticCharacter_factorsThrough_squarefreePart {n : ℕ} {hn : Odd n} 
     hpoint.trans hcandidate
 
 /-- In the `d = 1 mod 4` branch, the extra factor `4` also disappears. -/
-theorem quadraticCharacter_factorsThrough_squarefreePart_of_mod_four_eq_one {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} [NeZero (4 * n)] (bridge : JacobiCharacterArithmeticData n hn hns)
+theorem quadratic_factors_squarefree_mod4_one {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    [NeZero (4 * n)] (bridge : JacobiCharacterArithmeticData n hn hns)
     (hdvd : bridge.squarefreePart ∣ n) (hd4 : bridge.squarefreePart % 4 = 1) :
     DirichletCharacter.FactorsThrough (quadraticCharacter n hn) bridge.squarefreePart := by
   have hlevel : bridge.squarefreePart ∣ 4 * n := by
@@ -363,7 +363,7 @@ theorem quadraticCharacter_factorsThrough_squarefreePart_of_mod_four_eq_one {n :
       apply jacobiSym.mod_left'
       exact_mod_cast hv
     simpa only [jacobiSym.one_left] using hj'
-  have hpoint := quadraticCharacter_apply_of_squarefreePart_coprime bridge hcop
+  have hpoint := quadraticChar_eq_squarefreePart_of_coprime bridge hcop
   simp only [ite_eq_left hd4] at hpoint
   apply Units.ext
   rw [MulChar.coe_toUnitHom, hxeq]
@@ -374,14 +374,14 @@ theorem quadraticCharacter_factorsThrough_squarefreePart_of_mod_four_eq_one {n :
 
 /-- The 2-adic proper-divisor obstruction also applies to the original level `n=b²*d`; the
 prime-AP representative is chosen above the square factor and is therefore a unit at `4*n`. -/
-theorem complexQuadraticCharacter_not_factorsThrough_eq_d_or_two_mul_of_bridge {n c : ℕ}
-    {hn : Odd n} {hns : ¬IsSquare n} [NeZero (4 * n)]
-    (bridge : JacobiCharacterArithmeticData n hn hns) (hd4 : bridge.squarefreePart % 4 = 3)
+theorem complexQuadratic_not_factors_d_or_two_d {n c : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    [NeZero (4 * n)] (bridge : JacobiCharacterArithmeticData n hn hns)
+    (hd4 : bridge.squarefreePart % 4 = 3)
     (hc : c = bridge.squarefreePart ∨ c = 2 * bridge.squarefreePart) :
     ¬DirichletCharacter.FactorsThrough (complexQuadraticCharacter n hn) c := by
   intro hfactor
   obtain ⟨a, haodd, hac, haj, ha4, has⟩ :=
-    exists_nat_odd_one_modEq_and_jacobiSym_eq_one_of_eq_d_or_two_mul bridge.squarefreePart_odd hd4
+    exists_odd_one_modEq_jacobi_one_of_d_or_two_d bridge.squarefreePart_odd hd4
       (Odd.pos bridge.squareFactor_odd) hc
   have hacopd : Nat.Coprime a bridge.squarefreePart := by
     rw [Nat.coprime_iff_gcd_eq_one]
@@ -399,7 +399,7 @@ theorem complexQuadraticCharacter_not_factorsThrough_eq_d_or_two_mul_of_bridge {
     simpa only [pow_two] using Nat.Coprime.mul_right haodd.coprime_two_right haodd.coprime_two_right
   have hacop : Nat.Coprime a (4 * n) := hacop4.mul_right hacopn
   have hone := factorsThrough_apply_eq_one_of_one_modEq hfactor hac hacop
-  have hq := quadraticCharacter_apply_of_squarefreePart_coprime bridge hacop
+  have hq := quadraticChar_eq_squarefreePart_of_coprime bridge hacop
   simp only [ite_eq_right
         (by
           intro h
@@ -417,14 +417,14 @@ theorem complexQuadraticCharacter_not_factorsThrough_eq_d_or_two_mul_of_bridge {
 
 /-- The CRT obstruction remains valid for `n = b²*d`: the prime representative is
 chosen coprime to the square factor, and hence is a unit at the original level. -/
-theorem complexQuadraticCharacter_not_factorsThrough_proper_squarefreePart_of_mod_four_eq_one
-    {n c : ℕ} {hn : Odd n} {hns : ¬IsSquare n} [NeZero (4 * n)]
-    (bridge : JacobiCharacterArithmeticData n hn hns) (hd4 : bridge.squarefreePart % 4 = 1)
-    (hc : c ∣ bridge.squarefreePart) (hnot : ¬bridge.squarefreePart ∣ c) :
+theorem complexQuadratic_not_factors_proper_mod4_one {n c : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    [NeZero (4 * n)] (bridge : JacobiCharacterArithmeticData n hn hns)
+    (hd4 : bridge.squarefreePart % 4 = 1) (hc : c ∣ bridge.squarefreePart)
+    (hnot : ¬bridge.squarefreePart ∣ c) :
     ¬DirichletCharacter.FactorsThrough (complexQuadraticCharacter n hn) c := by
   intro hfactor
   obtain ⟨a, haodd, hac, haj, hacopFactor⟩ :=
-    exists_nat_odd_one_modEq_and_jacobiSym_eq_neg_one_coprime bridge.squarefreePart_odd
+    exists_odd_modEq_jacobi_neg_one_coprime bridge.squarefreePart_odd
       bridge.squarefreePart_squarefree hc hnot (Odd.pos bridge.squareFactor_odd)
   have hacopd : Nat.Coprime a bridge.squarefreePart := by
     rw [Nat.coprime_iff_gcd_eq_one]
@@ -445,7 +445,7 @@ theorem complexQuadraticCharacter_not_factorsThrough_proper_squarefreePart_of_mo
   have hacop : Nat.Coprime a (4 * n) :=
     (haodd.coprime_two_right.mul_right haodd.coprime_two_right).mul_right hacopn
   have hone := factorsThrough_apply_eq_one_of_one_modEq hfactor hac hacop
-  have hq := quadraticCharacter_apply_of_squarefreePart_coprime bridge hacop
+  have hq := quadraticChar_eq_squarefreePart_of_coprime bridge hacop
   simp only [ite_eq_left hd4] at hq
   have hval := complexQuadraticCharacter_apply n hn ((a : ℤ) : ZMod (4 * n))
   have hone' : ((quadraticCharacter n hn) ((a : ℤ) : ZMod (4 * n)) : ℂ) = 1 := by
@@ -457,16 +457,15 @@ theorem complexQuadraticCharacter_not_factorsThrough_proper_squarefreePart_of_mo
 
 /-- In the `d = 3 mod 4` branch, a proper divisor missing an odd factor is excluded at the
 bridge level by a representative that is also coprime to the square factor. -/
-theorem complexQuadraticCharacter_not_factorsThrough_proper_squarefreePart_of_mod_four_eq_three
-    {n c : ℕ} {hn : Odd n} {hns : ¬IsSquare n} [NeZero (4 * n)]
-    (bridge : JacobiCharacterArithmeticData n hn hns) (hd4 : bridge.squarefreePart % 4 = 3)
-    (hc : c ∣ 4 * bridge.squarefreePart) (hnot : ¬bridge.squarefreePart ∣ c) :
+theorem complexQuadratic_not_factors_proper_mod4_three {n c : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    [NeZero (4 * n)] (bridge : JacobiCharacterArithmeticData n hn hns)
+    (hd4 : bridge.squarefreePart % 4 = 3) (hc : c ∣ 4 * bridge.squarefreePart)
+    (hnot : ¬bridge.squarefreePart ∣ c) :
     ¬DirichletCharacter.FactorsThrough (complexQuadraticCharacter n hn) c := by
   intro hfactor
   obtain ⟨a, haodd, ha4, hac, haj, hacopFactor⟩ :=
-    exists_nat_odd_one_modEq_and_jacobiSym_eq_neg_one_of_dvd_four_mul_coprime
-      bridge.squarefreePart_odd bridge.squarefreePart_squarefree (Odd.pos bridge.squareFactor_odd)
-      hc hnot
+    exists_mod4_modEq_jacobi_neg_one_coprime bridge.squarefreePart_odd
+      bridge.squarefreePart_squarefree (Odd.pos bridge.squareFactor_odd) hc hnot
   have hacopd : Nat.Coprime a bridge.squarefreePart := by
     rw [Nat.coprime_iff_gcd_eq_one]
     by_contra hne
@@ -484,7 +483,7 @@ theorem complexQuadraticCharacter_not_factorsThrough_proper_squarefreePart_of_mo
   have hacop : Nat.Coprime a (4 * n) :=
     (haodd.coprime_two_right.mul_right haodd.coprime_two_right).mul_right hacopn
   have hone := factorsThrough_apply_eq_one_of_one_modEq hfactor hac hacop
-  have hq := quadraticCharacter_apply_of_squarefreePart_coprime bridge hacop
+  have hq := quadraticChar_eq_squarefreePart_of_coprime bridge hacop
   simp only [ite_eq_right
         (by
           intro h
@@ -503,37 +502,32 @@ theorem complexQuadraticCharacter_not_factorsThrough_proper_squarefreePart_of_mo
   norm_num only at hone'
 
 /-- The complex quadratic character has conductor dividing `d` in the `d = 1 mod 4` branch. -/
-theorem complexQuadraticCharacter_conductor_dvd_squarefreePart_of_mod_four_eq_one {n : ℕ}
-    {hn : Odd n} {hns : ¬IsSquare n} [NeZero (4 * n)]
-    (bridge : JacobiCharacterArithmeticData n hn hns) (hdvd : bridge.squarefreePart ∣ n)
-    (hd4 : bridge.squarefreePart % 4 = 1) :
+theorem complexQuadratic_conductor_dvd_mod4_one {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    [NeZero (4 * n)] (bridge : JacobiCharacterArithmeticData n hn hns)
+    (hdvd : bridge.squarefreePart ∣ n) (hd4 : bridge.squarefreePart % 4 = 1) :
     (complexQuadraticCharacter n hn).conductor ∣ bridge.squarefreePart := by
   apply DirichletCharacter.conductor_dvd_of_mem_conductorSet
   exact
     (DirichletCharacter.mem_conductorSet_iff _).mpr
-      (factorsThrough_ringHomComp_of_int
-        (quadraticCharacter_factorsThrough_squarefreePart_of_mod_four_eq_one bridge hdvd hd4))
+      (factorsThrough_ringHomComp_of_int (quadratic_factors_squarefree_mod4_one bridge hdvd hd4))
 
 /-- In the `d = 1 mod 4` branch, the complex character has exactly the squarefree-part
 conductor, not merely a divisor of it. -/
-theorem complexQuadraticCharacter_conductor_eq_squarefreePart_of_mod_four_eq_one {n : ℕ}
-    {hn : Odd n} {hns : ¬IsSquare n} [NeZero (4 * n)]
-    (bridge : JacobiCharacterArithmeticData n hn hns) (hdvd : bridge.squarefreePart ∣ n)
-    (hd4 : bridge.squarefreePart % 4 = 1) :
+theorem complexQuadratic_conductor_eq_mod4_one {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    [NeZero (4 * n)] (bridge : JacobiCharacterArithmeticData n hn hns)
+    (hdvd : bridge.squarefreePart ∣ n) (hd4 : bridge.squarefreePart % 4 = 1) :
     (complexQuadraticCharacter n hn).conductor = bridge.squarefreePart := by
   apply Nat.dvd_antisymm
-  · exact complexQuadraticCharacter_conductor_dvd_squarefreePart_of_mod_four_eq_one bridge hdvd hd4
+  · exact complexQuadratic_conductor_dvd_mod4_one bridge hdvd hd4
   · by_contra hnot
     apply
-      complexQuadraticCharacter_not_factorsThrough_proper_squarefreePart_of_mod_four_eq_one bridge
-        hd4
-        (complexQuadraticCharacter_conductor_dvd_squarefreePart_of_mod_four_eq_one bridge hdvd hd4)
-        hnot
+      complexQuadratic_not_factors_proper_mod4_one bridge hd4
+        (complexQuadratic_conductor_dvd_mod4_one bridge hdvd hd4) hnot
     exact DirichletCharacter.factorsThrough_conductor (complexQuadraticCharacter n hn)
 
 /-- The complex quadratic character has conductor dividing `4*d` in the general branch. -/
-theorem complexQuadraticCharacter_conductor_dvd_four_mul_squarefreePart {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} [NeZero (4 * n)] (bridge : JacobiCharacterArithmeticData n hn hns)
+theorem complexQuadratic_conductor_dvd_four_part {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    [NeZero (4 * n)] (bridge : JacobiCharacterArithmeticData n hn hns)
     (hdvd : bridge.squarefreePart ∣ n) :
     (complexQuadraticCharacter n hn).conductor ∣ 4 * bridge.squarefreePart := by
   apply DirichletCharacter.conductor_dvd_of_mem_conductorSet
@@ -543,45 +537,40 @@ theorem complexQuadraticCharacter_conductor_dvd_four_mul_squarefreePart {n : ℕ
         (quadraticCharacter_factorsThrough_squarefreePart bridge (Nat.mul_dvd_mul_left 4 hdvd)))
 
 /-- In the `d = 3 mod 4` branch, the complex quadratic character has conductor `4*d`. -/
-theorem complexQuadraticCharacter_conductor_eq_four_mul_squarefreePart_of_mod_four_eq_three {n : ℕ}
-    {hn : Odd n} {hns : ¬IsSquare n} [NeZero (4 * n)]
-    (bridge : JacobiCharacterArithmeticData n hn hns) (hdvd : bridge.squarefreePart ∣ n)
-    (hd4 : bridge.squarefreePart % 4 = 3) :
+theorem complexQuadratic_conductor_eq_mod4_three {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    [NeZero (4 * n)] (bridge : JacobiCharacterArithmeticData n hn hns)
+    (hdvd : bridge.squarefreePart ∣ n) (hd4 : bridge.squarefreePart % 4 = 3) :
     (complexQuadraticCharacter n hn).conductor = 4 * bridge.squarefreePart := by
   apply Nat.dvd_antisymm
-  · exact complexQuadraticCharacter_conductor_dvd_four_mul_squarefreePart bridge hdvd
+  · exact complexQuadratic_conductor_dvd_four_part bridge hdvd
   · by_contra hproper
     by_cases hdc : bridge.squarefreePart ∣ (complexQuadraticCharacter n hn).conductor
     · rcases
-        eq_squarefreePart_or_two_mul_of_dvd_four_mul_of_dvd bridge.squarefreePart_odd
-          (complexQuadraticCharacter_conductor_dvd_four_mul_squarefreePart bridge hdvd) hdc
-          hproper with
+        eq_or_two_mul_of_dvd_four_mul_of_dvd bridge.squarefreePart_odd
+          (complexQuadratic_conductor_dvd_four_part bridge hdvd) hdc hproper with
         hcd | hcd
       · exact
-          complexQuadraticCharacter_not_factorsThrough_eq_d_or_two_mul_of_bridge bridge hd4
-            (Or.inl hcd) (DirichletCharacter.factorsThrough_conductor _)
+          complexQuadratic_not_factors_d_or_two_d bridge hd4 (Or.inl hcd)
+            (DirichletCharacter.factorsThrough_conductor _)
       · exact
-          complexQuadraticCharacter_not_factorsThrough_eq_d_or_two_mul_of_bridge bridge hd4
-            (Or.inr hcd) (DirichletCharacter.factorsThrough_conductor _)
+          complexQuadratic_not_factors_d_or_two_d bridge hd4 (Or.inr hcd)
+            (DirichletCharacter.factorsThrough_conductor _)
     · exact
-        complexQuadraticCharacter_not_factorsThrough_proper_squarefreePart_of_mod_four_eq_three
-          bridge hd4 (complexQuadraticCharacter_conductor_dvd_four_mul_squarefreePart bridge hdvd)
-          hdc (DirichletCharacter.factorsThrough_conductor _)
+        complexQuadratic_not_factors_proper_mod4_three bridge hd4
+          (complexQuadratic_conductor_dvd_four_part bridge hdvd) hdc
+          (DirichletCharacter.factorsThrough_conductor _)
 
 /-- Primitive normalization preserves the `4*d` conductor in the `d = 3 mod 4` branch. -/
-theorem primitiveQuadraticCharacter_conductor_eq_discriminant_of_mod_four_eq_three {n : ℕ}
-    {hn : Odd n} {hns : ¬IsSquare n} [NeZero (4 * n)]
-    (bridge : JacobiCharacterArithmeticData n hn hns) (hdvd : bridge.squarefreePart ∣ n)
-    (hd4 : bridge.squarefreePart % 4 = 3) :
+theorem primitiveQuadratic_conductor_mod4_three {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    [NeZero (4 * n)] (bridge : JacobiCharacterArithmeticData n hn hns)
+    (hdvd : bridge.squarefreePart ∣ n) (hd4 : bridge.squarefreePart % 4 = 3) :
     (primitiveQuadraticCharacter n hn).conductor = bridge.discriminant := by
   have hprim :
     (primitiveQuadraticCharacter n hn).conductor = (complexQuadraticCharacter n hn).conductor :=
     (DirichletCharacter.isPrimitive_def (primitiveQuadraticCharacter n hn)).mp
       (DirichletCharacter.primitiveCharacter_isPrimitive (complexQuadraticCharacter n hn))
-  rw [hprim,
-    complexQuadraticCharacter_conductor_eq_four_mul_squarefreePart_of_mod_four_eq_three bridge hdvd
-      hd4,
-    bridge.discriminant_eq, positiveFundamentalDiscriminant_eq_four_mul]
+  rw [hprim, complexQuadratic_conductor_eq_mod4_three bridge hdvd hd4, bridge.discriminant_eq,
+    positiveFundamentalDiscriminant_eq_four_mul]
   exact by
     intro h
     rw [hd4] at h
@@ -589,37 +578,34 @@ theorem primitiveQuadraticCharacter_conductor_eq_discriminant_of_mod_four_eq_thr
 
 /-- In the `d = 1 mod 4` branch, primitive normalization preserves the exact discriminant
 conductor obtained from the squarefree arithmetic bridge. -/
-theorem primitiveQuadraticCharacter_conductor_eq_discriminant_of_mod_four_eq_one {n : ℕ}
-    {hn : Odd n} {hns : ¬IsSquare n} [NeZero (4 * n)]
-    (bridge : JacobiCharacterArithmeticData n hn hns) (hdvd : bridge.squarefreePart ∣ n)
-    (hd4 : bridge.squarefreePart % 4 = 1) :
+theorem primitiveQuadratic_conductor_mod4_one {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    [NeZero (4 * n)] (bridge : JacobiCharacterArithmeticData n hn hns)
+    (hdvd : bridge.squarefreePart ∣ n) (hd4 : bridge.squarefreePart % 4 = 1) :
     (primitiveQuadraticCharacter n hn).conductor = bridge.discriminant := by
   have hprim :
     (primitiveQuadraticCharacter n hn).conductor = (complexQuadraticCharacter n hn).conductor :=
     (DirichletCharacter.isPrimitive_def (primitiveQuadraticCharacter n hn)).mp
       (DirichletCharacter.primitiveCharacter_isPrimitive (complexQuadraticCharacter n hn))
-  rw [hprim,
-    complexQuadraticCharacter_conductor_eq_squarefreePart_of_mod_four_eq_one bridge hdvd hd4]
+  rw [hprim, complexQuadratic_conductor_eq_mod4_one bridge hdvd hd4]
   rw [bridge.discriminant_eq, positiveFundamentalDiscriminant_eq_self hd4]
 
 /-- The primitive conductor equals the constructed discriminant in either odd squarefree branch. -/
-theorem primitiveQuadraticCharacter_conductor_eq_discriminant {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} [NeZero (4 * n)] (bridge : JacobiCharacterArithmeticData n hn hns)
+theorem primitiveQuadratic_conductor_eq_discriminant {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    [NeZero (4 * n)] (bridge : JacobiCharacterArithmeticData n hn hns)
     (hdvd : bridge.squarefreePart ∣ n) :
     (primitiveQuadraticCharacter n hn).conductor = bridge.discriminant := by
   by_cases hd4 : bridge.squarefreePart % 4 = 1
-  · exact primitiveQuadraticCharacter_conductor_eq_discriminant_of_mod_four_eq_one bridge hdvd hd4
+  · exact primitiveQuadratic_conductor_mod4_one bridge hdvd hd4
   · have hd4' : bridge.squarefreePart % 4 = 3 := by
       rcases Nat.odd_mod_four_iff.mp (Nat.odd_iff.mp bridge.squarefreePart_odd) with h | h
       · exact False.elim (hd4 h)
       · exact h
-    exact
-      primitiveQuadraticCharacter_conductor_eq_discriminant_of_mod_four_eq_three bridge hdvd hd4'
+    exact primitiveQuadratic_conductor_mod4_three bridge hdvd hd4'
 
 /-- The original complex quadratic character has conductor equal to the bridge discriminant.
 Oddness makes its level nonzero; primitive normalization preserves conductor, so the two residue
 branches of the primitive conductor theorem supply this equality for subsequent cutoff bounds. -/
-theorem complexQuadraticCharacter_conductor_eq_discriminant {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+theorem complexQuadratic_conductor_eq_discriminant {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : JacobiCharacterArithmeticData n hn hns) (hdvd : bridge.squarefreePart ∣ n) :
     (complexQuadraticCharacter n hn).conductor = bridge.discriminant := by
   let _ : NeZero (4 * n) :=
@@ -630,12 +616,12 @@ theorem complexQuadraticCharacter_conductor_eq_discriminant {n : ℕ} {hn : Odd 
     (primitiveQuadraticCharacter n hn).conductor = (complexQuadraticCharacter n hn).conductor :=
     (DirichletCharacter.isPrimitive_def (primitiveQuadraticCharacter n hn)).mp
       (DirichletCharacter.primitiveCharacter_isPrimitive (complexQuadraticCharacter n hn))
-  exact hprim.symm.trans (primitiveQuadraticCharacter_conductor_eq_discriminant bridge hdvd)
+  exact hprim.symm.trans (primitiveQuadratic_conductor_eq_discriminant bridge hdvd)
 
 /-- A primitive character value of one at two forces the conductor to be odd.
 With an even conductor, two is a nonunit and its character value must be zero. This rules out the
 `4 * d` discriminant branch in the positive value-at-two case. -/
-theorem primitiveQuadraticCharacter_conductor_odd_of_two_eq_one (n : ℕ) (hn : Odd n)
+theorem primitiveQuadratic_conductor_odd_of_two_one (n : ℕ) (hn : Odd n)
     (hc :
       primitiveQuadraticCharacter n hn (2 : ZMod (complexQuadraticCharacter n hn).conductor) = 1) :
     Odd (complexQuadraticCharacter n hn).conductor := by
@@ -657,8 +643,8 @@ theorem primitiveQuadraticCharacter_conductor_odd_of_two_eq_one (n : ℕ) (hn : 
 /-- If conductor equals the discriminant and the primitive value at two is minus one, the
 discriminant equals the squarefree part. A nonzero value at two forces odd conductor, excluding
 the `4 * d` branch. This identifies the modulus used in the negative value-at-two estimates. -/
-theorem JacobiCharacterArithmeticData.discriminant_eq_squarefreePart_of_two_eq_neg_one {n : ℕ}
-    {hn : Odd n} {hns : ¬IsSquare n} (bridge : JacobiCharacterArithmeticData n hn hns)
+theorem JacobiCharacterArithmeticData.discr_eq_part_of_two_neg_one {n : ℕ} {hn : Odd n}
+    {hns : ¬IsSquare n} (bridge : JacobiCharacterArithmeticData n hn hns)
     (hcond : (complexQuadraticCharacter n hn).conductor = bridge.discriminant)
     (hc :
       primitiveQuadraticCharacter n hn (2 : ZMod (complexQuadraticCharacter n hn).conductor) = -1) :
@@ -695,8 +681,8 @@ theorem JacobiCharacterArithmeticData.discriminant_eq_squarefreePart_of_two_eq_n
 /-- If conductor equals the discriminant and the primitive value at two is one, the discriminant
 equals the squarefree part. Oddness of conductor excludes the `4 * d` branch, giving the exact
 modulus for the positive value-at-two estimates. -/
-theorem JacobiCharacterArithmeticData.discriminant_eq_squarefreePart_of_two_eq_one {n : ℕ}
-    {hn : Odd n} {hns : ¬IsSquare n} (bridge : JacobiCharacterArithmeticData n hn hns)
+theorem JacobiCharacterArithmeticData.discr_eq_part_of_two_one {n : ℕ} {hn : Odd n}
+    {hns : ¬IsSquare n} (bridge : JacobiCharacterArithmeticData n hn hns)
     (hcond : (complexQuadraticCharacter n hn).conductor = bridge.discriminant)
     (hc :
       primitiveQuadraticCharacter n hn (2 : ZMod (complexQuadraticCharacter n hn).conductor) = 1) :
@@ -707,7 +693,7 @@ theorem JacobiCharacterArithmeticData.discriminant_eq_squarefreePart_of_two_eq_o
       exact Nat.mul_ne_zero (by decide) hnpos.ne'⟩
   have hoddD : Odd bridge.discriminant := by
     rw [← hcond]
-    exact primitiveQuadraticCharacter_conductor_odd_of_two_eq_one n hn hc
+    exact primitiveQuadratic_conductor_odd_of_two_one n hn hc
   have hdmod : bridge.squarefreePart % 4 = 1 := by
     by_contra hdmod
     rw [bridge.discriminant_eq, positiveFundamentalDiscriminant_eq_four_mul hdmod] at hoddD
@@ -858,8 +844,8 @@ Proof: transfer the fixed witness and use elementary logarithmic lower bounds; t
 the square factor to be at least `2`, hence `n ≥ 28`.
 Role: supplies an unconditional logarithmic-square witness bound for these three squarefree parts.
 -/
-theorem exists_primeNeOneWitness_cast_le_log_sq_of_small_squarefreePart {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : JacobiCharacterArithmeticData n hn hns) (hn11 : 11 ≤ n)
+theorem exists_primeNeOne_log_sq_of_small_part {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : JacobiCharacterArithmeticData n hn hns) (hn11 : 11 ≤ n)
     (hd : bridge.squarefreePart = 3 ∨ bridge.squarefreePart = 5 ∨ bridge.squarefreePart = 7) :
     ∃ hdn : (primeNeOneWitnessSet n).Nonempty,
       (primeNeOneWitness n hdn : ℝ) ≤ (Real.log n) ^ 2 := by
@@ -924,7 +910,7 @@ Content: oddness leaves only `9` below `11` after the excluded values, while squ
 eliminates `9`.
 Role: separates the three small squarefree parts from the range `d ≥ 11`.
 -/
-theorem JacobiCharacterArithmeticData.squarefreePart_ge_eleven_of_not_small {n : ℕ} {hn : Odd n}
+theorem JacobiCharacterArithmeticData.squarefreePart_ge_11_of_not_small {n : ℕ} {hn : Odd n}
     {hns : ¬IsSquare n} (bridge : JacobiCharacterArithmeticData n hn hns)
     (h3 : bridge.squarefreePart ≠ 3) (h5 : bridge.squarefreePart ≠ 5)
     (h7 : bridge.squarefreePart ≠ 7) : 11 ≤ bridge.squarefreePart := by
@@ -971,7 +957,7 @@ theorem JacobiCharacterArithmeticData.y_ge_of_nat_cutoff_of_twelve {n : ℕ} {hn
   exact hN.trans hlog
 
 /-- The positive fundamental discriminant of the squarefree part `d` is at most `4*d`. -/
-theorem JacobiCharacterArithmeticData.discriminant_le_four_mul_squarefreePart {n : ℕ} {hn : Odd n}
+theorem JacobiCharacterArithmeticData.discr_le_four_squarefreePart {n : ℕ} {hn : Odd n}
     {hns : ¬IsSquare n} (bridge : JacobiCharacterArithmeticData n hn hns) :
     bridge.discriminant ≤ 4 * bridge.squarefreePart := by
   rw [bridge.discriminant_eq]
@@ -981,7 +967,7 @@ theorem JacobiCharacterArithmeticData.discriminant_le_four_mul_squarefreePart {n
   · rw [positiveFundamentalDiscriminant_eq_four_mul hd4]
 
 /-- Positivity and `discriminant ≤ 4*d` give `log discriminant ≤ log d + log 4`. -/
-theorem JacobiCharacterArithmeticData.log_discriminant_le_y_add_log_four {n : ℕ} {hn : Odd n}
+theorem JacobiCharacterArithmeticData.log_discr_le_y_add_log_four {n : ℕ} {hn : Odd n}
     {hns : ¬IsSquare n} (bridge : JacobiCharacterArithmeticData n hn hns) :
     Real.log (bridge.discriminant : ℝ) ≤ bridge.y + Real.log 4 := by
   have hdpos : 0 < (bridge.squarefreePart : ℝ) := by exact_mod_cast bridge.squarefreePart_pos
@@ -989,7 +975,7 @@ theorem JacobiCharacterArithmeticData.log_discriminant_le_y_add_log_four {n : �
   have hprodpos : 0 < (4 * (bridge.squarefreePart : ℝ)) := by
     exact mul_pos (by norm_num only : (0 : ℝ) < 4) hdpos
   have hle : (bridge.discriminant : ℝ) ≤ 4 * (bridge.squarefreePart : ℝ) := by
-    exact_mod_cast bridge.discriminant_le_four_mul_squarefreePart
+    exact_mod_cast bridge.discr_le_four_squarefreePart
   have hlog := Real.strictMonoOn_log.monotoneOn hDpos hprodpos hle
   rw [Real.log_mul (by norm_num only) hdpos.ne'] at hlog
   simpa only [y, ge_iff_le, add_comm] using hlog
@@ -1000,7 +986,7 @@ Conclusion: the bridge character conductor is the constructed fundamental discri
 Content: transfer the existing primitive-conductor identity across `character_eq`.
 Role: supplies the exact modulus in conductor and logarithmic comparisons.
 -/
-theorem JacobiCharacterArithmeticData.character_conductor_eq_discriminant {n : ℕ} {hn : Odd n}
+theorem JacobiCharacterArithmeticData.conductor_eq_discriminant {n : ℕ} {hn : Odd n}
     {hns : ¬IsSquare n} [NeZero (complexQuadraticCharacter n hn).conductor]
     (bridge : JacobiCharacterArithmeticData n hn hns) :
     bridge.character.conductor = bridge.discriminant := by
@@ -1012,7 +998,7 @@ theorem JacobiCharacterArithmeticData.character_conductor_eq_discriminant {n : �
     exact
       ⟨bridge.squareFactor ^ 2, by
         simpa only [Nat.mul_comm] using bridge.squarefreePart_sq_mul.symm⟩
-  have hprim := primitiveQuadraticCharacter_conductor_eq_discriminant bridge hdvd
+  have hprim := primitiveQuadratic_conductor_eq_discriminant bridge hdvd
   have hchar : bridge.character.conductor = (primitiveQuadraticCharacter n hn).conductor := by
     rw [bridge.character_eq]
   exact hchar.trans hprim
@@ -1020,12 +1006,12 @@ theorem JacobiCharacterArithmeticData.character_conductor_eq_discriminant {n : �
 /-- If the bridge discriminant is at most its squarefree part, the log conductor is at most
 `y = log d`. Identify conductor with discriminant and apply log monotonicity to their positive
 casts. This is the sharper conductor comparison for the odd-discriminant branch. -/
-theorem JacobiCharacterArithmeticData.log_character_conductor_le_of_discriminant_le {n : ℕ}
-    {hn : Odd n} {hns : ¬IsSquare n} [NeZero (complexQuadraticCharacter n hn).conductor]
+theorem JacobiCharacterArithmeticData.log_conductor_le_of_discriminant {n : ℕ} {hn : Odd n}
+    {hns : ¬IsSquare n} [NeZero (complexQuadraticCharacter n hn).conductor]
     (bridge : JacobiCharacterArithmeticData n hn hns)
     (hD : bridge.discriminant ≤ bridge.squarefreePart) :
     Real.log bridge.character.conductor ≤ bridge.y := by
-  have hcond := bridge.character_conductor_eq_discriminant
+  have hcond := bridge.conductor_eq_discriminant
   have hDpos : (0 : ℝ) < bridge.discriminant := by exact_mod_cast bridge.discriminant_pos
   have hdpos : (0 : ℝ) < bridge.squarefreePart := by exact_mod_cast bridge.squarefreePart_pos
   have hle : (bridge.discriminant : ℝ) ≤ bridge.squarefreePart := by exact_mod_cast hD
@@ -1042,18 +1028,18 @@ bridge discriminant estimate without changing the analytic radius.
 Role: bounds the log conductor in terms of the squarefree-part parameter, without a condition on
 the character value at `2`.
 -/
-theorem JacobiCharacterArithmeticData.log_primitiveQuadraticCharacter_conductor_le_y_add_log_four
-    {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n} [NeZero (4 * n)]
-    (bridge : JacobiCharacterArithmeticData n hn hns) (hdvd : bridge.squarefreePart ∣ n) :
+theorem JacobiCharacterArithmeticData.log_primitiveConductor_le {n : ℕ} {hn : Odd n}
+    {hns : ¬IsSquare n} [NeZero (4 * n)] (bridge : JacobiCharacterArithmeticData n hn hns)
+    (hdvd : bridge.squarefreePart ∣ n) :
     Real.log (primitiveQuadraticCharacter n hn).conductor ≤ bridge.y + Real.log 4 := by
-  rw [primitiveQuadraticCharacter_conductor_eq_discriminant bridge hdvd]
-  exact bridge.log_discriminant_le_y_add_log_four
+  rw [primitiveQuadratic_conductor_eq_discriminant bridge hdvd]
+  exact bridge.log_discr_le_y_add_log_four
 
 /-- The bridge character satisfies `log conductor ≤ y + log 4` without a condition at two.
 Rewrite it as the canonical primitive character and infer `d ∣ n` from the square decomposition
 to reuse the uniform discriminant estimate in analytic branch bounds. -/
-theorem JacobiCharacterArithmeticData.log_character_conductor_le_y_add_log_four {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} [NeZero (complexQuadraticCharacter n hn).conductor]
+theorem JacobiCharacterArithmeticData.log_conductor_le {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    [NeZero (complexQuadraticCharacter n hn).conductor]
     (bridge : JacobiCharacterArithmeticData n hn hns) :
     Real.log bridge.character.conductor ≤ bridge.y + Real.log 4 := by
   let _ : NeZero (4 * n) :=
@@ -1065,7 +1051,7 @@ theorem JacobiCharacterArithmeticData.log_character_conductor_le_y_add_log_four 
       ⟨bridge.squareFactor ^ 2, by
         simpa only [Nat.mul_comm] using bridge.squarefreePart_sq_mul.symm⟩
   rw [bridge.character_eq]
-  exact bridge.log_primitiveQuadraticCharacter_conductor_le_y_add_log_four hdvd
+  exact bridge.log_primitiveConductor_le hdvd
 
 /-- Under a no-small-witness hypothesis, an odd prime divisor cannot occur below the cutoff. -/
 theorem not_dvd_of_no_primeNeOne_witness {n X p : ℕ} (hp : p.Prime) (hodd : Odd p) (hpX : p ≤ X)
@@ -1096,10 +1082,9 @@ theorem primitiveQuadraticCharacter_apply_odd_prime {n p : ℕ} (hn : Odd n) (hp
     complexQuadraticCharacter_apply_odd_prime n hn hp hodd (hp.coprime_iff_not_dvd.mpr hpdvd)
 
 /-- The primitive character is one at every odd prime below `X` when no witness exists. -/
-theorem primitiveQuadraticCharacter_eq_one_of_no_primeNeOne_witness {n X p : ℕ} (hn : Odd n)
-    (hp : p.Prime) (hodd : Odd p) (hpX : p ≤ X)
-    (hno : ∀ q, q.Prime → Odd q → q ≤ X → q ∉ primeNeOneWitnessSet n) (hpdvd : ¬p ∣ n) :
-    primitiveQuadraticCharacter n hn (p : ℤ) = 1 := by
+theorem primitiveQuadratic_one_of_no_neOneWitness {n X p : ℕ} (hn : Odd n) (hp : p.Prime)
+    (hodd : Odd p) (hpX : p ≤ X) (hno : ∀ q, q.Prime → Odd q → q ≤ X → q ∉ primeNeOneWitnessSet n)
+    (hpdvd : ¬p ∣ n) : primitiveQuadraticCharacter n hn (p : ℤ) = 1 := by
   rw [primitiveQuadraticCharacter_apply_odd_prime hn hp hodd hpdvd]
   have hj : jacobiSym n p = 1 := by
     by_contra hne
@@ -1115,14 +1100,13 @@ Proof: first obtain non-divisibility from the no-witness hypothesis, then rewrit
 character using `character_eq` and apply the primitive-character lemma above.
 Role: supplies exact character values under a no-witness cutoff hypothesis.
 -/
-theorem JacobiCharacterArithmeticData.character_eq_one_of_no_primeNeOne_witness {n X p : ℕ}
-    {hn : Odd n} {hns : ¬IsSquare n} (bridge : JacobiCharacterArithmeticData n hn hns)
-    (hp : p.Prime) (hodd : Odd p) (hpX : p ≤ X)
-    (hno : ∀ q, q.Prime → Odd q → q ≤ X → q ∉ primeNeOneWitnessSet n) :
+theorem JacobiCharacterArithmeticData.character_one_of_no_neOneWitness {n X p : ℕ} {hn : Odd n}
+    {hns : ¬IsSquare n} (bridge : JacobiCharacterArithmeticData n hn hns) (hp : p.Prime)
+    (hodd : Odd p) (hpX : p ≤ X) (hno : ∀ q, q.Prime → Odd q → q ≤ X → q ∉ primeNeOneWitnessSet n) :
     bridge.character (p : ℤ) = 1 := by
   have hpdvd : ¬p ∣ n := not_dvd_of_no_primeNeOne_witness hp hodd hpX hno
   rw [bridge.character_eq]
-  exact primitiveQuadraticCharacter_eq_one_of_no_primeNeOne_witness hn hp hodd hpX hno hpdvd
+  exact primitiveQuadratic_one_of_no_neOneWitness hn hp hodd hpX hno hpdvd
 
 /--
 Input/assumptions: the same bridge and no-witness cutoff as the preceding adapter.
@@ -1134,10 +1118,9 @@ Proof: the bridge conductor divides `4*n`; an odd prime not dividing `n` is ther
 that conductor.  The primitive-character coprime evaluation then reduces to the preceding adapter.
 Role: transports the no-witness value-one condition through primitive normalization.
 -/
-theorem JacobiCharacterArithmeticData.primitiveCharacter_eq_one_of_no_primeNeOne_witness {n X p : ℕ}
-    {hn : Odd n} {hns : ¬IsSquare n} (bridge : JacobiCharacterArithmeticData n hn hns)
-    (hp : p.Prime) (hodd : Odd p) (hpX : p ≤ X)
-    (hno : ∀ q, q.Prime → Odd q → q ≤ X → q ∉ primeNeOneWitnessSet n) :
+theorem JacobiCharacterArithmeticData.primitive_one_of_no_neOneWitness {n X p : ℕ} {hn : Odd n}
+    {hns : ¬IsSquare n} (bridge : JacobiCharacterArithmeticData n hn hns) (hp : p.Prime)
+    (hodd : Odd p) (hpX : p ≤ X) (hno : ∀ q, q.Prime → Odd q → q ≤ X → q ∉ primeNeOneWitnessSet n) :
     bridge.character.primitiveCharacter (p : ℤ) = 1 := by
   have hpdvd : ¬p ∣ n := not_dvd_of_no_primeNeOne_witness hp hodd hpX hno
   have hcdvd : bridge.character.conductor ∣ 4 * n := by
@@ -1167,7 +1150,7 @@ theorem JacobiCharacterArithmeticData.primitiveCharacter_eq_one_of_no_primeNeOne
   have hcop : IsCoprime (p : ℤ) ((complexQuadraticCharacter n hn).conductor : ℤ) := by
     exact_mod_cast hp.coprime_iff_not_dvd.mpr hpc
   rw [DirichletCharacter.primitiveCharacter_apply_of_isCoprime (χ := bridge.character) hcop]
-  exact bridge.character_eq_one_of_no_primeNeOne_witness hp hodd hpX hno
+  exact bridge.character_one_of_no_neOneWitness hp hodd hpX hno
 
 /-- Transfer the even parity of the bridge character to its primitive normalization. -/
 theorem JacobiCharacterArithmeticData.primitiveCharacter_even {n : ℕ} {hn : Odd n}
@@ -1193,8 +1176,8 @@ theorem JacobiCharacterArithmeticData.primitiveCharacter_even {n : ℕ} {hn : Od
 on every prime in the displayed logarithmic prime-power ranges. Bound each
 root cutoff by `y²` and apply the bridge witness-transfer theorem. This supplies
 the character-value hypothesis for the weighted correction estimates. -/
-theorem JacobiCharacterArithmeticData.primitiveCharacter_eq_one_in_log_square_range {n : ℕ}
-    {hn : Odd n} {hns : ¬IsSquare n} [NeZero (complexQuadraticCharacter n hn).conductor]
+theorem JacobiCharacterArithmeticData.primitive_eq_one_log_square {n : ℕ} {hn : Odd n}
+    {hns : ¬IsSquare n} [NeZero (complexQuadraticCharacter n hn).conductor]
     (bridge : JacobiCharacterArithmeticData n hn hns) {y : ℝ} (hy : 1 ≤ y)
     (hno : ∀ q, q.Prime → Odd q → q ≤ ⌊y ^ 2⌋₊ → q ∉ primeNeOneWitnessSet n) :
     ∀ {k p : ℕ},
@@ -1217,7 +1200,6 @@ theorem JacobiCharacterArithmeticData.primitiveCharacter_eq_one_in_log_square_ra
         (p : ℝ) ≤ (⌊(y ^ 2) ^ ((1 : ℝ) / k)⌋₊ : ℕ) := by exact_mod_cast (Finset.mem_Ioc.mp hpmem).2
         _ ≤ (y ^ 2) ^ ((1 : ℝ) / k) := Nat.floor_le (Real.rpow_nonneg (zero_le_one.trans hbase) _)
     exact hpcast.trans hpow
-  simpa only [Int.cast_natCast] using
-    bridge.primitiveCharacter_eq_one_of_no_primeNeOne_witness hp hodd hpX hno
+  simpa only [Int.cast_natCast] using bridge.primitive_one_of_no_neOneWitness hp hodd hpX hno
 
 end PseudoPrime.NumberTheory

@@ -19,10 +19,9 @@ namespace PseudoPrime.LLS
 Claim: the reciprocal bound, log upper bound with error -5/2, and Riemann lower bound conflict.
 Proof: clear positive denominators and retain the positive remainder polynomials from height seven.
 Role: extend the analytic Part 2 separation to cutoff fifty. -/
-theorem refinedPart2_bounds_incompatible_of_root_ge_seven {t z L F R S b r : ℝ} (ht : (7 : ℝ) ≤ t)
-    (hz : 0 ≤ z) (hrcost : (3 / 2 : ℝ) ≤ r)
-    (hL : (t - 2) * L ≤ (t - 2) * t + t * (2 * z - (2 * r + 701 / 500))) (hzupper : z ≤ t / 3)
-    (hF : F ≤ L - 2096 / 1831) (hR : 2 * z - r ≤ R)
+theorem refinedPart2_incompatible_of_root_ge_7 {t z L F R S b r : ℝ} (ht : (7 : ℝ) ≤ t) (hz : 0 ≤ z)
+    (hrcost : (3 / 2 : ℝ) ≤ r) (hL : (t - 2) * L ≤ (t - 2) * t + t * (2 * z - (2 * r + 701 / 500)))
+    (hzupper : z ≤ t / 3) (hF : F ≤ L - 2096 / 1831) (hR : 2 * z - r ≤ R)
     (hb : (1 - 1 / t) ^ 2 * b ≤ (1 / 2 : ℝ) * (1 - 1 / t ^ 2) * F - R - 1 / 4)
     (hu : S ≤ (2 * t + 2 + 2 * z) * b + F * z - 5 / 2)
     (hl : t ^ 2 - (1839 / 500 : ℝ) * z - 1 - (42781 / 915500 : ℝ) * (t + 1) ≤ S) : False := by
@@ -123,7 +122,7 @@ theorem refinedPart2_bounds_incompatible_of_root_ge_seven {t z L F R S b r : ℝ
 /-- Input: a real cutoff at least fifty. Claim: the odd log main error is at most -5/2.
 Proof: certify the logarithm of fifty and keep the Euler lower bound.
 Role: supply the odd branch of the larger low-scale analytic range. -/
-theorem primitiveLogOddMainError_le_five_halves_of_ge_fifty {x : ℝ} (hx : 50 ≤ x) :
+theorem primitiveLogOddError_le_neg_5_2_of_ge_50 {x : ℝ} (hx : 50 ≤ x) :
     Analysis.primitiveLogOddMainError x ≤ -(5 / 2 : ℝ) := by
   have hc : Analysis.rationalLogIntervalCheck 50 6 10 (39 / 10) 4 = true := by decide +kernel
   have hl := (Analysis.rationalLogIntervalCheck_sound hc).1
@@ -140,7 +139,7 @@ theorem primitiveLogOddMainError_le_five_halves_of_ge_fifty {x : ℝ} (hx : 50 �
 /-- Input: a real cutoff at least fifty. Claim: the even log main error is at most -5/2.
 Proof: retain the negative quadratic logarithmic term.
 Role: supply the even branch of the larger low-scale analytic range. -/
-theorem primitiveLogEvenMainError_le_five_halves_of_ge_fifty {x : ℝ} (hx : 50 ≤ x) :
+theorem primitiveLogEvenError_le_neg_5_2_of_ge_50 {x : ℝ} (hx : 50 ≤ x) :
     Analysis.primitiveLogEvenMainError x ≤ -(5 / 2 : ℝ) := by
   have hc : Analysis.rationalLogIntervalCheck 50 6 10 (39 / 10) 4 = true := by decide +kernel
   have hl := (Analysis.rationalLogIntervalCheck_sound hc).1
@@ -156,7 +155,7 @@ theorem primitiveLogEvenMainError_le_five_halves_of_ge_fifty {x : ℝ} (hx : 50 
 Claim: the finer root is at least seven and its square is at least fifty.
 Proof: certify the tangent point and apply the logarithm tangent on the entire half-line.
 Role: discharge the revised comparison's height and cutoff inputs. -/
-theorem finerPart2Root_height_and_cutoff_of_ge_621_div_100 {L : ℝ} (hL : (621 / 100 : ℝ) ≤ L) :
+theorem finerPart2Root_height_cutoff_of_ge_621_100 {L : ℝ} (hL : (621 / 100 : ℝ) ≤ L) :
     7 ≤ Analysis.finerPart2CutoffRoot L ∧ 50 ≤ (Analysis.finerPart2CutoffRoot L) ^ 2 := by
   have hL0 : 0 < L := by linarith only [hL]
   have hc : Analysis.rationalLogIntervalCheck (621 / 100) 3 10 (182 / 100) (183 / 100) = true := by

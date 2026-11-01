@@ -126,7 +126,7 @@ theorem signedTwoPoleGap_negative_log_dominates_cost {q A : ℕ} (hq : 0 < q) (h
 /-- Under GRH, a nonprincipal quadratic character of level q at most A with
 log A at least 2000 has a prime not dividing q below the signed logarithmic cutoff
 with value minus one. Insert the certified cost comparison into witness extraction. -/
-theorem exists_prime_neg_one_le_signedTwoPole_log_ambient {q A : ℕ} [NeZero q]
+theorem exists_negOnePrime_le_signedTwoPole_log_ambient {q A : ℕ} [NeZero q]
     (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hqA : q ≤ A)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 2000 ≤ Real.log A) :
     ∃ p : ℕ,

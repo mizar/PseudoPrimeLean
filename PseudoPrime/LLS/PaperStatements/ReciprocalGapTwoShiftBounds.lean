@@ -39,11 +39,11 @@ theorem reciprocalGap_pole_re_le_positive_prefix {h r x : ℝ} (hh : 0 < h) (hr 
     (MellinKernel.weightedResidue (reciprocalGapMellinKernel h hh)
           (fun z : ℂ ↦ χ.completedLFunction (z + 1 / 2)) x (-1 / 2)).re ≤
       reciprocalGapPrefixPoleBudget h r q x M G B := by
-  have hpi := DirichletCharacter.isPrimitive_inv hp
+  have hpi := AnalyticNumberTheory.DirichletLFunction.character_isPrimitive_inv hp
   have hni : χ⁻¹⁻¹ ≠ 1 := by simpa only [inv_inv] using hne
-  have hc :=
-    completedLogDeriv_endpoint_le_positive_prefix hq (hGRH q χ⁻¹ hpi) hpi hinv hni hr B hM hG
-  simp only [DirichletCharacter.inv_apply_eq_conj, Complex.conj_re] at hc
+  have hc := completedLogDeriv_prefix_bound_RH hq (hGRH q χ⁻¹ hpi) hpi hinv hni hr B hM hG
+  simp only [AnalyticNumberTheory.DirichletLFunction.character_inv_apply_eq_conj,
+    Complex.conj_re] at hc
   have hpre :=
     AnalyticNumberTheory.Arithmetic.character_positive_mangoldt_prefix_eq_twice χ B
       (fun n ↦ ((n : ℝ) ^ (1 + r))⁻¹) hB htriv
@@ -77,7 +77,7 @@ theorem reciprocalGap_remainder_re_le_two_shift_prefix {h r : ℝ} (hh : 0 < h) 
       reciprocalGapPrefixPoleBudget h r q x M₁ G₁ B + reciprocalGapRealAxisBudget h q x M₂ G₂ +
         reciprocalGapSignedGammaBudget h x := by
   have hx0 := zero_lt_one.trans_le hx
-  have hΓ := reciprocalGap_remainder_gamma_re_le_signed_budget hh hx χ
+  have hΓ := reciprocalGap_gamma_re_le_signedBudget hh hx χ
   have hP :=
     reciprocalGap_pole_re_le_positive_prefix hh hr hx0 hq hp hne hinv hGRH B hB htriv hM₁ hG₁
   have hL := reciprocalGap_leftIntegral_re_eq_realAxis hh hp hne hinv hx
@@ -92,8 +92,8 @@ separation with three certified Euler caps produces a non-one prime witness.
 Assume prime triviality, retain untwisted positive prefixes at both comparison points,
 and bound Gamma factors uniformly by the two parity endpoints. No input-range certificate
 or concrete numerical cutoff is built into this generic criterion. -/
-theorem exists_prime_not_one_of_reciprocalGap_two_shift_prefix {h r c : ℝ} (hh : 0 < h) (hr : 0 < r)
-    {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+theorem exists_prime_neOne_twoShiftGap_GRH {h r c : ℝ} (hh : 0 < h) (hr : 0 < r) {q : ℕ} [NeZero q]
+    (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hc : (1 / 2 : ℝ) < c) (hbound : c ^ 2 ≤ 1 / 4 + h / 2) {x : ℝ}
     (hx : 1 ≤ x) (B₀ B₁ : Finset ℕ) (hB₀ : ∀ n ∈ B₀, (n : ℝ) ≤ x) (hB₁ : ∀ n ∈ B₁, (n : ℝ) ≤ x)

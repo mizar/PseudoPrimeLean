@@ -29,14 +29,13 @@ noncomputable def gammaSignedPrincipalFactorFreeSeparation (L b x : ℝ) : ℝ :
 /-- Under odd-nonsquare input data, log(n) <= L, x >= 4096 and the pole log bound,
 the scalar margin is below the actual joint margin plus 7/60. Compare the local
 and pole costs. Role: remove factorization from the witness criterion. -/
-theorem gamma_signed_principal_separation_le_joint_add_small_scale {n Q : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) {L b x : ℝ} (hlog : Real.log n ≤ L) (hx : 4096 ≤ x)
-    (hlogQ : Real.log Q ≤ L + 7 / 5) :
+theorem gammaSignedPrincipal_joint_smallScale {n Q : ℕ} (hn : Odd n) (hns : ¬IsSquare n) {L b x : ℝ}
+    (hlog : Real.log n ≤ L) (hx : 4096 ≤ x) (hlogQ : Real.log Q ≤ L + 7 / 5) :
     gammaSignedPrincipalFactorFreeSeparation L b x ≤
       gammaJointPrefixSeparationWithPrincipalCap Q (NumberTheory.complexQuadraticCharacter n hn) b x
           (-3 / 2) (gammaSignedVariationPrincipalCap x) +
         7 / 60 := by
-  have hJ := gamma_joint_prefix_le_factor_free_budget_small_scale (b := b) hn hns hlog hx
+  have hJ := gammaJointPrefix_factorFree_smallScale (b := b) hn hns hlog hx
   have hN :
     ((7 / 6 : ℝ) * Real.log Q + 4) / Real.sqrt x ≤ ((7 / 6 : ℝ) * (L + 7 / 5) + 4) / Real.sqrt x :=
     div_le_div_of_nonneg_right (by linarith only [hlogQ]) (Real.sqrt_nonneg x)

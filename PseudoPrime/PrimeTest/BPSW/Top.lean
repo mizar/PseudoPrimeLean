@@ -80,8 +80,8 @@ theorem bailliePSW_of_prime_of_search {n : ℕ} (hn : n.Prime) {D : ℤ}
     rw [bailliePSW, primalityPrecheck_none_of_odd hn3 hodd hn.not_isSquare]
     change selfridgeClassicalSearchAscending n (n - 2) = some D at hsearch
     simp only [selfridgeClassicalMethodAStarParamsWithinTwoMul]
-    rw [selfridgeClassicalMethodAStarParamsAscending_of_search hsearch]
-    let hmod := selfridgeClassicalSearchWithinTwoMul_some_methodA_mod hsearch
+    rw [classicalAStarAscending_of_search hsearch]
+    let hmod := classicalTwoMul_methodA_mod hsearch
     let param := LucasParams.methodAStar D hmod
     have hD : param.D = D := by
       dsimp only [param, LucasParams.methodAStar]
@@ -123,6 +123,6 @@ through `decideByTest`; it does not certify primality of arbitrary accepted inpu
 theorem bailliePSW_spec_unconditional : PrimalityTestSpec bailliePSW := by
   apply bailliePSW_spec
   intro n hn hn3
-  exact selfridgeClassicalSearchAscendingWithinTwoMul_some_of_prime_of_three_le hn hn3
+  exact classicalAscending_twoMul_prime hn hn3
 
 end PseudoPrime.PrimeTest

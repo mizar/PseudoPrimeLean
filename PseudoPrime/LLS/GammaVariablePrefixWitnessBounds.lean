@@ -24,7 +24,7 @@ namespace PseudoPrime.LLS
  Use the common primitive Gamma upper bound and the actual prime-two comparison.
  Only the scalar principal/ramp gap remains to be certified for a chosen starting value;
  the analytic proof is independent of the prefix length. -/
-theorem exists_odd_prime_ne_one_of_variable_prefix_budget {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+theorem exists_oddPrime_neOne_variablePrefix_GRH {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
     (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (h2 : 2 ∣ q)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 ≤ x)
     (hcut : 1 ≤ (99 / 40 : ℝ) * x) (prefixLen : ℕ) {C : ℝ}
@@ -38,8 +38,7 @@ theorem exists_odd_prime_ne_one_of_variable_prefix_budget {q : ℕ} [NeZero q] (
         2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x)) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ χ p ≠ 1 := by
   have hnp :=
-    PaperStatements.gamma_primitiveCharacter_sum_re_le_variable_prefix_scale hq χ hne hGRH hx
-      prefixLen hC
+    PaperStatements.gammaCharacterSum_re_le_variable_prefix_scale hq χ hne hGRH hx prefixLen hC
   apply exists_odd_prime_ne_one_of_gamma_ramp_gap χ hquad h2 (zero_lt_one.trans_le hx) hcut
   linarith only [hnp, hgap]
 

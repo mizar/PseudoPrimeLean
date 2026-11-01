@@ -19,7 +19,7 @@ namespace PseudoPrime.LLS
 budget is bounded using only odd primes through the anchored support.
 Apply tail vanishing to the original support. Role: reduce the numerical
 obligation without changing the underlying arithmetic budget. -/
-theorem gamma_scale_signed_dual_budget_le_anchored_support {L x : ℝ} (hx : 1 ≤ x) :
+theorem gammaSignedDual_le_anchorSupport {L x : ℝ} (hx : 1 ≤ x) :
     gammaScaleSignedDualBudget L x ≤
       gammaRamifiedDualParameter x * L +
         ∑ p ∈ gammaRamifiedCertificatePrimeSet (max 160 (1 + (52 / 25 : ℝ) * Real.sqrt x)),
@@ -41,13 +41,13 @@ namespace PseudoPrime.LLS
 prime support by the anchored support leaves the exact dual budget unchanged.
 Use tail vanishing in both directions. Role: shrink the finite obligation
 without introducing any loss in the numerical upper bound. -/
-theorem gamma_scale_signed_dual_budget_eq_anchor160_support {L x : ℝ} (hx : 1 ≤ x) :
+theorem gammaSignedDual_eq_anchor160Support {L x : ℝ} (hx : 1 ≤ x) :
     gammaScaleSignedDualBudget L x =
       gammaRamifiedDualParameter x * L +
         ∑ p ∈ gammaRamifiedCertificatePrimeSet (max 160 (1 + (52 / 25 : ℝ) * Real.sqrt x)),
           Real.log p *
             max (gammaRamifiedSignedCombinedCost p x - gammaRamifiedDualParameter x) 0 := by
-  apply le_antisymm (gamma_scale_signed_dual_budget_le_anchored_support hx)
+  apply le_antisymm (gammaSignedDual_le_anchorSupport hx)
   have h :=
     gamma_ramified_signed_variable_excess_le_finite
       (gammaRamifiedCertificatePrimeSet (max 160 (1 + (52 / 25 : ℝ) * Real.sqrt x)))
@@ -62,12 +62,12 @@ namespace PseudoPrime.LLS
 /-- Input: x >= 1 and an upper cap E on the anchored signed excess sum.
 Claim: the full dual budget is at most delta(x)*L+E. Add the unchanged
 linear term. Role: feed compact local bounds to quadratic witnesses. -/
-theorem gamma_scale_signed_dual_budget_le_of_anchored_rows {L x E : ℝ} (hx : 1 ≤ x)
+theorem gamma_signed_dual_budget_le_of_anchor {L x E : ℝ} (hx : 1 ≤ x)
     (hrows :
       (∑ p ∈ gammaRamifiedCertificatePrimeSet (max 160 (1 + (52 / 25 : ℝ) * Real.sqrt x)),
           Real.log p * max (gammaRamifiedSignedCombinedCost p x - gammaRamifiedDualParameter x) 0) ≤
         E) :
     gammaScaleSignedDualBudget L x ≤ gammaRamifiedDualParameter x * L + E := by
-  exact (gamma_scale_signed_dual_budget_le_anchored_support hx).trans (add_le_add le_rfl hrows)
+  exact (gammaSignedDual_le_anchorSupport hx).trans (add_le_add le_rfl hrows)
 
 end PseudoPrime.LLS

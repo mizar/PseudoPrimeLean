@@ -69,7 +69,7 @@ the subgroup-index multiple of the principal finite Gamma sum by the numerical
 primitive average, retaining the exact nonprincipal conductor-log sum.
 Use the signed no-small-prime comparison and annihilator cardinality.
 This is the analytic upper side of the finite-cutoff contradiction. -/
-theorem gamma_principal_sum_le_conductor_bound_of_noSmallPrimes {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+theorem gamma_principal_sum_le_conductor_of_noSmall_GRH {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
     (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     {x X : ℝ} (hx : 1 ≤ x)
     (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
@@ -87,7 +87,7 @@ theorem gamma_principal_sum_le_conductor_bound_of_noSmallPrimes {q : ℕ} [NeZer
       _ at hu
   rw [map_sum] at hu
   exact
-    (MellinKernel.principal_sum_le_primitive_average_of_noSmallPrimes gammaMellinKernel H
+    (MellinKernel.principal_sum_le_primitive_of_noSmall gammaMellinKernel H
           (zero_lt_one.trans_le hx) hsmall).trans
       hu
 
@@ -109,7 +109,7 @@ theorem gamma_noSmallPrimes_explicit_inequality {q : ℕ} [NeZero q] (hq : 20000
   have hlo :=
     gamma_principal_sum_lower_thirteen (q := q) hGRH.riemann (zero_lt_one.trans_le hx) hl hcut
   have hm := mul_le_mul_of_nonneg_left hlo (Nat.cast_nonneg H.index)
-  have hhi := gamma_principal_sum_le_conductor_bound_of_noSmallPrimes hq H hGRH hx hsmall
+  have hhi := gamma_principal_sum_le_conductor_of_noSmall_GRH hq H hGRH hx hsmall
   have he : Finset.Icc 1 ⌊lambda * x⌋₊ = Finset.Ioc 0 ⌊lambda * x⌋₊ := by
     ext n
     simp only [Finset.mem_Icc, Finset.mem_Ioc, Nat.succ_le_iff]
@@ -122,10 +122,10 @@ The main Gamma comparison then has no finite modulus-loss term.
 Replace the principal finite sum by level one and combine its lower bound
 with the conductor-sensitive primitive upper bound.
 This is the numerical contradiction inequality for the Miller–Rabin branch. -/
-theorem gamma_noSmallPrimes_explicit_inequality_of_no_small_divisor {q : ℕ} [NeZero q]
-    (hq : 20000 ≤ q) (H : Subgroup (ZMod q)ˣ)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x lambda : ℝ} (hx : 1 ≤ x)
-    (hl : 0 ≤ lambda) (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊lambda * x⌋₊ < p)
+theorem gamma_noSmallPrimes_of_noSmallDivisor_GRH {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {x lambda : ℝ} (hx : 1 ≤ x) (hl : 0 ≤ lambda)
+    (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊lambda * x⌋₊ < p)
     (hsmall :
       ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → NumberTheory.residueInSubgroup q H p) :
     ((H.index : ℝ) * (1 - Real.exp (-lambda)) - 1) * Real.sqrt x ≤
@@ -134,13 +134,12 @@ theorem gamma_noSmallPrimes_explicit_inequality_of_no_small_divisor {q : ℕ} [N
         ((H.index - 1 : ℕ) : ℝ) * (39 + (10002 * Real.log q + 10004) / Real.sqrt x) := by
   have hlo := gamma_level_one_sum_lower_thirteen hGRH.riemann (zero_lt_one.trans_le hx) hl
   have hm := mul_le_mul_of_nonneg_left hlo (Nat.cast_nonneg H.index)
-  have hhi := gamma_principal_sum_le_conductor_bound_of_noSmallPrimes hq H hGRH hx hsmall
+  have hhi := gamma_principal_sum_le_conductor_of_noSmall_GRH hq H hGRH hx hsmall
   have he : Finset.Icc 1 ⌊lambda * x⌋₊ = Finset.Ioc 0 ⌊lambda * x⌋₊ := by
     ext n
     simp only [Finset.mem_Icc, Finset.mem_Ioc, Nat.succ_le_iff]
   rw [he, ← Complex.re_sum,
-    MellinKernel.principal_sum_eq_level_one_of_no_small_prime_divisor gammaMellinKernel (q := q) x
-      hdiv,
+    MellinKernel.principal_sum_level_one_of_no_divisor gammaMellinKernel (q := q) x hdiv,
     Complex.re_sum] at hhi
   nlinarith only [hm, hhi]
 

@@ -102,10 +102,10 @@ positivity of the variable-width principal gap yields a nontrivial prime.
 Keep the full finite Euler prefix, insert the anchored lower bound and apply the
 actual variable-width principal comparison. This is the consumer used by the
 small-scale numerical candidate without enumerating the full Euler support. -/
-theorem prime_trivial_false_of_anchoredEulerPrefix_variable_width {q A : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1) (hqA : q ≤ A)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x C a b h : ℝ} (hx : 2 ≤ x)
-    (hh : 0 < h) (hhx : h ≤ x) (ha : 1 < a) (hab : a ≤ b) (hb : b ≤ (99 / 40 : ℝ) * x)
+theorem not_primeTrivial_anchoredVariable_GRH {q A : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hne : χ ≠ 1) (hqA : q ≤ A) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {x C a b h : ℝ} (hx : 2 ≤ x) (hh : 0 < h) (hhx : h ≤ x) (ha : 1 < a) (hab : a ≤ b)
+    (hb : b ≤ (99 / 40 : ℝ) * x)
     (hC : AnalyticNumberTheory.DirichletLFunction.twoPoleGammaConstant χ.primitiveCharacter ≤ C)
     (hgap :
       0 <
@@ -126,8 +126,8 @@ theorem prime_trivial_false_of_anchoredEulerPrefix_variable_width {q A : ℕ} [N
   have ht' : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ (99 / 40 : ℝ) * x → χ.primitiveCharacter p = 1 :=
     fun p hp hb ↦ PaperStatements.primitiveCharacter_apply_one_of_apply_one χ (ht p hp hb)
   have he :=
-    AnalyticNumberTheory.Arithmetic.pairedEulerPrefix_eq_twice_of_coprime_support
-      χ.primitiveCharacter S hS (fun n _ ↦ Nat.coprime_one_right n) (fun p hp hb _ ↦ ht' p hp hb)
+    AnalyticNumberTheory.Arithmetic.pairedEulerPrefix_eq_twice_of_coprime χ.primitiveCharacter S hS
+      (fun n _ ↦ Nat.coprime_one_right n) (fun p hp hb _ ↦ ht' p hp hb)
   have hd :
     2 * anchoredTwoPolePrefixLower a b ≤
       ∑ n ∈ S,
@@ -138,7 +138,7 @@ theorem prime_trivial_false_of_anchoredEulerPrefix_variable_width {q A : ℕ} [N
   have hu := gamma_primitive_re_le_reflectedSplit_of_prefix χ hne hqA hGRH hx hC S hd
   have hx0 : 0 < x := by linarith only [hx]
   have hl :=
-    gammaLocalCorrection_nonpos_of_level_primes_above χ hx0
+    gammaLocalCorrection_nonpos_of_large_primes χ hx0
       (fun p hp ↦ (level_prime_above_cutoff_of_all_prime_trivial χ ht hp).le)
   have hJ :=
     variableRampPrincipalLower_le_actual hGRH.riemann (by linarith only [hx] : 1 ≤ x) hh hhx

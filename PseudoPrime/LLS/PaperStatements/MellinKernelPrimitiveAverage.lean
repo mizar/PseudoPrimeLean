@@ -120,7 +120,7 @@ finite principal sum is at most the real primitive-character average.
 Combine the arithmetic no-small-prime lower bound with the signed aggregate
 primitive comparison. This supplies the primitive analytic side directly,
 without an absolute level-change error. -/
-theorem principal_sum_le_primitive_average_of_noSmallPrimes (K : MellinKernel) {q : ℕ} [NeZero q]
+theorem principal_sum_le_primitive_of_noSmall (K : MellinKernel) {q : ℕ} [NeZero q]
     (H : Subgroup (ZMod q)ˣ) {x X : ℝ} (hx : 0 < x)
     (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
     (H.index : ℝ) * ∑ n ∈ Finset.Icc 1 ⌊X⌋₊, (K.summand (1 : DirichletCharacter ℂ q) x n).re ≤

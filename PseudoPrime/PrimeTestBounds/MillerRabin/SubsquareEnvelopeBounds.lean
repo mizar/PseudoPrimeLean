@@ -68,8 +68,7 @@ theorem exists_prime_witness_le_subsquareEnvelope {n : ℕ} (hnOdd : Odd n) (hnC
   · obtain ⟨p, hp, hb, hf⟩ :=
       exists_prime_witness_le_rationalCutoff_of_large hn1 hnOdd hnComposite hn hGRH
     exact ⟨p, hp, le_min hb (hb.trans h), hf⟩
-  · obtain ⟨p, hp, _, hb, hf⟩ :=
-      exists_prime_witness_le_gamma_199_div_250_plus_216_3000 hnOdd hnComposite hGRH hn
+  · obtain ⟨p, hp, _, hb, hf⟩ := exists_prime_gamma216_3000_GRH hnOdd hnComposite hGRH hn
     exact ⟨p, hp, le_min (hb.trans (le_of_not_ge h)) hb, hf⟩
 
 /-- Input: n at least 70392.
@@ -86,9 +85,8 @@ theorem subsquareEnvelope_lt_log_sq {n : ℕ} (hn : 70392 ≤ n) :
 Claim: the same prime witness obeys the envelope and is strictly below log(n) squared.
 Proof: combine witness existence with the persistent envelope comparison.
 This gives an actual witness theorem, not just a comparison of candidate formulas. -/
-theorem exists_prime_witness_lt_log_sq_of_subsquareEnvelope {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hn : 70392 ≤ n) :
+theorem exists_prime_witness_subsquare_of_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hn : 70392 ≤ n) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ subsquareEnvelope (Real.log n) ∧

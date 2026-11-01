@@ -63,8 +63,8 @@ theorem exists_uniform_polynomial_theta_supply :
                       (q : ℝ) ≤ Real.sqrt ((H + 1 : ℕ) : ℝ) →
                       (∀
                         e ∈
-                          DirichletLFunction.LogFreeDensity.exceptionalFamilyConductorsAwayFromFour
-                            (H + 1) (1 - 1 / Real.log ((H + 1 : ℕ) : ℝ)),
+                          DirichletLFunction.LogFreeDensity.exceptionalExceptFour (H + 1)
+                            (1 - 1 / Real.log ((H + 1 : ℕ) : ℝ)),
                         ¬e ∣ q) →
                       ∀ x : ℝ,
                         X ≤ x →
@@ -73,7 +73,7 @@ theorem exists_uniform_polynomial_theta_supply :
   have hε : 0 < Real.log (5 / 4) / 512 :=
     div_pos (Real.log_pos (by norm_num only)) (by norm_num only)
   obtain ⟨b, hb, R₀, X₀, hR₀, hX₀, htheta⟩ :=
-    exists_uniform_polynomial_half_scale_theta_threshold (Real.log (5 / 4) / 512) hε
+    exists_uniform_halfScale_theta_threshold (Real.log (5 / 4) / 512) hε
   obtain ⟨X₁, hX₁, hbudget⟩ := exists_uniform_scalar_theta_budget_threshold
   refine ⟨b, hb, R₀, max 4 (max X₀ X₁), hR₀, le_max_left _ _, ?_⟩
   intro H hH hR q a inst ha hq hsqrt havoid x hx hpow

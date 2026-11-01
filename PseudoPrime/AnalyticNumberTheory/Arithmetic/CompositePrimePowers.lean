@@ -27,7 +27,7 @@ noncomputable def compositePrimePowerLogWeightedSum (x : ℝ) : ℝ :=
 /-- The nonprime Mangoldt sum equals the prime-power-supported sum with its prime
 terms set to zero. Terms outside prime-power support vanish. This supplies the
 input to Chebyshev's prime-power reindexing. -/
-theorem compositePrimePowerLogWeightedSum_eq_supported (x : ℝ) :
+theorem compositeLogSum_eq_supported (x : ℝ) :
     compositePrimePowerLogWeightedSum x =
       ∑ n ∈ (Finset.Ioc 0 ⌊x⌋₊).filter IsPrimePow,
         if ¬n.Prime then logWeightedMangoldtTerm x n else 0 := by
@@ -38,19 +38,19 @@ theorem compositePrimePowerLogWeightedSum_eq_supported (x : ℝ) :
   intro n _
   by_cases hn : IsPrimePow n
   · rw [ite_eq_left hn]
-  · rw [ite_eq_right hn, logWeightedMangoldtTerm_eq_zero_of_not_primePow hn, ite_self]
+  · rw [ite_eq_right hn, logMangoldtTerm_eq_zero_of_not_primePow hn, ite_self]
 
 /-- At a nonnegative cutoff, the composite prime-power sum is the double sum of
 logarithmic weights with prime exponent at least two. Chebyshev reindexing supplies
 the logarithmic exponent cutoff; the prime terms at exponent one vanish.
 This separates squares and higher powers in explicit arithmetic bounds. -/
-theorem compositePrimePowerLogWeightedSum_eq_sum_powers {x : ℝ} (hx : 0 ≤ x) :
+theorem compositeLogSum_eq_sum_powers {x : ℝ} (hx : 0 ≤ x) :
     compositePrimePowerLogWeightedSum x =
       ∑ k ∈ Finset.Icc 2 ⌊Real.log x / Real.log 2⌋₊,
         ∑ p ∈ (Finset.Ioc 0 ⌊x ^ ((1 : ℝ) / k)⌋₊).filter Nat.Prime,
           logWeightedMangoldtTerm x (p ^ k) := by
   classical
-  rw [compositePrimePowerLogWeightedSum_eq_supported, Chebyshev.sum_PrimePow_eq_sum_sum _ hx]
+  rw [compositeLogSum_eq_supported, Chebyshev.sum_PrimePow_eq_sum_sum _ hx]
   let F := fun k : ℕ ↦
     ∑ p ∈ (Finset.Ioc 0 ⌊x ^ ((1 : ℝ) / k)⌋₊).filter Nat.Prime,
       if ¬(p ^ k).Prime then logWeightedMangoldtTerm x (p ^ k) else 0
@@ -96,8 +96,7 @@ theorem logWeightedMangoldtTerm_prime_pow_eq_root {x : ℝ} (hx : 0 < x) {p k : 
 exponent is bounded by the exponent times the full Mangoldt sum at the root cutoff.
 The prime-power identity reduces the claim to adjoining nonnegative composite terms.
 This bounds each exponent slice in the composite prime-power decomposition. -/
-theorem primePowerExponentSlice_le_logWeightedMangoldtSum {x : ℝ} (hx : 0 < x) {k : ℕ}
-    (hk : 0 < k) :
+theorem primePowerSlice_le_logWeightedSum {x : ℝ} (hx : 0 < x) {k : ℕ} (hk : 0 < k) :
     (∑ p ∈ (Finset.Ioc 0 ⌊x ^ ((1 : ℝ) / k)⌋₊).filter Nat.Prime,
         logWeightedMangoldtTerm x (p ^ k)) ≤
       (k : ℝ) * logWeightedMangoldtSum (x ^ ((1 : ℝ) / k)) := by
@@ -126,15 +125,15 @@ theorem primePowerExponentSlice_le_logWeightedMangoldtSum {x : ℝ} (hx : 0 < x)
 of the full Mangoldt sums at all root cutoffs, weighted by their exponents.
 Reindex composite prime powers and apply the exponent-slice bound term by term.
 This supplies an arithmetic upper bound independent of any Dirichlet character. -/
-theorem compositePrimePowerLogWeightedSum_le_root_sums {x : ℝ} (hx : 1 < x) :
+theorem compositeLogSum_le_root_sums {x : ℝ} (hx : 1 < x) :
     compositePrimePowerLogWeightedSum x ≤
       ∑ k ∈ Finset.Icc 2 ⌊Real.log x / Real.log 2⌋₊,
         (k : ℝ) * logWeightedMangoldtSum (x ^ ((1 : ℝ) / k)) := by
-  rw [compositePrimePowerLogWeightedSum_eq_sum_powers (zero_lt_one.trans hx).le]
+  rw [compositeLogSum_eq_sum_powers (zero_lt_one.trans hx).le]
   apply Finset.sum_le_sum
   intro k hk
   exact
-    primePowerExponentSlice_le_logWeightedMangoldtSum (zero_lt_one.trans hx)
+    primePowerSlice_le_logWeightedSum (zero_lt_one.trans hx)
       (lt_of_lt_of_le (by norm_num only : 0 < 2) (Finset.mem_Icc.mp hk).1)
 
 end PseudoPrime.AnalyticNumberTheory.Arithmetic

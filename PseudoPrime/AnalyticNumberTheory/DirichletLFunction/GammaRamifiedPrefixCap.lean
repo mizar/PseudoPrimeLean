@@ -36,19 +36,18 @@ theorem gamma_nonunit_prefix_le_total (q : ℕ) (B : Finset ℕ) :
 /-- The exact finite prime-power loss at conductor primes is capped by the
 whole integer prefix. Use the prime-power bijection before the pointwise cap.
 The endpoint convention is m at most floor b, including prime-power endpoints. -/
-theorem gamma_ramified_prime_power_prefix_le_total (q : ℕ) {b : ℝ} (hb : 0 ≤ b) :
+theorem gammaRamified_prefix_le_total (q : ℕ) {b : ℝ} (hb : 0 ≤ b) :
     (∑ k ∈ Finset.Icc 1 ⌊Real.log b / Real.log 2⌋₊,
         ∑ p ∈ (Finset.Ioc 0 ⌊b ^ (1 / (k : ℝ))⌋₊).filter Nat.Prime,
           if p ∣ q then Analysis.gammaResolventMangoldtWeight (p ^ k) else 0) ≤
       ∑ m ∈ Finset.Ioc 0 ⌊b⌋₊, Analysis.gammaResolventMangoldtWeight m := by
-  rw [← gamma_nonunit_prefix_eq_prime_power_sum q hb]
+  rw [← gammaNonunit_eq_primePowerSum q hb]
   exact gamma_nonunit_prefix_le_total q (Finset.Ioc 0 ⌊b⌋₊)
 
 /-- Separate the finite character deficit into its exact ramified weight
 and its deficit on conductor units. A character is zero at nonunits.
 Minus-one values on units remain in the second sum, even after primitivization. -/
-theorem gamma_character_prefix_eq_nonunit_add_unit_deficit {q : ℕ} (χ : DirichletCharacter ℂ q)
-    (B : Finset ℕ) :
+theorem gammaPrefix_nonunit_add_deficit {q : ℕ} (χ : DirichletCharacter ℂ q) (B : Finset ℕ) :
     (∑ m ∈ B, (1 - (χ m).re) * Analysis.gammaResolventMangoldtWeight m) =
       (∑ m ∈ B, if Nat.Coprime m q then 0 else Analysis.gammaResolventMangoldtWeight m) +
         (∑ m ∈ B,
@@ -67,9 +66,9 @@ theorem gamma_character_prefix_eq_nonunit_add_unit_deficit {q : ℕ} (χ : Diric
 cap only the ramified prefix and certify the even Gamma correction.
 The remaining conductor-unit deficit is retained explicitly. This gives
 the coarse prefix route without assuming that all units have value one. -/
-theorem gammaResolvent_zeroMass_le_capped_even_prefix {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (he : χ.Even) (B : Finset ℕ) :
+theorem gammaMass_le_cappedEven_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    (he : χ.Even) (B : Finset ℕ) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
           Gamma.gammaResolventMajorant ρ.im) ≤
@@ -79,11 +78,11 @@ theorem gammaResolvent_zeroMass_le_capped_even_prefix {q : ℕ} [NeZero q] (hq :
         (∑ m ∈ B,
           if Nat.Coprime m q then (1 - (χ m).re) * Analysis.gammaResolventMangoldtWeight m
           else 0) := by
-  have hs := gammaResolvent_zeroMass_le_signed_prefix hq hRH hp hne hinv B
+  have hs := gammaMass_le_signedPrefix_RH hq hRH hp hne hinv B
   have hc := gamma_nonunit_prefix_le_total q B
   have hΓ := Gamma.gammaResolvent_even_correction_le
   have heq : χ.gammaFactor = Complex.Gammaℝ := funext he.gammaFactor_def
-  rw [heq, gamma_character_prefix_eq_nonunit_add_unit_deficit χ B] at hs
+  rw [heq, gammaPrefix_nonunit_add_deficit χ B] at hs
   linarith only [hs, hc, hΓ]
 
 /-- If every conductor unit in the retained finite set has value one,
@@ -91,7 +90,7 @@ the capped even zero-mass bound contains no unit deficit. Ramified inputs
 are still present through the single prefix cap. This is the coarse scalar
 interface for a genuinely unit-one prefix, rather than an assumption about
 all original ambient units after primitivization. -/
-theorem gammaResolvent_zeroMass_le_capped_even_prefix_of_units_one {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem gammaMass_cappedEven_units_one_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (he : χ.Even) (B : Finset ℕ)
     (hB : ∀ m ∈ B, Nat.Coprime m q → χ m = 1) :
@@ -102,7 +101,7 @@ theorem gammaResolvent_zeroMass_le_capped_even_prefix_of_units_one {q : ℕ} [Ne
           (∑' m : ℕ, Analysis.gammaResolventMangoldtWeight m) -
         (∑ m ∈ B, Analysis.gammaResolventMangoldtWeight m) := by
   classical
-  have hs := gammaResolvent_zeroMass_le_capped_even_prefix hq hRH hp hne hinv he B
+  have hs := gammaMass_le_cappedEven_RH hq hRH hp hne hinv he B
   have hz :
     (∑ m ∈ B,
         if Nat.Coprime m q then (1 - (χ m).re) * Analysis.gammaResolventMangoldtWeight m else 0) =
@@ -175,8 +174,8 @@ theorem gamma_any_prime_prefix_le_total {b : ℝ} (hb : 0 ≤ b) (R : Finset ℕ
 is capped once by the common integer prefix. The zero character value
 persists at every positive power, so its deficit is exactly the weight.
 This applies to the ramified set in the actual local conductor comparison. -/
-theorem gamma_selected_ramified_character_prefix_le_total {q : ℕ} (χ : DirichletCharacter ℂ q)
-    {b : ℝ} (hb : 0 ≤ b) (R : Finset ℕ) (hR : ∀ p ∈ R, χ p = 0) :
+theorem gammaSelected_ramified_le_total {q : ℕ} (χ : DirichletCharacter ℂ q) {b : ℝ} (hb : 0 ≤ b)
+    (R : Finset ℕ) (hR : ∀ p ∈ R, χ p = 0) :
     (∑ p ∈ R,
         ∑ k ∈ gammaPrefixPowerIndices b p,
           (1 - (χ (p ^ (k + 1))).re) * Analysis.gammaResolventMangoldtWeight (p ^ (k + 1))) ≤
@@ -196,7 +195,7 @@ theorem gamma_selected_ramified_character_prefix_le_total {q : ℕ} (χ : Dirich
 /-- For a prime and scale at least one, its log-weighted signed ramified
 ramp is at most log((99/40)x)/sqrt x. Combine the cutoff count bound with
 log p positivity and cancel the same prime logarithm. -/
-theorem gamma_ramified_prime_ramp_le_log_cutoff {p : ℕ} (hp : p.Prime) {x : ℝ} (hx : 1 ≤ x) :
+theorem gammaRamified_ramp_le_log {p : ℕ} (hp : p.Prime) {x : ℝ} (hx : 1 ≤ x) :
     Real.log p *
         ((∑' k : ℕ, Analysis.exponentialRampLocalCorrection 0 ((p : ℝ) ^ (k + 1) / x) (k + 1)) /
           Real.sqrt x) ≤
@@ -218,12 +217,12 @@ theorem gamma_ramified_prime_ramp_le_log_cutoff {p : ℕ} (hp : p.Prime) {x : �
 cap plus a ramp allowance per selected prime. The common nonnegative
 weight permits one global cap; the signed ramp is bounded separately.
 This is the local input for the coarse analytic tail comparison. -/
-theorem gamma_selected_ramified_local_cost_le_prefix_cap {q : ℕ} (χ : DirichletCharacter ℂ q)
-    {b x : ℝ} (hb : 0 ≤ b) (hx : 1 ≤ x) (R : Finset ℕ) (hR : ∀ p ∈ R, p.Prime ∧ χ p = 0) :
+theorem gammaRamified_cost_le_cap {q : ℕ} (χ : DirichletCharacter ℂ q) {b x : ℝ} (hb : 0 ≤ b)
+    (hx : 1 ≤ x) (R : Finset ℕ) (hR : ∀ p ∈ R, p.Prime ∧ χ p = 0) :
     (∑ p ∈ R, Analysis.gammaActualPrimeLocalCost χ p (gammaPrefixPowerIndices b p) x) ≤
       (∑ m ∈ Finset.Ioc 0 ⌊b⌋₊, Analysis.gammaResolventMangoldtWeight m) +
         (R.card : ℝ) * (Real.log ((99 / 40 : ℝ) * x) / Real.sqrt x) := by
-  have he := gamma_selected_ramified_character_prefix_le_total χ hb R (fun p hp ↦ (hR p hp).2)
+  have he := gammaSelected_ramified_le_total χ hb R (fun p hp ↦ (hR p hp).2)
   have hr :
     (∑ p ∈ R,
         Real.log p *
@@ -235,7 +234,7 @@ theorem gamma_selected_ramified_local_cost_le_prefix_cap {q : ℕ} (χ : Dirichl
     apply Finset.sum_le_sum
     intro p hp
     rw [(hR p hp).2]
-    exact gamma_ramified_prime_ramp_le_log_cutoff (hR p hp).1 hx
+    exact gammaRamified_ramp_le_log (hR p hp).1 hx
   simp only [Analysis.gammaActualPrimeLocalCost, Finset.sum_add_distrib]
   linarith only [he, hr]
 

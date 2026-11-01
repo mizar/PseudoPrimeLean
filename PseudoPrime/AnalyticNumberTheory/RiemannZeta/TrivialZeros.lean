@@ -27,6 +27,6 @@ theorem zeta_trivial_of_zero_outside_strip {s : ℂ} (hz : riemannZeta s = 0)
     (hout : ¬(0 ≤ s.re ∧ s.re ≤ 1)) : ∃ n : ℕ, s = -2 * ((n : ℂ) + 1) := by
   have hr : s.re < 1 := lt_of_not_ge fun h ↦ riemannZeta_ne_zero_of_one_le_re h hz
   have hl : s.re < 0 := lt_of_not_ge fun h ↦ hout ⟨h, hr.le⟩
-  exact exists_nat_eq_neg_two_mul_add_one_of_riemannZeta_zero_re_neg hl hz
+  exact exists_neg_even_of_zeta_zero_re_neg hl hz
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

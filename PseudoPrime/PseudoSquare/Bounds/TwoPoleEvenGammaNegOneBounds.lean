@@ -25,8 +25,8 @@ noncomputable def evenGammaTwoPoleNegOneRadius (L : ℝ) : ℝ :=
 prime negative Jacobi witness lies below the logarithmic two-pole radius at B.
 Use original level 4n and common ambient level 4B. Monotonicity of the nonlinear
 root transfers log(4B) to log B+7/5. No finite-input certificate is used. -/
-theorem exists_odd_prime_neg_one_le_evenGammaTwoPole_log_ambient {n B : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hnB : n ≤ B) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem exists_oddPrime_negOne_evenTwoPoleAmbient_GRH {n B : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hnB : n ≤ B) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : 1250 ≤ Real.log B) :
     ∃ p : ℕ,
       p.Prime ∧
@@ -38,8 +38,7 @@ theorem exists_odd_prime_neg_one_le_evenGammaTwoPole_log_ambient {n B : ℕ} (hn
     nlinarith only [(Nat.cast_nonneg B : (0 : ℝ) ≤ B)]
   have hLA : 1250 ≤ Real.log (4 * B : ℕ) := hL.trans (Real.log_le_log (Nat.cast_pos.mpr hBpos) hBA)
   obtain ⟨p, hp, hd, hb, hv⟩ :=
-    LLS.exists_prime_neg_one_le_evenGammaTwoPole_log_ambient
-      (NumberTheory.complexQuadraticCharacter n hn)
+    LLS.exists_prime_negOne_evenTwoPoleLog_GRH (NumberTheory.complexQuadraticCharacter n hn)
       (NumberTheory.complexQuadraticCharacter_isQuadratic n hn)
       (NumberTheory.complexQuadraticCharacter_isEven n hn)
       (NumberTheory.complexQuadraticCharacter_ne_one_of_not_square n hn hns)
@@ -59,7 +58,7 @@ theorem exists_odd_prime_neg_one_le_evenGammaTwoPole_log_ambient {n B : ℕ} (hn
       hlog
   have hs := mul_self_le_mul_self hr hu
   have hw :=
-    NumberTheory.primeNegOneWitness_mem_of_complexQuadraticCharacter_ne_one n hn hp hd
+    NumberTheory.negOneWitness_mem_of_quadratic_ne_one n hn hp hd
       (by
         rw [hv]; norm_num only)
   refine ⟨p, hp, hw.2.1, ?_, hw.2.2⟩
@@ -69,12 +68,11 @@ theorem exists_odd_prime_neg_one_le_evenGammaTwoPole_log_ambient {n B : ℕ} (hn
 /-- Under the common-ambient assumptions, bound the least odd-prime negative
 Jacobi witness for n by the logarithmic radius at B. Apply leastness to the
 constructed prime. This is the input to the full finite-maximum theorem. -/
-theorem primeNegOneWitness_cast_le_evenGammaTwoPole_log_ambient {n B : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hnB : n ≤ B) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem negOneWitness_le_evenGammaTwoPole_log_ambient {n B : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hnB : n ≤ B) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : 1250 ≤ Real.log B) (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ evenGammaTwoPoleNegOneRadius (Real.log B) := by
-  obtain ⟨p, hp, ho, hb, hv⟩ :=
-    exists_odd_prime_neg_one_le_evenGammaTwoPole_log_ambient hn hns hnB hGRH hL
+  obtain ⟨p, hp, ho, hb, hv⟩ := exists_oddPrime_negOne_evenTwoPoleAmbient_GRH hn hns hnB hGRH hL
   exact (Nat.cast_le.mpr (NumberTheory.primeNegOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hb
 
 /-- Under GRH with log B at least 1250, QNegOne(B) is at most the logarithmic
@@ -87,7 +85,7 @@ theorem QNegOne_le_evenGammaTwoPole_logarithmic {B : ℕ} (hL : 1250 ≤ Real.lo
   intro n hn
   have ha := NumberTheory.mem_admissibleFinset_iff.mp hn
   exact
-    primeNegOneWitness_cast_le_evenGammaTwoPole_log_ambient ha.odd ha.not_isSquare ha.le hGRH hL
+    negOneWitness_le_evenGammaTwoPole_log_ambient ha.odd ha.not_isSquare ha.le hGRH hL
       (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare ha.odd ha.not_isSquare)
 
 /-- For real L at least 1250, the logarithmic negative radius is strictly below
@@ -109,22 +107,21 @@ theorem evenGammaTwoPoleNegOneRadius_lt_ninety_nine {L : ℝ} (hL : 1250 ≤ L) 
 /-- For odd nonsquare n under GRH with log n at least 1250, an odd prime negative
 Jacobi witness lies below the logarithmic radius at n. Specialize the common
 ambient theorem to B=n. -/
-theorem exists_prime_neg_one_witness_le_evenGammaTwoPole_logarithmic {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 1250 ≤ Real.log n) :
+theorem exists_prime_negOne_evenTwoPoleLog_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 1250 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         Odd p ∧ (p : ℝ) ≤ evenGammaTwoPoleNegOneRadius (Real.log n) ∧ jacobiSym n p = -1 := by
-  exact exists_odd_prime_neg_one_le_evenGammaTwoPole_log_ambient hn hns le_rfl hGRH hL
+  exact exists_oddPrime_negOne_evenTwoPoleAmbient_GRH hn hns le_rfl hGRH hL
 
 /-- Under the pointwise assumptions, the least odd-prime negative Jacobi witness
 is bounded by the logarithmic radius. Specialize the common-ambient leastness
 interface. This is the pointwise companion of the full QNegOne bound. -/
-theorem primeNegOneWitness_cast_le_evenGammaTwoPole_logarithmic {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 1250 ≤ Real.log n) (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
+theorem negOneWitness_le_evenGammaTwoPole_logarithmic {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 1250 ≤ Real.log n)
+    (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ evenGammaTwoPoleNegOneRadius (Real.log n) := by
-  exact primeNegOneWitness_cast_le_evenGammaTwoPole_log_ambient hn hns le_rfl hGRH hL hw
+  exact negOneWitness_le_evenGammaTwoPole_log_ambient hn hns le_rfl hGRH hL hw
 
 /-- For L at least 1250, the sharp negative radius is smaller than the preceding
 signed logarithmic radius. Both its logarithmic coefficient and additive constant

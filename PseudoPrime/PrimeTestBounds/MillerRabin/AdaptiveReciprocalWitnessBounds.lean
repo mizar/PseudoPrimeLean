@@ -28,10 +28,8 @@ theorem exists_prime_witness_le_adaptivePart2Root {n : ℕ} (hnOdd : Odd n) (hnC
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   have hn : 1 < n := (by norm_num only : (1 : ℕ) < 600).trans_le hnLarge
   let : NeZero n := ⟨(zero_lt_one.trans hn).ne'⟩
-  obtain ⟨H, hH, hpass⟩ :=
-    PrimeTest.exists_proper_subgroup_containing_strongMillerRabinPass hn hnOdd hnComposite
-  obtain ⟨p, hp, hb, hout⟩ :=
-    LLS.exists_prime_outside_subgroup_le_adaptivePart2Root hnLarge H hH hGRH
+  obtain ⟨H, hH, hpass⟩ := PrimeTest.exists_proper_subgroup_strongMR hn hnOdd hnComposite
+  obtain ⟨p, hp, hb, hout⟩ := LLS.exists_prime_outside_adaptivePart2_GRH hnLarge H hH hGRH
   exact ⟨p, hp, hb, PrimeTest.not_pass_of_outside_subgroup hpass hout⟩
 
 /-- Input: GRH and an odd composite at least 600.
@@ -58,7 +56,7 @@ theorem exists_least_prime_witness_le_adaptivePart2Root {n : ℕ} (hnOdd : Odd n
 Claim: a prime inside the adaptive radius fails the required canonical power equalities.
 Proof: apply the exact characterization of strong Miller-Rabin rejection.
 Role: connect the witness theorem to the executable acceptance condition. -/
-theorem exists_prime_rejecting_powers_le_adaptivePart2Root {n : ℕ} (hnOdd : Odd n)
+theorem exists_primeRejectPowers_le_adaptivePart2Root {n : ℕ} (hnOdd : Odd n)
     (hnComposite : ¬n.Prime) (hnLarge : 600 ≤ n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     let (s, d) := Nat.maxPowDvdDiv 2 (n - 1);
@@ -73,9 +71,8 @@ theorem exists_prime_rejecting_powers_le_adaptivePart2Root {n : ℕ} (hnOdd : Od
 Claim: the same prime rejecting base satisfies the adaptive bound and lies below log(n)^2.
 Proof: combine the bounded witness with the strict adaptive radius comparison.
 Role: lower the strict same-witness comparison entrance without a minimum formula. -/
-theorem exists_prime_witness_le_adaptivePart2Root_and_lt_log_sq {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hnLarge : 16000 ≤ n)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
+theorem exists_prime_adaptive_strictLogSq_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hnLarge : 16000 ≤ n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (Analysis.adaptivePart2CutoffRoot (Real.log n)) ^ 2 ∧

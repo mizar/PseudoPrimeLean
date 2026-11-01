@@ -43,9 +43,9 @@ theorem primeNeOneWitness_le_squarefree_log_square {n : ℕ} {hn : Odd n} {hns :
   · apply transfer (p := 5) _ (le_refl 5)
     rw [h7]
     exact ⟨Nat.prime_five, by decide, NumberTheory.jacobiSym_seven_five_ne_one⟩
-  have hd11 := bridge.squarefreePart_ge_eleven_of_not_small h3 h5 h7
+  have hd11 := bridge.squarefreePart_ge_11_of_not_small h3 h5 h7
   obtain ⟨hd, hb⟩ :=
-    exists_primeNeOneWitness_cast_le_log_sq_of_odd_nonsquare hGRH bridge.squarefreePart_odd
+    exists_neOneWitness_le_log_sq_of_odd_nonsquare hGRH bridge.squarefreePart_odd
       bridge.squarefreePart_not_isSquare hd11
   have htr := NumberTheory.primeNeOneWitness_le_of_squarefreePart bridge (hd := hd)
   exact (Nat.cast_le.mpr htr).trans (hb.trans (le_max_right _ _))
@@ -91,8 +91,8 @@ theorem exists_odd_prime_ne_one_le_squarefree_log_square {n : ℕ} {hn : Odd n} 
 an actual non-one odd-prime witness below log(n)^(2-epsilon). Instantiate the
 least-witness estimate using unconditional existence, with no added coprimality
 condition. This is the prime-existence interface for the exponent improvement. -/
-theorem exists_odd_prime_ne_one_le_log_power_of_squarefree_log {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem exists_odd_prime_ne_one_log_pow_squarefree_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {epsilon : ℝ}
     (hsmall : (5 : ℝ) ≤ (Real.log n) ^ (2 - epsilon))
     (hd : Real.log bridge.squarefreePart ≤ (Real.log n) ^ (1 - epsilon / 2)) :

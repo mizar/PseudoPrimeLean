@@ -386,7 +386,7 @@ theorem rational_cutoff_150_82_le_prime_mul_floor {p k : ℕ} (hp : 0 < p)
 
 /-- At the rational cutoff 150/82, any exponent at least 8292684/10000000
 absorbs the cutoff constant and floor loss when log p≥10^12. -/
-theorem rational_cutoff_150_82_le_prime_mul_floor_of_beta {p k : ℕ} {beta : ℝ} (hp : 0 < p)
+theorem cutoff_150_82_le_prime_mul_floor {p k : ℕ} {beta : ℝ} (hp : 0 < p)
     (hL : (10 : ℝ) ^ 12 ≤ Real.log p) (hbeta : 8292684 / 10000000 ≤ beta)
     (hcut : k ^ 82 ≤ 2 ^ 82 * p ^ 150) : 256 * k ≤ p * Nat.floor ((p : ℝ) ^ beta) := by
   have hpR : (0 : ℝ) < p := Nat.cast_pos.mpr hp
@@ -693,7 +693,7 @@ theorem rational_cutoff_28_15_le_prime_mul_floor_of_beta {p k : ℕ} {beta : ℝ
 /-- For the rational scale 192/105, a smooth exponent at least
 `87/105 + 1/200000` absorbs the cutoff factor and floor loss once
 `ln p ≥ 10^12`. -/
-theorem rational_cutoff_192_105_le_prime_mul_floor_of_beta {p k : ℕ} {beta : ℝ} (hp : 0 < p)
+theorem cutoff_192_105_le_prime_mul_floor {p k : ℕ} {beta : ℝ} (hp : 0 < p)
     (hL : (10 : ℝ) ^ 12 ≤ Real.log p) (hbeta : 87 / 105 + 1 / 200000 ≤ beta)
     (hcut : k ^ 105 ≤ 2 ^ 105 * p ^ 192) : 256 * k ≤ p * Nat.floor ((p : ℝ) ^ beta) := by
   have hpR : (0 : ℝ) < p := Nat.cast_pos.mpr hp
@@ -759,7 +759,7 @@ theorem rational_cutoff_192_105_le_prime_mul_floor_of_beta {p k : ℕ} {beta : �
 /-- For the equivalent scale 2048/1120, the same smooth exponent and floor
 loss bound the cutoff by the prime-weighted floor. The generic rational-power
 estimate converts the integer cutoff to the reduced ratio 192/105. -/
-theorem rational_cutoff_2048_1120_le_prime_mul_floor_of_beta {p k : ℕ} {beta : ℝ} (hp : 0 < p)
+theorem cutoff_2048_1120_le_prime_mul_floor {p k : ℕ} {beta : ℝ} (hp : 0 < p)
     (hL : (10 : ℝ) ^ 12 ≤ Real.log p) (hbeta : 87 / 105 + 1 / 200000 ≤ beta)
     (hcut : k ^ 1120 ≤ 2 ^ 1120 * p ^ 2048) : 256 * k ≤ p * Nat.floor ((p : ℝ) ^ beta) := by
   have hroot := rational_cutoff_le_two_rpow (a := 1120) (b := 2048) (by norm_num only) hcut

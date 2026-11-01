@@ -147,9 +147,8 @@ theorem quadraticExcludedPrimeCost_eq_zero_of_large {q p : ℕ} {x : ℝ} (hx : 
 cost bound only on primes p<=x outside finite T. Larger bases have zero cost and
 log p is nonnegative. This reduces uniform tail certification to a finite prime
 range while preserving the same total budget and exceptional excesses. -/
-theorem quadraticExcludedBudget_le_primeBudget_of_finite_tail {N : ℕ} (hN : N ≠ 0) (q : ℕ) {x : ℝ}
-    (hx : 1 ≤ x) (w : ℕ → ℝ) (hw : ∀ n : ℕ, ¬IsPrimePow n → w n = 0) (T : Finset ℕ) {a : ℝ}
-    (ha : 0 ≤ a)
+theorem quadraticBudget_le_of_finite_prime_tail {N : ℕ} (hN : N ≠ 0) (q : ℕ) {x : ℝ} (hx : 1 ≤ x)
+    (w : ℕ → ℝ) (hw : ∀ n : ℕ, ¬IsPrimePow n → w n = 0) (T : Finset ℕ) {a : ℝ} (ha : 0 ≤ a)
     (htail :
       ∀ p : ℕ,
         p.Prime → (p : ℝ) ≤ x → p ∉ T → quadraticExcludedPrimeCost q x w p ≤ a * Real.log p) :

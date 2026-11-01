@@ -64,7 +64,7 @@ theorem norm_gamma_oscillatingZeroSum_le_twoPole {m : ℕ} [NeZero m] (hm : 2 �
     (MellinKernel.norm_oscillatingZeroTerm gammaMellinKernel χ hx ρ).trans
       (norm_gamma_kernelZeroTerm_eq_twoPole hGRH hp hne hinv ρ)
   rw [tsum_congr he] at hn
-  exact hn.trans (gamma_zeroMass_le_twoPole_rational_retained hm (hGRH m χ hp) hp hne hinv A B).2
+  exact hn.trans (gammaNormMass_twoPole_rational_RH hm (hGRH m χ hp) hp hne hinv A B).2
 
 open AnalyticNumberTheory.DirichletLFunction in
 /-- Under GRH with primitive conductor between three and an ambient modulus at
@@ -86,7 +86,7 @@ theorem gamma_primitive_sum_re_le_twoPole {q m : ℕ} [NeZero m] (hq : 20000 ≤
   have hz :=
     norm_gamma_oscillatingZeroSum_le_twoPole (by linarith only [hm]) hGRH hp hne hinv
       (zero_lt_one.trans_le hx) A B
-  have hr := norm_gamma_primitive_remainder_le_variable_scale_sharp hq hm hmq hp hne hinv hGRH hx
+  have hr := gammaRemainder_norm_le_variable_scale_sharp hq hm hmq hp hne hinv hGRH hx
   have hn : ‖S‖ ≤ ‖S + Z‖ + ‖Z‖ := by
     have h := norm_sub_le (S + Z) Z
     rw [add_sub_cancel_right] at h
@@ -119,8 +119,8 @@ theorem norm_gamma_primitive_remainder_le_from_eight {q : ℕ} [NeZero q] {χ : 
             (x : ℂ) ^ (((-9 / 16 : ℝ) : ℂ) + Complex.I * t)))
   have hx1 : 1 ≤ x := hx
   have hr : ‖S - (P - Z + J)‖ ≤ 64 / 9 :=
-    norm_gamma_completed_remainder_le_sixty_four_ninths (by linarith only [hq]) hGRH hp hne hinv
-      (a := -9 / 16) (b := 9 / 16) (by norm_num only)
+    norm_gamma_completed_remainder_le_64_9_GRH (by linarith only [hq]) hGRH hp hne hinv (a :=
+      -9 / 16) (b := 9 / 16) (by norm_num only)
       (by
         change (-1 / 2 - 1 / 8 : ℝ) < -9 / 16; norm_num only)
       (by

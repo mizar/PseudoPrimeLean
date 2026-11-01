@@ -415,7 +415,7 @@ open scoped Topology FourierTransform in
 open PseudoPrime.LLS.IndexSixBarrier in
 /-- Refining a rational upper certificate with any denominator cannot overcome
 the same obstruction for any admissible Mellin kernel. -/
-theorem no_rational_mellin_certificate_at_paper_target :
+theorem no_rational_certificate_paper_target :
     ¬∃ (K : MellinKernel) (lambda : ℝ) (r : ℚ),
         0 < lambda ∧
           0 < indexSixDenominator K lambda ∧
@@ -428,7 +428,7 @@ open scoped Topology FourierTransform in
 open PseudoPrime.LLS.IndexSixBarrier in
 /-- The kernel method cannot supply the paper's coefficient for every positive
 epsilon, even if both the kernel and the cutoff may depend on epsilon. -/
-theorem not_mellin_certificates_for_all_positive_epsilon :
+theorem not_certificates_all_positive_epsilon :
     ¬(∀ ε : ℝ,
         0 < ε →
           ∃ (K : MellinKernel) (lambda : ℝ),

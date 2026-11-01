@@ -30,7 +30,7 @@ theorem reciprocalGapProfile_nonneg {h : ℝ} (hh : 0 < h) (x : ℝ) :
 /-- For positive gap and scale, the normalized central integral is the real compact profile.
 Apply inverse Mellin inversion and the clamped two-pole weight formula.
 This identifies the scalar baseline in the signed Gamma series. -/
-theorem reciprocalGap_central_weight_integral_eq_real_profile {h x : ℝ} (hh : 0 < h) (hx : 0 < x) :
+theorem reciprocalGap_weight_integral_eq_profile {h x : ℝ} (hh : 0 < h) (hx : 0 < x) :
     ((1 / (2 * Real.pi) : ℝ) : ℂ) * (∫ t : ℝ, reciprocalGapCentralWeight h x t) =
       (reciprocalGapProfile h x : ℂ) := by
   rw [reciprocalGap_central_weight_integral_eq_profile hh hx,
@@ -92,8 +92,7 @@ theorem reciprocalGap_laplace_inner_integral_eq_density {h x : ℝ} (hh : 0 < h)
     exact
       MeasureTheory.integral_congr_ae
         (MeasureTheory.ae_of_all _ (fun t ↦ reciprocalGap_laplace_mul_weight_eq_shift hx h c r t))
-  rw [hI, mul_left_comm,
-    reciprocalGap_central_weight_integral_eq_real_profile hh (mul_pos hx (Real.exp_pos _))]
+  rw [hI, mul_left_comm, reciprocalGap_weight_integral_eq_profile hh (mul_pos hx (Real.exp_pos _))]
   simp only [reciprocalGapResolventDensity, Complex.ofReal_mul]
 
 /-- For positive gap, resolvent coordinate and scale, the normalized reciprocal-weighted
@@ -163,7 +162,7 @@ theorem integrable_reciprocalGapCentralReciprocalWeight {h c x : ℝ} (hh : 0 < 
       (fun t : ℝ ↦
         (1 / ((c : ℂ) + Complex.I * (t : ℂ) / 2)) * reciprocalGapCentralWeight h x t) := by
   have hD :=
-    (quadratic_weight_vertical_resolvent_integral_bound hc (reciprocalGapCentralWeight h x)
+    (quadratic_resolvent_integral_bound hc (reciprocalGapCentralWeight h x)
         (continuous_reciprocalGapCentralWeight hh hx)
         (norm_reciprocalGapCentralWeight_le hh.le hx)).1
   have hW := (integrable_reciprocalGapCentralWeight hh hx).const_mul (1 / (c : ℂ))
@@ -177,7 +176,7 @@ theorem integrable_reciprocalGapCentralReciprocalWeight {h c x : ℝ} (hh : 0 < 
 /-- For positive parameters, each normalized reciprocal-difference integral equals the real
 profile divided by c minus the scalar density integral. Split only integrable terms and
 use both exact inverse formulas. This is the signed scalar summand of the Gamma series. -/
-theorem reciprocalGap_resolvent_difference_integral_eq_real {h c x : ℝ} (hh : 0 < h) (hc : 0 < c)
+theorem reciprocalGap_resolventDiff_integral_real {h c x : ℝ} (hh : 0 < h) (hc : 0 < c)
     (hx : 0 < x) :
     ((1 / (2 * Real.pi) : ℝ) : ℂ) *
         (∫ t : ℝ,
@@ -195,7 +194,7 @@ theorem reciprocalGap_resolvent_difference_integral_eq_real {h c x : ℝ} (hh : 
     MeasureTheory.integral_sub ((integrable_reciprocalGapCentralWeight hh hx).const_mul _)
       (integrable_reciprocalGapCentralReciprocalWeight hh hc hx),
     MeasureTheory.integral_const_mul, mul_sub, mul_left_comm _ (1 / (c : ℂ)) _,
-    reciprocalGap_central_weight_integral_eq_real_profile hh hx,
+    reciprocalGap_weight_integral_eq_profile hh hx,
     reciprocalGap_resolvent_integral_eq_real hh hc hx]
   simp only [Complex.ofReal_sub, div_eq_mul_inv, Complex.ofReal_mul, Complex.ofReal_inv, mul_one,
     mul_comm]
@@ -213,8 +212,8 @@ theorem reciprocalGapProfile_eq_zero_of_le_one {h x : ℝ} (hh : 0 < h) (hx : 0 
 
 /-- For positive gap and scale, the scalar density vanishes when log(x)<=r/2.
 The shifted scale is then at most one. This cuts off the half-line convolution at 2 log(x). -/
-theorem reciprocalGapResolventDensity_eq_zero_of_log_le_half {h x : ℝ} (hh : 0 < h) (hx : 0 < x)
-    (c r : ℝ) (hr : Real.log x ≤ r / 2) : reciprocalGapResolventDensity h c x r = 0 := by
+theorem recipGapDensity_zero_of_log_le_half {h x : ℝ} (hh : 0 < h) (hx : 0 < x) (c r : ℝ)
+    (hr : Real.log x ≤ r / 2) : reciprocalGapResolventDensity h c x r = 0 := by
   have hpos : 0 < x * Real.exp (-r / 2) := mul_pos hx (Real.exp_pos _)
   have hl : Real.log (x * Real.exp (-r / 2)) ≤ 0 := by
     rw [Real.log_mul hx.ne' (Real.exp_ne_zero _), Real.log_exp]
@@ -227,8 +226,7 @@ theorem reciprocalGapResolventDensity_eq_zero_of_log_le_half {h x : ℝ} (hh : 0
 at all positive gaps and scales as its real compact baseline plus half the scalar series.
 Replace each reciprocal integral by its real density and commute the real embedding with
 the convergent sum. This preserves cancellations instead of taking absolute values. -/
-theorem reciprocalGap_central_gammaIntegral_re_eq_scalar_series {q : ℕ}
-    (χ : DirichletCharacter ℂ q) :
+theorem reciprocalGap_gamma_re_eq_scalarSeries {q : ℕ} (χ : DirichletCharacter ℂ q) :
     ∃ b : ℝ,
       1 / 4 ≤ b ∧
         b ≤ 1 ∧
@@ -244,7 +242,7 @@ theorem reciprocalGap_central_gammaIntegral_re_eq_scalar_series {q : ℕ}
                   ∑' n : ℕ,
                     (reciprocalGapProfile h x / (b + n) -
                       ∫ r : ℝ in Set.Ioi 0, reciprocalGapResolventDensity h (b + n) x r) := by
-  obtain ⟨b, hb, hb1, h⟩ := reciprocalGap_central_gammaIntegral_eq_resolvent_series χ
+  obtain ⟨b, hb, hb1, h⟩ := reciprocalGap_gamma_eq_resolventSeries χ
   refine ⟨b, hb, hb1, ?_⟩
   intro hGap x hh hx
   have hb0 : 0 < b := lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1 / 4) hb
@@ -261,11 +259,11 @@ theorem reciprocalGap_central_gammaIntegral_re_eq_scalar_series {q : ℕ}
     apply tsum_congr
     intro n
     simpa only [C, J, F, mul_div_assoc] using
-      reciprocalGap_resolvent_difference_integral_eq_real hh
+      reciprocalGap_resolventDiff_integral_real hh
         (add_pos_of_pos_of_nonneg hb0 (Nat.cast_nonneg n)) hx
   have he := h hh hx
   rw [← reciprocalGap_central_weight_integral_eq_profile hh hx,
-    reciprocalGap_central_weight_integral_eq_real_profile hh hx] at he
+    reciprocalGap_weight_integral_eq_profile hh hx] at he
   have he' :
     C *
         (∫ t : ℝ,
@@ -285,8 +283,7 @@ theorem reciprocalGap_central_gammaIntegral_re_eq_scalar_series {q : ℕ}
 minus its pole and left contributions has the exact signed scalar Gamma series.
 Rewrite the proved central-line identity and apply the scalar decomposition.
 This connects the coincident-pole-safe representation to the actual witness remainder. -/
-theorem reciprocalGap_remainder_sub_pole_left_re_eq_scalar_series {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) :
+theorem reciprocalGap_error_re_eq_scalarSeries {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) :
     ∃ b : ℝ,
       1 / 4 ≤ b ∧
         b ≤ 1 ∧
@@ -301,10 +298,10 @@ theorem reciprocalGap_remainder_sub_pole_left_re_eq_scalar_series {q : ℕ} [NeZ
                   ∑' n : ℕ,
                     (reciprocalGapProfile h x / (b + n) -
                       ∫ r : ℝ in Set.Ioi 0, reciprocalGapResolventDensity h (b + n) x r) := by
-  obtain ⟨b, hb, hb1, hseries⟩ := reciprocalGap_central_gammaIntegral_re_eq_scalar_series χ
+  obtain ⟨b, hb, hb1, hseries⟩ := reciprocalGap_gamma_re_eq_scalarSeries χ
   refine ⟨b, hb, hb1, ?_⟩
   intro h x hh hx
-  rw [reciprocalGap_remainder_sub_pole_left_eq_central_gamma hh χ hx]
+  rw [reciprocalGap_error_eq_centralGamma hh χ hx]
   exact hseries hh (zero_lt_one.trans_le hx)
 
 /-- For positive scale, rewrite the scalar density using explicit real exponentials and a
@@ -342,20 +339,19 @@ theorem reciprocalGapResolventDensity_eq_exp_clamped {h x : ℝ} (hx : 0 < x) (c
 series. The exact scalar inverse formula identifies their absolute values with normalized
 complex integral norms, bounded by the already summable integrated absolute norms.
 This makes convergence of the final real Gamma series explicit. -/
-theorem summable_reciprocalGap_scalar_resolvent_difference {h b x : ℝ} (hh : 0 < h) (hb : 0 < b)
-    (hx : 0 < x) :
+theorem summable_reciprocalGap_scalar_resolvent {h b x : ℝ} (hh : 0 < h) (hb : 0 < b) (hx : 0 < x) :
     Summable
       (fun n : ℕ ↦
         reciprocalGapProfile h x / (b + n) -
           ∫ r : ℝ in Set.Ioi 0, reciprocalGapResolventDensity h (b + n) x r) := by
   have hs :=
-    summable_quadratic_weight_resolvent_integral_norm hb (reciprocalGapCentralWeight h x)
+    summable_quadratic_resolvent_norm hb (reciprocalGapCentralWeight h x)
       (continuous_reciprocalGapCentralWeight hh hx) (norm_reciprocalGapCentralWeight_le hh.le hx)
   apply Summable.of_norm_bounded hs
   intro n
   have he :=
     congrArg norm
-      (reciprocalGap_resolvent_difference_integral_eq_real hh
+      (reciprocalGap_resolventDiff_integral_real hh
         (add_pos_of_pos_of_nonneg hb (Nat.cast_nonneg n)) hx)
   have hd : ‖((1 / (2 * Real.pi) : ℝ) : ℂ)‖ = 1 / (2 * Real.pi) := by
     rw [Complex.norm_real, Real.norm_eq_abs,

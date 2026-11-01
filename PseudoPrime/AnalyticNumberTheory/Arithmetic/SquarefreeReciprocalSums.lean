@@ -40,7 +40,7 @@ squarefree and coprime to `Q`, and the ambient product sum factors by
 Role: converts the unrestricted squarefree reciprocal lower bound into a
 lower bound for the range coprime to `Q`.
 -/
-theorem squarefree_reciprocal_sum_le_factor_mul_coprime_sum (z Q : ℕ) (hQ : Q ≠ 0) :
+theorem squarefree_recip_sum_le_factor_mul_coprime (z Q : ℕ) (hQ : Q ≠ 0) :
     (∑ m ∈ (Finset.range (z + 1)).filter Squarefree, 1 / (m : ℝ)) ≤
       (∑ n ∈ (Finset.range (z + 1)).filter (fun n : ℕ => Squarefree n ∧ Nat.Coprime n Q),
           1 / (n : ℝ)) *
@@ -301,8 +301,7 @@ lower bound for the unrestricted sum.
 Role: supplies a lower bound for the reciprocal sum with primes dividing `Q`
 removed.
 -/
-theorem squarefree_coprime_reciprocal_sum_ge_totient_ratio_log_div_two (z Q : ℕ) (hQ : 0 < Q)
-    (hz : 1 ≤ z) :
+theorem totient_log_le_squarefree_coprime_recip_sum (z Q : ℕ) (hQ : 0 < Q) (hz : 1 ≤ z) :
     (Nat.totient Q : ℝ) / (Q : ℝ) * (Real.log ((z + 1 : ℕ) : ℝ) / 2) ≤
       ∑ n ∈ (Finset.range (z + 1)).filter (fun n : ℕ => 0 < n ∧ Squarefree n ∧ Nat.Coprime n Q),
         1 / (n : ℝ) := by
@@ -335,8 +334,7 @@ theorem squarefree_coprime_reciprocal_sum_ge_totient_ratio_log_div_two (z Q : �
     rw [hAeq]
     exact squarefreeReciprocalSum_ge_log_div_two z hz
   have hsumBound : S ≤ R * ∏ p ∈ Q.primeFactors, (1 + (p : ℝ)⁻¹) := by
-    simpa only [S, R, A, B] using
-      squarefree_reciprocal_sum_le_factor_mul_coprime_sum z Q (Nat.ne_of_gt hQ)
+    simpa only [S, R, A, B] using squarefree_recip_sum_le_factor_mul_coprime z Q (Nat.ne_of_gt hQ)
   have hRnonneg : 0 ≤ R := by
     dsimp only [R, B]
     exact Finset.sum_nonneg fun n hn => one_div_nonneg.mpr (Nat.cast_nonneg n)
@@ -344,7 +342,7 @@ theorem squarefree_coprime_reciprocal_sum_ge_totient_ratio_log_div_two (z Q : �
   have hphi : 0 < (Nat.totient Q : ℝ) := by exact_mod_cast Nat.totient_pos.mpr hQ
   have hprod : ∏ p ∈ Q.primeFactors, (1 + (p : ℝ)⁻¹) ≤ ratio := by
     simpa only [ratio] using
-      PseudoPrime.NumberTheory.TotientProductBounds.primeFactor_one_add_inv_prod_le_div_totient hQ
+      PseudoPrime.NumberTheory.TotientProductBounds.primeFactor_prod_one_add_inv_le_totient hQ
   have hscaled : Real.log ((z + 1 : ℕ) : ℝ) / 2 ≤ R * ratio := by
     calc
       _ ≤ S := hfull
@@ -377,8 +375,7 @@ by the larger `1/φ(r)`, then compare `Z/Q` with `⌊Z/Q⌋ + 1`.
 
 Role: provides the `log(Z/Q)` gain in the pre-sifted large-sieve estimate.
 -/
-theorem squarefree_coprime_reciprocal_totient_sum_ge_log_div_two (z Q : ℕ) (hQ : 0 < Q)
-    (hz : 1 ≤ z) :
+theorem log_le_squarefree_coprime_inv_totient_sum (z Q : ℕ) (hQ : 0 < Q) (hz : 1 ≤ z) :
     Real.log ((z + 1 : ℕ) : ℝ) / 2 ≤
       (Q : ℝ) / (Nat.totient Q : ℝ) *
         ∑ r ∈ (Finset.range (z + 1)).filter (fun r : ℕ => 0 < r ∧ Squarefree r ∧ Nat.Coprime r Q),
@@ -387,7 +384,7 @@ theorem squarefree_coprime_reciprocal_totient_sum_ge_log_div_two (z Q : ℕ) (hQ
     (Finset.range (z + 1)).filter (fun r : ℕ => 0 < r ∧ Squarefree r ∧ Nat.Coprime r Q)
   have hbase :
     (Nat.totient Q : ℝ) / (Q : ℝ) * (Real.log ((z + 1 : ℕ) : ℝ) / 2) ≤ ∑ r ∈ S, 1 / (r : ℝ) := by
-    simpa only [S] using squarefree_coprime_reciprocal_sum_ge_totient_ratio_log_div_two z Q hQ hz
+    simpa only [S] using totient_log_le_squarefree_coprime_recip_sum z Q hQ hz
   have hsum : ∑ r ∈ S, 1 / (r : ℝ) ≤ ∑ r ∈ S, 1 / (Nat.totient r : ℝ) := by
     apply Finset.sum_le_sum
     intro r hr
@@ -416,8 +413,7 @@ theorem squarefree_coprime_reciprocal_totient_sum_ge_log_div_two (z Q : ℕ) (hQ
     _ ≤ (Q : ℝ) / (Nat.totient Q : ℝ) * ∑ r ∈ S, 1 / (Nat.totient r : ℝ) := hmul
     _ = _ := by rfl
 
-theorem squarefree_coprime_reciprocal_totient_sum_ge_log_ratio_div_two (Z Q : ℕ) (hQ : 0 < Q)
-    (hQZ : Q ≤ Z) :
+theorem log_ratio_le_squarefree_coprime_inv_totient (Z Q : ℕ) (hQ : 0 < Q) (hQZ : Q ≤ Z) :
     Real.log ((Z : ℝ) / (Q : ℝ)) / 2 ≤
       (Q : ℝ) / (Nat.totient Q : ℝ) *
         ∑
@@ -425,7 +421,7 @@ theorem squarefree_coprime_reciprocal_totient_sum_ge_log_ratio_div_two (Z Q : �
             (Finset.range (Z / Q + 1)).filter (fun r : ℕ => 0 < r ∧ Squarefree r ∧ Nat.Coprime r Q),
           1 / (Nat.totient r : ℝ) := by
   have hz : 1 ≤ Z / Q := (Nat.one_le_div_iff hQ).2 hQZ
-  have hbase := squarefree_coprime_reciprocal_totient_sum_ge_log_div_two (Z / Q) Q hQ hz
+  have hbase := log_le_squarefree_coprime_inv_totient_sum (Z / Q) Q hQ hz
   have hQposR : 0 < (Q : ℝ) := by exact_mod_cast hQ
   have hZposR : 0 < (Z : ℝ) := by exact_mod_cast (lt_of_lt_of_le hQ hQZ)
   have hdivNat : Z < (Z / Q + 1) * Q := by

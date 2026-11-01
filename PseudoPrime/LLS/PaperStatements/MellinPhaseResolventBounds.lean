@@ -34,10 +34,9 @@ the signed phase is pointwise bounded by the finite resolvent on every real ordi
 Claim: the negative real zero sum is bounded by the resolvent zero mass.
 Proof: use nonnegative zero multiplicities and summability of both series.
 Role: transfer phase-sensitive majorants to the actual explicit formula. -/
-theorem neg_re_oscillatingZeroSum_le_finiteResolvent (K : MellinKernel) {q : ℕ} [NeZero q]
-    (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) (l : List (ℚ × ℚ))
+theorem negRe_zeroSum_le_resolvent_GRH (K : MellinKernel) {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+    {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) (l : List (ℚ × ℚ))
     (ha : ∀ ab ∈ l, (0 : ℚ) < ab.1)
     (hphase :
       ∀ t : ℝ,
@@ -81,12 +80,12 @@ theorem neg_re_oscillatingZeroSum_le_prefix_tail (K : MellinKernel) {q : ℕ} [N
       AnalyticNumberTheory.DirichletLFunction.finiteSignedPrefixBudget χ l B -
         Analysis.pairedWeightTail (Analysis.finiteSignedMangoldtWeight l) (fun n ↦ (χ n).re) B := by
   have h :=
-    neg_re_oscillatingZeroSum_le_finiteResolvent K hq hGRH hp hne hinv hx l
+    negRe_zeroSum_le_resolvent_GRH K hq hGRH hp hne hinv hx l
       (fun ab hab ↦ lt_trans (by norm_num only : (0 : ℚ) < 1 / 2) (ha ab hab)) hphase
   exact
     h.trans_eq
-      (AnalyticNumberTheory.DirichletLFunction.finiteSignedResolvent_zeroMass_eq_prefix_tail hq
-        (hGRH q χ hp) hp hne hinv l ha B)
+      (AnalyticNumberTheory.DirichletLFunction.signedResolvent_mass_prefix_tail_RH hq (hGRH q χ hp)
+        hp hne hinv l ha B)
 
 /-- Input: the phase-majorant hypotheses and nonnegative common Mangoldt weights.
 Claim: the prefix budget bounds the negative real zero sum.
@@ -104,12 +103,12 @@ theorem neg_re_oscillatingZeroSum_le_prefix (K : MellinKernel) {q : ℕ} [NeZero
     -(∑' ρ : ℂ, K.oscillatingZeroTerm χ x ρ).re ≤
       AnalyticNumberTheory.DirichletLFunction.finiteSignedPrefixBudget χ l B := by
   have h :=
-    neg_re_oscillatingZeroSum_le_finiteResolvent K hq hGRH hp hne hinv hx l
+    negRe_zeroSum_le_resolvent_GRH K hq hGRH hp hne hinv hx l
       (fun ab hab ↦ lt_trans (by norm_num only : (0 : ℚ) < 1 / 2) (ha ab hab)) hphase
   exact
     h.trans
-      (AnalyticNumberTheory.DirichletLFunction.finiteSignedResolvent_zeroMass_le_prefix hq
-        (hGRH q χ hp) hp hne hinv l ha hW B)
+      (AnalyticNumberTheory.DirichletLFunction.signedResolvent_mass_le_prefix_RH hq (hGRH q χ hp) hp
+        hne hinv l ha hW B)
 
 end PseudoPrime.LLS.PaperStatements.MellinKernel
 

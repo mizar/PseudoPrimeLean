@@ -50,7 +50,7 @@ theorem twoPole_zeroSum_le_real_axis {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : D
       (fun ρ : ℂ ↦ (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ)) (fun ρ : ℂ ↦ ρ.im)
       phase hm hphase hc0 hab hs
   have he :=
-    completed_poissonSum_eq_signed_ordinary hq hRH hp hne hinv
+    poissonSum_eq_signedOrdinary_RH hq hRH hp hne hinv
       (show (1 : ℝ) < 1 / 2 + c by linarith only [hc])
   simp only [add_sub_cancel_left, Complex.ofReal_add] at he
   have ht :
@@ -80,9 +80,7 @@ theorem twoPole_zeroSum_le_positive_prefix {q : ℕ} [NeZero q] (hq : 2 ≤ q)
             (∑' n : ℕ, ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ (1 / 2 + c)) -
           ∑ n ∈ B, (1 + (χ n).re) * ArithmeticFunction.vonMangoldt n / (n : ℝ) ^ (1 / 2 + c)) := by
   have h := (twoPole_zeroSum_le_real_axis hq hRH hp hne hinv hc hab phase hphase).2
-  have hE :=
-    re_logDeriv_le_principal_sub_positive_prefix χ (show (1 : ℝ) < 1 / 2 + c by linarith only [hc])
-      B
+  have hE := re_L_logDeriv_le_positivePrefix χ (show (1 : ℝ) < 1 / 2 + c by linarith only [hc]) B
   simp only [Complex.ofReal_add] at hE
   have hm :=
     mul_le_mul_of_nonneg_left

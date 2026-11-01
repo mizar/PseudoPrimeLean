@@ -38,9 +38,9 @@ theorem exists_prime_ne_one_le_variable_reciprocal_root {q : ℕ} [NeZero q]
 /-- Under GRH for any nonprincipal even χ of nonzero level q and x ≥ 64,
 a unit-prime non-one witness lies below the variable even conductor bound.
 Preserve evenness under primitivization and transfer the value on units. -/
-theorem exists_prime_ne_one_le_even_variable_reciprocal_root {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (heven : χ.Even)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 64 ≤ x) :
+theorem exists_prime_neOne_evenVariableRecip_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hχ : χ ≠ 1) (heven : χ.Even) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {x : ℝ} (hx : 64 ≤ x) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤
@@ -49,7 +49,7 @@ theorem exists_prime_ne_one_le_even_variable_reciprocal_root {q : ℕ} [NeZero q
   let : NeZero χ.conductor := ⟨χ.conductor_ne_zero⟩
   have hc := NumberTheory.three_le_conductor_of_ne_one χ hχ
   obtain ⟨p, hp, hb, hd, hv⟩ :=
-    PaperStatements.exists_prime_ne_one_le_even_variable_reciprocal_root χ.primitiveCharacter hc
+    PaperStatements.exists_prime_neOne_evenVariableRecip_GRH χ.primitiveCharacter hc
       χ.primitiveCharacter_isPrimitive ((NumberTheory.primitiveCharacter_even_iff χ).mpr heven) hGRH
       (NeZero.ne q) hx
   have he := χ.primitiveCharacter_apply_of_isCoprime (hp.coprime_iff_not_dvd.mpr hd).isCoprime

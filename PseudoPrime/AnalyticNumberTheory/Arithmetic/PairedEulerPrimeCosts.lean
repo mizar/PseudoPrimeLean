@@ -22,7 +22,7 @@ namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 allowance (1/5) log 2 only at two. Bound the denominators by rational fourth-power comparisons
 and use a tangent bound for log p when p is at least three. This scalar bound charges the
 unramified prime prefix to the conductor quotient. -/
-theorem pairedEulerPrefixWeight_prime_upper_three_tenths {p : ℕ} (hp : p.Prime) :
+theorem pairedEulerWeight_prime_le_three_tenths {p : ℕ} (hp : p.Prime) :
     pairedEulerPrefixWeight (5 / 4) (11 / 4) (3 / 4) p ≤
       (3 / 10 : ℝ) * Real.log p + if p = 2 then (1 / 5 : ℝ) * Real.log 2 else 0 := by
   have hp0 : (0 : ℝ) < p := Nat.cast_pos.mpr hp.pos

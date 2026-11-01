@@ -87,8 +87,7 @@ theorem fiberBandFree_parameters_small_loss {m c : ℕ} (hm : 0 < m) :
 growth exponent fit `B`, the alternative degree coefficient is at most
 `2^(2^B)`. Use the quarter-range quotient estimate and absorb the natural
 power exponent by its binary length. -/
-theorem fiberBandFreeCoefficient_le_double_exp_of_quarter_budget {m c B : ℕ}
-    (hr : 7 ≤ fiberBandFreeMomentOrder m c)
+theorem freeFiberBand_le_double_exp_of_quarter {m c B : ℕ} (hr : 7 ≤ fiberBandFreeMomentOrder m c)
     (hbudget :
       2 * fiberBandFreeMomentOrder m c - 1 +
           Nat.log2
@@ -99,7 +98,7 @@ theorem fiberBandFreeCoefficient_le_double_exp_of_quarter_budget {m c B : ℕ}
           4 ≤
         B) :
     fiberBandFreeCoefficient m c ≤ 2 ^ (2 ^ B) := by
-  have hQ := quotientPowerBoundConstant_le_double_exp_log_quarter hr
+  have hQ := quotientConstant_le_double_exp_quarter hr
   have hD := pow_le_double_exp_add_of_log2 (e := fiberBandFreeGrowthOrder m c ^ 2 * (m - 1)) hQ
   have hC := band_coefficient_le_double_exp hD
   have hbudget' :
@@ -150,7 +149,7 @@ theorem quotientPowerBoundConstant_two_le_of_seven_le {r : ℕ} (hr : 7 ≤ r) :
 
 /-- Use the sharper band coefficient bound when the quotient-growth constant
 is at least two. This saves one bit in the inner exponent budget. -/
-theorem fiberBandFreeCoefficient_le_double_exp_of_quarter_budget_three {m c B : ℕ}
+theorem freeFiberBand_le_double_exp_of_quarter_three {m c B : ℕ}
     (hr : 7 ≤ fiberBandFreeMomentOrder m c) (hepos : 0 < fiberBandFreeGrowthOrder m c ^ 2 * (m - 1))
     (hbudget :
       2 * fiberBandFreeMomentOrder m c - 1 +
@@ -162,7 +161,7 @@ theorem fiberBandFreeCoefficient_le_double_exp_of_quarter_budget_three {m c B : 
           3 ≤
         B) :
     fiberBandFreeCoefficient m c ≤ 2 ^ (2 ^ B) := by
-  have hQ := quotientPowerBoundConstant_le_double_exp_log_quarter hr
+  have hQ := quotientConstant_le_double_exp_quarter hr
   have hQtwo := quotientPowerBoundConstant_two_le_of_seven_le hr
   have h2pow : 2 ≤ 2 ^ (fiberBandFreeGrowthOrder m c ^ 2 * (m - 1)) := by
     simpa only [pow_one] using Nat.pow_le_pow_right (by decide : 0 < 2) (Nat.succ_le_iff.mpr hepos)
@@ -286,7 +285,7 @@ theorem fiberBandFreeCoefficient_20_le_double_exp {m B : ℕ} (hlo : 2 ≤ m) (h
     simp only [fiberBandFreeMomentOrder]
     nlinarith only [hGlo]
   have hbudget := fiberBandFree_orders_20_budget hlo hhi
-  exact fiberBandFreeCoefficient_le_double_exp_of_quarter_budget hr (hbudget.trans hB)
+  exact freeFiberBand_le_double_exp_of_quarter hr (hbudget.trans hB)
 
 /-- For degrees from 2 through 42, precision 162 gives a common inner
 double-exponential budget of 1411717327. Bound the order parameters at degree
@@ -638,7 +637,7 @@ theorem fiberBandFreeCoefficient_280_le_double_exp {m B : ℕ} (hlo : 2 ≤ m) (
   have hEpos : 0 < fiberBandFreeGrowthOrder m 280 ^ 2 * (m - 1) :=
     Nat.mul_pos (Nat.pow_pos (fiberBandFreeGrowthOrder_pos m 280)) hmlow
   exact
-    fiberBandFreeCoefficient_le_double_exp_of_quarter_budget_three hr hEpos
+    freeFiberBand_le_double_exp_of_quarter_three hr hEpos
       ((fiberBandFree_orders_280_budget hlo hhi).trans hB)
 
 /-- Every degree `2 ≤ m ≤ 42` at free precision 12 fits the inner budget
@@ -815,7 +814,7 @@ theorem fiberBandFreeCoefficient_12_le_double_exp {m B : ℕ} (hlo : 2 ≤ m) (h
   have hEpos : 0 < fiberBandFreeGrowthOrder m 12 ^ 2 * (m - 1) :=
     Nat.mul_pos (Nat.pow_pos (fiberBandFreeGrowthOrder_pos m 12)) hmlow
   exact
-    fiberBandFreeCoefficient_le_double_exp_of_quarter_budget_three hr hEpos
+    freeFiberBand_le_double_exp_of_quarter_three hr hEpos
       ((fiberBandFree_orders_12_budget hlo hhi).trans hB)
 
 /-- At free precision 18, every degree from 2 through 42 fits the double-
@@ -830,7 +829,7 @@ theorem fiberBandFreeCoefficient_18_le_double_exp {m B : ℕ} (hlo : 2 ≤ m) (h
   have hEpos : 0 < fiberBandFreeGrowthOrder m 18 ^ 2 * (m - 1) :=
     Nat.mul_pos (Nat.pow_pos (fiberBandFreeGrowthOrder_pos m 18)) hmlow
   exact
-    fiberBandFreeCoefficient_le_double_exp_of_quarter_budget_three hr hEpos
+    freeFiberBand_le_double_exp_of_quarter_three hr hEpos
       ((fiberBandFree_orders_18_budget hlo hhi).trans hB)
 
 /-- Every degree from 2 through 42 at precision 162 fits any coefficient
@@ -851,7 +850,7 @@ theorem fiberBandFreeCoefficient_162_le_double_exp {m B : ℕ} (hlo : 2 ≤ m) (
     have hm : 0 < m - 1 := by omega
     exact Nat.mul_pos (Nat.pow_pos hG) hm
   have hbudget := fiberBandFree_orders_162_budget hlo hhi
-  exact fiberBandFreeCoefficient_le_double_exp_of_quarter_budget_three hr hepos (hbudget.trans hB)
+  exact freeFiberBand_le_double_exp_of_quarter_three hr hepos (hbudget.trans hB)
 
 /-- Every degree from 2 through 42 at precision 168 fits the common inner
 budget 2^(2^B) for B ≥ 1,518,225,486. -/
@@ -865,7 +864,7 @@ theorem fiberBandFreeCoefficient_168_le_double_exp {m B : ℕ} (hlo : 2 ≤ m) (
   have hEpos : 0 < fiberBandFreeGrowthOrder m 168 ^ 2 * (m - 1) :=
     Nat.mul_pos (Nat.pow_pos (fiberBandFreeGrowthOrder_pos m 168)) hmlow
   exact
-    fiberBandFreeCoefficient_le_double_exp_of_quarter_budget_three hr hEpos
+    freeFiberBand_le_double_exp_of_quarter_three hr hEpos
       ((fiberBandFree_orders_168_budget hlo hhi).trans hB)
 
 /-- The alternative degree constants have a common sum over the eight fixed
@@ -876,8 +875,7 @@ def eightDegreeFreeFiberCoefficient (c : ℕ) : ℕ :=
 /-- The free-order coefficient controls each balanced height band. Use the
 explicit orders, the exact strict height gap, and the natural root estimate;
 the factorial remains symbolic in the returned coefficient. -/
-theorem heightRestrictedRatioSet_le_explicit_free_fiber_band_bound {m c : ℕ} (hm : 0 < m)
-    (hc : 0 < c) :
+theorem heightRatios_le_free_fiber_band_bound {m c : ℕ} (hm : 0 < m) (hc : 0 < c) :
     ∀ (p H T : ℕ) [Fact p.Prime],
       H < p →
         0 < T →
@@ -903,7 +901,7 @@ theorem heightRestrictedRatioSet_le_explicit_free_fiber_band_bound {m c : ℕ} (
   have hnr := Nat.mul_pos hn hr
   have hnrR : (0 : ℝ) < (n * r : ℕ) := Nat.cast_pos.mpr hnr
   have hcR : (0 : ℝ) < c := Nat.cast_pos.mpr hc
-  have hpoly := heightRestrictedRatioSet_fiber_power_le_polynomial hHp hT hm hn hr
+  have hpoly := heightRatios_fiber_power_le_polynomial hHp hT hm hn hr
   have hb := natural_count_le_polynomial_root hnr hpoly
   have he : ((n * r : ℕ) : ℝ) / (n * r : ℕ) = 1 := div_self (ne_of_gt hnrR)
   rw [he, Real.rpow_one] at hb
@@ -962,7 +960,7 @@ theorem heightRestrictedRatioSet_le_explicit_free_fiber_band_bound {m c : ℕ} (
 /-- The sum of the eight free-order degree coefficients bounds every
 restricted ratio below $p^{5/28}$. Sum the degree bands and use the trivial
 positive-rational count below $p^{1/84}$. -/
-theorem heightRestrictedRatioSet_le_explicit_free_eight_degree_bound {c : ℕ} (hc : 0 < c) :
+theorem heightRatios_le_free_eight_degree_bound {c : ℕ} (hc : 0 < c) :
     ∀ (p H T : ℕ) [Fact p.Prime],
       H < p →
         (T : ℝ) ≤ (p : ℝ) ^ (5 / 28 : ℝ) →
@@ -981,7 +979,7 @@ theorem heightRestrictedRatioSet_le_explicit_free_eight_degree_bound {c : ℕ} (
   have hC (m : D) : 0 < C m := by
     dsimp only [C]
     exact Nat.cast_pos.mpr (Nat.succ_pos _)
-  have hbound (m : D) := heightRestrictedRatioSet_le_explicit_free_fiber_band_bound (hD m) hc
+  have hbound (m : D) := heightRatios_le_free_fiber_band_bound (hD m) hc
   let K : ℝ := 1 + ∑ m : D, C m
   have hsum : 0 ≤ ∑ m : D, C m := Finset.sum_nonneg (fun m _ ↦ (hC m).le)
   have hK : 1 ≤ K := by
@@ -1059,7 +1057,7 @@ def freeFiniteFiberCountCoefficient (c h : ℕ) : ℕ :=
 /-- The total independent-loss count coefficient is below the next double
 exponential when all eight free degree coefficients fit a common budget.
 Combine the eight-term sum with its harmonic multiplier before absorbing them. -/
-theorem freeFiniteFiberCountCoefficient_lt_double_exp_of_degree_bounds {c h B : ℕ}
+theorem freeFiberCountCoeff_lt_double_exp_of_degrees {c h B : ℕ}
     (hfactor : 36 * (2 * h + 1) < 2 ^ (2 ^ B))
     (hF :
       ∀ m ∈ ({6, 7, 8, 9, 11, 14, 21, 42} : Finset ℕ), fiberBandFreeCoefficient m c ≤ 2 ^ (2 ^ B)) :
@@ -1086,9 +1084,9 @@ theorem freeFiniteFiberCountCoefficient_lt_double_exp_of_degree_bounds {c h B : 
 /-- The complete count coefficient at precision 280 and loss 140 fits the
 next double-exponential budget once the inner exponent is at least
 4,217,292,884. Sum the eight degree bounds and absorb the harmonic factor. -/
-theorem freeFiniteFiberCountCoefficient_280_140_lt_double_exp {B : ℕ} (hB : 4217292884 ≤ B) :
+theorem freeFiberCountCoeff_280_140_lt_double_exp {B : ℕ} (hB : 4217292884 ≤ B) :
     freeFiniteFiberCountCoefficient 280 140 < 2 ^ (2 ^ (B + 1)) := by
-  apply freeFiniteFiberCountCoefficient_lt_double_exp_of_degree_bounds
+  apply freeFiberCountCoeff_lt_double_exp_of_degrees
   · have hB4 : 4 ≤ B := (by norm_num only : 4 ≤ 4217292884).trans hB
     have h2B : 16 ≤ 2 ^ B := Nat.pow_le_pow_right (by decide : 0 < 2) hB4
     have hUnit : 2 ^ 16 ≤ 2 ^ (2 ^ B) := Nat.pow_le_pow_right (by decide : 0 < 2) h2B
@@ -1107,9 +1105,9 @@ theorem freeFiniteFiberCountCoefficient_280_140_lt_double_exp {B : ℕ} (hB : 42
 /-- The complete count coefficient at free precision 20 and independent loss
 10 is below the next double-exponential budget. Bound the eight degrees by
 their shared budget and absorb the fixed harmonic factor. -/
-theorem freeFiniteFiberCountCoefficient_20_10_lt_double_exp {B : ℕ} (hB : 21516867 ≤ B) :
+theorem freeFiberCountCoeff_20_10_lt_double_exp {B : ℕ} (hB : 21516867 ≤ B) :
     freeFiniteFiberCountCoefficient 20 10 < 2 ^ (2 ^ (B + 1)) := by
-  apply freeFiniteFiberCountCoefficient_lt_double_exp_of_degree_bounds
+  apply freeFiberCountCoeff_lt_double_exp_of_degrees
   · have hB4 : 4 ≤ B := (by norm_num only : 4 ≤ 21516867).trans hB
     calc
       36 * (2 * 10 + 1) = 756 := by norm_num only
@@ -1126,9 +1124,9 @@ theorem freeFiniteFiberCountCoefficient_20_10_lt_double_exp {B : ℕ} (hB : 2151
 
 /-- The complete count coefficient at precision 162 and independent loss 81
 fits the next double-exponential budget after summing the eight degrees. -/
-theorem freeFiniteFiberCountCoefficient_162_81_lt_double_exp {B : ℕ} (hB : 1411717327 ≤ B) :
+theorem freeFiberCountCoeff_162_81_lt_double_exp {B : ℕ} (hB : 1411717327 ≤ B) :
     freeFiniteFiberCountCoefficient 162 81 < 2 ^ (2 ^ (B + 1)) := by
-  apply freeFiniteFiberCountCoefficient_lt_double_exp_of_degree_bounds
+  apply freeFiberCountCoeff_lt_double_exp_of_degrees
   · have hB4 : 4 ≤ B := (by norm_num only : 4 ≤ 1411717327).trans hB
     have h2B : 16 ≤ 2 ^ B := Nat.pow_le_pow_right (by decide : 0 < 2) hB4
     have hUnit : 2 ^ 16 ≤ 2 ^ (2 ^ B) := Nat.pow_le_pow_right (by decide : 0 < 2) h2B
@@ -1147,9 +1145,9 @@ theorem freeFiniteFiberCountCoefficient_162_81_lt_double_exp {B : ℕ} (hB : 141
 
 /-- The complete finite-fiber count coefficient at precision 168 and
 independent loss 84 fits below 2^(2^(B+1)) for B ≥ 1,518,225,486. -/
-theorem freeFiniteFiberCountCoefficient_168_84_lt_double_exp {B : ℕ} (hB : 1518225486 ≤ B) :
+theorem freeFiberCountCoeff_168_84_lt_double_exp {B : ℕ} (hB : 1518225486 ≤ B) :
     freeFiniteFiberCountCoefficient 168 84 < 2 ^ (2 ^ (B + 1)) := by
-  apply freeFiniteFiberCountCoefficient_lt_double_exp_of_degree_bounds
+  apply freeFiberCountCoeff_lt_double_exp_of_degrees
   · have hB4 : 4 ≤ B := (by norm_num only : 4 ≤ 1518225486).trans hB
     have h2B : 16 ≤ 2 ^ B := Nat.pow_le_pow_right (by decide : 0 < 2) hB4
     have hUnit : 2 ^ 16 ≤ 2 ^ (2 ^ B) := Nat.pow_le_pow_right (by decide : 0 < 2) h2B
@@ -1162,7 +1160,7 @@ theorem freeFiniteFiberCountCoefficient_168_84_lt_double_exp {B : ℕ} (hB : 151
       simpa only [Finset.mem_insert, Finset.mem_singleton] using hm
     rcases hm' with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
     all_goals
-      apply fiberBandFreeCoefficient_le_double_exp_of_quarter_budget_three
+      apply freeFiberBand_le_double_exp_of_quarter_three
       · norm_num only [fiberBandFreeMomentOrder]
       · norm_num only [fiberBandFreeGrowthOrder]
       · exact (fiberBandFree_orders_168_budget (by norm_num only) (by norm_num only)).trans hB
@@ -1170,9 +1168,9 @@ theorem freeFiniteFiberCountCoefficient_168_84_lt_double_exp {B : ℕ} (hB : 151
 /-- The complete finite-fiber count coefficient at precision 164 and
 independent loss 82 fits the double-exponential budget at `B = 1,446,789,710`.
 -/
-theorem freeFiniteFiberCountCoefficient_164_82_lt_double_exp {B : ℕ} (hB : 1446789710 ≤ B) :
+theorem freeFiberCountCoeff_164_82_lt_double_exp {B : ℕ} (hB : 1446789710 ≤ B) :
     freeFiniteFiberCountCoefficient 164 82 < 2 ^ (2 ^ (B + 1)) := by
-  apply freeFiniteFiberCountCoefficient_lt_double_exp_of_degree_bounds
+  apply freeFiberCountCoeff_lt_double_exp_of_degrees
   · have hB4 : 4 ≤ B := (by norm_num only : 4 ≤ 1446789710).trans hB
     have h2B : 16 ≤ 2 ^ B := Nat.pow_le_pow_right (by decide : 0 < 2) hB4
     have hUnit : 2 ^ 16 ≤ 2 ^ (2 ^ B) := Nat.pow_le_pow_right (by decide : 0 < 2) h2B
@@ -1185,16 +1183,16 @@ theorem freeFiniteFiberCountCoefficient_164_82_lt_double_exp {B : ℕ} (hB : 144
       simpa only [Finset.mem_insert, Finset.mem_singleton] using hm
     rcases hm' with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
     all_goals
-      apply fiberBandFreeCoefficient_le_double_exp_of_quarter_budget_three
+      apply freeFiberBand_le_double_exp_of_quarter_three
       · norm_num only [fiberBandFreeMomentOrder]
       · norm_num only [fiberBandFreeGrowthOrder]
       · exact (fiberBandFree_orders_164_budget (by norm_num only) (by norm_num only)).trans hB
 
 /-- The complete count coefficient at precision 12 and independent loss 6 is
 below `2^(2^(B+1))` whenever `B ≥ 7,746,111`. -/
-theorem freeFiniteFiberCountCoefficient_12_6_lt_double_exp {B : ℕ} (hB : 7746111 ≤ B) :
+theorem freeFiberCountCoeff_12_6_lt_double_exp {B : ℕ} (hB : 7746111 ≤ B) :
     freeFiniteFiberCountCoefficient 12 6 < 2 ^ (2 ^ (B + 1)) := by
-  apply freeFiniteFiberCountCoefficient_lt_double_exp_of_degree_bounds
+  apply freeFiberCountCoeff_lt_double_exp_of_degrees
   · have hB4 : 4 ≤ B := (by norm_num only : 4 ≤ 7746111).trans hB
     calc
       36 * (2 * 6 + 1) = 468 := by norm_num only
@@ -1209,9 +1207,9 @@ theorem freeFiniteFiberCountCoefficient_12_6_lt_double_exp {B : ℕ} (hB : 77461
 
 /-- The complete count coefficient at precision 18 and independent loss 9 is
 below `2^(2^(B+1))` whenever `B ≥ 17,428,673`. -/
-theorem freeFiniteFiberCountCoefficient_18_9_lt_double_exp {B : ℕ} (hB : 17428673 ≤ B) :
+theorem freeFiberCountCoeff_18_9_lt_double_exp {B : ℕ} (hB : 17428673 ≤ B) :
     freeFiniteFiberCountCoefficient 18 9 < 2 ^ (2 ^ (B + 1)) := by
-  apply freeFiniteFiberCountCoefficient_lt_double_exp_of_degree_bounds
+  apply freeFiberCountCoeff_lt_double_exp_of_degrees
   · have hB4 : 4 ≤ B := (by norm_num only : 4 ≤ 17428673).trans hB
     calc
       36 * (2 * 9 + 1) = 684 := by norm_num only
@@ -1226,7 +1224,7 @@ theorem freeFiniteFiberCountCoefficient_18_9_lt_double_exp {B : ℕ} (hB : 17428
 
 /-- Raise a complete-count coefficient through the energy power and absorb
 the fixed coefficient `2^176` into the symbolic prime threshold. -/
-theorem free_finite_fiber_energy_coefficient_lt_prime_threshold {a B u c h : ℕ}
+theorem freeFiber_energy_lt_threshold {a B u c h : ℕ}
     (hcount : freeFiniteFiberCountCoefficient c h < 2 ^ (2 ^ (B + 1)))
     (hbudget : B + 1 + 13 * a + 176 * a < u) :
     (2 ^ 176 : ℕ) ^ a * freeFiniteFiberCountCoefficient c h ^ (13 * a) <
@@ -1236,57 +1234,54 @@ theorem free_finite_fiber_energy_coefficient_lt_prime_threshold {a B u c h : ℕ
 
 /-- The precision-20, loss-10 count coefficient supports the explicit
 energy coefficient at prime threshold `P(21518759)`. -/
-theorem free_finite_fiber_energy_coefficient_lt_prime_threshold_20 :
+theorem freeFiber_energy_lt_threshold_20 :
     (2 ^ 176 : ℕ) ^ 10 * freeFiniteFiberCountCoefficient 20 10 ^ (13 * 10) <
       explicitFiniteFiberPrimeThreshold 21518759 := by
-  apply
-    free_finite_fiber_energy_coefficient_lt_prime_threshold (a := 10) (B := 21516867) (u :=
-      21518759) (c := 20) (h := 10)
-  · exact freeFiniteFiberCountCoefficient_20_10_lt_double_exp (by norm_num only)
+  apply freeFiber_energy_lt_threshold (a := 10) (B := 21516867) (u := 21518759) (c := 20) (h := 10)
+  · exact freeFiberCountCoeff_20_10_lt_double_exp (by norm_num only)
   · norm_num only
 
 /-- The precision-162, loss-81 count coefficient supports the explicit
 energy coefficient at prime threshold `P(1411732827)`. -/
-theorem free_finite_fiber_energy_coefficient_lt_prime_threshold_162 :
+theorem freeFiber_energy_lt_threshold_162 :
     (2 ^ 176 : ℕ) ^ 82 * freeFiniteFiberCountCoefficient 162 81 ^ (13 * 82) <
       explicitFiniteFiberPrimeThreshold 1411732827 := by
   apply
-    free_finite_fiber_energy_coefficient_lt_prime_threshold (a := 82) (B := 1411717327) (u :=
-      1411732827) (c := 162) (h := 81)
-  · exact freeFiniteFiberCountCoefficient_162_81_lt_double_exp (by norm_num only)
+    freeFiber_energy_lt_threshold (a := 82) (B := 1411717327) (u := 1411732827) (c := 162) (h := 81)
+  · exact freeFiberCountCoeff_162_81_lt_double_exp (by norm_num only)
   · norm_num only
 
 /-- The precision-280, loss-140 count coefficient supports energy exponent
 105 at the explicit prime threshold `P(4,217,312,731)`. -/
-theorem free_finite_fiber_energy_coefficient_lt_prime_threshold_280_140_105 :
+theorem freeFiber_energy_lt_threshold_280_140_105 :
     (2 ^ 176 : ℕ) ^ 105 * freeFiniteFiberCountCoefficient 280 140 ^ (13 * 105) <
       explicitFiniteFiberPrimeThreshold 4217312731 := by
   apply
-    free_finite_fiber_energy_coefficient_lt_prime_threshold (a := 105) (B := 4217292884) (u :=
-      4217312731) (c := 280) (h := 140)
-  · exact freeFiniteFiberCountCoefficient_280_140_lt_double_exp (by norm_num only)
+    freeFiber_energy_lt_threshold (a := 105) (B := 4217292884) (u := 4217312731) (c := 280) (h :=
+      140)
+  · exact freeFiberCountCoeff_280_140_lt_double_exp (by norm_num only)
   · norm_num only
 
 /-- The precision-168, loss-84 count coefficient supports energy exponent
 210 below the prime threshold P(1,518,265,178). -/
-theorem free_finite_fiber_energy_coefficient_lt_prime_threshold_168_84_210 :
+theorem freeFiber_energy_lt_threshold_168_84_210 :
     (2 ^ 176 : ℕ) ^ 210 * freeFiniteFiberCountCoefficient 168 84 ^ (13 * 210) <
       explicitFiniteFiberPrimeThreshold 1518265178 := by
   apply
-    free_finite_fiber_energy_coefficient_lt_prime_threshold (a := 210) (B := 1518225486) (u :=
-      1518265178) (c := 168) (h := 84)
-  · exact freeFiniteFiberCountCoefficient_168_84_lt_double_exp (by norm_num only)
+    freeFiber_energy_lt_threshold (a := 210) (B := 1518225486) (u := 1518265178) (c := 168) (h :=
+      84)
+  · exact freeFiberCountCoeff_168_84_lt_double_exp (by norm_num only)
   · norm_num only
 
 /-- The precision-164, loss-82 coefficient supports the squared energy
 exponent 2,240 below the explicit prime threshold `P(1,447,213,072)`. -/
-theorem free_finite_fiber_energy_coefficient_lt_prime_threshold_164_82_2240 :
+theorem freeFiber_energy_lt_threshold_164_82_2240 :
     (2 ^ 176 : ℕ) ^ 2240 * freeFiniteFiberCountCoefficient 164 82 ^ (13 * 2240) <
       explicitFiniteFiberPrimeThreshold 1447213072 := by
   apply
-    free_finite_fiber_energy_coefficient_lt_prime_threshold (a := 2240) (B := 1446789710) (u :=
-      1447213072) (c := 164) (h := 82)
-  · exact freeFiniteFiberCountCoefficient_164_82_lt_double_exp (by norm_num only)
+    freeFiber_energy_lt_threshold (a := 2240) (B := 1446789710) (u := 1447213072) (c := 164) (h :=
+      82)
+  · exact freeFiberCountCoeff_164_82_lt_double_exp (by norm_num only)
   · norm_num only
 
 /-- Cast the free complete-count coefficient to the real harmonic constant
@@ -1303,8 +1298,8 @@ theorem freeFiniteFiberCountCoefficient_cast (c h : ℕ) :
 /-- With precision `1/c ≤ eta`, the alternative eight-degree coefficient
 controls every restricted ratio by `K T p^(1/84+eta)`. Absorb the height
 power using `T ≤ p` and monotonicity in the prime exponent. -/
-theorem heightRestrictedRatioSet_le_explicit_free_finite_fiber_ratio_bound {eta : ℝ} {c : ℕ}
-    (hc : 0 < c) (hprec : 1 / (c : ℝ) ≤ eta) :
+theorem heightRatios_le_freeFiber_ratio_bound {eta : ℝ} {c : ℕ} (hc : 0 < c)
+    (hprec : 1 / (c : ℝ) ≤ eta) :
     ∀ (p H T : ℕ) [Fact p.Prime],
       H < p →
         (T : ℝ) ≤ (p : ℝ) ^ (5 / 28 : ℝ) →
@@ -1312,7 +1307,7 @@ theorem heightRestrictedRatioSet_le_explicit_free_finite_fiber_ratio_bound {eta 
           eightDegreeFreeFiberCoefficient c * T * (p : ℝ) ^ (1 / 84 + eta) := by
   let K : ℝ := eightDegreeFreeFiberCoefficient c
   have hK : 0 < K := Nat.cast_pos.mpr (Nat.succ_pos _)
-  have hbound := heightRestrictedRatioSet_le_explicit_free_eight_degree_bound hc
+  have hbound := heightRatios_le_free_eight_degree_bound hc
   intro p H T hp hHp htop
   have hp1 : (1 : ℝ) ≤ p := Nat.one_le_cast.mpr (Fact.out : p.Prime).pos
   have hp0 : (0 : ℝ) < p := Nat.cast_pos.mpr (Fact.out : p.Prime).pos
@@ -1347,7 +1342,7 @@ theorem heightRestrictedRatioSet_le_explicit_free_finite_fiber_ratio_bound {eta 
 Under `1/c ≤ (1/h)/2`, every odd prime and admissible height has the stated
 full congruence-count bound. The reciprocal-height sum uses half of `1/h`
 for its logarithmic factor, leaving the other half in the prime exponent. -/
-theorem boundedCongruenceCount_le_explicit_free_finite_fiber {h c : ℕ} (hh : 0 < h) (hc : 0 < c)
+theorem congruenceCount_le_freeFiber {h c : ℕ} (hh : 0 < h) (hc : 0 < c)
     (hprec : 1 / (c : ℝ) ≤ (1 / (h : ℝ)) / 2) :
     ∀ (p H : ℕ) [Fact p.Prime],
       Odd p →
@@ -1364,12 +1359,11 @@ theorem boundedCongruenceCount_le_explicit_free_finite_fiber {h c : ℕ} (hh : 0
   intro p H hp hodd hHp htop
   rw [freeFiniteFiberCountCoefficient_cast]
   change (boundedCongruenceCount p H : ℝ) ≤ C * H * (p : ℝ) ^ (1 / 84 + eta)
-  have hR :=
-    heightRestrictedRatioSet_le_explicit_free_finite_fiber_ratio_bound (eta := eta / 2) hc hprec
+  have hR := heightRatios_le_freeFiber_ratio_bound (eta := eta / 2) hc hprec
   have hp1 : (1 : ℝ) ≤ p := Nat.one_le_cast.mpr (Fact.out : p.Prime).pos
   have hp0 : (0 : ℝ) < p := Nat.cast_pos.mpr (Fact.out : p.Prime).pos
   have hcount :=
-    boundedCongruenceCount_le_of_uniform_height_ratios hodd hHp hK.le
+    congruenceCount_le_of_uniform_height_ratios hodd hHp hK.le
       (fun T hT ↦ hR p H T hHp ((Nat.cast_le.mpr hT).trans htop))
   have hpow := Real.rpow_le_rpow (Nat.cast_nonneg H) (Nat.cast_le.mpr hHp.le) hdelta.le
   have hlog :=
@@ -1396,9 +1390,8 @@ theorem boundedCongruenceCount_le_explicit_free_finite_fiber {h c : ℕ} (hh : 0
 `a`, then absorb its prime exponent into the requested integer `g`. This
 connects the independent count-loss and finite-band parameters to energy
 estimates without imposing `h = a`. -/
-theorem boundedCongruenceCount_power_le_explicit_free_finite_fiber {a h c g : ℕ} (ha : 0 < a)
-    (hh : 0 < h) (hc : 0 < c) (hprec : 1 / (c : ℝ) ≤ (1 / (h : ℝ)) / 2)
-    (hratio : 1 / 84 + 1 / (h : ℝ) ≤ (g : ℝ) / a) :
+theorem congruenceCount_power_le_freeFiber {a h c g : ℕ} (ha : 0 < a) (hh : 0 < h) (hc : 0 < c)
+    (hprec : 1 / (c : ℝ) ≤ (1 / (h : ℝ)) / 2) (hratio : 1 / 84 + 1 / (h : ℝ) ≤ (g : ℝ) / a) :
     ∀ (p H : ℕ) [Fact p.Prime],
       Odd p →
         H < p →
@@ -1406,7 +1399,7 @@ theorem boundedCongruenceCount_power_le_explicit_free_finite_fiber {a h c g : �
         boundedCongruenceCount p H ^ a ≤
           freeFiniteFiberCountCoefficient c h ^ a * H ^ a * p ^ g := by
   intro p H hp hodd hHp htop
-  have hcount := boundedCongruenceCount_le_explicit_free_finite_fiber hh hc hprec p H hodd hHp htop
+  have hcount := congruenceCount_le_freeFiber hh hc hprec p H hodd hHp htop
   have hp0 : (0 : ℝ) ≤ p := Nat.cast_nonneg p
   have hp1 : (1 : ℝ) ≤ p := Nat.one_le_cast.mpr (Fact.out : p.Prime).pos
   have hpow := pow_le_pow_left₀ (Nat.cast_nonneg (boundedCongruenceCount p H)) hcount a

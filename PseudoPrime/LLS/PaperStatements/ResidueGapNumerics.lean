@@ -561,8 +561,8 @@ open Classical in
 bound whenever the resulting rational upper majorant is below the rational
 principal lower bound. Substitute the interval estimates into the root-certificate
 criterion. This is the checked interface for excluding moduli from finite coverage. -/
-theorem exists_least_prime_in_residue_le_of_interval_certificates {q : ℕ} [NeZero q] (a : (ZMod q)ˣ)
-    (hq : 64 ≤ q) (hu : q ≤ 20000) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem exists_least_residue_intervalCert_GRH {q : ℕ} [NeZero q] (a : (ZMod q)ˣ) (hq : 64 ≤ q)
+    (hu : q ≤ 20000) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     {x X s S L T : ℝ} (hx : 65536 ≤ x) (hX0 : 0 < X) (hX : X ≤ x) (hs0 : 0 < s)
     (hs : s ≤ Real.sqrt x) (hS : Real.sqrt x ≤ S) (hL : Real.log q ≤ L) (hT : Real.log x ≤ T)
     {K : ℕ} (hK : ⌊Real.log x / Real.log 2⌋₊ ≤ K) (b c : ℕ → ℝ)
@@ -589,7 +589,7 @@ theorem exists_least_prime_in_residue_le_of_interval_certificates {q : ℕ} [NeZ
       (add_le_add hsqb (le_refl (∑ k ∈ (Finset.Icc 3 K).filter Odd, (k : ℝ) * (b k + c k / 20))))
       (Nat.cast_nonneg q.totient : (0 : ℝ) ≤ q.totient)
   exact
-    exists_least_prime_in_residue_le_of_power_certificates a hq hGRH hx hK b c hb hc hpow hsq
+    exists_least_residue_powerCert_GRH a hq hGRH hx hK b c hb hc hpow hsq
       ((lt_of_le_of_lt (add_le_add hm hn) hgap).trans_le hp)
 
 /-- Check the strict rational gap between the principal lower estimate and
@@ -748,10 +748,10 @@ theorem TotientLogResidueCertificate.exists_least_prime {q : ℕ} [NeZero q]
   simp only [Rat.cast_pow, Rat.cast_mul, Rat.cast_natCast] at hg
   rw [htot]
   exact
-    exists_least_prime_in_residue_le_of_interval_certificates a hq hu hGRH hxMinR
-      (sq_pos_of_pos hs0R) hxl hs0R (hxS.symm ▸ hsl) (hxS.symm ▸ hsu) hlog.2 hT hKreal
-      (fun k ↦ (d.rootUpper k : ℝ)) (fun k ↦ (d.sqrtRootUpper k : ℝ)) (fun k _ ↦ Nat.cast_nonneg _)
-      (fun k _ ↦ Nat.cast_nonneg _) (fun k hk ↦ hxu.trans (hr k hk).1) (fun k hk ↦ (hr k hk).2)
+    exists_least_residue_intervalCert_GRH a hq hu hGRH hxMinR (sq_pos_of_pos hs0R) hxl hs0R
+      (hxS.symm ▸ hsl) (hxS.symm ▸ hsu) hlog.2 hT hKreal (fun k ↦ (d.rootUpper k : ℝ))
+      (fun k ↦ (d.sqrtRootUpper k : ℝ)) (fun k _ ↦ Nat.cast_nonneg _) (fun k _ ↦ Nat.cast_nonneg _)
+      (fun k hk ↦ hxu.trans (hr k hk).1) (fun k hk ↦ (hr k hk).2)
       (by simpa only [htot, hfac] using hg)
 
 /-- Check both the analytic interval data and the arithmetic values from a full
@@ -767,7 +767,7 @@ def TotientLogResidueCertificate.checkWithFactors (d : TotientLogResidueCertific
 both pass bounds the least prime in every unit residue by the totient-logarithm
 cutoff. Reflect the arithmetic identities and apply the common analytic theorem.
 This is the shared consumer for generated bounded-modulus certificates. -/
-theorem TotientLogResidueCertificate.exists_least_prime_of_factor_list {q : ℕ} [NeZero q]
+theorem TotientLogResidueCertificate.exists_least_factors_GRH {q : ℕ} [NeZero q]
     (d : TotientLogResidueCertificate) (factors : List ℕ)
     (hcheck : d.checkWithFactors q factors = true)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (a : (ZMod q)ˣ) :
@@ -785,7 +785,7 @@ theorem TotientLogResidueCertificate.exists_least_prime_of_factor_list {q : ℕ}
 give the totient-logarithm least-prime bound. Check the factor product, totient and
 distinct-prime count separately from primality, then apply the shared analytic theorem.
 This reuses common prime proofs without evaluating primality in each certificate. -/
-theorem TotientLogResidueCertificate.exists_least_prime_of_factor_values {q : ℕ} [NeZero q]
+theorem TotientLogResidueCertificate.exists_least_values_GRH {q : ℕ} [NeZero q]
     (d : TotientLogResidueCertificate) (factors : List ℕ) (hp : ∀ p ∈ factors, p.Prime)
     (hv : NumberTheory.factorListValueCheck q d.totient d.primeFactorCount factors = true)
     (hc : d.check q = true) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
@@ -802,7 +802,7 @@ theorem TotientLogResidueCertificate.exists_least_prime_of_factor_values {q : �
 totient-logarithm least-prime bound throughout their interval. Subtract the initial
 modulus to select the finite index and apply that certificate's soundness theorem.
 This joins certificate blocks without repeating the real-analytic argument. -/
-theorem exists_least_prime_in_residue_le_of_analytic_certificate_block {s n q : ℕ} [NeZero q]
+theorem exists_least_residue_certBlock_GRH {s n q : ℕ} [NeZero q]
     (d : Fin n → TotientLogResidueCertificate) (factors : Fin n → List ℕ)
     (h : ∀ i : Fin n, (d i).checkWithFactors (s + i.val) (factors i) = true) (hs : s ≤ q)
     (hb : q < s + n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
@@ -815,7 +815,7 @@ theorem exists_least_prime_in_residue_le_of_analytic_certificate_block {s n q : 
   have he : s + i.val = q := Nat.add_sub_of_le hs
   have hc := h i
   rw [he] at hc
-  exact (d i).exists_least_prime_of_factor_list (factors i) hc hGRH a
+  exact (d i).exists_least_factors_GRH (factors i) hc hGRH a
 
 /-- Build certificate data from millionth-scaled logarithm endpoints and a
 list of natural upper bounds for exponents three, five, seven and so on.
@@ -1001,12 +1001,12 @@ rational character coefficients. The cutoff is at least 65536.
 Combine the half-period square bound, corrected odd-power sum, and parity-averaged
 character estimate; the strict gap contradicts a prime-free residue class.
 This is the common soundness theorem for refined small-modulus certificates. -/
-theorem exists_least_prime_in_residue_le_of_refined_interval_gap {q r K J : ℕ} [NeZero q]
-    (a : (ZMod q)ˣ) (hq : 64 ≤ q) (hu : q ≤ 20000)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x X s S L T t : ℝ}
-    (hh : (2 : ℝ) ≤ q.totient) (hx : 65536 ≤ x) (hX0 : 0 < X) (hX : X ≤ x) (hs0 : 0 < s)
-    (hs : s ≤ Real.sqrt x) (hS : Real.sqrt x ≤ S) (hL : Real.log q ≤ L) (hT : Real.log x ≤ T)
-    (ht : t ≤ Real.log x) (hC0 : 0 ≤ residueParityIntervalCoefficient q.totient X L T)
+theorem exists_least_residue_refinedGap_GRH {q r K J : ℕ} [NeZero q] (a : (ZMod q)ˣ) (hq : 64 ≤ q)
+    (hu : q ≤ 20000) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {x X s S L T t : ℝ} (hh : (2 : ℝ) ≤ q.totient) (hx : 65536 ≤ x) (hX0 : 0 < X) (hX : X ≤ x)
+    (hs0 : 0 < s) (hs : s ≤ Real.sqrt x) (hS : Real.sqrt x ≤ S) (hL : Real.log q ≤ L)
+    (hT : Real.log x ≤ T) (ht : t ≤ Real.log x)
+    (hC0 : 0 ≤ residueParityIntervalCoefficient q.totient X L T)
     (hR0 : 0 ≤ T - (1 + 23 / 40) + (1839 / 1000 : ℝ) / X + 1 / (20 * s))
     (hroot : Nat.card { z : ZMod q // z ^ 2 = (a : ZMod q) } ≤ r)
     (hJ : (2 * ⌊Real.sqrt x⌋₊) / q ≤ J) (hbase : Real.log x ≤ 4 * Real.log ((q : ℝ) / 2))
@@ -1036,17 +1036,15 @@ theorem exists_least_prime_in_residue_le_of_refined_interval_gap {q r K J : ℕ}
   have hsquare :=
     square_residue_sum_le_half_period_intervals hq2 a hroot hx1 hT J hJ hbase l hl hl0 hperiod
   have hodd :=
-    (AnalyticNumberTheory.Arithmetic.nonsquareCompositeLogWeightedSum_le_odd_powers
-          (zero_lt_one.trans hx1)).trans
-      (oddPrimePowerLogWeightedSum_le_corrected_power_certificates hGRH.riemann hx1 ht hK b c hb hc
-        hpow hsq hpos)
+    (AnalyticNumberTheory.Arithmetic.nonsquareLogSum_le_odd_powers (zero_lt_one.trans hx1)).trans
+      (oddPrimePowerSum_certificates_RH hGRH.riemann hx1 ht hK b c hb hc hpow hsq hpos)
   have hn :=
-    (nonprincipal_residue_logWeightedNorm_sum_le_parity_explicit hq hGRH hx).trans
+    (residueLogNorm_sum_le_parity_explicit hq hGRH hx).trans
       (residueNonprincipalParityUpper_le_interval hq hu hh hx hX0 hX hs0 hs hS hL hT hC0 hR0)
   exact
     exists_least_prime_in_residue_le_of_weighted_gap a hGRH.riemann hx1
       (fun hno ↦
-        (AnalyticNumberTheory.Arithmetic.residue_logWeightedSum_le_square_add_nonsquare (a : ZMod q)
+        (AnalyticNumberTheory.Arithmetic.residue_logSum_le_square_add_nonsquare (a : ZMod q)
               (zero_lt_one.trans hx1) hno).trans
           (add_le_add hsquare hodd))
       hn (hgap.trans_le (cosetPrincipalLower_ge_interval hx hX hS hT))
@@ -1084,9 +1082,9 @@ Supply an upper cutoff, a lower cutoff logarithm, and an upper exponent limit.
 The power check bounds the roots; the sign check justifies extending the exponent sum.
 Apply the corrected analytic estimate with these reflected conditions. This connects
 finite certificate data to the odd contribution in the refined residue gap. -/
-theorem oddPrimePowerLogWeightedSum_le_of_corrected_checks (hRH : RiemannHypothesis) {x : ℝ}
-    (hx : 1 < x) {X t : ℚ} (hX : x ≤ (X : ℝ)) (ht : (t : ℝ) ≤ Real.log x) {K : ℕ}
-    (hK : ⌊Real.log x / Real.log 2⌋₊ ≤ K) (b c : ℕ → ℕ) (hp : oddRootPowerCheck X K b c = true)
+theorem oddPrimePowerLogSum_le_of_checks_RH (hRH : RiemannHypothesis) {x : ℝ} (hx : 1 < x) {X t : ℚ}
+    (hX : x ≤ (X : ℝ)) (ht : (t : ℝ) ≤ Real.log x) {K : ℕ} (hK : ⌊Real.log x / Real.log 2⌋₊ ≤ K)
+    (b c : ℕ → ℕ) (hp : oddRootPowerCheck X K b c = true)
     (hn : correctedOddRootNonnegCheck K t b c = true) :
     (∑ k ∈ (Finset.Icc 3 ⌊Real.log x / Real.log 2⌋₊).filter Odd,
         ∑ p ∈ (Finset.Ioc 0 ⌊x ^ ((1 : ℝ) / k)⌋₊).filter Nat.Prime,
@@ -1095,10 +1093,9 @@ theorem oddPrimePowerLogWeightedSum_le_of_corrected_checks (hRH : RiemannHypothe
         ((k : ℝ) * ((b k : ℝ) + (c k : ℝ) / 20) - 183 / 100 * (t : ℝ) - (k : ℝ) / 2) := by
   have hr := oddRootPowerCheck_sound hp
   exact
-    oddPrimePowerLogWeightedSum_le_corrected_power_certificates hRH hx ht hK (fun k ↦ (b k : ℝ))
-      (fun k ↦ (c k : ℝ)) (fun k _ ↦ Nat.cast_nonneg _) (fun k _ ↦ Nat.cast_nonneg _)
-      (fun k hk ↦ hX.trans (hr k hk).1) (fun k hk ↦ (hr k hk).2)
-      (correctedOddRootNonnegCheck_sound hn)
+    oddPrimePowerSum_certificates_RH hRH hx ht hK (fun k ↦ (b k : ℝ)) (fun k ↦ (c k : ℝ))
+      (fun k _ ↦ Nat.cast_nonneg _) (fun k _ ↦ Nat.cast_nonneg _) (fun k hk ↦ hX.trans (hr k hk).1)
+      (fun k hk ↦ (hr k hk).2) (correctedOddRootNonnegCheck_sound hn)
 
 /-- Check the endpoint sign conditions and a rational upper bound for the sum of
 half-period square weights. The supplied root-count bound and logarithm data determine
@@ -1244,7 +1241,7 @@ Supply certified upper bounds for a prime-free residue sum and the nonprincipal
 character norms, along with cutoff intervals and cutoff at least 65536.
 Combine the checked strict gap with the principal lower bound. This is the final
 connection from refined certificate components to a least-prime bound. -/
-theorem exists_least_prime_in_residue_le_of_interval_gap_check {q : ℕ} [NeZero q] (a : (ZMod q)ˣ)
+theorem exists_least_residue_gapCheck_RH {q : ℕ} [NeZero q] (a : (ZMod q)ˣ)
     (hRH : RiemannHypothesis) {x : ℝ} {X S T U N : ℚ} (hx : 65536 ≤ x) (hX : (X : ℝ) ≤ x)
     (hS : Real.sqrt x ≤ (S : ℝ)) (hT : Real.log x ≤ (T : ℝ))
     (hu :
@@ -1307,9 +1304,9 @@ nonprincipal residue-character norms. For moduli from 64 to 20000 and cutoff at
 least 65536, supply certified logarithm and square-root intervals.
 Combine the parity-averaged estimate, sign-checked interval comparison, and rational
 majorant check. This provides the character input to the least-prime gap criterion. -/
-theorem nonprincipal_residue_logWeightedNorm_sum_le_of_parity_checks {q : ℕ} [NeZero q]
-    (hq : 64 ≤ q) (hu : q ≤ 20000) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {x : ℝ} (hh : (2 : ℝ) ≤ q.totient) (hx : 65536 ≤ x) {X s S L T N : ℚ} (hX0 : (0 : ℝ) < X)
+theorem nonprincipal_residue_norm_le_of_checks_GRH {q : ℕ} [NeZero q] (hq : 64 ≤ q) (hu : q ≤ 20000)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ}
+    (hh : (2 : ℝ) ≤ q.totient) (hx : 65536 ≤ x) {X s S L T N : ℚ} (hX0 : (0 : ℝ) < X)
     (hX : (X : ℝ) ≤ x) (hs0 : (0 : ℝ) < s) (hs : (s : ℝ) ≤ Real.sqrt x) (hS : Real.sqrt x ≤ (S : ℝ))
     (hL : Real.log q ≤ (L : ℝ)) (hT : Real.log x ≤ (T : ℝ))
     (hc : residueParitySignCheck q.totient X s L T = true)
@@ -1319,7 +1316,7 @@ theorem nonprincipal_residue_logWeightedNorm_sum_le_of_parity_checks {q : ℕ} [
       (N : ℝ) := by
   have hi := residueNonprincipalParityUpper_le_of_sign_check hq hu hh hx hX0 hX hs0 hs hS hL hT hc
   exact
-    (nonprincipal_residue_logWeightedNorm_sum_le_parity_explicit hq hGRH hx).trans
+    (residueLogNorm_sum_le_parity_explicit hq hGRH hx).trans
       (hi.trans (residueParityUpperCheck_sound hN))
 
 /-- Check a rational upper bound for the finite corrected odd-root sum.
@@ -1358,7 +1355,7 @@ a certified exponent limit. The checks bound the square and odd contributions,
 the character norms, and the final strict gap.
 Combine the checked analytic estimates and contradict a prime-free residue.
 This is the common soundness theorem for refined small-modulus certificate data. -/
-theorem exists_least_prime_in_residue_le_of_refined_checks {q r J K : ℕ} [NeZero q] (a : (ZMod q)ˣ)
+theorem exists_least_residue_refinedChecks_GRH {q r J K : ℕ} [NeZero q] (a : (ZMod q)ˣ)
     (hq : 64 ≤ q) (hu : q ≤ 20000) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     {x : ℝ} {X P s S L T t V O N : ℚ} (hh : (2 : ℝ) ≤ q.totient) (hx : 65536 ≤ x)
     (hX0 : (0 : ℝ) < X) (hX : (X : ℝ) ≤ x) (hP : x ≤ (P : ℝ)) (hs0 : (0 : ℝ) < s)
@@ -1379,18 +1376,15 @@ theorem exists_least_prime_in_residue_le_of_refined_checks {q r J K : ℕ} [NeZe
   have hq2 : 2 < q := lt_of_lt_of_le (by norm_num only) hq
   have hsq := square_residue_sum_le_of_half_period_check hq2 a hroot hx1 hT hJ hbase l hl hweights
   have ho :=
-    (AnalyticNumberTheory.Arithmetic.nonsquareCompositeLogWeightedSum_le_odd_powers
-          (zero_lt_one.trans hx1)).trans
-      ((oddPrimePowerLogWeightedSum_le_of_corrected_checks hGRH.riemann hx1 hP ht hK b c hpowers
-            hpositive).trans
+    (AnalyticNumberTheory.Arithmetic.nonsquareLogSum_le_odd_powers (zero_lt_one.trans hx1)).trans
+      ((oddPrimePowerLogSum_le_of_checks_RH hGRH.riemann hx1 hP ht hK b c hpowers hpositive).trans
         (correctedOddRootSumCheck_sound hodd))
   have hn :=
-    nonprincipal_residue_logWeightedNorm_sum_le_of_parity_checks hq hu hGRH hh hx hX0 hX hs0 hs hS
-      hL hT hsigns hnorm
-  apply exists_least_prime_in_residue_le_of_interval_gap_check a hGRH.riemann hx hX hS hT _ hn hgap
+    nonprincipal_residue_norm_le_of_checks_GRH hq hu hGRH hh hx hX0 hX hs0 hs hS hL hT hsigns hnorm
+  apply exists_least_residue_gapCheck_RH a hGRH.riemann hx hX hS hT _ hn hgap
   intro hno
   have hc :=
-    (AnalyticNumberTheory.Arithmetic.residue_logWeightedSum_le_square_add_nonsquare (a : ZMod q)
+    (AnalyticNumberTheory.Arithmetic.residue_logSum_le_square_add_nonsquare (a : ZMod q)
           (zero_lt_one.trans hx1) hno).trans
       (add_le_add hsq ho)
   simpa only [Rat.cast_add] using hc

@@ -167,8 +167,8 @@ omit [NeZero q] in
 /-- Under the no-small-prime hypothesis, a principal term at an index at most `X`
 outside the subgroup image is zero. Nonzero terms would be coprime prime powers,
 whose prime bases and powers already lie in `H`. This removes the indicator below `X`. -/
-theorem principal_summand_eq_zero_of_not_residue_of_noSmallPrimes (K : MellinKernel)
-    (H : Subgroup (ZMod q)ˣ) (x : ℝ) {X : ℝ}
+theorem principal_summand_zero_of_no_residue (K : MellinKernel) (H : Subgroup (ZMod q)ˣ) (x : ℝ)
+    {X : ℝ}
     (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p)
     {n : ℕ} (hbound : (n : ℝ) ≤ X) (hm : ¬NumberTheory.residueInSubgroup q H n) :
     K.summand (1 : DirichletCharacter ℂ q) x n = 0 := by
@@ -186,8 +186,8 @@ omit [NeZero q] in
 /-- Under the no-small-prime hypothesis, the subgroup indicator does not change
 any real principal term below `X`. Inside `H` it acts as the identity; outside,
 the principal term is zero. This identifies the entire finite Mangoldt sum. -/
-theorem subgroup_indicator_eq_principal_of_noSmallPrimes (K : MellinKernel) (H : Subgroup (ZMod q)ˣ)
-    (x : ℝ) {X : ℝ}
+theorem subgroup_indicator_eq_principal_noSmall (K : MellinKernel) (H : Subgroup (ZMod q)ˣ) (x : ℝ)
+    {X : ℝ}
     (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p)
     {n : ℕ} (hbound : (n : ℝ) ≤ X) :
     {m : ℕ | NumberTheory.residueInSubgroup q H m}.indicator
@@ -196,8 +196,7 @@ theorem subgroup_indicator_eq_principal_of_noSmallPrimes (K : MellinKernel) (H :
   by_cases hm : NumberTheory.residueInSubgroup q H n
   · exact Set.indicator_of_mem (s := {m : ℕ | NumberTheory.residueInSubgroup q H m}) hm _
   · rw [Set.indicator_of_notMem (s := {m : ℕ | NumberTheory.residueInSubgroup q H m}) hm,
-      principal_summand_eq_zero_of_not_residue_of_noSmallPrimes K H x hsmall hbound hm,
-      Complex.zero_re]
+      principal_summand_zero_of_no_residue K H x hsmall hbound hm, Complex.zero_re]
 
 /-- If every eligible prime up to `X` lies in `H`, its index times the principal
 finite smoothed sum is at most the real annihilator average of the full series.
@@ -218,7 +217,7 @@ theorem principal_sum_le_average_of_noSmallPrimes (K : MellinKernel) (H : Subgro
     have hle : (n : ℝ) ≤ X :=
       (Nat.le_floor_iff' (Nat.one_le_iff_ne_zero.mp (Finset.mem_Icc.mp hn).1)).mp
         (Finset.mem_Icc.mp hn).2
-    exact subgroup_indicator_eq_principal_of_noSmallPrimes K H x hsmall hle
+    exact subgroup_indicator_eq_principal_noSmall K H x hsmall hle
   rw [← he]
   exact subgroup_indicator_sum_le_average K H hx _
 

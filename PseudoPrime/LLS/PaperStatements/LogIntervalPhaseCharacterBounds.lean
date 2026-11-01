@@ -47,8 +47,8 @@ theorem gamma_primitive_sum_re_le_log_interval_prefix {q m : ℕ} [NeZero m] (hq
   have hpos : ∀ ab ∈ l, (0 : ℚ) < ab.1 := fun ab hab ↦
     (by norm_num only : (0 : ℚ) < 1 / 2).trans (hl ab hab)
   have hz :=
-    gammaMellinKernel.neg_re_oscillatingZeroSum_le_finiteResolvent hm2 hGRH hp hne hinv
-      (by linarith only [hx]) (Analysis.logarithmicPhaseExtension l ((5 / 16) * (r1 - r0) ^ 2))
+    gammaMellinKernel.negRe_zeroSum_le_resolvent_GRH hm2 hGRH hp hne hinv (by linarith only [hx])
+      (Analysis.logarithmicPhaseExtension l ((5 / 16) * (r1 - r0) ^ 2))
       (fun ab hab ↦
         (by norm_num only : (0 : ℚ) < 1 / 2).trans
           (Analysis.logarithmicPhaseExtension_admissible hl _ ab hab))
@@ -59,11 +59,11 @@ theorem gamma_primitive_sum_re_le_log_interval_prefix {q m : ℕ} [NeZero m] (hq
           Analysis.gammaHalf_phase_majorant_on_log_interval (by linarith only [hx]) l r0 r1 hlo hhi
             ha hbphase t)
   have hmz :=
-    AnalyticNumberTheory.DirichletLFunction.logarithmicPhaseExtension_zeroMass_le hm2 (hGRH m χ hp)
-      hp hne hinv l hpos hd0
+    AnalyticNumberTheory.DirichletLFunction.logPhaseExtension_mass_le_RH hm2 (hGRH m χ hp) hp hne
+      hinv l hpos hd0
   have hb :=
-    AnalyticNumberTheory.DirichletLFunction.finiteSignedResolvent_zeroMass_le_prefix hm2
-      (hGRH m χ hp) hp hne hinv l hl (Analysis.finiteSignedMangoldtWeight_nonneg l hW) B
+    AnalyticNumberTheory.DirichletLFunction.signedResolvent_mass_le_prefix_RH hm2 (hGRH m χ hp) hp
+      hne hinv l hl (Analysis.finiteSignedMangoldtWeight_nonneg l hW) B
   have hr := re_gamma_primitive_remainder_le_conductor_free hq hm hmq hp hne hinv hGRH hx
   simp only [Complex.add_re] at hr
   dsimp only [AnalyticNumberTheory.DirichletLFunction.finiteSignedPrefixBudget]

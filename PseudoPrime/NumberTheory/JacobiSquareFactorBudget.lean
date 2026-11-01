@@ -34,7 +34,7 @@ theorem JacobiCharacterArithmeticData.prime_dvd_conductor_iff {n : ℕ} {hn : Od
     (hpn : p ∣ n) : p ∣ (complexQuadraticCharacter n hn).conductor ↔ p ∣ bridge.squarefreePart := by
   have hdvd : bridge.squarefreePart ∣ n :=
     ⟨bridge.squareFactor ^ 2, by simpa only [Nat.mul_comm] using bridge.squarefreePart_sq_mul.symm⟩
-  rw [complexQuadraticCharacter_conductor_eq_discriminant bridge hdvd, bridge.discriminant_eq]
+  rw [complexQuadratic_conductor_eq_discriminant bridge hdvd, bridge.discriminant_eq]
   by_cases hd4 : bridge.squarefreePart % 4 = 1
   · rw [positiveFundamentalDiscriminant_eq_self hd4]
   · rw [positiveFundamentalDiscriminant_eq_four_mul hd4]
@@ -49,14 +49,14 @@ theorem JacobiCharacterArithmeticData.prime_dvd_conductor_iff {n : ℕ} {hn : Od
 /-- The conductor logarithm plus twice the square-factor logarithm is at
 most log n+log 4. Combine the exact input decomposition with conductor<=4d.
 This retains the same square-factor saving in the analytic level and cost budgets. -/
-theorem JacobiCharacterArithmeticData.log_conductor_add_square_factor_le {n : ℕ} {hn : Odd n}
+theorem JacobiCharacterArithmeticData.log_conductor_square_le {n : ℕ} {hn : Odd n}
     {hns : ¬IsSquare n} (bridge : JacobiCharacterArithmeticData n hn hns) :
     Real.log (complexQuadraticCharacter n hn).conductor + 2 * Real.log bridge.squareFactor ≤
       Real.log n + Real.log 4 := by
   have hdvd : bridge.squarefreePart ∣ n :=
     ⟨bridge.squareFactor ^ 2, by simpa only [Nat.mul_comm] using bridge.squarefreePart_sq_mul.symm⟩
-  rw [complexQuadraticCharacter_conductor_eq_discriminant bridge hdvd]
-  have hlog := bridge.log_discriminant_le_y_add_log_four
+  rw [complexQuadratic_conductor_eq_discriminant bridge hdvd]
+  have hlog := bridge.log_discr_le_y_add_log_four
   dsimp only [JacobiCharacterArithmeticData.y] at hlog
   have he :=
     AnalyticNumberTheory.Arithmetic.log_square_factor_decomposition bridge.squarefreePart_pos.ne'
@@ -68,7 +68,7 @@ nonnegative excesses, local costs at conductor primes and other input primes
 sum to at most b log n+(a-b)log d plus the excesses. Identify the conductor
 support before applying the square-factor budget. This supplies arithmetic input
 to actual negative Jacobi witness bounds. -/
-theorem JacobiCharacterArithmeticData.sum_prime_cost_le_conductor_square_budget {n : ℕ} {hn : Odd n}
+theorem JacobiCharacterArithmeticData.primeCost_le_conductor_square {n : ℕ} {hn : Odd n}
     {hns : ¬IsSquare n} (bridge : JacobiCharacterArithmeticData n hn hns) (F : ℕ → ℝ) {a b : ℝ}
     (ha : 0 ≤ a) (hb : 0 ≤ b) (T : Finset ℕ) (e : ℕ → ℝ) (he : ∀ p ∈ T, 0 ≤ e p)
     (hR :
@@ -82,7 +82,7 @@ theorem JacobiCharacterArithmeticData.sum_prime_cost_le_conductor_square_budget 
     (∑ p ∈ n.primeFactors, F p) ≤
       b * Real.log n + (a - b) * Real.log bridge.squarefreePart + ∑ p ∈ T, e p := by
   apply
-    AnalyticNumberTheory.Arithmetic.sum_prime_cost_le_square_factor_budget_add_excess
+    AnalyticNumberTheory.Arithmetic.sum_prime_cost_le_square_budget_add_excess
       bridge.squarefreePart_pos.ne' bridge.squareFactor_pos.ne' bridge.squarefreePart_sq_mul F ha hb
       T e he
   · intro p hp hd

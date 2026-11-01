@@ -58,9 +58,9 @@ theorem unit_half_pow_eq_one_of_twoAdic_lt {p E : ℕ} [Fact p.Prime] (hpOdd : O
 the two-adic valuation of twice its exponent is smaller than that of p-1.
 Square the common sign, reduce the resulting power identity and use order
 divisibility. This is the local containment for the unequal-valuation branch. -/
-theorem signSubgroup_unit_local_half_pow_eq_one_of_twoAdic_lt {n p E : ℕ} [Fact p.Prime]
-    (hpOdd : Odd p) (hpn : p ∣ n) (hE : E ≠ 0) (hv : padicValNat 2 (2 * E) < padicValNat 2 (p - 1))
-    (u : (ZMod n)ˣ) (hu : u ∈ signSubgroup n E) : (ZMod.unitsMap hpn u) ^ (p / 2) = 1 := by
+theorem signSubgroup_local_half_pow_one_of_twoAdic_lt {n p E : ℕ} [Fact p.Prime] (hpOdd : Odd p)
+    (hpn : p ∣ n) (hE : E ≠ 0) (hv : padicValNat 2 (2 * E) < padicValNat 2 (p - 1)) (u : (ZMod n)ˣ)
+    (hu : u ∈ signSubgroup n E) : (ZMod.unitsMap hpn u) ^ (p / 2) = 1 := by
   have hpow : u ^ (2 * E) = 1 := by
     change u ^ E = 1 ∨ u ^ E = -1 at hu
     rw [Nat.mul_comm 2 E, pow_mul]
@@ -76,9 +76,9 @@ two-adic valuations, every ambient strong MR pass reduces into the p/2-power
 kernel modulo p. The smaller factor supplies the canonical common-sign subgroup;
 its doubled exponent retains that smaller valuation. This removes a supplied
 local square-residue premise from the unequal-valuation witness branch. -/
-theorem strongMillerRabinPass_mem_local_half_kernel_of_twoAdic_lt {n p q a : ℕ} [Fact p.Prime]
-    [Fact q.Prime] (hn : 1 < n) (hnOdd : Odd n) (hpOdd : Odd p) (hqOdd : Odd q) (hpn : p ∣ n)
-    (hqn : q ∣ n) (hv : padicValNat 2 (q - 1) < padicValNat 2 (p - 1))
+theorem strongPass_mem_local_half_kernel_of_twoAdic_lt {n p q a : ℕ} [Fact p.Prime] [Fact q.Prime]
+    (hn : 1 < n) (hnOdd : Odd n) (hpOdd : Odd p) (hqOdd : Odd q) (hpn : p ∣ n) (hqn : q ∣ n)
+    (hv : padicValNat 2 (q - 1) < padicValNat 2 (p - 1))
     (hpass : StrongMillerRabinPass n (a : ZMod n)) :
     ∃ v : (ZMod p)ˣ,
       v ∈ (powMonoidHom (p / 2) : (ZMod p)ˣ →* (ZMod p)ˣ).ker ∧ (v : ZMod p) = (a : ZMod p) := by
@@ -97,7 +97,7 @@ theorem strongMillerRabinPass_mem_local_half_kernel_of_twoAdic_lt {n p q a : ℕ
   obtain ⟨u, hu, hua⟩ :=
     strongMillerRabinPass_mem_signSubgroup hn hnOdd hpass (Fact.out : q.Prime) hqOdd hqn
   refine ⟨ZMod.unitsMap hpn u, ?_, ?_⟩
-  · exact signSubgroup_unit_local_half_pow_eq_one_of_twoAdic_lt hpOdd hpn hE (hval.trans_lt hv) u hu
+  · exact signSubgroup_local_half_pow_one_of_twoAdic_lt hpOdd hpn hE (hval.trans_lt hv) u hu
   · rw [ZMod.unitsMap_val, hua, ZMod.cast_natCast hpn]
 
 /-- At an odd prime, the half-exponent power kernel is a proper subgroup.

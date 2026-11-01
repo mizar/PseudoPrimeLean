@@ -28,10 +28,10 @@ theorem exists_odd_prime_ne_one_of_even_gamma_log_22221 {q : ℕ} [NeZero q] (hq
     (hlogq : Real.log q ≤ L + 7 / 5) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * L ^ 2 ∧ χ p ≠ 1 := by
   apply
-    exists_odd_prime_ne_one_of_log_ratio_character_budget χ hquad h2 hGRH (by linarith only [hL])
+    exists_oddPrime_neOne_logRatioBudget_GRH χ hquad h2 hGRH (by linarith only [hL])
       (nonOne_log_ratio_of_ge_22221 hL) hlogq (C := 541 / 50)
   · exact
-      (PaperStatements.gamma_primitiveCharacter_sum_re_lt_common_euler_cost hq χ hne hGRH
+      (PaperStatements.gammaCharacterSum_re_lt_common_euler_cost hq χ hne hGRH
           (by nlinarith only [hL, sq_nonneg (L - 22221)])
           (gamma_even_common_cost_lt_precise hGRH.riemann
             ((NumberTheory.primitiveCharacter_even_iff χ).mpr heven))).le

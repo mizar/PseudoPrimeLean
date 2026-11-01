@@ -167,7 +167,7 @@ theorem triangular_central_gamma_exp_re_le_profile {q : ℕ} (χ : DirichletChar
               (Analysis.triangularMellinFunction a (Complex.I * t) *
                 (Real.exp (e * l) : ℂ) ^ (Complex.I * t)))).re ≤
       -(3 / 4) * (2 * a - l) + 9 / 2 := by
-  obtain ⟨b, hb, hb1, hg⟩ := triangular_central_gammaIntegral_eq_weight_series χ
+  obtain ⟨b, hb, hb1, hg⟩ := triangular_gamma_eq_weightSeries χ
   have hp : triangularKernelProfile a (Real.exp (e * l)) = 2 * a - l := by
     unfold triangularKernelProfile
     rcases he with rfl | rfl
@@ -214,8 +214,8 @@ theorem triangular18_gammaIntegral_re_le_interior {q : ℕ} (χ : DirichletChara
 /-- For every character, 1≤x with log x≤36 and an admissible right line, the
 inverse-scale alpha-18 Gamma integral has real part at most -3(36-log x)/4+9/2.
 The positive-scale contour shift and negative logarithmic coordinate give this bound. -/
-theorem triangular18_inverse_gammaIntegral_re_le_interior {q : ℕ} (χ : DirichletCharacter ℂ q)
-    {b x : ℝ} (hb : 0 ≤ b) (hbK : b ≤ 5 / 8) (hx : 1 ≤ x) (hlog : Real.log x ≤ 36) :
+theorem triangular18_inverseGamma_interior_bound {q : ℕ} (χ : DirichletCharacter ℂ q) {b x : ℝ}
+    (hb : 0 ≤ b) (hbK : b ≤ 5 / 8) (hx : 1 ≤ x) (hlog : Real.log x ≤ 36) :
     let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
     (((1 / (2 * Real.pi) : ℝ) : ℂ) *
           (∫ t : ℝ,

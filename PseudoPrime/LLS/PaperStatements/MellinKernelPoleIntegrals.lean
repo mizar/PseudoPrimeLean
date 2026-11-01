@@ -150,8 +150,7 @@ theorem poleIntegral_eq_central_of_neg (K : MellinKernel) {p b x : ℝ} (hp : p 
   have htop := tendsto_pole_horizontalIntegral K hb hl0 hbK hx p 1 (Or.inl rfl)
   have hbot := tendsto_pole_horizontalIntegral K hb hl0 hbK hx p (-1) (Or.inr rfl)
   have ht :=
-    AnalyticNumberTheory.RectangleGeometry.tendsto_rectangleBoundaryIntegral_of_horizontal_limits
-      (K := F) (a := 0) (b := b) T
+    AnalyticNumberTheory.RectangleGeometry.tendsto_boundaryIntegral (K := F) (a := 0) (b := b) T
       (Filter.tendsto_atTop_add_const_right _ 1 tendsto_natCast_atTop_atTop)
       (by
         simpa only [F, T, neg_one_mul, Complex.ofReal_neg, neg_mul, sub_eq_add_neg, one_mul] using
@@ -162,8 +161,7 @@ theorem poleIntegral_eq_central_of_neg (K : MellinKernel) {p b x : ℝ} (hp : p 
     AnalyticNumberTheory.RectangleGeometry.rectangleBoundaryIntegral F ((0 : ℂ) - T n * Complex.I)
         ((b : ℂ) + T n * Complex.I) =
       0 := by
-    apply
-      AnalyticNumberTheory.RectangleGeometry.rectangleBoundaryIntegral_eq_zero_of_differentiableOn
+    apply AnalyticNumberTheory.RectangleGeometry.boundaryIntegral_zero_of_holomorphic
     intro s hs
     have hsr : 0 ≤ s.re ∧ s.re ≤ b := by
       have hs' := hs.1
@@ -228,7 +226,7 @@ theorem neg_pole_rectangleBoundaryIntegral_eq (K : MellinKernel) {p b T x : ℝ}
     exact ⟨⟨hp.le, hpb.le⟩, ⟨by linarith only [hT], hT.le⟩⟩
   have ho : (p : ℂ) ∈ RectangleGeometry.rectangleOpenBox z w := by
     apply
-      RectangleGeometry.mem_rectangleOpenBox_of_mem_closedBox_of_ne
+      RectangleGeometry.mem_openBox_of_closed_of_ne_sides
         (by
           rw [hzre, hwre]; exact hb)
         (by
@@ -315,8 +313,7 @@ theorem poleIntegral_eq_central_add_residue (K : MellinKernel) {p b x : ℝ} (hp
   have htop := (tendsto_pole_horizontalIntegral K hb hl0 hbK hx p 1 (Or.inl rfl)).neg
   have hbot := (tendsto_pole_horizontalIntegral K hb hl0 hbK hx p (-1) (Or.inr rfl)).neg
   have ht :=
-    AnalyticNumberTheory.RectangleGeometry.tendsto_rectangleBoundaryIntegral_of_horizontal_limits
-      (K := F) (a := 0) (b := b) T
+    AnalyticNumberTheory.RectangleGeometry.tendsto_boundaryIntegral (K := F) (a := 0) (b := b) T
       (Filter.tendsto_atTop_add_const_right _ 1 tendsto_natCast_atTop_atTop)
       (by
         simpa only [F, T, neg_one_mul, Complex.ofReal_neg, neg_mul, sub_eq_add_neg, one_mul,
@@ -355,8 +352,8 @@ theorem poleIntegral_eq_central_add_residue (K : MellinKernel) {p b x : ℝ} (hp
 and subtraction of `K(p)x^p` leave the normalized central pole integral.
 Apply the residue shift identity and cancel the nonzero factor `2π`.
 This expresses the principal main-term remainder as a central integral. -/
-theorem normalized_poleIntegral_sub_residue_eq_central (K : MellinKernel) {p b x : ℝ} (hp : 0 < p)
-    (hpb : p < b) (hbK : b ≤ 1 / 2 + K.delta) (hx : 1 ≤ x) :
+theorem poleIntegral_sub_residue_central (K : MellinKernel) {p b x : ℝ} (hp : 0 < p) (hpb : p < b)
+    (hbK : b ≤ 1 / 2 + K.delta) (hx : 1 ≤ x) :
     ((1 / (2 * Real.pi) : ℝ) : ℂ) *
           (∫ t : ℝ,
             (1 / (((b : ℂ) + Complex.I * t) - (p : ℂ))) *
@@ -393,7 +390,7 @@ theorem exists_norm_poleIntegral_sub_residue_le (K : MellinKernel) {p : ℝ} (hp
   obtain ⟨C, hC, hb⟩ := exists_norm_central_poleIntegral_le K hp.ne'
   refine ⟨C, hC, ?_⟩
   intro b x hpb hbK hx
-  rw [normalized_poleIntegral_sub_residue_eq_central K hp hpb hbK hx]
+  rw [poleIntegral_sub_residue_central K hp hpb hbK hx]
   exact hb (zero_lt_one.trans_le hx)
 
 /-- For a fixed negative real pole, the normalized pole integral is uniformly

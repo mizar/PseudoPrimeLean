@@ -105,8 +105,8 @@ theorem heilbronn_dyadic_band_envelope_sum_le {p : ℕ} [Fact p.Prime] (hodd : O
         ((heilbronnCorrelationLevel p Pj).card : ℝ) * ((2 : ℝ) ^ j) ^ 3 ≤ (262144 : ℝ) * (p : ℝ) ^ 3
       exact_mod_cast hb.2
   have hsum :=
-    Analysis.dyadic_fourthRoot_sum_le_of_balanced_band_budgets (n := Nat.log2 p) hEpos
-      (by exact_mod_cast hEB) A hA (fun j ↦ (hbudget j).1) (fun j ↦ (hbudget j).2)
+    Analysis.dyadic_fourthRoot_sum_le (n := Nat.log2 p) hEpos (by exact_mod_cast hEB) A hA
+      (fun j ↦ (hbudget j).1) (fun j ↦ (hbudget j).2)
   have hpReal : (0 : ℝ) ≤ p := Nat.cast_nonneg p
   have hrootB : Real.sqrt ((262144 : ℝ) * (p : ℝ) ^ 3) = 512 * (p : ℝ) * Real.sqrt p := by
     rw [Real.sqrt_mul (by norm_num only : (0 : ℝ) ≤ 262144)]
@@ -414,7 +414,7 @@ terms using the mass budget, and sum the Fourier envelopes by the preceding
 band-free estimate.
 Role: Establishes the weighted analogue of the mixed third-energy estimate
 needed by the analysis7 amplification argument. -/
-theorem weighted_dyadic_band_incidence_sum_le_of_card_mass {p : ℕ} [Fact p.Prime] (hodd : Odd p)
+theorem weighted_dyadic_incidence_sum_le {p : ℕ} [Fact p.Prime] (hodd : Odd p)
     (f : ZMod (p ^ 2) → ℕ)
     (hcard :
       (∑ j ∈ Finset.range (Nat.log2 p + 1),
@@ -497,8 +497,7 @@ theorem weighted_dyadic_band_incidence_sum_le_of_card_mass {p : ℕ} [Fact p.Pri
         intro hz
         exact Nat.not_le_of_gt (Nat.pow_pos (by decide : 0 < 2)) hz.1
       have hinc :=
-        weightedResidueDifferenceIncidence_le_correlation_level f
-          (fun v ↦ 2 ^ j ≤ v ∧ v < 2 ^ (j + 1)) hPzero
+        weightedIncidence_le_correlation_level f (fun v ↦ 2 ^ j ≤ v ∧ v < 2 ^ (j + 1)) hPzero
       have hfactor : 0 ≤ 4 * ((2 : ℝ) ^ j) ^ 2 := by positivity
       exact mul_le_mul_of_nonneg_left hinc hfactor
     _ =
@@ -538,7 +537,7 @@ theorem weighted_dyadic_band_incidence_sum_le {p : ℕ} [Fact p.Prime] (hodd : O
           (heilbronnCorrelationLevel p (fun v ↦ 2 ^ j ≤ v ∧ v < 2 ^ (j + 1))).card) ≤
       heilbronnEnergy p := by
     exact_mod_cast hcardNat
-  exact weighted_dyadic_band_incidence_sum_le_of_card_mass hodd f hcard
+  exact weighted_dyadic_incidence_sum_le hodd f hcard
 
 /-- Expand a weighted difference incidence as a real sum over its rows.
 
@@ -548,11 +547,11 @@ Proof: Rewrite the incidence as a cast natural pair sum and distribute the
 cast over its finite sums and products.
 Role: Identifies the band-filtered row sums in the dyadic correlation cover.
 -/
-theorem weightedResidueDifferenceIncidence_eq_filtered_real_sum {N : ℕ} [NeZero N] (f : ZMod N → ℕ)
+theorem weightedIncidence_eq_filtered_real_sum {N : ℕ} [NeZero N] (f : ZMod N → ℕ)
     (Q : Finset (ZMod N)) :
     weightedResidueDifferenceIncidence f Q =
       ∑ x : ZMod N, ∑ y ∈ Finset.univ.filter (fun y ↦ x - y ∈ Q), (f x : ℝ) * f y := by
-  rw [weightedResidueDifferenceIncidence_eq_filtered_sum]
+  rw [weightedIncidence_eq_filtered_sum]
   simp only [Nat.cast_sum, Nat.cast_mul]
 
 /-- The weighted sum of squared nonzero difference correlations is bounded by
@@ -610,7 +609,7 @@ theorem weighted_pair_correlation_square_le_bands {p : ℕ} [Fact p.Prime] (f : 
         apply Finset.sum_congr rfl
         intro x hx
         rw [hfilter]
-      _ = _ := (weightedResidueDifferenceIncidence_eq_filtered_real_sum f _).symm
+      _ = _ := (weightedIncidence_eq_filtered_real_sum f _).symm
   have hcast :
     (↑(∑ x : ZMod (p ^ 2), ∑ y ∈ Sx x, f x * f y * (r x y) ^ 2) : ℝ) ≤
       ∑ x : ZMod (p ^ 2),

@@ -121,7 +121,7 @@ theorem coupled_level_bound_of_logarithmic_root_le {L y c : ℝ} (hL : 0 < L) (h
 /-- Input: a logarithmic level at least 6.39. Claim: its finer root is at least 36/5.
 Proof: certify the tangent endpoint and use the tangent on the entire half-line.
 Role: retain the cutoff after the adaptive radius reduction. -/
-theorem finerPart2Root_ge_thirty_six_fifths_of_639_div_100_le {L : ℝ} (hL : (639 / 100 : ℝ) ≤ L) :
+theorem finerPart2Root_ge_36_5_of_639_100_le {L : ℝ} (hL : (639 / 100 : ℝ) ≤ L) :
     (36 / 5 : ℝ) ≤ finerPart2CutoffRoot L := by
   have hL0 : 0 < L := by linarith only [hL]
   have hc : rationalLogIntervalCheck (639 / 100) 3 10 (185 / 100) (186 / 100) = true := by

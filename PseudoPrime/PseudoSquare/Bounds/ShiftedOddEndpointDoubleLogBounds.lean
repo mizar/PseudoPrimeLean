@@ -37,19 +37,17 @@ theorem log_defect_le_shifted_half_sq_of_two_zero {N : ℕ} (χ : DirichletChara
     exact
       ht p hprime hodd
         (LLS.PaperStatements.cast_le_of_mem_root_cutoff hx1 (Finset.mem_Icc.mp hk).1 hp)
-  rw [logWeightedMangoldtSum_sub_characterLogWeightedSum_re_eq_twoAdicCorrection_of_eq_one x χ hx
-      ho]
+  rw [logMangoldt_sub_re_eq_twoCorrection_of_one x χ hx ho]
   exact
-    twoAdicLogCorrection_le_shifted_half_log_sq_of_apply_two_eq_zero x χ
-      ((by norm_num only : (0 : ℝ) < 2).trans_le hx).ne' h2
+    logTwoCorrection_le_shifted_sq_of_zero x χ ((by norm_num only : (0 : ℝ) < 2).trans_le hx).ne' h2
 
 /-- Under GRH, negative endpoint limits in the zero and nonzero branches
 give an odd non-one Jacobi prime. The zero branch retains the half-log-two
 shift; the nonzero branch uses the uniform sharp half-square defect.
 The conductor bounds remain correlated with the primitive value at two. -/
-theorem exists_odd_prime_jacobi_ne_one_of_shifted_conductor_branch_limits_neg {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x Y : ℝ}
-    (hx : 1 < x) (hY : 64 ≤ Y) (hYx : Y ≤ x)
+theorem exists_oddPrime_neOne_shiftedBranches_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x Y : ℝ} (hx : 1 < x)
+    (hY : 64 ≤ Y) (hYx : Y ≤ x)
     (hzero :
       LLS.PaperStatements.oddEndpointTwoCostLimit (4 * n) x Y (Real.log 2)
           ((Real.log x - Real.log 2 / 2) ^ 2 / 2) <
@@ -82,9 +80,8 @@ theorem exists_odd_prime_jacobi_ne_one_of_shifted_conductor_branch_limits_neg {n
         LLS.PaperStatements.quadraticTwoReciprocalCost (χ.primitiveCharacter 2) ≤ Real.log 2 := by
         rw [LLS.PaperStatements.quadraticTwoReciprocalCost, ite_eq_left h2]
       exact
-        LLS.PaperStatements.exists_odd_prime_of_twoCostLimit_neg_of_defect_bound χ hq hne hquad hGRH
-          hx hY hYx hC (fun ht ↦ log_defect_le_shifted_half_sq_of_two_zero χ hx2 h2 ht)
-          (hm.trans_lt hzero)
+        LLS.PaperStatements.exists_odd_prime_of_twoCost_defect_gap_GRH χ hq hne hquad hGRH hx hY hYx
+          hC (fun ht ↦ log_defect_le_shifted_half_sq_of_two_zero χ hx2 h2 ht) (hm.trans_lt hzero)
     · have hqle := NumberTheory.primitiveQuadratic_conductor_le_of_two_ne_zero hn h2
       have hm :=
         LLS.PaperStatements.oddEndpointTwoCostLimit_mono_level (c := (4 / 3 : ℝ) * Real.log 2) (D :=
@@ -93,8 +90,7 @@ theorem exists_odd_prime_jacobi_ne_one_of_shifted_conductor_branch_limits_neg {n
         LLS.PaperStatements.exists_odd_prime_of_sharp_twoCostLimit_neg χ hq hne hquad hGRH hx hY hYx
           (LLS.PaperStatements.quadraticTwoReciprocalCost_le_four_thirds _) (hm.trans_lt hnonzero)
   obtain ⟨p, hp, ho, hb, hv⟩ := hex
-  exact
-    ⟨p, hp, ho, hb, NumberTheory.jacobi_ne_one_of_primitiveQuadraticCharacter_ne_one hn hp ho hv⟩
+  exact ⟨p, hp, ho, hb, NumberTheory.jacobi_ne_one_of_primitive_ne_one hn hp ho hv⟩
 
 /-- For an odd nonsquare n≤B under GRH and log B≥96, a non-one odd prime
 lies below the squared 37/5 radius at B. Combine the two rational polynomial
@@ -121,13 +117,12 @@ theorem exists_prime_ne_one_le_shiftedDoubleLog_of_le {n B : ℕ} (hn : Odd n) (
     norm_num only [Nat.cast_ofNat]
     ring
   have hp :=
-    LLS.PaperStatements.shiftedOddEndpoint_doubleLog_branch_polynomials_pos hL
+    LLS.PaperStatements.shiftedOdd_doubleLog_branch_polynomials_pos hL
       (show (69 / 100 : ℝ) ≤ Real.log 2 by linarith only [Real.log_two_gt_d9])
       (show Real.log 2 ≤ (7 / 10 : ℝ) by linarith only [Real.log_two_lt_d9])
   rw [← hlog4] at hp
-  have h0 :=
-    LLS.PaperStatements.oddEndpointTwoCostLimit_neg_of_rational_polynomial_pos (4 * B) hy1 hp.1
-  have h1 := LLS.PaperStatements.oddEndpointTwoCostLimit_neg_of_rational_polynomial_pos B hy1 hp.2
+  have h0 := LLS.PaperStatements.oddEndpointTwoCost_neg_of_rational_poly (4 * B) hy1 hp.1
+  have h1 := LLS.PaperStatements.oddEndpointTwoCost_neg_of_rational_poly B hy1 hp.2
   have hm0 :=
     LLS.PaperStatements.oddEndpointTwoCostLimit_mono_level (c := Real.log 2) (D :=
       (2 * Real.log y - Real.log 2 / 2) ^ 2 / 2) (Nat.mul_pos (by decide : 0 < 4) hn.pos)
@@ -151,8 +146,7 @@ theorem exists_prime_ne_one_le_shiftedDoubleLog_of_le {n B : ℕ} (hn : Odd n) (
     rw [he]
     exact hm1.trans_lt h1
   obtain ⟨p, hp, ho, hb, hv⟩ :=
-    exists_odd_prime_jacobi_ne_one_of_shifted_conductor_branch_limits_neg hn hns hGRH hx h64
-      (le_refl _) hz hne
+    exists_oddPrime_neOne_shiftedBranches_GRH hn hns hGRH hx h64 (le_refl _) hz hne
   exact ⟨p, hp, ho, hv, hb⟩
 
 /-- Under GRH for an odd nonsquare input with log n≥96, the least odd-prime

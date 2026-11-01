@@ -22,7 +22,7 @@ nonnegative budget constants bound the primitive remainder sum by the level time
 one remainder at that level. Each primitive conductor is smaller, and the image
 has cardinality at most the original level. This removes dependent labels from
 the remainder that must be absorbed uniformly. -/
-theorem sum_primitive_remainders_le_level_budget {q Q H : ℕ} [NeZero q] (hq : q ≤ Q)
+theorem primitiveRemainders_level_bound {q Q H : ℕ} [NeZero q] (hq : q ≤ Q)
     (S : Finset (DirichletCharacter ℂ q)) {x σ C K T : ℝ} (hx : 2 ≤ x) (hC : 0 ≤ C) (hK : 0 ≤ K)
     (hT : 0 ≤ T) :
     (∑ p ∈ S.image (Arithmetic.boundedPrimitiveCharacterLabel hq),
@@ -37,15 +37,14 @@ theorem sum_primitive_remainders_le_level_budget {q Q H : ℕ} [NeZero q] (hq : 
     intro p hp
     obtain ⟨χ, hχ, rfl⟩ := Finset.mem_image.mp hp
     exact
-      primitiveHalfScaleRemainderBudget_mono_modulus (Nat.succ_pos _)
+      halfScaleRemainder_mono_modulus (Nat.succ_pos _)
         (Arithmetic.boundedPrimitiveCharacterLabel_level_le hq χ) hx hK hT
   rw [Finset.sum_const, nsmul_eq_mul] at hs
   have hcard : (((S.image (Arithmetic.boundedPrimitiveCharacterLabel hq)).card : ℕ) : ℝ) ≤ q := by
     exact_mod_cast Finset.card_image_le.trans (Arithmetic.card_character_family_le_level S)
   exact
     hs.trans
-      (mul_le_mul_of_nonneg_right hcard
-        (primitiveHalfScaleRemainderBudget_nonneg (NeZero.pos q) hx hC hK hT))
+      (mul_le_mul_of_nonneg_right hcard (halfScaleRemainder_nonneg (NeZero.pos q) hx hC hK hT))
 
 /-- At any real scale and nonzero level, the explicit family level-change
 correction is at most `q^2 log(x)^2`. Bound both the family size and the distinct
@@ -71,7 +70,7 @@ four. Preserve the leading gap-controlled and arbitrary-precision errors, bound
 the primitive remainder sum by one level majorant, and bound the level correction
 quadratically. The remaining expression depends only on the level and the chosen
 scale parameters, so its uniform absorption is a scalar analytic problem. -/
-theorem exists_character_family_scalar_half_scale_budget :
+theorem exists_halfScalar :
     ∃ A B C K T : ℝ,
       0 < A ∧
         0 < B ∧
@@ -98,7 +97,7 @@ theorem exists_character_family_scalar_half_scale_budget :
                                   (∀ χ ∈ S, χ ≠ 1) →
                                     (∀
                                       e ∈
-                                        exceptionalFamilyConductorsAwayFromFour (H + 1)
+                                        exceptionalExceptFour (H + 1)
                                           (1 - c / Real.log ((H + 1 : ℕ) : ℝ)),
                                       ¬e ∣ q) →
                                     (∑ χ ∈ S,
@@ -110,7 +109,7 @@ theorem exists_character_family_scalar_half_scale_budget :
                                         ε * x +
                                         (q : ℝ) * primitiveHalfScaleRemainderBudget q x σ H C K T +
                                         (q : ℝ) ^ 2 * (Real.log x) ^ 2 := by
-  obtain ⟨A, B, C, K, T, hA, hB, hC, hK, hT, hbudget⟩ := exists_character_family_half_scale_budget
+  obtain ⟨A, B, C, K, T, hA, hB, hC, hK, hT, hbudget⟩ := exists_halfFamily
   refine ⟨A, B, C, K, T, hA, hB, hC, hK, hT, ?_⟩
   intro ε hε
   obtain ⟨X, hX, hbound⟩ := hbudget ε hε
@@ -118,9 +117,8 @@ theorem exists_character_family_scalar_half_scale_budget :
   intro c hc H hH x σ hx hσlo hσhi hδ hscale q inst hq S hne havoid
   have hb := hbound c hc H hH x σ hx hσlo hσhi hδ hscale q hq S hne havoid
   have hr :=
-    sum_primitive_remainders_le_level_budget (H := H) (σ := σ) hq
-      (S.filter (fun χ ↦ χ.conductor ≠ 4)) (by linarith only [hX.trans hx] : 2 ≤ x) hC.le hK.le
-      hT.le
+    primitiveRemainders_level_bound (H := H) (σ := σ) hq (S.filter (fun χ ↦ χ.conductor ≠ 4))
+      (by linarith only [hX.trans hx] : 2 ≤ x) hC.le hK.le hT.le
   have he := character_level_correction_le_square S x
   exact hb.trans (add_le_add (add_le_add le_rfl hr) he)
 

@@ -42,9 +42,8 @@ theorem gamma_anchored_coefficient_le_of_check {a C : ℚ} {r : ℚ → ℚ × �
 /-- Input: a positive anchor a, p>1 with p>=a, and an anchored coefficient cap C.
 Claim: the actual signed prime Euler cost is at most C/(p-1). Proof: bound every positive
 power from the same anchor and sum the reciprocal series. Role: reusable prime-cost transfer. -/
-theorem gamma_prime_euler_cost_le_of_anchored_coefficient {a p C : ℝ} (ha : 0 < a) (hp : 1 < p)
-    (hap : a ≤ p) (hC : gammaAnchoredReciprocalCoefficient a ≤ C) :
-    gammaPrimeEulerCost p ≤ C / (p - 1) := by
+theorem gamma_prime_cost_le_of_anchor {a p C : ℝ} (ha : 0 < a) (hp : 1 < p) (hap : a ≤ p)
+    (hC : gammaAnchoredReciprocalCoefficient a ≤ C) : gammaPrimeEulerCost p ≤ C / (p - 1) := by
   apply gamma_prime_euler_cost_le_of_power_reciprocal hp
   intro k
   have hpow := hap.trans (le_self_pow₀ hp.le (Nat.succ_ne_zero k))

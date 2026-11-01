@@ -85,7 +85,7 @@ theorem triangular18_level_one_cutoff_sum_lower_of_rh (hRH : RiemannHypothesis) 
         ((triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)).summand
             (1 : DirichletCharacter ℂ 1) x k).re := by
   rw [triangular18_level_one_cutoff_sum hx]
-  exact triangular18_cutoff_mangoldt_normalized_lower_of_rh hRH hx
+  exact triangular18_cutoff_mangoldt_lower_of_RH hRH hx
 
 /-- Under RH the full level-one triangular arithmetic sum is bounded below
 by its explicit cutoff mass minus the normalized truncation error.

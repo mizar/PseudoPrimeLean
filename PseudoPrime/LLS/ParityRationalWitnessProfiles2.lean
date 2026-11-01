@@ -77,8 +77,8 @@ theorem rationalRadiusRoot_le_parity_shift {q : ℕ} [NeZero q] (hq : 3000 ≤ q
 prime through (log q+(42589/7000)log log q+77/25)².
 Compare the nonnegative rational-radius roots and transfer the pointwise witness.
 This is the general-character interface for the sharper profile. -/
-theorem exists_prime_character_ne_one_le_parityProfile3000 {q : ℕ} (χ : DirichletCharacter ℂ q)
-    (hne : χ ≠ 1) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hq : 3000 ≤ q) :
+theorem exists_prime_neOne_parity3000_GRH {q : ℕ} (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hq : 3000 ≤ q) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬p ∣ q ∧
@@ -98,9 +98,8 @@ theorem exists_prime_character_ne_one_le_parityProfile3000 {q : ℕ} (χ : Diric
 /-- Under GRH, q ≥ 3000 and H proper, a coprime outside prime lies through
 the parity-improved profile. Bound the rational-radius root and transfer its subgroup witness.
 This retains the uniform subgroup and starting-value scope. -/
-theorem exists_prime_outside_subgroup_le_parityProfile3000 {q : ℕ} (hq : 3000 ≤ q)
-    (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
+theorem exists_prime_outside_parity3000_GRH {q : ℕ} (hq : 3000 ≤ q) (H : Subgroup (ZMod q)ˣ)
+    (hH : H ≠ ⊤) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ,
       PrimeOutsideSubgroup q H p ∧
         (p : ℝ) ≤ (Real.log q + (42589 / 7000 : ℝ) * Real.log (Real.log q) + 77 / 25) ^ 2 := by
@@ -118,15 +117,14 @@ theorem exists_prime_outside_subgroup_le_parityProfile3000 {q : ℕ} (hq : 3000 
 /-- Under GRH, q ≥ 3000 and H proper, the least coprime outside prime lies
 through the parity-improved profile. Minimize the unbounded outside-prime predicate.
 Minimality holds among all eligible primes, with the same formula and starting value. -/
-theorem exists_least_prime_outside_subgroup_le_parityProfile3000 {q : ℕ} (hq : 3000 ≤ q)
-    (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
+theorem exists_least_outside_parity3000_GRH {q : ℕ} (hq : 3000 ≤ q) (H : Subgroup (ZMod q)ˣ)
+    (hH : H ≠ ⊤) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ,
       PrimeOutsideSubgroup q H p ∧
         (p : ℝ) ≤ (Real.log q + (42589 / 7000 : ℝ) * Real.log (Real.log q) + 77 / 25) ^ 2 ∧
         ∀ r, PrimeOutsideSubgroup q H r → p ≤ r := by
   classical
-  obtain ⟨p, hp, hb⟩ := exists_prime_outside_subgroup_le_parityProfile3000 hq H hH hGRH
+  obtain ⟨p, hp, hb⟩ := exists_prime_outside_parity3000_GRH hq H hH hGRH
   have hex : ∃ r, PrimeOutsideSubgroup q H r := ⟨p, hp⟩
   exact
     ⟨Nat.find hex, Nat.find_spec hex, (Nat.cast_le.mpr (Nat.find_min' hex hp)).trans hb, fun _ hr ↦
@@ -143,7 +141,7 @@ proper subgroup from 3000. Apply the sharper subgroup theorem and normalize the 
 This attaches a witness proof to the coefficient-and-start pair. -/
 theorem parityPart1Profile_bound : UniformSubgroupProfileBound parityPart1Profile := by
   intro q H hH hGRH hq
-  obtain ⟨p, hp, hb⟩ := exists_prime_outside_subgroup_le_parityProfile3000 hq H hH hGRH
+  obtain ⟨p, hp, hb⟩ := exists_prime_outside_parity3000_GRH hq H hH hGRH
   refine ⟨p, hp, ?_⟩
   simpa only [Analysis.RationalLogarithmicProfile.cutoff, Analysis.logarithmicShiftCutoff,
     Analysis.logarithmicShiftRoot, parityPart1Profile, Rat.cast_div, Rat.cast_ofNat, Rat.cast_one,
@@ -171,7 +169,7 @@ theorem parityPart1Profile_cutoff_le {n m : ℕ} (hn : 3000 ≤ n) (horder : n �
 /-- Under GRH, for 3000 ≤ q ≤ B and H proper, an outside prime lies through
 the parity profile at B. Transfer the pointwise witness by monotonicity.
 The envelope uses the same coefficient triple and starting value. -/
-theorem exists_prime_outside_le_parityPart1Profile_envelope {q B : ℕ} (hq : 3000 ≤ q) (hqB : q ≤ B)
+theorem exists_prime_outside_parityEnvelope_GRH {q B : ℕ} (hq : 3000 ≤ q) (hqB : q ≤ B)
     (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ, PrimeOutsideSubgroup q H p ∧ (p : ℝ) ≤ parityPart1Profile.cutoff B := by

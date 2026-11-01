@@ -29,10 +29,9 @@ ambient q≥20000 and scale x≥1, the actual Gaussian completed remainder is bo
 by 64/9 plus its explicit pole and left-moment errors. Combine the actual contour
 formula with the multiplier-dependent integral and pole estimates. This supplies a
 numerical remainder with conductor and scale dependence, without an eventual gate. -/
-theorem norm_gaussian_primitive_remainder_le_variable_scale {q m : ℕ} [NeZero m]
-    {χ : DirichletCharacter ℂ m} (hq : 20000 ≤ q) (hm : 3 ≤ m) (hmq : m ≤ q) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {x : ℝ} (hx : 1 ≤ x) :
+theorem norm_gaussianRemainder_variable_GRH {q m : ℕ} [NeZero m] {χ : DirichletCharacter ℂ m}
+    (hq : 20000 ≤ q) (hm : 3 ≤ m) (hmq : m ≤ q) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 ≤ x) :
     ‖(∑' n : ℕ, gaussianGammaMellinKernel.summand χ x n) +
           (∑' ρ : ℂ, gaussianGammaMellinKernel.oscillatingZeroTerm χ x ρ)‖ ≤
       64 / 9 + (2129 / 2000 : ℝ) * (((7 / 6 : ℝ) * Real.log q + 4) / Real.sqrt x) +
@@ -50,8 +49,8 @@ theorem norm_gaussian_primitive_remainder_le_variable_scale {q m : ℕ} [NeZero 
             (x : ℂ) ^ (((-9 / 16 : ℝ) : ℂ) + Complex.I * t)))
   have hx1 : 1 ≤ x := hx
   have hr : ‖S - (P - Z + J)‖ ≤ 64 / 9 :=
-    norm_gaussian_completed_remainder_le_sixty_four_ninths (by linarith only [hm]) hGRH hp hne hinv
-      (a := -9 / 16) (b := 9 / 16) (by norm_num only)
+    norm_gaussian_completed_remainder_le_64_9_GRH (by linarith only [hm]) hGRH hp hne hinv (a :=
+      -9 / 16) (b := 9 / 16) (by norm_num only)
       (by
         change (-1 / 2 - 1 / 8 : ℝ) < -9 / 16; norm_num only)
       (by
@@ -72,10 +71,9 @@ theorem norm_gaussian_primitive_remainder_le_variable_scale {q m : ℕ} [NeZero 
 Gaussian remainder keeps the signed left-contour estimate. The completed
 contour formula leaves only the right-contour norm allowance, the pole bound,
 and the Gaussian average of the signed left integral. -/
-theorem re_gaussian_primitive_remainder_le_variable_scale {q m : ℕ} [NeZero m]
-    {χ : DirichletCharacter ℂ m} (hq : 20000 ≤ q) (hm : 3 ≤ m) (hmq : m ≤ q) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {x : ℝ} (hx : 1 ≤ x) :
+theorem re_gaussianRemainder_variable_GRH {q m : ℕ} [NeZero m] {χ : DirichletCharacter ℂ m}
+    (hq : 20000 ≤ q) (hm : 3 ≤ m) (hmq : m ≤ q) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 ≤ x) :
     ((∑' n : ℕ, gaussianGammaMellinKernel.summand χ x n) +
           (∑' ρ : ℂ, gaussianGammaMellinKernel.oscillatingZeroTerm χ x ρ)).re ≤
       (512 / 27 : ℝ) / x + (2129 / 2000 : ℝ) * (((7 / 6 : ℝ) * Real.log q + 4) / Real.sqrt x) +
@@ -111,7 +109,7 @@ theorem re_gaussian_primitive_remainder_le_variable_scale {q m : ℕ} [NeZero m]
   have hP := gaussian_poleResidue_le_ambient hq hm hmq hp hne hGRH (zero_lt_one.trans_le hx)
   have hJ : J.re ≤ (473 / 10 : ℝ) * x ^ (-9 / 16 : ℝ) := by
     dsimp only [J]
-    rw [gaussian_signed_left_integral_eq_logGaussianAverage hp hne hinv (zero_lt_one.trans_le hx)]
+    rw [gaussianSignedLeft_logAverage hp hne hinv (zero_lt_one.trans_le hx)]
     exact re_gaussian_signed_left_integral_le hp hne hinv (zero_lt_one.trans_le hx)
   have hidentity : S + Z = (S - (P - Z + J)) + P + J := by ring
   have hpr : P.re ≤ (2129 / 2000 : ℝ) * (((7 / 6 : ℝ) * Real.log q + 4) / Real.sqrt x) :=
@@ -137,7 +135,7 @@ theorem gaussian_primitive_sum_re_le_variable_scale {q m : ℕ} [NeZero m] (hq :
   have hxpos : 0 < x := zero_lt_one.trans_le hx
   have hz :=
     norm_gaussian_oscillatingZeroSum_lt_principal (by linarith only [hm]) hGRH hp hne hinv hxpos
-  have hr := norm_gaussian_primitive_remainder_le_variable_scale hq hm hmq hp hne hinv hGRH hx
+  have hr := norm_gaussianRemainder_variable_GRH hq hm hmq hp hne hinv hGRH hx
   have hn : ‖S‖ ≤ ‖S + Z‖ + ‖Z‖ := by
     have h := norm_sub_le (S + Z) Z
     rw [add_sub_cancel_right] at h
@@ -151,8 +149,8 @@ theorem gaussian_primitive_sum_re_le_variable_scale {q m : ℕ} [NeZero m] (hq :
 /-- Bound the primitive Gaussian arithmetic sum using the signed real-part
 remainder. The oscillating zero sum is still charged by its certified norm;
 the left-contour contribution now has no positive conductor-log term. -/
-theorem gaussian_primitive_sum_re_le_variable_scale_signed {q m : ℕ} [NeZero m] (hq : 20000 ≤ q)
-    (hm : 3 ≤ m) (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
+theorem gaussianSum_variable_signed_GRH {q m : ℕ} [NeZero m] (hq : 20000 ≤ q) (hm : 3 ≤ m)
+    (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) :
     (∑' n : ℕ, gaussianGammaMellinKernel.summand χ x n).re ≤
@@ -164,7 +162,7 @@ theorem gaussian_primitive_sum_re_le_variable_scale_signed {q m : ℕ} [NeZero m
   have hxpos : 0 < x := zero_lt_one.trans_le hx
   have hz :=
     norm_gaussian_oscillatingZeroSum_lt_principal (by linarith only [hm]) hGRH hp hne hinv hxpos
-  have hr := re_gaussian_primitive_remainder_le_variable_scale hq hm hmq hp hne hinv hGRH hx
+  have hr := re_gaussianRemainder_variable_GRH hq hm hmq hp hne hinv hGRH hx
   have hnegZ : -Z.re ≤ ‖Z‖ := by
     have h := Complex.re_le_norm (-Z)
     simpa only [Complex.neg_re, norm_neg] using h
@@ -182,8 +180,8 @@ theorem gaussian_primitive_sum_re_le_variable_scale_signed {q m : ℕ} [NeZero m
 /-- When the primitive character is one on all primes through 50000, transfer
 the Gaussian prefix gain into the variable-scale sum bound. The completed
 remainder keeps its existing conductor-sensitive estimate. -/
-theorem gaussian_primitive_sum_re_le_variable_scale_prefix_gain {q m : ℕ} [NeZero m]
-    (hq : 20000 ≤ q) (hm : 3 ≤ m) (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
+theorem gaussianSum_variable_prefix50000_GRH {q m : ℕ} [NeZero m] (hq : 20000 ≤ q) (hm : 3 ≤ m)
+    (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ 50000 → χ p = 1) {x : ℝ}
     (hx : 1 ≤ x) :
@@ -197,7 +195,7 @@ theorem gaussian_primitive_sum_re_le_variable_scale_prefix_gain {q m : ℕ} [NeZ
   have hz :=
     norm_gaussian_oscillatingZeroSum_lt_prefix_gain (by linarith only [hm]) hGRH hp hne hinv hsmall
       hxpos
-  have hr := norm_gaussian_primitive_remainder_le_variable_scale hq hm hmq hp hne hinv hGRH hx
+  have hr := norm_gaussianRemainder_variable_GRH hq hm hmq hp hne hinv hGRH hx
   have hn : ‖S‖ ≤ ‖S + Z‖ + ‖Z‖ := by
     have h := norm_sub_le (S + Z) Z
     rw [add_sub_cancel_right] at h
@@ -211,8 +209,8 @@ theorem gaussian_primitive_sum_re_le_variable_scale_prefix_gain {q m : ℕ} [NeZ
 /-- Retain the certified 50000-prime prefix gain while using the signed
 real-part remainder, so the left-contour contribution is independent of the
 conductor logarithm. -/
-theorem gaussian_primitive_sum_re_le_variable_scale_prefix_gain_signed {q m : ℕ} [NeZero m]
-    (hq : 20000 ≤ q) (hm : 3 ≤ m) (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
+theorem gaussianSum_variable_prefix50000_signed_GRH {q m : ℕ} [NeZero m] (hq : 20000 ≤ q)
+    (hm : 3 ≤ m) (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ 50000 → χ p = 1) {x : ℝ}
     (hx : 1 ≤ x) :
@@ -226,7 +224,7 @@ theorem gaussian_primitive_sum_re_le_variable_scale_prefix_gain_signed {q m : �
   have hz :=
     norm_gaussian_oscillatingZeroSum_lt_prefix_gain (by linarith only [hm]) hGRH hp hne hinv hsmall
       hxpos
-  have hr := re_gaussian_primitive_remainder_le_variable_scale hq hm hmq hp hne hinv hGRH hx
+  have hr := re_gaussianRemainder_variable_GRH hq hm hmq hp hne hinv hGRH hx
   have hnegZ : -Z.re ≤ ‖Z‖ := by
     have h := Complex.re_le_norm (-Z)
     simpa only [Complex.neg_re, norm_neg] using h
@@ -245,8 +243,8 @@ theorem gaussian_primitive_sum_re_le_variable_scale_prefix_gain_signed {q m : �
 
 /-- When the primitive character is one on all primes through 1000, transfer
 the Gaussian prefix gain into the variable-scale sum bound. -/
-theorem gaussian_primitive_sum_re_le_variable_scale_prefix1000_gain {q m : ℕ} [NeZero m]
-    (hq : 20000 ≤ q) (hm : 3 ≤ m) (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
+theorem gaussianSum_variable_prefix1000_GRH {q m : ℕ} [NeZero m] (hq : 20000 ≤ q) (hm : 3 ≤ m)
+    (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ 1000 → χ p = 1) {x : ℝ}
     (hx : 1 ≤ x) :
@@ -258,9 +256,8 @@ theorem gaussian_primitive_sum_re_le_variable_scale_prefix1000_gain {q m : ℕ} 
   let Z := ∑' ρ : ℂ, gaussianGammaMellinKernel.oscillatingZeroTerm χ x ρ
   have hxpos : 0 < x := zero_lt_one.trans_le hx
   have hz :=
-    norm_gaussian_oscillatingZeroSum_lt_prefix1000_gain (by linarith only [hm]) hGRH hp hne hinv
-      hsmall hxpos
-  have hr := norm_gaussian_primitive_remainder_le_variable_scale hq hm hmq hp hne hinv hGRH hx
+    norm_gaussianZeroSum_prefix1000_lt_GRH (by linarith only [hm]) hGRH hp hne hinv hsmall hxpos
+  have hr := norm_gaussianRemainder_variable_GRH hq hm hmq hp hne hinv hGRH hx
   have hn : ‖S‖ ≤ ‖S + Z‖ + ‖Z‖ := by
     have h := norm_sub_le (S + Z) Z
     rw [add_sub_cancel_right] at h
@@ -318,7 +315,7 @@ theorem norm_gaussian_primitive_remainder_le_contract {q m : ℕ} [NeZero m]
   rw [mul_one] at hlast
   have hlast' := div_le_div_of_nonneg_right hlast (Real.sqrt_nonneg x)
   have hgap := div_nonneg (by linarith only [hL] : 0 ≤ 6 * Real.log q) (Real.sqrt_nonneg x)
-  have hr := norm_gaussian_primitive_remainder_le_variable_scale hq hm hmq hp hne hinv hGRH hx1
+  have hr := norm_gaussianRemainder_variable_GRH hq hm hmq hp hne hinv hGRH hx1
   simp only [div_eq_mul_inv] at hpole hleft hlast' hgap hr ⊢
   nlinarith only [hr, hpole, hleft, hlast', hgap]
 
@@ -326,7 +323,7 @@ theorem norm_gaussian_primitive_remainder_le_contract {q m : ℕ} [NeZero m]
  primitive Gaussian sum with the actual conductor, ambient pole logarithm and explicit left error.
  Transfer to the primitive source and its inverse. This supplies the variable-scale upper input
  for coefficient-preserving non-one witness threshold optimization. -/
-theorem gaussian_primitiveCharacter_sum_re_le_variable_scale {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+theorem gaussianCharSum_variable_GRH {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
     (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 ≤ x) :
     let : NeZero χ.conductor := ⟨χ.conductor_ne_zero⟩;
@@ -345,8 +342,8 @@ theorem gaussian_primitiveCharacter_sum_re_le_variable_scale {q : ℕ} [NeZero q
 /-- Transfer the signed variable-scale bound to the primitive source of any
 nonprincipal character. The ambient level remains in the pole term, while the
 left-contour error depends only on the Gaussian scale. -/
-theorem gaussian_primitiveCharacter_sum_re_le_variable_scale_signed {q : ℕ} [NeZero q]
-    (hq : 20000 ≤ q) (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
+theorem gaussianCharSum_variable_signed_GRH {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 ≤ x) :
     let : NeZero χ.conductor := ⟨χ.conductor_ne_zero⟩
     (∑' n : ℕ, gaussianGammaMellinKernel.summand χ.primitiveCharacter x n).re ≤
@@ -358,13 +355,13 @@ theorem gaussian_primitiveCharacter_sum_re_le_variable_scale_signed {q : ℕ} [N
   have hmq := Nat.le_of_dvd (Nat.pos_of_ne_zero (NeZero.ne q)) χ.conductor_dvd_level
   have hnp := AnalyticNumberTheory.Arithmetic.primitiveCharacter_ne_one χ hne
   exact
-    gaussian_primitive_sum_re_le_variable_scale_signed hq hm hmq hGRH
+    gaussianSum_variable_signed_GRH hq hm hmq hGRH
       (DirichletCharacter.primitiveCharacter_isPrimitive χ) hnp (inv_ne_one.mpr hnp) hx
 
 /-- For a nonprincipal level-q character whose primitive source is one on
 primes through 50000, use the transferred Gaussian prefix gain at its conductor. -/
-theorem gaussian_primitiveCharacter_sum_re_le_variable_scale_prefix_gain {q : ℕ} [NeZero q]
-    (hq : 20000 ≤ q) (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
+theorem gaussianCharSum_variable_prefix50000_GRH {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ 50000 → χ.primitiveCharacter p = 1) {x : ℝ}
     (hx : 1 ≤ x) :
@@ -378,13 +375,13 @@ theorem gaussian_primitiveCharacter_sum_re_le_variable_scale_prefix_gain {q : �
   have hmq := Nat.le_of_dvd (Nat.pos_of_ne_zero (NeZero.ne q)) χ.conductor_dvd_level
   have hnp := AnalyticNumberTheory.Arithmetic.primitiveCharacter_ne_one χ hne
   exact
-    gaussian_primitive_sum_re_le_variable_scale_prefix_gain hq hm hmq hGRH
+    gaussianSum_variable_prefix50000_GRH hq hm hmq hGRH
       (DirichletCharacter.primitiveCharacter_isPrimitive χ) hnp (inv_ne_one.mpr hnp) hsmall hx
 
 /-- Transfer the signed 50000-prefix bound to the primitive source of a
 nonprincipal character at level q. -/
-theorem gaussian_primitiveCharacter_sum_re_le_variable_scale_prefix_gain_signed {q : ℕ} [NeZero q]
-    (hq : 20000 ≤ q) (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
+theorem gaussianCharSum_prefix50000_signed_GRH {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ 50000 → χ.primitiveCharacter p = 1) {x : ℝ}
     (hx : 1 ≤ x) :
@@ -398,13 +395,13 @@ theorem gaussian_primitiveCharacter_sum_re_le_variable_scale_prefix_gain_signed 
   have hmq := Nat.le_of_dvd (Nat.pos_of_ne_zero (NeZero.ne q)) χ.conductor_dvd_level
   have hnp := AnalyticNumberTheory.Arithmetic.primitiveCharacter_ne_one χ hne
   exact
-    gaussian_primitive_sum_re_le_variable_scale_prefix_gain_signed hq hm hmq hGRH
+    gaussianSum_variable_prefix50000_signed_GRH hq hm hmq hGRH
       (DirichletCharacter.primitiveCharacter_isPrimitive χ) hnp (inv_ne_one.mpr hnp) hsmall hx
 
 /-- For a nonprincipal level-q character whose primitive source is one on
 primes through 1000, use the transferred Gaussian prefix gain at its conductor. -/
-theorem gaussian_primitiveCharacter_sum_re_le_variable_scale_prefix1000_gain {q : ℕ} [NeZero q]
-    (hq : 20000 ≤ q) (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
+theorem gaussianCharSum_variable_prefix1000_GRH {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ 1000 → χ.primitiveCharacter p = 1) {x : ℝ} (hx : 1 ≤ x) :
     let : NeZero χ.conductor := ⟨χ.conductor_ne_zero⟩
@@ -417,7 +414,7 @@ theorem gaussian_primitiveCharacter_sum_re_le_variable_scale_prefix1000_gain {q 
   have hmq := Nat.le_of_dvd (Nat.pos_of_ne_zero (NeZero.ne q)) χ.conductor_dvd_level
   have hnp := AnalyticNumberTheory.Arithmetic.primitiveCharacter_ne_one χ hne
   exact
-    gaussian_primitive_sum_re_le_variable_scale_prefix1000_gain hq hm hmq hGRH
+    gaussianSum_variable_prefix1000_GRH hq hm hmq hGRH
       (DirichletCharacter.primitiveCharacter_isPrimitive χ) hnp (inv_ne_one.mpr hnp) hsmall hx
 
 end PseudoPrime.LLS.PaperStatements

@@ -19,7 +19,7 @@ namespace PseudoPrime.PseudoSquare
 P>=2 and a negative separation at 4d give an odd n-coprime negative Jacobi prime.
 Insert proved common rates and finite excesses into the coupled witness theorem.
 No local-cost or untapered-budget assumptions remain in this statement. -/
-theorem exists_prime_neg_one_of_explicit_untapered_budget {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+theorem exists_prime_neg_one_of_untapered_budget_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 64 ≤ x) {P : ℕ}
     (hP : 2 ≤ P)
@@ -50,7 +50,7 @@ theorem exists_prime_neg_one_of_explicit_untapered_budget {n : ℕ} {hn : Odd n}
 /-- Under the fully specified prime-rate separation, the least negative
 odd-prime Jacobi witness is at most x. Apply leastness to the constructed prime.
 This exposes the local-hypothesis-free criterion to pointwise witness bounds. -/
-theorem primeNegOneWitness_le_of_explicit_untapered_budget {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+theorem negOneWitness_le_of_explicit_untapered_budget {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 64 ≤ x) {P : ℕ}
     (hP : 2 ≤ P)
@@ -62,7 +62,7 @@ theorem primeNegOneWitness_le_of_explicit_untapered_budget {n : ℕ} {hn : Odd n
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ x := by
   obtain ⟨p, hp, ho, hpx, _, hv⟩ :=
-    exists_prime_neg_one_of_explicit_untapered_budget bridge hGRH hx hP hsep
+    exists_prime_neg_one_of_untapered_budget_GRH bridge hGRH hx hP hsep
   exact (Nat.cast_le.mpr (NumberTheory.primeNegOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hpx
 
 /-- Under GRH, x>=64 and P>=2, a negative fully specified separation at

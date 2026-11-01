@@ -75,7 +75,7 @@ theorem mem_riemannZetaSingularitiesInRectangle_iff {z w s : ℂ} :
     grind only
 
 /-- A point inside the contour rectangle but outside its finite ledger is kernel-regular. -/
-theorem mem_riemannZetaRegularSet_of_not_mem_singularities {z w s : ℂ}
+theorem mem_zetaRegularSet_of_not_mem_singularities {z w s : ℂ}
     (hrect : s ∈ Rectangle.rectangleClosedBox z w)
     (hnot : s ∉ riemannZetaSingularitiesInRectangle z w) : s ∈ riemannZetaRegularSet := by
   refine ⟨?_, ?_, ?_⟩
@@ -87,8 +87,8 @@ theorem mem_riemannZetaRegularSet_of_not_mem_singularities {z w s : ℂ}
     exact hnot (mem_riemannZetaSingularitiesInRectangle_iff.mpr ⟨hrect, Or.inr (Or.inr hs)⟩)
 
 /-- A horizontal segment avoiding all ledger imaginary coordinates is kernel-regular. -/
-theorem horizontal_segment_subset_riemannZetaRegularSet {z w : ℂ} {c a b : ℝ}
-    (ha : a ∈ Set.uIcc z.re w.re) (hb : b ∈ Set.uIcc z.re w.re) (hc : c ∈ Set.uIcc z.im w.im)
+theorem horizontal_segment_subset_zetaRegularSet {z w : ℂ} {c a b : ℝ} (ha : a ∈ Set.uIcc z.re w.re)
+    (hb : b ∈ Set.uIcc z.re w.re) (hc : c ∈ Set.uIcc z.im w.im)
     (havoid : ∀ s ∈ riemannZetaSingularitiesInRectangle z w, s.im ≠ c) :
     ∀ t ∈ Set.uIcc a b, t + c * Complex.I ∈ riemannZetaRegularSet := by
   intro t ht
@@ -102,7 +102,7 @@ theorem horizontal_segment_subset_riemannZetaRegularSet {z w : ℂ} {c a b : ℝ
         simpa only [Set.mem_preimage, Complex.add_im, Complex.ofReal_im, Complex.mul_im,
           Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero,
           zero_add] using hc⟩
-  apply mem_riemannZetaRegularSet_of_not_mem_singularities hrect
+  apply mem_zetaRegularSet_of_not_mem_singularities hrect
   intro hs
   exact
     havoid _ hs
@@ -111,8 +111,8 @@ theorem horizontal_segment_subset_riemannZetaRegularSet {z w : ℂ} {c a b : ℝ
           Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero, zero_add])
 
 /-- A vertical segment avoiding all ledger real coordinates is kernel-regular. -/
-theorem vertical_segment_subset_riemannZetaRegularSet {z w : ℂ} {c a b : ℝ}
-    (hc : c ∈ Set.uIcc z.re w.re) (ha : a ∈ Set.uIcc z.im w.im) (hb : b ∈ Set.uIcc z.im w.im)
+theorem vertical_segment_subset_zetaRegularSet {z w : ℂ} {c a b : ℝ} (hc : c ∈ Set.uIcc z.re w.re)
+    (ha : a ∈ Set.uIcc z.im w.im) (hb : b ∈ Set.uIcc z.im w.im)
     (havoid : ∀ s ∈ riemannZetaSingularitiesInRectangle z w, s.re ≠ c) :
     ∀ t ∈ Set.uIcc a b, c + t * Complex.I ∈ riemannZetaRegularSet := by
   intro t ht
@@ -126,7 +126,7 @@ theorem vertical_segment_subset_riemannZetaRegularSet {z w : ℂ} {c a b : ℝ}
         simpa only [Set.mem_preimage, Complex.add_im, Complex.ofReal_im, Complex.mul_im,
           Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, add_zero,
           zero_add] using Set.uIcc_subset_uIcc ha hb ht⟩
-  apply mem_riemannZetaRegularSet_of_not_mem_singularities hrect
+  apply mem_zetaRegularSet_of_not_mem_singularities hrect
   intro hs
   exact
     havoid _ hs
@@ -156,10 +156,10 @@ theorem sum_riemannZetaSingularitiesInRectangle {M : Type*} [AddCommMonoid M] (z
   classical
   have hzero : (0 : ℂ) ∉ riemannZetaZerosInAnyRectangle z w := by
     intro hmem
-    exact ne_zero_of_mem_riemannZetaZerosInAnyRectangle hmem rfl
+    exact ne_zero_of_mem_zetaZerosInAnyRectangle hmem rfl
   have hone : (1 : ℂ) ∉ riemannZetaZerosInAnyRectangle z w := by
     intro hmem
-    exact ne_one_of_mem_riemannZetaZerosInAnyRectangle hmem rfl
+    exact ne_one_of_mem_zetaZerosInAnyRectangle hmem rfl
   have honeInsert : (1 : ℂ) ∉ insert 0 (riemannZetaZerosInAnyRectangle z w) := by
     intro h
     rcases Finset.mem_insert.mp h with h | h
@@ -180,7 +180,7 @@ The subset hypothesis ensures that any singular point of the cell would occur in
 finite ledger.  Set disjointness then excludes zero, one, and every zeta zero simultaneously.  This
 is the bridge from a geometric grid-cell certificate to the Cauchy--Goursat regularity hypothesis.
 -/
-theorem riemannZetaRectangleIsRegular_of_disjoint_singularities {z w a b : ℂ}
+theorem rectangleRegular_of_disjoint_ledger {z w a b : ℂ}
     (hsubset : Rectangle.rectangleClosedBox a b ⊆ Rectangle.rectangleClosedBox z w)
     (hdisjoint :
       Disjoint (Rectangle.rectangleClosedBox a b)
@@ -207,7 +207,7 @@ rectangle inside the outer one, while `cell_disjoint` excludes the outer finite 
 Together these invariants make every listed cell suitable for the rectangular Cauchy--Goursat
 theorem.  A later geometric layer will add coverage of the punctured rectangle.
 -/
-structure RiemannZetaRegularCellLedger (z w : ℂ) where
+structure RegularCellLedger (z w : ℂ) where
   cells : Finset (ℂ × ℂ)
   cell_subset :
     ∀ cell ∈ cells, Rectangle.rectangleClosedBox cell.1 cell.2 ⊆ Rectangle.rectangleClosedBox z w
@@ -264,7 +264,7 @@ noncomputable def riemannZetaRegularCellLedgerOfCells (z w : ℂ) (cells : Finse
     (hsubset :
       ∀ cell ∈ cells,
         Rectangle.rectangleClosedBox cell.1 cell.2 ⊆ Rectangle.rectangleClosedBox z w) :
-    RiemannZetaRegularCellLedger z w := by
+    RegularCellLedger z w := by
   classical
   refine ⟨riemannZetaRegularCells z w cells, ?_, ?_⟩
   · intro cell hcell
@@ -283,7 +283,7 @@ singular cells from representing the same point, and `point_covered` ensures tha
 singularity occurs.  Thus the singular cells and the finite singularity ledger are in bijection,
 without committing the geometric layer to a particular construction of the grid.
 -/
-structure RiemannZetaSingularCellAssignment (z w : ℂ) (cells : Finset (ℂ × ℂ)) where
+structure CellAssignment (z w : ℂ) (cells : Finset (ℂ × ℂ)) where
   pointOfCell : ℂ × ℂ → ℂ
   point_mem_ledger :
     ∀ cell ∈ riemannZetaSingularCells z w cells,
@@ -309,10 +309,10 @@ Geometric separation conditions making grid cells and singularities correspond b
 `cell_point_unique` says that one cell contains at most one catalogued singularity.
 `point_cell_unique` says that one catalogued singularity belongs to at most one listed cell; this
 excludes placement on shared grid edges.  `point_covered` places every catalogued singularity in a
-listed cell.  These three conditions construct `RiemannZetaSingularCellAssignment` canonically via
+listed cell.  These three conditions construct `CellAssignment` canonically via
 finite-choice-independent unique witnesses.
 -/
-structure RiemannZetaGridSingularitySeparation (z w : ℂ) (cells : Finset (ℂ × ℂ)) where
+structure GridSeparation (z w : ℂ) (cells : Finset (ℂ × ℂ)) where
   cell_point_unique :
     ∀ cell ∈ cells,
       ∀ s ∈ riemannZetaSingularitiesInRectangle z w,
@@ -336,7 +336,7 @@ required to lie in its open rectangle, expressing avoidance of all grid edges.  
 open rectangles are disjoint, and every ledger point is covered.  These conditions isolate the
 two geometric tasks for a concrete grid: separating points and choosing cuts away from them.
 -/
-structure RiemannZetaGridInteriorSeparation (z w : ℂ) (cells : Finset (ℂ × ℂ)) where
+structure InteriorSeparation (z w : ℂ) (cells : Finset (ℂ × ℂ)) where
   cell_point_unique :
     ∀ cell ∈ cells,
       ∀ s ∈ riemannZetaSingularitiesInRectangle z w,
@@ -362,9 +362,8 @@ structure RiemannZetaGridInteriorSeparation (z w : ℂ) (cells : Finset (ℂ × 
 certificate. A shared ledger point would lie in both cell interiors, contradicting their
 disjointness unless the cells agree; the other two invariants are inherited directly.
 This connects concrete grid geometry to the unique assignment construction. -/
-theorem RiemannZetaGridInteriorSeparation.toSeparation {z w : ℂ} {cells : Finset (ℂ × ℂ)}
-    (interior : RiemannZetaGridInteriorSeparation z w cells) :
-    RiemannZetaGridSingularitySeparation z w cells := by
+theorem InteriorSeparation.toSeparation {z w : ℂ} {cells : Finset (ℂ × ℂ)}
+    (interior : InteriorSeparation z w cells) : GridSeparation z w cells := by
   refine ⟨interior.cell_point_unique, ?_, interior.point_covered⟩
   intro s hs cell hcell hscell other hother hsother
   by_contra hne
@@ -377,9 +376,8 @@ theorem RiemannZetaGridInteriorSeparation.toSeparation {z w : ℂ} {cells : Fins
 singular cell and package the resulting assignment. Unique points per cell, unique cells
 per point, and coverage certify the bijection; choices on nonsingular cells are unconstrained.
 This supplies the local centers and sum reindexing used in contour residue assembly. -/
-noncomputable def RiemannZetaGridSingularitySeparation.toAssignment {z w : ℂ}
-    {cells : Finset (ℂ × ℂ)} (separation : RiemannZetaGridSingularitySeparation z w cells) :
-    RiemannZetaSingularCellAssignment z w cells := by
+noncomputable def GridSeparation.toAssignment {z w : ℂ} {cells : Finset (ℂ × ℂ)}
+    (separation : GridSeparation z w cells) : CellAssignment z w cells := by
   classical
   let pointOfCell : ℂ × ℂ → ℂ := fun cell ↦
     Classical.epsilon fun s ↦
@@ -415,9 +413,8 @@ noncomputable def RiemannZetaGridSingularitySeparation.toAssignment {z w : ℂ}
 /-- Convert an interior grid-separation certificate to a singular-cell assignment by first
 deriving abstract separation and then selecting its unique ledger points.
 This is the entry point from cut geometry to the contour's local residue centers. -/
-noncomputable def RiemannZetaGridInteriorSeparation.toAssignment {z w : ℂ} {cells : Finset (ℂ × ℂ)}
-    (interior : RiemannZetaGridInteriorSeparation z w cells) :
-    RiemannZetaSingularCellAssignment z w cells :=
+noncomputable def InteriorSeparation.toAssignment {z w : ℂ} {cells : Finset (ℂ × ℂ)}
+    (interior : InteriorSeparation z w cells) : CellAssignment z w cells :=
   interior.toSeparation.toAssignment
 
 /--
@@ -427,8 +424,8 @@ Every catalogued singularity in the parent cell equals its assigned point.  Henc
 the parent and exclusion of that one point make the subrectangle disjoint from the entire finite
 singularity ledger.  The standard ledger-disjointness criterion then supplies kernel regularity.
 -/
-theorem RiemannZetaSingularCellAssignment.subcell_isRegular {z w : ℂ} {cells : Finset (ℂ × ℂ)}
-    (assignment : RiemannZetaSingularCellAssignment z w cells) {parent child : ℂ × ℂ}
+theorem CellAssignment.subcell_isRegular {z w : ℂ} {cells : Finset (ℂ × ℂ)}
+    (assignment : CellAssignment z w cells) {parent child : ℂ × ℂ}
     (hparent : parent ∈ riemannZetaSingularCells z w cells)
     (hparentSubset :
       Rectangle.rectangleClosedBox parent.1 parent.2 ⊆ Rectangle.rectangleClosedBox z w)
@@ -436,7 +433,7 @@ theorem RiemannZetaSingularCellAssignment.subcell_isRegular {z w : ℂ} {cells :
       Rectangle.rectangleClosedBox child.1 child.2 ⊆ Rectangle.rectangleClosedBox parent.1 parent.2)
     (hexclude : assignment.pointOfCell parent ∉ Rectangle.rectangleClosedBox child.1 child.2) :
     RiemannZetaRectangleIsRegular child.1 child.2 := by
-  apply riemannZetaRectangleIsRegular_of_disjoint_singularities
+  apply rectangleRegular_of_disjoint_ledger
   · exact hchildSubset.trans hparentSubset
   · apply Set.disjoint_left.mpr
     intro s hschild hsledger
@@ -444,14 +441,14 @@ theorem RiemannZetaSingularCellAssignment.subcell_isRegular {z w : ℂ} {cells :
     exact hexclude (heq ▸ hschild)
 
 /-- A point of a singular parent cell is kernel-regular unless it is the assigned singularity. -/
-theorem RiemannZetaSingularCellAssignment.mem_regular_of_mem_parent_of_ne {z w : ℂ}
-    {cells : Finset (ℂ × ℂ)} (assignment : RiemannZetaSingularCellAssignment z w cells)
-    {parent : ℂ × ℂ} (hparent : parent ∈ riemannZetaSingularCells z w cells)
+theorem CellAssignment.mem_regular_of_parent_ne {z w : ℂ} {cells : Finset (ℂ × ℂ)}
+    (assignment : CellAssignment z w cells) {parent : ℂ × ℂ}
+    (hparent : parent ∈ riemannZetaSingularCells z w cells)
     (hparentSubset :
       Rectangle.rectangleClosedBox parent.1 parent.2 ⊆ Rectangle.rectangleClosedBox z w)
     {s : ℂ} (hs : s ∈ Rectangle.rectangleClosedBox parent.1 parent.2)
     (hne : s ≠ assignment.pointOfCell parent) : s ∈ riemannZetaRegularSet := by
-  apply mem_riemannZetaRegularSet_of_not_mem_singularities (hparentSubset hs)
+  apply mem_zetaRegularSet_of_not_mem_singularities (hparentSubset hs)
   intro hsledger
   exact hne (assignment.point_unique parent hparent s hsledger hs)
 
@@ -462,9 +459,9 @@ def RiemannZetaRectangleBoundaryIsRegular (z w : ℂ) : Prop :=
   RectangleGeometry.rectangleClosedBoxBoundary z w ⊆ riemannZetaRegularSet
 
 /-- Every noncentral cell of a strict `3 × 3` puncture grid is kernel-regular. -/
-theorem RiemannZetaSingularCellAssignment.threeByThree_noncentral_isRegular {z w : ℂ}
-    {cells : Finset (ℂ × ℂ)} (assignment : RiemannZetaSingularCellAssignment z w cells)
-    {parent : ℂ × ℂ} (hparent : parent ∈ riemannZetaSingularCells z w cells)
+theorem CellAssignment.noncentral_isRegular_3x3 {z w : ℂ} {cells : Finset (ℂ × ℂ)}
+    (assignment : CellAssignment z w cells) {parent : ℂ × ℂ}
+    (hparent : parent ∈ riemannZetaSingularCells z w cells)
     (hparentSubset :
       Rectangle.rectangleClosedBox parent.1 parent.2 ⊆ Rectangle.rectangleClosedBox z w)
     {a b : ℂ} (hzare : parent.1.re < a.re) (habre : a.re < b.re) (hbwre : b.re < parent.2.re)
@@ -491,13 +488,13 @@ theorem RiemannZetaSingularCellAssignment.threeByThree_noncentral_isRegular {z w
     RectangleGeometry.rectangleGridCells_closedBox_subset hxcuts hycuts child hchild
   apply assignment.subcell_isRegular hparent hparentSubset hchildSubset
   exact
-    RectangleGeometry.not_mem_noncentral_threeByThreeGridCell hzare habre hbwre hzaim habim hbwim
-      hpoint hchild hne
+    RectangleGeometry.not_mem_noncentral_3x3Cell hzare habre hbwre hzaim habim hbwim hpoint hchild
+      hne
 
 /-- The noncentral-cell regularity theorem in the finite-set form used by contour contraction. -/
-theorem RiemannZetaSingularCellAssignment.threeByThree_surrounding_regular {z w : ℂ}
-    {cells : Finset (ℂ × ℂ)} (assignment : RiemannZetaSingularCellAssignment z w cells)
-    {parent : ℂ × ℂ} (hparent : parent ∈ riemannZetaSingularCells z w cells)
+theorem CellAssignment.surrounding_regular_3x3 {z w : ℂ} {cells : Finset (ℂ × ℂ)}
+    (assignment : CellAssignment z w cells) {parent : ℂ × ℂ}
+    (hparent : parent ∈ riemannZetaSingularCells z w cells)
     (hparentSubset :
       Rectangle.rectangleClosedBox parent.1 parent.2 ⊆ Rectangle.rectangleClosedBox z w)
     {a b : ℂ} (hzare : parent.1.re < a.re) (habre : a.re < b.re) (hbwre : b.re < parent.2.re)
@@ -509,14 +506,14 @@ theorem RiemannZetaSingularCellAssignment.threeByThree_surrounding_regular {z w 
       child ≠ (a, b) → RiemannZetaRectangleIsRegular child.1 child.2 := by
   intro child hchild hne
   apply
-    assignment.threeByThree_noncentral_isRegular hparent hparentSubset hzare habre hbwre hzaim habim
-      hbwim hpoint
+    assignment.noncentral_isRegular_3x3 hparent hparentSubset hzare habre hbwre hzaim habim hbwim
+      hpoint
   · simpa only [List.mem_toFinset] using hchild
   · exact hne
 
 /-- Interior separation places each assigned singularity in its cell's open rectangle. -/
-theorem RiemannZetaGridInteriorSeparation.pointOfCell_mem_open {z w : ℂ} {cells : Finset (ℂ × ℂ)}
-    (interior : RiemannZetaGridInteriorSeparation z w cells) {cell : ℂ × ℂ}
+theorem InteriorSeparation.assigned_mem_open {z w : ℂ} {cells : Finset (ℂ × ℂ)}
+    (interior : InteriorSeparation z w cells) {cell : ℂ × ℂ}
     (hcell : cell ∈ riemannZetaSingularCells z w cells) :
     interior.toAssignment.pointOfCell cell ∈ RectangleGeometry.rectangleOpenBox cell.1 cell.2 := by
   apply interior.point_mem_open
@@ -525,33 +522,30 @@ theorem RiemannZetaGridInteriorSeparation.pointOfCell_mem_open {z w : ℂ} {cell
   · exact interior.toAssignment.point_mem_cell cell hcell
 
 /-- Every assigned singularity has a positive closed ball contained in its open cell. -/
-theorem RiemannZetaGridInteriorSeparation.exists_closedBall_pointOfCell_subset_open {z w : ℂ}
-    {cells : Finset (ℂ × ℂ)} (interior : RiemannZetaGridInteriorSeparation z w cells) {cell : ℂ × ℂ}
+theorem InteriorSeparation.exists_point_ball {z w : ℂ} {cells : Finset (ℂ × ℂ)}
+    (interior : InteriorSeparation z w cells) {cell : ℂ × ℂ}
     (hcell : cell ∈ riemannZetaSingularCells z w cells) :
     ∃ ε : ℝ,
       0 < ε ∧
         Metric.closedBall (interior.toAssignment.pointOfCell cell) ε ⊆
           RectangleGeometry.rectangleOpenBox cell.1 cell.2 := by
-  exact
-    RectangleGeometry.exists_closedBall_subset_rectangleOpenBox
-      (interior.pointOfCell_mem_open hcell)
+  exact RectangleGeometry.exists_closedBall_subset_openBox (interior.assigned_mem_open hcell)
 
 /-- All assigned singularities admit one common positive radius contained in their open cells. -/
-theorem RiemannZetaGridInteriorSeparation.exists_common_cell_radius {z w : ℂ}
-    {cells : Finset (ℂ × ℂ)} (interior : RiemannZetaGridInteriorSeparation z w cells) :
+theorem InteriorSeparation.exists_radius_all {z w : ℂ} {cells : Finset (ℂ × ℂ)}
+    (interior : InteriorSeparation z w cells) :
     ∃ ε : ℝ,
       0 < ε ∧
         ∀ cell ∈ riemannZetaSingularCells z w cells,
           Metric.closedBall (interior.toAssignment.pointOfCell cell) ε ⊆
             RectangleGeometry.rectangleOpenBox cell.1 cell.2 := by
-  apply RectangleGeometry.Finset.exists_common_closedBall_subset
+  apply RectangleGeometry.Finset.exists_common_ball
   intro cell hcell
-  exact interior.exists_closedBall_pointOfCell_subset_open hcell
+  exact interior.exists_point_ball hcell
 
 /-- A singular-cell sum can be reindexed by the finite enclosing singularity ledger. -/
-theorem RiemannZetaSingularCellAssignment.sum_pointOfCell {M : Type*} [AddCommMonoid M] {z w : ℂ}
-    {cells : Finset (ℂ × ℂ)} (assignment : RiemannZetaSingularCellAssignment z w cells)
-    (value : ℂ → M) :
+theorem CellAssignment.sum_pointOfCell {M : Type*} [AddCommMonoid M] {z w : ℂ}
+    {cells : Finset (ℂ × ℂ)} (assignment : CellAssignment z w cells) (value : ℂ → M) :
     (∑ cell ∈ riemannZetaSingularCells z w cells, value (assignment.pointOfCell cell)) =
       ∑ s ∈ riemannZetaSingularitiesInRectangle z w, value s := by
   apply Finset.sum_bij (fun cell _ ↦ assignment.pointOfCell cell)
@@ -566,15 +560,14 @@ theorem RiemannZetaSingularCellAssignment.sum_pointOfCell {M : Type*} [AddCommMo
     rfl
 
 /-- Every cell in a regular-cell ledger is a regular zeta-kernel rectangle. -/
-theorem RiemannZetaRegularCellLedger.cell_isRegular {z w : ℂ}
-    (ledger : RiemannZetaRegularCellLedger z w) {cell : ℂ × ℂ} (hcell : cell ∈ ledger.cells) :
-    RiemannZetaRectangleIsRegular cell.1 cell.2 := by
+theorem RegularCellLedger.cell_isRegular {z w : ℂ} (ledger : RegularCellLedger z w) {cell : ℂ × ℂ}
+    (hcell : cell ∈ ledger.cells) : RiemannZetaRectangleIsRegular cell.1 cell.2 := by
   exact
-    riemannZetaRectangleIsRegular_of_disjoint_singularities (ledger.cell_subset cell hcell)
+    rectangleRegular_of_disjoint_ledger (ledger.cell_subset cell hcell)
       (ledger.cell_disjoint cell hcell)
 
 /-- A regular contour boundary contains none of the finitely catalogued singularities. -/
-theorem not_mem_rectangleClosedBoxBoundary_of_mem_riemannZetaSingularities {z w s : ℂ}
+theorem singularity_not_mem_boundary {z w s : ℂ}
     (hregular : RiemannZetaRectangleBoundaryIsRegular z w)
     (hs : s ∈ riemannZetaSingularitiesInRectangle z w) :
     s ∉ RectangleGeometry.rectangleClosedBoxBoundary z w := by
@@ -587,14 +580,13 @@ theorem not_mem_rectangleClosedBoxBoundary_of_mem_riemannZetaSingularities {z w 
   · exact hsregular.2.2 hzeta
 
 /-- A catalogued singularity lies in the open rectangle when the outer boundary is regular. -/
-theorem mem_rectangleOpenBox_of_mem_riemannZetaSingularities {z w s : ℂ}
-    (hregular : RiemannZetaRectangleBoundaryIsRegular z w)
+theorem singularity_mem_openBox {z w s : ℂ} (hregular : RiemannZetaRectangleBoundaryIsRegular z w)
     (hs : s ∈ riemannZetaSingularitiesInRectangle z w) :
     s ∈ RectangleGeometry.rectangleOpenBox z w := by
   have hsclosed := (mem_riemannZetaSingularitiesInRectangle_iff.mp hs).1
   by_contra hnot
   exact
-    not_mem_rectangleClosedBoxBoundary_of_mem_riemannZetaSingularities hregular hs
+    singularity_not_mem_boundary hregular hs
       ⟨hsclosed, by simpa only [RectangleGeometry.rectangleOpenBox] using hnot⟩
 
 /-- Every catalogued singularity has positive clearance from a regular contour boundary. -/
@@ -602,7 +594,7 @@ theorem riemannZetaSingularityBoundaryClearance_pos {z w s : ℂ}
     (hregular : RiemannZetaRectangleBoundaryIsRegular z w)
     (hs : s ∈ riemannZetaSingularitiesInRectangle z w) :
     0 < RectangleGeometry.rectangleClosedBoxBoundaryClearance s z w := by
-  have hnotmem := not_mem_rectangleClosedBoxBoundary_of_mem_riemannZetaSingularities hregular hs
+  have hnotmem := singularity_not_mem_boundary hregular hs
   have hinf : 0 < Metric.infDist s (RectangleGeometry.rectangleClosedBoxBoundary z w) :=
     ((RectangleGeometry.isClosed_rectangleClosedBoxBoundary z w).notMem_iff_infDist_pos
           (RectangleGeometry.nonempty_rectangleClosedBoxBoundary z w)).mp
@@ -610,7 +602,7 @@ theorem riemannZetaSingularityBoundaryClearance_pos {z w s : ℂ}
   exact div_pos hinf (by norm_num only)
 
 /-- The clearance radius is strictly smaller than the distance to every boundary point. -/
-theorem riemannZetaSingularityBoundaryClearance_lt_dist {z w s y : ℂ}
+theorem zetaSingularityBoundaryClearance_lt_dist {z w s y : ℂ}
     (hregular : RiemannZetaRectangleBoundaryIsRegular z w)
     (hs : s ∈ riemannZetaSingularitiesInRectangle z w)
     (hy : y ∈ RectangleGeometry.rectangleClosedBoxBoundary z w) :
@@ -624,7 +616,7 @@ theorem riemannZetaSingularityBoundaryClearance_lt_dist {z w s y : ℂ}
   exact hhalf.trans_le (Metric.infDist_le_dist_of_mem hy)
 
 /-- One radius separates the contour boundary and every pair of distinct singularities. -/
-theorem exists_pairwise_disjoint_riemannZetaSingularityRadius {z w : ℂ}
+theorem exists_disjoint_singularityRadius {z w : ℂ}
     (hregular : RiemannZetaRectangleBoundaryIsRegular z w) :
     ∃ ε : ℝ,
       0 < ε ∧
@@ -663,7 +655,7 @@ theorem exists_pairwise_disjoint_riemannZetaSingularityRadius {z w : ℂ}
     have hmle := Finset.min'_le constraints _ hmem
     have hmhalf : m / 2 < RectangleGeometry.rectangleClosedBoxBoundaryClearance s z w := by
       linarith only [hmpos, hmle]
-    exact hmhalf.trans (riemannZetaSingularityBoundaryClearance_lt_dist hregular hs hy)
+    exact hmhalf.trans (zetaSingularityBoundaryClearance_lt_dist hregular hs hy)
   · intro s hs t ht hst
     have hpair : dist s t / 2 ∈ pairValues := by
       apply Finset.mem_biUnion.mpr
@@ -683,7 +675,7 @@ noncomputable def riemannZetaPuncturedRectangle (z w : ℂ) (ε : ℝ) : Set ℂ
     ⋃ s ∈ (riemannZetaSingularitiesInRectangle z w : Set ℂ), Metric.closedBall s ε
 
 /-- Removing nonnegative-radius balls around the ledger leaves only regular kernel points. -/
-theorem riemannZetaPuncturedRectangle_subset_regularSet {z w : ℂ} {ε : ℝ} (hε : 0 ≤ ε) :
+theorem zetaPuncturedRectangle_subset_regularSet {z w : ℂ} {ε : ℝ} (hε : 0 ≤ ε) :
     riemannZetaPuncturedRectangle z w ε ⊆ riemannZetaRegularSet := by
   intro s hs
   have hsrect : s ∈ Rectangle.rectangleClosedBox z w := hs.1
@@ -701,8 +693,8 @@ theorem riemannZetaPuncturedRectangle_subset_regularSet {z w : ℂ} {ε : ℝ} (
     exact exclude (Or.inr (Or.inr hszeta))
 
 /-- A kernel regular off the assigned point has equal integrals on nested local circles. -/
-theorem RiemannZetaSingularCellAssignment.circleIntegral_eq_of_le {z w : ℂ} {cells : Finset (ℂ × ℂ)}
-    (assignment : RiemannZetaSingularCellAssignment z w cells) {parent : ℂ × ℂ}
+theorem CellAssignment.circleIntegral_eq_of_le {z w : ℂ} {cells : Finset (ℂ × ℂ)}
+    (assignment : CellAssignment z w cells) {parent : ℂ × ℂ}
     (hparent : parent ∈ riemannZetaSingularCells z w cells)
     (hparentSubset :
       Rectangle.rectangleClosedBox parent.1 parent.2 ⊆ Rectangle.rectangleClosedBox z w)
@@ -716,8 +708,8 @@ theorem RiemannZetaSingularCellAssignment.circleIntegral_eq_of_le {z w : ℂ} {c
   let c := assignment.pointOfCell parent
   have hregular {s : ℂ} (hs : s ∈ Metric.closedBall c R) (hne : s ≠ c) :
     s ∈ riemannZetaRegularSet := by
-    apply assignment.mem_regular_of_mem_parent_of_ne hparent hparentSubset
-    · exact RectangleGeometry.rectangleOpenBox_subset_rectangleClosedBox _ _ (hball hs)
+    apply assignment.mem_regular_of_parent_ne hparent hparentSubset
+    · exact RectangleGeometry.openBox_subset_closedBox _ _ (hball hs)
     · exact hne
   have hcontinuous : ContinuousOn f (Metric.closedBall c R \ Metric.ball c r) := by
     intro s hs

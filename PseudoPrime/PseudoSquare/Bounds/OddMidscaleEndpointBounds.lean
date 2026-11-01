@@ -66,9 +66,7 @@ theorem exists_prime_ne_one_witness_le_oddMidscale {n : ℕ} (hn : Odd n) (hns :
         jacobiSym n p ≠ 1 := by
   have hd := LLS.PaperStatements.oddMidscaleEndpointRadius_data hlo hhi
   obtain ⟨hzero, hnonzero⟩ := oddMidscaleNeOne_branch_polynomials hlo hhi
-  exact
-    exists_odd_prime_jacobi_ne_one_of_branch_polynomials_pos hn hns hGRH (by linarith only [hd.1])
-      hzero hnonzero
+  exact exists_oddPrime_neOne_branchPolys_GRH hn hns hGRH (by linarith only [hd.1]) hzero hnonzero
 
 /-- For an odd nonsquare n in the certified logarithmic interval under GRH,
 the least odd-prime non-one witness obeys the affine-radius bound. Transfer

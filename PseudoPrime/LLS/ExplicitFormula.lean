@@ -65,8 +65,8 @@ def LLSRiemannReciprocalVerticalIntegralLowerBound : Prop :=
                     ((τ : ℂ) + y * Complex.I)).re
 
 /-- Convert the logarithmic vertical-integral interface into LLS Lemma 2.1's Riemann lower bound. -/
-theorem llsRiemannWeightedLowerBound_of_verticalIntegralLowerBound
-    (h : LLSRiemannLogVerticalIntegralLowerBound) : LLSRiemannWeightedLowerBound := by
+theorem riemannWeightedLower_of_vertical (h : LLSRiemannLogVerticalIntegralLowerBound) :
+    LLSRiemannWeightedLowerBound := by
   intro x hx
   have hx0 : (0 : ℝ) < x := zero_lt_one.trans hx
   have heq :=
@@ -79,8 +79,7 @@ theorem llsRiemannWeightedLowerBound_of_verticalIntegralLowerBound
 
 /-- Convert the reciprocal vertical-integral interface into LLS Lemma 2.4's explicit Riemann
 lower bound. -/
-theorem llsRiemannReciprocalExplicitLowerBound_of_verticalIntegralLowerBound
-    (h : LLSRiemannReciprocalVerticalIntegralLowerBound) :
+theorem riemannReciprocalLower_of_vertical (h : LLSRiemannReciprocalVerticalIntegralLowerBound) :
     LLSRiemannReciprocalExplicitLowerBound := by
   intro x hx
   have hx0 : (0 : ℝ) < x := zero_lt_one.trans hx

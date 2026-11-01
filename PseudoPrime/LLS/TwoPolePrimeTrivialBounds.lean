@@ -51,11 +51,11 @@ theorem generalTwoPoleUpper_le_of_all_prime_trivial {q : ℕ} [NeZero q] (χ : D
   have hp : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ (99 / 40 : ℝ) * x → χ.primitiveCharacter p = 1 :=
     fun p hprime hb ↦ PaperStatements.primitiveCharacter_apply_one_of_apply_one χ (ht p hprime hb)
   have hD :=
-    excludedCharacterDefect_eq_zero_of_all_prime_trivial (N := q) χ.primitiveCharacter S
+    excludedDefect_zero_of_all_prime_trivial (N := q) χ.primitiveCharacter S
       (pairedEulerPrefixWeight (5 / 4) (11 / 4) (3 / 4)) hS
-      (fun n _ hn ↦ pairedEulerPrefixWeight_eq_zero_of_mangoldt_eq_zero _ _ _ hn) hp
+      (fun n _ hn ↦ pairedEulerWeight_eq_zero_of_mangoldt_zero _ _ _ hn) hp
   have hC :=
-    gammaLocalCorrection_nonpos_of_level_primes_above χ hx
+    gammaLocalCorrection_nonpos_of_large_primes χ hx
       (fun p hmem ↦ (level_prime_above_cutoff_of_all_prime_trivial χ ht hmem).le)
   have hlog : Real.log χ.conductor ≤ Real.log q :=
     Real.log_le_log (Nat.cast_pos.mpr (Nat.pos_of_ne_zero χ.conductor_ne_zero))
@@ -69,10 +69,9 @@ theorem generalTwoPoleUpper_le_of_all_prime_trivial {q : ℕ} [NeZero q] (χ : D
 excludes value one at all primes through the cutoff. Insert the level-only upper
 budget into the general-character contradiction. This avoids checking a separate
 scalar condition for every character. -/
-theorem prime_trivial_false_of_twoPolePrimeTrivialSeparation {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 ≤ x)
-    (S : Finset ℕ) (hS : ∀ n ∈ S, (n : ℝ) ≤ (99 / 40 : ℝ) * x)
+theorem not_primeTrivial_twoPoleSeparation_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hne : χ ≠ 1) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ}
+    (hx : 1 ≤ x) (S : Finset ℕ) (hS : ∀ n ∈ S, (n : ℝ) ≤ (99 / 40 : ℝ) * x)
     (hgap : 0 < twoPolePrimeTrivialSeparation q S x) :
     ¬(∀ p : ℕ, p.Prime → (p : ℝ) ≤ (99 / 40 : ℝ) * x → χ p = 1) := by
   intro ht

@@ -31,7 +31,7 @@ theorem triangular18_oscillating_zero_re_lower_signed {q : ℕ} [NeZero q] (hq :
   have he : (∑' ρ : ℂ, ‖K.oscillatingZeroTerm χ x ρ‖) = ∑' ρ : ℂ, ‖K.kernelZeroTerm χ ρ‖ :=
     tsum_congr (MellinKernel.norm_oscillatingZeroTerm K χ hx)
   have hz : ‖Z‖ ≤ ∑' ρ : ℂ, ‖K.kernelZeroTerm χ ρ‖ := ht.trans_eq he
-  have hm := triangular18_absoluteMass_le_signed_arithmetic_sub_thirty_six hq hGRH hp hne hinv
+  have hm := triangular18_mass_signed_sub36_GRH hq hGRH hp hne hinv
   have hr := Complex.re_le_norm (-Z)
   rw [Complex.neg_re, norm_neg] at hr
   change -36 * Real.log q + _ + _ + 36 ≤ Z.re
@@ -42,9 +42,8 @@ aggregate by the dual conductor profile, both signed Gamma integrals, and the in
 principal cost, minus the scale-one arithmetic pair and thirty-six per member.
 Combine the dual average upper bound with the signed oscillating zero lower bound.
 This removes the oscillating zero aggregate without an estimated left-contour remainder. -/
-theorem triangular18_annihilator_arithmetic_upper_dual_signed {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ}
-    (hx : 1 ≤ x) :
+theorem triangular18_arithmetic_dual_signed_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 ≤ x) :
     letI := Classical.propDecidable
     letI : ∀ i : NumberTheory.subgroupAnnihilator H, NeZero i.val.conductor := fun i ↦
       ⟨i.val.conductor_ne_zero⟩
@@ -91,7 +90,7 @@ theorem triangular18_annihilator_arithmetic_upper_dual_signed {q : ℕ} [NeZero 
         (inv_ne_one.mpr (hp χ hχ)) (zero_lt_one.trans_le hx)
   have hsum := Finset.sum_le_sum (s := S) hz
   simp only [Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_const, nsmul_eq_mul] at hsum
-  have h := triangular18_annihilator_dual_scale_arithmetic_upper_numeric H hGRH hx
+  have h := triangular18_dual_upper_numeric_GRH H hGRH hx
   dsimp only at h ⊢
   simp only [Complex.add_re, Finset.sum_add_distrib] at h
   simp only [Complex.add_re, Finset.sum_add_distrib]

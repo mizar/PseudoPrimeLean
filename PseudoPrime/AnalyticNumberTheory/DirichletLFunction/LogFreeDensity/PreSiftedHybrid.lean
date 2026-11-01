@@ -31,14 +31,14 @@ radius `1`.
 
 Role: provides the fixed smooth profile used for localization on the logarithmic axis.
 -/
-noncomputable def preSiftedHybridUnitBump : ContDiffBump (0 : ℝ) :=
+noncomputable def hybridUnitBump : ContDiffBump (0 : ℝ) :=
   { rIn := 1 / 2
     rOut := 1
     rIn_pos := by norm_num only [one_div]
     rIn_lt_rOut := by norm_num only [one_div] }
 
 /--
-Definition: the unit-mass normalization of `preSiftedHybridUnitBump` with respect to Lebesgue
+Definition: the unit-mass normalization of `hybridUnitBump` with respect to Lebesgue
 measure on `ℝ`.
 
 Output: a nonnegative smooth window supported in the unit ball.
@@ -46,18 +46,17 @@ Output: a nonnegative smooth window supported in the unit ball.
 Role: its scale changes will provide the compactly supported kernel in the hybrid mean-square
 localization.
 -/
-noncomputable def preSiftedHybridUnitWindow : ℝ → ℝ :=
-  preSiftedHybridUnitBump.normed MeasureTheory.volume
+noncomputable def hybridUnitWindow : ℝ → ℝ :=
+  hybridUnitBump.normed MeasureTheory.volume
 
 /--
-Definition: the Schwartz-map packaging of `preSiftedHybridUnitWindow`.
+Definition: the Schwartz-map packaging of `hybridUnitWindow`.
 
 Proof: a compactly supported smooth function defines a Schwartz map.
 
 Role: lets the hybrid localization use the existing Schwartz–Plancherel theorem.
 -/
-noncomputable def preSiftedHybridUnitWindowComplex : ℝ → ℂ := fun x =>
-  Complex.ofRealCLM (preSiftedHybridUnitWindow x)
+noncomputable def hybridUnitWindowC : ℝ → ℂ := fun x => Complex.ofRealCLM (hybridUnitWindow x)
 
 /--
 Definition: the complex Schwartz-map packaging of the real-valued unit window.
@@ -67,12 +66,11 @@ support and smoothness.
 
 Role: provides the complex-valued Fourier transform used in the height localization.
 -/
-noncomputable def preSiftedHybridUnitWindowSchwartz : SchwartzMap ℝ ℂ :=
-  (ContDiffBump.hasCompactSupport_normed (μ := MeasureTheory.volume)
-          preSiftedHybridUnitBump).comp_left
+noncomputable def hybridUnitSchwartz : SchwartzMap ℝ ℂ :=
+  (ContDiffBump.hasCompactSupport_normed (μ := MeasureTheory.volume) hybridUnitBump).comp_left
       (Complex.ofRealCLM.map_zero) |>.toSchwartzMap
     (ContDiff.continuousLinearMap_comp Complex.ofRealCLM
-      (ContDiffBump.contDiff_normed (μ := MeasureTheory.volume) (n := ⊤) preSiftedHybridUnitBump))
+      (ContDiffBump.contDiff_normed (μ := MeasureTheory.volume) (n := ⊤) hybridUnitBump))
 
 /--
 Claim: the underlying function of the Schwartz window is the normalized bump window.
@@ -81,8 +79,7 @@ Proof: `HasCompactSupport.toSchwartzMap` preserves the underlying function.
 
 Role: connects pointwise kernel formulas to the Fourier transform on Schwartz maps.
 -/
-theorem coe_preSiftedHybridUnitWindowSchwartz :
-    (preSiftedHybridUnitWindowSchwartz : ℝ → ℂ) = preSiftedHybridUnitWindowComplex :=
+theorem coe_unitSchwartz : (hybridUnitSchwartz : ℝ → ℂ) = hybridUnitWindowC :=
   rfl
 
 /--
@@ -96,7 +93,7 @@ complex multiplication.
 
 Role: provides the common Fourier representation for the unit window and its dilations.
 -/
-theorem preSiftedHybrid_fourier_eq_integral_exp (f : SchwartzMap ℝ ℂ) (ξ : ℝ) :
+theorem hybrid_fourier_exp (f : SchwartzMap ℝ ℂ) (ξ : ℝ) :
     (FourierTransform.fourier f : ℝ → ℂ) ξ =
       ∫ x : ℝ, Complex.exp ((-2 * Real.pi * x * ξ) * Complex.I) * f x ∂MeasureTheory.volume := by
   change FourierTransform.fourier (f : ℝ → ℂ) ξ = _
@@ -121,22 +118,22 @@ real scalar action on `ℂ` to multiplication.
 
 Role: exposes the integral formula needed to estimate the transform near frequency zero.
 -/
-theorem preSiftedHybridUnitWindowSchwartz_fourier_eq_integral (ξ : ℝ) :
-    (FourierTransform.fourier preSiftedHybridUnitWindowSchwartz : ℝ → ℂ) ξ =
+theorem unitFourier_integral (ξ : ℝ) :
+    (FourierTransform.fourier hybridUnitSchwartz : ℝ → ℂ) ξ =
       ∫ x : ℝ,
         Complex.exp ((-2 * Real.pi * x * ξ) * Complex.I) *
-          preSiftedHybridUnitWindowComplex x ∂MeasureTheory.volume := by
+          hybridUnitWindowC x ∂MeasureTheory.volume := by
   calc
-    (FourierTransform.fourier preSiftedHybridUnitWindowSchwartz : ℝ → ℂ) ξ =
+    (FourierTransform.fourier hybridUnitSchwartz : ℝ → ℂ) ξ =
         ∫ x : ℝ,
           Complex.exp ((-2 * Real.pi * x * ξ) * Complex.I) *
-            (preSiftedHybridUnitWindowSchwartz : ℝ → ℂ) x ∂MeasureTheory.volume :=
-      preSiftedHybrid_fourier_eq_integral_exp preSiftedHybridUnitWindowSchwartz ξ
+            (hybridUnitSchwartz : ℝ → ℂ) x ∂MeasureTheory.volume :=
+      hybrid_fourier_exp hybridUnitSchwartz ξ
     _ =
         ∫ x : ℝ,
           Complex.exp ((-2 * Real.pi * x * ξ) * Complex.I) *
-            preSiftedHybridUnitWindowComplex x ∂MeasureTheory.volume :=
-      by simp only [coe_preSiftedHybridUnitWindowSchwartz]
+            hybridUnitWindowC x ∂MeasureTheory.volume :=
+      by simp only [coe_unitSchwartz]
 
 /--
 Claim: the exponential factor in the real Fourier kernel differs from one by at most its phase
@@ -147,7 +144,7 @@ its complex norm.
 
 Role: bounds the Fourier transform's deviation from its value at frequency zero.
 -/
-theorem norm_preSiftedHybridFourierPhase_sub_one_le (x ξ : ℝ) :
+theorem fourierPhase_sub_one (x ξ : ℝ) :
     ‖Complex.exp ((((-2 * Real.pi * x * ξ : ℝ) : ℂ) * Complex.I)) - 1‖ ≤
       2 * Real.pi * |ξ| * |x| := by
   have hz : ((((-2 * Real.pi * x * ξ : ℝ) : ℂ) * Complex.I).re) ≤ 0 := by
@@ -176,9 +173,8 @@ Proof: use the normalization identity for `ContDiffBump.normed`.
 
 Role: fixes the mass of every rescaled localization kernel.
 -/
-theorem integral_preSiftedHybridUnitWindow :
-    ∫ x : ℝ, preSiftedHybridUnitWindow x ∂MeasureTheory.volume = 1 :=
-  ContDiffBump.integral_normed preSiftedHybridUnitBump
+theorem integral_unitWindow : ∫ x : ℝ, hybridUnitWindow x ∂MeasureTheory.volume = 1 :=
+  ContDiffBump.integral_normed hybridUnitBump
 
 /--
 Claim: the normalized hybrid window vanishes outside the open unit ball.
@@ -188,13 +184,12 @@ function.
 
 Role: restricts the phase error in the Fourier integral to points with absolute value at most one.
 -/
-theorem preSiftedHybridUnitWindow_eq_zero_of_one_le_abs {x : ℝ} (hx : 1 ≤ |x|) :
-    preSiftedHybridUnitWindow x = 0 := by
-  have hsupp : Function.support preSiftedHybridUnitWindow = Metric.ball 0 1 := by
-    change Function.support (preSiftedHybridUnitBump.normed MeasureTheory.volume) = Metric.ball 0 1
-    simpa only [preSiftedHybridUnitBump] using
-      (ContDiffBump.support_normed_eq (f := preSiftedHybridUnitBump) (μ := MeasureTheory.volume))
-  have hxnot : x ∉ Function.support preSiftedHybridUnitWindow := by
+theorem unitWindow_zero {x : ℝ} (hx : 1 ≤ |x|) : hybridUnitWindow x = 0 := by
+  have hsupp : Function.support hybridUnitWindow = Metric.ball 0 1 := by
+    change Function.support (hybridUnitBump.normed MeasureTheory.volume) = Metric.ball 0 1
+    simpa only [hybridUnitBump] using
+      (ContDiffBump.support_normed_eq (f := hybridUnitBump) (μ := MeasureTheory.volume))
+  have hxnot : x ∉ Function.support hybridUnitWindow := by
     rw [hsupp]
     simp only [Metric.mem_ball, Real.dist_eq]
     exact not_lt.mpr (by simpa only [Real.norm_eq_abs, sub_zero] using hx)
@@ -208,8 +203,8 @@ Proof: use nonnegativity of the normalized bump.
 
 Role: permits pointwise comparison of its square with the window itself.
 -/
-theorem preSiftedHybridUnitWindow_nonneg (x : ℝ) : 0 ≤ preSiftedHybridUnitWindow x :=
-  ContDiffBump.nonneg_normed preSiftedHybridUnitBump x
+theorem unitWindow_nonneg (x : ℝ) : 0 ≤ hybridUnitWindow x :=
+  ContDiffBump.nonneg_normed hybridUnitBump x
 
 /--
 Claim: the Fourier transform of the unit window differs from one by at most `2π |ξ|`.
@@ -220,20 +215,18 @@ integrate against the nonnegative unit-mass window.
 Role: gives a uniform positive lower bound for the Fourier transform at sufficiently small
 frequencies.
 -/
-theorem norm_preSiftedHybridUnitWindow_fourier_sub_one_le (ξ : ℝ) :
-    ‖(FourierTransform.fourier preSiftedHybridUnitWindowSchwartz : ℝ → ℂ) ξ - 1‖ ≤
-      2 * Real.pi * |ξ| := by
+theorem unitFourier_sub_le (ξ : ℝ) :
+    ‖(FourierTransform.fourier hybridUnitSchwartz : ℝ → ℂ) ξ - 1‖ ≤ 2 * Real.pi * |ξ| := by
   let phase : ℝ → ℂ := fun x => Complex.exp ((((-2 * Real.pi * x * ξ : ℝ) : ℂ) * Complex.I))
-  have hcomplex :
-    MeasureTheory.Integrable preSiftedHybridUnitWindowComplex MeasureTheory.volume := by
-    rw [← coe_preSiftedHybridUnitWindowSchwartz]
-    exact preSiftedHybridUnitWindowSchwartz.integrable
-  have hreal : MeasureTheory.Integrable preSiftedHybridUnitWindow MeasureTheory.volume :=
-    ContDiffBump.integrable_normed preSiftedHybridUnitBump
-  have hmass : ∫ x : ℝ, preSiftedHybridUnitWindowComplex x ∂MeasureTheory.volume = 1 := by
-    change ∫ x : ℝ, Complex.ofRealCLM (preSiftedHybridUnitWindow x) ∂MeasureTheory.volume = 1
+  have hcomplex : MeasureTheory.Integrable hybridUnitWindowC MeasureTheory.volume := by
+    rw [← coe_unitSchwartz]
+    exact hybridUnitSchwartz.integrable
+  have hreal : MeasureTheory.Integrable hybridUnitWindow MeasureTheory.volume :=
+    ContDiffBump.integrable_normed hybridUnitBump
+  have hmass : ∫ x : ℝ, hybridUnitWindowC x ∂MeasureTheory.volume = 1 := by
+    change ∫ x : ℝ, Complex.ofRealCLM (hybridUnitWindow x) ∂MeasureTheory.volume = 1
     rw [ContinuousLinearMap.integral_comp_comm _ hreal]
-    rw [integral_preSiftedHybridUnitWindow]
+    rw [integral_unitWindow]
     rfl
   have hphaseNorm (x : ℝ) : ‖phase x‖ ≤ 1 := by
     dsimp [phase]
@@ -247,16 +240,13 @@ theorem norm_preSiftedHybridUnitWindow_fourier_sub_one_le (ξ : ℝ) :
     dsimp [phase]
     fun_prop
   have hmul :
-    MeasureTheory.Integrable (fun x : ℝ => phase x * preSiftedHybridUnitWindowComplex x)
-      MeasureTheory.volume :=
+    MeasureTheory.Integrable (fun x : ℝ => phase x * hybridUnitWindowC x) MeasureTheory.volume :=
     hcomplex.bdd_mul hphaseCont.aestronglyMeasurable (Filter.Eventually.of_forall hphaseNorm)
   have hdiff :
-    MeasureTheory.Integrable (fun x : ℝ => (phase x - 1) * preSiftedHybridUnitWindowComplex x)
+    MeasureTheory.Integrable (fun x : ℝ => (phase x - 1) * hybridUnitWindowC x)
       MeasureTheory.volume := by
     have hsub :
-      MeasureTheory.Integrable
-        (fun x : ℝ =>
-          phase x * preSiftedHybridUnitWindowComplex x - preSiftedHybridUnitWindowComplex x)
+      MeasureTheory.Integrable (fun x : ℝ => phase x * hybridUnitWindowC x - hybridUnitWindowC x)
         MeasureTheory.volume :=
       hmul.sub hcomplex
     apply hsub.congr
@@ -265,53 +255,47 @@ theorem norm_preSiftedHybridUnitWindow_fourier_sub_one_le (ξ : ℝ) :
   have hC : 0 ≤ 2 * Real.pi * |ξ| :=
     mul_nonneg (mul_nonneg (by norm_num) Real.pi_pos.le) (abs_nonneg ξ)
   have hpoint (x : ℝ) :
-    ‖(phase x - 1) * preSiftedHybridUnitWindowComplex x‖ ≤
-      (2 * Real.pi * |ξ|) * preSiftedHybridUnitWindow x := by
+    ‖(phase x - 1) * hybridUnitWindowC x‖ ≤ (2 * Real.pi * |ξ|) * hybridUnitWindow x := by
     by_cases hx : 1 ≤ |x|
-    · change
-        ‖(phase x - 1) * (preSiftedHybridUnitWindow x : ℂ)‖ ≤
-          (2 * Real.pi * |ξ|) * preSiftedHybridUnitWindow x
-      rw [preSiftedHybridUnitWindow_eq_zero_of_one_le_abs hx]
+    · change ‖(phase x - 1) * (hybridUnitWindow x : ℂ)‖ ≤ (2 * Real.pi * |ξ|) * hybridUnitWindow x
+      rw [unitWindow_zero hx]
       simp only [Complex.ofReal_zero, mul_zero, norm_zero]
       exact le_rfl
     · have hxlt : |x| < 1 := lt_of_not_ge hx
-      have hφ : 0 ≤ preSiftedHybridUnitWindow x := preSiftedHybridUnitWindow_nonneg x
+      have hφ : 0 ≤ hybridUnitWindow x := unitWindow_nonneg x
       calc
-        ‖(phase x - 1) * preSiftedHybridUnitWindowComplex x‖ =
-            ‖phase x - 1‖ * preSiftedHybridUnitWindow x :=
-          by
-          change ‖(phase x - 1) * (preSiftedHybridUnitWindow x : ℂ)‖ = _
+        ‖(phase x - 1) * hybridUnitWindowC x‖ = ‖phase x - 1‖ * hybridUnitWindow x := by
+          change ‖(phase x - 1) * (hybridUnitWindow x : ℂ)‖ = _
           rw [norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg hφ]
-        _ ≤ (2 * Real.pi * |ξ| * |x|) * preSiftedHybridUnitWindow x :=
-          mul_le_mul_of_nonneg_right (norm_preSiftedHybridFourierPhase_sub_one_le x ξ) hφ
-        _ ≤ (2 * Real.pi * |ξ|) * preSiftedHybridUnitWindow x := by
+        _ ≤ (2 * Real.pi * |ξ| * |x|) * hybridUnitWindow x :=
+          mul_le_mul_of_nonneg_right (fourierPhase_sub_one x ξ) hφ
+        _ ≤ (2 * Real.pi * |ξ|) * hybridUnitWindow x := by
           calc
-            _ ≤ ((2 * Real.pi * |ξ|) * 1) * preSiftedHybridUnitWindow x :=
+            _ ≤ ((2 * Real.pi * |ξ|) * 1) * hybridUnitWindow x :=
               mul_le_mul_of_nonneg_right (mul_le_mul_of_nonneg_left hxlt.le hC) hφ
-            _ = (2 * Real.pi * |ξ|) * preSiftedHybridUnitWindow x := by rw [mul_one]
-        _ = (2 * Real.pi * |ξ|) * preSiftedHybridUnitWindow x := by ring
+            _ = (2 * Real.pi * |ξ|) * hybridUnitWindow x := by rw [mul_one]
+        _ = (2 * Real.pi * |ξ|) * hybridUnitWindow x := by ring
   have hnorm :
-    ‖∫ x : ℝ, (phase x - 1) * preSiftedHybridUnitWindowComplex x ∂MeasureTheory.volume‖ ≤
-      2 * Real.pi * |ξ| := by
+    ‖∫ x : ℝ, (phase x - 1) * hybridUnitWindowC x ∂MeasureTheory.volume‖ ≤ 2 * Real.pi * |ξ| := by
     calc
-      ‖∫ x : ℝ, (phase x - 1) * preSiftedHybridUnitWindowComplex x ∂MeasureTheory.volume‖ ≤
-          ∫ x : ℝ, ‖(phase x - 1) * preSiftedHybridUnitWindowComplex x‖ ∂MeasureTheory.volume :=
+      ‖∫ x : ℝ, (phase x - 1) * hybridUnitWindowC x ∂MeasureTheory.volume‖ ≤
+          ∫ x : ℝ, ‖(phase x - 1) * hybridUnitWindowC x‖ ∂MeasureTheory.volume :=
         MeasureTheory.norm_integral_le_integral_norm _
-      _ ≤ ∫ x : ℝ, (2 * Real.pi * |ξ|) * preSiftedHybridUnitWindow x ∂MeasureTheory.volume :=
+      _ ≤ ∫ x : ℝ, (2 * Real.pi * |ξ|) * hybridUnitWindow x ∂MeasureTheory.volume :=
         MeasureTheory.integral_mono_ae hdiff.norm (hreal.const_mul (2 * Real.pi * |ξ|))
           (Filter.Eventually.of_forall hpoint)
       _ = 2 * Real.pi * |ξ| := by
-        rw [MeasureTheory.integral_const_mul, integral_preSiftedHybridUnitWindow]
+        rw [MeasureTheory.integral_const_mul, integral_unitWindow]
         simp only [mul_one]
   have hrepr :
-    (FourierTransform.fourier preSiftedHybridUnitWindowSchwartz : ℝ → ℂ) ξ - 1 =
-      ∫ x : ℝ, (phase x - 1) * preSiftedHybridUnitWindowComplex x ∂MeasureTheory.volume := by
+    (FourierTransform.fourier hybridUnitSchwartz : ℝ → ℂ) ξ - 1 =
+      ∫ x : ℝ, (phase x - 1) * hybridUnitWindowC x ∂MeasureTheory.volume := by
     calc
       _ =
-          (∫ x : ℝ, phase x * preSiftedHybridUnitWindowComplex x ∂MeasureTheory.volume) -
-            ∫ x : ℝ, preSiftedHybridUnitWindowComplex x ∂MeasureTheory.volume :=
+          (∫ x : ℝ, phase x * hybridUnitWindowC x ∂MeasureTheory.volume) -
+            ∫ x : ℝ, hybridUnitWindowC x ∂MeasureTheory.volume :=
         by
-        rw [preSiftedHybridUnitWindowSchwartz_fourier_eq_integral]
+        rw [unitFourier_integral]
         rw [hmass]
         congr 1
         apply MeasureTheory.integral_congr_ae
@@ -320,12 +304,9 @@ theorem norm_preSiftedHybridUnitWindow_fourier_sub_one_le (ξ : ℝ) :
         congr 2
         push_cast
         ring
-      _ =
-          ∫ x : ℝ,
-            (phase x * preSiftedHybridUnitWindowComplex x -
-              preSiftedHybridUnitWindowComplex x) ∂MeasureTheory.volume :=
+      _ = ∫ x : ℝ, (phase x * hybridUnitWindowC x - hybridUnitWindowC x) ∂MeasureTheory.volume :=
         (MeasureTheory.integral_sub hmul hcomplex).symm
-      _ = ∫ x : ℝ, (phase x - 1) * preSiftedHybridUnitWindowComplex x ∂MeasureTheory.volume := by
+      _ = ∫ x : ℝ, (phase x - 1) * hybridUnitWindowC x ∂MeasureTheory.volume := by
         congr 1
         funext x
         ring
@@ -341,34 +322,33 @@ one.
 
 Role: supplies the nonvanishing Fourier factor needed in the height localization.
 -/
-theorem norm_preSiftedHybridUnitWindow_fourier_ge_half {ξ : ℝ} (hξ : 2 * Real.pi * |ξ| ≤ 1 / 4) :
-    (1 / 2 : ℝ) ≤ ‖(FourierTransform.fourier preSiftedHybridUnitWindowSchwartz : ℝ → ℂ) ξ‖ := by
-  have hdev := norm_preSiftedHybridUnitWindow_fourier_sub_one_le ξ
-  have hdev' :
-    ‖(FourierTransform.fourier preSiftedHybridUnitWindowSchwartz : ℝ → ℂ) ξ - 1‖ ≤ 1 / 4 :=
+theorem unitFourier_ge_half {ξ : ℝ} (hξ : 2 * Real.pi * |ξ| ≤ 1 / 4) :
+    (1 / 2 : ℝ) ≤ ‖(FourierTransform.fourier hybridUnitSchwartz : ℝ → ℂ) ξ‖ := by
+  have hdev := unitFourier_sub_le ξ
+  have hdev' : ‖(FourierTransform.fourier hybridUnitSchwartz : ℝ → ℂ) ξ - 1‖ ≤ 1 / 4 :=
     hdev.trans hξ
   have hrev :
-    ‖(1 : ℂ) - (FourierTransform.fourier preSiftedHybridUnitWindowSchwartz : ℝ → ℂ) ξ‖ =
-      ‖(FourierTransform.fourier preSiftedHybridUnitWindowSchwartz : ℝ → ℂ) ξ - 1‖ := by
+    ‖(1 : ℂ) - (FourierTransform.fourier hybridUnitSchwartz : ℝ → ℂ) ξ‖ =
+      ‖(FourierTransform.fourier hybridUnitSchwartz : ℝ → ℂ) ξ - 1‖ := by
     rw [show
-        (1 : ℂ) - (FourierTransform.fourier preSiftedHybridUnitWindowSchwartz : ℝ → ℂ) ξ =
-          -((FourierTransform.fourier preSiftedHybridUnitWindowSchwartz : ℝ → ℂ) ξ - 1)
+        (1 : ℂ) - (FourierTransform.fourier hybridUnitSchwartz : ℝ → ℂ) ξ =
+          -((FourierTransform.fourier hybridUnitSchwartz : ℝ → ℂ) ξ - 1)
         by ring]
     rw [norm_neg]
   have htri :
     ‖(1 : ℂ)‖ ≤
-      ‖(1 : ℂ) - (FourierTransform.fourier preSiftedHybridUnitWindowSchwartz : ℝ → ℂ) ξ‖ +
-        ‖(FourierTransform.fourier preSiftedHybridUnitWindowSchwartz : ℝ → ℂ) ξ‖ := by
+      ‖(1 : ℂ) - (FourierTransform.fourier hybridUnitSchwartz : ℝ → ℂ) ξ‖ +
+        ‖(FourierTransform.fourier hybridUnitSchwartz : ℝ → ℂ) ξ‖ := by
     calc
       ‖(1 : ℂ)‖ =
-          ‖((1 : ℂ) - (FourierTransform.fourier preSiftedHybridUnitWindowSchwartz : ℝ → ℂ) ξ) +
-              (FourierTransform.fourier preSiftedHybridUnitWindowSchwartz : ℝ → ℂ) ξ‖ :=
+          ‖((1 : ℂ) - (FourierTransform.fourier hybridUnitSchwartz : ℝ → ℂ) ξ) +
+              (FourierTransform.fourier hybridUnitSchwartz : ℝ → ℂ) ξ‖ :=
         by
         congr 1
         ring
       _ ≤
-          ‖(1 : ℂ) - (FourierTransform.fourier preSiftedHybridUnitWindowSchwartz : ℝ → ℂ) ξ‖ +
-            ‖(FourierTransform.fourier preSiftedHybridUnitWindowSchwartz : ℝ → ℂ) ξ‖ :=
+          ‖(1 : ℂ) - (FourierTransform.fourier hybridUnitSchwartz : ℝ → ℂ) ξ‖ +
+            ‖(FourierTransform.fourier hybridUnitSchwartz : ℝ → ℂ) ξ‖ :=
         norm_add_le _ _
   rw [norm_one, hrev] at htri
   linarith only [htri, hdev']
@@ -381,19 +361,18 @@ bound is one.
 
 Role: gives the unit-scale pointwise bound needed for the kernel's squared integral estimate.
 -/
-theorem preSiftedHybridUnitWindow_le_one (x : ℝ) : preSiftedHybridUnitWindow x ≤ 1 := by
+theorem unitWindow_le_one (x : ℝ) : hybridUnitWindow x ≤ 1 := by
   have hvol : MeasureTheory.volume.real (Metric.closedBall (0 : ℝ) (1 / 2)) = 1 := by
     change (MeasureTheory.volume (Metric.closedBall (0 : ℝ) (1 / 2))).toReal = 1
     rw [Real.volume_closedBall]
     rw [ENNReal.toReal_ofReal (by norm_num only [one_div])]
     norm_num only [one_div]
   calc
-    preSiftedHybridUnitWindow x ≤
-        1 / MeasureTheory.volume.real (Metric.closedBall (0 : ℝ) preSiftedHybridUnitBump.rIn) :=
-      ContDiffBump.normed_le_div_measure_closedBall_rIn preSiftedHybridUnitBump MeasureTheory.volume
-        x
+    hybridUnitWindow x ≤
+        1 / MeasureTheory.volume.real (Metric.closedBall (0 : ℝ) hybridUnitBump.rIn) :=
+      ContDiffBump.normed_le_div_measure_closedBall_rIn hybridUnitBump MeasureTheory.volume x
     _ = 1 := by
-      rw [show preSiftedHybridUnitBump.rIn = 1 / 2 from rfl, hvol]
+      rw [show hybridUnitBump.rIn = 1 / 2 from rfl, hvol]
       norm_num only [one_div]
 
 /--
@@ -404,45 +383,37 @@ follows by domination.
 
 Role: supplies the scale-independent squared-mass bound for localization.
 -/
-theorem integral_sq_preSiftedHybridUnitWindow_le_one :
-    ∫ x : ℝ, preSiftedHybridUnitWindow x ^ 2 ∂MeasureTheory.volume ≤ 1 := by
-  have hcont : Continuous preSiftedHybridUnitWindow := by
-    change Continuous (preSiftedHybridUnitBump.normed MeasureTheory.volume)
+theorem unitWindow_sqInt_le : ∫ x : ℝ, hybridUnitWindow x ^ 2 ∂MeasureTheory.volume ≤ 1 := by
+  have hcont : Continuous hybridUnitWindow := by
+    change Continuous (hybridUnitBump.normed MeasureTheory.volume)
     exact
       ContDiff.continuous
-        (ContDiffBump.contDiff_normed (μ := MeasureTheory.volume) (n := ⊤) preSiftedHybridUnitBump)
-  have hint : MeasureTheory.Integrable preSiftedHybridUnitWindow MeasureTheory.volume :=
-    ContDiffBump.integrable_normed preSiftedHybridUnitBump
+        (ContDiffBump.contDiff_normed (μ := MeasureTheory.volume) (n := ⊤) hybridUnitBump)
+  have hint : MeasureTheory.Integrable hybridUnitWindow MeasureTheory.volume :=
+    ContDiffBump.integrable_normed hybridUnitBump
   have hsqIntegrable :
-    MeasureTheory.Integrable (fun x : ℝ => preSiftedHybridUnitWindow x ^ 2)
-      MeasureTheory.volume := by
+    MeasureTheory.Integrable (fun x : ℝ => hybridUnitWindow x ^ 2) MeasureTheory.volume := by
     apply hint.mono' ((hcont.pow 2).aestronglyMeasurable)
     filter_upwards [] with x
-    change |preSiftedHybridUnitWindow x ^ 2| ≤ preSiftedHybridUnitWindow x
-    rw [abs_of_nonneg (sq_nonneg (preSiftedHybridUnitWindow x))]
+    change |hybridUnitWindow x ^ 2| ≤ hybridUnitWindow x
+    rw [abs_of_nonneg (sq_nonneg (hybridUnitWindow x))]
     calc
-      preSiftedHybridUnitWindow x ^ 2 = preSiftedHybridUnitWindow x * preSiftedHybridUnitWindow x :=
-        by rw [pow_two]
-      _ ≤ preSiftedHybridUnitWindow x * 1 :=
-        mul_le_mul_of_nonneg_left (preSiftedHybridUnitWindow_le_one x)
-          (preSiftedHybridUnitWindow_nonneg x)
-      _ = preSiftedHybridUnitWindow x := mul_one _
-  have hsqLe :
-    (fun x : ℝ => preSiftedHybridUnitWindow x ^ 2) ≤ᵐ[MeasureTheory.volume]
-      preSiftedHybridUnitWindow := by
+      hybridUnitWindow x ^ 2 = hybridUnitWindow x * hybridUnitWindow x := by rw [pow_two]
+      _ ≤ hybridUnitWindow x * 1 :=
+        mul_le_mul_of_nonneg_left (unitWindow_le_one x) (unitWindow_nonneg x)
+      _ = hybridUnitWindow x := mul_one _
+  have hsqLe : (fun x : ℝ => hybridUnitWindow x ^ 2) ≤ᵐ[MeasureTheory.volume] hybridUnitWindow := by
     filter_upwards [] with x
     calc
-      preSiftedHybridUnitWindow x ^ 2 = preSiftedHybridUnitWindow x * preSiftedHybridUnitWindow x :=
-        by rw [pow_two]
-      _ ≤ preSiftedHybridUnitWindow x * 1 :=
-        mul_le_mul_of_nonneg_left (preSiftedHybridUnitWindow_le_one x)
-          (preSiftedHybridUnitWindow_nonneg x)
-      _ = preSiftedHybridUnitWindow x := mul_one _
+      hybridUnitWindow x ^ 2 = hybridUnitWindow x * hybridUnitWindow x := by rw [pow_two]
+      _ ≤ hybridUnitWindow x * 1 :=
+        mul_le_mul_of_nonneg_left (unitWindow_le_one x) (unitWindow_nonneg x)
+      _ = hybridUnitWindow x := mul_one _
   calc
-    ∫ x : ℝ, preSiftedHybridUnitWindow x ^ 2 ∂MeasureTheory.volume ≤
-        ∫ x : ℝ, preSiftedHybridUnitWindow x ∂MeasureTheory.volume :=
+    ∫ x : ℝ, hybridUnitWindow x ^ 2 ∂MeasureTheory.volume ≤
+        ∫ x : ℝ, hybridUnitWindow x ∂MeasureTheory.volume :=
       MeasureTheory.integral_mono_ae hsqIntegrable hint hsqLe
-    _ = 1 := integral_preSiftedHybridUnitWindow
+    _ = 1 := integral_unitWindow
 
 /--
 Definition: the dilation of the unit window at positive scale `δ`, given by
@@ -452,8 +423,7 @@ Output: a real-valued localization kernel on the logarithmic axis.
 
 Role: its mass and squared mass control the height-integrated hybrid estimate.
 -/
-noncomputable def preSiftedHybridKernel (δ : ℝ) : ℝ → ℝ := fun x =>
-  δ⁻¹ * preSiftedHybridUnitWindow (δ⁻¹ * x)
+noncomputable def preSiftedHybridKernel (δ : ℝ) : ℝ → ℝ := fun x => δ⁻¹ * hybridUnitWindow (δ⁻¹ * x)
 
 /--
 Definition: the complex Schwartz-map packaging of the dilated hybrid kernel at positive scale.
@@ -463,11 +433,11 @@ Construction: compose the unit window with multiplication by `δ⁻¹` and multi
 
 Role: provides the scaled kernel to the Schwartz Fourier transform and Plancherel theorem.
 -/
-noncomputable def preSiftedHybridKernelSchwartz (δ : ℝ) (hδ : 0 < δ) : SchwartzMap ℝ ℂ :=
+noncomputable def hybridKernelSchwartz (δ : ℝ) (hδ : 0 < δ) : SchwartzMap ℝ ℂ :=
   let u : ℝˣ := Units.mk0 δ⁻¹ (inv_ne_zero (ne_of_gt hδ))
   δ⁻¹ •
     (SchwartzMap.compCLMOfContinuousLinearEquiv ℂ (ContinuousLinearEquiv.unitsEquivAut ℝ u)
-      preSiftedHybridUnitWindowSchwartz)
+      hybridUnitSchwartz)
 
 /--
 Definition: translate a complex Schwartz map by `a`, giving the function `x ↦ f(x - a)`.
@@ -476,8 +446,7 @@ Construction: compose the Schwartz map with the translation isometry.
 
 Role: packages each localized summand as a Schwartz function for finite sums and Plancherel.
 -/
-noncomputable def preSiftedHybridTranslateSchwartz (f : SchwartzMap ℝ ℂ) (a : ℝ) :
-    SchwartzMap ℝ ℂ := by
+noncomputable def hybridShiftSchwartz (f : SchwartzMap ℝ ℂ) (a : ℝ) : SchwartzMap ℝ ℂ := by
   have hg : (fun x : ℝ => x - a).HasTemperateGrowth :=
     Function.HasTemperateGrowth.id.sub (Function.HasTemperateGrowth.const a)
   have hanti : AntilipschitzWith 1 (fun x : ℝ => x - a) := by
@@ -492,8 +461,8 @@ Claim: the translated Schwartz map evaluates to `f (x - a)`.
 
 Role: exposes the translated summand used in the finite Dirichlet polynomial localization.
 -/
-theorem coe_preSiftedHybridTranslateSchwartz (f : SchwartzMap ℝ ℂ) (a : ℝ) :
-    (preSiftedHybridTranslateSchwartz f a : ℝ → ℂ) = fun x => (f : ℝ → ℂ) (x - a) := by
+theorem coe_shiftSchwartz (f : SchwartzMap ℝ ℂ) (a : ℝ) :
+    (hybridShiftSchwartz f a : ℝ → ℂ) = fun x => (f : ℝ → ℂ) (x - a) := by
   funext x
   rfl
 
@@ -504,10 +473,10 @@ Proof: apply the translation formula for the real Fourier integral to the underl
 
 Role: gives the Fourier factorization for each localized summand.
 -/
-theorem preSiftedHybridTranslateSchwartz_fourier (f : SchwartzMap ℝ ℂ) (a ξ : ℝ) :
-    (FourierTransform.fourier (preSiftedHybridTranslateSchwartz f a) : ℝ → ℂ) ξ =
+theorem shiftSchwartz_fourier (f : SchwartzMap ℝ ℂ) (a ξ : ℝ) :
+    (FourierTransform.fourier (hybridShiftSchwartz f a) : ℝ → ℂ) ξ =
       Real.fourierChar ((-a) * ξ) • (FourierTransform.fourier f : ℝ → ℂ) ξ := by
-  rw [SchwartzMap.fourier_coe, coe_preSiftedHybridTranslateSchwartz, SchwartzMap.fourier_coe]
+  rw [SchwartzMap.fourier_coe, coe_shiftSchwartz, SchwartzMap.fourier_coe]
   have h :=
     Fourier.fourierIntegral_comp_add_right Real.fourierChar MeasureTheory.volume (f : ℝ → ℂ) (-a)
   have hξ := congrFun h ξ
@@ -521,9 +490,8 @@ Proof: induct on the finite index set and use the pointwise addition and scalar-
 
 Role: converts the finite Schwartz sum into the pointwise localized Dirichlet polynomial.
 -/
-theorem coe_sum_smul_preSiftedHybridSchwartz {ι : Type} (s : Finset ι) (c : ι → ℂ)
-    (F : ι → SchwartzMap ℝ ℂ) (x : ℝ) :
-    (∑ i ∈ s, c i • F i : SchwartzMap ℝ ℂ) x = ∑ i ∈ s, c i • (F i : ℝ → ℂ) x := by
+theorem coe_sum_smul_schwartz {ι : Type} (s : Finset ι) (c : ι → ℂ) (F : ι → SchwartzMap ℝ ℂ)
+    (x : ℝ) : (∑ i ∈ s, c i • F i : SchwartzMap ℝ ℂ) x = ∑ i ∈ s, c i • (F i : ℝ → ℂ) x := by
   classical
     induction s using Finset.induction_on with
   | empty => simp
@@ -539,36 +507,34 @@ Proof: use linearity of the Schwartz Fourier transform and the translation formu
 
 Role: factors the Fourier transform of the finite Dirichlet polynomial localized by the kernel.
 -/
-theorem preSiftedHybridTranslateSchwartz_sum_fourier {ι : Type} (s : Finset ι) (c : ι → ℂ)
-    (a : ι → ℝ) (f : SchwartzMap ℝ ℂ) (ξ : ℝ) :
-    (FourierTransform.fourier (∑ i ∈ s, c i • preSiftedHybridTranslateSchwartz f (a i)) : ℝ → ℂ) ξ =
+theorem shiftSum_fourier {ι : Type} (s : Finset ι) (c : ι → ℂ) (a : ι → ℝ) (f : SchwartzMap ℝ ℂ)
+    (ξ : ℝ) :
+    (FourierTransform.fourier (∑ i ∈ s, c i • hybridShiftSchwartz f (a i)) : ℝ → ℂ) ξ =
       ∑ i ∈ s,
         c i • (Real.fourierChar ((-(a i)) * ξ) • (FourierTransform.fourier f : ℝ → ℂ) ξ) := by
   have hmap :
-    FourierTransform.fourier (∑ i ∈ s, c i • preSiftedHybridTranslateSchwartz f (a i)) =
-      ∑ i ∈ s, c i • FourierTransform.fourier (preSiftedHybridTranslateSchwartz f (a i)) := by
+    FourierTransform.fourier (∑ i ∈ s, c i • hybridShiftSchwartz f (a i)) =
+      ∑ i ∈ s, c i • FourierTransform.fourier (hybridShiftSchwartz f (a i)) := by
     change
-      SchwartzMap.fourierTransformCLM ℂ (∑ i ∈ s, c i • preSiftedHybridTranslateSchwartz f (a i)) =
-        ∑ i ∈ s, c i • SchwartzMap.fourierTransformCLM ℂ (preSiftedHybridTranslateSchwartz f (a i))
+      SchwartzMap.fourierTransformCLM ℂ (∑ i ∈ s, c i • hybridShiftSchwartz f (a i)) =
+        ∑ i ∈ s, c i • SchwartzMap.fourierTransformCLM ℂ (hybridShiftSchwartz f (a i))
     rw [map_sum]
     simp only [map_smul]
   have hpoint := congrArg (fun g : SchwartzMap ℝ ℂ => (g : ℝ → ℂ) ξ) hmap
-  rw [coe_sum_smul_preSiftedHybridSchwartz] at hpoint
+  rw [coe_sum_smul_schwartz] at hpoint
   calc
-    (FourierTransform.fourier (∑ i ∈ s, c i • preSiftedHybridTranslateSchwartz f (a i)) : ℝ → ℂ) ξ =
-        ∑ i ∈ s,
-          c i • (FourierTransform.fourier (preSiftedHybridTranslateSchwartz f (a i)) : ℝ → ℂ) ξ :=
+    (FourierTransform.fourier (∑ i ∈ s, c i • hybridShiftSchwartz f (a i)) : ℝ → ℂ) ξ =
+        ∑ i ∈ s, c i • (FourierTransform.fourier (hybridShiftSchwartz f (a i)) : ℝ → ℂ) ξ :=
       hpoint
     _ = ∑ i ∈ s, c i • (Real.fourierChar ((-(a i)) * ξ) • (FourierTransform.fourier f : ℝ → ℂ) ξ) :=
       by
       apply Finset.sum_congr rfl
       intro i hi
-      rw [preSiftedHybridTranslateSchwartz_fourier]
+      rw [shiftSchwartz_fourier]
 
 /-- Translate the scaled kernel to a center `a` as the function `x ↦ κδ(x - a)`. -/
-noncomputable def preSiftedHybridTranslatedKernelSchwartz (δ : ℝ) (hδ : 0 < δ) (a : ℝ) :
-    SchwartzMap ℝ ℂ :=
-  preSiftedHybridTranslateSchwartz (preSiftedHybridKernelSchwartz δ hδ) a
+noncomputable def hybridShiftedKernel (δ : ℝ) (hδ : 0 < δ) (a : ℝ) : SchwartzMap ℝ ℂ :=
+  hybridShiftSchwartz (hybridKernelSchwartz δ hδ) a
 
 /--
 Definition: the finite Schwartz sum that localizes coefficients at their logarithms.
@@ -579,9 +545,9 @@ Output: the sum of translated scaled kernels with the given coefficients.
 
 Role: supplies the smooth finite function to which Plancherel is applied.
 -/
-noncomputable def preSiftedHybridLocalizedSchwartz (δ : ℝ) (hδ : 0 < δ) (s : Finset ℕ) (c : ℕ → ℂ) :
+noncomputable def hybridLocalizedSum (δ : ℝ) (hδ : 0 < δ) (s : Finset ℕ) (c : ℕ → ℂ) :
     SchwartzMap ℝ ℂ :=
-  ∑ n ∈ s, c n • preSiftedHybridTranslatedKernelSchwartz δ hδ (Real.log n)
+  ∑ n ∈ s, c n • hybridShiftedKernel δ hδ (Real.log n)
 
 /--
 Definition: the finite Dirichlet polynomial with coefficients supported on `s`.
@@ -590,7 +556,7 @@ Definition: `Σ n ∈ s, c n * exp(-it log n)`.
 
 Role: the height integral of its squared norm is bounded by the localized Schwartz sum.
 -/
-noncomputable def preSiftedHybridDirichletPolynomial (s : Finset ℕ) (c : ℕ → ℂ) (t : ℝ) : ℂ :=
+noncomputable def hybridDirichletPoly (s : Finset ℕ) (c : ℕ → ℂ) (t : ℝ) : ℂ :=
   ∑ n ∈ s, c n * Complex.exp ((-(t * Real.log n) : ℝ) * Complex.I)
 
 /--
@@ -602,13 +568,12 @@ exponential and factor out the common kernel transform.
 
 Role: connects height integration of a finite Dirichlet polynomial to Plancherel.
 -/
-theorem preSiftedHybridLocalizedSchwartz_fourier (δ : ℝ) (hδ : 0 < δ) (s : Finset ℕ) (c : ℕ → ℂ)
-    (ξ : ℝ) :
-    (FourierTransform.fourier (preSiftedHybridLocalizedSchwartz δ hδ s c) : ℝ → ℂ) ξ =
-      (FourierTransform.fourier (preSiftedHybridKernelSchwartz δ hδ) : ℝ → ℂ) ξ *
+theorem localized_fourier (δ : ℝ) (hδ : 0 < δ) (s : Finset ℕ) (c : ℕ → ℂ) (ξ : ℝ) :
+    (FourierTransform.fourier (hybridLocalizedSum δ hδ s c) : ℝ → ℂ) ξ =
+      (FourierTransform.fourier (hybridKernelSchwartz δ hδ) : ℝ → ℂ) ξ *
         ∑ n ∈ s, c n * Complex.exp ((-2 * Real.pi * Real.log n * ξ) * Complex.I) := by
-  simp only [preSiftedHybridLocalizedSchwartz, preSiftedHybridTranslatedKernelSchwartz]
-  rw [preSiftedHybridTranslateSchwartz_sum_fourier]
+  simp only [hybridLocalizedSum, hybridShiftedKernel]
+  rw [shiftSum_fourier]
   rw [Finset.mul_sum]
   apply Finset.sum_congr rfl
   intro n hn
@@ -625,14 +590,12 @@ each exponential.
 
 Role: identifies the Fourier integral used in the height localization estimate.
 -/
-theorem preSiftedHybridLocalizedSchwartz_fourier_at_height (δ : ℝ) (hδ : 0 < δ) (s : Finset ℕ)
-    (c : ℕ → ℂ) (t : ℝ) :
-    (FourierTransform.fourier (preSiftedHybridLocalizedSchwartz δ hδ s c) : ℝ → ℂ)
-        (t / (2 * Real.pi)) =
-      (FourierTransform.fourier (preSiftedHybridKernelSchwartz δ hδ) : ℝ → ℂ) (t / (2 * Real.pi)) *
-        preSiftedHybridDirichletPolynomial s c t := by
-  rw [preSiftedHybridLocalizedSchwartz_fourier]
-  unfold preSiftedHybridDirichletPolynomial
+theorem localizedFourier_at_t (δ : ℝ) (hδ : 0 < δ) (s : Finset ℕ) (c : ℕ → ℂ) (t : ℝ) :
+    (FourierTransform.fourier (hybridLocalizedSum δ hδ s c) : ℝ → ℂ) (t / (2 * Real.pi)) =
+      (FourierTransform.fourier (hybridKernelSchwartz δ hδ) : ℝ → ℂ) (t / (2 * Real.pi)) *
+        hybridDirichletPoly s c t := by
+  rw [localized_fourier]
+  unfold hybridDirichletPoly
   congr 1
   apply Finset.sum_congr rfl
   intro n hn
@@ -646,30 +609,27 @@ Definition: translate the unit-mass window by `a` as the Schwartz function `x �
 
 Role: provides a fixed smooth window centered at each logarithm in a finite Dirichlet polynomial.
 -/
-noncomputable def preSiftedHybridTranslatedUnitWindowSchwartz (a : ℝ) : SchwartzMap ℝ ℂ :=
-  preSiftedHybridTranslateSchwartz preSiftedHybridUnitWindowSchwartz a
+noncomputable def hybridShiftedWindow (a : ℝ) : SchwartzMap ℝ ℂ :=
+  hybridShiftSchwartz hybridUnitSchwartz a
 
 /--
 Claim: the translated Schwartz window evaluates to the unit window at `x - a`.
 
 Role: exposes the pointwise window used in the finite Dirichlet polynomial localization.
 -/
-theorem coe_preSiftedHybridTranslatedUnitWindowSchwartz (a : ℝ) :
-    (preSiftedHybridTranslatedUnitWindowSchwartz a : ℝ → ℂ) = fun x =>
-      preSiftedHybridUnitWindowComplex (x - a) := by
-  rw [preSiftedHybridTranslatedUnitWindowSchwartz, coe_preSiftedHybridTranslateSchwartz,
-    coe_preSiftedHybridUnitWindowSchwartz]
+theorem coe_shiftUnitWindow (a : ℝ) :
+    (hybridShiftedWindow a : ℝ → ℂ) = fun x => hybridUnitWindowC (x - a) := by
+  rw [hybridShiftedWindow, coe_shiftSchwartz, coe_unitSchwartz]
 
 /--
 Claim: translating the unit window multiplies its Fourier transform by the corresponding phase.
 
 Role: gives the Fourier factorization for each term of the localized finite Dirichlet polynomial.
 -/
-theorem preSiftedHybridTranslatedUnitWindowSchwartz_fourier (a ξ : ℝ) :
-    (FourierTransform.fourier (preSiftedHybridTranslatedUnitWindowSchwartz a) : ℝ → ℂ) ξ =
-      Real.fourierChar ((-a) * ξ) •
-        (FourierTransform.fourier preSiftedHybridUnitWindowSchwartz : ℝ → ℂ) ξ := by
-  exact preSiftedHybridTranslateSchwartz_fourier preSiftedHybridUnitWindowSchwartz a ξ
+theorem shiftWindow_fourier (a ξ : ℝ) :
+    (FourierTransform.fourier (hybridShiftedWindow a) : ℝ → ℂ) ξ =
+      Real.fourierChar ((-a) * ξ) • (FourierTransform.fourier hybridUnitSchwartz : ℝ → ℂ) ξ := by
+  exact shiftSchwartz_fourier hybridUnitSchwartz a ξ
 
 /--
 Claim: the scaled Schwartz kernel represents the complexification of the real hybrid kernel.
@@ -678,13 +638,13 @@ Proof: evaluate the Schwartz composition, then use linearity of the real-to-comp
 
 Role: connects the real kernel mass estimates to its complex Fourier transform.
 -/
-theorem coe_preSiftedHybridKernelSchwartz (δ : ℝ) (hδ : 0 < δ) :
-    (preSiftedHybridKernelSchwartz δ hδ : ℝ → ℂ) = fun x =>
+theorem coe_kernelSchwartz (δ : ℝ) (hδ : 0 < δ) :
+    (hybridKernelSchwartz δ hδ : ℝ → ℂ) = fun x =>
       Complex.ofRealCLM (preSiftedHybridKernel δ x) := by
   funext x
   change
-    δ⁻¹ • Complex.ofRealCLM (preSiftedHybridUnitWindow (x * δ⁻¹)) =
-      Complex.ofRealCLM (δ⁻¹ * preSiftedHybridUnitWindow (δ⁻¹ * x))
+    δ⁻¹ • Complex.ofRealCLM (hybridUnitWindow (x * δ⁻¹)) =
+      Complex.ofRealCLM (δ⁻¹ * hybridUnitWindow (δ⁻¹ * x))
   rw [← Complex.ofRealCLM.map_smul]
   simp only [smul_eq_mul, mul_comm]
 
@@ -693,11 +653,10 @@ Claim: the translated scaled kernel is the complexification of `x ↦ κδ(x - a
 
 Role: connects pointwise finite-sum localization to the real kernel bounds.
 -/
-theorem coe_preSiftedHybridTranslatedKernelSchwartz (δ : ℝ) (hδ : 0 < δ) (a : ℝ) :
-    (preSiftedHybridTranslatedKernelSchwartz δ hδ a : ℝ → ℂ) = fun x =>
+theorem coe_shiftKernel (δ : ℝ) (hδ : 0 < δ) (a : ℝ) :
+    (hybridShiftedKernel δ hδ a : ℝ → ℂ) = fun x =>
       Complex.ofRealCLM (preSiftedHybridKernel δ (x - a)) := by
-  rw [preSiftedHybridTranslatedKernelSchwartz, coe_preSiftedHybridTranslateSchwartz,
-    coe_preSiftedHybridKernelSchwartz]
+  rw [hybridShiftedKernel, coe_shiftSchwartz, coe_kernelSchwartz]
 
 /--
 Claim: evaluation of the localized Schwartz sum is the finite sum of its translated real kernels.
@@ -706,17 +665,16 @@ Proof: evaluate the finite sum termwise and use the translated-kernel coercion f
 
 Role: exposes the pointwise coefficient sum used by the local pre-sifted large sieve.
 -/
-theorem coe_preSiftedHybridLocalizedSchwartz (δ : ℝ) (hδ : 0 < δ) (s : Finset ℕ) (c : ℕ → ℂ) :
-    (preSiftedHybridLocalizedSchwartz δ hδ s c : ℝ → ℂ) = fun x =>
+theorem coe_localizedSum (δ : ℝ) (hδ : 0 < δ) (s : Finset ℕ) (c : ℕ → ℂ) :
+    (hybridLocalizedSum δ hδ s c : ℝ → ℂ) = fun x =>
       ∑ n ∈ s, c n * (preSiftedHybridKernel δ (x - Real.log n) : ℂ) := by
   funext x
-  rw [preSiftedHybridLocalizedSchwartz, coe_sum_smul_preSiftedHybridSchwartz]
+  rw [hybridLocalizedSum, coe_sum_smul_schwartz]
   simp only [smul_eq_mul]
   apply Finset.sum_congr rfl
   intro n hn
   congr 1
-  simpa only [Complex.ofRealCLM_apply] using
-    congrFun (coe_preSiftedHybridTranslatedKernelSchwartz δ hδ (Real.log n)) x
+  simpa only [Complex.ofRealCLM_apply] using congrFun (coe_shiftKernel δ hδ (Real.log n)) x
 
 /--
 Claim: dilation of the hybrid kernel rescales its Fourier transform by the reciprocal frequency.
@@ -726,26 +684,26 @@ cancel the resulting scalar factors.
 
 Role: transfers the unit-window Fourier lower bound to the scale used in height localization.
 -/
-theorem preSiftedHybridKernelSchwartz_fourier_eq_unitWindow (δ : ℝ) (hδ : 0 < δ) (ξ : ℝ) :
-    (FourierTransform.fourier (preSiftedHybridKernelSchwartz δ hδ) : ℝ → ℂ) ξ =
-      (FourierTransform.fourier preSiftedHybridUnitWindowSchwartz : ℝ → ℂ) (δ * ξ) := by
+theorem kernelFourier_scaled (δ : ℝ) (hδ : 0 < δ) (ξ : ℝ) :
+    (FourierTransform.fourier (hybridKernelSchwartz δ hδ) : ℝ → ℂ) ξ =
+      (FourierTransform.fourier hybridUnitSchwartz : ℝ → ℂ) (δ * ξ) := by
   let f : ℝ → ℂ := fun y =>
-    Complex.exp ((-2 * Real.pi * y * (δ * ξ)) * Complex.I) * preSiftedHybridUnitWindowComplex y
+    Complex.exp ((-2 * Real.pi * y * (δ * ξ)) * Complex.I) * hybridUnitWindowC y
   have hchange : ∫ x : ℝ, f (δ⁻¹ * x) = δ • ∫ y : ℝ, f y := by
     have h := MeasureTheory.Measure.integral_comp_mul_left f δ⁻¹
     rw [inv_inv, abs_of_pos hδ] at h
     exact h
   have hscaled :
-    (FourierTransform.fourier (preSiftedHybridKernelSchwartz δ hδ) : ℝ → ℂ) ξ =
+    (FourierTransform.fourier (hybridKernelSchwartz δ hδ) : ℝ → ℂ) ξ =
       ∫ x : ℝ, δ⁻¹ • f (δ⁻¹ * x) := by
     calc
-      (FourierTransform.fourier (preSiftedHybridKernelSchwartz δ hδ) : ℝ → ℂ) ξ =
+      (FourierTransform.fourier (hybridKernelSchwartz δ hδ) : ℝ → ℂ) ξ =
           ∫ x : ℝ,
             Complex.exp (-2 * Real.pi * (x : ℂ) * ξ * Complex.I) *
               (preSiftedHybridKernel δ x : ℂ) :=
         by
-        have hf := preSiftedHybrid_fourier_eq_integral_exp (preSiftedHybridKernelSchwartz δ hδ) ξ
-        simpa only [coe_preSiftedHybridKernelSchwartz, Complex.ofRealCLM_apply] using hf
+        have hf := hybrid_fourier_exp (hybridKernelSchwartz δ hδ) ξ
+        simpa only [coe_kernelSchwartz, Complex.ofRealCLM_apply] using hf
       _ = ∫ x : ℝ, δ⁻¹ • f (δ⁻¹ * x) := by
         apply MeasureTheory.integral_congr_ae
         filter_upwards [] with x
@@ -753,18 +711,16 @@ theorem preSiftedHybridKernelSchwartz_fourier_eq_unitWindow (δ : ℝ) (hδ : 0 
           Complex.exp ((-2 * Real.pi * x * ξ) * Complex.I) * (preSiftedHybridKernel δ x : ℂ) =
             δ⁻¹ •
               (Complex.exp ((-2 * Real.pi * (δ⁻¹ * x) * (δ * ξ)) * Complex.I) *
-                preSiftedHybridUnitWindowComplex (δ⁻¹ * x)) := by
+                hybridUnitWindowC (δ⁻¹ * x)) := by
           have hc :
-            Complex.ofRealCLM (preSiftedHybridKernel δ x) =
-              δ⁻¹ • preSiftedHybridUnitWindowComplex (δ⁻¹ * x) := by
+            Complex.ofRealCLM (preSiftedHybridKernel δ x) = δ⁻¹ • hybridUnitWindowC (δ⁻¹ * x) := by
             rw [preSiftedHybridKernel]
             change
-              Complex.ofRealCLM (δ⁻¹ * preSiftedHybridUnitWindow (δ⁻¹ * x)) =
-                δ⁻¹ • Complex.ofRealCLM (preSiftedHybridUnitWindow (δ⁻¹ * x))
+              Complex.ofRealCLM (δ⁻¹ * hybridUnitWindow (δ⁻¹ * x)) =
+                δ⁻¹ • Complex.ofRealCLM (hybridUnitWindow (δ⁻¹ * x))
             rw [← Complex.ofRealCLM.map_smul]
             simp only [smul_eq_mul]
-          have hcCast :
-            (preSiftedHybridKernel δ x : ℂ) = δ⁻¹ • preSiftedHybridUnitWindowComplex (δ⁻¹ * x) := by
+          have hcCast : (preSiftedHybridKernel δ x : ℂ) = δ⁻¹ • hybridUnitWindowC (δ⁻¹ * x) := by
             simpa only [Complex.ofRealCLM_apply] using hc
           have ha : -2 * Real.pi * x * ξ = -2 * Real.pi * (δ⁻¹ * x) * (δ * ξ) := by
             calc
@@ -786,15 +742,14 @@ theorem preSiftedHybridKernelSchwartz_fourier_eq_unitWindow (δ : ℝ) (hδ : 0 
         push_cast
         rfl
   calc
-    (FourierTransform.fourier (preSiftedHybridKernelSchwartz δ hδ) : ℝ → ℂ) ξ =
-        ∫ x : ℝ, δ⁻¹ • f (δ⁻¹ * x) :=
+    (FourierTransform.fourier (hybridKernelSchwartz δ hδ) : ℝ → ℂ) ξ = ∫ x : ℝ, δ⁻¹ • f (δ⁻¹ * x) :=
       hscaled
     _ = δ⁻¹ • ∫ x : ℝ, f (δ⁻¹ * x) := by rw [MeasureTheory.integral_smul]
     _ = δ⁻¹ • (δ • ∫ y : ℝ, f y) := congrArg (fun z : ℂ => δ⁻¹ • z) hchange
     _ = ∫ y : ℝ, f y := by rw [smul_smul, inv_mul_cancel₀ (ne_of_gt hδ), one_smul]
-    _ = (FourierTransform.fourier preSiftedHybridUnitWindowSchwartz : ℝ → ℂ) (δ * ξ) := by
+    _ = (FourierTransform.fourier hybridUnitSchwartz : ℝ → ℂ) (δ * ξ) := by
       symm
-      have hu := preSiftedHybridUnitWindowSchwartz_fourier_eq_integral (δ * ξ)
+      have hu := unitFourier_integral (δ * ξ)
       convert hu using 1
       dsimp [f]
       push_cast
@@ -809,11 +764,10 @@ Proof: apply the Fourier scaling identity and the unit-window lower bound.
 
 Role: supplies the nonvanishing Fourier factor in the height localization argument.
 -/
-theorem norm_preSiftedHybridKernelSchwartz_fourier_ge_half (δ : ℝ) (hδ : 0 < δ) {ξ : ℝ}
-    (hξ : 2 * Real.pi * |δ * ξ| ≤ 1 / 4) :
-    1 / 2 ≤ ‖(FourierTransform.fourier (preSiftedHybridKernelSchwartz δ hδ) : ℝ → ℂ) ξ‖ := by
-  rw [preSiftedHybridKernelSchwartz_fourier_eq_unitWindow]
-  exact norm_preSiftedHybridUnitWindow_fourier_ge_half hξ
+theorem kernelFourier_ge_half (δ : ℝ) (hδ : 0 < δ) {ξ : ℝ} (hξ : 2 * Real.pi * |δ * ξ| ≤ 1 / 4) :
+    1 / 2 ≤ ‖(FourierTransform.fourier (hybridKernelSchwartz δ hδ) : ℝ → ℂ) ξ‖ := by
+  rw [kernelFourier_scaled]
+  exact unitFourier_ge_half hξ
 
 /--
 Claim: the scaled hybrid kernel has Fourier transform norm at least `1/2` on the indicated
@@ -825,17 +779,15 @@ Proof: convert the height `t` to the Fourier frequency `t / (2π)` and apply the
 
 Role: gives the uniform Fourier lower bound needed to recover the height integral from localization.
 -/
-theorem norm_preSiftedHybridKernelSchwartz_fourier_ge_half_of_height (δ : ℝ) (hδ : 0 < δ) {t : ℝ}
-    (ht : δ * |t| ≤ 1 / 4) :
+theorem kernelFourier_at_t_ge (δ : ℝ) (hδ : 0 < δ) {t : ℝ} (ht : δ * |t| ≤ 1 / 4) :
     1 / 2 ≤
-      ‖(FourierTransform.fourier (preSiftedHybridKernelSchwartz δ hδ) : ℝ → ℂ)
-          (t / (2 * Real.pi))‖ := by
+      ‖(FourierTransform.fourier (hybridKernelSchwartz δ hδ) : ℝ → ℂ) (t / (2 * Real.pi))‖ := by
   have hπ : 0 < 2 * Real.pi := by positivity
   have hfreq : 2 * Real.pi * |δ * (t / (2 * Real.pi))| = δ * |t| := by
     rw [abs_mul, abs_div, abs_of_pos hδ, abs_of_pos hπ]
     field_simp
   exact
-    norm_preSiftedHybridKernelSchwartz_fourier_ge_half δ hδ
+    kernelFourier_ge_half δ hδ
       (by
         rw [hfreq]; exact ht)
 
@@ -847,17 +799,14 @@ Proof: compose the integrable unit window with a nonzero dilation, then multiply
 
 Role: justifies its Lebesgue integral and subsequent Plancherel estimates.
 -/
-theorem preSiftedHybridKernel_integrable (δ : ℝ) (hδ : 0 < δ) :
+theorem hybridKernel_L1 (δ : ℝ) (hδ : 0 < δ) :
     MeasureTheory.Integrable (preSiftedHybridKernel δ) MeasureTheory.volume := by
   change
-    MeasureTheory.Integrable (fun x : ℝ => δ⁻¹ * preSiftedHybridUnitWindow (δ⁻¹ * x))
-      MeasureTheory.volume
+    MeasureTheory.Integrable (fun x : ℝ => δ⁻¹ * hybridUnitWindow (δ⁻¹ * x)) MeasureTheory.volume
   have hcomp :
-    MeasureTheory.Integrable (fun x : ℝ => preSiftedHybridUnitWindow (δ⁻¹ * x))
-      MeasureTheory.volume :=
-    (MeasureTheory.integrable_comp_mul_left_iff preSiftedHybridUnitWindow
-          (inv_ne_zero (ne_of_gt hδ))).2
-      (ContDiffBump.integrable_normed preSiftedHybridUnitBump)
+    MeasureTheory.Integrable (fun x : ℝ => hybridUnitWindow (δ⁻¹ * x)) MeasureTheory.volume :=
+    (MeasureTheory.integrable_comp_mul_left_iff hybridUnitWindow (inv_ne_zero (ne_of_gt hδ))).2
+      (ContDiffBump.integrable_normed hybridUnitBump)
   exact hcomp.const_mul δ⁻¹
 
 /--
@@ -870,28 +819,28 @@ unit-window bound by one.
 
 Role: permits termwise integration of the pointwise localized large-sieve estimate.
 -/
-theorem preSiftedHybridKernel_sq_integrable (δ : ℝ) (hδ : 0 < δ) :
+theorem hybridKernel_sq_L1 (δ : ℝ) (hδ : 0 < δ) :
     MeasureTheory.Integrable (fun x : ℝ => preSiftedHybridKernel δ x ^ 2) MeasureTheory.volume := by
-  have hucont : Continuous preSiftedHybridUnitWindow := by
-    change Continuous (preSiftedHybridUnitBump.normed MeasureTheory.volume)
+  have hucont : Continuous hybridUnitWindow := by
+    change Continuous (hybridUnitBump.normed MeasureTheory.volume)
     exact
       ContDiff.continuous
-        (ContDiffBump.contDiff_normed (μ := MeasureTheory.volume) (n := ⊤) preSiftedHybridUnitBump)
+        (ContDiffBump.contDiff_normed (μ := MeasureTheory.volume) (n := ⊤) hybridUnitBump)
   have hkcont : Continuous (preSiftedHybridKernel δ) := by
-    change Continuous (fun x : ℝ => δ⁻¹ * preSiftedHybridUnitWindow (δ⁻¹ * x))
+    change Continuous (fun x : ℝ => δ⁻¹ * hybridUnitWindow (δ⁻¹ * x))
     exact continuous_const.mul (hucont.comp (continuous_const.mul continuous_id))
   have hknonneg : ∀ x, 0 ≤ preSiftedHybridKernel δ x := by
     intro x
-    change 0 ≤ δ⁻¹ * preSiftedHybridUnitWindow (δ⁻¹ * x)
-    exact mul_nonneg (inv_nonneg.mpr hδ.le) (preSiftedHybridUnitWindow_nonneg _)
+    change 0 ≤ δ⁻¹ * hybridUnitWindow (δ⁻¹ * x)
+    exact mul_nonneg (inv_nonneg.mpr hδ.le) (unitWindow_nonneg _)
   have hkbound : ∀ x, preSiftedHybridKernel δ x ≤ δ⁻¹ := by
     intro x
-    change δ⁻¹ * preSiftedHybridUnitWindow (δ⁻¹ * x) ≤ δ⁻¹
+    change δ⁻¹ * hybridUnitWindow (δ⁻¹ * x) ≤ δ⁻¹
     calc
-      δ⁻¹ * preSiftedHybridUnitWindow (δ⁻¹ * x) ≤ δ⁻¹ * 1 :=
-        mul_le_mul_of_nonneg_left (preSiftedHybridUnitWindow_le_one _) (inv_nonneg.mpr hδ.le)
+      δ⁻¹ * hybridUnitWindow (δ⁻¹ * x) ≤ δ⁻¹ * 1 :=
+        mul_le_mul_of_nonneg_left (unitWindow_le_one _) (inv_nonneg.mpr hδ.le)
       _ = δ⁻¹ := mul_one _
-  have hkernel := preSiftedHybridKernel_integrable δ hδ
+  have hkernel := hybridKernel_L1 δ hδ
   have hmajor :
     MeasureTheory.Integrable (fun x : ℝ => δ⁻¹ * |preSiftedHybridKernel δ x|)
       MeasureTheory.volume := by
@@ -916,7 +865,7 @@ Proof: expand the complex norm product and use translation invariance of Lebesgu
 
 Role: supplies the termwise integral needed to integrate the pointwise hybrid large-sieve bound.
 -/
-theorem integral_norm_sq_mul_preSiftedHybridKernel_translate (δ : ℝ) (a : ℂ) (b : ℝ) :
+theorem shiftKernel_normSqInt (δ : ℝ) (a : ℂ) (b : ℝ) :
     (∫ x : ℝ, ‖a * (preSiftedHybridKernel δ (x - b) : ℂ)‖ ^ 2 ∂MeasureTheory.volume) =
       ‖a‖ ^ 2 * ∫ x : ℝ, preSiftedHybridKernel δ x ^ 2 ∂MeasureTheory.volume := by
   have hmp :
@@ -958,8 +907,7 @@ Proof: exponentiate the two strict logarithmic inequalities and use the defining
 Role: places each locally supported coefficient in the short interval used by the pre-sifted
 large sieve.
 -/
-theorem preSiftedHybrid_nat_mem_floor_exp_Ico {n : ℕ} (hn : 0 < n) (x δ : ℝ)
-    (hwindow : |x - Real.log n| < δ) :
+theorem nat_mem_floor_exp_Ico {n : ℕ} (hn : 0 < n) (x δ : ℝ) (hwindow : |x - Real.log n| < δ) :
     Nat.floor (Real.exp (x - δ)) ≤ n ∧ n < Nat.floor (Real.exp (x + δ)) + 1 := by
   have hwindow' := abs_lt.mp hwindow
   have hloglo : x - δ < Real.log (n : ℝ) := by linarith only [hwindow'.2]
@@ -986,7 +934,7 @@ past its floor.
 
 Role: controls the rounding loss when applying the interval-supported pre-sifted large sieve.
 -/
-theorem preSiftedHybrid_floor_exp_window_length_le (x δ : ℝ) (hδ : 0 < δ) :
+theorem floorExp_window_le (x δ : ℝ) (hδ : 0 < δ) :
     ((Nat.floor (Real.exp (x + δ)) + 1 - Nat.floor (Real.exp (x - δ)) : ℕ) : ℝ) ≤
       Real.exp (x + δ) - Real.exp (x - δ) + 2 := by
   let lo := Nat.floor (Real.exp (x - δ))
@@ -1016,15 +964,14 @@ lemma.
 Role: removes coefficients outside the local logarithmic window before applying the short-interval
 large sieve.
 -/
-theorem preSiftedHybridKernel_eq_zero_of_scale_le_abs (δ x : ℝ) (hδ : 0 < δ) (h : δ ≤ |x|) :
-    preSiftedHybridKernel δ x = 0 := by
+theorem hybridKernel_zero (δ x : ℝ) (hδ : 0 < δ) (h : δ ≤ |x|) : preSiftedHybridKernel δ x = 0 := by
   unfold preSiftedHybridKernel
   have hinv : 0 < δ⁻¹ := inv_pos.mpr hδ
   have habs : 1 ≤ |δ⁻¹ * x| := by
     rw [abs_mul, abs_of_pos hinv]
     have hm := mul_le_mul_of_nonneg_left h hinv.le
     simpa only [inv_mul_cancel₀ (ne_of_gt hδ)] using hm
-  simp only [preSiftedHybridUnitWindow_eq_zero_of_one_le_abs habs, mul_zero]
+  simp only [unitWindow_zero habs, mul_zero]
 
 /--
 Inputs: a positive kernel scale and a nonzero value of the scaled kernel.
@@ -1036,10 +983,10 @@ least the scale.
 
 Role: converts nonzero localized coefficients into the interval support hypothesis.
 -/
-theorem preSiftedHybridKernel_ne_zero_implies_abs_lt (δ x : ℝ) (hδ : 0 < δ)
-    (hK : preSiftedHybridKernel δ x ≠ 0) : |x| < δ := by
+theorem kernel_ne_zero_abs_lt (δ x : ℝ) (hδ : 0 < δ) (hK : preSiftedHybridKernel δ x ≠ 0) :
+    |x| < δ := by
   by_contra h
-  exact hK (preSiftedHybridKernel_eq_zero_of_scale_le_abs δ x hδ (le_of_not_gt h))
+  exact hK (hybridKernel_zero δ x hδ (le_of_not_gt h))
 
 /--
 Inputs: a positive integer whose scaled hybrid kernel is nonzero at a logarithmic displacement.
@@ -1053,11 +1000,10 @@ floor bound applies.
 Role: turns the support of each localized coefficient into the interval support required by the
 pre-sifted short-interval large sieve.
 -/
-theorem preSiftedHybrid_nat_mem_floor_exp_Ico_of_kernel_ne_zero {n : ℕ} (hn : 0 < n) (x δ : ℝ)
-    (hδ : 0 < δ) (hK : preSiftedHybridKernel δ (x - Real.log n) ≠ 0) :
+theorem kernel_nat_floor_Ico {n : ℕ} (hn : 0 < n) (x δ : ℝ) (hδ : 0 < δ)
+    (hK : preSiftedHybridKernel δ (x - Real.log n) ≠ 0) :
     Nat.floor (Real.exp (x - δ)) ≤ n ∧ n < Nat.floor (Real.exp (x + δ)) + 1 :=
-  preSiftedHybrid_nat_mem_floor_exp_Ico hn x δ
-    (preSiftedHybridKernel_ne_zero_implies_abs_lt δ (x - Real.log n) hδ hK)
+  nat_mem_floor_exp_Ico hn x δ (kernel_ne_zero_abs_lt δ (x - Real.log n) hδ hK)
 
 /--
 Inputs: a positive scale no larger than `1/4`.
@@ -1069,7 +1015,7 @@ Proof: apply the rational upper bound for `exp u` on `0 ≤ u < 2`, then simplif
 
 Role: gives a uniform bound for the local interval length in terms of each supported integer.
 -/
-theorem preSiftedHybrid_exp_two_mul_sub_one_le (δ : ℝ) (hδ : 0 < δ) (hδ' : δ ≤ 1 / 4) :
+theorem exp_two_sub_one_le (δ : ℝ) (hδ : 0 < δ) (hδ' : δ ≤ 1 / 4) :
     Real.exp (2 * δ) - 1 ≤ 6 * δ := by
   have hu : 0 ≤ 2 * δ := by positivity
   have hu' : 2 * δ < 2 := by linarith only [hδ']
@@ -1093,14 +1039,13 @@ exponential increment bound and the lower endpoint estimate from the logarithmic
 
 Role: bounds the natural interval length used by the pre-sifted large sieve.
 -/
-theorem preSiftedHybrid_exp_window_width_le {n : ℕ} (hn : 0 < n) (x δ : ℝ) (hδ : 0 < δ)
-    (hδ' : δ ≤ 1 / 4) (hwindow : |x - Real.log n| < δ) :
-    Real.exp (x + δ) - Real.exp (x - δ) ≤ 6 * δ * n := by
+theorem expWindow_width_le {n : ℕ} (hn : 0 < n) (x δ : ℝ) (hδ : 0 < δ) (hδ' : δ ≤ 1 / 4)
+    (hwindow : |x - Real.log n| < δ) : Real.exp (x + δ) - Real.exp (x - δ) ≤ 6 * δ * n := by
   have hwindow' := abs_lt.mp hwindow
   have hlog : x - δ < Real.log (n : ℝ) := by linarith only [hwindow'.2]
   have hnR : 0 < (n : ℝ) := by exact_mod_cast hn
   have hlo : Real.exp (x - δ) ≤ (n : ℝ) := (Real.exp_lt_exp.mpr hlog).le.trans_eq (Real.exp_log hnR)
-  have hfactor := preSiftedHybrid_exp_two_mul_sub_one_le δ hδ hδ'
+  have hfactor := exp_two_sub_one_le δ hδ hδ'
   have hfactor_nonneg : 0 ≤ Real.exp (2 * δ) - 1 := by
     apply sub_nonneg.mpr
     have hu : 0 ≤ 2 * δ := by positivity
@@ -1131,8 +1076,8 @@ Proof: absorb the two-unit rounding loss into `8Z²`, then apply the width estim
 Role: converts the interval-supported large-sieve output into a coefficientwise bound suitable
 for integration over the logarithmic axis.
 -/
-theorem preSiftedHybrid_interval_factor_le (N : ℕ) (W δ n Z : ℝ) (hround : (N : ℝ) ≤ W + 2)
-    (hwidth : W ≤ 6 * δ * n) (hZ : 1 ≤ Z) : 4 * (N : ℝ) + 6 * Z ^ 2 ≤ 24 * δ * n + 14 * Z ^ 2 := by
+theorem hybridInterval_le (N : ℕ) (W δ n Z : ℝ) (hround : (N : ℝ) ≤ W + 2) (hwidth : W ≤ 6 * δ * n)
+    (hZ : 1 ≤ Z) : 4 * (N : ℝ) + 6 * Z ^ 2 ≤ 24 * δ * n + 14 * Z ^ 2 := by
   have hZsq : 1 ≤ Z ^ 2 := by nlinarith [sq_nonneg (Z - 1)]
   nlinarith only [hround, hwidth, hZsq]
 
@@ -1147,15 +1092,12 @@ polynomial is unchanged.
 
 Role: lets the short-interval estimate control the original localized finite polynomial.
 -/
-theorem primitiveCharacterPolynomialMeanSquare_eq_filter_preSiftedHybridKernel {q : ℕ} (hq : 1 < q)
-    (s : Finset ℕ) (δ x : ℝ) (a : ℕ → ℂ) :
-    primitiveCharacterPolynomialMeanSquare q hq s
-        (fun n => a n * (preSiftedHybridKernel δ (x - Real.log (n : ℝ)) : ℂ)) =
-      primitiveCharacterPolynomialMeanSquare q hq
-        (s.filter fun n : ℕ => preSiftedHybridKernel δ (x - Real.log (n : ℝ)) ≠ 0)
+theorem meanSquare_filter {q : ℕ} (hq : 1 < q) (s : Finset ℕ) (δ x : ℝ) (a : ℕ → ℂ) :
+    polyMeanSquare q hq s (fun n => a n * (preSiftedHybridKernel δ (x - Real.log (n : ℝ)) : ℂ)) =
+      polyMeanSquare q hq (s.filter fun n : ℕ => preSiftedHybridKernel δ (x - Real.log (n : ℝ)) ≠ 0)
         (fun n => a n * (preSiftedHybridKernel δ (x - Real.log (n : ℝ)) : ℂ)) := by
   classical
-  unfold primitiveCharacterPolynomialMeanSquare
+  unfold polyMeanSquare
   apply Finset.sum_congr rfl
   intro χ hχ
   congr 1
@@ -1180,13 +1122,12 @@ apply the interval-supported pre-sifted large sieve, and bound its factor term b
 Role: provides the pointwise-in-center large-sieve estimate needed before integrating the
 localized Schwartz norm.
 -/
-theorem preSiftedHybrid_local_mean_square_le (Z : ℕ) (hZ : 2 ≤ Z) (δ : ℝ) (hδ : 0 < δ)
-    (hδ' : δ ≤ 1 / 4) (s : Finset ℕ) (hpos : ∀ n ∈ s, 0 < n)
-    (hprime : ∀ n ∈ s, ∀ p, Nat.Prime p → p ∣ n → Z < p) (x : ℝ) (a : ℕ → ℂ) :
+theorem preSifted_filtered_le (Z : ℕ) (hZ : 2 ≤ Z) (δ : ℝ) (hδ : 0 < δ) (hδ' : δ ≤ 1 / 4)
+    (s : Finset ℕ) (hpos : ∀ n ∈ s, 0 < n) (hprime : ∀ n ∈ s, ∀ p, Nat.Prime p → p ∣ n → Z < p)
+    (x : ℝ) (a : ℕ → ℂ) :
     (∑ q ∈ (Finset.Ioc 1 Z).attach,
         Real.log ((Z : ℝ) / (q.val : ℝ)) *
-          primitiveCharacterPolynomialMeanSquare q.val
-            (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1)
+          polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1)
             (s.filter fun n : ℕ => preSiftedHybridKernel δ (x - Real.log (n : ℝ)) ≠ 0)
             (fun n => a n * (preSiftedHybridKernel δ (x - Real.log (n : ℝ)) : ℂ))) ≤
       ∑ n ∈ s,
@@ -1211,8 +1152,8 @@ theorem preSiftedHybrid_local_mean_square_le (Z : ℕ) (hZ : 2 ≤ Z) (δ : ℝ)
     intro n hn
     have hnS : n ∈ s := (Finset.mem_filter.mp hn).1
     have hk : preSiftedHybridKernel δ (x - Real.log (n : ℝ)) ≠ 0 := (Finset.mem_filter.mp hn).2
-    have hwindow := preSiftedHybridKernel_ne_zero_implies_abs_lt δ (x - Real.log (n : ℝ)) hδ hk
-    have hplace := preSiftedHybrid_nat_mem_floor_exp_Ico (hpos n hnS) x δ hwindow
+    have hwindow := kernel_ne_zero_abs_lt δ (x - Real.log (n : ℝ)) hδ hk
+    have hplace := nat_mem_floor_exp_Ico (hpos n hnS) x δ hwindow
     rw [Finset.mem_Ico]
     constructor
     · simpa only [M] using hplace.1
@@ -1222,10 +1163,10 @@ theorem preSiftedHybrid_local_mean_square_le (Z : ℕ) (hZ : 2 ≤ Z) (δ : ℝ)
     intro n hn p hp hpn
     exact hprime n (Finset.mem_filter.mp hn).1 p hp hpn
   have hround : (N : ℝ) ≤ Real.exp (x + δ) - Real.exp (x - δ) + 2 := by
-    simpa only [N, H, M] using preSiftedHybrid_floor_exp_window_length_le x δ hδ
+    simpa only [N, H, M] using floorExp_window_le x δ hδ
   have hlarge :=
-    primitiveCharacterFamilyMeanSquare_preSifted_le_of_support_Ico Z hZ M N Sx hSx
-      (fun n => a n * (preSiftedHybridKernel δ (x - Real.log n) : ℂ)) hprimeSx
+    preSifted_Ico_le Z hZ M N Sx hSx (fun n => a n * (preSiftedHybridKernel δ (x - Real.log n) : ℂ))
+      hprimeSx
   calc
     _ ≤
         (4 * (N : ℝ) + 6 * (Z : ℝ) ^ 2) *
@@ -1244,13 +1185,11 @@ theorem preSiftedHybrid_local_mean_square_le (Z : ℕ) (hZ : 2 ≤ Z) (δ : ℝ)
       apply Finset.sum_le_sum
       intro n hn
       have hnS : n ∈ s := (Finset.mem_filter.mp hn).1
-      have hwindow :=
-        preSiftedHybridKernel_ne_zero_implies_abs_lt δ (x - Real.log (n : ℝ)) hδ
-          (Finset.mem_filter.mp hn).2
-      have hwidth := preSiftedHybrid_exp_window_width_le (hpos n hnS) x δ hδ hδ' hwindow
+      have hwindow := kernel_ne_zero_abs_lt δ (x - Real.log (n : ℝ)) hδ (Finset.mem_filter.mp hn).2
+      have hwidth := expWindow_width_le (hpos n hnS) x δ hδ hδ' hwindow
       have hfactor :=
-        preSiftedHybrid_interval_factor_le N (Real.exp (x + δ) - Real.exp (x - δ)) δ n Z hround
-          hwidth (by exact_mod_cast (show 1 ≤ Z by omega))
+        hybridInterval_le N (Real.exp (x + δ) - Real.exp (x - δ)) δ n Z hround hwidth
+          (by exact_mod_cast (show 1 ≤ Z by omega))
       exact mul_le_mul_of_nonneg_left hfactor (sq_nonneg _)
     _ ≤
         ∑ n ∈ s,
@@ -1262,7 +1201,7 @@ theorem preSiftedHybrid_local_mean_square_le (Z : ℕ) (hZ : 2 ≤ Z) (δ : ℝ)
       positivity
 
 /--
-Inputs: the hypotheses of `preSiftedHybrid_local_mean_square_le`.
+Inputs: the hypotheses of `preSifted_filtered_le`.
 
 Claim: the same local estimate holds for coefficients on the original support, with the kernel
 making every omitted term vanish.
@@ -1271,13 +1210,12 @@ Proof: rewrite each primitive-character mean square using the kernel-filter inva
 
 Role: states the pointwise estimate directly for the finite localized Dirichlet polynomial.
 -/
-theorem preSiftedHybrid_localized_mean_square_le (Z : ℕ) (hZ : 2 ≤ Z) (δ : ℝ) (hδ : 0 < δ)
-    (hδ' : δ ≤ 1 / 4) (s : Finset ℕ) (hpos : ∀ n ∈ s, 0 < n)
-    (hprime : ∀ n ∈ s, ∀ p, Nat.Prime p → p ∣ n → Z < p) (x : ℝ) (a : ℕ → ℂ) :
+theorem preSifted_unfiltered (Z : ℕ) (hZ : 2 ≤ Z) (δ : ℝ) (hδ : 0 < δ) (hδ' : δ ≤ 1 / 4)
+    (s : Finset ℕ) (hpos : ∀ n ∈ s, 0 < n) (hprime : ∀ n ∈ s, ∀ p, Nat.Prime p → p ∣ n → Z < p)
+    (x : ℝ) (a : ℕ → ℂ) :
     (∑ q ∈ (Finset.Ioc 1 Z).attach,
         Real.log ((Z : ℝ) / (q.val : ℝ)) *
-          primitiveCharacterPolynomialMeanSquare q.val
-            (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+          polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
             (fun n => a n * (preSiftedHybridKernel δ (x - Real.log (n : ℝ)) : ℂ))) ≤
       ∑ n ∈ s,
         ‖a n * (preSiftedHybridKernel δ (x - Real.log (n : ℝ)) : ℂ)‖ ^ 2 *
@@ -1286,18 +1224,15 @@ theorem preSiftedHybrid_localized_mean_square_le (Z : ℕ) (hZ : 2 ≤ Z) (δ : 
     _ =
         ∑ q ∈ (Finset.Ioc 1 Z).attach,
           Real.log ((Z : ℝ) / (q.val : ℝ)) *
-            primitiveCharacterPolynomialMeanSquare q.val
-              (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1)
+            polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1)
               (s.filter fun n : ℕ => preSiftedHybridKernel δ (x - Real.log (n : ℝ)) ≠ 0)
               (fun n => a n * (preSiftedHybridKernel δ (x - Real.log (n : ℝ)) : ℂ)) :=
       by
       apply Finset.sum_congr rfl
       intro q hq
       congr 1
-      exact
-        primitiveCharacterPolynomialMeanSquare_eq_filter_preSiftedHybridKernel
-          (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s δ x a
-    _ ≤ _ := preSiftedHybrid_local_mean_square_le Z hZ δ hδ hδ' s hpos hprime x a
+      exact meanSquare_filter (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s δ x a
+    _ ≤ _ := preSifted_filtered_le Z hZ δ hδ hδ' s hpos hprime x a
 
 /--
 Inputs: a positive kernel scale, a finite coefficient support, and a logarithmic center.
@@ -1311,19 +1246,18 @@ finite kernel sum, and reorder each coefficient-character-kernel product.
 Role: identifies the pointwise right side of the local sieve estimate with the Schwartz norms
 whose integrals are controlled by Plancherel.
 -/
-theorem primitiveCharacterPolynomialMeanSquare_eq_localizedSchwartz_norm_sq {q : ℕ} (hq : 1 < q)
-    (s : Finset ℕ) (δ : ℝ) (hδ : 0 < δ) (x : ℝ) (a : ℕ → ℂ) :
-    primitiveCharacterPolynomialMeanSquare q hq s
-        (fun n => a n * (preSiftedHybridKernel δ (x - Real.log (n : ℝ)) : ℂ)) =
-      ∑ χ ∈ primitiveDirichletCharacterSet q,
-        ‖preSiftedHybridLocalizedSchwartz δ hδ s (fun n => a n * χ (n : ZMod q)) x‖ ^ 2 := by
+theorem meanSquare_localized {q : ℕ} (hq : 1 < q) (s : Finset ℕ) (δ : ℝ) (hδ : 0 < δ) (x : ℝ)
+    (a : ℕ → ℂ) :
+    polyMeanSquare q hq s (fun n => a n * (preSiftedHybridKernel δ (x - Real.log (n : ℝ)) : ℂ)) =
+      ∑ χ ∈ primitiveCharacters q,
+        ‖hybridLocalizedSum δ hδ s (fun n => a n * χ (n : ZMod q)) x‖ ^ 2 := by
   classical
-  unfold primitiveCharacterPolynomialMeanSquare
+  unfold polyMeanSquare
   apply Finset.sum_congr rfl
   intro χ hχ
   rw [Complex.normSq_eq_norm_sq]
   apply congrArg (fun z : ℂ => ‖z‖ ^ 2)
-  rw [coe_preSiftedHybridLocalizedSchwartz]
+  rw [coe_localizedSum]
   apply Finset.sum_congr rfl
   intro n hn
   ring_nf
@@ -1335,12 +1269,12 @@ Proof: change variables by `x ↦ δ⁻¹ x` in the Lebesgue integral and use th
 
 Role: preserves the finite Dirichlet polynomial after convolution with the kernel.
 -/
-theorem integral_preSiftedHybridKernel (δ : ℝ) (hδ : 0 < δ) :
+theorem integral_hybridKernel (δ : ℝ) (hδ : 0 < δ) :
     ∫ x : ℝ, preSiftedHybridKernel δ x ∂MeasureTheory.volume = 1 := by
-  change ∫ x : ℝ, δ⁻¹ * preSiftedHybridUnitWindow (δ⁻¹ * x) ∂MeasureTheory.volume = 1
+  change ∫ x : ℝ, δ⁻¹ * hybridUnitWindow (δ⁻¹ * x) ∂MeasureTheory.volume = 1
   rw [MeasureTheory.integral_const_mul]
   rw [MeasureTheory.Measure.integral_comp_mul_left]
-  rw [inv_inv, abs_of_pos hδ, integral_preSiftedHybridUnitWindow]
+  rw [inv_inv, abs_of_pos hδ, integral_unitWindow]
   simp only [smul_eq_mul, mul_one, inv_mul_cancel₀ (ne_of_gt hδ)]
 
 /--
@@ -1350,31 +1284,28 @@ Proof: change variables in the squared integral and apply the unit window's squa
 
 Role: supplies the scale-dependent factor in the pointwise short-interval estimate.
 -/
-theorem integral_sq_preSiftedHybridKernel_le (δ : ℝ) (hδ : 0 < δ) :
+theorem hybridKernel_sqInt_le (δ : ℝ) (hδ : 0 < δ) :
     ∫ x : ℝ, preSiftedHybridKernel δ x ^ 2 ∂MeasureTheory.volume ≤ δ⁻¹ := by
-  change ∫ x : ℝ, (δ⁻¹ * preSiftedHybridUnitWindow (δ⁻¹ * x)) ^ 2 ∂MeasureTheory.volume ≤ δ⁻¹
+  change ∫ x : ℝ, (δ⁻¹ * hybridUnitWindow (δ⁻¹ * x)) ^ 2 ∂MeasureTheory.volume ≤ δ⁻¹
   have hfun :
-    (fun x : ℝ => (δ⁻¹ * preSiftedHybridUnitWindow (δ⁻¹ * x)) ^ 2) = fun x =>
-      δ⁻¹ ^ 2 * preSiftedHybridUnitWindow (δ⁻¹ * x) ^ 2 := by
+    (fun x : ℝ => (δ⁻¹ * hybridUnitWindow (δ⁻¹ * x)) ^ 2) = fun x =>
+      δ⁻¹ ^ 2 * hybridUnitWindow (δ⁻¹ * x) ^ 2 := by
     funext x
     rw [mul_pow]
   have hscale :
-    ∫ x : ℝ, preSiftedHybridUnitWindow (δ⁻¹ * x) ^ 2 ∂MeasureTheory.volume =
-      δ * ∫ y : ℝ, preSiftedHybridUnitWindow y ^ 2 ∂MeasureTheory.volume := by
-    have h :=
-      MeasureTheory.Measure.integral_comp_mul_left (fun y : ℝ => preSiftedHybridUnitWindow y ^ 2)
-        δ⁻¹
+    ∫ x : ℝ, hybridUnitWindow (δ⁻¹ * x) ^ 2 ∂MeasureTheory.volume =
+      δ * ∫ y : ℝ, hybridUnitWindow y ^ 2 ∂MeasureTheory.volume := by
+    have h := MeasureTheory.Measure.integral_comp_mul_left (fun y : ℝ => hybridUnitWindow y ^ 2) δ⁻¹
     rw [inv_inv, abs_of_pos hδ] at h
     simpa only [smul_eq_mul] using h
   calc
-    ∫ x : ℝ, (δ⁻¹ * preSiftedHybridUnitWindow (δ⁻¹ * x)) ^ 2 ∂MeasureTheory.volume =
-        δ⁻¹ ^ 2 * ∫ x : ℝ, preSiftedHybridUnitWindow (δ⁻¹ * x) ^ 2 ∂MeasureTheory.volume :=
+    ∫ x : ℝ, (δ⁻¹ * hybridUnitWindow (δ⁻¹ * x)) ^ 2 ∂MeasureTheory.volume =
+        δ⁻¹ ^ 2 * ∫ x : ℝ, hybridUnitWindow (δ⁻¹ * x) ^ 2 ∂MeasureTheory.volume :=
       by rw [hfun, MeasureTheory.integral_const_mul]
-    _ = δ⁻¹ ^ 2 * (δ * ∫ y : ℝ, preSiftedHybridUnitWindow y ^ 2 ∂MeasureTheory.volume) :=
+    _ = δ⁻¹ ^ 2 * (δ * ∫ y : ℝ, hybridUnitWindow y ^ 2 ∂MeasureTheory.volume) :=
       congrArg (fun r : ℝ => δ⁻¹ ^ 2 * r) hscale
     _ ≤ δ⁻¹ ^ 2 * (δ * 1) :=
-      mul_le_mul_of_nonneg_left
-        (mul_le_mul_of_nonneg_left integral_sq_preSiftedHybridUnitWindow_le_one (le_of_lt hδ))
+      mul_le_mul_of_nonneg_left (mul_le_mul_of_nonneg_left unitWindow_sqInt_le (le_of_lt hδ))
         (sq_nonneg _)
     _ = δ⁻¹ := by
       calc
@@ -1393,12 +1324,11 @@ bound after dilation.
 
 Role: bounds each coefficient's contribution when integrating the local sieve estimate.
 -/
-theorem integral_norm_sq_mul_preSiftedHybridKernel_translate_le (δ : ℝ) (hδ : 0 < δ) (a : ℂ)
-    (b : ℝ) :
+theorem shiftKernel_normSq_le (δ : ℝ) (hδ : 0 < δ) (a : ℂ) (b : ℝ) :
     (∫ x : ℝ, ‖a * (preSiftedHybridKernel δ (x - b) : ℂ)‖ ^ 2 ∂MeasureTheory.volume) ≤
       ‖a‖ ^ 2 * δ⁻¹ := by
-  rw [integral_norm_sq_mul_preSiftedHybridKernel_translate]
-  exact mul_le_mul_of_nonneg_left (integral_sq_preSiftedHybridKernel_le δ hδ) (sq_nonneg ‖a‖)
+  rw [shiftKernel_normSqInt]
+  exact mul_le_mul_of_nonneg_left (hybridKernel_sqInt_le δ hδ) (sq_nonneg ‖a‖)
 
 /--
 Inputs: a positive scale, a complex coefficient, and a real translation center.
@@ -1410,8 +1340,7 @@ translation invariance of Lebesgue measure.
 
 Role: gives the integrability hypothesis needed to integrate the local coefficient sum.
 -/
-theorem integrable_norm_sq_mul_preSiftedHybridKernel_translate (δ : ℝ) (hδ : 0 < δ) (a : ℂ)
-    (b : ℝ) :
+theorem shiftKernel_normSq_L1 (δ : ℝ) (hδ : 0 < δ) (a : ℂ) (b : ℝ) :
     MeasureTheory.Integrable (fun x : ℝ => ‖a * (preSiftedHybridKernel δ (x - b) : ℂ)‖ ^ 2)
       MeasureTheory.volume := by
   have hmp :
@@ -1422,7 +1351,7 @@ theorem integrable_norm_sq_mul_preSiftedHybridKernel_translate (δ : ℝ) (hδ :
   have hshift :
     MeasureTheory.Integrable (fun x : ℝ => preSiftedHybridKernel δ (x - b) ^ 2)
       MeasureTheory.volume :=
-    hmp.integrable_comp_of_integrable (preSiftedHybridKernel_sq_integrable δ hδ)
+    hmp.integrable_comp_of_integrable (hybridKernel_sq_L1 δ hδ)
   have hpoint (x : ℝ) :
     ‖a * (preSiftedHybridKernel δ (x - b) : ℂ)‖ ^ 2 =
       ‖a‖ ^ 2 * preSiftedHybridKernel δ (x - b) ^ 2 := by
@@ -1440,8 +1369,7 @@ weight preserves integrability, and the support is finite.
 
 Role: allows integration of the pointwise right side term by term.
 -/
-theorem integrable_preSiftedHybrid_localized_coefficient_bound (Z : ℕ) (δ : ℝ) (hδ : 0 < δ)
-    (s : Finset ℕ) (a : ℕ → ℂ) :
+theorem localizedBound_L1 (Z : ℕ) (δ : ℝ) (hδ : 0 < δ) (s : Finset ℕ) (a : ℕ → ℂ) :
     MeasureTheory.Integrable
       (fun x : ℝ =>
         ∑ n ∈ s,
@@ -1450,9 +1378,7 @@ theorem integrable_preSiftedHybrid_localized_coefficient_bound (Z : ℕ) (δ : �
       MeasureTheory.volume := by
   apply MeasureTheory.integrable_finsetSum
   intro n hn
-  exact
-    (integrable_norm_sq_mul_preSiftedHybridKernel_translate δ hδ (a n) (Real.log n)).mul_const
-      (24 * δ * n + 14 * (Z : ℝ) ^ 2)
+  exact (shiftKernel_normSq_L1 δ hδ (a n) (Real.log n)).mul_const (24 * δ * n + 14 * (Z : ℝ) ^ 2)
 
 /--
 Inputs: a positive scale, an integer cutoff, a finite coefficient support, and coefficients.
@@ -1465,8 +1391,7 @@ and simplify the resulting scale factors.
 
 Role: produces the integrated right side required for the hybrid estimate.
 -/
-theorem integral_preSiftedHybrid_localized_coefficient_bound_le (Z : ℕ) (δ : ℝ) (hδ : 0 < δ)
-    (s : Finset ℕ) (a : ℕ → ℂ) :
+theorem localizedBound_int_le (Z : ℕ) (δ : ℝ) (hδ : 0 < δ) (s : Finset ℕ) (a : ℕ → ℂ) :
     (∫ x : ℝ,
         ∑ n ∈ s,
           ‖a n * (preSiftedHybridKernel δ (x - Real.log n) : ℂ)‖ ^ 2 *
@@ -1474,8 +1399,7 @@ theorem integral_preSiftedHybrid_localized_coefficient_bound_le (Z : ℕ) (δ : 
       ∑ n ∈ s, ‖a n‖ ^ 2 * ((24 : ℝ) * n + 14 * (Z : ℝ) ^ 2 / δ) := by
   rw [MeasureTheory.integral_finsetSum _
       (fun n hn =>
-        (integrable_norm_sq_mul_preSiftedHybridKernel_translate δ hδ (a n) (Real.log n)).mul_const
-          (24 * δ * n + 14 * (Z : ℝ) ^ 2))]
+        (shiftKernel_normSq_L1 δ hδ (a n) (Real.log n)).mul_const (24 * δ * n + 14 * (Z : ℝ) ^ 2))]
   simp_rw [MeasureTheory.integral_mul_const]
   calc
     (∑ n ∈ s,
@@ -1487,9 +1411,7 @@ theorem integral_preSiftedHybrid_localized_coefficient_bound_le (Z : ℕ) (δ : 
       apply Finset.sum_le_sum
       intro n hn
       exact
-        mul_le_mul_of_nonneg_right
-          (integral_norm_sq_mul_preSiftedHybridKernel_translate_le δ hδ (a n) (Real.log n))
-          (by positivity)
+        mul_le_mul_of_nonneg_right (shiftKernel_normSq_le δ hδ (a n) (Real.log n)) (by positivity)
     _ = ∑ n ∈ s, ‖a n‖ ^ 2 * ((24 : ℝ) * n + 14 * (Z : ℝ) ^ 2 / δ) := by
       apply Finset.sum_congr rfl
       intro n hn
@@ -1514,45 +1436,38 @@ Proof: use the lower bound for the kernel transform in the finite-sum Fourier fa
 
 Role: supplies the pointwise input for integration over a bounded height interval.
 -/
-theorem preSiftedHybridLocalizedSchwartz_pointwise_le_fourier_sq (δ : ℝ) (hδ : 0 < δ) (s : Finset ℕ)
-    (c : ℕ → ℂ) (t : ℝ) (ht : δ * |t| ≤ 1 / 4) :
-    ‖preSiftedHybridDirichletPolynomial s c t‖ ^ 2 ≤
+theorem polyNormSq_fourier_le (δ : ℝ) (hδ : 0 < δ) (s : Finset ℕ) (c : ℕ → ℂ) (t : ℝ)
+    (ht : δ * |t| ≤ 1 / 4) :
+    ‖hybridDirichletPoly s c t‖ ^ 2 ≤
       4 *
-        ‖(FourierTransform.fourier (preSiftedHybridLocalizedSchwartz δ hδ s c) : ℝ → ℂ)
-              (t / (2 * Real.pi))‖ ^
+        ‖(FourierTransform.fourier (hybridLocalizedSum δ hδ s c) : ℝ → ℂ) (t / (2 * Real.pi))‖ ^
           2 := by
-  have hk := norm_preSiftedHybridKernelSchwartz_fourier_ge_half_of_height δ hδ ht
-  have hfactor := preSiftedHybridLocalizedSchwartz_fourier_at_height δ hδ s c t
+  have hk := kernelFourier_at_t_ge δ hδ ht
+  have hfactor := localizedFourier_at_t δ hδ s c t
   have hnorm :
-    ‖(FourierTransform.fourier (preSiftedHybridLocalizedSchwartz δ hδ s c) : ℝ → ℂ)
-          (t / (2 * Real.pi))‖ =
-      ‖(FourierTransform.fourier (preSiftedHybridKernelSchwartz δ hδ) : ℝ → ℂ)
-            (t / (2 * Real.pi))‖ *
-        ‖preSiftedHybridDirichletPolynomial s c t‖ := by
+    ‖(FourierTransform.fourier (hybridLocalizedSum δ hδ s c) : ℝ → ℂ) (t / (2 * Real.pi))‖ =
+      ‖(FourierTransform.fourier (hybridKernelSchwartz δ hδ) : ℝ → ℂ) (t / (2 * Real.pi))‖ *
+        ‖hybridDirichletPoly s c t‖ := by
     rw [hfactor, norm_mul]
-  have hmul :=
-    mul_le_mul_of_nonneg_right hk (norm_nonneg (preSiftedHybridDirichletPolynomial s c t))
+  have hmul := mul_le_mul_of_nonneg_right hk (norm_nonneg (hybridDirichletPoly s c t))
   have hle :
-    ‖preSiftedHybridDirichletPolynomial s c t‖ ≤
+    ‖hybridDirichletPoly s c t‖ ≤
       2 *
-        (‖(FourierTransform.fourier (preSiftedHybridKernelSchwartz δ hδ) : ℝ → ℂ)
-              (t / (2 * Real.pi))‖ *
-          ‖preSiftedHybridDirichletPolynomial s c t‖) := by
+        (‖(FourierTransform.fourier (hybridKernelSchwartz δ hδ) : ℝ → ℂ) (t / (2 * Real.pi))‖ *
+          ‖hybridDirichletPoly s c t‖) := by
     nlinarith [hmul]
   rw [hnorm]
   calc
-    ‖preSiftedHybridDirichletPolynomial s c t‖ ^ 2 ≤
+    ‖hybridDirichletPoly s c t‖ ^ 2 ≤
         (2 *
-            (‖(FourierTransform.fourier (preSiftedHybridKernelSchwartz δ hδ) : ℝ → ℂ)
-                  (t / (2 * Real.pi))‖ *
-              ‖preSiftedHybridDirichletPolynomial s c t‖)) ^
+            (‖(FourierTransform.fourier (hybridKernelSchwartz δ hδ) : ℝ → ℂ) (t / (2 * Real.pi))‖ *
+              ‖hybridDirichletPoly s c t‖)) ^
           2 :=
       (sq_le_sq₀ (norm_nonneg _) (by positivity)).2 hle
     _ =
         4 *
-          (‖(FourierTransform.fourier (preSiftedHybridKernelSchwartz δ hδ) : ℝ → ℂ)
-                  (t / (2 * Real.pi))‖ *
-              ‖preSiftedHybridDirichletPolynomial s c t‖) ^
+          (‖(FourierTransform.fourier (hybridKernelSchwartz δ hδ) : ℝ → ℂ) (t / (2 * Real.pi))‖ *
+              ‖hybridDirichletPoly s c t‖) ^
             2 :=
       by ring
 
@@ -1566,16 +1481,15 @@ Proof: integrate the pointwise Fourier lower bound over the interval.
 
 Role: supplies the first integral step toward the height localization estimate.
 -/
-theorem preSiftedHybridDirichletPolynomial_intervalIntegral_le_fourier (δ T : ℝ) (hδ : 0 < δ)
-    (hT : 0 ≤ T) (hδT : δ * T ≤ 1 / 4) (s : Finset ℕ) (c : ℕ → ℂ) :
-    (∫ t in (-T)..T, ‖preSiftedHybridDirichletPolynomial s c t‖ ^ 2) ≤
+theorem polyInt_fourier_le (δ T : ℝ) (hδ : 0 < δ) (hT : 0 ≤ T) (hδT : δ * T ≤ 1 / 4) (s : Finset ℕ)
+    (c : ℕ → ℂ) :
+    (∫ t in (-T)..T, ‖hybridDirichletPoly s c t‖ ^ 2) ≤
       4 *
         (∫ t in (-T)..T,
-          ‖(FourierTransform.fourier (preSiftedHybridLocalizedSchwartz δ hδ s c) : ℝ → ℂ)
-                (t / (2 * Real.pi))‖ ^
+          ‖(FourierTransform.fourier (hybridLocalizedSum δ hδ s c) : ℝ → ℂ) (t / (2 * Real.pi))‖ ^
             2) := by
-  have hcontP : Continuous (fun t : ℝ => preSiftedHybridDirichletPolynomial s c t) := by
-    unfold preSiftedHybridDirichletPolynomial
+  have hcontP : Continuous (fun t : ℝ => hybridDirichletPoly s c t) := by
+    unfold hybridDirichletPoly
     apply continuous_finsetSum
     intro n hn
     apply Continuous.mul continuous_const
@@ -1585,29 +1499,24 @@ theorem preSiftedHybridDirichletPolynomial_intervalIntegral_le_fourier (δ T : �
   have hcontF :
     Continuous
       (fun t : ℝ =>
-        (FourierTransform.fourier (preSiftedHybridLocalizedSchwartz δ hδ s c) : ℝ → ℂ)
-          (t / (2 * Real.pi))) :=
-    (SchwartzMap.continuous
-          (FourierTransform.fourier (preSiftedHybridLocalizedSchwartz δ hδ s c))).comp
+        (FourierTransform.fourier (hybridLocalizedSum δ hδ s c) : ℝ → ℂ) (t / (2 * Real.pi))) :=
+    (SchwartzMap.continuous (FourierTransform.fourier (hybridLocalizedSum δ hδ s c))).comp
       (continuous_id.div_const (2 * Real.pi))
   have hPint :
-    IntervalIntegrable (fun t : ℝ => ‖preSiftedHybridDirichletPolynomial s c t‖ ^ 2)
-      MeasureTheory.volume (-T) T :=
+    IntervalIntegrable (fun t : ℝ => ‖hybridDirichletPoly s c t‖ ^ 2) MeasureTheory.volume (-T) T :=
     (hcontP.norm.pow 2).intervalIntegrable _ _
   have hFcont :
     Continuous
       (fun t : ℝ =>
         4 *
-          ‖(FourierTransform.fourier (preSiftedHybridLocalizedSchwartz δ hδ s c) : ℝ → ℂ)
-                (t / (2 * Real.pi))‖ ^
+          ‖(FourierTransform.fourier (hybridLocalizedSum δ hδ s c) : ℝ → ℂ) (t / (2 * Real.pi))‖ ^
             2) :=
     continuous_const.mul (hcontF.norm.pow 2)
   have hFint :
     IntervalIntegrable
       (fun t : ℝ =>
         4 *
-          ‖(FourierTransform.fourier (preSiftedHybridLocalizedSchwartz δ hδ s c) : ℝ → ℂ)
-                (t / (2 * Real.pi))‖ ^
+          ‖(FourierTransform.fourier (hybridLocalizedSum δ hδ s c) : ℝ → ℂ) (t / (2 * Real.pi))‖ ^
             2)
       MeasureTheory.volume (-T) T :=
     hFcont.intervalIntegrable _ _
@@ -1616,20 +1525,18 @@ theorem preSiftedHybridDirichletPolynomial_intervalIntegral_le_fourier (δ T : �
     _ ≤
         ∫ t in (-T)..T,
           4 *
-            ‖(FourierTransform.fourier (preSiftedHybridLocalizedSchwartz δ hδ s c) : ℝ → ℂ)
-                  (t / (2 * Real.pi))‖ ^
+            ‖(FourierTransform.fourier (hybridLocalizedSum δ hδ s c) : ℝ → ℂ) (t / (2 * Real.pi))‖ ^
               2 :=
       by
       apply intervalIntegral.integral_mono_on (μ := MeasureTheory.volume) hab hPint hFint
       intro t ht
       have habs : |t| ≤ T := abs_le.mpr ⟨by linarith only [ht.1], ht.2⟩
       have hscale : δ * |t| ≤ 1 / 4 := (mul_le_mul_of_nonneg_left habs hδ.le).trans hδT
-      exact preSiftedHybridLocalizedSchwartz_pointwise_le_fourier_sq δ hδ s c t hscale
+      exact polyNormSq_fourier_le δ hδ s c t hscale
     _ =
         4 *
           (∫ t in (-T)..T,
-            ‖(FourierTransform.fourier (preSiftedHybridLocalizedSchwartz δ hδ s c) : ℝ → ℂ)
-                  (t / (2 * Real.pi))‖ ^
+            ‖(FourierTransform.fourier (hybridLocalizedSum δ hδ s c) : ℝ → ℂ) (t / (2 * Real.pi))‖ ^
               2) :=
       by rw [intervalIntegral.integral_const_mul]
 
@@ -1641,7 +1548,7 @@ Proof: apply the interval change of variables `t = 2πξ`.
 
 Role: prepares the localized integral for the Schwartz–Plancherel identity.
 -/
-theorem preSiftedHybridFourier_intervalIntegral_eq_frequency (T : ℝ) (F : SchwartzMap ℝ ℂ) :
+theorem fourierInt_frequency (T : ℝ) (F : SchwartzMap ℝ ℂ) :
     (∫ t in (-T)..T, ‖(FourierTransform.fourier F : ℝ → ℂ) (t / (2 * Real.pi))‖ ^ 2) =
       2 * Real.pi *
         (∫ ξ in (-(T / (2 * Real.pi)))..(T / (2 * Real.pi)),
@@ -1662,7 +1569,7 @@ norm by a constant multiple of its integrable norm.
 
 Role: justifies enlarging a finite Fourier-frequency interval to the full Plancherel integral.
 -/
-theorem integrable_norm_sq_of_schwartz (F : SchwartzMap ℝ ℂ) :
+theorem integrable_norm_sq (F : SchwartzMap ℝ ℂ) :
     MeasureTheory.Integrable (fun x : ℝ => ‖F x‖ ^ 2) MeasureTheory.volume := by
   let C : ℝ := max 1 (SchwartzMap.seminorm ℂ 0 0 F)
   have hbound : ∀ x : ℝ, ‖F x‖ ≤ C := by
@@ -1693,28 +1600,23 @@ integrability of each Schwartz norm square and closure under finite sums.
 
 Role: justifies integrating the pointwise pre-sifted large-sieve inequality.
 -/
-theorem integrable_primitiveCharacterPolynomialMeanSquare_localized {q : ℕ} (hq : 1 < q)
-    (s : Finset ℕ) (δ : ℝ) (hδ : 0 < δ) (a : ℕ → ℂ) :
+theorem meanSquare_local_L1 {q : ℕ} (hq : 1 < q) (s : Finset ℕ) (δ : ℝ) (hδ : 0 < δ) (a : ℕ → ℂ) :
     MeasureTheory.Integrable
       (fun x : ℝ =>
-        primitiveCharacterPolynomialMeanSquare q hq s
-          (fun n => a n * (preSiftedHybridKernel δ (x - Real.log n) : ℂ)))
+        polyMeanSquare q hq s (fun n => a n * (preSiftedHybridKernel δ (x - Real.log n) : ℂ)))
       MeasureTheory.volume := by
   have hpoint :
     (fun x : ℝ =>
-        primitiveCharacterPolynomialMeanSquare q hq s
-          (fun n => a n * (preSiftedHybridKernel δ (x - Real.log n) : ℂ))) =
+        polyMeanSquare q hq s (fun n => a n * (preSiftedHybridKernel δ (x - Real.log n) : ℂ))) =
       fun x =>
-      ∑ χ ∈ primitiveDirichletCharacterSet q,
-        ‖preSiftedHybridLocalizedSchwartz δ hδ s (fun n => a n * χ (n : ZMod q)) x‖ ^ 2 := by
+      ∑ χ ∈ primitiveCharacters q,
+        ‖hybridLocalizedSum δ hδ s (fun n => a n * χ (n : ZMod q)) x‖ ^ 2 := by
     funext x
-    exact primitiveCharacterPolynomialMeanSquare_eq_localizedSchwartz_norm_sq hq s δ hδ x a
+    exact meanSquare_localized hq s δ hδ x a
   rw [hpoint]
   apply MeasureTheory.integrable_finsetSum
   intro χ hχ
-  exact
-    integrable_norm_sq_of_schwartz
-      (preSiftedHybridLocalizedSchwartz δ hδ s (fun n => a n * χ (n : ZMod q)))
+  exact integrable_norm_sq (hybridLocalizedSum δ hδ s (fun n => a n * χ (n : ZMod q)))
 
 /--
 Inputs: a finite modulus range, a finite coefficient support, a positive kernel scale, and
@@ -1726,21 +1628,18 @@ Proof: each fixed-modulus mean square is integrable, and the attached modulus su
 
 Role: supplies integrability for exchanging the modulus and height integrals in the hybrid bound.
 -/
-theorem integrable_preSiftedHybrid_localized_family (Z : ℕ) (s : Finset ℕ) (δ : ℝ) (hδ : 0 < δ)
-    (a : ℕ → ℂ) :
+theorem localizedFamily_L1 (Z : ℕ) (s : Finset ℕ) (δ : ℝ) (hδ : 0 < δ) (a : ℕ → ℂ) :
     MeasureTheory.Integrable
       (fun x : ℝ =>
         ∑ q ∈ (Finset.Ioc 1 Z).attach,
           Real.log ((Z : ℝ) / (q.val : ℝ)) *
-            primitiveCharacterPolynomialMeanSquare q.val
-              (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+            polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
               (fun n => a n * (preSiftedHybridKernel δ (x - Real.log n) : ℂ)))
       MeasureTheory.volume := by
   apply MeasureTheory.integrable_finsetSum
   intro q hq
   exact
-    (integrable_primitiveCharacterPolynomialMeanSquare_localized
-          (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s δ hδ a).const_mul
+    (meanSquare_local_L1 (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s δ hδ a).const_mul
       (Real.log ((Z : ℝ) / (q.val : ℝ)))
 
 /--
@@ -1754,26 +1653,23 @@ move each real constant weight outside its integral.
 
 Role: separates the finite modulus sum before applying the height localization estimate.
 -/
-theorem integral_preSiftedHybrid_localized_family_eq (Z : ℕ) (s : Finset ℕ) (δ : ℝ) (hδ : 0 < δ)
-    (a : ℕ → ℂ) :
+theorem localizedFamily_int (Z : ℕ) (s : Finset ℕ) (δ : ℝ) (hδ : 0 < δ) (a : ℕ → ℂ) :
     (∫ x : ℝ,
         ∑ q ∈ (Finset.Ioc 1 Z).attach,
           Real.log ((Z : ℝ) / (q.val : ℝ)) *
-            primitiveCharacterPolynomialMeanSquare q.val
-              (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+            polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
               (fun n =>
                 a n * (preSiftedHybridKernel δ (x - Real.log n) : ℂ)) ∂MeasureTheory.volume) =
       ∑ q ∈ (Finset.Ioc 1 Z).attach,
         Real.log ((Z : ℝ) / (q.val : ℝ)) *
           ∫ x : ℝ,
-            primitiveCharacterPolynomialMeanSquare q.val
-              (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+            polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
               (fun n =>
                 a n * (preSiftedHybridKernel δ (x - Real.log n) : ℂ)) ∂MeasureTheory.volume := by
   rw [MeasureTheory.integral_finsetSum _
       (fun q hq =>
-        (integrable_primitiveCharacterPolynomialMeanSquare_localized
-              (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s δ hδ a).const_mul
+        (meanSquare_local_L1 (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s δ hδ
+              a).const_mul
           (Real.log ((Z : ℝ) / (q.val : ℝ))))]
   simp only [MeasureTheory.integral_const_mul]
 
@@ -1789,25 +1685,23 @@ apply the termwise translated-kernel square-integral bound.
 
 Role: connects the short-interval sieve estimate to the height-integrated hybrid estimate.
 -/
-theorem integral_preSiftedHybrid_localized_family_le (Z : ℕ) (hZ : 2 ≤ Z) (δ : ℝ) (hδ : 0 < δ)
-    (hδ' : δ ≤ 1 / 4) (s : Finset ℕ) (hpos : ∀ n ∈ s, 0 < n)
-    (hprime : ∀ n ∈ s, ∀ p, Nat.Prime p → p ∣ n → Z < p) (a : ℕ → ℂ) :
+theorem localizedFamilyInt_le (Z : ℕ) (hZ : 2 ≤ Z) (δ : ℝ) (hδ : 0 < δ) (hδ' : δ ≤ 1 / 4)
+    (s : Finset ℕ) (hpos : ∀ n ∈ s, 0 < n) (hprime : ∀ n ∈ s, ∀ p, Nat.Prime p → p ∣ n → Z < p)
+    (a : ℕ → ℂ) :
     (∫ x : ℝ,
         ∑ q ∈ (Finset.Ioc 1 Z).attach,
           Real.log ((Z : ℝ) / (q.val : ℝ)) *
-            primitiveCharacterPolynomialMeanSquare q.val
-              (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+            polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
               (fun n =>
                 a n * (preSiftedHybridKernel δ (x - Real.log n) : ℂ)) ∂MeasureTheory.volume) ≤
       ∑ n ∈ s, ‖a n‖ ^ 2 * ((24 : ℝ) * n + 14 * (Z : ℝ) ^ 2 / δ) := by
-  have hleft := integrable_preSiftedHybrid_localized_family Z s δ hδ a
-  have hright := integrable_preSiftedHybrid_localized_coefficient_bound Z δ hδ s a
+  have hleft := localizedFamily_L1 Z s δ hδ a
+  have hright := localizedBound_L1 Z δ hδ s a
   calc
     (∫ x : ℝ,
           ∑ q ∈ (Finset.Ioc 1 Z).attach,
             Real.log ((Z : ℝ) / (q.val : ℝ)) *
-              primitiveCharacterPolynomialMeanSquare q.val
-                (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+              polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
                 (fun n =>
                   a n * (preSiftedHybridKernel δ (x - Real.log n) : ℂ)) ∂MeasureTheory.volume) ≤
         ∫ x : ℝ,
@@ -1817,10 +1711,9 @@ theorem integral_preSiftedHybrid_localized_family_le (Z : ℕ) (hZ : 2 ≤ Z) (�
       by
       apply MeasureTheory.integral_mono_ae hleft hright
       exact
-        Filter.Eventually.of_forall fun x =>
-          preSiftedHybrid_localized_mean_square_le Z hZ δ hδ hδ' s hpos hprime x a
+        Filter.Eventually.of_forall fun x => preSifted_unfiltered Z hZ δ hδ hδ' s hpos hprime x a
     _ ≤ ∑ n ∈ s, ‖a n‖ ^ 2 * ((24 : ℝ) * n + 14 * (Z : ℝ) ^ 2 / δ) :=
-      integral_preSiftedHybrid_localized_coefficient_bound_le Z δ hδ s a
+      localizedBound_int_le Z δ hδ s a
 
 /--
 Claim: the squared Fourier norm of a Schwartz map on a finite interval is at most its integral
@@ -1831,8 +1724,7 @@ measure with Lebesgue measure, using integrability of the squared Schwartz norm.
 
 Role: extends the frequency interval before applying Plancherel.
 -/
-theorem preSiftedHybridFourier_intervalIntegral_le_full (a b : ℝ) (hab : a ≤ b)
-    (F : SchwartzMap ℝ ℂ) :
+theorem fourierInt_le_full (a b : ℝ) (hab : a ≤ b) (F : SchwartzMap ℝ ℂ) :
     (∫ ξ in a..b, ‖(FourierTransform.fourier F : ℝ → ℂ) ξ‖ ^ 2) ≤
       ∫ ξ : ℝ, ‖(FourierTransform.fourier F : ℝ → ℂ) ξ‖ ^ 2 := by
   let G : SchwartzMap ℝ ℂ := FourierTransform.fourier F
@@ -1842,7 +1734,7 @@ theorem preSiftedHybridFourier_intervalIntegral_le_full (a b : ℝ) (hab : a ≤
   rw [intervalIntegral.integral_of_le hab]
   exact
     MeasureTheory.integral_mono_measure MeasureTheory.Measure.restrict_le_self hnonneg
-      (integrable_norm_sq_of_schwartz G)
+      (integrable_norm_sq G)
 
 /--
 Claim: the height integral of the finite Dirichlet polynomial is at most `8π` times the squared
@@ -1853,19 +1745,18 @@ the full-line integral comparison, and Schwartz Plancherel.
 
 Role: provides the Fourier localization input for the pre-sifted hybrid large sieve.
 -/
-theorem preSiftedHybridDirichletPolynomial_intervalIntegral_le_eight_pi (δ T : ℝ) (hδ : 0 < δ)
-    (hT : 0 ≤ T) (hδT : δ * T ≤ 1 / 4) (s : Finset ℕ) (c : ℕ → ℂ) :
-    (∫ t in (-T)..T, ‖preSiftedHybridDirichletPolynomial s c t‖ ^ 2) ≤
-      8 * Real.pi * (∫ x : ℝ, ‖preSiftedHybridLocalizedSchwartz δ hδ s c x‖ ^ 2) := by
-  let F := preSiftedHybridLocalizedSchwartz δ hδ s c
-  have hheight := preSiftedHybridDirichletPolynomial_intervalIntegral_le_fourier δ T hδ hT hδT s c
-  have hfreq := preSiftedHybridFourier_intervalIntegral_eq_frequency T F
+theorem polyInt_eight_pi_le (δ T : ℝ) (hδ : 0 < δ) (hT : 0 ≤ T) (hδT : δ * T ≤ 1 / 4) (s : Finset ℕ)
+    (c : ℕ → ℂ) :
+    (∫ t in (-T)..T, ‖hybridDirichletPoly s c t‖ ^ 2) ≤
+      8 * Real.pi * (∫ x : ℝ, ‖hybridLocalizedSum δ hδ s c x‖ ^ 2) := by
+  let F := hybridLocalizedSum δ hδ s c
+  have hheight := polyInt_fourier_le δ T hδ hT hδT s c
+  have hfreq := fourierInt_frequency T F
   have hπ : 0 < 2 * Real.pi := by positivity
   have hab : -(T / (2 * Real.pi)) ≤ T / (2 * Real.pi) := neg_le_self (div_nonneg hT (le_of_lt hπ))
-  have hfreq_le :=
-    preSiftedHybridFourier_intervalIntegral_le_full (-(T / (2 * Real.pi))) (T / (2 * Real.pi)) hab F
+  have hfreq_le := fourierInt_le_full (-(T / (2 * Real.pi))) (T / (2 * Real.pi)) hab F
   calc
-    (∫ t in (-T)..T, ‖preSiftedHybridDirichletPolynomial s c t‖ ^ 2) ≤
+    (∫ t in (-T)..T, ‖hybridDirichletPoly s c t‖ ^ 2) ≤
         4 * (∫ t in (-T)..T, ‖(FourierTransform.fourier F : ℝ → ℂ) (t / (2 * Real.pi))‖ ^ 2) :=
       hheight
     _ =
@@ -1894,21 +1785,19 @@ character polynomial, and recombine the finite character sum under the real-line
 
 Role: connects the pointwise pre-sifted large-sieve estimate to a height-integrated family bound.
 -/
-theorem primitiveCharacterPolynomialMeanSquare_intervalIntegral_le_eight_pi {q : ℕ} (hq : 1 < q)
-    (s : Finset ℕ) (δ T : ℝ) (hδ : 0 < δ) (hT : 0 ≤ T) (hδT : δ * T ≤ 1 / 4) (a : ℕ → ℂ) :
+theorem meanSquare_eight_pi {q : ℕ} (hq : 1 < q) (s : Finset ℕ) (δ T : ℝ) (hδ : 0 < δ) (hT : 0 ≤ T)
+    (hδT : δ * T ≤ 1 / 4) (a : ℕ → ℂ) :
     (∫ t in (-T)..T,
-        primitiveCharacterPolynomialMeanSquare q hq s
-          (fun n => a n * Complex.exp ((-(t * Real.log n) : ℝ) * Complex.I))) ≤
+        polyMeanSquare q hq s (fun n => a n * Complex.exp ((-(t * Real.log n) : ℝ) * Complex.I))) ≤
       8 * Real.pi *
         (∫ x : ℝ,
-          primitiveCharacterPolynomialMeanSquare q hq s
+          polyMeanSquare q hq s
             (fun n =>
               a n * (preSiftedHybridKernel δ (x - Real.log n) : ℂ)) ∂MeasureTheory.volume) := by
   classical
   have hpolyCont (χ : DirichletCharacter ℂ q) :
-    Continuous
-      (fun t : ℝ => preSiftedHybridDirichletPolynomial s (fun n => a n * χ (n : ZMod q)) t) := by
-    unfold preSiftedHybridDirichletPolynomial
+    Continuous (fun t : ℝ => hybridDirichletPoly s (fun n => a n * χ (n : ZMod q)) t) := by
+    unfold hybridDirichletPoly
     apply continuous_finsetSum
     intro n hn
     apply Continuous.mul continuous_const
@@ -1917,90 +1806,80 @@ theorem primitiveCharacterPolynomialMeanSquare_intervalIntegral_le_eight_pi {q :
     exact Complex.continuous_exp.comp ((Complex.continuous_ofReal.comp harg).mul continuous_const)
   have hsum (χ : DirichletCharacter ℂ q) (t : ℝ) :
     ∑ n ∈ s, a n * Complex.exp ((-(t * Real.log n) : ℝ) * Complex.I) * χ (n : ZMod q) =
-      preSiftedHybridDirichletPolynomial s (fun n => a n * χ (n : ZMod q)) t := by
-    unfold preSiftedHybridDirichletPolynomial
+      hybridDirichletPoly s (fun n => a n * χ (n : ZMod q)) t := by
+    unfold hybridDirichletPoly
     apply Finset.sum_congr rfl
     intro n hn
     ring
   have hmean (t : ℝ) :
-    primitiveCharacterPolynomialMeanSquare q hq s
-        (fun n => a n * Complex.exp ((-(t * Real.log n) : ℝ) * Complex.I)) =
-      ∑ χ ∈ primitiveDirichletCharacterSet q,
-        ‖preSiftedHybridDirichletPolynomial s (fun n => a n * χ (n : ZMod q)) t‖ ^ 2 := by
-    unfold primitiveCharacterPolynomialMeanSquare
+    polyMeanSquare q hq s (fun n => a n * Complex.exp ((-(t * Real.log n) : ℝ) * Complex.I)) =
+      ∑ χ ∈ primitiveCharacters q,
+        ‖hybridDirichletPoly s (fun n => a n * χ (n : ZMod q)) t‖ ^ 2 := by
+    unfold polyMeanSquare
     apply Finset.sum_congr rfl
     intro χ hχ
     rw [Complex.normSq_eq_norm_sq]
     exact congrArg (fun z : ℂ => ‖z‖ ^ 2) (hsum χ t)
   have hlocal (x : ℝ) :
-    primitiveCharacterPolynomialMeanSquare q hq s
-        (fun n => a n * (preSiftedHybridKernel δ (x - Real.log n) : ℂ)) =
-      ∑ χ ∈ primitiveDirichletCharacterSet q,
-        ‖preSiftedHybridLocalizedSchwartz δ hδ s (fun n => a n * χ (n : ZMod q)) x‖ ^ 2 :=
-    primitiveCharacterPolynomialMeanSquare_eq_localizedSchwartz_norm_sq hq s δ hδ x a
+    polyMeanSquare q hq s (fun n => a n * (preSiftedHybridKernel δ (x - Real.log n) : ℂ)) =
+      ∑ χ ∈ primitiveCharacters q,
+        ‖hybridLocalizedSum δ hδ s (fun n => a n * χ (n : ZMod q)) x‖ ^ 2 :=
+    meanSquare_localized hq s δ hδ x a
   have hlocalIntegral :
     (∫ x : ℝ,
-        primitiveCharacterPolynomialMeanSquare q hq s
+        polyMeanSquare q hq s
           (fun n => a n * (preSiftedHybridKernel δ (x - Real.log n) : ℂ)) ∂MeasureTheory.volume) =
-      ∑ χ ∈ primitiveDirichletCharacterSet q,
+      ∑ χ ∈ primitiveCharacters q,
         ∫ x : ℝ,
-          ‖preSiftedHybridLocalizedSchwartz δ hδ s (fun n => a n * χ (n : ZMod q)) x‖ ^
+          ‖hybridLocalizedSum δ hδ s (fun n => a n * χ (n : ZMod q)) x‖ ^
             2 ∂MeasureTheory.volume := by
     rw [show
         (fun x : ℝ =>
-            primitiveCharacterPolynomialMeanSquare q hq s
-              (fun n => a n * (preSiftedHybridKernel δ (x - Real.log n) : ℂ))) =
+            polyMeanSquare q hq s (fun n => a n * (preSiftedHybridKernel δ (x - Real.log n) : ℂ))) =
           fun x =>
-          ∑ χ ∈ primitiveDirichletCharacterSet q,
-            ‖preSiftedHybridLocalizedSchwartz δ hδ s (fun n => a n * χ (n : ZMod q)) x‖ ^ 2
+          ∑ χ ∈ primitiveCharacters q,
+            ‖hybridLocalizedSum δ hδ s (fun n => a n * χ (n : ZMod q)) x‖ ^ 2
         from funext hlocal]
     rw [MeasureTheory.integral_finsetSum _
         (fun χ hχ =>
-          integrable_norm_sq_of_schwartz
-            (preSiftedHybridLocalizedSchwartz δ hδ s (fun n => a n * χ (n : ZMod q))))]
+          integrable_norm_sq (hybridLocalizedSum δ hδ s (fun n => a n * χ (n : ZMod q))))]
   have hheightSum :
     (∫ t in (-T)..T,
-        primitiveCharacterPolynomialMeanSquare q hq s
-          (fun n => a n * Complex.exp ((-(t * Real.log n) : ℝ) * Complex.I))) =
-      ∑ χ ∈ primitiveDirichletCharacterSet q,
-        ∫ t in (-T)..T,
-          ‖preSiftedHybridDirichletPolynomial s (fun n => a n * χ (n : ZMod q)) t‖ ^ 2 := by
+        polyMeanSquare q hq s (fun n => a n * Complex.exp ((-(t * Real.log n) : ℝ) * Complex.I))) =
+      ∑ χ ∈ primitiveCharacters q,
+        ∫ t in (-T)..T, ‖hybridDirichletPoly s (fun n => a n * χ (n : ZMod q)) t‖ ^ 2 := by
     rw [show
         (fun t : ℝ =>
-            primitiveCharacterPolynomialMeanSquare q hq s
+            polyMeanSquare q hq s
               (fun n => a n * Complex.exp ((-(t * Real.log n) : ℝ) * Complex.I))) =
           fun t =>
-          ∑ χ ∈ primitiveDirichletCharacterSet q,
-            ‖preSiftedHybridDirichletPolynomial s (fun n => a n * χ (n : ZMod q)) t‖ ^ 2
+          ∑ χ ∈ primitiveCharacters q, ‖hybridDirichletPoly s (fun n => a n * χ (n : ZMod q)) t‖ ^ 2
         from funext hmean]
     exact
-      intervalIntegral.integral_finsetSum (s := primitiveDirichletCharacterSet q) (f := fun χ t =>
-        ‖preSiftedHybridDirichletPolynomial s (fun n => a n * χ (n : ZMod q)) t‖ ^ 2)
+      intervalIntegral.integral_finsetSum (s := primitiveCharacters q) (f := fun χ t =>
+        ‖hybridDirichletPoly s (fun n => a n * χ (n : ZMod q)) t‖ ^ 2)
         (fun χ hχ => (hpolyCont χ).norm.pow 2 |>.intervalIntegrable (-T) T)
   calc
     (∫ t in (-T)..T,
-          primitiveCharacterPolynomialMeanSquare q hq s
+          polyMeanSquare q hq s
             (fun n => a n * Complex.exp ((-(t * Real.log n) : ℝ) * Complex.I))) =
-        ∑ χ ∈ primitiveDirichletCharacterSet q,
-          ∫ t in (-T)..T,
-            ‖preSiftedHybridDirichletPolynomial s (fun n => a n * χ (n : ZMod q)) t‖ ^ 2 :=
+        ∑ χ ∈ primitiveCharacters q,
+          ∫ t in (-T)..T, ‖hybridDirichletPoly s (fun n => a n * χ (n : ZMod q)) t‖ ^ 2 :=
       hheightSum
     _ ≤
-        ∑ χ ∈ primitiveDirichletCharacterSet q,
+        ∑ χ ∈ primitiveCharacters q,
           8 * Real.pi *
             (∫ x : ℝ,
-              ‖preSiftedHybridLocalizedSchwartz δ hδ s (fun n => a n * χ (n : ZMod q)) x‖ ^
+              ‖hybridLocalizedSum δ hδ s (fun n => a n * χ (n : ZMod q)) x‖ ^
                 2 ∂MeasureTheory.volume) :=
       by
       apply Finset.sum_le_sum
       intro χ hχ
-      exact
-        preSiftedHybridDirichletPolynomial_intervalIntegral_le_eight_pi δ T hδ hT hδT s
-          (fun n => a n * χ (n : ZMod q))
+      exact polyInt_eight_pi_le δ T hδ hT hδT s (fun n => a n * χ (n : ZMod q))
     _ =
         8 * Real.pi *
           ∫ x : ℝ,
-            primitiveCharacterPolynomialMeanSquare q hq s
+            polyMeanSquare q hq s
               (fun n =>
                 a n * (preSiftedHybridKernel δ (x - Real.log n) : ℂ)) ∂MeasureTheory.volume :=
       by rw [← Finset.mul_sum, ← hlocalIntegral]
@@ -2018,14 +1897,12 @@ integrated pointwise pre-sieved estimate and absorb the fixed constants using `�
 Role: provides the finite-support hybrid large-sieve estimate required by the zero-density
 argument.
 -/
-theorem primitiveCharacterFamilyMeanSquare_preSifted_hybrid_interval (Z : ℕ) (hZ : 2 ≤ Z) (T : ℝ)
-    (hT : 1 ≤ T) (s : Finset ℕ) (hpos : ∀ n ∈ s, 0 < n) (a : ℕ → ℂ)
-    (hprime : ∀ n ∈ s, ∀ p, Nat.Prime p → p ∣ n → Z < p) :
+theorem hybridFamily_interval (Z : ℕ) (hZ : 2 ≤ Z) (T : ℝ) (hT : 1 ≤ T) (s : Finset ℕ)
+    (hpos : ∀ n ∈ s, 0 < n) (a : ℕ → ℂ) (hprime : ∀ n ∈ s, ∀ p, Nat.Prime p → p ∣ n → Z < p) :
     (∑ q ∈ (Finset.Ioc 1 Z).attach,
         Real.log ((Z : ℝ) / (q.val : ℝ)) *
           ∫ t in (-T)..T,
-            primitiveCharacterPolynomialMeanSquare q.val
-              (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+            polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
               (fun n => a n * Complex.exp ((-(t * Real.log n) : ℝ) * Complex.I))) ≤
       (2048 : ℝ) * ∑ n ∈ s, ‖a n‖ ^ 2 * ((n : ℝ) + (Z : ℝ) ^ 2 * T) := by
   let δ : ℝ := 1 / (4 * T)
@@ -2047,20 +1924,18 @@ theorem primitiveCharacterFamilyMeanSquare_preSifted_hybrid_interval (Z : ℕ) (
   have hδinv : δ⁻¹ = 4 * T := by
     dsimp only [δ]
     rw [one_div, inv_inv]
-  have hloc := integral_preSiftedHybrid_localized_family_le Z hZ δ hδ hδle s hpos hprime a
+  have hloc := localizedFamilyInt_le Z hZ δ hδ hδle s hpos hprime a
   calc
     (∑ q ∈ (Finset.Ioc 1 Z).attach,
           Real.log ((Z : ℝ) / (q.val : ℝ)) *
             ∫ t in (-T)..T,
-              primitiveCharacterPolynomialMeanSquare q.val
-                (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+              polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
                 (fun n => a n * Complex.exp ((-(t * Real.log n) : ℝ) * Complex.I))) ≤
         ∑ q ∈ (Finset.Ioc 1 Z).attach,
           Real.log ((Z : ℝ) / (q.val : ℝ)) *
             (8 * Real.pi *
               ∫ x : ℝ,
-                primitiveCharacterPolynomialMeanSquare q.val
-                  (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+                polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
                   (fun n =>
                     a n * (preSiftedHybridKernel δ (x - Real.log n) : ℂ)) ∂MeasureTheory.volume) :=
       by
@@ -2073,16 +1948,13 @@ theorem primitiveCharacterFamilyMeanSquare_preSifted_hybrid_interval (Z : ℕ) (
         Real.log_nonneg ((one_le_div hqpos).2 (by exact_mod_cast hqdata.2))
       exact
         mul_le_mul_of_nonneg_left
-          (primitiveCharacterPolynomialMeanSquare_intervalIntegral_le_eight_pi
-            (show 1 < q.val from hqdata.1) s δ T hδ hTpos.le hδT.le a)
-          hweight
+          (meanSquare_eight_pi (show 1 < q.val from hqdata.1) s δ T hδ hTpos.le hδT.le a) hweight
     _ =
         8 * Real.pi *
           (∫ x : ℝ,
             ∑ q ∈ (Finset.Ioc 1 Z).attach,
               Real.log ((Z : ℝ) / (q.val : ℝ)) *
-                primitiveCharacterPolynomialMeanSquare q.val
-                  (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+                polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
                   (fun n =>
                     a n * (preSiftedHybridKernel δ (x - Real.log n) : ℂ)) ∂MeasureTheory.volume) :=
       by
@@ -2091,8 +1963,7 @@ theorem primitiveCharacterFamilyMeanSquare_preSifted_hybrid_interval (Z : ℕ) (
               Real.log ((Z : ℝ) / (q.val : ℝ)) *
                 (8 * Real.pi *
                   ∫ x : ℝ,
-                    primitiveCharacterPolynomialMeanSquare q.val
-                      (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+                    polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
                       (fun n =>
                         a n *
                           (preSiftedHybridKernel δ (x - Real.log n) : ℂ)) ∂MeasureTheory.volume)) =
@@ -2100,8 +1971,7 @@ theorem primitiveCharacterFamilyMeanSquare_preSifted_hybrid_interval (Z : ℕ) (
               8 * Real.pi *
                 (Real.log ((Z : ℝ) / (q.val : ℝ)) *
                   ∫ x : ℝ,
-                    primitiveCharacterPolynomialMeanSquare q.val
-                      (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+                    polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
                       (fun n =>
                         a n *
                           (preSiftedHybridKernel δ (x - Real.log n) : ℂ)) ∂MeasureTheory.volume) :=
@@ -2114,8 +1984,7 @@ theorem primitiveCharacterFamilyMeanSquare_preSifted_hybrid_interval (Z : ℕ) (
               (∑ q ∈ (Finset.Ioc 1 Z).attach,
                 Real.log ((Z : ℝ) / (q.val : ℝ)) *
                   ∫ x : ℝ,
-                    primitiveCharacterPolynomialMeanSquare q.val
-                      (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+                    polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
                       (fun n =>
                         a n *
                           (preSiftedHybridKernel δ (x - Real.log n) : ℂ)) ∂MeasureTheory.volume) :=
@@ -2125,12 +1994,11 @@ theorem primitiveCharacterFamilyMeanSquare_preSifted_hybrid_interval (Z : ℕ) (
               ∫ x : ℝ,
                 ∑ q ∈ (Finset.Ioc 1 Z).attach,
                   Real.log ((Z : ℝ) / (q.val : ℝ)) *
-                    primitiveCharacterPolynomialMeanSquare q.val
-                      (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+                    polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
                       (fun n =>
                         a n *
                           (preSiftedHybridKernel δ (x - Real.log n) : ℂ)) ∂MeasureTheory.volume :=
-          by rw [← integral_preSiftedHybrid_localized_family_eq Z s δ hδ a]
+          by rw [← localizedFamily_int Z s δ hδ a]
     _ ≤ 8 * Real.pi * (∑ n ∈ s, ‖a n‖ ^ 2 * ((24 : ℝ) * n + 14 * (Z : ℝ) ^ 2 / δ)) :=
       mul_le_mul_of_nonneg_left hloc (by positivity)
     _ ≤ (2048 : ℝ) * ∑ n ∈ s, ‖a n‖ ^ 2 * ((n : ℝ) + (Z : ℝ) ^ 2 * T) := by
@@ -2163,7 +2031,7 @@ theorem primitiveCharacterFamilyMeanSquare_preSifted_hybrid_interval (Z : ℕ) (
 
 /--
 Inputs: the parameters and hypotheses of
-`primitiveCharacterFamilyMeanSquare_preSifted_hybrid_interval`.
+`hybridFamily_interval`.
 
 Claim: the logarithmically weighted primitive-character mean square over the closed height
 interval `[-T,T]` satisfies the same absolute hybrid bound.
@@ -2173,49 +2041,43 @@ Lebesgue measure.
 
 Role: exposes the set-integral form used by the zero-density application.
 -/
-theorem primitiveCharacterFamilyMeanSquare_preSifted_hybrid (Z : ℕ) (hZ : 2 ≤ Z) (T : ℝ)
-    (hT : 1 ≤ T) (s : Finset ℕ) (hpos : ∀ n ∈ s, 0 < n) (a : ℕ → ℂ)
-    (hprime : ∀ n ∈ s, ∀ p, Nat.Prime p → p ∣ n → Z < p) :
+theorem hybridFamily_Icc (Z : ℕ) (hZ : 2 ≤ Z) (T : ℝ) (hT : 1 ≤ T) (s : Finset ℕ)
+    (hpos : ∀ n ∈ s, 0 < n) (a : ℕ → ℂ) (hprime : ∀ n ∈ s, ∀ p, Nat.Prime p → p ∣ n → Z < p) :
     (∑ q ∈ (Finset.Ioc 1 Z).attach,
         Real.log ((Z : ℝ) / (q.val : ℝ)) *
           ∫ t in Set.Icc (-T) T,
-            primitiveCharacterPolynomialMeanSquare q.val
-              (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+            polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
               (fun n =>
                 a n * Complex.exp ((-(t * Real.log n) : ℝ) * Complex.I)) ∂MeasureTheory.volume) ≤
       (2048 : ℝ) * ∑ n ∈ s, ‖a n‖ ^ 2 * ((n : ℝ) + (Z : ℝ) ^ 2 * T) := by
   have hinterval : -T ≤ T := by linarith only [hT]
   have hset (q : { q // q ∈ Finset.Ioc 1 Z }) :
     (∫ t in Set.Icc (-T) T,
-        primitiveCharacterPolynomialMeanSquare q.val
-          (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+        polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
           (fun n =>
             a n * Complex.exp ((-(t * Real.log n) : ℝ) * Complex.I)) ∂MeasureTheory.volume) =
       ∫ t in (-T)..T,
-        primitiveCharacterPolynomialMeanSquare q.val
-          (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+        polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
           (fun n => a n * Complex.exp ((-(t * Real.log n) : ℝ) * Complex.I)) := by
     rw [MeasureTheory.integral_Icc_eq_integral_Ioc, intervalIntegral.integral_of_le hinterval]
   calc
     (∑ q ∈ (Finset.Ioc 1 Z).attach,
           Real.log ((Z : ℝ) / (q.val : ℝ)) *
             ∫ t in Set.Icc (-T) T,
-              primitiveCharacterPolynomialMeanSquare q.val
-                (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+              polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
                 (fun n =>
                   a n * Complex.exp ((-(t * Real.log n) : ℝ) * Complex.I)) ∂MeasureTheory.volume) =
         ∑ q ∈ (Finset.Ioc 1 Z).attach,
           Real.log ((Z : ℝ) / (q.val : ℝ)) *
             ∫ t in (-T)..T,
-              primitiveCharacterPolynomialMeanSquare q.val
-                (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+              polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
                 (fun n => a n * Complex.exp ((-(t * Real.log n) : ℝ) * Complex.I)) :=
       by
       apply Finset.sum_congr rfl
       intro q hq
       rw [hset q]
     _ ≤ (2048 : ℝ) * ∑ n ∈ s, ‖a n‖ ^ 2 * ((n : ℝ) + (Z : ℝ) ^ 2 * T) :=
-      primitiveCharacterFamilyMeanSquare_preSifted_hybrid_interval Z hZ T hT s hpos a hprime
+      hybridFamily_interval Z hZ T hT s hpos a hprime
 
 /--
 Inputs: an integer conductor cutoff `R`, a height cutoff, finite Dirichlet coefficients, and the
@@ -2227,13 +2089,11 @@ using nonnegativity of the mean squares and their logarithmic weights.
 Role: gives the zero-density argument the unweighted conductor range with an explicit logarithmic
 saving.
 -/
-theorem primitiveCharacterFamilyMeanSquare_preSifted_hybrid_R_squared (R : ℕ) (hR : 2 ≤ R) (T : ℝ)
-    (hT : 1 ≤ T) (s : Finset ℕ) (hpos : ∀ n ∈ s, 0 < n) (a : ℕ → ℂ)
-    (hprime : ∀ n ∈ s, ∀ p, Nat.Prime p → p ∣ n → R ^ 2 < p) :
+theorem hybridFamily_Rsq (R : ℕ) (hR : 2 ≤ R) (T : ℝ) (hT : 1 ≤ T) (s : Finset ℕ)
+    (hpos : ∀ n ∈ s, 0 < n) (a : ℕ → ℂ) (hprime : ∀ n ∈ s, ∀ p, Nat.Prime p → p ∣ n → R ^ 2 < p) :
     (∑ q ∈ ((Finset.Ioc 1 (R ^ 2)).attach.filter fun q => q.val ≤ R),
         ∫ t in Set.Icc (-T) T,
-          primitiveCharacterPolynomialMeanSquare q.val
-            (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+          polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
             (fun n =>
               a n * Complex.exp ((-(t * Real.log n) : ℝ) * Complex.I)) ∂MeasureTheory.volume) ≤
       (2048 : ℝ) / Real.log R * ∑ n ∈ s, ‖a n‖ ^ 2 * ((n : ℝ) + (R : ℝ) ^ 4 * T) := by
@@ -2242,11 +2102,10 @@ theorem primitiveCharacterFamilyMeanSquare_preSifted_hybrid_R_squared (R : ℕ) 
   let qSmall := qBig.filter fun q => q.val ≤ R
   let G (q : { q // q ∈ Finset.Ioc 1 (R ^ 2) }) : ℝ :=
     ∫ t in Set.Icc (-T) T,
-      primitiveCharacterPolynomialMeanSquare q.val
-        (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+      polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
         (fun n => a n * Complex.exp ((-(t * Real.log n) : ℝ) * Complex.I)) ∂MeasureTheory.volume
   have hR2 : 2 ≤ R ^ 2 := by nlinarith only [hR]
-  have hbig := primitiveCharacterFamilyMeanSquare_preSifted_hybrid (R ^ 2) hR2 T hT s hpos a hprime
+  have hbig := hybridFamily_Icc (R ^ 2) hR2 T hT s hpos a hprime
   have hRpos : (0 : ℝ) < R := by exact_mod_cast (by omega : 0 < R)
   have hlogR : 0 < Real.log R := by
     apply Real.log_pos
@@ -2257,8 +2116,7 @@ theorem primitiveCharacterFamilyMeanSquare_preSifted_hybrid_R_squared (R : ℕ) 
     apply MeasureTheory.integral_nonneg
     intro t
     exact
-      primitiveCharacterPolynomialMeanSquare_nonneg
-        (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+      polyMeanSquare_nonneg (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
         (fun n => a n * Complex.exp ((-(t * Real.log n) : ℝ) * Complex.I))
   have hlogWeight : ∀ q ∈ qSmall, Real.log R ≤ Real.log ((R : ℝ) ^ 2 / q.val) := by
     intro q hq
@@ -2313,13 +2171,11 @@ Proof: apply the `Z = R^2` hybrid estimate, use primality to verify its roughnes
 absorb `R^4 T` into each prime using the lower support bound.
 Role: supplies the prime-polynomial form required by the zero-density argument.
 -/
-theorem primitiveCharacterPrimePolynomial_preSifted_hybrid_R_squared (R : ℕ) (hR : 2 ≤ R) (T : ℝ)
-    (hT : 1 ≤ T) (hTupper : T ≤ 2 * R) (s : Finset ℕ) (hprime : ∀ p ∈ s, Nat.Prime p)
-    (hlower : ∀ p ∈ s, R ^ 6 ≤ p) :
+theorem hybridPrimePoly_Rsq (R : ℕ) (hR : 2 ≤ R) (T : ℝ) (hT : 1 ≤ T) (hTupper : T ≤ 2 * R)
+    (s : Finset ℕ) (hprime : ∀ p ∈ s, Nat.Prime p) (hlower : ∀ p ∈ s, R ^ 6 ≤ p) :
     (∑ q ∈ ((Finset.Ioc 1 (R ^ 2)).attach.filter fun q => q.val ≤ R),
         ∫ t in Set.Icc (-T) T,
-          primitiveCharacterPolynomialMeanSquare q.val
-            (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+          polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
             (fun p =>
               ((Real.log (p : ℝ) / (p : ℝ) : ℝ) : ℂ) *
                 Complex.exp ((-(t * Real.log p) : ℝ) * Complex.I)) ∂MeasureTheory.volume) ≤
@@ -2338,8 +2194,7 @@ theorem primitiveCharacterPrimePolynomial_preSifted_hybrid_R_squared (R : ℕ) (
   have hpos : ∀ p ∈ s, 0 < p := by
     intro p hp
     exact (hprime p hp).pos
-  have hhybrid :=
-    primitiveCharacterFamilyMeanSquare_preSifted_hybrid_R_squared R hR T hT s hpos a hrough
+  have hhybrid := hybridFamily_Rsq R hR T hT s hpos a hrough
   have hRreal : (2 : ℝ) ≤ R := by exact_mod_cast hR
   have hR4T : (R : ℝ) ^ 4 * T ≤ (R : ℝ) ^ 6 := by
     calc
@@ -2386,8 +2241,7 @@ theorem primitiveCharacterPrimePolynomial_preSifted_hybrid_R_squared (R : ℕ) (
   change
     (∑ q ∈ ((Finset.Ioc 1 (R ^ 2)).attach.filter fun q => q.val ≤ R),
         ∫ t in Set.Icc (-T) T,
-          primitiveCharacterPolynomialMeanSquare q.val
-            (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
+          polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1) s
             (fun p =>
               a p * Complex.exp ((-(t * Real.log p) : ℝ) * Complex.I)) ∂MeasureTheory.volume) ≤
       _
@@ -2404,12 +2258,11 @@ mean-square bound.
 Proof: filter the finite interval by primality and apply the finite prime-support estimate.
 Role: exposes the interval-indexed form used for truncated prime sums in zero detection.
 -/
-theorem primitiveCharacterPrimeInterval_preSifted_hybrid_R_squared (R P₀ u : ℕ) (hR : 2 ≤ R)
-    (hP₀ : R ^ 6 ≤ P₀) (T : ℝ) (hT : 1 ≤ T) (hTupper : T ≤ 2 * R) :
+theorem hybridPrimeIoc_Rsq (R P₀ u : ℕ) (hR : 2 ≤ R) (hP₀ : R ^ 6 ≤ P₀) (T : ℝ) (hT : 1 ≤ T)
+    (hTupper : T ≤ 2 * R) :
     (∑ q ∈ ((Finset.Ioc 1 (R ^ 2)).attach.filter fun q => q.val ≤ R),
         ∫ t in Set.Icc (-T) T,
-          primitiveCharacterPolynomialMeanSquare q.val
-            (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1)
+          polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1)
             ((Finset.Ioc P₀ u).filter Nat.Prime)
             (fun p =>
               ((Real.log (p : ℝ) / (p : ℝ) : ℝ) : ℂ) *
@@ -2417,9 +2270,7 @@ theorem primitiveCharacterPrimeInterval_preSifted_hybrid_R_squared (R P₀ u : �
       (4096 : ℝ) / Real.log R *
         ∑ p ∈ (Finset.Ioc P₀ u).filter Nat.Prime, (Real.log (p : ℝ)) ^ 2 / (p : ℝ) := by
   classical
-  apply
-    primitiveCharacterPrimePolynomial_preSifted_hybrid_R_squared R hR T hT hTupper
-      ((Finset.Ioc P₀ u).filter Nat.Prime)
+  apply hybridPrimePoly_Rsq R hR T hT hTupper ((Finset.Ioc P₀ u).filter Nat.Prime)
   · intro p hp
     exact (Finset.mem_filter.mp hp).2
   · intro p hp
@@ -2434,7 +2285,7 @@ sum with `Chebyshev.theta`.
 Role: supplies the analytic identity used to derive the prime-weight energy bound for the hybrid
 zero-density estimate.
 -/
-theorem finite_prime_log_reciprocal_sum_eq_abel (n : ℕ) (hn : 1 ≤ n) :
+theorem primeLogSum_abel (n : ℕ) (hn : 1 ≤ n) :
     (∑ k ∈ Finset.Ioc 1 n, if Nat.Prime k then Real.log (k : ℝ) / k else 0) =
       Chebyshev.theta n / n + ∫ t in Set.Ioc (1 : ℝ) n, (t ^ 2)⁻¹ * Chebyshev.theta t := by
   let c : ℕ → ℝ := fun k => if Nat.Prime k then Real.log k else 0
@@ -2517,7 +2368,7 @@ Proof: apply the Abel identity, Chebyshev's pointwise bound, and the integral of
 Role: supplies the first-order estimate used to bound the prime logarithmic energy in the hybrid
 large-sieve specialization.
 -/
-theorem finite_prime_log_reciprocal_sum_le (n : ℕ) (hn : 2 ≤ n) :
+theorem primeLogSum_le (n : ℕ) (hn : 2 ≤ n) :
     (∑ k ∈ Finset.Ioc 1 n, if Nat.Prime k then Real.log (k : ℝ) / k else 0) ≤
       Real.log 4 * (1 + Real.log n) := by
   have hn1 : (1 : ℝ) ≤ n := by exact_mod_cast (by omega)
@@ -2561,7 +2412,7 @@ theorem finite_prime_log_reciprocal_sum_le (n : ℕ) (hn : 2 ≤ n) :
   have hfirst : Chebyshev.theta n / n ≤ Real.log 4 := by
     apply (div_le_iff₀ hnpos).2
     simpa only [mul_comm] using hthetaN
-  have habel := finite_prime_log_reciprocal_sum_eq_abel n (by omega)
+  have habel := primeLogSum_abel n (by omega)
   rw [← intervalIntegral.integral_of_le hn1] at habel
   calc
     _ = Chebyshev.theta n / n + ∫ t in (1 : ℝ)..n, (t ^ 2)⁻¹ * Chebyshev.theta t := habel
@@ -2576,7 +2427,7 @@ Proof: bound one factor of each squared logarithm by `log n` and apply the recip
 sum estimate.
 Role: supplies the coefficient-energy bound needed by the prime-supported hybrid estimate.
 -/
-theorem finite_prime_log_square_reciprocal_sum_le (n : ℕ) (hn : 2 ≤ n) :
+theorem primeLogSqSum_le (n : ℕ) (hn : 2 ≤ n) :
     (∑ k ∈ Finset.Ioc 1 n, if Nat.Prime k then Real.log (k : ℝ) ^ 2 / k else 0) ≤
       Real.log 4 * Real.log n * (1 + Real.log n) := by
   have hn1 : 1 ≤ n := by omega
@@ -2609,7 +2460,7 @@ theorem finite_prime_log_square_reciprocal_sum_le (n : ℕ) (hn : 2 ≤ n) :
     _ = Real.log n * (∑ k ∈ Finset.Ioc 1 n, if Nat.Prime k then Real.log (k : ℝ) / k else 0) := by
       rw [Finset.mul_sum]
     _ ≤ Real.log n * (Real.log 4 * (1 + Real.log n)) :=
-      mul_le_mul_of_nonneg_left (finite_prime_log_reciprocal_sum_le n hn) hlogn
+      mul_le_mul_of_nonneg_left (primeLogSum_le n hn) hlogn
     _ = Real.log 4 * Real.log n * (1 + Real.log n) := by ring
 
 /--
@@ -2621,12 +2472,11 @@ Proof: extend the prime energy sum to all primes up to `u`, then apply the finit
 log-square estimate.
 Role: supplies the logarithmic-energy form needed when the hybrid estimate enters zero detection.
 -/
-theorem primitiveCharacterPrimeInterval_preSifted_hybrid_log_square_bound (R P₀ u : ℕ) (hR : 2 ≤ R)
-    (hP₀ : R ^ 6 ≤ P₀) (hP₀u : P₀ ≤ u) (T : ℝ) (hT : 1 ≤ T) (hTupper : T ≤ 2 * R) :
+theorem hybridPrimeIoc_logSq (R P₀ u : ℕ) (hR : 2 ≤ R) (hP₀ : R ^ 6 ≤ P₀) (hP₀u : P₀ ≤ u) (T : ℝ)
+    (hT : 1 ≤ T) (hTupper : T ≤ 2 * R) :
     (∑ q ∈ ((Finset.Ioc 1 (R ^ 2)).attach.filter fun q => q.val ≤ R),
         ∫ t in Set.Icc (-T) T,
-          primitiveCharacterPolynomialMeanSquare q.val
-            (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1)
+          polyMeanSquare q.val (show 1 < q.val from (Finset.mem_Ioc.mp q.property).1)
             ((Finset.Ioc P₀ u).filter Nat.Prime)
             (fun p =>
               ((Real.log (p : ℝ) / (p : ℝ) : ℝ) : ℂ) *
@@ -2663,12 +2513,11 @@ theorem primitiveCharacterPrimeInterval_preSifted_hybrid_log_square_bound (R P�
       exact div_nonneg (sq_nonneg _) (Nat.cast_nonneg _)
     · change 0 ≤ if Nat.Prime p then Real.log (p : ℝ) ^ 2 / p else 0
       rw [ite_eq_right hprime]
-  have henergy := finite_prime_log_square_reciprocal_sum_le u hu
+  have henergy := primeLogSqSum_le u hu
   have hcoefficient : 0 ≤ (4096 : ℝ) / Real.log R := by
     apply div_nonneg (by norm_num only)
     exact (Real.log_pos (by exact_mod_cast (show 1 < R by omega))).le
-  have hhybrid :=
-    primitiveCharacterPrimeInterval_preSifted_hybrid_R_squared R P₀ u hR hP₀ T hT hTupper
+  have hhybrid := hybridPrimeIoc_Rsq R P₀ u hR hP₀ T hT hTupper
   calc
     _ ≤ (4096 : ℝ) / Real.log R * ∑ p ∈ s, (Real.log (p : ℝ)) ^ 2 / p := hhybrid
     _ ≤ (4096 : ℝ) / Real.log R * ∑ p ∈ t, w p := by

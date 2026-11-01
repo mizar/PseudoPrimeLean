@@ -59,7 +59,7 @@ theorem jointRampPrincipal_actual_error_bound (hRH : RiemannHypothesis) {x y : �
 into its exact main term, endpoint remainder and arithmetic error integral. Use interval
 linearity and the quadratic-exponential primitive. This retains the main endpoint sign in the
 joint finite-sum transfer. -/
-theorem logWeighted_exponential_integral_eq_main_add_error {x y : ℝ} (hx : 0 < x) (hy : 0 ≤ y) :
+theorem logWeighted_exp_integral_eq_main_error {x y : ℝ} (hx : 0 < x) (hy : 0 ≤ y) :
     (∫ u in (0 : ℝ)..y,
         AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum (x * u) *
           ((u - 1) * Real.exp (-u))) =
@@ -106,8 +106,8 @@ theorem logWeighted_exponential_integral_eq_main_add_error {x y : ℝ} (hx : 0 <
 any fixed cutoff bounds every finite exponential Mangoldt sum. Enlarge the cutoff above the
 finite index, keep the boundary term, and let its polynomial-exponential envelope decay.
 This requires an eventual integral estimate, not a bound at all small cutoffs. -/
-theorem exponentialMangoldtSum_upper_of_eventual_integral_cap (hRH : RiemannHypothesis) {x E : ℝ}
-    (hx : 1 ≤ x) (y0 : ℝ)
+theorem expMangoldtSum_upper_of_eventual_cap_RH (hRH : RiemannHypothesis) {x E : ℝ} (hx : 1 ≤ x)
+    (y0 : ℝ)
     (hI :
       ∀ y : ℝ,
         0 ≤ y →
@@ -135,7 +135,7 @@ theorem exponentialMangoldtSum_upper_of_eventual_integral_cap (hRH : RiemannHypo
   have hb :
     AnalyticNumberTheory.Arithmetic.exponentialMangoldtSum x (x * y) ≤
       x + E + ((4 * x + x ^ 2) * y ^ 2 + 4 * y) * Real.exp (-y) := by
-    rw [AnalyticNumberTheory.Arithmetic.exponentialMangoldtSum_eq_logWeighted_integral hx0 hy0]
+    rw [AnalyticNumberTheory.Arithmetic.expMangoldtSum_eq_logWeighted_integral hx0 hy0]
     have ht := mul_nonneg hx0.le hy0
     have hA :=
       mul_le_mul_of_nonneg_left (logWeightedMangoldtSum_le_four_add_four hRH ht)
@@ -158,9 +158,9 @@ theorem exponentialMangoldtSum_upper_joint_error (hRH : RiemannHypothesis) {x : 
             AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional
               (fun u ↦ AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum (x * u) - x * u) +
           jointRampPrincipalErrorNumerator x) := by
-  apply exponentialMangoldtSum_upper_of_eventual_integral_cap hRH hx (99 / 40)
+  apply expMangoldtSum_upper_of_eventual_cap_RH hRH hx (99 / 40)
   intro y hy0 hy
-  rw [logWeighted_exponential_integral_eq_main_add_error (zero_lt_one.trans_le hx) hy0]
+  rw [logWeighted_exp_integral_eq_main_error (zero_lt_one.trans_le hx) hy0]
   have hb := (abs_le.mp (jointRampPrincipal_actual_error_bound hRH hx hy)).1
   dsimp only [AnalyticNumberTheory.Arithmetic.jointRampPrincipalFunctional,
     Analysis.exponentialRampVariationLeft] at hb
@@ -187,8 +187,7 @@ theorem jointRampPrincipalLower_le_actual (hRH : RiemannHypothesis) {x : ℝ} (h
             PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x n).re := by
   have hx0 := zero_lt_one.trans_le hx
   have hs := Real.sqrt_pos.mpr hx0
-  have hR :=
-    AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum_normalized_eq_main_add_error hx0
+  have hR := AnalyticNumberTheory.Arithmetic.expRampMangoldt_div_sqrt_eq_main_add_error hx0
   have hP :
     (∑' n : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x n).re ≤
       2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -

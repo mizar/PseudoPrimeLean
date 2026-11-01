@@ -47,9 +47,9 @@ theorem norm_completedLogDeriv_zero_le_affine_log {q : ℕ} [NeZero q] {χ : Dir
 an ambient modulus q at least 20000 have completed endpoint norm at most (7/6) log q + 4.
 Use the ambient xi estimate and bound the half-conductor logarithm by log q/2. This also
 handles the small primitive conductors arising when a character is primitivized. -/
-theorem norm_completedLogDeriv_zero_le_ambient_affine_log {q m : ℕ} [NeZero m]
-    {χ : DirichletCharacter ℂ m} (hq : 20000 ≤ q) (hm : 3 ≤ m) (hmq : m ≤ q) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
+theorem norm_completedLogDeriv_zero_ambient_GRH {q m : ℕ} [NeZero m] {χ : DirichletCharacter ℂ m}
+    (hq : 20000 ≤ q) (hm : 3 ≤ m) (hmq : m ≤ q) (hp : χ.IsPrimitive) (hne : χ ≠ 1)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ‖logDeriv χ.completedLFunction 0‖ ≤ (7 / 6 : ℝ) * Real.log q + 4 := by
   have hmR : (1 : ℝ) ≤ m := by exact_mod_cast (by linarith only [hm] : 1 ≤ m)
   have hmpos : (0 : ℝ) < m := zero_lt_one.trans_le hmR
@@ -79,7 +79,7 @@ the kernel-pole residue has norm at most C log q / sqrt x for scales at least on
 positive constant depends only on the kernel. Bound the completed endpoint norm by its xi
 estimate, absorb the constant into log q, and use the inverse-square-root Mellin power.
 This removes the pole contribution from the primitive arithmetic explicit formula. -/
-theorem exists_norm_completed_poleResidue_le_log_div_sqrt (K : MellinKernel) :
+theorem exists_completedResidue_log_sqrt_GRH (K : MellinKernel) :
     ∃ C : ℝ,
       0 < C ∧
         ∀ {q : ℕ} [NeZero q],
@@ -134,7 +134,7 @@ and an ambient modulus q at least 20000 have kernel-pole residue norm at most
 C log q / sqrt x for x at least one. The positive constant depends only on the kernel.
 Apply the ambient completed endpoint bound and the inverse-square-root Mellin power.
 This supplies the pole estimate when primitivization produces a small conductor. -/
-theorem exists_norm_completed_poleResidue_le_ambient_log_div_sqrt (K : MellinKernel) :
+theorem exists_ambientResidue_log_sqrt_GRH (K : MellinKernel) :
     ∃ C : ℝ,
       0 < C ∧
         ∀ {q m : ℕ} [NeZero m],
@@ -162,7 +162,7 @@ theorem exists_norm_completed_poleResidue_le_ambient_log_div_sqrt (K : MellinKer
   have hunit : 1 ≤ Real.log q / Real.log 2 :=
     (le_div_iff₀ h2).mpr (by simpa only [one_mul] using hlog2)
   have hb : ‖logDeriv χ.completedLFunction 0‖ ≤ B * Real.log q := by
-    have h := norm_completedLogDeriv_zero_le_ambient_affine_log hq hm hmq hp hne hGRH
+    have h := norm_completedLogDeriv_zero_ambient_GRH hq hm hmq hp hne hGRH
     dsimp only [B]
     simp only [div_eq_mul_inv] at hunit ⊢
     nlinarith only [hunit, h]

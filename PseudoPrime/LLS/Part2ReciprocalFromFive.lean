@@ -29,7 +29,7 @@ theorem exists_prime_outside_reciprocalPart2_from_five
         (p : ℝ) ≤ (Analysis.reciprocalPart2CutoffRoot (Real.log q)) ^ 2 ∧
         ¬∃ u ∈ H, (u : ZMod q) = (p : ZMod q) := by
   by_cases hlarge : 1120 ≤ q
-  · exact exists_prime_outside_subgroup_image_le_reciprocalPart2Root hlarge H hH hGRH
+  · exact exists_prime_outside_reciprocalPart2_GRH hlarge H hH hGRH
   · obtain ⟨p, hp, hb, hout⟩ :=
       exists_prime_outside_part2_finite hq
         (lt_of_lt_of_le (Nat.lt_of_not_ge hlarge) (by norm_num only : 1120 ≤ 3000)) H hH

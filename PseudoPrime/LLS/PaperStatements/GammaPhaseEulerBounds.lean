@@ -51,8 +51,8 @@ and a Gamma norm comparison on 5<=|t|<=16.
 Claim: the actual Gamma arithmetic sum obeys the same prefix-plus-remainder bound.
 Proof: combine the low-frequency approximation with the middle norm bound and the proved tail.
 Role: avoid paying a uniform absolute approximation error on the decaying spectral tail. -/
-theorem gamma_primitive_sum_re_le_phase64_of_GammaSeq_split {q m : ℕ} [NeZero m] (hq : 20000 ≤ q)
-    (hm : 3 ≤ m) (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
+theorem gammaSum_phase64_GammaSeq_split_GRH {q m : ℕ} [NeZero m] (hq : 20000 ≤ q) (hm : 3 ≤ m)
+    (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 2 ≤ x) (B : Finset ℕ) {n : ℕ} (hn : n ≠ 0)
     (hc :

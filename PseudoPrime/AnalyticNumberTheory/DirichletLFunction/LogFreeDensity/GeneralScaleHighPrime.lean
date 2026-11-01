@@ -21,12 +21,11 @@ of each derivative signal on primes above `R^6`. The requested order controls th
 low-prime loss directly, without bounding `η log R` by an absolute constant.
 The prime-power error uses the independent small-shift budget. This supplies the
 common support for general-scale hybrid incidence. -/
-theorem exists_uniform_high_prime_signal_cutoff_of_order_budget (η D : ℝ)
-    (Krequested Kmax nmax R : ℕ) (hη : 0 < η) (hηsmall : η ≤ 1) (hD : 0 ≤ D) (hR : 2 ≤ R)
-    (hDrequested : D + 5 ≤ 5 * ((Krequested - 1 : ℕ) : ℝ))
+theorem exists_highCutoff (η D : ℝ) (Krequested Kmax nmax R : ℕ) (hη : 0 < η) (hηsmall : η ≤ 1)
+    (hD : 0 ≤ D) (hR : 2 ≤ R) (hDrequested : D + 5 ≤ 5 * ((Krequested - 1 : ℕ) : ℝ))
     (hRbudget : 6 * η * Real.log (R : ℝ) ≤ Real.exp (-(D + 6)) * ((Krequested - 1 : ℕ) : ℝ))
     (hηratio : 4 * η ≤ Real.exp (-(D + 5)))
-    (hm : Nat.ceil (Real.log higherPrimePowerEulerMajorantConstant) ≤ Krequested) :
+    (hm : Nat.ceil (Real.log primePowerEulerBound) ≤ Krequested) :
     ∃ cutoff : ℕ,
       R ^ 6 ≤ cutoff ∧
         1 ≤ cutoff ∧
@@ -59,8 +58,7 @@ theorem exists_uniform_high_prime_signal_cutoff_of_order_budget (η D : ℝ)
                                 s p‖ := by
   have hmin : 1 ≤ R ^ 6 := Nat.one_le_pow 6 R ((by norm_num only : 1 ≤ 2).trans hR)
   obtain ⟨cutoff, hcutoff, hpos, hlog, hsignal⟩ :=
-    exists_uniform_finite_Euler_signal_cutoff_for_order_family η D Kmax nmax (R ^ 6) hη hηsmall hD
-      hmin
+    eulerFamily_cutoff η D Kmax nmax (R ^ 6) hη hηsmall hD hmin
   refine ⟨cutoff, hcutoff, hpos, hlog, ?_⟩
   intro n hn K hKreq hKmax hKorder q hq χ s hs hdet
   have hnmin : Krequested - 1 ≤ n := Nat.sub_le_iff_le_add.mpr (hKreq.trans hKorder)
@@ -70,10 +68,10 @@ theorem exists_uniform_high_prime_signal_cutoff_of_order_budget (η D : ℝ)
     norm_num only [Nat.cast_ofNat]
     nlinarith only [hRbudget, hnreal, Real.exp_pos (-(D + 6))]
   exact
-    finite_high_prime_sum_norm_ge_of_detector_signal χ (R ^ 6) cutoff n K
-      (hR.trans (Nat.le_self_pow (by decide) R)) hcutoff hη hηsmall hD (Real.exp_pos _).le hKorder
-      (detector_order_exponential_margin Krequested n K D hD hDrequested hnmin hKorder) hscale
-      (low_prime_exponential_budget D) hηratio (hm.trans (hKreq.trans hKorder)) s hs
+    highPrime_ge_detector χ (R ^ 6) cutoff n K (hR.trans (Nat.le_self_pow (by decide) R)) hcutoff hη
+      hηsmall hD (Real.exp_pos _).le hKorder
+      (detector_order_margin Krequested n K D hD hDrequested hnmin hKorder) hscale
+      (lowPrime_exp_budget D) hηratio (hm.trans (hKreq.trans hKorder)) s hs
       (hsignal n hn K hKmax χ hs hdet)
 
 /-- Under the general-scale order budget and the prime-energy monotonicity budget,
@@ -81,12 +79,11 @@ one shared high-prime support retains the weakest signal on a physical height wi
 Transfer the derivative signal and apply the normalized variation bound.
 The radius is proportional to the shift and is independent of the mesh density,
 so the result can feed multiplicity-preserving incidence estimates. -/
-theorem exists_uniform_high_prime_signal_physical_window_of_order_budget (η D : ℝ)
-    (Krequested Kmax nmax R : ℕ) (hη : 0 < η) (hηsmall : η ≤ 1) (hD : 0 ≤ D) (hR : 2 ≤ R)
-    (hDrequested : D + 5 ≤ 5 * ((Krequested - 1 : ℕ) : ℝ))
+theorem exists_highWindow (η D : ℝ) (Krequested Kmax nmax R : ℕ) (hη : 0 < η) (hηsmall : η ≤ 1)
+    (hD : 0 ≤ D) (hR : 2 ≤ R) (hDrequested : D + 5 ≤ 5 * ((Krequested - 1 : ℕ) : ℝ))
     (hRbudget : 6 * η * Real.log (R : ℝ) ≤ Real.exp (-(D + 6)) * ((Krequested - 1 : ℕ) : ℝ))
     (hηratio : 4 * η ≤ Real.exp (-(D + 5)))
-    (hm : Nat.ceil (Real.log higherPrimePowerEulerMajorantConstant) ≤ Krequested)
+    (hm : Nat.ceil (Real.log primePowerEulerBound) ≤ Krequested)
     (hlarge : ((2 * nmax + 1 : ℕ) : ℝ) ≤ 6 * Real.log (R : ℝ)) :
     ∃ cutoff : ℕ,
       R ^ 6 ≤ cutoff ∧
@@ -108,16 +105,13 @@ theorem exists_uniform_high_prime_signal_physical_window_of_order_budget (η D :
                           ‖iteratedDeriv r (logDeriv (DirichletCharacter.LFunction χ))
                               (((1 + η : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ →
                       ∀ u : ℝ,
-                        |u - t| ≤
-                            η * Real.exp (-(D * (Kmax : ℝ))) /
-                              (16 * primeLogPowerVariationBound nmax) →
+                        |u - t| ≤ η * Real.exp (-(D * (Kmax : ℝ))) / (16 * primeLogVariation nmax) →
                           Real.exp (-(D * (Kmax : ℝ))) / 16 ≤
                             (η ^ (r + 1) / (r.factorial : ℝ)) *
-                              ‖primeLogPowerPolynomial (highPrimeEulerSupport R cutoff) r (1 + η)
+                              ‖primeLogPowerPoly (highPrimeEulerSupport R cutoff) r (1 + η)
                                   (fun k ↦ χ (k : ZMod q)) u‖ := by
   obtain ⟨cutoff, hcutoff, hpos, hlog, hsignal⟩ :=
-    exists_uniform_high_prime_signal_cutoff_of_order_budget η D Krequested Kmax nmax R hη hηsmall hD
-      hR hDrequested hRbudget hηratio hm
+    exists_highCutoff η D Krequested Kmax nmax R hη hηsmall hD hR hDrequested hRbudget hηratio hm
   refine ⟨cutoff, hcutoff, hpos, hlog, ?_⟩
   intro r hr K hKreq hKmax hKorder q hq χ t hdet u hdist
   have hs : ((((1 + η : ℝ) : ℂ) + (t : ℂ) * Complex.I).re) = 1 + η := by
@@ -132,31 +126,29 @@ theorem exists_uniform_high_prime_signal_physical_window_of_order_budget (η D :
               (LSeries.logMul^[r]
                 (fun k : ℕ ↦ χ (k : ZMod q) * (ArithmeticFunction.vonMangoldt k : ℂ)))
               (((1 + η : ℝ) : ℂ) + (t : ℂ) * Complex.I) p‖ at hhigh
-  rw [finite_highPrimeEuler_sum_eq_primeLogPowerPolynomial] at hhigh
+  rw [highPrime_sum_eq_poly] at hhigh
   have hKreal : (K : ℝ) ≤ Kmax := by exact_mod_cast hKmax
   have he := Real.exp_le_exp.mpr (neg_le_neg (mul_le_mul_of_nonneg_left hKreal hD))
   have hcenter := (div_le_div_of_nonneg_right he (by norm_num only : (0 : ℝ) ≤ 8)).trans hhigh
   have hRone : 1 ≤ R := (by norm_num only : 1 ≤ 2).trans hR
   have hmoment :=
-    prime_energy_decreasing_range_of_order_envelope (η / 2) r nmax R
-      (div_nonneg hη.le (by norm_num only)) hr hRone hlarge
+    primeEnergy_moment_le (η / 2) r nmax R (div_nonneg hη.le (by norm_num only)) hr hRone hlarge
   rw [show 2 * (η / 2) = η by ring] at hmoment
   have hrnext : r + 1 ≤ 2 * r + 1 := by
     rw [two_mul]
     exact Nat.add_le_add_right (Nat.le_add_right r r) 1
   have hrreal : ((r + 1 : ℕ) : ℝ) ≤ ((2 * r + 1 : ℕ) : ℝ) := by exact_mod_cast hrnext
   have hradius :
-    η * (Real.exp (-(D * (Kmax : ℝ))) / 8) / (2 * primeLogPowerVariationBound nmax) =
-      η * Real.exp (-(D * (Kmax : ℝ))) / (16 * primeLogPowerVariationBound nmax) := by
+    η * (Real.exp (-(D * (Kmax : ℝ))) / 8) / (2 * primeLogVariation nmax) =
+      η * Real.exp (-(D * (Kmax : ℝ))) / (16 * primeLogVariation nmax) := by
     simp only [div_eq_mul_inv, mul_inv_rev]
     ring
   have hwindow :=
-    normalized_primeLogPowerPolynomial_window η (Real.exp (-(D * (Kmax : ℝ))) / 8) r nmax (R ^ 6)
+    primePoly_window_le η (Real.exp (-(D * (Kmax : ℝ))) / 8) r nmax (R ^ 6)
       (highPrimeEulerSupport R cutoff) t u (fun k ↦ χ (k : ZMod q)) hη hηsmall
       (Nat.one_le_pow 6 R hRone) hr (hrreal.trans hmoment)
-      (fun p hp ↦ (mem_highPrimeEulerSupport.mp hp).2.1)
-      (fun p hp ↦ (mem_highPrimeEulerSupport.mp hp).2.2) (fun p hp ↦ χ.norm_le_one (p : ZMod q))
-      hcenter (by rwa [hradius])
+      (fun p hp ↦ (mem_highPrimeSupport.mp hp).2.1) (fun p hp ↦ (mem_highPrimeSupport.mp hp).2.2)
+      (fun p hp ↦ χ.norm_le_one (p : ZMod q)) hcenter (by rwa [hradius])
   simpa only [div_div, show (8 : ℝ) * 2 = 16 by norm_num only] using hwindow
 
 /-- One absolute gamma constant works for every primitive completed zero satisfying
@@ -165,7 +157,7 @@ support, an order between three and four times the cap, and a positive signal on
 physical height window. Apply the consecutive-moment detector, weaken its explicit
 signal to an exponential, and transfer it using the general-scale order budget.
 This connects actual zeros to the common support used in hybrid incidence. -/
-theorem exists_uniform_completed_zero_high_prime_window_of_cap :
+theorem exists_cappedWindow :
     ∃ G : ℝ,
       0 ≤ G ∧
         ∀ (η : ℝ) (R N : ℕ),
@@ -176,7 +168,7 @@ theorem exists_uniform_completed_zero_high_prime_window_of_cap :
             Real.log 414720 + 5 ≤ 5 * ((N - 1 : ℕ) : ℝ) →
             6 * η * Real.log (R : ℝ) ≤ Real.exp (-(Real.log 414720 + 6)) * ((N - 1 : ℕ) : ℝ) →
             4 * η ≤ Real.exp (-(Real.log 414720 + 5)) →
-            Nat.ceil (Real.log higherPrimePowerEulerMajorantConstant) ≤ N →
+            Nat.ceil (Real.log primePowerEulerBound) ≤ N →
             ((2 * (4 * N) + 1 : ℕ) : ℝ) ≤ 6 * Real.log (R : ℝ) →
             ∃ cutoff : ℕ,
               R ^ 6 ≤ cutoff ∧
@@ -195,10 +187,9 @@ theorem exists_uniform_completed_zero_high_prime_window_of_cap :
                         χ.completedLFunction ρ = 0 →
                         χ.completedLFunction (((1 + η : ℝ) : ℂ) + (ρ.im : ℂ) * Complex.I) ≠ 0 →
                         Nat.ceil
-                            (completedZeroLocalLogBoundConstant *
-                              (1 + 644 * η * Real.log ((q : ℝ) * (|ρ.im| + 3)))) ≤
+                            (localLogConstant * (1 + 644 * η * Real.log ((q : ℝ) * (|ρ.im| + 3)))) ≤
                           N →
-                        completedGenusScaledMassUpperBound q η ρ.im ≤ N →
+                        scaledGenusMassBound q η ρ.im ≤ N →
                         η * G * (Real.log (4 * |ρ.im| + 4) + 1) ≤ N →
                         ∃ n : ℕ,
                           3 * N ≤ n ∧
@@ -206,19 +197,19 @@ theorem exists_uniform_completed_zero_high_prime_window_of_cap :
                             ∀ u : ℝ,
                               |u - ρ.im| ≤
                                   η * Real.exp (-(Real.log 414720 * N)) /
-                                    (16 * primeLogPowerVariationBound (4 * N)) →
+                                    (16 * primeLogVariation (4 * N)) →
                                 Real.exp (-(Real.log 414720 * N)) / 16 ≤
                                   η ^ (n + 1) / (n.factorial : ℝ) *
-                                    ‖primeLogPowerPolynomial (highPrimeEulerSupport R cutoff) n
-                                        (1 + η) (fun k ↦ χ (k : ZMod q)) u‖ := by
-  obtain ⟨G, hG, hdetector⟩ := exists_ordinary_LFunction_linear_order_detector_of_cap
+                                    ‖primeLogPowerPoly (highPrimeEulerSupport R cutoff) n (1 + η)
+                                        (fun k ↦ χ (k : ZMod q)) u‖ := by
+  obtain ⟨G, hG, hdetector⟩ := ordinary_linearCap
   refine ⟨G, hG, ?_⟩
   intro η R N hη hηsmall hR hN hDrequested hRbudget hηratio hm hlarge
   have hηone : η ≤ 1 := by linarith only [hηsmall]
   have hD : 0 ≤ Real.log 414720 := Real.log_nonneg (by norm_num only)
   obtain ⟨cutoff, hcutoff, hpos, hlog, hwindow⟩ :=
-    exists_uniform_high_prime_signal_physical_window_of_order_budget η (Real.log 414720) N N (4 * N)
-      R hη hηone hD hR hDrequested hRbudget hηratio hm hlarge
+    exists_highWindow η (Real.log 414720) N N (4 * N) R hη hηone hD hR hDrequested hRbudget hηratio
+      hm hlarge
   refine ⟨cutoff, hcutoff, hpos, hlog, ?_⟩
   intro q hq χ hqtwo hχ hp hinv ρ hρre hzero hc hlocal hmass hgamma
   have hcre : ((((1 + η : ℝ) : ℂ) + (ρ.im : ℂ) * Complex.I).re) = 1 + η := by
@@ -230,7 +221,7 @@ theorem exists_uniform_completed_zero_high_prime_window_of_cap :
   obtain ⟨n, hnlow, hnupper, hsignal⟩ :=
     hdetector hqtwo hχ hp hinv hη hηsmall hcre hcim hρre hzero hc N hN hlocal hmass hgamma
   have hNpos : 1 ≤ N := (by norm_num only : 1 ≤ 4).trans hN
-  have hsignal' := (linear_cap_signal_ge_exp_neg N (n + 1) hNpos hnupper).trans hsignal
+  have hsignal' := (linearSignal_exp_ge N (n + 1) hNpos hnupper).trans hsignal
   have hnmax : n ≤ 4 * N := (Nat.le_succ n).trans hnupper
   have hNorder : N ≤ n + 1 :=
     (Nat.le_mul_of_pos_left N (by decide : 0 < 3)).trans (hnlow.trans (Nat.le_succ n))
@@ -241,7 +232,7 @@ an absolute linear enlargement of any scale at least one meets the multiplicity 
 the exponential order margin, the scaled low-prime budget, and the minimum order.
 Take a ceiling above the maximum of the required absolute coefficients.
 This keeps the common detector order linear in the conductor-height scale. -/
-theorem exists_general_scale_order_cap (C D : ℝ) (m : ℕ) :
+theorem exists_scaleOrderCap (C D : ℝ) (m : ℕ) :
     ∃ B : ℝ,
       0 < B ∧
         ∀ L S : ℝ,
@@ -304,7 +295,7 @@ The cap controls local multiplicity, scaled genus mass, gamma growth, low-prime
 removal, and prime-power minimum order. Enlarge the existing detector cap and
 compare each conductor-height logarithm with the common logarithm.
 This discharges all cap assumptions uniformly over the zero family. -/
-theorem exists_uniform_general_scale_detector_cap (G : ℝ) (hG : 0 ≤ G) :
+theorem exists_scaleDetectCap (G : ℝ) (hG : 0 ≤ G) :
     ∃ B : ℝ,
       0 < B ∧
         ∀ (η : ℝ) (R : ℕ),
@@ -316,29 +307,26 @@ theorem exists_uniform_general_scale_detector_cap (G : ℝ) (hG : 0 ≤ G) :
                 (N : ℝ) ≤ B * (1 + η * Real.log ((R : ℝ) * ((R : ℝ) + 3))) ∧
                 Real.log 414720 + 5 ≤ 5 * ((N - 1 : ℕ) : ℝ) ∧
                 6 * η * Real.log (R : ℝ) ≤ Real.exp (-(Real.log 414720 + 6)) * ((N - 1 : ℕ) : ℝ) ∧
-                Nat.ceil (Real.log higherPrimePowerEulerMajorantConstant) ≤ N ∧
+                Nat.ceil (Real.log primePowerEulerBound) ≤ N ∧
                 ∀ (q : ℕ),
                   2 ≤ q →
                     q ≤ R →
                     ∀ t : ℝ,
                       |t| ≤ R →
                         Nat.ceil
-                              (completedZeroLocalLogBoundConstant *
-                                (1 + 644 * η * Real.log ((q : ℝ) * (|t| + 3)))) ≤
+                              (localLogConstant * (1 + 644 * η * Real.log ((q : ℝ) * (|t| + 3)))) ≤
                             N ∧
-                          completedGenusScaledMassUpperBound q η t ≤ N ∧
+                          scaledGenusMassBound q η t ≤ N ∧
                           η * G * (Real.log (4 * |t| + 4) + 1) ≤ N := by
-  let C := linearOrderDetectorCapCoefficient G
+  let C := linearDetectorCoeff G
   have hlog4 : 0 ≤ Real.log 4 := Real.log_nonneg (by norm_num only)
   have hC : 0 ≤ C := by
-    dsimp only [C, linearOrderDetectorCapCoefficient]
-    have hBterm := mul_nonneg completedGenusMassCenterConstant_pos.le (add_nonneg hlog4 zero_le_one)
+    dsimp only [C, linearDetectorCoeff]
+    have hBterm := mul_nonneg genusMassCenter_pos.le (add_nonneg hlog4 zero_le_one)
     have hGterm := mul_nonneg hG (add_nonneg hlog4 (by norm_num only : (0 : ℝ) ≤ 2))
-    linarith only [completedZeroLocalLogBoundConstant_pos, completedGenusMassShiftConstant_pos,
-      hBterm, hGterm]
+    linarith only [localLogConstant_pos, genusMassShift_pos, hBterm, hGterm]
   obtain ⟨B, hB, hcap⟩ :=
-    exists_general_scale_order_cap C (Real.log 414720)
-      (Nat.ceil (Real.log higherPrimePowerEulerMajorantConstant))
+    exists_scaleOrderCap C (Real.log 414720) (Nat.ceil (Real.log primePowerEulerBound))
   refine ⟨B, hB, ?_⟩
   intro η R hη hηone hR
   have hRreal : (2 : ℝ) ≤ R := by exact_mod_cast hR
@@ -368,8 +356,7 @@ theorem exists_uniform_general_scale_detector_cap (G : ℝ) (hG : 0 ≤ G) :
             (mul_le_mul_of_nonneg_left (add_le_add_right (mul_le_mul_of_nonneg_left hlog hη.le) 1)
               hC)).trans
         hNC
-    obtain ⟨_, hlocal, hmass, hgamma, _⟩ :=
-      linear_order_detector_numeric_caps q hq η t G hη hηone hG
+    obtain ⟨_, hlocal, hmass, hgamma, _⟩ := linearDetector_caps q hq η t G hη hηone hG
     exact
       ⟨hlocal.trans hlocalcap, hmass.trans (Nat.cast_le.mpr hlocalcap),
         hgamma.trans (Nat.cast_le.mpr hlocalcap)⟩
@@ -380,7 +367,7 @@ the prime-energy monotonicity condition, uniformly over smaller shifts. Compare 
 common conductor-height logarithm with three times the conductor logarithm and use
 logarithmic divergence. The threshold also meets the detector and prime-power budgets.
 This removes the remaining size conditions from the physical-window transfer. -/
-theorem eventually_general_scale_prime_energy_budget (B : ℝ) (hB : 0 < B) :
+theorem eventual_scaleBudget (B : ℝ) (hB : 0 < B) :
     ∃ η₀ : ℝ,
       0 < η₀ ∧
         η₀ ≤ 1 / 1288 ∧
@@ -444,7 +431,7 @@ The cap is linear in the conductor-height scale; the support has an explicit
 logarithmic bound. Discharge all numerical budgets, use right-half-plane nonvanishing,
 and apply the cap-level transfer. No fixed bound on the scaled logarithm is assumed.
 This supplies actual zero detectors for general-scale hybrid counting. -/
-theorem exists_uniform_completed_zero_general_scale_high_prime_window :
+theorem exists_scaleWindow :
     ∃ B η₀ : ℝ,
       0 < B ∧
         0 < η₀ ∧
@@ -482,16 +469,14 @@ theorem exists_uniform_completed_zero_general_scale_high_prime_window :
                                     ∀ u : ℝ,
                                       |u - ρ.im| ≤
                                           η * Real.exp (-(Real.log 414720 * N)) /
-                                            (16 * primeLogPowerVariationBound (4 * N)) →
+                                            (16 * primeLogVariation (4 * N)) →
                                         Real.exp (-(Real.log 414720 * N)) / 16 ≤
                                           η ^ (n + 1) / (n.factorial : ℝ) *
-                                            ‖primeLogPowerPolynomial
-                                                (highPrimeEulerSupport R cutoff) n (1 + η)
-                                                (fun k ↦ χ (k : ZMod q)) u‖ := by
-  obtain ⟨G, hG, hwindow⟩ := exists_uniform_completed_zero_high_prime_window_of_cap
-  obtain ⟨B, hB, hcap⟩ := exists_uniform_general_scale_detector_cap G hG
-  obtain ⟨η₀, hη₀, hsmall, hratio, R₀, hR₀, henergy⟩ :=
-    eventually_general_scale_prime_energy_budget B hB
+                                            ‖primeLogPowerPoly (highPrimeEulerSupport R cutoff) n
+                                                (1 + η) (fun k ↦ χ (k : ZMod q)) u‖ := by
+  obtain ⟨G, hG, hwindow⟩ := exists_cappedWindow
+  obtain ⟨B, hB, hcap⟩ := exists_scaleDetectCap G hG
+  obtain ⟨η₀, hη₀, hsmall, hratio, R₀, hR₀, henergy⟩ := eventual_scaleBudget B hB
   refine ⟨B, η₀, hB, hη₀, hsmall, R₀, hR₀, ?_⟩
   intro R hR η hη hηsmall
   have hRtwo : 2 ≤ R := (by norm_num only : 2 ≤ 3).trans (hR₀.trans hR)
@@ -505,7 +490,7 @@ theorem exists_uniform_completed_zero_general_scale_high_prime_window :
   refine ⟨N, cutoff, hN, hNupper, hcutoff, hpos, hlog, ?_⟩
   intro q hq χ hqtwo hqR hχ hp ρ hheight hρre hzero
   have hc : χ.completedLFunction (((1 + η : ℝ) : ℂ) + (ρ.im : ℂ) * Complex.I) ≠ 0 := by
-    apply DirichletLFunction.completedLFunction_ne_zero_of_one_le_re hχ
+    apply DirichletLFunction.completed_ne_zero_of_one_le_re hχ
     have hcre : ((((1 + η : ℝ) : ℂ) + (ρ.im : ℂ) * Complex.I).re) = 1 + η := by
       simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.ofReal_im, Complex.I_re,
         zero_mul, mul_zero, sub_zero, add_zero]

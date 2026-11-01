@@ -19,16 +19,16 @@ namespace PseudoPrime.PrimeTestBounds.Selfridge
 also bounds the classical pure negative Selfridge discriminant magnitude. Use
 the unconditional max(27,witness) comparison. This generic transfer does not
 assume GRH and can accept any subsequent analytic witness estimate. -/
-theorem classicalSelfridgeD_neg_natAbs_le_of_prime_witness_bound {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) {X : ℝ}
-    (h27 : 27 ≤ X) (hb : (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ X) :
+theorem classicalD_neg_natAbs_le_of_primeWitness {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) {X : ℝ} (h27 : 27 ≤ X)
+    (hb : (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ X) :
     ((PrimeTest.selfridgeD
             (PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n
-              (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+              (PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
         ℝ) ≤
       X := by
-  let hs := PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns
-  have hstop := PrimeTest.classicalFirstStopNegOne_le_max_twenty_seven_primeWitness hn hw hs
+  let hs := PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn hns
+  have hstop := PrimeTest.classicalFirstNegOne_le_max_27_primeWitness hn hw hs
   have hstopR : (PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n hs : ℝ) ≤ X :=
     (by exact_mod_cast hstop : _ ≤ max 27 (NumberTheory.primeNegOneWitness n hw : ℝ)).trans
       (max_le h27 hb)
@@ -38,16 +38,16 @@ theorem classicalSelfridgeD_neg_natAbs_le_of_prime_witness_bound {n : ℕ} (hn :
 bounds the classical factor-detecting discriminant magnitude. Use the exact
 max(15,witness) comparison and rewrite the signed discriminant magnitude.
 No GRH is required; zero-valued witnesses remain available in this transfer. -/
-theorem classicalSelfridgeD_ne_natAbs_le_of_prime_witness_bound {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) {X : ℝ} (h15 : 15 ≤ X)
+theorem classicalD_ne_natAbs_le_of_primeWitness {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) {X : ℝ} (h15 : 15 ≤ X)
     (hb : (NumberTheory.primeNeOneWitness n hw : ℝ) ≤ X) :
     ((PrimeTest.selfridgeD
             (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n
-              (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+              (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
         ℝ) ≤
       X := by
-  let hs := PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns
-  have hstop := PrimeTest.classicalFirstStopNeOne_le_max_fifteen_primeWitness hn.pos hn hns hw hs
+  let hs := PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns
+  have hstop := PrimeTest.classicalNeOne_le_max15_witness hn.pos hn hns hw hs
   have hstopR : (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n hs : ℝ) ≤ X :=
     (by exact_mod_cast hstop : _ ≤ max 15 (NumberTheory.primeNeOneWitness n hw : ℝ)).trans
       (max_le h15 hb)
@@ -57,48 +57,48 @@ theorem classicalSelfridgeD_ne_natAbs_le_of_prime_witness_bound {n : ℕ} (hn : 
 Wheel30 pure negative discriminant magnitudes. Apply the generic classical
 transfer and the unconditional equality of the two first stops.
 This accepts arbitrary later analytic bounds without changing their hypotheses. -/
-theorem selfridgeNegOneMagnitudes_le_of_prime_witness_bound {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+theorem negOne_magnitudes_of_witness {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) {X : ℝ} (h27 : 27 ≤ X)
     (hb : (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ X) :
     ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         X ∧
       ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNegOne PrimeTest.isWheel30NegOneCandidate n
-                (PrimeTest.wheel30FirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.wheel30NegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         X := by
-  have hc := classicalSelfridgeD_neg_natAbs_le_of_prime_witness_bound hn hns hw h27 hb
+  have hc := classicalD_neg_natAbs_le_of_primeWitness hn hns hw h27 hb
   refine ⟨hc, ?_⟩
   simpa only [PrimeTest.firstStopNegOne_wheel30_eq_classical hn
-        (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns)
-        (PrimeTest.wheel30FirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns)] using
+        (PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn hns)
+        (PrimeTest.wheel30NegOneSet_nonempty_of_odd_nonsquare hn hns)] using
     hc
 
 /-- A non-one odd-prime witness bound X>=15 controls both classical and
 Wheel30 factor-detecting magnitudes. Apply the generic non-one transfer and
 the unconditional equality of both scans. This preserves earlier entrance
 conditions available only for zero-or-negative witnesses. -/
-theorem selfridgeNeOneMagnitudes_le_of_prime_witness_bound {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+theorem selfridgeNeOneMagnitudes_le_of_primeWitness {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) {X : ℝ} (h15 : 15 ≤ X)
     (hb : (NumberTheory.primeNeOneWitness n hw : ℝ) ≤ X) :
     ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         X ∧
       ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNeOne PrimeTest.isWheel30NeOneCandidate n
-                (PrimeTest.wheel30FirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.wheel30NeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         X := by
-  have hc := classicalSelfridgeD_ne_natAbs_le_of_prime_witness_bound hn hns hw h15 hb
+  have hc := classicalD_ne_natAbs_le_of_primeWitness hn hns hw h15 hb
   refine ⟨hc, ?_⟩
   simpa only [PrimeTest.firstStopNeOne_wheel30_eq_classical hn.pos hn hns
-        (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns)
-        (PrimeTest.wheel30FirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns)] using
+        (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns)
+        (PrimeTest.wheel30NeOneSet_nonempty_of_odd_nonsquare hn hns)] using
     hc
 
 end PseudoPrime.PrimeTestBounds.Selfridge

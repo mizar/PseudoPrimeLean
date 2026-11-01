@@ -20,10 +20,9 @@ balance `sigma + 2 delta <= 1` put the level-weighted low-height budget below th
 common power-log weight times the displayed constant. Compare counting and
 logarithmic coefficients before applying the low-height common-weight lemma.
 This estimate is uniform in modulus and height. -/
-theorem weighted_low_height_budget_le_common_weight {q H : ℕ} {x σ δ K : ℝ} (hq : 1 ≤ q)
-    (hqr : q ≤ H + 1) (hx : 4 ≤ x) (hRx : ((H + 1 : ℕ) : ℝ) ≤ x)
-    (hpow : ((H + 1 : ℕ) : ℝ) ^ 2 ≤ x ^ δ) (hσ : 1 / 2 ≤ σ) (hbalance : σ + 2 * δ ≤ 1)
-    (hK : 0 ≤ K) :
+theorem lowHeight_weighted_bound {q H : ℕ} {x σ δ K : ℝ} (hq : 1 ≤ q) (hqr : q ≤ H + 1) (hx : 4 ≤ x)
+    (hRx : ((H + 1 : ℕ) : ℝ) ≤ x) (hpow : ((H + 1 : ℕ) : ℝ) ^ 2 ≤ x ^ δ) (hσ : 1 / 2 ≤ σ)
+    (hbalance : σ + 2 * δ ≤ 1) (hK : 0 ≤ K) :
     (q : ℝ) *
         ((2 * ((H + 1 : ℕ) : ℝ) + 1) * K * (Real.log q + Real.log (4 + ((H + 1 : ℕ) : ℝ)) + 1)) *
         regularizedLowHeightMajorant x σ ≤
@@ -58,7 +57,7 @@ theorem weighted_low_height_budget_le_common_weight {q H : ℕ} {x σ δ K : ℝ
   have hm := mul_le_mul hcoeff hlogbound (by linarith only [hlogq0, hlogh0]) hlarge
   have hmM := mul_le_mul_of_nonneg_right hm (regularizedLowHeightMajorant_nonneg (σ := σ) hx2)
   have hfin :=
-    mul_le_mul_of_nonneg_left (rpow_log_low_majorant_le_common_weight hx2 hσ hbalance)
+    mul_le_mul_of_nonneg_left (lowMajorant_rpow_log_bound hx2 hσ hbalance)
       (mul_nonneg (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 3) hK)
         (by linarith only [hlog2] : 0 ≤ 3 + Real.log 2))
   change
@@ -72,10 +71,9 @@ level-weighted genus and arithmetic corrections plus the quadratic level-change
 cost are bounded by one common power-log weight. Use `q <= R^2 <= x^delta`,
 `q^2 <= R^2`, and logarithm monotonicity. This leaves only fixed constants in the
 time-dependent part of the full family remainder. -/
-theorem weighted_genus_and_arithmetic_corrections_le_common_weight {q H : ℕ} {x σ δ C : ℝ}
-    (hq : 1 ≤ q) (hqr : q ≤ H + 1) (hx : 4 ≤ x) (hRx : ((H + 1 : ℕ) : ℝ) ≤ x)
-    (hpow : ((H + 1 : ℕ) : ℝ) ^ 2 ≤ x ^ δ) (hσ : 1 / 2 ≤ σ) (hbalance : σ + 2 * δ ≤ 1)
-    (hC : 0 ≤ C) :
+theorem genusArithmetic_weighted_bound {q H : ℕ} {x σ δ C : ℝ} (hq : 1 ≤ q) (hqr : q ≤ H + 1)
+    (hx : 4 ≤ x) (hRx : ((H + 1 : ℕ) : ℝ) ≤ x) (hpow : ((H + 1 : ℕ) : ℝ) ^ 2 ≤ x ^ δ)
+    (hσ : 1 / 2 ≤ σ) (hbalance : σ + 2 * δ ≤ 1) (hC : 0 ≤ C) :
     (q : ℝ) * (32 * Real.log 2) * (genusCorrectionBudgetConstant + Real.log q) +
         (q : ℝ) * C * (Real.log x + 1) +
         (q : ℝ) ^ 2 * (Real.log x) ^ 2 ≤

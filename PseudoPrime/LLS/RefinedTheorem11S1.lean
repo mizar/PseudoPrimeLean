@@ -85,7 +85,7 @@ open PseudoPrime.AnalyticNumberTheory.Arithmetic in
 is bounded below by the Riemann main term minus its zero-mass error and the common-factor cost.
 Use the exact arbitrary-cutoff support identity and the uniform common-factor estimate.
 This is the lower analytic input for the refined-radius comparison. -/
-theorem characterLogWeightedSum_re_ge_riemann_of_prime_trivial {q : ℕ} [NeZero q] (x : ℝ)
+theorem characterLogSum_re_ge_of_prime_trivial_RH {q : ℕ} [NeZero q] (x : ℝ)
     (χ : DirichletCharacter ℂ q) (hx : 1 < x) (hRH : RiemannHypothesis)
     (htrivial : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ x → χ p = 1) :
     x - Real.log (2 * Real.pi) * Real.log x - 1 -
@@ -93,9 +93,9 @@ theorem characterLogWeightedSum_re_ge_riemann_of_prime_trivial {q : ℕ} [NeZero
         (1 / 2 : ℝ) * q.primeFactors.card * (Real.log x) ^ 2 ≤
       (characterLogWeightedSum x χ).re := by
   have hx0 : 0 < x := zero_lt_one.trans hx
-  have hr := llsRiemannWeightedLowerBound_of_riemannHypothesis hRH x hx
+  have hr := riemannWeightedLower_of_RH hRH x hx
   have hc := commonFactorLogWeightedSum_le (NeZero.ne q) hx0
-  rw [characterLogWeightedSum_re_eq_sub_common_of_prime_trivial x χ hx0 htrivial]
+  rw [characterLogSum_re_eq_sub_of_prime_trivial x χ hx0 htrivial]
   linarith only [hr, hc]
 
 /-- For q≥3000, the squared cutoff logarithm is at most
@@ -140,8 +140,7 @@ theorem characterLogWeightedSum_re_ge_refinedRadius {q : ℕ} [NeZero q] (χ : D
     lt_of_lt_of_le (lt_trans (by norm_num only : (0 : ℝ) < 8) hL) hroot
   have hx : (1 : ℝ) < (refinedRadiusRoot q) ^ 2 := by nlinarith only [hL, hroot]
   have h :=
-    characterLogWeightedSum_re_ge_riemann_of_prime_trivial ((refinedRadiusRoot q) ^ 2) χ hx
-      hGRH.riemann htrivial
+    characterLogSum_re_ge_of_prime_trivial_RH ((refinedRadiusRoot q) ^ 2) χ hx hGRH.riemann htrivial
   rw [Real.sqrt_sq hy.le] at h
   have hloss := log_sq_refinedRadius_le_level_ratio hq
   have hw : (0 : ℝ) ≤ (1 / 2 : ℝ) * q.primeFactors.card :=
@@ -173,9 +172,7 @@ theorem exists_prime_character_ne_one_le_refinedRadius {q : ℕ} [NeZero q]
   have hN : 2 ≤ χ.conductor :=
     Nat.succ_le_iff.mpr
       (Nat.lt_of_le_of_ne (NeZero.pos χ.conductor)
-        (Ne.symm
-          (AnalyticNumberTheory.DirichletLFunction.dirichletCharacter_level_ne_one_of_ne_one
-            hprim)))
+        (Ne.symm (AnalyticNumberTheory.DirichletLFunction.character_level_ne_one_of_ne_one hprim)))
   have hu := characterLogWeightedSum_re_le_refinedRadius χ hq hN hprim hGRH htrivial
   have hl := characterLogWeightedSum_re_ge_refinedRadius χ hq hGRH htrivial
   have hP : (57 / 50 : ℝ) ≤ Real.log Real.pi := by

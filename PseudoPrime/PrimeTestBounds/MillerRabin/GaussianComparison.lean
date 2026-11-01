@@ -54,17 +54,15 @@ theorem gaussian_inequality_of_prime_passes_in_subgroup {n : ℕ} [NeZero n] (hn
         14 * ((H.index : ℝ) + 1) * x ^ (1 / 4 : ℝ) +
         ((H.index - 1 : ℕ) : ℝ) * LLS.PaperStatements.gaussianAmbientError n x := by
   have hn : 1 < n := by linarith only [hnlarge]
-  apply
-    LLS.PaperStatements.gaussian_noSmallPrimes_explicit_inequality_of_no_small_divisor hnlarge H
-      hGRH hx hl
+  apply LLS.PaperStatements.gaussian_noSmallPrimes_bound_of_no_divisor_GRH hnlarge H hGRH hx hl
   · exact prime_divisor_gt_cutoff_of_strong_pass hn hnOdd hpass
   · intro p hp _ hpX
     exact hHpass (p : ZMod n) (hpass p hp hpX)
 
 /-- Under GRH, if every prime base through lambda*x passes and lambda*x reaches
 50000, the Gaussian subgroup comparison uses the transferred prefix error. -/
-theorem gaussian_inequality_of_prime_passes_in_subgroup_prefix_gain {n : ℕ} [NeZero n]
-    (hnlarge : 20000 ≤ n) (hnOdd : Odd n) (H : Subgroup (ZMod n)ˣ)
+theorem gaussian_pass_subgroup_prefix50000_GRH {n : ℕ} [NeZero n] (hnlarge : 20000 ≤ n)
+    (hnOdd : Odd n) (H : Subgroup (ZMod n)ˣ)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x lambda : ℝ} (hx : 4 ≤ x)
@@ -80,16 +78,15 @@ theorem gaussian_inequality_of_prime_passes_in_subgroup_prefix_gain {n : ℕ} [N
         14 * ((H.index : ℝ) + 1) * x ^ (1 / 4 : ℝ) +
         ((H.index - 1 : ℕ) : ℝ) * LLS.PaperStatements.gaussianAmbientErrorPrefix n x := by
   have hn : 1 < n := by linarith only [hnlarge]
-  apply
-    LLS.PaperStatements.gaussian_noSmallPrimes_explicit_inequality_prefix_gain hnlarge H hGRH hx hX
+  apply LLS.PaperStatements.gaussian_noSmall_prefix50000_GRH hnlarge H hGRH hx hX
   · exact prime_divisor_gt_cutoff_of_strong_pass hn hnOdd hpass
   · intro p hp _ hpX
     exact hHpass (p : ZMod n) (hpass p hp hpX)
 
 /-- Under GRH, universal prime-base passage through a 50000 prefix forces the
 Gaussian comparison with the signed left-contour remainder. -/
-theorem gaussian_inequality_of_prime_passes_in_subgroup_prefix_gain_signed {n : ℕ} [NeZero n]
-    (hnlarge : 20000 ≤ n) (hnOdd : Odd n) (H : Subgroup (ZMod n)ˣ)
+theorem gaussian_pass_prefix50000_signed_GRH {n : ℕ} [NeZero n] (hnlarge : 20000 ≤ n)
+    (hnOdd : Odd n) (H : Subgroup (ZMod n)ˣ)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x lambda : ℝ} (hx : 4 ≤ x)
@@ -105,17 +102,15 @@ theorem gaussian_inequality_of_prime_passes_in_subgroup_prefix_gain_signed {n : 
         14 * ((H.index : ℝ) + 1) * x ^ (1 / 4 : ℝ) +
         ((H.index - 1 : ℕ) : ℝ) * LLS.PaperStatements.gaussianAmbientErrorPrefixSigned n x := by
   have hn : 1 < n := by linarith only [hnlarge]
-  apply
-    LLS.PaperStatements.gaussian_noSmallPrimes_explicit_inequality_prefix_gain_signed hnlarge H hGRH
-      hx hX
+  apply LLS.PaperStatements.gaussian_noSmall_prefix50000_signed_GRH hnlarge H hGRH hx hX
   · exact prime_divisor_gt_cutoff_of_strong_pass hn hnOdd hpass
   · intro p hp _ hpX
     exact hHpass (p : ZMod n) (hpass p hp hpX)
 
 /-- Under GRH, relative-width Gaussian comparison and a 50000 prefix bound,
 universal prime-base passage forces the signed left-contour estimate. -/
-theorem gaussian_inequality_of_prime_passes_in_subgroup_relative_prefix_gain_signed {n : ℕ}
-    [NeZero n] (hnlarge : 20000 ≤ n) (hnOdd : Odd n) (H : Subgroup (ZMod n)ˣ)
+theorem gaussian_pass_relative50000_signed_GRH {n : ℕ} [NeZero n] (hnlarge : 20000 ≤ n)
+    (hnOdd : Odd n) (H : Subgroup (ZMod n)ˣ)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {h x lambda : ℝ} (hh : 0 < h)
@@ -133,9 +128,7 @@ theorem gaussian_inequality_of_prime_passes_in_subgroup_relative_prefix_gain_sig
         13 +
         ((H.index - 1 : ℕ) : ℝ) * LLS.PaperStatements.gaussianAmbientErrorPrefixSigned n x := by
   have hn : 1 < n := by linarith only [hnlarge]
-  apply
-    LLS.PaperStatements.gaussian_noSmallPrimes_inequality_relative_prefix_gain_signed hnlarge H hGRH
-      hh hh1 hx hl hX
+  apply LLS.PaperStatements.gaussian_noSmall_relative50000_signed_GRH hnlarge H hGRH hh hh1 hx hl hX
   · exact prime_divisor_gt_cutoff_of_strong_pass hn hnOdd hpass
   · intro p hp _ hpX
     exact hHpass (p : ZMod n) (hpass p hp hpX)
@@ -144,8 +137,8 @@ theorem gaussian_inequality_of_prime_passes_in_subgroup_relative_prefix_gain_sig
 up to lambda*x forces the actual Gaussian comparison for any supplied subgroup
 containing all strong passes. Prime divisors exceed the cutoff, and the signed
 subgroup average retains its exact conductor-log sum and numerical errors. -/
-theorem gaussian_inequality_of_prime_passes_constant_principal {n : ℕ} [NeZero n]
-    (hnlarge : 20000 ≤ n) (hnOdd : Odd n) (H : Subgroup (ZMod n)ˣ)
+theorem gaussian_pass_constPrincipal_GRH {n : ℕ} [NeZero n] (hnlarge : 20000 ≤ n) (hnOdd : Odd n)
+    (H : Subgroup (ZMod n)ˣ)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x lambda : ℝ} (hx : 4 ≤ x)
@@ -162,9 +155,7 @@ theorem gaussian_inequality_of_prime_passes_constant_principal {n : ℕ} [NeZero
         13 +
         ((H.index - 1 : ℕ) : ℝ) * LLS.PaperStatements.gaussianAmbientError n x := by
   have hn : 1 < n := by linarith only [hnlarge]
-  apply
-    LLS.PaperStatements.gaussian_noSmallPrimes_explicit_inequality_constant_principal hnlarge H hGRH
-      hx hl
+  apply LLS.PaperStatements.gaussian_noSmall_constPrincipal_GRH hnlarge H hGRH hx hl
   · exact prime_divisor_gt_cutoff_of_strong_pass hn hnOdd hpass
   · intro p hp _ hpX
     exact hHpass (p : ZMod n) (hpass p hp hpX)

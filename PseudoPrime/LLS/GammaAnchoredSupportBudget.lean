@@ -36,7 +36,7 @@ theorem gamma_anchored_support_subset (x : ℝ) :
 /-- Input: real L and x>=100. Claim: the actual signed dual budget equals its sum over
 the smaller anchored support. Proof: the removed excess terms vanish exactly.
 Role: reduce numerical certification without replacing the finite summands by coarse costs. -/
-theorem gamma_scale_signed_dual_budget_eq_anchored_support (L : ℝ) {x : ℝ} (hx : 100 ≤ x) :
+theorem gammaSignedDual_eq_anchorSupport (L : ℝ) {x : ℝ} (hx : 100 ≤ x) :
     gammaScaleSignedDualBudget L x =
       gammaRamifiedDualParameter x * L +
         ∑ p ∈ gammaAnchoredSupportPrimeSet x,
@@ -78,7 +78,7 @@ theorem gamma_joint_prefix_le_anchored_support (hRH : RiemannHypothesis) {n : �
   have h :=
     gamma_joint_prefix89100_bound_halfline hRH hn hns hb hlog hx
       (le_refl (gammaScaleSignedDualBudget L x))
-  rw [gamma_scale_signed_dual_budget_eq_anchored_support L (by linarith only [hx])] at h
+  rw [gammaSignedDual_eq_anchorSupport L (by linarith only [hx])] at h
   exact h
 
 end PseudoPrime.LLS

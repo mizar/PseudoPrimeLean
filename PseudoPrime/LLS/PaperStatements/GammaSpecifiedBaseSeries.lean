@@ -18,8 +18,7 @@ namespace PseudoPrime.LLS.PaperStatements
 actual Gamma integral has the certified density-and-resolvent series.
 Integrability follows from the actual kernel and Gamma factor. This helper
 allows the exact parity base to be retained throughout the inversion argument. -/
-theorem gamma_central_archimedean_integral_eq_density_series_of_base {q : ℕ}
-    (χ : DirichletCharacter ℂ q) {b : ℝ} (hb : 0 < b)
+theorem gammaArchIntegral_density_of_base {q : ℕ} (χ : DirichletCharacter ℂ q) {b : ℝ} (hb : 0 < b)
     (hp :
       ∀ t : ℝ,
         logDeriv χ.gammaFactor (Complex.I * t + 1 / 2) =
@@ -61,7 +60,7 @@ theorem gamma_central_archimedean_integral_eq_density_series_of_base {q : ℕ}
           change 2 * (logDeriv χ.gammaFactor (Complex.I * t + 1 / 2) * W t - B * W t) = D t
           rw [he]
           ring))
-  have hseries := gamma_central_digamma_vertical_sub_integral_eq_tsum hb hx
+  have hseries := gamma_digamma_sub_integral_tsum hb hx
   change
     ((1 / (2 * Real.pi) : ℝ) : ℂ) *
         (∫ t : ℝ, logDeriv χ.gammaFactor (Complex.I * t + 1 / 2) * W t) =
@@ -86,8 +85,7 @@ theorem gamma_central_archimedean_integral_eq_density_series_of_base {q : ℕ}
 integral has the exact real scalar series representation. Apply the certified
 reciprocal inversions to the convergent series. The helper retains the exact
 parity base supplied by the character identity in the final application. -/
-theorem gamma_central_archimedean_integral_re_eq_scalar_series_of_base {q : ℕ}
-    (χ : DirichletCharacter ℂ q) {b : ℝ} (hb : 0 < b)
+theorem gammaArchIntegral_scalar_of_base {q : ℕ} (χ : DirichletCharacter ℂ q) {b : ℝ} (hb : 0 < b)
     (hp :
       ∀ t : ℝ,
         logDeriv χ.gammaFactor (Complex.I * t + 1 / 2) =
@@ -113,9 +111,8 @@ theorem gamma_central_archimedean_integral_re_eq_scalar_series_of_base {q : ℕ}
     apply tsum_congr
     intro n
     simpa only [C, J, F, K, mul_div_assoc] using
-      gamma_central_resolvent_difference_integral_eq_real
-        (add_pos_of_pos_of_nonneg hb (Nat.cast_nonneg n)) hx
-  have he := gamma_central_archimedean_integral_eq_density_series_of_base χ hb hp hx
+      gammaResolvent_diff_integral_real (add_pos_of_pos_of_nonneg hb (Nat.cast_nonneg n)) hx
+  have he := gammaArchIntegral_density_of_base χ hb hp hx
   have he' :
     C * (∫ t : ℝ, logDeriv χ.gammaFactor (Complex.I * t + 1 / 2) * gammaCentralMellinWeight x t) =
       ((-Complex.log Real.pi + Complex.digamma (b : ℂ)) / 2) * (K : ℂ) +
@@ -135,8 +132,7 @@ theorem gamma_central_archimedean_integral_re_eq_scalar_series_of_base {q : ℕ}
 for which the real scalar series represents the actual central Gamma integral
 at every positive scale. The auxiliary base identity is discharged by parity,
 so the public result has no extra analytic hypothesis. -/
-theorem gamma_central_archimedean_integral_re_eq_scalar_exact_parity {q : ℕ}
-    (χ : DirichletCharacter ℂ q) :
+theorem gammaArchIntegral_scalar_parity {q : ℕ} (χ : DirichletCharacter ℂ q) :
     ∃ b : ℝ,
       (b = 1 / 4 ∨ b = 3 / 4) ∧
         ∀ x : ℝ,
@@ -155,6 +151,6 @@ theorem gamma_central_archimedean_integral_re_eq_scalar_exact_parity {q : ℕ}
   have hb0 : 0 < b := by rcases hb with rfl | rfl <;> norm_num only
   refine ⟨b, hb, ?_⟩
   intro x hx
-  exact gamma_central_archimedean_integral_re_eq_scalar_series_of_base χ hb0 hp hx
+  exact gammaArchIntegral_scalar_of_base χ hb0 hp hx
 
 end PseudoPrime.LLS.PaperStatements

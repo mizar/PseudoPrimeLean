@@ -29,10 +29,8 @@ theorem exists_prime_witness_le_refinedCutoff_of_large {n : ℕ} (hn : 1 < n) (h
         (p : ℝ) ≤ min ((Real.log n) ^ 2) ((Analysis.logarithmicCutoffRoot (Real.log n)) ^ 2) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   let _ : NeZero n := ⟨(zero_lt_one.trans hn).ne'⟩
-  obtain ⟨H, hH, hpass⟩ :=
-    PrimeTest.exists_proper_subgroup_containing_strongMillerRabinPass hn hnOdd hnComposite
-  obtain ⟨p, hp, hb, hout⟩ :=
-    LLS.exists_prime_outside_subgroup_image_le_refinedPart2Cutoff hnLarge H hH hGRH
+  obtain ⟨H, hH, hpass⟩ := PrimeTest.exists_proper_subgroup_strongMR hn hnOdd hnComposite
+  obtain ⟨p, hp, hb, hout⟩ := LLS.exists_prime_outside_refinedPart2_GRH hnLarge H hH hGRH
   exact ⟨p, hp, hb, PrimeTest.not_pass_of_outside_subgroup hpass hout⟩
 
 /-- For 1<n<3000, the refined minimum cutoff equals (log(n))².
@@ -61,8 +59,7 @@ theorem exists_prime_witness_le_refinedCutoff
         (p : ℝ) ≤ min ((Real.log n) ^ 2) ((Analysis.logarithmicCutoffRoot (Real.log n)) ^ 2) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   by_cases hsmall : n < 3000
-  · obtain ⟨p, hp, hb, hf⟩ :=
-      exists_prime_millerRabin_witness_le_log_sq_of_lt_3000 hn hnOdd hnComposite hsmall
+  · obtain ⟨p, hp, hb, hf⟩ := exists_primeWitness_lt_3000 hn hnOdd hnComposite hsmall
     refine ⟨p, hp, ?_, PrimeTest.not_strongMillerRabinPass_iff.mpr hf⟩
     rw [refinedCutoff_eq_log_sq_of_lt_3000 hn hsmall]
     exact hb
@@ -74,7 +71,7 @@ theorem exists_prime_witness_le_refinedCutoff
 cutoff is equivalent to primality. A composite has the strengthened witness;
 a prime accepts these bases because they also lie below the old logarithmic cutoff.
 This is the public primality criterion corresponding to the refined witness theorem. -/
-theorem prime_iff_millerRabin_for_all_primes_le_refinedCutoff
+theorem prime_iff_pass_primes_refinedCutoff_GRH
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : 1 < n)
     (hnOdd : Odd n) :
     (∀ p : ℕ,

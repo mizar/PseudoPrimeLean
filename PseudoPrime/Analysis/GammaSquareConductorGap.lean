@@ -67,8 +67,8 @@ theorem gamma_square_only_prime_log_gap_budget {n d m f : ℕ} (hn : n = d * m ^
 prime, the actual Euler and ramp losses are absorbed by the change from
 M log f to M log(4n). The arithmetic gap is proved from n=d*m^2, d|f and f<=4d.
 The explicit per-prime numerical bound remains a separate required input. -/
-theorem gamma_square_actual_cost_absorbed_by_conductor_gap {n d m f : ℕ} (hn : n = d * m ^ 2)
-    (hd : 0 < d) (hm : 0 < m) (hf : 0 < f) (hdf : d ∣ f) (hfd : f ≤ 4 * d) (S : Finset ℕ)
+theorem gamma_square_cost_le_conductor_gap {n d m f : ℕ} (hn : n = d * m ^ 2) (hd : 0 < d)
+    (hm : 0 < m) (hf : 0 < f) (hdf : d ∣ f) (hfd : f ≤ 4 * d) (S : Finset ℕ)
     (hS : S ⊆ n.primeFactors) (homit : ∀ p ∈ S, ¬p ∣ f) (χ : DirichletCharacter ℂ f)
     (hχ : ∀ p ∈ S, χ p = -1) (K : ℕ → Finset ℕ) {x M : ℝ} (hx : 0 < x) (hM : 0 ≤ M)
     (hcost : ∀ p ∈ S, gammaSquareCombinedCost p x ≤ 2 * M) :
@@ -107,8 +107,8 @@ theorem gamma_minus_one_prime_not_dvd_modulus {f p : ℕ} (χ : DirichletCharact
 /-- Character value minus one implies that each selected prime is absent from the
 modulus. Apply the arithmetic conductor-gap absorption without an additional
 omitted-prime hypothesis. The quantitative combined-cost bound is still required. -/
-theorem gamma_minus_one_actual_cost_absorbed_by_conductor_gap {n d m f : ℕ} (hn : n = d * m ^ 2)
-    (hd : 0 < d) (hm : 0 < m) (hf : 0 < f) (hdf : d ∣ f) (hfd : f ≤ 4 * d) (S : Finset ℕ)
+theorem gamma_neg_one_cost_le_conductor_gap {n d m f : ℕ} (hn : n = d * m ^ 2) (hd : 0 < d)
+    (hm : 0 < m) (hf : 0 < f) (hdf : d ∣ f) (hfd : f ≤ 4 * d) (S : Finset ℕ)
     (hS : S ⊆ n.primeFactors) (χ : DirichletCharacter ℂ f) (hχ : ∀ p ∈ S, χ p = -1)
     (K : ℕ → Finset ℕ) {x M : ℝ} (hx : 0 < x) (hM : 0 ≤ M)
     (hcost : ∀ p ∈ S, gammaSquareCombinedCost p x ≤ 2 * M) :
@@ -121,7 +121,7 @@ theorem gamma_minus_one_actual_cost_absorbed_by_conductor_gap {n d m f : ℕ} (h
                 Real.sqrt x))) ≤
       M * Real.log (4 * (n : ℝ)) := by
   exact
-    gamma_square_actual_cost_absorbed_by_conductor_gap hn hd hm hf hdf hfd S hS
+    gamma_square_cost_le_conductor_gap hn hd hm hf hdf hfd S hS
       (fun p hp ↦
         gamma_minus_one_prime_not_dvd_modulus χ (Nat.prime_of_mem_primeFactors (hS hp)) (hχ p hp))
       χ hχ K hx hM hcost

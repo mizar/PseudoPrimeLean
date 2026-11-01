@@ -25,9 +25,9 @@ and a zero-free sphere of radius R ≥ 1. At `norm s ≤ R / 2`, bound the diffe
 between the centered logarithmic derivative and the finite genus sum.
 Combine variation of the analytic factor with the canonical correction estimate;
 the resulting error tends to zero when the growth exponent is below two. -/
-theorem norm_centeredLogDeriv_sub_truncatedGenus_le {F : ℂ → ℂ} (hF : Differentiable ℂ F)
-    (h0 : F 0 ≠ 0) {C r R : ℝ} (hC : 0 < C) (hg : ∀ z : ℂ, ‖F z‖ ≤ Real.exp (C * (‖z‖ + 1) ^ r))
-    (hR : 1 ≤ R) (hzf : ∀ ρ : ℂ, ‖ρ‖ = R → F ρ ≠ 0) {s : ℂ} (hs : ‖s‖ ≤ R / 2) (hsne : F s ≠ 0) :
+theorem centeredLogDeriv_truncatedGenus_le {F : ℂ → ℂ} (hF : Differentiable ℂ F) (h0 : F 0 ≠ 0)
+    {C r R : ℝ} (hC : 0 < C) (hg : ∀ z : ℂ, ‖F z‖ ≤ Real.exp (C * (‖z‖ + 1) ^ r)) (hR : 1 ≤ R)
+    (hzf : ∀ ρ : ℂ, ‖ρ‖ = R → F ρ ≠ 0) {s : ℂ} (hs : ‖s‖ ≤ R / 2) (hsne : F s ≠ 0) :
     ‖(logDeriv F s - logDeriv F 0) - truncatedGenusSum F R s‖ ≤
       192 * ‖s‖ * (C * (R + 1) ^ r - Real.log ‖F 0‖ + 1) / R ^ 2 +
         (2 * ‖s‖ / R ^ 2) * ((C * (2 * R + 1) ^ r - Real.log ‖F 0‖) / Real.log 2) := by
@@ -38,7 +38,7 @@ theorem norm_centeredLogDeriv_sub_truncatedGenus_le {F : ℂ → ℂ} (hF : Diff
   have hsclosed : s ∈ Metric.closedBall (0 : ℂ) R := by
     rw [Metric.mem_closedBall, dist_zero_right]
     exact hs.trans (half_le_self hR0.le)
-  have heq := ecanonicalDecomp_centered_logDeriv_eq h0 hF hR0 D hzf hsclosed hsne
+  have heq := ecanonical_centered_logDeriv_eq h0 hF hR0 D hzf hsclosed hsne
   have hdiff := hF
   have hanalyticClosed : AnalyticOnNhd ℂ (F) (Metric.closedBall (0 : ℂ) R) := fun z _ ↦
     hdiff.analyticAt z
@@ -50,8 +50,8 @@ theorem norm_centeredLogDeriv_sub_truncatedGenus_le {F : ℂ → ℂ} (hF : Diff
     intro u hu
     rw [Set.Finite.mem_toFinset] at hu
     refine ⟨Dv.supportWithinDomain hu, ?_, ?_⟩
-    · exact ne_of_mem_divisorBallSupport_of_entire_value_ne_zero hF hu h0ne
-    · exact (ne_of_mem_divisorBallSupport_of_entire_value_ne_zero hF hu hsne).symm
+    · exact ne_of_mem_divisor_of_value_ne_zero hF hu h0ne
+    · exact (ne_of_mem_divisor_of_value_ne_zero hF hu hsne).symm
   have hsub1 :
     Function.support (fun u : ℂ ↦ ((-Dv u : ℤ) : ℂ) * logDeriv (Complex.canonicalFactor R u) s) ⊆
       hfin.toFinset := by
@@ -305,8 +305,7 @@ theorem centered_logDeriv_eq_genusSum {F : ℂ → ℂ} (hF : Differentiable ℂ
     · exact Filter.Eventually.of_forall (fun n ↦ norm_nonneg _)
     · filter_upwards [hR.eventually_ge_atTop (max 1 (2 * ‖s‖))] with n hn
       exact
-        norm_centeredLogDeriv_sub_truncatedGenus_le hF h0 hC hg ((le_max_left _ _).trans hn)
-          (hfree n)
+        centeredLogDeriv_truncatedGenus_le hF h0 hC hg ((le_max_left _ _).trans hn) (hfree n)
           (by
             have h := (le_max_right 1 (2 * ‖s‖)).trans hn; linarith only [h])
           hs

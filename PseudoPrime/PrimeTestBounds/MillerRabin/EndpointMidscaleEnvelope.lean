@@ -46,13 +46,11 @@ theorem exists_least_endpointMidscaleBase {n : ℕ} [NeZero n] (hn : 1 < n) (ho 
         (p : ℝ) ≤ endpointMidscaleBase (Real.log n) ∧
         ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
   by_cases h8 : Real.log n ≤ 22
-  · obtain ⟨p, hp, hb, hr, hm⟩ :=
-      exists_least_prime_reject_le_7over4_shifted_eightNinths_log_sq hn ho hc hGRH hL h8
+  · obtain ⟨p, hp, hb, hr, hm⟩ := exists_least_prime_shift7_4_64_81_GRH hn ho hc hGRH hL h8
     refine ⟨p, hp, hr, ?_, hm⟩
     simpa only [endpointMidscaleBase, ite_eq_left h8] using hb
   · by_cases h9 : Real.log n ≤ 111 / 4
-    · obtain ⟨p, hp, hb, hr, hm⟩ :=
-        exists_least_prime_reject_le_7over4_shifted_eightyOne_log_sq hn ho hc hGRH hL h9
+    · obtain ⟨p, hp, hb, hr, hm⟩ := exists_least_prime_shift7_4_81_100_GRH hn ho hc hGRH hL h9
       refine ⟨p, hp, hr, ?_, hm⟩
       simpa only [endpointMidscaleBase, ite_eq_right h8, ite_eq_left h9] using hb
     · by_cases hf : Real.log n ≤ 144 / 5
@@ -61,8 +59,7 @@ theorem exists_least_endpointMidscaleBase {n : ℕ} [NeZero n] (hn : 1 < n) (ho 
         simpa only [endpointMidscaleBase, ite_eq_right h8, ite_eq_right h9, ite_eq_left hf] using
           (show (p : ℝ) ≤ 576 by exact_mod_cast hb)
       · obtain ⟨p, hp, hb, hr, hm⟩ :=
-          exists_least_prime_reject_le_7over4_shifted_midscale_radius_sq hn ho hc hGRH
-            (le_of_not_ge hf) hU
+          exists_least_prime_shift7_4_midscale_GRH hn ho hc hGRH (le_of_not_ge hf) hU
         refine ⟨p, hp, hr, ?_, hm⟩
         simpa only [endpointMidscaleBase, ite_eq_right h8, ite_eq_right h9, ite_eq_right hf] using
           hb
@@ -168,7 +165,7 @@ theorem exists_least_endpointGammaMidscale {n : ℕ} [NeZero n] (hn : 1 < n) (ho
   obtain ⟨p, hp, hb, hr, hm⟩ :=
     exists_least_prime_reject_le_even_twoStep_cutoff hn ho hc hGRH (by linarith only [hL])
   exact
-    least_prime_witness_bound_min
-      (exists_least_prime_witness_le_endpointGammaEnvelope ho hc hGRH hL hU) ⟨p, hp, hr, hb, hm⟩
+    least_prime_witness_bound_min (exists_leastWitness_le_endpointGammaEnvelope ho hc hGRH hL hU)
+      ⟨p, hp, hr, hb, hm⟩
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

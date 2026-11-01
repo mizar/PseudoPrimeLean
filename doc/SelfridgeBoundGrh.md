@@ -59,8 +59,8 @@ $$
 | 公開定理 | 入力範囲と結論 |
 |---|---|
 | `classicalSelfridgeD_elementary_bound_explicit` | $n \ge 3$ で $\lvert g_{\ne 1}(n) \rvert \le \lvert g_{-1}(n) \rvert \le R(n)$ |
-| `classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_log_sq_of_13_le` | $n \ge 13$ で $\lvert g_{\ne 1}(n) \rvert \le (\ln\mathrel{} n)^2$ |
-| `classicalSelfridgeD_firstStopNeOne_natAbs_cast_le_max_thirteen_log_sq` | 奇数かつ非平方数の入力で $\lvert g_{\ne 1}(n) \rvert \le \max\left\lbrace 13, (\ln\mathrel{} n)^2 \right\rbrace$ |
+| `classicalD_neOne_logSq_from13_GRH` | $n \ge 13$ で $\lvert g_{\ne 1}(n) \rvert \le (\ln\mathrel{} n)^2$ |
+| `classicalD_neOne_le_max13_logSq_GRH` | 奇数かつ非平方数の入力で $\lvert g_{\ne 1}(n) \rvert \le \max\left\lbrace 13, (\ln\mathrel{} n)^2 \right\rbrace$ |
 | `classicalNeOneMaximum_cast_le_log_sq_of_751_le` | $B \ge 751$ で因子検出停止値の最大が $(\ln\mathrel{} B)^2$ 以下 |
 
 名前に `log_sq` を含む既存定理でも、純粋 $-1$ 側には右辺が $R(n)$ のものがある。利用時は名前だけでなく定理の型を確認する。
@@ -96,7 +96,7 @@ $$
 
 | 条件 | $\lvert g_{\ne1}(n)\rvert$ と $\lvert g^{(30)}_{\ne1}(n)\rvert$ の上界 | Lean定理 |
 |---|---|---|
-| $L\ge50$ | $(L-2\ln L+37/5)^2$ | `selfridgeNeOneMagnitudes_le_shifted_double_log_from_fifty` |
+| $L\ge50$ | $(L-2\ln L+37/5)^2$ | `neOne_magnitudes_doubleLog50_GRH` |
 | $L\ge22221$ | $(4/5)L^2$ | `selfridgeNeOneMagnitudes_le_four_fifths` |
 | $L\ge10^{18}$ | $(777/1000)L^2$ | `selfridgeNeOne_fourPole_sharp` |
 
@@ -191,8 +191,8 @@ T_{\mathrm{cl}}(B)\le\frac{u(\ln B)^2-3}{2}.
 \end{gathered}
 $$
 
-`selfridgeNeOneMaxima_le_shifted_double_log_from_fifty` と
-`classicalNeOneTrialMaximum_le_shifted_double_log_from_fifty` が対応する。
+`neOne_maxima_doubleLog50_GRH` と
+`classicalTrials_doubleLog50_GRH` が対応する。
 共通尺度 $B$ での $Q_{\ne1}(B)$ 上界を使うため、 $\ln n < 50$ の対象入力も最大値に含む。
 試行回数はJacobi記号の評価回数であり、ビット演算の計算量ではない。
 [FiniteScaleShiftedDoubleLogBounds.lean](../PseudoPrime/PrimeTestBounds/Selfridge/FiniteScaleShiftedDoubleLogBounds.lean) で証明した。

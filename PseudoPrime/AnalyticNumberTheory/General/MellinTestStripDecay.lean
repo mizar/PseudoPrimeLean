@@ -81,8 +81,8 @@ every Fourier Schwartz seminorm of the exponentially weighted family has a
 positive uniform bound. Uniform source seminorm bounds give von Neumann
 boundedness, which the continuous linear Fourier transform preserves.
 This removes the real-part dependence from the fixed-line decay estimate. -/
-theorem weightedLogTestSchwartz_fourier_seminorm_uniform_bound (g : ℝ → ℂ)
-    (hc : HasCompactSupport g) (hg : ContDiff ℝ (↑(⊤ : ℕ∞)) g) (a b : ℝ) (k n : ℕ) :
+theorem logTestSchwartz_fourier_uniform_bound (g : ℝ → ℂ) (hc : HasCompactSupport g)
+    (hg : ContDiff ℝ (↑(⊤ : ℕ∞)) g) (a b : ℝ) (k n : ℕ) :
     ∃ C : ℝ,
       0 < C ∧
         ∀ σ ∈ Set.Icc a b,
@@ -110,13 +110,13 @@ positive uniform bound. Combine the Mellin--Fourier identity and frequency
 rescaling with boundedness of the Fourier Schwartz seminorm across the strip.
 The fourth-power case dominates quadratic logarithmic-derivative growth
 on the horizontal edges of expanding explicit-formula contours. -/
-theorem mellin_logarithmicTestWeight_uniform_power_bound (g : ℝ → ℂ) (he : ∀ u : ℝ, g (-u) = g u)
+theorem logTest_mellin_uniform_power_bound (g : ℝ → ℂ) (he : ∀ u : ℝ, g (-u) = g u)
     (hc : HasCompactSupport g) (hg : ContDiff ℝ (↑(⊤ : ℕ∞)) g) (a b : ℝ) (k : ℕ) :
     ∃ C : ℝ,
       0 < C ∧
         ∀ σ ∈ Set.Icc a b,
           ∀ T : ℝ, |T| ^ k * ‖mellin (logarithmicTestWeight g) ((σ : ℂ) + T * Complex.I)‖ ≤ C := by
-  obtain ⟨C, hC, hbound⟩ := weightedLogTestSchwartz_fourier_seminorm_uniform_bound g hc hg a b k 0
+  obtain ⟨C, hC, hbound⟩ := logTestSchwartz_fourier_uniform_bound g hc hg a b k 0
   have hp : 0 < 2 * Real.pi := mul_pos (by norm_num only) Real.pi_pos
   refine ⟨(2 * Real.pi) ^ k * C, mul_pos (pow_pos hp k) hC, fun σ hσ T ↦ ?_⟩
   exact

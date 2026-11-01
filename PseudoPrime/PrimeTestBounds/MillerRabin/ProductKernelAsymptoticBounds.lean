@@ -45,8 +45,8 @@ theorem SmallCofactorOrGap.small_kernel {n : ℕ} {τ : ℝ} (h : SmallCofactorO
 in SmallCofactorOrGap n tau have least prime MR witness at most log(n)^A.
 Use the proved exact small-kernel analytic theorem after the arithmetic
 reduction. The threshold is uniform over the factorization and GRH is absent. -/
-theorem eventually_exists_least_prime_witness_of_small_cofactor_or_gap {τ A : ℝ} (hτ0 : 0 < τ)
-    (hτ1 : τ < 1) (hA : 1 / (1 - τ) < A) :
+theorem eventually_least_smallCofactorOrGap {τ A : ℝ} (hτ0 : 0 < τ) (hτ1 : τ < 1)
+    (hA : 1 / (1 - τ) < A) :
     ∀ᶠ n : ℕ in Filter.atTop,
       1 < n →
         Odd n →
@@ -56,15 +56,15 @@ theorem eventually_exists_least_prime_witness_of_small_cofactor_or_gap {τ A : �
             ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) ∧
             (q : ℝ) ≤ (Real.log n) ^ A ∧
             ∀ r : ℕ, r.Prime → ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) → q ≤ r := by
-  apply (eventually_exists_least_prime_witness_of_prime_small_kernel hτ0 hτ1 hA).mono
+  apply (eventually_least_prime_smallKernel hτ0 hτ1 hA).mono
   intro n h hn ho hfamily
   exact h hn ho hfamily.small_kernel
 
 /-- If A<2 as well, the product-family least-prime bound is eventually
 strictly below log(n)^2. Keep the same witness and compare real exponents
 at log(n)>1. No finite input certificate or GRH assumption is used. -/
-theorem eventually_exists_least_prime_witness_strict_of_small_cofactor_or_gap {τ A : ℝ}
-    (hτ0 : 0 < τ) (hτ1 : τ < 1) (hA : 1 / (1 - τ) < A) (hA2 : A < 2) :
+theorem eventually_least_smallCofactorOrGap_strict {τ A : ℝ} (hτ0 : 0 < τ) (hτ1 : τ < 1)
+    (hA : 1 / (1 - τ) < A) (hA2 : A < 2) :
     ∀ᶠ n : ℕ in Filter.atTop,
       1 < n →
         Odd n →
@@ -77,8 +77,8 @@ theorem eventually_exists_least_prime_witness_strict_of_small_cofactor_or_gap {�
             ∀ r : ℕ, r.Prime → ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) → q ≤ r := by
   have ht : Filter.Tendsto (fun n : ℕ ↦ Real.log n) Filter.atTop Filter.atTop :=
     Real.tendsto_log_atTop.comp tendsto_natCast_atTop_atTop
-  filter_upwards [eventually_exists_least_prime_witness_of_small_cofactor_or_gap hτ0 hτ1 hA,
-    ht.eventually_gt_atTop 1] with n h hL hn ho hfamily
+  filter_upwards [eventually_least_smallCofactorOrGap hτ0 hτ1 hA, ht.eventually_gt_atTop 1] with n h
+    hL hn ho hfamily
   obtain ⟨q, hq, hf, hb, hleast⟩ := h hn ho hfamily
   have hs : (Real.log n) ^ A < (Real.log n) ^ 2 := by
     simpa only [Real.rpow_two] using Real.rpow_lt_rpow_of_exponent_lt hL hA2
@@ -88,8 +88,7 @@ theorem eventually_exists_least_prime_witness_strict_of_small_cofactor_or_gap {�
 exponent A<2 for its eventual least-prime MR bound, strictly below log(n)^2.
 Choose A between 1/(1-tau) and two and apply the proved family theorem.
 The bound is unconditional, including squarefree products with two factors. -/
-theorem exists_subquadratic_exponent_of_small_cofactor_or_gap {τ : ℝ} (hτ0 : 0 < τ)
-    (hτhalf : τ < 1 / 2) :
+theorem exists_subquadratic_smallCofactorOrGap {τ : ℝ} (hτ0 : 0 < τ) (hτhalf : τ < 1 / 2) :
     ∃ A : ℝ,
       0 < A ∧
         A < 2 ∧
@@ -111,6 +110,6 @@ theorem exists_subquadratic_exponent_of_small_cofactor_or_gap {τ : ℝ} (hτ0 :
   obtain ⟨A, hA, hA2⟩ := exists_between hbound
   exact
     ⟨A, (div_pos zero_lt_one hd).trans hA, hA2,
-      eventually_exists_least_prime_witness_strict_of_small_cofactor_or_gap hτ0 hτ1 hA hA2⟩
+      eventually_least_smallCofactorOrGap_strict hτ0 hτ1 hA hA2⟩
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

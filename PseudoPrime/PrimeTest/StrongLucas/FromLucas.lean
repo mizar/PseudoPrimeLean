@@ -56,8 +56,7 @@ and `hzero` supplies the full-index `U` zero. Decompose the index into odd part 
 two, apply the field-level zero-factor induction, then unfold the finite Strong specification.
 Prime completeness combines this bridge with the finite-field Lucas index theorem.
 -/
-theorem isStrongLucasProbablePrime_of_lucasUZMod_index_zero {n : ℕ} [Fact n.Prime]
-    (param : LucasParams)
+theorem strongLucas_of_prime_U_index_zero {n : ℕ} [Fact n.Prime] (param : LucasParams)
     (hzero : lucasUZMod n param.P param.Q (lucasProbablePrimeIndex n param.D) = 0) :
     IsStrongLucasProbablePrime n param := by
   rcases hSdPair : Nat.maxPowDvdDiv 2 (lucasProbablePrimeIndex n param.D) with ⟨s, d⟩

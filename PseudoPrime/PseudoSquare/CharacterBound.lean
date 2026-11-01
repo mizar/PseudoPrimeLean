@@ -43,9 +43,7 @@ theorem exists_primeNegOneWitness_of_LLS (hLLS : LLS.llsTheorem11S1Character) (n
     hLLS (4 * n) (NumberTheory.complexQuadraticCharacter n hn)
       (by simpa only [NumberTheory.characterModulus] using hq)
       (NumberTheory.complexQuadraticCharacter_ne_one_of_not_square n hn hns)
-  have hℓmem :=
-    NumberTheory.primeNegOneWitness_mem_of_complexQuadraticCharacter_ne_one n hn hℓprime hℓndvd
-      hℓchar
+  have hℓmem := NumberTheory.negOneWitness_mem_of_quadratic_ne_one n hn hℓprime hℓndvd hℓchar
   exact ⟨ℓ, hℓmem, by simpa only [NumberTheory.characterModulus] using hℓbound⟩
 
 /--

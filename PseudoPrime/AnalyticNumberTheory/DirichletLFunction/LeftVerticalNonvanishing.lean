@@ -18,7 +18,7 @@ public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveFunct
 namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 
 /-- Generic left-vertical nonvanishing, using the inverse-character far-left reflection. -/
-theorem dirichletLFunction_ne_zero_leftVertical {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+theorem LFunction_ne_zero_leftVertical {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (A : ℕ) (hA : 2 ≤ A) (t : ℝ) :
     DirichletCharacter.LFunction χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I) ≠ 0 := by
   set s : ℂ := ((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I with hs_def
@@ -36,13 +36,9 @@ theorem dirichletLFunction_ne_zero_leftVertical {N : ℕ} [NeZero N] {χ : Diric
   have hFsne := completedLFunction_ne_zero_farLeft hprimitive hne hinv hs1re
   have hΓsne : DirichletCharacter.gammaFactor χ s ≠ 0 := by
     rcases χ.even_or_odd with heven | hodd
-    · exact
-        gammaFactor_ne_zero_of_even_of_half_ne_neg_nat heven (leftVertical_even_half_ne_neg_nat A t)
-    · exact
-        gammaFactor_ne_zero_of_odd_of_half_ne_neg_nat hodd (leftVertical_odd_half_ne_neg_nat A t)
-  have hLeq :=
-    dirichletLFunction_eq_completed_div_gammaFactor χ s
-      (Or.inr (dirichletCharacter_level_ne_one_of_ne_one hne))
+    · exact gammaFactor_even_ne_zero_nonpole heven (leftVertical_even_half_ne_neg_nat A t)
+    · exact gammaFactor_odd_ne_zero_nonpole hodd (leftVertical_odd_half_ne_neg_nat A t)
+  have hLeq := L_eq_completed_div_gammaFactor χ s (Or.inr (character_level_ne_one_of_ne_one hne))
   rw [hLeq]
   exact div_ne_zero hFsne hΓsne
 

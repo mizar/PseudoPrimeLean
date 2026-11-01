@@ -34,10 +34,9 @@ apply the prime-tail selection and finite prime-product lemmas.
 
 Role: this is the threshold-parameterized arithmetic stage in reliable §2.
 -/
-theorem exists_seed_auxiliary_modulus_of_initial_uniform_count_with_threshold (c₀ : ℝ)
-    (x₀ x N T : ℕ) (hT : primeTailCountThreshold ≤ T)
-    (hcount : ReliableProp15UniformCount c₀ 1 1 x₀) (hx : x₀ ≤ x) (hN : N ≠ 0)
-    (hSquarefree : Squarefree N)
+theorem exists_seed_modulus_of_initial_threshold (c₀ : ℝ) (x₀ x N T : ℕ)
+    (hT : primeTailCountThreshold ≤ T) (hcount : ReliableProp15UniformCount c₀ 1 1 x₀) (hx : x₀ ≤ x)
+    (hN : N ≠ 0) (hSquarefree : Squarefree N)
     (hlower :
       (T : ℝ) <
         reliableProp15Coefficient c₀ 1 x *
@@ -56,7 +55,7 @@ theorem exists_seed_auxiliary_modulus_of_initial_uniform_count_with_threshold (c
         ArithmeticFunction.carmichael L ∣ k * N ∧
         S.card ≤ 2 * (S.filter (fun p => 60 * S.card < p)).card := by
   obtain ⟨k, hk, hkpow, S, hSsize, hS⟩ :=
-    exists_prime_set_of_reliable_prop15_uniform_count c₀ 1 1 x₀ N x T hcount hx hN hSquarefree
+    exists_primes_of_prop15_uniformCount c₀ 1 1 x₀ N x T hcount hx hN hSquarefree
       (Nat.coprime_one_right N) hlower
   obtain ⟨Ssmall, hSsmall_sub, hSsmall_card⟩ :=
     Finset.exists_subset_card_eq (s := S) (n := T + 1) (Nat.succ_le_of_lt hSsize)
@@ -97,10 +96,9 @@ prime-counting estimate, and form the tail product.
 Role: this supplies the improved reciprocal bound to the generalized AGP
 average-count argument.
 -/
-theorem exists_seed_auxiliary_modulus_of_initial_uniform_count_with_threshold120 (c₀ : ℝ)
-    (x₀ x N T : ℕ) (hT : primeTailCountThreshold120 ≤ T)
-    (hcount : ReliableProp15UniformCount c₀ 1 1 x₀) (hx : x₀ ≤ x) (hN : N ≠ 0)
-    (hSquarefree : Squarefree N)
+theorem exists_seed_modulus_of_initial_threshold120 (c₀ : ℝ) (x₀ x N T : ℕ)
+    (hT : primeTailCountThreshold120 ≤ T) (hcount : ReliableProp15UniformCount c₀ 1 1 x₀)
+    (hx : x₀ ≤ x) (hN : N ≠ 0) (hSquarefree : Squarefree N)
     (hlower :
       (T : ℝ) <
         reliableProp15Coefficient c₀ 1 x *
@@ -119,7 +117,7 @@ theorem exists_seed_auxiliary_modulus_of_initial_uniform_count_with_threshold120
         ArithmeticFunction.carmichael L ∣ k * N ∧
         S.card ≤ 2 * (S.filter (fun p => 120 * S.card < p)).card := by
   obtain ⟨k, hk, hkpow, S, hSsize, hS⟩ :=
-    exists_prime_set_of_reliable_prop15_uniform_count c₀ 1 1 x₀ N x T hcount hx hN hSquarefree
+    exists_primes_of_prop15_uniformCount c₀ 1 1 x₀ N x T hcount hx hN hSquarefree
       (Nat.coprime_one_right N) hlower
   obtain ⟨Ssmall, hSsmall_sub, hSsmall_card⟩ :=
     Finset.exists_subset_card_eq (s := S) (n := T + 1) (Nat.succ_le_of_lt hSsize)
@@ -134,7 +132,7 @@ theorem exists_seed_auxiliary_modulus_of_initial_uniform_count_with_threshold120
     rcases hS p (hSsmall_sub hp) with ⟨_, _, _, d, hd, _, heq⟩
     exact ⟨d, hd, heq⟩
   have hSpos : 0 < Ssmall.card := lt_of_le_of_lt (Nat.zero_le _) hSsmallSize
-  have hprimeCount := primeCounting_bound_of_primeTailCountThreshold120 (Nat.le_of_lt hSsmallSize)
+  have hprimeCount := primeCounting_le_half_from_threshold120 (Nat.le_of_lt hSsmallSize)
   obtain ⟨hLsq, hLprimeFactors, hLreciprocal, hLlambda, hLcard⟩ :=
     seed_prime_tail_auxiliary_modulus_data_of_cutoff Ssmall k N 120 (by norm_num only) hprime hseed
       hSpos hprimeCount
@@ -167,7 +165,7 @@ complete the modulus-four arithmetic estimates.
 Role: this makes the improved seed modulus usable as input to the later
 Proposition 1.5 and prime-supply stages.
 -/
-theorem exists_seed_auxiliary_modulus_with_prop15_input120 (c₀ : ℝ) (x₀ x N T : ℕ)
+theorem exists_seed_modulus_prop15_input120 (c₀ : ℝ) (x₀ x N T : ℕ)
     (hT : primeTailCountThreshold120 ≤ T) (hcount : ReliableProp15UniformCount c₀ 1 1 x₀)
     (hx : x₀ ≤ x) (hN : N ≠ 0) (hSquarefree : Squarefree N) (hNleX : N ≤ x)
     (hTpower : (T + 1) ^ 4 ≤ x)
@@ -198,16 +196,14 @@ theorem exists_seed_auxiliary_modulus_with_prop15_input120 (c₀ : ℝ) (x₀ x 
   obtain
     ⟨k, S, L, hk, hkpow, hSsize, hScard, hS, hL, hLsq, hLprimeFactors, hLreciprocal, hLlambda,
       hLcard⟩ :=
-    exists_seed_auxiliary_modulus_of_initial_uniform_count_with_threshold120 c₀ x₀ x N T hT hcount
-      hx hN hSquarefree hlower
-  have hprimeCount := primeCounting_bound_of_primeTailCountThreshold120 (Nat.le_of_lt hSsize)
+    exists_seed_modulus_of_initial_threshold120 c₀ x₀ x N T hT hcount hx hN hSquarefree hlower
+  have hprimeCount := primeCounting_le_half_from_threshold120 (Nat.le_of_lt hSsize)
   have hxTwo : 2 ≤ x := le_trans hcount.1 hx
   have hLreciprocalC : (∑ p ∈ L.primeFactors, (p : ℝ)⁻¹) ≤ (120 : ℝ)⁻¹ := by
     simpa only [one_div, Nat.cast_ofNat] using hLreciprocal
   have harithmetic :=
-    seed_auxiliary_modulus_arithmetic_bounds_of_cutoff_of_N_le_x 120 (by norm_num only) hxTwo
-      (Nat.pos_of_ne_zero hN) hNleX hk hkpow hScard hTpower hS hL hLsq hLprimeFactors hLreciprocalC
-      hLlambda hprimeCount
+    seed_modulus_arithmetic_cutoff 120 (by norm_num only) hxTwo (Nat.pos_of_ne_zero hN) hNleX hk
+      hkpow hScard hTpower hS hL hLsq hLprimeFactors hLreciprocalC hLlambda hprimeCount
   exact
     ⟨k, S, L, hk, hkpow, hSsize, hScard, hS, hL, hLsq, hLprimeFactors, hLreciprocal, hLlambda,
       hLcard, harithmetic⟩
@@ -231,7 +227,7 @@ seed construction.
 Role: this connects the original fixed-factor divisor count to the finite
 arithmetic stage of reliable §2.
 -/
-theorem exists_seed_auxiliary_modulus_of_fixedFactorCount (c₀ : ℝ) (hc₀ : 0 < c₀) (x₀ x z s T : ℕ)
+theorem exists_seed_modulus_of_fixedFactorCount (c₀ : ℝ) (hc₀ : 0 < c₀) (x₀ x z s T : ℕ)
     (hT : primeTailCountThreshold ≤ T) (hcount : ReliableProp15UniformCount c₀ 1 1 x₀) (hx : x₀ ≤ x)
     (hcut : (primeSetLE z).prod id ≤ reliableProp15DivisorCutoff x)
     (hlower :
@@ -261,7 +257,7 @@ theorem exists_seed_auxiliary_modulus_of_fixedFactorCount (c₀ : ℝ) (hc₀ : 
   have hcoef : 0 < reliableProp15Coefficient c₀ 1 x := by
     rw [hcoefeq]
     exact div_pos hc₀ hlog
-  have hdivcard := choose_le_restrictedDivisors_card_of_fixedPrimeFactorProducts (s := s) hcut
+  have hdivcard := choose_le_restricted_card_of_prime_products (s := s) hcut
   have hdivcardR :
     ((Nat.choose (Nat.primeCounting z) s : ℕ) : ℝ) ≤
       ((restrictedDivisors ((primeSetLE z).prod id) (reliableProp15DivisorCutoff x)).card : ℝ) := by
@@ -279,8 +275,8 @@ theorem exists_seed_auxiliary_modulus_of_fixedFactorCount (c₀ : ℝ) (hc₀ : 
   have hNpos := primeProductLE_pos z
   have hNdata := primeProductLE_data z
   exact
-    exists_seed_auxiliary_modulus_of_initial_uniform_count_with_threshold c₀ x₀ x
-      ((primeSetLE z).prod id) T hT hcount hx (Nat.ne_of_gt hNpos) hNdata.1 hlower'
+    exists_seed_modulus_of_initial_threshold c₀ x₀ x ((primeSetLE z).prod id) T hT hcount hx
+      (Nat.ne_of_gt hNpos) hNdata.1 hlower'
 
 /--
 Inputs: the uniform modulus-1 count, a squarefree nonzero modulus `N`, and a
@@ -298,7 +294,7 @@ Proof: specialize the parameterized construction to
 Role: this is the fixed-threshold interface used by the existing initial-count
 bridges.
 -/
-theorem exists_seed_auxiliary_modulus_of_initial_uniform_count (c₀ : ℝ) (x₀ x N : ℕ)
+theorem exists_seed_modulus_of_initialCount (c₀ : ℝ) (x₀ x N : ℕ)
     (hcount : ReliableProp15UniformCount c₀ 1 1 x₀) (hx : x₀ ≤ x) (hN : N ≠ 0)
     (hSquarefree : Squarefree N)
     (hlower :
@@ -320,8 +316,8 @@ theorem exists_seed_auxiliary_modulus_of_initial_uniform_count (c₀ : ℝ) (x�
   obtain
     ⟨k, S, L, hk, hkpow, hSsize, _hScard, hS, hL, hLsq, hLprimeFactors, hLreciprocal, hLlambda,
       hLcard⟩ :=
-    exists_seed_auxiliary_modulus_of_initial_uniform_count_with_threshold c₀ x₀ x N
-      primeTailCountThreshold (Nat.le_refl _) hcount hx hN hSquarefree hlower
+    exists_seed_modulus_of_initial_threshold c₀ x₀ x N primeTailCountThreshold (Nat.le_refl _)
+      hcount hx hN hSquarefree hlower
   exact ⟨k, S, L, hk, hkpow, hSsize, hS, hL, hLsq, hLprimeFactors, hLreciprocal, hLlambda, hLcard⟩
 
 /--
@@ -337,7 +333,7 @@ the restricted divisors used by reliable, Proposition 1.5.
 Role: this is the initial seed construction with the square-root divisor range
 used in reliable, §2.
 -/
-theorem exists_seed_auxiliary_modulus_of_sqrt_divisor_count (c₀ : ℝ) (hc₀ : 0 < c₀) (x₀ x N T : ℕ)
+theorem exists_seed_modulus_of_sqrt_divisors (c₀ : ℝ) (hc₀ : 0 < c₀) (x₀ x N T : ℕ)
     (hT : primeTailCountThreshold ≤ T) (hcount : ReliableProp15UniformCount c₀ 1 1 x₀) (hx : x₀ ≤ x)
     (hN : N ≠ 0) (hSquarefree : Squarefree N) (hcut : Nat.sqrt N ≤ reliableProp15DivisorCutoff x)
     (hlower :
@@ -357,11 +353,9 @@ theorem exists_seed_auxiliary_modulus_of_sqrt_divisor_count (c₀ : ℝ) (hc₀ 
         S.card ≤ 2 * (S.filter (fun p => 60 * S.card < p)).card := by
   have hxTwo : 2 ≤ x := le_trans hcount.1 hx
   have hlower' :=
-    initial_uniform_count_lower_bound_of_sqrt_divisors (c₀ := c₀) (N := N) (x := x) (T := T) hc₀ hN
-      hSquarefree hcut hxTwo hlower
-  exact
-    exists_seed_auxiliary_modulus_of_initial_uniform_count_with_threshold c₀ x₀ x N T hT hcount hx
-      hN hSquarefree hlower'
+    initialCount_lower_of_sqrt_divisors (c₀ := c₀) (N := N) (x := x) (T := T) hc₀ hN hSquarefree
+      hcut hxTwo hlower
+  exact exists_seed_modulus_of_initial_threshold c₀ x₀ x N T hT hcount hx hN hSquarefree hlower'
 
 /--
 Inputs: a squarefree nonzero modulus `N` below the divisor cutoff and a lower
@@ -374,12 +368,12 @@ Content: when the cutoff covers `N`, every divisor is counted, and squarefree
 `N` has exactly `2 ^ N.primeFactors.card` divisors.
 
 Proof: rewrite the restricted divisor cardinality using
-`card_restrictedDivisors_eq_two_pow_primeFactors_card`.
+`restrictedDivisors_card_eq_two_pow`.
 
 Role: this gives a convenient sufficient condition for the initial uniform
 count needed by the seed auxiliary-modulus construction.
 -/
-theorem initial_uniform_count_lower_bound_of_full_divisors (c₀ : ℝ) (x N : ℕ) (hN : N ≠ 0)
+theorem initialCount_lower_of_full_divisors (c₀ : ℝ) (x N : ℕ) (hN : N ≠ 0)
     (hSquarefree : Squarefree N) (hcutoff : N ≤ reliableProp15DivisorCutoff x)
     (hlower :
       (primeTailCountThreshold : ℝ) <
@@ -387,7 +381,7 @@ theorem initial_uniform_count_lower_bound_of_full_divisors (c₀ : ℝ) (x N : �
     (primeTailCountThreshold : ℝ) <
       reliableProp15Coefficient c₀ 1 x *
         ((restrictedDivisors N (reliableProp15DivisorCutoff x)).card : ℝ) := by
-  rw [card_restrictedDivisors_eq_two_pow_primeFactors_card hN hSquarefree hcutoff]
+  rw [restrictedDivisors_card_eq_two_pow hN hSquarefree hcutoff]
   exact hlower
 
 /--
@@ -401,13 +395,13 @@ Proof: rewrite the restricted-divisor cardinality as the full divisor count.
 Role: this threshold-parameterized form connects the prime-product count to
 the exact-size seed construction.
 -/
-theorem initial_uniform_count_lower_bound_of_full_divisors_with_threshold (c₀ : ℝ) (x N T : ℕ)
-    (hN : N ≠ 0) (hSquarefree : Squarefree N) (hcutoff : N ≤ reliableProp15DivisorCutoff x)
+theorem initialCount_lower_full_threshold (c₀ : ℝ) (x N T : ℕ) (hN : N ≠ 0)
+    (hSquarefree : Squarefree N) (hcutoff : N ≤ reliableProp15DivisorCutoff x)
     (hlower : (T : ℝ) < reliableProp15Coefficient c₀ 1 x * ((2 ^ N.primeFactors.card : ℕ) : ℝ)) :
     (T : ℝ) <
       reliableProp15Coefficient c₀ 1 x *
         ((restrictedDivisors N (reliableProp15DivisorCutoff x)).card : ℝ) := by
-  rw [card_restrictedDivisors_eq_two_pow_primeFactors_card hN hSquarefree hcutoff]
+  rw [restrictedDivisors_card_eq_two_pow hN hSquarefree hcutoff]
   exact hlower
 
 open PseudoPrime.NumberTheory.PrimeProducts in
@@ -416,7 +410,7 @@ Inputs: the modulus-1 uniform count, a cutoff `z`, and bounds placing the
 product of primes at most `z` below the divisor cutoff with enough divisors.
 
 Claim: this initial prime product supplies the auxiliary modulus data produced
-by `exists_seed_auxiliary_modulus_of_initial_uniform_count`.
+by `exists_seed_modulus_of_initialCount`.
 
 Content: the divisor count is `2 ^ Nat.primeCounting z`, since the prime
 product is squarefree and has exactly `Nat.primeCounting z` prime factors.
@@ -456,11 +450,10 @@ theorem exists_seed_auxiliary_modulus_of_primeProductLE (c₀ : ℝ) (x₀ x z :
     rw [primeProductLE_primeFactors_card]
     exact hlower
   have hRestrictedLower :=
-    initial_uniform_count_lower_bound_of_full_divisors c₀ x ((primeSetLE z).prod id) hN hData.1 hcut
-      hFullLower
+    initialCount_lower_of_full_divisors c₀ x ((primeSetLE z).prod id) hN hData.1 hcut hFullLower
   exact
-    exists_seed_auxiliary_modulus_of_initial_uniform_count c₀ x₀ x ((primeSetLE z).prod id) hcount
-      hx hN hData.1 hRestrictedLower
+    exists_seed_modulus_of_initialCount c₀ x₀ x ((primeSetLE z).prod id) hcount hx hN hData.1
+      hRestrictedLower
 
 open PseudoPrime.NumberTheory.PrimeProducts in
 /--
@@ -479,7 +472,7 @@ the restricted count, and apply the threshold-parameterized seed theorem.
 Role: this is the threshold-aware prime-product bridge for the initial
 modulus-1 application of Proposition 1.5.
 -/
-theorem exists_seed_auxiliary_modulus_of_primeProductLE_with_threshold (c₀ : ℝ) (x₀ x z T : ℕ)
+theorem exists_seed_modulus_of_primorial_threshold (c₀ : ℝ) (x₀ x z T : ℕ)
     (hcount : ReliableProp15UniformCount c₀ 1 1 x₀) (hx : x₀ ≤ x)
     (hcut : (primeSetLE z).prod id ≤ reliableProp15DivisorCutoff x)
     (hT : primeTailCountThreshold ≤ T)
@@ -508,11 +501,10 @@ theorem exists_seed_auxiliary_modulus_of_primeProductLE_with_threshold (c₀ : �
     rw [primeProductLE_primeFactors_card]
     exact hlower
   have hRestrictedLower :=
-    initial_uniform_count_lower_bound_of_full_divisors_with_threshold c₀ x ((primeSetLE z).prod id)
-      T hN hData.1 hcut hFullLower
+    initialCount_lower_full_threshold c₀ x ((primeSetLE z).prod id) T hN hData.1 hcut hFullLower
   exact
-    exists_seed_auxiliary_modulus_of_initial_uniform_count_with_threshold c₀ x₀ x
-      ((primeSetLE z).prod id) T hT hcount hx hN hData.1 hRestrictedLower
+    exists_seed_modulus_of_initial_threshold c₀ x₀ x ((primeSetLE z).prod id) T hT hcount hx hN
+      hData.1 hRestrictedLower
 
 open PseudoPrime.NumberTheory.PrimeProducts in
 /--
@@ -528,8 +520,8 @@ then apply the general cutoff tail and squarefree-product constructions.
 Role: this retains the stronger reciprocal-sum estimate needed by the
 full-divisor AGP route without changing the established cutoff-60 API.
 -/
-theorem exists_seed_auxiliary_modulus_of_primeProductLE_with_threshold_cutoff (c₀ : ℝ)
-    (x₀ x z T C : ℕ) (hC : 4 < C) (hcount : ReliableProp15UniformCount c₀ 1 1 x₀) (hx : x₀ ≤ x)
+theorem exists_seed_modulus_primorial_cutoff (c₀ : ℝ) (x₀ x z T C : ℕ) (hC : 4 < C)
+    (hcount : ReliableProp15UniformCount c₀ 1 1 x₀) (hx : x₀ ≤ x)
     (hcut : (primeSetLE z).prod id ≤ reliableProp15DivisorCutoff x)
     (hT : primeTailCountThreshold ≤ T) (hprimeCount : 2 * Nat.primeCounting (C * (T + 1)) ≤ T + 1)
     (hlower : (T : ℝ) < reliableProp15Coefficient c₀ 1 x * ((2 ^ Nat.primeCounting z : ℕ) : ℝ)) :
@@ -555,11 +547,9 @@ theorem exists_seed_auxiliary_modulus_of_primeProductLE_with_threshold_cutoff (c
     (T : ℝ) < reliableProp15Coefficient c₀ 1 x * ((2 ^ N.primeFactors.card : ℕ) : ℝ) := by
     rw [primeProductLE_primeFactors_card]
     exact hlower
-  have hRestrictedLower :=
-    initial_uniform_count_lower_bound_of_full_divisors_with_threshold c₀ x N T hN hData.1 hcut
-      hFullLower
+  have hRestrictedLower := initialCount_lower_full_threshold c₀ x N T hN hData.1 hcut hFullLower
   obtain ⟨k, hk, hkpow, Sall, hSallsize, hSall⟩ :=
-    exists_prime_set_of_reliable_prop15_uniform_count c₀ 1 1 x₀ N x T hcount hx hN hData.1
+    exists_primes_of_prop15_uniformCount c₀ 1 1 x₀ N x T hcount hx hN hData.1
       (Nat.coprime_one_right _) hRestrictedLower
   obtain ⟨S, hSsub, hScard⟩ :=
     Finset.exists_subset_card_eq (s := Sall) (n := T + 1) (Nat.succ_le_of_lt hSallsize)
@@ -612,7 +602,7 @@ apply the thresholded seed construction at `x = N^5`.
 Role: this connects the explicit first-stage parameter scale to the seed
 primes required for the reliable Proposition 1.5 construction.
 -/
-theorem exists_seed_auxiliary_modulus_of_primeProductLE_scale {c₀ : ℝ} (hc₀ : 0 < c₀) (x₀ : ℕ)
+theorem exists_seed_modulus_primorial_scale {c₀ : ℝ} (hc₀ : 0 < c₀) (x₀ : ℕ)
     (hcount : ReliableProp15UniformCount c₀ 1 1 x₀) :
     ∃ m z T : ℕ,
       10 ≤ m ∧
@@ -738,8 +728,7 @@ theorem exists_seed_auxiliary_modulus_of_primeProductLE_scale {c₀ : ℝ} (hc�
   have hTpowX : (T + 1) ^ 4 ≤ N ^ 5 := le_trans hTpow hNfiveLower
   have hcut := primeProductLE_le_divisorCutoff_fifth_power z
   have hseed :=
-    exists_seed_auxiliary_modulus_of_primeProductLE_with_threshold c₀ x₀ (N ^ 5) z T hcount hx₀ hcut
-      hT60 hcountStrict
+    exists_seed_modulus_of_primorial_threshold c₀ x₀ (N ^ 5) z T hcount hx₀ hcut hT60 hcountStrict
   rcases hseed with
     ⟨k, S, L, hk, hkpow, hSsize, hScard, hS, hL, hLsq, hLprimeFactors, hLreciprocal, hLlambda,
       hLcard⟩
@@ -752,8 +741,8 @@ theorem exists_seed_auxiliary_modulus_of_primeProductLE_scale {c₀ : ℝ} (hc�
   obtain
     ⟨hLcoprimeFour, hFactorPower, hFactorBound, hLlower, hLambdaLower, hProp15Input, hLbound,
       hLambdaBound⟩ :=
-    seed_auxiliary_modulus_arithmetic_bounds_of_N_le_x hxTwo hNpos hNleX hk hkpow hScard hTpowX hS
-      hL hLsq hLprimeFactors hLreciprocal hLlambda hprimeCount
+    seed_modulus_arithmetic_of_N_le_x hxTwo hNpos hNleX hk hkpow hScard hTpowX hS hL hLsq
+      hLprimeFactors hLreciprocal hLlambda hprimeCount
   have hFactorCount : (T + 1) / 2 ≤ L.primeFactors.card := by
     rw [hLprimeFactors, ← hScard]
     exact Nat.div_le_of_le_mul hLcard
@@ -764,8 +753,8 @@ theorem exists_seed_auxiliary_modulus_of_primeProductLE_scale {c₀ : ℝ} (hc�
     rw [hLprimeFactors] at hp
     exact (hS p (Finset.mem_filter.mp hp).1).1
   have hfixed :=
-    fixedPrimeFactorProductsOf_card_lower_bound_of_seed_factor_count L.primeFactors T (z * m)
-      hprimeFactor hFactorCount hs hscaleS
+    fixedPrimeProducts_card_lower_of_seed_count L.primeFactors T (z * m) hprimeFactor hFactorCount
+      hs hscaleS
   have hzm : 20 ≤ z * m := Nat.mul_le_mul hzge2 hm
   have h80 : 80 ≤ 4 * z * m := by
     calc
@@ -875,8 +864,8 @@ the exact-size seed bridge and monotonicity of natural fourth powers.
 Role: this is the parameterized initial arithmetic construction needed before
 the P2 threshold can be compared with the later progression count.
 -/
-theorem exists_seed_auxiliary_modulus_of_uniform_count_with_threshold (c₀ : ℝ) (hc₀ : 0 < c₀)
-    (x₀ T : ℕ) (hT : primeTailCountThreshold ≤ T) (hcount : ReliableProp15UniformCount c₀ 1 1 x₀) :
+theorem exists_seed_modulus_uniform_threshold (c₀ : ℝ) (hc₀ : 0 < c₀) (x₀ T : ℕ)
+    (hT : primeTailCountThreshold ≤ T) (hcount : ReliableProp15UniformCount c₀ 1 1 x₀) :
     ∃ (z : ℕ),
       2 ≤ z ∧
         x₀ ≤ ((primeSetLE z).prod id : ℕ) ^ 5 ∧
@@ -914,8 +903,8 @@ theorem exists_seed_auxiliary_modulus_of_uniform_count_with_threshold (c₀ : �
   obtain
     ⟨k, S, L, hk, hkpow, hSsize, hScard, hS, hL, hLsq, hLprimeFactors, hLreciprocal, hLlambda,
       hLcard⟩ :=
-    exists_seed_auxiliary_modulus_of_primeProductLE_with_threshold c₀ x₀
-      ((primeSetLE z).prod id ^ 5) z T hcount hx₀ hcut hT hlower
+    exists_seed_modulus_of_primorial_threshold c₀ x₀ ((primeSetLE z).prod id ^ 5) z T hcount hx₀
+      hcut hT hlower
   have hprimeCount := primeCounting_bound_of_primeTailCountThreshold (Nat.le_of_lt hSsize)
   have hxTwo : 2 ≤ ((primeSetLE z).prod id : ℕ) ^ 5 := le_trans hcount.1 hx₀
   obtain
@@ -944,8 +933,8 @@ half of the squarefree divisor count still exceeds the target. The cutoff for
 Role: this replaces the initial `N ^ 5` all-divisor construction with the
 square-root range used in reliable, §2.
 -/
-theorem exists_seed_auxiliary_modulus_of_uniform_count_sqrt_cutoff (c₀ : ℝ) (hc₀ : 0 < c₀)
-    (x₀ T : ℕ) (hT : primeTailCountThreshold ≤ T) (hcount : ReliableProp15UniformCount c₀ 1 1 x₀) :
+theorem exists_seed_modulus_uniform_sqrt (c₀ : ℝ) (hc₀ : 0 < c₀) (x₀ T : ℕ)
+    (hT : primeTailCountThreshold ≤ T) (hcount : ReliableProp15UniformCount c₀ 1 1 x₀) :
     ∃ z : ℕ,
       2 ≤ z ∧
         x₀ ≤ ((primeSetLE z).prod id : ℕ) ^ 2 ∧
@@ -1061,8 +1050,8 @@ theorem exists_seed_auxiliary_modulus_of_uniform_count_sqrt_cutoff (c₀ : ℝ) 
     rw [primeProductLE_primeFactors_card z]
     exact hlowerNew
   have hseed :=
-    exists_seed_auxiliary_modulus_of_sqrt_divisor_count c₀ hc₀ x₀ (N ^ 2) N T hT hcount hx₀
-      (Nat.ne_of_gt hNpos) (primeProductLE_data z).1 hcut hlowerFactors
+    exists_seed_modulus_of_sqrt_divisors c₀ hc₀ x₀ (N ^ 2) N T hT hcount hx₀ (Nat.ne_of_gt hNpos)
+      (primeProductLE_data z).1 hcut hlowerFactors
   rcases hseed with
     ⟨k, S, L, hk, hkpow, hSsize, hScard, hS, hL, hLsq, hLprimeFactors, hLreciprocal, hLlambda,
       hLcard⟩
@@ -1072,8 +1061,8 @@ theorem exists_seed_auxiliary_modulus_of_uniform_count_sqrt_cutoff (c₀ : ℝ) 
   obtain
     ⟨hLcoprimeFour, hFactorPower, hFactorBound, hLlower, hLambdaLower, hProp15Input, hLbound,
       hLambdaBound⟩ :=
-    seed_auxiliary_modulus_arithmetic_bounds_of_N_le_x hxTwo hNpos hNleX hk hkpow hScard hTpow hS hL
-      hLsq hLprimeFactors hLreciprocal hLlambda hprimeCount
+    seed_modulus_arithmetic_of_N_le_x hxTwo hNpos hNleX hk hkpow hScard hTpow hS hL hLsq
+      hLprimeFactors hLreciprocal hLlambda hprimeCount
   have hFactorCount : (T + 1) / 2 ≤ L.primeFactors.card := by
     rw [hLprimeFactors, ← hScard]
     exact Nat.div_le_of_le_mul hLcard
@@ -1122,9 +1111,8 @@ shared arithmetic-bound theorem.
 Role: this is the enriched initial construction following the fixed-factor
 divisor count in reliable §2.
 -/
-theorem exists_seed_auxiliary_modulus_of_fixedFactorCount_with_threshold (c₀ : ℝ) (hc₀ : 0 < c₀)
-    (x₀ x z s T : ℕ) (hT : primeTailCountThreshold ≤ T)
-    (hcount : ReliableProp15UniformCount c₀ 1 1 x₀) (hx : x₀ ≤ x)
+theorem exists_seed_modulus_fixedFactors_threshold (c₀ : ℝ) (hc₀ : 0 < c₀) (x₀ x z s T : ℕ)
+    (hT : primeTailCountThreshold ≤ T) (hcount : ReliableProp15UniformCount c₀ 1 1 x₀) (hx : x₀ ≤ x)
     (hcut : (primeSetLE z).prod id ≤ reliableProp15DivisorCutoff x) (hTpower : (T + 1) ^ 4 ≤ x)
     (hlower :
       (T : ℝ) <
@@ -1156,7 +1144,7 @@ theorem exists_seed_auxiliary_modulus_of_fixedFactorCount_with_threshold (c₀ :
   obtain
     ⟨k, S, L, hk, hkpow, hSsize, hScard, hS, hL, hLsq, hLprimeFactors, hLreciprocal, hLlambda,
       hLcard⟩ :=
-    exists_seed_auxiliary_modulus_of_fixedFactorCount c₀ hc₀ x₀ x z s T hT hcount hx hcut hlower
+    exists_seed_modulus_of_fixedFactorCount c₀ hc₀ x₀ x z s T hT hcount hx hcut hlower
   have hprimeCount := primeCounting_bound_of_primeTailCountThreshold (Nat.le_of_lt hSsize)
   have hxTwo : 2 ≤ x := le_trans hcount.1 hx
   obtain

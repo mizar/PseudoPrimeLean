@@ -103,7 +103,7 @@ theorem exists_uniform_heilbronn_interval_bound {r : ℕ} (hr : 16185 ≤ r) :
               k < p ^ 2 ∧
               p ^ 28 ≤ k ^ 15 ∧
               k ^ 15 ≤ 32768 * p ^ 28 ∧ p * heilbronnInitialCount p k < 256 * k := by
-  obtain ⟨P, hP⟩ := exists_uniform_weighted_short_congruence_energy_budget (M := 1) hr
+  obtain ⟨P, hP⟩ := exists_uniform_short_energy_budget (M := 1) hr
   refine ⟨max P (32 ^ 15 * 32768 + 1), ?_⟩
   intro p hp hodd hlarge
   have hPp := (max_le_iff.mp hlarge).1

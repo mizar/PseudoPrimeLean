@@ -55,7 +55,7 @@ theorem prime_factor_square_le_local_gcd_quotient_mul {p m : ℕ} (hp : 1 < p) (
 of the ambient-predecessor power kernel modulo p. Apply the cyclic prime
 unit-group index formula and the cofactor gcd inequality.
 This replaces the local modulus size premise by a local subgroup index bound. -/
-theorem prime_factor_square_le_local_powerKernel_index_mul {p m : ℕ} [Fact p.Prime] (hm : 1 < m) :
+theorem primeFactor_sq_le_powerKernel_index {p m : ℕ} [Fact p.Prime] (hm : 1 < m) :
     p ^ 2 ≤ (powMonoidHom (p * m - 1) : (ZMod p)ˣ →* (ZMod p)ˣ).ker.index * (p * m) := by
   rw [Subgroup.index_ker, IsCyclic.card_powMonoidHom_range, Nat.card_eq_fintype_card,
     ZMod.card_units_eq_totient, Nat.totient_prime (Fact.out : p.Prime)]

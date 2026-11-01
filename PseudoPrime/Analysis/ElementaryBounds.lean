@@ -26,8 +26,7 @@ log 17`, `harmonic 16 = 2436559/720720` (rational arithmetic); `log 17 ≤ log 1
 Role: the sharper Euler–Mascheroni lower bound needed for the odd main-error bound (`γ > 1/2`
 alone is too weak).
 -/
-theorem twenty_seven_fiftieths_lt_eulerMascheroniConstant :
-    (27 / 50 : ℝ) < Real.eulerMascheroniConstant := by
+theorem eulerMascheroniConstant_gt_27_50 : (27 / 50 : ℝ) < Real.eulerMascheroniConstant := by
   have hseq := Real.eulerMascheroniSeq_lt_eulerMascheroniConstant 16
   have hlog17 :=
     log_le_log_add_sub_div (a := (16 : ℝ)) (y := 17) (by norm_num only) (by norm_num only)

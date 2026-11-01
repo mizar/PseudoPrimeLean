@@ -20,8 +20,8 @@ namespace PseudoPrime.NumberTheory.Heilbronn
 the long-height residue factor p²+4T^(2m). Raise the finite-fiber growth
 inequality to r and replace the quotient coefficient by its explicit divisor
 bound. The fixed m,n,r are independent of the prime and both heights. -/
-theorem heightRestrictedRatioSet_fiber_power_le_polynomial {p H T m n r : ℕ} [Fact p.Prime]
-    (hHp : H < p) (hT : 0 < T) (hm : 0 < m) (hn : 0 < n) (hr : 0 < r) :
+theorem heightRatios_fiber_power_le_polynomial {p H T m n r : ℕ} [Fact p.Prime] (hHp : H < p)
+    (hT : 0 < T) (hm : 0 < m) (hn : 0 < n) (hr : 0 < r) :
     ((heightRestrictedRatioSet p H T).card ^ m * p) ^ (n * r) ≤
       quotientPowerBoundConstant r ^ (n ^ 2 * (m - 1)) * T ^ heightRatioLossExponent m n r *
         (p ^ 2 + 4 * T ^ (2 * m)) ^ (n * r) := by
@@ -66,7 +66,7 @@ theorem residue_product_band_bound {p T m : ℕ} {beta : ℝ}
 for positive degree m and precision c. Use the explicit orders n,r, retain
 their factorial coefficient, and extract roots as in the uniform band
 estimate. This supplies a numerical coefficient rather than only existence. -/
-theorem heightRestrictedRatioSet_le_explicit_fiber_band_bound {m c : ℕ} (hm : 0 < m) (hc : 0 < c) :
+theorem heightRatios_le_fiber_band_bound {m c : ℕ} (hm : 0 < m) (hc : 0 < c) :
     ∀ (p H T : ℕ) [Fact p.Prime],
       H < p →
         0 < T →
@@ -91,7 +91,7 @@ theorem heightRestrictedRatioSet_le_explicit_fiber_band_bound {m c : ℕ} (hm : 
   have hnr := Nat.mul_pos hn hr
   have hnrR : (0 : ℝ) < (n * r : ℕ) := Nat.cast_pos.mpr hnr
   have hcR : (0 : ℝ) < c := Nat.cast_pos.mpr hc
-  have hpoly := heightRestrictedRatioSet_fiber_power_le_polynomial hHp hT hm hn hr
+  have hpoly := heightRatios_fiber_power_le_polynomial hHp hT hm hn hr
   have hb := natural_count_le_polynomial_root hnr hpoly
   have he : ((n * r : ℕ) : ℝ) / (n * r : ℕ) = 1 := div_self (ne_of_gt hnrR)
   rw [he, Real.rpow_one] at hb
@@ -164,6 +164,6 @@ theorem exists_uniform_height_ratio_fiber_band_bound {m c : ℕ} (hm : 0 < m) (h
                   C * (T : ℝ) ^ (1 + 1 / (c : ℝ)) * (p : ℝ) ^ beta := by
   exact
     ⟨fiberBandCoefficient m c, Nat.cast_pos.mpr (fiberBandCoefficient_pos m c),
-      heightRestrictedRatioSet_le_explicit_fiber_band_bound hm hc⟩
+      heightRatios_le_fiber_band_bound hm hc⟩
 
 end PseudoPrime.NumberTheory.Heilbronn

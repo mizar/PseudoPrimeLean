@@ -20,8 +20,8 @@ namespace PseudoPrime.PseudoSquare
 there is an odd-prime Jacobi non-one witness at most (99/100)L².
 Apply the improved character theorem at level 4n and transfer prime values,
 including nonunits. This is the large-level endpoint existence interface. -/
-theorem exists_prime_ne_one_witness_le_gamma_endpoint_nearSquare {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hq : 20000 ≤ 4 * n) {L : ℝ} (hL : 1000 ≤ L) (hlogn : Real.log n ≤ L)
+theorem exists_neOneWitness_le_gamma_endpoint_nearSquare {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hq : 20000 ≤ 4 * n) {L : ℝ} (hL : 1000 ≤ L) (hlogn : Real.log n ≤ L)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 100 : ℝ) * L ^ 2 ∧ jacobiSym n p ≠ 1 := by
   let : NeZero (4 * n) := ⟨Nat.mul_ne_zero (by norm_num only) (Odd.pos hn).ne'⟩
@@ -29,8 +29,7 @@ theorem exists_prime_ne_one_witness_le_gamma_endpoint_nearSquare {n : ℕ} (hn :
     rw [LLS.log_original_quadratic_level (Odd.pos hn)]
     linarith only [hlogn, Analysis.log_four_le_seven_fifths]
   obtain ⟨p, hp, hodd, hbound, hval⟩ :=
-    LLS.exists_odd_prime_ne_one_of_nearSquare_gamma_endpoint hq
-      (NumberTheory.complexQuadraticCharacter n hn)
+    LLS.exists_oddPrime_neOne_nearSquare_GRH hq (NumberTheory.complexQuadraticCharacter n hn)
       (NumberTheory.complexQuadraticCharacter_isQuadratic n hn)
       (NumberTheory.complexQuadraticCharacter_ne_one_of_not_square n hn hns)
       (by exact ⟨2 * n, by ring⟩) hGRH hL hlogq
@@ -51,14 +50,14 @@ the least odd-prime non-one Jacobi witness is at most (99/100)L².
 Use the near-square Gamma theorem at large levels and the established global
 log-square envelope at smaller levels. All inputs share the same endpoint.
 The witness-set nonemptiness proof is explicit for finite-maximum consumers. -/
-theorem primeNeOneWitness_cast_le_gamma_endpoint_nearSquare
+theorem neOneWitness_cast_le_gamma_endpoint_nearSquare
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : Odd n)
     (hns : ¬IsSquare n) {L : ℝ} (hL : 1000 ≤ L) (hlogn : Real.log n ≤ L)
     (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤ (99 / 100 : ℝ) * L ^ 2 := by
   by_cases hq : 20000 ≤ 4 * n
   · obtain ⟨p, hp, ho, hb, hv⟩ :=
-      exists_prime_ne_one_witness_le_gamma_endpoint_nearSquare hn hns hq hL hlogn hGRH
+      exists_neOneWitness_le_gamma_endpoint_nearSquare hn hns hq hL hlogn hGRH
     exact (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hb
   · have hnsmall : n ≤ 46000 := by
       have ht := lt_of_not_ge hq
@@ -81,7 +80,7 @@ theorem primeNeOneWitness_cast_le_gamma_endpoint_nearSquare
 Jacobi non-one witness at most (99/100)(log n)². Apply the endpoint least-witness
 bound and use membership in the witness set. No modulus-size or numerical-gap
 hypothesis remains. This is the pointwise coefficient-preserving start improvement. -/
-theorem exists_prime_ne_one_witness_le_nearSquare_gamma_log_1000
+theorem exists_neOneWitness_le_nearSquare_gamma_log_1000
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : Odd n)
     (hns : ¬IsSquare n) (hL : 1000 ≤ Real.log n) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 100 : ℝ) * (Real.log n) ^ 2 ∧ jacobiSym n p ≠ 1 := by
@@ -91,7 +90,7 @@ theorem exists_prime_ne_one_witness_le_nearSquare_gamma_log_1000
   have hm := NumberTheory.primeNeOneWitness_mem n hw
   exact
     ⟨NumberTheory.primeNeOneWitness n hw, hm.1, hm.2.1,
-      primeNeOneWitness_cast_le_gamma_endpoint_nearSquare hGRH hn hns hL (le_refl _) hw, hm.2.2⟩
+      neOneWitness_cast_le_gamma_endpoint_nearSquare hGRH hn hns hL (le_refl _) hw, hm.2.2⟩
 
 /-- Under GRH and log B ≥ 1000, the finite maximum of least non-one
 Jacobi witnesses through B is at most (99/100)(log B)².
@@ -106,7 +105,7 @@ theorem QNeOne_le_nearSquare_gamma_log_1000 {B : ℕ} (hB : 1000 ≤ Real.log B)
   have hn0 : (0 : ℝ) < n := by exact_mod_cast Odd.pos ha.odd
   have hnB : (n : ℝ) ≤ B := by exact_mod_cast ha.le
   exact
-    primeNeOneWitness_cast_le_gamma_endpoint_nearSquare hGRH ha.odd ha.not_isSquare hB
+    neOneWitness_cast_le_gamma_endpoint_nearSquare hGRH ha.odd ha.not_isSquare hB
       (Real.log_le_log hn0 hnB)
       (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
         (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare ha.odd ha.not_isSquare))

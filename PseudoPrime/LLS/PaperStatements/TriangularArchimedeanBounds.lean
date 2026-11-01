@@ -37,8 +37,7 @@ theorem triangular_gamma_central_log_bound {q : ℕ} (χ : DirichletCharacter �
       linarith only [hp, Real.pi_lt_four]
     linarith only [hb, hnlog, Real.pi_lt_four,
       AnalyticNumberTheory.Gamma.digammaLogErrorBound_le_eight]
-  · have hb :=
-      AnalyticNumberTheory.DirichletLFunction.norm_logDeriv_gammaFactor_central_le_linear χ hs
+  · have hb := AnalyticNumberTheory.DirichletLFunction.gammaLogDeriv_central_linear χ hs
     have ht1 : |s.im| ≤ 1 := (lt_of_not_ge ht).le
     linarith only [hb, ht1, hlog]
 

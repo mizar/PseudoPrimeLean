@@ -48,8 +48,8 @@ independent vertical-integrability hypothesis. -/
 theorem verticalIntegrable_mellin_logarithmicTestWeight (g : ℝ → ℂ) (he : ∀ u : ℝ, g (-u) = g u)
     (hc : HasCompactSupport g) (hg : ContDiff ℝ (↑(⊤ : ℕ∞)) g) (σ : ℝ) :
     Complex.VerticalIntegrable (mellin (logarithmicTestWeight g)) σ := by
-  obtain ⟨D₀, _, h₀⟩ := mellin_logarithmicTestWeight_uniform_power_bound g he hc hg σ σ 0
-  obtain ⟨D₂, _, h₂⟩ := mellin_logarithmicTestWeight_uniform_power_bound g he hc hg σ σ 2
+  obtain ⟨D₀, _, h₀⟩ := logTest_mellin_uniform_power_bound g he hc hg σ σ 0
+  obtain ⟨D₂, _, h₂⟩ := logTest_mellin_uniform_power_bound g he hc hg σ σ 2
   have hline : Continuous (fun T : ℝ ↦ (σ : ℂ) + T * Complex.I) :=
     continuous_const.add (Complex.continuous_ofReal.mul continuous_const)
   have hm := (differentiable_mellin_logarithmicTestWeight g hc hg.continuous).continuous

@@ -128,9 +128,8 @@ theorem integral_tsum_centeredResolventKernel_of_mass {ι : Type*} (α : ι → 
 multiplicity mass, the normalized integral of the centered resolvent sum is the
 multiplicity-weighted sum of (x^alpha-1)/alpha^2. Exchange the series and integral
 and evaluate each pole by Mellin inversion. This gives the completed-zero contribution. -/
-theorem normalized_integral_tsum_centeredResolventKernel {ι : Type*} (α : ι → ℂ) (m : ι → ℕ)
-    (hα : ∀ i, (α i).re < 0) {τ x : ℝ} (hτ : 0 < τ) (hx : 1 < x)
-    (hm : Summable (fun i ↦ (m i : ℝ) / ‖α i‖ ^ (3 / 2 : ℝ))) :
+theorem centeredResolvent_integral_tsum {ι : Type*} (α : ι → ℂ) (m : ι → ℕ) (hα : ∀ i, (α i).re < 0)
+    {τ x : ℝ} (hτ : 0 < τ) (hx : 1 < x) (hm : Summable (fun i ↦ (m i : ℝ) / ‖α i‖ ^ (3 / 2 : ℝ))) :
     (2 * Real.pi)⁻¹ • (∫ y : ℝ, ∑' i, (m i : ℂ) * centeredResolventKernel (α i) x τ y) =
       ∑' i, (m i : ℂ) * (((x : ℂ) ^ (α i) - 1) / (α i) ^ 2) := by
   rw [integral_tsum_centeredResolventKernel_of_mass α m hα hτ (zero_lt_one.trans hx) hm,

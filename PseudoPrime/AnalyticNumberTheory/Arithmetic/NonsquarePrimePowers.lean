@@ -37,7 +37,7 @@ private noncomputable def nonsquarePrimePowerSlice (x : ℝ) (k : ℕ) : ℝ :=
 /-- The nonsquare composite sum equals its prime-power-supported sum with excluded
 terms set to zero. Vanishing Mangoldt coefficients remove the remaining indices.
 This supplies the input to Chebyshev's finite prime-power reindexing. -/
-private theorem nonsquareCompositeLogWeightedSum_eq_supported (x : ℝ) :
+private theorem nonsquareLogSum_eq_supported (x : ℝ) :
     nonsquareCompositeLogWeightedSum x =
       ∑ n ∈ (Finset.Ioc 0 ⌊x⌋₊).filter IsPrimePow,
         if ¬n.Prime ∧ ¬IsSquare n then logWeightedMangoldtTerm x n else 0 := by
@@ -48,7 +48,7 @@ private theorem nonsquareCompositeLogWeightedSum_eq_supported (x : ℝ) :
   intro n _
   by_cases hn : IsPrimePow n
   · rw [ite_eq_left hn]
-  · rw [ite_eq_right hn, logWeightedMangoldtTerm_eq_zero_of_not_primePow hn, ite_self]
+  · rw [ite_eq_right hn, logMangoldtTerm_eq_zero_of_not_primePow hn, ite_self]
 
 /-- For an even exponent, the nonsquare slice vanishes because every such power
 is a square. This removes all even slices without estimating their weights. -/
@@ -92,13 +92,13 @@ private theorem nonsquarePrimePowerSlice_le {x : ℝ} (hx : 0 < x) {k : ℕ} (hk
 prime-power slices with odd exponent at least three. Reindex by Chebyshev's formula,
 remove even and exponent-one slices, and enlarge the remaining nonnegative slices.
 This connects the nonsquare residue-class remainder to the Section 4.1 odd-power bound. -/
-theorem nonsquareCompositeLogWeightedSum_le_odd_powers {x : ℝ} (hx : 0 < x) :
+theorem nonsquareLogSum_le_odd_powers {x : ℝ} (hx : 0 < x) :
     nonsquareCompositeLogWeightedSum x ≤
       ∑ k ∈ (Finset.Icc 3 ⌊Real.log x / Real.log 2⌋₊).filter Odd,
         ∑ p ∈ (Finset.Ioc 0 ⌊x ^ ((1 : ℝ) / k)⌋₊).filter Nat.Prime,
           logWeightedMangoldtTerm x (p ^ k) := by
   classical
-  rw [nonsquareCompositeLogWeightedSum_eq_supported, Chebyshev.sum_PrimePow_eq_sum_sum _ hx.le]
+  rw [nonsquareLogSum_eq_supported, Chebyshev.sum_PrimePow_eq_sum_sum _ hx.le]
   let K := ⌊Real.log x / Real.log 2⌋₊
   have he :
     (∑ k ∈ (Finset.Icc 3 K).filter Odd, nonsquarePrimePowerSlice x k) =

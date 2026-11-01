@@ -109,7 +109,7 @@ theorem sum_finiteSignedEulerWeight_progression_le_cost (l : List (ℚ × ℚ))
 Claim: a finite Mangoldt progression prefix is bounded by log(p) times the exact cost.
 Proof: Mangoldt is log(p) on positive prime powers and the finite Euler bound applies.
 Role: connect arbitrary signed candidates to actual prime-local corrections. -/
-theorem sum_finiteSignedMangoldtWeight_progression_le_cost (l : List (ℚ × ℚ))
+theorem sum_signedMangoldt_progression_le_cost (l : List (ℚ × ℚ))
     (ha : ∀ ab ∈ l, 0 < (1 / 2 : ℝ) + (ab.1 : ℝ))
     (hW : ∀ u : ℝ, 1 ≤ u → 0 ≤ finiteSignedEulerWeight l u) {p : ℕ} (hp : p.Prime) {d r : ℕ}
     (hd : 0 < d) (hr : 0 < r) (K : Finset ℕ) :

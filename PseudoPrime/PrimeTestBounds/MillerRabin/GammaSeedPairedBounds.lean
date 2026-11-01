@@ -40,8 +40,8 @@ theorem gammaSignedPrefixMRBudget_lt_precise_common_cost (hRH : RiemannHypothesi
 and prefix 50000 is less than mu*log(n)+7/4. Retain the analytic Euler prefix
 28493/5000, even Gamma gain, and pole and contour bounds. Role: lower the analytic
 entrance without new arithmetic certificates. -/
-theorem gammaSignedPrefixMRBudget_seed_lt_even_nearSquare (hRH : RiemannHypothesis) {L : ℝ}
-    (hL : 225 ≤ L) {n : ℕ} (hlog : Real.log n ≤ L) :
+theorem gammaSignedPrefix_seed_evenNearSquare_RH (hRH : RiemannHypothesis) {L : ℝ} (hL : 225 ≤ L)
+    {n : ℕ} (hlog : Real.log n ≤ L) :
     gammaSignedPrefixMRBudget n n ((2 / 5 : ℝ) * L ^ 2) 50000 <
       (11783423 / 25000000 : ℝ) * Real.log n + 7 / 4 := by
   let x := (2 / 5 : ℝ) * L ^ 2
@@ -79,9 +79,8 @@ theorem gammaSignedPrefixMRBudget_seed_lt_even_nearSquare (hRH : RiemannHypothes
 base is at most (99/100)log(n)^2 and strictly below log(n)^2. Combine the retained
 Euler prefix with the paired ramp bounds on the whole half-line.
 Role: improve the previous log-400 analytic entrance without finite input checks. -/
-theorem exists_prime_witness_le_even_paired_nearSquare_gamma_log_225 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 225 ≤ Real.log n) :
+theorem exists_prime_evenPaired_log225_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 225 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (99 / 100 : ℝ) * (Real.log n) ^ 2 ∧
@@ -104,7 +103,7 @@ theorem exists_prime_witness_le_even_paired_nearSquare_gamma_log_225 {n : ℕ} (
   have he := LLS.gamma_seed_paired_nearSquare_budgets hL
   have hP := LLS.gamma_level_one_sum_upper_variable hGRH.riemann hx1
   have hT := LLS.gamma_ramp_sum_lower_paired hGRH.riemann hx1
-  have hu := gammaSignedPrefixMRBudget_seed_lt_even_nearSquare hGRH.riemann hL (le_refl _)
+  have hu := gammaSignedPrefix_seed_evenNearSquare_RH hGRH.riemann hL (le_refl _)
   have hgap :
     gammaSignedPrefixMRBudget n n x 50000 <
       2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
@@ -127,17 +126,15 @@ theorem exists_prime_witness_le_even_paired_nearSquare_gamma_log_225 {n : ℕ} (
 /-- Under the same GRH, odd-composite and log(n) >= 225 hypotheses, a least
 prime MR rejecting base satisfies the displayed bound. Minimize the unbounded
 prime rejection predicate. Role: expose a least-witness version of the half-line bound. -/
-theorem exists_least_prime_witness_le_even_paired_nearSquare_gamma_log_225 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 225 ≤ Real.log n) :
+theorem exists_least_prime_evenPaired_log225_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 225 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
         (p : ℝ) ≤ (99 / 100 : ℝ) * (Real.log n) ^ 2 ∧
         ∀ r : ℕ, r.Prime → ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) → p ≤ r := by
   classical
-  obtain ⟨p, hp, hb, _, hf⟩ :=
-    exists_prime_witness_le_even_paired_nearSquare_gamma_log_225 hnOdd hnComposite hGRH hL
+  obtain ⟨p, hp, hb, _, hf⟩ := exists_prime_evenPaired_log225_GRH hnOdd hnComposite hGRH hL
   have hex : ∃ r : ℕ, r.Prime ∧ ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := ⟨p, hp, hf⟩
   exact
     ⟨Nat.find hex, (Nat.find_spec hex).1, (Nat.find_spec hex).2,
@@ -147,16 +144,14 @@ theorem exists_least_prime_witness_le_even_paired_nearSquare_gamma_log_225 {n : 
 /-- Under the same hypotheses, a prime below the stated bound fails the initial
 power equality and every negative-one equality in the standard binary decomposition
 of n-1. Apply the characterization of MR rejection. Role: expose the actual power tests. -/
-theorem exists_prime_rejecting_powers_le_even_paired_nearSquare_gamma_log_225 {n : ℕ}
-    (hnOdd : Odd n) (hnComposite : ¬n.Prime)
+theorem exists_rejectPowers_evenPaired_log225_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 225 ≤ Real.log n) :
     let (s, d) := Nat.maxPowDvdDiv 2 (n - 1);
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (99 / 100 : ℝ) * (Real.log n) ^ 2 ∧
         (p : ZMod n) ^ d ≠ 1 ∧ ∀ j : ℕ, j < s → (p : ZMod n) ^ (2 ^ j * d) ≠ -1 := by
-  obtain ⟨p, hp, hb, _, hf⟩ :=
-    exists_prime_witness_le_even_paired_nearSquare_gamma_log_225 hnOdd hnComposite hGRH hL
+  obtain ⟨p, hp, hb, _, hf⟩ := exists_prime_evenPaired_log225_GRH hnOdd hnComposite hGRH hL
   exact ⟨p, hp, hb, PrimeTest.not_strongMillerRabinPass_iff.mp hf⟩
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

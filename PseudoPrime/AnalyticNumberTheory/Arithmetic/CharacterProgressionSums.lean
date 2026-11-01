@@ -45,7 +45,7 @@ open Classical in
 the weighted real sum is at least the principal real value minus the sum of
 nonprincipal norms. Split off the principal character and use character norm
 at most one. This is the error interface for progression lower bounds. -/
-theorem principal_re_sub_nonprincipal_norm_sum_le_weighted_re {q : ℕ} [NeZero q] (u : (ZMod q)ˣ)
+theorem principal_re_sub_norm_sum_le_weighted_re {q : ℕ} [NeZero q] (u : (ZMod q)ˣ)
     (F : DirichletCharacter ℂ q → ℂ) :
     (F 1).re - ∑ χ ∈ (Finset.univ : Finset (DirichletCharacter ℂ q)).erase 1, ‖F χ‖ ≤
       (∑ χ : DirichletCharacter ℂ q, χ (↑(u⁻¹) : ZMod q) * F χ).re := by
@@ -79,8 +79,7 @@ theorem weighted_progression_lower_of_character_sums {q : ℕ} [NeZero q] (u : (
     (∑ n ∈ S, (w n : ℂ) * (1 : DirichletCharacter ℂ q) n).re -
         ∑ χ ∈ (Finset.univ : Finset (DirichletCharacter ℂ q)).erase 1, ‖∑ n ∈ S, (w n : ℂ) * χ n‖ ≤
       (q.totient : ℝ) * ∑ n ∈ S.filter (fun n : ℕ ↦ (u : ZMod q) = (n : ZMod q)), w n := by
-  have hb :=
-    principal_re_sub_nonprincipal_norm_sum_le_weighted_re u (fun χ ↦ ∑ n ∈ S, (w n : ℂ) * χ n)
+  have hb := principal_re_sub_norm_sum_le_weighted_re u (fun χ ↦ ∑ n ∈ S, (w n : ℂ) * χ n)
   rw [sum_character_weighted_eq_progression u S] at hb
   simpa only [Complex.mul_re, Complex.natCast_re, Complex.natCast_im, Complex.re_sum,
     Complex.ofReal_re, zero_mul, sub_zero] using hb

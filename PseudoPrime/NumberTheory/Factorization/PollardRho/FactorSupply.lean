@@ -345,7 +345,7 @@ def partialPrimeFactorSupplyByTreeRounds (policy : PrimeLeafPolicy) (params : Pa
           partialPrimeFactorSupplyByTreeRounds policy params right (n / d)
 
 /-- Actual Floyd rounds at every reached node sum to no more than all allowances in the tree. -/
-theorem partialPrimeFactorSupplyByTreeRounds_le (policy : PrimeLeafPolicy) (params : Params)
+theorem partialFactorSupply_rounds_le_fuel (policy : PrimeLeafPolicy) (params : Params)
     (tree : RhoBudgetTree) (n : ℕ) :
     partialPrimeFactorSupplyByTreeRounds policy params tree n ≤ tree.totalFuel := by
   induction tree generalizing n with

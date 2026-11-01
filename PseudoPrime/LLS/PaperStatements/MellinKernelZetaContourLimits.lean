@@ -43,7 +43,7 @@ theorem tendsto_xi_boundaryIntegral (K : MellinKernel) {a b x : ℝ} (hab : a �
         (Complex.I *
           ((∫ t : ℝ, F ((b : ℂ) + t * Complex.I)) - (∫ t : ℝ, F ((a : ℂ) + t * Complex.I))))) := by
   apply
-    AnalyticNumberTheory.RectangleGeometry.tendsto_rectangleBoundaryIntegral_of_horizontal_limits _
+    AnalyticNumberTheory.RectangleGeometry.tendsto_boundaryIntegral _
       AnalyticNumberTheory.RiemannZeta.tendsto_goodHeightSeq_atTop
   · have h := (tendsto_xi_horizontalIntegral K hab ha hb ha' hb' hx (-1) (Or.inr rfl)).neg
     simpa only [neg_one_mul, one_mul, Complex.ofReal_neg, neg_mul, sub_eq_add_neg, mul_assoc,
@@ -93,7 +93,7 @@ theorem xiKernelSingularities_interior_goodHeight (hRH : RiemannHypothesis) (n :
       rw [he]
       norm_num only [Complex.neg_re, Complex.div_ofNat_re, Complex.one_re]
     · right
-      have hr := riemannXi_zero_re_eq_half_of_riemannHypothesis hRH hz
+      have hr := xi_zero_re_eq_half_of_riemannHypothesis hRH hz
       simp only [Complex.add_re, Complex.div_ofNat_re, Complex.one_re] at hr
       linarith only [hr]
   have hsi : s.im ≠ -T ∧ s.im ≠ T := by
@@ -107,7 +107,7 @@ theorem xiKernelSingularities_interior_goodHeight (hRH : RiemannHypothesis) (n :
       simp only [Complex.add_im, Complex.div_ofNat_im, Complex.one_im, zero_div, add_zero] at hh
       exact ⟨hh.2, hh.1⟩
   apply
-    RectangleGeometry.mem_rectangleOpenBox_of_mem_closedBox_of_ne
+    RectangleGeometry.mem_openBox_of_closed_of_ne_sides
       (by
         rw [hlr, hrr]; linarith only [ha, hb])
       (by

@@ -84,7 +84,7 @@ theorem integrableOn_psiLogErrorKernel_Ioi_of_bound {B x : ℝ} (hB : 0 ≤ B) (
 assuming `B ≥ 0`, `x > 1`, and `log x ≥ 1`. Bound the norm of the integral by the
 integral of the cubic logarithmic majorant and evaluate that integral explicitly.
 This is the quantitative tail estimate used in the Mangoldt second-order bound. -/
-theorem abs_integral_psiLogErrorKernel_Ioi_le_of_bound {B x : ℝ} (hB : 0 ≤ B) (hx : 1 < x)
+theorem abs_integral_psiLogErrorKernel_Ioi_le {B x : ℝ} (hB : 0 ≤ B) (hx : 1 < x)
     (hl : 1 ≤ Real.log x) (hψ : ∀ t : ℝ, x ≤ t → |Chebyshev.psi t - t| ≤ B * t / (Real.log t) ^ 2) :
     |∫ t in Set.Ioi x, psiLogErrorKernel t| ≤ B / (Real.log x) ^ 2 := by
   have hi := (Analysis.integrableOn_inv_mul_log_cube hx).const_mul (2 * B)

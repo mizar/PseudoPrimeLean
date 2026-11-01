@@ -24,10 +24,9 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
  [1,15/2] and a certified lower Gamma argument R, the centered Poisson sum is at most
  the ordinary derivative norm plus the m-term Gamma prefix allowance.
  Use the exact completed identity and both Gamma-factor parity shifts. -/
-theorem completed_poissonSum_centered_le_ordinary_prefix {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {σ : ℝ} (hσ : 1 ≤ σ) (hσu : σ ≤ 15 / 2) {R : ℝ} (hR : 1 / 2 ≤ R)
-    (hRσ : R ≤ σ / 2) (m : ℕ) :
+theorem poissonSum_centered_prefix_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    {σ : ℝ} (hσ : 1 ≤ σ) (hσu : σ ≤ 15 / 2) {R : ℝ} (hR : 1 / 2 ≤ R) (hRσ : R ≤ σ / 2) (m : ℕ) :
     |(∑' ρ : ℂ,
             (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
               ((σ - 1 / 2) / Complex.normSq ((σ : ℂ) - ρ))) -
@@ -40,9 +39,8 @@ theorem completed_poissonSum_centered_le_ordinary_prefix {q : ℕ} [NeZero q] (h
   have he := completed_poissonSum_eq_logDeriv_re hq hRH hp hne hinv hs
   simp only [Complex.ofReal_re] at he
   have hd :=
-    logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne
-      (completedLFunction_ne_zero_of_one_le_re hne hσ) (gammaFactor_ne_zero_of_re_pos χ hr)
-      (analyticAt_gammaFactor_of_re_pos χ hr).differentiableAt
+    L_logDeriv_sub_gamma_of_regular hne (completed_ne_zero_of_one_le_re hne hσ)
+      (gammaFactor_ne_zero_of_re_pos χ hr) (analyticAt_gammaFactor_of_re_pos χ hr).differentiableAt
   have hf :
     logDeriv χ.completedLFunction (σ : ℂ) =
       logDeriv χ.LFunction (σ : ℂ) + logDeriv χ.gammaFactor (σ : ℂ) := by
@@ -51,16 +49,15 @@ theorem completed_poissonSum_centered_le_ordinary_prefix {q : ℕ} [NeZero q] (h
   rw [he, add_sub_cancel_right, hf, Complex.add_re]
   exact
     (abs_add_le _ _).trans
-      (add_le_add (Complex.abs_re_le_norm _)
-        (abs_re_logDeriv_gammaFactor_le_prefix χ hσ hσu hR hRσ m))
+      (add_le_add (Complex.abs_re_le_norm _) (gammaLogDeriv_re_le_prefix χ hσ hσu hR hRσ m))
 
 /-- For every certified resolvent node under primitive nonprincipal individual RH,
  the centered Poisson sum is bounded by its eight-term prefix Euler error.
  Combine the actual ordinary Euler ratio with dyadic certification and real Gamma prefixes.
  This supplies the unconditional analytic per-node inputs for the new mass bound. -/
-theorem completed_poissonSum_centered_le_resolvent_prefix {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (ab : ℚ × ℚ) (hab : ab ∈ Gamma.gammaResolventCoefficients) :
+theorem poissonSum_resolvent_prefix_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    (ab : ℚ × ℚ) (hab : ab ∈ Gamma.gammaResolventCoefficients) :
     |(∑' ρ : ℂ,
             (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
               ((ab.1 : ℝ) / Complex.normSq ((((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ) - ρ))) -
@@ -76,7 +73,7 @@ theorem completed_poissonSum_centered_le_resolvent_prefix {q : ℕ} [NeZero q] (
   have hs : 1 ≤ 1 / 2 + (ab.1 : ℝ) := by linarith only [halR]
   have hsu : 1 / 2 + (ab.1 : ℝ) ≤ 15 / 2 := by linarith only [hauR]
   have hb :=
-    completed_poissonSum_centered_le_ordinary_prefix hq hRH hp hne hinv hs hsu
+    poissonSum_centered_prefix_RH hq hRH hp hne hinv hs hsu
       (show 1 / 2 ≤ (1 / 2 + (ab.1 : ℝ)) / 2 by linarith only [hs]) (le_refl _) 8
   have hn : 1 / 2 + (ab.1 : ℝ) - 1 / 2 = (ab.1 : ℝ) := by ring
   rw [hn] at hb

@@ -26,9 +26,9 @@ namespace PseudoPrime.LLS.PaperStatements
 outside H exists through (4/5)(log q-2)². Apply the independent-scale witness
 theorem and the certified local-loss allowance with a strict rational margin.
 This improves the pointwise upper bound on the entire stated half-line. -/
-theorem exists_prime_outside_le_gamma_four_fifths_log_minus_two {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 46330 ≤ Real.log q) :
+theorem exists_prime_outside_4_5_shift_neg_2_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hH : H ≠ ⊤) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hL : 46330 ≤ Real.log q) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬p ∣ q ∧

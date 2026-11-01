@@ -64,7 +64,7 @@ theorem gamma_ramp_prime_trivial_false_twoPole {q : ℕ} [NeZero q] (χ : Dirich
     PaperStatements.primitiveCharacter_apply_one_of_apply_one χ
       (hsmall p hprime (hprime.coprime_iff_not_dvd.mp hcop) hpb)
   have hC :=
-    PaperStatements.gamma_primitive_sum_re_le_twoPole_quadratic_budget hm hGRH hp hnp
+    PaperStatements.gammaPrimitiveSum_re_le_twoPole_quadratic_budget hm hGRH hp hnp
       (inv_ne_one.mpr hnp) (NumberTheory.isQuadratic_primitiveCharacter χ hquad) hx S hS ht
   have hT := gamma_ramp_sum_lower_paired hGRH.riemann hx
   have hP := gamma_level_one_sum_upper_variable hGRH.riemann hx

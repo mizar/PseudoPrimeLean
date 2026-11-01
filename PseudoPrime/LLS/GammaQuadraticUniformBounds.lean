@@ -126,8 +126,7 @@ theorem gamma_ramp_prime_trivial_false_uniform {n : ℕ} (hn : Odd n)
   have hQ := gamma_ramp_no_witness_comparison χ hquad hx hsmall
   have hlo := gamma_ramp_sum_lower_seven hGRH.riemann hL
   have hP := PaperStatements.gamma_level_one_sum_upper_one_fifth hGRH.riemann hL
-  have hC :=
-    PaperStatements.gamma_primitiveCharacter_sum_re_le_smoothed_at_ramp_scale hq χ hne hGRH hL hlogq
+  have hC := PaperStatements.gammaCharacterSum_re_le_smoothed_at_ramp_scale hq χ hne hGRH hL hlogq
   have hE := gammaQuadraticLocalCorrection_absorbed_uniform hn χ hquad hq hL hlogq
   apply Analysis.gamma_ramp_inequality_false_of_log_ge hL
   nlinarith only [hQ, hlo, hP, hC, hE]

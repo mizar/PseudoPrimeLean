@@ -32,11 +32,11 @@ noncomputable def gammaRefinedThetaDualBudget (θ L : ℝ) : ℝ :=
 actual Jacobi square, dyadic and ramified losses share a finite theta dual budget.
 Use the existing square/dyadic absorption and the adjustable signed support bound.
 This is the parameterized joint local input of the integer-prefix comparison. -/
-theorem gamma_jacobi_refined_joint_local_cost_le_finite_signed_dual_theta {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
-    (S R : Finset ℕ) (hS : S ⊆ n.primeFactors) (hR : R ⊆ n.primeFactors)
-    (hSχ : ∀ p ∈ S, bridge.character p = -1) (hRχ : ∀ p ∈ R, bridge.character p = 0)
-    (K : ℕ → Finset ℕ) (K2 : Finset ℕ) {L : ℝ} (hL : 100 * Real.log 10 ≤ L) {θ : ℝ} (hθ : 1 < θ) :
+theorem gammaJacobi_jointLocal_thetaDual_le {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns) (S R : Finset ℕ)
+    (hS : S ⊆ n.primeFactors) (hR : R ⊆ n.primeFactors) (hSχ : ∀ p ∈ S, bridge.character p = -1)
+    (hRχ : ∀ p ∈ R, bridge.character p = 0) (K : ℕ → Finset ℕ) (K2 : Finset ℕ) {L : ℝ}
+    (hL : 100 * Real.log 10 ≤ L) {θ : ℝ} (hθ : 1 < θ) :
     (11783423 / 25000000 : ℝ) * Real.log (NumberTheory.complexQuadraticCharacter n hn).conductor +
         (∑ p ∈ S,
           Analysis.gammaActualPrimeLocalCost bridge.character p (K p)
@@ -53,7 +53,7 @@ theorem gamma_jacobi_refined_joint_local_cost_le_finite_signed_dual_theta {n : �
               (gammaRamifiedSignedCombinedCost p (Analysis.gammaRefinedScale L) -
                 gammaRamifiedThetaParameter θ (Analysis.gammaRefinedScale L))
               0 := by
-  have hs := gamma_jacobi_refined_actual_square_dyadic_cost_le bridge S hS hSχ K K2 hL
+  have hs := gammaJacobi_actualSquare_dyadicCost_le bridge S hS hSχ K K2 hL
   have hr :=
     gamma_odd_signed_cost_le_theta_dual hn R hR bridge.character hRχ K hθ
       (by linarith only [Analysis.gamma_refined_scale_ge_twenty_thousand hL])
@@ -63,9 +63,9 @@ theorem gamma_jacobi_refined_joint_local_cost_le_finite_signed_dual_theta {n : �
 all actual local losses obey the finite theta dual budget. Classify the
 quadratic values and apply the joint bound to the zero and minus-one sets.
 This removes auxiliary branch sets from the adjustable comparison. -/
-theorem gamma_jacobi_refined_input_all_local_cost_le_finite_signed_dual_theta {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
-    (K : ℕ → Finset ℕ) (K2 : Finset ℕ) (hlarge : 10 ^ 100 ≤ n) {θ : ℝ} (hθ : 1 < θ) :
+theorem gammaJacobi_allLocal_thetaDual_le {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns) (K : ℕ → Finset ℕ)
+    (K2 : Finset ℕ) (hlarge : 10 ^ 100 ≤ n) {θ : ℝ} (hθ : 1 < θ) :
     (11783423 / 25000000 : ℝ) * Real.log (NumberTheory.complexQuadraticCharacter n hn).conductor +
         (∑ p ∈ n.primeFactors,
           Analysis.gammaActualPrimeLocalCost bridge.character p (K p)
@@ -84,8 +84,8 @@ theorem gamma_jacobi_refined_input_all_local_cost_le_finite_signed_dual_theta {n
   let R := n.primeFactors.filter (fun p : ℕ ↦ bridge.character p = 0)
   have hL := Analysis.gamma_refined_log_range_of_decimal hlarge
   have hj :=
-    gamma_jacobi_refined_joint_local_cost_le_finite_signed_dual_theta bridge S R
-      (Finset.filter_subset _ _) (Finset.filter_subset _ _) (fun p hp ↦ (Finset.mem_filter.mp hp).2)
+    gammaJacobi_jointLocal_thetaDual_le bridge S R (Finset.filter_subset _ _)
+      (Finset.filter_subset _ _) (fun p hp ↦ (Finset.mem_filter.mp hp).2)
       (fun p hp ↦ (Finset.mem_filter.mp hp).2) K K2 hL hθ
   have hc :=
     gamma_actual_quadratic_local_sum_le_classified hn bridge.character bridge.character_quadratic K
@@ -129,21 +129,19 @@ theorem gamma_jacobi_integer_prefix_local_budget_theta {n : ℕ} {hn : Odd n} {h
               0 := by
   let K := AnalyticNumberTheory.DirichletLFunction.gammaPrefixPowerIndices b
   have he :=
-    AnalyticNumberTheory.DirichletLFunction.gamma_character_prefix_add_ambient_ramp_eq_local_cost
-      bridge.character (Nat.mul_pos (by norm_num only) hn.pos) hb hone
-      (Analysis.gammaRefinedScale (Real.log n))
+    AnalyticNumberTheory.DirichletLFunction.gammaPrefix_add_ramp_eq_cost bridge.character
+      (Nat.mul_pos (by norm_num only) hn.pos) hb hone (Analysis.gammaRefinedScale (Real.log n))
   rw [he, gamma_ambient_four_factor_sum_eq hn]
-  simpa only [add_assoc] using
-    gamma_jacobi_refined_input_all_local_cost_le_finite_signed_dual_theta bridge K (K 2) hlarge hθ
+  simpa only [add_assoc] using gammaJacobi_allLocal_thetaDual_le bridge K (K 2) hlarge hθ
 
 /-- Absence of negative odd-prime Jacobi witnesses up to b implies the
 parameterized integer-prefix local budget for theta greater than one.
 Transfer the actual no-witness hypothesis to unit-prime character values.
 This is the arithmetic input for the adjustable zero-mass comparison. -/
-theorem gamma_jacobi_no_negative_integer_prefix_local_budget_theta {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns) {b : ℝ}
-    (hb : 1 ≤ b) (hno : ∀ p : ℕ, p.Prime → Odd p → (p : ℝ) ≤ b → jacobiSym n p ≠ -1)
-    (hlarge : 10 ^ 100 ≤ n) {θ : ℝ} (hθ : 1 < θ) :
+theorem gammaJacobi_noNeg_integerThetaBudget {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns) {b : ℝ} (hb : 1 ≤ b)
+    (hno : ∀ p : ℕ, p.Prime → Odd p → (p : ℝ) ≤ b → jacobiSym n p ≠ -1) (hlarge : 10 ^ 100 ≤ n)
+    {θ : ℝ} (hθ : 1 < θ) :
     (11783423 / 25000000 : ℝ) * Real.log (NumberTheory.complexQuadraticCharacter n hn).conductor +
         ((∑ m ∈ Finset.Ioc 0 ⌊b⌋₊,
             (1 - (bridge.character m).re) * Analysis.gammaResolventMangoldtWeight m) +
@@ -169,8 +167,8 @@ theorem gamma_jacobi_no_negative_integer_prefix_local_budget_theta {n : ℕ} {hn
 ramp satisfy the signed prefix comparison with the finite theta dual budget.
 Combine the existing signed Poisson formula and the actual local estimate.
 This leaves an explicit numerical target with a parameter chosen per cell. -/
-theorem gamma_jacobi_zeroMass_add_ambient_ramp_le_integer_prefix_dual_theta {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem gammaJacobi_massAmbient_thetaDual_RH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hRH : AnalyticNumberTheory.GRH.DirichletRiemannHypothesis bridge.character) {b : ℝ}
     (hb : 1 ≤ b)
     (hone : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → Nat.Coprime p (4 * n) → bridge.character p = 1)
@@ -201,7 +199,7 @@ theorem gamma_jacobi_zeroMass_add_ambient_ramp_le_integer_prefix_dual_theta {n :
     (Nat.succ_le_iff.mpr bridge.squarefreePart_gt_one).trans
       (Nat.le_of_dvd hf (gamma_jacobi_modulus_squarefree_data bridge).1)
   have hz :=
-    AnalyticNumberTheory.DirichletLFunction.gammaResolvent_zeroMass_le_signed_prefix hq hRH
+    AnalyticNumberTheory.DirichletLFunction.gammaMass_le_signedPrefix_RH hq hRH
       bridge.character_primitive bridge.character_ne_one
       (by
         rw [bridge.character_quadratic.inv]; exact bridge.character_ne_one)
@@ -214,8 +212,8 @@ theorem gamma_jacobi_zeroMass_add_ambient_ramp_le_integer_prefix_dual_theta {n :
 primitive zero mass and ambient ramp satisfy the adjustable finite dual
 comparison. Transfer the witness condition to unit primes and apply the
 parameterized zero-mass bound. The finite prefix gain is retained. -/
-theorem gamma_jacobi_no_negative_zeroMass_add_ramp_le_prefix_dual_theta {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem gammaJacobi_noNeg_massRamp_thetaDual_RH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hRH : AnalyticNumberTheory.GRH.DirichletRiemannHypothesis bridge.character) {b : ℝ}
     (hb : 1 ≤ b) (hno : ∀ p : ℕ, p.Prime → Odd p → (p : ℝ) ≤ b → jacobiSym n p ≠ -1)
     (hlarge : 10 ^ 100 ≤ n) {θ : ℝ} (hθ : 1 < θ) :
@@ -239,7 +237,7 @@ theorem gamma_jacobi_no_negative_zeroMass_add_ramp_le_prefix_dual_theta {n : ℕ
         (3 / 4 : ℝ) +
         gammaRefinedThetaDualBudget θ (Real.log n) := by
   exact
-    gamma_jacobi_zeroMass_add_ambient_ramp_le_integer_prefix_dual_theta bridge hRH hb
+    gammaJacobi_massAmbient_thetaDual_RH bridge hRH hb
       (gamma_jacobi_no_negative_prefix_prime_one bridge hno) hlarge hθ
 
 /-- At theta=5/4 the parameterized signed budget equals the existing

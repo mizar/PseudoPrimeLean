@@ -54,7 +54,7 @@ theorem GammaLocalPrimeRow.window_numerator_le_lowered_left_base_ratio (r : Gamm
     (hb : (1 : ℝ) ≤ c.lo) (θ : ℝ) :
     gammaRamifiedWindowNumerator r.prime a c.hi θ ≤
       (r.rampUpper : ℝ) - θ + (((r.prime : ℝ) + 1) / (r.prime - 1)) * ((c.lo : ℝ) - a) / a := by
-  have hs := Analysis.gamma_prime_exponential_mass_difference_le_base_ratio hp.one_lt ha hab hb
+  have hs := Analysis.gamma_prime_exp_mass_sub_le_base_ratio hp.one_lt ha hab hb
   have hr := r.window_numerator_le_of_envelope c hcell hp hc θ
   dsimp only [gammaRamifiedWindowNumerator] at hs hr ⊢
   linarith only [hs, hr]

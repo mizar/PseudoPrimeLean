@@ -260,9 +260,9 @@ theorem exponentialMangoldtSum_upper_clipped_shift (hRH : RiemannHypothesis) {x 
               (fun u ↦ AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum (x * u) - x * u) +
           clippedShiftPrincipalErrorNumerator x h +
           Real.log (2 * Real.pi) * Real.exp (-(1 / x))) := by
-  apply exponentialMangoldtSum_upper_of_eventual_integral_cap hRH hx (99 / 40)
+  apply expMangoldtSum_upper_of_eventual_cap_RH hRH hx (99 / 40)
   intro y hy0 hy
-  rw [logWeighted_exponential_integral_eq_main_add_error (zero_lt_one.trans_le hx) hy0]
+  rw [logWeighted_exp_integral_eq_main_error (zero_lt_one.trans_le hx) hy0]
   have hb := (abs_le.mp (jointFunctional_clippedShiftError_abs_le hRH hx hh hhx hy)).1
   have he := jointFunctional_clippedShiftError_eq hx hy
   have hc : Real.log (2 * Real.pi) ≤ 2 := by linarith only [Analysis.log_two_mul_pi_lt.le]
@@ -291,8 +291,7 @@ theorem clippedShiftPrincipalLower_le_actual (hRH : RiemannHypothesis) {x h : �
             PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x n).re := by
   have hx0 := zero_lt_one.trans_le hx
   have hs := Real.sqrt_pos.mpr hx0
-  have hR :=
-    AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum_normalized_eq_main_add_error hx0
+  have hR := AnalyticNumberTheory.Arithmetic.expRampMangoldt_div_sqrt_eq_main_add_error hx0
   have hP :
     (∑' n : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x n).re ≤
       2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -

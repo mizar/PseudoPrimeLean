@@ -18,7 +18,7 @@ public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.LogDerivBound
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 
 /-- The growing far-left segment length divided by the unified height tends to zero. -/
-theorem tendsto_farLeftLength_div_unifiedContourHeightSeq :
+theorem tendsto_farLeftLength_div_unifiedHeight :
     Filter.Tendsto (fun m : ℕ => (2 * (m : ℝ) + 1 / 2) / unifiedContourHeightSeq m) Filter.atTop
       (nhds 0) := by
   have hbound :
@@ -52,9 +52,9 @@ theorem tendsto_farLeftLength_div_unifiedContourHeightSeq :
       hbound hrhs
 
 /-- The unified height still has polynomial growth and is absorbed by geometric decay. -/
-theorem tendsto_unifiedContourHeightSeq_sq_mul_pow_of_lt_one {r : ℝ} (hr : 0 ≤ r) (h'r : r < 1) :
+theorem tendsto_unifiedHeight_sq_mul_pow {r : ℝ} (hr : 0 ≤ r) (h'r : r < 1) :
     Filter.Tendsto (fun m : ℕ => unifiedContourHeightSeq m ^ 2 * r ^ m) Filter.atTop (nhds 0) := by
-  have hpow := tendsto_farLeftHeightSeq_sq_mul_pow_of_lt_one hr h'r
+  have hpow := tendsto_farLeftHeight_sq_mul_pow hr h'r
   have hrpow := tendsto_pow_atTop_nhds_zero_of_lt_one hr h'r
   have hmajor :
     Filter.Tendsto (fun m : ℕ => (2 * farLeftHeightSeq m ^ 2 + 200) * r ^ m) Filter.atTop
@@ -66,7 +66,7 @@ theorem tendsto_unifiedContourHeightSeq_sq_mul_pow_of_lt_one {r : ℝ} (hr : 0 �
     · ring_nf
   apply squeeze_zero (fun m => by positivity) (fun m => ?_) hmajor
   have hUle : unifiedContourHeightSeq m ≤ farLeftHeightSeq m + 10 :=
-    (unifiedContourHeightSeq_lt_farLeftHeightSeq_add_ten m).le
+    (unifiedHeight_lt_farLeftHeight_add_ten m).le
   have hFnn : 0 ≤ farLeftHeightSeq m := (farLeftHeightSeq_pos m).le
   have hUnn : 0 ≤ unifiedContourHeightSeq m :=
     hFnn.trans (farLeftHeightSeq_le_unifiedContourHeightSeq m)
@@ -163,7 +163,7 @@ noncomputable def unifiedTauRectangleUpper (τ : ℝ) (m : ℕ) : ℂ :=
   ⟨τ, unifiedContourHeightSeq m⟩
 
 /-- The unified rectangle ending at `τ > 1` has no kernel singularity on its boundary. -/
-theorem llsRiemannRectangleBoundaryIsRegular_unified_tau {τ : ℝ} (hτ : 1 < τ) (m : ℕ) :
+theorem boundaryRegular_unified_tau {τ : ℝ} (hτ : 1 < τ) (m : ℕ) :
     RiemannZetaRectangleBoundaryIsRegular (unifiedRectangleLower m)
       (unifiedTauRectangleUpper τ m) := by
   intro s hs
@@ -280,8 +280,7 @@ theorem llsRiemannRectangleBoundaryIsRegular_unified_tau {τ : ℝ} (hτ : 1 < �
   exfalso
   apply hs.2
   exact
-    RectangleGeometry.mem_rectangleOpenBox_of_mem_closedBox_of_ne hre him hsbox hsleft hsright
-      hslower hsupper
+    RectangleGeometry.mem_openBox_of_closed_of_ne_sides hre him hsbox hsleft hsright hslower hsupper
 
 /-- A point with real part in `[-(2m+1),τ]` and imaginary part in `[-H_m,H_m]`
 belongs to the corresponding unified rectangle. No separate assumption `τ > 1` is needed. -/

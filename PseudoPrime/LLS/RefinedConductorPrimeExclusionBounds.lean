@@ -97,9 +97,8 @@ theorem exists_prime_ne_one_le_unclipped_conductor_root {q : ℕ} [NeZero q]
 unit-prime outside its image below the root conductor budget. Apply the character
 witness and contradict triviality on a proposed subgroup unit.
 This retains the chosen character's conductor in the subgroup conclusion. -/
-theorem exists_prime_outside_le_unclipped_character_conductor {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1)
-    (ht : ∀ u : (ZMod q)ˣ, u ∈ H → χ (u : ZMod q) = 1)
+theorem exists_prime_outside_unclippedConductor_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (ht : ∀ u : (ZMod q)ˣ, u ∈ H → χ (u : ZMod q) = 1)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ,
       p.Prime ∧

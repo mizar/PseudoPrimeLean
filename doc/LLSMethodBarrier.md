@@ -227,7 +227,7 @@ $$
 c_h(K,\lambda)\le C_h(1/200)
 $$
 
-を述べる。定理1.3は任意の正の誤差での上界を要求するため、この特定の正の誤差でも目標係数に達する必要がある。したがって、同じ係数式を使う限り、許容核の探索、尺度の変更、Taylor項数の増加、有理近似の分母の変更だけでは目標係数に達しない。指数6では、分母に制限のない有理数証明書についても `no_rational_ep1_certificate_at_paper_target` と `no_rational_mellin_certificate_at_paper_target` が明示されている。
+を述べる。定理1.3は任意の正の誤差での上界を要求するため、この特定の正の誤差でも目標係数に達する必要がある。したがって、同じ係数式を使う限り、許容核の探索、尺度の変更、Taylor項数の増加、有理近似の分母の変更だけでは目標係数に達しない。指数6では、分母に制限のない有理数証明書についても `no_rational_ep1_certificate_at_paper_target` と `no_rational_certificate_paper_target` が明示されている。
 
 ### 障害定理の実装対応
 

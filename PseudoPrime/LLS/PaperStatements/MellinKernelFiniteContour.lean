@@ -81,7 +81,7 @@ theorem exists_radius_weighted_pole (K : MellinKernel) {F : ℂ → ℂ} {x : �
     dsimp only [H]
     rw [K.regularized_eq s hs (Set.mem_compl_singleton_iff.mp hsp)]
     ring
-  exact RectangleGeometry.exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul hH heq
+  exact RectangleGeometry.exists_radius_integral_residue hH heq
 
 /-- The residue coefficient of `-logDeriv F(s) K(s) x^s`: use kernel regularization at
 `-1/2`, and minus the finite analytic order times the weight elsewhere. Analyticity,
@@ -109,8 +109,8 @@ theorem weightedFiniteContourIdentity (K : MellinKernel) {F : ℂ → ℂ} {x : 
         (fun s => -logDeriv F s * (K.function s * (x : ℂ) ^ s)) z w =
       ∑ s ∈ S, 2 * Real.pi * Complex.I * weightedResidue K F x s := by
   apply
-    AnalyticNumberTheory.RectangleGeometry.rectangleBoundaryIntegral_eq_sum_of_local_residues _ _ S
-      hre him hclosed hopen
+    AnalyticNumberTheory.RectangleGeometry.boundaryIntegral_eq_sum_residues _ _ S hre him hclosed
+      hopen
   · intro s hs hn
     have hr := hregion hs
     have hsp : s ≠ -1 / 2 := fun he => hn (hcover s hs (Or.inl he))
@@ -166,7 +166,7 @@ theorem completedFiniteContourIdentity (K : MellinKernel) {N : ℕ} [NeZero N]
       ((χ.differentiable_completedLFunction hne).analyticAt _).comp
         (analyticAt_id.add analyticAt_const)
   · simpa only [neg_div, neg_add_cancel] using
-      DirichletLFunction.dirichletCompletedLFunction_zero_ne_zero_of_primitive hprimitive hne
+      DirichletLFunction.completed_zero_ne_zero_of_primitive hprimitive hne
   · exact fun s hs => (DirichletLFunction.mem_completedKernelSingularities.mp hs).1
   · exact hopen
   · exact fun s hs hz => DirichletLFunction.mem_completedKernelSingularities.mpr ⟨hs, hz⟩

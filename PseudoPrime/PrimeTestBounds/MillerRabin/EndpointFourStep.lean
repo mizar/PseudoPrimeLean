@@ -26,8 +26,7 @@ theorem exists_prime_evenEndpoint {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.
           (Real.log r)) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ r ^ 2 ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   let : NeZero n := ⟨Nat.ne_zero_of_lt hn⟩
-  obtain ⟨p, hp, hb, hpow, hrest⟩ :=
-    exists_prime_reject_of_even_exact_endpoint_gap_pos hn ho hc hGRH hr hg
+  obtain ⟨p, hp, hb, hpow, hrest⟩ := exists_rejectPowers_evenExactGap_GRH hn ho hc hGRH hr hg
   exact ⟨p, hp, hb, PrimeTest.not_strongMillerRabinPass_iff.mpr ⟨hpow, hrest⟩⟩
 
 /-- Under GRH, odd composites with log n>=45/4 have a rejecting prime below C2(log n).

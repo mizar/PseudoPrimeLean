@@ -96,9 +96,7 @@ theorem gamma_left_integrand_bound {q : ℕ} [NeZero q] {χ : DirichletCharacter
   have hlog : 0 ≤ Real.log q := Real.log_nonneg hq1
   have hnlog : ‖Complex.log (q : ℂ)‖ = Real.log q := by
     rw [← Complex.natCast_log, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg hlog]
-  have hd :=
-    AnalyticNumberTheory.DirichletLFunction.norm_logDeriv_completed_neg_one_sixteenth_le hp hne hinv
-      t
+  have hd := AnalyticNumberTheory.DirichletLFunction.completedLogDeriv_neg_1_16_bound hp hne hinv t
   rw [hnlog, ← he] at hd
   have hm :=
     gamma_left_envelope hlog (abs_nonneg t) (norm_nonneg (Complex.Gamma (s + 1 / 2))) hg32 hg4

@@ -148,7 +148,7 @@ theorem exists_carmichael_subset_of_progression_primes (L : ℕ) [NeZero L] (hL 
         Nat.IsCarmichael (∏ p ∈ U, p) ∧
         (∀ p ∈ U, p - 1 ∣ k * L) ∧ k * L ∣ (∏ p ∈ U, p) - 1 ∧ (∏ p ∈ U, (p : ZMod L)) = 1 := by
   obtain ⟨U, hUP, hcard, _, hmodL⟩ :=
-    exists_two_or_more_unit_product_eq_one_of_progression L hL hlambda P k hkL hcoprime hprogression
+    exists_two_or_more_unit_prod_one_of_progression L hL hlambda P k hkL hcoprime hprogression
       hlarge
   have hprimeU : ∀ p ∈ U, Nat.Prime p := by
     intro p hp
@@ -157,8 +157,7 @@ theorem exists_carmichael_subset_of_progression_primes (L : ℕ) [NeZero L] (hL 
     intro p hp
     exact hprogression p ((Finset.mem_erase.mp (hUP hp)).2)
   obtain ⟨hcar, horder, hproductMod⟩ :=
-    isCarmichael_finset_prime_product_of_progression_unit_product L k hkL hprimeU hcard
-      hprogressionU hmodL
+    carmichael_primeProduct_of_progression L k hkL hprimeU hcard hprogressionU hmodL
   refine ⟨U, hUP, hcard, hcar, horder, hproductMod, hmodL⟩
 
 /--
@@ -235,7 +234,7 @@ theorem strongMillerRabinPass_all_of_signature_class {Q : Finset ℕ} {K : ℕ} 
   have hQ : Q.Nonempty := Finset.card_pos.mp (lt_of_lt_of_le (by decide : 0 < 2) hcard)
   have hcommon := common_legendre_sign_of_pairwise_signatures W hprime hnotdiv hpair hQ
   exact
-    strongMillerRabinPass_all_of_finset_prime_product W hprime hcard horder hproductMod hpMod hbase
+    strongPass_all_of_finset_prime_product W hprime hcard horder hproductMod hpMod hbase
       (fun b hb p hp => hnotdiv p hp b hb) hcommon
 
 /--
@@ -253,12 +252,11 @@ threshold, construct its Carmichael subset, and apply the P1 signature test.
 Role: this assembles the finite combinatorial P2 construction from a supplied
 prime set; producing such a set remains the P3 task.
 -/
-theorem exists_carmichael_strongMillerRabin_pass_all_of_large_progression_primes (L : ℕ) [NeZero L]
-    (hL : 2 < L) (hlambda : 3 ≤ ArithmeticFunction.carmichael L)
-    [NeZero (ArithmeticFunction.carmichael L)] (W P : Finset ℕ) (k : ℕ) (hkL : Nat.Coprime k L)
-    (hprime : ∀ p ∈ P, Nat.Prime p) (hcoprime : ∀ p ∈ P, Nat.Coprime p L)
-    (hprogression : ∀ p ∈ P, ∃ d, d ∣ L ∧ p = d * k + 1) (hpMod : ∀ p ∈ P, p % 4 = 3)
-    (hbase : ∀ b ∈ W, 0 < b) (hnotdiv : ∀ p ∈ P, ∀ b ∈ W, ¬p ∣ b)
+theorem exists_carmichael_strongPass_all_of_progression (L : ℕ) [NeZero L] (hL : 2 < L)
+    (hlambda : 3 ≤ ArithmeticFunction.carmichael L) [NeZero (ArithmeticFunction.carmichael L)]
+    (W P : Finset ℕ) (k : ℕ) (hkL : Nat.Coprime k L) (hprime : ∀ p ∈ P, Nat.Prime p)
+    (hcoprime : ∀ p ∈ P, Nat.Coprime p L) (hprogression : ∀ p ∈ P, ∃ d, d ∣ L ∧ p = d * k + 1)
+    (hpMod : ∀ p ∈ P, p % 4 = 3) (hbase : ∀ b ∈ W, 0 < b) (hnotdiv : ∀ p ∈ P, ∀ b ∈ W, ¬p ∣ b)
     (hsize : 2 ^ W.card * Nat.floor ((ArithmeticFunction.carmichael L : ℝ) * Real.log L) < P.card) :
     ∃ U : Finset ℕ,
       U ⊆ P ∧

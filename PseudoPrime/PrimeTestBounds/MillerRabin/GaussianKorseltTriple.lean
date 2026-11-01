@@ -58,8 +58,8 @@ theorem three_prime_korselt_sign_subgroup_data {n p q r : ℕ} (hp : p.Prime) (h
   have hnv : padicValNat 2 (n - 1) = padicValNat 2 (p - 1) := by
     rw [hn]
     exact
-      PrimeTest.twoAdic_triple_pred_eq_of_equal_predecessor_valuations hp.one_lt hq.one_lt hr.one_lt
-        hpOdd hqOdd hrOdd hpv hprv
+      PrimeTest.twoAdic_triple_pred_eq_of_pred_valuations hp.one_lt hq.one_lt hr.one_lt hpOdd hqOdd
+        hrOdd hpv hprv
   have hpvn := hnv.symm
   have hqvn := hpv.symm.trans hpvn
   have hrvn := hprv.symm.trans hpvn
@@ -85,17 +85,15 @@ theorem three_prime_korselt_sign_subgroup_data {n p q r : ℕ} (hp : p.Prime) (h
   have hcopQR : q.Coprime r :=
     hq.coprime_iff_not_dvd.mpr (fun h ↦ hqr ((Nat.dvd_prime hr).mp h |>.resolve_left hq.ne_one))
   have hi :=
-    PrimeTest.index_signSubgroup_three_primes_eq_four_of_local_half_odd hpOdd hqOdd hrOdd hkp hkq
-      hkr hEp hEq hEr hcopPQ hcopPR hcopQR
+    PrimeTest.signSubgroup_index_three_primes_eq_four hpOdd hqOdd hrOdd hkp hkq hkr hEp hEq hEr
+      hcopPQ hcopPR hcopQR
   rw [← hn] at hi
   have hpass :
     ∀ z : ZMod n,
       PrimeTest.StrongMillerRabinPass n z →
         ∃ u : (ZMod n)ˣ, u ∈ PrimeTest.signSubgroup n ((n - 1) / 2) ∧ (u : ZMod n) = z := by
     intro z hz
-    exact
-      PrimeTest.strongMillerRabinPass_mem_half_signSubgroup_of_equal_twoAdic hn1 hnOdd hp hpOdd hpn
-        hpvn hz
+    exact PrimeTest.strongPass_mem_half_signSubgroup_of_twoAdic_eq hn1 hnOdd hp hpOdd hpn hpvn hz
   exact ⟨kp, kq, kr, hkp, hkq, hkr, hEp, hEq, hEr, hi, hpass⟩
 
 /-- A three-prime Korselt modulus determines the common-sign subgroup, its
@@ -142,14 +140,14 @@ theorem three_prime_korselt_conductor_subgroup_data {n p q r : ℕ} [NeZero n] (
   have hb1 : b ≠ 1 := hnon b (hb ▸ hp.one_lt.trans_le (Nat.le_mul_of_pos_right p hr.pos))
   have hc1 : c ≠ 1 := hnon c (hc ▸ hq.one_lt.trans_le (Nat.le_mul_of_pos_right q hr.pos))
   obtain ⟨hab, hac, hbc⟩ :=
-    LLS.PaperStatements.three_characters_ne_of_pairwise_product_conductors H a b c ha hb hc hp.pos
-      hq.pos hr.pos hpq hpr hqr
+    LLS.PaperStatements.three_characters_ne_of_product_conductors H a b c ha hb hc hp.pos hq.pos
+      hr.pos hpq hpr hqr
   have hs :=
     LLS.PaperStatements.nonprincipal_annihilator_eq_three_of_index_four H hi a b c ha1 hb1 hc1 hab
       hac hbc
   have hC :=
-    LLS.PaperStatements.subgroupConductorLogSum_eq_twice_log_of_three_conductors H a b c hab hac hbc
-      hs ha hb hc hp.pos hq.pos hr.pos hn
+    LLS.PaperStatements.subgroupConductorLogSum_eq_two_log_of_three H a b c hab hac hbc hs ha hb hc
+      hp.pos hq.pos hr.pos hn
   exact ⟨H, hi, hpass, hC⟩
 
 /-- Under GRH, a modulus n≥10^434782608696 that is the product of three
@@ -159,9 +157,9 @@ preserves the predecessor valuation; each Korselt quotient is odd. Construct the
 half-exponent common-sign subgroup, prove index four and pass containment, then
 apply the actual Gaussian three-prime theorem. No additional analytic, subgroup,
 conductor or exponent condition remains in this three-prime branch. -/
-theorem exists_prime_witness_le_gaussian_0283_of_three_prime_korselt {n p q r : ℕ} (hp : p.Prime)
-    (hq : q.Prime) (hr : r.Prime) (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r) (hpq : p ≠ q)
-    (hpr : p ≠ r) (hqr : q ≠ r) (hn : n = p * q * r) (hpdiv : p - 1 ∣ n - 1) (hqdiv : q - 1 ∣ n - 1)
+theorem exists_prime_gaussian_0282924_korselt_GRH {n p q r : ℕ} (hp : p.Prime) (hq : q.Prime)
+    (hr : r.Prime) (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r) (hpq : p ≠ q) (hpr : p ≠ r)
+    (hqr : q ≠ r) (hn : n = p * q * r) (hpdiv : p - 1 ∣ n - 1) (hqdiv : q - 1 ∣ n - 1)
     (hrdiv : r - 1 ∣ n - 1) (hpv : padicValNat 2 (p - 1) = padicValNat 2 (q - 1))
     (hprv : padicValNat 2 (p - 1) = padicValNat 2 (r - 1))
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hN : 10 ^ 434782608696 ≤ n) :
@@ -187,8 +185,8 @@ theorem exists_prime_witness_le_gaussian_0283_of_three_prime_korselt {n p q r : 
   have hnv : padicValNat 2 (n - 1) = padicValNat 2 (p - 1) := by
     rw [hn]
     exact
-      PrimeTest.twoAdic_triple_pred_eq_of_equal_predecessor_valuations hp.one_lt hq.one_lt hr.one_lt
-        hpOdd hqOdd hrOdd hpv hprv
+      PrimeTest.twoAdic_triple_pred_eq_of_pred_valuations hp.one_lt hq.one_lt hr.one_lt hpOdd hqOdd
+        hrOdd hpv hprv
   have hpvn := hnv.symm
   have hqvn := hpv.symm.trans hpvn
   have hrvn := hprv.symm.trans hpvn
@@ -205,27 +203,25 @@ theorem exists_prime_witness_le_gaussian_0283_of_three_prime_korselt {n p q r : 
   have hcopQR : q.Coprime r :=
     hq.coprime_iff_not_dvd.mpr (fun h ↦ hqr ((Nat.dvd_prime hr).mp h |>.resolve_left hq.ne_one))
   have hi :=
-    PrimeTest.index_signSubgroup_three_primes_eq_four_of_local_half_odd hpOdd hqOdd hrOdd hkp hkq
-      hkr hEp hEq hEr hcopPQ hcopPR hcopQR
+    PrimeTest.signSubgroup_index_three_primes_eq_four hpOdd hqOdd hrOdd hkp hkq hkr hEp hEq hEr
+      hcopPQ hcopPR hcopQR
   rw [← hn] at hi
   have hpass :
     ∀ z : ZMod n,
       PrimeTest.StrongMillerRabinPass n z →
         ∃ u : (ZMod n)ˣ, u ∈ PrimeTest.signSubgroup n ((n - 1) / 2) ∧ (u : ZMod n) = z := by
     intro z hz
-    exact
-      PrimeTest.strongMillerRabinPass_mem_half_signSubgroup_of_equal_twoAdic hn1 hnOdd hp hpOdd hpn
-        hpvn hz
+    exact PrimeTest.strongPass_mem_half_signSubgroup_of_twoAdic_eq hn1 hnOdd hp hpOdd hpn hpvn hz
   exact
-    exists_prime_witness_le_gaussian_0283_of_three_prime_sign_subgroup hnOdd hpOdd hqOdd hrOdd hpn
-      hqn hrn hkp hkq hkr hEp hEq hEr hpq hpr hqr hn hi hpass hGRH hN
+    exists_prime_gaussian_0282924_signTriple_GRH hnOdd hpOdd hqOdd hrOdd hpn hqn hrn hkp hkq hkr hEp
+      hEq hEr hpq hpr hqr hn hi hpass hGRH hN
 
 /-- At scale `600`, a three-prime Korselt modulus with a common predecessor
 two-adic valuation has a prime failing strong MR below the classified Gaussian
 star bound. -/
-theorem exists_prime_witness_le_gaussian_star_of_three_prime_korselt {n p q r : ℕ} (hp : p.Prime)
-    (hq : q.Prime) (hr : r.Prime) (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r) (hpq : p ≠ q)
-    (hpr : p ≠ r) (hqr : q ≠ r) (hn : n = p * q * r) (hpdiv : p - 1 ∣ n - 1) (hqdiv : q - 1 ∣ n - 1)
+theorem exists_prime_gaussianStar_threeKorselt_GRH {n p q r : ℕ} (hp : p.Prime) (hq : q.Prime)
+    (hr : r.Prime) (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r) (hpq : p ≠ q) (hpr : p ≠ r)
+    (hqr : q ≠ r) (hn : n = p * q * r) (hpdiv : p - 1 ∣ n - 1) (hqdiv : q - 1 ∣ n - 1)
     (hrdiv : r - 1 ∣ n - 1) (hpv : padicValNat 2 (p - 1) = padicValNat 2 (q - 1))
     (hprv : padicValNat 2 (p - 1) = padicValNat 2 (r - 1)) (hnlarge : 20000 ≤ n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 600 ≤ Real.log n) :
@@ -242,13 +238,13 @@ theorem exists_prime_witness_le_gaussian_star_of_three_prime_korselt {n p q r : 
   obtain ⟨H, hi, hpass, hC⟩ :=
     three_prime_korselt_conductor_subgroup_data hp hq hr hpOdd hqOdd hrOdd hpq hpr hqr hn hpdiv
       hqdiv hrdiv hpv hprv
-  exact exists_prime_witness_le_gaussian_star_of_index_four hnOdd hnlarge H hi hpass hGRH hC.le hL
+  exact exists_prime_gaussianStar_indexFour_GRH hnOdd hnlarge H hi hpass hGRH hC.le hL
 
 /-- For a uniform three-prime Korselt modulus, the shared arithmetic subgroup
 data closes the new Gamma index-100 bound from logarithmic scale 330. -/
-theorem exists_prime_witness_le_gammaIndex100_of_three_prime_korselt {n p q r : ℕ} (hp : p.Prime)
-    (hq : q.Prime) (hr : r.Prime) (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r) (hpq : p ≠ q)
-    (hpr : p ≠ r) (hqr : q ≠ r) (hn : n = p * q * r) (hpdiv : p - 1 ∣ n - 1) (hqdiv : q - 1 ∣ n - 1)
+theorem exists_prime_gamma100_threeKorselt_GRH {n p q r : ℕ} (hp : p.Prime) (hq : q.Prime)
+    (hr : r.Prime) (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r) (hpq : p ≠ q) (hpr : p ≠ r)
+    (hqr : q ≠ r) (hn : n = p * q * r) (hpdiv : p - 1 ∣ n - 1) (hqdiv : q - 1 ∣ n - 1)
     (hrdiv : r - 1 ∣ n - 1) (hpv : padicValNat 2 (p - 1) = padicValNat 2 (q - 1))
     (hprv : padicValNat 2 (p - 1) = padicValNat 2 (r - 1)) (hnlarge : 20000 ≤ n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 330 ≤ Real.log n) :
@@ -265,15 +261,13 @@ theorem exists_prime_witness_le_gammaIndex100_of_three_prime_korselt {n p q r : 
   obtain ⟨H, hi, hpass, hC⟩ :=
     three_prime_korselt_conductor_subgroup_data hp hq hr hpOdd hqOdd hrOdd hpq hpr hqr hn hpdiv
       hqdiv hrdiv hpv hprv
-  exact
-    exists_prime_witness_le_gammaIndex100_of_index_four_conductor hnlarge hnOdd H hi hpass hGRH
-      hC.le hL
+  exact exists_prime_gamma100_indexFour_GRH hnlarge hnOdd H hi hpass hGRH hC.le hL
 
 /-- A uniform three-prime Korselt modulus has a witness below the 6/5
 Gaussian bound from logarithmic scale 500. -/
-theorem exists_prime_witness_le_gaussian6fifths_of_three_prime_korselt {n p q r : ℕ} (hp : p.Prime)
-    (hq : q.Prime) (hr : r.Prime) (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r) (hpq : p ≠ q)
-    (hpr : p ≠ r) (hqr : q ≠ r) (hn : n = p * q * r) (hpdiv : p - 1 ∣ n - 1) (hqdiv : q - 1 ∣ n - 1)
+theorem gaussian6_5_primeWitness_threeKorselt_GRH {n p q r : ℕ} (hp : p.Prime) (hq : q.Prime)
+    (hr : r.Prime) (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r) (hpq : p ≠ q) (hpr : p ≠ r)
+    (hqr : q ≠ r) (hn : n = p * q * r) (hpdiv : p - 1 ∣ n - 1) (hqdiv : q - 1 ∣ n - 1)
     (hrdiv : r - 1 ∣ n - 1) (hpv : padicValNat 2 (p - 1) = padicValNat 2 (q - 1))
     (hprv : padicValNat 2 (p - 1) = padicValNat 2 (r - 1)) (hnlarge : 20000 ≤ n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 500 ≤ Real.log n) :
@@ -290,13 +284,13 @@ theorem exists_prime_witness_le_gaussian6fifths_of_three_prime_korselt {n p q r 
   obtain ⟨H, hi, hpass, hC⟩ :=
     three_prime_korselt_conductor_subgroup_data hp hq hr hpOdd hqOdd hrOdd hpq hpr hqr hn hpdiv
       hqdiv hrdiv hpv hprv
-  exact exists_prime_witness_le_gaussian6fifths_of_index_four hnOdd hnlarge H hi hpass hGRH hC.le hL
+  exact gaussian6_5_primeWitness_index_four_GRH hnOdd hnlarge H hi hpass hGRH hC.le hL
 
 /-- A uniform three-prime Korselt modulus has a witness below the constant-6
 Gaussian bound from logarithmic scale 300. -/
-theorem exists_prime_witness_le_gaussianMR6_of_three_prime_korselt {n p q r : ℕ} (hp : p.Prime)
-    (hq : q.Prime) (hr : r.Prime) (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r) (hpq : p ≠ q)
-    (hpr : p ≠ r) (hqr : q ≠ r) (hn : n = p * q * r) (hpdiv : p - 1 ∣ n - 1) (hqdiv : q - 1 ∣ n - 1)
+theorem exists_prime_gaussian6_threeKorselt_GRH {n p q r : ℕ} (hp : p.Prime) (hq : q.Prime)
+    (hr : r.Prime) (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r) (hpq : p ≠ q) (hpr : p ≠ r)
+    (hqr : q ≠ r) (hn : n = p * q * r) (hpdiv : p - 1 ∣ n - 1) (hqdiv : q - 1 ∣ n - 1)
     (hrdiv : r - 1 ∣ n - 1) (hpv : padicValNat 2 (p - 1) = padicValNat 2 (q - 1))
     (hprv : padicValNat 2 (p - 1) = padicValNat 2 (r - 1)) (hnlarge : 20000 ≤ n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 300 ≤ Real.log n) :
@@ -313,13 +307,13 @@ theorem exists_prime_witness_le_gaussianMR6_of_three_prime_korselt {n p q r : �
   obtain ⟨H, hi, hpass, hC⟩ :=
     three_prime_korselt_conductor_subgroup_data hp hq hr hpOdd hqOdd hrOdd hpq hpr hqr hn hpdiv
       hqdiv hrdiv hpv hprv
-  exact exists_prime_witness_le_gaussianMR6_of_index_four hnOdd hnlarge H hi hpass hGRH hC.le hL
+  exact exists_primeWitness_le_gaussianMR6_of_index_four hnOdd hnlarge H hi hpass hGRH hC.le hL
 
 /-- A uniform three-prime Korselt modulus has a witness below the
 prefix-improved constant-18 Gaussian bound from logarithmic scale 300. -/
-theorem exists_prime_witness_le_gaussianMR18_of_three_prime_korselt {n p q r : ℕ} (hp : p.Prime)
-    (hq : q.Prime) (hr : r.Prime) (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r) (hpq : p ≠ q)
-    (hpr : p ≠ r) (hqr : q ≠ r) (hn : n = p * q * r) (hpdiv : p - 1 ∣ n - 1) (hqdiv : q - 1 ∣ n - 1)
+theorem exists_prime_gaussian18_threeKorselt_GRH {n p q r : ℕ} (hp : p.Prime) (hq : q.Prime)
+    (hr : r.Prime) (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r) (hpq : p ≠ q) (hpr : p ≠ r)
+    (hqr : q ≠ r) (hn : n = p * q * r) (hpdiv : p - 1 ∣ n - 1) (hqdiv : q - 1 ∣ n - 1)
     (hrdiv : r - 1 ∣ n - 1) (hpv : padicValNat 2 (p - 1) = padicValNat 2 (q - 1))
     (hprv : padicValNat 2 (p - 1) = padicValNat 2 (r - 1)) (hnlarge : 20000 ≤ n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 300 ≤ Real.log n) :
@@ -336,6 +330,6 @@ theorem exists_prime_witness_le_gaussianMR18_of_three_prime_korselt {n p q r : �
   obtain ⟨H, hi, hpass, hC⟩ :=
     three_prime_korselt_conductor_subgroup_data hp hq hr hpOdd hqOdd hrOdd hpq hpr hqr hn hpdiv
       hqdiv hrdiv hpv hprv
-  exact exists_prime_witness_le_gaussianMR18_of_index_four hnOdd hnlarge H hi hpass hGRH hC.le hL
+  exact exists_prime_gaussian18_indexFour_GRH hnOdd hnlarge H hi hpass hGRH hC.le hL
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

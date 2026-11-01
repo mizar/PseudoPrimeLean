@@ -19,9 +19,9 @@ namespace PseudoPrime.LLS.PaperStatements
 sum by the empty-prefix two-pole budget at any larger ambient level and scale at
 least one. Retain max(20000,A) for the pole and enlarge the conductor only in
 nonnegative factors. This lets one scale control every admissible input below B. -/
-theorem gamma_primitiveCharacter_sum_re_le_twoPole_ambient {q A : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1) (hqA : q ≤ A)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 ≤ x) :
+theorem gammaCharacterSum_re_le_twoPole_ambient {q A : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hne : χ ≠ 1) (hqA : q ≤ A) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {x : ℝ} (hx : 1 ≤ x) :
     (∑' n : ℕ, gammaMellinKernel.summand χ.primitiveCharacter x n).re ≤
       twoPolePrimeTrivialUpper A ∅ x := by
   let : NeZero χ.conductor := ⟨χ.conductor_ne_zero⟩

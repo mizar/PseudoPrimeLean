@@ -19,17 +19,16 @@ nonprincipal inverse, the shifted inverse-square mass at three halves has the
 explicit logarithmic modulus bound displayed below. Specialize the existing
 unconditional genus estimate to shift one half and height zero. Both constants
 are fixed independently of the modulus. -/
-theorem completed_genus_three_halves_mass_le_explicit {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
+theorem completed_genusMass_3_2_bound {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
           ‖(((3 / 2 : ℝ) : ℂ) - ρ)⁻¹‖ ^ 2) ≤
       2 *
-        (12 + LogFreeDensity.completedGenusMassShiftConstant * (Real.log 4 + 1) + Real.log q +
-          LogFreeDensity.completedGenusMassCenterConstant * (Real.log 4 + 1)) := by
+        (12 + LogFreeDensity.genusMassShift * (Real.log 4 + 1) + Real.log q +
+          LogFreeDensity.genusMassCenter * (Real.log 4 + 1)) := by
   obtain ⟨A, B, hA, hB, _, _, hb⟩ :=
-    LogFreeDensity.exists_completed_genus_inverse_square_mass_le_uniform_bound hq hne hp hinv (η :=
-      1 / 2) (by norm_num only) le_rfl 0
+    LogFreeDensity.exists_genusMassBound hq hne hp hinv (η := 1 / 2) (by norm_num only) le_rfl 0
   rw [hA, hB] at hb
   norm_num only [Complex.ofReal_zero, mul_zero, add_zero, abs_zero] at hb
   linarith only [hb]
@@ -39,7 +38,7 @@ at least two, any genus tail starting at absolute height at least one is bounded
 by sixteen times the full shifted mass. Bound finite sums pointwise and use
 summability of the nonnegative shifted mass. This retains actual multiplicities
 and applies without RH or quantitative zero exclusion. -/
-theorem tsum_norm_completed_genus_tail_le_shifted_mass {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem completed_genusTail_le_shiftedMass {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {R : ℝ}
     (hR : 1 ≤ R) :
     (∑' ρ : ℂ,
@@ -59,7 +58,7 @@ theorem tsum_norm_completed_genus_tail_le_shifted_mass {q : ℕ} [NeZero q] (hq 
         ‖(((3 / 2 : ℝ) : ℂ) - ρ)⁻¹‖ ^ 2 :=
     mul_nonneg (by exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg hAn ρ) (sq_nonneg _)
   have hs :=
-    LogFreeDensity.summable_completed_genus_inverse_square hq hne hp hinv (s := ((3 / 2 : ℝ) : ℂ))
+    LogFreeDensity.summable_genusInvSq hq hne hp hinv (s := ((3 / 2 : ℝ) : ℂ))
       (by norm_num only [Complex.ofReal_re])
   apply Real.tsum_le_of_sum_le (fun ρ ↦ ite_nonneg (norm_nonneg _) le_rfl)
   intro S
@@ -79,8 +78,7 @@ theorem tsum_norm_completed_genus_tail_le_shifted_mass {q : ℕ} [NeZero q] (hq 
     intro ρ _
     by_cases hh : R ≤ |ρ.im|
     · rw [ite_eq_left hh]
-      simpa only [mul_assoc] using
-        norm_completed_genus_term_le_shifted_mass_of_large_im hp hne hinv (hR.trans hh)
+      simpa only [mul_assoc] using completed_genusTerm_shiftedMass_le hp hne hinv (hR.trans hh)
     · rw [ite_eq_right hh]
       exact mul_nonneg (by norm_num only) (hn ρ)
   exact ht.trans (mul_le_mul_of_nonneg_left hf (by norm_num only))
@@ -90,7 +88,7 @@ at least two, every high genus tail has a uniform bound of size `O(log q)` with
 the two fixed constants displayed below. Combine the tail-to-mass comparison
 with the explicit shifted bound. The bound is independent of the tail cutoff
 and supplies the correction term in the regularized explicit-formula budget. -/
-theorem tsum_norm_completed_genus_tail_le_uniform_bound {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem completed_genusTail_uniform_bound {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {R : ℝ}
     (hR : 1 ≤ R) :
     (∑' ρ : ℂ,
@@ -99,10 +97,10 @@ theorem tsum_norm_completed_genus_tail_le_uniform_bound {q : ℕ} [NeZero q] (hq
               (1 / ((2 : ℂ) - ρ) + 1 / ρ)‖
         else 0) ≤
       32 *
-        (12 + LogFreeDensity.completedGenusMassShiftConstant * (Real.log 4 + 1) + Real.log q +
-          LogFreeDensity.completedGenusMassCenterConstant * (Real.log 4 + 1)) := by
-  have ht := tsum_norm_completed_genus_tail_le_shifted_mass hq hp hne hinv hR
-  have hm := completed_genus_three_halves_mass_le_explicit hq hp hne hinv
+        (12 + LogFreeDensity.genusMassShift * (Real.log 4 + 1) + Real.log q +
+          LogFreeDensity.genusMassCenter * (Real.log 4 + 1)) := by
+  have ht := completed_genusTail_le_shiftedMass hq hp hne hinv hR
+  have hm := completed_genusMass_3_2_bound hq hp hne hinv
   linarith only [ht, hm]
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

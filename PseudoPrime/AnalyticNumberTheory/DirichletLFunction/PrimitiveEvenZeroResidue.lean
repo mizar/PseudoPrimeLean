@@ -11,7 +11,7 @@ public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PrimitiveResid
 /-!
 # the residue evaluation (even, start): the generic even-zero regularization derivative
 
-Character-free computation of `deriv (DirichletLFunction.dirichletReciprocalEvenZeroRegularization
+Character-free computation of `deriv (DirichletLFunction.reciprocalEvenZeroRegularization
 x m g) 0` in
 terms of `logDeriv g 0`, `m`, and `x`, via the product rule (three factors: the linear-affine
 piece `-(m + s·logDeriv g s)`, the Mellin power `x^{s-1}`, and the simple-pole factor `(s-1)⁻¹`).
@@ -25,7 +25,7 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 
 /--
 Input/assumptions: `x > 0`, `m : ℕ`, `g : ℂ → ℂ` analytic at `0` with `g 0 ≠ 0`.
-Conclusion: `deriv (DirichletLFunction.dirichletReciprocalEvenZeroRegularization x m g) 0 =
+Conclusion: `deriv (DirichletLFunction.reciprocalEvenZeroRegularization x m g) 0 =
   (1/x) · (logDeriv g 0 + m · (log x + 1))`.
 Content: `R(s) = A(s) B(s) C(s)` with `A(s) := -(m + s logDeriv g s)`, `B(s) := x^{s-1}`,
 `C(s) := (s-1)⁻¹`. `A(0) = -m`, `A'(0) = -logDeriv g 0` (product rule on `s ↦ s · logDeriv g s`,
@@ -36,9 +36,9 @@ exponent `s - 1`); `C(0) = -1`, `C'(0) = -1`. The product rule combines these in
 Role: the "(ER)" generic derivative formula, the character-free half of the even `s = 0` residue
 closed form.
 -/
-theorem deriv_dirichletReciprocalEvenZeroRegularization_zero {x : ℝ} (hx : 0 < x) (m : ℕ)
-    {g : ℂ → ℂ} (hg : AnalyticAt ℂ g 0) (hg0 : g 0 ≠ 0) :
-    deriv (dirichletReciprocalEvenZeroRegularization x m g) 0 =
+theorem deriv_reciprocalEvenReg_zero {x : ℝ} (hx : 0 < x) (m : ℕ) {g : ℂ → ℂ}
+    (hg : AnalyticAt ℂ g 0) (hg0 : g 0 ≠ 0) :
+    deriv (reciprocalEvenZeroRegularization x m g) 0 =
       (1 / x : ℂ) * (logDeriv g 0 + (m : ℂ) * (Complex.log x + 1)) := by
   have hxC : (x : ℂ) ≠ 0 := by exact_mod_cast hx.ne'
   have hlogDerivG : DifferentiableAt ℂ (logDeriv g) 0 := by
@@ -64,7 +64,7 @@ theorem deriv_dirichletReciprocalEvenZeroRegularization_zero {x : ℝ} (hx : 0 <
         norm_num only)
   have hprod := (hA.mul hB).mul hC
   have hR :
-    HasDerivAt (dirichletReciprocalEvenZeroRegularization x m g)
+    HasDerivAt (reciprocalEvenZeroRegularization x m g)
       ((-(logDeriv g 0) * (x : ℂ) ^ ((0 : ℂ) - 1) +
             (-((m : ℂ) + (0 : ℂ) * logDeriv g 0)) * ((x : ℂ) ^ ((0 : ℂ) - 1) * Complex.log x * 1)) *
           ((0 - 1 : ℂ))⁻¹ +
@@ -73,7 +73,7 @@ theorem deriv_dirichletReciprocalEvenZeroRegularization_zero {x : ℝ} (hx : 0 <
       0 := by
     apply hprod.congr_of_eventuallyEq
     filter_upwards with s
-    unfold dirichletReciprocalEvenZeroRegularization
+    unfold reciprocalEvenZeroRegularization
     simp only [Pi.mul_apply]
     ring
   rw [hR.deriv]

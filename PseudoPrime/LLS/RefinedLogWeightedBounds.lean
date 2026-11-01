@@ -48,7 +48,7 @@ theorem characterLogWeightedSum_re_le_refined_fullLevel {q : ℕ} [NeZero q]
     rw [Nat.div_ne_zero_iff]
     exact ⟨χ.conductor_ne_zero, Nat.le_of_dvd (NeZero.pos q) χ.conductor_dvd_level⟩
   have habsorb := primitiveLogConductorAbsorption x χ hx2 hqd
-  rw [characterLogWeightedSum_re_primitive_eq_add_levelChangeCorrection] at hraw
+  rw [characterLogSum_re_primitive_eq_add] at hraw
   nlinarith only [hraw, hmul, habsorb]
 
 end PseudoPrime.LLS

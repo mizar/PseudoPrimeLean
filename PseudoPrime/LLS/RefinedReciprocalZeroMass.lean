@@ -38,13 +38,12 @@ theorem primitiveZeroMass_le_refined_fullLevel_raw {q : ℕ} [NeZero q] (χ : Di
   have hraw :=
     primitiveReciprocalRaw hN hGRH χ.primitiveCharacter_isPrimitive hne
       (fun hi ↦ hne (inv_eq_one.mp hi)) hx
-  have hlower :=
-    characterReciprocalWeightedSum_re_ge_refined_lower_bound x χ hx2 hGRH.riemann htrivial
+  have hlower := characterRecipSum_re_ge_refined_of_RH x χ hx2 hGRH.riemann htrivial
   have hqd : q / χ.conductor ≠ 0 := by
     rw [Nat.div_ne_zero_iff]
     exact ⟨χ.conductor_ne_zero, Nat.le_of_dvd (NeZero.pos q) χ.conductor_dvd_level⟩
   have habsorb := primitiveReciprocalConductorAbsorption x χ hx2 hqd
-  rw [characterReciprocalWeightedSum_re_primitive_eq_add_levelChangeCorrection] at hraw
+  rw [characterRecipSum_re_primitive_eq_add] at hraw
   linarith only [hraw, hlower, habsorb]
 
 open PseudoPrime.AnalyticNumberTheory.Arithmetic in

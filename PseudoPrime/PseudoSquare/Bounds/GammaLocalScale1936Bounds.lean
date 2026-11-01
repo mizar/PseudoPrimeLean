@@ -20,7 +20,7 @@ namespace PseudoPrime.PseudoSquare
 Claim: scalar gap at least delta-3/4 yields an odd-prime negative Jacobi witness.
 Proof: choose the common auxiliary pole level and transfer to actual separation.
 Role: replace the fixed scale gate by a complete actual local certificate. -/
-theorem exists_prime_neg_one_witness_of_local_certificate {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+theorem exists_negOneWitness_of_local_certificate {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L b x δ : ℝ} (hL : 10 ≤ L)
     (hlog : Real.log n ≤ L) (hx : 2 ≤ x) (cert : LLS.GammaLocalBudgetCertificate x δ) (hb : 1 ≤ b)
     (hbx : b ≤ (99 / 40 : ℝ) * x) (hgap : δ - 3 / 4 ≤ LLS.gammaFactorFreeSeparation L b x) :
@@ -29,14 +29,13 @@ theorem exists_prime_neg_one_witness_of_local_certificate {n : ℕ} (hn : Odd n)
   have hQ : 20000 ≤ Q := le_max_left _ _
   have hnQ : 4 * n ≤ Q := le_max_right _ _
   have hlogQ := LLS.gamma_log_pole_level_le_of_common_endpoint hn hL hlog
-  have hs :=
-    LLS.gamma_factor_free_separation_of_local_certificate (Q := Q) (b := b) hn hns hlog cert hlogQ
+  have hs := LLS.gammaFactorFree_le_localCert (Q := Q) (b := b) hn hns hlog cert hlogQ
   have hg :
     0 ≤
       LLS.gammaJointPrefixSeparation Q (NumberTheory.complexQuadraticCharacter n hn) b x
         (-3 / 2) := by
     linarith only [hs, hgap]
-  exact exists_prime_neg_one_witness_of_joint_prefix_separation hn hns hQ hnQ hGRH hx hb hbx hg
+  exact exists_negOneWitness_of_joint_prefix_separation hn hns hQ hnQ hGRH hx hb hbx hg
 
 /-- Input: GRH, a common log endpoint, local certificate and scalar gap.
 Claim: the full negative-witness maximum is at most 99x/40.
@@ -54,7 +53,7 @@ theorem QNegOne_le_of_local_certificate {B : ℕ}
   intro n hn
   have ha := NumberTheory.mem_admissibleFinset_iff.mp hn
   obtain ⟨q, hq, ho, hqb, hval⟩ :=
-    exists_prime_neg_one_witness_of_local_certificate ha.odd ha.not_isSquare hGRH hB
+    exists_negOneWitness_of_local_certificate ha.odd ha.not_isSquare hGRH hB
       (Real.log_le_log (Nat.cast_pos.mpr ha.odd.pos) (Nat.cast_le.mpr ha.le)) hx cert hb hbx hgap
   exact
     (Nat.cast_le.mpr
@@ -67,15 +66,15 @@ theorem QNegOne_le_of_local_certificate {B : ℕ}
 Claim: an odd-prime negative witness exists through 99x/40.
 Proof: instantiate the certificate with delta=4393/5000 and the prefix lower bound 203/50.
 Role: expose the lower finite-scale entrance with required gap 643/5000. -/
-theorem exists_prime_neg_one_witness_of_checkpoint1000_scale1936 {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L b x D : ℝ}
-    (hL : 10 ≤ L) (hlog : Real.log n ≤ L) (hx : 1936 ≤ x) (hb : 1000 ≤ b)
-    (hbx : b ≤ (99 / 40 : ℝ) * x) (hD : LLS.gammaScaleSignedDualBudget L x ≤ D)
+theorem exists_negOneWitness_of_checkpoint1000_scale1936 {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L b x D : ℝ} (hL : 10 ≤ L)
+    (hlog : Real.log n ≤ L) (hx : 1936 ≤ x) (hb : 1000 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
+    (hD : LLS.gammaScaleSignedDualBudget L x ≤ D)
     (hgap : 643 / 5000 ≤ LLS.gammaPrefixSeparation L x D (203 / 50)) :
     ∃ q : ℕ, q.Prime ∧ Odd q ∧ (q : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n q = -1 := by
   have hs := LLS.gamma_checkpoint1000_separation_le hGRH.riemann hb hD
   apply
-    exists_prime_neg_one_witness_of_local_certificate hn hns hGRH hL hlog (by linarith only [hx])
+    exists_negOneWitness_of_local_certificate hn hns hGRH hL hlog (by linarith only [hx])
       (LLS.gamma_local_certificate1936 hx) (by linarith only [hb]) hbx
   norm_num only
   exact hgap.trans hs

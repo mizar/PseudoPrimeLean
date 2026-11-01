@@ -111,7 +111,7 @@ theorem exists_riemannZeta_localFactor {ρ : ℂ} (hρ1 : ρ ≠ 1) :
 Near a zeta zero, `ζ'/ζ` is its multiplicity divided by `s-ρ`, plus an analytic logarithmic
 derivative.
 -/
-theorem exists_eventuallyEq_logDeriv_riemannZeta_at_zero {ρ : ℂ} (hρ1 : ρ ≠ 1)
+theorem exists_eventuallyEq_logDeriv_zeta_at_zero {ρ : ℂ} (hρ1 : ρ ≠ 1)
     (hzero : riemannZeta ρ = 0) :
     ∃ g : ℂ → ℂ,
       0 < riemannZetaZeroMultiplicity ρ ∧
@@ -184,7 +184,7 @@ theorem mem_riemannZetaZerosInAnyRectangle_iff {z w ρ : ℂ} :
     Set.mem_preimage, Set.mem_singleton_iff]
 
 /-- Every zero in the unrestricted rectangular ledger differs from zero. -/
-theorem ne_zero_of_mem_riemannZetaZerosInAnyRectangle {z w ρ : ℂ}
+theorem ne_zero_of_mem_zetaZerosInAnyRectangle {z w ρ : ℂ}
     (hρ : ρ ∈ riemannZetaZerosInAnyRectangle z w) : ρ ≠ 0 := by
   intro hρzero
   rw [hρzero, mem_riemannZetaZerosInAnyRectangle_iff] at hρ
@@ -194,7 +194,7 @@ theorem ne_zero_of_mem_riemannZetaZerosInAnyRectangle {z w ρ : ℂ}
   exact hzetaZero hρ.2
 
 /-- Every zero in the unrestricted rectangular ledger differs from one. -/
-theorem ne_one_of_mem_riemannZetaZerosInAnyRectangle {z w ρ : ℂ}
+theorem ne_one_of_mem_zetaZerosInAnyRectangle {z w ρ : ℂ}
     (hρ : ρ ∈ riemannZetaZerosInAnyRectangle z w) : ρ ≠ 1 := by
   intro hρone
   rw [hρone, mem_riemannZetaZerosInAnyRectangle_iff] at hρ

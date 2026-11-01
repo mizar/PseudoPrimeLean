@@ -54,7 +54,7 @@ theorem norm_riemannZetaLogZeroContribution_of_rh (hRH : RiemannHypothesis) {x :
     {ρ : ℂ} (hρ : riemannZeta ρ = 0) (hre : 0 ≤ ρ.re) :
     ‖riemannZetaLogZeroContribution x ρ‖ =
       Real.sqrt x * (riemannZetaZeroMultiplicity ρ : ℝ) / Complex.normSq ρ := by
-  have hhalf := riemannZeta_zero_re_eq_half_of_riemannHypothesis hRH hρ hre
+  have hhalf := zeta_zero_re_eq_half_of_riemannHypothesis hRH hρ hre
   unfold riemannZetaLogZeroContribution
   rw [norm_div, norm_mul, norm_neg, Complex.norm_natCast, Complex.norm_cpow_eq_rpow_re_of_pos hx,
     hhalf]
@@ -63,13 +63,13 @@ theorem norm_riemannZetaLogZeroContribution_of_rh (hRH : RiemannHypothesis) {x :
   ring
 
 /-- **The pointwise reciprocal-kernel zero-contribution norm formula under RH.** -/
-theorem norm_riemannZetaReciprocalZeroContribution_of_rh (hRH : RiemannHypothesis) {x : ℝ}
-    (hx : 0 < x) {ρ : ℂ} (hρ : riemannZeta ρ = 0) (hre : 0 ≤ ρ.re) :
+theorem norm_zetaReciprocalZeroContribution_of_rh (hRH : RiemannHypothesis) {x : ℝ} (hx : 0 < x)
+    {ρ : ℂ} (hρ : riemannZeta ρ = 0) (hre : 0 ≤ ρ.re) :
     ‖riemannZetaReciprocalZeroContribution x ρ‖ =
       (riemannZetaZeroMultiplicity ρ : ℝ) / (Real.sqrt x * Complex.normSq ρ) := by
-  have hhalf := riemannZeta_zero_re_eq_half_of_riemannHypothesis hRH hρ hre
+  have hhalf := zeta_zero_re_eq_half_of_riemannHypothesis hRH hρ hre
   have hnormeq : ‖ρ - 1‖ = ‖ρ‖ := by
-    have hsq := normSq_riemannZeta_zero_sub_one_eq_of_riemannHypothesis hRH hρ hre
+    have hsq := normSq_zero_sub_one_eq_RH hRH hρ hre
     rw [Complex.normSq_eq_norm_sq, Complex.normSq_eq_norm_sq] at hsq
     exact (sq_eq_sq₀ (norm_nonneg (ρ - 1)) (norm_nonneg ρ)).mp hsq
   have hre_sub : (ρ - 1).re = -(1 / 2) := by

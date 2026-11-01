@@ -18,7 +18,7 @@ namespace PseudoPrime.LLS
 Claim: the reciprocal main error is at most -1/4.
 Proof: retain the reciprocal factor and use the existing Euler and logarithm bounds.
 Role: extend the reciprocal-only analytic comparison to the smaller cutoff regime. -/
-theorem primitiveReciprocalOddMainError_le_fixed_of_ge_twenty_six_half {x : ℝ} (hx : 53 / 2 ≤ x) :
+theorem primitiveRecipOddError_le_neg_1_4_of_ge_53_2 {x : ℝ} (hx : 53 / 2 ≤ x) :
     Analysis.primitiveReciprocalOddMainError x ≤ -(1 / 4 : ℝ) := by
   have hxp : 0 < x := by linarith only [hx]
   have hi : 1 / x ≤ (2 / 53 : ℝ) := by
@@ -39,7 +39,7 @@ theorem primitiveReciprocalOddMainError_le_fixed_of_ge_twenty_six_half {x : ℝ}
 Claim: the reciprocal main error is at most -1/4.
 Proof: retain the reciprocal factor and use the existing Euler and logarithm bounds.
 Role: extend the reciprocal-only analytic comparison to the smaller cutoff regime. -/
-theorem primitiveReciprocalEvenMainError_le_fixed_of_ge_twenty_six_half {x : ℝ} (hx : 53 / 2 ≤ x) :
+theorem primitiveReciprocalEvenError_le_neg_1_4 {x : ℝ} (hx : 53 / 2 ≤ x) :
     Analysis.primitiveReciprocalEvenMainError x ≤ -(1 / 4 : ℝ) := by
   have hxp : 0 < x := by linarith only [hx]
   have hi : 1 / x ≤ (2 / 53 : ℝ) := by

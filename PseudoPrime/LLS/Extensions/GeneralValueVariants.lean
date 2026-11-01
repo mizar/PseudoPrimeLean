@@ -83,14 +83,12 @@ theorem generalL_ge_two_of_bounds (hψ : AnalyticNumberTheory.Arithmetic.PsiSeco
     valueUpperCorrection d (Real.log (2 * (d : ℝ))) ((d : ℝ) * (A + B) + (34 / 7 : ℝ) * (d : ℝ) + 1)
       (Real.log (Real.log f.val.analyticConductor))
   have hs :=
-    isLittleO_valueUpperCorrection_on_conductorFilter d (Real.log (2 * (d : ℝ)))
+    valueCorrection_isLittleO d (Real.log (2 * (d : ℝ)))
       ((d : ℝ) * (A + B) + (34 / 7 : ℝ) * (d : ℝ) + 1)
   have hb :=
-    isBigO_valueUpperCorrection_on_conductorFilter hd (Real.log (2 * (d : ℝ)))
+    valueCorrection_isBigO_degree hd (Real.log (2 * (d : ℝ)))
       ((d : ℝ) * (A + B) + (34 / 7 : ℝ) * (d : ℝ) + 1)
-  exact
-    ⟨e, e, hs, hs, hb, hb,
-      eventually_value_bounds_with_correction_of_mangoldt_errors hd0 hB hHa hψb⟩
+  exact ⟨e, e, hs, hs, hb, hb, eventually_value_bounds_of_mangoldt_errors hd0 hB hHa hψb⟩
 
 /-- The two explicit second-order arithmetic hypotheses imply this fixed-degree variant.
 Extract their constants and use the uniform value correction; no degree-one exact
@@ -105,13 +103,12 @@ theorem generalL_nonvanishing_of_bounds (hψ : AnalyticNumberTheory.Arithmetic.P
     valueUpperCorrection d (Real.log (2 * (d : ℝ))) ((d : ℝ) * (A + B) + (34 / 7 : ℝ) * (d : ℝ) + 1)
       (Real.log (Real.log f.val.analyticConductor))
   have hs :=
-    isLittleO_valueUpperCorrection_on_conductorFilter d (Real.log (2 * (d : ℝ)))
+    valueCorrection_isLittleO d (Real.log (2 * (d : ℝ)))
       ((d : ℝ) * (A + B) + (34 / 7 : ℝ) * (d : ℝ) + 1)
   have hb :=
-    isBigO_valueUpperCorrection_nonvanishing_on_conductorFilter hd (Real.log (2 * (d : ℝ)))
+    valueCorrection_isBigO_positive_degree hd (Real.log (2 * (d : ℝ)))
       ((d : ℝ) * (A + B) + (34 / 7 : ℝ) * (d : ℝ) + 1)
-  exact
-    ⟨e, e, hs, hs, hb, hb, eventually_value_bounds_with_correction_of_mangoldt_errors hd hB hHa hψb⟩
+  exact ⟨e, e, hs, hs, hb, hb, eventually_value_bounds_of_mangoldt_errors hd hB hHa hψb⟩
 
 /-- A second-order psi estimate alone supplies the degree-at-least-two value bounds.
 Derive the logarithmic Mangoldt estimate, including its Euler constant, from psi;

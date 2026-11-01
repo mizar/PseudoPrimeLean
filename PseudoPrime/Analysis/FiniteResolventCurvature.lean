@@ -92,8 +92,7 @@ theorem concaveOn_weighted_plainResolvent {a : ℝ} (ha : 0 < a) (c lo hi : ℝ)
     ConcaveOn ℝ (Set.Icc lo hi)
       (fun t ↦ c * plainResolvent a t - (|c| * (6 / a ^ 3)) / 2 * t ^ 2) := by
   apply
-    concaveOn_quadratic_correction_of_second_deriv_le
-      (fun t _ ↦ (hasDerivAt_plainResolvent ha t).const_mul c)
+    concaveOn_quadratic_correction (fun t _ ↦ (hasDerivAt_plainResolvent ha t).const_mul c)
       (fun t _ ↦ (hasDerivAt_plainResolventDeriv ha t).const_mul c)
   intro t _
   exact

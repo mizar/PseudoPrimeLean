@@ -225,8 +225,8 @@ theorem not_oddPrimeTrivial_of_reciprocal_entrance {q : ℕ} [NeZero q] (χ : Di
   have hx := Analysis.sq_ge_64_of_ge_8 h8
   exact
     not_oddPrimeTrivial_of_reciprocal_loss χ hne heven hGRH h8 hlog4 hlogOdd hcases
-      (AnalyticNumberTheory.RiemannZeta.reciprocalWeightedMangoldtSum_ge_log_sub_789_div_500
-        hGRH.riemann (le_trans (by norm_num only) hx))
+      (AnalyticNumberTheory.RiemannZeta.reciprocalMangoldt_ge_log_sub_789_500 hGRH.riemann
+        (le_trans (by norm_num only) hx))
       (qNeOneReciprocalUpper_lt_lower hy hL)
 
 end PseudoPrime.LLS.Extensions

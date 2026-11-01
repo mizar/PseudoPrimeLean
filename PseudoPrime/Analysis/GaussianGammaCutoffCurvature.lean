@@ -130,7 +130,7 @@ theorem gaussianTilt_second_derivative_factor_abs_le (v : ℝ) :
 
 /-- The normalized second derivative factor of the tilted Gaussian is at most `4/3`.
 The exponential endpoint and `pi > 3` absorb the factor two from the Gaussian polynomial. -/
-theorem gaussianTilt_second_derivative_normalized_abs_le_four_thirds (v : ℝ) :
+theorem gaussianTilt_deriv2_normalized_abs_le_4_3 (v : ℝ) :
     |((-2 * v + 1 / 2) ^ 2 - 2) * Real.exp (-(v ^ 2) + v / 2)| / Real.sqrt Real.pi ≤ 4 / 3 := by
   have hD := gaussianTilt_second_derivative_factor_abs_le v
   have hE : Real.exp (1 / 16) ≤ (2129 : ℝ) / 2000 := gaussian_endpoint_exp_le
@@ -186,7 +186,7 @@ theorem gaussianTilt_normalized_le_two_thirds (v : ℝ) :
 
 /-- The normalized first derivative factor of the tilted Gaussian is at most `2/3`.
 Completing the square reduces it to the uniform exponential-decay estimate above. -/
-theorem gaussianTilt_derivative_normalized_abs_le_two_thirds (v : ℝ) :
+theorem gaussianTilt_deriv_normalized_abs_le_2_3 (v : ℝ) :
     |(-2 * v + 1 / 2) * Real.exp (-(v ^ 2) + v / 2)| / Real.sqrt Real.pi ≤ 2 / 3 := by
   have hD := gaussianTilt_derivative_factor_abs_le v
   have hE : Real.exp (1 / 16) ≤ (2129 : ℝ) / 2000 := gaussian_endpoint_exp_le
@@ -317,13 +317,13 @@ theorem gaussianGammaCutoff_secondDeriv_abs_le {l v : ℝ} (hl : 0 ≤ l) (_hv :
     rw [abs_of_pos (Real.exp_pos _)]
     exact h
   have hAb : |A * b| ≤ 2 / 3 * Real.sqrt Real.pi := by
-    have h := gaussianTilt_derivative_normalized_abs_le_two_thirds v
+    have h := gaussianTilt_deriv_normalized_abs_le_2_3 v
     rw [div_le_iff₀ hsqrt] at h
     change |Real.exp (-(v ^ 2) + v / 2) * (-2 * v + 1 / 2)| ≤ 2 / 3 * Real.sqrt Real.pi
     rw [abs_mul] at h ⊢
     nlinarith only [h]
   have hAbb : |A * (b ^ 2 - 2)| ≤ 4 / 3 * Real.sqrt Real.pi := by
-    have h := gaussianTilt_second_derivative_normalized_abs_le_four_thirds v
+    have h := gaussianTilt_deriv2_normalized_abs_le_4_3 v
     rw [div_le_iff₀ hsqrt] at h
     change |Real.exp (-(v ^ 2) + v / 2) * ((-2 * v + 1 / 2) ^ 2 - 2)| ≤ 4 / 3 * Real.sqrt Real.pi
     rw [abs_mul] at h ⊢

@@ -23,7 +23,7 @@ explicit level-change correction. Injective primitive labels bound the number of
 such characters by the fixed number modulo four; apply the fixed-modulus limit
 at a correspondingly smaller error rate. The leading error is independent of the
 ambient modulus and no quantitative zero-free region for conductor four is assumed. -/
-theorem exists_uniform_induced_conductor_four_half_sum_bound {ε : ℝ} (hε : 0 < ε) :
+theorem inducedConductor4_halfSum_bound {ε : ℝ} (hε : 0 < ε) :
     ∃ X : ℝ,
       2 ≤ X ∧
         ∀ (q : ℕ) [NeZero q],
@@ -44,7 +44,7 @@ theorem exists_uniform_induced_conductor_four_half_sum_bound {ε : ℝ} (hε : 0
         (0 : ℝ) ≤ Fintype.card (DirichletCharacter ℂ 4))]
   let δ : ℝ := ε / (N + 1)
   have hδ : 0 < δ := div_pos hε hN
-  obtain ⟨X, hX, hfour⟩ := exists_uniform_conductor_four_half_sum_bound hδ
+  obtain ⟨X, hX, hfour⟩ := uniform_conductor_four_halfSum_bound hδ
   refine ⟨max 2 X, le_max_left _ _, ?_⟩
   intro q inst S hne hcon x hx
   have hx2 : 2 ≤ x := (le_max_left 2 X).trans hx
@@ -77,7 +77,7 @@ theorem exists_uniform_induced_conductor_four_half_sum_bound {ε : ℝ} (hε : 0
   have hs :=
     Finset.sum_le_sum (s := S)
       (fun χ hχ ↦
-        (Arithmetic.norm_characterLogWeightedSum_half_le_primitive_add_level_error χ hx2).trans
+        (Arithmetic.norm_characterLogSum_half_le_primitive_add χ hx2).trans
           (add_le_add (hsource χ hχ) le_rfl))
   rw [Finset.sum_const, nsmul_eq_mul] at hs
   have hsmall := mul_le_mul_of_nonneg_right hscalar (by linarith only [hx2] : 0 ≤ x)

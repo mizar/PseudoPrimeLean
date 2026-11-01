@@ -224,8 +224,8 @@ theorem logDeriv_completed_eq_completionFactor_add (f : GeneralLFunction) (hf : 
 /-- For an admissible RH function, the real ordinary logarithmic derivative at one is
 half the completed zero mass minus the gamma contribution. The completed endpoint
 identity and the product decomposition remove any separate endpoint assumption. -/
-theorem re_logDeriv_ordinary_one_eq_half_zeroMass_sub_gamma (f : GeneralLFunction)
-    (hf : f.IsAdmissible) (hRH : f.RiemannHypothesis) :
+theorem ordinary_logDeriv_one_real_RH (f : GeneralLFunction) (hf : f.IsAdmissible)
+    (hRH : f.RiemannHypothesis) :
     (logDeriv f.L 1).re = f.zeroMass / 2 - f.gammaLogDerivativeAtOne := by
   have he :=
     congrArg Complex.re

@@ -99,7 +99,7 @@ theorem exists_odd_prime_negative_of_phase64_finite_gap {n : ℕ} {hn : Odd n} {
   have hxlo := (by norm_num only : (1600 : ℝ) ≤ 163840 / 99).trans hx.1
   have hxhi := hx.2.trans (by norm_num only : (4096128001 / 2475000 : ℝ) ≤ 1700)
   exact
-    exists_odd_prime_negative_of_phase64_ramified_gap bridge hGRH hq hmq hlo hhi
+    exists_oddPrime_negJacobi_phase64_ramified_GRH bridge hGRH hq hmq hlo hhi
       ((phase64_ramified_budget_le_finite bridge q hxlo hxhi (L ^ 2)).trans_lt hgap)
 
 end PseudoPrime.LLS

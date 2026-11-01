@@ -37,10 +37,9 @@ theorem norm_reflected_archimedean_difference_le {q : ℕ} [NeZero q] {χ : Diri
     rw [hr]; norm_num only
   have hp : 0 < s.re := zero_lt_one.trans_le hr1
   have he :=
-    logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne
-      (completedLFunction_ne_zero_of_one_le_re hne hr1) (gammaFactor_ne_zero_of_re_pos χ hp)
-      (analyticAt_gammaFactor_of_re_pos χ hp).differentiableAt
-  have hg := norm_logDeriv_gammaFactor_seventeen_sixteenths_le χ hr
+    L_logDeriv_sub_gamma_of_regular hne (completed_ne_zero_of_one_le_re hne hr1)
+      (gammaFactor_ne_zero_of_re_pos χ hp) (analyticAt_gammaFactor_of_re_pos χ hp).differentiableAt
+  have hg := gammaLogDeriv_17_16_linear_bound χ hr
   rw [hi, abs_neg] at hg
   change ‖logDeriv χ.completedLFunction s - logDeriv χ.LFunction s‖ ≤ _
   rw [he]
@@ -69,7 +68,7 @@ theorem gammaReflectedArchimedeanIntegrand_bound {q : ℕ} [NeZero q] {χ : Diri
     simp only [z, Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re,
       Complex.I_re, Complex.I_im, zero_mul, mul_one, zero_add, add_zero]
   have h0 := PseudoPrime.Analysis.norm_Gamma_le_gammaRefinedZeroEnvelope hz
-  have h1 := PseudoPrime.Analysis.norm_Gamma_mul_height_le_gammaRefinedFirstEnvelope hz
+  have h1 := PseudoPrime.Analysis.norm_Gamma_mul_height_le_refinedEnvelope hz
   rw [hi] at h0 h1
   change ‖Complex.Gamma z‖ ≤ PseudoPrime.Analysis.gammaRefinedZeroEnvelope t at h0
   change ‖Complex.Gamma z‖ * |t| ≤ PseudoPrime.Analysis.gammaRefinedFirstEnvelope t at h1
@@ -148,7 +147,7 @@ theorem re_gamma_primitive_remainder_le_reflected_split {q m : ℕ} [NeZero m]
         Analysis.gammaNegativeConductorTerm (Real.log m) x +
         (35 / 2 : ℝ) * x ^ (-9 / 16 : ℝ) +
         1 / (x * Real.sqrt x) := by
-  have hr := re_gamma_primitive_remainder_le_archimedean_add_euler hq hm hmq hp hne hinv hGRH hx
+  have hr := gammaRemainder_re_le_archimedean_add_euler hq hm hmq hp hne hinv hGRH hx
   have ha := norm_gammaReflectedArchimedeanIntegral_le hp hne hinv (by linarith only [hx] : 0 < x)
   linarith only [hr, ha]
 
@@ -156,7 +155,7 @@ theorem re_gamma_primitive_remainder_le_reflected_split {q m : ℕ} [NeZero m]
 retain both finite Euler savings while using the separated left error.
 Combine the zero-sum norm with the actual improved completed remainder.
 This is the arithmetic upper-bound interface for the witness comparisons. -/
-theorem gamma_primitive_sum_re_le_twoPole_reflected_split {q m : ℕ} [NeZero m] (hq : 20000 ≤ q)
+theorem gammaPrimitiveSum_re_le_twoPole_reflected_split {q m : ℕ} [NeZero m] (hq : 20000 ≤ q)
     (hm : 3 ≤ m) (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 2 ≤ x) {C : ℝ}
@@ -173,8 +172,8 @@ theorem gamma_primitive_sum_re_le_twoPole_reflected_split {q m : ℕ} [NeZero m]
         (35 / 2 : ℝ) * x ^ (-9 / 16 : ℝ) +
         1 / (x * Real.sqrt x) := by
   have hz :=
-    norm_gamma_oscillatingZeroSum_le_twoPole_constant (by linarith only [hm] : 2 ≤ m) hGRH hp hne
-      hinv (by linarith only [hx] : 0 < x) hC A B
+    norm_gammaZeroSum_twoPole_bound_GRH (by linarith only [hm] : 2 ≤ m) hGRH hp hne hinv
+      (by linarith only [hx] : 0 < x) hC A B
   have hr := re_gamma_primitive_remainder_le_reflected_split hq hm hmq hp hne hinv hGRH hx
   have hn := Complex.re_le_norm (-(∑' ρ : ℂ, gammaMellinKernel.oscillatingZeroTerm χ x ρ))
   simp only [Complex.neg_re, norm_neg] at hn

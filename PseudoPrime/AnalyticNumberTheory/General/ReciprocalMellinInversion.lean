@@ -64,8 +64,8 @@ theorem verticalReciprocalMultiplier_norm_le {τ : ℝ} (hτ : 0 < τ) (y : ℝ)
 /-- For a positive vertical coordinate, the reciprocal coefficient term equals its logarithmic
 term multiplied by `z / (z + 1)`. Cancel the nonzero vertical denominators algebraically.
 This identifies the integrable factor used in reciprocal series inversion. -/
-theorem reciprocalMellinTerm_eq_logarithmicMellinTerm_mul (a : ℕ → ℂ) (x : ℝ) {τ : ℝ} (hτ : 0 < τ)
-    (n : ℕ) (y : ℝ) :
+theorem reciprocalMellinTerm_eq_logTerm_mul (a : ℕ → ℂ) (x : ℝ) {τ : ℝ} (hτ : 0 < τ) (n : ℕ)
+    (y : ℝ) :
     reciprocalMellinTerm a x τ n y =
       logarithmicMellinTerm a x τ n y *
         (((τ : ℂ) + y * Complex.I) / ((τ : ℂ) + y * Complex.I + 1)) := by
@@ -79,7 +79,7 @@ logarithmic counterpart. Multiply the logarithmic term by the multiplier of norm
 This provides the termwise integral-norm majorant. -/
 theorem norm_reciprocalMellinTerm_le (a : ℕ → ℂ) (x : ℝ) {τ : ℝ} (hτ : 0 < τ) (n : ℕ) (y : ℝ) :
     ‖reciprocalMellinTerm a x τ n y‖ ≤ ‖logarithmicMellinTerm a x τ n y‖ := by
-  rw [reciprocalMellinTerm_eq_logarithmicMellinTerm_mul a x hτ, norm_mul]
+  rw [reciprocalMellinTerm_eq_logTerm_mul a x hτ, norm_mul]
   exact mul_le_of_le_one_right (norm_nonneg _) (verticalReciprocalMultiplier_norm_le hτ y)
 
 /-- For `a 0 = 0` and `x,τ > 0`, every reciprocal coefficient integrand is integrable.
@@ -96,8 +96,7 @@ theorem integrable_reciprocalMellinTerm (a : ℕ → ℂ) (ha : a 0 = 0) {x τ :
       (Filter.Eventually.of_forall (verticalReciprocalMultiplier_norm_le hτ))
   exact
     hi.congr
-      (Filter.Eventually.of_forall
-        (fun y ↦ (reciprocalMellinTerm_eq_logarithmicMellinTerm_mul a x hτ n y).symm))
+      (Filter.Eventually.of_forall (fun y ↦ (reciprocalMellinTerm_eq_logTerm_mul a x hτ n y).symm))
 
 /-- If `a 0 = 0`, `x,τ > 0`, and the coefficient L-series converges absolutely at `τ`, the
 reciprocal terms have summable integral norms. Compare each integral with its logarithmic
@@ -186,7 +185,7 @@ theorem mellinWeightOne_tsum_eq_integral_LSeries (a : ℕ → ℂ) (ha : a 0 = 0
 by `n^(-σ) w₁(n/x)` shifts the L-series argument in the reciprocal Mellin integral to
 `σ + τ + iy`. Apply unshifted inversion to the real-shifted coefficients and translate their
 series. This supports the ordinary logarithmic derivative on its right half-plane. -/
-theorem mellinWeightOne_shifted_tsum_eq_integral_LSeries (a : ℕ → ℂ) (ha : a 0 = 0) (σ : ℝ)
+theorem mellinWeightOne_shifted_integral (a : ℕ → ℂ) (ha : a 0 = 0) (σ : ℝ)
     {x τ : ℝ} (hx : 0 < x) (hτ : 0 < τ) (hsum : LSeriesSummable a ((σ + τ : ℝ) : ℂ)) :
     (∑' n : ℕ, a n * (n : ℂ) ^ (-(σ : ℂ)) * Analysis.mellinWeightOne ((n : ℝ) / x)) =
       (2 * Real.pi : ℝ)⁻¹ •
@@ -243,8 +242,8 @@ theorem mellinWeightOne_tsum_eq_reciprocalWeightedSum (a : ℕ → ℂ) (ha : a 
 coefficients shifted by `n^(-σ)` equals the normalized reciprocal L-series integral.
 Combine finite-support collapse with shifted Mellin inversion. This supplies the arithmetic
 identity for the general reciprocal explicit formula. -/
-theorem reciprocalWeightedSum_shifted_eq_integral_LSeries (a : ℕ → ℂ) (ha : a 0 = 0) (σ : ℝ)
-    {x τ : ℝ} (hx : 0 < x) (hτ : 0 < τ) (hsum : LSeriesSummable a ((σ + τ : ℝ) : ℂ)) :
+theorem reciprocalWeightedSum_shifted_integral (a : ℕ → ℂ) (ha : a 0 = 0) (σ : ℝ) {x τ : ℝ}
+    (hx : 0 < x) (hτ : 0 < τ) (hsum : LSeriesSummable a ((σ + τ : ℝ) : ℂ)) :
     reciprocalWeightedSum (shiftedLSeriesCoefficient a σ) x =
       (2 * Real.pi : ℝ)⁻¹ •
         ∫ y : ℝ,
@@ -252,7 +251,7 @@ theorem reciprocalWeightedSum_shifted_eq_integral_LSeries (a : ℕ → ℂ) (ha 
             (((τ : ℂ) + y * Complex.I) * ((τ : ℂ) + y * Complex.I + 1)) := by
   have ha0 : shiftedLSeriesCoefficient a σ 0 = 0 := by rw [shiftedLSeriesCoefficient, ha, zero_mul]
   rw [← mellinWeightOne_tsum_eq_reciprocalWeightedSum _ ha0 hx]
-  exact mellinWeightOne_shifted_tsum_eq_integral_LSeries a ha σ hx hτ hsum
+  exact mellinWeightOne_shifted_integral a ha σ hx hτ hsum
 
 /-- For `a 0 = 0`, positive `x,τ` and absolute convergence at `τ`, the reciprocal L-series
 integrand is integrable. The coefficient terms have summable integral norms, so their sum is

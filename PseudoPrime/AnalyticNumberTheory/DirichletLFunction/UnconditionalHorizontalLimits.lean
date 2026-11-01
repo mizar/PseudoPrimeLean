@@ -87,7 +87,7 @@ theorem exists_uniform_horizontal_log_budget {q : ℕ} [NeZero q] (hq : 2 ≤ q)
                   (4 * (q : ℝ) + 3) * (u + 3) * Real.log (u + 3) -
                       Real.log ‖χ.completedLFunction 0‖ ≤
                     Real.log 2 * (K * n * Real.log n) := by
-  obtain ⟨K, hK, hbudget⟩ := exists_K_forall_H2LogBound_thirtyTwo_le hq hp hne
+  obtain ⟨K, hK, hbudget⟩ := eventually_ballCount_32_bound hq hp hne
   refine ⟨K, hK, ?_⟩
   filter_upwards [hbudget, Filter.eventually_ge_atTop (1 : ℝ)] with n hn hnge
   refine ⟨hnge, ?_⟩
@@ -120,7 +120,7 @@ noncomputable def unconditionalHorizontalCleanEnvelope (M K n : ℝ) : ℝ :=
 /-- For fixed mass and positive budget coefficient, the clean horizontal error tends
 to zero at infinity. Apply the logarithmic and square-root decay limits termwise.
 This permits squeezing normalized horizontal logarithmic derivatives. -/
-theorem tendsto_unconditionalHorizontalCleanEnvelope (M K : ℝ) (hK : 0 < K) :
+theorem tendsto_unconditionalEnvelope (M K : ℝ) (hK : 0 < K) :
     Filter.Tendsto (unconditionalHorizontalCleanEnvelope M K) Filter.atTop (nhds 0) := by
   have hfirst := General.tendsto_log_div_sq_atTop.const_mul ((768 * Real.log 2 + 8) * K)
   have hsecond :=
@@ -174,7 +174,7 @@ works at every sufficiently large real scale: one common height gives nonvanishi
 and a clean normalized bound on both signed edges of the growing real strip.
 Use the unconditional separated-point genus estimate and uniform Jensen budgets.
 This removes RH before the horizontal contour limit is taken. -/
-theorem exists_eventually_unconditional_horizontal_clean_bound {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem eventually_horizontal_clean_bound {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     ∃ K : ℝ,
       0 < K ∧
@@ -199,7 +199,7 @@ theorem exists_eventually_unconditional_horizontal_clean_bound {q : ℕ} [NeZero
   filter_upwards [hbudget] with n hn
   obtain ⟨hnge, hb⟩ := hn
   obtain ⟨T, hT, R, hR, δ, hδ, hδeq, hbounds⟩ :=
-    exists_primitiveHorizontalScaledStripLogDerivBound_unconditionally hq hp hne hinv hnge
+    exists_scaledStripLogDeriv_bound hq hp hne hinv hnge
   have hnpos : 0 < n := zero_lt_one.trans_le hnge
   have hRone : 1 ≤ R := by linarith only [hR.1, hnge]
   have hRpos : 0 < R := zero_lt_one.trans_le hRone
@@ -275,8 +275,8 @@ signed centered logarithmic derivatives bounded after division by height squared
 The growing strips are zero-free on these edges. Shift the eventual good-height
 witnesses by one fixed natural index and compose the clean-envelope limit.
 This is the unconditional height-sequence input to explicit contour formulas. -/
-theorem exists_unconditional_horizontal_height_sequence {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
+theorem exists_horizontalHeightSeq {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     ∃ T ε : ℕ → ℝ,
       Filter.Tendsto T Filter.atTop Filter.atTop ∧
         Filter.Tendsto ε Filter.atTop (nhds 0) ∧
@@ -295,7 +295,7 @@ theorem exists_unconditional_horizontal_height_sequence {q : ℕ} [NeZero q] (hq
                   χ.completedLFunction ((σ : ℂ) + T k * Complex.I) ≠ 0 ∧
                   χ.completedLFunction ((σ : ℂ) - T k * Complex.I) ≠ 0 := by
   classical
-  obtain ⟨K, hK, hgood⟩ := exists_eventually_unconditional_horizontal_clean_bound hq hp hne hinv
+  obtain ⟨K, hK, hgood⟩ := eventually_horizontal_clean_bound hq hp hne hinv
   have hnseq : Filter.Tendsto (fun k : ℕ ↦ (k : ℝ) + 1) Filter.atTop Filter.atTop :=
     Filter.tendsto_atTop_add_const_right Filter.atTop 1 tendsto_natCast_atTop_atTop
   obtain ⟨k₀, hk₀⟩ := Filter.eventually_atTop.mp (hnseq.eventually hgood)
@@ -315,8 +315,7 @@ theorem exists_unconditional_horizontal_height_sequence {q : ℕ} [NeZero q] (hq
       Filter.tendsto_atTop_add_const_right Filter.atTop ((k₀ : ℝ) + 1) tendsto_natCast_atTop_atTop
     simpa only [Nat.cast_add, add_assoc] using h
   have hε : Filter.Tendsto ε Filter.atTop (nhds 0) :=
-    (tendsto_unconditionalHorizontalCleanEnvelope (completedLFunctionInverseSquareMass χ) K hK).comp
-      hnshift
+    (tendsto_unconditionalEnvelope (completedLFunctionInverseSquareMass χ) K hK).comp hnshift
   refine ⟨T, ε, hT, hε, ?_⟩
   intro k
   refine ⟨hTlower k, ?_⟩

@@ -23,12 +23,12 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 derivative at 1+r+it obeys the explicit Euler-ratio bound. Dominate its twisted
 Mangoldt series by the untwisted series. This extends the real-axis error budget
 to shifted Poisson centers without imposing RH. -/
-theorem norm_logDeriv_vertical_le_euler_ratio {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
-    {r : ℝ} (hr : 0 < r) (t : ℝ) :
+theorem norm_L_logDeriv_le_euler_ratio {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) {r : ℝ}
+    (hr : 0 < r) (t : ℝ) :
     ‖logDeriv χ.LFunction (((1 + r : ℝ) : ℂ) + t * Complex.I)‖ ≤
       (r⁻¹ ^ 2 + (r + 1)⁻¹) / (1 + (2 : ℝ) ^ (-r) / r) := by
   have hs : 1 < 1 + r := by linarith only [hr]
-  have hn := norm_neg_deriv_div_dirichletLFunction_le_vonMangoldt_tsum χ hs t
+  have hn := norm_logDeriv_L_le_mangoldt_tsum χ hs t
   simp only [neg_div, norm_neg] at hn
   exact hn.trans (Arithmetic.tsum_vonMangoldt_le_euler_ratio hr)
 
@@ -71,15 +71,15 @@ theorem euler_ratio_le_four_div_gap {r : ℝ} (hr : 0 < r) (hr1 : r ≤ 1) :
 
 /-- The ordinary logarithmic derivative on the line `1 + r + it` is at most `4 / r`
 when `0 < r ≤ 1`. Combine the uniform Euler-ratio estimate with its elementary simplification. -/
-theorem norm_logDeriv_vertical_le_four_div_gap {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
-    {r : ℝ} (hr : 0 < r) (hr1 : r ≤ 1) (t : ℝ) :
+theorem norm_L_logDeriv_le_four_div_gap {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) {r : ℝ}
+    (hr : 0 < r) (hr1 : r ≤ 1) (t : ℝ) :
     ‖logDeriv χ.LFunction (((1 + r : ℝ) : ℂ) + t * Complex.I)‖ ≤ 4 / r := by
-  exact (norm_logDeriv_vertical_le_euler_ratio χ hr t).trans (euler_ratio_le_four_div_gap hr hr1)
+  exact (norm_L_logDeriv_le_euler_ratio χ hr t).trans (euler_ratio_le_four_div_gap hr hr1)
 
 /-- For each fixed shift `0 < r ≤ 1`, the completed logarithmic derivative is bounded by the
 Euler term `4 / r` plus a logarithmic-height gamma term, uniformly in the modulus and character.
 The gamma constant may depend on `r`; a constant uniform in the shift is needed for log-free use. -/
-theorem exists_norm_completed_logDeriv_small_shift_bound {r : ℝ} (hr : 0 < r) (hr1 : r ≤ 1) :
+theorem completedLogDeriv_smallShift_bound {r : ℝ} (hr : 0 < r) (hr1 : r ≤ 1) :
     ∃ A : ℝ,
       0 < A ∧
         ∀ {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q),
@@ -89,7 +89,7 @@ theorem exists_norm_completed_logDeriv_small_shift_bound {r : ℝ} (hr : 0 < r) 
                 4 / r + A * (Real.log (4 + |t|) + 1) := by
   have hσ : 0 < (1 + r : ℝ) := by linarith only [hr]
   have hσ' : (1 + r : ℝ) ≤ 2 := by linarith only [hr1]
-  obtain ⟨A, hA, hgamma⟩ := exists_uniform_norm_logDeriv_gammaFactor_vertical_le_log hσ hσ'
+  obtain ⟨A, hA, hgamma⟩ := uniform_gammaLogDeriv_vertical hσ hσ'
   refine ⟨A, hA, ?_⟩
   intro q _ χ hne t
   let s : ℂ := ((1 + r : ℝ) : ℂ) + Complex.I * t
@@ -99,18 +99,16 @@ theorem exists_norm_completed_logDeriv_small_shift_bound {r : ℝ} (hr : 0 < r) 
   have hs1 : 1 ≤ s.re := by
     rw [hsre]; linarith only [hr]
   have hspos : 0 < s.re := zero_lt_one.trans_le hs1
-  have hF : DirichletCharacter.completedLFunction χ s ≠ 0 :=
-    completedLFunction_ne_zero_of_one_le_re hne hs1
+  have hF : DirichletCharacter.completedLFunction χ s ≠ 0 := completed_ne_zero_of_one_le_re hne hs1
   have hG : DirichletCharacter.gammaFactor χ s ≠ 0 := gammaFactor_ne_zero_of_re_pos χ hspos
   have hderivG := (analyticAt_gammaFactor_of_re_pos χ hspos).differentiableAt
-  have hidentity :=
-    logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne hF hG hderivG
+  have hidentity := L_logDeriv_sub_gamma_of_regular hne hF hG hderivG
   have hsum :
     logDeriv χ.completedLFunction s = logDeriv χ.LFunction s + logDeriv χ.gammaFactor s := by
     rw [hidentity]
     ring
   have hordinary : ‖logDeriv χ.LFunction s‖ ≤ 4 / r := by
-    have h := norm_logDeriv_vertical_le_four_div_gap χ hr hr1 t
+    have h := norm_L_logDeriv_le_four_div_gap χ hr hr1 t
     have hsEq : s = (((1 + r : ℝ) : ℂ) + t * Complex.I) := by
       dsimp [s]
       rw [mul_comm (Complex.I : ℂ) (t : ℂ)]
@@ -129,7 +127,7 @@ theorem exists_norm_completed_logDeriv_small_shift_bound {r : ℝ} (hr : 0 < r) 
 constant is uniform in the shift, modulus, and nonprincipal character. Combine the uniform
 gamma estimate on `3/4 ≤ Re(s) ≤ 3/2` with the Euler bound for the ordinary logarithmic
 derivative. This gives the shift-uniform input needed for a local multiplicity estimate. -/
-theorem exists_uniform_norm_completed_logDeriv_small_shift_bound :
+theorem uniform_completedLogDeriv_smallShift :
     ∃ A : ℝ,
       0 < A ∧
         ∀ {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q),
@@ -140,7 +138,7 @@ theorem exists_uniform_norm_completed_logDeriv_small_shift_bound :
                 ∀ t : ℝ,
                   ‖logDeriv χ.completedLFunction (((1 + r : ℝ) : ℂ) + Complex.I * t)‖ ≤
                     4 / r + A * (Real.log (4 + |t|) + 1) := by
-  obtain ⟨C, hC, hstrip⟩ := exists_uniform_norm_logDeriv_gammaFactor_on_strip
+  obtain ⟨C, hC, hstrip⟩ := uniform_gammaLogDeriv_strip_log
   let A : ℝ := 2 * C + 1
   have hA : 0 < A := by
     dsimp only [A]
@@ -165,18 +163,16 @@ theorem exists_uniform_norm_completed_logDeriv_small_shift_bound :
     rw [hsre]
     linarith only [hr]
   have hspos : 0 < s.re := zero_lt_one.trans_le hs1
-  have hF : DirichletCharacter.completedLFunction χ s ≠ 0 :=
-    completedLFunction_ne_zero_of_one_le_re hne hs1
+  have hF : DirichletCharacter.completedLFunction χ s ≠ 0 := completed_ne_zero_of_one_le_re hne hs1
   have hG : DirichletCharacter.gammaFactor χ s ≠ 0 := gammaFactor_ne_zero_of_re_pos χ hspos
   have hderivG := (analyticAt_gammaFactor_of_re_pos χ hspos).differentiableAt
-  have hidentity :=
-    logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne hF hG hderivG
+  have hidentity := L_logDeriv_sub_gamma_of_regular hne hF hG hderivG
   have hsum :
     logDeriv χ.completedLFunction s = logDeriv χ.LFunction s + logDeriv χ.gammaFactor s := by
     rw [hidentity]
     ring
   have hordinary : ‖logDeriv χ.LFunction s‖ ≤ 4 / r := by
-    have h := norm_logDeriv_vertical_le_four_div_gap χ hr (by linarith only [hr1]) t
+    have h := norm_L_logDeriv_le_four_div_gap χ hr (by linarith only [hr1]) t
     have hsEq : s = (((1 + r : ℝ) : ℂ) + t * Complex.I) := by
       dsimp [s]
       rw [mul_comm (Complex.I : ℂ) (t : ℂ)]
@@ -234,9 +230,9 @@ noncomputable def shiftedCompletedPoissonSum {q : ℕ} [NeZero q] (χ : Dirichle
 the conductor term and the exact real Gamma derivative from the shifted Poisson sum
 leaves an error bounded by the Euler ratio. Use the completed Poisson identity and
 the ordinary/completed derivative decomposition. Gamma signs are retained. -/
-theorem shifted_poissonSum_centered_sub_gamma_le_euler_ratio {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {r : ℝ} (hr : 0 < r) (t : ℝ) :
+theorem shiftedPoisson_euler_ratio_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    {r : ℝ} (hr : 0 < r) (t : ℝ) :
     |shiftedCompletedPoissonSum χ r t - Real.log q / 2 -
           (logDeriv χ.gammaFactor (((1 + r : ℝ) : ℂ) + t * Complex.I)).re| ≤
       (r⁻¹ ^ 2 + (r + 1)⁻¹) / (1 + (2 : ℝ) ^ (-r) / r) := by
@@ -253,23 +249,22 @@ theorem shifted_poissonSum_centered_sub_gamma_le_euler_ratio {q : ℕ} [NeZero q
         rw [hs]; linarith only [hr])
   rw [hs, show 1 + r - 1 / 2 = 1 / 2 + r by ring] at he
   have hd :=
-    logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hne
-      (completedLFunction_ne_zero_of_one_le_re hne hs1) (gammaFactor_ne_zero_of_re_pos χ hspos)
+    L_logDeriv_sub_gamma_of_regular hne (completed_ne_zero_of_one_le_re hne hs1)
+      (gammaFactor_ne_zero_of_re_pos χ hspos)
       (analyticAt_gammaFactor_of_re_pos χ hspos).differentiableAt
   unfold shiftedCompletedPoissonSum
   change |(∑' ρ : ℂ, _) - Real.log q / 2 - (logDeriv χ.gammaFactor s).re| ≤ _
   rw [he, add_sub_cancel_right, ← Complex.sub_re, ← hd]
-  exact (Complex.abs_re_le_norm _).trans (norm_logDeriv_vertical_le_euler_ratio χ hr t)
+  exact (Complex.abs_re_le_norm _).trans (norm_L_logDeriv_le_euler_ratio χ hr t)
 
 /-- For primitive nonprincipal individual-RH data and a finite collection of
 positive horizontal gaps, heights and signed weights, the absolute weighted sum of
 the conductor-and-Gamma-subtracted Poisson errors is bounded by the absolute-weighted
 Euler ratios. Apply the shifted estimate termwise. This supplies a certificate
 interface that does not replace the signed Gamma combination by separate norms. -/
-theorem shifted_poisson_signed_combination_error_le {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {ι : Type*} (S : Finset ι) (r t w : ι → ℝ)
-    (hr : ∀ i ∈ S, 0 < r i) :
+theorem shiftedPoisson_signed_error_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    {ι : Type*} (S : Finset ι) (r t w : ι → ℝ) (hr : ∀ i ∈ S, 0 < r i) :
     |∑ i ∈ S,
           w i *
             (shiftedCompletedPoissonSum χ (r i) (t i) - Real.log q / 2 -
@@ -280,8 +275,7 @@ theorem shifted_poisson_signed_combination_error_le {q : ℕ} [NeZero q] (hq : 2
   intro i hi
   rw [abs_mul]
   exact
-    mul_le_mul_of_nonneg_left
-      (shifted_poissonSum_centered_sub_gamma_le_euler_ratio hq hRH hp hne hinv (hr i hi) (t i))
+    mul_le_mul_of_nonneg_left (shiftedPoisson_euler_ratio_RH hq hRH hp hne hinv (hr i hi) (t i))
       (abs_nonneg (w i))
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

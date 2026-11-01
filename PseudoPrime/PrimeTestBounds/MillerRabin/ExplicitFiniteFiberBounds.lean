@@ -61,14 +61,14 @@ theorem explicit_fiber_prime_threshold_le_log_power {n u : ℕ} {A : ℝ} (hu : 
 at most log(n)^(1838239/1000000). Apply the proved explicit Fermat-quotient theorem
 at large square prime divisors; a smaller square prime divisor is itself
 a bounded rejecting base. GRH and unspecified analytic thresholds are absent. -/
-theorem exists_prime_witness_of_explicit_finite_fiber_threshold {n : ℕ} (hn : 1 < n) (ho : Odd n)
-    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold (1388714689827) ≤ n) :
+theorem exists_primeWitness_explicitFiber {n : ℕ} (hn : 1 < n) (ho : Odd n) (hns : ¬Squarefree n)
+    (hlarge : explicitFiniteFiberInputThreshold (1388714689827) ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         (q : ℝ) ≤ (Real.log n) ^ (1838239 / 1000000 : ℝ) ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) := by
   apply
-    exists_prime_witness_le_log_power_of_uniform_fermat_quotient_bound (P :=
+    exists_prime_logPower_uniformFermat (P :=
       NumberTheory.Heilbronn.explicitFiniteFiberPrimeThreshold (1388714689827)) hn ho hns
       (1838239 / 1000000) (by norm_num only)
       (explicit_fiber_prime_threshold_le_log_power (by norm_num only)
@@ -76,16 +76,14 @@ theorem exists_prime_witness_of_explicit_finite_fiber_threshold {n : ℕ} (hn : 
   intro p hp hp2 hpLarge
   let : Fact p.Prime := ⟨hp⟩
   obtain ⟨q, hq, hb, hpow⟩ :=
-    NumberTheory.Heilbronn.exists_prime_nontrivial_power_of_explicit_fiber_threshold
-      (hp.odd_of_ne_two hp2) hpLarge
+    NumberTheory.Heilbronn.exists_prime_pow_ne_one_1838239_1000000 (hp.odd_of_ne_two hp2) hpLarge
   exact ⟨q, hq.pos, hb, hpow⟩
 
 /-- Above N(1388714689827), the least prime MR witness of every odd nonsquarefree
 n>1 is at most log(n)^(1838239/1000000), strictly below log(n)^2. Minimize the proved
 rejecting-prime predicate and compare the real exponents at log(n)>1.
 This is an unconditional least-witness bound with a specified starting value. -/
-theorem exists_least_prime_witness_of_explicit_finite_fiber_threshold {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hns : ¬Squarefree n)
+theorem exists_leastWitness_explicitFiber {n : ℕ} (hn : 1 < n) (ho : Odd n) (hns : ¬Squarefree n)
     (hlarge : explicitFiniteFiberInputThreshold (1388714689827) ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
@@ -94,7 +92,7 @@ theorem exists_least_prime_witness_of_explicit_finite_fiber_threshold {n : ℕ} 
         (q : ℝ) < (Real.log n) ^ 2 ∧
         ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → q ≤ s := by
   classical
-  obtain ⟨q, hq, hb, hf⟩ := exists_prime_witness_of_explicit_finite_fiber_threshold hn ho hns hlarge
+  obtain ⟨q, hq, hb, hf⟩ := exists_primeWitness_explicitFiber hn ho hns hlarge
   have hLn : 1 < Real.log n := by
     have hbound :=
       explicit_fiber_prime_threshold_le_log_power (by norm_num only : 2 ≤ (1388714689827 : ℕ))
@@ -118,15 +116,14 @@ theorem exists_least_prime_witness_of_explicit_finite_fiber_threshold {n : ℕ} 
 /-- For every odd nonsquarefree n>1 above N(283000007562), a prime MR witness
 is at most log(n)^(1850004/1000000). Apply the 74/40 finite-fiber Fermat bound
 at large square prime divisors and use a smaller square prime divisor directly. -/
-theorem exists_prime_witness_of_explicit_finite_fiber_threshold_74_40 {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hns : ¬Squarefree n)
-    (hlarge : explicitFiniteFiberInputThreshold 283000007562 ≤ n) :
+theorem exists_primeWitness_explicitFiber_74_40 {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 283000007562 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         (q : ℝ) ≤ (Real.log n) ^ (1850004 / 1000000 : ℝ) ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) := by
   apply
-    exists_prime_witness_le_log_power_of_uniform_fermat_quotient_bound (P :=
+    exists_prime_logPower_uniformFermat (P :=
       NumberTheory.Heilbronn.explicitFiniteFiberPrimeThreshold 283000007562) hn ho hns
       (1850004 / 1000000) (by norm_num only)
       (explicit_fiber_prime_threshold_le_log_power (by norm_num only)
@@ -134,16 +131,14 @@ theorem exists_prime_witness_of_explicit_finite_fiber_threshold_74_40 {n : ℕ} 
   intro p hp hp2 hpLarge
   let : Fact p.Prime := ⟨hp⟩
   obtain ⟨q, hq, hb, hpow⟩ :=
-    NumberTheory.Heilbronn.exists_prime_nontrivial_power_of_explicit_fiber_threshold_74_40
-      (hp.odd_of_ne_two hp2) hpLarge
+    NumberTheory.Heilbronn.exists_prime_pow_ne_one_1850004_1000000 (hp.odd_of_ne_two hp2) hpLarge
   exact ⟨q, hq.pos, hb, hpow⟩
 
 /-- Above N(283000007562), the least prime MR witness of every odd
 nonsquarefree n>1 is at most log(n)^(1850004/1000000), strictly below log(n)^2.
 Minimize the rejecting-prime predicate and compare the exponents at log(n)>1. -/
-theorem exists_least_prime_witness_of_explicit_finite_fiber_threshold_74_40 {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hns : ¬Squarefree n)
-    (hlarge : explicitFiniteFiberInputThreshold 283000007562 ≤ n) :
+theorem exists_leastWitness_explicitFiber_74_40 {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 283000007562 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) ∧
@@ -151,8 +146,7 @@ theorem exists_least_prime_witness_of_explicit_finite_fiber_threshold_74_40 {n :
         (q : ℝ) < (Real.log n) ^ 2 ∧
         ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → q ≤ s := by
   classical
-  obtain ⟨q, hq, hb, hf⟩ :=
-    exists_prime_witness_of_explicit_finite_fiber_threshold_74_40 hn ho hns hlarge
+  obtain ⟨q, hq, hb, hf⟩ := exists_primeWitness_explicitFiber_74_40 hn ho hns hlarge
   have hLn : 1 < Real.log n := by
     have hbound :=
       explicit_fiber_prime_threshold_le_log_power (by norm_num only : 2 ≤ (283000007562 : ℕ))
@@ -176,15 +170,14 @@ theorem exists_least_prime_witness_of_explicit_finite_fiber_threshold_74_40 {n :
 /-- For every odd nonsquarefree n>1 above N(242591045876), a prime MR witness
 is at most log(n)^(184211/100000). Apply the 70/38 finite-fiber Fermat bound
 at large square prime divisors and use a smaller square prime divisor directly. -/
-theorem exists_prime_witness_of_explicit_finite_fiber_threshold_38_70 {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hns : ¬Squarefree n)
-    (hlarge : explicitFiniteFiberInputThreshold 242591045876 ≤ n) :
+theorem exists_primeWitness_explicitFiber_38_70 {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 242591045876 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         (q : ℝ) ≤ (Real.log n) ^ (184211 / 100000 : ℝ) ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) := by
   apply
-    exists_prime_witness_le_log_power_of_uniform_fermat_quotient_bound (P :=
+    exists_prime_logPower_uniformFermat (P :=
       NumberTheory.Heilbronn.explicitFiniteFiberPrimeThreshold 242591045876) hn ho hns
       (184211 / 100000) (by norm_num only)
       (explicit_fiber_prime_threshold_le_log_power (by norm_num only)
@@ -192,16 +185,14 @@ theorem exists_prime_witness_of_explicit_finite_fiber_threshold_38_70 {n : ℕ} 
   intro p hp hp2 hpLarge
   let : Fact p.Prime := ⟨hp⟩
   obtain ⟨q, hq, hb, hpow⟩ :=
-    NumberTheory.Heilbronn.exists_prime_nontrivial_power_of_explicit_fiber_threshold_38_70
-      (hp.odd_of_ne_two hp2) hpLarge
+    NumberTheory.Heilbronn.exists_prime_pow_ne_one_184211_100000 (hp.odd_of_ne_two hp2) hpLarge
   exact ⟨q, hq.pos, hb, hpow⟩
 
 /-- Above N(242591045876), the least prime MR witness of every odd
 nonsquarefree n>1 is at most log(n)^(184211/100000), strictly below log(n)^2.
 Minimize the rejecting-prime predicate and compare the exponents at log(n)>1. -/
-theorem exists_least_prime_witness_of_explicit_finite_fiber_threshold_38_70 {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hns : ¬Squarefree n)
-    (hlarge : explicitFiniteFiberInputThreshold 242591045876 ≤ n) :
+theorem exists_leastWitness_explicitFiber_38_70 {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 242591045876 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) ∧
@@ -209,8 +200,7 @@ theorem exists_least_prime_witness_of_explicit_finite_fiber_threshold_38_70 {n :
         (q : ℝ) < (Real.log n) ^ 2 ∧
         ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → q ≤ s := by
   classical
-  obtain ⟨q, hq, hb, hf⟩ :=
-    exists_prime_witness_of_explicit_finite_fiber_threshold_38_70 hn ho hns hlarge
+  obtain ⟨q, hq, hb, hf⟩ := exists_primeWitness_explicitFiber_38_70 hn ho hns hlarge
   have hLn : 1 < Real.log n := by
     have hbound :=
       explicit_fiber_prime_threshold_le_log_power (by norm_num only : 2 ≤ (242591045876 : ℕ))
@@ -234,15 +224,14 @@ theorem exists_least_prime_witness_of_explicit_finite_fiber_threshold_38_70 {n :
 /-- Every odd nonsquarefree n>1 above N(145000006050) has a prime MR
 witness at most log(n)^(1843755/1000000). Apply the 59/32 Fermat-quotient
 bound at large square prime divisors and use a smaller square divisor directly. -/
-theorem exists_prime_witness_of_explicit_finite_fiber_threshold_32_59 {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hns : ¬Squarefree n)
-    (hlarge : explicitFiniteFiberInputThreshold 145000006050 ≤ n) :
+theorem exists_primeWitness_explicitFiber_32_59 {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 145000006050 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         (q : ℝ) ≤ (Real.log n) ^ (1843755 / 1000000 : ℝ) ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) := by
   apply
-    exists_prime_witness_le_log_power_of_uniform_fermat_quotient_bound (P :=
+    exists_prime_logPower_uniformFermat (P :=
       NumberTheory.Heilbronn.explicitFiniteFiberPrimeThreshold 145000006050) hn ho hns
       (1843755 / 1000000) (by norm_num only)
       (explicit_fiber_prime_threshold_le_log_power (by norm_num only)
@@ -250,16 +239,14 @@ theorem exists_prime_witness_of_explicit_finite_fiber_threshold_32_59 {n : ℕ} 
   intro p hp hp2 hpLarge
   let : Fact p.Prime := ⟨hp⟩
   obtain ⟨q, hq, hb, hpow⟩ :=
-    NumberTheory.Heilbronn.exists_prime_nontrivial_power_of_explicit_fiber_threshold_32_59
-      (hp.odd_of_ne_two hp2) hpLarge
+    NumberTheory.Heilbronn.exists_prime_pow_ne_one_1843755_1000000 (hp.odd_of_ne_two hp2) hpLarge
   exact ⟨q, hq.pos, hb, hpow⟩
 
 /-- Above N(145000006050), the least prime MR witness of every odd
 nonsquarefree n>1 is at most log(n)^(1843755/1000000), strictly below log(n)^2.
 Minimize the rejecting-prime predicate and compare exponents at log(n)>1. -/
-theorem exists_least_prime_witness_of_explicit_finite_fiber_threshold_32_59 {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hns : ¬Squarefree n)
-    (hlarge : explicitFiniteFiberInputThreshold 145000006050 ≤ n) :
+theorem exists_leastWitness_explicitFiber_32_59 {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 145000006050 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) ∧
@@ -267,8 +254,7 @@ theorem exists_least_prime_witness_of_explicit_finite_fiber_threshold_32_59 {n :
         (q : ℝ) < (Real.log n) ^ 2 ∧
         ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → q ≤ s := by
   classical
-  obtain ⟨q, hq, hb, hf⟩ :=
-    exists_prime_witness_of_explicit_finite_fiber_threshold_32_59 hn ho hns hlarge
+  obtain ⟨q, hq, hb, hf⟩ := exists_primeWitness_explicitFiber_32_59 hn ho hns hlarge
   have hLn : 1 < Real.log n := by
     have hbound :=
       explicit_fiber_prime_threshold_le_log_power (by norm_num only : 2 ≤ (145000006050 : ℕ))
@@ -292,14 +278,14 @@ theorem exists_least_prime_witness_of_explicit_finite_fiber_threshold_32_59 {n :
 /-- Every odd nonsquarefree n>1 above N(4449271510) has a prime MR witness
 at most log(n)^1.90000001698. Apply the 19/10 Fermat-quotient bound at large
 square prime divisors and use a smaller square divisor directly. -/
-theorem exists_prime_witness_of_explicit_finite_fiber_threshold_10_19 {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 4449271510 ≤ n) :
+theorem exists_primeWitness_explicitFiber_10_19 {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 4449271510 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         (q : ℝ) ≤ (Real.log n) ^ (1900000016707 / 1000000000000 : ℝ) ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) := by
   apply
-    exists_prime_witness_le_log_power_of_uniform_fermat_quotient_bound (P :=
+    exists_prime_logPower_uniformFermat (P :=
       NumberTheory.Heilbronn.explicitFiniteFiberPrimeThreshold 4449271510) hn ho hns
       (1900000016707 / 1000000000000) (by norm_num only)
       (explicit_fiber_prime_threshold_le_log_power (by norm_num only)
@@ -307,15 +293,14 @@ theorem exists_prime_witness_of_explicit_finite_fiber_threshold_10_19 {n : ℕ} 
   intro p hp hp2 hpLarge
   let : Fact p.Prime := ⟨hp⟩
   obtain ⟨q, hq, hb, hpow⟩ :=
-    NumberTheory.Heilbronn.exists_prime_nontrivial_power_of_explicit_fiber_threshold_10_19
-      (hp.odd_of_ne_two hp2) hpLarge
+    NumberTheory.Heilbronn.exists_prime_pow_ne_one_1900000016707_d12 (hp.odd_of_ne_two hp2) hpLarge
   exact ⟨q, hq.pos, hb, hpow⟩
 
 /-- Above N(4449271510), the least prime MR witness of every odd
 nonsquarefree n>1 is at most log(n)^1.900000016707, strictly below log(n)^2.
 Minimize the rejecting-prime predicate and compare exponents at log(n)>1. -/
-theorem exists_least_prime_witness_of_explicit_finite_fiber_threshold_10_19 {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 4449271510 ≤ n) :
+theorem exists_leastWitness_explicitFiber_10_19 {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 4449271510 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) ∧
@@ -323,8 +308,7 @@ theorem exists_least_prime_witness_of_explicit_finite_fiber_threshold_10_19 {n :
         (q : ℝ) < (Real.log n) ^ 2 ∧
         ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → q ≤ s := by
   classical
-  obtain ⟨q, hq, hb, hf⟩ :=
-    exists_prime_witness_of_explicit_finite_fiber_threshold_10_19 hn ho hns hlarge
+  obtain ⟨q, hq, hb, hf⟩ := exists_primeWitness_explicitFiber_10_19 hn ho hns hlarge
   have hLn : 1 < Real.log n := by
     have hbound :=
       explicit_fiber_prime_threshold_le_log_power (by norm_num only : 2 ≤ (4449271510 : ℕ))
@@ -349,14 +333,14 @@ theorem exists_least_prime_witness_of_explicit_finite_fiber_threshold_10_19 {n :
 /-- Every odd nonsquarefree n>1 above N(76598623) has a prime MR witness
 at most log(n)^1.9000007986. This improves the exponent at the smallest
 coefficient threshold for the 19/10 scale. -/
-theorem exists_prime_witness_of_explicit_finite_fiber_threshold_10_19_53m {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 76598623 ≤ n) :
+theorem exists_primeWitness_explicitFiber_10_19_53m {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 76598623 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         (q : ℝ) ≤ (Real.log n) ^ (19000007986 / 10000000000 : ℝ) ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) := by
   apply
-    exists_prime_witness_le_log_power_of_uniform_fermat_quotient_bound (P :=
+    exists_prime_logPower_uniformFermat (P :=
       NumberTheory.Heilbronn.explicitFiniteFiberPrimeThreshold 76598623) hn ho hns
       (19000007986 / 10000000000) (by norm_num only)
       (explicit_fiber_prime_threshold_le_log_power (by norm_num only)
@@ -364,14 +348,13 @@ theorem exists_prime_witness_of_explicit_finite_fiber_threshold_10_19_53m {n : �
   intro p hp hp2 hpLarge
   let : Fact p.Prime := ⟨hp⟩
   obtain ⟨q, hq, hb, hpow⟩ :=
-    NumberTheory.Heilbronn.exists_prime_nontrivial_power_of_explicit_fiber_threshold_10_19_53m
-      (hp.odd_of_ne_two hp2) hpLarge
+    NumberTheory.Heilbronn.exists_prime_pow_ne_one_19000007986_d10 (hp.odd_of_ne_two hp2) hpLarge
   exact ⟨q, hq.pos, hb, hpow⟩
 
 /-- Above N(76598623), the least prime MR witness of every odd
 nonsquarefree n>1 is at most log(n)^1.9000007988 and strictly below log(n)^2. -/
-theorem exists_least_prime_witness_of_explicit_finite_fiber_threshold_10_19_53m {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 76598623 ≤ n) :
+theorem exists_leastWitness_explicitFiber_10_19_53m {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 76598623 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) ∧
@@ -379,8 +362,7 @@ theorem exists_least_prime_witness_of_explicit_finite_fiber_threshold_10_19_53m 
         (q : ℝ) < (Real.log n) ^ 2 ∧
         ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → q ≤ s := by
   classical
-  obtain ⟨q, hq, hb, hf⟩ :=
-    exists_prime_witness_of_explicit_finite_fiber_threshold_10_19_53m hn ho hns hlarge
+  obtain ⟨q, hq, hb, hf⟩ := exists_primeWitness_explicitFiber_10_19_53m hn ho hns hlarge
   have hLn : 1 < Real.log n := by
     have hbound :=
       explicit_fiber_prime_threshold_le_log_power (by norm_num only : 2 ≤ (76598623 : ℕ))
@@ -404,14 +386,14 @@ theorem exists_least_prime_witness_of_explicit_finite_fiber_threshold_10_19_53m 
 /-- Every odd nonsquarefree input above `N(21518759)` has a prime MR witness
 at most `(log n)^1.900003`. Transfer the free 10/19 Fermat-quotient bound
 through its explicit prime threshold. -/
-theorem exists_prime_witness_of_free_finite_fiber_threshold_10_19_149m {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 21518759 ≤ n) :
+theorem exists_primeWitness_freeFiber_10_19_149m {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 21518759 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         (q : ℝ) ≤ (Real.log n) ^ (1900003 / 1000000 : ℝ) ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) := by
   apply
-    exists_prime_witness_le_log_power_of_uniform_fermat_quotient_bound (P :=
+    exists_prime_logPower_uniformFermat (P :=
       NumberTheory.Heilbronn.explicitFiniteFiberPrimeThreshold 21518759) hn ho hns
       (1900003 / 1000000) (by norm_num only)
       (explicit_fiber_prime_threshold_le_log_power (by norm_num only)
@@ -419,14 +401,13 @@ theorem exists_prime_witness_of_free_finite_fiber_threshold_10_19_149m {n : ℕ}
   intro p hp hp2 hpLarge
   let : Fact p.Prime := ⟨hp⟩
   obtain ⟨q, hq, hb, hpow⟩ :=
-    NumberTheory.Heilbronn.exists_prime_nontrivial_power_of_free_finite_fiber_threshold_10_19_149m
-      (hp.odd_of_ne_two hp2) hpLarge
+    NumberTheory.Heilbronn.exists_prime_pow_ne_one_1900003_1000000 (hp.odd_of_ne_two hp2) hpLarge
   exact ⟨q, hq.pos, hb, hpow⟩
 
 /-- Above `N(21518759)`, the least prime MR witness for every odd nonsquarefree
 input is at most `(log n)^1.900003`, strictly below `(log n)^2`. -/
-theorem exists_least_prime_witness_of_free_finite_fiber_threshold_10_19_149m {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 21518759 ≤ n) :
+theorem exists_leastWitness_freeFiber_10_19_149m {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 21518759 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) ∧
@@ -434,8 +415,7 @@ theorem exists_least_prime_witness_of_free_finite_fiber_threshold_10_19_149m {n 
         (q : ℝ) < (Real.log n) ^ 2 ∧
         ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → q ≤ s := by
   classical
-  obtain ⟨q, hq, hb, hf⟩ :=
-    exists_prime_witness_of_free_finite_fiber_threshold_10_19_149m hn ho hns hlarge
+  obtain ⟨q, hq, hb, hf⟩ := exists_primeWitness_freeFiber_10_19_149m hn ho hns hlarge
   have hLn : 1 < Real.log n := by
     have hbound :=
       explicit_fiber_prime_threshold_le_log_power (by norm_num only : 2 ≤ (21518759 : ℕ))
@@ -459,14 +439,14 @@ theorem exists_least_prime_witness_of_free_finite_fiber_threshold_10_19_149m {n 
 /-- Every odd nonsquarefree input above `N(1411732827)` has a prime
 Miller–Rabin witness at most `(log n)^1.83`. The bound follows from the
 free 150/82 finite-fiber estimate and its explicit smooth-number supply. -/
-theorem exists_prime_witness_of_free_finite_fiber_threshold_150_82 {n : ℕ} (hn : 1 < n) (ho : Odd n)
-    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 1411732827 ≤ n) :
+theorem exists_primeWitness_freeFiber_150_82 {n : ℕ} (hn : 1 < n) (ho : Odd n) (hns : ¬Squarefree n)
+    (hlarge : explicitFiniteFiberInputThreshold 1411732827 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         (q : ℝ) ≤ (Real.log n) ^ (183 / 100 : ℝ) ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) := by
   apply
-    exists_prime_witness_le_log_power_of_uniform_fermat_quotient_bound (P :=
+    exists_prime_logPower_uniformFermat (P :=
       NumberTheory.Heilbronn.explicitFiniteFiberPrimeThreshold 1411732827) hn ho hns (183 / 100)
       (by norm_num only)
       (explicit_fiber_prime_threshold_le_log_power (by norm_num only)
@@ -474,14 +454,13 @@ theorem exists_prime_witness_of_free_finite_fiber_threshold_150_82 {n : ℕ} (hn
   intro p hp hp2 hpLarge
   let : Fact p.Prime := ⟨hp⟩
   obtain ⟨q, hq, hb, hpow⟩ :=
-    NumberTheory.Heilbronn.exists_prime_nontrivial_power_of_free_finite_fiber_threshold_150_82
-      (hp.odd_of_ne_two hp2) hpLarge
+    NumberTheory.Heilbronn.exists_prime_pow_ne_one_183_100 (hp.odd_of_ne_two hp2) hpLarge
   exact ⟨q, hq.pos, hb, hpow⟩
 
 /-- Above `N(1411732827)`, the least prime Miller–Rabin witness for every odd
 nonsquarefree input is at most `(log n)^1.83`, strictly below `(log n)^2`. -/
-theorem exists_least_prime_witness_of_free_finite_fiber_threshold_150_82 {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 1411732827 ≤ n) :
+theorem exists_leastWitness_freeFiber_150_82 {n : ℕ} (hn : 1 < n) (ho : Odd n) (hns : ¬Squarefree n)
+    (hlarge : explicitFiniteFiberInputThreshold 1411732827 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) ∧
@@ -489,8 +468,7 @@ theorem exists_least_prime_witness_of_free_finite_fiber_threshold_150_82 {n : �
         (q : ℝ) < (Real.log n) ^ 2 ∧
         ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → q ≤ s := by
   classical
-  obtain ⟨q, hq, hb, hf⟩ :=
-    exists_prime_witness_of_free_finite_fiber_threshold_150_82 hn ho hns hlarge
+  obtain ⟨q, hq, hb, hf⟩ := exists_primeWitness_freeFiber_150_82 hn ho hns hlarge
   have hLn : 1 < Real.log n := by
     have hbound :=
       explicit_fiber_prime_threshold_le_log_power (by norm_num only : 2 ≤ (1411732827 : ℕ))
@@ -513,14 +491,14 @@ theorem exists_least_prime_witness_of_free_finite_fiber_threshold_150_82 {n : �
 
 /-- Above `N(1411732827)`, every odd nonsquarefree input has a prime
 Miller–Rabin witness at most `(log n)^1.8297`, by the 75/41 finite-fiber bound. -/
-theorem exists_prime_witness_of_free_finite_fiber_threshold_75_41 {n : ℕ} (hn : 1 < n) (ho : Odd n)
-    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 1411732827 ≤ n) :
+theorem exists_primeWitness_freeFiber_75_41 {n : ℕ} (hn : 1 < n) (ho : Odd n) (hns : ¬Squarefree n)
+    (hlarge : explicitFiniteFiberInputThreshold 1411732827 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         (q : ℝ) ≤ (Real.log n) ^ (18297 / 10000 : ℝ) ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) := by
   apply
-    exists_prime_witness_le_log_power_of_uniform_fermat_quotient_bound (P :=
+    exists_prime_logPower_uniformFermat (P :=
       NumberTheory.Heilbronn.explicitFiniteFiberPrimeThreshold 1411732827) hn ho hns (18297 / 10000)
       (by norm_num only)
       (explicit_fiber_prime_threshold_le_log_power (by norm_num only)
@@ -528,14 +506,13 @@ theorem exists_prime_witness_of_free_finite_fiber_threshold_75_41 {n : ℕ} (hn 
   intro p hp hp2 hpLarge
   let : Fact p.Prime := ⟨hp⟩
   obtain ⟨q, hq, hb, hpow⟩ :=
-    NumberTheory.Heilbronn.exists_prime_nontrivial_power_of_free_finite_fiber_threshold_75_41
-      (hp.odd_of_ne_two hp2) hpLarge
+    NumberTheory.Heilbronn.exists_prime_pow_ne_one_18297_10000 (hp.odd_of_ne_two hp2) hpLarge
   exact ⟨q, hq.pos, hb, hpow⟩
 
 /-- For inputs above `N(1411732827)`, the least prime Miller–Rabin witness is
 at most `(log n)^1.8297` and therefore strictly below `(log n)^2`. -/
-theorem exists_least_prime_witness_of_free_finite_fiber_threshold_75_41 {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 1411732827 ≤ n) :
+theorem exists_leastWitness_freeFiber_75_41 {n : ℕ} (hn : 1 < n) (ho : Odd n) (hns : ¬Squarefree n)
+    (hlarge : explicitFiniteFiberInputThreshold 1411732827 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) ∧
@@ -543,8 +520,7 @@ theorem exists_least_prime_witness_of_free_finite_fiber_threshold_75_41 {n : ℕ
         (q : ℝ) < (Real.log n) ^ 2 ∧
         ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → q ≤ s := by
   classical
-  obtain ⟨q, hq, hb, hf⟩ :=
-    exists_prime_witness_of_free_finite_fiber_threshold_75_41 hn ho hns hlarge
+  obtain ⟨q, hq, hb, hf⟩ := exists_primeWitness_freeFiber_75_41 hn ho hns hlarge
   have hLn : 1 < Real.log n := by
     have hbound :=
       explicit_fiber_prime_threshold_le_log_power (by norm_num only : 2 ≤ (1411732827 : ℕ))
@@ -568,14 +544,14 @@ theorem exists_least_prime_witness_of_free_finite_fiber_threshold_75_41 {n : ℕ
 /-- Above `N(1411732827)`, every odd nonsquarefree input has a prime
 Miller–Rabin witness at most `(log n)^1.82927`, using the sharpened 75/41
 finite-fiber Fermat-quotient bound. -/
-theorem exists_prime_witness_of_free_finite_fiber_threshold_75_41_182927 {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 1411732827 ≤ n) :
+theorem exists_primeWitness_freeFiber_75_41_182927 {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 1411732827 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         (q : ℝ) ≤ (Real.log n) ^ (182927 / 100000 : ℝ) ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) := by
   apply
-    exists_prime_witness_le_log_power_of_uniform_fermat_quotient_bound (P :=
+    exists_prime_logPower_uniformFermat (P :=
       NumberTheory.Heilbronn.explicitFiniteFiberPrimeThreshold 1411732827) hn ho hns
       (182927 / 100000) (by norm_num only)
       (explicit_fiber_prime_threshold_le_log_power (by norm_num only)
@@ -583,14 +559,13 @@ theorem exists_prime_witness_of_free_finite_fiber_threshold_75_41_182927 {n : �
   intro p hp hp2 hpLarge
   let : Fact p.Prime := ⟨hp⟩
   obtain ⟨q, hq, hb, hpow⟩ :=
-    NumberTheory.Heilbronn.exists_prime_nontrivial_power_of_free_finite_fiber_threshold_75_41_182927
-      (hp.odd_of_ne_two hp2) hpLarge
+    NumberTheory.Heilbronn.exists_prime_pow_ne_one_182927_100000 (hp.odd_of_ne_two hp2) hpLarge
   exact ⟨q, hq.pos, hb, hpow⟩
 
 /-- Above `N(1411732827)`, the least prime Miller–Rabin witness is at most
 `(log n)^1.82927` and therefore strictly below `(log n)^2`. -/
-theorem exists_least_prime_witness_of_free_finite_fiber_threshold_75_41_182927 {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 1411732827 ≤ n) :
+theorem exists_leastWitness_freeFiber_75_41_182927 {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 1411732827 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) ∧
@@ -598,8 +573,7 @@ theorem exists_least_prime_witness_of_free_finite_fiber_threshold_75_41_182927 {
         (q : ℝ) < (Real.log n) ^ 2 ∧
         ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → q ≤ s := by
   classical
-  obtain ⟨q, hq, hb, hf⟩ :=
-    exists_prime_witness_of_free_finite_fiber_threshold_75_41_182927 hn ho hns hlarge
+  obtain ⟨q, hq, hb, hf⟩ := exists_primeWitness_freeFiber_75_41_182927 hn ho hns hlarge
   have hLn : 1 < Real.log n := by
     have hbound :=
       explicit_fiber_prime_threshold_le_log_power (by norm_num only : 2 ≤ (1411732827 : ℕ))
@@ -624,30 +598,27 @@ open PseudoPrime.NumberTheory.Heilbronn in
 /-- Above `N(4,217,312,731)`, every odd nonsquarefree input has a prime
 Miller–Rabin witness at most `(ln n)^(1.82861)`. Transfer the new 192/105
 Fermat-quotient estimate through the uniform prime reduction. -/
-theorem exists_prime_witness_of_free_finite_fiber_threshold_192_105_182861 {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 4217312731 ≤ n) :
+theorem exists_primeWitness_freeFiber_192_105_182861 {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 4217312731 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         (q : ℝ) ≤ (Real.log n) ^ (182861 / 100000 : ℝ) ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) := by
   apply
-    exists_prime_witness_le_log_power_of_uniform_fermat_quotient_bound (P :=
+    exists_prime_logPower_uniformFermat (P :=
       NumberTheory.Heilbronn.explicitFiniteFiberPrimeThreshold 4217312731) hn ho hns
       (182861 / 100000) (by norm_num only)
       (explicit_fiber_prime_threshold_le_log_power (by norm_num only)
         (by norm_num only : (3 : ℝ) ≤ 2 * (182861 / 100000)) hlarge)
   intro p hp hp2 hpLarge
   let : Fact p.Prime := ⟨hp⟩
-  obtain ⟨q, hq, hb, hpow⟩ :=
-    exists_prime_nontrivial_power_of_free_finite_fiber_threshold_192_105_182861
-      (hp.odd_of_ne_two hp2) hpLarge
+  obtain ⟨q, hq, hb, hpow⟩ := exists_prime_pow_ne_one_182861_100000 (hp.odd_of_ne_two hp2) hpLarge
   exact ⟨q, hq.pos, hb, hpow⟩
 
 /-- Above `N(4,217,312,731)`, the least prime Miller–Rabin witness is at most
 `(ln n)^(1.82861)` and therefore strictly below `(ln n)^2`. -/
-theorem exists_least_prime_witness_of_free_finite_fiber_threshold_192_105_182861 {n : ℕ}
-    (hn : 1 < n) (ho : Odd n) (hns : ¬Squarefree n)
-    (hlarge : explicitFiniteFiberInputThreshold 4217312731 ≤ n) :
+theorem exists_leastWitness_freeFiber_192_105_182861 {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 4217312731 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) ∧
@@ -655,8 +626,7 @@ theorem exists_least_prime_witness_of_free_finite_fiber_threshold_192_105_182861
         (q : ℝ) < (Real.log n) ^ 2 ∧
         ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → q ≤ s := by
   classical
-  obtain ⟨q, hq, hb, hf⟩ :=
-    exists_prime_witness_of_free_finite_fiber_threshold_192_105_182861 hn ho hns hlarge
+  obtain ⟨q, hq, hb, hf⟩ := exists_primeWitness_freeFiber_192_105_182861 hn ho hns hlarge
   have hLn : 1 < Real.log n := by
     have hbound :=
       explicit_fiber_prime_threshold_le_log_power (n := n) (u := 4217312731) (A := 182861 / 100000)
@@ -682,14 +652,14 @@ Claim: A prime Miller–Rabin witness is at most `(log n)^(1876/1000)`.
 Content: Transfer the 30/16 Fermat-quotient bound through the prime reduction.
 Proof: Apply the uniform Fermat-to-Miller–Rabin implication.
 Role: Supplies the explicit witness bound used to identify the least witness. -/
-theorem exists_prime_witness_of_free_finite_fiber_threshold_30_16_149m {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 21518759 ≤ n) :
+theorem exists_primeWitness_freeFiber_30_16_149m {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 21518759 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         (q : ℝ) ≤ (Real.log n) ^ (1876 / 1000 : ℝ) ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) := by
   apply
-    exists_prime_witness_le_log_power_of_uniform_fermat_quotient_bound (P :=
+    exists_prime_logPower_uniformFermat (P :=
       NumberTheory.Heilbronn.explicitFiniteFiberPrimeThreshold 21518759) hn ho hns (1876 / 1000)
       (by norm_num only)
       (explicit_fiber_prime_threshold_le_log_power (by norm_num only)
@@ -697,8 +667,7 @@ theorem exists_prime_witness_of_free_finite_fiber_threshold_30_16_149m {n : ℕ}
   intro p hp hp2 hpLarge
   let : Fact p.Prime := ⟨hp⟩
   obtain ⟨q, hq, hb, hpow⟩ :=
-    NumberTheory.Heilbronn.exists_prime_nontrivial_power_of_free_finite_fiber_threshold_30_16_149m
-      (hp.odd_of_ne_two hp2) hpLarge
+    NumberTheory.Heilbronn.exists_prime_pow_ne_one_1876_1000 (hp.odd_of_ne_two hp2) hpLarge
   exact ⟨q, hq.pos, hb, hpow⟩
 
 /-- Inputs: an odd nonsquarefree `n ≥ N(21518759)`.
@@ -707,8 +676,8 @@ and strictly below `(log n)^2`.
 Content: The bound applies only to odd nonsquarefree inputs.
 Proof: Use the prime-witness existence theorem and `Nat.find` minimality.
 Role: Publishes the least-witness bound for the explicit 30/16 branch. -/
-theorem exists_least_prime_witness_of_free_finite_fiber_threshold_30_16_149m {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 21518759 ≤ n) :
+theorem exists_leastWitness_freeFiber_30_16_149m {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 21518759 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) ∧
@@ -716,8 +685,7 @@ theorem exists_least_prime_witness_of_free_finite_fiber_threshold_30_16_149m {n 
         (q : ℝ) < (Real.log n) ^ 2 ∧
         ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → q ≤ s := by
   classical
-  obtain ⟨q, hq, hb, hf⟩ :=
-    exists_prime_witness_of_free_finite_fiber_threshold_30_16_149m hn ho hns hlarge
+  obtain ⟨q, hq, hb, hf⟩ := exists_primeWitness_freeFiber_30_16_149m hn ho hns hlarge
   have hLn : 1 < Real.log n := by
     have hbound :=
       explicit_fiber_prime_threshold_le_log_power (by norm_num only : 2 ≤ (21518759 : ℕ))
@@ -743,14 +711,14 @@ Claim: A prime Miller–Rabin witness is at most `(log n)^(1868/1000)`.
 Content: Transfer the 28/15 Fermat-quotient bound through the prime reduction.
 Proof: Apply the uniform Fermat-to-Miller–Rabin implication.
 Role: Supplies the witness bound used to identify the least witness. -/
-theorem exists_prime_witness_of_free_finite_fiber_threshold_28_15_149m {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 21518759 ≤ n) :
+theorem exists_primeWitness_freeFiber_28_15_149m {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 21518759 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         (q : ℝ) ≤ (Real.log n) ^ (1868 / 1000 : ℝ) ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) := by
   apply
-    exists_prime_witness_le_log_power_of_uniform_fermat_quotient_bound (P :=
+    exists_prime_logPower_uniformFermat (P :=
       NumberTheory.Heilbronn.explicitFiniteFiberPrimeThreshold 21518759) hn ho hns (1868 / 1000)
       (by norm_num only)
       (explicit_fiber_prime_threshold_le_log_power (by norm_num only)
@@ -758,16 +726,15 @@ theorem exists_prime_witness_of_free_finite_fiber_threshold_28_15_149m {n : ℕ}
   intro p hp hp2 hpLarge
   let : Fact p.Prime := ⟨hp⟩
   obtain ⟨q, hq, hb, hpow⟩ :=
-    NumberTheory.Heilbronn.exists_prime_nontrivial_power_of_free_finite_fiber_threshold_28_15_149m
-      (hp.odd_of_ne_two hp2) hpLarge
+    NumberTheory.Heilbronn.exists_prime_pow_ne_one_1868_1000 (hp.odd_of_ne_two hp2) hpLarge
   exact ⟨q, hq.pos, hb, hpow⟩
 
 /-- Inputs: an odd nonsquarefree `n ≥ N(21518759)`.
 Claim: Its least prime Miller–Rabin witness is at most `(log n)^(1868/1000)`
 and strictly below `(log n)^2`. Proof: Use the prime-witness existence theorem
 and `Nat.find` minimality. Role: Publishes the least-witness bound for 28/15. -/
-theorem exists_least_prime_witness_of_free_finite_fiber_threshold_28_15_149m {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 21518759 ≤ n) :
+theorem exists_leastWitness_freeFiber_28_15_149m {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 21518759 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) ∧
@@ -775,8 +742,7 @@ theorem exists_least_prime_witness_of_free_finite_fiber_threshold_28_15_149m {n 
         (q : ℝ) < (Real.log n) ^ 2 ∧
         ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → q ≤ s := by
   classical
-  obtain ⟨q, hq, hb, hf⟩ :=
-    exists_prime_witness_of_free_finite_fiber_threshold_28_15_149m hn ho hns hlarge
+  obtain ⟨q, hq, hb, hf⟩ := exists_primeWitness_freeFiber_28_15_149m hn ho hns hlarge
   have hLn : 1 < Real.log n := by
     have hbound :=
       explicit_fiber_prime_threshold_le_log_power (by norm_num only : 2 ≤ (21518759 : ℕ))
@@ -802,32 +768,29 @@ open PseudoPrime.NumberTheory.Heilbronn in
 Claim: A prime Miller–Rabin witness is at most `(log n)^(18666701/10000000)`.
 Proof: Transfer the refined 28/15 Fermat-quotient bound through prime reduction.
 Role: Supplies the witness bound used to identify the least witness. -/
-theorem exists_prime_witness_of_free_finite_fiber_threshold_28_15_18666701 {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 21518759 ≤ n) :
+theorem exists_primeWitness_freeFiber_28_15_18666701 {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 21518759 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         (q : ℝ) ≤ (Real.log n) ^ (18666701 / 10000000 : ℝ) ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) := by
   apply
-    exists_prime_witness_le_log_power_of_uniform_fermat_quotient_bound (P :=
+    exists_prime_logPower_uniformFermat (P :=
       NumberTheory.Heilbronn.explicitFiniteFiberPrimeThreshold 21518759) hn ho hns
       (18666701 / 10000000) (by norm_num only)
       (explicit_fiber_prime_threshold_le_log_power (by norm_num only)
         (by norm_num only : (3 : ℝ) ≤ 2 * (18666701 / 10000000)) hlarge)
   intro p hp hp2 hpLarge
   let : Fact p.Prime := ⟨hp⟩
-  obtain ⟨q, hq, hb, hpow⟩ :=
-    exists_prime_nontrivial_power_of_free_finite_fiber_threshold_28_15_18666701
-      (hp.odd_of_ne_two hp2) hpLarge
+  obtain ⟨q, hq, hb, hpow⟩ := exists_prime_pow_ne_one_18666701_d7 (hp.odd_of_ne_two hp2) hpLarge
   exact ⟨q, hq.pos, hb, hpow⟩
 
 /-- Inputs: an odd nonsquarefree `n ≥ N(21518759)`.
 Claim: Its least prime Miller–Rabin witness is at most `(log n)^(1866920/1000000)`
 and strictly below `(log n)^2`. Proof: Use witness existence and `Nat.find`.
 Role: Publishes the refined least-witness bound for 28/15. -/
-theorem exists_least_prime_witness_of_free_finite_fiber_threshold_28_15_18666701 {n : ℕ}
-    (hn : 1 < n) (ho : Odd n) (hns : ¬Squarefree n)
-    (hlarge : explicitFiniteFiberInputThreshold 21518759 ≤ n) :
+theorem exists_leastWitness_freeFiber_28_15_18666701 {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 21518759 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) ∧
@@ -835,8 +798,7 @@ theorem exists_least_prime_witness_of_free_finite_fiber_threshold_28_15_18666701
         (q : ℝ) < (Real.log n) ^ 2 ∧
         ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → q ≤ s := by
   classical
-  obtain ⟨q, hq, hb, hf⟩ :=
-    exists_prime_witness_of_free_finite_fiber_threshold_28_15_18666701 hn ho hns hlarge
+  obtain ⟨q, hq, hb, hf⟩ := exists_primeWitness_freeFiber_28_15_18666701 hn ho hns hlarge
   have hLn : 1 < Real.log n := by
     have hbound :=
       explicit_fiber_prime_threshold_le_log_power (by norm_num only : 2 ≤ (21518759 : ℕ))
@@ -862,15 +824,14 @@ open PseudoPrime.NumberTheory.Heilbronn in
 Claim: a prime Miller–Rabin witness is at most `(log n)^(1.8666703)`.
 Proof: Transfer the parameterized 28/15 Fermat-quotient bound through prime
 reduction. Role: supplies the witness for the lower-start least-witness result. -/
-theorem exists_prime_witness_of_free_finite_fiber_threshold_28_15_18666703 {n u : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hns : ¬Squarefree n) (hu : 17431511 ≤ u)
-    (hlarge : explicitFiniteFiberInputThreshold u ≤ n) :
+theorem exists_primeWitness_freeFiber_28_15_18666703 {n u : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hu : 17431511 ≤ u) (hlarge : explicitFiniteFiberInputThreshold u ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         (q : ℝ) ≤ (Real.log n) ^ (18666703 / 10000000 : ℝ) ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) := by
   apply
-    exists_prime_witness_le_log_power_of_uniform_fermat_quotient_bound (P :=
+    exists_prime_logPower_uniformFermat (P :=
       NumberTheory.Heilbronn.explicitFiniteFiberPrimeThreshold u) hn ho hns (18666703 / 10000000)
       (by norm_num only)
       (explicit_fiber_prime_threshold_le_log_power
@@ -878,18 +839,15 @@ theorem exists_prime_witness_of_free_finite_fiber_threshold_28_15_18666703 {n u 
         (by norm_num only : (3 : ℝ) ≤ 2 * (18666703 / 10000000)) hlarge)
   intro p hp hp2 hpLarge
   let : Fact p.Prime := ⟨hp⟩
-  obtain ⟨q, hq, hb, hpow⟩ :=
-    exists_prime_nontrivial_power_of_free_finite_fiber_threshold_28_15_18666703
-      (hp.odd_of_ne_two hp2) hu hpLarge
+  obtain ⟨q, hq, hb, hpow⟩ := exists_prime_pow_ne_one_18666703_d7 (hp.odd_of_ne_two hp2) hu hpLarge
   exact ⟨q, hq.pos, hb, hpow⟩
 
 /-- Inputs: an odd nonsquarefree `n>1` with `n≥N(u)` and `u≥17,431,511`.
 Claim: its least prime Miller–Rabin witness is at most `(log n)^(1.8666703)`
 and strictly below `(log n)^2`. Proof: Use the witness existence theorem and
 `Nat.find` minimality. Role: publishes the lower-start least-witness bound. -/
-theorem exists_least_prime_witness_of_free_finite_fiber_threshold_28_15_18666703 {n u : ℕ}
-    (hn : 1 < n) (ho : Odd n) (hns : ¬Squarefree n) (hu : 17431511 ≤ u)
-    (hlarge : explicitFiniteFiberInputThreshold u ≤ n) :
+theorem exists_leastWitness_freeFiber_28_15_18666703 {n u : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hu : 17431511 ≤ u) (hlarge : explicitFiniteFiberInputThreshold u ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) ∧
@@ -897,8 +855,7 @@ theorem exists_least_prime_witness_of_free_finite_fiber_threshold_28_15_18666703
         (q : ℝ) < (Real.log n) ^ 2 ∧
         ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → q ≤ s := by
   classical
-  obtain ⟨q, hq, hb, hf⟩ :=
-    exists_prime_witness_of_free_finite_fiber_threshold_28_15_18666703 hn ho hns hu hlarge
+  obtain ⟨q, hq, hb, hf⟩ := exists_primeWitness_freeFiber_28_15_18666703 hn ho hns hu hlarge
   have hLn : 1 < Real.log n := by
     have hbound :=
       explicit_fiber_prime_threshold_le_log_power
@@ -926,61 +883,55 @@ theorem exists_least_prime_witness_of_free_finite_fiber_threshold_28_15_18666703
 Claim: a prime Miller–Rabin witness is at most `(log n)^(1.8666703)`.
 Proof: Specialize the parameterized lower-start theorem to its first valid u.
 Role: exposes the concrete starting threshold. -/
-theorem exists_prime_witness_of_free_finite_fiber_threshold_28_15_17456612 {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 17456612 ≤ n) :
+theorem exists_primeWitness_freeFiber_28_15_17456612 {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 17456612 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         (q : ℝ) ≤ (Real.log n) ^ (18666703 / 10000000 : ℝ) ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) :=
-  exists_prime_witness_of_free_finite_fiber_threshold_28_15_18666703 hn ho hns (by norm_num only)
-    hlarge
+  exists_primeWitness_freeFiber_28_15_18666703 hn ho hns (by norm_num only) hlarge
 
 /-- Inputs: an odd nonsquarefree `n>1` with `n≥N(17,456,612)`.
 Claim: its least prime Miller–Rabin witness is at most `(log n)^(1.8666703)`
 and strictly below `(log n)^2`. Proof: Specialize the generic least-witness
 theorem to `u=17,456,612`. Role: publishes the concrete lower-start bound. -/
-theorem exists_least_prime_witness_of_free_finite_fiber_threshold_28_15_17456612 {n : ℕ}
-    (hn : 1 < n) (ho : Odd n) (hns : ¬Squarefree n)
-    (hlarge : explicitFiniteFiberInputThreshold 17456612 ≤ n) :
+theorem exists_leastWitness_freeFiber_28_15_17456612 {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 17456612 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) ∧
         (q : ℝ) ≤ (Real.log n) ^ (18666703 / 10000000 : ℝ) ∧
         (q : ℝ) < (Real.log n) ^ 2 ∧
         ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → q ≤ s :=
-  exists_least_prime_witness_of_free_finite_fiber_threshold_28_15_18666703 hn ho hns
-    (by norm_num only) hlarge
+  exists_leastWitness_freeFiber_28_15_18666703 hn ho hns (by norm_num only) hlarge
 
 /-- Inputs: an odd nonsquarefree `n>1` with `n≥N(17,431,511)`.
 Claim: its least prime Miller–Rabin witness is at most `(log n)^(1.8666703)`
 and strictly below `(log n)^2`. Specialize the parameterized least-witness
 theorem at the reduced explicit threshold. -/
-theorem exists_least_prime_witness_of_free_finite_fiber_threshold_28_15_17431511 {n : ℕ}
-    (hn : 1 < n) (ho : Odd n) (hns : ¬Squarefree n)
-    (hlarge : explicitFiniteFiberInputThreshold 17431511 ≤ n) :
+theorem exists_leastWitness_freeFiber_28_15_17431511 {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 17431511 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) ∧
         (q : ℝ) ≤ (Real.log n) ^ (18666703 / 10000000 : ℝ) ∧
         (q : ℝ) < (Real.log n) ^ 2 ∧
         ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → q ≤ s :=
-  exists_least_prime_witness_of_free_finite_fiber_threshold_28_15_18666703 hn ho hns
-    (by norm_num only) hlarge
+  exists_leastWitness_freeFiber_28_15_18666703 hn ho hns (by norm_num only) hlarge
 
 open PseudoPrime.NumberTheory.Heilbronn in
 /-- Inputs: an odd nonsquarefree `n>1` with `n≥N(u)` and `u≥17,431,511`.
 Claim: a prime Miller–Rabin witness is at most `(log n)^(1.866670171)`.
 Proof: Transfer the sharper 28/15 Fermat bound through prime reduction.
 Role: supplies the witness for the improved least-witness theorem. -/
-theorem exists_prime_witness_of_free_finite_fiber_threshold_28_15_1866670171 {n u : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hns : ¬Squarefree n) (hu : 17431511 ≤ u)
-    (hlarge : explicitFiniteFiberInputThreshold u ≤ n) :
+theorem exists_primeWitness_freeFiber_28_15_1866670171 {n u : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hu : 17431511 ≤ u) (hlarge : explicitFiniteFiberInputThreshold u ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         (q : ℝ) ≤ (Real.log n) ^ (1866670171 / 1000000000 : ℝ) ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) := by
   apply
-    exists_prime_witness_le_log_power_of_uniform_fermat_quotient_bound (P :=
+    exists_prime_logPower_uniformFermat (P :=
       NumberTheory.Heilbronn.explicitFiniteFiberPrimeThreshold u) hn ho hns
       (1866670171 / 1000000000) (by norm_num only)
       (explicit_fiber_prime_threshold_le_log_power
@@ -989,17 +940,15 @@ theorem exists_prime_witness_of_free_finite_fiber_threshold_28_15_1866670171 {n 
   intro p hp hp2 hpLarge
   let : Fact p.Prime := ⟨hp⟩
   obtain ⟨q, hq, hb, hpow⟩ :=
-    exists_prime_nontrivial_power_of_free_finite_fiber_threshold_28_15_1866670171
-      (hp.odd_of_ne_two hp2) hu hpLarge
+    exists_prime_pow_ne_one_1866670171_d9 (hp.odd_of_ne_two hp2) hu hpLarge
   exact ⟨q, hq.pos, hb, hpow⟩
 
 /-- Inputs: an odd nonsquarefree `n>1` with `n≥N(u)` and `u≥17,431,511`.
 Claim: its least prime Miller–Rabin witness is at most `(log n)^(1.866670171)`
 and strictly below `(log n)^2`. Proof: apply `Nat.find` to the existence
 theorem. Role: publishes the improved least-witness bound. -/
-theorem exists_least_prime_witness_of_free_finite_fiber_threshold_28_15_1866670171 {n u : ℕ}
-    (hn : 1 < n) (ho : Odd n) (hns : ¬Squarefree n) (hu : 17431511 ≤ u)
-    (hlarge : explicitFiniteFiberInputThreshold u ≤ n) :
+theorem exists_leastWitness_freeFiber_28_15_1866670171 {n u : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hu : 17431511 ≤ u) (hlarge : explicitFiniteFiberInputThreshold u ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) ∧
@@ -1007,8 +956,7 @@ theorem exists_least_prime_witness_of_free_finite_fiber_threshold_28_15_18666701
         (q : ℝ) < (Real.log n) ^ 2 ∧
         ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → q ≤ s := by
   classical
-  obtain ⟨q, hq, hb, hf⟩ :=
-    exists_prime_witness_of_free_finite_fiber_threshold_28_15_1866670171 hn ho hns hu hlarge
+  obtain ⟨q, hq, hb, hf⟩ := exists_primeWitness_freeFiber_28_15_1866670171 hn ho hns hu hlarge
   have hLn : 1 < Real.log n := by
     have hbound :=
       explicit_fiber_prime_threshold_le_log_power
@@ -1036,32 +984,29 @@ theorem exists_least_prime_witness_of_free_finite_fiber_threshold_28_15_18666701
 Claim: its least prime Miller–Rabin witness is at most `(log n)^(1.866670171)`
 and strictly below `(log n)^2`. Proof: specialize the parameterized theorem
 to its explicit start. Role: exposes the improved concrete threshold. -/
-theorem exists_least_prime_witness_of_free_finite_fiber_threshold_28_15_17431511_1866670171 {n : ℕ}
-    (hn : 1 < n) (ho : Odd n) (hns : ¬Squarefree n)
-    (hlarge : explicitFiniteFiberInputThreshold 17431511 ≤ n) :
+theorem exists_leastWitness_fiber_17431511_1866670171 {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 17431511 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) ∧
         (q : ℝ) ≤ (Real.log n) ^ (1866670171 / 1000000000 : ℝ) ∧
         (q : ℝ) < (Real.log n) ^ 2 ∧
         ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → q ≤ s :=
-  exists_least_prime_witness_of_free_finite_fiber_threshold_28_15_1866670171 hn ho hns
-    (by norm_num only) hlarge
+  exists_leastWitness_freeFiber_28_15_1866670171 hn ho hns (by norm_num only) hlarge
 
 open PseudoPrime.NumberTheory.Heilbronn in
 /-- Inputs: an odd nonsquarefree `n>1` with `n≥N(u)` and `u≥17,431,511`.
 Claim: a prime Miller–Rabin witness is at most `(log n)^(1.86667011)`.
 Proof: Transfer the refined 28/15 Fermat bound through prime reduction.
 Role: supplies the witness for the improved least-witness theorem. -/
-theorem exists_prime_witness_of_free_finite_fiber_threshold_28_15_186667011 {n u : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hns : ¬Squarefree n) (hu : 17431511 ≤ u)
-    (hlarge : explicitFiniteFiberInputThreshold u ≤ n) :
+theorem exists_primeWitness_freeFiber_28_15_186667011 {n u : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hu : 17431511 ≤ u) (hlarge : explicitFiniteFiberInputThreshold u ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         (q : ℝ) ≤ (Real.log n) ^ (186667011 / 100000000 : ℝ) ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) := by
   apply
-    exists_prime_witness_le_log_power_of_uniform_fermat_quotient_bound (P :=
+    exists_prime_logPower_uniformFermat (P :=
       NumberTheory.Heilbronn.explicitFiniteFiberPrimeThreshold u) hn ho hns (186667011 / 100000000)
       (by norm_num only)
       (explicit_fiber_prime_threshold_le_log_power
@@ -1069,18 +1014,15 @@ theorem exists_prime_witness_of_free_finite_fiber_threshold_28_15_186667011 {n u
         (by norm_num only : (3 : ℝ) ≤ 2 * (186667011 / 100000000)) hlarge)
   intro p hp hp2 hpLarge
   let : Fact p.Prime := ⟨hp⟩
-  obtain ⟨q, hq, hb, hpow⟩ :=
-    exists_prime_nontrivial_power_of_free_finite_fiber_threshold_28_15_186667011
-      (hp.odd_of_ne_two hp2) hu hpLarge
+  obtain ⟨q, hq, hb, hpow⟩ := exists_prime_pow_ne_one_186667011_d8 (hp.odd_of_ne_two hp2) hu hpLarge
   exact ⟨q, hq.pos, hb, hpow⟩
 
 /-- Inputs: an odd nonsquarefree `n>1` with `n≥N(u)` and `u≥17,431,511`.
 Claim: its least prime Miller–Rabin witness is at most `(log n)^(1.86667011)`
 and strictly below `(log n)^2`. Proof: apply `Nat.find` to the existence
 theorem. Role: publishes the sharper least-witness bound. -/
-theorem exists_least_prime_witness_of_free_finite_fiber_threshold_28_15_186667011 {n u : ℕ}
-    (hn : 1 < n) (ho : Odd n) (hns : ¬Squarefree n) (hu : 17431511 ≤ u)
-    (hlarge : explicitFiniteFiberInputThreshold u ≤ n) :
+theorem exists_leastWitness_freeFiber_28_15_186667011 {n u : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hu : 17431511 ≤ u) (hlarge : explicitFiniteFiberInputThreshold u ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) ∧
@@ -1088,8 +1030,7 @@ theorem exists_least_prime_witness_of_free_finite_fiber_threshold_28_15_18666701
         (q : ℝ) < (Real.log n) ^ 2 ∧
         ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → q ≤ s := by
   classical
-  obtain ⟨q, hq, hb, hf⟩ :=
-    exists_prime_witness_of_free_finite_fiber_threshold_28_15_186667011 hn ho hns hu hlarge
+  obtain ⟨q, hq, hb, hf⟩ := exists_primeWitness_freeFiber_28_15_186667011 hn ho hns hu hlarge
   have hLn : 1 < Real.log n := by
     have hbound :=
       explicit_fiber_prime_threshold_le_log_power
@@ -1117,32 +1058,29 @@ theorem exists_least_prime_witness_of_free_finite_fiber_threshold_28_15_18666701
 Claim: its least prime Miller–Rabin witness is at most `(log n)^(1.86667011)`
 and strictly below `(log n)^2`. Proof: specialize the parameterized theorem
 to its explicit start. Role: publishes the concrete improved bound. -/
-theorem exists_least_prime_witness_of_free_finite_fiber_threshold_28_15_17431511_186667011 {n : ℕ}
-    (hn : 1 < n) (ho : Odd n) (hns : ¬Squarefree n)
-    (hlarge : explicitFiniteFiberInputThreshold 17431511 ≤ n) :
+theorem exists_leastWitness_freeFiber_17431511_186667011 {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 17431511 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) ∧
         (q : ℝ) ≤ (Real.log n) ^ (186667011 / 100000000 : ℝ) ∧
         (q : ℝ) < (Real.log n) ^ 2 ∧
         ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → q ≤ s :=
-  exists_least_prime_witness_of_free_finite_fiber_threshold_28_15_186667011 hn ho hns
-    (by norm_num only) hlarge
+  exists_leastWitness_freeFiber_28_15_186667011 hn ho hns (by norm_num only) hlarge
 
 open PseudoPrime.NumberTheory.Heilbronn in
 /-- Inputs: an odd nonsquarefree `n>1` with `n≥N(u)` and `u≥17,431,511`.
 Claim: a prime Miller–Rabin witness is at most `(log n)^(1.866670047)`.
 Proof: Transfer the refined 28/15 Fermat bound through prime reduction.
 Role: supplies the witness for the improved least-witness theorem. -/
-theorem exists_prime_witness_of_free_finite_fiber_threshold_28_15_1866670047 {n u : ℕ} (hn : 1 < n)
-    (ho : Odd n) (hns : ¬Squarefree n) (hu : 17431511 ≤ u)
-    (hlarge : explicitFiniteFiberInputThreshold u ≤ n) :
+theorem exists_primeWitness_freeFiber_28_15_1866670047 {n u : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hu : 17431511 ≤ u) (hlarge : explicitFiniteFiberInputThreshold u ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         (q : ℝ) ≤ (Real.log n) ^ (1866670047 / 1000000000 : ℝ) ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) := by
   apply
-    exists_prime_witness_le_log_power_of_uniform_fermat_quotient_bound (P :=
+    exists_prime_logPower_uniformFermat (P :=
       NumberTheory.Heilbronn.explicitFiniteFiberPrimeThreshold u) hn ho hns
       (1866670047 / 1000000000) (by norm_num only)
       (explicit_fiber_prime_threshold_le_log_power
@@ -1151,17 +1089,15 @@ theorem exists_prime_witness_of_free_finite_fiber_threshold_28_15_1866670047 {n 
   intro p hp hp2 hpLarge
   let : Fact p.Prime := ⟨hp⟩
   obtain ⟨q, hq, hb, hpow⟩ :=
-    exists_prime_nontrivial_power_of_free_finite_fiber_threshold_28_15_1866670047
-      (hp.odd_of_ne_two hp2) hu hpLarge
+    exists_prime_pow_ne_one_1866670047_d9 (hp.odd_of_ne_two hp2) hu hpLarge
   exact ⟨q, hq.pos, hb, hpow⟩
 
 /-- Inputs: an odd nonsquarefree `n>1` with `n≥N(u)` and `u≥17,431,511`.
 Claim: its least prime Miller–Rabin witness is at most `(log n)^(1.866670047)`
 and strictly below `(log n)^2`. Proof: apply `Nat.find` to the existence
 theorem. Role: publishes the sharper least-witness bound. -/
-theorem exists_least_prime_witness_of_free_finite_fiber_threshold_28_15_1866670047 {n u : ℕ}
-    (hn : 1 < n) (ho : Odd n) (hns : ¬Squarefree n) (hu : 17431511 ≤ u)
-    (hlarge : explicitFiniteFiberInputThreshold u ≤ n) :
+theorem exists_leastWitness_freeFiber_28_15_1866670047 {n u : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hu : 17431511 ≤ u) (hlarge : explicitFiniteFiberInputThreshold u ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) ∧
@@ -1169,8 +1105,7 @@ theorem exists_least_prime_witness_of_free_finite_fiber_threshold_28_15_18666700
         (q : ℝ) < (Real.log n) ^ 2 ∧
         ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → q ≤ s := by
   classical
-  obtain ⟨q, hq, hb, hf⟩ :=
-    exists_prime_witness_of_free_finite_fiber_threshold_28_15_1866670047 hn ho hns hu hlarge
+  obtain ⟨q, hq, hb, hf⟩ := exists_primeWitness_freeFiber_28_15_1866670047 hn ho hns hu hlarge
   have hLn : 1 < Real.log n := by
     have hbound :=
       explicit_fiber_prime_threshold_le_log_power
@@ -1198,16 +1133,14 @@ theorem exists_least_prime_witness_of_free_finite_fiber_threshold_28_15_18666700
 Claim: its least prime Miller–Rabin witness is at most `(log n)^(1.866670047)`
 and strictly below `(log n)^2`. Proof: specialize the parameterized theorem
 to its explicit start. Role: publishes the concrete improved bound. -/
-theorem exists_least_prime_witness_of_free_finite_fiber_threshold_28_15_17431511_1866670047 {n : ℕ}
-    (hn : 1 < n) (ho : Odd n) (hns : ¬Squarefree n)
-    (hlarge : explicitFiniteFiberInputThreshold 17431511 ≤ n) :
+theorem exists_leastWitness_fiber_17431511_1866670047 {n : ℕ} (hn : 1 < n) (ho : Odd n)
+    (hns : ¬Squarefree n) (hlarge : explicitFiniteFiberInputThreshold 17431511 ≤ n) :
     ∃ q : ℕ,
       q.Prime ∧
         ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) ∧
         (q : ℝ) ≤ (Real.log n) ^ (1866670047 / 1000000000 : ℝ) ∧
         (q : ℝ) < (Real.log n) ^ 2 ∧
         ∀ s : ℕ, s.Prime → ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) → q ≤ s :=
-  exists_least_prime_witness_of_free_finite_fiber_threshold_28_15_1866670047 hn ho hns
-    (by norm_num only) hlarge
+  exists_leastWitness_freeFiber_28_15_1866670047 hn ho hns (by norm_num only) hlarge
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

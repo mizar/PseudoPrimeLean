@@ -64,8 +64,7 @@ theorem gamma_archimedean_integrand_bound {q : ℕ} (χ : DirichletCharacter ℂ
     simp only [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im, Complex.ofReal_re,
       Complex.ofReal_im, Complex.div_ofNat_re, Complex.one_re, zero_mul, mul_zero, sub_zero,
       zero_add]
-  have hd :=
-    AnalyticNumberTheory.DirichletLFunction.norm_logDeriv_gammaFactor_central_le_linear χ hr
+  have hd := AnalyticNumberTheory.DirichletLFunction.gammaLogDeriv_central_linear χ hr
   simp only [Complex.add_im, Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_re,
     Complex.ofReal_im, Complex.div_ofNat_im, Complex.one_im, one_mul, zero_mul, zero_div, zero_add,
     add_zero] at hd
@@ -178,8 +177,7 @@ theorem gamma_archimedean_integrand_exp_bound {q : ℕ} (χ : DirichletCharacter
     simp only [Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im, Complex.ofReal_re,
       Complex.ofReal_im, Complex.div_ofNat_re, Complex.one_re, zero_mul, mul_zero, sub_zero,
       zero_add]
-  have hd :=
-    AnalyticNumberTheory.DirichletLFunction.norm_logDeriv_gammaFactor_central_le_linear χ hr
+  have hd := AnalyticNumberTheory.DirichletLFunction.gammaLogDeriv_central_linear χ hr
   simp only [Complex.add_im, Complex.mul_im, Complex.I_re, Complex.I_im, Complex.ofReal_re,
     Complex.ofReal_im, Complex.div_ofNat_im, Complex.one_im, one_mul, zero_mul, zero_div, zero_add,
     add_zero] at hd
@@ -252,7 +250,7 @@ theorem norm_gamma_right_integral_le_sixty_four_ninths {q : ℕ} (χ : Dirichlet
 formula has archimedean remainder at most 64/9 on admissible contour lines.
 Substitute the exact formula and apply the right-line integral bound.
 The residue, zero sum and left integral remain explicit for later estimates. -/
-theorem norm_gamma_completed_remainder_le_sixty_four_ninths {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem norm_gamma_completed_remainder_le_64_9_GRH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {a b x : ℝ} (hab : a < b)
     (ha : -1 / 2 - gammaMellinKernel.delta < a) (hb : b ≤ 1 / 2 + gammaMellinKernel.delta)

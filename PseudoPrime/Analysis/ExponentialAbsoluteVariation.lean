@@ -91,8 +91,7 @@ theorem exp_neg_one_le_three_eighths : Real.exp (-1) ≤ (3 / 8 : ℝ) := by
 /-- Input: nonnegative affine coefficients and cutoff. Claim: the variation
 integral is at most 3a/4+5b/4. Insert exp(-1) <= 3/8 into the exact bound.
 Role: provide constants suitable for later rational witness comparisons. -/
-theorem integral_affine_abs_exponential_variation_le_rational {a b y : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b)
-    (hy : 0 ≤ y) :
+theorem integral_affine_abs_exp_variation_le {a b y : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hy : 0 ≤ y) :
     (∫ u in (0 : ℝ)..y, (a + b * u) * |u - 1| * Real.exp (-u)) ≤ 3 / 4 * a + 5 / 4 * b := by
   have h := integral_affine_abs_exponential_variation_le ha hb hy
   have hm :=
@@ -128,6 +127,6 @@ theorem norm_integral_exponential_variation_le_affine {a b y : ℝ} (ha : 0 ≤ 
             (mul_le_mul_of_nonneg_right (hbound u hu)
                   (mul_nonneg (abs_nonneg _) (Real.exp_pos _).le)).trans_eq
               (by ring))
-  exact hn.trans (hm.trans (integral_affine_abs_exponential_variation_le_rational ha hb hy))
+  exact hn.trans (hm.trans (integral_affine_abs_exp_variation_le ha hb hy))
 
 end PseudoPrime.Analysis

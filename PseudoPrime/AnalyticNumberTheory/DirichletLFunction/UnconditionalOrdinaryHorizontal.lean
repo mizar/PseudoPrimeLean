@@ -20,7 +20,7 @@ an ordinary logarithmic-derivative norm divided by height squared is bounded by
 the centered completed norm, its center value, and a gamma-factor bound with the
 same normalization. Subtract the gamma logarithmic derivative and use the triangle
 inequality. This transfers unconditional completed envelopes to ordinary L-functions. -/
-theorem ordinary_logDeriv_normalized_le_completed {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+theorem L_logDeriv_normalized_le_completed {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
     (hne : χ ≠ 1) (s : ℂ) (hsim : s.im ≠ 0) (hc : χ.completedLFunction s ≠ 0) (T G : ℝ)
     (hgamma : ‖logDeriv (DirichletCharacter.gammaFactor χ) s‖ ≤ G) :
     ‖logDeriv χ.LFunction s‖ / T ^ 2 ≤
@@ -36,7 +36,7 @@ theorem ordinary_logDeriv_normalized_le_completed {q : ℕ} [NeZero q] {χ : Dir
       ‖logDeriv χ.completedLFunction s - logDeriv χ.completedLFunction 0‖ +
         ‖logDeriv χ.completedLFunction 0‖ +
         G := by
-    rw [logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor hne hc hsim]
+    rw [L_logDeriv_eq_completed_sub_gamma hne hc hsim]
     exact (norm_sub_le _ _).trans (add_le_add htri hgamma)
   have h := div_le_div_of_nonneg_right hbound (sq_nonneg T)
   convert h using 1
@@ -72,7 +72,7 @@ envelope tending to zero after height-square normalization, uniformly on the
 central strip at both signs. The completed function is nonzero on both edges.
 Subtract the gamma factor from the unconditional completed height sequence.
 This supplies the kernel estimates for unconditional horizontal contour limits. -/
-theorem exists_unconditional_ordinary_horizontal_height_sequence {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem exists_ordinaryHorizontalHeightSeq {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     ∃ T η : ℕ → ℝ,
       Filter.Tendsto T Filter.atTop Filter.atTop ∧
@@ -85,8 +85,8 @@ theorem exists_unconditional_ordinary_horizontal_height_sequence {q : ℕ} [NeZe
                   ‖logDeriv χ.LFunction ((σ : ℂ) - T k * Complex.I)‖ / (T k) ^ 2 ≤ η k ∧
                   χ.completedLFunction ((σ : ℂ) + T k * Complex.I) ≠ 0 ∧
                   χ.completedLFunction ((σ : ℂ) - T k * Complex.I) ≠ 0 := by
-  obtain ⟨T, ε, hT, hε, hspec⟩ := exists_unconditional_horizontal_height_sequence hq hp hne hinv
-  obtain ⟨G, hG, hgamma⟩ := exists_norm_logDeriv_gammaFactor_horizontal_le
+  obtain ⟨T, ε, hT, hε, hspec⟩ := exists_horizontalHeightSeq hq hp hne hinv
+  obtain ⟨G, hG, hgamma⟩ := gammaLogDeriv_horizontal_bound
   let η := fun k : ℕ ↦
     ε k + ‖logDeriv χ.completedLFunction 0‖ / (T k) ^ 2 + G * (T k + 1) / (T k) ^ 2
   have hrest :=
@@ -124,8 +124,7 @@ theorem exists_unconditional_ordinary_horizontal_height_sequence {q : ℕ} [NeZe
           rw [ht]; exact hTge)
     rw [ht] at hgbound
     have hraw :=
-      ordinary_logDeriv_normalized_le_completed hne _ (by rwa [him]) hc (T k) (G * (T k + 1))
-        hgbound
+      L_logDeriv_normalized_le_completed hne _ (by rwa [him]) hc (T k) (G * (T k + 1)) hgbound
     dsimp only [η]
     linarith only [hraw, hεbound]
   have hform : (σ : ℂ) - (T k : ℂ) * Complex.I = (σ : ℂ) + ((-(T k) : ℝ) : ℂ) * Complex.I := by

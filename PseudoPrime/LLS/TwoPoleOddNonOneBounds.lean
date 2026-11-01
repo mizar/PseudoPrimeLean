@@ -45,7 +45,7 @@ theorem exists_odd_prime_ne_one_le_twoPole_shift32 {q A : ℕ} [NeZero q] (χ : 
   have hsep := twoPolePrimeTrivialSeparation_shift32_gt_one hL
   have hP := gamma_level_one_sum_upper_variable hGRH.riemann hx
   have hT := gamma_ramp_sum_lower_paired hGRH.riemann hx
-  have hC := PaperStatements.gamma_primitiveCharacter_sum_re_le_twoPole_ambient χ hne hqA hGRH hx
+  have hC := PaperStatements.gammaCharacterSum_re_le_twoPole_ambient χ hne hqA hGRH hx
   apply
     exists_odd_prime_ne_one_of_gamma_ramp_gap χ hquad h2 hxpos
       (show 1 ≤ (99 / 40 : ℝ) * x by nlinarith only [hx])

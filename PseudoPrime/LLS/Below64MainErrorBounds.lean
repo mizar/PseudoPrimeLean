@@ -73,7 +73,7 @@ theorem primitiveReciprocalOddMainError_le_fixed_of_ge59 {x : ℝ} (hx : 59 ≤ 
 /-- At x at least 59 the even reciprocal main error is at most -1/4.
 Monotonicity of the logarithmic ratio controls the positive tail term.
 This supplies the even branch without changing the reciprocal constant. -/
-theorem primitiveReciprocalEvenMainError_le_fixed_of_ge59 {x : ℝ} (hx : 59 ≤ x) :
+theorem reciprocalEvenError_le_neg_quarter_ge59 {x : ℝ} (hx : 59 ≤ x) :
     Analysis.primitiveReciprocalEvenMainError x ≤ -(1 / 4 : ℝ) := by
   have hxp : 0 < x := by linarith only [hx]
   have hi : 1 / x ≤ (1 / 59 : ℝ) :=

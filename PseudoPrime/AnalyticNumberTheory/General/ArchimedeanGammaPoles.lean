@@ -168,9 +168,8 @@ theorem inverseArchimedeanGammaFactor_ne_zero_at_two {d : ℕ} (κ : Fin d → �
 vanishes exactly when s=-kappa_j for some j. Its pi power is nonzero and each
 shifted reciprocal has only its first pole in this half-plane.
 This describes the complete positive-rectangle pole ledger. -/
-theorem inverseArchimedeanGammaFactor_eq_zero_iff_of_re_pos {d : ℕ} (κ : Fin d → ℂ)
-    (hk : ∀ j, -1 < (κ j).re) {s : ℂ} (hs : 0 < s.re) :
-    inverseArchimedeanGammaFactor κ s = 0 ↔ ∃ j : Fin d, s = -κ j := by
+theorem inverseArchimedean_zero_iff_of_re_pos {d : ℕ} (κ : Fin d → ℂ) (hk : ∀ j, -1 < (κ j).re)
+    {s : ℂ} (hs : 0 < s.re) : inverseArchimedeanGammaFactor κ s = 0 ↔ ∃ j : Fin d, s = -κ j := by
   rw [inverseArchimedeanGammaFactor_eq_product]
   have hp : ((Real.pi : ℂ) ^ ((-(d : ℂ) / 2) * s))⁻¹ ≠ 0 :=
     inv_ne_zero (Complex.cpow_ne_zero_iff.mpr (Or.inl (Complex.ofReal_ne_zero.mpr Real.pi_ne_zero)))
@@ -215,8 +214,8 @@ sufficiently small square integrals of the negative reciprocal-factor logarithmi
 derivative times the weight equal -2*pi*i times its multiplicity times W(c).
 Finite analytic order follows from the nonzero value at two. This supplies the
 local certificates for gamma-factor contour assembly. -/
-theorem exists_radius_weighted_inverseArchimedeanGamma_residue {d : ℕ} (κ : Fin d → ℂ)
-    (hk : ∀ j, -1 < (κ j).re) (c : ℂ) {W : ℂ → ℂ} (hW : AnalyticAt ℂ W c) :
+theorem exists_inverseGamma_weighted_residue {d : ℕ} (κ : Fin d → ℂ) (hk : ∀ j, -1 < (κ j).re)
+    (c : ℂ) {W : ℂ → ℂ} (hW : AnalyticAt ℂ W c) :
     ∃ R : ℝ,
       0 < R ∧
         ∀ r : ℝ,
@@ -249,16 +248,13 @@ theorem neg_logDeriv_inverseArchimedeanGammaFactor {d : ℕ} (κ : Fin d → ℂ
 /-- For shifts with real part greater than minus one in a positive ordered rectangle,
 a point outside the gamma ledger has nonzero reciprocal factor. Apply the exact
 positive-half-plane zero characterization. This proves regularity off the ledger. -/
-theorem inverseArchimedeanGammaFactor_ne_zero_off_pole_ledger {d : ℕ} (κ : Fin d → ℂ)
-    (hk : ∀ j, -1 < (κ j).re) {z w s : ℂ} (hz : 0 < z.re) (hre : z.re < w.re)
-    (hs : s ∈ Rectangle.rectangleClosedBox z w)
+theorem inverseGammaFactor_ne_off_poles {d : ℕ} (κ : Fin d → ℂ) (hk : ∀ j, -1 < (κ j).re)
+    {z w s : ℂ} (hz : 0 < z.re) (hre : z.re < w.re) (hs : s ∈ Rectangle.rectangleClosedBox z w)
     (hn : s ∉ archimedeanGammaPolesInPositiveRectangle κ z w) :
     inverseArchimedeanGammaFactor κ s ≠ 0 := by
   intro h
   have hp :=
-    (inverseArchimedeanGammaFactor_eq_zero_iff_of_re_pos κ hk
-          (re_pos_of_mem_positive_rectangle hz hre hs)).mp
-      h
+    (inverseArchimedean_zero_iff_of_re_pos κ hk (re_pos_of_mem_positive_rectangle hz hre hs)).mp h
   exact hn ((mem_archimedeanGammaPolesInPositiveRectangle κ z w s).mpr ⟨hp, hs⟩)
 
 /-- For shifts with Re kappa_j>-1, an ordered positive-real rectangle, an entire
@@ -278,16 +274,16 @@ theorem inverseArchimedeanGamma_weighted_finite_contour {d : ℕ} (κ : Fin d �
         2 * Real.pi * Complex.I *
           (-(analyticOrderNatAt (inverseArchimedeanGammaFactor κ) s : ℂ) * W s) := by
   apply
-    RectangleGeometry.rectangleBoundaryIntegral_eq_sum_of_local_residues _ _ _ hre him
+    RectangleGeometry.boundaryIntegral_eq_sum_residues _ _ _ hre him
       (fun s hs ↦ ((mem_archimedeanGammaPolesInPositiveRectangle κ z w s).mp hs).2) hopen
   · intro s hs hn
-    have hf := inverseArchimedeanGammaFactor_ne_zero_off_pole_ledger κ hk hz hre hs hn
+    have hf := inverseGammaFactor_ne_off_poles κ hk hz hre hs hn
     exact
       ((((differentiable_inverseArchimedeanGammaFactor κ).analyticAt s).deriv.div
               ((differentiable_inverseArchimedeanGammaFactor κ).analyticAt s) hf).neg.mul
           (hW.analyticAt s)).differentiableAt
   · intro s _
-    exact exists_radius_weighted_inverseArchimedeanGamma_residue κ hk s (hW.analyticAt s)
+    exact exists_inverseGamma_weighted_residue κ hk s (hW.analyticAt s)
 
 /-- For shifts with Re kappa_j>-1, an ordered positive-real rectangle, an entire
 weight, and an interior pole ledger, the weighted actual gamma logarithmic
@@ -306,19 +302,18 @@ theorem archimedeanGamma_weighted_finite_contour {d : ℕ} (κ : Fin d → ℂ) 
         2 * Real.pi * Complex.I *
           (-(analyticOrderNatAt (inverseArchimedeanGammaFactor κ) s : ℂ) * W s) := by
   rw [← inverseArchimedeanGamma_weighted_finite_contour κ hk hz hre him hW hopen]
-  apply RectangleGeometry.rectangleBoundaryIntegral_congr_boundary
+  apply RectangleGeometry.boundaryIntegral_congr_boundary
   intro s hs
   have hn : s ∉ archimedeanGammaPolesInPositiveRectangle κ z w := fun h ↦ hs.2 (hopen s h)
   dsimp only
   rw [neg_logDeriv_inverseArchimedeanGammaFactor κ
-      (inverseArchimedeanGammaFactor_ne_zero_off_pole_ledger κ hk hz hre hs.1 hn)]
+      (inverseGammaFactor_ne_off_poles κ hk hz hre hs.1 hn)]
 
 /-- For shifts with nonnegative real part, an ordered positive-real rectangle has
 an empty gamma pole ledger. Every first pole has nonpositive real part.
 This isolates the residue-free case used by the LLS gamma parameters. -/
-theorem archimedeanGammaPolesInPositiveRectangle_eq_empty_of_nonneg {d : ℕ} (κ : Fin d → ℂ)
-    (hk : ∀ j, 0 ≤ (κ j).re) {z w : ℂ} (hz : 0 < z.re) (hre : z.re < w.re) :
-    archimedeanGammaPolesInPositiveRectangle κ z w = ∅ := by
+theorem gammaPoleLedger_empty_of_nonneg {d : ℕ} (κ : Fin d → ℂ) (hk : ∀ j, 0 ≤ (κ j).re) {z w : ℂ}
+    (hz : 0 < z.re) (hre : z.re < w.re) : archimedeanGammaPolesInPositiveRectangle κ z w = ∅ := by
   apply Finset.eq_empty_iff_forall_notMem.mpr
   intro s hs
   obtain ⟨⟨j, hj⟩, hbox⟩ := (mem_archimedeanGammaPolesInPositiveRectangle κ z w s).mp hs
@@ -330,13 +325,13 @@ theorem archimedeanGammaPolesInPositiveRectangle_eq_empty_of_nonneg {d : ℕ} (�
 rectangle, the actual gamma logarithmic boundary integral vanishes. Apply the
 finite gamma residue identity with its empty ledger. This supplies the finite
 contour stage of residue-free Mellin line shifting in LLS. -/
-theorem archimedeanGamma_weighted_finite_contour_eq_zero_of_nonneg {d : ℕ} (κ : Fin d → ℂ)
-    (hk : ∀ j, 0 ≤ (κ j).re) {z w : ℂ} (hz : 0 < z.re) (hre : z.re < w.re) (him : z.im < w.im)
-    {W : ℂ → ℂ} (hW : Differentiable ℂ W) :
+theorem gamma_weighted_contour_zero_of_nonneg {d : ℕ} (κ : Fin d → ℂ) (hk : ∀ j, 0 ≤ (κ j).re)
+    {z w : ℂ} (hz : 0 < z.re) (hre : z.re < w.re) (him : z.im < w.im) {W : ℂ → ℂ}
+    (hW : Differentiable ℂ W) :
     RectangleGeometry.rectangleBoundaryIntegral
         (fun s ↦ logDeriv (archimedeanGammaFactor κ) s * W s) z w =
       0 := by
-  have he := archimedeanGammaPolesInPositiveRectangle_eq_empty_of_nonneg κ hk hz hre
+  have he := gammaPoleLedger_empty_of_nonneg κ hk hz hre
   have hop :
     ∀ s ∈ archimedeanGammaPolesInPositiveRectangle κ z w,
       s ∈ RectangleGeometry.rectangleOpenBox z w := by
@@ -354,8 +349,7 @@ theorem inverseArchimedeanGammaFactor_ne_zero_of_nonneg {d : ℕ} (κ : Fin d �
     (hk : ∀ j, 0 ≤ (κ j).re) {s : ℂ} (hs : 0 < s.re) : inverseArchimedeanGammaFactor κ s ≠ 0 := by
   intro he
   obtain ⟨j, hj⟩ :=
-    (inverseArchimedeanGammaFactor_eq_zero_iff_of_re_pos κ
-          (fun j ↦ lt_of_lt_of_le neg_one_lt_zero (hk j)) hs).mp
+    (inverseArchimedean_zero_iff_of_re_pos κ (fun j ↦ lt_of_lt_of_le neg_one_lt_zero (hk j)) hs).mp
       he
   rw [hj, Complex.neg_re] at hs
   exact (not_lt_of_ge (neg_nonpos.mpr (hk j))) hs

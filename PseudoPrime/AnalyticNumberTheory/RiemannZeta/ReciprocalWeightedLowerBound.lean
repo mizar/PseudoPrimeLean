@@ -29,8 +29,7 @@ theorem reciprocalWeightedMangoldtSum_lower_bound (hRH : RiemannHypothesis) {x :
   rw [Complex.ofReal_re] at hre
   simp only [Complex.ofReal_ofNat] at hre
   rw [hre]
-  have hformula :=
-    re_integral_riemannZetaReciprocalContourKernel_two_ge_of_riemannHypothesis hRH hx1
+  have hformula := reciprocal_integral_two_re_lower_RH hRH hx1
   have hrem := riemannReciprocalRemainder_lower_bound hx
   linarith only [hformula, hrem]
 

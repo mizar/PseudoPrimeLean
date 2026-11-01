@@ -30,7 +30,7 @@ theorem ofDirichletCharacter_summable_zeroMassTerm {q : ℕ} [NeZero q] (χ : Di
     (hRH : AnalyticNumberTheory.GRH.DirichletRiemannHypothesis χ) :
     Summable (ofDirichletCharacter χ).zeroMassTerm := by
   have hdiv :=
-    AnalyticNumberTheory.DirichletLFunction.summable_divisor_div_normSq_of_dirichletRH hq hRH hp hne
+    AnalyticNumberTheory.DirichletLFunction.summable_divisor_div_normSq_of_RH hq hRH hp hne
       (inv_ne_one.mpr hne)
   have hplane :
     Summable (fun z : ℂ ↦ (analyticOrderNatAt χ.completedLFunction z : ℝ) / ‖z‖ ^ 2) := by
@@ -48,14 +48,14 @@ theorem ofDirichletCharacter_summable_zeroMassTerm {q : ℕ} [NeZero q] (χ : Di
   change
     (analyticOrderNatAt χ.completedLFunction (ρ : ℂ) : ℝ) / ‖(ρ : ℂ)‖ ^ 2 =
       (analyticOrderNatAt (ofDirichletCharacter χ).completed (ρ : ℂ) : ℝ) / ‖(ρ : ℂ)‖ ^ 2
-  rw [ofDirichletCharacter_analyticOrderNatAt_completed χ hne]
+  rw [dirichlet_completed_order χ hne]
 
 /-- For a primitive nonprincipal character of modulus at least two, individual RH and x>1
 supply a coefficient |theta|<=1 for the integrated zero term, with scale
 2*|primitiveBRe|/(sqrt x*(log x)^2). Apply the general zero-error estimate and prove mass
 summability from the character's RH. This is the zero-error coefficient of Lemma 2.5. -/
-theorem ofDirichletCharacter_integrated_zero_term_eq_theta {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hq : 2 ≤ q) (hp : χ.IsPrimitive) (hne : χ ≠ 1)
+theorem dirichlet_integrated_zero_theta_RH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hq : 2 ≤ q) (hp : χ.IsPrimitive) (hne : χ ≠ 1)
     (hRH : AnalyticNumberTheory.GRH.DirichletRiemannHypothesis χ) {x : ℝ} (hx : 1 < x) :
     ∃ θ : ℝ,
       |θ| ≤ 1 ∧
@@ -68,7 +68,7 @@ theorem ofDirichletCharacter_integrated_zero_term_eq_theta {q : ℕ} [NeZero q]
       (ofDirichletCharacter_riemannHypothesis χ hp hne hRH)
       (ofDirichletCharacter_summable_zeroMassTerm χ hq hp hne hRH) hx
   refine ⟨θ, hθ, ?_⟩
-  rw [heq, ofDirichletCharacter_zeroMass_eq_two_mul_abs_BRe_of_dirichletRH χ hq hp hne hRH]
+  rw [heq, dirichlet_zeroMass_two_BRe_RH χ hq hp hne hRH]
   ring
 
 end PseudoPrime.LLS.Extensions.GeneralLFunction

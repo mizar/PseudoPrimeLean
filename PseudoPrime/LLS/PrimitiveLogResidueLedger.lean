@@ -36,17 +36,11 @@ theorem re_sum_llsPrimitiveLogResidueAt_le {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 64 ≤ x) {z w : ℂ}
     (h0 :
-      (0 : ℂ) ∈
-        AnalyticNumberTheory.DirichletLFunction.dirichletLFunctionSingularitiesInRectangle χ hne z
-          w)
+      (0 : ℂ) ∈ AnalyticNumberTheory.DirichletLFunction.LFunctionSingularitiesInRectangle χ hne z w)
     (h1 :
       (1 : ℂ) ∈
-        AnalyticNumberTheory.DirichletLFunction.dirichletLFunctionSingularitiesInRectangle χ hne z
-          w) :
-    (∑
-          s ∈
-            AnalyticNumberTheory.DirichletLFunction.dirichletLFunctionSingularitiesInRectangle χ hne
-              z w,
+        AnalyticNumberTheory.DirichletLFunction.LFunctionSingularitiesInRectangle χ hne z w) :
+    (∑ s ∈ AnalyticNumberTheory.DirichletLFunction.LFunctionSingularitiesInRectangle χ hne z w,
           AnalyticNumberTheory.DirichletLFunction.dirichletLogResidueAt hne x s).re ≤
       (2 * Real.sqrt x + 2 + Real.log x) *
             |AnalyticNumberTheory.DirichletLFunction.primitiveBRe χ| +
@@ -62,32 +56,28 @@ theorem re_sum_llsPrimitiveLogResidueAt_le {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
         11 / 4 := by
     rcases χ.even_or_odd with heven | hodd
     · rw [AnalyticNumberTheory.DirichletLFunction.dirichletLogResidueAt_zero_of_even hne x heven]
-      exact
-        re_iteratedDeriv_two_llsPrimitiveLogEvenZeroRegularization_zero_div_two_le hN2 hGRH
-          hprimitive hne hinv hx
+      exact logEvenRegularization_second_re_bound_GRH hN2 hGRH hprimitive hne hinv hx
     · rw [AnalyticNumberTheory.DirichletLFunction.dirichletLogResidueAt_zero_of_odd hne x hodd]
-      exact
-        re_deriv_llsPrimitiveLogMellinZeroRegularization_zero_of_odd_le hN2 hGRH hprimitive hne hinv
-          hodd hx
+      exact logMellinRegularization_odd_deriv_bound_GRH hN2 hGRH hprimitive hne hinv hodd hx
   have herased :=
-    AnalyticNumberTheory.DirichletLFunction.re_sum_erased_primitiveLogResidues_le hN2 hGRH
-      hprimitive hne hinv hxpos (z := z) (w := w)
+    AnalyticNumberTheory.DirichletLFunction.logResidue_erased_re_sum_le_GRH hN2 hGRH hprimitive hne
+      hinv hxpos (z := z) (w := w)
   simp only [Complex.add_re, Complex.zero_re]
   have hsum := add_le_add hr0_bound herased
   calc
     0 + (AnalyticNumberTheory.DirichletLFunction.dirichletLogResidueAt hne x 0).re +
           (∑
               ρ ∈
-                ((AnalyticNumberTheory.DirichletLFunction.dirichletLFunctionSingularitiesInRectangle
-                          χ hne z w).erase
+                ((AnalyticNumberTheory.DirichletLFunction.LFunctionSingularitiesInRectangle χ hne z
+                          w).erase
                       1).erase
                   0,
               AnalyticNumberTheory.DirichletLFunction.dirichletLogResidueAt hne x ρ).re =
         (AnalyticNumberTheory.DirichletLFunction.dirichletLogResidueAt hne x 0).re +
           (∑
               ρ ∈
-                ((AnalyticNumberTheory.DirichletLFunction.dirichletLFunctionSingularitiesInRectangle
-                          χ hne z w).erase
+                ((AnalyticNumberTheory.DirichletLFunction.LFunctionSingularitiesInRectangle χ hne z
+                          w).erase
                       1).erase
                   0,
               AnalyticNumberTheory.DirichletLFunction.dirichletLogResidueAt hne x ρ).re :=

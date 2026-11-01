@@ -24,7 +24,7 @@ their interval integrals along horizontal lines.
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 
 /-- Both contour kernels are interval-integrable along every upper unified horizontal segment. -/
-theorem intervalIntegrable_riemannZetaKernels_unified_upper {x a b : ℝ} (hx : 0 < x) (m : ℕ) :
+theorem intervalIntegrable_kernels_unified_upper {x a b : ℝ} (hx : 0 < x) (m : ℕ) :
     IntervalIntegrable
         (fun σ : ℝ ↦
           riemannZetaReciprocalContourKernel x ((σ : ℂ) + unifiedContourHeightSeq m * Complex.I))
@@ -35,9 +35,8 @@ theorem intervalIntegrable_riemannZetaKernels_unified_upper {x a b : ℝ} (hx : 
         MeasureTheory.volume a b := by
   have hUpos : 0 < unifiedContourHeightSeq m :=
     (farLeftHeightSeq_pos m).trans_le (farLeftHeightSeq_le_unifiedContourHeightSeq m)
-  constructor <;> apply RectangleGeometry.intervalIntegrable_horizontal_of_continuousAt <;>
-    intro σ _
-  · apply (differentiableAt_riemannZetaReciprocalContourKernel hx ?_ ?_ ?_).continuousAt
+  constructor <;> apply RectangleGeometry.intervalIntegrable_horizontal_cont <;> intro σ _
+  · apply (differentiableAt_reciprocalKernel hx ?_ ?_ ?_).continuousAt
     · intro hs
       have him := congrArg Complex.im hs
       simp only [Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re, Complex.I_im,
@@ -49,7 +48,7 @@ theorem intervalIntegrable_riemannZetaKernels_unified_upper {x a b : ℝ} (hx : 
         mul_one, Complex.I_re, mul_zero, add_zero, zero_add, Complex.one_im] at him
       linarith only [him, hUpos]
     · exact riemannZeta_ne_zero_on_unified_upper m σ
-  · apply (differentiableAt_riemannZetaLogContourKernel hx ?_ ?_ ?_).continuousAt
+  · apply (differentiableAt_logKernel hx ?_ ?_ ?_).continuousAt
     · intro hs
       have him := congrArg Complex.im hs
       simp only [Complex.add_im, Complex.ofReal_im, Complex.mul_im, Complex.ofReal_re, Complex.I_im,
@@ -63,7 +62,7 @@ theorem intervalIntegrable_riemannZetaKernels_unified_upper {x a b : ℝ} (hx : 
     · exact riemannZeta_ne_zero_on_unified_upper m σ
 
 /-- Both contour kernels are interval-integrable along every lower unified horizontal segment. -/
-theorem intervalIntegrable_riemannZetaKernels_unified_lower {x a b : ℝ} (hx : 0 < x) (m : ℕ) :
+theorem intervalIntegrable_kernels_unified_lower {x a b : ℝ} (hx : 0 < x) (m : ℕ) :
     IntervalIntegrable
         (fun σ : ℝ ↦
           riemannZetaReciprocalContourKernel x ((σ : ℂ) - unifiedContourHeightSeq m * Complex.I))
@@ -76,15 +75,15 @@ theorem intervalIntegrable_riemannZetaKernels_unified_lower {x a b : ℝ} (hx : 
     (farLeftHeightSeq_pos m).trans_le (farLeftHeightSeq_le_unifiedContourHeightSeq m)
   constructor
   · convert
-      RectangleGeometry.intervalIntegrable_horizontal_of_continuousAt
-        (riemannZetaReciprocalContourKernel x) (-(unifiedContourHeightSeq m)) a b ?_ using
+      RectangleGeometry.intervalIntegrable_horizontal_cont (riemannZetaReciprocalContourKernel x)
+        (-(unifiedContourHeightSeq m)) a b ?_ using
       1
     · funext σ
       apply congrArg (riemannZetaReciprocalContourKernel x)
       push_cast
       ring
     · intro σ _
-      apply (differentiableAt_riemannZetaReciprocalContourKernel hx ?_ ?_ ?_).continuousAt
+      apply (differentiableAt_reciprocalKernel hx ?_ ?_ ?_).continuousAt
       · intro hs
         have him := congrArg Complex.im hs
         simp only [Complex.ofReal_neg, neg_mul, Complex.add_im, Complex.ofReal_im, Complex.neg_im,
@@ -105,15 +104,15 @@ theorem intervalIntegrable_riemannZetaKernels_unified_lower {x a b : ℝ} (hx : 
         rw [heq]
         exact riemannZeta_ne_zero_on_unified_lower m σ
   · convert
-      RectangleGeometry.intervalIntegrable_horizontal_of_continuousAt
-        (riemannZetaLogContourKernel x) (-(unifiedContourHeightSeq m)) a b ?_ using
+      RectangleGeometry.intervalIntegrable_horizontal_cont (riemannZetaLogContourKernel x)
+        (-(unifiedContourHeightSeq m)) a b ?_ using
       1
     · funext σ
       apply congrArg (riemannZetaLogContourKernel x)
       push_cast
       ring
     · intro σ _
-      apply (differentiableAt_riemannZetaLogContourKernel hx ?_ ?_ ?_).continuousAt
+      apply (differentiableAt_logKernel hx ?_ ?_ ?_).continuousAt
       · intro hs
         have him := congrArg Complex.im hs
         simp only [Complex.ofReal_neg, neg_mul, Complex.add_im, Complex.ofReal_im, Complex.neg_im,
@@ -135,8 +134,7 @@ theorem intervalIntegrable_riemannZetaKernels_unified_lower {x a b : ℝ} (hx : 
         exact riemannZeta_ne_zero_on_unified_lower m σ
 
 /-- Each upper horizontal unified contour integral splits at the finite-contour line. -/
-theorem intervalIntegral_riemannZetaLogContourKernel_unified_upper_split {x a c : ℝ} (hx : 0 < x)
-    (m : ℕ) :
+theorem integral_logKernel_unified_upper_split {x a c : ℝ} (hx : 0 < x) (m : ℕ) :
     (∫ σ in a..c,
         riemannZetaLogContourKernel x ((σ : ℂ) + (unifiedContourHeightSeq m : ℂ) * Complex.I)) =
       (∫ σ in a..(-1 / 2),
@@ -145,12 +143,11 @@ theorem intervalIntegral_riemannZetaLogContourKernel_unified_upper_split {x a c 
           riemannZetaLogContourKernel x
             ((σ : ℂ) + (unifiedContourHeightSeq m : ℂ) * Complex.I) := by
   rw [← intervalIntegral.integral_add_adjacent_intervals]
-  · exact (intervalIntegrable_riemannZetaKernels_unified_upper hx m (a := a) (b := -1 / 2)).2
-  · exact (intervalIntegrable_riemannZetaKernels_unified_upper hx m (a := -1 / 2) (b := c)).2
+  · exact (intervalIntegrable_kernels_unified_upper hx m (a := a) (b := -1 / 2)).2
+  · exact (intervalIntegrable_kernels_unified_upper hx m (a := -1 / 2) (b := c)).2
 
 /-- Each upper horizontal reciprocal contour integral splits at the finite-contour line. -/
-theorem intervalIntegral_riemannZetaReciprocalContourKernel_unified_upper_split {x a c : ℝ}
-    (hx : 0 < x) (m : ℕ) :
+theorem reciprocal_integral_unified_upper_split {x a c : ℝ} (hx : 0 < x) (m : ℕ) :
     (∫ σ in a..c,
         riemannZetaReciprocalContourKernel x
           ((σ : ℂ) + (unifiedContourHeightSeq m : ℂ) * Complex.I)) =
@@ -161,12 +158,11 @@ theorem intervalIntegral_riemannZetaReciprocalContourKernel_unified_upper_split 
           riemannZetaReciprocalContourKernel x
             ((σ : ℂ) + (unifiedContourHeightSeq m : ℂ) * Complex.I) := by
   rw [← intervalIntegral.integral_add_adjacent_intervals]
-  · exact (intervalIntegrable_riemannZetaKernels_unified_upper hx m (a := a) (b := -1 / 2)).1
-  · exact (intervalIntegrable_riemannZetaKernels_unified_upper hx m (a := -1 / 2) (b := c)).1
+  · exact (intervalIntegrable_kernels_unified_upper hx m (a := a) (b := -1 / 2)).1
+  · exact (intervalIntegrable_kernels_unified_upper hx m (a := -1 / 2) (b := c)).1
 
 /-- Each lower horizontal unified contour integral splits at the finite-contour line. -/
-theorem intervalIntegral_riemannZetaLogContourKernel_unified_lower_split {x a c : ℝ} (hx : 0 < x)
-    (m : ℕ) :
+theorem integral_logKernel_unified_lower_split {x a c : ℝ} (hx : 0 < x) (m : ℕ) :
     (∫ σ in a..c,
         riemannZetaLogContourKernel x ((σ : ℂ) - (unifiedContourHeightSeq m : ℂ) * Complex.I)) =
       (∫ σ in a..(-1 / 2),
@@ -175,12 +171,11 @@ theorem intervalIntegral_riemannZetaLogContourKernel_unified_lower_split {x a c 
           riemannZetaLogContourKernel x
             ((σ : ℂ) - (unifiedContourHeightSeq m : ℂ) * Complex.I) := by
   rw [← intervalIntegral.integral_add_adjacent_intervals]
-  · exact (intervalIntegrable_riemannZetaKernels_unified_lower hx m (a := a) (b := -1 / 2)).2
-  · exact (intervalIntegrable_riemannZetaKernels_unified_lower hx m (a := -1 / 2) (b := c)).2
+  · exact (intervalIntegrable_kernels_unified_lower hx m (a := a) (b := -1 / 2)).2
+  · exact (intervalIntegrable_kernels_unified_lower hx m (a := -1 / 2) (b := c)).2
 
 /-- Each lower horizontal reciprocal contour integral splits at the finite-contour line. -/
-theorem intervalIntegral_riemannZetaReciprocalContourKernel_unified_lower_split {x a c : ℝ}
-    (hx : 0 < x) (m : ℕ) :
+theorem reciprocal_integral_unified_lower_split {x a c : ℝ} (hx : 0 < x) (m : ℕ) :
     (∫ σ in a..c,
         riemannZetaReciprocalContourKernel x
           ((σ : ℂ) - (unifiedContourHeightSeq m : ℂ) * Complex.I)) =
@@ -191,12 +186,11 @@ theorem intervalIntegral_riemannZetaReciprocalContourKernel_unified_lower_split 
           riemannZetaReciprocalContourKernel x
             ((σ : ℂ) - (unifiedContourHeightSeq m : ℂ) * Complex.I) := by
   rw [← intervalIntegral.integral_add_adjacent_intervals]
-  · exact (intervalIntegrable_riemannZetaKernels_unified_lower hx m (a := a) (b := -1 / 2)).1
-  · exact (intervalIntegrable_riemannZetaKernels_unified_lower hx m (a := -1 / 2) (b := c)).1
+  · exact (intervalIntegrable_kernels_unified_lower hx m (a := a) (b := -1 / 2)).1
+  · exact (intervalIntegrable_kernels_unified_lower hx m (a := -1 / 2) (b := c)).1
 
 /-- The logarithmic far-left horizontal integral has a `length / height` majorant. -/
-theorem norm_intervalIntegral_riemannZetaLogContourKernel_unified_farLeft_le {x : ℝ} (hx : 1 < x)
-    (m : ℕ) :
+theorem norm_integral_logKernel_unified_farLeft_le {x : ℝ} (hx : 1 < x) (m : ℕ) :
     ‖∫ σ in (-(2 * (m : ℝ) + 1))..(-1 / 2),
           riemannZetaLogContourKernel x ((σ : ℂ) + unifiedContourHeightSeq m * Complex.I)‖ ≤
       unifiedFarLeftLinearConst * x ^ (-(1 : ℝ) / 2) * (2 * (m : ℝ) + 1 / 2) /
@@ -205,8 +199,7 @@ theorem norm_intervalIntegral_riemannZetaLogContourKernel_unified_farLeft_le {x 
   have hT1 : (1 : ℝ) ≤ T :=
     (one_le_farLeftHeightSeq m).trans (farLeftHeightSeq_le_unifiedContourHeightSeq m)
   have hTpos : 0 < T := one_pos.trans_le hT1
-  have hbase :=
-    norm_intervalIntegral_riemannZetaLogContourKernel_farLeft_le hx (m := m) (t := T) hTpos.ne'
+  have hbase := norm_integral_logKernel_farLeft_le hx (m := m) (t := T) hTpos.ne'
   have hlog := farLeftZetaLogDerivBound_unified_le m
   have hxpow : 0 < x ^ (-(1 : ℝ) / 2) := Real.rpow_pos_of_pos (lt_trans zero_lt_one hx) _
   calc
@@ -222,8 +215,7 @@ theorem norm_intervalIntegral_riemannZetaLogContourKernel_unified_farLeft_le {x 
       field_simp [hTpos.ne']
 
 /-- The reciprocal far-left horizontal integral has the same `length / height` majorant. -/
-theorem norm_intervalIntegral_riemannZetaReciprocalContourKernel_unified_farLeft_le {x : ℝ}
-    (hx : 1 < x) (m : ℕ) :
+theorem norm_reciprocal_unified_farLeft_integral {x : ℝ} (hx : 1 < x) (m : ℕ) :
     ‖∫ σ in (-(2 * (m : ℝ) + 1))..(-1 / 2),
           riemannZetaReciprocalContourKernel x ((σ : ℂ) + unifiedContourHeightSeq m * Complex.I)‖ ≤
       unifiedFarLeftLinearConst * x ^ (-(3 : ℝ) / 2) * (2 * (m : ℝ) + 1 / 2) /
@@ -232,9 +224,7 @@ theorem norm_intervalIntegral_riemannZetaReciprocalContourKernel_unified_farLeft
   have hT1 : (1 : ℝ) ≤ T :=
     (one_le_farLeftHeightSeq m).trans (farLeftHeightSeq_le_unifiedContourHeightSeq m)
   have hTpos : 0 < T := one_pos.trans_le hT1
-  have hbase :=
-    norm_intervalIntegral_riemannZetaReciprocalContourKernel_farLeft_le hx (m := m) (t := T)
-      hTpos.ne'
+  have hbase := norm_integral_reciprocalKernel_farLeft_le hx (m := m) (t := T) hTpos.ne'
   have hlog := farLeftZetaLogDerivBound_unified_le m
   have hxpow : 0 < x ^ (-(3 : ℝ) / 2) := Real.rpow_pos_of_pos (lt_trans zero_lt_one hx) _
   calc
@@ -250,41 +240,35 @@ theorem norm_intervalIntegral_riemannZetaReciprocalContourKernel_unified_farLeft
       field_simp [hTpos.ne']
 
 /-- The upper growing logarithmic far-left segment vanishes on the unified sequence. -/
-theorem tendsto_intervalIntegral_riemannZetaLogContourKernel_unified_farLeft {x : ℝ} (hx : 1 < x) :
+theorem tendsto_integral_logKernel_unified_farLeft {x : ℝ} (hx : 1 < x) :
     Filter.Tendsto
       (fun m : ℕ =>
         ∫ σ in (-(2 * (m : ℝ) + 1))..(-1 / 2),
           riemannZetaLogContourKernel x ((σ : ℂ) + unifiedContourHeightSeq m * Complex.I))
       Filter.atTop (nhds 0) := by
-  apply
-    squeeze_zero_norm
-      (fun m => norm_intervalIntegral_riemannZetaLogContourKernel_unified_farLeft_le hx m)
+  apply squeeze_zero_norm (fun m => norm_integral_logKernel_unified_farLeft_le hx m)
   convert
-      tendsto_farLeftLength_div_unifiedContourHeightSeq.const_mul
+      tendsto_farLeftLength_div_unifiedHeight.const_mul
         (unifiedFarLeftLinearConst * x ^ (-(1 : ℝ) / 2)) using
       1 <;>
     ring_nf
 
 /-- The upper growing reciprocal far-left segment vanishes on the unified sequence. -/
-theorem tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_unified_farLeft {x : ℝ}
-    (hx : 1 < x) :
+theorem tendsto_reciprocal_unified_farLeft {x : ℝ} (hx : 1 < x) :
     Filter.Tendsto
       (fun m : ℕ =>
         ∫ σ in (-(2 * (m : ℝ) + 1))..(-1 / 2),
           riemannZetaReciprocalContourKernel x ((σ : ℂ) + unifiedContourHeightSeq m * Complex.I))
       Filter.atTop (nhds 0) := by
-  apply
-    squeeze_zero_norm
-      (fun m => norm_intervalIntegral_riemannZetaReciprocalContourKernel_unified_farLeft_le hx m)
+  apply squeeze_zero_norm (fun m => norm_reciprocal_unified_farLeft_integral hx m)
   convert
-      tendsto_farLeftLength_div_unifiedContourHeightSeq.const_mul
+      tendsto_farLeftLength_div_unifiedHeight.const_mul
         (unifiedFarLeftLinearConst * x ^ (-(3 : ℝ) / 2)) using
       1 <;>
     ring_nf
 
 /-- The logarithmic left-vertical integral has a square-height geometric majorant. -/
-theorem norm_intervalIntegral_riemannZetaLogContourKernel_unified_leftVertical_le {x : ℝ}
-    (hx : 1 < x) (m : ℕ) :
+theorem norm_integral_logKernel_unified_left_le {x : ℝ} (hx : 1 < x) (m : ℕ) :
     ‖∫ t in (-(unifiedContourHeightSeq m))..(unifiedContourHeightSeq m),
           riemannZetaLogContourKernel x (-(2 * m + 1 : ℂ) + (t : ℂ) * Complex.I)‖ ≤
       2 * unifiedLeftVerticalLinearConst * x ^ (-(1 : ℝ)) *
@@ -293,14 +277,13 @@ theorem norm_intervalIntegral_riemannZetaLogContourKernel_unified_leftVertical_l
   have hTpos : 0 < T :=
     (farLeftHeightSeq_pos m).trans_le (farLeftHeightSeq_le_unifiedContourHeightSeq m)
   have hbase :=
-    norm_intervalIntegral_riemannZetaLogContourKernel_leftVertical_le (x := x)
-      (by linarith only [hx]) (m := m) (T := T) hTpos.le
+    norm_integral_logKernel_left_le (x := x) (by linarith only [hx]) (m := m) (T := T) hTpos.le
   have hlog := leftVerticalZetaLogDerivBound_unified_le m
   change leftVerticalZetaLogDerivBound m T ≤ unifiedLeftVerticalLinearConst * T at hlog
   have hxpow : 0 < x ^ (-(2 * (m : ℝ) + 1)) := Real.rpow_pos_of_pos (by linarith only [hx]) _
   have hden : (1 : ℝ) ≤ (2 * (m : ℝ) + 1) ^ 2 := by nlinarith only [Nat.cast_nonneg (α := ℝ) m]
   have hnonneg : 0 ≤ leftVerticalZetaLogDerivBound m T :=
-    le_trans (norm_nonneg _) (norm_logDeriv_riemannZeta_neg_odd_add_mul_I_le_uniform m T)
+    le_trans (norm_nonneg _) (norm_logDeriv_neg_odd_le_bound m T)
   have hxeq : x ^ (-(2 * (m : ℝ) + 1)) = x ^ (-(1 : ℝ)) * (x ^ (-(2 : ℝ))) ^ m := by
     rw [show -(2 * (m : ℝ) + 1) = -(2 : ℝ) * (m : ℝ) + -(1 : ℝ) by ring,
       Real.rpow_add (by linarith only [hx]), Real.rpow_mul (by linarith only [hx] : 0 ≤ x),
@@ -322,8 +305,7 @@ theorem norm_intervalIntegral_riemannZetaLogContourKernel_unified_leftVertical_l
       ring
 
 /-- The reciprocal left-vertical integral has the analogous geometric majorant. -/
-theorem norm_intervalIntegral_riemannZetaReciprocalContourKernel_unified_leftVertical_le {x : ℝ}
-    (hx : 1 < x) (m : ℕ) :
+theorem norm_reciprocal_unified_left_integral {x : ℝ} (hx : 1 < x) (m : ℕ) :
     ‖∫ t in (-(unifiedContourHeightSeq m))..(unifiedContourHeightSeq m),
           riemannZetaReciprocalContourKernel x (-(2 * m + 1 : ℂ) + (t : ℂ) * Complex.I)‖ ≤
       2 * unifiedLeftVerticalLinearConst * x ^ (-(2 : ℝ)) *
@@ -332,15 +314,15 @@ theorem norm_intervalIntegral_riemannZetaReciprocalContourKernel_unified_leftVer
   have hTpos : 0 < T :=
     (farLeftHeightSeq_pos m).trans_le (farLeftHeightSeq_le_unifiedContourHeightSeq m)
   have hbase :=
-    norm_intervalIntegral_riemannZetaReciprocalContourKernel_leftVertical_le (x := x)
-      (lt_trans zero_lt_one hx) (m := m) (T := T) hTpos.le
+    norm_integral_reciprocalKernel_left_le (x := x) (lt_trans zero_lt_one hx) (m := m) (T := T)
+      hTpos.le
   have hlog := leftVerticalZetaLogDerivBound_unified_le m
   change leftVerticalZetaLogDerivBound m T ≤ unifiedLeftVerticalLinearConst * T at hlog
   have hxpow : 0 < x ^ (-(2 * (m : ℝ) + 2)) := Real.rpow_pos_of_pos (lt_trans zero_lt_one hx) _
   have hden : (1 : ℝ) ≤ (2 * (m : ℝ) + 1) * (2 * (m : ℝ) + 2) := by
     nlinarith only [Nat.cast_nonneg (α := ℝ) m]
   have hnonneg : 0 ≤ leftVerticalZetaLogDerivBound m T :=
-    le_trans (norm_nonneg _) (norm_logDeriv_riemannZeta_neg_odd_add_mul_I_le_uniform m T)
+    le_trans (norm_nonneg _) (norm_logDeriv_neg_odd_le_bound m T)
   have hxeq : x ^ (-(2 * (m : ℝ) + 2)) = x ^ (-(2 : ℝ)) * (x ^ (-(2 : ℝ))) ^ m := by
     rw [show -(2 * (m : ℝ) + 2) = -(2 : ℝ) * (m : ℝ) + -(2 : ℝ) by ring,
       Real.rpow_add (lt_trans zero_lt_one hx),
@@ -364,16 +346,13 @@ theorem norm_intervalIntegral_riemannZetaReciprocalContourKernel_unified_leftVer
       ring
 
 /-- The logarithmic left-vertical edge vanishes on the unified contour sequence. -/
-theorem tendsto_intervalIntegral_riemannZetaLogContourKernel_unified_leftVertical {x : ℝ}
-    (hx : 1 < x) :
+theorem tendsto_integral_logKernel_unified_left {x : ℝ} (hx : 1 < x) :
     Filter.Tendsto
       (fun m : ℕ =>
         ∫ t in (-(unifiedContourHeightSeq m))..(unifiedContourHeightSeq m),
           riemannZetaLogContourKernel x (-(2 * m + 1 : ℂ) + (t : ℂ) * Complex.I))
       Filter.atTop (nhds 0) := by
-  apply
-    squeeze_zero_norm
-      (fun m => norm_intervalIntegral_riemannZetaLogContourKernel_unified_leftVertical_le hx m)
+  apply squeeze_zero_norm (fun m => norm_integral_logKernel_unified_left_le hx m)
   have hrpos : 0 ≤ x ^ (-(2 : ℝ)) := by positivity
   have hrlt : x ^ (-(2 : ℝ)) < 1 := by
     rw [show (-(2 : ℝ)) = -(2 : ℕ) by norm_num only,
@@ -381,21 +360,17 @@ theorem tendsto_intervalIntegral_riemannZetaLogContourKernel_unified_leftVertica
     right
     nlinarith only [hx, sq_nonneg (x - 1)]
   simpa only [Real.rpow_neg_ofNat, Int.reduceNeg, zpow_neg, zpow_ofNat, inv_pow, mul_zero] using
-    (tendsto_unifiedContourHeightSeq_sq_mul_pow_of_lt_one hrpos hrlt).const_mul
+    (tendsto_unifiedHeight_sq_mul_pow hrpos hrlt).const_mul
       (2 * unifiedLeftVerticalLinearConst * x ^ (-(1 : ℝ)))
 
 /-- The reciprocal left-vertical edge vanishes on the unified contour sequence. -/
-theorem tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_unified_leftVertical {x : ℝ}
-    (hx : 1 < x) :
+theorem tendsto_reciprocal_unified_left {x : ℝ} (hx : 1 < x) :
     Filter.Tendsto
       (fun m : ℕ =>
         ∫ t in (-(unifiedContourHeightSeq m))..(unifiedContourHeightSeq m),
           riemannZetaReciprocalContourKernel x (-(2 * m + 1 : ℂ) + (t : ℂ) * Complex.I))
       Filter.atTop (nhds 0) := by
-  apply
-    squeeze_zero_norm
-      (fun m =>
-        norm_intervalIntegral_riemannZetaReciprocalContourKernel_unified_leftVertical_le hx m)
+  apply squeeze_zero_norm (fun m => norm_reciprocal_unified_left_integral hx m)
   have hrpos : 0 ≤ x ^ (-(2 : ℝ)) := by positivity
   have hrlt : x ^ (-(2 : ℝ)) < 1 := by
     rw [show (-(2 : ℝ)) = -(2 : ℕ) by norm_num only,
@@ -403,7 +378,7 @@ theorem tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_unified_left
     right
     nlinarith only [hx, sq_nonneg (x - 1)]
   simpa only [Real.rpow_neg_ofNat, Int.reduceNeg, zpow_neg, zpow_ofNat, inv_pow, mul_zero] using
-    (tendsto_unifiedContourHeightSeq_sq_mul_pow_of_lt_one hrpos hrlt).const_mul
+    (tendsto_unifiedHeight_sq_mul_pow hrpos hrlt).const_mul
       (2 * unifiedLeftVerticalLinearConst * x ^ (-(2 : ℝ)))
 
 /-- The logarithmic Riemann contour kernel commutes with conjugation for positive `x`. -/
@@ -432,8 +407,7 @@ theorem riemannZetaReciprocalContourKernel_conj {x : ℝ} (hx : 0 < x) (s : ℂ)
     exact Real.pi_ne_zero.symm
 
 /-- A lower horizontal logarithmic-kernel integral is the conjugate of the upper one. -/
-theorem intervalIntegral_riemannZetaLogContourKernel_neg_height {x : ℝ} (hx : 0 < x) {a b T : ℝ}
-    (hab : a ≤ b) :
+theorem integral_logKernel_neg_height {x : ℝ} (hx : 0 < x) {a b T : ℝ} (hab : a ≤ b) :
     (∫ σ in a..b, riemannZetaLogContourKernel x ((σ : ℂ) - (T : ℂ) * Complex.I)) =
       starRingEnd ℂ
         (∫ σ in a..b, riemannZetaLogContourKernel x ((σ : ℂ) + (T : ℂ) * Complex.I)) := by
@@ -450,8 +424,7 @@ theorem intervalIntegral_riemannZetaLogContourKernel_neg_height {x : ℝ} (hx : 
   rw [integral_conj]
 
 /-- A lower horizontal reciprocal-kernel integral is the conjugate of the upper one. -/
-theorem intervalIntegral_riemannZetaReciprocalContourKernel_neg_height {x : ℝ} (hx : 0 < x)
-    {a b T : ℝ} (hab : a ≤ b) :
+theorem integral_reciprocalKernel_neg_height {x : ℝ} (hx : 0 < x) {a b T : ℝ} (hab : a ≤ b) :
     (∫ σ in a..b, riemannZetaReciprocalContourKernel x ((σ : ℂ) - (T : ℂ) * Complex.I)) =
       starRingEnd ℂ
         (∫ σ in a..b, riemannZetaReciprocalContourKernel x ((σ : ℂ) + (T : ℂ) * Complex.I)) := by
@@ -469,67 +442,62 @@ theorem intervalIntegral_riemannZetaReciprocalContourKernel_neg_height {x : ℝ}
   rw [integral_conj]
 
 /-- The fixed lower-right logarithmic segment vanishes along the unified contour heights. -/
-theorem tendsto_intervalIntegral_riemannZetaLogContourKernel_neg_unifiedHeightSeq {x : ℝ}
-    (hx : 0 < x) {lam tau : ℝ} (hlam : -(1 : ℝ) / 2 ≤ lam) (hlamtau : lam ≤ tau) (htau : tau ≤ 2) :
+theorem tendsto_logKernel_neg_unifiedHeight {x : ℝ} (hx : 0 < x) {lam tau : ℝ}
+    (hlam : -(1 : ℝ) / 2 ≤ lam) (hlamtau : lam ≤ tau) (htau : tau ≤ 2) :
     Filter.Tendsto
       (fun m : ℕ =>
         ∫ σ in lam..tau,
           riemannZetaLogContourKernel x ((σ : ℂ) - unifiedContourHeightSeq m * Complex.I))
       Filter.atTop (nhds 0) := by
-  have hu :=
-    tendsto_intervalIntegral_riemannZetaLogContourKernel_unifiedHeightSeq hx hlam hlamtau htau
+  have hu := tendsto_integral_logKernel_unifiedHeightSeq hx hlam hlamtau htau
   have hc := Complex.continuous_conj.continuousAt.tendsto.comp hu
   convert hc using 1
   · funext m
-    exact intervalIntegral_riemannZetaLogContourKernel_neg_height hx hlamtau
+    exact integral_logKernel_neg_height hx hlamtau
   · simp only [map_zero]
 
 /-- The fixed lower-right reciprocal segment vanishes along the unified contour heights. -/
-theorem tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_neg_unifiedHeightSeq {x : ℝ}
-    (hx : 0 < x) {lam tau : ℝ} (hlam : -(1 : ℝ) / 2 ≤ lam) (hlamtau : lam ≤ tau) (htau : tau ≤ 2) :
+theorem tendsto_reciprocal_neg_unifiedHeight {x : ℝ} (hx : 0 < x) {lam tau : ℝ}
+    (hlam : -(1 : ℝ) / 2 ≤ lam) (hlamtau : lam ≤ tau) (htau : tau ≤ 2) :
     Filter.Tendsto
       (fun m : ℕ =>
         ∫ σ in lam..tau,
           riemannZetaReciprocalContourKernel x ((σ : ℂ) - unifiedContourHeightSeq m * Complex.I))
       Filter.atTop (nhds 0) := by
-  have hu :=
-    tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_unifiedHeightSeq hx hlam hlamtau
-      htau
+  have hu := tendsto_reciprocal_unifiedHeight hx hlam hlamtau htau
   have hc := Complex.continuous_conj.continuousAt.tendsto.comp hu
   convert hc using 1
   · funext m
-    exact intervalIntegral_riemannZetaReciprocalContourKernel_neg_height hx hlamtau
+    exact integral_reciprocalKernel_neg_height hx hlamtau
   · simp only [map_zero]
 
 /-- The lower growing logarithmic far-left segment vanishes on the unified sequence. -/
-theorem tendsto_intervalIntegral_riemannZetaLogContourKernel_neg_unified_farLeft {x : ℝ}
-    (hx : 1 < x) :
+theorem tendsto_logKernel_neg_unified_farLeft {x : ℝ} (hx : 1 < x) :
     Filter.Tendsto
       (fun m : ℕ =>
         ∫ σ in (-(2 * (m : ℝ) + 1))..(-1 / 2),
           riemannZetaLogContourKernel x ((σ : ℂ) - unifiedContourHeightSeq m * Complex.I))
       Filter.atTop (nhds 0) := by
-  have hu := tendsto_intervalIntegral_riemannZetaLogContourKernel_unified_farLeft hx
+  have hu := tendsto_integral_logKernel_unified_farLeft hx
   have hc := Complex.continuous_conj.continuousAt.tendsto.comp hu
   convert hc using 1
   · funext m
-    apply intervalIntegral_riemannZetaLogContourKernel_neg_height (by linarith only [hx])
+    apply integral_logKernel_neg_height (by linarith only [hx])
     linarith only [Nat.cast_nonneg (α := ℝ) m]
   · simp only [map_zero]
 
 /-- The lower growing reciprocal far-left segment vanishes on the unified sequence. -/
-theorem tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_neg_unified_farLeft {x : ℝ}
-    (hx : 1 < x) :
+theorem tendsto_reciprocal_neg_unified_farLeft {x : ℝ} (hx : 1 < x) :
     Filter.Tendsto
       (fun m : ℕ =>
         ∫ σ in (-(2 * (m : ℝ) + 1))..(-1 / 2),
           riemannZetaReciprocalContourKernel x ((σ : ℂ) - unifiedContourHeightSeq m * Complex.I))
       Filter.atTop (nhds 0) := by
-  have hu := tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_unified_farLeft hx
+  have hu := tendsto_reciprocal_unified_farLeft hx
   have hc := Complex.continuous_conj.continuousAt.tendsto.comp hu
   convert hc using 1
   · funext m
-    apply intervalIntegral_riemannZetaReciprocalContourKernel_neg_height (lt_trans zero_lt_one hx)
+    apply integral_reciprocalKernel_neg_height (lt_trans zero_lt_one hx)
     nlinarith only [Nat.cast_nonneg (α := ℝ) m]
   · simp only [map_zero]
 
@@ -558,22 +526,22 @@ noncomputable def riemannZetaReciprocalThreeUnifiedEdges (x : ℝ) (m : ℕ) : �
         riemannZetaReciprocalContourKernel x (-(2 * m + 1 : ℂ) + (t : ℂ) * Complex.I))
 
 /-- The three non-right logarithmic edges vanish on the single good-height sequence. -/
-theorem tendsto_riemannZetaLogThreeUnifiedEdges_atTop {x : ℝ} (hx : 1 < x) :
+theorem tendsto_zetaLogThreeUnifiedEdges_atTop {x : ℝ} (hx : 1 < x) :
     Filter.Tendsto (riemannZetaLogThreeUnifiedEdges x) Filter.atTop (nhds 0) := by
-  have hlower := tendsto_intervalIntegral_riemannZetaLogContourKernel_neg_unified_farLeft hx
-  have hupper := tendsto_intervalIntegral_riemannZetaLogContourKernel_unified_farLeft hx
-  have hleft := tendsto_intervalIntegral_riemannZetaLogContourKernel_unified_leftVertical hx
+  have hlower := tendsto_logKernel_neg_unified_farLeft hx
+  have hupper := tendsto_integral_logKernel_unified_farLeft hx
+  have hleft := tendsto_integral_logKernel_unified_left hx
   convert hlower.sub hupper |>.sub (hleft.const_smul Complex.I) using 1
   · funext m
     rfl
   · simp only [sub_self, smul_eq_mul, mul_zero]
 
 /-- The three non-right reciprocal edges vanish on the single good-height sequence. -/
-theorem tendsto_riemannZetaReciprocalThreeUnifiedEdges_atTop {x : ℝ} (hx : 1 < x) :
+theorem tendsto_reciprocal_threeUnifiedEdges {x : ℝ} (hx : 1 < x) :
     Filter.Tendsto (riemannZetaReciprocalThreeUnifiedEdges x) Filter.atTop (nhds 0) := by
-  have hlower := tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_neg_unified_farLeft hx
-  have hupper := tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_unified_farLeft hx
-  have hleft := tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_unified_leftVertical hx
+  have hlower := tendsto_reciprocal_neg_unified_farLeft hx
+  have hupper := tendsto_reciprocal_unified_farLeft hx
+  have hleft := tendsto_reciprocal_unified_left hx
   convert hlower.sub hupper |>.sub (hleft.const_smul Complex.I) using 1
   · funext m
     rfl
@@ -601,7 +569,7 @@ noncomputable def riemannZetaReciprocalUnifiedBoundaryError (x τ : ℝ) (m : �
 
 /-- The logarithmic boundary at `τ` is the finite-contour boundary error plus its truncated
 right edge. -/
-theorem rectangleBoundaryIntegral_log_unified_tau_eq {x τ : ℝ} (hx : 0 < x) (m : ℕ) :
+theorem boundaryIntegral_log_unified_tau_eq {x τ : ℝ} (hx : 0 < x) (m : ℕ) :
     RectangleGeometry.rectangleBoundaryIntegral (riemannZetaLogContourKernel x)
         (unifiedRectangleLower m) (unifiedTauRectangleUpper τ m) =
       riemannZetaLogUnifiedBoundaryError x τ m +
@@ -631,14 +599,14 @@ theorem rectangleBoundaryIntegral_log_unified_tau_eq {x τ : ℝ} (hx : 0 < x) (
     apply congrArg (riemannZetaLogContourKernel x)
     push_cast
     ring
-  rw [hbottom, hleft, intervalIntegral_riemannZetaLogContourKernel_unified_lower_split hx m,
-    intervalIntegral_riemannZetaLogContourKernel_unified_upper_split hx m]
+  rw [hbottom, hleft, integral_logKernel_unified_lower_split hx m,
+    integral_logKernel_unified_upper_split hx m]
   unfold riemannZetaLogUnifiedBoundaryError riemannZetaLogThreeUnifiedEdges
   abel
 
 /-- The reciprocal boundary at `τ` is the finite-contour boundary error plus its truncated
 right edge. -/
-theorem rectangleBoundaryIntegral_reciprocal_unified_tau_eq {x τ : ℝ} (hx : 0 < x) (m : ℕ) :
+theorem boundaryIntegral_reciprocal_unified_tau_eq {x τ : ℝ} (hx : 0 < x) (m : ℕ) :
     RectangleGeometry.rectangleBoundaryIntegral (riemannZetaReciprocalContourKernel x)
         (unifiedRectangleLower m) (unifiedTauRectangleUpper τ m) =
       riemannZetaReciprocalUnifiedBoundaryError x τ m +
@@ -669,18 +637,18 @@ theorem rectangleBoundaryIntegral_reciprocal_unified_tau_eq {x τ : ℝ} (hx : 0
     apply congrArg (riemannZetaReciprocalContourKernel x)
     push_cast
     ring
-  rw [hbottom, hleft, intervalIntegral_riemannZetaReciprocalContourKernel_unified_lower_split hx m,
-    intervalIntegral_riemannZetaReciprocalContourKernel_unified_upper_split hx m]
+  rw [hbottom, hleft, reciprocal_integral_unified_lower_split hx m,
+    reciprocal_integral_unified_upper_split hx m]
   unfold riemannZetaReciprocalUnifiedBoundaryError riemannZetaReciprocalThreeUnifiedEdges
   abel
 
 /-- Both finite contour identities apply to every unified rectangle ending at `τ > 1`. -/
-theorem riemannZetaFiniteContourIdentities_unified_tau {x τ : ℝ} (hx : 0 < x) (hτ : 1 < τ) (m : ℕ) :
+theorem zetaFiniteContourIdentities_unified_tau {x τ : ℝ} (hx : 0 < x) (hτ : 1 < τ) (m : ℕ) :
     RiemannZetaReciprocalFiniteContourIdentity x (unifiedRectangleLower m)
         (unifiedTauRectangleUpper τ m) ∧
       RiemannZetaLogFiniteContourIdentity x (unifiedRectangleLower m)
         (unifiedTauRectangleUpper τ m) := by
-  apply riemannZetaFiniteContourIdentities_of_regular hx
+  apply zetaFiniteContourIdentities_of_regular hx
   · simp only [unifiedRectangleLower, unifiedTauRectangleUpper]
     have hm : (0 : ℝ) ≤ m := Nat.cast_nonneg m
     linarith only [hm, hτ]
@@ -688,20 +656,20 @@ theorem riemannZetaFiniteContourIdentities_unified_tau {x τ : ℝ} (hx : 0 < x)
     have hUpos : 0 < unifiedContourHeightSeq m :=
       (farLeftHeightSeq_pos m).trans_le (farLeftHeightSeq_le_unifiedContourHeightSeq m)
     linarith only [hUpos]
-  · exact llsRiemannRectangleBoundaryIsRegular_unified_tau hτ m
+  · exact boundaryRegular_unified_tau hτ m
 
 /-- Every non-right logarithmic boundary piece vanishes on the unified sequence. -/
-theorem tendsto_riemannZetaLogUnifiedBoundaryError_atTop {x : ℝ} (hx : 1 < x) {τ : ℝ} (hτ : 1 < τ)
+theorem tendsto_zetaLogUnifiedBoundaryError_atTop {x : ℝ} (hx : 1 < x) {τ : ℝ} (hτ : 1 < τ)
     (hτ2 : τ ≤ 2) :
     Filter.Tendsto (riemannZetaLogUnifiedBoundaryError x τ) Filter.atTop (nhds 0) := by
-  have hfar := tendsto_riemannZetaLogThreeUnifiedEdges_atTop hx
+  have hfar := tendsto_zetaLogThreeUnifiedEdges_atTop hx
   have hlower :=
-    tendsto_intervalIntegral_riemannZetaLogContourKernel_neg_unifiedHeightSeq (x := x)
-      (lt_trans zero_lt_one hx) (lam := -1 / 2) (tau := τ) le_rfl
+    tendsto_logKernel_neg_unifiedHeight (x := x) (lt_trans zero_lt_one hx) (lam := -1 / 2) (tau :=
+      τ) le_rfl
       (le_trans (by norm_num only : (-1 / 2 : ℝ) ≤ 0) (le_of_lt (lt_trans zero_lt_one hτ))) hτ2
   have hupper :=
-    tendsto_intervalIntegral_riemannZetaLogContourKernel_unifiedHeightSeq (x := x)
-      (lt_trans zero_lt_one hx) (lam := -1 / 2) (tau := τ) le_rfl
+    tendsto_integral_logKernel_unifiedHeightSeq (x := x) (lt_trans zero_lt_one hx) (lam := -1 / 2)
+      (tau := τ) le_rfl
       (le_trans (by norm_num only : (-1 / 2 : ℝ) ≤ 0) (le_of_lt (lt_trans zero_lt_one hτ))) hτ2
   convert hfar.add hlower |>.sub hupper using 1
   · funext m
@@ -709,18 +677,18 @@ theorem tendsto_riemannZetaLogUnifiedBoundaryError_atTop {x : ℝ} (hx : 1 < x) 
   · simp only [add_zero, sub_self]
 
 /-- Every non-right reciprocal boundary piece vanishes on the unified sequence. -/
-theorem tendsto_riemannZetaReciprocalUnifiedBoundaryError_atTop {x : ℝ} (hx : 1 < x) {τ : ℝ}
-    (hτ : 1 < τ) (hτ2 : τ ≤ 2) :
+theorem tendsto_reciprocal_unifiedBoundaryError {x : ℝ} (hx : 1 < x) {τ : ℝ} (hτ : 1 < τ)
+    (hτ2 : τ ≤ 2) :
     Filter.Tendsto (riemannZetaReciprocalUnifiedBoundaryError x τ) Filter.atTop (nhds 0) := by
-  have hfar := tendsto_riemannZetaReciprocalThreeUnifiedEdges_atTop hx
+  have hfar := tendsto_reciprocal_threeUnifiedEdges hx
   have hlower :=
-    tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_neg_unifiedHeightSeq (x := x)
-      (lt_trans zero_lt_one hx) (lam := -1 / 2) (tau := τ) le_rfl
+    tendsto_reciprocal_neg_unifiedHeight (x := x) (lt_trans zero_lt_one hx) (lam := -1 / 2) (tau :=
+      τ) le_rfl
       (le_trans (by norm_num only : (-1 / 2 : ℝ) ≤ 0) (le_of_lt (lt_trans zero_lt_one hτ))) hτ2
   have hupper :=
-    tendsto_intervalIntegral_riemannZetaReciprocalContourKernel_unifiedHeightSeq (x := x)
-      (lt_trans zero_lt_one hx) (lam := -1 / 2) (tau := τ) le_rfl
-      (le_trans (by norm_num only : (-1 / 2 : ℝ) ≤ 0) (le_of_lt (lt_trans zero_lt_one hτ))) hτ2
+    tendsto_reciprocal_unifiedHeight (x := x) (lt_trans zero_lt_one hx) (lam := -1 / 2) (tau := τ)
+      le_rfl (le_trans (by norm_num only : (-1 / 2 : ℝ) ≤ 0) (le_of_lt (lt_trans zero_lt_one hτ)))
+      hτ2
   convert hfar.add hlower |>.sub hupper using 1
   · funext m
     rfl
@@ -745,37 +713,34 @@ noncomputable def riemannZetaReciprocalUnifiedContourAssembly (x τ : ℝ) (m : 
         riemannZetaReciprocalContourKernel x ((τ : ℂ) + (t : ℂ) * Complex.I))
 
 /-- The assembled logarithmic contour is exactly the finite-contour logarithmic residue ledger. -/
-theorem riemannZetaLogUnifiedContourAssembly_eq_residueLedger {x τ : ℝ} (hx : 0 < x) (hτ : 1 < τ)
-    (m : ℕ) :
+theorem logUnifiedAssembly_eq_residueLedger {x τ : ℝ} (hx : 0 < x) (hτ : 1 < τ) (m : ℕ) :
     riemannZetaLogUnifiedContourAssembly x τ m =
       2 * Real.pi * Complex.I *
         riemannZetaLogContourResidueLedger x (unifiedRectangleLower m)
           (unifiedTauRectangleUpper τ m) := by
   unfold riemannZetaLogUnifiedContourAssembly
-  rw [← rectangleBoundaryIntegral_log_unified_tau_eq hx m]
-  exact (riemannZetaFiniteContourIdentities_unified_tau hx hτ m).2
+  rw [← boundaryIntegral_log_unified_tau_eq hx m]
+  exact (zetaFiniteContourIdentities_unified_tau hx hτ m).2
 
 /-- The assembled reciprocal contour is exactly the finite-contour reciprocal residue ledger. -/
-theorem riemannZetaReciprocalUnifiedContourAssembly_eq_residueLedger {x τ : ℝ} (hx : 0 < x)
-    (hτ : 1 < τ) (m : ℕ) :
+theorem reciprocalUnifiedAssembly_eq_ledger {x τ : ℝ} (hx : 0 < x) (hτ : 1 < τ) (m : ℕ) :
     riemannZetaReciprocalUnifiedContourAssembly x τ m =
       2 * Real.pi * Complex.I *
         riemannZetaReciprocalContourResidueLedger x (unifiedRectangleLower m)
           (unifiedTauRectangleUpper τ m) := by
   unfold riemannZetaReciprocalUnifiedContourAssembly
-  rw [← rectangleBoundaryIntegral_reciprocal_unified_tau_eq hx m]
-  exact (riemannZetaFiniteContourIdentities_unified_tau hx hτ m).1
+  rw [← boundaryIntegral_reciprocal_unified_tau_eq hx m]
+  exact (zetaFiniteContourIdentities_unified_tau hx hτ m).1
 
 /-- The assembled logarithmic contour converges to the full right vertical integral. -/
-theorem tendsto_riemannZetaLogUnifiedContourAssembly_atTop {x : ℝ} (hx : 1 < x) {τ : ℝ} (hτ : 1 < τ)
+theorem tendsto_zetaLogUnifiedContourAssembly_atTop {x : ℝ} (hx : 1 < x) {τ : ℝ} (hτ : 1 < τ)
     (hτ2 : τ ≤ 2) :
     Filter.Tendsto (riemannZetaLogUnifiedContourAssembly x τ) Filter.atTop
       (nhds
         (Complex.I • ∫ t : ℝ, riemannZetaLogContourKernel x ((τ : ℂ) + (t : ℂ) * Complex.I))) := by
-  have herr := tendsto_riemannZetaLogUnifiedBoundaryError_atTop hx hτ hτ2
+  have herr := tendsto_zetaLogUnifiedBoundaryError_atTop hx hτ hτ2
   have hright :=
-    (tendsto_intervalIntegral_riemannZetaLogContourKernel (x := x) (lt_trans zero_lt_one hx)
-          hτ).comp
+    (tendsto_integral_logKernel (x := x) (lt_trans zero_lt_one hx) hτ).comp
       tendsto_unifiedContourHeightSeq_atTop
   convert herr.add (hright.const_smul Complex.I) using 1
   · funext m
@@ -783,16 +748,14 @@ theorem tendsto_riemannZetaLogUnifiedContourAssembly_atTop {x : ℝ} (hx : 1 < x
   · simp only [smul_eq_mul, zero_add]
 
 /-- The assembled reciprocal contour converges to the full right vertical integral. -/
-theorem tendsto_riemannZetaReciprocalUnifiedContourAssembly_atTop {x : ℝ} (hx : 1 < x) {τ : ℝ}
-    (hτ : 1 < τ) (hτ2 : τ ≤ 2) :
+theorem tendsto_reciprocal_unifiedAssembly {x : ℝ} (hx : 1 < x) {τ : ℝ} (hτ : 1 < τ) (hτ2 : τ ≤ 2) :
     Filter.Tendsto (riemannZetaReciprocalUnifiedContourAssembly x τ) Filter.atTop
       (nhds
         (Complex.I •
           ∫ t : ℝ, riemannZetaReciprocalContourKernel x ((τ : ℂ) + (t : ℂ) * Complex.I))) := by
-  have herr := tendsto_riemannZetaReciprocalUnifiedBoundaryError_atTop hx hτ hτ2
+  have herr := tendsto_reciprocal_unifiedBoundaryError hx hτ hτ2
   have hright :=
-    (tendsto_intervalIntegral_riemannZetaReciprocalContourKernel (x := x) (lt_trans zero_lt_one hx)
-          hτ).comp
+    (tendsto_integral_reciprocalKernel (x := x) (lt_trans zero_lt_one hx) hτ).comp
       tendsto_unifiedContourHeightSeq_atTop
   convert herr.add (hright.const_smul Complex.I) using 1
   · funext m
@@ -801,7 +764,7 @@ theorem tendsto_riemannZetaReciprocalUnifiedContourAssembly_atTop {x : ℝ} (hx 
 
 /-- For every unified rectangle with `τ > 1`, the logarithmic Mellin-pole
 ledger is the sum of the residues at zero and one. -/
-theorem riemannZetaLogMellinPoleLedger_unifiedTau_eq {x τ : ℝ} (hτ : 1 < τ) (m : ℕ) :
+theorem zetaLogMellinPoleLedger_unifiedTau_eq {x τ : ℝ} (hτ : 1 < τ) (m : ℕ) :
     riemannZetaLogMellinPoleLedger x (unifiedRectangleLower m) (unifiedTauRectangleUpper τ m) =
       riemannZetaLogResidueAtZero x + riemannZetaLogResidueAtOne x := by
   unfold riemannZetaLogMellinPoleLedger
@@ -810,7 +773,7 @@ theorem riemannZetaLogMellinPoleLedger_unifiedTau_eq {x τ : ℝ} (hτ : 1 < τ)
 
 /-- The reciprocal Mellin-pole ledger is the constant sum of both (fully closed-form) residues,
 for every unified `τ`-rectangle with `τ > 1`. -/
-theorem riemannZetaReciprocalMellinPoleLedger_unifiedTau_eq {x τ : ℝ} (hτ : 1 < τ) (m : ℕ) :
+theorem reciprocalPoleLedger_unifiedTau_eq {x τ : ℝ} (hτ : 1 < τ) (m : ℕ) :
     riemannZetaReciprocalMellinPoleLedger x (unifiedRectangleLower m)
         (unifiedTauRectangleUpper τ m) =
       riemannZetaReciprocalResidueAtZero x + riemannZetaReciprocalResidueAtOne x := by
@@ -820,29 +783,29 @@ theorem riemannZetaReciprocalMellinPoleLedger_unifiedTau_eq {x τ : ℝ} (hτ : 
 
 /-- The logarithmic residue ledger splits into the constant Mellin-pole part and the growing
 zero-ledger part, for every unified `τ`-rectangle with `τ > 1`. -/
-theorem riemannZetaLogContourResidueLedger_unifiedTau_eq {x τ : ℝ} (hτ : 1 < τ) (m : ℕ) :
+theorem zetaLogContourResidueLedger_unifiedTau_eq {x τ : ℝ} (hτ : 1 < τ) (m : ℕ) :
     riemannZetaLogContourResidueLedger x (unifiedRectangleLower m) (unifiedTauRectangleUpper τ m) =
       (riemannZetaLogResidueAtZero x + riemannZetaLogResidueAtOne x) +
         riemannZetaLogContourZeroLedger x (unifiedRectangleLower m)
           (unifiedTauRectangleUpper τ m) := by
   unfold riemannZetaLogContourResidueLedger
-  rw [riemannZetaLogMellinPoleLedger_unifiedTau_eq hτ]
+  rw [zetaLogMellinPoleLedger_unifiedTau_eq hτ]
 
 /-- The reciprocal residue ledger splits into the constant Mellin-pole part and the growing
 zero-ledger part, for every unified `τ`-rectangle with `τ > 1`. -/
-theorem riemannZetaReciprocalContourResidueLedger_unifiedTau_eq {x τ : ℝ} (hτ : 1 < τ) (m : ℕ) :
+theorem reciprocalResidueLedger_unifiedTau_eq {x τ : ℝ} (hτ : 1 < τ) (m : ℕ) :
     riemannZetaReciprocalContourResidueLedger x (unifiedRectangleLower m)
         (unifiedTauRectangleUpper τ m) =
       (riemannZetaReciprocalResidueAtZero x + riemannZetaReciprocalResidueAtOne x) +
         riemannZetaReciprocalContourZeroLedger x (unifiedRectangleLower m)
           (unifiedTauRectangleUpper τ m) := by
   unfold riemannZetaReciprocalContourResidueLedger
-  rw [riemannZetaReciprocalMellinPoleLedger_unifiedTau_eq hτ]
+  rw [reciprocalPoleLedger_unifiedTau_eq hτ]
 
 /-- For `x > 1` and `1 < τ ≤ 2`, the finite logarithmic residue ledger times
 `2πi` converges along the unified rectangles to `I` times the full right
 vertical-line integral. -/
-theorem tendsto_riemannZetaLogContourResidueLedger_atTop {x : ℝ} (hx : 1 < x) {τ : ℝ} (hτ : 1 < τ)
+theorem tendsto_zetaLogContourResidueLedger_atTop {x : ℝ} (hx : 1 < x) {τ : ℝ} (hτ : 1 < τ)
     (hτ2 : τ ≤ 2) :
     Filter.Tendsto
       (fun m : ℕ =>
@@ -859,15 +822,15 @@ theorem tendsto_riemannZetaLogContourResidueLedger_atTop {x : ℝ} (hx : 1 < x) 
             (unifiedTauRectangleUpper τ m)) =
       riemannZetaLogUnifiedContourAssembly x τ := by
     funext m
-    exact (riemannZetaLogUnifiedContourAssembly_eq_residueLedger (zero_lt_one.trans hx) hτ m).symm
+    exact (logUnifiedAssembly_eq_residueLedger (zero_lt_one.trans hx) hτ m).symm
   rw [heq]
-  exact tendsto_riemannZetaLogUnifiedContourAssembly_atTop hx hτ hτ2
+  exact tendsto_zetaLogUnifiedContourAssembly_atTop hx hτ hτ2
 
 /-- For `x > 1` and `1 < τ ≤ 2`, the finite reciprocal residue ledger times
 `2πi` converges along the unified rectangles to `I` times the full right
 vertical-line integral. -/
-theorem tendsto_riemannZetaReciprocalContourResidueLedger_atTop {x : ℝ} (hx : 1 < x) {τ : ℝ}
-    (hτ : 1 < τ) (hτ2 : τ ≤ 2) :
+theorem tendsto_reciprocalResidueLedger_unified {x : ℝ} (hx : 1 < x) {τ : ℝ} (hτ : 1 < τ)
+    (hτ2 : τ ≤ 2) :
     Filter.Tendsto
       (fun m : ℕ =>
         2 * Real.pi * Complex.I *
@@ -884,10 +847,8 @@ theorem tendsto_riemannZetaReciprocalContourResidueLedger_atTop {x : ℝ} (hx : 
             (unifiedTauRectangleUpper τ m)) =
       riemannZetaReciprocalUnifiedContourAssembly x τ := by
     funext m
-    exact
-      (riemannZetaReciprocalUnifiedContourAssembly_eq_residueLedger (zero_lt_one.trans hx) hτ
-          m).symm
+    exact (reciprocalUnifiedAssembly_eq_ledger (zero_lt_one.trans hx) hτ m).symm
   rw [heq]
-  exact tendsto_riemannZetaReciprocalUnifiedContourAssembly_atTop hx hτ hτ2
+  exact tendsto_reciprocal_unifiedAssembly hx hτ hτ2
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

@@ -131,7 +131,7 @@ $$
 
 原論文との相違・中間式の補足。第3.1節の式(3.3)直後では、原始化した指標 $\widetilde\chi$ の逆数加重和を、指標を除いた和から $\widetilde q=\mathrm{cond}(\chi)$ と互いに素でない項を引いた和に等置している。しかし、小さい素数についての仮定が $\widetilde\chi(p)=1$ を保証するのは $p \nmid q$ の場合であり、 $p \mid q$ かつ $p \nmid\widetilde q$ ではその値を指定しない。この等式には原始化に伴う有限補正が必要である。
 
-実装では、[PseudoPrime/AnalyticNumberTheory/Arithmetic/ReciprocalLevelChange.lean](../PseudoPrime/AnalyticNumberTheory/Arithmetic/ReciprocalLevelChange.lean) の `characterReciprocalWeightedSum_re_primitive_eq_add_levelChangeCorrection` により符号付きの補正を保持し、 `primitiveReciprocalConductorAbsorption` で導手の対数と合わせて法 $q$ の対数へ吸収する。[PseudoPrime/LLS/Theorem11S1Estimates.lean](../PseudoPrime/LLS/Theorem11S1Estimates.lean) の `llsPart1PrimitiveZeroMassFullLevelRawAt_of_grh_generic` がこの評価を用いる。これは原文の中間式を補う議論であり、定理1.1の結論・定数・GRHの前提は変わらない。
+実装では、[PseudoPrime/AnalyticNumberTheory/Arithmetic/ReciprocalLevelChange.lean](../PseudoPrime/AnalyticNumberTheory/Arithmetic/ReciprocalLevelChange.lean) の `characterRecipSum_re_primitive_eq_add` により符号付きの補正を保持し、 `primitiveReciprocalConductorAbsorption` で導手の対数と合わせて法 $q$ の対数へ吸収する。[PseudoPrime/LLS/Theorem11S1Estimates.lean](../PseudoPrime/LLS/Theorem11S1Estimates.lean) の `part1ZeroMassFullLevelRaw_of_GRH` がこの評価を用いる。これは原文の中間式を補う議論であり、定理1.1の結論・定数・GRHの前提は変わらない。
 
 ## 系1.1 `lls_corollary11`
 
@@ -660,7 +660,7 @@ $$
 
 よって残積分は、原文に書かれた法に一様な $O_K(x^{-5/8})$ には入らない。これは核条件と関数等式に基づく中間評価への指摘であり、小さい素数がすべて部分群に入る配置や、補題6.1の結論そのものの反例を構成したものではない。
 
-実装は導手因子を保ち、固定した左線で $O_K((1+\ln f)x^{c_-})$ を示してから $O_K(\ln q/\sqrt x)$ へ吸収する。この誤差は補題の最終的な $O_K(1+\ln q\ln x/\sqrt x)$ に含まれるため、補題6.1の結論は維持される。対応する定理は [PseudoPrime/LLS/MellinKernelLeftBounds.lean](../PseudoPrime/LLS/MellinKernelLeftBounds.lean) の `exists_norm_left_completedIntegral_le_log_rpow` と `exists_norm_left_completedIntegral_le_log_div_sqrt` である。
+実装は導手因子を保ち、固定した左線で $O_K((1+\ln f)x^{c_-})$ を示してから $O_K(\ln q/\sqrt x)$ へ吸収する。この誤差は補題の最終的な $O_K(1+\ln q\ln x/\sqrt x)$ に含まれるため、補題6.1の結論は維持される。対応する定理は [PseudoPrime/LLS/MellinKernelLeftBounds.lean](../PseudoPrime/LLS/MellinKernelLeftBounds.lean) の `exists_leftCompleted_log_rpow` と `exists_leftCompleted_log_sqrt` である。
 
 ## 命題6.1 `lls_proposition61`
 

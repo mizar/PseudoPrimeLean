@@ -43,8 +43,8 @@ Proof: bound the real-part difference by `2η`, the imaginary-part difference by
 the triangle inequality for the complex norm.
 Role: places every zero in a height window inside the radius-`3η` disk used by local power sums.
 -/
-theorem norm_one_add_eta_add_it_sub_le_three_eta {η t : ℝ} {ρ : ℂ} (hη : 0 ≤ η)
-    (hρlower : 1 - η ≤ ρ.re) (hρupper : ρ.re ≤ 1) (ht : |t - ρ.im| ≤ η) :
+theorem heightWindow_dist_le {η t : ℝ} {ρ : ℂ} (hη : 0 ≤ η) (hρlower : 1 - η ≤ ρ.re)
+    (hρupper : ρ.re ≤ 1) (ht : |t - ρ.im| ≤ η) :
     ‖((1 + η : ℝ) : ℂ) + (t : ℂ) * Complex.I - ρ‖ ≤ 3 * η := by
   have hdecomp :
     ((1 + η : ℝ) : ℂ) + (t : ℂ) * Complex.I - ρ =
@@ -82,10 +82,10 @@ estimate.
 Role: preserves zero multiplicities as weights when local height-window zeros are sent to power
 sums.
 -/
-theorem exists_height_window_weighted_reciprocal_power_sum (s : Finset ℂ) (a : ℂ → ℂ) (M : ℕ)
-    (hs : 0 < s.card) {η t : ℝ} (hη : 0 < η) (hrealLower : ∀ ρ ∈ s, 1 - η ≤ ρ.re)
-    (hrealUpper : ∀ ρ ∈ s, ρ.re ≤ 1) (himag : ∀ ρ ∈ s, |t - ρ.im| ≤ η)
-    (hne : ∀ ρ ∈ s, ((1 + η : ℝ) : ℂ) + (t : ℂ) * Complex.I ≠ ρ) (hmass : 0 < ‖∑ ρ ∈ s, a ρ‖) :
+theorem exists_heightPowerSum (s : Finset ℂ) (a : ℂ → ℂ) (M : ℕ) (hs : 0 < s.card) {η t : ℝ}
+    (hη : 0 < η) (hrealLower : ∀ ρ ∈ s, 1 - η ≤ ρ.re) (hrealUpper : ∀ ρ ∈ s, ρ.re ≤ 1)
+    (himag : ∀ ρ ∈ s, |t - ρ.im| ≤ η) (hne : ∀ ρ ∈ s, ((1 + η : ℝ) : ℂ) + (t : ℂ) * Complex.I ≠ ρ)
+    (hmass : 0 < ‖∑ ρ ∈ s, a ρ‖) :
     ∃ l ∈ Finset.range s.card,
       0 < ‖∑ ρ ∈ s, a ρ‖ / (2 ^ (M + 2 * s.card) * (3 * η) ^ (M + 1 + l)) ∧
         ‖∑ ρ ∈ s, a ρ‖ / (2 ^ (M + 2 * s.card) * (3 * η) ^ (M + 1 + l)) ≤
@@ -97,12 +97,10 @@ theorem exists_height_window_weighted_reciprocal_power_sum (s : Finset ℂ) (a :
     intro ρ hρ
     constructor
     · exact norm_pos_iff.mpr (sub_ne_zero.mpr (hne ρ hρ))
-    · exact
-        norm_one_add_eta_add_it_sub_le_three_eta hη.le (hrealLower ρ hρ) (hrealUpper ρ hρ)
-          (himag ρ hρ)
+    · exact heightWindow_dist_le hη.le (hrealLower ρ hρ) (hrealUpper ρ hρ) (himag ρ hρ)
   obtain ⟨l, hl, hpower⟩ :=
-    exists_finset_weighted_reciprocal_power_sum_norm_ge_of_disk s
-      (((1 + η : ℝ) : ℂ) + (t : ℂ) * Complex.I) a M hs (3 * η) (by positivity) hzeros
+    weightedInvSum_finset s (((1 + η : ℝ) : ℂ) + (t : ℂ) * Complex.I) a M hs (3 * η) (by positivity)
+      hzeros
   have hden : 0 < 2 ^ (M + 2 * s.card) * (3 * η) ^ (M + 1 + l) :=
     mul_pos (by positivity) (pow_pos (by positivity) _)
   have hratio : 0 < ‖∑ ρ ∈ s, a ρ‖ / (2 ^ (M + 2 * s.card) * (3 * η) ^ (M + 1 + l)) :=
@@ -118,8 +116,7 @@ Proof: restrict the divisor to its finite support, use nonnegative integer multi
 that their sum has norm at least one, and apply the finite height-window estimate.
 Role: connects analytic zeros with multiplicity weights to the local zero-detection power sums.
 -/
-theorem exists_analytic_divisor_height_window_weighted_reciprocal_power_sum {F : ℂ → ℂ}
-    (hF : AnalyticOnNhd ℂ F Set.univ) {η t : ℝ} (hη : 0 < η)
+theorem exists_divisorWindow {F : ℂ → ℂ} (hF : AnalyticOnNhd ℂ F Set.univ) {η t : ℝ} (hη : 0 < η)
     (hcenter : F (((1 + η : ℝ) : ℂ) + (t : ℂ) * Complex.I) ≠ 0)
     (hzeros :
       ∃ ρ,
@@ -216,8 +213,8 @@ theorem exists_analytic_divisor_height_window_weighted_reciprocal_power_sum {F :
     · exact norm_pos_iff.mpr hsub
     · exact le_of_lt (by simpa only [norm_sub_rev] using hmem)
   have hresult :=
-    exists_finset_weighted_reciprocal_power_sum_norm_ge_of_disk s c (fun ρ => (d ρ : ℂ)) M hspos
-      (3 * η) (mul_pos (by norm_num) hη) hdistance
+    weightedInvSum_finset s c (fun ρ => (d ρ : ℂ)) M hspos (3 * η) (mul_pos (by norm_num) hη)
+      hdistance
   rcases hresult with ⟨l, hl, hbound⟩
   have hden : 0 < 2 ^ (M + 2 * s.card) * (3 * η) ^ (M + 1 + l) := by positivity
   have hpositiveRatio : 0 < ‖∑ ρ ∈ s, (d ρ : ℂ)‖ / (2 ^ (M + 2 * s.card) * (3 * η) ^ (M + 1 + l)) :=
@@ -232,7 +229,7 @@ Proof: Use local boundedness near `s = 1` of `ζ(s) - 1/(s-1)` and place `s = 1+
 neighborhood.
 Role: estimates the pole term when bounding Dirichlet series with real part near `1`.
 -/
-theorem exists_zeta_pole_remainder_bound :
+theorem exists_zetaPole_bound :
     ∃ C ε : ℝ,
       0 ≤ C ∧
         0 < ε ∧
@@ -264,11 +261,11 @@ Claim: There are a constant `C` and a radius such that `‖ζ(1+x)‖ ≤ (C+1)/
 Proof: Separate the pole `1/x` from the bounded remainder and use `x ≤ 1` and `C ≥ 0`.
 Role: bounds Dirichlet `L`-series near real part `1`.
 -/
-theorem exists_riemannZeta_one_add_bound :
+theorem exists_zeta_one_bound :
     ∃ C ε : ℝ,
       0 ≤ C ∧
         0 < ε ∧ ε ≤ 1 ∧ ∀ x : ℝ, 0 < x → x < ε → ‖riemannZeta (1 + (x : ℂ))‖ ≤ (C + 1) / x := by
-  obtain ⟨C, ε, hC, hε, hεle, hbound⟩ := exists_zeta_pole_remainder_bound
+  obtain ⟨C, ε, hC, hε, hεle, hbound⟩ := exists_zetaPole_bound
   refine ⟨C, ε, hC, hε, hεle, ?_⟩
   intro x hx hxε
   have hrem := hbound x hx hxε
@@ -304,7 +301,7 @@ complex sum by the sum of term norms, and identify those norms with the positive
 Role: transfers the real-axis pole estimate to a height-uniform bound in the half-plane
 `Re(s) > 1`.
 -/
-theorem norm_riemannZeta_vertical_le_real {σ t : ℝ} (hσ : 1 < σ) :
+theorem zeta_vertical_norm_le {σ t : ℝ} (hσ : 1 < σ) :
     ‖riemannZeta ((σ : ℂ) + t * Complex.I)‖ ≤ ‖riemannZeta (σ : ℂ)‖ := by
   let s : ℂ := (σ : ℂ) + t * Complex.I
   let f : ℕ → ℂ := fun n => 1 / ((n + 1 : ℕ) : ℂ) ^ s
@@ -365,7 +362,7 @@ by `2 ^ ω(N) ≤ N`.
 Role: gives a conductor-dependent majorant for principal factors in the three-L-function
 product used to bound nonprincipal L-values.
 -/
-theorem norm_LFunctionTrivChar_le_level_mul_zeta {N : ℕ} [NeZero N] {s : ℂ} (hs : 1 < s.re) :
+theorem principal_le_q_zeta {N : ℕ} [NeZero N] {s : ℂ} (hs : 1 < s.re) :
     ‖DirichletCharacter.LFunctionTrivChar N s‖ ≤ (N : ℝ) * ‖riemannZeta s‖ := by
   have hsne : s ≠ 1 := by
     intro heq
@@ -408,7 +405,7 @@ Claim: the principal-character L-value at `1+x` is at most `N (C+1)/x` for fixed
 Proof: combine the Euler-factor bound with the local pole estimate for ζ.
 Role: supplies the horizontal principal factor in the three-L-function product estimate.
 -/
-theorem exists_norm_LFunctionTrivChar_one_add_bound {N : ℕ} [NeZero N] :
+theorem exists_principalBound {N : ℕ} [NeZero N] :
     ∃ C ε : ℝ,
       0 ≤ C ∧
         0 < ε ∧
@@ -417,11 +414,11 @@ theorem exists_norm_LFunctionTrivChar_one_add_bound {N : ℕ} [NeZero N] :
           0 < x →
             x < ε →
             ‖DirichletCharacter.LFunctionTrivChar N (1 + (x : ℂ))‖ ≤ (N : ℝ) * ((C + 1) / x) := by
-  obtain ⟨C, ε, hC, hε, hεle, hζ⟩ := exists_riemannZeta_one_add_bound
+  obtain ⟨C, ε, hC, hε, hεle, hζ⟩ := exists_zeta_one_bound
   refine ⟨C, ε, hC, hε, hεle, ?_⟩
   intro x hx hxε
   have hupper :=
-    norm_LFunctionTrivChar_le_level_mul_zeta (N := N) (s := 1 + (x : ℂ))
+    principal_le_q_zeta (N := N) (s := 1 + (x : ℂ))
       (by simp only [Complex.add_re, Complex.one_re, Complex.ofReal_re, lt_add_iff_pos_right, hx])
   exact le_trans hupper (mul_le_mul_of_nonneg_left (hζ x hx hxε) (Nat.cast_nonneg N))
 
@@ -432,7 +429,7 @@ Proof: bound its finite Euler factors by `N`, compare ζ at height `t` with ζ o
 and apply the local pole estimate.
 Role: controls both principal factors in the three-L-function product independently of height.
 -/
-theorem exists_norm_LFunctionTrivChar_one_add_vertical_bound {N : ℕ} [NeZero N] :
+theorem exists_principalVert {N : ℕ} [NeZero N] :
     ∃ C ε : ℝ,
       0 ≤ C ∧
         0 < ε ∧
@@ -442,12 +439,12 @@ theorem exists_norm_LFunctionTrivChar_one_add_vertical_bound {N : ℕ} [NeZero N
             x < ε →
             ‖DirichletCharacter.LFunctionTrivChar N (1 + (x : ℂ) + t * Complex.I)‖ ≤
               (N : ℝ) * ((C + 1) / x) := by
-  obtain ⟨C, ε, hC, hε, hεle, hzeta_bound⟩ := exists_riemannZeta_one_add_bound
+  obtain ⟨C, ε, hC, hε, hεle, hzeta_bound⟩ := exists_zeta_one_bound
   refine ⟨C, ε, hC, hε, hεle, ?_⟩
   intro x t hx hxε
-  have hzeta := norm_riemannZeta_vertical_le_real (σ := 1 + x) (t := t) (by linarith only [hx])
+  have hzeta := zeta_vertical_norm_le (σ := 1 + x) (t := t) (by linarith only [hx])
   have hprincipal :=
-    norm_LFunctionTrivChar_le_level_mul_zeta (N := N) (s := 1 + (x : ℂ) + t * Complex.I)
+    principal_le_q_zeta (N := N) (s := 1 + (x : ℂ) + t * Complex.I)
       (by
         simp only [Complex.add_re, Complex.one_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re,
           Complex.I_im, Complex.ofReal_im, zero_mul, sub_self, mul_zero, add_zero,
@@ -471,7 +468,7 @@ Claim: the L-value is bounded by the zeta value at the same real part, uniformly
 Proof: compare the absolutely convergent Dirichlet series termwise with the positive real series.
 Role: bounds the final factor in the three-L-function product near the line `re s = 1`.
 -/
-theorem norm_LFunction_le_riemannZeta_real {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) {σ t : ℝ}
+theorem LFunction_le_zetaReal {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) {σ t : ℝ}
     (hσ : 1 < σ) :
     ‖DirichletCharacter.LFunction χ ((σ : ℂ) + t * Complex.I)‖ ≤ ‖riemannZeta (σ : ℂ)‖ := by
   let s : ℂ := (σ : ℂ) + t * Complex.I
@@ -568,7 +565,7 @@ Proof: apply the three-L-function product inequality and bound both other factor
 zeta estimate and absolute convergence.
 Role: supplies a height-uniform center-value lower bound for local zero counting.
 -/
-theorem exists_norm_LFunction_lower_bound_one_add {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) :
+theorem exists_LFunctionLower {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) :
     ∃ C ε : ℝ,
       0 < C ∧
         0 < ε ∧
@@ -578,7 +575,7 @@ theorem exists_norm_LFunction_lower_bound_one_add {N : ℕ} [NeZero N] (χ : Dir
             x < ε →
             x / (2 * (N : ℝ) * C) ≤
               ‖DirichletCharacter.LFunction χ (1 + (x : ℂ) + Complex.I * y)‖ := by
-  obtain ⟨C₀, ε₀, hC₀, hε₀, hε₀le, hζ⟩ := exists_riemannZeta_one_add_bound
+  obtain ⟨C₀, ε₀, hC₀, hε₀, hε₀le, hζ⟩ := exists_zeta_one_bound
   let C : ℝ := C₀ + 1
   refine ⟨C, ε₀ / 2, ?_, ?_, ?_, ?_⟩
   · dsimp only [C]
@@ -592,7 +589,7 @@ theorem exists_norm_LFunction_lower_bound_one_add {N : ℕ} [NeZero N] (χ : Dir
     let B : ℝ := ‖DirichletCharacter.LFunction χ (1 + (x : ℂ) + Complex.I * y)‖
     let D : ℝ := ‖DirichletCharacter.LFunction (χ ^ 2) (1 + (x : ℂ) + 2 * Complex.I * y)‖
     have hprincipal :=
-      norm_LFunctionTrivChar_le_level_mul_zeta (N := N) (s := 1 + (x : ℂ))
+      principal_le_q_zeta (N := N) (s := 1 + (x : ℂ))
         (by simp only [Complex.add_re, Complex.one_re, Complex.ofReal_re, lt_add_iff_pos_right, hx])
     have hA : A ≤ (N : ℝ) * (C / x) := by
       dsimp only [A]
@@ -602,8 +599,7 @@ theorem exists_norm_LFunction_lower_bound_one_add {N : ℕ} [NeZero N] (χ : Dir
           hprincipal
         _ ≤ (N : ℝ) * (C / x) := mul_le_mul_of_nonneg_left hζx (Nat.cast_nonneg N)
     have hthird :=
-      norm_LFunction_le_riemannZeta_real (χ := χ ^ 2) (σ := 1 + x) (t := 2 * y)
-        (by linarith only [hx])
+      LFunction_le_zetaReal (χ := χ ^ 2) (σ := 1 + x) (t := 2 * y) (by linarith only [hx])
     have hD : D ≤ C / x := by
       dsimp only [D]
       have harg : ((1 + x : ℝ) : ℂ) + (2 * y) * Complex.I = 1 + (x : ℂ) + 2 * Complex.I * y := by
@@ -686,7 +682,7 @@ Proof: Bound the absolutely convergent Dirichlet series termwise by the reciproc
 and use its sum bound.
 Role: makes the polynomial growth constant on the circle uniform for the local Jensen estimate.
 -/
-theorem norm_LFunction_le_two_at_two {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) {s : ℂ}
+theorem LFunction_norm_two_le {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) {s : ℂ}
     (hs : s.re = 2) : ‖DirichletCharacter.LFunction χ s‖ ≤ 2 := by
   let f : ℕ → ℂ := fun n => (χ n : ℂ)
   have hRe : 1 < s.re := by
@@ -727,7 +723,7 @@ Proof: Use the lower bound from the three-factor product for Dirichlet `L` funct
 the other two factors at real part `2`.
 Role: supplies a denominator independent of the center value in the local Jensen estimate.
 -/
-theorem norm_LFunction_lower_bound_at_two {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (y : ℝ) :
+theorem LFunction_two_norm_ge {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) (y : ℝ) :
     (1 / 2 : ℝ) ≤ ‖DirichletCharacter.LFunction χ (2 + Complex.I * y)‖ := by
   let z : ℂ := 2 + Complex.I * y
   let w : ℂ := 2 + 2 * Complex.I * y
@@ -738,9 +734,8 @@ theorem norm_LFunction_lower_bound_at_two {N : ℕ} [NeZero N] (χ : DirichletCh
     simp only [w, Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im, Complex.ofReal_re,
       Complex.ofReal_im, Complex.re_ofNat, Complex.im_ofNat, zero_mul, mul_zero, sub_zero, add_zero]
   have hA0 :=
-    norm_LFunction_le_two_at_two (N := N) (1 : DirichletCharacter ℂ N) (s := (2 : ℂ))
-      (Complex.re_ofNat 2)
-  have hC0 := norm_LFunction_le_two_at_two (χ := χ ^ 2) (s := w) hw
+    LFunction_norm_two_le (N := N) (1 : DirichletCharacter ℂ N) (s := (2 : ℂ)) (Complex.re_ofNat 2)
+  have hC0 := LFunction_norm_two_le (χ := χ ^ 2) (s := w) hw
   let A := ‖DirichletCharacter.LFunctionTrivChar N (2 : ℂ)‖
   let B := ‖DirichletCharacter.LFunction χ z‖
   let C := ‖DirichletCharacter.LFunction (χ ^ 2) w‖
@@ -784,7 +779,7 @@ circle, handling zeros separately because `Real.log 0` is defined as zero in Lea
 
 Role: supplies the boundary maximum estimate used with Jensen's formula in local zero counts.
 -/
-theorem circleAverage_log_norm_le_log_of_bound {c : ℂ} {R M : ℝ} {f : ℂ → ℂ} (hM : 1 ≤ M)
+theorem circle_logAverage_le {c : ℂ} {R M : ℝ} {f : ℂ → ℂ} (hM : 1 ≤ M)
     (hmero : MeromorphicOn f (Metric.sphere c |R|))
     (hbound : ∀ z ∈ Metric.sphere c |R|, ‖f z‖ ≤ M) :
     Real.circleAverage (fun z => Real.log ‖f z‖) c R ≤ Real.log M := by
@@ -811,8 +806,8 @@ for analytic functions.
 Role: converts a future uniform boundary estimate for completed `L`-functions into the local zero
 counts required by log-free density.
 -/
-theorem completedLFunction_local_zero_count_le {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
-    (hχ : χ ≠ 1) {c : ℂ} {r R M : ℝ} (hr : 0 < |r|) (hrR : |r| < |R|) (hM : 1 ≤ M)
+theorem completedLocal_le {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ}
+    {r R M : ℝ} (hr : 0 < |r|) (hrR : |r| < |R|) (hM : 1 ≤ M)
     (hc : DirichletCharacter.completedLFunction χ c ≠ 0)
     (hbound : ∀ z ∈ Metric.sphere c |R|, ‖DirichletCharacter.completedLFunction χ z‖ ≤ M) :
     (Int.cast
@@ -837,10 +832,9 @@ then apply the uniform completed-function bound in Jensen's estimate.
 Role: makes the abstract local zero-count bound explicit in terms of the conductor and disk
 location and size.
 -/
-theorem completedLFunction_local_zero_count_le_ball_bound {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hq : 2 ≤ q) (hprimitive : χ.IsPrimitive) (hχ : χ ≠ 1)
-    (hinv : χ⁻¹ ≠ 1) {c : ℂ} {r R : ℝ} (hr : 0 < |r|) (hrR : |r| < |R|)
-    (hc : DirichletCharacter.completedLFunction χ c ≠ 0) :
+theorem completedBall_le {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hq : 2 ≤ q)
+    (hprimitive : χ.IsPrimitive) (hχ : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {c : ℂ} {r R : ℝ} (hr : 0 < |r|)
+    (hrR : |r| < |R|) (hc : DirichletCharacter.completedLFunction χ c ≠ 0) :
     (Int.cast
           (∑ᶠ u : ℂ,
             MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
@@ -868,11 +862,11 @@ theorem completedLFunction_local_zero_count_le_ball_bound {q : ℕ} [NeZero q]
           rw [← hzdist]; ring
     have hq1 : 1 < q := by omega
     have hball :=
-      norm_completedLFunction_le_completedLFunctionBallBound hq1 hprimitive hχ hinv
+      norm_completed_le_completedBallBound hq1 hprimitive hχ hinv
         (add_nonneg (norm_nonneg c) (abs_nonneg R)) (z := z) (R := ‖c‖ + |R|) hznorm
     exact hball.trans (le_max_right (1 : ℝ) B)
   have hcount :=
-    completedLFunction_local_zero_count_le χ hχ hr hrR (M := max (1 : ℝ) B) (le_max_left 1 B) hc
+    completedLocal_le χ hχ hr hrR (M := max (1 : ℝ) B) (le_max_left 1 B) hc
       (by
         intro z hz
         exact hboundary z hz)
@@ -889,9 +883,8 @@ Jensen's zero-count inequality.
 Role: gives a logarithmic local zero-count estimate in the right half of the critical strip
 without an exponential-type envelope for the completed function.
 -/
-theorem LFunction_local_zero_count_le_polynomial_bound {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hq : 1 < q) (hχ : χ ≠ 1) {c : ℂ} {r R : ℝ} (hr : 0 < |r|)
-    (hrR : |r| < |R|) (hc : DirichletCharacter.LFunction χ c ≠ 0)
+theorem LFunctionLocal_le {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hq : 1 < q) (hχ : χ ≠ 1)
+    {c : ℂ} {r R : ℝ} (hr : 0 < |r|) (hrR : |r| < |R|) (hc : DirichletCharacter.LFunction χ c ≠ 0)
     (hcircle : ∀ z ∈ Metric.sphere c |R|, 1 / 2 ≤ z.re) :
     (Int.cast
           (∑ᶠ u : ℂ,
@@ -940,9 +933,8 @@ half-plane, and use equality of the analytic orders of the two functions.
 Role: connects a local zero-count estimate in the right half-plane to the completed-function
 zero-count interface.
 -/
-theorem completedLFunction_local_zero_count_le_LFunction_polynomial_bound {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hq : 1 < q) (hχ : χ ≠ 1) {c : ℂ} {r R : ℝ} (hr : 0 < |r|)
-    (hrR : |r| < |R|) (hc : DirichletCharacter.LFunction χ c ≠ 0)
+theorem completedPoly_le {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hq : 1 < q) (hχ : χ ≠ 1)
+    {c : ℂ} {r R : ℝ} (hr : 0 < |r|) (hrR : |r| < |R|) (hc : DirichletCharacter.LFunction χ c ≠ 0)
     (hcircle : ∀ z ∈ Metric.sphere c |R|, 1 / 2 ≤ z.re) :
     (Int.cast
           (∑ᶠ u : ℂ,
@@ -984,7 +976,7 @@ theorem completedLFunction_local_zero_count_le_LFunction_polynomial_bound {q : �
         MeromorphicOn.AnalyticOnNhd.divisor_apply hFl hu]
       exact
         congrArg (fun v : ℕ∞ => (ENat.map (Nat.cast : ℕ → ℤ) v).untop₀)
-          (completedLFunction_analyticOrderAt_eq_LFunction_of_re_pos χ hχ (hinner u hu))
+          (completed_order_eq_L_of_re_pos χ hχ (hinner u hu))
     · rw [(MeromorphicOn.divisor Fc U).apply_eq_zero_of_notMem hu,
         (MeromorphicOn.divisor Fl U).apply_eq_zero_of_notMem hu]
   have hsum :
@@ -992,7 +984,7 @@ theorem completedLFunction_local_zero_count_le_LFunction_polynomial_bound {q : �
     apply finsum_congr
     intro u
     exact hdiv u
-  have hcount := LFunction_local_zero_count_le_polynomial_bound hq hχ hr hrR hc hcircle
+  have hcount := LFunctionLocal_le hq hχ hr hrR hc hcircle
   change (Int.cast (∑ᶠ u : ℂ, MeromorphicOn.divisor Fc U u) : ℝ) ≤ _
   rw [hsum]
   exact hcount
@@ -1005,8 +997,8 @@ Proof: Substitute the uniform central-value lower bound and the circle real-part
 local Jensen estimate.
 Role: provides a local zero-count bound independent of the central value.
 -/
-theorem completedLFunction_local_zero_count_at_two_line {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hq : 1 < q) (hχ : χ ≠ 1) (y : ℝ) :
+theorem completed_twoLine_le {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hq : 1 < q)
+    (hχ : χ ≠ 1) (y : ℝ) :
     (Int.cast
           (∑ᶠ u : ℂ,
             MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
@@ -1015,7 +1007,7 @@ theorem completedLFunction_local_zero_count_at_two_line {q : ℕ} [NeZero q]
       Real.log (2 * max (1 : ℝ) (2 * (q : ℝ) * (‖(2 + Complex.I * y : ℂ)‖ + 3 / 2))) /
         Real.log (3 / 2) := by
   let c : ℂ := 2 + Complex.I * y
-  have hcenter := norm_LFunction_lower_bound_at_two χ y
+  have hcenter := LFunction_two_norm_ge χ y
   have hcenter' : (1 / 2 : ℝ) ≤ ‖DirichletCharacter.LFunction χ c‖ := by
     simpa only [c] using hcenter
   have hc : DirichletCharacter.LFunction χ c ≠ 0 := by
@@ -1044,8 +1036,7 @@ theorem completedLFunction_local_zero_count_at_two_line {q : ℕ} [NeZero q]
     have hlow := (abs_le.mp hreal).1
     linarith only [hlow, hcre]
   have hcount :=
-    completedLFunction_local_zero_count_le_LFunction_polynomial_bound hq hχ (r := 1) (R := 3 / 2)
-      (by norm_num only) (by norm_num only) hc hcircle
+    completedPoly_le hq hχ (r := 1) (R := 3 / 2) (by norm_num only) (by norm_num only) hc hcircle
   have hcount' :
     (Int.cast
           (∑ᶠ u : ℂ,
@@ -1080,10 +1071,9 @@ Proof: identify each analytic order with the disk divisor and enlarge the finite
 the finite support of that divisor.
 Role: connects the public rectangle counting convention to the local Jensen estimates.
 -/
-theorem completedZeroMultiplicityCountInRectangle_le_ball_divisor_sum {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (z w c : ℂ) (R : ℝ)
-    (hbox : ∀ ρ ∈ dirichletCompletedLFunctionRectangleBox z w, ρ ∈ Metric.closedBall c R) :
-    completedZeroMultiplicityCountInRectangle χ hχ z w ≤
+theorem rectMass_le_ball {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (z w c : ℂ)
+    (R : ℝ) (hbox : ∀ ρ ∈ completedRectangleBox z w, ρ ∈ Metric.closedBall c R) :
+    completedMultiplicityCount χ hχ z w ≤
       (Int.cast
           (∑ᶠ u : ℂ,
             MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) (Metric.closedBall c R)
@@ -1153,17 +1143,17 @@ Proof: convert the coordinate inequality to closed-ball membership, then apply t
 comparison theorem.
 Role: gives a real-coordinate interface for covering rectangular zero regions by Jensen disks.
 -/
-theorem completedZeroMultiplicityCountInRectangle_le_ball_divisor_sum_of_coordinates {q : ℕ}
-    [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (z w c : ℂ) (R : ℝ) (hR : 0 ≤ R)
+theorem rectMass_ball_coords {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1)
+    (z w c : ℂ) (R : ℝ) (hR : 0 ≤ R)
     (hcoord :
       ∀ x ∈ Set.uIcc z.re w.re, ∀ y ∈ Set.uIcc z.im w.im, (x - c.re) ^ 2 + (y - c.im) ^ 2 ≤ R ^ 2) :
-    completedZeroMultiplicityCountInRectangle χ hχ z w ≤
+    completedMultiplicityCount χ hχ z w ≤
       (Int.cast
           (∑ᶠ u : ℂ,
             MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) (Metric.closedBall c R)
               u) :
         ℝ) := by
-  apply completedZeroMultiplicityCountInRectangle_le_ball_divisor_sum χ hχ z w c R
+  apply rectMass_le_ball χ hχ z w c R
   intro ρ hρ
   change ρ.re ∈ Set.uIcc z.re w.re ∧ ρ.im ∈ Set.uIcc z.im w.im at hρ
   rw [Metric.mem_closedBall, dist_eq_norm, Complex.norm_eq_sqrt_sq_add_sq, Complex.sub_re,
@@ -1179,14 +1169,13 @@ growth Jensen estimate for the ordinary Dirichlet `L`-function.
 Role: combines geometric coverage and local analytic growth in the interface used for height
 slabs.
 -/
-theorem completedZeroMultiplicityCountInRectangle_le_LFunction_Jensen_bound {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hq : 1 < q) (hχ : χ ≠ 1) (z w c : ℂ) {r R : ℝ} (hr : 0 < |r|)
-    (hrR : |r| < |R|) (hc : DirichletCharacter.LFunction χ c ≠ 0)
-    (hcircle : ∀ z ∈ Metric.sphere c |R|, 1 / 2 ≤ z.re)
+theorem rectMass_jensen_le {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hq : 1 < q) (hχ : χ ≠ 1)
+    (z w c : ℂ) {r R : ℝ} (hr : 0 < |r|) (hrR : |r| < |R|)
+    (hc : DirichletCharacter.LFunction χ c ≠ 0) (hcircle : ∀ z ∈ Metric.sphere c |R|, 1 / 2 ≤ z.re)
     (hcoord :
       ∀ x ∈ Set.uIcc z.re w.re,
         ∀ y ∈ Set.uIcc z.im w.im, (x - c.re) ^ 2 + (y - c.im) ^ 2 ≤ |r| ^ 2) :
-    completedZeroMultiplicityCountInRectangle χ hχ z w ≤
+    completedMultiplicityCount χ hχ z w ≤
       Real.log (max (1 : ℝ) (2 * (q : ℝ) * (‖c‖ + |R|)) / ‖DirichletCharacter.LFunction χ c‖) /
         Real.log (R / r) := by
   calc
@@ -1196,10 +1185,8 @@ theorem completedZeroMultiplicityCountInRectangle_le_LFunction_Jensen_bound {q :
               MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
                 (Metric.closedBall c |r|) u) :
           ℝ) :=
-      completedZeroMultiplicityCountInRectangle_le_ball_divisor_sum_of_coordinates χ hχ z w c |r|
-        (abs_nonneg r) hcoord
-    _ ≤ _ :=
-      completedLFunction_local_zero_count_le_LFunction_polynomial_bound hq hχ hr hrR hc hcircle
+      rectMass_ball_coords χ hχ z w c |r| (abs_nonneg r) hcoord
+    _ ≤ _ := completedPoly_le hq hχ hr hrR hc hcircle
 
 /--
 Inputs: a nontrivial Dirichlet character, a height slab with nonnegative half-width, an inner
@@ -1209,20 +1196,17 @@ Proof: bound the squared coordinate distance from the center by the inner radius
 the rectangle-to-disk Jensen interface.
 Role: supplies a uniform local estimate for each short height interval in a zero-density covering.
 -/
-theorem completedZeroMultiplicityCountInTwoLineSlab_le_Jensen_bound {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hq : 1 < q) (hχ : χ ≠ 1) (sigma y v : ℝ) (hσ : sigma ≤ 1)
-    (hv : 0 ≤ v) {r R : ℝ} (hr : 0 < |r|) (hrR : |r| < |R|)
-    (hc : DirichletCharacter.LFunction χ (⟨2, y⟩ : ℂ) ≠ 0)
+theorem twoLineSlab_jensen_le {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hq : 1 < q)
+    (hχ : χ ≠ 1) (sigma y v : ℝ) (hσ : sigma ≤ 1) (hv : 0 ≤ v) {r R : ℝ} (hr : 0 < |r|)
+    (hrR : |r| < |R|) (hc : DirichletCharacter.LFunction χ (⟨2, y⟩ : ℂ) ≠ 0)
     (hcircle : ∀ z ∈ Metric.sphere (⟨2, y⟩ : ℂ) |R|, 1 / 2 ≤ z.re)
     (hgeom : (2 - sigma) ^ 2 + v ^ 2 ≤ |r| ^ 2) :
-    completedZeroMultiplicityCountInRectangle χ hχ (⟨sigma, y - v⟩ : ℂ) (⟨1, y + v⟩ : ℂ) ≤
+    completedMultiplicityCount χ hχ (⟨sigma, y - v⟩ : ℂ) (⟨1, y + v⟩ : ℂ) ≤
       Real.log
           (max (1 : ℝ) (2 * (q : ℝ) * (‖(⟨2, y⟩ : ℂ)‖ + |R|)) /
             ‖DirichletCharacter.LFunction χ (⟨2, y⟩ : ℂ)‖) /
         Real.log (R / r) := by
-  apply
-    completedZeroMultiplicityCountInRectangle_le_LFunction_Jensen_bound hq hχ _ _ (⟨2, y⟩ : ℂ) hr
-      hrR hc hcircle
+  apply rectMass_jensen_le hq hχ _ _ (⟨2, y⟩ : ℂ) hr hrR hc hcircle
   intro x hx t ht
   have hx' : sigma ≤ x ∧ x ≤ 1 := by simpa only [Set.uIcc_of_le hσ, Set.mem_Icc] using hx
   have horder : y - v ≤ y + v := by linarith only [hv]
@@ -1242,8 +1226,8 @@ disk and finiteness of analytic divisors give the result.
 Role: makes the zeros with their analytic multiplicities into finite data for local power-sum
 arguments.
 -/
-theorem completedLFunction_local_zero_support_finite {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
-    (hχ : χ ≠ 1) (c : ℂ) (R : ℝ) :
+theorem completedSupport_fin {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (c : ℂ)
+    (R : ℝ) :
     (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
         (Metric.ball c |R|)).support.Finite := by
   have hanalytic :
@@ -1257,7 +1241,7 @@ Claim: the `n`th derivative of the reciprocal affine factor is `(-1)^n n! (z-u)^
 Proof: translate the global reciprocal derivative formula on an open set to the point `u`.
 Role: gives the explicit higher inverse-distance powers contributed by each local zero factor.
 -/
-theorem iteratedDeriv_sub_const_inv (u : ℂ) (n : ℕ) :
+theorem iteratedDeriv_sub_inv (u : ℂ) (n : ℕ) :
     iteratedDeriv n (fun z : ℂ => (z - u)⁻¹) =
       (fun z => (-1 : ℂ) ^ n * (n.factorial : ℂ) * (z - u) ^ (-1 - n : ℤ)) := by
   rw [iteratedDeriv_comp_sub_const]
@@ -1272,7 +1256,7 @@ natural power of its reciprocal.
 Proof: Rewrite the exponent `-1-n` as `Int.negSucc n` and convert to a reciprocal power.
 Role: matches the central logarithmic-derivative formula with Turán's weighted power sum.
 -/
-theorem zpow_neg_one_sub_nat_eq_inv_pow (z u : ℂ) (n : ℕ) :
+theorem zpow_neg_succ_inv_pow (z u : ℂ) (n : ℕ) :
     (z - u) ^ (-1 - (n : ℤ) : ℤ) = (z - u)⁻¹ ^ (n + 1) := by
   rw [show (-1 - (n : ℤ)) = Int.negSucc n by
       simp only [sub_eq_add_neg, Int.negSucc_eq, neg_add, add_comm]]
@@ -1286,9 +1270,9 @@ Proof: Use the exponent conversion for iterated derivatives and reassociate natu
 addition.
 Role: applies Turán's finite power-sum estimate to iterated logarithmic derivatives at the center.
 -/
-theorem zpow_neg_one_sub_add_eq_inv_pow (z u : ℂ) (M l : ℕ) :
+theorem zpow_neg_add_inv_pow (z u : ℂ) (M l : ℕ) :
     (z - u) ^ (-1 - ((M + l : ℕ) : ℤ)) = (z - u)⁻¹ ^ (M + 1 + l) := by
-  rw [zpow_neg_one_sub_nat_eq_inv_pow]
+  rw [zpow_neg_succ_inv_pow]
   congr 1
   calc
     M + l + 1 = M + (l + 1) := Nat.add_assoc M l 1
@@ -1302,7 +1286,7 @@ finite set.
 Proof: the exceptional set is finite and therefore locally finite in the open set.
 Role: supplies regular points for differentiating finite sums of reciprocal factors.
 -/
-theorem eventually_forall_ne_of_finset (s : Finset ℂ) (U : Set ℂ) :
+theorem eventually_forall_ne (s : Finset ℂ) (U : Set ℂ) :
     ∀ᶠ z in Filter.codiscreteWithin U, ∀ u ∈ s, z ≠ u := by
   apply codiscreteWithin_iff_locallyFiniteComplementWithin.2
   intro z hz
@@ -1324,7 +1308,7 @@ Proof: differentiate the finite sum at points outside `s` and use the affine rec
 formula term by term.
 Role: converts finite local zero contributions into the power sums used by Turan estimates.
 -/
-theorem iteratedDeriv_finset_reciprocal_sum (s : Finset ℂ) (m : ℂ → ℂ) (n : ℕ) (U : Set ℂ)
+theorem reciprocal_sum_iter (s : Finset ℂ) (m : ℂ → ℂ) (n : ℕ) (U : Set ℂ)
     (havoid : ∀ᶠ z in Filter.codiscreteWithin U, ∀ u ∈ s, z ≠ u) :
     iteratedDeriv n (fun z : ℂ => ∑ u ∈ s, m u * (z - u)⁻¹) =ᶠ[Filter.codiscreteWithin U]
       (fun z => ∑ u ∈ s, m u * ((-1 : ℂ) ^ n * (n.factorial : ℂ) * (z - u) ^ (-1 - n : ℤ))) := by
@@ -1346,7 +1330,7 @@ theorem iteratedDeriv_finset_reciprocal_sum (s : Finset ℂ) (m : ℂ → ℂ) (
     (analyticAt_id.sub analyticAt_const).inv hzu
   have hcontInv : ContDiffAt ℂ n (fun w : ℂ => (w - u)⁻¹) z := hanalytic.contDiffAt
   rw [iteratedDeriv_const_mul (m u) hcontInv,
-    PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LogFreeDensity.iteratedDeriv_sub_const_inv]
+    PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LogFreeDensity.iteratedDeriv_sub_inv]
 
 /--
 Inputs: a complex coefficient function with finite support, an open set `U`, and a derivative
@@ -1356,8 +1340,7 @@ corresponding weighted inverse-power `finsum` away from a discrete subset of `U`
 Proof: reduce both `finsum`s to the finite support and apply the finite-sum derivative formula.
 Role: provides the higher-order zero contribution in the local completed-L-function decomposition.
 -/
-theorem iteratedDeriv_finsum_reciprocal_sum (m : ℂ → ℂ) (hfinite : m.support.Finite) (n : ℕ)
-    (U : Set ℂ) :
+theorem reciprocalFinsum_iter (m : ℂ → ℂ) (hfinite : m.support.Finite) (n : ℕ) (U : Set ℂ) :
     iteratedDeriv n (fun z : ℂ => ∑ᶠ u, m u * (z - u)⁻¹) =ᶠ[Filter.codiscreteWithin U]
       (fun z => ∑ᶠ u, m u * ((-1 : ℂ) ^ n * (n.factorial : ℂ) * (z - u) ^ (-1 - n : ℤ))) := by
   let s := hfinite.toFinset
@@ -1384,7 +1367,7 @@ theorem iteratedDeriv_finsum_reciprocal_sum (m : ℂ → ℂ) (hfinite : m.suppo
       apply hu
       simp only [hm, zero_mul]
     exact (Set.Finite.mem_toFinset hfinite).mpr (by simpa only [Function.mem_support] using hmu)
-  have hlocal := iteratedDeriv_finset_reciprocal_sum s m n U (eventually_forall_ne_of_finset s U)
+  have hlocal := reciprocal_sum_iter s m n U (eventually_forall_ne s U)
   filter_upwards [hlocal] with z hz
   calc
     iteratedDeriv n (fun w : ℂ => ∑ᶠ u, m u * (w - u)⁻¹) z =
@@ -1402,8 +1385,8 @@ Proof: The nonzero value at the specified point gives finite analytic order; use
 and the local factorization theorem.
 Role: provides the local Turán factorization beyond the completed `L` function.
 -/
-theorem exists_analytic_local_zero_factorization {F : ℂ → ℂ} (hF : AnalyticOnNhd ℂ F Set.univ)
-    (z₀ : ℂ) (hz₀ : F z₀ ≠ 0) (c : ℂ) (R : ℝ) :
+theorem exists_localFactor {F : ℂ → ℂ} (hF : AnalyticOnNhd ℂ F Set.univ) (z₀ : ℂ) (hz₀ : F z₀ ≠ 0)
+    (c : ℂ) (R : ℝ) :
     ∃ g : ℂ → ℂ,
       AnalyticOnNhd ℂ g (Metric.ball c |R|) ∧
         (∀ u : Metric.ball c |R|, g u ≠ 0) ∧
@@ -1442,8 +1425,8 @@ the local meromorphic factorization theorem then extracts the finite divisor in 
 Role: isolates the local zero contribution before estimating the remaining analytic logarithmic
 derivative.
 -/
-theorem exists_completedLFunction_local_zero_factorization {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (c : ℂ) (R : ℝ) :
+theorem exists_completedLocal {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (c : ℂ)
+    (R : ℝ) :
     ∃ g : ℂ → ℂ,
       AnalyticOnNhd ℂ g (Metric.ball c |R|) ∧
         (∀ u : Metric.ball c |R|, g u ≠ 0) ∧
@@ -1456,8 +1439,8 @@ theorem exists_completedLFunction_local_zero_factorization {q : ℕ} [NeZero q]
   let F := DirichletCharacter.completedLFunction χ
   have hF : AnalyticOnNhd ℂ F Set.univ := fun z _ =>
     (DirichletCharacter.differentiable_completedLFunction hχ).analyticAt z
-  have h1nz : F 1 ≠ 0 := dirichletCompletedLFunction_one_ne_zero_of_ne_one hχ
-  obtain ⟨g, hg, hgn, hfactor⟩ := exists_analytic_local_zero_factorization hF 1 h1nz c R
+  have h1nz : F 1 ≠ 0 := completed_one_ne_zero_of_ne_one hχ
+  obtain ⟨g, hg, hgn, hfactor⟩ := exists_localFactor hF 1 h1nz c R
   refine ⟨g, hg, hgn, ?_⟩
   simpa only [F] using hfactor
 
@@ -1468,8 +1451,8 @@ Content: analyticity and finite meromorphic order identify the zero set with the
 Proof: rewrite membership through `MeromorphicNFOn.zero_set_eq_divisor_support`.
 Role: supplies the local support witness required by Turán's zero-detection estimate.
 -/
-theorem completedLFunction_zero_mem_local_divisor_support {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ} {R : ℝ} {u : ℂ} (hu : u ∈ Metric.ball c |R|)
+theorem zero_mem_localSupport {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {c : ℂ}
+    {R : ℝ} {u : ℂ} (hu : u ∈ Metric.ball c |R|)
     (hzero : DirichletCharacter.completedLFunction χ u = 0) :
     u ∈
       (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
@@ -1481,7 +1464,7 @@ theorem completedLFunction_zero_mem_local_divisor_support {q : ℕ} [NeZero q]
   have hnormal : MeromorphicNFOn F U := hFanalytic.meromorphicNFOn
   have hmem : u ∈ U ∩ F ⁻¹' {0} := ⟨hu, hzero⟩
   rw [hnormal.zero_set_eq_divisor_support fun v =>
-      meromorphicOrderAt_dirichletCompletedLFunction_ne_top χ hχ v] at hmem
+      meromorphicOrderAt_completed_ne_top χ hχ v] at hmem
   change u ∈ (MeromorphicOn.divisor F U).support
   exact hmem
 
@@ -1493,8 +1476,7 @@ a nonzero center within distance one half, and a ball of twice that distance con
 Proof: apply the analytic isolated-zero theorem and the identity principle at the point two.
 Role: produces the geometric local input for the completed `L` Turán derivative bound.
 -/
-theorem exists_completedLFunction_nonzero_center_ball_of_zero {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {ρ : ℂ}
+theorem exists_nonzeroCenter {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {ρ : ℂ}
     (hzero : DirichletCharacter.completedLFunction χ ρ = 0) :
     ∃ c : ℂ,
       ∃ R : ℝ,
@@ -1502,7 +1484,7 @@ theorem exists_completedLFunction_nonzero_center_ball_of_zero {q : ℕ} [NeZero 
   let F := DirichletCharacter.completedLFunction χ
   have hF : AnalyticOnNhd ℂ F Set.univ := fun z _ =>
     (DirichletCharacter.differentiable_completedLFunction hχ).analyticAt z
-  have htwo_ne : F 2 ≠ 0 := dirichletCompletedLFunction_two_ne_zero χ hχ
+  have htwo_ne : F 2 ≠ 0 := completed_two_ne_zero χ hχ
   have htwo_ord : analyticOrderAt F (2 : ℂ) = 0 :=
     (hF 2 trivial).analyticOrderAt_eq_zero.mpr htwo_ne
   have htwo_notTop : analyticOrderAt F (2 : ℂ) ≠ ⊤ := by
@@ -1555,8 +1537,8 @@ the chosen radius.
 Role: replaces an arbitrary nearby center and radius with parameters determined by the zero
 region, for later uniform local zero estimates.
 -/
-theorem exists_completedLFunction_explicit_center_ball_of_zero {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {σ : ℝ} {ρ : ℂ} (hσ : (3 / 4 : ℝ) ≤ σ) (hρ : σ ≤ ρ.re)
+theorem exists_explicitCenter {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {σ : ℝ}
+    {ρ : ℂ} (hσ : (3 / 4 : ℝ) ≤ σ) (hρ : σ ≤ ρ.re)
     (hzero : DirichletCharacter.completedLFunction χ ρ = 0) :
     ∃ c : ℂ,
       ∃ R : ℝ,
@@ -1587,7 +1569,7 @@ theorem exists_completedLFunction_explicit_center_ball_of_zero {q : ℕ} [NeZero
       Complex.ofReal_re]
     norm_num only [mul_zero, zero_mul, mul_one, add_zero, zero_add]
   have hc : DirichletCharacter.completedLFunction χ c ≠ 0 := by
-    apply completedLFunction_ne_zero_of_one_le_re hχ
+    apply completed_ne_zero_of_one_le_re hχ
     rw [hcre]
     linarith only [hσlt]
   have hsubre : (c - ρ).re = 2 - σ - ρ.re := by rw [Complex.sub_re, hcre]
@@ -1617,9 +1599,8 @@ Proof: bound the real-coordinate difference by the complex distance and apply th
 Role: verifies the outer-circle hypothesis needed to apply the polynomial-growth Jensen estimate
 to the explicit local ball.
 -/
-theorem explicit_center_outer_circle_re_ge_half {σ : ℝ} {c z : ℂ} (hcre : c.re = 2 - σ)
-    (hσ : (13 / 14 : ℝ) ≤ σ) (hσlt : σ < 1) (hz : z ∈ Metric.sphere c (8 * (1 - σ))) :
-    (1 / 2 : ℝ) ≤ z.re := by
+theorem outerCircle_re_ge {σ : ℝ} {c z : ℂ} (hcre : c.re = 2 - σ) (hσ : (13 / 14 : ℝ) ≤ σ)
+    (hσlt : σ < 1) (hz : z ∈ Metric.sphere c (8 * (1 - σ))) : (1 / 2 : ℝ) ≤ z.re := by
   have hR : 0 < 8 * (1 - σ) := by nlinarith only [hσlt]
   have hdist : dist z c = 8 * (1 - σ) := by simpa only [Metric.mem_sphere, abs_of_pos hR] using hz
   have hnorm : ‖z - c‖ = 8 * (1 - σ) := by rwa [← dist_eq_norm]
@@ -1630,9 +1611,8 @@ theorem explicit_center_outer_circle_re_ge_half {σ : ℝ} {c z : ℂ} (hcre : c
   nlinarith only [hcre, hσ, hleft]
 
 /-- The outer-circle half-plane bound for the radius `16(1 - σ)` at `σ ≥ 29/30`. -/
-theorem explicit_center_outer_circle_re_ge_half_of_scale16 {σ : ℝ} {c z : ℂ} (hcre : c.re = 2 - σ)
-    (hσ : (29 / 30 : ℝ) ≤ σ) (hσlt : σ < 1) (hz : z ∈ Metric.sphere c (16 * (1 - σ))) :
-    (1 / 2 : ℝ) ≤ z.re := by
+theorem outerCircle16_re_ge {σ : ℝ} {c z : ℂ} (hcre : c.re = 2 - σ) (hσ : (29 / 30 : ℝ) ≤ σ)
+    (hσlt : σ < 1) (hz : z ∈ Metric.sphere c (16 * (1 - σ))) : (1 / 2 : ℝ) ≤ z.re := by
   have hR : 0 < 16 * (1 - σ) := by nlinarith only [hσlt]
   have hdist : dist z c = 16 * (1 - σ) := by simpa only [Metric.mem_sphere, abs_of_pos hR] using hz
   have hnorm : ‖z - c‖ = 16 * (1 - σ) := by rwa [← dist_eq_norm]
@@ -1653,13 +1633,13 @@ Proof: establish the outer-circle half-plane condition above and apply the recta
 Jensen estimate.
 Role: supplies a Jensen bound for local zero sets around the explicit centers used near `Re s=1`.
 -/
-theorem completedZeroMultiplicityCountInRectangle_le_explicit_center_Jensen_bound {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (hq : 1 < q) {σ : ℝ} {c : ℂ} (hcre : c.re = 2 - σ)
-    (hσ : (13 / 14 : ℝ) ≤ σ) (hσlt : σ < 1) (hc : DirichletCharacter.LFunction χ c ≠ 0) (z w : ℂ)
+theorem rectMass_jensen4_le {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1)
+    (hq : 1 < q) {σ : ℝ} {c : ℂ} (hcre : c.re = 2 - σ) (hσ : (13 / 14 : ℝ) ≤ σ) (hσlt : σ < 1)
+    (hc : DirichletCharacter.LFunction χ c ≠ 0) (z w : ℂ)
     (hcoord :
       ∀ x ∈ Set.uIcc z.re w.re,
         ∀ y ∈ Set.uIcc z.im w.im, (x - c.re) ^ 2 + (y - c.im) ^ 2 ≤ (4 * (1 - σ)) ^ 2) :
-    completedZeroMultiplicityCountInRectangle χ hχ z w ≤
+    completedMultiplicityCount χ hχ z w ≤
       Real.log
           (max (1 : ℝ) (2 * (q : ℝ) * (‖c‖ + |8 * (1 - σ)|)) / ‖DirichletCharacter.LFunction χ c‖) /
         Real.log ((8 * (1 - σ)) / (4 * (1 - σ))) := by
@@ -1673,14 +1653,14 @@ theorem completedZeroMultiplicityCountInRectangle_le_explicit_center_Jensen_boun
   have hcircle : ∀ v ∈ Metric.sphere c |8 * (1 - σ)|, 1 / 2 ≤ v.re := by
     intro v hv
     have hv' : v ∈ Metric.sphere c (8 * (1 - σ)) := by simpa only [abs_of_pos houterPos] using hv
-    exact explicit_center_outer_circle_re_ge_half hcre hσ hσlt hv'
+    exact outerCircle_re_ge hcre hσ hσlt hv'
   have hcoord' :
     ∀ x ∈ Set.uIcc z.re w.re,
       ∀ y ∈ Set.uIcc z.im w.im, (x - c.re) ^ 2 + (y - c.im) ^ 2 ≤ |4 * (1 - σ)| ^ 2 := by
     simpa only [abs_of_pos hinner] using hcoord
   exact
-    completedZeroMultiplicityCountInRectangle_le_LFunction_Jensen_bound hq hχ z w c (r :=
-      4 * (1 - σ)) (R := 8 * (1 - σ)) hinnerAbs hratio hc hcircle hcoord'
+    rectMass_jensen_le hq hχ z w c (r := 4 * (1 - σ)) (R := 8 * (1 - σ)) hinnerAbs hratio hc hcircle
+      hcoord'
 
 /--
 Inputs: a nontrivial character, an explicit center with `1 - σ < ε`, and a rectangle inside
@@ -1691,8 +1671,8 @@ Proof: use the three-L-function lower bound at `1 + (1 - σ) + it`, then compare
 the explicit-center Jensen estimate.
 Role: provides a quantitative center estimate for the near-one local zero-density step.
 -/
-theorem exists_completedZeroMultiplicityCountInRectangle_le_explicit_center_Jensen_bound_of_near_one
-    {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (hq : 1 < q) :
+theorem exists_rectMass_near {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1)
+    (hq : 1 < q) :
     ∃ C ε : ℝ,
       0 < C ∧
         0 < ε ∧
@@ -1705,12 +1685,12 @@ theorem exists_completedZeroMultiplicityCountInRectangle_le_explicit_center_Jens
             ∀ z w : ℂ,
               (∀ x ∈ Set.uIcc z.re w.re,
                   ∀ y ∈ Set.uIcc z.im w.im, (x - c.re) ^ 2 + (y - c.im) ^ 2 ≤ (4 * (1 - σ)) ^ 2) →
-                completedZeroMultiplicityCountInRectangle χ hχ z w ≤
+                completedMultiplicityCount χ hχ z w ≤
                   Real.log
                       (max (1 : ℝ) (2 * (q : ℝ) * (‖c‖ + |8 * (1 - σ)|)) *
                         (2 * (q : ℝ) * C / (1 - σ))) /
                     Real.log 2 := by
-  obtain ⟨C, ε, hC, hε, hεle, hLlower⟩ := exists_norm_LFunction_lower_bound_one_add (N := q) χ
+  obtain ⟨C, ε, hC, hε, hεle, hLlower⟩ := exists_LFunctionLower (N := q) χ
   refine ⟨C, ε, hC, hε, hεle, ?_⟩
   intro σ c hcre hσ hσlt hnear z w hcoord
   have hqpos : 0 < (q : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne q)
@@ -1744,9 +1724,7 @@ theorem exists_completedZeroMultiplicityCountInRectangle_le_explicit_center_Jens
     have hzero : B = 0 := by
       dsimp only [B]; rw [hz, norm_zero]
     linarith only [hB, hzero]
-  have hJ :=
-    completedZeroMultiplicityCountInRectangle_le_explicit_center_Jensen_bound χ hχ hq hcre hσ hσlt
-      hc z w hcoord
+  have hJ := rectMass_jensen4_le χ hχ hq hcre hσ hσlt hc z w hcoord
   have hM : 0 < M := by
     dsimp only [M]
     exact lt_of_lt_of_le (by norm_num only) (le_max_left _ _)
@@ -1774,8 +1752,7 @@ theorem exists_completedZeroMultiplicityCountInRectangle_le_explicit_center_Jens
     dsimp only [x] at hx
     field_simp [ne_of_gt hx]
     ring
-  have hJ' :
-    completedZeroMultiplicityCountInRectangle χ hχ z w ≤ Real.log (M / B) / Real.log 2 := by
+  have hJ' : completedMultiplicityCount χ hχ z w ≤ Real.log (M / B) / Real.log 2 := by
     simpa only [M, B, hratio] using hJ
   have hfinal := div_le_div_of_nonneg_right hlog (le_of_lt hlog2)
   dsimp only [M, K, x] at hfinal
@@ -1790,14 +1767,13 @@ Content: the outer circle stays in `re s ≥ 1/2`, and the outer-to-inner radius
 Proof: use the scale-16 circle bound and the rectangle-to-disk Jensen theorem.
 Role: bounds the zero count in a square that contains the explicit local divisor ball.
 -/
-theorem completedZeroMultiplicityCountInRectangle_le_explicit_center_Jensen_bound_of_scale8 {q : ℕ}
-    [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (hq : 1 < q) {σ : ℝ} {c : ℂ}
-    (hcre : c.re = 2 - σ) (hσ : (29 / 30 : ℝ) ≤ σ) (hσlt : σ < 1)
+theorem rectMass_jensen8_le {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1)
+    (hq : 1 < q) {σ : ℝ} {c : ℂ} (hcre : c.re = 2 - σ) (hσ : (29 / 30 : ℝ) ≤ σ) (hσlt : σ < 1)
     (hc : DirichletCharacter.LFunction χ c ≠ 0) (z w : ℂ)
     (hcoord :
       ∀ x ∈ Set.uIcc z.re w.re,
         ∀ y ∈ Set.uIcc z.im w.im, (x - c.re) ^ 2 + (y - c.im) ^ 2 ≤ (8 * (1 - σ)) ^ 2) :
-    completedZeroMultiplicityCountInRectangle χ hχ z w ≤
+    completedMultiplicityCount χ hχ z w ≤
       Real.log
           (max (1 : ℝ) (2 * (q : ℝ) * (‖c‖ + |16 * (1 - σ)|)) /
             ‖DirichletCharacter.LFunction χ c‖) /
@@ -1812,14 +1788,14 @@ theorem completedZeroMultiplicityCountInRectangle_le_explicit_center_Jensen_boun
   have hcircle : ∀ v ∈ Metric.sphere c |16 * (1 - σ)|, 1 / 2 ≤ v.re := by
     intro v hv
     have hv' : v ∈ Metric.sphere c (16 * (1 - σ)) := by simpa only [abs_of_pos houterPos] using hv
-    exact explicit_center_outer_circle_re_ge_half_of_scale16 hcre hσ hσlt hv'
+    exact outerCircle16_re_ge hcre hσ hσlt hv'
   have hcoord' :
     ∀ x ∈ Set.uIcc z.re w.re,
       ∀ y ∈ Set.uIcc z.im w.im, (x - c.re) ^ 2 + (y - c.im) ^ 2 ≤ |8 * (1 - σ)| ^ 2 := by
     simpa only [abs_of_pos hinner] using hcoord
   exact
-    completedZeroMultiplicityCountInRectangle_le_LFunction_Jensen_bound hq hχ z w c (r :=
-      8 * (1 - σ)) (R := 16 * (1 - σ)) hinnerAbs hratio hc hcircle hcoord'
+    rectMass_jensen_le hq hχ z w c (r := 8 * (1 - σ)) (R := 16 * (1 - σ)) hinnerAbs hratio hc
+      hcircle hcoord'
 
 /--
 Inputs: a nontrivial completed Dirichlet `L`-function, a disk, and a point in the disk.
@@ -1829,8 +1805,8 @@ Proof: apply the analytic divisor formula on the disk and on the whole plane; bo
 same analytic order of the completed function.
 Role: identifies finite local zero sums with the corresponding part of the global zero sum.
 -/
-theorem completedLFunction_local_divisor_eq_global_at {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (c : ℂ) (R : ℝ) {ρ : ℂ} (hρ : ρ ∈ Metric.ball c |R|) :
+theorem completedLocal_global {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (c : ℂ)
+    (R : ℝ) {ρ : ℂ} (hρ : ρ ∈ Metric.ball c |R|) :
     MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) (Metric.ball c |R|) ρ =
       MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ := by
   have hF : AnalyticOnNhd ℂ (DirichletCharacter.completedLFunction χ) Set.univ := by
@@ -1853,21 +1829,21 @@ Proof: map the finite divisor support into the rectangle's finite zero ledger, t
 Role: converts local divisor support size, which controls the Turán derivative order, into the
 standard multiplicity-weighted zero-counting interface.
 -/
-theorem completedLFunction_local_divisor_support_card_le_rectangle_count {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (c : ℂ) (R : ℝ) (z w : ℂ)
+theorem localSupport_card_le {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (c : ℂ)
+    (R : ℝ) (z w : ℂ)
     (hbox :
       ∀ u,
         u ∈
             (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
                 (Metric.ball c |R|)).support →
-          u ∈ dirichletCompletedLFunctionRectangleBox z w) :
-    (((completedLFunction_local_zero_support_finite χ hχ c R).toFinset.card : ℕ) : ℝ) ≤
-      completedZeroMultiplicityCountInRectangle χ hχ z w := by
+          u ∈ completedRectangleBox z w) :
+    (((completedSupport_fin χ hχ c R).toFinset.card : ℕ) : ℝ) ≤
+      completedMultiplicityCount χ hχ z w := by
   classical
   let F : ℂ → ℂ := DirichletCharacter.completedLFunction χ
   let U := Metric.ball c |R|
   let D : ℂ → ℤ := MeromorphicOn.divisor F U
-  let hfinite : D.support.Finite := completedLFunction_local_zero_support_finite χ hχ c R
+  let hfinite : D.support.Finite := completedSupport_fin χ hχ c R
   let S := hfinite.toFinset
   let Z := completedZerosInRectangle χ hχ z w
   have hFanalytic : AnalyticOnNhd ℂ F U := by
@@ -1881,8 +1857,7 @@ theorem completedLFunction_local_divisor_support_card_le_rectangle_count {q : �
     intro u hu
     have huD : u ∈ D.support := (Set.Finite.mem_toFinset hfinite).mp hu
     have hzmem : u ∈ U ∩ F ⁻¹' {0} := by
-      rw [hnormal.zero_set_eq_divisor_support
-          (fun v => meromorphicOrderAt_dirichletCompletedLFunction_ne_top χ hχ v)]
+      rw [hnormal.zero_set_eq_divisor_support (fun v => meromorphicOrderAt_completed_ne_top χ hχ v)]
       exact huD
     have hz : F u = 0 := hzmem.2
     exact (mem_completedZerosInRectangle_iff).2 ⟨hbox u huD, hz⟩
@@ -1893,7 +1868,7 @@ theorem completedLFunction_local_divisor_support_card_le_rectangle_count {q : �
     have hAorder : analyticOrderAt F u ≠ 0 := hA.analyticOrderAt_ne_zero.mpr hz
     have htop : analyticOrderAt F u ≠ ⊤ := by
       intro heq
-      have htop' := meromorphicOrderAt_dirichletCompletedLFunction_ne_top χ hχ u
+      have htop' := meromorphicOrderAt_completed_ne_top χ hχ u
       rw [hA.meromorphicOrderAt_eq, heq, ENat.map_top] at htop'
       exact htop' rfl
     have hnat : analyticOrderNatAt F u ≠ 0 := by
@@ -1917,7 +1892,7 @@ theorem completedLFunction_local_divisor_support_card_le_rectangle_count {q : �
       (by
         intro u huS huZ
         exact Nat.cast_nonneg _)
-  unfold completedZeroMultiplicityCountInRectangle
+  unfold completedMultiplicityCount
   simpa only [S, Z, D, F, U] using hcardReal.trans hsum
 
 /--
@@ -1933,24 +1908,24 @@ to the full rectangle zero set using nonnegativity.
 Role: supplies the total-multiplicity bound needed to place local zero power sums in a fixed
 multiple exponent block.
 -/
-theorem completedLFunction_local_divisor_support_multiplicity_le_rectangle_count {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (c : ℂ) (R : ℝ) (z w : ℂ)
+theorem localSupport_mass_le {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (c : ℂ)
+    (R : ℝ) (z w : ℂ)
     (hbox :
       ∀ u,
         u ∈
             (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
                 (Metric.ball c |R|)).support →
-          u ∈ dirichletCompletedLFunctionRectangleBox z w) :
-    (∑ u ∈ (completedLFunction_local_zero_support_finite χ hχ c R).toFinset,
+          u ∈ completedRectangleBox z w) :
+    (∑ u ∈ (completedSupport_fin χ hχ c R).toFinset,
         ((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) (Metric.ball c |R|)
               u).toNat :
           ℝ)) ≤
-      completedZeroMultiplicityCountInRectangle χ hχ z w := by
+      completedMultiplicityCount χ hχ z w := by
   classical
   let F : ℂ → ℂ := DirichletCharacter.completedLFunction χ
   let U := Metric.ball c |R|
   let D : ℂ → ℤ := MeromorphicOn.divisor F U
-  let hfinite : D.support.Finite := completedLFunction_local_zero_support_finite χ hχ c R
+  let hfinite : D.support.Finite := completedSupport_fin χ hχ c R
   let S := hfinite.toFinset
   let Z := completedZerosInRectangle χ hχ z w
   have hFanalytic : AnalyticOnNhd ℂ F U := by
@@ -1964,8 +1939,7 @@ theorem completedLFunction_local_divisor_support_multiplicity_le_rectangle_count
     intro u hu
     have huD : u ∈ D.support := (Set.Finite.mem_toFinset hfinite).mp hu
     have hzmem : u ∈ U ∩ F ⁻¹' {0} := by
-      rw [hnormal.zero_set_eq_divisor_support
-          (fun v => meromorphicOrderAt_dirichletCompletedLFunction_ne_top χ hχ v)]
+      rw [hnormal.zero_set_eq_divisor_support (fun v => meromorphicOrderAt_completed_ne_top χ hχ v)]
       exact huD
     exact (mem_completedZerosInRectangle_iff).2 ⟨hbox u huD, hzmem.2⟩
   have horder : ∀ u ∈ S, D u = (analyticOrderNatAt F u : ℤ) := by
@@ -1974,7 +1948,7 @@ theorem completedLFunction_local_divisor_support_multiplicity_le_rectangle_count
     have huU : u ∈ U := by
       change u ∈ (MeromorphicOn.divisor F U).support at huD
       exact (MeromorphicOn.divisor F U).supportWithinDomain huD
-    have hlocalGlobal := completedLFunction_local_divisor_eq_global_at χ hχ c R huU
+    have hlocalGlobal := completedLocal_global χ hχ c R huU
     rw [show D = MeromorphicOn.divisor F U from rfl, hlocalGlobal,
       MeromorphicOn.AnalyticOnNhd.divisor_apply hFglobal (Set.mem_univ u)]
     change
@@ -1988,7 +1962,7 @@ theorem completedLFunction_local_divisor_support_multiplicity_le_rectangle_count
         intro u huS huZ
         exact Nat.cast_nonneg _)
   calc
-    (∑ u ∈ (completedLFunction_local_zero_support_finite χ hχ c R).toFinset,
+    (∑ u ∈ (completedSupport_fin χ hχ c R).toFinset,
           ((MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) (Metric.ball c |R|)
                 u).toNat :
             ℝ)) =
@@ -2004,8 +1978,8 @@ theorem completedLFunction_local_divisor_support_multiplicity_le_rectangle_count
       have htoNat : ((analyticOrderNatAt F u : ℤ).toNat : ℤ) = (analyticOrderNatAt F u : ℤ) :=
         Int.toNat_of_nonneg (by positivity)
       exact_mod_cast htoNat
-    _ ≤ completedZeroMultiplicityCountInRectangle χ hχ z w := by
-      unfold completedZeroMultiplicityCountInRectangle
+    _ ≤ completedMultiplicityCount χ hχ z w := by
+      unfold completedMultiplicityCount
       simpa only [Z, F] using hsum
 
 /--
@@ -2019,15 +1993,13 @@ the product of its two closed intervals.
 Role: gives the geometric covering needed to turn a local divisor-support cardinality into a
 rectangular zero count.
 -/
-theorem completedLFunction_local_divisor_support_mem_centered_square {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (c : ℂ) {R : ℝ} (hR : 0 < R) {u : ℂ}
+theorem localSupport_square {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (c : ℂ) {R : ℝ}
+    (hR : 0 < R) {u : ℂ}
     (hu :
       u ∈
         (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
             (Metric.ball c R)).support) :
-    u ∈
-      dirichletCompletedLFunctionRectangleBox (⟨c.re - R, c.im - R⟩ : ℂ)
-        (⟨c.re + R, c.im + R⟩ : ℂ) := by
+    u ∈ completedRectangleBox (⟨c.re - R, c.im - R⟩ : ℂ) (⟨c.re + R, c.im + R⟩ : ℂ) := by
   have huB : u ∈ Metric.ball c R :=
     (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
           (Metric.ball c R)).supportWithinDomain
@@ -2059,7 +2031,7 @@ reciprocal has the stated positive lower bound.
 Role: supplies the pointwise contribution of each nearby zero in the unconditional local
 multiplicity estimate.
 -/
-theorem re_inv_ge_half_inv_of_near_one_zero {η : ℝ} (hη : 0 < η) {t : ℝ} {ρ : ℂ}
+theorem re_inv_near_one_ge {η : ℝ} (hη : 0 < η) {t : ℝ} {ρ : ℂ}
     (hclose : ‖ρ - ((1 : ℂ) + (t : ℂ) * Complex.I)‖ ≤ η / 4) (hρ : ρ.re < 1) :
     (1 / ((1 + η) + (t : ℂ) * Complex.I - ρ)).re ≥ 1 / (2 * η) := by
   let z : ℂ := (1 + η) + (t : ℂ) * Complex.I - ρ
@@ -2111,14 +2083,14 @@ Inputs: a nontrivial completed Dirichlet `L`-function, a zero within `η / 4` of
 a positive shift `η`.
 Claim: the zero's real Poisson-kernel contribution at `1 + η + it` is at least `1 / (2η)`.
 Content: unconditional nonvanishing to the right of one gives `Re ρ < 1`; apply
-`re_inv_ge_half_inv_of_near_one_zero` to the geometric closeness hypothesis.
+`re_inv_near_one_ge` to the geometric closeness hypothesis.
 Role: turns a nearby completed zero into a quantitative term for the local multiplicity estimate.
 -/
-theorem re_inv_ge_half_inv_of_completed_zero_near_one {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) {η : ℝ} (hη : 0 < η) {t : ℝ} {ρ : ℂ}
-    (hclose : ‖ρ - ((1 : ℂ) + (t : ℂ) * Complex.I)‖ ≤ η / 4) (hzero : χ.completedLFunction ρ = 0) :
+theorem re_inv_zero_near_ge {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) {η : ℝ}
+    (hη : 0 < η) {t : ℝ} {ρ : ℂ} (hclose : ‖ρ - ((1 : ℂ) + (t : ℂ) * Complex.I)‖ ≤ η / 4)
+    (hzero : χ.completedLFunction ρ = 0) :
     (1 / ((1 + η) + (t : ℂ) * Complex.I - ρ)).re ≥ 1 / (2 * η) := by
-  exact re_inv_ge_half_inv_of_near_one_zero hη hclose (completedLFunction_zero_re_lt_one hχ hzero)
+  exact re_inv_near_one_ge hη hclose (completedLFunction_zero_re_lt_one hχ hzero)
 
 /--
 Inputs: a primitive nonprincipal character of modulus at least two, a positive shift `η`, and a
@@ -2129,13 +2101,10 @@ Content: the unconditional genus expansion has nonnegative terms; each rectangle
 at least its analytic order divided by `2η` to the shifted reciprocal kernel.
 Role: converts local zero multiplicity into a lower bound for the full right-half-plane genus sum.
 -/
-theorem completedZeroMultiplicityCountInRectangle_le_right_genus_sum {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {η : ℝ}
-    (hη : 0 < η) {t : ℝ} (z w : ℂ)
-    (hbox :
-      ∀ ρ ∈ dirichletCompletedLFunctionRectangleBox z w,
-        ‖ρ - ((1 : ℂ) + (t : ℂ) * Complex.I)‖ ≤ η / 4) :
-    completedZeroMultiplicityCountInRectangle χ hχ z w ≤
+theorem rectMass_genus_le {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1)
+    (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) {t : ℝ} (z w : ℂ)
+    (hbox : ∀ ρ ∈ completedRectangleBox z w, ‖ρ - ((1 : ℂ) + (t : ℂ) * Complex.I)‖ ≤ η / 4) :
+    completedMultiplicityCount χ hχ z w ≤
       2 * η *
         (logDeriv χ.completedLFunction ((1 + η) + (t : ℂ) * Complex.I) -
             logDeriv χ.completedLFunction 0).re := by
@@ -2186,14 +2155,14 @@ theorem completedZeroMultiplicityCountInRectangle_le_right_genus_sum {q : ℕ} [
       · rw [one_div, Complex.inv_re]
         exact div_nonneg hrepos.le (Complex.normSq_nonneg _)
   have hglobal : (logDeriv F s - logDeriv F 0).re = ∑' ρ, rterm ρ := by
-    rw [completed_centered_logDeriv_eq_genusSum_right hq hp hχ hinv hs, Complex.re_tsum hseries]
+    rw [completedLogDeriv_genus_eq_right hq hp hχ hinv hs, Complex.re_tsum hseries]
   let S := completedZerosInRectangle χ hχ z w
   have hpoint (ρ : ℂ) (hρ : ρ ∈ S) : (analyticOrderNatAt F ρ : ℝ) ≤ 2 * η * rterm ρ := by
     have hmem := mem_completedZerosInRectangle_iff.mp hρ
     have hzero := hmem.2
     have hclose := hbox ρ hmem.1
     have hk : (1 / (s - ρ)).re ≥ 1 / (2 * η) := by
-      simpa only [s] using re_inv_ge_half_inv_of_completed_zero_near_one hχ hη hclose hzero
+      simpa only [s] using re_inv_zero_near_ge hχ hη hclose hzero
     have hpos := completedLFunction_zero_re_pos hp hinv hzero
     have horder : D ρ = (analyticOrderNatAt F ρ : ℤ) := by
       rw [show D = MeromorphicOn.divisor F Set.univ from rfl,
@@ -2245,7 +2214,7 @@ theorem completedZeroMultiplicityCountInRectangle_le_right_genus_sum {q : ℕ} [
         apply mul_le_mul_of_nonneg_left
         · exact hrseries.sum_le_tsum S (fun ρ _ => hnonneg ρ)
         · exact mul_nonneg (by norm_num only : (0 : ℝ) ≤ 2) hη.le
-  unfold completedZeroMultiplicityCountInRectangle
+  unfold completedMultiplicityCount
   simpa only [S, F, s] using hcount.trans_eq (by rw [hglobal])
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LogFreeDensity

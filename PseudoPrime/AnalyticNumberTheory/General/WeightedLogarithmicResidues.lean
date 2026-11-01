@@ -85,8 +85,7 @@ theorem exists_radius_weighted_logDeriv_residue {F g W : ℂ → ℂ} {c : ℂ} 
     rw [hs]
     dsimp only [H]
     field_simp [sub_ne_zero.mpr (Set.mem_compl_singleton_iff.mp hsc)]
-  obtain ⟨R, hR, hr⟩ :=
-    RectangleGeometry.exists_radius_forall_rectangleBoundaryIntegral_eq_two_pi_I_mul hH heq
+  obtain ⟨R, hR, hr⟩ := RectangleGeometry.exists_radius_integral_residue hH heq
   refine ⟨R, hR, fun r hpos hle => ?_⟩
   rw [hr r hpos hle]
   simp only [H, sub_self, zero_mul, add_zero]

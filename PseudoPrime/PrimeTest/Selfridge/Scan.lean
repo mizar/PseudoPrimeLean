@@ -570,12 +570,12 @@ Small inputs are kernel checked. -/
 theorem selfridgeNeOneScan_total {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n) :
     (selfridgeNeOneScan n 5 (2 * n)).isSome = true := by
   by_cases hlarge : 15 < n
-  · have hc := classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns
-    have hw := wheel30FirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns
+  · have hc := classicalNeOneSet_nonempty_of_odd_nonsquare hn hns
+    have hw := wheel30NeOneSet_nonempty_of_odd_nonsquare hn hns
     have hp :=
       primeNeOneWitnessSet_nonempty_of_negOne
         (primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns)
-    have hb := classicalFirstStopNeOne_lt_of_odd_nonsquare_of_fifteen_lt hn hns hlarge hp hc
+    have hb := classicalNeOne_lt_of_odd_nonsquare_gt_15 hn hns hlarge hp hc
     apply selfridgeNeOneScan_terminates hw
     rw [firstStopNeOne_wheel30_eq_classical hn.pos hn hns hc hw]
     exact

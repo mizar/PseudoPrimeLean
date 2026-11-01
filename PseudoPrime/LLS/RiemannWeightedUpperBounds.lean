@@ -89,8 +89,7 @@ theorem logWeightedMangoldtSum_le_add_sqrt_twentieth (hRH : RiemannHypothesis) {
 root-cutoff sums retaining the negative logarithmic and constant corrections.
 Apply the corrected Mangoldt bound at each positive root cutoff.
 This preserves the savings needed for residue comparisons at smaller moduli. -/
-theorem compositePrimePowerLogWeightedSum_le_corrected_root_sums (hRH : RiemannHypothesis) {x : ℝ}
-    (hx : 1 < x) :
+theorem compositePrimePowerSum_corrected_RH (hRH : RiemannHypothesis) {x : ℝ} (hx : 1 < x) :
     AnalyticNumberTheory.Arithmetic.compositePrimePowerLogWeightedSum x ≤
       ∑ k ∈ Finset.Icc 2 ⌊Real.log x / Real.log 2⌋₊,
         (k : ℝ) *
@@ -98,7 +97,7 @@ theorem compositePrimePowerLogWeightedSum_le_corrected_root_sums (hRH : RiemannH
               Real.log (2 * Real.pi) * Real.log (x ^ ((1 : ℝ) / k)) -
               19 / 20 +
             Real.pi ^ 2 / 24) := by
-  apply (AnalyticNumberTheory.Arithmetic.compositePrimePowerLogWeightedSum_le_root_sums hx).trans
+  apply (AnalyticNumberTheory.Arithmetic.compositeLogSum_le_root_sums hx).trans
   apply Finset.sum_le_sum
   intro k hk
   have hkpos : (0 : ℝ) < k := by
@@ -112,12 +111,11 @@ theorem compositePrimePowerLogWeightedSum_le_corrected_root_sums (hRH : RiemannH
 finite sum of explicit root-cutoff expressions. The prime-power decomposition
 and the weighted Mangoldt upper bound give each exponent's contribution.
 This reduces the remaining coset upper bound to inequalities in real powers. -/
-theorem compositePrimePowerLogWeightedSum_le_explicit_root_sums (hRH : RiemannHypothesis) {x : ℝ}
-    (hx : 1 < x) :
+theorem compositePrimePowerSum_explicit_RH (hRH : RiemannHypothesis) {x : ℝ} (hx : 1 < x) :
     AnalyticNumberTheory.Arithmetic.compositePrimePowerLogWeightedSum x ≤
       ∑ k ∈ Finset.Icc 2 ⌊Real.log x / Real.log 2⌋₊,
         (k : ℝ) * (x ^ ((1 : ℝ) / k) + Real.sqrt (x ^ ((1 : ℝ) / k)) / 20) := by
-  apply (AnalyticNumberTheory.Arithmetic.compositePrimePowerLogWeightedSum_le_root_sums hx).trans
+  apply (AnalyticNumberTheory.Arithmetic.compositeLogSum_le_root_sums hx).trans
   apply Finset.sum_le_sum
   intro k hk
   have hkpos : (0 : ℝ) < k := by

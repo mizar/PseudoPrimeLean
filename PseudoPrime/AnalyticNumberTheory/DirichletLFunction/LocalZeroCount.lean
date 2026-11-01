@@ -35,8 +35,7 @@ theorem completed_divisor_le_two_mul_poisson {q : ℕ} [NeZero q] {χ : Dirichle
   · change (D : ℝ) ≤ 2 * ((D : ℝ) * _)
     simp only [hD, Int.cast_zero, zero_mul, mul_zero, le_refl]
   · have hr :=
-      completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv
-        (completed_zero_of_divisor_ne_zero hne hD)
+      completed_zero_re_eq_half_of_RH hRH hp hinv (completed_zero_of_divisor_ne_zero hne hD)
     have ha : AnalyticOnNhd ℂ χ.completedLFunction Set.univ := fun z _ ↦
       (DirichletCharacter.differentiable_completedLFunction hne).analyticAt z
     have hn : (0 : ℝ) ≤ D := by exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg ha ρ
@@ -66,7 +65,7 @@ logarithmic height error. The positive error constant is uniform in q and the ch
 Compare each multiplicity with twice its Poisson weight, bound the finite sum by the
 convergent full series, and use the uniform completed logarithmic-derivative estimate.
 This supplies local zero counts for tails of quadratically decaying kernel sums. -/
-theorem exists_uniform_local_zeroMultiplicity_bound :
+theorem uniform_localMultiplicity_bound_RH :
     ∃ A : ℝ,
       0 < A ∧
         ∀ (q : ℕ) [NeZero q],
@@ -81,7 +80,7 @@ theorem exists_uniform_local_zeroMultiplicity_bound :
                     ∑ ρ ∈ S, (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) ≤
                       Real.log q + 2 * A * (Real.log (4 + |t|) + 1) := by
   obtain ⟨A, hA, hb⟩ :=
-    exists_uniform_poissonSum_error_le_log (show (1 : ℝ) < 3 / 2 by norm_num only)
+    uniform_poissonError_log_bound_RH (show (1 : ℝ) < 3 / 2 by norm_num only)
       (show (3 / 2 : ℝ) ≤ 2 by norm_num only)
   refine ⟨A, hA, ?_⟩
   intro q _ hq χ hRH hp hne hinv t S hS

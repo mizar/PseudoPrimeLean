@@ -77,7 +77,7 @@ theorem phase64_ramp_endpoint_lower_of_blocks (hr : ∀ i : Fin 16, RampBlockVal
 /-- Given all principal block proofs, the actual range-40000 exponential
 sum at the upper endpoint is at most 1654. Apply fixed-point atom soundness and cast
 the checked natural upper total. -/
-theorem phase64_principal_endpoint_upper_of_blocks (hp : ∀ i : Fin 32, PrincipalBlockValid i.val) :
+theorem principal_endpoint_upper_of_blocks (hp : ∀ i : Fin 32, PrincipalBlockValid i.val) :
     (∑ n ∈ Finset.range 40000,
         Real.exp (-(n : ℝ) / (4096128001 / 2475000)) * ArithmeticFunction.vonMangoldt n) ≤
       (1654 : ℝ) := by

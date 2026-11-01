@@ -22,7 +22,7 @@ and later analytic bounds need no new first-stop argument. -/
 theorem classicalMaximum_le_of_QNegOne {B : ℕ} {X : ℝ} (h27 : 27 ≤ X)
     (hQ : (PseudoSquare.QNegOne B : ℝ) ≤ X) : (classicalNegOneMaximum B : ℝ) ≤ X := by
   have hm : (classicalNegOneMaximum B : ℝ) ≤ (max 27 (PseudoSquare.QNegOne B) : ℕ) :=
-    Nat.cast_le.mpr (classicalNegOneMaximum_le_max_twenty_seven_QNegOne B)
+    Nat.cast_le.mpr (classicalNegOneMaximum_le_max_27_QNegOne B)
   rw [Nat.cast_max, Nat.cast_ofNat] at hm
   exact hm.trans (max_le h27 hQ)
 

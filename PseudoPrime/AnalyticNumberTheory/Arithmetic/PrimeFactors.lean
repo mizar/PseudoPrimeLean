@@ -41,7 +41,7 @@ noncomputable def primeFactorLogSum (q : ℕ) : ℝ :=
 /-- For every natural `q`, the project prime-support count equals mathlib's
 `cardDistinctFactors q` by definition. This exposes the underlying arithmetic-function API
 for multiplicativity and prime-power calculations. -/
-theorem distinctPrimeFactorCount_eq_cardDistinctFactors (q : ℕ) :
+theorem distinctPrimeFactorCount_eq_cardFactors (q : ℕ) :
     distinctPrimeFactorCount q = ArithmeticFunction.cardDistinctFactors q :=
   rfl
 
@@ -130,7 +130,7 @@ This replaces the weighted support of the complementary level by one logarithmic
 theorem primeFactorLogSum_quotient_le_log {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) :
     primeFactorLogSum (q / χ.conductor) ≤ Real.log (q / χ.conductor : ℕ) := by
   have hsum := primeFactorLogSum_le_card_mul_log_two (n := q / χ.conductor)
-  have hcard := DirichletLFunction.card_primeFactors_quotient_le_log_div_log_two χ
+  have hcard := DirichletLFunction.quotient_primeFactors_card_le_log χ
   have hlog2 : 0 < Real.log 2 := Real.log_pos one_lt_two
   calc
     primeFactorLogSum (q / χ.conductor) ≤ ((q / χ.conductor).primeFactors.card : ℝ) * Real.log 2 :=

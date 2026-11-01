@@ -69,7 +69,7 @@ reduces this to a polynomial inequality. Multiplying the cleared gap by `20` giv
 (`eight_lt_llsTheorem11S1RadiusRoot`) reduces it to `3y² + 4y - 2 ≥ 0`, immediate from `y ≥ 8`.
 Role: connects the shared full-level bound to the level-indexed numerical chain.
 -/
-theorem llsPart1PrimitiveFullLevelUpperBound_le_fullLevel {q : ℕ} (hq : 3000 ≤ q) :
+theorem part1PrimitiveFullLevel_le_fullLevel {q : ℕ} (hq : 3000 ≤ q) :
     llsPart1PrimitiveFullLevelUpperBound q ≤ llsPart1FullLevelUpperBound q := by
   have hy8 : (8 : ℝ) < llsTheorem11S1RadiusRoot q := eight_lt_llsTheorem11S1RadiusRoot hq
   have hypos : (0 : ℝ) < llsTheorem11S1RadiusRoot q := by linarith only [hy8]

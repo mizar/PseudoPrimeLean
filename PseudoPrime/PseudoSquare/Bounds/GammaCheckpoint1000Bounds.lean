@@ -28,8 +28,8 @@ theorem exists_prime_neg_one_witness_of_checkpoint1000 {n : ℕ} (hn : Odd n) (h
     ∃ q : ℕ, q.Prime ∧ Odd q ∧ (q : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n q = -1 := by
   have hs := LLS.gamma_checkpoint1000_separation_le hGRH.riemann hb hD
   exact
-    exists_prime_neg_one_witness_of_factor_free_separation hn hns hGRH hL hlog hx
-      (by linarith only [hb]) hbx (hgap.trans hs)
+    exists_negOneWitness_of_factor_free_separation hn hns hGRH hL hlog hx (by linarith only [hb])
+      hbx (hgap.trans hs)
 
 /-- Input: GRH, a common log endpoint, an admissible scale and a cutoff-1000 margin.
 Claim: the full negative-witness maximum is at most 99x/40.

@@ -27,9 +27,9 @@ sum minus `K(1/2) sqrt x` is uniformly bounded for `x ≥ 1`. Split the zeta
 logarithmic derivative into xi, two poles and gamma; all four weighted integrals
 are absolutely integrable. The positive pole supplies the main term, and the
 proved xi, negative-pole, central remainder and gamma bounds control the error. -/
-private theorem exists_norm_level_one_summand_sub_main_le_of_lines (K : MellinKernel)
-    (hRH : RiemannHypothesis) {a b : ℝ} (ha : -1 / 2 - K.delta < a) (hb : b ≤ 1 / 2 + K.delta)
-    (ha' : -1 ≤ a) (hb' : b ≤ 1) (haleft : a < -1 / 2) (hbright : 1 / 2 < b) :
+private theorem exists_levelOne_error_of_lines_RH (K : MellinKernel) (hRH : RiemannHypothesis)
+    {a b : ℝ} (ha : -1 / 2 - K.delta < a) (hb : b ≤ 1 / 2 + K.delta) (ha' : -1 ≤ a) (hb' : b ≤ 1)
+    (haleft : a < -1 / 2) (hbright : 1 / 2 < b) :
     ∃ C : ℝ,
       0 < C ∧
         ∀ {x : ℝ},
@@ -70,13 +70,13 @@ private theorem exists_norm_level_one_summand_sub_main_le_of_lines (K : MellinKe
         Complex.one_re]
       linarith only [hbright]
     dsimp only [F, P, Q, G]
-    rw [AnalyticNumberTheory.RiemannXi.logDeriv_eq_poles_gammaFactor_zeta_of_one_lt_re hr]
+    rw [AnalyticNumberTheory.RiemannXi.logDeriv_eq_poles_gamma_zeta_of_re_gt_one hr]
     simp only [Complex.ofReal_neg, Complex.ofReal_div, Complex.ofReal_one, Complex.ofReal_ofNat]
     ring
   have hf :
     (fun t : ℝ => -logDeriv riemannZeta (s t + 1 / 2) * W t) = (fun t => F t + P t + Q t + G t) :=
     funext he
-  have hsum := tsum_level_one_summand_eq_integral_zeta_logDeriv K hxp hbright hb
+  have hsum := levelOne_summand_integral_zeta K hxp hbright hb
   change
     (∑' n : ℕ, K.summand (1 : DirichletCharacter ℂ 1) x n) =
       d * (∫ t : ℝ, -logDeriv riemannZeta (s t + 1 / 2) * W t) at hsum
@@ -142,7 +142,7 @@ theorem exists_norm_level_one_summand_sub_main_le (K : MellinKernel) (hRH : Riem
                   K.function (1 / 2) * (Real.sqrt x : ℂ)‖ ≤
               C := by
   obtain ⟨a, b, ha, hb, ha', hb', haleft, hbright⟩ := exists_principal_contour_lines K
-  exact exists_norm_level_one_summand_sub_main_le_of_lines K hRH ha hb ha' hb' haleft hbright
+  exact exists_levelOne_error_of_lines_RH K hRH ha hb ha' hb' haleft hbright
 
 /-- Under RH, the principal-character weighted sum at every nonzero modulus has
 main term `K(1/2) sqrt x` and error at most `C(1+log q log x/sqrt x)` for `x ≥ 2`.
@@ -157,7 +157,7 @@ theorem exists_principal_summand_remainder_le (K : MellinKernel) (hRH : RiemannH
                   K.function (1 / 2) * (Real.sqrt x : ℂ)‖ ≤
               C * (1 + Real.log q * Real.log x / Real.sqrt x) := by
   obtain ⟨A, hA, hb⟩ := exists_norm_level_one_summand_sub_main_le K hRH
-  apply exists_principal_summand_remainder_le_of_level_one K hA
+  apply exists_principal_error_of_levelOne K hA
   intro x hx
   exact hb (by linarith only [hx])
 

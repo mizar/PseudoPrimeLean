@@ -31,8 +31,8 @@ theorem reciprocalWeightedSum_eq_zero_sub_gamma (f : GeneralLFunction)
     f.reciprocalWeightedSum x =
       -logDeriv f.L 1 * (1 - (x : ℂ)⁻¹) -
         ((f.zeroMass : ℂ) / (x : ℂ) - f.reciprocalZeroSum x) - f.reciprocalGammaSum x := by
-  have ha := normalized_integral_completedReciprocal_eq_arithmetic_sub f hf hRH zero_lt_one hx
-  have hz := normalized_integral_completedReciprocalMellin_eq f hf hRH zero_lt_one hx
+  have ha := completedReciprocal_arithmetic_sub_RH f hf hRH zero_lt_one hx
+  have hz := completedReciprocal_integral_RH f hf hRH zero_lt_one hx
   have he := ha.symm.trans hz
   rw [logDeriv_completed_eq_completionFactor_add f hf (by norm_num only [Complex.one_re])
     (completed_ne_zero_of_re_ne_half hRH (by norm_num only [Complex.one_re]))] at he
@@ -242,7 +242,7 @@ theorem zeroMassReciprocalRemainder_eq_contributions (f : GeneralLFunction) (hf 
     Complex.ofReal_im, mul_zero, sub_zero] at he
   have hd : ((f.zeroMass : ℂ) / (x : ℂ)).re = f.zeroMass / x := by
     rw [← Complex.ofReal_div, Complex.ofReal_re]
-  rw [hd, re_logDeriv_ordinary_one_eq_half_zeroMass_sub_gamma f hf hRH] at he
+  rw [hd, ordinary_logDeriv_one_real_RH f hf hRH] at he
   unfold zeroMassReciprocalRemainder
   rw [Complex.sub_re, he]
   ring

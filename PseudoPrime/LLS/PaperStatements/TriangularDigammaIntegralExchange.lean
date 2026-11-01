@@ -63,8 +63,7 @@ theorem vertical_half_height_resolvent_norm {c : ℝ} (hc : 0 < c) (t : ℝ) :
 weighted by the triangular kernel and Mellin phase, has integrable norm. Its normalized
 integral is at most (2a+2)/(c*sqrt(2c)). The phase has unit norm; apply the first-moment bound.
 This supplies inverse three-half-power decay in the shifted pole. -/
-theorem triangular_vertical_resolvent_norm_integrable_and_bound {a c x : ℝ} (ha : 0 < a)
-    (hc : 0 < c) (hx : 0 < x) :
+theorem triangular_resolvent_integrable_bound {a c x : ℝ} (ha : 0 < a) (hc : 0 < c) (hx : 0 < x) :
     MeasureTheory.Integrable
         (fun t : ℝ ↦
           ‖(1 / (c : ℂ) - 1 / ((c : ℂ) + Complex.I * (t / 2))) *
@@ -79,7 +78,7 @@ theorem triangular_vertical_resolvent_norm_integrable_and_bound {a c x : ℝ} (h
   let F := fun t : ℝ ↦
     |t| * ‖Analysis.triangularMellinFunction a (Complex.I * t)‖ / Real.sqrt ((2 * c) ^ 2 + t ^ 2)
   have hc2 : 0 < 2 * c := mul_pos (by norm_num only) hc
-  have hI := (triangular_resolvent_first_moment_integrable_and_bound ha hc2).1
+  have hI := (triangular_firstMoment_integrable_bound ha hc2).1
   have hb := triangular_resolvent_normalized_first_moment_le ha hc2
   change MeasureTheory.Integrable F at hI
   change (∫ t : ℝ, F t) / (2 * Real.pi) ≤ (2 * a + 2) / Real.sqrt (2 * c) at hb
@@ -105,8 +104,7 @@ theorem triangular_vertical_resolvent_norm_integrable_and_bound {a c x : ℝ} (h
 vertical reciprocal differences are summable. Compare positive indices with a three-half
 p-series using the moment bound; the zero term is a finite exception.
 This is the absolute convergence needed for exchanging series and integration. -/
-theorem summable_triangular_vertical_resolvent_integral_norm {a b x : ℝ} (ha : 0 < a) (hb : 0 < b)
-    (hx : 0 < x) :
+theorem summable_triangular_resolvent_norm {a b x : ℝ} (ha : 0 < a) (hb : 0 < b) (hx : 0 < x) :
     Summable
       (fun n : ℕ ↦
         (∫ t : ℝ,
@@ -121,7 +119,7 @@ theorem summable_triangular_vertical_resolvent_integral_norm {a b x : ℝ} (ha :
   intro n hn
   have hn0 : (0 : ℝ) < n := Nat.cast_pos.mpr hn
   have hc : 0 < b + n := add_pos_of_pos_of_nonneg hb (Nat.cast_nonneg n)
-  have h := (triangular_vertical_resolvent_norm_integrable_and_bound ha hc hx).2
+  have h := (triangular_resolvent_integrable_bound ha hc hx).2
   have hi :
     0 ≤
       (∫ t : ℝ,
@@ -172,7 +170,7 @@ theorem integrable_triangular_vertical_resolvent {a c x : ℝ} (ha : 0 < a) (hc 
       (Or.inl (Complex.ofReal_ne_zero.mpr hx.ne'))
   exact
     (MeasureTheory.integrable_norm_iff ((hD.mul hK).mul hP).aestronglyMeasurable).mp
-      (triangular_vertical_resolvent_norm_integrable_and_bound ha hc hx).1
+      (triangular_resolvent_integrable_bound ha hc hx).1
 
 /-- For positive triangular parameter, real digamma base and scale, integrate
 the weighted vertical digamma difference term by term. Use the complex reciprocal-series
@@ -193,7 +191,7 @@ theorem integral_triangular_digamma_vertical_sub_eq_tsum {a b x : ℝ} (ha : 0 <
     (1 / ((b + n : ℝ) : ℂ) - 1 / (((b + n : ℝ) : ℂ) + Complex.I * (t / 2))) *
       Analysis.triangularMellinFunction a (Complex.I * t) *
       (x : ℂ) ^ (Complex.I * t)
-  have hs := (summable_triangular_vertical_resolvent_integral_norm ha hb hx).mul_left (2 * Real.pi)
+  have hs := (summable_triangular_resolvent_norm ha hb hx).mul_left (2 * Real.pi)
   simp only [mul_div_cancel₀ _ (mul_pos (by norm_num only : (0 : ℝ) < 2) Real.pi_pos).ne'] at hs
   change Summable (fun n : ℕ ↦ ∫ t : ℝ, ‖F n t‖) at hs
   have hi (n : ℕ) : MeasureTheory.Integrable (F n) :=

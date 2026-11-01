@@ -36,7 +36,7 @@ theorem integrable_gammaCentralReciprocalWeight {c x : ℝ} (hc : 0 < c) (hx : 0
 exactly the baseline density divided by c minus the real scalar resolvent.
 Linearity is used only after both integrands are proved integrable.
 This exposes the real signed term needed for summing the archimedean series. -/
-theorem gamma_central_resolvent_difference_integral_eq_real {c x : ℝ} (hc : 0 < c) (hx : 0 < x) :
+theorem gammaResolvent_diff_integral_real {c x : ℝ} (hc : 0 < c) (hx : 0 < x) :
     ((1 / (2 * Real.pi) : ℝ) : ℂ) *
         (∫ t : ℝ,
           (1 / (c : ℂ) - 1 / ((c : ℂ) + Complex.I * (t : ℂ) / 2)) * gammaCentralMellinWeight x t) =
@@ -69,7 +69,7 @@ theorem gamma_central_resolvent_difference_re_le {c x : ℝ} (hc : 3 / 4 < c) (h
       (Real.sqrt x⁻¹ * Real.exp (-x⁻¹)) *
         (1 / c - ((1 + x⁻¹) / (c - 1 / 4) - x⁻¹ / (c - 3 / 4))) := by
   have hc0 : 0 < c := by linarith only [hc]
-  rw [gamma_central_resolvent_difference_integral_eq_real hc0 hx, Complex.ofReal_re]
+  rw [gammaResolvent_diff_integral_real hc0 hx, Complex.ofReal_re]
   have h := integral_gammaResolventScalarDensity_ge_rational hc hx
   simp only [div_eq_mul_inv, one_mul] at h ⊢
   nlinarith only [h]
@@ -84,7 +84,7 @@ theorem summable_gammaCentralScalarDifference {b x : ℝ} (hb : 0 < b) (hx : 0 <
         Real.sqrt x⁻¹ * Real.exp (-x⁻¹) / (b + n) -
           ∫ r : ℝ in Set.Ioi 0, gammaResolventScalarDensity (b + n) x r) := by
   have hs :=
-    summable_weighted_vertical_resolvent_integral_norm hb (gammaCentralMellinWeight x)
+    summable_vertical_resolvent_integrals hb (gammaCentralMellinWeight x)
       (continuous_gammaCentralMellinWeight hx).aestronglyMeasurable
       (integrable_abs_mul_norm_gammaCentralMellinWeight hx)
   have hi :
@@ -100,8 +100,7 @@ theorem summable_gammaCentralScalarDifference {b x : ℝ} (hb : 0 < b) (hx : 0 <
     hC.congr
       (fun n ↦ by
         simpa only [mul_div_assoc] using
-          gamma_central_resolvent_difference_integral_eq_real
-            (add_pos_of_pos_of_nonneg hb (Nat.cast_nonneg n)) hx)
+          gammaResolvent_diff_integral_real (add_pos_of_pos_of_nonneg hb (Nat.cast_nonneg n)) hx)
 
 /-- For positive base and scale, the tail after the initial resolvent term
 is bounded by two convergent digamma differences. Compare the summable scalar

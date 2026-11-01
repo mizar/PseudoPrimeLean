@@ -55,8 +55,8 @@ theorem tendsto_completed_boundaryIntegral (K : MellinKernel) {q : ℕ} [NeZero 
         (Complex.I *
           ((∫ t : ℝ, F ((b : ℂ) + t * Complex.I)) - (∫ t : ℝ, F ((a : ℂ) + t * Complex.I))))) := by
   apply
-    AnalyticNumberTheory.RectangleGeometry.tendsto_rectangleBoundaryIntegral_of_horizontal_limits _
-      (tendsto_primitiveHorizontalHeightSeq_atTop hq hGRH hp hne hinv)
+    AnalyticNumberTheory.RectangleGeometry.tendsto_boundaryIntegral _
+      (tendsto_horizontalHeightSeq_GRH hq hGRH hp hne hinv)
   · have h :=
       (tendsto_completed_horizontalIntegral K hq hGRH hp hne hinv hab ha hb ha' hb' hx (-1)
           (Or.inr rfl)).neg
@@ -117,6 +117,6 @@ theorem tendsto_completed_residueSum (K : MellinKernel) {q : ℕ} [NeZero q] (hq
       Complex.ofReal_re, Complex.I_re, Complex.I_im, mul_zero, mul_one, add_zero, zero_add,
       zero_sub] using hnn
   · exact closed_goodHeight_box_subset_region K hab.le ha hb
-  · exact completedKernelSingularities_interior_goodHeight hq hGRH hp hne hinv n haleft hbright
+  · exact singularities_interior_goodHeight_GRH hq hGRH hp hne hinv n haleft hbright
 
 end PseudoPrime.LLS.PaperStatements.MellinKernel

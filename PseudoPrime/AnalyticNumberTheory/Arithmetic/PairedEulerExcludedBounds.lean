@@ -25,7 +25,7 @@ theorem paired_weighted_sum_eq_of_ambient_trivial {q N : ℕ} (χ : DirichletCha
     (hw : ∀ n ∈ S, ArithmeticFunction.vonMangoldt n = 0 → w n = 0)
     (ht : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ b → Nat.Coprime p N → χ p = 1) :
     (∑ n ∈ S, (1 + (χ n).re) * w n) = 2 * (∑ n ∈ S, w n) - excludedCharacterDefect χ N S w := by
-  have he := weighted_defect_eq_excluded_of_ambient_trivial χ S w hS hw ht
+  have he := weighted_defect_eq_excluded_of_trivial χ S w hS hw ht
   have hs : (∑ n ∈ S, (1 + (χ n).re) * w n) = (∑ n ∈ S, w n) + (∑ n ∈ S, (χ n).re * w n) := by
     rw [← Finset.sum_add_distrib]
     apply Finset.sum_congr rfl

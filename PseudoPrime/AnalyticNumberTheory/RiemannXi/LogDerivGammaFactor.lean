@@ -35,7 +35,7 @@ theorem logDeriv_eq_pole_gammaFactor_zeta_of_regular {s : ℂ} (hs : -2 < s.re) 
   have hh : ∀ m : ℕ, (s + 2) / 2 ≠ -(m : ℂ) := by
     simpa only [Complex.ofReal_zero, add_zero] using
       DirichletLFunction.half_add_ne_neg_nat_of_re_pos hp (le_refl (0 : ℝ))
-  have hg := DirichletLFunction.logDeriv_gammaFactor_eq_of_even_of_half_ne_neg_nat h1 hh
+  have hg := DirichletLFunction.gammaLogDeriv_even_eq_digamma h1 hh
   rw [show (s + 2) / 2 = s / 2 + 1 by ring] at hg
   rw [logDeriv_eq_pole_gamma_zeta_of_regular hs hn hz, hg]
   ring
@@ -43,7 +43,7 @@ theorem logDeriv_eq_pole_gammaFactor_zeta_of_regular {s : ℂ} (hs : -2 < s.re) 
 /-- To the right of one, ξ separates two elementary poles, the level-one gamma
 factor and the zeta logarithmic derivative. The digamma recurrence removes the
 shift by two. This form reuses the right-line gamma and Euler integrability bounds. -/
-theorem logDeriv_eq_poles_gammaFactor_zeta_of_one_lt_re {s : ℂ} (hs : 1 < s.re) :
+theorem logDeriv_eq_poles_gamma_zeta_of_re_gt_one {s : ℂ} (hs : 1 < s.re) :
     logDeriv riemannXi s =
       1 / s + 1 / (s - 1) + logDeriv (1 : DirichletCharacter ℂ 1).gammaFactor s +
         logDeriv riemannZeta s := by
@@ -52,8 +52,8 @@ theorem logDeriv_eq_poles_gammaFactor_zeta_of_one_lt_re {s : ℂ} (hs : 1 < s.re
     simpa only [Complex.ofReal_zero, add_zero] using
       DirichletLFunction.half_add_ne_neg_nat_of_re_pos hp (le_refl (0 : ℝ))
   have hg :=
-    DirichletLFunction.logDeriv_gammaFactor_eq_of_even_of_half_ne_neg_nat
-      DirichletLFunction.principal_modulus_one_even hh
+    DirichletLFunction.gammaLogDeriv_even_eq_digamma DirichletLFunction.principal_modulus_one_even
+      hh
   rw [logDeriv_eq_pole_gamma_zeta_of_one_lt_re hs, hg, Complex.digamma_apply_add_one (s / 2) hh,
     inv_div]
   ring

@@ -237,6 +237,6 @@ theorem exists_findSquareCertificate_of_coverage {n : ℕ} (hn : Nat.Prime n) (h
     ⟨NumberTheory.Factorization.aggregatePrimeFactorList factors, 1⟩
   have hdata : partialFactorizationOfNMinusOne n params fuel = some data := by
     simp only [partialFactorizationOfNMinusOne, nMinusOnePrimeFactors, hfactors, data]
-  exact exists_findSquareCertificate_of_prime_factorSupply hn hn5 params fuel hdata
+  exact exists_squareCertificate_of_factorSupply hn hn5 params fuel hdata
 
 end PseudoPrime.PrimeTest.BLS

@@ -88,7 +88,7 @@ theorem twoPoleRetainedNumerator_negative_margin {L u : ℝ} (hL : 800 ≤ L) (h
 /-- For a positive level q at most A with log A at least 800, the retained numerator dominates
 the actual prime-factor cost. Bound the number of factors by 2log(A)/5 and keep the cutoff
 allowance 1/40. This supplies the negative-witness extraction hypothesis. -/
-theorem retainedScaleTwoPoleNegative_numerator_dominates_cost {q A : ℕ} (hq : 0 < q) (hqA : q ≤ A)
+theorem retainedTwoPole_numerator_gt_cost {q A : ℕ} (hq : 0 < q) (hqA : q ≤ A)
     (hL : 800 ≤ Real.log A) :
     (q.primeFactors.card : ℝ) *
         Real.log ((99 / 40 : ℝ) * retainedScaleTwoPoleNegativeLogRoot (Real.log A) ^ 2) <
@@ -113,10 +113,9 @@ theorem retainedScaleTwoPoleNegative_numerator_dominates_cost {q A : ℕ} (hq : 
 800 has a unit prime of value minus one through the displayed cutoff. Insert the even Gamma cap
 and retained local-cost separation into the generic extraction. The common scale covers small
 conductors. -/
-theorem exists_prime_neg_one_le_retainedScaleTwoPole_log_ambient {q A : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (heven : χ.Even) (hne : χ ≠ 1)
-    (hqA : q ≤ A) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 800 ≤ Real.log A) :
+theorem exists_prime_negOne_retainedTwoPoleLog_GRH {q A : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hquad : χ.IsQuadratic) (heven : χ.Even) (hne : χ ≠ 1) (hqA : q ≤ A)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 800 ≤ Real.log A) :
     ∃ p : ℕ,
       p.Prime ∧
         ¬p ∣ q ∧
@@ -124,11 +123,10 @@ theorem exists_prime_neg_one_le_retainedScaleTwoPole_log_ambient {q A : ℕ} [Ne
         χ p = -1 := by
   have hd := retainedScaleTwoPoleNegativeLogRoot_data hL
   have hc :=
-    AnalyticNumberTheory.DirichletLFunction.twoPoleGammaConstant_le_signed_of_even
-      χ.primitiveCharacter ((NumberTheory.primitiveCharacter_even_iff χ).mpr heven)
+    AnalyticNumberTheory.DirichletLFunction.twoPoleGamma_le_112_25_of_even χ.primitiveCharacter
+      ((NumberTheory.primitiveCharacter_even_iff χ).mpr heven)
   exact
     exists_prime_neg_one_of_twoPoleRetainedNumerator χ hquad hne hqA hGRH hd.1 hd.2.2 hc
-      (retainedScaleTwoPoleNegative_numerator_dominates_cost (Nat.pos_of_ne_zero (NeZero.ne q)) hqA
-        hL)
+      (retainedTwoPole_numerator_gt_cost (Nat.pos_of_ne_zero (NeZero.ne q)) hqA hL)
 
 end PseudoPrime.LLS

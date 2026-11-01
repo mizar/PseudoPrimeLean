@@ -83,7 +83,7 @@ noncomputable def principalExponentialTailBound (x : ℝ) (N : ℕ) : ℝ :=
 prefix estimates, plus a scalar geometric-tail bound, give C/R below the actual
 principal-ramp difference. Combine the proved tail estimate with endpoint monotonicity.
 No integer-modulus enumeration or RH premise is needed. -/
-theorem principalRampDifference_lower_of_finite_endpoints {a b x C R r p e : ℝ} (ha : 0 < a)
+theorem principalRampDifference_lower_finite_endpoints {a b x C R r p e : ℝ} (ha : 0 < a)
     (hax : a ≤ x) (hxb : x ≤ b) (N : ℕ)
     (hr : r ≤ AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum a)
     (hp : (∑ n ∈ Finset.range N, Real.exp (-(n : ℝ) / b) * ArithmeticFunction.vonMangoldt n) ≤ p)

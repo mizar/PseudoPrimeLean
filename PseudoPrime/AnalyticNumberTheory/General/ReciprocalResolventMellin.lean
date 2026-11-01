@@ -235,7 +235,7 @@ theorem integral_reciprocalResolventKernel_eq {α : ℂ} (hα : α.re < 0) (ha :
 mass and x,τ > 0, the integrals of weighted reciprocal-kernel norms are summable.
 Dominate each integral by the centered logarithmic-kernel integral.
 This justifies exchanging the zero series and vertical integral. -/
-theorem summable_integral_norm_reciprocalResolventKernel {ι : Type*} (α : ι → ℂ) (m : ι → ℕ)
+theorem summable_reciprocalResolvent_integral {ι : Type*} (α : ι → ℂ) (m : ι → ℕ)
     (hα : ∀ i, (α i).re < 0) {τ x : ℝ} (hτ : 0 < τ) (hx : 0 < x)
     (hm : Summable (fun i ↦ (m i : ℝ) / ‖α i‖ ^ (3 / 2 : ℝ))) :
     Summable (fun i ↦ ∫ y : ℝ, ‖(m i : ℂ) * reciprocalResolventKernel (α i) x τ y‖) := by
@@ -266,7 +266,7 @@ theorem integral_tsum_reciprocalResolventKernel {ι : Type*} [Countable ι] (α 
   rw [←
     MeasureTheory.integral_tsum_of_summable_integral_norm
       (fun i ↦ (integrable_reciprocalResolventKernel (hα i) hτ hx).const_mul (m i : ℂ))
-      (summable_integral_norm_reciprocalResolventKernel α m hα hτ hx hm)]
+      (summable_reciprocalResolvent_integral α m hα hτ hx hm)]
   exact tsum_congr (fun i ↦ MeasureTheory.integral_const_mul _ _)
 
 /-- For any pole family with summable inverse-three-halves multiplicity mass
@@ -320,7 +320,7 @@ theorem integral_tsum_reciprocalResolventKernel_of_mass {ι : Type*} (α : ι �
 multiplicity mass, τ > 0 and x > 1, the normalized reciprocal-resolvent integral equals
 the multiplicity-weighted series (x^α - 1/x)/(α(α+1)). Exchange and evaluate each integral.
 This supplies the completed-zero term of the general reciprocal formula. -/
-theorem normalized_integral_tsum_reciprocalResolventKernel {ι : Type*} (α : ι → ℂ) (m : ι → ℕ)
+theorem reciprocalResolvent_integral_tsum {ι : Type*} (α : ι → ℂ) (m : ι → ℕ)
     (hα : ∀ i, (α i).re < 0) (ha : ∀ i, α i ≠ -1) {τ x : ℝ} (hτ : 0 < τ) (hx : 1 < x)
     (hm : Summable (fun i ↦ (m i : ℝ) / ‖α i‖ ^ (3 / 2 : ℝ))) :
     (2 * Real.pi)⁻¹ • (∫ y : ℝ, ∑' i, (m i : ℂ) * reciprocalResolventKernel (α i) x τ y) =

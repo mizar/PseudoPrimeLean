@@ -16,8 +16,7 @@ namespace PseudoPrime.Analysis
 
 /-- Any beta>13/15 absorbs the cutoff constant: eventually 256k<=p floor(p^beta)
 for every k with k^15<=32768p^28. Choose an intermediate exponent and keep the floor error. -/
-theorem eventually_cutoff_le_prime_mul_floor_power_of_exponent {beta : ℝ}
-    (hbeta : (13 / 15 : ℝ) < beta) :
+theorem eventually_cutoff_28_15_le_prime_floor {beta : ℝ} (hbeta : (13 / 15 : ℝ) < beta) :
     Filter.Eventually
       (fun p : ℕ ↦ ∀ k : ℕ, k ^ 15 ≤ 32768 * p ^ 28 → 256 * k ≤ p * Nat.floor ((p : ℝ) ^ beta))
       Filter.atTop := by

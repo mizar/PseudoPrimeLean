@@ -20,9 +20,9 @@ namespace PseudoPrime.LLS
 rows covering the upper support. Claim: the corrected fixed row sum bounds
 the actual dual budget throughout the enlarged interval. Extract downward
 numerator bounds and apply window transport. Role: avoid new row tables. -/
-theorem gamma_scale_signed_dual_budget_le_lowered_window_rows (c : GammaLocalCellData)
-    (rows : ℕ → GammaLocalPrimeRow) (hcell : c.check = true) {L lo x E : ℝ} (hL : 0 ≤ L)
-    (hlo : 1 ≤ lo) (hab : lo ≤ (c.lo : ℝ)) (hlox : lo ≤ x) (hxhi : x ≤ (c.hi : ℝ))
+theorem gammaSignedDual_loweredRows (c : GammaLocalCellData) (rows : ℕ → GammaLocalPrimeRow)
+    (hcell : c.check = true) {L lo x E : ℝ} (hL : 0 ≤ L) (hlo : 1 ≤ lo) (hab : lo ≤ (c.lo : ℝ))
+    (hlox : lo ≤ x) (hxhi : x ≤ (c.hi : ℝ))
     (hcheck :
       ∀ p ∈ gammaAnchoredWindowPrimeSet c.hi, (rows p).prime = p ∧ (rows p).envelopeCheck c = true)
     (he :
@@ -58,9 +58,9 @@ rows covering the upper support. Claim: the corrected fixed row sum bounds
 the actual dual budget throughout the enlarged interval, using the improved
 coefficient 3 for the common scale correction. Extract downward
 numerator bounds and apply window transport. Role: avoid new row tables. -/
-theorem gamma_scale_signed_dual_budget_le_lowered_window_rows_three (c : GammaLocalCellData)
-    (rows : ℕ → GammaLocalPrimeRow) (hcell : c.check = true) {L lo x E : ℝ} (hL : 0 ≤ L)
-    (hlo : 1 ≤ lo) (hab : lo ≤ (c.lo : ℝ)) (hlox : lo ≤ x) (hxhi : x ≤ (c.hi : ℝ))
+theorem gammaSignedDual_loweredRows_three (c : GammaLocalCellData) (rows : ℕ → GammaLocalPrimeRow)
+    (hcell : c.check = true) {L lo x E : ℝ} (hL : 0 ≤ L) (hlo : 1 ≤ lo) (hab : lo ≤ (c.lo : ℝ))
+    (hlox : lo ≤ x) (hxhi : x ≤ (c.hi : ℝ))
     (hcheck :
       ∀ p ∈ gammaAnchoredWindowPrimeSet c.hi, (rows p).prime = p ∧ (rows p).envelopeCheck c = true)
     (he :
@@ -96,7 +96,7 @@ rows covering the upper support. Claim: the corrected fixed row sum bounds
 the actual dual budget throughout the enlarged interval, retaining the base-sensitive
 coefficient in each row of the scale correction. Extract downward
 numerator bounds and apply window transport. Role: avoid new row tables. -/
-theorem gamma_scale_signed_dual_budget_le_lowered_window_rows_base_ratio (c : GammaLocalCellData)
+theorem gammaSignedDual_loweredRows_baseRatio (c : GammaLocalCellData)
     (rows : ℕ → GammaLocalPrimeRow) (hcell : c.check = true) {L lo x E : ℝ} (hL : 0 ≤ L)
     (hlo : 1 ≤ lo) (hab : lo ≤ (c.lo : ℝ)) (hlox : lo ≤ x) (hxhi : x ≤ (c.hi : ℝ))
     (hcheck :

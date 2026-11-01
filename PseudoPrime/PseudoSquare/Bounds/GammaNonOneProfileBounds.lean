@@ -26,8 +26,8 @@ namespace PseudoPrime.PseudoSquare
  Apply the non-one Gamma comparison to the complex quadratic character.
  On units use prime evaluation; on nonunits use the zero Jacobi value.
  This permits the same scale for pointwise bounds and finite maxima. -/
-theorem exists_prime_ne_one_witness_le_gamma_at_endpoint_thirtyTwo {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hq : 20000 ≤ 4 * n) {L : ℝ} (hL : 36010 ≤ L) (hlogn : Real.log n ≤ L)
+theorem exists_prime_neOne_gammaThirtyTwo_GRH {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hq : 20000 ≤ 4 * n) {L : ℝ} (hL : 36010 ≤ L) (hlogn : Real.log n ≤ L)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * L ^ 2 ∧ jacobiSym n p ≠ 1 := by
   let : NeZero (4 * n) := ⟨Nat.mul_ne_zero (by norm_num only) (Odd.pos hn).ne'⟩
@@ -61,14 +61,13 @@ private theorem nonOne_decimal_cutoff_ge (d : ℕ) (hd : 5 ≤ d) : 20000 ≤ 10
  the least non-one witness is at most (4/5)L². Large levels use the common-scale Gamma
  theorem; smaller levels use the existing global non-one envelope bounded by 121.
  This covers all inputs, including those below the public decimal starting value. -/
-theorem primeNeOneWitness_cast_le_gamma_endpoint_thirtyTwo
+theorem neOneWitness_cast_le_gamma_endpoint_thirtyTwo
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : Odd n)
     (hns : ¬IsSquare n) {L : ℝ} (hL : 36010 ≤ L) (hlogn : Real.log n ≤ L)
     (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤ (4 / 5 : ℝ) * L ^ 2 := by
   by_cases hq : 20000 ≤ 4 * n
-  · obtain ⟨p, hp, ho, hb, hv⟩ :=
-      exists_prime_ne_one_witness_le_gamma_at_endpoint_thirtyTwo hn hns hq hL hlogn hGRH
+  · obtain ⟨p, hp, ho, hb, hv⟩ := exists_prime_neOne_gammaThirtyTwo_GRH hn hns hq hL hlogn hGRH
     exact (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hb
   · have hnsmall : n ≤ 46000 := by
       have ht := lt_of_not_ge hq
@@ -110,8 +109,8 @@ theorem exists_prime_ne_one_witness_le_gamma_15639
   have hq : 20000 ≤ 4 * n :=
     (by norm_num only : 20000 ≤ 4 * 20000).trans (Nat.mul_le_mul_left 4 hnlarge)
   exact
-    exists_prime_ne_one_witness_le_gamma_at_endpoint_thirtyTwo hn hns hq
-      (log_nat_gt_36010_of_decimal_15639 hN).le (le_refl _) hGRH
+    exists_prime_neOne_gammaThirtyTwo_GRH hn hns hq (log_nat_gt_36010_of_decimal_15639 hN).le
+      (le_refl _) hGRH
 
 /-- Under GRH, for an odd nonsquare n >= 10^15639, the least odd-prime non-one
 witness is at most (4/5) log(n)^2. Minimize the witness from the refined wrapper. -/
@@ -135,7 +134,7 @@ theorem QNeOne_le_gamma_15639 {B : ℕ} (hB : 10 ^ 15639 ≤ B)
   have hn0 : (0 : ℝ) < n := by exact_mod_cast Odd.pos ha.odd
   have hnB : (n : ℝ) ≤ B := by exact_mod_cast ha.le
   exact
-    primeNeOneWitness_cast_le_gamma_endpoint_thirtyTwo hGRH ha.odd ha.not_isSquare
+    neOneWitness_cast_le_gamma_endpoint_thirtyTwo hGRH ha.odd ha.not_isSquare
       (log_nat_gt_36010_of_decimal_15639 hB).le (Real.log_le_log hn0 hnB)
       (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne
         (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare ha.odd ha.not_isSquare))

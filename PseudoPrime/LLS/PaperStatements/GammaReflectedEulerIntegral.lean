@@ -137,15 +137,15 @@ theorem gamma_reflected_ordinary_eq_euler {q : ℕ} [NeZero q] (χ : DirichletCh
     simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, Complex.I_im,
       Complex.ofReal_im, zero_mul, mul_zero, sub_zero, add_zero]
     norm_num only
-  have h := lSeries_twist_vonMangoldt_eq_neg_logDeriv_dirichletLFunction_of_one_lt_re χ hs
+  have h := LSeries_mangoldt_eq_neg_logDeriv χ hs
   simpa only [logDeriv, Pi.div_apply, Pi.mul_def, neg_div] using h.symm
 
 /-- For any character of positive level and positive scale, the normalized actual
 ordinary-logarithmic-derivative integral has norm at most 1/(x sqrt x).
 Rewrite it as the reflected Euler integral. This separates the ordinary cost from
 the remaining completed archimedean contribution. -/
-theorem norm_gamma_reflected_ordinary_logDeriv_integral_le {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) {x : ℝ} (hx : 0 < x) :
+theorem gammaReflected_ordinaryIntegral_le {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) {x : ℝ}
+    (hx : 0 < x) :
     ‖(((1 / (2 * Real.pi) : ℝ) : ℂ) *
           (∫ t : ℝ,
             -logDeriv χ.LFunction (((17 / 16 : ℝ) : ℂ) + Complex.I * (-t : ℝ)) *
@@ -224,7 +224,7 @@ theorem gamma_signed_left_eq_ordinary_add_archimedean {q : ℕ} [NeZero q]
         gammaSignedLeftWeight x t := by
     rw [gammaSignedLeftIntegrand_reflection hp hne hinv, add_mul, add_sub_cancel_left]
   have hc := hr.congr (MeasureTheory.ae_of_all _ he)
-  rw [gammaSignedLeftIntegral_eq_conductor_add_remainder hp hne hinv hx]
+  rw [gammaLeft_eq_conductor_remainder hp hne hinv hx]
   simp only [he]
   dsimp only [gammaReflectedArchimedeanIntegral]
   simp only [sub_mul]
@@ -243,7 +243,7 @@ theorem re_gamma_signed_left_le_archimedean_add_euler {q : ℕ} [NeZero q]
         ‖gammaReflectedArchimedeanIntegral χ⁻¹ x‖ +
         1 / (x * Real.sqrt x) := by
   have he := gamma_signed_left_eq_ordinary_add_archimedean hp hne hinv hx
-  have hn := norm_gamma_reflected_ordinary_logDeriv_integral_le χ⁻¹ hx
+  have hn := gammaReflected_ordinaryIntegral_le χ⁻¹ hx
   simp only [neg_mul, MeasureTheory.integral_neg, mul_neg, norm_neg] at hn
   have ho :=
     Complex.re_le_norm
@@ -262,10 +262,9 @@ cost, signed conductor term, actual archimedean norm and 1/(x sqrt x).
 Insert the split left integral into the completed residue identity and retain
 the nonpositive right integral. This connects the Euler improvement to the
 remainder used by witness comparisons. -/
-theorem re_gamma_primitive_remainder_le_archimedean_add_euler {q m : ℕ} [NeZero m]
-    {χ : DirichletCharacter ℂ m} (hq : 20000 ≤ q) (hm : 3 ≤ m) (hmq : m ≤ q) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {x : ℝ} (hx : 2 ≤ x) :
+theorem gammaRemainder_re_le_archimedean_add_euler {q m : ℕ} [NeZero m] {χ : DirichletCharacter ℂ m}
+    (hq : 20000 ≤ q) (hm : 3 ≤ m) (hmq : m ≤ q) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 2 ≤ x) :
     ((∑' n : ℕ, gammaMellinKernel.summand χ x n) +
           (∑' ρ : ℂ, gammaMellinKernel.oscillatingZeroTerm χ x ρ)).re ≤
       ((7 / 6 : ℝ) * Real.log q + 4) / Real.sqrt x +

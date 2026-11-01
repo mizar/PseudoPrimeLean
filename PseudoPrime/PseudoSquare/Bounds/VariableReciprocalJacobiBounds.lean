@@ -19,9 +19,8 @@ namespace PseudoPrime.PseudoSquare
 /-- Under GRH for odd nonsquare n and any reciprocal cutoff x ≥ 64, an odd
 coprime negative prime lies below the variable even root in the actual conductor.
 Exclude 2n, preserve primitive evenness, and transfer the non-one value to Jacobi -1. -/
-theorem exists_prime_neg_one_le_variable_reciprocal_conductor_root {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ}
-    (hx : 64 ≤ x) :
+theorem exists_prime_negOne_variableConductor_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 64 ≤ x) :
     ∃ p : ℕ,
       p.Prime ∧
         Odd p ∧
@@ -42,7 +41,7 @@ theorem exists_prime_neg_one_le_variable_reciprocal_conductor_root {n : ℕ} {hn
     exact NumberTheory.primitiveQuadraticCharacter_ne_one_of_not_square n hn hns hh
   have hf := NumberTheory.three_le_conductor_of_ne_one χ hχ
   obtain ⟨p, hp, hb, hd, hv⟩ :=
-    LLS.PaperStatements.exists_prime_ne_one_le_even_variable_reciprocal_root χ.primitiveCharacter hf
+    LLS.PaperStatements.exists_prime_neOne_evenVariableRecip_GRH χ.primitiveCharacter hf
       χ.primitiveCharacter_isPrimitive
       ((NumberTheory.primitiveCharacter_even_iff χ).mpr
         (NumberTheory.complexQuadraticCharacter_isEven n hn))
@@ -72,29 +71,29 @@ theorem exists_prime_neg_one_le_variable_reciprocal_conductor_root {n : ℕ} {hn
 /-- Under GRH for odd nonsquare n, the least negative odd-prime witness is at
 most the variable even conductor bound at every x ≥ 64. Apply leastness to the
 actual prime theorem. This connects cutoff selection to the public least witness. -/
-theorem primeNegOneWitness_le_variable_reciprocal_conductor_root {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem negOneWitness_le_variableConductor_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) {x : ℝ} (hx : 64 ≤ x) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤
       LLS.PaperStatements.variableReciprocalWitnessBound
         (NumberTheory.complexQuadraticCharacter n hn).conductor (2 * n) x (179 / 200)
         (21 / 10) := by
   obtain ⟨p, hp, ho, _, hj, hb⟩ :=
-    exists_prime_neg_one_le_variable_reciprocal_conductor_root (hn := hn) (hns := hns) hGRH hx
+    exists_prime_negOne_variableConductor_GRH (hn := hn) (hns := hns) hGRH hx
   exact (Nat.cast_le.mpr (NumberTheory.primeNegOneWitness_le n hw ⟨hp, ho, hj⟩)).trans hb
 
 /-- Under GRH for odd nonsquare n, the least non-one odd-prime witness is at
 most the variable even conductor bound at every x ≥ 64. A negative Jacobi value
 is non-one, so the actual negative prime also bounds this least witness. -/
-theorem primeNeOneWitness_le_variable_reciprocal_conductor_root {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+theorem neOneWitness_le_variableConductor_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) {x : ℝ} (hx : 64 ≤ x) :
     (NumberTheory.primeNeOneWitness n hw : ℝ) ≤
       LLS.PaperStatements.variableReciprocalWitnessBound
         (NumberTheory.complexQuadraticCharacter n hn).conductor (2 * n) x (179 / 200)
         (21 / 10) := by
   obtain ⟨p, hp, ho, _, hj, hb⟩ :=
-    exists_prime_neg_one_le_variable_reciprocal_conductor_root (hn := hn) (hns := hns) hGRH hx
+    exists_prime_negOne_variableConductor_GRH (hn := hn) (hns := hns) hGRH hx
   have hne : jacobiSym n p ≠ 1 := by
     rw [hj]; norm_num only
   exact (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hp, ho, hne⟩)).trans hb

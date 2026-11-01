@@ -148,7 +148,7 @@ theorem exists_riemannZeta_zeroFree_factorization {z : ℂ} {R : ℝ} (hR : 0 < 
 /-- The logarithmic derivative of `ζ` at a non-zero point `z` decomposes as a finite sum over
 nearby zeros' contributions `m_ρ/(z-ρ)` plus the logarithmic derivative of a zero-free analytic
 remainder `g`. -/
-theorem exists_logDeriv_riemannZeta_eq_sum_add_logDeriv {z : ℂ} {R : ℝ} (hR : 0 < R)
+theorem exists_logDeriv_zeta_eq_sum_add_logDeriv {z : ℂ} {R : ℝ} (hR : 0 < R)
     (hz1 : ∀ w ∈ Metric.closedBall z R, w ≠ 1) (hzgood : riemannZeta z ≠ 0) :
     ∃ (S : Finset ℂ) (m : ℂ → ℕ) (g : ℂ → ℂ),
       AnalyticOnNhd ℂ g (Metric.ball z R) ∧
@@ -219,7 +219,7 @@ theorem exists_logDeriv_riemannZeta_eq_sum_add_logDeriv {z : ℂ} {R : ℝ} (hR 
   ring
 
 /-- The same log-derivative decomposition as
-`PseudoPrime.AnalyticNumberTheory.RiemannZeta.exists_logDeriv_riemannZeta_eq_sum_add_logDeriv`,
+`PseudoPrime.AnalyticNumberTheory.RiemannZeta.exists_logDeriv_zeta_eq_sum_add_logDeriv`,
 but evaluated at an arbitrary point `z0` of the factorization ball (not necessarily the
 factorization center `z` itself), taking the factorization data directly as input. This is what
 lets a single Jensen-scale factorization (centered far from the evaluation point, where `ζ` is
@@ -317,7 +317,7 @@ making the boundary bound on `log‖g‖` degenerate. -/
 (and which avoids the pole at `1`): the identity theorem argument of
 `PseudoPrime.AnalyticNumberTheory.RiemannZeta.riemannZeta_analyticOrderAt_ne_top`,
 generalized from the Jensen disk to an arbitrary ball. -/
-theorem riemannZeta_analyticOrderAt_ne_top_of_center {c : ℂ} {R : ℝ}
+theorem zeta_analyticOrderAt_ne_top_of_center {c : ℂ} {R : ℝ}
     (hc1 : ∀ w ∈ Metric.closedBall c R, w ≠ 1) (hcgood : riemannZeta c ≠ 0) {u : ℂ}
     (hu : u ∈ Metric.closedBall c R) : analyticOrderAt riemannZeta u ≠ ⊤ := by
   intro htop
@@ -631,9 +631,7 @@ theorem exists_jensen_good_radius_twoSided {T : ℝ} (hT : 8 ≤ T) :
     · rw [ENat.map_natCast_eq_zero]
       exact (hAnBall ρ hρmem).analyticOrderAt_ne_zero.mpr hζ
     · rw [hmapinj]
-      exact
-        riemannZeta_analyticOrderAt_ne_top_of_center hz1 hzgood
-          (Metric.ball_subset_closedBall hρmem)
+      exact zeta_analyticOrderAt_ne_top_of_center hz1 hzgood (Metric.ball_subset_closedBall hρmem)
   have hmem : ‖z - ρ‖ ∈ D := Finset.mem_image_of_mem _ hd
   exact hRgood _ hmem
 
@@ -643,7 +641,7 @@ a radius in `[71/20,73/20]`. Extracted zeros lie `δ` inside it, with an explici
 lower bound for `δ` and a Jensen multiplicity bound. Choose the larger radius within
 the zero-free radial gap; later closed-disk estimates then retain analyticity.
 -/
-theorem exists_riemannZeta_zeroFree_factorization_jensen_good_radius {T : ℝ} (hT : 8 ≤ T) :
+theorem exists_zeroFree_jensen_factorization {T : ℝ} (hT : 8 ≤ T) :
     ∃ (R δ R2 : ℝ) (S : Finset ℂ) (m : ℂ → ℕ) (g : ℂ → ℂ),
       0 < δ ∧
         1 / (40 * jensenLogConst * Real.log (T + 2) + 50) ≤ δ ∧
@@ -702,7 +700,7 @@ theorem exists_riemannZeta_zeroFree_factorization_jensen_good_radius {T : ℝ} (
   have hz1R2 : ∀ w ∈ Metric.closedBall z R2, w ≠ 1 := fun w hw =>
     hz1 w (Metric.closedBall_subset_closedBall hR2small.le hw)
   obtain ⟨S, m, g, hgAn, hgne, hmpos, hSU, hSzero, hmeqSmall, heqOn, hlog⟩ :=
-    exists_logDeriv_riemannZeta_eq_sum_add_logDeriv (R := R2) hR2pos hz1R2 hzgood
+    exists_logDeriv_zeta_eq_sum_add_logDeriv (R := R2) hR2pos hz1R2 hzgood
   have hu_dist : ∀ u ∈ S, ‖z - u‖ ≤ R - δ := by
     intro u hu
     have huU := hSU u hu
@@ -773,7 +771,7 @@ and explicit center and upper-bound estimates. Use the radial zero gap for the
 boundary product, Jensen growth, and the distance at least two from center to every
 zero. These certificates feed the off-center derivative and squared-log estimates.
 -/
-theorem exists_bound_re_logDeriv_g_jensen_good_radius {T : ℝ} (hT : 8 ≤ T) :
+theorem exists_jensen_logDeriv_primitive_bound {T : ℝ} (hT : 8 ≤ T) :
     ∃ (R1 R2 : ℝ) (S : Finset ℂ) (m : ℂ → ℕ) (g h : ℂ → ℂ) (M : ℝ),
       (71 : ℝ) / 20 ≤ R1 ∧
         R1 < R2 ∧
@@ -797,7 +795,7 @@ theorem exists_bound_re_logDeriv_g_jensen_good_radius {T : ℝ} (hT : 8 ≤ T) :
   obtain
     ⟨R, δ, R2, S, m, g, hδ_pos, hδ_ge, hR, hR1R2, hR2small, hgAn, hgne, hmpos, hSzero, hu_dist,
       hsum_le, heqOn⟩ :=
-    exists_riemannZeta_zeroFree_factorization_jensen_good_radius hT
+    exists_zeroFree_jensen_factorization hT
   set z : ℂ := jensenCenter T with hz_def
   have hT4 : (4 : ℝ) ≤ T := le_trans (by norm_num only : (4 : ℝ) ≤ 8) hT
   set R1 : ℝ := R + δ / 2 with hR1_def
@@ -1090,9 +1088,9 @@ Under the stated height, radius, center-slack, and semi-explicit bound hypothese
 factor by `2880`, use the quadratic Jensen majorant, and absorb constant and linear
 logarithm terms into the square. This closes the numerical part of the zeta estimate.
 -/
-theorem le_qMinusOneZetaLogDerivConst_mul_log_sq_of_semi_explicit {H T R1 M gjc d X : ℝ}
-    (hH : 8 ≤ H) (hT1 : H ≤ T) (_hT2 : T ≤ H + 1) (hR1big : 71 / 20 ≤ R1) (hR1lt37 : R1 < 37 / 10)
-    (hd_le : d ≤ 7 / 2) (hMc : gjc < M)
+theorem le_qMinusOneLogDerivConst_mul_log_sq {H T R1 M gjc d X : ℝ} (hH : 8 ≤ H) (hT1 : H ≤ T)
+    (_hT2 : T ≤ H + 1) (hR1big : 71 / 20 ≤ R1) (hR1lt37 : R1 < 37 / 10) (hd_le : d ≤ 7 / 2)
+    (hMc : gjc < M)
     (hMle :
       M ≤
         Real.log (jensenM T) +
@@ -1304,7 +1302,7 @@ theorem forall_norm_logDeriv_riemannZeta_le {H : ℝ} (hH : 8 ≤ H) {T : ℝ}
   obtain
     ⟨R1, R2, S, m, g, h, M, hR1big, hR1R2, hR2small, hgAn, hgne, hmpos, hh', hSzero, hsum_le, heqOn,
       hMc, hgjc_ge, hMle, hMbound⟩ :=
-    exists_bound_re_logDeriv_g_jensen_good_radius hT8
+    exists_jensen_logDeriv_primitive_bound hT8
   intro σ hσ1 hσ2 hzgood
   set z : ℂ := σ + T * Complex.I with hz_def
   set c : ℂ := jensenCenter T with hc_def
@@ -1423,8 +1421,7 @@ theorem forall_norm_logDeriv_riemannZeta_le {H : ℝ} (hH : 8 ≤ H) {T : ℝ}
         by gcongr
   have hR1lt37 : R1 < 37 / 10 := lt_trans hR1R2 hR2small
   exact
-    le_qMinusOneZetaLogDerivConst_mul_log_sq_of_semi_explicit hH hT.1 hT.2 hR1big hR1lt37 hd_le hMc
-      hMle hgjc_ge hsemi
+    le_qMinusOneLogDerivConst_mul_log_sq hH hT.1 hT.2 hR1big hR1lt37 hd_le hMc hMle hgjc_ge hsemi
 
 /-- The explicit `O((log T)²/T²)` bound decays to `0` as `T → ∞`: `log(T+2)²/T²` is squeezed
 between `0` and `4 * (log(T+2)/(T+2))²`, and the latter tends to `0` since `log t / t → 0`

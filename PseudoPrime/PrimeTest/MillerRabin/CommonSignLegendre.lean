@@ -24,7 +24,7 @@ namespace PseudoPrime.PrimeTest
 prime factor p when its exponent is an odd multiple of p/2. Reduce the unit
 through the canonical cast homomorphism and apply local Euler sign transport.
 This is the prime-factor reduction used for the actual common-sign subgroup. -/
-theorem legendre_unit_value_eq_sign_of_prime_factor_power {n p E k : ℕ} [NeZero n] [Fact p.Prime]
+theorem legendre_unit_eq_sign_of_prime_factor_power {n p E k : ℕ} [NeZero n] [Fact p.Prime]
     [Fact (2 < p)] (hpn : p ∣ n) (u : (ZMod n)ˣ) {σ : ℤ} (hk : Odd k) (hE : E = (p / 2) * k)
     (hσ : σ = 1 ∨ σ = -1) (hpow : (u : ZMod n) ^ E = (σ : ZMod n)) :
     legendreSym p (((u : ZMod n).val : ℕ) : ℤ) = σ := by
@@ -60,8 +60,8 @@ theorem legendre_pair_mul_eq_one_on_signSubgroup {n p q E kp kq : ℕ} [NeZero n
       simpa only [Units.val_pow_eq_pow_val, Units.val_neg, Units.val_one, Int.cast_neg,
         Int.cast_one] using congrArg Units.val h
   obtain ⟨σ, hσ, hpow⟩ := hsign
-  rw [legendre_unit_value_eq_sign_of_prime_factor_power hpn u hkp hEp hσ hpow,
-    legendre_unit_value_eq_sign_of_prime_factor_power hqn u hkq hEq hσ hpow]
+  rw [legendre_unit_eq_sign_of_prime_factor_power hpn u hkp hEp hσ hpow,
+    legendre_unit_eq_sign_of_prime_factor_power hqn u hkq hEq hσ hpow]
   rcases hσ with hσ | hσ
   · rw [hσ, one_mul]
   · rw [hσ, neg_mul_neg, one_mul]

@@ -18,7 +18,7 @@ namespace PseudoPrime.AnalyticNumberTheory.DirichletLFunction
 is exactly the common Mangoldt weight summed over nonunits. A character
 vanishes on nonunits, so no correction is silently discarded. This reduces
 the signed prefix loss to ramified inputs before prime-power grouping. -/
-theorem gamma_prefix_correction_eq_nonunit_sum {q : ℕ} (χ : DirichletCharacter ℂ q) (B : Finset ℕ)
+theorem gammaPrefix_eq_nonunit {q : ℕ} (χ : DirichletCharacter ℂ q) (B : Finset ℕ)
     (hB : ∀ n ∈ B, Nat.Coprime n q → χ n = 1) :
     (∑ n ∈ B, (1 - (χ n).re) * Analysis.gammaResolventMangoldtWeight n) =
       ∑ n ∈ B, if Nat.Coprime n q then 0 else Analysis.gammaResolventMangoldtWeight n := by
@@ -33,9 +33,9 @@ theorem gamma_prefix_correction_eq_nonunit_sum {q : ℕ} (χ : DirichletCharacte
 all have character value one, the zero-mass prefix inequality has precisely
 the noncoprime correction. Apply the established signed prefix inequality and
 the exact correction identity. This exposes the ramified loss for local bounds. -/
-theorem gammaResolvent_zeroMass_le_ramified_prefix {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (B : Finset ℕ) (hB : ∀ n ∈ B, Nat.Coprime n q → χ n = 1) :
+theorem gammaMass_le_ramifiedPrefix_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    (B : Finset ℕ) (hB : ∀ n ∈ B, Nat.Coprime n q → χ n = 1) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
           Gamma.gammaResolventMajorant ρ.im) ≤
@@ -46,15 +46,15 @@ theorem gammaResolvent_zeroMass_le_ramified_prefix {q : ℕ} [NeZero q] (hq : 2 
             (∑' n : ℕ, Analysis.gammaResolventMangoldtWeight n) -
           2 * (∑ n ∈ B, Analysis.gammaResolventMangoldtWeight n) +
         ∑ n ∈ B, if Nat.Coprime n q then 0 else Analysis.gammaResolventMangoldtWeight n := by
-  have h := gammaResolvent_zeroMass_le_signed_prefix hq hRH hp hne hinv B
-  rw [gamma_prefix_correction_eq_nonunit_sum χ B hB] at h
+  have h := gammaMass_le_signedPrefix_RH hq hRH hp hne hinv B
+  rw [gammaPrefix_eq_nonunit χ B hB] at h
   exact h
 
 /-- At a positive power of a prime, the ramified correction is present exactly
 when that prime divides the conductor. Coprimality of a positive prime power
 is equivalent to coprimality of its base. This identifies the local prime
 condition for grouping the prefix correction into conductor costs. -/
-theorem gamma_primePower_ramified_correction_eq {q p k : ℕ} (hp : p.Prime) (hk : 0 < k) :
+theorem gammaPrimePower_ramified_eq {q p k : ℕ} (hp : p.Prime) (hk : 0 < k) :
     (if Nat.Coprime (p ^ k) q then 0 else Analysis.gammaResolventMangoldtWeight (p ^ k)) =
       if p ∣ q then Analysis.gammaResolventMangoldtWeight (p ^ k) else 0 := by
   simp only [Nat.coprime_pow_left_iff hk, Nat.Prime.coprime_iff_not_dvd hp]

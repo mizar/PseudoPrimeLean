@@ -81,8 +81,8 @@ then use `Nat.totient_mul_of_prime_of_not_dvd`.
 Role: this is the complementary totient case in the AGP
 Brun–Titchmarsh specialization.
 -/
-theorem agp_totient_drm_eq_r_sub_one_mul_totient_dm_of_not_dvd {d r m : ℕ} (hr : Nat.Prime r)
-    (hrd : ¬r ∣ d) (hrm : ¬r ∣ m) : Nat.totient (d * r * m) = (r - 1) * Nat.totient (d * m) := by
+theorem totient_drm_eq_pred_mul_totient_dm_of_not_dvd {d r m : ℕ} (hr : Nat.Prime r) (hrd : ¬r ∣ d)
+    (hrm : ¬r ∣ m) : Nat.totient (d * r * m) = (r - 1) * Nat.totient (d * m) := by
   have hnot : ¬r ∣ d * m := by
     intro h
     rcases hr.dvd_mul.mp h with hrd' | hrm'
@@ -115,7 +115,7 @@ theorem agp_totient_d4_lower_bound {d r : ℕ} (hr : Nat.Prime r) (hr4 : Nat.Cop
     norm_cast
     exact Nat.mul_le_mul_right (Nat.totient (d * 4)) (Nat.sub_le r 1)
   · have hrnot4 : ¬r ∣ 4 := hr.coprime_iff_not_dvd.mp hr4
-    rw [agp_totient_drm_eq_r_sub_one_mul_totient_dm_of_not_dvd hr hrd hrnot4]
+    rw [totient_drm_eq_pred_mul_totient_dm_of_not_dvd hr hrd hrnot4]
 
 /--
 Inputs: nonnegative `Y`, `r ≥ 3`, positive `A`, `LX`, and `Lr`, with

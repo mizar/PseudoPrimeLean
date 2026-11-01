@@ -101,7 +101,7 @@ noncomputable def reciprocalGapFullEndpointLimit (q : ℕ) (x Y : ℝ) : ℝ :=
 /-- For arbitrary q,Y and fixed x>=1, the full endpoint separation has the stated
 right limit at zero gap. Combine the quotient and signed Gamma limits with the
 nonzero limiting denominators. No limiting kernel or zero-sum exchange is assumed. -/
-theorem tendsto_reciprocalGapFullEndpointSeparation_right (q : ℕ) {x : ℝ} (hx : 1 ≤ x) (Y : ℝ) :
+theorem tendsto_reciprocalGapFullEndpoint (q : ℕ) {x : ℝ} (hx : 1 ≤ x) (Y : ℝ) :
     Filter.Tendsto (fun h : ℝ ↦ reciprocalGapFullEndpointSeparation h q x Y)
       (nhdsWithin 0 (Set.Ioi 0)) (nhds (reciprocalGapFullEndpointLimit q x Y)) := by
   let M := reciprocalGapReciprocalMassCap q Y (Real.log Y - (31551 / 20000 : ℝ))
@@ -149,7 +149,7 @@ theorem exists_pos_gap_of_fullEndpointLimit_neg (q : ℕ) {x Y : ℝ} (hx : 1 �
     (hlim : reciprocalGapFullEndpointLimit q x Y < 0) :
     ∃ h : ℝ, 0 < h ∧ reciprocalGapFullEndpointSeparation h q x Y < 0 := by
   have hn : ∀ᶠ h : ℝ in nhdsWithin 0 (Set.Ioi 0), reciprocalGapFullEndpointSeparation h q x Y < 0 :=
-    (tendsto_reciprocalGapFullEndpointSeparation_right q hx Y).eventually (Iio_mem_nhds hlim)
+    (tendsto_reciprocalGapFullEndpoint q hx Y).eventually (Iio_mem_nhds hlim)
   have hp : ∀ᶠ h : ℝ in nhdsWithin 0 (Set.Ioi 0), 0 < h := self_mem_nhdsWithin
   exact (hp.and hn).exists
 
@@ -162,6 +162,6 @@ theorem exists_prime_not_one_of_fullEndpointLimit_neg {q : ℕ} [NeZero q] (hq :
     (hYx : Y ≤ x) (hlim : reciprocalGapFullEndpointLimit q x Y < 0) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ x ∧ χ p ≠ 1 := by
   obtain ⟨h, hh, hs⟩ := exists_pos_gap_of_fullEndpointLimit_neg q hx.le hlim
-  exact exists_prime_not_one_of_reciprocalGap_full_endpoint hh hq hGRH hp hne hinv hx hY hYx hs
+  exact exists_prime_neOne_fullGap_GRH hh hq hGRH hp hne hinv hx hY hYx hs
 
 end PseudoPrime.LLS.PaperStatements

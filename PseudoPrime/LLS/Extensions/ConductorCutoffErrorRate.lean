@@ -18,7 +18,7 @@ namespace PseudoPrime.LLS.Extensions.GeneralLFunction
 converges to `34d/7` on the conductor filter. Expand the scaled error and take the logarithmic
 power limits; only the normalized zero-mass majorant survives.
 This supplies a second-order error bound while preserving the leading conductor correction. -/
-theorem tendsto_truncatedConductorErrorBound_mul_log_sq {d : ℕ} (hd : 0 < d) :
+theorem conductorError_logSq_tendsto {d : ℕ} (hd : 0 < d) :
     Filter.Tendsto
       (fun f : FixedDegreeFamily d ↦
         f.val.truncatedConductorErrorBound (valueCutoff d f.val.analyticConductor) *
@@ -30,7 +30,7 @@ theorem tendsto_truncatedConductorErrorBound_mul_log_sq {d : ℕ} (hd : 0 < d) :
   have hlx := (Analysis.tendsto_log_pow_div_self 1).comp (tendsto_valueCutoff_atTop hd)
   have hl2x := (Analysis.tendsto_log_pow_div_self 2).comp (tendsto_valueCutoff_atTop hd)
   have hp :=
-    AnalyticNumberTheory.Arithmetic.tendsto_reciprocalMangoldtSum_mul_log_div_sqrt.comp
+    AnalyticNumberTheory.Arithmetic.tendsto_recipMangoldt_mul_log_div_sqrt.comp
       (tendsto_valueCutoff_atTop hd)
   have hu := (hr.const_mul ((d : ℝ) * zeroMassDegreeBound)).const_add ((34 / 7 : ℝ) * (d : ℝ))
   let z :=
@@ -76,7 +76,7 @@ theorem tendsto_valueError_mul_log_sq {d : ℕ} (hd : 0 < d) :
   have hs :=
     ((Analysis.tendsto_log_pow_div_sqrt 2).comp (tendsto_valueCutoff_atTop hd)).const_mul
       ((d : ℝ) * (3 / 2))
-  have ht := (tendsto_truncatedConductorErrorBound_mul_log_sq hd).add hs
+  have ht := (conductorError_logSq_tendsto hd).add hs
   simp only [mul_zero, add_zero] at ht
   convert ht using 1
   funext f
@@ -87,7 +87,7 @@ theorem tendsto_valueError_mul_log_sq {d : ℕ} (hd : 0 < d) :
 exponent `d Q(x) + 2d/log x + (34d/7 + 1)/log^2 x` at the common cutoff.
 The reciprocal retains the factor `(6/pi^2)^d`. Apply the scaled error limit and absorb
 square loss into the common error. This preserves the first-order term for the final expansion. -/
-theorem eventually_norm_L_one_and_reciprocal_le_secondOrder_error {d : ℕ} (hd : 0 < d) :
+theorem eventually_normL_pair_secondOrder {d : ℕ} (hd : 0 < d) :
     ∀ᶠ f : FixedDegreeFamily d in conductorFilter d,
       let x := valueCutoff d f.val.analyticConductor
       let b := ((34 / 7 : ℝ) * (d : ℝ) + 1) / (Real.log x) ^ 2
@@ -105,7 +105,7 @@ theorem eventually_norm_L_one_and_reciprocal_le_secondOrder_error {d : ℕ} (hd 
   have hlim :=
     (tendsto_valueError_mul_log_sq hd).eventually
       (gt_mem_nhds (show (34 / 7 : ℝ) * (d : ℝ) < (34 / 7 : ℝ) * (d : ℝ) + 1 by linarith only))
-  filter_upwards [eventually_norm_L_one_and_reciprocal_le_valueCutoff hd, hlim,
+  filter_upwards [eventually_normL_pair_le_cutoff hd, hlim,
     (tendsto_valueCutoff_atTop hd).eventually (Filter.eventually_gt_atTop (1 : ℝ))] with f hb he hx
   dsimp only at hb ⊢
   have hs : 0 ≤ (d : ℝ) * (3 / (2 * Real.sqrt (valueCutoff d f.val.analyticConductor))) :=
@@ -126,8 +126,7 @@ L-value bounds with exponent `d(log log x + gamma + 1/log x) + K/log^2 x`, where
 `K = d(A+B) + 34d/7 + 1`. The reciprocal retains the zeta-at-two factor.
 Compose the arithmetic inputs with the conductor cutoff and insert the uniform error bound.
 The prime-sum estimates are explicit hypotheses; this does not prove the public general-L claim. -/
-theorem eventually_norm_L_one_and_reciprocal_le_of_secondOrder_mangoldt_errors {d : ℕ} (hd : 0 < d)
-    {A B : ℝ} (hB : 0 ≤ B)
+theorem eventually_L_one_inv_le_of_mangoldt_errors {d : ℕ} (hd : 0 < d) {A B : ℝ} (hB : 0 ≤ B)
     (hH :
       ∀ᶠ x : ℝ in Filter.atTop,
         |(∑ n ∈ Finset.Ioc 0 ⌊x⌋₊, ArithmeticFunction.vonMangoldt n / ((n : ℝ) * Real.log n)) -
@@ -140,7 +139,7 @@ theorem eventually_norm_L_one_and_reciprocal_le_of_secondOrder_mangoldt_errors {
         (d : ℝ) * (Real.log (Real.log x) + Real.eulerMascheroniConstant + 1 / Real.log x) +
           ((d : ℝ) * (A + B) + (34 / 7 : ℝ) * (d : ℝ) + 1) / (Real.log x) ^ 2
       ‖f.val.L 1‖ ≤ Real.exp m ∧ 1 / ‖f.val.L 1‖ ≤ (6 / Real.pi ^ 2) ^ d * Real.exp m := by
-  filter_upwards [eventually_norm_L_one_and_reciprocal_le_secondOrder_error hd,
+  filter_upwards [eventually_normL_pair_secondOrder hd,
     (tendsto_valueCutoff_atTop hd).eventually hH, (tendsto_valueCutoff_atTop hd).eventually hψ,
     (tendsto_valueCutoff_atTop hd).eventually (Filter.eventually_gt_atTop (1 : ℝ)),
     (tendsto_log_valueCutoff_atTop hd).eventually (Filter.eventually_ge_atTop (1 : ℝ))] with f hb
@@ -148,8 +147,7 @@ theorem eventually_norm_L_one_and_reciprocal_le_of_secondOrder_mangoldt_errors {
   dsimp only at hb ⊢
   have hQ :=
     mul_le_mul_of_nonneg_left
-      (AnalyticNumberTheory.Arithmetic.truncatedMangoldtMajorant_le_of_secondOrder_mangoldt_errors
-        hx hl hB hHf hψf)
+      (AnalyticNumberTheory.Arithmetic.truncatedMangoldtMajorant_le_of_errors hx hl hB hHf hψf)
       (Nat.cast_nonneg d)
   have hex :
     (d : ℝ) *

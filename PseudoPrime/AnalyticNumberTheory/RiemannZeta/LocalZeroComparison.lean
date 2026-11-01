@@ -120,7 +120,7 @@ theorem exists_local_logDeriv_bound {T : ℝ} (hT : 8 ≤ T) :
   obtain
     ⟨R1, R2, S, m, g, h, M, hR1big, hR1R2, hR2small, hgAn, hgne, hmpos, hh', hSzero, _, heqOn, hMc,
       hgjc_ge, hMle, hMbound⟩ :=
-    exists_bound_re_logDeriv_g_jensen_good_radius hT
+    exists_jensen_logDeriv_primitive_bound hT
   refine ⟨R2, S, m, g, hR1big.trans_lt hR1R2, hR2small, hgAn, hgne, hmpos, hSzero, heqOn, ?_⟩
   intro σ hσ1 hσ2
   set z : ℂ := σ + T * Complex.I with hz_def
@@ -160,8 +160,8 @@ theorem exists_local_logDeriv_bound {T : ℝ} (hT : 8 ≤ T) :
     mul_nonneg (mul_nonneg jensenLogConst_pos.le (Real.log_nonneg (by linarith only [hT])))
       ((le_max_right _ _).trans' zero_le_one)
   exact
-    le_qMinusOneZetaLogDerivConst_mul_log_sq_of_semi_explicit hT le_rfl (by linarith only) hR1big
-      (hR1R2.trans hR2small) hd_le hMc hMle hgjc_ge (hderiv_bound.trans (le_add_of_nonneg_left hnn))
+    le_qMinusOneLogDerivConst_mul_log_sq hT le_rfl (by linarith only) hR1big (hR1R2.trans hR2small)
+      hd_le hMc hMle hgjc_ge (hderiv_bound.trans (le_add_of_nonneg_left hnn))
 
 /-- A zeta zero inside a nonvanishing-factor decomposition belongs to its finite zero set.
 Otherwise every product factor and the analytic remainder would be nonzero.

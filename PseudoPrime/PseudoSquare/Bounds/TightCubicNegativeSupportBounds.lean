@@ -19,8 +19,8 @@ namespace PseudoPrime.PseudoSquare
 /-- Conductor and sensitive-cost envelopes under GRH give an odd coprime
 negative Jacobi witness at the tight cubic radius. Transfer the primitive
 quadratic character value and exclude two through the excluded integer 2n. -/
-theorem exists_prime_neg_one_le_tight_cubic_sensitive_radius {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {G E : ℝ}
+theorem exists_prime_negOne_tightCubicSensitive_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {G E : ℝ}
     (hlog : Real.log (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ G)
     (hcost :
       AnalyticNumberTheory.Arithmetic.characterExclusionCost
@@ -43,7 +43,7 @@ theorem exists_prime_neg_one_le_tight_cubic_sensitive_radius {n : ℕ} {hn : Odd
   have hf := NumberTheory.three_le_conductor_of_ne_one χ hχ
   have hprim := AnalyticNumberTheory.Arithmetic.primitiveCharacter_ne_one χ hχ
   obtain ⟨p, hp, hb, hd, hv⟩ :=
-    LLS.PaperStatements.exists_prime_outside_le_tight_cubic_exclusion_radius χ.primitiveCharacter
+    LLS.PaperStatements.exists_prime_neOne_tightCubic_GRH χ.primitiveCharacter
       (le_trans (by decide : 2 ≤ 3) hf) (mul_ne_zero (by norm_num only : (2 : ℕ) ≠ 0) hn.pos.ne')
       hGRH χ.primitiveCharacter_isPrimitive hprim hlog hcost
   have hpn : ¬p ∣ n := fun h ↦ hd (h.trans (dvd_mul_left n 2))
@@ -71,8 +71,8 @@ theorem exists_prime_neg_one_le_tight_cubic_sensitive_radius {n : ℕ} {hn : Odd
 /-- If the cost at 2n is at most G+2E, the tight square-factor radius bounds
 an odd coprime negative prime. Apply sensitive extraction and the proved
 ramification absorption, with nonnegative conductor and square-factor envelopes. -/
-theorem exists_prime_neg_one_le_tight_cubic_square_factor_of_envelopes {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {G E : ℝ}
+theorem exists_prime_negOne_tightCubicEnvelopes_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {G E : ℝ}
     (hlog : Real.log (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ G) (hE : 0 ≤ E)
     (hcost :
       AnalyticNumberTheory.Arithmetic.characterExclusionCost
@@ -87,7 +87,7 @@ theorem exists_prime_neg_one_le_tight_cubic_square_factor_of_envelopes {n : ℕ}
   have hG :=
     (Real.log_natCast_nonneg (NumberTheory.complexQuadraticCharacter n hn).conductor).trans hlog
   obtain ⟨p, hp, ho, hc, hj, hb⟩ :=
-    exists_prime_neg_one_le_tight_cubic_sensitive_radius (hns := hns) hGRH hlog hcost
+    exists_prime_negOne_tightCubicSensitive_GRH (hns := hns) hGRH hlog hcost
   have hr := LLS.PaperStatements.tightCubicExclusionRadius_le_square_factor hG hE
   have hcost0 : 0 ≤ G + 2 * E := by linarith only [hG, hE]
   have hn := (LLS.PaperStatements.tightCubicExclusionRadius_data hG hcost0).1
@@ -98,8 +98,8 @@ theorem exists_prime_neg_one_le_tight_cubic_square_factor_of_envelopes {n : ℕ}
 prime below the tight square-factor radius. Its only square-factor cost is
 the logarithm sum over primes where (d/p)=-1. Conductor and cost estimates
 are discharged from the existing arithmetic decomposition. -/
-theorem exists_prime_neg_one_le_tight_cubic_negative_support {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem exists_prime_negOne_tightCubicNegative_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ,
       p.Prime ∧
@@ -116,21 +116,21 @@ theorem exists_prime_neg_one_le_tight_cubic_negative_support {n : ℕ} {hn : Odd
     ⟨bridge.squareFactor ^ 2, by simpa only [mul_comm] using bridge.squarefreePart_sq_mul.symm⟩
   have hf :=
     Nat.le_of_dvd (Nat.mul_pos (by decide : 0 < 4) bridge.squarefreePart_pos)
-      (NumberTheory.complexQuadraticCharacter_conductor_dvd_four_mul_squarefreePart bridge hdvd)
+      (NumberTheory.complexQuadratic_conductor_dvd_four_part bridge hdvd)
   have hlog :=
     Real.log_le_log
       (Nat.cast_pos.mpr
         (Nat.pos_of_ne_zero (NumberTheory.complexQuadraticCharacter n hn).conductor_ne_zero))
       (Nat.cast_le.mpr hf)
   exact
-    exists_prime_neg_one_le_tight_cubic_square_factor_of_envelopes (hns := hns) hGRH hlog
+    exists_prime_negOne_tightCubicEnvelopes_GRH (hns := hns) hGRH hlog
       (negativeSquareFactorCost_nonneg _ _)
-      (primitiveQuadraticExclusionCost_le_negative_square_factor bridge)
+      (quadraticExclusionCost_le_negative_square_factor bridge)
 
 /-- Under GRH, leastness transfers the negative-support cubic radius to the
 least negative odd-prime witness of n=s²d. The support cost is the explicit
 Jacobi filter on the square factor, with no remaining analytic cost hypothesis. -/
-theorem primeNegOneWitness_le_tight_cubic_negative_support {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+theorem negOneWitness_le_tight_cubic_negative_support {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
@@ -139,13 +139,13 @@ theorem primeNegOneWitness_le_tight_cubic_negative_support {n : ℕ} {hn : Odd n
           (Real.log ((4 * bridge.squarefreePart : ℕ) : ℝ))
           (negativeSquareFactorCost bridge.squarefreePart bridge.squareFactor)) ^
         2 := by
-  obtain ⟨p, hp, ho, _, hj, hb⟩ := exists_prime_neg_one_le_tight_cubic_negative_support bridge hGRH
+  obtain ⟨p, hp, ho, _, hj, hb⟩ := exists_prime_negOne_tightCubicNegative_GRH bridge hGRH
   exact (Nat.cast_le.mpr (NumberTheory.primeNegOneWitness_le n hw ⟨hp, ho, hj⟩)).trans hb
 
 /-- The same negative-support radius bounds the least non-one odd-prime
 witness under GRH. Use the constructed negative value as a non-one value;
 this does not identify the two least witnesses. -/
-theorem primeNeOneWitness_le_tight_cubic_negative_support {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+theorem neOneWitness_le_tight_cubic_negative_support {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
@@ -154,7 +154,7 @@ theorem primeNeOneWitness_le_tight_cubic_negative_support {n : ℕ} {hn : Odd n}
           (Real.log ((4 * bridge.squarefreePart : ℕ) : ℝ))
           (negativeSquareFactorCost bridge.squarefreePart bridge.squareFactor)) ^
         2 := by
-  obtain ⟨p, hp, ho, _, hj, hb⟩ := exists_prime_neg_one_le_tight_cubic_negative_support bridge hGRH
+  obtain ⟨p, hp, ho, _, hj, hb⟩ := exists_prime_negOne_tightCubicNegative_GRH bridge hGRH
   have hne : jacobiSym n p ≠ 1 := by
     rw [hj]; norm_num only
   exact (Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le n hw ⟨hp, ho, hne⟩)).trans hb

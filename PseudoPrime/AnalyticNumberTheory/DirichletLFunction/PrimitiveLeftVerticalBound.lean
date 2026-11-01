@@ -42,8 +42,8 @@ the denominator lower bound `1 + t² ≤ ‖s‖ * ‖s - 1‖`
 Role: the left-vertical integral argument pointwise kernel bound (K), feeding the
 absolute-integrability argument.
 -/
-theorem norm_dirichletReciprocalContourKernel_leftVertical_le {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} {x : ℝ} (hx : 0 < x) {A : ℕ} (hA : 2 ≤ A) {t D : ℝ}
+theorem reciprocalKernel_left_norm_bound {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} {x : ℝ}
+    (hx : 0 < x) {A : ℕ} (hA : 2 ≤ A) {t D : ℝ}
     (hL :
       ‖logDeriv (DirichletCharacter.LFunction χ)
             (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
@@ -95,8 +95,8 @@ finishes.
 Role: the `(K')` envelope bound, uniformly scaling the universal integrable envelope `g` by an
 `A`-dependent but `t`-independent constant, feeding the kernel's own integrability.
 -/
-theorem norm_dirichletReciprocalContourKernel_leftVertical_envelope_le {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} {x : ℝ} (hx : 0 < x) {A : ℕ} (hA : 2 ≤ A) {D : ℝ} (hDnn : 0 ≤ D)
+theorem reciprocalKernel_left_envelope {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} {x : ℝ}
+    (hx : 0 < x) {A : ℕ} (hA : 2 ≤ A) {D : ℝ} (hDnn : 0 ≤ D)
     (hLbound :
       ∀ t : ℝ,
         ‖logDeriv (DirichletCharacter.LFunction χ)
@@ -105,7 +105,7 @@ theorem norm_dirichletReciprocalContourKernel_leftVertical_envelope_le {N : ℕ}
     (t : ℝ) :
     ‖dirichletReciprocalContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
       D * x ^ (-(A : ℝ) - 3 / 2) * (((A : ℝ) + 5) ^ 2 + 1) * General.logQuadraticEnvelope t := by
-  have hK := norm_dirichletReciprocalContourKernel_leftVertical_le hx hA (hLbound t)
+  have hK := reciprocalKernel_left_norm_bound hx hA (hLbound t)
   set BA : ℝ := ((A : ℝ) + 5) ^ 2 + 1 with hBA_def
   have hBA1 : (1 : ℝ) ≤ BA := by
     rw [hBA_def]
@@ -141,8 +141,8 @@ Role: the explicit-`D` form of the left-vertical integral argument whole-line in
 vanishing argument reuse a single `D` obtained once (rather than re-deriving it, existentially, at
 every `A`).
 -/
-theorem norm_integral_dirichletReciprocalContourKernel_leftVertical_of_bound {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} {x : ℝ} (hx : 0 < x) {A : ℕ} (hA : 2 ≤ A) {D : ℝ} (hDnn : 0 ≤ D)
+theorem reciprocalKernel_left_integral_le {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N} {x : ℝ}
+    (hx : 0 < x) {A : ℕ} (hA : 2 ≤ A) {D : ℝ} (hDnn : 0 ≤ D)
     (hLbound :
       ∀ t : ℝ,
         ‖logDeriv (DirichletCharacter.LFunction χ)
@@ -159,8 +159,7 @@ theorem norm_integral_dirichletReciprocalContourKernel_leftVertical_of_bound {N 
     General.integrable_logQuadraticEnvelope.const_mul _
   have hbound :=
     MeasureTheory.norm_integral_le_of_norm_le hg
-      (Filter.Eventually.of_forall fun t =>
-        norm_dirichletReciprocalContourKernel_leftVertical_envelope_le hx hA hDnn hLbound t)
+      (Filter.Eventually.of_forall fun t => reciprocalKernel_left_envelope hx hA hDnn hLbound t)
   rwa [MeasureTheory.integral_const_mul] at hbound
 
 /--
@@ -170,9 +169,9 @@ Content: the generic inverse-character nonvanishing theorem replaces the quadrat
 the existing continuity proof.
 Role: supplies measurability for the generic left-vertical integrability proof.
 -/
-theorem continuous_dirichletReciprocalContourKernel_leftVertical_line {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ}
-    (hx : 0 < x) {A : ℕ} (hA : 2 ≤ A) :
+theorem continuous_reciprocalKernel_left {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) {A : ℕ}
+    (hA : 2 ≤ A) :
     Continuous
       (fun t : ℝ ↦
         dirichletReciprocalContourKernel x χ
@@ -203,10 +202,8 @@ theorem continuous_dirichletReciprocalContourKernel_leftVertical_line {N : ℕ} 
       intro h
       rw [h, Complex.one_re] at hsre_neg
       exact (not_lt_of_ge (show (0 : ℝ) ≤ 1 from by norm_num only)) hsre_neg
-    have hL := dirichletLFunction_ne_zero_leftVertical hprimitive hne hinv A hA t
-    exact
-      (differentiableAt_dirichletReciprocalContourKernel hx hne hs0 hs1
-          hL).continuousAt.continuousWithinAt
+    have hL := LFunction_ne_zero_leftVertical hprimitive hne hinv A hA t
+    exact (differentiableAt_reciprocalKernel hx hne hs0 hs1 hL).continuousAt.continuousWithinAt
   exact hOn.comp_continuous hg (fun t => Set.mem_range_self t)
 
 /--
@@ -215,26 +212,21 @@ Conclusion: the generic reciprocal kernel is integrable on the full left vertica
 Content: applies the generic `L'/L` envelope bound to the existing integrable logarithmic envelope.
 Role: permits the generic truncated-to-whole-line limit.
 -/
-theorem integrable_dirichletReciprocalContourKernel_leftVertical {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ}
-    (hx : 0 < x) {A : ℕ} (hA : 2 ≤ A) :
+theorem integrable_reciprocalKernel_left {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) {A : ℕ}
+    (hA : 2 ≤ A) :
     MeasureTheory.Integrable
       (fun t : ℝ ↦
         dirichletReciprocalContourKernel x χ
           (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)) := by
-  obtain ⟨D, hDnn, hD⟩ :=
-    exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le_general hprimitive hne hinv
+  obtain ⟨D, hDnn, hD⟩ := L_logDeriv_leftVertical_bound hprimitive hne hinv
   apply
     MeasureTheory.Integrable.mono'
       ((General.integrable_logQuadraticEnvelope.const_mul
         (D * x ^ (-(A : ℝ) - 3 / 2) * (((A : ℝ) + 5) ^ 2 + 1))))
-  · exact
-      (continuous_dirichletReciprocalContourKernel_leftVertical_line hprimitive hne hinv hx
-          hA).aestronglyMeasurable
+  · exact (continuous_reciprocalKernel_left hprimitive hne hinv hx hA).aestronglyMeasurable
   · filter_upwards with t
-    exact
-      norm_dirichletReciprocalContourKernel_leftVertical_envelope_le hx hA hDnn (fun t => hD A hA t)
-        t
+    exact reciprocalKernel_left_envelope hx hA hDnn (fun t => hD A hA t) t
 
 /--
 Input/assumptions: the generic left-vertical hypotheses, `x > 0`, and `A ≥ 2`.
@@ -242,9 +234,9 @@ Conclusion: symmetric finite truncations converge to the generic whole-line left
 Content: applies `intervalIntegral_tendsto_integral` to the preceding integrability theorem.
 Role: is the fixed-`A` component for the shared-height contour limit.
 -/
-theorem tendsto_intervalIntegral_dirichletReciprocalContourKernel_leftVertical {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ}
-    (hx : 0 < x) {A : ℕ} (hA : 2 ≤ A) :
+theorem tendsto_reciprocal_left_truncated {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) {A : ℕ}
+    (hA : 2 ≤ A) :
     Filter.Tendsto
       (fun T : ℝ ↦
         ∫ t in -T..T,
@@ -255,8 +247,8 @@ theorem tendsto_intervalIntegral_dirichletReciprocalContourKernel_leftVertical {
           dirichletReciprocalContourKernel x χ
             (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))) :=
   MeasureTheory.intervalIntegral_tendsto_integral
-    (integrable_dirichletReciprocalContourKernel_leftVertical hprimitive hne hinv hx hA)
-    Analysis.tendsto_neg_atTop_atBot' Filter.tendsto_id
+    (integrable_reciprocalKernel_left hprimitive hne hinv hx hA) Analysis.tendsto_neg_atTop_atBot'
+    Filter.tendsto_id
 
 /--
 Input/assumptions: the generic primitive character hypotheses and GRH, with `x > 0` and `A ≥ 2`.
@@ -266,8 +258,8 @@ Content: composes the fixed-`A` generic truncation limit with the named height s
 infinity.
 Role: connects the generic left edge to the same rectangles as the generic horizontal edges.
 -/
-theorem tendsto_primitiveHorizontalHeightSeq_leftVertical_intervalIntegral {N : ℕ} [NeZero N]
-    (hN2 : 2 ≤ N) {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
+theorem tendsto_reciprocal_left_height_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+    {χ : DirichletCharacter ℂ N} (hGRH : GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) {A : ℕ}
     (hA : 2 ≤ A) :
     Filter.Tendsto
@@ -281,9 +273,8 @@ theorem tendsto_primitiveHorizontalHeightSeq_leftVertical_intervalIntegral {N : 
         (∫ t : ℝ,
           dirichletReciprocalContourKernel x χ
             (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))) :=
-  (tendsto_intervalIntegral_dirichletReciprocalContourKernel_leftVertical hprimitive hne hinv hx
-        hA).comp
-    (tendsto_primitiveHorizontalHeightSeq_atTop hN2 hGRH hprimitive hne hinv)
+  (tendsto_reciprocal_left_truncated hprimitive hne hinv hx hA).comp
+    (tendsto_horizontalHeightSeq_GRH hN2 hGRH hprimitive hne hinv)
 
 /-! ### `A → ∞`: the fixed-`A` whole-line integral vanishes — the left-edge argument's completion -/
 
@@ -292,17 +283,15 @@ whole reciprocal-kernel integral on `Re s = -A-1/2` tends to zero as `A → ∞`
 A single logarithmic-derivative coefficient bounds its norm by a constant times
 `(A+1)²*(x⁻¹)^A`, which tends to zero by geometric decay. This removes the left edge
 from the general primitive-character explicit formula. -/
-theorem tendsto_dirichletReciprocalContourKernel_leftVertical_integral_atTop {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ}
-    (hx : 1 < x) :
+theorem tendsto_reciprocal_left_integral {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 < x) :
     Filter.Tendsto
       (fun A : ℕ ↦
         ∫ t : ℝ,
           dirichletReciprocalContourKernel x χ (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))
       Filter.atTop (nhds 0) := by
   have hxpos : (0 : ℝ) < x := lt_trans zero_lt_one hx
-  obtain ⟨D, hDnn, hD⟩ :=
-    exists_C_norm_logDeriv_dirichletLFunction_leftVertical_le_general hprimitive hne hinv
+  obtain ⟨D, hDnn, hD⟩ := L_logDeriv_leftVertical_bound hprimitive hne hinv
   set r : ℝ := x⁻¹ with hr_def
   have hr0 : (0 : ℝ) ≤ r := by
     rw [hr_def]
@@ -327,9 +316,7 @@ theorem tendsto_dirichletReciprocalContourKernel_leftVertical_integral_atTop {N 
                 (((-(A : ℝ) - 1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)‖ ≤
           K * (((A : ℝ) + 1) ^ 2 * r ^ A) := by
     intro A hA
-    have hI :=
-      norm_integral_dirichletReciprocalContourKernel_leftVertical_of_bound hxpos hA hDnn
-        (fun t => hD A hA t)
+    have hI := reciprocalKernel_left_integral_le hxpos hA hDnn (fun t => hD A hA t)
     calc
       ‖∫ t : ℝ,
               dirichletReciprocalContourKernel x χ

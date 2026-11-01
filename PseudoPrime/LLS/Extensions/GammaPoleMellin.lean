@@ -24,12 +24,12 @@ namespace PseudoPrime.LLS.Extensions.GeneralLFunction
 derivative difference equals the finite sum over gamma shifts of the convergent series
 `1/(t+κ_j+2n) - 1/(s+κ_j+2n)`. Rewrite the digamma resolvent formula at half arguments.
 This gives the gamma pole expansion used in the centered Mellin integrand. -/
-theorem logDeriv_completionFactor_sub_eq_gammaPoleSeries (f : GeneralLFunction)
-    (hf : f.IsAdmissible) {s t : ℂ} (hs : 0 < s.re) (ht : 0 < t.re) :
+theorem completion_logDeriv_gammaPoleSeries (f : GeneralLFunction) (hf : f.IsAdmissible) {s t : ℂ}
+    (hs : 0 < s.re) (ht : 0 < t.re) :
     logDeriv f.completionFactor s - logDeriv f.completionFactor t =
       ∑ j : Fin f.degree,
         ∑' n : ℕ, (1 / (t + f.shift j + 2 * (n : ℂ)) - 1 / (s + f.shift j + 2 * (n : ℂ))) := by
-  rw [logDeriv_completionFactor_sub_eq_resolventSeries f hf hs ht, Finset.sum_div]
+  rw [completion_logDeriv_resolventSeries f hf hs ht, Finset.sum_div]
   apply Finset.sum_congr rfl
   intro j _
   rw [← tsum_div_const]
@@ -42,8 +42,8 @@ theorem logDeriv_completionFactor_sub_eq_gammaPoleSeries (f : GeneralLFunction)
 logarithmic derivative equals the finite sum over gamma shifts of
 `sum_n 1/(σ+κ_j+2n)²`. Differentiate the local centered pole expansion and translate
 back from its center to σ. This evaluates the gamma part of the Mellin origin term. -/
-theorem deriv_logDeriv_completionFactor_real_eq_gammaPoleSeries (f : GeneralLFunction)
-    (hf : f.IsAdmissible) {σ : ℝ} (hσ : 1 ≤ σ) :
+theorem completion_deriv_real_gammaPoleSeries (f : GeneralLFunction) (hf : f.IsAdmissible) {σ : ℝ}
+    (hσ : 1 ≤ σ) :
     deriv (logDeriv f.completionFactor) (σ : ℂ) =
       ∑ j : Fin f.degree, ∑' n : ℕ, 1 / ((σ : ℂ) + f.shift j + 2 * (n : ℂ)) ^ 2 := by
   have hsum :=
@@ -67,7 +67,7 @@ theorem deriv_logDeriv_completionFactor_real_eq_gammaPoleSeries (f : GeneralLFun
     have hs : 0 < ((σ : ℂ) + z).re := by
       rw [Complex.add_re, Complex.ofReal_re]
       linarith only [hr, hz, hσ]
-    rw [logDeriv_completionFactor_sub_eq_gammaPoleSeries f hf hs
+    rw [completion_logDeriv_gammaPoleSeries f hf hs
         (by
           rw [Complex.ofReal_re]; linarith only [hσ])]
     apply Finset.sum_congr rfl
@@ -120,8 +120,8 @@ gamma-pole resolvent integrals equals shiftedGammaSum minus the derivative of
 the completion factor's logarithmic derivative at σ. Sum the individual Mellin
 evaluations and substitute the inverse-square derivative series.
 This identifies both the gamma residues and their centered origin correction. -/
-theorem sum_normalized_integral_gammaPoleResolvent_eq (f : GeneralLFunction) (hf : f.IsAdmissible)
-    {σ τ x : ℝ} (hσ : 1 ≤ σ) (hτ : 0 < τ) (hx : 1 < x) :
+theorem gammaPole_normalized_integral (f : GeneralLFunction) (hf : f.IsAdmissible) {σ τ x : ℝ}
+    (hσ : 1 ≤ σ) (hτ : 0 < τ) (hx : 1 < x) :
     (∑ j : Fin f.degree,
         (2 * Real.pi)⁻¹ •
           (∫ y : ℝ,
@@ -132,6 +132,6 @@ theorem sum_normalized_integral_gammaPoleResolvent_eq (f : GeneralLFunction) (hf
   simp only [AnalyticNumberTheory.Gamma.normalized_integral_gammaPoleResolvent_eq (hf.2.2.2.1 _) hσ
         hτ hx]
   rw [Finset.sum_sub_distrib, shiftedGammaSum, AnalyticNumberTheory.General.gammaShiftFamilySum,
-    deriv_logDeriv_completionFactor_real_eq_gammaPoleSeries f hf hσ]
+    completion_deriv_real_gammaPoleSeries f hf hσ]
 
 end PseudoPrime.LLS.Extensions.GeneralLFunction

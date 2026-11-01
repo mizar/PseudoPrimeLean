@@ -131,8 +131,8 @@ private theorem character_gammaFactor_ne_zero {q : ℕ} [NeZero q] (χ : Dirichl
 factor and the ordinary L-function. The nonzero character gamma factor permits division
 cancellation; the parity normalization identifies both gamma factors.
 This proves compatibility of the entire continuation with the prescribed product. -/
-theorem ofDirichletCharacter_completed_eq_gamma_product {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) {s : ℂ} (hs : 0 < s.re) :
+theorem dirichlet_completed_gamma_product {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) {s : ℂ}
+    (hs : 0 < s.re) :
     (ofDirichletCharacter χ).completed s =
       (q : ℂ) ^ (s / 2) * (ofDirichletCharacter χ).gammaFactor s * χ.LFunction s := by
   have hs0 : s ≠ 0 := fun h ↦ (ne_of_gt hs) (congrArg Complex.re h)
@@ -162,7 +162,7 @@ private theorem normalized_completion_conj {q : ℕ} [NeZero q] (χ : DirichletC
       (Complex.mem_slitPlane_iff.mpr (Or.inl (by exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne q))))
   have hc := Complex.conj_cpow (q : ℂ) ((1 - s) / 2) harg
   simp only [map_div₀, map_sub, map_one, map_ofNat, Complex.conj_natCast] at hc
-  rw [map_mul, map_mul, ← hc, DirichletCharacter.completedLFunction_conj]
+  rw [map_mul, map_mul, ← hc, AnalyticNumberTheory.DirichletLFunction.completed_conj]
   simp only [map_sub, map_one, Complex.conj_conj]
   split_ifs
   · rw [map_one]
@@ -202,7 +202,7 @@ The resulting squared-norm identity and nonnegativity give unit norm for admissi
 theorem ofDirichletCharacter_rootNumber_norm {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) : ‖χ.rootNumber‖ = 1 := by
   have h0ne : (ofDirichletCharacter χ).completed 0 ≠ 0 := fun h ↦
-    dirichletCompletedLFunction_zero_ne_zero_of_primitive hp hne
+    completed_zero_ne_zero_of_primitive hp hne
       ((ofDirichletCharacter_completed_eq_zero_iff χ 0).mp h)
   have h0 := ofDirichletCharacter_functionalEquation χ hp 0
   have h1 := ofDirichletCharacter_functionalEquation χ hp 1
@@ -258,8 +258,8 @@ private theorem normalized_completion_envelope {q : ℕ} [NeZero q] (χ : Dirich
         (((q : ℝ) + (1 + Real.sqrt Real.pi) + (4 * (q : ℝ) + 3)) *
           ((‖s‖ + 3) * Real.log (‖s‖ + 3))) := by
   have hF :=
-    (norm_completedLFunction_le_completedLFunctionBallBound (Nat.lt_of_succ_le hq) hp hne
-          (inv_ne_one.mpr hne) (norm_nonneg s) (le_refl ‖s‖)).trans
+    (norm_completed_le_completedBallBound (Nat.lt_of_succ_le hq) hp hne (inv_ne_one.mpr hne)
+          (norm_nonneg s) (le_refl ‖s‖)).trans
       (completedLFunctionBallBound_le_exp hq hs)
   have hL := one_le_log_add_three hs
   have hX : ‖s‖ ≤ (‖s‖ + 3) * Real.log (‖s‖ + 3) := by
@@ -311,8 +311,7 @@ theorem ofDirichletCharacter_isAdmissible {q : ℕ} [NeZero q] (χ : DirichletCh
     (hq : 2 ≤ q) (hp : χ.IsPrimitive) (hne : χ ≠ 1) : (ofDirichletCharacter χ).IsAdmissible := by
   refine
     ⟨Nat.zero_lt_one, Nat.pos_of_ne_zero (NeZero.ne q), ?_, ?_, ?_, fun s hs ↦
-      ofDirichletCharacter_convergence χ hs, fun s hs ↦
-      ofDirichletCharacter_completed_eq_gamma_product χ hs,
+      ofDirichletCharacter_convergence χ hs, fun s hs ↦ dirichlet_completed_gamma_product χ hs,
       ofDirichletCharacter_differentiable χ hne, ofDirichletCharacter_hasOrderAtMostOne χ hq hp hne,
       χ.rootNumber, ofDirichletCharacter_rootNumber_norm χ hp hne,
       ofDirichletCharacter_functionalEquation χ hp⟩

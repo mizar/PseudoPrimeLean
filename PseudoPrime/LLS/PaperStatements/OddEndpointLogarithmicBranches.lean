@@ -108,22 +108,20 @@ theorem log_defect_le_quadratic_two_branch {q : ℕ} (χ : DirichletCharacter �
         p ∈ Finset.Ioc 0 ⌊x ^ ((1 : ℝ) / k)⌋₊ → p.Prime → Odd p → χ.primitiveCharacter p = 1 := by
     intro k p hk hp hprime hodd
     exact ht p hprime hodd (cast_le_of_mem_root_cutoff hx1 (Finset.mem_Icc.mp hk).1 hp)
-  rw [logWeightedMangoldtSum_sub_characterLogWeightedSum_re_eq_twoAdicCorrection_of_eq_one x χ hx2
-      ho]
+  rw [logMangoldt_sub_re_eq_twoCorrection_of_one x χ hx2 ho]
   rcases hquad (2 : ZMod χ.conductor) with h0 | h1 | hm
   · rw [quadraticTwoLogCost, ite_eq_left h0]
-    exact twoAdicLogCorrection_le_half_log_sq_of_apply_two_eq_zero x χ hx0 h0
+    exact logTwoCorrection_le_half_sq_of_zero x χ hx0 h0
   · have hn0 : χ.primitiveCharacter 2 ≠ 0 := by
       rw [h1]; exact one_ne_zero
     rw [quadraticTwoLogCost, ite_eq_right hn0, ite_eq_left h1]
-    exact (twoAdicLogCorrection_eq_zero_of_apply_two_eq_one x χ hx0 h1).le
+    exact (logTwoCorrection_eq_zero_of_one x χ hx0 h1).le
   · have hn0 : χ.primitiveCharacter 2 ≠ 0 := by
       rw [hm]; exact neg_ne_zero.mpr one_ne_zero
     have hn1 : χ.primitiveCharacter 2 ≠ 1 := by
       rw [hm]; norm_num only
     rw [quadraticTwoLogCost, ite_eq_right hn0, ite_eq_right hn1]
-    exact
-      twoAdicLogCorrection_le_half_log_sq_add_log_two_mul_log_half_of_apply_two_eq_neg_one x χ hx hm
+    exact logTwoCorrection_le_half_sq_add_of_neg_one x χ hx hm
 
 /-- For x>=4 and any complex branch input, the logarithmic cost is at most the
 common minus-one envelope. Log x>=log 2 makes the extra term nonnegative.

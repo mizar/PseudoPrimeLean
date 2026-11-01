@@ -32,7 +32,7 @@ theorem gammaFactor_logDeriv_eq_affine_digamma {q : ℕ} (χ : DirichletCharacte
     intro s hs
     have hp : 0 < (s / 2).re := by
       rw [complex_div_two_re]; linarith only [hs]
-    rw [logDeriv_gammaFactor_eq_of_even_of_half_ne_neg_nat he
+    rw [gammaLogDeriv_even_eq_digamma he
         (fun n ↦ AnalyticNumberTheory.Gamma.not_neg_nat_of_re_pos hp n)]
     simp only [Complex.ofReal_zero, add_zero]
     ring
@@ -41,7 +41,7 @@ theorem gammaFactor_logDeriv_eq_affine_digamma {q : ℕ} (χ : DirichletCharacte
     have hp : 0 < ((s + 1) / 2).re := by
       rw [complex_div_two_re, Complex.add_re, Complex.one_re]
       linarith only [hs]
-    rw [logDeriv_gammaFactor_eq_of_odd_of_half_ne_neg_nat ho
+    rw [gammaLogDeriv_odd_eq_digamma ho
         (fun n ↦ AnalyticNumberTheory.Gamma.not_neg_nat_of_re_pos hp n)]
     have hz : (s + 1) / 2 = s / 2 + ((1 / 2 : ℝ) : ℂ) := by
       push_cast; ring
@@ -173,8 +173,8 @@ theorem reciprocalGap_reflectedIntegral_eq_realAxis {h : ℝ} (hh : 0 < h) {q : 
     logDeriv χ⁻¹.completedLFunction s = logDeriv χ⁻¹.LFunction s + logDeriv χ⁻¹.gammaFactor s := by
     have hs0 : 0 < s.re := zero_lt_one.trans_le hs
     have hf :=
-      logDeriv_dirichletLFunction_eq_completed_sub_gammaFactor_of_regular hinv
-        (completedLFunction_ne_zero_of_one_le_re hinv hs) (gammaFactor_ne_zero_of_re_pos χ⁻¹ hs0)
+      L_logDeriv_sub_gamma_of_regular hinv (completed_ne_zero_of_one_le_re hinv hs)
+        (gammaFactor_ne_zero_of_re_pos χ⁻¹ hs0)
         (analyticAt_gammaFactor_of_re_pos χ⁻¹ hs0).differentiableAt
     rw [hf]
     ring
@@ -232,7 +232,7 @@ theorem reciprocalGap_leftIntegral_eq_realAxis {h : ℝ} (hh : 0 < h) {q : ℕ} 
     reciprocalGapLeftIntegral h hh χ x =
       ((-x ^ (-1 / 2 - h) / h : ℝ) : ℂ) *
         (Complex.log q + logDeriv χ⁻¹.completedLFunction ((1 + h : ℝ) : ℂ)) := by
-  rw [reciprocalGap_leftIntegral_eq_conductor_add_reflected hh hp hne hinv hx,
+  rw [reciprocalGap_left_eq_conductor_reflected hh hp hne hinv hx,
     reciprocalGap_reflectedIntegral_eq_realAxis hh hp hne hinv hx, ← Complex.natCast_log]
   simp only [Complex.ofReal_div, Complex.ofReal_mul, Complex.ofReal_neg]
   ring
@@ -270,7 +270,7 @@ theorem reciprocalGap_remainder_re_le_realAxis_budget {h : ℝ} (hh : 0 < h) {q 
   let P :=
     MellinKernel.weightedResidue (reciprocalGapMellinKernel h hh)
       (fun z : ℂ ↦ χ.completedLFunction (z + 1 / 2)) x (-1 / 2)
-  have hΓ := reciprocalGap_remainder_gamma_re_le_signed_budget hh hx χ
+  have hΓ := reciprocalGap_gamma_re_le_signedBudget hh hx χ
   have hP :=
     (Complex.re_le_norm P).trans
       (reciprocalGap_poleResidue_norm_le hh hq hp hne hGRH (zero_lt_one.trans_le hx))
@@ -284,11 +284,10 @@ zero-test coordinate and scale at least one, separation with the exact signed le
 produces a prime non-one witness below the scale. Combine the existing zero-prefix test
 and pole/Gamma bounds with the new real-axis remainder estimate.
 A concrete uniform coefficient or starting point is not assumed to have been improved. -/
-theorem exists_prime_not_one_of_reciprocalGap_realAxis_separation {h c : ℝ} (hh : 0 < h) {q : ℕ}
-    [NeZero q] (hq : 8 ≤ q) {χ : DirichletCharacter ℂ q}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hc : (1 / 2 : ℝ) < c) (hbound : c ^ 2 ≤ 1 / 4 + h / 2) {x : ℝ}
-    (hx : 1 ≤ x) (B : Finset ℕ)
+theorem exists_prime_neOne_axisGap_GRH {h c : ℝ} (hh : 0 < h) {q : ℕ} [NeZero q] (hq : 8 ≤ q)
+    {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hc : (1 / 2 : ℝ) < c)
+    (hbound : c ^ 2 ≤ 1 / 4 + h / 2) {x : ℝ} (hx : 1 ≤ x) (B : Finset ℕ)
     (hgap :
       (1 / c) *
             (Real.log q / 2 + (logDeriv χ.gammaFactor (((1 / 2 : ℝ) + c) : ℂ)).re +

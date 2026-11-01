@@ -40,21 +40,18 @@ theorem gaussian_noSmallPrimes_inequality_relative {q : ℕ} [NeZero q] (hq : 20
     gaussian_level_one_sum_lower_relative hGRH.riemann hh hh1
       ((by norm_num only : (0 : ℝ) < 4).trans_le hx) hl
   have hm := mul_le_mul_of_nonneg_left hlo (Nat.cast_nonneg H.index)
-  have hhi :=
-    gaussian_principal_sum_le_conductor_bound_of_noSmallPrimes_constant_principal hq H hGRH hx
-      hsmall
+  have hhi := gaussianPrincipal_const_noSmall_GRH hq H hGRH hx hsmall
   have he : Finset.Icc 1 ⌊lambda * x⌋₊ = Finset.Ioc 0 ⌊lambda * x⌋₊ := by
     ext n
     simp only [Finset.mem_Icc, Finset.mem_Ioc, Nat.succ_le_iff]
   rw [he, ← Complex.re_sum,
-    MellinKernel.principal_sum_eq_level_one_of_no_small_prime_divisor gaussianGammaMellinKernel
-      (q := q) x hdiv,
+    MellinKernel.principal_sum_level_one_of_no_divisor gaussianGammaMellinKernel (q := q) x hdiv,
     Complex.re_sum] at hhi
   nlinarith only [hm, hhi]
 
 /-- Under the same relative Gaussian hypotheses, if the prime cutoff reaches
 50000 then the transferred prefix lowers the ambient additive error. -/
-theorem gaussian_noSmallPrimes_inequality_relative_prefix_gain {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+theorem gaussian_noSmall_relative50000_GRH {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
     (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     {h x lambda : ℝ} (hh : 0 < h) (hh1 : h ≤ 1 / 2) (hx : 4 ≤ x) (hl : 0 ≤ lambda)
     (hX : 50000 ≤ lambda * x) (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊lambda * x⌋₊ < p)
@@ -73,24 +70,20 @@ theorem gaussian_noSmallPrimes_inequality_relative_prefix_gain {q : ℕ} [NeZero
     gaussian_level_one_sum_lower_relative hGRH.riemann hh hh1
       ((by norm_num only : (0 : ℝ) < 4).trans_le hx) hl
   have hm := mul_le_mul_of_nonneg_left hlo (Nat.cast_nonneg H.index)
-  have hhi :=
-    gaussian_principal_sum_le_conductor_bound_of_noSmallPrimes_constant_principal_prefix_gain hq H
-      hGRH hx hX hdiv hsmall
+  have hhi := gaussianPrincipal_const_prefix50000_GRH hq H hGRH hx hX hdiv hsmall
   have he : Finset.Icc 1 ⌊lambda * x⌋₊ = Finset.Ioc 0 ⌊lambda * x⌋₊ := by
     ext n
     simp only [Finset.mem_Icc, Finset.mem_Ioc, Nat.succ_le_iff]
   rw [he, ← Complex.re_sum,
-    MellinKernel.principal_sum_eq_level_one_of_no_small_prime_divisor gaussianGammaMellinKernel
-      (q := q) x hdiv,
+    MellinKernel.principal_sum_level_one_of_no_divisor gaussianGammaMellinKernel (q := q) x hdiv,
     Complex.re_sum] at hhi
   nlinarith only [hm, hhi]
 
 /-- The relative-width comparison with the signed 50000-prefix error. -/
-theorem gaussian_noSmallPrimes_inequality_relative_prefix_gain_signed {q : ℕ} [NeZero q]
-    (hq : 20000 ≤ q) (H : Subgroup (ZMod q)ˣ)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {h x lambda : ℝ} (hh : 0 < h)
-    (hh1 : h ≤ 1 / 2) (hx : 4 ≤ x) (hl : 0 ≤ lambda) (hX : 50000 ≤ lambda * x)
-    (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊lambda * x⌋₊ < p)
+theorem gaussian_noSmall_relative50000_signed_GRH {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {h x lambda : ℝ} (hh : 0 < h) (hh1 : h ≤ 1 / 2) (hx : 4 ≤ x) (hl : 0 ≤ lambda)
+    (hX : 50000 ≤ lambda * x) (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊lambda * x⌋₊ < p)
     (hsmall :
       ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → NumberTheory.residueInSubgroup q H p) :
     ((H.index : ℝ) * (1 - h) *
@@ -111,18 +104,16 @@ theorem gaussian_noSmallPrimes_inequality_relative_prefix_gain_signed {q : ℕ} 
     ext n
     simp only [Finset.mem_Icc, Finset.mem_Ioc, Nat.succ_le_iff]
   rw [he, ← Complex.re_sum,
-    MellinKernel.principal_sum_eq_level_one_of_no_small_prime_divisor gaussianGammaMellinKernel
-      (q := q) x hdiv,
+    MellinKernel.principal_sum_level_one_of_no_divisor gaussianGammaMellinKernel (q := q) x hdiv,
     Complex.re_sum] at hhi
   nlinarith only [hm, hhi]
 
 /-- Under the same relative Gaussian hypotheses, a cutoff of at least 1000
 uses the transferred 1000-prefix gain in the ambient error. -/
-theorem gaussian_noSmallPrimes_inequality_relative_prefix1000_gain {q : ℕ} [NeZero q]
-    (hq : 20000 ≤ q) (H : Subgroup (ZMod q)ˣ)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {h x lambda : ℝ} (hh : 0 < h)
-    (hh1 : h ≤ 1 / 2) (hx : 4 ≤ x) (hl : 0 ≤ lambda) (hX : 1000 ≤ lambda * x)
-    (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊lambda * x⌋₊ < p)
+theorem gaussian_noSmall_relative1000_GRH {q : ℕ} [NeZero q] (hq : 20000 ≤ q)
+    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {h x lambda : ℝ} (hh : 0 < h) (hh1 : h ≤ 1 / 2) (hx : 4 ≤ x) (hl : 0 ≤ lambda)
+    (hX : 1000 ≤ lambda * x) (hdiv : ∀ p : ℕ, p.Prime → p ∣ q → ⌊lambda * x⌋₊ < p)
     (hsmall :
       ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ lambda * x → NumberTheory.residueInSubgroup q H p) :
     ((H.index : ℝ) * (1 - h) *
@@ -145,8 +136,7 @@ theorem gaussian_noSmallPrimes_inequality_relative_prefix1000_gain {q : ℕ} [Ne
     ext n
     simp only [Finset.mem_Icc, Finset.mem_Ioc, Nat.succ_le_iff]
   rw [he, ← Complex.re_sum,
-    MellinKernel.principal_sum_eq_level_one_of_no_small_prime_divisor gaussianGammaMellinKernel
-      (q := q) x hdiv,
+    MellinKernel.principal_sum_level_one_of_no_divisor gaussianGammaMellinKernel (q := q) x hdiv,
     Complex.re_sum] at hhi
   nlinarith only [hm, hhi]
 

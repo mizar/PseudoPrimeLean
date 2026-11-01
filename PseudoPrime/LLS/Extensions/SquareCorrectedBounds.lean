@@ -33,7 +33,7 @@ theorem truncatedMangoldtMajorant_eq_log_sums {x : ℝ} (hx : 1 < x) :
 /-- For a cutoff above one, the alternating prime-power sum is the negative truncated
 majorant plus `log (pi^2 / 6)` minus the square correction loss. Reindex even exponents
 as squares and use the logarithmic zeta series. This retains the lower-value Euler constant. -/
-theorem alternatingPrimePowerSum_eq_majorant_squareLoss {x : ℝ} (hx : 1 < x) :
+theorem alternatingPrimePowers_majorant_loss {x : ℝ} (hx : 1 < x) :
     PaperStatements.alternatingPrimePowerSum x =
       -AnalyticNumberTheory.Arithmetic.truncatedMangoldtMajorant x + Real.log (Real.pi ^ 2 / 6) -
         AnalyticNumberTheory.Arithmetic.squareMangoldtCorrectionLoss x := by
@@ -57,7 +57,7 @@ theorem neg_log_norm_L_one_le_square_corrected (f : GeneralLFunction) (hf : f.Is
         f.truncatedConductorErrorBound x := by
   have hx1 : 1 < x := lt_of_lt_of_le (by norm_num only : (1 : ℝ) < 100) hx
   have h := neg_log_norm_L_one_le_alternating f hf hRH hx
-  rw [alternatingPrimePowerSum_eq_majorant_squareLoss hx1] at h
+  rw [alternatingPrimePowers_majorant_loss hx1] at h
   have hs :=
     mul_le_mul_of_nonneg_left (AnalyticNumberTheory.Arithmetic.squareMangoldtCorrectionLoss_le x hx)
       (Nat.cast_nonneg f.degree)

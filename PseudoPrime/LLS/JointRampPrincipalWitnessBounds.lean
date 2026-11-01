@@ -94,8 +94,8 @@ theorem prime_trivial_false_of_jointRampPrincipal_prefix {q A : ℕ} [NeZero q]
   have ht' : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ (99 / 40 : ℝ) * x → χ.primitiveCharacter p = 1 :=
     fun p hp hb ↦ PaperStatements.primitiveCharacter_apply_one_of_apply_one χ (ht p hp hb)
   have he :=
-    AnalyticNumberTheory.Arithmetic.pairedEulerPrefix_eq_twice_of_coprime_support
-      χ.primitiveCharacter S hS (fun n _ ↦ Nat.coprime_one_right n) (fun p hp hb _ ↦ ht' p hp hb)
+    AnalyticNumberTheory.Arithmetic.pairedEulerPrefix_eq_twice_of_coprime χ.primitiveCharacter S hS
+      (fun n _ ↦ Nat.coprime_one_right n) (fun p hp hb _ ↦ ht' p hp hb)
   have hd :
     g ≤
       ∑ n ∈ S,
@@ -106,7 +106,7 @@ theorem prime_trivial_false_of_jointRampPrincipal_prefix {q A : ℕ} [NeZero q]
   have hb := gamma_primitive_re_le_twoPoleConstant_of_prefix χ hne hqA hGRH hx hC S hd
   have hx0 : 0 < x := by linarith only [hx]
   have hl :=
-    gammaLocalCorrection_nonpos_of_level_primes_above χ hx0
+    gammaLocalCorrection_nonpos_of_large_primes χ hx0
       (fun p hp ↦ (level_prime_above_cutoff_of_all_prime_trivial χ ht hp).le)
   have hJ := jointRampPrincipalLower_le_actual hGRH.riemann (by linarith only [hx] : 1 ≤ x)
   have hN := gamma_ramp_no_witness_comparison_general χ hx0 (fun p hp _ hb0 ↦ ht p hp hb0)
@@ -118,8 +118,8 @@ theorem prime_trivial_false_of_jointRampPrincipal_prefix {q A : ℕ} [NeZero q]
 joint gap above the prime-two allowance yield an odd non-one prime. Combine the actual joint
 principal bound with the odd-prime comparison. This preserves common-error cancellation in the
 Jacobi non-one argument. -/
-theorem exists_odd_prime_ne_one_of_jointRampPrincipal_prefix {q A : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (h2 : 2 ∣ q) (hqA : q ≤ A)
+theorem exists_oddPrime_neOne_jointRampPrefix_GRH {q A : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (h2 : 2 ∣ q) (hqA : q ≤ A)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x C g : ℝ} (hx : 2 ≤ x)
     (hC : AnalyticNumberTheory.DirichletLFunction.twoPoleGammaConstant χ.primitiveCharacter ≤ C)
     (S : Finset ℕ) (hS : ∀ n ∈ S, (n : ℝ) ≤ (99 / 40 : ℝ) * x) (hodd : ∀ n ∈ S, Odd n)
@@ -138,8 +138,8 @@ theorem exists_odd_prime_ne_one_of_jointRampPrincipal_prefix {q A : ℕ} [NeZero
     PaperStatements.primitiveCharacter_apply_one_of_apply_one χ
       (ht p hp (Nat.coprime_two_right.mp hc) hb)
   have he :=
-    AnalyticNumberTheory.Arithmetic.pairedEulerPrefix_eq_twice_of_coprime_support
-      χ.primitiveCharacter S hS (fun n hn ↦ Nat.coprime_two_right.mpr (hodd n hn)) ht'
+    AnalyticNumberTheory.Arithmetic.pairedEulerPrefix_eq_twice_of_coprime χ.primitiveCharacter S hS
+      (fun n hn ↦ Nat.coprime_two_right.mpr (hodd n hn)) ht'
   have hd :
     g ≤
       ∑ n ∈ S,
@@ -160,8 +160,8 @@ theorem exists_odd_prime_ne_one_of_jointRampPrincipal_prefix {q A : ℕ} [NeZero
 gap above the level-prime ramp cost yield a unit-prime witness of value minus one. Combine the
 conductor-cancelled arithmetic bound with the actual joint principal lower bound, then use
 quadraticity. No sampled or implicit uniform exclusion condition is introduced. -/
-theorem exists_prime_neg_one_of_jointRampPrincipal_conductor_prefix {q A : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hqA : q ≤ A)
+theorem exists_prime_negOne_jointRampConductor_GRH {q A : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hqA : q ≤ A)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x C Y g a d : ℝ} (hx : 2 ≤ x)
     (hY : 1 ≤ Y) (ha : 0 ≤ a) (hd : 0 ≤ d) (hscale : 1 ≤ (1 / 2 - a) * Real.sqrt x)
     (hprime :
@@ -182,8 +182,8 @@ theorem exists_prime_neg_one_of_jointRampPrincipal_conductor_prefix {q A : ℕ} 
     have ht : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ (99 / 40 : ℝ) * x → χ p = 1 := fun p hp hd hb ↦
       Classical.byContradiction (fun hv ↦ hnone ⟨p, hp, hd, hb, hv⟩)
     have hb :=
-      gamma_primitive_add_local_le_of_parameterized_conductor_prefix χ hquad hne hqA hGRH hx hY ha
-        hd hscale hprime hYcut hC ht
+      gamma_primitive_local_le_of_prefix_GRH χ hquad hne hqA hGRH hx hY ha hd hscale hprime hYcut hC
+        ht
     have hJ := jointRampPrincipalLower_le_actual hGRH.riemann (by linarith only [hx] : 1 ≤ x)
     have hN := gamma_ramp_no_witness_comparison χ hquad (by linarith only [hx] : 0 < x) ht
     dsimp only [jointRampPrincipalGap, twoPoleConstantUpper, signedTwoPoleUpper] at hgap hb

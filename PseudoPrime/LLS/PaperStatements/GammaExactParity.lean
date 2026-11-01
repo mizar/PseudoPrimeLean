@@ -36,7 +36,7 @@ theorem gamma_central_eq_complex_digamma_exact_parity {q : ℕ} (χ : DirichletC
         Complex.ofReal_re, Complex.ofReal_im, zero_mul, mul_zero, sub_zero]
       norm_num only [Complex.one_re]
     have he :=
-      logDeriv_gammaFactor_eq_of_even_of_half_ne_neg_nat hχ
+      gammaLogDeriv_even_eq_digamma hχ
         (fun n ↦ AnalyticNumberTheory.Gamma.not_neg_nat_of_re_pos hp n)
     rw [he, hz]
     ring
@@ -51,7 +51,7 @@ theorem gamma_central_eq_complex_digamma_exact_parity {q : ℕ} (χ : DirichletC
         Complex.ofReal_re, Complex.ofReal_im, zero_mul, mul_zero, sub_zero]
       norm_num only [Complex.one_re]
     have he :=
-      logDeriv_gammaFactor_eq_of_odd_of_half_ne_neg_nat hχ
+      gammaLogDeriv_odd_eq_digamma hχ
         (fun n ↦ AnalyticNumberTheory.Gamma.not_neg_nat_of_re_pos hp n)
     rw [he, hz]
     ring

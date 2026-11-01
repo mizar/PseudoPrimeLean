@@ -67,9 +67,9 @@ theorem twoPoleSignedVariationGap_gt_constant {A : ℕ} {C x : ℝ} (hx : 1 ≤ 
 arbitrary valid upper cap P on the actual principal sum. A positive cap-dependent gap excludes
 triviality on every prime below the cutoff. Apply the primitive prefix bound and the general
 ramp comparison. This is the common character input for MR prime witnesses. -/
-theorem prime_trivial_false_of_twoPolePrincipalCap_prefix {q A : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1) (hqA : q ≤ A)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x C g P : ℝ} (hx : 2 ≤ x)
+theorem not_primeTrivial_twoPolePrincipalCap_GRH {q A : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hne : χ ≠ 1) (hqA : q ≤ A) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {x C g P : ℝ} (hx : 2 ≤ x)
     (hC : AnalyticNumberTheory.DirichletLFunction.twoPoleGammaConstant χ.primitiveCharacter ≤ C)
     (S : Finset ℕ) (hS : ∀ n ∈ S, (n : ℝ) ≤ (99 / 40 : ℝ) * x)
     (hg : g ≤ 2 * twoPoleEulerPrefixMass S)
@@ -81,8 +81,8 @@ theorem prime_trivial_false_of_twoPolePrincipalCap_prefix {q A : ℕ} [NeZero q]
   have ht' : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ (99 / 40 : ℝ) * x → χ.primitiveCharacter p = 1 :=
     fun p hp hb ↦ PaperStatements.primitiveCharacter_apply_one_of_apply_one χ (ht p hp hb)
   have he :=
-    AnalyticNumberTheory.Arithmetic.pairedEulerPrefix_eq_twice_of_coprime_support
-      χ.primitiveCharacter S hS (fun n _ ↦ Nat.coprime_one_right n) (fun p hp hb _ ↦ ht' p hp hb)
+    AnalyticNumberTheory.Arithmetic.pairedEulerPrefix_eq_twice_of_coprime χ.primitiveCharacter S hS
+      (fun n _ ↦ Nat.coprime_one_right n) (fun p hp hb _ ↦ ht' p hp hb)
   have hd :
     g ≤
       ∑ n ∈ S,
@@ -93,7 +93,7 @@ theorem prime_trivial_false_of_twoPolePrincipalCap_prefix {q A : ℕ} [NeZero q]
   have hb := gamma_primitive_re_le_twoPoleConstant_of_prefix χ hne hqA hGRH hx hC S hd
   have hx0 : 0 < x := by linarith only [hx]
   have hl :=
-    gammaLocalCorrection_nonpos_of_level_primes_above χ hx0
+    gammaLocalCorrection_nonpos_of_large_primes χ hx0
       (fun p hp ↦ (level_prime_above_cutoff_of_all_prime_trivial χ ht hp).le)
   have hT := gamma_ramp_sum_lower_paired hGRH.riemann (by linarith only [hx] : 1 ≤ x)
   have hN := gamma_ramp_no_witness_comparison_general χ hx0 (fun p hp _ hb0 ↦ ht p hp hb0)
@@ -105,8 +105,8 @@ theorem prime_trivial_false_of_twoPolePrincipalCap_prefix {q A : ℕ} [NeZero q]
 prefix and any valid principal upper cap. If the resulting gap exceeds the prime-two allowance,
 an odd non-one prime exists through the cutoff. Keep the exact principal cap in the ramp
 contradiction. This supplies the improved non-one Jacobi interface. -/
-theorem exists_odd_prime_ne_one_of_twoPolePrincipalCap_prefix {q A : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (h2 : 2 ∣ q) (hqA : q ≤ A)
+theorem exists_oddPrime_neOne_twoPoleCap_GRH {q A : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (h2 : 2 ∣ q) (hqA : q ≤ A)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x C g P : ℝ} (hx : 2 ≤ x)
     (hC : AnalyticNumberTheory.DirichletLFunction.twoPoleGammaConstant χ.primitiveCharacter ≤ C)
     (S : Finset ℕ) (hS : ∀ n ∈ S, (n : ℝ) ≤ (99 / 40 : ℝ) * x) (hodd : ∀ n ∈ S, Odd n)
@@ -127,8 +127,8 @@ theorem exists_odd_prime_ne_one_of_twoPolePrincipalCap_prefix {q A : ℕ} [NeZer
     PaperStatements.primitiveCharacter_apply_one_of_apply_one χ
       (ht p hp (Nat.coprime_two_right.mp hc) hb)
   have he :=
-    AnalyticNumberTheory.Arithmetic.pairedEulerPrefix_eq_twice_of_coprime_support
-      χ.primitiveCharacter S hS (fun n hn ↦ Nat.coprime_two_right.mpr (hodd n hn)) ht'
+    AnalyticNumberTheory.Arithmetic.pairedEulerPrefix_eq_twice_of_coprime χ.primitiveCharacter S hS
+      (fun n hn ↦ Nat.coprime_two_right.mpr (hodd n hn)) ht'
   have hd :
     g ≤
       ∑ n ∈ S,
@@ -150,7 +150,7 @@ full Euler prefix and valid principal upper cap, the saved gap exceeding the lev
 cost yields a unit prime of value minus one. Combine the parameterized conductor cancellation
 with the cap-dependent principal comparison and exclude zero and one. This transfers sharper
 principal estimates to negative witnesses without reintroducing a prefix exclusion hypothesis. -/
-theorem exists_prime_neg_one_of_twoPolePrincipalCap_conductor_prefix {q A : ℕ} [NeZero q]
+theorem exists_prime_negOne_twoPoleCapConductor_GRH {q A : ℕ} [NeZero q]
     (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (hne : χ ≠ 1) (hqA : q ≤ A)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x C Y g a d P : ℝ} (hx : 2 ≤ x)
     (hY : 1 ≤ Y) (ha : 0 ≤ a) (hd : 0 ≤ d) (hscale : 1 ≤ (1 / 2 - a) * Real.sqrt x)
@@ -174,8 +174,8 @@ theorem exists_prime_neg_one_of_twoPolePrincipalCap_conductor_prefix {q A : ℕ}
     have ht : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ (99 / 40 : ℝ) * x → χ p = 1 := fun p hp hd hb ↦
       Classical.byContradiction (fun hv ↦ hnone ⟨p, hp, hd, hb, hv⟩)
     have hb :=
-      gamma_primitive_add_local_le_of_parameterized_conductor_prefix χ hquad hne hqA hGRH hx hY ha
-        hd hscale hprime hYcut hC ht
+      gamma_primitive_local_le_of_prefix_GRH χ hquad hne hqA hGRH hx hY ha hd hscale hprime hYcut hC
+        ht
     have hT := gamma_ramp_sum_lower_paired hGRH.riemann (by linarith only [hx] : 1 ≤ x)
     have hN := gamma_ramp_no_witness_comparison χ hquad (by linarith only [hx] : 0 < x) ht
     dsimp only [twoPolePrincipalCapGap, twoPoleConstantUpper, signedTwoPoleUpper] at hgap hb

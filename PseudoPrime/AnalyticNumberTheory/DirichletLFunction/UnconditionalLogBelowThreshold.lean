@@ -40,9 +40,9 @@ least two, and real part below a threshold at most one, the regularized term is
 bounded by its actual multiplicity times the combined low-height majorant.
 Split at real part one half: use cancellation near the origin on the left and
 the power-weighted kernel on the right. No RH or zero gap is required. -/
-theorem norm_regularizedLogHalfZeroTerm_le_below_threshold {q : ℕ} [NeZero q]
-    {χ : DirichletCharacter ℂ q} (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x σ : ℝ}
-    (hx : 2 ≤ x) (hσ : σ ≤ 1) {ρ : ℂ} (hre : ρ.re ≤ σ) :
+theorem regularizedHalfTerm_low_bound {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x σ : ℝ} (hx : 2 ≤ x) (hσ : σ ≤ 1) {ρ : ℂ}
+    (hre : ρ.re ≤ σ) :
     ‖regularizedLogHalfZeroTerm χ x ρ‖ ≤
       (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
         regularizedLowHeightMajorant x σ := by
@@ -57,12 +57,12 @@ theorem norm_regularizedLogHalfZeroTerm_le_below_threshold {q : ℕ} [NeZero q]
     add_nonneg (mul_nonneg (mul_nonneg (by norm_num only) (Real.sqrt_nonneg x)) (sq_nonneg _))
       (mul_nonneg hlog2 (by linarith only [hlog]))
   by_cases hh : ρ.re ≤ 1 / 2
-  · have hb := norm_regularizedLogHalfZeroTerm_le_low_re hp hne hinv hx hh
+  · have hb := norm_regularHalfTerm_le_low_re hp hne hinv hx hh
     have hright := mul_nonneg hD (mul_nonneg hK (Real.rpow_nonneg (by linarith only [hx]) σ))
     dsimp only [regularizedLowHeightMajorant]
     nlinarith only [hb, hright]
   · have hlo : 1 / 2 ≤ ρ.re := (lt_of_not_ge hh).le
-    have hb := norm_regularizedLogHalfZeroTerm_le_right_power_weight hne hx hlo (hre.trans hσ)
+    have hb := regularizedHalfTerm_right_bound hne hx hlo (hre.trans hσ)
     have hdiv : x ^ ρ.re / (1 + ρ.im ^ 2) ≤ x ^ ρ.re :=
       div_le_self (Real.rpow_nonneg (by linarith only [hx]) _) (by nlinarith only [sq_nonneg ρ.im])
     have hpow := Real.rpow_le_rpow_of_exponent_le (by linarith only [hx] : 1 ≤ x) hre
@@ -76,7 +76,7 @@ norm sum below a real threshold at most one and within a natural height.
 The character is primitive nonprincipal with nonprincipal inverse, modulus and
 scale are at least two. Sum the combined kernel majorant and insert the proved
 bounded-height count. This controls the left and intermediate strips uniformly. -/
-theorem exists_sum_norm_regularizedLogHalfZeroTerm_below_threshold_bound :
+theorem regularizedHalfTerm_low_sum_bound :
     ∃ K : ℝ,
       0 < K ∧
         ∀ (q : ℕ) [NeZero q],
@@ -94,14 +94,12 @@ theorem exists_sum_norm_regularizedLogHalfZeroTerm_below_threshold_bound :
                         ∑ ρ ∈ S, ‖regularizedLogHalfZeroTerm χ x ρ‖ ≤
                           ((2 * (H : ℝ) + 1) * K * (Real.log q + Real.log (4 + (H : ℝ)) + 1)) *
                             regularizedLowHeightMajorant x σ := by
-  obtain ⟨K, hK, hcount⟩ := exists_uniform_local_zeroMultiplicity_bound_unconditionally
+  obtain ⟨K, hK, hcount⟩ := uniform_localMultiplicity_bound
   refine ⟨K, hK, ?_⟩
   intro q inst hq χ hp hne hinv x σ hx hσ H S hre hh
-  have hc :=
-    sum_completed_divisor_le_bounded_height_unconditionally hK (hcount q hq χ hp hne hinv) H S hh
+  have hc := sum_completed_divisor_height_bound hK (hcount q hq χ hp hne hinv) H S hh
   have hb :=
-    Finset.sum_le_sum
-      (fun ρ hρ ↦ norm_regularizedLogHalfZeroTerm_le_below_threshold hp hne hinv hx hσ (hre ρ hρ))
+    Finset.sum_le_sum (fun ρ hρ ↦ regularizedHalfTerm_low_bound hp hne hinv hx hσ (hre ρ hρ))
   rw [← Finset.sum_mul] at hb
   exact hb.trans (mul_le_mul_of_nonneg_right hc (regularizedLowHeightMajorant_nonneg hx))
 

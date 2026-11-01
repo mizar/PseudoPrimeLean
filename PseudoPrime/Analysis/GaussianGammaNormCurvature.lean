@@ -195,7 +195,7 @@ theorem gamma_norm_moment_le_of_exp_bound {t C : ℝ} (ht : 0 ≤ t) (k : ℕ)
 
 /-- At nonnegative height, the weighted curvature is bounded by 30 plus a quartic
 polynomial times the Gamma density. Use product rules, absolute-value bounds, and damping≤1. -/
-theorem abs_scaledGaussianGammaNormSecondDeriv_le_polynomial {t : ℝ} (ht : 0 ≤ t) :
+theorem abs_scaledGaussianGamma_deriv2_le_polynomial {t : ℝ} (ht : 0 ≤ t) :
     |scaledGaussianGammaNormSecondDeriv t| ≤
       30 + (1 / 2 + 2 * t + 11 / 4 * t ^ 2 + 2 * t ^ 3 + t ^ 4 / 4) * gammaHalfLineNorm t := by
   have hab : |t ^ 2 / 4 - 1 / 2| ≤ t ^ 2 / 4 + 1 / 2 := by
@@ -242,6 +242,6 @@ theorem abs_scaledGaussianGammaNormSecondDeriv_le_forty {t : ℝ} (ht : 0 ≤ t)
   have h3 := gamma_norm_moment_le_of_exp_bound ht 3 (gaussian_cubic_exp_decay_le ht)
   have h4 := gamma_norm_moment_le_of_exp_bound ht 4 (gaussian_quartic_exp_decay_le ht)
   norm_num only [pow_zero, pow_one, one_mul] at h0 h1
-  nlinarith only [abs_scaledGaussianGammaNormSecondDeriv_le_polynomial ht, h0, h1, h2, h3, h4]
+  nlinarith only [abs_scaledGaussianGamma_deriv2_le_polynomial ht, h0, h1, h2, h3, h4]
 
 end PseudoPrime.Analysis

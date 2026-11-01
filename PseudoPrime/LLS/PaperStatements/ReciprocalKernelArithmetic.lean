@@ -69,7 +69,7 @@ theorem reciprocalMellinKernel_tsum_eq_finite {q : ℕ} (χ : DirichletCharacter
 Claim: the finite weighted sum equals the pole residue minus zeros plus the two contour integrals.
 Proof: instantiate the completed kernel formula at lines -9/16 and 9/16.
 Role: remove all kernel admissibility and inversion premises from the rational explicit formula. -/
-theorem reciprocalMellinKernel_finite_sum_eq_completed_formula {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem reciprocalMellin_completed_formula_GRH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) :
     let W := fun s : ℂ ↦ reciprocalMellinFunction s * (x : ℂ) ^ s

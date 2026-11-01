@@ -56,7 +56,7 @@ theorem norm_nearZeroResolvent_le_of_avoiding_height {F : ℂ → ℂ} {T c : �
 convergence of the nearby resolvent sum and a norm bound by the count divided
 by the margin. Pointwise domination justifies the norm and sum interchange.
 This controls the nearby poles on a zero-avoiding horizontal contour edge. -/
-theorem summable_nearZeroResolvent_and_bound_of_avoiding_height {F : ℂ → ℂ} {T c : ℝ} (hc : 0 < c)
+theorem nearZeroResolvent_summable_bound_avoid_height {F : ℂ → ℂ} {T c : ℝ} (hc : 0 < c)
     (ha : ∀ ρ : ℂ, F ρ = 0 → c ≤ |T - ρ.im|) {s : ℂ} (hs : s.im = T)
     (hm : Summable (localZeroMultiplicity F T)) :
     Summable (nearZeroResolventTerm F T s) ∧
@@ -83,7 +83,7 @@ theorem norm_logDeriv_le_of_avoiding_height {F : ℂ → ℂ} {ε : ℂ} (hε : 
         (6 + 10 * ‖(((3 : ℝ) : ℂ) + T * Complex.I) - s‖) *
           ‖logDeriv F (((3 : ℝ) : ℂ) + T * Complex.I)‖ := by
   have hm := localZeroCount_bound_of_orderAtMostOne hε hfe hright hF h0 horder T
-  have hn := summable_nearZeroResolvent_and_bound_of_avoiding_height hc ha hs hm.1
+  have hn := nearZeroResolvent_summable_bound_avoid_height hc ha hs hm.1
   have he :=
     (logDeriv_nearZero_error_le hε hfe hright hF h0 horder s
         (nonzero_at_avoiding_height hc ha hs)).2

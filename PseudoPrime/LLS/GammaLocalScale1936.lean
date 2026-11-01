@@ -222,7 +222,7 @@ theorem gamma_dyadic_minus_cost_1936 {f : ℕ} (χ : DirichletCharacter ℂ f) (
     (K : Finset ℕ) {x : ℝ} (hx : 1936 ≤ x) :
     Analysis.gammaActualPrimeLocalCost χ 2 K x - (11783423 / 25000000 : ℝ) * Real.log 4 ≤
       (11 / 20 : ℝ) := by
-  have he := Analysis.gamma_minus_one_positive_prime_correction_le_cost χ Nat.prime_two hχ K
+  have he := Analysis.gamma_neg_one_prime_correction_le_cost χ Nat.prime_two hχ K
   have hr := gamma_dyadic_minus_ramp_1936 hx
   have hc := gamma_dyadic_weighted_euler_bounds.2
   norm_num only [Nat.cast_ofNat] at he
@@ -238,7 +238,7 @@ Role: discharge the ramified dyadic field without a finite prefix table. -/
 theorem gamma_dyadic_zero_cost_1936 {f : ℕ} (χ : DirichletCharacter ℂ f) (hχ : χ 2 = 0)
     (K : Finset ℕ) {x : ℝ} (hx : 1936 ≤ x) :
     Analysis.gammaActualPrimeLocalCost χ 2 K x ≤ (4393 / 5000 : ℝ) := by
-  have he := Analysis.sum_gammaResolventMangoldtWeight_primePowers_le_cost Nat.prime_two K
+  have he := Analysis.sum_gammaMangoldt_primePowers_le_cost Nat.prime_two K
   have hr := gamma_dyadic_zero_ramp_1936 hx
   have hc := gamma_dyadic_weighted_euler_bounds.1
   norm_num only [Nat.cast_ofNat] at he

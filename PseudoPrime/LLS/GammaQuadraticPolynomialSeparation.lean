@@ -39,7 +39,7 @@ namespace PseudoPrime.LLS
 paired polynomial data at x >= 1. Claim: the common-cost margin is strictly
 positive. Compare the pole and character budgets to the generic paired gap.
 Role: transfer arbitrary local-cost improvements without recomputing a cell. -/
-theorem gamma_joint_prefix_common_margin_pos_of_polynomial {q Q : ℕ} (χ : DirichletCharacter ℂ q)
+theorem gamma_joint_common_margin_pos_of_polynomial {q Q : ℕ} (χ : DirichletCharacter ℂ q)
     {L x b C R u : ℝ} (hx : 1 ≤ x) (hroot : Real.sqrt x ≤ R)
     (hlog : Real.log ((101 / 40 : ℝ) * x) ≤ u) (hlogQ : Real.log Q ≤ L)
     (hJ : gammaJointPrefixLocalBudget χ b x ≤ (11783423 / 25000000 : ℝ) * L - 2 * C)

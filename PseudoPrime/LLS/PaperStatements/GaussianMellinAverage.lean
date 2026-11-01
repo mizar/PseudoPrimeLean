@@ -102,8 +102,7 @@ by the Gaussian Mellin factor equals averaging the vertically integrated
 shifted integrand against the normalized Gaussian. The product majorant is the
 Gaussian exponential moment times `‖F‖`; Fubini and the complex Gaussian moment
 give the identity. This is the transfer interface for signed contour estimates. -/
-theorem integral_gaussianMultiplier_eq_logGaussianAverage {c : ℝ} {F : ℝ → ℂ}
-    (hF : MeasureTheory.Integrable F) :
+theorem gaussianMultiplier_integral_average {c : ℝ} {F : ℝ → ℂ} (hF : MeasureTheory.Integrable F) :
     (∫ t : ℝ, Complex.exp ((((c : ℂ) + Complex.I * (t : ℂ)) ^ 2) / 4) * F t) =
       ∫ v : ℝ,
         (PseudoPrime.Analysis.normalizedGaussianWeight v : ℂ) *

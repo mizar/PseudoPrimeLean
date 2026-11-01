@@ -21,7 +21,7 @@ and ambient-unit prime triviality through b≥1, keep the unretained paired
 Euler mass together with the zero mass and ambient ramp. The exact paired
 prefix identity and the joint conductor budget give the same finite dual
 upper bound while retaining the additional nonnegative prime-power gain. -/
-theorem gamma_jacobi_zeroMass_add_ramp_pairedTail_le_dual {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+theorem gammaJacobi_massRamp_pairedTail_dual_RH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hRH : AnalyticNumberTheory.GRH.DirichletRiemannHypothesis bridge.character) {b : ℝ}
     (hb : 1 ≤ b)
@@ -49,7 +49,7 @@ theorem gamma_jacobi_zeroMass_add_ramp_pairedTail_le_dual {n : ℕ} {hn : Odd n}
         gammaRefinedSignedDualBudget (Real.log n) := by
   have hq := le_trans (by norm_num only : (2 : ℕ) ≤ 3) (gamma_jacobi_modulus_ge_three bridge)
   have hz :=
-    AnalyticNumberTheory.DirichletLFunction.gammaResolvent_zeroMass_add_pairedTail_eq_prefix hq hRH
+    AnalyticNumberTheory.DirichletLFunction.gammaMass_add_tail_eq_prefix_RH hq hRH
       bridge.character_primitive bridge.character_ne_one
       (by
         rw [bridge.character_quadratic.inv]; exact bridge.character_ne_one)
@@ -62,8 +62,8 @@ theorem gamma_jacobi_zeroMass_add_ramp_pairedTail_le_dual {n : ℕ} {hn : Odd n}
 witness through the prescribed cutoff, the complete arithmetic comparison
 retains the nonnegative paired tail on the left. The same numerical budget
 is sufficient, and a certified tail lower bound can improve its gap. -/
-theorem gamma_jacobi_no_negative_arithmetic_add_pairedTail_le_budget {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem gammaJacobi_noNeg_arithPairedTail_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hlarge : 10 ^ 100 ≤ n) {b : ℝ}
     (hb : 1 ≤ b) (hbX : b ≤ (99 / 40 : ℝ) * Analysis.gammaRefinedScale (Real.log n))
     (hno :
@@ -100,7 +100,7 @@ theorem gamma_jacobi_no_negative_arithmetic_add_pairedTail_le_budget {n : ℕ} {
     PaperStatements.gamma_primitive_sum_re_le_resolvent_sharp hq hm hmq hGRH
       bridge.character_primitive bridge.character_ne_one hinv hx
   have hz :=
-    gamma_jacobi_zeroMass_add_ramp_pairedTail_le_dual bridge
+    gammaJacobi_massRamp_pairedTail_dual_RH bridge
       (hGRH _ bridge.character bridge.character_primitive) hb
       (gamma_jacobi_no_negative_prefix_prime_one bridge
         (fun p hp hodd hpb ↦ hno p hp hodd (hpb.trans hbX)))
@@ -129,8 +129,8 @@ theorem gamma_jacobi_no_negative_arithmetic_add_pairedTail_le_budget {n : ℕ} {
 Jacobi arithmetic comparison by their common weight. The gain depends only
 on the selected finite set and remains valid at ramified primes. This is
 an input-independent refinement available to the numerical gap certificate. -/
-theorem gamma_jacobi_no_negative_arithmetic_add_square_gain_le_budget {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem gammaJacobi_noNeg_arithSquareGain_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hlarge : 10 ^ 100 ≤ n) {b : ℝ}
     (hb : 1 ≤ b) (hbX : b ≤ (99 / 40 : ℝ) * Analysis.gammaRefinedScale (Real.log n))
     (hno :
@@ -151,16 +151,15 @@ theorem gamma_jacobi_no_negative_arithmetic_add_square_gain_le_budget {n : ℕ} 
   have ht :=
     Analysis.gammaPairedEulerTail_ge_square_sum bridge.character bridge.character_quadratic
       (Finset.Ioc 0 ⌊b⌋₊) C hBC hC
-  have ha :=
-    gamma_jacobi_no_negative_arithmetic_add_pairedTail_le_budget bridge hGRH hlarge hb hbX hno
+  have ha := gammaJacobi_noNeg_arithPairedTail_GRH bridge hGRH hlarge hb hbX hno
   exact (add_le_add_right ht _).trans ha
 
 /-- A strict gap including selected square-power gains forces an odd-prime
 negative Jacobi witness through the prescribed cutoff. The numerical
 premise depends only on n, b and the selected finite square set, and can be
 weaker than the gap obtained by discarding the nonnegative paired tail. -/
-theorem exists_odd_prime_negative_of_refined_square_gain_gap {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem exists_oddPrime_negJacobi_refinedSquare_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hlarge : 10 ^ 100 ≤ n) {b : ℝ}
     (hb : 1 ≤ b) (hbX : b ≤ (99 / 40 : ℝ) * Analysis.gammaRefinedScale (Real.log n)) (C : Finset ℕ)
     (hC : ∀ m ∈ C, IsSquare m) (hBC : Disjoint (Finset.Ioc 0 ⌊b⌋₊) C)
@@ -187,7 +186,6 @@ theorem exists_odd_prime_negative_of_refined_square_gain_gap {n : ℕ} {hn : Odd
     fun p hp hodd hcut hj ↦ hnot ⟨p, hp, hodd, hcut, hj⟩
   exact
     (not_le_of_gt hgap)
-      (gamma_jacobi_no_negative_arithmetic_add_square_gain_le_budget bridge hGRH hlarge hb hbX hno C
-        hC hBC)
+      (gammaJacobi_noNeg_arithSquareGain_GRH bridge hGRH hlarge hb hbX hno C hC hBC)
 
 end PseudoPrime.LLS

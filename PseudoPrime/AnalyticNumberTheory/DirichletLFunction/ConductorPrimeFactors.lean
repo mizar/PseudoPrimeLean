@@ -46,31 +46,27 @@ theorem conductor_mul_quotient {q : ℕ} (χ : DirichletCharacter ℂ q) :
   Nat.mul_div_cancel' χ.conductor_dvd_level
 
 /-- The level logarithm splits exactly into conductor and complementary-quotient logarithms. -/
-theorem log_level_eq_log_conductor_add_log_quotient {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) :
+theorem log_level_eq_conductor_add_quotient {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) :
     Real.log q = Real.log χ.conductor + Real.log (q / χ.conductor : ℕ) := by
   have hconductor : (χ.conductor : ℝ) ≠ 0 := by exact_mod_cast (conductor_pos χ).ne'
   have hquotient : ((q / χ.conductor : ℕ) : ℝ) ≠ 0 := by exact_mod_cast (quotient_pos χ).ne'
   rw [← Real.log_mul hconductor hquotient, ← Nat.cast_mul, conductor_mul_quotient χ]
 
 /-- The quotient logarithm is the level logarithm minus the conductor logarithm. -/
-theorem log_quotient_eq_log_level_sub_log_conductor {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) :
+theorem log_quotient_eq_level_sub_conductor {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) :
     Real.log (q / χ.conductor : ℕ) = Real.log q - Real.log χ.conductor := by
-  rw [log_level_eq_log_conductor_add_log_quotient χ]
+  rw [log_level_eq_conductor_add_quotient χ]
   rw [add_sub_cancel_left]
 
 /-- The radical of a natural number is at least `2` to the number of its prime factors. -/
-theorem two_pow_card_primeFactors_le_prod_primeFactors (m : ℕ) :
+theorem pow_two_card_primeFactors_le_prod (m : ℕ) :
     2 ^ m.primeFactors.card ≤ ∏ p ∈ m.primeFactors, p := by
   rw [← Finset.prod_const]
   exact Finset.prod_le_prod fun p hp ↦ (Nat.mem_primeFactors.mp hp).1.two_le
 
 /-- A positive natural number is at least `2` to the number of its distinct prime factors. -/
 theorem two_pow_card_primeFactors_le {m : ℕ} (hm : 0 < m) : 2 ^ m.primeFactors.card ≤ m := by
-  exact
-    (two_pow_card_primeFactors_le_prod_primeFactors m).trans
-      (Nat.le_of_dvd hm (Nat.prod_primeFactors_dvd m))
+  exact (pow_two_card_primeFactors_le_prod m).trans (Nat.le_of_dvd hm (Nat.prod_primeFactors_dvd m))
 
 /-- The number of distinct prime factors satisfies the elementary logarithmic bound. -/
 theorem card_primeFactors_le_log_div_log_two {m : ℕ} (hm : 0 < m) :
@@ -87,8 +83,7 @@ theorem card_primeFactors_le_log_div_log_two {m : ℕ} (hm : 0 < m) :
 
 /-- The complementary quotient satisfies the `ω ≤ log / log 2` estimate used in
 downstream modules. -/
-theorem card_primeFactors_quotient_le_log_div_log_two {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) :
+theorem quotient_primeFactors_card_le_log {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) :
     ((q / χ.conductor).primeFactors.card : ℝ) ≤ Real.log (q / χ.conductor : ℕ) / Real.log 2 :=
   card_primeFactors_le_log_div_log_two (quotient_pos χ)
 

@@ -97,8 +97,8 @@ theorem gamma_quadratic_prime_factor_cost_le_five {n : ℕ} (hn : Odd n) (hL : 4
 Mlog(conductor) plus the actual signed local correction is at most Mlog(n)+6.
 Absorb the conductor quotient first, then bound the prime-factor cost by five
 and Mlog(4) by one. This is the local budget in the smoothed witness comparison. -/
-theorem gammaQuadraticLocalCorrection_absorbed_at_ramp_scale {n : ℕ} (hn : Odd n)
-    (χ : DirichletCharacter ℂ (4 * n)) (hquad : χ.IsQuadratic) (hL : 46000 ≤ Real.log n) :
+theorem gammaQuadLocal_absorbed_rampScale {n : ℕ} (hn : Odd n) (χ : DirichletCharacter ℂ (4 * n))
+    (hquad : χ.IsQuadratic) (hL : 46000 ≤ Real.log n) :
     (11783423 / 25000000 : ℝ) * Real.log χ.conductor +
         gammaQuadraticLocalCorrection χ ((32 / 99 : ℝ) * (Real.log n) ^ 2) ≤
       (11783423 / 25000000 : ℝ) * Real.log n + 6 := by

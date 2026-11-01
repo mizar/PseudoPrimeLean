@@ -37,14 +37,13 @@ theorem qNeOneAnalyticFalse_of_scale_error {n : ℕ} {hn : Odd n} {hns : ¬IsSqu
           ((DirichletCharacter.isPrimitive_def bridge.character).mp bridge.character_primitive ▸
             hc)⟩
   have hodd : LLS.Extensions.OddPrimeTrivial bridge.character (y ^ 2) :=
-    bridge.primitiveCharacter_eq_one_in_log_square_range (show 1 ≤ y by linarith only [hy]) hno
+    bridge.primitive_eq_one_log_square (show 1 ≤ y by linarith only [hy]) hno
   have hcases :=
     NumberTheory.isQuadratic_primitiveCharacter bridge.character bridge.character_quadratic
       (2 : ZMod bridge.character.conductor)
   exact
-    LLS.Extensions.not_oddPrimeTrivial_of_scale_reciprocal_separation bridge.character
-      bridge.character_ne_one bridge.primitiveCharacter_even hGRH hy
-      bridge.log_character_conductor_le_y_add_log_four
+    LLS.Extensions.not_oddPrimeTrivial_scaleReciprocal_GRH bridge.character bridge.character_ne_one
+      bridge.primitiveCharacter_even hGRH hy bridge.log_conductor_le
       (qNeOne_log_conductor_le_y_of_two_ne_zero bridge) hcases hsep hodd
 
 /-- Under GRH and the stated scale-dependent separation, an odd-prime

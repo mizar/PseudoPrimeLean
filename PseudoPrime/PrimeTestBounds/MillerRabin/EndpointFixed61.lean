@@ -30,8 +30,8 @@ theorem exists_prime_endpoint61 {n : ℕ} [NeZero n] (hn : 1 < n) (ho : Odd n) (
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : Real.log n ≤ 286 / 25) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ 61 ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   obtain ⟨p, hp, hb, hpow, hrest⟩ :=
-    exists_prime_reject_of_even_exact_endpoint_gap_pos hn ho hc hGRH
-      (by norm_num only : (8 : ℝ) ≤ 49 / 6) (LLS.PaperStatements.endpoint61_gap_pos hL)
+    exists_rejectPowers_evenExactGap_GRH hn ho hc hGRH (by norm_num only : (8 : ℝ) ≤ 49 / 6)
+      (LLS.PaperStatements.endpoint61_gap_pos hL)
   have h67 : (p : ℝ) < 67 := lt_of_le_of_lt hb (by norm_num only)
   have hp61 := prime_lt67_le61 hp (by exact_mod_cast h67)
   exact ⟨p, hp, by exact_mod_cast hp61, PrimeTest.not_strongMillerRabinPass_iff.mpr ⟨hpow, hrest⟩⟩

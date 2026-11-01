@@ -57,8 +57,7 @@ theorem norm_reciprocalGapCentralWeight_le {h x : ℝ} (hh : 0 ≤ h) (hx : 0 < 
 /-- For positive gap, digamma base and scale, integrate the actual weighted digamma
 difference term by term. Use the general quadratic-decay exchange theorem.
 The resulting series retains the signs of the reciprocal differences. -/
-theorem reciprocalGap_digamma_vertical_sub_integral_eq_tsum {h b x : ℝ} (hh : 0 < h) (hb : 0 < b)
-    (hx : 0 < x) :
+theorem reciprocalGap_digamma_integral_eq_tsum {h b x : ℝ} (hh : 0 < h) (hb : 0 < b) (hx : 0 < x) :
     (∫ t : ℝ,
         (Complex.digamma ((b : ℂ) + Complex.I * (t / 2)) - Complex.digamma (b : ℂ)) *
           reciprocalGapCentralWeight h x t) =
@@ -67,7 +66,7 @@ theorem reciprocalGap_digamma_vertical_sub_integral_eq_tsum {h b x : ℝ} (hh : 
           (1 / ((b + n : ℝ) : ℂ) - 1 / (((b + n : ℝ) : ℂ) + Complex.I * (t / 2))) *
             reciprocalGapCentralWeight h x t := by
   exact
-    integral_quadratic_weight_digamma_vertical_sub_eq_tsum hb (reciprocalGapCentralWeight h x)
+    quadratic_digamma_integral_eq_tsum hb (reciprocalGapCentralWeight h x)
       (continuous_reciprocalGapCentralWeight hh hx) (norm_reciprocalGapCentralWeight_le hh.le hx)
 
 /-- For positive gap and scale, the normalized central weight integral equals the compact
@@ -99,8 +98,7 @@ for all positive gaps and scales as its explicit compact-profile baseline plus t
 convergent series of weighted reciprocal-difference integrals.
 Split the integrable digamma baseline and use the quadratic-decay exchange theorem.
 This exact identity preserves signs; scalar resolvent inversion is still required. -/
-theorem reciprocalGap_central_gammaIntegral_eq_resolvent_series {q : ℕ}
-    (χ : DirichletCharacter ℂ q) :
+theorem reciprocalGap_gamma_eq_resolventSeries {q : ℕ} (χ : DirichletCharacter ℂ q) :
     ∃ b : ℝ,
       1 / 4 ≤ b ∧
         b ≤ 1 ∧
@@ -148,7 +146,7 @@ theorem reciprocalGap_central_gammaIntegral_eq_resolvent_series {q : ℕ}
           rw [he]
           ring))
   have hseries :=
-    reciprocalGap_digamma_vertical_sub_integral_eq_tsum hh
+    reciprocalGap_digamma_integral_eq_tsum hh
       (lt_of_lt_of_le (by norm_num only : (0 : ℝ) < 1 / 4) hb) hx
   change (∫ t : ℝ, D t) = _ at hseries
   change
@@ -168,8 +166,8 @@ theorem reciprocalGap_central_gammaIntegral_eq_resolvent_series {q : ℕ}
 integral from the completed remainder leaves the exact central Gamma integral.
 Use the contour decomposition and the proved right-to-central line shift.
 This connects the signed Gamma series to the actual witness remainder without a norm bound. -/
-theorem reciprocalGap_remainder_sub_pole_left_eq_central_gamma {h : ℝ} (hh : 0 < h) {q : ℕ}
-    [NeZero q] (χ : DirichletCharacter ℂ q) {x : ℝ} (hx : 1 ≤ x) :
+theorem reciprocalGap_error_eq_centralGamma {h : ℝ} (hh : 0 < h) {q : ℕ} [NeZero q]
+    (χ : DirichletCharacter ℂ q) {x : ℝ} (hx : 1 ≤ x) :
     reciprocalGapCompletedRemainder h hh χ x -
         MellinKernel.weightedResidue (reciprocalGapMellinKernel h hh)
           (fun z : ℂ ↦ χ.completedLFunction (z + 1 / 2)) x (-1 / 2) -

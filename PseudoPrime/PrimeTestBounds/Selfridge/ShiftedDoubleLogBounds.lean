@@ -24,12 +24,12 @@ theorem selfridgeNeOneMagnitudes_le_shifted_double_log {n : ℕ} (hn : Odd n) (h
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 96 ≤ Real.log n) :
     ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         (Real.log n - 2 * Real.log (Real.log n) + 37 / 5) ^ 2 ∧
       ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNeOne PrimeTest.isWheel30NeOneCandidate n
-                (PrimeTest.wheel30FirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.wheel30NeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         (Real.log n - 2 * Real.log (Real.log n) + 37 / 5) ^ 2 := by
   let hw :=
@@ -39,7 +39,7 @@ theorem selfridgeNeOneMagnitudes_le_shifted_double_log {n : ℕ} (hn : Odd n) (h
   have hr := (LLS.PaperStatements.shiftedOddEndpointDoubleLogRoot_data hL).1
   dsimp only [LLS.PaperStatements.shiftedOddEndpointDoubleLogRoot] at hr
   exact
-    selfridgeNeOneMagnitudes_le_of_prime_witness_bound hn hns hw
+    selfridgeNeOneMagnitudes_le_of_primeWitness hn hns hw
       (by nlinarith only [hr, sq_nonneg (Real.log n - 2 * Real.log (Real.log n) + 37 / 5 - 94)]) hb
 
 /-- Under GRH and log B≥96, both factor-detecting Selfridge maxima through B
@@ -66,6 +66,6 @@ theorem classicalNeOneTrialMaximum_le_shifted_double_log {B : ℕ}
   have hr := (LLS.PaperStatements.shiftedOddEndpointDoubleLogRoot_data hL).1
   dsimp only [LLS.PaperStatements.shiftedOddEndpointDoubleLogRoot] at hr
   have hb := (selfridgeNeOneMaxima_le_shifted_double_log hGRH hL).1
-  exact classicalTrialCountThrough_real_le_of_value_bound (by nlinarith only [hr]) hb
+  exact classicalTrialCount_real_bound (by nlinarith only [hr]) hb
 
 end PseudoPrime.PrimeTestBounds.Selfridge

@@ -25,7 +25,7 @@ noncomputable def gaussianGammaCutoffIntegrand (l v : ℝ) : ℝ :=
 /-- Clamp the real argument to the nonnegative half line. On every finite
 interval, the half Gaussian moment dominates the resulting product integrand.
 This provides absolute integrability for the cutoff Fubini exchange. -/
-private theorem integrable_gaussianGammaProfileIntegrand_clamped_prod (a b : ℝ) :
+private theorem integrable_clamped_gaussianGammaProfile (a b : ℝ) :
     MeasureTheory.Integrable (fun z : ℝ × ℝ ↦ gaussianGammaProfileIntegrand (max 0 z.1) z.2)
       ((MeasureTheory.volume.restrict (Set.uIoc a b)).prod MeasureTheory.volume) := by
   let : MeasureTheory.IsFiniteMeasure (MeasureTheory.volume.restrict (Set.uIoc a b)) :=
@@ -92,8 +92,7 @@ theorem integral_gaussianGammaProfile_average_interval {l : ℝ} (hl : 0 ≤ l) 
       rw [Set.uIcc_of_le hl] at hu
       simp only [max_eq_right hu.1]
     _ = ∫ v : ℝ, ∫ u in (0 : ℝ)..l, gaussianGammaProfileIntegrand (max 0 u) v :=
-      MeasureTheory.intervalIntegral_integral_swap
-        (integrable_gaussianGammaProfileIntegrand_clamped_prod 0 l)
+      MeasureTheory.intervalIntegral_integral_swap (integrable_clamped_gaussianGammaProfile 0 l)
     _ = _ := by
       apply MeasureTheory.integral_congr_ae
       apply Filter.Eventually.of_forall

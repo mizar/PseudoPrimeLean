@@ -26,7 +26,7 @@ the logarithmic Mangoldt sum is bounded by its square contribution plus the unre
 nonsquare composite contribution. Split the finite sum by squareness and enlarge the
 nonsquare part using nonnegative weights. This separates the two prime-power estimates
 used in the least-prime argument for arithmetic progressions. -/
-theorem residue_logWeightedSum_le_square_add_nonsquare {q : ℕ} (a : ZMod q) {x : ℝ} (hx : 0 < x)
+theorem residue_logSum_le_square_add_nonsquare {q : ℕ} (a : ZMod q) {x : ℝ} (hx : 0 < x)
     (hno : ∀ p : ℕ, p.Prime → (p : ZMod q) = a → ¬(p : ℝ) ≤ x) :
     (∑ n ∈ (Finset.Icc 1 ⌊x⌋₊).filter (fun n : ℕ ↦ (n : ZMod q) = a), logWeightedMangoldtTerm x n) ≤
       (∑ n ∈ (Finset.Icc 1 ⌊x⌋₊).filter (fun n : ℕ ↦ IsSquare n ∧ (n : ZMod q) = a),

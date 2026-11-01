@@ -93,15 +93,15 @@ theorem integrable_gammaResolventMellinIntegrand (f : GeneralLFunction) (hf : f.
 integral equals shiftedGammaSum minus the derivative of the completion factor's
 logarithmic derivative at σ. Integrate the finite family and apply the individual
 pole evaluations. This identifies the gamma residues and their origin correction. -/
-theorem normalized_integral_gammaResolventMellinIntegrand_eq (f : GeneralLFunction)
-    (hf : f.IsAdmissible) {σ τ x : ℝ} (hσ : 1 ≤ σ) (hτ : 0 < τ) (hx : 1 < x) :
+theorem gammaResolvent_normalized_integral (f : GeneralLFunction) (hf : f.IsAdmissible) {σ τ x : ℝ}
+    (hσ : 1 ≤ σ) (hτ : 0 < τ) (hx : 1 < x) :
     (2 * Real.pi)⁻¹ • (∫ y : ℝ, f.gammaResolventMellinIntegrand x σ τ y) =
       f.shiftedGammaSum x σ - deriv (logDeriv f.completionFactor) (σ : ℂ) := by
   unfold gammaResolventMellinIntegrand
   rw [MeasureTheory.integral_finsetSum Finset.univ
       (fun j _ ↦ integrable_gammaPoleMellinSeries f hf hσ hτ (zero_lt_one.trans hx) j),
     Finset.smul_sum]
-  exact sum_normalized_integral_gammaPoleResolvent_eq f hf hσ hτ hx
+  exact gammaPole_normalized_integral f hf hσ hτ hx
 
 /-- For admissible data satisfying individual RH, real σ ≥ 1, τ > 0, and any real x,
 the zero Mellin integrand equals the completed logarithmic derivative difference
@@ -153,8 +153,8 @@ theorem gammaResolventMellinIntegrand_eq (f : GeneralLFunction) (hf : f.IsAdmiss
     linarith only [hσ, hτ]
   have ht : 0 < (σ : ℂ).re := by
     rw [Complex.ofReal_re]; linarith only [hσ]
-  rw [logDeriv_completionFactor_sub_eq_gammaPoleSeries f hf hs ht, ← Finset.sum_neg_distrib,
-    Finset.sum_mul, Finset.sum_div]
+  rw [completion_logDeriv_gammaPoleSeries f hf hs ht, ← Finset.sum_neg_distrib, Finset.sum_mul,
+    Finset.sum_div]
   unfold gammaResolventMellinIntegrand
   apply Finset.sum_congr rfl
   intro j _
@@ -179,8 +179,8 @@ of the ordinary logarithmic derivative equals the completed logarithmic derivati
 derivative minus the completion factor's logarithmic derivative's derivative at σ.
 Differentiate the local completion identity; analyticity and nonvanishing justify
 the quotient derivatives. This combines the zero and gamma origin corrections. -/
-theorem deriv_logDeriv_ordinary_eq_completed_sub_completionFactor (f : GeneralLFunction)
-    (hf : f.IsAdmissible) (hRH : f.RiemannHypothesis) {σ : ℝ} (hσ : 1 ≤ σ) :
+theorem ordinary_logDeriv_deriv_split_RH (f : GeneralLFunction) (hf : f.IsAdmissible)
+    (hRH : f.RiemannHypothesis) {σ : ℝ} (hσ : 1 ≤ σ) :
     deriv (logDeriv f.L) (σ : ℂ) =
       deriv (logDeriv f.completed) (σ : ℂ) - deriv (logDeriv f.completionFactor) (σ : ℂ) := by
   have hs : 1 / 2 < (σ : ℂ).re := by
@@ -271,20 +271,20 @@ theorem normalized_integral_ordinaryMellin_eq (f : GeneralLFunction) (hf : f.IsA
   simp only [Pi.sub_apply] at hIZΓ
   have hIZ := MeasureTheory.integral_sub hO hZ
   rw [he, hIZΓ, hIZ, smul_sub, smul_sub, MeasureTheory.integral_const_mul, ← mul_smul_comm, hGI,
-    hZI, normalized_integral_gammaResolventMellinIntegrand_eq f hf hσ hτ hx]
+    hZI, gammaResolvent_normalized_integral f hf hσ hτ hx]
   have hs : 1 / 2 < (σ : ℂ).re := by
     rw [Complex.ofReal_re]; linarith only [hσ]
   rw [AnalyticNumberTheory.General.deriv_shiftedLogarithmicRegularization
       (analyticAt_ordinary_of_re_pos f hf (lt_trans (show (0 : ℝ) < 1 / 2 by norm_num only) hs))
       (ordinary_ne_zero_of_re_gt_half f hf hRH hs) hx0,
-    deriv_logDeriv_ordinary_eq_completed_sub_completionFactor f hf hRH hσ]
+    ordinary_logDeriv_deriv_split_RH f hf hRH hσ]
   ring
 
 /-- For admissible RH data, σ > 1 and x > 1, the shifted weighted arithmetic sum equals
 the regularized origin derivative plus the shifted zero sum minus the gamma sum.
 Combine arithmetic Mellin inversion on the line τ=1 with the analytic integral evaluation.
 This discharges the exact-formula input to the generalized logarithmic Lemma 2.5. -/
-theorem shiftedArithmeticSum_eq_origin_zero_sub_gamma (f : GeneralLFunction) (hf : f.IsAdmissible)
+theorem shiftedArithmetic_origin_zero_gamma_RH (f : GeneralLFunction) (hf : f.IsAdmissible)
     (hRH : f.RiemannHypothesis) {σ x : ℝ} (hσ : 1 < σ) (hx : 1 < x) :
     f.shiftedArithmeticSum x σ =
       deriv (AnalyticNumberTheory.General.shiftedLogarithmicRegularization f.L x (σ : ℂ)) 0 +

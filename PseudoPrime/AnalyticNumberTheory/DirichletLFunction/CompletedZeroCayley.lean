@@ -33,7 +33,7 @@ noncomputable def completedZeroCayleyTerm {q : ℕ} [NeZero q] (χ : DirichletCh
 Cayley zero term of degree n+1 is the binomial combination of inverse powers of degrees
 two through n+2. The shifted zero has real part one, so apply the weighted Cayley identity.
 This permits the already bounded complex inverse-power moments to control circle moments. -/
-theorem completedZeroCayleyTerm_eq_inversePowerSum {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+theorem cayleyTerm_eq_invPowerSum_RH {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
     (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) (n : ℕ)
     (ρ : CompletedZero χ) :
     completedZeroCayleyTerm χ (n + 1) ρ =
@@ -42,8 +42,7 @@ theorem completedZeroCayleyTerm_eq_inversePowerSum {q : ℕ} [NeZero q] {χ : Di
           ((analyticOrderNatAt χ.completedLFunction (ρ : ℂ) : ℂ) /
             ((((3 / 2 : ℝ) : ℂ)) - (ρ : ℂ)) ^ (j + 2)) := by
   apply PseudoPrime.Analysis.cayley_weighted_power_expansion
-  rw [Complex.sub_re, Complex.ofReal_re,
-    completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv ρ.property]
+  rw [Complex.sub_re, Complex.ofReal_re, completed_zero_re_eq_half_of_RH hRH hp hinv ρ.property]
   norm_num only
 
 /-- For primitive nonprincipal characters of modulus at least two, with nonprincipal
@@ -51,16 +50,16 @@ inverse and individual RH, the Cayley zero sum of degree n+1 equals a finite bin
 combination of inverse-power zero sums. Each inverse-power series is absolutely convergent;
 interchange the finite sum with the zero series and factor out its coefficients.
 This transfers the uniform moment estimates without taking absolute values termwise. -/
-theorem completedZeroCayleySum_eq_inversePowerSums {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (n : ℕ) :
+theorem cayleySum_eq_invPowerSums_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
+    (n : ℕ) :
     (∑' ρ : CompletedZero χ, completedZeroCayleyTerm χ (n + 1) ρ) =
       ∑ j ∈ Finset.range (n + 1),
         -(n.choose j : ℂ) * (-2 : ℂ) ^ j *
           (∑' ρ : CompletedZero χ,
             (analyticOrderNatAt χ.completedLFunction (ρ : ℂ) : ℂ) /
               ((((3 / 2 : ℝ) : ℂ)) - (ρ : ℂ)) ^ (j + 2)) := by
-  rw [tsum_congr (completedZeroCayleyTerm_eq_inversePowerSum hRH hp hinv n)]
+  rw [tsum_congr (cayleyTerm_eq_invPowerSum_RH hRH hp hinv n)]
   rw [Summable.tsum_finsetSum]
   · apply Finset.sum_congr rfl
     intro j hj
@@ -84,13 +83,13 @@ theorem summable_completedZeroCayleyTerm {q : ℕ} [NeZero q] (hq : 2 ≤ q)
         (summable_completedZero_inversePower hq hRH hp hne hinv
               (show (1 : ℝ) ≤ 3 / 2 by norm_num only) j).mul_left
           (-(n.choose j : ℂ) * (-2 : ℂ) ^ j))
-  exact h.congr (fun ρ => (completedZeroCayleyTerm_eq_inversePowerSum hRH hp hinv n ρ).symm)
+  exact h.congr (fun ρ => (cayleyTerm_eq_invPowerSum_RH hRH hp hinv n ρ).symm)
 
 /-- For each positive degree n+1, the norm of the Poisson-weighted Cayley zero sum has
 a positive bound independent of the modulus and primitive nonprincipal character, assuming
 individual RH and a nonprincipal inverse. Apply the finite moment identity and the uniform
 bounds for its inverse-power sums. These are bounds on the complex sum, preserving cancellation. -/
-theorem exists_uniform_norm_completedZeroCayleySum_le (n : ℕ) :
+theorem uniform_cayleySum_bound_RH (n : ℕ) :
     ∃ C : ℝ,
       0 < C ∧
         ∀ (q : ℕ) [NeZero q],
@@ -100,12 +99,12 @@ theorem exists_uniform_norm_completedZeroCayleySum_le (n : ℕ) :
                 χ.IsPrimitive →
                 χ ≠ 1 →
                 χ⁻¹ ≠ 1 → ‖∑' ρ : CompletedZero χ, completedZeroCayleyTerm χ (n + 1) ρ‖ ≤ C := by
-  choose B hB hb using exists_uniform_norm_completedZero_inversePowerSum_le
+  choose B hB hb using uniform_zeroInvPower_bound_RH
   let C : ℝ := ∑ j ∈ Finset.range (n + 1), ‖-(n.choose j : ℂ) * (-2 : ℂ) ^ j‖ * B j
   have hC : 0 ≤ C := Finset.sum_nonneg (fun j _ => mul_nonneg (norm_nonneg _) (hB j).le)
   refine ⟨C + 1, by linarith only [hC], ?_⟩
   intro q _ hq χ hRH hp hne hinv
-  rw [completedZeroCayleySum_eq_inversePowerSums hq hRH hp hne hinv]
+  rw [cayleySum_eq_invPowerSums_RH hq hRH hp hne hinv]
   apply (norm_sum_le _ _).trans
   apply le_trans (Finset.sum_le_sum (fun j hj => ?_)) (show C ≤ C + 1 by linarith only)
   rw [norm_mul]
@@ -116,7 +115,7 @@ norm of the weighted Cayley zero sum at most epsilon log q, uniformly over primi
 nonprincipal characters satisfying individual RH with nonprincipal inverse.
 Absorb the fixed-degree bound into the growing logarithm. This proves vanishing positive
 moments for the conductor-normalized weighted zero distribution. -/
-theorem exists_uniform_completedZeroCayleySum_le_log (n : ℕ) {ε : ℝ} (hε : 0 < ε) :
+theorem eventually_cayleySum_le_log_RH (n : ℕ) {ε : ℝ} (hε : 0 < ε) :
     ∃ Q : ℕ,
       2 ≤ Q ∧
         ∀ (q : ℕ) [NeZero q],
@@ -127,7 +126,7 @@ theorem exists_uniform_completedZeroCayleySum_le_log (n : ℕ) {ε : ℝ} (hε :
                 χ ≠ 1 →
                 χ⁻¹ ≠ 1 →
                 ‖∑' ρ : CompletedZero χ, completedZeroCayleyTerm χ (n + 1) ρ‖ ≤ ε * Real.log q := by
-  obtain ⟨C, _, hb⟩ := exists_uniform_norm_completedZeroCayleySum_le n
+  obtain ⟨C, _, hb⟩ := uniform_cayleySum_bound_RH n
   have hl :=
     (Real.tendsto_log_atTop.comp (tendsto_natCast_atTop_atTop (R := ℝ))).eventually_ge_atTop (C / ε)
   obtain ⟨Q, hQ⟩ := Filter.eventually_atTop.mp hl

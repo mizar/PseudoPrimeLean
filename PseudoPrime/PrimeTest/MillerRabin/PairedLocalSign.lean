@@ -48,8 +48,8 @@ theorem signSubgroup_pair_ne_top_of_local_half_odd {p q E kp kq : ℕ} [Fact p.P
     (NumberTheory.complexJacobiNumeratorCharacter p hpOdd).changeLevel (dvd_mul_right p q) *
       (NumberTheory.complexJacobiNumeratorCharacter q hqOdd).changeLevel (dvd_mul_left q p)
   have ha : χ ∈ NumberTheory.subgroupAnnihilator (signSubgroup (p * q) E) :=
-    paired_quadraticCharacter_mem_signSubgroup_annihilator hpOdd hqOdd (dvd_mul_right p q)
-      (dvd_mul_left q p) hkp hkq hEp hEq
+    pairedQuadratic_sign_annihilator hpOdd hqOdd (dvd_mul_right p q) (dvd_mul_left q p) hkp hkq hEp
+      hEq
   have hc : χ.conductor = p * q :=
     paired_quadraticCharacter_conductor hpOdd hqOdd (dvd_mul_right p q) (dvd_mul_left q p) hpq
   intro ht

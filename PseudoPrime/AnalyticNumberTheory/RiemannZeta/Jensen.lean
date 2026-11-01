@@ -230,7 +230,7 @@ Restrict the pole-free analytic domain using the disk containment; Jensen needs 
 -/
 theorem jensen_analyticOnNhd {T : ℝ} (hT : 4 ≤ T) :
     AnalyticOnNhd ℂ riemannZeta (Metric.closedBall (jensenCenter T) (39 / 10)) :=
-  analyticOnNhd_riemannZeta_reGt_neg_one_diff_one.mono (jensenBall_subset hT)
+  analyticOnNhd_zeta_reGt_neg_one_diff_one.mono (jensenBall_subset hT)
 
 /--
 Zeta is nonzero at every Jensen center, since its real part is three.
@@ -272,7 +272,7 @@ theorem jensen_f_bound {T : ℝ} (hT : 4 ≤ T) :
       (by
         simp only [Metric.mem_closedBall, dist_eq_norm]
         rw [hz])
-  have hb := norm_riemannZeta_le_of_reGt_neg_one_diff_one hzmem
+  have hb := norm_zeta_le_of_reGt_neg_one_diff_one hzmem
   have hTabs : |T| = T := abs_of_nonneg (by linarith only [hT])
   have hnz : ‖z‖ ≤ T + 69 / 10 := by
     have h1 : ‖z‖ ≤ ‖jensenCenter T‖ + ‖z - jensenCenter T‖ := by
@@ -340,7 +340,7 @@ theorem jensen_f_bound_ball {T : ℝ} (hT : 4 ≤ T) :
       (by
         simp only [Metric.mem_closedBall, dist_eq_norm]
         exact hz)
-  have hb := norm_riemannZeta_le_of_reGt_neg_one_diff_one hzmem
+  have hb := norm_zeta_le_of_reGt_neg_one_diff_one hzmem
   have hTnonneg : (0 : ℝ) ≤ T := le_trans (by norm_num only : (0 : ℝ) ≤ 4) hT
   have hTabs : |T| = T := abs_of_nonneg hTnonneg
   have hnz : ‖z‖ ≤ T + 69 / 10 := by

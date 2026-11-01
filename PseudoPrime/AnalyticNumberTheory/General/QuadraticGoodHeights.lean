@@ -111,8 +111,8 @@ reference profile from the conductor and gamma estimates, then apply the
 zero-avoiding height construction. No separate horizontal growth premise
 or Riemann hypothesis is required. This is a fixed-completion estimate for
 the general explicit formula. -/
-theorem exists_height_with_quadratic_bound_of_completion {F L : ℂ → ℂ} {ε : ℂ} {q d : ℕ}
-    (hq : 1 ≤ q) (k : ℤ) (κ : Fin d → ℂ) (hκ : ∀ j, -1 < (κ j).re)
+theorem exists_goodHeight_of_completion {F L : ℂ → ℂ} {ε : ℂ} {q d : ℕ} (hq : 1 ≤ q) (k : ℤ)
+    (κ : Fin d → ℂ) (hκ : ∀ j, -1 < (κ j).re)
     (hreg :
       ∀ z,
         z ≠ 0 →

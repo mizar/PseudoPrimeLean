@@ -45,8 +45,7 @@ theorem triangular18_cutoff_mangoldt_lower_of_rh (hRH : RiemannHypothesis) {x : 
 /-- Under RH the cutoff sum divided by sqrt x is at least the explicit
 cutoff mass times sqrt x minus 1456 x^(1/4), for positive scale.
 Divide the unnormalized lower bound and simplify the real powers. -/
-theorem triangular18_cutoff_mangoldt_normalized_lower_of_rh (hRH : RiemannHypothesis) {x : ℝ}
-    (hx : 0 < x) :
+theorem triangular18_cutoff_mangoldt_lower_of_RH (hRH : RiemannHypothesis) {x : ℝ} (hx : 0 < x) :
     Real.sqrt x * (68 + 4 * Real.exp (-18)) - 1456 * x ^ (1 / 4 : ℝ) ≤
       (∑ k ∈ Finset.Ioc ⌊Real.exp (-36) * x⌋₊ ⌊x⌋₊,
           ((36 + Real.log ((k : ℝ) / x)) * ((k : ℝ) / x) ^ (-1 / 2 : ℝ)) *

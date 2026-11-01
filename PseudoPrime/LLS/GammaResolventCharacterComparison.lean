@@ -54,8 +54,8 @@ Jacobi witnesses through the prescribed cutoff forces a comparison of the
 actual principal and ramp sums with the signed Gamma factor, full Euler
 weight, integer prefix gain, finite local dual budget, pole and sharp left cost.
 Only the remaining quantitative numerical inequality is needed for contradiction. -/
-theorem gamma_jacobi_no_negative_refined_arithmetic_comparison {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem gammaJacobi_noNeg_refinedArith_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hlarge : 10 ^ 100 ≤ n) {b : ℝ}
     (hb : 1 ≤ b) (hbX : b ≤ (99 / 40 : ℝ) * Analysis.gammaRefinedScale (Real.log n))
     (hno :
@@ -96,7 +96,7 @@ theorem gamma_jacobi_no_negative_refined_arithmetic_comparison {n : ℕ} {hn : O
     PaperStatements.gamma_primitive_sum_re_le_resolvent_sharp hq hm hmq hGRH
       bridge.character_primitive bridge.character_ne_one hinv hx
   have hz :=
-    gamma_jacobi_no_negative_zeroMass_add_ramp_le_prefix_dual bridge
+    gammaJacobi_noNeg_massRamp_prefixDual_RH bridge
       (hGRH _ bridge.character bridge.character_primitive) hb
       (fun p hp hodd hpb ↦ hno p hp hodd (hpb.trans hbX)) hlarge
   have ha := gamma_jacobi_no_negative_ramp_comparison bridge hx0 hno
@@ -121,7 +121,7 @@ an odd-prime negative Jacobi witness below the prescribed cutoff, for odd
 nonsquare n≥10^100 under GRH. Negating witness existence supplies exactly
 the no-negative hypothesis of the complete smoothed arithmetic comparison.
 The gap remains an explicit numerical requirement, not an assumed certificate. -/
-theorem exists_odd_prime_negative_of_refined_arithmetic_gap {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+theorem exists_oddPrime_negJacobi_refinedArith_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hlarge : 10 ^ 100 ≤ n) {b : ℝ}
     (hb : 1 ≤ b) (hbX : b ≤ (99 / 40 : ℝ) * Analysis.gammaRefinedScale (Real.log n))
@@ -145,7 +145,7 @@ theorem exists_odd_prime_negative_of_refined_arithmetic_gap {n : ℕ} {hn : Odd 
         Odd p →
         (p : ℝ) ≤ (99 / 40 : ℝ) * Analysis.gammaRefinedScale (Real.log n) → jacobiSym n p ≠ -1 :=
     fun p hp hodd hcut hj ↦ hnot ⟨p, hp, hodd, hcut, hj⟩
-  have h := gamma_jacobi_no_negative_refined_arithmetic_comparison bridge hGRH hlarge hb hbX hno
+  have h := gammaJacobi_noNeg_refinedArith_GRH bridge hGRH hlarge hb hbX hno
   have hn0 : (n : ℝ) ≠ 0 := (Nat.cast_pos.mpr hn.pos).ne'
   have hlog : Real.log (4 * (n : ℝ)) = Real.log n + Real.log 4 := by
     rw [Real.log_mul (by norm_num only : (4 : ℝ) ≠ 0) hn0, add_comm]

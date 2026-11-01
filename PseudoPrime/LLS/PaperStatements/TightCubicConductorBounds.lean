@@ -58,7 +58,7 @@ theorem cubicGapRationalBudget_le_tight {q : ℕ} (hq : 2 ≤ q) {x : ℝ} (hx :
 /-- Primitive nonprincipal GRH data satisfy the cubic character upper bound
 with constants 97/130 and 103729/15000. Compose the rational budget with its
 tight scalar estimate and remove square-root normalization. -/
-theorem sqrt_mul_reciprocalGapCharacterSum_three_re_le_tight {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem sqrt_reciprocalGap_three_bound_GRH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) :
     Real.sqrt x * (reciprocalGapCharacterSum 3 χ x).re ≤
@@ -102,10 +102,9 @@ theorem tightCubicExclusionRadius_data {G E : ℝ} (hG : 0 ≤ G) (hE : 0 ≤ E)
 character-sensitive exclusion cost give an outside prime below the squared
 cubic radius. Combine the exact defect with the two analytic bounds and the
 radius identity. This permits arbitrary later upper bounds for E_chi(m). -/
-theorem exists_prime_outside_le_tight_cubic_exclusion_radius {f m : ℕ} [NeZero f]
-    (χ : DirichletCharacter ℂ f) (hf : 2 ≤ f) (hm : m ≠ 0)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) {G E : ℝ} (hlog : Real.log f ≤ G)
+theorem exists_prime_neOne_tightCubic_GRH {f m : ℕ} [NeZero f] (χ : DirichletCharacter ℂ f)
+    (hf : 2 ≤ f) (hm : m ≠ 0) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) {G E : ℝ} (hlog : Real.log f ≤ G)
     (hcost : AnalyticNumberTheory.Arithmetic.characterExclusionCost χ m ≤ E) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ (tightCubicExclusionRadius G E) ^ 2 ∧ ¬p ∣ m ∧ χ p ≠ 1 := by
   have hf0 : 0 ≤ Real.log (f : ℝ) :=
@@ -124,9 +123,7 @@ theorem exists_prime_outside_le_tight_cubic_exclusion_radius {f m : ℕ} [NeZero
     by_contra hv
     exact hn ⟨p, hp, hpx, hpm, hv⟩
   have hdef := sqrt_mul_cubic_defect_le_sensitive χ hm hx.le ht
-  have hu :=
-    sqrt_mul_reciprocalGapCharacterSum_three_re_le_tight hf hGRH hp hne
-      (fun h ↦ hne (inv_eq_one.mp h)) hx.le
+  have hu := sqrt_reciprocalGap_three_bound_GRH hf hGRH hp hne (fun h ↦ hne (inv_eq_one.mp h)) hx.le
   have hl :=
     mul_le_mul_of_nonneg_left (reciprocalGap_principal_three_ge hGRH.riemann hx)
       (Real.sqrt_nonneg ((tightCubicExclusionRadius G E) ^ 2))

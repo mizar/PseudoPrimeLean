@@ -153,32 +153,32 @@ theorem firstStopNeOneSet_nonempty_of_witness {C : ℕ → Prop} {n i : ℕ} (hi
   exact ⟨i, hi, hndvd, hj⟩
 
 /-- A prime pure `-1` first-stop is an odd-prime Jacobi witness. -/
-theorem primeNegOneWitnessSet_of_prime_mem_firstStopNegOneSet {C : ℕ → Prop} {n p : ℕ}
-    (hC : CandidateOdd C) (hn : Odd n) (hp : p.Prime) (hstop : p ∈ FirstStopNegOneSet C n) :
+theorem negOneWitnessSet_of_firstStop_prime {C : ℕ → Prop} {n p : ℕ} (hC : CandidateOdd C)
+    (hn : Odd n) (hp : p.Prime) (hstop : p ∈ FirstStopNegOneSet C n) :
     p ∈ primeNegOneWitnessSet n := by
   refine ⟨hp, hC hstop.1, ?_⟩
   rw [← jacobi_selfridgeD (hC hstop.1) hn]
   exact hstop.2
 
 /-- A prime factor-detecting first-stop is an odd-prime `≠1` witness. -/
-theorem primeNeOneWitnessSet_of_prime_mem_firstStopNeOneSet {C : ℕ → Prop} {n p : ℕ}
-    (hC : CandidateOdd C) (hn : Odd n) (hp : p.Prime) (hstop : p ∈ FirstStopNeOneSet C n) :
+theorem neOneWitnessSet_of_firstStop_prime {C : ℕ → Prop} {n p : ℕ} (hC : CandidateOdd C)
+    (hn : Odd n) (hp : p.Prime) (hstop : p ∈ FirstStopNeOneSet C n) :
     p ∈ primeNeOneWitnessSet n := by
   refine ⟨hp, hC hstop.1, ?_⟩
   rw [← jacobi_selfridgeD (hC hstop.1) hn]
   exact hstop.2.2
 
 /-- An odd-prime `-1` witness in the candidate set is a pure stopping candidate. -/
-theorem mem_firstStopNegOneSet_of_mem_primeNegOneWitnessSet {C : ℕ → Prop} {n p : ℕ} (hn : Odd n)
-    (hCp : C p) (hp : p ∈ primeNegOneWitnessSet n) : p ∈ FirstStopNegOneSet C n := by
+theorem mem_firstStopNegOne_of_primeNegOneWitness {C : ℕ → Prop} {n p : ℕ} (hn : Odd n) (hCp : C p)
+    (hp : p ∈ primeNegOneWitnessSet n) : p ∈ FirstStopNegOneSet C n := by
   refine ⟨hCp, ?_⟩
   rw [jacobi_selfridgeD hp.2.1 hn]
   exact hp.2.2
 
 /-- An odd-prime `≠1` witness in the candidate set is factor-detecting when not divisible by
 `n`. -/
-theorem mem_firstStopNeOneSet_of_mem_primeNeOneWitnessSet {C : ℕ → Prop} {n p : ℕ} (hn : Odd n)
-    (hCp : C p) (hndvd : ¬n ∣ p) (hp : p ∈ primeNeOneWitnessSet n) : p ∈ FirstStopNeOneSet C n := by
+theorem mem_firstStopNeOne_of_primeNeOneWitness {C : ℕ → Prop} {n p : ℕ} (hn : Odd n) (hCp : C p)
+    (hndvd : ¬n ∣ p) (hp : p ∈ primeNeOneWitnessSet n) : p ∈ FirstStopNeOneSet C n := by
   refine ⟨hCp, hndvd, ?_⟩
   rw [jacobi_selfridgeD hp.2.1 hn]
   exact hp.2.2
@@ -188,21 +188,21 @@ theorem primeNegOneWitness_le_firstStopNegOne_of_prime {C : ℕ → Prop} {n : �
     (hn : Odd n) (hw : (primeNegOneWitnessSet n).Nonempty) (hs : (FirstStopNegOneSet C n).Nonempty)
     (hp : (firstStopNegOne C n hs).Prime) : primeNegOneWitness n hw ≤ firstStopNegOne C n hs := by
   apply primeNegOneWitness_le
-  exact primeNegOneWitnessSet_of_prime_mem_firstStopNegOneSet hC hn hp (firstStopNegOne_mem C n hs)
+  exact negOneWitnessSet_of_firstStop_prime hC hn hp (firstStopNegOne_mem C n hs)
 
 /-- If the factor-detecting first-stop is prime, the least `≠ 1` witness is no larger than it. -/
 theorem primeNeOneWitness_le_firstStopNeOne_of_prime {C : ℕ → Prop} {n : ℕ} (hC : CandidateOdd C)
     (hn : Odd n) (hw : (primeNeOneWitnessSet n).Nonempty) (hs : (FirstStopNeOneSet C n).Nonempty)
     (hp : (firstStopNeOne C n hs).Prime) : primeNeOneWitness n hw ≤ firstStopNeOne C n hs := by
   apply primeNeOneWitness_le
-  exact primeNeOneWitnessSet_of_prime_mem_firstStopNeOneSet hC hn hp (firstStopNeOne_mem C n hs)
+  exact neOneWitnessSet_of_firstStop_prime hC hn hp (firstStopNeOne_mem C n hs)
 
 /-- If the least `-1` witness is a candidate, the pure first-stop is no larger than it. -/
 theorem firstStopNegOne_le_primeNegOneWitness {C : ℕ → Prop} {n : ℕ} (hn : Odd n)
     (hw : (primeNegOneWitnessSet n).Nonempty) (hs : (FirstStopNegOneSet C n).Nonempty)
     (hC : C (primeNegOneWitness n hw)) : firstStopNegOne C n hs ≤ primeNegOneWitness n hw := by
   apply firstStopNegOne_le
-  exact mem_firstStopNegOneSet_of_mem_primeNegOneWitnessSet hn hC (primeNegOneWitness_mem n hw)
+  exact mem_firstStopNegOne_of_primeNegOneWitness hn hC (primeNegOneWitness_mem n hw)
 
 /-- If the least `≠ 1` witness is a candidate and avoids `n`, the first-stop is no larger. -/
 theorem firstStopNeOne_le_primeNeOneWitness {C : ℕ → Prop} {n : ℕ} (hn : Odd n)
@@ -210,6 +210,6 @@ theorem firstStopNeOne_le_primeNeOneWitness {C : ℕ → Prop} {n : ℕ} (hn : O
     (hC : C (primeNeOneWitness n hw)) (hndvd : ¬n ∣ primeNeOneWitness n hw) :
     firstStopNeOne C n hs ≤ primeNeOneWitness n hw := by
   apply firstStopNeOne_le
-  exact mem_firstStopNeOneSet_of_mem_primeNeOneWitnessSet hn hC hndvd (primeNeOneWitness_mem n hw)
+  exact mem_firstStopNeOne_of_primeNeOneWitness hn hC hndvd (primeNeOneWitness_mem n hw)
 
 end PseudoPrime.PrimeTest

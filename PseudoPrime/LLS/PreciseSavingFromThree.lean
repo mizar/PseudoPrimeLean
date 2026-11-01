@@ -79,8 +79,7 @@ theorem exists_prime_outside_preciseSaving_from_three
     (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤) :
     ∃ p : ℕ, PrimeOutsideSubgroup q H p ∧ (p : ℝ) ≤ (preciseSavingRadiusRoot q) ^ 2 := by
   by_cases hlarge : 3000 ≤ q
-  · obtain ⟨p, hp, hd, hb, hout⟩ :=
-      exists_prime_outside_subgroup_le_preciseSavingRadius hlarge H hH hGRH
+  · obtain ⟨p, hp, hd, hb, hout⟩ := exists_prime_outside_preciseSaving_GRH hlarge H hH hGRH
     exact ⟨p, primeOutsideSubgroup_of_image_exclusion H hp hd hout, hb⟩
   · by_cases hsmall : q ≤ 5
     · exact exists_prime_outside_preciseSaving_small hq hsmall H hH
@@ -94,9 +93,8 @@ theorem exists_prime_outside_preciseSaving_from_three
 Claim: a coprime non-one prime exists through the precise-saving squared radius.
 Proof: apply the subgroup theorem to the proper kernel of the character on units.
 Role: provide the full-range character counterpart of the strengthened Part 1 bound. -/
-theorem exists_prime_character_ne_one_le_preciseSavingRadius_from_three {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hne : χ ≠ 1) (hq : 3 ≤ q)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
+theorem exists_prime_neOne_preciseSaving_three_GRH {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (hne : χ ≠ 1) (hq : 3 ≤ q) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ, p.Prime ∧ ¬p ∣ q ∧ χ p ≠ 1 ∧ (p : ℝ) ≤ (preciseSavingRadiusRoot q) ^ 2 := by
   obtain ⟨p, ⟨hp, hd, u, hu, heq⟩, hb⟩ :=
     exists_prime_outside_preciseSaving_from_three hGRH hq χ.toUnitHom.ker

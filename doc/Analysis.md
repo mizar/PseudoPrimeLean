@@ -26,7 +26,7 @@ $$
 \frac{27}{50} < \gamma < \frac{29}{50}.
 $$
 
-対応する定理は `twenty_seven_fiftieths_lt_eulerMascheroniConstant` と `eulerMascheroniConstant_lt_twentyNine_fiftieths`。
+対応する定理は `eulerMascheroniConstant_gt_27_50` と `eulerMascheroniConstant_lt_twentyNine_fiftieths`。
 
 `logLinearRatio` が表す $(2\ln\mathrel{} y + 1)/y$ と、 `logSquareRatio` が表す $(\ln\mathrel{} y)^2/y$ は、ともに $y \ge 8$ で狭義単調減少する。 `strictAntiOn_logLinearRatio` と `strictAntiOn_logSquareRatio` により、無限区間の比較を端点での評価へ帰着できる。
 

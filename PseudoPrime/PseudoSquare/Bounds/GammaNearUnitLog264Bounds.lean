@@ -29,17 +29,17 @@ theorem gamma_near_unit_profile_inputs_of_log_ge_264 {L : ℝ} (hlo : 264 ≤ L)
 Claim: the least negative odd-prime witness is at most (9999/10000)L^2.
 Proof: use the asymmetric-prefix bridge through 265 and the established half-line beyond it.
 Role: lower the common-endpoint entrance without enumerating inputs. -/
-theorem primeNegOneWitness_cast_le_nearUnit_log_264_endpoint {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L : ℝ}
-    (hL : 264 ≤ L) (hlog : Real.log n ≤ L) (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
+theorem negOneWitness_cast_le_nearUnit_log_264_endpoint {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {L : ℝ} (hL : 264 ≤ L)
+    (hlog : Real.log n ≤ L) (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ (9999 / 10000 : ℝ) * L ^ 2 := by
   by_cases h265 : 265 ≤ L
-  · exact primeNegOneWitness_cast_le_nearUnit_log_265_endpoint hn hns hGRH h265 hlog hw
+  · exact negOneWitness_cast_le_nearUnit_log_265_endpoint hn hns hGRH h265 hlog hw
   · obtain ⟨hx, hb, hbx⟩ := gamma_near_unit_profile_inputs_of_log_ge_264 hL
     have hs := LLS.gamma_log264_separation_264_265 hGRH.riemann hL (lt_of_not_ge h265).le
     have h :=
-      primeNegOneWitness_cast_le_of_factor_free_separation hn hns hGRH (by linarith only [hL]) hlog
-        hx hb hbx hs hw
+      negOneWitness_cast_le_of_factor_free_separation hn hns hGRH (by linarith only [hL]) hlog hx hb
+        hbx hs hw
     nlinarith only [h]
 
 /-- Input: GRH, odd nonsquare n and log n>=264.
@@ -54,7 +54,7 @@ theorem exists_prime_neg_one_witness_le_nearUnit_log_264 {n : ℕ} (hn : Odd n) 
   have hm := NumberTheory.primeNegOneWitness_mem n hw
   exact
     ⟨NumberTheory.primeNegOneWitness n hw, hm.1, hm.2.1,
-      primeNegOneWitness_cast_le_nearUnit_log_264_endpoint hn hns hGRH hL (le_refl _) hw, hm.2.2⟩
+      negOneWitness_cast_le_nearUnit_log_264_endpoint hn hns hGRH hL (le_refl _) hw, hm.2.2⟩
 
 /-- Input: GRH, odd nonsquare n with log n>=264 and a nonempty least-negative set.
 Claim: the least odd-prime negative witness obeys <=(9999/10000)(log n)^2<(log n)^2.
@@ -64,7 +64,7 @@ theorem primeNegOneWitness_bound_nearUnit_log_264 {n : ℕ} (hn : Odd n) (hns : 
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ (9999 / 10000 : ℝ) * (Real.log n) ^ 2 ∧
       (NumberTheory.primeNegOneWitness n hw : ℝ) < (Real.log n) ^ 2 := by
-  have h := primeNegOneWitness_cast_le_nearUnit_log_264_endpoint hn hns hGRH hL (le_refl _) hw
+  have h := negOneWitness_cast_le_nearUnit_log_264_endpoint hn hns hGRH hL (le_refl _) hw
   exact ⟨h, by nlinarith only [h, sq_pos_of_pos (show 0 < Real.log n by linarith only [hL])]⟩
 
 /-- Input: GRH, odd nonsquare n with log n>=264 and a nonempty least-non-one set.
@@ -95,7 +95,7 @@ theorem QNegOne_bound_nearUnit_log_264 {B : ℕ}
     intro n hn
     have ha := NumberTheory.mem_admissibleFinset_iff.mp hn
     exact
-      primeNegOneWitness_cast_le_nearUnit_log_264_endpoint ha.odd ha.not_isSquare hGRH hL
+      negOneWitness_cast_le_nearUnit_log_264_endpoint ha.odd ha.not_isSquare hGRH hL
         (Real.log_le_log (Nat.cast_pos.mpr ha.odd.pos) (Nat.cast_le.mpr ha.le))
         (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare ha.odd ha.not_isSquare)
   exact ⟨hle, by nlinarith only [hle, sq_pos_of_pos (show 0 < Real.log B by linarith only [hL])]⟩

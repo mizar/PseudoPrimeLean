@@ -47,7 +47,7 @@ theorem gamma_primitiveCharacter_sum_re_le_uniform_scale {q : ℕ} [NeZero q] (h
       (show Real.log χ.conductor ≤ T + 2 by linarith only [hlogf, hambient])
   have hlead := mul_le_mul_of_nonneg_left hlogf (by norm_num only : (0 : ℝ) ≤ 11783423 / 25000000)
   have hu :=
-    gamma_primitiveCharacter_sum_re_le_variable_prefix_scale hq χ hne hGRH hx 32
+    gammaCharacterSum_re_le_variable_prefix_scale hq χ hne hGRH hx 32
       Analysis.gammaResolvent_thirtyTwo_error_lt
   linarith only [hu, hpole, hleft, hlead]
 

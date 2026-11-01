@@ -33,15 +33,10 @@ theorem exists_prime_witness_le_gammaIndex100 {n : ℕ} (hnOdd : Odd n) (hcomp :
   have hnlarge : 20000 ≤ n := by
     have h20000 : 20000 ≤ 10 ^ 142 := by norm_num only
     exact h20000.trans hn142
-  rcases
-    exists_prime_witness_le_gammaIndex100_or_uniform_korselt_triple_of_odd_composite hnOdd hcomp
-      hGRH hL with
-    hw | htriple
+  rcases gamma100_witness_or_Korselt_oddComposite_GRH hnOdd hcomp hGRH hL with hw | htriple
   · exact hw
   · obtain ⟨hsf, hc, hK, hU⟩ := htriple
-    exact
-      exists_prime_witness_le_gammaIndex100_of_uniform_korselt_triple_card hnOdd hsf hc hK hU
-        hnlarge hGRH hL
+    exact exists_prime_gamma100_korseltCard_GRH hnOdd hsf hc hK hU hnlarge hGRH hL
 
 /-- The least prime rejecting strong MR inherits the Gamma index-100 cutoff
 for every odd composite at logarithmic scale at least 330. -/
@@ -62,9 +57,8 @@ theorem exists_least_prime_witness_le_gammaIndex100 {n : ℕ} (hnOdd : Odd n) (h
 
 /-- The least prime rejecting strong MR is bounded by the two-prefix `U₁₀₀`
 envelope for every odd composite with logarithm at least 240. -/
-theorem exists_least_prime_witness_le_gammaIndex100PrefixUpper {n : ℕ} (hnOdd : Odd n)
-    (hcomp : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 240 ≤ Real.log n) :
+theorem exists_leastWitness_le_gammaIndex100PrefixUpper {n : ℕ} (hnOdd : Odd n) (hcomp : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 240 ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ gammaIndex100PrefixUpper (Real.log n) ∧
@@ -219,7 +213,7 @@ theorem gammaIndex100Radius_ge_affine {L : ℝ} (hL : 330 ≤ L) :
 
 /-- The 6/5 Gaussian radius is below the `287/200` multiple of the affine
 lower bound for the index-100 Gamma radius from `L = 500` onward. -/
-theorem gaussianMR6FifthsRadius_lt_gammaIndex100Comparison {L : ℝ} (hL : 500 ≤ L) :
+theorem gaussian6Fifths_lt_gamma100Comparison {L : ℝ} (hL : 500 ≤ L) :
     gaussian6FifthsRadius L <
       (287 / 200 : ℝ) * ((11783423 / 25000000 : ℝ) / (91 / 100) * L + 14 / 5) := by
   let R0 := (287 / 200 : ℝ) * ((11783423 / 25000000 : ℝ) / (91 / 100) * L + 14 / 5)
@@ -439,7 +433,7 @@ index-100 Gamma bound. The comparison uses the analysis12 rational scale
 `287/200` and its strict coefficient inequality. -/
 theorem gaussianMR6FifthsBound_lt_gammaIndex100Bound {L : ℝ} (hL : 500 ≤ L) :
     gaussian6FifthsBound L < gammaIndex100Bound L := by
-  have hrad6 := gaussianMR6FifthsRadius_lt_gammaIndex100Comparison hL
+  have hrad6 := gaussian6Fifths_lt_gamma100Comparison hL
   have hgamma := gammaIndex100Radius_ge_affine (by linarith only [hL])
   have hrad : gaussian6FifthsRadius L < (287 / 200 : ℝ) * gammaIndex100Radius L := by
     have hmul := mul_le_mul_of_nonneg_left hgamma (by norm_num only : (0 : ℝ) ≤ 287 / 200)

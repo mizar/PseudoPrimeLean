@@ -77,8 +77,8 @@ of index at least four containing every strong Miller–Rabin pass. Choose the
 sign subgroup from the smaller local two-adic exponent. The local even-image
 conditions exclude index two, and reduction to the prime attaining the minimum
 proves pass containment. This closes the squarefree two-prime subgroup branch. -/
-theorem exists_index_ge_four_subgroup_containing_passes_two_primes {p q : ℕ} (hp : p.Prime)
-    (hq : q.Prime) (hp2 : p ≠ 2) (hq2 : q ≠ 2) (hpq : p < q) :
+theorem exists_index_four_subgroup_two_primes {p q : ℕ} (hp : p.Prime) (hq : q.Prime) (hp2 : p ≠ 2)
+    (hq2 : q ≠ 2) (hpq : p < q) :
     ∃ H : Subgroup (ZMod (p * q))ˣ,
       4 ≤ H.index ∧
         ∀ z : ZMod (p * q),

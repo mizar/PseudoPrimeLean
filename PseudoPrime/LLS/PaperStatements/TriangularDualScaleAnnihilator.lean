@@ -18,9 +18,8 @@ namespace PseudoPrime.LLS.PaperStatements
 nonprincipal annihilator characters at their primitive conductors. Supply conductor size,
 primitivity and nonprincipal inverse internally. Both arithmetic scales and Gamma terms
 retain their signs. This is the input to the subgroup dual-scale comparison. -/
-theorem triangular18_annihilator_dual_scale_signed_formula {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ}
-    (hx : 1 ≤ x) :
+theorem triangular18_annihilator_dual_signed_GRH {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 ≤ x) :
     letI := Classical.propDecidable
     letI : ∀ i : NumberTheory.subgroupAnnihilator H, NeZero i.val.conductor := fun i ↦
       ⟨i.val.conductor_ne_zero⟩

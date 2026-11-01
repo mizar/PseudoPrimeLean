@@ -33,13 +33,12 @@ theorem principal_logWeightedSum_ge_sqrt_log_lower {q : ℕ} [NeZero q] (hq : 20
         Real.sqrt x / (3 * d) * (Real.log x) ^ 2 ≤
       (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum x
           (1 : DirichletCharacter ℂ q)).re := by
-  have hr := llsRiemannWeightedLowerBound_of_riemannHypothesis hRH x hx
+  have hr := riemannWeightedLower_of_RH hRH x hx
   have hm :=
     mul_le_mul_of_nonneg_right AnalyticNumberTheory.RiemannXi.riemannZeroMass_le_one_fortieth
       (add_nonneg (Real.sqrt_nonneg x) zero_le_one)
   have he :=
-    AnalyticNumberTheory.Arithmetic.commonFactorLogWeightedSum_le_sqrt_log_square hq
-      (zero_lt_one.trans hx) hd hs
+    AnalyticNumberTheory.Arithmetic.commonLogSum_le_sqrt_log_sq hq (zero_lt_one.trans hx) hd hs
   rw [AnalyticNumberTheory.Arithmetic.characterLogWeightedSum_one_re_eq]
   nlinarith only [hr, hm, he]
 
@@ -65,7 +64,7 @@ theorem exists_least_prime_in_coset_le_of_scaled_gap {q : ℕ} [NeZero q] (H : S
   have hn :=
     nonprincipal_logWeightedNorm_sum_le_explicit H ((by norm_num only : (64 : ℕ) ≤ 20000).trans hq)
       hGRH ((by norm_num only : (65536 : ℝ) ≤ 1000000000).trans hx)
-  have hc := compositePrimePowerLogWeightedSum_le_explicit_root_sums hGRH.riemann hx1
+  have hc := compositePrimePowerSum_explicit_RH hGRH.riemann hx1
   have ht :=
     mul_le_mul_of_nonneg_left (hc.trans (compositeRootSum_le hx))
       (Nat.cast_nonneg H.index : (0 : ℝ) ≤ H.index)

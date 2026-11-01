@@ -20,16 +20,16 @@ The refined checkpoint margin must be at least 7/60.
 Claim: an odd prime negative witness exists through 99x/40.
 Proof: use the proved asymmetric checkpoint tail in the generic witness theorem.
 Role: expose the improved prefix estimate to actual quadratic witnesses. -/
-theorem exists_prime_neg_one_witness_of_asymmetric_checkpoint {n : ℕ} (hn : Odd n)
-    (hns : ¬IsSquare n) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {b L x D : ℝ}
-    (hb : 50000 ≤ b) (hD : LLS.gammaScaleSignedDualBudget L x ≤ D) (hL : 10 ≤ L)
-    (hlog : Real.log n ≤ L) (hx : 4096 ≤ x) (hbx : b ≤ (99 / 40 : ℝ) * x)
+theorem exists_negOneWitness_of_asymmetric_checkpoint {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {b L x D : ℝ} (hb : 50000 ≤ b)
+    (hD : LLS.gammaScaleSignedDualBudget L x ≤ D) (hL : 10 ≤ L) (hlog : Real.log n ≤ L)
+    (hx : 4096 ≤ x) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hgap : 7 / 60 ≤ LLS.gammaCheckpointSeparation L x D (3293 / 500)) :
     ∃ q : ℕ, q.Prime ∧ Odd q ∧ (q : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n q = -1 := by
   have hs := LLS.gamma_checkpoint50000_asymmetric_separation_le hGRH.riemann hb hD
   exact
-    exists_prime_neg_one_witness_of_factor_free_separation hn hns hGRH hL hlog hx
-      (by linarith only [hb]) hbx (hgap.trans hs)
+    exists_negOneWitness_of_factor_free_separation hn hns hGRH hL hlog hx (by linarith only [hb])
+      hbx (hgap.trans hs)
 
 /-- Input: GRH, an admissible common log endpoint and the refined checkpoint margin.
 Claim: the full negative-witness maximum through B is at most 99x/40.

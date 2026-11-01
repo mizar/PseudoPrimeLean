@@ -334,9 +334,8 @@ above one, the original and reflected dual endpoint integrals sum to
 2*k*Mellin(phi)(1). Conjugation identifies the dual rational kernel with the
 original, then evaluate each integral. This tracks both endpoint contributions
 before comparing the completed and ordinary zero sets in the source formula. -/
-theorem normalized_integral_paired_regularization_endpoints (k : ℤ) (g : ℝ → ℂ)
-    (he : ∀ u : ℝ, g (-u) = g u) (hc : HasCompactSupport g) (hg : ContDiff ℝ (↑(⊤ : ℕ∞)) g) (σ : ℝ)
-    (hs : 1 < σ) :
+theorem pairedRegularization_integral_endpoints (k : ℤ) (g : ℝ → ℂ) (he : ∀ u : ℝ, g (-u) = g u)
+    (hc : HasCompactSupport g) (hg : ContDiff ℝ (↑(⊤ : ℕ∞)) g) (σ : ℝ) (hs : 1 < σ) :
     (1 / (2 * Real.pi) : ℝ) •
         ((∫ T : ℝ,
             ((k : ℂ) * (1 / ((σ : ℂ) + T * Complex.I) + 1 / (((σ : ℂ) + T * Complex.I) - 1))) *

@@ -31,18 +31,17 @@ theorem selfridgeNegOne_fourPole_sharp {n : ℕ} (hn : Odd n) (hns : ¬IsSquare 
     (hL : (10 : ℝ) ^ 18 ≤ Real.log n) :
     ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNegOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.classicalNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         (777 / 1000 : ℝ) * (Real.log n) ^ 2 ∧
       ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNegOne PrimeTest.isWheel30NegOneCandidate n
-                (PrimeTest.wheel30FirstStopNegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.wheel30NegOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         (777 / 1000 : ℝ) * (Real.log n) ^ 2 := by
   let hw := NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns
   exact
-    selfridgeNegOneMagnitudes_le_of_prime_witness_bound hn hns hw
-      (fourPole_sharp_bound_ge_twenty_seven hL)
+    negOne_magnitudes_of_witness hn hns hw (fourPole_sharp_bound_ge_twenty_seven hL)
       (LLS.PaperStatements.fourPole_sharp_jacobi_finite_least hn hns hGRH hL hw)
 
 /-- Under the same explicit entrance, both factor-detecting Selfridge magnitudes
@@ -53,12 +52,12 @@ theorem selfridgeNeOne_fourPole_sharp {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n
     (hL : (10 : ℝ) ^ 18 ≤ Real.log n) :
     ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNeOne PrimeTest.isClassicalCandidate n
-                (PrimeTest.classicalFirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.classicalNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         (777 / 1000 : ℝ) * (Real.log n) ^ 2 ∧
       ((PrimeTest.selfridgeD
               (PrimeTest.firstStopNeOne PrimeTest.isWheel30NeOneCandidate n
-                (PrimeTest.wheel30FirstStopNeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
+                (PrimeTest.wheel30NeOneSet_nonempty_of_odd_nonsquare hn hns))).natAbs :
           ℝ) ≤
         (777 / 1000 : ℝ) * (Real.log n) ^ 2 := by
   let hw := NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare hn hns
@@ -69,7 +68,7 @@ theorem selfridgeNeOne_fourPole_sharp {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n
       (NumberTheory.primeNegOneWitness n hw : ℝ) :=
     Nat.cast_le.mpr (NumberTheory.primeNeOneWitness_le_primeNegOneWitness n hw)
   exact
-    selfridgeNeOneMagnitudes_le_of_prime_witness_bound hn hns
+    selfridgeNeOneMagnitudes_le_of_primeWitness hn hns
       (NumberTheory.primeNeOneWitnessSet_nonempty_of_negOne hw)
       ((by norm_num only : (15 : ℝ) ≤ 27).trans (fourPole_sharp_bound_ge_twenty_seven hL))
       (he.trans hb)

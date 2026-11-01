@@ -43,7 +43,7 @@ theorem negativeCoprimeEnvelope_eq_support_cost (n : ℕ) (hn : Odd n) (y : ℝ)
 single-support cost and a separated base-plus-c gap give an odd prime with
 Jacobi value minus one through y squared. Insert the budget into the exact
 coprime envelope. The gap remains an explicit quantitative hypothesis. -/
-theorem exists_prime_neg_one_witness_of_singleSupportBudget {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+theorem exists_negOneWitness_of_singleSupportBudget {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y c : ℝ} (hy : (8 : ℝ) ≤ y)
     (hc : negativeCoprimeSupportCost n hn y ≤ c)
     (hgap :
@@ -53,14 +53,14 @@ theorem exists_prime_neg_one_witness_of_singleSupportBudget {n : ℕ} (hn : Odd 
           c <
         AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum (y ^ 2)) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ y ^ 2 ∧ jacobiSym n p = -1 := by
-  apply exists_prime_neg_one_witness_of_coupledCoprimeGap hn hns hGRH hy
+  apply exists_negOneWitness_of_coupledCoprimeGap hn hns hGRH hy
   rw [negativeCoprimeEnvelope_eq_support_cost]
   linarith only [hc, hgap]
 
 /-- Under the same GRH, root and support-budget hypotheses, the least odd-prime
 negative witness is at most y squared. Compare it with the extracted witness.
 This supplies a common-endpoint interface for full finite maxima. -/
-theorem primeNegOneWitness_cast_le_of_singleSupportBudget {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
+theorem negOneWitness_cast_le_of_singleSupportBudget {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {y c : ℝ} (hy : (8 : ℝ) ≤ y)
     (hc : negativeCoprimeSupportCost n hn y ≤ c)
     (hgap :
@@ -71,8 +71,7 @@ theorem primeNegOneWitness_cast_le_of_singleSupportBudget {n : ℕ} (hn : Odd n)
         AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum (y ^ 2))
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
     (NumberTheory.primeNegOneWitness n hw : ℝ) ≤ y ^ 2 := by
-  obtain ⟨p, hp, ho, hb, hv⟩ :=
-    exists_prime_neg_one_witness_of_singleSupportBudget hn hns hGRH hy hc hgap
+  obtain ⟨p, hp, ho, hb, hv⟩ := exists_negOneWitness_of_singleSupportBudget hn hns hGRH hy hc hgap
   exact (Nat.cast_le.mpr (NumberTheory.primeNegOneWitness_le n hw ⟨hp, ho, hv⟩)).trans hb
 
 /-- Under GRH at root y>=8, budgets and separated gaps for every admissible
@@ -97,7 +96,7 @@ theorem QNegOne_le_of_singleSupportBudget {B : ℕ} {y : ℝ} (hy : (8 : ℝ) �
   intro n hn
   have ha := NumberTheory.mem_admissibleFinset_iff.mp hn
   exact
-    primeNegOneWitness_cast_le_of_singleSupportBudget ha.odd ha.not_isSquare hGRH hy
+    negOneWitness_cast_le_of_singleSupportBudget ha.odd ha.not_isSquare hGRH hy
       (hc n ha.odd ha.not_isSquare ha.le) (hgap n ha.odd ha.not_isSquare ha.le)
       (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare ha.odd ha.not_isSquare)
 

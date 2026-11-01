@@ -440,8 +440,8 @@ Claim: The sum of `2^(2j) * A(j)^(3/4)` is at most
 Proof: Choose a dyadic cutoff for `B/E`, apply the two-tail estimate, then
 use the exact balance of the tails.
 Role: Supplies the band-sum bound in analysis7 without a band-count factor. -/
-theorem dyadic_fourthRoot_sum_le_of_balanced_band_budgets {n : ℕ} {E B : ℝ} (hE : 0 < E)
-    (hEB : E ≤ B) (A : ℕ → ℝ) (hA : ∀ j, 0 ≤ A j) (hquad : ∀ j, A j * ((2 : ℝ) ^ j) ^ 2 ≤ E)
+theorem dyadic_fourthRoot_sum_le {n : ℕ} {E B : ℝ} (hE : 0 < E) (hEB : E ≤ B) (A : ℕ → ℝ)
+    (hA : ∀ j, 0 ≤ A j) (hquad : ∀ j, A j * ((2 : ℝ) ^ j) ^ 2 ≤ E)
     (hcube : ∀ j, A j * ((2 : ℝ) ^ j) ^ 3 ≤ B) :
     (∑ j ∈ Finset.range (n + 1), ((2 : ℝ) ^ j) ^ 2 * (Real.sqrt (Real.sqrt (A j))) ^ 3) ≤
       16 * Real.sqrt (Real.sqrt E) * Real.sqrt B := by

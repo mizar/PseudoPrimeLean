@@ -22,7 +22,7 @@ square root of the height parameter and avoiding the exceptional conductor divis
 the actual sum of half-scale errors is at most the tolerance times time. The proof fixes
 a strip below one, absorbs all explicit remainders, and chooses one exponent for both
 the density scale and leading exponential error. Conductor four is included. -/
-theorem exists_uniform_character_family_half_scale_bound :
+theorem exists_uniformHalf :
     ∀ ε : ℝ,
       0 < ε →
         ∃ b : ℕ,
@@ -40,7 +40,7 @@ theorem exists_uniform_character_family_half_scale_bound :
                             (∀ χ ∈ S, χ ≠ 1) →
                               (∀
                                 e ∈
-                                  exceptionalFamilyConductorsAwayFromFour (H + 1)
+                                  exceptionalExceptFour (H + 1)
                                     (1 - 1 / Real.log ((H + 1 : ℕ) : ℝ)),
                                 ¬e ∣ q) →
                               ∀ x : ℝ,
@@ -50,8 +50,7 @@ theorem exists_uniform_character_family_half_scale_bound :
                                           Arithmetic.characterLogWeightedSum (x / 2) χ‖) ≤
                                     ε * x := by
   intro ε hε
-  obtain ⟨A, B, C, K, T, hA, hB, hC, hK, hT, hbudget⟩ :=
-    exists_character_family_scalar_half_scale_budget
+  obtain ⟨A, B, C, K, T, hA, hB, hC, hK, hT, hbudget⟩ := exists_halfScalar
   let η := min (1 / 4 : ℝ) (1 / (4 * A))
   let σ := 1 - η
   have hη : 0 < η :=
@@ -69,8 +68,8 @@ theorem exists_uniform_character_family_half_scale_bound :
   have hεthird : 0 < ε / 3 := div_pos hε (by norm_num only)
   obtain ⟨X, hX, hbound⟩ := hbudget (ε / 3) hεthird
   obtain ⟨b₀, hb₀, R₁, hR₁, habsorb⟩ :=
-    exists_uniform_remainder_absorption_above_polynomial_scale hσlo hσhi hC.le hK.le hT.le hεthird
-  obtain ⟨b, hb, hexp⟩ := exists_small_exponential_at_nat_scale hB hεthird (max (b₀ : ℝ) (4 * A))
+    uniform_remainder_absorption hσlo hσhi hC.le hK.le hT.le hεthird
+  obtain ⟨b, hb, hexp⟩ := exists_small_exp_nat_scale hB hεthird (max (b₀ : ℝ) (4 * A))
   have hbb : b₀ ≤ b := by exact_mod_cast (le_max_left (b₀ : ℝ) (4 * A)).trans hb
   have hbA : 4 * A ≤ (b : ℝ) := (le_max_right (b₀ : ℝ) (4 * A)).trans hb
   refine ⟨b, hb₀.trans hbb, max R₁ X, hR₁.trans (le_max_left _ _), ?_⟩

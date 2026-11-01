@@ -477,8 +477,8 @@ def ValidPartialFactorization (n : ℕ) (data : PartialFactorizationData) : Prop
 
 /-- A valid BLS partial factorization of a prime `n ≥ 5` has a common witness base in
 `List.range n` for all of its prime keys. -/
-theorem exists_common_blsWitness_for_valid_partialFactorization {n : ℕ} (hn : Nat.Prime n)
-    (hn5 : 5 ≤ n) (data : PartialFactorizationData) (hdata : ValidPartialFactorization n data) :
+theorem exists_common_witness_of_partialFactorization {n : ℕ} (hn : Nat.Prime n) (hn5 : 5 ≤ n)
+    (data : PartialFactorizationData) (hdata : ValidPartialFactorization n data) :
     ∃ a, a ∈ List.range n ∧ ∀ qe, qe ∈ data.factors → IsBLSWitness n qe.1 a := by
   obtain ⟨a, ha, hab, hcommon⟩ := exists_common_blsWitness_base_of_prime hn hn5
   have hspec := (checkPartialFactorization_eq_true_iff n data).mp hdata

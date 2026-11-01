@@ -43,10 +43,9 @@ theorem not_characterTrivialBelow_sharperPart2Root {q : ℕ} [NeZero q] (χ : Di
   have hx := Analysis.sq_ge_64_of_ge_8 ht8.le
   have hcore := weightedComparisonCore_of_trivialBelow χ hne hGRH hx ht
   obtain ⟨hS, hR, hb, hu⟩ :=
-    re_characterLogWeightedSum_ge_and_zeroMass_le_and_logWeighted_le
-      (llsRiemannWeightedLowerBound_of_riemannHypothesis hGRH.riemann)
-      (llsRiemannReciprocalLowerBound_of_riemannHypothesis hGRH.riemann)
-      (lt_of_lt_of_le (by norm_num only) hx) (le_trans (by norm_num only) hx) hcore
+    weightedComparison_core_bounds (riemannWeightedLower_of_RH hGRH.riemann)
+      (riemannReciprocalLower_of_RH hGRH.riemann) (lt_of_lt_of_le (by norm_num only) hx)
+      (le_trans (by norm_num only) hx) hcore
   have hsqrt :
     Real.sqrt ((Analysis.sharperPart2CutoffRoot (Real.log q)) ^ 2) =
       Analysis.sharperPart2CutoffRoot (Real.log q) :=
@@ -94,7 +93,7 @@ theorem exists_prime_not_one_le_sharperPart2Root {q : ℕ} [NeZero q] (χ : Diri
 /-- Under GRH at q ≥ 3000, a proper subgroup's image misses a prime
 through the sharper Part 2 root squared. Pull back a nonprincipal quotient
 character. Nonunits are allowed; this form feeds Miller-Rabin rejection. -/
-theorem exists_prime_outside_subgroup_image_le_sharperPart2Root {q : ℕ} [NeZero q] (hq : 3000 ≤ q)
+theorem exists_prime_outside_sharperPart2_GRH {q : ℕ} [NeZero q] (hq : 3000 ≤ q)
     (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ,

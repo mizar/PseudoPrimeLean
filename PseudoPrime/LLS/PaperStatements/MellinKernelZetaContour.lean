@@ -83,7 +83,7 @@ theorem eventually_mem_xiKernelSingularities (hRH : RiemannHypothesis) {T : ℕ 
         Or.inl
           (by
             rw [he]; norm_num only [Complex.neg_re, Complex.div_ofNat_re, Complex.one_re])
-    · have hr := riemannXi_zero_re_eq_half_of_riemannHypothesis hRH hz
+    · have hr := xi_zero_re_eq_half_of_riemannHypothesis hRH hz
       simp only [Complex.add_re, Complex.div_ofNat_re, Complex.one_re] at hr
       exact Or.inr (by linarith only [hr])
   filter_upwards [hT.eventually_gt_atTop |s.im|] with n hn
@@ -199,7 +199,7 @@ theorem sum_xiKernelResidues_erase_pole (K : MellinKernel) (hRH : RiemannHypothe
       simpa only [ρ, add_sub_cancel_right] using hmem.1
     · exact add_sub_cancel_right s (1 / 2)
   · intro ρ _
-    exact (weightedResidue_xi_zero_eq_neg_zetaOscillatingZeroTerm K hRH x ρ).symm
+    exact (xi_zero_residue_zetaTerm_RH K hRH x ρ).symm
 
 open AnalyticNumberTheory.RiemannXi in
 /-- Under RH, if the rectangle ledger contains the kernel pole, its complete residue

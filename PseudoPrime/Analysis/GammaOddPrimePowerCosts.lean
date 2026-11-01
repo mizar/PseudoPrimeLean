@@ -76,7 +76,7 @@ noncomputable def gammaPrimeOddEulerCost (p : ℝ) : ℝ :=
 /-- For a base greater than one, the actual odd-power Euler series equals its
 closed signed local cost. Absolute convergence permits the finite coefficient
 sum to pass through the infinite sum before evaluating the geometric nodes. -/
-theorem tsum_gammaResolventEulerWeight_odd_powers_eq_cost {p : ℝ} (hp : 1 < p) :
+theorem tsum_gammaEulerWeight_odd_powers_eq_cost {p : ℝ} (hp : 1 < p) :
     (∑' k : ℕ, gammaResolventEulerWeight (p ^ (2 * k + 1))) = gammaPrimeOddEulerCost p := by
   have hs (ab : ℚ × ℚ) (hab : ab ∈ AnalyticNumberTheory.Gamma.gammaResolventCoefficients) :
     Summable (fun k : ℕ ↦ (ab.2 : ℝ) * (p ^ (2 * k + 1)) ^ (-(1 / 2 + (ab.1 : ℝ)))) := by
@@ -110,7 +110,7 @@ to enlarge the finite sum. This preserves the even-power cancellation in the
 square-part comparison rather than bounding all powers together. -/
 theorem sum_gammaResolventEulerWeight_odd_powers_le_cost {p : ℝ} (hp : 1 < p) (K : Finset ℕ) :
     (∑ k ∈ K, gammaResolventEulerWeight (p ^ (2 * k + 1))) ≤ gammaPrimeOddEulerCost p := by
-  rw [← tsum_gammaResolventEulerWeight_odd_powers_eq_cost hp]
+  rw [← tsum_gammaEulerWeight_odd_powers_eq_cost hp]
   exact
     (summable_gammaResolventEulerWeight_odd_powers hp).sum_le_tsum K
       (fun k hk ↦ gamma_resolvent_euler_weight_nonneg (one_le_pow₀ hp.le))
@@ -119,8 +119,7 @@ theorem sum_gammaResolventEulerWeight_odd_powers_le_cost {p : ℝ} (hp : 1 < p) 
 by log p times the exact odd-power cost. Mangoldt is log p on each positive
 prime power, and the logarithm is nonnegative. This supplies the local bound
 before doubling the character-minus-one loss. -/
-theorem sum_gammaResolventMangoldtWeight_odd_primePowers_le_cost {p : ℕ} (hp : p.Prime)
-    (K : Finset ℕ) :
+theorem sum_gammaMangoldt_odd_primePowers_le_cost {p : ℕ} (hp : p.Prime) (K : Finset ℕ) :
     (∑ k ∈ K, gammaResolventMangoldtWeight (p ^ (2 * k + 1))) ≤
       Real.log p * gammaPrimeOddEulerCost p := by
   have hp1 : (1 : ℝ) < (p : ℝ) := by exact_mod_cast hp.one_lt
@@ -155,7 +154,7 @@ theorem gamma_minus_one_odd_prime_correction_le_cost {q p : ℕ} (χ : Dirichlet
   rw [Finset.sum_congr rfl (fun k hk ↦ (gamma_character_minus_one_power_corrections χ hχ k).2), ←
     Finset.mul_sum]
   exact
-    mul_le_mul_of_nonneg_left (sum_gammaResolventMangoldtWeight_odd_primePowers_le_cost hp K)
+    mul_le_mul_of_nonneg_left (sum_gammaMangoldt_odd_primePowers_le_cost hp K)
       (by norm_num only : (0 : ℝ) ≤ 2)
 
 end PseudoPrime.Analysis

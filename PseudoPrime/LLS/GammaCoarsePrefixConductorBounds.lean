@@ -47,8 +47,7 @@ theorem gamma_jacobi_all_local_cost_le_prefix_cap {n : ℕ} {hn : Odd n} {hns : 
     gamma_jacobi_refined_input_square_dyadic_cost_le bridge S (Finset.filter_subset _ _)
       (fun p hp ↦ (Finset.mem_filter.mp hp).2) K (K 2) hlarge
   have hr :=
-    AnalyticNumberTheory.DirichletLFunction.gamma_selected_ramified_local_cost_le_prefix_cap
-      bridge.character hb hx R
+    AnalyticNumberTheory.DirichletLFunction.gammaRamified_cost_le_cap bridge.character hb hx R
       (fun p hp ↦
         ⟨Nat.prime_of_mem_primeFactors (Finset.mem_filter.mp hp).1, (Finset.mem_filter.mp hp).2⟩)
   have hc :=
@@ -98,9 +97,8 @@ theorem gamma_jacobi_integer_prefix_local_budget_cap {n : ℕ} {hn : Odd n} {hns
             Real.sqrt (Analysis.gammaRefinedScale (Real.log n))) := by
   let K := AnalyticNumberTheory.DirichletLFunction.gammaPrefixPowerIndices b
   have he :=
-    AnalyticNumberTheory.DirichletLFunction.gamma_character_prefix_add_ambient_ramp_eq_local_cost
-      bridge.character (Nat.mul_pos (by norm_num only) hn.pos) hb hone
-      (Analysis.gammaRefinedScale (Real.log n))
+    AnalyticNumberTheory.DirichletLFunction.gammaPrefix_add_ramp_eq_cost bridge.character
+      (Nat.mul_pos (by norm_num only) hn.pos) hb hone (Analysis.gammaRefinedScale (Real.log n))
   rw [he, gamma_ambient_four_factor_sum_eq hn]
   simpa only [add_assoc] using
     gamma_jacobi_all_local_cost_le_prefix_cap bridge (zero_le_one.trans hb) hlarge
@@ -110,8 +108,8 @@ the primitive zero mass and actual ambient ramp have a coarse upper bound
 with one retained prefix gain. The even Gamma correction is certified,
 and square-part, ramified, and dyadic costs are all included. This is
 the analytic contract used before the remaining scalar tail certificates. -/
-theorem gamma_jacobi_no_negative_zeroMass_add_ramp_le_prefix_cap {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem gammaJacobi_noNeg_massRamp_prefixCap_RH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hRH : AnalyticNumberTheory.GRH.DirichletRiemannHypothesis bridge.character) {b : ℝ}
     (hb : 1 ≤ b) (hno : ∀ p : ℕ, p.Prime → Odd p → (p : ℝ) ≤ b → jacobiSym n p ≠ -1)
     (hlarge : 10 ^ 100 ≤ n) :
@@ -135,7 +133,7 @@ theorem gamma_jacobi_no_negative_zeroMass_add_ramp_le_prefix_cap {n : ℕ} {hn :
     (gamma_jacobi_modulus_eq_discriminant bridge).symm ▸ bridge.discriminant_pos
   let : NeZero (NumberTheory.complexQuadraticCharacter n hn).conductor := ⟨hf.ne'⟩
   have hz :=
-    AnalyticNumberTheory.DirichletLFunction.gammaResolvent_zeroMass_le_signed_prefix
+    AnalyticNumberTheory.DirichletLFunction.gammaMass_le_signedPrefix_RH
       (le_trans (by norm_num only : (2 : ℕ) ≤ 3) (gamma_jacobi_modulus_ge_three bridge)) hRH
       bridge.character_primitive bridge.character_ne_one
       (by
@@ -168,8 +166,8 @@ noncomputable def gammaCoarseArithmeticBudget (L b w : ℝ) : ℝ :=
 cutoff forces the actual principal/ramp comparison against the coarse
 prefix-cap scalar budget. The primitive, ambient, square and dyadic losses
 are discharged; only scalar certification and prime-count bounds remain. -/
-theorem gamma_jacobi_no_negative_coarse_arithmetic_comparison {n : ℕ} {hn : Odd n}
-    {hns : ¬IsSquare n} (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
+theorem gammaJacobi_noNeg_coarseArith_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+    (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hlarge : 10 ^ 100 ≤ n) {b : ℝ}
     (hb : 1 ≤ b) (hbX : b ≤ (99 / 40 : ℝ) * Analysis.gammaRefinedScale (Real.log n))
     (hno :
@@ -201,7 +199,7 @@ theorem gamma_jacobi_no_negative_coarse_arithmetic_comparison {n : ℕ} {hn : Od
     PaperStatements.gamma_primitive_sum_re_le_resolvent_sharp hq hm hmq hGRH
       bridge.character_primitive bridge.character_ne_one hinv hx
   have hz :=
-    gamma_jacobi_no_negative_zeroMass_add_ramp_le_prefix_cap bridge
+    gammaJacobi_noNeg_massRamp_prefixCap_RH bridge
       (hGRH _ bridge.character bridge.character_primitive) hb
       (fun p hp hodd hpb ↦ hno p hp hodd (hpb.trans hbX)) hlarge
   have ha := gamma_jacobi_no_negative_ramp_comparison bridge hx0 hno
@@ -238,7 +236,7 @@ theorem gammaCoarseArithmeticBudget_mono_count {L b w v : ℝ} (hx : 1 ≤ Analy
 for the number of distinct input prime factors forces an odd-prime negative
 Jacobi witness under GRH. Both the conductor losses and fixed Gamma
 correction are proved; the gap is the remaining numerical tail obligation. -/
-theorem exists_odd_prime_negative_of_coarse_arithmetic_gap {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
+theorem exists_oddPrime_negJacobi_coarse_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hlarge : 10 ^ 100 ≤ n) {b w : ℝ}
     (hb : 1 ≤ b) (hbX : b ≤ (99 / 40 : ℝ) * Analysis.gammaRefinedScale (Real.log n))
@@ -263,7 +261,7 @@ theorem exists_odd_prime_negative_of_coarse_arithmetic_gap {n : ℕ} {hn : Odd n
         Odd p →
         (p : ℝ) ≤ (99 / 40 : ℝ) * Analysis.gammaRefinedScale (Real.log n) → jacobiSym n p ≠ -1 :=
     fun p hp hodd hcut hj ↦ hnot ⟨p, hp, hodd, hcut, hj⟩
-  have ha := gamma_jacobi_no_negative_coarse_arithmetic_comparison bridge hGRH hlarge hb hbX hno
+  have ha := gammaJacobi_noNeg_coarseArith_GRH bridge hGRH hlarge hb hbX hno
   have hx : 1 ≤ Analysis.gammaRefinedScale (Real.log n) :=
     le_trans (by norm_num only : (1 : ℝ) ≤ 20000)
       (Analysis.gamma_refined_scale_ge_twenty_thousand

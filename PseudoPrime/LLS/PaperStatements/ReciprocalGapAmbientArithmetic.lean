@@ -83,8 +83,8 @@ theorem selected_reciprocalGap_sum_sub_loss_le_character {q N : ℕ} (hqN : q �
 /-- Under the same ambient prime-triviality data, certified Mangoldt lower endpoints
 and power upper endpoints at most one give a selected lower sum minus the exact exclusion
 cost below the character sum. Compose the algebraic selected-weight certificate. -/
-theorem selected_reciprocalGap_lower_sub_loss_le_character {q N : ℕ} (hqN : q ∣ N) {h x : ℝ}
-    (hh : 0 ≤ h) (hx : 0 < x) (χ : DirichletCharacter ℂ q)
+theorem reciprocalGap_selected_lower_le_char {q N : ℕ} (hqN : q ∣ N) {h x : ℝ} (hh : 0 ≤ h)
+    (hx : 0 < x) (χ : DirichletCharacter ℂ q)
     (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ x → Nat.Coprime p N → χ p = 1) (B : Finset ℕ)
     (hB : B ⊆ Finset.Ioc 0 ⌊x⌋₊) (hcop : ∀ n ∈ B, Nat.Coprime n N) (lo u : ℕ → ℝ)
     (hlo : ∀ n ∈ B, lo n ≤ ArithmeticFunction.vonMangoldt n) (hu : ∀ n ∈ B, ((n : ℝ) / x) ^ h ≤ u n)

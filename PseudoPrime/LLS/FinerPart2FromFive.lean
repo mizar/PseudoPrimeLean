@@ -27,10 +27,10 @@ theorem exists_prime_not_one_le_finerPart2Root {q : ℕ} [NeZero q] (χ : Dirich
   have hL := Analysis.log_level_ge_finerPart2_entrance hq
   obtain ⟨hh, hcut⟩ := Analysis.finerPart2Root_height_and_cutoff hL
   apply
-    exists_prime_not_one_of_reciprocalCostCoupledRoot χ hne hGRH hh hcut
+    exists_prime_not_one_of_recipCoupledRoot_GRH χ hne hGRH hh hcut
       (by norm_num only : (3 / 2 : ℝ) ≤ 31551 / 20000)
-      (AnalyticNumberTheory.RiemannZeta.reciprocalWeightedMangoldtSum_ge_log_sub_31551_div_20000
-        hGRH.riemann (le_trans (by norm_num only) hcut))
+      (AnalyticNumberTheory.RiemannZeta.reciprocalMangoldt_ge_log_sub_31551_20000 hGRH.riemann
+        (le_trans (by norm_num only) hcut))
   have hc :=
     Analysis.logarithmicCutoffRoot_coupled_level_bound (c := (45571 / 10000 : ℝ))
       (by linarith only [hL]) (by linarith only [hh])
@@ -75,6 +75,6 @@ theorem exists_prime_outside_finerPart2_from_five
       p.Prime ∧
         (p : ℝ) ≤ (Analysis.finerPart2CutoffRoot (Real.log q)) ^ 2 ∧
         ¬∃ u ∈ H, (u : ZMod q) = (p : ZMod q) := by
-  exact exists_prime_outside_finerPart2_from_five_analytic hq H hH hGRH
+  exact exists_prime_outside_finerPart2_five_GRH hq H hH hGRH
 
 end PseudoPrime.LLS

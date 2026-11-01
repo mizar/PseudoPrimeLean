@@ -92,16 +92,16 @@ theorem gaussianResolvent_gammaFactor_le {q : ℕ} (χ : DirichletCharacter ℂ 
 
 /-- Under Riemann RH, the nonnegative common Gaussian Euler mass is below 683/50.
 The signed pole sum and the even archimedean gain bound the full infinite sum. -/
-theorem gaussianResolvent_euler_lt_principal_budget (hRH : RiemannHypothesis) :
+theorem gaussianEuler_lt_principalBudget_RH (hRH : RiemannHypothesis) :
     (∑' n : ℕ, Analysis.gaussianResolventMangoldtWeight n) < 683 / 50 := by
-  have he := RiemannXi.gaussianResolvent_euler_lt_fifteen_tenth_add_gamma hRH
+  have he := RiemannXi.gaussianEuler_lt_151_10_add_gamma_RH hRH
   have hg := gaussianResolvent_gammaFactor_0_le principal_modulus_one_even
   linarith only [he, hg]
 
 /-- Under primitive nonprincipal individual RH and Riemann RH, the Gaussian
 norm zero mass plus its nonnegative paired Euler tail has explicit additive cost
 12871/1000, retaining both the prefix gain and the exact character deficit. -/
-theorem gaussian_zeroMass_add_pairedTail_lt_principal_prefix {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+theorem gaussianNormMass_tail_principal_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ)
     (hRiemann : RiemannHypothesis) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1)
     (B : Finset ℕ) :
@@ -112,8 +112,8 @@ theorem gaussian_zeroMass_add_pairedTail_lt_principal_prefix {q : ℕ} [NeZero q
       (20115621 / 50000000 : ℝ) * Real.log q + 12871 / 1000 -
           2 * (∑ n ∈ B, Analysis.gaussianResolventMangoldtWeight n) +
         ∑ n ∈ B, (1 - (χ n).re) * Analysis.gaussianResolventMangoldtWeight n := by
-  have hz := gaussian_zeroMass_add_pairedTail_le_prefix hq hRH hp hne hinv B
-  have he := gaussianResolvent_euler_lt_principal_budget hRiemann
+  have hz := gaussianNormMass_tail_le_prefix_RH hq hRH hp hne hinv B
+  have he := gaussianEuler_lt_principalBudget_RH hRiemann
   have hg := gaussianResolvent_gammaFactor_le χ
   linarith only [hz, he, hg]
 
@@ -121,14 +121,14 @@ theorem gaussian_zeroMass_add_pairedTail_lt_principal_prefix {q : ℕ} [NeZero q
 norm zero mass has additive cost 12871/1000 instead of the coarse 1811.
 Apply the exact paired prefix estimate with the empty prefix and remove only
 the certified nonnegative complementary prime-power mass. -/
-theorem gaussian_zeroMass_lt_principal_uniform {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hRH : GRH.DirichletRiemannHypothesis χ)
-    (hRiemann : RiemannHypothesis) (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
+theorem gaussianNormMass_principal_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hRH : GRH.DirichletRiemannHypothesis χ) (hRiemann : RiemannHypothesis) (hp : χ.IsPrimitive)
+    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) :
     (∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
           ‖Analysis.gaussianGammaFunction (ρ - 1 / 2)‖) <
       (20115621 / 50000000 : ℝ) * Real.log q + 12871 / 1000 := by
-  have h := gaussian_zeroMass_add_pairedTail_lt_principal_prefix hq hRH hRiemann hp hne hinv ∅
+  have h := gaussianNormMass_tail_principal_RH hq hRH hRiemann hp hne hinv ∅
   simp only [Finset.sum_empty, mul_zero, sub_zero, add_zero] at h
   have ht := Analysis.gaussianPairedEulerTail_nonneg χ ∅
   linarith only [h, ht]

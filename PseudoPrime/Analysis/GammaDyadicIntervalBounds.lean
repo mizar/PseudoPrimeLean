@@ -64,7 +64,7 @@ theorem gamma_dyadic_ramified_actual_cost_le_interval (K : Finset ℕ) {x lo hi 
               Real.exp (-((2 : ℝ) ^ (k + 1) / hi))) /
             Real.sqrt lo) := by
   exact
-    add_le_add (sum_gammaResolventMangoldtWeight_primePowers_le_cost Nat.prime_two K)
+    add_le_add (sum_gammaMangoldt_primePowers_le_cost Nat.prime_two K)
       (mul_le_mul_of_nonneg_left
         (gamma_ramified_series_le_interval_exp_prefix (by norm_num only) hlo hlox hxhi)
         (Real.log_nonneg (by norm_num only : (1 : ℝ) ≤ 2)))

@@ -67,7 +67,7 @@ theorem gamma_primitive_reflected_cap {q Q : ℕ} [NeZero q] (hQ : 20000 ≤ Q) 
   have hp := DirichletCharacter.primitiveCharacter_isPrimitive χ
   have hnp := AnalyticNumberTheory.Arithmetic.primitiveCharacter_ne_one χ hne
   have hz :=
-    AnalyticNumberTheory.DirichletLFunction.gammaResolvent_zeroMass_le_signed_prefix
+    AnalyticNumberTheory.DirichletLFunction.gammaMass_le_signedPrefix_RH
       (le_trans (by norm_num only : (2 : ℕ) ≤ 3) hm) (hGRH _ χ.primitiveCharacter hp) hp hnp
       (inv_ne_one.mpr hnp) (Finset.Ioc 0 ⌊b⌋₊)
   have he :=

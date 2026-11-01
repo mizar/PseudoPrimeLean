@@ -66,7 +66,7 @@ theorem truncatedConductorErrorBound_eq_scaled (f : GeneralLFunction) {d : ℕ} 
 cutoff tends to zero uniformly on the conductor filter. Expand the error into reciprocal
 scales and the scaled Mangoldt majorant, and take their limits term by term.
 This leaves the quantitative arithmetic main-term estimates as separate analytic inputs. -/
-theorem tendsto_truncatedConductorErrorBound_at_valueCutoff {d : ℕ} (hd : 0 < d) :
+theorem conductorError_valueCutoff_tendsto {d : ℕ} (hd : 0 < d) :
     Filter.Tendsto
       (fun f : FixedDegreeFamily d ↦
         f.val.truncatedConductorErrorBound (valueCutoff d f.val.analyticConductor))
@@ -114,8 +114,7 @@ upper bounds for the L-value and its reciprocal with exponent `d Q(x) + epsilon`
 The reciprocal bound retains the factor `(6 / pi^2)^d`. Absorb the leading conductor term,
 full truncation error and square loss using their uniform zero limits.
 This reduces both final value estimates to the same arithmetic majorant. -/
-theorem eventually_norm_L_one_and_reciprocal_le_arithmetic_majorant {d : ℕ} (hd : 0 < d) {ε : ℝ}
-    (hε : 0 < ε) :
+theorem eventually_normL_pair_le_majorant {d : ℕ} (hd : 0 < d) {ε : ℝ} (hε : 0 < ε) :
     ∀ᶠ f : FixedDegreeFamily d in conductorFilter d,
       let x := valueCutoff d f.val.analyticConductor
       ‖f.val.L 1‖ ≤
@@ -125,12 +124,10 @@ theorem eventually_norm_L_one_and_reciprocal_le_arithmetic_majorant {d : ℕ} (h
             Real.exp
               ((d : ℝ) * AnalyticNumberTheory.Arithmetic.truncatedMangoldtMajorant x + ε) := by
   have he :=
-    (tendsto_conductor_term_at_valueCutoff hd).add
-        (tendsto_truncatedConductorErrorBound_at_valueCutoff hd) |>.add
+    (tendsto_conductor_term_at_valueCutoff hd).add (conductorError_valueCutoff_tendsto hd) |>.add
       ((tendsto_squareLoss_at_valueCutoff hd).const_mul (d : ℝ))
   simp only [add_zero, mul_zero] at he
-  filter_upwards [eventually_norm_L_one_and_reciprocal_le_valueCutoff hd,
-    he.eventually (gt_mem_nhds hε)] with f hb heps
+  filter_upwards [eventually_normL_pair_le_cutoff hd, he.eventually (gt_mem_nhds hε)] with f hb heps
   dsimp only at hb ⊢
   have hs : 0 ≤ (d : ℝ) * (3 / (2 * Real.sqrt (valueCutoff d f.val.analyticConductor))) :=
     mul_nonneg (Nat.cast_nonneg d)

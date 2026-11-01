@@ -51,9 +51,8 @@ theorem exists_prime_triangularProfileIndex (f : TriangularProfile) {n : ℕ} [N
         (p : ℝ) ≤ f.C * Real.log n ^ 2 ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   have hiR : (1000000000000 : ℝ) ≤ ((PrimeTest.fermatSubgroup n).index : ℝ) := by exact_mod_cast hi
   obtain ⟨p, hp, hb, hout⟩ :=
-    LLS.PaperStatements.exists_prime_factor_or_outside_of_triangular18_signed_gap
-      (PrimeTest.fermatSubgroup n) hGRH (triangularProfile_roots f hL).1
-      (triangularProfile_gap f hL hiR)
+    LLS.PaperStatements.exists_prime_factorOrOutside_signedGap_GRH (PrimeTest.fermatSubgroup n) hGRH
+      (triangularProfile_roots f hL).1 (triangularProfile_gap f hL hiR)
   refine ⟨p, hp, hb, ?_⟩
   intro hpass
   rcases hout with hd | hout
@@ -105,8 +104,8 @@ theorem exists_prime_triangularProfile (f : TriangularProfile) {n : ℕ} (hn : 1
           norm_num only [Nat.cast_ofNat]; linarith only [hL, f.entry])
     have hJ : (10 ^ 12 : ℕ) ^ 3 ≤ n := by simpa only [← pow_mul, Nat.reduceMul] using h36
     rcases
-      finite_index_local_subgroup_or_uniform_korselt_triple hn ho hc (PrimeTest.fermatSubgroup n)
-        le_rfl (by norm_num only : 1 ≤ 10 ^ 12) hJ hi with
+      localSubgroup_or_uniformKorseltTriple hn ho hc (PrimeTest.fermatSubgroup n) le_rfl
+        (by norm_num only : 1 ≤ 10 ^ 12) hJ hi with
       hl | ht
     · obtain ⟨q, hq, hqn, hsize, K, hK, hpass⟩ := hl
       have hqp : 0 < q := (by norm_num only : 0 < 2).trans_le hq

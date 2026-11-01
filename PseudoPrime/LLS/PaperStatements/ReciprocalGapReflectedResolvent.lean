@@ -18,8 +18,8 @@ namespace PseudoPrime.LLS.PaperStatements
 /-- For positive real decay and a continuous integrable complex weight, the reflected
 Laplace product is integrable on the positive half-line times the full height line.
 Separate its norm into real exponential decay and the weight norm. This justifies Fubini. -/
-theorem integrable_reflected_resolvent_laplace_mul_weight {a : ℝ} (ha : 0 < a) (W : ℝ → ℂ)
-    (hW : Continuous W) (hiW : MeasureTheory.Integrable W) :
+theorem integrable_reflected_resolvent_laplace {a : ℝ} (ha : 0 < a) (W : ℝ → ℂ) (hW : Continuous W)
+    (hiW : MeasureTheory.Integrable W) :
     MeasureTheory.Integrable
       (fun p : ℝ × ℝ ↦ Complex.exp (-((a : ℂ) - Complex.I * (p.2 : ℂ) / 2) * (p.1 : ℂ)) * W p.2)
       ((MeasureTheory.volume.restrict (Set.Ioi 0)).prod MeasureTheory.volume) := by
@@ -64,7 +64,7 @@ theorem reflected_resolvent_integral_eq_laplace_weight {a : ℝ} (ha : 0 < a) (W
             rw [he, MeasureTheory.integral_mul_const])
     _ = _ :=
       (MeasureTheory.integral_integral_swap
-          (integrable_reflected_resolvent_laplace_mul_weight ha W hW hiW)).symm
+          (integrable_reflected_resolvent_laplace ha W hW hiW)).symm
 
 /-- The adjustable rational kernel on the vertical line Re(s)=c times the Mellin power x^s.
 The real parameters h,c,x,t are totalized. Later lemmas impose a line between the poles

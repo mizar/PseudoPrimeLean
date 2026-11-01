@@ -48,8 +48,8 @@ Proof: remove the constant correction, differentiate `1 / (z - ρ)` by translati
 iterated derivative formula for reciprocal powers.
 Role: identifies the terms used when differentiating the completed genus expansion.
 -/
-theorem iteratedDerivWithin_completed_genus_term {U : Set ℂ} (hU : IsOpen U) {n : ℕ} (hn : 0 < n)
-    (D : ℤ) (ρ z : ℂ) (hz : z ∈ U) :
+theorem genusTerm_deriv_iter {U : Set ℂ} (hU : IsOpen U) {n : ℕ} (hn : 0 < n) (D : ℤ) (ρ z : ℂ)
+    (hz : z ∈ U) :
     iteratedDerivWithin n (fun w : ℂ => (D : ℂ) * (1 / (w - ρ) + 1 / ρ)) U z =
       (D : ℂ) * ((-1 : ℂ) ^ n * (n.factorial : ℂ) * (z - ρ) ^ (-1 - (n : ℕ) : ℤ)) := by
   have hsplit :
@@ -88,11 +88,11 @@ corresponding reciprocal-distance power.
 Proof: use the explicit derivative formula and rewrite the norm of the negative integer power.
 Role: provides a real-valued majorant for locally uniform summability of differentiated terms.
 -/
-theorem norm_iteratedDerivWithin_completed_genus_term {U : Set ℂ} (hU : IsOpen U) {n : ℕ}
-    (hn : 0 < n) (D : ℤ) (hD : 0 ≤ D) (ρ z : ℂ) (hz : z ∈ U) :
+theorem genusTerm_deriv_norm {U : Set ℂ} (hU : IsOpen U) {n : ℕ} (hn : 0 < n) (D : ℤ) (hD : 0 ≤ D)
+    (ρ z : ℂ) (hz : z ∈ U) :
     ‖iteratedDerivWithin n (fun w : ℂ => (D : ℂ) * (1 / (w - ρ) + 1 / ρ)) U z‖ =
       (D : ℝ) * (n.factorial : ℝ) * ‖(z - ρ)⁻¹‖ ^ (n + 1) := by
-  rw [iteratedDerivWithin_completed_genus_term hU hn D ρ z hz]
+  rw [genusTerm_deriv_iter hU hn D ρ z hz]
   simp only [norm_mul, norm_pow, norm_neg, norm_one, norm_natCast]
   rw [show (-1 - (n : ℕ) : ℤ) = -(n + 1 : ℕ) by omega]
   rw [zpow_neg, norm_inv, zpow_natCast, norm_pow, norm_inv, ← inv_pow]
@@ -111,7 +111,7 @@ Proof: compare the distances by division, raise the comparison to the required p
 two powers controlled by the second distance.
 Role: supplies the real inequality needed to majorize differentiated genus terms on compact sets.
 -/
-theorem inv_pow_le_inv_sq_majorant {n : ℕ} (hn : 1 ≤ n) {a b δ ε R : ℝ} (hδ : 0 < δ) (hε : 0 < ε)
+theorem invPow_invSq_majorant {n : ℕ} (hn : 1 ≤ n) {a b δ ε R : ℝ} (hδ : 0 < δ) (hε : 0 < ε)
     (hR : 0 ≤ R) (hδa : δ ≤ a) (hεb : ε ≤ b) (hab : b ≤ a + R) :
     a⁻¹ ^ (n + 1) ≤ (1 + R / δ) ^ (n + 1) * ε⁻¹ ^ (n - 1) * b⁻¹ ^ 2 := by
   have ha : 0 < a := lt_of_lt_of_le hδ hδa
@@ -161,9 +161,8 @@ Proof: dominate each inverse-square term by the nonnegative real part of the com
 kernel, using `Re ρ < 1` for every completed zero, and use summability of the genus expansion.
 Role: supplies the square-summability hypothesis for infinite remote-tail power-sum estimates.
 -/
-theorem summable_completed_genus_inverse_square {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {s : ℂ}
-    (hs : 1 < s.re) :
+theorem summable_genusInvSq {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {s : ℂ} (hs : 1 < s.re) :
     Summable
       (fun ρ : ℂ =>
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) * ‖(s - ρ)⁻¹‖ ^ 2) := by
@@ -278,9 +277,9 @@ point; then apply the locally bounded summability criterion.
 Role: supplies the convergence hypothesis for exchanging higher derivatives with the completed
 genus sum.
 -/
-theorem summableLocallyUniformlyOn_completed_genus_term_iteratedDerivWithin {q : ℕ} [NeZero q]
-    (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1)
-    {s₀ : ℂ} (hs₀ : 1 < s₀.re) (n : ℕ) (hn : 0 < n) :
+theorem genusDeriv_localSum {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {s₀ : ℂ} (hs₀ : 1 < s₀.re) (n : ℕ)
+    (hn : 0 < n) :
     SummableLocallyUniformlyOn
       (fun ρ : ℂ =>
         iteratedDerivWithin n
@@ -319,7 +318,7 @@ theorem summableLocallyUniformlyOn_completed_genus_term_iteratedDerivWithin {q :
       · exact pow_nonneg (inv_nonneg.mpr hε.le) _
     let u : ℂ → ℝ := fun ρ => C * ((D ρ : ℝ) * ‖(s₀ - ρ)⁻¹‖ ^ 2)
     have hu : Summable u := by
-      have hsum := summable_completed_genus_inverse_square hq hχ hp hinv hs₀
+      have hsum := summable_genusInvSq hq hχ hp hinv hs₀
       have hscale : Summable (fun ρ : ℂ => C * ((D ρ : ℝ) * ‖(s₀ - ρ)⁻¹‖ ^ 2)) := hsum.mul_left C
       simpa only [u, D] using hscale
     refine ⟨u, hu, ?_⟩
@@ -334,7 +333,7 @@ theorem summableLocallyUniformlyOn_completed_genus_term_iteratedDerivWithin {q :
     · change
         ‖iteratedDerivWithin n (fun s : ℂ => (D ρ : ℂ) * (1 / (s - ρ) + 1 / ρ)) V z‖ ≤
           C * ((D ρ : ℝ) * ‖(s₀ - ρ)⁻¹‖ ^ 2)
-      rw [norm_iteratedDerivWithin_completed_genus_term hV hn (D ρ) hDint ρ z (hK hz)]
+      rw [genusTerm_deriv_norm hV hn (D ρ) hDint ρ z (hK hz)]
       simp only [hDzero, Int.cast_zero, zero_mul, mul_zero]
       exact le_rfl
     · have hzero := completed_zero_of_divisor_ne_zero hχ hDzero
@@ -368,11 +367,11 @@ theorem summableLocallyUniformlyOn_completed_genus_term_iteratedDerivWithin {q :
                 _ = R₀ + ‖z - ρ‖ := by ring
             _ = ‖z - ρ‖ + R₀ := by ring
         exact ⟨hnormz, hnorms₀, htri⟩
-      have hpower := inv_pow_le_inv_sq_majorant hn hδ hε hR₀ hgeom.1 hgeom.2.1 hgeom.2.2
+      have hpower := invPow_invSq_majorant hn hδ hε hR₀ hgeom.1 hgeom.2.1 hgeom.2.2
       change
         ‖iteratedDerivWithin n (fun s : ℂ => (D ρ : ℂ) * (1 / (s - ρ) + 1 / ρ)) V z‖ ≤
           C * ((D ρ : ℝ) * ‖(s₀ - ρ)⁻¹‖ ^ 2)
-      rw [norm_iteratedDerivWithin_completed_genus_term hV hn (D ρ) hDint ρ z (hK hz), norm_inv]
+      rw [genusTerm_deriv_norm hV hn (D ρ) hDint ρ z (hK hz), norm_inv]
       calc
         (D ρ : ℝ) * (n.factorial : ℝ) * ‖z - ρ‖⁻¹ ^ (n + 1) ≤
             (D ρ : ℝ) * (n.factorial : ℝ) *
@@ -397,9 +396,8 @@ Proof: differentiate the resolvent terms on a small ball and dominate their deri
 by four times the inverse-square mass at the center.
 Role: identifies the completed genus expansion's derivative with the full zero divisor mass.
 -/
-theorem hasDerivAt_completed_genus_sum_right {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {s : ℂ}
-    (hs : 1 < s.re) :
+theorem hasDerivAt_genusSum {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {s : ℂ} (hs : 1 < s.re) :
     HasDerivAt
       (fun z : ℂ =>
         ∑' ρ : ℂ,
@@ -419,8 +417,7 @@ theorem hasDerivAt_completed_genus_sum_right {q : ℕ} [NeZero q] (hq : 2 ≤ q)
   have hbase : Summable (g · s) := by
     simpa only [g, D] using summable_completed_genus_terms_right hq hp hχ hinv hs
   have hmajor : Summable (fun ρ : ℂ => 4 * ((D ρ : ℝ) * ‖(s - ρ)⁻¹‖ ^ 2)) := by
-    simpa only [mul_assoc] using
-      (summable_completed_genus_inverse_square hq hχ hp hinv hs).mul_left 4
+    simpa only [mul_assoc] using (summable_genusInvSq hq hχ hp hinv hs).mul_left 4
   have hF : AnalyticOnNhd ℂ χ.completedLFunction Set.univ := by
     have hdiff := DirichletCharacter.differentiable_completedLFunction hχ
     intro z hz
@@ -502,7 +499,7 @@ theorem hasDerivAt_completed_genus_sum_right {q : ℕ} [NeZero q] (hq : 2 ≤ q)
           _ ≤ δ + ‖z - ρ‖ := add_le_add hclose' le_rfl
           _ = ‖z - ρ‖ + δ := by ring_nf
       have hpow :=
-        inv_pow_le_inv_sq_majorant (n := 1) (by norm_num only) hδ hδ hδ.le hdenz hdenS htriangle
+        invPow_invSq_majorant (n := 1) (by norm_num only) hδ hδ hδ.le hdenz hdenS htriangle
       have hpow' : ‖(z - ρ)⁻¹‖ ^ 2 ≤ 4 * ‖(s - ρ)⁻¹‖ ^ 2 := by
         rw [norm_inv, norm_inv]
         norm_num only [div_self hδ.ne', Nat.sub_self, pow_zero] at hpow
@@ -528,9 +525,9 @@ Proof: apply the locally uniform convergence theorem for iterated derivatives, u
 square summability bound as a local majorant for every positive derivative order.
 Role: permits higher derivatives of the zero expansion to be computed term by term.
 -/
-theorem iteratedDerivWithin_completed_genus_sum_right {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {s : ℂ}
-    (hs : 1 < s.re) (n : ℕ) (_hn : 0 < n) :
+theorem genusSum_deriv_iter {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {s : ℂ} (hs : 1 < s.re) (n : ℕ)
+    (_hn : 0 < n) :
     iteratedDerivWithin n
         (fun z : ℂ =>
           ∑' ρ : ℂ,
@@ -550,9 +547,7 @@ theorem iteratedDerivWithin_completed_genus_sum_right {q : ℕ} [NeZero q] (hq :
     simpa only [f, D] using summable_completed_genus_terms_right hq hp hχ hinv hz
   have hloc (k : ℕ) (hk₁ : 1 ≤ k) (hkn : k ≤ n) :
     SummableLocallyUniformlyOn (fun ρ : ℂ => iteratedDerivWithin k (f ρ) V) V := by
-    exact
-      summableLocallyUniformlyOn_completed_genus_term_iteratedDerivWithin hq hχ hp hinv hs k
-        (Nat.lt_of_lt_of_le Nat.zero_lt_one hk₁)
+    exact genusDeriv_localSum hq hχ hp hinv hs k (Nat.lt_of_lt_of_le Nat.zero_lt_one hk₁)
   have hdiff (ρ : ℂ) (k : ℕ) (z : ℂ) (hk : k ≤ n) (hz : z ∈ V) :
     DifferentiableAt ℂ (iteratedDerivWithin k (f ρ) V) z := by
     have hF : AnalyticOnNhd ℂ χ.completedLFunction Set.univ := by
@@ -598,9 +593,9 @@ Proof: exchange the iterated derivative with the genus sum, then apply the expli
 formula to each resolvent term.
 Role: supplies higher zero moments for decompositions into local and remote zero sets.
 -/
-theorem iteratedDerivWithin_completed_genus_sum_eq_zero_moment {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {s : ℂ}
-    (hs : 1 < s.re) (n : ℕ) (hn : 0 < n) :
+theorem genusSum_zeroMoments {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {s : ℂ} (hs : 1 < s.re) (n : ℕ)
+    (hn : 0 < n) :
     iteratedDerivWithin n
         (fun z : ℂ =>
           ∑' ρ : ℂ,
@@ -609,11 +604,11 @@ theorem iteratedDerivWithin_completed_genus_sum_eq_zero_moment {q : ℕ} [NeZero
       ∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℂ) *
           ((-1 : ℂ) ^ n * (n.factorial : ℂ) * (s - ρ) ^ (-1 - (n : ℕ) : ℤ)) := by
-  rw [iteratedDerivWithin_completed_genus_sum_right hq hχ hp hinv hs n hn]
+  rw [genusSum_deriv_iter hq hχ hp hinv hs n hn]
   apply tsum_congr
   intro ρ
   exact
-    iteratedDerivWithin_completed_genus_term (isOpen_lt continuous_const Complex.continuous_re) hn
+    genusTerm_deriv_iter (isOpen_lt continuous_const Complex.continuous_re) hn
       (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ) ρ s hs
 
 /--
@@ -624,24 +619,23 @@ Proof: differentiate the centered genus expansion and identify it locally with t
 logarithmic derivative by the Hadamard identity.
 Role: supplies the analytic inverse-square zero moment used in local and remote zero estimates.
 -/
-theorem deriv_logDeriv_eq_completed_genus_inverse_square {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {s : ℂ}
-    (hs : 1 < s.re) :
+theorem logDeriv_deriv_genus {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {s : ℂ} (hs : 1 < s.re) :
     deriv (logDeriv χ.completedLFunction) s =
       ∑' ρ : ℂ, -(MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℂ) * (s - ρ)⁻¹ ^ 2 := by
   let F : ℂ → ℂ := χ.completedLFunction
   have hF : AnalyticAt ℂ F s :=
     (DirichletCharacter.differentiable_completedLFunction hχ).analyticAt s
-  have hsne : F s ≠ 0 := completedLFunction_ne_zero_of_one_le_re hχ hs.le
+  have hsne : F s ≠ 0 := completed_ne_zero_of_one_le_re hχ hs.le
   have hlog : AnalyticAt ℂ (logDeriv F) s := hF.deriv.div hF hsne
   have hcentered := (hlog.differentiableAt.hasDerivAt).sub_const (logDeriv F 0)
-  have hGenus := hasDerivAt_completed_genus_sum_right hq hχ hp hinv hs
+  have hGenus := hasDerivAt_genusSum hq hχ hp hinv hs
   have hEq :
     (fun z : ℂ => logDeriv F z - logDeriv F 0) =ᶠ[nhds s]
       (fun z : ℂ =>
         ∑' ρ : ℂ, (MeromorphicOn.divisor F Set.univ ρ : ℂ) * (1 / (z - ρ) + 1 / ρ)) := by
     filter_upwards [(isOpen_lt continuous_const Complex.continuous_re).mem_nhds hs] with z hz
-    exact completed_centered_logDeriv_eq_genusSum_right hq hp hχ hinv hz
+    exact completedLogDeriv_genus_eq_right hq hp hχ hinv hz
   have hGenus' := hGenus.congr_of_eventuallyEq hEq
   have hderiv := hcentered.unique hGenus'
   simpa only [F] using hderiv
@@ -655,9 +649,9 @@ Proof: transfer the centered Hadamard expansion to iterated derivatives, exchang
 and zero sum using local uniform convergence, and differentiate each resolvent term explicitly.
 Role: provides higher zero moments for the Turán detection argument.
 -/
-theorem iteratedDerivWithin_logDeriv_eq_completed_genus_power_sum {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {s : ℂ}
-    (hs : 1 < s.re) (n : ℕ) (hn : 0 < n) :
+theorem logDeriv_iter_genus {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {s : ℂ} (hs : 1 < s.re) (n : ℕ)
+    (hn : 0 < n) :
     iteratedDerivWithin n (fun z : ℂ => logDeriv χ.completedLFunction z) {z : ℂ | 1 < z.re} s =
       ∑' ρ : ℂ,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℂ) *
@@ -671,7 +665,7 @@ theorem iteratedDerivWithin_logDeriv_eq_completed_genus_power_sum {q : ℕ} [NeZ
       (fun z : ℂ => ∑' ρ : ℂ, (MeromorphicOn.divisor F Set.univ ρ : ℂ) * (1 / (z - ρ) + 1 / ρ))
       V := by
     intro z hz
-    exact completed_centered_logDeriv_eq_genusSum_right hq hp hχ hinv hz
+    exact completedLogDeriv_genus_eq_right hq hp hχ hinv hz
   have hwithin := iteratedDerivWithin_congr (n := n) hEq
   have hcenterFun :
     (fun z : ℂ => logDeriv F z - logDeriv F 0) = fun z => -logDeriv F 0 + logDeriv F z := by
@@ -681,7 +675,7 @@ theorem iteratedDerivWithin_logDeriv_eq_completed_genus_power_sum {q : ℕ} [NeZ
     iteratedDerivWithin n (fun z : ℂ => logDeriv F z - logDeriv F 0) V s =
       iteratedDerivWithin n (fun z : ℂ => logDeriv F z) V s := by
     rw [hcenterFun, iteratedDerivWithin_const_add hn]
-  have hsum := iteratedDerivWithin_completed_genus_sum_right hq hχ hp hinv hs n hn
+  have hsum := genusSum_deriv_iter hq hχ hp hinv hs n hn
   calc
     iteratedDerivWithin n (fun z : ℂ => logDeriv F z) V s =
         iteratedDerivWithin n (fun z : ℂ => logDeriv F z - logDeriv F 0) V s :=
@@ -703,8 +697,7 @@ theorem iteratedDerivWithin_logDeriv_eq_completed_genus_power_sum {q : ℕ} [NeZ
       by
       apply tsum_congr
       intro ρ
-      exact
-        iteratedDerivWithin_completed_genus_term hV hn (MeromorphicOn.divisor F Set.univ ρ) ρ s hsV
+      exact genusTerm_deriv_iter hV hn (MeromorphicOn.divisor F Set.univ ρ) ρ s hsV
 
 /--
 Inputs: a primitive nonprincipal completed Dirichlet `L`-function, a point right of `Re s = 1`,
@@ -715,9 +708,9 @@ Proof: obtain summability from local uniform convergence, then split the summabl
 the finite-set complement identity.
 Role: separates near zeros from the remaining zeros in the detector estimate.
 -/
-theorem iteratedDerivWithin_logDeriv_split_finite_complement {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {s : ℂ}
-    (hs : 1 < s.re) (n : ℕ) (hn : 0 < n) (S : Finset ℂ) :
+theorem logDeriv_finite_tail {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {s : ℂ} (hs : 1 < s.re) (n : ℕ) (hn : 0 < n)
+    (S : Finset ℂ) :
     iteratedDerivWithin n (fun z : ℂ => logDeriv χ.completedLFunction z) {z : ℂ | 1 < z.re} s =
       (∑ ρ ∈ S,
           (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℂ) *
@@ -730,8 +723,7 @@ theorem iteratedDerivWithin_logDeriv_split_finite_complement {q : ℕ} [NeZero q
   let term : ℂ → ℂ := fun ρ =>
     (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℂ) *
       ((-1 : ℂ) ^ n * (n.factorial : ℂ) * (s - ρ) ^ (-1 - (n : ℕ) : ℤ))
-  have hlocal :=
-    summableLocallyUniformlyOn_completed_genus_term_iteratedDerivWithin hq hχ hp hinv hs n hn
+  have hlocal := genusDeriv_localSum hq hχ hp hinv hs n hn
   have hsumDeriv :
     Summable
       (fun ρ : ℂ =>
@@ -744,13 +736,11 @@ theorem iteratedDerivWithin_logDeriv_split_finite_complement {q : ℕ} [NeZero q
     hsumDeriv.congr fun ρ => by
       dsimp only [term]
       exact
-        iteratedDerivWithin_completed_genus_term (isOpen_lt continuous_const Complex.continuous_re)
-          hn (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ) ρ s hs
+        genusTerm_deriv_iter (isOpen_lt continuous_const Complex.continuous_re) hn
+          (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ) ρ s hs
   calc
     iteratedDerivWithin n (fun z : ℂ => logDeriv χ.completedLFunction z) V s = ∑' ρ : ℂ, term ρ :=
-      by
-      simpa only [term, V] using
-        iteratedDerivWithin_logDeriv_eq_completed_genus_power_sum hq hχ hp hinv hs n hn
+      by simpa only [term, V] using logDeriv_iter_genus hq hχ hp hinv hs n hn
     _ = (∑ ρ ∈ S, term ρ) + ∑' ρ : ↑((↑S : Set ℂ)ᶜ), term ρ := by
       simpa only [term] using (hsumTerm.sum_add_tsum_compl (s := S)).symm
 
@@ -763,19 +753,19 @@ Proof: apply the finite-complement identity to the finite local support, then id
 divisor value with its global value on that support.
 Role: connects the local zero power-sum block to the global derivative and its remote tail.
 -/
-theorem iteratedDerivWithin_logDeriv_eq_local_divisor_sum_add_complement {q : ℕ} [NeZero q]
-    (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1)
-    {c : ℂ} (hc : 1 < c.re) (R : ℝ) (n : ℕ) (hn : 0 < n) :
+theorem logDeriv_local_tail {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {c : ℂ} (hc : 1 < c.re) (R : ℝ) (n : ℕ)
+    (hn : 0 < n) :
     iteratedDerivWithin n (fun z : ℂ => logDeriv χ.completedLFunction z) {z : ℂ | 1 < z.re} c =
-      (∑ ρ ∈ (completedLFunction_local_zero_support_finite χ hχ c R).toFinset,
+      (∑ ρ ∈ (completedSupport_fin χ hχ c R).toFinset,
           (MeromorphicOn.divisor χ.completedLFunction (Metric.ball c |R|) ρ : ℂ) *
             ((-1 : ℂ) ^ n * (n.factorial : ℂ) * (c - ρ) ^ (-1 - (n : ℕ) : ℤ))) +
-        ∑' (ρ : { ρ : ℂ // ρ ∉ (completedLFunction_local_zero_support_finite χ hχ c R).toFinset }),
+        ∑' (ρ : { ρ : ℂ // ρ ∉ (completedSupport_fin χ hχ c R).toFinset }),
           (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℂ) *
             ((-1 : ℂ) ^ n * (n.factorial : ℂ) * (c - ρ) ^ (-1 - (n : ℕ) : ℤ)) := by
   classical
-  let S := (completedLFunction_local_zero_support_finite χ hχ c R).toFinset
-  have hsplit := iteratedDerivWithin_logDeriv_split_finite_complement hq hχ hp hinv hc n hn S
+  let S := (completedSupport_fin χ hχ c R).toFinset
+  have hsplit := logDeriv_finite_tail hq hχ hp hinv hc n hn S
   have hsum :
     (∑ ρ ∈ S,
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℂ) *
@@ -787,12 +777,12 @@ theorem iteratedDerivWithin_logDeriv_eq_local_divisor_sum_add_complement {q : �
     intro ρ hρ
     have hfinite :
       (MeromorphicOn.divisor χ.completedLFunction (Metric.ball c |R|)).support.Finite :=
-      completedLFunction_local_zero_support_finite χ hχ c R
+      completedSupport_fin χ hχ c R
     have hmem : ρ ∈ (MeromorphicOn.divisor χ.completedLFunction (Metric.ball c |R|)).support :=
       (Set.Finite.mem_toFinset hfinite).mp (by simpa only [S] using hρ)
     have hball : ρ ∈ Metric.ball c |R| :=
       (MeromorphicOn.divisor χ.completedLFunction (Metric.ball c |R|)).supportWithinDomain hmem
-    rw [completedLFunction_local_divisor_eq_global_at χ hχ c R hball]
+    rw [completedLocal_global χ hχ c R hball]
   calc
     _ =
         (∑ ρ ∈ S,
@@ -820,10 +810,9 @@ Proof: rewrite the subtype sum as an indicator sum; inside the disk the local an
 agree, while every nonzero complementary term lies outside the disk.
 Role: transfers the remote-tail estimate to the complementary term in the derivative split.
 -/
-theorem completedLFunction_local_support_complement_eq_remote_power_sum {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (c : ℂ) {η : ℝ} (hη : 0 < η) (k : ℕ) :
-    ∑' (v :
-        { v : ℂ // v ∉ (completedLFunction_local_zero_support_finite χ hχ c (80 * η)).toFinset }),
+theorem localTail_remoteSum {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (c : ℂ)
+    {η : ℝ} (hη : 0 < η) (k : ℕ) :
+    ∑' (v : { v : ℂ // v ∉ (completedSupport_fin χ hχ c (80 * η)).toFinset }),
         (MeromorphicOn.divisor χ.completedLFunction Set.univ v : ℂ) * (c - v)⁻¹ ^ k =
       ∑' v : ℂ,
         ((if 80 * η ≤ ‖c - v‖ then (MeromorphicOn.divisor χ.completedLFunction Set.univ v : ℝ)
@@ -835,14 +824,14 @@ theorem completedLFunction_local_support_complement_eq_remote_power_sum {q : ℕ
   let U : Set ℂ := Metric.ball c |80 * η|
   let Dlocal : ℂ → ℤ := MeromorphicOn.divisor χ.completedLFunction U
   let Dglobal : ℂ → ℤ := MeromorphicOn.divisor χ.completedLFunction Set.univ
-  let S : Finset ℂ := (completedLFunction_local_zero_support_finite χ hχ c (80 * η)).toFinset
+  let S : Finset ℂ := (completedSupport_fin χ hχ c (80 * η)).toFinset
   let Sc : Set ℂ := {v : ℂ | v ∉ S}
   let term : ℂ → ℂ := fun v => (Dglobal v : ℂ) * (c - v)⁻¹ ^ k
   let remoteTerm : ℂ → ℂ := fun v =>
     ((if 80 * η ≤ ‖c - v‖ then (Dglobal v : ℝ) else 0 : ℝ) : ℂ) *
       (if 80 * η ≤ ‖c - v‖ then (c - v)⁻¹ else 0) ^ k
   have hfinite : Dlocal.support.Finite := by
-    simpa only [Dlocal, U] using completedLFunction_local_zero_support_finite χ hχ c (80 * η)
+    simpa only [Dlocal, U] using completedSupport_fin χ hχ c (80 * η)
   have hpoint (v : ℂ) : Sc.indicator term v = remoteTerm v := by
     by_cases hremote : 80 * η ≤ ‖c - v‖
     · have hnotS : v ∉ S := by
@@ -884,7 +873,7 @@ theorem completedLFunction_local_support_complement_eq_remote_power_sum {q : ℕ
             simpa only [S, Dlocal, U] using hsupport
           exact hvS hmemS
         have hglobalzero : Dglobal v = 0 := by
-          have heq := completedLFunction_local_divisor_eq_global_at χ hχ c (80 * η) hball
+          have heq := completedLocal_global χ hχ c (80 * η) hball
           have heq' : Dlocal v = Dglobal v := by simpa only [Dlocal, Dglobal, U] using heq
           rw [hlocalzero] at heq'
           exact heq'.symm
@@ -907,8 +896,8 @@ Claim: the inverse-square mass restricted to the subset is bounded by the full i
 Proof: compare the nonnegative summands pointwise and use summability of the full genus mass.
 Role: transfers the uniform global mass estimate to remote zero sets.
 -/
-theorem completed_genus_inverse_square_subset_mass_le {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) (S : Set ℂ)
+theorem genusSubset_mass_le {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) (S : Set ℂ)
     [DecidablePred fun ρ : ℂ => ρ ∈ S] {s : ℂ} (hs : 1 < s.re) :
     ∑' ρ : ℂ,
         (if ρ ∈ S then (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) else 0) *
@@ -918,7 +907,7 @@ theorem completed_genus_inverse_square_subset_mass_le {q : ℕ} [NeZero q] (hq :
   let D : ℂ → ℝ := fun ρ => (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ)
   let w : ℂ → ℝ := fun ρ => if ρ ∈ S then D ρ else 0
   let z : ℂ → ℂ := fun ρ => if ρ ∈ S then (s - ρ)⁻¹ else 0
-  have hsum := summable_completed_genus_inverse_square hq hχ hp hinv hs
+  have hsum := summable_genusInvSq hq hχ hp hinv hs
   have hF : AnalyticOnNhd ℂ χ.completedLFunction Set.univ := by
     have hdiff := DirichletCharacter.differentiable_completedLFunction hχ
     intro u hu
@@ -952,18 +941,17 @@ Proof: dominate each inverse-square term by its nonnegative genus-kernel real pa
 pointwise inequalities.
 Role: gives a quantitative square-mass input for absorbing remote zeros in the positive detector.
 -/
-theorem completed_genus_inverse_square_mass_le_right_genus_sum {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {s : ℂ}
-    (hs : 1 < s.re) :
+theorem genusInvSq_right_le {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {s : ℂ} (hs : 1 < s.re) :
     ∑' ρ : ℂ, (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) * ‖(s - ρ)⁻¹‖ ^ 2 ≤
       (s.re - 1)⁻¹ * (logDeriv χ.completedLFunction s - logDeriv χ.completedLFunction (-1)).re := by
   let F : ℂ → ℂ := χ.completedLFunction
   let D : ℂ → ℤ := MeromorphicOn.divisor F Set.univ
   let cterm : ℂ → ℂ := fun ρ => (D ρ : ℂ) * (1 / (s - ρ) + 1 / (1 + ρ))
   let rterm : ℂ → ℝ := fun ρ => (cterm ρ).re
-  have hsum := summable_completed_genus_inverse_square hq hχ hp hinv hs
+  have hsum := summable_genusInvSq hq hχ hp hinv hs
   have hseries : Summable cterm := by
-    simpa only [cterm, D, F] using summable_completed_genus_terms_minus_one hq hp hχ hinv hs
+    simpa only [cterm, D, F] using summable_completed_genus_neg_one hq hp hχ hinv hs
   have hrseries : Summable rterm := by
     apply Summable.of_norm_bounded hseries.norm
     intro ρ
@@ -1048,7 +1036,7 @@ theorem completed_genus_inverse_square_mass_le_right_genus_sum {q : ℕ} [NeZero
   have hglobal :
     (logDeriv χ.completedLFunction s - logDeriv χ.completedLFunction (-1)).re =
       ∑' ρ : ℂ, rterm ρ := by
-    rw [completed_centered_logDeriv_eq_genusSum_minus_one hq hp hχ hinv hs, Complex.re_tsum hseries]
+    rw [completedLogDeriv_genus_eq_neg_one hq hp hχ hinv hs, Complex.re_tsum hseries]
   calc
     _ ≤ ∑' ρ : ℂ, (s.re - 1)⁻¹ * rterm ρ := htotal
     _ = (s.re - 1)⁻¹ * ∑' ρ : ℂ, rterm ρ := by rw [tsum_mul_left]
@@ -1059,14 +1047,13 @@ theorem completed_genus_inverse_square_mass_le_right_genus_sum {q : ℕ} [NeZero
 conductor, character, and height. -/
 
 /-- The uniform shift constant selected from the completed logarithmic-derivative estimate. -/
-noncomputable def completedGenusMassShiftConstant : ℝ :=
-  Classical.choose exists_uniform_norm_completed_logDeriv_small_shift_bound
+noncomputable def genusMassShift : ℝ :=
+  Classical.choose uniform_completedLogDeriv_smallShift
 
 /-- The fixed center constant selected from the completed logarithmic-derivative estimate. -/
-noncomputable def completedGenusMassCenterConstant : ℝ :=
+noncomputable def genusMassCenter : ℝ :=
   Classical.choose
-    (exists_norm_completed_logDeriv_small_shift_bound (r := 1) (by norm_num only)
-      (by norm_num only))
+    (completedLogDeriv_smallShift_bound (r := 1) (by norm_num only) (by norm_num only))
 
 /--
 Inputs: a primitive nonprincipal completed Dirichlet `L`-function, a positive shift at most `1/2`,
@@ -1077,12 +1064,12 @@ Proof: bound the genus sum using the uniform vertical logarithmic-derivative est
 functional equation at `2`, then apply the inverse-square mass comparison.
 Role: supplies the global mass estimate needed to verify remote-tail absorption quantitatively.
 -/
-theorem exists_completed_genus_inverse_square_mass_le_uniform_bound {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {η : ℝ}
-    (hη : 0 < η) (hη1 : η ≤ 1 / 2) (t : ℝ) :
+theorem exists_genusMassBound {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) (hη1 : η ≤ 1 / 2)
+    (t : ℝ) :
     ∃ A B : ℝ,
-      A = completedGenusMassShiftConstant ∧
-        B = completedGenusMassCenterConstant ∧
+      A = genusMassShift ∧
+        B = genusMassCenter ∧
         0 < A ∧
         0 < B ∧
         ∑' ρ : ℂ,
@@ -1090,10 +1077,10 @@ theorem exists_completed_genus_inverse_square_mass_le_uniform_bound {q : ℕ} [N
               ‖((((1 + η : ℝ) : ℂ) + Complex.I * t) - ρ)⁻¹‖ ^ 2 ≤
           (1 / η) *
             (4 / η + A * (Real.log (4 + |t|) + 1) + Real.log q + 4 + B * (Real.log 4 + 1)) := by
-  let A := completedGenusMassShiftConstant
+  let A := genusMassShift
   have hA : 0 < A := by
-    dsimp only [A, completedGenusMassShiftConstant]
-    exact (Classical.choose_spec exists_uniform_norm_completed_logDeriv_small_shift_bound).1
+    dsimp only [A, genusMassShift]
+    exact (Classical.choose_spec uniform_completedLogDeriv_smallShift).1
   have hderiv :
     ∀ {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q),
       χ ≠ 1 →
@@ -1104,17 +1091,14 @@ theorem exists_completed_genus_inverse_square_mass_le_uniform_bound {q : ℕ} [N
               ‖logDeriv χ.completedLFunction (((1 + r : ℝ) : ℂ) + Complex.I * t)‖ ≤
                 4 / r + A * (Real.log (4 + |t|) + 1) := by
     intro q inst χ hχ r hr hr1 t
-    dsimp only [A, completedGenusMassShiftConstant]
-    exact
-      (Classical.choose_spec exists_uniform_norm_completed_logDeriv_small_shift_bound).2 χ hχ hr hr1
-        t
-  let B := completedGenusMassCenterConstant
+    dsimp only [A, genusMassShift]
+    exact (Classical.choose_spec uniform_completedLogDeriv_smallShift).2 χ hχ hr hr1 t
+  let B := genusMassCenter
   have hB : 0 < B := by
-    dsimp only [B, completedGenusMassCenterConstant]
+    dsimp only [B, genusMassCenter]
     exact
       (Classical.choose_spec
-          (exists_norm_completed_logDeriv_small_shift_bound (r := 1) (by norm_num only)
-            (by norm_num only))).1
+          (completedLogDeriv_smallShift_bound (r := 1) (by norm_num only) (by norm_num only))).1
   have hbase :
     ∀ {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q),
       χ ≠ 1 →
@@ -1122,11 +1106,10 @@ theorem exists_completed_genus_inverse_square_mass_le_uniform_bound {q : ℕ} [N
           ‖logDeriv χ.completedLFunction (((1 + 1 : ℝ) : ℂ) + Complex.I * t)‖ ≤
             4 / 1 + B * (Real.log (4 + |t|) + 1) := by
     intro q inst χ hχ t
-    dsimp only [B, completedGenusMassCenterConstant]
+    dsimp only [B, genusMassCenter]
     exact
       (Classical.choose_spec
-            (exists_norm_completed_logDeriv_small_shift_bound (r := 1) (by norm_num only)
-              (by norm_num only))).2
+            (completedLogDeriv_smallShift_bound (r := 1) (by norm_num only) (by norm_num only))).2
         χ hχ t
   let s : ℂ := ((1 + η : ℝ) : ℂ) + Complex.I * t
   have hsre : s.re = 1 + η := by
@@ -1146,8 +1129,8 @@ theorem exists_completed_genus_inverse_square_mass_le_uniform_bound {q : ℕ} [N
     rw [huEq]
     change (1 : ℝ) ≤ 2
     norm_num only
-  have hF2 : χ⁻¹.completedLFunction u ≠ 0 := completedLFunction_ne_zero_of_one_le_re hinv huRe
-  have hfe := completedLFunction_logDeriv_functionalEquation_at hp hχ (s := u) hF2
+  have hF2 : χ⁻¹.completedLFunction u ≠ 0 := completed_ne_zero_of_one_le_re hinv huRe
+  have hfe := completedLogDeriv_functionalEq hp hχ (s := u) hF2
   have hone : (1 : ℂ) - u = -1 := by
     rw [huEq]; norm_num only
   rw [hone] at hfe
@@ -1180,7 +1163,7 @@ theorem exists_completed_genus_inverse_square_mass_le_uniform_bound {q : ℕ} [N
       neg_le_abs _
     linarith only [hpoint, hcenter, hnorm', hcenterre]
   have hmass :=
-    completed_genus_inverse_square_mass_le_right_genus_sum hq hχ hp hinv (s := s)
+    genusInvSq_right_le hq hχ hp hinv (s := s)
       (by
         rw [hsre]; linarith only [hη])
   have hηinv : 0 ≤ 1 / η := (one_div_pos.mpr hη).le
@@ -1201,8 +1184,8 @@ Proof: the denominator at `w` is at least half its distance at `s`, while the la
 `δ`; split the power into its square and the remaining `k - 2` factors.
 Role: supplies a local uniform majorant for differentiating the completed genus series.
 -/
-private theorem weighted_reciprocal_power_uniform_bound {δ D : ℝ} {w s ρ : ℂ} {k : ℕ} (hδ : 0 < δ)
-    (hD : 0 ≤ D) (hsep : δ ≤ ‖s - ρ‖) (hclose : ‖w - s‖ ≤ δ / 2) (hk : 2 ≤ k) :
+private theorem reciprocalPow_uniform {δ D : ℝ} {w s ρ : ℂ} {k : ℕ} (hδ : 0 < δ) (hD : 0 ≤ D)
+    (hsep : δ ≤ ‖s - ρ‖) (hclose : ‖w - s‖ ≤ δ / 2) (hk : 2 ≤ k) :
     D * ‖(w - ρ)⁻¹‖ ^ k ≤ 4 * (2 / δ) ^ (k - 2) * (D * ‖(s - ρ)⁻¹‖ ^ 2) := by
   have hleft : ‖s - ρ‖ ≤ ‖s - w‖ + ‖w - ρ‖ := by
     calc
@@ -1258,13 +1241,12 @@ a set of divisor points separated from `s`, and a power `k ≥ 2`.
 Claim: the divisor-weighted reciprocal-power sum over that set is absolutely summable and is
 bounded by its inverse-square mass times the remote radius to the power `k - 2`.
 Proof: apply the generic weighted power-sum estimate to the divisor multiplicities restricted to
-the set, using `summable_completed_genus_inverse_square` for the square mass.
+the set, using `summable_genusInvSq` for the square mass.
 Role: controls the infinite remote contribution in the local zero detector.
 -/
-theorem norm_tsum_completed_genus_remote_reciprocal_power_le {q : ℕ} [NeZero q] (hq : 2 ≤ q)
-    {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) (S : Set ℂ)
-    [DecidablePred fun ρ : ℂ => ρ ∈ S] {s : ℂ} (hs : 1 < s.re) {η : ℝ} (hη : 0 < η)
-    (hremote : ∀ ρ ∈ S, 8 * η ≤ ‖s - ρ‖) (k : ℕ) (hk : 2 ≤ k) :
+theorem remoteSum_norm_le {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1)
+    (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) (S : Set ℂ) [DecidablePred fun ρ : ℂ => ρ ∈ S] {s : ℂ}
+    (hs : 1 < s.re) {η : ℝ} (hη : 0 < η) (hremote : ∀ ρ ∈ S, 8 * η ≤ ‖s - ρ‖) (k : ℕ) (hk : 2 ≤ k) :
     Summable
         (fun ρ : ℂ =>
           ((if ρ ∈ S then (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) else 0 : ℝ) :
@@ -1283,7 +1265,7 @@ theorem norm_tsum_completed_genus_remote_reciprocal_power_le {q : ℕ} [NeZero q
   let D : ℂ → ℝ := fun ρ => (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ)
   let w : ℂ → ℝ := fun ρ => if ρ ∈ S then D ρ else 0
   let z : ℂ → ℂ := fun ρ => if ρ ∈ S then (s - ρ)⁻¹ else 0
-  have hsum := summable_completed_genus_inverse_square hq hχ hp hinv hs
+  have hsum := summable_genusInvSq hq hχ hp hinv hs
   have hF : AnalyticOnNhd ℂ χ.completedLFunction Set.univ := by
     have hdiff := DirichletCharacter.differentiable_completedLFunction hχ
     intro u hu
@@ -1314,7 +1296,7 @@ theorem norm_tsum_completed_genus_remote_reciprocal_power_le {q : ℕ} [NeZero q
       rfl
     · simp only [w, z, hρ, ite_false, zero_mul, Real.norm_eq_abs, abs_zero]
       exact abs_nonneg _
-  have hbound := norm_tsum_weighted_power_le_of_summable_square w z hw hz hbase k hk
+  have hbound := weightedPower_tsum_le w z hw hz hbase k hk
   rcases hbound with ⟨hpower, hbound⟩
   exact ⟨by simpa only [w, z, D] using hpower, by simpa only [w, z, D] using hbound⟩
 
@@ -1325,8 +1307,8 @@ Claim: the square-mass tail at distance `8η` is at most half of the near-zero s
 Proof: compare the two inverse powers by multiplying through their positive denominators.
 Role: gives the exact numerical absorption step for the remote completed-zero contribution.
 -/
-private theorem remote_inverse_power_tail_le_half_near_scale {η N S : ℝ} {k : ℕ} (hη : 0 < η)
-    (hN : 0 < N) (hsmall : 8 * N * S * (3 * η) ^ (k + 1) ≤ (8 * η) ^ (k - 2)) :
+private theorem remoteScalar_succ_le {η N S : ℝ} {k : ℕ} (hη : 0 < η) (hN : 0 < N)
+    (hsmall : 8 * N * S * (3 * η) ^ (k + 1) ≤ (8 * η) ^ (k - 2)) :
     S * (1 / (8 * η)) ^ (k - 2) ≤ (1 / (8 * N)) * (1 / (3 * η)) ^ (k + 1) := by
   have hleft : S * (1 / (8 * η)) ^ (k - 2) = S / (8 * η) ^ (k - 2) := by
     rw [one_div_pow]
@@ -1349,7 +1331,7 @@ Proof: powers of `3 / 8` tend to zero; rewrite the desired inequality as a const
 that geometric power times the positive scale `(8η)^(k - 2)`.
 Role: chooses the derivative order needed to absorb the remote inverse-square mass.
 -/
-private theorem exists_nat_ge_geometric_remote_tail {η N S : ℝ} (hη : 0 < η) :
+private theorem exists_remoteSuccK {η N S : ℝ} (hη : 0 < η) :
     ∃ K : ℕ, 2 ≤ K ∧ ∀ k : ℕ, K ≤ k → 8 * N * S * (3 * η) ^ (k + 1) ≤ (8 * η) ^ (k - 2) := by
   let A : ℝ := 216 * N * S * η ^ 3
   have hpow : Filter.Tendsto (fun n : ℕ => ((3 : ℝ) / 8) ^ n) Filter.atTop (nhds 0) :=
@@ -1387,8 +1369,8 @@ Claim: the remote reciprocal-power sum is bounded by the near-signal scale at th
 Proof: rewrite both sides as quotients and apply the stated cross-multiplied inequality.
 Role: aligns the remote estimate with the exponent `n + 1` in the completed logarithmic derivative.
 -/
-private theorem remote_inverse_power_tail_le_matching_scale {η N S : ℝ} {k : ℕ} (hη : 0 < η)
-    (hN : 0 < N) (hsmall : 8 * N * S * (3 * η) ^ k ≤ (8 * η) ^ (k - 2)) :
+private theorem remoteScalar_same_le {η N S : ℝ} {k : ℕ} (hη : 0 < η) (hN : 0 < N)
+    (hsmall : 8 * N * S * (3 * η) ^ k ≤ (8 * η) ^ (k - 2)) :
     S * (1 / (8 * η)) ^ (k - 2) ≤ (1 / (8 * N)) * (1 / (3 * η)) ^ k := by
   have hleft : S * (1 / (8 * η)) ^ (k - 2) = S / (8 * η) ^ (k - 2) := by
     rw [one_div_pow]
@@ -1411,8 +1393,7 @@ Proof: Bernoulli's inequality bounds the geometric threshold by a ceiling; rewri
 as that geometric factor times `(8η)^(k - 2)`.
 Role: chooses a quantified order threshold for the completed logarithmic-derivative moment.
 -/
-private theorem exists_nat_ge_geometric_remote_tail_matching_scale {η N S : ℝ} (hη : 0 < η)
-    (Kmin : ℕ) (hKmin : 2 ≤ Kmin) :
+private theorem exists_remoteSameK {η N S : ℝ} (hη : 0 < η) (Kmin : ℕ) (hKmin : 2 ≤ Kmin) :
     ∃ K : ℕ,
       Kmin ≤ K ∧
         K ≤ max (Nat.ceil (max (72 * N * S * η ^ 2) 0) + 3) Kmin ∧
@@ -1492,10 +1473,10 @@ Proof: apply the inverse-square tail estimate and the explicit denominator compa
 Role: separates the remaining analytic task, proving the stated square-mass condition, from the
 already formalized absorption of the remote terms.
 -/
-theorem norm_tsum_completed_genus_remote_reciprocal_power_le_half_near_scale {q : ℕ} [NeZero q]
-    (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1)
-    (S : Set ℂ) [DecidablePred fun ρ : ℂ => ρ ∈ S] {s : ℂ} (hs : 1 < s.re) {η N : ℝ} (hη : 0 < η)
-    (hN : 0 < N) (hremote : ∀ ρ ∈ S, 8 * η ≤ ‖s - ρ‖) (k : ℕ) (hk : 2 ≤ k)
+theorem remoteSum_succ_le {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1)
+    (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) (S : Set ℂ) [DecidablePred fun ρ : ℂ => ρ ∈ S] {s : ℂ}
+    (hs : 1 < s.re) {η N : ℝ} (hη : 0 < η) (hN : 0 < N) (hremote : ∀ ρ ∈ S, 8 * η ≤ ‖s - ρ‖) (k : ℕ)
+    (hk : 2 ≤ k)
     (hsmall :
       8 * N *
           (∑' ρ : ℂ,
@@ -1508,9 +1489,8 @@ theorem norm_tsum_completed_genus_remote_reciprocal_power_le_half_near_scale {q 
               ℂ) *
             (if ρ ∈ S then (s - ρ)⁻¹ else 0) ^ k‖ ≤
       (1 / (8 * N)) * (1 / (3 * η)) ^ (k + 1) := by
-  have htail :=
-    norm_tsum_completed_genus_remote_reciprocal_power_le hq hχ hp hinv S hs hη hremote k hk
-  have habsorb := remote_inverse_power_tail_le_half_near_scale hη hN hsmall
+  have htail := remoteSum_norm_le hq hχ hp hinv S hs hη hremote k hk
+  have habsorb := remoteScalar_succ_le hη hN hsmall
   calc
     _ ≤
         (8 * η)⁻¹ ^ (k - 2) *
@@ -1528,10 +1508,10 @@ Proof: apply the inverse-square tail estimate, then use the matching-exponent de
 Role: supplies the tail estimate needed to compare with the local power sum in an order-`n`
 logarithmic derivative.
 -/
-theorem norm_tsum_completed_genus_remote_reciprocal_power_le_matching_scale {q : ℕ} [NeZero q]
-    (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1)
-    (S : Set ℂ) [DecidablePred fun ρ : ℂ => ρ ∈ S] {s : ℂ} (hs : 1 < s.re) {η N : ℝ} (hη : 0 < η)
-    (hN : 0 < N) (hremote : ∀ ρ ∈ S, 8 * η ≤ ‖s - ρ‖) (k : ℕ) (hk : 2 ≤ k)
+theorem remoteSum_same_le {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1)
+    (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) (S : Set ℂ) [DecidablePred fun ρ : ℂ => ρ ∈ S] {s : ℂ}
+    (hs : 1 < s.re) {η N : ℝ} (hη : 0 < η) (hN : 0 < N) (hremote : ∀ ρ ∈ S, 8 * η ≤ ‖s - ρ‖) (k : ℕ)
+    (hk : 2 ≤ k)
     (hsmall :
       8 * N *
           (∑' ρ : ℂ,
@@ -1544,9 +1524,8 @@ theorem norm_tsum_completed_genus_remote_reciprocal_power_le_matching_scale {q :
               ℂ) *
             (if ρ ∈ S then (s - ρ)⁻¹ else 0) ^ k‖ ≤
       (1 / (8 * N)) * (1 / (3 * η)) ^ k := by
-  have htail :=
-    norm_tsum_completed_genus_remote_reciprocal_power_le hq hχ hp hinv S hs hη hremote k hk
-  have habsorb := remote_inverse_power_tail_le_matching_scale hη hN hsmall
+  have htail := remoteSum_norm_le hq hχ hp hinv S hs hη hremote k hk
+  have habsorb := remoteScalar_same_le hη hN hsmall
   calc
     _ ≤
         (8 * η)⁻¹ ^ (k - 2) *
@@ -1563,10 +1542,10 @@ Proof: choose an order from geometric decay, use the mass bound to establish the
 inequality, then apply the remote-tail estimate.
 Role: removes the order-dependent square-mass condition from the remote-tail interface.
 -/
-theorem exists_k_completed_genus_remote_reciprocal_power_le_half_near_scale {q : ℕ} [NeZero q]
-    (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1)
-    (S : Set ℂ) [DecidablePred fun ρ : ℂ => ρ ∈ S] {s : ℂ} (hs : 1 < s.re) {η N M : ℝ} (hη : 0 < η)
-    (hN : 0 < N) (hremote : ∀ ρ ∈ S, 8 * η ≤ ‖s - ρ‖)
+theorem exists_remoteSuccSum {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) (S : Set ℂ)
+    [DecidablePred fun ρ : ℂ => ρ ∈ S] {s : ℂ} (hs : 1 < s.re) {η N M : ℝ} (hη : 0 < η) (hN : 0 < N)
+    (hremote : ∀ ρ ∈ S, 8 * η ≤ ‖s - ρ‖)
     (hMass :
       ∑' ρ : ℂ,
           (if ρ ∈ S then (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) else 0) *
@@ -1580,7 +1559,7 @@ theorem exists_k_completed_genus_remote_reciprocal_power_le_half_near_scale {q :
                   ℂ) *
                 (if ρ ∈ S then (s - ρ)⁻¹ else 0) ^ k‖ ≤
           (1 / (8 * N)) * (1 / (3 * η)) ^ (k + 1) := by
-  obtain ⟨k, hk, hsmallM⟩ := exists_nat_ge_geometric_remote_tail (η := η) (N := N) (S := M) hη
+  obtain ⟨k, hk, hsmallM⟩ := exists_remoteSuccK (η := η) (N := N) (S := M) hη
   have hη3 : 0 ≤ (3 * η) ^ (k + 1) := by positivity
   have hsmall :
     8 * N *
@@ -1595,10 +1574,7 @@ theorem exists_k_completed_genus_remote_reciprocal_power_le_half_near_scale {q :
         exact mul_le_mul_of_nonneg_left hMass (by positivity)
       _ = 8 * N * M * (3 * η) ^ (k + 1) := by ring
       _ ≤ (8 * η) ^ (k - 2) := hsmallM k le_rfl
-  exact
-    ⟨k, hk,
-      norm_tsum_completed_genus_remote_reciprocal_power_le_half_near_scale hq hχ hp hinv S hs hη hN
-        hremote k hk hsmall⟩
+  exact ⟨k, hk, remoteSum_succ_le hq hχ hp hinv S hs hη hN hremote k hk hsmall⟩
 
 /--
 Purpose: express the explicit derivative-order cutoff obtained from the conductor-height
@@ -1609,7 +1585,7 @@ Inputs: the conductor, shift, height, mass scale and constants, and minimum deri
 Output: an order beyond which the remote reciprocal-power tail is absorbed.
 Role: makes the matching-scale bound available to the local zero detector and its callers.
 -/
-noncomputable def completedGenusRemoteTailCutoffFromMass (q : ℕ) (η t N A B : ℝ) (Kmin : ℕ) : ℕ :=
+noncomputable def remoteCutoffFromMass (q : ℕ) (η t N A B : ℝ) (Kmin : ℕ) : ℕ :=
   max
     (Nat.ceil
         (max
@@ -1622,9 +1598,8 @@ noncomputable def completedGenusRemoteTailCutoffFromMass (q : ℕ) (η t N A B :
     Kmin
 
 /-- The remote-tail order cutoff using the fixed completed-genus mass constants. -/
-noncomputable def completedGenusRemoteTailUniformCutoff (q : ℕ) (η t N : ℝ) (Kmin : ℕ) : ℕ :=
-  completedGenusRemoteTailCutoffFromMass q η t N completedGenusMassShiftConstant
-    completedGenusMassCenterConstant Kmin
+noncomputable def uniformRemoteCutoff (q : ℕ) (η t N : ℝ) (Kmin : ℕ) : ℕ :=
+  remoteCutoffFromMass q η t N genusMassShift genusMassCenter Kmin
 
 /--
 Inputs: a primitive character, a positive shift at most `1/2`, a height, and a remote set of zeros.
@@ -1634,11 +1609,10 @@ Proof: bound the mass on the remote set by the global mass, then apply geometric
 remote-tail comparison.
 Role: supplies the unconditional mass estimate needed by local zero detection.
 -/
-theorem exists_k_completed_genus_remote_reciprocal_power_le_uniform_half_near_scale {q : ℕ}
-    [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive)
-    (hinv : χ⁻¹ ≠ 1) (S : Set ℂ) [DecidablePred fun ρ : ℂ => ρ ∈ S] {η : ℝ} (hη : 0 < η)
-    (hη1 : η ≤ 1 / 2) (t : ℝ) {N : ℝ} (hN : 0 < N) (Kmin : ℕ)
-    (hremote : ∀ ρ ∈ S, 8 * η ≤ ‖(((1 + η : ℝ) : ℂ) + Complex.I * t) - ρ‖) :
+theorem exists_uniformSuccSum {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) (S : Set ℂ)
+    [DecidablePred fun ρ : ℂ => ρ ∈ S] {η : ℝ} (hη : 0 < η) (hη1 : η ≤ 1 / 2) (t : ℝ) {N : ℝ}
+    (hN : 0 < N) (Kmin : ℕ) (hremote : ∀ ρ ∈ S, 8 * η ≤ ‖(((1 + η : ℝ) : ℂ) + Complex.I * t) - ρ‖) :
     ∃ A B : ℝ,
       0 < A ∧
         0 < B ∧
@@ -1660,9 +1634,8 @@ theorem exists_k_completed_genus_remote_reciprocal_power_le_uniform_half_near_sc
     simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, Complex.I_im,
       Complex.ofReal_im, zero_mul, mul_zero, sub_zero, add_zero]
     linarith only [hη]
-  obtain ⟨A, B, _, _, hA, hB, hglobal⟩ :=
-    exists_completed_genus_inverse_square_mass_le_uniform_bound hq hχ hp hinv hη hη1 t
-  have hsubset := completed_genus_inverse_square_subset_mass_le hq hχ hp hinv S hs
+  obtain ⟨A, B, _, _, hA, hB, hglobal⟩ := exists_genusMassBound hq hχ hp hinv hη hη1 t
+  have hsubset := genusSubset_mass_le hq hχ hp hinv S hs
   have hremote' : ∀ ρ ∈ S, 8 * η ≤ ‖s - ρ‖ := by simpa only [s] using hremote
   let M := (1 / η) * (4 / η + A * (Real.log (4 + |t|) + 1) + Real.log q + 4 + B * (Real.log 4 + 1))
   have hglobal' :
@@ -1670,7 +1643,7 @@ theorem exists_k_completed_genus_remote_reciprocal_power_le_uniform_half_near_sc
       M := by
     simpa only [M, s] using hglobal
   have hMass := hsubset.trans hglobal'
-  obtain ⟨K₀, hK₀, hsmallM⟩ := exists_nat_ge_geometric_remote_tail (η := η) (N := N) (S := M) hη
+  obtain ⟨K₀, hK₀, hsmallM⟩ := exists_remoteSuccK (η := η) (N := N) (S := M) hη
   let K := max K₀ Kmin
   have hKmin' : Kmin ≤ K := le_max_right _ _
   have hK : 2 ≤ K := le_trans hK₀ (le_max_left _ _)
@@ -1691,9 +1664,7 @@ theorem exists_k_completed_genus_remote_reciprocal_power_le_uniform_half_near_sc
         exact mul_le_mul_of_nonneg_left hMass (by positivity)
       _ = 8 * N * M * (3 * η) ^ (k + 1) := by ring
       _ ≤ (8 * η) ^ (k - 2) := hsmallM k hk₀
-  have htail :=
-    norm_tsum_completed_genus_remote_reciprocal_power_le_half_near_scale hq hχ hp hinv S hs hη hN
-      hremote' k (le_trans hK hk) hsmall
+  have htail := remoteSum_succ_le hq hχ hp hinv S hs hη hN hremote' k (le_trans hK hk) hsmall
   simpa only [s] using htail
 
 /--
@@ -1704,17 +1675,17 @@ Proof: bound the remote mass by the global inverse-square mass and apply the mat
 geometric tail estimate.
 Role: aligns the unconditional remote bound with the completed logarithmic-derivative formula.
 -/
-theorem exists_k_completed_genus_remote_reciprocal_power_le_uniform_matching_scale {q : ℕ}
-    [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive)
-    (hinv : χ⁻¹ ≠ 1) (S : Set ℂ) [DecidablePred fun ρ : ℂ => ρ ∈ S] {η : ℝ} (hη : 0 < η)
-    (hη1 : η ≤ 1 / 2) (t : ℝ) {N : ℝ} (hN : 0 < N) (Kmin : ℕ) (hKmin : 2 ≤ Kmin)
+theorem exists_uniformSameSum {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) (S : Set ℂ)
+    [DecidablePred fun ρ : ℂ => ρ ∈ S] {η : ℝ} (hη : 0 < η) (hη1 : η ≤ 1 / 2) (t : ℝ) {N : ℝ}
+    (hN : 0 < N) (Kmin : ℕ) (hKmin : 2 ≤ Kmin)
     (hremote : ∀ ρ ∈ S, 8 * η ≤ ‖(((1 + η : ℝ) : ℂ) + Complex.I * t) - ρ‖) :
     ∃ A B : ℝ,
       0 < A ∧
         0 < B ∧
         ∃ K : ℕ,
           Kmin ≤ K ∧
-            K ≤ completedGenusRemoteTailUniformCutoff q η t N Kmin ∧
+            K ≤ uniformRemoteCutoff q η t N Kmin ∧
             2 ≤ K ∧
             ∀ k : ℕ,
               K ≤ k →
@@ -1731,9 +1702,8 @@ theorem exists_k_completed_genus_remote_reciprocal_power_le_uniform_matching_sca
     simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, Complex.I_im,
       Complex.ofReal_im, zero_mul, mul_zero, sub_zero, add_zero]
     linarith only [hη]
-  obtain ⟨A, B, hAeq, hBeq, hA, hB, hglobal⟩ :=
-    exists_completed_genus_inverse_square_mass_le_uniform_bound hq hχ hp hinv hη hη1 t
-  have hsubset := completed_genus_inverse_square_subset_mass_le hq hχ hp hinv S hs
+  obtain ⟨A, B, hAeq, hBeq, hA, hB, hglobal⟩ := exists_genusMassBound hq hχ hp hinv hη hη1 t
+  have hsubset := genusSubset_mass_le hq hχ hp hinv S hs
   have hremote' : ∀ ρ ∈ S, 8 * η ≤ ‖s - ρ‖ := by simpa only [s] using hremote
   let M := (1 / η) * (4 / η + A * (Real.log (4 + |t|) + 1) + Real.log q + 4 + B * (Real.log 4 + 1))
   have hglobal' :
@@ -1742,10 +1712,9 @@ theorem exists_k_completed_genus_remote_reciprocal_power_le_uniform_matching_sca
     simpa only [M, s] using hglobal
   have hMass := hsubset.trans hglobal'
   obtain ⟨K, hKmin', hKupper, hK, hsmallM⟩ :=
-    exists_nat_ge_geometric_remote_tail_matching_scale (η := η) (N := N) (S := M) hη Kmin hKmin
-  have hKupper' : K ≤ completedGenusRemoteTailUniformCutoff q η t N Kmin := by
-    simpa only [hAeq, hBeq, completedGenusRemoteTailUniformCutoff,
-      completedGenusRemoteTailCutoffFromMass, M] using hKupper
+    exists_remoteSameK (η := η) (N := N) (S := M) hη Kmin hKmin
+  have hKupper' : K ≤ uniformRemoteCutoff q η t N Kmin := by
+    simpa only [hAeq, hBeq, uniformRemoteCutoff, remoteCutoffFromMass, M] using hKupper
   refine ⟨A, B, hA, hB, K, hKmin', hKupper', hK, ?_⟩
   intro k hk
   have hsmall :
@@ -1762,9 +1731,7 @@ theorem exists_k_completed_genus_remote_reciprocal_power_le_uniform_matching_sca
         exact mul_le_mul_of_nonneg_left hMass (by positivity)
       _ = 8 * N * M * (3 * η) ^ k := by ring
       _ ≤ (8 * η) ^ (k - 2) := hsmallM k hk
-  have htail :=
-    norm_tsum_completed_genus_remote_reciprocal_power_le_matching_scale hq hχ hp hinv S hs hη hN
-      hremote' k (le_trans hK hk) hsmall
+  have htail := remoteSum_same_le hq hχ hp hinv S hs hη hN hremote' k (le_trans hK hk) hsmall
   simpa only [s] using htail
 
 /-- For a primitive character, the local zero multiplicity is bounded by the genus sum centered
@@ -1774,13 +1741,10 @@ Claim: its multiplicity is at most `2η` times the real part of the shifted loga
 derivative difference.
 Role: removes the uncontrolled center at zero from the local multiplicity estimate.
 -/
-theorem completedZeroMultiplicityCountInRectangle_le_minus_one_genus_sum {q : ℕ} [NeZero q]
-    (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q} (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1)
-    {η : ℝ} (hη : 0 < η) {t : ℝ} (z w : ℂ)
-    (hbox :
-      ∀ ρ ∈ dirichletCompletedLFunctionRectangleBox z w,
-        ‖ρ - ((1 : ℂ) + (t : ℂ) * Complex.I)‖ ≤ η / 4) :
-    completedZeroMultiplicityCountInRectangle χ hχ z w ≤
+theorem rectMass_genus_negOne {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+    (hχ : χ ≠ 1) (hp : χ.IsPrimitive) (hinv : χ⁻¹ ≠ 1) {η : ℝ} (hη : 0 < η) {t : ℝ} (z w : ℂ)
+    (hbox : ∀ ρ ∈ completedRectangleBox z w, ‖ρ - ((1 : ℂ) + (t : ℂ) * Complex.I)‖ ≤ η / 4) :
+    completedMultiplicityCount χ hχ z w ≤
       2 * η *
         (logDeriv χ.completedLFunction ((1 + η) + (t : ℂ) * Complex.I) -
             logDeriv χ.completedLFunction (-1)).re := by
@@ -1795,7 +1759,7 @@ theorem completedZeroMultiplicityCountInRectangle_le_minus_one_genus_sum {q : �
       mul_zero, mul_one, sub_zero]
     linarith only [hη]
   have hseries : Summable cterm := by
-    simpa only [cterm, D, F, s] using (summable_completed_genus_terms_minus_one hq hp hχ hinv hs)
+    simpa only [cterm, D, F, s] using (summable_completed_genus_neg_one hq hp hχ hinv hs)
   have hrseries : Summable rterm := by
     apply Summable.of_norm_bounded hseries.norm
     intro ρ
@@ -1834,14 +1798,14 @@ theorem completedZeroMultiplicityCountInRectangle_le_minus_one_genus_sum {q : �
           linarith only [hrepos]
         exact div_nonneg hplus (Complex.normSq_nonneg _)
   have hglobal : (logDeriv F s - logDeriv F (-1)).re = ∑' ρ, rterm ρ := by
-    rw [completed_centered_logDeriv_eq_genusSum_minus_one hq hp hχ hinv hs, Complex.re_tsum hseries]
+    rw [completedLogDeriv_genus_eq_neg_one hq hp hχ hinv hs, Complex.re_tsum hseries]
   let S := completedZerosInRectangle χ hχ z w
   have hpoint (ρ : ℂ) (hρ : ρ ∈ S) : (analyticOrderNatAt F ρ : ℝ) ≤ 2 * η * rterm ρ := by
     have hmem := mem_completedZerosInRectangle_iff.mp hρ
     have hzero := hmem.2
     have hclose := hbox ρ hmem.1
     have hk : (1 / (s - ρ)).re ≥ 1 / (2 * η) := by
-      simpa only [s] using re_inv_ge_half_inv_of_completed_zero_near_one hχ hη hclose hzero
+      simpa only [s] using re_inv_zero_near_ge hχ hη hclose hzero
     have hpos := completedLFunction_zero_re_pos hp hinv hzero
     have horder : D ρ = (analyticOrderNatAt F ρ : ℤ) := by
       rw [show D = MeromorphicOn.divisor F Set.univ from rfl,
@@ -1896,7 +1860,7 @@ theorem completedZeroMultiplicityCountInRectangle_le_minus_one_genus_sum {q : �
         apply mul_le_mul_of_nonneg_left
         · exact hrseries.sum_le_tsum S (fun ρ _ => hnonneg ρ)
         · exact mul_nonneg (by norm_num only : (0 : ℝ) ≤ 2) hη.le
-  unfold completedZeroMultiplicityCountInRectangle
+  unfold completedMultiplicityCount
   simpa only [S, F, s] using hcount.trans_eq (by rw [hglobal])
 
 open PseudoPrime.AnalyticNumberTheory.DirichletLFunction in
@@ -1910,10 +1874,9 @@ Proof: compare support cardinality with a rectangular zero count, apply Jensen w
 `3/2`, and substitute the lower bound at the real-part-two center.
 Role: controls the variable order in the local Turán argument using only conductor and height.
 -/
-theorem completedLFunction_explicit_local_divisor_support_card_le_log_bound {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) (hq : 1 < q) {σ : ℝ} (hσ : (29 / 30 : ℝ) ≤ σ)
-    (hσlt : σ < 1) (c : ℂ) (hcre : c.re = 2 - σ) :
-    (((completedLFunction_local_zero_support_finite χ hχ c (4 * (1 - σ))).toFinset.card : ℕ) : ℝ) ≤
+theorem localSupport_logBound {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1)
+    (hq : 1 < q) {σ : ℝ} (hσ : (29 / 30 : ℝ) ≤ σ) (hσlt : σ < 1) (c : ℂ) (hcre : c.re = 2 - σ) :
+    (((completedSupport_fin χ hχ c (4 * (1 - σ))).toFinset.card : ℕ) : ℝ) ≤
       Real.log (2 * max (1 : ℝ) (2 * (q : ℝ) * (‖(2 + Complex.I * c.im : ℂ)‖ + 3 / 2))) /
         Real.log (9 / 8) := by
   let δ : ℝ := 1 - σ
@@ -1940,7 +1903,7 @@ theorem completedLFunction_explicit_local_divisor_support_card_le_log_bound {q :
       u ∈
           (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
               (Metric.ball c |4 * (1 - σ)|)).support →
-        u ∈ dirichletCompletedLFunctionRectangleBox z w := by
+        u ∈ completedRectangleBox z w := by
     intro u hu
     have hu' :
       u ∈
@@ -1953,10 +1916,9 @@ theorem completedLFunction_explicit_local_divisor_support_card_le_log_bound {q :
         (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
             (Metric.ball c r)).support := by
       simpa only [r, δ] using hu'
-    have hmem := completedLFunction_local_divisor_support_mem_centered_square χ c hrpos hu''
+    have hmem := localSupport_square χ c hrpos hu''
     simpa only [z, w, r] using hmem
-  have hcard :=
-    completedLFunction_local_divisor_support_card_le_rectangle_count χ hχ c (4 * (1 - σ)) z w hbox
+  have hcard := localSupport_card_le χ hχ c (4 * (1 - σ)) z w hbox
   have hcoord :
     ∀ x ∈ Set.uIcc z.re w.re,
       ∀ y ∈ Set.uIcc z.im w.im, (x - C.re) ^ 2 + (y - C.im) ^ 2 ≤ |(4 / 3 : ℝ)| ^ 2 := by
@@ -1991,7 +1953,7 @@ theorem completedLFunction_explicit_local_divisor_support_card_le_log_bound {q :
     rw [hcreC, hcimC]
     nlinarith only [hxlow, hxhigh, hylo, hyhi]
   have hcenter : (1 / 2 : ℝ) ≤ ‖DirichletCharacter.LFunction χ C‖ := by
-    simpa only [C] using norm_LFunction_lower_bound_at_two χ c.im
+    simpa only [C] using LFunction_two_norm_ge χ c.im
   have hc : DirichletCharacter.LFunction χ C ≠ 0 := by
     intro hz0
     have hnorm0 : ‖DirichletCharacter.LFunction χ C‖ = 0 := by rw [hz0, norm_zero]
@@ -2014,11 +1976,11 @@ theorem completedLFunction_explicit_local_divisor_support_card_le_log_bound {q :
         Complex.ofReal_im, Complex.re_ofNat, zero_mul, mul_zero, sub_zero, add_zero]
     linarith only [(abs_le.mp hre).1, hC]
   have hJ :=
-    completedZeroMultiplicityCountInRectangle_le_LFunction_Jensen_bound hq hχ z w C (r := 4 / 3)
-      (R := 3 / 2) (by norm_num only) (by norm_num only) hc hcircle
+    rectMass_jensen_le hq hχ z w C (r := 4 / 3) (R := 3 / 2) (by norm_num only) (by norm_num only)
+      hc hcircle
       (by simpa only [abs_of_pos (by norm_num only : (0 : ℝ) < (4 / 3 : ℝ))] using hcoord)
   have hJ' :
-    completedZeroMultiplicityCountInRectangle χ hχ z w ≤
+    completedMultiplicityCount χ hχ z w ≤
       Real.log (max (1 : ℝ) (2 * (q : ℝ) * (‖C‖ + 3 / 2)) / ‖DirichletCharacter.LFunction χ C‖) /
         Real.log (9 / 8) := by
     have hrati : (3 / 2 : ℝ) / (4 / 3) = 9 / 8 := by norm_num only
@@ -2042,8 +2004,8 @@ theorem completedLFunction_explicit_local_divisor_support_card_le_log_bound {q :
     norm_num only
   have hJ'' := hJ'.trans (div_le_div_of_nonneg_right hlog (le_of_lt hdenpos))
   have hcard' :
-    (((completedLFunction_local_zero_support_finite χ hχ c (4 * (1 - σ))).toFinset.card : ℕ) : ℝ) ≤
-      completedZeroMultiplicityCountInRectangle χ hχ z w :=
+    (((completedSupport_fin χ hχ c (4 * (1 - σ))).toFinset.card : ℕ) : ℝ) ≤
+      completedMultiplicityCount χ hχ z w :=
     hcard
   simpa only [C] using hcard'.trans hJ''
 
@@ -2056,8 +2018,8 @@ membership with divisor support.
 Proof: combine the positive-count extraction with the isolated-zero and support lemmas above.
 Role: supplies the geometric and support hypotheses to the local Turán derivative estimate.
 -/
-theorem exists_completedZeroCount_local_support_of_pos {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {σ T : ℝ} (hσ : σ ≤ 1) (hT : 0 ≤ T)
+theorem count_localSupport {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {σ T : ℝ}
+    (hσ : σ ≤ 1) (hT : 0 ≤ T)
     (hcount : 0 < PseudoPrime.AnalyticNumberTheory.DirichletLFunction.completedZeroCount χ hχ σ T) :
     ∃ ρ : ℂ,
       σ ≤ ρ.re ∧
@@ -2074,13 +2036,12 @@ theorem exists_completedZeroCount_local_support_of_pos {q : ℕ} [NeZero q]
                 (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
                     (Metric.ball c |R|)).support := by
   obtain ⟨ρ, hregion⟩ :=
-    PseudoPrime.AnalyticNumberTheory.DirichletLFunction.exists_mem_completedZeroCountRegion_of_pos χ
-      hχ hσ hT hcount
+    PseudoPrime.AnalyticNumberTheory.DirichletLFunction.exists_zeroRegion_of_count_pos χ hχ hσ hT
+      hcount
   have hzero : DirichletCharacter.completedLFunction χ ρ = 0 := hregion.2.2.2.2
-  obtain ⟨c, R, hR, hRle, hc, hball⟩ :=
-    exists_completedLFunction_nonzero_center_ball_of_zero χ hχ hzero
+  obtain ⟨c, R, hR, hRle, hc, hball⟩ := exists_nonzeroCenter χ hχ hzero
   have hballAbs : ρ ∈ Metric.ball c |R| := by simpa only [abs_of_pos hR] using hball
-  have hsupport := completedLFunction_zero_mem_local_divisor_support χ hχ hballAbs hzero
+  have hsupport := zero_mem_localSupport χ hχ hballAbs hzero
   exact
     ⟨ρ, hregion.1, hregion.2.1, hregion.2.2.1, hregion.2.2.2.1, hzero, c, R, hR, hRle, hc, hsupport⟩
 
@@ -2095,9 +2056,8 @@ Proof: extract a zero, apply the explicit-center construction, and identify zero
 with local divisor support.
 Role: supplies controlled geometric data for uniform local zero estimates near `Re s = 1`.
 -/
-theorem exists_completedZeroCount_explicit_local_support_of_pos {q : ℕ} [NeZero q]
-    (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {σ T : ℝ} (hσlower : (3 / 4 : ℝ) ≤ σ)
-    (hσupper : σ ≤ 1) (hT : 0 ≤ T)
+theorem count_explicitSupport {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) (hχ : χ ≠ 1) {σ T : ℝ}
+    (hσlower : (3 / 4 : ℝ) ≤ σ) (hσupper : σ ≤ 1) (hT : 0 ≤ T)
     (hcount : 0 < PseudoPrime.AnalyticNumberTheory.DirichletLFunction.completedZeroCount χ hχ σ T) :
     ∃ ρ : ℂ,
       σ ≤ ρ.re ∧
@@ -2117,13 +2077,13 @@ theorem exists_completedZeroCount_explicit_local_support_of_pos {q : ℕ} [NeZer
                 (MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ)
                     (Metric.ball c |R|)).support := by
   obtain ⟨ρ, hregion⟩ :=
-    PseudoPrime.AnalyticNumberTheory.DirichletLFunction.exists_mem_completedZeroCountRegion_of_pos χ
-      hχ hσupper hT hcount
+    PseudoPrime.AnalyticNumberTheory.DirichletLFunction.exists_zeroRegion_of_count_pos χ hχ hσupper
+      hT hcount
   have hzero : DirichletCharacter.completedLFunction χ ρ = 0 := hregion.2.2.2.2
   obtain ⟨c, R, hRdef, hR, hRle, hcre, hcim, hc, hball⟩ :=
-    exists_completedLFunction_explicit_center_ball_of_zero χ hχ hσlower hregion.1 hzero
+    exists_explicitCenter χ hχ hσlower hregion.1 hzero
   have hballAbs : ρ ∈ Metric.ball c |R| := by simpa only [abs_of_pos hR] using hball
-  have hsupport := completedLFunction_zero_mem_local_divisor_support χ hχ hballAbs hzero
+  have hsupport := zero_mem_localSupport χ hχ hballAbs hzero
   exact
     ⟨ρ, hregion.1, hregion.2.1, hregion.2.2.1, hregion.2.2.2.1, hzero, c, R, hRdef, hR, hRle, hcre,
       hcim, hc, hsupport⟩

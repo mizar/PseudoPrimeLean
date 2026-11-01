@@ -67,7 +67,7 @@ theorem centered_logDeriv_completed_one_eq_zeroMass (f : GeneralLFunction) (hf :
   have h1 : f.completed 1 ≠ 0 :=
     completed_ne_zero_of_re_ne_half hRH (by norm_num only [Complex.one_re])
   obtain ⟨C, hC, hg⟩ :=
-    AnalyticNumberTheory.General.exists_global_exponential_bound_of_orderAtMostOne hF.continuous
+    AnalyticNumberTheory.General.exists_exp_bound_of_orderAtMostOne hF.continuous
       hf.2.2.2.2.2.2.2.2.1 (show (1 : ℝ) < 3 / 2 by norm_num only)
   rw [AnalyticNumberTheory.General.centered_logDeriv_eq_genusSum hF h0 hC
       (show (0 : ℝ) ≤ 3 / 2 by norm_num only) (show (3 / 2 : ℝ) < 2 by norm_num only) hg h1

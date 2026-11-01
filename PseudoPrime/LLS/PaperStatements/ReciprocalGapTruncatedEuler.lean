@@ -42,9 +42,7 @@ theorem norm_logDeriv_vertical_le_truncatedEuler {q : ℕ} [NeZero q] (χ : Diri
     {r : ℝ} (hr : 0 < r) {N : ℕ} (hN : 3 ≤ N) (t : ℝ) :
     ‖logDeriv χ.LFunction (((1 + r : ℝ) : ℂ) + t * Complex.I)‖ ≤
       AnalyticNumberTheory.Arithmetic.truncatedEulerUpper r N := by
-  have hn :=
-    norm_neg_deriv_div_dirichletLFunction_le_vonMangoldt_tsum χ
-      (show 1 < 1 + r by linarith only [hr]) t
+  have hn := norm_logDeriv_L_le_mangoldt_tsum χ (show 1 < 1 + r by linarith only [hr]) t
   simp only [neg_div, norm_neg] at hn
   exact hn.trans (AnalyticNumberTheory.Arithmetic.tsum_vonMangoldt_le_truncatedEuler hr hN)
 
@@ -53,8 +51,8 @@ x>=1 and two finite supports below x, three arbitrary cutoffs>=3 give an explici
 finite-prefix separation condition implying a non-one prime witness below x.
 Supply all three Euler caps from the proved truncated ratio and apply the two-shift
 criterion. Numerical certification of a particular parameter range remains a separate step. -/
-theorem exists_prime_not_one_of_reciprocalGap_truncated_separation {h r c : ℝ} (hh : 0 < h)
-    (hr : 0 < r) {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
+theorem exists_prime_neOne_truncatedGap_GRH {h r c : ℝ} (hh : 0 < h) (hr : 0 < r) {q : ℕ} [NeZero q]
+    (hq : 2 ≤ q) {χ : DirichletCharacter ℂ q}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hc : (1 / 2 : ℝ) < c) (hbound : c ^ 2 ≤ 1 / 4 + h / 2) {x : ℝ}
     (hx : 1 ≤ x) (B₀ B₁ : Finset ℕ) (hB₀ : ∀ n ∈ B₀, (n : ℝ) ≤ x) (hB₁ : ∀ n ∈ B₁, (n : ℝ) ≤ x)
@@ -67,8 +65,8 @@ theorem exists_prime_not_one_of_reciprocalGap_truncated_separation {h r c : ℝ}
   have he : (1 : ℝ) + (c - 1 / 2) = 1 / 2 + c := by ring
   rw [he] at h0
   exact
-    exists_prime_not_one_of_reciprocalGap_two_shift_prefix hh hr hq hGRH hp hne hinv hc hbound hx B₀
-      B₁ hB₀ hB₁ (AnalyticNumberTheory.Arithmetic.truncatedEulerUpper (c - 1 / 2) N₀)
+    exists_prime_neOne_twoShiftGap_GRH hh hr hq hGRH hp hne hinv hc hbound hx B₀ B₁ hB₀ hB₁
+      (AnalyticNumberTheory.Arithmetic.truncatedEulerUpper (c - 1 / 2) N₀)
       (AnalyticNumberTheory.Arithmetic.truncatedEulerUpper r N₁)
       (AnalyticNumberTheory.Arithmetic.truncatedEulerUpper h N₂) h0
       (AnalyticNumberTheory.Arithmetic.tsum_vonMangoldt_le_truncatedEuler hr hN₁)

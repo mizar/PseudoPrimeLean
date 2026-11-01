@@ -107,7 +107,7 @@ theorem characterLogWeightedSum_re_le_comparisonUpper
   have hy : 0 < llsTheorem11S1RadiusRoot q := by
     exact add_pos_of_pos_of_nonneg (Real.log_pos hqone) (llsCorrectionTerm_nonneg q)
   have hcomparison :=
-    AnalyticNumberTheory.Arithmetic.norm_characterLogWeightedSum_sub_primitive_le
+    AnalyticNumberTheory.Arithmetic.norm_characterLogSum_sub_primitive_le
       ((llsTheorem11S1RadiusRoot q) ^ 2) χ (sq_pos_of_pos hy)
   have hre :=
     Complex.re_le_norm

@@ -53,18 +53,18 @@ theorem reciprocalSum_re_ge_of_quadratic_two_branch {q : ℕ} (χ : DirichletCha
         p ∈ Finset.Ioc 0 ⌊Y ^ ((1 : ℝ) / k)⌋₊ → p.Prime → Odd p → χ.primitiveCharacter p = 1 := by
     intro k p hk hp hprime hodd
     exact ht p hprime hodd (cast_le_of_mem_root_cutoff hy1 (Finset.mem_Icc.mp hk).1 hp)
-  have he := reciprocalWeightedSum_sub_re_eq_twoAdicCorrection_of_eq_one Y χ hY ho
-  have hr := reciprocalWeightedMangoldtSum_ge_log_sub_31551_div_20000 hRH hY
+  have he := recipMangoldt_sub_re_eq_twoCorrection_of_one Y χ hY ho
+  have hr := reciprocalMangoldt_ge_log_sub_31551_20000 hRH hY
   rcases hquad (2 : ZMod χ.conductor) with h0 | h1 | hm
-  · have hc := twoAdicReciprocalCorrection_le_log_two_of_apply_two_eq_zero Y χ hy0 h0
+  · have hc := recipTwoCorrection_le_log_two_of_zero Y χ hy0 h0
     rw [quadraticTwoReciprocalCost, ite_eq_left h0]
     linarith only [he, hr, hc]
-  · have hc := twoAdicReciprocalCorrection_eq_zero_of_apply_two_eq_one Y χ h1
+  · have hc := recipTwoCorrection_eq_zero_of_one Y χ h1
     have hn0 : χ.primitiveCharacter 2 ≠ 0 := by
       rw [h1]; exact one_ne_zero
     rw [quadraticTwoReciprocalCost, ite_eq_right hn0, ite_eq_left h1]
     linarith only [he, hr, hc]
-  · have hc := twoAdicReciprocalCorrection_le_four_thirds_log_two_of_apply_two_eq_neg_one Y χ hY hm
+  · have hc := recipTwoCorrection_le_4_3_log_two_of_neg_one Y χ hY hm
     have hn0 : χ.primitiveCharacter 2 ≠ 0 := by
       rw [hm]; exact neg_ne_zero.mpr one_ne_zero
     have hn1 : χ.primitiveCharacter 2 ≠ 1 := by

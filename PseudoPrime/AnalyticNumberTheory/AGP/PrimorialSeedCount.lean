@@ -30,7 +30,7 @@ count formula, and the fact that every divisor is at most the primorial.
 
 Role: supplies the full-divisor source bound for the primorial seed construction.
 -/
-theorem restrictedDivisors_primorial_card_eq_primeCounting (z : ℕ) :
+theorem restricted_primorial_card_eq_two_pow_pi (z : ℕ) :
     let N := (PseudoPrime.NumberTheory.PrimeProducts.primeSetLE z).prod id
     (restrictedDivisors N N).card = 2 ^ Nat.primeCounting z := by
   let N := (PseudoPrime.NumberTheory.PrimeProducts.primeSetLE z).prod id
@@ -70,7 +70,7 @@ theorem primorial_seed_source_count_of_prime_count_lower (z D : ℕ) (hD : D < N
   · have hadd : D + n = Nat.primeCounting z := by
       dsimp only [n]
       exact Nat.add_sub_of_le (Nat.le_of_lt hD)
-    rw [hadd, restrictedDivisors_primorial_card_eq_primeCounting]
+    rw [hadd, restricted_primorial_card_eq_two_pow_pi]
 
 /--
 Inputs: a primorial cutoff, an exceptional-set budget below its prime count,
@@ -124,8 +124,8 @@ factor `2^D`, and note that only the divisor `1` is lost by the final filter.
 
 Role: tracks the exact finite loss needed for the primorial seed average.
 -/
-theorem exceptional_free_nontrivial_divisor_card_lower_of_source_count (L : ℕ) (E : Finset ℕ)
-    (D n : ℕ) (hL : 0 < L) (hSquarefree : Squarefree L) (hEcard : E.card ≤ D)
+theorem exceptional_free_nontrivial_card_lower (L : ℕ) (E : Finset ℕ) (D n : ℕ) (hL : 0 < L)
+    (hSquarefree : Squarefree L) (hEcard : E.card ≤ D)
     (hsource : 2 ^ (D + n) ≤ (restrictedDivisors L L).card) :
     2 ^ n ≤
       ((restrictedDivisors (exceptionalFreePartForModulus L E 1) L).filter (fun d ↦ 1 < d)).card +
@@ -139,9 +139,7 @@ theorem exceptional_free_nontrivial_divisor_card_lower_of_source_count (L : ℕ)
     intro hzero
     have hzeroDvd : 0 ∣ L := by simpa only [L', hzero] using hLdiv
     exact Nat.ne_of_gt hL (Nat.zero_dvd.mp hzeroDvd)
-  have hloss :=
-    restrictedDivisors_card_le_exceptional_modulus_count_bound L E 1 L D (Nat.ne_of_gt hL)
-      hSquarefree hEcard
+  have hloss := restrictedDivisors_exceptional_count L E 1 L D (Nat.ne_of_gt hL) hSquarefree hEcard
   have hkeep : 2 ^ n ≤ R.card := by
     have hmul : 2 ^ D * 2 ^ n ≤ 2 ^ D * R.card := by
       calc
@@ -185,17 +183,15 @@ factor `2^D` and gives the required threshold.
 Role: derives the finite-average input from primorial count data instead of
 assuming that input separately for every exceptional set.
 -/
-theorem primorial_seed_threshold_bound_of_exceptional_loss (L : ℕ) (E : Finset ℕ) (D₀ n T : ℕ)
-    (c₀ logX : ℝ) (hL : 0 < L) (hSquarefree : Squarefree L) (hEcard : E.card ≤ D₀) (hn : 0 < n)
+theorem primorial_seed_bound_of_exceptional_loss (L : ℕ) (E : Finset ℕ) (D₀ n T : ℕ) (c₀ logX : ℝ)
+    (hL : 0 < L) (hSquarefree : Squarefree L) (hEcard : E.card ≤ D₀) (hn : 0 < n)
     (hsource : 2 ^ (D₀ + n) ≤ (restrictedDivisors L L).card) (hfactor : c₀ * (2 : ℝ) ^ D₀ ≤ 1 / 128)
     (hlogX : 0 < logX) (hT : (T : ℝ) ≤ c₀ * ((2 ^ (D₀ + n) : ℕ) : ℝ) / logX) :
     (T : ℝ) ≤
       (((restrictedDivisors (exceptionalFreePartForModulus L E 1) L).filter (fun d ↦ 1 < d)).card :
           ℝ) /
         (64 * logX) := by
-  have hCard :=
-    exceptional_free_nontrivial_divisor_card_lower_of_source_count L E D₀ n hL hSquarefree hEcard
-      hsource
+  have hCard := exceptional_free_nontrivial_card_lower L E D₀ n hL hSquarefree hEcard hsource
   have hpow : 2 ≤ 2 ^ n := Nat.le_self_pow (Nat.ne_of_gt hn) 2
   have hDpos :
     0 <
@@ -290,7 +286,7 @@ theorem exists_primorial_seed_prime_set_from_theta (D : Finset ℕ) (x : ℕ →
       ∀ d,
         ∀ _hdD : d ∈ D,
           c ≤
-            agpFifthPowerAverageCoefficientOfProgressionBound 0 0 *
+            fifthPowerProgressionAverageCoeff 0 0 *
               ((x d : ℝ) / (Nat.totient (d * 1) : ℝ) / Real.log (xmax : ℝ)))
     (hlower : ((positiveCoprimeParameters 1 Kmax).card * T : ℕ) < c * (D.card : ℝ)) :
     ∃ k ∈ positiveCoprimeParameters 1 Kmax,
@@ -314,9 +310,9 @@ theorem exists_primorial_seed_prime_set_from_theta (D : Finset ℕ) (x : ℕ →
     have hqempty : q.val ∈ (∅ : Finset ℕ) := by simpa only [Nat.primeFactors_one] using q.property
     exact False.elim (Finset.notMem_empty q.val hqempty)
   exact
-    exists_prime_set_from_theta_lower_and_brun_titchmarsh_bounds D x xmax Kmax 1 1 1 T c 0 0
-      (by norm_num only) hxmax (by norm_num only) hpos (fun _ _ => Nat.coprime_one_right _)
-      (by norm_num only) hcut hcommon hx hL hLcoprime
+    exists_primes_of_theta_brunTitchmarsh D x xmax Kmax 1 1 1 T c 0 0 (by norm_num only) hxmax
+      (by norm_num only) hpos (fun _ _ => Nat.coprime_one_right _) (by norm_num only) hcut hcommon
+      hx hL hLcoprime
       (by
         intro d hdD
         exact_mod_cast (by simpa only [Nat.mul_one] using hmodulus d hdD))
@@ -344,7 +340,7 @@ estimate to modulus and residue `1`.
 Role: feeds the primorial finite-average seed construction from the
 small-modulus theta theorem required by the unconditional AGP proof.
 -/
-theorem primorial_seed_theta_bounds_of_small_modulus_supply (N J D₀ X₀ : ℕ) (hN : 0 < N)
+theorem primorial_seed_theta_of_modulus_supply (N J D₀ X₀ : ℕ) (hN : 0 < N)
     (hSquarefree : Squarefree N) (_hJ : 2 ≤ J)
     (hSupply :
       ∀ X : ℕ,
@@ -420,7 +416,7 @@ construction.
 -/
 theorem agp_primorial_seed_average_target (X d : ℕ) (hX : 2 ≤ X) (hd : 0 < d) :
     ((X : ℝ) ^ 3) / (4 * Real.log ((X ^ 5 : ℕ) : ℝ)) ≤
-      agpFifthPowerAverageCoefficientOfProgressionBound 0 0 *
+      fifthPowerProgressionAverageCoeff 0 0 *
         (((d * X ^ 3 : ℕ) : ℝ) / (Nat.totient (d * 1) : ℝ) / Real.log ((X ^ 5 : ℕ) : ℝ)) := by
   have hXpow : (32 : ℝ) ≤ ((X ^ 5 : ℕ) : ℝ) := by exact_mod_cast Nat.pow_le_pow_left hX 5
   have hX5 : (1 : ℝ) < ((X ^ 5 : ℕ) : ℝ) := lt_of_lt_of_le (by norm_num only) hXpow
@@ -439,21 +435,20 @@ theorem agp_primorial_seed_average_target (X d : ℕ) (hX : 2 ≤ X) (hd : 0 < d
         mul_le_mul_of_nonneg_right hdiv (pow_nonneg (Nat.cast_nonneg X) 3)
       _ = ((d : ℝ) * (X : ℝ) ^ 3) / (Nat.totient (d * 1) : ℝ) := by ring
       _ = ((d * X ^ 3 : ℕ) : ℝ) / (Nat.totient (d * 1) : ℝ) := by rw [Nat.cast_mul, Nat.cast_pow]
-  have hcoeff : (1 / 4 : ℝ) ≤ agpFifthPowerAverageCoefficientOfProgressionBound 0 0 := by
-    norm_num only [agpFifthPowerAverageCoefficientOfProgressionBound,
-      agpFifthPowerRawPrimeCountCoefficient]
-  have hcoeffNonneg : 0 ≤ agpFifthPowerAverageCoefficientOfProgressionBound 0 0 :=
+  have hcoeff : (1 / 4 : ℝ) ≤ fifthPowerProgressionAverageCoeff 0 0 := by
+    norm_num only [fifthPowerProgressionAverageCoeff, agpFifthPowerRawPrimeCountCoefficient]
+  have hcoeffNonneg : 0 ≤ fifthPowerProgressionAverageCoeff 0 0 :=
     le_trans (by norm_num only) hcoeff
   have hscaled :
     ((X : ℝ) ^ 3) / 4 ≤
-      agpFifthPowerAverageCoefficientOfProgressionBound 0 0 *
+      fifthPowerProgressionAverageCoeff 0 0 *
         (((d * X ^ 3 : ℕ) : ℝ) / (Nat.totient (d * 1) : ℝ)) := by
     calc
       ((X : ℝ) ^ 3) / 4 = (1 / 4 : ℝ) * (X : ℝ) ^ 3 := by ring
-      _ ≤ agpFifthPowerAverageCoefficientOfProgressionBound 0 0 * (X : ℝ) ^ 3 :=
+      _ ≤ fifthPowerProgressionAverageCoeff 0 0 * (X : ℝ) ^ 3 :=
         mul_le_mul_of_nonneg_right hcoeff (pow_nonneg (Nat.cast_nonneg X) 3)
       _ ≤
-          agpFifthPowerAverageCoefficientOfProgressionBound 0 0 *
+          fifthPowerProgressionAverageCoeff 0 0 *
             (((d * X ^ 3 : ℕ) : ℝ) / (Nat.totient (d * 1) : ℝ)) :=
         mul_le_mul_of_nonneg_left hmain hcoeffNonneg
   calc
@@ -461,12 +456,12 @@ theorem agp_primorial_seed_average_target (X d : ℕ) (hX : 2 ≤ X) (hd : 0 < d
         (((X : ℝ) ^ 3) / 4) / Real.log ((X ^ 5 : ℕ) : ℝ) :=
       by ring
     _ ≤
-        (agpFifthPowerAverageCoefficientOfProgressionBound 0 0 *
+        (fifthPowerProgressionAverageCoeff 0 0 *
             (((d * X ^ 3 : ℕ) : ℝ) / (Nat.totient (d * 1) : ℝ))) /
           Real.log ((X ^ 5 : ℕ) : ℝ) :=
       div_le_div_of_nonneg_right hscaled (le_of_lt hlog)
     _ =
-        agpFifthPowerAverageCoefficientOfProgressionBound 0 0 *
+        fifthPowerProgressionAverageCoeff 0 0 *
           (((d * X ^ 3 : ℕ) : ℝ) / (Nat.totient (d * 1) : ℝ) / Real.log ((X ^ 5 : ℕ) : ℝ)) :=
       by ring
 
@@ -530,8 +525,8 @@ and apply the existing finite-average prime-set theorem.
 Role: constructs the initial primorial seed prime set needed before selecting
 the `1024`-tail modulus.
 -/
-theorem exists_primorial_seed_prime_set_of_small_modulus_supply (N J D₀ X₀ X T n : ℕ) (c₀ : ℝ)
-    (hN : 0 < N) (hSquarefree : Squarefree N) (hJ : 2 ≤ J) (hn : 0 < n)
+theorem exists_primorial_primes_of_modulus_supply (N J D₀ X₀ X T n : ℕ) (c₀ : ℝ) (hN : 0 < N)
+    (hSquarefree : Squarefree N) (hJ : 2 ≤ J) (hn : 0 < n)
     (hsource : 2 ^ (D₀ + n) ≤ (restrictedDivisors N N).card) (hfactor : c₀ * (2 : ℝ) ^ D₀ ≤ 1 / 128)
     (hTbound : (T : ℝ) ≤ c₀ * ((2 ^ (D₀ + n) : ℕ) : ℝ) / Real.log ((X ^ 5 : ℕ) : ℝ))
     (hHuge : 18000000 ^ 2 ≤ X) (hX₀ : X₀ ≤ X) (hNJ : N ^ J ≤ X)
@@ -569,8 +564,7 @@ theorem exists_primorial_seed_prime_set_of_small_modulus_supply (N J D₀ X₀ X
   have hXpos : 0 < X := Nat.lt_of_lt_of_le (by norm_num only) hXtwo
   have hJone : 1 ≤ J := le_trans (by norm_num only) hJ
   obtain ⟨E, hEcard, hTheta⟩ :=
-    primorial_seed_theta_bounds_of_small_modulus_supply N J D₀ X₀ hN hSquarefree hJ hSupply X hX₀
-      hNJ
+    primorial_seed_theta_of_modulus_supply N J D₀ X₀ hN hSquarefree hJ hSupply X hX₀ hNJ
   let L' := exceptionalFreePartForModulus N E 1
   let D := (restrictedDivisors L' N).filter (fun d ↦ 1 < d)
   let x : ℕ → ℕ := fun d ↦ d * X ^ 3
@@ -597,9 +591,7 @@ theorem exists_primorial_seed_prime_set_of_small_modulus_supply (N J D₀ X₀ X
                   (fun d ↦ 1 < d)).card :
               ℝ) := by
     intro E' hE'
-    have hCard :=
-      exceptional_free_nontrivial_divisor_card_lower_of_source_count N E' D₀ n hN hSquarefree hE'
-        hsource
+    have hCard := exceptional_free_nontrivial_card_lower N E' D₀ n hN hSquarefree hE' hsource
     have hpow : 2 ≤ 2 ^ n := Nat.le_self_pow (Nat.ne_of_gt hn) 2
     have hDpos :
       0 <
@@ -607,8 +599,8 @@ theorem exists_primorial_seed_prime_set_of_small_modulus_supply (N J D₀ X₀ X
             (fun d ↦ 1 < d)).card := by
       omega
     have hThreshold :=
-      primorial_seed_threshold_bound_of_exceptional_loss N E' D₀ n T c₀ (Real.log ((X ^ 5 : ℕ) : ℝ))
-        hN hSquarefree hE' hn hsource hfactor hlogX hTbound
+      primorial_seed_bound_of_exceptional_loss N E' D₀ n T c₀ (Real.log ((X ^ 5 : ℕ) : ℝ)) hN
+        hSquarefree hE' hn hsource hfactor hlogX hTbound
     exact
       primorial_seed_average_lower_of_divisor_count X T
         ((restrictedDivisors (exceptionalFreePartForModulus N E' 1) N).filter (fun d ↦ 1 < d)) hXtwo
@@ -617,13 +609,13 @@ theorem exists_primorial_seed_prime_set_of_small_modulus_supply (N J D₀ X₀ X
     ∀ d,
       ∀ hdD : d ∈ D,
         c ≤
-          agpFifthPowerAverageCoefficientOfProgressionBound 0 0 *
+          fifthPowerProgressionAverageCoeff 0 0 *
             ((x d : ℝ) / (Nat.totient (d * 1) : ℝ) / Real.log ((X ^ 5 : ℕ) : ℝ)) := by
     intro d hdD
     have hd' := Finset.mem_filter.mp hdD
     change
       c ≤
-        agpFifthPowerAverageCoefficientOfProgressionBound 0 0 *
+        fifthPowerProgressionAverageCoeff 0 0 *
           (((d * X ^ 3 : ℕ) : ℝ) / (Nat.totient (d * 1) : ℝ) / Real.log ((X ^ 5 : ℕ) : ℝ))
     simpa only [c] using
       agp_primorial_seed_average_target X d hXtwo (Nat.lt_trans Nat.zero_lt_one hd'.2)
@@ -699,8 +691,8 @@ the arbitrary-cutoff seed-modulus and P2 lower-bound theorems.
 
 Role: connects the primorial theta average to the full-divisor P2 auxiliary-modulus constructor.
 -/
-theorem exists_primorial_seed_tail_modulus_of_small_modulus_supply (N J D₀ X₀ X T n : ℕ) (c₀ : ℝ)
-    (hN : 0 < N) (hSquarefree : Squarefree N) (hJ : 2 ≤ J) (hn : 0 < n)
+theorem exists_seed_tail_modulus_of_small_supply (N J D₀ X₀ X T n : ℕ) (c₀ : ℝ) (hN : 0 < N)
+    (hSquarefree : Squarefree N) (hJ : 2 ≤ J) (hn : 0 < n)
     (hsource : 2 ^ (D₀ + n) ≤ (restrictedDivisors N N).card) (hfactor : c₀ * (2 : ℝ) ^ D₀ ≤ 1 / 128)
     (hTbound : (T : ℝ) ≤ c₀ * ((2 ^ (D₀ + n) : ℕ) : ℝ) / Real.log ((X ^ 5 : ℕ) : ℝ))
     (hHuge : 18000000 ^ 2 ≤ X) (hX₀ : X₀ ≤ X) (hNJ : N ^ J ≤ X)
@@ -739,8 +731,8 @@ theorem exists_primorial_seed_tail_modulus_of_small_modulus_supply (N J D₀ X�
                 ArithmeticFunction.carmichael L ≤ (X ^ 5) ^ 2 ∧
                 2 < L ∧ 3 ≤ ArithmeticFunction.carmichael L := by
   obtain ⟨E, hEcard, k, hk, P, hPcard, hP⟩ :=
-    exists_primorial_seed_prime_set_of_small_modulus_supply N J D₀ X₀ X T n c₀ hN hSquarefree hJ hn
-      hsource hfactor hTbound hHuge hX₀ hNJ hSupply
+    exists_primorial_primes_of_modulus_supply N J D₀ X₀ X T n c₀ hN hSquarefree hJ hn hsource
+      hfactor hTbound hHuge hX₀ hNJ hSupply
   obtain ⟨S, hSsub, hScard⟩ :=
     Finset.exists_subset_card_eq (s := P) (n := T + 1) (Nat.succ_le_of_lt hPcard)
   have hLprops := exceptionalFreePartForModulus_properties N E 1 (Nat.ne_of_gt hN) hSquarefree
@@ -883,8 +875,8 @@ theorem exists_primorial_seed_prime_set_of_count_margin (z J D₀ X₀ X T : ℕ
   obtain ⟨n, hn, hsource, hTbound⟩ :=
     primorial_seed_initial_count_data_of_margin z D₀ (X ^ 5) T c₀ hD hmargin
   exact
-    exists_primorial_seed_prime_set_of_small_modulus_supply N J D₀ X₀ X T n c₀ hN hdata.1 hJ hn
-      hsource hfactor hTbound hHuge hX₀ hNJ hSupply
+    exists_primorial_primes_of_modulus_supply N J D₀ X₀ X T n c₀ hN hdata.1 hJ hn hsource hfactor
+      hTbound hHuge hX₀ hNJ hSupply
 
 /--
 Inputs: a primorial cutoff, its initial P2 count margin, the cutoff-1024
@@ -898,7 +890,7 @@ margin, then apply the general cutoff tail construction.
 
 Role: connects one P2 scale choice directly to the full seed-tail interface.
 -/
-theorem exists_primorial_seed_tail_modulus_of_count_margin (z J D₀ X₀ X T : ℕ) (c₀ : ℝ) (hJ : 2 ≤ J)
+theorem exists_seed_tail_modulus_of_count_margin (z J D₀ X₀ X T : ℕ) (c₀ : ℝ) (hJ : 2 ≤ J)
     (hD : D₀ < Nat.primeCounting z) (hfactor : c₀ * (2 : ℝ) ^ D₀ ≤ 1 / 128)
     (hmargin :
       (T : ℝ) < reliableProp15Coefficient c₀ 1 (X ^ 5) * ((2 ^ Nat.primeCounting z : ℕ) : ℝ))
@@ -950,7 +942,7 @@ theorem exists_primorial_seed_tail_modulus_of_count_margin (z J D₀ X₀ X T : 
   obtain ⟨n, hn, hsource, hTbound⟩ :=
     primorial_seed_initial_count_data_of_margin z D₀ (X ^ 5) T c₀ hD hmargin
   exact
-    exists_primorial_seed_tail_modulus_of_small_modulus_supply N J D₀ X₀ X T n c₀ hN hdata.1 hJ hn
-      hsource hfactor hTbound hHuge hX₀ hNJ hSupply h1024
+    exists_seed_tail_modulus_of_small_supply N J D₀ X₀ X T n c₀ hN hdata.1 hJ hn hsource hfactor
+      hTbound hHuge hX₀ hNJ hSupply h1024
 
 end PseudoPrime.AnalyticNumberTheory.AGP

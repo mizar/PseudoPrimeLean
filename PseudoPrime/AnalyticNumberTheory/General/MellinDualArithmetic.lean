@@ -25,7 +25,7 @@ convergent coefficient series with zero constant term, the paired arithmetic
 sum equals the two Mellin integrals for the original and dual series.
 Conjugation gives convergence of the dual series, and termwise inversion
 evaluates both sums. This is the arithmetic pair in the explicit formula. -/
-theorem logarithmicTestWeight_paired_tsum_eq_integral_LSeries (a : ℕ → ℂ) (ha : a 0 = 0) (g : ℝ → ℂ)
+theorem logTest_paired_tsum_integral_LSeries (a : ℕ → ℂ) (ha : a 0 = 0) (g : ℝ → ℂ)
     (he : ∀ u : ℝ, g (-u) = g u) (hc : HasCompactSupport g) (hg : ContDiff ℝ (↑(⊤ : ℕ∞)) g) (σ : ℝ)
     (hs : LSeriesSummable a (σ : ℂ)) :
     (∑' n : ℕ, (a n + star (a n)) * logarithmicTestWeight g n) =
@@ -69,9 +69,9 @@ absolutely convergent line evaluates the paired arithmetic sum as the negative
 normalized sum of original and reflected conjugate logarithmic-derivative integrals.
 Apply the paired Mellin evaluation and preserve both minus signs. The Euler-product
 derivation of the input logarithmic-derivative identity remains a separate step. -/
-theorem logarithmicTestWeight_paired_tsum_eq_neg_logDeriv_integrals (L : ℂ → ℂ) (a : ℕ → ℂ)
-    (ha : a 0 = 0) (g : ℝ → ℂ) (he : ∀ u : ℝ, g (-u) = g u) (hc : HasCompactSupport g)
-    (hg : ContDiff ℝ (↑(⊤ : ℕ∞)) g) (σ : ℝ) (hs : LSeriesSummable a (σ : ℂ))
+theorem logTest_paired_tsum_neg_logDeriv (L : ℂ → ℂ) (a : ℕ → ℂ) (ha : a 0 = 0) (g : ℝ → ℂ)
+    (he : ∀ u : ℝ, g (-u) = g u) (hc : HasCompactSupport g) (hg : ContDiff ℝ (↑(⊤ : ℕ∞)) g) (σ : ℝ)
+    (hs : LSeriesSummable a (σ : ℂ))
     (hlog : ∀ T : ℝ, logDeriv L ((σ : ℂ) + T * Complex.I) = -LSeries a ((σ : ℂ) + T * Complex.I)) :
     (∑' n : ℕ, (a n + star (a n)) * logarithmicTestWeight g n) =
       -(1 / (2 * Real.pi) : ℝ) •
@@ -103,13 +103,13 @@ theorem logarithmicTestWeight_paired_tsum_eq_neg_logDeriv_integrals (L : ℂ →
       simpa only [Complex.ofReal_neg, neg_mul] using hlog (-T)
     simp only [hh, star_neg, neg_mul, MeasureTheory.integral_neg]
   rw [hi, hj, ← neg_add, neg_smul, smul_neg, neg_neg]
-  exact logarithmicTestWeight_paired_tsum_eq_integral_LSeries a ha g he hc hg σ hs
+  exact logTest_paired_tsum_integral_LSeries a ha g he hc hg σ hs
 
 /-- Absolute convergence of the original coefficient series also makes its
 paired logarithmic-test values summable. Conjugation supplies the dual
 convergence, and adding the two summable families proves the claim.
 This allows removal of the zero index in the explicit formula. -/
-theorem summable_logarithmicTestWeight_paired_coefficients (a : ℕ → ℂ) (ha : a 0 = 0) (g : ℝ → ℂ)
+theorem summable_logTest_paired_coefficients (a : ℕ → ℂ) (ha : a 0 = 0) (g : ℝ → ℂ)
     (he : ∀ u : ℝ, g (-u) = g u) (hc : HasCompactSupport g) (hg : ContDiff ℝ (↑(⊤ : ℕ∞)) g) (σ : ℝ)
     (hs : LSeriesSummable a (σ : ℂ)) :
     Summable (fun n : ℕ ↦ (a n + star (a n)) * logarithmicTestWeight g n) := by
@@ -161,7 +161,7 @@ theorem paired_sqrt_sum_eq_neg_logDeriv_integrals (L : ℂ → ℂ) (a : ℕ →
               mellin (logarithmicTestWeight g) ((σ : ℂ) + T * Complex.I))) := by
   rw [←
     logarithmicTestWeight_paired_tsum_eq_sqrt_sum a ha g
-      (summable_logarithmicTestWeight_paired_coefficients a ha g he hc hg σ hs)]
-  exact logarithmicTestWeight_paired_tsum_eq_neg_logDeriv_integrals L a ha g he hc hg σ hs hlog
+      (summable_logTest_paired_coefficients a ha g he hc hg σ hs)]
+  exact logTest_paired_tsum_neg_logDeriv L a ha g he hc hg σ hs hlog
 
 end PseudoPrime.AnalyticNumberTheory.General

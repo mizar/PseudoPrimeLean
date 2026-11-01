@@ -52,9 +52,8 @@ theorem residueDifferenceIncidence_fourier_split {N : ℕ} [NeZero N] (S Q : Fin
 N times the difference incidence by card(Q)card(S)²+NMcard(S). Apply the
 envelope termwise and use the exact second Fourier moment of S.
 This is the finite analytic comparison needed on every correlation band. -/
-theorem residueDifferenceIncidence_mul_le_of_fourier_bound {N : ℕ} [NeZero N]
-    (S Q : Finset (ZMod N)) {M : ℝ} (hM : 0 ≤ M)
-    (hQ : ∀ l : ZMod N, l ≠ 0 → ‖residueCharacterSum Q l‖ ≤ M) :
+theorem differenceIncidence_mul_le_of_fourier_bound {N : ℕ} [NeZero N] (S Q : Finset (ZMod N))
+    {M : ℝ} (hM : 0 ≤ M) (hQ : ∀ l : ZMod N, l ≠ 0 → ‖residueCharacterSum Q l‖ ≤ M) :
     (N : ℝ) * residueDifferenceIncidence S Q ≤
       (Q.card : ℝ) * (S.card : ℝ) ^ 2 + (N : ℝ) * M * S.card := by
   rw [residueDifferenceIncidence_fourier_split]
@@ -84,7 +83,7 @@ theorem residueDifferenceIncidence_le_of_fourier_bound {N : ℕ} [NeZero N] (S Q
   apply (mul_le_mul_iff_right₀ hN).mp
   calc
     _ ≤ (Q.card : ℝ) * (S.card : ℝ) ^ 2 + (N : ℝ) * M * S.card :=
-      residueDifferenceIncidence_mul_le_of_fourier_bound S Q hM hQ
+      differenceIncidence_mul_le_of_fourier_bound S Q hM hQ
     _ = (N : ℝ) * ((S.card : ℝ) ^ 2 * Q.card / N + M * S.card) := by field_simp [hN.ne']
 
 end PseudoPrime.NumberTheory.Heilbronn

@@ -43,8 +43,8 @@ The finite set `B` contains only indices at most `b`.
 Claim: the Gamma arithmetic bound retains twice the exact prime-power prefix savings,
 with no character-defect term. Proof: cancel the generic finite defect in the certified bound.
 Role: leave only explicit gamma-factor and Euler budgets for the witness contradiction. -/
-theorem gamma_primitive_sum_re_le_phase64_first_cell_prime_prefix {q m : ℕ} [NeZero m]
-    (hq : 20000 ≤ q) (hm : 3 ≤ m) (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
+theorem gammaSum_phase64_primePrefix_GRH {q m : ℕ} [NeZero m] (hq : 20000 ≤ q) (hm : 3 ≤ m)
+    (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {L : ℝ} (hlo : (64 : ℝ) ≤ L) (hhi : L ≤ 64001 / 1000)
     (B : Finset ℕ) {b : ℝ} (hB : ∀ k ∈ B, (k : ℝ) ≤ b)
@@ -62,7 +62,7 @@ theorem gamma_primitive_sum_re_le_phase64_first_cell_prime_prefix {q m : ℕ} [N
         43 * (L ^ 2 / (99 / 40)) ^ (-9 / 16 : ℝ) := by
   have h := gamma_primitive_sum_re_le_phase64_first_cell hq hm hmq hGRH hp hne hinv hlo hhi B
   have he :=
-    AnalyticNumberTheory.DirichletLFunction.finiteSigned_prefix_defect_eq_zero_of_prime_one χ
+    AnalyticNumberTheory.DirichletLFunction.signedPrefixDefect_zero_of_prime_one χ
       Analysis.phaseResolvent64Coefficients B hB hsmall
   simpa only [AnalyticNumberTheory.DirichletLFunction.finiteSignedPrefixBudget, he, add_zero] using
     h
@@ -71,8 +71,8 @@ theorem gamma_primitive_sum_re_le_phase64_first_cell_prime_prefix {q m : ℕ} [N
 Claim: the actual Gamma sum is bounded by a character-independent signed parity budget
 and the proved remainder. Proof: combine the first-cell bound with exact defect cancellation.
 Role: reduce the remaining witness comparison to explicit scalar Gamma and Euler costs. -/
-theorem gamma_primitive_sum_re_le_phase64_first_cell_parity_prefix {q m : ℕ} [NeZero m]
-    (hq : 20000 ≤ q) (hm : 3 ≤ m) (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
+theorem gammaSum_phase64_parityPrefix_GRH {q m : ℕ} [NeZero m] (hq : 20000 ≤ q) (hm : 3 ≤ m)
+    (hmq : m ≤ q) {χ : DirichletCharacter ℂ m}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
     (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {L : ℝ} (hlo : (64 : ℝ) ≤ L) (hhi : L ≤ 64001 / 1000)
     (B : Finset ℕ) {b : ℝ} (hB : ∀ k ∈ B, (k : ℝ) ≤ b)
@@ -84,7 +84,7 @@ theorem gamma_primitive_sum_re_le_phase64_first_cell_parity_prefix {q m : ℕ} [
         43 * (L ^ 2 / (99 / 40)) ^ (-9 / 16 : ℝ) := by
   have h := gamma_primitive_sum_re_le_phase64_first_cell hq hm hmq hGRH hp hne hinv hlo hhi B
   have hb :=
-    AnalyticNumberTheory.DirichletLFunction.finiteSignedPrefixBudget_le_of_prime_one χ
+    AnalyticNumberTheory.DirichletLFunction.signedPrefixBudget_le_of_prime_one χ
       Analysis.phaseResolvent64Coefficients B hB hsmall
   linarith only [h, hb]
 

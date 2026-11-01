@@ -61,11 +61,10 @@ theorem reciprocalGapRealAxisLeftValue_le_uniform_budget {h x : ℝ} (hh : 0 < h
 admissible zero comparison and x>=1, separation with the uniform real-axis budget
 produces a non-one prime witness. Bound the exact left value and reuse the signed
 real-axis criterion. The zero-prefix term still retains its exact character values. -/
-theorem exists_prime_not_one_of_reciprocalGap_uniform_realAxis_separation {h c : ℝ} (hh : 0 < h)
-    {q : ℕ} [NeZero q] (hq : 8 ≤ q) {χ : DirichletCharacter ℂ q}
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hp : χ.IsPrimitive)
-    (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hc : (1 / 2 : ℝ) < c) (hbound : c ^ 2 ≤ 1 / 4 + h / 2) {x : ℝ}
-    (hx : 1 ≤ x) (B : Finset ℕ)
+theorem exists_prime_neOne_uniformAxisGap_GRH {h c : ℝ} (hh : 0 < h) {q : ℕ} [NeZero q] (hq : 8 ≤ q)
+    {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) (hc : (1 / 2 : ℝ) < c)
+    (hbound : c ^ 2 ≤ 1 / 4 + h / 2) {x : ℝ} (hx : 1 ≤ x) (B : Finset ℕ)
     (hgap :
       (1 / c) *
             (Real.log q / 2 + (logDeriv χ.gammaFactor (((1 / 2 : ℝ) + c) : ℂ)).re +
@@ -76,8 +75,7 @@ theorem exists_prime_not_one_of_reciprocalGap_uniform_realAxis_separation {h c :
             reciprocalGapSignedGammaBudget h x) <
         (reciprocalGapCharacterSum h (1 : DirichletCharacter ℂ 1) x).re) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ x ∧ χ p ≠ 1 := by
-  apply
-    exists_prime_not_one_of_reciprocalGap_realAxis_separation hh hq hGRH hp hne hinv hc hbound hx B
+  apply exists_prime_neOne_axisGap_GRH hh hq hGRH hp hne hinv hc hbound hx B
   have hV := reciprocalGapRealAxisLeftValue_le_uniform_budget hh (zero_lt_one.trans_le hx) hinv
   linarith only [hV, hgap]
 

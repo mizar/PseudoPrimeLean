@@ -44,7 +44,7 @@ theorem heilbronnTripleCorrelation_square_sum {p : ℕ} [Fact p.Prime] :
     (∑ a : ZMod (p ^ 2), ∑ b : ZMod (p ^ 2), heilbronnTripleCorrelation p a b ^ 2) =
       heilbronnThirdEnergy p := by
   have h := PseudoPrime.Analysis.finite_triple_correlation_square_sum (heilbronnElements p)
-  simpa only [← heilbronn_correlation_eq_finiteDifferenceCorrelation, heilbronnTripleCorrelation,
+  simpa only [← correlation_eq_finiteDifferenceCorrelation, heilbronnTripleCorrelation,
     heilbronnThirdEnergy] using h
 
 /-- Rewrite the full amplified triple sum against C₃. The remaining edge

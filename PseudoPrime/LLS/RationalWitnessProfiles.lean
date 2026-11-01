@@ -32,7 +32,7 @@ proper subgroup from 3000. Apply the rational subgroup theorem and normalize the
 This attaches a proof to the coefficient-and-start pair. -/
 theorem rationalPart1Profile_bound : UniformSubgroupProfileBound rationalPart1Profile := by
   intro q H hH hGRH hq
-  obtain ⟨p, hp, hb⟩ := exists_prime_outside_subgroup_le_rationalProfile3000 hq H hH hGRH
+  obtain ⟨p, hp, hb⟩ := exists_prime_outside_rational3000_GRH hq H hH hGRH
   refine ⟨p, hp, ?_⟩
   simpa only [Analysis.RationalLogarithmicProfile.cutoff, Analysis.logarithmicShiftCutoff,
     Analysis.logarithmicShiftRoot, rationalPart1Profile, Rat.cast_div, Rat.cast_ofNat, Rat.cast_one,
@@ -60,8 +60,8 @@ theorem rationalPart1Profile_cutoff_le {n m : ℕ} (hn : 3000 ≤ n) (horder : n
 /-- Under GRH, for 3000 ≤ q ≤ B and H proper, an outside prime exists through
 the retained Part 1 cutoff evaluated at B. Transfer the pointwise witness by monotonicity.
 The envelope uses the same coefficient triple and starting value. -/
-theorem exists_prime_outside_le_rationalPart1Profile_envelope {q B : ℕ} (hq : 3000 ≤ q)
-    (hqB : q ≤ B) (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
+theorem exists_prime_outside_rationalEnvelope_GRH {q B : ℕ} (hq : 3000 ≤ q) (hqB : q ≤ B)
+    (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ, PrimeOutsideSubgroup q H p ∧ (p : ℝ) ≤ rationalPart1Profile.cutoff B := by
   obtain ⟨p, hp, hb⟩ := rationalPart1Profile_bound q H hH hGRH hq

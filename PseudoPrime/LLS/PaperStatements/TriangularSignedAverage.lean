@@ -67,8 +67,8 @@ sum of character and inverse arithmetic real parts is at least minus twice
 the level-one principal sum. Remove the unique principal term from the
 nonnegative full primitive aggregate and use the inverse real-part identity.
 This closes the signed arithmetic term in the conductor comparison. -/
-theorem triangular18_nonprincipal_arithmetic_pair_sum_lower {q : ℕ} [NeZero q]
-    (H : Subgroup (ZMod q)ˣ) {x : ℝ} (hx : 0 < x) :
+theorem triangular18_nonprincipal_pair_lower {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ) {x : ℝ}
+    (hx : 0 < x) :
     letI := Classical.propDecidable
     let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18);
     -(2 : ℝ) * (∑' n : ℕ, K.summand (1 : DirichletCharacter ℂ 1) x n).re ≤

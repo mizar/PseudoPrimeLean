@@ -26,16 +26,14 @@ theorem primitiveLogOrigin_le_of_mainErrors {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     (dirichletLogResidueAt hne x 0).re ≤
       (2 + Real.log x) * |primitiveBRe χ| + (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x +
         e := by
-  have hD := neg_re_deriv_logDeriv_completedLFunction_zero_le_abs_BRe hGRH hprimitive hne hinv hN2
+  have hD := completedLogDeriv_neg_re_abs_BRe_GRH hGRH hprimitive hne hinv hN2
   rcases χ.even_or_odd with heven | hodd
   · rw [dirichletLogResidueAt_zero_of_even hne x heven,
-      re_iteratedDeriv_two_dirichletLogEvenZeroRegularization_zero_div_two hN2 hGRH hprimitive hne
-        hinv hx]
+      re_logEvenReg_deriv2_div2_GRH hN2 hGRH hprimitive hne hinv hx]
     unfold Analysis.primitiveLogEvenMainError at he
     linarith only [hD, he]
   · rw [dirichletLogResidueAt_zero_of_odd hne x hodd,
-      re_deriv_dirichletLogMellinZeroRegularization_zero_of_odd hN2 hGRH hprimitive hne hinv hodd
-        hx]
+      re_logMellinReg_deriv_zero_odd_GRH hN2 hGRH hprimitive hne hinv hodd hx]
     unfold Analysis.primitiveLogOddMainError at ho
     linarith only [hD, ho]
 
@@ -48,15 +46,14 @@ theorem primitiveLogLedger_le_of_mainErrors {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x e : ℝ} (hx : 0 < x)
     (ho : Analysis.primitiveLogOddMainError x ≤ e) (he : Analysis.primitiveLogEvenMainError x ≤ e)
-    {z w : ℂ} (h0 : (0 : ℂ) ∈ dirichletLFunctionSingularitiesInRectangle χ hne z w)
-    (h1 : (1 : ℂ) ∈ dirichletLFunctionSingularitiesInRectangle χ hne z w) :
-    (∑ s ∈ dirichletLFunctionSingularitiesInRectangle χ hne z w, dirichletLogResidueAt hne x s).re ≤
+    {z w : ℂ} (h0 : (0 : ℂ) ∈ LFunctionSingularitiesInRectangle χ hne z w)
+    (h1 : (1 : ℂ) ∈ LFunctionSingularitiesInRectangle χ hne z w) :
+    (∑ s ∈ LFunctionSingularitiesInRectangle χ hne z w, dirichletLogResidueAt hne x s).re ≤
       (2 * Real.sqrt x + 2 + Real.log x) * |primitiveBRe χ| +
         (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x +
         e := by
   have hzero := primitiveLogOrigin_le_of_mainErrors hN2 hGRH hprimitive hne hinv hx ho he
-  have hrest :=
-    re_sum_erased_primitiveLogResidues_le hN2 hGRH hprimitive hne hinv hx (z := z) (w := w)
+  have hrest := logResidue_erased_re_sum_le_GRH hN2 hGRH hprimitive hne hinv hx (z := z) (w := w)
   rw [dirichletSplitLogSingularitySum x hne h1 h0, dirichletLogResidueAt_one hne x]
   simp only [Complex.add_re, Complex.zero_re]
   nlinarith only [hzero, hrest]
@@ -67,7 +64,7 @@ open PseudoPrime.AnalyticNumberTheory.DirichletLFunction in
 parity main errors give the weighted-sum estimate with its left edge retained.
 Pass the parameterized finite-ledger inequality through the common-height
 contour limit. This separates analytic convergence from numerical cutoffs. -/
-theorem characterLogWeightedSum_sub_leftVertical_le_of_mainErrors {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
+theorem characterLogSum_sub_left_le_of_mainErrors_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
     {χ : DirichletCharacter ℂ N} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hprimitive : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x e : ℝ} (hx : 1 < x)
     (ho : Analysis.primitiveLogOddMainError x ≤ e) (he : Analysis.primitiveLogEvenMainError x ≤ e)
@@ -81,8 +78,7 @@ theorem characterLogWeightedSum_sub_leftVertical_le_of_mainErrors {N : ℕ} [NeZ
         (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x +
         e := by
   have hx1 : (1 : ℝ) ≤ x := hx.le
-  have htend :=
-    tendsto_normalized_dirichletLogBoundary_heightSeq_of_grh hN2 hGRH hprimitive hne hinv hx1 A hA
+  have htend := tendsto_logBoundary_heightSeq_GRH hN2 hGRH hprimitive hne hinv hx1 A hA
   have htendRe := (Complex.continuous_re.tendsto _).comp htend
   have hev :
     ∀ᶠ k : ℕ in Filter.atTop,
@@ -96,11 +92,8 @@ theorem characterLogWeightedSum_sub_leftVertical_le_of_mainErrors {N : ℕ} [NeZ
           e := by
     filter_upwards with k
     have hid :=
-      dirichletLogFiniteContourIdentity_heightSeq_normalized hN2 hGRH hprimitive hne hinv
-        (zero_lt_one.trans hx) A k hA
-    obtain ⟨h0, h1⟩ :=
-      primitiveReciprocalMellinPoints_mem_singularities_heightSeq hN2 hGRH hprimitive hne hinv A k
-        hA
+      logContour_heightSeq_normalized_GRH hN2 hGRH hprimitive hne hinv (zero_lt_one.trans hx) A k hA
+    obtain ⟨h0, h1⟩ := heightSeq_zero_one_singular_GRH hN2 hGRH hprimitive hne hinv A k hA
     have hbound :=
       primitiveLogLedger_le_of_mainErrors hN2 hGRH hprimitive hne hinv (zero_lt_one.trans hx) ho he
         (z := primitiveHeightSeqLowerCorner hN2 hGRH hprimitive hne hinv A k) (w :=
@@ -142,8 +135,7 @@ theorem primitiveLogWeightedUpper_of_mainErrors {N : ℕ} [NeZero N] (hN2 : 2 �
         (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x +
         e := by
   have hx1 : (1 : ℝ) < x := hx
-  have htend :=
-    tendsto_dirichletLogContourKernel_leftVertical_integral_atTop hprimitive hne hinv hx1
+  have htend := tendsto_logKernel_left_integral hprimitive hne hinv hx1
   have htendRe := (Complex.continuous_re.tendsto _).comp htend
   have htendScaled :
     Filter.Tendsto
@@ -167,9 +159,7 @@ theorem primitiveLogWeightedUpper_of_mainErrors {N : ℕ} [NeZero N] (hN2 : 2 �
           (1 / 2) * (Real.log N - Real.log Real.pi) * Real.log x +
           e := by
     filter_upwards [Filter.eventually_ge_atTop 2] with A hA
-    exact
-      characterLogWeightedSum_sub_leftVertical_le_of_mainErrors hN2 hGRH hprimitive hne hinv hx ho
-        he A hA
+    exact characterLogSum_sub_left_le_of_mainErrors_GRH hN2 hGRH hprimitive hne hinv hx ho he A hA
   exact le_of_tendsto htendScaled hev
 
 end PseudoPrime.LLS

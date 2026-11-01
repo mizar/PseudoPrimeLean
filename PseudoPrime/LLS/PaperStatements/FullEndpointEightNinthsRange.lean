@@ -96,8 +96,7 @@ theorem fullEndpoint_eightNinths_polynomial_pos {y z : ℝ} (ha : 8 ≤ y) (hb :
 /-- For every real 9<=L<=81/4 the endpoint polynomial at y=(8/9)L is positive.
 Insert the radius interval and the tighter log chord. This certifies a
 continuous interval without enumerating integer moduli. -/
-theorem fullEndpoint_polynomial_pos_eightNinths_log_interval {L : ℝ} (hL : 9 ≤ L)
-    (hU : L ≤ (81 / 4 : ℝ)) :
+theorem fullPoly_pos_eightNinths_interval {L : ℝ} (hL : 9 ≤ L) (hU : L ≤ (81 / 4 : ℝ)) :
     0 < fullEndpointPolynomial L (2096 / 1831) ((8 / 9 : ℝ) * L) (Real.log ((8 / 9 : ℝ) * L)) := by
   let y := (8 / 9 : ℝ) * L
   have ha : (8 : ℝ) ≤ y := by
@@ -119,9 +118,9 @@ theorem exists_prime_ne_one_le_eightNinths_log_sq {q : ℕ} [NeZero q] (χ : Dir
     (hL : 9 ≤ Real.log q) (hU : Real.log q ≤ (81 / 4 : ℝ)) :
     ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ (64 / 81 : ℝ) * (Real.log q) ^ 2 ∧ χ p ≠ 1 := by
   obtain ⟨p, hp, hb, hv⟩ :=
-    exists_prime_ne_one_of_fullEndpointPolynomial_original χ hne hGRH
+    exists_prime_ne_one_of_fullEndpointPoly_original χ hne hGRH
       (by linarith only [hL] : (8 : ℝ) ≤ (8 / 9 : ℝ) * Real.log q)
-      (fullEndpoint_polynomial_pos_eightNinths_log_interval hL hU)
+      (fullPoly_pos_eightNinths_interval hL hU)
   exact ⟨p, hp, by nlinarith only [hb], hv⟩
 
 /-- For positive L the coefficient-64/81 bound is strictly smaller than the

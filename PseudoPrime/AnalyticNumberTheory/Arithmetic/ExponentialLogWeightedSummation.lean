@@ -79,7 +79,7 @@ private theorem exponential_sum_eq_positive_sum (x y : ℝ) :
 the logarithmically weighted integral plus y exp(-y)A(xy) and exp(-y)psi(xy).
 Use the finite atom reconstruction, justified interchange, and arithmetic cutoff identities.
 This is the exact double-partial-summation formula with its finite endpoint terms. -/
-theorem exponentialMangoldtSum_eq_logWeighted_integral {x y : ℝ} (hx : 0 < x) (hy : 0 ≤ y) :
+theorem expMangoldtSum_eq_logWeighted_integral {x y : ℝ} (hx : 0 < x) (hy : 0 ≤ y) :
     exponentialMangoldtSum x (x * y) =
       (∫ u in (0 : ℝ)..y, logWeightedMangoldtSum (x * u) * ((u - 1) * Real.exp (-u))) +
         y * Real.exp (-y) * logWeightedMangoldtSum (x * y) +

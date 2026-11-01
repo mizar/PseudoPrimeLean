@@ -55,10 +55,10 @@ theorem canonical_sign_exponent_local_half {p n : ℕ} (hp : 1 < p) (hpOdd : Odd
 predecessor two-adic valuations, their paired quadratic character annihilates
 the canonical sign subgroup. Construct both odd local half-exponent factors
 internally. This supplies the paired character for the four-factor branch. -/
-theorem paired_quadraticCharacter_mem_canonical_sign_annihilator {n p q : ℕ} [NeZero n]
-    [Fact p.Prime] [Fact q.Prime] [Fact (2 < p)] [Fact (2 < q)] (hn : 1 < n) (hnOdd : Odd n)
-    (hpOdd : Odd p) (hqOdd : Odd q) (hpn : p ∣ n) (hqn : q ∣ n) (hpK : p - 1 ∣ n - 1)
-    (hqK : q - 1 ∣ n - 1) (hv : padicValNat 2 (q - 1) = padicValNat 2 (p - 1)) :
+theorem pairedQuadratic_canonical_annihilator {n p q : ℕ} [NeZero n] [Fact p.Prime] [Fact q.Prime]
+    [Fact (2 < p)] [Fact (2 < q)] (hn : 1 < n) (hnOdd : Odd n) (hpOdd : Odd p) (hqOdd : Odd q)
+    (hpn : p ∣ n) (hqn : q ∣ n) (hpK : p - 1 ∣ n - 1) (hqK : q - 1 ∣ n - 1)
+    (hv : padicValNat 2 (q - 1) = padicValNat 2 (p - 1)) :
     (NumberTheory.complexJacobiNumeratorCharacter p hpOdd).changeLevel hpn *
         (NumberTheory.complexJacobiNumeratorCharacter q hqOdd).changeLevel hqn ∈
       NumberTheory.subgroupAnnihilator
@@ -68,6 +68,6 @@ theorem paired_quadraticCharacter_mem_canonical_sign_annihilator {n p q : ℕ} [
   obtain ⟨kq, hkq, hEq⟩ :=
     canonical_sign_exponent_local_half (Fact.out : q.Prime).one_lt hqOdd hn hnOdd hqK
   rw [hv] at hEq
-  exact paired_quadraticCharacter_mem_signSubgroup_annihilator hpOdd hqOdd hpn hqn hkp hkq hEp hEq
+  exact pairedQuadratic_sign_annihilator hpOdd hqOdd hpn hqn hkp hkq hEp hEq
 
 end PseudoPrime.PrimeTest
