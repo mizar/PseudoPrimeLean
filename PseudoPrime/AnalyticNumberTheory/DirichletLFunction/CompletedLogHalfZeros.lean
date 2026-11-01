@@ -110,7 +110,7 @@ theorem completedLogZeroTerm_ne_zero_facts {N : ℕ} [NeZero N] {χ : DirichletC
     intro h
     apply hnz
     simp only [completedLogZeroTerm, h, Int.cast_zero, zero_mul, zero_div]
-  have hz := dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD
+  have hz := completed_zero_of_divisor_ne_zero hne hD
   have hr := completedLFunction_zero_re_eq_half hGRH hp hne hinv hz
   have h0 : ρ ≠ 0 := by
     intro h
@@ -196,7 +196,7 @@ theorem norm_completedLogHalfPhaseTerm_le_eight_quadratic_weight {N : ℕ} [NeZe
     exact div_nonneg (by norm_num only) (by nlinarith only [sq_nonneg ρ.im])
   · have hr :=
       completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv
-        (dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD₀)
+        (completed_zero_of_divisor_ne_zero hne hD₀)
     have hD : 0 ≤ (D : ℝ) := by
       have ha : AnalyticOnNhd ℂ χ.completedLFunction Set.univ := fun z _ ↦
         (DirichletCharacter.differentiable_completedLFunction hne).analyticAt z
@@ -265,7 +265,7 @@ theorem completedLogHalfZeroTerm_eq_sqrt_mul_phase {N : ℕ} [NeZero N] {χ : Di
   by_cases hD : MeromorphicOn.divisor χ.completedLFunction Set.univ ρ = 0
   · simp only [completedLogHalfZeroTerm, completedLogHalfPhaseTerm, hD, Int.cast_zero, zero_mul,
       zero_div, mul_zero]
-  · have hz := dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD
+  · have hz := completed_zero_of_divisor_ne_zero hne hD
     have hr := completedLFunction_zero_re_eq_half hGRH hp hne hinv hz
     dsimp only [completedLogHalfZeroTerm, completedLogHalfPhaseTerm]
     rw [cpow_eq_sqrt_mul_phase_of_re_half hx hr]

@@ -39,7 +39,7 @@ theorem weightedResidue_eq_neg_oscillatingZeroTerm (K : MellinKernel) {q : ℕ} 
   rw [hm, oscillatingZeroTerm, kernelZeroTerm]
   by_cases hD : MeromorphicOn.divisor χ.completedLFunction Set.univ (s + 1 / 2) = 0
   · simp only [hD, Int.cast_zero, neg_zero, zero_mul]
-  · have hz := dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD
+  · have hz := completed_zero_of_divisor_ne_zero hne hD
     have hr := completedLFunction_zero_re_eq_half hGRH hp hne hinv hz
     have he : s = Complex.I * (s + 1 / 2).im := by
       apply Complex.ext
@@ -100,7 +100,7 @@ theorem oscillatingZeroTerm_zero (K : MellinKernel) {q : ℕ} [NeZero q] {χ : D
     by_contra hd
     exact
       dirichletCompletedLFunction_zero_ne_zero_of_primitive hp hne
-        (dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hd)
+        (completed_zero_of_divisor_ne_zero hne hd)
   simp only [oscillatingZeroTerm, kernelZeroTerm, hD, Int.cast_zero, zero_mul]
 
 open AnalyticNumberTheory.DirichletLFunction in

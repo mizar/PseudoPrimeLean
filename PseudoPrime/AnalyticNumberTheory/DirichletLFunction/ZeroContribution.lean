@@ -137,7 +137,7 @@ theorem norm_completedLogZeroTerm_eq {N : ℕ} [NeZero N] {χ : DirichletCharact
         fun z _ => hdiff.analyticAt z
       exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg hanalytic ρ
     have hzero : DirichletCharacter.completedLFunction χ ρ = 0 :=
-      dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD0
+      completed_zero_of_divisor_ne_zero hne hD0
     have hre_half : ρ.re = (1 : ℝ) / 2 :=
       completedLFunction_zero_re_eq_half hGRH hprimitive hne hinv hzero
     have hnormsq : ‖ρ ^ 2‖ = Complex.normSq ρ := by rw [norm_pow, ← Complex.normSq_eq_norm_sq]

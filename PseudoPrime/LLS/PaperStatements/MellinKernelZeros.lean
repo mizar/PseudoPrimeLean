@@ -90,7 +90,7 @@ theorem norm_kernelZeroTerm_le (K : MellinKernel) {q : ℕ} [NeZero q] {χ : Dir
         show D = MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ from
           rfl,
       hD, Int.cast_zero, zero_mul, norm_zero, zero_div, mul_zero, le_refl]
-  · have hz := dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD
+  · have hz := completed_zero_of_divisor_ne_zero hne hD
     have hr := completedLFunction_zero_re_eq_half hGRH hp hne hinv hz
     have hnD : (0 : ℝ) ≤ D := by
       have ha : AnalyticOnNhd ℂ (DirichletCharacter.completedLFunction χ) Set.univ := fun z _ ↦

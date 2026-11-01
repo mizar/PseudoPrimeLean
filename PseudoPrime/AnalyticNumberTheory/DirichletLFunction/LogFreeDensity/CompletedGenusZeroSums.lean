@@ -192,7 +192,7 @@ theorem summable_completed_genus_inverse_square {q : ℕ} [NeZero q] (hq : 2 ≤
   have hnonneg (ρ : ℂ) : 0 ≤ rterm ρ := by
     by_cases hD : D ρ = 0
     · simp only [rterm, cterm, D, hD, Int.cast_zero, zero_mul, Complex.zero_re, le_refl]
-    · have hz := dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hχ hD
+    · have hz := completed_zero_of_divisor_ne_zero hχ hD
       have hrepos := completedLFunction_zero_re_pos hp hinv hz
       have hrelt := completedLFunction_zero_re_lt_one hχ hz
       rw [hterm]
@@ -210,7 +210,7 @@ theorem summable_completed_genus_inverse_square {q : ℕ} [NeZero q] (hq : 2 ≤
     by_cases hD : D ρ = 0
     · rw [hterm, hD]
       simp only [Int.cast_zero, zero_mul, zero_div, le_refl]
-    · have hz := dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hχ hD
+    · have hz := completed_zero_of_divisor_ne_zero hχ hD
       have hrelt := completedLFunction_zero_re_lt_one hχ hz
       have hreal : s.re - 1 ≤ (s - ρ).re := by
         rw [Complex.sub_re]
@@ -337,7 +337,7 @@ theorem summableLocallyUniformlyOn_completed_genus_term_iteratedDerivWithin {q :
       rw [norm_iteratedDerivWithin_completed_genus_term hV hn (D ρ) hDint ρ z (hK hz)]
       simp only [hDzero, Int.cast_zero, zero_mul, mul_zero]
       exact le_rfl
-    · have hzero := dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hχ hDzero
+    · have hzero := completed_zero_of_divisor_ne_zero hχ hDzero
       have hρlt := completedLFunction_zero_re_lt_one hχ hzero
       have hgeom : δ ≤ ‖z - ρ‖ ∧ ε ≤ ‖s₀ - ρ‖ ∧ ‖s₀ - ρ‖ ≤ ‖z - ρ‖ + R₀ := by
         have hrealz : δ ≤ (z - ρ).re := by
@@ -434,7 +434,7 @@ theorem hasDerivAt_completed_genus_sum_right {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     by_cases hD : D ρ = 0
     · simpa only [g, g', D, hD, Int.cast_zero, zero_mul, neg_zero] using
         (hasDerivAt_const z (0 : ℂ))
-    · have hzero := dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hχ hD
+    · have hzero := completed_zero_of_divisor_ne_zero hχ hD
       have hre := completedLFunction_zero_re_lt_one hχ hzero
       have hclose : ‖z - s‖ < δ := by simpa only [dist_eq_norm] using Metric.mem_ball.mp hz
       have hzre : (s.re + 1) / 2 < z.re := by
@@ -464,7 +464,7 @@ theorem hasDerivAt_completed_genus_sum_right {q : ℕ} [NeZero q] (hq : 2 ≤ q)
   have hbound (ρ z : ℂ) (hz : z ∈ U) : ‖g' ρ z‖ ≤ 4 * ((D ρ : ℝ) * ‖(s - ρ)⁻¹‖ ^ 2) := by
     by_cases hD : D ρ = 0
     · simp only [g', D, hD, Int.cast_zero, zero_mul, neg_zero, norm_zero, mul_zero, le_refl]
-    · have hzero := dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hχ hD
+    · have hzero := completed_zero_of_divisor_ne_zero hχ hD
       have hre := completedLFunction_zero_re_lt_one hχ hzero
       have hclose : ‖z - s‖ < δ := by simpa only [dist_eq_norm] using Metric.mem_ball.mp hz
       have hzre : (s.re + 1) / 2 < z.re := by
@@ -564,7 +564,7 @@ theorem iteratedDerivWithin_completed_genus_sum_right {q : ℕ} [NeZero q] (hq :
       by_cases hD : D ρ = 0
       · simp only [f, hD, Int.cast_zero, zero_mul]
         exact analyticAt_const
-      · have hzero := dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hχ hD
+      · have hzero := completed_zero_of_divisor_ne_zero hχ hD
         have hρlt := completedLFunction_zero_re_lt_one hχ hzero
         have hden : w - ρ ≠ 0 := by
           intro heq
@@ -985,7 +985,7 @@ theorem completed_genus_inverse_square_mass_le_right_genus_sum {q : ℕ} [NeZero
     · rw [hterm, hD]
       simp only [Int.cast_zero, zero_mul, mul_zero]
       exact le_rfl
-    · have hz := dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hχ hD
+    · have hz := completed_zero_of_divisor_ne_zero hχ hD
       have hrelt := completedLFunction_zero_re_lt_one hχ hz
       have hshift : 0 < s.re - 1 := by linarith only [hs]
       have hreal : s.re - 1 ≤ (s - ρ).re := by
@@ -1815,7 +1815,7 @@ theorem completedZeroMultiplicityCountInRectangle_le_minus_one_genus_sum {q : �
   have hnonneg (ρ : ℂ) : 0 ≤ rterm ρ := by
     by_cases hD : D ρ = 0
     · simp only [rterm, cterm, D, hD, Int.cast_zero, zero_mul, Complex.zero_re, le_refl]
-    · have hz := dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hχ hD
+    · have hz := completed_zero_of_divisor_ne_zero hχ hD
       have hrepos := completedLFunction_zero_re_pos hp hinv hz
       have hrelt := completedLFunction_zero_re_lt_one hχ hz
       rw [hterm]

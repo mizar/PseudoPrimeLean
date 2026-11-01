@@ -45,7 +45,7 @@ theorem completedLogDeriv_endpoint_le_shifted {q : ℕ} [NeZero q] (hq : 2 ≤ q
     · simp only [P, hD, Int.cast_zero, zero_mul, mul_zero, le_refl]
     · have hr :=
         completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv
-          (dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD)
+          (completed_zero_of_divisor_ne_zero hne hD)
       have hn (σ : ℝ) : Complex.normSq ((σ : ℂ) - ρ) = (σ - 1 / 2) ^ 2 + ρ.im ^ 2 := by
         rw [Complex.normSq_apply]
         simp only [Complex.sub_re, Complex.sub_im, Complex.ofReal_re, Complex.ofReal_im, hr]

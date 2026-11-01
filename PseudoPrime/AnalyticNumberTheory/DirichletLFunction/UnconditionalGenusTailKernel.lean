@@ -89,7 +89,7 @@ theorem norm_completed_genus_term_le_shifted_mass_of_large_im {q : ℕ} [NeZero 
         ‖(((3 / 2 : ℝ) : ℂ) - ρ)⁻¹‖ ^ 2 := by
   by_cases hD : MeromorphicOn.divisor χ.completedLFunction Set.univ ρ = 0
   · simp only [hD, Int.cast_zero, zero_mul, mul_zero, norm_zero, le_refl]
-  · have hz := dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD
+  · have hz := completed_zero_of_divisor_ne_zero hne hD
     have hlo := (completedLFunction_zero_re_pos hp hinv hz).le
     have hhi := (completedLFunction_zero_re_lt_one hne hz).le
     have hAn : AnalyticOnNhd ℂ χ.completedLFunction Set.univ := fun z _ ↦

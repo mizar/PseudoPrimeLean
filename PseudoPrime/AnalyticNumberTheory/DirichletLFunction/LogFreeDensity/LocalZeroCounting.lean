@@ -2170,7 +2170,7 @@ theorem completedZeroMultiplicityCountInRectangle_le_right_genus_sum {q : ℕ} [
   have hnonneg (ρ : ℂ) : 0 ≤ rterm ρ := by
     by_cases hD : D ρ = 0
     · simp only [rterm, cterm, D, hD, Int.cast_zero, zero_mul, Complex.zero_re, le_refl]
-    · have hz := dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hχ hD
+    · have hz := completed_zero_of_divisor_ne_zero hχ hD
       have hrepos := completedLFunction_zero_re_pos hp hinv hz
       have hrelt := completedLFunction_zero_re_lt_one hχ hz
       rw [hterm]

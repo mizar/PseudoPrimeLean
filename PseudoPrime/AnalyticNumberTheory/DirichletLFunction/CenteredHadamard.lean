@@ -39,7 +39,7 @@ theorem norm_completed_genusTerm_le {q : ℕ} [NeZero q] {χ : DirichletCharacte
   by_cases hD : D = 0
   · change ‖(D : ℂ) * _‖ ≤ _ * ((D : ℝ) / _)
     simp only [hD, Int.cast_zero, zero_mul, norm_zero, zero_div, mul_zero, le_refl]
-  · have hz := dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD
+  · have hz := completed_zero_of_divisor_ne_zero hne hD
     have hr := completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv hz
     have ha : AnalyticOnNhd ℂ (DirichletCharacter.completedLFunction χ) Set.univ := fun z _ ↦
       (DirichletCharacter.differentiable_completedLFunction hne).analyticAt z
@@ -235,8 +235,7 @@ theorem summable_completed_genus_terms_right {q : ℕ} [NeZero q] {χ : Dirichle
         ‖(D ρ : ℂ) * (1 / (s - ρ) + 1 / ρ)‖ ≤ (3 * ‖s‖) * ‖(D ρ : ℂ) * (1 / ((1 : ℂ) - ρ) + 1 / ρ)‖
       rw [hD]
       simp only [Int.cast_zero, zero_mul, norm_zero, mul_zero, le_rfl]
-    have hzero : χ.completedLFunction ρ = 0 :=
-      dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hDne
+    have hzero : χ.completedLFunction ρ = 0 := completed_zero_of_divisor_ne_zero hne hDne
     have hρlt : ρ.re < 1 := completedLFunction_zero_re_lt_one hne hzero
     have hsρ : s - ρ ≠ 0 := by
       intro heq
@@ -426,7 +425,7 @@ theorem completed_centered_logDeriv_eq_genusSum_minus_one {q : ℕ} [NeZero q] (
     intro ρ
     by_cases hD : D ρ = 0
     · simp only [correction, baseOne, D, hD, Int.cast_zero, zero_mul, norm_zero, le_refl]
-    · have hzero : F ρ = 0 := dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD
+    · have hzero : F ρ = 0 := completed_zero_of_divisor_ne_zero hne hD
       have hre0 := completedLFunction_zero_re_pos hp hinv hzero
       have hre1 := completedLFunction_zero_re_lt_one hne hzero
       have hρ0 : ρ ≠ 0 := by
@@ -460,7 +459,7 @@ theorem completed_centered_logDeriv_eq_genusSum_minus_one {q : ℕ} [NeZero q] (
     intro ρ
     by_cases hD : D ρ = 0
     · simp only [baseS, correction, target, D, hD, Int.cast_zero, zero_mul, add_zero]
-    · have hzero : F ρ = 0 := dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD
+    · have hzero : F ρ = 0 := completed_zero_of_divisor_ne_zero hne hD
       have hre0 := completedLFunction_zero_re_pos hp hinv hzero
       have hre1 := completedLFunction_zero_re_lt_one hne hzero
       have hρ0 : ρ ≠ 0 := by
@@ -570,7 +569,7 @@ theorem summable_completed_genus_terms_minus_one {q : ℕ} [NeZero q] (hq : 2 �
     intro ρ
     by_cases hD : D ρ = 0
     · simp only [correction, baseOne, D, hD, Int.cast_zero, zero_mul, norm_zero, le_refl]
-    · have hzero : F ρ = 0 := dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD
+    · have hzero : F ρ = 0 := completed_zero_of_divisor_ne_zero hne hD
       have hre0 := completedLFunction_zero_re_pos hp hinv hzero
       have hre1 := completedLFunction_zero_re_lt_one hne hzero
       have hρ0 : ρ ≠ 0 := by
@@ -606,7 +605,7 @@ theorem summable_completed_genus_terms_minus_one {q : ℕ} [NeZero q] (hq : 2 �
       (D ρ : ℂ) * (1 / (s - ρ) + 1 / ρ) + (D ρ : ℂ) * (1 / (1 + ρ) - 1 / ρ) =
         (D ρ : ℂ) * (1 / (s - ρ) + 1 / (1 + ρ))
     simp only [hD, Int.cast_zero, zero_mul, add_zero]
-  · have hzero : F ρ = 0 := dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD
+  · have hzero : F ρ = 0 := completed_zero_of_divisor_ne_zero hne hD
     have hre0 := completedLFunction_zero_re_pos hp hinv hzero
     have hre1 := completedLFunction_zero_re_lt_one hne hzero
     have hρ0 : ρ ≠ 0 := by

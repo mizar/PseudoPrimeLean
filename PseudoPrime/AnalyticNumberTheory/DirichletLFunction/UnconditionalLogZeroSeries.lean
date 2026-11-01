@@ -27,7 +27,7 @@ theorem norm_completedLogZeroTerm_le_unconditionally {q : ℕ} [NeZero q] {χ : 
   by_cases hDzero : D = 0
   · change ‖(D : ℂ) * (x : ℂ) ^ ρ / ρ ^ 2‖ ≤ x * ((D : ℝ) / Complex.normSq ρ)
     simp only [hDzero, Int.cast_zero, zero_mul, zero_div, norm_zero, mul_zero, le_refl]
-  · have hz := dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hDzero
+  · have hz := completed_zero_of_divisor_ne_zero hne hDzero
     have hre := completedLFunction_zero_re_lt_one hne hz
     have hAn : AnalyticOnNhd ℂ χ.completedLFunction Set.univ := fun z _ ↦
       (χ.differentiable_completedLFunction hne).analyticAt z
@@ -68,7 +68,7 @@ theorem completedLogZeroTerm_ne_zero_facts_unconditionally {q : ℕ} [NeZero q]
     intro h
     apply hnz
     simp only [completedLogZeroTerm, h, Int.cast_zero, zero_mul, zero_div]
-  have hz := dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD
+  have hz := completed_zero_of_divisor_ne_zero hne hD
   have hpos := completedLFunction_zero_re_pos hp hinv hz
   have hlt := completedLFunction_zero_re_lt_one hne hz
   have hzero : ρ ≠ 0 := by

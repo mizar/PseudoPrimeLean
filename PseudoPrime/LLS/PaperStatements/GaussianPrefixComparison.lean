@@ -35,9 +35,7 @@ private theorem gaussian_kernel_zero_norm {m : ℕ} [NeZero m] {χ : DirichletCh
         (D : ℝ) * ‖Analysis.gaussianGammaFunction (ρ - 1 / 2)‖
     rw [hD]
     norm_num only [Int.cast_zero, zero_mul, norm_zero]
-  · have hz :=
-      AnalyticNumberTheory.DirichletLFunction.dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero
-        hne hD
+  · have hz := AnalyticNumberTheory.DirichletLFunction.completed_zero_of_divisor_ne_zero hne hD
     have hr :=
       AnalyticNumberTheory.DirichletLFunction.completedLFunction_zero_re_eq_half hGRH hp hne hinv hz
     have he : Complex.I * (ρ.im : ℂ) + 1 / 2 = ρ := by

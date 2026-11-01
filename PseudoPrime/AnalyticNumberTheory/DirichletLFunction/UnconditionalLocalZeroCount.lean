@@ -29,7 +29,7 @@ theorem completed_divisor_le_four_mul_shifted_mass_unconditionally {q : ℕ} [Ne
   by_cases hD : D = 0
   · change (D : ℝ) ≤ 4 * ((D : ℝ) * _)
     simp only [hD, Int.cast_zero, zero_mul, mul_zero, le_refl]
-  · have hz := dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD
+  · have hz := completed_zero_of_divisor_ne_zero hne hD
     have hrlo := completedLFunction_zero_re_pos hp hinv hz
     have hrhi := completedLFunction_zero_re_lt_one hne hz
     have ha : AnalyticOnNhd ℂ χ.completedLFunction Set.univ := fun z _ ↦

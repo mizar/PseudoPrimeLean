@@ -41,7 +41,7 @@ theorem triangular18_zero_norm_le_eight_poisson_of_height {q : ℕ} [NeZero q]
       le_refl]
   · have hr :=
       completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv
-        (dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD)
+        (completed_zero_of_divisor_ne_zero hne hD)
     have ha : AnalyticOnNhd ℂ χ.completedLFunction Set.univ := fun z _ ↦
       (DirichletCharacter.differentiable_completedLFunction hne).analyticAt z
     have hn : (0 : ℝ) ≤ D := by exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg ha ρ

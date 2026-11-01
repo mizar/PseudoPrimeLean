@@ -113,8 +113,8 @@ Content: contrapositive of
 `DirichletLFunction.meromorphicOrderAt_dirichletCompletedLFunction_eq_zero_of_ne_zero`
 (a nonzero value forces order, hence divisor, zero).
 -/
-theorem dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero {N : ℕ} [NeZero N]
-    {χ : DirichletCharacter ℂ N} (hne : χ ≠ 1) {ρ : ℂ}
+theorem completed_zero_of_divisor_ne_zero {N : ℕ} [NeZero N] {χ : DirichletCharacter ℂ N}
+    (hne : χ ≠ 1) {ρ : ℂ}
     (hρ : MeromorphicOn.divisor (DirichletCharacter.completedLFunction χ) Set.univ ρ ≠ 0) :
     DirichletCharacter.completedLFunction χ ρ = 0 := by
   by_contra hρne
@@ -171,7 +171,7 @@ theorem dirichletCompletedLFunctionZeroMass_eq_tsum_re_inv_of_dirichletRH {N : �
     by_cases hD0 : D = 0
     · simp only [hD0, Int.cast_zero, one_div, zero_mul, Complex.zero_re, Complex.inv_re, mul_zero]
     · have hzero : DirichletCharacter.completedLFunction χ ρ = 0 :=
-        dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD0
+        completed_zero_of_divisor_ne_zero hne hD0
       have hre_half : ρ.re = (1 : ℝ) / 2 :=
         completedLFunction_zero_re_eq_half_of_dirichletRH hRH hprimitive hinv hzero
       have hterm := genusOneTerm_re_eq_of_re_eq_half hre_half
@@ -411,7 +411,7 @@ theorem primitiveZeroMass_nonneg_of_dirichletRH {N : ℕ} [NeZero N] {χ : Diric
   · have hDnonneg : (0 : ℝ) ≤ (D : ℝ) := by
       exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg hanalytic ρ
     have hzero : DirichletCharacter.completedLFunction χ ρ = 0 :=
-      dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD0
+      completed_zero_of_divisor_ne_zero hne hD0
     have hre_half : ρ.re = (1 : ℝ) / 2 :=
       completedLFunction_zero_re_eq_half_of_dirichletRH hRH hprimitive hinv hzero
     have hinv_re_pos : 0 ≤ (1 / ρ).re := by
@@ -455,7 +455,7 @@ theorem summable_divisor_div_normSq_of_dirichletRH {N : ℕ} [NeZero N] (hN2 : 2
   · simp only [hD0, Int.cast_zero, one_div, zero_mul, Complex.reCLM_apply, Complex.zero_re,
       zero_div]
   · have hzero : DirichletCharacter.completedLFunction χ ρ = 0 :=
-      dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD0
+      completed_zero_of_divisor_ne_zero hne hD0
     have hre_half : ρ.re = (1 : ℝ) / 2 :=
       completedLFunction_zero_re_eq_half_of_dirichletRH hRH hprimitive hinv hzero
     have hterm := genusOneTerm_re_eq_of_re_eq_half hre_half
@@ -507,7 +507,7 @@ theorem norm_completedReciprocalZeroTerm_eq {N : ℕ} [NeZero N] {χ : Dirichlet
         fun z _ => hdiff.analyticAt z
       exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg hanalytic ρ
     have hzero : DirichletCharacter.completedLFunction χ ρ = 0 :=
-      dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD0
+      completed_zero_of_divisor_ne_zero hne hD0
     have hre_half : ρ.re = (1 : ℝ) / 2 :=
       completedLFunction_zero_re_eq_half hGRH hprimitive hne hinv hzero
     have hconj : (1 : ℂ) - ρ = starRingEnd ℂ ρ := by
@@ -552,7 +552,7 @@ theorem tsum_divisor_inv_normSq_eq_two_mul_zeroMass_of_dirichletRH {N : ℕ} [Ne
   by_cases hD0 : D = 0
   · simp only [hD0, Int.cast_zero, zero_div, one_div, Complex.inv_re, zero_mul, mul_zero]
   · have hzero : DirichletCharacter.completedLFunction χ ρ = 0 :=
-      dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD0
+      completed_zero_of_divisor_ne_zero hne hD0
     have hre_half : ρ.re = (1 : ℝ) / 2 :=
       completedLFunction_zero_re_eq_half_of_dirichletRH hRH hprimitive hinv hzero
     have hInvRe : (1 / ρ).re = (1 : ℝ) / 2 / Complex.normSq ρ := by

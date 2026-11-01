@@ -45,7 +45,7 @@ theorem tendsto_completedLogZeroTerm_div_scale {q : ℕ} [NeZero q] {χ : Dirich
   by_cases hD : MeromorphicOn.divisor χ.completedLFunction Set.univ ρ = 0
   · simpa only [completedLogZeroTerm, hD, Int.cast_zero, zero_mul, zero_div] using
       (tendsto_const_nhds : Filter.Tendsto (fun _ : ℝ ↦ (0 : ℂ)) Filter.atTop (nhds 0))
-  · have hz := dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD
+  · have hz := completed_zero_of_divisor_ne_zero hne hD
     have hre := completedLFunction_zero_re_lt_one hne hz
     have hr : Filter.Tendsto (fun x : ℝ ↦ x ^ (ρ.re - 1)) Filter.atTop (nhds 0) := by
       have h := tendsto_rpow_neg_atTop (sub_pos.mpr hre)

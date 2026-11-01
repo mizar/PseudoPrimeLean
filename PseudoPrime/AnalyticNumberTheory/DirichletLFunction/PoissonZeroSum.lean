@@ -37,7 +37,7 @@ theorem completed_genusTerm_re_eq_poisson_add_inverse {q : ℕ} [NeZero q]
     simp only [hD, Int.cast_zero, zero_mul, Complex.zero_re]
   · have hr :=
       completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv
-        (dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD)
+        (completed_zero_of_divisor_ne_zero hne hD)
     change ((D : ℂ) * _).re = (D : ℝ) * _
     rw [← Complex.ofReal_intCast, Complex.re_ofReal_mul, Complex.add_re, one_div (s - ρ),
       Complex.inv_re, Complex.sub_re, hr]
@@ -58,7 +58,7 @@ theorem completed_inverseTerm_eq_half_inverseSquare {q : ℕ} [NeZero q] {χ : D
     simp only [hD, Int.cast_zero, zero_mul, zero_div, mul_zero]
   · have hr :=
       completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv
-        (dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD)
+        (completed_zero_of_divisor_ne_zero hne hD)
     rw [one_div ρ, Complex.inv_re, hr]
     ring
 

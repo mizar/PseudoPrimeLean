@@ -48,7 +48,7 @@ theorem summable_divisor_div_normSq_unconditionally {q : ℕ} [NeZero q] (hq : 2
       simp only [near, ite_eq_left hnorm, f, h, Int.cast_zero, zero_div]
     exact
       ⟨by simpa only [Metric.mem_closedBall, dist_zero_right] using hnorm,
-        dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hDv⟩
+        completed_zero_of_divisor_ne_zero hne hDv⟩
   have hfarNonneg (ρ : ℂ) : 0 ≤ far ρ := by
     dsimp only [far]
     split

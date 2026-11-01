@@ -83,7 +83,7 @@ theorem tsum_norm_regularizedLogHalfZeroTerm_le_truncated_parts {q : ℕ} [NeZer
             zero_mul, zero_div, mul_zero, sub_self, norm_zero]
         rw [hz]
         exact add_nonneg (add_nonneg hsn htn) hun
-      · have hz := dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD
+      · have hz := completed_zero_of_divisor_ne_zero hne hD
         have hlo := (completedLFunction_zero_re_pos hp hinv hz).le
         have hhi := (completedLFunction_zero_re_lt_one hne hz).le
         by_cases hr : ρ.re ≤ σ

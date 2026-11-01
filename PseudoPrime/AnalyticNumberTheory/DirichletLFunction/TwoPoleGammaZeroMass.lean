@@ -53,7 +53,7 @@ theorem gamma_zeroMass_le_of_poissonDifferenceWeight_majorant {q : ℕ} [NeZero 
     · simp only [hD, Int.cast_zero, zero_mul]
     · have hr :=
         completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv
-          (dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD)
+          (completed_zero_of_divisor_ne_zero hne hD)
       have hρ : ρ = (1 / 2 : ℂ) + Complex.I * ρ.im := by
         calc
           ρ = (ρ.re : ℂ) + (ρ.im : ℂ) * Complex.I := (Complex.re_add_im ρ).symm

@@ -28,7 +28,7 @@ theorem completedLogHalfZeroTerm_mem_height_ledger_unconditionally {q : ℕ} [Ne
     intro h
     apply hnz
     simp only [completedLogHalfZeroTerm, h, Int.cast_zero, zero_mul, zero_div]
-  have hz := dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD
+  have hz := completed_zero_of_divisor_ne_zero hne hD
   have hrpos := completedLFunction_zero_re_pos hp hinv hz
   have hrlt := completedLFunction_zero_re_lt_one hne hz
   apply mem_completedZerosInRectangle_iff.mpr ⟨?_, hz⟩

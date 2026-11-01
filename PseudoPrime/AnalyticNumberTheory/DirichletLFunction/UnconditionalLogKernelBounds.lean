@@ -186,7 +186,7 @@ theorem norm_regularizedLogHalfZeroTerm_le_low_re {q : ℕ} [NeZero q] {χ : Dir
   · have hDz : MeromorphicOn.divisor χ.completedLFunction Set.univ ρ = 0 := hD
     simp only [regularizedLogHalfZeroTerm, completedLogHalfZeroTerm, hDz, Int.cast_zero, zero_mul,
       zero_div, mul_zero, sub_self, norm_zero, le_refl]
-  · have hz := dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD
+  · have hz := completed_zero_of_divisor_ne_zero hne hD
     have hρ : ρ ≠ 0 := by
       intro he
       exact dirichletCompletedLFunction_zero_ne_zero_of_primitive hp hne (he ▸ hz)

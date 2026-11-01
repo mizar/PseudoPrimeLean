@@ -111,7 +111,7 @@ theorem gamma_zeroMass_lt_of_prefix_error {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     · simp only [hD, Int.cast_zero, zero_mul, le_refl]
     · have hr :=
         completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv
-          (dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD)
+          (completed_zero_of_divisor_ne_zero hne hD)
       have he : ρ = (1 / 2 : ℂ) + Complex.I * ρ.im := by
         calc
           ρ = (ρ.re : ℂ) + (ρ.im : ℂ) * Complex.I := (Complex.re_add_im ρ).symm

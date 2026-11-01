@@ -32,7 +32,7 @@ private theorem norm_gamma_kernelZeroTerm_eq_adaptive {m : ℕ} [NeZero m]
   · change ‖(D : ℂ) * Complex.Gamma (Complex.I * ρ.im + 1 / 2)‖ = (D : ℝ) * ‖Complex.Gamma ρ‖
     rw [hD]
     norm_num only [Int.cast_zero, zero_mul, norm_zero]
-  · have hz := dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD
+  · have hz := completed_zero_of_divisor_ne_zero hne hD
     have hr := completedLFunction_zero_re_eq_half hGRH hp hne hinv hz
     have he : Complex.I * (ρ.im : ℂ) + 1 / 2 = ρ := by
       apply Complex.ext

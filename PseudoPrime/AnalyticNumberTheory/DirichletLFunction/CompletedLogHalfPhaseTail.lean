@@ -1061,7 +1061,7 @@ theorem finite_completed_divisor_support_below_height {N : ℕ} [NeZero N]
   let f : ℂ → ℂ := fun z => z + ((1 / 2 : ℝ) : ℂ)
   apply Set.Finite.subset (hf.image f)
   intro ρ hρ
-  have hz := dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hρ.2
+  have hz := completed_zero_of_divisor_ne_zero hne hρ.2
   have hr := completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv hz
   rw [Set.mem_image]
   refine ⟨ρ - ((1 / 2 : ℝ) : ℂ), ?_, ?_⟩

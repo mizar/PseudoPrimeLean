@@ -41,7 +41,7 @@ theorem shifted_poisson_term_eq_height_kernel {q : ℕ} [NeZero q] {χ : Dirichl
     simp only [hD, Int.cast_zero, zero_mul]
   · have hr :=
       completedLFunction_zero_re_eq_half_of_dirichletRH hRH hp hinv
-        (dirichletCompletedLFunction_zero_of_divisor_univ_ne_zero hne hD)
+        (completed_zero_of_divisor_ne_zero hne hD)
     have he :
       Complex.normSq ((((1 + r : ℝ) : ℂ) + t * Complex.I) - ρ) =
         (1 / 2 + r) ^ 2 + (t - ρ.im) ^ 2 := by
