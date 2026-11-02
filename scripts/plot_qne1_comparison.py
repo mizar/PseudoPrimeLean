@@ -24,13 +24,16 @@ from matplotlib.ticker import FixedLocator, FuncFormatter, NullLocator
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = Path(__file__).resolve().parent / "data"
 KAPPA = 0.01 / (1 + math.sqrt(0.99))
-FOUR_POLE_PROFILES = [(79 / 100, 900000000), (39 / 50, 14400000000),
-                      (777 / 1000, 1440000000000)]
+PREVIOUS_FOUR_POLE_PROFILES = ((79 / 100, 900000000), (39 / 50, 14400000000),
+                               (777 / 1000, 1440000000000))
+FOUR_POLE_PROFILES = [(79 / 100, 4000000), (39 / 50, 25000000),
+                      (777 / 1000, 1600000000)]
 
 
-def four_pole_cumulative(L: np.ndarray) -> np.ndarray:
-    """Three-row minimum from FourPoleReducedBounds.lean, including earlier inputs."""
-    return np.minimum.reduce([c * np.maximum(E, L)**2 for c, E in FOUR_POLE_PROFILES])
+def four_pole_cumulative(L: np.ndarray, profiles=None) -> np.ndarray:
+    """Three-row common-scale minimum, including inputs below each row's entrance."""
+    rows = FOUR_POLE_PROFILES if profiles is None else profiles
+    return np.minimum.reduce([c * np.maximum(E, L)**2 for c, E in rows])
 
 
 def refined_elementary_radius(L: np.ndarray) -> np.ndarray:
@@ -39,46 +42,28 @@ def refined_elementary_radius(L: np.ndarray) -> np.ndarray:
     return (level + (24 / 5) * np.log(level) + 2)**2
 
 
+def precise_saving_candidates(L: np.ndarray) -> np.ndarray:
+    """Certified Ra/R31 cumulative radii at the original quadratic level."""
+    level = L + math.log(4)
+    return np.stack([
+        (level + (24 / 5) * np.log(level) + 7031 / 5000)**2,
+        ((33 / 31) * level + (4 / 5) * np.log(level) + 18327 / 2000)**2,
+    ])
+
+
+def quarter_negative_candidate(L: np.ndarray) -> np.ndarray:
+    """Negative quarter-logarithm candidate, inherited only inside its guard."""
+    return np.where(L >= 500,
+        (99 / 40) * ((500 / 821) * (L + 7 / 5) +
+                     (11 / 10) * np.log(L + 7 / 5) + 6)**2, np.inf)
+
+
 def non_one_candidates(L: np.ndarray) -> np.ndarray:
     """Dedicated non-one candidates; these must never enter the negative-only plot."""
     return np.stack([
         np.where(L < math.log(1000000), 47.0, np.inf),
         (4 / 5) * np.maximum(22221, L)**2,
     ])
-
-
-def plot_four_pole_cumulative(output_dir: Path) -> None:
-    """Show all three certified reduced entrances shared by both witness maxima."""
-    L = np.unique(np.concatenate([np.geomspace(7e8, 2e12, 6001),
-                                  np.array([E for _, E in FOUR_POLE_PROFILES])]))
-    candidate = four_pole_cumulative(L) / L**2
-    combined = np.minimum(0.8, candidate)
-    assert np.all(combined <= 0.8)
-    assert np.isclose(combined[-1], 777 / 1000)
-    assert combined[-1] < 39 / 50
-    fig, ax = plt.subplots(figsize=(10, 5.5))
-    entrance_labels = [r"9\cdot10^8", r"1.44\cdot10^{10}", r"1.44\cdot10^{12}"]
-    for (c, E), color, entrance_label in zip(
-            FOUR_POLE_PROFILES, ["#3977a8", "#009e73", "#aa55aa"], entrance_labels):
-        ax.plot(L, c * np.maximum(E, L)**2 / L**2, color=color, linewidth=1.3,
-                label=fr"$c={c:g},\quad E={entrance_label}$")
-        ax.axvline(E, color=color, linestyle=":", linewidth=0.8)
-    ax.axhline(0.8, color="#666666", linestyle="--", label="Quadratic bound (4/5)")
-    ax.plot(L, combined, color="#d55e00", linewidth=2.5, label="Minimum with 4/5")
-    ax.set(xscale="log", xlabel=r"$L=\ln N$",
-           ylabel=r"Upper bound divided by $L^2$", ylim=(0.775, 0.802),
-           title="Reduced fourth-pole entrances for both cumulative witness maxima")
-    ax.grid(color="#e1e5e9", linewidth=0.6)
-    ax.set_yticks([0.777, 0.78, 0.79, 0.8])
-    ax.legend(loc="upper right", fontsize=10)
-    fig.tight_layout()
-    stem = output_dir / "q_four_pole_high_comparison"
-    fig.savefig(stem.with_suffix(".svg"), metadata={"Date": None})
-    svg = stem.with_suffix(".svg")
-    svg.write_text("\n".join(line.rstrip() for line in svg.read_text(encoding="utf-8").splitlines())
-                   + "\n", encoding="utf-8")
-    fig.savefig(stem.with_suffix(".png"), dpi=180)
-    plt.close(fig)
 
 
 def crossing() -> float:
@@ -95,7 +80,7 @@ def crossing() -> float:
     return (lo + hi) / 2
 
 
-def common_endpoint_candidates(L: np.ndarray) -> np.ndarray:
+def common_endpoint_candidates(L: np.ndarray, four_pole_profiles=None) -> np.ndarray:
     """Proved negative-witness candidates, also valid for non-one maxima by inclusion."""
     return np.stack([
         refined_elementary_radius(L),
@@ -104,11 +89,11 @@ def common_endpoint_candidates(L: np.ndarray) -> np.ndarray:
         np.where(L <= 1609 / 25, 4093.0, np.inf),
         (99 / 100) * np.maximum(290, L)**2,
         (4 / 5) * np.maximum(46000, L)**2,
-        four_pole_cumulative(L),
+        four_pole_cumulative(L, four_pole_profiles),
     ])
 
 
-def upper(L: np.ndarray) -> np.ndarray:
+def upper(L: np.ndarray, four_pole_profiles=None) -> np.ndarray:
     """Published bounds, extended to real B for drawing; theorems use natural B."""
     baseline = np.select(
         [L < math.log(10), L < math.log(2984), L < math.log(3295),
@@ -127,7 +112,8 @@ def upper(L: np.ndarray) -> np.ndarray:
         (L >= 3259 / 25) & (L <= 16277 / 100),
         ((3200 / 3241) * (L - 18 / 25))**2, np.inf))
     return np.minimum(old, np.min(np.concatenate([
-        common_endpoint_candidates(L), non_one_candidates(L),
+        common_endpoint_candidates(L, four_pole_profiles), non_one_candidates(L),
+        precise_saving_candidates(L), quarter_negative_candidate(L)[None, :],
     ]), axis=0))
 
 
@@ -181,7 +167,8 @@ def main() -> None:
         np.where((L >= 3259 / 25) & (L <= 16277 / 100),
                  ((3200 / 3241) * (L - 18 / 25))**2, np.inf),
     ])
-    direct = np.concatenate([direct, common_endpoint_candidates(L), non_one_candidates(L)])
+    direct = np.concatenate([direct, common_endpoint_candidates(L), non_one_candidates(L),
+                             precise_saving_candidates(L), quarter_negative_candidate(L)[None, :]])
     np.testing.assert_allclose(U, np.min(direct, axis=0), rtol=2e-15)
     assert np.all(U > 0)
     assert np.all(U[L >= math.log(10)] <= L[L >= math.log(10)]**2 * (1 + 1e-14))
@@ -261,7 +248,6 @@ def main() -> None:
     print(f"Wrote {stem}.svg and .png")
     print(f"Double-logarithm / two-pole crossing: ln B = {root:.12f}; "
           f"log10 B = {root / math.log(10):.12f}")
-    plot_four_pole_cumulative(args.output_dir)
     print(f"Checked {len(L)} curve samples against {len(direct)} candidates, 49 recorded maxima, "
           "and the crossover residual.")
 

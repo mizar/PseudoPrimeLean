@@ -657,33 +657,6 @@ def endpoint79_upper(L: np.ndarray) -> np.ndarray:
                     np.minimum(baseline, 79), baseline)
 
 
-def plot_endpoint79_guard(output_dir: Path) -> None:
-    """Show the certified local improvement without changing the tuned baseline."""
-    L = np.unique(np.concatenate([np.linspace(12.64, 12.665, 1800), [12.65, 12.659]]))
-    proof_interval = np.linspace(12.65, 12.659, 100)
-    assert np.all(upper(proof_interval) > 83)
-    assert np.all(endpoint79_upper(proof_interval) == 79)
-    fig, ax = plt.subplots(figsize=(9, 4.5))
-    ax.plot(L, upper(L), label="Tuned selected cutoff", color="#667788", linewidth=1.8)
-    ax.plot(L, endpoint79_upper(L), label="Guarded fixed-79 cutoff", color="#d55e00",
-            linewidth=1.8)
-    ax.axvspan(12.65, 12.659, color="#009e73", alpha=.12,
-               label="Lean-certified strict improvement interval")
-    ax.set_xlabel(r"$L=\ln n$")
-    ax.set_ylabel("Selected witness cutoff")
-    ax.set_title("Fixed-79 guard: local comparison")
-    ax.grid(color="#dddddd", linewidth=.5)
-    ax.legend(fontsize=9)
-    fig.tight_layout()
-    stem = output_dir / "mr_endpoint79_guard_comparison"
-    fig.savefig(stem.with_suffix(".svg"), metadata={"Date": None})
-    svg = stem.with_suffix(".svg")
-    svg.write_text("\n".join(line.rstrip() for line in svg.read_text(encoding="utf-8").splitlines())
-                   + "\n", encoding="utf-8")
-    fig.savefig(stem.with_suffix(".png"), dpi=180)
-    plt.close(fig)
-
-
 def gaussian_surplus_family(L: np.ndarray) -> np.ndarray:
     """MR GaussianSeededSurplus.lean with its actual two certified prefix floors."""
     return np.minimum(np.maximum(35000, gaussian_raw_bound(L, 4.185)),
@@ -696,74 +669,94 @@ def previous_next_tuned_upper(L: np.ndarray) -> np.ndarray:
     return np.where(L >= 63, np.minimum(baseline, gaussian_surplus_family(L)), baseline)
 
 
-def next_tuned_upper(L: np.ndarray) -> np.ndarray:
-    """Full NextTunedSelectedEnvelope with its original small-input guard."""
+def previous_gaussian_upper(L: np.ndarray) -> np.ndarray:
+    """Complete public minimum before replacing residual 7.6 by residual 7.2."""
     previous = previous_next_tuned_upper(L)
     return np.where(L >= 63, np.minimum(previous, gaussian_low_profile(L, 9.1, 7.6)), previous)
 
 
-def plot_next_tuned(output_dir: Path) -> None:
-    """Compare the full adopted candidates with the preserved tuned baseline."""
-    for lo, hi in [(12.65, 12.659), (245, 255), (300, 310)]:
-        probe = np.linspace(lo, hi, 101)
-        assert np.all(next_tuned_upper(probe) < upper(probe))
-    fig, axes = plt.subplots(2, 2, figsize=(11, 8))
-    for ax, (lo, hi, title, proof_lo, proof_hi) in zip(axes.flat, [
-            (12.64, 12.665, "Fixed-79", 12.65, 12.659),
-            (99, 102, "1000 prefix surplus", 100, 101),
-            (240, 260, "35000 prefix surplus", 245, 255),
-            (295, 350, "50000 prefix surplus", 300, 350)]):
-        L = np.linspace(lo, hi, 2500)
-        reference = previous_next_tuned_upper(L) if title == "1000 prefix surplus" else upper(L)
-        label = "Previous public minimum" if title == "1000 prefix surplus" else "Tuned baseline"
-        ax.plot(L, reference, label=label, color="#667788", linewidth=1.8)
-        ax.plot(L, next_tuned_upper(L), label="Next tuned", color="#d55e00", linewidth=1.8)
-        ax.axvspan(proof_lo, proof_hi, color="#009e73", alpha=.12,
-                   label="Certified strict interval")
-        ax.set_title(title)
-        ax.set_xlabel(r"$L=\ln n$")
-        ax.set_ylabel("Selected witness cutoff")
-        ax.grid(color="#dddddd", linewidth=.5)
-        ax.legend(fontsize=8)
-    fig.tight_layout()
-    stem = output_dir / "mr_next_tuned_comparison"
-    fig.savefig(stem.with_suffix(".svg"), metadata={"Date": None})
-    svg = stem.with_suffix(".svg")
-    svg.write_text("\n".join(line.rstrip() for line in svg.read_text(encoding="utf-8").splitlines())
-                   + "\n", encoding="utf-8")
-    fig.savefig(stem.with_suffix(".png"), dpi=170)
-    plt.close(fig)
+def next_tuned_nested_upper(L: np.ndarray) -> np.ndarray:
+    """Retained nested assembly for checking the proved six-branch pruning."""
+    previous = previous_next_tuned_upper(L)
+    return np.where(L >= 63, np.minimum(previous, gaussian_low_profile(L, 9.1, 7.2)), previous)
+
+
+def next_tuned_upper(L: np.ndarray) -> np.ndarray:
+    """NextTunedNormalSelected: the equal formula without four plus two dominated branches."""
+    baseline = sharp_upper(L)
+    finite = np.select([L <= cap for _, cap in TUNED_FINITE_STEPS],
+        [np.minimum(baseline, b) for b, _ in TUNED_FINITE_STEPS], default=baseline)
+    high = np.minimum.reduce([finite] +
+        [np.where(L >= T, C * L**2, np.inf) for C, T in TUNED_TRIANGULAR_PROFILES])
+    large = np.minimum.reduce([high, gaussian_surplus_family(L),
+                              gaussian_low_profile(L, 9.1, 7.2)])
+    low = np.minimum(finite, np.where(L <= 12659 / 1000, 79, finite))
+    return np.where(L < math.log(3000), baseline, np.where(L >= 63, large, low))
+
+
+def gaussian_history_base(L: np.ndarray, residual: float = 7.2) -> np.ndarray:
+    """Candidate-A common-scale base; residual 7.6 retains the previous Gaussian comparison."""
+    return np.minimum(L**2, gaussian_low_profile(np.maximum(63, L), 9.1, residual))
+
+
+def gaussian_histories(residual: float = 7.2) -> list[float]:
+    """Evaluate the same entrance recurrence, with the proved Gaussian base."""
+    histories: list[float] = []
+    for i, (_, entrance) in enumerate(HISTORY_TRIANGULAR_PROFILES):
+        base = float(gaussian_history_base(np.array([float(entrance)]), residual)[0])
+        histories.append(min([base] +
+            [max(histories[j], float(HISTORY_TRIANGULAR_PROFILES[j][0]) * entrance**2)
+             for j in range(i)]))
+    return histories
+
+
+def gaussian_cumulative(L: np.ndarray, residual: float = 7.2) -> np.ndarray:
+    """All-scale Gaussian-base history, without pointwise-envelope monotonicity."""
+    histories = gaussian_histories(residual)
+    return np.minimum.reduce([gaussian_history_base(L, residual)] +
+        [np.maximum(H, float(C) * L**2) for H, (C, _) in
+         zip(histories, HISTORY_TRIANGULAR_PROFILES)])
+
+
+def square_base_cumulative(L: np.ndarray) -> np.ndarray:
+    """Complete previous eight-profile history; retained for the same-guard comparison."""
+    return np.minimum.reduce([L**2] +
+        [np.maximum(float(H), float(C) * L**2) for H, (C, _) in
+         zip(triangular_histories(), HISTORY_TRIANGULAR_PROFILES)])
 
 
 def plot_mr_cumulative(output_dir: Path) -> None:
-    """Compare the retained seven-profile majorant with the proved eight-profile history."""
-    histories = triangular_histories()
+    """Show only the current high-scale cumulative bound and pointwise candidates."""
+    histories = gaussian_histories()
+    assert histories[0] < (59 / 125) * (3e10)**2
+    assert np.isclose(histories[1], (4603 / 10000) * (4e10)**2, rtol=2e-15)
+    assert np.allclose(histories[2:], [float(H) for H in triangular_histories()[2:]],
+                       rtol=2e-15)
     entrances = np.array([T for _, T in HISTORY_TRIANGULAR_PROFILES])
-    recoveries = np.array([math.sqrt(float(H / C)) for H, (C, _) in
+    recoveries = np.array([math.sqrt(H / float(C)) for H, (C, _) in
                            zip(histories, HISTORY_TRIANGULAR_PROFILES)])
-    L = np.unique(np.concatenate([np.geomspace(1e10, 1e14, 3000),
-                                  entrances, recoveries]))
-    previous = np.minimum.reduce([np.ones_like(L)] +
-        [np.maximum((T / L)**2, C) for C, T in TUNED_TRIANGULAR_PROFILES])
-    cumulative = np.minimum.reduce([np.ones_like(L)] +
-        [np.maximum(float(H) / L**2, float(C)) for H, (C, _) in
-         zip(histories, HISTORY_TRIANGULAR_PROFILES)])
-    pointwise = np.minimum.reduce([np.ones_like(L)] +
+    fig, ax = plt.subplots(figsize=(10, 5.5))
+    local = np.linspace(63, 180, 2401)
+    assert np.all(gaussian_cumulative(local) <= gaussian_cumulative(local, 7.6) * (1 + 1e-14))
+    proof_band = np.linspace(100, 101, 101)
+    assert np.all(gaussian_cumulative(proof_band) < square_base_cumulative(proof_band))
+    L = np.unique(np.concatenate([np.geomspace(1e10, 1e14, 3000), entrances, recoveries]))
+    cumulative = gaussian_cumulative(L) / L**2
+    previous = square_base_cumulative(L) / L**2
+    pointwise = np.minimum.reduce([gaussian_history_base(L) / L**2] +
         [np.where(L >= T, float(C), np.inf) for C, T in HISTORY_TRIANGULAR_PROFILES])
     assert np.all(cumulative >= pointwise - 1e-14)
     assert np.all(cumulative <= previous + 1e-14)
-    assert np.all(cumulative[L >= 2e12] < previous[L >= 2e12])
-    fig, ax = plt.subplots(figsize=(10, 5.5))
     ax.semilogx(L, cumulative, color="#d55e00", linewidth=2.5,
-                label="Eight profiles with reduced entrance history")
-    ax.semilogx(L, previous, color="#777777", linestyle=":",
-                label="Previous seven-profile cumulative bound")
+                     label="Gaussian-base eight-profile history")
     ax.semilogx(L, pointwise, color="#3977a8", linestyle="--",
-                label="Pointwise eight-profile bound")
+                     label="Pointwise Gaussian and eight profiles")
+    ax.axhline(4 / 9, color="#333333", linestyle=":", linewidth=1.7,
+               label=r"$(4/9)(\ln N)^2$ reference")
     ax.set(xlabel=r"$L=\ln N$", ylabel=r"Upper bound divided by $L^2$",
-           title="MR least rejecting prime: cumulative and pointwise bounds")
+                title="Cumulative bounds at high scales")
     ax.grid(color="#e1e5e9", linewidth=0.6)
-    ax.legend(loc="upper right", fontsize=9)
+    ax.legend(loc="upper right", fontsize=8)
     fig.tight_layout()
     stem = output_dir / "mr_cumulative_high_comparison"
     fig.savefig(stem.with_suffix(".svg"), metadata={"Date": None})
@@ -953,13 +946,14 @@ def main() -> None:
         assert all(passes(a) for a in primes[:-1])
 
     U = next_tuned_upper(L)
+    np.testing.assert_allclose(U, next_tuned_nested_upper(L), rtol=2e-15)
     assert np.all(np.array(ps) <= next_tuned_upper(record_L))
     fig, ax = plt.subplots(figsize=(12, 8))
     fig.subplots_adjust(left=.09, right=.95, top=.87, bottom=.13)
     ax.plot(np.log(L), U, color="#d55e00", linewidth=2.5,
             label=r"Pointwise bound $U_{\mathrm{MR}}(n)$ (comparison table)", zorder=3)
-    ax.plot(np.log(L), L**2, color="#333333", linewidth=1.7, linestyle=":",
-            label=r"$(\ln n)^2$", zorder=4)
+    ax.plot(np.log(L), (4 / 9) * L**2, color="#333333", linewidth=1.7, linestyle=":",
+            label=r"$(4/9)(\ln n)^2$", zorder=4)
     ax.step(np.log(record_L), ps, where="post", color="#007f80", linewidth=2,
             zorder=5)
     ax.scatter(np.log(record_L), ps, s=27, color="#007f80", zorder=7,
@@ -985,7 +979,7 @@ def main() -> None:
     inset = ax.inset_axes([.045, .53, .35, .28])
     keep = L >= math.log(3000)
     inset.plot(np.log(L[keep]), U[keep]/L[keep]**2, color="#d55e00", linewidth=2)
-    inset.axhline(1, color="#333333", linestyle=":", linewidth=1.3)
+    inset.axhline(4 / 9, color="#333333", linestyle=":", linewidth=1.3)
     inset.set_yscale("log")
     inset.set_xlim(math.log(math.log(3000)), math.log(Lmax))
     inset.set_ylim(.3, 1.015)
@@ -1006,42 +1000,22 @@ def main() -> None:
                    + "\n", encoding="utf-8")
     fig.savefig(stem.with_suffix(".png"), dpi=180)
     plt.close(fig)
-    # Supplement the production plot with direct old-sharp versus tuned comparisons.
-    fig, axes = plt.subplots(1, 3, figsize=(15, 4.3))
-    for ax, (lo, hi, label) in zip(axes, [(8.05, 12.7, "Fixed-prime cutoffs"),
-            (95., 300., "Gaussian and seeded"), (3e10, 1.9e12, "Triangular profiles")]):
-        x = np.linspace(lo, hi, 5000)
-        ax.plot(x, sharp_upper(x), label="055559 sharp", color="#667788", linewidth=1.6)
-        ax.plot(x, upper(x), label="Tuned", color="#d55e00", linewidth=1.6)
-        ax.set_title(label)
-        ax.set_xlabel(r"$L=\ln n$")
-        ax.set_ylabel("Selected witness bound")
-        ax.grid(color="#dddddd", linewidth=.5)
-        ax.legend(fontsize=8)
-    fig.tight_layout()
-    comparison = args.output_dir / "mr_tuned_vs_sharp"
-    fig.savefig(comparison.with_suffix(".svg"), metadata={"Date": None})
-    comparison_svg = comparison.with_suffix(".svg")
-    comparison_svg.write_text("\n".join(line.rstrip() for line in
-        comparison_svg.read_text(encoding="utf-8").splitlines()) + "\n", encoding="utf-8")
-    fig.savefig(comparison.with_suffix(".png"), dpi=160)
-    plt.close(fig)
     plot_mr_cumulative(args.output_dir)
-    plot_endpoint79_guard(args.output_dir)
-    plot_next_tuned(args.output_dir)
     report = {"small_interval_switch": 2047,
               "small_three_interval": [2047, 3000],
               "low_prime_steps": TUNED_FINITE_STEPS,
               "pointwise_radius_floor": 8, "pointwise_inverse_bisections": 64,
-              "gaussian_profiles": [{"floor": u, "residual": D} for u, D in
+              "retained_comparison_gaussian_profiles": [{"floor": u, "residual": D} for u, D in
                   TUNED_GAUSSIAN_PROFILES],
               "gaussian_profile_switches": [gaussian_floor_switch(u, D) for u, D in
                   [(9.1,9.29), (9.3,9.29), (9.3,8.7), (9.48,8.7),
                    (9.48,8.145), (9.79,8.145), (9.79,8.125)]],
               "gaussian_prefix": 722517/200000,
-              "gaussian_surplus_1000": {"floor": 9.1, "residual": 7.6,
+              "gaussian_surplus_1000": {"floor": 9.1, "residual": 7.2,
+                                        "previous_residual": 7.6, "index_four_threshold": 36.63,
                                         "prefix": 868517/200000, "log_guard": 63},
-              "gaussian_seeded_residuals": [5.619, 5.372],
+              "retained_comparison_seeded_residuals": [5.619, 5.372],
+              "gaussian_seeded_surplus_residuals": [4.185, 3.934],
               "gaussian_seeded_prefixes": [481117/100000, 983059/200000],
               "gaussian_seeded_switches": [gaussian_switch(N, D) for N, D in
                   [(35000, 5.619), (50000, 5.619), (50000, 5.372)]],
@@ -1052,9 +1026,16 @@ def main() -> None:
               "comparison_baseline": "sharpSelectedEnvelope",
               "sampled_selection_equality_checked": True,
               "baseline_sampled_monotonicity_checked": True,
-              "plotted_envelope": "nextTunedSelectedEnvelope",
+              "plotted_envelope": "nextTunedNormalSelected",
+              "canonical_plotted_envelope": "nextTunedSelectedEnvelope",
+              "plotted_selection_equality": "nextTunedSelected_eq_normal",
+              "removed_direct_gaussian_branches": 6,
+              "gaussian_A_comparison_interval": [105, 105.5],
+              "cumulative_gaussian_residual": 7.2,
+              "previous_cumulative_gaussian_residual": 7.6,
               "gaussian_strict_sample_interval": [100, 235.73],
-              "candidates_checked": len(candidates(L)),
+              "comparison_candidates_checked": len(candidates(L)),
+              "normal_form_checked_against_nested": True,
               "plot_scale_points_checked": len(L), "high_scale_probe_count": len(probe),
               "record_points_checked": len(records)}
     print(json.dumps(report, indent=2))

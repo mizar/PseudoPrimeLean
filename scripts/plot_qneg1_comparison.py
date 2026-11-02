@@ -5,7 +5,8 @@ Run with matplotlib installed. Horizontal positions are ln(ln B), labelled
 as powers of ten; vertical values use a logarithmic axis. Calculations use
 L = ln B so the enormous endpoints never need to be constructed.
 The common-scale fourth-pole branch covers all earlier inputs directly. Finite
-guards and the additive-two radius reuse the existing certificate leaves.
+guards reuse the existing certificate leaves. The precise-saving elementary
+and small-prime roots are certified without factoring every input.
 """
 
 from __future__ import annotations
@@ -17,7 +18,8 @@ import math
 from pathlib import Path
 
 from plot_qne1_comparison import (
-    DATA_DIR, ROOT, common_endpoint_candidates, power_ticks, refined_elementary_radius,
+    DATA_DIR, ROOT, PREVIOUS_FOUR_POLE_PROFILES, common_endpoint_candidates,
+    power_ticks, refined_elementary_radius, precise_saving_candidates,
 )
 import matplotlib.pyplot as plt
 import numpy as np
@@ -32,8 +34,8 @@ def elementary_radius(L: np.ndarray) -> np.ndarray:
     return refined_elementary_radius(L)
 
 
-def upper(L: np.ndarray) -> np.ndarray:
-    """Certified cumulative candidates, including common endpoints and the fixed cap."""
+def previous_upper(L: np.ndarray) -> np.ndarray:
+    """Complete preceding negative minimum, with its original rows and finite guards."""
     baseline = np.select([L < ENTRANCE, L < 290, L < 600, L < 19978 * math.log(10)],
                      [elementary_radius(L), 0.9999 * L**2, 0.99 * L**2,
                       (99 / 40) * ((500 / 821) * (L + 7 / 5) +
@@ -42,7 +44,15 @@ def upper(L: np.ndarray) -> np.ndarray:
     old = np.minimum(baseline,np.where(L >= 500,
         (99 / 40) * ((500 / 821) * (L + 7 / 5) +
                       (11 / 10) * np.log(L + 7 / 5) + 6)**2,np.inf))
-    return np.minimum(old, np.min(common_endpoint_candidates(L), axis=0))
+    return np.minimum(old, np.min(common_endpoint_candidates(L, PREVIOUS_FOUR_POLE_PROFILES),
+                                  axis=0))
+
+
+def upper(L: np.ndarray) -> np.ndarray:
+    """Certified cumulative minimum, retaining every preceding candidate and guard."""
+    return np.minimum.reduce([previous_upper(L),
+        np.min(common_endpoint_candidates(L), axis=0),
+        np.min(precise_saving_candidates(L), axis=0)])
 
 
 def main() -> None:
@@ -85,9 +95,15 @@ def main() -> None:
                                   (11 / 10) * np.log(L + 7 / 5) + 6)**2, np.inf),
         np.where(L >= 19978 * math.log(10), 0.8 * L**2, np.inf),
     ])
-    candidates = np.concatenate([candidates, common_endpoint_candidates(L)])
+    candidates = np.concatenate([candidates, common_endpoint_candidates(L),
+                                 precise_saving_candidates(L)])
     assert np.allclose(U, np.min(candidates, axis=0), rtol=1e-12, atol=0)
     assert upper(np.array([600.0]))[0] < .99 * 600**2
+    assert np.all(U <= previous_upper(L) * (1 + 2e-15))
+    for bits in [32, 64, 128, 256, 320]:
+        scale = np.array([bits * math.log(2)])
+        assert upper(scale)[0] < previous_upper(scale)[0]
+    assert upper(np.array([80 * math.log(2)]))[0] == 4093
 
     data_dir = DATA_DIR
     with (data_dir / "negative_records.csv").open(encoding="utf-8", newline="") as f:
@@ -140,6 +156,8 @@ def main() -> None:
     fig.subplots_adjust(left=0.115, right=0.97, top=0.87, bottom=0.19)
     ax.plot(np.log(L), U, color="#d55e00", linewidth=2.5,
             label=r"GRH cumulative upper bound $U_{-1}(N)$", zorder=3)
+    ax.plot(np.log(L), previous_upper(L), color="#7e8994", linewidth=1.2, linestyle="--",
+            label="Previous complete cumulative bound", zorder=2)
     ax.plot(np.log(L), L**2, color="#333333", linewidth=1.7, linestyle=":",
             label=r"$(\ln n)^2$", zorder=4)
     ax.step(actual_x, actual_y, where="post", color="#007f80", linewidth=2,
