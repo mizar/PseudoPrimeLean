@@ -61,6 +61,9 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.PrincipalLowerBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.ClippedAffineBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.SmallLogBound
 public import PseudoPrime.PrimeTestBounds.MillerRabin.FromLLS
+public import PseudoPrime.PrimeTestBounds.MillerRabin.FourNinthsCriterion
+public import PseudoPrime.PrimeTestBounds.MillerRabin.FourNinthsEnvelope
+public import PseudoPrime.PrimeTestBounds.MillerRabin.FourNinthsCumulative
 public import PseudoPrime.PrimeTestBounds.MillerRabin.ReciprocalGapAmbient
 public import PseudoPrime.PrimeTestBounds.MillerRabin.ReciprocalGapEndpointSelected
 public import PseudoPrime.PrimeTestBounds.MillerRabin.ReciprocalGapFullEndpoint
