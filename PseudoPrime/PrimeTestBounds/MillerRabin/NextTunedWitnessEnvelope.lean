@@ -11,6 +11,7 @@ public import PseudoPrime.LLS.PaperStatements.EndpointPrime79PlusData
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianSeededSurplus
 public import PseudoPrime.PrimeTestBounds.MillerRabin.EndpointPrime79Plus
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianSeededSurplusBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianSurplusBounds
 
 /-! # Public witness bounds from fixed-79 and actual Gaussian surplus -/
 
@@ -19,14 +20,16 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianSeededSurplusBound
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
 /-- Preserve the exact small branch and intersect the tuned baseline with the fixed-79 extension
-and the surplus seeded family. Every new candidate keeps its certified guard. -/
+and both Gaussian surplus candidates. Every new candidate keeps its certified guard. -/
 noncomputable def nextTunedWitnessEnvelope (n : ℕ) : ℝ :=
   if n < 3000 then smallIntervalBound n
   else
     min (tunedWitnessEnvelope n)
       (min (if Real.log n ≤ LLS.PaperStatements.prime79PlusCap then 79 else tunedWitnessEnvelope n)
-        (if 63 ≤ Real.log n then gaussianSeededSurplusFamily (Real.log n)
-        else tunedWitnessEnvelope n))
+        (min
+          (if 63 ≤ Real.log n then gaussianSeededSurplusFamily (Real.log n)
+          else tunedWitnessEnvelope n)
+          (if 63 ≤ Real.log n then gaussianSurplusBound (Real.log n) else tunedWitnessEnvelope n)))
 
 /-- The selected numerical expression uses the tuned selection in the same guarded minimum. -/
 noncomputable def nextTunedSelectedEnvelope (n : ℕ) : ℝ :=
@@ -34,8 +37,10 @@ noncomputable def nextTunedSelectedEnvelope (n : ℕ) : ℝ :=
   else
     min (tunedSelectedEnvelope n)
       (min (if Real.log n ≤ LLS.PaperStatements.prime79PlusCap then 79 else tunedSelectedEnvelope n)
-        (if 63 ≤ Real.log n then gaussianSeededSurplusFamily (Real.log n)
-        else tunedSelectedEnvelope n))
+        (min
+          (if 63 ≤ Real.log n then gaussianSeededSurplusFamily (Real.log n)
+          else tunedSelectedEnvelope n)
+          (if 63 ≤ Real.log n then gaussianSurplusBound (Real.log n) else tunedSelectedEnvelope n)))
 
 /-- Round the new guarded witness cutoff to the greatest permitted prime. -/
 noncomputable def nextTunedPrimeEnvelope (n : ℕ) : ℝ :=
@@ -73,7 +78,8 @@ This transfers the same least rejecting prime through all available certificates
 theorem nextTuned_lower_of_candidates {n : ℕ} (hN : 3000 ≤ n) {C : ℝ}
     (hB : C ≤ tunedWitnessEnvelope n)
     (hF : Real.log n ≤ LLS.PaperStatements.prime79PlusCap → C ≤ 79)
-    (hS : 63 ≤ Real.log n → C ≤ gaussianSeededSurplusFamily (Real.log n)) :
+    (hS : 63 ≤ Real.log n → C ≤ gaussianSeededSurplusFamily (Real.log n))
+    (hG : 63 ≤ Real.log n → C ≤ gaussianSurplusBound (Real.log n)) :
     C ≤ nextTunedWitnessEnvelope n := by
   rw [nextTunedWitnessEnvelope, ite_eq_right (not_lt.mpr hN)]
   apply le_min hB
@@ -81,9 +87,13 @@ theorem nextTuned_lower_of_candidates {n : ℕ} (hN : 3000 ≤ n) {C : ℝ}
   · by_cases h : Real.log n ≤ LLS.PaperStatements.prime79PlusCap
     · exact (hF h).trans_eq (ite_eq_left h).symm
     · exact hB.trans_eq (ite_eq_right h).symm
-  · by_cases h : 63 ≤ Real.log n
-    · exact (hS h).trans_eq (ite_eq_left h).symm
-    · exact hB.trans_eq (ite_eq_right h).symm
+  · apply le_min
+    · by_cases h : 63 ≤ Real.log n
+      · exact (hS h).trans_eq (ite_eq_left h).symm
+      · exact hB.trans_eq (ite_eq_right h).symm
+    · by_cases h : 63 ≤ Real.log n
+      · exact (hG h).trans_eq (ite_eq_left h).symm
+      · exact hB.trans_eq (ite_eq_right h).symm
 
 /-- At the fixed-79 entrance the new cutoff is at most 79 above the small branch. -/
 theorem nextTuned_le79 {n : ℕ} (hN : 3000 ≤ n)
@@ -99,16 +109,20 @@ theorem nextTuned_le_seeded {n : ℕ} (f : Bool) (hL : 63 ≤ Real.log n) :
     min (tunedWitnessEnvelope n)
         (min
           (if Real.log n ≤ LLS.PaperStatements.prime79PlusCap then 79 else tunedWitnessEnvelope n)
-          (if 63 ≤ Real.log n then gaussianSeededSurplusFamily (Real.log n)
-          else tunedWitnessEnvelope n)) ≤
+          (min
+            (if 63 ≤ Real.log n then gaussianSeededSurplusFamily (Real.log n)
+            else tunedWitnessEnvelope n)
+            (if 63 ≤ Real.log n then gaussianSurplusBound (Real.log n)
+            else tunedWitnessEnvelope n))) ≤
       gaussianSeededSurplusFamily (Real.log n) :=
-    (min_le_right _ _).trans ((min_le_right _ _).trans (le_of_eq (ite_eq_left hL)))
+    (min_le_right _ _).trans
+      ((min_le_right _ _).trans ((min_le_left _ _).trans (le_of_eq (ite_eq_left hL))))
   cases f
   · exact h.trans (min_le_left _ _)
   · exact h.trans (min_le_right _ _)
 
 /-- Under GRH each odd composite above one has a least rejecting prime below the new min.
-Transfer both actual new witness bounds by leastness, preserving the exact small branch. -/
+Transfer the actual candidate bounds by leastness, preserving the exact small branch. -/
 theorem exists_least_nextTunedEnvelope {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ,
@@ -130,7 +144,8 @@ theorem exists_least_nextTunedEnvelope {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc :
       ⟨p, hp, hr,
         nextTuned_lower_of_candidates (le_of_not_gt hN) hb
           (fun hL ↦ transfer (exists_prime_endpoint79Plus hn ho hc hGRH hL))
-          (fun hL ↦ transfer (exists_prime_seededSurplusFamily ho hc hGRH hL)),
+          (fun hL ↦ transfer (exists_prime_seededSurplusFamily ho hc hGRH hL))
+          (fun hL ↦ transfer (exists_prime_gaussianSurplus ho hc hGRH hL)),
         hm⟩
 
 /-- Under GRH the guarded new cutoff contains an actual prime rejecting strong MR. -/
