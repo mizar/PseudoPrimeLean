@@ -214,6 +214,34 @@ $B < 1000000$ では非1値停止の2種類が47以下となる。
 47の上界を純粋負値停止へ転用しない。750と1000000では、それぞれの有限候補を外す。
 空の入力集合に対する既存の定義も保持し、停止最大は0、古典試行回数最大は1となる。
 
+### 精密savingの二式と空域の試行回数
+
+[PreciseSavingBounds.lean](../PseudoPrime/PrimeTestBounds/Selfridge/PreciseSavingBounds.lean)
+は [PseudoSquareの二式](PseudoSquare.md#素因数のsavingを保持した二つの累積上界)
+から、古典・Wheel30の負値停止と非1値停止の4最大へ上界を移す。
+$U(B)=\min(R_a(B),R_{31}(B))$ とすると、GRHの下で全ての自然数上端について
+各停止最大は $U(B)$ 以下となる。例外27・15を吸収できることも証明している。
+
+$B \ge 3$ なら、両方の古典試行回数最大は $(U(B)-3)/2$ 以下となる。
+全自然数の上端には
+
+$$
+T(B)\le \max\left(1,\frac{U(B)-3}{2}\right)
+$$
+
+を用いる。 $B < 3$ では停止最大が0でも試行回数最大は1となるため、
+この場合に床1を外してはならない。
+`selfridgeMaxima_le_preciseAll`、 `classicalTrials_le_preciseRadii`、
+`classicalTrials_le_preciseAll` が対応する。
+Jacobiの非1値専用候補を純粋負値停止へ移すことはしない。
+
+同ファイルは旧候補全体も保持した `PseudoSquare.preciseSavingEnvelope` に対して、
+同じ4停止最大・sharp試行回数・全域試行回数の上界を与える。
+`selfridgeMaxima_le_preciseSaving`、 `classicalTrials_le_preciseSaving`、
+`classicalTrials_le_preciseSavingAll` が対応する。
+$44 \le \ln B \le 46$ では、4停止最大が4093未満、両古典試行回数最大が2045未満となる。
+非1値専用の旧上界全体への厳密改善を、この4093との比較から推論しない。
+
 ### 四極核の自由尺度と短縮した入口
 
 [FourPoleCommonBounds.lean](../PseudoPrime/PrimeTestBounds/Selfridge/FourPoleCommonBounds.lean) は、
@@ -221,13 +249,30 @@ GRH下で、全ての自然数上端に対する4種類の停止最大を
 $(777/1000)\max\lbrace10^{18},\ln B\rbrace^2$ 以下に抑える。
 自由な共通尺度を使って入口未満の入力も覆い、従来の累積候補より小さくする。
 
-さらに [FourPoleReducedBounds.lean](../PseudoPrime/PrimeTestBounds/Selfridge/FourPoleReducedBounds.lean) の
-`selfridgeMaxima_le_fourPole_reduced` は、短縮した3入口の最小値
-`PseudoSquare.fourPoleReducedBound B` を4種類全てへ移す。
-`classicalTrials_le_fourPole_reduced` は、両方の古典試行回数最大を
+さらに [FourPoleAbelBounds.lean](../PseudoPrime/PrimeTestBounds/Selfridge/FourPoleAbelBounds.lean) の
+`selfridgeMaxima_le_fourPole_abel` は、短縮した3入口の最小値
+`PseudoSquare.fourPoleAbelBound B` を4種類全てへ移す。
+`classicalTrials_le_fourPole_abel` は、両方の古典試行回数最大を
 その上界から3を引いて2で割った量以下に抑える。
 数値証明書をLLS、Jacobiの累積最大をPseudoSquare、停止・回数への転送をSelfridgeに置く。
 既存の停止値・試行回数の定義は保持する。
+
+### 最終の公開最小値と試行回数
+
+[FourPoleAbelComparison.lean](../PseudoPrime/PrimeTestBounds/Selfridge/FourPoleAbelComparison.lean)
+は、Q5と新しいAbel候補を含む負値・非1値の最小値を、それぞれの停止規約へ移す。
+負値停止の上界は `abelNegStopBound`、非1値停止は `abelNeStopBound` とし、
+後者は例外15との最大値を保持する。負値側の例外27は、上端3以上で選択式の下限に吸収する。
+上端3未満では両停止上界を0とし、両試行上界を1とする。
+
+`selfridgeMaxima_le_abelSelection` と `classicalTrials_le_abelSelection` は
+全自然数の4停止最大・2古典試行回数を覆う。
+上端3以上では `abelTrialBounds_sharp` により、各試行上界は対応する停止上界から
+3を引いて2で割った式に等しい。
+`abelSelection_nonworsening` は対応する旧候補全体の最小値以下を示し、
+`abelSelection_strict_window` は $4000000 \le \ln B \le 10000000$ で、
+停止上界と試行上界の両方の厳密改善を証明する。
+専用候補と例外が異なるため、負値と非1値の式を同一視しない。
 
 ## 証人評価との接続
 
@@ -243,8 +288,8 @@ $(777/1000)\max\lbrace10^{18},\ln B\rbrace^2$ 以下に抑える。
 |---|---|---|
 | 古典・Wheel30の非1値停止最大 | $B\ge751$ | $U_{\ne1}(B)$。 $Q_{\ne1}(B)$ と同じ図を使える |
 | 古典・Wheel30の純粋負値停止最大 | $B\ge399$ | $U_{-1}(B)$。 $Q_{-1}(B)$ と同じ図を使える |
-| 上記4種類の停止最大 | 全ての $B\in\mathbb N$ | $F_4(B)=\mathrm{fourPoleReducedBound}(B)$ |
-| 上記4種類の停止最大 | $\ln B \ge 1440000000000$ | $(777/1000)(\ln B)^2$ |
+| 上記4種類の停止最大 | 全ての $B\in\mathbb N$ | $F_4(B)=\mathrm{fourPoleAbelBound}(B)$ |
+| 上記4種類の停止最大 | $\ln B \ge 1600000000$ | $(777/1000)(\ln B)^2$ |
 | 古典方式の2種類の試行回数最大 | 全ての $B\in\mathbb N$ | $(F_4(B)-3)/2$ |
 
 ここで $L=\ln B$ とする。3行の共通尺度候補の最小値を $F_4(B)$ と書く。
@@ -252,9 +297,9 @@ $(777/1000)\max\lbrace10^{18},\ln B\rbrace^2$ 以下に抑える。
 
 | 対数上端の区間 | 4種類の停止最大に共通の上界 |
 |---|---|
-| $900000000 \le L$ | $(79/100)L^2$ |
-| $14400000000 \le L$ | $(39/50)L^2$ |
-| $1440000000000 \le L$ | $(777/1000)L^2$ |
+| $4000000 \le L$ | $(79/100)L^2$ |
+| $25000000 \le L$ | $(39/50)L^2$ |
+| $1600000000 \le L$ | $(777/1000)L^2$ |
 
 表の範囲は重なっており、その範囲内では最小の候補を使う。
 [PseudoSquareの高域のまとめ](PseudoSquare.md#高域の累積上界) に候補の定義を示す。
@@ -271,10 +316,6 @@ $(777/1000)\max\lbrace10^{18},\ln B\rbrace^2$ 以下に抑える。
 
 この2図はPseudoSquareと共有する。上端751以上の非1値系列、399以上の負値系列では、記録線は古典・Wheel30の対応する停止最大値の記録としても読め、上界曲線も共通に使える。それ未満の記録線はPseudoSquareの証人最大値として読む。
 
-![短縮した3入口を使う第四極核の共通累積上界](figures/q_four_pole_high_comparison.svg)
-
-高域図は $F_4$ と係数4/5の候補の最小値を $(\ln B)^2$ で割ったもの。
-同じ曲線が4種類のSelfridge停止最大も抑える。図の補間はLeanの証明を代替しない。
 [図・適用条件・生成スクリプトの一覧](figures/README.md) を参照する。
 
 ## 試行回数と計算量

@@ -364,7 +364,32 @@ $868517/200000=4.342585$ であり、新たな大規模有限探索は行わな�
 [GaussianSurplusBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianSurplusBounds.lean) の
 `exists_prime_gaussianSurplus` と `exists_least_gaussianSurplus` が、
 大指数・指数4・局所因子の各場合を通じて実際の証人へ接続する。
-従来の4profileと35000・50000の候補は保持する。
+この残差7.6の候補は比較用の $G_0$ として保持する。
+
+同じ床9.1とprefixを使い、残差を7.2へ縮めた候補を
+
+$$
+G_A(L)=\max\lbrace(6/5)(91/10)^4,V_{36/5}(L)\rbrace
+$$
+
+とする。
+[GaussianTightNumerics.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianTightNumerics.lean)
+は、指数4側の誤差と主項の両方に共通の閾値 $3663/100=36.63$ を認証する。
+[GaussianTightBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianTightBounds.lean)
+の `exists_prime_gaussianTight` と `exists_least_gaussianTight` は、
+大指数・指数4・局所の各枝から、GRHの下で実際の拒否素数と最小拒否素数を与える。
+入力は奇合成数で $L \ge 63$ とし、prefixやscalar gapの追加仮定は要求しない。
+公開式では既存の3000と対数63のguardを保って $G_0$ を $G_A$ へ置き換える。
+有限prefixのデータと35000・50000の候補は増やさない。
+
+[GaussianTightComparison.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianTightComparison.lean)
+は、置換前の全公開最小値を `priorSurplusEnvelope` として保持する。
+`nextTuned_le_priorSurplus`、 `nextSelected_le_priorSurplus`、
+`nextPrime_le_priorSurplus` は、全自然数で実数の証人上界・選択値・素数丸め後の値が
+それぞれ従来以下であることを証明する。
+$105 \le \ln n \le 105.5$ では、新上界が8609未満、旧候補全体の最小値が8609より大きい。
+認証済み素数8609を挟むため、`nextTuned_strict_tighter` により丸め後にも厳密改善を得る。
+旧全最小値は $100 \le \ln n \le 235.73$ で $G_0(\ln n)$ に等しいことも証明している。
 
 [GaussianSurplusComparison.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianSurplusComparison.lean)
 の `nextTuned_le_previous` は、全ての入力で変更前の公開最小値以下となることを証明する。
@@ -423,19 +448,82 @@ $$
 
 履歴の認証値は $B_7=622051696000000000000000$、 $B_8=937044836000000000000000$ であり、回復条件を有理数のまま比較している。従来の `highCumulativeEnvelope` とその定理は比較用にも保持した。
 
-![MRの8候補と前段からの履歴縮小](figures/mr_cumulative_high_comparison.png)
+さらに、床9.1・残差7.6の既存Gaussianを $G_0(L)$ とし、基底を
 
-図は従来の7候補累積、新しい8候補累積、8候補の点ごとの値を、それぞれ対数二乗で割って示す。実数軸の描画をLeanの全自然数上端の証明と区別する。
+$$
+B_0(L)=\min\lbrace L^2,G_0(\max\lbrace63,L\rbrace)\rbrace
+$$
+
+へ置き換えた。
+[GaussianCumulativeBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianCumulativeBounds.lean)
+の `leastPrime_le_gaussianBase` は、 $\ln n \le L$ の全ての奇合成数を同じ基底で覆う。
+対数63未満の入力は既存の $63^2=3969$ とGaussianの床で吸収し、新たな入力列挙は行わない。
+非負の $L \le 63$ では基底は従来の $L^2$ と一致する。
+
+[BaseHistoryBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/BaseHistoryBounds.lean)
+の再帰は開始値と係数を写像として受け取り、固定した数値証明書に依存しない。
+MRのprofileと実際の最小拒否素数への移送はGaussianの利用側に置く。
+`cumulativeLeastPrime_le_gaussian` はGRHの下で全自然数上端を覆い、
+`gaussianCumulative_le_history` は従来の8候補累積以下であることを示す。
+
+[GaussianHistoryCaps.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianHistoryCaps.lean)
+では、 $100 \le \ln N \le 101$ の旧累積が $(\ln N)^2 \ge 10000$ である一方、
+新累積は8419未満となることから、全候補を合わせた累積上界の厳密改善を証明した。
+点ごとのGaussian証人は既に存在したため、新しい改善はその累積への接続である。
+
+$G_0$ 基底の第1適用開始点の履歴は $(59/125)T_1^2$ 未満、
+第2は正確に $(4603/10000)T_2^2$ となる。
+`gaussian_first_recovery_scale` と `gaussian_second_recovery_scale` により、
+係数 $.4603$ と $.4145$ への回復尺度は、それぞれ30378881000、42152002600以下である。
+これは有理数の平方比較による認証値であり、平方根の表示近似を仮定に使っていない。
+第3以降も従来の保証を維持し、第7・第8候補も引き続き有効である。
+
+最終的には、同じ履歴再帰へ改善候補 $G_A$ の基底
+
+$$
+B_A(L)=\min\lbrace L^2,G_A(\max\lbrace63,L\rbrace)\rbrace
+$$
+
+を渡す。
+[GaussianTightCumulativeBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianTightCumulativeBounds.lean)
+の `cumulativeLeastPrime_le_gaussianTight` は全自然数の累積最大を覆う。
+`gaussianTightCumulative_le_gaussian` と `gaussianTightCumulative_le_history` により、
+この累積は $G_0$ 基底の累積と従来の平方基底の累積の両方以下となる。
+区間100から101の厳密改善も維持する。
+第1capは引き続き狭義上界、第2capは $(4603/10000)T_2^2$ 以下として継承し、
+上の二つの回復尺度も同じ認証値を再利用する。
+
+![Gaussian基底によるMR累積上界と履歴の縮小](figures/mr_cumulative_high_comparison.png)
+
+図は高域だけを対象とし、現行の8候補の履歴とGaussianを含む点ごとの候補を、
+対数二乗で割って示す。
+黒点線は規準 $(4/9)(\ln N)^2$ に対応し、この縦軸では高さ $4/9$ となる。
+実数軸の描画をLeanの全自然数上端の証明と区別する。
 
 ### 包絡線の構成
 
-補助包絡線 `sharpSelectedEnvelope` を $U_{\mathrm{sharp}}(n)$ と書く。包絡線は補助包絡線、14個の固定素数候補、4個のGaussian候補、3個のGaussian surplus候補、7個の高域候補の最小値をとる。各候補は証明済みの適用条件を満たす範囲で有効になる。第8の高域候補は前節の累積包絡線に含める。
+補助包絡線 `sharpSelectedEnvelope` と14個の固定素数候補の最小値を $F(n)$ と書く。
+$H(n)$ は $F(n)$ と、有効な7個の高域候補の最小値である。
+$G_+(L)=\min\lbrace G_{35}(L),G_{50}(L)\rbrace$ とし、
+$C_{79}(n)$ は $L \le 12659/1000$ なら79、それ以外なら $F(n)$ とする。
+現在の選択式には次の正規形を使える。
+
+| 入力の範囲 | 正規形の値 |
+|---|---|
+| $n < 3000$ | 既存の `smallIntervalBound n` |
+| $n \ge 3000$、 $L < 63$ | $\min\lbrace F(n),C_{79}(n)\rbrace$ |
+| $L \ge 63$ | $\min\lbrace H(n),G_+(L),G_A(L)\rbrace$ |
+
+[NextTunedNormalForm.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/NextTunedNormalForm.lean)
+の `nextTuned_eq_normal`、 `nextTunedSelected_eq_normal`、 `nextTunedPrime_eq_normal` は、
+全自然数で実証人用・選択用・素数丸め後の式が元の公開APIと等しいことを証明する。
+共通guardの対数63以上では、surplusが支配する旧4個のtuned Gaussianと
+旧2個のseeded tunedを直接の枝から除いた。
+これは式の同値整理であり、追加の上界改善として数えない。旧APIは保持する。
 
 高域の入口 $T_i$ はtriangular上界の表の値である。第1〜7候補は入口が増加し係数が減少するため、有効なもののうち最後の候補だけを残せる。 $T_8$ 以降の第8候補は $U_{\mathrm{sharp}}$ に含まれる。
 
 数値関数と実証人の接続は [TunedWitnessEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/TunedWitnessEnvelope.lean)、小入力の等式は [TunedIntervalSelection.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/TunedIntervalSelection.lean) にある。有限区間の選択は [EndpointTunedEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointTunedEnvelope.lean) が与える。
-
-$G_+(L)=\min\lbrace G_{35}(L),G_{50}(L)\rbrace$ とする。
 
 ### 上界式と証明済みの適用条件
 
@@ -448,7 +536,7 @@ $G_+(L)=\min\lbrace G_{35}(L),G_{50}(L)\rbrace$ とする。
 | 固定素数表にある $L \le L_0$ | 表の各素数23〜79 |
 | $n\ge3000$、 $L\le12659/1000$ | 固定上界79 |
 | すべての実数 $L$ | $U_{\mathrm{pt}}(L)$ |
-| $63 \le L$ | $A_{9.1,9.29}(L)$、 $A_{9.3,8.7}(L)$、 $A_{9.48,8.145}(L)$、 $A_{9.79,8.125}(L)$ |
+| $63 \le L$ | $G_A(L)$ |
 | $63 \le L$ | $G_{35}(L)$、 $G_{50}(L)$ |
 | 各 $T_i \le L$ | $C_iL^2$、 $i=1,\ldots,8$ |
 
@@ -474,15 +562,15 @@ $G_+(L)=\min\lbrace G_{35}(L),G_{50}(L)\rbrace$ とする。
 | $12.3975 < L \le 12.6409$ | $79$ |
 | $12.6409 < L \le 12659/1000$ | $\min\lbrace U_{\mathrm{pt}}(L),79\rbrace$ |
 | $12659/1000 < L < 63$ | $U_{\mathrm{pt}}(L)$ |
-| $63 \le L < T_1$ | $\min\lbrace U_{\mathrm{sharp}}(n),A_+(L),G_+(L)\rbrace$ |
-| $T_i \le L < T_{i+1}$、 $1 \le i \le 6$ | $\min\lbrace U_{\mathrm{sharp}}(n),A_+(L),G_+(L),C_iL^2\rbrace$ |
-| $T_7 \le L$ | $\min\lbrace U_{\mathrm{sharp}}(n),A_+(L),G_+(L),C_7L^2\rbrace$ |
+| $63 \le L < T_1$ | $\min\lbrace U_{\mathrm{sharp}}(n),G_A(L),G_+(L)\rbrace$ |
+| $T_i \le L < T_{i+1}$、 $1 \le i \le 6$ | $\min\lbrace U_{\mathrm{sharp}}(n),G_A(L),G_+(L),C_iL^2\rbrace$ |
+| $T_7 \le L$ | $\min\lbrace U_{\mathrm{sharp}}(n),G_A(L),G_+(L),C_7L^2\rbrace$ |
 
 ### 比較グラフ
 
 ![Miller–Rabinの最小素数証人と上界式の比較](figures/mr_upper_bound_comparison.svg)
 
-横軸は $\ln(\ln n)$ に線形なスケールとし、目盛りには $n$ を10の累乗で示す。縦軸は対数軸である。 $2^{64}$、 $2^{80}$、 $2^{128}$ の縦グリッドを重ねた。橙の実線は表の $U_{\mathrm{MR}}(n)$、黒の点線は $(\ln n)^2$、青緑の点と階段線は最小素数証人の記録を表す。
+横軸は $\ln(\ln n)$ に線形なスケールとし、目盛りには $n$ を10の累乗で示す。縦軸は対数軸である。 $2^{64}$、 $2^{80}$、 $2^{128}$ の縦グリッドを重ねた。橙の実線は表の $U_{\mathrm{MR}}(n)$、黒の点線は $(4/9)(\ln n)^2$、青緑の点と階段線は最小素数証人の記録を表す。
 
 基数を素数 $p_1=2,p_2=3,p_3=5,\ldots$ の順に選んでMiller–Rabinテストを行う。青緑の点の横座標は [OEIS A006945](https://oeis.org/A006945) の第 $k$ 項、すなわち最初の $k-1$ 個の素数基数 $p_1,\ldots,p_{k-1}$ によるテストをすべて通過する最小の奇合成数である。縦座標はその入力を棄却する最小素数基数 $q_{\mathrm{MR}}(n)$ であり、記録更新点では $Q_{\mathrm{MR}}(n)$ と一致する。例えば、 $n=2047$ は基数2で通過し、基数3で棄却されるため、点の縦座標は3となる。青緑の階段線は掲載した記録を結んだもので、未探索範囲への外挿ではない。
 

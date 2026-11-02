@@ -1118,6 +1118,42 @@ Miller–Rabinでは、合格底を含む真部分群を構成し、S2から得�
 
 具体的な前提と上界式、Miller–Rabin専用の解析による改良、各式が最良となる区間は [Miller–Rabinの素数判定同値と素数底証人上界](MillerRabinBoundGrh.md) を参照する。
 
+## 固定四極核の主指標誤差の改善
+
+[RationalPolePrincipalSharp.lean](../PseudoPrime/LLS/PaperStatements/RationalPolePrincipalSharp.lean)
+は、RHと $x \ge 2$ の下で、実際の主指標prefixを $P(x)$、全和を $F(x)$ として
+
+$$
+2P(x)-F(x)\ge \sqrt{x}D-(2x^{1/4}+14)
+$$
+
+を証明する。ここで $D$ は既存の四極核の主項係数であり、変更していない。
+実装は整数cutoffの境界項を残した二段Abel恒等式を使う。
+二次密度の変動を $1369/650$ 以下に抑え、prefixの誤差を
+$x^{1/4}+1499/325$、全和の誤差を $1369/325$ 以下とした。
+定数部分は $4367/325 < 14$ となる。
+
+これは主指標の実和に対する評価である。証人抽出には
+[RationalPoleAbelWitness.lean](../PseudoPrime/LLS/PaperStatements/RationalPoleAbelWitness.lean)
+で既存の非主指標・導手・法の局所費用を合わせる。
+これらの費用を省略した新しい仮定は利用側へ渡さない。
+一般の指数4〜6に対する定理1.3の証明とは区別する。
+
+[RationalPoleAbelEntrance.lean](../PseudoPrime/LLS/PaperStatements/RationalPoleAbelEntrance.lean)
+は、係数 $c$ と開始尺度 $E$ の次の3行を有理数の不等式で認証する。
+
+| $c$ | $E$ |
+|---|---:|
+| $79/100$ | $4000000$ |
+| $39/50$ | $25000000$ |
+| $777/1000$ | $1600000000$ |
+
+GRHの下で、奇数非平方の入力と $L \ge E$、 $\ln n \le L$ に対して、
+$p \le cL^2$ を満たす実際の負値Jacobi奇素数証人を得る。
+`fourPole_abel_scale_isLeast` は同じ範囲で最小証人も与える。
+元の法の費用は定理の内部で払い終えている。
+入口は対数尺度で数百万以上であり、通常のビット幅での実効改善とは説明しない。
+
 ## 利用例
 
 ```lean

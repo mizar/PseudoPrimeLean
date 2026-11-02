@@ -366,6 +366,18 @@ $$
 
 を主張する。 $b_\zeta$ は`RiemannXi.riemannZeroMass`であり、[本体の解説の記法](LLSPaperStatements.md#記法)と同じ定数である。公開定理の型では、これらの下界はGRHと別々の引数として渡す。
 
+## 固定四極核の主指標評価との区別
+
+以下の三分岐は既存の二次指標向け拡張命題である。
+別経路の四極核では主指標の実有限和と全和を二段Abel恒等式で評価し、
+RHと $x \ge 2$ から主項gapの誤差 $2x^{1/4}+14$ を得る。
+[RationalPolePrincipalSharp.lean](../PseudoPrime/LLS/PaperStatements/RationalPolePrincipalSharp.lean)
+の `fourPole_principal_gap_sharp` がその定理である。
+元のcharacter・ambient法の費用を保持する証人判定は
+[RationalPoleAbelWitness.lean](../PseudoPrime/LLS/PaperStatements/RationalPoleAbelWitness.lean)
+に分けている。以下の命題の前提や結論を、この改善のために変更してはいない。
+Jacobiの実際の最小証人と累積上界は [PseudoSquare.md](PseudoSquare.md) を参照する。
+
 ## 値0の分岐 `lls_qNeOne_zero_branch`
 
 前提は上の共通条件に加えて、 $\chi_*(2)=0$ と

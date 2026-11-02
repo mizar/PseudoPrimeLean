@@ -699,6 +699,20 @@ $$
 原論文との相違。原論文は $X$ が対数二乗の規模以上であるとして、主指標和を積分で近似し、漸近誤差を吸収する。実装ではRHによるMangoldt部分和評価から重み付き有限測度の弱収束を示し、原点付近を別に抑えて積分近似を導く。さらに、有界な尺度も法の閾値を大きくして扱うことで、公開命題をすべての正の切断値 $X$ について証明する。原論文の大きい尺度での議論に、積分近似の正当化と小さい尺度の処理を加えている。
 
 
+## 有限尺度での四極核の主指標評価
+
+これは原論文の命題に対する追加の有限尺度評価である。
+[RationalPoleDoubleAbel.lean](../PseudoPrime/LLS/PaperStatements/RationalPoleDoubleAbel.lean)
+は、整数cutoffの有限和と実際の全主指標和を、同じ核の二次密度の積分へ変換する。
+原点付近は可積分性で処理し、hard cutoffの端点項を保持する。
+[RationalPolePrincipalSharp.lean](../PseudoPrime/LLS/PaperStatements/RationalPolePrincipalSharp.lean)
+の `fourPole_principal_gap_sharp` は、RHと $x \ge 2$ だけから、
+既存の主項gapに対する誤差 $2x^{1/4}+14$ を与える。
+
+この改善は有限誤差の縮小であり、核の漸近主項係数は変えない。
+非主指標と元の法の局所費用も残す。
+一般の指数4〜6の定理1.3や、新しい同時零点評価を証明したものではない。
+
 ## 部分族を選ぶ二次指標の改善
 
 GRHの下で、部分群 $H$ が2個の位数2指標の単元核に含まれるとき、各核の外で得た適格素数は $H$ の外にもある。`PartialCharacterBounds.lean` は、両指標の正確な導手を使う半径の最小値を、実際の最小部分群外素数へ接続する。任意の正のambient許容項を保持し、法の閾値は指標と部分群に一様に取る。
