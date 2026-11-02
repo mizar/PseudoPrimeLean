@@ -6,7 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.Part1ProductCertificates
+public import PseudoPrime.LLS.Part1ProductCheck
+public import PseudoPrime.LLS.Part1SmallRadiusBounds
 
 /-! # Integer prime caps below the original Part 2 log-square cutoff -/
 
@@ -70,12 +71,12 @@ theorem part2_small_cap_le_log_sq {q : ℕ} (hq : 5 ≤ q) :
 Proof: split at 705 and use the checked logarithms at 79 and 705.
 Role: reuse the complete catalog without introducing new group-generation data. -/
 theorem part2_catalog_cap_le_log_sq {q : ℕ} (hq : 79 ≤ q) :
-    (llsPart1FinitePrimeCap q : ℝ) ≤ (Real.log q) ^ 2 := by
+    (part1PrimeCap q : ℝ) ≤ (Real.log q) ^ 2 := by
   by_cases h : q < 705
-  · simpa only [llsPart1FinitePrimeCap, ite_eq_left h, Nat.cast_ofNat] using
+  · simpa only [part1PrimeCap, ite_eq_left h, Nat.cast_ofNat] using
       log_sq_ge_of_rational_check (cap := 19) (by decide +kernel : 0 < 79) hq
         part2_small_log_checks.2.2.2.2 (by norm_num only) (by norm_num only)
-  · simpa only [llsPart1FinitePrimeCap, ite_eq_right h, Nat.cast_ofNat] using
+  · simpa only [part1PrimeCap, ite_eq_right h, Nat.cast_ofNat] using
       log_sq_ge_of_rational_check (cap := 43) (by decide +kernel : 0 < 705) (Nat.le_of_not_gt h)
         lls_log705_check (by norm_num only) (by norm_num only)
 

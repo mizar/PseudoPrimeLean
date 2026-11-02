@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.LLS.PreciseSavingSmallBounds
 public import PseudoPrime.LLS.Part1RetainedSavingProductBounds
-public import PseudoPrime.LLS.Part1FromThree
+public import PseudoPrime.LLS.Part1ProductFinite
 public import PseudoPrime.LLS.CharacterPart2FromFive
 
 /-! # Precise reciprocal-saving Part 1 witnesses from modulus three -/
@@ -22,37 +22,22 @@ Claim: a coprime outside prime exists below that cap.
 Proof: locate the existing checked product block and transfer its prime bound.
 Role: reuse the finite catalog for any later real radius without repeating its index proof. -/
 theorem exists_prime_outside_catalog_of_cap {q : ℕ} [NeZero q] (hq : 5 ≤ q) (hQ : q < 3000)
-    (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤) {R : ℝ} (hcap : (llsPart1FinitePrimeCap q : ℝ) ≤ R) :
-    ∃ p : ℕ, PrimeOutsideSubgroup q H p ∧ (p : ℝ) ≤ R := by
-  let r := q - 5
-  have hs : r + 5 = q := Nat.sub_add_cancel hq
-  have hb : r / 128 < 24 :=
-    (Nat.div_lt_iff_lt_mul (by decide +kernel : 0 < 128)).mpr (by linarith only [hs, hQ])
-  have hi : r % 128 < 128 := Nat.mod_lt r (by decide +kernel : 0 < 128)
-  have he : 5 + 128 * (r / 128) + r % 128 = q := by
-    have hd := Nat.mod_add_div r 128
-    linarith only [hd, hs]
-  have hcheck :=
-    lls_part1_product_block_sound (SmallPart1.part1_catalog_checks ⟨r / 128, hb⟩) hi
-      (show 5 + 128 * (r / 128) + r % 128 < 3000 by
-        rw [he]; exact hQ)
-  rw [he] at hcheck
-  obtain ⟨p, hp, hd, hbound, hout⟩ :=
-    NumberTheory.exists_prime_outside_of_generationProductCheck hcheck
-      (modulus_le_product_depth (NeZero.ne q)) H hH
-  exact
-    ⟨p, primeOutsideSubgroup_of_image_exclusion H hp hd hout, (Nat.cast_le.mpr hbound).trans hcap⟩
+    (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤) {R : ℝ} (hcap : (part1PrimeCap q : ℝ) ≤ R) :
+    ∃ p : ℕ, PrimeOutsideSubgroup q H p ∧ (p : ℝ) ≤ R :=
+  Exists.elim (exists_prime_outside_part1_finite_cap hq hQ H hH) fun p hp ↦
+    ⟨p, primeOutsideSubgroup_of_image_exclusion H hp.1 hp.2.1 hp.2.2.2,
+      (Nat.cast_le.mpr hp.2.2.1).trans hcap⟩
 
 /-- Input: a modulus at least six.
 Claim: its finite catalog prime cap lies inside the precise-saving squared radius.
 Proof: use the new bounds nineteen and forty-three on the two catalog ranges.
 Role: reuse all finite certificate data unchanged. -/
 theorem precise_saving_finite_cap_le_radius {q : ℕ} (hq : 6 ≤ q) :
-    (llsPart1FinitePrimeCap q : ℝ) ≤ (preciseSavingRadiusRoot q) ^ 2 := by
+    (part1PrimeCap q : ℝ) ≤ (preciseSavingRadiusRoot q) ^ 2 := by
   by_cases h : q < 705
-  · simpa only [llsPart1FinitePrimeCap, ite_eq_left h, Nat.cast_ofNat] using
+  · simpa only [part1PrimeCap, ite_eq_left h, Nat.cast_ofNat] using
       precise_saving_radius_sq_ge_nineteen hq
-  · simpa only [llsPart1FinitePrimeCap, ite_eq_right h, Nat.cast_ofNat] using
+  · simpa only [part1PrimeCap, ite_eq_right h, Nat.cast_ofNat] using
       precise_saving_radius_sq_ge_forty_three (Nat.le_of_not_gt h)
 
 /-- Input: a modulus between three and five and a proper unit subgroup.
@@ -61,14 +46,13 @@ Proof: reuse the checked small product codes and the new radius lower bound five
 Role: handle the three smallest nonvacuous moduli. -/
 theorem exists_prime_outside_preciseSaving_small {q : ℕ} [NeZero q] (hq : 3 ≤ q) (hQ : q ≤ 5)
     (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤) :
-    ∃ p : ℕ, PrimeOutsideSubgroup q H p ∧ (p : ℝ) ≤ (preciseSavingRadiusRoot q) ^ 2 := by
-  have hc := retained_saving_small_product_check ⟨q, Nat.lt_succ_iff.mpr hQ⟩ hq
-  obtain ⟨p, hp, hd, hb, hout⟩ :=
-    NumberTheory.exists_prime_outside_of_generationProductCheck hc
-      (modulus_le_product_depth (NeZero.ne q)) H hH
-  exact
-    ⟨p, primeOutsideSubgroup_of_image_exclusion H hp hd hout,
-      (Nat.cast_le.mpr hb).trans (precise_saving_radius_sq_ge_five_three_five hq hQ)⟩
+    ∃ p : ℕ, PrimeOutsideSubgroup q H p ∧ (p : ℝ) ≤ (preciseSavingRadiusRoot q) ^ 2 :=
+  Exists.elim
+    (exists_prime_outside_of_unitCoverage
+      (retained_saving_small_coverage ⟨q, Nat.lt_succ_iff.mpr hQ⟩ hq) H hH)
+    fun p hp ↦
+    ⟨p, primeOutsideSubgroup_of_image_exclusion H hp.1 hp.2.1 hp.2.2.2,
+      (Nat.cast_le.mpr hp.2.2.1).trans (precise_saving_radius_sq_ge_five_three_five hq hQ)⟩
 
 /-- Input: GRH, a modulus at least three, and a proper unit subgroup.
 Claim: a coprime outside prime exists within the precise-saving squared radius.

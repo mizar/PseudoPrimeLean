@@ -256,7 +256,6 @@ public import PseudoPrime.LLS.GammaCheckpoint1000Refined
 public import PseudoPrime.LLS.GammaCheckpoint35000
 public import PseudoPrime.LLS.Part1SmallRadiusBounds
 public import PseudoPrime.LLS.Part1ThreeFourBounds
-public import PseudoPrime.LLS.Part1ProductCertificates
 public import PseudoPrime.LLS.Part1RetainedSavingSmallBounds
 public import PseudoPrime.LLS.Part1RetainedSavingProductBounds
 public import PseudoPrime.LLS.GammaLog264Certificates

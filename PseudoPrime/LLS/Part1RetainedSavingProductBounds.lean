@@ -6,7 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.Part1ProductCertificates
+public import PseudoPrime.LLS.UnitGenerationCoverSoundness
+public import PseudoPrime.LLS.Theorem11S1Subgroup
 
 /-! # Shared unit-witness conversion and product checks at moduli three through five -/
 
@@ -30,14 +31,22 @@ Output: an integer code. Role: certify these three unit groups with prime cap fi
 def retainedSavingSmallCode (q : ℕ) : ℕ :=
   if q = 3 then 130 else if q = 4 then 131 else 258
 
-/-- Claim: every modulus between three and five passes its finite product check.
-Proof: kernel arithmetic over Fin 6. Role: cover the small exceptions to the uniform cap 19. -/
-theorem retained_saving_small_product_check :
+/-- Select a packed divisor code for the three smallest precise-saving moduli.
+Definition: return 4098 at four and the input modulus otherwise.
+Input: any natural modulus. Output: divisor two at level one for four, and divisor q at
+level zero for three or five. Role: supply nonunit bits in the three checked certificate pairs. -/
+def retainedSavingSmallDivisor (q : ℕ) : ℕ :=
+  if q = 4 then 4098 else q
+
+/-- The three small certificate pairs pass exact product-and-divisor coverage.
+Input: a modulus below six and at least three. Claim: coverage passes with prime cap five.
+Proof: kernel reduction of the finite proposition. Role: certify the small precise-saving range. -/
+theorem retained_saving_small_coverage :
     ∀ q : Fin 6,
       3 ≤ q.val →
-        NumberTheory.generationProductCheck q.val 5 (q.val.log2 + 1)
-            (retainedSavingSmallCode q.val) =
-          true := by
-  decide +kernel
+        unitGenerationCoverCheck q.val 5 (q.val.log2 + 1) (retainedSavingSmallCode q.val)
+            (retainedSavingSmallDivisor q.val) =
+          true :=
+  of_decide_eq_true rfl
 
 end PseudoPrime.LLS

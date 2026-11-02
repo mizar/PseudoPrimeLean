@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.Part1ProductBlock00
 public import PseudoPrime.LLS.Part2FiniteTransfer
 
 /-! # Small-modulus Part 2 witnesses checked by the kernel -/
@@ -14,22 +15,24 @@ public import PseudoPrime.LLS.Part2FiniteTransfer
 
 namespace PseudoPrime.LLS
 
-/-- Input: a local index i, corresponding to q=5+i.
-Output: below 79, accept a prime divisor within the small cap or the existing generation code;
-return true on padding indices. Role: certify nonunit and unit witnesses with one exact check. -/
-def part2SmallLeaf (i : ℕ) : Bool :=
+/-- Check one finite Part 2 position using a divisor prime or exact unit coverage.
+Input: a local index for the modulus five plus that index.
+Definition: below 79, check allowed prime divisors or both certificate arrays of block zero;
+outside that range return true. Output: acceptance of either branch, or padding.
+Role: supply exact checks for the finite range from five through 78. -/
+def part2SmallCoverageLeaf (i : ℕ) : Bool :=
   let q := 5 + i
   if q < 79 then
-    NumberTheory.generationPrimeLabels.any (fun p ↦ decide (p ≤ part2SmallPrimeCap q ∧ p ∣ q)) ||
-      NumberTheory.generationProductCheck q (part2SmallPrimeCap q) (q.log2 + 1)
-        SmallPart1.block00Codes[i]!
+    unitGenerationPrimes.any (fun p ↦ decide (p ≤ part2SmallPrimeCap q ∧ p ∣ q)) ||
+      unitGenerationCoverCheck q (part2SmallPrimeCap q) (q.log2 + 1) part1ProductCodes00[i]!
+        part1DivisorCodes00[i]!
   else true
 
 /-- Input: one of five windows of sixteen indices.
 Claim: every leaf of the window passes the exact small certificate check.
 Proof: kernel computation with default resources. Role: cover q from 5 through 78. -/
 theorem part2_small_windows (j : Fin 5) :
-    NumberTheory.generationBalancedAll part2SmallLeaf 4 (16 * j.val) = true := by
+    unitGenerationAll part2SmallCoverageLeaf 4 (16 * j.val) = true := by
   fin_cases j
   all_goals decide +kernel
 
@@ -38,9 +41,9 @@ Claim: the corresponding prime-divisor or product-generation check succeeds.
 Proof: choose the checked window by quotient and remainder and remove padding.
 Role: extract one finite check without enumerating subgroups. -/
 theorem part2_small_leaf_sound {q : ℕ} (hq : 5 ≤ q) (hQ : q < 79) :
-    (NumberTheory.generationPrimeLabels.any (fun p ↦ decide (p ≤ part2SmallPrimeCap q ∧ p ∣ q)) ||
-        NumberTheory.generationProductCheck q (part2SmallPrimeCap q) (q.log2 + 1)
-          SmallPart1.block00Codes[q - 5]!) =
+    (unitGenerationPrimes.any (fun p ↦ decide (p ≤ part2SmallPrimeCap q ∧ p ∣ q)) ||
+        unitGenerationCoverCheck q (part2SmallPrimeCap q) (q.log2 + 1) part1ProductCodes00[q - 5]!
+          part1DivisorCodes00[q - 5]!) =
       true := by
   let i := q - 5
   have hs : 5 + i = q := Nat.add_sub_of_le hq
@@ -52,8 +55,8 @@ theorem part2_small_leaf_sound {q : ℕ} (hq : 5 ≤ q) (hQ : q < 79) :
     have he := Nat.mod_add_div i 16
     norm_num only
     linarith only [hm, he]
-  have hc := NumberTheory.generationBalancedAll_sound (part2_small_windows ⟨i / 16, hj⟩) hl hu
-  simp only [part2SmallLeaf] at hc
+  have hc := unitGenerationAll_sound (part2_small_windows ⟨i / 16, hj⟩) hl hu
+  simp only [part2SmallCoverageLeaf] at hc
   rw [hs, ite_eq_left hQ] at hc
   exact hc
 
@@ -69,12 +72,10 @@ theorem exists_prime_outside_part2_small_finite {q : ℕ} [NeZero q] (hq : 5 ≤
   rcases Bool.or_eq_true_iff.mp (part2_small_leaf_sound hq hQ) with hd | hg
   · obtain ⟨p, hp, hpd⟩ := List.any_eq_true.mp hd
     have h := of_decide_eq_true hpd
-    have hprime := NumberTheory.generationPrimeLabels_prime hp
+    have hprime := prime_of_mem_unitGenerationPrimes hp
     exact
       ⟨p, hprime, (Nat.cast_le.mpr h.1).trans (part2_small_cap_le_log_sq hq),
         prime_dvd_outside_subgroup_image hprime h.2 H⟩
-  · exact
-      exists_prime_outside_image_le_of_product hg (modulus_le_product_depth (NeZero.ne q))
-        (part2_small_cap_le_log_sq hq) H hH
+  · exact exists_prime_outside_image_le_of_coverage hg (part2_small_cap_le_log_sq hq) H hH
 
 end PseudoPrime.LLS
