@@ -718,6 +718,34 @@ def gaussian_cumulative(L: np.ndarray, residual: float = 7.2) -> np.ndarray:
          zip(histories, HISTORY_TRIANGULAR_PROFILES)])
 
 
+def four_ninths_upper(L: np.ndarray) -> np.ndarray:
+    """Lean fourNinthsSelectedEnvelope, preserving the branch below 3000."""
+    old = next_tuned_upper(L)
+    return np.where(L < math.log(3000), old, np.minimum(old, (4 / 9) * L**2))
+
+
+def four_ninths_history_base(L: np.ndarray) -> np.ndarray:
+    """Lean fourNinthsHistoryBase at an arbitrary real log scale."""
+    return np.minimum(gaussian_history_base(L), (4 / 9) * L**2)
+
+
+def four_ninths_histories() -> list[float]:
+    histories: list[float] = []
+    for i, (_, entrance) in enumerate(HISTORY_TRIANGULAR_PROFILES):
+        base = float(four_ninths_history_base(np.array([float(entrance)]))[0])
+        histories.append(min([base] +
+            [max(histories[j], float(HISTORY_TRIANGULAR_PROFILES[j][0]) * entrance**2)
+             for j in range(i)]))
+    return histories
+
+
+def four_ninths_cumulative(L: np.ndarray) -> np.ndarray:
+    """Lean fourNinthsCumulativeEnvelope, including the revised entrance histories."""
+    return np.minimum.reduce([four_ninths_history_base(L)] +
+        [np.maximum(H, float(C) * L**2) for H, (C, _) in
+         zip(four_ninths_histories(), HISTORY_TRIANGULAR_PROFILES)])
+
+
 def square_base_cumulative(L: np.ndarray) -> np.ndarray:
     """Complete previous eight-profile history; retained for the same-guard comparison."""
     return np.minimum.reduce([L**2] +
@@ -734,23 +762,25 @@ def plot_mr_cumulative(output_dir: Path) -> None:
                        rtol=2e-15)
     entrances = np.array([T for _, T in HISTORY_TRIANGULAR_PROFILES])
     recoveries = np.array([math.sqrt(H / float(C)) for H, (C, _) in
-                           zip(histories, HISTORY_TRIANGULAR_PROFILES)])
+                           zip(four_ninths_histories(), HISTORY_TRIANGULAR_PROFILES)])
     fig, ax = plt.subplots(figsize=(10, 5.5))
     local = np.linspace(63, 180, 2401)
     assert np.all(gaussian_cumulative(local) <= gaussian_cumulative(local, 7.6) * (1 + 1e-14))
     proof_band = np.linspace(100, 101, 101)
     assert np.all(gaussian_cumulative(proof_band) < square_base_cumulative(proof_band))
     L = np.unique(np.concatenate([np.geomspace(1e10, 1e14, 3000), entrances, recoveries]))
-    cumulative = gaussian_cumulative(L) / L**2
+    cumulative = four_ninths_cumulative(L) / L**2
     previous = square_base_cumulative(L) / L**2
-    pointwise = np.minimum.reduce([gaussian_history_base(L) / L**2] +
+    pointwise = np.minimum.reduce([four_ninths_history_base(L) / L**2] +
         [np.where(L >= T, float(C), np.inf) for C, T in HISTORY_TRIANGULAR_PROFILES])
     assert np.all(cumulative >= pointwise - 1e-14)
     assert np.all(cumulative <= previous + 1e-14)
+    assert np.all(cumulative <= (4 / 9) + 1e-14)
+    assert np.all(cumulative <= gaussian_cumulative(L) / L**2 + 1e-14)
     ax.semilogx(L, cumulative, color="#d55e00", linewidth=2.5,
-                     label="Gaussian-base eight-profile history")
+                     label="Four-ninths-base eight-profile history")
     ax.semilogx(L, pointwise, color="#3977a8", linestyle="--",
-                     label="Pointwise Gaussian and eight profiles")
+                     label="Pointwise four-ninths and eight profiles")
     ax.axhline(4 / 9, color="#333333", linestyle=":", linewidth=1.7,
                label=r"$(4/9)(\ln N)^2$ reference")
     ax.set(xlabel=r"$L=\ln N$", ylabel=r"Upper bound divided by $L^2$",
@@ -945,13 +975,15 @@ def main() -> None:
         assert primes[-1] == p and not passes(p)
         assert all(passes(a) for a in primes[:-1])
 
-    U = next_tuned_upper(L)
-    np.testing.assert_allclose(U, next_tuned_nested_upper(L), rtol=2e-15)
-    assert np.all(np.array(ps) <= next_tuned_upper(record_L))
+    previous_U = next_tuned_upper(L)
+    np.testing.assert_allclose(previous_U, next_tuned_nested_upper(L), rtol=2e-15)
+    U = four_ninths_upper(L)
+    assert np.all(U <= previous_U)
+    assert np.all(np.array(ps) <= four_ninths_upper(record_L))
     fig, ax = plt.subplots(figsize=(12, 8))
     fig.subplots_adjust(left=.09, right=.95, top=.87, bottom=.13)
     ax.plot(np.log(L), U, color="#d55e00", linewidth=2.5,
-            label=r"Pointwise bound $U_{\mathrm{MR}}(n)$ (comparison table)", zorder=3)
+            label=r"Pointwise bound $U_{\mathrm{MR}}(n)$", zorder=3)
     ax.plot(np.log(L), (4 / 9) * L**2, color="#333333", linewidth=1.7, linestyle=":",
             label=r"$(4/9)(\ln n)^2$", zorder=4)
     ax.step(np.log(record_L), ps, where="post", color="#007f80", linewidth=2,
@@ -982,9 +1014,10 @@ def main() -> None:
     inset.axhline(4 / 9, color="#333333", linestyle=":", linewidth=1.3)
     inset.set_yscale("log")
     inset.set_xlim(math.log(math.log(3000)), math.log(Lmax))
-    inset.set_ylim(.3, 1.015)
-    inset.yaxis.set_major_locator(FixedLocator([.3, .4, .5, .6, .7, .8, .9, 1]))
-    inset.yaxis.set_major_formatter(FuncFormatter(lambda y, _: f"{y:.2f}"))
+    inset.set_ylim(.3, 4 / 9)
+    inset.yaxis.set_major_locator(FixedLocator([.3, .35, .4, 4 / 9]))
+    inset.yaxis.set_major_formatter(
+        FuncFormatter(lambda y, _: r"$4/9$" if np.isclose(y, 4 / 9) else f"{y:.2f}"))
     inset.yaxis.set_minor_locator(NullLocator())
     power_ticks(inset, [4, 8, 16, 32, 64, 128, 256, 512, 1024])
     inset.tick_params(labelsize=9)
@@ -1026,9 +1059,9 @@ def main() -> None:
               "comparison_baseline": "sharpSelectedEnvelope",
               "sampled_selection_equality_checked": True,
               "baseline_sampled_monotonicity_checked": True,
-              "plotted_envelope": "nextTunedNormalSelected",
-              "canonical_plotted_envelope": "nextTunedSelectedEnvelope",
-              "plotted_selection_equality": "nextTunedSelected_eq_normal",
+              "plotted_envelope": "fourNinthsSelectedEnvelope",
+              "canonical_plotted_envelope": "fourNinthsSelectedEnvelope",
+              "previous_selection_equality": "nextTunedSelected_eq_normal",
               "removed_direct_gaussian_branches": 6,
               "gaussian_A_comparison_interval": [105, 105.5],
               "cumulative_gaussian_residual": 7.2,

@@ -12,7 +12,7 @@
 
 主な結果は次の二つである。
 
-1. GRH の下で、奇数 $n > 1$ が素数であることと、上界 $p \le (\ln\mathrel{} n)^2$ を満たすすべての素数底で強 Miller–Rabin 条件を満たすことは同値である。
+1. GRH の下で、奇数 $n > 1$ が素数であることと、上界 $p \le \frac{4}{9}(\ln\mathrel{} n)^2$ を満たすすべての素数底で強 Miller–Rabin 条件を満たすことは同値である。
 2. GRH の下で、正の奇数で平方数でない整数 $n$ に対して、2 種類の奇素数証人 $p$ の存在と、それぞれの明示的な上界を示す。一方は Legendre 記号 $\bigl(\frac{n}{p}\bigr)$ が $1$ でない証人、もう一方は記号が $-1$ となる証人である。
 
 以下、 $\ln$ は底が $e$ の自然対数を表す。Lean では `Real.log` に対応する。
@@ -25,7 +25,7 @@ $$
 \boxed{
 n \text{ が素数}
 \iff
-\text{すべての素数 }p \le (\ln\mathrel{} n)^2 \text{ が } n \text{ に対する強 Miller–Rabin 条件を満たす}
+\text{すべての素数 }p \le \frac{4}{9}(\ln\mathrel{} n)^2 \text{ が } n \text{ に対する強 Miller–Rabin 条件を満たす}
 }
 $$
 
@@ -40,7 +40,7 @@ $$
 $$
 n \text{ が素数}
 \iff
-\forall p \text{ 素数},\quad p \le (\ln\mathrel{} n)^2
+\forall p \text{ 素数},\quad p \le \frac{4}{9}(\ln\mathrel{} n)^2
 \Longrightarrow \bigl(p^d \equiv 1 \pmod n
 \lor
 \exists j \in ℕ,\quad j < s \land p^{2^j d} \equiv -1 \pmod n\bigr).
@@ -52,34 +52,34 @@ $$
 n \text{ が合成数}
 \iff
 \exists p \text{ 素数},\quad
-p \le (\ln\mathrel{} n)^2
+p \le \frac{4}{9}(\ln\mathrel{} n)^2
 \land
 p^d \not\equiv 1 \pmod n
 \land
 \forall j \in ℕ,\quad j < s \Longrightarrow p^{2^j d} \not\equiv -1 \pmod n.
 $$
 
-つまり、奇数 $n > 1$ の合成数性は、それを棄却する素数底 $p \le (\ln\mathrel{} n)^2$ の存在と同値である。
+つまり、奇数 $n > 1$ の合成数性は、それを棄却する素数底 $p \le \frac{4}{9}(\ln\mathrel{} n)^2$ の存在と同値である。
 
 ここで $ℕ = \lbrace 0, 1, 2, \ldots \rbrace$ とし、Lean の `ℕ` に合わせる。
 
 同値の二つの向きでは、仮定の役割が異なる。
 
 - $\text{Prime} \to (\text{all pass})$ の向きに GRH は不要である。 $n$ が素数なら、指定の上界以下の各素数底が合格する。
-- $(\text{all pass}) \to \text{Prime}$ の向きに GRH を用いる。奇合成数 $n > 1$ には、 $n$ を棄却する素数底 $p \le (\ln\mathrel{} n)^2$ が存在する。
+- $(\text{all pass}) \to \text{Prime}$ の向きに GRH を用いる。奇合成数 $n > 1$ には、 $n$ を棄却する素数底 $p \le \frac{4}{9}(\ln\mathrel{} n)^2$ が存在する。
 
 Lean では $n - 1$ の分解を $n$ から標準的に定める。その値 $s$、 $d$ と分解の等式は、この公開定理における追加仮定ではない。
 
-公開定理は名前空間 `PseudoPrime.PrimeTestBounds.MillerRabin` の [FromLLS.lean](PseudoPrime/PrimeTestBounds/MillerRabin/FromLLS.lean) にある。以下の宣言抜粋では証明本体を省略している。
+公開定理は名前空間 `PseudoPrime.PrimeTestBounds.MillerRabin` の [FourNinthsCriterion.lean](PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsCriterion.lean) にある。以下の宣言抜粋では証明本体を省略している。
 
 ```lean
-theorem prime_iff_millerRabin_for_all_primes_le_log_sq
+theorem prime_iff_mr_le_four_ninths_log_sq
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : 1 < n)
-    (hnOdd : Odd n) :
+    (ho : Odd n) :
     let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)
     (∀ p : ℕ,
         Nat.Prime p →
-          (p : ℝ) ≤ (Real.log (n : ℝ)) ^ 2 →
+          (p : ℝ) ≤ (4 / 9 : ℝ) * (Real.log n) ^ 2 →
           ((p : ZMod n) ^ d = 1 ∨ ∃ j : ℕ, j < s ∧ (p : ZMod n) ^ (2 ^ j * d) = -1)) ↔
       Nat.Prime n
 ```

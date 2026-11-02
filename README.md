@@ -12,7 +12,7 @@ The analytic development follows the work of Lamzouri, Li, and Soundararajan, [*
 
 The project has two main results:
 
-1. Under GRH, an odd integer $n > 1$ is prime if and only if it passes the strong Miller–Rabin conditions for every prime base $p \le (\ln\mathrel{} n)^2$.
+1. Under GRH, an odd integer $n > 1$ is prime if and only if it passes the strong Miller–Rabin conditions for every prime base $p \le \frac{4}{9}(\ln\mathrel{} n)^2$.
 2. Under GRH, every positive odd nonsquare $n$ has odd-prime witnesses of two kinds, each with an explicit upper bound. For one kind, the Legendre symbol $\bigl(\frac{n}{p}\bigr)$ is different from $1$; for the other, it is equal to $-1$.
 
 Here and throughout, $\ln$ denotes the natural logarithm (base $e$), represented by `Real.log` in Lean.
@@ -25,7 +25,7 @@ $$
 \boxed{
 n \text{ is prime}
 \iff
-\text{every prime }p \le (\ln\mathrel{} n)^2
+\text{every prime }p \le \frac{4}{9}(\ln\mathrel{} n)^2
 \text{ passes the strong Miller–Rabin conditions for }n
 }
 $$
@@ -41,7 +41,7 @@ Then
 $$
 n \text{ is prime}
 \iff
-\forall p \text{ prime},\quad p \le (\ln\mathrel{} n)^2
+\forall p \text{ prime},\quad p \le \frac{4}{9}(\ln\mathrel{} n)^2
 \Longrightarrow \bigl(p^d \equiv 1 \pmod n
 \lor
 \exists j \in ℕ,\quad j < s \land p^{2^j d} \equiv -1 \pmod n\bigr).
@@ -53,7 +53,7 @@ $$
 n \text{ is composite}
 \iff
 \exists p \text{ prime},\quad
-p \le (\ln\mathrel{} n)^2
+p \le \frac{4}{9}(\ln\mathrel{} n)^2
 \land
 p^d \not\equiv 1 \pmod n
 \land
@@ -71,16 +71,16 @@ The two directions require different assumptions:
 
 In Lean, the decomposition is determined canonically from $n$. The values $s$, $d$, and the decomposition equation are not additional assumptions of this public criterion.
 
-The public theorem is in namespace `PseudoPrime.PrimeTestBounds.MillerRabin`, in [FromLLS.lean](PseudoPrime/PrimeTestBounds/MillerRabin/FromLLS.lean). The following declaration excerpt omits its proof.
+The public theorem is in namespace `PseudoPrime.PrimeTestBounds.MillerRabin`, in [FourNinthsCriterion.lean](PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsCriterion.lean). The following declaration excerpt omits its proof.
 
 ```lean
-theorem prime_iff_millerRabin_for_all_primes_le_log_sq
+theorem prime_iff_mr_le_four_ninths_log_sq
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : 1 < n)
-    (hnOdd : Odd n) :
+    (ho : Odd n) :
     let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)
     (∀ p : ℕ,
         Nat.Prime p →
-          (p : ℝ) ≤ (Real.log (n : ℝ)) ^ 2 →
+          (p : ℝ) ≤ (4 / 9 : ℝ) * (Real.log n) ^ 2 →
           ((p : ZMod n) ^ d = 1 ∨ ∃ j : ℕ, j < s ∧ (p : ZMod n) ^ (2 ^ j * d) = -1)) ↔
       Nat.Prime n
 ```
