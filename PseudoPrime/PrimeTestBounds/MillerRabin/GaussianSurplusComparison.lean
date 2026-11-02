@@ -149,8 +149,10 @@ theorem nextTuned_lt8419 {n : ℕ} (hL : 100 ≤ Real.log n) (hU : Real.log n �
   have hg : nextTunedWitnessEnvelope n ≤ gaussianSurplusBound (Real.log n) := by
     rw [nextTunedWitnessEnvelope, ite_eq_right (not_lt.mpr hN)]
     exact
-      (min_le_right _ _).trans
-        ((min_le_right _ _).trans ((min_le_right _ _).trans (le_of_eq (ite_eq_left h63))))
+      ((min_le_right _ _).trans
+            ((min_le_right _ _).trans
+              ((min_le_right _ _).trans (le_of_eq (ite_eq_left h63))))).trans
+        (gaussianTight_le_surplus _)
   exact hg.trans_lt (hb.trans_le (by norm_num only))
 
 /-- On the closed log band from 100 to 101, both real and prime-rounded public cutoffs improve.

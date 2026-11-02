@@ -11,7 +11,7 @@ public import PseudoPrime.LLS.PaperStatements.EndpointPrime79PlusData
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianSeededSurplus
 public import PseudoPrime.PrimeTestBounds.MillerRabin.EndpointPrime79Plus
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianSeededSurplusBounds
-public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianSurplusBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianTightBounds
 
 /-! # Public witness bounds from fixed-79 and actual Gaussian surplus -/
 
@@ -29,7 +29,7 @@ noncomputable def nextTunedWitnessEnvelope (n : ℕ) : ℝ :=
         (min
           (if 63 ≤ Real.log n then gaussianSeededSurplusFamily (Real.log n)
           else tunedWitnessEnvelope n)
-          (if 63 ≤ Real.log n then gaussianSurplusBound (Real.log n) else tunedWitnessEnvelope n)))
+          (if 63 ≤ Real.log n then gaussianTightBound (Real.log n) else tunedWitnessEnvelope n)))
 
 /-- The selected numerical expression uses the tuned selection in the same guarded minimum. -/
 noncomputable def nextTunedSelectedEnvelope (n : ℕ) : ℝ :=
@@ -40,7 +40,7 @@ noncomputable def nextTunedSelectedEnvelope (n : ℕ) : ℝ :=
         (min
           (if 63 ≤ Real.log n then gaussianSeededSurplusFamily (Real.log n)
           else tunedSelectedEnvelope n)
-          (if 63 ≤ Real.log n then gaussianSurplusBound (Real.log n) else tunedSelectedEnvelope n)))
+          (if 63 ≤ Real.log n then gaussianTightBound (Real.log n) else tunedSelectedEnvelope n)))
 
 /-- Round the new guarded witness cutoff to the greatest permitted prime. -/
 noncomputable def nextTunedPrimeEnvelope (n : ℕ) : ℝ :=
@@ -79,7 +79,7 @@ theorem nextTuned_lower_of_candidates {n : ℕ} (hN : 3000 ≤ n) {C : ℝ}
     (hB : C ≤ tunedWitnessEnvelope n)
     (hF : Real.log n ≤ LLS.PaperStatements.prime79PlusCap → C ≤ 79)
     (hS : 63 ≤ Real.log n → C ≤ gaussianSeededSurplusFamily (Real.log n))
-    (hG : 63 ≤ Real.log n → C ≤ gaussianSurplusBound (Real.log n)) :
+    (hG : 63 ≤ Real.log n → C ≤ gaussianTightBound (Real.log n)) :
     C ≤ nextTunedWitnessEnvelope n := by
   rw [nextTunedWitnessEnvelope, ite_eq_right (not_lt.mpr hN)]
   apply le_min hB
@@ -112,7 +112,7 @@ theorem nextTuned_le_seeded {n : ℕ} (f : Bool) (hL : 63 ≤ Real.log n) :
           (min
             (if 63 ≤ Real.log n then gaussianSeededSurplusFamily (Real.log n)
             else tunedWitnessEnvelope n)
-            (if 63 ≤ Real.log n then gaussianSurplusBound (Real.log n)
+            (if 63 ≤ Real.log n then gaussianTightBound (Real.log n)
             else tunedWitnessEnvelope n))) ≤
       gaussianSeededSurplusFamily (Real.log n) :=
     (min_le_right _ _).trans
@@ -145,7 +145,7 @@ theorem exists_least_nextTunedEnvelope {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc :
         nextTuned_lower_of_candidates (le_of_not_gt hN) hb
           (fun hL ↦ transfer (exists_prime_endpoint79Plus hn ho hc hGRH hL))
           (fun hL ↦ transfer (exists_prime_seededSurplusFamily ho hc hGRH hL))
-          (fun hL ↦ transfer (exists_prime_gaussianSurplus ho hc hGRH hL)),
+          (fun hL ↦ transfer (exists_prime_gaussianTight ho hc hGRH hL)),
         hm⟩
 
 /-- Under GRH the guarded new cutoff contains an actual prime rejecting strong MR. -/
