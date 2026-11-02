@@ -184,6 +184,11 @@ public import PseudoPrime.NumberTheory.Heilbronn.HeightLayerSmoothSupply
 public import PseudoPrime.NumberTheory.Heilbronn.RationalHeilbronnSmoothSupply
 public import PseudoPrime.NumberTheory.Heilbronn.DyadicCorrelationBandEnvelope
 public import PseudoPrime.NumberTheory.JacobiWitness.PrimeInputReduction
+public import PseudoPrime.NumberTheory.CharacterKernelPowers
+public import PseudoPrime.NumberTheory.QuadraticTraceWeights
+public import PseudoPrime.NumberTheory.QuadraticSignPatterns
+public import PseudoPrime.NumberTheory.CharacterTracePenalty
+public import PseudoPrime.NumberTheory.SmallIndexCharacters
 
 /-!
 # General number theory umbrella
