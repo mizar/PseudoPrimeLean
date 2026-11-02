@@ -662,6 +662,18 @@ public import PseudoPrime.LLS.PaperStatements.LogIntervalPhaseCharacterBounds
 public import PseudoPrime.LLS.LogIntervalPhaseJacobiBounds
 public import PseudoPrime.LLS.Phase64SharpFixedJacobiCell
 public import PseudoPrime.LLS.UnconditionalGeneralValues
+public import PseudoPrime.LLS.GaussianPrefix1000Surplus
+public import PseudoPrime.LLS.PaperStatements.RationalPoleCommonScale
+public import PseudoPrime.LLS.PaperStatements.RationalPoleReducedEntrance
+public import PseudoPrime.LLS.PaperStatements.PartialFamilyEnvelopes
+public import PseudoPrime.LLS.PaperStatements.PartialCyclicConductorBounds
+public import PseudoPrime.LLS.PaperStatements.PartialBiquadraticConductorBounds
+public import PseudoPrime.LLS.PaperStatements.WeightedEndpointReduction
+public import PseudoPrime.LLS.PaperStatements.WeightedCyclicEndpoints
+public import PseudoPrime.LLS.PaperStatements.CyclicCharacterTraces
+public import PseudoPrime.LLS.PaperStatements.CyclicSixCharacterTraces
+public import PseudoPrime.LLS.PaperStatements.CyclicFiveCharacterBounds
+public import PseudoPrime.LLS.PaperStatements.BiquadraticCharacterTraces
 
 /-! Public umbrella for the LLS theorem and its common numerical and analytic layers. -/
 

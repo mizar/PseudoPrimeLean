@@ -2,7 +2,7 @@
 
 対象: [`PseudoPrime/PseudoSquare`](../PseudoPrime/PseudoSquare)。公開入口は [`PseudoPrime/PseudoSquare.lean`](../PseudoPrime/PseudoSquare.lean)、名前空間は `PseudoPrime.PseudoSquare`。
 
-この領域では、奇数かつ非平方数に対する最小 Jacobi 証人の最大値を定義する。有限計算と Dirichlet 指標・L 関数の解析を組み合わせて、その上界を証明する。実行用の BPSW 本体は [PrimeTest](PrimeTest.md)、Selfridge 固有の上界への接続は [SelfridgeBoundGrh](SelfridgeBoundGrh.md) で扱う。
+この領域では奇数かつ非平方数に対する最小 Jacobi 証人の最大値を定義する。有限計算と Dirichlet 指標・L 関数の解析を組み合わせて、その上界を証明する。実行用の BPSW 本体は [PrimeTest](PrimeTest.md)、Selfridge 固有の上界への接続は [SelfridgeBoundGrh](SelfridgeBoundGrh.md) で扱う。
 
 ## 構成
 
@@ -193,7 +193,7 @@ $$
 \left(\frac nq\right)\ne1,\quad q\le F(n) < (\ln n)^2.
 $$
 
-有限最大値については、上の記号で次を証明した。
+有限最大値については上の記号で次を証明した。
 
 $$
 \mathrm{GRH},\qquad B\in\mathbb N,\qquad B\ge2984
@@ -243,7 +243,7 @@ $t\ge3295$ では $F_{1/10}(t) < F(t)$ であり、補正 $1/1000$ の上界を�
 解析的な三分岐比較で根と導手上界の差を $1/10$ まで許すことで得た。
 小さい平方自由部分の処理は既存のGRH定理を再利用し、入力別の有限証明書は追加していない。
 補正 $1/1000$ の定理は $2984\le n < 3295$ の範囲も扱うため、そのまま残している。
-負値証人の上界からも、 $q_{\ne1}(n)\le q_{-1}(n)$ と $Q_{\ne1}(B)\le Q_{-1}(B)$ により非1証人の上界が得られる。係数 $99/100$ と $9999/10000$ の結果は、次の負値証人の節にまとめる。
+負値証人の上界からも $q_{\ne1}(n)\le q_{-1}(n)$ と $Q_{\ne1}(B)\le Q_{-1}(B)$ により非1証人の上界が得られる。係数 $99/100$ と $9999/10000$ の結果は、次の負値証人の節にまとめる。
 
 #### 根から1/2を引く非1証人上界
 
@@ -362,7 +362,7 @@ $$
 $$
 
 という汎用評価へ帰着した。入力整数は列挙しない。 $\ln y\le5$ では因数分解し、 $\ln y\ge5$ では指数関数のTaylor下界を使う。
-分離条件と導手の費用は [FiniteScaleShiftedDoubleLogRoot.lean](../PseudoPrime/LLS/FiniteScaleShiftedDoubleLogRoot.lean) で証明した。
+分離条件と導手の費用は [FiniteScaleShiftedDoubleLogRoot.lean](../PseudoPrime/LLS/PaperStatements/FiniteScaleShiftedDoubleLogRoot.lean) で証明した。
 
 $$
 L\ge96,\quad\ln L > \frac{93}{20}
@@ -422,7 +422,7 @@ $$
 $$
 
 が成立する。
-[OddMidscaleEndpointRadius.lean](../PseudoPrime/LLS/OddMidscaleEndpointRadius.lean)
+[OddMidscaleEndpointRadius.lean](../PseudoPrime/LLS/PaperStatements/OddMidscaleEndpointRadius.lean)
 の `oddMidscale_sq_lt_sharpDoubleLog_sq` がこの比較を証明する。
 適用区間は $130.36\le L\le162.77$、半径の範囲は $128\le R_{\mathrm{odd}}(L)\le160$ である。
 
@@ -465,7 +465,7 @@ $$
 数値分離は [TwoPolePrincipalPrefixBounds.lean](../PseudoPrime/LLS/TwoPolePrincipalPrefixBounds.lean) にある。
 これにより、対数尺度500以上の半直線上で数値分離を証明した。
 
-有限最大値では、すべての $n\in\mathcal A$、 $n\le B$ に共通の補助法 $4B$ を使う。
+有限最大値ではすべての $n\in\mathcal A$、 $n\le B$ に共通の補助法 $4B$ を使う。
 小さい入力も同じ解析評価に含めるため、入力整数の有限証明書は追加していない。
 この上界は値0を許す非1証人に対するもので、負値証人には適用しない。
 
@@ -505,7 +505,7 @@ $$
 正の実数 $t\ge3$ に対して、
 
 $$
-R(t)=\left(\ln(4t)+\frac{24}{5}\ln\ln(4t)+3\right)^2
+R(t)=\left(\ln(4t)+\frac{24}{5}\ln\ln(4t)+2\right)^2
 $$
 
 と置く。
@@ -523,9 +523,26 @@ $$
 Q_{-1}(B)\le R(B).
 $$
 
-存在定理は [Bounds/PointwiseWitness.lean](../PseudoPrime/PseudoSquare/Bounds/PointwiseWitness.lean) の
-`exists_prime_neg_one_witness_of_grh`、有限最大値の定理は `elementary_formula_explicit` である。
+存在定理は [RefinedElementaryBounds.lean](../PseudoPrime/PseudoSquare/Bounds/RefinedElementaryBounds.lean) の `exists_negOneWitness_le_refined_elementary`、累積最大値の定理は `refined_elementary_formula_explicit` である。従来の加算定数3の定理も保持しており、現在の共通包絡線は加算定数2を選ぶ。
 値 $-1$ を要求するため、証人 $q$ は必ず $n$ を割らない。
+
+#### 既存の有限上界と精密化した選択
+
+[FiniteEndpointBounds.lean](../PseudoPrime/PseudoSquare/Bounds/FiniteEndpointBounds.lean) は、 $B < 750$ の負値上界31と、 $B < 10^6$ の非1値上界47を既存の証明書から再利用する。47は負値側の上界には使わない。 $399 \le B < 750$ では負値最大が正確に31となる。これらの有限結果にGRHは不要で、新しい入力列挙も追加していない。
+
+`negOneEndpointEnvelope` と `neOneEndpointEnvelope` は各有限結果のguardを保持して解析候補との最小値を取る。`commonEnvelope_le_previous` は加算定数3を含む従来の共通最小値以下を、`commonEnvelope_lt_previous_small` は $3 \le B$、 $\ln B < 10$ での厳密改善を証明する。
+
+下表は描画スクリプトが計算した負値側の候補全体の最小値の表示用近似である。4093などの候補には、それぞれの有効範囲を適用する。
+
+| 上端 | 従来の最小値 | 更新後の最小値 |
+| --- | ---: | ---: |
+| $2^{32}$ | 1741.749513 | 1659.280967 |
+| $2^{64}$ | 4093.000000 | 4093.000000 |
+| $2^{80}$ | 4093.000000 | 4093.000000 |
+| $2^{128}$ | 13159.310243 | 12930.882169 |
+| $2^{256}$ | 42736.018036 | 42323.564203 |
+
+非1値側では、 $B=999999$ の表示値が約177.302795から47へ下がる。 $B=10^6$ では有限47のguardは終了する。 $B < 3$ の空の最大値0という規約は変えない。
 
 #### 固定尺度による4093の有界区間上界
 
@@ -560,7 +577,7 @@ $$
 q_{-1}(n)\le\frac{99}{100}(\ln n)^2 < (\ln n)^2.
 $$
 
-有限最大値については、同じ共通端点で次を得る。
+有限最大値については同じ共通端点で次を得る。
 
 $$
 \mathrm{GRH},\quad B\in\mathbb N,\quad \ln B\ge290
@@ -579,7 +596,7 @@ $$
 [GammaPrincipalPairedNonOneBounds.lean](../PseudoPrime/PseudoSquare/Bounds/GammaPrincipalPairedNonOneBounds.lean) は
 非1証人の最小値と有限最大値へ接続する。
 
-係数99/100の評価では、ランプ端点の結合に加え、RH下の $\xi'/\xi$ の非負な零点和を用いる。符号付き係数を保った共通の素数冪和を $25/2$ 未満に抑え、開始対数尺度を550へ下げた。新しい有限入力の証明書は生成していない。非1証人に対する2984からの負の補正とは、それぞれの前提で成立する別の上界である。
+係数99/100の評価ではランプ端点の結合に加え、RH下の $\xi'/\xi$ の非負な零点和を用いる。符号付き係数を保った共通の素数冪和を $25/2$ 未満に抑え、開始対数尺度を550へ下げた。新しい有限入力の証明書は生成していない。非1証人に対する2984からの負の補正とは、それぞれの前提で成立する別の上界である。
 
 ##### 係数99/100の証明に用いる混合Euler評価
 
@@ -696,27 +713,61 @@ $$
 後者は小さい対象入力も共通端点で覆う。
 符号付きGamma項と局所費用を保持した解析比較を用い、
 $\ln n\ge46000$ の評価へ十進開始値から接続する。
-係数99/100より小さいため、この開始値以降は掲載式の中で最小となる。
+係数99/100より小さく、高域では第四極核の候補も含む最小値を選ぶ。
 
-#### 係数777/1000の有限入口と全域累積候補
+#### 四極核の自由尺度と短縮した有限入口
 
-[RationalPoleSharpEntrance.lean](../PseudoPrime/LLS/RationalPoleSharpEntrance.lean) は、GRH下で、奇数・非平方の全入力 $n$ に対し、 $\ln n\ge10^{18}$ なら実際の負値Jacobi奇素数証人とその最小値が $(777/1000)(\ln n)^2$ 以下となることを証明する。平方自由性や、利用者が与える算術的な橋は前提にしていない。
-
-累積最大値には入口未満の入力も含まれる。[FourPoleFiniteBounds.lean](../PseudoPrime/PseudoSquare/Bounds/FourPoleFiniteBounds.lean) は、この履歴を残す候補
+[RationalPoleCommonScale.lean](../PseudoPrime/LLS/PaperStatements/RationalPoleCommonScale.lean)
+は、GRH下で $L \ge 10^{18}$、 $\ln n \le L$ を満たす奇数・非平方入力に、
+$(777/1000)L^2$ 以下の実際の負値Jacobi奇素数証人と最小証人を与える。
+利用者が与える算術的な橋は前提にしない。
+この自由尺度を使うと、全ての自然数上端に対する累積候補は
 
 $$
-U_4(B)=\max\left(\frac{9999}{10000}(10^{18})^2,\frac{777}{1000}(\ln B)^2\right)
+C_4(B)=\frac{777}{1000}\max\lbrace10^{18},\ln B\rbrace^2
 $$
 
-を `fourPoleCumulativeBound` と定義し、負値・非1値の両証人の累積最大値を全ての自然数上端 $B$ で抑える。空の対象範囲も含む。
+となる。[FourPoleCommonBounds.lean](../PseudoPrime/PseudoSquare/Bounds/FourPoleCommonBounds.lean)
+は、従来の `fourPoleCumulativeBound` 以下になることも証明する。
+従来の式 $U_4(B)=\max\lbrace(9999/10000)(10^{18})^2,(777/1000)(\ln B)^2\rbrace$
+は比較用に保持する。
 
-![入口未満の定数項を残した第四極核の累積上界](figures/q_four_pole_high_comparison.png)
+さらに、同じ核と明示公式の誤差配分を整理し、次の3行の係数と開始尺度を認証した。
+係数を $c$、対数尺度の入口を $E$ と書く。
 
-図は $L=\ln B$ とし、累積候補と係数 $4/5$ の上界との最小値を $L^2$ で割って示す。 $L=10^{18}$ で点ごとの入口を満たしても、累積候補には小入力の定数項が残るため、直ちに係数777/1000へ切り替わるわけではない。中低域の図では、共通端点255の候補と、適用域内の4093の定数候補を含める。いずれも列挙した証明済み候補内での比較である。
+| $c$ | $E$ |
+|---|---|
+| $79/100$ | $900000000$ |
+| $39/50$ | $14400000000$ |
+| $777/1000$ | $1440000000000$ |
+
+[RationalPoleReducedEntrance.lean](../PseudoPrime/LLS/PaperStatements/RationalPoleReducedEntrance.lean)
+が各行の実際の証人を供給し、
+[FourPoleReducedBounds.lean](../PseudoPrime/PseudoSquare/Bounds/FourPoleReducedBounds.lean)
+が全域の累積候補
+
+$$
+F_4(B)=\min_{(c,E)\text{ が上表の行}} c\max\lbrace E,\ln B\rbrace^2
+$$
+
+を `fourPoleReducedBound` と定義する。GRH下で、負値・非1値の両累積最大が
+$F_4(B)$ 以下となる。上端0や空の対象範囲も含む。
+`fourPole_reduced_le_common` と `fourPole_reduced_le_legacy` により、
+$F_4(B) \le C_4(B) \le U_4(B)$ も成立する。
+選択した核・誤差予算・数値証明書はLLSに置き、Jacobiの最小証人と累積最大への接続を
+PseudoSquare側に置く。
+
+![短縮した3入口を使う第四極核の累積上界](figures/q_four_pole_high_comparison.png)
+
+図は3行の累積候補と $(4/5)L^2$ の最小値を $L^2$ で割って示す。
+各行の入口未満も $\max\lbrace E,L\rbrace$ で覆っており、
+点ごとの式をその適用域外へ延長していない。
+横軸は $L=\ln B$ である。この改善は非常に大きい入力域を対象とし、
+通常のビット幅での実用的改善を意味しない。
 
 ## Selfridgeと共有する前提と累積最大値
 
-上端 $B$ は任意の自然数とし、最大値の対象は $0 < n\le B$ の奇数・非平方入力にそろえる。上端 $B$ 自身に奇数・非平方条件は課さない。上端0を含む全域関数では、Leanの $\mathrm{Real.log}(0)=0$ と空の最大値0の規約を使う。点ごとの最小素数証人 $q_{\ne1}(n),q_{-1}(n)$ と、その累積最大値 $Q_{\ne1}(B),Q_{-1}(B)$ を区別する。
+上端 $B$ は任意の自然数とし、最大値の対象は $0 < n\le B$ の奇数・非平方入力にそろえる。上端 $B$ 自身に奇数・非平方条件は課さない。上端0を含む全域関数ではLeanの $\mathrm{Real.log}(0)=0$ と空の最大値0の規約を使う。点ごとの最小素数証人 $q_{\ne1}(n),q_{-1}(n)$ と、その累積最大値 $Q_{\ne1}(B),Q_{-1}(B)$ を区別する。
 
 Selfridgeの対応する停止値絶対値の累積最大を $M_{\ne1}(B),M_{-1}(B)$、Wheel30版を $M^{(30)}_{\ne1}(B),M^{(30)}_{-1}(B)$ とする。[MaximumBridge.lean](../PseudoPrime/PrimeTestBounds/Selfridge/MaximumBridge.lean) は次をGRHなしで証明する。
 
@@ -730,7 +781,7 @@ Selfridgeの対応する停止値絶対値の累積最大を $M_{\ne1}(B),M_{-1}
 
 表の最初の2行では引数 $B$ を省略した。一致は対応する同じ系列どうしの関係であり、非1値系列と負値系列を同一視するものではない。点ごとの最小証人と停止値の一致も、この累積最大値の一致からは仮定しない。
 
-以下の解析的上界にはGRHを加える。一致範囲では、PseudoSquareの累積上界と図を、そのまま古典Selfridge・Wheel30の停止最大値にも使える。[Selfridgeのまとめ](SelfridgeBoundGrh.md#累積上界の適用区間と図) に停止値・試行回数への対応を示す。
+以下の解析的上界にはGRHを加える。一致範囲ではPseudoSquareの累積上界と図を、そのまま古典Selfridge・Wheel30の停止最大値にも使える。[Selfridgeのまとめ](SelfridgeBoundGrh.md#累積上界の適用区間と図) に停止値・試行回数への対応を示す。
 
 ## LLS の役割
 
@@ -748,46 +799,71 @@ $$
 J(B)=\frac{9999}{10000}\max\lbrace255,L\rbrace^2
 $$
 
-と書く。第四極核の累積候補 $U_4(B)$ は前節の `fourPoleCumulativeBound` である。
+と書く。第四極核の累積候補 $F_4(B)$ は前節の `fourPoleReducedBound` である。
 
 | 上界式 | 適用条件 | 累積上界への適用 |
 |---|---|---|
 | $J(B)$ | 全ての自然数上端 | 小入力を尺度255で覆う。他の有効な式との最小値をとる |
 | $4093$ | $L\le1609/25$ | 両系列に有効な定数候補。適用域の外へは延長しない |
-| $U_4(B)$ | 全ての自然数上端 | 入口未満の定数項を保持して最小化 |
-| $\frac{777}{1000}L^2$ | 下表の $L_{\mathrm{recover}}$ 以上で $U_4(B)$ から回復 | 高域の二次上界 |
+| $F_4(B)$ | 全ての自然数上端 | 3行の自由尺度候補を最小化 |
+| $\frac{777}{1000}L^2$ | $L \ge 1440000000000$ | 最も小さい係数の行から得る |
 
-[Jと4093の接続](../PseudoPrime/PseudoSquare/Bounds/CommonEndpointBounds.lean) と [U4の接続](../PseudoPrime/PseudoSquare/Bounds/FourPoleFiniteBounds.lean) は、どちらも非1値・負値の両累積最大を扱う。点ごとの係数777/1000は $\ln n\ge10^{18}$ から有効だが、累積候補にはそれ以前の入力の履歴が残る。入口直後から累積値も同じ係数になるとはしない。
+[Jと4093の接続](../PseudoPrime/PseudoSquare/Bounds/CommonEndpointBounds.lean) と
+[F4の接続](../PseudoPrime/PseudoSquare/Bounds/FourPoleReducedBounds.lean) は、
+どちらも非1値・負値の両累積最大を扱う。自由尺度を通じて入口未満の入力も評価するため、
+点ごとの入口と累積候補の適用条件を取り違えない。
 
-各図の $U_{\ne1}(B),U_{-1}(B)$ は、詳細表とこの表の有効な式の最小値である。以下の中低域の図に加え、[高域の比較図](figures/q_four_pole_high_comparison.svg) が入口未満の入力を含む累積上界を示す。[図と生成スクリプトの対応](figures/README.md) も参照する。
+各図の $U_{\ne1}(B),U_{-1}(B)$ は詳細表とこの表の有効な式の最小値である。以下の中低域の図に加え、[高域の比較図](figures/q_four_pole_high_comparison.svg) が入口未満の入力を含む累積上界を示す。[図と生成スクリプトの対応](figures/README.md) も参照する。
 
 
 ## 証人別の上界式の適用区間と比較
 
-累積上界は、各行の式と $J(B)$、 $U_4(B)$ の最小値とする。 $\ln B\le1609/25$ では4093も最小値に含める。点ごとの上界には累積用の定数項を代入しない。
+累積上界は各行の式と $J(B)$、 $F_4(B)$、Q1の有限・精密化候補の最小値とする。 $\ln B\le1609/25$ では4093も最小値に含める。点ごとの上界には累積用の定数項を代入しない。
 
 参考となる実測値は [3種類の最小素数証人の数表](WitnessRecords.md) にまとめた。負値証人は $n < 2^{64}$、非1証人は $n < 2^{80}$ の累積最大値の更新点を掲載している。
 
-以下はGRHを仮定する。上界は、以下の範囲条件で有効になる式の最小値をとる。共通端点255・有効域内の4093・第四極核の累積上界も含める。点ごとの最小証人と累積最大値は別の行に示し、点ごとの入口をそのまま累積全域へ外挿しない。
+以下はGRHを仮定する。上界は以下の範囲条件で有効になる式の最小値をとる。共通端点255・有効域内の4093・第四極核の累積上界も含める。点ごとの最小証人と累積最大値は別の行に示し、点ごとの入口をそのまま累積全域へ外挿しない。
 
 ### 高域の累積上界
 
-高域では $E=10^{18}$、 $L=\ln B$ とし、
+全ての自然数上端で $F_4(B)$ が使える。 $L=\ln B$ が各行の入口を超えると、
+次の簡単な式も得られる。表は各範囲で保証される上界を示し、
+最良の切替点を列挙したものではない。実際の選択は常に3行の最小値である。
 
-$$
-L_{\mathrm{cross}}=E\sqrt{\frac{9999}{8000}},\qquad
-L_{\mathrm{recover}}=E\sqrt{\frac{9999}{7770}}
-$$
-
-と置く。係数4/5の候補と $U_4$ の最小値は次のとおりである。両証人の累積最大に使え、Selfridgeとの一致開始点も十分に超えている。
-
-| 対数上端の区間 | $\min\lbrace(4/5)L^2,U_4(B)\rbrace$ |
+| 対数上端の条件 | 両証人の累積最大に使える上界 |
 |---|---|
-| $E\le L\le L_{\mathrm{cross}}$ | $(4/5)L^2$ |
-| $L_{\mathrm{cross}} < L < L_{\mathrm{recover}}$ | $(9999/10000)E^2$ |
-| $L_{\mathrm{recover}}\le L$ | $(777/1000)L^2$ |
+| $900000000 \le L$ | $(79/100)L^2$ |
+| $14400000000 \le L$ | $(39/50)L^2$ |
+| $1440000000000 \le L$ | $(777/1000)L^2$ |
 
-切替は $U_4(B)=\max\lbrace(9999/10000)E^2,(777/1000)L^2\rbrace$ と係数4/5の代数比較から得たもので、浮動小数の交点を定理の条件にしていない。証人・累積最大のLean上界へ代入する式の比較であり、新たな証人定理や適用条件を追加したものではない。
+`fourPole_reduced_lt_smoothed` は、 $L \ge 900000000$ で
+$F_4(B) < (4/5)L^2$ を証明する。
+[FourPoleLegacyComparison.lean](../PseudoPrime/PseudoSquare/Bounds/FourPoleLegacyComparison.lean)
+は、以前のshifted・single-log・double-log・two-pole・初等半径などの候補も含め、
+旧公開最小値全体との比較を証明する。
+`fourPole_reduced_lt_old_min` は $900000000 \le L \le 10^{15}$ で、
+負値・非1値の両方の旧最小値より真に小さいことを示す。
+Q2単独の共通尺度候補についても、`fourPole_common_lt_old_min` が
+$10^{18} \le L \le (11/10)10^{18}$ で同じ厳密改善を示す。
+既存の中低域の候補や有限上界を捨てて $F_4$ だけへ置き換えるものではない。
+
+### 既存Gamma評価を共通尺度で使う候補
+
+[GammaCommonBounds.lean](../PseudoPrime/PseudoSquare/Bounds/GammaCommonBounds.lean) は、
+既存の自由尺度の評価から次の全域累積候補を供給する。
+新しい解析核や有限列挙による改善ではない。
+
+| 対象 | 候補 | 旧公開最小値より真に小さくなる対数上端の区間 |
+|---|---|---|
+| 負値 | $(99/100)\max\lbrace290,L\rbrace^2$ | $289 \le L \le 579/2$ |
+| 非1値 | $(4/5)\max\lbrace22221,L\rbrace^2$ | $21000 \le L \le 22000$ |
+| 負値 | $(4/5)\max\lbrace46000,L\rbrace^2$ | $44000 \le L \le 45000$ |
+
+[GammaLegacyComparison.lean](../PseudoPrime/PseudoSquare/Bounds/GammaLegacyComparison.lean)
+は、各区間で有効な旧候補を全て含む最小値への厳密比較を証明する。
+290の候補の勝ち区間は負値側についてのものであり、
+非1値側では既存double-log候補の方が小さい。
+22221の候補を負値側へ転用しない。
 
 ### 非1証人の比較：Legendre記号が $0$ または $-1$
 
@@ -821,8 +897,8 @@ $$
 | $Q_{\ne1}(B)$ | $B\in\mathbb N$、 $500\le\ln B < 22221$、 $T(\ln B)^2\le V_{\ne1}(\ln B)$ | $T(\ln B)^2$ | [`QNeOne_le_shiftedDoubleLog`](../PseudoPrime/PseudoSquare/Bounds/ShiftedOddEndpointDoubleLogBounds.lean) |
 | $Q_{\ne1}(B)$ | $B\in\mathbb N$、 $500\le\ln B < 22221$、 $V_{\ne1}(\ln B) < T(\ln B)^2$ | $V_{\ne1}(\ln B)$ | [`QNeOne_le_eulerPrefixTwoPole`](../PseudoPrime/PseudoSquare/Bounds/TwoPolePrefixBounds.lean) |
 | $q_{\ne1}(n)$ | $n\in\mathcal A$、 $22221\le\ln n < 10^{18}$ | $(4/5)(\ln n)^2$ | [`exists_prime_ne_one_witness_le_gamma_log_22221`](../PseudoPrime/PseudoSquare/Bounds/GammaPrincipalEulerNonOneBounds.lean) |
-| $q_{\ne1}(n)$ | $n\in\mathcal A$、 $\ln n\ge10^{18}$ | $(777/1000)(\ln n)^2$ | [負値証人の有限入口](../PseudoPrime/LLS/RationalPoleSharpEntrance.lean) と $q_{\ne1}\le q_{-1}$ |
-| $Q_{\ne1}(B)$ | $B\in\mathbb N$、 $\ln B\ge22221$ | $\min\lbrace(4/5)(\ln B)^2,U_4(B)\rbrace$ | [`QNeOne_le_gamma_log_22221`](../PseudoPrime/PseudoSquare/Bounds/GammaPrincipalEulerNonOneBounds.lean)・[第四極核の累積候補](../PseudoPrime/PseudoSquare/Bounds/FourPoleFiniteBounds.lean) |
+| $q_{\ne1}(n)$ | $n\in\mathcal A$、 $\ln n\ge10^{18}$ | $(777/1000)(\ln n)^2$ | [負値証人の有限入口](../PseudoPrime/LLS/PaperStatements/RationalPoleSharpEntrance.lean) と $q_{\ne1}\le q_{-1}$ |
+| $Q_{\ne1}(B)$ | $B\in\mathbb N$、 $\ln B\ge22221$ | $\min\lbrace(4/5)(\ln B)^2,F_4(B)\rbrace$ | [`QNeOne_le_gamma_log_22221`](../PseudoPrime/PseudoSquare/Bounds/GammaPrincipalEulerNonOneBounds.lean)・[第四極核の累積候補](../PseudoPrime/PseudoSquare/Bounds/FourPoleReducedBounds.lean) |
 
 
 $n\in\mathcal A$、 $n < 11$ では $n=3,5,7$ なので、掲載式 $\max\lbrace5,(\ln n)^2\rbrace$ は5になる。有限最大値の表は対数二乗上界が成立する $B\ge10$ を対象とする。 $3\le B < 10$ では同じ存在定理から $Q_{\ne1}(B)\le5$ が従い、 $B < 3$ では対象集合が空なので $Q_{\ne1}(B)=Q_{-1}(B)=0$ である。
@@ -831,7 +907,7 @@ $n\in\mathcal A$、 $n < 11$ では $n=3,5,7$ なので、掲載式 $\max\lbrace
 
 対数尺度を $L$ とすると、補正 $1/2$ の式と負の対数補正の式は $\ln L=7/2$ で一致する。
 $\ln L > 7/2$ では後者が小さい。
-$L\ge96$ では定数11/4の式が定数3の式より小さい。 $\ln L > 93/20$ では、さらに $T(L)^2 < S(L)^2$ となる。係数99/100の式も適用できる $L\ge290$ では
+$L\ge96$ では定数11/4の式が定数3の式より小さい。 $\ln L > 93/20$ ではさらに $T(L)^2 < S(L)^2$ となる。係数99/100の式も適用できる $L\ge290$ では
 
 $$
 (L-\ln L+11/4)^2\le\frac{99}{100}L^2
@@ -866,17 +942,17 @@ $L\ge600$ では二極上界の根が $(631/1000)L$ 以下なので、 $V_{\ne1}
 $500\le L < 800$ では表の大小条件で比較し、切り替わる尺度の近似値は $L\approx557.1916$ である。
 
 したがって $800\le L < 22221$ では $V_{\ne1}(L)$ が掲載式のうち最小になる。
-$L\ge22221$ では、 $V_{\ne1}(L)/L^2 > (99/40)(500/821)^2 > 4/5$ であり、既存の係数4/5の式の方が小さい。 また $T(L) > (9/10)L$ なので、 $T(L)^2 > (81/100)L^2 > (4/5)L^2$ である。
+$L\ge22221$ では $V_{\ne1}(L)/L^2 > (99/40)(500/821)^2 > 4/5$ であり、既存の係数4/5の式の方が小さい。 また $T(L) > (9/10)L$ なので、 $T(L)^2 > (81/100)L^2 > (4/5)L^2$ である。
 
 ![非1証人の有限最大値とGRHによる上界の比較](figures/qne1_upper_bound_comparison.svg)
 
 横軸は $\ln(\ln B)$ に線形なスケールとし、目盛りには $B$ を10の累乗で表示した。縦軸は対数軸である。橙の実線は表の候補と共通端点・定数候補の最小値 $U(B)$、黒の点線は $(\ln B)^2$、青緑の階段線は $2^{80}$ までの記録に基づく $Q_{\ne1}(B)$ を示す。実測値の線は探索上限で止めている。
 
-上界同士の差は主図では小さいため、挿入図に比 $U(B)/(\ln B)^2$ を対数軸で示した。描画範囲は $3\le B\le10^{16384}$ とし、負の対数補正と二極上界が切り替わる $\log_{10}B\approx 241.9852$ と二極上界の適用開始尺度500と、係数4/5の開始尺度22221も含めた。この近似値は描画用であり、表の厳密な適用条件を置き換えない。 $130.36\le\ln B\le162.77$ では奇素数専用の一次半径の二乗を使い、両端で従来式との切り替えによる小さな段差が生じる。 $\exp(22/5) < \ln B < 96$ では定数37/5の式が従来の対数補正式を改善する。開始尺度96では定数11/4の式へ切り替わり、 $\ln\ln B=93/20$ で係数2の負の対数補正式へ切り替わる。上界はGRHを仮定し、整数間の曲線は表示のために補間している。
+上界同士の差は主図では小さいため、挿入図に比 $U(B)/(\ln B)^2$ を対数軸で示した。挿入図の範囲は $10^6 < B \le 10^{16384}$ とし、有限上界47の区間を除いて解析的上界の差を示す。描画範囲は $3\le B\le10^{16384}$ とし、負の対数補正と二極上界が切り替わる $\log_{10}B\approx 241.9852$ と二極上界の適用開始尺度500と、係数4/5の開始尺度22221も含めた。この近似値は描画用であり、表の厳密な適用条件を置き換えない。 $130.36\le\ln B\le162.77$ では奇素数専用の一次半径の二乗を使い、両端で従来式との切り替えによる小さな段差が生じる。 $\exp(22/5) < \ln B < 96$ では定数37/5の式が従来の対数補正式を改善する。開始尺度96では定数11/4の式へ切り替わり、 $\ln\ln B=93/20$ で係数2の負の対数補正式へ切り替わる。上界はGRHを仮定し、整数間の曲線は表示のために補間している。
 
 ### 負値証人の比較：Legendre記号が $-1$
 
-対象は $q_{-1}(n)$ と $Q_{-1}(B)$ である。非1証人の補正 $1/1000$、 $1/10$、 $1/2$ と負の対数補正の定理は、値 $0$ の証人を許すため、この表には適用できない。
+対象は $q_{-1}(n)$ と $Q_{-1}(B)$ である。非1証人の補正 $1/1000$、 $1/10$、 $1/2$ と負の対数補正の定理は値 $0$ の証人を許すため、この表には適用できない。
 
 | 対象 | 条件 | 範囲別の上界式 | 対応するLean定理 |
 |---|---|---|---|
@@ -894,11 +970,11 @@ $L\ge22221$ では、 $V_{\ne1}(L)/L^2 > (99/40)(500/821)^2 > 4/5$ であり、�
 | $q_{-1}(n)$ | $n\in\mathcal A$、 $\ln n\ge500$、 $n < 10^{19978}$、 $V_{-1}(\ln n) < (99/100)(\ln n)^2$ | $V_{-1}(\ln n)$ | [`negOneWitness_le_quarterLog_GRH`](../PseudoPrime/PseudoSquare/Bounds/QuarterLogClippedNegOneBounds.lean) |
 | $Q_{-1}(B)$ | $B\in\mathbb N$、 $\ln B\ge500$、 $B < 10^{19978}$、 $V_{-1}(\ln B) < (99/100)(\ln B)^2$ | $V_{-1}(\ln B)$ | [`QNegOne_le_quarterClippedTwoPole_logarithmic`](../PseudoPrime/PseudoSquare/Bounds/QuarterLogClippedNegOneBounds.lean) |
 | $q_{-1}(n)$ | $n\in\mathcal A$、 $n\ge10^{19978}$、 $\ln n < 10^{18}$ | $(4/5)(\ln n)^2$ | [`primeNegOneWitness_cast_le_gamma_19978`](../PseudoPrime/PseudoSquare/Bounds/GammaWitnessBounds.lean) |
-| $q_{-1}(n)$ | $n\in\mathcal A$、 $\ln n\ge10^{18}$ | $(777/1000)(\ln n)^2$ | `fourPole_sharp_jacobi_finite_least`：[RationalPoleSharpEntrance.lean](../PseudoPrime/LLS/RationalPoleSharpEntrance.lean) |
-| $Q_{-1}(B)$ | $B\in\mathbb N$、 $B\ge10^{19978}$ | $\min\lbrace(4/5)(\ln B)^2,U_4(B)\rbrace$ | [`gamma_formula_explicit_19978`](../PseudoPrime/PseudoSquare/Bounds/GammaMaximumBounds.lean)・[第四極核の累積候補](../PseudoPrime/PseudoSquare/Bounds/FourPoleFiniteBounds.lean) |
+| $q_{-1}(n)$ | $n\in\mathcal A$、 $\ln n\ge10^{18}$ | $(777/1000)(\ln n)^2$ | `fourPole_sharp_jacobi_finite_least`：[RationalPoleSharpEntrance.lean](../PseudoPrime/LLS/PaperStatements/RationalPoleSharpEntrance.lean) |
+| $Q_{-1}(B)$ | $B\in\mathbb N$、 $B\ge10^{19978}$ | $\min\lbrace(4/5)(\ln B)^2,F_4(B)\rbrace$ | [`gamma_formula_explicit_19978`](../PseudoPrime/PseudoSquare/Bounds/GammaMaximumBounds.lean)・[第四極核の累積候補](../PseudoPrime/PseudoSquare/Bounds/FourPoleReducedBounds.lean) |
 
 
-上の高域の点ごとの行は係数777/1000を採用し、累積の行は小入力の履歴を残す $U_4$ と係数4/5の最小値を採用する。
+従来の点ごとの定理も表に保持している。現在の累積比較では短縮した3入口の候補 $F_4$ と係数4/5、および他の有効な候補の最小値を使う。
 
 $t\ge3$ では $R(t) > (\ln t)^2$ なので、係数1未満の式が適用できる範囲では、その式が $R(t)$ より小さい。
 係数 $9999/10000$ の式は開始尺度を下げ、係数 $99/100$ の式は尺度290以上でより小さい上界を与える。

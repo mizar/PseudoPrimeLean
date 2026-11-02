@@ -128,7 +128,7 @@ $$
 
 $$
 \frac{d}{x(\ln x)^2}\sum_{n=0}^{\infty}\frac{1}{(n+1)^2}
-<\frac{2d}{x(\ln x)^2}
+ < \frac{2d}{x(\ln x)^2}
 $$
 
 で抑える。

@@ -2,7 +2,7 @@
 
 対象は [arXiv:1309.3595v3](https://arxiv.org/abs/1309.3595v3)（2016年12月8日改訂版、[PDF原文](https://arxiv.org/pdf/1309.3595v3)・[HTML本文](https://arxiv.org/html/1309.3595v3)）である。旧版の補題6.1と、それに依存する定理1.2・1.3には訂正があるため、版を固定して照合する。
 
-Lamzouri・Li・Soundararajanによる論文[「Conditional bounds for the least quadratic non-residue and related problems」](https://arxiv.org/abs/1309.3595v3)の命題を解説する。命題は [PseudoPrime/LLS/PaperStatements.lean](../PseudoPrime/LLS/PaperStatements.lean)、補助定義は [PseudoPrime/LLS/PaperDefinitions.lean](../PseudoPrime/LLS/PaperDefinitions.lean)、公開証明は [PseudoPrime/LLS/PaperProofs.lean](../PseudoPrime/LLS/PaperProofs.lean) にある。名前空間は `PseudoPrime.LLS.PaperStatements` である。
+Lamzouri・Li・Soundararajanによる論文[「Conditional bounds for the least quadratic non-residue and related problems」](https://arxiv.org/abs/1309.3595v3)の命題を解説する。命題は [PseudoPrime/LLS/PaperStatements/PaperStatements.lean](../PseudoPrime/LLS/PaperStatements/PaperStatements.lean)、補助定義は [PseudoPrime/LLS/PaperStatements/PaperDefinitions.lean](../PseudoPrime/LLS/PaperStatements/PaperDefinitions.lean)、公開証明は [PseudoPrime/LLS/PaperStatements/PaperProofs.lean](../PseudoPrime/LLS/PaperStatements/PaperProofs.lean) にある。名前空間は `PseudoPrime.LLS.PaperStatements` である。
 
 各節では、原文の主張を定式化した際の条件と量化の範囲、および証明の概要を述べる。ここで扱う18項目のうち、定理1.3以外の17項目には、それぞれ `PaperStatements.lean` の命題を証明する公開定理がある。定理1.3は、全範囲の命題 `lls_theorem13` と、指数7以上に制限した命題 `lls_theorem13_of_index_ge_seven` を区別する。公開証明は後者に対するものである。
 
@@ -192,13 +192,13 @@ $$
 
 指数7以上27以下では、第6.3節のガンマ核を用いる。この範囲では $21/8 < \ln(2h) < 4$ であり、 $1-1/h \ge 6/7$ と $\ln(2h)/(4-\ln(2h)) > 21/11$ が成り立つ。したがって定理1.3の誤差なしの係数は少なくとも $81/121$ であり、定理1.2の係数 $33/50=0.66$ を上回る。係数の差より小さい誤差を選んで定理1.2を適用し、上記の厳密不等式を得る。制限版の公開証明では、この二つの範囲を合わせて指数7以上の結論を得る。
 
-指数4〜6でも、十分大きな法が奇素数の真の冪 $q=r^k$、 $k \ge 2$ である場合は、[PseudoPrime/LLS/PrimePowerSubgroupBounds.lean](../PseudoPrime/LLS/PrimePowerSubgroupBounds.lean) の `theorem13_small_index_of_odd_proper_prime_power` により証明されている。部分群の指数 $h$ と底の素数 $r$ が互いに素の場合は、単数群の巡回性から部分群を素数法へ縮約する。例外となる $h=5,r=5$ は法25、 $h=6,r=3$ は法9へ縮約する。有界な縮約法では最小素数の存在と有限性から一様な上界を取り、対数二乗の増大によって吸収する。冪の指数が2以上なので、縮約後の係数 $659/1000$ は元の法では $659/4000$ となる。 $659/4000 < C_h(0)$ の余裕に漸近誤差を吸収し、 $p < C_h(0)(\ln q)^2$ という狭義上界を得る。この部分定理は、目標係数に正の $\varepsilon$ を加えなくても成立する。
+指数4〜6でも、十分大きな法が奇素数の真の冪 $q=r^k$、 $k \ge 2$ である場合は、[PseudoPrime/LLS/PaperStatements/PrimePowerSubgroupBounds.lean](../PseudoPrime/LLS/PaperStatements/PrimePowerSubgroupBounds.lean) の `theorem13_small_index_of_odd_proper_prime_power` により証明されている。部分群の指数 $h$ と底の素数 $r$ が互いに素の場合は、単数群の巡回性から部分群を素数法へ縮約する。例外となる $h=5,r=5$ は法25、 $h=6,r=3$ は法9へ縮約する。有界な縮約法では最小素数の存在と有限性から一様な上界を取り、対数二乗の増大によって吸収する。冪の指数が2以上なので、縮約後の係数 $659/1000$ は元の法では $659/4000$ となる。 $659/4000 < C_h(0)$ の余裕に漸近誤差を吸収し、 $p < C_h(0)(\ln q)^2$ という狭義上界を得る。この部分定理は、目標係数に正の $\varepsilon$ を加えなくても成立する。
 
-一般の法についても、非主の消去指標の原始導手の対数和を $S_H$ とし、 $S_H \le (h-1)\ln q/2$ が成り立つなら、十分大きな法に対する指数4〜6の結論は [PseudoPrime/LLS/SmallIndexConductorBounds.lean](../PseudoPrime/LLS/SmallIndexConductorBounds.lean) の `theorem13_small_index_of_conductor_sum_le_half` により証明されている。各指標の明示公式で導手を保持し、主指標を含む平均と有限和の積分下界を比較する。導手和の定数倍に $\eta\ln q$（ $\eta > 0$）を加えた量の平方を切断値に取ることで、導手が有界の場合にも一様な最小素数上界が得られる。改善したガンマ核の係数と導手の節約から、こちらも $p < C_h(0)(\ln q)^2$ を得る。
+一般の法についても、非主の消去指標の原始導手の対数和を $S_H$ とし、 $S_H \le (h-1)\ln q/2$ が成り立つなら、十分大きな法に対する指数4〜6の結論は [PseudoPrime/LLS/PaperStatements/SmallIndexConductorBounds.lean](../PseudoPrime/LLS/PaperStatements/SmallIndexConductorBounds.lean) の `theorem13_small_index_of_conductor_sum_le_half` により証明されている。各指標の明示公式で導手を保持し、主指標を含む平均と有限和の積分下界を比較する。導手和の定数倍に $\eta\ln q$（ $\eta > 0$）を加えた量の平方を切断値に取ることで、導手が有界の場合にも一様な最小素数上界が得られる。改善したガンマ核の係数と導手の節約から、こちらも $p < C_h(0)(\ln q)^2$ を得る。
 
-有理極核による分岐では、同じ導手和条件をさらに緩和している。[RationalPoleConductorRatios.lean](../PseudoPrime/LLS/RationalPoleConductorRatios.lean) は、指数4・5・6について、それぞれ $S_H \le r(h-1)\ln q$ の比率 $r=51/100,5/7,23/25$ の下で、十分大きな法に対する厳密な上界 $p < C_h(0)(\ln q)^2$ を証明する。閾値は指数ごとに存在し、法と部分群について一様である。数値の有限入口を与えた定理ではない。
+有理極核による分岐では、同じ導手和条件をさらに緩和している。[RationalPoleConductorRatios.lean](../PseudoPrime/LLS/PaperStatements/RationalPoleConductorRatios.lean) は、指数4・5・6について、それぞれ $S_H \le r(h-1)\ln q$ の比率 $r=51/100,5/7,23/25$ の下で、十分大きな法に対する厳密な上界 $p < C_h(0)(\ln q)^2$ を証明する。閾値は指数ごとに存在し、法と部分群について一様である。数値の有限入口を与えた定理ではない。
 
-二次・三次の指標を互いに素な法 $m,n$ から引き戻すCRT分岐もある。[CrtConductorBounds.lean](../PseudoPrime/LLS/CrtConductorBounds.lean) は、成分の位数が正確に2・3なら構成した核の指数が6となることを使い、非主導手積 $f_2^3f_3^4$ と導手対数和 $3\ln f_2+4\ln f_3$ から最小素数の上界を導く。原定理1.3の目標に加え、十分大きな積の法に対する係数 $44/125$ の厳密な対数二乗上界を与える。CRT指標と導手の算術は [CrtCharacters.lean](../PseudoPrime/NumberTheory/CrtCharacters.lean) にある。
+二次・三次の指標を互いに素な法 $m,n$ から引き戻すCRT分岐もある。[CrtConductorBounds.lean](../PseudoPrime/LLS/PaperStatements/CrtConductorBounds.lean) は、成分の位数が正確に2・3なら構成した核の指数が6となることを使い、非主導手積 $f_2^3f_3^4$ と導手対数和 $3\ln f_2+4\ln f_3$ から最小素数の上界を導く。原定理1.3の目標に加え、十分大きな積の法に対する係数 $44/125$ の厳密な対数二乗上界を与える。CRT指標と導手の算術は [CrtCharacters.lean](../PseudoPrime/NumberTheory/CrtCharacters.lean) にある。
 
 これらは追加の十分条件の下での結果である。特に導手和条件は法 $q$ だけでなく部分群 $H$ にも依存し、一般の部分群が満たすとは示していない。指数4〜6を任意の法と部分群について扱う証明はなく、定理1.3全体の公開証明はない。
 
@@ -223,7 +223,7 @@ $$
 
 さらに $C_4(0)=0.1648545\ldots < 1/4$ であり、指数4の係数は原論文第6.1節自身が示す共通核の限界より小さい。指数5・6も、本プロジェクトの $60/121$ の障害により同じ比較からは達成できない。したがって、第6.2節の記載をそのまま指数4〜6の証明として採用することはできない。この疑義は、導出の不足を指摘するものであり、定理1.3の数論的な結論の反例を与えるものではない。旧版について論文末尾に記された訂正履歴とも区別する。
 
-実装は、三角形型核を用いる指数28以上と、定理1.2のガンマ核の上界から導く指数7〜27を合わせて、指数7以上を証明する。後者は第6.2節の直接の導出とは異なる。指数4〜6の法の縮約、導手和による部分定理、および共通核の係数障害は原論文に含まれない追加の議論であり、一般の場合の証明を完了するものではない。核の係数と正値性の照合先は [PseudoPrime/LLS/TheoreticalKernelProfiles.lean](../PseudoPrime/LLS/TheoreticalKernelProfiles.lean)、最小素数への移行は [PseudoPrime/LLS/TheoreticalPrimeBounds.lean](../PseudoPrime/LLS/TheoreticalPrimeBounds.lean) である。
+実装は、三角形型核を用いる指数28以上と、定理1.2のガンマ核の上界から導く指数7〜27を合わせて、指数7以上を証明する。後者は第6.2節の直接の導出とは異なる。指数4〜6の法の縮約、導手和による部分定理、および共通核の係数障害は原論文に含まれない追加の議論であり、一般の場合の証明を完了するものではない。核の係数と正値性の照合先は [PseudoPrime/LLS/PaperStatements/TheoreticalKernelProfiles.lean](../PseudoPrime/LLS/PaperStatements/TheoreticalKernelProfiles.lean)、最小素数への移行は [PseudoPrime/LLS/PaperStatements/TheoreticalPrimeBounds.lean](../PseudoPrime/LLS/PaperStatements/TheoreticalPrimeBounds.lean) である。
 
 ## 定理1.4 `lls_theorem14`
 
@@ -261,9 +261,9 @@ $$
 
 解析区間で覆わない法には、整数上界付きの有限被覆を使う。4,412個の異なる奇素数の素数性を一度だけ確認した共有表を使い、素数2は別に扱う。この表から、698法について全単元剰余類が指定した上界以下の素数で覆われることを検査する。さらに959法には、倍数の法で確認した被覆を約数の法へ転送する。単元剰余類を倍数の法へ持ち上げ、そこで得た素数を元の法へ写せば同じ整数上界が保たれる。転送先でその上界を $(\varphi(q)\ln q)^2$ と比較する。この有限部分にはGRHを要しない。
 
-最後に、 $4 \le q < 5700$ の全5,696法が、解析経路4,039法・直接の有限被覆698法・倍数からの転送959法のいずれかに入ることを対応表の有限検査で確認する。共通の解析区間と大きい法の一様評価へ接続することで、すべての $q > 3$ を覆う。証明書の接続は [PseudoPrime/LLS/Corollary12.lean](../PseudoPrime/LLS/Corollary12.lean)、共有素数表は [PseudoPrime/LLS/Corollary12PrimeCatalog.lean](../PseudoPrime/LLS/Corollary12PrimeCatalog.lean) にある。
+最後に、 $4 \le q < 5700$ の全5,696法が、解析経路4,039法・直接の有限被覆698法・倍数からの転送959法のいずれかに入ることを対応表の有限検査で確認する。共通の解析区間と大きい法の一様評価へ接続することで、すべての $q > 3$ を覆う。証明書の接続は [PseudoPrime/LLS/PaperStatements/Corollary12.lean](../PseudoPrime/LLS/PaperStatements/Corollary12.lean)、共有素数表は [PseudoPrime/LLS/Corollary12PrimeCatalog.lean](../PseudoPrime/LLS/Corollary12PrimeCatalog.lean) にある。
 
-原論文との相違。第4.3節では $q\le20000$ を計算で確認し、 $q>20000$ を一様な解析評価で扱う。実装では $q\ge20000$ を大きい法の評価で扱い、その下にも解析的な十分条件を適用する。小さい法を素因数個数ごとの共有区間と残余の有限被覆に分け、有限被覆を約数へ転送して証明を共有する構成は、原論文の有限計算の記述にはない。有限検査では、証明済み素数のビット列を法ごとに折り畳んで剰余を被覆し、使う除数が2以上で法を割り切ることから単元の候補を絞る。この除数リストには素因数分解の完全性を要求しない。解析区間を選ぶための素因数リストの確認とは別の検査である。
+原論文との相違。第4.3節では $q\le20000$ を計算で確認し、 $q > 20000$ を一様な解析評価で扱う。実装では $q\ge20000$ を大きい法の評価で扱い、その下にも解析的な十分条件を適用する。小さい法を素因数個数ごとの共有区間と残余の有限被覆に分け、有限被覆を約数へ転送して証明を共有する構成は、原論文の有限計算の記述にはない。有限検査では、証明済み素数のビット列を法ごとに折り畳んで剰余を被覆し、使う除数が2以上で法を割り切ることから単元の候補を絞る。この除数リストには素因数分解の完全性を要求しない。解析区間を選ぶための素因数リストの確認とは別の検査である。
 
 ## 定理1.5 `lls_theorem15`
 
@@ -514,7 +514,7 @@ $$
 
 これらの評価と有限添字の付け替えにより、各素数について比較不等式を得る。Mangoldt関数は素数冪以外では零となるため、整数上の有限和を素数冪の和へ書き換えて結論を得る。
 
-原論文との相違・省略された場合分け。原論文の奇素数に対する表示式では、偶数冪の有限尾部を無限和に広げた後の下界を直ちに非負としている。しかし、例えば素数 $p \ge 101$ に対して $x=p$ と置くと、一次項の重みは0なのに無限偶数尾部は正であり、この中間下界は負になる。 $p^2 \le x$ の枝で無限尾部の評価を使い、 $p \le x < p^2$ では一次項だけを比較する必要がある。実装の [PseudoPrime/LLS/PrimePowerEvenComparison.lean](../PseudoPrime/LLS/PrimePowerEvenComparison.lean) は、この場合分けを明示している。これは補題自体の結論の反例ではなく、原文の証明に省略された処理の補完である。
+原論文との相違・省略された場合分け。原論文の奇素数に対する表示式では、偶数冪の有限尾部を無限和に広げた後の下界を直ちに非負としている。しかし、例えば素数 $p \ge 101$ に対して $x=p$ と置くと、一次項の重みは0なのに無限偶数尾部は正であり、この中間下界は負になる。 $p^2 \le x$ の枝で無限尾部の評価を使い、 $p \le x < p^2$ では一次項だけを比較する必要がある。実装の [PseudoPrime/LLS/PaperStatements/PrimePowerEvenComparison.lean](../PseudoPrime/LLS/PaperStatements/PrimePowerEvenComparison.lean) は、この場合分けを明示している。これは補題自体の結論の反例ではなく、原文の証明に省略された処理の補完である。
 
 素数2については、原論文は最初の5項の三角多項式を計算機で評価する。実装では単位円上の複素冪の実部を使い、対応する多項式の下界と偶数指数の尾部をそれぞれ有理数 $5/36$ と比較して非負性を証明する。素数ごとに比較して足す構成は原論文と同じだが、素数2の計算を証明付きの代数的不等式に置き換えている。
 
@@ -580,7 +580,7 @@ GRHの下で、原始非主指標について、完備関数の対数微分を�
 
 核の帯内で、左の積分線の実部を $[-3/2,-1/2)$、右の積分線の実部を $(1/2,3/2]$ から選ぶと、有限留数和の $2\pi i$ 倍は、実変数 $t$ で表示した右垂直積分から左垂直積分を引いた値の $i$ 倍へ収束する。左右の絶対可積分性と、特異点が各長方形の内部にあることも証明済みである。GRHでは平行移動した零点の実部が0となり、選んだ高さでの完備関数の非零性が上下の境界上の零点を排除する。核の極も左右の積分線の間にある。有限長方形の等式と水平辺の消滅、垂直辺の広義積分の極限を組み合わせ、これらの性質を追加仮定にせず極限を得る。
 
-有限留数和の極限が全零点にわたる級数に一致することも証明済みである。平行移動の微分は1なので、零点の位数は変わらない。GRHにより平行移動した零点は $i\gamma$ に一致し、核の極以外の留数は振動零点項の負値となる。完備関数は原点で非零なので、核の極と零点の寄与は重ならない。各零点が十分大きな高さの長方形に含まれることと絶対収束から、有限留数和は核の極の留数から振動零点級数を引いた値へ収束する。極限の一意性により、右垂直積分から左垂直積分を引いた値は、この極限値の $2\pi$ 倍となる。係数の正確な対応は [PseudoPrime/LLS/MellinKernelContourLimits.lean](../PseudoPrime/LLS/MellinKernelContourLimits.lean) の `tendsto_completed_residueSum` と [PseudoPrime/LLS/MellinKernelResidueSeries.lean](../PseudoPrime/LLS/MellinKernelResidueSeries.lean) の `completed_vertical_difference_eq_residues` にある。
+有限留数和の極限が全零点にわたる級数に一致することも証明済みである。平行移動の微分は1なので、零点の位数は変わらない。GRHにより平行移動した零点は $i\gamma$ に一致し、核の極以外の留数は振動零点項の負値となる。完備関数は原点で非零なので、核の極と零点の寄与は重ならない。各零点が十分大きな高さの長方形に含まれることと絶対収束から、有限留数和は核の極の留数から振動零点級数を引いた値へ収束する。極限の一意性により、右垂直積分から左垂直積分を引いた値は、この極限値の $2\pi$ 倍となる。係数の正確な対応は [PseudoPrime/LLS/PaperStatements/MellinKernelContourLimits.lean](../PseudoPrime/LLS/PaperStatements/MellinKernelContourLimits.lean) の `tendsto_completed_residueSum` と [PseudoPrime/LLS/PaperStatements/MellinKernelResidueSeries.lean](../PseudoPrime/LLS/PaperStatements/MellinKernelResidueSeries.lean) の `completed_vertical_difference_eq_residues` にある。
 
 右側では、実部が $1/2$ より大きく $3/2$ 以下の許容線について、完備関数の積分の絶対可積分性も証明済みである。対数微分を通常のL関数とガンマ因子の部分に分ける。ガンマ因子は正の実部を持つ線で連続となり、その対数微分を $\ln(4+\vert t\vert)$ の定数倍と定数項で抑えられる。核の二次減衰と合わせた上界は、可積分な $(1+t^2)^{-3/4}$ の定数倍以下となる。通常のL関数の部分には、先に示したMangoldt級数による積分表示を使う。これらの等式を組み合わせると、原始指標のMangoldt和は、核の極の留数から振動零点級数を引き、左側の完備積分と右側のガンマ積分をそれぞれ $2\pi$ で割って加えた値に等しい。この厳密な公式も証明済みであり、残る積分の一様な上界は仮定していない。
 
@@ -660,7 +660,7 @@ $$
 
 よって残積分は、原文に書かれた法に一様な $O_K(x^{-5/8})$ には入らない。これは核条件と関数等式に基づく中間評価への指摘であり、小さい素数がすべて部分群に入る配置や、補題6.1の結論そのものの反例を構成したものではない。
 
-実装は導手因子を保ち、固定した左線で $O_K((1+\ln f)x^{c_-})$ を示してから $O_K(\ln q/\sqrt x)$ へ吸収する。この誤差は補題の最終的な $O_K(1+\ln q\ln x/\sqrt x)$ に含まれるため、補題6.1の結論は維持される。対応する定理は [PseudoPrime/LLS/MellinKernelLeftBounds.lean](../PseudoPrime/LLS/MellinKernelLeftBounds.lean) の `exists_leftCompleted_log_rpow` と `exists_leftCompleted_log_sqrt` である。
+実装は導手因子を保ち、固定した左線で $O_K((1+\ln f)x^{c_-})$ を示してから $O_K(\ln q/\sqrt x)$ へ吸収する。この誤差は補題の最終的な $O_K(1+\ln q\ln x/\sqrt x)$ に含まれるため、補題6.1の結論は維持される。対応する定理は [PseudoPrime/LLS/PaperStatements/MellinKernelLeftBounds.lean](../PseudoPrime/LLS/PaperStatements/MellinKernelLeftBounds.lean) の `exists_leftCompleted_log_rpow` と `exists_leftCompleted_log_sqrt` である。
 
 ## 命題6.1 `lls_proposition61`
 
@@ -674,7 +674,7 @@ $$
 
 が成り立つ。閾値 $Q$ は $K,h,\lambda,\varepsilon$ に依存してよいが、同じ指数の部分群 $H$ と正の切断値 $X$ については一様である。公開証明は `lls_proposition61_proof` である。
 
-左辺の $\sqrt X$ に掛かる係数の正値性は、この命題自体の前提ではない。その係数が非正なら不等式は自明に成立し、 $X$ の上界を取り出す段階で初めて正値性を必要とする。この場合分けは [PseudoPrime/LLS/MellinKernelUniformComparison.lean](../PseudoPrime/LLS/MellinKernelUniformComparison.lean) の `exists_scaled_kernel_comparison` にある。
+左辺の $\sqrt X$ に掛かる係数の正値性は、この命題自体の前提ではない。その係数が非正なら不等式は自明に成立し、 $X$ の上界を取り出す段階で初めて正値性を必要とする。この場合分けは [PseudoPrime/LLS/PaperStatements/MellinKernelUniformComparison.lean](../PseudoPrime/LLS/PaperStatements/MellinKernelUniformComparison.lean) の `exists_scaled_kernel_comparison` にある。
 
 部分群上で値が1となる指標全体を $\widetilde H$ とすると、その個数は指数 $h$ に等しい。自然数 $n$ の剰余類が単元であり $H$ に入るとき、 $\sum_{\chi\in\widetilde H}\chi(n)=h$ となり、それ以外では0となる。部分群外の単元では、値が1でない指標を掛けて指標群を置換し、和の消滅を示す。非単元では各指標が0となる。この直交関係と絶対収束から、指標平均を、部分群内の項だけを残した主指標の無限和へ変換できる。
 

@@ -179,9 +179,14 @@ public import PseudoPrime.PrimeTestBounds.Selfridge.AnalyticWitnessBounds
 public import PseudoPrime.PrimeTestBounds.Selfridge.OddMidscaleBounds
 public import PseudoPrime.PrimeTestBounds.Selfridge.LogSqMaximum
 public import PseudoPrime.PrimeTestBounds.Selfridge.CommonEndpointBounds
+public import PseudoPrime.PrimeTestBounds.Selfridge.FiniteEndpointBounds
 public import PseudoPrime.PrimeTestBounds.Selfridge.FourPoleFiniteBounds
 public import PseudoPrime.PrimeTestBounds.Selfridge.FourPoleSharpFiniteBounds
+public import PseudoPrime.PrimeTestBounds.Selfridge.FourPoleCommonBounds
+public import PseudoPrime.PrimeTestBounds.Selfridge.FourPoleReducedBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.CumulativeHighBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.HistoryCumulativeBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianSurplusComparison
 
 /-!
 # Analytic and conditional bounds applied to primality tests

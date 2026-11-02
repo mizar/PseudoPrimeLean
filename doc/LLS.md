@@ -436,7 +436,7 @@ $$
 \exists p\in\mathbb P,\quad p\le61,\quad\chi(p)\ne1.
 $$
 
-[FullEndpointEightyOneRange.lean](../PseudoPrime/LLS/FullEndpointEightyOneRange.lean) の
+[FullEndpointEightyOneRange.lean](../PseudoPrime/LLS/PaperStatements/FullEndpointEightyOneRange.lean) の
 `PaperStatements.exists_prime_ne_one_le_sixty_one_of_log_le_nine` が対応する。
 法の有限列挙は使わず、半径8の端点分離式を解析的に抑える。
 値0も認め、素数2も候補に含む。
@@ -450,7 +450,7 @@ H\subsetneq G_q
 \exists p\in\mathbb P,\quad p\le61,\quad[p]_q\notin\iota_q(H).
 $$
 
-[FullEndpointEightyOneSubgroup.lean](../PseudoPrime/LLS/FullEndpointEightyOneSubgroup.lean) の
+[FullEndpointEightyOneSubgroup.lean](../PseudoPrime/LLS/PaperStatements/FullEndpointEightyOneSubgroup.lean) の
 `PaperStatements.exists_prime_outside_subgroup_le_sixty_one` が対応する。
 商群の非主指標を引き戻し、上の指標版を適用する。剰余環の非単元も証人になる。
 
@@ -499,7 +499,7 @@ $$
 
 $$
 \begin{gathered}
-\mathrm{GRH},\quad q\in\mathbb N,\quad q>0,\quad
+\mathrm{GRH},\quad q\in\mathbb N,\quad q > 0,\quad
 \chi\text{ は法 }q\text{ のDirichlet指標},\quad\chi\ne1,\\
 \frac{1339}{50}\le L\le\frac{26269}{100}
 \\
@@ -518,16 +518,16 @@ H\subsetneq(\mathbb Z/q\mathbb Z)^\times
 $$
 
 対応する定理は
-[非主指標版](../PseudoPrime/LLS/MidscaleEndpointRadius.lean) の
+[非主指標版](../PseudoPrime/LLS/PaperStatements/MidscaleEndpointRadius.lean) の
 `exists_prime_ne_one_le_midscale_radius_sq` と
-[真部分群版](../PseudoPrime/LLS/MidscaleEndpointSubgroup.lean) の
+[真部分群版](../PseudoPrime/LLS/PaperStatements/MidscaleEndpointSubgroup.lean) の
 `exists_prime_outside_midscale_GRH` である。
 素数2と非単元も証人に含む。奇素数の負値Jacobi証人にはそのまま適用しない。
 
 半径は接続点でそれぞれ32、64、128となり、両端では24、256となる。
 4区間の四次式を各5個の有理Bernstein係数で認証し、対数の凹性で実際の自然対数へ移した。
 法の有限列挙は使わない。
-[比較定理](../PseudoPrime/LLS/MidscaleEndpointComparison.lean)
+[比較定理](../PseudoPrime/LLS/PaperStatements/MidscaleEndpointComparison.lean)
 `midscaleEndpointRadius_sq_lt_adaptive_sq` により、区間全体で
 
 $$
@@ -549,11 +549,11 @@ $L=\ln q$ とし、上記の $R_{\mathrm{ad}}(q)$、 $F_{\mathrm{ad}}(q)$、 $F_
 | $5\le q < 600$ | $L^2$ | [`exists_prime_not_one_le_log_sq_from_five`](../PseudoPrime/LLS/CharacterPart2FromFive.lean) |
 | $600\le q$、 $L\le9$、 $R_{\mathrm{ad}}(q)\ge L$、 $L^2\le61$ | $L^2$ | [`exists_prime_not_one_le_log_sq_from_five`](../PseudoPrime/LLS/CharacterPart2FromFive.lean) |
 | $600\le q$、 $L\le9$、 $R_{\mathrm{ad}}(q) < L$、 $F_{\mathrm{ad}}(q)\le61$ | $F_{\mathrm{ad}}(q)$ | [`exists_prime_not_one_le_adaptivePart2Root`](../PseudoPrime/LLS/AdaptiveReciprocalWitnessBounds.lean) |
-| $600\le q$、 $L\le9$、 $61 < L^2$、 $61 < F_{\mathrm{ad}}(q)$ | $61$ | [`PaperStatements.exists_prime_ne_one_le_sixty_one_of_log_le_nine`](../PseudoPrime/LLS/FullEndpointEightyOneRange.lean) |
-| $9 < L\le81/4$ | $(64/81)L^2$ | [`PaperStatements.exists_prime_ne_one_le_eightNinths_log_sq`](../PseudoPrime/LLS/FullEndpointEightNinthsRange.lean) |
-| $81/4 < L\le26$ | $(81/100)L^2$ | [`PaperStatements.exists_prime_ne_one_le_eightyOne_log_sq`](../PseudoPrime/LLS/FullEndpointEightyOneRange.lean) |
+| $600\le q$、 $L\le9$、 $61 < L^2$、 $61 < F_{\mathrm{ad}}(q)$ | $61$ | [`PaperStatements.exists_prime_ne_one_le_sixty_one_of_log_le_nine`](../PseudoPrime/LLS/PaperStatements/FullEndpointEightyOneRange.lean) |
+| $9 < L\le81/4$ | $(64/81)L^2$ | [`PaperStatements.exists_prime_ne_one_le_eightNinths_log_sq`](../PseudoPrime/LLS/PaperStatements/FullEndpointEightNinthsRange.lean) |
+| $81/4 < L\le26$ | $(81/100)L^2$ | [`PaperStatements.exists_prime_ne_one_le_eightyOne_log_sq`](../PseudoPrime/LLS/PaperStatements/FullEndpointEightyOneRange.lean) |
 | $26 < L < 1339/50$ または $26269/100 < L < 300$ | $F_{\mathrm{ad}}(q)$ | [`exists_prime_not_one_le_adaptivePart2Root`](../PseudoPrime/LLS/AdaptiveReciprocalWitnessBounds.lean) |
-| $1339/50\le L\le26269/100$ | $R_{\mathrm{aff}}(L)^2$ | [`PaperStatements.exists_prime_ne_one_le_midscale_radius_sq`](../PseudoPrime/LLS/MidscaleEndpointRadius.lean) |
+| $1339/50\le L\le26269/100$ | $R_{\mathrm{aff}}(L)^2$ | [`PaperStatements.exists_prime_ne_one_le_midscale_radius_sq`](../PseudoPrime/LLS/PaperStatements/MidscaleEndpointRadius.lean) |
 | $L\ge300$、 $q < 10^{19787}$ | $F_\Gamma(q)$ | [`exists_prime_ne_one_le_clippedAffine`](../PseudoPrime/LLS/ClippedAffineWitnessBounds.lean) |
 | $q\ge10^{19787}$ | $(4/5)L^2$ | [`exists_prime_ne_one_4_5_log_sq_19787_GRH`](../PseudoPrime/LLS/GammaUniformTightStart.lean) |
 
@@ -894,7 +894,7 @@ p\le X,\quad p\nmid m,\quad\chi(p)\ne1.
 \end{gathered}
 $$
 
-[TruncatedCubicExclusion.lean](../PseudoPrime/LLS/TruncatedCubicExclusion.lean) の
+[TruncatedCubicExclusion.lean](../PseudoPrime/LLS/PaperStatements/TruncatedCubicExclusion.lean) の
 `exists_prime_outside_le_of_cubic_radius_GRH` が対応する。
 除外整数を $X$ 以下の素因数の積に置き換えて既存の抽出定理を適用する。
 抽出した素数も $X$ 以下なので、元の $m$ を割らないことが従う。
@@ -918,7 +918,7 @@ p\le X_j,\quad p\nmid m,\quad\chi(p)\ne1,\\
 \end{gathered}
 $$
 
-[TruncatedCubicIteration.lean](../PseudoPrime/LLS/TruncatedCubicIteration.lean) の
+[TruncatedCubicIteration.lean](../PseudoPrime/LLS/PaperStatements/TruncatedCubicIteration.lean) の
 `truncatedCubicIterate_step_le`、`exists_prime_outside_le_truncatedCubicIterate`、
 `truncatedCubicIterate_eventually_constant` が対応する。
 費用の単調性から、各反復値は有効な上界を保つ。
@@ -961,7 +961,7 @@ G,E\ge0\quad\Longrightarrow\quad
 r_{2434/75}(G,E) < r_{65/2}(G,E).
 $$
 
-[ParameterizedCubicSquareFactorRadius.lean](../PseudoPrime/LLS/ParameterizedCubicSquareFactorRadius.lean) の
+[ParameterizedCubicSquareFactorRadius.lean](../PseudoPrime/LLS/PaperStatements/ParameterizedCubicSquareFactorRadius.lean) の
 `tightCubicExclusionRadius_le_square_factor2434` と
 `cubicSquareFactorRadius2434_lt_tight` が対応する。
 $c=2434/75$ では $c-63/2=143/150$ となり、導手係数の条件は等号で成立する。
@@ -1028,8 +1028,8 @@ Chebyshevの素数個数下界から、法の素因数を除いても十分な�
 
 ## 共通核の係数が持つ下限
 
-この節の $K$ は [PaperDefinitions.lean](../PseudoPrime/LLS/PaperDefinitions.lean) の
-`MellinKernel` の要素とし、$\widetilde K$ をその逆Mellin変換とする。
+この節の $K$ は [PaperDefinitions.lean](../PseudoPrime/LLS/PaperStatements/PaperDefinitions.lean) の
+`MellinKernel` の要素とし、 $\widetilde K$ をその逆Mellin変換とする。
 局所的な記号を次のように定義する。
 
 $$
@@ -1097,10 +1097,10 @@ x > 0
 \Lambda(m)\chi(m)(1-m/x).
 $$
 
-[ReciprocalKernel.lean](../PseudoPrime/LLS/ReciprocalKernel.lean) はすべての適格性条件を証明し、
-[ReciprocalKernelArithmetic.lean](../PseudoPrime/LLS/ReciprocalKernelArithmetic.lean) は
+[ReciprocalKernel.lean](../PseudoPrime/LLS/PaperStatements/ReciprocalKernel.lean) はすべての適格性条件を証明し、
+[ReciprocalKernelArithmetic.lean](../PseudoPrime/LLS/PaperStatements/ReciprocalKernelArithmetic.lean) は
 この有限和をGRH下の完備L関数の明示公式へ接続する。
-[ReciprocalKernelComparison.lean](../PseudoPrime/LLS/ReciprocalKernelComparison.lean) は、
+[ReciprocalKernelComparison.lean](../PseudoPrime/LLS/PaperStatements/ReciprocalKernelComparison.lean) は、
 非負Euler級数の初めの有限個の項を残した零点和評価を実際の有限指標和へ渡す。
 留数と輪郭積分の明示的な数値評価は別途必要であり、新しい証人開始点を主張するものではない。
 

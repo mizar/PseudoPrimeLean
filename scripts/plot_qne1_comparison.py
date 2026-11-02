@@ -24,35 +24,52 @@ from matplotlib.ticker import FixedLocator, FuncFormatter, NullLocator
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = Path(__file__).resolve().parent / "data"
 KAPPA = 0.01 / (1 + math.sqrt(0.99))
-FOUR_POLE_ENTRANCE = 1e18
-FOUR_POLE_COEFFICIENT = 777 / 1000
+FOUR_POLE_PROFILES = [(79 / 100, 900000000), (39 / 50, 14400000000),
+                      (777 / 1000, 1440000000000)]
 
 
 def four_pole_cumulative(L: np.ndarray) -> np.ndarray:
-    """Certified all-input maximum; retain the old cap below the finite entrance."""
-    return np.maximum((9999 / 10000) * FOUR_POLE_ENTRANCE**2,
-                      FOUR_POLE_COEFFICIENT * L**2)
+    """Three-row minimum from FourPoleReducedBounds.lean, including earlier inputs."""
+    return np.minimum.reduce([c * np.maximum(E, L)**2 for c, E in FOUR_POLE_PROFILES])
+
+
+def refined_elementary_radius(L: np.ndarray) -> np.ndarray:
+    """The proved additive-two radius, evaluated at the logarithmic endpoint."""
+    level = L + math.log(4)
+    return (level + (24 / 5) * np.log(level) + 2)**2
+
+
+def non_one_candidates(L: np.ndarray) -> np.ndarray:
+    """Dedicated non-one candidates; these must never enter the negative-only plot."""
+    return np.stack([
+        np.where(L < math.log(1000000), 47.0, np.inf),
+        (4 / 5) * np.maximum(22221, L)**2,
+    ])
 
 
 def plot_four_pole_cumulative(output_dir: Path) -> None:
-    """Show the high-domain switch shared by both witness maxima."""
-    ratio = np.linspace(0.9, 1.4, 2401)
-    L = ratio * FOUR_POLE_ENTRANCE
+    """Show all three certified reduced entrances shared by both witness maxima."""
+    L = np.unique(np.concatenate([np.geomspace(7e8, 2e12, 6001),
+                                  np.array([E for _, E in FOUR_POLE_PROFILES])]))
     candidate = four_pole_cumulative(L) / L**2
     combined = np.minimum(0.8, candidate)
     assert np.all(combined <= 0.8)
     assert np.isclose(combined[-1], 777 / 1000)
     assert combined[-1] < 39 / 50
     fig, ax = plt.subplots(figsize=(10, 5.5))
-    ax.plot(ratio, candidate, label="Fourth-pole candidate (777/1000)", color="#3977a8")
+    entrance_labels = [r"9\cdot10^8", r"1.44\cdot10^{10}", r"1.44\cdot10^{12}"]
+    for (c, E), color, entrance_label in zip(
+            FOUR_POLE_PROFILES, ["#3977a8", "#009e73", "#aa55aa"], entrance_labels):
+        ax.plot(L, c * np.maximum(E, L)**2 / L**2, color=color, linewidth=1.3,
+                label=fr"$c={c:g},\quad E={entrance_label}$")
+        ax.axvline(E, color=color, linestyle=":", linewidth=0.8)
     ax.axhline(0.8, color="#666666", linestyle="--", label="Quadratic bound (4/5)")
-    ax.plot(ratio, combined, color="#d55e00", linewidth=2.5, label="Current cumulative bound")
-    ax.axvline(1, color="#8a99a8", linestyle=":", label="Pointwise finite entrance")
-    ax.set(xlabel=r"$L/10^{18}$, where $L=\ln N$",
-           ylabel=r"Upper bound divided by $L^2$", ylim=(0.775, 1.02),
-           title="Fourth-pole bound for both cumulative witness maxima")
+    ax.plot(L, combined, color="#d55e00", linewidth=2.5, label="Minimum with 4/5")
+    ax.set(xscale="log", xlabel=r"$L=\ln N$",
+           ylabel=r"Upper bound divided by $L^2$", ylim=(0.775, 0.802),
+           title="Reduced fourth-pole entrances for both cumulative witness maxima")
     ax.grid(color="#e1e5e9", linewidth=0.6)
-    ax.set_yticks([0.777, 0.8, 0.85, 0.9, 0.95, 1.0])
+    ax.set_yticks([0.777, 0.78, 0.79, 0.8])
     ax.legend(loc="upper right", fontsize=10)
     fig.tight_layout()
     stem = output_dir / "q_four_pole_high_comparison"
@@ -79,10 +96,14 @@ def crossing() -> float:
 
 
 def common_endpoint_candidates(L: np.ndarray) -> np.ndarray:
-    """Cumulative bounds from CommonEndpointBounds.lean, including earlier inputs."""
+    """Proved negative-witness candidates, also valid for non-one maxima by inclusion."""
     return np.stack([
+        refined_elementary_radius(L),
+        np.where(L < math.log(750), 31.0, np.inf),
         (9999 / 10000) * np.maximum(255, L)**2,
         np.where(L <= 1609 / 25, 4093.0, np.inf),
+        (99 / 100) * np.maximum(290, L)**2,
+        (4 / 5) * np.maximum(46000, L)**2,
         four_pole_cumulative(L),
     ])
 
@@ -105,7 +126,9 @@ def upper(L: np.ndarray) -> np.ndarray:
     old = np.minimum(previous, np.where(
         (L >= 3259 / 25) & (L <= 16277 / 100),
         ((3200 / 3241) * (L - 18 / 25))**2, np.inf))
-    return np.minimum(old, np.min(common_endpoint_candidates(L), axis=0))
+    return np.minimum(old, np.min(np.concatenate([
+        common_endpoint_candidates(L), non_one_candidates(L),
+    ]), axis=0))
 
 
 def power_ticks(ax: plt.Axes, powers: list[int]) -> None:
@@ -130,7 +153,8 @@ def main() -> None:
 
     root = crossing()
     Lmax = args.max_power * math.log(10)
-    boundaries = [math.log(3), math.log(10), math.log(2984), math.log(3295),
+    boundaries = [math.log(3), math.log(10), math.log(750), math.log(2984), math.log(3295),
+                  math.log(1000000),
                   12.5, math.exp(3.5), 50, math.exp(22/5), 96, math.exp(93/20),
                   3259 / 25, 16277 / 100,
                   1609 / 25, 255, 290, root, 500, 800, 22221, Lmax]
@@ -157,7 +181,7 @@ def main() -> None:
         np.where((L >= 3259 / 25) & (L <= 16277 / 100),
                  ((3200 / 3241) * (L - 18 / 25))**2, np.inf),
     ])
-    direct = np.concatenate([direct, common_endpoint_candidates(L)])
+    direct = np.concatenate([direct, common_endpoint_candidates(L), non_one_candidates(L)])
     np.testing.assert_allclose(U, np.min(direct, axis=0), rtol=2e-15)
     assert np.all(U > 0)
     assert np.all(U[L >= math.log(10)] <= L[L >= math.log(10)]**2 * (1 + 1e-14))
@@ -209,16 +233,18 @@ def main() -> None:
     # The main curves nearly coincide on a logarithmic axis. An inset shows
     # their ratio, also on a logarithmic vertical axis, without changing the main scale.
     inset = ax.inset_axes([0.045, 0.53, 0.45, 0.28])
-    keep = L >= math.log(10)
+    inset_start = math.log(1000000)
+    inset_end = min(Lmax, 16384 * math.log(10))
+    keep = (L > inset_start) & (L <= inset_end)
     inset.plot(np.log(L[keep]), U[keep] / L[keep]**2, color="#d55e00", linewidth=2)
     inset.axhline(1, color="#333333", linestyle=":", linewidth=1.3)
     inset.set_yscale("log")
-    inset.set_xlim(math.log(math.log(10)), math.log(Lmax))
+    inset.set_xlim(math.log(inset_start), math.log(inset_end))
     inset.set_ylim(0.78, 1.006)
     inset.yaxis.set_major_locator(FixedLocator([0.8, 0.85, 0.9, 0.95, 1]))
     inset.yaxis.set_major_formatter(FuncFormatter(lambda y, _: f"{y:.2f}"))
     inset.yaxis.set_minor_locator(NullLocator())
-    power_ticks(inset, [1, 4, 16, 64, 256, 1024, 4096, 16384])
+    power_ticks(inset, [6, 16, 64, 256, 1024, 4096, 16384])
     inset.tick_params(labelsize=9)
     inset.set_title(r"Detail: $U(N)/(\ln N)^2$", fontsize=10)
     inset.grid(color="#e1e5e9", linewidth=0.6)

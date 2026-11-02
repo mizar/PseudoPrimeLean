@@ -13,6 +13,7 @@ import argparse
 import csv
 import json
 import math
+from fractions import Fraction
 from pathlib import Path
 
 from plot_qne1_comparison import DATA_DIR, ROOT, power_ticks
@@ -588,6 +589,32 @@ TUNED_TRIANGULAR_PROFILES = [
     (.2891, 5e11), (.28399, 1.08e12), (.28289, 1.48e12),
 ]
 
+# Exact parameters of HistoryCumulativeBounds.historyProfiles, in entrance order.
+HISTORY_TRIANGULAR_PROFILES = [
+    (Fraction(4603, 10000), 30000000000),
+    (Fraction(4145, 10000), 40000000000),
+    (Fraction(663, 2000), 100000000000),
+    (Fraction(374, 1250), 250000000000),
+    (Fraction(2891, 10000), 500000000000),
+    (Fraction(28399, 100000), 1080000000000),
+    (Fraction(28289, 100000), 1480000000000),
+    (Fraction(1411811, 5000000), 1820000000000),
+]
+
+
+def triangular_histories() -> list[Fraction]:
+    """Eight exact retained costs; no logarithmic input enumeration or rounding."""
+    histories: list[Fraction] = []
+    for i, (_, entrance) in enumerate(HISTORY_TRIANGULAR_PROFILES):
+        histories.append(min(
+            [Fraction(entrance**2)] +
+            [max(histories[j], HISTORY_TRIANGULAR_PROFILES[j][0] * entrance**2)
+             for j in range(i)]
+        ))
+    assert histories[6] == 622051696000000000000000
+    assert histories[7] == 937044836000000000000000
+    return histories
+
 
 def gaussian_tuned_family(L: np.ndarray) -> np.ndarray:
     return np.minimum.reduce([gaussian_low_profile(L, u, D)
@@ -663,10 +690,16 @@ def gaussian_surplus_family(L: np.ndarray) -> np.ndarray:
                       np.maximum(50000, gaussian_raw_bound(L, 3.934)))
 
 
-def next_tuned_upper(L: np.ndarray) -> np.ndarray:
-    """Full NextTunedSelectedEnvelope with its original small-input guard."""
+def previous_next_tuned_upper(L: np.ndarray) -> np.ndarray:
+    """Former public minimum, before adding the thousand-term surplus candidate."""
     baseline = endpoint79_upper(L)
     return np.where(L >= 63, np.minimum(baseline, gaussian_surplus_family(L)), baseline)
+
+
+def next_tuned_upper(L: np.ndarray) -> np.ndarray:
+    """Full NextTunedSelectedEnvelope with its original small-input guard."""
+    previous = previous_next_tuned_upper(L)
+    return np.where(L >= 63, np.minimum(previous, gaussian_low_profile(L, 9.1, 7.6)), previous)
 
 
 def plot_next_tuned(output_dir: Path) -> None:
@@ -674,13 +707,16 @@ def plot_next_tuned(output_dir: Path) -> None:
     for lo, hi in [(12.65, 12.659), (245, 255), (300, 310)]:
         probe = np.linspace(lo, hi, 101)
         assert np.all(next_tuned_upper(probe) < upper(probe))
-    fig, axes = plt.subplots(1, 3, figsize=(15, 4.3))
-    for ax, (lo, hi, title, proof_lo, proof_hi) in zip(axes, [
+    fig, axes = plt.subplots(2, 2, figsize=(11, 8))
+    for ax, (lo, hi, title, proof_lo, proof_hi) in zip(axes.flat, [
             (12.64, 12.665, "Fixed-79", 12.65, 12.659),
+            (99, 102, "1000 prefix surplus", 100, 101),
             (240, 260, "35000 prefix surplus", 245, 255),
             (295, 350, "50000 prefix surplus", 300, 350)]):
         L = np.linspace(lo, hi, 2500)
-        ax.plot(L, upper(L), label="Tuned baseline", color="#667788", linewidth=1.8)
+        reference = previous_next_tuned_upper(L) if title == "1000 prefix surplus" else upper(L)
+        label = "Previous public minimum" if title == "1000 prefix surplus" else "Tuned baseline"
+        ax.plot(L, reference, label=label, color="#667788", linewidth=1.8)
         ax.plot(L, next_tuned_upper(L), label="Next tuned", color="#d55e00", linewidth=1.8)
         ax.axvspan(proof_lo, proof_hi, color="#009e73", alpha=.12,
                    label="Certified strict interval")
@@ -700,22 +736,30 @@ def plot_next_tuned(output_dir: Path) -> None:
 
 
 def plot_mr_cumulative(output_dir: Path) -> None:
-    """Draw CumulativeHighBounds.lean with each profile's earlier-input history."""
-    entrances = np.array([T for _, T in TUNED_TRIANGULAR_PROFILES])
-    recoveries = np.array([T / math.sqrt(C) for C, T in TUNED_TRIANGULAR_PROFILES])
+    """Compare the retained seven-profile majorant with the proved eight-profile history."""
+    histories = triangular_histories()
+    entrances = np.array([T for _, T in HISTORY_TRIANGULAR_PROFILES])
+    recoveries = np.array([math.sqrt(float(H / C)) for H, (C, _) in
+                           zip(histories, HISTORY_TRIANGULAR_PROFILES)])
     L = np.unique(np.concatenate([np.geomspace(1e10, 1e14, 3000),
                                   entrances, recoveries]))
-    cumulative = np.minimum.reduce([np.ones_like(L)] +
+    previous = np.minimum.reduce([np.ones_like(L)] +
         [np.maximum((T / L)**2, C) for C, T in TUNED_TRIANGULAR_PROFILES])
+    cumulative = np.minimum.reduce([np.ones_like(L)] +
+        [np.maximum(float(H) / L**2, float(C)) for H, (C, _) in
+         zip(histories, HISTORY_TRIANGULAR_PROFILES)])
     pointwise = np.minimum.reduce([np.ones_like(L)] +
-        [np.where(L >= T, C, np.inf) for C, T in TUNED_TRIANGULAR_PROFILES])
+        [np.where(L >= T, float(C), np.inf) for C, T in HISTORY_TRIANGULAR_PROFILES])
     assert np.all(cumulative >= pointwise - 1e-14)
-    assert np.all(cumulative <= 1)
+    assert np.all(cumulative <= previous + 1e-14)
+    assert np.all(cumulative[L >= 2e12] < previous[L >= 2e12])
     fig, ax = plt.subplots(figsize=(10, 5.5))
     ax.semilogx(L, cumulative, color="#d55e00", linewidth=2.5,
-                label="Cumulative bound retaining entrance history")
+                label="Eight profiles with reduced entrance history")
+    ax.semilogx(L, previous, color="#777777", linestyle=":",
+                label="Previous seven-profile cumulative bound")
     ax.semilogx(L, pointwise, color="#3977a8", linestyle="--",
-                label="Pointwise seven-profile bound")
+                label="Pointwise eight-profile bound")
     ax.set(xlabel=r"$L=\ln N$", ylabel=r"Upper bound divided by $L^2$",
            title="MR least rejecting prime: cumulative and pointwise bounds")
     ax.grid(color="#e1e5e9", linewidth=0.6)
@@ -995,6 +1039,8 @@ def main() -> None:
                   [(9.1,9.29), (9.3,9.29), (9.3,8.7), (9.48,8.7),
                    (9.48,8.145), (9.79,8.145), (9.79,8.125)]],
               "gaussian_prefix": 722517/200000,
+              "gaussian_surplus_1000": {"floor": 9.1, "residual": 7.6,
+                                        "prefix": 868517/200000, "log_guard": 63},
               "gaussian_seeded_residuals": [5.619, 5.372],
               "gaussian_seeded_prefixes": [481117/100000, 983059/200000],
               "gaussian_seeded_switches": [gaussian_switch(N, D) for N, D in

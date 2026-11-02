@@ -134,7 +134,13 @@ public import PseudoPrime.PseudoSquare.Computation.QThresholds
 public import PseudoPrime.PseudoSquare.Computation.QNeOneFiniteLogSq
 public import PseudoPrime.PseudoSquare.Computation.SmallNegOne.Below399
 public import PseudoPrime.PseudoSquare.Bounds.CommonEndpointBounds
+public import PseudoPrime.PseudoSquare.Bounds.FiniteEndpointBounds
 public import PseudoPrime.PseudoSquare.Bounds.FourPoleFiniteBounds
+public import PseudoPrime.PseudoSquare.Bounds.FourPoleCommonBounds
+public import PseudoPrime.PseudoSquare.Bounds.FourPoleReducedBounds
+public import PseudoPrime.PseudoSquare.Bounds.FourPoleLegacyComparison
+public import PseudoPrime.PseudoSquare.Bounds.GammaCommonBounds
+public import PseudoPrime.PseudoSquare.Bounds.GammaLegacyComparison
 
 /-!
 # PseudoSquare umbrella module

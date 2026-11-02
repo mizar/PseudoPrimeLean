@@ -4,8 +4,8 @@
 Run with matplotlib installed. Horizontal positions are ln(ln B), labelled
 as powers of ten; vertical values use a logarithmic axis. Calculations use
 L = ln B so the enormous endpoints never need to be constructed.
-The shared fourth-pole cumulative branch uses coefficient 777/1000 and retains
-the low-input cap below its certified logarithmic entrance 10**18.
+The common-scale fourth-pole branch covers all earlier inputs directly. Finite
+guards and the additive-two radius reuse the existing certificate leaves.
 """
 
 from __future__ import annotations
@@ -16,7 +16,9 @@ import json
 import math
 from pathlib import Path
 
-from plot_qne1_comparison import DATA_DIR, ROOT, common_endpoint_candidates, power_ticks
+from plot_qne1_comparison import (
+    DATA_DIR, ROOT, common_endpoint_candidates, power_ticks, refined_elementary_radius,
+)
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import FixedLocator, FuncFormatter, NullLocator
@@ -26,9 +28,8 @@ ENTRANCE = 255
 
 
 def elementary_radius(L: np.ndarray) -> np.ndarray:
-    """R(B), evaluated at L = ln B."""
-    log4B = L + math.log(4)
-    return (log4B + 4.8 * np.log(log4B) + 3)**2
+    """The refined additive-two R(B), evaluated at L = ln B."""
+    return refined_elementary_radius(L)
 
 
 def upper(L: np.ndarray) -> np.ndarray:
@@ -61,7 +62,7 @@ def main() -> None:
                          "axes.spines.top": False, "axes.spines.right": False})
 
     Lmax = args.max_power * math.log(10)
-    entrances = np.array([1609 / 25, ENTRANCE, 290.0, 500.0, 550.0, 600.0,
+    entrances = np.array([math.log(750), 1609 / 25, ENTRANCE, 290.0, 500.0, 550.0, 600.0,
                           19978 * math.log(10)])
     L = np.unique(np.concatenate([
         np.exp(np.linspace(math.log(math.log(3)), math.log(Lmax), 7000)),

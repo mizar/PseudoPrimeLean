@@ -11,9 +11,9 @@ C_h(\varepsilon)=
 \left(\frac{\ln(2h)}{\ln(2h)-4}\right)^2
 $$
 
-とする。ここで $h=[(ℤ/qℤ)^\times:H]$ は部分群の指数、 $\ln$ は自然対数である。Lean命題は、GRHの下で、固定した $h \ge 4$ と任意の $\varepsilon > 0$ に対して閾値 $Q$ が存在し、 $q \ge Q$ と指数 $h$ の任意の部分群 $H$ について、 $p \nmid q$ かつ $p \bmod q \notin H$ を満たす最小素数が $C_h(\varepsilon)(\ln q)^2$ 未満となることを述べる。閾値は $h,\varepsilon$ に依存してよいが、 $q,H$ には依存しない。
+とする。ここで $h=[(ℤ/qℤ)^\times:H]$ は部分群の指数、 $\ln$ は自然対数である。Lean命題はGRHの下で、固定した $h \ge 4$ と任意の $\varepsilon > 0$ に対して閾値 $Q$ が存在し、 $q \ge Q$ と指数 $h$ の任意の部分群 $H$ について、 $p \nmid q$ かつ $p \bmod q \notin H$ を満たす最小素数が $C_h(\varepsilon)(\ln q)^2$ 未満となることを述べる。閾値は $h,\varepsilon$ に依存してよいが、 $q,H$ には依存しない。
 
-論文の第6.1節は、命題6.1による共通核の比較では先頭係数 $1/4$ より小さい上界を得られないことを述べる。本プロジェクトでは、この比較の限界を指数4〜6で $60/121$ に強めて形式化している。以下の係数障害自体はGRHを仮定しない解析的な命題であり、GRHから導かれる素数上界に適用する際に命題6.1と接続する。
+論文の第6.1節は命題6.1による共通核の比較では先頭係数 $1/4$ より小さい上界を得られないことを述べる。本プロジェクトではこの比較の限界を指数4〜6で $60/121$ に強めて形式化している。以下の係数障害自体はGRHを仮定しない解析的な命題であり、GRHから導かれる素数上界に適用する際に命題6.1と接続する。
 
 ### 原文 §6.2 の導出に関する疑義
 
@@ -25,19 +25,19 @@ $$
 
 である。この下界で比較不等式を除して上界を得るには、右辺が正である必要がある。整数の指数では $h \ge 28$ がこの条件に対応する。これは実際の $D_h$ の符号とは別の条件であり、簡略下界が負の場合にそれを二乗しても、上界の導出は正当化されない。
 
-とくに $C_4(0)=0.1648545\ldots < 1/4$ は論文自身の §6.1 の方法の限界より小さい。したがって、少なくとも指数4の係数は、同じ命題6.1の比較からそのまま導けるものではない。指数5・6も、以下の $60/121$ の障害により同じ比較では達成できない。この指摘は、原文の導出への疑義であり、定理1.3の数論的な結論の反例ではない。
+とくに $C_4(0)=0.1648545\ldots < 1/4$ は論文自身の §6.1 の方法の限界より小さい。したがって、少なくとも指数4の係数は同じ命題6.1の比較からそのまま導けるものではない。指数5・6も以下の $60/121$ の障害により同じ比較では達成できない。この指摘は原文の導出への疑義であり、定理1.3の数論的な結論の反例ではない。
 
-本プロジェクトでは $h \ge 28$ を三角形型核で、 $7 \le h \le 27$ を第6.3節のガンマ核と係数比較で証明する。対応する証明は `triangular_kernel_bound_of_large_index`、 `triangularCoefficient_gt_gamma_of_small_index`（[`PseudoPrime/LLS/TheoreticalKernelProfiles.lean`](../PseudoPrime/LLS/TheoreticalKernelProfiles.lean)）と、それらから最小素数の上界を導く [`PseudoPrime/LLS/TheoreticalPrimeBounds.lean`](../PseudoPrime/LLS/TheoreticalPrimeBounds.lean) にある。指数4〜6の一般の場合は、原文のこの計算から証明済みとは扱わない。
+本プロジェクトでは $h \ge 28$ を三角形型核で、 $7 \le h \le 27$ を第6.3節のガンマ核と係数比較で証明する。対応する証明は `triangular_kernel_bound_of_large_index`、 `triangularCoefficient_gt_gamma_of_small_index`（[`PseudoPrime/LLS/PaperStatements/TheoreticalKernelProfiles.lean`](../PseudoPrime/LLS/PaperStatements/TheoreticalKernelProfiles.lean)）と、それらから最小素数の上界を導く [`PseudoPrime/LLS/PaperStatements/TheoreticalPrimeBounds.lean`](../PseudoPrime/LLS/PaperStatements/TheoreticalPrimeBounds.lean) にある。指数4〜6の一般の場合は、原文のこの計算から証明済みとは扱わない。
 
 ## 導手を保持した条件付き分岐
 
-この障壁は、全ての非主指標の零点費用を法の対数で一律に評価する比較に対するものである。原始導手の対数和を保持すると、異なる十分条件の下で指数4〜6の目標を証明できる。[RationalPoleConductorRatios.lean](../PseudoPrime/LLS/RationalPoleConductorRatios.lean) は、導手対数和が $(h-1)\ln q$ の $51/100$・$5/7$・$23/25$ 倍以下となる場合を、それぞれ指数4・5・6で扱う。
+この障壁は全ての非主指標の零点費用を法の対数で一律に評価する比較に対するものである。原始導手の対数和を保持すると、異なる十分条件の下で指数4〜6の目標を証明できる。[RationalPoleConductorRatios.lean](../PseudoPrime/LLS/PaperStatements/RationalPoleConductorRatios.lean) は、導手対数和が $(h-1)\ln q$ の $51/100$・ $5/7$・ $23/25$ 倍以下となる場合を、それぞれ指数4・5・6で扱う。
 
-[CrtConductorBounds.lean](../PseudoPrime/LLS/CrtConductorBounds.lean) は、互いに素な成分の法と位数2・3の指標から構成した指数6の核について、実際の最小素数へ接続する。原始成分の法がともに1より大きい場合には、導手対数和が従来の半分条件を超えることも証明している。この分岐は、素数法の任意の部分群を扱う一般の指数4〜6の解決とは区別する。
+[CrtConductorBounds.lean](../PseudoPrime/LLS/PaperStatements/CrtConductorBounds.lean) は、互いに素な成分の法と位数2・3の指標から構成した指数6の核について、実際の最小素数へ接続する。原始成分の法がともに1より大きい場合には、導手対数和が従来の半分条件を超えることも証明している。この分岐は素数法の任意の部分群を扱う一般の指数4〜6の解決とは区別する。
 
 ## 共通核による比較と正規化
 
-ここでいう許容核は、[`PseudoPrime/LLS/PaperDefinitions.lean`](../PseudoPrime/LLS/PaperDefinitions.lean) の `MellinKernel` を指す。解析性・減衰・Mellin積分の可積分性と積分路の独立性に加え、正の引数で逆Mellin変換が実数値・非負であり、少なくとも一つの正の引数で非零であることを要求する。
+ここでいう許容核は[`PseudoPrime/LLS/PaperStatements/PaperDefinitions.lean`](../PseudoPrime/LLS/PaperStatements/PaperDefinitions.lean) の `MellinKernel` を指す。解析性・減衰・Mellin積分の可積分性と積分路の独立性に加え、正の引数で逆Mellin変換が実数値・非負であり、少なくとも一つの正の引数で非零であることを要求する。
 
 $\widetilde K(u)$ はコードの `K.transform u`、 $K(s)$ は `K.function s` とする。正の切断点 $\lambda$ に対して、
 
@@ -73,7 +73,7 @@ $$
 
 ## 指数6のFourier双対評価
 
-指数6では、Mellin核に対応する関数を含む、より広いFourier試験関数のクラスに対して下限を証明する。 $F:ℝ\toℂ$ のFourier変換は $(ℱ F)(t)=\int_{-\infty}^{\infty}F(x)e^{-2\pi ixt}dx$ の規約を用い、
+指数6ではMellin核に対応する関数を含む、より広いFourier試験関数のクラスに対して下限を証明する。 $F:ℝ\toℂ$ のFourier変換は $(ℱ F)(t)=\int_{-\infty}^{\infty}F(x)e^{-2\pi ixt}dx$ の規約を用い、
 
 $$
 \begin{aligned}
@@ -173,7 +173,7 @@ J_A(F)=\int_{-\infty}^0\mathrm{Re}(\mathcal F F)(t)e^{\pi t}dt
 +A\max\lbrace\mathrm{Re}(\mathcal F F)(t),0\rbrace\right)e^{\pi t}dt
 $$
 
-と置く。Leanでは、この被積分関数を実数直線全体の一つの関数として積分する。
+と置く。Leanではこの被積分関数を実数直線全体の一つの関数として積分する。
 $A\le B$ なら被積分関数は点ごとに減少するため、両方の被積分関数が可積分なら $J_B(F)\le J_A(F)$ となる。特に $A\ge1/5$ では $J_A(F)\le J_{1/5}(F)$ である。
 
 さらに、 $F$ と $J_A$ の被積分関数が可積分で $J_A(F) > 0$ なら、同じ双対評価から
@@ -211,10 +211,10 @@ $$
 
 $$
 C_h(1/200)
-<\left(\frac14+\frac1{200}\right)
+ < \left(\frac14+\frac1{200}\right)
 \left(\frac56\right)^2\left(\frac53\right)^2
 =\frac{425}{864}
-<\frac{60}{121}.
+ < \frac{60}{121}.
 $$
 
 指数6の中間比較は `paperCoefficient_one_div_two_hundred_lt`、最後の有理数比較は `rational_gap`、指数4〜6の結論は `smallIndexTargetWithSlack_lt_barrier` で証明されている。 $\varepsilon=1/200$ は $1/4$ に加わる量であり、積全体への加算ではない。
@@ -227,7 +227,7 @@ $$
 c_h(K,\lambda)\le C_h(1/200)
 $$
 
-を述べる。定理1.3は任意の正の誤差での上界を要求するため、この特定の正の誤差でも目標係数に達する必要がある。したがって、同じ係数式を使う限り、許容核の探索、尺度の変更、Taylor項数の増加、有理近似の分母の変更だけでは目標係数に達しない。指数6では、分母に制限のない有理数証明書についても `no_rational_ep1_certificate_at_paper_target` と `no_rational_certificate_paper_target` が明示されている。
+を述べる。定理1.3は任意の正の誤差での上界を要求するため、この特定の正の誤差でも目標係数に達する必要がある。したがって、同じ係数式を使う限り、許容核の探索、尺度の変更、Taylor項数の増加、有理近似の分母の変更だけでは目標係数に達しない。指数6では分母に制限のない有理数証明書についても `no_rational_ep1_certificate_at_paper_target` と `no_rational_certificate_paper_target` が明示されている。
 
 ### 障害定理の実装対応
 
@@ -241,12 +241,17 @@ $$
 
 ## 証明済みの部分定理と残る範囲
 
-定理1.3の指数7以上は、[`PseudoPrime/LLS/PaperProofs.lean`](../PseudoPrime/LLS/PaperProofs.lean) の `lls_theorem13_of_index_ge_seven_proof` で証明されている。指数4〜6についても、GRHの下で、十分大きな法に対する次の部分定理がある。名前空間はいずれも `PseudoPrime.LLS.PaperStatements` である。
+定理1.3の指数7以上は[`PseudoPrime/LLS/PaperStatements/PaperProofs.lean`](../PseudoPrime/LLS/PaperStatements/PaperProofs.lean) の `lls_theorem13_of_index_ge_seven_proof` で証明されている。指数4〜6についてもGRHの下で、十分大きな法に対する次の部分定理がある。名前空間はいずれも `PseudoPrime.LLS.PaperStatements` である。
 
 | 定理 | 追加条件 |
 | --- | --- |
-| `theorem13_small_index_of_odd_proper_prime_power` — [`PseudoPrime/LLS/PrimePowerSubgroupBounds.lean`](../PseudoPrime/LLS/PrimePowerSubgroupBounds.lean) | 法が $q=r^k$、 $r$ が奇素数、 $k \ge 2$。底の素数に例外は残していない。 |
-| `theorem13_small_index_of_conductor_sum_le_half` — [`PseudoPrime/LLS/SmallIndexConductorBounds.lean`](../PseudoPrime/LLS/SmallIndexConductorBounds.lean) | `subgroupConductorLogSum H` が $(h-1)\ln q/2$ 以下。法は一般の正整数でよい。 |
+| `theorem13_small_index_of_odd_proper_prime_power` — [`PseudoPrime/LLS/PaperStatements/PrimePowerSubgroupBounds.lean`](../PseudoPrime/LLS/PaperStatements/PrimePowerSubgroupBounds.lean) | 法が $q=r^k$、 $r$ が奇素数、 $k \ge 2$。底の素数に例外は残していない。 |
+| `theorem13_small_index_of_conductor_sum_le_half` — [`PseudoPrime/LLS/PaperStatements/SmallIndexConductorBounds.lean`](../PseudoPrime/LLS/PaperStatements/SmallIndexConductorBounds.lean) | `subgroupConductorLogSum H` が $(h-1)\ln q/2$ 以下。法は一般の正整数でよい。 |
+| `rationalPole_theorem13_index_four` — [RationalPoleConductorRatios.lean](../PseudoPrime/LLS/PaperStatements/RationalPoleConductorRatios.lean) | 指数4、導手対数和が $(51/100)3\ln q$ 以下。 |
+| `rationalPole_theorem13_index_five` — [同ファイル](../PseudoPrime/LLS/PaperStatements/RationalPoleConductorRatios.lean) | 指数5、導手対数和が $(5/7)4\ln q$ 以下。 |
+| `rationalPole_theorem13_index_six` — [同ファイル](../PseudoPrime/LLS/PaperStatements/RationalPoleConductorRatios.lean) | 指数6、導手対数和が $(23/25)5\ln q$ 以下。 |
+| `theorem13_crt_two_three` — [CrtConductorBounds.lean](../PseudoPrime/LLS/PaperStatements/CrtConductorBounds.lean) | 互いに素な法の位数2・位数3の指標から構成する、指数6のCRT核。 |
+| `quadratic_single_theorem13` — [PartialFamilyEnvelopes.lean](../PseudoPrime/LLS/PaperStatements/PartialFamilyEnvelopes.lean) | 位数2の指標 $\chi$ について $H \le \ker\chi$、 $\ln f_\chi \le (23/50)\ln q$。指数4の原目標係数を達成する。 |
 
 `subgroupConductorLogSum H` は、 $H$ 上で1となる指標のうち非主のものについて、その原始導手 $f_\chi$ の対数を足した
 
@@ -254,12 +259,50 @@ $$
 \sum_{\substack{\chi\in H^\perp\\\chi\ne\chi_0}}\ln f_\chi
 $$
 
-である。各導手を法で抑える一般評価は $(h-1)\ln q$ であり、その半分以下という条件は追加仮定である。
+である。各導手を法で抑える一般評価は $(h-1)\ln q$ であり、表の導手比は追加条件である。
 
-両定理では $4 \le h \le 6$ を満たす指数を固定し、閾値 $Q$ を与える。追加条件を満たす $q \ge Q$ と指数 $h$ の部分群について、最小の部分群外素数を $C_h(0)(\ln q)^2$ 未満に抑える。したがって、任意の正の誤差での定理1.3の上界も得られる。この閾値は、該当範囲の法と部分群について一様である。
+表の原目標を達成する定理では、指数を固定し、該当する構造条件や導手条件を満たす
+十分大きな法に対して、最小の部分群外素数を $C_h(0)(\ln q)^2$ 未満に抑える。
+したがって、任意の正の誤差での定理1.3の上界も得られる。
+閾値は定理の条件を満たす法・指標・部分群について一様である。
+`quadratic_single_theorem13` 自体は部分群の指数を要求せず、
+その結論を指数4の原目標との比較に使う。
 
-どちらの追加条件も満たさない指数4〜6の場合については、一般の結論は未証明である。公開証明の対象は指数7以上の制限版であり、上記の部分定理を合わせても `lls_theorem13` 全体の証明にはなっていない。
+さらに、同じ法で二次・三次の部分族と全指標族の上界を最小化する定理がある。
+これらは実際の部分群外最小素数の上界だが、無条件に原目標係数を達成する主張ではない。
 
-上の障害は、各指標の導手を法で一律に抑え、共通核と指標ごとの独立した絶対値評価を使う係数式についての結果である。導手の節約や法の縮約を用いる部分定理は、その一律評価を改善するため障害と矛盾しない。残る範囲を扱うには、導手や局所群の性質、零点の同時制約、または別の数論的比較を使い、この係数式を改善する必要がある。
+| 包絡線 | 対象と保持する条件 |
+|---|---|
+| [PartialFamilyEnvelopes.lean](../PseudoPrime/LLS/PaperStatements/PartialFamilyEnvelopes.lean) | 指数4の二次部分族と全平均、3つの二次指標を含む場合、指数6の二次・三次部分族と全平均。同じ法の $\varepsilon\ln q$ を全候補に残す。 |
+| [PartialCyclicConductorBounds.lean](../PseudoPrime/LLS/PaperStatements/PartialCyclicConductorBounds.lean) | 位数4・5・6の生成指標を入力し、その核について導手和を正確に展開する。任意の指数5・6の部分群から生成指標を抽出する利用側も含む。 |
+| [PartialBiquadraticConductorBounds.lean](../PseudoPrime/LLS/PaperStatements/PartialBiquadraticConductorBounds.lean) | 任意の指数4部分群を巡回・二次交叉へ分類し、同じ法で3単独枝と全平均の実際の最小素数包絡線へ接続する。CRT表示を前提にしない。 |
+
+CRTの部分族については
+[PartialQuadraticConductorBounds.lean](../PseudoPrime/LLS/PaperStatements/PartialQuadraticConductorBounds.lean) と
+[PartialCubicConductorBounds.lean](../PseudoPrime/LLS/PaperStatements/PartialCubicConductorBounds.lean)
+にも比較がある。部分族の導手だけで誤差項を縮小せず、法 $q$ に対する一様性を保持する。
+
+重みの端点縮約も実際の指標trace・導手対数和・principal prefixと全和へ接続している。
+任意の非負正規化実重みを扱い、共役な指標の重みが等しいとは仮定しない。
+trace下限に必要な条件は実際のunit値から導き、未確認のscalar条件として利用側へ残さない。
+
+| 商の型 | 選択する端点と実装 |
+|---|---|
+| $C_2^2$ | 3つの単独二次指標と全平均。[BiquadraticCharacterTraces.lean](../PseudoPrime/LLS/PaperStatements/BiquadraticCharacterTraces.lean) が実現する3符号パターンから罰則の必要性を導く。 |
+| $C_4$ | 二次指標と全平均。[CyclicCharacterTraces.lean](../PseudoPrime/LLS/PaperStatements/CyclicCharacterTraces.lean) が任意重みの実trace制約を必要十分条件で表す。 |
+| $C_5$ | 全平均。[CyclicFiveCharacterBounds.lean](../PseudoPrime/LLS/PaperStatements/CyclicFiveCharacterBounds.lean) が同じ導手によるcostと必要罰則 $m \ge 1/4$ を使う。 |
+| $C_6$ | 二次部分族・三次部分族・全平均。[CyclicSixCharacterTraces.lean](../PseudoPrime/LLS/PaperStatements/CyclicSixCharacterTraces.lean) が実traceの必要十分条件から端点へ移す。 |
+
+各端点の比較は実際のprincipal prefixと非負なtailを用い、
+負のdeficitから実際の部分群外最小素数を得る判定へ接続する。
+このgapを明示した判定と、前表の追加gapを要求しない半径上界は区別する。
+数値を選ばない指標値・平均・符号の一般補題はNumberTheoryに置き、
+核とprefixを使うdeficit・最小素数判定はLLS側に置く。
+
+これらの構造条件や導手条件で覆われない指数4〜6について、一般の結論は未証明である。
+公開証明の対象は指数7以上の制限版であり、部分定理を合わせても
+`lls_theorem13` 全体の証明にはなっていない。
+
+上の障害は各指標の導手を法で一律に抑え、共通核と指標ごとの独立した絶対値評価を使う係数式についての結果である。導手の節約や法の縮約を用いる部分定理は、その一律評価を改善するため障害と矛盾しない。残る範囲を扱うには、導手や局所群の性質、零点の同時制約、または別の数論的比較を使い、この係数式を改善する必要がある。
 
 この結果は定理1.3自体の反例を示すものではなく、任意の解析手法や多核方式を排除するものでもない。

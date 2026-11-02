@@ -108,7 +108,7 @@ end PseudoPrime.PrimeTestBounds.MillerRabin
 | `exists_prime_nextTunedPrimeEnvelope`・`exists_least_nextTunedPrimeEnvelope` | 現在の選択値を素数へ丸めた上界 | [NextTunedWitnessEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/NextTunedWitnessEnvelope.lean) |
 | `exists_prime_millerRabin_witness_le_log_sq` | 奇合成数に対する素数底の証人定理 | [FromLLS.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FromLLS.lean) |
 | `prime_iff_millerRabin_for_all_primes_le_log_sq` | GRH の下で、上界内の全素数底の明示的な冪条件と素数性の同値 | [FromLLS.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FromLLS.lean) |
-| `exists_rejectPowers_logSq_GRH` | `exists_prime_millerRabin_witness_le_log_sq` と同じ冪不等式を述べる別名。定理名に `eq_false` を含むが、型は Boolean の `= false` を直接結論にはしない | [FromLLS.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FromLLS.lean) |
+| `exists_rejectPowers_logSq_GRH` | `exists_prime_millerRabin_witness_le_log_sq` と同じ冪不等式を述べる別名。型は Boolean の `= false` を直接結論にはしない | [FromLLS.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FromLLS.lean) |
 | `exists_primeWitness_lt_3000` | GRH を仮定しない $1 < n < 3000$ の定理 | [SmallLogBound.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/SmallLogBound.lean) |
 
 ## 証明の流れ
@@ -229,7 +229,7 @@ $$
 
 ### 固定79の適用範囲
 
-入力が3000以上で $L\le12659/1000$ のとき、固定素数上界79を使える。証明書は、有限principal和の32個の相異なる項を使う。2047未満の値2と、2047以上3000未満の値3を優先し、他の有効な上界との最小値をとる。
+入力が3000以上で $L\le12659/1000$ のとき、固定素数上界79を使える。証明書は有限principal和の32個の相異なる項を使う。2047未満の値2と、2047以上3000未満の値3を優先し、他の有効な上界との最小値をとる。
 
 証人への接続は [Endpoint79TunedEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/Endpoint79TunedEnvelope.lean)、現在の包絡線への接続は [NextTunedWitnessEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/NextTunedWitnessEnvelope.lean) にある。
 
@@ -267,7 +267,7 @@ $$
 
 である。 $F_{\mathrm{pt}}(8)\approx11.2893992652$ で、下限の8はすべての実数 $L$ で保持する。
 
-pointwise gapは正確に $D_e(y)(F_{\mathrm{pt}}(y)-L)$ となる。逆関数半径でgapが0になる場合も、最小素数証人とその平方根の中点を用いる離散的な議論により証人上界が成り立つ。定義・単調性・逆関数は [LLS/EndpointPointwiseRoot.lean](../PseudoPrime/LLS/EndpointPointwiseRoot.lean)、全奇合成数の素数証人・最小素数証人は [MillerRabin/EndpointPointwiseRoot.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointPointwiseRoot.lean) にある。
+pointwise gapは正確に $D_e(y)(F_{\mathrm{pt}}(y)-L)$ となる。逆関数半径でgapが0になる場合も、最小素数証人とその平方根の中点を用いる離散的な議論により証人上界が成り立つ。定義・単調性・逆関数は [LLS/PaperStatements/EndpointPointwiseRoot.lean](../PseudoPrime/LLS/PaperStatements/EndpointPointwiseRoot.lean)、全奇合成数の素数証人・最小素数証人は [MillerRabin/EndpointPointwiseRoot.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointPointwiseRoot.lean) にある。
 
 ### 低床Gaussianの4profile
 
@@ -336,9 +336,9 @@ $$
 
 数値証明書は [GaussianTunedProfiles.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianTunedProfiles.lean)、素数証人・最小素数証人は [GaussianTunedBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianTunedBounds.lean) にある。
 
-### Gaussian surplusを使う2候補
+### Gaussian surplusを使う3候補
 
-同じ $V_D(L)$ を用いると、追加した2候補は
+同じ $V_D(L)$ を用いると、既存の2候補は
 
 $$
 G_{35}(L)=\max\lbrace35000,V_{837/200}(L)\rbrace,\qquad
@@ -347,12 +347,33 @@ $$
 
 である。両候補は $L\ge63$ で使う。固定した床値と残差予算により、範囲条件だけで適用できる。
 
-[NextTunedWitnessEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/NextTunedWitnessEnvelope.lean) は、既存tuned包絡線・固定79候補・Gaussian surplusの2候補を、それぞれの有効域で最小化する。選択値は `nextTunedSelectedEnvelope`、素数丸め後の値は `nextTunedPrimeEnvelope` で公開している。1より大きい奇合成数について、GRHから実際の拒否素数と最小拒否素数を与える。追加のprefix下界や部分群の分類を利用側の仮定には残していない。
+[NextTunedWitnessEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/NextTunedWitnessEnvelope.lean) は、既存tuned包絡線・固定79候補・Gaussian surplusの3候補を、それぞれの有効域で最小化する。選択値は `nextTunedSelectedEnvelope`、素数丸め後の値は `nextTunedPrimeEnvelope` で公開している。1より大きい奇合成数について、GRHから実際の拒否素数と最小拒否素数を与える。追加のprefix下界や部分群の分類を利用側の仮定には残していない。
 
-surplusは、Gaussian重みからGamma重みの17/20倍を引いた差である。この差の非負性と既存35行の厳密な有限評価から、100以上のprefixに73/100の加算を得る。35000と50000の既存Gamma prefixへ接続すると、実際のGaussian prefixの下界はそれぞれ5.54117と5.645295となる。MR側の残差は4.185と3.934となり、prefixのfloorは35000と50000を保持する。固定データとprefix評価はLLS、MR固有のfloor・残差予算はMillerRabin側へ配置している。
+surplusはGaussian重みからGamma重みの17/20倍を引いた差である。この差の非負性と既存35行の厳密な有限評価から、100以上のprefixに73/100の加算を得る。35000と50000の既存Gamma prefixへ接続すると、実際のGaussian prefixの下界はそれぞれ5.54117と5.645295となる。MR側の残差は4.185と3.934となり、prefixのfloorは35000と50000を保持する。固定データとprefix評価はLLS、MR固有のfloor・残差予算はMillerRabin側へ配置している。
 
+1000までの既存Gamma prefixにも同じsurplusを接続し、第三の候補
 
-合成後も、2047未満の公開値2と、2047以上3000未満の公開値3を保持する。後者では選択値・丸め後の値の両方の局所単調性を証明している。全域の単調性は仮定しない。累積上界は引き続き実際の最小拒否素数を対象とする `CumulativeHighBounds.lean` の全域定理で評価できる。
+$$
+G_{1000}(L)=\max\lbrace(6/5)(91/10)^4,V_{38/5}(L)\rbrace
+$$
+
+を加えた。この候補も $L \ge 63$ で使う。Gaussian prefixの下界は
+$868517/200000=4.342585$ であり、新たな大規模有限探索は行わない。
+[GaussianPrefix1000Surplus.lean](../PseudoPrime/LLS/GaussianPrefix1000Surplus.lean) が
+実際のprefix評価を供給し、
+[GaussianSurplusBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianSurplusBounds.lean) の
+`exists_prime_gaussianSurplus` と `exists_least_gaussianSurplus` が、
+大指数・指数4・局所因子の各場合を通じて実際の証人へ接続する。
+従来の4profileと35000・50000の候補は保持する。
+
+[GaussianSurplusComparison.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianSurplusComparison.lean)
+の `nextTuned_le_previous` は、全ての入力で変更前の公開最小値以下となることを証明する。
+`nextTuned_strict_surplus` は $100 \le \ln n \le 101$ で、実数の公開上界と
+素数丸め後の公開上界の両方が真に小さくなることを証明する。
+丸め後の比較では、認証済み素数8419が新上界より大きく、旧上界以下となることを使う。
+単独のGaussian候補だけとの比較ではない。
+
+合成後も2047未満の公開値2と、2047以上3000未満の公開値3を保持する。後者では選択値・丸め後の値の両方の局所単調性を証明している。全域の単調性は仮定しない。累積上界は実際の最小拒否素数を対象とする `HistoryCumulativeBounds.lean` の全域定理で評価できる。
 
 ### 高域のtriangular上界
 
@@ -377,29 +398,38 @@ triangular kernelの明示公式から、各行の適用条件で $C_iL^2$ 以�
 
 実数上界 $R \ge 2$ に対して、 $R$ 以下の最大素数を $\mathrm{primeRound}(R)$ とする。 $R < 2$ では値を変えない。すべての実数で $\mathrm{primeRound}(R) \le R$ が成り立ち、 $p \le R$ を満たす素数 $p$ は丸め後も範囲内にある。また、 `primeRound_mono` はこの丸めの単調性を示す。定義と定理は [PrimeCutoff.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/PrimeCutoff.lean) にある。
 
-`nextTunedPrimeEnvelope n` は `tunedWitnessEnvelope n` を丸める。2・3・固定23〜79は丸めても同じ値である。素数への丸めは調べる素数基数の集合を変えずに、実数上界をその集合の最大要素へ置き換える。
+`nextTunedPrimeEnvelope n` は `nextTunedWitnessEnvelope n` を丸める。2・3・固定23〜79は丸めても同じ値である。素数への丸めは調べる素数基数の集合を変えずに、実数上界をその集合の最大要素へ置き換える。
 
 ### 全域の累積上界
 
-$Q_{\mathrm{MR}}(N)$ は、 $N$ 以下の奇合成数の最小MR棄却素数の累積最大値とする。
+$Q_{\mathrm{MR}}(N)$ は、 $1 < n \le N$ の奇合成数に対する真の最小拒否素数の最大値である。対象外の入力の値は0とし、上端 $N=0,1,2$ も含める。
 
-[CumulativeHighBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/CumulativeHighBounds.lean) の `compositeLeastPrime` は、1より大きい奇合成数では最小のMR棄却素数、それ以外では0とする全域関数である。GRH下で、その値が実際の素数であり強MRテストを棄却することと、他の棄却素数以下であることを `compositeLeastPrime_spec` が証明する。
-
-高域表の第1〜7候補の入口と係数を $T_i,C_i$ とすると、公開関数 `highCumulativeEnvelope` は
+[HistoryCumulativeBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HistoryCumulativeBounds.lean) は、従来の改善済み7候補を保ち、第8候補も含めた履歴を使う。入口が増加する順の係数と尺度を $C_i,T_i$ とし、
 
 $$
-C(N)=\min\left((\ln N)^2,\min_{1\le i\le7}\max\left(T_i^2,C_i(\ln N)^2\right)\right)
+B_1=T_1^2,\qquad
+B_i=\min\lbrace T_i^2,\ \min_{j < i}\max(B_j,C_jT_i^2)\rbrace
 $$
 
-である。上端0ではLeanの $\mathrm{Real.log}(0)=0$ を用い、対象が空の累積最大値は0とする。入口以前の全入力は対数二乗上界で覆い、その履歴を $T_i^2$ として残す。`cumulativeLeastPrime_le_high` は、GRH下で $N$ 以下の全入力の累積最大値が $C(N)$ 以下となることを、0や空の対象範囲を含む全ての自然数 $N$ について証明する。点ごとの包絡線の全域単調性は仮定していない。 $T_i^2\le C_i(\ln N)^2$ となったプロファイルは、`highCumulative_le_recovered` により元の改善係数を回復する。
+と置く。公開関数 `historyCumulativeEnvelope` は
 
-![MRの点ごとの上界と入口履歴を保持した累積上界](figures/mr_cumulative_high_comparison.png)
+$$
+\min\lbrace(\ln N)^2,\ \min_{1\le i\le8}\max(B_i,C_i(\ln N)^2)\rbrace
+$$
 
-図は7プロファイルの点ごとの候補と、上記の累積候補をそれぞれ対数二乗で割って示す。既存の全候補の最適値を示す図ではない。実数軸の線は表示用の補間であり、全自然数上端に対する保証はLean定理による。小区間の公開値3とその局所単調性は既存仕様のままである。
+である。各入口より前の入力を、既証明の前段候補で覆う。高入口の係数を小入力へ外挿せず、点ごとの包絡線の全域単調性も仮定しない。
+
+`cumulativeLeastPrime_le_history` はGRH下の全自然数上端でこの上界を証明する。`historyCumulative_le_high` は従来の7候補の公開値以下を、`historyCumulative_lt_high_large` は $\ln N \ge 2\times10^{12}$ での厳密改善を示す。最小証人の意味と、 $2047 \le n < 3000$ の点ごとの公開値3は変えない。
+
+履歴の認証値は $B_7=622051696000000000000000$、 $B_8=937044836000000000000000$ であり、回復条件を有理数のまま比較している。従来の `highCumulativeEnvelope` とその定理は比較用にも保持した。
+
+![MRの8候補と前段からの履歴縮小](figures/mr_cumulative_high_comparison.png)
+
+図は従来の7候補累積、新しい8候補累積、8候補の点ごとの値を、それぞれ対数二乗で割って示す。実数軸の描画をLeanの全自然数上端の証明と区別する。
 
 ### 包絡線の構成
 
-補助包絡線 `sharpSelectedEnvelope` を $U_{\mathrm{sharp}}(n)$ と書く。包絡線は補助包絡線、14個の固定素数候補、4個のGaussian候補、2個のGaussian surplus候補、7個の高域候補の最小値をとる。各候補は証明済みの適用条件を満たす範囲で有効になる。
+補助包絡線 `sharpSelectedEnvelope` を $U_{\mathrm{sharp}}(n)$ と書く。包絡線は補助包絡線、14個の固定素数候補、4個のGaussian候補、3個のGaussian surplus候補、7個の高域候補の最小値をとる。各候補は証明済みの適用条件を満たす範囲で有効になる。第8の高域候補は前節の累積包絡線に含める。
 
 高域の入口 $T_i$ はtriangular上界の表の値である。第1〜7候補は入口が増加し係数が減少するため、有効なもののうち最後の候補だけを残せる。 $T_8$ 以降の第8候補は $U_{\mathrm{sharp}}$ に含まれる。
 
