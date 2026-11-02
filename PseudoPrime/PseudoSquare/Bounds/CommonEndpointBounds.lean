@@ -8,6 +8,7 @@ module
 
 public import PseudoPrime.PseudoSquare.Bounds.GammaJointEntranceBounds
 public import PseudoPrime.PseudoSquare.Bounds.ElementaryOmegaFinal
+public import PseudoPrime.PseudoSquare.Bounds.RefinedElementaryBounds
 public import PseudoPrime.LLS.Phase64RetainedExcessJacobiCell
 
 /-! # Common-endpoint and retained fixed-cap bounds on all smaller inputs -/
@@ -130,11 +131,29 @@ theorem witnessMaxima_le_fixed_cap {B : ℕ}
           ((Real.log_le_log (Nat.cast_pos.mpr ha.pos) (Nat.cast_le.mpr ha.le)).trans hlog) _)
   exact ⟨Nat.cast_le.mp h, (QNeOne_le_QNegOne B).trans (Nat.cast_le.mp h)⟩
 
-/-- The minimum of the elementary and common-endpoint bounds and, when valid, 4093.
+/-- The refined elementary radius is strictly below the previous additive-three radius.
+Input: an endpoint at least three. Proof: expand both positive squared roots.
+Role: certify that the refined public candidate improves the previous elementary candidate. -/
+theorem refinedRadius_lt_elementary {B : ℕ} (hB : 3 ≤ B) :
+    refinedElementaryRadius B < elementaryRadius B := by
+  have hr := refinedElementaryRoot_gt hB
+  dsimp only [refinedElementaryRoot] at hr
+  dsimp only [refinedElementaryRadius, refinedElementaryRoot, elementaryRadius]
+  nlinarith only [hr]
+
+/-- The refined radius absorbs the finite cap thirty-one at every endpoint at least three.
+Input: the endpoint lower bound. Proof: square the established positive root lower bound.
+Role: preserve the exceptional stopping values in later Selfridge transfers. -/
+theorem refinedRadius_gt_thirtyOne {B : ℕ} (hB : 3 ≤ B) : (31 : ℝ) < refinedElementaryRadius B := by
+  have hr := refinedElementaryRoot_gt hB
+  dsimp only [refinedElementaryRadius]
+  nlinarith only [hr]
+
+/-- The minimum of the refined elementary and common-endpoint bounds and, when valid, 4093.
 Guards restrict the retained cap to its proved upper logarithmic endpoint. This
 candidate preserves both earlier formulas and introduces no monotonicity requirement. -/
 noncomputable def commonEndpointEnvelope (B : ℕ) : ℝ :=
-  min (elementaryRadius B)
+  min (refinedElementaryRadius B)
     (min (jointEndpointBound B) (if Real.log B ≤ 1609 / 25 then 4093 else jointEndpointBound B))
 
 /-- Under GRH and B>=3, both witness maxima obey the combined envelope. Combine the
@@ -148,8 +167,42 @@ theorem witnessMaxima_le_common_envelope {B : ℕ}
     split_ifs with h
     · exact Nat.cast_le.mpr (witnessMaxima_le_fixed_cap hGRH h).1
     · exact hj
-  have h := le_min (elementary_formula_real hGRH hB).2 (le_min hj hf)
+  have h := le_min (refined_elementary_formula_real hB hGRH).2 (le_min hj hf)
   exact ⟨h, (Nat.cast_le.mpr (QNeOne_le_QNegOne B)).trans h⟩
+
+/-- The retained cap is smaller than every common-endpoint joint candidate.
+Input: any endpoint. Proof: square its common scale, which is at least 255.
+Role: compare the old finite-cap and joint branches without numerical sampling. -/
+private theorem fixed_cap_lt_jointEndpoint (B : ℕ) : (4093 : ℝ) < jointEndpointBound B := by
+  have hm := le_max_left (255 : ℝ) (Real.log B)
+  unfold jointEndpointBound
+  nlinarith only [hm, sq_nonneg (max 255 (Real.log B) - 255)]
+
+/-- Below logarithmic scale ten the refined radius is below every old candidate.
+Input: an endpoint at least three below that scale. Proof: use the old radius below 4093
+and the joint candidate above 4093. Role: certify the full old selection comparison. -/
+private theorem refinedRadius_lt_previous_small {B : ℕ} (hB : 3 ≤ B) (hL : Real.log B < 10) :
+    refinedElementaryRadius B <
+      min (elementaryRadius B)
+        (min (jointEndpointBound B)
+          (if Real.log B ≤ 1609 / 25 then 4093 else jointEndpointBound B)) := by
+  have hr := refinedRadius_lt_elementary hB
+  have hf := elementaryRadius_lt_fixed_cap (lt_of_lt_of_le (by norm_num only : 0 < 3) hB) hL
+  have hj := (hr.trans hf).trans (fixed_cap_lt_jointEndpoint B)
+  refine lt_min hr (lt_min hj ?_)
+  split_ifs
+  · exact hr.trans hf
+  · exact hj
+
+/-- The new common minimum strictly improves the full old minimum below scale ten.
+Input: an endpoint at least three with logarithm below ten.
+Proof: select the refined radius. Role: certify an actual winning interval for the public bound. -/
+theorem commonEnvelope_lt_previous_small {B : ℕ} (hB : 3 ≤ B) (hL : Real.log B < 10) :
+    commonEndpointEnvelope B <
+      min (elementaryRadius B)
+        (min (jointEndpointBound B)
+          (if Real.log B ≤ 1609 / 25 then 4093 else jointEndpointBound B)) :=
+  (min_le_left _ _).trans_lt (refinedRadius_lt_previous_small hB hL)
 
 /-- If log B>=64, the elementary radius dominates (log B)^2. Expand log(4B),
 use nonnegative loglog and square the larger positive base. This supplies exact

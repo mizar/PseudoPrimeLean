@@ -45,8 +45,8 @@ The elementary radius exceeds 31 and both endpoint candidates exceed 27. This pe
 Selfridge transfer without modifying the envelope by an additional maximum. -/
 theorem commonEnvelope_ge_twenty_seven {B : ℕ} (hB : 3 ≤ B) :
     27 ≤ PseudoSquare.commonEndpointEnvelope B := by
-  have he : (27 : ℝ) ≤ PseudoSquare.elementaryRadius B :=
-    (by norm_num only : (27 : ℝ) ≤ 31).trans (PseudoSquare.thirtyOne_lt_elementaryRadius hB).le
+  have he : (27 : ℝ) ≤ PseudoSquare.refinedElementaryRadius B :=
+    (by norm_num only : (27 : ℝ) ≤ 31).trans (PseudoSquare.refinedRadius_gt_thirtyOne hB).le
   have hj : (27 : ℝ) ≤ PseudoSquare.jointEndpointBound B := by
     have hm := le_max_left (255 : ℝ) (Real.log B)
     unfold PseudoSquare.jointEndpointBound
