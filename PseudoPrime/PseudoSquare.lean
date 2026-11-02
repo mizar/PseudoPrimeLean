@@ -141,6 +141,7 @@ public import PseudoPrime.PseudoSquare.Bounds.FourPoleReducedBounds
 public import PseudoPrime.PseudoSquare.Bounds.FourPoleLegacyComparison
 public import PseudoPrime.PseudoSquare.Bounds.GammaCommonBounds
 public import PseudoPrime.PseudoSquare.Bounds.GammaLegacyComparison
+public import PseudoPrime.PseudoSquare.Bounds.FourPoleAbelComparison
 
 /-!
 # PseudoSquare umbrella module

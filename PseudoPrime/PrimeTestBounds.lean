@@ -187,6 +187,9 @@ public import PseudoPrime.PrimeTestBounds.Selfridge.FourPoleReducedBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.CumulativeHighBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.HistoryCumulativeBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianSurplusComparison
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianTightComparison
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianTightCumulativeBounds
+public import PseudoPrime.PrimeTestBounds.Selfridge.FourPoleAbelComparison
 
 /-!
 # Analytic and conditional bounds applied to primality tests

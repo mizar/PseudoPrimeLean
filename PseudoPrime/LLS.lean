@@ -674,6 +674,8 @@ public import PseudoPrime.LLS.PaperStatements.CyclicCharacterTraces
 public import PseudoPrime.LLS.PaperStatements.CyclicSixCharacterTraces
 public import PseudoPrime.LLS.PaperStatements.CyclicFiveCharacterBounds
 public import PseudoPrime.LLS.PaperStatements.BiquadraticCharacterTraces
+public import PseudoPrime.LLS.PreciseSavingScaleBounds
+public import PseudoPrime.LLS.PaperStatements.RationalPoleAbelEntrance
 
 /-! Public umbrella for the LLS theorem and its common numerical and analytic layers. -/
 

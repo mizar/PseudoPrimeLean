@@ -189,6 +189,7 @@ public import PseudoPrime.NumberTheory.QuadraticTraceWeights
 public import PseudoPrime.NumberTheory.QuadraticSignPatterns
 public import PseudoPrime.NumberTheory.CharacterTracePenalty
 public import PseudoPrime.NumberTheory.SmallIndexCharacters
+public import PseudoPrime.NumberTheory.SmallPrimeLogTail
 
 /-!
 # General number theory umbrella
