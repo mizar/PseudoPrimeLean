@@ -82,12 +82,53 @@ MR用に係数を固定した近似式の比較は
 任意係数の近似根や継続条件は `Analysis/AffineLogarithmicTailBounds.lean` に残し、
 固定した近似式を実際のMR証人へ移す定理と区別する。
 
+## 改善計画_1の配置計画
+
+今回追加する宣言は次の区分で配置する。これは配置と依存の計画であり、
+各ファイルの証明完成や全体ビルドの成功を示すものではない。
+ファイルごとの契約と分割理由は
+[詳細配置計画](../../PseudoPrimeWork/20261102_Inprovement/round1/PlacementPlan.md) に記録する。
+以下のパスはLeanソースルートの `PseudoPrime/` からの相対パスである。
+
+| 対象 | 配置先 | 所有する内容と分割理由 |
+|---|---|---|
+| 任意の小素数境界による尾評価 | `NumberTheory/SmallPrimeLogTail.lean` | 任意の非零の法の素因数和を、総対数と有限の小素数寄与へ分解する。核・GRH・Jacobi入力に依存せず、法の素因数費用の共通基盤として使う |
+| 精密savingの固定認証 | `LLS/PreciseSavingPrime31.lean`、 `PreciseSavingScaleBounds.lean` | 選択した31と定数の認証、因数分解を要しない根の上界。任意境界の尾評価と分ける |
+| 負値Jacobiへの移送と累積 | `PseudoSquare/Bounds/PreciseSavingJacobiBounds.lean`、 `PreciseSavingCumulative.lean` | 実際の証人・最小証人、小域31と全自然数の上端を扱う |
+| 負値Jacobiの候補選択 | `PseudoSquare/Bounds/PreciseSavingWindowBounds.lean`、 `PreciseSavingEnvelope.lean` | 勝利区間の認証と旧公開候補全体との比較を分け、区間の調整を証人の基盤へ戻さない |
+| MRの任意基底履歴 | `PrimeTestBounds/MillerRabin/BaseHistoryBounds.lean` | 小さな再帰と順序保存。現在の役割はMR履歴の構築なので、引数が一般的でもMR側に置く |
+| MRのGaussian累積 | `PrimeTestBounds/MillerRabin/GaussianCumulativeBounds.lean`、 `GaussianHistoryCaps.lean` | MRへの具体化・実最小証人・旧履歴比較と、調整するcap・回復条件の認証を分ける |
+| MRの改善Gaussian候補 | `PrimeTestBounds/MillerRabin/GaussianTightNumerics.lean`、 `GaussianTightBounds.lean` | 固定予算の認証と実際の証人への接続を分ける |
+| MRの公開候補と比較 | `PrimeTestBounds/MillerRabin/NextTunedWitnessEnvelope.lean`、 `NextTunedNormalForm.lean`、 `GaussianTightComparison.lean`、 `GaussianTightCumulativeBounds.lean` | 既存guard内の候補置換、支配された枝の同値整理、厳密比較、累積への移送を分ける |
+| 非負全域のMangoldt誤差 | `LLS/RiemannWeightedErrorGlobal.lean` | 核を要求しない既存LLS評価の拡張。任意重みの部分和評価にも使えるが、既存依存を逆転させて一般解析へ移さない |
+| 固定K4の二段Abel解析 | `LLS/PaperStatements/RationalPoleDoubleAbelInputs.lean`、 `RationalPoleSecondVariation.lean`、 `RationalPoleDoubleAbel.lean`、 `RationalPolePrincipalSharp.lean` | 選択した核の微分・可積分性・実和の恒等式・主指標誤差。適用開始値やcharacterの数値予算は読み込まない |
+| K4の実証人と開始値 | `LLS/PaperStatements/RationalPoleAbelWitness.lean`、 `RationalPoleAbelBudget.lean`、 `RationalPoleAbelEntrance.lean` | 元のcharacter・法の費用を保持した抽出、半直線への移送、3行の開始値認証を分ける |
+| K4のJacobi累積と比較 | `PseudoSquare/Bounds/FourPoleAbelBounds.lean`、 `FourPoleAbelComparison.lean` | 実証人・累積と、Q5を含む旧公開最小値との比較を分ける。Q5の調整をAbel上界へ戻さない |
+| Selfridgeの利用 | `PrimeTestBounds/Selfridge/PreciseSavingBounds.lean`、 `FourPoleAbelBounds.lean` | Jacobiの上界を停止最大・古典試行回数へ移す。空域と例外27・15は停止規約に従って処理する |
+| Selfridgeの最終比較 | `PrimeTestBounds/Selfridge/FourPoleAbelComparison.lean` | Q5・Abelと非1値専用候補の最終最小値を停止・試行へ移す。比較の集約を基礎のAbel停止上界から分ける |
+
+基本名前空間は親ディレクトリに一致させる。
+`PseudoSquare/Bounds` だけは下記の既存例外に従い、 `PseudoPrime.PseudoSquare` を使う。
+ファイル名を補助名前空間として追加せず、新しい例外も設けない。
+
+一般尾評価からLLS・MR・PseudoSquareへの直接・推移importと宣言参照を追加しない。
+固定認証は利用側から参照し、同じ名前空間でも、開始値・窓・capの変更が
+安定した定義や恒等式へ戻る依存を作らない。
+実装ファイルは必要な個別モジュールをimportし、分野全体の集約ファイルをimportしない。
+
+公開時は `NumberTheory.lean`、 `LLS.lean`、 `PseudoSquare.lean`、
+`PrimeTestBounds.lean` から最終の利用側へ到達できることを確認する。
+直接importだけでなく、推移importと集約importもファイル単位で監査する。
+既存の一般APIの移設は今回の対象に含めない。
+命名・行長・配置、単体CLIとLSPを確認し、最終整形後に全体CLIを行う。
+波及試験は省略し、静的な依存分析だけで再ビルドの削減や高速化を実証したとは扱わない。
+
 ## 名前空間の依存図
 
 図は配置方針に沿う向きのimportを表示し、図に表示しない依存も下表に列挙する。名前空間単位の集計であり、ファイル単位の循環検査や、各宣言の前提・主張・証明の意味上の監査を代替しない。図と表の両方を確認し、一般側から適用側へ戻る依存は、宣言の配置と数学的な依存に照らして個別に見直す。
 
 <!-- namespace-dependencies:start -->
-対象はチェックアウト内のLeanソース 2800 ファイル。隠しディレクトリ・ `archive` ・シンボリックリンク以下は走査しない。未追跡ファイルも含む。Mathlibなどの外部依存と同一グループ内の辺は図から除く。
+対象はチェックアウト内のLeanソース 2872 ファイル。隠しディレクトリ・ `archive` ・シンボリックリンク以下は走査しない。未追跡ファイルも含む。Mathlibなどの外部依存と同一グループ内の辺は図から除く。
 
 ```mermaid
 flowchart TD
@@ -96,12 +137,12 @@ flowchart TD
     N2["AnalyticNumberTheory (562)"]
     N3["Combinatorics (2)"]
     N4["Data (1)"]
-    N5["LLS (960)"]
-    N6["NumberTheory (250)"]
+    N5["LLS (994)"]
+    N6["NumberTheory (255)"]
     N7["PrimeTest (162)"]
-    N8["PrimeTestBounds (283)"]
-    N9["PseudoSquare (143)"]
-    N10["Tests (16)"]
+    N8["PrimeTestBounds (301)"]
+    N9["PseudoSquare (156)"]
+    N10["Tests (18)"]
     N11["Tools (4)"]
     N0 --> N1
     N0 --> N2
@@ -132,13 +173,14 @@ flowchart TD
     N9 --> N2
     N9 --> N5
     N9 --> N6
+    N10 --> N5
     N10 --> N6
     N10 --> N7
     N10 --> N11
     N11 --> N7
 ```
 
-ノードの括弧内はファイル数。名前は `PseudoPrime.` を省略している。異なるグループ間の直接依存 39 方向のうち、配置方針に沿う 33 方向を表示する。図に表示しない 6 方向は下表にすべて示す。表示する辺はすべて実際のimportに基づく。図から除いた依存がソース上で解消されたことを意味しない。
+ノードの括弧内はファイル数。名前は `PseudoPrime.` を省略している。異なるグループ間の直接依存 40 方向のうち、配置方針に沿う 34 方向を表示する。図に表示しない 6 方向は下表にすべて示す。表示する辺はすべて実際のimportに基づく。図から除いた依存がソース上で解消されたことを意味しない。
 
 | 依存元 | 依存先 | import数 |
 |---|---|---|
