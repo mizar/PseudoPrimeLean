@@ -31,3 +31,13 @@ concerns a symbol equal to negative one for odd nonsquares at least three. Both 
 GRH assumption and permitted axioms as the Miller–Rabin challenge.
 The [quadratic witness slides](PrimeQuadraticWitnessCriterion.md) show the statements and the
 GRH definition used by the solution.
+
+The extended LLS S1 subgroup bound and S2 nonprincipal-character bound are compared with:
+
+```sh
+lake comparator --config=ComparatorChallenges/LLSWitnessCriterion.json
+```
+
+The S1 statement fixes the original correction term and starts at modulus three. The S2 statement
+starts at modulus five, allows character value zero, and does not require the witness to be coprime
+to the modulus. The [LLS slides](LLSWitnessCriterion.md) display both statements and GRH.
