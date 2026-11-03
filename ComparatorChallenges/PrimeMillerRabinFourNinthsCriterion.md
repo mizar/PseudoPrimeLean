@@ -44,6 +44,7 @@ style: |
   .trivial { margin-top: 11px; font-size: 18px; }
   .modulus-one { margin-top: 12px; font-size: 15px; color: #435969; }
   .full-math { margin-top: 15px; font-size: 21px; }
+  .decomp-note { margin-top: 14px; font-size: 14px; line-height: 1.3; color: #435969; }
   .foot {
     position: absolute; left: 38px; right: 38px; bottom: 22px;
     padding-top: 10px; border-top: 1px solid #dbe4e8;
@@ -131,20 +132,15 @@ For $q=1$, $L(z,\chi)=\zeta(z)$; thus GRH includes RH.
 
 <div class="right">
 
-## Full criterion — all hypotheses and the conclusion
+## Proven theorem — canonical decomposition
 
 <div class="full-math">
 
 $$
 \boxed{
 \begin{gathered}
-\mathrm{GRH} \Longrightarrow
-\forall n,s,d\in\mathbb Z_{\ge0},\\[4pt]
-\left(
-\begin{gathered}
-n > 1 \land n\equiv1\!\!\!\!\pmod2\land n-1=2^s d \land d\equiv1\!\!\!\!\pmod2
-\end{gathered}
-\right)
+\mathrm{GRH},\quad n\in\mathbb Z_{\ge0},\quad n > 1,\quad n\equiv1\pmod2,\\[4pt]
+(s,d):=\mathrm{Nat.maxPowDvdDiv}(2,n-1)
 \Longrightarrow\\[4pt]
 \left[
 \begin{gathered}
@@ -163,6 +159,13 @@ j < s \land p^{2^j d}\equiv-1\pmod n
 \end{gathered}
 }
 $$
+
+</div>
+
+<div class="decomp-note">
+
+The separate Prop `PrimeMillerRabinFourNinthsCriterion` quantifies over every $s,d$ with
+$n-1=2^s d$ and $d$ odd. The theorem shown above uses `Nat.maxPowDvdDiv` instead.
 
 </div>
 </div>
