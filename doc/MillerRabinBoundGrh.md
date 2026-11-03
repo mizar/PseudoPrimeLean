@@ -2,7 +2,9 @@
 
 GRHの下で、奇合成数 $n \ge 9$ には $(4/9)(\ln n)^2$ 以下のMiller–Rabin拒否素数が存在する。証人と最小証人の定理は [FourNinthsBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsBounds.lean)、素数判定条件の同値は [FourNinthsCriterion.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsCriterion.lean) にある。名前空間は `PseudoPrime.PrimeTestBounds.MillerRabin` で、 `import PseudoPrime` から利用できる。
 
-公開選択上界 $U_{\mathrm{MR}}(n)$ は [FourNinthsEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsEnvelope.lean) の `fourNinthsSelectedEnvelope` である。 $n < 3000$ の既存値を保ち、 $n \ge 3000$ では `nextTunedSelectedEnvelope` と $(4/9)(\ln n)^2$ の最小値をとる。 `exists_least_fourNinthsSelected` はGRHの下で最小拒否素数がこの値以下であることを示す。 `fourNinthsPrimeEnvelope` は選択値を素数へ丸め、 `exists_least_fourNinthsPrime` が同じ最小証人を保持する。
+さらに $\ln n \ge 70000$ では、上界を $(7/16)(\ln n)^2$ に改善できる。証人と最小証人の定理は [HighCoefficientBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighCoefficientBounds.lean) にある。
+
+公開選択上界 $U_{\mathrm{MR}}(n)$ は [HighCoefficientEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighCoefficientEnvelope.lean) の `highCoeffSelected` である。従来の選択上界を基礎とし、 $n \ge 3000$ かつ $\ln n \ge 70000$ では $(7/16)(\ln n)^2$ との最小値をとる。 `exists_least_highCoeffSelected` は最小拒否素数がこの値以下であることを示す。 `highCoeffPrime` は選択値を素数へ丸め、同じ最小証人を保持する。
 
 MRの最小素数証人の累積最大値について、既知の更新点を [3種類の最小素数証人の数表](WitnessRecords.md) に参考情報として掲載した。
 
@@ -102,11 +104,17 @@ end PseudoPrime.PrimeTestBounds.MillerRabin
 | `prime_iff_mr_le_four_ninths_log_sq` | $4/9$ の上界による素数判定条件 | [FourNinthsCriterion.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsCriterion.lean) |
 | `exists_least_fourNinthsSelected`・`exists_least_fourNinthsPrime` | 選択値と素数丸め値による最小証人の上界 | [FourNinthsEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsEnvelope.lean) |
 | `cumulativeLeastPrime_le_four_ninths_log_sq` | 全自然数の上端に対する累積最大値の $4/9$ 上界 | [FourNinthsCumulative.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsCumulative.lean) |
+| `highCoeff_prime_witness`・`highCoeff_least_witness` | $\ln n \ge 70000$ における $7/16$ の証人と最小証人 | [HighCoefficientBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighCoefficientBounds.lean) |
+| `prime_iff_mr_highCoeff` | $\ln n \ge 70000$ における $7/16$ の素数判定条件 | [HighCoefficientCriterion.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighCoefficientCriterion.lean) |
+| `exists_least_highCoeffSelected`・`exists_least_highCoeffPrime` | 現行の選択値と素数丸め値による最小証人の上界 | [HighCoefficientEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighCoefficientEnvelope.lean) |
+| `cumulativeLeastPrime_le_highCoeff_quad` | $\ln N \ge 71000$ における累積最大値の $7/16$ 上界 | [HighCoefficientCumulative.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighCoefficientCumulative.lean) |
 | `exists_primeWitness_lt_3000` | GRHを仮定しない奇合成数 $9 \le n < 3000$ の定理 | [SmallLogBound.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/SmallLogBound.lean) |
 
 ## 証明の流れ
 
 係数 $4/9$ の定理では重複込みの素因数個数により奇合成数を分類する。素因数が3個以上なら既存の因数個数による上界を使う。2個の場合は平方と異なる2素数の積に分け、局所核の大きさと素数積の個数を比較する。低域では重複を許す素数積と有限個の有理数証明書を使い、中域では素数個数の解析的下界と61行の証明書を使う。 $\ln n \ge 1024$ は一様な評価で扱う。小さい入力と固定素数23・29の既存定理を接続し、全域を覆う。実装は [FourNinthsFiniteWitness.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsFiniteWitness.lean) と [FourNinthsHighWitness.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsHighWitness.lean) を経て全域定理に至る。
+
+高域の $7/16$ の定理でも、重複込みの素因数個数で分類する。4個以上は因数個数の上界で扱う。2個の場合と、3個で重複因子がある場合は局所核と素数積を比較する。相異なる3素数の場合は、非Korselt因子または異なる2進付値があれば因子の選択を使い、残る場合は導手の対数和を用いたGaussian評価を適用する。素数積の計数は連続した対数区間で評価し、遠い高域では既存の係数0.4145の定理につなぐ。詳細は [HighCoefficientBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighCoefficientBounds.lean) とそのimport先にある。
 
 合格底の構造と小さい入力の有限分類は [Composite.lean](../PseudoPrime/PrimeTest/MillerRabin/Composite.lean) と [Computation/Small.lean](../PseudoPrime/PrimeTest/MillerRabin/Computation/Small.lean) にある。有限分類は $9 \le n < 3000$ の奇合成数に対して底2または3の不合格を示す。素数入力の合格方向にはGRHを使わない。
 
@@ -135,13 +143,13 @@ $$
 q_{\mathrm{MR}}(n)=\min\lbrace p\in\mathbb P\mid\neg\mathrm{StrongMRPass}(n,p)\rbrace
 $$
 
-と書く。現在の実数上界を $U_{\mathrm{MR}}(n)=\mathrm{fourNinthsSelectedEnvelope}(n)$ とする。GRHの下で $q_{\mathrm{MR}}(n) \le U_{\mathrm{MR}}(n)$ が成り立つ。
+と書く。現在の実数上界を $U_{\mathrm{MR}}(n)=\mathrm{highCoeffSelected}(n)$ とする。GRHの下で $q_{\mathrm{MR}}(n) \le U_{\mathrm{MR}}(n)$ が成り立つ。
 
 ### 有限区間 $9 \le n < 3000$ の上界
 
 $9 \le n < 2047$ では2、 $2047 \le n < 3000$ では3を返す。底2または底3での拒否を有限分類で証明し、素数証人と最小素数証人へ接続する。この範囲ではGRHは不要である。定義と証人定理は [SmallPointwiseBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/SmallPointwiseBounds.lean) にある。
 
-公開数値関数の仕様としても、すべての自然数 $2047 \le n < 3000$ で `fourNinthsSelectedEnvelope n` と `fourNinthsPrimeEnvelope n` はともに3である。この等式には奇数性や合成数性を仮定しない。 $n < 2047$ では両関数が2を返す。値3と局所単調性は [FourNinthsEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsEnvelope.lean) で示し、2の分岐は同ファイルの定義と小域定理から従う。
+公開数値関数の仕様としても、すべての自然数 $2047 \le n < 3000$ で `highCoeffSelected n` と `highCoeffPrime n` はともに3である。この等式には奇数性や合成数性を仮定しない。 $n < 2047$ では両関数が2を返す。値3と局所単調性は [HighCoefficientEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighCoefficientEnvelope.lean) で示す。
 
 ### 固定素数上界23〜79と有限principal和
 
@@ -295,14 +303,15 @@ triangular kernelの明示公式から、各行の適用条件で $C_iL^2$ 以�
 
 実数上界 $R \ge 2$ に対して、 $R$ 以下の最大素数を $\mathrm{primeRound}(R)$ とする。 $R < 2$ では値を変えない。すべての実数で $\mathrm{primeRound}(R) \le R$ が成り立ち、 $p \le R$ を満たす素数 $p$ は丸め後も範囲内にある。また、 `primeRound_mono` はこの丸めの単調性を示す。定義と定理は [PrimeCutoff.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/PrimeCutoff.lean) にある。
 
-`fourNinthsPrimeEnvelope n` は `fourNinthsSelectedEnvelope n` を丸める。2・3・固定23〜79は丸めても同じ値である。素数への丸めは調べる素数基数の集合を変えずに、実数上界をその集合の最大要素へ置き換える。
+`highCoeffPrime n` は `highCoeffSelected n` を丸める。2・3・固定23〜79は丸めても同じ値である。素数への丸めは調べる素数基数の集合を変えずに、実数上界をその集合の最大要素へ置き換える。
 
 ### 全域の累積上界
 
 $Q_{\mathrm{MR}}(N)$ を $9 \le n \le N$ の奇合成数 $n$ に対する最小拒否素数の最大値とし、対象がないときは0とする。累積上界は次の共通尺度の基底と8個のtriangular候補から構成する。
 
 $$
-B(L)=\min\left\lbrace \frac49 L^2, G_A(\max\lbrace63,L\rbrace)\right\rbrace.
+B(L)=\min\left\lbrace \frac49 L^2, G_A(\max\lbrace63,L\rbrace),
+\max\left\lbrace\frac49 70000^2,\frac7{16}L^2\right\rbrace\right\rbrace.
 $$
 
 入口の昇順に $H_0(L)=B(L)$ とし、表の $C_i,T_i$ に対して
@@ -312,7 +321,7 @@ H_i(L)=\min\left\lbrace H_{i-1}(L),
 \max\left\lbrace H_{i-1}(T_i),C_iL^2\right\rbrace\right\rbrace.
 $$
 
-GRHの下ですべての自然数 $N$ について $Q_{\mathrm{MR}}(N) \le H_8(\ln N) \le (4/9)(\ln N)^2$ が成り立つ。入口より前の入力は $H_{i-1}(T_i)$ が覆う。証明は [FourNinthsCumulative.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsCumulative.lean) の `cumulativeLeastPrime_le_fourNinths` と `cumulativeLeastPrime_le_four_ninths_log_sq` にある。点ごとの包絡線に全域単調性は要求しない。
+GRHの下ですべての自然数 $N$ について $Q_{\mathrm{MR}}(N) \le H_8(\ln N) \le (4/9)(\ln N)^2$ が成り立つ。さらに $\ln N \ge 71000$ では $Q_{\mathrm{MR}}(N) \le (7/16)(\ln N)^2$ となる。新しい入口より前の入力は $(4/9)70000^2$ が覆う。triangular候補の入口より前は $H_{i-1}(T_i)$ が覆う。証明は [HighCoefficientCumulative.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighCoefficientCumulative.lean) にある。点ごとの包絡線に全域単調性は要求しない。
 
 ![MR累積上界と点ごとの候補](figures/mr_cumulative_high_comparison.png)
 
@@ -320,7 +329,7 @@ GRHの下ですべての自然数 $N$ について $Q_{\mathrm{MR}}(N) \le H_8(\
 
 ### 包絡線の構成
 
-$n \ge 3000$ では固定素数候補、pointwise上界、Gaussian上界、適用条件を満たすtriangular上界、および $(4/9)L^2$ の最小値をとる。 $n < 3000$ では小域の値2または3を使う。表の $U_{\mathrm{sharp}}(n)$ は `sharpSelectedEnvelope n` であり、適用条件を満たす候補を含む。その定義は [SharpWitnessEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/SharpWitnessEnvelope.lean) にある。候補のガードと数値関数の定義は [FourNinthsEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsEnvelope.lean) にある。
+$n \ge 3000$ では固定素数候補、pointwise上界、Gaussian上界、適用条件を満たすtriangular上界、および $(4/9)L^2$ の最小値をとる。さらに $L \ge 70000$ では $(7/16)L^2$ も候補に加える。 $n < 3000$ では小域の値2または3を使う。表の $U_{\mathrm{sharp}}(n)$ は `sharpSelectedEnvelope n` であり、適用条件を満たす候補を含む。その定義は [SharpWitnessEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/SharpWitnessEnvelope.lean) にある。新しい候補のガードは [HighCoefficientEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighCoefficientEnvelope.lean) にある。
 
 ### 上界式と証明済みの適用条件
 
@@ -337,10 +346,11 @@ $n \ge 3000$ では固定素数候補、pointwise上界、Gaussian上界、適�
 | $63 \le L$ | $G_{35}(L)$、 $G_{50}(L)$ |
 | 各 $T_i \le L$ | $C_iL^2$、 $i=1,\ldots,8$ |
 | 奇合成数 $n \ge 9$ | $(4/9)L^2$ |
+| 奇合成数 $n \ge 9$、 $70000 \le L$ | $(7/16)L^2$ |
 
 ## 上界式の適用区間
 
-次の表では $n \ge 3000$ の各行にある候補と $(4/9)L^2$ の最小値をとる。小域の2行は記載した値をそのまま使う。
+次の表では $n \ge 3000$ の各行にある候補と $(4/9)L^2$ の最小値をとり、 $L \ge 70000$ では $(7/16)L^2$ も加える。小域の2行は記載した値をそのまま使う。
 
 | 適用条件 | 現行の上界を構成する候補 |
 |---|---|

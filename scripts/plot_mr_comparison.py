@@ -724,6 +724,12 @@ def four_ninths_upper(L: np.ndarray) -> np.ndarray:
     return np.where(L < math.log(3000), old, np.minimum(old, (4 / 9) * L**2))
 
 
+def high_coefficient_upper(L: np.ndarray) -> np.ndarray:
+    """Lean highCoeffSelected, with the seven-sixteenths branch from L = 70000."""
+    old = four_ninths_upper(L)
+    return np.where(L >= 70000, np.minimum(old, (7 / 16) * L**2), old)
+
+
 def four_ninths_history_base(L: np.ndarray) -> np.ndarray:
     """Lean fourNinthsHistoryBase at an arbitrary real log scale."""
     return np.minimum(gaussian_history_base(L), (4 / 9) * L**2)
@@ -746,6 +752,29 @@ def four_ninths_cumulative(L: np.ndarray) -> np.ndarray:
          zip(four_ninths_histories(), HISTORY_TRIANGULAR_PROFILES)])
 
 
+def high_coefficient_history_base(L: np.ndarray) -> np.ndarray:
+    """Lean highCoeffHistoryBase, including the entrance cap for earlier inputs."""
+    cap = np.maximum((4 / 9) * 70000**2, (7 / 16) * L**2)
+    return np.minimum(four_ninths_history_base(L), cap)
+
+
+def high_coefficient_histories() -> list[float]:
+    histories: list[float] = []
+    for i, (_, entrance) in enumerate(HISTORY_TRIANGULAR_PROFILES):
+        base = float(high_coefficient_history_base(np.array([float(entrance)]))[0])
+        histories.append(min([base] +
+            [max(histories[j], float(HISTORY_TRIANGULAR_PROFILES[j][0]) * entrance**2)
+             for j in range(i)]))
+    return histories
+
+
+def high_coefficient_cumulative(L: np.ndarray) -> np.ndarray:
+    """Lean highCoeffCumulative, using the new common-scale base."""
+    return np.minimum.reduce([high_coefficient_history_base(L)] +
+        [np.maximum(H, float(C) * L**2) for H, (C, _) in
+         zip(high_coefficient_histories(), HISTORY_TRIANGULAR_PROFILES)])
+
+
 def square_base_cumulative(L: np.ndarray) -> np.ndarray:
     """Complete previous eight-profile history; retained for the same-guard comparison."""
     return np.minimum.reduce([L**2] +
@@ -762,25 +791,25 @@ def plot_mr_cumulative(output_dir: Path) -> None:
                        rtol=2e-15)
     entrances = np.array([T for _, T in HISTORY_TRIANGULAR_PROFILES])
     recoveries = np.array([math.sqrt(H / float(C)) for H, (C, _) in
-                           zip(four_ninths_histories(), HISTORY_TRIANGULAR_PROFILES)])
+                           zip(high_coefficient_histories(), HISTORY_TRIANGULAR_PROFILES)])
     fig, ax = plt.subplots(figsize=(10, 5.5))
     local = np.linspace(63, 180, 2401)
     assert np.all(gaussian_cumulative(local) <= gaussian_cumulative(local, 7.6) * (1 + 1e-14))
     proof_band = np.linspace(100, 101, 101)
     assert np.all(gaussian_cumulative(proof_band) < square_base_cumulative(proof_band))
     L = np.unique(np.concatenate([np.geomspace(1e10, 1e14, 3000), entrances, recoveries]))
-    cumulative = four_ninths_cumulative(L) / L**2
+    cumulative = high_coefficient_cumulative(L) / L**2
     previous = square_base_cumulative(L) / L**2
-    pointwise = np.minimum.reduce([four_ninths_history_base(L) / L**2] +
+    pointwise = np.minimum.reduce([high_coefficient_upper(L) / L**2] +
         [np.where(L >= T, float(C), np.inf) for C, T in HISTORY_TRIANGULAR_PROFILES])
     assert np.all(cumulative >= pointwise - 1e-14)
     assert np.all(cumulative <= previous + 1e-14)
     assert np.all(cumulative <= (4 / 9) + 1e-14)
     assert np.all(cumulative <= gaussian_cumulative(L) / L**2 + 1e-14)
     ax.semilogx(L, cumulative, color="#d55e00", linewidth=2.5,
-                     label="Four-ninths-base eight-profile history")
+                     label="Seven-sixteenths-base eight-profile history")
     ax.semilogx(L, pointwise, color="#3977a8", linestyle="--",
-                     label="Pointwise four-ninths and eight profiles")
+                     label="Pointwise current bound and eight profiles")
     ax.axhline(4 / 9, color="#333333", linestyle=":", linewidth=1.7,
                label=r"$(4/9)(\ln N)^2$ reference")
     ax.set(xlabel=r"$L=\ln N$", ylabel=r"Upper bound divided by $L^2$",
@@ -977,9 +1006,9 @@ def main() -> None:
 
     previous_U = next_tuned_upper(L)
     np.testing.assert_allclose(previous_U, next_tuned_nested_upper(L), rtol=2e-15)
-    U = four_ninths_upper(L)
+    U = high_coefficient_upper(L)
     assert np.all(U <= previous_U)
-    assert np.all(np.array(ps) <= four_ninths_upper(record_L))
+    assert np.all(np.array(ps) <= high_coefficient_upper(record_L))
     fig, ax = plt.subplots(figsize=(12, 8))
     fig.subplots_adjust(left=.09, right=.95, top=.87, bottom=.13)
     ax.plot(np.log(L), U, color="#d55e00", linewidth=2.5,
@@ -1059,8 +1088,8 @@ def main() -> None:
               "comparison_baseline": "sharpSelectedEnvelope",
               "sampled_selection_equality_checked": True,
               "baseline_sampled_monotonicity_checked": True,
-              "plotted_envelope": "fourNinthsSelectedEnvelope",
-              "canonical_plotted_envelope": "fourNinthsSelectedEnvelope",
+              "plotted_envelope": "highCoeffSelected",
+              "canonical_plotted_envelope": "highCoeffSelected",
               "previous_selection_equality": "nextTunedSelected_eq_normal",
               "removed_direct_gaussian_branches": 6,
               "gaussian_A_comparison_interval": [105, 105.5],
