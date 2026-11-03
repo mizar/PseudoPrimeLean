@@ -69,24 +69,18 @@ The two directions require different assumptions:
 - $\text{Prime} \to (\text{all pass})$ is unconditional: every prime base satisfying the stated bound passes when $n$ is prime.
 - $(\text{all pass}) \to \text{Prime}$ uses GRH: every odd composite $n > 1$ has a rejecting prime base not exceeding the stated bound.
 
-The Lean proposition states the criterion for every $s$ and $d$ satisfying $n - 1 = 2^s d$ with $d$ odd. The declarations are in namespace `ComparatorChallenges`, in [PrimeMillerRabinFourNinthsSolution.lean](ComparatorChallenges/PrimeMillerRabinFourNinthsSolution.lean). The solution refers to the library proof.
+The Lean proposition states the criterion for all nonnegative integers $s$ and $d$ satisfying $n - 1 = 2^s d$ with $d$ odd. The theorem below uses the canonical decomposition returned by `Nat.maxPowDvdDiv`. Both declarations are in namespace `ComparatorChallenges`, in [PrimeMillerRabinFourNinthsSolution.lean](ComparatorChallenges/PrimeMillerRabinFourNinthsSolution.lean); the theorem refers to the library proof.
 
 ```lean
-def PrimeMillerRabinFourNinthsCriterion : Prop :=
-  GeneralizedRiemannHypothesis →
-    ∀ n s d : ℕ,
-      1 < n →
-        Odd n →
-        n - 1 = 2 ^ s * d →
-        Odd d →
-        ((∀ p : ℕ,
-            Nat.Prime p →
-              (p : ℝ) ≤ (4 / 9 : ℝ) * (Real.log n) ^ 2 →
-              ((p : ZMod n) ^ d = 1 ∨ ∃ j : ℕ, j < s ∧ (p : ZMod n) ^ (2 ^ j * d) = -1)) ↔
-          Nat.Prime n)
-
-theorem prime_millerRabin_four_ninths_criterion : PrimeMillerRabinFourNinthsCriterion :=
-  PseudoPrime.PrimeTestBounds.MillerRabin.prime_millerRabin_four_ninths_criterion
+theorem prime_millerRabin_four_ninths_criterion (hGRH : GeneralizedRiemannHypothesis) {n : ℕ}
+    (hn : 1 < n) (ho : Odd n) :
+    let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)
+    (∀ p : ℕ,
+        Nat.Prime p →
+          (p : ℝ) ≤ (4 / 9 : ℝ) * (Real.log n) ^ 2 →
+          ((p : ZMod n) ^ d = 1 ∨ ∃ j : ℕ, j < s ∧ (p : ZMod n) ^ (2 ^ j * d) = -1)) ↔
+      Nat.Prime n :=
+  PseudoPrime.PrimeTestBounds.MillerRabin.prime_iff_mr_le_four_ninths_log_sq hGRH hn ho
 ```
 
 The chained implications `Nat.Prime p → (p : ℝ) ≤ ... → ...` require the strong Miller–Rabin pass condition for every base `p` that is prime and satisfies the bound. This explicit power-congruence condition is equivalent to `PrimeTest.strongMillerRabinWithBase n p = true`, as proved by [`strongMillerRabinWithBase_eq_true_iff_pass`](PseudoPrime/PrimeTest/MillerRabin/Decomposition.lean).

@@ -68,24 +68,18 @@ $$
 - $\text{Prime} \to (\text{all pass})$ の向きに GRH は不要である。 $n$ が素数なら、指定の上界以下の各素数底が合格する。
 - $(\text{all pass}) \to \text{Prime}$ の向きに GRH を用いる。奇合成数 $n > 1$ には、 $n$ を棄却する素数底 $p \le \frac{4}{9}(\ln\mathrel{} n)^2$ が存在する。
 
-Lean の次の命題は、 $n - 1 = 2^s d$ と奇数の $d$ を満たす任意の $s$、 $d$ に対して判定条件を述べる。宣言は名前空間 `ComparatorChallenges` の [PrimeMillerRabinFourNinthsSolution.lean](ComparatorChallenges/PrimeMillerRabinFourNinthsSolution.lean) にある。解答側はライブラリの証明を参照する。
+Lean の次の命題は、 $n - 1 = 2^s d$ と奇数の $d$ を満たす任意の非負整数 $s$、 $d$ に対して判定条件を述べる。続く定理は `Nat.maxPowDvdDiv` が返す標準分解を使う。どちらの宣言も名前空間 `ComparatorChallenges` の [PrimeMillerRabinFourNinthsSolution.lean](ComparatorChallenges/PrimeMillerRabinFourNinthsSolution.lean) にあり、定理はライブラリの証明を参照する。
 
 ```lean
-def PrimeMillerRabinFourNinthsCriterion : Prop :=
-  GeneralizedRiemannHypothesis →
-    ∀ n s d : ℕ,
-      1 < n →
-        Odd n →
-        n - 1 = 2 ^ s * d →
-        Odd d →
-        ((∀ p : ℕ,
-            Nat.Prime p →
-              (p : ℝ) ≤ (4 / 9 : ℝ) * (Real.log n) ^ 2 →
-              ((p : ZMod n) ^ d = 1 ∨ ∃ j : ℕ, j < s ∧ (p : ZMod n) ^ (2 ^ j * d) = -1)) ↔
-          Nat.Prime n)
-
-theorem prime_millerRabin_four_ninths_criterion : PrimeMillerRabinFourNinthsCriterion :=
-  PseudoPrime.PrimeTestBounds.MillerRabin.prime_millerRabin_four_ninths_criterion
+theorem prime_millerRabin_four_ninths_criterion (hGRH : GeneralizedRiemannHypothesis) {n : ℕ}
+    (hn : 1 < n) (ho : Odd n) :
+    let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)
+    (∀ p : ℕ,
+        Nat.Prime p →
+          (p : ℝ) ≤ (4 / 9 : ℝ) * (Real.log n) ^ 2 →
+          ((p : ZMod n) ^ d = 1 ∨ ∃ j : ℕ, j < s ∧ (p : ZMod n) ^ (2 ^ j * d) = -1)) ↔
+      Nat.Prime n :=
+  PseudoPrime.PrimeTestBounds.MillerRabin.prime_iff_mr_le_four_ninths_log_sq hGRH hn ho
 ```
 
 連鎖する含意 `Nat.Prime p → (p : ℝ) ≤ ... → ...` は、任意の底 `p` が素数であり、かつ上界以下であるときに Miller–Rabin 条件を要求する。この明示的な冪合同条件は、実行用判定 `PrimeTest.strongMillerRabinWithBase n p` が `true` を返すことと同値であり、 [`strongMillerRabinWithBase_eq_true_iff_pass`](PseudoPrime/PrimeTest/MillerRabin/Decomposition.lean) で証明している。
