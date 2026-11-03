@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Combinatorics.ChoosePowerBounds
 public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.NumberTheory.ExcludedPrimeCountLower
 public import PseudoPrime.NumberTheory.PrimeProductSubgroupCounting
@@ -76,7 +77,7 @@ theorem eventually_prime_outside_logPower_cardRpow {beta A : ℝ} (hbeta : 0 < b
     NumberTheory.exists_prime_outside_of_card_lt_choose H S k B
       (fun r hr ↦ (Nat.mem_primesLE.mp (Finset.mem_sdiff.mp hr).1).2)
       (fun r hr ↦ (Nat.mem_primesLE.mp (Finset.mem_sdiff.mp hr).1).1) hsize
-      (NumberTheory.card_lt_choose_of_power_budget hbudget)
+      (Combinatorics.card_lt_choose_of_power_budget hbudget)
   have hrd : ¬r ∣ q := fun hd ↦
     (Finset.mem_sdiff.mp hrs).2 (Nat.mem_primeFactors.mpr ⟨hr, hd, hq.ne'⟩)
   exact ⟨r, hr, hrd, (Nat.cast_le.mpr hrB).trans (Nat.floor_le (Real.rpow_nonneg hLpos.le A)), hout⟩

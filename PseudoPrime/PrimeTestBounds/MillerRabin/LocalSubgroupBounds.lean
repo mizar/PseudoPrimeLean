@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.UnitPowerKernelProperness
 public import PseudoPrime.PrimeTestBounds.MillerRabin.FromLLS
 public import PseudoPrime.PrimeTestBounds.MillerRabin.MRLocalCutoffNumerics
 public import PseudoPrime.PrimeTest.MillerRabin.LocalFermatKernel
@@ -97,7 +98,7 @@ theorem exists_prime_0282924_nonKorseltFactor_GRH {n p : ℕ} [Fact p.Prime] (hn
   exact
     exists_prime_witness_le_0283_of_local_subgroup hnOdd (Fact.out : p.Prime).two_le hpn
       (powMonoidHom (n - 1) : (ZMod p)ˣ →* (ZMod p)ˣ).ker
-      (PrimeTest.local_prime_powerKernel_ne_top_of_not_dvd hdiv)
+      (NumberTheory.local_prime_powerKernel_ne_top_of_not_dvd hdiv)
       (fun a ha ↦ PrimeTest.strongMR_local_primeKernel hn1 hnOdd hpn ha) hGRH hn hsize
 
 /-- Under GRH for odd n≥10^141, a non-Korselt prime factor gives coefficient

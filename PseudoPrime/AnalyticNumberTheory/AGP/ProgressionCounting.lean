@@ -22,7 +22,6 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 public import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Nat.Choose.Bounds
-public import PseudoPrime.NumberTheory.PrimeProductSubgroupCounting
 public import PseudoPrime.Data.Finset.FiniteCounting
 
 /-! # ProgressionCounting

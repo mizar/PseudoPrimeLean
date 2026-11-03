@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.AmbientFermatKernel
 public import PseudoPrime.PrimeTestBounds.MillerRabin.SmallFermatKernelAsymptoticBounds
 
 /-! # Exact local Fermat kernel bounds for all positive prime-power exponents -/
@@ -56,7 +57,7 @@ theorem eventually_prime_positiveLocalKernel {a : ℕ} (ha : 0 < a) {τ A : ℝ}
   let H := (powMonoidHom (n - 1) : (ZMod (p ^ a))ˣ →* (ZMod (p ^ a))ˣ).ker
   have hH : (Nat.card H : ℝ) ≤ ((p ^ a : ℕ) : ℝ) ^ (τ / a) := by
     rw [show Nat.card H = (p - 1).gcd (n - 1) from
-        card_local_fermat_kernel_prime_pow hn hp hp2 ha hdiv]
+        NumberTheory.card_local_fermat_kernel_prime_pow hn hp hp2 ha hdiv]
     rw [Nat.cast_pow, ← Real.rpow_natCast_mul (Nat.cast_nonneg p)]
     have he : (a : ℝ) * (τ / a) = τ :=
       mul_div_cancel₀ τ (ne_of_gt (Nat.cast_pos.mpr ha : (0 : ℝ) < a))

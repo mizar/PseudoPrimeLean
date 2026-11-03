@@ -6,7 +6,10 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeProductCountingBounds
+public import PseudoPrime.NumberTheory.AmbientFermatKernel
+public import PseudoPrime.Combinatorics.ChoosePowerBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeProductCountingTransfer
+public import Mathlib.NumberTheory.PrimeCounting
 
 /-! # Finite prime-product criteria with the exact ambient Fermat kernel -/
 
@@ -27,7 +30,7 @@ theorem exists_prime_witness_of_exact_kernel_choose {n p a : ℕ} (hn : 1 < n) (
   apply
     exists_prime_witness_of_local_card_lt_choose
       (powMonoidHom (n - 1) : (ZMod (p ^ a))ˣ →* (ZMod (p ^ a))ˣ).ker S k B hprime hbound hsize
-  · rw [card_local_fermat_kernel_prime_pow hn hp hp2 ha hdiv]
+  · rw [NumberTheory.card_local_fermat_kernel_prime_pow hn hp hp2 ha hdiv]
     exact hcount
   · exact fun r hr ↦ PrimeTest.strongMR_local_divisorKernel hn ho hdiv hr
 
@@ -41,7 +44,7 @@ theorem exists_primeWitness_of_exact_kernel_power_budget {n p a : ℕ} (hn : 1 <
     ∃ r : ℕ, r.Prime ∧ r ≤ B ∧ ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
   exact
     exists_prime_witness_of_exact_kernel_choose hn ho hp hp2 ha hdiv S k B hprime hbound hsize
-      (NumberTheory.card_lt_choose_of_power_budget hcount)
+      (Combinatorics.card_lt_choose_of_power_budget hcount)
 
 /-- For a positive prime-power divisor p^a of odd n>1, B^k<p^a and
 choose(pi(B),k)>gcd(p-1,n-1) bound the least prime MR witness by B.

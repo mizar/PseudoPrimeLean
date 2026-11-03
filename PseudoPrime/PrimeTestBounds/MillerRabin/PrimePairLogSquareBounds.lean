@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.UnitPowerKernelProperness
 public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalLogSquareBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.FourPrimeFactorBounds
 public import PseudoPrime.PrimeTest.MillerRabin.UnequalTwoAdicSquares
@@ -130,11 +131,11 @@ theorem exists_prime_witness_le_prime_pair_log_sq {n p q : ℕ} (hn : 1 < n) (ho
                 ha)
     · exact
         transfer q hq5 hqn (Nat.le_mul_of_pos_left q hp.pos) _
-          (PrimeTest.local_prime_powerKernel_ne_top_of_not_dvd hqK)
+          (NumberTheory.local_prime_powerKernel_ne_top_of_not_dvd hqK)
           (fun a ha ↦ PrimeTest.strongMR_local_primeKernel hn ho hqn ha)
   · exact
       transfer p hp5 hpn (Nat.le_mul_of_pos_right p hq.pos) _
-        (PrimeTest.local_prime_powerKernel_ne_top_of_not_dvd hpK)
+        (NumberTheory.local_prime_powerKernel_ne_top_of_not_dvd hpK)
         (fun a ha ↦ PrimeTest.strongMR_local_primeKernel hn ho hpn ha)
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

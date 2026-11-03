@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.UnitPowerKernelProperness
 public import PseudoPrime.NumberTheory.MarkedPrimeFactorLogMean
 public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimePairLogSquareBounds
 
@@ -94,7 +95,7 @@ theorem exists_prime_witness_le_nonKorselt_factor_log_sq {n r : ℕ} (hn : 1 < n
   exact
     exists_prime_witness_le_local_log_sq hn ho hr5 hrn
       (powMonoidHom (n - 1) : (ZMod r)ˣ →* (ZMod r)ˣ).ker
-      (PrimeTest.local_prime_powerKernel_ne_top_of_not_dvd hbad)
+      (NumberTheory.local_prime_powerKernel_ne_top_of_not_dvd hbad)
       (fun a ha ↦ PrimeTest.strongMR_local_primeKernel hn ho hrn ha) hGRH
 
 /-- Under GRH, an odd n>1 with at least three distinct prime factors and

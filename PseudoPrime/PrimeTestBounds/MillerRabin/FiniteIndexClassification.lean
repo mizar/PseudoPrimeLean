@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.UnitPowerKernelProperness
 public import Mathlib.NumberTheory.CarmichaelNumber
 public import PseudoPrime.PrimeTestBounds.MillerRabin.FourPrimeFactorBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.UnequalTwoAdicBounds
@@ -61,7 +62,7 @@ theorem localSubgroup_or_uniformKorseltTriple {n J : ℕ} [NeZero n] (hn1 : 1 < 
     have hsize : p ^ 2 ≤ J * (p * m) := by
       exact hlocalSize.trans (Nat.mul_le_mul_right (p * m) (hlocalIndex.trans hi))
     let K := (powMonoidHom (p * m - 1) : (ZMod p)ˣ →* (ZMod p)ˣ).ker
-    have hproper : K ≠ ⊤ := PrimeTest.local_prime_powerKernel_ne_top_of_not_dvd hdiv
+    have hproper : K ≠ ⊤ := NumberTheory.local_prime_powerKernel_ne_top_of_not_dvd hdiv
     have hcontain :
       ∀ a : ℕ,
         PrimeTest.StrongMillerRabinPass (p * m) (a : ZMod (p * m)) →

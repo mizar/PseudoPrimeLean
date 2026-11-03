@@ -6,8 +6,9 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.AmbientFermatKernel
 public import PseudoPrime.NumberTheory.PrimeProductMultisetCounting
-public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeProductCountingBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeProductCountingTransfer
 
 /-! # MR witnesses from products with repeated prime factors -/
 
@@ -41,7 +42,7 @@ theorem exists_prime_primePow_multichoose {n p a : ℕ} (hn : 1 < n) (ho : Odd n
   let : NeZero (p ^ a) := ⟨pow_ne_zero a hp.ne_zero⟩
   let H := (powMonoidHom (n - 1) : (ZMod (p ^ a))ˣ →* (ZMod (p ^ a))ˣ).ker
   have hcard : Nat.card H < Nat.choose (S.card + k) k := by
-    rw [card_local_fermat_kernel_prime_pow hn hp hp2 ha hdiv]
+    rw [NumberTheory.card_local_fermat_kernel_prime_pow hn hp hp2 ha hdiv]
     exact (Nat.gcd_le_left (n - 1) (Nat.sub_pos_of_lt hp.one_lt)).trans_lt hcount
   obtain ⟨r, _, hr, hb, hout⟩ :=
     NumberTheory.exists_prime_outside_of_multichoose H S k B hB hprime hbound hsize hcard
@@ -60,7 +61,7 @@ theorem exists_prime_primePow_multichoose_gcd {n p a : ℕ} (hn : 1 < n) (ho : O
   apply
     exists_prime_witness_of_multichoose
       (powMonoidHom (n - 1) : (ZMod (p ^ a))ˣ →* (ZMod (p ^ a))ˣ).ker S k B hB hprime hbound hsize
-  · rw [card_local_fermat_kernel_prime_pow hn hp hp2 ha hdiv]
+  · rw [NumberTheory.card_local_fermat_kernel_prime_pow hn hp hp2 ha hdiv]
     exact hcount
   · exact fun r hr ↦ PrimeTest.strongMR_local_divisorKernel hn ho hdiv hr
 

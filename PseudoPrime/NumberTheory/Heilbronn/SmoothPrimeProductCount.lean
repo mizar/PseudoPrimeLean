@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.NumberTheory.Heilbronn.HeilbronnSmoothExtraction
-public import PseudoPrime.NumberTheory.PrimeProductSubgroupCounting
+public import PseudoPrime.NumberTheory.PrimeFiniteProductInjective
 
 /-! # Squarefree prime products as distinct smooth integers -/
 

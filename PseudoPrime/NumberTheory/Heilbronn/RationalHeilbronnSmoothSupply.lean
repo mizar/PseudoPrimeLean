@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Combinatorics.ChoosePowerBounds
 public import PseudoPrime.NumberTheory.Heilbronn.SmoothPrimeProductCount
 public import PseudoPrime.Analysis.RationalHeilbronnSmoothBudget
 public import PseudoPrime.NumberTheory.Heilbronn.RationalEnergyScales
@@ -82,7 +83,7 @@ theorem eventually_smooth_count_at_rational_cutoff {a t : ℕ} {A : ℝ} (ha : 0
     exact hh
   have hbudget : C * s ^ s < (B.primeCounting + 1 - s) ^ s :=
     Analysis.subgroup_power_budget_of_log_scale hCpos hL1 hb hcb hs hsL hslo hMp hlogC
-  have hchoose := NumberTheory.card_lt_choose_of_power_budget hbudget
+  have hchoose := Combinatorics.card_lt_choose_of_power_budget hbudget
   have hsmooth :=
     choose_le_smoothNumbersUpTo_card (S := B.primesLE) (fun q hq ↦ (Nat.mem_primesLE.mp hq).2)
       (fun q hq ↦ (Nat.mem_primesLE.mp hq).1) hsize.le

@@ -11,7 +11,7 @@ public import Mathlib.Data.Finset.Defs
 public import Mathlib.Data.Nat.Factorization.Basic
 public import Mathlib.NumberTheory.CarmichaelNumber
 public import Mathlib.NumberTheory.PrimeCounting
-public import PseudoPrime.NumberTheory.PrimeProductSubgroupCounting
+public import PseudoPrime.NumberTheory.PrimeFiniteProductInjective
 
 /-! # Finite products of primes
 

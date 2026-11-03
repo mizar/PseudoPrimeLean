@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.AmbientFermatKernel
 public import PseudoPrime.LLS.SmallSubgroupPowerBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimePowerAsymptoticBounds
 
@@ -55,7 +56,7 @@ theorem eventually_prime_witness_log_small_fermat {a : ℕ} (ha : 2 ≤ a) {τ A
   let H := (powMonoidHom (n - 1) : (ZMod (p ^ a))ˣ →* (ZMod (p ^ a))ˣ).ker
   have hH : (Nat.card H : ℝ) ≤ ((p ^ a : ℕ) : ℝ) ^ (τ / a) := by
     rw [show Nat.card H = (p - 1).gcd (n - 1) from
-        card_local_fermat_kernel_prime_pow hn hp hp2 ha0 hdiv]
+        NumberTheory.card_local_fermat_kernel_prime_pow hn hp hp2 ha0 hdiv]
     rw [Nat.cast_pow, ← Real.rpow_natCast_mul (Nat.cast_nonneg p)]
     have he : (a : ℝ) * (τ / a) = τ := by field_simp [show (a : ℝ) ≠ 0 by exact_mod_cast ha0.ne']
     rw [he]

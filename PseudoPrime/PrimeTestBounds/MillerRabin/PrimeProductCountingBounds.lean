@@ -6,73 +6,15 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.NumberTheory.PrimeProductSubgroupCounting
-public import PseudoPrime.NumberTheory.UnitPowerCardinality
+public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeProductCountingTransfer
 public import PseudoPrime.NumberTheory.ChebyshevPrimeCountLower
-public import PseudoPrime.PrimeTest.MillerRabin.LocalFermatKernel
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
-/-! # Unconditional MR witnesses from prime-product counting -/
+/-! # Analytic MR witness criteria from prime-product bounds -/
 
 @[expose] public section
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
-
-/-- If all ambient MR passes map into a local subgroup H, B^k < q and
-choose(card S,k) > card H force a rejecting prime at most B from S.
-This transports prime-product counting without GRH or a least-witness monotonicity claim. -/
-theorem exists_prime_witness_of_local_card_lt_choose {n q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
-    (S : Finset ℕ) (k B : ℕ) (hprime : ∀ p ∈ S, Nat.Prime p) (hbound : ∀ p ∈ S, p ≤ B)
-    (hsize : B ^ k < q) (hcount : Nat.card H < Nat.choose S.card k)
-    (hpass :
-      ∀ a : ℕ,
-        PseudoPrime.PrimeTest.StrongMillerRabinPass n (a : ZMod n) →
-          ∃ u : (ZMod q)ˣ, u ∈ H ∧ (u : ZMod q) = (a : ZMod q)) :
-    ∃ p : ℕ, p.Prime ∧ p ≤ B ∧ ¬PseudoPrime.PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
-  obtain ⟨p, _, hp, hb, hout⟩ :=
-    NumberTheory.exists_prime_outside_of_card_lt_choose H S k B hprime hbound hsize hcount
-  exact ⟨p, hp, hb, fun hyes ↦ hout (hpass p hyes)⟩
-
-/-- For an odd prime power p^a dividing n>1, the ambient (n-1)-power kernel
-has size gcd(p-1,n-1). Coprimality of p and n-1 cancels the p-power factor.
-Used to bound the local subgroup by p-1 in unconditional witness counting. -/
-theorem card_local_fermat_kernel_prime_pow {n p a : ℕ} (hn : 1 < n) (hp : p.Prime) (hp2 : p ≠ 2)
-    (ha : 0 < a) (hdiv : p ^ a ∣ n) :
-    Nat.card (powMonoidHom (n - 1) : (ZMod (p ^ a))ˣ →* (ZMod (p ^ a))ˣ).ker =
-      (p - 1).gcd (n - 1) := by
-  have hcop : p.Coprime (n - 1) :=
-    ((Nat.coprime_self_sub_right hn.le).mpr (Nat.coprime_one_right n)).of_dvd_left
-      ((dvd_pow_self p ha.ne').trans hdiv)
-  rw [PseudoPrime.NumberTheory.card_unitPowerKernel_prime_pow hp hp2 ha]
-  exact (hcop.pow_left (a - 1)).gcd_mul_left_cancel (p - 1)
-
-/-- For an odd n>1 divisible by an odd prime power p^a, let S contain primes
-at most B. If B^k < p^a and choose(card S,k) > p-1, an actual prime in S
-rejects n. Use the ambient Fermat kernel and its exact cardinality; no GRH is needed. -/
-theorem exists_prime_witness_of_prime_pow_choose {n p a : ℕ} (hn : 1 < n) (ho : Odd n)
-    (hp : p.Prime) (hp2 : p ≠ 2) (ha : 0 < a) (hdiv : p ^ a ∣ n) (S : Finset ℕ) (k B : ℕ)
-    (hprime : ∀ r ∈ S, Nat.Prime r) (hbound : ∀ r ∈ S, r ≤ B) (hsize : B ^ k < p ^ a)
-    (hcount : p - 1 < Nat.choose S.card k) :
-    ∃ r : ℕ, r.Prime ∧ r ≤ B ∧ ¬PseudoPrime.PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
-  let : NeZero (p ^ a) := ⟨pow_ne_zero a hp.ne_zero⟩
-  apply
-    exists_prime_witness_of_local_card_lt_choose
-      (powMonoidHom (n - 1) : (ZMod (p ^ a))ˣ →* (ZMod (p ^ a))ˣ).ker S k B hprime hbound hsize
-  · rw [card_local_fermat_kernel_prime_pow hn hp hp2 ha hdiv]
-    exact (Nat.gcd_le_left (n - 1) (Nat.sub_pos_of_lt hp.one_lt)).trans_lt hcount
-  · exact fun r hr ↦ PseudoPrime.PrimeTest.strongMR_local_divisorKernel hn ho hdiv hr
-
-/-- The power budget (p-1)*k^k < (card S+1-k)^k and B^k < p^a force
-an actual MR rejecting prime at most B. This sufficient condition uses only natural
-powers, avoiding a large binomial evaluation. No GRH assumption is required. -/
-theorem exists_prime_witness_of_prime_pow_power_budget {n p a : ℕ} (hn : 1 < n) (ho : Odd n)
-    (hp : p.Prime) (hp2 : p ≠ 2) (ha : 0 < a) (hdiv : p ^ a ∣ n) (S : Finset ℕ) (k B : ℕ)
-    (hprime : ∀ r ∈ S, Nat.Prime r) (hbound : ∀ r ∈ S, r ≤ B) (hsize : B ^ k < p ^ a)
-    (hcount : (p - 1) * k ^ k < (S.card + 1 - k) ^ k) :
-    ∃ r : ℕ, r.Prime ∧ r ≤ B ∧ ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
-  exact
-    exists_prime_witness_of_prime_pow_choose hn ho hp hp2 ha hdiv S k B hprime hbound hsize
-      (NumberTheory.card_lt_choose_of_power_budget hcount)
 
 /-- The unconditional prime-product budget gives a log-power bound whenever
 B is at most log(n)^(2-epsilon). This pointwise criterion keeps the product-count
@@ -106,7 +48,7 @@ theorem exists_prime_primePow_chebyshevBudget {n p a : ℕ} (hn : 1 < n) (ho : O
       (fun r hr ↦ (Nat.mem_primesLE.mp hr).2) (fun r hr ↦ (Nat.mem_primesLE.mp hr).1) hsize
   rw [Nat.primesLE_card_eq_primeCounting]
   exact
-    (NumberTheory.card_lt_choose_of_power_budget hbudget).trans_le
+    (Combinatorics.card_lt_choose_of_power_budget hbudget).trans_le
       (Nat.choose_le_choose k (NumberTheory.le_primeCounting_of_chebyshev_lower hB hprimecount))
 
 /-- Under the elementary Chebyshev and prime-product budgets, the least prime

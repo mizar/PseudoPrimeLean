@@ -6,29 +6,16 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.PrimeFiniteProductInjective
 public import Mathlib.RingTheory.ZMod.UnitsCyclic
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Algebra.BigOperators.Finprod
-public import Mathlib.Data.Nat.Choose.Bounds
 
 /-! # Squarefree prime products in small modular subgroups -/
 
 @[expose] public section
 
 namespace PseudoPrime.NumberTheory
-
-/-- Equal products of finite sets of primes have equal supports. Prime divisibility
-and primality identify each factor. Used to distinguish squarefree products in counting. -/
-theorem prime_finset_product_injective {S T : Finset ℕ} (hS : ∀ p ∈ S, Nat.Prime p)
-    (hT : ∀ p ∈ T, Nat.Prime p) (he : S.prod id = T.prod id) : S = T := by
-  have hsub :
-    ∀ (U V : Finset ℕ),
-      (∀ p ∈ U, Nat.Prime p) → (∀ p ∈ V, Nat.Prime p) → U.prod id = V.prod id → U ⊆ V := by
-    intro U V hU hV hprod p hp
-    have hd : p ∣ V.prod id := hprod ▸ Finset.dvd_prod_of_mem id hp
-    obtain ⟨r, hr, hpr⟩ := (hU p hp).prime.dvd_finsetProd_iff id |>.mp hd
-    exact ((hV r hr).dvd_iff_eq (hU p hp).ne_one).mp hpr ▸ hr
-  exact Finset.Subset.antisymm (hsub S T hS hT he) (hsub T S hT hS he.symm)
 
 /-- If every factor has a unit representative in H, so does its product.
 Multiply the representatives and use subgroup closure. Supplies the counting map. -/
@@ -94,25 +81,5 @@ theorem exists_prime_outside_of_card_lt_choose {q : ℕ} [NeZero q] (H : Subgrou
   intro p hp
   by_contra hm
   exact h ⟨p, hp, hprime p hp, hbound p hp, hm⟩
-
-/-- The elementary power lower bound for a binomial coefficient, with no division.
-Bound the descending factorial below and k! above by k^k. Used to turn analytic
-prime-count estimates into a subgroup-size contradiction. -/
-theorem choose_power_lower (M k : ℕ) : (M + 1 - k) ^ k ≤ k ^ k * Nat.choose M k := by
-  calc
-    (M + 1 - k) ^ k ≤ M.descFactorial k := Nat.pow_sub_le_descFactorial M k
-    _ = k.factorial * Nat.choose M k := Nat.descFactorial_eq_factorial_mul_choose M k
-    _ ≤ k ^ k * Nat.choose M k := Nat.mul_le_mul_right (Nat.choose M k) (Nat.factorial_le_pow k)
-
-/-- A strict power budget C*k^k < (M+1-k)^k implies C < choose(M,k).
-Contradict the preceding lower bound. This avoids evaluating a large binomial
-coefficient when applying the prime-product witness criterion. -/
-theorem card_lt_choose_of_power_budget {C M k : ℕ} (h : C * k ^ k < (M + 1 - k) ^ k) :
-    C < Nat.choose M k := by
-  by_contra hn
-  have hc : Nat.choose M k ≤ C := Nat.le_of_not_gt hn
-  have hb := (choose_power_lower M k).trans (Nat.mul_le_mul_left (k ^ k) hc)
-  rw [Nat.mul_comm C] at h
-  exact Nat.not_lt_of_ge hb h
 
 end PseudoPrime.NumberTheory

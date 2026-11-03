@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.AmbientFermatKernel
 public import PseudoPrime.LLS.RelativeChebyshevLowerBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeProductMultisetBounds
 
@@ -83,7 +84,8 @@ theorem exists_prime_choose_count_gcd {n p a : ℕ} (hn : 1 < n) (ho : Odd n) (h
     exists_prime_witness_of_local_card_lt_choose
       (powMonoidHom (n - 1) : (ZMod (p ^ a))ˣ →* (ZMod (p ^ a))ˣ).ker B.primesLE k B
       (fun r hr ↦ (Nat.mem_primesLE.mp hr).2) (fun r hr ↦ (Nat.mem_primesLE.mp hr).1) hsize
-  · rw [card_local_fermat_kernel_prime_pow hn hp hp2 ha hdiv, Nat.primesLE_card_eq_primeCounting]
+  · rw [NumberTheory.card_local_fermat_kernel_prime_pow hn hp hp2 ha hdiv,
+      Nat.primesLE_card_eq_primeCounting]
     exact hcount.trans_le (Nat.choose_le_choose k hprimecount)
   · exact fun r hr ↦ PrimeTest.strongMR_local_divisorKernel hn ho hdiv hr
 

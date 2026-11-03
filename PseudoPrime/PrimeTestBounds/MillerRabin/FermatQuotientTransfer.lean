@@ -6,7 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeProductCountingBounds
+public import PseudoPrime.NumberTheory.AmbientFermatKernel
+public import PseudoPrime.PrimeTest.MillerRabin.LocalFermatKernel
 public import PseudoPrime.NumberTheory.PrimePowerNontrivial
 
 /-! # Transferring nontrivial local Fermat powers to MR witnesses
@@ -33,7 +34,7 @@ theorem local_fermat_kernel_le_prime_predecessor_kernel {n p a : ℕ} (hn : 1 < 
     exact pow_card_eq_one
   have hv := congrArg (fun v : H ↦ (v : (ZMod (p ^ a))ˣ)) hc
   change u ^ Nat.card H = 1 at hv
-  rw [card_local_fermat_kernel_prime_pow hn hp hp2 ha hdiv] at hv
+  rw [NumberTheory.card_local_fermat_kernel_prime_pow hn hp hp2 ha hdiv] at hv
   obtain ⟨t, ht⟩ := Nat.gcd_dvd_left (p - 1) (n - 1)
   rw [ht, pow_mul, hv, one_pow]
 

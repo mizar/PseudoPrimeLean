@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTest.MillerRabin.LocalFermatKernel
+public import PseudoPrime.NumberTheory.ProductFermatKernel
 
 /-! # Local Fermat index controls prime-factor size
 
@@ -18,22 +19,12 @@ has index k with p²≤k*p*m. The predecessor gcd reduces to that of m-1.
 
 namespace PseudoPrime.PrimeTest
 
-/-- For p,m>1, the predecessor gcd of p*m and p equals that of m and p.
-Expand p*m-1 as (m-1)+(p-1)*m and apply the Euclidean gcd identity.
-This identifies the local kernel quotient with the cofactor quotient. -/
-theorem gcd_predecessor_mul_eq_cofactor {p m : ℕ} (hp : 1 < p) (hm : 1 < m) :
-    (p - 1).gcd (p * m - 1) = (p - 1).gcd (m - 1) := by
-  have hpred : p * m - 1 = (m - 1) + (p - 1) * m := by
-    nlinarith only [Nat.sub_add_cancel hp.le, Nat.sub_add_cancel hm.le,
-      Nat.sub_add_cancel (hp.le.trans (Nat.le_mul_of_pos_right p (Nat.zero_lt_of_lt hm)))]
-  rw [hpred, Nat.gcd_add_mul_left_right]
-
 /-- For p,m>1, p² is bounded by p*m times the local predecessor gcd quotient.
 The gcd divides m-1, so p-1 divides k*(m-1); positivity gives p≤k*m.
 Multiply by p. This is the arithmetic size bound for the non-Korselt local branch. -/
 theorem prime_factor_square_le_local_gcd_quotient_mul {p m : ℕ} (hp : 1 < p) (hm : 1 < m) :
     p ^ 2 ≤ ((p - 1) / (p - 1).gcd (p * m - 1)) * (p * m) := by
-  rw [gcd_predecessor_mul_eq_cofactor hp hm]
+  rw [NumberTheory.gcd_predecessor_product (Nat.zero_lt_of_lt hp) (Nat.zero_lt_of_lt hm)]
   let k := (p - 1) / (p - 1).gcd (m - 1)
   have hkg : k * (p - 1).gcd (m - 1) = p - 1 := Nat.div_mul_cancel (Nat.gcd_dvd_left _ _)
   have hk : 0 < k := by
@@ -60,27 +51,6 @@ theorem primeFactor_sq_le_powerKernel_index {p m : ℕ} [Fact p.Prime] (hm : 1 <
   rw [Subgroup.index_ker, IsCyclic.card_powMonoidHom_range, Nat.card_eq_fintype_card,
     ZMod.card_units_eq_totient, Nat.totient_prime (Fact.out : p.Prime)]
   exact prime_factor_square_le_local_gcd_quotient_mul (Fact.out : p.Prime).one_lt hm
-
-/-- A prime-factor ambient-power kernel has index at most that of any
-ambient subgroup contained in the Fermat subgroup. Pull the local kernel back
-along the surjective unit reduction, use containment, and compare finite indices.
-This transfers the finite global index bound into a local modulus size bound. -/
-theorem local_powerKernel_index_le_of_le_fermat {n p : ℕ} [NeZero n] [Fact p.Prime] (hpn : p ∣ n)
-    (H : Subgroup (ZMod n)ˣ) (hH : H ≤ fermatSubgroup n) :
-    (powMonoidHom (n - 1) : (ZMod p)ˣ →* (ZMod p)ˣ).ker.index ≤ H.index := by
-  let K := (powMonoidHom (n - 1) : (ZMod p)ˣ →* (ZMod p)ˣ).ker
-  have hsub : H ≤ K.comap (ZMod.unitsMap hpn) := by
-    intro u hu
-    have hv := hH hu
-    change u ^ (n - 1) = 1 at hv
-    change (ZMod.unitsMap hpn u) ^ (n - 1) = 1
-    rw [← map_pow, hv, map_one]
-  have hd := Subgroup.index_dvd_of_le hsub
-  rw [K.index_comap_of_surjective (ZMod.unitsMap_surjective hpn)] at hd
-  have hi : 0 < H.index := by
-    rw [Subgroup.index_eq_card]
-    exact Nat.card_pos
-  exact Nat.le_of_dvd hi hd
 
 /-- A sign subgroup lies in the ambient Fermat subgroup when twice its
 exponent divides n-1. A common sign raised to an even multiple is one.
@@ -117,6 +87,16 @@ theorem local_divisor_powerKernel_index_le_of_le_fermat {n q : ℕ} [NeZero n] [
     rw [Subgroup.index_eq_card]
     exact Nat.card_pos
   exact Nat.le_of_dvd hi hd
+
+/-- A prime-factor ambient-power kernel has index at most that of any
+ambient subgroup contained in the Fermat subgroup. Pull the local kernel back
+along the surjective unit reduction, use containment, and compare finite indices.
+This transfers the finite global index bound into a local modulus size bound. -/
+theorem local_powerKernel_index_le_of_le_fermat {n p : ℕ} [NeZero n] [Fact p.Prime] (hpn : p ∣ n)
+    (H : Subgroup (ZMod n)ˣ) (hH : H ≤ fermatSubgroup n) :
+    (powMonoidHom (n - 1) : (ZMod p)ˣ →* (ZMod p)ˣ).ker.index ≤ H.index := by
+  let : NeZero p := ⟨(Fact.out : p.Prime).ne_zero⟩
+  exact local_divisor_powerKernel_index_le_of_le_fermat hpn H hH
 
 /-- A Korselt prime divisor of a composite modulus is at most its square root.
 The cofactor exceeds one, and Korselt divisibility makes the predecessor gcd

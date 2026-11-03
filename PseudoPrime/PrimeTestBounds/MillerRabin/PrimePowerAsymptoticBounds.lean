@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.NumberTheory.PrimeCountPowerLower
 public import PseudoPrime.Analysis.PrimeProductLogarithmicBudget
-public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeProductCountingBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeProductCountingTransfer
 
 /-! # Unconditional log-power MR bounds from prime-power divisors -/
 
