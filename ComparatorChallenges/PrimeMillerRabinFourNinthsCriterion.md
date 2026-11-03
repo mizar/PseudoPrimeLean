@@ -36,9 +36,9 @@ style: |
   .short-label { display: flex; align-items: baseline; gap: 20px; margin-bottom: 3px; }
   .short-label p { font-size: 16px; }
   .short-math { font-size: 23px; }
-  .left { position: absolute; left: 38px; top: 256px; width: 510px; }
-  .right { position: absolute; left: 584px; top: 256px; width: 658px; }
-  .divider { position: absolute; left: 550px; top: 256px; width: 1px; height: 400px; background: #dbe4e8; }
+  .left { position: absolute; left: 38px; top: 256px; width: 470px; }
+  .right { position: absolute; left: 544px; top: 256px; width: 698px; }
+  .divider { position: absolute; left: 520px; top: 256px; width: 1px; height: 400px; background: #dbe4e8; }
   .grh-math { margin-top: 15px; font-size: 21px; }
   .notation { margin-top: 12px; font-size: 14px; line-height: 1.3; color: #435969; }
   .trivial { margin-top: 11px; font-size: 18px; }
@@ -142,7 +142,7 @@ $$
 \forall n,s,d\in\mathbb Z_{\ge0},\\[4pt]
 \left(
 \begin{gathered}
-n > 1 \land n\equiv1\pmod2\land n-1=2^s d \land d\equiv1\pmod2
+n > 1 \land n\equiv1\!\!\!\!\pmod2\land n-1=2^s d \land d\equiv1\!\!\!\!\pmod2
 \end{gathered}
 \right)
 \Longrightarrow\\[4pt]
