@@ -16,3 +16,18 @@ separate environments; do not import the challenge into the solution. The challe
 The allowed axioms are `propext`, `Quot.sound`, and `Classical.choice`. GRH is an explicit
 assumption in the statement, not an allowed axiom. The configuration contains no definition
 holes: the definitions used in the statement are part of the fixed challenge.
+
+The two GRH-conditional odd-prime quadratic witness bounds use the same arrangement. Run both
+comparisons together with:
+
+```sh
+lake comparator --config=ComparatorChallenges/PrimeQuadraticWitnessCriterion.json
+```
+
+The solution applies `exists_prime_ne_one_witness_of_grh` in `PseudoSquare/Bounds/PointwiseWitness.lean`
+and `exists_negOneWitness_le_refined_elementary` in `PseudoSquare/Bounds/RefinedElementaryBounds.lean`.
+The first bound concerns a Jacobi symbol different from one for positive odd nonsquares; the second
+concerns a symbol equal to negative one for odd nonsquares at least three. Both use the same explicit
+GRH assumption and permitted axioms as the Miller–Rabin challenge.
+The [quadratic witness slides](PrimeQuadraticWitnessCriterion.md) show the statements and the
+GRH definition used by the solution.
