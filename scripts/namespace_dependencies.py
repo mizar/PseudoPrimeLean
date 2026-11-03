@@ -13,6 +13,7 @@ from check_namespace_layout import mask
 # Display policy only: imports against this direction remain in the source.
 # Unknown groups must be reviewed rather than silently omitted.
 LAYERS = {
+    'ComparatorChallenges': 1,
     'PseudoPrime': 0,
     'PseudoPrime.Tests': 1,
     'PseudoPrime.Tools': 2,
@@ -46,7 +47,8 @@ def collect(root):
     edges = defaultdict(list)
     external = Counter()
     for module, path in sorted(modules.items()):
-        source = '.'.join(module.split('.')[:2])
+        parts = module.split('.')
+        source = '.'.join(parts[:2]) if parts[0] == 'PseudoPrime' else parts[0]
         groups[source] += 1
         text = mask(path.read_text(encoding='utf-8-sig'))
         for match in re.finditer(r'^\s*(?:(?:public|private)\s+)?import\s+([^\n]+)',
@@ -55,7 +57,8 @@ def collect(root):
                 if target not in modules:
                     external[target.split('.')[0]] += 1
                     continue
-                destination = '.'.join(target.split('.')[:2])
+                parts = target.split('.')
+                destination = '.'.join(parts[:2]) if parts[0] == 'PseudoPrime' else parts[0]
                 if source != destination:
                     edges[source, destination].append(
                         (path.relative_to(root).as_posix(), target))
@@ -123,7 +126,7 @@ def main():
     if not (args.write or args.check):
         print(output, end='')
         return 0
-    path = root / 'doc' / 'NamespaceLayout.md'
+    path = root / 'doc' / 'ReviewPolicy' / 'generated' / 'namespace-dependencies.md'
     text = path.read_text(encoding='utf-8')
     start, end = '<!-- namespace-dependencies:start -->', '<!-- namespace-dependencies:end -->'
     before, rest = text.split(start, 1)
