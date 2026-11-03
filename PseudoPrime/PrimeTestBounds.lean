@@ -64,6 +64,10 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.FromLLS
 public import PseudoPrime.PrimeTestBounds.MillerRabin.FourNinthsCriterion
 public import PseudoPrime.PrimeTestBounds.MillerRabin.FourNinthsEnvelope
 public import PseudoPrime.PrimeTestBounds.MillerRabin.FourNinthsCumulative
+public import PseudoPrime.PrimeTestBounds.MillerRabin.HighCoefficientEnvelope
+public import PseudoPrime.PrimeTestBounds.MillerRabin.HighCoefficientCumulative
+public import PseudoPrime.PrimeTestBounds.MillerRabin.HighCoefficientHeilbronn
+public import PseudoPrime.PrimeTestBounds.MillerRabin.HighCoefficientCriterion
 public import PseudoPrime.PrimeTestBounds.MillerRabin.ReciprocalGapAmbient
 public import PseudoPrime.PrimeTestBounds.MillerRabin.ReciprocalGapEndpointSelected
 public import PseudoPrime.PrimeTestBounds.MillerRabin.ReciprocalGapFullEndpoint
