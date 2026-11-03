@@ -1,0 +1,10 @@
+{
+  "challenge_module": "ComparatorChallenges.LLSWitnessCriterion",
+  "solution_module": "ComparatorChallenges.LLSWitnessSolution",
+  "theorem_names": [
+    "ComparatorChallenges.lls_subgroup_witness_bound",
+    "ComparatorChallenges.lls_character_witness_bound"
+  ],
+  "definition_names": [],
+  "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"]
+}
