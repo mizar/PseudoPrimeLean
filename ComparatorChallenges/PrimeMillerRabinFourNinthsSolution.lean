@@ -41,7 +41,14 @@ def PrimeMillerRabinFourNinthsCriterion : Prop :=
               ((p : ZMod n) ^ d = 1 ∨ ∃ j : ℕ, j < s ∧ (p : ZMod n) ^ (2 ^ j * d) = -1)) ↔
           Nat.Prime n)
 
-theorem prime_millerRabin_four_ninths_criterion : PrimeMillerRabinFourNinthsCriterion :=
-  PseudoPrime.PrimeTestBounds.MillerRabin.prime_millerRabin_four_ninths_criterion
+theorem prime_millerRabin_four_ninths_criterion (hGRH : GeneralizedRiemannHypothesis) {n : ℕ}
+    (hn : 1 < n) (ho : Odd n) :
+    let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)
+    (∀ p : ℕ,
+        Nat.Prime p →
+          (p : ℝ) ≤ (4 / 9 : ℝ) * (Real.log n) ^ 2 →
+          ((p : ZMod n) ^ d = 1 ∨ ∃ j : ℕ, j < s ∧ (p : ZMod n) ^ (2 ^ j * d) = -1)) ↔
+      Nat.Prime n :=
+  PseudoPrime.PrimeTestBounds.MillerRabin.prime_iff_mr_le_four_ninths_log_sq hGRH hn ho
 
 end ComparatorChallenges

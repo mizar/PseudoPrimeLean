@@ -33,19 +33,14 @@ def DirichletRiemannHypothesis {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ
 def GeneralizedRiemannHypothesis : Prop :=
   ∀ (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q), χ.IsPrimitive → DirichletRiemannHypothesis χ
 
-def PrimeMillerRabinFourNinthsCriterion : Prop :=
-  GeneralizedRiemannHypothesis →
-    ∀ n s d : ℕ,
-      1 < n →
-        Odd n →
-        n - 1 = 2 ^ s * d →
-        Odd d →
-        ((∀ p : ℕ,
-            Nat.Prime p →
-              (p : ℝ) ≤ (4 / 9 : ℝ) * (Real.log n) ^ 2 →
-              ((p : ZMod n) ^ d = 1 ∨ ∃ j : ℕ, j < s ∧ (p : ZMod n) ^ (2 ^ j * d) = -1)) ↔
-          Nat.Prime n)
-
-theorem prime_millerRabin_four_ninths_criterion : PrimeMillerRabinFourNinthsCriterion := by sorry
+theorem prime_millerRabin_four_ninths_criterion (hGRH : GeneralizedRiemannHypothesis) {n : ℕ}
+    (hn : 1 < n) (ho : Odd n) :
+    let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)
+    (∀ p : ℕ,
+        Nat.Prime p →
+          (p : ℝ) ≤ (4 / 9 : ℝ) * (Real.log n) ^ 2 →
+          ((p : ZMod n) ^ d = 1 ∨ ∃ j : ℕ, j < s ∧ (p : ZMod n) ^ (2 ^ j * d) = -1)) ↔
+      Nat.Prime n := by
+  sorry
 
 end ComparatorChallenges
