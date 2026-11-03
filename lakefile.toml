@@ -21,3 +21,6 @@ rev = "dev/v4.35.0"
 
 [[lean_lib]]
 name = "PseudoPrime"
+
+[[lean_lib]]
+name = "ComparatorChallenges"

@@ -4,7 +4,7 @@ Run the four-ninths criterion challenge from the project root with Lean 4.35's
 built-in comparator on Linux with `bwrap` available:
 
 ```sh
-lake comparator --config=PseudoPrime/ComparatorChallenges/PrimeMillerRabinFourNinthsCriterion.json
+lake comparator --config=ComparatorChallenges/PrimeMillerRabinFourNinthsCriterion.json
 ```
 
 The challenge states the GRH-conditional criterion independently of the library proof. The

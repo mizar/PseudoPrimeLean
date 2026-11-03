@@ -6,14 +6,19 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.FourNinthsCriterion
+public import Mathlib.NumberTheory.LSeries.DirichletContinuation
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 
-/-! Comparator solution: reproduce the challenge statements and use the library proof. -/
+/-! # Four-ninths Miller–Rabin criterion challenge
+
+This file states the GRH-conditional primality criterion independently of the library proof.
+Its theorem is a placeholder for comparison with a solution using Lake's built-in comparator.
+The definitions fix the meaning of GRH and the criterion for that comparison.
+-/
 
 @[expose] public section
 
-namespace PseudoPrime.Challenges
+namespace ComparatorChallenges
 
 noncomputable def dirichletTrivialZeros {q : ℕ} (χ : DirichletCharacter ℂ q) : Set ℤ := by
   classical
@@ -41,7 +46,6 @@ def PrimeMillerRabinFourNinthsCriterion : Prop :=
               ((p : ZMod n) ^ d = 1 ∨ ∃ j : ℕ, j < s ∧ (p : ZMod n) ^ (2 ^ j * d) = -1)) ↔
           Nat.Prime n)
 
-theorem prime_millerRabin_four_ninths_criterion : PrimeMillerRabinFourNinthsCriterion :=
-  PseudoPrime.PrimeTestBounds.MillerRabin.prime_millerRabin_four_ninths_criterion
+theorem prime_millerRabin_four_ninths_criterion : PrimeMillerRabinFourNinthsCriterion := by sorry
 
-end PseudoPrime.Challenges
+end ComparatorChallenges

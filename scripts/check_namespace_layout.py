@@ -107,7 +107,8 @@ def main():
     root = args.root.resolve()
     policy = json.loads((Path(__file__).with_name("namespace_layout_policy.json"))
                         .read_text(encoding="utf-8"))["structural_directories"]
-    files = sorted(path for path in (root / "PseudoPrime").rglob("*.lean")
+    source_roots = (root / "PseudoPrime", root / "ComparatorChallenges")
+    files = sorted(path for source_root in source_roots for path in source_root.rglob("*.lean")
                    if not any(part.startswith(".") or part == "archive"
                               for part in path.relative_to(root).parts))
     errors = []
