@@ -68,20 +68,24 @@ $$
 - $\text{Prime} \to (\text{all pass})$ の向きに GRH は不要である。 $n$ が素数なら、指定の上界以下の各素数底が合格する。
 - $(\text{all pass}) \to \text{Prime}$ の向きに GRH を用いる。奇合成数 $n > 1$ には、 $n$ を棄却する素数底 $p \le \frac{4}{9}(\ln\mathrel{} n)^2$ が存在する。
 
-Lean では $n - 1$ の分解を $n$ から標準的に定める。その値 $s$、 $d$ と分解の等式は、この公開定理における追加仮定ではない。
-
-公開定理は名前空間 `PseudoPrime.PrimeTestBounds.MillerRabin` の [FourNinthsCriterion.lean](PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsCriterion.lean) にある。以下の宣言抜粋では証明本体を省略している。
+Lean の次の命題は、 $n - 1 = 2^s d$ と奇数の $d$ を満たす任意の $s$、 $d$ に対して判定条件を述べる。宣言は名前空間 `ComparatorChallenges` の [PrimeMillerRabinFourNinthsSolution.lean](ComparatorChallenges/PrimeMillerRabinFourNinthsSolution.lean) にある。解答側はライブラリの証明を参照する。
 
 ```lean
-theorem prime_iff_mr_le_four_ninths_log_sq
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) :
-    let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)
-    (∀ p : ℕ,
-        Nat.Prime p →
-          (p : ℝ) ≤ (4 / 9 : ℝ) * (Real.log n) ^ 2 →
-          ((p : ZMod n) ^ d = 1 ∨ ∃ j : ℕ, j < s ∧ (p : ZMod n) ^ (2 ^ j * d) = -1)) ↔
-      Nat.Prime n
+def PrimeMillerRabinFourNinthsCriterion : Prop :=
+  GeneralizedRiemannHypothesis →
+    ∀ n s d : ℕ,
+      1 < n →
+        Odd n →
+        n - 1 = 2 ^ s * d →
+        Odd d →
+        ((∀ p : ℕ,
+            Nat.Prime p →
+              (p : ℝ) ≤ (4 / 9 : ℝ) * (Real.log n) ^ 2 →
+              ((p : ZMod n) ^ d = 1 ∨ ∃ j : ℕ, j < s ∧ (p : ZMod n) ^ (2 ^ j * d) = -1)) ↔
+          Nat.Prime n)
+
+theorem prime_millerRabin_four_ninths_criterion : PrimeMillerRabinFourNinthsCriterion :=
+  PseudoPrime.PrimeTestBounds.MillerRabin.prime_millerRabin_four_ninths_criterion
 ```
 
 連鎖する含意 `Nat.Prime p → (p : ℝ) ≤ ... → ...` は、任意の底 `p` が素数であり、かつ上界以下であるときに Miller–Rabin 条件を要求する。この明示的な冪合同条件は、実行用判定 `PrimeTest.strongMillerRabinWithBase n p` が `true` を返すことと同値であり、 [`strongMillerRabinWithBase_eq_true_iff_pass`](PseudoPrime/PrimeTest/MillerRabin/Decomposition.lean) で証明している。
@@ -113,21 +117,21 @@ theorem exists_prime_ne_one_witness_of_grh
 GRH の下で、次を満たす奇素数 $p$ も存在する。
 
 $$
-p \le \Bigl(\ln(4n) + \frac{24}{5}\ln(\ln(4n)) + 3\Bigr)^2,\qquad
+p \le \Bigl(\ln(4n) + \frac{24}{5}\ln(\ln(4n)) + 2\Bigr)^2,\qquad
 \boxed{\Bigl(\frac{n}{p}\Bigr) = -1}
 $$
 
-対応する公開定理も、同じ名前空間・ファイルにある。
+正の奇数で平方数でない $n$ は $n \ge 3$ を満たす。対応する公開定理は同じ名前空間の [RefinedElementaryBounds.lean](PseudoPrime/PseudoSquare/Bounds/RefinedElementaryBounds.lean) にある。
 
 ```lean
-theorem exists_prime_neg_one_witness_of_grh
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hnpos : 0 < n)
+theorem exists_negOneWitness_le_refined_elementary
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn3 : 3 ≤ n)
     (hn : Odd n) (hns : ¬IsSquare n) :
     ∃ p : ℕ,
       p.Prime ∧
         Odd p ∧
         (p : ℝ) ≤
-          (Real.log (4 * (n : ℝ)) + (24 / 5 : ℝ) * Real.log (Real.log (4 * (n : ℝ))) + 3) ^ 2 ∧
+          (Real.log (4 * (n : ℝ)) + (24 / 5 : ℝ) * Real.log (Real.log (4 * (n : ℝ))) + 2) ^ 2 ∧
         jacobiSym n p = -1
 ```
 
@@ -137,7 +141,7 @@ Lean の定理では `jacobiSym n p` を用いる。分母 $p$ は奇素数な�
 
 ## GRH の仮定の位置付け
 
-上記の条件付き結果では、GRH を明示的な仮定とする。Lean では、名前空間 `PseudoPrime` 内の [`AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis`](PseudoPrime/AnalyticNumberTheory/GRH/Definition.lean) として定義している。
+上記の条件付き結果では、GRH を明示的な仮定とする。ライブラリでは、名前空間 `PseudoPrime` 内の [`AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis`](PseudoPrime/AnalyticNumberTheory/GRH/Definition.lean) として定義している。Comparator解答側の `ComparatorChallenges.GeneralizedRiemannHypothesis` は、同じ条件を独立した定義として記述する。
 
 このプロジェクトは **GRH 自体を証明しない**。GRH から、LLS Theorem 1.1 の関連する部分に対応する結果を Lean 内で導出する。これには [`LLS.llsTheorem11S1_of_grh`](PseudoPrime/LLS/Theorem11S1GRH.lean) と [`LLS.llsTheorem11S2_of_grh`](PseudoPrime/LLS/Theorem11S2.lean) が含まれる。これらをプロジェクトの代数的・数論的議論と有限範囲の議論と組み合わせ、上記の明示的上界を得る。
 

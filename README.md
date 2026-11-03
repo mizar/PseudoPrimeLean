@@ -69,20 +69,24 @@ The two directions require different assumptions:
 - $\text{Prime} \to (\text{all pass})$ is unconditional: every prime base satisfying the stated bound passes when $n$ is prime.
 - $(\text{all pass}) \to \text{Prime}$ uses GRH: every odd composite $n > 1$ has a rejecting prime base not exceeding the stated bound.
 
-In Lean, the decomposition is determined canonically from $n$. The values $s$, $d$, and the decomposition equation are not additional assumptions of this public criterion.
-
-The public theorem is in namespace `PseudoPrime.PrimeTestBounds.MillerRabin`, in [FourNinthsCriterion.lean](PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsCriterion.lean). The following declaration excerpt omits its proof.
+The Lean proposition states the criterion for every $s$ and $d$ satisfying $n - 1 = 2^s d$ with $d$ odd. The declarations are in namespace `ComparatorChallenges`, in [PrimeMillerRabinFourNinthsSolution.lean](ComparatorChallenges/PrimeMillerRabinFourNinthsSolution.lean). The solution refers to the library proof.
 
 ```lean
-theorem prime_iff_mr_le_four_ninths_log_sq
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) :
-    let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)
-    (∀ p : ℕ,
-        Nat.Prime p →
-          (p : ℝ) ≤ (4 / 9 : ℝ) * (Real.log n) ^ 2 →
-          ((p : ZMod n) ^ d = 1 ∨ ∃ j : ℕ, j < s ∧ (p : ZMod n) ^ (2 ^ j * d) = -1)) ↔
-      Nat.Prime n
+def PrimeMillerRabinFourNinthsCriterion : Prop :=
+  GeneralizedRiemannHypothesis →
+    ∀ n s d : ℕ,
+      1 < n →
+        Odd n →
+        n - 1 = 2 ^ s * d →
+        Odd d →
+        ((∀ p : ℕ,
+            Nat.Prime p →
+              (p : ℝ) ≤ (4 / 9 : ℝ) * (Real.log n) ^ 2 →
+              ((p : ZMod n) ^ d = 1 ∨ ∃ j : ℕ, j < s ∧ (p : ZMod n) ^ (2 ^ j * d) = -1)) ↔
+          Nat.Prime n)
+
+theorem prime_millerRabin_four_ninths_criterion : PrimeMillerRabinFourNinthsCriterion :=
+  PseudoPrime.PrimeTestBounds.MillerRabin.prime_millerRabin_four_ninths_criterion
 ```
 
 The chained implications `Nat.Prime p → (p : ℝ) ≤ ... → ...` require the strong Miller–Rabin pass condition for every base `p` that is prime and satisfies the bound. This explicit power-congruence condition is equivalent to `PrimeTest.strongMillerRabinWithBase n p = true`, as proved by [`strongMillerRabinWithBase_eq_true_iff_pass`](PseudoPrime/PrimeTest/MillerRabin/Decomposition.lean).
@@ -114,21 +118,21 @@ theorem exists_prime_ne_one_witness_of_grh
 Assuming GRH, there also exists an odd prime $p$ such that
 
 $$
-p \le \Bigl(\ln(4n) + \frac{24}{5}\ln(\ln(4n)) + 3\Bigr)^2,\qquad
+p \le \Bigl(\ln(4n) + \frac{24}{5}\ln(\ln(4n)) + 2\Bigr)^2,\qquad
 \boxed{\Bigl(\frac{n}{p}\Bigr) = -1}
 $$
 
-The corresponding public theorem is in the same namespace and file.
+A positive odd nonsquare satisfies $n \ge 3$. The corresponding public theorem is in the same namespace, in [RefinedElementaryBounds.lean](PseudoPrime/PseudoSquare/Bounds/RefinedElementaryBounds.lean).
 
 ```lean
-theorem exists_prime_neg_one_witness_of_grh
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hnpos : 0 < n)
+theorem exists_negOneWitness_le_refined_elementary
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn3 : 3 ≤ n)
     (hn : Odd n) (hns : ¬IsSquare n) :
     ∃ p : ℕ,
       p.Prime ∧
         Odd p ∧
         (p : ℝ) ≤
-          (Real.log (4 * (n : ℝ)) + (24 / 5 : ℝ) * Real.log (Real.log (4 * (n : ℝ))) + 3) ^ 2 ∧
+          (Real.log (4 * (n : ℝ)) + (24 / 5 : ℝ) * Real.log (Real.log (4 * (n : ℝ))) + 2) ^ 2 ∧
         jacobiSym n p = -1
 ```
 
@@ -138,7 +142,7 @@ The first result allows $\bigl(\frac{n}{p}\bigr) = 0$ or $\bigl(\frac{n}{p}\bigr
 
 ## Status of the GRH assumption
 
-GRH is an explicit hypothesis of the conditional results above, represented by [`AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis`](PseudoPrime/AnalyticNumberTheory/GRH/Definition.lean) within namespace `PseudoPrime`.
+GRH is an explicit hypothesis of the conditional results above. The library represents it by [`AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis`](PseudoPrime/AnalyticNumberTheory/GRH/Definition.lean) within namespace `PseudoPrime`. The comparator solution states the same condition in its own `ComparatorChallenges.GeneralizedRiemannHypothesis` definition.
 
 This project does **not** prove GRH. From GRH, it derives within Lean the results corresponding to the relevant parts of LLS Theorem 1.1, including [`LLS.llsTheorem11S1_of_grh`](PseudoPrime/LLS/Theorem11S1GRH.lean) and [`LLS.llsTheorem11S2_of_grh`](PseudoPrime/LLS/Theorem11S2.lean). These are then combined with the project's algebraic, number-theoretic, and finite-range arguments to obtain the public bounds above.
 
