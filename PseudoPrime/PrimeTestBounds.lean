@@ -65,6 +65,9 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.FourNinthsCriterion
 public import PseudoPrime.PrimeTestBounds.MillerRabin.FourNinthsEnvelope
 public import PseudoPrime.PrimeTestBounds.MillerRabin.FourNinthsCumulative
 public import PseudoPrime.PrimeTestBounds.MillerRabin.HighCoefficientEnvelope
+public import PseudoPrime.PrimeTestBounds.MillerRabin.HighWindowComparison
+public import PseudoPrime.PrimeTestBounds.MillerRabin.HighWindowCumulative
+public import PseudoPrime.PrimeTestBounds.MillerRabin.HighWindowExtendedComparison
 public import PseudoPrime.PrimeTestBounds.MillerRabin.HighCoefficientCumulative
 public import PseudoPrime.PrimeTestBounds.MillerRabin.HighCoefficientHeilbronn
 public import PseudoPrime.PrimeTestBounds.MillerRabin.HighCoefficientCriterion
