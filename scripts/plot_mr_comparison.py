@@ -730,6 +730,19 @@ def high_coefficient_upper(L: np.ndarray) -> np.ndarray:
     return np.where(L >= 70000, np.minimum(old, (7 / 16) * L**2), old)
 
 
+HIGH_WINDOW_PROFILES = [(423 / 1000, 38e9), (2 / 5, 45e9),
+                        (369 / 1000, 60e9), (173 / 500, 80e9),
+                        (323 / 1000, 120e9), (37 / 125, 300e9), (36 / 125, 600e9)]
+
+
+def high_window_upper(L: np.ndarray) -> np.ndarray:
+    """Lean highWindowExtended, including all seven guarded high-window profiles."""
+    selected = high_coefficient_upper(L)
+    for coefficient, entrance in HIGH_WINDOW_PROFILES:
+        selected = np.where(L >= entrance, np.minimum(selected, coefficient * L**2), selected)
+    return selected
+
+
 def four_ninths_history_base(L: np.ndarray) -> np.ndarray:
     """Lean fourNinthsHistoryBase at an arbitrary real log scale."""
     return np.minimum(gaussian_history_base(L), (4 / 9) * L**2)
@@ -775,6 +788,28 @@ def high_coefficient_cumulative(L: np.ndarray) -> np.ndarray:
          zip(high_coefficient_histories(), HISTORY_TRIANGULAR_PROFILES)])
 
 
+def high_window_histories() -> list[float]:
+    """Entrance bounds in Lean's highWindowHistoryProfiles recursion."""
+    histories: list[float] = []
+    profiles = sorted(HISTORY_TRIANGULAR_PROFILES + HIGH_WINDOW_PROFILES, key=lambda item: item[1])
+    for index, (_, entrance) in enumerate(profiles):
+        base = float(high_coefficient_history_base(np.array([float(entrance)]))[0])
+        histories.append(min([base] + [
+            max(histories[j], float(profiles[j][0]) * entrance**2)
+            for j in range(index)
+        ]))
+    return histories
+
+
+def high_window_cumulative(L: np.ndarray) -> np.ndarray:
+    """Lean highWindowCumulative, including the retained entrance history."""
+    profiles = sorted(HISTORY_TRIANGULAR_PROFILES + HIGH_WINDOW_PROFILES, key=lambda item: item[1])
+    return np.minimum.reduce([high_coefficient_cumulative(L)] + [
+        np.maximum(history, float(coefficient) * L**2)
+        for history, (coefficient, _) in zip(high_window_histories(), profiles)
+    ])
+
+
 def square_base_cumulative(L: np.ndarray) -> np.ndarray:
     """Complete previous eight-profile history; retained for the same-guard comparison."""
     return np.minimum.reduce([L**2] +
@@ -792,28 +827,40 @@ def plot_mr_cumulative(output_dir: Path) -> None:
     entrances = np.array([T for _, T in HISTORY_TRIANGULAR_PROFILES])
     recoveries = np.array([math.sqrt(H / float(C)) for H, (C, _) in
                            zip(high_coefficient_histories(), HISTORY_TRIANGULAR_PROFILES)])
+    window_profiles = sorted(HISTORY_TRIANGULAR_PROFILES + HIGH_WINDOW_PROFILES,
+                             key=lambda item: item[1])
+    window_recoveries = np.array([math.sqrt(H / float(C)) for H, (C, _) in
+                                  zip(high_window_histories(), window_profiles)])
     fig, ax = plt.subplots(figsize=(10, 5.5))
     local = np.linspace(63, 180, 2401)
     assert np.all(gaussian_cumulative(local) <= gaussian_cumulative(local, 7.6) * (1 + 1e-14))
     proof_band = np.linspace(100, 101, 101)
     assert np.all(gaussian_cumulative(proof_band) < square_base_cumulative(proof_band))
-    L = np.unique(np.concatenate([np.geomspace(1e10, 1e14, 3000), entrances, recoveries]))
-    cumulative = high_coefficient_cumulative(L) / L**2
+    window_entrances = np.array([T for _, T in HIGH_WINDOW_PROFILES])
+    L = np.unique(np.concatenate([np.geomspace(math.log(3000), 1e15, 5000), entrances, recoveries,
+                                  window_entrances, window_recoveries,
+                                  np.nextafter(window_entrances, -np.inf)]))
+    cumulative = high_window_cumulative(L) / L**2
     previous = square_base_cumulative(L) / L**2
-    pointwise = np.minimum.reduce([high_coefficient_upper(L) / L**2] +
+    pointwise = np.minimum.reduce([high_window_upper(L) / L**2] +
         [np.where(L >= T, float(C), np.inf) for C, T in HISTORY_TRIANGULAR_PROFILES])
+    window_probe = np.array([38e9, np.nextafter(40e9, -np.inf), 45e9, 60e9,
+                             80e9, np.nextafter(1e11, -np.inf)])
+    assert np.all(high_window_upper(window_probe) < high_coefficient_upper(window_probe))
     assert np.all(cumulative >= pointwise - 1e-14)
+    assert np.all(cumulative <= high_coefficient_cumulative(L) / L**2 + 1e-14)
     assert np.all(cumulative <= previous + 1e-14)
     assert np.all(cumulative <= (4 / 9) + 1e-14)
     assert np.all(cumulative <= gaussian_cumulative(L) / L**2 + 1e-14)
     ax.semilogx(L, cumulative, color="#d55e00", linewidth=2.5,
-                     label="Seven-sixteenths-base eight-profile history")
+                     label="Cumulative maximum: upper bound")
     ax.semilogx(L, pointwise, color="#3977a8", linestyle="--",
-                     label="Pointwise current bound and eight profiles")
+                     label="Pointwise: upper bound")
     ax.axhline(4 / 9, color="#333333", linestyle=":", linewidth=1.7,
                label=r"$(4/9)(\ln N)^2$ reference")
     ax.set(xlabel=r"$L=\ln N$", ylabel=r"Upper bound divided by $L^2$",
                 title="Cumulative bounds at high scales")
+    ax.set_xlim(math.log(3000), 1e15)
     ax.grid(color="#e1e5e9", linewidth=0.6)
     ax.legend(loc="upper right", fontsize=8)
     fig.tight_layout()
@@ -1006,9 +1053,9 @@ def main() -> None:
 
     previous_U = next_tuned_upper(L)
     np.testing.assert_allclose(previous_U, next_tuned_nested_upper(L), rtol=2e-15)
-    U = high_coefficient_upper(L)
+    U = high_window_upper(L)
     assert np.all(U <= previous_U)
-    assert np.all(np.array(ps) <= high_coefficient_upper(record_L))
+    assert np.all(np.array(ps) <= high_window_upper(record_L))
     fig, ax = plt.subplots(figsize=(12, 8))
     fig.subplots_adjust(left=.09, right=.95, top=.87, bottom=.13)
     ax.plot(np.log(L), U, color="#d55e00", linewidth=2.5,
@@ -1088,8 +1135,8 @@ def main() -> None:
               "comparison_baseline": "sharpSelectedEnvelope",
               "sampled_selection_equality_checked": True,
               "baseline_sampled_monotonicity_checked": True,
-              "plotted_envelope": "highCoeffSelected",
-              "canonical_plotted_envelope": "highCoeffSelected",
+              "plotted_envelope": "highWindowExtended",
+              "canonical_plotted_envelope": "highWindowExtended",
               "previous_selection_equality": "nextTunedSelected_eq_normal",
               "removed_direct_gaussian_branches": 6,
               "gaussian_A_comparison_interval": [105, 105.5],
