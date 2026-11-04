@@ -10,6 +10,7 @@ public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.NormNum
+public import PseudoPrime.PrimeTestBounds.MillerRabin.TriangularCore
 
 /-! # Rational triangular profile certificates -/
 
@@ -38,6 +39,25 @@ structure TriangularProfile where
   triple : 28237 / 100000 ≤ C ∨ (1411811 / 5000000 ≤ C ∧ 1820000000000 ≤ T)
   margin : (36 + b + (1456 + 13 / 10000000) / v) * T + 101 < (68 - 3 / 10000) * a * T
 
+/-- The analytic fields of a triangular profile, excluding its triple certificate.
+The core is used by the local and large-index estimates and retains all budgets. -/
+def triangularProfileCore (f : TriangularProfile) : TriangularCore where
+  C := f.C
+  T := f.T
+  a := f.a
+  m := f.m
+  v := f.v
+  b := f.b
+  entry := f.entry
+  root := f.root
+  localBudget := f.localBudget
+  square := f.square
+  upper := f.upper
+  root16 := f.root16
+  fourth := f.fourth
+  cost := f.cost
+  margin := f.margin
+
 /-- The first profile has coefficient 7/15 and starts at thirty billion. -/
 noncomputable def triangularP0466 : TriangularProfile where
   C := 7 / 15
@@ -62,32 +82,7 @@ uniformly above its entrance. The proof uses monotonicity of nonnegative squares
 theorem triangularProfile_roots (f : TriangularProfile) {L : ℝ} (hL : f.T ≤ L) :
     let x := f.C * L ^ 2;
     1 < x ∧ f.a * L ≤ Real.sqrt x ∧ Real.sqrt x ≤ L ∧ x ^ (1 / 4 : ℝ) ≤ L / f.v := by
-  have hLp : 0 < L := by linarith only [f.entry, hL]
-  have ha : 0 < f.a := by linarith only [f.root]
-  have hC : 0 ≤ f.C := (sq_nonneg f.a).trans f.square
-  have hl : f.a * L ≤ Real.sqrt (f.C * L ^ 2) := by
-    apply (Real.le_sqrt (mul_nonneg ha.le hLp.le) (mul_nonneg hC (sq_nonneg L))).2
-    nlinarith only [mul_le_mul_of_nonneg_right f.square (sq_nonneg L)]
-  have hh : L / 2 ≤ Real.sqrt (f.C * L ^ 2) := by
-    nlinarith only [hl, mul_le_mul_of_nonneg_right f.root.le hLp.le]
-  have hx : 1 < f.C * L ^ 2 := by
-    nlinarith only [Real.sq_sqrt (mul_nonneg hC (sq_nonneg L)), hh, hL, f.entry]
-  have hu : Real.sqrt (f.C * L ^ 2) ≤ L := by
-    apply Real.sqrt_le_iff.mpr
-    exact ⟨hLp.le, by nlinarith only [mul_le_mul_of_nonneg_right f.upper (sq_nonneg L)]⟩
-  have ht : ((f.C * L ^ 2) ^ (1 / 4 : ℝ)) ^ 2 = Real.sqrt (f.C * L ^ 2) := by
-    have he := Real.rpow_mul (zero_lt_one.trans hx).le (1 / 4) 2
-    norm_num only [Real.rpow_two] at he
-    rw [Real.sqrt_eq_rpow]
-    exact he.symm
-  have hv : f.v ^ 2 ≤ L := f.fourth.2.trans hL
-  have hquarter : (f.C * L ^ 2) ^ (1 / 4 : ℝ) ≤ L / f.v := by
-    apply (le_div_iff₀ f.fourth.1).2
-    have hmul := mul_le_mul_of_nonneg_right hu (sq_nonneg f.v)
-    have hmul' := mul_le_mul_of_nonneg_left hv hLp.le
-    have hp := Real.rpow_nonneg (zero_lt_one.trans hx).le (1 / 4)
-    nlinarith only [hmul, hmul', ht, mul_nonneg hp f.fourth.1.le, hLp]
-  exact ⟨hx, hl, hu, hquarter⟩
+  exact triangularCore_roots (triangularProfileCore f) hL
 
 /-- Rational certificate for the coefficient-042 triangular profile. -/
 noncomputable def triangularP042 : TriangularProfile where
@@ -239,45 +234,7 @@ noncomputable def triangularProfile (i : Fin 8) : TriangularProfile :=
 sixteenth-root floor and radius slope give the generic decaying-cost estimate. -/
 theorem triangularProfile_power (f : TriangularProfile) {L : ℝ} (hL : f.T ≤ L) :
     (f.C * L ^ 2) ^ (-9 / 16 : ℝ) ≤ (1 / f.a / L) * (1 / f.m) := by
-  let x := f.C * L ^ 2
-  have hb := triangularProfile_roots f hL
-  change 1 < x ∧ f.a * L ≤ Real.sqrt x ∧ Real.sqrt x ≤ L ∧ x ^ (1 / 4 : ℝ) ≤ L / f.v at hb
-  have hLp : 0 < L := by linarith only [f.entry, hL]
-  have ha : 0 < f.a := by linarith only [f.root]
-  have hpos : 0 < x := zero_lt_one.trans hb.1
-  have hxlarge : f.m ^ 16 ≤ x := by
-    have hT : 0 ≤ f.T := by linarith only [f.entry]
-    have hsq := (sq_le_sq₀ hT hLp.le).mpr hL
-    have hC := (sq_nonneg f.a).trans f.square
-    exact f.root16.2.trans (mul_le_mul_of_nonneg_left hsq hC)
-  have hpowfac : x ^ (-9 / 16 : ℝ) = (Real.sqrt x)⁻¹ * (x ^ (1 / 16 : ℝ))⁻¹ := by
-    calc
-      x ^ (-9 / 16 : ℝ) = x ^ ((-1 / 2 : ℝ) + (-1 / 16 : ℝ)) := by
-        congr 1; ring
-      _ = x ^ (-1 / 2 : ℝ) * x ^ (-1 / 16 : ℝ) := Real.rpow_add hpos _ _
-      _ = (Real.sqrt x)⁻¹ * (x ^ (1 / 16 : ℝ))⁻¹ := by
-        rw [show (-1 / 2 : ℝ) = -(1 / 2) by ring, Real.rpow_neg hpos.le]
-        rw [← Real.sqrt_eq_rpow]
-        rw [show (-1 / 16 : ℝ) = -(1 / 16) by ring, Real.rpow_neg hpos.le]
-  have hsqrtInv : (Real.sqrt x)⁻¹ ≤ (1 / f.a / L) := by
-    have h := one_div_le_one_div_of_le (mul_pos ha hLp) hb.2.1
-    simpa only [one_div, mul_inv_rev, div_eq_mul_inv, mul_comm, one_mul, mul_one] using h
-  have hroot16 : f.m ≤ x ^ (1 / 16 : ℝ) := by
-    have hm :=
-      Real.rpow_le_rpow (pow_nonneg f.root16.1.le 16) hxlarge
-        (by norm_num only : (0 : ℝ) ≤ (1 / 16 : ℝ))
-    have he : (f.m ^ 16) ^ (1 / 16 : ℝ) = f.m := by
-      rw [← Real.rpow_natCast]
-      rw [← Real.rpow_mul f.root16.1.le]
-      norm_num only [Real.rpow_one]
-    rw [he] at hm
-    exact hm
-  have hinv : (x ^ (1 / 16 : ℝ))⁻¹ ≤ 1 / f.m := by
-    simpa only [one_div] using one_div_le_one_div_of_le f.root16.1 hroot16
-  rw [hpowfac]
-  exact
-    mul_le_mul hsqrtInv hinv (inv_nonneg.mpr (Real.rpow_nonneg hpos.le _))
-      (div_nonneg (div_nonneg (by norm_num only) ha.le) hLp.le)
+  exact triangularCore_power (triangularProfileCore f) hL
 
 /-- Above its entrance, each profile bounds the signed secondary cost by b L
 and the pole correction by 100. The ratio (L+284)/L is at most 1001/1000. -/
@@ -285,47 +242,7 @@ theorem triangularProfile_costs (f : TriangularProfile) {L : ℝ} (hL : f.T ≤ 
     let x := f.C * L ^ 2;
     165000 + 4000000000000 * (L + 284) * x ^ (-9 / 16 : ℝ) ≤ f.b * L ∧
       36 * L / (Real.sqrt x - 1) ≤ 100 := by
-  have hb := triangularProfile_roots f hL
-  have hLp : 0 < L := by linarith only [f.entry, hL]
-  have ha : 0 < f.a := by linarith only [f.root]
-  have hratio : (L + 284) / L ≤ (1001 / 1000 : ℝ) := by
-    apply (div_le_iff₀ hLp).2
-    linarith only [hL, f.entry]
-  have hsmall :=
-    mul_le_mul_of_nonneg_left (triangularProfile_power f hL)
-      (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 4000000000000)
-        (by linarith only [hLp] : (0 : ℝ) ≤ L + 284))
-  have he :
-    4000000000000 * (L + 284) * ((1 / f.a / L) * (1 / f.m)) =
-      (4000000000000 / (f.a * f.m)) * ((L + 284) / L) := by
-    simp only [div_eq_mul_inv, mul_inv_rev]
-    ring
-  rw [he] at hsmall
-  have hratio' :=
-    mul_le_mul_of_nonneg_left hratio
-      (div_nonneg (by norm_num only : (0 : ℝ) ≤ 4000000000000) (mul_nonneg ha.le f.root16.1.le))
-  have hbpos : 0 ≤ f.b := by
-    have hc := f.cost
-    have hnon :=
-      div_nonneg (by norm_num only : (0 : ℝ) ≤ 4000000000000 * (1001 / 1000))
-        (mul_nonneg ha.le f.root16.1.le)
-    have hT : 0 < f.T := by linarith only [f.entry]
-    by_contra hn
-    have hneg := mul_neg_of_neg_of_pos (lt_of_not_ge hn) hT
-    linarith only [hc, hnon, hneg]
-  have hbudget := mul_le_mul_of_nonneg_left hL hbpos
-  have hcost : 165000 + 4000000000000 * (L + 284) * (f.C * L ^ 2) ^ (-9 / 16 : ℝ) ≤ f.b * L := by
-    have hc := f.cost
-    simp only [div_eq_mul_inv, mul_inv_rev] at hc hratio' hsmall
-    nlinarith only [hsmall, hratio', hc, hbudget]
-  have hh : L / 2 ≤ Real.sqrt (f.C * L ^ 2) := by
-    have hm := mul_le_mul_of_nonneg_right f.root.le hLp.le
-    nlinarith only [hb.2.1, hm]
-  have hd : 0 < Real.sqrt (f.C * L ^ 2) - 1 := by linarith only [hh, hL, f.entry]
-  have hpole : 36 * L / (Real.sqrt (f.C * L ^ 2) - 1) ≤ 100 := by
-    apply (div_le_iff₀ hd).mpr
-    linarith only [hh, hL, f.entry]
-  exact ⟨hcost, hpole⟩
+  exact triangularCore_costs (triangularProfileCore f) hL
 
 /-- The certified positive rational margin gives the actual alpha-18 signed
 gap for every subgroup index at least 10^12. The independent cost is divided
@@ -338,54 +255,6 @@ theorem triangularProfile_gap (f : TriangularProfile) {L h : ℝ} (hL : f.T ≤ 
       h *
         (Real.sqrt x * (68 + 4 * Real.exp (-18)) - 1456 * x ^ (1 / 4 : ℝ) -
           36 * L / (Real.sqrt x - 1)) := by
-  let x := f.C * L ^ 2
-  let C := 165000 + 4000000000000 * (L + 284) * x ^ (-9 / 16 : ℝ)
-  have hLp : 0 < L := by linarith only [f.entry, hL]
-  have hhp : 0 < h := by linarith only [hh]
-  have hb := triangularProfile_roots f hL
-  change 1 < x ∧ f.a * L ≤ Real.sqrt x ∧ Real.sqrt x ≤ L ∧ x ^ (1 / 4 : ℝ) ≤ L / f.v at hb
-  have hc := triangularProfile_costs f hL
-  change C ≤ f.b * L ∧ 36 * L / (Real.sqrt x - 1) ≤ 100 at hc
-  have hn := Real.sqrt_nonneg x
-  have ht := Real.rpow_nonneg (zero_lt_one.trans hb.1).le (1 / 4)
-  have hC0 : 0 ≤ C := by
-    dsimp only [C]
-    exact
-      add_nonneg (by norm_num only)
-        (mul_nonneg (mul_nonneg (by norm_num only) (by linarith only [hLp]))
-          (Real.rpow_nonneg (zero_lt_one.trans hb.1).le _))
-  have hC : 0 ≤ 36 * L + C := add_nonneg (mul_nonneg (by norm_num only) hLp.le) hC0
-  have hpr := mul_le_mul_of_nonneg_right hh hn
-  have hpt := mul_le_mul_of_nonneg_right hh ht
-  have hcost0 := mul_le_mul_of_nonneg_right (by linarith only [] : h - 1 ≤ h) hC
-  have hcost1 := mul_le_mul_of_nonneg_left (add_le_add_left hc.1 (36 * L)) hhp.le
-  have hu :
-    300000000 * Real.sqrt x + 1300000 * x ^ (1 / 4 : ℝ) + 602600000 + (h - 1) * (36 * L + C) ≤
-      h *
-        ((3 / 10000 : ℝ) * Real.sqrt x + (13 / 10000000 : ℝ) * x ^ (1 / 4 : ℝ) + 36 * L + f.b * L +
-          1) := by
-    nlinarith only [hpr, hpt, hcost0, hcost1, hh]
-  let d := (68 - 3 / 10000 : ℝ) * f.a - (36 + f.b + (1456 + 13 / 10000000 : ℝ) / f.v)
-  have hmargin : 101 < d * f.T := by
-    dsimp only [d]
-    nlinarith only [f.margin]
-  have hd : 0 < d := by
-    by_contra hn
-    have hT : 0 ≤ f.T := by linarith only [f.entry]
-    have hm := mul_nonpos_of_nonpos_of_nonneg (le_of_not_gt hn) hT
-    linarith only [hm, hmargin]
-  have hmul := mul_le_mul_of_nonneg_left hL hd.le
-  have hE := mul_nonneg hn (Real.exp_pos (-18)).le
-  have hg :
-    (3 / 10000 : ℝ) * Real.sqrt x + (13 / 10000000 : ℝ) * x ^ (1 / 4 : ℝ) + 36 * L + f.b * L + 1 <
-      Real.sqrt x * (68 + 4 * Real.exp (-18)) - 1456 * x ^ (1 / 4 : ℝ) -
-        36 * L / (Real.sqrt x - 1) := by
-    have hm : 101 < d * L := hmargin.trans_le hmul
-    dsimp only [d] at hm
-    have hquarter := hb.2.2.2
-    simp only [div_eq_mul_inv] at hm hquarter
-    nlinarith only [hb.2.1, hquarter, hc.2, hm, hE]
-  have hfinal := hu.trans_lt (mul_lt_mul_of_pos_left hg hhp)
-  simpa only [C, add_assoc] using hfinal
+  exact triangularCore_gap (triangularProfileCore f) hL hh
 
 end PseudoPrime.PrimeTestBounds.MillerRabin
