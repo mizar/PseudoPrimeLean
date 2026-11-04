@@ -1,6 +1,12 @@
 # 比較図の生成
 
-このディレクトリの4本の `plot_*.py` で比較図を生成する。必要なPythonパッケージはNumPyとMatplotlibである。3本の比較図スクリプトは同じディレクトリの描画補助を使い、 `data/` のCSVを入力として読む。この3本は作業ディレクトリに依存せず、既定ではLeanリポジトリの `doc/figures/` にSVGとPNGを出力する。
+このディレクトリの `plot_*.py` で比較図を生成する。必要なPythonパッケージはNumPyとMatplotlibである。3本の比較図スクリプトは同じディレクトリの描画補助を使い、 `data/` のCSVを入力として読む。この3本は作業ディレクトリに依存せず、既定ではLeanリポジトリの `doc/figures/` にSVGとPNGを出力する。
+
+`plot_all_witnesses.py` は `data/` の3種類の更新点CSVを読み、 `doc/figures/all_witnesses.png` を生成する。横軸の位置は $\ln n$ に基づき、更新点を階段状に表示する。 `--output-dir` で出力先を変更でき、 `--format svg` ではSVGを生成する。図はCSVに記録された点を表示するもので、探索範囲外の更新点を確定するものではない。
+
+```powershell
+python -X utf8 scripts/plot_all_witnesses.py
+```
 
 Leanリポジトリのルートから次を実行する。
 
