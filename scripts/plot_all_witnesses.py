@@ -38,7 +38,7 @@ def read_records(path: Path) -> list[tuple[int, int]]:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path, default=ROOT / "doc" / "figures")
-    parser.add_argument("--format", choices=("png", "svg"), default="png")
+    parser.add_argument("--format", choices=("png", "svg"), help="Output only this format")
     args = parser.parse_args()
 
     datasets = [(read_records(DATA / filename), marker, label) for filename, marker, label in SERIES]
@@ -70,10 +70,15 @@ def main() -> None:
     top.set_xlabel(r"positioned by $\ln n$")
     fig.tight_layout()
     args.output_dir.mkdir(parents=True, exist_ok=True)
-    output = args.output_dir / f"all_witnesses.{args.format}"
-    fig.savefig(output, dpi=100)
+    for output_format in (args.format,) if args.format else ("svg", "png"):
+        output = args.output_dir / f"all_witnesses.{output_format}"
+        fig.savefig(output, dpi=100)
+        if output_format == "svg":
+            output.write_text("\n".join(line.rstrip() for line in
+                                        output.read_text(encoding="utf-8").splitlines()) + "\n",
+                              encoding="utf-8", newline="\n")
+        print(output)
     plt.close(fig)
-    print(output)
 
 
 if __name__ == "__main__":
