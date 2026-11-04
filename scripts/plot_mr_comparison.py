@@ -2,7 +2,7 @@
 """Plot the pointwise Miller-Rabin witness-bound comparison in the public docs.
 
 Install matplotlib, then run this script. By default, the plot covers
-9 <= n <= 10**1024. Set --max-power to extend it, up to 10**8192.
+9 <= n <= 10**64. Set --max-power to extend it, up to 10**8192.
 Coordinates use L = ln n, never n.
 Record points are pointwise witnesses, not an extrapolated finite-maximum bound.
 """
@@ -743,6 +743,34 @@ def high_window_upper(L: np.ndarray) -> np.ndarray:
     return selected
 
 
+def paired_bound(L: np.ndarray) -> np.ndarray:
+    """Variable paired-prime bound, valid for L >= 70000."""
+    log_l = np.log(np.maximum(L, 1.0))
+    alpha = (2 * log_l + 1 / 100) / (3 * log_l + 339 / 500)
+    return alpha**2 * L**2
+
+
+def factorial_bound(L: np.ndarray) -> np.ndarray:
+    """Variable factorial bound, valid for L >= 80000."""
+    log_l = np.log(np.maximum(L, 1.0))
+    alpha = (2 * log_l + 3 / 200) / (3 * log_l + 49 / 50)
+    return alpha**2 * L**2
+
+
+def factorial_selected_upper(L: np.ndarray) -> np.ndarray:
+    """Lean factorialSelected, including both guarded variable bounds."""
+    previous = high_window_upper(L)
+    paired = np.where(L >= 70000, paired_bound(L), np.inf)
+    factorial = np.where(L >= 80000, factorial_bound(L), np.inf)
+    return np.minimum.reduce([previous, paired, factorial])
+
+
+def mean_selected_upper(L: np.ndarray) -> np.ndarray:
+    """Lean meanSelected, including the guarded coefficient 427/1000."""
+    fixed = np.where(L >= 80000, (427 / 1000) * L**2, np.inf)
+    return np.minimum(factorial_selected_upper(L), fixed)
+
+
 def four_ninths_history_base(L: np.ndarray) -> np.ndarray:
     """Lean fourNinthsHistoryBase at an arbitrary real log scale."""
     return np.minimum(gaussian_history_base(L), (4 / 9) * L**2)
@@ -810,6 +838,87 @@ def high_window_cumulative(L: np.ndarray) -> np.ndarray:
     ])
 
 
+def variable_cumulative(L: np.ndarray) -> np.ndarray:
+    """Lean variableCumulative, including both entrance-history caps."""
+    previous = high_window_cumulative(L)
+    paired = np.maximum((4 / 9) * 70000**2, paired_bound(L))
+    paired_history = max((4 / 9) * 70000**2, float(paired_bound(np.array([80000.0]))[0]))
+    factorial = np.maximum(paired_history, factorial_bound(L))
+    return np.minimum.reduce([previous, paired, factorial])
+
+
+def mean_cumulative(L: np.ndarray) -> np.ndarray:
+    """Lean meanCumulative, retaining the pre-80000 paired history."""
+    paired_history = max((4 / 9) * 70000**2, float(paired_bound(np.array([80000.0]))[0]))
+    fixed_cap = np.maximum(paired_history, (427 / 1000) * L**2)
+    return np.minimum(variable_cumulative(L), fixed_cap)
+
+
+def triangular_adaptive_radius(L: np.ndarray) -> np.ndarray:
+    """Lean triangularAdaptiveRadius at positive logarithmic scales."""
+    m = np.sqrt(np.sqrt(np.sqrt((5313 / 10000) * L)))
+    a = 36 + (1456 + 13 / 10000000) / np.sqrt(L) + 165102 / L
+    d = (4000000000000 * (1001 / 1000)) / (m * L)
+    k = 68 - 3 / 10000
+    floor = np.where(L >= 1820000000000, 1411811 / 5000000, 28237 / 100000)
+    return np.maximum(np.sqrt(floor), (a + np.sqrt(a * a + 4 * k * d)) / (2 * k))
+
+
+def triangular_adaptive_selected(L: np.ndarray) -> np.ndarray:
+    """Lean triangularAdaptiveSelected, including its entrance guard."""
+    candidate = np.where(L >= 3e10, triangular_adaptive_radius(L)**2 * L**2, np.inf)
+    return np.minimum(mean_selected_upper(L), candidate)
+
+
+def triangular_adaptive_cap(L: np.ndarray) -> np.ndarray:
+    """Lean triangularAdaptiveCap for positive logarithmic scales."""
+    history = np.where(L >= 1.82e12, math.sqrt(28237 / 100000) * 1.82e12, 0.0)
+    return np.maximum((4 / 9) * (3e10)**2,
+                      np.maximum(triangular_adaptive_radius(L) * L, history)**2)
+
+
+def triangular_adaptive_cumulative(L: np.ndarray) -> np.ndarray:
+    """Lean triangularAdaptiveCumulative for positive logarithmic scales."""
+    return np.minimum(mean_cumulative(L), triangular_adaptive_cap(L))
+
+
+def gaussian_adaptive_bound(L: np.ndarray) -> np.ndarray:
+    """Gaussian cutoff at logarithmic scale L, valid from two trillion."""
+    k = 20115621 / 50000000
+    e = (61 / 100) * (28794111 / 12500000)
+    a = (2 * k + e / np.sqrt(L) + 39 / L) / (10971611 / 5000000)
+    return (21 / 10) * (a * L)**2
+
+
+def gaussian_adaptive_selected(L: np.ndarray) -> np.ndarray:
+    """Lean gaussianAdaptiveSelected with its guarded Gaussian candidate."""
+    return np.minimum(triangular_adaptive_selected(L),
+                      np.where(L >= 2e12, gaussian_adaptive_bound(L), np.inf))
+
+
+def gaussian_adaptive_cumulative(L: np.ndarray) -> np.ndarray:
+    """Lean gaussianAdaptiveCumulative with the triangular entrance cap."""
+    history = triangular_adaptive_cap(np.array([2e12]))[0]
+    cap = np.maximum(history, gaussian_adaptive_bound(L))
+    return np.minimum(triangular_adaptive_cumulative(L), cap)
+
+
+FIXED_IMPROVED_PROFILES = [(3869 / 10000, 5e10), (222 / 625, 7e10), (1567 / 5000, 1.5e11)]
+
+
+def fixed_improved_selected(L: np.ndarray) -> np.ndarray:
+    """Lean fixedImprovedSelected, including the three guarded profiles."""
+    return np.minimum.reduce([gaussian_adaptive_selected(L)] +
+        [np.where(L >= T, C * L**2, np.inf) for C, T in FIXED_IMPROVED_PROFILES])
+
+
+def fixed_improved_cumulative(L: np.ndarray) -> np.ndarray:
+    """Lean fixedImprovedCumulative, retaining each triangular entrance cap."""
+    return np.minimum.reduce([gaussian_adaptive_cumulative(L)] +
+        [np.maximum(triangular_adaptive_cap(np.array([T]))[0], C * L**2)
+         for C, T in FIXED_IMPROVED_PROFILES])
+
+
 def square_base_cumulative(L: np.ndarray) -> np.ndarray:
     """Complete previous eight-profile history; retained for the same-guard comparison."""
     return np.minimum.reduce([L**2] +
@@ -837,17 +946,41 @@ def plot_mr_cumulative(output_dir: Path) -> None:
     proof_band = np.linspace(100, 101, 101)
     assert np.all(gaussian_cumulative(proof_band) < square_base_cumulative(proof_band))
     window_entrances = np.array([T for _, T in HIGH_WINDOW_PROFILES])
+    variable_entrances = np.array([70000.0, 80000.0, 3e10, 1.82e12, 2e12] +
+                                  [T for _, T in FIXED_IMPROVED_PROFILES])
     L = np.unique(np.concatenate([np.geomspace(math.log(3000), 1e15, 5000), entrances, recoveries,
                                   window_entrances, window_recoveries,
+                                  variable_entrances, np.nextafter(variable_entrances, -np.inf),
                                   np.nextafter(window_entrances, -np.inf)]))
-    cumulative = high_window_cumulative(L) / L**2
+    cumulative = fixed_improved_cumulative(L) / L**2
     previous = square_base_cumulative(L) / L**2
-    pointwise = np.minimum.reduce([high_window_upper(L) / L**2] +
+    pointwise = np.minimum.reduce([fixed_improved_selected(L) / L**2] +
         [np.where(L >= T, float(C), np.inf) for C, T in HISTORY_TRIANGULAR_PROFILES])
     window_probe = np.array([38e9, np.nextafter(40e9, -np.inf), 45e9, 60e9,
                              80e9, np.nextafter(1e11, -np.inf)])
+    variable_probe = np.array([69999.0, 70000.0, 79999.0, 80000.0, 100000.0])
     assert np.all(high_window_upper(window_probe) < high_coefficient_upper(window_probe))
+    assert factorial_selected_upper(variable_probe)[0] == high_window_upper(variable_probe)[0]
+    assert np.all(paired_bound(variable_probe[1:]) < high_window_upper(variable_probe[1:]))
+    assert np.all(factorial_bound(variable_probe[3:]) < paired_bound(variable_probe[3:]))
+    assert np.all(variable_cumulative(variable_probe) >= factorial_selected_upper(variable_probe))
+    assert variable_cumulative(variable_probe[-1]) < high_window_cumulative(variable_probe[-1])
+    improvement_probe = np.array([1e7, 2e7])
+    assert np.all(mean_selected_upper(improvement_probe) < factorial_selected_upper(improvement_probe))
+    assert np.all(mean_cumulative(L) <= variable_cumulative(L))
+    adaptive_probe = np.array([5e10, 5.5e10, np.nextafter(6e10, -np.inf)])
+    assert np.all(triangular_adaptive_selected(adaptive_probe) < mean_selected_upper(adaptive_probe))
+    assert np.all(triangular_adaptive_cumulative(L) <= mean_cumulative(L))
+    gaussian_probe = np.array([2e12, 3e12, 1e13, 1e15])
+    assert np.all(gaussian_adaptive_bound(gaussian_probe) <
+                  (1411811 / 5000000) * gaussian_probe**2)
+    assert np.all(gaussian_adaptive_cumulative(L) <= triangular_adaptive_cumulative(L))
+    for C, T in FIXED_IMPROVED_PROFILES:
+        probe = np.array([T])
+        assert C * T**2 < gaussian_adaptive_selected(probe)[0]
+    assert np.all(fixed_improved_cumulative(L) <= gaussian_adaptive_cumulative(L))
     assert np.all(cumulative >= pointwise - 1e-14)
+    assert np.all(cumulative <= high_window_cumulative(L) / L**2 + 1e-14)
     assert np.all(cumulative <= high_coefficient_cumulative(L) / L**2 + 1e-14)
     assert np.all(cumulative <= previous + 1e-14)
     assert np.all(cumulative <= (4 / 9) + 1e-14)
@@ -877,7 +1010,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path,
                         default=ROOT / "doc/figures")
-    parser.add_argument("--max-power", type=int, default=1024)
+    parser.add_argument("--max-power", type=int, default=64)
     args = parser.parse_args()
     if args.max_power < 1:
         parser.error("--max-power must be a positive integer")
@@ -896,7 +1029,7 @@ def main() -> None:
                           5581 / 200, 523 / 50, 2171 / 100, 1373 / 50,
                           144 / 5, 120, 122, 330, 500, 5283 / 20, Lc, 81 / 4, 26, 1339 / 50, 703 / 20,
                           10367 / 200, 1706 / 25, 6671 / 50, 26269 / 100,
-                          210, 240, 250, 258, 300, 11255, 34971, 46330,
+                          210, 240, 250, 258, 300, 11255, 34971, 46330, 70000, 80000,
                           shift117_minus_two_crossing(), 50880, 350000,
                           4000, 9565217391305 * math.log(10)])
     entrances = np.concatenate([entrances, [45/4, 2877/250, 47/4, 100, 112,
@@ -1053,9 +1186,9 @@ def main() -> None:
 
     previous_U = next_tuned_upper(L)
     np.testing.assert_allclose(previous_U, next_tuned_nested_upper(L), rtol=2e-15)
-    U = high_window_upper(L)
+    U = mean_selected_upper(L)
     assert np.all(U <= previous_U)
-    assert np.all(np.array(ps) <= high_window_upper(record_L))
+    assert np.all(np.array(ps) <= mean_selected_upper(record_L))
     fig, ax = plt.subplots(figsize=(12, 8))
     fig.subplots_adjust(left=.09, right=.95, top=.87, bottom=.13)
     ax.plot(np.log(L), U, color="#d55e00", linewidth=2.5,
@@ -1068,13 +1201,13 @@ def main() -> None:
                label=r"Record points $Q_{\mathrm{MR}}(N)$ (OEIS A006945; prime bases 2, 3, 5, …)")
     ax.set_yscale("log")
     ax.set_xlim(math.log(math.log(9)), math.log(Lmax))
-    ax.set_ylim(1, Lmax**2 * 1.2)
+    ax.set_ylim(1, 1e4)
     powers = [2**k for k in range(14) if 2**k < args.max_power] + [args.max_power]
     power_ticks(ax, powers)
     ax.set_xlabel(r"Odd composite integer $n$ / upper bound $N$", labelpad=10)
     ax.set_ylabel("Least prime witness / upper bound")
     ax.grid(which="major", color="#d8dde3", linewidth=.7)
-    bit_powers = [64, 80, 128]
+    bit_powers = [k for k in [64, 80, 128] if k * math.log(2) <= Lmax]
     bit_positions = [math.log(k * math.log(2)) for k in bit_powers]
     for x in bit_positions:
         ax.axvline(x, color="#7e91ac", linestyle="--", linewidth=.9, zorder=1)
@@ -1090,12 +1223,13 @@ def main() -> None:
     inset.axhline(4 / 9, color="#333333", linestyle=":", linewidth=1.3)
     inset.set_yscale("log")
     inset.set_xlim(math.log(math.log(3000)), math.log(Lmax))
-    inset.set_ylim(.3, 4 / 9)
+    inset.set_ylim(.3, .45)
     inset.yaxis.set_major_locator(FixedLocator([.3, .35, .4, 4 / 9]))
     inset.yaxis.set_major_formatter(
         FuncFormatter(lambda y, _: r"$4/9$" if np.isclose(y, 4 / 9) else f"{y:.2f}"))
     inset.yaxis.set_minor_locator(NullLocator())
-    power_ticks(inset, [4, 8, 16, 32, 64, 128, 256, 512, 1024])
+    power_ticks(inset, [k for k in [4, 8, 16, 32, 64, 128, 256, 512, 1024]
+                        if k <= args.max_power])
     inset.tick_params(labelsize=9)
     inset.set_title(r"Detail: $U_{\mathrm{MR}}(n)/(\ln n)^2$", fontsize=10)
     inset.grid(color="#e1e5e9", linewidth=.6)
@@ -1135,8 +1269,9 @@ def main() -> None:
               "comparison_baseline": "sharpSelectedEnvelope",
               "sampled_selection_equality_checked": True,
               "baseline_sampled_monotonicity_checked": True,
-              "plotted_envelope": "highWindowExtended",
-              "canonical_plotted_envelope": "highWindowExtended",
+              "plotted_envelope": "fixedImprovedSelected",
+              "canonical_plotted_envelope": "fixedImprovedSelected",
+              "cumulative_variable_caps": "fixedImprovedCumulative",
               "previous_selection_equality": "nextTunedSelected_eq_normal",
               "removed_direct_gaussian_branches": 6,
               "gaussian_A_comparison_interval": [105, 105.5],

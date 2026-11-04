@@ -4,7 +4,7 @@ GRHの下で、奇合成数 $n \ge 9$ には $(4/9)(\ln n)^2$ 以下のMiller–
 
 さらに $\ln n \ge 70000$ では、上界を $(7/16)(\ln n)^2$ に改善できる。証人と最小証人の定理は [HighCoefficientBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighCoefficientBounds.lean) にある。
 
-公開選択上界 $U_{\mathrm{MR}}(n)$ は [HighWindowExtended.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighWindowExtended.lean) の `highWindowExtended` である。各入口から下表の係数を持つ候補を加える。 `exists_least_highWindowExtended` は最小拒否素数が選択値以下であることを示す。 `highWindowExtendedPrime` は選択値を素数へ丸め、同じ最小証人を保持する。
+公開選択上界 $U_{\mathrm{MR}}(n)$ は [ImprovedFixedEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/ImprovedFixedEnvelope.lean) の `fixedImprovedSelected` である。対による計数、階乗評価、係数 $427/1000$、尺度に応じて選ぶtriangular・Gaussian上界と、3つの固定係数候補を組み合わせる。 `exists_least_fixedImproved` は最小拒否素数が選択値以下であることを示す。 `fixedImprovedPrime` は選択値を素数へ丸め、同じ最小証人を保持する。
 
 MRの最小素数証人の累積最大値について、既知の更新点を [3種類の最小素数証人の数表](WitnessRecords.md) に参考情報として掲載した。
 
@@ -109,6 +109,23 @@ end PseudoPrime.PrimeTestBounds.MillerRabin
 | `exists_least_highCoeffSelected`・`exists_least_highCoeffPrime` | 高域候補を加える前の選択値と素数丸め値による最小証人の上界 | [HighCoefficientEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighCoefficientEnvelope.lean) |
 | `exists_least_highWindowSelected`・`exists_least_highWindowPrime` | 高域候補を加えた選択値と素数丸め値による最小証人の上界 | [HighWindowEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighWindowEnvelope.lean) |
 | `exists_least_highWindowExtended`・`exists_least_highWindowExtendedPrime` | 追加の高域候補を含む選択値と素数丸め値による最小証人の上界 | [HighWindowExtended.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighWindowExtended.lean) |
+| `paired_prime_witness`・`factorial_prime_witness` | 可変係数による全奇合成数の証人上界 | [HighVariableBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighVariableBounds.lean)、[HighFactorialBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighFactorialBounds.lean) |
+| `prime_witness_427` | $\ln n \ge 80000$ における係数 $427/1000$ の証人上界 | [MeanAllFactors.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/MeanAllFactors.lean) |
+| `exists_least_meanSelected`・`exists_least_meanSelectedPrime` | 現行の選択値と素数丸め値による最小証人の上界 | [MeanEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/MeanEnvelope.lean) |
+| `meanSelected_lt_factorial` | $10^7 \le \ln n \le 2\cdot10^7$ における従来の包絡線からの厳密な改善 | [MeanComparison.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/MeanComparison.lean) |
+| `pairedSelected_lt_previous`・`factorialSelected_lt_paired` | 各候補の入口付近における従来の包絡線からの厳密な改善 | [HighVariableComparison.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighVariableComparison.lean)、[HighFactorialComparison.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighFactorialComparison.lean) |
+| `cumulativeLeastPrime_le_mean` | 可変係数、固定係数と入口以前の履歴を含む累積最大値の上界 | [MeanEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/MeanEnvelope.lean) |
+| `triangularAdaptive_prime_witness` | $\ln n \ge 3\cdot 10^{10}$ における可変triangular上界の素数証人 | [TriangularAdaptiveWitness.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/TriangularAdaptiveWitness.lean) |
+| `exists_least_triangularAdaptive`・`exists_least_triangularAdaptivePrime` | 現行の選択値と素数丸め値による最小証人の上界 | [TriangularAdaptiveEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/TriangularAdaptiveEnvelope.lean) |
+| `triangularAdaptive_lt_mean` | $5\cdot 10^{10} \le \ln n < 6\cdot 10^{10}$ での厳密な改善 | [TriangularAdaptiveComparison.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/TriangularAdaptiveComparison.lean) |
+| `cumulativeLeastPrime_le_triangular` | 可変triangular候補と切替前の履歴を含む累積上界 | [TriangularAdaptiveCumulative.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/TriangularAdaptiveCumulative.lean) |
+| `gaussianAdaptive_prime_witness` | $\ln n \ge 2\cdot 10^{12}$ の全奇合成数に対する可変Gaussian上界 | [GaussianAdaptiveWitness.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianAdaptiveWitness.lean) |
+| `exists_least_gaussianAdaptive`・`exists_least_gaussianAdaptivePrime` | 現行の選択値と素数丸め値による最小証人の上界 | [GaussianAdaptiveEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianAdaptiveEnvelope.lean) |
+| `gaussianAdaptive_lt_triangular` | $\ln n \ge 2\cdot 10^{12}$ での従来の包絡線からの厳密な改善 | [GaussianAdaptiveComparison.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianAdaptiveComparison.lean) |
+| `cumulativeLeastPrime_le_gaussianAdaptive` | Gaussian候補と入口以前の履歴を含む累積上界 | [GaussianAdaptiveCumulative.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianAdaptiveCumulative.lean) |
+| `exists_least_fixedImproved`・`exists_least_fixedImprovedPrime` | 現行の選択値と素数丸め値による最小証人の上界 | [ImprovedFixedEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/ImprovedFixedEnvelope.lean) |
+| `fixedImproved_lt_03869`・`fixedImproved_lt_03552`・`fixedImproved_lt_03134` | 3つの固定係数候補による厳密な改善 | [ImprovedFixedComparison.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/ImprovedFixedComparison.lean) |
+| `cumulativeLeastPrime_le_fixedImproved` | 固定係数候補と入口以前の履歴を含む累積上界 | [ImprovedFixedCumulative.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/ImprovedFixedCumulative.lean) |
 | `highWindow_lt_previous` | $4.5\cdot10^{10} \le \ln n < 10^{11}$ における従来の選択上界からの厳密な改善 | [HighWindowComparison.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighWindowComparison.lean) |
 | `highWindow_lt_previous_early` | $3.8\cdot10^{10} \le \ln n < 4\cdot10^{10}$ における従来の選択上界からの厳密な改善 | [HighWindowComparison.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighWindowComparison.lean) |
 | `highWindowExtended_lt_0323`・`highWindowExtended_lt_0296`・`highWindowExtended_lt_0288` | 追加3候補の各入口から次の既存入口までにおける厳密な改善 | [HighWindowExtendedComparison.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighWindowExtendedComparison.lean) |
@@ -121,6 +138,10 @@ end PseudoPrime.PrimeTestBounds.MillerRabin
 係数 $4/9$ の定理では重複込みの素因数個数により奇合成数を分類する。素因数が3個以上なら既存の因数個数による上界を使う。2個の場合は平方と異なる2素数の積に分け、局所核の大きさと素数積の個数を比較する。低域では重複を許す素数積と有限個の有理数証明書を使い、中域では素数個数の解析的下界と61行の証明書を使う。 $\ln n \ge 1024$ は一様な評価で扱う。小さい入力と固定素数23・29の既存定理を接続し、全域を覆う。実装は [FourNinthsFiniteWitness.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsFiniteWitness.lean) と [FourNinthsHighWitness.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsHighWitness.lean) を経て全域定理に至る。
 
 高域の $7/16$ の定理でも、重複込みの素因数個数で分類する。4個以上は因数個数の上界で扱う。2個の場合と、3個で重複因子がある場合は局所核と素数積を比較する。相異なる3素数の場合は、非Korselt因子または異なる2進付値があれば因子の選択を使い、残る場合は導手の対数和を用いたGaussian評価を適用する。素数積の計数は連続した対数区間で評価し、遠い高域では既存の係数0.4145の定理につなぐ。詳細は [HighCoefficientBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighCoefficientBounds.lean) とそのimport先にある。
+
+可変係数の定理でも同じ因数構造を扱う。RHから正方半径での素数供給を $99/100$ に強め、局所核と素数積の個数を比較する。階乗型では対数階乗の上界から二項係数を評価し、床・天井と $\ln(k+1)$ の損失を残す。平方自由3素因子の特殊な場合は、それぞれの半径でGaussian比較の余裕を確認する。
+
+係数 $427/1000$ の定理では素数積の平均対数で選別した積を局所核へ注入する。第一Chebyshev関数の評価とAbel公式の積分項から素数供給を得て、有限誤差付きStirling評価で個数を下から抑える。重複因子と平方自由3素因子も扱い、 $\ln n \ge 4\cdot10^{10}$ は既存のtriangular上界で覆う。
 
 合格底の構造と小さい入力の有限分類は [Composite.lean](../PseudoPrime/PrimeTest/MillerRabin/Composite.lean) と [Computation/Small.lean](../PseudoPrime/PrimeTest/MillerRabin/Computation/Small.lean) にある。有限分類は $9 \le n < 3000$ の奇合成数に対して底2または3の不合格を示す。素数入力の合格方向にはGRHを使わない。
 
@@ -149,13 +170,27 @@ $$
 q_{\mathrm{MR}}(n)=\min\lbrace p\in\mathbb P\mid\neg\mathrm{StrongMRPass}(n,p)\rbrace
 $$
 
-と書く。現在の実数上界を $U_{\mathrm{MR}}(n)=\mathrm{highWindowExtended}(n)$ とする。GRHの下で $q_{\mathrm{MR}}(n) \le U_{\mathrm{MR}}(n)$ が成り立つ。
+と書く。現在の実数上界を $U_{\mathrm{MR}}(n)=\mathrm{fixedImprovedSelected}(n)$ とする。GRHの下で $q_{\mathrm{MR}}(n) \le U_{\mathrm{MR}}(n)$ が成り立つ。
 
 ### 有限区間 $9 \le n < 3000$ の上界
 
 $9 \le n < 2047$ では2、 $2047 \le n < 3000$ では3を返す。底2または底3での拒否を有限分類で証明し、素数証人と最小素数証人へ接続する。この範囲ではGRHは不要である。定義と証人定理は [SmallPointwiseBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/SmallPointwiseBounds.lean) にある。
 
-公開数値関数の仕様としても、すべての自然数 $2047 \le n < 3000$ で `highWindowExtended n` と `highWindowExtendedPrime n` はともに3である。この等式には奇数性や合成数性を仮定しない。 $n < 2047$ では両関数が2を返す。値3の等式は [HighWindowExtended.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighWindowExtended.lean) で示す。
+公開数値関数の仕様としても、すべての自然数 $2047 \le n < 3000$ で `fixedImprovedSelected n` と `fixedImprovedPrime n` はともに3である。この等式には奇数性や合成数性を仮定しない。 $n < 2047$ では両関数が2を返す。
+
+### 可変係数による高域上界
+
+$L=\ln n$ とし、次の係数を定める。
+
+$$
+C_{\mathrm{pair}}(L)=\left(\frac{2\ln L+1/100}{3\ln L+339/500}\right)^2,
+\qquad
+C_{\mathrm{fac}}(L)=\left(\frac{2\ln L+3/200}{3\ln L+49/50}\right)^2.
+$$
+
+GRHの下で、すべての奇合成数について $L \ge 70000$ なら $q_{\mathrm{MR}}(n) \le C_{\mathrm{pair}}(L)L^2$、 $L \ge 80000$ なら $q_{\mathrm{MR}}(n) \le C_{\mathrm{fac}}(L)L^2$ が成り立つ。 $70000 \le L \le 100000$ では対による候補が以前の包絡線を、 $80000 \le L \le 100000$ では階乗型が対による候補を、それぞれ厳密に下回る。
+
+さらに $L \ge 80000$ では $q_{\mathrm{MR}}(n) \le (427/1000)L^2$ が成り立つ。この候補は $10^7 \le L \le 2\cdot10^7$ で、それまでの包絡線を厳密に下回る。
 
 ### 固定素数上界23〜53と有限principal和
 
@@ -200,43 +235,60 @@ $$
 
 ### 高域のtriangular上界
 
-triangular kernelの明示公式から、各入口 $T_i$ 以上で $C_iL^2$ 以下の素数証人を得る。次の表には公開上界の包絡線を更新する候補を入口順に示す。各候補は次の入口以降も有効だが、より小さい係数の候補に引き継がれる。
+triangular kernelの明示公式から、認証した入口以上で固定係数による素数証人を得る。現行の選択上界はこれらの候補と以下の可変候補を組み合わせる。固定profileの定義と証人定理は [TriangularTunedProfiles.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/TriangularTunedProfiles.lean) と [HighWindowBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighWindowBounds.lean) などにある。
 
-| $i$ | 適用条件 $T_i \le L$ | 係数 $C_i$ |
-|---:|---|---|
-| 1 | $3.8\cdot10^{10} \le L$ | $423/1000=0.423$ |
-| 2 | $4\cdot10^{10} \le L$ | $829/2000=0.4145$ |
-| 3 | $4.5\cdot10^{10} \le L$ | $2/5=0.4$ |
-| 4 | $6\cdot10^{10} \le L$ | $369/1000=0.369$ |
-| 5 | $8\cdot10^{10} \le L$ | $173/500=0.346$ |
-| 6 | $10^{11} \le L$ | $663/2000=0.3315$ |
-| 7 | $1.2\cdot10^{11} \le L$ | $323/1000=0.323$ |
-| 8 | $2.5\cdot10^{11} \le L$ | $374/1250=0.2992$ |
-| 9 | $3\cdot10^{11} \le L$ | $37/125=0.296$ |
-| 10 | $5\cdot10^{11} \le L$ | $2891/10000=0.2891$ |
-| 11 | $6\cdot10^{11} \le L$ | $36/125=0.288$ |
-| 12 | $1.08\cdot10^{12} \le L$ | $28399/100000=0.28399$ |
-| 13 | $1.48\cdot10^{12} \le L$ | $28289/100000=0.28289$ |
-| 14 | $1.82\cdot10^{12} \le L$ | $1411811/5000000=0.2823622$ |
+さらに $L \ge 3\cdot 10^{10}$ で、次の尺度依存の上界を最小値に加える。
 
-各profileの証明書と証人定理は [HighWindowProfiles.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighWindowProfiles.lean)、[HighWindowBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighWindowBounds.lean)、[TriangularTunedProfiles.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/TriangularTunedProfiles.lean)、[TriangularTunedBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/TriangularTunedBounds.lean)、[TriangularProfiles.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/TriangularProfiles.lean)、[TriangularProfileBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/TriangularProfileBounds.lean) にある。
+$$
+\begin{aligned}
+m(L)&=\left((5313/10000)L\right)^{1/8},\\
+A(L)&=36+\frac{1456+13/10000000}{\sqrt L}+\frac{165102}{L},\\
+D(L)&=\frac{4\cdot 10^{12}(1001/1000)}{m(L)L},\qquad K=68-3/10000,\\
+r(L)&=\frac{A(L)+\sqrt{A(L)^2+4KD(L)}}{2K},\\
+g(L)&=\begin{cases}28237/100000&L < 1.82\cdot 10^{12},\\
+1411811/5000000&L \ge 1.82\cdot 10^{12},\end{cases}\\
+a(L)&=\max\lbrace\sqrt{g(L)},r(L)\rbrace.
+\end{aligned}
+$$
+
+GRHの下で $q_{\mathrm{MR}}(n) \le a(L)^2L^2$ が成り立つ。 $5\cdot 10^{10} \le L < 6\cdot 10^{10}$ では、この候補を加えた包絡線がそれまでの包絡線を厳密に下回る。
+
+可変候補の入口付近をさらに改善するため、次の固定係数も加える。各行の右端は、その候補を加えた選択上界が、加える前のGaussian選択上界を厳密に下回ると証明した区間である。適用範囲は記載した入口以上の全域であり、右端に制限されない。
+
+| 入口 $T$ | 係数 $C$ | 厳密な改善を証明した範囲 |
+|---:|---:|---|
+| $5\cdot 10^{10}$ | $3869/10000$ | $5\cdot 10^{10} \le L \le 5.04\cdot 10^{10}$ |
+| $7\cdot 10^{10}$ | $222/625$ | $7\cdot 10^{10} \le L \le 7.04\cdot 10^{10}$ |
+| $1.5\cdot 10^{11}$ | $1567/5000$ | $1.5\cdot 10^{11} \le L \le 1.501\cdot 10^{11}$ |
+
+### 可変Gaussian係数
+
+$L \ge 2\cdot 10^{12}$ では、次の係数も選択上界に加える。
+
+$$
+a_G(L)=\frac{2(20115621/50000000)
++(61/100)(28794111/12500000)/\sqrt L+39/L}{10971611/5000000},
+\qquad C_G(L)=\frac{21}{10}a_G(L)^2.
+$$
+
+GRHの下で、すべての奇合成数について $q_{\mathrm{MR}}(n) \le C_G(L)L^2$ が成り立つ。この係数は対象範囲全体で $1411811/5000000$ を厳密に下回り、選択上界も従来の包絡線を厳密に下回る。三素因子にはGaussian比較を使い、それ以外の分類には同じ半径でtriangular比較の条件を満たすことを示す。
 
 ### 素数への丸め
 
 実数上界 $R \ge 2$ に対して、 $R$ 以下の最大素数を $\mathrm{primeRound}(R)$ とする。 $R < 2$ では値を変えない。すべての実数で $\mathrm{primeRound}(R) \le R$ が成り立ち、 $p \le R$ を満たす素数 $p$ は丸め後も範囲内にある。また、 `primeRound_mono` はこの丸めの単調性を示す。定義と定理は [PrimeCutoff.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/PrimeCutoff.lean) にある。
 
-`highWindowExtendedPrime n` は `highWindowExtended n` を丸める。2・3と表の固定素数は丸めても同じ値である。素数への丸めは調べる素数基数の集合を変えずに、実数上界をその集合の最大要素へ置き換える。
+`fixedImprovedPrime n` は `fixedImprovedSelected n` を丸める。2・3と表の固定素数は丸めても同じ値である。素数への丸めは調べる素数基数の集合を変えずに、実数上界をその集合の最大要素へ置き換える。
 
 ### 全域の累積上界
 
 $Q_{\mathrm{MR}}(N)$ を $9 \le n \le N$ の奇合成数 $n$ に対する最小拒否素数の最大値とし、対象がないときは0とする。累積上界は次の共通尺度の基底と8個のtriangular候補から構成する。 $L \ge 0$ に対して
 
 $$
-B(L)=\min\left\lbrace \frac49 L^2,
+B(L)=\min\left\lbrace G(L),\frac49 L^2,
 \max\left\lbrace\frac49 70000^2,\frac7{16}L^2\right\rbrace\right\rbrace.
 $$
 
-従来の累積上界を定める8候補は [HistoryCumulativeBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HistoryCumulativeBounds.lean) の `historyProfiles` にある。これらの入口と係数を昇順に $(E_i,F_i)$ とし、 $H_0(L)=B(L)$ とする。
+ここで $G(L)$ は既存のGaussian共通尺度上界 `gaussianTightHistoryBase` である。従来の累積上界を定める8候補は [HistoryCumulativeBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HistoryCumulativeBounds.lean) の `historyProfiles` にある。これらの入口と係数を昇順に $(E_i,F_i)$ とし、 $H_0(L)=B(L)$ とする。
 
 $$
 H_i(L)=\min\left\lbrace H_{i-1}(L),
@@ -245,7 +297,7 @@ $$
 
 GRHの下ですべての自然数 $N$ について $Q_{\mathrm{MR}}(N) \le H_8(\ln N) \le (4/9)(\ln N)^2$ が成り立つ。さらに $\ln N \ge 71000$ では $Q_{\mathrm{MR}}(N) \le (7/16)(\ln N)^2$ となる。入口より前の入力は $(4/9)70000^2$ が覆う。triangular候補の入口より前は $H_{i-1}(E_i)$ が覆う。証明は [HighCoefficientCumulative.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighCoefficientCumulative.lean) にある。
 
-累積上界の計算では上表の14候補に加え、従来の履歴に含まれる1候補を保持する。この15候補を入口の昇順に $(S_j,D_j)$ とし、 $K_0(L)=B(L)$ とする。
+累積上界の計算では [HighWindowCumulative.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighWindowCumulative.lean) の `highWindowHistoryProfiles` にある15候補を使う。入口と係数を昇順に $(S_j,D_j)$ とし、 $K_0(L)=B(L)$ とする。
 
 $$
 K_j(L)=\min\left\lbrace K_{j-1}(L),
@@ -255,13 +307,54 @@ $$
 
 と定める。各入口より前の入力には $K_{j-1}(S_j)$ を使う。GRHの下で $Q_{\mathrm{MR}}(N) \le \min\lbrace H_8(\ln N),K_{15}(\ln N)\rbrace$ が成り立つ。証明と定義は [HighWindowCumulative.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighWindowCumulative.lean) にある。点ごとの包絡線に全域単調性は要求しない。
 
-![MR累積上界と点ごとの候補](figures/mr_cumulative_high_comparison.png)
+可変係数を含む累積上界は、さらに次の3つの入口履歴付き上界との最小値をとる。
 
-図の橙線は累積最大値の上界 $\min\lbrace H_8(L),K_{15}(L)\rbrace/L^2$、青い破線は点ごとの上界 $U_{\mathrm{MR}}(n)/(\ln n)^2$ を示す。黒点線の高さは $4/9$ である。実数軸の描画と、Leanによる自然数上端の証明は区別する。
+$$
+V(L)=\min\left\lbrace H_8(L),K_{15}(L),
+\max\left\lbrace\frac49 70000^2,C_{\mathrm{pair}}(L)L^2\right\rbrace,
+\max\left\lbrace H_{\mathrm{pair}},C_{\mathrm{fac}}(L)L^2\right\rbrace,
+\max\left\lbrace H_{\mathrm{pair}},\frac{427}{1000}L^2\right\rbrace
+\right\rbrace.
+$$
+
+ここで $H_{\mathrm{pair}}=\max\lbrace(4/9)70000^2,C_{\mathrm{pair}}(80000)80000^2\rbrace$ である。最初の定数は $L < 70000$、 $H_{\mathrm{pair}}$ は $L < 80000$ の入力を覆う。各可変係数は適用範囲内で増加するため、現在の $L$ による式をその範囲の過去の入力にも使える。Leanでは自然数上端 $N$ について `meanCumulative N` を定義し、GRHの下で $Q_{\mathrm{MR}}(N) \le \mathrm{meanCumulative}(N)$ を証明している。詳細は [MeanEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/MeanEnvelope.lean) にある。
+
+切替前の値を保持する関数 $J(L)$ と現行の累積上界 $W(L)$ を次のように定める。
+
+$$
+J(L)=\begin{cases}0&L < 1.82\cdot 10^{12},\\
+\sqrt{28237/100000}(1.82\cdot 10^{12})&L \ge 1.82\cdot 10^{12},\end{cases}
+$$
+
+$$
+W(L)=\min\left\lbrace V(L),\max\left\lbrace\frac49(3\cdot 10^{10})^2,
+\max\lbrace a(L)L,J(L)\rbrace^2\right\rbrace\right\rbrace.
+$$
+
+最初の定数は可変triangular候補の入口以前を覆い、 $J(L)$ は係数切替以前の履歴を保持する。GRHの下で $Q_{\mathrm{MR}}(N) \le W(\ln N)$ が成り立つ。Leanでの定義と証明は [TriangularAdaptiveCumulative.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/TriangularAdaptiveCumulative.lean) にある。
+
+Gaussian候補を含む累積上界は、 $T=2\cdot 10^{12}$ として
+
+$$
+W_G(L)=\min\left\lbrace W(L),\max\left\lbrace
+\mathrm{triangularAdaptiveCap}(T),C_G(L)L^2\right\rbrace\right\rbrace
+$$
+
+である。入口以前にはtriangular側の共通尺度上界を用いる。 $a_G(L)L$ の単調性により、入口以後の過去の入力を上端のGaussian候補で覆う。GRHの下で $Q_{\mathrm{MR}}(N) \le W_G(\ln N)$ が成り立つ。証明は [GaussianAdaptiveCumulative.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianAdaptiveCumulative.lean) にある。
+
+固定係数の3候補を含む現行の累積上界は、上表の入口と係数を $(T_i,C_i)$ として
+
+$$
+W_F(L)=\min\left\lbrace W_G(L),
+\min_{i=1,2,3}\max\left\lbrace\mathrm{triangularAdaptiveCap}(T_i),C_iL^2\right\rbrace
+\right\rbrace.
+$$
+
+各入口以前にはtriangular側の共通尺度上界を保持する。GRHの下で $Q_{\mathrm{MR}}(N) \le W_F(\ln N)$ が成り立つ。
 
 ### 包絡線の構成
 
-$n \ge 3000$ では固定素数候補、適用条件を満たすtriangular上界、および $(4/9)L^2$ の最小値をとる。さらに $L \ge 70000$ では $(7/16)L^2$ を加える。 $n < 3000$ では小域の値2または3を使う。高域候補のガードは [HighWindowExtended.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/HighWindowExtended.lean) とそのimport先にある。
+$n \ge 3000$ では固定素数候補、適用条件を満たすtriangular上界、および $(4/9)L^2$ の最小値をとる。さらに $L \ge 70000$ では $(7/16)L^2$ と $C_{\mathrm{pair}}(L)L^2$、 $L \ge 80000$ では $C_{\mathrm{fac}}(L)L^2$ と $(427/1000)L^2$ を加える。 $n < 3000$ では小域の値2または3を使う。
 
 ### 上界式と証明済みの適用条件
 
@@ -275,10 +368,13 @@ $n \ge 3000$ では固定素数候補、適用条件を満たすtriangular上界
 | 各 $T_i \le L$ | $C_iL^2$、 $i=1,\ldots,14$ |
 | 奇合成数 $n \ge 9$ | $(4/9)L^2$ |
 | 奇合成数 $n \ge 9$、 $70000 \le L$ | $(7/16)L^2$ |
+| 奇合成数 $n \ge 9$、 $70000 \le L$ | $C_{\mathrm{pair}}(L)L^2$ |
+| 奇合成数 $n \ge 9$、 $80000 \le L$ | $C_{\mathrm{fac}}(L)L^2$ |
+| 奇合成数 $n \ge 9$、 $80000 \le L$ | $(427/1000)L^2$ |
 
 ## 上界式の適用区間
 
-次の表では $n \ge 3000$ の各行にある候補と $(4/9)L^2$ の最小値をとり、 $L \ge 70000$ では $(7/16)L^2$ も加える。小域の2行は記載した値をそのまま使う。
+次の表では $n \ge 3000$ の各行にある候補と $(4/9)L^2$ の最小値をとり、 $L \ge 70000$ では $(7/16)L^2$ と $C_{\mathrm{pair}}(L)L^2$、 $L \ge 80000$ では $C_{\mathrm{fac}}(L)L^2$ と $(427/1000)L^2$ も加える。小域の2行は記載した値をそのまま使う。
 
 | 適用条件 | 現行の上界を構成する候補 |
 |---|---|
@@ -303,8 +399,14 @@ $n \ge 3000$ では固定素数候補、適用条件を満たすtriangular上界
 
 基数を素数 $p_1=2,p_2=3,p_3=5,\ldots$ の順に選んでMiller–Rabinテストを行う。青緑の点の横座標は [OEIS A006945](https://oeis.org/A006945) の第 $k$ 項、すなわち最初の $k-1$ 個の素数基数 $p_1,\ldots,p_{k-1}$ によるテストをすべて通過する最小の奇合成数である。縦座標はその入力を棄却する最小素数基数 $q_{\mathrm{MR}}(n)$ であり、記録更新点では $Q_{\mathrm{MR}}(n)$ と一致する。例えば、 $n=2047$ は基数2で通過し、基数3で棄却されるため、点の縦座標は3となる。青緑の階段線は掲載した記録を結んだもので、未探索範囲への外挿ではない。
 
-描画範囲は $9 \le n \le 10^{1024}$ である。点ごとの上界を描いており、累積上界としての単調性は仮定していない。挿入図は $n \ge 3000$ での比 $U_{\mathrm{MR}}(n)/(\ln n)^2$ を示す。この比の下降は分子である上界 $U_{\mathrm{MR}}(n)$ の下降を意味しない。triangular候補が有効になる高域の入口は描画範囲外であり、そこで入力ごとの上界に下降が生じても、累積最大値の下降を表すものではない。
+描画範囲は $9 \le n \le 10^{64}$、縦軸は $10^0$ から $10^4$ である。点ごとの上界を描いており、累積上界としての単調性は仮定していない。挿入図は $n \ge 3000$ での比 $U_{\mathrm{MR}}(n)/(\ln n)^2$ を示す。この比の下降は分子である上界 $U_{\mathrm{MR}}(n)$ の下降を意味しない。可変係数とtriangular候補が有効になる高域の入口は描画範囲外であり、そこで入力ごとの上界に下降が生じても、累積最大値の下降を表すものではない。
 
 図の数値計算はLeanの証明を代替しない。 [PNG版](figures/mr_upper_bound_comparison.png)
+
+### 累積上界と点ごとの上界の比較
+
+![MR累積上界と点ごとの候補](figures/mr_cumulative_high_comparison.svg)
+
+橙線は累積最大値の上界 $W_F(L)/L^2$、青い破線は点ごとの上界 $U_{\mathrm{MR}}(n)/(\ln n)^2$ を示す。黒点線の高さは $4/9$ である。実数軸の描画と、Leanによる自然数上端の証明は区別する。[PNG版](figures/mr_cumulative_high_comparison.png)
 
 [構成全体へ](README.md) · [PrimeTest](PrimeTest.md) · [LLS](LLS.md)
