@@ -15,6 +15,8 @@ public import PseudoPrime.PseudoSquare
 public import PseudoPrime.PrimeTest
 public import PseudoPrime.PrimeTestBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.FromLLS
+public import PseudoPrime.PrimeTestBounds.MillerRabin.ReducedContourComparison
+public import PseudoPrime.PrimeTestBounds.MillerRabin.ReducedContourAbsorption
 
 /-!
 # PseudoPrime public library
