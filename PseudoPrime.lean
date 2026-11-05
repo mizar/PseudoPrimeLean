@@ -24,6 +24,9 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.JointSurplusCumulative
 public import PseudoPrime.PrimeTestBounds.MillerRabin.JointSurplusComparison
 public import PseudoPrime.PrimeTestBounds.MillerRabin.JointSurplusThresholds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.JointSurplusAsymptotic
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalModulusArithmetic
+public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformTripleConductor
+public import PseudoPrime.LLS.PaperStatements.TriangularEvenBaseline
 
 /-!
 # PseudoPrime public library
