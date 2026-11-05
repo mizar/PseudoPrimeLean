@@ -883,7 +883,7 @@ def triangular_adaptive_cumulative(L: np.ndarray) -> np.ndarray:
 
 
 def gaussian_adaptive_bound(L: np.ndarray) -> np.ndarray:
-    """Gaussian cutoff at logarithmic scale L, valid from two trillion."""
+    """Gaussian cutoff at logarithmic scale L, certified from 3e10."""
     k = 20115621 / 50000000
     e = (61 / 100) * (28794111 / 12500000)
     a = (2 * k + e / np.sqrt(L) + 39 / L) / (10971611 / 5000000)
@@ -912,11 +912,28 @@ def fixed_improved_selected(L: np.ndarray) -> np.ndarray:
         [np.where(L >= T, C * L**2, np.inf) for C, T in FIXED_IMPROVED_PROFILES])
 
 
+REDUCED_PROFILES = [(1057 / 2500, 80000.0), (39 / 100, 2e8),
+                    (161 / 500, 5e8), (3 / 10, 1e9), (71 / 250, 5e9)]
+REDUCED_GAUSSIAN_ENTRY = 3e10
+
+
+def reduced_series_bound(L: np.ndarray) -> np.ndarray:
+    """Lean reducedSeriesCoeff multiplied by the squared logarithmic scale."""
+    coeff = np.select([L >= T for _, T in reversed(REDUCED_PROFILES[1:])],
+                      [C for C, _ in reversed(REDUCED_PROFILES[1:])],
+                      default=REDUCED_PROFILES[0][0])
+    return np.where(L >= REDUCED_GAUSSIAN_ENTRY, gaussian_adaptive_bound(L), coeff * L**2)
+
+
+def reduced_selected(L: np.ndarray) -> np.ndarray:
+    """Lean reducedSelected, preserving the old bound below the entrance."""
+    return np.minimum(fixed_improved_selected(L),
+                      np.where(L >= 80000, reduced_series_bound(L), np.inf))
+
+
 def plotted_pointwise_upper(L: np.ndarray) -> np.ndarray:
-    """Pointwise envelope used by both comparison figures."""
-    return np.minimum.reduce([fixed_improved_selected(L)] +
-        [np.where(L >= T, float(C) * L**2, np.inf)
-         for C, T in HISTORY_TRIANGULAR_PROFILES])
+    """Lean pointwise envelope used by both comparison figures."""
+    return reduced_selected(L)
 
 
 def fixed_improved_cumulative(L: np.ndarray) -> np.ndarray:
@@ -924,6 +941,23 @@ def fixed_improved_cumulative(L: np.ndarray) -> np.ndarray:
     return np.minimum.reduce([gaussian_adaptive_cumulative(L)] +
         [np.maximum(triangular_adaptive_cap(np.array([T]))[0], C * L**2)
          for C, T in FIXED_IMPROVED_PROFILES])
+
+
+def reduced_history(L: np.ndarray, count: int = len(REDUCED_PROFILES)) -> np.ndarray:
+    """Lean reducedHistory1 through reducedHistory5, including entrance histories."""
+    history = np.maximum((4 / 9) * 70000**2, paired_bound(L))
+    for index, (C, T) in enumerate(REDUCED_PROFILES[:count]):
+        entrance = reduced_history(np.array([T]), index)[0]
+        history = np.minimum(history, np.maximum(entrance, C * L**2))
+    return history
+
+
+def reduced_cumulative(L: np.ndarray) -> np.ndarray:
+    """Lean reducedCumulative, with the early Gaussian entrance history."""
+    history = reduced_history(L)
+    entrance = reduced_history(np.array([REDUCED_GAUSSIAN_ENTRY]))[0]
+    gaussian_history = np.minimum(history, np.maximum(entrance, gaussian_adaptive_bound(L)))
+    return np.minimum(fixed_improved_cumulative(L), gaussian_history)
 
 
 def square_base_cumulative(L: np.ndarray) -> np.ndarray:
@@ -954,12 +988,13 @@ def plot_mr_cumulative(output_dir: Path) -> None:
     assert np.all(gaussian_cumulative(proof_band) < square_base_cumulative(proof_band))
     window_entrances = np.array([T for _, T in HIGH_WINDOW_PROFILES])
     variable_entrances = np.array([70000.0, 80000.0, 3e10, 1.82e12, 2e12] +
+                                  [T for _, T in REDUCED_PROFILES] +
                                   [T for _, T in FIXED_IMPROVED_PROFILES])
     L = np.unique(np.concatenate([np.geomspace(math.log(3000), 1e15, 5000), entrances, recoveries,
                                   window_entrances, window_recoveries,
                                   variable_entrances, np.nextafter(variable_entrances, -np.inf),
                                   np.nextafter(window_entrances, -np.inf)]))
-    cumulative = fixed_improved_cumulative(L) / L**2
+    cumulative = reduced_cumulative(L) / L**2
     previous = square_base_cumulative(L) / L**2
     pointwise = plotted_pointwise_upper(L) / L**2
     window_probe = np.array([38e9, np.nextafter(40e9, -np.inf), 45e9, 60e9,
@@ -984,7 +1019,11 @@ def plot_mr_cumulative(output_dir: Path) -> None:
     for C, T in FIXED_IMPROVED_PROFILES:
         probe = np.array([T])
         assert C * T**2 < gaussian_adaptive_selected(probe)[0]
+    reduced_probe = np.array([1e7, 2e8, 5e8, 1e9, 5e9, 3e10])
+    assert np.all(reduced_selected(reduced_probe) < fixed_improved_selected(reduced_probe))
+    assert np.all(np.diff(reduced_series_bound(L[L >= 80000]) / L[L >= 80000]**2) <= 1e-14)
     assert np.all(fixed_improved_cumulative(L) <= gaussian_adaptive_cumulative(L))
+    assert np.all(reduced_cumulative(L) <= fixed_improved_cumulative(L))
     assert np.all(cumulative >= pointwise - 1e-14)
     assert np.all(cumulative <= high_window_cumulative(L) / L**2 + 1e-14)
     assert np.all(cumulative <= high_coefficient_cumulative(L) / L**2 + 1e-14)
@@ -1295,9 +1334,9 @@ def main() -> None:
               "comparison_baseline": "sharpSelectedEnvelope",
               "sampled_selection_equality_checked": True,
               "baseline_sampled_monotonicity_checked": True,
-              "plotted_envelope": "fixedImprovedSelected",
-              "canonical_plotted_envelope": "fixedImprovedSelected",
-              "cumulative_variable_caps": "fixedImprovedCumulative",
+              "plotted_envelope": "reducedSelected",
+              "canonical_plotted_envelope": "reducedSelected",
+              "cumulative_variable_caps": "reducedCumulative",
               "previous_selection_equality": "nextTunedSelected_eq_normal",
               "removed_direct_gaussian_branches": 6,
               "gaussian_A_comparison_interval": [105, 105.5],
