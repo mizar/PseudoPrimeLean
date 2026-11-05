@@ -883,7 +883,7 @@ def triangular_adaptive_cumulative(L: np.ndarray) -> np.ndarray:
 
 
 def gaussian_adaptive_bound(L: np.ndarray) -> np.ndarray:
-    """Gaussian cutoff at logarithmic scale L, certified from 3e10."""
+    """Gaussian cutoff at logarithmic scale L, certified from 25000."""
     k = 20115621 / 50000000
     e = (61 / 100) * (28794111 / 12500000)
     a = (2 * k + e / np.sqrt(L) + 39 / L) / (10971611 / 5000000)
@@ -953,13 +953,33 @@ def dual_mean_series_bound(L: np.ndarray) -> np.ndarray:
     return np.where(L >= 81000, np.minimum(fixed, (4187 / 10000) * L**2), fixed)
 
 
-def plotted_pointwise_upper(L: np.ndarray) -> np.ndarray:
-    """Lean pointwise envelope used by both comparison figures."""
+def smooth_pointwise_upper(L: np.ndarray) -> np.ndarray:
+    """Previous Lean pointwise envelope."""
     selected = np.minimum(reduced_selected(L),
                           np.where(L >= 80000, dual_mean_series_bound(L), np.inf))
     candidate = np.where(L >= DUAL_GAUSSIAN_ENTRY, gaussian_adaptive_bound(L),
                          smooth_coefficient(L) * L**2)
     return np.minimum(selected, np.where(L >= 5e6, candidate, np.inf))
+
+
+def surplus_cutoff(L: np.ndarray, floor: float, residual: float) -> np.ndarray:
+    """Clipped quadratic-root cutoff for one certified Gaussian prefix."""
+    a, v, d = 20115621 / 25000000, 28794111 / 12500000, 10971611 / 5000000
+    root = (v + np.sqrt(v * v + 4 * d * (a * L + residual))) / (2 * d)
+    radius = np.maximum(floor, root**2)
+    return (21 / 10) * radius**2
+
+
+def surplus_global(L: np.ndarray) -> np.ndarray:
+    """Lean jointSurplusGlobal on nonnegative logarithmic scales."""
+    return np.minimum((4 / 9) * L**2,
+                      np.minimum(surplus_cutoff(L, 130, 30), surplus_cutoff(L, 155, 29)))
+
+
+def plotted_pointwise_upper(L: np.ndarray) -> np.ndarray:
+    """Lean jointSelected, including the existing small-input selection."""
+    old = smooth_pointwise_upper(L)
+    return np.where(L >= math.log(3000), np.minimum(old, surplus_global(L)), old)
 
 
 def fixed_improved_cumulative(L: np.ndarray) -> np.ndarray:
@@ -1017,6 +1037,11 @@ def smooth_cumulative(L: np.ndarray) -> np.ndarray:
     return np.minimum(previous, np.maximum(entry, candidate))
 
 
+def joint_cumulative(L: np.ndarray) -> np.ndarray:
+    """Lean jointCumulative with the earlier history and global candidate."""
+    return np.minimum(smooth_cumulative(L), surplus_global(L))
+
+
 def square_base_cumulative(L: np.ndarray) -> np.ndarray:
     """Complete previous eight-profile history; retained for the same-guard comparison."""
     return np.minimum.reduce([L**2] +
@@ -1044,15 +1069,17 @@ def plot_mr_cumulative(output_dir: Path) -> None:
     proof_band = np.linspace(100, 101, 101)
     assert np.all(gaussian_cumulative(proof_band) < square_base_cumulative(proof_band))
     window_entrances = np.array([T for _, T in HIGH_WINDOW_PROFILES])
-    variable_entrances = np.array([70000.0, 80000.0, 3e10, 1.82e12, 2e12] +
-                                  [T for _, T in DUAL_PROFILES] +
+    variable_entrances = np.array([280.0, 283.0, 290.0, 300.0, 330.0, 340.0, 400.0,
+                                  1000.0, 4000.0, 6500.0, 25000.0,
+                                  70000.0, 80000.0, 3e10, 1.82e12, 2e12] +
+                                  [T for _, T in DUAL_PROFILES] + [DUAL_GAUSSIAN_ENTRY] +
                                   [T for _, T in REDUCED_PROFILES] +
                                   [T for _, T in FIXED_IMPROVED_PROFILES])
     L = np.unique(np.concatenate([np.geomspace(math.log(3000), 1e15, 5000), entrances, recoveries,
                                   window_entrances, window_recoveries,
                                   variable_entrances, np.nextafter(variable_entrances, -np.inf),
                                   np.nextafter(window_entrances, -np.inf)]))
-    cumulative = smooth_cumulative(L) / L**2
+    cumulative = joint_cumulative(L) / L**2
     previous = square_base_cumulative(L) / L**2
     pointwise = plotted_pointwise_upper(L) / L**2
     window_probe = np.array([38e9, np.nextafter(40e9, -np.inf), 45e9, 60e9,
@@ -1083,6 +1110,8 @@ def plot_mr_cumulative(output_dir: Path) -> None:
     assert np.all(fixed_improved_cumulative(L) <= gaussian_adaptive_cumulative(L))
     assert np.all(reduced_cumulative(L) <= fixed_improved_cumulative(L))
     assert np.all(smooth_cumulative(L) <= reduced_cumulative(L))
+    assert np.all(joint_cumulative(L) <= smooth_cumulative(L))
+    assert np.all(np.diff(surplus_global(L) / L**2) <= 1e-14)
     assert np.all(cumulative >= pointwise - 1e-14)
     assert np.all(cumulative <= high_window_cumulative(L) / L**2 + 1e-14)
     assert np.all(cumulative <= high_coefficient_cumulative(L) / L**2 + 1e-14)
@@ -1160,7 +1189,10 @@ def main() -> None:
     inset_max = 1e14
     inset_entrances = np.concatenate((entrances, [T for _, T in TRIANGULAR_PROFILES],
                                       [T for _, T in HISTORY_TRIANGULAR_PROFILES],
-                                      [T for _, T in FIXED_IMPROVED_PROFILES], [3e10, 2e12]))
+                                      [T for _, T in FIXED_IMPROVED_PROFILES],
+                                      [T for _, T in DUAL_PROFILES],
+                                      [280, 283, 290, 300, 330, 340, 400, 1000, 4000,
+                                       6500, 25000, DUAL_GAUSSIAN_ENTRY, 3e10, 2e12]))
     inset_entrances = inset_entrances[(inset_entrances >= math.log(3000)) &
                                       (inset_entrances <= inset_max)]
     entrances = entrances[entrances <= Lmax]
@@ -1393,9 +1425,9 @@ def main() -> None:
               "comparison_baseline": "sharpSelectedEnvelope",
               "sampled_selection_equality_checked": True,
               "baseline_sampled_monotonicity_checked": True,
-              "plotted_envelope": "reducedSelected",
-              "canonical_plotted_envelope": "reducedSelected",
-              "cumulative_variable_caps": "reducedCumulative",
+              "plotted_envelope": "jointSelected",
+              "canonical_plotted_envelope": "jointSelected",
+              "cumulative_variable_caps": "jointCumulative",
               "previous_selection_equality": "nextTunedSelected_eq_normal",
               "removed_direct_gaussian_branches": 6,
               "gaussian_A_comparison_interval": [105, 105.5],
