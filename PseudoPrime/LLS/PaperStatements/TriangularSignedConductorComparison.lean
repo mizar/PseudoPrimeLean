@@ -97,6 +97,101 @@ theorem triangular18_principal_signedExplicit_GRH {q : ℕ} [NeZero q] (H : Subg
   change (H.index : ℝ) * _ ≤ _
   linarith only [hb, ha]
 
+/-- Under GRH, subgroup conductor averaging preserves the sharper signed contour
+coefficient `8 * 10 ^ 9`; primitive aggregate positivity removes the signed terms. -/
+theorem triangular18_conductor_signed_sharp {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x X : ℝ} (hx : 1 ≤ x)
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
+    let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
+    (H.index : ℝ) * (∑ n ∈ Finset.Icc 1 ⌊X⌋₊, (K.summand (1 : DirichletCharacter ℂ q) x n).re) ≤
+      (∑' n : ℕ, K.summand (1 : DirichletCharacter ℂ 1) x n).re +
+        2 * (∑' n : ℕ, K.summand (1 : DirichletCharacter ℂ 1) 1 n).re +
+        (36 + 8000000000 * x ^ (-9 / 16 : ℝ)) * subgroupConductorLogSum H +
+        ((H.index : ℝ) - 1) * (165000 + 8000000000 * 284 * x ^ (-9 / 16 : ℝ)) := by
+  classical
+  let _ := Classical.propDecidable
+  let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
+  let S := NumberTheory.subgroupAnnihilator H
+  let P := (∑' n : ℕ, K.summand (1 : DirichletCharacter ℂ 1) x n).re
+  let A := fun χ : S ↦
+    (∑' n : ℕ, K.summand χ.val.primitiveCharacter 1 n).re +
+      (∑' n : ℕ, K.summand (χ.val.primitiveCharacter)⁻¹ 1 n).re
+  let B := fun χ : S ↦
+    36 * Real.log χ.val.conductor - A χ + 165000 +
+      8000000000 * (Real.log χ.val.conductor + 284) * x ^ (-9 / 16 : ℝ)
+  have hf : Finset.univ.filter (fun χ : S ↦ χ.val ≠ 1) = Finset.univ.erase (1 : S) := by
+    have he (χ : S) : χ.val = 1 ↔ χ = 1 := by
+      constructor
+      · intro h
+        exact Subtype.ext h
+      · intro h
+        exact congrArg Subtype.val h
+    apply Finset.ext
+    intro χ
+    simp only [Finset.mem_filter, Finset.mem_erase, Finset.mem_univ, true_and, and_true,
+      not_congr (he χ)]
+  have hcard : ((Finset.univ.erase (1 : S)).card : ℝ) = (H.index : ℝ) - 1 := by
+    rw [Finset.card_erase_of_mem (Finset.mem_univ _), Finset.card_univ]
+    rw [Nat.cast_sub (Nat.one_le_iff_ne_zero.mpr (Nat.ne_of_gt (Fintype.card_pos_iff.mpr ⟨1⟩))),
+      Nat.cast_one, NumberTheory.card_subgroupAnnihilator]
+  have hb := triangular18_principal_signed_sharp H hGRH hx hsmall
+  simp only [sub_sub] at hb
+  change
+    (H.index : ℝ) * (∑ n ∈ Finset.Icc 1 ⌊X⌋₊, (K.summand (1 : DirichletCharacter ℂ q) x n).re) ≤
+      ∑ χ : S, if χ.val = 1 then P else B χ at hb
+  rw [triangular18_split_principal_budget_sum H P B] at hb
+  erw [hf] at hb
+  have hs :
+    (∑ χ ∈ Finset.univ.erase (1 : S), B χ) =
+      (36 + 8000000000 * x ^ (-9 / 16 : ℝ)) * subgroupConductorLogSum H +
+          ((H.index : ℝ) - 1) * (165000 + 8000000000 * 284 * x ^ (-9 / 16 : ℝ)) -
+        ∑ χ ∈ Finset.univ.erase (1 : S), A χ := by
+    calc
+      _ =
+          ∑ χ ∈ Finset.univ.erase (1 : S),
+            (((36 + 8000000000 * x ^ (-9 / 16 : ℝ)) * Real.log χ.val.conductor +
+                (165000 + 8000000000 * 284 * x ^ (-9 / 16 : ℝ))) -
+              A χ) :=
+        Finset.sum_congr rfl
+          (fun χ _ ↦ by
+            dsimp only [B]; ring)
+      _ = _ := by
+        rw [Finset.sum_sub_distrib, Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_const,
+          nsmul_eq_mul, hcard]
+        unfold subgroupConductorLogSum
+        congr 3
+        apply Finset.sum_congr
+        · apply Finset.ext
+          intro χ
+          simp only [Finset.mem_erase, Finset.mem_univ]
+        · intro χ _
+          rfl
+  rw [hs] at hb
+  have ha := triangular18_nonprincipal_pair_lower H (x := 1) (by norm_num only)
+  change
+    -(2 : ℝ) * (∑' n : ℕ, K.summand (1 : DirichletCharacter ℂ 1) 1 n).re ≤
+      ∑ χ ∈ Finset.univ.erase (1 : S), A χ at ha
+  change (H.index : ℝ) * _ ≤ _
+  linarith only [hb, ha]
+
+/-- Under GRH, numerical level-one bounds retain the sharper conductor coefficient
+and the existing independent cost. This supplies the large-factor comparison. -/
+theorem triangular18_numeric_signed_sharp {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x X : ℝ} (hx : 1 ≤ x)
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ X → NumberTheory.residueInSubgroup q H p) :
+    (H.index : ℝ) *
+        (∑ n ∈ Finset.Icc 1 ⌊X⌋₊,
+          ((triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)).summand
+              (1 : DirichletCharacter ℂ q) x n).re) ≤
+      300000000 * Real.sqrt x + 1300000 * x ^ (1 / 4 : ℝ) + 602600000 +
+        (36 + 8000000000 * x ^ (-9 / 16 : ℝ)) * subgroupConductorLogSum H +
+        ((H.index : ℝ) - 1) * (165000 + 8000000000 * 284 * x ^ (-9 / 16 : ℝ)) := by
+  have hb := triangular18_conductor_signed_sharp H hGRH hx hsmall
+  have hp := triangular18_level_one_arithmetic_upper_of_rh hGRH.riemann (zero_lt_one.trans_le hx)
+  have h1 := triangular18_level_one_arithmetic_upper_of_rh hGRH.riemann (x := 1) (by norm_num only)
+  simp only [Real.sqrt_one, Real.one_rpow, mul_one] at h1
+  linarith only [hb, hp, h1]
+
 end PseudoPrime.LLS.PaperStatements
 
 namespace PseudoPrime.LLS.PaperStatements

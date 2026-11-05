@@ -72,4 +72,56 @@ theorem exists_prime_factorOrOutside_signedGap_GRH {q : ℕ} [NeZero q] (H : Sub
   exact
     (not_le_of_gt hgap) (triangular18_signed_large_factor_comparison_GRH H hGRH hx hlarge hsmall)
 
+/-- Under GRH, the signed large-factor comparison retains the improved contour
+coefficient `8 * 10 ^ 9`. The conductor sum is bounded by the level logarithm. -/
+theorem triangular18_largeFactor_reduced {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 < x)
+    (hlarge : ∀ p ∈ q.primeFactors, x ≤ (p : ℝ))
+    (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ x → NumberTheory.residueInSubgroup q H p) :
+    (H.index : ℝ) *
+        (Real.sqrt x * (68 + 4 * Real.exp (-18)) - 1456 * x ^ (1 / 4 : ℝ) -
+          36 * Real.log q / (Real.sqrt x - 1)) ≤
+      300000000 * Real.sqrt x + 1300000 * x ^ (1 / 4 : ℝ) + 602600000 +
+        ((H.index : ℝ) - 1) *
+          (36 * Real.log q + 165000 + 8000000000 * (Real.log q + 284) * x ^ (-9 / 16 : ℝ)) := by
+  have hb := triangular18_prime_budget_le_of_large hx hlarge
+  have hl :=
+    (sub_le_sub_left hb (Real.sqrt x * (68 + 4 * Real.exp (-18)) - 1456 * x ^ (1 / 4 : ℝ))).trans
+      (triangular18_finite_principal_lower_of_rh (q := q) hGRH.riemann (zero_lt_one.trans hx))
+  have hm := mul_le_mul_of_nonneg_left hl (Nat.cast_nonneg H.index)
+  have hc := hm.trans (triangular18_numeric_signed_sharp H hGRH hx.le hsmall)
+  have hcoef : 0 ≤ 36 + 8000000000 * x ^ (-9 / 16 : ℝ) :=
+    add_nonneg (by norm_num only)
+      (mul_nonneg (by norm_num only) (Real.rpow_nonneg (zero_lt_one.trans hx).le _))
+  have hu := mul_le_mul_of_nonneg_left (subgroupConductorLogSum_le H) hcoef
+  nlinarith only [hc, hu]
+
+/-- Under GRH, a strict reduced-contour gap yields an actual prime dividing the
+level or outside the subgroup. Failure of a witness supplies the large-factor
+and containment assumptions for the signed comparison. -/
+theorem exists_prime_signedGap_reduced {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 1 < x)
+    (hgap :
+      300000000 * Real.sqrt x + 1300000 * x ^ (1 / 4 : ℝ) + 602600000 +
+          ((H.index : ℝ) - 1) *
+            (36 * Real.log q + 165000 + 8000000000 * (Real.log q + 284) * x ^ (-9 / 16 : ℝ)) <
+        (H.index : ℝ) *
+          (Real.sqrt x * (68 + 4 * Real.exp (-18)) - 1456 * x ^ (1 / 4 : ℝ) -
+            36 * Real.log q / (Real.sqrt x - 1))) :
+    ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ x ∧ (p ∣ q ∨ ¬NumberTheory.residueInSubgroup q H p) := by
+  classical
+  by_contra hnone
+  have hlarge (p : ℕ) (hp : p ∈ q.primeFactors) : x ≤ (p : ℝ) := by
+    by_contra hlt
+    exact
+      hnone
+        ⟨p, Nat.prime_of_mem_primeFactors hp, (lt_of_not_ge hlt).le,
+          Or.inl (Nat.dvd_of_mem_primeFactors hp)⟩
+  have hsmall (p : ℕ) (hp : p.Prime) (_ : ¬p ∣ q) (hle : (p : ℝ) ≤ x) :
+    NumberTheory.residueInSubgroup q H p := by
+    by_contra hout
+    exact hnone ⟨p, hp, hle, Or.inr hout⟩
+  exact
+    (not_le_of_gt hgap) (triangular18_largeFactor_reduced H hGRH hx hlarge hsmall)
+
 end PseudoPrime.LLS.PaperStatements

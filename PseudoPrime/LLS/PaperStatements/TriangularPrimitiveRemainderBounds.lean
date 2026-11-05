@@ -19,12 +19,10 @@ standard remainder contracts without supplied analytic error assumptions.
 
 namespace PseudoPrime.LLS.PaperStatements
 
-/-- For primitive nonprincipal data and nonprincipal inverse, the normalized
-alpha-18 completed left integral is at most 4*10^12*(norm(log q)+284)*x^(-9/16)
-for positive x. Reflect the logarithmic derivative, keep the scale factor,
-and apply the explicit fixed-line decay and logarithmic integral budgets.
-This is the scale-decaying left contribution to the primitive contour remainder. -/
-theorem triangular18_completedLeft_scaled_bound {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+/-- For primitive nonprincipal data and positive `x`, the normalized completed
+left integral has coefficient `8 * 10 ^ 9`. The sharper fixed-line kernel decay
+and the existing logarithmic integral bound give this uniform contour estimate. -/
+theorem triangular18_completedLeft_scaled_sharp {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) :
     let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
     ‖((1 / (2 * Real.pi) : ℝ) : ℂ) *
@@ -32,7 +30,7 @@ theorem triangular18_completedLeft_scaled_bound {q : ℕ} [NeZero q] {χ : Diric
             -logDeriv χ.completedLFunction (((-9 / 16 : ℝ) : ℂ) + Complex.I * t + 1 / 2) *
               (K.function (((-9 / 16 : ℝ) : ℂ) + Complex.I * t) *
                 (x : ℂ) ^ (((-9 / 16 : ℝ) : ℂ) + Complex.I * t)))‖ ≤
-      4000000000000 * (‖Complex.log q‖ + 284) * x ^ (-9 / 16 : ℝ) := by
+      8000000000 * (‖Complex.log q‖ + 284) * x ^ (-9 / 16 : ℝ) := by
   let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
   let F := fun t : ℝ ↦
     -logDeriv χ.completedLFunction (((-9 / 16 : ℝ) : ℂ) + Complex.I * t + 1 / 2) *
@@ -60,18 +58,18 @@ theorem triangular18_completedLeft_scaled_bound {q : ℕ} [NeZero q] {χ : Diric
     have hm := mul_le_mul_of_nonneg_right hg (Real.rpow_nonneg hx.le (-9 / 16))
     simpa only [mul_assoc, mul_left_comm, mul_comm] using hm
   have hK (t : ℝ) :
-    ‖K.function (((-9 / 16 : ℝ) : ℂ) + Complex.I * t)‖ ≤ 1000000000000 / (1 + t ^ 2) := by
+    ‖K.function (((-9 / 16 : ℝ) : ℂ) + Complex.I * t)‖ ≤ 2000000000 / (1 + t ^ 2) := by
     have hs : |(((-9 / 16 : ℝ) : ℂ) + Complex.I * t).re| = (9 / 16 : ℝ) := by
       simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.I_re, Complex.I_im,
         Complex.ofReal_im, zero_mul, mul_zero, sub_zero, add_zero]
       norm_num only
-    have hd := Analysis.triangular18_fixed_line_decay hs
+    have hd := Analysis.triangular18_fixed_line_decay_sharp hs
     simpa only [K, triangularMellinKernel, Complex.add_im, Complex.ofReal_im, Complex.mul_im,
       Complex.I_re, Complex.I_im, Complex.ofReal_re, one_mul, zero_mul, zero_add] using hd
   have hraw := norm_logWeighted_product_integral_le hA hF hK
   have hJ :=
     mul_le_mul_of_nonneg_left Analysis.logarithmic_inverseSquare_integral_le_twenty_two
-      (mul_nonneg hA (by norm_num only : (0 : ℝ) ≤ 1000000000000))
+      (mul_nonneg hA (by norm_num only : (0 : ℝ) ≤ 2000000000))
   have hn := norm_mellinNormalization_mul_le_sixth (hraw.trans hJ)
   have he :
     (fun t : ℝ ↦
@@ -84,21 +82,39 @@ theorem triangular18_completedLeft_scaled_bound {q : ℕ} [NeZero q] {χ : Diric
     ring
   change ‖((1 / (2 * Real.pi) : ℝ) : ℂ) * _‖ ≤ _
   rw [he]
-  have hnum : (A * 1000000000000 * 22) / 6 ≤ 4000000000000 * A := by nlinarith only [hA]
+  have hnum : (A * 2000000000 * 22) / 6 ≤ 8000000000 * A := by nlinarith only [hA]
   have h := hn.trans hnum
   simpa only [A, mul_assoc] using h
 
-/-- For primitive nonprincipal GRH data of modulus at least two, nonprincipal
-inverse and x>=1, the arithmetic sum plus oscillating zero sum has norm at most
-4*10^12*(log(q)+284)*x^(-9/16)+55000. Apply the exact contour formula, remove
-the zero pole, and add the explicit left and uniform gamma bounds.
-This precise contract retains the scale decay for subsequent MR comparisons. -/
-theorem triangular18_primitive_remainder_norm_le_precise {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+/-- For primitive nonprincipal data and nonprincipal inverse, the normalized
+alpha-18 completed left integral is at most 4*10^12*(norm(log q)+284)*x^(-9/16)
+for positive x. Reflect the logarithmic derivative, keep the scale factor,
+and apply the explicit fixed-line decay and logarithmic integral budgets.
+This is the scale-decaying left contribution to the primitive contour remainder. -/
+theorem triangular18_completedLeft_scaled_bound {q : ℕ} [NeZero q] {χ : DirichletCharacter ℂ q}
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 0 < x) :
+    let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
+    ‖((1 / (2 * Real.pi) : ℝ) : ℂ) *
+          (∫ t : ℝ,
+            -logDeriv χ.completedLFunction (((-9 / 16 : ℝ) : ℂ) + Complex.I * t + 1 / 2) *
+              (K.function (((-9 / 16 : ℝ) : ℂ) + Complex.I * t) *
+                (x : ℂ) ^ (((-9 / 16 : ℝ) : ℂ) + Complex.I * t)))‖ ≤
+      4000000000000 * (‖Complex.log q‖ + 284) * x ^ (-9 / 16 : ℝ) := by
+  have hA : 0 ≤ (‖Complex.log q‖ + 284) * x ^ (-9 / 16 : ℝ) :=
+    mul_nonneg (add_nonneg (norm_nonneg _) (by norm_num only)) (Real.rpow_nonneg hx.le _)
+  have hs := triangular18_completedLeft_scaled_sharp hp hne hinv hx
+  dsimp only at hs ⊢
+  nlinarith only [hs, hA]
+
+/-- Under GRH and primitive nonprincipal hypotheses, the arithmetic sum plus
+its oscillating zero sum has left-contour coefficient `8 * 10 ^ 9` and gamma
+budget `55000`. The sharper completed-left estimate feeds the contour identity. -/
+theorem triangular18_primitive_remainder_sharp {q : ℕ} [NeZero q] (hq : 2 ≤ q)
     {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) :
     let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
     ‖(∑' n : ℕ, K.summand χ x n) + (∑' ρ : ℂ, K.oscillatingZeroTerm χ x ρ)‖ ≤
-      4000000000000 * (Real.log q + 284) * x ^ (-9 / 16 : ℝ) + 55000 := by
+      8000000000 * (Real.log q + 284) * x ^ (-9 / 16 : ℝ) + 55000 := by
   let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
   let R :=
     ((1 / (2 * Real.pi) : ℝ) : ℂ) *
@@ -112,8 +128,8 @@ theorem triangular18_primitive_remainder_norm_le_precise {q : ℕ} [NeZero q] (h
         logDeriv χ.gammaFactor (((9 / 16 : ℝ) : ℂ) + Complex.I * t + 1 / 2) *
           (K.function (((9 / 16 : ℝ) : ℂ) + Complex.I * t) *
             (x : ℂ) ^ (((9 / 16 : ℝ) : ℂ) + Complex.I * t)))
-  have hR : ‖R‖ ≤ 4000000000000 * (‖Complex.log q‖ + 284) * x ^ (-9 / 16 : ℝ) :=
-    triangular18_completedLeft_scaled_bound hp hne hinv (zero_lt_one.trans_le hx)
+  have hR : ‖R‖ ≤ 8000000000 * (‖Complex.log q‖ + 284) * x ^ (-9 / 16 : ℝ) :=
+    triangular18_completedLeft_scaled_sharp hp hne hinv (zero_lt_one.trans_le hx)
   have hqR : (1 : ℝ) ≤ q := by
     simpa only [Nat.cast_one] using
       (Nat.cast_le.mpr ((by decide : 1 ≤ 2).trans hq) : ((1 : ℕ) : ℝ) ≤ (q : ℝ))
@@ -137,6 +153,26 @@ theorem triangular18_primitive_remainder_norm_le_precise {q : ℕ} [NeZero q] (h
   change ‖(∑' n : ℕ, K.summand χ x n) + (∑' ρ : ℂ, K.oscillatingZeroTerm χ x ρ)‖ ≤ _
   rw [he']
   exact (norm_add_le R G).trans (add_le_add hR hG)
+
+/-- For primitive nonprincipal GRH data of modulus at least two, nonprincipal
+inverse and x>=1, the arithmetic sum plus oscillating zero sum has norm at most
+4*10^12*(log(q)+284)*x^(-9/16)+55000. Apply the exact contour formula, remove
+the zero pole, and add the explicit left and uniform gamma bounds.
+This precise contract retains the scale decay for subsequent MR comparisons. -/
+theorem triangular18_primitive_remainder_norm_le_precise {q : ℕ} [NeZero q] (hq : 2 ≤ q)
+    {χ : DirichletCharacter ℂ q} (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hp : χ.IsPrimitive) (hne : χ ≠ 1) (hinv : χ⁻¹ ≠ 1) {x : ℝ} (hx : 1 ≤ x) :
+    let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
+    ‖(∑' n : ℕ, K.summand χ x n) + (∑' ρ : ℂ, K.oscillatingZeroTerm χ x ρ)‖ ≤
+      4000000000000 * (Real.log q + 284) * x ^ (-9 / 16 : ℝ) + 55000 := by
+  have hqR : (1 : ℝ) ≤ q := by
+    simpa only [Nat.cast_one] using
+      (Nat.cast_le.mpr ((by decide : 1 ≤ 2).trans hq) : ((1 : ℕ) : ℝ) ≤ (q : ℝ))
+  have hA : 0 ≤ (Real.log q + 284) * x ^ (-9 / 16 : ℝ) :=
+    mul_nonneg (by linarith only [Real.log_nonneg hqR]) (Real.rpow_nonneg (by linarith only [hx]) _)
+  have hs := triangular18_primitive_remainder_sharp hq hGRH hp hne hinv hx
+  dsimp only at hs ⊢
+  nlinarith only [hs, hA]
 
 /-- Nonnegative L, 0<=y<=1 and r<=y transfer the explicit left and gamma
 budgets to 1.2*10^15*(1+L*y). Multiply the scale comparison by the nonnegative
