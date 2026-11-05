@@ -912,6 +912,13 @@ def fixed_improved_selected(L: np.ndarray) -> np.ndarray:
         [np.where(L >= T, C * L**2, np.inf) for C, T in FIXED_IMPROVED_PROFILES])
 
 
+def plotted_pointwise_upper(L: np.ndarray) -> np.ndarray:
+    """Pointwise envelope used by both comparison figures."""
+    return np.minimum.reduce([fixed_improved_selected(L)] +
+        [np.where(L >= T, float(C) * L**2, np.inf)
+         for C, T in HISTORY_TRIANGULAR_PROFILES])
+
+
 def fixed_improved_cumulative(L: np.ndarray) -> np.ndarray:
     """Lean fixedImprovedCumulative, retaining each triangular entrance cap."""
     return np.minimum.reduce([gaussian_adaptive_cumulative(L)] +
@@ -954,8 +961,7 @@ def plot_mr_cumulative(output_dir: Path) -> None:
                                   np.nextafter(window_entrances, -np.inf)]))
     cumulative = fixed_improved_cumulative(L) / L**2
     previous = square_base_cumulative(L) / L**2
-    pointwise = np.minimum.reduce([fixed_improved_selected(L) / L**2] +
-        [np.where(L >= T, float(C), np.inf) for C, T in HISTORY_TRIANGULAR_PROFILES])
+    pointwise = plotted_pointwise_upper(L) / L**2
     window_probe = np.array([38e9, np.nextafter(40e9, -np.inf), 45e9, 60e9,
                              80e9, np.nextafter(1e11, -np.inf)])
     variable_probe = np.array([69999.0, 70000.0, 79999.0, 80000.0, 100000.0])
@@ -1053,6 +1059,12 @@ def main() -> None:
         [gaussian_floor_switch(v, D) for (_, D), (v, _) in
          zip(TUNED_GAUSSIAN_PROFILES, TUNED_GAUSSIAN_PROFILES[1:])],
         [gaussian_switch(N, D) for N, D in [(35000, 5.619), (50000, 5.619), (50000, 5.372)]]])
+    inset_max = 1e14
+    inset_entrances = np.concatenate((entrances, [T for _, T in TRIANGULAR_PROFILES],
+                                      [T for _, T in HISTORY_TRIANGULAR_PROFILES],
+                                      [T for _, T in FIXED_IMPROVED_PROFILES], [3e10, 2e12]))
+    inset_entrances = inset_entrances[(inset_entrances >= math.log(3000)) &
+                                      (inset_entrances <= inset_max)]
     entrances = entrances[entrances <= Lmax]
     L = np.unique(np.concatenate([
         np.exp(np.linspace(math.log(math.log(9)), math.log(Lmax), 10000)),
@@ -1186,7 +1198,7 @@ def main() -> None:
 
     previous_U = next_tuned_upper(L)
     np.testing.assert_allclose(previous_U, next_tuned_nested_upper(L), rtol=2e-15)
-    U = mean_selected_upper(L)
+    U = plotted_pointwise_upper(L)
     assert np.all(U <= previous_U)
     assert np.all(np.array(ps) <= mean_selected_upper(record_L))
     fig, ax = plt.subplots(figsize=(12, 8))
@@ -1218,22 +1230,36 @@ def main() -> None:
     ax.set_title("Miller–Rabin: least-prime witness bounds", pad=46)
 
     inset = ax.inset_axes([.045, .53, .35, .28])
-    keep = L >= math.log(3000)
-    inset.plot(np.log(L[keep]), U[keep]/L[keep]**2, color="#d55e00", linewidth=2)
+    inset_L = np.unique(np.concatenate([
+        np.geomspace(math.log(3000), inset_max, 10000), inset_entrances,
+        np.nextafter(inset_entrances, -np.inf), np.nextafter(inset_entrances, np.inf),
+        [math.log(3000), inset_max],
+    ]))
+    inset_L = inset_L[(inset_L >= math.log(3000)) & (inset_L <= inset_max)]
+    inset_U = plotted_pointwise_upper(inset_L)
+    for entrance in [3e10, 5e10, 7e10, 1.5e11, 2e12]:
+        assert np.any(inset_L == entrance)
+    assert np.all(inset_U <= mean_selected_upper(inset_L))
+    inset.plot(np.log(inset_L), inset_U / inset_L**2, color="#d55e00", linewidth=2)
     inset.axhline(4 / 9, color="#333333", linestyle=":", linewidth=1.3)
     inset.set_yscale("log")
-    inset.set_xlim(math.log(math.log(3000)), math.log(Lmax))
-    inset.set_ylim(.3, .45)
-    inset.yaxis.set_major_locator(FixedLocator([.3, .35, .4, 4 / 9]))
+    inset.set_xlim(math.log(math.log(3000)), math.log(inset_max))
+    inset.set_ylim(.27, .45)
+    inset.yaxis.set_major_locator(FixedLocator([.28, .3, .35, .4, 4 / 9]))
     inset.yaxis.set_major_formatter(
         FuncFormatter(lambda y, _: r"$4/9$" if np.isclose(y, 4 / 9) else f"{y:.2f}"))
     inset.yaxis.set_minor_locator(NullLocator())
-    power_ticks(inset, [k for k in [4, 8, 16, 32, 64, 128, 256, 512, 1024]
-                        if k <= args.max_power])
+    inset_ticks = [(math.log(k * math.log(10)), rf"$10^{{{k}}}$") for k in (4, 64)]
+    inset_ticks += [(k * math.log(10), rf"$e^{{10^{{{k}}}}}$") for k in (4, 6, 8, 10, 12, 14)]
+    inset_ticks.sort()
+    inset.xaxis.set_major_locator(FixedLocator([position for position, _ in inset_ticks]))
+    inset.xaxis.set_major_formatter(FuncFormatter(
+        lambda x, _: next((label for position, label in inset_ticks if np.isclose(x, position)), "")))
+    inset.xaxis.set_minor_locator(NullLocator())
     inset.tick_params(labelsize=9)
     inset.set_title(r"Detail: $U_{\mathrm{MR}}(n)/(\ln n)^2$", fontsize=10)
     inset.grid(color="#e1e5e9", linewidth=.6)
-    for x in bit_positions:
+    for x in [math.log(k * math.log(2)) for k in [64, 80, 128]]:
         inset.axvline(x, color="#7e91ac", linestyle="--", linewidth=.8, zorder=1)
     inset.set_facecolor("#fafbfd")
     stem = args.output_dir / "mr_upper_bound_comparison"
