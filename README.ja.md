@@ -12,10 +12,10 @@
 
 主な結果は次の二つである。
 
-1. GRH の下で、奇数 $n > 1$ が素数であることと、上界 $p \le \frac{4}{9}(\ln\mathrel{} n)^2$ を満たすすべての素数底で強 Miller–Rabin 条件を満たすことは同値である。
+1. GRH の下で、奇数 $n > 1$ が素数であることと、上界 $p \le 2(\log_9 n)^2$ を満たすすべての素数底で強 Miller–Rabin 条件を満たすことは同値である。
 2. GRH の下で、正の奇数で平方数でない整数 $n$ に対して、2 種類の奇素数証人 $p$ の存在と、それぞれの明示的な上界を示す。一方は Legendre 記号 $\bigl(\frac{n}{p}\bigr)$ が $1$ でない証人、もう一方は記号が $-1$ となる証人である。
 
-以下、 $\ln$ は底が $e$ の自然対数を表す。Lean では `Real.log` に対応する。
+以下、 $\ln$ は底が $e$ の自然対数を表し、Lean の `Real.log` に対応する。底9の対数 $\log_9 n$ は `Real.logb 9 n` に対応する。
 
 ## GRH の下での強 Miller–Rabin 素数判定条件
 
@@ -25,7 +25,7 @@ $$
 \boxed{
 n \text{ が素数}
 \iff
-\text{すべての素数 }p \le \frac{4}{9}(\ln\mathrel{} n)^2 \text{ が } n \text{ に対する強 Miller–Rabin 条件を満たす}
+\text{すべての素数 }p \le 2(\log_9 n)^2 \text{ が } n \text{ に対する強 Miller–Rabin 条件を満たす}
 }
 $$
 
@@ -40,7 +40,7 @@ $$
 $$
 n \text{ が素数}
 \iff
-\forall p \text{ 素数},\quad p \le \frac{4}{9}(\ln\mathrel{} n)^2
+\forall p \text{ 素数},\quad p \le 2(\log_9 n)^2
 \Longrightarrow \bigl(p^d \equiv 1 \pmod n
 \lor
 \exists j \in ℕ,\quad j < s \land p^{2^j d} \equiv -1 \pmod n\bigr).
@@ -52,34 +52,33 @@ $$
 n \text{ が合成数}
 \iff
 \exists p \text{ 素数},\quad
-p \le \frac{4}{9}(\ln\mathrel{} n)^2
+p \le 2(\log_9 n)^2
 \land
 p^d \not\equiv 1 \pmod n
 \land
 \forall j \in ℕ,\quad j < s \Longrightarrow p^{2^j d} \not\equiv -1 \pmod n.
 $$
 
-つまり、奇数 $n > 1$ の合成数性は、それを棄却する素数底 $p \le \frac{4}{9}(\ln\mathrel{} n)^2$ の存在と同値である。
+つまり、奇数 $n > 1$ の合成数性は、それを棄却する素数底 $p \le 2(\log_9 n)^2$ の存在と同値である。
 
 ここで $ℕ = \lbrace 0, 1, 2, \ldots \rbrace$ とし、Lean の `ℕ` に合わせる。
 
 同値の二つの向きでは、仮定の役割が異なる。
 
 - $\text{Prime} \to (\text{all pass})$ の向きに GRH は不要である。 $n$ が素数なら、指定の上界以下の各素数底が合格する。
-- $(\text{all pass}) \to \text{Prime}$ の向きに GRH を用いる。奇合成数 $n > 1$ には、 $n$ を棄却する素数底 $p \le \frac{4}{9}(\ln\mathrel{} n)^2$ が存在する。
+- $(\text{all pass}) \to \text{Prime}$ の向きに GRH を用いる。奇合成数 $n > 1$ には、 $n$ を棄却する素数底 $p \le 2(\log_9 n)^2$ が存在する。
 
-Lean の次の命題は、 $n - 1 = 2^s d$ と奇数の $d$ を満たす任意の非負整数 $s$、 $d$ に対して判定条件を述べる。続く定理は `Nat.maxPowDvdDiv` が返す標準分解を使う。どちらの宣言も名前空間 `ComparatorChallenges` の [PrimeMillerRabinFourNinthsSolution.lean](ComparatorChallenges/PrimeMillerRabinFourNinthsSolution.lean) にあり、定理はライブラリの証明を参照する。
+Lean の次の命題は、 $n - 1 = 2^s d$ と奇数の $d$ を満たす任意の非負整数 $s$、 $d$ に対して判定条件を述べる。続く定理は `Nat.maxPowDvdDiv` が返す標準分解を使う。どちらの宣言も名前空間 `ComparatorChallenges` の [PrimeMillerRabinLogNineSolution.lean](ComparatorChallenges/PrimeMillerRabinLogNineSolution.lean) にあり、定理はライブラリの証明を使う。以下では証明本体を省略する。
 
 ```lean
-theorem prime_millerRabin_four_ninths_criterion (hGRH : GeneralizedRiemannHypothesis) {n : ℕ}
+theorem prime_millerRabin_log_nine_criterion (hGRH : GeneralizedRiemannHypothesis) {n : ℕ}
     (hn : 1 < n) (ho : Odd n) :
     let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)
     (∀ p : ℕ,
         Nat.Prime p →
-          (p : ℝ) ≤ (4 / 9 : ℝ) * (Real.log n) ^ 2 →
+          (p : ℝ) ≤ 2 * (Real.logb 9 n) ^ 2 →
           ((p : ZMod n) ^ d = 1 ∨ ∃ j : ℕ, j < s ∧ (p : ZMod n) ^ (2 ^ j * d) = -1)) ↔
-      Nat.Prime n :=
-  PseudoPrime.PrimeTestBounds.MillerRabin.prime_iff_mr_le_four_ninths_log_sq hGRH hn ho
+      Nat.Prime n
 ```
 
 連鎖する含意 `Nat.Prime p → (p : ℝ) ≤ ... → ...` は、任意の底 `p` が素数であり、かつ上界以下であるときに Miller–Rabin 条件を要求する。この明示的な冪合同条件は、実行用判定 `PrimeTest.strongMillerRabinWithBase n p` が `true` を返すことと同値であり、 [`strongMillerRabinWithBase_eq_true_iff_pass`](PseudoPrime/PrimeTest/MillerRabin/Decomposition.lean) で証明している。

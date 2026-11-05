@@ -12,10 +12,10 @@ The analytic development follows the work of Lamzouri, Li, and Soundararajan, [*
 
 The project has two main results:
 
-1. Under GRH, an odd integer $n > 1$ is prime if and only if it passes the strong Miller–Rabin conditions for every prime base $p \le \frac{4}{9}(\ln\mathrel{} n)^2$.
+1. Under GRH, an odd integer $n > 1$ is prime if and only if it passes the strong Miller–Rabin conditions for every prime base $p \le 2(\log_9 n)^2$.
 2. Under GRH, every positive odd nonsquare $n$ has odd-prime witnesses of two kinds, each with an explicit upper bound. For one kind, the Legendre symbol $\bigl(\frac{n}{p}\bigr)$ is different from $1$; for the other, it is equal to $-1$.
 
-Here and throughout, $\ln$ denotes the natural logarithm (base $e$), represented by `Real.log` in Lean.
+Here and throughout, $\ln$ denotes the natural logarithm (base $e$), represented by `Real.log` in Lean. The base-nine logarithm $\log_9 n$ is represented by `Real.logb 9 n`.
 
 ## Strong Miller–Rabin primality criterion under GRH
 
@@ -25,7 +25,7 @@ $$
 \boxed{
 n \text{ is prime}
 \iff
-\text{every prime }p \le \frac{4}{9}(\ln\mathrel{} n)^2
+\text{every prime }p \le 2(\log_9 n)^2
 \text{ passes the strong Miller–Rabin conditions for }n
 }
 $$
@@ -41,7 +41,7 @@ Then
 $$
 n \text{ is prime}
 \iff
-\forall p \text{ prime},\quad p \le \frac{4}{9}(\ln\mathrel{} n)^2
+\forall p \text{ prime},\quad p \le 2(\log_9 n)^2
 \Longrightarrow \bigl(p^d \equiv 1 \pmod n
 \lor
 \exists j \in ℕ,\quad j < s \land p^{2^j d} \equiv -1 \pmod n\bigr).
@@ -53,7 +53,7 @@ $$
 n \text{ is composite}
 \iff
 \exists p \text{ prime},\quad
-p \le \frac{4}{9}(\ln\mathrel{} n)^2
+p \le 2(\log_9 n)^2
 \land
 p^d \not\equiv 1 \pmod n
 \land
@@ -69,18 +69,17 @@ The two directions require different assumptions:
 - $\text{Prime} \to (\text{all pass})$ is unconditional: every prime base satisfying the stated bound passes when $n$ is prime.
 - $(\text{all pass}) \to \text{Prime}$ uses GRH: every odd composite $n > 1$ has a rejecting prime base not exceeding the stated bound.
 
-The Lean proposition states the criterion for all nonnegative integers $s$ and $d$ satisfying $n - 1 = 2^s d$ with $d$ odd. The theorem below uses the canonical decomposition returned by `Nat.maxPowDvdDiv`. Both declarations are in namespace `ComparatorChallenges`, in [PrimeMillerRabinFourNinthsSolution.lean](ComparatorChallenges/PrimeMillerRabinFourNinthsSolution.lean); the theorem refers to the library proof.
+The Lean proposition states the criterion for all nonnegative integers $s$ and $d$ satisfying $n - 1 = 2^s d$ with $d$ odd. The theorem below uses the canonical decomposition returned by `Nat.maxPowDvdDiv`. Both declarations are in namespace `ComparatorChallenges`, in [PrimeMillerRabinLogNineSolution.lean](ComparatorChallenges/PrimeMillerRabinLogNineSolution.lean); the theorem uses the library proof. Its proof is omitted below.
 
 ```lean
-theorem prime_millerRabin_four_ninths_criterion (hGRH : GeneralizedRiemannHypothesis) {n : ℕ}
+theorem prime_millerRabin_log_nine_criterion (hGRH : GeneralizedRiemannHypothesis) {n : ℕ}
     (hn : 1 < n) (ho : Odd n) :
     let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)
     (∀ p : ℕ,
         Nat.Prime p →
-          (p : ℝ) ≤ (4 / 9 : ℝ) * (Real.log n) ^ 2 →
+          (p : ℝ) ≤ 2 * (Real.logb 9 n) ^ 2 →
           ((p : ZMod n) ^ d = 1 ∨ ∃ j : ℕ, j < s ∧ (p : ZMod n) ^ (2 ^ j * d) = -1)) ↔
-      Nat.Prime n :=
-  PseudoPrime.PrimeTestBounds.MillerRabin.prime_iff_mr_le_four_ninths_log_sq hGRH hn ho
+      Nat.Prime n
 ```
 
 The chained implications `Nat.Prime p → (p : ℝ) ≤ ... → ...` require the strong Miller–Rabin pass condition for every base `p` that is prime and satisfies the bound. This explicit power-congruence condition is equivalent to `PrimeTest.strongMillerRabinWithBase n p = true`, as proved by [`strongMillerRabinWithBase_eq_true_iff_pass`](PseudoPrime/PrimeTest/MillerRabin/Decomposition.lean).

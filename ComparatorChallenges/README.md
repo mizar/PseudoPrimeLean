@@ -17,6 +17,15 @@ The allowed axioms are `propext`, `Quot.sound`, and `Classical.choice`. GRH is a
 assumption in the statement, not an allowed axiom. The configuration contains no definition
 holes: the definitions used in the statement are part of the fixed challenge.
 
+The stronger base-nine logarithm criterion has a separate challenge and solution:
+
+```sh
+lake comparator --config=ComparatorChallenges/PrimeMillerRabinLogNineCriterion.json
+```
+
+Its solution uses the base-nine rejecting-prime bound and the four-ninths prime acceptance
+result. The [base-nine slides](PrimeMillerRabinLogNineCriterion.md) display the theorem and GRH.
+
 The two GRH-conditional odd-prime quadratic witness bounds use the same arrangement. Run both
 comparisons together with:
 
