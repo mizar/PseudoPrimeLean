@@ -977,9 +977,15 @@ def surplus_global(L: np.ndarray) -> np.ndarray:
 
 
 def plotted_pointwise_upper(L: np.ndarray) -> np.ndarray:
-    """Lean jointSelected, including the existing small-input selection."""
+    """Minimum of Lean's jointSelected and the certified 0.4136 max bound."""
     old = smooth_pointwise_upper(L)
-    return np.where(L >= math.log(3000), np.minimum(old, surplus_global(L)), old)
+    selected = np.where(L >= math.log(3000), np.minimum(old, surplus_global(L)), old)
+    return np.minimum(selected, max_04136_bound(L))
+
+
+def max_04136_bound(L: np.ndarray) -> np.ndarray:
+    """Certified pointwise bound, also monotone for L >= ln 9."""
+    return np.maximum(2.0, (517 / 1250) * L**2)
 
 
 def fixed_improved_cumulative(L: np.ndarray) -> np.ndarray:
@@ -1042,6 +1048,11 @@ def joint_cumulative(L: np.ndarray) -> np.ndarray:
     return np.minimum(smooth_cumulative(L), surplus_global(L))
 
 
+def plotted_cumulative_upper(L: np.ndarray) -> np.ndarray:
+    """Combine jointCumulative with the monotone max-form bound."""
+    return np.minimum(joint_cumulative(L), max_04136_bound(L))
+
+
 def square_base_cumulative(L: np.ndarray) -> np.ndarray:
     """Complete previous eight-profile history; retained for the same-guard comparison."""
     return np.minimum.reduce([L**2] +
@@ -1079,7 +1090,7 @@ def plot_mr_cumulative(output_dir: Path) -> None:
                                   window_entrances, window_recoveries,
                                   variable_entrances, np.nextafter(variable_entrances, -np.inf),
                                   np.nextafter(window_entrances, -np.inf)]))
-    cumulative = joint_cumulative(L) / L**2
+    cumulative = plotted_cumulative_upper(L) / L**2
     previous = square_base_cumulative(L) / L**2
     pointwise = plotted_pointwise_upper(L) / L**2
     window_probe = np.array([38e9, np.nextafter(40e9, -np.inf), 45e9, 60e9,
@@ -1111,6 +1122,8 @@ def plot_mr_cumulative(output_dir: Path) -> None:
     assert np.all(reduced_cumulative(L) <= fixed_improved_cumulative(L))
     assert np.all(smooth_cumulative(L) <= reduced_cumulative(L))
     assert np.all(joint_cumulative(L) <= smooth_cumulative(L))
+    assert np.all(plotted_cumulative_upper(L) <= joint_cumulative(L))
+    assert np.all(plotted_cumulative_upper(L) <= max_04136_bound(L))
     assert np.all(np.diff(surplus_global(L) / L**2) <= 1e-14)
     assert np.all(cumulative >= pointwise - 1e-14)
     assert np.all(cumulative <= high_window_cumulative(L) / L**2 + 1e-14)
@@ -1119,11 +1132,11 @@ def plot_mr_cumulative(output_dir: Path) -> None:
     assert np.all(cumulative <= (4 / 9) + 1e-14)
     assert np.all(cumulative <= gaussian_cumulative(L) / L**2 + 1e-14)
     ax.semilogx(L, cumulative, color="#d55e00", linewidth=2.5,
-                     label="Cumulative maximum: upper bound")
+                     label="Cumulative bound: joint and 0.4136 max")
     ax.semilogx(L, pointwise, color="#3977a8", linestyle="--",
-                     label="Pointwise: upper bound")
-    ax.axhline(4 / 9, color="#333333", linestyle=":", linewidth=1.7,
-               label=r"$(4/9)(\ln N)^2$ reference")
+                     label="Pointwise bound: joint and 0.4136 max")
+    ax.axhline(2 / math.log(9)**2, color="#333333", linestyle=":", linewidth=1.7,
+               label=r"$2(\log_9 N)^2$ reference")
     ax.set(xlabel=r"$L=\ln N$", ylabel=r"Upper bound divided by $L^2$",
                 title="Cumulative bounds at high scales")
     ax.set_xlim(math.log(3000), 1e15)
@@ -1182,6 +1195,7 @@ def main() -> None:
             [(9.1, 9.3), (9.5, 9.3), (9.5, 8.15), (9.8, 8.15), (9.8, 8.13)]],
         [gaussian_switch(N, D) for N, D in [(35000, 5.63), (50000, 5.63), (50000, 5.41)]]])
     entrances = np.concatenate([entrances, [cap for _, cap in TUNED_FINITE_STEPS],
+        [math.sqrt(31 * 1250 / 517), 3461 / 10],
         [gaussian_floor_switch(u, D) for u, D in TUNED_GAUSSIAN_PROFILES],
         [gaussian_floor_switch(v, D) for (_, D), (v, _) in
          zip(TUNED_GAUSSIAN_PROFILES, TUNED_GAUSSIAN_PROFILES[1:])],
@@ -1330,13 +1344,15 @@ def main() -> None:
     np.testing.assert_allclose(previous_U, next_tuned_nested_upper(L), rtol=2e-15)
     U = plotted_pointwise_upper(L)
     assert np.all(U <= previous_U)
+    assert np.all(U <= max_04136_bound(L))
+    assert np.all(max_04136_bound(L) <= 2 * (L / math.log(9))**2 * (1 + 1e-14))
     assert np.all(np.array(ps) <= mean_selected_upper(record_L))
     fig, ax = plt.subplots(figsize=(12, 8))
     fig.subplots_adjust(left=.09, right=.95, top=.87, bottom=.13)
     ax.plot(np.log(L), U, color="#d55e00", linewidth=2.5,
-            label=r"Pointwise bound $U_{\mathrm{MR}}(n)$", zorder=3)
-    ax.plot(np.log(L), (4 / 9) * L**2, color="#333333", linewidth=1.7, linestyle=":",
-            label=r"$(4/9)(\ln n)^2$", zorder=4)
+            label=r"Pointwise bound $U_{\mathrm{MR}}(n)$ (joint and 0.4136 max)", zorder=3)
+    ax.plot(np.log(L), 2 * (L / math.log(9))**2, color="#333333", linewidth=1.7, linestyle=":",
+            label=r"$2(\log_9 n)^2$", zorder=4)
     ax.step(np.log(record_L), ps, where="post", color="#007f80", linewidth=2,
             zorder=5)
     ax.scatter(np.log(record_L), ps, s=27, color="#007f80", zorder=7,
@@ -1359,7 +1375,7 @@ def main() -> None:
     ax.legend(loc="upper left", framealpha=.97, fontsize=10)
     ax.set_title("Miller–Rabin: least-prime witness bounds", pad=46)
 
-    inset = ax.inset_axes([.045, .53, .35, .28])
+    inset = ax.inset_axes([.06, .53, .35, .28])
     inset_L = np.unique(np.concatenate([
         np.geomspace(math.log(3000), inset_max, 10000), inset_entrances,
         np.nextafter(inset_entrances, -np.inf), np.nextafter(inset_entrances, np.inf),
@@ -1371,13 +1387,15 @@ def main() -> None:
         assert np.any(inset_L == entrance)
     assert np.all(inset_U <= mean_selected_upper(inset_L))
     inset.plot(np.log(inset_L), inset_U / inset_L**2, color="#d55e00", linewidth=2)
-    inset.axhline(4 / 9, color="#333333", linestyle=":", linewidth=1.3)
+    reference_ratio = 2 / math.log(9)**2
+    inset.axhline(reference_ratio, color="#333333", linestyle=":", linewidth=1.3)
     inset.set_yscale("log")
     inset.set_xlim(math.log(math.log(3000)), math.log(inset_max))
-    inset.set_ylim(.27, .45)
-    inset.yaxis.set_major_locator(FixedLocator([.28, .3, .35, .4, 4 / 9]))
+    inset.set_ylim(.27, .42)
+    inset.yaxis.set_major_locator(FixedLocator([.28, .3, .35, .4, reference_ratio]))
     inset.yaxis.set_major_formatter(
-        FuncFormatter(lambda y, _: r"$4/9$" if np.isclose(y, 4 / 9) else f"{y:.2f}"))
+        FuncFormatter(lambda y, _: r"$2/(\ln 9)^2$"
+                      if np.isclose(y, reference_ratio) else f"{y:.2f}"))
     inset.yaxis.set_minor_locator(NullLocator())
     inset_ticks = [(math.log(k * math.log(10)), rf"$10^{{{k}}}$") for k in (4, 64)]
     inset_ticks += [(k * math.log(10), rf"$e^{{10^{{{k}}}}}$") for k in (4, 6, 8, 10, 12, 14)]
@@ -1425,9 +1443,10 @@ def main() -> None:
               "comparison_baseline": "sharpSelectedEnvelope",
               "sampled_selection_equality_checked": True,
               "baseline_sampled_monotonicity_checked": True,
-              "plotted_envelope": "jointSelected",
-              "canonical_plotted_envelope": "jointSelected",
-              "cumulative_variable_caps": "jointCumulative",
+              "plotted_envelope": "min(jointSelected, max(2, (517/1250)*L^2))",
+              "lean_selected_envelope_current": "jointSelected",
+              "max_bound_theorem": "compositeLeastPrime_le_max_4136",
+              "cumulative_variable_caps": "min(jointCumulative, max(2, (517/1250)*L^2))",
               "previous_selection_equality": "nextTunedSelected_eq_normal",
               "removed_direct_gaussian_branches": 6,
               "gaussian_A_comparison_interval": [105, 105.5],

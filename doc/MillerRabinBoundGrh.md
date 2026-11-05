@@ -1,8 +1,8 @@
 # PrimeTestBounds.MillerRabin　GRH下の素数判定同値と証人上界
 
-GRHの下で、奇合成数 $n \ge 9$ には $(4/9)(\ln n)^2$ 以下のMiller–Rabin拒否素数が存在する。証人と最小証人の定理は [FourNinthsBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsBounds.lean)、素数判定条件の同値は [FourNinthsCriterion.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsCriterion.lean) にある。名前空間は `PseudoPrime.PrimeTestBounds.MillerRabin` で、 `import PseudoPrime` から利用できる。
+GRHの下で、奇合成数 $n \ge 9$ の最小Miller–Rabin拒否素数は $\max\lbrace 2,(517/1250)(\ln n)^2\rbrace$ 以下であり、 $2(\log_9 n)^2$ 以下でもある。定理は [LeastPrime4136.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/LeastPrime4136.lean) にある。 $(4/9)(\ln n)^2$ による素数判定条件の同値は [FourNinthsCriterion.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsCriterion.lean) にある。名前空間は `PseudoPrime.PrimeTestBounds.MillerRabin` で、 `import PseudoPrime` から利用できる。
 
-公開選択上界 $U_{\mathrm{MR}}(n)$ は [JointSurplusEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/JointSurplusEnvelope.lean) の `jointSelected` である。有限区間の上界と解析的な上界を組み合わせ、 `jointSelected_least` は最小拒否素数が選択値以下であることを示す。 `jointPrime` は選択値を素数へ丸める。
+[JointSurplusEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/JointSurplusEnvelope.lean) の `jointSelected` は有限区間と解析的な上界を組み合わせ、 `jointSelected_least` は最小拒否素数がその値以下であることを示す。 `jointPrime` は選択値を素数へ丸める。本稿と図では、この選択値と上記のmax形の小さい方を $U_{\mathrm{MR}}(n)$ とする。Leanにはこの最小値の専用定義を設けず、証明済みの2つの上界から導く。
 
 MRの最小素数証人の累積最大値について、既知の更新点を [3種類の最小素数証人の数表](WitnessRecords.md) に参考情報として掲載した。
 
@@ -98,6 +98,8 @@ end PseudoPrime.PrimeTestBounds.MillerRabin
 
 | 宣言 | 内容 | ソース |
 |---|---|---|
+| `exists_prime_reject_max_4136` | GRH下の奇合成数に対する係数 $517/1250$ のmax形の証人上界 | [GlobalMax4136.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GlobalMax4136.lean) |
+| `compositeLeastPrime_le_max_4136`・`compositeLeastPrime_le_log9_sq` | 最小拒否素数のmax形と底9の上界 | [LeastPrime4136.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/LeastPrime4136.lean) |
 | `exists_prime_witness_four_ninths`・`exists_least_witness_four_ninths` | GRH下の奇合成数 $n \ge 9$ に対する $4/9$ の証人と最小証人 | [FourNinthsBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsBounds.lean) |
 | `prime_iff_mr_le_four_ninths_log_sq` | $4/9$ の上界による素数判定条件 | [FourNinthsCriterion.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsCriterion.lean) |
 | `cumulativeLeastPrime_le_four_ninths_log_sq` | 全自然数の上端に対する累積最大値の $4/9$ 上界 | [FourNinthsCumulative.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsCumulative.lean) |
@@ -110,9 +112,11 @@ end PseudoPrime.PrimeTestBounds.MillerRabin
 
 ## 証明の流れ
 
+係数 $517/1250$ のmax形では、 $\ln n < 8$ を底2・3の有限分類で扱う。 $8 \le \ln n \le 350$ で素因数が重複込みで2個の場合は、平方数について係数 $0.371$、相異なる2素数の積について係数 $0.409$ の上界を使う。有限証明では90組の素数供給と956個の計数候補を認証し、平方数の78行と半素数の122区間を接続する。素因数が3個以上の場合は、 $8 \le \ln n \le 25/2$ で小さい素因数を使い、 $25/2 \le \ln n \le 3461/10$ で偶指標の補正を使う。 $\ln n \ge 3461/10$ は全域Gaussian上界で覆う。
+
 係数 $4/9$ の定理では重複込みの素因数個数により奇合成数を分類する。素因数が3個以上なら既存の因数個数による上界を使う。2個の場合は平方と異なる2素数の積に分け、局所核の大きさと素数積の個数を比較する。低域では重複を許す素数積と有限個の有理数証明書を使い、中域では素数個数の解析的下界と61行の証明書を使う。 $\ln n \ge 1024$ は一様な評価で扱う。小さい入力と固定素数23・29の既存定理を接続し、全域を覆う。実装は [FourNinthsFiniteWitness.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsFiniteWitness.lean) と [FourNinthsHighWitness.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsHighWitness.lean) を経て全域定理に至る。
 
-全域上界 $F$ では、尺度1の算術和の寄与と符号付きGamma評価を組み合わせる。共同の重みに対するAbel評価と素数供給の下界を使って、大きな部分群指数の場合に証人を得る。一様な3素因子の場合はGaussian比較を使う。各因数構造の証人を同じ切断点へ接続し、最小証人と累積上界を導く。
+全域上界 $F$ では尺度1の算術和の寄与と符号付きGamma評価を組み合わせる。共同の重みに対するAbel評価と素数供給の下界を使って、大きな部分群指数の場合に証人を得る。一様な3素因子の場合はGaussian比較を使う。各因数構造の証人を同じ切断点へ接続し、最小証人と累積上界を導く。
 
 合格底の構造と小さい入力の有限分類は [Composite.lean](../PseudoPrime/PrimeTest/MillerRabin/Composite.lean) と [Computation/Small.lean](../PseudoPrime/PrimeTest/MillerRabin/Computation/Small.lean) にある。有限分類は $9 \le n < 3000$ の奇合成数に対して底2または3の不合格を示す。素数入力の合格方向にはGRHを使わない。
 
@@ -126,6 +130,9 @@ import PseudoPrime
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
 #print axioms prime_iff_mr_le_four_ninths_log_sq
+#print axioms exists_prime_reject_max_4136
+#print axioms compositeLeastPrime_le_max_4136
+#print axioms compositeLeastPrime_le_log9_sq
 #print axioms exists_prime_witness_four_ninths
 #print axioms cumulativeLeastPrime_le_four_ninths_log_sq
 #print axioms jointPrime_least
@@ -143,7 +150,14 @@ $$
 q_{\mathrm{MR}}(n)=\min\lbrace p\in\mathbb P\mid\neg\mathrm{StrongMRPass}(n,p)\rbrace
 $$
 
-と書く。現在の実数上界を $U_{\mathrm{MR}}(n)=\mathrm{jointSelected}(n)$ とする。GRHの下で $q_{\mathrm{MR}}(n) \le U_{\mathrm{MR}}(n)$ が成り立つ。
+と書く。実数上界を次のように定める。
+
+$$
+C(L)=\max\left\lbrace 2,\frac{517}{1250}L^2\right\rbrace,\qquad
+U_{\mathrm{MR}}(n)=\min\lbrace\mathrm{jointSelected}(n),C(\ln n)\rbrace.
+$$
+
+GRHの下で $q_{\mathrm{MR}}(n) \le U_{\mathrm{MR}}(n)$ が成り立つ。さらに $n \ge 9$ では $C(\ln n) \le 2(\log_9 n)^2$ である。両方の上界は [LeastPrime4136.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/LeastPrime4136.lean) にあり、その数値比較は [LogNineComparison.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/LogNineComparison.lean) にある。
 
 ### 有限区間 $9 \le n < 3000$ の上界
 
@@ -151,7 +165,7 @@ $9 \le n < 2047$ では2、 $2047 \le n < 3000$ では3を返す。底2または
 
 公開数値関数の仕様としても、すべての自然数 $2047 \le n < 3000$ で `jointSelected n` と `jointPrime n` はともに3である。この等式には奇数性や合成数性を仮定しない。 $n < 2047$ では両関数が2を返す。
 
-### 固定素数上界23〜53と有限principal和
+### 固定素数上界23・31と有限principal和
 
 固定半径 $y$ に対して、次の実際のvon Mangoldt和を使う。
 
@@ -181,16 +195,9 @@ $$
 | 適用条件 | 固定半径 $y$ | $10^6\delta_R$ | $10^6\delta_S$ | 素数証人上界 |
 |---|---|---:|---:|---:|
 | $L \le 8.0901$ | $53851/10000$ | 7385 | 597822 | 23 |
-| $L \le 8.3320$ | $55677/10000$ | 7794 | 630000 | 29 |
 | $L \le 9.0031$ | $60827/10000$ | 9395 | 729227 | 31 |
-| $L \le 9.3961$ | $64031/10000$ | 6554 | 651721 | 37 |
-| $L \le 9.9619$ | $68556/10000$ | 6816 | 712934 | 43 |
-| $L \le 10.4895$ | $72801/10000$ | 8072 | 819332 | 47 |
-| $L \le 10.9671$ | $76811/10000$ | 6484 | 769482 | 53 |
 
-各行は記した上端以下の全域で使え、個別の証人定理には $n \ge 3000$ や前行の上端を仮定しない。小域の値2・3と $(4/9)L^2$ も含めた公開包絡線では、表の7候補がそれぞれ選択される区間を持つ。証明書は [EndpointFiniteCredits.lean](../PseudoPrime/Analysis/EndpointFiniteCredits.lean)、素数証人・最小素数証人は [EndpointFiniteTuned.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointFiniteTuned.lean) にある。
-
-固定上界41、59、61、67、71、73、79は、それぞれの適用上端 $L_0$ で $(4/9)L_0^2$ が固定上界より小さい。したがって $n \ge 3000$ の適用範囲全体でも $(4/9)L^2$ の方が小さい。 $n < 3000$ では値2または3を使うため、これらの固定上界は公開包絡線を更新しない。
+各行は記した上端以下の全域で使え、個別の証人定理には $n \ge 3000$ や前行の上端を仮定しない。証明書は [EndpointFiniteCredits.lean](../PseudoPrime/Analysis/EndpointFiniteCredits.lean)、素数証人・最小素数証人は [EndpointFiniteTuned.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointFiniteTuned.lean) にある。
 
 ### 全域の解析的上界
 
@@ -215,17 +222,14 @@ GRHの下で、すべての奇合成数 $n \ge 9$ に対して $q_{\mathrm{MR}}(
 
 | 入口 $L$ | その入口以降で成り立つ評価 |
 |---:|---:|
-| $283$ | $F(L) < (4/9)L^2$ |
-| $290$ | $F(L) < (7/16)L^2$ |
-| $300$ | $F(L) < 0.432L^2$ |
-| $330$ | $F(L) < 0.42L^2$ |
+| $3461/10$ | $F(L) < (517/1250)L^2$ |
 | $400$ | $F(L) < 0.397L^2$ |
 | $1000$ | $F(L) < 0.338L^2$ |
 | $4000$ | $F(L) < 0.304L^2$ |
 | $6500$ | $F(L) < 0.3L^2$ |
 | $25000$ | $F(L) < 0.29L^2$ |
 
-これらは [JointSurplusThresholds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/JointSurplusThresholds.lean) で証明した。 $0.42$ の評価は上表の入口以降に限る。 また、 $F(L)/L^2$ は $L \to \infty$ で次の値に収束する。
+最初の行は [GaussianHigh4136.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianHigh4136.lean)、残りの行は [JointSurplusThresholds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/JointSurplusThresholds.lean) で証明した。 $F(L)/L^2$ は $L \to \infty$ で次の値に収束する。
 
 $$
 \frac{21}{10}\left(\frac{20115621/25000000}{10971611/5000000}\right)^2.
@@ -243,34 +247,30 @@ $$
 
 $Q_{\mathrm{MR}}(N)$ を $9 \le n \le N$ の奇合成数 $n$ に対する最小拒否素数の最大値とし、対象がないときは0とする。以下では $N \ge 9$、 $L=\ln N$ とする。 $N < 9$ では $Q_{\mathrm{MR}}(N)=0$ である。
 
-全域で有効な $F$ は非減少なので、 GRHの下で $Q_{\mathrm{MR}}(N) \le F(\ln N)$ である。公開する `jointCumulative` は、この上界と既存の累積上界 `smoothCumulative` の最小値に等しい。尺度1の旧候補は $F$ に吸収される。この同値は [JointSurplusComparison.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/JointSurplusComparison.lean) の `jointCumulative_eq_scaleOne_min` で証明している。
+全域で有効な $F$ は非減少なので、 GRHの下で $Q_{\mathrm{MR}}(N) \le F(\ln N)$ である。 `jointCumulative` は、この上界と `smoothCumulative` の最小値に等しい。この同値は [JointSurplusComparison.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/JointSurplusComparison.lean) の `jointCumulative_eq_scaleOne_min` で証明している。 $C(L)$ も $L \ge 0$ で非減少なので、各入力へのmax形から $Q_{\mathrm{MR}}(N) \le C(\ln N)$ が従う。図ではこの2つの累積上界の小さい方を描く。
 
 ### 包絡線の構成
 
-$n < 3000$ では小域の値2または3を使う。 $n \ge 3000$ では有限区間の固定素数候補を含む選択上界と $F(\ln n)$ の最小値をとる。上界の選択は入力ごとに行うため、その値自体を累積上界として扱わない。
+$n < 3000$ では小域の値2または3を使う。 $n \ge 3000$ では固定素数候補、 $F(\ln n)$、 $C(\ln n)$ を比較する。上界の選択は入力ごとに行うため、その値自体を累積上界として扱わない。
 
 ## 上界式の適用区間
 
-次の表は小域と固定素数候補の適用範囲を示す。 $n \ge 3000$ では、適用可能な候補と $F(L)$ を比較する。
+次の表は描画範囲で数値比較により確認した $U_{\mathrm{MR}}$ の候補を示す。 $C(L)$ と31の交点を $L_{31}=\sqrt{31\cdot1250/517}$ とする。図の上界の定義は全域で $\mathrm{jointSelected}(n)$ と $C(\ln n)$ の最小値である。
 
 | 適用条件 | 現行の上界を構成する候補 |
 |---|---|
 | $9 \le n < 2047$ | $2$ |
 | $2047 \le n < 3000$ | $3$ |
 | $\ln3000 \le L \le 8.0901$ | $23$ |
-| $8.0901 < L \le 8.3320$ | $29$ |
-| $8.3320 < L \le 9.0031$ | $31$ |
-| $9.0031 < L \le 9.3961$ | $37$ |
-| $9.3961 < L \le 9.9619$ | $43$ |
-| $9.9619 < L \le 10.4895$ | $47$ |
-| $10.4895 < L \le 10.9671$ | $53$ |
-| $10.9671 < L$ | $F(L)$ |
+| $8.0901 < L < L_{31}$ | $C(L)$ |
+| $L_{31} \le L \le 9.0031$ | $31$ |
+| $9.0031 < L$ | $\min\lbrace C(L),F(L)\rbrace$ |
 
 ### 比較グラフ
 
 ![Miller–Rabinの最小素数証人と上界式の比較](figures/mr_upper_bound_comparison.svg)
 
-横軸は $\ln(\ln n)$ に線形なスケールとし、目盛りには $n$ を10の累乗で示す。縦軸は対数軸である。 $2^{64}$、 $2^{80}$、 $2^{128}$ の縦グリッドを重ねた。橙の実線は有限区間の候補と $F$ から定めた $U_{\mathrm{MR}}(n)$、黒の点線は $(4/9)(\ln n)^2$、青緑の点と階段線は最小素数証人の記録を表す。
+横軸は $\ln(\ln n)$ に線形なスケールとし、目盛りには $n$ を10の累乗で示す。縦軸は対数軸である。 $2^{64}$、 $2^{80}$、 $2^{128}$ の縦グリッドを重ねた。橙の実線は $\mathrm{jointSelected}(n)$ と $C(\ln n)$ の最小値、黒の点線は $2(\log_9 n)^2$、青緑の点と階段線は最小素数証人の記録を表す。
 
 基数を素数 $p_1=2,p_2=3,p_3=5,\ldots$ の順に選んでMiller–Rabinテストを行う。青緑の点の横座標は [OEIS A006945](https://oeis.org/A006945) の第 $k$ 項、すなわち最初の $k-1$ 個の素数基数 $p_1,\ldots,p_{k-1}$ によるテストをすべて通過する最小の奇合成数である。縦座標はその入力を棄却する最小素数基数 $q_{\mathrm{MR}}(n)$ であり、記録更新点では $Q_{\mathrm{MR}}(n)$ と一致する。例えば、 $n=2047$ は基数2で通過し、基数3で棄却されるため、点の縦座標は3となる。青緑の階段線は掲載した記録を結んだもので、未探索範囲への外挿ではない。
 
@@ -282,6 +282,6 @@ $n < 3000$ では小域の値2または3を使う。 $n \ge 3000$ では有限�
 
 ![MR累積上界と点ごとの候補](figures/mr_cumulative_high_comparison.svg)
 
-橙線は`jointCumulative` による累積上界を $L^2$ で割った値、青い破線は点ごとの上界 $U_{\mathrm{MR}}(n)/(\ln n)^2$ を示す。黒点線の高さは $4/9$ である。実数軸の描画と、Leanによる自然数上端の証明は区別する。[PNG版](figures/mr_cumulative_high_comparison.png)
+橙線は `jointCumulative` と $C(L)$ の小さい方を $L^2$ で割った累積上界、青い破線は点ごとの上界 $U_{\mathrm{MR}}(n)/(\ln n)^2$ を示す。黒点線の高さは $2/(\ln 9)^2$ である。実数軸の描画と、Leanによる自然数上端の証明は区別する。[PNG版](figures/mr_cumulative_high_comparison.png)
 
 [構成全体へ](README.md) · [PrimeTest](PrimeTest.md) · [LLS](LLS.md)
