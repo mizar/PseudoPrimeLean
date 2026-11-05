@@ -18,6 +18,12 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.FromLLS
 public import PseudoPrime.PrimeTestBounds.MillerRabin.ReducedContourComparison
 public import PseudoPrime.PrimeTestBounds.MillerRabin.ReducedContourAbsorption
 public import PseudoPrime.PrimeTestBounds.MillerRabin.SmoothDualCumulative
+public import PseudoPrime.PrimeTestBounds.MillerRabin.ScaleOneCumulativeA
+public import PseudoPrime.PrimeTestBounds.MillerRabin.ScaleOneComparisonA
+public import PseudoPrime.PrimeTestBounds.MillerRabin.JointSurplusCumulative
+public import PseudoPrime.PrimeTestBounds.MillerRabin.JointSurplusComparison
+public import PseudoPrime.PrimeTestBounds.MillerRabin.JointSurplusThresholds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.JointSurplusAsymptotic
 
 /-!
 # PseudoPrime public library
