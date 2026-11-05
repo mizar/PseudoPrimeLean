@@ -1,6 +1,6 @@
 # PrimeTestBounds.MillerRabin　GRH下の素数判定同値と証人上界
 
-GRHの下で、奇合成数 $n \ge 9$ の最小Miller–Rabin拒否素数は $\max\lbrace 2,(517/1250)(\ln n)^2\rbrace$ 以下であり、 $2(\log_9 n)^2$ 以下でもある。定理は [LeastPrime4136.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/LeastPrime4136.lean) にある。 $(4/9)(\ln n)^2$ による素数判定条件の同値は [FourNinthsCriterion.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsCriterion.lean) にある。名前空間は `PseudoPrime.PrimeTestBounds.MillerRabin` で、 `import PseudoPrime` から利用できる。
+GRHの下で、奇合成数 $n \ge 9$ の最小Miller–Rabin拒否素数は $\max\lbrace 2,(517/1250)(\ln n)^2\rbrace$ 以下であり、 $2(\log_9 n)^2$ 以下でもある。定理は [LeastPrime4136.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/LeastPrime4136.lean) にある。 底9の上界による素数判定条件は [PrimeMillerRabinLogNineSolution.lean](../ComparatorChallenges/PrimeMillerRabinLogNineSolution.lean) にある。上界の定理は名前空間 `PseudoPrime.PrimeTestBounds.MillerRabin` に属し、 `import PseudoPrime` から利用できる。素数判定条件は別の名前空間 `ComparatorChallenges` に属する。
 
 [JointSurplusEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/JointSurplusEnvelope.lean) の `jointSelected` は有限区間と解析的な上界を組み合わせ、 `jointSelected_least` は最小拒否素数がその値以下であることを示す。 `jointPrime` は選択値を素数へ丸める。本稿と図では、この選択値と上記のmax形の小さい方を $U_{\mathrm{MR}}(n)$ とする。Leanにはこの最小値の専用定義を設けず、証明済みの2つの上界から導く。
 
@@ -29,7 +29,7 @@ $$
 $$
 n \text{ が素数}
 \iff
-\text{すべての素数底 }p \le \frac{4}{9}(\ln\mathrel{} n)^2\text{ が強 Miller–Rabin 条件を満たす}
+\text{すべての素数底 }p \le 2(\log_9 n)^2\text{ が強 Miller–Rabin 条件を満たす}
 $$
 
 具体的には、一意な分解を
@@ -64,7 +64,7 @@ $$
 n \text{ が合成数}
 \iff
 \exists p \text{ 素数},\quad
-p \le \frac{4}{9}(\ln\mathrel{} n)^2
+p \le 2(\log_9 n)^2
 \land p^d \not\equiv 1 \pmod n
 \land \forall j \in ℕ,\quad
 j < s \Longrightarrow p^{2^j d} \not\equiv -1 \pmod n
@@ -74,22 +74,21 @@ $$
 
 Lean では $n - 1$ の 2 進付値 $s$ と奇数部分 $d$ をそれぞれ `padicValNat 2 (n - 1)` と `Nat.divMaxPow (n - 1) 2` として定義し、合同式を `ZMod n` の等式・不等式として表す。 GRHは前述の命題を仮定するものであり、GRH自体を証明したという主張ではない。
 
-`prime_iff_mr_le_four_ninths_log_sq` の宣言部を示す。証明本体は省略している。
+`ComparatorChallenges.prime_millerRabin_log_nine_criterion` の宣言部を示す。証明本体は省略している。
 
 ```lean
-namespace PseudoPrime.PrimeTestBounds.MillerRabin
+namespace ComparatorChallenges
 
-theorem prime_iff_mr_le_four_ninths_log_sq
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) :
+theorem prime_millerRabin_log_nine_criterion (hGRH : GeneralizedRiemannHypothesis) {n : ℕ}
+    (hn : 1 < n) (ho : Odd n) :
     let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)
     (∀ p : ℕ,
         Nat.Prime p →
-          (p : ℝ) ≤ (4 / 9 : ℝ) * (Real.log n) ^ 2 →
+          (p : ℝ) ≤ 2 * (Real.logb 9 n) ^ 2 →
           ((p : ZMod n) ^ d = 1 ∨ ∃ j : ℕ, j < s ∧ (p : ZMod n) ^ (2 ^ j * d) = -1)) ↔
       Nat.Prime n
 
-end PseudoPrime.PrimeTestBounds.MillerRabin
+end ComparatorChallenges
 ```
 
 ## 公開定理
@@ -100,9 +99,7 @@ end PseudoPrime.PrimeTestBounds.MillerRabin
 |---|---|---|
 | `exists_prime_reject_max_4136` | GRH下の奇合成数に対する係数 $517/1250$ のmax形の証人上界 | [GlobalMax4136.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GlobalMax4136.lean) |
 | `compositeLeastPrime_le_max_4136`・`compositeLeastPrime_le_log9_sq` | 最小拒否素数のmax形と底9の上界 | [LeastPrime4136.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/LeastPrime4136.lean) |
-| `exists_prime_witness_four_ninths`・`exists_least_witness_four_ninths` | GRH下の奇合成数 $n \ge 9$ に対する $4/9$ の証人と最小証人 | [FourNinthsBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsBounds.lean) |
-| `prime_iff_mr_le_four_ninths_log_sq` | $4/9$ の上界による素数判定条件 | [FourNinthsCriterion.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsCriterion.lean) |
-| `cumulativeLeastPrime_le_four_ninths_log_sq` | 全自然数の上端に対する累積最大値の $4/9$ 上界 | [FourNinthsCumulative.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsCumulative.lean) |
+| `exists_prime_reject_le_log9_sq` | GRH下の奇合成数に対する底9の拒否素数上界 | [LeastPrime4136.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/LeastPrime4136.lean) |
 | `jointSurplus_least` | 全域上界 $F(\ln n)$ による最小証人の評価 | [JointSurplusEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/JointSurplusEnvelope.lean) |
 | `jointSelected_least`・`jointPrime_least` | 選択上界と素数丸めによる最小証人の評価 | [JointSurplusEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/JointSurplusEnvelope.lean) |
 | `cumulativeLeastPrime_le_joint` | 全自然数の上端に対する累積最大値の評価 | [JointSurplusCumulative.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/JointSurplusCumulative.lean) |
@@ -110,11 +107,13 @@ end PseudoPrime.PrimeTestBounds.MillerRabin
 | `jointSurplus_lt_042` など | 指定した入口以降での係数評価 | [JointSurplusThresholds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/JointSurplusThresholds.lean) |
 | `exists_primeWitness_lt_3000` | GRHを仮定しない奇合成数 $9 \le n < 3000$ の定理 | [SmallLogBound.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/SmallLogBound.lean) |
 
+素数判定条件の `ComparatorChallenges.prime_millerRabin_log_nine_criterion` は [Comparatorの解答](../ComparatorChallenges/PrimeMillerRabinLogNineSolution.lean) にある。
+
 ## 証明の流れ
 
 係数 $517/1250$ のmax形では、 $\ln n < 8$ を底2・3の有限分類で扱う。 $8 \le \ln n \le 350$ で素因数が重複込みで2個の場合は、平方数について係数 $0.371$、相異なる2素数の積について係数 $0.409$ の上界を使う。有限証明では90組の素数供給と956個の計数候補を認証し、平方数の78行と半素数の122区間を接続する。素因数が3個以上の場合は、 $8 \le \ln n \le 25/2$ で小さい素因数を使い、 $25/2 \le \ln n \le 3461/10$ で偶指標の補正を使う。 $\ln n \ge 3461/10$ は全域Gaussian上界で覆う。
 
-係数 $4/9$ の定理では重複込みの素因数個数により奇合成数を分類する。素因数が3個以上なら既存の因数個数による上界を使う。2個の場合は平方と異なる2素数の積に分け、局所核の大きさと素数積の個数を比較する。低域では重複を許す素数積と有限個の有理数証明書を使い、中域では素数個数の解析的下界と61行の証明書を使う。 $\ln n \ge 1024$ は一様な評価で扱う。小さい入力と固定素数23・29の既存定理を接続し、全域を覆う。実装は [FourNinthsFiniteWitness.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsFiniteWitness.lean) と [FourNinthsHighWitness.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/FourNinthsHighWitness.lean) を経て全域定理に至る。
+底9の素数判定条件では、合成数の場合は底9の拒否素数上界を使う。素数の場合は底9の検査範囲を既存の素数入力の合格範囲と比較し、GRHを使わずにすべての対象となる素数底が合格することを示す。
 
 全域上界 $F$ では尺度1の算術和の寄与と符号付きGamma評価を組み合わせる。共同の重みに対するAbel評価と素数供給の下界を使って、大きな部分群指数の場合に証人を得る。一様な3素因子の場合はGaussian比較を使う。各因数構造の証人を同じ切断点へ接続し、最小証人と累積上界を導く。
 
@@ -126,15 +125,16 @@ end PseudoPrime.PrimeTestBounds.MillerRabin
 
 ```lean
 import PseudoPrime
+import ComparatorChallenges.PrimeMillerRabinLogNineSolution
+
+#print axioms ComparatorChallenges.prime_millerRabin_log_nine_criterion
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
-#print axioms prime_iff_mr_le_four_ninths_log_sq
 #print axioms exists_prime_reject_max_4136
 #print axioms compositeLeastPrime_le_max_4136
 #print axioms compositeLeastPrime_le_log9_sq
-#print axioms exists_prime_witness_four_ninths
-#print axioms cumulativeLeastPrime_le_four_ninths_log_sq
+#print axioms exists_prime_reject_le_log9_sq
 #print axioms jointPrime_least
 #print axioms cumulativeLeastPrime_le_joint
 #print axioms PseudoPrime.PrimeTest.base_two_or_three_rejects_of_lt_3000
@@ -274,7 +274,7 @@ $n < 3000$ では小域の値2または3を使う。 $n \ge 3000$ では固定�
 
 基数を素数 $p_1=2,p_2=3,p_3=5,\ldots$ の順に選んでMiller–Rabinテストを行う。青緑の点の横座標は [OEIS A006945](https://oeis.org/A006945) の第 $k$ 項、すなわち最初の $k-1$ 個の素数基数 $p_1,\ldots,p_{k-1}$ によるテストをすべて通過する最小の奇合成数である。縦座標はその入力を棄却する最小素数基数 $q_{\mathrm{MR}}(n)$ であり、記録更新点では $Q_{\mathrm{MR}}(n)$ と一致する。例えば、 $n=2047$ は基数2で通過し、基数3で棄却されるため、点の縦座標は3となる。青緑の階段線は掲載した記録を結んだもので、未探索範囲への外挿ではない。
 
-主図の描画範囲は $9 \le n \le 10^{64}$、縦軸は $10^0$ から $10^4$ である。点ごとの上界を描いており、累積上界としての単調性は仮定していない。挿入図は $3000 \le n \le e^{10^{14}}$ での比 $U_{\mathrm{MR}}(n)/(\ln n)^2$ を示す。この比の下降は分子である上界 $U_{\mathrm{MR}}(n)$ の下降を意味しない。全域上界 $F$ が $4/9$ の上界を改善する範囲は主図の範囲外にある。そこで入力ごとの上界に下降が生じても、累積最大値の下降を表すものではない。
+主図の描画範囲は $9 \le n \le 10^{64}$、縦軸は $10^0$ から $10^4$ である。点ごとの上界を描いており、累積上界としての単調性は仮定していない。挿入図は $3000 \le n \le e^{10^{14}}$ での比 $U_{\mathrm{MR}}(n)/(\ln n)^2$ を示す。この比の下降は分子である上界 $U_{\mathrm{MR}}(n)$ の下降を意味しない。全域上界 $F$ がmax形を改善する範囲は主図の範囲外にある。そこで入力ごとの上界に下降が生じても、累積最大値の下降を表すものではない。
 
 図の数値計算はLeanの証明を代替しない。 [PNG版](figures/mr_upper_bound_comparison.png)
 
