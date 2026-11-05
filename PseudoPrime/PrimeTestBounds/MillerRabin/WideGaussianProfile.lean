@@ -8,11 +8,13 @@ module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRelativeHighNumerics
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRelativeTripleBounds
+
 /-! # Relative Gaussian witnesses at the lower dual-scale entrance -/
 
 @[expose] public section
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
+
 /-- Input bounds for a relative Gaussian witness from scale 200000000.
 The fields certify the radius, fourth root and strict scalar margin. -/
 structure WideGaussianProfile where
@@ -100,9 +102,8 @@ theorem wideGaussian_error (f : WideGaussianProfile) {n : ℕ} {L : ℝ} (hL : f
   linarith only [hpole, ht.1, ht.2]
 
 /-- The profile margin contradicts the index-four Gaussian comparison with bounded errors. -/
-theorem wideGaussian_false (f : WideGaussianProfile) {L : ℝ} (hL : f.T ≤ L)
-    {r s A : ℝ} (hr : f.a * L ≤ r) (hr500 : 500 ≤ r) (hs10 : 10 ≤ s)
-    (hs : s ≤ (61 / 100 : ℝ) * L / f.v)
+theorem wideGaussian_false (f : WideGaussianProfile) {L : ℝ} (hL : f.T ≤ L) {r s A : ℝ}
+    (hr : f.a * L ≤ r) (hr500 : 500 ≤ r) (hs10 : 10 ≤ s) (hs : s ≤ (61 / 100 : ℝ) * L / f.v)
     (hA : A ≤ (12871 / 1000 : ℝ) - 2 * (489311 / 100000) + 4 + 273 / 1000)
     (hcmp :
       (10971611 / 5000000 : ℝ) * r ≤
@@ -137,11 +138,10 @@ theorem wideGaussian_false (f : WideGaussianProfile) {L : ℝ} (hL : f.T ≤ L)
     nlinarith only [hcmp, hr, hs, hA, hleft, hright]
   linarith only [hmargin, hmul, hbound]
 
-
 /-- Under GRH, an index-four subgroup with the stated conductor bound gives an actual
 rejecting prime within the profile cutoff. -/
-theorem wideGaussian_witness_four (f : WideGaussianProfile) {n : ℕ} [NeZero n]
-    (hnOdd : Odd n) (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
+theorem wideGaussian_witness_four (f : WideGaussianProfile) {n : ℕ} [NeZero n] (hnOdd : Odd n)
+    (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
@@ -257,6 +257,5 @@ theorem wideGaussian_witness_card (f : WideGaussianProfile) {n : ℕ} (hnOdd : O
       (hq.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hqn))
       (hr.odd_of_ne_two (hnOdd.ne_two_of_dvd_nat hrn)) hpq hpr hqr hnprod (hK p hp hpn)
       (hK q hq hqn) (hK r hr hrn) (hU p q hp hq hpn hqn) (hU p r hp hr hpn hrn) hnlarge hGRH hL
-
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

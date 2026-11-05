@@ -8,17 +8,18 @@ module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.DualMeanCofactor
 public import PseudoPrime.PrimeTestBounds.MillerRabin.VariableRepeatedBounds
+
 /-! # Repeated-factor witnesses for the two-cell mean bridge -/
 
 @[expose] public section
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
+
 /-- Under RH, the variable-radius divisor theorem bounds a rejecting prime for an
 odd modulus with a sufficiently large prime-power divisor. -/
-theorem dualMean_primePow {n p a : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime)
-    (hp2 : p ≠ 2) (ha : 2 ≤ a) (hdiv : p ^ a ∣ n) (hRH : RiemannHypothesis)
-    (hL : (81000 : ℝ) ≤ Real.log n) (hlower : Real.log n / 3 ≤ Real.log (p ^ a : ℕ))
-    (hupper : Real.log (p ^ a : ℕ) ≤ Real.log n) :
+theorem dualMean_primePow {n p a : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime) (hp2 : p ≠ 2)
+    (ha : 2 ≤ a) (hdiv : p ^ a ∣ n) (hRH : RiemannHypothesis) (hL : (81000 : ℝ) ≤ Real.log n)
+    (hlower : Real.log n / 3 ≤ Real.log (p ^ a : ℕ)) (hupper : Real.log (p ^ a : ℕ) ≤ Real.log n) :
     ∃ r : ℕ,
       r.Prime ∧
         (r : ℝ) ≤ (4187 / 10000 : ℝ) * (Real.log n) ^ 2 ∧
@@ -31,8 +32,8 @@ theorem dualMean_primePow {n p a : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime)
 
 /-- Under RH, an odd product of a prime square and a prime has a witness below
 the new coefficient. Split on the logarithmic size of the prime cofactor. -/
-theorem dualMean_squarePrime {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime)
-    (hq : q.Prime) (hprod : n = p ^ 2 * q) (hRH : RiemannHypothesis) (hL : (81000 : ℝ) ≤ Real.log n)
+theorem dualMean_squarePrime {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime) (hq : q.Prime)
+    (hprod : n = p ^ 2 * q) (hRH : RiemannHypothesis) (hL : (81000 : ℝ) ≤ Real.log n)
     (hLU : Real.log n ≤ 5000000) :
     ∃ r : ℕ,
       r.Prime ∧
@@ -56,10 +57,6 @@ theorem dualMean_squarePrime {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Pri
   · have hlower : Real.log n / 3 ≤ Real.log (p ^ 2 : ℕ) := by
       have hqsmall := le_of_not_gt hqLarge
       linarith only [hlog, hqsmall, hL]
-    exact
-      dualMean_primePow hn ho hp hp2 (by norm_num only : 2 ≤ 2) hdiv hRH hL hlower hupper
-
-
-
+    exact dualMean_primePow hn ho hp hp2 (by norm_num only : 2 ≤ 2) hdiv hRH hL hlower hupper
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

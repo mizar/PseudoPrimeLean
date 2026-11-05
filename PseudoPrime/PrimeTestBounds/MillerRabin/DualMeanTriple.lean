@@ -8,11 +8,13 @@ module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.DualMeanRepeated
 public import PseudoPrime.PrimeTestBounds.MillerRabin.ReducedGaussianBounds
+
 /-! # Gaussian triple witness for the two-cell mean bridge -/
 
 @[expose] public section
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
+
 /-- The rational Gaussian profile certifies the uniform three-factor branch at
 the squared radius for the mean bridge, from logarithmic scale 81000. -/
 noncomputable def dualMeanGaussian : ReducedGaussianProfile where
@@ -26,6 +28,7 @@ noncomputable def dualMeanGaussian : ReducedGaussianProfile where
   upper := by norm_num only
   fourth := by norm_num only [and_self]
   margin := by norm_num only
+
 /-- Under GRH, a squarefree odd modulus with three prime factors has a rejecting
 prime below coefficient 4187/10000 from scale 81000. Local witnesses cover
 nonuniform cases and the certified Gaussian profile handles the uniform case. -/
@@ -62,11 +65,9 @@ theorem dualMean_squarefreeThree {n : ℕ} (hn : 1 < n) (ho : Odd n) (hsf : Squa
       rcases lt_or_gt_of_ne hne with hlt | hgt
       · exact hlocal (Or.inl ⟨q, hqMem, p, hpMem, hlt⟩)
       · exact hlocal (Or.inl ⟨p, hpMem, q, hqMem, hgt⟩)
-    obtain ⟨r, hr, hb, hf⟩ := reducedGaussian_cardWitness dualMeanGaussian ho hsf hcard hK hU
-      hGRH hL
+    obtain ⟨r, hr, hb, hf⟩ :=
+      reducedGaussian_cardWitness dualMeanGaussian ho hsf hcard hK hU hGRH hL
     have hc : (647 / 1000 : ℝ) ^ 2 ≤ 4187 / 10000 := by norm_num only
     exact ⟨r, hr, hb.trans (mul_le_mul_of_nonneg_right hc (sq_nonneg _)), hf⟩
-
-
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

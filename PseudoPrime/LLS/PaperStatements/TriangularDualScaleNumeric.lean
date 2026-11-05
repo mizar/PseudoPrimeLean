@@ -16,16 +16,20 @@ public import PseudoPrime.LLS.PaperStatements.TriangularLargeFactorComparison
 @[expose] public section
 
 namespace PseudoPrime.LLS.PaperStatements
+
 /-- At every positive scale, the real part of the normalized Gamma integral is at most 6000.
 Apply the norm bound, including when the scale is the inverse of a larger one. -/
 theorem triangular18_gamma_re_le {q : ℕ} (χ : DirichletCharacter ℂ q) {x : ℝ} (hx : 0 < x) :
     let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
     (((1 / (2 * Real.pi) : ℝ) : ℂ) *
-      (∫ t : ℝ, logDeriv χ.gammaFactor ((((9 / 16 : ℝ) : ℂ) + Complex.I * t) + 1 / 2) *
-        (K.function (((9 / 16 : ℝ) : ℂ) + Complex.I * t) *
-          (x : ℂ) ^ (((9 / 16 : ℝ) : ℂ) + Complex.I * t)))).re ≤ 6000 := by
-  have hb := triangular18_gammaIntegral_norm_le_6000 χ
-    (by norm_num only : (0 : ℝ) ≤ 9 / 16) (by norm_num only : (9 / 16 : ℝ) ≤ 5 / 8) hx
+          (∫ t : ℝ,
+            logDeriv χ.gammaFactor ((((9 / 16 : ℝ) : ℂ) + Complex.I * t) + 1 / 2) *
+              (K.function (((9 / 16 : ℝ) : ℂ) + Complex.I * t) *
+                (x : ℂ) ^ (((9 / 16 : ℝ) : ℂ) + Complex.I * t)))).re ≤
+      6000 := by
+  have hb :=
+    triangular18_gammaIntegral_norm_le_6000 χ (by norm_num only : (0 : ℝ) ≤ 9 / 16)
+      (by norm_num only : (9 / 16 : ℝ) ≤ 5 / 8) hx
   exact (Complex.re_le_norm _).trans hb
 
 /-- Under GRH and containment of eligible primes, the finite principal sum is bounded by
@@ -40,7 +44,8 @@ theorem triangular18_dual_numeric {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
               (1 : DirichletCharacter ℂ q) x n).re) ≤
       300000000 * (Real.sqrt x + Real.sqrt x⁻¹) +
         1300000 * (x ^ (1 / 4 : ℝ) + (x⁻¹) ^ (1 / 4 : ℝ)) +
-        602600000 + (36 + triangularKernelProfile 18 x) * subgroupConductorLogSum H +
+        602600000 +
+        (36 + triangularKernelProfile 18 x) * subgroupConductorLogSum H +
         ((H.index : ℝ) - 1) * 11964 := by
   classical
   let _ := Classical.propDecidable
@@ -48,9 +53,10 @@ theorem triangular18_dual_numeric {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
   let K := triangularMellinKernel (by norm_num only : (0 : ℝ) < 18)
   let G := fun (i : A) (ψ : DirichletCharacter ℂ i.val.conductor) (y : ℝ) ↦
     ((1 / (2 * Real.pi) : ℝ) : ℂ) *
-      (∫ t : ℝ, logDeriv ψ.gammaFactor ((((9 / 16 : ℝ) : ℂ) + Complex.I * t) + 1 / 2) *
-        (K.function (((9 / 16 : ℝ) : ℂ) + Complex.I * t) *
-          (y : ℂ) ^ (((9 / 16 : ℝ) : ℂ) + Complex.I * t)))
+      (∫ t : ℝ,
+        logDeriv ψ.gammaFactor ((((9 / 16 : ℝ) : ℂ) + Complex.I * t) + 1 / 2) *
+          (K.function (((9 / 16 : ℝ) : ℂ) + Complex.I * t) *
+            (y : ℂ) ^ (((9 / 16 : ℝ) : ℂ) + Complex.I * t)))
   have hf : Finset.univ.filter (fun χ : A ↦ χ.val ≠ 1) = Finset.univ.erase (1 : A) := by
     have he (χ : A) : χ.val = 1 ↔ χ = 1 := by
       constructor
@@ -75,12 +81,15 @@ theorem triangular18_dual_numeric {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
       simp only [Finset.mem_erase, Finset.mem_univ]
     · intro χ _
       rfl
-  have hg : (∑ χ ∈ Finset.univ.erase (1 : A),
-      (G χ χ.val.primitiveCharacter x + G χ (χ.val.primitiveCharacter)⁻¹ x⁻¹).re) ≤
+  have hg :
+    (∑ χ ∈ Finset.univ.erase (1 : A),
+        (G χ χ.val.primitiveCharacter x + G χ (χ.val.primitiveCharacter)⁻¹ x⁻¹).re) ≤
       ((H.index : ℝ) - 1) * 12000 := by
     have hp : 0 < x := zero_lt_one.trans_le hx
-    have hs : ∀ χ : A, (G χ χ.val.primitiveCharacter x +
-        G χ (χ.val.primitiveCharacter)⁻¹ x⁻¹).re ≤ (12000 : ℝ) := by
+    have hs :
+      ∀ χ : A,
+        (G χ χ.val.primitiveCharacter x + G χ (χ.val.primitiveCharacter)⁻¹ x⁻¹).re ≤
+          (12000 : ℝ) := by
       intro χ
       have h1 := triangular18_gamma_re_le χ.val.primitiveCharacter hp
       have h2 := triangular18_gamma_re_le (χ.val.primitiveCharacter)⁻¹ (inv_pos.mpr hp)
@@ -99,13 +108,18 @@ theorem triangular18_dual_numeric {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
   simp only [Real.sqrt_one, Real.one_rpow, mul_one] at h1
   dsimp only at ha
   change (H.index : ℝ) * _ ≤ _
-  change (H.index : ℝ) * _ ≤
+  change
+    (H.index : ℝ) * _ ≤
       triangularKernelProfile 18 x * subgroupConductorLogSum H +
-        (∑ χ ∈ Finset.univ.erase (1 : A),
-          (G χ χ.val.primitiveCharacter x + G χ (χ.val.primitiveCharacter)⁻¹ x⁻¹).re) +
-        300000000 * Real.sqrt x⁻¹ + 1300000 * (x⁻¹) ^ (1 / 4 : ℝ) +
-        36 * subgroupConductorLogSum H - _ - 36 * ((H.index : ℝ) - 1) +
-        300000000 * Real.sqrt x + 1300000 * x ^ (1 / 4 : ℝ) at hb
+            (∑ χ ∈ Finset.univ.erase (1 : A),
+              (G χ χ.val.primitiveCharacter x + G χ (χ.val.primitiveCharacter)⁻¹ x⁻¹).re) +
+            300000000 * Real.sqrt x⁻¹ +
+            1300000 * (x⁻¹) ^ (1 / 4 : ℝ) +
+            36 * subgroupConductorLogSum H -
+          _ -
+          36 * ((H.index : ℝ) - 1) +
+        300000000 * Real.sqrt x +
+        1300000 * x ^ (1 / 4 : ℝ) at hb
   nlinarith only [hb, ha, h1, hg]
 
 /-- Under GRH, large level factors and small-prime containment imply the all-scale
@@ -150,11 +164,14 @@ theorem exists_prime_dual_gap {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)ˣ)
   by_contra hnone
   have hlarge (p : ℕ) (hp : p ∈ q.primeFactors) : x ≤ (p : ℝ) := by
     by_contra hlt
-    exact hnone ⟨p, Nat.prime_of_mem_primeFactors hp, (lt_of_not_ge hlt).le,
-      Or.inl (Nat.dvd_of_mem_primeFactors hp)⟩
+    exact
+      hnone
+        ⟨p, Nat.prime_of_mem_primeFactors hp, (lt_of_not_ge hlt).le,
+          Or.inl (Nat.dvd_of_mem_primeFactors hp)⟩
   have hsmall (p : ℕ) (hp : p.Prime) (_ : ¬p ∣ q) (hle : (p : ℝ) ≤ x) :
-      NumberTheory.residueInSubgroup q H p := by
+    NumberTheory.residueInSubgroup q H p := by
     by_contra hout
     exact hnone ⟨p, hp, hle, Or.inr hout⟩
   exact (not_le_of_gt hgap) (triangular18_dual_large_factors H hGRH hx hlarge hsmall)
+
 end PseudoPrime.LLS.PaperStatements

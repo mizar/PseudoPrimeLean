@@ -9,17 +9,18 @@ module
 public import PseudoPrime.PrimeTestBounds.MillerRabin.MeanAllFactors
 public import PseudoPrime.PrimeTestBounds.MillerRabin.DualMeanTriple
 public import PseudoPrime.PrimeTestBounds.MillerRabin.DualScaleWitness
+
 /-! # All-factor witness for the shortened mean-counting bridge -/
 
 @[expose] public section
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
+
 /-- Under GRH, distinct semiprimes in the bridge interval admit the new witness bound.
 Split on the larger factor's logarithm. -/
-theorem dualMean_distinct {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime)
-    (hq : q.Prime) (hpq : p < q) (hprod : n = p * q)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : (81000 : ℝ) ≤ Real.log n)
-    (hLU : Real.log n ≤ 5000000) :
+theorem dualMean_distinct {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime) (hq : q.Prime)
+    (hpq : p < q) (hprod : n = p * q) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    (hL : (81000 : ℝ) ≤ Real.log n) (hLU : Real.log n ≤ 5000000) :
     ∃ r : ℕ,
       r.Prime ∧
         (r : ℝ) ≤ (4187 / 10000 : ℝ) * (Real.log n) ^ 2 ∧
@@ -39,10 +40,7 @@ theorem dualMean_distinct {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime)
     have he : ((647 / 1000 : ℝ) * Real.log n) ^ 2 = (647 / 1000 : ℝ) ^ 2 * (Real.log n) ^ 2 :=
       mul_pow _ _ 2
     exact ⟨r, hr, hb.trans (hsq.trans (he.le.trans hcoeff)), hf⟩
-  · exact
-      dualMean_cofactor hGRH.riemann hn ho hp.one_lt hq hq2 hprod hL hLU
-        (lt_of_not_ge hsmall)
-
+  · exact dualMean_cofactor hGRH.riemann hn ho hp.one_lt hq hq2 hprod hL hLU (lt_of_not_ge hsmall)
 
 /-- Under GRH, the general factor-count bound covers odd composites with at least
 four prime factors. -/
@@ -61,7 +59,6 @@ theorem dualMean_many {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
     apply (div_le_div_iff₀ hp (by norm_num only : (0 : ℝ) < 10000)).mpr
     nlinarith only [hs]
   exact ⟨r, hr, hb.trans (mul_le_mul_of_nonneg_right hcoeff (sq_nonneg _)), hf⟩
-
 
 /-- Under GRH, the bridge bound covers the two-factor case, including squares. -/
 theorem dualMean_two {n : ℕ} (hn : 1 < n) (ho : Odd n)
@@ -85,10 +82,8 @@ theorem dualMean_two {n : ℕ} (hn : 1 < n) (ho : Odd n)
       linarith only [hL]
     have hupper : Real.log (p ^ 2 : ℕ) ≤ Real.log n := by rw [← hsquare]
     exact
-      dualMean_primePow hn ho hp hp2 (by norm_num only : 2 ≤ 2) hdiv hGRH.riemann hL
-        hlower hupper
+      dualMean_primePow hn ho hp hp2 (by norm_num only : 2 ≤ 2) hdiv hGRH.riemann hL hlower hupper
   · exact dualMean_distinct hn ho hp hq hlt hprod hGRH hL hLU
-
 
 /-- Under GRH, the bridge bound covers repeated and squarefree three-factor cases. -/
 theorem dualMean_three {n : ℕ} (hn : 1 < n) (ho : Odd n)
@@ -143,7 +138,6 @@ theorem dualMean_three {n : ℕ} (hn : 1 < n) (ho : Odd n)
     rw [List.toFinset_card_of_nodup hnodup, hl]
   exact dualMean_squarefreeThree hn ho hsf hdistinct hGRH hL
 
-
 /-- Under GRH, factor-count classification gives the bridge bound throughout its finite interval. -/
 theorem dualMean_finite {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : (81000 : ℝ) ≤ Real.log n)
@@ -169,15 +163,15 @@ theorem dualMean_finite {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
 coefficient 4187/10000. The 0.4 dual-scale theorem covers the tail. -/
 theorem prime_witness_04187 {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : (81000 : ℝ) ≤ Real.log n) :
-    ∃ r : ℕ, r.Prime ∧
-      (r : ℝ) ≤ (4187 / 10000 : ℝ) * (Real.log n) ^ 2 ∧
-      ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
+    ∃ r : ℕ,
+      r.Prime ∧
+        (r : ℝ) ≤ (4187 / 10000 : ℝ) * (Real.log n) ^ 2 ∧
+        ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
   by_cases hsmall : Real.log n ≤ 5000000
   · exact dualMean_finite hn ho hc hGRH hL hsmall
   · have hlarge : (5000000 : ℝ) ≤ Real.log n := (lt_of_not_ge hsmall).le
     obtain ⟨r, hr, hb, hf⟩ := prime_witness_dual040 hn ho hc hGRH hlarge
     have hcoeff : (2 / 5 : ℝ) ≤ 4187 / 10000 := by norm_num only
     exact ⟨r, hr, hb.trans (mul_le_mul_of_nonneg_right hcoeff (sq_nonneg _)), hf⟩
-
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

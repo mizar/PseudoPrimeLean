@@ -8,16 +8,17 @@ module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.DualScaleCumulative
 public import PseudoPrime.PrimeTestBounds.MillerRabin.ReducedContourComparison
+
 /-! # Strict improvement of the preceding full public selection -/
 
 @[expose] public section
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
+
 /-- In the stated interval the preceding full selection equals its 0.4228 candidate.
 Use the earlier factorial comparison to identify the remaining mean branch. -/
 theorem reducedSelected_eq_mean_window {n : ℕ} (hL : (10000000 : ℝ) ≤ Real.log n)
-    (hU : Real.log n ≤ 20000000) :
-    reducedSelected n = (1057 / 2500 : ℝ) * Real.log n ^ 2 := by
+    (hU : Real.log n ≤ 20000000) : reducedSelected n = (1057 / 2500 : ℝ) * Real.log n ^ 2 := by
   have h80 : (80000 : ℝ) ≤ Real.log n := by linarith only [hL]
   have hs : 0 < Real.log n ^ 2 := sq_pos_of_pos (by linarith only [hL])
   have hm := meanSelected_lt_factorial hL hU
@@ -35,6 +36,7 @@ theorem reducedSelected_eq_mean_window {n : ℕ} (hL : (10000000 : ℝ) ≤ Real
       ite_eq_right (by linarith only [hU])]
   rw [reducedSelected, ite_eq_left h80, hold, hr, min_eq_right]
   nlinarith only [hs]
+
 /-- On the stated nonempty scale interval the dual selection strictly improves
 the entire preceding public selection, using the certified 0.4 witness. -/
 theorem dualSelected_lt_reduced_window {n : ℕ} (hL : (10000000 : ℝ) ≤ Real.log n)
@@ -47,13 +49,13 @@ theorem dualSelected_lt_reduced_window {n : ℕ} (hL : (10000000 : ℝ) ≤ Real
   have hr : dualMeanSeriesCoeff (Real.log n) ≤ 2 / 5 := by
     rw [dualMeanSeriesCoeff, ite_eq_left h81]
     apply (min_le_left _ _).trans
-    rw [dualSeriesCoeff, ite_eq_right (by linarith only [hU]),
+    rw [dualSeriesCoeff, ite_eq_right (by linarith only [hU]), ite_eq_right (by linarith only [hU]),
       ite_eq_right (by linarith only [hU]), ite_eq_right (by linarith only [hU]),
-      ite_eq_right (by linarith only [hU]), ite_eq_right (by linarith only [hU]),
-      ite_eq_left h5]
+      ite_eq_right (by linarith only [hU]), ite_eq_left h5]
   rw [dualSelected, ite_eq_left h80]
   apply (min_le_right _ _).trans_lt
   rw [hold]
   have hh := mul_le_mul_of_nonneg_right hr (le_of_lt hs)
   nlinarith only [hh, hs]
+
 end PseudoPrime.PrimeTestBounds.MillerRabin

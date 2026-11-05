@@ -8,11 +8,13 @@ module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.MeanCofactorWitness
 public import PseudoPrime.PrimeTestBounds.MillerRabin.DualMeanScalar
+
 /-! # Two-cell mean-counting witness at the shortened dual-scale entrance -/
 
 @[expose] public section
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
+
 /-- Under RH, an odd product with a sufficiently large prime cofactor and logarithm
 between 81000 and 5000000 has a rejecting prime below coefficient 4187/10000.
 The floored radius satisfies two existing theta cells and their certified scalar gaps. -/
@@ -20,7 +22,8 @@ theorem dualMean_cofactor (hRH : RiemannHypothesis) {n m q : ℕ} (hn : 1 < n) (
     (hm : 1 < m) (hq : q.Prime) (hq2 : q ≠ 2) (hprod : n = m * q) (hL : (81000 : ℝ) ≤ Real.log n)
     (hLU : Real.log n ≤ 5000000) (hqL : (647 / 1000 : ℝ) * Real.log n < Real.log q) :
     ∃ r : ℕ,
-      r.Prime ∧ (r : ℝ) ≤ (4187 / 10000 : ℝ) * (Real.log n) ^ 2 ∧
+      r.Prime ∧
+        (r : ℝ) ≤ (4187 / 10000 : ℝ) * (Real.log n) ^ 2 ∧
         ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
   have hLUbig : Real.log n ≤ 40000000000 := by linarith only [hLU]
   let L := Real.log n
@@ -53,7 +56,8 @@ theorem dualMean_cofactor (hRH : RiemannHypothesis) {n m q : ℕ} (hn : 1 < n) (
         exact_mod_cast hx
       have hu28 : Real.log (b ^ 2 : ℕ) ≤ 28 :=
         mean_log_radius_of_pow (Nat.zero_lt_of_lt (by linarith only [hb] : 1 < b)) hbpow
-          (by norm_num only [Nat.cast_ofNat]; linarith only [Real.log_two_lt_d9])
+          (by
+            norm_num only [Nat.cast_ofNat]; linarith only [Real.log_two_lt_d9])
       have hB := Nat.pow_le_pow_left hb 2
       obtain ⟨hθB, hθ, hupper⟩ := mean_theta_cell_one hRH hB
       have hgap := dualMean_gap_one hu0 hu28 hL
@@ -77,7 +81,8 @@ theorem dualMean_cofactor (hRH : RiemannHypothesis) {n m q : ℕ} (hn : 1 < n) (
         exact_mod_cast hx
       have hu31 : Real.log (b ^ 2 : ℕ) ≤ 31 :=
         mean_log_radius_of_pow (Nat.zero_lt_of_lt (by linarith only [hb] : 1 < b)) hbpow
-          (by norm_num only [Nat.cast_ofNat]; linarith only [Real.log_two_lt_d9])
+          (by
+            norm_num only [Nat.cast_ofNat]; linarith only [Real.log_two_lt_d9])
       obtain ⟨hθB, hθ, hupper⟩ := mean_theta_cell_two hRH (Nat.pow_le_pow_left hb2 2)
       have hgap := dualMean_gap_two hu0 hu31 hL1
       exact
@@ -97,4 +102,5 @@ theorem dualMean_cofactor (hRH : RiemannHypothesis) {n m q : ℕ} (hn : 1 < n) (
   change (r : ℝ) ≤ (4187 / 10000 : ℝ) * L ^ 2
   rw [he] at hsquare
   exact hrreal.trans (hsquare.trans hcoeffL)
+
 end PseudoPrime.PrimeTestBounds.MillerRabin

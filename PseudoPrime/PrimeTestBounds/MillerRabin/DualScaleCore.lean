@@ -9,11 +9,13 @@ module
 public import PseudoPrime.LLS.PaperStatements.TriangularDualScaleNumeric
 public import PseudoPrime.PrimeTestBounds.MillerRabin.ReducedContourBounds
 public import PseudoPrime.Analysis.LogTaylorBounds
+
 /-! # Dual-scale budgets and all-factor witness reduction -/
 
 @[expose] public section
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
+
 /-- A dual-scale quadratic cutoff with certified entrance, roots, logarithm and strict margin.
 The fields control the local and large-index branches for every scale above the entrance;
 a separate Gaussian witness handles the remaining three-factor branch. -/
@@ -30,8 +32,8 @@ structure DualScaleCore where
   upper : C ≤ 1
   fourth : 0 < v ∧ v ^ 2 ≤ T
   logLower : ell ≤ Real.log (C * T ^ 2)
-  margin : (36 + max 0 (36 - ell) + (1456 + 13 / 10000000) / v) * T + 12065 <
-    (68 - 3 / 10000) * a * T
+  margin :
+    (36 + max 0 (36 - ell) + (1456 + 13 / 10000000) / v) * T + 12065 < (68 - 3 / 10000) * a * T
 
 /-- The cutoff has the certified square-root and fourth-root bounds above its entrance. -/
 theorem dualCore_roots (f : DualScaleCore) {L : ℝ} (hL : f.T ≤ L) :
@@ -66,14 +68,14 @@ theorem dualCore_roots (f : DualScaleCore) {L : ℝ} (hL : f.T ≤ L) :
 
 /-- At large index, the core's strict margin implies the complete dual-scale gap.
 Both inverse-scale terms and the nonnegative triangular profile are retained. -/
-theorem dualCore_gap (f : DualScaleCore) {L h : ℝ} (hL : f.T ≤ L)
-    (hh : 1000000000000 ≤ h) :
+theorem dualCore_gap (f : DualScaleCore) {L h : ℝ} (hL : f.T ≤ L) (hh : 1000000000000 ≤ h) :
     let x := f.C * L ^ 2;
-    300000000 * (Real.sqrt x + Real.sqrt x⁻¹) +
-        1300000 * (x ^ (1 / 4 : ℝ) + (x⁻¹) ^ (1 / 4 : ℝ)) + 602600000 +
+    300000000 * (Real.sqrt x + Real.sqrt x⁻¹) + 1300000 * (x ^ (1 / 4 : ℝ) + (x⁻¹) ^ (1 / 4 : ℝ)) +
+        602600000 +
         (h - 1) * ((36 + LLS.PaperStatements.triangularKernelProfile 18 x) * L + 11964) <
-      h * (Real.sqrt x * (68 + 4 * Real.exp (-18)) - 1456 * x ^ (1 / 4 : ℝ) -
-        36 * L / (Real.sqrt x - 1)) := by
+      h *
+        (Real.sqrt x * (68 + 4 * Real.exp (-18)) - 1456 * x ^ (1 / 4 : ℝ) -
+          36 * L / (Real.sqrt x - 1)) := by
   let x := f.C * L ^ 2
   have hLp : 0 < L := by linarith only [f.entry, hL]
   have hhp : 0 < h := by linarith only [hh]
@@ -81,8 +83,7 @@ theorem dualCore_gap (f : DualScaleCore) {L h : ℝ} (hL : f.T ≤ L)
   change 1 < x ∧ f.a * L ≤ Real.sqrt x ∧ Real.sqrt x ≤ L ∧ x ^ (1 / 4 : ℝ) ≤ L / f.v at hb
   have hT : 0 ≤ f.T := by linarith only [f.entry]
   have hC : 0 ≤ f.C := (sq_nonneg f.a).trans f.square
-  have hbase : f.C * f.T ^ 2 ≤ x :=
-    mul_le_mul_of_nonneg_left ((sq_le_sq₀ hT hLp.le).mpr hL) hC
+  have hbase : f.C * f.T ^ 2 ≤ x := mul_le_mul_of_nonneg_left ((sq_le_sq₀ hT hLp.le).mpr hL) hC
   have hbase0 : 0 < f.C * f.T ^ 2 := by
     have ha : 0 < f.a := by linarith only [f.root]
     have hc : 0 < f.C := lt_of_lt_of_le (sq_pos_of_pos ha) f.square
@@ -115,20 +116,25 @@ theorem dualCore_gap (f : DualScaleCore) {L h : ℝ} (hL : f.T ≤ L)
     add_nonneg (mul_nonneg (add_nonneg (by norm_num only) hp0) hLp.le) (by norm_num only)
   have hprofile := mul_le_mul_of_nonneg_right hp hLp.le
   have hidx := mul_le_mul_of_nonneg_right (by linarith only [] : h - 1 ≤ h) hpc
-  have hbound := mul_le_mul_of_nonneg_left
-    (show (36 + LLS.PaperStatements.triangularKernelProfile 18 x) * L + 11964 ≤
-      (36 + max 0 (36 - f.ell)) * L + 11964 by nlinarith only [hprofile]) hhp.le
+  have hbound :=
+    mul_le_mul_of_nonneg_left
+      (show
+        (36 + LLS.PaperStatements.triangularKernelProfile 18 x) * L + 11964 ≤
+          (36 + max 0 (36 - f.ell)) * L + 11964
+        by nlinarith only [hprofile])
+      hhp.le
   have hpr := mul_le_mul_of_nonneg_right hh hS
   have hpq := mul_le_mul_of_nonneg_right hh hQ
   have hu :
-    300000000 * (Real.sqrt x + Real.sqrt x⁻¹) +
-        1300000 * (x ^ (1 / 4 : ℝ) + (x⁻¹) ^ (1 / 4 : ℝ)) + 602600000 +
+    300000000 * (Real.sqrt x + Real.sqrt x⁻¹) + 1300000 * (x ^ (1 / 4 : ℝ) + (x⁻¹) ^ (1 / 4 : ℝ)) +
+        602600000 +
         (h - 1) * ((36 + LLS.PaperStatements.triangularKernelProfile 18 x) * L + 11964) ≤
-      h * ((3 / 10000 : ℝ) * Real.sqrt x + (13 / 10000000 : ℝ) * x ^ (1 / 4 : ℝ) +
-        (36 + max 0 (36 - f.ell)) * L + 11965) := by
+      h *
+        ((3 / 10000 : ℝ) * Real.sqrt x + (13 / 10000000 : ℝ) * x ^ (1 / 4 : ℝ) +
+          (36 + max 0 (36 - f.ell)) * L +
+          11965) := by
     nlinarith only [hidx, hbound, hpr, hpq, hsInv, hrInv, hh]
-  let d := (68 - 3 / 10000 : ℝ) * f.a -
-    (36 + max 0 (36 - f.ell) + (1456 + 13 / 10000000 : ℝ) / f.v)
+  let d := (68 - 3 / 10000 : ℝ) * f.a - (36 + max 0 (36 - f.ell) + (1456 + 13 / 10000000 : ℝ) / f.v)
   have hmargin : 12065 < d * f.T := by
     dsimp only [d]
     nlinarith only [f.margin]
@@ -140,9 +146,10 @@ theorem dualCore_gap (f : DualScaleCore) {L h : ℝ} (hL : f.T ≤ L)
   have hE := mul_nonneg hS (Real.exp_pos (-18)).le
   have hg :
     (3 / 10000 : ℝ) * Real.sqrt x + (13 / 10000000 : ℝ) * x ^ (1 / 4 : ℝ) +
-      (36 + max 0 (36 - f.ell)) * L + 11965 <
-    Real.sqrt x * (68 + 4 * Real.exp (-18)) - 1456 * x ^ (1 / 4 : ℝ) -
-      36 * L / (Real.sqrt x - 1) := by
+        (36 + max 0 (36 - f.ell)) * L +
+        11965 <
+      Real.sqrt x * (68 + 4 * Real.exp (-18)) - 1456 * x ^ (1 / 4 : ℝ) -
+        36 * L / (Real.sqrt x - 1) := by
     have hm : 12065 < d * L := hmargin.trans_le hmul
     dsimp only [d] at hm
     have hquarter := hb.2.2.2
@@ -175,8 +182,8 @@ theorem dualCore_local (f : DualScaleCore) {n q : ℕ} (hn : 0 < n) (hq : 0 < q)
 
 /-- Under GRH and a large Fermat-subgroup index, the dual gap gives a rejecting prime.
 A prime factor is nonunit and an outside prime cannot pass the strong test. -/
-theorem exists_prime_dualCoreIndex (f : DualScaleCore) {n : ℕ} [NeZero n] (hn : 1 < n)
-    (ho : Odd n) (hi : 1000000000000 ≤ (PrimeTest.fermatSubgroup n).index)
+theorem exists_prime_dualCoreIndex (f : DualScaleCore) {n : ℕ} [NeZero n] (hn : 1 < n) (ho : Odd n)
+    (hi : 1000000000000 ≤ (PrimeTest.fermatSubgroup n).index)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : f.T ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
@@ -195,9 +202,8 @@ theorem exists_prime_dualCoreIndex (f : DualScaleCore) {n : ℕ} [NeZero n] (hn 
 
 /-- Under GRH, the dual core gives a rejecting prime for every odd composite once
 the same-cutoff witness for the exceptional triple case is supplied. -/
-theorem exists_prime_dualCore (f : DualScaleCore) {n : ℕ} (hn : 1 < n) (ho : Odd n)
-    (hc : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : f.T ≤ Real.log n)
+theorem exists_prime_dualCore (f : DualScaleCore) {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : f.T ≤ Real.log n)
     (htriple :
       Squarefree n →
         n.primeFactors.card = 3 →
@@ -229,4 +235,5 @@ theorem exists_prime_dualCore (f : DualScaleCore) {n : ℕ} (hn : 1 < n) (ho : O
       exact ⟨p, hp, hb.trans (dualCore_local f (Nat.zero_lt_of_lt hn) hqp hsize hL), hr⟩
     · exact htriple ht.1 ht.2.1 ht.2.2.1 ht.2.2.2
   · exact exists_prime_dualCoreIndex f hn ho (by exact_mod_cast (lt_of_not_ge hi).le) hGRH hL
+
 end PseudoPrime.PrimeTestBounds.MillerRabin
