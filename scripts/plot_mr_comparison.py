@@ -915,6 +915,9 @@ def fixed_improved_selected(L: np.ndarray) -> np.ndarray:
 REDUCED_PROFILES = [(1057 / 2500, 80000.0), (39 / 100, 2e8),
                     (161 / 500, 5e8), (3 / 10, 1e9), (71 / 250, 5e9)]
 REDUCED_GAUSSIAN_ENTRY = 3e10
+DUAL_PROFILES = [(4187 / 10000, 81000.0), (2 / 5, 5e6), (9 / 25, 1.5e7),
+                 (33 / 100, 3e7), (31 / 100, 6e7), (29 / 100, 1e8)]
+DUAL_GAUSSIAN_ENTRY = 2e8
 
 
 def reduced_series_bound(L: np.ndarray) -> np.ndarray:
@@ -931,9 +934,32 @@ def reduced_selected(L: np.ndarray) -> np.ndarray:
                       np.where(L >= 80000, reduced_series_bound(L), np.inf))
 
 
+def smooth_coefficient(L: np.ndarray) -> np.ndarray:
+    """Lean smoothCoeff, the maximum of the dual and Gaussian certificates."""
+    k = 68 - 3 / 10000
+    e = 1456 + 13 / 10000000
+    d = 36 + np.maximum(0, 36 + math.log(4) - 2 * np.log(L))
+    a = (d + e / np.sqrt(L) + 12066 / L) / k
+    b = (161 / 200 + (238 / 5) / np.sqrt(L) + 91 / L) / (21943 / 10000)
+    return np.maximum(a**2, (21 / 10) * b**2)
+
+
+def dual_mean_series_bound(L: np.ndarray) -> np.ndarray:
+    """Lean dualMeanSeriesCoeff multiplied by the squared scale."""
+    coeff = np.select([L >= T for _, T in reversed(DUAL_PROFILES[1:])],
+                      [C for C, _ in reversed(DUAL_PROFILES[1:])],
+                      default=1057 / 2500)
+    fixed = np.where(L >= DUAL_GAUSSIAN_ENTRY, gaussian_adaptive_bound(L), coeff * L**2)
+    return np.where(L >= 81000, np.minimum(fixed, (4187 / 10000) * L**2), fixed)
+
+
 def plotted_pointwise_upper(L: np.ndarray) -> np.ndarray:
     """Lean pointwise envelope used by both comparison figures."""
-    return reduced_selected(L)
+    selected = np.minimum(reduced_selected(L),
+                          np.where(L >= 80000, dual_mean_series_bound(L), np.inf))
+    candidate = np.where(L >= DUAL_GAUSSIAN_ENTRY, gaussian_adaptive_bound(L),
+                         smooth_coefficient(L) * L**2)
+    return np.minimum(selected, np.where(L >= 5e6, candidate, np.inf))
 
 
 def fixed_improved_cumulative(L: np.ndarray) -> np.ndarray:
@@ -952,12 +978,43 @@ def reduced_history(L: np.ndarray, count: int = len(REDUCED_PROFILES)) -> np.nda
     return history
 
 
-def reduced_cumulative(L: np.ndarray) -> np.ndarray:
-    """Lean reducedCumulative, with the early Gaussian entrance history."""
+def reduced_gaussian_history(L: np.ndarray) -> np.ndarray:
+    """Lean reducedGaussianHistory on positive scales."""
     history = reduced_history(L)
     entrance = reduced_history(np.array([REDUCED_GAUSSIAN_ENTRY]))[0]
-    gaussian_history = np.minimum(history, np.maximum(entrance, gaussian_adaptive_bound(L)))
-    return np.minimum(fixed_improved_cumulative(L), gaussian_history)
+    return np.minimum(history, np.maximum(entrance, gaussian_adaptive_bound(L)))
+
+
+def reduced_cumulative(L: np.ndarray) -> np.ndarray:
+    """Lean reducedCumulative, with the early Gaussian entrance history."""
+    return np.minimum(fixed_improved_cumulative(L), reduced_gaussian_history(L))
+
+
+def dual_history(L: np.ndarray, count: int = len(DUAL_PROFILES)) -> np.ndarray:
+    """Lean dualHistory1 through dualHistory6, preserving each entrance."""
+    history = reduced_gaussian_history(L)
+    for index, (C, T) in enumerate(DUAL_PROFILES[:count]):
+        entrance = dual_history(np.array([T]), index)[0]
+        history = np.minimum(history, np.maximum(entrance, C * L**2))
+    return history
+
+
+def dual_gaussian_history(L: np.ndarray) -> np.ndarray:
+    """Lean dualGaussianHistory with its earlier entrance."""
+    history = dual_history(L)
+    entrance = dual_history(np.array([DUAL_GAUSSIAN_ENTRY]))[0]
+    return np.minimum(history, np.maximum(entrance, gaussian_adaptive_bound(L)))
+
+
+def smooth_cumulative(L: np.ndarray) -> np.ndarray:
+    """Lean smoothCumulative, including continuous and Gaussian histories."""
+    previous = np.minimum(reduced_cumulative(L), dual_gaussian_history(L))
+    entry = dual_history(np.array([5e6]))[0]
+    end = smooth_coefficient(np.array([DUAL_GAUSSIAN_ENTRY]))[0] * DUAL_GAUSSIAN_ENTRY**2
+    candidate = np.where(L >= DUAL_GAUSSIAN_ENTRY,
+                         np.maximum(end, gaussian_adaptive_bound(L)),
+                         smooth_coefficient(L) * L**2)
+    return np.minimum(previous, np.maximum(entry, candidate))
 
 
 def square_base_cumulative(L: np.ndarray) -> np.ndarray:
@@ -988,13 +1045,14 @@ def plot_mr_cumulative(output_dir: Path) -> None:
     assert np.all(gaussian_cumulative(proof_band) < square_base_cumulative(proof_band))
     window_entrances = np.array([T for _, T in HIGH_WINDOW_PROFILES])
     variable_entrances = np.array([70000.0, 80000.0, 3e10, 1.82e12, 2e12] +
+                                  [T for _, T in DUAL_PROFILES] +
                                   [T for _, T in REDUCED_PROFILES] +
                                   [T for _, T in FIXED_IMPROVED_PROFILES])
     L = np.unique(np.concatenate([np.geomspace(math.log(3000), 1e15, 5000), entrances, recoveries,
                                   window_entrances, window_recoveries,
                                   variable_entrances, np.nextafter(variable_entrances, -np.inf),
                                   np.nextafter(window_entrances, -np.inf)]))
-    cumulative = reduced_cumulative(L) / L**2
+    cumulative = smooth_cumulative(L) / L**2
     previous = square_base_cumulative(L) / L**2
     pointwise = plotted_pointwise_upper(L) / L**2
     window_probe = np.array([38e9, np.nextafter(40e9, -np.inf), 45e9, 60e9,
@@ -1024,6 +1082,7 @@ def plot_mr_cumulative(output_dir: Path) -> None:
     assert np.all(np.diff(reduced_series_bound(L[L >= 80000]) / L[L >= 80000]**2) <= 1e-14)
     assert np.all(fixed_improved_cumulative(L) <= gaussian_adaptive_cumulative(L))
     assert np.all(reduced_cumulative(L) <= fixed_improved_cumulative(L))
+    assert np.all(smooth_cumulative(L) <= reduced_cumulative(L))
     assert np.all(cumulative >= pointwise - 1e-14)
     assert np.all(cumulative <= high_window_cumulative(L) / L**2 + 1e-14)
     assert np.all(cumulative <= high_coefficient_cumulative(L) / L**2 + 1e-14)
