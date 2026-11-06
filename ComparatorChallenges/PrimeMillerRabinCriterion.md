@@ -164,7 +164,7 @@ $$
 
 <div class="decomp-note">
 
-The separate Prop `PrimeMillerRabinLogNineCriterion` quantifies over every $s,d$ with
+The separate Prop `PrimeMillerRabinCriterion` quantifies over every $s,d$ with
 $n-1=2^s d$ and $d$ odd. The theorem shown above uses `Nat.maxPowDvdDiv` instead.
 
 </div>

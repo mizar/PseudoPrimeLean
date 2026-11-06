@@ -69,7 +69,7 @@ The two directions require different assumptions:
 - $\text{Prime} \to (\text{all pass})$ is unconditional: every prime base satisfying the stated bound passes when $n$ is prime.
 - $(\text{all pass}) \to \text{Prime}$ uses GRH: every odd composite $n > 1$ has a rejecting prime base not exceeding the stated bound.
 
-The Lean proposition states the criterion for all nonnegative integers $s$ and $d$ satisfying $n - 1 = 2^s d$ with $d$ odd. The theorem below uses the canonical decomposition returned by `Nat.maxPowDvdDiv`. Both declarations are in namespace `ComparatorChallenges`, in [PrimeMillerRabinLogNineSolution.lean](ComparatorChallenges/PrimeMillerRabinLogNineSolution.lean); the theorem uses the library proof. Its proof is omitted below.
+The Lean proposition states the criterion for all nonnegative integers $s$ and $d$ satisfying $n - 1 = 2^s d$ with $d$ odd. The theorem below uses the canonical decomposition returned by `Nat.maxPowDvdDiv`. Both declarations are in namespace `ComparatorChallenges`, in [PrimeMillerRabinSolution.lean](ComparatorChallenges/PrimeMillerRabinSolution.lean); the theorem uses the library proof. Its proof is omitted below.
 
 ```lean
 theorem prime_millerRabin_log_nine_criterion (hGRH : GeneralizedRiemannHypothesis) {n : ℕ}

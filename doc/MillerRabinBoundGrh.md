@@ -1,6 +1,6 @@
 # PrimeTestBounds.MillerRabin　GRH下の素数判定同値と証人上界
 
-GRHの下で、奇合成数 $n \ge 9$ の最小Miller–Rabin拒否素数は $\max\lbrace 2,(517/1250)(\ln n)^2\rbrace$ 以下であり、 $2(\log_9 n)^2$ 以下でもある。定理は [LeastPrime4136.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/LeastPrime4136.lean) にある。 底9の上界による素数判定条件は [PrimeMillerRabinLogNineSolution.lean](../ComparatorChallenges/PrimeMillerRabinLogNineSolution.lean) にある。上界の定理は名前空間 `PseudoPrime.PrimeTestBounds.MillerRabin` に属し、 `import PseudoPrime` から利用できる。素数判定条件は別の名前空間 `ComparatorChallenges` に属する。
+GRHの下で、奇合成数 $n \ge 9$ の最小Miller–Rabin拒否素数は $\max\lbrace 2,(517/1250)(\ln n)^2\rbrace$ 以下であり、 $2(\log_9 n)^2$ 以下でもある。定理は [LeastPrime4136.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/LeastPrime4136.lean) にある。 底9の上界による素数判定条件は [PrimeMillerRabinSolution.lean](../ComparatorChallenges/PrimeMillerRabinSolution.lean) にある。上界の定理は名前空間 `PseudoPrime.PrimeTestBounds.MillerRabin` に属し、 `import PseudoPrime` から利用できる。素数判定条件は別の名前空間 `ComparatorChallenges` に属する。
 
 [JointSurplusEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/JointSurplusEnvelope.lean) の `jointSelected` は有限区間と解析的な上界を組み合わせ、 `jointSelected_least` は最小拒否素数がその値以下であることを示す。 `jointPrime` は選択値を素数へ丸める。本稿と図では、この選択値と上記のmax形の小さい方を $U_{\mathrm{MR}}(n)$ とする。Leanにはこの最小値の専用定義を設けず、証明済みの2つの上界から導く。
 
@@ -107,7 +107,7 @@ end ComparatorChallenges
 | `jointSurplus_lt_042` など | 指定した入口以降での係数評価 | [JointSurplusThresholds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/JointSurplusThresholds.lean) |
 | `exists_primeWitness_lt_3000` | GRHを仮定しない奇合成数 $9 \le n < 3000$ の定理 | [SmallLogBound.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/SmallLogBound.lean) |
 
-素数判定条件の `ComparatorChallenges.prime_millerRabin_log_nine_criterion` は [Comparatorの解答](../ComparatorChallenges/PrimeMillerRabinLogNineSolution.lean) にある。
+素数判定条件の `ComparatorChallenges.prime_millerRabin_log_nine_criterion` は [Comparatorの解答](../ComparatorChallenges/PrimeMillerRabinSolution.lean) にある。
 
 ## 証明の流れ
 
@@ -125,7 +125,7 @@ end ComparatorChallenges
 
 ```lean
 import PseudoPrime
-import ComparatorChallenges.PrimeMillerRabinLogNineSolution
+import ComparatorChallenges.PrimeMillerRabinSolution
 
 #print axioms ComparatorChallenges.prime_millerRabin_log_nine_criterion
 

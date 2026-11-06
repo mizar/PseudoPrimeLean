@@ -1,6 +1,6 @@
 {
-  "challenge_module": "ComparatorChallenges.PrimeMillerRabinLogNineCriterion",
-  "solution_module": "ComparatorChallenges.PrimeMillerRabinLogNineSolution",
+  "challenge_module": "ComparatorChallenges.PrimeMillerRabinCriterion",
+  "solution_module": "ComparatorChallenges.PrimeMillerRabinSolution",
   "theorem_names": [
     "ComparatorChallenges.prime_millerRabin_log_nine_criterion"
   ],

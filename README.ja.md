@@ -68,7 +68,7 @@ $$
 - $\text{Prime} \to (\text{all pass})$ の向きに GRH は不要である。 $n$ が素数なら、指定の上界以下の各素数底が合格する。
 - $(\text{all pass}) \to \text{Prime}$ の向きに GRH を用いる。奇合成数 $n > 1$ には、 $n$ を棄却する素数底 $p \le 2(\log_9 n)^2$ が存在する。
 
-Lean の次の命題は、 $n - 1 = 2^s d$ と奇数の $d$ を満たす任意の非負整数 $s$、 $d$ に対して判定条件を述べる。続く定理は `Nat.maxPowDvdDiv` が返す標準分解を使う。どちらの宣言も名前空間 `ComparatorChallenges` の [PrimeMillerRabinLogNineSolution.lean](ComparatorChallenges/PrimeMillerRabinLogNineSolution.lean) にあり、定理はライブラリの証明を使う。以下では証明本体を省略する。
+Lean の次の命題は、 $n - 1 = 2^s d$ と奇数の $d$ を満たす任意の非負整数 $s$、 $d$ に対して判定条件を述べる。続く定理は `Nat.maxPowDvdDiv` が返す標準分解を使う。どちらの宣言も名前空間 `ComparatorChallenges` の [PrimeMillerRabinSolution.lean](ComparatorChallenges/PrimeMillerRabinSolution.lean) にあり、定理はライブラリの証明を使う。以下では証明本体を省略する。
 
 ```lean
 theorem prime_millerRabin_log_nine_criterion (hGRH : GeneralizedRiemannHypothesis) {n : ℕ}

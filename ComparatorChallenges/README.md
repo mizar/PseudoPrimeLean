@@ -20,11 +20,11 @@ holes: the definitions used in the statement are part of the fixed challenge.
 The stronger base-nine logarithm criterion has a separate challenge and solution:
 
 ```sh
-lake comparator --config=ComparatorChallenges/PrimeMillerRabinLogNineCriterion.json
+lake comparator --config=ComparatorChallenges/PrimeMillerRabinCriterion.json
 ```
 
 Its solution uses the base-nine rejecting-prime bound and the four-ninths prime acceptance
-result. The [base-nine slides](PrimeMillerRabinLogNineCriterion.md) display the theorem and GRH.
+result. The [base-nine slides](PrimeMillerRabinCriterion.md) display the theorem and GRH.
 
 The two GRH-conditional odd-prime quadratic witness bounds use the same arrangement. Run both
 comparisons together with:

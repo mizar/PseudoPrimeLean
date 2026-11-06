@@ -30,7 +30,7 @@ def DirichletRiemannHypothesis {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ
 def GeneralizedRiemannHypothesis : Prop :=
   ∀ (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q), χ.IsPrimitive → DirichletRiemannHypothesis χ
 
-def PrimeMillerRabinLogNineCriterion : Prop :=
+def PrimeMillerRabinCriterion : Prop :=
   GeneralizedRiemannHypothesis →
     ∀ n s d : ℕ,
       1 < n →
