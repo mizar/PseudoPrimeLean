@@ -48,6 +48,9 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.SemiprimeUniform409
 public import PseudoPrime.PrimeTestBounds.MillerRabin.LeastPrime4136
 public import PseudoPrime.PrimeTestBounds.MillerRabin.LogNineComparison
 public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformTripleConductor
+public import PseudoPrime.PrimeTestBounds.MillerRabin.Target030CoveredRanges
+public import PseudoPrime.PrimeTestBounds.MillerRabin.Target030SemiprimeCells83
+public import PseudoPrime.PrimeTestBounds.MillerRabin.Target030CellNumerics
 public import PseudoPrime.LLS.PaperStatements.TriangularEvenBaseline
 
 /-!
