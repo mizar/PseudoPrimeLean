@@ -159,6 +159,22 @@ $$
 
 GRHの下で $q_{\mathrm{MR}}(n) \le U_{\mathrm{MR}}(n)$ が成り立つ。さらに $n \ge 9$ では $C(\ln n) \le 2(\log_9 n)^2$ である。両方の上界は [LeastPrime4136.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/LeastPrime4136.lean) にあり、その数値比較は [LogNineComparison.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/LogNineComparison.lean) にある。
 
+### 係数0.3を接続した上界
+
+GRHの下で、 $8 \le L \le 197/5$ または $5250 \le L$ を満たす奇合成数には、 $p \le (3/10)L^2$ を満たすMR拒否素数 $p$ が存在する。これは [Target030CoveredRanges.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/Target030CoveredRanges.lean) の `exists_prime_reject_03_covered_ranges` で証明している。さらに、特定の3素因子型 `UniformKorseltTriple` に属さない場合は、 $8 \le L$ の全域で同じ上界が成り立つ。定義と証明は [Target030High.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/Target030High.lean) と [Target030NonuniformLog8.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/Target030NonuniformLog8.lean) にある。
+
+これらの定理と既存の上界から、図に使う上界を次のように構成する。
+
+$$
+U_{0.30}(n)=
+\begin{cases}
+\min\lbrace U_{\mathrm{MR}}(n),(3/10)L^2\rbrace & 8 \le L \le 197/5\quad\mathrm{or}\quad 5250 \le L,\\
+U_{\mathrm{MR}}(n) & \mathrm{otherwise}.
+\end{cases}
+$$
+
+したがって、対象となるすべての奇合成数について $q_{\mathrm{MR}}(n) \le U_{0.30}(n)$ である。この式は証明済みの上界を文書と図で組み合わせたもので、Leanの `jointSelected` の定義は変更していない。 $197/5 < L < 5250$ の `UniformKorseltTriple` については係数0.3の上界を主張せず、従来の上界を使う。
+
 ### 有限区間 $9 \le n < 3000$ の上界
 
 $9 \le n < 2047$ では2、 $2047 \le n < 3000$ では3を返す。底2または底3での拒否を有限分類で証明し、素数証人と最小素数証人へ接続する。この範囲ではGRHは不要である。定義と証人定理は [SmallPointwiseBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/SmallPointwiseBounds.lean) にある。
@@ -247,15 +263,28 @@ $$
 
 $Q_{\mathrm{MR}}(N)$ を $9 \le n \le N$ の奇合成数 $n$ に対する最小拒否素数の最大値とし、対象がないときは0とする。以下では $N \ge 9$、 $L=\ln N$ とする。 $N < 9$ では $Q_{\mathrm{MR}}(N)=0$ である。
 
-全域で有効な $F$ は非減少なので、 GRHの下で $Q_{\mathrm{MR}}(N) \le F(\ln N)$ である。 `jointCumulative` は、この上界と `smoothCumulative` の最小値に等しい。この同値は [JointSurplusComparison.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/JointSurplusComparison.lean) の `jointCumulative_eq_scaleOne_min` で証明している。 $C(L)$ も $L \ge 0$ で非減少なので、各入力へのmax形から $Q_{\mathrm{MR}}(N) \le C(\ln N)$ が従う。図ではこの2つの累積上界の小さい方を描く。
+全域で有効な $F$ は非減少なので、 GRHの下で $Q_{\mathrm{MR}}(N) \le F(\ln N)$ である。 `jointCumulative` は、この上界と `smoothCumulative` の最小値に等しい。この同値は [JointSurplusComparison.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/JointSurplusComparison.lean) の `jointCumulative_eq_scaleOne_min` で証明している。 $C(L)$ も $L \ge 0$ で非減少なので、各入力へのmax形から $Q_{\mathrm{MR}}(N) \le C(\ln N)$ が従う。この2つの累積上界の小さい方を $B(L)$ とする。
+
+図の累積上界は入口以前の履歴を含め、次の式で構成する。
+
+$$
+B_{0.30}(L)=
+\begin{cases}
+\min\lbrace B(L),(3/10)L^2\rbrace & 8 \le L \le 197/5,\\
+\min\lbrace B(L),\max\lbrace B(5250),(3/10)L^2\rbrace\rbrace & 5250 \le L,\\
+B(L) & \mathrm{otherwise}.
+\end{cases}
+$$
+
+最初の区間では、 $\ln n < 8$ の入力は $n < 3000$ なので、有限区間の上界3も $(3/10)L^2$ 以下である。高域では $\ln n < 5250$ の入力を $B(5250)$ で抑える。したがってGRHの下で $Q_{\mathrm{MR}}(N) \le B_{0.30}(\ln N)$ が成り立つ。この累積式も既存の証明から導いた文書上の構成である。
 
 ### 包絡線の構成
 
-$n < 3000$ では小域の値2または3を使う。 $n \ge 3000$ では固定素数候補、 $F(\ln n)$、 $C(\ln n)$ を比較する。上界の選択は入力ごとに行うため、その値自体を累積上界として扱わない。
+$n < 3000$ では小域の値2または3を使う。 $n \ge 3000$ では固定素数候補、 $F(\ln n)$、 $C(\ln n)$ を比較する。さらに証明済みの2区間では係数0.3の候補を比較する。上界の選択は入力ごとに行うため、その値自体を累積上界として扱わない。
 
 ## 上界式の適用区間
 
-次の表は描画範囲で数値比較により確認した $U_{\mathrm{MR}}$ の候補を示す。 $C(L)$ と31の交点を $L_{31}=\sqrt{31\cdot1250/517}$ とする。図の上界の定義は全域で $\mathrm{jointSelected}(n)$ と $C(\ln n)$ の最小値である。
+次の表は描画範囲で数値比較により確認した従来の $U_{\mathrm{MR}}$ の候補を示す。 $C(L)$ と31の交点を $L_{31}=\sqrt{31\cdot1250/517}$ とする。従来の上界は全域で $\mathrm{jointSelected}(n)$ と $C(\ln n)$ の最小値である。
 
 | 適用条件 | 現行の上界を構成する候補 |
 |---|---|
@@ -266,15 +295,17 @@ $n < 3000$ では小域の値2または3を使う。 $n \ge 3000$ では固定�
 | $L_{31} \le L \le 9.0031$ | $31$ |
 | $9.0031 < L$ | $\min\lbrace C(L),F(L)\rbrace$ |
 
+上の表に係数0.3の候補を追加し、証明済みの2区間で最小値を取ったものが $U_{0.30}$ である。
+
 ### 比較グラフ
 
 ![Miller–Rabinの最小素数証人と上界式の比較](figures/mr_upper_bound_comparison.svg)
 
-横軸は $\ln(\ln n)$ に線形なスケールとし、目盛りには $n$ を10の累乗で示す。縦軸は対数軸である。 $2^{64}$、 $2^{80}$、 $2^{128}$ の縦グリッドを重ねた。橙の実線は $\mathrm{jointSelected}(n)$ と $C(\ln n)$ の最小値、黒の点線は $2(\log_9 n)^2$、青緑の点と階段線は最小素数証人の記録を表す。
+横軸は $\ln(\ln n)$ に線形なスケールとし、目盛りには $n$ を10の累乗で示す。縦軸は対数軸である。 $2^{64}$、 $2^{80}$、 $2^{128}$ の縦グリッドを重ねた。橙の実線は $U_{0.30}(n)$、黒の点線は $2(\log_9 n)^2$、青緑の点と階段線は最小素数証人の記録を表す。
 
 基数を素数 $p_1=2,p_2=3,p_3=5,\ldots$ の順に選んでMiller–Rabinテストを行う。青緑の点の横座標は [OEIS A006945](https://oeis.org/A006945) の第 $k$ 項、すなわち最初の $k-1$ 個の素数基数 $p_1,\ldots,p_{k-1}$ によるテストをすべて通過する最小の奇合成数である。縦座標はその入力を棄却する最小素数基数 $q_{\mathrm{MR}}(n)$ であり、記録更新点では $Q_{\mathrm{MR}}(n)$ と一致する。例えば、 $n=2047$ は基数2で通過し、基数3で棄却されるため、点の縦座標は3となる。青緑の階段線は掲載した記録を結んだもので、未探索範囲への外挿ではない。
 
-主図の描画範囲は $9 \le n \le 10^{64}$、縦軸は $10^0$ から $10^4$ である。点ごとの上界を描いており、累積上界としての単調性は仮定していない。挿入図は $3000 \le n \le e^{10^{14}}$ での比 $U_{\mathrm{MR}}(n)/(\ln n)^2$ を示す。この比の下降は分子である上界 $U_{\mathrm{MR}}(n)$ の下降を意味しない。全域上界 $F$ がmax形を改善する範囲は主図の範囲外にある。そこで入力ごとの上界に下降が生じても、累積最大値の下降を表すものではない。
+主図の描画範囲は $9 \le n \le 10^{64}$、縦軸は $10^0$ から $10^4$ である。点ごとの上界を描いており、累積上界としての単調性は仮定していない。挿入図は $3000 \le n \le e^{10^{14}}$ での比 $U_{0.30}(n)/(\ln n)^2$ を示す。この比の下降は分子である上界 $U_{0.30}(n)$ の下降を意味しない。全域上界 $F$ がmax形を改善する範囲は主図の範囲外にある。そこで入力ごとの上界に下降が生じても、累積最大値の下降を表すものではない。
 
 図の数値計算はLeanの証明を代替しない。 [PNG版](figures/mr_upper_bound_comparison.png)
 
@@ -282,6 +313,6 @@ $n < 3000$ では小域の値2または3を使う。 $n \ge 3000$ では固定�
 
 ![MR累積上界と点ごとの候補](figures/mr_cumulative_high_comparison.svg)
 
-橙線は `jointCumulative` と $C(L)$ の小さい方を $L^2$ で割った累積上界、青い破線は点ごとの上界 $U_{\mathrm{MR}}(n)/(\ln n)^2$ を示す。黒点線の高さは $2/(\ln 9)^2$ である。実数軸の描画と、Leanによる自然数上端の証明は区別する。[PNG版](figures/mr_cumulative_high_comparison.png)
+橙線は履歴を含む累積上界 $B_{0.30}(L)/L^2$、青い破線は点ごとの上界 $U_{0.30}(n)/(\ln n)^2$ を示す。黒点線の高さは $2/(\ln 9)^2$ である。実数軸の描画と、Leanによる自然数上端の証明は区別する。[PNG版](figures/mr_cumulative_high_comparison.png)
 
 [構成全体へ](README.md) · [PrimeTest](PrimeTest.md) · [LLS](LLS.md)

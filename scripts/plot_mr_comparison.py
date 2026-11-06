@@ -980,7 +980,9 @@ def plotted_pointwise_upper(L: np.ndarray) -> np.ndarray:
     """Minimum of Lean's jointSelected and the certified 0.4136 max bound."""
     old = smooth_pointwise_upper(L)
     selected = np.where(L >= math.log(3000), np.minimum(old, surplus_global(L)), old)
-    return np.minimum(selected, max_04136_bound(L))
+    baseline = np.minimum(selected, max_04136_bound(L))
+    covered = ((L >= 8) & (L <= 197 / 5)) | (L >= 5250)
+    return np.where(covered, np.minimum(baseline, (3 / 10) * L**2), baseline)
 
 
 def max_04136_bound(L: np.ndarray) -> np.ndarray:
@@ -1050,7 +1052,13 @@ def joint_cumulative(L: np.ndarray) -> np.ndarray:
 
 def plotted_cumulative_upper(L: np.ndarray) -> np.ndarray:
     """Combine jointCumulative with the monotone max-form bound."""
-    return np.minimum(joint_cumulative(L), max_04136_bound(L))
+    baseline = np.minimum(joint_cumulative(L), max_04136_bound(L))
+    entrance = np.minimum(joint_cumulative(np.array([5250.0])),
+                          max_04136_bound(np.array([5250.0])))[0]
+    early = np.minimum(baseline, (3 / 10) * L**2)
+    high = np.minimum(baseline, np.maximum(entrance, (3 / 10) * L**2))
+    return np.where((L >= 8) & (L <= 197 / 5), early,
+                    np.where(L >= 5250, high, baseline))
 
 
 def square_base_cumulative(L: np.ndarray) -> np.ndarray:
@@ -1080,7 +1088,7 @@ def plot_mr_cumulative(output_dir: Path) -> None:
     proof_band = np.linspace(100, 101, 101)
     assert np.all(gaussian_cumulative(proof_band) < square_base_cumulative(proof_band))
     window_entrances = np.array([T for _, T in HIGH_WINDOW_PROFILES])
-    variable_entrances = np.array([280.0, 283.0, 290.0, 300.0, 330.0, 340.0, 400.0,
+    variable_entrances = np.array([8.0, 197 / 5, 5250.0, 280.0, 283.0, 290.0, 300.0, 330.0, 340.0, 400.0,
                                   1000.0, 4000.0, 6500.0, 25000.0,
                                   70000.0, 80000.0, 3e10, 1.82e12, 2e12] +
                                   [T for _, T in DUAL_PROFILES] + [DUAL_GAUSSIAN_ENTRY] +
@@ -1090,6 +1098,7 @@ def plot_mr_cumulative(output_dir: Path) -> None:
                                   window_entrances, window_recoveries,
                                   variable_entrances, np.nextafter(variable_entrances, -np.inf),
                                   np.nextafter(window_entrances, -np.inf)]))
+    L = L[L >= math.log(3000)]
     cumulative = plotted_cumulative_upper(L) / L**2
     previous = square_base_cumulative(L) / L**2
     pointwise = plotted_pointwise_upper(L) / L**2
@@ -1132,9 +1141,9 @@ def plot_mr_cumulative(output_dir: Path) -> None:
     assert np.all(cumulative <= (4 / 9) + 1e-14)
     assert np.all(cumulative <= gaussian_cumulative(L) / L**2 + 1e-14)
     ax.semilogx(L, cumulative, color="#d55e00", linewidth=2.5,
-                     label="Cumulative bound: joint and 0.4136 max")
+                     label="Cumulative bound with 0.30 covered ranges")
     ax.semilogx(L, pointwise, color="#3977a8", linestyle="--",
-                     label="Pointwise bound: joint and 0.4136 max")
+                     label="Pointwise bound with 0.30 covered ranges")
     ax.axhline(2 / math.log(9)**2, color="#333333", linestyle=":", linewidth=1.7,
                label=r"$2(\log_9 N)^2$ reference")
     ax.set(xlabel=r"$L=\ln N$", ylabel=r"Upper bound divided by $L^2$",
@@ -1168,7 +1177,7 @@ def main() -> None:
 
     Lmax = args.max_power * math.log(10)
     Lc = shifted_endpoint_w1000_crossing(73 / 50)
-    entrances = np.array([math.log(500), math.log(1053), math.log(1120),
+    entrances = np.array([8.0, 197 / 5, 5250.0, math.log(500), math.log(1053), math.log(1120),
                           math.log(2047), math.log(3000), 56 / 5, 286 / 25,
                           23 / 2, 74 / 5, 43 / 4, 22, 111 / 4, 63, 209, gamma_fixed_switch(),
                           81 / 8, 171 / 8, 217 / 8,
@@ -1350,7 +1359,7 @@ def main() -> None:
     fig, ax = plt.subplots(figsize=(12, 8))
     fig.subplots_adjust(left=.09, right=.95, top=.87, bottom=.13)
     ax.plot(np.log(L), U, color="#d55e00", linewidth=2.5,
-            label=r"Pointwise bound $U_{\mathrm{MR}}(n)$ (joint and 0.4136 max)", zorder=3)
+            label=r"Pointwise bound $U_{0.30}(n)$ (covered ranges)", zorder=3)
     ax.plot(np.log(L), 2 * (L / math.log(9))**2, color="#333333", linewidth=1.7, linestyle=":",
             label=r"$2(\log_9 n)^2$", zorder=4)
     ax.step(np.log(record_L), ps, where="post", color="#007f80", linewidth=2,
@@ -1405,7 +1414,7 @@ def main() -> None:
         lambda x, _: next((label for position, label in inset_ticks if np.isclose(x, position)), "")))
     inset.xaxis.set_minor_locator(NullLocator())
     inset.tick_params(labelsize=9)
-    inset.set_title(r"Detail: $U_{\mathrm{MR}}(n)/(\ln n)^2$", fontsize=10)
+    inset.set_title(r"Detail: $U_{0.30}(n)/(\ln n)^2$", fontsize=10)
     inset.grid(color="#e1e5e9", linewidth=.6)
     for x in [math.log(k * math.log(2)) for k in [64, 80, 128]]:
         inset.axvline(x, color="#7e91ac", linestyle="--", linewidth=.8, zorder=1)
@@ -1443,10 +1452,10 @@ def main() -> None:
               "comparison_baseline": "sharpSelectedEnvelope",
               "sampled_selection_equality_checked": True,
               "baseline_sampled_monotonicity_checked": True,
-              "plotted_envelope": "min(jointSelected, max(2, (517/1250)*L^2))",
+              "plotted_envelope": "baseline min 0.3*L^2 on [8,39.4] and [5250,infinity)",
               "lean_selected_envelope_current": "jointSelected",
               "max_bound_theorem": "compositeLeastPrime_le_max_4136",
-              "cumulative_variable_caps": "min(jointCumulative, max(2, (517/1250)*L^2))",
+              "cumulative_variable_caps": "baseline with 0.30 covered intervals and high entrance history",
               "previous_selection_equality": "nextTunedSelected_eq_normal",
               "removed_direct_gaussian_branches": 6,
               "gaussian_A_comparison_interval": [105, 105.5],
