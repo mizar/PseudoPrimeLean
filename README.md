@@ -69,7 +69,7 @@ The two directions require different assumptions:
 - $\text{Prime} \to (\text{all pass})$ is unconditional: every prime base satisfying the stated bound passes when $n$ is prime.
 - $(\text{all pass}) \to \text{Prime}$ uses GRH: every odd composite $n > 1$ has a rejecting prime base not exceeding the stated bound.
 
-The Lean proposition states the criterion for all nonnegative integers $s$ and $d$ satisfying $n - 1 = 2^s d$ with $d$ odd. The theorem below uses the canonical decomposition returned by `Nat.maxPowDvdDiv`. Both declarations are in namespace `ComparatorChallenges`, in [PrimeMillerRabinSolution.lean](ComparatorChallenges/PrimeMillerRabinSolution.lean); the theorem uses the library proof. Its proof is omitted below.
+The Lean proposition states the criterion for all nonnegative integers $s$ and $d$ satisfying $n - 1 = 2^s d$ with $d$ odd. The theorem below uses the canonical decomposition returned by `Nat.maxPowDvdDiv`. Both declarations are in namespace `ComparatorChallenges.PrimeMillerRabinWitness`, in [PrimeMillerRabinWitnessSolution.lean](ComparatorChallenges/PrimeMillerRabinWitness/PrimeMillerRabinWitnessSolution.lean); the theorem uses the library proof. Its proof is omitted below.
 
 ```lean
 theorem prime_millerRabin_log_nine_criterion (hGRH : GeneralizedRiemannHypothesis) {n : ℕ}
@@ -135,7 +135,7 @@ The first result allows $\bigl(\frac{n}{p}\bigr) = 0$ or $\bigl(\frac{n}{p}\bigr
 
 ## Status of the GRH assumption
 
-GRH is an explicit hypothesis of the conditional results above. The library represents it by [`AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis`](PseudoPrime/AnalyticNumberTheory/GRH/Definition.lean) within namespace `PseudoPrime`. The comparator solution states the same condition in its own `ComparatorChallenges.GeneralizedRiemannHypothesis` definition.
+GRH is an explicit hypothesis of the conditional results above. The library represents it by [`AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis`](PseudoPrime/AnalyticNumberTheory/GRH/Definition.lean) within namespace `PseudoPrime`. Each comparator solution states the same condition in its own challenge-specific namespace.
 
 This project does **not** prove GRH. From GRH, it derives within Lean the results corresponding to the relevant parts of LLS Theorem 1.1, including [`LLS.llsTheorem11S1_of_grh`](PseudoPrime/LLS/Theorem11S1GRH.lean) and [`LLS.llsTheorem11S2_of_grh`](PseudoPrime/LLS/Theorem11S2.lean). These are then combined with the project's algebraic, number-theoretic, and finite-range arguments to obtain the public bounds above.
 

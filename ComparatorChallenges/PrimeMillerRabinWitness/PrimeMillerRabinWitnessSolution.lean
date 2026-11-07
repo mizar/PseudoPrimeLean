@@ -8,6 +8,7 @@ module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.FourNinthsCriterion
 public import PseudoPrime.PrimeTestBounds.MillerRabin.LeastPrime4136
+public import PseudoPrime.PrimeTestBounds.MillerRabin.Target030Global
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
 
@@ -15,7 +16,7 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Base
 
 @[expose] public section
 
-namespace ComparatorChallenges
+namespace ComparatorChallenges.PrimeMillerRabinWitness
 
 noncomputable def dirichletTrivialZeros {q : ℕ} (χ : DirichletCharacter ℂ q) : Set ℤ := by
   classical
@@ -30,7 +31,7 @@ def DirichletRiemannHypothesis {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ
 def GeneralizedRiemannHypothesis : Prop :=
   ∀ (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q), χ.IsPrimitive → DirichletRiemannHypothesis χ
 
-def PrimeMillerRabinCriterion : Prop :=
+def PrimeMillerRabinWitnessCriterion : Prop :=
   GeneralizedRiemannHypothesis →
     ∀ n s d : ℕ,
       1 < n →
@@ -81,4 +82,34 @@ theorem prime_millerRabin_log_nine_criterion (hGRH : GeneralizedRiemannHypothesi
       PseudoPrime.PrimeTestBounds.MillerRabin.prime_passes_four_ninths ho hp hprime
         (hb.trans (log_nine_cutoff_le n))
 
-end ComparatorChallenges
+/-- Under GRH, prime bases up to the global three-tenths maximum cutoff
+characterize odd primes greater than one. The composite case uses the certified
+rejecting prime, while primes pass by the base-two and four-ninths bounds. -/
+theorem prime_millerRabin_03_criterion (hGRH : GeneralizedRiemannHypothesis) {n : ℕ} (hn : 1 < n)
+    (ho : Odd n) :
+    let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)
+    (∀ p : ℕ,
+        Nat.Prime p →
+          (p : ℝ) ≤ max 2 ((3 / 10 : ℝ) * Real.log n ^ 2) →
+          ((p : ZMod n) ^ d = 1 ∨ ∃ j : ℕ, j < s ∧ (p : ZMod n) ^ (2 ^ j * d) = -1)) ↔
+      Nat.Prime n := by
+  constructor
+  · intro hpass
+    by_contra hc
+    obtain ⟨p, hp, hb, hf⟩ :=
+      PseudoPrime.PrimeTestBounds.MillerRabin.exists_prime_reject_03_global hn ho hc hGRH
+    exact hf (hpass p hp hb)
+  · intro hp p hprime hb
+    rcases (le_max_iff.mp hb) with htwo | hlarge
+    · have hp2 : p = 2 := Nat.le_antisymm (by exact_mod_cast htwo) hprime.two_le
+      subst p
+      exact
+        PseudoPrime.PrimeTest.strongMillerRabinWithBase_eq_true_iff_pass.mp
+          (PseudoPrime.PrimeTest.strongMillerRabinBase2_of_prime_of_ne_two hp
+            (ho.ne_two_of_dvd_nat dvd_rfl))
+    · apply PseudoPrime.PrimeTestBounds.MillerRabin.prime_passes_four_ninths ho hp hprime
+      exact
+        hlarge.trans
+          (mul_le_mul_of_nonneg_right (by norm_num only : (3 / 10 : ℝ) ≤ 4 / 9) (sq_nonneg _))
+
+end ComparatorChallenges.PrimeMillerRabinWitness

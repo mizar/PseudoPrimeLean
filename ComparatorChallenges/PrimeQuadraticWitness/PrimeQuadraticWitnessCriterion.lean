@@ -6,19 +6,18 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PseudoSquare.Bounds.PointwiseWitness
-public import PseudoPrime.PseudoSquare.Bounds.RefinedElementaryBounds
+public import Mathlib.NumberTheory.LSeries.DirichletContinuation
 public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 
 /-! # GRH-conditional prime quadratic witness challenges
 
-These statements reproduce GRH and the two explicit Jacobi witness bounds for comparison;
-the theorems below apply the library proofs without importing the challenge module.
+These statements fix GRH and the two explicit Jacobi witness bounds independently of their
+library proofs. The theorem placeholders are checked against the separate comparator solution.
 -/
 
 @[expose] public section
 
-namespace ComparatorChallenges
+namespace ComparatorChallenges.PrimeQuadraticWitness
 
 /-- The integer arguments excluded as trivial zeros for a complex Dirichlet character.
 The modulus-one case uses negative even integers; otherwise parity selects the nonpositive
@@ -45,8 +44,7 @@ bounded by the maximum of five and the squared logarithm. This states the first 
 def PrimeNeOneWitnessBound : Prop :=
   GeneralizedRiemannHypothesis →
     ∀ n : ℕ,
-      0 < n →
-        Odd n →
+      Odd n →
         ¬IsSquare n →
         ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ max 5 (Real.log (n : ℝ) ^ 2) ∧ jacobiSym n p ≠ 1
 
@@ -56,8 +54,7 @@ challenge. -/
 def PrimeNegOneWitnessBound : Prop :=
   GeneralizedRiemannHypothesis →
     ∀ n : ℕ,
-      3 ≤ n →
-        Odd n →
+      Odd n →
         ¬IsSquare n →
         ∃ p : ℕ,
           p.Prime ∧
@@ -66,13 +63,10 @@ def PrimeNegOneWitnessBound : Prop :=
               (Real.log (4 * (n : ℝ)) + (24 / 5 : ℝ) * Real.log (Real.log (4 * (n : ℝ))) + 2) ^ 2 ∧
             jacobiSym n p = -1
 
-/-- The non-one witness bound follows from the library theorem for every positive odd nonsquare. -/
-theorem prime_ne_one_witness_bound : PrimeNeOneWitnessBound := fun hGRH n hnpos hn hns ↦
-  PseudoPrime.PseudoSquare.exists_prime_ne_one_witness_of_grh (n := n) hGRH hnpos hn hns
+/-- The GRH-conditional non-one witness bound, to be established by a comparator solution. -/
+theorem prime_ne_one_witness_bound : PrimeNeOneWitnessBound := by sorry
 
-/-- The negative-one witness bound follows from the library theorem for every odd nonsquare
-at least three. -/
-theorem prime_neg_one_witness_bound : PrimeNegOneWitnessBound := fun hGRH n hn3 hn hns ↦
-  PseudoPrime.PseudoSquare.exists_negOneWitness_le_refined_elementary (n := n) hGRH hn3 hn hns
+/-- The GRH-conditional negative-one witness bound, to be established by a comparator solution. -/
+theorem prime_neg_one_witness_bound : PrimeNegOneWitnessBound := by sorry
 
-end ComparatorChallenges
+end ComparatorChallenges.PrimeQuadraticWitness

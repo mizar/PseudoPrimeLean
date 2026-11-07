@@ -1,7 +1,7 @@
 name = "PseudoPrime"
 version = "0.1.0"
 keywords = ["math"]
-defaultTargets = ["PseudoPrime"]
+defaultTargets = ["PseudoPrime", "ComparatorChallenges"]
 
 [leanOptions]
 pp.unicode.fun = true # pretty-prints `fun a ↦ b`

@@ -1,8 +1,8 @@
 param([string] $MarpCli)
 
 $projectRoot = Split-Path -Parent $PSScriptRoot
-$inputFile = Join-Path $projectRoot 'ComparatorChallenges/PrimeQuadraticWitnessCriterion.md'
-$outputFile = Join-Path $projectRoot 'ComparatorChallenges/PrimeQuadraticWitnessCriterion.png'
+$inputFile = Join-Path $projectRoot 'ComparatorChallenges/PrimeQuadraticWitness/PrimeQuadraticWitnessCriterion.md'
+$outputFile = Join-Path $projectRoot 'ComparatorChallenges/PrimeQuadraticWitness/PrimeQuadraticWitnessCriterion.png'
 $marpArgs = @('--images', 'png', $inputFile, '--html', '--allow-local-files', '--image-scale', '2', '-o', $outputFile)
 
 if ($MarpCli) {

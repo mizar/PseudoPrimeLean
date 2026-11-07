@@ -67,7 +67,7 @@ style: |
 
 ## Abbreviated form
 
-Assume GRH; let $n$ be a positive odd nonsquare.
+Assume GRH; let $n$ be an odd nonsquare.
 
 </div>
 <div class="short-math">
@@ -138,7 +138,7 @@ $$
 \begin{gathered}
 \mathrm{GRH} \Longrightarrow
 \forall n\in\mathbb Z_{\ge 0},\\[5pt]
-\left(n > 0 \land n\equiv1\pmod2
+\left(n\equiv1\pmod2
 \land n\notin\lbrace k^2 : k\in\mathbb Z_{\ge 0}\rbrace\right)
 \Longrightarrow\\[8pt]
 \exists p\in\mathbb P,\quad p\equiv1\pmod2,\\[5pt]
@@ -155,7 +155,7 @@ $$
 
 $\mathbb P$: primes. $\ln$: natural logarithm. The symbol denotes the Jacobi symbol.
 
-`ComparatorChallenges.prime_ne_one_witness_bound`
+`ComparatorChallenges.PrimeQuadraticWitness.prime_ne_one_witness_bound`
 
 </div>
 
@@ -175,7 +175,7 @@ $\mathbb P$: primes. $\ln$: natural logarithm. The symbol denotes the Jacobi sym
 
 ## Abbreviated form
 
-Assume GRH; let $n \ge 3$ be an odd nonsquare.
+Assume GRH; let $n$ be an odd nonsquare.
 
 </div>
 <div class="short-math">
@@ -246,7 +246,7 @@ $$
 \begin{gathered}
 \mathrm{GRH} \Longrightarrow
 \forall n\in\mathbb Z_{\ge 0},\\[5pt]
-\left(n \ge 3 \land n\equiv1\pmod2
+\left(n\equiv1\pmod2
 \land n\notin\lbrace k^2 : k\in\mathbb Z_{\ge 0}\rbrace\right)
 \Longrightarrow\\[8pt]
 \exists p\in\mathbb P,\quad p\equiv1\pmod2,\\[5pt]
@@ -263,6 +263,6 @@ $$
 
 $\mathbb P$: primes. $\ln$: natural logarithm. The symbol denotes the Jacobi symbol.
 
-`ComparatorChallenges.prime_neg_one_witness_bound`
+`ComparatorChallenges.PrimeQuadraticWitness.prime_neg_one_witness_bound`
 
 </div>

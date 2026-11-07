@@ -1,0 +1,14 @@
+{
+  "challenge_module": "ComparatorChallenges.PrimeMillerRabinWitness.PrimeMillerRabinWitnessCriterion",
+  "solution_module": "ComparatorChallenges.PrimeMillerRabinWitness.PrimeMillerRabinWitnessSolution",
+  "theorem_names": [
+    "ComparatorChallenges.PrimeMillerRabinWitness.prime_millerRabin_log_nine_criterion",
+    "ComparatorChallenges.PrimeMillerRabinWitness.prime_millerRabin_03_criterion"
+  ],
+  "definition_names": [],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ]
+}

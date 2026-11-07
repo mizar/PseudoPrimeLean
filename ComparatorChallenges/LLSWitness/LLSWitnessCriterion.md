@@ -165,7 +165,7 @@ The abbreviated bound uses $B(q)$ defined above.
 
 $\omega(q)$ counts distinct prime factors; $[p]_q$ is the unit residue of $p$ because $p\nmid q$.
 
-`ComparatorChallenges.lls_subgroup_witness_bound`
+`ComparatorChallenges.LLSWitness.lls_subgroup_witness_bound`
 
 </div>
 
@@ -278,6 +278,6 @@ $\chi \ne 1$ means that $\chi$ is nonprincipal. The character need not be primit
 
 $\chi(p)=0$ is allowed; the conclusion does not require $p\nmid q$.
 
-`ComparatorChallenges.lls_character_witness_bound`
+`ComparatorChallenges.LLSWitness.lls_character_witness_bound`
 
 </div>

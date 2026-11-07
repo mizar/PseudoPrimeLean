@@ -58,7 +58,7 @@ style: |
 <div class="heading">
 <div class="eyebrow">PSEUDOPRIME · PRIME-BASE PRIMALITY CRITERION</div>
 
-# Miller–Rabin under GRH
+# Miller–Rabin under GRH: $p\le\frac{2}{(\ln 9)^2}(\ln n)^2$
 
 <div class="subtitle">Comparator solution using the library proof</div>
 </div>
@@ -164,14 +164,143 @@ $$
 
 <div class="decomp-note">
 
-The separate Prop `PrimeMillerRabinCriterion` quantifies over every $s,d$ with
+The separate Prop `PrimeMillerRabinWitnessCriterion` quantifies over every $s,d$ with
 $n-1=2^s d$ and $d$ odd. The theorem shown above uses `Nat.maxPowDvdDiv` instead.
 
 </div>
 
-`ComparatorChallenges.prime_millerRabin_log_nine_criterion`
+`ComparatorChallenges.PrimeMillerRabinWitness.prime_millerRabin_log_nine_criterion`
 
 proof from `LeastPrime4136.lean` and `FourNinthsCriterion.lean`
+
+</div>
+
+<div class="foot">
+
+$\mathbb P$: primes. The odd-part decomposition uniquely determines $s,d$.
+
+</div>
+
+---
+
+<div class="topline"></div>
+<div class="heading">
+<div class="eyebrow">PSEUDOPRIME · PRIME-BASE PRIMALITY CRITERION</div>
+
+# Miller–Rabin under GRH: $p\le\max\left(2,\,\frac{3}{10}(\ln n)^2\right)$
+
+<div class="subtitle">Comparator solution using the library proof</div>
+</div>
+
+<div class="short">
+<div class="short-label">
+
+## Abbreviated form
+
+Assume GRH; let $n > 1$ be an odd integer.
+
+</div>
+<div class="short-math">
+
+$$
+\boxed{
+\text{every prime }p \le \max\left(2,\,\frac{3}{10}(\ln n)^2\right)\text{ passes the strong Miller–Rabin conditions for }n \iff n\text{ is prime}.
+}
+$$
+
+</div>
+</div>
+
+<div class="divider"></div>
+<div class="left">
+
+## GRH — definition
+
+<div class="grh-math">
+
+$$
+\boxed{
+\begin{gathered}
+\mathrm{GRH} :\Longleftrightarrow\\[3pt]
+\forall q\in\mathbb Z_{\ge 1},\quad
+\forall\chi\in\mathcal X_{\mathrm{prim}}(q),\quad
+\forall z\in\mathbb C,\\[3pt]
+\bigl(L(z,\chi)=0 \land z\notin T_\chi\bigr)
+\Longrightarrow\mathrm{Re}(z)=\frac12.
+\end{gathered}
+}
+$$
+
+</div>
+<div class="notation">
+
+$\mathcal X_{\mathrm{prim}}(q)$: primitive complex Dirichlet characters modulo $q$.<br>
+$L(z,\chi)$: Mathlib's complex-valued Dirichlet $L$-function, defined at every $z$.
+At the pole $z=1$ for the trivial character, it has a formal complex value;
+the GRH statement above does not exclude that point.
+
+</div>
+<div class="trivial">
+
+$$
+T_\chi:=
+\begin{cases}
+\lbrace -2,-4,-6,\ldots\rbrace, & q=1,\\[2pt]
+\lbrace 0,-2,-4,\ldots\rbrace, & q > 1,\quad \chi(-1)=1,\\[2pt]
+\lbrace -1,-3,-5,\ldots\rbrace, & q > 1,\quad \chi(-1)=-1.
+\end{cases}
+$$
+
+</div>
+<div class="modulus-one">
+
+For $q=1$, $L(z,\chi)=\zeta(z)$; thus GRH includes RH.
+
+</div>
+</div>
+
+<div class="right">
+
+## Proven theorem — canonical decomposition
+
+<div class="full-math">
+
+$$
+\boxed{
+\begin{gathered}
+\mathrm{GRH},\quad n\in\mathbb Z_{\ge0},\quad n > 1,\quad n\equiv1\pmod2,\\[4pt]
+(s,d):=\mathrm{Nat.maxPowDvdDiv}(2,n-1)
+\Longrightarrow\\[4pt]
+\left[
+\begin{gathered}
+\left(\forall p\in\mathbb P,\quad
+p \le \max\left(2,\,\frac{3}{10}(\ln n)^2\right) \Longrightarrow\right.\\[4pt]
+\left.\left(
+\begin{gathered}
+p^d\equiv1\pmod n\\[2pt]
+{}\lor \exists j\in\mathbb Z_{\ge0},\quad
+j < s \land p^{2^j d}\equiv-1\pmod n
+\end{gathered}
+\right)\right)
+\Longleftrightarrow n\in\mathbb P
+\end{gathered}
+\right].
+\end{gathered}
+}
+$$
+
+</div>
+
+<div class="decomp-note">
+
+The separate Prop `PrimeMillerRabinWitnessCriterion` quantifies over every $s,d$ with
+$n-1=2^s d$ and $d$ odd. The theorem shown above uses `Nat.maxPowDvdDiv` instead.
+
+</div>
+
+`ComparatorChallenges.PrimeMillerRabinWitness.prime_millerRabin_03_criterion`
+
+proof from `Target030Global.lean` and `FourNinthsCriterion.lean`
 
 </div>
 

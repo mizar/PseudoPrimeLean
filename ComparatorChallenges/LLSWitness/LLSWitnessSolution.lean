@@ -6,18 +6,19 @@ Authors: Mizar
 
 module
 
-public import Mathlib.NumberTheory.ArithmeticFunction.Misc
+public import PseudoPrime.LLS.Part1FromThree
+public import PseudoPrime.LLS.CharacterPart2FromFive
 public import Mathlib.NumberTheory.LSeries.DirichletContinuation
 
 /-! # LLS subgroup and character witness challenges
 
-These statements fix GRH and the original LLS correction independently of the library proofs.
-The theorem placeholders are compared with a separate solution module.
+These statements reproduce GRH and the original LLS correction for comparison.
+The theorems below apply the library proofs without importing the challenge module.
 -/
 
 @[expose] public section
 
-namespace ComparatorChallenges
+namespace ComparatorChallenges.LLSWitness
 
 /-- Integer arguments excluded as trivial zeros for a complex Dirichlet character. The
 modulus-one case uses negative even integers; otherwise parity selects the nonpositive even
@@ -81,10 +82,12 @@ def LLSCharacterWitnessBound : Prop :=
     ∀ (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q),
       χ ≠ 1 → 5 ≤ q → ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ (Real.log q) ^ 2 ∧ χ p ≠ 1
 
-/-- The extended LLS subgroup witness bound, to be proved by a comparator solution. -/
-theorem lls_subgroup_witness_bound : LLSSubgroupWitnessBound := by sorry
+/-- The extended subgroup witness bound follows from the library S1 theorem. -/
+theorem lls_subgroup_witness_bound : LLSSubgroupWitnessBound := fun hGRH q _ hq H hH ↦
+  PseudoPrime.LLS.llsTheorem11S1_from_three_of_grh hGRH q hq H hH
 
-/-- The LLS nonprincipal-character witness bound, to be proved by a comparator solution. -/
-theorem lls_character_witness_bound : LLSCharacterWitnessBound := by sorry
+/-- The nonprincipal-character witness bound follows from the library S2 theorem. -/
+theorem lls_character_witness_bound : LLSCharacterWitnessBound := fun hGRH q _ χ hne hq ↦
+  PseudoPrime.LLS.exists_prime_not_one_le_log_sq_from_five (q := q) χ hne hq hGRH
 
-end ComparatorChallenges
+end ComparatorChallenges.LLSWitness

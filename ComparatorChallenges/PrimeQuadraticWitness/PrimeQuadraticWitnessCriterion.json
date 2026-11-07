@@ -1,0 +1,10 @@
+{
+  "challenge_module": "ComparatorChallenges.PrimeQuadraticWitness.PrimeQuadraticWitnessCriterion",
+  "solution_module": "ComparatorChallenges.PrimeQuadraticWitness.PrimeQuadraticWitnessSolution",
+  "theorem_names": [
+    "ComparatorChallenges.PrimeQuadraticWitness.prime_ne_one_witness_bound",
+    "ComparatorChallenges.PrimeQuadraticWitness.prime_neg_one_witness_bound"
+  ],
+  "definition_names": [],
+  "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"]
+}

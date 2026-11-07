@@ -19,7 +19,7 @@ The definitions fix the meaning of GRH and the criterion for that comparison.
 
 @[expose] public section
 
-namespace ComparatorChallenges
+namespace ComparatorChallenges.PrimeMillerRabinWitness
 
 noncomputable def dirichletTrivialZeros {q : ℕ} (χ : DirichletCharacter ℂ q) : Set ℤ := by
   classical
@@ -44,4 +44,14 @@ theorem prime_millerRabin_log_nine_criterion (hGRH : GeneralizedRiemannHypothesi
       Nat.Prime n := by
   sorry
 
-end ComparatorChallenges
+theorem prime_millerRabin_03_criterion (hGRH : GeneralizedRiemannHypothesis) {n : ℕ} (hn : 1 < n)
+    (ho : Odd n) :
+    let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)
+    (∀ p : ℕ,
+        Nat.Prime p →
+          (p : ℝ) ≤ max 2 ((3 / 10 : ℝ) * Real.log n ^ 2) →
+          ((p : ZMod n) ^ d = 1 ∨ ∃ j : ℕ, j < s ∧ (p : ZMod n) ^ (2 ^ j * d) = -1)) ↔
+      Nat.Prime n := by
+  sorry
+
+end ComparatorChallenges.PrimeMillerRabinWitness
