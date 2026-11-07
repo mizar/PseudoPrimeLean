@@ -1,7 +1,6 @@
 // C++: Strengthening the Baillie-PSW primality test
 // https://homes.cerias.purdue.edu/~ssw/bfw.pdf
 // https://arxiv.org/abs/2006.14425
-// BFW-* audit tasks are tracked in PseudoPrimeWork/BPSW_execution_alignment_plan.md.
 #include <boost/multiprecision/cpp_int.hpp>
 #include <boost/multiprecision/integer.hpp>
 
