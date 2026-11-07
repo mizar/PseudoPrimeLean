@@ -4,8 +4,8 @@
 
 | 図 | 表す上界・比較 | 本文のまとめ | 生成スクリプト |
 |---|---|---|---|
-| [MR上界](mr_upper_bound_comparison.svg) | 現在のMR包絡線と最小証人記録 | [MR比較グラフ](../MillerRabinBoundGrh.md#比較グラフ) | [plot_mr_comparison.py](../../scripts/plot_mr_comparison.py) |
-| [MR全域累積](mr_cumulative_high_comparison.svg) | 現行Gaussian基底による全域累積上界と8候補の履歴 | [MR累積上界](../MillerRabinBoundGrh.md#全域の累積上界) | [plot_mr_comparison.py](../../scripts/plot_mr_comparison.py) |
+| [MR上界](mr_upper_bound_comparison.svg) | 小入力の上界と区分係数による上界、最小証人記録 | [MR比較グラフ](../MillerRabinBoundGrh.md#比較グラフ) | [plot_mr_comparison.py](../../scripts/plot_mr_comparison.py) |
+| [MR全域累積](mr_cumulative_high_comparison.svg) | 区分係数の入口ごとに履歴を保持した累積上界と点ごとの上界 | [MR累積上界](../MillerRabinBoundGrh.md#全域の累積上界) | [plot_mr_comparison.py](../../scripts/plot_mr_comparison.py) |
 | [非1値証人](qne1_upper_bound_comparison.svg) | $Q_{\ne1}(B)$ と上界 $U_{\ne1}(B)$ | [PseudoSquare](../PseudoSquare.md#証人別の上界式の適用区間と比較)・[Selfridge](../SelfridgeBoundGrh.md#累積上界の適用区間と図) | [plot_qne1_comparison.py](../../scripts/plot_qne1_comparison.py) |
 | [負値証人](qneg1_upper_bound_comparison.svg) | $Q_{-1}(B)$ と上界 $U_{-1}(B)$ | [PseudoSquare](../PseudoSquare.md#証人別の上界式の適用区間と比較)・[Selfridge](../SelfridgeBoundGrh.md#累積上界の適用区間と図) | [plot_qneg1_comparison.py](../../scripts/plot_qneg1_comparison.py) |
 

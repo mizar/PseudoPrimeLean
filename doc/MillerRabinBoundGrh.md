@@ -1,318 +1,177 @@
-# PrimeTestBounds.MillerRabin　GRH下の素数判定同値と証人上界
+# Miller–Rabinの拒否素数上界
 
-GRHの下で、奇合成数 $n \ge 9$ の最小Miller–Rabin拒否素数は $\max\lbrace 2,(517/1250)(\ln n)^2\rbrace$ 以下であり、 $2(\log_9 n)^2$ 以下でもある。定理は [LeastPrime4136.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/LeastPrime4136.lean) にある。 底9の上界による素数判定条件は [PrimeMillerRabinSolution.lean](../ComparatorChallenges/PrimeMillerRabinSolution.lean) にある。上界の定理は名前空間 `PseudoPrime.PrimeTestBounds.MillerRabin` に属し、 `import PseudoPrime` から利用できる。素数判定条件は別の名前空間 `ComparatorChallenges` に属する。
+GRHの下で、奇合成数を棄却する最小の素数底には、下記の点ごとの上界と累積上界がある。図は有限区間の底2・3、係数 $3/10$、および新しい区分上界を描く。図の選択式と累積履歴は、それぞれのLean定理から構成した値である。
 
-[JointSurplusEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/JointSurplusEnvelope.lean) の `jointSelected` は有限区間と解析的な上界を組み合わせ、 `jointSelected_least` は最小拒否素数がその値以下であることを示す。 `jointPrime` は選択値を素数へ丸める。本稿と図では、この選択値と上記のmax形の小さい方を $U_{\mathrm{MR}}(n)$ とする。Leanにはこの最小値の専用定義を設けず、証明済みの2つの上界から導く。
+## 対象と記号
 
-MRの最小素数証人の累積最大値について、既知の更新点を [3種類の最小素数証人の数表](WitnessRecords.md) に参考情報として掲載した。
+$n > 1$ を奇合成数、 $L = \ln n$ とし、 $q_{\mathrm{MR}}(n)$ を $n$ がMiller–Rabinテストに不合格となる最小の素数底とする。 $Q_{\mathrm{MR}}(N)$ は $9 \le n \le N$ の奇合成数に対する $q_{\mathrm{MR}}(n)$ の最大値である。対象がない場合は0とする。
 
-## 共通の記号
+本ページの解析的な上界は一般化Riemann予想（GRH）を仮定する。GRH自体を証明するものではない。底2・3の有限分類はGRHを仮定しない。最小拒否素数の存在とMiller–Rabin合格条件の定義は [Decomposition.lean](../PseudoPrime/PrimeTest/MillerRabin/Decomposition.lean) と関連する上界定理にある。
 
-$$
-\mathbb N=\lbrace0,1,2,\ldots\rbrace,\qquad
-\mathbb P=\lbrace p\in\mathbb N\mid p\text{ は素数}\rbrace.
-$$
+## 点ごとの包絡線
 
-$\ln$ は自然対数を表す。整数入力 $n$ と底 $p$ は自然数とする。
-GRHはすべての原始複素Dirichlet指標のL関数について、非自明零点の実部が $1/2$ であるという仮定である。
-Leanの定義は [Definition.lean](../PseudoPrime/AnalyticNumberTheory/GRH/Definition.lean) の
-`PseudoPrime.AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis` に対応する。
-
-## 証明した主張
-
-前提と主張は次のとおりである。
+GRHの下、全ての奇合成数 $n > 1$ について、最小拒否素数には次の上界がある。
 
 $$
-\mathrm{GRH},\qquad n\in\mathbb N,\qquad n > 1,\qquad n\equiv1\pmod2.
+q_{\mathrm{MR}}(n) \le \max\lbrace2,(3/10)L^2\rbrace.
 $$
 
-$$
-n \text{ が素数}
-\iff
-\text{すべての素数底 }p \le 2(\log_9 n)^2\text{ が強 Miller–Rabin 条件を満たす}
-$$
+証人の存在は [Target030Global.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/Target030Global.lean) の `exists_prime_reject_03_global` が示す。
 
-具体的には、一意な分解を
+新しい区分上界を定めるため、 $D = 24439/50000$、 $A = 3/(8(27/25)^5)$、 $V = 53/500$、 $K \ge 0$ として、
 
 $$
-n - 1 = 2^s d,\qquad s, d \in ℕ,\qquad d \text{ は奇数}
+s_K(L)=\frac{V+\sqrt{V^2+4D(AL+K)}}{2D},
+\qquad B_K(L)=s_K(L)^4
 $$
 
-と書く。底 $p$ に対する強 Miller–Rabin の合格条件は、次の冪合同条件である。
+とおく。Leanではそれぞれ `refinedPaperRoot` と `refinedPaperBound` に対応する。 $L \ge 8$ における区分係数は次のとおりである。
 
 $$
-p^d \equiv 1 \pmod n
-\lor
-\exists j \in ℕ,\quad j < s \land p^{2^j d} \equiv -1 \pmod n
+C_{\mathrm{new}}(L)=
+\begin{cases}
+3/10 & 8 \le L < 1000,\\
+B_3(L)/L^2 & 1000 \le L < 3000,\\
+B_1(L)/L^2 & 3000 \le L < 10000,\\
+B_0(L)/L^2 & 10000 \le L.
+\end{cases}
 $$
 
-任意の自然数底 $a$ について、この条件を次のように略記する。
+[RefinedSixPolePiecewise.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/RefinedSixPolePiecewise.lean) の `refined_piecewise_branches` はこの分岐を表し、[RefinedTriangularWidth24.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/RefinedTriangularWidth24.lean) の `refined_piecewise_witness` はGRHの下、 $L \ge 8$ の奇合成数に対して $p \le C_{\mathrm{new}}(L)L^2$ を満たす拒否素数を与える。
+
+図の点ごとの上界は次の3つの証明済みの枝から定める。
 
 $$
-\mathrm{StrongMRPass}(n,a)
-\quad\Longleftrightarrow\quad
-\left(a^d\equiv1\pmod n\right)
-\lor\left(\exists j\in\mathbb N,\quad j < s\land a^{2^jd}\equiv-1\pmod n\right).
+U_{\mathrm{new}}(n)=
+\begin{cases}
+2 & 9 \le n < 2047,\\
+3 & 2047 \le n < 3000,\\
+C_{\mathrm{new}}(L)L^2 & 3000 \le n.
+\end{cases}
 $$
 
-以降、素数底証人とは $p\in\mathbb P$ かつ $\neg\mathrm{StrongMRPass}(n,p)$ を満たす底を指す。
-この合格条件は、実行用判定 `strongMillerRabinWithBase n p` が `true` を返すことと同値である。対応する定理は [Decomposition.lean](../PseudoPrime/PrimeTest/MillerRabin/Decomposition.lean) の `strongMillerRabinWithBase_eq_true_iff_pass` である。
+小入力の有限分類は [SmallPointwiseBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/SmallPointwiseBounds.lean) にある。 $3000 \le n$ なら $8 \le L$ なので、最後の枝には区分上界を適用できる。図の選択式自体はLeanの単一の定義ではなく、これらの定理を組み合わせたものである。以前の選択式と区分上界の最小値とは、切替点の前後を含む10万点で数値が一致した。全入力で同じ値になることは、この数値検証からは結論できない。
 
-この前提の下で合成数なら $n \ge 9$ であり、合成数性について次の同値が成り立つ。
+## 上界を与える定理と証明方法
 
-$$
-n \text{ が合成数}
-\iff
-\exists p \text{ 素数},\quad
-p \le 2(\log_9 n)^2
-\land p^d \not\equiv 1 \pmod n
-\land \forall j \in ℕ,\quad
-j < s \Longrightarrow p^{2^j d} \not\equiv -1 \pmod n
-$$
-
-素数なら上界内のすべての素数底で合格することは、GRHなしに証明できる。逆に、これらの底での合格から素数性を導く向きに GRH を用いる。素数入力では、上界内の素数底は $p < n$ を満たし、 $n$ と互いに素になる。
-
-Lean では $n - 1$ の 2 進付値 $s$ と奇数部分 $d$ をそれぞれ `padicValNat 2 (n - 1)` と `Nat.divMaxPow (n - 1) 2` として定義し、合同式を `ZMod n` の等式・不等式として表す。 GRHは前述の命題を仮定するものであり、GRH自体を証明したという主張ではない。
-
-`ComparatorChallenges.prime_millerRabin_log_nine_criterion` の宣言部を示す。証明本体は省略している。
-
-```lean
-namespace ComparatorChallenges
-
-theorem prime_millerRabin_log_nine_criterion (hGRH : GeneralizedRiemannHypothesis) {n : ℕ}
-    (hn : 1 < n) (ho : Odd n) :
-    let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)
-    (∀ p : ℕ,
-        Nat.Prime p →
-          (p : ℝ) ≤ 2 * (Real.logb 9 n) ^ 2 →
-          ((p : ZMod n) ^ d = 1 ∨ ∃ j : ℕ, j < s ∧ (p : ZMod n) ^ (2 ^ j * d) = -1)) ↔
-      Nat.Prime n
-
-end ComparatorChallenges
-```
-
-## 公開定理
-
-以下の名前は `PseudoPrime.PrimeTestBounds.MillerRabin` 名前空間に属する。
-
-| 宣言 | 内容 | ソース |
+| 範囲・役割 | 主な定理 | 証明方法 |
 |---|---|---|
-| `exists_prime_reject_max_4136` | GRH下の奇合成数に対する係数 $517/1250$ のmax形の証人上界 | [GlobalMax4136.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GlobalMax4136.lean) |
-| `compositeLeastPrime_le_max_4136`・`compositeLeastPrime_le_log9_sq` | 最小拒否素数のmax形と底9の上界 | [LeastPrime4136.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/LeastPrime4136.lean) |
-| `exists_prime_reject_le_log9_sq` | GRH下の奇合成数に対する底9の拒否素数上界 | [LeastPrime4136.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/LeastPrime4136.lean) |
-| `jointSurplus_least` | 全域上界 $F(\ln n)$ による最小証人の評価 | [JointSurplusEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/JointSurplusEnvelope.lean) |
-| `jointSelected_least`・`jointPrime_least` | 選択上界と素数丸めによる最小証人の評価 | [JointSurplusEnvelope.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/JointSurplusEnvelope.lean) |
-| `cumulativeLeastPrime_le_joint` | 全自然数の上端に対する累積最大値の評価 | [JointSurplusCumulative.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/JointSurplusCumulative.lean) |
-| `jointSurplusGlobal_ratio_anti` | 全域上界を $L^2$ で割った係数の単調非増加性 | [GaussianSurplusShape.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianSurplusShape.lean) |
-| `jointSurplus_lt_042` など | 指定した入口以降での係数評価 | [JointSurplusThresholds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/JointSurplusThresholds.lean) |
-| `exists_primeWitness_lt_3000` | GRHを仮定しない奇合成数 $9 \le n < 3000$ の定理 | [SmallLogBound.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/SmallLogBound.lean) |
+| $9 \le n < 3000$ | `exists_primeWitness_lt_3000` | 小入力を有限分類し、底2または3の不合格を検証する。 |
+| 全域の係数0.3 | `exists_prime_reject_03_global` | 小入力の有限分類と、 $\ln n \ge 8$ に対する証人定理を結合する。低域では因数構造に応じた有限証明と局所指標の評価を使い、高域ではGaussian比較を使う。 |
+| $8 \le L < 1000$ の区分上界 | `refined_piecewise_low_witness` | 係数0.3の証人定理を、区分係数の最初の枝へ書き換える。 |
+| $L \ge 1000$、小さいFermat部分群指数 | `refined_index16_witness` | 局所部分群に対する証人と、一様Korselt三素数積の場合を分ける。後者は六次有理極核のEuler項・Gamma項・零点和と有限主和を評価し、端点の有理数計算で残差を抑える。 |
+| $L \ge 1000$、大きいFermat部分群指数 | `refined_24_inner_witness`、`refined_24_outer_witness` | 幅24の三角核について二尺度の明示公式と指標族平均を使う。内側ではAbel和とChebyshev関数の下界、外側では幅18の二つの支持和を使い、有限主和と数値ギャップから拒否素数を得る。 |
+| 区分上界の全域接続 | `refined_piecewise_witness` | 対数の大きさ、部分群指数、三角核の内外で場合分けし、上記の証人を統合する。 |
 
-素数判定条件の `ComparatorChallenges.prime_millerRabin_log_nine_criterion` は [Comparatorの解答](../ComparatorChallenges/PrimeMillerRabinSolution.lean) にある。
+## 小入力の有限分類と全域への接続
 
-## 証明の流れ
+[Target030Global.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/Target030Global.lean) は、 [Target030Log8.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/Target030Log8.lean) の $L \ge 8$ における係数0.3の証人定理を、小入力の有限分類と接続する。 $n < 2047$ では底2、 $2047 \le n < 3000$ では底3以下の証人を使う。後者では $\ln n \ge 7$ から $3 \le (3/10)L^2$ を示す。 $n \ge 3000$ では $L \ge 8$ を示して係数0.3の定理を適用する。
 
-係数 $517/1250$ のmax形では、 $\ln n < 8$ を底2・3の有限分類で扱う。 $8 \le \ln n \le 350$ で素因数が重複込みで2個の場合は、平方数について係数 $0.371$、相異なる2素数の積について係数 $0.409$ の上界を使う。有限証明では90組の素数供給と956個の計数候補を認証し、平方数の78行と半素数の122区間を接続する。素因数が3個以上の場合は、 $8 \le \ln n \le 25/2$ で小さい素因数を使い、 $25/2 \le \ln n \le 3461/10$ で偶指標の補正を使う。 $\ln n \ge 3461/10$ は全域Gaussian上界で覆う。
+こうして `exists_prime_reject_03_global` は、GRHの下ですべての奇合成数 $n > 1$ に対して $p \le \max\lbrace2,(3/10)L^2\rbrace$ を満たす拒否素数 $p$ を与える。さらに `compositeLeastPrime_le_03_global` は、その証人との比較から最小拒否素数にも同じ上界が成り立つことを示す。
 
-底9の素数判定条件では、合成数の場合は底9の拒否素数上界を使う。素数の場合は底9の検査範囲を既存の素数入力の合格範囲と比較し、GRHを使わずにすべての対象となる素数底が合格することを示す。
+証明の接続点は、有限計算で得た整数の上界を対数の式へ移すことである。 $2047 \le n < 3000$ では底3以下という事実だけでは係数0.3の評価にならないため、対数の単調性と検証済みの有理数による下界から $L \ge 7$ を得る。 $n \ge 3000$ でも同様に $L \ge 8$ を得る。これらの対数評価は有理数区間の判定をLeanで検証したものである。
 
-全域上界 $F$ では尺度1の算術和の寄与と符号付きGamma評価を組み合わせる。共同の重みに対するAbel評価と素数供給の下界を使って、大きな部分群指数の場合に証人を得る。一様な3素因子の場合はGaussian比較を使う。各因数構造の証人を同じ切断点へ接続し、最小証人と累積上界を導く。
+## Target030Global.lean：対数尺度8以上の係数0.3
 
-合格底の構造と小さい入力の有限分類は [Composite.lean](../PseudoPrime/PrimeTest/MillerRabin/Composite.lean) と [Computation/Small.lean](../PseudoPrime/PrimeTest/MillerRabin/Computation/Small.lean) にある。有限分類は $9 \le n < 3000$ の奇合成数に対して底2または3の不合格を示す。素数入力の合格方向にはGRHを使わない。
+係数0.3の解析的な根拠は、`Target030Global.lean` が呼び出す [Target030Log8.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/Target030Log8.lean) の `exists_prime_reject_03_log8` である。この定理はGRHの下、奇合成数の $L = \ln n$ が $8 \le L$ を満たせば、 $p \le (3/10)L^2$ となる拒否素数 $p$ が存在すると示す。証明は対数尺度と因数構造に応じて次の枝を結合する。
 
-## 証明依存
+- $8 \le L \le 1000$： [QuadraticGammaAnalyticBridgeCombined.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/QuadraticGammaAnalyticBridgeCombined.lean) の `exists_reject_03_analytic1000` を使う。 $L \le 550$ の既存の証明に91個の解析セルを継ぎ足し、隣接セルの端点を接続する。各セルの評価を検証することで、有限区間全体に係数0.3を適用する。
+- $L > 1000$ で一様Korselt型三素数積の場合：平方因子を持たず、異なる3つの素因数を持ち、各素因数 $p$ について $p-1$ が $n-1$ を割り、各 $p-1$ の2進付値が等しい場合である。Gaussian核を使った評価から証人が存在するための数値比較を導き、`gaussian030_scalar_gap` でその不等式を検証する。選んだGaussianの尺度から得られる探索上限も $(3/10)L^2$ 以下である。
+- $L > 1000$ で上記以外の場合： [Target030NonuniformLog8.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/Target030NonuniformLog8.lean) の `exists_prime_reject_03_nonuniform_log8` を使う。素因数の個数や局所部分群による分類を用い、指数が小さい場合の局所証人と、指数が大きい場合の解析的な証人を組み合わせる。
 
-主定理、証人系、有限分類、小範囲の上界、真部分群の中心定理、利用した S2 定理の推移的公理依存は `propext`、 `Classical.choice`、 `Quot.sound` のみである。有限証明を含め、これらの定理に `sorry` や `native_decide` 由来の公理依存はない。確認例は次のとおり。
+一様Korselt型では、探索範囲内に拒否素数がないと仮定したときの指標和の評価と、Gaussian核による下界を比較する。`gaussian030_scalar_gap` が両者の間に必要な厳密な差を与えるため、この仮定を排除できる。係数0.3は単に数値実験から選んだ値ではなく、証人の探索上限が $(3/10)L^2$ 以下になることと、この差が正になることの両方をLeanで検証している。
 
-```lean
-import PseudoPrime
-import ComparatorChallenges.PrimeMillerRabinSolution
+### 素因数の数とKorselt型による分類
 
-#print axioms ComparatorChallenges.prime_millerRabin_log_nine_criterion
+証明で扱う素因数の個数には、重複を込めて数える個数と、異なる素因数の個数がある。例えば $p^2q$ は前者では3個、後者では2個である。合成数には重複を込めて少なくとも2個の素因数がある。係数0.3の証明では、この個数と平方因子の有無を使い、局所的な条件から証人を得られる場合と、複数の指標をまとめて評価する必要がある場合に分ける。
 
-namespace PseudoPrime.PrimeTestBounds.MillerRabin
+重複を込めた素因数が4個以上の場合、`exists_prime_reject_03_four_factors` は、素因数の総数を $k$ とする既存の上界 $4L^2/k^2$ を使う。 $k \ge 4$ なら係数は高々 $1/4$ なので、係数0.3の範囲に収まる。平方因子がある場合には、平方因子に対する上界も利用できる。例えば $8 \le L \le 100$ の非一様の場合、`exists_prime_reject_03_nonuniform_100` は平方因子がある場合を先に分離する。
 
-#print axioms exists_prime_reject_max_4136
-#print axioms compositeLeastPrime_le_max_4136
-#print axioms compositeLeastPrime_le_log9_sq
-#print axioms exists_prime_reject_le_log9_sq
-#print axioms jointPrime_least
-#print axioms cumulativeLeastPrime_le_joint
-#print axioms PseudoPrime.PrimeTest.base_two_or_three_rejects_of_lt_3000
+平方因子がなく異なる2素数の積となる場合は、2素数積向けの証人定理を使う。 $8 \le L \le 100$ では `exists_prime_reject_03_semiprime_100` がこの場合を扱う。より大きい尺度では、非一様の場合に対する局所部分群の分類と解析的上界を使い、指数に応じた場合分けを通じて証人を得る。
 
-end PseudoPrime.PrimeTestBounds.MillerRabin
-```
+異なる3素数の積では、特にKorselt条件 $p-1 \mid n-1$ がすべての素因数 $p$ について成り立つ場合に注意が必要である。Korselt条件に加えて各 $p-1$ の2進付値がすべて等しいものを、ここでは一様Korselt型と呼ぶ。この型は、単一の素因数に着目した局所条件による証人の構成から残る例外であり、上述のGaussian核を使う高域の証明で重点的に扱う。区分上界の小指数側でも、この型に対して六次有理極核を使う別の証明を用いる。
 
-## 個別の上界と証明
+3素数の場合でも、一様Korselt型以外は局所的な差を利用できる。ある素因数でKorselt条件が成立しないか、2つの素因数の前身 $p-1$ の2進付値が異なるためである。`exists_prime_reject_03_nonuniform_three` は、この違いから `exists_prime_reject_03_local_factor` を適用し、係数高々 $1/4$ の証人を得る。Korselt条件を満たしていても、2進付値が異なればこちらに含まれる。
 
-対象を正の奇合成数とし、 $9 \le n$、 $L=\ln n$ とする。最小素数証人を
+この因数分類による証明は、解析セルによる有限範囲の一括証明と重なる部分を持つ。最終定理 `exists_prime_reject_03_log8` が直接使うのは、 $L \le 1000$ では解析セルによる定理であり、 $L > 1000$ では一様Korselt型とそれ以外の定理である。
 
-$$
-q_{\mathrm{MR}}(n)=\min\lbrace p\in\mathbb P\mid\neg\mathrm{StrongMRPass}(n,p)\rbrace
-$$
+`Target030Global.lean` 自体はこれらの解析評価を再証明せず、上記の $8 \le L$ の定理を前節の有限分類と接続してmax形の全域定理を得る。
 
-と書く。実数上界を次のように定める。
+## RefinedSixPolePiecewise.lean：区分係数と証人の接続
+
+[RefinedSixPolePiecewise.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/RefinedSixPolePiecewise.lean) は、上記の $C_{\mathrm{new}}(L)$ と、高域で使う余裕項 $K \in \lbrace 3,1,0\rbrace$ を定義する。`refined_piecewise_branches` は各切替点での式を確定し、`refined_piecewise_high` は $L \ge 1000$ のとき $C_{\mathrm{new}}(L)L^2=B_K(L)$ となることを示す。
+
+同ファイルの `refined_piecewise_low_witness` は、 $8 \le L < 1000$ で係数0.3の証人を区分係数の証人として使う。また `refined_pair_piecewise_witness` は、一様なKorselt型の三素数積に対し、所定の残差評価を仮定して高域の区分上界を与える。このファイルだけでは高域の全奇合成数に対する証人の存在は結論していない。小さいFermat部分群指数の場合は [RefinedSixPoleIndex.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/RefinedSixPoleIndex.lean) で扱い、残る大きい指数の場合と統合は次のファイルで扱う。
+
+高域の式の根幹は、上で定義した正の根 $s=s_K(L)$ が二次方程式
 
 $$
-C(L)=\max\left\lbrace 2,\frac{517}{1250}L^2\right\rbrace,\qquad
-U_{\mathrm{MR}}(n)=\min\lbrace\mathrm{jointSelected}(n),C(\ln n)\rbrace.
+D s^2-V s=AL+K
 $$
 
-GRHの下で $q_{\mathrm{MR}}(n) \le U_{\mathrm{MR}}(n)$ が成り立つ。さらに $n \ge 9$ では $C(\ln n) \le 2(\log_9 n)^2$ である。両方の上界は [LeastPrime4136.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/LeastPrime4136.lean) にあり、その数値比較は [LogNineComparison.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/LogNineComparison.lean) にある。
+を満たし、証人の探索範囲を $B_K(L)=s^4$ とする点にある。先行する `refined_pair_root_witness` は、探索範囲内のすべての素数が合格すると仮定して得られる必要条件と、この根の等式および残差の上界を比較し、矛盾を導く。残差評価は同定理の仮定であり、区分係数を定義しただけでは自動的に得られない。
 
-### 係数0.3を接続した上界
+`refined_pair_piecewise_witness` は、選択した $K$ が $0 \le K \le 3$ を満たすことと、 $L > 0$ によって $C_{\mathrm{new}}(L)L^2=B_K(L)$ と約分できることを使い、この条件付き証人を区分係数の形式に移す。小さい指数の全域証明では、局所的な場合と一様Korselt型三素数積の場合を分類し、後者に必要な残差評価も確保する。
 
-GRHの下で、 $8 \le L \le 197/5$ または $5250 \le L$ を満たす奇合成数には、 $p \le (3/10)L^2$ を満たすMR拒否素数 $p$ が存在する。これは [Target030CoveredRanges.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/Target030CoveredRanges.lean) の `exists_prime_reject_03_covered_ranges` で証明している。さらに、特定の3素因子型 `UniformKorseltTriple` に属さない場合は、 $8 \le L$ の全域で同じ上界が成り立つ。定義と証明は [Target030High.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/Target030High.lean) と [Target030NonuniformLog8.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/Target030NonuniformLog8.lean) にある。
+## RefinedTriangularWidth24.lean：大きい指数と区分上界の統合
 
-これらの定理と既存の上界から、図に使う上界を次のように構成する。
+[RefinedTriangularWidth24.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/RefinedTriangularWidth24.lean) は、Fermat部分群の指数が少なくとも $10^{16}$ の場合を幅24の三角核で扱う。指標族の二尺度の明示公式から、対象の素数が存在しない場合の評価を導き、有限主和の下界との矛盾によって、法を割るか部分群の外にある素数を得る。その素数がMiller–Rabinテストの拒否素数になることを使う。
+
+具体的には、幅24の核について、尺度 $x$ と逆尺度 $x^{-1}$ の指標和を、導手の対数、Gamma項、零点和に結びつける。尺度1ではGRHの下で零点項の絶対値の和を取り出せる。Gamma項の実部を指標とその逆指標のそれぞれについて $-27$ 以下に抑えることで、零点和の評価に $-54$ の項と尺度1の算術和を残す。これを部分群を消す指標族について合計し、主指標を分離する。
+
+探索範囲内に法を割る素数も部分群の外にある素数もないと仮定すると、尺度 $x$ と尺度1の有限主和に対する上界が得られる。一方、主和を下から評価する。指数が大きい場合には、その下界と導手・Gamma項などから得た上界の間に厳密な数値ギャップができ、仮定に矛盾する。得られた素数が法を割る場合、Miller–Rabin合格に必要な互いに素という条件に反する。部分群の外にある場合も、合格する底がFermat部分群に属することに反する。
+
+高域では $x=B_K(L)$ とおき、 $\ln x \le 48$ と $48 \le \ln x$ に分ける。前者の `refined_24_inner_witness` では、Abel和とChebyshev関数の評価による有限主和の下界を使う。後者の `refined_24_outer_witness` では、幅18の二つの支持和に分けて評価する。`refined_24_outer_lower` は、その有限主和が $(9199/100)\sqrt{x}-2000x^{1/4}$ 以上であることを示し、数値ギャップの証明へ渡す。
+
+内側で下から抑えるのは、尺度 $x$ の有限主和と尺度1の有限主和の2倍との和である。外側では尺度1の主和の非負性を使い、尺度 $x$ の有限主和だけで矛盾を得る。外側の係数 $9199/100$ は、より精密な係数 $92-20e^{-18}$ の指数関数項を有理数で抑えたものだ。これらの下界と数値ギャップは、それぞれの範囲の仮定を明示してLeanで証明している。
+
+最後の `refined_piecewise_witness` は、 $8 \le L < 1000$、 $L \ge 1000$ かつ指数が $10^{16}$ 以下の場合、大きい指数の内側・外側の場合を結合する。結果としてGRHの下、 $L \ge 8$ のすべての奇合成数に対して $p \le C_{\mathrm{new}}(L)L^2$ を満たす拒否素数を与える。切替点における具体的な式は、前節の `refined_piecewise_branches` と組み合わせて得られる。
+
+係数0.3の素数判定同値 `prime_millerRabin_03_criterion` は [PrimeMillerRabinWitnessSolution.lean](../ComparatorChallenges/PrimeMillerRabinWitness/PrimeMillerRabinWitnessSolution.lean) にある。奇数 $n > 1$ について、指定範囲内のすべての素数底で合格することと $n$ の素数性が同値である。合成数を排除する向きにGRHを使い、素数が対象の底で合格する向きには使わない。
+
+## 累積上界
+
+GRHの下、係数0.3のmax形は累積最大値の上界にもなる。これは [Target030Cumulative.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/Target030Cumulative.lean) の `cumulativeLeastPrime_le_03` が示す。図では $H_0(L)=\max\lbrace2,(3/10)L^2\rbrace$ とし、 $(T_i,K_i)=(1000,3),(3000,1),(10000,0)$ に対して次を順に適用する。
 
 $$
-U_{0.30}(n)=
+H_i(L)=
 \begin{cases}
-\min\lbrace U_{\mathrm{MR}}(n),(3/10)L^2\rbrace & 8 \le L \le 197/5\quad\mathrm{or}\quad 5250 \le L,\\
-U_{\mathrm{MR}}(n) & \mathrm{otherwise}.
+H_{i-1}(L) & L < T_i,\\
+\min\lbrace H_{i-1}(L),\max\lbrace H_{i-1}(T_i),B_{K_i}(L)\rbrace\rbrace & T_i \le L.
 \end{cases}
 $$
 
-したがって、対象となるすべての奇合成数について $q_{\mathrm{MR}}(n) \le U_{0.30}(n)$ である。この式は証明済みの上界を文書と図で組み合わせたもので、Leanの `jointSelected` の定義は変更していない。 $197/5 < L < 5250$ の `UniformKorseltTriple` については係数0.3の上界を主張せず、従来の上界を使う。
+各 $B_K$ は $K \ge 0$、 $L \ge 0$ で非減少であり、 $B_0 \le B_1 \le B_3$ が成り立つ。したがって、入口以前の履歴と入口以降の区分上界の大きい方で全入力を覆える。図の累積上界は $H_3$ である。この組合せを独立したLean定義として証明したわけではない。
 
-### 有限区間 $9 \le n < 3000$ の上界
-
-$9 \le n < 2047$ では2、 $2047 \le n < 3000$ では3を返す。底2または底3での拒否を有限分類で証明し、素数証人と最小素数証人へ接続する。この範囲ではGRHは不要である。定義と証人定理は [SmallPointwiseBounds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/SmallPointwiseBounds.lean) にある。
-
-公開数値関数の仕様としても、すべての自然数 $2047 \le n < 3000$ で `jointSelected n` と `jointPrime n` はともに3である。この等式には奇数性や合成数性を仮定しない。 $n < 2047$ では両関数が2を返す。
-
-### 固定素数上界23・31と有限principal和
-
-固定半径 $y$ に対して、次の実際のvon Mangoldt和を使う。
-
-$$
-R(x)=\sum_{1 \le m \le x}\Lambda(m)\left(\frac1m-\frac1x\right),\qquad
-S(x)=\sum_{1 \le m \le x}\Lambda(m)\ln\frac xm.
-$$
-
-各半径で、次の2本の下界を有限和から証明する。
-
-$$
-\ell(y)=\frac{78861}{50000}+\frac{231}{5000y}-\frac{16033}{9000y^2}.
-$$
-
-$$
-2\ln y-\ell(y)+\delta_R \le R(y^2),
-$$
-
-$$
-y^2-\frac y{20}-\frac{1839}{500}\ln y-\frac{21}{20}+\delta_S \le S(y^2).
-$$
-
-各半径で既存の有理部分和が与える余裕を使い、補強量を分母 $10^6$ の有理数に固定する。必要な素数の対数について有理区間をTaylor級数8項で検証し、相異なる素数冪の寄与を加える。残りの項は非負なので、これらの部分和は元の和の下界となる。
-
-実際の $R(y^2)$ と $S(y^2)$ に対する下界を指標の比較定理へ渡し、強化した比較gapが正であることから $y^2$ 以下のMR拒否素数を得る。表の各行で $y^2$ は次の素数より小さいため、素数間の有限検証により表の上界へ丸められる。
-
-| 適用条件 | 固定半径 $y$ | $10^6\delta_R$ | $10^6\delta_S$ | 素数証人上界 |
-|---|---|---:|---:|---:|
-| $L \le 8.0901$ | $53851/10000$ | 7385 | 597822 | 23 |
-| $L \le 9.0031$ | $60827/10000$ | 9395 | 729227 | 31 |
-
-各行は記した上端以下の全域で使え、個別の証人定理には $n \ge 3000$ や前行の上端を仮定しない。証明書は [EndpointFiniteCredits.lean](../PseudoPrime/Analysis/EndpointFiniteCredits.lean)、素数証人・最小素数証人は [EndpointFiniteTuned.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/EndpointFiniteTuned.lean) にある。
-
-### 全域の解析的上界
-
-$L > 0$ に対して、次の定数と関数を定める。
-
-$$
-A=\frac{20115621}{25000000},\quad V=\frac{28794111}{12500000},\quad
-D=\frac{10971611}{5000000},\quad
-s_R(L)=\frac{V+\sqrt{V^2+4D(AL+R)}}{2D}.
-$$
-
-$$
-\Phi_{35}(L)=\frac{21}{10}\max\lbrace130,s_{30}(L)^2\rbrace^2,\quad
-\Phi_{50}(L)=\frac{21}{10}\max\lbrace155,s_{29}(L)^2\rbrace^2,
-$$
-
-$$
-F(L)=\min\left\lbrace\frac49L^2,\Phi_{35}(L),\Phi_{50}(L)\right\rbrace.
-$$
-
-GRHの下で、すべての奇合成数 $n \ge 9$ に対して $q_{\mathrm{MR}}(n) \le F(\ln n)$ である。 $F$ は非負の範囲で単調非減少であり、 $F(L)/L^2$ は $L > 0$ で単調非増加である。証明は [GaussianSurplusGlobal.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianSurplusGlobal.lean) と [GaussianSurplusShape.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianSurplusShape.lean) にある。
-
-| 入口 $L$ | その入口以降で成り立つ評価 |
-|---:|---:|
-| $3461/10$ | $F(L) < (517/1250)L^2$ |
-| $400$ | $F(L) < 0.397L^2$ |
-| $1000$ | $F(L) < 0.338L^2$ |
-| $4000$ | $F(L) < 0.304L^2$ |
-| $6500$ | $F(L) < 0.3L^2$ |
-| $25000$ | $F(L) < 0.29L^2$ |
-
-最初の行は [GaussianHigh4136.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/GaussianHigh4136.lean)、残りの行は [JointSurplusThresholds.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/JointSurplusThresholds.lean) で証明した。 $F(L)/L^2$ は $L \to \infty$ で次の値に収束する。
-
-$$
-\frac{21}{10}\left(\frac{20115621/25000000}{10971611/5000000}\right)^2.
-$$
-
-この極限は [JointSurplusAsymptotic.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/JointSurplusAsymptotic.lean) で証明している。
-
-### 素数への丸め
-
-実数上界 $R \ge 2$ に対して、 $R$ 以下の最大素数を $\mathrm{primeRound}(R)$ とする。 $R < 2$ では値を変えない。すべての実数で $\mathrm{primeRound}(R) \le R$ が成り立ち、 $p \le R$ を満たす素数 $p$ は丸め後も範囲内にある。また、 `primeRound_mono` はこの丸めの単調性を示す。定義と定理は [PrimeCutoff.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/PrimeCutoff.lean) にある。
-
-`jointPrime n` は `jointSelected n` を丸める。2・3と表の固定素数は丸めても同じ値である。素数への丸めは調べる素数基数の集合を変えずに、実数上界をその集合の最大要素へ置き換える。
-
-### 全域の累積上界
-
-$Q_{\mathrm{MR}}(N)$ を $9 \le n \le N$ の奇合成数 $n$ に対する最小拒否素数の最大値とし、対象がないときは0とする。以下では $N \ge 9$、 $L=\ln N$ とする。 $N < 9$ では $Q_{\mathrm{MR}}(N)=0$ である。
-
-全域で有効な $F$ は非減少なので、 GRHの下で $Q_{\mathrm{MR}}(N) \le F(\ln N)$ である。 `jointCumulative` は、この上界と `smoothCumulative` の最小値に等しい。この同値は [JointSurplusComparison.lean](../PseudoPrime/PrimeTestBounds/MillerRabin/JointSurplusComparison.lean) の `jointCumulative_eq_scaleOne_min` で証明している。 $C(L)$ も $L \ge 0$ で非減少なので、各入力へのmax形から $Q_{\mathrm{MR}}(N) \le C(\ln N)$ が従う。この2つの累積上界の小さい方を $B(L)$ とする。
-
-図の累積上界は入口以前の履歴を含め、次の式で構成する。
-
-$$
-B_{0.30}(L)=
-\begin{cases}
-\min\lbrace B(L),(3/10)L^2\rbrace & 8 \le L \le 197/5,\\
-\min\lbrace B(L),\max\lbrace B(5250),(3/10)L^2\rbrace\rbrace & 5250 \le L,\\
-B(L) & \mathrm{otherwise}.
-\end{cases}
-$$
-
-最初の区間では、 $\ln n < 8$ の入力は $n < 3000$ なので、有限区間の上界3も $(3/10)L^2$ 以下である。高域では $\ln n < 5250$ の入力を $B(5250)$ で抑える。したがってGRHの下で $Q_{\mathrm{MR}}(N) \le B_{0.30}(\ln N)$ が成り立つ。この累積式も既存の証明から導いた文書上の構成である。
-
-### 包絡線の構成
-
-$n < 3000$ では小域の値2または3を使う。 $n \ge 3000$ では固定素数候補、 $F(\ln n)$、 $C(\ln n)$ を比較する。さらに証明済みの2区間では係数0.3の候補を比較する。上界の選択は入力ごとに行うため、その値自体を累積上界として扱わない。
-
-## 上界式の適用区間
-
-次の表は描画範囲で数値比較により確認した従来の $U_{\mathrm{MR}}$ の候補を示す。 $C(L)$ と31の交点を $L_{31}=\sqrt{31\cdot1250/517}$ とする。従来の上界は全域で $\mathrm{jointSelected}(n)$ と $C(\ln n)$ の最小値である。
-
-| 適用条件 | 現行の上界を構成する候補 |
-|---|---|
-| $9 \le n < 2047$ | $2$ |
-| $2047 \le n < 3000$ | $3$ |
-| $\ln3000 \le L \le 8.0901$ | $23$ |
-| $8.0901 < L < L_{31}$ | $C(L)$ |
-| $L_{31} \le L \le 9.0031$ | $31$ |
-| $9.0031 < L$ | $\min\lbrace C(L),F(L)\rbrace$ |
-
-上の表に係数0.3の候補を追加し、証明済みの2区間で最小値を取ったものが $U_{0.30}$ である。
-
-### 比較グラフ
+## 比較グラフ
 
 ![Miller–Rabinの最小素数証人と上界式の比較](figures/mr_upper_bound_comparison.svg)
 
-横軸は $\ln(\ln n)$ に線形なスケールとし、目盛りには $n$ を10の累乗で示す。縦軸は対数軸である。 $2^{64}$、 $2^{80}$、 $2^{128}$ の縦グリッドを重ねた。橙の実線は $U_{0.30}(n)$、黒の点線は $2(\log_9 n)^2$、青緑の点と階段線は最小素数証人の記録を表す。
+橙線は $U_{\mathrm{new}}(n)$、黒点線は $\max\lbrace2,(3/10)(\ln n)^2\rbrace$ を示す。横軸は $\ln(\ln n)$ に線形な尺度、縦軸は対数軸である。主図は $9 \le n \le 10^{64}$、挿入図は $3000 \le n \le e^{10^{14}}$ を対象とし、挿入図では上界を $(\ln n)^2$ で割る。
 
-基数を素数 $p_1=2,p_2=3,p_3=5,\ldots$ の順に選んでMiller–Rabinテストを行う。青緑の点の横座標は [OEIS A006945](https://oeis.org/A006945) の第 $k$ 項、すなわち最初の $k-1$ 個の素数基数 $p_1,\ldots,p_{k-1}$ によるテストをすべて通過する最小の奇合成数である。縦座標はその入力を棄却する最小素数基数 $q_{\mathrm{MR}}(n)$ であり、記録更新点では $Q_{\mathrm{MR}}(n)$ と一致する。例えば、 $n=2047$ は基数2で通過し、基数3で棄却されるため、点の縦座標は3となる。青緑の階段線は掲載した記録を結んだもので、未探索範囲への外挿ではない。
+青緑の点は [OEIS A006945](https://oeis.org/A006945) の記録となる奇合成数と、その最小拒否素数を示す。階段線は掲載した記録を結んだもので、未探索範囲への外挿ではない。[PNG版](figures/mr_upper_bound_comparison.png)
 
-主図の描画範囲は $9 \le n \le 10^{64}$、縦軸は $10^0$ から $10^4$ である。点ごとの上界を描いており、累積上界としての単調性は仮定していない。挿入図は $3000 \le n \le e^{10^{14}}$ での比 $U_{0.30}(n)/(\ln n)^2$ を示す。この比の下降は分子である上界 $U_{0.30}(n)$ の下降を意味しない。全域上界 $F$ がmax形を改善する範囲は主図の範囲外にある。そこで入力ごとの上界に下降が生じても、累積最大値の下降を表すものではない。
+### 累積上界と点ごとの上界
 
-図の数値計算はLeanの証明を代替しない。 [PNG版](figures/mr_upper_bound_comparison.png)
+![MR累積上界と点ごとの上界](figures/mr_cumulative_high_comparison.svg)
 
-### 累積上界と点ごとの上界の比較
+橙線は $H_3(L)/L^2$、青い破線は点ごとの上界 $U_{\mathrm{new}}(n)/(\ln n)^2$、黒点線は係数0.3のmax形を $L^2$ で割った値を示す。切替点では以前の履歴を保持するため、累積上界は点ごとの上界と異なる場合がある。[PNG版](figures/mr_cumulative_high_comparison.png)
 
-![MR累積上界と点ごとの候補](figures/mr_cumulative_high_comparison.svg)
+図は数値描画であり、Leanによる自然数入力の証明と区別する。生成方法は [図の一覧](figures/README.md) にある。
 
-橙線は履歴を含む累積上界 $B_{0.30}(L)/L^2$、青い破線は点ごとの上界 $U_{0.30}(n)/(\ln n)^2$ を示す。黒点線の高さは $2/(\ln 9)^2$ である。実数軸の描画と、Leanによる自然数上端の証明は区別する。[PNG版](figures/mr_cumulative_high_comparison.png)
+## 公理依存の確認
+
+次の宣言について、`#print axioms` で推移的な依存を確認できる。
+
+```lean
+import PseudoPrime
+import ComparatorChallenges.PrimeMillerRabinWitness.PrimeMillerRabinWitnessSolution
+
+#print axioms PseudoPrime.PrimeTestBounds.MillerRabin.refined_piecewise_witness
+#print axioms PseudoPrime.PrimeTestBounds.MillerRabin.refined_piecewise_branches
+#print axioms PseudoPrime.PrimeTestBounds.MillerRabin.exists_prime_reject_03_global
+#print axioms PseudoPrime.PrimeTestBounds.MillerRabin.cumulativeLeastPrime_le_03
+#print axioms ComparatorChallenges.PrimeMillerRabinWitness.prime_millerRabin_03_criterion
+```
 
 [構成全体へ](README.md) · [PrimeTest](PrimeTest.md) · [LLS](LLS.md)

@@ -1,1473 +1,213 @@
 #!/usr/bin/env python3
-"""Plot the pointwise Miller-Rabin witness-bound comparison in the public docs.
+"""Draw the current Miller-Rabin pointwise and cumulative witness bounds.
 
-Install matplotlib, then run this script. By default, the plot covers
-9 <= n <= 10**64. Set --max-power to extend it, up to 10**8192.
-Coordinates use L = ln n, never n.
-Record points are pointwise witnesses, not an extrapolated finite-maximum bound.
+The pointwise branches are the certified small-input bounds, the global 0.30
+bound, and the piecewise cutoff of refined_piecewise_witness. Cumulative
+histories retain each branch's preceding entrance bound. All coordinates are
+computed from L = ln(n); plotting is numerical, not a Lean proof.
 """
 
 from __future__ import annotations
 
 import argparse
 import csv
-import json
 import math
-from fractions import Fraction
 from pathlib import Path
 
-from plot_qne1_comparison import DATA_DIR, ROOT, power_ticks
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import FixedLocator, FuncFormatter, NullLocator
 
+from plot_qne1_comparison import DATA_DIR, ROOT, power_ticks
 
-def adaptive_root(L: np.ndarray) -> np.ndarray:
-    t = L - 2 * np.log(L) + 45571 / 10000
-    return (L - 2 * np.log(L) + 113911 / 25000
-            + 231 / (2500 * (t - 1)) - 16033 / (4500 * t**2))
 
+ENTRANCES = ((1000.0, 3.0), (3000.0, 1.0), (10000.0, 0.0))
 
-def gaussian_6fifths_bound(L: np.ndarray) -> np.ndarray:
-    mass = 16 / 25
-    endpoint = 2129 / 2000
-    index = 1000000000
-    conductor = 161 / 400
-    d = (index * mass - endpoint) / (index - 1)
-    beta = (index / (index - 1)) * (mass / 3 + 3 / 10)
-    root = (beta + np.sqrt(beta**2 + 4 * d * (conductor * L + 29))) / (2 * d)
-    return (6 / 5) * root**4
 
+def paper_bound(L: np.ndarray, allowance: float | np.ndarray) -> np.ndarray:
+    """Fourth power of the positive root in RefinedSixPolePaperRoot.lean."""
+    d, a, v = 24439 / 50000, 3 / (8 * (27 / 25)**5), 53 / 500
+    return ((v + np.sqrt(v*v + 4*d*(a*L + allowance))) / (2*d))**4
 
-def gamma_clipped_prefix_root(L: np.ndarray, credit: float) -> np.ndarray:
-    offset = 143420077 / 11856000 - 2 * credit
-    linear = (11783423 / 25000000) * L + offset
-    reciprocal = (7 / 6) * L + 190 / 3
-    return (linear + np.sqrt(linear**2 + 4 * (87069 / 98800) * reciprocal)) \
-        / (2 * (87069 / 98800))
 
+def paper_piecewise_upper(L: np.ndarray) -> np.ndarray:
+    """Piecewise witness cutoff, certified for odd composites with L >= 8."""
+    allowance = np.where(L < 3000, 3.0, np.where(L < 10000, 1.0, 0.0))
+    return np.where(L < 1000, .3 * L**2, paper_bound(L, allowance))
 
-def gamma_clipped_upper(L: np.ndarray) -> np.ndarray:
-    first = np.maximum(1000, (99 / 40) * gamma_clipped_prefix_root(L, 203 / 50)**2)
-    second = np.maximum(50000, (99 / 40) * gamma_clipped_prefix_root(L, 28493 / 5000)**2)
-    return np.minimum(first, second)
 
+def pointwise_upper(L: np.ndarray) -> np.ndarray:
+    """Displayed cutoff: small-input values, then the certified piecewise bound."""
+    return np.where(L < math.log(2047), 2.0,
+                    np.where(L < math.log(3000), 3.0, paper_piecewise_upper(L)))
 
-def gamma_midscale_upper(L: np.ndarray) -> np.ndarray:
-    """The certified 35000 prefix and the refined 1000 prefix, valid for L >= 120."""
-    first = np.maximum(35000, (99 / 40) * gamma_clipped_prefix_root(L, 11147 / 2000)**2)
-    second = np.maximum(1000, (99 / 40) * gamma_clipped_prefix_root(L, 413 / 100)**2)
-    return np.minimum(first, second)
 
+def cumulative_upper(L: np.ndarray) -> np.ndarray:
+    """Cumulative bound on L >= ln(3000), retaining each entrance history."""
+    result = np.maximum(2.0, .3 * L**2)
+    caps: list[float] = []
+    for index, (entrance, allowance) in enumerate(ENTRANCES):
+        anchor = max(2.0, .3 * entrance**2)
+        for previous, (previous_entrance, previous_allowance) in enumerate(ENTRANCES[:index]):
+            if entrance >= previous_entrance:
+                old_branch = float(paper_bound(np.array([entrance]), previous_allowance)[0])
+                anchor = min(anchor, max(caps[previous], old_branch))
+        caps.append(anchor)
+        result = np.where(L >= entrance,
+                          np.minimum(result, np.maximum(anchor, paper_bound(L, allowance))),
+                          result)
+    return result
 
-def endpoint_midscale_base(L: np.ndarray) -> np.ndarray:
-    """The 7/4 endpoint ranges before adding the two-step candidate."""
-    return np.select(
-        [L <= 22, L <= 111 / 4, L <= 144 / 5],
-        [(64 / 81) * (L - 7 / 4)**2, (81 / 100) * (L - 7 / 4)**2,
-         np.full_like(L, 576)],
-        default=midscale_root(L - 7 / 4)**2,
-    )
 
-
-def gamma_index100_bound(L: np.ndarray) -> np.ndarray:
-    mu = 11783423 / 25000000
-    a = 91 / 100
-    linear = mu * L + 1057 / 2500
-    reciprocal = (7 / 6) * L + 61
-    radius = (linear + np.sqrt(linear**2 + 4 * a * reciprocal)) / (2 * a)
-    return (99 / 40) * radius**2
-
-
-def gamma_index100_prefix_upper(L: np.ndarray) -> np.ndarray:
-    """Minimum of the retained 1000-term and 50000-term Gamma prefixes."""
-    mu = 11783423 / 25000000
-
-    def prefix_bound(credit: float, floor: float) -> np.ndarray:
-        linear = mu * L + (591 / 50 - 2 * credit)
-        reciprocal = (7 / 6) * L + 61
-        radius = (linear + np.sqrt(linear**2 + 4 * (91 / 100) * reciprocal)) \
-            / (2 * (91 / 100))
-        return np.maximum(floor, (99 / 40) * radius**2)
-
-    return np.minimum(prefix_bound(203 / 50, 1000),
-                      prefix_bound(28493 / 5000, 50000))
-
-
-def gaussian_18_bound(L: np.ndarray) -> np.ndarray:
-    """Analysis13's constant-18 version of the 6/5 Gaussian bound."""
-    mass = 16 / 25
-    endpoint = 2129 / 2000
-    index = 1000000000
-    conductor = 161 / 400
-    d = (index * mass - endpoint) / (index - 1)
-    beta = (index / (index - 1)) * (mass / 3 + 3 / 10)
-    root = (beta + np.sqrt(beta**2 + 4 * d * (conductor * L + 18))) / (2 * d)
-    return (6 / 5) * root**4
-
-
-def gaussian_6_bound(L: np.ndarray) -> np.ndarray:
-    """The unchanged constant-6 Gaussian bound, now valid from scale 240."""
-    mass = 16 / 25
-    endpoint = 2129 / 2000
-    index = 1000000000
-    conductor = 161 / 400
-    d = (index * mass - endpoint) / (index - 1)
-    beta = (index / (index - 1)) * (mass / 3 + 3 / 10)
-    root = (beta + np.sqrt(beta**2 + 4 * d * (conductor * L + 6))) / (2 * d)
-    return (6 / 5) * root**4
-
-
-def gaussian_refined_bound(L: np.ndarray) -> np.ndarray:
-    """Separate refined Gaussian bound, proved for logarithmic scale at least 300."""
-    mass = 64167 / 100000
-    endpoint = 2129 / 2000
-    index = 1000000000
-    conductor = 20115621 / 50000000
-    width = 2 / 5
-    d = (index * mass - endpoint) / (index - 1)
-    beta = (index / (index - 1)) * (width * mass + 1 / (10 * width))
-    root = (beta + np.sqrt(beta**2 + 4 * d * (conductor * L + 28 / 5))) / (2 * d)
-    return (6 / 5) * root**4
-
-
-def midscale_root(L: np.ndarray) -> np.ndarray:
-    return np.select([L <= 703 / 20, L <= 10367 / 200, L <= 1706 / 25,
-                      L <= 6671 / 50],
-                     [(800 / 837) * (L - 167 / 100),
-                      (3200 / 3337) * (L - 89 / 50),
-                      (3200 / 3281) * (L - 131 / 50),
-                      (3200 / 3259) * (L - 153 / 50)],
-                     default=(12800 / 12927) * (L - 83 / 20))
-
-
-def even_two_step_cutoff(L: np.ndarray) -> np.ndarray:
-    """Two fixed substitutions in the normalized even endpoint correction."""
-    def correction(y: np.ndarray) -> np.ndarray:
-        z = np.log(y)
-        numerator = (
-            36620000 * y**3 * z - 56749471 * y**3
-            + 109860000 * y**2 * z**2 + 73100099 * y**2 * z
-            + 10777809 * y**2 - 73240000 * y * z**2
-            - 1528140 * y * z + 2824690 * y - 36620000 * z**2
-            - 177204180 * z - 94877470
-        )
-        denominator = 18310000 * (y - 1) * ((y + 1)**2 + 2 * y * z)
-        return numerator / denominator
-
-    first = np.maximum(8, L - correction(L))
-    second = L - correction(first)
-    return second**2
-
-
-def shift117_minus_two_crossing() -> float:
-    return (47366 + math.sqrt(47366**2 + 4 * 2723311)) / 2
-
-
-def shifted_endpoint_w1000_crossing(shift: float = 9 / 8) -> float:
-    a0 = 12800 / 12927
-    s0 = math.sqrt(99 / 40)
-    return (9 * s0 + (shift + 83 / 20) * a0) / (a0 - (287 / 500) * s0)
-
-
-def compatible_candidates(L: np.ndarray) -> np.ndarray:
-    """All-input bounds checked against the documented envelope."""
-    return np.array([
-        np.where(L < math.log(2047), 2.0, np.inf),
-        np.where((L >= math.log(2047)) & (L < math.log(3000)), 3.0, np.inf),
-        np.where((L >= math.log(3000)) & (L <= 9), 61.0, np.inf),
-        np.where((L >= math.log(3000)) & (L <= 56 / 5), 61.0, np.inf),
-        np.where(L >= math.log(600), adaptive_root(L)**2, np.inf),
-        np.where((L > 9) & (L < 81 / 8), (64 / 81) * L**2, np.inf),
-        np.where((L >= 81 / 8) & (L <= 171 / 8),
-                 (64 / 81) * (L - 9 / 8)**2, np.inf),
-        np.where((L > 171 / 8) & (L <= 217 / 8),
-                 (81 / 100) * (L - 9 / 8)**2, np.inf),
-        np.where((L > 217 / 8) & (L <= 5581 / 200), 576.0, np.inf),
-        np.where((L > 5581 / 200) & (L < shifted_endpoint_w1000_crossing()),
-                 midscale_root(L - 9 / 8)**2, np.inf),
-        np.where((L >= 523 / 50) & (L <= 2171 / 100),
-                 (64 / 81) * (L - 73 / 50)**2, np.inf),
-        np.where((L >= 23 / 2) & (L <= 240), even_two_step_cutoff(L), np.inf),
-        np.where((L >= math.log(3000)) & (L <= 286 / 25), 61.0, np.inf),
-        np.where((L >= 43 / 4) & (L <= 22), (64 / 81) * (L - 7 / 4)**2, np.inf),
-        np.where((L >= 43 / 4) & (L <= 111 / 4), (81 / 100) * (L - 7 / 4)**2, np.inf),
-        np.where(L >= 120, gamma_midscale_upper(L), np.inf),
-        np.where((L >= 63) & (L <= 240), 35000.0, np.inf),
-        np.where(L >= 240, gamma_index100_prefix_upper(L), np.inf),
-        np.where(L >= 300, gaussian_18_bound(L), np.inf),
-        np.where(L >= 240, gaussian_6_bound(L), np.inf),
-        np.where(L >= 300, gaussian_refined_bound(L), np.inf),
-        np.where((L >= 523 / 50) & (L <= 1373 / 50),
-                 (81 / 100) * (L - 73 / 50)**2, np.inf),
-        np.where((L >= 2171 / 100) & (L <= 144 / 5), 576.0, np.inf),
-        np.where((L >= 706 / 25) & (L <= 5283 / 20),
-                 midscale_root(L - 73 / 50)**2, np.inf),
-        np.where((L >= 144 / 5) & (L <= 13517 / 100),
-                 midscale_root(L - 7 / 4)**2, np.inf),
-        np.where(L >= 300, (99 / 40) * ((500 / 821) * L + 3)**2, np.inf),
-        np.where(L >= 11255, 0.8 * L**2, np.inf),
-        np.where((L >= 1339 / 50) & (L <= 26269 / 100), midscale_root(L)**2, np.inf),
-        np.where(L >= math.log(3000), (199 / 250) * (L + 216)**2, np.inf),
-        np.where(L >= 210, (99 / 40) * ((287 / 500) * L + 9)**2, np.inf),
-        np.where(L >= 240, (99 / 40) * ((287 / 500) * L + 9 / 2)**2, np.inf),
-        np.where(L >= 258, (99 / 40) * ((107 / 200) * L + 24 / 5)**2, np.inf),
-        np.where(L >= 4000,
-                 (21 / 10) * ((5503 / 10000) * L + (4 / 5) * np.sqrt(L) + 46)**2,
-                 np.inf),
-        np.where(L >= 500, gaussian_6fifths_bound(L), np.inf),
-        np.where(L >= 330, gamma_index100_bound(L), np.inf),
-        np.where(L >= 34971, (4 / 5) * (L + 29)**2, np.inf),
-        np.where(L >= 34971, (199 / 250) * (L + 117)**2, np.inf),
-        np.where(L >= 46330, (4 / 5) * (L - 2)**2, np.inf),
-        np.where(L >= 50880, (4 / 5) * (L - np.log(L))**2, np.inf),
-        np.where(L >= 350000, (16 / 25) * L**2, np.inf),
-        np.where(L >= 9565217391305 * math.log(10),
-                 (282924 / 1000000) * L**2, np.inf),
-        np.where((L >= 120) & (L < 500), gamma_clipped_upper(L), np.inf),
-    ])
-
-
-def previous_upper(L: np.ndarray) -> np.ndarray:
-    """The retained high-range envelope and comparison baseline."""
-    shifted_crossing = shifted_endpoint_w1000_crossing(73 / 50)
-    endpoint_gamma = np.minimum(midscale_root(L - 7 / 4)**2, gamma_clipped_upper(L))
-    previous = np.select(
-        [L < math.log(2047), L < math.log(3000), L <= 56 / 5, L < 23 / 2,
-         L <= 74 / 5, L <= 2171 / 100,
-         L <= 1373 / 50, L <= 144 / 5, L < 120, L < 122, L < 330, L < 500,
-         L < 9565217391305 * math.log(10),
-         ],
-        [np.full_like(L, 2), np.full_like(L, 3), np.full_like(L, 61),
-         (64 / 81) * (L - 73 / 50)**2, even_two_step_cutoff(L),
-         (64 / 81) * (L - 73 / 50)**2, (81 / 100) * (L - 73 / 50)**2,
-         np.full_like(L, 576), midscale_root(L - 7 / 4)**2,
-         endpoint_gamma, gamma_clipped_upper(L), gamma_index100_bound(L),
-         gaussian_6fifths_bound(L)],
-        default=(282924 / 1000000) * L**2,
-    )
-    return np.minimum.reduce([
-        previous,
-        np.where(L >= 240, gamma_index100_prefix_upper(L), np.inf),
-        np.where(L >= 300, gaussian_18_bound(L), np.inf),
-        np.where(L >= 240, gaussian_6_bound(L), np.inf),
-        np.where(L >= 300, gaussian_refined_bound(L), np.inf),
-    ])
-
-
-def gamma_fixed_switch() -> float:
-    """Numerical rendering of the exact Lean gammaFixedSwitch (208 < S < 209)."""
-    radius = math.sqrt((40 / 99) * 35000)
-    offset = 143420077 / 11856000 - 2 * (413 / 100)
-    return ((87069 / 98800) * radius - offset - (190 / 3) / radius) / (
-        11783423 / 25000000 + (7 / 6) / radius)
-
-
-def compatible_upper(L: np.ndarray) -> np.ndarray:
-    """Explicit Lean selectedWitnessEnvelope; continuous dominance is formally proved."""
-    return np.select(
-        [L < math.log(2047), L < math.log(3000), L <= 286 / 25,
-         L < 23 / 2, L < 120, L <= gamma_fixed_switch(), L <= 240,
-         L < 300, L < 9565217391305 * math.log(10)],
-        [np.full_like(L, 2), np.full_like(L, 3), np.full_like(L, 61),
-         (64 / 81) * (L - 7 / 4)**2, even_two_step_cutoff(L),
-         np.maximum(1000, (99 / 40) * gamma_clipped_prefix_root(L, 413 / 100)**2),
-         np.full_like(L, 35000), gaussian_6_bound(L), gaussian_refined_bound(L)],
-        default=(282924 / 1000000) * L**2,
-    )
-
-
-
-def endpoint_correction(y: np.ndarray) -> np.ndarray:
-    z = np.log(y)
-    numerator = (36620000 * (3*y+1) * (y-1) * z**2
-                 + (36620000*y**3 + 73100099*y**2 - 1528140*y - 177204180)*z
-                 - 56749471*y**3 + 10777809*y**2 + 2824690*y - 94877470)
-    return numerator / (18310000*(y-1)*((y+1)**2 + 2*y*z))
-
-
-def even_four_step_cutoff(L: np.ndarray) -> np.ndarray:
-    # Only L>=45/4 is a candidate; clamp inactive vector entries before logarithms.
-    L = np.maximum(L, 45/4)
-    a = np.maximum(8, L-endpoint_correction(L))
-    b = L-endpoint_correction(a)
-    c = np.maximum(8, L-endpoint_correction(b))
-    return (L-endpoint_correction(c))**2
-
-
-def gamma_sharp_bound(L: np.ndarray) -> np.ndarray:
-    K, mu, D, T = 86733/98800, 11783423/25000000, 38128717/11856000, 20475759/494000
-    v = mu*L+D
-    r = (v+np.sqrt(v*v+4*K*(7*L/6+T)))/(2*K)
-    return (99/40)*r*r
-
-
-def gamma_sharp_switch() -> float:
-    R = math.sqrt(1400000/99)
-    return ((86733/98800)*R-38128717/11856000-(20475759/494000)/R) / (
-        11783423/25000000+7/(6*R))
-
-
-def gaussian_coefficients() -> tuple[float, float, float]:
-    J, M, E, k = 1e9, 64167/100000, 2129/2000, 2/5
-    return (J*M-E)/(J-1), (J/(J-1))*(k*M+1/(10*k)), 20115621/50000000
-
-
-def gaussian_raw_bound(L: np.ndarray, D: float) -> np.ndarray:
-    d, beta, c = gaussian_coefficients()
-    t = (beta+np.sqrt(beta*beta+4*d*(c*L+D)))/(2*d)
-    return (6/5)*t**4
-
-
-def gaussian_switch(N: int, D: float) -> float:
-    d, beta, c = gaussian_coefficients()
-    r = math.sqrt(5*N/6)
-    return (d*r-beta*math.sqrt(r)-D)/c
-
-
-def gaussian_selected(L: np.ndarray) -> np.ndarray:
-    s1, s2, s3 = (gaussian_switch(35000, 29/5), gaussian_switch(50000, 29/5),
-                  gaussian_switch(50000, 111/20))
-    return np.select([L <= s1, L < s2, L <= s3],
-                     [np.full_like(L, 35000), gaussian_raw_bound(L, 29/5),
-                      np.full_like(L, 50000)], default=gaussian_raw_bound(L, 111/20))
-
-
-def previous_candidates(L: np.ndarray) -> np.ndarray:
-    small = np.where(L < math.log(2047), 2., 3.)
-    return np.array([
-        compatible_upper(L),
-        np.where(L < math.log(3000), small, np.inf),
-        np.where(L <= 2877/250, 61., np.inf),
-        np.where(L <= 47/4, 67., np.inf),
-        np.where(L >= 45/4, even_four_step_cutoff(L), np.inf),
-        np.where(L >= 100, gamma_sharp_bound(L), np.inf),
-        np.where(L >= 63, np.maximum(35000, gaussian_raw_bound(L, 29/5)), np.inf),
-        np.where(L >= 63, np.maximum(50000, gaussian_raw_bound(L, 111/20)), np.inf),
-        np.where(L >= 2e12, (282924/1000000)*L**2, np.inf),
-    ])
-
-
-def previous_upper(L: np.ndarray) -> np.ndarray:
-    """Numerical rendering of Lean improvedSelectedEnvelope and its exact switches."""
-    four, gamma = even_four_step_cutoff(L), gamma_sharp_bound(L)
-    small = np.where(L < math.log(2047), 2., 3.)
-    return np.select(
-        [L < math.log(3000), L <= 2877/250, L <= 47/4, L < 100, L < 112,
-         L <= gamma_sharp_switch(), L <= 240, L < 2e12],
-        [small, np.full_like(L, 61), np.full_like(L, 67), four, np.minimum(four, gamma),
-         gamma, np.full_like(L, 35000), gaussian_selected(L)],
-        default=(282924/1000000)*L**2)
-
-
-
-LOW_PRIME_STEPS = [(23, 401/50), (29, 413/50), (31, 893/100), (37, 933/100),
-                   (41, 238/25), (43, 989/100), (47, 521/50), (53, 109/10), (59, 553/50)]
-
-
-def pointwise_cutoff(L: np.ndarray) -> np.ndarray:
-    """Clipped inverse of y+H_pt(y), using the proved increasing domain y>=8."""
-    lo = np.full_like(L, 8.)
-    hi = np.maximum(8., L)
-    for _ in range(64):
-        y = (lo+hi)/2
-        z = np.log(y)
-        loss = 78861/50000 + 231/(5000*y) - 16033/(9000*y*y)
-        delta = 2*y*y*(y+1+z)*(31551/20000-loss)/((y-1)*((y+1)**2+2*y*z))
-        below = y+endpoint_correction(y)+delta < L
-        lo = np.where(below, y, lo)
-        hi = np.where(below, hi, y)
-    return ((lo+hi)/2)**2
-
-
-def gaussian1000_bound(L: np.ndarray) -> np.ndarray:
-    d, beta, c = gaussian_coefficients()
-    M, E, k = 64167/100000, 2129/2000, 2/5
-    d4 = (4*M-E)/3
-    beta4 = (4/3)*(M*k+1/(10*k))
-    large = (beta+np.sqrt(beta*beta+4*d*(c*L+163/20)))/(2*d)
-    four = (beta4+np.sqrt(beta4*beta4+4*d4*((2/3)*c*L+127/10)))/(2*d4)
-    return (6/5)*np.maximum(10, np.maximum(large, four))**4
-
-
-def gamma_reflected_bound(L: np.ndarray) -> np.ndarray:
-    K, mu, D, T = 86733/98800, 11783423/25000000, 38128717/11856000, 58129633/2223000
-    v = mu*L+D
-    r = (v+np.sqrt(v*v+4*K*(7*L/6+T)))/(2*K)
-    return (99/40)*r*r
-
-
-def gaussian_seeded_selected(L: np.ndarray) -> np.ndarray:
-    s1, s2, s3 = (gaussian_switch(35000, 567/100), gaussian_switch(50000, 567/100),
-                  gaussian_switch(50000, 109/20))
-    return np.select([L <= s1, L < s2, L <= s3],
-                     [np.full_like(L, 35000), gaussian_raw_bound(L, 567/100),
-                      np.full_like(L, 50000)], default=gaussian_raw_bound(L, 109/20))
-
-
-def next_candidates(L: np.ndarray) -> np.ndarray:
-    """The guarded baseline nextWitnessEnvelope, including all nine low-prime certificates."""
-    result = [previous_upper(L), pointwise_cutoff(L),
-              np.where(L >= 63, gaussian1000_bound(L), np.inf),
-              np.where(L >= 100, gamma_reflected_bound(L), np.inf),
-              np.where(L >= 63, np.maximum(35000, gaussian_raw_bound(L, 567/100)), np.inf),
-              np.where(L >= 63, np.maximum(50000, gaussian_raw_bound(L, 109/20)), np.inf),
-              np.where(L <= 11509/1000, 61., np.inf),
-              np.where(L <= 1179/100, 67., np.inf),
-              np.where(L <= 1193/100, 71., np.inf),
-              np.where(L <= 12337/1000, 73., np.inf),
-              np.where(L >= 1.5e12, (282924/1000000)*L**2, np.inf),
-              np.where(L >= 2e12, (2827/10000)*L**2, np.inf)]
-    result.extend(np.where(L <= cap, float(b), np.inf) for b, cap in LOW_PRIME_STEPS)
-    return np.array(result)
-
-
-def next_upper(L: np.ndarray) -> np.ndarray:
-    """Baseline Lean nextSelectedEnvelope; numerical inverse evaluation is for rendering."""
-    P, A, G = pointwise_cutoff(L), gaussian1000_bound(L), gamma_reflected_bound(L)
-    low = np.select([L <= cap for _, cap in LOW_PRIME_STEPS],
-                    [np.full_like(L, b) for b, _ in LOW_PRIME_STEPS], default=np.inf)
-    small = np.where(L < math.log(2047), 2., 3.)
-    return np.select(
-        [L < math.log(3000), L <= 553/50, L <= 11509/1000,
-         L <= 1179/100, L <= 1193/100, L <= 12337/1000, L < 100,
-         L < 132, L <= 235, L < 240, L < 1.5e12, L < 2e12],
-        [small, low, np.full_like(L, 61), np.minimum(67, P), np.minimum(71, P),
-         np.minimum(73, P), P, np.minimum(P, np.minimum(G, A)), np.minimum(P, A),
-         np.minimum(35000, A), gaussian_seeded_selected(L), (282924/1000000)*L**2],
-        default=(2827/10000)*L**2)
-
-
-TIGHT_LOW_PRIME_STEPS = [
-    (23, 8032/1000), (29, 8271/1000), (31, 8934/1000),
-    (37, 9339/1000), (41, 9532/1000), (43, 9902/1000),
-    (47, 10422/1000), (53, 10907/1000), (59, 11062/1000),
-]
-
-
-def gaussian_recovered_bound(L: np.ndarray) -> np.ndarray:
-    """Lean gaussianRecoveredBound: one large-index root, allowance 8.14, floor 12000."""
-    return np.maximum(12000., gaussian_raw_bound(L, 407/50))
-
-
-def gamma_recovered_bound(L: np.ndarray) -> np.ndarray:
-    """Lean gammaRecoveredBound, whose fixed-stencil domain starts at L=101."""
-    K, mu = 86733/98800, 11783423/25000000
-    D, T = 36174637/11856000, 58129633/2223000
-    v = mu*L+D
-    radius = (v+np.sqrt(v*v+4*K*(7*L/6+T)))/(2*K)
-    return (99/40)*radius**2
-
-
-def gaussian_recovered_seeded(L: np.ndarray) -> np.ndarray:
-    """Lean gaussianRecoveredSeeded: the exact selection of both clipped profiles."""
-    s1, s2, s3 = (gaussian_switch(35000, 283/50), gaussian_switch(50000, 283/50),
-                  gaussian_switch(50000, 136/25))
-    return np.select(
-        [L <= s1, L < s2, L <= s3],
-        [np.full_like(L, 35000), gaussian_raw_bound(L, 283/50),
-         np.full_like(L, 50000)], default=gaussian_raw_bound(L, 136/25))
-
-
-def refined_candidates(L: np.ndarray) -> np.ndarray:
-    """Independent guarded minimum defining Lean refinedWitnessEnvelope."""
-    result = list(next_candidates(L))
-    result.extend(np.where(L <= cap, float(b), np.inf)
-                  for b, cap in TIGHT_LOW_PRIME_STEPS)
-    result.extend([
-        np.where(L >= 63, gaussian_recovered_bound(L), np.inf),
-        np.where(L >= 101, gamma_recovered_bound(L), np.inf),
-        np.where(L >= 63, np.maximum(35000, gaussian_raw_bound(L, 283/50)), np.inf),
-        np.where(L >= 63, np.maximum(50000, gaussian_raw_bound(L, 136/25)), np.inf),
-        np.where(L >= 1.1e12, (71/250)*L**2, np.inf),
-        np.where(L >= 2e12, (28237/100000)*L**2, np.inf),
-    ])
-    return np.array(result)
-
-
-def refined_upper(L: np.ndarray) -> np.ndarray:
-    """Lean refinedSelectedEnvelope with its unchanged small-input convention.
-
-    Evaluate the ordered low-prime selection first, then exactly the active analytic
-    candidates. The independent candidates() check verifies the equivalent guarded min.
-    """
-    baseline = next_upper(L)
-    low = np.select([L <= cap for _, cap in TIGHT_LOW_PRIME_STEPS],
-                    [np.full_like(L, b) for b, _ in TIGHT_LOW_PRIME_STEPS],
-                    default=baseline)
-    base = np.where(L < math.log(3000), baseline, low)
-    gaussian = gaussian_recovered_bound(L)
-    gamma = gamma_recovered_bound(L)
-    seeded = gaussian_recovered_seeded(L)
-    return np.select(
-        [L < 63, L < 101, L < 1.1e12, L < 2e12],
-        [base, np.minimum.reduce([base, gaussian, seeded]),
-         np.minimum.reduce([base, gaussian, gamma, seeded]),
-         np.minimum.reduce([base, gaussian, gamma, seeded, (71/250)*L**2])],
-        default=np.minimum.reduce([
-            base, gaussian, gamma, seeded, (71/250)*L**2, (28237/100000)*L**2]))
-
-
-FINITE_PRINCIPAL_STEPS = [
-    (23, 8.087), (29, 8.325), (31, 8.987), (37, 9.390),
-    (41, 9.583), (43, 9.952), (47, 10.471), (53, 10.955),
-    (59, 11.109), (61, 11.546), (67, 11.830), (71, 11.970), (73, 12.373),
-]
-TRIANGULAR_PROFILES = [
-    (7/15, 3e10), (21/50, 4e10), (1/3, 1e11), (3/10, 2.5e11),
-    (29/100, 5e11), (71/250, 1.08e12), (2829/10000, 1.48e12),
-    (1411811/5000000, 1.82e12),
-]
-
-
-def gaussian_floor_switch(u: float, D: float) -> float:
-    d, beta, c = gaussian_coefficients()
-    return (d*u*u-beta*u-D)/c
-
-
-def gaussian_low_profile(L: np.ndarray, u: float, D: float) -> np.ndarray:
-    return np.maximum((6/5)*u**4, gaussian_raw_bound(L, D))
-
-
-def gaussian_low_family(L: np.ndarray) -> np.ndarray:
-    """Exact rational-switch selection of the three low-floor profiles."""
-    return np.select(
-        [L <= gaussian_floor_switch(9.5, 9.3),
-         L <= gaussian_floor_switch(9.8, 8.15)],
-        [gaussian_low_profile(L, 9.1, 9.3), gaussian_low_profile(L, 9.5, 8.15)],
-        default=gaussian_low_profile(L, 9.8, 8.13))
-
-
-def gaussian_seeded_sharp(L: np.ndarray) -> np.ndarray:
-    t1, t2, t3 = (gaussian_switch(35000, 5.63), gaussian_switch(50000, 5.63),
-                  gaussian_switch(50000, 5.41))
-    return np.select([L <= t1, L < t2, L <= t3],
-        [np.full_like(L, 35000), gaussian_raw_bound(L, 5.63),
-         np.full_like(L, 50000)], default=gaussian_raw_bound(L, 5.41))
-
-
-def candidates(L: np.ndarray) -> np.ndarray:
-    """Independent guarded minimum for Lean sharpWitnessEnvelope."""
-    result = list(refined_candidates(L))
-    result.extend(np.where(L <= cap, float(b), np.inf)
-                  for b, cap in FINITE_PRINCIPAL_STEPS)
-    result.extend(np.where(L >= 63, gaussian_low_profile(L, u, D), np.inf)
-                  for u, D in [(9.1, 9.3), (9.5, 8.15), (9.8, 8.13)])
-    result.extend(np.where(L >= 63, np.maximum(N, gaussian_raw_bound(L, D)), np.inf)
-                  for N, D in [(35000, 5.63), (50000, 5.41)])
-    result.extend(np.where(L >= T, C*L**2, np.inf) for C, T in TRIANGULAR_PROFILES)
-    return np.array(result)
-
-
-def upper(L: np.ndarray) -> np.ndarray:
-    """Lean sharpSelectedEnvelope; 2047 <= n < 3000 retains value three."""
-    baseline = refined_upper(L)
-    finite = np.select([L <= cap for _, cap in FINITE_PRINCIPAL_STEPS],
-        [np.minimum(baseline, b) for b, _ in FINITE_PRINCIPAL_STEPS], default=baseline)
-    analytic = np.where(L < 63, finite,
-        np.minimum.reduce([finite, gaussian_low_family(L), gaussian_seeded_sharp(L)]))
-    # Entrances increase and coefficients decrease, so the last active profile wins.
-    triangular = np.select([L < T for _, T in TRIANGULAR_PROFILES],
-        [analytic] + [np.minimum(analytic, C*L**2) for C, _ in TRIANGULAR_PROFILES[:-1]],
-        default=np.minimum(analytic, TRIANGULAR_PROFILES[-1][0]*L**2))
-    return np.where(L < math.log(3000), baseline, triangular)
-
-
-
-# The 055559 functions remain independent comparison baselines.
-sharp_upper = upper
-sharp_candidates = candidates
-TUNED_FINITE_STEPS = [
-    (23, 8.0901), (29, 8.3320), (31, 9.0031), (37, 9.3961),
-    (41, 9.5875), (43, 9.9619), (47, 10.4895), (53, 10.9671),
-    (59, 11.1199), (61, 11.5654), (67, 11.8463), (71, 11.9879),
-    (73, 12.3975), (79, 12.6409),
-]
-TUNED_GAUSSIAN_PROFILES = [(9.1, 9.29), (9.3, 8.7), (9.48, 8.145), (9.79, 8.125)]
-TUNED_TRIANGULAR_PROFILES = [
-    (.4603, 3e10), (.4145, 4e10), (.3315, 1e11), (.2992, 2.5e11),
-    (.2891, 5e11), (.28399, 1.08e12), (.28289, 1.48e12),
-]
-
-# Exact parameters of HistoryCumulativeBounds.historyProfiles, in entrance order.
-HISTORY_TRIANGULAR_PROFILES = [
-    (Fraction(4603, 10000), 30000000000),
-    (Fraction(4145, 10000), 40000000000),
-    (Fraction(663, 2000), 100000000000),
-    (Fraction(374, 1250), 250000000000),
-    (Fraction(2891, 10000), 500000000000),
-    (Fraction(28399, 100000), 1080000000000),
-    (Fraction(28289, 100000), 1480000000000),
-    (Fraction(1411811, 5000000), 1820000000000),
-]
-
-
-def triangular_histories() -> list[Fraction]:
-    """Eight exact retained costs; no logarithmic input enumeration or rounding."""
-    histories: list[Fraction] = []
-    for i, (_, entrance) in enumerate(HISTORY_TRIANGULAR_PROFILES):
-        histories.append(min(
-            [Fraction(entrance**2)] +
-            [max(histories[j], HISTORY_TRIANGULAR_PROFILES[j][0] * entrance**2)
-             for j in range(i)]
-        ))
-    assert histories[6] == 622051696000000000000000
-    assert histories[7] == 937044836000000000000000
-    return histories
-
-
-def gaussian_tuned_family(L: np.ndarray) -> np.ndarray:
-    return np.minimum.reduce([gaussian_low_profile(L, u, D)
-                              for u, D in TUNED_GAUSSIAN_PROFILES])
-
-
-def gaussian_seeded_tuned(L: np.ndarray) -> np.ndarray:
-    return np.minimum(np.maximum(35000, gaussian_raw_bound(L, 5.619)),
-                      np.maximum(50000, gaussian_raw_bound(L, 5.372)))
-
-
-def candidates(L: np.ndarray) -> np.ndarray:
-    """Independent guarded minimum for Lean tunedWitnessEnvelope."""
-    result = list(sharp_candidates(L))
-    result.extend(np.where(L <= cap, float(b), np.inf) for b, cap in TUNED_FINITE_STEPS)
-    result.extend(np.where(L >= 63, gaussian_low_profile(L, u, D), np.inf)
-                  for u, D in TUNED_GAUSSIAN_PROFILES)
-    result.extend(np.where(L >= 63, np.maximum(N, gaussian_raw_bound(L, D)), np.inf)
-                  for N, D in [(35000, 5.619), (50000, 5.372)])
-    result.extend(np.where(L >= T, C*L**2, np.inf) for C, T in TUNED_TRIANGULAR_PROFILES)
-    return np.array(result)
-
-
-def upper(L: np.ndarray) -> np.ndarray:
-    """Lean tunedSelectedEnvelope, preserving both total small-input branches."""
-    baseline = sharp_upper(L)
-    finite = np.select([L <= cap for _, cap in TUNED_FINITE_STEPS],
-        [np.minimum(baseline, b) for b, _ in TUNED_FINITE_STEPS], default=baseline)
-    analytic = np.where(L < 63, finite,
-        np.minimum.reduce([finite, gaussian_tuned_family(L), gaussian_seeded_tuned(L)]))
-    triangular = np.minimum.reduce([analytic] +
-        [np.where(L >= T, np.minimum(analytic, C*L**2), analytic)
-         for C, T in TUNED_TRIANGULAR_PROFILES])
-    return np.where(L < math.log(3000), baseline, triangular)
-
-def endpoint79_upper(L: np.ndarray) -> np.ndarray:
-    """Independent fixed-79 guard from Endpoint79TunedEnvelope.lean."""
-    baseline = upper(L)
-    return np.where((L >= math.log(3000)) & (L <= 12659 / 1000),
-                    np.minimum(baseline, 79), baseline)
-
-
-def gaussian_surplus_family(L: np.ndarray) -> np.ndarray:
-    """MR GaussianSeededSurplus.lean with its actual two certified prefix floors."""
-    return np.minimum(np.maximum(35000, gaussian_raw_bound(L, 4.185)),
-                      np.maximum(50000, gaussian_raw_bound(L, 3.934)))
-
-
-def previous_next_tuned_upper(L: np.ndarray) -> np.ndarray:
-    """Former public minimum, before adding the thousand-term surplus candidate."""
-    baseline = endpoint79_upper(L)
-    return np.where(L >= 63, np.minimum(baseline, gaussian_surplus_family(L)), baseline)
-
-
-def previous_gaussian_upper(L: np.ndarray) -> np.ndarray:
-    """Complete public minimum before replacing residual 7.6 by residual 7.2."""
-    previous = previous_next_tuned_upper(L)
-    return np.where(L >= 63, np.minimum(previous, gaussian_low_profile(L, 9.1, 7.6)), previous)
-
-
-def next_tuned_nested_upper(L: np.ndarray) -> np.ndarray:
-    """Retained nested assembly for checking the proved six-branch pruning."""
-    previous = previous_next_tuned_upper(L)
-    return np.where(L >= 63, np.minimum(previous, gaussian_low_profile(L, 9.1, 7.2)), previous)
-
-
-def next_tuned_upper(L: np.ndarray) -> np.ndarray:
-    """NextTunedNormalSelected: the equal formula without four plus two dominated branches."""
-    baseline = sharp_upper(L)
-    finite = np.select([L <= cap for _, cap in TUNED_FINITE_STEPS],
-        [np.minimum(baseline, b) for b, _ in TUNED_FINITE_STEPS], default=baseline)
-    high = np.minimum.reduce([finite] +
-        [np.where(L >= T, C * L**2, np.inf) for C, T in TUNED_TRIANGULAR_PROFILES])
-    large = np.minimum.reduce([high, gaussian_surplus_family(L),
-                              gaussian_low_profile(L, 9.1, 7.2)])
-    low = np.minimum(finite, np.where(L <= 12659 / 1000, 79, finite))
-    return np.where(L < math.log(3000), baseline, np.where(L >= 63, large, low))
-
-
-def gaussian_history_base(L: np.ndarray, residual: float = 7.2) -> np.ndarray:
-    """Candidate-A common-scale base; residual 7.6 retains the previous Gaussian comparison."""
-    return np.minimum(L**2, gaussian_low_profile(np.maximum(63, L), 9.1, residual))
-
-
-def gaussian_histories(residual: float = 7.2) -> list[float]:
-    """Evaluate the same entrance recurrence, with the proved Gaussian base."""
-    histories: list[float] = []
-    for i, (_, entrance) in enumerate(HISTORY_TRIANGULAR_PROFILES):
-        base = float(gaussian_history_base(np.array([float(entrance)]), residual)[0])
-        histories.append(min([base] +
-            [max(histories[j], float(HISTORY_TRIANGULAR_PROFILES[j][0]) * entrance**2)
-             for j in range(i)]))
-    return histories
-
-
-def gaussian_cumulative(L: np.ndarray, residual: float = 7.2) -> np.ndarray:
-    """All-scale Gaussian-base history, without pointwise-envelope monotonicity."""
-    histories = gaussian_histories(residual)
-    return np.minimum.reduce([gaussian_history_base(L, residual)] +
-        [np.maximum(H, float(C) * L**2) for H, (C, _) in
-         zip(histories, HISTORY_TRIANGULAR_PROFILES)])
-
-
-def four_ninths_upper(L: np.ndarray) -> np.ndarray:
-    """Lean fourNinthsSelectedEnvelope, preserving the branch below 3000."""
-    old = next_tuned_upper(L)
-    return np.where(L < math.log(3000), old, np.minimum(old, (4 / 9) * L**2))
-
-
-def high_coefficient_upper(L: np.ndarray) -> np.ndarray:
-    """Lean highCoeffSelected, with the seven-sixteenths branch from L = 70000."""
-    old = four_ninths_upper(L)
-    return np.where(L >= 70000, np.minimum(old, (7 / 16) * L**2), old)
-
-
-HIGH_WINDOW_PROFILES = [(423 / 1000, 38e9), (2 / 5, 45e9),
-                        (369 / 1000, 60e9), (173 / 500, 80e9),
-                        (323 / 1000, 120e9), (37 / 125, 300e9), (36 / 125, 600e9)]
-
-
-def high_window_upper(L: np.ndarray) -> np.ndarray:
-    """Lean highWindowExtended, including all seven guarded high-window profiles."""
-    selected = high_coefficient_upper(L)
-    for coefficient, entrance in HIGH_WINDOW_PROFILES:
-        selected = np.where(L >= entrance, np.minimum(selected, coefficient * L**2), selected)
-    return selected
-
-
-def paired_bound(L: np.ndarray) -> np.ndarray:
-    """Variable paired-prime bound, valid for L >= 70000."""
-    log_l = np.log(np.maximum(L, 1.0))
-    alpha = (2 * log_l + 1 / 100) / (3 * log_l + 339 / 500)
-    return alpha**2 * L**2
-
-
-def factorial_bound(L: np.ndarray) -> np.ndarray:
-    """Variable factorial bound, valid for L >= 80000."""
-    log_l = np.log(np.maximum(L, 1.0))
-    alpha = (2 * log_l + 3 / 200) / (3 * log_l + 49 / 50)
-    return alpha**2 * L**2
-
-
-def factorial_selected_upper(L: np.ndarray) -> np.ndarray:
-    """Lean factorialSelected, including both guarded variable bounds."""
-    previous = high_window_upper(L)
-    paired = np.where(L >= 70000, paired_bound(L), np.inf)
-    factorial = np.where(L >= 80000, factorial_bound(L), np.inf)
-    return np.minimum.reduce([previous, paired, factorial])
-
-
-def mean_selected_upper(L: np.ndarray) -> np.ndarray:
-    """Lean meanSelected, including the guarded coefficient 427/1000."""
-    fixed = np.where(L >= 80000, (427 / 1000) * L**2, np.inf)
-    return np.minimum(factorial_selected_upper(L), fixed)
-
-
-def four_ninths_history_base(L: np.ndarray) -> np.ndarray:
-    """Lean fourNinthsHistoryBase at an arbitrary real log scale."""
-    return np.minimum(gaussian_history_base(L), (4 / 9) * L**2)
-
-
-def four_ninths_histories() -> list[float]:
-    histories: list[float] = []
-    for i, (_, entrance) in enumerate(HISTORY_TRIANGULAR_PROFILES):
-        base = float(four_ninths_history_base(np.array([float(entrance)]))[0])
-        histories.append(min([base] +
-            [max(histories[j], float(HISTORY_TRIANGULAR_PROFILES[j][0]) * entrance**2)
-             for j in range(i)]))
-    return histories
-
-
-def four_ninths_cumulative(L: np.ndarray) -> np.ndarray:
-    """Lean fourNinthsCumulativeEnvelope, including the revised entrance histories."""
-    return np.minimum.reduce([four_ninths_history_base(L)] +
-        [np.maximum(H, float(C) * L**2) for H, (C, _) in
-         zip(four_ninths_histories(), HISTORY_TRIANGULAR_PROFILES)])
-
-
-def high_coefficient_history_base(L: np.ndarray) -> np.ndarray:
-    """Lean highCoeffHistoryBase, including the entrance cap for earlier inputs."""
-    cap = np.maximum((4 / 9) * 70000**2, (7 / 16) * L**2)
-    return np.minimum(four_ninths_history_base(L), cap)
-
-
-def high_coefficient_histories() -> list[float]:
-    histories: list[float] = []
-    for i, (_, entrance) in enumerate(HISTORY_TRIANGULAR_PROFILES):
-        base = float(high_coefficient_history_base(np.array([float(entrance)]))[0])
-        histories.append(min([base] +
-            [max(histories[j], float(HISTORY_TRIANGULAR_PROFILES[j][0]) * entrance**2)
-             for j in range(i)]))
-    return histories
-
-
-def high_coefficient_cumulative(L: np.ndarray) -> np.ndarray:
-    """Lean highCoeffCumulative, using the new common-scale base."""
-    return np.minimum.reduce([high_coefficient_history_base(L)] +
-        [np.maximum(H, float(C) * L**2) for H, (C, _) in
-         zip(high_coefficient_histories(), HISTORY_TRIANGULAR_PROFILES)])
-
-
-def high_window_histories() -> list[float]:
-    """Entrance bounds in Lean's highWindowHistoryProfiles recursion."""
-    histories: list[float] = []
-    profiles = sorted(HISTORY_TRIANGULAR_PROFILES + HIGH_WINDOW_PROFILES, key=lambda item: item[1])
-    for index, (_, entrance) in enumerate(profiles):
-        base = float(high_coefficient_history_base(np.array([float(entrance)]))[0])
-        histories.append(min([base] + [
-            max(histories[j], float(profiles[j][0]) * entrance**2)
-            for j in range(index)
-        ]))
-    return histories
-
-
-def high_window_cumulative(L: np.ndarray) -> np.ndarray:
-    """Lean highWindowCumulative, including the retained entrance history."""
-    profiles = sorted(HISTORY_TRIANGULAR_PROFILES + HIGH_WINDOW_PROFILES, key=lambda item: item[1])
-    return np.minimum.reduce([high_coefficient_cumulative(L)] + [
-        np.maximum(history, float(coefficient) * L**2)
-        for history, (coefficient, _) in zip(high_window_histories(), profiles)
-    ])
-
-
-def variable_cumulative(L: np.ndarray) -> np.ndarray:
-    """Lean variableCumulative, including both entrance-history caps."""
-    previous = high_window_cumulative(L)
-    paired = np.maximum((4 / 9) * 70000**2, paired_bound(L))
-    paired_history = max((4 / 9) * 70000**2, float(paired_bound(np.array([80000.0]))[0]))
-    factorial = np.maximum(paired_history, factorial_bound(L))
-    return np.minimum.reduce([previous, paired, factorial])
-
-
-def mean_cumulative(L: np.ndarray) -> np.ndarray:
-    """Lean meanCumulative, retaining the pre-80000 paired history."""
-    paired_history = max((4 / 9) * 70000**2, float(paired_bound(np.array([80000.0]))[0]))
-    fixed_cap = np.maximum(paired_history, (427 / 1000) * L**2)
-    return np.minimum(variable_cumulative(L), fixed_cap)
-
-
-def triangular_adaptive_radius(L: np.ndarray) -> np.ndarray:
-    """Lean triangularAdaptiveRadius at positive logarithmic scales."""
-    m = np.sqrt(np.sqrt(np.sqrt((5313 / 10000) * L)))
-    a = 36 + (1456 + 13 / 10000000) / np.sqrt(L) + 165102 / L
-    d = (4000000000000 * (1001 / 1000)) / (m * L)
-    k = 68 - 3 / 10000
-    floor = np.where(L >= 1820000000000, 1411811 / 5000000, 28237 / 100000)
-    return np.maximum(np.sqrt(floor), (a + np.sqrt(a * a + 4 * k * d)) / (2 * k))
-
-
-def triangular_adaptive_selected(L: np.ndarray) -> np.ndarray:
-    """Lean triangularAdaptiveSelected, including its entrance guard."""
-    candidate = np.where(L >= 3e10, triangular_adaptive_radius(L)**2 * L**2, np.inf)
-    return np.minimum(mean_selected_upper(L), candidate)
-
-
-def triangular_adaptive_cap(L: np.ndarray) -> np.ndarray:
-    """Lean triangularAdaptiveCap for positive logarithmic scales."""
-    history = np.where(L >= 1.82e12, math.sqrt(28237 / 100000) * 1.82e12, 0.0)
-    return np.maximum((4 / 9) * (3e10)**2,
-                      np.maximum(triangular_adaptive_radius(L) * L, history)**2)
-
-
-def triangular_adaptive_cumulative(L: np.ndarray) -> np.ndarray:
-    """Lean triangularAdaptiveCumulative for positive logarithmic scales."""
-    return np.minimum(mean_cumulative(L), triangular_adaptive_cap(L))
-
-
-def gaussian_adaptive_bound(L: np.ndarray) -> np.ndarray:
-    """Gaussian cutoff at logarithmic scale L, certified from 25000."""
-    k = 20115621 / 50000000
-    e = (61 / 100) * (28794111 / 12500000)
-    a = (2 * k + e / np.sqrt(L) + 39 / L) / (10971611 / 5000000)
-    return (21 / 10) * (a * L)**2
-
-
-def gaussian_adaptive_selected(L: np.ndarray) -> np.ndarray:
-    """Lean gaussianAdaptiveSelected with its guarded Gaussian candidate."""
-    return np.minimum(triangular_adaptive_selected(L),
-                      np.where(L >= 2e12, gaussian_adaptive_bound(L), np.inf))
-
-
-def gaussian_adaptive_cumulative(L: np.ndarray) -> np.ndarray:
-    """Lean gaussianAdaptiveCumulative with the triangular entrance cap."""
-    history = triangular_adaptive_cap(np.array([2e12]))[0]
-    cap = np.maximum(history, gaussian_adaptive_bound(L))
-    return np.minimum(triangular_adaptive_cumulative(L), cap)
-
-
-FIXED_IMPROVED_PROFILES = [(3869 / 10000, 5e10), (222 / 625, 7e10), (1567 / 5000, 1.5e11)]
-
-
-def fixed_improved_selected(L: np.ndarray) -> np.ndarray:
-    """Lean fixedImprovedSelected, including the three guarded profiles."""
-    return np.minimum.reduce([gaussian_adaptive_selected(L)] +
-        [np.where(L >= T, C * L**2, np.inf) for C, T in FIXED_IMPROVED_PROFILES])
-
-
-REDUCED_PROFILES = [(1057 / 2500, 80000.0), (39 / 100, 2e8),
-                    (161 / 500, 5e8), (3 / 10, 1e9), (71 / 250, 5e9)]
-REDUCED_GAUSSIAN_ENTRY = 3e10
-DUAL_PROFILES = [(4187 / 10000, 81000.0), (2 / 5, 5e6), (9 / 25, 1.5e7),
-                 (33 / 100, 3e7), (31 / 100, 6e7), (29 / 100, 1e8)]
-DUAL_GAUSSIAN_ENTRY = 2e8
-
-
-def reduced_series_bound(L: np.ndarray) -> np.ndarray:
-    """Lean reducedSeriesCoeff multiplied by the squared logarithmic scale."""
-    coeff = np.select([L >= T for _, T in reversed(REDUCED_PROFILES[1:])],
-                      [C for C, _ in reversed(REDUCED_PROFILES[1:])],
-                      default=REDUCED_PROFILES[0][0])
-    return np.where(L >= REDUCED_GAUSSIAN_ENTRY, gaussian_adaptive_bound(L), coeff * L**2)
-
-
-def reduced_selected(L: np.ndarray) -> np.ndarray:
-    """Lean reducedSelected, preserving the old bound below the entrance."""
-    return np.minimum(fixed_improved_selected(L),
-                      np.where(L >= 80000, reduced_series_bound(L), np.inf))
-
-
-def smooth_coefficient(L: np.ndarray) -> np.ndarray:
-    """Lean smoothCoeff, the maximum of the dual and Gaussian certificates."""
-    k = 68 - 3 / 10000
-    e = 1456 + 13 / 10000000
-    d = 36 + np.maximum(0, 36 + math.log(4) - 2 * np.log(L))
-    a = (d + e / np.sqrt(L) + 12066 / L) / k
-    b = (161 / 200 + (238 / 5) / np.sqrt(L) + 91 / L) / (21943 / 10000)
-    return np.maximum(a**2, (21 / 10) * b**2)
-
-
-def dual_mean_series_bound(L: np.ndarray) -> np.ndarray:
-    """Lean dualMeanSeriesCoeff multiplied by the squared scale."""
-    coeff = np.select([L >= T for _, T in reversed(DUAL_PROFILES[1:])],
-                      [C for C, _ in reversed(DUAL_PROFILES[1:])],
-                      default=1057 / 2500)
-    fixed = np.where(L >= DUAL_GAUSSIAN_ENTRY, gaussian_adaptive_bound(L), coeff * L**2)
-    return np.where(L >= 81000, np.minimum(fixed, (4187 / 10000) * L**2), fixed)
-
-
-def smooth_pointwise_upper(L: np.ndarray) -> np.ndarray:
-    """Previous Lean pointwise envelope."""
-    selected = np.minimum(reduced_selected(L),
-                          np.where(L >= 80000, dual_mean_series_bound(L), np.inf))
-    candidate = np.where(L >= DUAL_GAUSSIAN_ENTRY, gaussian_adaptive_bound(L),
-                         smooth_coefficient(L) * L**2)
-    return np.minimum(selected, np.where(L >= 5e6, candidate, np.inf))
-
-
-def surplus_cutoff(L: np.ndarray, floor: float, residual: float) -> np.ndarray:
-    """Clipped quadratic-root cutoff for one certified Gaussian prefix."""
-    a, v, d = 20115621 / 25000000, 28794111 / 12500000, 10971611 / 5000000
-    root = (v + np.sqrt(v * v + 4 * d * (a * L + residual))) / (2 * d)
-    radius = np.maximum(floor, root**2)
-    return (21 / 10) * radius**2
-
-
-def surplus_global(L: np.ndarray) -> np.ndarray:
-    """Lean jointSurplusGlobal on nonnegative logarithmic scales."""
-    return np.minimum((4 / 9) * L**2,
-                      np.minimum(surplus_cutoff(L, 130, 30), surplus_cutoff(L, 155, 29)))
-
-
-def plotted_pointwise_upper(L: np.ndarray) -> np.ndarray:
-    """Minimum of Lean's jointSelected and the certified 0.4136 max bound."""
-    old = smooth_pointwise_upper(L)
-    selected = np.where(L >= math.log(3000), np.minimum(old, surplus_global(L)), old)
-    baseline = np.minimum(selected, max_04136_bound(L))
-    covered = ((L >= 8) & (L <= 197 / 5)) | (L >= 5250)
-    return np.where(covered, np.minimum(baseline, (3 / 10) * L**2), baseline)
-
-
-def max_04136_bound(L: np.ndarray) -> np.ndarray:
-    """Certified pointwise bound, also monotone for L >= ln 9."""
-    return np.maximum(2.0, (517 / 1250) * L**2)
-
-
-def fixed_improved_cumulative(L: np.ndarray) -> np.ndarray:
-    """Lean fixedImprovedCumulative, retaining each triangular entrance cap."""
-    return np.minimum.reduce([gaussian_adaptive_cumulative(L)] +
-        [np.maximum(triangular_adaptive_cap(np.array([T]))[0], C * L**2)
-         for C, T in FIXED_IMPROVED_PROFILES])
-
-
-def reduced_history(L: np.ndarray, count: int = len(REDUCED_PROFILES)) -> np.ndarray:
-    """Lean reducedHistory1 through reducedHistory5, including entrance histories."""
-    history = np.maximum((4 / 9) * 70000**2, paired_bound(L))
-    for index, (C, T) in enumerate(REDUCED_PROFILES[:count]):
-        entrance = reduced_history(np.array([T]), index)[0]
-        history = np.minimum(history, np.maximum(entrance, C * L**2))
-    return history
-
-
-def reduced_gaussian_history(L: np.ndarray) -> np.ndarray:
-    """Lean reducedGaussianHistory on positive scales."""
-    history = reduced_history(L)
-    entrance = reduced_history(np.array([REDUCED_GAUSSIAN_ENTRY]))[0]
-    return np.minimum(history, np.maximum(entrance, gaussian_adaptive_bound(L)))
-
-
-def reduced_cumulative(L: np.ndarray) -> np.ndarray:
-    """Lean reducedCumulative, with the early Gaussian entrance history."""
-    return np.minimum(fixed_improved_cumulative(L), reduced_gaussian_history(L))
-
-
-def dual_history(L: np.ndarray, count: int = len(DUAL_PROFILES)) -> np.ndarray:
-    """Lean dualHistory1 through dualHistory6, preserving each entrance."""
-    history = reduced_gaussian_history(L)
-    for index, (C, T) in enumerate(DUAL_PROFILES[:count]):
-        entrance = dual_history(np.array([T]), index)[0]
-        history = np.minimum(history, np.maximum(entrance, C * L**2))
-    return history
-
-
-def dual_gaussian_history(L: np.ndarray) -> np.ndarray:
-    """Lean dualGaussianHistory with its earlier entrance."""
-    history = dual_history(L)
-    entrance = dual_history(np.array([DUAL_GAUSSIAN_ENTRY]))[0]
-    return np.minimum(history, np.maximum(entrance, gaussian_adaptive_bound(L)))
-
-
-def smooth_cumulative(L: np.ndarray) -> np.ndarray:
-    """Lean smoothCumulative, including continuous and Gaussian histories."""
-    previous = np.minimum(reduced_cumulative(L), dual_gaussian_history(L))
-    entry = dual_history(np.array([5e6]))[0]
-    end = smooth_coefficient(np.array([DUAL_GAUSSIAN_ENTRY]))[0] * DUAL_GAUSSIAN_ENTRY**2
-    candidate = np.where(L >= DUAL_GAUSSIAN_ENTRY,
-                         np.maximum(end, gaussian_adaptive_bound(L)),
-                         smooth_coefficient(L) * L**2)
-    return np.minimum(previous, np.maximum(entry, candidate))
-
-
-def joint_cumulative(L: np.ndarray) -> np.ndarray:
-    """Lean jointCumulative with the earlier history and global candidate."""
-    return np.minimum(smooth_cumulative(L), surplus_global(L))
-
-
-def plotted_cumulative_upper(L: np.ndarray) -> np.ndarray:
-    """Combine jointCumulative with the monotone max-form bound."""
-    baseline = np.minimum(joint_cumulative(L), max_04136_bound(L))
-    entrance = np.minimum(joint_cumulative(np.array([5250.0])),
-                          max_04136_bound(np.array([5250.0])))[0]
-    early = np.minimum(baseline, (3 / 10) * L**2)
-    high = np.minimum(baseline, np.maximum(entrance, (3 / 10) * L**2))
-    return np.where((L >= 8) & (L <= 197 / 5), early,
-                    np.where(L >= 5250, high, baseline))
-
-
-def square_base_cumulative(L: np.ndarray) -> np.ndarray:
-    """Complete previous eight-profile history; retained for the same-guard comparison."""
-    return np.minimum.reduce([L**2] +
-        [np.maximum(float(H), float(C) * L**2) for H, (C, _) in
-         zip(triangular_histories(), HISTORY_TRIANGULAR_PROFILES)])
-
-
-def plot_mr_cumulative(output_dir: Path) -> None:
-    """Show only the current high-scale cumulative bound and pointwise candidates."""
-    histories = gaussian_histories()
-    assert histories[0] < (59 / 125) * (3e10)**2
-    assert np.isclose(histories[1], (4603 / 10000) * (4e10)**2, rtol=2e-15)
-    assert np.allclose(histories[2:], [float(H) for H in triangular_histories()[2:]],
-                       rtol=2e-15)
-    entrances = np.array([T for _, T in HISTORY_TRIANGULAR_PROFILES])
-    recoveries = np.array([math.sqrt(H / float(C)) for H, (C, _) in
-                           zip(high_coefficient_histories(), HISTORY_TRIANGULAR_PROFILES)])
-    window_profiles = sorted(HISTORY_TRIANGULAR_PROFILES + HIGH_WINDOW_PROFILES,
-                             key=lambda item: item[1])
-    window_recoveries = np.array([math.sqrt(H / float(C)) for H, (C, _) in
-                                  zip(high_window_histories(), window_profiles)])
-    fig, ax = plt.subplots(figsize=(10, 5.5))
-    local = np.linspace(63, 180, 2401)
-    assert np.all(gaussian_cumulative(local) <= gaussian_cumulative(local, 7.6) * (1 + 1e-14))
-    proof_band = np.linspace(100, 101, 101)
-    assert np.all(gaussian_cumulative(proof_band) < square_base_cumulative(proof_band))
-    window_entrances = np.array([T for _, T in HIGH_WINDOW_PROFILES])
-    variable_entrances = np.array([8.0, 197 / 5, 5250.0, 280.0, 283.0, 290.0, 300.0, 330.0, 340.0, 400.0,
-                                  1000.0, 4000.0, 6500.0, 25000.0,
-                                  70000.0, 80000.0, 3e10, 1.82e12, 2e12] +
-                                  [T for _, T in DUAL_PROFILES] + [DUAL_GAUSSIAN_ENTRY] +
-                                  [T for _, T in REDUCED_PROFILES] +
-                                  [T for _, T in FIXED_IMPROVED_PROFILES])
-    L = np.unique(np.concatenate([np.geomspace(math.log(3000), 1e15, 5000), entrances, recoveries,
-                                  window_entrances, window_recoveries,
-                                  variable_entrances, np.nextafter(variable_entrances, -np.inf),
-                                  np.nextafter(window_entrances, -np.inf)]))
-    L = L[L >= math.log(3000)]
-    cumulative = plotted_cumulative_upper(L) / L**2
-    previous = square_base_cumulative(L) / L**2
-    pointwise = plotted_pointwise_upper(L) / L**2
-    window_probe = np.array([38e9, np.nextafter(40e9, -np.inf), 45e9, 60e9,
-                             80e9, np.nextafter(1e11, -np.inf)])
-    variable_probe = np.array([69999.0, 70000.0, 79999.0, 80000.0, 100000.0])
-    assert np.all(high_window_upper(window_probe) < high_coefficient_upper(window_probe))
-    assert factorial_selected_upper(variable_probe)[0] == high_window_upper(variable_probe)[0]
-    assert np.all(paired_bound(variable_probe[1:]) < high_window_upper(variable_probe[1:]))
-    assert np.all(factorial_bound(variable_probe[3:]) < paired_bound(variable_probe[3:]))
-    assert np.all(variable_cumulative(variable_probe) >= factorial_selected_upper(variable_probe))
-    assert variable_cumulative(variable_probe[-1]) < high_window_cumulative(variable_probe[-1])
-    improvement_probe = np.array([1e7, 2e7])
-    assert np.all(mean_selected_upper(improvement_probe) < factorial_selected_upper(improvement_probe))
-    assert np.all(mean_cumulative(L) <= variable_cumulative(L))
-    adaptive_probe = np.array([5e10, 5.5e10, np.nextafter(6e10, -np.inf)])
-    assert np.all(triangular_adaptive_selected(adaptive_probe) < mean_selected_upper(adaptive_probe))
-    assert np.all(triangular_adaptive_cumulative(L) <= mean_cumulative(L))
-    gaussian_probe = np.array([2e12, 3e12, 1e13, 1e15])
-    assert np.all(gaussian_adaptive_bound(gaussian_probe) <
-                  (1411811 / 5000000) * gaussian_probe**2)
-    assert np.all(gaussian_adaptive_cumulative(L) <= triangular_adaptive_cumulative(L))
-    for C, T in FIXED_IMPROVED_PROFILES:
-        probe = np.array([T])
-        assert C * T**2 < gaussian_adaptive_selected(probe)[0]
-    reduced_probe = np.array([1e7, 2e8, 5e8, 1e9, 5e9, 3e10])
-    assert np.all(reduced_selected(reduced_probe) < fixed_improved_selected(reduced_probe))
-    assert np.all(np.diff(reduced_series_bound(L[L >= 80000]) / L[L >= 80000]**2) <= 1e-14)
-    assert np.all(fixed_improved_cumulative(L) <= gaussian_adaptive_cumulative(L))
-    assert np.all(reduced_cumulative(L) <= fixed_improved_cumulative(L))
-    assert np.all(smooth_cumulative(L) <= reduced_cumulative(L))
-    assert np.all(joint_cumulative(L) <= smooth_cumulative(L))
-    assert np.all(plotted_cumulative_upper(L) <= joint_cumulative(L))
-    assert np.all(plotted_cumulative_upper(L) <= max_04136_bound(L))
-    assert np.all(np.diff(surplus_global(L) / L**2) <= 1e-14)
-    assert np.all(cumulative >= pointwise - 1e-14)
-    assert np.all(cumulative <= high_window_cumulative(L) / L**2 + 1e-14)
-    assert np.all(cumulative <= high_coefficient_cumulative(L) / L**2 + 1e-14)
-    assert np.all(cumulative <= previous + 1e-14)
-    assert np.all(cumulative <= (4 / 9) + 1e-14)
-    assert np.all(cumulative <= gaussian_cumulative(L) / L**2 + 1e-14)
-    ax.semilogx(L, cumulative, color="#d55e00", linewidth=2.5,
-                     label="Cumulative bound with 0.30 covered ranges")
-    ax.semilogx(L, pointwise, color="#3977a8", linestyle="--",
-                     label="Pointwise bound with 0.30 covered ranges")
-    ax.axhline(2 / math.log(9)**2, color="#333333", linestyle=":", linewidth=1.7,
-               label=r"$2(\log_9 N)^2$ reference")
-    ax.set(xlabel=r"$L=\ln N$", ylabel=r"Upper bound divided by $L^2$",
-                title="Cumulative bounds at high scales")
-    ax.set_xlim(math.log(3000), 1e15)
-    ax.grid(color="#e1e5e9", linewidth=0.6)
-    ax.legend(loc="upper right", fontsize=8)
-    fig.tight_layout()
-    stem = output_dir / "mr_cumulative_high_comparison"
-    fig.savefig(stem.with_suffix(".svg"), metadata={"Date": None})
-    svg = stem.with_suffix(".svg")
-    svg.write_text("\n".join(line.rstrip() for line in svg.read_text(encoding="utf-8").splitlines())
-                   + "\n", encoding="utf-8")
-    fig.savefig(stem.with_suffix(".png"), dpi=180)
-    plt.close(fig)
-
-
-def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output-dir", type=Path,
-                        default=ROOT / "doc/figures")
-    parser.add_argument("--max-power", type=int, default=64)
-    args = parser.parse_args()
-    if args.max_power < 1:
-        parser.error("--max-power must be a positive integer")
-    if args.max_power > 8192:
-        parser.error("--max-power must not exceed 8192")
-    args.output_dir.mkdir(parents=True, exist_ok=True)
-    plt.rcParams.update({"font.size": 11, "svg.hashsalt": "mr-comparison",
-                         "axes.spines.top": False, "axes.spines.right": False})
-
-    Lmax = args.max_power * math.log(10)
-    Lc = shifted_endpoint_w1000_crossing(73 / 50)
-    entrances = np.array([8.0, 197 / 5, 5250.0, math.log(500), math.log(1053), math.log(1120),
-                          math.log(2047), math.log(3000), 56 / 5, 286 / 25,
-                          23 / 2, 74 / 5, 43 / 4, 22, 111 / 4, 63, 209, gamma_fixed_switch(),
-                          81 / 8, 171 / 8, 217 / 8,
-                          5581 / 200, 523 / 50, 2171 / 100, 1373 / 50,
-                          144 / 5, 120, 122, 330, 500, 5283 / 20, Lc, 81 / 4, 26, 1339 / 50, 703 / 20,
-                          10367 / 200, 1706 / 25, 6671 / 50, 26269 / 100,
-                          210, 240, 250, 258, 300, 11255, 34971, 46330, 70000, 80000,
-                          shift117_minus_two_crossing(), 50880, 350000,
-                          4000, 9565217391305 * math.log(10)])
-    entrances = np.concatenate([entrances, [45/4, 2877/250, 47/4, 100, 112,
-        gamma_sharp_switch(), gaussian_switch(35000, 29/5), gaussian_switch(50000, 29/5),
-        gaussian_switch(50000, 111/20), 2e12]])
-    entrances = np.concatenate([entrances, [cap for _, cap in LOW_PRIME_STEPS],
-        [11509/1000, 1179/100, 1193/100, 12337/1000, 100, 132, 235, 240,
-         gaussian_switch(35000,567/100), gaussian_switch(50000,567/100),
-         gaussian_switch(50000,109/20), 1.5e12, 2e12]])
-    entrances = np.concatenate([entrances, [cap for _, cap in TIGHT_LOW_PRIME_STEPS],
-        [63, 101, 108, 126, 132, 215, 235, 1.1e12, 1.5e12, 2e12,
-         gaussian_switch(35000, 283/50), gaussian_switch(50000, 283/50),
-         gaussian_switch(50000, 136/25)]])
-    entrances = np.concatenate([entrances,
-        [cap for _, cap in FINITE_PRINCIPAL_STEPS], [T for _, T in TRIANGULAR_PROFILES],
-        [gaussian_floor_switch(u, D) for u, D in
-            [(9.1, 9.3), (9.5, 9.3), (9.5, 8.15), (9.8, 8.15), (9.8, 8.13)]],
-        [gaussian_switch(N, D) for N, D in [(35000, 5.63), (50000, 5.63), (50000, 5.41)]]])
-    entrances = np.concatenate([entrances, [cap for _, cap in TUNED_FINITE_STEPS],
-        [math.sqrt(31 * 1250 / 517), 3461 / 10],
-        [gaussian_floor_switch(u, D) for u, D in TUNED_GAUSSIAN_PROFILES],
-        [gaussian_floor_switch(v, D) for (_, D), (v, _) in
-         zip(TUNED_GAUSSIAN_PROFILES, TUNED_GAUSSIAN_PROFILES[1:])],
-        [gaussian_switch(N, D) for N, D in [(35000, 5.619), (50000, 5.619), (50000, 5.372)]]])
-    inset_max = 1e14
-    inset_entrances = np.concatenate((entrances, [T for _, T in TRIANGULAR_PROFILES],
-                                      [T for _, T in HISTORY_TRIANGULAR_PROFILES],
-                                      [T for _, T in FIXED_IMPROVED_PROFILES],
-                                      [T for _, T in DUAL_PROFILES],
-                                      [280, 283, 290, 300, 330, 340, 400, 1000, 4000,
-                                       6500, 25000, DUAL_GAUSSIAN_ENTRY, 3e10, 2e12]))
-    inset_entrances = inset_entrances[(inset_entrances >= math.log(3000)) &
-                                      (inset_entrances <= inset_max)]
-    entrances = entrances[entrances <= Lmax]
-    L = np.unique(np.concatenate([
-        np.exp(np.linspace(math.log(math.log(9)), math.log(Lmax), 10000)),
-        entrances, np.nextafter(entrances, -np.inf), np.nextafter(entrances, np.inf),
-        [math.log(9), Lmax],
-    ]))
-    U = upper(L)
-    # These checks are finite runtime comparisons, separate from Lean interval proofs.
-    # Keep the fixed baseline independent from the new candidates and interval selection.
-    np.testing.assert_allclose(next_upper(L), np.min(next_candidates(L), axis=0),
-                               rtol=3e-15)
-    assert np.all(U <= next_upper(L)*(1+3e-15))
-    np.testing.assert_allclose(previous_upper(L), np.min(previous_candidates(L), axis=0),
-                               rtol=3e-15)
-    np.testing.assert_allclose(U, np.min(candidates(L), axis=0), rtol=2e-15)
-    assert upper(np.array([np.nextafter(math.log(2047), -np.inf)]))[0] == 2
-    assert upper(np.array([math.log(2047)]))[0] == 3
-    assert np.all(U > 0) and np.all(U <= L**2)
-
-    # These finite numerical checks supplement the Lean continuous interval proofs.
-    np.testing.assert_array_equal(upper(np.array([math.log(2047),
-        np.nextafter(math.log(2047), np.inf)])), [3., 3.])
-    assert np.all(U <= compatible_upper(L)*(1+2e-15))
-    probe = np.unique(np.concatenate([np.geomspace(240, 4e13, 10000),
-        [1.1e12, np.nextafter(1.1e12, -np.inf), np.nextafter(1.1e12, np.inf),
-         1.5e12, np.nextafter(1.5e12, -np.inf), np.nextafter(1.5e12, np.inf),
-         2e12, np.nextafter(2e12, -np.inf), np.nextafter(2e12, np.inf)]]))
-    high_boundaries = np.array([T for _, T in TRIANGULAR_PROFILES])
-    probe = np.unique(np.concatenate([probe, high_boundaries,
-        np.nextafter(high_boundaries, -np.inf), np.nextafter(high_boundaries, np.inf)]))
-    np.testing.assert_allclose(upper(probe), np.min(candidates(probe), axis=0), rtol=3e-15)
-    assert np.all(upper(probe) <= compatible_upper(probe)*(1+3e-15))
-    assert np.all(upper(probe) <= next_upper(probe)*(1+3e-15))
-    gamma_strict = np.linspace(108., 126., 1001)
-    single_strict = np.linspace(132., 235., 2001)
-    earlier_strict = np.linspace(1.1e12, np.nextafter(1.5e12, -np.inf), 1001)
-    sharper_strict = np.geomspace(2e12, 4e13, 1001)
-    for interval in [gamma_strict, single_strict, earlier_strict, sharper_strict]:
-        assert np.all(upper(interval) < next_upper(interval))
-    old_single_strict = np.linspace(132., 215., 1001)
-    assert np.all(np.maximum(12000., gaussian_raw_bound(old_single_strict, 163/20))
-                  < next_upper(old_single_strict))
-    for (bound, old_cap), (new_bound, new_cap) in zip(LOW_PRIME_STEPS,
-                                                    TIGHT_LOW_PRIME_STEPS):
-        assert bound == new_bound and old_cap < new_cap
-        segment = np.linspace(np.nextafter(old_cap, np.inf), new_cap, 17)
-        assert np.all(refined_upper(segment) == float(bound))
-        assert np.all(upper(segment) < next_upper(segment))
-        assert refined_upper(np.array([np.nextafter(new_cap, np.inf)]))[0] > bound
-    for scale in [L, probe]:
-        selected = gaussian_recovered_seeded(scale)
-        profiles = np.minimum(np.maximum(35000, gaussian_raw_bound(scale, 283/50)),
-                              np.maximum(50000, gaussian_raw_bound(scale, 136/25)))
-        np.testing.assert_allclose(selected, profiles, rtol=3e-15)
-    seed_switches = [gaussian_switch(35000, 283/50),
-                     gaussian_switch(50000, 283/50), gaussian_switch(50000, 136/25)]
-    assert 240 < seed_switches[0] < seed_switches[1] < seed_switches[2] < 295
-    assert 209 < gamma_sharp_switch() < 210
-    assert 240 < gaussian_switch(35000, 29/5) < 242
-    assert 293 < gaussian_switch(50000, 29/5) < gaussian_switch(50000, 111/20) < 294
-
-    # Current-baseline strict cells and the normal-range monotonicity check.
-    assert np.all(U <= refined_upper(L)*(1+3e-15))
-    assert np.all(np.diff(U) >= -1e-9)
-    gaussian_band = np.linspace(100, 235, 3001)
-    assert np.all(upper(gaussian_band) < refined_upper(gaussian_band))
-    for old, new in zip(TIGHT_LOW_PRIME_STEPS, FINITE_PRINCIPAL_STEPS[:9]):
-        b, old_cap = old
-        segment = np.linspace(np.nextafter(old_cap, np.inf), new[1], 31)
-        assert np.all(upper(segment) == b)
-        assert np.all(upper(segment) < refined_upper(segment))
-    for lo, hi, b in [(11.52, 11.53, 61), (11.8, 11.82, 67),
-                      (11.94, 11.96, 71), (12.35, 12.37, 73)]:
-        cell = np.linspace(lo, hi, 51)
-        assert np.all(upper(cell) == b)
-        assert np.all(upper(cell) < refined_upper(cell))
-    for lo, hi in [(3e10, np.nextafter(1.1e12, -np.inf)), (1.82e12, 4e13)]:
-        cell = np.geomspace(lo, hi, 3001)
-        assert np.all(upper(cell) < refined_upper(cell))
-    for scale in [L, probe]:
-        np.testing.assert_allclose(gaussian_low_family(scale), np.minimum.reduce([
-            gaussian_low_profile(scale, 9.1, 9.3), gaussian_low_profile(scale, 9.5, 8.15),
-            gaussian_low_profile(scale, 9.8, 8.13)]), rtol=4e-15)
-        np.testing.assert_allclose(gaussian_seeded_sharp(scale), np.minimum(
-            np.maximum(35000, gaussian_raw_bound(scale, 5.63)),
-            np.maximum(50000, gaussian_raw_bound(scale, 5.41))), rtol=4e-15)
-
-    # These sampled checks supplement the separate continuous Lean interval proofs.
-    assert np.all(U <= sharp_upper(L)*(1+3e-15))
-    for (b, old_cap), (_, cap) in zip(FINITE_PRINCIPAL_STEPS, TUNED_FINITE_STEPS):
-        cell = np.linspace(old_cap+1e-10, cap, 101)
-        assert np.all(upper(cell) == b) and np.all(upper(cell) < sharp_upper(cell))
-    for lo, hi in [(12.61, 12.6409), (100, 235.73), (3e10, 1.82e12-1)]:
-        cell = np.linspace(lo, hi, 3001)
-        assert np.all(upper(cell) < sharp_upper(cell))
-    t1 = gaussian_switch(35000, 5.63)
-    t2 = gaussian_switch(50000, 5.63)
-    t3 = gaussian_switch(50000, 5.41)
-    for lo, hi in [(t1+1e-8, t2+550000/20115621-1e-8), (t3+1e-8, 3e10-1)]:
-        cell = np.linspace(lo, hi, 3001)
-        assert np.all(upper(cell) < sharp_upper(cell))
-
-    data = DATA_DIR / "mr_records.csv"
-    with data.open(encoding="utf-8", newline="") as f:
-        records = list(csv.DictReader(f))
-    ns = [int(r["n"]) for r in records]
-    ps = [int(r["witness"]) for r in records]
+def load_records() -> tuple[list[int], list[int]]:
+    """Load and independently check each recorded least rejecting prime."""
+    with (DATA_DIR / "mr_records.csv").open(encoding="utf-8", newline="") as stream:
+        records = list(csv.DictReader(stream))
+    ns = [int(row["n"]) for row in records]
+    ps = [int(row["witness"]) for row in records]
     assert len(records) == 11 and ps[-1] == 43
     assert all(a < b for a, b in zip(ns, ns[1:]))
     assert all(a < b for a, b in zip(ps, ps[1:]))
-    record_L = np.log(np.array(ns, dtype=float))
-    assert np.all(np.array(ps) <= upper(record_L))
+    assert np.all(np.asarray(ps) <= pointwise_upper(np.log(np.asarray(ns, dtype=float))))
     for n, p in zip(ns, ps):
         d, s = n - 1, 0
         while d % 2 == 0:
             d //= 2
             s += 1
-        def passes(a):
-            x = pow(a, d, n)
-            if x in (1, n - 1):
+
+        def passes(a: int) -> bool:
+            value = pow(a, d, n)
+            if value in (1, n - 1):
                 return True
             for _ in range(1, s):
-                x = x*x % n
-                if x == n - 1:
+                value = value * value % n
+                if value == n - 1:
                     return True
             return False
+
         primes = [a for a in range(2, p + 1)
                   if all(a % b for b in range(2, math.isqrt(a) + 1))]
         assert primes[-1] == p and not passes(p)
         assert all(passes(a) for a in primes[:-1])
+    return ns, ps
 
-    previous_U = next_tuned_upper(L)
-    np.testing.assert_allclose(previous_U, next_tuned_nested_upper(L), rtol=2e-15)
-    U = plotted_pointwise_upper(L)
-    assert np.all(U <= previous_U)
-    assert np.all(U <= max_04136_bound(L))
-    assert np.all(max_04136_bound(L) <= 2 * (L / math.log(9))**2 * (1 + 1e-14))
-    assert np.all(np.array(ps) <= mean_selected_upper(record_L))
-    fig, ax = plt.subplots(figsize=(12, 8))
-    fig.subplots_adjust(left=.09, right=.95, top=.87, bottom=.13)
-    ax.plot(np.log(L), U, color="#d55e00", linewidth=2.5,
-            label=r"Pointwise bound $U_{0.30}(n)$ (covered ranges)", zorder=3)
-    ax.plot(np.log(L), 2 * (L / math.log(9))**2, color="#333333", linewidth=1.7, linestyle=":",
-            label=r"$2(\log_9 n)^2$", zorder=4)
-    ax.step(np.log(record_L), ps, where="post", color="#007f80", linewidth=2,
-            zorder=5)
-    ax.scatter(np.log(record_L), ps, s=27, color="#007f80", zorder=7,
-               label=r"Record points $Q_{\mathrm{MR}}(N)$ (OEIS A006945; prime bases 2, 3, 5, …)")
-    ax.set_yscale("log")
-    ax.set_xlim(math.log(math.log(9)), math.log(Lmax))
-    ax.set_ylim(1, 1e4)
-    powers = [2**k for k in range(14) if 2**k < args.max_power] + [args.max_power]
-    power_ticks(ax, powers)
-    ax.set_xlabel(r"Odd composite integer $n$ / upper bound $N$", labelpad=10)
-    ax.set_ylabel("Least prime witness / upper bound")
-    ax.grid(which="major", color="#d8dde3", linewidth=.7)
-    bit_powers = [k for k in [64, 80, 128] if k * math.log(2) <= Lmax]
-    bit_positions = [math.log(k * math.log(2)) for k in bit_powers]
-    for x in bit_positions:
-        ax.axvline(x, color="#7e91ac", linestyle="--", linewidth=.9, zorder=1)
-    top = ax.secondary_xaxis("top")
-    top.set_xticks(bit_positions, [rf"$2^{{{k}}}$" for k in bit_powers])
-    top.tick_params(axis="x", colors="#536780", labelsize=10, pad=5)
-    ax.legend(loc="upper left", framealpha=.97, fontsize=10)
-    ax.set_title("Miller–Rabin: least-prime witness bounds", pad=46)
 
-    inset = ax.inset_axes([.06, .53, .35, .28])
-    inset_L = np.unique(np.concatenate([
-        np.geomspace(math.log(3000), inset_max, 10000), inset_entrances,
-        np.nextafter(inset_entrances, -np.inf), np.nextafter(inset_entrances, np.inf),
-        [math.log(3000), inset_max],
-    ]))
-    inset_L = inset_L[(inset_L >= math.log(3000)) & (inset_L <= inset_max)]
-    inset_U = plotted_pointwise_upper(inset_L)
-    for entrance in [3e10, 5e10, 7e10, 1.5e11, 2e12]:
-        assert np.any(inset_L == entrance)
-    assert np.all(inset_U <= mean_selected_upper(inset_L))
-    inset.plot(np.log(inset_L), inset_U / inset_L**2, color="#d55e00", linewidth=2)
-    reference_ratio = 2 / math.log(9)**2
-    inset.axhline(reference_ratio, color="#333333", linestyle=":", linewidth=1.3)
-    inset.set_yscale("log")
-    inset.set_xlim(math.log(math.log(3000)), math.log(inset_max))
-    inset.set_ylim(.27, .42)
-    inset.yaxis.set_major_locator(FixedLocator([.28, .3, .35, .4, reference_ratio]))
-    inset.yaxis.set_major_formatter(
-        FuncFormatter(lambda y, _: r"$2/(\ln 9)^2$"
-                      if np.isclose(y, reference_ratio) else f"{y:.2f}"))
-    inset.yaxis.set_minor_locator(NullLocator())
-    inset_ticks = [(math.log(k * math.log(10)), rf"$10^{{{k}}}$") for k in (4, 64)]
-    inset_ticks += [(k * math.log(10), rf"$e^{{10^{{{k}}}}}$") for k in (4, 6, 8, 10, 12, 14)]
-    inset_ticks.sort()
-    inset.xaxis.set_major_locator(FixedLocator([position for position, _ in inset_ticks]))
-    inset.xaxis.set_major_formatter(FuncFormatter(
-        lambda x, _: next((label for position, label in inset_ticks if np.isclose(x, position)), "")))
-    inset.xaxis.set_minor_locator(NullLocator())
-    inset.tick_params(labelsize=9)
-    inset.set_title(r"Detail: $U_{0.30}(n)/(\ln n)^2$", fontsize=10)
-    inset.grid(color="#e1e5e9", linewidth=.6)
-    for x in [math.log(k * math.log(2)) for k in [64, 80, 128]]:
-        inset.axvline(x, color="#7e91ac", linestyle="--", linewidth=.8, zorder=1)
-    inset.set_facecolor("#fafbfd")
-    stem = args.output_dir / "mr_upper_bound_comparison"
+def samples(lower: float, upper: float, count: int) -> np.ndarray:
+    """Include both sides of every discontinuity inside the plotted interval."""
+    switches = np.array([math.log(2047), math.log(3000), 1000.0, 3000.0, 10000.0])
+    points = np.unique(np.concatenate((np.geomspace(lower, upper, count), switches,
+                                      np.nextafter(switches, -np.inf),
+                                      np.nextafter(switches, np.inf), [lower, upper])))
+    return points[(lower <= points) & (points <= upper)]
+
+
+def save_figure(fig: plt.Figure, stem: Path) -> None:
     fig.savefig(stem.with_suffix(".svg"), metadata={"Date": None})
     svg = stem.with_suffix(".svg")
     svg.write_text("\n".join(line.rstrip() for line in svg.read_text(encoding="utf-8").splitlines())
                    + "\n", encoding="utf-8")
     fig.savefig(stem.with_suffix(".png"), dpi=180)
     plt.close(fig)
-    plot_mr_cumulative(args.output_dir)
-    report = {"small_interval_switch": 2047,
-              "small_three_interval": [2047, 3000],
-              "low_prime_steps": TUNED_FINITE_STEPS,
-              "pointwise_radius_floor": 8, "pointwise_inverse_bisections": 64,
-              "retained_comparison_gaussian_profiles": [{"floor": u, "residual": D} for u, D in
-                  TUNED_GAUSSIAN_PROFILES],
-              "gaussian_profile_switches": [gaussian_floor_switch(u, D) for u, D in
-                  [(9.1,9.29), (9.3,9.29), (9.3,8.7), (9.48,8.7),
-                   (9.48,8.145), (9.79,8.145), (9.79,8.125)]],
-              "gaussian_prefix": 722517/200000,
-              "gaussian_surplus_1000": {"floor": 9.1, "residual": 7.2,
-                                        "previous_residual": 7.6, "index_four_threshold": 36.63,
-                                        "prefix": 868517/200000, "log_guard": 63},
-              "retained_comparison_seeded_residuals": [5.619, 5.372],
-              "gaussian_seeded_surplus_residuals": [4.185, 3.934],
-              "gaussian_seeded_prefixes": [481117/100000, 983059/200000],
-              "gaussian_seeded_switches": [gaussian_switch(N, D) for N, D in
-                  [(35000, 5.619), (50000, 5.619), (50000, 5.372)]],
-              "triangular_log_entrances": [T for _, T in TRIANGULAR_PROFILES],
-              "triangular_coefficients": [C for C, _ in TUNED_TRIANGULAR_PROFILES] + [1411811/5000000],
-              "lean_selected_envelope": "tunedSelectedEnvelope",
-              "lean_selection_equality": "tuned_eq_selected",
-              "comparison_baseline": "sharpSelectedEnvelope",
-              "sampled_selection_equality_checked": True,
-              "baseline_sampled_monotonicity_checked": True,
-              "plotted_envelope": "baseline min 0.3*L^2 on [8,39.4] and [5250,infinity)",
-              "lean_selected_envelope_current": "jointSelected",
-              "max_bound_theorem": "compositeLeastPrime_le_max_4136",
-              "cumulative_variable_caps": "baseline with 0.30 covered intervals and high entrance history",
-              "previous_selection_equality": "nextTunedSelected_eq_normal",
-              "removed_direct_gaussian_branches": 6,
-              "gaussian_A_comparison_interval": [105, 105.5],
-              "cumulative_gaussian_residual": 7.2,
-              "previous_cumulative_gaussian_residual": 7.6,
-              "gaussian_strict_sample_interval": [100, 235.73],
-              "comparison_candidates_checked": len(candidates(L)),
-              "normal_form_checked_against_nested": True,
-              "plot_scale_points_checked": len(L), "high_scale_probe_count": len(probe),
-              "record_points_checked": len(records)}
-    print(json.dumps(report, indent=2))
-    print(f"Wrote {stem}.svg and .png")
+
+
+def plot_cumulative(output_dir: Path) -> None:
+    L = samples(math.log(3000), 1e15, 6000)
+    cumulative, pointwise = cumulative_upper(L), pointwise_upper(L)
+    assert np.all(cumulative >= pointwise - 1e-12 * np.maximum(1, pointwise))
+    assert np.all(np.diff(cumulative) >= -1e-13 * cumulative[1:])
+    for threshold, _ in ENTRANCES:
+        near = np.array([np.nextafter(threshold, -np.inf), threshold,
+                         np.nextafter(threshold, np.inf)])
+        assert pointwise_upper(near)[1] < pointwise_upper(near)[0]
+        assert np.all(np.diff(cumulative_upper(near)) >= -1e-7)
+    fig, ax = plt.subplots(figsize=(10, 5.5))
+    ax.semilogx(L, cumulative / L**2, color="#d55e00", linewidth=2.5,
+                label="Cumulative bound with piecewise cutoff")
+    ax.semilogx(L, pointwise / L**2, color="#3977a8", linestyle="--",
+                label="Pointwise bound with piecewise cutoff")
+    ax.plot(L, np.maximum(2.0, .3 * L**2) / L**2, color="#333333", linestyle=":",
+            linewidth=1.7, label=r"$\max\{2,\frac{3}{10}(\ln N)^2\}$ reference")
+    ax.set(xlabel=r"$L=\ln N$", ylabel=r"Upper bound divided by $L^2$",
+           title="Cumulative bounds at high scales")
+    ax.set_xlim(math.log(3000), 1e15)
+    ax.grid(color="#e1e5e9", linewidth=.6)
+    ax.legend(loc="upper right", fontsize=8)
+    fig.tight_layout()
+    save_figure(fig, output_dir / "mr_cumulative_high_comparison")
+
+
+def plot_pointwise(output_dir: Path, max_power: int) -> None:
+    ns, ps = load_records()
+    record_L = np.log(np.asarray(ns, dtype=float))
+    Lmax = max_power * math.log(10)
+    L = samples(math.log(9), Lmax, 10000)
+    upper = pointwise_upper(L)
+    fig, ax = plt.subplots(figsize=(12, 8))
+    fig.subplots_adjust(left=.09, right=.95, top=.87, bottom=.13)
+    ax.plot(np.log(L), upper, color="#d55e00", linewidth=2.5,
+            label=r"Pointwise bound $U_{\mathrm{new}}(n)$", zorder=3)
+    ax.plot(np.log(L), np.maximum(2.0, .3 * L**2), color="#333333", linewidth=1.7,
+            linestyle=":", label=r"$\max\{2,\frac{3}{10}(\ln n)^2\}$", zorder=4)
+    ax.step(np.log(record_L), ps, where="post", color="#007f80", linewidth=2, zorder=5)
+    ax.scatter(np.log(record_L), ps, s=27, color="#007f80", zorder=7,
+               label=r"Record points $Q_{\mathrm{MR}}(N)$ (OEIS A006945; prime bases 2, 3, 5, …)")
+    ax.set_yscale("log")
+    ax.set_xlim(math.log(math.log(9)), math.log(Lmax))
+    ax.set_ylim(1, 1e4)
+    powers = [2**k for k in range(14) if 2**k < max_power] + [max_power]
+    power_ticks(ax, powers)
+    ax.set_xlabel(r"Odd composite integer $n$ / upper bound $N$", labelpad=10)
+    ax.set_ylabel("Least prime witness / upper bound")
+    ax.grid(which="major", color="#d8dde3", linewidth=.7)
+    bits = [k for k in [64, 80, 128] if k * math.log(2) <= Lmax]
+    positions = [math.log(k * math.log(2)) for k in bits]
+    for position in positions:
+        ax.axvline(position, color="#7e91ac", linestyle="--", linewidth=.9, zorder=1)
+    top = ax.secondary_xaxis("top")
+    top.set_xticks(positions, [rf"$2^{{{k}}}$" for k in bits])
+    top.tick_params(axis="x", colors="#536780", labelsize=10, pad=5)
+    ax.legend(loc="upper left", framealpha=.97, fontsize=10)
+    ax.set_title("Miller–Rabin: least-prime witness bounds", pad=46)
+    inset = ax.inset_axes([.06, .53, .35, .28])
+    inset_L = samples(math.log(3000), 1e14, 10000)
+    inset.plot(np.log(inset_L), pointwise_upper(inset_L) / inset_L**2,
+               color="#d55e00", linewidth=2)
+    inset.axhline(.3, color="#333333", linestyle=":", linewidth=1.3)
+    inset.set_yscale("log")
+    inset.set_xlim(math.log(math.log(3000)), math.log(1e14))
+    inset.set_ylim(.27, .303)
+    inset.yaxis.set_major_locator(FixedLocator([.27, .28, .29, .3]))
+    inset.yaxis.set_major_formatter(FuncFormatter(lambda y, _: f"{y:.2f}"))
+    inset.yaxis.set_minor_locator(NullLocator())
+    ticks = [(math.log(k * math.log(10)), rf"$10^{{{k}}}$") for k in (4, 64)]
+    ticks += [(k * math.log(10), rf"$e^{{10^{{{k}}}}}$") for k in (4, 6, 8, 10, 12, 14)]
+    ticks.sort()
+    inset.xaxis.set_major_locator(FixedLocator([position for position, _ in ticks]))
+    inset.xaxis.set_major_formatter(FuncFormatter(
+        lambda x, _: next((label for position, label in ticks if np.isclose(x, position)), "")))
+    inset.xaxis.set_minor_locator(NullLocator())
+    inset.tick_params(labelsize=9)
+    inset.set_title(r"Detail: $U_{\mathrm{new}}(n)/(\ln n)^2$", fontsize=10)
+    inset.grid(color="#e1e5e9", linewidth=.6)
+    for position in [math.log(k * math.log(2)) for k in [64, 80, 128]]:
+        inset.axvline(position, color="#7e91ac", linestyle="--", linewidth=.8, zorder=1)
+    inset.set_facecolor("#fafbfd")
+    save_figure(fig, output_dir / "mr_upper_bound_comparison")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--output-dir", type=Path, default=ROOT / "doc/figures")
+    parser.add_argument("--max-power", type=int, default=64)
+    args = parser.parse_args()
+    if not 1 <= args.max_power <= 8192:
+        parser.error("--max-power must be between 1 and 8192")
+    args.output_dir.mkdir(parents=True, exist_ok=True)
+    plt.rcParams.update({"font.size": 11, "svg.hashsalt": "mr-comparison",
+                         "axes.spines.top": False, "axes.spines.right": False})
+    plot_pointwise(args.output_dir, args.max_power)
+    plot_cumulative(args.output_dir)
+    print(f"Wrote Miller-Rabin comparison figures to {args.output_dir}")
 
 
 if __name__ == "__main__":
