@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Draw the current Miller-Rabin pointwise and cumulative witness bounds.
 
-The pointwise branches are the certified small-input bounds, the global 0.30
+The pointwise branches are the certified small-input bounds, the global 0.28
 bound, and the piecewise cutoff of refined_piecewise_witness. Cumulative
 histories retain each branch's preceding entrance bound. All coordinates are
 computed from L = ln(n); plotting is numerical, not a Lean proof.
@@ -24,6 +24,15 @@ from plot_qne1_comparison import DATA_DIR, ROOT, power_ticks
 ENTRANCES = ((1000.0, 3.0), (3000.0, 1.0), (10000.0, 0.0))
 
 
+def first_crossover() -> float:
+    """Solve paper_bound(L, 3) = 0.28 L² on the first paper branch."""
+    d, a, v = 24439 / 50000, 3 / (8 * (27 / 25)**5), 53 / 500
+    q = .28
+    slope = d * math.sqrt(q) - a
+    root = (v * q**.25 + math.sqrt(v*v * math.sqrt(q) + 12 * slope)) / (2 * slope)
+    return root**2
+
+
 def paper_bound(L: np.ndarray, allowance: float | np.ndarray) -> np.ndarray:
     """Fourth power of the positive root in RefinedSixPolePaperRoot.lean."""
     d, a, v = 24439 / 50000, 3 / (8 * (27 / 25)**5), 53 / 500
@@ -37,17 +46,18 @@ def paper_piecewise_upper(L: np.ndarray) -> np.ndarray:
 
 
 def pointwise_upper(L: np.ndarray) -> np.ndarray:
-    """Displayed cutoff: small-input values, then the certified piecewise bound."""
+    """Combine the small-input, 0.28 and piecewise witness cutoffs."""
     return np.where(L < math.log(2047), 2.0,
-                    np.where(L < math.log(3000), 3.0, paper_piecewise_upper(L)))
+                    np.where(L < math.log(3000), 3.0,
+                             np.minimum(.28 * L**2, paper_piecewise_upper(L))))
 
 
 def cumulative_upper(L: np.ndarray) -> np.ndarray:
     """Cumulative bound on L >= ln(3000), retaining each entrance history."""
-    result = np.maximum(2.0, .3 * L**2)
+    result = np.maximum(2.0, .28 * L**2)
     caps: list[float] = []
     for index, (entrance, allowance) in enumerate(ENTRANCES):
-        anchor = max(2.0, .3 * entrance**2)
+        anchor = max(2.0, .28 * entrance**2)
         for previous, (previous_entrance, previous_allowance) in enumerate(ENTRANCES[:index]):
             if entrance >= previous_entrance:
                 old_branch = float(paper_bound(np.array([entrance]), previous_allowance)[0])
@@ -94,7 +104,8 @@ def load_records() -> tuple[list[int], list[int]]:
 
 def samples(lower: float, upper: float, count: int) -> np.ndarray:
     """Include both sides of every discontinuity inside the plotted interval."""
-    switches = np.array([math.log(2047), math.log(3000), 1000.0, 3000.0, 10000.0])
+    switches = np.array([math.log(2047), math.log(3000), 1000.0, first_crossover(),
+                         3000.0, 10000.0])
     points = np.unique(np.concatenate((np.geomspace(lower, upper, count), switches,
                                       np.nextafter(switches, -np.inf),
                                       np.nextafter(switches, np.inf), [lower, upper])))
@@ -118,15 +129,15 @@ def plot_cumulative(output_dir: Path) -> None:
     for threshold, _ in ENTRANCES:
         near = np.array([np.nextafter(threshold, -np.inf), threshold,
                          np.nextafter(threshold, np.inf)])
-        assert pointwise_upper(near)[1] < pointwise_upper(near)[0]
+        assert pointwise_upper(near)[1] <= pointwise_upper(near)[0] * (1 + 1e-14)
         assert np.all(np.diff(cumulative_upper(near)) >= -1e-7)
     fig, ax = plt.subplots(figsize=(10, 5.5))
     ax.semilogx(L, cumulative / L**2, color="#d55e00", linewidth=2.5,
                 label="Cumulative bound with piecewise cutoff")
     ax.semilogx(L, pointwise / L**2, color="#3977a8", linestyle="--",
                 label="Pointwise bound with piecewise cutoff")
-    ax.plot(L, np.maximum(2.0, .3 * L**2) / L**2, color="#333333", linestyle=":",
-            linewidth=1.7, label=r"$\max\{2,\frac{3}{10}(\ln N)^2\}$ reference")
+    ax.plot(L, np.maximum(2.0, .28 * L**2) / L**2, color="#333333", linestyle=":",
+            linewidth=1.7, label=r"$\max\{2,\frac{7}{25}(\ln N)^2\}$ reference")
     ax.set(xlabel=r"$L=\ln N$", ylabel=r"Upper bound divided by $L^2$",
            title="Cumulative bounds at high scales")
     ax.set_xlim(math.log(3000), 1e15)
@@ -146,8 +157,8 @@ def plot_pointwise(output_dir: Path, max_power: int) -> None:
     fig.subplots_adjust(left=.09, right=.95, top=.87, bottom=.13)
     ax.plot(np.log(L), upper, color="#d55e00", linewidth=2.5,
             label=r"Pointwise bound $U_{\mathrm{new}}(n)$", zorder=3)
-    ax.plot(np.log(L), np.maximum(2.0, .3 * L**2), color="#333333", linewidth=1.7,
-            linestyle=":", label=r"$\max\{2,\frac{3}{10}(\ln n)^2\}$", zorder=4)
+    ax.plot(np.log(L), np.maximum(2.0, .28 * L**2), color="#333333", linewidth=1.7,
+            linestyle=":", label=r"$\max\{2,\frac{7}{25}(\ln n)^2\}$", zorder=4)
     ax.step(np.log(record_L), ps, where="post", color="#007f80", linewidth=2, zorder=5)
     ax.scatter(np.log(record_L), ps, s=27, color="#007f80", zorder=7,
                label=r"Record points $Q_{\mathrm{MR}}(N)$ (OEIS A006945; prime bases 2, 3, 5, …)")
@@ -172,12 +183,12 @@ def plot_pointwise(output_dir: Path, max_power: int) -> None:
     inset_L = samples(math.log(3000), 1e14, 10000)
     inset.plot(np.log(inset_L), pointwise_upper(inset_L) / inset_L**2,
                color="#d55e00", linewidth=2)
-    inset.axhline(.3, color="#333333", linestyle=":", linewidth=1.3)
+    inset.axhline(.28, color="#333333", linestyle=":", linewidth=1.3)
     inset.set_yscale("log")
     inset.set_xlim(math.log(math.log(3000)), math.log(1e14))
-    inset.set_ylim(.27, .303)
-    inset.yaxis.set_major_locator(FixedLocator([.27, .28, .29, .3]))
-    inset.yaxis.set_major_formatter(FuncFormatter(lambda y, _: f"{y:.2f}"))
+    inset.set_ylim(.27, .283)
+    inset.yaxis.set_major_locator(FixedLocator([.27, .275, .28]))
+    inset.yaxis.set_major_formatter(FuncFormatter(lambda y, _: f"{y:.3f}"))
     inset.yaxis.set_minor_locator(NullLocator())
     ticks = [(math.log(k * math.log(10)), rf"$10^{{{k}}}$") for k in (4, 64)]
     ticks += [(k * math.log(10), rf"$e^{{10^{{{k}}}}}$") for k in (4, 6, 8, 10, 12, 14)]
