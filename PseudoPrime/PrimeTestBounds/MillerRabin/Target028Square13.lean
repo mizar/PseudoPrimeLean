@@ -6,7 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target030SquareCoverage
+public import PseudoPrime.PrimeTestBounds.MillerRabin.SquareDivisorCoverage
+public import PseudoPrime.PrimeTestBounds.MillerRabin.SquareCoverageRows
 
 /-! # Coefficient 0.28 for square divisors through logarithmic scale 13 -/
 

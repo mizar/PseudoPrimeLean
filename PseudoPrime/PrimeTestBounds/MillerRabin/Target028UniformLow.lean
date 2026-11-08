@@ -6,7 +6,10 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target030UniformLow
+public import PseudoPrime.PrimeTestBounds.MillerRabin.Target030KorseltClassification
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LogScalePow22
+public import PseudoPrime.PrimeTestBounds.MillerRabin.Target030Local
+public import PseudoPrime.NumberTheory.PrimeFactorPairClassification
 
 /-! # Low-range uniform Korselt witnesses with coefficient 0.28 -/
 

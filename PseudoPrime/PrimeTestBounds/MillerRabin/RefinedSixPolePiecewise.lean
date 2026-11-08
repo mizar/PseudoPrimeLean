@@ -7,7 +7,6 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedSixPolePaperRootWitness
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target030Log8
 
 /-! # Piecewise refined Miller--Rabin coefficient -/
 
@@ -64,19 +63,6 @@ theorem refined_pair_piecewise_witness {n p q r : ℕ} [NeZero n] [NeZero p] [Ne
   exact
     refined_pair_root_witness hsq hnprod hGRH hn ho hp hq hr hpn hqn hrn hpqn hprn hqrn hpK hqK hrK
       hvq hvr hL (refined_allowance_range _).1 hres
-
-/-- Under GRH, every odd composite with `8 ≤ log n < 1000` has a prime witness
-bounded by the piecewise coefficient. This is the existing three-tenths theorem
-rewritten using the low-range branch of the coefficient. -/
-theorem refined_piecewise_low_witness {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : (8 : ℝ) ≤ Real.log n)
-    (hU : Real.log n < 1000) :
-    ∃ l : ℕ,
-      l.Prime ∧
-        (l : ℝ) ≤ refinedPaperCoefficient (Real.log n) * (Real.log n) ^ 2 ∧
-        ¬PrimeTest.StrongMillerRabinPass n (l : ZMod n) := by
-  rw [refinedPaperCoefficient, ite_eq_left hU]
-  exact exists_prime_reject_03_log8 hn ho hc hGRH hL
 
 /-- The four branches of the coefficient agree exactly with the paper's thresholds.
 Evaluate the piecewise allowance and coefficient at the stated interval endpoints. -/

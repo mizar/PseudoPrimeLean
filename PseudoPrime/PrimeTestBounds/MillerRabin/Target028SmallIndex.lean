@@ -6,7 +6,10 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target030High
+public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformKorseltTriple
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalEvenAnchors
+public import PseudoPrime.PrimeTestBounds.MillerRabin.TotalFactorWitnessBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.MixedTwoAdicLogBounds
 
 /-! # Small-index local witnesses for the coefficient 0.28 -/
 

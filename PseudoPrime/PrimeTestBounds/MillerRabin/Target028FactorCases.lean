@@ -6,7 +6,10 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target030High
+public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformKorseltTriple
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalEvenAnchors
+public import PseudoPrime.PrimeTestBounds.MillerRabin.TotalFactorWitnessBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.MixedTwoAdicLogBounds
 
 /-! # Factor-count cases with coefficient 0.28 -/
 

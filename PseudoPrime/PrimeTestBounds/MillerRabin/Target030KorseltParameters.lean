@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target030High
+public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformKorseltTriple
 
 /-! # Parameters for finite uniform Korselt triple classification -/
 

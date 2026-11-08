@@ -92,18 +92,4 @@ theorem refined_index16_witness {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Pr
         hpass hGRH hL
   · exact refined_uniform_certified_witness hn ho htriple hGRH hL
 
-/-- Under GRH, the piecewise bound holds when `log n ≥ 8` and either the low
-branch applies or the Fermat subgroup index is at most `10^16`. Combine the
-existing low-range theorem with the finite-index reduction above. -/
-theorem refined_piecewise_index16 {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : (8 : ℝ) ≤ Real.log n)
-    (hcover : Real.log n < 1000 ∨ (PrimeTest.fermatSubgroup n).index ≤ 10 ^ 16) :
-    ∃ p : ℕ,
-      p.Prime ∧
-        (p : ℝ) ≤ refinedPaperCoefficient (Real.log n) * Real.log n ^ 2 ∧
-        ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
-  by_cases hsmall : Real.log n < 1000
-  · exact refined_piecewise_low_witness hn ho hc hGRH hL hsmall
-  · exact refined_index16_witness hn ho hc (hcover.resolve_left hsmall) hGRH (le_of_not_gt hsmall)
-
 end PseudoPrime.PrimeTestBounds.MillerRabin

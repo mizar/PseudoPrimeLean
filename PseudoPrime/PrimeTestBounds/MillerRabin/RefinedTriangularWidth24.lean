@@ -8,6 +8,7 @@ module
 
 public import PseudoPrime.LLS.PaperStatements.TriangularDualScaleGeneral
 public import PseudoPrime.LLS.PaperStatements.TriangularCreditedInterior
+public import PseudoPrime.LLS.PaperStatements.TriangularJointSharp
 public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedSixPoleLargeIndexScalar
 
 /-! # Width-24 triangular dual-scale input for the refined bound -/
@@ -1453,27 +1454,6 @@ theorem refined_24_inner_witness {n : ℕ} (hn : 1 < n) (ho : Odd n)
       exact (hp.coprime_iff_not_dvd.mp hcop) hd
     · exact hout (PrimeTest.strongMillerRabinPass_mem_fermatSubgroup hn ho hpass)
 
-/-- Under GRH, the paper's piecewise cutoff has a rejecting prime whenever
-the low logarithmic branch, the small Fermat-index branch, or the width-24
-inner-support branch applies. Split by logarithmic size and subgroup index. -/
-theorem refined_piecewise_inner_or_index {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : (8 : ℝ) ≤ Real.log n)
-    (hcover :
-      Real.log n < 1000 ∨
-        (PrimeTest.fermatSubgroup n).index ≤ 10 ^ 16 ∨
-        Real.log (refinedPaperBound (Real.log n) (refinedPaperAllowance (Real.log n))) ≤ 48) :
-    ∃ p : ℕ,
-      p.Prime ∧
-        (p : ℝ) ≤ refinedPaperCoefficient (Real.log n) * Real.log n ^ 2 ∧
-        ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
-  by_cases hsmall : Real.log n < 1000
-  · exact refined_piecewise_low_witness hn ho hc hGRH hL hsmall
-  · by_cases hi : (PrimeTest.fermatSubgroup n).index ≤ 10 ^ 16
-    · exact refined_index16_witness hn ho hc hi hGRH (le_of_not_gt hsmall)
-    · have hy := (hcover.resolve_left hsmall).resolve_left hi
-      have hlarge : 10 ^ 16 ≤ (PrimeTest.fermatSubgroup n).index := Nat.le_of_lt (lt_of_not_ge hi)
-      exact refined_24_inner_witness hn ho hlarge hGRH (le_of_not_gt hsmall) hy
-
 /-- Under GRH in the outer width-24 support, a finite principal lower bound
 and a strict numerical gap force a prime dividing the modulus or outside the
 subgroup. The scale-one principal sum is nonnegative and may be discarded. -/
@@ -1788,23 +1768,21 @@ theorem refined_24_outer_witness {n : ℕ} (hn : 1 < n) (ho : Odd n)
       exact (hp.coprime_iff_not_dvd.mp hcop) hd
     · exact hout (PrimeTest.strongMillerRabinPass_mem_fermatSubgroup hn ho hpass)
 
-/-- Under GRH, every odd composite with `log n ≥ 8` has a rejecting prime
-bounded by the piecewise paper coefficient. Combine the low and small-index
-branches with the inner and outer width-24 high-index witnesses. -/
-theorem refined_piecewise_witness {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : (8 : ℝ) ≤ Real.log n) :
+/-- Under GRH, every odd composite with logarithm at least 1000 has a rejecting
+prime bounded by the piecewise coefficient. Split by subgroup index and then use
+the inner or outer width-24 witness. -/
+theorem refined_piecewise_high_witness {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : (1000 : ℝ) ≤ Real.log n) :
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ refinedPaperCoefficient (Real.log n) * Real.log n ^ 2 ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
-  by_cases hsmall : Real.log n < 1000
-  · exact refined_piecewise_low_witness hn ho hc hGRH hL hsmall
-  · by_cases hi : (PrimeTest.fermatSubgroup n).index ≤ 10 ^ 16
-    · exact refined_index16_witness hn ho hc hi hGRH (le_of_not_gt hsmall)
-    · have hlarge : 10 ^ 16 ≤ (PrimeTest.fermatSubgroup n).index := Nat.le_of_lt (lt_of_not_ge hi)
-      by_cases hy :
-        Real.log (refinedPaperBound (Real.log n) (refinedPaperAllowance (Real.log n))) ≤ 48
-      · exact refined_24_inner_witness hn ho hlarge hGRH (le_of_not_gt hsmall) hy
-      · exact refined_24_outer_witness hn ho hlarge hGRH (le_of_not_gt hsmall) (le_of_not_ge hy)
+  by_cases hi : (PrimeTest.fermatSubgroup n).index ≤ 10 ^ 16
+  · exact refined_index16_witness hn ho hc hi hGRH hL
+  · have hlarge : 10 ^ 16 ≤ (PrimeTest.fermatSubgroup n).index := Nat.le_of_lt (lt_of_not_ge hi)
+    by_cases hy :
+      Real.log (refinedPaperBound (Real.log n) (refinedPaperAllowance (Real.log n))) ≤ 48
+    · exact refined_24_inner_witness hn ho hlarge hGRH hL hy
+    · exact refined_24_outer_witness hn ho hlarge hGRH hL (le_of_not_ge hy)
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

@@ -196,7 +196,8 @@ public import PseudoPrime.PrimeTestBounds.Selfridge.FourPoleFiniteBounds
 public import PseudoPrime.PrimeTestBounds.Selfridge.FourPoleSharpFiniteBounds
 public import PseudoPrime.PrimeTestBounds.Selfridge.FourPoleCommonBounds
 public import PseudoPrime.PrimeTestBounds.Selfridge.FourPoleReducedBounds
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target030Selection
+public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028Selection
+public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedPiecewiseWitness
 public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedSixPolePairGap
 public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedSixPoleGammaContour
 public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedSixPolePairNumeric

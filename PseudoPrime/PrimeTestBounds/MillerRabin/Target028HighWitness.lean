@@ -24,7 +24,7 @@ theorem exists_prime_reject_028_high {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : �
       p.Prime ∧
         (p : ℝ) ≤ (7 / 25 : ℝ) * Real.log n ^ 2 ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
-  obtain ⟨p, hp, hb, hf⟩ := refined_piecewise_witness hn ho hc hGRH (by linarith only [hL])
+  obtain ⟨p, hp, hb, hf⟩ := refined_piecewise_high_witness hn ho hc hGRH (by linarith only [hL])
   exact ⟨p, hp, hb.trans (target028_piecewise_le hL), hf⟩
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

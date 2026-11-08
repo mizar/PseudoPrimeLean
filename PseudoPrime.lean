@@ -45,7 +45,6 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.Count1600Witness
 public import PseudoPrime.PrimeTestBounds.MillerRabin.CountCandidateData
 public import PseudoPrime.PrimeTestBounds.MillerRabin.SquareUniform371
 public import PseudoPrime.PrimeTestBounds.MillerRabin.SemiprimeUniform409
-public import PseudoPrime.PrimeTestBounds.MillerRabin.LeastPrime4136
 public import PseudoPrime.PrimeTestBounds.MillerRabin.LogNineComparison
 public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformTripleConductor
 public import PseudoPrime.PrimeTestBounds.MillerRabin.Target030CoveredRanges

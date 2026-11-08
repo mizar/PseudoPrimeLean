@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.Target030KorseltClassification
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LogScalePow22
 public import PseudoPrime.PrimeTestBounds.MillerRabin.Target030EarlyBridge
 
 /-! # Uniform Korselt triples on the low 0.30 range -/
@@ -83,22 +84,6 @@ theorem uniformKorselt_reject_03_pow22 {n : ℕ} (hn : 1 < n) (ho : Odd n)
     exact
       exists_prime_reject_03_divisor43 hn ho (by decide : Nat.Prime 43) (by decide : 43 ∣ 1152271)
         (by decide) (by decide)
-
-/-- Logarithmic scale at most 15 implies an input bound of `2^22`. A rational
-lower bound for the logarithm of that power makes the comparison explicit. -/
-theorem le_pow22_of_log_le_15 {n : ℕ} (hn : 1 < n) (hU : Real.log n ≤ (15 : ℝ)) : n ≤ 2 ^ 22 := by
-  have hcert :=
-    (Analysis.rationalLogIntervalCheck_sound
-        (show Analysis.rationalLogIntervalCheck 4194304 23 32 (151 / 10) 16 = true from by
-          decide +kernel)).1
-  norm_num only [Rat.cast_ofNat, Rat.cast_div] at hcert
-  have hlog : Real.log (n : ℝ) ≤ Real.log (4194304 : ℝ) := by linarith only [hU, hcert]
-  have hcast :=
-    (Real.log_le_log_iff (Nat.cast_pos.mpr (Nat.zero_lt_of_lt hn))
-          (by norm_num only : (0 : ℝ) < 4194304)).mp
-      hlog
-  norm_num only at hcast ⊢
-  exact_mod_cast hcast
 
 /-- Under GRH, every odd uniform Korselt triple with logarithm in `[8, 39.4]`
 has a 0.30 rejecting prime. The finite classification covers the range through

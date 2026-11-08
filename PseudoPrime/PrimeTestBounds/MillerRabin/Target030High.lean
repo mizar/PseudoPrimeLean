@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.JointSurplusEnvelope
 public import PseudoPrime.PrimeTestBounds.MillerRabin.JointSurplusThresholds
-public import PseudoPrime.PrimeTestBounds.MillerRabin.FiniteIndexClassification
+public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformKorseltTriple
 public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalEvenAnchors
 public import PseudoPrime.PrimeTestBounds.MillerRabin.MRLocalCutoffNumerics
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianSurplusIndex
@@ -20,15 +20,6 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.MixedTwoAdicLogBounds
 @[expose] public section
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
-
-/-- The exceptional squarefree Korselt triple with uniform predecessor valuations.
-This predicate packages the arithmetic alternative in the finite-index classification
-for use in the nonexceptional witness branch. -/
-def UniformKorseltTriple (n : ℕ) : Prop :=
-  Squarefree n ∧
-    n.primeFactors.card = 3 ∧
-    (∀ p : ℕ, p.Prime → p ∣ n → p - 1 ∣ n - 1) ∧
-    (∀ p q : ℕ, p.Prime → q.Prime → p ∣ n → q ∣ n → padicValNat 2 (p - 1) = padicValNat 2 (q - 1))
 
 /-- Under GRH, an odd composite with at least four prime factors counted
 with multiplicity has a rejecting prime within the 0.30 cutoff. The existing
@@ -147,19 +138,6 @@ theorem exists_prime_reject_03_low_index {n : ℕ} [NeZero n] (ho : Odd n) (hc :
         (p : ℝ) ≤ (3 / 10 : ℝ) * (Real.log n) ^ 2 ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) :=
   (witness_or_uniformKorselt_log240_GRH ho hc H hH hi hGRH hL).resolve_right hU
-
-/-- At logarithmic scale 100, the input exceeds the cube of the finite-index
-threshold. The elementary bound on `log 10` supplies the comparison. -/
-theorem ten_pow_27_le_of_log100 {n : ℕ} [NeZero n] (hL : (100 : ℝ) ≤ Real.log n) : 10 ^ 27 ≤ n := by
-  by_contra hnot
-  have hsmall : n < 10 ^ 27 := Nat.lt_of_not_ge hnot
-  have hcast : (n : ℝ) < (10 : ℝ) ^ 27 := by exact_mod_cast hsmall
-  have hlogsmall := Real.log_lt_log (Nat.cast_pos.mpr (NeZero.pos n)) hcast
-  have hlog27 : Real.log ((10 : ℝ) ^ 27) < 100 := by
-    rw [Real.log_pow]
-    norm_num only [Nat.cast_ofNat]
-    nlinarith only [log_ten_lt_seven_thirds]
-  exact (not_lt_of_ge hL) (hlogsmall.trans hlog27)
 
 /-- Under GRH, the finite-index classification and the radius-48 local
 correction give a 0.30 witness for every nonexceptional odd composite from

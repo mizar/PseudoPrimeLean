@@ -7,6 +7,10 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedSixPoleMonotonicity
+public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformKorseltTriple
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalEvenAnchors
+public import PseudoPrime.PrimeTestBounds.MillerRabin.TotalFactorWitnessBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.MixedTwoAdicLogBounds
 
 /-! # Rational endpoint inputs for the refined residual -/
 
@@ -443,21 +447,5 @@ theorem refined_low_index_witness {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.
       refined_local_subgroup_witness hn ho (lt_of_lt_of_le (by decide : 0 < 2) hq) hqn hsize K
         hproper hpass hGRH hL
   · exact refined_uniform_certified_witness hn ho htriple hGRH hL
-
-/-- Under GRH, an odd composite with `log n ≥ 8` has a witness within the
-piecewise bound if either its logarithm is below `1000` or its Fermat subgroup
-has index at most `10^9`. The low-range witness and the certified high-range
-finite-index classification cover these alternatives. -/
-theorem refined_piecewise_covered_witness {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : (8 : ℝ) ≤ Real.log n)
-    (hcover : Real.log n < 1000 ∨ (PrimeTest.fermatSubgroup n).index ≤ 10 ^ 9) :
-    ∃ p : ℕ,
-      p.Prime ∧
-        (p : ℝ) ≤ refinedPaperCoefficient (Real.log n) * Real.log n ^ 2 ∧
-        ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
-  by_cases hsmall : Real.log n < 1000
-  · exact refined_piecewise_low_witness hn ho hc hGRH hL hsmall
-  · have hi : (PrimeTest.fermatSubgroup n).index ≤ 10 ^ 9 := hcover.resolve_left hsmall
-    exact refined_low_index_witness hn ho hc hi hGRH (le_of_not_gt hsmall)
 
 end PseudoPrime.PrimeTestBounds.MillerRabin
