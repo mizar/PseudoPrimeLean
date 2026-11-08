@@ -171,13 +171,13 @@ $n-1=2^s d$ and $d$ odd. The theorem shown above uses `Nat.maxPowDvdDiv` instead
 
 `ComparatorChallenges.PrimeMillerRabinWitness.prime_millerRabin_log_nine_criterion`
 
-proof from `LeastPrime4136.lean` and `FourNinthsCriterion.lean`
+proof from `Target028GlobalBridge.lean`
 
 </div>
 
 <div class="foot">
 
-$\mathbb P$: primes. The odd-part decomposition uniquely determines $s,d$.
+$\mathbb P$: primes. $\ln$: natural logarithm. The odd-part decomposition uniquely determines $s,d$.
 
 </div>
 
@@ -187,7 +187,7 @@ $\mathbb P$: primes. The odd-part decomposition uniquely determines $s,d$.
 <div class="heading">
 <div class="eyebrow">PSEUDOPRIME · PRIME-BASE PRIMALITY CRITERION</div>
 
-# Miller–Rabin under GRH: $p\le\max\left(2,\,\frac{3}{10}(\ln n)^2\right)$
+# Miller–Rabin under GRH: $p\le\max\left(2,\,\frac{7}{25}(\ln n)^2\right)$
 
 <div class="subtitle">Comparator solution using the library proof</div>
 </div>
@@ -204,7 +204,7 @@ Assume GRH; let $n > 1$ be an odd integer.
 
 $$
 \boxed{
-\text{every prime }p \le \max\left(2,\,\frac{3}{10}(\ln n)^2\right)\text{ passes the strong Miller–Rabin conditions for }n \iff n\text{ is prime}.
+\text{every prime }p \le \max\left(2,\,\frac{7}{25}(\ln n)^2\right)\text{ passes the strong Miller–Rabin conditions for }n \iff n\text{ is prime}.
 }
 $$
 
@@ -274,7 +274,7 @@ $$
 \left[
 \begin{gathered}
 \left(\forall p\in\mathbb P,\quad
-p \le \max\left(2,\,\frac{3}{10}(\ln n)^2\right) \Longrightarrow\right.\\[4pt]
+p \le \max\left(2,\,\frac{7}{25}(\ln n)^2\right) \Longrightarrow\right.\\[4pt]
 \left.\left(
 \begin{gathered}
 p^d\equiv1\pmod n\\[2pt]
@@ -298,14 +298,16 @@ $n-1=2^s d$ and $d$ odd. The theorem shown above uses `Nat.maxPowDvdDiv` instead
 
 </div>
 
-`ComparatorChallenges.PrimeMillerRabinWitness.prime_millerRabin_03_criterion`
+`ComparatorChallenges.PrimeMillerRabinWitness.prime_millerRabin_028_criterion`
 
-proof from `Target030Global.lean` and `FourNinthsCriterion.lean`
+The proof uses `prime_millerRabin_028_criterion` in
+[`Target028GlobalBridge.lean`](../../PseudoPrime/PrimeTestBounds/MillerRabin/Target028GlobalBridge.lean),
+which connects the verified logarithmic-scale witness to the global cutoff.
 
 </div>
 
 <div class="foot">
 
-$\mathbb P$: primes. The odd-part decomposition uniquely determines $s,d$.
+$\mathbb P$: primes. $\ln$: natural logarithm. The odd-part decomposition uniquely determines $s,d$.
 
 </div>
