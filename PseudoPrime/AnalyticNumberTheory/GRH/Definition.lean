@@ -45,30 +45,21 @@ def GeneralizedRiemannHypothesis : Prop :=
 the excluded pole value is nonzero in mathlib. Used to extract RH from GRH. -/
 theorem dirichletRiemannHypothesis_one_iff :
     DirichletRiemannHypothesis (1 : DirichletCharacter ℂ 1) ↔ RiemannHypothesis := by
+  classical
   have htriv (s : ℂ) :
-    s ∉ (Int.cast : ℤ → ℂ) '' ({z : ℤ | ∃ n : ℕ, z = -2 * ((n : ℤ) + 1)} : Set ℤ) ↔
-      ¬∃ n : ℕ, s = -2 * ((n : ℂ) + 1) := by
+    s ∈ (Int.cast : ℤ → ℂ) '' dirichletTrivialZeros (1 : DirichletCharacter ℂ 1) ↔
+      ∃ n : ℕ, s = -2 * ((n : ℂ) + 1) := by
+    simp only [Set.mem_image]
     constructor
-    · intro hs h
-      rcases h with ⟨n, hn⟩
-      apply hs
-      refine ⟨-2 * ((n : ℤ) + 1), ⟨n, rfl⟩, ?_⟩
-      calc
-        ((-2 * ((n : ℤ) + 1) : ℤ) : ℂ) = -2 * ((n : ℂ) + 1) := by
-          norm_num only [Int.cast_neg, Int.cast_mul, Int.cast_add, Int.cast_natCast]
-        _ = s := hn.symm
-    · intro hs h
-      rcases h with ⟨z, ⟨n, hn⟩, hz⟩
-      apply hs
+    · rintro ⟨_, ⟨n, rfl⟩, rfl⟩
       refine ⟨n, ?_⟩
-      calc
-        s = (z : ℂ) := hz.symm
-        _ = ((-2 * ((n : ℤ) + 1) : ℤ) : ℂ) := by rw [← hn]
-        _ = -2 * ((n : ℂ) + 1) := by
-          norm_num only [Int.cast_neg, Int.cast_mul, Int.cast_add, Int.cast_natCast]
-  simp only [DirichletRiemannHypothesis, DirichletCharacter.LFunction_modOne_eq,
-    dirichletTrivialZeros, RiemannHypothesis, ite_eq_left]
-  simp only [htriv]
+      push_cast
+      ring
+    · rintro ⟨n, rfl⟩
+      refine ⟨-2 * ((n : ℤ) + 1), ⟨n, rfl⟩, ?_⟩
+      push_cast
+      ring
+  simp only [DirichletRiemannHypothesis, DirichletCharacter.LFunction_modOne_eq, htriv]
   constructor
   · intro h s hs ht _
     exact h s hs ht
