@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.PrincipalLowerWitnessBounds
 public import PseudoPrime.LLS.ClippedLogShiftPrincipalBounds
 public import PseudoPrime.LLS.TwoPolePrimePowerPrefixSavings
@@ -33,7 +34,7 @@ theorem exists_odd_prime_ne_one_of_principalLower_gap {n B : ℕ} (hn : Odd n) (
     (hx : 3 ≤ x)
     (hP :
       P ≤
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ,
               LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re)
     (hgap : 0 < principalNeOneGap B x P) :
@@ -90,7 +91,7 @@ theorem exists_odd_prime_neg_one_of_principalLower_gap {n B : ℕ} (hn : Odd n) 
     (hx : 25 ≤ x)
     (hP :
       P ≤
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ,
               LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re)
     (hgap : 0 < principalNegOneGap B x P) :
@@ -150,7 +151,7 @@ theorem primeNeOneWitness_cast_le_of_principalLower_gap {n B : ℕ} (hn : Odd n)
     (hx : 3 ≤ x)
     (hP :
       P ≤
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ,
               LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re)
     (hgap : 0 < principalNeOneGap B x P) (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
@@ -166,7 +167,7 @@ theorem QNeOne_le_of_principalLower_gap {B : ℕ}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x P : ℝ} (hx : 3 ≤ x)
     (hP :
       P ≤
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ,
               LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re)
     (hgap : 0 < principalNeOneGap B x P) : (QNeOne B : ℝ) ≤ (99 / 40 : ℝ) * x := by
@@ -188,7 +189,7 @@ theorem primeNegOneWitness_cast_le_of_principalLower_gap {n B : ℕ} (hn : Odd n
     (hx : 25 ≤ x)
     (hP :
       P ≤
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ,
               LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re)
     (hgap : 0 < principalNegOneGap B x P) (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
@@ -204,7 +205,7 @@ theorem QNegOne_le_of_principalLower_gap {B : ℕ}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x P : ℝ} (hx : 25 ≤ x)
     (hP :
       P ≤
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ,
               LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re)
     (hgap : 0 < principalNegOneGap B x P) : (QNegOne B : ℝ) ≤ (99 / 40 : ℝ) * x := by

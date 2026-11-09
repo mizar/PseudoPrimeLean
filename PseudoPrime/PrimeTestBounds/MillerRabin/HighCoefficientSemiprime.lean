@@ -6,10 +6,11 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.FourNinthsHighLog
-public import PseudoPrime.PrimeTestBounds.MillerRabin.FourNinthsHighPrimeCount
-public import PseudoPrime.PrimeTestBounds.MillerRabin.FourNinthsSemiprimeSmall
-public import PseudoPrime.PrimeTestBounds.MillerRabin.TriangularTunedBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.HighRadiusLogBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.HighSquarePrimeCount
+public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimePowerCountingCriteria
+public import PseudoPrime.PrimeTestBounds.MillerRabin.MarkedFactorLogBounds
+public import PseudoPrime.NumberTheory.UnitPowerCardinality
 
 /-! # Paired-prime count budgets for the high-range coefficient -/
 
@@ -307,56 +308,5 @@ theorem highCoeff_largeCofactor_witness {n m q : ℕ} (hn : 1 < n) (ho : Odd n) 
     rw [Nat.cast_pow]
     nlinarith only [hsquare]
   exact ⟨r, hr, (Nat.cast_le.mpr hbR).trans hbound, hf⟩
-
-/-- Under GRH, an odd product of distinct primes `p < q` has a prime MR witness
-at most `(7 / 16) * log n ^ 2` when `70000 ≤ log n ≤ 40000000000`.
-If `log q` is small, its non-Korselt factor bound applies; otherwise the
-uniform paired-product count supplies the witness. -/
-theorem highCoeff_distinctSemiprime_witness {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime)
-    (hq : q.Prime) (hpq : p < q) (hprod : n = p * q)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : (70000 : ℝ) ≤ Real.log n)
-    (hU : Real.log n ≤ 40000000000) :
-    ∃ r : ℕ,
-      r.Prime ∧
-        (r : ℝ) ≤ (7 / 16 : ℝ) * (Real.log n) ^ 2 ∧
-        ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
-  have hdiv : q ∣ n := by
-    rw [hprod]
-    exact dvd_mul_left q p
-  have hq2 : q ≠ 2 := ho.ne_two_of_dvd_nat hdiv
-  by_cases hsmall : Real.log q ≤ (66143 / 100000 : ℝ) * Real.log n
-  · have hbad : ¬q - 1 ∣ n - 1 := by
-      rw [hprod]
-      exact NumberTheory.not_sub_one_dvd_prime_mul_sub_one_of_lt hp hq hpq
-    obtain ⟨r, hr, hb, hf⟩ :=
-      exists_prime_witness_le_nonKorselt_factor_log_sq hn ho hq hdiv hbad hGRH
-    have hsq := pow_le_pow_left₀ (Real.log_natCast_nonneg q) hsmall 2
-    have hbound : (Real.log q) ^ 2 ≤ (7 / 16 : ℝ) * (Real.log n) ^ 2 := by nlinarith only [hsq]
-    exact ⟨r, hr, hb.trans hbound, hf⟩
-  · exact
-      highCoeff_largeCofactor_witness hn ho hp.one_lt hq hq2 hprod hGRH.riemann hL hU
-        (lt_of_not_ge hsmall)
-
-/-- Under GRH, an odd composite product of distinct primes `p < q` has a
-prime MR witness at most `(7 / 16) * log n ^ 2` for every `log n ≥ 70000`.
-The finite logarithmic interval uses the paired count and the remaining range
-uses the existing triangular profile with coefficient `4145 / 10000`. -/
-theorem highCoeff_semiprime_witness {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
-    (hp : p.Prime) (hq : q.Prime) (hpq : p < q) (hprod : n = p * q)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : (70000 : ℝ) ≤ Real.log n) :
-    ∃ r : ℕ,
-      r.Prime ∧
-        (r : ℝ) ≤ (7 / 16 : ℝ) * (Real.log n) ^ 2 ∧
-        ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
-  by_cases hU : Real.log n ≤ 40000000000
-  · exact highCoeff_distinctSemiprime_witness hn ho hp hq hpq hprod hGRH hL hU
-  · have ht : triangularP04145.T ≤ Real.log n := by
-      change (40000000000 : ℝ) ≤ Real.log n
-      exact (lt_of_not_ge hU).le
-    obtain ⟨r, hr, hb, hf⟩ := exists_prime_triangularProfile triangularP04145 hn ho hc hGRH ht
-    have hbound : triangularP04145.C * Real.log n ^ 2 ≤ (7 / 16 : ℝ) * (Real.log n) ^ 2 := by
-      change (4145 / 10000 : ℝ) * Real.log n ^ 2 ≤ (7 / 16 : ℝ) * (Real.log n) ^ 2
-      nlinarith only [sq_nonneg (Real.log n)]
-    exact ⟨r, hr, hb.trans hbound, hf⟩
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

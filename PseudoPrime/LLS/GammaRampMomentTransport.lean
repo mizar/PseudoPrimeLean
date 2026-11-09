@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.GammaFiniteRampRows
 public import PseudoPrime.LLS.GammaSignedRampCellBounds
 
@@ -87,9 +88,8 @@ by its first moment times the reciprocal-scale difference.
 Sum the pointwise gains on the old support and keep the newly admitted
 Mangoldt atoms as nonnegative terms. No fresh prime or transcendental data is needed. -/
 theorem gamma_ramp_sum_first_moment_transport {b x : ℝ} (hb : 0 < b) (hbx : b ≤ x) :
-    AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum b +
-        (1 / b - 1 / x) * gammaRampFirstMoment b ≤
-      AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x := by
+    exponentialRampMangoldtSum b + (1 / b - 1 / x) * gammaRampFirstMoment b ≤
+      exponentialRampMangoldtSum x := by
   have hs :=
     Finset.sum_le_sum (s := Finset.Ioc 0 ⌊b * (99 / 40 : ℝ)⌋₊)
       (fun m hm ↦
@@ -191,9 +191,8 @@ theorem gamma_ramp_prefix_moment_lower_actual {b q : ℚ} {N : ℕ} (hN : N ≤ 
 to every larger positive scale. The reciprocal-scale coefficient is nonnegative.
 This consumes numerical certificates without requiring a new prime-power scan. -/
 theorem gamma_ramp_transport_of_lower_bounds {b x r q : ℝ} (hb : 0 < b) (hbx : b ≤ x)
-    (hr : r ≤ AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum b)
-    (hq : q ≤ gammaRampFirstMoment b) :
-    r + (1 / b - 1 / x) * q ≤ AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x := by
+    (hr : r ≤ exponentialRampMangoldtSum b) (hq : q ≤ gammaRampFirstMoment b) :
+    r + (1 / b - 1 / x) * q ≤ exponentialRampMangoldtSum x := by
   have hd : 0 ≤ 1 / b - 1 / x :=
     sub_nonneg.mpr (div_le_div₀ (by norm_num only : (0 : ℝ) ≤ 1) le_rfl hb hbx)
   exact

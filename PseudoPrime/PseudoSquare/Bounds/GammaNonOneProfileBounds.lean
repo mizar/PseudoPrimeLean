@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.GammaNonOneProfileWitnessBounds
-public import PseudoPrime.Analysis.QuadraticGammaDecimalRefinement
+public import PseudoPrime.LLS.QuadraticGammaDecimalRefinement
 public import PseudoPrime.PseudoSquare.Bounds.PointwiseWitness
 public import PseudoPrime.PseudoSquare.Bounds.QNeOneLogSq
 
@@ -74,7 +74,7 @@ theorem neOneWitness_cast_le_gamma_endpoint_thirtyTwo
       nlinarith only [ht]
     have hnR : (n : ℝ) ≤ 46000 := by exact_mod_cast hnsmall
     have hn0 : (0 : ℝ) < n := by exact_mod_cast Odd.pos hn
-    have hl := (Real.log_le_log hn0 hnR).trans Analysis.log_46000_lt_eleven.le
+    have hl := (Real.log_le_log hn0 hnR).trans LLS.log_46000_lt_eleven.le
     have hl0 : 0 ≤ Real.log n :=
       Real.log_nonneg (by exact_mod_cast Nat.one_le_iff_ne_zero.mpr (Odd.pos hn).ne')
     have hs : (Real.log n) ^ 2 ≤ (11 : ℝ) ^ 2 := (sq_le_sq₀ hl0 (by norm_num only)).mpr hl
@@ -96,7 +96,7 @@ theorem log_nat_gt_36010_of_decimal_15639 {n : ℕ} (hN : 10 ^ 15639 ≤ n) :
   have hl := Real.log_le_log hpos hcast
   rw [Real.log_pow] at hl
   norm_num only at hl
-  linarith only [hl, Analysis.log_ten_gt_230258]
+  linarith only [hl, LLS.log_ten_gt_230258]
 
 /-- Under GRH, every odd nonsquare n >= 10^15639 has an odd prime non-one
 Jacobi witness at most (4/5) log(n)^2. Apply the existing endpoint theorem

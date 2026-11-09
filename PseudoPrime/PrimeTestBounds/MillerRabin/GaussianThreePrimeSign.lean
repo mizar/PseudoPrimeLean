@@ -51,34 +51,6 @@ theorem exists_prime_gaussian_0282924_signTriple_GRH {n p q r E kp kq kr : ℕ} 
     exists_prime_gaussian_threeAnnihilators_GRH hnOdd (PrimeTest.signSubgroup n E) hi hpass hGRH a b
       c ha hb hc Fact.out Fact.out Fact.out hpq hpr hqr hn hN
 
-/-- Under GRH at logarithmic scale `600`, a common-sign index-four subgroup
-with three pairwise product conductors gives the classified Gaussian star
-witness. The threshold only supplies the comparison's elementary size bound. -/
-theorem exists_prime_gaussianStar_signTriple_GRH {n p q r E kp kq kr : ℕ} [NeZero n] [Fact p.Prime]
-    [Fact q.Prime] [Fact r.Prime] [Fact (2 < p)] [Fact (2 < q)] [Fact (2 < r)] (hnOdd : Odd n)
-    (hnlarge : 20000 ≤ n) (hpOdd : Odd p) (hqOdd : Odd q) (hrOdd : Odd r) (hpn : p ∣ n)
-    (hqn : q ∣ n) (hrn : r ∣ n) (hkp : Odd kp) (hkq : Odd kq) (hkr : Odd kr)
-    (hEp : E = (p / 2) * kp) (hEq : E = (q / 2) * kq) (hEr : E = (r / 2) * kr) (hpq : p ≠ q)
-    (hpr : p ≠ r) (hqr : q ≠ r) (hn : n = p * q * r) (hi : (PrimeTest.signSubgroup n E).index = 4)
-    (hpass :
-      ∀ z : ZMod n,
-        PrimeTest.StrongMillerRabinPass n z →
-          ∃ u : (ZMod n)ˣ, u ∈ PrimeTest.signSubgroup n E ∧ (u : ZMod n) = z)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 600 ≤ Real.log n) :
-    ∃ s : ℕ,
-      s.Prime ∧
-        (s : ℝ) ≤ gaussianStarBound (Real.log n) ∧
-        ¬PrimeTest.StrongMillerRabinPass n (s : ZMod n) := by
-  obtain ⟨a, ha⟩ :=
-    PrimeTest.exists_paired_sign_annihilator_with_conductor hpOdd hqOdd hpn hqn hkp hkq hEp hEq hpq
-  obtain ⟨b, hb⟩ :=
-    PrimeTest.exists_paired_sign_annihilator_with_conductor hpOdd hrOdd hpn hrn hkp hkr hEp hEr hpr
-  obtain ⟨c, hc⟩ :=
-    PrimeTest.exists_paired_sign_annihilator_with_conductor hqOdd hrOdd hqn hrn hkq hkr hEq hEr hqr
-  exact
-    exists_prime_gaussianStar_threePrimeMembers_GRH hnlarge hnOdd (PrimeTest.signSubgroup n E) hpass
-      hGRH hL hi a b c ha hb hc Fact.out Fact.out Fact.out hpq hpr hqr hn
-
 /-- The common-sign subgroup and its three pairwise product conductors feed
 the Gamma index-100 cutoff from logarithmic scale 330. -/
 theorem exists_prime_gamma100_signTriple_GRH {n p q r E kp kq kr : ℕ} [NeZero n] [Fact p.Prime]

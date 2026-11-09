@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.GammaVariablePrincipalBounds
-public import PseudoPrime.Analysis.GammaNonOneNumerics
+public import PseudoPrime.LLS.GammaNonOneNumerics
 
 /-! # Explicit scalar budgets for the non-one Gamma comparison
 

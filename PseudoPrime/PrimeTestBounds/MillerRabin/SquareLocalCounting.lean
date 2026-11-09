@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.FourNinthsSquareBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.SquareLogCounting
 
 /-! # Square witnesses from reusable prime supplies -/
 

@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.Analysis.ExponentialRampUnramifiedSupport
 public import PseudoPrime.LLS.GammaIntegerPrefixConductorBounds
 public import PseudoPrime.LLS.GammaQuadraticNoWitness
@@ -78,7 +79,7 @@ to apply the existing absolutely convergent arithmetic comparison. -/
 theorem gamma_jacobi_no_negative_ramp_comparison {n : ℕ} {hn : Odd n} {hns : ¬IsSquare n}
     (bridge : NumberTheory.JacobiCharacterArithmeticData n hn hns) {x : ℝ} (hx : 0 < x)
     (hno : ∀ p : ℕ, p.Prime → Odd p → (p : ℝ) ≤ (99 / 40 : ℝ) * x → jacobiSym n p ≠ -1) :
-    2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) ≤
+    2 * (exponentialRampMangoldtSum x / Real.sqrt x) ≤
       (∑' m : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x m).re +
         (∑' m : ℕ, PaperStatements.gammaMellinKernel.summand bridge.character x m).re +
         ∑ p ∈ (4 * n).primeFactors,

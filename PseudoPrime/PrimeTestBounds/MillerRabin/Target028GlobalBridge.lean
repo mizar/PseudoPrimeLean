@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028SmallInputs
-public import PseudoPrime.PrimeTestBounds.MillerRabin.FromLLS
+public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeLogSquareBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028Log8
 public import PseudoPrime.PrimeTestBounds.MillerRabin.LogNineComparison
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
@@ -98,10 +98,10 @@ theorem prime_millerRabin_028_of_log8
         PrimeTest.strongMillerRabinWithBase_eq_true_iff_pass.mp
           (PrimeTest.strongMillerRabinBase2_of_prime_of_ne_two hp (ho.ne_two_of_dvd_nat dvd_rfl))
     · by_contra hnot
-      have hbound : (p : ℝ) ≤ Real.log n ^ 2 := by
-        nlinarith only [hlarge, sq_nonneg (Real.log n)]
-      exact no_prime_millerRabin_witness_le_log_sq_of_prime ho hp
-        ⟨p, hprime, hbound, PrimeTest.not_strongMillerRabinPass_iff.mp hnot⟩
+      have hbound : (p : ℝ) ≤ Real.log n ^ 2 := by nlinarith only [hlarge, sq_nonneg (Real.log n)]
+      exact
+        no_prime_millerRabin_witness_le_log_sq_of_prime ho hp
+          ⟨p, hprime, hbound, PrimeTest.not_strongMillerRabinPass_iff.mp hnot⟩
 
 /-- Under GRH, the global 0.28 prime-base test characterizes odd primes above
 one. The logarithmic-scale witness supplies the composite direction and the
@@ -119,15 +119,14 @@ theorem prime_millerRabin_028_criterion
   intro m hm hodd hcomposite hscale
   exact exists_prime_reject_028_log8 hm hodd hcomposite hGRH hscale
 
-/-- The base-nine cutoff lies below the four-ninths cutoff. A lower bound on
-`log 9` gives the coefficient comparison used for prime acceptance. -/
-private theorem log_nine_cutoff_le (x : ℝ) :
-    2 * (Real.logb 9 x) ^ 2 ≤ (4 / 9 : ℝ) * (Real.log x) ^ 2 := by
+/-- The base-nine cutoff lies below the squared natural logarithm. A lower
+bound on `log 9` gives the comparison used for prime acceptance. -/
+private theorem log_nine_cutoff_le (x : ℝ) : 2 * (Real.logb 9 x) ^ 2 ≤ (Real.log x) ^ 2 := by
   have hlog : Real.log (9 : ℝ) = 2 * Real.log 3 := by
     rw [show (9 : ℝ) = 3 ^ 2 by norm_num only, Real.log_pow]
     norm_num only [Nat.cast_ofNat]
   have hlow : (219 / 100 : ℝ) < Real.log 9 := by linarith only [hlog, Real.log_three_gt_d9]
-  have hsquare : (2 : ℝ) ≤ (4 / 9 : ℝ) * (Real.log 9) ^ 2 := by
+  have hsquare : (2 : ℝ) ≤ (Real.log 9) ^ 2 := by
     nlinarith only [hlow, sq_nonneg (Real.log 9 - 219 / 100)]
   change 2 * (Real.log x / Real.log 9) ^ 2 ≤ _
   rw [div_pow, ← mul_div_assoc]
@@ -152,19 +151,14 @@ theorem prime_millerRabin_log_nine_criterion
     by_cases h9 : 9 ≤ n
     · apply (prime_millerRabin_028_criterion hGRH hn ho).mp
       intro p hp hb
-      have hcmp : max 2 ((7 / 25 : ℝ) * Real.log n ^ 2) ≤
-          max 2 ((517 / 1250 : ℝ) * Real.log n ^ 2) :=
-        max_le_max_left _
-          (mul_le_mul_of_nonneg_right (by norm_num only) (sq_nonneg (Real.log n)))
-      exact hpass p hp (hb.trans (hcmp.trans (max_04136_le_logb_nine_sq (Nat.cast_le.mpr h9))))
+      exact hpass p hp (hb.trans (max_028_le_logb_nine_sq (Nat.cast_le.mpr h9)))
     · have hsmall : ∀ k : Fin 9, 1 < k.val → Odd k.val → k.val.Prime := by decide +kernel
       exact hsmall ⟨n, Nat.lt_of_not_ge h9⟩ hn ho
   · intro hp p hprime hb
     by_contra hnot
-    have hbound : (p : ℝ) ≤ Real.log n ^ 2 := by
-      have hcut := hb.trans (log_nine_cutoff_le n)
-      nlinarith only [hcut, sq_nonneg (Real.log n)]
-    exact no_prime_millerRabin_witness_le_log_sq_of_prime ho hp
-      ⟨p, hprime, hbound, PrimeTest.not_strongMillerRabinPass_iff.mp hnot⟩
+    have hbound : (p : ℝ) ≤ Real.log n ^ 2 := hb.trans (log_nine_cutoff_le n)
+    exact
+      no_prime_millerRabin_witness_le_log_sq_of_prime ho hp
+        ⟨p, hprime, hbound, PrimeTest.not_strongMillerRabinPass_iff.mp hnot⟩
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

@@ -42,9 +42,9 @@ theorem exists_prime_reject_028_square_425_63 {n p : ℕ} (hn : 1 < n) (ho : Odd
     have hcost0 : (414 : ℝ) / 10 < Real.log ((p ^ 2 : ℕ) : ℝ) := by
       apply square_factor_budget_of_log (H := 414) (W := 2087485597) (by decide) hbig0
       norm_num only [Nat.cast_ofNat]
-      nlinarith only [target030_square_stage_log0]
+      nlinarith only [square_factor_stage_log0]
     by_cases h1 : p ≤ 1488482619460
-    · have hc : p ≤ target030Seed373Row14.getD 414 0 := by
+    · have hc : p ≤ primeSeed373Row14.getD 414 0 := by
         change p ≤ 1488482619460
         exact h1
       obtain ⟨r, hr, hb, hf⟩ :=
@@ -54,8 +54,8 @@ theorem exists_prime_reject_028_square_425_63 {n p : ℕ} (hn : 1 < n) (ho : Odd
       have hcost1 : (500 : ℝ) / 10 < Real.log ((p ^ 2 : ℕ) : ℝ) := by
         apply square_factor_budget_of_log (H := 500) (W := 1488482619461) (by decide) hbig1
         norm_num only [Nat.cast_ofNat]
-        nlinarith only [target030_square_stage_log1]
-      have hc : p ≤ target030Seed373Row14.getD 500 0 := by
+        nlinarith only [square_factor_stage_log1]
+      have hc : p ≤ primeSeed373Row14.getD 500 0 := by
         change p ≤ 68854718408873
         exact hpmax
       obtain ⟨r, hr, hb, hf⟩ :=

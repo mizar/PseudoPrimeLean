@@ -6,10 +6,11 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.PaperStatements.GammaReflectedResolventComparison
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaSignedPrefixBounds
-public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaSeedPairedBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaPolynomialBudget
 
 /-! # Reflected signed-prefix MR budgets and all-input gap consumers -/
 
@@ -41,7 +42,7 @@ theorem exists_prime_reflected_gap_four {n : ℕ} [NeZero n] (hn : 1 < n) (hnOdd
     {x b : ℝ} (hx : 2 ≤ x) (hb : 0 ≤ b) (hbX : b ≤ (99 / 40 : ℝ) * x)
     (hgap :
       gammaReflectedMRBudget n n x b <
-        (4 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        (4 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
             (∑' k : ℕ,
                 LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x
                   k).re) /
@@ -84,7 +85,7 @@ theorem exists_prime_reflected_gap_all {n : ℕ} [NeZero n] (hn : 1 < n) (hnOdd 
     (hx : 2 ≤ x) (hb : 0 ≤ b) (hbX : b ≤ (99 / 40 : ℝ) * x)
     (hgap :
       gammaReflectedMRBudget n n x b <
-        (4 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        (4 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
             (∑' k : ℕ,
                 LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x
                   k).re) /

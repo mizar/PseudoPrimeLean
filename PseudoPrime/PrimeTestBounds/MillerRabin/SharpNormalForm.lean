@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Order.MinAbsorption
 public import PseudoPrime.PrimeTestBounds.MillerRabin.SharpIntervalSelection
 public import PseudoPrime.PrimeTestBounds.MillerRabin.EndpointFinitePointwise
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianNormalAbsorption
@@ -16,19 +17,6 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianSeededSharpMonoton
 @[expose] public section
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
-
-/-- If two new candidates dominate their old counterparts, their intersection
-absorbs the old counterparts from a common pointwise minimum. Compare both inequalities directly. -/
-theorem min_absorb_gaussianSeeded (P G S R T : ℝ) (hG : G ≤ R) (hS : S ≤ T) :
-    min (min P (min R T)) (min G S) = min P (min G S) := by
-  apply le_antisymm
-  · exact le_min ((min_le_left _ _).trans (min_le_left _ _)) (min_le_right _ _)
-  · apply le_min
-    · exact
-        le_min (min_le_left _ _)
-          (le_min ((min_le_right _ _).trans ((min_le_left _ _).trans hG))
-            ((min_le_right _ _).trans ((min_le_right _ _).trans hS)))
-    · exact min_le_right _ _
 
 /-- Above the final finite cap, the finite selected function equals the current refined selection.
 Rewrite both numerical guarded-selection identities around the existing fallback theorem. -/
@@ -91,8 +79,7 @@ theorem sharpSelected_eq_regular_low {n : ℕ} (hN : 3000 ≤ n) (hU : Real.log 
       rw [sharpSelected_eq_analytic hN he (by linarith only [hU]),
         lowFiniteSelected_eq_refined hn hlast, refined_eq_pointwise_mix hn he hU]
       exact
-        min_absorb_gaussianSeeded _ _ _ _ _
-          (gaussianLowFamily_lt_recovered (by linarith only [he])).le
+        Order.min_absorb_pairs _ _ _ _ _ (gaussianLowFamily_lt_recovered (by linarith only [he])).le
           (gaussianSeededSharp_le_seeded he)
 
 /-- For inputs at least 3000 below scale thirty billion, the sharp selection equals

@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianKorseltTriple
+public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformKorseltSubgroup
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaSignedPrefixBounds
 
 /-! # Conductor and parity data for uniform Korselt triples -/

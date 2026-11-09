@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.LLS.PaperStatements.GammaNonOneRefinedBudgets
 public import PseudoPrime.LLS.PaperStatements.GammaPrefixCharacterBounds
-public import PseudoPrime.Analysis.GammaNonOnePrefixNumerics
+public import PseudoPrime.LLS.GammaNonOnePrefixNumerics
 
 /-! # Scalar budgets for the per-node Gamma prefix comparison
 

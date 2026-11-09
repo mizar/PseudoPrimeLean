@@ -6,6 +6,8 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.GaussianTailBounds
+public import PseudoPrime.LLS.GaussianResidualBudget
 public import PseudoPrime.LLS.GammaActualConductorBudget
 public import PseudoPrime.LLS.GammaActualPrimeCosts
 public import PseudoPrime.LLS.GammaActualRamifiedBudget
@@ -55,13 +57,13 @@ public import PseudoPrime.LLS.Phase64RamifiedIntervalCertificate
 public import PseudoPrime.LLS.Phase64RamifiedTailBounds
 public import PseudoPrime.LLS.Phase64RetainedExcessBounds
 public import PseudoPrime.LLS.Phase64SquareConductorBounds
-
 public import PseudoPrime.LLS.QNeOneLogShiftRadius
 public import PseudoPrime.LLS.Below64MainErrorBounds
 public import PseudoPrime.LLS.IndexSixBarrier.ParameterizedFourier
 public import PseudoPrime.LLS.RetainedEvenReciprocalError
 public import PseudoPrime.LLS.SevenPart2Bounds
 public import PseudoPrime.LLS.SmallReciprocalMainErrorBounds
+public import PseudoPrime.LLS.GaussianWidthComparison
 public import PseudoPrime.LLS.GaussianRelativeFour
 public import PseudoPrime.LLS.Part2FromFive
 public import PseudoPrime.LLS.SmallSubgroupPowerBounds
@@ -403,7 +405,6 @@ public import PseudoPrime.LLS.PaperStatements.OddEndpointTwoCostWitness
 public import PseudoPrime.LLS.PaperStatements.OddEndpointCostMonotonicity
 public import PseudoPrime.LLS.PaperStatements.TaperedTwoReciprocalCost
 public import PseudoPrime.LLS.PaperStatements.TaperedTwoEndpointWitness
-public import PseudoPrime.AnalyticNumberTheory.Arithmetic.QuadraticBudgetLinear
 public import PseudoPrime.LLS.PaperStatements.FiniteExcludedTaperSavings
 public import PseudoPrime.LLS.PaperStatements.ConductorSquareFactorCost
 public import PseudoPrime.LLS.PaperStatements.UntaperedPrimeCostBounds
@@ -425,9 +426,7 @@ public import PseudoPrime.LLS.PaperStatements.OddMidscaleEndpointCertificate
 public import PseudoPrime.LLS.PaperStatements.OddMidscaleEndpointRadius
 public import PseudoPrime.LLS.PaperStatements.OddEndpointLogShiftSeparation
 public import PseudoPrime.LLS.PaperStatements.OddEndpointLowerLogShiftSeparation
-public import PseudoPrime.AnalyticNumberTheory.Arithmetic.LLSExcludedCharacterDefect
 public import PseudoPrime.LLS.PaperStatements.ExcludedEndpointWitness
-public import PseudoPrime.AnalyticNumberTheory.Arithmetic.QuadraticExcludedBudget
 public import PseudoPrime.LLS.PaperStatements.QuadraticExcludedEndpoint
 public import PseudoPrime.LLS.PaperStatements.QuadraticExcludedPrimeBudget
 public import PseudoPrime.LLS.PaperStatements.GammaRefinedLeftMomentBounds
@@ -487,8 +486,6 @@ public import PseudoPrime.LLS.PaperStatements.TriangularDualScaleInteriorNumeric
 public import PseudoPrime.LLS.PaperStatements.TriangularDualScaleTargetBarrier
 public import PseudoPrime.LLS.PaperStatements.TriangularSignedZeroInteriorComparison
 public import PseudoPrime.LLS.PaperStatements.TriangularExplicitZeroTail
-public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ShiftedPoissonEulerBounds
-public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ShiftedPoissonHeightMajorants
 public import PseudoPrime.LLS.PaperStatements.TriangularLowHeightMajorants
 public import PseudoPrime.LLS.PaperStatements.TriangularPrimitiveRemainderBounds
 public import PseudoPrime.LLS.PaperStatements.CosetPrimeBounds
@@ -676,6 +673,7 @@ public import PseudoPrime.LLS.PaperStatements.CyclicFiveCharacterBounds
 public import PseudoPrime.LLS.PaperStatements.BiquadraticCharacterTraces
 public import PseudoPrime.LLS.PreciseSavingScaleBounds
 public import PseudoPrime.LLS.PaperStatements.RationalPoleAbelEntrance
+public import PseudoPrime.LLS.PaperStatements.TriangularEvenBaseline
 
 /-! Public umbrella for the LLS theorem and its common numerical and analytic layers. -/
 

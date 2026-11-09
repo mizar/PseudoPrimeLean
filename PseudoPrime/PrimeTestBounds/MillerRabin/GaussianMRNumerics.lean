@@ -6,11 +6,11 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.DecimalLogBounds
+public import PseudoPrime.LLS.DecimalLogBounds
 
 public import PseudoPrime.LLS.PaperStatements.GaussianSubgroupComparison
 public import PseudoPrime.LLS.PaperStatements.GammaLeftMomentBounds
-public import PseudoPrime.Analysis.QuadraticGammaSmoothedNumerics
+public import PseudoPrime.LLS.QuadraticGammaSmoothedNumerics
 
 /-! # Explicit scale and error budgets for Gaussian Miller--Rabin witnesses
 
@@ -138,7 +138,7 @@ theorem gaussian_main_term_lt {L E : ℝ} (hL : 0 < L) (hE : E ≤ L / 800) :
 /-- The decimal cutoff n≥10^97826087 gives log n≥225000000.
 Specialize the variable-exponent logarithm bound and compare rational constants. -/
 theorem gaussian_log_cutoff {n : ℕ} (hn : 10 ^ 97826087 ≤ n) : (225000000 : ℝ) ≤ Real.log n := by
-  have h := Analysis.gaussianMR_log_of_decimal hn
+  have h := LLS.log_ge_of_pow10_le hn
   norm_num only [Nat.cast_ofNat] at h
   linarith only [h]
 

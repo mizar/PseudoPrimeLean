@@ -6,9 +6,10 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.PaperStatements.GammaQuadraticArithmetic
 public import PseudoPrime.LLS.PaperStatements.MellinKernelBounds
-public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ScaledMangoldtMonotonicity
+public import PseudoPrime.LLS.ScaledMangoldtMonotonicity
 
 /-! # Endpoint bounds for the actual principal-ramp difference -/
 
@@ -78,16 +79,14 @@ theorem principalExponentialMass_mono {a b : ℝ} (ha : 0 < a) (hab : a ≤ b) :
 Its strict excess over the character budget extracts witnesses. Endpoint bounds below
 apply to this expression itself, with no separate approximate main terms. -/
 noncomputable def principalRampDifference (x : ℝ) : ℝ :=
-  2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+  2 * (exponentialRampMangoldtSum x / Real.sqrt x) -
     (∑' n : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x n).re
 
 /-- At positive scale the principal-ramp difference is a single numerator
 2*ramp-principalMass divided by sqrt(x). Substitute the exact principal identity. -/
 theorem principalRampDifference_eq_mass {x : ℝ} (hx : 0 < x) :
     principalRampDifference x =
-      (2 * AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x -
-          principalExponentialMass x) /
-        Real.sqrt x := by
+      (2 * exponentialRampMangoldtSum x - principalExponentialMass x) / Real.sqrt x := by
   rw [principalExponentialMass_eq_scaled_gamma hx, sub_div,
     mul_div_cancel_right₀ _ (Real.sqrt_pos.mpr hx).ne', mul_div_assoc]
   rfl
@@ -96,19 +95,12 @@ theorem principalRampDifference_eq_mass {x : ℝ} (hx : 0 < x) :
 the ramp at the left endpoint minus principal mass at the right endpoint gives C/R below
 the actual difference when sqrt(right)<=R. Preserve the combined numerator before division. -/
 theorem principalRampDifference_lower_of_endpoints {a b x C R : ℝ} (ha : 0 < a) (hax : a ≤ x)
-    (hxb : x ≤ b)
-    (hC :
-      C ≤
-        2 * AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum a -
-          principalExponentialMass b)
+    (hxb : x ≤ b) (hC : C ≤ 2 * exponentialRampMangoldtSum a - principalExponentialMass b)
     (hC0 : 0 ≤ C) (hR : Real.sqrt b ≤ R) : C / R ≤ principalRampDifference x := by
   have hx := ha.trans_le hax
-  have hS := AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum_mono ha hax
+  have hS := exponentialRampMangoldtSum_mono ha hax
   have hP := principalExponentialMass_mono hx hxb
-  have hnum :
-    C ≤
-      2 * AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x -
-        principalExponentialMass x := by
+  have hnum : C ≤ 2 * exponentialRampMangoldtSum x - principalExponentialMass x := by
     linarith only [hC, hS, hP]
   have hr := (Real.sqrt_le_sqrt hxb).trans hR
   rw [principalRampDifference_eq_mass hx]

@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.PaperStatements.GammaUniformSubgroupComparison
 
@@ -34,7 +35,7 @@ theorem gamma_primitiveCharacter_sum_re_le_uniform_scale {q : ℕ} [NeZero q] (h
   let x := (32 / 99 : ℝ) * T ^ 2
   have hxlarge := common_nonOne_ramp_scale_large hT
   have hx : 1 ≤ x := (by norm_num only : (1 : ℝ) ≤ (17 / 5) ^ 16).trans hxlarge
-  have hs := Analysis.ramp_scale_sqrt_lower (show (0 : ℝ) ≤ T by linarith only [hT])
+  have hs := ramp_scale_sqrt_lower (show (0 : ℝ) ≤ T by linarith only [hT])
   have hmq := Nat.le_of_dvd (Nat.pos_of_ne_zero (NeZero.ne q)) χ.conductor_dvd_level
   have hfpos : (0 : ℝ) < χ.conductor := by exact_mod_cast Nat.pos_of_ne_zero χ.conductor_ne_zero
   have hmqR : (χ.conductor : ℝ) ≤ q := by exact_mod_cast hmq
@@ -152,7 +153,7 @@ theorem gamma_ramp_subgroup_comparison_uniform_scale {q : ℕ} [NeZero q] (hq : 
   have he := (div_le_iff₀ hs0).mpr (common_nonOne_ramp_error_numerator hT)
   have hlow :
     (∫ u in (0 : ℝ)..(99 / 40), Analysis.exponentialRampWeight u) * Real.sqrt x - 693 / 100 ≤
-      AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x := by
+      exponentialRampMangoldtSum x / Real.sqrt x := by
     linarith only [hramp, he]
   have hm := mul_le_mul_of_nonneg_left hlow (Nat.cast_nonneg H.index)
   have hi := Subgroup.one_lt_index_of_ne_top hH
@@ -202,7 +203,7 @@ theorem exists_prime_outside_le_gamma_four_fifths_scale {q : ℕ} [NeZero q] (hq
   have he : (99 / 40 : ℝ) * ((32 / 99 : ℝ) * T ^ 2) = (4 / 5 : ℝ) * T ^ 2 := by ring
   dsimp only at hc
   rw [he] at hc
-  have hm := Analysis.nonOne_main_term_gap (show 0 < T by linarith only [hT])
+  have hm := nonOne_main_term_gap (show 0 < T by linarith only [hT])
   linarith only [hc, hbudget, hm]
 
 end PseudoPrime.LLS.PaperStatements

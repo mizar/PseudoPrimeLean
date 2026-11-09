@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LeastRejectingPrime
 public import PseudoPrime.LLS.PaperStatements.FullEndpointEvenPolynomial
 public import PseudoPrime.LLS.PaperStatements.FullEndpointEightNinthsRange
 public import PseudoPrime.LLS.PaperStatements.FullEndpointEightyOneRange
@@ -230,26 +231,6 @@ theorem exists_primeReject_le_even_shifted_nineTenths_sq {N : ℕ} [NeZero N] (h
     ring
   rw [heq] at hpx
   exact hpx
-
-/-- A bounded rejecting prime yields a least rejecting prime with the same
-bound. This bridge lets the endpoint witness theorems expose minimum-witness
-results without repeating the `Nat.find` argument. -/
-theorem exists_least_prime_reject_of_exists_prime_reject {N : ℕ} [NeZero N] {B : ℝ}
-    (h : ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ B ∧ ¬PrimeTest.StrongMillerRabinPass N (p : ZMod N)) :
-    ∃ p : ℕ,
-      p.Prime ∧
-        (p : ℝ) ≤ B ∧
-        ¬PrimeTest.StrongMillerRabinPass N (p : ZMod N) ∧
-        ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass N (q : ZMod N) → p ≤ q := by
-  classical
-  let hex : ∃ q : ℕ, q.Prime ∧ ¬PrimeTest.StrongMillerRabinPass N (q : ZMod N) := by
-    exact ⟨h.choose, h.choose_spec.1, h.choose_spec.2.2⟩
-  refine ⟨Nat.find hex, (Nat.find_spec hex).1, ?_, (Nat.find_spec hex).2, ?_⟩
-  · exact
-      (Nat.cast_le.mpr (Nat.find_min' hex ⟨h.choose_spec.1, h.choose_spec.2.2⟩)).trans
-        h.choose_spec.2.1
-  · intro q hq hf
-    exact Nat.find_min' hex ⟨hq, hf⟩
 
 /-- For every odd composite with logarithmic scale at least `23/2`, the two-step
 endpoint correction gives a rejecting prime below the square of its second

@@ -241,14 +241,14 @@ set_option maxHeartbeats 0 in
 -- The finite chain contains 209 short rows.
 /-- The sampled base and all grouped updates are checked. -/
 theorem target028_group518_checked :
-    weightedGroupBaseCheck 76 62 500 6 target030Seed373Row14 target028Group518Base = true ∧
+    weightedGroupBaseCheck 76 62 500 6 primeSeed373Row14 target028Group518Base = true ∧
       weightedGroupRowsCheck 6 target028Group518Base target028Group518Row target028Group518Rows =
         true := by
   constructor <;> decide +kernel
 
 /-- The checked row is a lower bound for the weighted count at budget 518. -/
 theorem target028_group518_count :
-    11199153120272822 ≤ weightedPrimeCount id target030Seed1849Weights 518 := by
+    11199153120272822 ≤ weightedPrimeCount id primeSeed1849Weights 518 := by
   have h :=
     target028_group_grid_lower 62 6 (by decide) target028Group518Base target028Group518Row
       target028Group518Rows (by decide) target028_group518_checked.1 target028_group518_checked.2

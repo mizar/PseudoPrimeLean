@@ -41,8 +41,7 @@ noncomputable def gaussianFloorRawRoot (fifty : Bool) (L : ℝ) : ℝ :=
   (gaussianMRRefinedBeta +
       Real.sqrt
         (gaussianMRRefinedBeta ^ 2 +
-          4 * gaussianMRRefinedD *
-            (gaussianMRRefinedConductor * L + gaussianFloorConstant fifty))) /
+          4 * gaussianMRRefinedD * (gaussianConductorCoeff * L + gaussianFloorConstant fifty))) /
     (2 * gaussianMRRefinedD)
 
 /-- The clipped root max(sqrt(sqrt(5N/6)),t).
@@ -79,32 +78,32 @@ theorem gaussianFloor_root_pos (f : Bool) (L : ℝ) : 0 < gaussianFloorRoot f L 
 Square the discriminant identity. This equality is used only before clipping. -/
 theorem gaussianFloor_raw_equation (f : Bool) {L : ℝ} (hL : 0 ≤ L) :
     gaussianMRRefinedD * gaussianFloorRawRoot f L ^ 2 =
-      gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * gaussianFloorRawRoot f L +
+      gaussianConductorCoeff * L + gaussianMRRefinedBeta * gaussianFloorRawRoot f L +
         gaussianFloorConstant f := by
   have hd := gaussianMRRefined_coefficients.1
-  have hc : 0 < gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
+  have hc : 0 < gaussianConductorCoeff := by norm_num only [gaussianConductorCoeff]
   let z :=
     Real.sqrt
       (gaussianMRRefinedBeta ^ 2 +
-        4 * gaussianMRRefinedD * (gaussianMRRefinedConductor * L + gaussianFloorConstant f))
+        4 * gaussianMRRefinedD * (gaussianConductorCoeff * L + gaussianFloorConstant f))
   have ha :
     0 ≤
       gaussianMRRefinedBeta ^ 2 +
-        4 * gaussianMRRefinedD * (gaussianMRRefinedConductor * L + gaussianFloorConstant f) :=
+        4 * gaussianMRRefinedD * (gaussianConductorCoeff * L + gaussianFloorConstant f) :=
     add_nonneg (sq_nonneg _)
       (mul_nonneg (mul_nonneg (by norm_num only) hd.le)
         (add_nonneg (mul_nonneg hc.le hL) (gaussianFloor_constant_pos f).le))
   have hz :
     z ^ 2 =
       gaussianMRRefinedBeta ^ 2 +
-        4 * gaussianMRRefinedD * (gaussianMRRefinedConductor * L + gaussianFloorConstant f) :=
+        4 * gaussianMRRefinedD * (gaussianConductorCoeff * L + gaussianFloorConstant f) :=
     Real.sq_sqrt ha
   have hlin :=
     div_mul_cancel₀ (gaussianMRRefinedBeta + z)
       (ne_of_gt (mul_pos (by norm_num only : (0 : ℝ) < 2) hd))
   change gaussianFloorRawRoot f L * (2 * gaussianMRRefinedD) = gaussianMRRefinedBeta + z at hlin
   have hsq := congrArg (fun u : ℝ ↦ u ^ 2) hlin
-  norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
+  norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianConductorCoeff,
     gaussian6FifthsIndex, gaussianMRRefinedMass, gaussianMRRefinedWidth,
     gaussian6FifthsEndpoint] at hz hlin hsq ⊢
   nlinarith only [hz, hlin, hsq]
@@ -170,7 +169,7 @@ theorem gaussianFloor_cutoff_le (f : Bool) (L : ℝ) :
 Factor the difference from the raw-root equation and use 13*d>beta.
 An equality is not asserted after clipping. -/
 theorem gaussianFloor_equation_le (f : Bool) {L : ℝ} (hL : 0 ≤ L) :
-    gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * gaussianFloorRoot f L +
+    gaussianConductorCoeff * L + gaussianMRRefinedBeta * gaussianFloorRoot f L +
         gaussianFloorConstant f ≤
       gaussianMRRefinedD * gaussianFloorRadius f L := by
   have ht := gaussianFloor_raw_equation f hL
@@ -213,13 +212,13 @@ using the clipped-root inequality and the large-index ratio cap. -/
 noncomputable def gaussianFloorResidualA : ℝ :=
   (gaussian6FifthsIndex / (gaussian6FifthsIndex - 1)) *
       (21 * gaussian6FifthsEndpoint / (10 * gaussianMRRefinedWidth)) -
-    7 * gaussian6FifthsEndpoint * gaussianMRRefinedBeta / (6 * gaussianMRRefinedConductor)
+    7 * gaussian6FifthsEndpoint * gaussianMRRefinedBeta / (6 * gaussianConductorCoeff)
 
 /-- The profile-dependent negative inverse-radius coefficient in the residual.
 It must be estimated jointly with the positive inverse-root term. -/
 noncomputable def gaussianFloorResidualV (f : Bool) : ℝ :=
   (gaussian6FifthsIndex / (gaussian6FifthsIndex - 1)) * (1839 * gaussian6FifthsEndpoint / 1000) +
-    gaussian6FifthsEndpoint * (4 - 7 * gaussianFloorConstant f / (6 * gaussianMRRefinedConductor))
+    gaussian6FifthsEndpoint * (4 - 7 * gaussianFloorConstant f / (6 * gaussianConductorCoeff))
 
 /-- Both profiles satisfy the signed coefficient and strict residual inequalities.
 Exact rational evaluation checks the anchors; no input enumeration is used. -/
@@ -229,7 +228,7 @@ theorem gaussianFloor_residual_checks (f : Bool) :
       0 < gaussianFloorResidualA * gaussianFloorAnchor f + 2 * gaussianFloorResidualV f ∧
       0 < gaussianFloorResidualA * gaussianFloorAnchor f + gaussianFloorResidualV f ∧
       (12871 / 1000 : ℝ) - 2 * gaussianFloorPrefix f +
-          7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianMRRefinedConductor) +
+          7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianConductorCoeff) +
           gaussianFloorResidualA / gaussianFloorAnchor f +
           gaussianFloorResidualV f / gaussianFloorAnchor f ^ 2 +
           13 / (gaussian6FifthsIndex - 1) +
@@ -238,23 +237,21 @@ theorem gaussianFloor_residual_checks (f : Bool) :
   cases f <;>
     norm_num only [gaussianFloorResidualA, gaussianFloorResidualV, gaussianFloorAnchor,
       gaussianFloorPrefix, gaussianFloorConstant, gaussianMRRefinedD, gaussianMRRefinedBeta,
-      gaussianMRRefinedConductor, gaussianMRRefinedWidth, gaussianMRRefinedMass,
-      gaussian6FifthsIndex, gaussian6FifthsEndpoint, Bool.false_eq_true, ite_false, ite_true,
-      and_self]
+      gaussianConductorCoeff, gaussianMRRefinedWidth, gaussianMRRefinedMass, gaussian6FifthsIndex,
+      gaussian6FifthsEndpoint, Bool.false_eq_true, ite_false, ite_true, and_self]
 
 /-- For r=s^2>0 satisfying the clipped budget, bound the pole term by the
 retained inverse-root and inverse-square expression. Multiply by the positive radius
 and use the exact conductor coefficient; the inequality direction is preserved. -/
 theorem gaussianFloor_pole_bound {f : Bool} {L r s : ℝ} (hr : 0 < r) (hreq : r = s ^ 2)
     (hG :
-      gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s + gaussianFloorConstant f ≤
+      gaussianConductorCoeff * L + gaussianMRRefinedBeta * s + gaussianFloorConstant f ≤
         gaussianMRRefinedD * r) :
     gaussian6FifthsEndpoint * (((7 / 6 : ℝ) * L + 4) / r) ≤
-      7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianMRRefinedConductor) -
-          (7 * gaussian6FifthsEndpoint * gaussianMRRefinedBeta / (6 * gaussianMRRefinedConductor)) /
-            s +
+      7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianConductorCoeff) -
+          (7 * gaussian6FifthsEndpoint * gaussianMRRefinedBeta / (6 * gaussianConductorCoeff)) / s +
         (gaussian6FifthsEndpoint *
-            (4 - 7 * gaussianFloorConstant f / (6 * gaussianMRRefinedConductor))) /
+            (4 - 7 * gaussianFloorConstant f / (6 * gaussianConductorCoeff))) /
           s ^ 2 := by
   have hs : s ≠ 0 := by
     intro h
@@ -262,19 +259,18 @@ theorem gaussianFloor_pole_bound {f : Bool} {L r s : ℝ} (hr : 0 < r) (hreq : r
     exact hr.ne' hreq
   have hmul :=
     mul_le_mul_of_nonneg_left hG
-      (by norm_num only [gaussian6FifthsEndpoint, gaussianMRRefinedConductor] :
-        (0 : ℝ) ≤ 7 * gaussian6FifthsEndpoint / (6 * gaussianMRRefinedConductor))
-  have hcne : gaussianMRRefinedConductor ≠ 0 := by norm_num only [gaussianMRRefinedConductor]
+      (by norm_num only [gaussian6FifthsEndpoint, gaussianConductorCoeff] :
+        (0 : ℝ) ≤ 7 * gaussian6FifthsEndpoint / (6 * gaussianConductorCoeff))
+  have hcne : gaussianConductorCoeff ≠ 0 := by norm_num only [gaussianConductorCoeff]
   have hid :
-    (7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianMRRefinedConductor) -
-            (7 * gaussian6FifthsEndpoint * gaussianMRRefinedBeta /
-                (6 * gaussianMRRefinedConductor)) /
+    (7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianConductorCoeff) -
+            (7 * gaussian6FifthsEndpoint * gaussianMRRefinedBeta / (6 * gaussianConductorCoeff)) /
               s +
           (gaussian6FifthsEndpoint *
-              (4 - 7 * gaussianFloorConstant f / (6 * gaussianMRRefinedConductor))) /
+              (4 - 7 * gaussianFloorConstant f / (6 * gaussianConductorCoeff))) /
             s ^ 2) *
         r =
-      (7 * gaussian6FifthsEndpoint / (6 * gaussianMRRefinedConductor)) *
+      (7 * gaussian6FifthsEndpoint / (6 * gaussianConductorCoeff)) *
           (gaussianMRRefinedD * r - gaussianMRRefinedBeta * s - gaussianFloorConstant f) +
         4 * gaussian6FifthsEndpoint := by
     rw [hreq]
@@ -285,7 +281,7 @@ theorem gaussianFloor_pole_bound {f : Bool} {L r s : ℝ} (hr : 0 < r) (hreq : r
       gaussian6FifthsEndpoint * ((7 / 6 : ℝ) * L + 4) := by
     field_simp [hr.ne']
   apply (mul_le_mul_iff_right₀ hr).mp
-  norm_num only [gaussian6FifthsEndpoint, gaussianMRRefinedConductor] at hmul hid hl ⊢
+  norm_num only [gaussian6FifthsEndpoint, gaussianConductorCoeff] at hmul hid hl ⊢
   nlinarith only [hmul, hid, hl]
 
 /-- For L>=63 and index m>=10^9, the normalized large-index error is strictly below D.
@@ -347,14 +343,13 @@ theorem gaussianFloor_residual {f : Bool} {L m : ℝ} {q : ℕ} (hL : 63 ≤ L)
     (gaussian6FifthsIndex / (gaussian6FifthsIndex - 1)) *
           (21 * gaussian6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
             1839 * gaussian6FifthsEndpoint / (1000 * r)) +
-        (7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianMRRefinedConductor) -
-            (7 * gaussian6FifthsEndpoint * gaussianMRRefinedBeta /
-                (6 * gaussianMRRefinedConductor)) /
+        (7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianConductorCoeff) -
+            (7 * gaussian6FifthsEndpoint * gaussianMRRefinedBeta / (6 * gaussianConductorCoeff)) /
               s +
           (gaussian6FifthsEndpoint *
-              (4 - 7 * gaussianFloorConstant f / (6 * gaussianMRRefinedConductor))) /
+              (4 - 7 * gaussianFloorConstant f / (6 * gaussianConductorCoeff))) /
             s ^ 2) =
-      7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianMRRefinedConductor) +
+      7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianConductorCoeff) +
         gaussianFloorResidualA / s +
         gaussianFloorResidualV f / s ^ 2 := by
     rw [hreq]
@@ -392,19 +387,18 @@ theorem gaussianFloor_triple_error {f : Bool} {L : ℝ} {q : ℕ} (hL : 63 ≤ L
     mul_le_mul_of_nonneg_left (add_le_add hqDiv (le_refl (4 / r)))
       (by norm_num only [gaussian6FifthsEndpoint] : (0 : ℝ) ≤ gaussian6FifthsEndpoint)
   have hneg :
-    gaussian6FifthsEndpoint * (4 - 7 * gaussianFloorConstant f / (6 * gaussianMRRefinedConductor)) ≤
+    gaussian6FifthsEndpoint * (4 - 7 * gaussianFloorConstant f / (6 * gaussianConductorCoeff)) ≤
       0 := by
     cases f <;>
-      norm_num only [gaussian6FifthsEndpoint, gaussianFloorConstant, gaussianMRRefinedConductor,
+      norm_num only [gaussian6FifthsEndpoint, gaussianFloorConstant, gaussianConductorCoeff,
         Bool.false_eq_true, ite_false, ite_true]
   have hnegDiv := div_nonpos_of_nonpos_of_nonneg hneg (sq_nonneg s)
   have hposDiv :
     0 ≤
-      (7 * gaussian6FifthsEndpoint * gaussianMRRefinedBeta / (6 * gaussianMRRefinedConductor)) /
-        s := by
+      (7 * gaussian6FifthsEndpoint * gaussianMRRefinedBeta / (6 * gaussianConductorCoeff)) / s := by
     apply div_nonneg _ hs.le
     norm_num only [gaussian6FifthsEndpoint, gaussianMRRefinedBeta, gaussianMRRefinedWidth,
-      gaussianMRRefinedMass, gaussian6FifthsIndex, gaussianMRRefinedConductor]
+      gaussianMRRefinedMass, gaussian6FifthsIndex, gaussianConductorCoeff]
   have hqId (t : ℝ) :
     gaussian6FifthsEndpoint * ((7 / 6) * t / r + 4 / r) =
       gaussian6FifthsEndpoint * (((7 / 6) * t + 4) / r) := by
@@ -412,7 +406,7 @@ theorem gaussianFloor_triple_error {f : Bool} {L : ℝ} {q : ℕ} (hL : 63 ≤ L
   rw [hqId (Real.log q), hqId L] at hqPole
   have hPcap :
     gaussian6FifthsEndpoint * (((7 / 6 : ℝ) * Real.log q + 4) / r) ≤
-      7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianMRRefinedConductor) := by
+      7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianConductorCoeff) := by
     linarith only [hqPole, hpole, hnegDiv, hposDiv]
   have hS :=
     div_le_div_of_nonneg_left
@@ -436,10 +430,10 @@ theorem gaussianFloor_triple_error {f : Bool} {L : ℝ} {q : ℕ} (hL : 63 ≤ L
             12871 / 1000 -
           2 * (189499 / 40000) +
         148 / 1000 +
-        7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianMRRefinedConductor) <
+        7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianConductorCoeff) <
       11 := by
     norm_num only [gaussian6FifthsEndpoint, gaussianMRRefinedD, gaussianMRRefinedMass,
-      gaussian6FifthsIndex, gaussianMRRefinedConductor, gaussianMRRefinedWidth]
+      gaussian6FifthsIndex, gaussianConductorCoeff, gaussianMRRefinedWidth]
   dsimp only [LLS.PaperStatements.gaussianPrefixError]
   rw [Real.sqrt_sq hr.le]
   dsimp only [gaussian6FifthsEndpoint] at hPcap hS hR hcap ⊢
@@ -478,7 +472,7 @@ theorem gaussianFloor_triple_main (f : Bool) (L : ℝ) :
 Subtract two thirds of the clipped-root budget and apply the strict main margin. -/
 theorem gaussianFloor_triple_absurd {f : Bool} {L : ℝ} (hL : 63 ≤ L) :
     ¬(gaussianMRRefinedTripleD * gaussianFloorRadius f L ≤
-        (2 / 3 : ℝ) * gaussianMRRefinedConductor * L +
+        (2 / 3 : ℝ) * gaussianConductorCoeff * L +
           gaussianMRRefinedTripleBeta * gaussianFloorRoot f L +
           11) := by
   intro hb
@@ -521,8 +515,8 @@ theorem gaussianFloor_radius_linear {f : Bool} {L : ℝ} (hL : 63 ≤ L) :
   have hG := gaussianFloor_equation_le f (by linarith only [hL] : (0 : ℝ) ≤ L)
   have hp := mul_pos gaussianMRRefined_coefficients.2 (gaussianFloor_root_pos f L)
   have hD := gaussianFloor_constant_pos f
-  have hcoef : 0 < gaussianMRRefinedConductor - (5 / 8 : ℝ) * gaussianMRRefinedD := by
-    norm_num only [gaussianMRRefinedConductor, gaussianMRRefinedD, gaussianMRRefinedMass,
+  have hcoef : 0 < gaussianConductorCoeff - (5 / 8 : ℝ) * gaussianMRRefinedD := by
+    norm_num only [gaussianConductorCoeff, gaussianMRRefinedD, gaussianMRRefinedMass,
       gaussian6FifthsEndpoint, gaussian6FifthsIndex]
   have hm := mul_pos hcoef (by linarith only [hL] : (0 : ℝ) < L)
   have hd := gaussianMRRefined_coefficients.1

@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.PaperStatements.GammaConductorFreeAdaptiveBounds
 public import PseudoPrime.LLS.GammaNonOneAdaptiveWitnessBounds
 public import PseudoPrime.LLS.GammaNonOneProfileWitnessBounds
@@ -37,7 +38,7 @@ theorem exists_oddPrime_neOne_conductorFree_GRH {q : ℕ} [NeZero q] (hq : 20000
     nlinarith only [hL, sq_nonneg (L - 30000)]
   have hx1 : 1 ≤ x := le_trans (by norm_num only : (1 : ℝ) ≤ 2) hx
   have hx0 := zero_lt_one.trans_le hx1
-  have hs := Analysis.ramp_scale_sqrt_lower hL0.le
+  have hs := ramp_scale_sqrt_lower hL0.le
   have hl := conductor_free_nonOne_cutoff_log (show (30000 : ℝ) ≤ L by linarith only [hL])
   obtain ⟨hleft, heP, heT, htwo⟩ :=
     PaperStatements.conductor_free_nonOne_error_budgets (show (30000 : ℝ) ≤ L by linarith only [hL])
@@ -52,14 +53,14 @@ theorem exists_oddPrime_neOne_conductorFree_GRH {q : ℕ} [NeZero q] (hq : 20000
   have hlead := mul_le_mul_of_nonneg_left hlogf (by norm_num only : (0 : ℝ) ≤ 11783423 / 25000000)
   have hP := gamma_level_one_sum_upper_variable hGRH.riemann hx1
   have hT := gamma_ramp_sum_lower_variable hGRH.riemann hx1
-  have hmain := Analysis.nonOne_main_term_gap hL0
+  have hmain := nonOne_main_term_gap hL0
   have hnp :=
     PaperStatements.gammaCharacterSum_re_le_conductor_free_prefix hq χ hne hGRH hx prefixLen hC
   have hactual :
     (∑' k : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re +
         (∑' k : ℕ, PaperStatements.gammaMellinKernel.summand χ.primitiveCharacter x k).re +
         (Real.log ((99 / 40 : ℝ) * x) + Real.log 2) / Real.sqrt x <
-      2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) := by
+      2 * (exponentialRampMangoldtSum x / Real.sqrt x) := by
     change
       _ <
         (2 * (∫ u in (0 : ℝ)..(99 / 40), Analysis.exponentialRampWeight u) - 1) *

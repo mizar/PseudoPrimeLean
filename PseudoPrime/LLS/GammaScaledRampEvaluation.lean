@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.GammaScaledRampTree
 
 /-! # Integer prefix evaluation of actual rational ramp lower bounds -/
@@ -82,7 +83,7 @@ actual ramp sum. Proof: rewrite to the certified rational lower polynomial.
 All prime, endpoint, distinctness and integer-weight inputs come from the tree. -/
 theorem GammaScaledRampTree.rampLower_le_actual {a x : ℚ} {D hi : ℕ}
     (t : GammaScaledRampTree a D 0 hi) (hD : D ≠ 0) (ha : 0 < a) (hax : a ≤ x) (n : ℕ) :
-    (t.rampLower x n : ℝ) ≤ AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x := by
+    (t.rampLower x n : ℝ) ≤ exponentialRampMangoldtSum x := by
   rw [t.rampLower_eq hD (ha.trans_le hax) n]
   exact (t.block.toCertificate ha).lower_le_actual hax n
 

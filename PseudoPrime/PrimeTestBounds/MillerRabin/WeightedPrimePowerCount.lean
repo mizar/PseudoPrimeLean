@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target030Square805
+public import PseudoPrime.PrimeTestBounds.MillerRabin.SquareSeed89Stage414
 
 /-! # Prime-power witnesses from numerical count lower bounds -/
 

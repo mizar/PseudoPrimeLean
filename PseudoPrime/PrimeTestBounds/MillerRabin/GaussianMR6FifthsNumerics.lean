@@ -6,7 +6,9 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMRVariableRelativeNumerics
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMRNumerics
+public import PseudoPrime.LLS.GaussianWidthComparison
+public import PseudoPrime.LLS.PaperStatements.GammaNonOneRefinedBudgets
 
 /-! # Numerical inputs for the 6/5 Gaussian MR bound -/
 
@@ -963,7 +965,7 @@ theorem gaussian6Fifths_relative_comparison_impossible {m t s r A L I E C h : �
       gaussian6Fifths_large_index_impossible hm hs17 hrbound hgamma hA hroot
         (by simpa only [ht] using hbudget)
   exact
-    gaussian_relative_comparison_to_scalar hm4 ht hs hr hh hh1 hI0 hE0 hC
+    LLS.gaussian_compare_width_third hm4 ht hs hr hh hh1 hI0 hE0 hC
       (by norm_num only [gaussian6FifthsConductor]) hD hbeta hcmp hfinish
 
 /-- The index-four comparison with conductor cost `2L` is incompatible with
@@ -1101,261 +1103,6 @@ theorem gaussian18_triple_comparison_impossible {L : ℝ} (hL : 300 ≤ L)
     nlinarith only [hscaled, hlow, hmargin]
   apply (not_le_of_gt hstrict)
   nlinarith only [hindexCmp]
-
-/-- From scale 600, the 6/5 Gaussian bound is at most 2601/2800 of the
-classified star bound. -/
-theorem gaussian6FifthsBound_lt_gaussianStarBound_ratio {L : ℝ} (hL : 600 ≤ L) :
-    gaussian6FifthsBound L < (2601 / 2800 : ℝ) * gaussianStarBound L := by
-  let q : ℝ := 51 / 40
-  let r := gaussian6FifthsRadius L
-  let s := gaussian6FifthsRoot L
-  let R := gaussianStarRadius L
-  let S := gaussianStarRoot L
-  have hspos : 0 < s := gaussian6FifthsRoot_pos (by linarith only [hL])
-  have hSpos : 0 < S := gaussianStarRoot_pos hL
-  have hr : s ^ 2 = r := by dsimp only [s, r, gaussian6FifthsRadius]
-  have hR : S ^ 2 = R := by dsimp only [S, R, gaussianStarRadius]
-  have hRlo : 294 ≤ R := by
-    have hrad := gaussianStarRadius_lower hL
-    nlinarith only [hrad, hL]
-  have hSlo : 17 ≤ S := by nlinarith only [hR, hRlo, hSpos]
-  have hqpos : 0 ≤ q := by norm_num only [q]
-  have hqrootSq : Real.sqrt q ^ 2 = q := Real.sq_sqrt hqpos
-  have hqroot : Real.sqrt q ≤ 113 / 100 := by
-    have hqrootNonneg := Real.sqrt_nonneg q
-    norm_num only [q] at hqrootSq ⊢
-    nlinarith only [hqrootSq, hqrootNonneg]
-  have hD6 : 0 < gaussian6FifthsD := gaussian6Fifths_coefficients_pos.1
-  have hBeta6 : 0 < gaussian6FifthsBeta := gaussian6Fifths_coefficients_pos.2
-  have hDstar : 0 < gaussianStarD := gaussianStar_coefficients_pos.1
-  have hBetastar : 0 < gaussianStarBeta := gaussianStar_coefficients_pos.2
-  have hcoef : 0 < gaussian6FifthsD * q - gaussianStarD := by
-    norm_num [q, gaussian6FifthsD, gaussian6FifthsIndex, gaussian6FifthsMass,
-      gaussian6FifthsEndpoint, gaussianStarD, gaussianStarIndex, gaussianStarMass,
-      gaussianStarEndpoint]
-  have hgap :
-    17 * (gaussian6FifthsD * q - gaussianStarD) >
-      gaussian6FifthsBeta * (113 / 100) - gaussianStarBeta := by
-    norm_num [q, gaussian6FifthsD, gaussian6FifthsIndex, gaussian6FifthsMass,
-      gaussian6FifthsEndpoint, gaussian6FifthsBeta, gaussianStarD, gaussianStarIndex,
-      gaussianStarMass, gaussianStarEndpoint, gaussianStarBeta]
-  have hscalar :
-    gaussian6FifthsD * q * R - gaussian6FifthsBeta * (113 / 100) * S >
-      gaussianStarD * R - gaussianStarBeta * S := by
-    have hinner :
-      0 <
-        (gaussian6FifthsD * q - gaussianStarD) * S -
-          (gaussian6FifthsBeta * (113 / 100) - gaussianStarBeta) := by
-      have hscaled := mul_le_mul_of_nonneg_left hSlo hcoef.le
-      have hlower :
-        gaussian6FifthsBeta * (113 / 100) - gaussianStarBeta <
-          (gaussian6FifthsD * q - gaussianStarD) * S :=
-        lt_of_lt_of_le (by linarith only [hgap]) hscaled
-      linarith only [hlower]
-    have hscaled := mul_pos hinner hSpos
-    rw [← hR]
-    nlinarith only [hscaled, hR]
-  have hroot6 := gaussian6FifthsRadius_equation (by linarith only [hL])
-  have hrootStar := gaussianStarRadius_equation hL
-  have hroot6' :
-    gaussian6FifthsD * r = gaussian6FifthsConductor * L + gaussian6FifthsBeta * s + 29 := by
-    simpa only [r, s] using hroot6
-  have hrootStar' : gaussianStarD * R = gaussianStarConductor * L + gaussianStarBeta * S + 29 := by
-    simpa only [R, S] using hrootStar
-  have hnewEq :
-    gaussian6FifthsD * r - gaussian6FifthsBeta * s = gaussian6FifthsConductor * L + 29 := by
-    nlinarith only [hroot6']
-  have hstarEq : gaussianStarD * R - gaussianStarBeta * S = gaussianStarConductor * L + 29 := by
-    nlinarith only [hrootStar']
-  have hconductors : gaussian6FifthsConductor = gaussianStarConductor := by
-    norm_num only [gaussian6FifthsConductor, gaussianStarConductor]
-  have hrad : r < q * R := by
-    by_contra hnot
-    have hbad : q * R ≤ r := le_of_not_gt hnot
-    let t : ℝ := Real.sqrt q * S
-    have htpos : 0 < t := by
-      dsimp only [t]
-      exact mul_pos (Real.sqrt_pos.2 (by norm_num only [q])) hSpos
-    have htSq : t ^ 2 = q * R := by
-      dsimp only [t]
-      rw [mul_pow, hqrootSq, hR]
-    have hsle : t ≤ s := by
-      by_contra hsnot
-      have hdiff : 0 < t - s := by linarith only [hsnot]
-      have hsum : 0 < t + s := by positivity
-      have hsquare : s ^ 2 < t ^ 2 := by nlinarith only [hdiff, hsum]
-      nlinarith only [hsquare, htSq, hbad, hr]
-    have hsumLower : 34 ≤ s + t := by
-      have htlower : 17 ≤ t := by
-        dsimp only [t]
-        have hrootLower : 1 ≤ Real.sqrt q := by
-          have hqrootSq' := hqrootSq
-          norm_num only [q] at hqrootSq' ⊢
-          nlinarith only [hqrootSq', Real.sqrt_nonneg q]
-        nlinarith only [hrootLower, hSlo]
-      linarith only [hsle, htlower]
-    have hmonoCoef : gaussian6FifthsD * (s + t) ≥ gaussian6FifthsBeta := by
-      have hDscaled := mul_le_mul_of_nonneg_left hsumLower hD6.le
-      norm_num [gaussian6FifthsD, gaussian6FifthsIndex, gaussian6FifthsMass,
-        gaussian6FifthsEndpoint, gaussian6FifthsBeta, gaussian6FifthsIndex,
-        gaussian6FifthsMass] at hDscaled ⊢
-      nlinarith only [hDscaled]
-    have hfactor : r - t ^ 2 = (s - t) * (s + t) := by
-      rw [← hr]
-      ring_nf
-    have hmono :
-      gaussian6FifthsD * t ^ 2 - gaussian6FifthsBeta * t ≤
-        gaussian6FifthsD * r - gaussian6FifthsBeta * s := by
-      have hnonneg := mul_nonneg (sub_nonneg.mpr hsle) (sub_nonneg.mpr hmonoCoef)
-      have hidentity :
-        gaussian6FifthsD * r - gaussian6FifthsBeta * s -
-            (gaussian6FifthsD * t ^ 2 - gaussian6FifthsBeta * t) =
-          (s - t) * (gaussian6FifthsD * (s + t) - gaussian6FifthsBeta) := by
-        rw [← hr]
-        ring_nf
-      nlinarith only [hnonneg, hidentity]
-    have hsqrtBound : t ≤ (113 / 100 : ℝ) * S := by
-      dsimp only [t]
-      exact mul_le_mul_of_nonneg_right hqroot hSpos.le
-    have hbetaScaled := mul_le_mul_of_nonneg_left hsqrtBound hBeta6.le
-    have hbetaScaled' : gaussian6FifthsBeta * t ≤ gaussian6FifthsBeta * (113 / 100) * S := by
-      calc
-        gaussian6FifthsBeta * t ≤ gaussian6FifthsBeta * (113 / 100 * S) := hbetaScaled
-        _ = gaussian6FifthsBeta * (113 / 100) * S := by ring
-    have hnewStrict :
-      gaussian6FifthsD * t ^ 2 - gaussian6FifthsBeta * t >
-        gaussianStarD * R - gaussianStarBeta * S := by
-      have hrewrite :
-        gaussian6FifthsD * t ^ 2 - gaussian6FifthsBeta * t =
-          gaussian6FifthsD * q * R - gaussian6FifthsBeta * t := by
-        rw [htSq]
-        ring
-      have hstep :
-        gaussian6FifthsD * q * R - gaussian6FifthsBeta * (113 / 100) * S ≤
-          gaussian6FifthsD * q * R - gaussian6FifthsBeta * t := by
-        nlinarith only [hbetaScaled']
-      calc
-        gaussian6FifthsD * t ^ 2 - gaussian6FifthsBeta * t =
-            gaussian6FifthsD * q * R - gaussian6FifthsBeta * t :=
-          hrewrite
-        _ ≥ gaussian6FifthsD * q * R - gaussian6FifthsBeta * (113 / 100) * S := hstep
-        _ > gaussianStarD * R - gaussianStarBeta * S := hscalar
-    have hnew := hnewStrict.trans_le hmono
-    have hbudgetEq :
-      gaussian6FifthsD * r - gaussian6FifthsBeta * s =
-        gaussianStarD * R - gaussianStarBeta * S := by
-      rw [hnewEq, hstarEq, hconductors]
-    rw [hbudgetEq] at hnew
-    exact (lt_irrefl (gaussianStarD * R - gaussianStarBeta * S)) hnew
-  have hrnonneg : 0 ≤ r := by
-    dsimp only [r]
-    exact sq_nonneg (gaussian6FifthsRoot L)
-  have hRnonneg : 0 ≤ R := by
-    dsimp only [R]
-    exact sq_nonneg (gaussianStarRoot L)
-  have hboundSq : r ^ 2 < (q * R) ^ 2 := by
-    have hscaled := mul_lt_mul_of_pos_right hrad (by positivity : 0 < r + q * R)
-    nlinarith only [hscaled, hrad, hrnonneg, hRnonneg, hqpos]
-  have hcoeffEq : (6 / 5 : ℝ) * q ^ 2 = (2601 / 2800 : ℝ) * (21 / 10) := by norm_num [q]
-  dsimp only [gaussian6FifthsBound, gaussianStarBound]
-  calc
-    (6 / 5 : ℝ) * gaussian6FifthsRadius L ^ 2 < (6 / 5 : ℝ) * (q * gaussianStarRadius L) ^ 2 := by
-      exact mul_lt_mul_of_pos_left hboundSq (by norm_num only)
-    _ = (6 / 5 : ℝ) * q ^ 2 * gaussianStarRadius L ^ 2 := by ring
-    _ = (2601 / 2800 : ℝ) * (21 / 10) * gaussianStarRadius L ^ 2 := by rw [hcoeffEq]
-    _ = (2601 / 2800 : ℝ) * (21 / 10 * gaussianStarRadius L ^ 2) := by ring
-
-/-- The 6/5 budget radius is below `19/25` of the logarithmic scale for
-`L >= 500`. The proof evaluates its defining quadratic at that radius. -/
-theorem gaussian6FifthsRadius_upper_19_25 {L : ℝ} (hL : 500 ≤ L) :
-    gaussian6FifthsRadius L < (19 / 25 : ℝ) * L := by
-  let u : ℝ := Real.sqrt ((19 / 25 : ℝ) * L)
-  have hLpos : 0 < L := by linarith only [hL]
-  have hD : (639999 / 1000000 : ℝ) ≤ gaussian6FifthsD := by
-    norm_num [gaussian6FifthsD, gaussian6FifthsIndex, gaussian6FifthsMass, gaussian6FifthsEndpoint]
-  have hBeta : gaussian6FifthsBeta ≤ (257 / 500 : ℝ) := by
-    norm_num [gaussian6FifthsBeta, gaussian6FifthsIndex, gaussian6FifthsMass]
-  have hDpos := gaussian6Fifths_coefficients_pos.1
-  have hBetaPos := gaussian6Fifths_coefficients_pos.2
-  have huSq : u ^ 2 = (19 / 25 : ℝ) * L := by
-    dsimp only [u]
-    rw [Real.sq_sqrt]
-    positivity
-  have huPos : 0 < u := by
-    dsimp only [u]
-    exact Real.sqrt_pos.2 (by positivity)
-  have huLe : u ≤ L / 25 := by
-    apply Real.sqrt_le_iff.mpr
-    constructor
-    · positivity
-    · nlinarith only [hL]
-  have hbudget := gaussian6FifthsRadius_equation hL
-  have hroot := gaussian6FifthsRoot_pos hL
-  have hrootEq :
-    gaussian6FifthsD * gaussian6FifthsRoot L ^ 2 =
-      gaussian6FifthsConductor * L + gaussian6FifthsBeta * gaussian6FifthsRoot L + 29 := by
-    simpa only [gaussian6FifthsRadius] using hbudget
-  have hmarginSlope :
-    (63 / 1000 : ℝ) < (639999 / 1000000 : ℝ) * (19 / 25) - (161 / 400 : ℝ) - (257 / 500) / 25 := by
-    norm_num only
-  have hmargin :
-    0 <
-      gaussian6FifthsD * u ^ 2 - gaussian6FifthsBeta * u - (gaussian6FifthsConductor * L + 29) := by
-    have hDscaled := mul_le_mul_of_nonneg_right hD (sq_nonneg u)
-    have hbetascaled := mul_le_mul hBeta huLe huPos.le (by norm_num only : (0 : ℝ) ≤ 257 / 500)
-    have hmarginL := mul_lt_mul_of_pos_right hmarginSlope hLpos
-    have hconstant : 29 < (63 / 1000 : ℝ) * L := by nlinarith only [hL]
-    rw [huSq] at hDscaled
-    norm_num only [gaussian6FifthsConductor] at hmarginL ⊢
-    rw [huSq]
-    nlinarith only [hDscaled, hbetascaled, hmarginL, hconstant]
-  have hu19 : 19 ≤ u := by
-    dsimp only [u]
-    exact (Real.le_sqrt (by norm_num only) (by positivity)).2 (by nlinarith only [hL])
-  have hsum : 19 ≤ u + gaussian6FifthsRoot L := by linarith only [hu19, hroot]
-  have hcoef : 0 < gaussian6FifthsD * (u + gaussian6FifthsRoot L) - gaussian6FifthsBeta := by
-    have hmul := mul_le_mul hD hsum (by norm_num only : (0 : ℝ) ≤ 19) hDpos.le
-    nlinarith only [hmul, hBeta]
-  have hrad : gaussian6FifthsRoot L < u := by
-    by_contra hnot
-    have hbad : u ≤ gaussian6FifthsRoot L := le_of_not_gt hnot
-    have hidentity :
-      gaussian6FifthsD * u ^ 2 - gaussian6FifthsBeta * u - (gaussian6FifthsConductor * L + 29) -
-          (gaussian6FifthsD * gaussian6FifthsRoot L ^ 2 -
-            gaussian6FifthsBeta * gaussian6FifthsRoot L -
-            (gaussian6FifthsConductor * L + 29)) =
-        (u - gaussian6FifthsRoot L) *
-          (gaussian6FifthsD * (u + gaussian6FifthsRoot L) - gaussian6FifthsBeta) := by
-      ring
-    have hprod :
-      (u - gaussian6FifthsRoot L) *
-          (gaussian6FifthsD * (u + gaussian6FifthsRoot L) - gaussian6FifthsBeta) ≤
-        0 :=
-      mul_nonpos_of_nonpos_of_nonneg (by linarith only [hbad]) hcoef.le
-    nlinarith only [hmargin, hrootEq, hidentity, hprod]
-  have hsquare : gaussian6FifthsRoot L ^ 2 < u ^ 2 :=
-    (sq_lt_sq₀ (le_of_lt hroot) (le_of_lt huPos)).2 hrad
-  dsimp only [gaussian6FifthsRadius]
-  nlinarith only [hsquare, huSq]
-
-/-- The 6/5 Gaussian bound is below `7/10 * L^2` from `L = 500` onward. -/
-theorem gaussian6FifthsBound_lt_sevenTenths_sq {L : ℝ} (hL : 500 ≤ L) :
-    gaussian6FifthsBound L < (7 / 10 : ℝ) * L ^ 2 := by
-  have hrad := gaussian6FifthsRadius_upper_19_25 hL
-  have hLpos : 0 < L := by linarith only [hL]
-  have hL0 : 0 ≤ L := le_of_lt hLpos
-  have hr0 : 0 ≤ gaussian6FifthsRadius L := by
-    dsimp only [gaussian6FifthsRadius]
-    positivity
-  have hc0 : 0 ≤ (19 / 25 : ℝ) := by norm_num only
-  have hsq : gaussian6FifthsRadius L ^ 2 ≤ ((19 / 25 : ℝ) * L) ^ 2 := by
-    nlinarith only [hrad, hr0, mul_nonneg hc0 hL0]
-  have hratio : (6 / 5 : ℝ) * (19 / 25) ^ 2 < 7 / 10 := by norm_num only
-  have hscaled := mul_le_mul_of_nonneg_left hsq (by norm_num only : (0 : ℝ) ≤ 6 / 5)
-  dsimp only [gaussian6FifthsBound]
-  have hratioL := mul_lt_mul_of_pos_right hratio (sq_pos_of_pos hLpos)
-  ring_nf at hratioL ⊢
-  nlinarith only [hscaled, hratioL]
 
 /-- The constant-6 radius satisfies its quadratic budget equation. -/
 theorem gaussian6Radius_equation {L : ℝ} (hL : 300 ≤ L) :
@@ -1565,22 +1312,6 @@ theorem gaussian6Bound_gt_prefix {L : ℝ} (hL : 300 ≤ L) : 50000 < gaussian6B
   dsimp only [gaussian6Bound]
   linarith only [hstrict, hscaled]
 
-/-- The constant-6 bound strictly exceeds `3/10 * L^2` from scale 300. -/
-theorem gaussian6Bound_gt_local_three_tenths {L : ℝ} (hL : 300 ≤ L) :
-    (3 / 10 : ℝ) * L ^ 2 < gaussian6Bound L := by
-  have hr := gaussian6Radius_lower hL
-  have hLpos : 0 < L := by linarith only [hL]
-  have hbase : (5 / 8 : ℝ) * L < gaussian6Radius L := by linarith only [hr]
-  have hrad : ((5 / 8 : ℝ) * L) ^ 2 < gaussian6Radius L ^ 2 :=
-    (sq_lt_sq₀ (mul_nonneg (by norm_num only) hLpos.le)
-          (le_trans (mul_nonneg (by norm_num only) hLpos.le) hbase.le)).2
-      hbase
-  have hscaled := mul_lt_mul_of_pos_left hrad (by norm_num only : (0 : ℝ) < 6 / 5)
-  have hcoeff : (3 / 10 : ℝ) < (6 / 5) * (5 / 8) ^ 2 := by norm_num only
-  have hcoeffL := mul_lt_mul_of_pos_right hcoeff (sq_pos_of_pos hLpos)
-  dsimp only [gaussian6Bound] at hscaled ⊢
-  nlinarith only [hscaled, hcoeffL]
-
 /-- The signed 50000-prefix ambient error fits the constant-6 scalar budget. -/
 theorem gaussian6_ambient_error_prefix_signed_le {q : ℕ} {L : ℝ} (hL : 300 ≤ L)
     (hq : Real.log q ≤ L) :
@@ -1667,73 +1398,6 @@ theorem gaussian6_large_index_comparison_impossible {m s r A L : ℝ} (hm : gaus
         A := by
     nlinarith only [hcmp]
   exact (not_le_of_gt herr) hle
-
-/-- The constant-6 radius contradicts the index-four comparison when the
-signed prefix residual is at most eleven. -/
-theorem gaussian6_triple_comparison_impossible {L : ℝ} (hL : 300 ≤ L)
-    (hcmp :
-      ((4 * gaussian6FifthsMass - gaussian6FifthsEndpoint) / 3) * gaussian6Radius L ≤
-        (161 / 600 : ℝ) * L + (4 / 3 : ℝ) * (gaussian6FifthsMass / 3 + 3 / 10) * gaussian6Root L +
-          11) :
-    False := by
-  let r := gaussian6Radius L
-  let s := gaussian6Root L
-  have hrlo : 415 / 2 ≤ r := by
-    dsimp only [r]
-    have hrad := gaussian6Radius_lower hL
-    nlinarith only [hrad, hL]
-  have hspos : 0 < s := by
-    dsimp only [s]
-    exact gaussian6Root_pos hL
-  have hsSq : s ^ 2 = r := by dsimp only [s, r, gaussian6Radius]
-  have hs14 : 14 ≤ s := by nlinarith only [hsSq, hrlo, hspos]
-  have hsle : s ≤ r / 14 := by
-    apply (le_div_iff₀ (by norm_num only : (0 : ℝ) < 14)).2
-    nlinarith only [hsSq, hs14]
-  have hroot := gaussian6Radius_equation hL
-  have hroot' :
-    gaussian6FifthsD * r = gaussian6FifthsConductor * L + gaussian6FifthsBeta * s + 6 := by
-    simpa only [r, s] using hroot
-  have hindexCmp :
-    (((4 * gaussian6FifthsMass - gaussian6FifthsEndpoint) / 3) - (2 / 3 : ℝ) * gaussian6FifthsD) *
-        r ≤
-      ((4 / 3 : ℝ) * (gaussian6FifthsMass / 3 + 3 / 10) - (2 / 3 : ℝ) * gaussian6FifthsBeta) * s +
-        7 := by
-    change
-      ((4 * gaussian6FifthsMass - gaussian6FifthsEndpoint) / 3) * r ≤
-        (161 / 600 : ℝ) * L + (4 / 3 : ℝ) * (gaussian6FifthsMass / 3 + 3 / 10) * s + 11 at hcmp
-    have hc : gaussian6FifthsConductor = 161 / 400 := by norm_num only [gaussian6FifthsConductor]
-    rw [hc] at hroot'
-    nlinarith only [hcmp, hroot']
-  have hbetaDiff :
-    0 < (4 / 3 : ℝ) * (gaussian6FifthsMass / 3 + 3 / 10) - (2 / 3 : ℝ) * gaussian6FifthsBeta := by
-    norm_num [gaussian6FifthsBeta, gaussian6FifthsIndex, gaussian6FifthsMass]
-  have hgap :
-    (((4 * gaussian6FifthsMass - gaussian6FifthsEndpoint) / 3) - (2 / 3 : ℝ) * gaussian6FifthsD) -
-        ((4 / 3 : ℝ) * (gaussian6FifthsMass / 3 + 3 / 10) - (2 / 3 : ℝ) * gaussian6FifthsBeta) /
-          14 >
-      0 := by
-    norm_num [gaussian6FifthsD, gaussian6FifthsBeta, gaussian6FifthsIndex, gaussian6FifthsMass,
-      gaussian6FifthsEndpoint, gaussian6FifthsConductor]
-  have hmargin :
-    (7 : ℝ) <
-      (((4 * gaussian6FifthsMass - gaussian6FifthsEndpoint) / 3) - (2 / 3 : ℝ) * gaussian6FifthsD) *
-          (415 / 2) -
-        ((4 / 3 : ℝ) * (gaussian6FifthsMass / 3 + 3 / 10) - (2 / 3 : ℝ) * gaussian6FifthsBeta) *
-          (415 / 28) := by
-    norm_num [gaussian6FifthsD, gaussian6FifthsBeta, gaussian6FifthsIndex, gaussian6FifthsMass,
-      gaussian6FifthsEndpoint, gaussian6FifthsConductor]
-  have hstrict :
-    (7 : ℝ) <
-      (((4 * gaussian6FifthsMass - gaussian6FifthsEndpoint) / 3) - (2 / 3 : ℝ) * gaussian6FifthsD) *
-          r -
-        ((4 / 3 : ℝ) * (gaussian6FifthsMass / 3 + 3 / 10) - (2 / 3 : ℝ) * gaussian6FifthsBeta) *
-          s := by
-    have hscaled := mul_le_mul_of_nonneg_left hsle hbetaDiff.le
-    have hlow := mul_le_mul_of_nonneg_left hrlo (le_of_lt hgap)
-    nlinarith only [hscaled, hlow, hmargin]
-  apply (not_le_of_gt hstrict)
-  nlinarith only [hindexCmp]
 
 /-- The constant-6 radius is strictly below `0.71 L` from scale 300. -/
 theorem gaussian6Radius_lt_71_over_100_scale {L : ℝ} (hL : 300 ≤ L) :

@@ -28,9 +28,9 @@ theorem gaussianSeeded_raw_linear {L : ℝ} (hL : 240 ≤ L) :
     have hp := mul_nonneg h0 (sub_nonneg.mpr hL)
     nlinarith only [hp, hL]
   have hr2 := Real.sq_sqrt harg
-  have hc : 0 ≤ gaussianMRRefinedConductor * L + gaussianSeededConstant false := by
+  have hc : 0 ≤ gaussianConductorCoeff * L + gaussianSeededConstant false := by
     exact
-      add_nonneg (mul_nonneg (by norm_num only [gaussianMRRefinedConductor]) h0)
+      add_nonneg (mul_nonneg (by norm_num only [gaussianConductorCoeff]) h0)
         (gaussianSeeded_constant_pos false).le
   have hr : gaussianSeededRawRoot false L ≤ Real.sqrt ((73 / 100 : ℝ) * L) := by
     apply
@@ -41,7 +41,7 @@ theorem gaussianSeeded_raw_linear {L : ℝ} (hL : 240 ≤ L) :
       linarith only [hrlo]
     · norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
         gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint,
-        gaussianMRRefinedConductor, gaussianSeededConstant, Bool.false_eq_true, ite_false]
+        gaussianConductorCoeff, gaussianSeededConstant, Bool.false_eq_true, ite_false]
       nlinarith only [hrhi, hr2, hL]
   exact ((sq_le_sq₀ (gaussianSeeded_raw_pos false L).le (Real.sqrt_nonneg _)).mpr hr).trans_eq hr2
 
@@ -69,8 +69,8 @@ theorem gaussianSeededSelected_linear {L : ℝ} (hL : 240 ≤ L) :
 theorem gaussian1000_large_above {L : ℝ} (hL : 240 ≤ L) :
     (131 / 10 : ℝ) < gaussian1000LargeRoot L := by
   by_contra hn
-  have h0 : (0 : ℝ) ≤ gaussianMRRefinedConductor * L + 163 / 20 := by
-    norm_num only [gaussianMRRefinedConductor]
+  have h0 : (0 : ℝ) ≤ gaussianConductorCoeff * L + 163 / 20 := by
+    norm_num only [gaussianConductorCoeff]
     linarith only [hL]
   have hb : gaussianMRRefinedBeta < gaussianMRRefinedD * (131 / 10) := by
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
@@ -80,7 +80,7 @@ theorem gaussian1000_large_above {L : ℝ} (hL : 240 ≤ L) :
       gaussianMRRefined_coefficients.2 h0 hb (le_of_not_gt hn)
   norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
     gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint,
-    gaussianMRRefinedConductor] at h
+    gaussianConductorCoeff] at h
   linarith only [hL, h]
 
 /-- From L>=240 the seeded selected cutoff is below the two-root 1000-prefix cutoff. -/
@@ -91,7 +91,7 @@ theorem gaussianSeeded_lt_1000 {L : ℝ} (hL : 240 ≤ L) :
   have hroot : gaussianSeededRawRoot false L < gaussian1000LargeRoot L := by
     apply Analysis.gaussianBudgetRoot_strictMono gaussianMRRefined_coefficients.1
     · exact
-        add_nonneg (mul_nonneg (by norm_num only [gaussianMRRefinedConductor]) h0)
+        add_nonneg (mul_nonneg (by norm_num only [gaussianConductorCoeff]) h0)
           (gaussianSeeded_constant_pos false).le
     · norm_num only [gaussianSeededConstant, Bool.false_eq_true, ite_false]
       linarith only

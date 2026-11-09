@@ -6,9 +6,10 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target030KorseltClassification
+public import PseudoPrime.PrimeTestBounds.MillerRabin.KorseltClassification
 public import PseudoPrime.PrimeTestBounds.MillerRabin.LogScalePow22
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target030Local
+public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimePairLocalData
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalEvenAnchors
 public import PseudoPrime.NumberTheory.PrimeFactorPairClassification
 
 /-! # Low-range uniform Korselt witnesses with coefficient 0.28 -/
@@ -103,7 +104,7 @@ theorem exists_prime_reject_028_local_15_16 {n q : ℕ} [NeZero q] (hn : 1 < n) 
         (p : ℝ) ≤ (7 / 25 : ℝ) * (Real.log n) ^ 2 ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   obtain ⟨p, hp, hpbound, hfail⟩ :=
-    exists_prime_reject_target030_anchor hn ho hqn H hH hpass hGRH (b := 8) (d := 324969 / 100000)
+    exists_prime_reject_of_local_anchor hn ho hqn H hH hpass hGRH (b := 8) (d := 324969 / 100000)
       (j := 3) (by decide +kernel) hq
   have hmax : max (8 : ℝ) ((2 / 3 : ℝ) * Real.log n - 324969 / 100000) ≤ 8 := by
     apply max_le le_rfl

@@ -6,10 +6,11 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.PrimeTestBounds.MillerRabin.FiniteIndexClassification
 public import PseudoPrime.LLS.GaussianPrefixComparison2
 
 public import PseudoPrime.NumberTheory.ResidueSubgroup
-public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianStarClassification
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianIndexClassification
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMR240Numerics
 
 /-! # The unchanged constant-six Gaussian MR bound from logarithmic scale 240 -/
@@ -93,7 +94,7 @@ theorem gaussianMR6_index_four240 {n : ℕ} [NeZero n] (H : Subgroup (ZMod n)ˣ)
       11 := by
     exact gaussian6_triple_error240 hL le_rfl
   exact
-    gaussian_relative_comparison_to_scalar (m := 4) (t := 3) (s := s) (r := r) (A :=
+    LLS.gaussian_compare_width_third (m := 4) (t := 3) (s := s) (r := r) (A :=
       LLS.PaperStatements.gaussianPrefixError (47 / 10) n (r ^ 2)) (L := (2 / 3 : ℝ) * Real.log n)
       (I := I) (E := E) (C := LLS.PaperStatements.subgroupConductorLogSum H) (h := h) (M :=
       gaussian6FifthsMass) (Ecap := gaussian6FifthsEndpoint) (conductor := (161 / 400 : ℝ)) (D :=
@@ -326,10 +327,9 @@ theorem gaussianMR6_witness_large240 {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlar
     rw [ht] at hbudget
     linarith only [hbudget, hroot, herr]
   exact
-    gaussian_relative_comparison_to_scalar (m := m) (t := t) (s := s) (r := r) (A := A) (L := L)
-      (I := I) (E := E) (C := C) (h := h) (M := gaussian6FifthsMass) (Ecap :=
-      gaussian6FifthsEndpoint) (conductor := gaussian6FifthsConductor) (D := gaussian6FifthsD)
-      (beta := gaussian6FifthsBeta)
+    LLS.gaussian_compare_width_third (m := m) (t := t) (s := s) (r := r) (A := A) (L := L) (I := I)
+      (E := E) (C := C) (h := h) (M := gaussian6FifthsMass) (Ecap := gaussian6FifthsEndpoint)
+      (conductor := gaussian6FifthsConductor) (D := gaussian6FifthsD) (beta := gaussian6FifthsBeta)
       (by
         have hi' : (1000000000 : ℝ) ≤ m := by simpa only [m, gaussian6FifthsIndex] using hi
         linarith only [hi'])
@@ -416,7 +416,7 @@ theorem gaussianMR6_witness_small240 {n : ℕ} [NeZero n] (hnOdd : Odd n) (hcomp
     have hbound' := gaussian6_local240 hL
     exact ⟨s, hs, hbound.trans (le_of_lt hbound'), hfail⟩
   · obtain ⟨hsf, hc, hK, hU⟩ := htriple
-    have hN27 := ten_pow_twentyseven_le_of_log_ge_240 (by linarith only [hL])
+    have hN27 := pow10_27_le_of_log_ge_240 (by linarith only [hL])
     have hnlarge : 20000 ≤ n := by
       have h20000 : 20000 ≤ 10 ^ 27 := by norm_num only
       exact h20000.trans hN27
@@ -434,7 +434,7 @@ theorem gaussianMR6_fermat_large240 {n : ℕ} (hn1 : 1 < n) (hnOdd : Odd n)
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   let : NeZero n := ⟨Nat.ne_zero_of_lt hn1⟩
   have hnlarge : 20000 ≤ n :=
-    (by norm_num only : 20000 ≤ 10 ^ 27).trans (ten_pow_twentyseven_le_of_log_ge_240 hL)
+    (by norm_num only : 20000 ≤ 10 ^ 27).trans (pow10_27_le_of_log_ge_240 hL)
   have hiR : gaussian6FifthsIndex ≤ ((PrimeTest.fermatSubgroup n).index : ℝ) := by
     norm_num only [gaussian6FifthsIndex]
     exact_mod_cast hi

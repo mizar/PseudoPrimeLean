@@ -6,8 +6,9 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.LogShiftRampPrincipalBounds
-public import PseudoPrime.AnalyticNumberTheory.Arithmetic.JointRampPrincipalLinearity
+public import PseudoPrime.LLS.JointRampPrincipalLinearity
 public import PseudoPrime.LLS.CertifiedRampPrincipalBounds
 
 /-! # Continuous clipped logarithmic correction in the full principal comparison -/
@@ -77,23 +78,20 @@ theorem clippedShiftError_abs_le (hRH : RiemannHypothesis) {x u : ℝ} (hx : 0 <
 logarithmic correction equals exp(-1/x)+exp(-y)(1+y log(xy)). Apply the exact ramp and
 principal atom reconstructions. This retains both the finite endpoint and the constant term. -/
 theorem clippedLogAtom_jointFunctional_eq {x y : ℝ} (hx : 1 ≤ x) (hy : (99 / 40 : ℝ) ≤ y) :
-    AnalyticNumberTheory.Arithmetic.jointRampPrincipalFunctional (Analysis.positiveLogRatio (1 / x))
-        y =
+    jointRampPrincipalFunctional (Analysis.positiveLogRatio (1 / x)) y =
       Real.exp (-(1 / x)) + Real.exp (-y) * (1 + y * Real.log (x * y)) := by
   have hx0 : 0 < x := by linarith only [hx]
   have hv : 0 < 1 / x := one_div_pos.mpr hx0
   have hv1 : 1 / x ≤ 1 := (div_le_iff₀ hx0).mpr (by linarith only [hx])
   have hvy : 1 / x ≤ y := by linarith only [hv1, hy]
-  have hR := Analysis.exponentialRampLogKernel_eq_weight hv
+  have hR := exponentialRampLogKernel_eq_weight hv
   change
-    AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional
-        (Analysis.positiveLogRatio (1 / x)) =
+    exponentialRampVariationFunctional (Analysis.positiveLogRatio (1 / x)) =
       Analysis.exponentialRampWeight (1 / x) at hR
   have hP := Analysis.exponential_log_atom hv hvy
   have hlog : y / (1 / x) = x * y := by field_simp (disch := exact hx0.ne')
   rw [hlog] at hP
-  dsimp only [AnalyticNumberTheory.Arithmetic.jointRampPrincipalFunctional,
-    Analysis.exponentialRampVariationLeft]
+  dsimp only [jointRampPrincipalFunctional, exponentialRampVariationLeft]
   rw [hR]
   rw [Analysis.exponentialRampWeight_eq_exp_of_le_left
       (by linarith only [hv1] : 1 / x ≤ (247 / 100 : ℝ))]
@@ -103,8 +101,8 @@ theorem clippedLogAtom_jointFunctional_eq {x y : ℝ} (hx : 1 ≤ x) (hy : (99 /
 the raw arithmetic functional plus the exact clipped-log contribution. Use finite-interval
 linearity and the atom identity. No singular correction is inserted at the origin. -/
 theorem jointFunctional_clippedShiftError_eq {x y : ℝ} (hx : 1 ≤ x) (hy : (99 / 40 : ℝ) ≤ y) :
-    AnalyticNumberTheory.Arithmetic.jointRampPrincipalFunctional (clippedShiftError x) y =
-      AnalyticNumberTheory.Arithmetic.jointRampPrincipalFunctional
+    jointRampPrincipalFunctional (clippedShiftError x) y =
+      jointRampPrincipalFunctional
           (fun u ↦ AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum (x * u) - x * u) y +
         Real.log (2 * Real.pi) *
           (Real.exp (-(1 / x)) + Real.exp (-y) * (1 + y * Real.log (x * y))) := by
@@ -118,16 +116,15 @@ theorem jointFunctional_clippedShiftError_eq {x y : ℝ} (hx : 1 ≤ x) (hy : (9
     ContinuousOn (fun u ↦ Real.log (2 * Real.pi) * Analysis.positiveLogRatio (1 / x) u)
       (Set.Icc 0 y) :=
     (continuous_const.mul (Analysis.positiveLogRatio_continuous (one_div_pos.mpr hx0))).continuousOn
-  have he := AnalyticNumberTheory.Arithmetic.jointRampPrincipalFunctional_add hy hf hg
+  have he := jointRampPrincipalFunctional_add hy hf hg
   change
-    AnalyticNumberTheory.Arithmetic.jointRampPrincipalFunctional
+    jointRampPrincipalFunctional
         (fun u ↦
           (AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum (x * u) - x * u) +
             Real.log (2 * Real.pi) * Analysis.positiveLogRatio (1 / x) u)
         y =
       _
-  rw [he, AnalyticNumberTheory.Arithmetic.jointRampPrincipalFunctional_const_mul,
-    clippedLogAtom_jointFunctional_eq hx hy]
+  rw [he, jointRampPrincipalFunctional_const_mul, clippedLogAtom_jointFunctional_eq hx hy]
 
 /-- For x at least one, y beyond the ramp and c at most two, the logarithmic boundary
 cost c(1+y log(xy)) is at most x(y^2+y+1). Use a logarithmic tangent at two.
@@ -160,7 +157,7 @@ theorem clippedShiftError_compact_le (hRH : RiemannHypothesis) {x u : ℝ} (hx :
   have he := clippedShiftError_abs_le hRH (zero_lt_one.trans_le hx) hu
   rw [Real.sqrt_mul (by linarith only [hx] : 0 ≤ x)] at he
   have hs :=
-    mul_le_mul_of_nonneg_left (Analysis.sqrt_le_ramp_right hub)
+    mul_le_mul_of_nonneg_left (sqrt_le_ramp_right hub)
       (div_nonneg (Real.sqrt_nonneg x) (by norm_num only : (0 : ℝ) ≤ 20))
   linarith only [he, hs]
 
@@ -234,10 +231,10 @@ the corrected joint functional has the displayed logarithm-free numerator bound.
 Apply the common-error theorem to the continuous corrected function and the three envelopes. -/
 theorem jointFunctional_clippedShiftError_abs_le (hRH : RiemannHypothesis) {x y h : ℝ} (hx : 1 ≤ x)
     (hh : 0 < h) (hhx : h ≤ x) (hy : (99 / 40 : ℝ) ≤ y) :
-    |AnalyticNumberTheory.Arithmetic.jointRampPrincipalFunctional (clippedShiftError x) y| ≤
+    |jointRampPrincipalFunctional (clippedShiftError x) y| ≤
       clippedShiftPrincipalErrorNumerator x h := by
   apply
-    AnalyticNumberTheory.Arithmetic.jointRampPrincipalFunctional_abs_le hy
+    jointRampPrincipalFunctional_abs_le hy
       (clippedShiftError_continuousOn (zero_lt_one.trans_le hx) y)
   · intro u hu
     exact clippedShiftError_compact_le hRH hx hu.1 hu.2
@@ -256,7 +253,7 @@ theorem exponentialMangoldtSum_upper_clipped_shift (hRH : RiemannHypothesis) {x 
     AnalyticNumberTheory.Arithmetic.exponentialMangoldtSum x (N : ℝ) ≤
       x +
         (2 *
-            AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional
+            exponentialRampVariationFunctional
               (fun u ↦ AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum (x * u) - x * u) +
           clippedShiftPrincipalErrorNumerator x h +
           Real.log (2 * Real.pi) * Real.exp (-(1 / x))) := by
@@ -268,8 +265,7 @@ theorem exponentialMangoldtSum_upper_clipped_shift (hRH : RiemannHypothesis) {x 
   have hc : Real.log (2 * Real.pi) ≤ 2 := by linarith only [Analysis.log_two_mul_pi_lt.le]
   have ht :=
     mul_le_mul_of_nonneg_right (clippedLog_boundary_cost_le hx hy hc) (Real.exp_pos (-y)).le
-  dsimp only [AnalyticNumberTheory.Arithmetic.jointRampPrincipalFunctional,
-    Analysis.exponentialRampVariationLeft] at he hb
+  dsimp only [jointRampPrincipalFunctional, exponentialRampVariationLeft] at he hb
   linarith only [hb, he, ht]
 
 /-- The principal lower cap with exact ramp mass and corrected numerator plus
@@ -286,16 +282,15 @@ Gamma series and use the exact ramp identity. This completes the infinite-series
 theorem clippedShiftPrincipalLower_le_actual (hRH : RiemannHypothesis) {x h : ℝ} (hx : 1 ≤ x)
     (hh : 0 < h) (hhx : h ≤ x) :
     clippedShiftPrincipalLower x h ≤
-      2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+      2 * (exponentialRampMangoldtSum x / Real.sqrt x) -
         (∑' n : ℕ,
             PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x n).re := by
   have hx0 := zero_lt_one.trans_le hx
   have hs := Real.sqrt_pos.mpr hx0
-  have hR := AnalyticNumberTheory.Arithmetic.expRampMangoldt_div_sqrt_eq_main_add_error hx0
+  have hR := expRampMangoldt_div_sqrt_eq_main_add_error hx0
   have hP :
     (∑' n : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x n).re ≤
-      2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
-        clippedShiftPrincipalLower x h := by
+      2 * (exponentialRampMangoldtSum x / Real.sqrt x) - clippedShiftPrincipalLower x h := by
     apply PaperStatements.gamma_level_one_sum_upper_of_finite_upper hx0
     intro N
     have heq := PaperStatements.gamma_level_one_sum_eq_exponential (y := (N : ℝ)) hx0
@@ -305,12 +300,11 @@ theorem clippedShiftPrincipalLower_le_actual (hRH : RiemannHypothesis) {x h : �
     have hb := exponentialMangoldtSum_upper_clipped_shift hRH hx hh hhx N
     rw [add_assoc] at hb
     have he :
-      (2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
-            clippedShiftPrincipalLower x h) *
+      (2 * (exponentialRampMangoldtSum x / Real.sqrt x) - clippedShiftPrincipalLower x h) *
           Real.sqrt x =
         x +
           (2 *
-              AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional
+              exponentialRampVariationFunctional
                 (fun u ↦ AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum (x * u) - x * u) +
             (clippedShiftPrincipalErrorNumerator x h +
               Real.log (2 * Real.pi) * Real.exp (-(1 / x)))) := by
@@ -320,7 +314,7 @@ theorem clippedShiftPrincipalLower_le_actual (hRH : RiemannHypothesis) {x h : �
         _ =
             (Real.sqrt x) ^ 2 +
               2 *
-                ((AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional
+                ((exponentialRampVariationFunctional
                       (fun u ↦
                         AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum (x * u) - x * u) /
                     Real.sqrt x) *

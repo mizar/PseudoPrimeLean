@@ -7,8 +7,8 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.HighCoefficientSemiprime
-public import PseudoPrime.PrimeTestBounds.MillerRabin.FourNinthsHighKernel
-public import PseudoPrime.PrimeTestBounds.MillerRabin.FourNinthsSquareBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.HighCountingKernel
+public import PseudoPrime.PrimeTestBounds.MillerRabin.SquareLogCounting
 
 /-! # High-range prime-product budgets for repeated factors -/
 
@@ -293,47 +293,5 @@ theorem highCoeff_primePow_divisor {n p a : ℕ} (hn : 1 < n) (ho : Odd n) (hp :
     rw [Nat.cast_pow]
     nlinarith only [hsquare]
   exact ⟨r, hr, (Nat.cast_le.mpr hbR).trans hbound, hf⟩
-
-/-- Under GRH, an odd composite `n = p ^ 2 * q` with prime `p` and `q`
-has a prime MR witness at most `(7 / 16) * log n ^ 2` for `log n ≥ 70000`.
-When `q` is large, use its local kernel; otherwise use the local kernel at
-`p ^ 2`. The existing triangular profile covers the far high range. -/
-theorem highCoeff_squareTimesPrime_witness {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
-    (hp : p.Prime) (hq : q.Prime) (hprod : n = p ^ 2 * q)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : (70000 : ℝ) ≤ Real.log n) :
-    ∃ r : ℕ,
-      r.Prime ∧
-        (r : ℝ) ≤ (7 / 16 : ℝ) * (Real.log n) ^ 2 ∧
-        ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
-  have hpsq : 1 < p ^ 2 := by nlinarith only [hp.one_lt]
-  have hpdiv : p ∣ n := hprod ▸ dvd_mul_of_dvd_left (dvd_pow_self p (by norm_num only)) q
-  have hqdiv : q ∣ n := hprod ▸ dvd_mul_left q (p ^ 2)
-  have hp2 : p ≠ 2 := ho.ne_two_of_dvd_nat hpdiv
-  have hq2 : q ≠ 2 := ho.ne_two_of_dvd_nat hqdiv
-  have hdiv : p ^ 2 ∣ n := hprod ▸ dvd_mul_right (p ^ 2) q
-  have hlog : Real.log n = Real.log (p ^ 2 : ℕ) + Real.log q := by
-    rw [hprod, Nat.cast_mul,
-      Real.log_mul (Nat.cast_ne_zero.mpr (Nat.ne_zero_of_lt (zero_lt_one.trans hpsq)))
-        (Nat.cast_ne_zero.mpr hq.ne_zero)]
-  have hupper : Real.log (p ^ 2 : ℕ) ≤ Real.log n := by
-    have hqlog := Real.log_natCast_nonneg q
-    linarith only [hlog, hqlog]
-  by_cases hqLarge : (66143 / 100000 : ℝ) * Real.log n < Real.log q
-  · by_cases hU : Real.log n ≤ 40000000000
-    · exact highCoeff_largeCofactor_witness hn ho hpsq hq hq2 hprod hGRH.riemann hL hU hqLarge
-    · have ht : triangularP04145.T ≤ Real.log n := by
-        change (40000000000 : ℝ) ≤ Real.log n
-        exact (lt_of_not_ge hU).le
-      obtain ⟨r, hr, hb, hf⟩ := exists_prime_triangularProfile triangularP04145 hn ho hc hGRH ht
-      have hbound : triangularP04145.C * Real.log n ^ 2 ≤ (7 / 16 : ℝ) * (Real.log n) ^ 2 := by
-        change (4145 / 10000 : ℝ) * Real.log n ^ 2 ≤ (7 / 16 : ℝ) * (Real.log n) ^ 2
-        nlinarith only [sq_nonneg (Real.log n)]
-      exact ⟨r, hr, hb.trans hbound, hf⟩
-  · have hlower : Real.log n / 3 ≤ Real.log (p ^ 2 : ℕ) := by
-      have hqsmall := le_of_not_gt hqLarge
-      linarith only [hlog, hqsmall, hL]
-    exact
-      highCoeff_primePow_divisor hn ho hp hp2 (by norm_num only : 2 ≤ 2) hdiv hGRH.riemann hL hlower
-        hupper
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.PaperStatements.TriangularJointSharp
 public import PseudoPrime.LLS.PaperStatements.TriangularSignedLargeIndexWitness
 public import PseudoPrime.PrimeTestBounds.MillerRabin.FiniteIndexClassification
 public import PseudoPrime.Analysis.NumericalLogBounds
@@ -59,7 +60,7 @@ theorem log_ge_triangular_large_index_of_decimal {n : ℕ} (hN : 10 ^ 9565217391
   have hl := Real.log_le_log hp hc
   rw [Real.log_pow] at hl
   norm_num only at hl
-  linarith only [hl, Analysis.log_ten_gt_twenty_three_tenths]
+  linarith only [hl, LLS.log_ten_gt_twenty_three_tenths]
 
 /-- Under GRH, every odd composite n >= 10^9565217391305 has a prime
 strong Miller--Rabin witness at most (282924/1000000)log(n)^2. Both the finite-index
@@ -179,5 +180,34 @@ theorem prime_iff_pass_primes_0283_logSq_GRH {n : ℕ} (ho : Odd n)
       mul_le_of_le_one_left (sq_nonneg _) (by norm_num only)
     exact
       (prime_iff_millerRabin_for_all_primes_le_log_sq hGRH hn ho).mpr hp p hprime (hb.trans hcap)
+
+/-- A positive triangular joint gap at a cutoff inside the kernel support
+gives a rejecting prime for an odd input under GRH. A prime dividing the input
+and a prime outside its Fermat subgroup both reject the original input. -/
+theorem exists_prime_reject_triangular {n : ℕ} [NeZero n] (hn : 1 < n) (ho : Odd n)
+    (hi : 1000000000 ≤ (PrimeTest.fermatSubgroup n).index)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x : ℝ} (hx : 16 ≤ x)
+    (hu : x ≤ Real.exp 36)
+    (hgap :
+      300000000 * (Real.sqrt x + Real.sqrt x⁻¹) +
+          1300000 * (x ^ (1 / 4 : ℝ) + (x⁻¹) ^ (1 / 4 : ℝ)) +
+          602600000 +
+          (((PrimeTest.fermatSubgroup n).index : ℝ) - 1) * ((72 - Real.log x) * Real.log n) <
+        ((PrimeTest.fermatSubgroup n).index : ℝ) *
+          ((220 - 4 * Real.log x) * Real.sqrt x -
+            (1064 / 5 - (19 / 5 : ℝ) * Real.log x) * x ^ (1 / 4 : ℝ) -
+            855)) :
+    ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ x ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
+  let H := PrimeTest.fermatSubgroup n
+  have hiR : (1000000000 : ℝ) ≤ (H.index : ℝ) := by exact_mod_cast hi
+  obtain ⟨p, hp, hb, hout⟩ :=
+    LLS.PaperStatements.exists_prime_joint_interior H hGRH hx hu (by linarith only [hiR]) hgap
+  refine ⟨p, hp, hb, ?_⟩
+  intro hpass
+  rcases hout with hd | hout
+  · have hcop :=
+      (ZMod.isUnit_iff_coprime p n).mp (PrimeTest.strongMillerRabinPass_isUnit hn ho hpass)
+    exact (hp.coprime_iff_not_dvd.mp hcop) hd
+  · exact hout (PrimeTest.strongMillerRabinPass_mem_fermatSubgroup hn ho hpass)
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

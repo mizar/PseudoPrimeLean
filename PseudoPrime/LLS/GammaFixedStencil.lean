@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.ClippedLogShiftPrincipalBounds
 
 /-! # Fixed-width stencil bounds with the tighter three-point root envelope -/
@@ -150,10 +151,9 @@ the corrected joint functional has the displayed logarithm-free numerator bound.
 Apply the common-error theorem to the continuous corrected function and the three envelopes. -/
 theorem fixedShift_joint_bound (hRH : RiemannHypothesis) {x y : ℝ} (hx : 1 ≤ x)
     (hy : (99 / 40 : ℝ) ≤ y) :
-    |AnalyticNumberTheory.Arithmetic.jointRampPrincipalFunctional (clippedShiftError x) y| ≤
-      fixedShiftPrincipalError x := by
+    |jointRampPrincipalFunctional (clippedShiftError x) y| ≤ fixedShiftPrincipalError x := by
   apply
-    AnalyticNumberTheory.Arithmetic.jointRampPrincipalFunctional_abs_le hy
+    jointRampPrincipalFunctional_abs_le hy
       (clippedShiftError_continuousOn (zero_lt_one.trans_le hx) y)
   · intro u hu
     exact clippedShiftError_compact_le hRH hx hu.1 hu.2
@@ -171,7 +171,7 @@ theorem fixedShift_exp_sum_upper (hRH : RiemannHypothesis) {x : ℝ} (hx : 1 ≤
     AnalyticNumberTheory.Arithmetic.exponentialMangoldtSum x (N : ℝ) ≤
       x +
         (2 *
-            AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional
+            exponentialRampVariationFunctional
               (fun u ↦ AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum (x * u) - x * u) +
           fixedShiftPrincipalError x +
           Real.log (2 * Real.pi) * Real.exp (-(1 / x))) := by
@@ -183,8 +183,7 @@ theorem fixedShift_exp_sum_upper (hRH : RiemannHypothesis) {x : ℝ} (hx : 1 ≤
   have hc : Real.log (2 * Real.pi) ≤ 2 := by linarith only [Analysis.log_two_mul_pi_lt.le]
   have ht :=
     mul_le_mul_of_nonneg_right (clippedLog_boundary_cost_le hx hy hc) (Real.exp_pos (-y)).le
-  dsimp only [AnalyticNumberTheory.Arithmetic.jointRampPrincipalFunctional,
-    Analysis.exponentialRampVariationLeft] at he hb
+  dsimp only [jointRampPrincipalFunctional, exponentialRampVariationLeft] at he hb
   linarith only [hb, he, ht]
 
 /-- The fixed-stencil principal cap retains exact ramp mass and the clipped logarithmic
@@ -198,16 +197,15 @@ the actual principal difference. Transfer the finite exponential estimates to th
 Gamma series and use the exact ramp identity. This completes the infinite-series consumer. -/
 theorem fixedShiftPrincipal_le_actual (hRH : RiemannHypothesis) {x : ℝ} (hx : 1 ≤ x) :
     fixedShiftPrincipalLower x ≤
-      2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+      2 * (exponentialRampMangoldtSum x / Real.sqrt x) -
         (∑' n : ℕ,
             PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x n).re := by
   have hx0 := zero_lt_one.trans_le hx
   have hs := Real.sqrt_pos.mpr hx0
-  have hR := AnalyticNumberTheory.Arithmetic.expRampMangoldt_div_sqrt_eq_main_add_error hx0
+  have hR := expRampMangoldt_div_sqrt_eq_main_add_error hx0
   have hP :
     (∑' n : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x n).re ≤
-      2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
-        fixedShiftPrincipalLower x := by
+      2 * (exponentialRampMangoldtSum x / Real.sqrt x) - fixedShiftPrincipalLower x := by
     apply PaperStatements.gamma_level_one_sum_upper_of_finite_upper hx0
     intro N
     have heq := PaperStatements.gamma_level_one_sum_eq_exponential (y := (N : ℝ)) hx0
@@ -217,12 +215,11 @@ theorem fixedShiftPrincipal_le_actual (hRH : RiemannHypothesis) {x : ℝ} (hx : 
     have hb := fixedShift_exp_sum_upper hRH hx N
     rw [add_assoc] at hb
     have he :
-      (2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
-            fixedShiftPrincipalLower x) *
+      (2 * (exponentialRampMangoldtSum x / Real.sqrt x) - fixedShiftPrincipalLower x) *
           Real.sqrt x =
         x +
           (2 *
-              AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional
+              exponentialRampVariationFunctional
                 (fun u ↦ AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum (x * u) - x * u) +
             (fixedShiftPrincipalError x + Real.log (2 * Real.pi) * Real.exp (-(1 / x)))) := by
       rw [hR]
@@ -231,7 +228,7 @@ theorem fixedShiftPrincipal_le_actual (hRH : RiemannHypothesis) {x : ℝ} (hx : 
         _ =
             (Real.sqrt x) ^ 2 +
               2 *
-                ((AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional
+                ((exponentialRampVariationFunctional
                       (fun u ↦
                         AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum (x * u) - x * u) /
                     Real.sqrt x) *

@@ -62,7 +62,7 @@ theorem neOneWitness_le_gamma_endpoint_conductor_free
       nlinarith only [ht]
     have hnR : (n : ℝ) ≤ 46000 := by exact_mod_cast hnsmall
     have hn0 : (0 : ℝ) < n := by exact_mod_cast Odd.pos hn
-    have hl := (Real.log_le_log hn0 hnR).trans Analysis.log_46000_lt_eleven.le
+    have hl := (Real.log_le_log hn0 hnR).trans LLS.log_46000_lt_eleven.le
     have hl0 : 0 ≤ Real.log n :=
       Real.log_nonneg (by exact_mod_cast Nat.one_le_iff_ne_zero.mpr (Odd.pos hn).ne')
     have hs : (Real.log n) ^ 2 ≤ (11 : ℝ) ^ 2 := (sq_le_sq₀ hl0 (by norm_num only)).mpr hl

@@ -6,7 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target030Local
+public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimePairLocalData
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalEvenWitness
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuadraticTripleUniformSpacing
 
 /-! # Local even shifts for ordered prime triples -/

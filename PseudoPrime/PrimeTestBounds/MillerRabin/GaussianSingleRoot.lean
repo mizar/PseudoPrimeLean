@@ -54,9 +54,9 @@ theorem gaussianSingle_cutoff_floor (L : ℝ) : (12000 : ℝ) ≤ gaussianSingle
 inequality. Compare the maximum with the raw root and use ten*d>beta.
 No equality is asserted for the combined root. -/
 theorem gaussianSingle_large_budget {L : ℝ} (hL : 0 ≤ L) :
-    gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * gaussianSingleRoot L + 163 / 20 ≤
+    gaussianConductorCoeff * L + gaussianMRRefinedBeta * gaussianSingleRoot L + 163 / 20 ≤
       gaussianMRRefinedD * gaussianSingleRadius L := by
-  have hc : 0 ≤ gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
+  have hc : 0 ≤ gaussianConductorCoeff := by norm_num only [gaussianConductorCoeff]
   have hcoef : gaussianMRRefinedBeta < gaussianMRRefinedD * gaussianSingleRoot L := by
     have hs :=
       mul_le_mul_of_nonneg_left (gaussianSingle_root_ten L) gaussianMRRefined_coefficients.1.le
@@ -77,13 +77,13 @@ anchor imply a strict normalized Gaussian error cap. Retain the signed pole term
 and use the radius-100 tail estimates. This serves both index branches. -/
 theorem gaussianSingle_error_cap {L eta eps D s : ℝ} {q : ℕ} (hs0 : 10 ≤ s)
     (hG :
-      gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s + 163 / 20 ≤
+      gaussianConductorCoeff * L + gaussianMRRefinedBeta * s + 163 / 20 ≤
         gaussianMRRefinedD * s ^ 2)
     (hq : Real.log q ≤ L) (h1 : 0 ≤ gaussian1000ResidualA eta * 10 + gaussian1000ResidualV eta)
     (h2 : 0 ≤ gaussian1000ResidualA eta * 10 + 2 * gaussian1000ResidualV eta)
     (hstrict :
       (12871 / 1000 : ℝ) - 2 * (7191 / 2000) +
-          7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianMRRefinedConductor) +
+          7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianConductorCoeff) +
           gaussian1000ResidualA eta / 10 +
           gaussian1000ResidualV eta / 100 +
           eps +
@@ -113,19 +113,17 @@ theorem gaussianSingle_error_cap {L eta eps D s : ℝ} {q : ℕ} (hs0 : 10 ≤ s
         linarith only [hmul]
       · exact hrpos.le
     · norm_num only [gaussian6FifthsEndpoint]
-  have htail := gaussian1000_tail hr100
+  have htail := LLS.gaussian_tail_of_radius_ge_100 hr100
   have hinverse := inverse_pair_le_anchor (by norm_num only : (0 : ℝ) < 10) hs0 h1 h2
   have hid :
     eta *
           (21 * gaussian6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
             1839 * gaussian6FifthsEndpoint / (1000 * r)) +
-        (7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianMRRefinedConductor) -
-            (7 * gaussian6FifthsEndpoint * gaussianMRRefinedBeta /
-                (6 * gaussianMRRefinedConductor)) /
+        (7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianConductorCoeff) -
+            (7 * gaussian6FifthsEndpoint * gaussianMRRefinedBeta / (6 * gaussianConductorCoeff)) /
               s +
-          (gaussian6FifthsEndpoint * (4 - 7 * (163 / 20) / (6 * gaussianMRRefinedConductor))) /
-            s ^ 2) =
-      7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianMRRefinedConductor) +
+          (gaussian6FifthsEndpoint * (4 - 7 * (163 / 20) / (6 * gaussianConductorCoeff))) / s ^ 2) =
+      7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianConductorCoeff) +
         gaussian1000ResidualA eta / s +
         gaussian1000ResidualV eta / s ^ 2 := by
     rw [hreq]
@@ -189,8 +187,8 @@ theorem gaussianSingle_radius_linear {L : ℝ} (hL : 63 ≤ L) :
   have hG := gaussianSingle_large_budget (by linarith only [hL] : (0 : ℝ) ≤ L)
   have hp := mul_pos gaussianMRRefined_coefficients.2 (gaussianSingle_root_pos L)
   have hD : (0 : ℝ) < 163 / 20 := by norm_num only
-  have hcoef : 0 < gaussianMRRefinedConductor - (5 / 8 : ℝ) * gaussianMRRefinedD := by
-    norm_num only [gaussianMRRefinedConductor, gaussianMRRefinedD, gaussianMRRefinedMass,
+  have hcoef : 0 < gaussianConductorCoeff - (5 / 8 : ℝ) * gaussianMRRefinedD := by
+    norm_num only [gaussianConductorCoeff, gaussianMRRefinedD, gaussianMRRefinedMass,
       gaussian6FifthsEndpoint, gaussian6FifthsIndex]
   have hm := mul_pos hcoef (by linarith only [hL] : (0 : ℝ) < L)
   have hd := gaussianMRRefined_coefficients.1

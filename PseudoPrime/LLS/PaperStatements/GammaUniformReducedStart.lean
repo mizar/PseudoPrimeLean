@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.GammaUniformWitnessBounds
-public import PseudoPrime.Analysis.QuadraticGammaDecimalRefinement
+public import PseudoPrime.LLS.QuadraticGammaDecimalRefinement
 public import PseudoPrime.LLS.GammaUniformReducedStartScalars
 
 /-! # A smaller uniform Gamma starting value
@@ -48,7 +48,7 @@ theorem exists_prime_outside_4_5_of_log_ge_45731_GRH {q : ℕ} [NeZero q] (H : S
   have hD :=
     gamma_commonFactor_budget_of_log_ge_42875 ((by norm_num only : (42875 : ℝ) ≤ 45731).trans hL)
   have he := gamma_uniform_error_budget_of_ge_45731 hL
-  have hm := Analysis.nonOne_main_term_gap (show 0 < Real.log q by linarith only [hL])
+  have hm := nonOne_main_term_gap (show 0 < Real.log q by linarith only [hL])
   linarith only [hc, hD, he, hm]
 
 /-- Under GRH, q ≥ 10^19861 and H any proper subgroup of the units,

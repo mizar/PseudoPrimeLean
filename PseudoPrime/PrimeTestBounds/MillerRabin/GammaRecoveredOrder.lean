@@ -241,7 +241,7 @@ theorem gaussian1000_radius_affine_lower {L : ℝ} (hL : 0 ≤ L) :
     (20115621 / 37554500 : ℝ) * L + 2918336 / 75109 ≤ gaussian1000Radius L := by
   have hb := gaussian1000_four_budget hL
   have ht := gaussian1000_root_ten L
-  norm_num only [gaussian1000FourD, gaussian1000FourBeta, gaussianMRRefinedConductor,
+  norm_num only [gaussian1000FourD, gaussian1000FourBeta, gaussianConductorCoeff,
     gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsEndpoint] at hb
   linarith only [hb, ht]
 

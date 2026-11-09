@@ -77,7 +77,7 @@ theorem gamma_small_profile_separation_of_check (hRH : RiemannHypothesis) (a b e
     linarith only [hp, hD]
   have he3 := gamma_small_profile_pole_error hL
   have he4 := gamma_left_error_le_of_scale_ge_33000 hx
-  have hm1 := mul_le_mul_of_nonneg_right Analysis.gamma_ramp_mass_lower (Real.sqrt_nonneg x)
+  have hm1 := mul_le_mul_of_nonneg_right gamma_ramp_mass_lower (Real.sqrt_nonneg x)
   have hm2 :=
     mul_le_mul_of_nonneg_left hroot (show (0 : ℝ) ≤ 83125234337 / 100000000000 by norm_num only)
   have hm := hm2.trans hm1

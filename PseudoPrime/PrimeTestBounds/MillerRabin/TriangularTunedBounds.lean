@@ -27,16 +27,4 @@ theorem exists_prime_triangularTunedProfile (i : Fin 7) {n : ℕ} (hn : 1 < n) (
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) :=
   exists_prime_triangularProfile (triangularTunedProfile i) hn ho hc hGRH hL
 
-/-- The least rejecting prime satisfies each tuned profile bound under the
-same all-odd-composite assumptions and certified entrance. -/
-theorem exists_least_triangularTunedProfile (i : Fin 7) {n : ℕ} (hn : 1 < n) (ho : Odd n)
-    (hc : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : (triangularTunedProfile i).T ≤ Real.log n) :
-    ∃ p : ℕ,
-      p.Prime ∧
-        (p : ℝ) ≤ (triangularTunedProfile i).C * Real.log n ^ 2 ∧
-        ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
-        ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q :=
-  exists_least_triangularProfile (triangularTunedProfile i) hn ho hc hGRH hL
-
 end PseudoPrime.PrimeTestBounds.MillerRabin

@@ -10,7 +10,7 @@ public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.PaperStatements.GammaUniformSignedProfiles
 public import PseudoPrime.LLS.GammaUniformTightStart
 public import PseudoPrime.Analysis.LogarithmicShiftBounds
-public import PseudoPrime.Analysis.GammaUniformSignedWitnessBounds
+public import PseudoPrime.LLS.GammaUniformSignedWitnessBounds
 
 /-! # Decimal and character interfaces for rational signed Gamma profiles
 
@@ -38,7 +38,7 @@ theorem exists_prime_outside_4_5_shift_29_15188_GRH {q : ℕ} (H : Subgroup (ZMo
   let : NeZero q := ⟨hq0⟩
   apply exists_prime_outside_4_5_shift_29_GRH H hH hGRH
   exact
-    (Analysis.log_nat_gt_of_decimal_lower (by norm_num only : 0 < 15188) hq
+    (log_nat_gt_of_decimal_lower (by norm_num only : 0 < 15188) hq
         (by norm_num only : (34971 : ℝ) < (15188 : ℝ) * (115129 / 50000))).le
 
 /-- Under GRH, q ≥ 10^20121 and H proper, a coprime prime outside H exists
@@ -55,7 +55,7 @@ theorem exists_prime_outside_4_5_shift_neg_2_20121_GRH {q : ℕ} (H : Subgroup (
   let : NeZero q := ⟨hq0⟩
   apply exists_prime_outside_4_5_shift_neg_2_GRH H hH hGRH
   exact
-    (Analysis.log_nat_gt_of_decimal_lower (by norm_num only : 0 < 20121) hq
+    (log_nat_gt_of_decimal_lower (by norm_num only : 0 < 20121) hq
         (by norm_num only : (46330 : ℝ) < (20121 : ℝ) * (115129 / 50000))).le
 
 /-- Under GRH, q ≥ 10^22097 and H proper, a coprime prime outside H exists
@@ -73,7 +73,7 @@ theorem exists_prime_outside_4_5_sub_loglog_22097_GRH {q : ℕ} (H : Subgroup (Z
   let : NeZero q := ⟨hq0⟩
   apply exists_prime_outside_4_5_sub_loglog_GRH H hH hGRH
   exact
-    (Analysis.log_nat_gt_of_decimal_lower (by norm_num only : 0 < 22097) hq
+    (log_nat_gt_of_decimal_lower (by norm_num only : 0 < 22097) hq
         (by norm_num only : (50880 : ℝ) < (22097 : ℝ) * (115129 / 50000))).le
 
 end PseudoPrime.LLS.PaperStatements

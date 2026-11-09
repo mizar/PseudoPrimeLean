@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.LLS.PaperStatements.GammaNonOneNumerics
 public import PseudoPrime.LLS.PaperStatements.GammaNonOneRefinedNumerics
-public import PseudoPrime.Analysis.LLSGammaNonOneRefinedNumerics
+public import PseudoPrime.LLS.LLSGammaNonOneRefinedNumerics
 
 /-! # Sharper non-one Gamma error budgets
 

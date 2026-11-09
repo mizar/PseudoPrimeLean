@@ -6,10 +6,12 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalDecimalScale
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalDivisorLogBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianSeededTuned
 public import PseudoPrime.LLS.GammaSeedLogMoment
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianBudgetBranches
-public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianBudgetFour
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianBudgetFourThreshold
 
 /-! # Actual tuned seeded Gaussian witnesses -/
 
@@ -64,9 +66,10 @@ theorem seededTuned_four (f : Bool) {n : ℕ} [NeZero n] (ho : Odd n) (hnlarge :
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   have h0 : (0 : ℝ) ≤ Real.log n := by linarith only [hL]
   exact
-    gaussianBudget_four_witness (gaussianSeededSharpCutoff f) (gaussianSeededTunedPrefix f)
-      (gaussianSeededTunedRoot f (Real.log n)) (gaussianSeededTuned_root13 f _)
-      (seededTuned_prefix f hGRH) (gaussianSeededTuned_cutoff_le f _)
+    gaussianBudget_four_witness_threshold (gaussianSeededSharpCutoff f)
+      (gaussianSeededTunedPrefix f) (gaussianSeededTunedRoot f (Real.log n)) 11
+      (gaussianSeededTuned_root13 f _) (seededTuned_prefix f hGRH)
+      (gaussianSeededTuned_cutoff_le f _)
       (gaussianSeededTuned_four_error f h0 (le_refl (Real.log n)))
       (gaussianSeededTuned_four_absurd f h0) ho hnlarge H hi hp hGRH hC
 

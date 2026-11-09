@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.FourNinthsPrimeData
+public import PseudoPrime.PrimeTestBounds.MillerRabin.IndexedPrimeCountBounds
 
 /-! # Indexed prime supplies for the repeated-product envelope -/
 

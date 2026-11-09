@@ -52,7 +52,7 @@ theorem log_lt63_of_small {n : ℕ} (hN : n < 3000) : Real.log n < (63 : ℝ) :=
       exact_mod_cast (hN.le.trans (by norm_num only : 3000 ≤ 46000))
     have hL :=
       (Real.log_le_log (Nat.cast_pos.mpr (Nat.pos_of_ne_zero hz)) hcast).trans_lt
-        Analysis.log_46000_lt_eleven
+        LLS.log_46000_lt_eleven
     linarith only [hL]
 
 /-- Every input below 3000 retains the existing small-interval value. Use its

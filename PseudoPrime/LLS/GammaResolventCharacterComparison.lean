@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.PaperStatements.GammaSignedVariableScaleBounds
 public import PseudoPrime.LLS.GammaNoNegativeRampSupport
 public import PseudoPrime.Analysis.GammaResolventGridCertificate
@@ -64,7 +65,7 @@ theorem gammaJacobi_noNeg_refinedArith_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSqu
           Odd p →
           (p : ℝ) ≤ (99 / 40 : ℝ) * Analysis.gammaRefinedScale (Real.log n) → jacobiSym n p ≠ -1) :
     let x := Analysis.gammaRefinedScale (Real.log n)
-    2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+    2 * (exponentialRampMangoldtSum x / Real.sqrt x) -
         (∑' k : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re ≤
       (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
                 (fun ab ↦
@@ -128,8 +129,7 @@ theorem exists_oddPrime_negJacobi_refinedArith_GRH {n : ℕ} {hn : Odd n} {hns :
     (hgap :
       gammaRefinedArithmeticBudget (Real.log n) b <
         2 *
-            (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum
-                (Analysis.gammaRefinedScale (Real.log n)) /
+            (exponentialRampMangoldtSum (Analysis.gammaRefinedScale (Real.log n)) /
               Real.sqrt (Analysis.gammaRefinedScale (Real.log n))) -
           (∑' k : ℕ,
               PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1)

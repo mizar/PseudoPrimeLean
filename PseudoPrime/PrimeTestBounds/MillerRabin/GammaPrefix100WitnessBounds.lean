@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.PrimeTestBounds.MillerRabin.FiniteIndexClassification
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaLinearCutoffBounds
 public import PseudoPrime.LLS.GammaCheckpoint1000
 public import PseudoPrime.LLS.GammaCheckpoint50000
@@ -224,7 +225,7 @@ theorem exists_prime_witness_gamma100_prefix1000_GRH {n : ℕ} [NeZero n] (hn : 
     have hnlt : n < 46000 := by omega
     have hnltR : (n : ℝ) < 46000 := by exact_mod_cast hnlt
     have hlog := Real.log_lt_log (Nat.cast_pos.mpr hn0) hnltR
-    linarith only [hlog, Analysis.log_46000_lt_eleven, hL]
+    linarith only [hlog, LLS.log_46000_lt_eleven, hL]
   let r := gammaPrefix100Radius (Real.log n) (203 / 50)
   have hD : 0 ≤ (591 / 50 : ℝ) - 2 * (203 / 50) := by norm_num only
   have hL240 : 240 ≤ Real.log n := hL
@@ -269,7 +270,7 @@ theorem exists_prime_witness_gamma100_prefix50000_GRH {n : ℕ} [NeZero n] (hn :
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   have hn0 : 0 < n := Nat.pos_of_ne_zero (NeZero.ne n)
   have hlog20000 : Real.log (20000 : ℝ) < 11 := by
-    exact (Real.log_lt_log (by norm_num only) (by norm_num only)).trans Analysis.log_46000_lt_eleven
+    exact (Real.log_lt_log (by norm_num only) (by norm_num only)).trans LLS.log_46000_lt_eleven
   have hQ : 20000 ≤ n := by
     by_contra hnot
     have hnlt : n < 20000 := by omega
@@ -325,7 +326,7 @@ theorem exists_prime_gamma100_clipped50000_GRH {n : ℕ} [NeZero n] (hn : 1 < n)
     have hnlt : n < 46000 := by omega
     have hnltR : (n : ℝ) < 46000 := by exact_mod_cast hnlt
     have hlog := Real.log_lt_log (Nat.cast_pos.mpr hn0) hnltR
-    linarith only [hlog, Analysis.log_46000_lt_eleven, hL]
+    linarith only [hlog, LLS.log_46000_lt_eleven, hL]
   let r0 : ℝ := gammaPrefix100Radius (Real.log n) (28493 / 5000)
   let cutoff : ℝ := Real.sqrt ((2000000 : ℝ) / 99)
   let r : ℝ := max r0 cutoff

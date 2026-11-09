@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.LogTaylorBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.SmallPointwiseBounds
 
 /-! # Small-input maximum cutoff for coefficient 0.28 -/

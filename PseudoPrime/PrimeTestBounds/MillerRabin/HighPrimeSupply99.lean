@@ -6,8 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.FourNinthsHighPrimeCount
-public import PseudoPrime.PrimeTestBounds.MillerRabin.FourNinthsHighLog
+public import PseudoPrime.PrimeTestBounds.MillerRabin.HighSquarePrimeCount
+public import PseudoPrime.PrimeTestBounds.MillerRabin.HighRadiusLogBounds
 
 /-! # Prime supply at large square radii -/
 

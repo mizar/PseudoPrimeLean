@@ -189,4 +189,22 @@ theorem exists_negOneWitness_le_refined_elementary
   have hm := NumberTheory.primeNegOneWitness_mem n hw
   exact ⟨NumberTheory.primeNegOneWitness n hw, hm.1, hm.2.1, hb, hm.2.2⟩
 
+/-- Under GRH, every odd nonsquare has an odd-prime Jacobi witness equal to negative one,
+bounded by the refined elementary radius. Oddness and nonsquareness imply `3 ≤ n`,
+so the existing pointwise existence theorem applies without an extra lower-bound hypothesis. -/
+theorem exists_neg_one_witness_of_odd (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n) :
+    ∃ p : ℕ,
+      p.Prime ∧
+        Odd p ∧
+        (p : ℝ) ≤
+          (Real.log (4 * (n : ℝ)) + (24 / 5 : ℝ) * Real.log (Real.log (4 * (n : ℝ))) + 2) ^ 2 ∧
+        jacobiSym n p = -1 :=
+  exists_negOneWitness_le_refined_elementary hGRH
+    (Nat.succ_le_of_lt
+      (Nat.lt_of_le_of_ne
+        (Nat.succ_le_of_lt (Nat.lt_of_le_of_ne hn.pos (Ne.symm (fun h ↦ hns (h ▸ ⟨1, rfl⟩)))))
+        (Ne.symm (fun h ↦ (of_decide_eq_true rfl : ¬Odd (2 : ℕ)) (h ▸ hn)))))
+    hn hns
+
 end PseudoPrime.PseudoSquare

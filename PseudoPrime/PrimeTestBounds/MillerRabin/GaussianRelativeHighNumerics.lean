@@ -75,7 +75,7 @@ theorem gaussianRefinedTriple_error {n : ℕ} {L : ℝ} (hL : (2000000000000 : �
   have hpole : (2129 / 2000 : ℝ) * (((7 / 6 : ℝ) * Real.log n + 4) / r) ≤ 4 := by
     rw [← mul_div_assoc, div_le_iff₀ hrpos]
     linarith only [hroots.1, hL, hn]
-  have ht := gaussian1000_tail hroots.2.1
+  have ht := LLS.gaussian_tail_of_radius_ge_100 hroots.2.1
   dsimp only [LLS.PaperStatements.gaussianPrefixError]
   rw [Real.sqrt_sq hrpos.le]
   linarith only [hpole, ht.1, ht.2]

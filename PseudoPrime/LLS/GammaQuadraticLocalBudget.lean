@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.GammaQuadraticLocalCorrection
-public import PseudoPrime.Analysis.QuadraticGammaSmoothedNumerics
+public import PseudoPrime.LLS.QuadraticGammaSmoothedNumerics
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ElementaryOmegaFiniteCertificates
 public import Mathlib.Analysis.Complex.ExponentialBounds
 
@@ -88,7 +88,7 @@ theorem gamma_quadratic_prime_factor_cost_le_five {n : ℕ} (hn : Odd n) (hL : 4
         Real.log ((99 / 40 : ℝ) * ((32 / 99 : ℝ) * (Real.log n) ^ 2)) ≤
       (14 / 5 : ℝ) * Real.log (4 * n : ℕ) := by
     nlinarith only [hwmul, hterm]
-  have hroot := Analysis.ramp_scale_sqrt_lower hL0.le
+  have hroot := ramp_scale_sqrt_lower hL0.le
   have hs : 0 < Real.sqrt ((32 / 99 : ℝ) * (Real.log n) ^ 2) := by linarith only [hroot, hL]
   rw [div_le_iff₀ hs]
   nlinarith only [hbudget, hqhi, hroot, hL]
@@ -103,10 +103,10 @@ theorem gammaQuadLocal_absorbed_rampScale {n : ℕ} (hn : Odd n) (χ : Dirichlet
         gammaQuadraticLocalCorrection χ ((32 / 99 : ℝ) * (Real.log n) ^ 2) ≤
       (11783423 / 25000000 : ℝ) * Real.log n + 6 := by
   let : NeZero (4 * n) := ⟨Nat.mul_ne_zero (by norm_num only) (Odd.pos hn).ne'⟩
-  have hx1 := Analysis.ramp_scale_ge_one hL
+  have hx1 := ramp_scale_ge_one hL
   have hxpos := zero_lt_one.trans_le hx1
   have hcut : (1 : ℝ) ≤ (99 / 40) * ((32 / 99 : ℝ) * (Real.log n) ^ 2) := by nlinarith only [hx1]
-  have hroot := Analysis.ramp_scale_sqrt_lower (by linarith only [hL])
+  have hroot := ramp_scale_sqrt_lower (by linarith only [hL])
   have hM : (1 : ℝ) ≤ (11783423 / 25000000) * Real.sqrt ((32 / 99 : ℝ) * (Real.log n) ^ 2) := by
     nlinarith only [hroot, hL]
   have hcorr := gammaQuadraticLocalCorrection_absorb_conductor χ hquad hxpos hcut hM

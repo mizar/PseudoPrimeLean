@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.GammaVariableScaleLocalBridge
 public import PseudoPrime.PseudoSquare.Bounds.GammaSignedVariationBounds
 public import PseudoPrime.LLS.GammaEulerGrowthChebyshev
@@ -28,7 +29,7 @@ theorem exists_negOneWitness_of_variable_scale_gap {n Q : ℕ} (hn : Odd n) (hns
     (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hgap :
       LLS.gammaVariableScaleArithmeticBudget n Q x b <
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ,
               LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n p = -1 := by
@@ -48,7 +49,7 @@ theorem exists_neOneWitness_of_variable_scale_gap {n Q : ℕ} (hn : Odd n) (hns 
     (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hgap :
       LLS.gammaVariableScaleArithmeticBudget n Q x b <
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ,
               LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n p ≠ 1 := by
@@ -67,7 +68,7 @@ theorem primeNegOneWitness_cast_le_of_variable_scale_gap {n Q : ℕ} (hn : Odd n
     (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hgap :
       LLS.gammaVariableScaleArithmeticBudget n Q x b <
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ,
               LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re)
     (hw : (NumberTheory.primeNegOneWitnessSet n).Nonempty) :
@@ -85,7 +86,7 @@ theorem primeNeOneWitness_cast_le_of_variable_scale_gap {n Q : ℕ} (hn : Odd n)
     (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hgap :
       LLS.gammaVariableScaleArithmeticBudget n Q x b <
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ,
               LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re)
     (hw : (NumberTheory.primeNeOneWitnessSet n).Nonempty) :
@@ -103,7 +104,7 @@ theorem QNegOne_le_of_variable_scale_gap {B Q : ℕ} (hQ : 20000 ≤ Q) (hBQ : 4
     (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hgap :
       LLS.gammaVariableScaleArithmeticBudget B Q x b <
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ,
               LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re) :
     (QNegOne B : ℝ) ≤ (99 / 40 : ℝ) * x := by
@@ -126,7 +127,7 @@ theorem QNeOne_le_of_variable_scale_gap {B Q : ℕ} (hQ : 20000 ≤ Q) (hBQ : 4 
     (hb : 1 ≤ b) (hbx : b ≤ (99 / 40 : ℝ) * x)
     (hgap :
       LLS.gammaVariableScaleArithmeticBudget B Q x b <
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ,
               LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re) :
     (QNeOne B : ℝ) ≤ (99 / 40 : ℝ) * x := by

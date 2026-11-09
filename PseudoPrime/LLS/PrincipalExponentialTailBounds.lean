@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.PrincipalRampEndpointBounds
 public import Mathlib.Analysis.SpecificLimits.Normed
 
@@ -84,8 +85,7 @@ prefix estimates, plus a scalar geometric-tail bound, give C/R below the actual
 principal-ramp difference. Combine the proved tail estimate with endpoint monotonicity.
 No integer-modulus enumeration or RH premise is needed. -/
 theorem principalRampDifference_lower_finite_endpoints {a b x C R r p e : ℝ} (ha : 0 < a)
-    (hax : a ≤ x) (hxb : x ≤ b) (N : ℕ)
-    (hr : r ≤ AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum a)
+    (hax : a ≤ x) (hxb : x ≤ b) (N : ℕ) (hr : r ≤ exponentialRampMangoldtSum a)
     (hp : (∑ n ∈ Finset.range N, Real.exp (-(n : ℝ) / b) * ArithmeticFunction.vonMangoldt n) ≤ p)
     (he : principalExponentialTailBound b N ≤ e) (hC : C ≤ 2 * r - p - e) (hC0 : 0 ≤ C)
     (hR : Real.sqrt b ≤ R) : C / R ≤ principalRampDifference x := by

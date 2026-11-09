@@ -79,7 +79,7 @@ theorem gamma_principal_paired_nearSquare_budgets {L : ℝ} (hL : 550 ≤ L) :
     nlinarith only [hlogext, hlogr, hroot, hL, hx, hsq]
   · rw [div_le_iff₀ hs]
     linarith only [hlogx, hroot, hL]
-  · have hm := mul_le_mul_of_nonneg_right Analysis.gamma_ramp_mass_lower (Real.sqrt_nonneg x)
+  · have hm := mul_le_mul_of_nonneg_right gamma_ramp_mass_lower (Real.sqrt_nonneg x)
     nlinarith only [hm, hroot, hL]
 
 end PseudoPrime.LLS

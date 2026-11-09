@@ -7,7 +7,8 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMR240Numerics
-public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMRRelativeNumerics
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMRNumerics
+public import PseudoPrime.LLS.GaussianWidthComparison
 
 /-! # Fixed Gaussian cutoff 35000 with logarithmic upper endpoint 240 -/
 

@@ -146,7 +146,7 @@ theorem exists_primeOutside_199_250_117_d15188_GRH {q : ℕ} (H : Subgroup (ZMod
   let : NeZero q := ⟨hq0⟩
   apply exists_primeOutside_199_250_117_log_GRH H hH hGRH
   exact
-    (Analysis.log_nat_gt_of_decimal_lower (by norm_num only : 0 < 15188) hq
+    (log_nat_gt_of_decimal_lower (by norm_num only : 0 < 15188) hq
         (by norm_num only : (34971 : ℝ) < (15188 : ℝ) * (115129 / 50000))).le
 
 end PseudoPrime.LLS.PaperStatements

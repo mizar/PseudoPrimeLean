@@ -20,14 +20,14 @@ theorem gaussianSeededSharp_raw_mono (f : Bool) : Monotone (gaussianSeededSharpR
   intro a b hab
   change
     Analysis.gaussianBudgetRoot gaussianMRRefinedD gaussianMRRefinedBeta
-        (gaussianMRRefinedConductor * a + gaussianSeededSharpConstant f) ≤
+        (gaussianConductorCoeff * a + gaussianSeededSharpConstant f) ≤
       Analysis.gaussianBudgetRoot gaussianMRRefinedD gaussianMRRefinedBeta
-        (gaussianMRRefinedConductor * b + gaussianSeededSharpConstant f)
+        (gaussianConductorCoeff * b + gaussianSeededSharpConstant f)
   exact
     Analysis.gaussianBudgetRoot_mono gaussianMRRefined_coefficients.1
       (add_le_add
         (mul_le_mul_of_nonneg_left hab
-          (by norm_num only [gaussianMRRefinedConductor] : (0 : ℝ) ≤ gaussianMRRefinedConductor))
+          (by norm_num only [gaussianConductorCoeff] : (0 : ℝ) ≤ gaussianConductorCoeff))
         (le_refl (gaussianSeededSharpConstant f)))
 
 /-- Clipping a monotone raw root at a fixed floor preserves monotonicity. -/

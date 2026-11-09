@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.QuarterLogPrimeFactorBounds
 public import PseudoPrime.PseudoSquare.Bounds.PrincipalLowerBounds
 
@@ -31,7 +32,7 @@ theorem exists_odd_prime_neg_one_of_quarter_gap_GRH {n B : ℕ} (hn : Odd n) (hn
     (hx : 25 ≤ x)
     (hP :
       P ≤
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ,
               LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re)
     (hgap : 0 < quarterPrincipalNegOneGap B x P) :
@@ -90,7 +91,7 @@ theorem negOneWitness_le_of_quarterPrincipalLower_gap {n B : ℕ} (hn : Odd n) (
     (hx : 25 ≤ x)
     (hP :
       P ≤
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ,
               LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re)
     (hgap : 0 < quarterPrincipalNegOneGap B x P)
@@ -107,7 +108,7 @@ theorem QNegOne_le_of_quarterPrincipalLower_gap {B : ℕ}
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x P : ℝ} (hx : 25 ≤ x)
     (hP :
       P ≤
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ,
               LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re)
     (hgap : 0 < quarterPrincipalNegOneGap B x P) : (QNegOne B : ℝ) ≤ (99 / 40 : ℝ) * x := by

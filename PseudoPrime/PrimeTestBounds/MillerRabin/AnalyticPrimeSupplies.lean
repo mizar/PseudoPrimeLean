@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.Analysis.LogTaylorBounds
-public import PseudoPrime.PrimeTestBounds.MillerRabin.FourNinthsPrimeCount
+public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimePowerCountingCriteria
 
 /-! # Analytic prime supplies for repeated-product counting -/
 

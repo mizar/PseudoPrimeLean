@@ -465,7 +465,7 @@ theorem next_eq_selected {n : ℕ} (hn : 1 < n) : nextWitnessEnvelope n = nextSe
       exact_mod_cast (hN.le.trans (by norm_num only : 3000 ≤ 46000))
     have hL : Real.log n < 11 :=
       (Real.log_le_log (Nat.cast_pos.mpr (Nat.zero_lt_of_lt hn)) hcast).trans_lt
-        Analysis.log_46000_lt_eleven
+        LLS.log_46000_lt_eleven
     rw [next_eq_low (by linarith only [hL]), lowPrime_eq_selected hn]
     simp only [nextSelectedEnvelope, lowPrimeSelected, ite_eq_left hN]
   · by_cases h0 : Real.log n ≤ 553 / 50

@@ -18,13 +18,12 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 /-- Lowering both a nonnegative root floor and the residual strictly lowers the cutoff.
 Compare positive budget roots and square the resulting strict root inequality twice. -/
 theorem gaussianLowBound_lt_params {u v D E L : ℝ} (hu : 0 ≤ u) (hv : 0 ≤ v) (huv : u < v)
-    (hDE : D < E) (hC : 0 ≤ gaussianMRRefinedConductor * L + D) :
+    (hDE : D < E) (hC : 0 ≤ gaussianConductorCoeff * L + D) :
     gaussianLowBound u D L < gaussianLowBound v E L := by
   have hraw :=
     Analysis.gaussianBudgetRoot_strictMono (b := gaussianMRRefinedBeta)
       gaussianMRRefined_coefficients.1 hC
-      (by linarith only [hDE] :
-        gaussianMRRefinedConductor * L + D < gaussianMRRefinedConductor * L + E)
+      (by linarith only [hDE] : gaussianConductorCoeff * L + D < gaussianConductorCoeff * L + E)
   have hr : gaussianLowRoot u D L < gaussianLowRoot v E L :=
     max_lt (huv.trans_le (le_max_left _ _)) (hraw.trans_le (le_max_right _ _))
   have hp : 0 ≤ gaussianLowRoot u D L := hu.trans (le_max_left _ _)
@@ -36,13 +35,12 @@ theorem gaussianLowBound_lt_params {u v D E L : ℝ} (hu : 0 ≤ u) (hv : 0 ≤ 
 /-- A smaller residual strictly lowers a fixed-floor cutoff once the old root exceeds its floor.
 The raw roots compare strictly, and the displayed floor assumption excludes a shared plateau. -/
 theorem gaussianLowBound_lt_residual {u D E L : ℝ} (hu : 0 ≤ u) (hDE : D < E)
-    (hC : 0 ≤ gaussianMRRefinedConductor * L + D) (hfloor : u < gaussianLowRoot u E L) :
+    (hC : 0 ≤ gaussianConductorCoeff * L + D) (hfloor : u < gaussianLowRoot u E L) :
     gaussianLowBound u D L < gaussianLowBound u E L := by
   have hraw :=
     Analysis.gaussianBudgetRoot_strictMono (b := gaussianMRRefinedBeta)
       gaussianMRRefined_coefficients.1 hC
-      (by linarith only [hDE] :
-        gaussianMRRefinedConductor * L + D < gaussianMRRefinedConductor * L + E)
+      (by linarith only [hDE] : gaussianConductorCoeff * L + D < gaussianConductorCoeff * L + E)
   have hr : gaussianLowRoot u D L < gaussianLowRoot u E L :=
     max_lt hfloor (hraw.trans_le (le_max_right _ _))
   have hp : 0 ≤ gaussianLowRoot u D L := hu.trans (le_max_left _ _)
@@ -58,11 +56,11 @@ theorem gaussianTunedLow_lt_low {L : ℝ} (hL : 100 ≤ L) :
   have hswitch : gaussianLowSwitch (91 / 10) (93 / 10) < (100 : ℝ) := by
     norm_num only [gaussianLowSwitch, gaussianMRRefinedD, gaussianMRRefinedBeta,
       gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint,
-      gaussianMRRefinedConductor]
+      gaussianConductorCoeff]
   have hraw :
     (91 / 10 : ℝ) <
       Analysis.gaussianBudgetRoot gaussianMRRefinedD gaussianMRRefinedBeta
-        (gaussianMRRefinedConductor * L + 93 / 10) := by
+        (gaussianConductorCoeff * L + 93 / 10) := by
     apply lt_of_not_ge
     intro hr
     have hle :=
@@ -74,7 +72,7 @@ theorem gaussianTunedLow_lt_low {L : ℝ} (hL : 100 ≤ L) :
     gaussianLowBound_lt_residual (by norm_num only : (0 : ℝ) ≤ 91 / 10)
       (by norm_num only : (929 / 100 : ℝ) < 93 / 10)
       (by
-        norm_num only [gaussianMRRefinedConductor, GaussianTunedProfile.residual]
+        norm_num only [gaussianConductorCoeff, GaussianTunedProfile.residual]
         linarith only [h0])
       (hraw.trans_le (le_max_right _ _))
 
@@ -95,7 +93,7 @@ theorem gaussianTunedMiddle_lt_middle {L : ℝ} (hL : 0 ≤ L) :
       (by norm_num only : (0 : ℝ) ≤ 19 / 2) (by norm_num only : (237 / 25 : ℝ) < 19 / 2)
       (by norm_num only : (1629 / 200 : ℝ) < 163 / 20)
       (by
-        norm_num only [gaussianMRRefinedConductor, GaussianTunedProfile.residual]
+        norm_num only [gaussianConductorCoeff, GaussianTunedProfile.residual]
         linarith only [hL])
 
 /-- The new upper profile lowers both the floor and residual of the current upper. -/
@@ -106,7 +104,7 @@ theorem gaussianTunedUpper_lt_upper {L : ℝ} (hL : 0 ≤ L) :
       (by norm_num only : (0 : ℝ) ≤ 49 / 5) (by norm_num only : (979 / 100 : ℝ) < 49 / 5)
       (by norm_num only : (65 / 8 : ℝ) < 813 / 100)
       (by
-        norm_num only [gaussianMRRefinedConductor, GaussianTunedProfile.residual]
+        norm_num only [gaussianConductorCoeff, GaussianTunedProfile.residual]
         linarith only [hL])
 
 /-- The family is no larger than any one of its four certified components. -/

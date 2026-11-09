@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.Analysis.PositiveTaylorTransport
 
 public import PseudoPrime.LLS.GammaFiniteRampRows
@@ -168,7 +169,7 @@ Proof: discard zero atoms outside support, then use nonnegativity.
 There is no upper restriction on the indices or the scale. -/
 theorem gamma_ramp_finset_le_actual (s : Finset ℕ) {x : ℝ} (hx : 0 < x) (hs : ∀ m ∈ s, 0 < m) :
     (∑ m ∈ s, ArithmeticFunction.vonMangoldt m * Analysis.exponentialRampWeight ((m : ℝ) / x)) ≤
-      AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x := by
+      exponentialRampMangoldtSum x := by
   have heq :=
     Finset.sum_subset (Finset.filter_subset (fun m ↦ m ≤ ⌊x * (99 / 40 : ℝ)⌋₊) s) (f := fun m ↦
       ArithmeticFunction.vonMangoldt m * Analysis.exponentialRampWeight ((m : ℝ) / x))
@@ -196,8 +197,7 @@ theorem gamma_reserved_ramp_rows_lower_actual (rows : List GammaFiniteRampRow) (
     (hc : rows.Forall (fun r ↦ r.check (2 * a) = true))
     (hn : (rows.map GammaFiniteRampRow.index).Nodup)
     (hm : rows.Forall (fun r ↦ 0 < r.index ∧ r.index ≤ N)) :
-    (((rows.map (fun r ↦ r.reservedLower a x n)).sum : ℚ) : ℝ) ≤
-      AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x := by
+    (((rows.map (fun r ↦ r.reservedLower a x n)).sum : ℚ) : ℝ) ≤ exponentialRampMangoldtSum x := by
   exact
     (gamma_reserved_ramp_row_block_lower rows 0 N ha hax n hp hc hn hm).trans
       (gamma_ramp_finset_le_actual (Finset.Ioc 0 N) ((Rat.cast_pos (K := ℝ)).mpr (ha.trans_le hax))

@@ -19,12 +19,12 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 /-- The raw recovered-prefix root uses the residual allowance 8.14. -/
 noncomputable def gaussianRecoveredLargeRoot (L : ℝ) : ℝ :=
   Analysis.gaussianBudgetRoot gaussianMRRefinedD gaussianMRRefinedBeta
-    (gaussianMRRefinedConductor * L + 407 / 50)
+    (gaussianConductorCoeff * L + 407 / 50)
 
 /-- The recovered pole residual retains the allowance 8.14. -/
 noncomputable def gaussianRecoveredResidualV (eta : ℝ) : ℝ :=
   eta * (1839 * gaussian6FifthsEndpoint / 1000) +
-    gaussian6FifthsEndpoint * (4 - 7 * (407 / 50) / (6 * gaussianMRRefinedConductor))
+    gaussian6FifthsEndpoint * (4 - 7 * (407 / 50) / (6 * gaussianConductorCoeff))
 
 /-- The single large-index root with floor ten; no index-four root is used. -/
 noncomputable def gaussianRecoveredRoot (L : ℝ) : ℝ :=
@@ -66,9 +66,9 @@ theorem gaussianRecovered_cutoff_floor (L : ℝ) : (12000 : ℝ) ≤ gaussianRec
 inequality. Compare the maximum with the raw root and use ten*d>beta.
 No equality is asserted for the combined root. -/
 theorem gaussianRecovered_large_budget {L : ℝ} (hL : 0 ≤ L) :
-    gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * gaussianRecoveredRoot L + 407 / 50 ≤
+    gaussianConductorCoeff * L + gaussianMRRefinedBeta * gaussianRecoveredRoot L + 407 / 50 ≤
       gaussianMRRefinedD * gaussianRecoveredRadius L := by
-  have hc : 0 ≤ gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
+  have hc : 0 ≤ gaussianConductorCoeff := by norm_num only [gaussianConductorCoeff]
   have hcoef : gaussianMRRefinedBeta < gaussianMRRefinedD * gaussianRecoveredRoot L := by
     have hs :=
       mul_le_mul_of_nonneg_left (gaussianRecovered_root_ten L) gaussianMRRefined_coefficients.1.le
@@ -89,13 +89,13 @@ anchor imply a strict normalized Gaussian error cap. Retain the signed pole term
 and use the radius-100 tail estimates. This serves both index branches. -/
 theorem gaussianRecovered_error_cap {L eta eps D s : ℝ} {q : ℕ} (hs0 : 10 ≤ s)
     (hG :
-      gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s + 407 / 50 ≤
+      gaussianConductorCoeff * L + gaussianMRRefinedBeta * s + 407 / 50 ≤
         gaussianMRRefinedD * s ^ 2)
     (hq : Real.log q ≤ L) (h1 : 0 ≤ gaussian1000ResidualA eta * 10 + gaussianRecoveredResidualV eta)
     (h2 : 0 ≤ gaussian1000ResidualA eta * 10 + 2 * gaussianRecoveredResidualV eta)
     (hstrict :
       (12871 / 1000 : ℝ) - 2 * (901 / 250) +
-          7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianMRRefinedConductor) +
+          7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianConductorCoeff) +
           gaussian1000ResidualA eta / 10 +
           gaussianRecoveredResidualV eta / 100 +
           eps +
@@ -125,19 +125,17 @@ theorem gaussianRecovered_error_cap {L eta eps D s : ℝ} {q : ℕ} (hs0 : 10 �
         linarith only [hmul]
       · exact hrpos.le
     · norm_num only [gaussian6FifthsEndpoint]
-  have htail := gaussian1000_tail hr100
+  have htail := LLS.gaussian_tail_of_radius_ge_100 hr100
   have hinverse := inverse_pair_le_anchor (by norm_num only : (0 : ℝ) < 10) hs0 h1 h2
   have hid :
     eta *
           (21 * gaussian6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
             1839 * gaussian6FifthsEndpoint / (1000 * r)) +
-        (7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianMRRefinedConductor) -
-            (7 * gaussian6FifthsEndpoint * gaussianMRRefinedBeta /
-                (6 * gaussianMRRefinedConductor)) /
+        (7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianConductorCoeff) -
+            (7 * gaussian6FifthsEndpoint * gaussianMRRefinedBeta / (6 * gaussianConductorCoeff)) /
               s +
-          (gaussian6FifthsEndpoint * (4 - 7 * (407 / 50) / (6 * gaussianMRRefinedConductor))) /
-            s ^ 2) =
-      7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianMRRefinedConductor) +
+          (gaussian6FifthsEndpoint * (4 - 7 * (407 / 50) / (6 * gaussianConductorCoeff))) / s ^ 2) =
+      7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianConductorCoeff) +
         gaussian1000ResidualA eta / s +
         gaussianRecoveredResidualV eta / s ^ 2 := by
     rw [hreq]
@@ -157,15 +155,15 @@ theorem gaussianRecovered_large_checks :
       0 < gaussian1000ResidualA eta * 10 + gaussianRecoveredResidualV eta ∧
       0 < gaussian1000ResidualA eta * 10 + 2 * gaussianRecoveredResidualV eta ∧
       (12871 / 1000 : ℝ) - 2 * (901 / 250) +
-          7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianMRRefinedConductor) +
+          7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianConductorCoeff) +
           gaussian1000ResidualA eta / 10 +
           gaussianRecoveredResidualV eta / 100 +
           13 / (gaussian6FifthsIndex - 1) +
           273 / 1000 <
         407 / 50 := by
   norm_num only [gaussian1000ResidualA, gaussianRecoveredResidualV, gaussianMRRefinedD,
-    gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth,
-    gaussianMRRefinedConductor, gaussian6FifthsIndex, gaussian6FifthsEndpoint, and_self]
+    gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussianConductorCoeff,
+    gaussian6FifthsIndex, gaussian6FifthsEndpoint, and_self]
 
 /-- For L>=0, index m>=10^9 and log q<=L, the normalized error is below
 407/50. Bound the ratio and independent error by their large-index caps,
@@ -220,8 +218,8 @@ theorem gaussianRecovered_radius_linear {L : ℝ} (hL : 63 ≤ L) :
   have hG := gaussianRecovered_large_budget (by linarith only [hL] : (0 : ℝ) ≤ L)
   have hp := mul_pos gaussianMRRefined_coefficients.2 (gaussianRecovered_root_pos L)
   have hD : (0 : ℝ) < 407 / 50 := by norm_num only
-  have hcoef : 0 < gaussianMRRefinedConductor - (5 / 8 : ℝ) * gaussianMRRefinedD := by
-    norm_num only [gaussianMRRefinedConductor, gaussianMRRefinedD, gaussianMRRefinedMass,
+  have hcoef : 0 < gaussianConductorCoeff - (5 / 8 : ℝ) * gaussianMRRefinedD := by
+    norm_num only [gaussianConductorCoeff, gaussianMRRefinedD, gaussianMRRefinedMass,
       gaussian6FifthsEndpoint, gaussian6FifthsIndex]
   have hm := mul_pos hcoef (by linarith only [hL] : (0 : ℝ) < L)
   have hd := gaussianMRRefined_coefficients.1
@@ -259,8 +257,7 @@ theorem gaussianRecovered_four_checks :
     0 ≤ gaussianSingleFourA * 10 + gaussianSingleFourV (407 / 50) ∧
       0 ≤ gaussianSingleFourA * 10 + 2 * gaussianSingleFourV (407 / 50) ∧
       3 * ((12871 / 1000 : ℝ) - 2 * (901 / 250)) +
-          4 *
-            (7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianMRRefinedConductor)) +
+          4 * (7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianConductorCoeff)) +
           13 +
           1125 / 1000 +
           gaussianSingleFourA / 10 +
@@ -268,6 +265,6 @@ theorem gaussianRecovered_four_checks :
         41 := by
   norm_num only [gaussianSingleFourA, gaussianSingleFourV, gaussian6FifthsEndpoint,
     gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth,
-    gaussian6FifthsIndex, gaussianMRRefinedConductor, and_self]
+    gaussian6FifthsIndex, gaussianConductorCoeff, and_self]
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

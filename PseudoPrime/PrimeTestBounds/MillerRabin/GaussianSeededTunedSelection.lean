@@ -37,7 +37,7 @@ theorem seededTuned_raw_compare {f : Bool} {L N : ℝ} (hL : 63 ≤ L) (hN : 350
 /-- The smaller true-profile residual gives a strictly smaller raw curve at nonnegative scale. -/
 theorem seededTuned_raw_profiles_lt {L : ℝ} (hL : 0 ≤ L) :
     gaussianSeededTunedRawBound true L < gaussianSeededTunedRawBound false L := by
-  have hc : 0 ≤ gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
+  have hc : 0 ≤ gaussianConductorCoeff := by norm_num only [gaussianConductorCoeff]
   have hD : 0 ≤ gaussianSeededTunedConstant true := by
     norm_num only [gaussianSeededTunedConstant, Bool.false_eq_true, ite_false, ite_true]
   have hlt : gaussianSeededTunedConstant true < gaussianSeededTunedConstant false := by
@@ -46,7 +46,7 @@ theorem seededTuned_raw_profiles_lt {L : ℝ} (hL : 0 ≤ L) :
   have hroot :=
     Analysis.gaussianBudgetRoot_strictMono (b := gaussianMRRefinedBeta)
       gaussianMRRefined_coefficients.1 (add_nonneg (mul_nonneg hc hL) hD)
-      (add_lt_add_of_le_of_lt (le_refl (gaussianMRRefinedConductor * L)) hlt)
+      (add_lt_add_of_le_of_lt (le_refl (gaussianConductorCoeff * L)) hlt)
   change gaussianSeededTunedRawRoot true L < gaussianSeededTunedRawRoot false L at hroot
   have h2 :=
     (sq_lt_sq₀ (gaussianSeededTuned_raw_pos true L).le (gaussianSeededTuned_raw_pos false L).le).mpr

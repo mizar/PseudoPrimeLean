@@ -79,7 +79,7 @@ theorem exists_prime_conductorFree_log30000_GRH {n : ℕ} (hnOdd : Odd n) (hnCom
           (AnalyticNumberTheory.Arithmetic.commonFactorExponentialSum x ((99 / 40 : ℝ) * x) n /
             Real.sqrt x) at hc
   rw [hcut, hz, zero_div, mul_zero, add_zero] at hc
-  have hm := Analysis.nonOne_main_term_gap (show 0 < Real.log n by linarith only [hL])
+  have hm := LLS.nonOne_main_term_gap (show 0 < Real.log n by linarith only [hL])
   linarith only [hc, hm, hL]
 
 /-- Under the same odd-composite, GRH and logarithmic entrance conditions,

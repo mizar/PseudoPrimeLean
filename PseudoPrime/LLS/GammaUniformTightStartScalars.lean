@@ -30,6 +30,6 @@ theorem log_nat_gt_45561_of_decimal_19787 {n : ℕ} (hn : 10 ^ 19787 ≤ n) :
       (by exact_mod_cast hn : (10 : ℝ) ^ 19787 ≤ n)
   rw [Real.log_pow] at h
   norm_num only [Nat.cast_ofNat] at h
-  linarith only [h, Analysis.log_ten_gt_230258]
+  linarith only [h, log_ten_gt_230258]
 
 end PseudoPrime.LLS

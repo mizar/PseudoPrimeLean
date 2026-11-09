@@ -241,14 +241,14 @@ set_option maxHeartbeats 0 in
 -- The finite chain contains 209 rows with seven entries each.
 /-- The grouped update chain and sampled base row are exactly checked. -/
 theorem target028_group506_checked :
-    weightedGroupBaseCheck 76 50 500 6 target030Seed373Row14 target028Group506Base = true ∧
+    weightedGroupBaseCheck 76 50 500 6 primeSeed373Row14 target028Group506Base = true ∧
       weightedGroupRowsCheck 6 target028Group506Base target028Group506Row target028Group506Rows =
         true := by
   constructor <;> decide +kernel
 
 /-- The full 209-label weighted count at budget 506 exceeds the checked grid. -/
 theorem target028_group506_count :
-    5765473899816181 ≤ weightedPrimeCount id target030Seed1849Weights 506 := by
+    5765473899816181 ≤ weightedPrimeCount id primeSeed1849Weights 506 := by
   have h :=
     target028_group_grid_lower 50 6 (by decide) target028Group506Base target028Group506Row
       target028Group506Rows (by decide) target028_group506_checked.1 target028_group506_checked.2

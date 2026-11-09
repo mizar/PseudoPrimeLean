@@ -134,4 +134,12 @@ theorem exists_prime_neg_one_witness_of_grh
   have hmemNeg := NumberTheory.primeNegOneWitness_mem n hneg
   exact ⟨NumberTheory.primeNegOneWitness n hneg, hmemNeg.1, hmemNeg.2.1, hbound, hmemNeg.2.2⟩
 
+/-- Under GRH, every odd nonsquare has an odd-prime Jacobi witness different from one,
+bounded by `max 5 (log n)^2`. Oddness supplies positivity, so the existing pointwise
+existence theorem applies. This form exposes the witness bound without a redundant hypothesis. -/
+theorem exists_ne_one_witness_of_odd (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+    {n : ℕ} (hn : Odd n) (hns : ¬IsSquare n) :
+    ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ max 5 (Real.log (n : ℝ) ^ 2) ∧ jacobiSym n p ≠ 1 :=
+  exists_prime_ne_one_witness_of_grh hGRH hn.pos hn hns
+
 end PseudoPrime.PseudoSquare

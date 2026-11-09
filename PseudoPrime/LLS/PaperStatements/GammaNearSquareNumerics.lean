@@ -69,7 +69,7 @@ theorem nearSquare_gamma_error_budgets {L : ℝ} (hL : 1000 ≤ L) :
     linarith only [hlogX, hroot, hL]
   · rw [div_le_iff₀ hs]
     linarith only [hroot, hL]
-  · have hm := mul_le_mul_of_nonneg_right Analysis.gamma_ramp_mass_lower (Real.sqrt_nonneg x)
+  · have hm := mul_le_mul_of_nonneg_right gamma_ramp_mass_lower (Real.sqrt_nonneg x)
     nlinarith only [hm, hroot, hL]
 
 end PseudoPrime.LLS.PaperStatements

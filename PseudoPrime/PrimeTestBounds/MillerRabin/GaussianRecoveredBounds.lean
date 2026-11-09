@@ -6,12 +6,16 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalDecimalScale
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalDivisorLogBounds
 public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRecoveredRoot
 public import PseudoPrime.LLS.GammaPrefixRecovered
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMR1000WitnessBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianSingleFourNumerics
-public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRelativeTripleBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRelativePrefixWitness
+public import PseudoPrime.LLS.GaussianRelativeFour
+public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformKorseltSubgroup
 
 /-! # Actual recovered-prefix Gaussian witnesses with one budget root -/
 
@@ -127,16 +131,15 @@ theorem gaussianRecovered_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hn
     exact (div_le_iff₀ htpos).2 (by nlinarith only [hC'])
   have hroot :
     gaussianMRRefinedD * r ≥
-      gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s + (407 / 50) := by
+      gaussianConductorCoeff * L + gaussianMRRefinedBeta * s + (407 / 50) := by
     dsimp only [r, s, L]
     exact gaussianRecovered_large_budget (by linarith only [hL] : 0 ≤ Real.log n)
   have hcmp' :
     (m * (1 - h) * I - E) * r ≤
-      gaussianMRRefinedConductor * C +
-        m * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * E) +
+      gaussianConductorCoeff * C + m * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * E) +
         13 +
         t * A := by
-    simpa only [m, t, I, E, C, A, gaussianMRRefinedConductor] using hcmp
+    simpa only [m, t, I, E, C, A, gaussianConductorCoeff] using hcmp
   have hcoeff := gaussianMRRefined_index_coeffs hi
   have hD : gaussianMRRefinedD ≤ (m * gaussianMRRefinedMass - gaussian6FifthsEndpoint) / t := by
     simpa only [t] using hcoeff.1
@@ -146,7 +149,7 @@ theorem gaussianRecovered_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hn
     simpa only [t, mul_comm] using hcoeff.2.2
   have hfinish :
     gaussianMRRefinedD * r ≤
-        gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s +
+        gaussianConductorCoeff * L + gaussianMRRefinedBeta * s +
           (m / t) *
             (21 * gaussian6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
               1839 * gaussian6FifthsEndpoint / (1000 * r)) +
@@ -167,14 +170,14 @@ theorem gaussianRecovered_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hn
     rw [ht] at hbudget
     linarith only [hbudget, hroot, herr]
   exact
-    gaussian_compare_width (m := m) (t := t) (s := s) (r := r) (A := A) (L := L) (I := I) (E := E)
-      (C := C) (h := h) (M := gaussianMRRefinedMass) (Ecap := gaussian6FifthsEndpoint) (conductor :=
-      gaussianMRRefinedConductor) (D := gaussianMRRefinedD) (beta := gaussianMRRefinedBeta)
-      (by norm_num only [gaussianMRRefinedWidth])
+    LLS.gaussian_compare_width (m := m) (t := t) (s := s) (r := r) (A := A) (L := L) (I := I) (E :=
+      E) (C := C) (h := h) (M := gaussianMRRefinedMass) (Ecap := gaussian6FifthsEndpoint)
+      (conductor := gaussianConductorCoeff) (D := gaussianMRRefinedD) (beta :=
+      gaussianMRRefinedBeta) (by norm_num only [gaussianMRRefinedWidth])
       (by
         have hi' : (1000000000 : ℝ) ≤ m := by simpa only [m, gaussian6FifthsIndex] using hi
         linarith only [hi'])
-      rfl hspos rfl hh hh1 hI hE hC (by norm_num only [gaussianMRRefinedConductor]) hD hbeta hcmp'
+      rfl hspos rfl hh hh1 hI hE hC (by norm_num only [gaussianConductorCoeff]) hD hbeta hcmp'
       hfinish
 
 /-- Under GRH, an index-four pass-containing subgroup with conductor at most
@@ -229,7 +232,7 @@ theorem gaussianRecovered_witness_four {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnl
               (LLS.PaperStatements.gaussianGammaMellinKernel.transform u).re / Real.sqrt u) -
           Real.exp (1 / 16 : ℝ)) *
         ((3 / 4 : ℝ) * r) ≤
-      gaussianMRRefinedConductor * LLS.PaperStatements.subgroupConductorLogSum H +
+      gaussianConductorCoeff * LLS.PaperStatements.subgroupConductorLogSum H +
         4 *
           (1 / (10 * h) +
             ((21 / (10 * h) + 1839 / 1000) / ((3 / 4 : ℝ) * r)) * Real.exp (1 / 16 : ℝ)) +
@@ -240,14 +243,14 @@ theorem gaussianRecovered_witness_four {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnl
     LLS.gaussianRelativeFour_scalar hspos hs2 (by norm_num only : (0 : ℝ) < 3 / 4)
       (by norm_num only : (0 : ℝ) < 2 / 5) (show h = (2 / 5 : ℝ) / s from rfl) hh1
       LLS.PaperStatements.gaussianGamma_cutoff_gt_target.le Analysis.gaussian_endpoint_exp_le hC
-      (by norm_num only [gaussianMRRefinedConductor]) hcmp'
+      (by norm_num only [gaussianConductorCoeff]) hcmp'
   have hG := gaussianRecovered_large_budget (show 0 ≤ L by linarith only [hL])
   have hchecks := gaussianRecovered_four_checks
   have herror :=
     gaussianSingle_four_error hs10 hG hchecks.1 hchecks.2.1 hchecks.2.2 (le_refl (Real.log n))
   apply
     gaussianSingle_four_contradiction hs10 (by norm_num only : (407 / 50 : ℝ) ≤ 407 / 50) hG herror
-  norm_num only [gaussianMRRefinedConductor, gaussian6FifthsEndpoint,
+  norm_num only [gaussianConductorCoeff, gaussian6FifthsEndpoint,
     gaussianMRRefinedWidth] at hscalar ⊢
   simpa only [hs2, L, add_assoc] using hscalar
 

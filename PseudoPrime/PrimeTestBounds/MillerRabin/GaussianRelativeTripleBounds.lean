@@ -6,8 +6,9 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRelativePrefixWitness
 public import PseudoPrime.NumberTheory.ResidueSubgroup
-public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMR1000WitnessBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformKorseltSubgroup
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRelativeHighNumerics
 public import PseudoPrime.LLS.GaussianSeededPrefix
 
@@ -16,56 +17,6 @@ public import PseudoPrime.LLS.GaussianSeededPrefix
 @[expose] public section
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
-
-/--
-Inputs: an odd ambient modulus at least 20000, a pass-containing subgroup, GRH,
-a certified prefix, an admissible relative width and scale, and a refuted Gaussian comparison.
-Claim: some prime below the enclosing cutoff rejects strong Miller-Rabin.
-Proof: passing primes give both the divisor exclusion and subgroup containment required by
-the actual relative-prefix comparison, contradicting the supplied numerical rejection.
-Role: transports independently proved scalar budgets into actual rejecting-prime theorems.
--/
-theorem gaussianRelative_witness {n N : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarge : 20000 ≤ n)
-    (H : Subgroup (ZMod n)ˣ)
-    (hHpass :
-      ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {P h x lambda B : ℝ}
-    (hprefix : P ≤ ∑ j ∈ Finset.Ioc 0 N, Analysis.gaussianResolventMangoldtWeight j) (hh : 0 < h)
-    (hh1 : h ≤ 1 / 2) (hx : 4 ≤ x) (hl : 0 ≤ lambda) (hX : N ≤ lambda * x) (hcut : lambda * x ≤ B)
-    (hnot :
-      ¬(((H.index : ℝ) * (1 - h) *
-                (∫ u in (0 : ℝ)..lambda,
-                  (LLS.PaperStatements.gaussianGammaMellinKernel.transform u).re / Real.sqrt u) -
-              Real.exp (1 / 16 : ℝ)) *
-            Real.sqrt x ≤
-          gaussianMRRefinedConductor * LLS.PaperStatements.subgroupConductorLogSum H +
-            (H.index : ℝ) *
-              (1 / (10 * h) +
-                ((21 / (10 * h) + 1839 / 1000) / Real.sqrt x) * Real.exp (1 / 16 : ℝ)) +
-            13 +
-            ((H.index - 1 : ℕ) : ℝ) * LLS.PaperStatements.gaussianPrefixError P n x)) :
-    ∃ p : ℕ, p.Prime ∧ (p : ℝ) ≤ B ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
-  by_contra hnone
-  have hn1 : 1 < n := lt_of_lt_of_le (by decide : 1 < 20000) hnlarge
-  have hpass :
-    ∀ p : ℕ, p.Prime → (p : ℝ) ≤ lambda * x → PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
-    intro p hp hb
-    by_contra hf
-    exact hnone ⟨p, hp, hb.trans hcut, hf⟩
-  have hdiv : ∀ p : ℕ, p.Prime → p ∣ n → ⌊lambda * x⌋₊ < p := by
-    intro p hp hpdvd
-    apply lt_of_not_ge
-    intro hfloor
-    have hb : (p : ℝ) ≤ lambda * x := (Nat.le_floor_iff' hp.ne_zero).mp hfloor
-    exact PrimeTest.strongMillerRabinPass_not_of_prime_dvd hn1 hnOdd hp hpdvd (hpass p hp hb)
-  have hsmall :
-    ∀ p : ℕ, p.Prime → ¬p ∣ n → (p : ℝ) ≤ lambda * x → NumberTheory.residueInSubgroup n H p := by
-    intro p hp _ hb
-    exact hHpass _ (hpass p hp hb)
-  exact
-    hnot
-      (LLS.PaperStatements.gaussian_relative_prefix_le hprefix hnlarge H hGRH hh hh1 hx hl hX hdiv
-        hsmall)
 
 /-- Under GRH, an index-four pass-containing subgroup with conductor at most
 2 log n yields an actual rejecting prime below 0.28237(log n) squared from log n>=2e12.
@@ -121,7 +72,7 @@ theorem gaussianRefined_witness_four {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlar
               (LLS.PaperStatements.gaussianGammaMellinKernel.transform u).re / Real.sqrt u) -
           Real.exp (1 / 16 : ℝ)) *
         (1 * r) ≤
-      gaussianMRRefinedConductor * LLS.PaperStatements.subgroupConductorLogSum H +
+      gaussianConductorCoeff * LLS.PaperStatements.subgroupConductorLogSum H +
         4 * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / (1 * r)) * Real.exp (1 / 16 : ℝ)) +
         13 +
         3 * LLS.PaperStatements.gaussianPrefixError (489311 / 100000) n (r ^ 2) := by
@@ -130,10 +81,10 @@ theorem gaussianRefined_witness_four {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlar
     LLS.gaussianRelativeFour_scalar hspos hs2 (by norm_num only : (0 : ℝ) < 1)
       (by norm_num only : (0 : ℝ) < 2 / 5) (show h = (2 / 5 : ℝ) / s from rfl) hh1
       LLS.PaperStatements.gaussianGamma_cutoff_gt_target.le Analysis.gaussian_endpoint_exp_le hC
-      (by norm_num only [gaussianMRRefinedConductor]) hcmp'
+      (by norm_num only [gaussianConductorCoeff]) hcmp'
   have hA := gaussianRefinedTriple_error hL (le_refl (Real.log n))
   apply gaussianRefinedTriple_contradiction hL hroots.1 hroots.2.1 hroots.2.2.1 hroots.2.2.2 hA
-  norm_num only [one_mul, gaussianMRRefinedConductor] at hscalar ⊢
+  norm_num only [one_mul, gaussianConductorCoeff] at hscalar ⊢
   exact hscalar
 
 /-- For an odd uniform three-prime Korselt product, GRH and log n>=2e12

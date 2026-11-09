@@ -35,8 +35,7 @@ theorem exists_negOneWitness_le_qFit_negNineTenths
         jacobiSym n p = -1 := by
   obtain ⟨p, hp, ho, hb, hv⟩ := exists_prime_neg_one_witness_le_gamma_19978 hGRH hn hns hN
   have hL : 10000 ≤ Real.log n :=
-    (by norm_num only : (10000 : ℝ) ≤ 46000).trans
-      (Analysis.log_nat_gt_46000_of_decimal_19978 hN).le
+    (by norm_num only : (10000 : ℝ) ≤ 46000).trans (LLS.log_nat_gt_46000_of_decimal_19978 hN).le
   exact ⟨p, hp, ho, hb.trans (gamma_square_le_qFit_negNineTenths hL), hv⟩
 
 /-- Under GRH, an odd nonsquare n ≥ 10^19978 has an odd prime
@@ -54,8 +53,7 @@ theorem exists_prime_neg_one_witness_le_qFit_negOne
         jacobiSym n p = -1 := by
   obtain ⟨p, hp, ho, hb, hv⟩ := exists_prime_neg_one_witness_le_gamma_19978 hGRH hn hns hN
   have hL : 10000 ≤ Real.log n :=
-    (by norm_num only : (10000 : ℝ) ≤ 46000).trans
-      (Analysis.log_nat_gt_46000_of_decimal_19978 hN).le
+    (by norm_num only : (10000 : ℝ) ≤ 46000).trans (LLS.log_nat_gt_46000_of_decimal_19978 hN).le
   exact ⟨p, hp, ho, hb.trans (gamma_square_le_qFit_negOne hL), hv⟩
 
 /-- Under GRH, an odd nonsquare n ≥ 10^15639 has an odd prime
@@ -120,8 +118,7 @@ theorem QNegOne_le_qFit_negNineTenths {B : ℕ} (hB : 10 ^ 19978 ≤ B)
         2 := by
   have hb := (gamma_formula_explicit_19978 hB hGRH).2
   have hL : 10000 ≤ Real.log B :=
-    (by norm_num only : (10000 : ℝ) ≤ 46000).trans
-      (Analysis.log_nat_gt_46000_of_decimal_19978 hB).le
+    (by norm_num only : (10000 : ℝ) ≤ 46000).trans (LLS.log_nat_gt_46000_of_decimal_19978 hB).le
   exact hb.trans (gamma_square_le_qFit_negNineTenths hL)
 
 /-- Under the same GRH, odd nonsquare and decimal-start assumptions,
@@ -146,8 +143,7 @@ theorem QNegOne_le_qFit_negOne {B : ℕ} (hB : 10 ^ 19978 ≤ B)
       Analysis.affineLogarithmicRoot (Real.log B) 1 (-991489 / 250000) (6720131 / 1000000) ^ 2 := by
   have hb := (gamma_formula_explicit_19978 hB hGRH).2
   have hL : 10000 ≤ Real.log B :=
-    (by norm_num only : (10000 : ℝ) ≤ 46000).trans
-      (Analysis.log_nat_gt_46000_of_decimal_19978 hB).le
+    (by norm_num only : (10000 : ℝ) ≤ 46000).trans (LLS.log_nat_gt_46000_of_decimal_19978 hB).le
   exact hb.trans (gamma_square_le_qFit_negOne hL)
 
 /-- Under the same GRH, odd nonsquare and decimal-start assumptions,

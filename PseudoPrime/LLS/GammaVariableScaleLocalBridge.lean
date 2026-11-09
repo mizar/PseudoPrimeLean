@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.GammaVariableScaleLocalBounds
 public import PseudoPrime.LLS.GammaVariableJacobiComparison
 public import PseudoPrime.LLS.PaperStatements.GammaVariableJacobiComparison
@@ -154,7 +155,7 @@ theorem gammaJacobi_noNeg_variableScale_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSq
     (hmq : (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ q) {x b : ℝ} (hx : 2 ≤ x)
     (hb : 1 ≤ b) (hbX : b ≤ (99 / 40 : ℝ) * x)
     (hno : ∀ p : ℕ, p.Prime → Odd p → (p : ℝ) ≤ (99 / 40 : ℝ) * x → jacobiSym n p ≠ -1) :
-    2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+    2 * (exponentialRampMangoldtSum x / Real.sqrt x) -
         (∑' k : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re ≤
       gammaVariableScaleArithmeticBudget n q x b := by
   have hc :=
@@ -185,7 +186,7 @@ theorem exists_odd_prime_negative_of_variable_scale_gap {n : ℕ} {hn : Odd n} {
     (hb : 1 ≤ b) (hbX : b ≤ (99 / 40 : ℝ) * x)
     (hgap :
       gammaVariableScaleArithmeticBudget n q x b <
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ,
               PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n p = -1 := by

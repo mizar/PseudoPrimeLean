@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaReflectedPrefixBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaSharpComparison
 
@@ -199,7 +200,7 @@ theorem exists_prime_gammaReflected {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬
     have hN : (n : ℝ) ≤ 46000 := by
       exact_mod_cast ((lt_of_not_ge h).le.trans (by norm_num only : 20000 ≤ 46000))
     have hl := Real.log_le_log (Nat.cast_pos.mpr (Nat.zero_lt_of_lt hn)) hN
-    linarith only [hl, Analysis.log_46000_lt_eleven, hL]
+    linarith only [hl, LLS.log_46000_lt_eleven, hL]
   have hn9 : n ≠ 9 := by
     intro h
     rw [h] at hQ
@@ -244,9 +245,7 @@ theorem exists_prime_gammaReflected {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬
   have hmain := gammaSharpFourT_lower hGRH.riemann hr
   have hactual :
     gammaReflectedMRBudget n n (r ^ 2) 1000 <
-      (4 *
-            (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum (r ^ 2) /
-              Real.sqrt (r ^ 2)) -
+      (4 * (LLS.exponentialRampMangoldtSum (r ^ 2) / Real.sqrt (r ^ 2)) -
           (∑' k : ℕ,
               LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) (r ^ 2)
                 k).re) /
@@ -256,19 +255,5 @@ theorem exists_prime_gammaReflected {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬
   exact
     exists_prime_reflected_gap_all hn ho hc hn9 hGRH hQ hx (by norm_num only)
       (by nlinarith only [hr60]) hactual
-
-/-- Under the reflected Gamma assumptions, the least rejecting prime
-satisfies the same cutoff. Extract it from the actual all-input witness
-theorem with no squarefreeness, index or factor-count restriction. -/
-theorem exists_least_gammaReflected {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 100 ≤ Real.log n) :
-    ∃ p : ℕ,
-      p.Prime ∧
-        (p : ℝ) ≤ gammaReflectedBound (Real.log n) ∧
-        ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
-        ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
-  let : NeZero n := ⟨Nat.ne_zero_of_lt hn⟩
-  exact
-    exists_least_prime_reject_of_exists_prime_reject (exists_prime_gammaReflected hn ho hc hGRH hL)
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

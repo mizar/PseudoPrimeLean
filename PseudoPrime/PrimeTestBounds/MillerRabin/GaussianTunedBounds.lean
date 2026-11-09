@@ -6,6 +6,8 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalDecimalScale
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalDivisorLogBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianTunedProfiles
 public import PseudoPrime.LLS.GammaSeedLogMoment
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianBudgetBranches
@@ -121,7 +123,7 @@ theorem gaussianTuned_witness_four (f : GaussianTunedProfile) {n : ℕ} [NeZero 
               (LLS.PaperStatements.gaussianGammaMellinKernel.transform u).re / Real.sqrt u) -
           Real.exp (1 / 16 : ℝ)) *
         ((7559 / 10000 : ℝ) * r) ≤
-      gaussianMRRefinedConductor * LLS.PaperStatements.subgroupConductorLogSum H +
+      gaussianConductorCoeff * LLS.PaperStatements.subgroupConductorLogSum H +
         4 *
           (1 / (10 * h) +
             ((21 / (10 * h) + 1839 / 1000) / ((7559 / 10000 : ℝ) * r)) * Real.exp (1 / 16 : ℝ)) +
@@ -134,11 +136,11 @@ theorem gaussianTuned_witness_four (f : GaussianTunedProfile) {n : ℕ} [NeZero 
     LLS.gaussianRelativeFour_scalar hspos hs2 (by norm_num only : (0 : ℝ) < 7559 / 10000)
       (by norm_num only : (0 : ℝ) < 2 / 5) (show h = (2 / 5 : ℝ) / s from rfl) hh1
       LLS.PaperStatements.gaussianGamma_cutoff_gt_target.le Analysis.gaussian_endpoint_exp_le hC
-      (by norm_num only [gaussianMRRefinedConductor]) hcmp'
+      (by norm_num only [gaussianConductorCoeff]) hcmp'
   have hG := f.budget (show 0 ≤ L by linarith only [hL])
   have herror := f.four_error (f.root_floor L) hG (le_refl (Real.log n))
   have hmargin := f.four_margin (f.root_floor L)
-  norm_num only [gaussianMRRefinedConductor, gaussian6FifthsEndpoint,
+  norm_num only [gaussianConductorCoeff, gaussian6FifthsEndpoint,
     gaussianMRRefinedWidth] at hscalar hG herror hmargin
   rw [hs2] at hscalar
   dsimp only [s, r, L, GaussianTunedProfile.radius] at hscalar hG herror hmargin

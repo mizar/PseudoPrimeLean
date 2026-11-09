@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.Analysis.ExponentialRampNormBounds
 public import PseudoPrime.LLS.GammaQuadraticNoWitness
 public import PseudoPrime.LLS.PaperStatements.GeneralGammaRampComparison
@@ -132,7 +133,7 @@ consumer for paired Euler bounds and later MR subgroup comparisons. -/
 theorem gamma_ramp_no_witness_comparison_general {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
     {x : ℝ} (hx : 0 < x)
     (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ (99 / 40 : ℝ) * x → χ p = 1) :
-    2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) ≤
+    2 * (exponentialRampMangoldtSum x / Real.sqrt x) ≤
       (∑' n : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x n).re +
         (∑' n : ℕ, PaperStatements.gammaMellinKernel.summand χ.primitiveCharacter x n).re +
         gammaQuadraticLocalCorrection χ x := by

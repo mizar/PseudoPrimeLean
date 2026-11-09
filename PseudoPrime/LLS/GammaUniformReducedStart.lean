@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.GammaUniformWitnessBounds
-public import PseudoPrime.Analysis.QuadraticGammaDecimalRefinement
+public import PseudoPrime.LLS.QuadraticGammaDecimalRefinement
 public import PseudoPrime.LLS.PaperStatements.GammaUniformReducedStart
 
 /-! # A smaller uniform Gamma starting value

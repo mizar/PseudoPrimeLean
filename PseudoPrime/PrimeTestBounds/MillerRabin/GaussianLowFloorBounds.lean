@@ -6,12 +6,16 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalDecimalScale
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalDivisorLogBounds
 public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianLowProfiles
 public import PseudoPrime.LLS.GammaPrefixFine
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMR1000WitnessBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianSingleFourNumerics
-public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRelativeTripleBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRelativePrefixWitness
+public import PseudoPrime.LLS.GaussianRelativeFour
+public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformKorseltSubgroup
 
 /-! # Actual Gaussian witnesses with low profile floors -/
 
@@ -161,16 +165,15 @@ theorem gaussianLow_witness_large (f : GaussianLowProfile) {n : ℕ} [NeZero n] 
     exact (div_le_iff₀ htpos).2 (by nlinarith only [hC'])
   have hroot :
     gaussianMRRefinedD * r ≥
-      gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s + (f.residual) := by
+      gaussianConductorCoeff * L + gaussianMRRefinedBeta * s + (f.residual) := by
     dsimp only [r, s, L]
     exact f.budget (by linarith only [hL] : 0 ≤ Real.log n)
   have hcmp' :
     (m * (1 - h) * I - E) * r ≤
-      gaussianMRRefinedConductor * C +
-        m * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * E) +
+      gaussianConductorCoeff * C + m * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * E) +
         13 +
         t * A := by
-    simpa only [m, t, I, E, C, A, gaussianMRRefinedConductor] using hcmp
+    simpa only [m, t, I, E, C, A, gaussianConductorCoeff] using hcmp
   have hcoeff := gaussianMRRefined_index_coeffs hi
   have hD : gaussianMRRefinedD ≤ (m * gaussianMRRefinedMass - gaussian6FifthsEndpoint) / t := by
     simpa only [t] using hcoeff.1
@@ -180,7 +183,7 @@ theorem gaussianLow_witness_large (f : GaussianLowProfile) {n : ℕ} [NeZero n] 
     simpa only [t, mul_comm] using hcoeff.2.2
   have hfinish :
     gaussianMRRefinedD * r ≤
-        gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s +
+        gaussianConductorCoeff * L + gaussianMRRefinedBeta * s +
           (m / t) *
             (21 * gaussian6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
               1839 * gaussian6FifthsEndpoint / (1000 * r)) +
@@ -203,14 +206,14 @@ theorem gaussianLow_witness_large (f : GaussianLowProfile) {n : ℕ} [NeZero n] 
     rw [ht] at hbudget
     linarith only [hbudget, hroot, herr]
   exact
-    gaussian_compare_width (m := m) (t := t) (s := s) (r := r) (A := A) (L := L) (I := I) (E := E)
-      (C := C) (h := h) (M := gaussianMRRefinedMass) (Ecap := gaussian6FifthsEndpoint) (conductor :=
-      gaussianMRRefinedConductor) (D := gaussianMRRefinedD) (beta := gaussianMRRefinedBeta)
-      (by norm_num only [gaussianMRRefinedWidth])
+    LLS.gaussian_compare_width (m := m) (t := t) (s := s) (r := r) (A := A) (L := L) (I := I) (E :=
+      E) (C := C) (h := h) (M := gaussianMRRefinedMass) (Ecap := gaussian6FifthsEndpoint)
+      (conductor := gaussianConductorCoeff) (D := gaussianMRRefinedD) (beta :=
+      gaussianMRRefinedBeta) (by norm_num only [gaussianMRRefinedWidth])
       (by
         have hi' : (1000000000 : ℝ) ≤ m := by simpa only [m, gaussian6FifthsIndex] using hi
         linarith only [hi'])
-      rfl hspos rfl hh hh1 hI hE hC (by norm_num only [gaussianMRRefinedConductor]) hD hbeta hcmp'
+      rfl hspos rfl hh hh1 hI hE hC (by norm_num only [gaussianConductorCoeff]) hD hbeta hcmp'
       hfinish
 
 /-- Under GRH, an index-four pass-containing subgroup with conductor at most
@@ -264,7 +267,7 @@ theorem gaussianLow_witness_four (f : GaussianLowProfile) {n : ℕ} [NeZero n] (
               (LLS.PaperStatements.gaussianGammaMellinKernel.transform u).re / Real.sqrt u) -
           Real.exp (1 / 16 : ℝ)) *
         ((7559 / 10000 : ℝ) * r) ≤
-      gaussianMRRefinedConductor * LLS.PaperStatements.subgroupConductorLogSum H +
+      gaussianConductorCoeff * LLS.PaperStatements.subgroupConductorLogSum H +
         4 *
           (1 / (10 * h) +
             ((21 / (10 * h) + 1839 / 1000) / ((7559 / 10000 : ℝ) * r)) * Real.exp (1 / 16 : ℝ)) +
@@ -277,11 +280,11 @@ theorem gaussianLow_witness_four (f : GaussianLowProfile) {n : ℕ} [NeZero n] (
     LLS.gaussianRelativeFour_scalar hspos hs2 (by norm_num only : (0 : ℝ) < 7559 / 10000)
       (by norm_num only : (0 : ℝ) < 2 / 5) (show h = (2 / 5 : ℝ) / s from rfl) hh1
       LLS.PaperStatements.gaussianGamma_cutoff_gt_target.le Analysis.gaussian_endpoint_exp_le hC
-      (by norm_num only [gaussianMRRefinedConductor]) hcmp'
+      (by norm_num only [gaussianConductorCoeff]) hcmp'
   have hG := f.budget (show 0 ≤ L by linarith only [hL])
   have herror := f.four_error (f.root_floor L) hG (le_refl (Real.log n))
   have hmargin := f.four_margin (f.root_floor L)
-  norm_num only [gaussianMRRefinedConductor, gaussian6FifthsEndpoint,
+  norm_num only [gaussianConductorCoeff, gaussian6FifthsEndpoint,
     gaussianMRRefinedWidth] at hscalar hG herror hmargin
   rw [hs2] at hscalar
   dsimp only [s, r, L, GaussianLowProfile.radius] at hscalar hG herror hmargin

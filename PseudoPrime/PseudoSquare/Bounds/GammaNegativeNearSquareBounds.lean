@@ -76,7 +76,7 @@ theorem negOneWitness_cast_le_paired_nearSquare_endpoint
     have hq0 : 0 < 4 * (n : ℝ) := by linarith only [hnR]
     have hqR : 4 * (n : ℝ) ≤ 46000 := by
       exact_mod_cast (show 4 * n ≤ 46000 by linarith only [lt_of_not_ge hq])
-    have hlog := (Real.log_le_log hq0 hqR).trans Analysis.log_46000_lt_eleven.le
+    have hlog := (Real.log_le_log hq0 hqR).trans LLS.log_46000_lt_eleven.le
     have hlow :=
       Real.log_le_log (by norm_num only : (0 : ℝ) < 4) (show (4 : ℝ) ≤ 4 * n by linarith only [hnR])
     rw [show (4 : ℝ) = 2 ^ (2 : ℕ) by norm_num only, Real.log_pow] at hlow

@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.PaperStatements.TriangularDualScaleInteriorNumerics
-public import PseudoPrime.Analysis.QuadraticGammaSmoothedNumerics
+public import PseudoPrime.LLS.QuadraticGammaSmoothedNumerics
 
 /-!
 # Limitation of the ambient dual budget at the coefficient-0.283 target
@@ -39,8 +39,7 @@ theorem triangular18_dualBudget_ge_main_smallLog {L h : ℝ} (hL : 100 ≤ L) (h
     dsimp only [x]
     have hl := mul_self_le_mul_self hL0 hLupper
     nlinarith only [hl]
-  have hlog :=
-    (Real.log_le_log (zero_lt_one.trans_le hx1) hxupper).trans Analysis.log_46000_lt_eleven.le
+  have hlog := (Real.log_le_log (zero_lt_one.trans_le hx1) hxupper).trans log_46000_lt_eleven.le
   exact triangular18_dualInterior_budget_ge_main hL hh rfl (Real.log_nonneg hx1) hlog
 
 /-- At the exact anchor L=141 log(10) and every h≥4, the ambient conductor
@@ -52,8 +51,7 @@ theorem triangular18_dualBudget_ge_main_N141 {h : ℝ} (hh : 4 ≤ h) :
     let x := (283 / 1000) * L ^ 2
     h * (Real.sqrt x * (68 + 4 * Real.exp (-18))) ≤
       (h - 1) * ((72 - Real.log x) * L - 81 + (3 / 2) * Real.log x) := by
-  have hlower : (100 : ℝ) ≤ 141 * Real.log 10 := by
-    linarith only [Analysis.log_ten_gt_twenty_three_tenths]
+  have hlower : (100 : ℝ) ≤ 141 * Real.log 10 := by linarith only [log_ten_gt_twenty_three_tenths]
   have hten : Real.log (10 : ℝ) ≤ 5 / 2 := by
     have h2 := Real.log_two_lt_d9
     have h5 := Real.log_five_lt_d9

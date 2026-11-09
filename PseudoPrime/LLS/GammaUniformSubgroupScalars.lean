@@ -42,7 +42,7 @@ theorem log_div_cuberoot_le_of_ge_42875 {L : ℝ} (hL : 42875 ≤ L) :
   have ht := Real.log_le_sub_one_of_pos (div_pos hu0 (by norm_num only : (0 : ℝ) < 35))
   rw [Real.log_div hu0.ne' (by norm_num only : (35 : ℝ) ≠ 0), Real.log_rpow hL0] at ht
   rw [div_le_iff₀ hu0]
-  linarith only [hc, ha, Analysis.log_46000_lt_eleven, ht]
+  linarith only [hc, ha, log_46000_lt_eleven, ht]
 
 /-- For nonzero q and log q ≥ 42875, twice the normalized nonunit exponential
 loss at x=(32/99)(log q)^2 and cutoff (99/40)x is at most 4064/315.
@@ -62,7 +62,7 @@ theorem gamma_commonFactor_budget_of_log_ge_42875 {q : ℕ} [NeZero q] (hL : 428
     dsimp only [x]
     nlinarith only [hL, sq_nonneg (L - 42875)]
   have hcut : 1 ≤ (99 / 40 : ℝ) * x := by linarith only [hx]
-  have hroot := Analysis.ramp_scale_sqrt_lower (zero_lt_one.trans h1).le
+  have hroot := ramp_scale_sqrt_lower (zero_lt_one.trans h1).le
   have ht :=
     gamma_commonFactor_budget_of_ratio_sqrt (by norm_num only : (0 : ℝ) < 9 / 16) h1 hcut hroot
       (log_div_cuberoot_le_of_ge_42875 hL)

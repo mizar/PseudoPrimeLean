@@ -6,9 +6,11 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalDecimalScale
 public import PseudoPrime.PrimeTestBounds.MillerRabin.TriangularProfiles
 public import PseudoPrime.PrimeTestBounds.MillerRabin.TriangularRefinedBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRelativeProfileBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRelativeFixedProfiles
 public import PseudoPrime.PrimeTestBounds.MillerRabin.TriangularCoreBounds
 
 /-! # Actual rejecting primes for rational triangular profiles -/
@@ -16,24 +18,6 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.TriangularCoreBounds
 @[expose] public section
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
-
-/-- For a certified profile, q²<=10¹² n and log n>=T imply that the local
-subgroup cutoff is at most C(log n)². The logarithmic size inequality gives
-log q<(log n+28)/2; the profile's local budget controls the additive constant. -/
-theorem triangularProfile_local (f : TriangularProfile) {n q : ℕ} (hn : 0 < n) (hq : 0 < q)
-    (hsize : q ^ 2 ≤ 10 ^ 12 * n) (hL : f.T ≤ Real.log n) :
-    max (3000 : ℝ) (Real.log q ^ 2) ≤ f.C * Real.log n ^ 2 := by
-  exact triangularCore_local (triangularProfileCore f) hn hq hsize hL
-
-/-- The generic signed gap gives an actual rejecting prime in the large-index
-branch. A factor prime is nonunit; a subgroup-external prime cannot pass MR. -/
-theorem exists_prime_triangularProfileIndex (f : TriangularProfile) {n : ℕ} [NeZero n] (hn : 1 < n)
-    (ho : Odd n) (hi : 1000000000000 ≤ (PrimeTest.fermatSubgroup n).index)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : f.T ≤ Real.log n) :
-    ∃ p : ℕ,
-      p.Prime ∧
-        (p : ℝ) ≤ f.C * Real.log n ^ 2 ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
-  exact exists_prime_triangularCoreIndex (triangularProfileCore f) hn ho hi hGRH hL
 
 /-- Uniform squarefree Korselt triples satisfy each triangular profile cutoff.
 The first seven profiles use the new common relative certificate, while the
@@ -73,26 +57,11 @@ theorem exists_prime_triangularProfile (f : TriangularProfile) {n : ℕ} (hn : 1
   apply exists_prime_triangularCore (triangularProfileCore f) hn ho hc hGRH hL
   intro hsf hcard hK hU
   have h36 : 10 ^ 36 ≤ n :=
-    decimal_le_of_log_upper (Nat.zero_lt_of_lt hn)
+    pow10_le_of_log_gt (Nat.zero_lt_of_lt hn)
       (by
         norm_num only [Nat.cast_ofNat]
         linarith only [hL, f.entry])
   have hnlarge : 20000 ≤ n := (by norm_num only : 20000 ≤ 10 ^ 36).trans h36
   exact triangularProfile_triple f ho hsf hcard hK hU hnlarge hGRH hL
-
-/-- The least rejecting prime satisfies the same profile bound. Extract the
-least element from the actual all-odd-composite prime-witness theorem. -/
-theorem exists_least_triangularProfile (f : TriangularProfile) {n : ℕ} (hn : 1 < n) (ho : Odd n)
-    (hc : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : f.T ≤ Real.log n) :
-    ∃ p : ℕ,
-      p.Prime ∧
-        (p : ℝ) ≤ f.C * Real.log n ^ 2 ∧
-        ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
-        ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
-  let : NeZero n := ⟨Nat.ne_zero_of_lt hn⟩
-  exact
-    exists_least_prime_reject_of_exists_prime_reject
-      (exists_prime_triangularProfile f hn ho hc hGRH hL)
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

@@ -151,7 +151,7 @@ theorem twoPoleConstantGap_lower {q : ℕ} (hL : 800 ≤ Real.log q) {r C : ℝ}
       (2 * (∫ u in (0 : ℝ)..(99 / 40), Analysis.exponentialRampWeight u) - 1) * s :=
     mul_le_mul_of_nonneg_right
       ((by norm_num only : (831 / 1000 : ℝ) ≤ 83125234337 / 100000000000).trans
-        Analysis.gamma_ramp_mass_lower)
+        gamma_ramp_mass_lower)
       hspos.le
   dsimp only [twoPoleConstantGap, signedTwoPoleGap, signedTwoPoleUpper]
   nlinarith only [hE, hP, hPole, hLeft, hmass, hs, hL]

@@ -6,6 +6,8 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalDecimalScale
+public import PseudoPrime.PrimeTestBounds.MillerRabin.FiniteIndexClassification
 public import PseudoPrime.Analysis.TriangularRefinedNumerics
 public import PseudoPrime.PrimeTestBounds.MillerRabin.TriangularThresholdBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRelativeTripleBounds
@@ -73,7 +75,7 @@ theorem exists_prime_triangularEarlier {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc :
   by_cases hi : (PrimeTest.fermatSubgroup n).index ≤ 10 ^ 12
   · have hJ : (10 ^ 12 : ℕ) ^ 3 ≤ n := by
       have h36 : 10 ^ 36 ≤ n :=
-        decimal_le_of_log_upper (Nat.zero_lt_of_lt hn)
+        pow10_le_of_log_gt (Nat.zero_lt_of_lt hn)
           (by
             norm_num only [Nat.cast_ofNat]; linarith only [hL])
       simpa only [← pow_mul, Nat.reduceMul] using h36
@@ -88,7 +90,7 @@ theorem exists_prime_triangularEarlier {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc :
         exists_prime_witness_le_local_subgroup_envelope hn ho hq hqn K hK hpass hGRH
       exact ⟨p, hp, hb.trans (triangularEarlier_local (Nat.zero_lt_of_lt hn) hqp hsize hL), hr⟩
     · have hdecimal : 10 ^ 434782608696 ≤ n :=
-        decimal_le_of_log_upper (Nat.zero_lt_of_lt hn)
+        pow10_le_of_log_gt (Nat.zero_lt_of_lt hn)
           (by
             norm_num only [Nat.cast_ofNat]; linarith only [hL])
       obtain ⟨p, hp, hb, hr⟩ :=
@@ -96,21 +98,6 @@ theorem exists_prime_triangularEarlier {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc :
       refine ⟨p, hp, hb.trans ?_, hr⟩
       nlinarith only [sq_nonneg (Real.log n)]
   · exact exists_prime_triangularEarlierIndex hn ho (by exact_mod_cast (lt_of_not_ge hi).le) hGRH hL
-
-/-- Under the logarithmic threshold assumptions, the least rejecting prime satisfies
-the coefficient-0.284 bound. Extract it from the all-input witness theorem. -/
-theorem exists_least_triangularEarlier {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : (1100000000000 : ℝ) ≤ Real.log n) :
-    ∃ p : ℕ,
-      p.Prime ∧
-        (p : ℝ) ≤ (71 / 250 : ℝ) * Real.log n ^ 2 ∧
-        ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
-        ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
-  let : NeZero n := ⟨Nat.ne_zero_of_lt hn⟩
-  exact
-    exists_least_prime_reject_of_exists_prime_reject
-      (exists_prime_triangularEarlier hn ho hc hGRH hL)
 
 /-- For log n>=2 trillion and q^2<=10^12*n, the local subgroup envelope is below
 (28237/100000)*log(n)^2. The logarithm bound log q<((L+28)/2) is below
@@ -169,7 +156,7 @@ theorem exists_prime_triangularRefined {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc :
   by_cases hi : (PrimeTest.fermatSubgroup n).index ≤ 10 ^ 12
   · have hJ : (10 ^ 12 : ℕ) ^ 3 ≤ n := by
       have h36 : 10 ^ 36 ≤ n :=
-        decimal_le_of_log_upper (Nat.zero_lt_of_lt hn)
+        pow10_le_of_log_gt (Nat.zero_lt_of_lt hn)
           (by
             norm_num only [Nat.cast_ofNat]; linarith only [hL])
       simpa only [← pow_mul, Nat.reduceMul] using h36
@@ -188,20 +175,5 @@ theorem exists_prime_triangularRefined {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc :
         exact_mod_cast (show (20000 : ℝ) ≤ n by linarith only [hl, hL])
       exact gaussianRefined_witness_card ho ht.1 ht.2.1 ht.2.2.1 ht.2.2.2 hnlarge hGRH hL
   · exact exists_prime_triangularRefinedIndex hn ho (by exact_mod_cast (lt_of_not_ge hi).le) hGRH hL
-
-/-- Under the logarithmic threshold assumptions, the least rejecting prime satisfies
-the coefficient-0.28237 bound. Extract it from the all-input witness theorem. -/
-theorem exists_least_triangularRefined {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : (2000000000000 : ℝ) ≤ Real.log n) :
-    ∃ p : ℕ,
-      p.Prime ∧
-        (p : ℝ) ≤ (28237 / 100000 : ℝ) * Real.log n ^ 2 ∧
-        ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
-        ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
-  let : NeZero n := ⟨Nat.ne_zero_of_lt hn⟩
-  exact
-    exists_least_prime_reject_of_exists_prime_reject
-      (exists_prime_triangularRefined hn ho hc hGRH hL)
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalSubgroupBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalSubgroupEnvelope
 public import PseudoPrime.LLS.Part2FromFive
 
 /-! # Local MR log-square bounds without a fixed finite envelope -/

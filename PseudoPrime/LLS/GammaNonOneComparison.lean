@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.GammaQuadraticNoWitness
 public import PseudoPrime.LLS.PaperStatements.GammaVariableScaleBounds
 
@@ -111,7 +112,7 @@ The actual primitive conductor and both series are retained. -/
 theorem gamma_ramp_no_odd_ne_one_comparison {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
     (hquad : χ.IsQuadratic) (h2 : 2 ∣ q) {x : ℝ} (hx : 0 < x)
     (hsmall : ∀ p : ℕ, p.Prime → Odd p → (p : ℝ) ≤ (99 / 40 : ℝ) * x → χ p = 1) :
-    2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) ≤
+    2 * (exponentialRampMangoldtSum x / Real.sqrt x) ≤
       (∑' n : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x n).re +
         (∑' n : ℕ, PaperStatements.gammaMellinKernel.summand χ.primitiveCharacter x n).re +
         Real.log 2 *
@@ -135,7 +136,7 @@ theorem gamma_ramp_no_odd_ne_one_comparison_log_budget {q : ℕ} [NeZero q]
     (χ : DirichletCharacter ℂ q) (hquad : χ.IsQuadratic) (h2 : 2 ∣ q) {x : ℝ} (hx : 0 < x)
     (hcut : 1 ≤ (99 / 40 : ℝ) * x)
     (hsmall : ∀ p : ℕ, p.Prime → Odd p → (p : ℝ) ≤ (99 / 40 : ℝ) * x → χ p = 1) :
-    2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) ≤
+    2 * (exponentialRampMangoldtSum x / Real.sqrt x) ≤
       (∑' n : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x n).re +
         (∑' n : ℕ, PaperStatements.gammaMellinKernel.summand χ.primitiveCharacter x n).re +
         (Real.log ((99 / 40 : ℝ) * x) + Real.log 2) / Real.sqrt x := by
@@ -163,7 +164,7 @@ theorem exists_odd_prime_ne_one_of_gamma_ramp_gap {q : ℕ} [NeZero q] (χ : Dir
       (∑' n : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x n).re +
           (∑' n : ℕ, PaperStatements.gammaMellinKernel.summand χ.primitiveCharacter x n).re +
           (Real.log ((99 / 40 : ℝ) * x) + Real.log 2) / Real.sqrt x <
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x)) :
+        2 * (exponentialRampMangoldtSum x / Real.sqrt x)) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ χ p ≠ 1 := by
   classical
   by_contra hnone
@@ -188,7 +189,7 @@ theorem exists_odd_prime_ne_one_of_gamma_variable_budget {q : ℕ} [NeZero q] (h
             ((7 / 6 : ℝ) * Real.log q + 4) / Real.sqrt x +
             x ^ (-9 / 16 : ℝ) * ((16 / 5) * (Real.log χ.conductor + 283) + 5 / 3)) +
           (Real.log ((99 / 40 : ℝ) * x) + Real.log 2) / Real.sqrt x <
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x)) :
+        2 * (exponentialRampMangoldtSum x / Real.sqrt x)) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ χ p ≠ 1 := by
   have hnp := PaperStatements.gammaCharacterSum_re_le_variable_scale hq χ hne hGRH hx
   apply exists_odd_prime_ne_one_of_gamma_ramp_gap χ hquad h2 (zero_lt_one.trans_le hx) hcut

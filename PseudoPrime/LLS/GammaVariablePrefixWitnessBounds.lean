@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.PaperStatements.GammaVariablePrefixCharacterBounds
 public import PseudoPrime.LLS.GammaNonOneComparison
 
@@ -35,7 +36,7 @@ theorem exists_oddPrime_neOne_variablePrefix_GRH {q : ℕ} [NeZero q] (hq : 2000
             ((7 / 6 : ℝ) * Real.log q + 4) / Real.sqrt x +
             x ^ (-9 / 16 : ℝ) * ((16 / 5) * (Real.log χ.conductor + 283) + 5 / 3)) +
           (Real.log ((99 / 40 : ℝ) * x) + Real.log 2) / Real.sqrt x <
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x)) :
+        2 * (exponentialRampMangoldtSum x / Real.sqrt x)) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ χ p ≠ 1 := by
   have hnp :=
     PaperStatements.gammaCharacterSum_re_le_variable_prefix_scale hq χ hne hGRH hx prefixLen hC

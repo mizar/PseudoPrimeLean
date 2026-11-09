@@ -29,7 +29,7 @@ noncomputable def gaussianRecoveredSeededSwitch (f : Bool) (N : ℝ) : ℝ :=
   (gaussianMRRefinedD * Real.sqrt ((5 / 6) * N) -
       gaussianMRRefinedBeta * Real.sqrt (Real.sqrt ((5 / 6) * N)) -
       gaussianRecoveredSeededConstant f) /
-    gaussianMRRefinedConductor
+    gaussianConductorCoeff
 
 /-- For N>=35000, the fourth-root floor sqrt(sqrt(5N/6)) is at least thirteen.
 Square twice using the rational lower bound on N. -/
@@ -55,7 +55,7 @@ theorem gaussianRecoveredSeeded_raw_root_compare {f : Bool} {L N : ℝ} (hL : 0 
   have hy : (13 : ℝ) ≤ y := gaussianRecoveredSeeded_floor_thirteen hN
   have ht : 0 < t := gaussianRecoveredSeeded_raw_pos f L
   have hd := gaussianMRRefined_coefficients.1
-  have hc : 0 < gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
+  have hc : 0 < gaussianConductorCoeff := by norm_num only [gaussianConductorCoeff]
   have hb : gaussianMRRefinedBeta < 13 * gaussianMRRefinedD := by
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
       gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint]
@@ -66,12 +66,12 @@ theorem gaussianRecoveredSeeded_raw_root_compare {f : Bool} {L N : ℝ} (hL : 0 
   have he := gaussianRecoveredSeeded_raw_equation f hL
   change
     gaussianMRRefinedD * t ^ 2 =
-      gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * t +
+      gaussianConductorCoeff * L + gaussianMRRefinedBeta * t +
         gaussianRecoveredSeededConstant f at he
   have hsq : y ^ 2 = Real.sqrt ((5 / 6) * N) := Real.sq_sqrt (Real.sqrt_nonneg _)
   have hid :
     (y - t) * (gaussianMRRefinedD * (y + t) - gaussianMRRefinedBeta) =
-      gaussianMRRefinedConductor * (gaussianRecoveredSeededSwitch f N - L) := by
+      gaussianConductorCoeff * (gaussianRecoveredSeededSwitch f N - L) := by
     rw [gaussianRecoveredSeededSwitch]
     conv_rhs =>
       rw [mul_sub, mul_div_cancel₀ _ hc.ne', ← hsq,
@@ -79,11 +79,11 @@ theorem gaussianRecoveredSeeded_raw_root_compare {f : Bool} {L N : ℝ} (hL : 0 
     change
       (y - t) * (gaussianMRRefinedD * (y + t) - gaussianMRRefinedBeta) =
         gaussianMRRefinedD * y ^ 2 - gaussianMRRefinedBeta * y - gaussianRecoveredSeededConstant f -
-          gaussianMRRefinedConductor * L
+          gaussianConductorCoeff * L
     nlinarith only [he]
   have hneg :
     (t - y) * (gaussianMRRefinedD * (y + t) - gaussianMRRefinedBeta) =
-      gaussianMRRefinedConductor * (L - gaussianRecoveredSeededSwitch f N) := by
+      gaussianConductorCoeff * (L - gaussianRecoveredSeededSwitch f N) := by
     linarith only [hid]
   constructor
   · have hi : (t ≤ y) ↔ 0 ≤ (y - t) * (gaussianMRRefinedD * (y + t) - gaussianMRRefinedBeta) := by
@@ -143,12 +143,12 @@ Strict square-root monotonicity gives the comparison. -/
 theorem gaussianRecoveredSeeded_raw_profiles_lt {L : ℝ} (hL : 0 ≤ L) :
     gaussianRecoveredSeededRawRoot true L < gaussianRecoveredSeededRawRoot false L := by
   have hd := gaussianMRRefined_coefficients.1
-  have hc : 0 ≤ gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
+  have hc : 0 ≤ gaussianConductorCoeff := by norm_num only [gaussianConductorCoeff]
   have hdisc :
     0 ≤
       gaussianMRRefinedBeta ^ 2 +
         4 * gaussianMRRefinedD *
-          (gaussianMRRefinedConductor * L + gaussianRecoveredSeededConstant true) :=
+          (gaussianConductorCoeff * L + gaussianRecoveredSeededConstant true) :=
     add_nonneg (sq_nonneg _)
       (mul_nonneg (mul_nonneg (by norm_num only) hd.le)
         (add_nonneg (mul_nonneg hc hL) (gaussianRecoveredSeeded_constant_pos true).le))
@@ -158,10 +158,10 @@ theorem gaussianRecoveredSeeded_raw_profiles_lt {L : ℝ} (hL : 0 ≤ L) :
   have hrad :
     gaussianMRRefinedBeta ^ 2 +
         4 * gaussianMRRefinedD *
-          (gaussianMRRefinedConductor * L + gaussianRecoveredSeededConstant true) <
+          (gaussianConductorCoeff * L + gaussianRecoveredSeededConstant true) <
       gaussianMRRefinedBeta ^ 2 +
         4 * gaussianMRRefinedD *
-          (gaussianMRRefinedConductor * L + gaussianRecoveredSeededConstant false) := by
+          (gaussianConductorCoeff * L + gaussianRecoveredSeededConstant false) := by
     linarith only [hmul]
   have hs := Real.sqrt_lt_sqrt hdisc hrad
   change
@@ -186,7 +186,7 @@ Rational square-root enclosures prove this interval, without sampled crossing va
 theorem gaussianRecoveredSeeded_switch35_bounds :
     (240 : ℝ) < gaussianRecoveredSeededSwitch false 35000 ∧
       gaussianRecoveredSeededSwitch false 35000 < 242 := by
-  have hc : 0 < gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
+  have hc : 0 < gaussianConductorCoeff := by norm_num only [gaussianConductorCoeff]
   have hRlo : (8539 / 50 : ℝ) ≤ Real.sqrt ((5 / 6 : ℝ) * 35000) :=
     (Real.le_sqrt (by norm_num only) (by norm_num only)).mpr (by norm_num only)
   have hRhi : Real.sqrt ((5 / 6 : ℝ) * 35000) ≤ (17079 / 100 : ℝ) :=
@@ -199,13 +199,13 @@ theorem gaussianRecoveredSeeded_switch35_bounds :
   dsimp only [gaussianRecoveredSeededSwitch]
   constructor
   · apply (lt_div_iff₀ hc).mpr
-    norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
+    norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianConductorCoeff,
       gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsEndpoint, gaussian6FifthsIndex,
       gaussianRecoveredSeededConstant, Bool.false_eq_true, ite_false,
       ite_true] at hRlo hRhi hSlo hShi ⊢
     linarith only [hRlo, hShi]
   · apply (div_lt_iff₀ hc).mpr
-    norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
+    norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianConductorCoeff,
       gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsEndpoint, gaussian6FifthsIndex,
       gaussianRecoveredSeededConstant, Bool.false_eq_true, ite_false,
       ite_true] at hRlo hRhi hSlo hShi ⊢
@@ -217,7 +217,7 @@ residual constants, certify the complete parameter cases. -/
 theorem gaussianRecoveredSeeded_switch50_bounds (f : Bool) :
     (293 : ℝ) < gaussianRecoveredSeededSwitch f 50000 ∧
       gaussianRecoveredSeededSwitch f 50000 < 295 := by
-  have hc : 0 < gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
+  have hc : 0 < gaussianConductorCoeff := by norm_num only [gaussianConductorCoeff]
   have hDlo : (136 / 25 : ℝ) ≤ gaussianRecoveredSeededConstant f := by
     cases f <;>
       norm_num only [gaussianRecoveredSeededConstant, Bool.false_eq_true, ite_false, ite_true]
@@ -237,12 +237,12 @@ theorem gaussianRecoveredSeeded_switch50_bounds (f : Bool) :
   dsimp only [gaussianRecoveredSeededSwitch]
   constructor
   · apply (lt_div_iff₀ hc).mpr
-    norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
+    norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianConductorCoeff,
       gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsEndpoint,
       gaussian6FifthsIndex] at hRlo hRhi hSlo hShi ⊢
     linarith only [hRlo, hShi, hDhi]
   · apply (div_lt_iff₀ hc).mpr
-    norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
+    norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianConductorCoeff,
       gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsEndpoint,
       gaussian6FifthsIndex] at hRlo hRhi hSlo hShi ⊢
     linarith only [hRhi, hSlo, hDlo]
@@ -259,7 +259,7 @@ theorem gaussianRecoveredSeeded_switch_order :
   · dsimp only [gaussianRecoveredSeededSwitch]
     apply
       (div_lt_div_iff_of_pos_right
-          (by norm_num only [gaussianMRRefinedConductor] : 0 < gaussianMRRefinedConductor)).mpr
+          (by norm_num only [gaussianConductorCoeff] : 0 < gaussianConductorCoeff)).mpr
     norm_num only [gaussianRecoveredSeededConstant, Bool.false_eq_true, ite_false, ite_true]
     linarith only
 
@@ -357,11 +357,10 @@ theorem gaussianRecoveredSeeded_raw_shift (f : Bool) (L : ℝ) :
     gaussianRecoveredSeededRawRoot f L =
       gaussianSeededRawRoot f (L - gaussianRecoveredSeededShift) := by
   have he :
-    gaussianMRRefinedConductor * L + gaussianRecoveredSeededConstant f =
-      gaussianMRRefinedConductor * (L - gaussianRecoveredSeededShift) +
-        gaussianSeededConstant f := by
+    gaussianConductorCoeff * L + gaussianRecoveredSeededConstant f =
+      gaussianConductorCoeff * (L - gaussianRecoveredSeededShift) + gaussianSeededConstant f := by
     rw [gaussianRecoveredSeeded_constant_shift]
-    norm_num only [gaussianMRRefinedConductor, gaussianRecoveredSeededShift]
+    norm_num only [gaussianConductorCoeff, gaussianRecoveredSeededShift]
     ring
   rw [gaussianRecoveredSeededRawRoot, gaussianSeededRawRoot, he]
 
@@ -392,7 +391,7 @@ theorem gaussianRecoveredSeeded_switch_shift (f : Bool) (N : ℝ) :
     gaussianRecoveredSeededSwitch f N =
       gaussianSeededSwitch f N + gaussianRecoveredSeededShift := by
   rw [gaussianRecoveredSeededSwitch, gaussianSeededSwitch, gaussianRecoveredSeeded_constant_shift]
-  norm_num only [gaussianMRRefinedConductor, gaussianRecoveredSeededShift]
+  norm_num only [gaussianConductorCoeff, gaussianRecoveredSeededShift]
   ring
 
 /-- The recovered four-piece selected function is the horizontally shifted baseline
@@ -415,10 +414,9 @@ theorem gaussianRecoveredSeeded_raw_le_old (f : Bool) (L : ℝ) :
   have hrad := mul_le_mul_of_nonneg_left hconst (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 4) hd.le)
   have hrad' :
     gaussianMRRefinedBeta ^ 2 +
-        4 * gaussianMRRefinedD *
-          (gaussianMRRefinedConductor * L + gaussianRecoveredSeededConstant f) ≤
+        4 * gaussianMRRefinedD * (gaussianConductorCoeff * L + gaussianRecoveredSeededConstant f) ≤
       gaussianMRRefinedBeta ^ 2 +
-        4 * gaussianMRRefinedD * (gaussianMRRefinedConductor * L + gaussianSeededConstant f) := by
+        4 * gaussianMRRefinedD * (gaussianConductorCoeff * L + gaussianSeededConstant f) := by
     linarith only [hrad]
   have hroot := add_le_add_left (Real.sqrt_le_sqrt hrad') gaussianMRRefinedBeta
   exact
@@ -443,12 +441,11 @@ its baseline counterpart. The discriminants differ by the positive residual decr
 theorem gaussianRecoveredSeeded_raw_lt_old (f : Bool) {L : ℝ} (hL : 0 ≤ L) :
     gaussianRecoveredSeededRawBound f L < gaussianSeededRawBound f L := by
   have hd := gaussianMRRefined_coefficients.1
-  have hc : 0 ≤ gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
+  have hc : 0 ≤ gaussianConductorCoeff := by norm_num only [gaussianConductorCoeff]
   have hdisc :
     0 ≤
       gaussianMRRefinedBeta ^ 2 +
-        4 * gaussianMRRefinedD *
-          (gaussianMRRefinedConductor * L + gaussianRecoveredSeededConstant f) :=
+        4 * gaussianMRRefinedD * (gaussianConductorCoeff * L + gaussianRecoveredSeededConstant f) :=
     add_nonneg (sq_nonneg _)
       (mul_nonneg (mul_nonneg (by norm_num only) hd.le)
         (add_nonneg (mul_nonneg hc hL) (gaussianRecoveredSeeded_constant_pos f).le))
@@ -458,10 +455,9 @@ theorem gaussianRecoveredSeeded_raw_lt_old (f : Bool) {L : ℝ} (hL : 0 ≤ L) :
   have hmul := mul_lt_mul_of_pos_left hconst (mul_pos (by norm_num only : (0 : ℝ) < 4) hd)
   have hdisc' :
     gaussianMRRefinedBeta ^ 2 +
-        4 * gaussianMRRefinedD *
-          (gaussianMRRefinedConductor * L + gaussianRecoveredSeededConstant f) <
+        4 * gaussianMRRefinedD * (gaussianConductorCoeff * L + gaussianRecoveredSeededConstant f) <
       gaussianMRRefinedBeta ^ 2 +
-        4 * gaussianMRRefinedD * (gaussianMRRefinedConductor * L + gaussianSeededConstant f) := by
+        4 * gaussianMRRefinedD * (gaussianConductorCoeff * L + gaussianSeededConstant f) := by
     linarith only [hmul]
   have hs := add_lt_add_left (Real.sqrt_lt_sqrt hdisc hdisc') gaussianMRRefinedBeta
   have hr : gaussianRecoveredSeededRawRoot f L < gaussianSeededRawRoot f L :=

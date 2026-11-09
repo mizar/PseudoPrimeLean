@@ -25,7 +25,7 @@ theorem gaussian1000_large_anchor {L : ℝ} (hL : 132 ≤ L) : (10 : ℝ) < gaus
   have ht : gaussian1000LargeRoot L ≤ 10 := le_of_not_gt hn
   have hs : gaussian1000LargeRoot L ^ 2 ≤ 10 * gaussian1000LargeRoot L := by
     nlinarith only [mul_nonneg hp.le (sub_nonneg.mpr ht)]
-  norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
+  norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianConductorCoeff,
     gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsIndex,
     gaussian6FifthsEndpoint] at he
   nlinarith only [he, hs, ht, hL]
@@ -40,7 +40,7 @@ theorem gaussian1000_four_anchor {L : ℝ} (hL : 132 ≤ L) :
   have ht : gaussian1000FourRoot L ≤ 52 / 5 := le_of_not_gt hn
   have hs : gaussian1000FourRoot L ^ 2 ≤ (52 / 5 : ℝ) * gaussian1000FourRoot L := by
     nlinarith only [mul_nonneg hp.le (sub_nonneg.mpr ht)]
-  norm_num only [gaussian1000FourD, gaussian1000FourBeta, gaussianMRRefinedConductor,
+  norm_num only [gaussian1000FourD, gaussian1000FourBeta, gaussianConductorCoeff,
     gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsEndpoint] at he
   nlinarith only [he, hs, ht, hL]
 
@@ -52,7 +52,7 @@ theorem gaussian1000_large_square_upper {L : ℝ} (hL : 132 ≤ L) :
   have hp := gaussian1000_large_pos L
   have he := gaussian1000_large_equation (by linarith only [hL] : (0 : ℝ) ≤ L)
   have hprod := mul_nonneg (by linarith only [ht] : 0 ≤ gaussian1000LargeRoot L - 10) hp.le
-  norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
+  norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianConductorCoeff,
     gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsIndex,
     gaussian6FifthsEndpoint] at he
   nlinarith only [he, hprod, hL]
@@ -65,7 +65,7 @@ theorem gaussian1000_four_square_upper {L : ℝ} (hL : 132 ≤ L) :
   have hp := gaussian1000_four_pos L
   have he := gaussian1000_four_equation (by linarith only [hL] : (0 : ℝ) ≤ L)
   have hprod := mul_nonneg (by linarith only [ht] : 0 ≤ gaussian1000FourRoot L - 52 / 5) hp.le
-  norm_num only [gaussian1000FourD, gaussian1000FourBeta, gaussianMRRefinedConductor,
+  norm_num only [gaussian1000FourD, gaussian1000FourBeta, gaussianConductorCoeff,
     gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsEndpoint] at he
   nlinarith only [he, hprod, hL]
 
@@ -97,7 +97,7 @@ Both raw roots are at most 653/50 by exact budget certificates, and the
 rescaled fourth power of this anchor is strictly below the fixed bound. -/
 theorem gaussian1000_lt_fixed {L : ℝ} (hL : 0 ≤ L) (hU : L ≤ 235) :
     gaussian1000Bound L < 35000 := by
-  have hc : 0 ≤ gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
+  have hc : 0 ≤ gaussianConductorCoeff := by norm_num only [gaussianConductorCoeff]
   have hlarge : gaussian1000LargeRoot L ≤ (653 / 50 : ℝ) := by
     apply
       Analysis.gaussianBudgetRoot_le_of_budget gaussianMRRefined_coefficients.1
@@ -107,7 +107,7 @@ theorem gaussian1000_lt_fixed {L : ℝ} (hL : 0 ≤ L) (hU : L ≤ 235) :
         gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint]
     · norm_num only [gaussianMRRefinedBeta, gaussianMRRefinedD, gaussianMRRefinedMass,
         gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint,
-        gaussianMRRefinedConductor]
+        gaussianConductorCoeff]
       linarith only [hU]
   have hfour : gaussian1000FourRoot L ≤ (653 / 50 : ℝ) := by
     apply
@@ -118,7 +118,7 @@ theorem gaussian1000_lt_fixed {L : ℝ} (hL : 0 ≤ L) (hU : L ≤ 235) :
     · norm_num only [gaussian1000FourBeta, gaussian1000FourD, gaussianMRRefinedMass,
         gaussianMRRefinedWidth, gaussian6FifthsEndpoint]
     · norm_num only [gaussian1000FourBeta, gaussian1000FourD, gaussianMRRefinedMass,
-        gaussianMRRefinedWidth, gaussian6FifthsEndpoint, gaussianMRRefinedConductor]
+        gaussianMRRefinedWidth, gaussian6FifthsEndpoint, gaussianConductorCoeff]
       linarith only [hU]
   have hs : gaussian1000Root L ≤ (653 / 50 : ℝ) := max_le (by norm_num only) (max_le hlarge hfour)
   have hs2 := (sq_le_sq₀ (gaussian1000_root_pos L).le (by norm_num only)).mpr hs

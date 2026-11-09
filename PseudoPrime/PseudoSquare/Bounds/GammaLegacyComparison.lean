@@ -9,7 +9,7 @@ module
 public import PseudoPrime.PseudoSquare.Bounds.GammaCommonBounds
 public import PseudoPrime.PseudoSquare.Bounds.FourPoleLegacyComparison
 public import PseudoPrime.Analysis.ExplicitLogSqrtAbsorption
-public import PseudoPrime.Analysis.QuadraticGammaSmoothedNumerics
+public import PseudoPrime.LLS.QuadraticGammaSmoothedNumerics
 
 /-! # Whole-minimum winning intervals for the three common-scale Gamma candidates
 
@@ -181,7 +181,7 @@ Proof: use the established rational lower bound for log ten.
 Role: justify the inactive Gamma guard in the complete former negative minimum. -/
 theorem negative_window_before_decimal {B : ℕ} (hU : Real.log B ≤ 45000) :
     Real.log B < (19978 : ℝ) * Real.log 10 := by
-  linarith only [hU, Analysis.log_ten_gt_twenty_three_tenths]
+  linarith only [hU, LLS.log_ten_gt_twenty_three_tenths]
 
 /-- The mixed common-scale candidate strictly improves the complete former negative minimum.
 Input: an endpoint logarithm between 289 and 289.5. Claim: all earlier active branches lose.

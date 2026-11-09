@@ -6,9 +6,12 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalDecimalScale
 public import PseudoPrime.PrimeTestBounds.MillerRabin.TriangularCore
-public import PseudoPrime.PrimeTestBounds.MillerRabin.TriangularRefinedBounds
-public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRelativeProfileBounds
+public import PseudoPrime.LLS.PaperStatements.TriangularSignedLargeFactorComparison
+public import PseudoPrime.PrimeTestBounds.MillerRabin.FiniteIndexStructure
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalSubgroupEnvelope
+public import PseudoPrime.LLS.DecimalLogBounds
 
 /-! # Local and large-index witnesses from triangular analytic budgets -/
 
@@ -80,7 +83,7 @@ theorem exists_prime_triangularCore (f : TriangularCore) {n : ℕ} (hn : 1 < n) 
   let : NeZero n := ⟨Nat.ne_zero_of_lt hn⟩
   by_cases hi : (PrimeTest.fermatSubgroup n).index ≤ 10 ^ 12
   · have h36 : 10 ^ 36 ≤ n :=
-      decimal_le_of_log_upper (Nat.zero_lt_of_lt hn)
+      pow10_le_of_log_gt (Nat.zero_lt_of_lt hn)
         (by
           norm_num only [Nat.cast_ofNat]; linarith only [hL, f.entry])
     have hJ : (10 ^ 12 : ℕ) ^ 3 ≤ n := by simpa only [← pow_mul, Nat.reduceMul] using h36

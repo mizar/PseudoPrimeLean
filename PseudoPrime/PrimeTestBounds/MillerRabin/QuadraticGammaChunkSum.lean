@@ -6,7 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.QuadraticGammaUpperRows
+public import Mathlib.Algebra.BigOperators.Group.List.Basic
+public import Mathlib.Data.Rat.Defs
 
 /-! # List partition for principal Gamma upper certificates -/
 

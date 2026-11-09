@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.Phase64Ramified1700Bounds
 public import PseudoPrime.LLS.Phase64TransportedNumericalBudget
 
@@ -78,7 +79,7 @@ theorem exists_oddPrime_negJacobi_transport1700_GRH {n : ℕ} {hn : Odd n} {hns 
     (hLhi : L ≤ 64001 / 1000) (δ : ℚ) (hd : |Real.log x - Real.log (L ^ 2 / (99 / 40))| ≤ (δ : ℝ))
     (hgap :
       phase64TransportedNumericalBudget n q x δ <
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ,
               PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n p = -1 := by

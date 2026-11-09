@@ -7,7 +7,8 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalFactorEnvelope
-public import PseudoPrime.PrimeTestBounds.MillerRabin.FourNinthsSemiprimeBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.SemiprimeLogKernel
+public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimePowerCountingCriteria
 
 /-! # Semiprime witnesses from local bounds and repeated-prime products -/
 

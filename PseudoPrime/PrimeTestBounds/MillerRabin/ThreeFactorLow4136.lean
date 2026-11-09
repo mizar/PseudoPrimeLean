@@ -7,6 +7,8 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.LowExponential4136
+public import PseudoPrime.NumberTheory.PrimeFactorLogMean
+public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
 
 /-! # Low-range three-factor witness from a prime divisor -/
 

@@ -131,7 +131,7 @@ theorem midscale_eq_selected {n : ℕ} (hn : 1 < n) :
     have hN : (n : ℝ) ≤ 46000 := by exact_mod_cast (h.le.trans (by norm_num only))
     exact
       (Real.log_le_log (Nat.cast_pos.mpr (Nat.zero_lt_of_lt hn)) hN).trans_lt
-        Analysis.log_46000_lt_eleven
+        LLS.log_46000_lt_eleven
   by_cases h2 : n < 2047
   · have h3 : n < 3000 := h2.trans (by norm_num only)
     have hL := hsmall h3

@@ -7,7 +7,8 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028Cumulative
-public import PseudoPrime.PrimeTestBounds.MillerRabin.JointSurplusCumulative
+public import PseudoPrime.PrimeTestBounds.MillerRabin.SmallPointwiseBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeCutoff
 
 /-! # Pointwise and cumulative selections with the 0.28 bound -/
 
@@ -15,18 +16,19 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.JointSurplusCumulative
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
-/-- Intersect the existing pointwise selection with the global 0.28
-maximum bound. This retains every previous pointwise improvement. -/
+/-- Use the finite interval bound below 3000 and the global 0.28 maximum
+bound otherwise. This preserves the verified small-input cutoff. -/
 noncomputable def target028Selected (n : ℕ) : ℝ :=
-  min (jointSelected n) (max 2 ((7 / 25 : ℝ) * Real.log n ^ 2))
+  if n < 3000 then smallIntervalBound n else max 2 ((7 / 25 : ℝ) * Real.log n ^ 2)
 
-/-- Intersect the existing cumulative envelope with the global 0.28
-maximum bound. This retains the previous cumulative history. -/
+/-- The global 0.28 maximum cutoff at the natural endpoint `N`, used as
+a cumulative bound for least rejecting primes. -/
 noncomputable def target028Cumulative (N : ℕ) : ℝ :=
-  min (jointCumulative N) (max 2 ((7 / 25 : ℝ) * Real.log N ^ 2))
+  max 2 ((7 / 25 : ℝ) * Real.log N ^ 2)
 
-/-- Under GRH, the new selection bounds the least rejecting prime for every odd
-composite above one. Combine the old selection and the global actual witness. -/
+/-- Under GRH, the selection bounds the least rejecting prime for every odd
+composite above one. Use the finite small-input certificate below 3000 and
+the global 0.28 witness otherwise. -/
 theorem target028Selected_least {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
     ∃ p : ℕ,
@@ -34,18 +36,23 @@ theorem target028Selected_least {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Pr
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
         (p : ℝ) ≤ target028Selected n ∧
         ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
-  obtain ⟨p, hp, hr, hb, hm⟩ := jointSelected_least hn ho hc hGRH
-  obtain ⟨q, hq, hqb, hqr⟩ := exists_prime_reject_028_global hGRH hn ho hc
-  refine ⟨p, hp, hr, ?_, hm⟩
-  change (p : ℝ) ≤ min (jointSelected n) (max 2 ((7 / 25 : ℝ) * Real.log n ^ 2))
-  exact le_min hb ((Nat.cast_le.mpr (hm q hq hqr)).trans hqb)
+  by_cases hN : n < 3000
+  · obtain ⟨p, hp, hb, hr, hm⟩ := exists_least_smallInterval hn ho hc hN
+    exact ⟨p, hp, hr, by simpa only [target028Selected, ite_eq_left hN] using hb, hm⟩
+  · have hs := compositeLeastPrime_spec hGRH hn ho hc
+    obtain ⟨q, hq, hqb, hqf⟩ := exists_prime_reject_028_global hGRH hn ho hc
+    exact
+      ⟨compositeLeastPrime n, hs.1, hs.2.1, by
+        simpa only [target028Selected, ite_eq_right hN] using
+          (Nat.cast_le.mpr (hs.2.2 q hq hqf)).trans hqb,
+        hs.2.2⟩
 
-/-- Under GRH, the new cumulative selection bounds the cumulative least prime
-at every natural endpoint. Combine the two certified cumulative bounds. -/
+/-- Under GRH, the cumulative least prime at every natural endpoint is
+bounded by the global 0.28 maximum cutoff. -/
 theorem cumulativeLeastPrime_le_target028
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (N : ℕ) :
     (cumulativeLeastPrime N : ℝ) ≤ target028Cumulative N := by
-  exact le_min (cumulativeLeastPrime_le_joint hGRH N) (cumulativeLeastPrime_le_028 hGRH N)
+  exact cumulativeLeastPrime_le_028 hGRH N
 
 /-- Round the new pointwise cutoff down to the greatest prime it admits.
 The selected least rejecting prime remains within this rounded cutoff. -/
@@ -64,22 +71,13 @@ theorem target028Prime_least {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime
   obtain ⟨p, hp, hr, hb, hm⟩ := target028Selected_least hn ho hc hGRH
   exact ⟨p, hp, hr, prime_le_primeRound hp hb, hm⟩
 
-/-- The selected and rounded cutoffs both remain three on the entire interval
-from 2047 to 2999. The certified logarithm bound makes the new max cutoff
-at least three, so the previous small-input value is preserved. -/
+/-- The selected and rounded cutoffs both equal three on the interval from
+2047 to 2999. The finite interval cutoff has this value, and prime rounding
+preserves the prime three. -/
 theorem target028_small_three {n : ℕ} (hl : 2047 ≤ n) (hu : n < 3000) :
     target028Selected n = 3 ∧ target028Prime n = 3 := by
-  have hlog2047 :=
-    (Analysis.rationalLogIntervalCheck_sound
-        (show Analysis.rationalLogIntervalCheck 2047 11 12 7 8 = true by decide +kernel)).1
-  norm_num only [Rat.cast_ofNat] at hlog2047
-  have ht := Real.log_le_log (by norm_num only : (0 : ℝ) < 2047) (Nat.cast_le.mpr hl)
-  have h7 : (7 : ℝ) ≤ Real.log n := hlog2047.trans ht
-  have hs7 := pow_le_pow_left₀ (by norm_num only : (0 : ℝ) ≤ 7) h7 2
-  have hb : (3 : ℝ) ≤ max 2 ((7 / 25 : ℝ) * Real.log n ^ 2) :=
-    (show (3 : ℝ) ≤ (7 / 25 : ℝ) * Real.log n ^ 2 by nlinarith only [hs7]).trans (le_max_right _ _)
   have he : target028Selected n = 3 := by
-    rw [target028Selected, (joint_small hl hu).1, min_eq_left hb]
+    rw [target028Selected, ite_eq_left hu, smallIntervalBound, ite_eq_right (not_lt.mpr hl)]
   constructor
   · exact he
   · change primeRound (target028Selected n) = 3

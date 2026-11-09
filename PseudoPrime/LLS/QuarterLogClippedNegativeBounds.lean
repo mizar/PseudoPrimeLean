@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.FixedRampAnchor128Bounds
 public import PseudoPrime.LLS.ClippedAffineWitnessBounds
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.QuarterLogPrimeFactorBounds
@@ -132,7 +133,7 @@ theorem exists_prime_neg_one_of_principalLower_anchor128 {q A : ℕ} [NeZero q]
     (hb : 128 ≤ b) (hcut : b ≤ (99 / 40 : ℝ) * x)
     (hP :
       P ≤
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re)
     (hC : AnalyticNumberTheory.DirichletLFunction.twoPoleGammaConstant χ.primitiveCharacter ≤ C)
     (hgap :

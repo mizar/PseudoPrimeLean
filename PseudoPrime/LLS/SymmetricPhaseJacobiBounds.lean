@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.PaperStatements.SymmetricPhaseCharacterBounds
 public import PseudoPrime.LLS.LogarithmicPhaseJacobiBounds
 
@@ -38,7 +39,7 @@ theorem jacobi_no_negative_symmetric_phase_comparison {n : ℕ} {hn : Odd n} {hn
                 Complex.exp (Complex.I * ((t * (Real.log x + d) : ℝ) : ℂ))).re ≤
           Analysis.finiteSignedResolvent l t)
     (hno : ∀ p : ℕ, p.Prime → Odd p → (p : ℝ) ≤ (99 / 40 : ℝ) * x → jacobiSym n p ≠ -1) :
-    2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+    2 * (exponentialRampMangoldtSum x / Real.sqrt x) -
         (∑' k : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re ≤
       logarithmicPhaseJacobiLocalBudget bridge q x b l ((5 / 4) * d ^ 2) := by
   let : NeZero (NumberTheory.complexQuadraticCharacter n hn).conductor :=
@@ -84,7 +85,7 @@ theorem exists_odd_prime_negative_of_symmetric_phase_gap {n : ℕ} {hn : Odd n} 
           Analysis.finiteSignedResolvent l t)
     (hgap :
       logarithmicPhaseJacobiLocalBudget bridge q x b l ((5 / 4) * d ^ 2) <
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ,
               PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n p = -1 := by

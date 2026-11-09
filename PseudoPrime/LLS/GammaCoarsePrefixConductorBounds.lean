@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.GammaCertifiedArithmeticBudget
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaRamifiedPrefixCap
 
@@ -176,7 +177,7 @@ theorem gammaJacobi_noNeg_coarseArith_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsSqua
           Odd p →
           (p : ℝ) ≤ (99 / 40 : ℝ) * Analysis.gammaRefinedScale (Real.log n) → jacobiSym n p ≠ -1) :
     let x := Analysis.gammaRefinedScale (Real.log n)
-    2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+    2 * (exponentialRampMangoldtSum x / Real.sqrt x) -
         (∑' k : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re ≤
       gammaCoarseArithmeticBudget (Real.log n) b n.primeFactors.card := by
   dsimp only [gammaCoarseArithmeticBudget]
@@ -244,8 +245,7 @@ theorem exists_oddPrime_negJacobi_coarse_GRH {n : ℕ} {hn : Odd n} {hns : ¬IsS
     (hgap :
       gammaCoarseArithmeticBudget (Real.log n) b w <
         2 *
-            (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum
-                (Analysis.gammaRefinedScale (Real.log n)) /
+            (exponentialRampMangoldtSum (Analysis.gammaRefinedScale (Real.log n)) /
               Real.sqrt (Analysis.gammaRefinedScale (Real.log n))) -
           (∑' k : ℕ,
               PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1)

@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.PaperStatements.GammaSignedPrefixCharacterBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaConductorFreeBounds
@@ -59,7 +60,7 @@ theorem exists_prime_witness_of_signed_prefix_gap {n Q : ℕ} (hn : 1 < n) (hnOd
     (hQ : 20000 ≤ Q) (hnQ : n ≤ Q) {x b : ℝ} (hx : 2 ≤ x) (hb : 0 ≤ b) (hbX : b ≤ (99 / 40 : ℝ) * x)
     (hgap :
       gammaSignedPrefixMRBudget n Q x b <
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ,
               LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re) :
     ∃ p : ℕ,
@@ -105,7 +106,7 @@ theorem exists_prime_signedPrefix_indexFour_GRH {n : ℕ} [NeZero n] (hn : 1 < n
     {x b : ℝ} (hx : 2 ≤ x) (hb : 0 ≤ b) (hbX : b ≤ (99 / 40 : ℝ) * x)
     (hgap :
       gammaSignedPrefixMRBudget n n x b <
-        (4 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        (4 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
             (∑' k : ℕ,
                 LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x
                   k).re) /
@@ -148,7 +149,7 @@ theorem exists_prime_signedPrefix_allInputs_GRH {n : ℕ} [NeZero n] (hn : 1 < n
     (hx : 2 ≤ x) (hb : 0 ≤ b) (hbX : b ≤ (99 / 40 : ℝ) * x)
     (hgap :
       gammaSignedPrefixMRBudget n n x b <
-        (4 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        (4 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
             (∑' k : ℕ,
                 LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x
                   k).re) /
@@ -172,7 +173,7 @@ theorem exists_prime_witness_of_common_primitive_upper {n : ℕ} (hn : 1 < n) (h
           (∑' k : ℕ, LLS.PaperStatements.gammaMellinKernel.summand χ.primitiveCharacter x k).re ≤ U)
     (hgap :
       U <
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ,
               LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re) :
     ∃ p : ℕ,

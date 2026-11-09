@@ -6,7 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target030EvenEnvelope
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalEvenAnchors
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalFullEnvelope
 
 /-! # Even-correction interval bound for coefficient 0.28 -/
 

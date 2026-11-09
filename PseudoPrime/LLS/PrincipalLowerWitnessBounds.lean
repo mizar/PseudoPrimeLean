@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.ReflectedSplitConductorBounds
 
 /-! # Witness comparisons accepting any certified principal lower cap -/
@@ -30,7 +31,7 @@ theorem prime_trivial_false_of_principalLower_prefix {q A : ℕ} [NeZero q]
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x C g P : ℝ} (hx : 2 ≤ x)
     (hP :
       P ≤
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re)
     (hC : AnalyticNumberTheory.DirichletLFunction.twoPoleGammaConstant χ.primitiveCharacter ≤ C)
     (S : Finset ℕ) (hS : ∀ n ∈ S, (n : ℝ) ≤ (99 / 40 : ℝ) * x)
@@ -67,7 +68,7 @@ theorem exists_odd_prime_ne_one_of_principalLower_prefix {q A : ℕ} [NeZero q]
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x C g P : ℝ} (hx : 2 ≤ x)
     (hP :
       P ≤
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re)
     (hC : AnalyticNumberTheory.DirichletLFunction.twoPoleGammaConstant χ.primitiveCharacter ≤ C)
     (S : Finset ℕ) (hS : ∀ n ∈ S, (n : ℝ) ≤ (99 / 40 : ℝ) * x) (hodd : ∀ n ∈ S, Odd n)
@@ -111,7 +112,7 @@ theorem exists_prime_negOne_principalConductor_GRH {q A : ℕ} [NeZero q] (χ : 
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x C Y g a d P : ℝ} (hx : 2 ≤ x)
     (hP :
       P ≤
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re)
     (hY : 1 ≤ Y) (ha : 0 ≤ a) (hd : 0 ≤ d) (hscale : 1 ≤ (1 / 2 - a) * Real.sqrt x)
     (hprime :

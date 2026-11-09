@@ -56,8 +56,8 @@ theorem prime_millerRabin_028_criterion (hGRH : GeneralizedRiemannHypothesis) {n
   exact PseudoPrime.PrimeTestBounds.MillerRabin.prime_millerRabin_028_criterion hGRH hn ho
 
 /-- Under GRH, the prime-base strong test up to the base-nine cutoff characterizes
-odd primes greater than one. A rejecting-prime bound handles composites and the
-four-ninths acceptance theorem handles primes. -/
+odd primes greater than one. The 0.28 rejecting-prime bound handles composites;
+a direct logarithmic cutoff comparison handles primes. -/
 theorem prime_millerRabin_log_nine_criterion (hGRH : GeneralizedRiemannHypothesis) {n : ℕ}
     (hn : 1 < n) (ho : Odd n) :
     let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)

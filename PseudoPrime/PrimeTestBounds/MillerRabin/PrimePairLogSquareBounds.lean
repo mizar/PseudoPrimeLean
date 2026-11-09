@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.NumberTheory.UnitPowerKernelProperness
 public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalLogSquareBounds
-public import PseudoPrime.PrimeTestBounds.MillerRabin.FourPrimeFactorBounds
+public import PseudoPrime.PrimeTest.MillerRabin.PairedLocalSign
 public import PseudoPrime.PrimeTest.MillerRabin.UnequalTwoAdicSquares
 public import PseudoPrime.PrimeTest.MillerRabin.SquareFactorLocalBounds
 

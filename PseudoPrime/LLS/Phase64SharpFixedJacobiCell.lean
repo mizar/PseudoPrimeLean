@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.Phase64ExtendedJacobiCell
-public import PseudoPrime.Analysis.Phase64SharpAggregateBounds
+public import PseudoPrime.LLS.Phase64SharpAggregateBounds
 
 /-! # Wider fixed-scale Jacobi bounds from sharp existing aggregates -/
 
@@ -50,8 +50,8 @@ theorem phase64_principalRamp_sharp_lower :
   exact
     principalRampDifference_lower_finite_endpoints (by norm_num only : (0 : ℝ) < 163840 / 99)
       (le_refl (163840 / 99 : ℝ)) (by norm_num only : (163840 / 99 : ℝ) ≤ 4096128001 / 2475000)
-      40000 Analysis.Phase64EndpointCertificates.phase64_ramp_endpoint_lower_sharp
-      Analysis.Phase64EndpointCertificates.phase64_principal_endpoint_upper_sharp ht
+      40000 Phase64EndpointCertificates.phase64_ramp_endpoint_lower_sharp
+      Phase64EndpointCertificates.phase64_principal_endpoint_upper_sharp ht
       (by norm_num only : (1375 : ℝ) ≤ 2 * (151409083 / 100000) - 16531667 / 10000 - 1 / 100)
       (by norm_num only : (0 : ℝ) ≤ 1375) hs
 

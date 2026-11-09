@@ -6,7 +6,9 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaSeedPairedBounds
+public import PseudoPrime.LLS.ExponentialRampSummation
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaPolynomialBudget
+public import PseudoPrime.LLS.GammaSeedPairedNumerics
 public import PseudoPrime.LLS.ClippedAffineWitnessBounds
 public import PseudoPrime.LLS.PaperStatements.GammaNonOneRefinedBudgets
 public import PseudoPrime.LLS.GammaCheckpoint1000
@@ -486,7 +488,7 @@ theorem exists_prime_gammaLinear_log240_GRH {n : ℕ} (hnOdd : Odd n) (hnComposi
     have hnR : (n : ℝ) ≤ 46000 := by exact_mod_cast (show n ≤ 46000 by omega)
     have hl := Real.log_le_log hn0 hnR
     dsimp only [L] at hL'
-    linarith only [hl, Analysis.log_46000_lt_eleven, hL']
+    linarith only [hl, LLS.log_46000_lt_eleven, hL']
   have hrCutoff : (711 / 5 : ℝ) ≤ r := by
     dsimp only [r, a, d, L]
     nlinarith only [hL']
@@ -624,7 +626,7 @@ theorem exists_prime_gammaLinear_log240_GRH {n : ℕ} (hnOdd : Odd n) (hnComposi
     LLS.clippedShiftPrincipalLower_le_actual hGRH.riemann (by linarith only [hx]) hh hhx
   have hactualLower :
     (133 / 160 - 231 / 24700 : ℝ) * r - 7417297 / 3952000 - 23 / r ≤
-      2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+      2 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
         (∑' k : ℕ,
             LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re :=
     hprincipal.trans hactual
@@ -637,7 +639,7 @@ theorem exists_prime_gammaLinear_log240_GRH {n : ℕ} (hnOdd : Odd n) (hnComposi
       _ = 70 / r := by ring
   have hgap :
     gammaSignedPrefixMRBudget n n x 50000 <
-      2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+      2 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
         (∑' k : ℕ,
             LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re := by
     have hsum : 23 / r + 4 / r = 27 / r := by ring
@@ -689,7 +691,7 @@ theorem exists_prime_gammaLinear_log210_GRH {n : ℕ} (hnOdd : Odd n) (hnComposi
     have hnR : (n : ℝ) ≤ 46000 := by exact_mod_cast (show n ≤ 46000 by omega)
     have hl := Real.log_le_log hn0 hnR
     dsimp only [L] at hL'
-    linarith only [hl, Analysis.log_46000_lt_eleven, hL']
+    linarith only [hl, LLS.log_46000_lt_eleven, hL']
   have hbX : (1000 : ℝ) ≤ (99 / 40 : ℝ) * x := by
     dsimp only [x]
     nlinarith only [hr, sq_nonneg (r - 125)]
@@ -769,7 +771,7 @@ theorem exists_prime_gammaLinear_log210_GRH {n : ℕ} (hnOdd : Odd n) (hnComposi
     LLS.clippedShiftPrincipalLower_le_actual hGRH.riemann (by linarith only [hx]) hh hhx
   have hactualLower :
     (133 / 160 - 231 / 24700 : ℝ) * r - 7417297 / 3952000 - 23 / r ≤
-      2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+      2 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
         (∑' k : ℕ,
             LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re :=
     hprincipal.trans hactual
@@ -782,7 +784,7 @@ theorem exists_prime_gammaLinear_log210_GRH {n : ℕ} (hnOdd : Odd n) (hnComposi
       _ = 70 / r := by ring
   have hgap :
     gammaSignedPrefixMRBudget n n x 1000 <
-      2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+      2 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
         (∑' k : ℕ,
             LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re := by
     have hsum : 23 / r + 4 / r = 27 / r := by ring
@@ -793,16 +795,6 @@ theorem exists_prime_gammaLinear_log210_GRH {n : ℕ} (hnOdd : Odd n) (hnComposi
   refine ⟨p, hp, ?_, hreject⟩
   dsimp only [x, r, a, d, L] at hpbound ⊢
   exact hpbound
-
-/-- The former 250-entry API follows by specializing the 240-entry result.
-Role: preserve existing clients while exposing the lower entrance. -/
-theorem exists_prime_gammaLinear_log250_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 250 ≤ Real.log n) :
-    ∃ p : ℕ,
-      p.Prime ∧
-        (p : ℝ) ≤ (99 / 40 : ℝ) * ((287 / 500 : ℝ) * Real.log n + 9 / 2) ^ 2 ∧
-        ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) :=
-  exists_prime_gammaLinear_log240_GRH hnOdd hnComposite hGRH (by linarith only [hL])
 
 /-- Under the same hypotheses, the least prime MR witness satisfies the affine
 cutoff. Choose a witness from the preceding theorem and minimize the rejecting
@@ -821,35 +813,6 @@ theorem exists_least_prime_gammaLinear_log240_GRH {n : ℕ} (hnOdd : Odd n) (hnC
     ⟨Nat.find hex, (Nat.find_spec hex).1, (Nat.find_spec hex).2,
       (Nat.cast_le.mpr (Nat.find_min' hex ⟨hp, hreject⟩)).trans hpbound, fun q hq hqreject ↦
       Nat.find_min' hex ⟨hq, hqreject⟩⟩
-
-/-- Under the same hypotheses, the least prime MR witness satisfies the affine
-cutoff. Choose a witness from the preceding theorem and minimize the rejecting
-prime predicate. Role: supply the least-witness form used by the comparison table. -/
-theorem exists_least_prime_gammaLinear_log210_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 210 ≤ Real.log n) :
-    ∃ p : ℕ,
-      p.Prime ∧
-        ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
-        (p : ℝ) ≤ (99 / 40 : ℝ) * ((287 / 500 : ℝ) * Real.log n + 9) ^ 2 ∧
-        ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
-  classical
-  obtain ⟨p, hp, hpbound, hreject⟩ := exists_prime_gammaLinear_log210_GRH hnOdd hnComposite hGRH hL
-  have hex : ∃ q : ℕ, q.Prime ∧ ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) := ⟨p, hp, hreject⟩
-  exact
-    ⟨Nat.find hex, (Nat.find_spec hex).1, (Nat.find_spec hex).2,
-      (Nat.cast_le.mpr (Nat.find_min' hex ⟨hp, hreject⟩)).trans hpbound, fun q hq hqreject ↦
-      Nat.find_min' hex ⟨hq, hqreject⟩⟩
-
-/-- The least-witness API at logarithmic scale 250 follows by specialization.
-Role: preserve existing table references. -/
-theorem exists_least_prime_gammaLinear_log250_GRH {n : ℕ} (hnOdd : Odd n) (hnComposite : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 250 ≤ Real.log n) :
-    ∃ p : ℕ,
-      p.Prime ∧
-        ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
-        (p : ℝ) ≤ (99 / 40 : ℝ) * ((287 / 500 : ℝ) * Real.log n + 9 / 2) ^ 2 ∧
-        ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q :=
-  exists_least_prime_gammaLinear_log240_GRH hnOdd hnComposite hGRH (by linarith only [hL])
 
 /-- Under GRH, every odd composite with `log n ≥ 258` has a prime
 strong-Miller–Rabin rejecting base at most
@@ -882,7 +845,7 @@ theorem exists_prime_witness_le_gamma_index_four_log_258 {n : ℕ} (hnOdd : Odd 
     have hnR : (n : ℝ) ≤ 46000 := by exact_mod_cast (show n ≤ 46000 by omega)
     have hl := Real.log_le_log hn0 hnR
     dsimp only [L] at hL'
-    linarith only [hl, Analysis.log_46000_lt_eleven, hL']
+    linarith only [hl, LLS.log_46000_lt_eleven, hL']
   have hn9 : n ≠ 9 := by
     intro h
     subst n
@@ -930,14 +893,13 @@ theorem exists_prime_witness_le_gamma_index_four_log_258 {n : ℕ} (hnOdd : Odd 
     LLS.gammaRampPairedErrorNumerator x / Real.sqrt x ≤ Real.sqrt x / 200 + 47 / 20 := by
     simpa only [hscaleEq] using hseed.1
   have hmass : (293 / 320 : ℝ) ≤ ∫ u in (0 : ℝ)..(99 / 40), Analysis.exponentialRampWeight u := by
-    have hm := Analysis.gamma_ramp_mass_lower
+    have hm := LLS.gamma_ramp_mass_lower
     linarith only [hm]
   have hT := LLS.gamma_ramp_sum_lower_paired hGRH.riemann hx1
   rw [hsqrt] at hT hseedErr
   have hmassR := mul_le_mul_of_nonneg_right hmass hrpos.le
   have hTLower :
-    (293 / 320 : ℝ) * r - r / 200 - 47 / 20 ≤
-      AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / r := by
+    (293 / 320 : ℝ) * r - r / 200 - 47 / 20 ≤ LLS.exponentialRampMangoldtSum x / r := by
     nlinarith only [hT, hmassR, hseedErr]
   have hcap := LLS.clippedShiftError_twentieth_width_cap hrpos
   have hcapDiv := div_le_div_of_nonneg_right hcap hrpos.le
@@ -971,7 +933,7 @@ theorem exists_prime_witness_le_gamma_index_four_log_258 {n : ℕ} (hnOdd : Odd 
     LLS.clippedShiftPrincipalLower_le_actual hGRH.riemann (by linarith only [hx]) hh hhx
   have hactualLower :
     (133 / 160 - 231 / 24700 : ℝ) * r - 7417297 / 3952000 - 23 / r ≤
-      2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+      2 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
         (∑' k : ℕ,
             LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re := by
     exact hprincipal.trans hactual
@@ -1008,7 +970,7 @@ theorem exists_prime_witness_le_gamma_index_four_log_258 {n : ℕ} (hnOdd : Odd 
   rw [hsqrt] at hbudget hactualLower
   have hfour :
     (261143 / 296400 : ℝ) * r - (7417297 / 3952000 + 47 / 10) / 3 - 23 / (3 * r) ≤
-      (4 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+      (4 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ,
               LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re) /
         3 := by
@@ -1019,7 +981,7 @@ theorem exists_prime_witness_le_gamma_index_four_log_258 {n : ℕ} (hnOdd : Odd 
     nlinarith only [hTLower, hactualLower]
   have hgap :
     gammaSignedPrefixMRBudget n n x 50000 <
-      (4 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+      (4 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ,
               LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re) /
         3 := by
@@ -1034,350 +996,5 @@ theorem exists_prime_witness_le_gamma_index_four_log_258 {n : ℕ} (hnOdd : Odd 
   refine ⟨p, hp, ?_, hreject⟩
   dsimp only [x, r, a, d, L] at hpbound ⊢
   exact hpbound
-
-/-- The least prime rejecting base satisfies the same `B₄` upper bound.
-Minimize the unbounded rejection predicate and inherit the explicit bound from
-`exists_prime_witness_le_gamma_index_four_log_258`. -/
-theorem exists_leastWitness_le_gamma_index_four_log_258 {n : ℕ} (hnOdd : Odd n)
-    (hnComposite : ¬n.Prime) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : 258 ≤ Real.log n) :
-    ∃ p : ℕ,
-      p.Prime ∧
-        ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
-        (p : ℝ) ≤ (99 / 40 : ℝ) * ((107 / 200 : ℝ) * Real.log n + 24 / 5) ^ 2 ∧
-        ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
-  classical
-  obtain ⟨p, hp, hbound, hreject⟩ :=
-    exists_prime_witness_le_gamma_index_four_log_258 hnOdd hnComposite hGRH hL
-  have hex : ∃ q : ℕ, q.Prime ∧ ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) := ⟨p, hp, hreject⟩
-  exact
-    ⟨Nat.find hex, (Nat.find_spec hex).1, (Nat.find_spec hex).2,
-      (Nat.cast_le.mpr (Nat.find_min' hex ⟨hp, hreject⟩)).trans hbound, fun q hq hqReject ↦
-      Nat.find_min' hex ⟨hq, hqReject⟩⟩
-
-theorem gammaLinearCutoff_lt_midscale_sq {L : ℝ} (hlo : 240 ≤ L) :
-    (99 / 40 : ℝ) * ((287 / 500 : ℝ) * L + 9 / 2) ^ 2 <
-      (LLS.PaperStatements.midscaleEndpointRadius L) ^ 2 := by
-  have hbranch :
-    LLS.PaperStatements.midscaleEndpointRadius L = (12800 / 12927 : ℝ) * (L - 83 / 20) := by
-    unfold LLS.PaperStatements.midscaleEndpointRadius
-    have h₁ : ¬L ≤ 703 / 20 := by linarith only [hlo]
-    have h₂ : ¬L ≤ 10367 / 200 := by linarith only [hlo]
-    have h₃ : ¬L ≤ 1706 / 25 := by linarith only [hlo]
-    have h₄ : ¬L ≤ 6671 / 50 := by linarith only [hlo]
-    simp only [ite_eq_right h₁, ite_eq_right h₂, ite_eq_right h₃, ite_eq_right h₄]
-  have hr : 0 < (287 / 500 : ℝ) * L + 9 / 2 := by nlinarith only [hlo]
-  have hcoef : (99 / 40 : ℝ) < (8 / 5 : ℝ) ^ 2 := by norm_num only
-  have hr2 : 0 < ((287 / 500 : ℝ) * L + 9 / 2) ^ 2 := sq_pos_of_pos hr
-  have hR : (8 / 5 : ℝ) * ((287 / 500 : ℝ) * L + 9 / 2) < (12800 / 12927 : ℝ) * (L - 83 / 20) := by
-    nlinarith only [hlo]
-  have hscaled :
-    (99 / 40 : ℝ) * ((287 / 500 : ℝ) * L + 9 / 2) ^ 2 <
-      ((8 / 5 : ℝ) * ((287 / 500 : ℝ) * L + 9 / 2)) ^ 2 := by
-    calc
-      _ = (99 / 40 : ℝ) * ((287 / 500 : ℝ) * L + 9 / 2) ^ 2 := by ring
-      _ < (8 / 5 : ℝ) ^ 2 * ((287 / 500 : ℝ) * L + 9 / 2) ^ 2 := mul_lt_mul_of_pos_right hcoef hr2
-      _ = _ := by ring
-  have hscaledPos : 0 < (8 / 5 : ℝ) * ((287 / 500 : ℝ) * L + 9 / 2) := by positivity
-  have hEndpointPos : 0 < (12800 / 12927 : ℝ) * (L - 83 / 20) := lt_trans hscaledPos hR
-  have hsq := (sq_lt_sq₀ hscaledPos.le hEndpointPos.le).mpr hR
-  rw [hbranch]
-  exact hscaled.trans hsq
-
-/-- From logarithmic scale 210 onward, compare the 1000-term affine radius with
-the final branch of the five-piece midscale radius. The branch identity and a
-rational root comparison prove strict domination throughout its overlap. -/
-theorem gammaLinearCutoff1000_lt_midscale_sq {L : ℝ} (hL : 210 ≤ L) :
-    (99 / 40 : ℝ) * ((287 / 500 : ℝ) * L + 9) ^ 2 <
-      (LLS.PaperStatements.midscaleEndpointRadius L) ^ 2 := by
-  have hbranch :
-    LLS.PaperStatements.midscaleEndpointRadius L = (12800 / 12927 : ℝ) * (L - 83 / 20) := by
-    unfold LLS.PaperStatements.midscaleEndpointRadius
-    have h₁ : ¬L ≤ 703 / 20 := by linarith only [hL]
-    have h₂ : ¬L ≤ 10367 / 200 := by linarith only [hL]
-    have h₃ : ¬L ≤ 1706 / 25 := by linarith only [hL]
-    have h₄ : ¬L ≤ 6671 / 50 := by linarith only [hL]
-    simp only [ite_eq_right h₁, ite_eq_right h₂, ite_eq_right h₃, ite_eq_right h₄]
-  have hroot :
-    (15733 / 10000 : ℝ) * ((287 / 500 : ℝ) * L + 9) < (12800 / 12927 : ℝ) * (L - 83 / 20) := by
-    nlinarith only [hL]
-  have hcoef : (99 / 40 : ℝ) < (15733 / 10000 : ℝ) ^ 2 := by norm_num only
-  have hbase : 0 < (287 / 500 : ℝ) * L + 9 := by nlinarith only [hL]
-  have hbase2 : 0 < ((287 / 500 : ℝ) * L + 9) ^ 2 := sq_pos_of_pos hbase
-  have hscaled :
-    (99 / 40 : ℝ) * ((287 / 500 : ℝ) * L + 9) ^ 2 <
-      ((15733 / 10000 : ℝ) * ((287 / 500 : ℝ) * L + 9)) ^ 2 := by
-    calc
-      _ = (99 / 40 : ℝ) * ((287 / 500 : ℝ) * L + 9) ^ 2 := by ring
-      _ < (15733 / 10000 : ℝ) ^ 2 * ((287 / 500 : ℝ) * L + 9) ^ 2 :=
-        mul_lt_mul_of_pos_right hcoef hbase2
-      _ = _ := by ring
-  have hscaledPos : 0 ≤ (15733 / 10000 : ℝ) * ((287 / 500 : ℝ) * L + 9) := by positivity
-  have hrightPos : 0 ≤ (12800 / 12927 : ℝ) * (L - 83 / 20) := by linarith only [hroot, hscaledPos]
-  have hsq := (sq_lt_sq₀ hscaledPos hrightPos).mpr hroot
-  rw [hbranch]
-  exact hscaled.trans hsq
-
-/-- For L >= 240 the 50000-term radius is below the 1000-term radius. The
-linear terms differ by a positive constant, so their positive squares preserve
-the strict comparison. Role: retain the former branch in the envelope above 240. -/
-theorem gammaLinearCutoff_50000_lt_1000_sq {L : ℝ} (hL : 240 ≤ L) :
-    (99 / 40 : ℝ) * ((287 / 500 : ℝ) * L + 9 / 2) ^ 2 <
-      (99 / 40 : ℝ) * ((287 / 500 : ℝ) * L + 9) ^ 2 := by
-  have hroot : (287 / 500 : ℝ) * L + 9 / 2 < (287 / 500 : ℝ) * L + 9 := by nlinarith only
-  have hpos : 0 < (287 / 500 : ℝ) * L + 9 / 2 := by nlinarith only [hL]
-  have hsq := (sq_lt_sq₀ hpos.le (by linarith only [hroot, hpos])).mpr hroot
-  exact mul_lt_mul_of_pos_left hsq (by norm_num only)
-
-/-- From the end of the midscale interval to L=300, the new radius is below
-the adaptive radius. Use the existing analytic lower bound for the adaptive
-radius and ln L <= ln 300 <= 23/4, so the comparison holds on the whole interval. -/
-theorem gammaLinearCutoff_lt_adaptive_sq {L : ℝ} (hlo : 26269 / 100 ≤ L) (hhi : L ≤ 300) :
-    (99 / 40 : ℝ) * ((287 / 500 : ℝ) * L + 9 / 2) ^ 2 <
-      (Analysis.adaptivePart2CutoffRoot L) ^ 2 := by
-  have hlog : Real.log L ≤ 23 / 4 := by
-    calc
-      Real.log L ≤ Real.log 300 := Real.log_le_log (by linarith only [hlo] : (0 : ℝ) < L) hhi
-      _ ≤ 23 / 4 := LLS.clippedAffine_log_three_hundred_le
-  have hY := LLS.PaperStatements.midscale_adaptive_lower (by linarith only [hlo])
-  have hr : 0 < (287 / 500 : ℝ) * L + 9 / 2 := by nlinarith only [hlo]
-  have hcoef : (99 / 40 : ℝ) < (8 / 5 : ℝ) ^ 2 := by norm_num only
-  have hr2 : 0 < ((287 / 500 : ℝ) * L + 9 / 2) ^ 2 := sq_pos_of_pos hr
-  have hR : (8 / 5 : ℝ) * ((287 / 500 : ℝ) * L + 9 / 2) < L - 2 * Real.log L + 91 / 20 := by
-    nlinarith only [hlo, hlog]
-  have hscaled :
-    (99 / 40 : ℝ) * ((287 / 500 : ℝ) * L + 9 / 2) ^ 2 <
-      ((8 / 5 : ℝ) * ((287 / 500 : ℝ) * L + 9 / 2)) ^ 2 := by
-    calc
-      _ = (99 / 40 : ℝ) * ((287 / 500 : ℝ) * L + 9 / 2) ^ 2 := by ring
-      _ < (8 / 5 : ℝ) ^ 2 * ((287 / 500 : ℝ) * L + 9 / 2) ^ 2 := mul_lt_mul_of_pos_right hcoef hr2
-      _ = _ := by ring
-  have hroot : (8 / 5 : ℝ) * ((287 / 500 : ℝ) * L + 9 / 2) < Analysis.adaptivePart2CutoffRoot L :=
-    lt_of_lt_of_le hR hY
-  have hrootPos : 0 < Analysis.adaptivePart2CutoffRoot L := lt_trans (by positivity) hroot
-  have hsq :=
-    (sq_lt_sq₀ (by positivity : 0 ≤ (8 / 5 : ℝ) * ((287 / 500 : ℝ) * L + 9 / 2)) hrootPos.le).mpr
-      hroot
-  exact hscaled.trans hsq
-
-/-- For L>=250 the new affine root is below the clipped-affine root, hence
-the corresponding common-factor 99/40 bound is smaller wherever the latter
-theorem applies. -/
-theorem gammaLinearCutoff_lt_clippedAffine_sq {L : ℝ} (hL : 250 ≤ L) :
-    (99 / 40 : ℝ) * ((287 / 500 : ℝ) * L + 9 / 2) ^ 2 <
-      (99 / 40 : ℝ) * (LLS.clippedAffineRoot L) ^ 2 := by
-  have hroot : (287 / 500 : ℝ) * L + 9 / 2 < LLS.clippedAffineRoot L := by
-    dsimp only [LLS.clippedAffineRoot]
-    nlinarith only [hL]
-  have hpos : 0 < (287 / 500 : ℝ) * L + 9 / 2 := by nlinarith only [hL]
-  have hsq := (sq_lt_sq₀ hpos.le (by linarith only [hroot, hpos])).mpr hroot
-  exact mul_lt_mul_of_pos_left hsq (by norm_num only)
-
-/-- On 240<=L<=11255, the new MR cutoff is smaller than the previously
-available (199/250)(L+216)^2 branch. Compare rational square-root envelopes
-and use the interval endpoints for the affine comparison. -/
-theorem gammaLinearCutoff_lt_plus216_sq {L : ℝ} (hlo : 240 ≤ L) (hhi : L ≤ 11255) :
-    (99 / 40 : ℝ) * ((287 / 500 : ℝ) * L + 9 / 2) ^ 2 < (199 / 250 : ℝ) * (L + 216) ^ 2 := by
-  have hrootW : (787 / 500 : ℝ) * ((287 / 500 : ℝ) * L + 9 / 2) < (892 / 1000 : ℝ) * (L + 216) := by
-    nlinarith only [hlo, hhi]
-  have hbase : 0 < (287 / 500 : ℝ) * L + 9 / 2 := by nlinarith only [hlo]
-  have hcoefW : (99 / 40 : ℝ) < (787 / 500 : ℝ) ^ 2 := by norm_num only
-  have hbase2 : 0 < ((287 / 500 : ℝ) * L + 9 / 2) ^ 2 := sq_pos_of_pos hbase
-  have hW :
-    (99 / 40 : ℝ) * ((287 / 500 : ℝ) * L + 9 / 2) ^ 2 <
-      ((787 / 500 : ℝ) * ((287 / 500 : ℝ) * L + 9 / 2)) ^ 2 := by
-    calc
-      _ = (99 / 40 : ℝ) * ((287 / 500 : ℝ) * L + 9 / 2) ^ 2 := by ring
-      _ < (787 / 500 : ℝ) ^ 2 * ((287 / 500 : ℝ) * L + 9 / 2) ^ 2 :=
-        mul_lt_mul_of_pos_right hcoefW hbase2
-      _ = _ := by ring
-  have hcoef216 : (892 / 1000 : ℝ) ^ 2 < 199 / 250 := by norm_num only
-  have hplus : 0 < L + 216 := by linarith only [hlo]
-  have hplus2 : 0 < (L + 216) ^ 2 := sq_pos_of_pos hplus
-  have h216 : ((892 / 1000 : ℝ) * (L + 216)) ^ 2 < (199 / 250 : ℝ) * (L + 216) ^ 2 := by
-    calc
-      _ = (892 / 1000 : ℝ) ^ 2 * (L + 216) ^ 2 := by ring
-      _ < (199 / 250 : ℝ) * (L + 216) ^ 2 := mul_lt_mul_of_pos_right hcoef216 hplus2
-      _ = _ := by ring
-  have hsq :=
-    (sq_lt_sq₀ (by positivity : 0 ≤ (787 / 500 : ℝ) * ((287 / 500 : ℝ) * L + 9 / 2))
-          (by positivity : 0 ≤ (892 / 1000 : ℝ) * (L + 216))).mpr
-      hrootW
-  exact hW.trans (hsq.trans h216)
-
-/-- For `L ≥ 258`, the index-four Gamma radius improves the public linear
-cutoff `W(L)`. Both bounds carry the factor `99/40`, so it suffices to compare
-their positive affine radii. This is the first direct envelope comparison for
-the new all-input index-four witness theorem. -/
-theorem gamma_index_four_lt_linear_cutoff_sq {L : ℝ} (hL : 258 ≤ L) :
-    (99 / 40 : ℝ) * ((107 / 200 : ℝ) * L + 24 / 5) ^ 2 <
-      (99 / 40 : ℝ) * ((287 / 500 : ℝ) * L + 9 / 2) ^ 2 := by
-  have hroot : (107 / 200 : ℝ) * L + 24 / 5 < (287 / 500 : ℝ) * L + 9 / 2 := by nlinarith only [hL]
-  have hpos : 0 < (107 / 200 : ℝ) * L + 24 / 5 := by nlinarith only [hL]
-  have hsq := (sq_lt_sq₀ hpos.le (by linarith only [hroot, hpos])).mpr hroot
-  exact mul_lt_mul_of_pos_left hsq (by norm_num only)
-
-/-- A rational square-root proxy for the index-four Gamma bound. This isolates
-the coefficient comparison used by the later envelope lemmas. -/
-private theorem gamma_index_four_lt_proxy {L : ℝ} (hL : 258 ≤ L) :
-    (99 / 40 : ℝ) * ((107 / 200 : ℝ) * L + 24 / 5) ^ 2 < ((843 / 1000 : ℝ) * L + 38 / 5) ^ 2 := by
-  have hb : 0 < (107 / 200 : ℝ) * L + 24 / 5 := by nlinarith only [hL]
-  have hc : (99 / 40 : ℝ) < (787 / 500 : ℝ) ^ 2 := by norm_num only
-  have hs :
-    (99 / 40 : ℝ) * ((107 / 200 : ℝ) * L + 24 / 5) ^ 2 <
-      ((787 / 500 : ℝ) * ((107 / 200 : ℝ) * L + 24 / 5)) ^ 2 := by
-    calc
-      _ = (99 / 40 : ℝ) * ((107 / 200 : ℝ) * L + 24 / 5) ^ 2 := by ring
-      _ < (787 / 500 : ℝ) ^ 2 * ((107 / 200 : ℝ) * L + 24 / 5) ^ 2 :=
-        mul_lt_mul_of_pos_right hc (sq_pos_of_pos hb)
-      _ = _ := by ring
-  have hr : (787 / 500 : ℝ) * ((107 / 200 : ℝ) * L + 24 / 5) ≤ (843 / 1000 : ℝ) * L + 38 / 5 := by
-    nlinarith only [hL]
-  have hfactor : 0 ≤ (787 / 500 : ℝ) * ((107 / 200 : ℝ) * L + 24 / 5) :=
-    mul_nonneg (by norm_num only) hb.le
-  have hsq := mul_self_le_mul_self hfactor hr
-  exact lt_of_lt_of_le hs (by nlinarith only [hsq])
-
-/-- For every `L ≥ 258`, `B₄(L)` is below the classical `(4/5)L²` branch. -/
-theorem gamma_index_four_lt_four_fifths_log_sq {L : ℝ} (hL : 258 ≤ L) :
-    (99 / 40 : ℝ) * ((107 / 200 : ℝ) * L + 24 / 5) ^ 2 < (4 / 5 : ℝ) * L ^ 2 := by
-  have hp := gamma_index_four_lt_proxy hL
-  have hr : (843 / 1000 : ℝ) * L + 38 / 5 ≤ (89 / 100 : ℝ) * L := by nlinarith only [hL]
-  have hfactor : 0 ≤ (843 / 1000 : ℝ) * L + 38 / 5 := by nlinarith only [hL]
-  have hsq := mul_self_le_mul_self hfactor hr
-  have hc : (89 / 100 : ℝ) ^ 2 < 4 / 5 := by norm_num only
-  have hz : 0 < L ^ 2 := sq_pos_of_pos (by linarith only [hL])
-  calc
-    _ < ((843 / 1000 : ℝ) * L + 38 / 5) ^ 2 := hp
-    _ ≤ (89 / 100 : ℝ) ^ 2 * L ^ 2 := by nlinarith only [hsq]
-    _ < (4 / 5 : ℝ) * L ^ 2 := mul_lt_mul_of_pos_right hc hz
-
-/-- For `L ≥ 34971`, `B₄(L)` is below the shifted rational branch with shift 117. -/
-theorem gamma_index_four_lt_199_div_250_plus_117_sq {L : ℝ} (hL : 34971 ≤ L) :
-    (99 / 40 : ℝ) * ((107 / 200 : ℝ) * L + 24 / 5) ^ 2 < (199 / 250 : ℝ) * (L + 117) ^ 2 := by
-  have hp := gamma_index_four_lt_proxy (by linarith only [hL] : 258 ≤ L)
-  have hr : (843 / 1000 : ℝ) * L + 38 / 5 ≤ (89 / 100 : ℝ) * (L + 117) := by nlinarith only [hL]
-  have hfactor : 0 ≤ (843 / 1000 : ℝ) * L + 38 / 5 := by nlinarith only [hL]
-  have hsq := mul_self_le_mul_self hfactor hr
-  have hc : (89 / 100 : ℝ) ^ 2 < 199 / 250 := by norm_num only
-  have hz : 0 < (L + 117) ^ 2 := sq_pos_of_pos (by linarith only [hL])
-  calc
-    _ < ((843 / 1000 : ℝ) * L + 38 / 5) ^ 2 := hp
-    _ ≤ (89 / 100 : ℝ) ^ 2 * (L + 117) ^ 2 := by nlinarith only [hsq]
-    _ < (199 / 250 : ℝ) * (L + 117) ^ 2 := mul_lt_mul_of_pos_right hc hz
-
-/-- For `L ≥ 34971`, `B₄(L)` is below the shifted logarithmic branch with shift 29. -/
-theorem gamma_index_four_lt_four_fifths_plus_29_sq {L : ℝ} (hL : 34971 ≤ L) :
-    (99 / 40 : ℝ) * ((107 / 200 : ℝ) * L + 24 / 5) ^ 2 < (4 / 5 : ℝ) * (L + 29) ^ 2 := by
-  have hp := gamma_index_four_lt_proxy (by linarith only [hL] : 258 ≤ L)
-  have hr : (843 / 1000 : ℝ) * L + 38 / 5 ≤ (89 / 100 : ℝ) * (L + 29) := by nlinarith only [hL]
-  have hfactor : 0 ≤ (843 / 1000 : ℝ) * L + 38 / 5 := by nlinarith only [hL]
-  have hsq := mul_self_le_mul_self hfactor hr
-  have hc : (89 / 100 : ℝ) ^ 2 < 4 / 5 := by norm_num only
-  have hz : 0 < (L + 29) ^ 2 := sq_pos_of_pos (by linarith only [hL])
-  calc
-    _ < ((843 / 1000 : ℝ) * L + 38 / 5) ^ 2 := hp
-    _ ≤ (89 / 100 : ℝ) ^ 2 * (L + 29) ^ 2 := by nlinarith only [hsq]
-    _ < (4 / 5 : ℝ) * (L + 29) ^ 2 := mul_lt_mul_of_pos_right hc hz
-
-/-- For `L ≥ 46330`, `B₄(L)` is below the shifted quadratic branch. -/
-theorem gamma_index_four_lt_four_fifths_minus_two_sq {L : ℝ} (hL : 46330 ≤ L) :
-    (99 / 40 : ℝ) * ((107 / 200 : ℝ) * L + 24 / 5) ^ 2 < (4 / 5 : ℝ) * (L - 2) ^ 2 := by
-  have hp := gamma_index_four_lt_proxy (by linarith only [hL] : 258 ≤ L)
-  have hr : (843 / 1000 : ℝ) * L + 38 / 5 ≤ (89 / 100 : ℝ) * (L - 2) := by nlinarith only [hL]
-  have hfactor : 0 ≤ (843 / 1000 : ℝ) * L + 38 / 5 := by nlinarith only [hL]
-  have hsq := mul_self_le_mul_self hfactor hr
-  have hc : (89 / 100 : ℝ) ^ 2 < 4 / 5 := by norm_num only
-  have hz : 0 < (L - 2) ^ 2 := sq_pos_of_pos (by linarith only [hL])
-  calc
-    _ < ((843 / 1000 : ℝ) * L + 38 / 5) ^ 2 := hp
-    _ ≤ (89 / 100 : ℝ) ^ 2 * (L - 2) ^ 2 := by nlinarith only [hsq]
-    _ < (4 / 5 : ℝ) * (L - 2) ^ 2 := mul_lt_mul_of_pos_right hc hz
-
-/-- For `L ≥ 50880`, `B₄(L)` is below the logarithmically shifted square branch. -/
-theorem gamma_index_four_lt_four_fifths_minus_log_sq {L : ℝ} (hL : 50880 ≤ L) :
-    (99 / 40 : ℝ) * ((107 / 200 : ℝ) * L + 24 / 5) ^ 2 < (4 / 5 : ℝ) * (L - Real.log L) ^ 2 := by
-  have hp := gamma_index_four_lt_proxy (by linarith only [hL] : 258 ≤ L)
-  have hlog : Real.log L ≤ L / 300 + 19 / 4 := by
-    calc
-      Real.log L ≤ Real.log 300 + (L - 300) / 300 :=
-        Analysis.log_le_log_add_sub_div (by norm_num only) (by linarith only [hL])
-      _ ≤ L / 300 + 19 / 4 := by linarith only [LLS.clippedAffine_log_three_hundred_le]
-  have hr : (843 / 1000 : ℝ) * L + 38 / 5 ≤ (89 / 100 : ℝ) * (L - Real.log L) := by
-    nlinarith only [hL, hlog]
-  have hfactor : 0 ≤ (843 / 1000 : ℝ) * L + 38 / 5 := by nlinarith only [hL]
-  have hsq := mul_self_le_mul_self hfactor hr
-  have hc : (89 / 100 : ℝ) ^ 2 < 4 / 5 := by norm_num only
-  have hz : 0 < (L - Real.log L) ^ 2 := sq_pos_of_pos (by nlinarith only [hL, hlog])
-  calc
-    _ < ((843 / 1000 : ℝ) * L + 38 / 5) ^ 2 := hp
-    _ ≤ (89 / 100 : ℝ) ^ 2 * (L - Real.log L) ^ 2 := by nlinarith only [hsq]
-    _ < (4 / 5 : ℝ) * (L - Real.log L) ^ 2 := mul_lt_mul_of_pos_right hc hz
-
-/-- The index-four Gamma bound is below the adaptive cutoff for every `L ≥ 258`. -/
-theorem gamma_index_four_lt_adaptive_sq {L : ℝ} (hL : 258 ≤ L) :
-    (99 / 40 : ℝ) * ((107 / 200 : ℝ) * L + 24 / 5) ^ 2 <
-      (Analysis.adaptivePart2CutoffRoot L) ^ 2 := by
-  have hlog : Real.log L ≤ L / 300 + 19 / 4 := by
-    calc
-      Real.log L ≤ Real.log 300 + (L - 300) / 300 :=
-        Analysis.log_le_log_add_sub_div (by norm_num only) (by linarith only [hL])
-      _ ≤ L / 300 + 19 / 4 := by linarith only [LLS.clippedAffine_log_three_hundred_le]
-  have hY := LLS.PaperStatements.midscale_adaptive_lower (by linarith only [hL])
-  have hp := gamma_index_four_lt_proxy hL
-  have hr : (843 / 1000 : ℝ) * L + 38 / 5 ≤ L - 2 * Real.log L + 91 / 20 := by
-    nlinarith only [hL, hlog]
-  have hstrict : (843 / 1000 : ℝ) * L + 38 / 5 < L - 2 * Real.log L + 91 / 20 := by
-    nlinarith only [hL, hlog]
-  have hroot : (843 / 1000 : ℝ) * L + 38 / 5 < Analysis.adaptivePart2CutoffRoot L :=
-    lt_of_lt_of_le hstrict hY
-  have hfactor : 0 ≤ (843 / 1000 : ℝ) * L + 38 / 5 := by nlinarith only [hL]
-  have hsq := mul_self_le_mul_self hfactor (le_of_lt hroot)
-  have hrootPos : 0 < Analysis.adaptivePart2CutoffRoot L := lt_trans (by nlinarith only [hL]) hroot
-  have hright : 0 < (Analysis.adaptivePart2CutoffRoot L) ^ 2 := sq_pos_of_pos hrootPos
-  exact lt_of_lt_of_le hp (by nlinarith only [hsq])
-
-/-- The index-four bound also dominates the older shift-216 candidate wherever
-that candidate is defined. -/
-theorem gamma_index_four_lt_199_div_250_plus_216_sq {L : ℝ} (hL : 258 ≤ L) :
-    (99 / 40 : ℝ) * ((107 / 200 : ℝ) * L + 24 / 5) ^ 2 < (199 / 250 : ℝ) * (L + 216) ^ 2 := by
-  have hp := gamma_index_four_lt_proxy hL
-  have hr : (843 / 1000 : ℝ) * L + 38 / 5 ≤ (89 / 100 : ℝ) * (L + 216) := by nlinarith only [hL]
-  have hfactor : 0 ≤ (843 / 1000 : ℝ) * L + 38 / 5 := by nlinarith only [hL]
-  have hsq := mul_self_le_mul_self hfactor hr
-  have hc : (89 / 100 : ℝ) ^ 2 < 199 / 250 := by norm_num only
-  have hz : 0 < (L + 216) ^ 2 := sq_pos_of_pos (by linarith only [hL])
-  calc
-    _ < ((843 / 1000 : ℝ) * L + 38 / 5) ^ 2 := hp
-    _ ≤ (89 / 100 : ℝ) ^ 2 * (L + 216) ^ 2 := by nlinarith only [hsq]
-    _ < (199 / 250 : ℝ) * (L + 216) ^ 2 := mul_lt_mul_of_pos_right hc hz
-
-/-- From `L = 350000` onward, the Gaussian `16/25` branch is strictly below
-the index-four Gamma branch. -/
-theorem gaussian_relative_lt_gamma_index_four_sq {L : ℝ} (hL : 350000 ≤ L) :
-    (16 / 25 : ℝ) * L ^ 2 < (99 / 40 : ℝ) * ((107 / 200 : ℝ) * L + 24 / 5) ^ 2 := by
-  have hroot : (4 / 5 : ℝ) * L < (157 / 100 : ℝ) * ((107 / 200 : ℝ) * L) := by nlinarith only [hL]
-  have hscaled : ((4 / 5 : ℝ) * L) ^ 2 < ((157 / 100 : ℝ) * ((107 / 200 : ℝ) * L)) ^ 2 :=
-    (sq_lt_sq₀ (by positivity) (by positivity)).mpr hroot
-  have hbase : 0 ≤ (107 / 200 : ℝ) * L := by positivity
-  have hbaseShift : (107 / 200 : ℝ) * L ≤ (107 / 200 : ℝ) * L + 24 / 5 := by nlinarith only
-  have hfactor : 0 ≤ (157 / 100 : ℝ) * ((107 / 200 : ℝ) * L) := mul_nonneg (by norm_num only) hbase
-  have hsq :=
-    mul_self_le_mul_self hfactor
-      (mul_le_mul_of_nonneg_left hbaseShift (by norm_num only : (0 : ℝ) ≤ 157 / 100))
-  have hcoef : (157 / 100 : ℝ) ^ 2 < 99 / 40 := by norm_num only
-  have hshift : 0 < ((107 / 200 : ℝ) * L + 24 / 5) ^ 2 := sq_pos_of_pos (by nlinarith only [hL])
-  have hbound :
-    ((157 / 100 : ℝ) * ((107 / 200 : ℝ) * L + 24 / 5)) ^ 2 <
-      (99 / 40 : ℝ) * ((107 / 200 : ℝ) * L + 24 / 5) ^ 2 := by
-    calc
-      _ = (157 / 100 : ℝ) ^ 2 * ((107 / 200 : ℝ) * L + 24 / 5) ^ 2 := by ring
-      _ < (99 / 40 : ℝ) * ((107 / 200 : ℝ) * L + 24 / 5) ^ 2 := mul_lt_mul_of_pos_right hcoef hshift
-      _ = _ := by ring
-  calc
-    (16 / 25 : ℝ) * L ^ 2 = ((4 / 5 : ℝ) * L) ^ 2 := by ring
-    _ < ((157 / 100 : ℝ) * ((107 / 200 : ℝ) * L)) ^ 2 := hscaled
-    _ ≤ ((157 / 100 : ℝ) * ((107 / 200 : ℝ) * L + 24 / 5)) ^ 2 := by nlinarith only [hsq]
-    _ < (99 / 40 : ℝ) * ((107 / 200 : ℝ) * L + 24 / 5) ^ 2 := hbound
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

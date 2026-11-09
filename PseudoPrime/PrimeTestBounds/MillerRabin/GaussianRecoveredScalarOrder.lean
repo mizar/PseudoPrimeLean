@@ -19,8 +19,8 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 /-- For levels at least 132, the original raw large-index root exceeds ten.
 The budget at ten contradicts its completed positive-root equation; clipping is inactive. -/
 theorem gaussianLargeRoot_gt_ten {L : ℝ} (hL : 132 ≤ L) : (10 : ℝ) < gaussian1000LargeRoot L := by
-  have hC : 0 ≤ gaussianMRRefinedConductor * L + 163 / 20 := by
-    have hc : 0 < gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
+  have hC : 0 ≤ gaussianConductorCoeff * L + 163 / 20 := by
+    have hc : 0 < gaussianConductorCoeff := by norm_num only [gaussianConductorCoeff]
     nlinarith only [hc, hL]
   have hb : gaussianMRRefinedBeta < gaussianMRRefinedD * 10 := by
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
@@ -30,19 +30,19 @@ theorem gaussianLargeRoot_gt_ten {L : ℝ} (hL : 132 ≤ L) : (10 : ℝ) < gauss
     Analysis.gaussianBudget_of_root_le gaussianMRRefined_coefficients.1
       gaussianMRRefined_coefficients.2 hC hb (le_of_not_gt ht)
   change
-    gaussianMRRefinedConductor * L + 163 / 20 + gaussianMRRefinedBeta * 10 ≤
+    gaussianConductorCoeff * L + 163 / 20 + gaussianMRRefinedBeta * 10 ≤
       gaussianMRRefinedD * 10 ^ 2 at hbudget
   norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
     gaussianMRRefinedWidth, gaussian6FifthsEndpoint, gaussian6FifthsIndex,
-    gaussianMRRefinedConductor] at hbudget
+    gaussianConductorCoeff] at hbudget
   linarith only [hbudget, hL]
 
 /-- On the real interval [132,215], the raw large-index root is at most 251/20.
 Evaluate the quadratic at that rational cap and use the exact root comparison theorem. -/
 theorem gaussianLargeRoot_le_cap {L : ℝ} (hL : 132 ≤ L) (hU : L ≤ 215) :
     gaussian1000LargeRoot L ≤ 251 / 20 := by
-  have hC : 0 ≤ gaussianMRRefinedConductor * L + 163 / 20 := by
-    have hc : 0 < gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
+  have hC : 0 ≤ gaussianConductorCoeff * L + 163 / 20 := by
+    have hc : 0 < gaussianConductorCoeff := by norm_num only [gaussianConductorCoeff]
     nlinarith only [hc, hL]
   apply
     Analysis.gaussianBudgetRoot_le_of_budget gaussianMRRefined_coefficients.1
@@ -50,8 +50,7 @@ theorem gaussianLargeRoot_le_cap {L : ℝ} (hL : 132 ≤ L) (hU : L ≤ 215) :
   · norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
       gaussianMRRefinedWidth, gaussian6FifthsEndpoint, gaussian6FifthsIndex]
   · norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
-      gaussianMRRefinedWidth, gaussian6FifthsEndpoint, gaussian6FifthsIndex,
-      gaussianMRRefinedConductor]
+      gaussianMRRefinedWidth, gaussian6FifthsEndpoint, gaussian6FifthsIndex, gaussianConductorCoeff]
     linarith only [hU]
 
 /-- For levels at least 132, the single-root radius is at most four fifths of
@@ -74,18 +73,15 @@ theorem gaussianSingle_radius_upper {L : ℝ} (hL : 132 ≤ L) :
       gaussianMRRefinedWidth, gaussian6FifthsEndpoint, gaussian6FifthsIndex]
   have hc :
     0 <
-      (4 / 5 : ℝ) * (gaussianMRRefinedD - gaussianMRRefinedBeta / 10) -
-        gaussianMRRefinedConductor := by
+      (4 / 5 : ℝ) * (gaussianMRRefinedD - gaussianMRRefinedBeta / 10) - gaussianConductorCoeff := by
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
-      gaussianMRRefinedWidth, gaussian6FifthsEndpoint, gaussian6FifthsIndex,
-      gaussianMRRefinedConductor]
+      gaussianMRRefinedWidth, gaussian6FifthsEndpoint, gaussian6FifthsIndex, gaussianConductorCoeff]
   have ha :
     (163 / 20 : ℝ) <
-      ((4 / 5) * (gaussianMRRefinedD - gaussianMRRefinedBeta / 10) - gaussianMRRefinedConductor) *
+      ((4 / 5) * (gaussianMRRefinedD - gaussianMRRefinedBeta / 10) - gaussianConductorCoeff) *
         132 := by
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
-      gaussianMRRefinedWidth, gaussian6FifthsEndpoint, gaussian6FifthsIndex,
-      gaussianMRRefinedConductor]
+      gaussianMRRefinedWidth, gaussian6FifthsEndpoint, gaussian6FifthsIndex, gaussianConductorCoeff]
   have hm := mul_le_mul_of_nonneg_left hL hc.le
   have hr : gaussian1000LargeRoot L ^ 2 ≤ (4 / 5 : ℝ) * L := by
     nlinarith only [he, hscale, ha, hm, hd]
@@ -143,10 +139,10 @@ theorem gaussianSingle_lt_original {L : ℝ} (hL : 132 ≤ L) (hU : L ≤ 215) :
   have he := gaussian1000_large_equation (by linarith only [hL] : (0 : ℝ) ≤ L)
   change
     gaussianMRRefinedD * t ^ 2 =
-      gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * t + 163 / 20 at he
+      gaussianConductorCoeff * L + gaussianMRRefinedBeta * t + 163 / 20 at he
   have hneg :
     gaussian1000FourD * t ^ 2 <
-      (2 / 3 : ℝ) * gaussianMRRefinedConductor * L + gaussian1000FourBeta * t + 127 / 10 := by
+      (2 / 3 : ℝ) * gaussianConductorCoeff * L + gaussian1000FourBeta * t + 127 / 10 := by
     dsimp only [A, B, C] at hpoly
     nlinarith only [hpoly, he]
   have hcoef : gaussian1000FourBeta < gaussian1000FourD * t := by
@@ -155,8 +151,8 @@ theorem gaussianSingle_lt_original {L : ℝ} (hL : 132 ≤ L) (hU : L ≤ 215) :
         gaussianMRRefinedWidth, gaussian6FifthsEndpoint]
     have hm := mul_le_mul_of_nonneg_left ht.le gaussian1000_coefficients.1.le
     linarith only [hb, hm]
-  have hC4 : 0 ≤ (2 / 3 : ℝ) * gaussianMRRefinedConductor * L + 127 / 10 := by
-    have hc : 0 < gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
+  have hC4 : 0 ≤ (2 / 3 : ℝ) * gaussianConductorCoeff * L + 127 / 10 := by
+    have hc : 0 < gaussianConductorCoeff := by norm_num only [gaussianConductorCoeff]
     nlinarith only [hc, hL]
   have hfour : t < gaussian1000FourRoot L := by
     by_contra hh
@@ -164,7 +160,7 @@ theorem gaussianSingle_lt_original {L : ℝ} (hL : 132 ≤ L) (hU : L ≤ 215) :
       Analysis.gaussianBudget_of_root_le gaussian1000_coefficients.1 gaussian1000_coefficients.2 hC4
         hcoef (le_of_not_gt hh)
     change
-      (2 / 3 : ℝ) * gaussianMRRefinedConductor * L + 127 / 10 + gaussian1000FourBeta * t ≤
+      (2 / 3 : ℝ) * gaussianConductorCoeff * L + 127 / 10 + gaussian1000FourBeta * t ≤
         gaussian1000FourD * t ^ 2 at hg
     linarith only [hg, hneg]
   have hlarge : gaussianSingleRoot L = t := max_eq_right ht.le
@@ -182,14 +178,14 @@ the old raw root is above the clipping floor. -/
 theorem gaussianRecovered_lt_single {L : ℝ} (hL : 132 ≤ L) :
     gaussianRecoveredBound L < gaussianSingleBound L := by
   have ht := gaussianLargeRoot_gt_ten hL
-  have hC : 0 ≤ gaussianMRRefinedConductor * L + 407 / 50 := by
-    have hc : 0 < gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
+  have hC : 0 ≤ gaussianConductorCoeff * L + 407 / 50 := by
+    have hc : 0 < gaussianConductorCoeff := by norm_num only [gaussianConductorCoeff]
     nlinarith only [hc, hL]
   have hraw : gaussianRecoveredLargeRoot L < gaussian1000LargeRoot L := by
     exact
       Analysis.gaussianBudgetRoot_strictMono gaussianMRRefined_coefficients.1 hC
         (by linarith only [] :
-          gaussianMRRefinedConductor * L + 407 / 50 < gaussianMRRefinedConductor * L + 163 / 20)
+          gaussianConductorCoeff * L + 407 / 50 < gaussianConductorCoeff * L + 163 / 20)
   have hroot : gaussianRecoveredRoot L < gaussianSingleRoot L := by
     rw [gaussianSingleRoot, max_eq_right ht.le]
     exact max_lt ht hraw

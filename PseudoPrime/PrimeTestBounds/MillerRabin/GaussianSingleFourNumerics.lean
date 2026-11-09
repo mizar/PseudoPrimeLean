@@ -17,29 +17,13 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 /-- The inverse-root coefficient after scaling the index-four radius by three quarters. -/
 noncomputable def gaussianSingleFourA : ℝ :=
   (16 / 3 : ℝ) * (21 * gaussian6FifthsEndpoint / (10 * gaussianMRRefinedWidth)) -
-    4 * (7 * gaussian6FifthsEndpoint * gaussianMRRefinedBeta / (6 * gaussianMRRefinedConductor))
+    4 * (7 * gaussian6FifthsEndpoint * gaussianMRRefinedBeta / (6 * gaussianConductorCoeff))
 
 /-- Given residual allowance D, retain its signed inverse-radius contribution after pole
 elimination. -/
 noncomputable def gaussianSingleFourV (D : ℝ) : ℝ :=
   (16 / 3 : ℝ) * (1839 * gaussian6FifthsEndpoint / 1000) +
-    4 * gaussian6FifthsEndpoint * (4 - 7 * D / (6 * gaussianMRRefinedConductor))
-
-/-- Exact rational checks certify the paired inverse-power hypotheses and residual below 41. -/
-theorem gaussianSingle_four_checks :
-    0 ≤ gaussianSingleFourA * 10 + gaussianSingleFourV (163 / 20) ∧
-      0 ≤ gaussianSingleFourA * 10 + 2 * gaussianSingleFourV (163 / 20) ∧
-      3 * ((12871 / 1000 : ℝ) - 2 * (7191 / 2000)) +
-          4 *
-            (7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianMRRefinedConductor)) +
-          13 +
-          1125 / 1000 +
-          gaussianSingleFourA / 10 +
-          gaussianSingleFourV (163 / 20) / 100 <
-        41 := by
-  norm_num only [gaussianSingleFourA, gaussianSingleFourV, gaussian6FifthsEndpoint,
-    gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth,
-    gaussian6FifthsIndex, gaussianMRRefinedConductor, and_self]
+    4 * gaussian6FifthsEndpoint * (4 - 7 * D / (6 * gaussianConductorCoeff))
 
 /-- For radius at least 75, bound the two actual tails using the scale 17/10 and positive
 denominators. -/
@@ -67,14 +51,12 @@ theorem gaussianSingle_four_tail {r : ℝ} (hr : 75 ≤ r) :
 /-- Given a root above ten, its large-index budget and rational residual checks, the actual scaled
 index-four error is below 41. Keep the signed inverse-power pair and use the radius-75 tails. -/
 theorem gaussianSingle_four_error {L s P D : ℝ} (hs : 10 ≤ s)
-    (hG :
-      gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s + D ≤ gaussianMRRefinedD * s ^ 2)
+    (hG : gaussianConductorCoeff * L + gaussianMRRefinedBeta * s + D ≤ gaussianMRRefinedD * s ^ 2)
     (h1 : 0 ≤ gaussianSingleFourA * 10 + gaussianSingleFourV D)
     (h2 : 0 ≤ gaussianSingleFourA * 10 + 2 * gaussianSingleFourV D)
     (hstrict :
       3 * ((12871 / 1000 : ℝ) - 2 * P) +
-          4 *
-            (7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianMRRefinedConductor)) +
+          4 * (7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianConductorCoeff)) +
           13 +
           1125 / 1000 +
           gaussianSingleFourA / 10 +
@@ -112,12 +94,11 @@ theorem gaussianSingle_four_error {L s P D : ℝ} (hs : 10 ≤ s)
           (21 * gaussian6FifthsEndpoint / (10 * gaussianMRRefinedWidth * (3 / 4) * s) +
             1839 * gaussian6FifthsEndpoint / (1000 * (3 / 4) * r)) +
         4 *
-          (7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianMRRefinedConductor) -
-              (7 * gaussian6FifthsEndpoint * gaussianMRRefinedBeta /
-                  (6 * gaussianMRRefinedConductor)) /
+          (7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianConductorCoeff) -
+              (7 * gaussian6FifthsEndpoint * gaussianMRRefinedBeta / (6 * gaussianConductorCoeff)) /
                 s +
-            (gaussian6FifthsEndpoint * (4 - 7 * D / (6 * gaussianMRRefinedConductor))) / s ^ 2) =
-      4 * (7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianMRRefinedConductor)) +
+            (gaussian6FifthsEndpoint * (4 - 7 * D / (6 * gaussianConductorCoeff))) / s ^ 2) =
+      4 * (7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianConductorCoeff)) +
         gaussianSingleFourA / s +
         gaussianSingleFourV D / s ^ 2 := by
     dsimp only [gaussianSingleFourA, gaussianSingleFourV, r]
@@ -149,12 +130,11 @@ theorem gaussianSingle_four_margin {s D : ℝ} (hs : 10 ≤ s) (hD : 407 / 50 �
 /-- The large-index budget and an index-four residual below 41 contradict the certified margin
 above 42. This closes both old and recovered-prefix scalar branches. -/
 theorem gaussianSingle_four_contradiction {L s D R : ℝ} (hs : 10 ≤ s) (hD : 407 / 50 ≤ D)
-    (hG :
-      gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s + D ≤ gaussianMRRefinedD * s ^ 2)
+    (hG : gaussianConductorCoeff * L + gaussianMRRefinedBeta * s + D ≤ gaussianMRRefinedD * s ^ 2)
     (hR : R < 41)
     (hcmp :
       (3 / 4 : ℝ) * (10971611 / 5000000) * s ^ 2 ≤
-        2 * gaussianMRRefinedConductor * L + (98882333 / 50000000) * s + R) :
+        2 * gaussianConductorCoeff * L + (98882333 / 50000000) * s + R) :
     False := by
   have hmargin := gaussianSingle_four_margin hs hD
   nlinarith only [hG, hR, hcmp, hmargin]

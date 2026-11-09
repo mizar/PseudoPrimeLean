@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.GammaRationalRampCertificates
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.LogWeightedSummationByParts
 
@@ -112,7 +113,7 @@ theorem gamma_finite_ramp_prefix_lower_actual {b q : ℚ} (_hb : 0 < b) {N : ℕ
       (q : ℝ) ≤
         ∑ m ∈ Finset.Ioc 0 N,
           ArithmeticFunction.vonMangoldt m * Analysis.exponentialRampWeight ((m : ℝ) / (b : ℝ))) :
-    (q : ℝ) ≤ AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum b := by
+    (q : ℝ) ≤ exponentialRampMangoldtSum b := by
   apply hprefix.trans
   exact
     Finset.sum_le_sum_of_subset_of_nonneg (Finset.Ioc_subset_Ioc le_rfl hN)

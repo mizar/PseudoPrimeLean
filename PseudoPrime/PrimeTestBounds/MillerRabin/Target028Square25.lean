@@ -6,8 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target030Square25
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target030Square28
+public import PseudoPrime.PrimeTestBounds.MillerRabin.SquareSeed43Stage197
+public import PseudoPrime.PrimeTestBounds.MillerRabin.SquareSeed89Stage197
 
 /-! # Coefficient 0.28 for square divisors through scale 25 -/
 

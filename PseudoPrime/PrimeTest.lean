@@ -44,6 +44,7 @@ public import PseudoPrime.PrimeTest.Execution
 public import PseudoPrime.PrimeTest.Precheck
 public import PseudoPrime.PrimeTest.EulerJacobi.Prime
 public import PseudoPrime.PrimeTest.MillerRabin.Prime
+public import PseudoPrime.PrimeTest.MillerRabin.PassSubgroupPrime
 public import PseudoPrime.PrimeTest.MillerRabin.WitnessSubgroupCardinality
 public import PseudoPrime.PrimeTest.MillerRabin.WitnessSubgroupTwoPrimes
 public import PseudoPrime.PrimeTest.MillerRabin.SignSubgroupIndex

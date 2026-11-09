@@ -28,7 +28,7 @@ theorem gamma_level_one_finite_sum_upper_one_fifth (hRH : RiemannHypothesis) {L 
     ∑ n ∈ Finset.Ioc 0 N,
         (gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) ((32 / 99 : ℝ) * L ^ 2) n).re ≤
       Real.sqrt ((32 / 99 : ℝ) * L ^ 2) + 1 / 5 := by
-  have hx0 : 0 < (32 / 99 : ℝ) * L ^ 2 := zero_lt_one.trans_le (Analysis.ramp_scale_ge_one hL)
+  have hx0 : 0 < (32 / 99 : ℝ) * L ^ 2 := zero_lt_one.trans_le (ramp_scale_ge_one hL)
   have heq :
     (∑ n ∈ Finset.Ioc 0 N,
         (gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) ((32 / 99 : ℝ) * L ^ 2) n).re) =
@@ -38,7 +38,7 @@ theorem gamma_level_one_finite_sum_upper_one_fifth (hRH : RiemannHypothesis) {L 
   rw [heq]
   apply (div_le_iff₀ (Real.sqrt_pos.mpr hx0)).mpr
   rw [add_mul, ← pow_two, Real.sq_sqrt hx0.le]
-  have hraw := exponentialMangoldtSum_upper_uniform hRH (Analysis.ramp_scale_ge_one hL) N
+  have hraw := exponentialMangoldtSum_upper_uniform hRH (ramp_scale_ge_one hL) N
   have herr := gamma_exponential_error_le_one_fifth_root hL
   linarith only [hraw, herr]
 
@@ -81,7 +81,7 @@ theorem gamma_level_one_sum_upper_one_fifth (hRH : RiemannHypothesis) {L : ℝ} 
           gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) ((32 / 99 : ℝ) * L ^ 2) n).re ≤
       Real.sqrt ((32 / 99 : ℝ) * L ^ 2) + 1 / 5 := by
   exact
-    gamma_level_one_sum_upper_of_finite_upper (zero_lt_one.trans_le (Analysis.ramp_scale_ge_one hL))
+    gamma_level_one_sum_upper_of_finite_upper (zero_lt_one.trans_le (ramp_scale_ge_one hL))
       (gamma_level_one_finite_sum_upper_one_fifth hRH hL)
 
 /-- Under RH and L>=46000, the primitive source of the principal character

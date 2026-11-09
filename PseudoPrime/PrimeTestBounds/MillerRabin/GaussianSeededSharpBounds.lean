@@ -6,6 +6,8 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalDecimalScale
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalDivisorLogBounds
 public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianSeededSharp
 public import PseudoPrime.LLS.GammaPrefixFine
@@ -34,7 +36,7 @@ theorem gaussianSeededSharp_index_four (f : Bool) {n : ℕ} [NeZero n] (H : Subg
                 (LLS.PaperStatements.gaussianGammaMellinKernel.transform u).re / Real.sqrt u) -
             Real.exp (1 / 16 : ℝ)) *
           Real.sqrt x ≤
-        gaussianMRRefinedConductor * LLS.PaperStatements.subgroupConductorLogSum H +
+        gaussianConductorCoeff * LLS.PaperStatements.subgroupConductorLogSum H +
           (H.index : ℝ) *
             (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / Real.sqrt x) * Real.exp (1 / 16 : ℝ)) +
           13 +
@@ -72,7 +74,7 @@ theorem gaussianSeededSharp_index_four (f : Bool) {n : ℕ} [NeZero n] (H : Subg
     linarith only [hsbound]
   have hcmp' :
     (4 * (1 - h) * I - E) * r ≤
-      gaussianMRRefinedConductor * LLS.PaperStatements.subgroupConductorLogSum H +
+      gaussianConductorCoeff * LLS.PaperStatements.subgroupConductorLogSum H +
         4 * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * Real.exp (1 / 16 : ℝ)) +
         13 +
         3 * LLS.PaperStatements.gaussianPrefixError (gaussianSeededSharpPrefix f) n (r ^ 2) := by
@@ -90,23 +92,23 @@ theorem gaussianSeededSharp_index_four (f : Bool) {n : ℕ} [NeZero n] (H : Subg
       11 := by
     exact gaussianSeededSharp_triple_error (f := f) hL le_rfl
   exact
-    gaussian_compare_width (m := 4) (t := 3) (s := s) (r := r) (A :=
+    LLS.gaussian_compare_width (m := 4) (t := 3) (s := s) (r := r) (A :=
       LLS.PaperStatements.gaussianPrefixError (gaussianSeededSharpPrefix f) n (r ^ 2)) (L :=
       (2 / 3 : ℝ) * Real.log n) (I := I) (E := E) (C :=
       LLS.PaperStatements.subgroupConductorLogSum H) (h := h) (M := gaussianMRRefinedMass) (Ecap :=
-      gaussian6FifthsEndpoint) (conductor := gaussianMRRefinedConductor) (D :=
+      gaussian6FifthsEndpoint) (conductor := gaussianConductorCoeff) (D :=
       (4 * gaussianMRRefinedMass - gaussian6FifthsEndpoint) / 3) (beta :=
       (4 / 3 : ℝ) *
         (gaussianMRRefinedMass * gaussianMRRefinedWidth + 1 / (10 * gaussianMRRefinedWidth)))
       (by norm_num only [gaussianMRRefinedWidth]) (by norm_num only : (4 : ℝ) ≤ 4)
       (by norm_num only : (3 : ℝ) = (4 : ℝ) - 1) hspos hrootSq.symm hh hh1 hI hE hCscaled
-      (by norm_num only [gaussianMRRefinedConductor] : (0 : ℝ) ≤ gaussianMRRefinedConductor) le_rfl
-      le_rfl hcmp'
+      (by norm_num only [gaussianConductorCoeff] : (0 : ℝ) ≤ gaussianConductorCoeff) le_rfl le_rfl
+      hcmp'
       (by
         intro hbudget
         have hnorm :
           ((4 * gaussianMRRefinedMass - gaussian6FifthsEndpoint) / 3) * r ≤
-            (2 / 3 : ℝ) * gaussianMRRefinedConductor * Real.log n +
+            (2 / 3 : ℝ) * gaussianConductorCoeff * Real.log n +
               (4 / 3 : ℝ) *
                 (gaussianMRRefinedMass * gaussianMRRefinedWidth +
                   1 / (10 * gaussianMRRefinedWidth)) *
@@ -298,17 +300,15 @@ theorem gaussianSeededSharp_witness_large (f : Bool) {n : ℕ} [NeZero n] (hnOdd
     exact (div_le_iff₀ htpos).2 (by nlinarith only [hC'])
   have hroot :
     gaussianMRRefinedD * r ≥
-      gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s +
-        gaussianSeededSharpConstant f := by
+      gaussianConductorCoeff * L + gaussianMRRefinedBeta * s + gaussianSeededSharpConstant f := by
     dsimp only [r, s, L]
     exact gaussianSeededSharp_equation_le f (by linarith only [hL] : 0 ≤ Real.log n)
   have hcmp' :
     (m * (1 - h) * I - E) * r ≤
-      gaussianMRRefinedConductor * C +
-        m * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * E) +
+      gaussianConductorCoeff * C + m * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * E) +
         13 +
         t * A := by
-    simpa only [m, t, I, E, C, A, gaussianMRRefinedConductor] using hcmp
+    simpa only [m, t, I, E, C, A, gaussianConductorCoeff] using hcmp
   have hcoeff := gaussianMRRefined_index_coeffs hi
   have hD : gaussianMRRefinedD ≤ (m * gaussianMRRefinedMass - gaussian6FifthsEndpoint) / t := by
     simpa only [t] using hcoeff.1
@@ -318,7 +318,7 @@ theorem gaussianSeededSharp_witness_large (f : Bool) {n : ℕ} [NeZero n] (hnOdd
     simpa only [t, mul_comm] using hcoeff.2.2
   have hfinish :
     gaussianMRRefinedD * r ≤
-        gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s +
+        gaussianConductorCoeff * L + gaussianMRRefinedBeta * s +
           (m / t) *
             (21 * gaussian6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
               1839 * gaussian6FifthsEndpoint / (1000 * r)) +
@@ -339,14 +339,14 @@ theorem gaussianSeededSharp_witness_large (f : Bool) {n : ℕ} [NeZero n] (hnOdd
     rw [ht] at hbudget
     linarith only [hbudget, hroot, herr]
   exact
-    gaussian_compare_width (m := m) (t := t) (s := s) (r := r) (A := A) (L := L) (I := I) (E := E)
-      (C := C) (h := h) (M := gaussianMRRefinedMass) (Ecap := gaussian6FifthsEndpoint) (conductor :=
-      gaussianMRRefinedConductor) (D := gaussianMRRefinedD) (beta := gaussianMRRefinedBeta)
-      (by norm_num only [gaussianMRRefinedWidth])
+    LLS.gaussian_compare_width (m := m) (t := t) (s := s) (r := r) (A := A) (L := L) (I := I) (E :=
+      E) (C := C) (h := h) (M := gaussianMRRefinedMass) (Ecap := gaussian6FifthsEndpoint)
+      (conductor := gaussianConductorCoeff) (D := gaussianMRRefinedD) (beta :=
+      gaussianMRRefinedBeta) (by norm_num only [gaussianMRRefinedWidth])
       (by
         have hi' : (1000000000 : ℝ) ≤ m := by simpa only [m, gaussian6FifthsIndex] using hi
         linarith only [hi'])
-      rfl hspos rfl hh hh1 hI hE hC (by norm_num only [gaussianMRRefinedConductor]) hD hbeta hcmp'
+      rfl hspos rfl hh hh1 hI hE hC (by norm_num only [gaussianConductorCoeff]) hD hbeta hcmp'
       hfinish
 
 /-- For an odd uniform three-prime Korselt product, either clipped cutoff bounds a

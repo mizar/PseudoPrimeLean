@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.LLS.GammaMixedProfileDualBounds
 public import PseudoPrime.Analysis.RpowIntegerCertificate
-public import PseudoPrime.Analysis.QuadraticGammaSmoothedNumerics
+public import PseudoPrime.LLS.QuadraticGammaSmoothedNumerics
 
 /-! # Fully certified separation on the logarithmic cell [300,310] -/
 
@@ -126,7 +126,7 @@ theorem gamma_factor_free_separation_300_310 (hRH : RiemannHypothesis) {L : ℝ}
   obtain ⟨hxlo, hxhi, hroot, hrhi, hlogx, hlogext, hlogr⟩ :=
     gamma_mixed_profile_geometry_300_310 hlo hhi
   change (79 / 125 : ℝ) * L ≤ Real.sqrt x at hroot
-  have hm1 := mul_le_mul_of_nonneg_right Analysis.gamma_ramp_mass_lower (Real.sqrt_nonneg x)
+  have hm1 := mul_le_mul_of_nonneg_right gamma_ramp_mass_lower (Real.sqrt_nonneg x)
   have hm2 :=
     mul_le_mul_of_nonneg_left hroot (show (0 : ℝ) ≤ 83125234337 / 100000000000 by norm_num only)
   have hm := hm2.trans hm1

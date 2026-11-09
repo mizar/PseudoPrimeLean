@@ -39,7 +39,7 @@ noncomputable def gaussianSeededTunedShift (f : Bool) : ℝ :=
 /-- The positive quadratic budget root with the tuned residual and existing common coefficients. -/
 noncomputable def gaussianSeededTunedRawRoot (f : Bool) (L : ℝ) : ℝ :=
   Analysis.gaussianBudgetRoot gaussianMRRefinedD gaussianMRRefinedBeta
-    (gaussianMRRefinedConductor * L + gaussianSeededTunedConstant f)
+    (gaussianConductorCoeff * L + gaussianSeededTunedConstant f)
 
 /-- Clip the tuned raw root at the unchanged fourth-root prefix floor.
 This retains the actual certified prefix at every scale. -/
@@ -58,10 +58,10 @@ noncomputable def gaussianSeededTunedBound (f : Bool) (L : ℝ) : ℝ :=
 /-- Each tuned residual equals its current sharp residual minus conductor times its own shift. -/
 theorem gaussianSeededTuned_constant_shift (f : Bool) :
     gaussianSeededTunedConstant f =
-      gaussianSeededSharpConstant f - gaussianMRRefinedConductor * gaussianSeededTunedShift f := by
+      gaussianSeededSharpConstant f - gaussianConductorCoeff * gaussianSeededTunedShift f := by
   cases f <;>
-    norm_num only [gaussianSeededTunedConstant, gaussianSeededSharpConstant,
-      gaussianMRRefinedConductor, gaussianSeededTunedShift, Bool.false_eq_true, ite_false, ite_true]
+    norm_num only [gaussianSeededTunedConstant, gaussianSeededSharpConstant, gaussianConductorCoeff,
+      gaussianSeededTunedShift, Bool.false_eq_true, ite_false, ite_true]
 
 /-- For numerical comparison, each tuned raw root is its current raw root at the displaced scale.
 This equality does not change the input of any actual witness theorem. -/
@@ -69,8 +69,8 @@ theorem gaussianSeededTuned_raw_shift (f : Bool) (L : ℝ) :
     gaussianSeededTunedRawRoot f L =
       gaussianSeededSharpRawRoot f (L - gaussianSeededTunedShift f) := by
   have he :
-    gaussianMRRefinedConductor * L + gaussianSeededTunedConstant f =
-      gaussianMRRefinedConductor * (L - gaussianSeededTunedShift f) +
+    gaussianConductorCoeff * L + gaussianSeededTunedConstant f =
+      gaussianConductorCoeff * (L - gaussianSeededTunedShift f) +
         gaussianSeededSharpConstant f := by
     rw [gaussianSeededTuned_constant_shift]
     ring
@@ -132,11 +132,11 @@ theorem gaussianSeededTuned_radius170 (f : Bool) (L : ℝ) :
 /-- At nonnegative scale, the clipped root satisfies the tuned quadratic budget.
 Increasing the raw root to the fixed prefix floor preserves the required inequality. -/
 theorem gaussianSeededTuned_budget (f : Bool) {L : ℝ} (hL : 0 ≤ L) :
-    gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * gaussianSeededTunedRoot f L +
+    gaussianConductorCoeff * L + gaussianMRRefinedBeta * gaussianSeededTunedRoot f L +
         gaussianSeededTunedConstant f ≤
       gaussianMRRefinedD * gaussianSeededTunedRadius f L := by
-  have hC : 0 ≤ gaussianMRRefinedConductor * L + gaussianSeededTunedConstant f := by
-    have hc : 0 ≤ gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
+  have hC : 0 ≤ gaussianConductorCoeff * L + gaussianSeededTunedConstant f := by
+    have hc : 0 ≤ gaussianConductorCoeff := by norm_num only [gaussianConductorCoeff]
     have hD : 0 ≤ gaussianSeededTunedConstant f := by
       cases f <;>
         norm_num only [gaussianSeededTunedConstant, Bool.false_eq_true, ite_false, ite_true]
@@ -185,7 +185,7 @@ theorem gaussianSeededTuned_residual_checks (f : Bool) :
         gaussian1000ResidualA eta * gaussianSeededTunedAnchor f +
           2 * gaussianLowResidualV eta (gaussianSeededTunedConstant f) ∧
       (12871 / 1000 : ℝ) - 2 * gaussianSeededTunedPrefix f +
-          7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianMRRefinedConductor) +
+          7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianConductorCoeff) +
           gaussian1000ResidualA eta / gaussianSeededTunedAnchor f +
           gaussianLowResidualV eta (gaussianSeededTunedConstant f) /
             gaussianSeededTunedAnchor f ^ 2 +
@@ -196,8 +196,8 @@ theorem gaussianSeededTuned_residual_checks (f : Bool) :
     norm_num only [gaussianSeededTunedAnchor, gaussianSeededTunedConstant,
       gaussianSeededTunedPrefix, gaussianSeededTunedTail, gaussian1000ResidualA,
       gaussianLowResidualV, gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
-      gaussianMRRefinedWidth, gaussianMRRefinedConductor, gaussian6FifthsIndex,
-      gaussian6FifthsEndpoint, Bool.false_eq_true, ite_false, ite_true, and_self]
+      gaussianMRRefinedWidth, gaussianConductorCoeff, gaussian6FifthsIndex, gaussian6FifthsEndpoint,
+      Bool.false_eq_true, ite_false, ite_true, and_self]
 
 /-- For every index at least one billion, the actual normalized prefix error is below the tuned
   residual.
@@ -229,7 +229,7 @@ the normalized index-four error is below eleven. Retain the signed pole savings 
   tail. -/
 theorem seededBudget_four_error {L s r P D : ℝ} {q : ℕ} (h13 : 13 ≤ s) (hr170 : 170 ≤ r)
     (hreq : r = s ^ 2)
-    (hG : gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s + D ≤ gaussianMRRefinedD * r)
+    (hG : gaussianConductorCoeff * L + gaussianMRRefinedBeta * s + D ≤ gaussianMRRefinedD * r)
     (hD : 1343 / 250 ≤ D) (hP : 480743 / 100000 ≤ P) (hq : Real.log q ≤ L) :
     (4 / 3 : ℝ) *
           (21 * gaussian6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
@@ -245,17 +245,16 @@ theorem seededBudget_four_error {L s r P D : ℝ} {q : ℕ} (h13 : 13 ≤ s) (hr
   have hqPole :=
     mul_le_mul_of_nonneg_left (add_le_add hqDiv (le_refl (4 / r)))
       (by norm_num only [gaussian6FifthsEndpoint] : (0 : ℝ) ≤ gaussian6FifthsEndpoint)
-  have hneg : gaussian6FifthsEndpoint * (4 - 7 * D / (6 * gaussianMRRefinedConductor)) ≤ 0 := by
-    norm_num only [gaussian6FifthsEndpoint, gaussianMRRefinedConductor]
+  have hneg : gaussian6FifthsEndpoint * (4 - 7 * D / (6 * gaussianConductorCoeff)) ≤ 0 := by
+    norm_num only [gaussian6FifthsEndpoint, gaussianConductorCoeff]
     linarith only [hD]
   have hnegDiv := div_nonpos_of_nonpos_of_nonneg hneg (sq_nonneg s)
   have hposDiv :
     0 ≤
-      (7 * gaussian6FifthsEndpoint * gaussianMRRefinedBeta / (6 * gaussianMRRefinedConductor)) /
-        s := by
+      (7 * gaussian6FifthsEndpoint * gaussianMRRefinedBeta / (6 * gaussianConductorCoeff)) / s := by
     apply div_nonneg _ hs.le
     norm_num only [gaussian6FifthsEndpoint, gaussianMRRefinedBeta, gaussianMRRefinedWidth,
-      gaussianMRRefinedMass, gaussian6FifthsIndex, gaussianMRRefinedConductor]
+      gaussianMRRefinedMass, gaussian6FifthsIndex, gaussianConductorCoeff]
   have hqId (t : ℝ) :
     gaussian6FifthsEndpoint * ((7 / 6) * t / r + 4 / r) =
       gaussian6FifthsEndpoint * (((7 / 6) * t + 4) / r) := by
@@ -263,7 +262,7 @@ theorem seededBudget_four_error {L s r P D : ℝ} {q : ℕ} (h13 : 13 ≤ s) (hr
   rw [hqId (Real.log q), hqId L] at hqPole
   have hPcap :
     gaussian6FifthsEndpoint * (((7 / 6 : ℝ) * Real.log q + 4) / r) ≤
-      7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianMRRefinedConductor) := by
+      7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianConductorCoeff) := by
     linarith only [hqPole, hpole, hnegDiv, hposDiv]
   have hS :=
     div_le_div_of_nonneg_left
@@ -285,10 +284,10 @@ theorem seededBudget_four_error {L s r P D : ℝ} {q : ℕ} (h13 : 13 ≤ s) (hr
             12871 / 1000 -
           2 * (480743 / 100000) +
         148 / 1000 +
-        7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianMRRefinedConductor) <
+        7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianConductorCoeff) <
       11 := by
     norm_num only [gaussian6FifthsEndpoint, gaussianMRRefinedD, gaussianMRRefinedMass,
-      gaussian6FifthsIndex, gaussianMRRefinedConductor, gaussianMRRefinedWidth]
+      gaussian6FifthsIndex, gaussianConductorCoeff, gaussianMRRefinedWidth]
   dsimp only [LLS.PaperStatements.gaussianPrefixError]
   rw [Real.sqrt_sq hr.le]
   dsimp only [gaussian6FifthsEndpoint] at hPcap hS hR hcap ⊢
@@ -343,7 +342,7 @@ theorem gaussianSeededTuned_four_error (f : Bool) {L : ℝ} {q : ℕ} (hL : 0 �
   comparison. -/
 theorem gaussianSeededTuned_four_absurd (f : Bool) {L : ℝ} (hL : 0 ≤ L) :
     ¬(gaussianMRRefinedTripleD * gaussianSeededTunedRadius f L ≤
-        (2 / 3 : ℝ) * gaussianMRRefinedConductor * L +
+        (2 / 3 : ℝ) * gaussianConductorCoeff * L +
           gaussianMRRefinedTripleBeta * gaussianSeededTunedRoot f L +
           11) := by
   intro hb
@@ -370,8 +369,8 @@ theorem gaussianSeededTuned_radius_linear {f : Bool} {L : ℝ} (hL : 63 ≤ L) :
       cases f <;>
         norm_num only [gaussianSeededTunedConstant, Bool.false_eq_true, ite_false, ite_true] :
       (0 : ℝ) < gaussianSeededTunedConstant f)
-  have hcoef : 0 < gaussianMRRefinedConductor - (5 / 8 : ℝ) * gaussianMRRefinedD := by
-    norm_num only [gaussianMRRefinedConductor, gaussianMRRefinedD, gaussianMRRefinedMass,
+  have hcoef : 0 < gaussianConductorCoeff - (5 / 8 : ℝ) * gaussianMRRefinedD := by
+    norm_num only [gaussianConductorCoeff, gaussianMRRefinedD, gaussianMRRefinedMass,
       gaussian6FifthsEndpoint, gaussian6FifthsIndex]
   have hm := mul_pos hcoef (by linarith only [hL] : (0 : ℝ) < L)
   have hd := gaussianMRRefined_coefficients.1

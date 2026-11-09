@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.Analysis.GammaRefinedTailGeometry
 public import PseudoPrime.LLS.PaperStatements.GammaNonOneRefinedBudgets
 public import PseudoPrime.LLS.GammaVariablePrincipalBounds
@@ -64,7 +65,7 @@ theorem gamma_tail_actual_principal_ramp_error (hRH : RiemannHypothesis) {L c : 
     (hc : 10 ≤ c) (hcu : c ≤ 15) :
     let x := Analysis.gammaTailProfileScale L c
     (∑' n : ℕ, gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x n).re -
-          2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) +
+          2 * (exponentialRampMangoldtSum x / Real.sqrt x) +
         (2 * (∫ u in (0 : ℝ)..(99 / 40), Analysis.exponentialRampWeight u) - 1) * Real.sqrt x ≤
       15 := by
   dsimp only

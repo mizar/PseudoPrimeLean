@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.Analysis.RationalListMoments
 
 public import PseudoPrime.LLS.GammaReservedRampRows
@@ -144,8 +145,7 @@ theorem gamma_reserved_ramp_moments_lower_actual (rows : List GammaFiniteRampRow
     (hc : rows.Forall (fun r ↦ r.check (2 * a) = true))
     (hn : (rows.map GammaFiniteRampRow.index).Nodup)
     (hm : rows.Forall (fun r ↦ 0 < r.index ∧ r.index ≤ N)) :
-    (gammaReservedRampLowerFromMoments rows a x n : ℝ) ≤
-      AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x := by
+    (gammaReservedRampLowerFromMoments rows a x n : ℝ) ≤ exponentialRampMangoldtSum x := by
   rw [← gamma_reserved_ramp_sum_eq_moments]
   exact gamma_reserved_ramp_rows_lower_actual rows N ha hax n hp hc hn hm
 
@@ -176,8 +176,7 @@ Proof: discharge all static row hypotheses from the certificate fields.
 This is the common entry point for a family of scalar cells. -/
 theorem GammaReservedRampCertificate.lower_le_actual {a : ℚ} (c : GammaReservedRampCertificate a)
     {x : ℚ} (hax : a ≤ x) (n : ℕ) :
-    (gammaReservedRampLowerFromMoments c.rows a x n : ℝ) ≤
-      AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x := by
+    (gammaReservedRampLowerFromMoments c.rows a x n : ℝ) ≤ exponentialRampMangoldtSum x := by
   exact
     gamma_reserved_ramp_moments_lower_actual c.rows c.upper c.anchorPos hax n c.primes c.checks
       c.indicesNodup c.support

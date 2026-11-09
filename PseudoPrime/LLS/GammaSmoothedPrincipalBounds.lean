@@ -6,9 +6,10 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.RiemannWeightedErrorBounds
 public import PseudoPrime.LLS.RiemannRampIncrementBounds
-public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ExponentialRampErrorBounds
+public import PseudoPrime.LLS.ExponentialRampErrorBounds
 
 /-! # Actual principal ramp sum with uniform error seven -/
 
@@ -75,7 +76,7 @@ private theorem rampErrorExtension_bound (hRH : RiemannHypothesis) {x : ℝ} (hx
   rw [rampErrorExtension_eqOn (zero_lt_one.trans_le hx) hu]
   dsimp only
   have hs :=
-    mul_le_mul_of_nonneg_left (Analysis.sqrt_le_ramp_right hu.2)
+    mul_le_mul_of_nonneg_left (sqrt_le_ramp_right hu.2)
       (div_nonneg (Real.sqrt_nonneg x) (by norm_num only : (0 : ℝ) ≤ 20))
   have he := logWeightedMangoldtSum_scaled_ramp_error hRH hx hu.1 hu.2
   linarith only [he, hs]
@@ -85,15 +86,15 @@ square-root and endpoint-logarithmic bound. Apply the actual variation norm boun
 85 to the continuous arithmetic error extension and transport back to A(xu)-xu.
 This discharges the ramp finite sum's analytic error input. -/
 theorem gamma_ramp_error_functional_bound (hRH : RiemannHypothesis) {x : ℝ} (hx : 1 ≤ x) :
-    |AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional
+    |exponentialRampVariationFunctional
           (fun u ↦ AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum (x * u) - x * u)| ≤
       (135 / 20 : ℝ) * Real.sqrt x +
         86 * ((1839 / 1000 : ℝ) * Real.log (x * (99 / 40)) + 21 / 20) := by
   have he :=
-    AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional_abs_le
+    exponentialRampVariationFunctional_abs_le
       (rampErrorExtension_continuous (zero_lt_one.trans_le hx)) (ramp_error_uniform_nonneg hx)
       (rampErrorExtension_bound hRH hx)
-  rw [AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional_congr
+  rw [exponentialRampVariationFunctional_congr
       (rampErrorExtension_eqOn (zero_lt_one.trans_le hx))] at he
   linarith only [he, ramp_error_log_term_nonneg hx, Real.sqrt_nonneg x]
 
@@ -104,8 +105,8 @@ theorem gamma_ramp_error_numerator_le_seven_root {L : ℝ} (hL : 46000 ≤ L) :
     (135 / 20 : ℝ) * Real.sqrt ((32 / 99 : ℝ) * L ^ 2) +
         86 * ((1839 / 1000 : ℝ) * Real.log (((32 / 99 : ℝ) * L ^ 2) * (99 / 40)) + 21 / 20) ≤
       7 * Real.sqrt ((32 / 99 : ℝ) * L ^ 2) := by
-  have hs := Analysis.ramp_scale_sqrt_lower (show (0 : ℝ) ≤ L by linarith only [hL])
-  have hl := Analysis.ramp_endpoint_log_upper hL
+  have hs := ramp_scale_sqrt_lower (show (0 : ℝ) ≤ L by linarith only [hL])
+  have hl := ramp_endpoint_log_upper hL
   linarith only [hs, hl, hL]
 
 /-- Under RH and L>=46000, the normalized actual ramp Mangoldt sum differs
@@ -113,17 +114,16 @@ from its exact main term by at most seven. Use the proved double-partial-summati
 identity, the full variation norm bound and the scalar gate.
 This is the two-sided finite principal-sum estimate for the smoothed comparison. -/
 theorem gamma_ramp_sum_abs_error_le_seven (hRH : RiemannHypothesis) {L : ℝ} (hL : 46000 ≤ L) :
-    |AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum ((32 / 99 : ℝ) * L ^ 2) /
-            Real.sqrt ((32 / 99 : ℝ) * L ^ 2) -
+    |exponentialRampMangoldtSum ((32 / 99 : ℝ) * L ^ 2) / Real.sqrt ((32 / 99 : ℝ) * L ^ 2) -
           (∫ u in (0 : ℝ)..(99 / 40), Analysis.exponentialRampWeight u) *
             Real.sqrt ((32 / 99 : ℝ) * L ^ 2)| ≤
       7 := by
-  have hx0 : 0 < (32 / 99 : ℝ) * L ^ 2 := zero_lt_one.trans_le (Analysis.ramp_scale_ge_one hL)
-  rw [AnalyticNumberTheory.Arithmetic.expRampMangoldt_div_sqrt_eq_main_add_error hx0,
-    add_sub_cancel_left, abs_div, abs_of_pos (Real.sqrt_pos.mpr hx0)]
+  have hx0 : 0 < (32 / 99 : ℝ) * L ^ 2 := zero_lt_one.trans_le (ramp_scale_ge_one hL)
+  rw [expRampMangoldt_div_sqrt_eq_main_add_error hx0, add_sub_cancel_left, abs_div,
+    abs_of_pos (Real.sqrt_pos.mpr hx0)]
   apply (div_le_iff₀ (Real.sqrt_pos.mpr hx0)).mpr
   exact
-    (gamma_ramp_error_functional_bound hRH (Analysis.ramp_scale_ge_one hL)).trans
+    (gamma_ramp_error_functional_bound hRH (ramp_scale_ge_one hL)).trans
       (gamma_ramp_error_numerator_le_seven_root hL)
 
 /-- Under RH and L>=46000, the normalized actual ramp finite sum is at least
@@ -133,8 +133,7 @@ theorem gamma_ramp_sum_lower_seven (hRH : RiemannHypothesis) {L : ℝ} (hL : 460
     (∫ u in (0 : ℝ)..(99 / 40), Analysis.exponentialRampWeight u) *
           Real.sqrt ((32 / 99 : ℝ) * L ^ 2) -
         7 ≤
-      AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum ((32 / 99 : ℝ) * L ^ 2) /
-        Real.sqrt ((32 / 99 : ℝ) * L ^ 2) := by
+      exponentialRampMangoldtSum ((32 / 99 : ℝ) * L ^ 2) / Real.sqrt ((32 / 99 : ℝ) * L ^ 2) := by
   have h := (abs_le.mp (gamma_ramp_sum_abs_error_le_seven hRH hL)).1
   linarith only [h]
 
@@ -152,7 +151,7 @@ variation functional bounded by the paired-jump numerator.
 Use the continuous finite extension, its uniform bound and the proved RH
 short-ramp increment. This keeps the signed endpoint cancellation. -/
 theorem gamma_ramp_error_functional_bound_paired (hRH : RiemannHypothesis) {x : ℝ} (hx : 1 ≤ x) :
-    |AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional
+    |exponentialRampVariationFunctional
           (fun u ↦ AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum (x * u) - x * u)| ≤
       gammaRampPairedErrorNumerator x := by
   have hx0 := zero_lt_one.trans_le hx
@@ -170,10 +169,9 @@ theorem gamma_ramp_error_functional_bound_paired (hRH : RiemannHypothesis) {x : 
     rw [hb, ha]
     exact logWeighted_ramp_error_increment hRH hx
   have h :=
-    AnalyticNumberTheory.Arithmetic.expRampVariation_abs_le_of_increment
-      (rampErrorExtension_continuous hx0) (rampErrorExtension_bound hRH hx) hinc
-  rw [AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional_congr
-      (rampErrorExtension_eqOn hx0)] at h
+    expRampVariation_abs_le_of_increment (rampErrorExtension_continuous hx0)
+      (rampErrorExtension_bound hRH hx) hinc
+  rw [exponentialRampVariationFunctional_congr (rampErrorExtension_eqOn hx0)] at h
   simpa only [gammaRampPairedErrorNumerator, add_assoc] using h
 
 /-- Under RH at any scale x at least one, the normalized actual ramp sum
@@ -183,10 +181,10 @@ This is the principal lower input for smaller witness entrances. -/
 theorem gamma_ramp_sum_lower_paired (hRH : RiemannHypothesis) {x : ℝ} (hx : 1 ≤ x) :
     (∫ u in (0 : ℝ)..(99 / 40), Analysis.exponentialRampWeight u) * Real.sqrt x -
         gammaRampPairedErrorNumerator x / Real.sqrt x ≤
-      AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x := by
+      exponentialRampMangoldtSum x / Real.sqrt x := by
   have hx0 := zero_lt_one.trans_le hx
   have he := gamma_ramp_error_functional_bound_paired hRH hx
-  rw [AnalyticNumberTheory.Arithmetic.expRampMangoldt_div_sqrt_eq_main_add_error hx0]
+  rw [expRampMangoldt_div_sqrt_eq_main_add_error hx0]
   have hdiv := div_le_div_of_nonneg_right (abs_le.mp he).1 (Real.sqrt_nonneg x)
   rw [neg_div] at hdiv
   linarith only [hdiv]

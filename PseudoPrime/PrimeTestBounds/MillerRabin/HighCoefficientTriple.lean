@@ -6,7 +6,9 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianKorseltTriple
+public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformKorseltSubgroup
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianComparison
+public import PseudoPrime.LLS.GaussianKernelCoefficientBounds
 
 /-! # Numerical budget for the high-range Gaussian triple branch -/
 

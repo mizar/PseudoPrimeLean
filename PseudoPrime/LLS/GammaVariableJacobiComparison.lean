@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.PaperStatements.GammaConductorFreeCharacterComparison
 public import PseudoPrime.LLS.PaperStatements.GammaVariableJacobiComparison
 
@@ -61,7 +62,7 @@ theorem gamma_jacobi_no_negative_actual_comparison {n : ℕ} {hn : Odd n} {hns :
     (hmq : (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ q) {x : ℝ} (hx : 2 ≤ x)
     (B : Finset ℕ)
     (hno : ∀ p : ℕ, p.Prime → Odd p → (p : ℝ) ≤ (99 / 40 : ℝ) * x → jacobiSym n p ≠ -1) :
-    2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+    2 * (exponentialRampMangoldtSum x / Real.sqrt x) -
         (∑' k : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re ≤
       gammaJacobiActualBudget bridge q x B := by
   have hm := gamma_jacobi_modulus_ge_three bridge
@@ -97,7 +98,7 @@ theorem exists_odd_prime_negative_of_actual_gap {n : ℕ} {hn : Odd n} {hns : ¬
     (B : Finset ℕ)
     (hgap :
       gammaJacobiActualBudget bridge q x B <
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ,
               PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n p = -1 := by
@@ -118,7 +119,7 @@ theorem exists_oddPrime_negJacobi_actualGap_GRH {n : ℕ} {hn : Odd n} {hns : ¬
     (hgap :
       gammaJacobiActualBudget bridge
           (max 20000 (NumberTheory.complexQuadraticCharacter n hn).conductor) x B <
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ,
               PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n p = -1 := by
@@ -139,8 +140,7 @@ theorem exists_odd_prime_negative_log_sq_of_actual_gap {n : ℕ} {hn : Odd n} {h
           (max 20000 (NumberTheory.complexQuadraticCharacter n hn).conductor)
           ((32 / 99 : ℝ) * (Real.log n) ^ 2) B <
         2 *
-            (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum
-                ((32 / 99 : ℝ) * (Real.log n) ^ 2) /
+            (exponentialRampMangoldtSum ((32 / 99 : ℝ) * (Real.log n) ^ 2) /
               Real.sqrt ((32 / 99 : ℝ) * (Real.log n) ^ 2)) -
           (∑' k : ℕ,
               PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1)
@@ -190,7 +190,7 @@ theorem gamma_jacobi_no_negative_local_upper_comparison {n : ℕ} {hn : Odd n} {
             (AnalyticNumberTheory.DirichletLFunction.gammaPrefixPowerIndices b p) x) ≤
         U)
     (hno : ∀ p : ℕ, p.Prime → Odd p → (p : ℝ) ≤ (99 / 40 : ℝ) * x → jacobiSym n p ≠ -1) :
-    2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+    2 * (exponentialRampMangoldtSum x / Real.sqrt x) -
         (∑' k : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re ≤
       (11783423 / 25000000 : ℝ) * Real.log (NumberTheory.complexQuadraticCharacter n hn).conductor +
             (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map
@@ -238,7 +238,7 @@ theorem exists_odd_prime_negative_of_local_upper_gap {n : ℕ} {hn : Odd n} {hns
           Analysis.gammaNegativeConductorTerm
             (Real.log (NumberTheory.complexQuadraticCharacter n hn).conductor) x +
           43 * x ^ (-9 / 16 : ℝ) <
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ,
               PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n p = -1 := by

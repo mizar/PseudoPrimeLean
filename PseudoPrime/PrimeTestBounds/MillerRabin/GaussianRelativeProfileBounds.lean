@@ -6,7 +6,10 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRelativeTripleBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRelativePrefixWitness
+public import PseudoPrime.LLS.GaussianRelativeFour
+public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformKorseltSubgroup
+public import PseudoPrime.LLS.GaussianSeededPrefix
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRelativeProfiles
 
 /-! # Generic relative Gaussian witnesses -/
@@ -66,7 +69,7 @@ theorem gaussianProfile_witness_four (f : GaussianRelativeProfile) {n : ℕ} [Ne
               (LLS.PaperStatements.gaussianGammaMellinKernel.transform u).re / Real.sqrt u) -
           Real.exp (1 / 16 : ℝ)) *
         (1 * r) ≤
-      gaussianMRRefinedConductor * LLS.PaperStatements.subgroupConductorLogSum H +
+      gaussianConductorCoeff * LLS.PaperStatements.subgroupConductorLogSum H +
         4 * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / (1 * r)) * Real.exp (1 / 16 : ℝ)) +
         13 +
         3 * LLS.PaperStatements.gaussianPrefixError (489311 / 100000) n (r ^ 2) := by
@@ -75,10 +78,10 @@ theorem gaussianProfile_witness_four (f : GaussianRelativeProfile) {n : ℕ} [Ne
     LLS.gaussianRelativeFour_scalar hspos hs2 (by norm_num only : (0 : ℝ) < 1)
       (by norm_num only : (0 : ℝ) < 2 / 5) (show h = (2 / 5 : ℝ) / s from rfl) hh1
       LLS.PaperStatements.gaussianGamma_cutoff_gt_target.le Analysis.gaussian_endpoint_exp_le hC
-      (by norm_num only [gaussianMRRefinedConductor]) hcmp'
+      (by norm_num only [gaussianConductorCoeff]) hcmp'
   have hA := gaussianRelativeProfile_error f hL (le_refl (Real.log n))
   apply gaussianRelativeProfile_false f hL hroots.1 hroots.2.1 hroots.2.2.1 hroots.2.2.2 hA
-  norm_num only [one_mul, gaussianMRRefinedConductor] at hscalar ⊢
+  norm_num only [one_mul, gaussianConductorCoeff] at hscalar ⊢
   exact hscalar
 
 /-- For an odd uniform three-prime Korselt product, GRH and log n>=T

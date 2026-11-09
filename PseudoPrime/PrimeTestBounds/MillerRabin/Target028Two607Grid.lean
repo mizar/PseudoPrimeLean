@@ -548,11 +548,11 @@ theorem target028Two607_checked :
 theorem target028Two607_count :
     9123515200361240639 ≤
       weightedPrimeCount id
-        (List.replicate 250 81 ++ (List.replicate 109 70 ++ target030Seed373Weights)) 607 := by
+        (List.replicate 250 81 ++ (List.replicate 109 70 ++ primeSeed373Weights)) 607 := by
   have hb :
     ∀ k ≤ 7,
       target028Two607Base.getD k 0 ≤
-        weightedPrimeCount id (List.replicate 109 70 ++ target030Seed373Weights) (40 + k * 81) := by
+        weightedPrimeCount id (List.replicate 109 70 ++ primeSeed373Weights) (40 + k * 81) := by
     intro k hk
     interval_cases k <;> norm_num only [Array.getD, target028Two607Base] at *
     · exact target028TwoLow607Part0_count
@@ -564,7 +564,7 @@ theorem target028Two607_count :
     · exact target028TwoLow607Part6_count
     · exact target028TwoLow607Part7_count
   have h :=
-    weightedGroupRows_lower 81 40 7 250 (List.replicate 109 70 ++ target030Seed373Weights)
+    weightedGroupRows_lower 81 40 7 250 (List.replicate 109 70 ++ primeSeed373Weights)
       target028Two607Base target028Two607Row target028Two607Rows (by decide) (by decide) (by decide)
       hb target028Two607_checked
   exact h

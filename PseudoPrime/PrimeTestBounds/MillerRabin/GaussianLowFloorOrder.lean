@@ -49,26 +49,26 @@ The rational floor is smaller than sqrt(w), so clipping preserves the bound. -/
 theorem gaussianLow_radius_affine {L : ℝ} (hL : 100 ≤ L) :
     gaussianLowRadius (91 / 10) (93 / 10) L < (13 / 20 : ℝ) * L + 99 / 5 := by
   let w := (13 / 20 : ℝ) * L + 99 / 5
-  let z := gaussianMRRefinedD * w - gaussianMRRefinedConductor * L - 93 / 10
+  let z := gaussianMRRefinedD * w - gaussianConductorCoeff * L - 93 / 10
   have hw : 0 < w := by
     dsimp only [w]; linarith only [hL]
   have hz : 0 < z := by
     dsimp only [z, w]
-    norm_num only [gaussianMRRefinedD, gaussianMRRefinedConductor, gaussianMRRefinedMass,
+    norm_num only [gaussianMRRefinedD, gaussianConductorCoeff, gaussianMRRefinedMass,
       gaussian6FifthsIndex, gaussian6FifthsEndpoint]
     linarith only [hL]
   have hpoly : gaussianMRRefinedBeta ^ 2 * w < z ^ 2 := by
     dsimp only [z, w]
-    norm_num only [gaussianMRRefinedD, gaussianMRRefinedConductor, gaussianMRRefinedMass,
+    norm_num only [gaussianMRRefinedD, gaussianConductorCoeff, gaussianMRRefinedMass,
       gaussianMRRefinedBeta, gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint]
     nlinarith only [sq_nonneg (L - 152), hL]
   have hbudget :
-    gaussianMRRefinedConductor * L + 93 / 10 + gaussianMRRefinedBeta * Real.sqrt w <
+    gaussianConductorCoeff * L + 93 / 10 + gaussianMRRefinedBeta * Real.sqrt w <
       gaussianMRRefinedD * (Real.sqrt w) ^ 2 := by
     have hs := Real.sq_sqrt hw.le
     have hp := mul_nonneg gaussianMRRefined_coefficients.2.le (Real.sqrt_nonneg w)
     dsimp only [z] at hz hpoly
-    norm_num only [gaussianMRRefinedD, gaussianMRRefinedConductor, gaussianMRRefinedMass,
+    norm_num only [gaussianMRRefinedD, gaussianConductorCoeff, gaussianMRRefinedMass,
       gaussianMRRefinedBeta, gaussianMRRefinedWidth, gaussian6FifthsIndex,
       gaussian6FifthsEndpoint] at hz hpoly hp ⊢
     nlinarith only [hpoly, hz, hs, hp]
@@ -81,8 +81,8 @@ theorem gaussianLow_radius_affine {L : ℝ} (hL : 100 ≤ L) :
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedMass, gaussianMRRefinedBeta,
       gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint] at hm ⊢
     linarith only [hm]
-  have hC : 0 ≤ gaussianMRRefinedConductor * L + 93 / 10 := by
-    norm_num only [gaussianMRRefinedConductor]
+  have hC : 0 ≤ gaussianConductorCoeff * L + 93 / 10 := by
+    norm_num only [gaussianConductorCoeff]
     linarith only [hL]
   have hraw :=
     lowGaussian_root_lt gaussianMRRefined_coefficients.1 gaussianMRRefined_coefficients.2 hC hcoef
@@ -258,16 +258,16 @@ theorem gaussianLowFamily_lt_pointwise {L : ℝ} (hL : 100 ≤ L) :
 9.5 and the raw quadratic budget is strictly positive at ten and L=126. -/
 theorem gaussianLowMiddleOld_lt12000 {L : ℝ} (hL : 0 ≤ L) (hU : L ≤ 126) :
     GaussianLowProfile.middleOld.bound L < (12000 : ℝ) := by
-  have hC : 0 ≤ gaussianMRRefinedConductor * L + 204 / 25 := by
-    norm_num only [gaussianMRRefinedConductor]
+  have hC : 0 ≤ gaussianConductorCoeff * L + 204 / 25 := by
+    norm_num only [gaussianConductorCoeff]
     linarith only [hL]
   have hcoef : gaussianMRRefinedBeta < gaussianMRRefinedD * 10 := by
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedMass, gaussianMRRefinedBeta,
       gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint]
   have hbudget :
-    gaussianMRRefinedConductor * L + 204 / 25 + gaussianMRRefinedBeta * 10 <
+    gaussianConductorCoeff * L + 204 / 25 + gaussianMRRefinedBeta * 10 <
       gaussianMRRefinedD * (10 : ℝ) ^ 2 := by
-    norm_num only [gaussianMRRefinedD, gaussianMRRefinedConductor, gaussianMRRefinedMass,
+    norm_num only [gaussianMRRefinedD, gaussianConductorCoeff, gaussianMRRefinedMass,
       gaussianMRRefinedBeta, gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint]
     linarith only [hU]
   have hraw :=
@@ -299,19 +299,19 @@ theorem gaussianLowOldFamily_lt12000 {L : ℝ} (hL : 100 ≤ L) (hU : L ≤ 126)
 at every nonnegative scale: both its floor and its raw residual are smaller. -/
 theorem gaussianLowUpper_lt_recovered {L : ℝ} (hL : 0 ≤ L) :
     GaussianLowProfile.upper.bound L < gaussianRecoveredBound L := by
-  have hC : 0 ≤ gaussianMRRefinedConductor * L + 813 / 100 := by
-    norm_num only [gaussianMRRefinedConductor]
+  have hC : 0 ≤ gaussianConductorCoeff * L + 813 / 100 := by
+    norm_num only [gaussianConductorCoeff]
     linarith only [hL]
   have hraw :=
     Analysis.gaussianBudgetRoot_strictMono (b := gaussianMRRefinedBeta)
       gaussianMRRefined_coefficients.1 hC
-      (show gaussianMRRefinedConductor * L + 813 / 100 < gaussianMRRefinedConductor * L + 407 / 50
-        by linarith only [])
+      (show gaussianConductorCoeff * L + 813 / 100 < gaussianConductorCoeff * L + 407 / 50 by
+        linarith only [])
   have hfloor : (49 / 5 : ℝ) < gaussianRecoveredRoot L := by
     linarith only [gaussianRecovered_root_ten L]
   have hraw' :
     Analysis.gaussianBudgetRoot gaussianMRRefinedD gaussianMRRefinedBeta
-        (gaussianMRRefinedConductor * L + 813 / 100) <
+        (gaussianConductorCoeff * L + 813 / 100) <
       gaussianRecoveredRoot L :=
     hraw.trans_le (le_max_right _ _)
   have hr : GaussianLowProfile.upper.root L < gaussianRecoveredRoot L := max_lt hfloor hraw'
@@ -324,16 +324,16 @@ theorem gaussianLowUpper_lt_recovered {L : ℝ} (hL : 0 ≤ L) :
 root test at 653/50 controls its raw root and its smaller floor. -/
 theorem gaussianLowUpper_lt35000 {L : ℝ} (hL : 0 ≤ L) (hU : L ≤ 235) :
     GaussianLowProfile.upper.bound L < (35000 : ℝ) := by
-  have hC : 0 ≤ gaussianMRRefinedConductor * L + 813 / 100 := by
-    norm_num only [gaussianMRRefinedConductor]
+  have hC : 0 ≤ gaussianConductorCoeff * L + 813 / 100 := by
+    norm_num only [gaussianConductorCoeff]
     linarith only [hL]
   have hcoef : gaussianMRRefinedBeta < gaussianMRRefinedD * (653 / 50) := by
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedMass, gaussianMRRefinedBeta,
       gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint]
   have hbudget :
-    gaussianMRRefinedConductor * L + 813 / 100 + gaussianMRRefinedBeta * (653 / 50) <
+    gaussianConductorCoeff * L + 813 / 100 + gaussianMRRefinedBeta * (653 / 50) <
       gaussianMRRefinedD * (653 / 50 : ℝ) ^ 2 := by
-    norm_num only [gaussianMRRefinedD, gaussianMRRefinedConductor, gaussianMRRefinedMass,
+    norm_num only [gaussianMRRefinedD, gaussianConductorCoeff, gaussianMRRefinedMass,
       gaussianMRRefinedBeta, gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint]
     linarith only [hU]
   have hraw :=

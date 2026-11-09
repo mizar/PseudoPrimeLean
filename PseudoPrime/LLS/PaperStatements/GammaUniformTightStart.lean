@@ -54,7 +54,7 @@ private theorem exists_prime_outside_of_gamma_budget_GRH {q : ℕ} [NeZero q] (H
     (99 / 40 : ℝ) * ((32 / 99 : ℝ) * (Real.log q) ^ 2) = (4 / 5 : ℝ) * (Real.log q) ^ 2 := by ring
   dsimp only at hc
   rw [he] at hc
-  have hm := Analysis.nonOne_main_term_gap (show 0 < Real.log q by linarith only [hL])
+  have hm := nonOne_main_term_gap (show 0 < Real.log q by linarith only [hL])
   linarith only [hc, hbudget, hm]
 
 /-- Under GRH, nonzero q, log q ≥ 45561 and H proper, a unit prime outside H

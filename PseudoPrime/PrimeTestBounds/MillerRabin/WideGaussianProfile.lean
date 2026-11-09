@@ -7,7 +7,10 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRelativeHighNumerics
-public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRelativeTripleBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRelativePrefixWitness
+public import PseudoPrime.LLS.GaussianRelativeFour
+public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformKorseltSubgroup
+public import PseudoPrime.LLS.GaussianSeededPrefix
 
 /-! # Relative Gaussian witnesses at the lower dual-scale entrance -/
 
@@ -91,7 +94,7 @@ theorem wideGaussian_error (f : WideGaussianProfile) {n : ℕ} {L : ℝ} (hL : f
   have hpole : (2129 / 2000 : ℝ) * (((7 / 6 : ℝ) * Real.log n + 4) / r) ≤ 4 := by
     rw [← mul_div_assoc, div_le_iff₀ hrpos]
     linarith only [hroots.1, hroot, hL, f.entry, hn]
-  have ht := gaussian1000_tail (show 100 ≤ r by linarith only [hroots.2.1])
+  have ht := LLS.gaussian_tail_of_radius_ge_100 (show 100 ≤ r by linarith only [hroots.2.1])
   dsimp only [LLS.PaperStatements.gaussianPrefixError]
   rw [Real.sqrt_sq hrpos.le]
   change
@@ -188,7 +191,7 @@ theorem wideGaussian_witness_four (f : WideGaussianProfile) {n : ℕ} [NeZero n]
               (LLS.PaperStatements.gaussianGammaMellinKernel.transform u).re / Real.sqrt u) -
           Real.exp (1 / 16 : ℝ)) *
         (1 * r) ≤
-      gaussianMRRefinedConductor * LLS.PaperStatements.subgroupConductorLogSum H +
+      gaussianConductorCoeff * LLS.PaperStatements.subgroupConductorLogSum H +
         4 * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / (1 * r)) * Real.exp (1 / 16 : ℝ)) +
         13 +
         3 * LLS.PaperStatements.gaussianPrefixError (489311 / 100000) n (r ^ 2) := by
@@ -197,10 +200,10 @@ theorem wideGaussian_witness_four (f : WideGaussianProfile) {n : ℕ} [NeZero n]
     LLS.gaussianRelativeFour_scalar hspos hs2 (by norm_num only : (0 : ℝ) < 1)
       (by norm_num only : (0 : ℝ) < 2 / 5) (show h = (2 / 5 : ℝ) / s from rfl) hh1
       LLS.PaperStatements.gaussianGamma_cutoff_gt_target.le Analysis.gaussian_endpoint_exp_le hC
-      (by norm_num only [gaussianMRRefinedConductor]) hcmp'
+      (by norm_num only [gaussianConductorCoeff]) hcmp'
   have hA := wideGaussian_error f hL (le_refl (Real.log n))
   apply wideGaussian_false f hL hroots.1 hroots.2.1 hroots.2.2.1 hroots.2.2.2 hA
-  norm_num only [one_mul, gaussianMRRefinedConductor] at hscalar ⊢
+  norm_num only [one_mul, gaussianConductorCoeff] at hscalar ⊢
   exact hscalar
 
 /-- Under GRH, the uniform three-prime case gives a rejecting prime within the profile cutoff. -/

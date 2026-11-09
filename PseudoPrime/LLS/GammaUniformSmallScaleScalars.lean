@@ -49,7 +49,7 @@ theorem gamma_small_scale_bounds {T : ℝ} (hT : 224 ≤ T) :
     norm_num only
     nlinarith only [hT, sq_nonneg (T - 224)]
   have hx : 1 ≤ x := (by norm_num only : (1 : ℝ) ≤ (9 / 5) ^ 16).trans hxlarge
-  have hs := Analysis.ramp_scale_sqrt_lower (show 0 ≤ T by linarith only [hT])
+  have hs := ramp_scale_sqrt_lower (show 0 ≤ T by linarith only [hT])
   have hl := gamma_small_scale_log_bound hT
   have hlogx :=
     Real.log_le_log (zero_lt_one.trans_le hx)

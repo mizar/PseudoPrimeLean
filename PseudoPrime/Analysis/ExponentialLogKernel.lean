@@ -6,7 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.ExponentialRampLogKernel
+public import PseudoPrime.Analysis.ClippedLogRatio
+public import PseudoPrime.Analysis.ExponentialRampCutoff
 
 /-! # Finite logarithmic reconstruction of the exponential weight -/
 

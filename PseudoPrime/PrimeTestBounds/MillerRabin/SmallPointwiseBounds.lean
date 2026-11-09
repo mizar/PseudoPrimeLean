@@ -6,7 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.MidscaleIntervalSelection
+public import PseudoPrime.PrimeTestBounds.MillerRabin.SmallWitnessBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LeastRejectingPrime
 
 /-! # Pointwise small-input witness bound -/
 

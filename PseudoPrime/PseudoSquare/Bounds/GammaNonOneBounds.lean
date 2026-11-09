@@ -58,7 +58,7 @@ theorem log_nat_ge_40000_of_decimal {n : ℕ} (hN : 10 ^ 17400 ≤ n) : (40000 :
   have hl := Real.log_le_log hpos hcast
   rw [Real.log_pow] at hl
   norm_num only at hl
-  linarith only [hl, Analysis.log_ten_gt_twenty_three_tenths]
+  linarith only [hl, LLS.log_ten_gt_twenty_three_tenths]
 
 /-- For decimal exponent d≥5, 10^d≥20000. Compare powers with the small exponent five.
  This avoids large numeral evaluation in the ambient-level gate. -/
@@ -108,7 +108,7 @@ theorem primeNeOneWitness_cast_le_gamma_endpoint
       nlinarith only [ht]
     have hnR : (n : ℝ) ≤ 46000 := by exact_mod_cast hnsmall
     have hn0 : (0 : ℝ) < n := by exact_mod_cast Odd.pos hn
-    have hl := (Real.log_le_log hn0 hnR).trans Analysis.log_46000_lt_eleven.le
+    have hl := (Real.log_le_log hn0 hnR).trans LLS.log_46000_lt_eleven.le
     have hl0 : 0 ≤ Real.log n :=
       Real.log_nonneg (by exact_mod_cast Nat.one_le_iff_ne_zero.mpr (Odd.pos hn).ne')
     have hs : (Real.log n) ^ 2 ≤ (11 : ℝ) ^ 2 := (sq_le_sq₀ hl0 (by norm_num only)).mpr hl

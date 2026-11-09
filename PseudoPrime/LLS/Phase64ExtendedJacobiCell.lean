@@ -96,8 +96,8 @@ theorem exists_odd_prime_negative_phase64_fixed_cap
   have hA :=
     phase64_principalRamp_lower_of_finite_bounds (by norm_num only : (64 : ℝ) ≤ 64)
       (by norm_num only : (64 : ℝ) ≤ 64001 / 1000) 40000
-      Analysis.Phase64EndpointCertificates.phase64_ramp_endpoint_lower
-      Analysis.Phase64EndpointCertificates.phase64_principal_endpoint_upper htail
+      Phase64EndpointCertificates.phase64_ramp_endpoint_lower
+      Phase64EndpointCertificates.phase64_principal_endpoint_upper htail
       (by norm_num only : (1373 : ℝ) ≤ 2 * 1514 - 1654 - 1 / 100)
       (by norm_num only : (0 : ℝ) ≤ 1373)
   have hgap :

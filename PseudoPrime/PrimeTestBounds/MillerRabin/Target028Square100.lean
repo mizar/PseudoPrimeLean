@@ -6,7 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target030Square100
+public import PseudoPrime.PrimeTestBounds.MillerRabin.SquareGroupedSupply
+public import PseudoPrime.PrimeTestBounds.MillerRabin.SquareFactorStageLogs
 public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028SquareSmallFactor
 
 /-! # Coefficient 0.28 for large square divisors -/
@@ -41,9 +42,9 @@ theorem exists_prime_reject_028_square_813_106 {n p : ℕ} (hn : 1 < n) (ho : Od
     have hcost0 : (414 : ℝ) / 10 < Real.log ((p ^ 2 : ℕ) : ℝ) := by
       apply square_factor_budget_of_log (H := 414) (W := 2087485597) (by decide) hbig0
       norm_num only [Nat.cast_ofNat]
-      nlinarith only [target030_square_stage_log0]
+      nlinarith only [square_factor_stage_log0]
     by_cases h1 : p ≤ 1488482619460
-    · have hc : p ≤ target030Seed373Row14.getD 414 0 := by
+    · have hc : p ≤ primeSeed373Row14.getD 414 0 := by
         change p ≤ 1488482619460
         exact h1
       obtain ⟨r, hr, hb, hf⟩ :=
@@ -55,9 +56,9 @@ theorem exists_prime_reject_028_square_813_106 {n p : ℕ} (hn : 1 < n) (ho : Od
       have hcost1 : (500 : ℝ) / 10 < Real.log ((p ^ 2 : ℕ) : ℝ) := by
         apply square_factor_budget_of_log (H := 500) (W := 1488482619461) (by decide) hbig1
         norm_num only [Nat.cast_ofNat]
-        nlinarith only [target030_square_stage_log1]
+        nlinarith only [square_factor_stage_log1]
       by_cases h2 : p ≤ 68854718408873
-      · have hc : p ≤ target030Seed373Row14.getD 500 0 := by
+      · have hc : p ≤ primeSeed373Row14.getD 500 0 := by
           change p ≤ 68854718408873
           exact h2
         obtain ⟨r, hr, hb, hf⟩ :=
@@ -69,9 +70,9 @@ theorem exists_prime_reject_028_square_813_106 {n p : ℕ} (hn : 1 < n) (ho : Od
         have hcost2 : (576 : ℝ) / 10 < Real.log ((p ^ 2 : ℕ) : ℝ) := by
           apply square_factor_budget_of_log (H := 576) (W := 68854718408874) (by decide) hbig2
           norm_num only [Nat.cast_ofNat]
-          nlinarith only [target030_square_stage_log2]
+          nlinarith only [square_factor_stage_log2]
         by_cases h3 : p ≤ 14459490865863330
-        · have hc : p ≤ Nat.choose (209 + 1) 1 * target030Seed373Row14.getD 500 0 := by
+        · have hc : p ≤ Nat.choose (209 + 1) 1 * primeSeed373Row14.getD 500 0 := by
             change p ≤ 14459490865863330
             exact h3
           obtain ⟨r, hr, hb, hf⟩ :=
@@ -81,9 +82,9 @@ theorem exists_prime_reject_028_square_813_106 {n p : ℕ} (hn : 1 < n) (ho : Od
           have hcost3 : (652 : ℝ) / 10 < Real.log ((p ^ 2 : ℕ) : ℝ) := by
             apply square_factor_budget_of_log (H := 652) (W := 14459490865863331) (by decide) hbig3
             norm_num only [Nat.cast_ofNat]
-            nlinarith only [target030_square_stage_log3]
+            nlinarith only [square_factor_stage_log3]
           by_cases h4 : p ≤ 1525476286348581315
-          · have hc : p ≤ Nat.choose (209 + 2) 2 * target030Seed373Row14.getD 500 0 := by
+          · have hc : p ≤ Nat.choose (209 + 2) 2 * primeSeed373Row14.getD 500 0 := by
               change p ≤ 1525476286348581315
               exact h4
             obtain ⟨r, hr, hb, hf⟩ :=
@@ -94,9 +95,9 @@ theorem exists_prime_reject_028_square_813_106 {n p : ℕ} (hn : 1 < n) (ho : Od
               apply
                 square_factor_budget_of_log (H := 728) (W := 1525476286348581316) (by decide) hbig4
               norm_num only [Nat.cast_ofNat]
-              nlinarith only [target030_square_stage_log4]
+              nlinarith only [square_factor_stage_log4]
             by_cases h5 : p ≤ 107800324235299746260
-            · have hc : p ≤ Nat.choose (209 + 3) 3 * target030Seed373Row14.getD 500 0 := by
+            · have hc : p ≤ Nat.choose (209 + 3) 3 * primeSeed373Row14.getD 500 0 := by
                 change p ≤ 107800324235299746260
                 exact h5
               obtain ⟨r, hr, hb, hf⟩ :=
@@ -108,9 +109,9 @@ theorem exists_prime_reject_028_square_813_106 {n p : ℕ} (hn : 1 < n) (ho : Od
                   square_factor_budget_of_log (H := 804) (W := 107800324235299746261) (by decide)
                     hbig5
                 norm_num only [Nat.cast_ofNat]
-                nlinarith only [target030_square_stage_log5]
+                nlinarith only [square_factor_stage_log5]
               by_cases h6 : p ≤ 5740367265529711488345
-              · have hc : p ≤ Nat.choose (209 + 4) 4 * target030Seed373Row14.getD 500 0 := by
+              · have hc : p ≤ Nat.choose (209 + 4) 4 * primeSeed373Row14.getD 500 0 := by
                   change p ≤ 5740367265529711488345
                   exact h6
                 obtain ⟨r, hr, hb, hf⟩ :=
@@ -122,8 +123,8 @@ theorem exists_prime_reject_028_square_813_106 {n p : ℕ} (hn : 1 < n) (ho : Od
                     square_factor_budget_of_log (H := 880) (W := 5740367265529711488345) (by decide)
                       (le_trans (by decide) hbig6)
                   norm_num only [Nat.cast_ofNat]
-                  nlinarith only [target030_square_stage_log6]
-                have hc : p ≤ Nat.choose (209 + 5) 5 * target030Seed373Row14.getD 500 0 := by
+                  nlinarith only [square_factor_stage_log6]
+                have hc : p ≤ Nat.choose (209 + 5) 5 * primeSeed373Row14.getD 500 0 := by
                   change p ≤ 245687718964671651701166
                   exact hpmax
                 obtain ⟨r, hr, hb, hf⟩ :=

@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.GammaNonOneComparison
 
 /-! # Variable-scale principal Gamma and ramp bounds
@@ -27,10 +28,10 @@ theorem gamma_ramp_sum_lower_variable (hRH : RiemannHypothesis) {x : ℝ} (hx : 
         ((135 / 20 : ℝ) * Real.sqrt x +
             86 * ((1839 / 1000 : ℝ) * Real.log (x * (99 / 40)) + 21 / 20)) /
           Real.sqrt x ≤
-      AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x := by
+      exponentialRampMangoldtSum x / Real.sqrt x := by
   have hx0 := zero_lt_one.trans_le hx
   have he := gamma_ramp_error_functional_bound hRH hx
-  rw [AnalyticNumberTheory.Arithmetic.expRampMangoldt_div_sqrt_eq_main_add_error hx0]
+  rw [expRampMangoldt_div_sqrt_eq_main_add_error hx0]
   have habs := (abs_le.mp he).1
   have hdiv := div_le_div_of_nonneg_right habs (Real.sqrt_nonneg x)
   rw [neg_div] at hdiv

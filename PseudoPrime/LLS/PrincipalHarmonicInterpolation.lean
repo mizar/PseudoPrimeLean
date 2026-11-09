@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.PrincipalRampEndpointBounds
 public import Mathlib.Analysis.Convex.SpecificFunctions.Basic
 public import PseudoPrime.LLS.Phase64Scale1700JacobiBudget
@@ -63,8 +64,7 @@ and the mass chord before dividing. Role: reuse endpoint arithmetic certificates
 in the strict gap required for Jacobi witness extraction. -/
 theorem principalRampDifference_lower_of_harmonic_chord {x y z a b A P Q C R : ℝ} (hx : 0 < x)
     (hy : 0 < y) (hxz : x ≤ z) (ha : 0 ≤ a) (hb : 0 ≤ b) (hab : a + b = 1)
-    (hscale : 1 / z = a / x + b / y)
-    (hA : A ≤ AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x)
+    (hscale : 1 / z = a / x + b / y) (hA : A ≤ exponentialRampMangoldtSum x)
     (hP : principalExponentialMass x ≤ P) (hQ : principalExponentialMass y ≤ Q)
     (hC : C ≤ 2 * A - (a * P + b * Q)) (hC0 : 0 ≤ C) (hR : Real.sqrt z ≤ R) :
     C / R ≤ principalRampDifference z := by
@@ -72,11 +72,8 @@ theorem principalRampDifference_lower_of_harmonic_chord {x y z a b A P Q C R : �
   have hm := principalExponentialMass_le_harmonic_chord hx hy hz ha hb hab hscale
   have hp := mul_le_mul_of_nonneg_left hP ha
   have hq := mul_le_mul_of_nonneg_left hQ hb
-  have hr := AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum_mono hx hxz
-  have hn :
-    C ≤
-      2 * AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum z -
-        principalExponentialMass z := by
+  have hr := exponentialRampMangoldtSum_mono hx hxz
+  have hn : C ≤ 2 * exponentialRampMangoldtSum z - principalExponentialMass z := by
     linarith only [hC, hA, hm, hp, hq, hr]
   rw [principalRampDifference_eq_mass hz]
   exact
@@ -96,10 +93,9 @@ theorem exists_oddPrime_negJacobi_harmonic_GRH {n : ℕ} {hn : Odd n} {hns : ¬I
     (hLhi : L ≤ 64001 / 1000) (δ : ℚ) (hd : |Real.log x - Real.log (L ^ 2 / (99 / 40))| ≤ (δ : ℝ))
     {a0 a1 u v A P Q C R : ℝ} (ha0 : 0 < a0) (ha1 : 0 < a1) (ha0x : a0 ≤ x) (hu : 0 ≤ u)
     (hv : 0 ≤ v) (huv : u + v = 1) (hscale : 1 / x = u / a0 + v / a1)
-    (hA : A ≤ AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum a0)
-    (hP : principalExponentialMass a0 ≤ P) (hQ : principalExponentialMass a1 ≤ Q)
-    (hC : C ≤ 2 * A - (u * P + v * Q)) (hC0 : 0 ≤ C) (hR : Real.sqrt x ≤ R)
-    (hgap : phase64TransportedNumericalBudget n q x δ < C / R) :
+    (hA : A ≤ exponentialRampMangoldtSum a0) (hP : principalExponentialMass a0 ≤ P)
+    (hQ : principalExponentialMass a1 ≤ Q) (hC : C ≤ 2 * A - (u * P + v * Q)) (hC0 : 0 ≤ C)
+    (hR : Real.sqrt x ≤ R) (hgap : phase64TransportedNumericalBudget n q x δ < C / R) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n p = -1 := by
   have hc :=
     principalRampDifference_lower_of_harmonic_chord ha0 ha1 ha0x hu hv huv hscale hA hP hQ hC hC0 hR

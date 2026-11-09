@@ -16,11 +16,11 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
 /-- The first eight supplied primes extended by the prime 23. -/
 def target028NinePrimes : List ℕ :=
-  target030FirstPrimes ++ [23]
+  primeSeed19Primes ++ [23]
 
 /-- Logarithmic weights of the nine supplied primes, scaled by ten. -/
 def target028NineWeight (p : ℕ) : ℕ :=
-  if p = 23 then 32 else target030FirstWeight p
+  if p = 23 then 32 else primeSeed19Weight p
 
 /-- Weight list corresponding to the nine distinct prime labels. -/
 def target028NineWeights : List ℕ :=
@@ -84,15 +84,15 @@ certified scaled logarithmic weight. The first eight labels reuse the
 previous supply and the final label uses a rational logarithm enclosure. -/
 theorem target028Nine_supply (p : ℕ) (hp : p ∈ target028NinePrimes) :
     p.Prime ∧ p ≤ 23 ∧ Real.log p ≤ (target028NineWeight p : ℝ) / 10 := by
-  have hmem : p ∈ target030FirstPrimes ∨ p = 23 := by
+  have hmem : p ∈ primeSeed19Primes ∨ p = 23 := by
     simpa only [target028NinePrimes, List.mem_append, List.mem_singleton] using hp
   rcases hmem with h | h
   · have h23 : p ≠ 23 := by
-      have hb := (target030_first_prime_supply p h).2
+      have hb := (prime_seed19_prime_supply p h).2
       exact fun he ↦ by
         subst p; norm_num only at hb
-    have hb := target030_first_prime_supply p h
-    have hw := target030_first_weight_bounds p h
+    have hb := prime_seed19_prime_supply p h
+    have hw := prime_seed19_weight_bounds p h
     simp only [target028NineWeight, ite_eq_right h23]
     exact ⟨hb.1, le_trans hb.2 (by decide), hw⟩
   · subst p

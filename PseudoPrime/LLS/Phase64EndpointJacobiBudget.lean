@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.PrincipalExponentialTailBounds
 public import PseudoPrime.LLS.Phase64NumericalJacobiBudget
 
@@ -19,8 +20,7 @@ namespace PseudoPrime.LLS
 below the actual principal-ramp difference. Apply endpoint monotonicity with the certified
 scale interval and root upper bound. -/
 theorem phase64_principalRamp_lower_of_finite_bounds {L r p e C : ℝ} (hlo : 64 ≤ L)
-    (hhi : L ≤ 64001 / 1000) (N : ℕ)
-    (hr : r ≤ AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum (163840 / 99))
+    (hhi : L ≤ 64001 / 1000) (N : ℕ) (hr : r ≤ exponentialRampMangoldtSum (163840 / 99))
     (hp :
       (∑ n ∈ Finset.range N,
           Real.exp (-(n : ℝ) / (4096128001 / 2475000)) * ArithmeticFunction.vonMangoldt n) ≤
@@ -42,7 +42,7 @@ theorem exists_oddPrime_negJacobi_phase64_finite_GRH {n : ℕ} {hn : Odd n} {hns
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {q : ℕ} (hq : 20000 ≤ q)
     (hmq : (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ q) {L r p e C : ℝ}
     (hlo : 64 ≤ L) (hhi : L ≤ 64001 / 1000) (N : ℕ)
-    (hr : r ≤ AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum (163840 / 99))
+    (hr : r ≤ exponentialRampMangoldtSum (163840 / 99))
     (hp :
       (∑ k ∈ Finset.range N,
           Real.exp (-(k : ℝ) / (4096128001 / 2475000)) * ArithmeticFunction.vonMangoldt k) ≤
@@ -108,7 +108,7 @@ theorem exists_odd_prime_negative_of_phase64_prefix_caps {n : ℕ} {hn : Odd n} 
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {q : ℕ} (hq : 20000 ≤ q)
     (hmq : (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ q) {L : ℝ} (hlo : 64 ≤ L)
     (hhi : L ≤ 64001 / 1000) (hnL : Real.log n ≤ L) (hqL : Real.log q ≤ L + 7 / 5)
-    (hr : (1514 : ℝ) ≤ AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum (163840 / 99))
+    (hr : (1514 : ℝ) ≤ exponentialRampMangoldtSum (163840 / 99))
     (hp :
       (∑ k ∈ Finset.range 40000,
           Real.exp (-(k : ℝ) / (4096128001 / 2475000)) * ArithmeticFunction.vonMangoldt k) ≤

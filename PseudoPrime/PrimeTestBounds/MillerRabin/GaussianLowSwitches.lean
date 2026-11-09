@@ -16,16 +16,16 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
 /-- The rational logarithmic scale at which the raw root reaches the floor u. -/
 noncomputable def gaussianLowSwitch (u D : ℝ) : ℝ :=
-  (gaussianMRRefinedD * u ^ 2 - gaussianMRRefinedBeta * u - D) / gaussianMRRefinedConductor
+  (gaussianMRRefinedD * u ^ 2 - gaussianMRRefinedBeta * u - D) / gaussianConductorCoeff
 
 /-- For nonnegative L and residual, a floor at least nine exceeds the raw root
 exactly up to its rational switch. The quadratic budget gives both implications. -/
 theorem gaussianLow_raw_le_iff {u D L : ℝ} (hu : 9 ≤ u) (hD : 0 ≤ D) (hL : 0 ≤ L) :
     Analysis.gaussianBudgetRoot gaussianMRRefinedD gaussianMRRefinedBeta
-          (gaussianMRRefinedConductor * L + D) ≤
+          (gaussianConductorCoeff * L + D) ≤
         u ↔
       L ≤ gaussianLowSwitch u D := by
-  have hc : 0 < gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
+  have hc : 0 < gaussianConductorCoeff := by norm_num only [gaussianConductorCoeff]
   have hb : gaussianMRRefinedBeta < 9 * gaussianMRRefinedD := by
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
       gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint]
@@ -51,9 +51,9 @@ after its rational switch. Factor the quadratic difference using its positive fa
 theorem gaussianLow_raw_ge_iff {u D L : ℝ} (hu : 9 ≤ u) (hD : 0 ≤ D) (hL : 0 ≤ L) :
     u ≤
         Analysis.gaussianBudgetRoot gaussianMRRefinedD gaussianMRRefinedBeta
-          (gaussianMRRefinedConductor * L + D) ↔
+          (gaussianConductorCoeff * L + D) ↔
       gaussianLowSwitch u D ≤ L := by
-  have hc : 0 < gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
+  have hc : 0 < gaussianConductorCoeff := by norm_num only [gaussianConductorCoeff]
   have hb : gaussianMRRefinedBeta < 9 * gaussianMRRefinedD := by
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
       gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint]
@@ -63,12 +63,12 @@ theorem gaussianLow_raw_ge_iff {u D L : ℝ} (hu : 9 ≤ u) (hD : 0 ≤ D) (hL :
   have hC := add_nonneg (mul_nonneg hc.le hL) hD
   let t :=
     Analysis.gaussianBudgetRoot gaussianMRRefinedD gaussianMRRefinedBeta
-      (gaussianMRRefinedConductor * L + D)
+      (gaussianConductorCoeff * L + D)
   have ht : 0 < t :=
     Analysis.gaussianBudgetRoot_pos gaussianMRRefined_coefficients.1
       gaussianMRRefined_coefficients.2
   have he :
-    gaussianMRRefinedD * t ^ 2 = gaussianMRRefinedBeta * t + (gaussianMRRefinedConductor * L + D) :=
+    gaussianMRRefinedD * t ^ 2 = gaussianMRRefinedBeta * t + (gaussianConductorCoeff * L + D) :=
     Analysis.gaussianBudgetRoot_equation gaussianMRRefined_coefficients.1 hC
   have hm : 0 < gaussianMRRefinedD * (t + u) - gaussianMRRefinedBeta := by
     have hp := mul_pos gaussianMRRefined_coefficients.1 ht
@@ -103,7 +103,7 @@ is smaller whenever the floors are ordered. -/
 theorem gaussianLow_roots_before {u v D E L : ℝ} (huv : u ≤ v)
     (hraw :
       Analysis.gaussianBudgetRoot gaussianMRRefinedD gaussianMRRefinedBeta
-          (gaussianMRRefinedConductor * L + D) ≤
+          (gaussianConductorCoeff * L + D) ≤
         v) :
     gaussianLowRoot u D L ≤ gaussianLowRoot v E L := by
   exact max_le (huv.trans (le_max_left _ _)) (hraw.trans (le_max_left _ _))
@@ -114,7 +114,7 @@ theorem gaussianLow_roots_after {u v D E L : ℝ} (hD : E ≤ D)
     (hraw :
       v ≤
         Analysis.gaussianBudgetRoot gaussianMRRefinedD gaussianMRRefinedBeta
-          (gaussianMRRefinedConductor * L + D)) :
+          (gaussianConductorCoeff * L + D)) :
     gaussianLowRoot v E L ≤ gaussianLowRoot u D L := by
   apply max_le (hraw.trans (le_max_right _ _))
   apply
@@ -181,7 +181,7 @@ theorem gaussianLowFamily_selection {L : ℝ} (hL : 0 ≤ L) :
   have horder : gaussianLowSwitch (19 / 2) (93 / 10) ≤ gaussianLowSwitch (49 / 5) (163 / 20) := by
     norm_num only [gaussianLowSwitch, gaussianMRRefinedD, gaussianMRRefinedBeta,
       gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint,
-      gaussianMRRefinedConductor]
+      gaussianConductorCoeff]
   by_cases hfirst : L ≤ gaussianLowSwitch (19 / 2) (93 / 10)
   · rw [ite_eq_left hfirst]
     exact
@@ -207,7 +207,7 @@ theorem gaussianLowProfile_floor_selection (f : GaussianLowProfile) {L : ℝ} (h
       if L ≤ gaussianLowSwitch f.floor f.residual then f.floor
       else
         Analysis.gaussianBudgetRoot gaussianMRRefinedD gaussianMRRefinedBeta
-          (gaussianMRRefinedConductor * L + f.residual) := by
+          (gaussianConductorCoeff * L + f.residual) := by
   have hu : (9 : ℝ) ≤ f.floor := by
     have h := f.signs.1; linarith only [h]
   have hiff := gaussianLow_raw_le_iff hu f.signs.2.le hL

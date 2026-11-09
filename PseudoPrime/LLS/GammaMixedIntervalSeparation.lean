@@ -175,7 +175,7 @@ theorem gamma_factor_free_separation_of_cell_check (hRH : RiemannHypothesis)
       (11783423 / 25000000 : ℝ) * (L + 7 / 5) + 3 / 4 + (D : ℝ) - 28923 / 2500 := by
     unfold gammaFactorFreeJointBudget
     linarith only [hp, hD]
-  have hm1 := mul_le_mul_of_nonneg_right Analysis.gamma_ramp_mass_lower (Real.sqrt_nonneg x)
+  have hm1 := mul_le_mul_of_nonneg_right gamma_ramp_mass_lower (Real.sqrt_nonneg x)
   have hm2 :=
     mul_le_mul_of_nonneg_left hroot (show (0 : ℝ) ≤ 83125234337 / 100000000000 by norm_num only)
   have hm := hm2.trans hm1

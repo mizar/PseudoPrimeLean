@@ -6,7 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.QuadraticGammaThreeCells
+public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformKorseltFactors
+public import PseudoPrime.PrimeTestBounds.MillerRabin.QuadraticTripleGap
 
 /-! # Uniform-triple transfer for arbitrary Gamma cells -/
 

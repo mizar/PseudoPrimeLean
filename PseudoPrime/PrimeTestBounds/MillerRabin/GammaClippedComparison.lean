@@ -6,14 +6,14 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaSignedPrefixBounds
-public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaSeedPairedBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaPolynomialBudget
 public import PseudoPrime.LLS.ClippedLogShiftPrincipalBounds
 public import PseudoPrime.LLS.ClippedAffineWitnessBounds
 public import PseudoPrime.LLS.GammaCheckpoint1000
-public import PseudoPrime.LLS.PaperStatements.MidscaleEndpointRadius
-public import PseudoPrime.Analysis.QuadraticGammaSmoothedNumerics
+public import PseudoPrime.LLS.QuadraticGammaSmoothedNumerics
 
 /-! # Clipped-log Gamma comparison radius -/
 
@@ -63,8 +63,7 @@ compact envelope and the clipped endpoint increment. The support-only continuity
 is handled by the clamped extension. -/
 theorem gammaClippedError_variation_bound (hRH : RiemannHypothesis) {x h : ℝ} (hx : 1 ≤ x)
     (hh : 0 < h) (hhx : h ≤ x) :
-    |PseudoPrime.AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional
-          (PseudoPrime.LLS.clippedShiftError x)| ≤
+    |PseudoPrime.LLS.exponentialRampVariationFunctional (PseudoPrime.LLS.clippedShiftError x)| ≤
       (3 / 2) * ((63 / 800 : ℝ) * Real.sqrt x + 21 / 20) +
         42 * (PseudoPrime.LLS.logShiftRampIncrement x h + 1 / 200) := by
   have hbound :
@@ -87,10 +86,8 @@ theorem gammaClippedError_variation_bound (hRH : RiemannHypothesis) {x h : ℝ} 
     rw [hleft, hright]
     exact hinc
   have hv :=
-    AnalyticNumberTheory.Arithmetic.expRampVariation_abs_le_of_increment
-      (gammaClippedErrorExtension_continuous hx0) hbound hD
-  rw [AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional_congr
-      gammaClippedErrorExtension_eqOn] at hv
+    LLS.expRampVariation_abs_le_of_increment (gammaClippedErrorExtension_continuous hx0) hbound hD
+  rw [LLS.exponentialRampVariationFunctional_congr gammaClippedErrorExtension_eqOn] at hv
   exact hv
 
 /-- Extend the logarithmic atom by the same clamp as the corrected error. Its
@@ -140,9 +137,8 @@ theorem gammaClippedRawErrorExtension_eqOn {x : ℝ} :
 subtraction. Split the two smooth integrals and retain the signed endpoint jumps. -/
 private theorem gammaClippedVariationFunctional_sub (f g : ℝ → ℝ) (hf : Continuous f)
     (hg : Continuous g) :
-    AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional (fun u ↦ f u - g u) =
-      AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional f -
-        AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional g := by
+    LLS.exponentialRampVariationFunctional (fun u ↦ f u - g u) =
+      LLS.exponentialRampVariationFunctional f - LLS.exponentialRampVariationFunctional g := by
   let Q1 : ℝ → ℝ := fun u ↦ (u - 1) * Real.exp (-u)
   let Q2 : ℝ → ℝ := fun u ↦
     Real.exp (-u) * ((u - 1) * ((99 / 40 - u) / (1 / 200)) + (2 * u - 1) / (1 / 200))
@@ -162,40 +158,37 @@ private theorem gammaClippedVariationFunctional_sub (f g : ℝ → ℝ) (hf : Co
     exact
       intervalIntegral.integral_sub ((hf.mul hQ).intervalIntegrable a b)
         ((hg.mul hQ).intervalIntegrable a b)
-  simp only [AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional]
+  simp only [LLS.exponentialRampVariationFunctional]
   rw [hInt Q1 hQ1 0 (247 / 100), hInt Q2 hQ2 (247 / 100) (99 / 40)]
   ring
 
 /-- The variation functional commutes with multiplication by a real constant. -/
 private theorem gammaClippedVariationFunctional_const_mul (c : ℝ) (f : ℝ → ℝ) :
-    AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional (fun u ↦ c * f u) =
-      c * AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional f := by
-  simp only [AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional, mul_assoc,
-    intervalIntegral.integral_const_mul]
+    LLS.exponentialRampVariationFunctional (fun u ↦ c * f u) =
+      c * LLS.exponentialRampVariationFunctional f := by
+  simp only [LLS.exponentialRampVariationFunctional, mul_assoc, intervalIntegral.integral_const_mul]
   ring
 
 /-- The variation functional of the logarithmic atom at $1/x$ is $e^{-1/x}$.
 Use the exact atom-to-ramp-kernel identity and the left branch of the ramp weight. -/
 theorem gammaClippedAtom_variation_eq_exp {x : ℝ} (hx : 1 ≤ x) :
-    AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional
-        (Analysis.positiveLogRatio (1 / x)) =
+    LLS.exponentialRampVariationFunctional (Analysis.positiveLogRatio (1 / x)) =
       Real.exp (-(1 / x)) := by
   have hx0 : 0 < x := by linarith only [hx]
   have hv : 0 < 1 / x := one_div_pos.mpr hx0
   have hleft : 1 / x ≤ (247 / 100 : ℝ) := by
     have hle : 1 / x ≤ 1 := (div_le_iff₀ hx0).mpr (by linarith only [hx])
     exact hle.trans (by norm_num only)
-  change Analysis.exponentialRampLogKernel (1 / x) = Real.exp (-(1 / x))
-  rw [Analysis.exponentialRampLogKernel_eq_weight hv,
+  change LLS.exponentialRampLogKernel (1 / x) = Real.exp (-(1 / x))
+  rw [LLS.exponentialRampLogKernel_eq_weight hv,
     Analysis.exponentialRampWeight_eq_exp_of_le_left hleft]
 
 /-- The uncorrected ramp error functional is the corrected error functional minus
 the exact logarithmic atom. Use the continuous extensions and support congruence. -/
 theorem gammaClippedRawError_variation_eq {x : ℝ} (hx : 1 ≤ x) :
-    AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional
+    LLS.exponentialRampVariationFunctional
         (fun u ↦ AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum (x * u) - x * u) =
-      AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional
-          (PseudoPrime.LLS.clippedShiftError x) -
+      LLS.exponentialRampVariationFunctional (PseudoPrime.LLS.clippedShiftError x) -
         Real.log (2 * Real.pi) * Real.exp (-(1 / x)) := by
   have hx0 : 0 < x := by linarith only [hx]
   have hAtomCont := gammaClippedAtomExtension_continuous hx0
@@ -207,49 +200,37 @@ theorem gammaClippedRawError_variation_eq {x : ℝ} (hx : 1 ≤ x) :
   have hScale :=
     gammaClippedVariationFunctional_const_mul (Real.log (2 * Real.pi)) (gammaClippedAtomExtension x)
   have hClip :=
-    AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional_congr
-      (gammaClippedErrorExtension_eqOn (x := x))
+    LLS.exponentialRampVariationFunctional_congr (gammaClippedErrorExtension_eqOn (x := x))
   have hRaw :=
-    AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional_congr
-      (gammaClippedRawErrorExtension_eqOn (x := x))
+    LLS.exponentialRampVariationFunctional_congr (gammaClippedRawErrorExtension_eqOn (x := x))
   have hAtom :=
-    AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional_congr
-      (gammaClippedAtomExtension_eqOn (x := x))
+    LLS.exponentialRampVariationFunctional_congr (gammaClippedAtomExtension_eqOn (x := x))
   calc
+    _ = LLS.exponentialRampVariationFunctional (gammaClippedRawErrorExtension x) := hRaw.symm
     _ =
-        AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional
-          (gammaClippedRawErrorExtension x) :=
-      hRaw.symm
-    _ =
-        AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional
-            (gammaClippedErrorExtension x) -
-          AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional
+        LLS.exponentialRampVariationFunctional (gammaClippedErrorExtension x) -
+          LLS.exponentialRampVariationFunctional
             (fun u ↦ Real.log (2 * Real.pi) * gammaClippedAtomExtension x u) :=
       by
       change
-        AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional
+        LLS.exponentialRampVariationFunctional
             (fun u ↦
               gammaClippedErrorExtension x u -
                 Real.log (2 * Real.pi) * gammaClippedAtomExtension x u) =
           _
       exact hSub
     _ =
-        AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional
-            (gammaClippedErrorExtension x) -
+        LLS.exponentialRampVariationFunctional (gammaClippedErrorExtension x) -
           Real.log (2 * Real.pi) *
-            AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional
-              (gammaClippedAtomExtension x) :=
+            LLS.exponentialRampVariationFunctional (gammaClippedAtomExtension x) :=
       by rw [hScale]
     _ =
-        AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional
-            (PseudoPrime.LLS.clippedShiftError x) -
+        LLS.exponentialRampVariationFunctional (PseudoPrime.LLS.clippedShiftError x) -
           Real.log (2 * Real.pi) *
-            AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional
-              (Analysis.positiveLogRatio (1 / x)) :=
+            LLS.exponentialRampVariationFunctional (Analysis.positiveLogRatio (1 / x)) :=
       by rw [hClip, hAtom]
     _ =
-        AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional
-            (PseudoPrime.LLS.clippedShiftError x) -
+        LLS.exponentialRampVariationFunctional (PseudoPrime.LLS.clippedShiftError x) -
           Real.log (2 * Real.pi) * Real.exp (-(1 / x)) :=
       by rw [gammaClippedAtom_variation_eq_exp hx]
 
@@ -257,12 +238,12 @@ theorem gammaClippedRawError_variation_eq {x : ℝ} (hx : 1 ≤ x) :
 lower bound from analysis11. The exact logarithmic atom correction is included. -/
 theorem gammaClippedRampSum_lower (hRH : RiemannHypothesis) {r : ℝ} (hr : 1 ≤ r) :
     ((293 / 320 : ℝ) - 231 / 49400) * r - 386043 / 395200 - 13 / r ≤
-      AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum (r ^ 2) / r := by
+      LLS.exponentialRampMangoldtSum (r ^ 2) / r := by
   have hx : 1 ≤ r ^ 2 := by nlinarith only [hr]
   have hr0 : 0 < r := by linarith only [hr]
   have hx0 : 0 < r ^ 2 := by positivity
   have hs : Real.sqrt (r ^ 2) = r := Real.sqrt_sq (by linarith only [hr])
-  have hnorm := AnalyticNumberTheory.Arithmetic.expRampMangoldt_div_sqrt_eq_main_add_error hx0
+  have hnorm := LLS.expRampMangoldt_div_sqrt_eq_main_add_error hx0
   rw [hs] at hnorm
   have hvar :=
     gammaClippedError_variation_bound hRH hx (by positivity : 0 < r ^ 2 / 20)
@@ -298,7 +279,7 @@ theorem gammaClippedRampSum_lower (hRH : RiemannHypothesis) {r : ℝ} (hr : 1 �
     nlinarith only [hc2, hAtom]
   have hvariation :
     -((231 / 49400 : ℝ) * r ^ 2) - (386043 / 395200 : ℝ) * r - 13 ≤
-      AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional
+      LLS.exponentialRampVariationFunctional
         (fun u ↦
           AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum (r ^ 2 * u) - r ^ 2 * u) := by
     rw [hraw]
@@ -307,20 +288,19 @@ theorem gammaClippedRampSum_lower (hRH : RiemannHypothesis) {r : ℝ} (hr : 1 �
     linarith only [hlow, hconstant]
   have hmass :
     (293 / 320 : ℝ) ≤ ∫ u in (0 : ℝ)..(99 / 40), PseudoPrime.Analysis.exponentialRampWeight u := by
-    have hm := PseudoPrime.Analysis.gamma_ramp_mass_lower
+    have hm := PseudoPrime.LLS.gamma_ramp_mass_lower
     nlinarith only [hm]
   have hmassR := mul_le_mul_of_nonneg_right hmass (sq_nonneg r)
   have hnormMul :
-    AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum (r ^ 2) =
+    LLS.exponentialRampMangoldtSum (r ^ 2) =
       ((∫ u in (0 : ℝ)..(99 / 40), PseudoPrime.Analysis.exponentialRampWeight u) * r +
-          AnalyticNumberTheory.Arithmetic.exponentialRampVariationFunctional
+          LLS.exponentialRampVariationFunctional
               (fun u ↦
                 AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum (r ^ 2 * u) - r ^ 2 * u) /
             r) *
         r := by
     calc
-      _ = (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum (r ^ 2) / r) * r := by
-        field_simp [hr0.ne']
+      _ = (LLS.exponentialRampMangoldtSum (r ^ 2) / r) * r := by field_simp [hr0.ne']
       _ = _ := congrArg (fun z : ℝ ↦ z * r) hnorm
   apply (le_div_iff₀ hr0).2
   rw [hnormMul]
@@ -331,7 +311,7 @@ theorem gammaClippedRampSum_lower (hRH : RiemannHypothesis) {r : ℝ} (hr : 1 �
 This is the index-four margin used by the scalar Gamma branch. -/
 theorem gammaClippedFourTRamp_lower (hRH : RiemannHypothesis) {r : ℝ} (hr : 1 ≤ r) :
     (87069 / 98800 : ℝ) * r - 15138157 / 11856000 - 49 / (3 * r) ≤
-      (4 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum (r ^ 2) / r) -
+      (4 * (LLS.exponentialRampMangoldtSum (r ^ 2) / r) -
           (∑' k : ℕ,
               LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) (r ^ 2)
                 k).re) /
@@ -339,7 +319,7 @@ theorem gammaClippedFourTRamp_lower (hRH : RiemannHypothesis) {r : ℝ} (hr : 1 
   have hr0 : 0 < r := by linarith only [hr]
   have hx : 1 ≤ r ^ 2 := by nlinarith only [hr]
   have hs : Real.sqrt (r ^ 2) = r := Real.sqrt_sq (by linarith only [hr])
-  let T := AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum (r ^ 2) / r
+  let T := LLS.exponentialRampMangoldtSum (r ^ 2) / r
   let P :=
     (∑' k : ℕ,
         LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) (r ^ 2) k).re
@@ -396,12 +376,12 @@ at exponent one hundred. -/
 theorem gammaClippedNormalizedMain_lower_index100 (hRH : RiemannHypothesis) {r k : ℝ} (hr : 1 ≤ r)
     (hk : 100 ≤ k) :
     (91 / 100 : ℝ) * r - 1 - 14 / r ≤
-      (k * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum (r ^ 2) / r) -
+      (k * (LLS.exponentialRampMangoldtSum (r ^ 2) / r) -
           (∑' j : ℕ,
               LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) (r ^ 2)
                 j).re) /
         (k - 1) := by
-  let T : ℝ := AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum (r ^ 2) / r
+  let T : ℝ := LLS.exponentialRampMangoldtSum (r ^ 2) / r
   let P : ℝ :=
     (∑' j : ℕ,
         LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) (r ^ 2) j).re
@@ -546,7 +526,7 @@ theorem exists_prime_witness_of_gamma_index100_gap {n : ℕ} [NeZero n] (hn : 1 
     dsimp only [k]
     exact_mod_cast hidx
   have hscalar := gammaClippedNormalizedMain_lower_index100 hGRH.riemann hr hk
-  let T : ℝ := AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum (r ^ 2) / r
+  let T : ℝ := LLS.exponentialRampMangoldtSum (r ^ 2) / r
   let P : ℝ :=
     (∑' j : ℕ,
         LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) (r ^ 2) j).re
@@ -729,7 +709,7 @@ theorem exists_prime_witness_of_gammaClippedPrefixGap {n : ℕ} [NeZero n] (hn :
     linarith only [hscalar, hconstant, hrecipSum, hr0]
   have hbudgetGap :
     gammaSignedPrefixMRBudget n n (r ^ 2) b <
-      (4 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum (r ^ 2) / r) -
+      (4 * (LLS.exponentialRampMangoldtSum (r ^ 2) / r) -
           (∑' k : ℕ,
               LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) (r ^ 2)
                 k).re) /
@@ -737,9 +717,7 @@ theorem exists_prime_witness_of_gammaClippedPrefixGap {n : ℕ} [NeZero n] (hn :
     exact lt_of_lt_of_le (lt_of_lt_of_le hbudgetUpper hbelow) hfour
   have hbudgetGap' :
     gammaSignedPrefixMRBudget n n (r ^ 2) b <
-      (4 *
-            (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum (r ^ 2) /
-              Real.sqrt (r ^ 2)) -
+      (4 * (LLS.exponentialRampMangoldtSum (r ^ 2) / Real.sqrt (r ^ 2)) -
           (∑' k : ℕ,
               LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) (r ^ 2)
                 k).re) /
@@ -767,7 +745,7 @@ theorem exists_prime_witness_le_gammaClippedPrefixBound {n : ℕ} (hn : 1 < n) (
     have hnPos : 0 < n := by omega
     have hn0 : (0 : ℝ) < n := by exact_mod_cast hnPos
     have hlog := Real.log_le_log hn0 hnR
-    linarith only [hlog, Analysis.log_46000_lt_eleven, hL]
+    linarith only [hlog, LLS.log_46000_lt_eleven, hL]
   have hn9 : n ≠ 9 := by omega
   have harg : 0 ≤ (40 / 99 : ℝ) * b := by positivity
   have hcut : 2 ≤ Real.sqrt ((40 / 99 : ℝ) * b) := by
@@ -805,113 +783,6 @@ theorem exists_prime_witness_le_gammaClippedPrefixBound {n : ℕ} (hn : 1 < n) (
   refine ⟨p, hp, ?_, hreject⟩
   simpa only [gammaClippedPrefixBound] using hpbound
 
-/-- The radius obtained from the fourth affine endpoint after the $73/50$ shift.
-It is the comparison scale for the clipped-log Gamma branch beginning at $L=120$. -/
-noncomputable def gammaClippedRadius (L : ℝ) : ℝ :=
-  (40 / 63 : ℝ) * ((3200 / 3259 : ℝ) * (L - 113 / 25))
-
-/-- The affine comparison radius obtained from the endpoint shifted by `7/4`.
-At levels above 122 its scalar Gamma gap is positive and its underlying line is
-below the corresponding five-piece endpoint radius. -/
-noncomputable def gammaClippedRadius7over4 (L : ℝ) : ℝ :=
-  (40 / 63 : ℝ) * ((3200 / 3259 : ℝ) * (L - 481 / 100))
-
-/-- The scalar margin for the first clipped-log Gamma prefix. A nonnegative margin
-implies that the proposed radius satisfies the new signed-prefix inequality. -/
-noncomputable def gammaClippedGap (L r : ℝ) : ℝ :=
-  (87069 / 98800 : ℝ) * r - (11783423 / 25000000 : ℝ) * L -
-    (143420077 / 11856000 - 2 * (203 / 50 : ℝ)) -
-    ((7 / 6 : ℝ) * L + 190 / 3) / r
-
-/-- The clipped-log scalar margin is positive on $L\ge120$ at the shifted affine
-endpoint radius. Compare with its exact positive anchor at $L=120$ and use the
-positive affine and reciprocal increments. This is the entry comparison for the
-first new Gamma witness bound. -/
-theorem gammaClippedGap_radius_positive {L : ℝ} (hL : 120 ≤ L) :
-    0 < gammaClippedGap L (gammaClippedRadius L) := by
-  let a : ℝ := (40 / 63 : ℝ) * (3200 / 3259)
-  let t : ℝ := -a * (113 / 25)
-  let r : ℝ := a * L + t
-  let r0 : ℝ := a * 120 + t
-  have hrEq : gammaClippedRadius L = r := by
-    dsimp only [gammaClippedRadius, r, a, t]
-    ring
-  have hr0Eq : gammaClippedRadius 120 = r0 := by
-    dsimp only [gammaClippedRadius, r0, a, t]
-    ring
-  have hr : 0 < r := by
-    dsimp only [r, a, t]
-    nlinarith only [hL]
-  have hr0 : 0 < r0 := by
-    dsimp only [r0, a, t]
-    norm_num only
-  have hbase : 0 < gammaClippedGap 120 r0 := by
-    dsimp only [gammaClippedGap, r0, a, t]
-    norm_num only
-  have hslope : 0 < (87069 / 98800 : ℝ) * a - 11783423 / 25000000 := by norm_num only [a]
-  have hrecip : 0 < a * (190 / 3 : ℝ) - (7 / 6 : ℝ) * t := by norm_num only [a, t]
-  have hid :
-    gammaClippedGap L r - gammaClippedGap 120 r0 =
-      ((87069 / 98800 : ℝ) * a - 11783423 / 25000000) * (L - 120) +
-        (a * (190 / 3 : ℝ) - (7 / 6 : ℝ) * t) * (L - 120) / (r * r0) := by
-    dsimp only [gammaClippedGap]
-    field_simp [hr.ne', hr0.ne']
-    ring
-  have hdelta : 0 ≤ L - 120 := by linarith only [hL]
-  have hlinear := mul_nonneg hslope.le hdelta
-  have hfrac : 0 ≤ (a * (190 / 3 : ℝ) - (7 / 6 : ℝ) * t) * (L - 120) / (r * r0) := by positivity
-  have hgap : 0 < gammaClippedGap L r := by
-    have hstep : 0 ≤ gammaClippedGap L r - gammaClippedGap 120 r0 := by
-      rw [hid]
-      exact add_nonneg hlinear hfrac
-    linarith only [hbase, hstep]
-  rw [← hrEq] at hgap
-  exact hgap
-
-/-- The clipped-log Gamma scalar gap is positive from level 122 at the affine
-radius associated with the endpoint's `7/4` shift. The proof starts at one
-positive rational anchor and the gap increases thereafter. -/
-theorem gammaClippedGap_radius7over4_positive {L : ℝ} (hL : 122 ≤ L) :
-    0 < gammaClippedGap L (gammaClippedRadius7over4 L) := by
-  let a : ℝ := (40 / 63 : ℝ) * (3200 / 3259)
-  let t : ℝ := -a * (481 / 100)
-  let r : ℝ := a * L + t
-  let r0 : ℝ := a * 122 + t
-  have hrEq : gammaClippedRadius7over4 L = r := by
-    dsimp only [gammaClippedRadius7over4, r, a, t]
-    ring
-  have hr0Eq : gammaClippedRadius7over4 122 = r0 := by
-    dsimp only [gammaClippedRadius7over4, r0, a, t]
-    ring
-  have hr : 0 < r := by
-    dsimp only [r, a, t]
-    nlinarith only [hL]
-  have hr0 : 0 < r0 := by
-    dsimp only [r0, a, t]
-    norm_num only
-  have hbase : 0 < gammaClippedGap 122 r0 := by
-    dsimp only [gammaClippedGap, r0, a, t]
-    norm_num only
-  have hslope : 0 < (87069 / 98800 : ℝ) * a - 11783423 / 25000000 := by norm_num only [a]
-  have hrecip : 0 < a * (190 / 3 : ℝ) - (7 / 6 : ℝ) * t := by norm_num only [a, t]
-  have hid :
-    gammaClippedGap L r - gammaClippedGap 122 r0 =
-      ((87069 / 98800 : ℝ) * a - 11783423 / 25000000) * (L - 122) +
-        (a * (190 / 3 : ℝ) - (7 / 6 : ℝ) * t) * (L - 122) / (r * r0) := by
-    dsimp only [gammaClippedGap]
-    field_simp [hr.ne', hr0.ne']
-    ring
-  have hdelta : 0 ≤ L - 122 := by linarith only [hL]
-  have hlinear := mul_nonneg hslope.le hdelta
-  have hfrac : 0 ≤ (a * (190 / 3 : ℝ) - (7 / 6 : ℝ) * t) * (L - 122) / (r * r0) := by positivity
-  have hgap : 0 < gammaClippedGap L r := by
-    have hstep : 0 ≤ gammaClippedGap L r - gammaClippedGap 122 r0 := by
-      rw [hid]
-      exact add_nonneg hlinear hfrac
-    linarith only [hbase, hstep]
-  rw [← hrEq] at hgap
-  exact hgap
-
 /-- The positive quadratic root of the clipped-log scalar condition. It solves
 the equality obtained by multiplying the gap by the radius. -/
 noncomputable def gammaClippedScalarRoot (L : ℝ) : ℝ :=
@@ -921,96 +792,6 @@ noncomputable def gammaClippedScalarRoot (L : ℝ) : ℝ :=
           4 * (87069 / 98800 : ℝ) * ((7 / 6 : ℝ) * L + 190 / 3))) /
     (2 * (87069 / 98800 : ℝ))
 
-/-- The scalar root is positive on the range where both prefix estimates apply.
-The constant offset and the square-root discriminant are positive there. -/
-theorem gammaClippedScalarRoot_pos {L : ℝ} (hL : 120 ≤ L) : 0 < gammaClippedScalarRoot L := by
-  have hL0 : 0 < L := by linarith only [hL]
-  have hD : 0 < (143420077 / 11856000 - 2 * (203 / 50 : ℝ)) := by norm_num only
-  have hb : 0 < (11783423 / 25000000 : ℝ) * L + (143420077 / 11856000 - 2 * (203 / 50 : ℝ)) :=
-    add_pos (mul_pos (by norm_num only) hL0) hD
-  have hA : 0 < (7 / 6 : ℝ) * L + 190 / 3 :=
-    add_pos (mul_pos (by norm_num only) hL0) (by norm_num only)
-  have hK : 0 < (87069 / 98800 : ℝ) := by norm_num only
-  have hdisc :
-    0 <
-      ((11783423 / 25000000 : ℝ) * L + (143420077 / 11856000 - 2 * (203 / 50 : ℝ))) ^ 2 +
-        4 * (87069 / 98800 : ℝ) * ((7 / 6 : ℝ) * L + 190 / 3) :=
-    add_pos (sq_pos_of_pos hb) (mul_pos (mul_pos (by norm_num only) hK) hA)
-  dsimp only [gammaClippedScalarRoot]
-  apply div_pos
-  · exact add_pos hb (Real.sqrt_pos.mpr hdisc)
-  · exact mul_pos (by norm_num only) hK
-
-/-- The quadratic root makes the first clipped-log scalar gap exactly zero.
-The positive root is selected because its numerator and denominator are positive
-throughout the target range $L\ge120$. -/
-theorem gammaClippedGap_root_eq_zero {L : ℝ} (hL : 120 ≤ L) :
-    gammaClippedGap L (gammaClippedScalarRoot L) = 0 := by
-  let b : ℝ := (11783423 / 25000000 : ℝ) * L + (143420077 / 11856000 - 2 * (203 / 50 : ℝ))
-  let A : ℝ := (7 / 6 : ℝ) * L + 190 / 3
-  let K : ℝ := 87069 / 98800
-  let disc : ℝ := b ^ 2 + 4 * K * A
-  let r : ℝ := (b + Real.sqrt disc) / (2 * K)
-  have hL0 : 0 < L := by linarith only [hL]
-  have hD : 0 < (143420077 / 11856000 - 2 * (203 / 50 : ℝ)) := by norm_num only
-  have hb : 0 < b := by
-    dsimp only [b]
-    positivity
-  have hA : 0 < A := by
-    dsimp only [A]
-    positivity
-  have hK : 0 < K := by norm_num only [K]
-  have hdisc : 0 < disc := by
-    dsimp only [disc]
-    positivity
-  have hs : (Real.sqrt disc) ^ 2 = disc := Real.sq_sqrt hdisc.le
-  have hr : 0 < r := by
-    dsimp only [r]
-    exact div_pos (add_pos hb (Real.sqrt_pos.mpr hdisc)) (mul_pos (by norm_num only) hK)
-  have hrEq : gammaClippedScalarRoot L = r := by
-    dsimp only [gammaClippedScalarRoot, r, disc, b, A, K]
-  have hquad : K * r ^ 2 - b * r - A = 0 := by
-    dsimp only [r]
-    have hK0 : K ≠ 0 := ne_of_gt hK
-    field_simp [hK0]
-    dsimp only [disc] at hs
-    nlinarith only [hs]
-  have hmul : gammaClippedGap L r * r = 0 := by
-    rw [gammaClippedGap]
-    dsimp only [A, b, K] at hquad ⊢
-    field_simp
-    nlinarith only [hquad]
-  rw [hrEq]
-  exact (mul_eq_zero.mp hmul).resolve_right hr.ne'
-
-/-- Every radius at least the quadratic root satisfies the scalar gap condition.
-The gap is increasing in the radius because its slope and reciprocal increment
-are positive. -/
-theorem gammaClippedGap_nonneg_of_root_le {L r : ℝ} (hL : 120 ≤ L)
-    (hr : gammaClippedScalarRoot L ≤ r) : 0 ≤ gammaClippedGap L r := by
-  let rho := gammaClippedScalarRoot L
-  have hrho : 0 < rho := gammaClippedScalarRoot_pos hL
-  have hr' : 0 < r := lt_of_lt_of_le hrho hr
-  have hL0 : 0 < L := by linarith only [hL]
-  have hA : 0 < (7 / 6 : ℝ) * L + 190 / 3 :=
-    add_pos (mul_pos (by norm_num only) hL0) (by norm_num only)
-  have hK : 0 < (87069 / 98800 : ℝ) := by norm_num only
-  have hid :
-    gammaClippedGap L r - gammaClippedGap L rho =
-      ((87069 / 98800 : ℝ) + ((7 / 6 : ℝ) * L + 190 / 3) / (r * rho)) * (r - rho) := by
-    simp only [gammaClippedGap]
-    field_simp [hr'.ne', hrho.ne']
-    ring_nf
-  have hdiff : 0 ≤ ((87069 / 98800 : ℝ) + ((7 / 6 : ℝ) * L + 190 / 3) / (r * rho)) * (r - rho) := by
-    apply mul_nonneg
-    · exact add_nonneg hK.le (div_nonneg hA.le (mul_nonneg hr'.le hrho.le))
-    · exact sub_nonneg.mpr hr
-  have hroot : gammaClippedGap L rho = 0 := by
-    dsimp only [rho]
-    exact gammaClippedGap_root_eq_zero hL
-  rw [hroot] at hid
-  linarith only [hid, hdiff]
-
 /-- The radius for the first retained prefix. It is the larger of the prefix cutoff
 radius and the positive root of the clipped-log scalar condition. -/
 noncomputable def gammaClippedRadius1000 (L : ℝ) : ℝ :=
@@ -1019,35 +800,6 @@ noncomputable def gammaClippedRadius1000 (L : ℝ) : ℝ :=
 /-- The resulting first-prefix witness bound. -/
 noncomputable def gammaClippedBound1000 (L : ℝ) : ℝ :=
   (99 / 40 : ℝ) * (gammaClippedRadius1000 L) ^ 2
-
-/-- The chosen first-prefix radius satisfies the clipped-log scalar condition. -/
-theorem gammaClippedRadius1000_gap_nonneg {L : ℝ} (hL : 120 ≤ L) :
-    0 ≤ gammaClippedGap L (gammaClippedRadius1000 L) := by
-  exact gammaClippedGap_nonneg_of_root_le hL (le_max_right _ _)
-
-/-- The first-prefix cutoff radius ensures that the proposed witness bound covers
-all 1000 terms of the retained prefix. -/
-theorem gammaClippedBound1000_ge_prefix {L : ℝ} : 1000 ≤ gammaClippedBound1000 L := by
-  let c : ℝ := (40 / 99 : ℝ) * 1000
-  let s := Real.sqrt c
-  have hc : 0 ≤ c := by
-    dsimp only [c]
-    norm_num only
-  have hs : 0 ≤ s := Real.sqrt_nonneg c
-  have hle : s ≤ gammaClippedRadius1000 L := by
-    dsimp only [s, gammaClippedRadius1000]
-    exact le_max_left _ _
-  have hsum : 0 ≤ s + gammaClippedRadius1000 L := add_nonneg hs (le_trans hs hle)
-  have hprod := mul_nonneg (sub_nonneg.mpr hle) hsum
-  have hrad2 : c ≤ (gammaClippedRadius1000 L) ^ 2 := by
-    have hsq := Real.sq_sqrt hc
-    dsimp only [s] at hprod hsq
-    nlinarith only [hprod, hsq]
-  have hscale := mul_le_mul_of_nonneg_left hrad2 (by norm_num only : (0 : ℝ) ≤ 99 / 40)
-  dsimp only [gammaClippedBound1000] at hscale ⊢
-  dsimp only [c] at hscale
-  norm_num only at hscale
-  exact hscale
 
 /-- For every odd composite input with log at least 120, the first clipped-log
 prefix yields an actual prime Miller--Rabin rejecting base within its stated bound. -/
@@ -1066,11 +818,6 @@ theorem exists_prime_witness_le_gammaClippedBound1000 {n : ℕ} (hn : 1 < n) (hn
   refine ⟨p, hp, ?_, hreject⟩
   simpa only [gammaClippedPrefixBound, gammaClippedPrefixRadius, gammaClippedPrefixRoot,
     gammaClippedBound1000, gammaClippedRadius1000, gammaClippedScalarRoot] using hpbound
-
-/-- The second retained prefix produces an actual prime rejecting base within its
-parameterized bound. -/
-noncomputable def gammaClippedRadius50000 (L : ℝ) : ℝ :=
-  gammaClippedPrefixRadius L 50000 (28493 / 5000)
 
 noncomputable def gammaClippedBound50000 (L : ℝ) : ℝ :=
   gammaClippedPrefixBound L 50000 (28493 / 5000)
@@ -1204,128 +951,6 @@ theorem gammaClippedPrefixGap_affine_nonneg {L L₀ C a t : ℝ} (hLL₀ : L₀ 
     simpa only [r₀] using hstep
   linarith only [hanchor, hstep']
 
-/-- The first prefix estimate improves the former $W(L)$ bound for all
-$L\ge120$. -/
-theorem gammaClippedUpper_le_oldW {L : ℝ} (hL : 120 ≤ L) :
-    gammaClippedUpper L ≤ (99 / 40 : ℝ) * ((287 / 500 : ℝ) * L + 9 / 2) ^ 2 := by
-  let a : ℝ := 287 / 500
-  let t : ℝ := 9 / 2
-  have hD : 0 ≤ 143420077 / 11856000 - 2 * (203 / 50 : ℝ) := by norm_num only
-  have ha : 0 ≤ a := by norm_num only [a]
-  have hr0 : 0 < a * 120 + t := by norm_num only [a, t]
-  have hslope : 0 ≤ (87069 / 98800 : ℝ) * a - 11783423 / 25000000 := by norm_num only [a]
-  have hrecip : 0 ≤ a * (190 / 3 : ℝ) - (7 / 6 : ℝ) * t := by norm_num only [a, t]
-  have hanchor : 0 ≤ gammaClippedPrefixGap 120 (203 / 50 : ℝ) (a * 120 + t) := by
-    norm_num only [gammaClippedPrefixGap, a, t]
-  have hgap :=
-    gammaClippedPrefixGap_affine_nonneg (by linarith only [hL]) ha hr0 hslope hrecip hanchor
-  have hroot := gammaClippedPrefixRoot_le_of_gap_nonneg hL hD (by positivity : 0 < a * L + t) hgap
-  have hcut21 : Real.sqrt ((40 / 99 : ℝ) * 1000) ≤ 21 := by
-    apply Real.sqrt_le_iff.mpr
-    exact ⟨by norm_num only, by norm_num only⟩
-  have hline : 21 ≤ a * L + t := by
-    dsimp only [a, t]
-    nlinarith only [hL]
-  have hrad : gammaClippedRadius1000 L ≤ a * L + t := by
-    dsimp only [gammaClippedRadius1000]
-    exact
-      max_le (hcut21.trans hline)
-        (by simpa only [gammaClippedScalarRoot, gammaClippedPrefixRoot] using hroot)
-  have hrad0 : 0 ≤ gammaClippedRadius1000 L := by
-    dsimp only [gammaClippedRadius1000]
-    exact le_trans (Real.sqrt_nonneg _) (le_max_left _ _)
-  have hline0 : 0 ≤ a * L + t := by exact le_trans (by norm_num only : (0 : ℝ) ≤ 21) hline
-  have hsq := (sq_le_sq₀ hrad0 hline0).mpr hrad
-  have hscale := mul_le_mul_of_nonneg_left hsq (by norm_num only : (0 : ℝ) ≤ 99 / 40)
-  have hbound : gammaClippedBound1000 L ≤ (99 / 40 : ℝ) * (a * L + t) ^ 2 := by
-    dsimp only [gammaClippedBound1000]
-    exact hscale
-  exact (min_le_left _ _).trans (by simpa only [a, t] using hbound)
-
-/-- The clipped-log envelope is also below the older 1000-term cutoff
-expression wherever that branch overlaps it. -/
-theorem gammaClippedUpper_le_gammaLinearCutoff1000 {L : ℝ} (hL : 120 ≤ L) :
-    gammaClippedUpper L ≤ (99 / 40 : ℝ) * ((287 / 500 : ℝ) * L + 9) ^ 2 := by
-  have hW := gammaClippedUpper_le_oldW hL
-  have hsmall : 0 ≤ (287 / 500 : ℝ) * L + 9 / 2 := by positivity
-  have hlarge : 0 ≤ (287 / 500 : ℝ) * L + 9 := by positivity
-  have hline : (287 / 500 : ℝ) * L + 9 / 2 ≤ (287 / 500 : ℝ) * L + 9 := by linarith only
-  have hsq := (sq_le_sq₀ hsmall hlarge).mpr hline
-  have hscale := mul_le_mul_of_nonneg_left hsq (by norm_num only : (0 : ℝ) ≤ 99 / 40)
-  exact hW.trans hscale
-
-/-- The second-prefix scalar condition holds along the existing index-four
-affine radius for $258\le L\le600$. -/
-theorem gammaClippedPrefixGap_nonneg_index_four {L : ℝ} (hL : 258 ≤ L) :
-    0 ≤ gammaClippedPrefixGap L (28493 / 5000) ((107 / 200 : ℝ) * L + 24 / 5) := by
-  let a : ℝ := 107 / 200
-  let t : ℝ := 24 / 5
-  let A₂ : ℝ := (87069 / 98800 : ℝ) * a ^ 2 - (11783423 / 25000000 : ℝ) * a
-  let A₁ : ℝ :=
-    2 * (87069 / 98800 : ℝ) * a * t - (11783423 / 25000000 : ℝ) * t -
-      (143420077 / 11856000 - 2 * (28493 / 5000 : ℝ)) * a -
-      7 / 6
-  let q : ℝ → ℝ := fun x ↦
-    (87069 / 98800 : ℝ) * (a * x + t) ^ 2 -
-      ((11783423 / 25000000 : ℝ) * x + (143420077 / 11856000 - 2 * (28493 / 5000 : ℝ))) *
-        (a * x + t) -
-      ((7 / 6 : ℝ) * x + 190 / 3)
-  have hA₂ : 0 ≤ A₂ := by norm_num only [A₂, a]
-  have hA₁ : 0 ≤ A₁ := by norm_num only [A₁, a, t]
-  have hq258 : 0 ≤ q 258 := by norm_num only [q, a, t]
-  have hpoly : q L - q 258 = (L - 258) * (A₂ * (L + 258) + A₁) := by
-    dsimp only [q, A₂, A₁, a, t]
-    ring
-  have hfactor : 0 ≤ A₂ * (L + 258) + A₁ := by
-    apply add_nonneg
-    · exact mul_nonneg hA₂ (by positivity)
-    · exact hA₁
-  have hproduct := mul_nonneg (sub_nonneg.mpr hL) hfactor
-  have hq : 0 ≤ q L := by linarith only [hpoly, hq258, hproduct]
-  have hr : 0 < a * L + t := by
-    dsimp only [a, t]
-    nlinarith only [hL]
-  have hgapEq : gammaClippedPrefixGap L (28493 / 5000) (a * L + t) = q L / (a * L + t) := by
-    dsimp only [gammaClippedPrefixGap, q]
-    field_simp [hr.ne']
-    ring
-  rw [hgapEq]
-  exact div_nonneg hq hr.le
-
-/-- From $L=258$ onward the improved second-prefix bound is below the
-index-four Gamma bound. -/
-theorem gammaClippedUpper_le_index_four {L : ℝ} (hL : 258 ≤ L) :
-    gammaClippedUpper L ≤ (99 / 40 : ℝ) * ((107 / 200 : ℝ) * L + 24 / 5) ^ 2 := by
-  let a : ℝ := 107 / 200
-  let t : ℝ := 24 / 5
-  have hD : 0 ≤ 143420077 / 11856000 - 2 * (28493 / 5000 : ℝ) := by norm_num only
-  have hgap := gammaClippedPrefixGap_nonneg_index_four hL
-  have h120 : 120 ≤ L := le_trans (by norm_num only) hL
-  have hr : 0 < a * L + t := by
-    dsimp only [a, t]
-    nlinarith only [hL]
-  have hroot := gammaClippedPrefixRoot_le_of_gap_nonneg h120 hD hr hgap
-  have hcut : Real.sqrt ((40 / 99 : ℝ) * 50000) ≤ 285 / 2 := by
-    apply Real.sqrt_le_iff.mpr
-    exact ⟨by norm_num only, by norm_num only⟩
-  have hline : 285 / 2 ≤ a * L + t := by
-    dsimp only [a, t]
-    nlinarith only [hL]
-  have hrad : gammaClippedPrefixRadius L 50000 (28493 / 5000) ≤ a * L + t := by
-    dsimp only [gammaClippedPrefixRadius]
-    exact max_le (hcut.trans hline) (by simpa only [gammaClippedPrefixRoot] using hroot)
-  have hrad0 : 0 ≤ gammaClippedPrefixRadius L 50000 (28493 / 5000) := by
-    dsimp only [gammaClippedPrefixRadius]
-    exact le_trans (Real.sqrt_nonneg _) (le_max_left _ _)
-  have hline0 : 0 ≤ a * L + t := by
-    have h285 : (0 : ℝ) ≤ 285 / 2 := by norm_num only
-    exact le_trans h285 hline
-  have hsq := (sq_le_sq₀ hrad0 hline0).mpr hrad
-  have hscale := mul_le_mul_of_nonneg_left hsq (by norm_num only : (0 : ℝ) ≤ 99 / 40)
-  have hbound : gammaClippedBound50000 L ≤ (99 / 40 : ℝ) * (a * L + t) ^ 2 := by
-    simpa only [gammaClippedBound50000, gammaClippedPrefixBound] using hscale
-  exact (min_le_right _ _).trans (by simpa only [a, t] using hbound)
-
 /-- Above the anchor, a test radius with smaller linear coefficient has a
 negative scalar gap when its constant offset is positive. -/
 theorem gammaClippedPrefixGap_neg_of_scale {L C c : ℝ} (hL : 0 < L)
@@ -1407,206 +1032,5 @@ theorem gammaClippedUpper_ge_sevenTenths_sq {L : ℝ} (hL : 300 ≤ L) :
       _ = (99 / 40 : ℝ) * (c * L) ^ 2 := hbase
       _ ≤ gammaClippedBound50000 L := hbound2
   exact le_min hfirst hsecond
-
-/-- From $L=120$ onward the first prefix bound is below the fourth shifted
-endpoint bound; consequently their Gamma minimum is below that endpoint. -/
-theorem gammaClippedUpper_le_shiftedEndpoint_sq {L : ℝ} (hL : 120 ≤ L) :
-    gammaClippedUpper L ≤ ((3200 / 3259 : ℝ) * (L - 113 / 25)) ^ 2 := by
-  have hD : 0 ≤ 143420077 / 11856000 - 2 * (203 / 50 : ℝ) := by norm_num only
-  have hgapOld := gammaClippedGap_radius_positive hL
-  have hgap : 0 ≤ gammaClippedPrefixGap L (203 / 50) (gammaClippedRadius L) := by
-    simpa only [gammaClippedPrefixGap, gammaClippedGap] using hgapOld.le
-  have hR0 : 0 < (3200 / 3259 : ℝ) * (L - 113 / 25) := by
-    dsimp only [gammaClippedRadius] at hgapOld
-    nlinarith only [hL]
-  have hr : 0 < gammaClippedRadius L := by
-    dsimp only [gammaClippedRadius]
-    positivity
-  have hroot := gammaClippedPrefixRoot_le_of_gap_nonneg hL hD hr hgap
-  have hroot' : gammaClippedScalarRoot L ≤ gammaClippedRadius L := by
-    simpa only [gammaClippedPrefixRoot, gammaClippedScalarRoot] using hroot
-  have hcut21 : Real.sqrt ((40 / 99 : ℝ) * 1000) ≤ 21 := by
-    apply Real.sqrt_le_iff.mpr
-    exact ⟨by norm_num only, by norm_num only⟩
-  have h21 : 21 ≤ gammaClippedRadius L := by
-    dsimp only [gammaClippedRadius]
-    nlinarith only [hL]
-  have hrad : gammaClippedRadius1000 L ≤ gammaClippedRadius L := by
-    dsimp only [gammaClippedRadius1000]
-    exact max_le (hcut21.trans h21) hroot'
-  have hradPos : 0 ≤ gammaClippedRadius1000 L := by
-    dsimp only [gammaClippedRadius1000]
-    exact le_trans (Real.sqrt_nonneg _) (le_max_left _ _)
-  have hsq := (sq_le_sq₀ hradPos hr.le).mpr hrad
-  have hscaled := mul_le_mul_of_nonneg_left hsq (by norm_num only : (0 : ℝ) ≤ 99 / 40)
-  have hbound : gammaClippedBound1000 L ≤ (99 / 40 : ℝ) * (gammaClippedRadius L) ^ 2 := by
-    dsimp only [gammaClippedBound1000]
-    exact hscaled
-  have hratio : (99 / 40 : ℝ) * (40 / 63) ^ 2 = 440 / 441 := by norm_num only
-  have hfinal :
-    (99 / 40 : ℝ) * (gammaClippedRadius L) ^ 2 ≤ ((3200 / 3259 : ℝ) * (L - 113 / 25)) ^ 2 := by
-    calc
-      _ = (99 / 40 : ℝ) * (40 / 63) ^ 2 * ((3200 / 3259 : ℝ) * (L - 113 / 25)) ^ 2 := by
-        rw [gammaClippedRadius]
-        ring
-      _ = (440 / 441 : ℝ) * ((3200 / 3259 : ℝ) * (L - 113 / 25)) ^ 2 := by rw [hratio]
-      _ ≤ _ := by nlinarith only [sq_nonneg ((3200 / 3259 : ℝ) * (L - 113 / 25))]
-  exact (min_le_left _ _).trans (hbound.trans hfinal)
-
-/-- On the fourth affine piece, the shifted endpoint radius is the comparison
-line used by the clipped-log Gamma estimate. -/
-theorem shiftedRadius_le_midscale_piece4 {L : ℝ} (hL : 120 ≤ L) (hPiece : L - 73 / 50 ≤ 6671 / 50) :
-    (3200 / 3259 : ℝ) * (L - 113 / 25) ≤
-      LLS.PaperStatements.midscaleEndpointRadius (L - 73 / 50) := by
-  have hLow1 : ¬(L - 73 / 50 ≤ 703 / 20) := by linarith only [hL]
-  have hLow2 : ¬(L - 73 / 50 ≤ 10367 / 200) := by linarith only [hL]
-  have hLow3 : ¬(L - 73 / 50 ≤ 1706 / 25) := by linarith only [hL]
-  simp only [LLS.PaperStatements.midscaleEndpointRadius, ite_eq_right hLow1, ite_eq_right hLow2,
-    ite_eq_right hLow3, ite_eq_left hPiece]
-  have heq : (L - 73 / 50) - 153 / 50 = L - 113 / 25 := by ring
-  rw [heq]
-
-/-- After the fourth affine piece, the final endpoint radius stays above its
-comparison line because its slope is larger. -/
-theorem shiftedRadius_le_midscale_final {L : ℝ} (hL : 120 ≤ L) (hPiece : 6671 / 50 < L - 73 / 50) :
-    (3200 / 3259 : ℝ) * (L - 113 / 25) ≤
-      LLS.PaperStatements.midscaleEndpointRadius (L - 73 / 50) := by
-  have hAbove : 3372 / 25 < L := by linarith only [hPiece]
-  have hLow1 : ¬(L - 73 / 50 ≤ 703 / 20) := by linarith only [hL]
-  have hLow2 : ¬(L - 73 / 50 ≤ 10367 / 200) := by linarith only [hL]
-  have hLow3 : ¬(L - 73 / 50 ≤ 1706 / 25) := by linarith only [hL]
-  simp only [LLS.PaperStatements.midscaleEndpointRadius, ite_eq_right hLow1, ite_eq_right hLow2,
-    ite_eq_right hLow3, ite_eq_right (not_le_of_gt hPiece)]
-  have hSlope : 0 ≤ (12800 / 12927 : ℝ) - 3200 / 3259 := by norm_num only
-  have hAt :
-    0 ≤
-      (12800 / 12927 : ℝ) * (3372 / 25 - 561 / 100) -
-        (3200 / 3259 : ℝ) * (3372 / 25 - 113 / 25) := by
-    norm_num only
-  have hdiff :
-    (12800 / 12927 : ℝ) * (L - 561 / 100) - (3200 / 3259 : ℝ) * (L - 113 / 25) =
-      ((12800 / 12927 : ℝ) - 3200 / 3259) * (L - 3372 / 25) +
-        ((12800 / 12927 : ℝ) * (3372 / 25 - 561 / 100) -
-          (3200 / 3259 : ℝ) * (3372 / 25 - 113 / 25)) := by
-    ring
-  have hdiff_nonneg :
-    0 ≤ (12800 / 12927 : ℝ) * (L - 561 / 100) - (3200 / 3259 : ℝ) * (L - 113 / 25) := by
-    rw [hdiff]
-    exact add_nonneg (mul_nonneg hSlope (by linarith only [hAbove])) hAt
-  have heq : L - 73 / 50 - 83 / 20 = L - 561 / 100 := by ring
-  rw [heq]
-  exact sub_nonneg.mp hdiff_nonneg
-
-/-- The shifted exact-even endpoint radius dominates the comparison line for
-all $L\ge120$, including both affine pieces that meet at its breakpoint. -/
-theorem shiftedEndpointRadius_le_midscaleEndpointRadius {L : ℝ} (hL : 120 ≤ L) :
-    (3200 / 3259 : ℝ) * (L - 113 / 25) ≤
-      LLS.PaperStatements.midscaleEndpointRadius (L - 73 / 50) := by
-  by_cases hPiece : L - 73 / 50 ≤ 6671 / 50
-  · exact shiftedRadius_le_midscale_piece4 hL hPiece
-  · exact shiftedRadius_le_midscale_final hL (lt_of_not_ge hPiece)
-
-/-- The comparison line at the new `7/4` shift lies below the five-piece
-endpoint radius for every level at least 122. At the final join the affine
-pieces agree, and the last slope is larger. -/
-theorem shiftedRadius7_4_le_midscale {L : ℝ} (hL : 122 ≤ L) :
-    (3200 / 3259 : ℝ) * (L - 481 / 100) ≤
-      LLS.PaperStatements.midscaleEndpointRadius (L - 7 / 4) := by
-  have hLow1 : ¬(L - 7 / 4 ≤ 703 / 20) := by linarith only [hL]
-  have hLow2 : ¬(L - 7 / 4 ≤ 10367 / 200) := by linarith only [hL]
-  have hLow3 : ¬(L - 7 / 4 ≤ 1706 / 25) := by linarith only [hL]
-  by_cases hPiece : L - 7 / 4 ≤ 6671 / 50
-  · simp only [LLS.PaperStatements.midscaleEndpointRadius, ite_eq_right hLow1, ite_eq_right hLow2,
-      ite_eq_right hLow3, ite_eq_left hPiece]
-    have heq : L - 7 / 4 - 153 / 50 = L - 481 / 100 := by ring
-    rw [heq]
-  · have hAbove : 13517 / 100 < L := by linarith only [hPiece]
-    simp only [LLS.PaperStatements.midscaleEndpointRadius, ite_eq_right hLow1, ite_eq_right hLow2,
-      ite_eq_right hLow3, ite_eq_right hPiece]
-    have hSlope : 0 ≤ (12800 / 12927 : ℝ) - 3200 / 3259 := by norm_num only
-    have hAt :
-      0 ≤
-        (12800 / 12927 : ℝ) * (13517 / 100 - 590 / 100) -
-          (3200 / 3259 : ℝ) * (13517 / 100 - 481 / 100) := by
-      norm_num only
-    have hdiff :
-      (12800 / 12927 : ℝ) * (L - 590 / 100) - (3200 / 3259 : ℝ) * (L - 481 / 100) =
-        ((12800 / 12927 : ℝ) - 3200 / 3259) * (L - 13517 / 100) +
-          ((12800 / 12927 : ℝ) * (13517 / 100 - 590 / 100) -
-            (3200 / 3259 : ℝ) * (13517 / 100 - 481 / 100)) := by
-      ring
-    have hdiffNonneg :
-      0 ≤ (12800 / 12927 : ℝ) * (L - 590 / 100) - (3200 / 3259 : ℝ) * (L - 481 / 100) := by
-      rw [hdiff]
-      exact add_nonneg (mul_nonneg hSlope (by linarith only [hAbove])) hAt
-    have heq : L - 7 / 4 - 83 / 20 = L - 590 / 100 := by ring
-    rw [heq]
-    exact sub_nonneg.mp hdiffNonneg
-
-/-- From level 122, the clipped-log Gamma envelope is below the endpoint
-radius with the `7/4` shift. The scalar comparison uses one anchor and a
-positive affine increment. -/
-theorem gammaClipped_le_midscale_shift7_4 {L : ℝ} (hL : 122 ≤ L) :
-    gammaClippedUpper L ≤ (LLS.PaperStatements.midscaleEndpointRadius (L - 7 / 4)) ^ 2 := by
-  have hD : 0 ≤ 143420077 / 11856000 - 2 * (203 / 50 : ℝ) := by norm_num only
-  have hgapOld := gammaClippedGap_radius7over4_positive hL
-  have hgap : 0 ≤ gammaClippedPrefixGap L (203 / 50) (gammaClippedRadius7over4 L) := by
-    simpa only [gammaClippedPrefixGap, gammaClippedGap] using hgapOld.le
-  have hR0 : 0 < (3200 / 3259 : ℝ) * (L - 481 / 100) := by
-    dsimp only [gammaClippedRadius7over4] at hgapOld
-    nlinarith only [hL]
-  have hr : 0 < gammaClippedRadius7over4 L := by
-    dsimp only [gammaClippedRadius7over4]
-    positivity
-  have hroot := gammaClippedPrefixRoot_le_of_gap_nonneg (by linarith only [hL]) hD hr hgap
-  have hroot' : gammaClippedScalarRoot L ≤ gammaClippedRadius7over4 L := by
-    simpa only [gammaClippedPrefixRoot, gammaClippedScalarRoot] using hroot
-  have hcut21 : Real.sqrt ((40 / 99 : ℝ) * 1000) ≤ 21 := by
-    apply Real.sqrt_le_iff.mpr
-    exact ⟨by norm_num only, by norm_num only⟩
-  have h21 : 21 ≤ gammaClippedRadius7over4 L := by
-    dsimp only [gammaClippedRadius7over4]
-    nlinarith only [hL]
-  have hrad : gammaClippedRadius1000 L ≤ gammaClippedRadius7over4 L := by
-    dsimp only [gammaClippedRadius1000]
-    exact max_le (hcut21.trans h21) hroot'
-  have hradPos : 0 ≤ gammaClippedRadius1000 L := by
-    dsimp only [gammaClippedRadius1000]
-    exact le_trans (Real.sqrt_nonneg _) (le_max_left _ _)
-  have hsq := (sq_le_sq₀ hradPos hr.le).mpr hrad
-  have hscaled := mul_le_mul_of_nonneg_left hsq (by norm_num only : (0 : ℝ) ≤ 99 / 40)
-  have hbound : gammaClippedBound1000 L ≤ (99 / 40 : ℝ) * (gammaClippedRadius7over4 L) ^ 2 := by
-    dsimp only [gammaClippedBound1000] at hscaled ⊢
-    exact hscaled
-  have hratio : (99 / 40 : ℝ) * (40 / 63) ^ 2 = 440 / 441 := by norm_num only
-  have hbase : 0 ≤ (3200 / 3259 : ℝ) * (L - 481 / 100) := by positivity
-  have hfinal :
-    (99 / 40 : ℝ) * (gammaClippedRadius7over4 L) ^ 2 ≤
-      ((3200 / 3259 : ℝ) * (L - 481 / 100)) ^ 2 := by
-    calc
-      _ = (99 / 40 : ℝ) * (40 / 63) ^ 2 * ((3200 / 3259 : ℝ) * (L - 481 / 100)) ^ 2 := by
-        rw [gammaClippedRadius7over4]
-        ring
-      _ = (440 / 441 : ℝ) * ((3200 / 3259 : ℝ) * (L - 481 / 100)) ^ 2 := by rw [hratio]
-      _ ≤ _ := by nlinarith only [sq_nonneg ((3200 / 3259 : ℝ) * (L - 481 / 100))]
-  have hradius := shiftedRadius7_4_le_midscale hL
-  have hradNew : 0 ≤ LLS.PaperStatements.midscaleEndpointRadius (L - 7 / 4) :=
-    le_trans hbase hradius
-  have hsqNew := (sq_le_sq₀ hbase hradNew).mpr hradius
-  exact (min_le_left _ _).trans (hbound.trans (hfinal.trans hsqNew))
-
-/-- The clipped-log Gamma envelope is no larger than the overlapping shifted
-exact-even endpoint bound. -/
-theorem gammaClipped_le_midscale_shift73_50 {L : ℝ} (hL : 120 ≤ L) :
-    gammaClippedUpper L ≤ (LLS.PaperStatements.midscaleEndpointRadius (L - 73 / 50)) ^ 2 := by
-  have hbound := gammaClippedUpper_le_shiftedEndpoint_sq hL
-  have hradius := shiftedEndpointRadius_le_midscaleEndpointRadius hL
-  have hbase : 0 ≤ (3200 / 3259 : ℝ) * (L - 113 / 25) := by
-    apply mul_nonneg
-    · norm_num only
-    · linarith only [hL]
-  have hrad : 0 ≤ LLS.PaperStatements.midscaleEndpointRadius (L - 73 / 50) := le_trans hbase hradius
-  have hsq := (sq_le_sq₀ hbase hrad).mpr hradius
-  exact hbound.trans hsq
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

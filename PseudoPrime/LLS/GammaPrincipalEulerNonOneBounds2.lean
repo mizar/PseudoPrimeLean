@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.GammaConductorFreeNonOneBounds
 public import PseudoPrime.LLS.PaperStatements.GammaPrincipalEulerCharacterBounds
 public import PseudoPrime.LLS.GammaRetainedCommonCostBounds
@@ -42,7 +43,7 @@ theorem exists_oddPrime_neOne_logRatioBudget_GRH {q : ℕ} [NeZero q] (χ : Diri
     nlinarith only [hL, sq_nonneg (L - 15000)]
   have hx1 : 1 ≤ x := le_trans (by norm_num only : (1 : ℝ) ≤ 2) hx
   have hx0 := zero_lt_one.trans_le hx1
-  have hs := Analysis.ramp_scale_sqrt_lower hL0.le
+  have hs := ramp_scale_sqrt_lower hL0.le
   have hl := nonOne_cutoff_log_of_wide_ratio hL0 hlogL
   obtain ⟨hleft, heP, heT, htwo⟩ := PaperStatements.nonOne_error_budgets_of_wide_ratio hL hx1 hs hl
   have hpole :=
@@ -55,13 +56,13 @@ theorem exists_oddPrime_neOne_logRatioBudget_GRH {q : ℕ} [NeZero q] (χ : Diri
   have hlead := mul_le_mul_of_nonneg_left hlogf (by norm_num only : (0 : ℝ) ≤ 11783423 / 25000000)
   have hP := gamma_level_one_sum_upper_variable hGRH.riemann hx1
   have hT := gamma_ramp_sum_lower_variable hGRH.riemann hx1
-  have hmain := Analysis.nonOne_main_term_gap hL0
+  have hmain := nonOne_main_term_gap hL0
   have hnp := hupper
   have hactual :
     (∑' k : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re +
         (∑' k : ℕ, PaperStatements.gammaMellinKernel.summand χ.primitiveCharacter x k).re +
         (Real.log ((99 / 40 : ℝ) * x) + Real.log 2) / Real.sqrt x <
-      2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) := by
+      2 * (exponentialRampMangoldtSum x / Real.sqrt x) := by
     change
       _ <
         (2 * (∫ u in (0 : ℝ)..(99 / 40), Analysis.exponentialRampWeight u) - 1) *

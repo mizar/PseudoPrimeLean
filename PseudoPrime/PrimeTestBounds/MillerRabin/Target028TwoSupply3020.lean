@@ -39,7 +39,7 @@ theorem exists_prime_reject_semiprime_two3020 {n p q : ℕ} (hn : 1 < n) (ho : O
     (hcount :
       C ≤
         weightedPrimeCount id
-          (List.replicate 250 81 ++ (List.replicate 109 70 ++ target030Seed373Weights)) H)
+          (List.replicate 250 81 ++ (List.replicate 109 70 ++ primeSeed373Weights)) H)
     {D X : ℝ} (hD : D ≤ Real.log (C : ℝ)) (hB : (3020 : ℝ) ≤ X)
     (hlocal : localFullEnvelope (max ((H : ℝ) / 10) (Real.log n - D)) ≤ X) :
     ∃ r : ℕ, r.Prime ∧ (r : ℝ) ≤ X ∧ ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by

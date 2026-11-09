@@ -53,11 +53,6 @@ theorem tunedWitness_eq_small {n : ℕ} (hN : n < 3000) :
     tunedWitnessEnvelope n = smallIntervalBound n :=
   ite_eq_left hN
 
-/-- All natural inputs below 3000 retain the prescribed small selected value. -/
-theorem tunedSelected_eq_small {n : ℕ} (hN : n < 3000) :
-    tunedSelectedEnvelope n = smallIntervalBound n :=
-  ite_eq_left hN
-
 /-- The tuned public cutoff never exceeds its finite-candidate base. -/
 theorem tunedWitness_le_finite (n : ℕ) : tunedWitnessEnvelope n ≤ tunedFiniteWitness n := by
   by_cases hN : n < 3000
@@ -69,17 +64,6 @@ theorem tunedWitness_le_finite (n : ℕ) : tunedWitnessEnvelope n ≤ tunedFinit
 theorem tunedWitness_le_sharp {n : ℕ} (hn : 1 < n) :
     tunedWitnessEnvelope n ≤ sharpWitnessEnvelope n :=
   (tunedWitness_le_finite n).trans (tunedFiniteWitness_le_sharp hn)
-
-/-- For inputs above one the tuned selected cutoff never exceeds current sharp selection. -/
-theorem tunedSelected_le_sharpSelected {n : ℕ} (hn : 1 < n) :
-    tunedSelectedEnvelope n ≤ sharpSelectedEnvelope n := by
-  rw [← tuned_eq_selected hn, ← sharp_eq_selected hn]
-  exact tunedWitness_le_sharp hn
-
-/-- Monotone prime rounding preserves non-worsening against the current sharp cutoff. -/
-theorem tunedPrime_le_sharpPrime {n : ℕ} (hn : 1 < n) :
-    tunedPrimeEnvelope n ≤ sharpPrimeEnvelope n :=
-  primeRound_mono (tunedWitness_le_sharp hn)
 
 /-- A common lower bound of the finite base and every active new candidate bounds the public min.
 This is the interface for transferring the same least prime across all candidates. -/
@@ -131,26 +115,6 @@ theorem exists_prime_tunedEnvelope {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n
   obtain ⟨p, hp, hr, hb, _⟩ := exists_least_tunedEnvelope hn ho hc hGRH
   exact ⟨p, hp, hb, hr⟩
 
-/-- The numerical selection identity preserves the same least rejecting prime under GRH. -/
-theorem exists_least_tunedSelected {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
-    ∃ p : ℕ,
-      p.Prime ∧
-        ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
-        (p : ℝ) ≤ tunedSelectedEnvelope n ∧
-        ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
-  rw [← tuned_eq_selected hn]
-  exact exists_least_tunedEnvelope hn ho hc hGRH
-
-/-- Under GRH the selected tuned cutoff contains an actual prime rejecting strong MR. -/
-theorem exists_prime_tunedSelected {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
-    ∃ p : ℕ,
-      p.Prime ∧
-        (p : ℝ) ≤ tunedSelectedEnvelope n ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
-  rw [← tuned_eq_selected hn]
-  exact exists_prime_tunedEnvelope hn ho hc hGRH
-
 /-- Prime-preserving rounding keeps the same least rejecting prime
 under the tuned rounded cutoff. -/
 theorem exists_least_tunedPrimeEnvelope {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
@@ -162,14 +126,5 @@ theorem exists_least_tunedPrimeEnvelope {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc 
         ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
   obtain ⟨p, hp, hr, hb, hm⟩ := exists_least_tunedEnvelope hn ho hc hGRH
   exact ⟨p, hp, hr, prime_le_primeRound hp hb, hm⟩
-
-/-- Under GRH the rounded tuned cutoff contains an actual prime rejecting strong MR. -/
-theorem exists_prime_tunedPrimeEnvelope {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
-    ∃ p : ℕ,
-      p.Prime ∧
-        (p : ℝ) ≤ tunedPrimeEnvelope n ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
-  obtain ⟨p, hp, hr, hb, _⟩ := exists_least_tunedPrimeEnvelope hn ho hc hGRH
-  exact ⟨p, hp, hb, hr⟩
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

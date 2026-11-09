@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.Phase64EndpointJacobiBudget
-public import PseudoPrime.Analysis.Phase64EndpointCertificates
+public import PseudoPrime.LLS.Phase64EndpointCertificates
 public import PseudoPrime.NumberTheory.JacobiWitness.Existence
 
 /-! # Fully certified Jacobi witnesses on the first phase64 logarithmic cell -/
@@ -58,8 +58,8 @@ theorem exists_odd_prime_negative_phase64_log_cell
     simpa only [Nat.cast_mul, Nat.cast_ofNat] using hlog
   exact
     exists_odd_prime_negative_of_phase64_prefix_caps bridge hGRH hq hm hlo hhi le_rfl hqlog
-      Analysis.Phase64EndpointCertificates.phase64_ramp_endpoint_lower
-      Analysis.Phase64EndpointCertificates.phase64_principal_endpoint_upper
+      Phase64EndpointCertificates.phase64_ramp_endpoint_lower
+      Phase64EndpointCertificates.phase64_principal_endpoint_upper
 
 /-- Under GRH, an odd nonsquare in the same bounded logarithmic cell has
 an odd-prime Jacobi witness different from one through log(n)^2. A certified negative

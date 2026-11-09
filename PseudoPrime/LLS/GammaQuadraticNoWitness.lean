@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.PaperStatements.GammaQuadraticArithmetic
 public import PseudoPrime.LLS.GammaSmoothedPrincipalBounds
 public import PseudoPrime.LLS.GammaExponentialPrincipalBounds
@@ -101,11 +102,9 @@ theorem normalizedRampMangoldtTerm_support {x : ℝ} (hx : 0 < x) (n : ℕ)
 /-- The normalized ramp series equals the actual finite ramp Mangoldt sum divided by sqrt(x).
 Use its exact finite support and extract the common denominator. -/
 theorem normalizedRampMangoldtTerm_tsum {x : ℝ} (hx : 0 < x) :
-    (∑' n : ℕ, normalizedRampMangoldtTerm x n) =
-      AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x := by
+    (∑' n : ℕ, normalizedRampMangoldtTerm x n) = exponentialRampMangoldtSum x / Real.sqrt x := by
   rw [tsum_eq_sum (normalizedRampMangoldtTerm_support hx)]
-  dsimp only [normalizedRampMangoldtTerm,
-    AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum]
+  dsimp only [normalizedRampMangoldtTerm, exponentialRampMangoldtSum]
   exact (Finset.sum_div _ _ _).symm
 
 /-- Under the no-witness condition, twice the normalized ramp term is bounded
@@ -130,7 +129,7 @@ Absolute summability and exact correction reindexing justify the whole-series co
 theorem gamma_ramp_no_witness_comparison {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
     (hquad : χ.IsQuadratic) {x : ℝ} (hx : 0 < x)
     (hsmall : ∀ p : ℕ, p.Prime → ¬p ∣ q → (p : ℝ) ≤ (99 / 40 : ℝ) * x → χ p = 1) :
-    2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) ≤
+    2 * (exponentialRampMangoldtSum x / Real.sqrt x) ≤
       (∑' n : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x n).re +
         (∑' n : ℕ, PaperStatements.gammaMellinKernel.summand χ.primitiveCharacter x n).re +
         gammaQuadraticLocalCorrection χ x := by
@@ -166,7 +165,7 @@ theorem gamma_ramp_prime_trivial_false {n : ℕ} (hn : Odd n) (χ : DirichletCha
   let : NeZero (4 * n) := ⟨Nat.mul_ne_zero (by norm_num only) (Odd.pos hn).ne'⟩
   let : NeZero χ.conductor := ⟨χ.conductor_ne_zero⟩
   intro hsmall
-  have hx := zero_lt_one.trans_le (Analysis.ramp_scale_ge_one hL)
+  have hx := zero_lt_one.trans_le (ramp_scale_ge_one hL)
   have hlogq : Real.log (4 * n : ℕ) ≤ Real.log n + 2 := by
     rw [log_original_quadratic_level (Odd.pos hn)]
     linarith only [log_four_le_two]
@@ -175,7 +174,7 @@ theorem gamma_ramp_prime_trivial_false {n : ℕ} (hn : Odd n) (χ : DirichletCha
   have hP := PaperStatements.gamma_level_one_sum_upper_one_fifth hGRH.riemann hL
   have hC := PaperStatements.gammaCharacterSum_re_le_smoothed_at_ramp_scale hq χ hne hGRH hL hlogq
   have hE := gammaQuadLocal_absorbed_rampScale hn χ hquad hL
-  apply Analysis.gamma_ramp_inequality_false_of_log_ge hL
+  apply gamma_ramp_inequality_false_of_log_ge hL
   nlinarith only [hQ, hlo, hP, hC, hE]
 
 end PseudoPrime.LLS

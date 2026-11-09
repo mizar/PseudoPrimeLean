@@ -42,7 +42,7 @@ private theorem small_gamma_root_le_seventy {n : ℕ} (hn3 : 3 ≤ n) (hn : n �
   have hq : 4 * (n : ℝ) ≤ 46000 := by
     have hnR : (n : ℝ) ≤ 5000 := by exact_mod_cast hn
     linarith only [hnR]
-  have hlog := (Real.log_le_log hq0 hq).trans Analysis.log_46000_lt_eleven.le
+  have hlog := (Real.log_le_log hq0 hq).trans LLS.log_46000_lt_eleven.le
   have hlog0 : 0 ≤ Real.log (4 * (n : ℝ)) :=
     Real.log_nonneg
       (by
@@ -124,7 +124,7 @@ theorem gamma_formula_explicit {B : ℕ} (hB : 10 ^ 20000 ≤ B)
   have ha := NumberTheory.mem_admissibleFinset_iff.mp hn
   exact
     least_gamma_le_endpoint_smoothed ha.odd ha.not_isSquare ha.le
-      (Analysis.log_nat_gt_46000_of_decimal hB).le hGRH
+      (LLS.log_nat_gt_46000_of_decimal hB).le hGRH
       (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare ha.odd ha.not_isSquare)
 
 /-- Under GRH for B≥10^19978, both finite witness maxima share the
@@ -141,7 +141,7 @@ theorem gamma_formula_explicit_19978 {B : ℕ} (hB : 10 ^ 19978 ≤ B)
   have ha := NumberTheory.mem_admissibleFinset_iff.mp hn
   exact
     least_gamma_le_endpoint_smoothed ha.odd ha.not_isSquare ha.le
-      (Analysis.log_nat_gt_46000_of_decimal_19978 hB).le hGRH
+      (LLS.log_nat_gt_46000_of_decimal_19978 hB).le hGRH
       (NumberTheory.primeNegOneWitnessSet_nonempty_of_odd_nonsquare ha.odd ha.not_isSquare)
 
 end PseudoPrime.PseudoSquare

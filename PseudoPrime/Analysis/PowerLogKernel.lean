@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.ExponentialRampLogKernel
+public import PseudoPrime.Analysis.ClippedLogRatio
 public import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 
 /-! # Logarithmic double partial summation for real power weights -/

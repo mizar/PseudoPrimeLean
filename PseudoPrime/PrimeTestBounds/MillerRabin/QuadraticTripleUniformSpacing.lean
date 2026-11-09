@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuadraticTripleValuation
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target030KorseltParameters
+public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformKorseltFactors
 
 /-! # Spacing for uniform Korselt triples -/
 

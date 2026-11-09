@@ -6,7 +6,10 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianBudgetBranches
+public import PseudoPrime.LLS.GaussianWidthComparison
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMR6FifthsNumerics
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMRRefinedNumerics
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRelativePrefixWitness
 
 /-! # Generic-threshold six-fifths Gaussian index-four witness branch -/
 
@@ -29,7 +32,7 @@ theorem gaussianBudget_four_index_threshold (P s0 K : ℝ) {n : ℕ} [NeZero n] 
         K)
     (hnot :
       ¬(gaussianMRRefinedTripleD * s0 ^ 2 ≤
-          (2 / 3 : ℝ) * gaussianMRRefinedConductor * Real.log n + gaussianMRRefinedTripleBeta * s0 +
+          (2 / 3 : ℝ) * gaussianConductorCoeff * Real.log n + gaussianMRRefinedTripleBeta * s0 +
             K)) :
     let _L := Real.log n
     let r := s0 ^ 2
@@ -41,7 +44,7 @@ theorem gaussianBudget_four_index_threshold (P s0 K : ℝ) {n : ℕ} [NeZero n] 
                 (LLS.PaperStatements.gaussianGammaMellinKernel.transform u).re / Real.sqrt u) -
             Real.exp (1 / 16 : ℝ)) *
           Real.sqrt x ≤
-        gaussianMRRefinedConductor * LLS.PaperStatements.subgroupConductorLogSum H +
+        gaussianConductorCoeff * LLS.PaperStatements.subgroupConductorLogSum H +
           (H.index : ℝ) *
             (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / Real.sqrt x) * Real.exp (1 / 16 : ℝ)) +
           13 +
@@ -77,7 +80,7 @@ theorem gaussianBudget_four_index_threshold (P s0 K : ℝ) {n : ℕ} [NeZero n] 
     linarith only [hsbound]
   have hcmp' :
     (4 * (1 - h) * I - E) * r ≤
-      gaussianMRRefinedConductor * LLS.PaperStatements.subgroupConductorLogSum H +
+      gaussianConductorCoeff * LLS.PaperStatements.subgroupConductorLogSum H +
         4 * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / r) * Real.exp (1 / 16 : ℝ)) +
         13 +
         3 * LLS.PaperStatements.gaussianPrefixError (P) n (r ^ 2) := by
@@ -95,23 +98,22 @@ theorem gaussianBudget_four_index_threshold (P s0 K : ℝ) {n : ℕ} [NeZero n] 
       K := by
     exact herr
   exact
-    gaussian_compare_width (m := 4) (t := 3) (s := s) (r := r) (A :=
+    LLS.gaussian_compare_width (m := 4) (t := 3) (s := s) (r := r) (A :=
       LLS.PaperStatements.gaussianPrefixError (P) n (r ^ 2)) (L := (2 / 3 : ℝ) * Real.log n) (I :=
       I) (E := E) (C := LLS.PaperStatements.subgroupConductorLogSum H) (h := h) (M :=
-      gaussianMRRefinedMass) (Ecap := gaussian6FifthsEndpoint) (conductor :=
-      gaussianMRRefinedConductor) (D := (4 * gaussianMRRefinedMass - gaussian6FifthsEndpoint) / 3)
-      (beta :=
+      gaussianMRRefinedMass) (Ecap := gaussian6FifthsEndpoint) (conductor := gaussianConductorCoeff)
+      (D := (4 * gaussianMRRefinedMass - gaussian6FifthsEndpoint) / 3) (beta :=
       (4 / 3 : ℝ) *
         (gaussianMRRefinedMass * gaussianMRRefinedWidth + 1 / (10 * gaussianMRRefinedWidth)))
       (by norm_num only [gaussianMRRefinedWidth]) (by norm_num only : (4 : ℝ) ≤ 4)
       (by norm_num only : (3 : ℝ) = (4 : ℝ) - 1) hspos hrootSq.symm hh hh1 hI hE hCscaled
-      (by norm_num only [gaussianMRRefinedConductor] : (0 : ℝ) ≤ gaussianMRRefinedConductor) le_rfl
-      le_rfl hcmp'
+      (by norm_num only [gaussianConductorCoeff] : (0 : ℝ) ≤ gaussianConductorCoeff) le_rfl le_rfl
+      hcmp'
       (by
         intro hbudget
         have hnorm :
           ((4 * gaussianMRRefinedMass - gaussian6FifthsEndpoint) / 3) * r ≤
-            (2 / 3 : ℝ) * gaussianMRRefinedConductor * Real.log n +
+            (2 / 3 : ℝ) * gaussianConductorCoeff * Real.log n +
               (4 / 3 : ℝ) *
                 (gaussianMRRefinedMass * gaussianMRRefinedWidth +
                   1 / (10 * gaussianMRRefinedWidth)) *
@@ -136,8 +138,7 @@ theorem gaussianBudget_four_witness_threshold (N : ℕ) (P s0 K : ℝ) (hs13 : 1
         K)
     (hnot :
       ¬(gaussianMRRefinedTripleD * s0 ^ 2 ≤
-          (2 / 3 : ℝ) * gaussianMRRefinedConductor * Real.log n + gaussianMRRefinedTripleBeta * s0 +
-            K))
+          (2 / 3 : ℝ) * gaussianConductorCoeff * Real.log n + gaussianMRRefinedTripleBeta * s0 + K))
     (ho : Odd n) (hnlarge : 20000 ≤ n) (H : Subgroup (ZMod n)ˣ) (hi : H.index = 4)
     (hHpass :
       ∀ z : ZMod n, PrimeTest.StrongMillerRabinPass n z → ∃ u : (ZMod n)ˣ, u ∈ H ∧ (u : ZMod n) = z)

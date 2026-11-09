@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.PaperStatements.GammaNearSquareNumerics
 public import PseudoPrime.LLS.PaperStatements.GammaNearSquareNonOneBounds
 
@@ -39,7 +40,7 @@ theorem exists_oddPrime_neOne_nearSquare_GRH {q : ℕ} [NeZero q] (hq : 20000 �
     (∑' k : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re +
         (∑' k : ℕ, PaperStatements.gammaMellinKernel.summand χ.primitiveCharacter x k).re +
         (Real.log ((99 / 40 : ℝ) * x) + Real.log 2) / Real.sqrt x <
-      2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) := by
+      2 * (exponentialRampMangoldtSum x / Real.sqrt x) := by
     nlinarith only [hu, hP, hT, he.2.1, he.2.2.1, he.2.2.2.2, htwo, hL]
   obtain ⟨p, hp, ho, hb, hv⟩ :=
     exists_odd_prime_ne_one_of_gamma_ramp_gap χ hquad h2 hx0

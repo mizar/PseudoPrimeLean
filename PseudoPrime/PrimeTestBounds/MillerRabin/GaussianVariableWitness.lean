@@ -6,7 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianSurplusWitness
+public import PseudoPrime.LLS.GaussianRelativeFour
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianRelativePrefixWitness
 
 /-! # Index-four Gaussian witness with variable relative width -/
 
@@ -63,7 +64,7 @@ theorem gaussian_variable_witness_four {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnl
               (LLS.PaperStatements.gaussianGammaMellinKernel.transform u).re / Real.sqrt u) -
           Real.exp (1 / 16 : ℝ)) *
         (1 * r) ≤
-      gaussianMRRefinedConductor * LLS.PaperStatements.subgroupConductorLogSum H +
+      gaussianConductorCoeff * LLS.PaperStatements.subgroupConductorLogSum H +
         4 * (1 / (10 * h) + ((21 / (10 * h) + 1839 / 1000) / (1 * r)) * Real.exp (1 / 16 : ℝ)) +
         13 +
         3 * LLS.PaperStatements.gaussianPrefixError P n (r ^ 2) := by
@@ -71,8 +72,8 @@ theorem gaussian_variable_witness_four {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnl
   have hscalar :=
     LLS.gaussianRelativeFour_scalar hspos hs2 (by norm_num only : (0 : ℝ) < 1) hk
       (show h = k / s from rfl) hh1 LLS.PaperStatements.gaussianGamma_cutoff_gt_target.le
-      Analysis.gaussian_endpoint_exp_le hC (by norm_num only [gaussianMRRefinedConductor]) hcmp'
-  norm_num only [one_mul, gaussianMRRefinedConductor] at hscalar
+      Analysis.gaussian_endpoint_exp_le hC (by norm_num only [gaussianConductorCoeff]) hcmp'
+  norm_num only [one_mul, gaussianConductorCoeff] at hscalar
   dsimp only [s] at hscalar
   ring_nf at hscalar hbudget hres
   linarith only [hscalar, hbudget, hres]

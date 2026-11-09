@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaPairedEulerIdentity
 public import PseudoPrime.LLS.GammaResolventCharacterComparison
 public import PseudoPrime.LLS.PaperStatements.GammaResolventCharacterComparison
@@ -72,8 +73,7 @@ theorem gammaJacobi_noNeg_arithPairedTail_GRH {n : ℕ} {hn : Odd n} {hns : ¬Is
           Odd p →
           (p : ℝ) ≤ (99 / 40 : ℝ) * Analysis.gammaRefinedScale (Real.log n) → jacobiSym n p ≠ -1) :
     2 *
-            (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum
-                (Analysis.gammaRefinedScale (Real.log n)) /
+            (exponentialRampMangoldtSum (Analysis.gammaRefinedScale (Real.log n)) /
               Real.sqrt (Analysis.gammaRefinedScale (Real.log n))) -
           (∑' k : ℕ,
               PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1)
@@ -140,8 +140,7 @@ theorem gammaJacobi_noNeg_arithSquareGain_GRH {n : ℕ} {hn : Odd n} {hns : ¬Is
           (p : ℝ) ≤ (99 / 40 : ℝ) * Analysis.gammaRefinedScale (Real.log n) → jacobiSym n p ≠ -1)
     (C : Finset ℕ) (hC : ∀ m ∈ C, IsSquare m) (hBC : Disjoint (Finset.Ioc 0 ⌊b⌋₊) C) :
     2 *
-            (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum
-                (Analysis.gammaRefinedScale (Real.log n)) /
+            (exponentialRampMangoldtSum (Analysis.gammaRefinedScale (Real.log n)) /
               Real.sqrt (Analysis.gammaRefinedScale (Real.log n))) -
           (∑' k : ℕ,
               PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1)
@@ -166,8 +165,7 @@ theorem exists_oddPrime_negJacobi_refinedSquare_GRH {n : ℕ} {hn : Odd n} {hns 
     (hgap :
       gammaRefinedArithmeticBudget (Real.log n) b <
         2 *
-              (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum
-                  (Analysis.gammaRefinedScale (Real.log n)) /
+              (exponentialRampMangoldtSum (Analysis.gammaRefinedScale (Real.log n)) /
                 Real.sqrt (Analysis.gammaRefinedScale (Real.log n))) -
             (∑' k : ℕ,
                 PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1)

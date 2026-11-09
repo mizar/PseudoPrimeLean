@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.LLS.PaperStatements.GammaNonOneRefinedBudgets
 public import PseudoPrime.LLS.PaperStatements.GammaAdaptiveCharacterBounds
-public import PseudoPrime.Analysis.GammaNonOneAdaptiveNumerics
+public import PseudoPrime.LLS.GammaNonOneAdaptiveNumerics
 
 /-! # Scalar budgets for the adaptive Gamma zero mass
 

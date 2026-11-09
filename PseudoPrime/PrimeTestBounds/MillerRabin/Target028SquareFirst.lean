@@ -6,7 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target030SquareFirst
+public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed19
+public import PseudoPrime.PrimeTestBounds.MillerRabin.SquareFactorSmall
 public import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedSemiprimeWitness
 
 /-! # Initial weighted square-factor certificate for coefficient 0.28 -/
@@ -18,7 +19,7 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 /-- The first seven prime labels are the primes at most 17. Their weights are
 inherited from the certified first supply. -/
 def target028FirstPrimes : List ℕ :=
-  target030FirstPrimes.take 7
+  primeSeed19Primes.take 7
 
 /-- The logarithmic weights of the first seven supplied prime labels. -/
 def target028FirstWeights : List ℕ :=
@@ -59,57 +60,56 @@ theorem target028First_checked :
 /-- The seven prime labels are distinct and match the certified weights. -/
 theorem target028First_labels :
     target028FirstPrimes.Nodup ∧
-      target028FirstPrimes.map target030FirstWeight = target028FirstWeights ∧
-      ∀ p ∈ target028FirstPrimes, 0 < target030FirstWeight p := by
+      target028FirstPrimes.map primeSeed19Weight = target028FirstWeights ∧
+      ∀ p ∈ target028FirstPrimes, 0 < primeSeed19Weight p := by
   decide +kernel
 
 /-- There are exactly 64 weighted prime multisets within budget 46. The
 checked recurrence transfers to the family of actual prime labels. -/
 theorem target028First_family_card :
-    (weightedPrimeFamily target028FirstPrimes.toFinset target030FirstWeight 46).card = 64 := by
+    (weightedPrimeFamily target028FirstPrimes.toFinset primeSeed19Weight 46).card = 64 := by
   have h :=
-    (weightedPrimeCount_weights_eq_card target030FirstWeight 46 target028FirstPrimes
+    (weightedPrimeCount_weights_eq_card primeSeed19Weight 46 target028FirstPrimes
           target028FirstWeights target028First_labels.1 target028First_labels.2.2
           target028First_labels.2.1).symm.trans
       ((weightedPrimeTableCheck_sound 57 target028FirstWeights target028FirstRow target028FirstTail
           target028First_checked 46 (by decide)).symm)
-  change (weightedPrimeFamily target028FirstPrimes.toFinset target030FirstWeight 46).card = 64 at h
+  change (weightedPrimeFamily target028FirstPrimes.toFinset primeSeed19Weight 46).card = 64 at h
   exact h
 
 /-- There are exactly 49 weighted prime multisets within budget 42. This
 smaller budget supplies the first semiprime interval. -/
 theorem target028First_family_card42 :
-    (weightedPrimeFamily target028FirstPrimes.toFinset target030FirstWeight 42).card = 49 := by
+    (weightedPrimeFamily target028FirstPrimes.toFinset primeSeed19Weight 42).card = 49 := by
   have h :=
-    (weightedPrimeCount_weights_eq_card target030FirstWeight 42 target028FirstPrimes
+    (weightedPrimeCount_weights_eq_card primeSeed19Weight 42 target028FirstPrimes
           target028FirstWeights target028First_labels.1 target028First_labels.2.2
           target028First_labels.2.1).symm.trans
       ((weightedPrimeTableCheck_sound 57 target028FirstWeights target028FirstRow target028FirstTail
           target028First_checked 42 (by decide)).symm)
-  change (weightedPrimeFamily target028FirstPrimes.toFinset target030FirstWeight 42).card = 49 at h
+  change (weightedPrimeFamily target028FirstPrimes.toFinset primeSeed19Weight 42).card = 49 at h
   exact h
 
 /-- There are exactly 51 weighted prime multisets within budget 43. This
 smaller budget supplies the first semiprime interval. -/
 theorem target028First_family_card43 :
-    (weightedPrimeFamily target028FirstPrimes.toFinset target030FirstWeight 43).card = 51 := by
+    (weightedPrimeFamily target028FirstPrimes.toFinset primeSeed19Weight 43).card = 51 := by
   have h :=
-    (weightedPrimeCount_weights_eq_card target030FirstWeight 43 target028FirstPrimes
+    (weightedPrimeCount_weights_eq_card primeSeed19Weight 43 target028FirstPrimes
           target028FirstWeights target028First_labels.1 target028First_labels.2.2
           target028First_labels.2.1).symm.trans
       ((weightedPrimeTableCheck_sound 57 target028FirstWeights target028FirstRow target028FirstTail
           target028First_checked 43 (by decide)).symm)
-  change (weightedPrimeFamily target028FirstPrimes.toFinset target030FirstWeight 43).card = 51 at h
+  change (weightedPrimeFamily target028FirstPrimes.toFinset primeSeed19Weight 43).card = 51 at h
   exact h
 
 /-- The checked table gives the weighted family count at every budget up to
 57. This interface supplies the subsequent square and semiprime cells. -/
 theorem target028First_family_card_at (H : ℕ) (hH : H ≤ 57) :
-    (weightedPrimeFamily target028FirstPrimes.toFinset target030FirstWeight H).card =
+    (weightedPrimeFamily target028FirstPrimes.toFinset primeSeed19Weight H).card =
       target028FirstRow.getD H 0 :=
-  (weightedPrimeCount_weights_eq_card target030FirstWeight H target028FirstPrimes
-        target028FirstWeights target028First_labels.1 target028First_labels.2.2
-        target028First_labels.2.1).symm.trans
+  (weightedPrimeCount_weights_eq_card primeSeed19Weight H target028FirstPrimes target028FirstWeights
+        target028First_labels.1 target028First_labels.2.2 target028First_labels.2.1).symm.trans
     ((weightedPrimeTableCheck_sound 57 target028FirstWeights target028FirstRow target028FirstTail
         target028First_checked H hH).symm)
 
@@ -146,18 +146,18 @@ theorem exists_prime_reject_028_square_first {n p : ℕ} (hn : 1 < n) (ho : Odd 
       ⟨p, hp, (Nat.cast_le.mpr hpSmall).trans hB,
         PrimeTest.strongMillerRabinPass_not_of_prime_dvd hn ho hp hpn⟩
   · let S := target028FirstPrimes.toFinset
-    let w := target030FirstWeight
+    let w := primeSeed19Weight
     let F := weightedPrimeFamily S w 46
     have hprime : ∀ r ∈ S, r.Prime := fun r hr ↦
-      (target030_first_prime_supply r (List.mem_of_mem_take (List.mem_toFinset.mp hr))).1
+      (prime_seed19_prime_supply r (List.mem_of_mem_take (List.mem_toFinset.mp hr))).1
     have hbound : ∀ r ∈ S, r ≤ 17 := by
       intro r hr
       have hm : r ∈ target028FirstPrimes := List.mem_toFinset.mp hr
-      simp only [target028FirstPrimes, target030FirstPrimes, List.take_succ_cons, List.take_zero,
+      simp only [target028FirstPrimes, primeSeed19Primes, List.take_succ_cons, List.take_zero,
         List.mem_cons, List.not_mem_nil, or_false] at hm
       rcases hm with h | h | h | h | h | h | h <;> subst r <;> decide
     have hw : ∀ r ∈ S, Real.log r ≤ (w r : ℝ) / 10 := fun r hr ↦
-      target030_first_weight_bounds r (List.mem_of_mem_take (List.mem_toFinset.mp hr))
+      prime_seed19_weight_bounds r (List.mem_of_mem_take (List.mem_toFinset.mp hr))
     have hwpos : ∀ r ∈ S, 1 ≤ w r := fun r hr ↦
       target028First_labels.2.2 r (List.mem_toFinset.mp hr)
     have hsub : ∀ T ∈ F, ∀ r ∈ T, r ∈ S := fun T hT ↦
@@ -189,18 +189,18 @@ theorem exists_prime_reject_028_semiprime_first {n p q : ℕ} (hn : 1 < n) (ho :
         (r : ℝ) ≤ (7 / 25 : ℝ) * (Real.log n) ^ 2 ∧
         ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
   let S := target028FirstPrimes.toFinset
-  let w := target030FirstWeight
+  let w := primeSeed19Weight
   let F := weightedPrimeFamily S w 42
   have hprime : ∀ r ∈ S, r.Prime := fun r hr ↦
-    (target030_first_prime_supply r (List.mem_of_mem_take (List.mem_toFinset.mp hr))).1
+    (prime_seed19_prime_supply r (List.mem_of_mem_take (List.mem_toFinset.mp hr))).1
   have hbound : ∀ r ∈ S, r ≤ 17 := by
     intro r hr
     have hm : r ∈ target028FirstPrimes := List.mem_toFinset.mp hr
-    simp only [target028FirstPrimes, target030FirstPrimes, List.take_succ_cons, List.take_zero,
+    simp only [target028FirstPrimes, primeSeed19Primes, List.take_succ_cons, List.take_zero,
       List.mem_cons, List.not_mem_nil, or_false] at hm
     rcases hm with h | h | h | h | h | h | h <;> subst r <;> decide
   have hw : ∀ r ∈ S, Real.log r ≤ (w r : ℝ) / 10 := fun r hr ↦
-    target030_first_weight_bounds r (List.mem_of_mem_take (List.mem_toFinset.mp hr))
+    prime_seed19_weight_bounds r (List.mem_of_mem_take (List.mem_toFinset.mp hr))
   have hwpos : ∀ r ∈ S, 1 ≤ w r := fun r hr ↦ target028First_labels.2.2 r (List.mem_toFinset.mp hr)
   have hsub : ∀ T ∈ F, ∀ r ∈ T, r ∈ S := fun T hT ↦
     ((mem_weightedPrimeFamily S w 42 hwpos T).mp hT).1
@@ -245,18 +245,18 @@ theorem exists_prime_reject_028_semiprime_second {n p q : ℕ} (hn : 1 < n) (ho 
         (r : ℝ) ≤ (7 / 25 : ℝ) * (Real.log n) ^ 2 ∧
         ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
   let S := target028FirstPrimes.toFinset
-  let w := target030FirstWeight
+  let w := primeSeed19Weight
   let F := weightedPrimeFamily S w 43
   have hprime : ∀ r ∈ S, r.Prime := fun r hr ↦
-    (target030_first_prime_supply r (List.mem_of_mem_take (List.mem_toFinset.mp hr))).1
+    (prime_seed19_prime_supply r (List.mem_of_mem_take (List.mem_toFinset.mp hr))).1
   have hbound : ∀ r ∈ S, r ≤ 17 := by
     intro r hr
     have hm : r ∈ target028FirstPrimes := List.mem_toFinset.mp hr
-    simp only [target028FirstPrimes, target030FirstPrimes, List.take_succ_cons, List.take_zero,
+    simp only [target028FirstPrimes, primeSeed19Primes, List.take_succ_cons, List.take_zero,
       List.mem_cons, List.not_mem_nil, or_false] at hm
     rcases hm with h | h | h | h | h | h | h <;> subst r <;> decide
   have hw : ∀ r ∈ S, Real.log r ≤ (w r : ℝ) / 10 := fun r hr ↦
-    target030_first_weight_bounds r (List.mem_of_mem_take (List.mem_toFinset.mp hr))
+    prime_seed19_weight_bounds r (List.mem_of_mem_take (List.mem_toFinset.mp hr))
   have hwpos : ∀ r ∈ S, 1 ≤ w r := fun r hr ↦ target028First_labels.2.2 r (List.mem_toFinset.mp hr)
   have hsub : ∀ T ∈ F, ∀ r ∈ T, r ∈ S := fun T hT ↦
     ((mem_weightedPrimeFamily S w 43 hwpos T).mp hT).1

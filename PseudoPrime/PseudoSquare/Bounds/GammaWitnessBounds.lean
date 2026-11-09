@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.LLS.GammaQuadraticNoWitness
 public import PseudoPrime.Analysis.QuadraticGammaErrorBounds
-public import PseudoPrime.Analysis.QuadraticGammaDecimalRefinement
+public import PseudoPrime.LLS.QuadraticGammaDecimalRefinement
 public import PseudoPrime.NumberTheory.JacobiCharacterPrimeEvaluation
 
 /-! # Direct Gamma bounds for negative and non-one quadratic prime witnesses -/
@@ -68,7 +68,7 @@ theorem exists_prime_neg_one_witness_le_gamma
     (decimal_cutoff_ge_twenty_thousand 20000 (by decide : 5 ≤ 20000)).trans hN
   have hq : 20000 ≤ 4 * n :=
     (by norm_num only : 20000 ≤ 4 * 20000).trans (Nat.mul_le_mul_left 4 hnlarge)
-  have hL := (Analysis.log_nat_gt_46000_of_decimal hN).le
+  have hL := (LLS.log_nat_gt_46000_of_decimal hN).le
   obtain ⟨p, hm, hb⟩ := exists_primeNegOneWitness_le_gamma_of_large_log hn hns hq hL hGRH
   exact ⟨p, hm.1, hm.2.1, hb, hm.2.2⟩
 
@@ -115,7 +115,7 @@ theorem exists_prime_neg_one_witness_le_gamma_19978
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {n : ℕ} (hn : Odd n)
     (hns : ¬IsSquare n) (hN : 10 ^ 19978 ≤ n) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (4 / 5 : ℝ) * (Real.log n) ^ 2 ∧ jacobiSym n p = -1 := by
-  have hL := (Analysis.log_nat_gt_46000_of_decimal_19978 hN).le
+  have hL := (LLS.log_nat_gt_46000_of_decimal_19978 hN).le
   have hnlarge : 20000 ≤ n := by
     apply Nat.cast_le (α := ℝ).mp
     norm_num only [Nat.cast_ofNat]

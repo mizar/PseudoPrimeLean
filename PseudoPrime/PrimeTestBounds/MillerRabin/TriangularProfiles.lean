@@ -77,13 +77,6 @@ noncomputable def triangularP0466 : TriangularProfile where
   triple := Or.inl (by norm_num only)
   margin := by norm_num only
 
-/-- A certified profile controls the radius, the fourth root, and the scale
-uniformly above its entrance. The proof uses monotonicity of nonnegative squares. -/
-theorem triangularProfile_roots (f : TriangularProfile) {L : ℝ} (hL : f.T ≤ L) :
-    let x := f.C * L ^ 2;
-    1 < x ∧ f.a * L ≤ Real.sqrt x ∧ Real.sqrt x ≤ L ∧ x ^ (1 / 4 : ℝ) ≤ L / f.v := by
-  exact triangularCore_roots (triangularProfileCore f) hL
-
 /-- Rational certificate for the coefficient-042 triangular profile. -/
 noncomputable def triangularP042 : TriangularProfile where
   C := 21 / 50
@@ -229,32 +222,5 @@ noncomputable def triangularProfile (i : Fin 8) : TriangularProfile :=
   | 5 => triangularP0284
   | 6 => triangularP02829
   | _ => triangularP02823622
-
-/-- The negative power splits into reciprocal root factors. Its certified
-sixteenth-root floor and radius slope give the generic decaying-cost estimate. -/
-theorem triangularProfile_power (f : TriangularProfile) {L : ℝ} (hL : f.T ≤ L) :
-    (f.C * L ^ 2) ^ (-9 / 16 : ℝ) ≤ (1 / f.a / L) * (1 / f.m) := by
-  exact triangularCore_power (triangularProfileCore f) hL
-
-/-- Above its entrance, each profile bounds the signed secondary cost by b L
-and the pole correction by 100. The ratio (L+284)/L is at most 1001/1000. -/
-theorem triangularProfile_costs (f : TriangularProfile) {L : ℝ} (hL : f.T ≤ L) :
-    let x := f.C * L ^ 2;
-    165000 + 4000000000000 * (L + 284) * x ^ (-9 / 16 : ℝ) ≤ f.b * L ∧
-      36 * L / (Real.sqrt x - 1) ≤ 100 := by
-  exact triangularCore_costs (triangularProfileCore f) hL
-
-/-- The certified positive rational margin gives the actual alpha-18 signed
-gap for every subgroup index at least 10^12. The independent cost is divided
-by that index; all scale-dependent errors retain the profile's own v. -/
-theorem triangularProfile_gap (f : TriangularProfile) {L h : ℝ} (hL : f.T ≤ L)
-    (hh : 1000000000000 ≤ h) :
-    let x := f.C * L ^ 2;
-    300000000 * Real.sqrt x + 1300000 * x ^ (1 / 4 : ℝ) + 602600000 +
-        (h - 1) * (36 * L + 165000 + 4000000000000 * (L + 284) * x ^ (-9 / 16 : ℝ)) <
-      h *
-        (Real.sqrt x * (68 + 4 * Real.exp (-18)) - 1456 * x ^ (1 / 4 : ℝ) -
-          36 * L / (Real.sqrt x - 1)) := by
-  exact triangularCore_gap (triangularProfileCore f) hL hh
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

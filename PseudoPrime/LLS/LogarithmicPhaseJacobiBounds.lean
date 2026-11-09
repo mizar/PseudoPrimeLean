@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.PaperStatements.LogarithmicPhaseCharacterBounds
 public import PseudoPrime.LLS.Phase64JacobiLocalComparison
 
@@ -50,7 +51,7 @@ theorem jacobi_no_negative_logarithmic_phase_comparison {n : ℕ} {hn : Odd n} {
         -(Complex.Gamma ((1 / 2 : ℂ) + Complex.I * t) * (y : ℂ) ^ (Complex.I * t)).re ≤
           Analysis.finiteSignedResolvent l t)
     (hno : ∀ p : ℕ, p.Prime → Odd p → (p : ℝ) ≤ (99 / 40 : ℝ) * x → jacobiSym n p ≠ -1) :
-    2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+    2 * (exponentialRampMangoldtSum x / Real.sqrt x) -
         (∑' k : ℕ, PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re ≤
       logarithmicPhaseJacobiLocalBudget bridge q x b l δ := by
   let : NeZero (NumberTheory.complexQuadraticCharacter n hn).conductor :=
@@ -88,7 +89,7 @@ theorem exists_oddPrime_negJacobi_logPhase_GRH {n : ℕ} {hn : Odd n} {hns : ¬I
           Analysis.finiteSignedResolvent l t)
     (hgap :
       logarithmicPhaseJacobiLocalBudget bridge q x b l δ <
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ,
               PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n p = -1 := by
@@ -114,7 +115,7 @@ theorem exists_oddPrime_negJacobi_transport64_GRH {n : ℕ} {hn : Odd n} {hns : 
     (hd : |Real.log x - Real.log (L ^ 2 / (99 / 40))| ≤ (δ : ℝ))
     (hgap :
       logarithmicPhaseJacobiLocalBudget bridge q x b Analysis.phaseResolvent64Coefficients δ <
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ,
               PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re) :
     ∃ p : ℕ, p.Prime ∧ Odd p ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ jacobiSym n p = -1 := by

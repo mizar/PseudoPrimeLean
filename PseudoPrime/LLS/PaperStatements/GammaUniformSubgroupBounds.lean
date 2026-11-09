@@ -46,7 +46,7 @@ theorem exists_prime_outside_le_gamma_four_fifths_log {q : ℕ} [NeZero q] (H : 
       ((by norm_num only : (35000 : ℝ) ≤ 46000).trans hL) hsmall
   have hD := gamma_commonFactor_budget_of_log_ge hL
   have he := gamma_uniform_error_budget hL
-  have hm := Analysis.nonOne_main_term_gap (show 0 < Real.log q by linarith only [hL])
+  have hm := nonOne_main_term_gap (show 0 < Real.log q by linarith only [hL])
   linarith only [hc, hD, he, hm]
 
 /-- Under GRH, q ≥ 10^20000 and H any proper subgroup of the units,
@@ -62,8 +62,6 @@ theorem exists_prime_outside_le_gamma_four_fifths {q : ℕ} (H : Subgroup (ZMod 
   have hq0 : q ≠ 0 :=
     Nat.ne_zero_of_lt ((pow_pos (by norm_num only : (0 : ℕ) < 10) 20000).trans_le hq)
   let : NeZero q := ⟨hq0⟩
-  exact
-    exists_prime_outside_le_gamma_four_fifths_log H hH hGRH
-      (Analysis.log_nat_gt_46000_of_decimal hq).le
+  exact exists_prime_outside_le_gamma_four_fifths_log H hH hGRH (log_nat_gt_46000_of_decimal hq).le
 
 end PseudoPrime.LLS.PaperStatements

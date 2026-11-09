@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianScalarWitness
-public import PseudoPrime.PrimeTestBounds.MillerRabin.QuadraticGammaFirstGap
+public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformKorseltTriple
 
 /-! # Uniform Korselt Gaussian scalar witness -/
 

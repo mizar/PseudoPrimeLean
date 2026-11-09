@@ -7,8 +7,9 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMR6FifthsNumerics
-public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMRWidthNumerics
+public import PseudoPrime.LLS.GaussianWidthComparison
 public import PseudoPrime.LLS.PaperStatements.GaussianPrefixComparison
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianConductorConstant
 
 /-! # Refined constant-width Gaussian MR numerical budgets from scale 300 -/
 
@@ -20,11 +21,6 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 It replaces the old 16/25 mass only in the separate refined witness bound. -/
 noncomputable def gaussianMRRefinedMass : ℝ :=
   64167 / 100000
-
-/-- The exact conductor coefficient from the Gaussian zero-mass estimate.
-The refined comparison retains this value through primitive character averaging. -/
-noncomputable def gaussianMRRefinedConductor : ℝ :=
-  20115621 / 50000000
 
 /-- The positive relative-width factor: h=(2/5)/s for root s.
 This balances the main-term loss against the principal smoothing error. -/
@@ -49,7 +45,7 @@ noncomputable def gaussianMRRefinedRoot (L : ℝ) : ℝ :=
   (gaussianMRRefinedBeta +
       Real.sqrt
         (gaussianMRRefinedBeta ^ 2 +
-          4 * gaussianMRRefinedD * (gaussianMRRefinedConductor * L + 28 / 5))) /
+          4 * gaussianMRRefinedD * (gaussianConductorCoeff * L + 28 / 5))) /
     (2 * gaussianMRRefinedD)
 
 /-- The squared refined root, which is the square root of the Mellin scale x.
@@ -95,25 +91,21 @@ Square the defining root identity with its nonnegative discriminant. This exact 
 is used before rounding the pole cost in the refined residual estimate. -/
 theorem gaussianMRRefined_equation {L : ℝ} (hL : 0 ≤ L) :
     gaussianMRRefinedD * gaussianMRRefinedRadius L =
-      gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * gaussianMRRefinedRoot L +
-        28 / 5 := by
+      gaussianConductorCoeff * L + gaussianMRRefinedBeta * gaussianMRRefinedRoot L + 28 / 5 := by
   have hd := gaussianMRRefined_coefficients.1
-  have hc : 0 < gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
+  have hc : 0 < gaussianConductorCoeff := by norm_num only [gaussianConductorCoeff]
   let z :=
     Real.sqrt
-      (gaussianMRRefinedBeta ^ 2 +
-        4 * gaussianMRRefinedD * (gaussianMRRefinedConductor * L + 28 / 5))
+      (gaussianMRRefinedBeta ^ 2 + 4 * gaussianMRRefinedD * (gaussianConductorCoeff * L + 28 / 5))
   have ha :
     0 ≤
-      gaussianMRRefinedBeta ^ 2 +
-        4 * gaussianMRRefinedD * (gaussianMRRefinedConductor * L + 28 / 5) :=
+      gaussianMRRefinedBeta ^ 2 + 4 * gaussianMRRefinedD * (gaussianConductorCoeff * L + 28 / 5) :=
     add_nonneg (sq_nonneg _)
       (mul_nonneg (mul_nonneg (by norm_num only) hd.le)
         (add_nonneg (mul_nonneg hc.le hL) (by norm_num only)))
   have hz :
     z ^ 2 =
-      gaussianMRRefinedBeta ^ 2 +
-        4 * gaussianMRRefinedD * (gaussianMRRefinedConductor * L + 28 / 5) :=
+      gaussianMRRefinedBeta ^ 2 + 4 * gaussianMRRefinedD * (gaussianConductorCoeff * L + 28 / 5) :=
     Real.sq_sqrt ha
   have hlin :=
     div_mul_cancel₀ (gaussianMRRefinedBeta + z)
@@ -121,7 +113,7 @@ theorem gaussianMRRefined_equation {L : ℝ} (hL : 0 ≤ L) :
   change gaussianMRRefinedRoot L * (2 * gaussianMRRefinedD) = gaussianMRRefinedBeta + z at hlin
   have hsq := congrArg (fun u : ℝ ↦ u ^ 2) hlin
   dsimp only [gaussianMRRefinedRadius]
-  norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
+  norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianConductorCoeff,
     gaussian6FifthsIndex, gaussianMRRefinedMass, gaussianMRRefinedWidth,
     gaussian6FifthsEndpoint] at hz hlin hsq ⊢
   nlinarith only [hz, hlin, hsq]
@@ -137,7 +129,7 @@ theorem gaussianMRRefined_root_lower {L : ℝ} (hL : 300 ≤ L) :
   have ht := lt_of_not_ge hn
   have hs : gaussianMRRefinedRoot L ^ 2 ≤ (14 : ℝ) * gaussianMRRefinedRoot L := by
     nlinarith only [mul_nonneg hp.le (sub_nonneg.mpr ht.le)]
-  norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
+  norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianConductorCoeff,
     gaussian6FifthsIndex, gaussianMRRefinedMass, gaussianMRRefinedWidth,
     gaussian6FifthsEndpoint] at he
   nlinarith only [he, hs, ht, hL]
@@ -148,7 +140,7 @@ theorem gaussianMRRefined_radius_lower {L : ℝ} (hL : 300 ≤ L) :
     (5 / 8 : ℝ) * L + 20 ≤ gaussianMRRefinedRadius L := by
   have he := gaussianMRRefined_equation (by linarith only [hL] : 0 ≤ L)
   have hs := gaussianMRRefined_root_lower hL
-  norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
+  norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianConductorCoeff,
     gaussian6FifthsIndex, gaussianMRRefinedMass, gaussianMRRefinedWidth,
     gaussian6FifthsEndpoint] at he
   nlinarith only [he, hs, hL]
@@ -160,7 +152,7 @@ theorem gaussianMRRefined_prefix50000 {L : ℝ} (hL : 300 ≤ L) :
   have he := gaussianMRRefined_equation (by linarith only [hL] : 0 ≤ L)
   have hs := gaussianMRRefined_root_lower hL
   have hr : (415 / 2 : ℝ) ≤ gaussianMRRefinedRadius L := by
-    norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
+    norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianConductorCoeff,
       gaussian6FifthsIndex, gaussianMRRefinedMass, gaussianMRRefinedWidth,
       gaussian6FifthsEndpoint] at he
     nlinarith only [he, hs, hL]
@@ -186,10 +178,10 @@ theorem gaussianMRRefined_lt_gaussianMR6 {L : ℝ} (hL : 300 ≤ L) :
     have hp := mul_nonneg (sub_nonneg.mpr hts) (by linarith only [hs, ht] : (0 : ℝ) ≤ s + t - 14)
     change
       gaussianMRRefinedD * s ^ 2 =
-        gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s + 28 / 5 at he
+        gaussianConductorCoeff * L + gaussianMRRefinedBeta * s + 28 / 5 at he
     change
       gaussian6FifthsD * t ^ 2 = gaussian6FifthsConductor * L + gaussian6FifthsBeta * t + 6 at hf
-    norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
+    norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianConductorCoeff,
       gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsD, gaussian6FifthsBeta,
       gaussian6FifthsConductor, gaussian6FifthsIndex, gaussian6FifthsMass,
       gaussian6FifthsEndpoint] at he hf
@@ -274,7 +266,7 @@ theorem gaussianMRRefined_budget {L : ℝ} (hL : 300 ≤ L) :
   let e := gaussian6FifthsEndpoint
   let d := gaussianMRRefinedD
   let b := gaussianMRRefinedBeta
-  let c := gaussianMRRefinedConductor
+  let c := gaussianConductorCoeff
   let a := g * (21 * e / (10 * gaussianMRRefinedWidth)) - 7 * e * b / (6 * c)
   let v := g * (1839 * e / 1000) + e * (4 - 7 * (28 / 5) / (6 * c))
   have hs : 14 ≤ s := le_trans (by norm_num only) (gaussianMRRefined_root_lower hL)
@@ -291,7 +283,7 @@ theorem gaussianMRRefined_budget {L : ℝ} (hL : 300 ≤ L) :
         e * (((7 / 6) * L + 4) / r) =
       7 * e * d / (6 * c) + a / s + v / r := by
     dsimp only [a, v]
-    have hc : c ≠ 0 := by norm_num only [c, gaussianMRRefinedConductor]
+    have hc : c ≠ 0 := by norm_num only [c, gaussianConductorCoeff]
     have hk : gaussianMRRefinedWidth ≠ 0 := by norm_num only [gaussianMRRefinedWidth]
     have hLsolve : L = (d * r - b * s - 28 / 5) / c :=
       (eq_div_iff hc).mpr (by linarith only [hroot])
@@ -306,10 +298,10 @@ theorem gaussianMRRefined_budget {L : ℝ} (hL : 300 ≤ L) :
   have ha : 0 ≤ a := by
     norm_num only [a, g, e, b, c, gaussian6FifthsIndex, gaussian6FifthsEndpoint,
       gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussianMRRefinedWidth,
-      gaussianMRRefinedConductor]
+      gaussianConductorCoeff]
   have hv : v ≤ 0 := by
     norm_num only [v, g, e, c, gaussian6FifthsIndex, gaussian6FifthsEndpoint,
-      gaussianMRRefinedConductor]
+      gaussianConductorCoeff]
   have ha' : a / s ≤ a / 14 := div_le_div_of_nonneg_left ha (by norm_num only) hs
   have hv' : v / r ≤ 0 := div_nonpos_of_nonpos_of_nonneg hv hr0.le
   have ht := gaussianMRRefined_tail hr
@@ -319,7 +311,7 @@ theorem gaussianMRRefined_budget {L : ℝ} (hL : 300 ≤ L) :
       28 / 5 := by
     norm_num only [a, g, e, b, c, d, gaussian6FifthsIndex, gaussian6FifthsEndpoint,
       gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussianMRRefinedWidth,
-      gaussianMRRefinedConductor, gaussianMRRefinedD]
+      gaussianConductorCoeff, gaussianMRRefinedD]
   change
     g * (21 * e / (10 * gaussianMRRefinedWidth * s) + 1839 * e / (1000 * r)) +
         13 / (gaussian6FifthsIndex - 1) +
@@ -430,7 +422,7 @@ This finishes the numerical part of the remaining three-prime branch. -/
 theorem gaussianMRRefined_triple {L : ℝ} (hL : 300 ≤ L)
     (hcmp :
       gaussianMRRefinedTripleD * gaussianMRRefinedRadius L ≤
-        (2 / 3 : ℝ) * gaussianMRRefinedConductor * L +
+        (2 / 3 : ℝ) * gaussianConductorCoeff * L +
           gaussianMRRefinedTripleBeta * gaussianMRRefinedRoot L +
           11) :
     False := by
@@ -450,15 +442,14 @@ theorem gaussianMRRefined_triple {L : ℝ} (hL : 300 ≤ L)
     nlinarith only [hsSq, hs14]
   have hroot := gaussianMRRefined_equation (by linarith only [hL] : 0 ≤ L)
   have hroot' :
-    gaussianMRRefinedD * r =
-      gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s + 28 / 5 := by
+    gaussianMRRefinedD * r = gaussianConductorCoeff * L + gaussianMRRefinedBeta * s + 28 / 5 := by
     simpa only [r, s] using hroot
   have hindexCmp :
     (gaussianMRRefinedTripleD - (2 / 3 : ℝ) * gaussianMRRefinedD) * r ≤
       (gaussianMRRefinedTripleBeta - (2 / 3 : ℝ) * gaussianMRRefinedBeta) * s + 109 / 15 := by
     change
       gaussianMRRefinedTripleD * r ≤
-        (2 / 3 : ℝ) * gaussianMRRefinedConductor * L + gaussianMRRefinedTripleBeta * s + 11 at hcmp
+        (2 / 3 : ℝ) * gaussianConductorCoeff * L + gaussianMRRefinedTripleBeta * s + 11 at hcmp
     nlinarith only [hcmp, hroot']
   have hbetaDiff : 0 < gaussianMRRefinedTripleBeta - (2 / 3 : ℝ) * gaussianMRRefinedBeta := by
     norm_num only [gaussianMRRefinedTripleD, gaussianMRRefinedTripleBeta, gaussianMRRefinedBeta,
@@ -469,14 +460,14 @@ theorem gaussianMRRefined_triple {L : ℝ} (hL : 300 ≤ L)
       0 := by
     norm_num only [gaussianMRRefinedTripleD, gaussianMRRefinedTripleBeta, gaussianMRRefinedD,
       gaussianMRRefinedBeta, gaussian6FifthsIndex, gaussianMRRefinedMass, gaussianMRRefinedWidth,
-      gaussian6FifthsEndpoint, gaussianMRRefinedConductor]
+      gaussian6FifthsEndpoint, gaussianConductorCoeff]
   have hmargin :
     (109 / 15 : ℝ) <
       (gaussianMRRefinedTripleD - (2 / 3 : ℝ) * gaussianMRRefinedD) * ((415 / 2)) -
         (gaussianMRRefinedTripleBeta - (2 / 3 : ℝ) * gaussianMRRefinedBeta) * ((415 / 28)) := by
     norm_num only [gaussianMRRefinedTripleD, gaussianMRRefinedTripleBeta, gaussianMRRefinedD,
       gaussianMRRefinedBeta, gaussian6FifthsIndex, gaussianMRRefinedMass, gaussianMRRefinedWidth,
-      gaussian6FifthsEndpoint, gaussianMRRefinedConductor]
+      gaussian6FifthsEndpoint, gaussianConductorCoeff]
   have hstrict :
     (109 / 15 : ℝ) <
       (gaussianMRRefinedTripleD - (2 / 3 : ℝ) * gaussianMRRefinedD) * r -

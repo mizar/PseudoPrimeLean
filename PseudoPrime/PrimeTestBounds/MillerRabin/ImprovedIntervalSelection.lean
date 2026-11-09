@@ -389,7 +389,7 @@ theorem improved_eq_small {n : ℕ} (hn : 1 < n) (hN : n < 3000) :
   have hcast : (n : ℝ) ≤ 46000 := by exact_mod_cast (hN.le.trans (by norm_num only : 3000 ≤ 46000))
   have hL : Real.log n < 11 :=
     (Real.log_le_log (Nat.cast_pos.mpr (Nat.zero_lt_of_lt hn)) hcast).trans_lt
-      Analysis.log_46000_lt_eleven
+      LLS.log_46000_lt_eleven
   have hsmall : smallIntervalBound n ≤ (3 : ℝ) := by
     by_cases h : n < 2047
     · simp only [smallIntervalBound, ite_eq_left h]

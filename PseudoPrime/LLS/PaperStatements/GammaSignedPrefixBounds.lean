@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.PaperStatements.GammaSignedPrefixCharacterBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaConductorFreeBounds
@@ -46,7 +47,7 @@ the actual full level-one Gamma sum. Compare with the finite exponential
 sum, then use nonnegative summands and absolute convergence.
 No RH or large-scale hypothesis is required. -/
 theorem gamma_ramp_le_full_principal {x : ℝ} (hx : 0 < x) :
-    AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x ≤
+    exponentialRampMangoldtSum x / Real.sqrt x ≤
       (∑' k : ℕ, gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re := by
   have hs := MellinKernel.summable_summand gammaMellinKernel (1 : DirichletCharacter ℂ 1) hx
   have ht :=

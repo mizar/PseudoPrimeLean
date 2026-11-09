@@ -6,8 +6,9 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalDecimalScale
 public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedSixPoleEndpoints
-public import PseudoPrime.PrimeTestBounds.MillerRabin.TriangularThresholdBounds
+public import PseudoPrime.LLS.DecimalLogBounds
 
 /-! # Finite-index reduction for the refined paper cutoff -/
 
@@ -77,7 +78,7 @@ theorem refined_index16_witness {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Pr
   let : NeZero n := ⟨Nat.ne_zero_of_lt hn⟩
   have hJ : (1 : ℕ) ≤ 10 ^ 16 := by norm_num only
   have h48 : 10 ^ 48 ≤ n :=
-    decimal_le_of_log_upper (A := 48) (Nat.zero_lt_of_lt hn)
+    pow10_le_of_log_gt (A := 48) (Nat.zero_lt_of_lt hn)
       (by
         norm_num only; linarith only [hL])
   have hJ3 : (10 ^ 16 : ℕ) ^ 3 ≤ n := by simpa only [← pow_mul, Nat.reduceMul] using h48

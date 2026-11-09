@@ -87,7 +87,7 @@ set_option maxHeartbeats 0 in
 -- The finite chain checks 109 short rows.
 /-- The base and low-group recurrence rows pass their checks. -/
 theorem target028TwoLow613Part3_checked :
-    weightedGroupBaseCheck 70 9 500 4 target030Seed373Row14 target028TwoLow613Part3Base = true ∧
+    weightedGroupBaseCheck 70 9 500 4 primeSeed373Row14 target028TwoLow613Part3Base = true ∧
       weightedGroupRowsCheck 4 target028TwoLow613Part3Base target028TwoLow613Part3Row
           target028TwoLow613Part3Rows =
         true := by
@@ -95,7 +95,7 @@ theorem target028TwoLow613Part3_checked :
 
 /-- The row lower-bounds the weighted count after the 109 low-group labels. -/
 theorem target028TwoLow613Part3_count :
-    9520112065 ≤ weightedPrimeCount id (List.replicate 109 70 ++ target030Seed373Weights) 289 := by
+    9520112065 ≤ weightedPrimeCount id (List.replicate 109 70 ++ primeSeed373Weights) 289 := by
   have h :=
     target028_group_grid_general 70 9 4 109 (by decide) (by decide) target028TwoLow613Part3Base
       target028TwoLow613Part3Row target028TwoLow613Part3Rows (by decide)

@@ -149,7 +149,7 @@ theorem gamma_log_pole_level_le_of_common_endpoint {n : ℕ} (hn : Odd n) {L : �
   · rw [max_eq_left (le_of_not_ge hq)]
     have hl :=
       Real.log_le_log (by norm_num only : (0 : ℝ) < 20000) (by norm_num only : (20000 : ℝ) ≤ 46000)
-    linarith only [hl, Analysis.log_46000_lt_eleven, hL]
+    linarith only [hl, log_46000_lt_eleven, hL]
 
 /-- Input: odd nonsquare n, log n <= L and arbitrary scale x >= 4096.
 Claim: the actual joint budget is below the scalar budget plus 7/60.

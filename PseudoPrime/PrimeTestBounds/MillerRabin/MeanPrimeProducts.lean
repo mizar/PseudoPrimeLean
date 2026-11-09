@@ -9,7 +9,7 @@ module
 public import PseudoPrime.NumberTheory.PrimeProductSelectedCounting
 public import PseudoPrime.NumberTheory.ProductFermatKernel
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ThetaPrimeCountBounds
-public import PseudoPrime.PrimeTestBounds.MillerRabin.FourNinthsPrimeCount
+public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimePowerCountingCriteria
 
 /-! # Average-logarithm prime-product criterion
 

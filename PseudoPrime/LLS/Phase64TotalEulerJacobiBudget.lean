@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.Phase64EulerJacobiBudget
 public import PseudoPrime.Analysis.Phase64EulerPrefixSeed
 
@@ -45,9 +46,7 @@ theorem phase64_jacobi_no_negative_total_comparison {n : ℕ} {hn : Odd n} {hns 
     (hmq : (NumberTheory.complexQuadraticCharacter n hn).conductor ≤ q) {L : ℝ} (hlo : 64 ≤ L)
     (hhi : L ≤ 64001 / 1000)
     (hno : ∀ p : ℕ, p.Prime → Odd p → (p : ℝ) ≤ L ^ 2 → jacobiSym n p ≠ -1) :
-    2 *
-          (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum (L ^ 2 / (99 / 40)) /
-            Real.sqrt (L ^ 2 / (99 / 40))) -
+    2 * (exponentialRampMangoldtSum (L ^ 2 / (99 / 40)) / Real.sqrt (L ^ 2 / (99 / 40))) -
         (∑' k : ℕ,
             PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1)
               (L ^ 2 / (99 / 40)) k).re ≤
@@ -70,9 +69,7 @@ theorem exists_odd_prime_negative_of_phase64_total_gap {n : ℕ} {hn : Odd n} {h
     (hhi : L ≤ 64001 / 1000)
     (hgap :
       phase64TotalEulerJacobiBudget n q (L ^ 2 / (99 / 40)) <
-        2 *
-            (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum (L ^ 2 / (99 / 40)) /
-              Real.sqrt (L ^ 2 / (99 / 40))) -
+        2 * (exponentialRampMangoldtSum (L ^ 2 / (99 / 40)) / Real.sqrt (L ^ 2 / (99 / 40))) -
           (∑' k : ℕ,
               PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1)
                 (L ^ 2 / (99 / 40)) k).re) :

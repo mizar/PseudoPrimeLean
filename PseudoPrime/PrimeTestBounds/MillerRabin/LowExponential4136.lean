@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.ThreeFactorEven4136
+public import PseudoPrime.Analysis.RealLog
 public import PseudoPrime.Analysis.PreciseLogTaylorBounds
 
 /-! # Exponential factor comparison on the low logarithmic range -/

@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.Phase64SquareConductorBounds
 public import PseudoPrime.LLS.Phase64JacobiLocalComparison
 
@@ -138,9 +139,7 @@ theorem exists_oddPrime_negJacobi_phase64_ramified_GRH {n : ℕ} {hn : Odd n} {h
     (hhi : L ≤ 64001 / 1000)
     (hgap :
       phase64RamifiedJacobiBudget bridge q (L ^ 2 / (99 / 40)) (L ^ 2) <
-        2 *
-            (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum (L ^ 2 / (99 / 40)) /
-              Real.sqrt (L ^ 2 / (99 / 40))) -
+        2 * (exponentialRampMangoldtSum (L ^ 2 / (99 / 40)) / Real.sqrt (L ^ 2 / (99 / 40))) -
           (∑' k : ℕ,
               PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1)
                 (L ^ 2 / (99 / 40)) k).re) :

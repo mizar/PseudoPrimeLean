@@ -72,7 +72,7 @@ theorem seededTunedFamily_le_sharp {L : ℝ} (hL : 63 ≤ L) :
 The positive decrease of the residual makes the quadratic-root comparison strict. -/
 theorem seededTuned_raw_lt_sharp (f : Bool) {L : ℝ} (hL : 0 ≤ L) :
     gaussianSeededTunedRawBound f L < gaussianSeededSharpRawBound f L := by
-  have hc : 0 ≤ gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
+  have hc : 0 ≤ gaussianConductorCoeff := by norm_num only [gaussianConductorCoeff]
   have hD : 0 ≤ gaussianSeededTunedConstant f := by
     cases f <;> norm_num only [gaussianSeededTunedConstant, Bool.false_eq_true, ite_false, ite_true]
   have hlt : gaussianSeededTunedConstant f < gaussianSeededSharpConstant f := by
@@ -82,7 +82,7 @@ theorem seededTuned_raw_lt_sharp (f : Bool) {L : ℝ} (hL : 0 ≤ L) :
   have hroot :=
     Analysis.gaussianBudgetRoot_strictMono (b := gaussianMRRefinedBeta)
       gaussianMRRefined_coefficients.1 (add_nonneg (mul_nonneg hc hL) hD)
-      (add_lt_add_of_le_of_lt (le_refl (gaussianMRRefinedConductor * L)) hlt)
+      (add_lt_add_of_le_of_lt (le_refl (gaussianConductorCoeff * L)) hlt)
   change gaussianSeededTunedRawRoot f L < gaussianSeededSharpRawRoot f L at hroot
   have h2 :=
     (sq_lt_sq₀ (gaussianSeededTuned_raw_pos f L).le (gaussianSeededSharp_raw_pos f L).le).mpr hroot

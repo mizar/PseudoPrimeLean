@@ -10,7 +10,6 @@ public import PseudoPrime.LLS.ClippedLogShiftPrincipalBounds
 public import PseudoPrime.LLS.PrincipalLowerWitnessBounds
 public import PseudoPrime.LLS.Anchor250Separation
 public import PseudoPrime.LLS.Theorem11S1Subgroup
-public import PseudoPrime.Analysis.AdaptiveReciprocalRadius
 
 /-! # A closed affine prime-witness radius from the fully corrected principal cap -/
 
@@ -211,28 +210,6 @@ theorem clippedAffine_log_three_hundred_le : Real.log (300 : ℝ) ≤ (23 / 4 : 
   norm_num only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_natCast] at h
   exact h.2
 
-/-- For L at least 300, the clipped affine cutoff is smaller than Y squared
-whenever Y exceeds L-2log L+4. Use a logarithmic tangent at 300 to bound Y/L below by
-39/40 and the affine root/L above by 6191/10000. This is a generic radius comparison. -/
-theorem clippedAffine_cutoff_lt_of_adaptive_lower {L Y : ℝ} (hL : 300 ≤ L)
-    (hY : L - 2 * Real.log L + 4 < Y) : (99 / 40 : ℝ) * clippedAffineRoot L ^ 2 < Y ^ 2 := by
-  have hL0 : 0 < L := by linarith only [hL]
-  have ht := Analysis.log_le_log_add_sub_div (by norm_num only : (0 : ℝ) < 300) hL0
-  have hlog : 2 * Real.log L - 4 ≤ L / 40 := by
-    linarith only [ht, clippedAffine_log_three_hundred_le, hL]
-  have hYb : (39 / 40 : ℝ) * L < Y := by linarith only [hlog, hY]
-  have hr : 0 ≤ clippedAffineRoot L := by
-    dsimp only [clippedAffineRoot]; linarith only [hL]
-  have hu : clippedAffineRoot L ≤ (6191 / 10000 : ℝ) * L := by
-    dsimp only [clippedAffineRoot]
-    linarith only [hL]
-  have hs := mul_self_le_mul_self hr hu
-  have hY0 : 0 < Y := by linarith only [hL0, hYb]
-  have hp :=
-    mul_pos (sub_pos.mpr hYb) (add_pos hY0 (mul_pos (by norm_num only : (0 : ℝ) < 39 / 40) hL0))
-  have hsq := sq_pos_of_pos hL0
-  nlinarith only [hs, hp, hsq]
-
 /-- Under GRH, a proper unit subgroup at logarithmic level at least 300 has a prime
 outside its image through the clipped affine cutoff. Pull back a nonprincipal quotient
 character and apply the character bound. Nonunit primes remain valid witnesses. -/
@@ -255,19 +232,5 @@ theorem exists_prime_outside_subgroup_le_clippedAffine {q : ℕ} [NeZero q] (H :
   apply hv
   rw [← he]
   exact pullbackCharacter_eq_one_of_mem χ' hu
-
-/-- For every real L at least 300, the clipped affine cutoff is smaller than the
-adaptive reciprocal cutoff. Use the proved reference-root bound to supply the generic
-comparison premise. This certifies the best-interval replacement without sampled crossings. -/
-theorem clippedAffine_cutoff_lt_adaptive {L : ℝ} (hL : 300 ≤ L) :
-    (99 / 40 : ℝ) * clippedAffineRoot L ^ 2 < Analysis.adaptivePart2CutoffRoot L ^ 2 := by
-  have ht :=
-    Analysis.finerPart2Root_ge_36_5_of_639_100_le (by linarith only [hL] : (639 / 100 : ℝ) ≤ L)
-  have hb :=
-    Analysis.adaptivePart2Root_bounds
-      (show 7 ≤ Analysis.finerPart2CutoffRoot L by linarith only [ht])
-  apply clippedAffine_cutoff_lt_of_adaptive_lower hL
-  dsimp only [Analysis.finerPart2CutoffRoot] at hb
-  linarith only [hb.1]
 
 end PseudoPrime.LLS

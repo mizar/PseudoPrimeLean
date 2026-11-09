@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target030SquareSmallFactor
+public import PseudoPrime.PrimeTestBounds.MillerRabin.SquareSeed89Stage414
 
 /-! # Bounded square factors for coefficient 0.28 -/
 

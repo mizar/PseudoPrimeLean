@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalDecimalScale
 public import PseudoPrime.Analysis.TriangularNextNumerics
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianNextTripleBounds
 
@@ -72,7 +73,7 @@ theorem exists_prime_triangularNext {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬
   by_cases hi : (PrimeTest.fermatSubgroup n).index ≤ 10 ^ 12
   · have hJ : (10 ^ 12 : ℕ) ^ 3 ≤ n := by
       have h36 : 10 ^ 36 ≤ n :=
-        decimal_le_of_log_upper (Nat.zero_lt_of_lt hn)
+        pow10_le_of_log_gt (Nat.zero_lt_of_lt hn)
           (by
             norm_num only [Nat.cast_ofNat]; linarith only [hL])
       simpa only [← pow_mul, Nat.reduceMul] using h36
@@ -88,19 +89,5 @@ theorem exists_prime_triangularNext {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬
       exact ⟨p, hp, hb.trans (triangularNext_local (Nat.zero_lt_of_lt hn) hqp hsize hL), hr⟩
     · exact exists_prime_gaussianNextTriple ho ht.1 ht.2.1 ht.2.2.1 ht.2.2.2 hGRH hL
   · exact exists_prime_triangularNextIndex hn ho (by exact_mod_cast (lt_of_not_ge hi).le) hGRH hL
-
-/-- Under the logarithmic threshold assumptions, the least rejecting prime satisfies
-the coefficient-0.2827 bound. Extract it from the all-input witness theorem. -/
-theorem exists_least_triangularNext {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hL : (2000000000000 : ℝ) ≤ Real.log n) :
-    ∃ p : ℕ,
-      p.Prime ∧
-        (p : ℝ) ≤ (2827 / 10000 : ℝ) * Real.log n ^ 2 ∧
-        ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
-        ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
-  let : NeZero n := ⟨Nat.ne_zero_of_lt hn⟩
-  exact
-    exists_least_prime_reject_of_exists_prime_reject (exists_prime_triangularNext hn ho hc hGRH hL)
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

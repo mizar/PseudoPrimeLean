@@ -40,8 +40,7 @@ theorem gamma_profile_199_div_250_plus_216_middle {q : ℕ} [NeZero q] (H : Subg
     Real.log_mul (by norm_num only : (2 : ℝ) ≠ 0) (pow_ne_zero 4 (by norm_num only : (10 : ℝ) ≠ 0)),
     Real.log_pow] at hlog20
   norm_num only [Nat.cast_ofNat] at hlog20
-  have hL : (49 / 5 : ℝ) ≤ L := by
-    linarith only [hlog20, Real.log_two_gt_d9, Analysis.log_ten_gt_230258]
+  have hL : (49 / 5 : ℝ) ≤ L := by linarith only [hlog20, Real.log_two_gt_d9, log_ten_gt_230258]
   have hL0 : 0 < L := by linarith only [hL]
   have hsqrt : (124687 / 125000 : ℝ) ≤ Real.sqrt (199 / 200 : ℝ) := by
     apply (Real.le_sqrt (by norm_num only) (by norm_num only)).mpr
@@ -62,7 +61,7 @@ theorem gamma_profile_199_div_250_plus_216_middle {q : ℕ} [NeZero q] (H : Subg
   have hlocal :=
     gamma_commonFactor_budget_of_ambient_scale (by norm_num only : (0 : ℝ) < 9 / 16)
       (show 1 < T by linarith only [hT]) hambient (zero_lt_one.trans_le hx) hcut hcutlog
-      (Analysis.ramp_scale_sqrt_lower hT0.le) (gamma_small_scale_cuberoot_ratio hT)
+      (ramp_scale_sqrt_lower hT0.le) (gamma_small_scale_cuberoot_ratio hT)
   norm_num only at hlocal
   have hbudget :
     (11783423 / 25000000 : ℝ) * Real.log q + 75169 / 900 +

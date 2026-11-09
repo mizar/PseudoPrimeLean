@@ -524,11 +524,11 @@ theorem target028Two597_checked :
 theorem target028Two597_count :
     5281184889100917312 ≤
       weightedPrimeCount id
-        (List.replicate 238 80 ++ (List.replicate 109 70 ++ target030Seed373Weights)) 597 := by
+        (List.replicate 238 80 ++ (List.replicate 109 70 ++ primeSeed373Weights)) 597 := by
   have hb :
     ∀ k ≤ 7,
       target028Two597Base.getD k 0 ≤
-        weightedPrimeCount id (List.replicate 109 70 ++ target030Seed373Weights) (37 + k * 80) := by
+        weightedPrimeCount id (List.replicate 109 70 ++ primeSeed373Weights) (37 + k * 80) := by
     intro k hk
     interval_cases k <;> norm_num only [Array.getD, target028Two597Base] at *
     · exact target028TwoLow597Part0_count
@@ -540,7 +540,7 @@ theorem target028Two597_count :
     · exact target028TwoLow597Part6_count
     · exact target028TwoLow597Part7_count
   have h :=
-    weightedGroupRows_lower 80 37 7 238 (List.replicate 109 70 ++ target030Seed373Weights)
+    weightedGroupRows_lower 80 37 7 238 (List.replicate 109 70 ++ primeSeed373Weights)
       target028Two597Base target028Two597Row target028Two597Rows (by decide) (by decide) (by decide)
       hb target028Two597_checked
   exact h

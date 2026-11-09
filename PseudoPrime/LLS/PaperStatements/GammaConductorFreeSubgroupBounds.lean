@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.GammaConductorFreeNonOneBounds
 public import PseudoPrime.LLS.PaperStatements.GammaUniformSubgroupComparison
@@ -63,7 +64,7 @@ theorem gammaCharacterSum_re_le_conductor_free_uniform {q : ℕ} [NeZero q] (hq 
     dsimp only [x]
     nlinarith only [hL, sq_nonneg (Real.log q - 30000)]
   have hx1 : 1 ≤ x := le_trans (by norm_num only : (1 : ℝ) ≤ 2) hx
-  have hs := Analysis.ramp_scale_sqrt_lower (show 0 ≤ Real.log q by linarith only [hL])
+  have hs := ramp_scale_sqrt_lower (show 0 ≤ Real.log q by linarith only [hL])
   have hl := conductor_free_nonOne_cutoff_log hL
   have he := conductor_free_nonOne_error_budgets hL hx1 hs hl
   have hpole :=
@@ -95,7 +96,7 @@ theorem gammaAverage_re_le_conductor_free_uniform {q : ℕ} [NeZero q] (hq : 200
   have hx : 1 ≤ x := by
     dsimp only [x]
     nlinarith only [hL, sq_nonneg (Real.log q - 30000)]
-  have hs := Analysis.ramp_scale_sqrt_lower (show 0 ≤ Real.log q by linarith only [hL])
+  have hs := ramp_scale_sqrt_lower (show 0 ≤ Real.log q by linarith only [hL])
   have he := conductor_free_nonOne_error_budgets hL hx hs (conductor_free_nonOne_cutoff_log hL)
   let F := fun χ : S ↦ (∑' k : ℕ, gammaMellinKernel.summand χ.val.primitiveCharacter x k).re
   have hp := PseudoPrime.LLS.gamma_level_one_sum_upper_variable hGRH.riemann hx
@@ -166,11 +167,11 @@ theorem gamma_ramp_subgroup_comparison_conductor_free {q : ℕ} [NeZero q] (hq :
   have hT := PseudoPrime.LLS.gamma_ramp_sum_lower_variable hGRH.riemann hx
   have he :=
     (conductor_free_nonOne_error_budgets hL hx
-        (Analysis.ramp_scale_sqrt_lower (show 0 ≤ Real.log q by linarith only [hL]))
+        (ramp_scale_sqrt_lower (show 0 ≤ Real.log q by linarith only [hL]))
         (conductor_free_nonOne_cutoff_log hL)).2.2.1
   have hlow :
     (∫ u in (0 : ℝ)..(99 / 40), Analysis.exponentialRampWeight u) * Real.sqrt x - 7 ≤
-      AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x := by
+      exponentialRampMangoldtSum x / Real.sqrt x := by
     linarith only [hT, he]
   have hm := mul_le_mul_of_nonneg_left hlow (Nat.cast_nonneg H.index)
   have hi := Subgroup.one_lt_index_of_ne_top hH

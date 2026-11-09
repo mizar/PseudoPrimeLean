@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.LLS.PaperStatements.GammaLeftIntegralBounds
 public import PseudoPrime.Analysis.GammaLeftMoments
-public import PseudoPrime.Analysis.QuadraticGammaSmoothedNumerics
+public import PseudoPrime.LLS.QuadraticGammaSmoothedNumerics
 
 /-! # Sharp Gamma left-integral moment bounds
 
@@ -225,8 +225,7 @@ theorem norm_gamma_left_integral_le_two_at_ramp_scale {q : ℕ} [NeZero q]
       2 := by
   have h :=
     norm_gamma_left_integral_le_two_of_moments (χ := χ) (L := L) (x := (32 / 99 : ℝ) * L ^ 2) hp hne
-      hinv hL (ramp_scale_ge_three_sixteenth hL)
-      (Analysis.ramp_scale_sqrt_lower (by linarith only [hL])) hq
+      hinv hL (ramp_scale_ge_three_sixteenth hL) (ramp_scale_sqrt_lower (by linarith only [hL])) hq
   simpa only [Complex.ofReal_mul, Complex.ofReal_pow] using h
 
 end PseudoPrime.LLS.PaperStatements

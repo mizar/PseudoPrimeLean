@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028GlobalBridge
-public import PseudoPrime.PrimeTestBounds.MillerRabin.CumulativeHighBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LeastPrimeCumulative
 
 /-! # Cumulative 0.28 bound for least rejecting primes -/
 
@@ -38,13 +38,6 @@ is bounded by the global maximum cutoff at `N`. Take the finite supremum of
 the preceding pointwise bound. -/
 theorem cumulativeLeastPrime_le_028 (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (N : ℕ) : (cumulativeLeastPrime N : ℝ) ≤ max 2 ((7 / 25 : ℝ) * Real.log N ^ 2) := by
-  have h0 : (0 : ℝ) ≤ max 2 ((7 / 25 : ℝ) * Real.log N ^ 2) :=
-    (by norm_num only : (0 : ℝ) ≤ 2).trans (le_max_left _ _)
-  have hb : cumulativeLeastPrime N ≤ ⌊max 2 ((7 / 25 : ℝ) * Real.log N ^ 2)⌋₊ := by
-    apply Finset.sup_le
-    intro n hn
-    apply Nat.le_floor
-    exact compositeLeastPrime_le_028_upper hGRH (Nat.le_of_lt_succ (Finset.mem_range.mp hn))
-  exact (Nat.cast_le.mpr hb).trans (Nat.floor_le h0)
+  exact cumulativeLeastPrime_le_of_pointwise (fun _ hn ↦ compositeLeastPrime_le_028_upper hGRH hn)
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

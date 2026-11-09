@@ -66,16 +66,11 @@ def PrimeNegOneWitnessBound : Prop :=
 
 /-- The non-one witness bound follows from the library theorem for every positive odd nonsquare. -/
 theorem prime_ne_one_witness_bound : PrimeNeOneWitnessBound := fun hGRH n hn hns ↦
-  PseudoPrime.PseudoSquare.exists_prime_ne_one_witness_of_grh (n := n) hGRH hn.pos hn hns
+  PseudoPrime.PseudoSquare.exists_ne_one_witness_of_odd (n := n) hGRH hn hns
 
 /-- The negative-one witness bound follows from the library theorem for every odd nonsquare
 at least three. -/
 theorem prime_neg_one_witness_bound : PrimeNegOneWitnessBound := fun hGRH n hn hns ↦
-  PseudoPrime.PseudoSquare.exists_negOneWitness_le_refined_elementary (n := n) hGRH
-    (Nat.succ_le_of_lt
-      (Nat.lt_of_le_of_ne
-        (Nat.succ_le_of_lt (Nat.lt_of_le_of_ne hn.pos (Ne.symm (fun h ↦ hns (h ▸ ⟨1, rfl⟩)))))
-        (Ne.symm (fun h ↦ (of_decide_eq_true rfl : ¬Odd (2 : ℕ)) (h ▸ hn)))))
-    hn hns
+  PseudoPrime.PseudoSquare.exists_neg_one_witness_of_odd (n := n) hGRH hn hns
 
 end ComparatorChallenges.PrimeQuadraticWitness

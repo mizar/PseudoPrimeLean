@@ -6,10 +6,12 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalDecimalScale
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalDivisorLogBounds
 public import PseudoPrime.LLS.GaussianPrefixComparison2
 
 public import PseudoPrime.NumberTheory.ResidueSubgroup
-public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianStarClassification
+public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianIndexClassification
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMR35000Numerics
 
 /-! # Fixed prime strong-MR witness bound 35000 on 63<=log n<=240 -/
@@ -81,7 +83,7 @@ theorem gaussian35000_index_four {n : ℕ} [NeZero n] (H : Subgroup (ZMod n)ˣ) 
     apply (div_le_iff₀ (by norm_num only : (0 : ℝ) < 3)).2
     nlinarith only [hC]
   exact
-    gaussian_relative_comparison_to_scalar (m := 4) (t := 3) (s := s) (r := r) (A :=
+    LLS.gaussian_compare_width_third (m := 4) (t := 3) (s := s) (r := r) (A :=
       LLS.PaperStatements.gaussianPrefixError (47 / 10) n (r ^ 2)) (L := (2 / 3 : ℝ) * Real.log n)
       (I := I) (E := E) (C := LLS.PaperStatements.subgroupConductorLogSum H) (h := h) (M :=
       gaussian6FifthsMass) (Ecap := gaussian6FifthsEndpoint) (conductor := (161 / 400 : ℝ)) (D :=
@@ -280,10 +282,9 @@ theorem gaussian35000_witness_large {n : ℕ} [NeZero n] (hnOdd : Odd n) (hnlarg
     intro hbudget
     exact gaussian35000_large_absurd hL hi (gaussian35000_ambient hL) hbudget
   exact
-    gaussian_relative_comparison_to_scalar (m := m) (t := t) (s := s) (r := r) (A := A) (L := L)
-      (I := I) (E := E) (C := C) (h := h) (M := gaussian6FifthsMass) (Ecap :=
-      gaussian6FifthsEndpoint) (conductor := gaussian6FifthsConductor) (D := gaussian6FifthsD)
-      (beta := gaussian6FifthsBeta)
+    LLS.gaussian_compare_width_third (m := m) (t := t) (s := s) (r := r) (A := A) (L := L) (I := I)
+      (E := E) (C := C) (h := h) (M := gaussian6FifthsMass) (Ecap := gaussian6FifthsEndpoint)
+      (conductor := gaussian6FifthsConductor) (D := gaussian6FifthsD) (beta := gaussian6FifthsBeta)
       (by
         have hi' : (1000000000 : ℝ) ≤ m := by simpa only [m, gaussian6FifthsIndex] using hi
         linarith only [hi'])

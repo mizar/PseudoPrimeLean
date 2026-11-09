@@ -19,7 +19,7 @@ supply the large-index radius, while the floor fixes the tail domain. -/
 noncomputable def gaussianLowRoot (u D L : ℝ) : ℝ :=
   max u
     (Analysis.gaussianBudgetRoot gaussianMRRefinedD gaussianMRRefinedBeta
-      (gaussianMRRefinedConductor * L + D))
+      (gaussianConductorCoeff * L + D))
 
 /-- The squared floored root, used as the radius whose square is the Mellin scale. -/
 noncomputable def gaussianLowRadius (u D L : ℝ) : ℝ :=
@@ -37,10 +37,10 @@ theorem gaussianLow_root_floor (u D L : ℝ) : u ≤ gaussianLowRoot u D L :=
 satisfies the large-index quadratic budget. Increasing the raw root to its floor
 preserves the inequality by the quadratic root comparison. -/
 theorem gaussianLow_budget {u D L : ℝ} (hu : 9 ≤ u) (hD : 0 ≤ D) (hL : 0 ≤ L) :
-    gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * gaussianLowRoot u D L + D ≤
+    gaussianConductorCoeff * L + gaussianMRRefinedBeta * gaussianLowRoot u D L + D ≤
       gaussianMRRefinedD * gaussianLowRadius u D L := by
   have hs : 9 ≤ gaussianLowRoot u D L := hu.trans (le_max_left _ _)
-  have hc : 0 ≤ gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
+  have hc : 0 ≤ gaussianConductorCoeff := by norm_num only [gaussianConductorCoeff]
   have hb : gaussianMRRefinedBeta < 9 * gaussianMRRefinedD := by
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
       gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint]
@@ -52,7 +52,7 @@ theorem gaussianLow_budget {u D L : ℝ} (hu : 9 ≤ u) (hD : 0 ≤ D) (hL : 0 �
       gaussianMRRefined_coefficients.2 (add_nonneg (mul_nonneg hc hL) hD) hcoef
       (show
         Analysis.gaussianBudgetRoot gaussianMRRefinedD gaussianMRRefinedBeta
-            (gaussianMRRefinedConductor * L + D) ≤
+            (gaussianConductorCoeff * L + D) ≤
           gaussianLowRoot u D L
         from le_max_right _ _)
   change _ ≤ gaussianMRRefinedD * gaussianLowRadius u D L at he
@@ -66,7 +66,7 @@ theorem gaussianLow_root_mono {u D : ℝ} : Monotone (gaussianLowRoot u D) := by
   exact
     add_le_add
       (mul_le_mul_of_nonneg_left hLK
-        (by norm_num only [gaussianMRRefinedConductor] : 0 ≤ gaussianMRRefinedConductor))
+        (by norm_num only [gaussianConductorCoeff] : 0 ≤ gaussianConductorCoeff))
       (le_refl D)
 
 /-- A rational scale certificate at positive R0 controls both Gaussian tail

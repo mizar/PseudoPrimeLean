@@ -6,8 +6,9 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.FiniteIndexClassification
-public import PseudoPrime.PrimeTestBounds.MillerRabin.MRLocalCutoffNumerics
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalDecimalScale
+public import PseudoPrime.PrimeTestBounds.MillerRabin.FiniteIndexStructure
+public import PseudoPrime.LLS.DecimalLogBounds
 
 /-! # Uniform Korselt triples and the finite-index threshold -/
 

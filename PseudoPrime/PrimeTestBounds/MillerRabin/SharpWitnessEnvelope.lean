@@ -71,25 +71,6 @@ theorem sharpWitness_le_refined {n : ℕ} (hn : 1 < n) :
     sharpWitnessEnvelope n ≤ refinedWitnessEnvelope n := by
   exact (sharpWitness_le_low n).trans (lowFiniteWitness_le_refined hn)
 
-/-- For inputs above one, the sharp selection never exceeds the current refined selection.
-Rewrite the numerical selection identities before applying the unrounded comparison. -/
-theorem sharpSelected_le_refined {n : ℕ} (hn : 1 < n) :
-    sharpSelectedEnvelope n ≤ refinedSelectedEnvelope n := by
-  rw [← sharp_eq_selected hn, ← refined_eq_selected hn]
-  exact sharpWitness_le_refined hn
-
-/-- For inputs above one, the rounded sharp cutoff never exceeds the rounded current cutoff.
-Use monotonicity of the same total prime-rounding function on both sides. -/
-theorem sharpPrime_le_refinedPrime {n : ℕ} (hn : 1 < n) :
-    sharpPrimeEnvelope n ≤ refinedPrimeEnvelope n := by
-  exact primeRound_mono (sharpWitness_le_refined hn)
-
-/-- For inputs above one, prime rounding never enlarges the sharp selected value. -/
-theorem sharpPrime_le_selected {n : ℕ} (hn : 1 < n) :
-    sharpPrimeEnvelope n ≤ sharpSelectedEnvelope n := by
-  rw [← sharp_eq_selected hn]
-  exact primeRound_le _
-
 /-- Above the small-input branch, a common lower bound for the finite base and every
 valid Gaussian, seeded and triangular candidate bounds the complete sharp cutoff.
 This interface transfers one actual least prime to the guarded minimum. -/
@@ -181,28 +162,6 @@ theorem exists_prime_sharpEnvelope {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n
   obtain ⟨p, hp, hr, hb, _⟩ := exists_least_sharpEnvelope hn ho hc hGRH
   exact ⟨p, hp, hb, hr⟩
 
-/-- Under GRH, the selected sharp cutoff contains the least rejecting prime.
-Transfer the actual unrounded witness through the numerical selection identity. -/
-theorem exists_least_sharpSelected {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
-    ∃ p : ℕ,
-      p.Prime ∧
-        ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) ∧
-        (p : ℝ) ≤ sharpSelectedEnvelope n ∧
-        ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
-  rw [← sharp_eq_selected hn]
-  exact exists_least_sharpEnvelope hn ho hc hGRH
-
-/-- Under GRH, the selected sharp cutoff contains an actual rejecting prime.
-The numerical identity preserves both primality and Miller-Rabin rejection. -/
-theorem exists_prime_sharpSelected {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
-    ∃ p : ℕ,
-      p.Prime ∧
-        (p : ℝ) ≤ sharpSelectedEnvelope n ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
-  rw [← sharp_eq_selected hn]
-  exact exists_prime_sharpEnvelope hn ho hc hGRH
-
 /-- Under GRH, rounding preserves the same actual least rejecting prime.
 Apply prime-preserving rounding to its unrounded numerical bound. -/
 theorem exists_least_sharpPrimeEnvelope {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
@@ -214,15 +173,5 @@ theorem exists_least_sharpPrimeEnvelope {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc 
         ∀ q : ℕ, q.Prime → ¬PrimeTest.StrongMillerRabinPass n (q : ZMod n) → p ≤ q := by
   obtain ⟨p, hp, hr, hb, hm⟩ := exists_least_sharpEnvelope hn ho hc hGRH
   exact ⟨p, hp, hr, prime_le_primeRound hp hb, hm⟩
-
-/-- Under GRH, the rounded sharp cutoff contains an actual rejecting prime.
-Extract it from the rounded least-prime theorem. -/
-theorem exists_prime_sharpPrimeEnvelope {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
-    ∃ p : ℕ,
-      p.Prime ∧
-        (p : ℝ) ≤ sharpPrimeEnvelope n ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
-  obtain ⟨p, hp, hr, hb, _⟩ := exists_least_sharpPrimeEnvelope hn ho hc hGRH
-  exact ⟨p, hp, hb, hr⟩
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

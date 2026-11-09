@@ -34,10 +34,6 @@ public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ElementaryOmegaFiniteC
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ElementaryOmegaStatement
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.LogLevelChange
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ExponentialMangoldtBounds
-public import PseudoPrime.Analysis.TriangularCutoffMangoldt
-public import PseudoPrime.Analysis.TriangularUpperMangoldt
-public import PseudoPrime.Analysis.TriangularUpperScaledIntegrals
-public import PseudoPrime.Analysis.TriangularUpperMangoldtBounds
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.LogWeightedSummationByParts
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ExponentialLogWeightedSummation
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PowerLogWeightedSummation
@@ -216,7 +212,6 @@ public import PseudoPrime.AnalyticNumberTheory.General.CanonicalDecomposition
 public import PseudoPrime.AnalyticNumberTheory.General.GeometricDecay
 public import PseudoPrime.AnalyticNumberTheory.General.LogPolynomialDecay
 public import PseudoPrime.AnalyticNumberTheory.General.LogQuadraticEnvelope
-public import PseudoPrime.Analysis.MellinWeights
 public import PseudoPrime.AnalyticNumberTheory.General.TwoPoleMellinWeights
 public import PseudoPrime.AnalyticNumberTheory.General.TwoPoleMellinInversion
 public import PseudoPrime.AnalyticNumberTheory.General.TwoPoleMiddleMellin
@@ -367,6 +362,7 @@ public import PseudoPrime.AnalyticNumberTheory.Gamma.ReciprocalPoleMellin
 public import PseudoPrime.AnalyticNumberTheory.Gamma.UniformReciprocalResidues
 public import PseudoPrime.AnalyticNumberTheory.Gamma.UniformDigamma
 public import PseudoPrime.AnalyticNumberTheory.Gamma.NumericalDigammaBounds
+public import PseudoPrime.AnalyticNumberTheory.Gamma.RationalResolventApproximation
 public import PseudoPrime.AnalyticNumberTheory.RectangleGeometry.VerticalLimits
 public import PseudoPrime.AnalyticNumberTheory.NumberField.DedekindLFunction
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimeSumBounds
@@ -412,6 +408,11 @@ public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.WeightedExplicitBound
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroFreeAllHeights
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroFreeLogSquared
 public import PseudoPrime.AnalyticNumberTheory.PrimeSums.Mertens
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ShiftedPoissonEulerBounds
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ShiftedPoissonHeightMajorants
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.LLSExcludedCharacterDefect
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.QuadraticExcludedBudget
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.QuadraticBudgetLinear
 
 /-!
 # Analytic number theory umbrella

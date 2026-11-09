@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.PrincipalLowerWitnessBounds
 public import PseudoPrime.LLS.ClippedLogShiftPrincipalBounds
 public import PseudoPrime.LLS.TwoPoleSmallPrefixSavings
@@ -26,7 +27,7 @@ theorem exists_prime_strong_witness_of_principalLowerGap {n : ℕ} [NeZero n] (h
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) {x g P : ℝ} (hx : 2 ≤ x)
     (hP :
       P ≤
-        2 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) -
+        2 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
           (∑' k : ℕ,
               LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x k).re)
     (S : Finset ℕ) (hS : ∀ n ∈ S, (n : ℝ) ≤ (99 / 40 : ℝ) * x)

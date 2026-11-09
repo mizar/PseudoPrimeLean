@@ -34,32 +34,6 @@ structure GaussianRelativeProfile where
           (61 / 100) * (28794111 / 12500000) / v) *
         T
 
-/-- The common triple certificate proves coefficient 0.28237 from thirty billion. -/
-noncomputable def gaussianRelativeCommon : GaussianRelativeProfile where
-  C := 28237 / 100000
-  T := 30000000000
-  a := 36669 / 100000
-  v := 170000
-  entry := by norm_num only
-  root := by norm_num only
-  square := by norm_num only
-  upper := by norm_num only
-  fourth := by norm_num only [and_self]
-  margin := by norm_num only
-
-/-- The sharper triple certificate proves coefficient 0.2823622 from 1.82 trillion. -/
-noncomputable def gaussianRelativeSharper : GaussianRelativeProfile where
-  C := 1411811 / 5000000
-  T := 1820000000000
-  a := 36668541 / 100000000
-  v := 1340000
-  entry := by norm_num only
-  root := by norm_num only
-  square := by norm_num only
-  upper := by norm_num only
-  fourth := by norm_num only [and_self]
-  margin := by norm_num only
-
 /-- At L above a certified entrance, the actual Gaussian scale has radius
 at least a L and 500. Its square root lies between ten and (61/100)L/v.
 These bounds supply the relative width and reciprocal error floors. -/
@@ -121,7 +95,7 @@ theorem gaussianRelativeProfile_error (f : GaussianRelativeProfile) {n : ℕ} {L
   have hpole : (2129 / 2000 : ℝ) * (((7 / 6 : ℝ) * Real.log n + 4) / r) ≤ 4 := by
     rw [← mul_div_assoc, div_le_iff₀ hrpos]
     linarith only [hroots.1, hroot, hL, f.entry, hn]
-  have ht := gaussian1000_tail (show 100 ≤ r by linarith only [hroots.2.1])
+  have ht := LLS.gaussian_tail_of_radius_ge_100 (show 100 ≤ r by linarith only [hroots.2.1])
   dsimp only [LLS.PaperStatements.gaussianPrefixError]
   rw [Real.sqrt_sq hrpos.le]
   change

@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.NumberTheory.ResidueSubgroup
 public import PseudoPrime.LLS.PaperStatements.GammaNonOneCommonNumerics
 public import PseudoPrime.LLS.PaperStatements.GammaVariablePrefixCharacterBounds
@@ -37,7 +38,7 @@ theorem gammaCharacterSum_re_le_uniform_thirtyTwo {q : ℕ} [NeZero q] (hq : 200
   let x := (32 / 99 : ℝ) * (Real.log q) ^ 2
   have hxlarge := common_nonOne_ramp_scale_large hL
   have hx : 1 ≤ x := (by norm_num only : (1 : ℝ) ≤ (17 / 5) ^ 16).trans hxlarge
-  have hs := Analysis.ramp_scale_sqrt_lower (show (0 : ℝ) ≤ Real.log q by linarith only [hL])
+  have hs := ramp_scale_sqrt_lower (show (0 : ℝ) ≤ Real.log q by linarith only [hL])
   have hmq := Nat.le_of_dvd (Nat.pos_of_ne_zero (NeZero.ne q)) χ.conductor_dvd_level
   have hfpos : (0 : ℝ) < χ.conductor := by exact_mod_cast Nat.pos_of_ne_zero χ.conductor_ne_zero
   have hmqR : (χ.conductor : ℝ) ≤ q := by exact_mod_cast hmq
@@ -108,13 +109,12 @@ theorem gamma_primitive_average_re_le_uniform_thirtyTwo {q : ℕ} [NeZero q] (hq
 level-one Gamma sum through (99/40)x. Compare the weights at each positive index.
 This transfers the ramp lower side to the existing finite subgroup interface. -/
 theorem gamma_ramp_le_finite_exponential {x : ℝ} (hx : 0 < x) :
-    AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x ≤
+    exponentialRampMangoldtSum x / Real.sqrt x ≤
       ∑ n ∈ Finset.Ioc 0 ⌊(99 / 40 : ℝ) * x⌋₊,
         (gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x n).re := by
   rw [gamma_level_one_sum_eq_exponential hx]
   apply div_le_div_of_nonneg_right _ (Real.sqrt_nonneg x)
-  unfold AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum
-    AnalyticNumberTheory.Arithmetic.exponentialMangoldtSum
+  unfold exponentialRampMangoldtSum AnalyticNumberTheory.Arithmetic.exponentialMangoldtSum
   rw [Finset.Icc_eq_cons_Ioc (Nat.zero_le _), Finset.sum_cons]
   simp only [Nat.cast_zero, neg_zero, zero_div, Real.exp_zero, ArithmeticFunction.map_zero,
     mul_zero, zero_add]
@@ -135,7 +135,7 @@ theorem gamma_ramp_subgroup_comparison {q : ℕ} [NeZero q] (H : Subgroup (ZMod 
     (hsmall :
       ∀ p : ℕ,
         p.Prime → ¬p ∣ q → (p : ℝ) ≤ (99 / 40 : ℝ) * x → NumberTheory.residueInSubgroup q H p) :
-    (H.index : ℝ) * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x) ≤
+    (H.index : ℝ) * (exponentialRampMangoldtSum x / Real.sqrt x) ≤
       ∑ χ : NumberTheory.subgroupAnnihilator H,
           (∑' n : ℕ, gammaMellinKernel.summand χ.val.primitiveCharacter x n).re +
         (H.index : ℝ) *
@@ -214,7 +214,7 @@ theorem gamma_ramp_subgroup_comparison_uniform {q : ℕ} [NeZero q] (hq : 20000 
   have he := (div_le_iff₀ hs0).mpr (common_nonOne_ramp_error_numerator hL)
   have hlow :
     (∫ u in (0 : ℝ)..(99 / 40), Analysis.exponentialRampWeight u) * Real.sqrt x - 693 / 100 ≤
-      AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum x / Real.sqrt x := by
+      exponentialRampMangoldtSum x / Real.sqrt x := by
     linarith only [hT, he]
   have hm := mul_le_mul_of_nonneg_left hlow (Nat.cast_nonneg H.index)
   have hi := Subgroup.one_lt_index_of_ne_top hH

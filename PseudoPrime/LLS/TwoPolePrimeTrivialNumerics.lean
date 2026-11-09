@@ -150,7 +150,7 @@ theorem twoPolePrimeTrivialSeparation_lower {q : ℕ} (hL : 1500 ≤ Real.log q)
       (2 * (∫ u in (0 : ℝ)..(99 / 40), Analysis.exponentialRampWeight u) - 1) * s :=
     mul_le_mul_of_nonneg_right
       ((by norm_num only : (831 / 1000 : ℝ) ≤ 83125234337 / 100000000000).trans
-        Analysis.gamma_ramp_mass_lower)
+        gamma_ramp_mass_lower)
       hspos.le
   dsimp only [twoPolePrimeTrivialSeparation, twoPolePrimeTrivialUpper]
   simp only [Finset.sum_empty, mul_zero, sub_zero]

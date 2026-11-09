@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.Analysis.GaussianBudgetRoots
+public import PseudoPrime.LLS.GaussianTailBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianMRClippedNumerics
 
 /-! # Two-root Gaussian budgets with the sharp 1000 prefix -/
@@ -30,13 +31,13 @@ For L>=0 its square satisfies the unmodified quadratic equation. The final
 radius is increased to cover this root, the index-four root and the floor ten. -/
 noncomputable def gaussian1000LargeRoot (L : ℝ) : ℝ :=
   Analysis.gaussianBudgetRoot gaussianMRRefinedD gaussianMRRefinedBeta
-    (gaussianMRRefinedConductor * L + 163 / 20)
+    (gaussianConductorCoeff * L + 163 / 20)
 
 /-- The positive index-four budget root with conductor coefficient 2c/3
 and residual allowance 127/10. It supplies the independent index-four constraint. -/
 noncomputable def gaussian1000FourRoot (L : ℝ) : ℝ :=
   Analysis.gaussianBudgetRoot gaussian1000FourD gaussian1000FourBeta
-    ((2 / 3 : ℝ) * gaussianMRRefinedConductor * L + 127 / 10)
+    ((2 / 3 : ℝ) * gaussianConductorCoeff * L + 127 / 10)
 
 /-- The maximum of ten and both Gaussian budget roots. The floor ensures
 the prefix and tail domains, while the two roots cover large index and index four. -/
@@ -97,9 +98,8 @@ theorem gaussian1000_cutoff_floor (L : ℝ) : (12000 : ℝ) ≤ gaussian1000Boun
 Apply the generic discriminant identity before increasing the radius by a maximum. -/
 theorem gaussian1000_large_equation {L : ℝ} (hL : 0 ≤ L) :
     gaussianMRRefinedD * gaussian1000LargeRoot L ^ 2 =
-      gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * gaussian1000LargeRoot L +
-        163 / 20 := by
-  have hc : 0 ≤ gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
+      gaussianConductorCoeff * L + gaussianMRRefinedBeta * gaussian1000LargeRoot L + 163 / 20 := by
+  have hc : 0 ≤ gaussianConductorCoeff := by norm_num only [gaussianConductorCoeff]
   have he :=
     Analysis.gaussianBudgetRoot_equation (b := gaussianMRRefinedBeta)
       gaussianMRRefined_coefficients.1
@@ -107,33 +107,32 @@ theorem gaussian1000_large_equation {L : ℝ} (hL : 0 ≤ L) :
   change
     gaussianMRRefinedD * gaussian1000LargeRoot L ^ 2 =
       gaussianMRRefinedBeta * gaussian1000LargeRoot L +
-        (gaussianMRRefinedConductor * L + 163 / 20) at he
+        (gaussianConductorCoeff * L + 163 / 20) at he
   linarith only [he]
 
 /-- For L>=0, the raw index-four root satisfies its quadratic equation
 with conductor coefficient 2c/3. This equality applies only to the raw root. -/
 theorem gaussian1000_four_equation {L : ℝ} (hL : 0 ≤ L) :
     gaussian1000FourD * gaussian1000FourRoot L ^ 2 =
-      (2 / 3 : ℝ) * gaussianMRRefinedConductor * L + gaussian1000FourBeta * gaussian1000FourRoot L +
+      (2 / 3 : ℝ) * gaussianConductorCoeff * L + gaussian1000FourBeta * gaussian1000FourRoot L +
         127 / 10 := by
-  have hc : 0 ≤ (2 / 3 : ℝ) * gaussianMRRefinedConductor := by
-    norm_num only [gaussianMRRefinedConductor]
+  have hc : 0 ≤ (2 / 3 : ℝ) * gaussianConductorCoeff := by norm_num only [gaussianConductorCoeff]
   have he :=
     Analysis.gaussianBudgetRoot_equation (b := gaussian1000FourBeta) gaussian1000_coefficients.1
       (add_nonneg (mul_nonneg hc hL) (by norm_num only : (0 : ℝ) ≤ 127 / 10))
   change
     gaussian1000FourD * gaussian1000FourRoot L ^ 2 =
       gaussian1000FourBeta * gaussian1000FourRoot L +
-        ((2 / 3 : ℝ) * gaussianMRRefinedConductor * L + 127 / 10) at he
+        ((2 / 3 : ℝ) * gaussianConductorCoeff * L + 127 / 10) at he
   linarith only [he]
 
 /-- For L>=0, the combined radius satisfies the large-index budget
 inequality. Compare the maximum with the raw root and use ten*d>beta.
 No equality is asserted for the combined root. -/
 theorem gaussian1000_large_budget {L : ℝ} (hL : 0 ≤ L) :
-    gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * gaussian1000Root L + 163 / 20 ≤
+    gaussianConductorCoeff * L + gaussianMRRefinedBeta * gaussian1000Root L + 163 / 20 ≤
       gaussianMRRefinedD * gaussian1000Radius L := by
-  have hc : 0 ≤ gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
+  have hc : 0 ≤ gaussianConductorCoeff := by norm_num only [gaussianConductorCoeff]
   have hcoef : gaussianMRRefinedBeta < gaussianMRRefinedD * gaussian1000Root L := by
     have hs :=
       mul_le_mul_of_nonneg_left (gaussian1000_root_ten L) gaussianMRRefined_coefficients.1.le
@@ -155,11 +154,10 @@ theorem gaussian1000_large_budget {L : ℝ} (hL : 0 ≤ L) :
 inequality. Compare with the second raw root and retain its independent
 conductor coefficient and residual allowance. -/
 theorem gaussian1000_four_budget {L : ℝ} (hL : 0 ≤ L) :
-    (2 / 3 : ℝ) * gaussianMRRefinedConductor * L + gaussian1000FourBeta * gaussian1000Root L +
+    (2 / 3 : ℝ) * gaussianConductorCoeff * L + gaussian1000FourBeta * gaussian1000Root L +
         127 / 10 ≤
       gaussian1000FourD * gaussian1000Radius L := by
-  have hc : 0 ≤ (2 / 3 : ℝ) * gaussianMRRefinedConductor := by
-    norm_num only [gaussianMRRefinedConductor]
+  have hc : 0 ≤ (2 / 3 : ℝ) * gaussianConductorCoeff := by norm_num only [gaussianConductorCoeff]
   have hcoef : gaussian1000FourBeta < gaussian1000FourD * gaussian1000Root L := by
     have hs := mul_le_mul_of_nonneg_left (gaussian1000_root_ten L) gaussian1000_coefficients.1.le
     have hb : gaussian1000FourBeta < 10 * gaussian1000FourD := by
@@ -175,57 +173,31 @@ theorem gaussian1000_four_budget {L : ℝ} (hL : 0 ≤ L) :
   change _ ≤ gaussian1000FourD * gaussian1000Radius L at he
   linarith only [he]
 
-/-- For r>=100, the contour tail is at most 271/1000 and the archimedean
-term is at most 2/1000. Use the rational sixteenth-root anchor 7/4;
-this avoids applying the older radius-170 estimate outside its domain. -/
-theorem gaussian1000_tail {r : ℝ} (hr : 100 ≤ r) :
-    (473 / 10 : ℝ) * (r ^ 2) ^ (-9 / 16 : ℝ) ≤ 271 / 1000 ∧ (512 / 27 : ℝ) / r ^ 2 ≤ 2 / 1000 := by
-  have hp : 0 < r := by linarith only [hr]
-  have hx : (7 / 4 : ℝ) ^ 16 ≤ r ^ 2 := by
-    norm_num only
-    nlinarith only [hr]
-  have hdec :=
-    LLS.PaperStatements.rpow_neg_nine_sixteenths_le_div_scale_sqrt (a := 7 / 4) (by norm_num only)
-      hx
-  rw [Real.sqrt_sq hp.le] at hdec
-  have hl := mul_le_mul_of_nonneg_left hdec (by norm_num only : (0 : ℝ) ≤ 473 / 10)
-  constructor
-  · have hc : (473 / 10 : ℝ) / ((7 / 4 : ℝ) * r) ≤ 271 / 1000 := by
-      rw [div_le_iff₀ (mul_pos (by norm_num only) hp)]
-      nlinarith only [hr]
-    have he : (473 / 10 : ℝ) * (1 / ((7 / 4 : ℝ) * r)) = (473 / 10 : ℝ) / ((7 / 4 : ℝ) * r) := by
-      ring
-    exact (hl.trans_eq he).trans hc
-  · rw [div_le_iff₀ (sq_pos_of_pos hp)]
-    nlinarith only [hr]
-
 /-- For r=s squared>0 satisfying the large-index budget with any allowance D,
 bound the pole by a constant plus retained inverse-root and inverse-radius terms.
 Multiply by the positive radius and preserve the signed quadratic term. -/
 theorem gaussianBudget_pole_bound {L r s D : ℝ} (hr : 0 < r) (hreq : r = s ^ 2)
-    (hG : gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s + D ≤ gaussianMRRefinedD * r) :
+    (hG : gaussianConductorCoeff * L + gaussianMRRefinedBeta * s + D ≤ gaussianMRRefinedD * r) :
     gaussian6FifthsEndpoint * (((7 / 6 : ℝ) * L + 4) / r) ≤
-      7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianMRRefinedConductor) -
-          (7 * gaussian6FifthsEndpoint * gaussianMRRefinedBeta / (6 * gaussianMRRefinedConductor)) /
-            s +
-        (gaussian6FifthsEndpoint * (4 - 7 * D / (6 * gaussianMRRefinedConductor))) / s ^ 2 := by
+      7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianConductorCoeff) -
+          (7 * gaussian6FifthsEndpoint * gaussianMRRefinedBeta / (6 * gaussianConductorCoeff)) / s +
+        (gaussian6FifthsEndpoint * (4 - 7 * D / (6 * gaussianConductorCoeff))) / s ^ 2 := by
   have hs : s ≠ 0 := by
     intro h
     rw [h, zero_pow (by norm_num only)] at hreq
     exact hr.ne' hreq
   have hmul :=
     mul_le_mul_of_nonneg_left hG
-      (by norm_num only [gaussian6FifthsEndpoint, gaussianMRRefinedConductor] :
-        (0 : ℝ) ≤ 7 * gaussian6FifthsEndpoint / (6 * gaussianMRRefinedConductor))
-  have hcne : gaussianMRRefinedConductor ≠ 0 := by norm_num only [gaussianMRRefinedConductor]
+      (by norm_num only [gaussian6FifthsEndpoint, gaussianConductorCoeff] :
+        (0 : ℝ) ≤ 7 * gaussian6FifthsEndpoint / (6 * gaussianConductorCoeff))
+  have hcne : gaussianConductorCoeff ≠ 0 := by norm_num only [gaussianConductorCoeff]
   have hid :
-    (7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianMRRefinedConductor) -
-            (7 * gaussian6FifthsEndpoint * gaussianMRRefinedBeta /
-                (6 * gaussianMRRefinedConductor)) /
+    (7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianConductorCoeff) -
+            (7 * gaussian6FifthsEndpoint * gaussianMRRefinedBeta / (6 * gaussianConductorCoeff)) /
               s +
-          (gaussian6FifthsEndpoint * (4 - 7 * D / (6 * gaussianMRRefinedConductor))) / s ^ 2) *
+          (gaussian6FifthsEndpoint * (4 - 7 * D / (6 * gaussianConductorCoeff))) / s ^ 2) *
         r =
-      (7 * gaussian6FifthsEndpoint / (6 * gaussianMRRefinedConductor)) *
+      (7 * gaussian6FifthsEndpoint / (6 * gaussianConductorCoeff)) *
           (gaussianMRRefinedD * r - gaussianMRRefinedBeta * s - D) +
         4 * gaussian6FifthsEndpoint := by
     rw [hreq]
@@ -236,20 +208,20 @@ theorem gaussianBudget_pole_bound {L r s D : ℝ} (hr : 0 < r) (hreq : r = s ^ 2
       gaussian6FifthsEndpoint * ((7 / 6 : ℝ) * L + 4) := by
     field_simp [hr.ne']
   apply (mul_le_mul_iff_right₀ hr).mp
-  norm_num only [gaussian6FifthsEndpoint, gaussianMRRefinedConductor] at hmul hid hl ⊢
+  norm_num only [gaussian6FifthsEndpoint, gaussianConductorCoeff] at hmul hid hl ⊢
   nlinarith only [hmul, hid, hl]
 
 /-- The coefficient of 1/s after eliminating the pole with the large-index
 budget. The parameter eta is the normalized subgroup-index ratio. -/
 noncomputable def gaussian1000ResidualA (eta : ℝ) : ℝ :=
   eta * (21 * gaussian6FifthsEndpoint / (10 * gaussianMRRefinedWidth)) -
-    7 * gaussian6FifthsEndpoint * gaussianMRRefinedBeta / (6 * gaussianMRRefinedConductor)
+    7 * gaussian6FifthsEndpoint * gaussianMRRefinedBeta / (6 * gaussianConductorCoeff)
 
 /-- The coefficient of 1/s squared after pole elimination with allowance
 163/20. It must be estimated jointly with the inverse-root coefficient. -/
 noncomputable def gaussian1000ResidualV (eta : ℝ) : ℝ :=
   eta * (1839 * gaussian6FifthsEndpoint / 1000) +
-    gaussian6FifthsEndpoint * (4 - 7 * (163 / 20) / (6 * gaussianMRRefinedConductor))
+    gaussian6FifthsEndpoint * (4 - 7 * (163 / 20) / (6 * gaussianConductorCoeff))
 
 /-- The large-index cap ratio satisfies both signed coefficient checks and
 the strict residual bound below 163/20. Verify every constant by rational arithmetic. -/
@@ -260,15 +232,15 @@ theorem gaussian1000_large_checks :
       0 < gaussian1000ResidualA eta * 10 + gaussian1000ResidualV eta ∧
       0 < gaussian1000ResidualA eta * 10 + 2 * gaussian1000ResidualV eta ∧
       (12871 / 1000 : ℝ) - 2 * (7191 / 2000) +
-          7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianMRRefinedConductor) +
+          7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianConductorCoeff) +
           gaussian1000ResidualA eta / 10 +
           gaussian1000ResidualV eta / 100 +
           13 / (gaussian6FifthsIndex - 1) +
           273 / 1000 <
         163 / 20 := by
   norm_num only [gaussian1000ResidualA, gaussian1000ResidualV, gaussianMRRefinedD,
-    gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth,
-    gaussianMRRefinedConductor, gaussian6FifthsIndex, gaussian6FifthsEndpoint, and_self]
+    gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussianConductorCoeff,
+    gaussian6FifthsIndex, gaussian6FifthsEndpoint, and_self]
 
 /-- The index-four ratio satisfies both signed coefficient checks and the
 strict residual bound below 127/10. Keep the pole allowance from the large-index root. -/
@@ -278,15 +250,15 @@ theorem gaussian1000_four_checks :
       0 < gaussian1000ResidualA (4 / 3) * 10 + gaussian1000ResidualV (4 / 3) ∧
       0 < gaussian1000ResidualA (4 / 3) * 10 + 2 * gaussian1000ResidualV (4 / 3) ∧
       (12871 / 1000 : ℝ) - 2 * (7191 / 2000) +
-          7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianMRRefinedConductor) +
+          7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianConductorCoeff) +
           gaussian1000ResidualA (4 / 3) / 10 +
           gaussian1000ResidualV (4 / 3) / 100 +
           13 / 3 +
           273 / 1000 <
         127 / 10 := by
   norm_num only [gaussian1000ResidualA, gaussian1000ResidualV, gaussianMRRefinedD,
-    gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth,
-    gaussianMRRefinedConductor, gaussian6FifthsIndex, gaussian6FifthsEndpoint, and_self]
+    gaussianMRRefinedBeta, gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussianConductorCoeff,
+    gaussian6FifthsIndex, gaussian6FifthsEndpoint, and_self]
 
 /-- For L>=0 and log q<=L, paired inverse-power checks and a strict rational
 anchor imply a strict normalized Gaussian error cap. Retain the signed pole terms
@@ -296,7 +268,7 @@ theorem gaussian1000_error_cap {L eta eps D : ℝ} {q : ℕ} (hL : 0 ≤ L) (hq 
     (h2 : 0 ≤ gaussian1000ResidualA eta * 10 + 2 * gaussian1000ResidualV eta)
     (hstrict :
       (12871 / 1000 : ℝ) - 2 * (7191 / 2000) +
-          7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianMRRefinedConductor) +
+          7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianConductorCoeff) +
           gaussian1000ResidualA eta / 10 +
           gaussian1000ResidualV eta / 100 +
           eps +
@@ -326,19 +298,17 @@ theorem gaussian1000_error_cap {L eta eps D : ℝ} {q : ℕ} (hL : 0 ≤ L) (hq 
     apply (mul_le_mul_iff_right₀ hrpos).mp
     field_simp [hrpos.ne']
     linarith only [hqmul]
-  have htail := gaussian1000_tail hr100
+  have htail := LLS.gaussian_tail_of_radius_ge_100 hr100
   have hinverse := inverse_pair_le_anchor (by norm_num only : (0 : ℝ) < 10) hs0 h1 h2
   have hid :
     eta *
           (21 * gaussian6FifthsEndpoint / (10 * gaussianMRRefinedWidth * s) +
             1839 * gaussian6FifthsEndpoint / (1000 * r)) +
-        (7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianMRRefinedConductor) -
-            (7 * gaussian6FifthsEndpoint * gaussianMRRefinedBeta /
-                (6 * gaussianMRRefinedConductor)) /
+        (7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianConductorCoeff) -
+            (7 * gaussian6FifthsEndpoint * gaussianMRRefinedBeta / (6 * gaussianConductorCoeff)) /
               s +
-          (gaussian6FifthsEndpoint * (4 - 7 * (163 / 20) / (6 * gaussianMRRefinedConductor))) /
-            s ^ 2) =
-      7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianMRRefinedConductor) +
+          (gaussian6FifthsEndpoint * (4 - 7 * (163 / 20) / (6 * gaussianConductorCoeff))) / s ^ 2) =
+      7 * gaussian6FifthsEndpoint * gaussianMRRefinedD / (6 * gaussianConductorCoeff) +
         gaussian1000ResidualA eta / s +
         gaussian1000ResidualV eta / s ^ 2 := by
     rw [hreq]
@@ -407,8 +377,8 @@ theorem gaussian1000_radius_linear {L : ℝ} (hL : 63 ≤ L) :
   have hG := gaussian1000_large_budget (by linarith only [hL] : (0 : ℝ) ≤ L)
   have hp := mul_pos gaussianMRRefined_coefficients.2 (gaussian1000_root_pos L)
   have hD : (0 : ℝ) < 163 / 20 := by norm_num only
-  have hcoef : 0 < gaussianMRRefinedConductor - (5 / 8 : ℝ) * gaussianMRRefinedD := by
-    norm_num only [gaussianMRRefinedConductor, gaussianMRRefinedD, gaussianMRRefinedMass,
+  have hcoef : 0 < gaussianConductorCoeff - (5 / 8 : ℝ) * gaussianMRRefinedD := by
+    norm_num only [gaussianConductorCoeff, gaussianMRRefinedD, gaussianMRRefinedMass,
       gaussian6FifthsEndpoint, gaussian6FifthsIndex]
   have hm := mul_pos hcoef (by linarith only [hL] : (0 : ℝ) < L)
   have hd := gaussianMRRefined_coefficients.1

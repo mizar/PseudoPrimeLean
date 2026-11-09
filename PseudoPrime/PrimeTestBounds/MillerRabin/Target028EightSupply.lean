@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028SevenSupply
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target030SquareLog10
+public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed19Count58
 
 /-! # Eight-prime weighted semiprime witnesses -/
 
@@ -23,28 +23,28 @@ any checked row of the eight-prime table to a semiprime interval. -/
 theorem target028_eight_supply_semiprime {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime)
     (hq : q.Prime) (hpq : p < q) (hprod : n = p * q)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : (83 / 10 : ℝ) ≤ Real.log n)
-    (H : ℕ) (hH : H ≤ 58) (D : ℝ) (hD : D ≤ Real.log (target030SquareRow.getD H 0 : ℝ))
+    (H : ℕ) (hH : H ≤ 58) (D : ℝ) (hD : D ≤ Real.log (primeSeed19Row58.getD H 0 : ℝ))
     (hbudget : (H : ℝ) / 10 ≤ (52915 / 100000 : ℝ) * Real.log n)
     (hmargin : (1 - 52915 / 100000 : ℝ) * Real.log n ≤ D) :
     ∃ r : ℕ,
       r.Prime ∧
         (r : ℝ) ≤ (7 / 25 : ℝ) * (Real.log n) ^ 2 ∧
         ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
-  let S := target030FirstPrimes.toFinset
-  let w := target030FirstWeight
+  let S := primeSeed19Primes.toFinset
+  let w := primeSeed19Weight
   let F := weightedPrimeFamily S w H
   have hprime : ∀ r ∈ S, r.Prime := fun r hr ↦
-    (target030_first_prime_supply r (List.mem_toFinset.mp hr)).1
+    (prime_seed19_prime_supply r (List.mem_toFinset.mp hr)).1
   have hbound : ∀ r ∈ S, r ≤ 19 := fun r hr ↦
-    (target030_first_prime_supply r (List.mem_toFinset.mp hr)).2
+    (prime_seed19_prime_supply r (List.mem_toFinset.mp hr)).2
   have hw : ∀ r ∈ S, Real.log r ≤ (w r : ℝ) / 10 := fun r hr ↦
-    target030_first_weight_bounds r (List.mem_toFinset.mp hr)
-  have hwpos : ∀ r ∈ S, 1 ≤ w r := fun r hr ↦ target030First_labels.2.2 r (List.mem_toFinset.mp hr)
+    prime_seed19_weight_bounds r (List.mem_toFinset.mp hr)
+  have hwpos : ∀ r ∈ S, 1 ≤ w r := fun r hr ↦ primeSeed19_labels.2.2 r (List.mem_toFinset.mp hr)
   have hsub : ∀ T ∈ F, ∀ r ∈ T, r ∈ S := fun T hT ↦
     ((mem_weightedPrimeFamily S w H hwpos T).mp hT).1
   have hcost : ∀ T ∈ F, (T.map w).sum ≤ H := fun T hT ↦
     ((mem_weightedPrimeFamily S w H hwpos T).mp hT).2
-  have hc : F.card = target030SquareRow.getD H 0 := target030Square_family_card H hH
+  have hc : F.card = primeSeed19Row58.getD H 0 := primeSeed19_family58 H hH
   have hDF : D ≤ Real.log (F.card : ℝ) := by
     rw [hc]; exact hD
   have hs : max ((H : ℝ) / 10) (Real.log n - D) ≤ (52915 / 100000 : ℝ) * Real.log n := by

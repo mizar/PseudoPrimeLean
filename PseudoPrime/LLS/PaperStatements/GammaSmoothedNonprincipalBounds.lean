@@ -132,6 +132,6 @@ theorem gammaCharacterSum_re_le_smoothed_at_ramp_scale {q : ℕ} [NeZero q] (hq 
       (11783423 / 25000000 : ℝ) * Real.log χ.conductor + 24 + 64 / 9 + 21 / 10 + 2 := by
   exact
     gamma_primitiveCharacter_sum_re_le_smoothed hq χ hne hGRH hL (ramp_scale_ge_three_sixteenth hL)
-      (Analysis.ramp_scale_sqrt_lower (by linarith only [hL])) hlogq
+      (ramp_scale_sqrt_lower (by linarith only [hL])) hlogq
 
 end PseudoPrime.LLS.PaperStatements

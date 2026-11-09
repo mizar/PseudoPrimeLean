@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaClippedComparison
 public import PseudoPrime.LLS.GammaCheckpoint1000Sharp
 public import PseudoPrime.PrimeTestBounds.MillerRabin.EndpointEvenPolynomial
@@ -22,7 +23,7 @@ reciprocal coefficients before applying log(2 pi)<=1839/1000 and exp(-1/r^2)<=1.
 This is the analytic main input for the sharper all-input Gamma witness theorem. -/
 theorem gammaSharpFourT_lower (hRH : RiemannHypothesis) {r : ℝ} (hr : 1 ≤ r) :
     (86733 / 98800 : ℝ) * r - 10148557 / 11856000 - (5754559 / 494000) / r ≤
-      (4 * (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum (r ^ 2) / r) -
+      (4 * (LLS.exponentialRampMangoldtSum (r ^ 2) / r) -
           (∑' k : ℕ,
               LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) (r ^ 2)
                 k).re) /
@@ -38,17 +39,17 @@ theorem gammaSharpFourT_lower (hRH : RiemannHypothesis) {r : ℝ} (hr : 1 ≤ r)
       42 * (LLS.logShiftRampIncrement (r ^ 2) ((2 / 25) * r ^ 2) + 1 / 200)
   let E : ℝ := LLS.clippedShiftPrincipalErrorNumerator (r ^ 2) ((2 / 25) * r ^ 2)
   let atom : ℝ := Real.log (2 * Real.pi) * Real.exp (-(1 / r ^ 2))
-  let T : ℝ := AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum (r ^ 2) / r
+  let T : ℝ := LLS.exponentialRampMangoldtSum (r ^ 2) / r
   let P : ℝ :=
     (∑' k : ℕ,
         LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) (r ^ 2) k).re
   have hvar := (abs_le.mp (gammaClippedError_variation_bound hRH hx hh hhx)).1
   rw [hs] at hvar
   have hraw := gammaClippedRawError_variation_eq hx
-  have hnorm := AnalyticNumberTheory.Arithmetic.expRampMangoldt_div_sqrt_eq_main_add_error hx0
+  have hnorm := LLS.expRampMangoldt_div_sqrt_eq_main_add_error hx0
   rw [hs] at hnorm
   have hmass : (293 / 320 : ℝ) ≤ ∫ u in (0 : ℝ)..(99 / 40), Analysis.exponentialRampWeight u := by
-    linarith only [Analysis.gamma_ramp_mass_lower]
+    linarith only [LLS.gamma_ramp_mass_lower]
   have hm := mul_le_mul_of_nonneg_right hmass hr0.le
   have hT : (293 / 320 : ℝ) * r - (V + atom) / r ≤ T := by
     dsimp only [T]
@@ -278,7 +279,7 @@ theorem exists_prime_gammaSharp {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Pr
     have hN : (n : ℝ) ≤ 46000 := by
       exact_mod_cast ((lt_of_not_ge h).le.trans (by norm_num only : 20000 ≤ 46000))
     have hl := Real.log_le_log (Nat.cast_pos.mpr (Nat.zero_lt_of_lt hn)) hN
-    linarith only [hl, Analysis.log_46000_lt_eleven, hL]
+    linarith only [hl, LLS.log_46000_lt_eleven, hL]
   have hn9 : n ≠ 9 := by
     intro h
     rw [h] at hQ
@@ -311,9 +312,7 @@ theorem exists_prime_gammaSharp {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Pr
   have hmain := gammaSharpFourT_lower hGRH.riemann hr
   have hactual :
     gammaSignedPrefixMRBudget n n (r ^ 2) 1000 <
-      (4 *
-            (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum (r ^ 2) /
-              Real.sqrt (r ^ 2)) -
+      (4 * (LLS.exponentialRampMangoldtSum (r ^ 2) / Real.sqrt (r ^ 2)) -
           (∑' k : ℕ,
               LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) (r ^ 2)
                 k).re) /

@@ -47,7 +47,7 @@ theorem gamma_paired_scalar_lt_gap {L x C R u : ℝ} (hx : 1 ≤ x) (hroot : Rea
     (Real.log_le_log (mul_pos hx0 (by norm_num only : (0 : ℝ) < 99 / 40))
           (show x * (99 / 40) ≤ (101 / 40 : ℝ) * x by linarith only [hx])).trans
       hlog
-  have hm := mul_le_mul_of_nonneg_right Analysis.gamma_ramp_mass_lower hx0.le
+  have hm := mul_le_mul_of_nonneg_right gamma_ramp_mass_lower hx0.le
   have hd :=
     PaperStatements.rpow_neg_nine_sixteenths_le_div_scale_sqrt (a := 1) (by norm_num only)
       (by

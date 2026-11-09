@@ -52,4 +52,33 @@ theorem baseHistory_mono {P : Type*} (entry coeff : P → ℝ) (B D : ℝ → �
   | nil => exact hBD L
   | cons f fs ih => exact min_le_min (ih L) (max_le_max (ih (entry f)) le_rfl)
 
+/-- Appending earlier profiles retains their history as an upper bound on the full expression.
+Induct through the newer prefix and project its left minima. This transfers recovery caps. -/
+theorem baseHistory_le_append {P : Type*} (entry coeff : P → ℝ) (B : ℝ → ℝ) (xs ys : List P)
+    (L : ℝ) : baseHistory entry coeff B (xs ++ ys) L ≤ baseHistory entry coeff B ys L := by
+  induction xs with
+  | nil => exact le_rfl
+  | cons f xs ih => exact (min_le_left _ _).trans ih
+
+/-- A common base and pointwise profile bounds control the assembled history.
+For a nonnegative input scale `l`, assume `x` is bounded by the base at every later scale
+and by each profile's quadratic value once its entrance is reached. If `l ≤ L`, the
+recurrence bounds `x` at `L`. Induction retains the earlier bound before each entrance
+and transports the quadratic bound afterward. This supports cumulative witness bounds. -/
+theorem baseHistory_bound {P : Type*} (entry coeff : P → ℝ) (B : ℝ → ℝ) (fs : List P) {x l L : ℝ}
+    (hl : 0 ≤ l) (hB : ∀ t, l ≤ t → x ≤ B t)
+    (hP : ∀ f, entry f ≤ l → 0 ≤ coeff f ∧ x ≤ coeff f * l ^ 2) (hscale : l ≤ L) :
+    x ≤ baseHistory entry coeff B fs L := by
+  induction fs generalizing L with
+  | nil => exact hB L hscale
+  | cons f fs ih =>
+    apply le_min (ih hscale)
+    by_cases he : entry f ≤ l
+    · obtain ⟨hc, hx⟩ := hP f he
+      exact
+        hx.trans
+          ((mul_le_mul_of_nonneg_left ((sq_le_sq₀ hl (hl.trans hscale)).mpr hscale) hc).trans
+            (le_max_right _ _))
+    · exact (ih (L := entry f) (le_of_not_ge he)).trans (le_max_left _ _)
+
 end PseudoPrime.PrimeTestBounds.MillerRabin

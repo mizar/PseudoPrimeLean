@@ -61,7 +61,7 @@ theorem twoPoleConstantGap_mul_root_lower {A : ℕ} {C r K : ℝ} (hr : 1 ≤ r)
   have hm :=
     mul_le_mul_of_nonneg_right
       ((by norm_num only : (831 / 1000 : ℝ) ≤ 83125234337 / 100000000000).trans
-        Analysis.gamma_ramp_mass_lower)
+        gamma_ramp_mass_lower)
       (sq_nonneg r)
   have hQ := twoPole_log_max_le_unconditional A
   dsimp only [twoPoleRetainedNumerator, twoPoleConstantGap, signedTwoPoleGap, signedTwoPoleUpper,

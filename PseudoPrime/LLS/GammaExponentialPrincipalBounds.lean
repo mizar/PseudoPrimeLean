@@ -240,13 +240,13 @@ theorem gamma_exponential_error_le_one_fifth_root {L : ℝ} (hL : 46000 ≤ L) :
         (1839 / 1000 : ℝ) * (2 * Real.log ((32 / 99 : ℝ) * L ^ 2) + 3) +
         21 / 10 ≤
       (1 / 5 : ℝ) * Real.sqrt ((32 / 99 : ℝ) * L ^ 2) := by
-  have hx1 := Analysis.ramp_scale_ge_one hL
+  have hx1 := ramp_scale_ge_one hL
   have hx0 : 0 < (32 / 99 : ℝ) * L ^ 2 := zero_lt_one.trans_le hx1
   have hc :=
     Real.log_le_log hx0
       (show (32 / 99 : ℝ) * L ^ 2 ≤ ((32 / 99 : ℝ) * L ^ 2) * (99 / 40) by nlinarith only [hx1])
-  have hl := Analysis.ramp_endpoint_log_upper hL
-  have hs := Analysis.ramp_scale_sqrt_lower (show (0 : ℝ) ≤ L by linarith only [hL])
+  have hl := ramp_endpoint_log_upper hL
+  have hs := ramp_scale_sqrt_lower (show (0 : ℝ) ≤ L by linarith only [hL])
   linarith only [hc, hl, hs, hL]
 
 end PseudoPrime.LLS

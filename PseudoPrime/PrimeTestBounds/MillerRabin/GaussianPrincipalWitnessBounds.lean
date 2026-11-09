@@ -143,28 +143,4 @@ theorem exists_prime_witness_le_gaussian_principal {n : ℕ} (hnOdd : Odd n) (hn
   obtain ⟨H, hi, hHpass⟩ := PrimeTest.exists_index_four_subgroup_strongMR hn1 hnOdd hnComposite hn9
   exact exists_prime_gaussianPrincipal_indexFour_GRH hnOdd H hi hHpass hGRH hL
 
-/-- Under GRH for odd n with log n≥130000000, passage of the canonical strong test
-for every prime base at most (16/25)log(n)² is equivalent to primality.
-The composite direction uses the explicit Gaussian prime witness; the prime
-direction restricts the existing log-squared criterion to the smaller cutoff.
-The same logarithmic threshold applies to both directions. -/
-theorem prime_iff_pass_primes_gaussianPrincipal_GRH {n : ℕ} (hnOdd : Odd n)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hL : 130000000 ≤ Real.log n) :
-    (∀ r : ℕ,
-        r.Prime →
-          (r : ℝ) ≤ (16 / 25 : ℝ) * (Real.log n) ^ 2 →
-          PrimeTest.StrongMillerRabinPass n (r : ZMod n)) ↔
-      n.Prime := by
-  constructor
-  · intro hpass
-    by_contra hComposite
-    obtain ⟨r, hr, hb, hfail⟩ := exists_prime_witness_le_gaussian_principal hnOdd hComposite hGRH hL
-    exact hfail (hpass r hr hb)
-  · intro hp r hr hb
-    have hn1 : 1 < n := hp.one_lt
-    have hcap : (16 / 25 : ℝ) * (Real.log n) ^ 2 ≤ (Real.log n) ^ 2 :=
-      mul_le_of_le_one_left (sq_nonneg _) (by norm_num only)
-    exact
-      (prime_iff_millerRabin_for_all_primes_le_log_sq hGRH hn1 hnOdd).mpr hp r hr (hb.trans hcap)
-
 end PseudoPrime.PrimeTestBounds.MillerRabin

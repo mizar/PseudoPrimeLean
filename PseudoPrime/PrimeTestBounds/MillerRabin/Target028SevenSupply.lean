@@ -30,18 +30,18 @@ theorem target028_seven_supply_semiprime {n p q : ℕ} (hn : 1 < n) (ho : Odd n)
         (r : ℝ) ≤ (7 / 25 : ℝ) * (Real.log n) ^ 2 ∧
         ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
   let S := target028FirstPrimes.toFinset
-  let w := target030FirstWeight
+  let w := primeSeed19Weight
   let F := weightedPrimeFamily S w H
   have hprime : ∀ r ∈ S, r.Prime := fun r hr ↦
-    (target030_first_prime_supply r (List.mem_of_mem_take (List.mem_toFinset.mp hr))).1
+    (prime_seed19_prime_supply r (List.mem_of_mem_take (List.mem_toFinset.mp hr))).1
   have hbound : ∀ r ∈ S, r ≤ 17 := by
     intro r hr
     have hm : r ∈ target028FirstPrimes := List.mem_toFinset.mp hr
-    simp only [target028FirstPrimes, target030FirstPrimes, List.take_succ_cons, List.take_zero,
+    simp only [target028FirstPrimes, primeSeed19Primes, List.take_succ_cons, List.take_zero,
       List.mem_cons, List.not_mem_nil, or_false] at hm
     rcases hm with h | h | h | h | h | h | h <;> subst r <;> decide
   have hw : ∀ r ∈ S, Real.log r ≤ (w r : ℝ) / 10 := fun r hr ↦
-    target030_first_weight_bounds r (List.mem_of_mem_take (List.mem_toFinset.mp hr))
+    prime_seed19_weight_bounds r (List.mem_of_mem_take (List.mem_toFinset.mp hr))
   have hwpos : ∀ r ∈ S, 1 ≤ w r := fun r hr ↦ target028First_labels.2.2 r (List.mem_toFinset.mp hr)
   have hsub : ∀ T ∈ F, ∀ r ∈ T, r ∈ S := fun T hT ↦
     ((mem_weightedPrimeFamily S w H hwpos T).mp hT).1
@@ -190,18 +190,18 @@ theorem exists_prime_reject_028_square_through97 {n p : ℕ} (hn : 1 < n) (ho : 
       ⟨p, hp, (Nat.cast_le.mpr hpSmall).trans hB,
         PrimeTest.strongMillerRabinPass_not_of_prime_dvd hn ho hp hpn⟩
   · let S := target028FirstPrimes.toFinset
-    let w := target030FirstWeight
+    let w := primeSeed19Weight
     let F := weightedPrimeFamily S w 57
     have hprime : ∀ r ∈ S, r.Prime := fun r hr ↦
-      (target030_first_prime_supply r (List.mem_of_mem_take (List.mem_toFinset.mp hr))).1
+      (prime_seed19_prime_supply r (List.mem_of_mem_take (List.mem_toFinset.mp hr))).1
     have hbound : ∀ r ∈ S, r ≤ 17 := by
       intro r hr
       have hm : r ∈ target028FirstPrimes := List.mem_toFinset.mp hr
-      simp only [target028FirstPrimes, target030FirstPrimes, List.take_succ_cons, List.take_zero,
+      simp only [target028FirstPrimes, primeSeed19Primes, List.take_succ_cons, List.take_zero,
         List.mem_cons, List.not_mem_nil, or_false] at hm
       rcases hm with h | h | h | h | h | h | h <;> subst r <;> decide
     have hw : ∀ r ∈ S, Real.log r ≤ (w r : ℝ) / 10 := fun r hr ↦
-      target030_first_weight_bounds r (List.mem_of_mem_take (List.mem_toFinset.mp hr))
+      prime_seed19_weight_bounds r (List.mem_of_mem_take (List.mem_toFinset.mp hr))
     have hwpos : ∀ r ∈ S, 1 ≤ w r := fun r hr ↦
       target028First_labels.2.2 r (List.mem_toFinset.mp hr)
     have hsub : ∀ T ∈ F, ∀ r ∈ T, r ∈ S := fun T hT ↦

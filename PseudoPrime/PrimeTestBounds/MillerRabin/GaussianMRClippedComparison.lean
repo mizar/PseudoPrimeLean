@@ -26,7 +26,7 @@ noncomputable def gaussianFloorSwitch (f : Bool) (N : ℝ) : ℝ :=
   (gaussianMRRefinedD * Real.sqrt ((5 / 6) * N) -
       gaussianMRRefinedBeta * Real.sqrt (Real.sqrt ((5 / 6) * N)) -
       gaussianFloorConstant f) /
-    gaussianMRRefinedConductor
+    gaussianConductorCoeff
 
 /-- For N>=35000, the fourth-root floor sqrt(sqrt(5N/6)) is at least thirteen.
 Square twice using the rational lower bound on N. -/
@@ -50,7 +50,7 @@ theorem gaussianFloor_raw_root_compare {f : Bool} {L N : ℝ} (hL : 0 ≤ L) (hN
   have hy : (13 : ℝ) ≤ y := gaussianFloor_floor_thirteen hN
   have ht : 0 < t := gaussianFloor_raw_pos f L
   have hd := gaussianMRRefined_coefficients.1
-  have hc : 0 < gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
+  have hc : 0 < gaussianConductorCoeff := by norm_num only [gaussianConductorCoeff]
   have hb : gaussianMRRefinedBeta < 13 * gaussianMRRefinedD := by
     norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedMass,
       gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint]
@@ -61,11 +61,11 @@ theorem gaussianFloor_raw_root_compare {f : Bool} {L N : ℝ} (hL : 0 ≤ L) (hN
   have he := gaussianFloor_raw_equation f hL
   change
     gaussianMRRefinedD * t ^ 2 =
-      gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * t + gaussianFloorConstant f at he
+      gaussianConductorCoeff * L + gaussianMRRefinedBeta * t + gaussianFloorConstant f at he
   have hsq : y ^ 2 = Real.sqrt ((5 / 6) * N) := Real.sq_sqrt (Real.sqrt_nonneg _)
   have hid :
     (y - t) * (gaussianMRRefinedD * (y + t) - gaussianMRRefinedBeta) =
-      gaussianMRRefinedConductor * (gaussianFloorSwitch f N - L) := by
+      gaussianConductorCoeff * (gaussianFloorSwitch f N - L) := by
     rw [gaussianFloorSwitch]
     conv_rhs =>
       rw [mul_sub, mul_div_cancel₀ _ hc.ne', ← hsq,
@@ -73,11 +73,11 @@ theorem gaussianFloor_raw_root_compare {f : Bool} {L N : ℝ} (hL : 0 ≤ L) (hN
     change
       (y - t) * (gaussianMRRefinedD * (y + t) - gaussianMRRefinedBeta) =
         gaussianMRRefinedD * y ^ 2 - gaussianMRRefinedBeta * y - gaussianFloorConstant f -
-          gaussianMRRefinedConductor * L
+          gaussianConductorCoeff * L
     nlinarith only [he]
   have hneg :
     (t - y) * (gaussianMRRefinedD * (y + t) - gaussianMRRefinedBeta) =
-      gaussianMRRefinedConductor * (L - gaussianFloorSwitch f N) := by
+      gaussianConductorCoeff * (L - gaussianFloorSwitch f N) := by
     linarith only [hid]
   constructor
   · have hi : (t ≤ y) ↔ 0 ≤ (y - t) * (gaussianMRRefinedD * (y + t) - gaussianMRRefinedBeta) := by
@@ -136,11 +136,11 @@ Strict square-root monotonicity gives the comparison. -/
 theorem gaussianFloor_raw_profiles_lt {L : ℝ} (hL : 0 ≤ L) :
     gaussianFloorRawRoot true L < gaussianFloorRawRoot false L := by
   have hd := gaussianMRRefined_coefficients.1
-  have hc : 0 ≤ gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
+  have hc : 0 ≤ gaussianConductorCoeff := by norm_num only [gaussianConductorCoeff]
   have hdisc :
     0 ≤
       gaussianMRRefinedBeta ^ 2 +
-        4 * gaussianMRRefinedD * (gaussianMRRefinedConductor * L + gaussianFloorConstant true) :=
+        4 * gaussianMRRefinedD * (gaussianConductorCoeff * L + gaussianFloorConstant true) :=
     add_nonneg (sq_nonneg _)
       (mul_nonneg (mul_nonneg (by norm_num only) hd.le)
         (add_nonneg (mul_nonneg hc hL) (gaussianFloor_constant_pos true).le))
@@ -149,10 +149,9 @@ theorem gaussianFloor_raw_profiles_lt {L : ℝ} (hL : 0 ≤ L) :
   have hmul := mul_lt_mul_of_pos_left hconst (mul_pos (by norm_num only : (0 : ℝ) < 4) hd)
   have hrad :
     gaussianMRRefinedBeta ^ 2 +
-        4 * gaussianMRRefinedD * (gaussianMRRefinedConductor * L + gaussianFloorConstant true) <
+        4 * gaussianMRRefinedD * (gaussianConductorCoeff * L + gaussianFloorConstant true) <
       gaussianMRRefinedBeta ^ 2 +
-        4 * gaussianMRRefinedD *
-          (gaussianMRRefinedConductor * L + gaussianFloorConstant false) := by
+        4 * gaussianMRRefinedD * (gaussianConductorCoeff * L + gaussianFloorConstant false) := by
     linarith only [hmul]
   have hs := Real.sqrt_lt_sqrt hdisc hrad
   change
@@ -175,7 +174,7 @@ theorem gaussianFloor_raw_bounds_lt {L : ℝ} (hL : 0 ≤ L) :
 Rational square-root enclosures prove this interval, without sampled crossing values. -/
 theorem gaussianFloor_switch35_bounds :
     (240 : ℝ) < gaussianFloorSwitch false 35000 ∧ gaussianFloorSwitch false 35000 < 242 := by
-  have hc : 0 < gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
+  have hc : 0 < gaussianConductorCoeff := by norm_num only [gaussianConductorCoeff]
   have hRlo : (8539 / 50 : ℝ) ≤ Real.sqrt ((5 / 6 : ℝ) * 35000) :=
     (Real.le_sqrt (by norm_num only) (by norm_num only)).mpr (by norm_num only)
   have hRhi : Real.sqrt ((5 / 6 : ℝ) * 35000) ≤ (17079 / 100 : ℝ) :=
@@ -188,12 +187,12 @@ theorem gaussianFloor_switch35_bounds :
   dsimp only [gaussianFloorSwitch]
   constructor
   · apply (lt_div_iff₀ hc).mpr
-    norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
+    norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianConductorCoeff,
       gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsEndpoint, gaussian6FifthsIndex,
       gaussianFloorConstant, Bool.false_eq_true, ite_false, ite_true] at hRlo hRhi hSlo hShi ⊢
     linarith only [hRlo, hShi]
   · apply (div_lt_iff₀ hc).mpr
-    norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
+    norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianConductorCoeff,
       gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsEndpoint, gaussian6FifthsIndex,
       gaussianFloorConstant, Bool.false_eq_true, ite_false, ite_true] at hRlo hRhi hSlo hShi ⊢
     linarith only [hRhi, hSlo]
@@ -203,7 +202,7 @@ Rational enclosures for the radius and root, together with the two allowed
 residual constants, certify the complete parameter cases. -/
 theorem gaussianFloor_switch50_bounds (f : Bool) :
     (293 : ℝ) < gaussianFloorSwitch f 50000 ∧ gaussianFloorSwitch f 50000 < 294 := by
-  have hc : 0 < gaussianMRRefinedConductor := by norm_num only [gaussianMRRefinedConductor]
+  have hc : 0 < gaussianConductorCoeff := by norm_num only [gaussianConductorCoeff]
   have hDlo : (111 / 20 : ℝ) ≤ gaussianFloorConstant f := by
     cases f <;> norm_num only [gaussianFloorConstant, Bool.false_eq_true, ite_false, ite_true]
   have hDhi : gaussianFloorConstant f ≤ (29 / 5 : ℝ) := by
@@ -221,12 +220,12 @@ theorem gaussianFloor_switch50_bounds (f : Bool) :
   dsimp only [gaussianFloorSwitch]
   constructor
   · apply (lt_div_iff₀ hc).mpr
-    norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
+    norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianConductorCoeff,
       gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsEndpoint,
       gaussian6FifthsIndex] at hRlo hRhi hSlo hShi ⊢
     linarith only [hRlo, hShi, hDhi]
   · apply (div_lt_iff₀ hc).mpr
-    norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
+    norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianConductorCoeff,
       gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsEndpoint,
       gaussian6FifthsIndex] at hRlo hRhi hSlo hShi ⊢
     linarith only [hRhi, hSlo, hDlo]
@@ -242,7 +241,7 @@ theorem gaussianFloor_switch_order :
   · dsimp only [gaussianFloorSwitch]
     apply
       (div_lt_div_iff_of_pos_right
-          (by norm_num only [gaussianMRRefinedConductor] : 0 < gaussianMRRefinedConductor)).mpr
+          (by norm_num only [gaussianConductorCoeff] : 0 < gaussianConductorCoeff)).mpr
     norm_num only [gaussianFloorConstant, Bool.false_eq_true, ite_false, ite_true]
     linarith only
 
@@ -333,11 +332,10 @@ theorem gaussianFloor35_raw_lt_six {L : ℝ} (hL : 240 ≤ L) :
     have hp := mul_nonneg (sub_nonneg.mpr hts) (by linarith only [hs, ht] : (0 : ℝ) ≤ s + t - 13)
     change
       gaussianMRRefinedD * s ^ 2 =
-        gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s +
-          gaussianFloorConstant false at he
+        gaussianConductorCoeff * L + gaussianMRRefinedBeta * s + gaussianFloorConstant false at he
     change
       gaussian6FifthsD * t ^ 2 = gaussian6FifthsConductor * L + gaussian6FifthsBeta * t + 6 at hf
-    norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
+    norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianConductorCoeff,
       gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsD, gaussian6FifthsBeta,
       gaussian6FifthsConductor, gaussian6FifthsIndex, gaussian6FifthsMass, gaussian6FifthsEndpoint,
       gaussianFloorConstant, Bool.false_eq_true, ite_false] at he hf
@@ -363,12 +361,11 @@ theorem gaussianFloor50_raw_lt_refined {L : ℝ} (hL : 300 ≤ L) :
     have hp := mul_nonneg (sub_nonneg.mpr hts) (by linarith only [hs, ht] : (0 : ℝ) ≤ s + t - 13)
     change
       gaussianMRRefinedD * s ^ 2 =
-        gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * s +
-          gaussianFloorConstant true at he
+        gaussianConductorCoeff * L + gaussianMRRefinedBeta * s + gaussianFloorConstant true at he
     change
       gaussianMRRefinedD * t ^ 2 =
-        gaussianMRRefinedConductor * L + gaussianMRRefinedBeta * t + 28 / 5 at hf
-    norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianMRRefinedConductor,
+        gaussianConductorCoeff * L + gaussianMRRefinedBeta * t + 28 / 5 at hf
+    norm_num only [gaussianMRRefinedD, gaussianMRRefinedBeta, gaussianConductorCoeff,
       gaussianMRRefinedMass, gaussianMRRefinedWidth, gaussian6FifthsIndex, gaussian6FifthsEndpoint,
       gaussianFloorConstant, ite_true] at he hf
     nlinarith only [he, hf, hp, hts, hL, hs, ht]

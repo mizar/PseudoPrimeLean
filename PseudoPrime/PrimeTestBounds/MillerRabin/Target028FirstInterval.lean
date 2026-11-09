@@ -7,8 +7,8 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028SquareFirst
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target030ThreeLow
 public import PseudoPrime.NumberTheory.PrimeFactorPairClassification
+public import PseudoPrime.NumberTheory.PrimeFactorLogMean
 
 /-! # First all-input interval for coefficient 0.28 -/
 

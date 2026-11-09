@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.HighVariableCoefficient
 public import PseudoPrime.PrimeTestBounds.MillerRabin.HighCoefficientTriple
-public import PseudoPrime.PrimeTestBounds.MillerRabin.HighCoefficientBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.MixedTwoAdicLogBounds
 
 /-! # Gaussian scale for the variable paired-prime coefficient -/
 

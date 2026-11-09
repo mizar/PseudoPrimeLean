@@ -47,6 +47,7 @@ public import PseudoPrime.NumberTheory.Jacobi.Fast
 public import PseudoPrime.NumberTheory.Jacobi.Basic
 public import PseudoPrime.NumberTheory.Jacobi.Prime
 public import PseudoPrime.NumberTheory.Factorization
+public import PseudoPrime.NumberTheory.OddComposite
 public import PseudoPrime.NumberTheory.Factorization.Basic
 public import PseudoPrime.NumberTheory.Factorization.PrimeLeafPolicy
 public import PseudoPrime.NumberTheory.Factorization.PollardRho.FactorSupply

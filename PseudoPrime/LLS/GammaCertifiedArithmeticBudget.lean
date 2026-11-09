@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.GammaPairedTailConductorBounds
 public import PseudoPrime.AnalyticNumberTheory.Gamma.EvenResolventCertificate
 
@@ -50,8 +51,7 @@ theorem exists_oddPrime_negJacobi_certSquare_GRH {n : ℕ} {hn : Odd n} {hns : �
     (hgap :
       gammaCertifiedArithmeticBudget (Real.log n) b <
         2 *
-              (AnalyticNumberTheory.Arithmetic.exponentialRampMangoldtSum
-                  (Analysis.gammaRefinedScale (Real.log n)) /
+              (exponentialRampMangoldtSum (Analysis.gammaRefinedScale (Real.log n)) /
                 Real.sqrt (Analysis.gammaRefinedScale (Real.log n))) -
             (∑' k : ℕ,
                 PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1)

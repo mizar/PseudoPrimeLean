@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.SmallPointwiseBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.MidscaleIntervalSelection
 public import PseudoPrime.PrimeTestBounds.MillerRabin.EndpointPointwise
 public import PseudoPrime.PrimeTestBounds.MillerRabin.EndpointFixed67
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaSharpEnvelope

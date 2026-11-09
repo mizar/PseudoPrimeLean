@@ -468,12 +468,12 @@ theorem target028Two569_checked :
 /-- The checked low and high grids bound the combined weighted count. -/
 theorem target028Two569_count :
     738183894796975557 ≤
-      weightedPrimeCount id
-        (List.replicate 211 79 ++ (List.replicate 95 70 ++ target030Seed373Weights)) 569 := by
+      weightedPrimeCount id (List.replicate 211 79 ++ (List.replicate 95 70 ++ primeSeed373Weights))
+        569 := by
   have hb :
     ∀ k ≤ 7,
       target028Two569Base.getD k 0 ≤
-        weightedPrimeCount id (List.replicate 95 70 ++ target030Seed373Weights) (16 + k * 79) := by
+        weightedPrimeCount id (List.replicate 95 70 ++ primeSeed373Weights) (16 + k * 79) := by
     intro k hk
     interval_cases k <;> norm_num only [Array.getD, target028Two569Base] at *
     · exact target028TwoLow569Part0_count
@@ -485,7 +485,7 @@ theorem target028Two569_count :
     · exact target028TwoLow569Part6_count
     · exact target028TwoLow569Part7_count
   have h :=
-    weightedGroupRows_lower 79 16 7 211 (List.replicate 95 70 ++ target030Seed373Weights)
+    weightedGroupRows_lower 79 16 7 211 (List.replicate 95 70 ++ primeSeed373Weights)
       target028Two569Base target028Two569Row target028Two569Rows (by decide) (by decide) (by decide)
       hb target028Two569_checked
   exact h

@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.GammaUniformWitnessBounds
-public import PseudoPrime.Analysis.QuadraticGammaDecimalRefinement
+public import PseudoPrime.LLS.QuadraticGammaDecimalRefinement
 
 /-! # A smaller uniform Gamma starting value
 
@@ -30,6 +30,6 @@ theorem log_nat_gt_45731_of_decimal_19861 {n : ℕ} (hn : 10 ^ 19861 ≤ n) :
       (by exact_mod_cast hn : (10 : ℝ) ^ 19861 ≤ n)
   rw [Real.log_pow] at h
   norm_num only [Nat.cast_ofNat] at h
-  linarith only [h, Analysis.log_ten_gt_230258]
+  linarith only [h, log_ten_gt_230258]
 
 end PseudoPrime.LLS

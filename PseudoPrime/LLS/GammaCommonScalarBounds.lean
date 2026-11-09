@@ -57,7 +57,7 @@ theorem common_nonOne_ramp_error_numerator {L : ℝ} (hL : 35000 ≤ L) :
     (135 / 20 : ℝ) * Real.sqrt ((32 / 99 : ℝ) * L ^ 2) +
         86 * ((1839 / 1000 : ℝ) * Real.log (((32 / 99 : ℝ) * L ^ 2) * (99 / 40)) + 21 / 20) ≤
       (693 / 100 : ℝ) * Real.sqrt ((32 / 99 : ℝ) * L ^ 2) := by
-  have hs := Analysis.ramp_scale_sqrt_lower (show (0 : ℝ) ≤ L by linarith only [hL])
+  have hs := ramp_scale_sqrt_lower (show (0 : ℝ) ≤ L by linarith only [hL])
   have hl := common_nonOne_ramp_endpoint_log_upper hL
   linarith only [hs, hl, hL]
 
@@ -80,7 +80,7 @@ theorem common_nonOne_exponential_error {L : ℝ} (hL : 35000 ≤ L) :
     Real.log_le_log (zero_lt_one.trans_le hx1)
       (show (32 / 99 : ℝ) * L ^ 2 ≤ ((32 / 99 : ℝ) * L ^ 2) * (99 / 40) by nlinarith only [hx1])
   have hl := common_nonOne_ramp_endpoint_log_upper hL
-  have hs := Analysis.ramp_scale_sqrt_lower (show (0 : ℝ) ≤ L by linarith only [hL])
+  have hs := ramp_scale_sqrt_lower (show (0 : ℝ) ≤ L by linarith only [hL])
   linarith only [hc, hl, hs, hL]
 
 /-- For L≥35000, the prime-two logarithmic correction is at most 1/100.
@@ -89,7 +89,7 @@ theorem common_nonOne_prime_two_budget {L : ℝ} (hL : 35000 ≤ L) :
     (Real.log ((99 / 40 : ℝ) * ((32 / 99 : ℝ) * L ^ 2)) + Real.log 2) /
         Real.sqrt ((32 / 99 : ℝ) * L ^ 2) ≤
       1 / 100 := by
-  have hs := Analysis.ramp_scale_sqrt_lower (show (0 : ℝ) ≤ L by linarith only [hL])
+  have hs := ramp_scale_sqrt_lower (show (0 : ℝ) ≤ L by linarith only [hL])
   have hs0 : 0 < Real.sqrt ((32 / 99 : ℝ) * L ^ 2) := by linarith only [hs, hL]
   have hl := common_nonOne_ramp_endpoint_log_upper hL
   have h2 := Real.log_le_sub_one_of_pos (by norm_num only : (0 : ℝ) < 2)
