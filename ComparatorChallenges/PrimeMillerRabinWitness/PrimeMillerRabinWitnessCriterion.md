@@ -45,6 +45,7 @@ style: |
   .modulus-one { margin-top: 12px; font-size: 15px; color: #435969; }
   .full-math { margin-top: 15px; font-size: 21px; }
   .decomp-note { margin-top: 14px; font-size: 14px; line-height: 1.3; color: #435969; }
+  .proof-note { font-size: 14px; color: #435969; }
   .foot {
     position: absolute; left: 38px; right: 38px; bottom: 22px;
     padding-top: 10px; border-top: 1px solid #dbe4e8;
@@ -169,9 +170,14 @@ $n-1=2^s d$ and $d$ odd. The theorem shown above uses `Nat.maxPowDvdDiv` instead
 
 </div>
 
+<div class="proof-note">
+
 `ComparatorChallenges.PrimeMillerRabinWitness.prime_millerRabin_log_nine_criterion`
 
-proof from `Target028GlobalBridge.lean`
+The proof uses `prime_millerRabin_log_nine_criterion` in
+[`Target028GlobalBridge.lean`](../../PseudoPrime/PrimeTestBounds/MillerRabin/Target028GlobalBridge.lean).
+
+</div>
 
 </div>
 
@@ -298,11 +304,15 @@ $n-1=2^s d$ and $d$ odd. The theorem shown above uses `Nat.maxPowDvdDiv` instead
 
 </div>
 
+<div class="proof-note">
+
 `ComparatorChallenges.PrimeMillerRabinWitness.prime_millerRabin_028_criterion`
 
 The proof uses `prime_millerRabin_028_criterion` in
 [`Target028GlobalBridge.lean`](../../PseudoPrime/PrimeTestBounds/MillerRabin/Target028GlobalBridge.lean),
 which connects the verified logarithmic-scale witness to the global cutoff.
+
+</div>
 
 </div>
 

@@ -52,6 +52,7 @@ style: |
     font-size: 13px; color: #597080;
   }
   .foot code { font-size: 12px; background: none; padding: 0; color: #597080; }
+  .proof-note { font-size: 14px; color: #435969; }
 ---
 
 <div class="topline"></div>
@@ -159,13 +160,21 @@ $H < (\mathbb Z/q\mathbb Z)^\times$ means that $H$ is a proper subgroup.
 The abbreviated bound uses $B(q)$ defined above.
 
 </div>
+
+<div class="proof-note">
+
+`ComparatorChallenges.LLSWitness.lls_subgroup_witness_bound`
+
+The proof uses `llsTheorem11S1_from_three_of_grh` in
+[`Part1FromThree.lean`](../../PseudoPrime/LLS/Part1FromThree.lean).
+
+</div>
+
 </div>
 
 <div class="foot">
 
 $\omega(q)$ counts distinct prime factors; $[p]_q$ is the unit residue of $p$ because $p\nmid q$.
-
-`ComparatorChallenges.LLSWitness.lls_subgroup_witness_bound`
 
 </div>
 
@@ -272,12 +281,20 @@ $\mathrm{DirChar}_{\mathbb C}(q)$ is the set of complex Dirichlet characters mod
 $\chi \ne 1$ means that $\chi$ is nonprincipal. The character need not be primitive.
 
 </div>
+
+<div class="proof-note">
+
+`ComparatorChallenges.LLSWitness.lls_character_witness_bound`
+
+The proof uses `exists_prime_not_one_le_log_sq_from_five` in
+[`CharacterPart2FromFive.lean`](../../PseudoPrime/LLS/CharacterPart2FromFive.lean).
+
+</div>
+
 </div>
 
 <div class="foot">
 
 $\chi(p)=0$ is allowed; the conclusion does not require $p\nmid q$.
-
-`ComparatorChallenges.LLSWitness.lls_character_witness_bound`
 
 </div>

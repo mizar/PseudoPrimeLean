@@ -51,6 +51,7 @@ style: |
     font-size: 13px; color: #597080;
   }
   .foot code { font-size: 12px; background: none; padding: 0; color: #597080; }
+  .proof-note { font-size: 14px; color: #435969; }
 ---
 
 <div class="topline"></div>
@@ -149,13 +150,21 @@ p \le \max\lbrace 5,(\ln n)^2\rbrace,\\[5pt]
 $$
 
 </div>
+
+<div class="proof-note">
+
+`ComparatorChallenges.PrimeQuadraticWitness.prime_ne_one_witness_bound`
+
+The proof uses `exists_ne_one_witness_of_odd` in
+[`PointwiseWitness.lean`](../../PseudoPrime/PseudoSquare/Bounds/PointwiseWitness.lean).
+
+</div>
+
 </div>
 
 <div class="foot">
 
 $\mathbb P$: primes. $\ln$: natural logarithm. The symbol denotes the Jacobi symbol.
-
-`ComparatorChallenges.PrimeQuadraticWitness.prime_ne_one_witness_bound`
 
 </div>
 
@@ -257,12 +266,20 @@ p \le \left(\ln(4n)+\frac{24}{5}\ln\ln(4n)+2\right)^2,\\[5pt]
 $$
 
 </div>
+
+<div class="proof-note">
+
+`ComparatorChallenges.PrimeQuadraticWitness.prime_neg_one_witness_bound`
+
+The proof uses `exists_neg_one_witness_of_odd` in
+[`RefinedElementaryBounds.lean`](../../PseudoPrime/PseudoSquare/Bounds/RefinedElementaryBounds.lean).
+
+</div>
+
 </div>
 
 <div class="foot">
 
 $\mathbb P$: primes. $\ln$: natural logarithm. The symbol denotes the Jacobi symbol.
-
-`ComparatorChallenges.PrimeQuadraticWitness.prime_neg_one_witness_bound`
 
 </div>
