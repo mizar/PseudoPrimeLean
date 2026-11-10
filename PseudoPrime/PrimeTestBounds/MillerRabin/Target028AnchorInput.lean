@@ -6,8 +6,11 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028AnchorCells
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028Through1133
+import PseudoPrime.NumberTheory.PrimeFactorPairClassification
+
+public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
+public import PseudoPrime.AnalyticNumberTheory.GRH.Definition
+import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterSemiprimeRange200
 
 /-! # Squarefree semiprime input for the refined count -/
 
@@ -16,8 +19,8 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028Through1133
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
 /-- A squarefree odd composite with fewer than four prime factors and not
-exactly three is a distinct semiprime. The refined anchored cells then
-give a 0.28 witness on logarithmic scales from 15.153 through 71.609. -/
+exactly three is a distinct semiprime. Its cumulative quarter-bound witness
+gives a 0.28 witness on logarithmic scales from 15.153 through 71.609. -/
 theorem target028_squarefree_anchor {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
     (hsf : Squarefree n) (h4 : ¬4 ≤ ArithmeticFunction.cardFactors n) (h3 : n.primeFactors.card ≠ 3)
     (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
@@ -46,6 +49,9 @@ theorem target028_squarefree_anchor {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬
   · subst q
     have hndiv := (Nat.squarefree_iff_prime_squarefree.mp hsf) p hp
     exact False.elim (hndiv (by rw [hprod]))
-  · exact target028_semiprime_15153_71609 hn ho hp hq hlt hprod hGRH hL hU
+  · obtain ⟨r, hr, hb, hf⟩ :=
+      quarter_semiprime_8_200 hn ho hp hq hlt hprod hGRH (by linarith only [hL])
+        (by linarith only [hU])
+    exact ⟨r, hr, hb.trans (mul_le_mul_of_nonneg_right (by norm_num only) (sq_nonneg _)), hf⟩
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

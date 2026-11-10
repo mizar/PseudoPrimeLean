@@ -97,7 +97,6 @@ theorem target028_two_weight_bounds (B w : ℕ) (hB : 1009 ≤ B) (hlog : Real.l
 
 -- The finite label check traverses the certified prime block through 5000.
 set_option maxRecDepth 65536 in
-set_option maxHeartbeats 0 in
 -- Duplicate-freeness and mapped weights are checked over the two filtered lists.
 /-- At cutoff 2618 the two groups contain 95 and 211 labels and match the
 positive weights required by the semiprime witness theorem. -/

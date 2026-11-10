@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028Fine53Suffix
+public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028Fine53Supply
 public import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedSemiprimeCount
 
 /-! # Fine weighted prime supply through 59 -/

@@ -16,7 +16,6 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
 -- The finite filtered prime lists require deeper reduction.
 set_option maxRecDepth 65536 in
-set_option maxHeartbeats 0 in
 -- The two label lists are checked against the existing certified prime block.
 /-- At cutoff 3020, the low and high groups contain 109 and 250 labels,
 respectively; the ordered weights match and are positive. -/

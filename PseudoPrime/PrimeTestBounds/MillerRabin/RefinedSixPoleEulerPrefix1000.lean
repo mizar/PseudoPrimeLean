@@ -237,7 +237,6 @@ def refinedEulerPrefixSet : Finset ℕ :=
 }
 
 set_option maxRecDepth 1000000 in
-set_option maxHeartbeats 0 in
 -- Kernel checking evaluates 193 rational certificate rows.
 /-- Every listed prime-power row passes the exact logarithm, power and primality
 checks. Kernel reduction verifies the complete finite certificate. -/
@@ -247,7 +246,6 @@ theorem refined_euler_prefix_check :
   decide +kernel
 
 set_option maxRecDepth 1000000 in
-set_option maxHeartbeats 0 in
 -- Kernel reduction evaluates the 193-term rational sum exactly.
 /-- The checked rational row sum exceeds the paper's normalized threshold.
 Kernel reduction verifies the exact rational comparison. -/

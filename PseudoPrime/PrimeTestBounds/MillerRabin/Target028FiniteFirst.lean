@@ -26,7 +26,6 @@ def target028RowWeight (n : ℕ) : ℚ :=
 
 -- Kernel reduction traverses the filtered 193-row prime-power table.
 set_option maxRecDepth 1000000 in
-set_option maxHeartbeats 0 in
 -- Each index is matched against the 51 checked endpoint rows.
 /-- Every retained prime-power index has a checked endpoint at or above it. -/
 theorem target028_first_row_selection :
@@ -36,7 +35,6 @@ theorem target028_first_row_selection :
 
 -- Kernel reduction evaluates the selected rational prime-power contributions.
 set_option maxRecDepth 1000000 in
-set_option maxHeartbeats 0 in
 -- The sum contains all certified prime-power rows through 252.
 /-- The selected rational lower weights give a principal prefix above 79/20. -/
 theorem target028_first_rows_rational :

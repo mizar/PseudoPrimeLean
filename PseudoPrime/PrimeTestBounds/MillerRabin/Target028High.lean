@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedSixPolePiecewise
+public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedRootComparison
 
 /-! # Three-tenths root refinement on the high logarithmic range -/
 
@@ -31,24 +32,6 @@ theorem target028_root_budget {L K z : ℝ} (hL : 2000 ≤ L) (hK3 : K ≤ 3)
   norm_num only at ⊢
   nlinarith only [hzsq, hzcap, hL, hK3]
 
-/-- A comparison radius at least 20 satisfying the quadratic budget bounds
-the positive paper root. Compare the root equation with the budget and use
-positivity of the factored difference. -/
-theorem target028_root_le {L K z : ℝ} (hL : 0 ≤ L) (hK : 0 ≤ K) (hz : 20 ≤ z)
-    (hbudget :
-      (3 / (8 * (27 / 25 : ℝ) ^ 5)) * L + K + (53 / 500 : ℝ) * z ≤ (24439 / 50000 : ℝ) * z ^ 2) :
-    refinedPaperRoot L K ≤ z := by
-  have he := refined_paper_root_equation hL hK
-  have hp := refined_paper_root_positive L K
-  by_contra hn
-  have hd : 0 < refinedPaperRoot L K - z := sub_pos.mpr (lt_of_not_ge hn)
-  have hm :=
-    mul_pos hd
-      (show 0 < (24439 / 50000 : ℝ) * (refinedPaperRoot L K + z) - 53 / 500 by
-        nlinarith only [hp, hz])
-  norm_num only at he hbudget hm
-  nlinarith only [he, hbudget, hm]
-
 /-- For logarithmic scale at least 2000 and allowance between zero and three,
 the squared paper root is bounded by `5291/10000` times the scale. This
 explicit comparison will bound the high-range fourth-power cutoff. -/
@@ -60,7 +43,7 @@ theorem target028_root_sq_le {L K : ℝ} (hL : 2000 ≤ L) (hK : 0 ≤ K) (hK3 :
   have hzsq : z ^ 2 = (5291 / 10000 : ℝ) * L := Real.sq_sqrt (mul_nonneg (by norm_num only) hL0)
   have hz20 : (20 : ℝ) ≤ z := by nlinarith only [hzsq, hz0, hL]
   have hbudget := target028_root_budget hL hK3 hzsq (target028_sqrt_cap hL)
-  have hs := target028_root_le hL0 hK hz20 hbudget
+  have hs := refined_root_le_of_budget hL0 hK hz20 hbudget
   have hp := refined_paper_root_positive L K
   have hsq := pow_le_pow_left₀ hp.le hs 2
   simpa only [hzsq] using hsq

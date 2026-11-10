@@ -16,7 +16,6 @@ public import PseudoPrime.AnalyticNumberTheory.Arithmetic.WeightedMangoldt
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
 set_option maxRecDepth 1000000 in
-set_option maxHeartbeats 0 in
 -- Kernel reduction checks the finite rational certificate.
 /-- Check a rational interval enclosing the logarithm of 1000. -/
 theorem refined_log_1000_check :
@@ -62,7 +61,6 @@ theorem refined_smooth_row_lower {n : ℕ} {r : RefinedEulerAtom}
     simp only [refinedSmoothLower, ite_eq_right hn, Rat.cast_zero, hz, le_refl]
 
 set_option maxRecDepth 1000000 in
-set_option maxHeartbeats 0 in
 -- Kernel reduction checks the finite rational certificate.
 /-- The rational lower row sum is greater than 24659/25. -/
 theorem refined_smooth_rational_lower :

@@ -16,7 +16,6 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
 -- The rational checks evaluate logarithmic Taylor and power certificates.
 set_option maxRecDepth 1000000 in
-set_option maxHeartbeats 0 in
 -- Reduction checks both turning-point endpoints for this moment.
 /-- The 1th logarithmic moment is at most its Gamma integral plus the two
 certified turning-point bounds. -/
@@ -62,7 +61,6 @@ theorem target028_log_moment_1_bound :
 
 -- The rational checks evaluate logarithmic Taylor and power certificates.
 set_option maxRecDepth 1000000 in
-set_option maxHeartbeats 0 in
 -- Reduction checks both turning-point endpoints for this moment.
 /-- The 2th logarithmic moment is at most its Gamma integral plus the two
 certified turning-point bounds. -/
@@ -109,7 +107,6 @@ theorem target028_log_moment_2_bound :
 
 -- The rational checks evaluate logarithmic Taylor and power certificates.
 set_option maxRecDepth 1000000 in
-set_option maxHeartbeats 0 in
 -- Reduction checks both turning-point endpoints for this moment.
 /-- The 3th logarithmic moment is at most its Gamma integral plus the two
 certified turning-point bounds. -/
@@ -156,7 +153,6 @@ theorem target028_log_moment_3_bound :
 
 -- The rational checks evaluate logarithmic Taylor and power certificates.
 set_option maxRecDepth 1000000 in
-set_option maxHeartbeats 0 in
 -- Reduction checks both turning-point endpoints for this moment.
 /-- The 4th logarithmic moment is at most its Gamma integral plus the two
 certified turning-point bounds. -/
@@ -203,7 +199,6 @@ theorem target028_log_moment_4_bound :
 
 -- The rational checks evaluate logarithmic Taylor and power certificates.
 set_option maxRecDepth 1000000 in
-set_option maxHeartbeats 0 in
 -- Reduction checks both turning-point endpoints for this moment.
 /-- The 5th logarithmic moment is at most its Gamma integral plus the two
 certified turning-point bounds. -/
@@ -250,7 +245,6 @@ theorem target028_log_moment_5_bound :
 
 -- The rational checks evaluate logarithmic Taylor and power certificates.
 set_option maxRecDepth 1000000 in
-set_option maxHeartbeats 0 in
 -- Reduction checks both turning-point endpoints for this moment.
 /-- The 6th logarithmic moment is at most its Gamma integral plus the two
 certified turning-point bounds. -/

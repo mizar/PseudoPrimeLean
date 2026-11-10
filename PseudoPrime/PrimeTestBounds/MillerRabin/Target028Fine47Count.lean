@@ -172,7 +172,6 @@ def target028Fine47Tail : List (Array ℕ) :=
 
 -- Reduction checks the weighted recurrence for fifteen labels and 181 budgets.
 set_option maxRecDepth 65536 in
-set_option maxHeartbeats 0 in
 -- The complete finite table contains sixteen arrays of 181 entries.
 /-- The rational weighted count table satisfies the exact recurrence. -/
 theorem target028_fine47_checked :

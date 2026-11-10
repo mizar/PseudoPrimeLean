@@ -6,7 +6,9 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028Fine53Core
+public import PseudoPrime.AnalyticNumberTheory.GRH.Definition
+public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
+import PseudoPrime.PrimeTestBounds.MillerRabin.Target028Fine53Core
 
 /-! # Semiprime cells from the refined sixteen-prime supply -/
 
@@ -18,8 +20,9 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 set_option maxRecDepth 65536 in
 /-- The refined sixteen-prime count gives a 0.28 semiprime witness on
 the certified logarithmic interval `[13777/1000, 13955/1000]`. -/
-theorem target028_fine53_cell0 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime) (hq : q.Prime)
-    (hpq : p < q) (hprod : n = p * q) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+private theorem target028_fine53_cell0 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime)
+    (hq : q.Prime) (hpq : p < q) (hprod : n = p * q)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : (13777 / 1000 : ℝ) ≤ Real.log n) (hU : Real.log n ≤ 13955 / 1000) :
     ∃ r : ℕ,
       r.Prime ∧
@@ -44,8 +47,9 @@ theorem target028_fine53_cell0 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.P
 set_option maxRecDepth 65536 in
 /-- The refined sixteen-prime count gives a 0.28 semiprime witness on
 the certified logarithmic interval `[13955/1000, 14087/1000]`. -/
-theorem target028_fine53_cell1 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime) (hq : q.Prime)
-    (hpq : p < q) (hprod : n = p * q) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+private theorem target028_fine53_cell1 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime)
+    (hq : q.Prime) (hpq : p < q) (hprod : n = p * q)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : (13955 / 1000 : ℝ) ≤ Real.log n) (hU : Real.log n ≤ 14087 / 1000) :
     ∃ r : ℕ,
       r.Prime ∧
@@ -70,8 +74,9 @@ theorem target028_fine53_cell1 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.P
 set_option maxRecDepth 65536 in
 /-- The refined sixteen-prime count gives a 0.28 semiprime witness on
 the certified logarithmic interval `[14087/1000, 14183/1000]`. -/
-theorem target028_fine53_cell2 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime) (hq : q.Prime)
-    (hpq : p < q) (hprod : n = p * q) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+private theorem target028_fine53_cell2 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime)
+    (hq : q.Prime) (hpq : p < q) (hprod : n = p * q)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : (14087 / 1000 : ℝ) ≤ Real.log n) (hU : Real.log n ≤ 14183 / 1000) :
     ∃ r : ℕ,
       r.Prime ∧
@@ -96,8 +101,9 @@ theorem target028_fine53_cell2 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.P
 set_option maxRecDepth 65536 in
 /-- The refined sixteen-prime count gives a 0.28 semiprime witness on
 the certified logarithmic interval `[14183/1000, 14264/1000]`. -/
-theorem target028_fine53_cell3 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime) (hq : q.Prime)
-    (hpq : p < q) (hprod : n = p * q) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+private theorem target028_fine53_cell3 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime)
+    (hq : q.Prime) (hpq : p < q) (hprod : n = p * q)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : (14183 / 1000 : ℝ) ≤ Real.log n) (hU : Real.log n ≤ 14264 / 1000) :
     ∃ r : ℕ,
       r.Prime ∧
@@ -122,8 +128,9 @@ theorem target028_fine53_cell3 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.P
 set_option maxRecDepth 65536 in
 /-- The refined sixteen-prime count gives a 0.28 semiprime witness on
 the certified logarithmic interval `[14264/1000, 14342/1000]`. -/
-theorem target028_fine53_cell4 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime) (hq : q.Prime)
-    (hpq : p < q) (hprod : n = p * q) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+private theorem target028_fine53_cell4 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime)
+    (hq : q.Prime) (hpq : p < q) (hprod : n = p * q)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : (14264 / 1000 : ℝ) ≤ Real.log n) (hU : Real.log n ≤ 14342 / 1000) :
     ∃ r : ℕ,
       r.Prime ∧
@@ -148,8 +155,9 @@ theorem target028_fine53_cell4 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.P
 set_option maxRecDepth 65536 in
 /-- The refined sixteen-prime count gives a 0.28 semiprime witness on
 the certified logarithmic interval `[14342/1000, 14392/1000]`. -/
-theorem target028_fine53_cell5 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime) (hq : q.Prime)
-    (hpq : p < q) (hprod : n = p * q) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+private theorem target028_fine53_cell5 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime)
+    (hq : q.Prime) (hpq : p < q) (hprod : n = p * q)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : (14342 / 1000 : ℝ) ≤ Real.log n) (hU : Real.log n ≤ 14392 / 1000) :
     ∃ r : ℕ,
       r.Prime ∧
@@ -174,8 +182,9 @@ theorem target028_fine53_cell5 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.P
 set_option maxRecDepth 65536 in
 /-- The refined sixteen-prime count gives a 0.28 semiprime witness on
 the certified logarithmic interval `[14392/1000, 14439/1000]`. -/
-theorem target028_fine53_cell6 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime) (hq : q.Prime)
-    (hpq : p < q) (hprod : n = p * q) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+private theorem target028_fine53_cell6 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime)
+    (hq : q.Prime) (hpq : p < q) (hprod : n = p * q)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : (14392 / 1000 : ℝ) ≤ Real.log n) (hU : Real.log n ≤ 14439 / 1000) :
     ∃ r : ℕ,
       r.Prime ∧
@@ -200,8 +209,9 @@ theorem target028_fine53_cell6 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.P
 set_option maxRecDepth 65536 in
 /-- The refined sixteen-prime count gives a 0.28 semiprime witness on
 the certified logarithmic interval `[14439/1000, 14465/1000]`. -/
-theorem target028_fine53_cell7 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime) (hq : q.Prime)
-    (hpq : p < q) (hprod : n = p * q) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+private theorem target028_fine53_cell7 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime)
+    (hq : q.Prime) (hpq : p < q) (hprod : n = p * q)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : (14439 / 1000 : ℝ) ≤ Real.log n) (hU : Real.log n ≤ 14465 / 1000) :
     ∃ r : ℕ,
       r.Prime ∧
@@ -226,8 +236,9 @@ theorem target028_fine53_cell7 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.P
 set_option maxRecDepth 65536 in
 /-- The refined sixteen-prime count gives a 0.28 semiprime witness on
 the certified logarithmic interval `[14465/1000, 14491/1000]`. -/
-theorem target028_fine53_cell8 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime) (hq : q.Prime)
-    (hpq : p < q) (hprod : n = p * q) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+private theorem target028_fine53_cell8 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime)
+    (hq : q.Prime) (hpq : p < q) (hprod : n = p * q)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : (14465 / 1000 : ℝ) ≤ Real.log n) (hU : Real.log n ≤ 14491 / 1000) :
     ∃ r : ℕ,
       r.Prime ∧
@@ -252,8 +263,9 @@ theorem target028_fine53_cell8 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.P
 set_option maxRecDepth 65536 in
 /-- The refined sixteen-prime count gives a 0.28 semiprime witness on
 the certified logarithmic interval `[14491/1000, 14518/1000]`. -/
-theorem target028_fine53_cell9 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime) (hq : q.Prime)
-    (hpq : p < q) (hprod : n = p * q) (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
+private theorem target028_fine53_cell9 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime)
+    (hq : q.Prime) (hpq : p < q) (hprod : n = p * q)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
     (hL : (14491 / 1000 : ℝ) ≤ Real.log n) (hU : Real.log n ≤ 14518 / 1000) :
     ∃ r : ℕ,
       r.Prime ∧

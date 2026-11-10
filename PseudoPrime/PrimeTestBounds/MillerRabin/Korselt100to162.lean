@@ -15,7 +15,6 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.KorseltFastSearch
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
 set_option maxRecDepth 32768 in
-set_option maxHeartbeats 0 in
 -- The kernel evaluates the reordered bounded enumeration for this range.
 /-- The reordered search has no candidate with smallest factor from 100 to
 161. Early prime and valuation checks keep the certificate compact. -/

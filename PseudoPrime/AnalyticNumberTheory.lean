@@ -37,6 +37,7 @@ public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ExponentialMangoldtBou
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.LogWeightedSummationByParts
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ExponentialLogWeightedSummation
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PowerLogWeightedSummation
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PowerLogMomentAbel
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.CubicLogWeightedSummation
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.CompositeMangoldtSqrtBound
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ExcludedCharacterDefect
@@ -379,6 +380,7 @@ public import PseudoPrime.AnalyticNumberTheory.Arithmetic.QuadraticPositivePrefi
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.CompositePrimePowers
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PsiSecondOrder
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.MangoldtLogSum
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PowerLogMomentLower
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.MangoldtSecondOrder
 public import PseudoPrime.AnalyticNumberTheory.General.MellinTestStripDecay
 public import PseudoPrime.AnalyticNumberTheory.General.HorizontalMellinDecay

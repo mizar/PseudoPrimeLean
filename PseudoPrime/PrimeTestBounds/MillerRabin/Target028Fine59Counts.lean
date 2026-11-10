@@ -6,6 +6,8 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.PrimeTestBounds.MillerRabin.Target028Fine53Suffix
+
 public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028Fine59Supply
 
 /-! # Counts for the extended prime supply -/

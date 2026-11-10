@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028ExtraBlock8
+public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedSixPoleEulerCertificate
 
 /-! # Additional Euler prefix block 9 -/
 
@@ -48,7 +48,6 @@ def target028ExtraSet9 : Finset ℕ :=
 
 -- The finite block reduces at most twenty proposed prime-power certificates.
 set_option maxRecDepth 1000000 in
-set_option maxHeartbeats 0 in
 -- Each logarithm interval uses 24 rational Taylor terms.
 /-- Every additional block 9 row passes the Euler atom checker. -/
 theorem target028_extra_check9 :

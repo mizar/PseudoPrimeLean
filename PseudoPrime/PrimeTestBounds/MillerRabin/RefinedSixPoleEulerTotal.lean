@@ -16,7 +16,6 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedSixPoleEulerSqrtInt
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
 set_option maxRecDepth 1000000 in
-set_option maxHeartbeats 0 in
 -- Kernel reduction checks the rational power intervals.
 /-- Check rational intervals for the three negative powers occurring at 1000. -/
 theorem refined_power_1000_checks :

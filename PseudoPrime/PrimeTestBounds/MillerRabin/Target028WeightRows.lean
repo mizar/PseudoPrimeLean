@@ -68,7 +68,6 @@ def target028WeightRows : List Target028WeightRow :=
 
 -- Kernel evaluation checks the 51 finite rational endpoint certificates.
 set_option maxRecDepth 1000000 in
-set_option maxHeartbeats 0 in
 -- Rational interval checks reduce 51 independent logarithmic Taylor certificates.
 /-- Every first-cutoff endpoint row satisfies its rational certificate. -/
 theorem target028_weight_rows_check : ∀ r ∈ target028WeightRows, r.check = true := by decide +kernel

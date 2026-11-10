@@ -79,8 +79,6 @@ def target028Cell37Rows : List Target028GeneralWeightRow :=
     ⟨2381, 2381, 0, -2, 2, 2838, 48796, 58542634, 1823⟩]
 
 -- Exact reduction checks the finite endpoint certificates.
-set_option maxRecDepth 1000000 in
-set_option maxHeartbeats 0 in
 -- Each row contains a logarithmic and an exponential fixed-point check.
 /-- Every weight endpoint for this cell passes its rational certificate. -/
 theorem target028_cell37_rows_check : ∀ r ∈ target028Cell37Rows, r.check = true := by decide +kernel
@@ -99,8 +97,6 @@ def target028Cell37Weight (n : ℕ) : ℚ :=
   ((target028Cell37RowFor n).weight : ℚ) / 1000000
 
 -- Kernel reduction traverses the existing 193-row prime-power table.
-set_option maxRecDepth 1000000 in
-set_option maxHeartbeats 0 in
 -- Each selected index is matched with the finite table of endpoints.
 /-- Each retained prime power has a checked endpoint and a valid monotone range. -/
 theorem target028_cell37_select :
@@ -112,8 +108,6 @@ theorem target028_cell37_select :
   decide +kernel
 
 -- The selected rational contributions are reduced by the kernel.
-set_option maxRecDepth 1000000 in
-set_option maxHeartbeats 0 in
 -- The prefix uses the previously checked prime-power logarithm data.
 /-- The rational principal prefix exceeds the cell's lower endpoint. -/
 theorem target028_cell37_sum_check :
@@ -122,8 +116,8 @@ theorem target028_cell37_sum_check :
         refinedPsiLower n (target028EulerData2701 n) * target028Cell37Weight n := by
   decide +kernel
 
--- Applying the certified prime-power prefix traverses its finite definition.
-set_option maxRecDepth 1000000 in
+set_option maxRecDepth 2000 in
+-- Applying the certified prime-power prefix exceeds the default recursion depth.
 /-- The actual finite principal sum exceeds the checked rational lower bound. -/
 theorem target028_cell37_principal :
     (62557 / 5000 : ℝ) <

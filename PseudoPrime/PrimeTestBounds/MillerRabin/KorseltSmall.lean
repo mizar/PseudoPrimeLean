@@ -15,7 +15,6 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.KorseltSearch
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
 set_option maxRecDepth 32768 in
-set_option maxHeartbeats 0 in
 -- The kernel evaluates the bounded parameter enumeration in this block.
 /-- The complete bounded parameter search with smallest factor below 20 has
 exactly these four candidates. This checks the integer conditions directly. -/

@@ -6,6 +6,10 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.SignedPrimeProductCounting
+public import PseudoPrime.NumberTheory.SmallSignedResidue
+public import PseudoPrime.NumberTheory.SmallPrimeSubgroup
+
 public import PseudoPrime.NumberTheory.QuadraticCharacterKernel
 public import PseudoPrime.NumberTheory.CharacterUnitKernel
 public import PseudoPrime.NumberTheory.LSeriesConjugation

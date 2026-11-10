@@ -250,7 +250,6 @@ def target028Group551Rows : List (Array ℕ) :=
     #[6, 7139, 1827910, 214781533, 15259174579, 736494273768, 24177398540836, 93032116949709],
     #[6, 7133, 1820771, 212953623, 15044393046, 721235099189, 23440904267068, 68854718408873]]
 
-set_option maxHeartbeats 0 in
 -- The finite chain contains 209 short rows.
 /-- The sampled base and all grouped updates are checked. -/
 theorem target028_group551_checked :

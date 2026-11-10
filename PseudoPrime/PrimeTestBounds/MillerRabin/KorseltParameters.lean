@@ -158,19 +158,10 @@ theorem uniformKorselt_finite_parameters {n p q r : ℕ} (hn : n = p * q * r) (h
   have hrec := korselt_parameter_reconstruct ha hr.one_lt.le heq
   exact ⟨ordered_triple_smallest_le_161 hn hpq hqr hbound, a, ha, hap, hdiv, hrec.1, hrec.2⟩
 
-/-- Every uniform Korselt triple at most `2^22` has ordered prime factors and
-appears in the bounded parameter search. Squarefreeness identifies the input
-with the product of its three distinct prime factors. -/
-theorem uniformKorselt_search_complete {n : ℕ} (hu : UniformKorseltTriple n) (hbound : n ≤ 2 ^ 22) :
-    ∃ p q r a : ℕ,
-      p.Prime ∧
-        q.Prime ∧
-        r.Prime ∧
-        p < q ∧
-        q < r ∧
-        n = p * q * r ∧
-        p ≤ 161 ∧
-        1 ≤ a ∧ a < p ∧ q - 1 ∣ (p - 1) * (p + a) ∧ a ∣ p * q - 1 ∧ r = (p * q - 1) / a + 1 := by
+/-- A uniform Korselt triple is the product of three distinct ordered primes.
+Squarefreeness identifies the product with its set of prime factors. -/
+theorem uniform_korselt_ordered {n : ℕ} (hu : UniformKorseltTriple n) :
+    ∃ p q r : ℕ, p.Prime ∧ q.Prime ∧ r.Prime ∧ p < q ∧ q < r ∧ n = p * q * r := by
   obtain ⟨p, q, r, hpq, hqr, hset⟩ := ordered_three_set n.primeFactors hu.2.1
   have hpMem : p ∈ n.primeFactors := hset ▸ Finset.mem_insert_self p _
   have hqMem : q ∈ n.primeFactors := hset ▸ Finset.mem_insert_of_mem (Finset.mem_insert_self q _)
@@ -187,6 +178,22 @@ theorem uniformKorselt_search_complete {n : ℕ} (hu : UniformKorseltTriple n) (
     have hqr' : q ≠ r := ne_of_lt hqr
     simpa only [Finset.prod_insert, Finset.prod_singleton, Finset.mem_insert, Finset.mem_singleton,
       hpq', hpr', hqr', or_self, not_false_eq_true, mul_assoc] using hprod
+  exact ⟨p, q, r, hp, hq, hr, hpq, hqr, hnprod⟩
+
+/-- Every uniform Korselt triple at most `2^22` has ordered prime factors and
+appears in the bounded parameter search. Squarefreeness identifies the input
+with the product of its three distinct prime factors. -/
+theorem uniformKorselt_search_complete {n : ℕ} (hu : UniformKorseltTriple n) (hbound : n ≤ 2 ^ 22) :
+    ∃ p q r a : ℕ,
+      p.Prime ∧
+        q.Prime ∧
+        r.Prime ∧
+        p < q ∧
+        q < r ∧
+        n = p * q * r ∧
+        p ≤ 161 ∧
+        1 ≤ a ∧ a < p ∧ q - 1 ∣ (p - 1) * (p + a) ∧ a ∣ p * q - 1 ∧ r = (p * q - 1) / a + 1 := by
+  obtain ⟨p, q, r, hp, hq, hr, hpq, hqr, hnprod⟩ := uniform_korselt_ordered hu
   obtain ⟨hpbound, a, ha, hap, hdiv, hadiv, hrform⟩ :=
     uniformKorselt_finite_parameters hnprod hp hq hr hpq hqr hu hbound
   exact ⟨p, q, r, a, hp, hq, hr, hpq, hqr, hnprod, hpbound, ha, hap, hdiv, hadiv, hrform⟩

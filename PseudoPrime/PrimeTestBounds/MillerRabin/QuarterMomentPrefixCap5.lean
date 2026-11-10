@@ -1,0 +1,34 @@
+/-
+Copyright (c) 2026 Mizar. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Mizar
+-/
+
+module
+
+public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterMomentPrefix2701
+
+/-! # Certified finite Mangoldt moment, degree 5 -/
+
+@[expose] public section
+
+namespace PseudoPrime.PrimeTestBounds.MillerRabin
+
+-- The kernel reduces the distinct degree-5 rational prefix over the finite support.
+set_option maxRecDepth 30000 in
+-- Exact rational arithmetic verifies this moment's independent scalar bound.
+/-- The rational degree-5 moment prefix is below its explicit upper endpoint. -/
+theorem quarter_moment_prefix2701_cap5 :
+    (List.zipWith (fun r u ↦ r.hi * (((r.k + 1 : ℕ) : ℚ) * r.hi) ^ 5 * u) (centerRowsBelow 2701)
+          quarterMomentPowers2701).sum ≤
+      (981503921 / 1000000 : ℚ) := by
+  decide +kernel
+
+/-- The actual finite degree-5 Mangoldt moment satisfies the certified bound. -/
+theorem quarter_moment_prefix2701_real5 :
+    (∑ n ∈ Finset.Ioc 0 2701, quarterMangoldtMoment 5 n) ≤ (981503921 / 1000000 : ℝ) := by
+  have h := (Rat.cast_le (K := ℝ)).mpr quarter_moment_prefix2701_cap5
+  simp only [Rat.cast_div, Rat.cast_ofNat] at h
+  exact (quarter_moment_prefix2701_upper 5).trans h
+
+end PseudoPrime.PrimeTestBounds.MillerRabin

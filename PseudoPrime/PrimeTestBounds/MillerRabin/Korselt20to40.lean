@@ -15,7 +15,6 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.KorseltSearch
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
 set_option maxRecDepth 32768 in
-set_option maxHeartbeats 0 in
 -- The kernel evaluates the bounded parameters in this factor range.
 /-- There are no candidates whose smallest factor is between 20 and 39.
 The finite checker evaluates all admissible quotient and divisor parameters. -/

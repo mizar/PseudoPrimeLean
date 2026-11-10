@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028FiniteCell
+public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028FinitePair252
 
 /-! # Monotonicity of the finite-cutoff principal weight -/
 

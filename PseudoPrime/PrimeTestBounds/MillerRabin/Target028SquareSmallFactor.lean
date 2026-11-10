@@ -7,6 +7,10 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.SquareSeed89Stage414
+import PseudoPrime.PrimeTestBounds.MillerRabin.SquareSeed43Stage197
+import PseudoPrime.PrimeTestBounds.MillerRabin.SquareSeed89Stage197
+import PseudoPrime.PrimeTestBounds.MillerRabin.SquareSeed89Stage282
+import PseudoPrime.PrimeTestBounds.MillerRabin.SquareSeed89Stage358
 
 /-! # Bounded square factors for coefficient 0.28 -/
 

@@ -6,7 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028EightSupply
+public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028SevenSupply
+public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed19Count58
 
 /-! # Nine-prime weighted count certificates -/
 

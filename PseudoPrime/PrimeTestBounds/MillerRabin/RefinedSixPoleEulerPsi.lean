@@ -35,7 +35,6 @@ theorem refined_psi_row_lower {n : ℕ} {r : RefinedEulerAtom}
     simp only [refinedPsiLower, ite_eq_right hn, Rat.cast_zero, hz, le_refl]
 
 set_option maxRecDepth 1000000 in
-set_option maxHeartbeats 0 in
 -- Kernel reduction checks the finite rational sum.
 /-- The rational lower row sum is greater than 24917/25. -/
 theorem refined_psi_rational_lower :

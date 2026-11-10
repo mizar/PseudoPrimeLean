@@ -83,7 +83,6 @@ def target028TwoLow585Part3Rows : List (Array ℕ) :=
     #[235, 72562, 8887609, 625098511], #[235, 72327, 8815047, 616210902],
     #[235, 72092, 8742720, 607395855]]
 
-set_option maxHeartbeats 0 in
 -- The finite chain checks 109 short rows.
 /-- The base and low-group recurrence rows pass their checks. -/
 theorem target028TwoLow585Part3_checked :

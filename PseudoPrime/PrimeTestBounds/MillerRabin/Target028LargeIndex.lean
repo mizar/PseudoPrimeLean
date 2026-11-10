@@ -18,8 +18,8 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 /-- The rational bounds for logarithm, roots, and index imply the strict
 triangular joint gap on the scale beginning at 106. This algebraic certificate
 is independent of the construction of those bounds. -/
-theorem triangular_gap_028_scalar (L z r y ri yi I : ℝ) (hL : 106 ≤ L) (hz1 : 8 ≤ z) (hz2 : z ≤ 14)
-    (hr1 : (52915 / 100000 : ℝ) * L ≤ r) (hr2 : r ≤ (53 / 100 : ℝ) * L)
+private theorem triangular_gap_028_scalar (L z r y ri yi I : ℝ) (hL : 106 ≤ L) (hz1 : 8 ≤ z)
+    (hz2 : z ≤ 14) (hr1 : (52915 / 100000 : ℝ) * L ≤ r) (hr2 : r ≤ (53 / 100 : ℝ) * L)
     (hy : y ≤ (71 / 1000 : ℝ) * L) (hy0 : 0 ≤ y) (hri : ri ≤ 1) (hyi : yi ≤ 1) (hI : 50000000 ≤ I) :
     300000000 * (r + ri) + 1300000 * (y + yi) + 602600000 + (I - 1) * ((72 - z) * L) <
       I * ((220 - 4 * z) * r - (1064 / 5 - (19 / 5 : ℝ) * z) * y - 855) := by
@@ -40,7 +40,7 @@ theorem triangular_gap_028_scalar (L z r y ri yi I : ℝ) (hL : 106 ≤ L) (hz1 
 /-- The 0.28 quadratic cutoff is at least 16 at scale 106. Its square root
 lies between two rational multiples of the scale and its fourth root is at
 most `71L/1000`; square comparison supplies the numerical gap bounds. -/
-theorem triangular_028_roots {L : ℝ} (hL : 106 ≤ L) :
+private theorem triangular_028_roots {L : ℝ} (hL : 106 ≤ L) :
     let x := (7 / 25 : ℝ) * L ^ 2
     16 ≤ x ∧
       (52915 / 100000 : ℝ) * L ≤ Real.sqrt x ∧
@@ -78,7 +78,7 @@ theorem triangular_028_roots {L : ℝ} (hL : 106 ≤ L) :
 /-- Between scales 106 and 2000, the logarithm of the quadratic cutoff lies
 between 8 and 14, and the cutoff lies inside the triangular support. Exact
 rational logarithm certificates and monotonicity give both endpoints. -/
-theorem triangular_028_logs {L : ℝ} (hL : 106 ≤ L) (hU : L ≤ 2000) :
+private theorem triangular_028_logs {L : ℝ} (hL : 106 ≤ L) (hU : L ≤ 2000) :
     let x := (7 / 25 : ℝ) * L ^ 2
     8 ≤ Real.log x ∧ Real.log x ≤ 14 ∧ x ≤ Real.exp 36 := by
   let x := (7 / 25 : ℝ) * L ^ 2

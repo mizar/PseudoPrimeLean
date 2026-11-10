@@ -6,8 +6,9 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.SquareSeed89Stage358
+public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed89Count358
 public import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeCountExtend
+public import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedCountWitness
 
 /-! # Weighted square-divisor supply and factor bounds -/
 

@@ -15,7 +15,6 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.KorseltSearch
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
 set_option maxRecDepth 32768 in
-set_option maxHeartbeats 0 in
 -- The kernel evaluates the bounded parameters in this factor range.
 /-- No candidate has smallest factor between 50 and 59. -/
 theorem korselt_candidates_50to60 : korseltCandidateRange 50 10 = [] := by decide +kernel

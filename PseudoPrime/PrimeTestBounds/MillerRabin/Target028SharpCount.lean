@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028NineSupply
+public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028NineCount
 
 /-! # Nine-prime count with a sharper weight for 17 -/
 

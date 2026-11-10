@@ -102,6 +102,7 @@ public import PseudoPrime.LLS.PaperStatements.MellinKernelCompactZeroMass
 public import PseudoPrime.LLS.PaperStatements.MellinKernelAmbientZeroMass
 public import PseudoPrime.LLS.PaperStatements.MellinKernelCharacterBounds
 public import PseudoPrime.LLS.RiemannChebyshevBounds
+public import PseudoPrime.LLS.ChebyshevQuarterError
 public import PseudoPrime.LLS.RiemannWeightedErrorBounds
 public import PseudoPrime.LLS.GammaSmoothedPrincipalBounds
 public import PseudoPrime.LLS.GammaSeedPairedNumerics

@@ -20,7 +20,6 @@ def target028EulerPrefix252 : Finset ℕ :=
   refinedEulerPrefixSet.filter (fun n ↦ n ≤ 252)
 
 set_option maxRecDepth 1000000 in
-set_option maxHeartbeats 0 in
 -- Kernel reduction evaluates the exact rational prefix of the existing certificate.
 /-- The rational Euler prefix through 252 exceeds the normalized lower bound
 `39/25`. Each row is taken from the previously checked prime-power table. -/

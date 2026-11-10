@@ -14,12 +14,13 @@ public import PseudoPrime.Analysis.LogTaylorBounds
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
-/-- Logarithmic scale at most 15 implies an input bound of `2^22`. A rational
-lower bound for the logarithm of that power makes the comparison explicit. -/
-theorem le_pow22_of_log_le_15 {n : ℕ} (hn : 1 < n) (hU : Real.log n ≤ (15 : ℝ)) : n ≤ 2 ^ 22 := by
+/-- Logarithmic scale at most `15.2` still lies below `2^22`. The stronger
+rational logarithm certificate extends the complete finite classification. -/
+theorem le_pow22_of_log_le_152 {n : ℕ} (hn : 1 < n) (hU : Real.log n ≤ (76 / 5 : ℝ)) :
+    n ≤ 2 ^ 22 := by
   have hcert :=
     (Analysis.rationalLogIntervalCheck_sound
-        (show Analysis.rationalLogIntervalCheck 4194304 23 32 (151 / 10) 16 = true from by
+        (show Analysis.rationalLogIntervalCheck 4194304 23 32 (76 / 5) 16 = true from by
           decide +kernel)).1
   norm_num only [Rat.cast_ofNat, Rat.cast_div] at hcert
   have hlog : Real.log (n : ℝ) ≤ Real.log (4194304 : ℝ) := by linarith only [hU, hcert]

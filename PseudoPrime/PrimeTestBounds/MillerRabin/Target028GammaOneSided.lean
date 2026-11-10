@@ -14,20 +14,21 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028GammaConvolution
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
-/-- A real kernel phase with nonnegative total mass and first-pole resolvent
-has a small one-sided even-Gamma integral. The baseline cancels the first-pole
-constant; the remaining nonnegative tail is controlled by the second moment.
-The integrability and sign hypotheses are supplied by inverse Mellin inversion. -/
-theorem target028_gamma_one_sided_of_phase (P : ℝ → ℝ) (hP : MeasureTheory.Integrable P)
+/-- The one-sided Gamma estimate retains the first-pole resolvent integral.
+The baseline has nonpositive mass, while the remaining digamma tail is
+controlled by the second moment. -/
+theorem quarter_gamma_phase_with_pole (P : ℝ → ℝ) (hP : MeasureTheory.Integrable P)
     (hR : MeasureTheory.Integrable (fun t ↦ P t / (1 / 4 + t ^ 2)))
     (hG :
       MeasureTheory.Integrable
         (fun t ↦
           ((Complex.digamma ((1 / 4 : ℂ) + Complex.I * (t / 2 : ℝ))).re - Real.log Real.pi) * P t))
-    (hPint : 0 ≤ ∫ t : ℝ, P t) (hRint : 0 ≤ ∫ t : ℝ, P t / (1 / 4 + t ^ 2))
+    (hPint : 0 ≤ ∫ t : ℝ, P t)
     (hPk : ∀ t : ℝ, P t ≤ ‖refinedSixPoleKernel.function (Complex.I * t)‖) :
-    (∫ t : ℝ,
-          ((Complex.digamma ((1 / 4 : ℂ) + Complex.I * (t / 2 : ℝ))).re - Real.log Real.pi) * P t) /
+    ((∫ t : ℝ,
+            ((Complex.digamma ((1 / 4 : ℂ) + Complex.I * (t / 2 : ℝ))).re - Real.log Real.pi) *
+              P t) +
+          ∫ t : ℝ, P t / (1 / 4 + t ^ 2)) /
         (2 * Real.pi) ≤
       (13 / 1000 : ℝ) * (27 / 25 : ℝ) ^ 2 := by
   let B : ℝ := (Complex.digamma ((1 / 4 : ℝ) : ℂ)).re - Real.log Real.pi
@@ -43,7 +44,8 @@ theorem target028_gamma_one_sided_of_phase (P : ℝ → ℝ) (hP : MeasureTheory
         (Complex.digamma ((1 / 4 : ℝ) : ℂ)).re -
         (4 - 1 / (1 / 4 + t ^ 2))
     have hd0 : 0 ≤ d := by
-      dsimp only [d]; linarith only [target028_gamma_vertical_lower t]
+      dsimp only [d]
+      linarith only [target028_gamma_vertical_lower t]
     have hd : d ≤ (26 / 125 : ℝ) * t ^ 2 := by
       dsimp only [d]
       linarith only [target028_gamma_vertical_upper t]
@@ -51,7 +53,8 @@ theorem target028_gamma_one_sided_of_phase (P : ℝ → ℝ) (hP : MeasureTheory
     have hn :=
       mul_le_mul_of_nonneg_right hd (norm_nonneg (refinedSixPoleKernel.function (Complex.I * t)))
     have he : E t = d * P t := by
-      dsimp only [E, d, B]; ring
+      dsimp only [E, d, B]
+      ring
     rw [he]
     nlinarith only [hm, hn]
   have hmain := target028_gamma_tail_integral_bound E hEi hbound
@@ -73,10 +76,33 @@ theorem target028_gamma_one_sided_of_phase (P : ℝ → ℝ) (hP : MeasureTheory
     rw [hadd, hsub, MeasureTheory.integral_const_mul]
   have hle :
     (∫ t : ℝ,
-        ((Complex.digamma ((1 / 4 : ℂ) + Complex.I * (t / 2 : ℝ))).re - Real.log Real.pi) * P t) ≤
+          ((Complex.digamma ((1 / 4 : ℂ) + Complex.I * (t / 2 : ℝ))).re - Real.log Real.pi) * P t) +
+        (∫ t : ℝ, P t / (1 / 4 + t ^ 2)) ≤
       ∫ t : ℝ, E t := by
-    linarith only [heint, hneg, hRint]
+    linarith only [heint, hneg]
   exact (div_le_div_of_nonneg_right hle (mul_nonneg (by norm_num only) Real.pi_pos.le)).trans hmain
+
+/-- A real kernel phase with nonnegative total mass and first-pole resolvent
+has a small one-sided even-Gamma integral. The baseline cancels the first-pole
+constant; the remaining nonnegative tail is controlled by the second moment.
+The integrability and sign hypotheses are supplied by inverse Mellin inversion. -/
+theorem target028_gamma_one_sided_of_phase (P : ℝ → ℝ) (hP : MeasureTheory.Integrable P)
+    (hR : MeasureTheory.Integrable (fun t ↦ P t / (1 / 4 + t ^ 2)))
+    (hG :
+      MeasureTheory.Integrable
+        (fun t ↦
+          ((Complex.digamma ((1 / 4 : ℂ) + Complex.I * (t / 2 : ℝ))).re - Real.log Real.pi) * P t))
+    (hPint : 0 ≤ ∫ t : ℝ, P t) (hRint : 0 ≤ ∫ t : ℝ, P t / (1 / 4 + t ^ 2))
+    (hPk : ∀ t : ℝ, P t ≤ ‖refinedSixPoleKernel.function (Complex.I * t)‖) :
+    (∫ t : ℝ,
+          ((Complex.digamma ((1 / 4 : ℂ) + Complex.I * (t / 2 : ℝ))).re - Real.log Real.pi) * P t) /
+        (2 * Real.pi) ≤
+      (13 / 1000 : ℝ) * (27 / 25 : ℝ) ^ 2 := by
+  have h := quarter_gamma_phase_with_pole P hP hR hG hPint hPk
+  have hp : 0 ≤ (∫ t : ℝ, P t / (1 / 4 + t ^ 2)) / (2 * Real.pi) :=
+    div_nonneg hRint (mul_nonneg (by norm_num only) Real.pi_pos.le)
+  rw [add_div] at h
+  linarith only [h, hp]
 
 /-- The real oscillatory phase of the sixth-pole kernel at logarithmic scale
 `y`. Its integral is the nonnegative inverse-Mellin profile. -/
@@ -151,10 +177,14 @@ theorem target028_gamma_phase_mass_nonneg (y : ℝ) : 0 ≤ ∫ t : ℝ, target0
   rw [hr]
   exact target028_kernel_fourier_nonneg y
 
-/-- The first-pole resolvent integral of the actual real phase is nonnegative.
-The complex statement follows from the positive Laplace convolution. -/
-theorem target028_gamma_resolvent_mass_nonneg (y : ℝ) :
-    0 ≤ ∫ t : ℝ, target028GammaPhase y t / (1 / 4 + t ^ 2) := by
+/-- The first-pole integral of the real phase equals the real part of the
+complex resolvent integral. The bounded resolvent gives integrability, so
+the continuous real-part map commutes with integration. -/
+theorem quarter_phase_resolvent_eq (y : ℝ) :
+    (∫ t : ℝ, target028GammaPhase y t / (1 / 4 + t ^ 2)) =
+      (∫ t : ℝ,
+          (refinedSixPoleKernel.function (Complex.I * t) * Complex.exp (Complex.I * (t : ℂ) * y)) *
+            ((1 / (1 / 4 + t ^ 2) : ℝ) : ℂ)).re := by
   have hden (t : ℝ) : 0 < 1 / 4 + t ^ 2 := by nlinarith only [sq_nonneg t]
   have hc : Continuous (fun t : ℝ ↦ (((1 / 4 + t ^ 2)⁻¹ : ℝ) : ℂ)) :=
     Complex.continuous_ofReal.comp
@@ -184,19 +214,24 @@ theorem target028_gamma_resolvent_mass_nonneg (y : ℝ) :
     simp only [target028GammaPhase, Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, mul_zero,
       sub_zero, div_eq_mul_inv]
   rw [he, hr]
-  change
-    0 ≤
-      (∫ t : ℝ,
-          refinedSixPoleKernel.function (Complex.I * t) * Complex.exp (Complex.I * (t : ℂ) * y) *
-            (((1 / 4 + t ^ 2)⁻¹ : ℝ) : ℂ)).re
+  simp only [one_div]
+  rfl
+
+/-- The first-pole resolvent integral of the actual real phase is nonnegative.
+The complex statement follows from the positive Laplace convolution. -/
+theorem target028_gamma_resolvent_mass_nonneg (y : ℝ) :
+    0 ≤ ∫ t : ℝ, target028GammaPhase y t / (1 / 4 + t ^ 2) := by
+  rw [quarter_phase_resolvent_eq]
   simpa only [one_div] using target028_first_pole_kernel_nonneg y
 
-/-- The paired even central Gamma integral has the sharp uniform one-sided
-bound `13(27/25)^2/1000`. Inverse Mellin inversion supplies the two positive
-phase integrals, and the second moment controls the remaining digamma tail. -/
-theorem target028_central_gamma_pair_le {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+/-- The even central Gamma integral and its normalized first-pole phase
+integral satisfy the one-sided second-moment bound. This retains the pole
+contribution for sharper bounds on a specified scale range. -/
+theorem quarter_gamma_central_with_pole {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
     (he : χ.Even) {x : ℝ} (hx : 0 < x) :
-    (refinedCentralGammaPair χ x).re ≤ (13 / 1000 : ℝ) * (27 / 25 : ℝ) ^ 2 := by
+    (refinedCentralGammaPair χ x).re +
+        (∫ t : ℝ, target028GammaPhase (Real.log x) t / (1 / 4 + t ^ 2)) / (2 * Real.pi) ≤
+      (13 / 1000 : ℝ) * (27 / 25 : ℝ) ^ 2 := by
   let P := target028GammaPhase (Real.log x)
   let F : ℝ → ℂ := fun t ↦
     refinedReflectedGammaIntegrand χ⁻¹ x ((0 : ℂ) + t * Complex.I) +
@@ -241,9 +276,8 @@ theorem target028_central_gamma_pair_le {q : ℕ} [NeZero q] (χ : DirichletChar
         Complex.ofReal_im, zero_mul, mul_zero, sub_zero, one_mul, zero_add]
     simpa only [hre, Real.exp_zero, mul_one] using h
   have hb :=
-    target028_gamma_one_sided_of_phase P (target028_gamma_phase_integrable _).2.1
-      (target028_gamma_resolvent_integrable _) hG (target028_gamma_phase_mass_nonneg _)
-      (target028_gamma_resolvent_mass_nonneg _) hPk
+    quarter_gamma_phase_with_pole P (target028_gamma_phase_integrable _).2.1
+      (target028_gamma_resolvent_integrable _) hG (target028_gamma_phase_mass_nonneg _) hPk
   have hr := Complex.reCLM.integral_comp_comm hFi
   change (∫ t : ℝ, (F t).re) = (∫ t : ℝ, F t).re at hr
   have hint :
@@ -261,8 +295,20 @@ theorem target028_central_gamma_pair_le {q : ℕ} [NeZero q] (χ : DirichletChar
     simp only [Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, zero_mul, sub_zero]
     rw [← hr, hint]
     ring
-  rw [hpair]
+  rw [add_div, ← hpair] at hb
   exact hb
+
+/-- The paired even central Gamma integral has the sharp uniform one-sided
+bound `13(27/25)^2/1000`. Inverse Mellin inversion supplies the two positive
+phase integrals, and the second moment controls the remaining digamma tail. -/
+theorem target028_central_gamma_pair_le {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q)
+    (he : χ.Even) {x : ℝ} (hx : 0 < x) :
+    (refinedCentralGammaPair χ x).re ≤ (13 / 1000 : ℝ) * (27 / 25 : ℝ) ^ 2 := by
+  have h := quarter_gamma_central_with_pole χ he hx
+  have hp : 0 ≤ (∫ t : ℝ, target028GammaPhase (Real.log x) t / (1 / 4 + t ^ 2)) / (2 * Real.pi) :=
+    div_nonneg (target028_gamma_resolvent_mass_nonneg (Real.log x))
+      (mul_nonneg (by norm_num only) Real.pi_pos.le)
+  linarith only [h, hp]
 
 /-- Three common even Gamma terms fit the explicit scaled budget `21/50`.
 The stronger bound from the second moment is compared by rational arithmetic. -/

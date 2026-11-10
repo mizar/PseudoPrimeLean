@@ -6,6 +6,8 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.NumberTheory.PrimeFactorPairClassification
+
 public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028TwoFinalCells
 public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028Through1133
 

@@ -513,7 +513,6 @@ def target028Two597Rows : List (Array ℕ) :=
     #[38, 51393, 20732616, 4431886200, 616511448974, 61559940547316, 4630533369387944,
       266281880209015000]]
 
-set_option maxHeartbeats 0 in
 -- The finite chain checks 238 short rows.
 /-- Every high-group row satisfies the unit-weight update. -/
 theorem target028Two597_checked :

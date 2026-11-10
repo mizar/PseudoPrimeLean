@@ -6,6 +6,11 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.LogPowerTailIntegral
+public import PseudoPrime.Analysis.LogPowerIntervalIntegral
+public import PseudoPrime.Analysis.ExponentialFourierProduct
+public import PseudoPrime.Analysis.ExponentialMomentTail
+
 public import PseudoPrime.Analysis.ClippedLogRatio
 
 public import PseudoPrime.Analysis.SqrtReciprocalSlope

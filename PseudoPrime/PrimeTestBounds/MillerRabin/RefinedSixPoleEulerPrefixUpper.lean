@@ -84,7 +84,6 @@ theorem refined_euler_upper_atom_sound {n : ℕ} {r : RefinedEulerAtom}
     simp only [refinedEulerAtomUpper, ite_eq_right hn, Rat.cast_zero, hz, zero_mul, le_refl]
 
 set_option maxRecDepth 1000000 in
-set_option maxHeartbeats 0 in
 -- Kernel reduction checks the finite rational certificate.
 /-- The 193 stored rows pass their upper negative-power checks. -/
 theorem refined_euler_upper_check :
@@ -93,14 +92,12 @@ theorem refined_euler_upper_check :
   decide +kernel
 
 set_option maxRecDepth 1000000 in
-set_option maxHeartbeats 0 in
 -- Kernel reduction checks the finite rational certificate.
 /-- All prime powers at most 1000 occur in the stored prefix. -/
 theorem refined_euler_prefix_support :
     ∀ n ∈ Finset.Ioc 0 1000, IsPrimePow n → n ∈ refinedEulerPrefixSet := by decide +kernel
 
 set_option maxRecDepth 1000000 in
-set_option maxHeartbeats 0 in
 -- Kernel reduction checks the finite rational certificate.
 /-- The rational upper row sum is strictly below 13107/5000. -/
 theorem refined_euler_prefix_rational_upper :
@@ -109,7 +106,6 @@ theorem refined_euler_prefix_rational_upper :
   decide +kernel
 
 set_option maxRecDepth 1000000 in
-set_option maxHeartbeats 0 in
 -- Kernel reduction checks the finite rational certificate.
 /-- All stored prefix indices lie in the interval from one to 1000. -/
 theorem refined_euler_prefix_subset : refinedEulerPrefixSet ⊆ Finset.Ioc 0 1000 := by decide +kernel
