@@ -8,6 +8,7 @@ module
 
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.NumberTheory.LSeries.DirichletContinuation
+public import Mathlib.NumberTheory.LSeries.Nonvanishing
 
 /-! # LLS subgroup and character witness challenges
 
@@ -38,6 +39,42 @@ def DirichletRiemannHypothesis {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ
 Riemann hypothesis. This is the explicit assumption in both witness propositions. -/
 def GeneralizedRiemannHypothesis : Prop :=
   ∀ (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q), χ.IsPrimitive → DirichletRiemannHypothesis χ
+
+/-- The Dirichlet Riemann hypothesis for the trivial character modulo one is equivalent to
+the Riemann hypothesis for the Riemann zeta function. Identify the character's L-function and
+trivial zeros with those of zeta, and use the nonvanishing convention at one. This equivalence
+connects the challenge's GRH formulation to the ordinary Riemann hypothesis. -/
+theorem dirichletRiemannHypothesis_one_iff :
+    DirichletRiemannHypothesis (1 : DirichletCharacter ℂ 1) ↔ RiemannHypothesis := by
+  classical
+  have htriv (s : ℂ) :
+    s ∈ (Int.cast : ℤ → ℂ) '' dirichletTrivialZeros (1 : DirichletCharacter ℂ 1) ↔
+      ∃ n : ℕ, s = -2 * ((n : ℂ) + 1) := by
+    simp only [Set.mem_image]
+    constructor
+    · rintro ⟨_, ⟨n, rfl⟩, rfl⟩
+      refine ⟨n, ?_⟩
+      push_cast
+      ring
+    · rintro ⟨n, rfl⟩
+      refine ⟨-2 * ((n : ℤ) + 1), ⟨n, rfl⟩, ?_⟩
+      push_cast
+      ring
+  simp only [DirichletRiemannHypothesis, DirichletCharacter.LFunction_modOne_eq, htriv]
+  constructor
+  · intro h s hs ht _
+    exact h s hs ht
+  · intro h s hs ht
+    exact h s hs ht (fun he => riemannZeta_one_ne_zero (he ▸ hs))
+
+/-- The challenge's generalized Riemann hypothesis implies the Riemann hypothesis. Apply GRH
+to the primitive trivial character modulo one and use the modulus-one equivalence. This provides
+the ordinary hypothesis to results that need only the Riemann zeta function. -/
+theorem GeneralizedRiemannHypothesis.riemann (h : GeneralizedRiemannHypothesis) :
+    RiemannHypothesis := by
+  have hDirichlet : DirichletRiemannHypothesis 1 :=
+    h 1 1 DirichletCharacter.isPrimitive_one_level_one
+  exact dirichletRiemannHypothesis_one_iff.mp hDirichlet
 
 /-- The logarithmic weight of the distinct prime factors of a natural number. This finite sum
 appears in the original LLS auxiliary term and is fixed as part of the challenge statement. -/

@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import Mathlib.NumberTheory.LSeries.DirichletContinuation
+public import Mathlib.NumberTheory.LSeries.Nonvanishing
 public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 
 /-! # GRH-conditional prime quadratic witness challenges
@@ -38,6 +39,35 @@ def DirichletRiemannHypothesis {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ
 Riemann hypothesis. This is the explicit assumption in both witness propositions. -/
 def GeneralizedRiemannHypothesis : Prop :=
   ∀ (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q), χ.IsPrimitive → DirichletRiemannHypothesis χ
+
+theorem dirichletRiemannHypothesis_one_iff :
+    DirichletRiemannHypothesis (1 : DirichletCharacter ℂ 1) ↔ RiemannHypothesis := by
+  classical
+  have htriv (s : ℂ) :
+    s ∈ (Int.cast : ℤ → ℂ) '' dirichletTrivialZeros (1 : DirichletCharacter ℂ 1) ↔
+      ∃ n : ℕ, s = -2 * ((n : ℂ) + 1) := by
+    simp only [Set.mem_image]
+    constructor
+    · rintro ⟨_, ⟨n, rfl⟩, rfl⟩
+      refine ⟨n, ?_⟩
+      push_cast
+      ring
+    · rintro ⟨n, rfl⟩
+      refine ⟨-2 * ((n : ℤ) + 1), ⟨n, rfl⟩, ?_⟩
+      push_cast
+      ring
+  simp only [DirichletRiemannHypothesis, DirichletCharacter.LFunction_modOne_eq, htriv]
+  constructor
+  · intro h s hs ht _
+    exact h s hs ht
+  · intro h s hs ht
+    exact h s hs ht (fun he => riemannZeta_one_ne_zero (he ▸ hs))
+
+theorem GeneralizedRiemannHypothesis.riemann (h : GeneralizedRiemannHypothesis) :
+    RiemannHypothesis := by
+  have hDirichlet : DirichletRiemannHypothesis 1 :=
+    h 1 1 DirichletCharacter.isPrimitive_one_level_one
+  exact dirichletRiemannHypothesis_one_iff.mp hDirichlet
 
 /-- Under GRH, every positive odd nonsquare has an odd-prime Jacobi witness different from one,
 bounded by the maximum of five and the squared logarithm. This states the first challenge. -/
