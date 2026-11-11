@@ -4,7 +4,7 @@ theme: default
 size: 16:9
 math: mathjax
 paginate: false
-title: "Miller–Rabin under GRH: the base-nine logarithm criterion"
+title: "Miller–Rabin under GRH: base-nine and 3/11 criteria"
 description: "Abbreviated and fully expanded forms of the prime-base Miller–Rabin criterion."
 style: |
   section {
@@ -165,8 +165,8 @@ $$
 
 <div class="decomp-note">
 
-The separate Prop `PrimeMillerRabinWitnessCriterion` quantifies over every $s,d$ with
-$n-1=2^s d$ and $d$ odd. The theorem shown above uses `Nat.maxPowDvdDiv` instead.
+The theorem uses `Nat.maxPowDvdDiv` to choose the canonical decomposition
+$n-1=2^s d$ with $d$ odd.
 
 </div>
 
@@ -175,7 +175,7 @@ $n-1=2^s d$ and $d$ odd. The theorem shown above uses `Nat.maxPowDvdDiv` instead
 `ComparatorChallenges.PrimeMillerRabinWitness.prime_millerRabin_log_nine_criterion`
 
 The proof uses `prime_millerRabin_log_nine_criterion` in
-[`Target028GlobalBridge.lean`](../../PseudoPrime/PrimeTestBounds/MillerRabin/Target028GlobalBridge.lean).
+[`LogNineBridge.lean`](../../PseudoPrime/PrimeTestBounds/MillerRabin/LogNineBridge.lean).
 
 </div>
 
@@ -193,7 +193,7 @@ $\mathbb P$: primes. $\ln$: natural logarithm. The odd-part decomposition unique
 <div class="heading">
 <div class="eyebrow">PSEUDOPRIME · PRIME-BASE PRIMALITY CRITERION</div>
 
-# Miller–Rabin under GRH: $p\le\max\left(2,\,\frac{7}{25}(\ln n)^2\right)$
+# Miller–Rabin under GRH: $p\le\max\left(2, \frac{3}{11}(\ln n)^2\right)$
 
 <div class="subtitle">Comparator solution using the library proof</div>
 </div>
@@ -210,7 +210,7 @@ Assume GRH; let $n > 1$ be an odd integer.
 
 $$
 \boxed{
-\text{every prime }p \le \max\left(2,\,\frac{7}{25}(\ln n)^2\right)\text{ passes the strong Miller–Rabin conditions for }n \iff n\text{ is prime}.
+\text{every prime }p \le \max\left(2, \frac{3}{11}(\ln n)^2\right)\text{ passes the strong Miller–Rabin conditions for }n \iff n\text{ is prime}.
 }
 $$
 
@@ -280,7 +280,7 @@ $$
 \left[
 \begin{gathered}
 \left(\forall p\in\mathbb P,\quad
-p \le \max\left(2,\,\frac{7}{25}(\ln n)^2\right) \Longrightarrow\right.\\[4pt]
+p \le \max\left(2, \frac{3}{11}(\ln n)^2\right) \Longrightarrow\right.\\[4pt]
 \left.\left(
 \begin{gathered}
 p^d\equiv1\pmod n\\[2pt]
@@ -299,18 +299,18 @@ $$
 
 <div class="decomp-note">
 
-The separate Prop `PrimeMillerRabinWitnessCriterion` quantifies over every $s,d$ with
-$n-1=2^s d$ and $d$ odd. The theorem shown above uses `Nat.maxPowDvdDiv` instead.
+The theorem uses `Nat.maxPowDvdDiv` to choose the canonical decomposition
+$n-1=2^s d$ with $d$ odd.
 
 </div>
 
 <div class="proof-note">
 
-`ComparatorChallenges.PrimeMillerRabinWitness.prime_millerRabin_028_criterion`
+`ComparatorChallenges.PrimeMillerRabinWitness.prime_millerRabin_027_criterion`
 
-The proof uses `prime_millerRabin_028_criterion` in
-[`Target028GlobalBridge.lean`](../../PseudoPrime/PrimeTestBounds/MillerRabin/Target028GlobalBridge.lean),
-which connects the verified logarithmic-scale witness to the global cutoff.
+The proof uses `prime_millerRabin_027_criterion` in
+[`ThreeEleventhsBridge.lean`](../../PseudoPrime/PrimeTestBounds/MillerRabin/ThreeEleventhsBridge.lean),
+which derives the criterion from the least rejecting-prime bound.
 
 </div>
 
