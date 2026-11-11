@@ -67,6 +67,13 @@ most `T`, weighted by analytic multiplicity. The height endpoint is closed. -/
 noncomputable def positiveZeroCount (T : ℝ) : ℝ :=
   ∑ ρ ∈ (zerosUpTo T).filter (fun ρ ↦ 0 < ρ.im), (riemannZetaZeroMultiplicity ρ : ℝ)
 
+/-- Equal closed-height zero ledgers have equal positive-height counts,
+including their analytic multiplicities. -/
+theorem positiveZeroCount_eq_of_zerosUpTo_eq {t u : ℝ} (h : zerosUpTo t = zerosUpTo u) :
+    positiveZeroCount t = positiveZeroCount u := by
+  unfold positiveZeroCount
+  rw [h]
+
 /-- Under RH, the two-sided zero count equals twice the positive-height
 count. The low-zero exclusion removes real zeros, and conjugation pairs the
 two signs while preserving multiplicities. -/

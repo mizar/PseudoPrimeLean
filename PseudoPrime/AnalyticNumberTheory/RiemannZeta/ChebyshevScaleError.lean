@@ -8,6 +8,7 @@ module
 
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevScale43
 import PseudoPrime.Analysis.NumericalLogBounds
+import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCountErrorNumerics
 
 /-! # Chebyshev error after bounding the scaled zero terms -/
 
@@ -70,23 +71,21 @@ theorem scale43_identities {L : ℝ} (hL : 43 ≤ L) :
     ring
   exact ⟨hδ, hu, hw, hwid, hT, hlog1, hlog2⟩
 
-/-- Under RH and the stated Rosser-type zero-count hypothesis, bound the
-Chebyshev error using linear estimates for the low- and high-zero factors.
-The width is `xδ`, with `0 ≤ δ ≤ 1/2`, and the cutoff is at least 1000. -/
-theorem psi_error_scaled (hRH : RiemannHypothesis) {x h T δ : ℝ} (hx0 : 0 < x) (hh : 0 < h)
-    (hx : 1 < x - h) (hT : 1000 ≤ T) (hδ : 0 ≤ δ) (hδ2 : δ ≤ 1 / 2) (hwidth : h = x * δ)
-    (hQ :
-      ∀ t ∈ Set.Ici (2 * Real.pi * Real.exp 1),
-        |positiveZeroCount t -
-              (t / (2 * Real.pi) * Real.log (t / (2 * Real.pi)) - t / (2 * Real.pi) + 7 / 8)| ≤
-          (137 / 1000 : ℝ) * Real.log t + (443 / 1000 : ℝ) * Real.log (Real.log t) + 397 / 250 +
-            1 / (5 * t)) :
+/-- Replacing the raw square-root and three-halves powers by their linear
+scale bounds preserves the explicit Chebyshev error estimate. -/
+private theorem psi_error_scaled_raw {x h T δ : ℝ} (hx0 : 0 < x) (hh : 0 < h) (hT : 1000 ≤ T)
+    (hδ : 0 ≤ δ) (hδ2 : δ ≤ 1 / 2) (hwidth : h = x * δ)
+    (hb :
+      |Chebyshev.psi x - x| ≤
+        h / 2 + Real.log (2 * Real.pi) +
+          Real.sqrt (x + h) * ((Real.log (T / (2 * Real.pi))) ^ 2 / (2 * Real.pi) + 1) +
+          ((x + h) ^ (3 / 2 : ℝ) + x ^ (3 / 2 : ℝ)) / h * (Real.log T / (Real.pi * T)) +
+          1 / h) :
     |Chebyshev.psi x - x| ≤
       h / 2 + Real.log (2 * Real.pi) +
         (Real.sqrt x * (1 + δ / 2)) * ((Real.log (T / (2 * Real.pi))) ^ 2 / (2 * Real.pi) + 1) +
         (x ^ (3 / 2 : ℝ) * (1 + 2 * δ) + x ^ (3 / 2 : ℝ)) / h * (Real.log T / (Real.pi * T)) +
         1 / h := by
-  have hb := psi_error_of_rosser hRH hT hh hx hQ
   have hp := scale_power_bounds hx0 hδ hδ2
   rw [← hwidth] at hp
   have ht0 : 0 ≤ T := by linarith only [hT]
@@ -105,17 +104,78 @@ theorem psi_error_scaled (hRH : RiemannHypothesis) {x h T δ : ℝ} (hx0 : 0 < x
   have hhigh := mul_le_mul_of_nonneg_right hhdiv hf
   linarith only [hb, hl, hhigh]
 
-/-- Under RH and the stated zero-count hypothesis, normalize the Chebyshev
-error by `sqrt x` when the width is `xδ` and the cutoff is `2/δ`. The
-inverse-width factor is retained until the cutoff is substituted. -/
-theorem psi_error_normalized (hRH : RiemannHypothesis) {x h δ : ℝ} (hx0 : 0 < x) (hh : 0 < h)
-    (hx : 1 < x - h) (hT : 1000 ≤ 2 / δ) (hδ : 0 < δ) (hδ2 : δ ≤ 1 / 2) (hwidth : h = x * δ)
+/-- Under RH, a `log t` zero-count error up to `T` and the stated ordinate
+tail bound give the scaled Chebyshev error estimate. The count and tail
+hypotheses are separate, allowing a finite zero-count range. -/
+theorem psi_error_scaled_tail (hRH : RiemannHypothesis) {x h T δ : ℝ} (hx0 : 0 < x) (hh : 0 < h)
+    (hx : 1 < x - h) (hT : 1000 ≤ T) (hδ : 0 ≤ δ) (hδ2 : δ ≤ 1 / 2) (hwidth : h = x * δ)
+    (hQ :
+      ∀ t ∈ Set.Icc (2 * Real.pi * Real.exp 1) T,
+        |positiveZeroCount t -
+              (t / (2 * Real.pi) * Real.log (t / (2 * Real.pi)) - t / (2 * Real.pi) + 7 / 8)| ≤
+          Real.log t)
+    (hTail : ordinateTail T ≤ Real.log T / (Real.pi * T)) :
+    |Chebyshev.psi x - x| ≤
+      h / 2 + Real.log (2 * Real.pi) +
+        (Real.sqrt x * (1 + δ / 2)) * ((Real.log (T / (2 * Real.pi))) ^ 2 / (2 * Real.pi) + 1) +
+        (x ^ (3 / 2 : ℝ) * (1 + 2 * δ) + x ^ (3 / 2 : ℝ)) / h * (Real.log T / (Real.pi * T)) +
+        1 / h := by
+  have hbase : 2 * Real.pi * Real.exp 1 ≤ T := by
+    have hp :=
+      mul_le_mul Real.pi_lt_four.le Real.exp_one_lt_three.le (Real.exp_pos 1).le
+        (by norm_num only : (0 : ℝ) ≤ 4)
+    nlinarith only [hp, hT]
+  exact
+    psi_error_scaled_raw hx0 hh hT hδ hδ2 hwidth (psi_error_of_coarse_tail hRH hbase hh hx hQ hTail)
+
+/-- Under RH and a positive-height zero-count error bounded by `log t`,
+bound the Chebyshev error with the displayed linear estimates. The width is
+`xδ`, with `0 ≤ δ ≤ 1/2`, and the cutoff is at least 1000. -/
+theorem psi_error_scaled_coarse (hRH : RiemannHypothesis) {x h T δ : ℝ} (hx0 : 0 < x) (hh : 0 < h)
+    (hx : 1 < x - h) (hT : 1000 ≤ T) (hδ : 0 ≤ δ) (hδ2 : δ ≤ 1 / 2) (hwidth : h = x * δ)
+    (hQ :
+      ∀ t ∈ Set.Ici (2 * Real.pi * Real.exp 1),
+        |positiveZeroCount t -
+              (t / (2 * Real.pi) * Real.log (t / (2 * Real.pi)) - t / (2 * Real.pi) + 7 / 8)| ≤
+          Real.log t) :
+    |Chebyshev.psi x - x| ≤
+      h / 2 + Real.log (2 * Real.pi) +
+        (Real.sqrt x * (1 + δ / 2)) * ((Real.log (T / (2 * Real.pi))) ^ 2 / (2 * Real.pi) + 1) +
+        (x ^ (3 / 2 : ℝ) * (1 + 2 * δ) + x ^ (3 / 2 : ℝ)) / h * (Real.log T / (Real.pi * T)) +
+        1 / h := by
+  exact psi_error_scaled_raw hx0 hh hT hδ hδ2 hwidth (psi_error_of_coarse hRH hT hh hx hQ)
+
+/-- Under RH and the stated Rosser-type zero-count hypothesis, bound the
+Chebyshev error using linear estimates for the low- and high-zero factors.
+The width is `xδ`, with `0 ≤ δ ≤ 1/2`, and the cutoff is at least 1000. -/
+theorem psi_error_scaled (hRH : RiemannHypothesis) {x h T δ : ℝ} (hx0 : 0 < x) (hh : 0 < h)
+    (hx : 1 < x - h) (hT : 1000 ≤ T) (hδ : 0 ≤ δ) (hδ2 : δ ≤ 1 / 2) (hwidth : h = x * δ)
     (hQ :
       ∀ t ∈ Set.Ici (2 * Real.pi * Real.exp 1),
         |positiveZeroCount t -
               (t / (2 * Real.pi) * Real.log (t / (2 * Real.pi)) - t / (2 * Real.pi) + 7 / 8)| ≤
           (137 / 1000 : ℝ) * Real.log t + (443 / 1000 : ℝ) * Real.log (Real.log t) + 397 / 250 +
             1 / (5 * t)) :
+    |Chebyshev.psi x - x| ≤
+      h / 2 + Real.log (2 * Real.pi) +
+        (Real.sqrt x * (1 + δ / 2)) * ((Real.log (T / (2 * Real.pi))) ^ 2 / (2 * Real.pi) + 1) +
+        (x ^ (3 / 2 : ℝ) * (1 + 2 * δ) + x ^ (3 / 2 : ℝ)) / h * (Real.log T / (Real.pi * T)) +
+        1 / h := by
+  apply psi_error_scaled_coarse hRH hx0 hh hx hT hδ hδ2 hwidth
+  intro t ht
+  exact (hQ t ht).trans (rosser_error_le_log ht)
+
+/-- Normalize a scaled Chebyshev error bound at cutoff `2 / δ`. The width
+is `xδ`, and the positivity assumptions justify all divisions. -/
+private theorem psi_error_normalized_raw {x h δ : ℝ} (hx0 : 0 < x) (hδ : 0 < δ) (hwidth : h = x * δ)
+    (hb :
+      |Chebyshev.psi x - x| ≤
+        h / 2 + Real.log (2 * Real.pi) +
+          (Real.sqrt x * (1 + δ / 2)) *
+            ((Real.log ((2 / δ) / (2 * Real.pi))) ^ 2 / (2 * Real.pi) + 1) +
+          (x ^ (3 / 2 : ℝ) * (1 + 2 * δ) + x ^ (3 / 2 : ℝ)) / h *
+            (Real.log (2 / δ) / (Real.pi * (2 / δ))) +
+          1 / h) :
     |Chebyshev.psi x - x| / Real.sqrt x ≤
       h / (2 * Real.sqrt x) + Real.log (2 * Real.pi) / Real.sqrt x +
         (1 + δ / 2) * ((Real.log ((2 / δ) / (2 * Real.pi))) ^ 2 / (2 * Real.pi) + 1) +
@@ -127,7 +187,6 @@ theorem psi_error_normalized (hRH : RiemannHypothesis) {x h δ : ℝ} (hx0 : 0 <
     convert hr using 1
     · norm_num only
     · rw [Real.rpow_one, Real.sqrt_eq_rpow]
-  have hb := psi_error_scaled hRH hx0 hh hx hT hδ.le hδ2 hwidth hQ
   have hhdiv := div_le_div_of_nonneg_right hb hs.le
   have heq :
     (h / 2 + Real.log (2 * Real.pi) +
@@ -150,6 +209,65 @@ theorem psi_error_normalized (hRH : RiemannHypothesis) {x h δ : ℝ} (hx0 : 0 <
     ring
   rw [heq] at hhdiv
   exact hhdiv
+
+/-- Under RH, the stated zero-count estimate only through the selected
+cutoff and an inverse-square ordinate-tail bound imply the normalized
+Chebyshev error estimate. Both analytic inputs remain explicit. -/
+theorem psi_error_normalized_tail (hRH : RiemannHypothesis) {x h δ : ℝ} (hx0 : 0 < x) (hh : 0 < h)
+    (hx : 1 < x - h) (hT : 1000 ≤ 2 / δ) (hδ : 0 < δ) (hδ2 : δ ≤ 1 / 2) (hwidth : h = x * δ)
+    (hQ :
+      ∀ t ∈ Set.Icc (2 * Real.pi * Real.exp 1) (2 / δ),
+        |positiveZeroCount t -
+              (t / (2 * Real.pi) * Real.log (t / (2 * Real.pi)) - t / (2 * Real.pi) + 7 / 8)| ≤
+          Real.log t)
+    (hTail : ordinateTail (2 / δ) ≤ Real.log (2 / δ) / (Real.pi * (2 / δ))) :
+    |Chebyshev.psi x - x| / Real.sqrt x ≤
+      h / (2 * Real.sqrt x) + Real.log (2 * Real.pi) / Real.sqrt x +
+        (1 + δ / 2) * ((Real.log ((2 / δ) / (2 * Real.pi))) ^ 2 / (2 * Real.pi) + 1) +
+        (1 + δ) * Real.log (2 / δ) / Real.pi +
+        1 / (h * Real.sqrt x) := by
+  exact
+    psi_error_normalized_raw hx0 hδ hwidth
+      (psi_error_scaled_tail hRH hx0 hh hx hT hδ.le hδ2 hwidth hQ hTail)
+
+/-- Under RH and a positive-height zero-count error bounded by `log t`,
+normalize the Chebyshev error by `sqrt x` for width `xδ` and cutoff `2/δ`.
+The coarse zero-count estimate remains an explicit hypothesis. -/
+theorem psi_error_normalized_coarse (hRH : RiemannHypothesis) {x h δ : ℝ} (hx0 : 0 < x) (hh : 0 < h)
+    (hx : 1 < x - h) (hT : 1000 ≤ 2 / δ) (hδ : 0 < δ) (hδ2 : δ ≤ 1 / 2) (hwidth : h = x * δ)
+    (hQ :
+      ∀ t ∈ Set.Ici (2 * Real.pi * Real.exp 1),
+        |positiveZeroCount t -
+              (t / (2 * Real.pi) * Real.log (t / (2 * Real.pi)) - t / (2 * Real.pi) + 7 / 8)| ≤
+          Real.log t) :
+    |Chebyshev.psi x - x| / Real.sqrt x ≤
+      h / (2 * Real.sqrt x) + Real.log (2 * Real.pi) / Real.sqrt x +
+        (1 + δ / 2) * ((Real.log ((2 / δ) / (2 * Real.pi))) ^ 2 / (2 * Real.pi) + 1) +
+        (1 + δ) * Real.log (2 / δ) / Real.pi +
+        1 / (h * Real.sqrt x) := by
+  exact
+    psi_error_normalized_raw hx0 hδ hwidth
+      (psi_error_scaled_coarse hRH hx0 hh hx hT hδ.le hδ2 hwidth hQ)
+
+/-- Under RH and the stated zero-count hypothesis, normalize the Chebyshev
+error by `sqrt x` when the width is `xδ` and the cutoff is `2/δ`. The
+inverse-width factor is retained until the cutoff is substituted. -/
+theorem psi_error_normalized (hRH : RiemannHypothesis) {x h δ : ℝ} (hx0 : 0 < x) (hh : 0 < h)
+    (hx : 1 < x - h) (hT : 1000 ≤ 2 / δ) (hδ : 0 < δ) (hδ2 : δ ≤ 1 / 2) (hwidth : h = x * δ)
+    (hQ :
+      ∀ t ∈ Set.Ici (2 * Real.pi * Real.exp 1),
+        |positiveZeroCount t -
+              (t / (2 * Real.pi) * Real.log (t / (2 * Real.pi)) - t / (2 * Real.pi) + 7 / 8)| ≤
+          (137 / 1000 : ℝ) * Real.log t + (443 / 1000 : ℝ) * Real.log (Real.log t) + 397 / 250 +
+            1 / (5 * t)) :
+    |Chebyshev.psi x - x| / Real.sqrt x ≤
+      h / (2 * Real.sqrt x) + Real.log (2 * Real.pi) / Real.sqrt x +
+        (1 + δ / 2) * ((Real.log ((2 / δ) / (2 * Real.pi))) ^ 2 / (2 * Real.pi) + 1) +
+        (1 + δ) * Real.log (2 / δ) / Real.pi +
+        1 / (h * Real.sqrt x) := by
+  apply psi_error_normalized_coarse hRH hx0 hh hx hT hδ hδ2 hwidth
+  intro t ht
+  exact (hQ t ht).trans (rosser_error_le_log ht)
 
 /-- Under RH and the stated Rosser-type zero-count bound, the normalized
 Chebyshev error satisfies the explicit logarithmic-scale estimate for
