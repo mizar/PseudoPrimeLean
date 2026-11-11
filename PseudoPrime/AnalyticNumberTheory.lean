@@ -296,6 +296,11 @@ public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.FarLeftLogDeriv
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.LeftVerticalLogDeriv
 public import PseudoPrime.AnalyticNumberTheory.General.VerticalGeometry
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.LeftVerticalNonvanishing
+public import PseudoPrime.AnalyticNumberTheory.Gamma.EndpointLimits
+public import PseudoPrime.AnalyticNumberTheory.Gamma.StirlingCell
+public import PseudoPrime.AnalyticNumberTheory.Gamma.EulerLogPartial
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.EulerLog
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.FunctionalEquation
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.GoodHeight
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.BasicBounds
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.Growth
