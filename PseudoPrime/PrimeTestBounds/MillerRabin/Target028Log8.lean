@@ -8,9 +8,8 @@ module
 
 public import PseudoPrime.AnalyticNumberTheory.GRH.Definition
 public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
-import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterIntersection200
-import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterJointPrimitive
-import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterUniformClosed398375
+import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterNonuniformLog8
+import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterBridge465
 import PseudoPrime.PrimeTestBounds.MillerRabin.Target028ResidualEndpoint
 
 /-! # Logarithmic-scale witness for the 0.28 cutoff -/
@@ -29,15 +28,14 @@ theorem exists_prime_reject_028_log8 {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : �
         (p : ℝ) ≤ (7 / 25 : ℝ) * Real.log n ^ 2 ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   have hcoef : (1 / 4 : ℝ) ≤ 7 / 25 := by norm_num only
-  by_cases hU : Real.log n ≤ 200
-  · obtain ⟨p, hp, hb, hf⟩ := quarter_all_8_200 hn ho hc hGRH hL hU
+  by_cases h465 : Real.log n ≤ 465
+  · obtain ⟨p, hp, hb, hf⟩ := quarter_max_through465 hn ho hc hGRH h465
+    have htwo : (2 : ℝ) ≤ (7 / 25 : ℝ) * Real.log n ^ 2 := by
+      nlinarith only [hL, sq_nonneg (Real.log n - 8)]
+    exact ⟨p, hp, hb.trans (max_le htwo (mul_le_mul_of_nonneg_right hcoef (sq_nonneg _))), hf⟩
+  by_cases hu : UniformKorseltTriple n
+  · exact target028_uniform_high_witness hn ho hu hGRH (by linarith only [h465])
+  · obtain ⟨p, hp, hb, hf⟩ := quarter_nonuniform_log8 hn ho hc hu hGRH hL
     exact ⟨p, hp, hb.trans (mul_le_mul_of_nonneg_right hcoef (sq_nonneg _)), hf⟩
-  · by_cases hu : UniformKorseltTriple n
-    · by_cases h398 : Real.log n ≤ (3187 / 8 : ℝ)
-      · obtain ⟨p, hp, hb, hf⟩ := quarter_uniform_8_398375 hn ho hu hGRH h398
-        exact ⟨p, hp, hb.trans (mul_le_mul_of_nonneg_right hcoef (sq_nonneg _)), hf⟩
-      · exact target028_uniform_high_witness hn ho hu hGRH (by linarith only [h398])
-    · obtain ⟨p, hp, hb, hf⟩ := quarter_nonuniform_high hn ho hc hu hGRH (by linarith only [hU])
-      exact ⟨p, hp, hb.trans (mul_le_mul_of_nonneg_right hcoef (sq_nonneg _)), hf⟩
 
 end PseudoPrime.PrimeTestBounds.MillerRabin
