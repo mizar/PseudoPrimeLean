@@ -30,37 +30,21 @@ theorem tendsto_log_nat_add_one_div_self :
   · rw [pow_one, add_comm]
   · ring
 
-/-- The logarithm of n divided by sqrt n tends to zero on natural inputs.
-Apply log(x)=o(x^(1/2)) and compose with natural casts. This absorbs the second
-Chebyshev error in the unconditional prime-count lower bound. -/
-theorem tendsto_log_nat_div_sqrt :
-    Filter.Tendsto (fun n : ℕ ↦ Real.log (n : ℝ) / Real.sqrt (n : ℝ)) Filter.atTop (nhds 0) := by
-  have hl := isLittleO_log_rpow_atTop (by norm_num only : (0 : ℝ) < 1 / 2)
-  have h := hl.tendsto_div_nhds_zero.comp (tendsto_natCast_atTop_atTop (R := ℝ))
-  simpa only [Real.sqrt_eq_rpow, Function.comp_def] using h
-
-/-- Eventually pi(B)*log B is at least (log 2)/2 times B.
-Absorb both errors in the elementary Chebyshev lower bound using their vanishing
-normalized limits. This supplies the main term needed for power lower bounds. -/
+/-- Eventually `pi(B) log B` is at least `(log 2)/2` times `B`.
+Absorb the only error, `log(B+1)`, in the direct Chebyshev lower bound.
+This supplies the main term needed for unconditional power lower bounds. -/
 theorem eventually_log2_half_le_primeCounting_log :
     Filter.Eventually (fun B : ℕ ↦ (Real.log 2 / 2) * B ≤ (B.primeCounting : ℝ) * Real.log B)
       Filter.atTop := by
   have hlog2 : 0 < Real.log 2 := Real.log_pos (by norm_num only)
-  have he1 :=
+  have he :=
     tendsto_log_nat_add_one_div_self.eventually_lt_const
-      (div_pos hlog2 (by norm_num only : (0 : ℝ) < 4))
-  have he2 :=
-    tendsto_log_nat_div_sqrt.eventually_lt_const (div_pos hlog2 (by norm_num only : (0 : ℝ) < 8))
-  filter_upwards [he1, he2, Filter.eventually_gt_atTop (0 : ℕ)] with B h1 h2 hB
+      (div_pos hlog2 (by norm_num only : (0 : ℝ) < 2))
+  filter_upwards [he, Filter.eventually_gt_atTop (0 : ℕ)] with B h1 hB
   have hp : (0 : ℝ) < B := Nat.cast_pos.mpr hB
-  have hs : 0 < Real.sqrt (B : ℝ) := Real.sqrt_pos.mpr hp
   have hfirst := (div_lt_iff₀ hp).mp h1
-  have hsecond := (div_lt_iff₀ hs).mp h2
-  have hm := mul_le_mul_of_nonneg_left hsecond.le hs.le
-  have he := chebyshev_lower_le_primeCounting_mul_log B
-  have hsq := Real.sq_sqrt hp.le
-  rw [mul_left_comm, ← pow_two, hsq] at hm
-  nlinarith only [hfirst, hm, he]
+  have hmain := chebyshev_lower_le_primeCounting_mul_log B
+  nlinarith only [hfirst, hmain]
 
 /-- For every real t<1, pi(B) is eventually at least B^t on natural B.
 Combine the linear-log lower bound with log(B)=o(B^(1-t)). No RH or GRH is used.

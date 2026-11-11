@@ -49,7 +49,10 @@ theorem log_half_no_witness_signed_comparison {q m : ℕ} (χ : DirichletCharact
   have hr : X / (X / 2) = 2 := by field_simp [hX0.ne']
   rw [hr] at hb
   have hP := principal_log_half_difference_lower_half_sqrt hRH hX
-  have ht := psi_sub_theta_le_eighteen_sqrt (show 1 ≤ X by linarith only [hX])
+  have hsharp :=
+    AnalyticNumberTheory.Arithmetic.psi_sub_theta_le_six_sqrt (show 1 ≤ X by linarith only [hX])
+  have ht : Chebyshev.psi X - Chebyshev.theta X ≤ 18 * Real.sqrt X := by
+    nlinarith only [hsharp, Real.sqrt_nonneg X]
   have hs :=
     mul_le_mul_of_nonneg_left ht
       (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 2)

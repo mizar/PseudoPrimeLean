@@ -54,7 +54,7 @@ theorem sqrt_mul_cubic_defect_le {f m : ℕ} (χ : DirichletCharacter ℂ f) (hm
     dsimp only [w]
     field_simp [hs]
   rw [he]
-  exact hb
+  exact hb.trans (by nlinarith only [Real.sqrt_nonneg x])
 
 /-- Under primitive nonprincipal GRH, strict separation of the cubic principal,
 character and excluded-support budgets yields a prime outside m where chi is not one.

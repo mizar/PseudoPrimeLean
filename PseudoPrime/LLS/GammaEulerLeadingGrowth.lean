@@ -29,7 +29,7 @@ theorem gammaEulerPrefix_doubling_leadingPower_RH (hRH : RiemannHypothesis) {a :
   have hbp :=
     psi_bounds_of_hundred_thousand_le hRH (show (100000 : ℝ) ≤ (2 : ℝ) * a by linarith only [haR])
   have hd : (39 / 100 : ℝ) * ((2 : ℝ) * a) ≤ Chebyshev.psi ((2 : ℝ) * a) - Chebyshev.psi a := by
-    linarith only [hap.2, hbp.1]
+    linarith only [hap.2, hbp.1, haR]
   have he : (((2 : ℝ) * a) ^ (-21 / 20 : ℝ)) * ((2 : ℝ) * a) = ((2 : ℝ) * a) ^ (-1 / 20 : ℝ) := by
     calc
       _ = ((2 : ℝ) * a) ^ (-21 / 20 : ℝ) * ((2 : ℝ) * a) ^ (1 : ℝ) := by rw [Real.rpow_one]

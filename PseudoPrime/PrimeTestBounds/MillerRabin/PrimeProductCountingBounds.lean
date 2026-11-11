@@ -40,7 +40,7 @@ finite prime list; quantitative choices of B,M,k remain explicit. -/
 theorem exists_prime_primePow_chebyshevBudget {n p a : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime)
     (hp2 : p ≠ 2) (ha : 0 < a) (hdiv : p ^ a ∣ n) (B M k : ℕ) (hB : 1 < B)
     (hprimecount :
-      (M : ℝ) * Real.log B ≤ (B : ℝ) * Real.log 2 - Real.log (B + 1) - 2 * Real.sqrt B * Real.log B)
+      (M : ℝ) * Real.log B ≤ (B : ℝ) * Real.log 2 - Real.log (B + 1))
     (hsize : B ^ k < p ^ a) (hbudget : (p - 1) * k ^ k < (M + 1 - k) ^ k) :
     ∃ r : ℕ, r.Prime ∧ r ≤ B ∧ ¬PseudoPrime.PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
   apply
@@ -57,7 +57,7 @@ the prime two. This states the unconditional criterion directly for a least witn
 theorem exists_least_prime_primePow_chebyshevBudget {n p a : ℕ} (hn : 1 < n) (ho : Odd n)
     (hp : p.Prime) (hp2 : p ≠ 2) (ha : 0 < a) (hdiv : p ^ a ∣ n) (B M k : ℕ) (hB : 1 < B)
     (hprimecount :
-      (M : ℝ) * Real.log B ≤ (B : ℝ) * Real.log 2 - Real.log (B + 1) - 2 * Real.sqrt B * Real.log B)
+      (M : ℝ) * Real.log B ≤ (B : ℝ) * Real.log 2 - Real.log (B + 1))
     (hsize : B ^ k < p ^ a) (hbudget : (p - 1) * k ^ k < (M + 1 - k) ^ k) :
     ∃ r : ℕ,
       r.Prime ∧

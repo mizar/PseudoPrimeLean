@@ -88,25 +88,25 @@ theorem prime_character_defect_le_sensitive {f m : ℕ} (χ : DirichletCharacter
       rw [← Finset.sum_div]; rfl
 
 /-- For x at least one, prime triviality outside nonzero m bounds the full
-weighted defect by E_chi(m)/3+12sqrt x. Split prime and nonprime indices and
+weighted defect by E_chi(m)/3+4sqrt x. Split prime and nonprime indices and
 retain the character-sensitive prime cost for later cubic extraction. -/
 theorem weighted_character_defect_le_sensitive {f m : ℕ} (χ : DirichletCharacter ℂ f) (hm : m ≠ 0)
     {x : ℝ} (hx : 1 ≤ x) (w : ℕ → ℝ) (hw : ∀ n ∈ Finset.Ioc 0 ⌊x⌋₊, 0 ≤ w n ∧ w n ≤ 1 / 3)
     (hsmall : ∀ p : ℕ, p.Prime → (p : ℝ) ≤ x → ¬p ∣ m → χ p = 1) :
     (∑ n ∈ Finset.Ioc 0 ⌊x⌋₊, (1 - (χ n).re) * ArithmeticFunction.vonMangoldt n * w n) ≤
-      characterExclusionCost χ m / 3 + 12 * Real.sqrt x := by
+      characterExclusionCost χ m / 3 + 4 * Real.sqrt x := by
   have hp :=
     prime_character_defect_le_sensitive χ hm (zero_le_one.trans hx) w (fun n hn ↦ (hw n hn).2)
       hsmall
   have hc :
     (∑ n ∈ (Finset.Ioc 0 ⌊x⌋₊).filter (fun n ↦ ¬n.Prime),
         (1 - (χ n).re) * ArithmeticFunction.vonMangoldt n * w n) ≤
-      12 * Real.sqrt x := by
+      4 * Real.sqrt x := by
     apply
       le_trans
         (Finset.sum_le_sum
           (fun n hn ↦ mangoldt_character_defect_term_le χ n (hw n (Finset.mem_filter.mp hn).1).1))
-    exact composite_mangoldt_weight_le_twelve_sqrt hx w (fun n hn ↦ (hw n hn).2)
+    exact composite_mangoldt_weight_le_four_sqrt hx w (fun n hn ↦ (hw n hn).2)
   rw [← Finset.sum_filter_add_sum_filter_not (Finset.Ioc 0 ⌊x⌋₊) Nat.Prime]
   exact add_le_add hp hc
 

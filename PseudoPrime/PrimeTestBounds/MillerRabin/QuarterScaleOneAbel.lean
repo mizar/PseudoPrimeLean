@@ -188,7 +188,7 @@ theorem quarter_scale_one_integrand_le {a X t : ℝ} (hbound : Real.log X = 2 * 
   have hlog := Real.log_le_log ht0 htX
   have hd : 0 ≤ t ^ (-3 / 2 : ℝ) * (a + 1 - Real.log t / 2) :=
     mul_nonneg (Real.rpow_nonneg ht0.le _) (by linarith only [hlog, hbound])
-  have hψ := quarter_psi_le_three ht
+  have hψ := AnalyticNumberTheory.Arithmetic.psi_le_three (zero_le_one.trans ht)
   have hmul := mul_le_mul_of_nonneg_left hψ hd
   nlinarith only [hmul]
 
@@ -466,7 +466,7 @@ theorem quarter_integral_psi_le {u v : ℝ} (hu : 1 ≤ u) (huv : u ≤ v) {d : 
   have hb :=
     intervalIntegral.integral_mono_on huv hdi (hmi.const_mul 3)
       (fun t ht ↦ by
-        have hp := quarter_psi_le_three (hu.trans ht.1)
+        have hp := AnalyticNumberTheory.Arithmetic.psi_le_three (zero_le_one.trans (hu.trans ht.1))
         have hm := mul_le_mul_of_nonneg_left hp (hd0 t ht)
         nlinarith only [hm])
   rw [intervalIntegral.integral_const_mul] at hb

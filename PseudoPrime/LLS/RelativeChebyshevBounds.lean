@@ -44,14 +44,14 @@ theorem psi_upper_relative_log_shift (hRH : RiemannHypothesis) {h t : ℝ} (hh :
   linarith only [hb, hc]
 
 /-- Under RH, for `t ≥ 1` and `0 < h ≤ 1 / 2`, the displayed expression bounds
-`theta t` from below. Subtract the existing `18 * sqrt t` bound for `psi t - theta t`
+`theta t` from below. Subtract the existing `6 * sqrt t` bound for `psi t - theta t`
 from the relative psi lower estimate. This supplies theta lower bounds for prime counting. -/
 theorem theta_lower_relative_log_shift (hRH : RiemannHypothesis) {h t : ℝ} (hh : 0 < h)
     (hh1 : h ≤ 1 / 2) (ht : 1 ≤ t) :
-    (1 - h) * t - (Real.sqrt t / 10 + 21 / 10) / h - 1839 / 1000 - 18 * Real.sqrt t ≤
+    (1 - h) * t - (Real.sqrt t / 10 + 21 / 10) / h - 1839 / 1000 - 6 * Real.sqrt t ≤
       Chebyshev.theta t := by
   have hp := psi_lower_relative_log_shift hRH hh hh1 (by linarith only [ht])
-  have hd := AnalyticNumberTheory.Arithmetic.psi_sub_theta_le_eighteen_sqrt ht
+  have hd := AnalyticNumberTheory.Arithmetic.psi_sub_theta_le_six_sqrt ht
   linarith only [hp, hd]
 
 /-- Under RH, let `0 < h ≤ 1 / 2`, `r ≥ 1`, and `t ≥ r ^ 2`. If the displayed
@@ -60,7 +60,7 @@ and the constant error by multiples of `t` using the common lower scale `r`.
 This turns one rational budget into a uniform theta bound on a half-line. -/
 theorem theta_lower_of_relative_budget (hRH : RiemannHypothesis) {h t r η : ℝ} (hh : 0 < h)
     (hh1 : h ≤ 1 / 2) (hr : 1 ≤ r) (ht : r ^ 2 ≤ t)
-    (hbudget : h + (1 / (10 * h) + 18) / r + (21 / (10 * h) + 1839 / 1000) / r ^ 2 ≤ 1 - η) :
+    (hbudget : h + (1 / (10 * h) + 6) / r + (21 / (10 * h) + 1839 / 1000) / r ^ 2 ≤ 1 - η) :
     η * t ≤ Chebyshev.theta t := by
   have hr0 : 0 < r := by linarith only [hr]
   have ht1 : 1 ≤ t := by nlinarith only [ht, hr]
@@ -72,7 +72,7 @@ theorem theta_lower_of_relative_budget (hRH : RiemannHypothesis) {h t r η : ℝ
     nlinarith only [hh', heq]
   have hsr : Real.sqrt t ≤ t / r := (le_div_iff₀ hr0).mpr (by nlinarith only [hrt])
   have htr : 1 ≤ t / r ^ 2 := (le_div_iff₀ (pow_pos hr0 2)).mpr (by simpa only [one_mul] using ht)
-  have hE : 0 ≤ 1 / (10 * h) + 18 := by
+  have hE : 0 ≤ 1 / (10 * h) + 6 := by
     have hx : 0 ≤ (1 : ℝ) / (10 * h) :=
       div_nonneg (by norm_num only) (mul_nonneg (by norm_num only) hh.le)
     linarith only [hx]
@@ -84,13 +84,13 @@ theorem theta_lower_of_relative_budget (hRH : RiemannHypothesis) {h t r η : ℝ
   have hF' := mul_le_mul_of_nonneg_left htr hF
   have hb := mul_le_mul_of_nonneg_right hbudget ht0
   have hp := psi_lower_relative_log_shift hRH hh hh1 ht0
-  have hd := AnalyticNumberTheory.Arithmetic.psi_sub_theta_le_eighteen_sqrt ht1
+  have hd := AnalyticNumberTheory.Arithmetic.psi_sub_theta_le_six_sqrt ht1
   have hcost :
-    (Real.sqrt t / 10 + 21 / 10) / h + 1839 / 1000 + 18 * Real.sqrt t ≤
-      ((1 / (10 * h) + 18) / r + (21 / (10 * h) + 1839 / 1000) / r ^ 2) * t := by
+    (Real.sqrt t / 10 + 21 / 10) / h + 1839 / 1000 + 6 * Real.sqrt t ≤
+      ((1 / (10 * h) + 6) / r + (21 / (10 * h) + 1839 / 1000) / r ^ 2) * t := by
     calc
-      _ = (1 / (10 * h) + 18) * Real.sqrt t + (21 / (10 * h) + 1839 / 1000) := by ring
-      _ ≤ (1 / (10 * h) + 18) * (t / r) + (21 / (10 * h) + 1839 / 1000) * (t / r ^ 2) := by
+      _ = (1 / (10 * h) + 6) * Real.sqrt t + (21 / (10 * h) + 1839 / 1000) := by ring
+      _ ≤ (1 / (10 * h) + 6) * (t / r) + (21 / (10 * h) + 1839 / 1000) * (t / r ^ 2) := by
         exact add_le_add hE' (by simpa only [mul_one] using hF')
       _ = _ := by ring
   nlinarith only [hcost, hb, hp, hd]

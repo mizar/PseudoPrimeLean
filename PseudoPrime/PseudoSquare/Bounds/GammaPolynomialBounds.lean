@@ -166,7 +166,7 @@ theorem Q_witness_maxima_5_4_block_GRH {B a b : ℕ} {x C D P : ℝ}
     (hx : 4096 ≤ x) (ha : 10000 ≤ a) (hratio : (5 / 4 : ℝ) * a ≤ b)
     (hbx : (b : ℝ) ≤ (99 / 40 : ℝ) * x)
     (hP : P ≤ ∑ j ∈ Finset.Ioc 0 a, Analysis.gammaResolventMangoldtWeight j)
-    (hcredit : C + (3 / 4 + D + 7 / 60) / 2 ≤ P + ((a : ℝ) / 200) * (b : ℝ) ^ (-21 / 20 : ℝ))
+    (hcredit : C + (3 / 4 + D + 7 / 60) / 2 ≤ P + (3 * (a : ℝ) / 200) * (b : ℝ) ^ (-21 / 20 : ℝ))
     (hdual : LLS.gammaScaleSignedDualBudget (Real.log B) x ≤ D)
     (hpoly : LLS.GammaPairedPolynomialCondition (Real.log B + 7 / 5) x C) :
     (QNegOne B : ℝ) ≤ (99 / 40 : ℝ) * x ∧ (QNeOne B : ℝ) ≤ (99 / 40 : ℝ) * x := by

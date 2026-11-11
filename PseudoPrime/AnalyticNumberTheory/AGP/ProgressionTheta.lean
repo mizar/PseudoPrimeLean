@@ -195,7 +195,9 @@ theorem higherPrimePowerMassInProgression_bounds (y : ℝ) (q a : ℕ) (hy : 1 �
     have hsum :=
       Finset.sum_le_sum_of_subset_of_nonneg (f := fun n : ℕ => ArithmeticFunction.vonMangoldt n)
         hsub (fun n hn _ => ArithmeticFunction.vonMangoldt_nonneg)
-    have hwhole := PseudoPrime.AnalyticNumberTheory.Arithmetic.psi_sub_theta_le_eighteen_sqrt hy
+    have hsharp := PseudoPrime.AnalyticNumberTheory.Arithmetic.psi_sub_theta_le_six_sqrt hy
+    have hwhole : Chebyshev.psi y - Chebyshev.theta y ≤ 18 * Real.sqrt y := by
+      nlinarith only [hsharp, Real.sqrt_nonneg y]
     rw [Chebyshev.psi_sub_theta_eq_sum_not_prime] at hwhole
     simpa only [S] using le_trans hsum hwhole
 

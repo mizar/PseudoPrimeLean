@@ -9,35 +9,13 @@ module
 public import PseudoPrime.LLS.PaperStatements.CoarseConductorLogBounds
 public import PseudoPrime.LLS.LogShiftRampPrincipalBounds
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.BoundedPrimeExclusion
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.CompositeMangoldtSqrtBound
 
 /-! # Conductor-square and linear prime-exclusion witness bounds -/
 
 @[expose] public section
 
 namespace PseudoPrime.LLS.PaperStatements
-
-/-- For y at least one, the total contribution of nonprime prime powers is
-at most 18 sqrt(y). Use the Costa-Pereira decomposition and the elementary
-Chebyshev upper bound, retaining an explicit universal constant. -/
-theorem psi_sub_theta_le_eighteen_sqrt {y : ℝ} (hy : 1 ≤ y) :
-    Chebyshev.psi y - Chebyshev.theta y ≤ 18 * Real.sqrt y := by
-  have hb (k : ℝ) (hk : 2 ≤ k) : Chebyshev.psi (y ^ (1 / k)) ≤ 6 * Real.sqrt y := by
-    have hr :=
-      Real.rpow_le_rpow_of_exponent_le hy
-        (show 1 / k ≤ 1 / 2 by exact one_div_le_one_div_of_le (by norm_num only : (0 : ℝ) < 2) hk)
-    rw [← Real.sqrt_eq_rpow] at hr
-    have hpsi := Chebyshev.psi_le_const_mul_self (Real.rpow_nonneg (zero_le_one.trans hy) (1 / k))
-    have hfour : Real.log (4 : ℝ) + 4 ≤ 6 := by
-      rw [Real.log_four_eq]
-      linarith only [Real.log_two_lt_d9]
-    have hcoef : 0 ≤ Real.log (4 : ℝ) + 4 := by
-      linarith only [Real.log_nonneg (by norm_num only : (1 : ℝ) ≤ 4)]
-    nlinarith only [hpsi, mul_le_mul_of_nonneg_left hr hcoef,
-      mul_le_mul_of_nonneg_right hfour (Real.sqrt_nonneg y)]
-  have h := Chebyshev.psi_sub_theta_le_psi_add_psi_add_psi y
-  norm_num only [show (2 : ℝ)⁻¹ = 1 / 2 by norm_num only, show (3 : ℝ)⁻¹ = 1 / 3 by norm_num only,
-    show (5 : ℝ)⁻¹ = 1 / 5 by norm_num only] at h
-  linarith only [h, hb 2 (le_refl 2), hb 3 (by norm_num only), hb 5 (by norm_num only)]
 
 /-- Under RH, y at least 131072 has logarithmic half-difference at least
 y/2-4sqrt(y). Subtract the two corrected principal formulas so the logarithmic
@@ -94,7 +72,11 @@ theorem log_half_no_witness_conductor_comparison {q m : ℕ} [NeZero q] (χ : Di
           (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum y χ -
             AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y / 2) χ)).trans
       (norm_sub_le _ _)
-  have ht := psi_sub_theta_le_eighteen_sqrt ((by norm_num only : (1 : ℝ) ≤ 131072).trans hy)
+  have hsharp :=
+    AnalyticNumberTheory.Arithmetic.psi_sub_theta_le_six_sqrt
+      ((by norm_num only : (1 : ℝ) ≤ 131072).trans hy)
+  have ht : Chebyshev.psi y - Chebyshev.theta y ≤ 18 * Real.sqrt y := by
+    nlinarith only [hsharp, Real.sqrt_nonneg y]
   have hsum : 0 ≤ ∑ p ∈ m.primeFactors, Real.log p :=
     Finset.sum_nonneg (fun p _ ↦ Real.log_natCast_nonneg p)
   have htail := Chebyshev.theta_le_psi y

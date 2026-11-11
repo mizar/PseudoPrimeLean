@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.RiemannWeightedErrorBounds
+public import PseudoPrime.LLS.ChebyshevQuarterError
 public import PseudoPrime.LLS.RiemannOneSidedCheckpoint
 public import PseudoPrime.Analysis.LogTaylorBounds
 public import PseudoPrime.Analysis.GammaEulerPositiveLowerBound
@@ -17,64 +18,6 @@ public import PseudoPrime.AnalyticNumberTheory.Arithmetic.LogWeightedDifferences
 @[expose] public section
 
 namespace PseudoPrime.LLS
-
-/-- Input: RH and x>=50000. Claim: the logarithmically weighted Mangoldt
-error is at most (3/20)sqrt(x). Retain the refined square-root and logarithm
-terms and use the logarithm tangent at 256. Role: quantify large-scale psi bounds. -/
-theorem logWeighted_error_le_three_20_sqrt_RH (hRH : RiemannHypothesis) {x : ℝ} (hx : 50000 ≤ x) :
-    |AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum x - x| ≤
-      (3 / 20 : ℝ) * Real.sqrt x := by
-  have hx1 : 1 < x := by linarith only [hx]
-  have hx0 := zero_lt_one.trans hx1
-  have hs : (220 : ℝ) ≤ Real.sqrt x := by
-    apply (Real.le_sqrt (by norm_num only) hx0.le).mpr
-    linarith only [hx]
-  have he := Real.log_pow (2 : ℝ) 8
-  norm_num only [Nat.cast_ofNat] at he
-  have ht :=
-    Analysis.log_le_log_add_sub_div (by norm_num only : (0 : ℝ) < 256) (Real.sqrt_pos.mpr hx0)
-  rw [Real.log_sqrt hx0.le] at ht
-  have hl : Real.log x ≤ Real.sqrt x / 20 := by linarith only [ht, he, hs, Real.log_two_lt_d9]
-  have h := logWeightedMangoldtSum_error_le_refined hRH hx1
-  linarith only [h, hl, hs]
-
-/-- Input: RH and t>=100000. Claim: (93/100)t<=psi(t)<=(27/25)t.
-Compare smoothed sums at 19t/20,t,21t/20 and use the sharp half-line error.
-Role: supply analytic interval mass without prime-power enumeration. -/
-theorem psi_bounds_of_hundred_thousand_le (hRH : RiemannHypothesis) {t : ℝ} (ht : 100000 ≤ t) :
-    (93 / 100 : ℝ) * t ≤ Chebyshev.psi t ∧ Chebyshev.psi t ≤ (27 / 25 : ℝ) * t := by
-  have ht0 : 0 < t := by linarith only [ht]
-  have hs := Real.sqrt_nonneg t
-  have hsq := Real.sq_sqrt ht0.le
-  have hs300 : (300 : ℝ) ≤ Real.sqrt t :=
-    (Real.le_sqrt (by norm_num only) ht0.le).mpr (by linarith only [ht])
-  have hg : 300 * Real.sqrt t ≤ t := by
-    nlinarith only [hsq, mul_nonneg (by linarith only [hs300] : 0 ≤ Real.sqrt t - 300) hs]
-  have hsmall : Real.sqrt ((19 / 20 : ℝ) * t) ≤ Real.sqrt t :=
-    Real.sqrt_le_sqrt (by linarith only [ht0])
-  have hbig : Real.sqrt ((21 / 20 : ℝ) * t) ≤ (11 / 10 : ℝ) * Real.sqrt t := by
-    apply (Real.sqrt_le_iff).mpr
-    exact ⟨mul_nonneg (by norm_num only) hs, by nlinarith only [hsq]⟩
-  have hl :=
-    (AnalyticNumberTheory.Arithmetic.psi_bounds_of_logWeighted_error_without_log
-        (by linarith only [ht0] : 0 < (19 / 20 : ℝ) * t)
-        (by linarith only [ht0] : (19 / 20 : ℝ) * t < t)
-        (logWeighted_error_le_three_20_sqrt_RH hRH (by linarith only [ht]))
-        (logWeighted_error_le_three_20_sqrt_RH hRH (by linarith only [ht]))).2
-  have hu :=
-    (AnalyticNumberTheory.Arithmetic.psi_bounds_of_logWeighted_error_without_log ht0
-        (by linarith only [ht0] : t < (21 / 20 : ℝ) * t)
-        (logWeighted_error_le_three_20_sqrt_RH hRH (by linarith only [ht]))
-        (logWeighted_error_le_three_20_sqrt_RH hRH (by linarith only [ht]))).1
-  have hlr : ((19 / 20 : ℝ) * t) / (t - (19 / 20) * t) = 19 := by
-    apply (div_eq_iff (by linarith only [ht0] : t - (19 / 20 : ℝ) * t ≠ 0)).mpr
-    ring
-  have hur : ((21 / 20 : ℝ) * t) / ((21 / 20) * t - t) = 21 := by
-    apply (div_eq_iff (by linarith only [ht0] : (21 / 20 : ℝ) * t - t ≠ 0)).mpr
-    ring
-  rw [mul_div_assoc, hlr] at hl
-  rw [mul_div_assoc, hur] at hu
-  constructor <;> linarith only [hl, hu, hsmall, hbig, hg]
 
 /-- Input: 0<t<=(5/2)^20. Claim: t^(-1/20)>=2/5. Apply antitonicity
 and combine real powers. Role: bound the endpoint weight of every doubling block. -/
@@ -98,7 +41,7 @@ theorem gamma_euler_prefix_doubling_gain (hRH : RiemannHypothesis) {a : ℕ} (ha
   have hbp :=
     psi_bounds_of_hundred_thousand_le hRH (show (100000 : ℝ) ≤ (2 : ℝ) * a by linarith only [haR])
   have hd : (39 / 100 : ℝ) * ((2 : ℝ) * a) ≤ Chebyshev.psi ((2 : ℝ) * a) - Chebyshev.psi a := by
-    linarith only [hap.2, hbp.1]
+    linarith only [hap.2, hbp.1, haR]
   have hp :=
     rpow_neg_twentieth_ge_two_fifths (show (0 : ℝ) < (2 : ℝ) * a by linarith only [haR])
       (show (2 : ℝ) * a ≤ (5 / 2 : ℝ) ^ (20 : ℕ) by
@@ -236,7 +179,7 @@ theorem psi_doubling_block_lower (hRH : RiemannHypothesis) {a : ℝ} (ha : 900 �
   exact (psi_asymmetric_doubling_block_lower ha).trans hd
 
 /-- Input: RH, a>=900, b>=2a and an Euler prefix credit at a.
-Claim: the prefix through b gains at least (a/200)b^(-21/20). Use
+Claim: the prefix through b gains at least (a/8)b^(-21/20). Use
 monotonicity of psi, the uniform short block and the positive Euler weight.
 Role: supply reusable growth below the large-scale doubling entrance. -/
 theorem gammaEulerPrefix_growth_doubling_RH (hRH : RiemannHypothesis) {a b : ℕ} {C : ℝ}
@@ -261,75 +204,21 @@ end PseudoPrime.LLS
 
 namespace PseudoPrime.LLS
 
-/-- Input: a>=10000. Claim: the asymmetric psi budget for [a,5a/4],
-with probes 6a/5 and 21a/20, is at least a/100. Keep the root/log errors
-and bound them uniformly by a tangent inequality.
-Role: remove the large-scale entrance from analytic positive block mass. -/
-theorem psi_asymmetric_five_fourths_block_lower {a : ℝ} (ha : 10000 ≤ a) :
-    a / 100 ≤
-      psiAsymmetricBlockLower a ((5 / 4 : ℝ) * a) ((6 / 5 : ℝ) * a) ((21 / 20 : ℝ) * a) := by
-  have ha0 : 0 < a := by linarith only [ha]
-  have hs := Real.sqrt_nonneg a
-  have hsq := Real.sq_sqrt ha0.le
-  have hs100 : (100 : ℝ) ≤ Real.sqrt a :=
-    (Real.le_sqrt (by norm_num only) ha0.le).mpr (by linarith only [ha])
-  have hroot : Real.sqrt a ≤ a / 100 := by
-    nlinarith only [hsq, mul_nonneg (by linarith only [hs100] : 0 ≤ Real.sqrt a - 100) hs]
-  have h1 : Real.sqrt ((6 / 5 : ℝ) * a) ≤ (11 / 10 : ℝ) * Real.sqrt a := by
-    apply (Real.sqrt_le_iff).mpr
-    exact ⟨mul_nonneg (by norm_num only) hs, by nlinarith only [hsq, ha0]⟩
-  have h2 : Real.sqrt ((5 / 4 : ℝ) * a) ≤ (6 / 5 : ℝ) * Real.sqrt a := by
-    apply (Real.sqrt_le_iff).mpr
-    exact ⟨mul_nonneg (by norm_num only) hs, by nlinarith only [hsq, ha0]⟩
-  have h3 : Real.sqrt ((21 / 20 : ℝ) * a) ≤ (11 / 10 : ℝ) * Real.sqrt a := by
-    apply (Real.sqrt_le_iff).mpr
-    exact ⟨mul_nonneg (by norm_num only) hs, by nlinarith only [hsq, ha0]⟩
-  have he := Real.log_pow (2 : ℝ) 14
-  norm_num only [Nat.cast_ofNat] at he
-  have hm :=
-    Real.log_le_log (by norm_num only : (0 : ℝ) < 10000) (by norm_num only : (10000 : ℝ) ≤ 16384)
-  have ht := Analysis.log_le_log_add_sub_div (by norm_num only : (0 : ℝ) < 10000) ha0
-  have hlog : Real.log a ≤ a / 1000 := by linarith only [he, hm, ht, Real.log_two_lt_d9, ha]
-  have hlog5 := Real.log_le_sub_one_of_pos (by norm_num only : (0 : ℝ) < 5 / 4)
-  have hlogb : Real.log ((5 / 4 : ℝ) * a) ≤ a / 1000 + 1 / 4 := by
-    rw [Real.log_mul (by norm_num only : (5 / 4 : ℝ) ≠ 0) ha0.ne']
-    linarith only [hlog, hlog5]
-  have hlo : ((6 / 5 : ℝ) * a) / ((5 / 4 : ℝ) * a - (6 / 5) * a) = 24 := by
-    apply (div_eq_iff (by linarith only [ha0] : (5 / 4 : ℝ) * a - (6 / 5) * a ≠ 0)).mpr
-    ring
-  have hhi : ((21 / 20 : ℝ) * a) / ((21 / 20 : ℝ) * a - a) = 21 := by
-    apply (div_eq_iff (by linarith only [ha0] : (21 / 20 : ℝ) * a - a ≠ 0)).mpr
-    ring
-  dsimp only [psiAsymmetricBlockLower]
-  rw [mul_div_assoc, hlo, mul_div_assoc, hhi]
-  linarith only [h1, h2, h3, hroot, hlog, hlogb, ha]
-
-/-- Input: RH and a>=10000. Claim: psi(5a/4)-psi(a)>=a/100.
-Combine the continuous asymmetric mass comparison with the uniform budget.
-Role: supply positive blocks at scales below the former doubling entrance. -/
-theorem psi_five_fourths_block_lower (hRH : RiemannHypothesis) {a : ℝ} (ha : 10000 ≤ a) :
-    a / 100 ≤ Chebyshev.psi ((5 / 4 : ℝ) * a) - Chebyshev.psi a := by
-  have hd :=
-    psi_sub_psi_ge_asymmetric_rh_bound hRH (show (1 : ℝ) < (6 / 5 : ℝ) * a by linarith only [ha])
-      (show (6 / 5 : ℝ) * a < (5 / 4 : ℝ) * a by linarith only [ha])
-      (show (1 : ℝ) < a by linarith only [ha]) (show a < (21 / 20 : ℝ) * a by linarith only [ha])
-  exact (psi_asymmetric_five_fourths_block_lower ha).trans hd
-
 /-- Input: RH, a>=10000, b>=5a/4 and an Euler prefix credit at a.
-Claim: the prefix through b gains at least (a/200)b^(-21/20). Use
+Claim: the prefix through b gains at least (3a/200)b^(-21/20). Use
 monotonicity of psi, the uniform short block and the positive Euler weight.
 Role: supply reusable growth below the large-scale doubling entrance. -/
 theorem gamma_euler_prefix_growth_5_4_RH (hRH : RiemannHypothesis) {a b : ℕ} {C : ℝ}
     (ha : 10000 ≤ a) (hratio : (5 / 4 : ℝ) * a ≤ b)
     (hC : C ≤ ∑ j ∈ Finset.Ioc 0 a, Analysis.gammaResolventMangoldtWeight j) :
-    C + ((a : ℝ) / 200) * (b : ℝ) ^ (-21 / 20 : ℝ) ≤
+    C + (3 * (a : ℝ) / 200) * (b : ℝ) ^ (-21 / 20 : ℝ) ≤
       ∑ j ∈ Finset.Ioc 0 b, Analysis.gammaResolventMangoldtWeight j := by
   have haR : (10000 : ℝ) ≤ a := by exact_mod_cast ha
   have habR : (a : ℝ) ≤ b := by linarith only [haR, hratio]
   have hab : a ≤ b := by exact_mod_cast habR
   have hl := psi_five_fourths_block_lower hRH haR
   have hm := Chebyshev.psi_mono hratio
-  have hd : (a : ℝ) / 100 ≤ Chebyshev.psi b - Chebyshev.psi a := by linarith only [hl, hm]
+  have hd : 3 * (a : ℝ) / 100 ≤ Chebyshev.psi b - Chebyshev.psi a := by linarith only [hl, hm]
   have hp :=
     mul_le_mul_of_nonneg_left hd
       (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 1 / 2)
@@ -456,7 +345,7 @@ theorem gamma_euler_prefix_doubling_gain_of_power_lower (hRH : RiemannHypothesis
   have hbp :=
     psi_bounds_of_hundred_thousand_le hRH (show (100000 : ℝ) ≤ (2 : ℝ) * a by linarith only [haR])
   have hd : (39 / 100 : ℝ) * ((2 : ℝ) * a) ≤ Chebyshev.psi ((2 : ℝ) * a) - Chebyshev.psi a := by
-    linarith only [hap.2, hbp.1]
+    linarith only [hap.2, hbp.1, haR]
   have he : (((2 : ℝ) * a) ^ (-21 / 20 : ℝ)) * ((2 : ℝ) * a) = ((2 : ℝ) * a) ^ (-1 / 20 : ℝ) := by
     calc
       _ = ((2 : ℝ) * a) ^ (-21 / 20 : ℝ) * ((2 : ℝ) * a) ^ (1 : ℝ) := by rw [Real.rpow_one]

@@ -149,7 +149,11 @@ theorem log_half_no_witness_of_norm_cap {q m : ℕ} [NeZero q] (χ : DirichletCh
           (AnalyticNumberTheory.Arithmetic.characterLogWeightedSum y χ -
             AnalyticNumberTheory.Arithmetic.characterLogWeightedSum (y / 2) χ)).trans
       (norm_sub_le _ _)
-  have ht := psi_sub_theta_le_eighteen_sqrt ((by norm_num only : (1 : ℝ) ≤ 200).trans hy)
+  have hsharp :=
+    AnalyticNumberTheory.Arithmetic.psi_sub_theta_le_six_sqrt
+      ((by norm_num only : (1 : ℝ) ≤ 200).trans hy)
+  have ht : Chebyshev.psi y - Chebyshev.theta y ≤ 18 * Real.sqrt y := by
+    nlinarith only [hsharp, Real.sqrt_nonneg y]
   have hsum : 0 ≤ ∑ p ∈ m.primeFactors, Real.log p :=
     Finset.sum_nonneg (fun p _ ↦ Real.log_natCast_nonneg p)
   have htail := Chebyshev.theta_le_psi y

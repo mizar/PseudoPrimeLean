@@ -18,7 +18,7 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.GammaPolynomialBudget
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
 /-- Input: RH, a>=900, b>=2a and arbitrary n,Q,x. Claim: the
-actual MR budget gains at least (a/100)b^(-21/20). Use twice the positive
+actual MR budget gains at least (a/4)b^(-21/20). Use twice the positive
 Euler block gain. Role: retain analytic savings at arbitrary admissible cutoffs. -/
 theorem gammaSignedPrefixMRBudget_doubling_block_gain (hRH : RiemannHypothesis) {a b : ℕ}
     (ha : 900 ≤ a) (hratio : (2 : ℝ) * a ≤ b) (n Q : ℕ) (x : ℝ) :
@@ -58,11 +58,11 @@ end PseudoPrime.PrimeTestBounds.MillerRabin
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
 /-- Input: RH, a>=10000, b>=5a/4 and arbitrary n,Q,x. Claim: the
-actual MR budget gains at least (a/100)b^(-21/20). Use twice the positive
+actual MR budget gains at least (3a/100)b^(-21/20). Use twice the positive
 Euler block gain. Role: retain analytic savings at arbitrary admissible cutoffs. -/
 theorem gammaSignedBudget_block_gain_5_4_RH (hRH : RiemannHypothesis) {a b : ℕ} (ha : 10000 ≤ a)
     (hratio : (5 / 4 : ℝ) * a ≤ b) (n Q : ℕ) (x : ℝ) :
-    gammaSignedPrefixMRBudget n Q x b + ((a : ℝ) / 100) * (b : ℝ) ^ (-21 / 20 : ℝ) ≤
+    gammaSignedPrefixMRBudget n Q x b + (3 * (a : ℝ) / 100) * (b : ℝ) ^ (-21 / 20 : ℝ) ≤
       gammaSignedPrefixMRBudget n Q x a := by
   have hp :=
     LLS.gamma_euler_prefix_growth_5_4_RH hRH ha hratio
@@ -84,7 +84,7 @@ theorem exists_prime_witness_of_five_fourths_block_gap {n a b : ℕ} {x : ℝ} (
         2 * (LLS.exponentialRampMangoldtSum x / Real.sqrt x) -
             (∑' j : ℕ,
                 LLS.PaperStatements.gammaMellinKernel.summand (1 : DirichletCharacter ℂ 1) x j).re +
-          ((a : ℝ) / 100) * (b : ℝ) ^ (-21 / 20 : ℝ)) :
+          (3 * (a : ℝ) / 100) * (b : ℝ) ^ (-21 / 20 : ℝ)) :
     ∃ p : ℕ,
       p.Prime ∧ (p : ℝ) ≤ (99 / 40 : ℝ) * x ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   have hd := gammaSignedBudget_block_gain_5_4_RH hGRH.riemann ha hratio n n x

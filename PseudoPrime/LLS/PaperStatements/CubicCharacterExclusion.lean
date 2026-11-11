@@ -52,7 +52,7 @@ theorem sqrt_mul_cubic_defect_le_sensitive {f m : ℕ} (χ : DirichletCharacter 
     dsimp only [w]
     field_simp [hs]
   rw [he]
-  exact hb
+  exact hb.trans (by nlinarith only [Real.sqrt_nonneg x])
 
 /-- Cubic radius for a conductor logarithm envelope G and a character-sensitive
 exclusion envelope E. It is A+sqrt(A²+(8/5)G+33+(4/3)E), A=(10/13)G+34.
