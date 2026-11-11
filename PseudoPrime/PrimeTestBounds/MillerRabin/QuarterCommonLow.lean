@@ -6,8 +6,7 @@ Authors: Mizar
 
 module
 
-import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterIntersection50
-import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterSmallInputs
+import PseudoPrime.PrimeTestBounds.MillerRabin.FromLLS
 public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028SmallIndex
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterEvenCorrection
 
@@ -17,29 +16,8 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterEvenCorrection
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
-/-- Under GRH, odd composites with logarithm at most 50 admit a rejecting prime
-within the maximum quarter-square cutoff. The interval bounds cover the input. -/
-private theorem quarter_small_max50 {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hU : Real.log n ≤ 50) :
-    ∃ p : ℕ,
-      p.Prime ∧
-        (p : ℝ) ≤ max 2 ((1 / 4 : ℝ) * Real.log n ^ 2) ∧
-        ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
-  by_cases hN : n < 3000
-  · exact exists_prime_reject_quarter_small hn ho hc hN
-  have hn3000 : 3000 ≤ n := Nat.le_of_not_gt hN
-  have hlog3000 :=
-    (Analysis.rationalLogIntervalCheck_sound
-        (show Analysis.rationalLogIntervalCheck 3000 12 12 8 (801 / 100) = true by
-          decide +kernel)).1
-  norm_num only [Rat.cast_ofNat] at hlog3000
-  have ht := Real.log_le_log (by norm_num only : (0 : ℝ) < 3000) (Nat.cast_le.mpr hn3000)
-  have h8 : (8 : ℝ) ≤ Real.log n := hlog3000.trans ht
-  obtain ⟨p, hp, hb, hf⟩ := quarter_all_8_50 hn ho hc hGRH h8 hU
-  exact ⟨p, hp, hb.trans (le_max_right _ _), hf⟩
-
 /-- An odd composite with logarithm at most 32 has a quarter-square
-witness at any common scale at least 68. The existing quarter-square witness is absorbed
+witness at any common scale at least 68. The global log-square witness is absorbed
 by the larger common scale. This handles the small-input branch of the
 nonuniform common-scale argument. -/
 theorem quarter_common_small {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
@@ -48,12 +26,13 @@ theorem quarter_common_small {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime
     ∃ p : ℕ,
       p.Prime ∧
         (p : ℝ) ≤ (1 / 4 : ℝ) * T ^ 2 ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
-  obtain ⟨p, hp, hb, hf⟩ := quarter_small_max50 hn ho hc hGRH (by linarith only [hU])
+  obtain ⟨p, hp, hb, hpow, hrest⟩ := exists_prime_millerRabin_witness_le_log_sq hGRH hn ho hc
   have hL : (0 : ℝ) ≤ Real.log n := Real.log_nonneg (by exact_mod_cast (Nat.le_of_lt hn))
   have hlog : (Real.log n) ^ 2 ≤ 32 ^ 2 := by nlinarith only [hL, hU]
   have ht : (68 : ℝ) ^ 2 ≤ T ^ 2 := by nlinarith only [hT]
-  have hbound : max 2 ((1 / 4 : ℝ) * (Real.log n) ^ 2) ≤ (1 / 4 : ℝ) * T ^ 2 := by
-    apply max_le <;> nlinarith only [hlog, ht]
+  have hbound : (Real.log n) ^ 2 ≤ (1 / 4 : ℝ) * T ^ 2 := by nlinarith only [hlog, ht]
+  have hf : ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) :=
+    PrimeTest.not_strongMillerRabinPass_iff.mpr ⟨hpow, hrest⟩
   exact ⟨p, hp, hb.trans hbound, hf⟩
 
 /-- Under GRH, a proper local subgroup whose modulus has logarithm at most
@@ -140,7 +119,7 @@ theorem quarter_common_small_index {n : ℕ} [NeZero n] (hn : 1 < n) (ho : Odd n
 
 /-- Under GRH, a nonuniform odd composite whose Fermat subgroup contains a
 subgroup of index at most 33000 has a quarter-square witness at any common
-scale `T ≥ 68` bounding its logarithm. Below `33000³` the global 0.28 bound is
+scale `T ≥ 68` bounding its logarithm. Below `33000³` the global log-square bound is
 absorbed; above it the finite-index local subgroup supplies the witness. -/
 theorem quarter_common_index_le {n : ℕ} [NeZero n] (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
     (H : Subgroup (ZMod n)ˣ) (hH : H ≤ PrimeTest.fermatSubgroup n) (hi : H.index ≤ 33000)

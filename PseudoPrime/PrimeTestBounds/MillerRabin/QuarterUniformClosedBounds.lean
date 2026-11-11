@@ -6,29 +6,13 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterUniformPrefixSharp
-public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterUniformPrefixBounds
-public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterUniformNarrowBounds
+public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterUniformAnyCutoff
 
 /-! Uniform Korselt witnesses from the closed Euler-tail budget. -/
 
 @[expose] public section
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
-
-/-- The explicit closed-tail budget combines the conductor term, Gamma and Euler bounds,
-and an upper bound for the full principal sum. -/
-noncomputable def quarterUniformClosedBudget (X U F H : ℝ) : ℝ :=
-  (2 * U) *
-          (((27 / 25 : ℝ) ^ 5 / 120) * Real.exp (-((27 / 25 : ℝ) * (21 / 8))) *
-            X ^ (-(27 / 25 : ℝ)) *
-            ((21 / 8 : ℝ) + Real.log X) ^ 5) +
-        (39 / 1000 : ℝ) * (27 / 25 : ℝ) ^ 2 +
-        H +
-        (3 / 8 : ℝ) * U -
-      (3117 / 400 : ℝ) * (27 / 25 : ℝ) ^ 5 +
-    4 * quarterEulerClosedTailCap X +
-    F
 
 /-- A closed-tail numerical budget implies a quarter-square uniform Korselt witness. -/
 theorem quarter_uniform_cell_closed {n p q r : ℕ} [NeZero n] [NeZero p] [NeZero q] [NeZero r]
@@ -54,22 +38,10 @@ theorem quarter_uniform_cell_closed {n p q r : ℕ} [NeZero n] [NeZero p] [NeZer
       l.Prime ∧
         (l : ℝ) ≤ (1 / 4 : ℝ) * Real.log n ^ 2 ∧
         ¬PrimeTest.StrongMillerRabinPass n (l : ZMod n) := by
-  have hlog : 0 ≤ Real.log X := Real.log_nonneg (by linarith only [hX])
-  have hc :
-    0 ≤
-      (((27 / 25 : ℝ) ^ 5 / 120) * Real.exp (-((27 / 25 : ℝ) * (21 / 8))) * X ^ (-(27 / 25 : ℝ)) *
-        ((21 / 8 : ℝ) + Real.log X) ^ 5) := by
-    positivity
-  have hm := mul_le_mul_of_nonneg_right (show 2 * Real.log n ≤ 2 * U by linarith only [hU]) hc
-  have hfirst :=
-    quarter_uniform_witness_prefix_closed hsq hnprod hGRH hn ho hp hq hr hpn hqn hrn hpqn hprn hqrn
-      hpK hqK hrK hvq hvr hX hH t ht
-  have hw : ∃ l : ℕ, l.Prime ∧ (l : ℝ) ≤ X ∧ ¬PrimeTest.StrongMillerRabinPass n (l : ZMod n) := by
-    apply hfirst
-    dsimp only [quarterUniformClosedBudget] at hcert
-    linarith only [hm, hU, hF, hS, hcert]
-  obtain ⟨l, hl, hlX, hf⟩ := hw
-  exact ⟨l, hl, hlX.trans hcut, hf⟩
+  obtain ⟨l, hl, hb, hf⟩ :=
+    quarter_uniform_cell_any hsq hnprod hGRH hn ho hp hq hr hpn hqn hrn hpqn hprn hqrn hpK hqK hrK
+      hvq hvr hX hH t ht hU hS hF hcert
+  exact ⟨l, hl, hb.trans hcut, hf⟩
 
 /-- A closed-tail numerical budget implies a quarter-square uniform Korselt witness. -/
 theorem quarter_uniform_bounds_closed {n : ℕ} (hn : 1 < n) (ho : Odd n)
@@ -89,45 +61,8 @@ theorem quarter_uniform_bounds_closed {n : ℕ} (hn : 1 < n) (ho : Odd n)
       l.Prime ∧
         (l : ℝ) ≤ (1 / 4 : ℝ) * Real.log n ^ 2 ∧
         ¬PrimeTest.StrongMillerRabinPass n (l : ZMod n) := by
-  obtain ⟨p, q, r, hpq, hpr, hqr, hset⟩ := Finset.card_eq_three.mp hu.2.1
-  have hpMem : p ∈ n.primeFactors := hset ▸ Finset.mem_insert_self p _
-  have hqMem : q ∈ n.primeFactors := hset ▸ Finset.mem_insert_of_mem (Finset.mem_insert_self q _)
-  have hrMem : r ∈ n.primeFactors :=
-    hset ▸ Finset.mem_insert_of_mem (Finset.mem_insert_of_mem (Finset.mem_singleton_self r))
-  have hp := (Nat.mem_primeFactors.mp hpMem).1
-  have hq := (Nat.mem_primeFactors.mp hqMem).1
-  have hr := (Nat.mem_primeFactors.mp hrMem).1
-  have hpD := (Nat.mem_primeFactors.mp hpMem).2.1
-  have hqD := (Nat.mem_primeFactors.mp hqMem).2.1
-  have hrD := (Nat.mem_primeFactors.mp hrMem).2.1
-  have hprod := (Nat.prod_primeFactors_of_squarefree hu.1).symm
-  rw [hset] at hprod
-  have hnprod : n = p * q * r := by
-    simpa only [Finset.prod_insert, Finset.prod_singleton, Finset.mem_insert, Finset.mem_singleton,
-      hpq, hpr, hqr, or_self, not_false_eq_true, mul_assoc] using hprod
-  have hpO := Odd.of_dvd_nat ho hpD
-  have hqO := Odd.of_dvd_nat ho hqD
-  have hrO := Odd.of_dvd_nat ho hrD
-  have hp2 : p ≠ 2 := fun h ↦ (by decide : ¬Odd (2 : ℕ)) (h ▸ hpO)
-  have hq2 : q ≠ 2 := fun h ↦ (by decide : ¬Odd (2 : ℕ)) (h ▸ hqO)
-  have hr2 : r ≠ 2 := fun h ↦ (by decide : ¬Odd (2 : ℕ)) (h ▸ hrO)
-  let : NeZero n := ⟨Nat.ne_of_gt (Nat.zero_lt_of_lt hn)⟩
-  let : NeZero p := ⟨hp.ne_zero⟩
-  let : NeZero q := ⟨hq.ne_zero⟩
-  let : NeZero r := ⟨hr.ne_zero⟩
-  let : Fact p.Prime := ⟨hp⟩
-  let : Fact q.Prime := ⟨hq⟩
-  let : Fact r.Prime := ⟨hr⟩
-  let : Fact (2 < p) := ⟨lt_of_le_of_ne hp.two_le (Ne.symm hp2)⟩
-  let : Fact (2 < q) := ⟨lt_of_le_of_ne hq.two_le (Ne.symm hq2)⟩
-  let : Fact (2 < r) := ⟨lt_of_le_of_ne hr.two_le (Ne.symm hr2)⟩
-  have hpqD : p * q ∣ n := ⟨r, hnprod⟩
-  have hprD : p * r ∣ n := ⟨q, hnprod.trans (by ac_rfl)⟩
-  have hqrD : q * r ∣ n := ⟨p, hnprod.trans (by ac_rfl)⟩
-  exact
-    quarter_uniform_cell_closed hu.1 hnprod hGRH hn ho hpO hqO hrO hpD hqD hrD hpqD hprD hqrD
-      (hu.2.2.1 p hp hpD) (hu.2.2.1 q hq hqD) (hu.2.2.1 r hr hrD) (hu.2.2.2 q p hq hp hqD hpD)
-      (hu.2.2.2 r p hr hp hrD hpD) hX hH t ht hU hcut hS hF hcert
+  obtain ⟨l, hl, hb, hf⟩ := quarter_uniform_bounds_any hn ho hu hGRH hX hH hU t ht hS hF hcert
+  exact ⟨l, hl, hb.trans hcut, hf⟩
 
 /-- A centered principal bound and a closed Euler-tail certificate give a quarter-square
 witness for a uniform Korselt triple at radii at least 180. -/

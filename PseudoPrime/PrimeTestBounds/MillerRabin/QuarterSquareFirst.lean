@@ -8,7 +8,6 @@ module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed19
 public import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedSemiprimeWitness
-public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterUniformLow
 
 /-! # Initial square-factor certificate for coefficient one quarter -/
 
