@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Draw the current Miller-Rabin pointwise and cumulative witness bounds.
 
-The pointwise branches are the certified small-input bounds, the global 0.28
+The pointwise branches are the certified small-input bounds, the global 3/11
 bound, and the piecewise cutoff of refined_piecewise_witness. Cumulative
 histories retain each branch's preceding entrance bound. All coordinates are
 computed from L = ln(n); plotting is numerical, not a Lean proof. The
-quarter-square curve is certified through L = 398.75.
-The three-elevenths bound is Lean-proved for L >= 5 * 10^6.
+quarter-square curve through L = 465 uses the proved least-witness theorem.
+The three-elevenths bound is Lean-proved for all odd composites under GRH.
 """
 
 from __future__ import annotations
@@ -25,8 +25,7 @@ from plot_qne1_comparison import DATA_DIR, ROOT, power_ticks
 
 ENTRANCES = ((1000.0, 3.0), (3000.0, 1.0), (10000.0, 0.0))
 QUARTER_LOW = 200.0
-QUARTER_HIGH = (200.0, 398.75)
-THREE_ELEVENTHS_START = 5_000_000.0
+QUARTER_HIGH = (200.0, 465.0)
 
 
 def quarter_interval(L: np.ndarray) -> np.ndarray:
@@ -35,9 +34,9 @@ def quarter_interval(L: np.ndarray) -> np.ndarray:
 
 
 def first_crossover() -> float:
-    """Solve paper_bound(L, 3) = 0.28 L² on the first paper branch."""
+    """Solve paper_bound(L, 3) = (3/11) L² on the first paper branch."""
     d, a, v = 24439 / 50000, 3 / (8 * (27 / 25)**5), 53 / 500
-    q = .28
+    q = 3 / 11
     slope = d * math.sqrt(q) - a
     root = (v * q**.25 + math.sqrt(v*v * math.sqrt(q) + 12 * slope)) / (2 * slope)
     return root**2
@@ -56,23 +55,23 @@ def paper_piecewise_upper(L: np.ndarray) -> np.ndarray:
 
 
 def pointwise_upper(L: np.ndarray) -> np.ndarray:
-    """Combine the small-input, 0.28 and piecewise witness cutoffs."""
+    """Combine the small-input, 3/11 and piecewise witness cutoffs."""
     current = np.where(L < math.log(2047), 2.0,
                        np.where(L < math.log(3000), 3.0,
-                                np.minimum(np.where(quarter_interval(L), .25, .28) * L**2,
+                                np.minimum(np.where(quarter_interval(L), .25, 3 / 11) * L**2,
                                            paper_piecewise_upper(L))))
-    return np.where(L >= THREE_ELEVENTHS_START, np.minimum(current, (3 / 11) * L**2), current)
+    return np.minimum(current, np.maximum(2.0, (3 / 11) * L**2))
 
 
 def cumulative_upper(L: np.ndarray) -> np.ndarray:
     """Cumulative bound on L >= ln(3000), retaining each entrance history."""
-    result = np.maximum(2.0, np.where(L <= QUARTER_LOW, .25, .28) * L**2)
+    result = np.maximum(2.0, np.where(L <= QUARTER_LOW, .25, 3 / 11) * L**2)
     high_quarter = np.maximum(.25 * QUARTER_HIGH[0]**2, .25 * L**2)
     result = np.where((QUARTER_HIGH[0] <= L) & (L <= QUARTER_HIGH[1]),
                       np.minimum(result, high_quarter), result)
     caps: list[float] = []
     for index, (entrance, allowance) in enumerate(ENTRANCES):
-        anchor = max(2.0, .28 * entrance**2)
+        anchor = max(2.0, (3 / 11) * entrance**2)
         for previous, (previous_entrance, previous_allowance) in enumerate(ENTRANCES[:index]):
             if entrance >= previous_entrance:
                 old_branch = float(paper_bound(np.array([entrance]), previous_allowance)[0])
@@ -81,12 +80,6 @@ def cumulative_upper(L: np.ndarray) -> np.ndarray:
         result = np.where(L >= entrance,
                           np.minimum(result, np.maximum(anchor, paper_bound(L, allowance))),
                           result)
-    high_anchor = .28 * THREE_ELEVENTHS_START**2
-    for index, (_, allowance) in enumerate(ENTRANCES):
-        branch = float(paper_bound(np.array([THREE_ELEVENTHS_START]), allowance)[0])
-        high_anchor = min(high_anchor, max(caps[index], branch))
-    result = np.where(L >= THREE_ELEVENTHS_START,
-                      np.minimum(result, np.maximum(high_anchor, (3 / 11) * L**2)), result)
     return result
 
 
@@ -126,7 +119,7 @@ def load_records() -> tuple[list[int], list[int]]:
 def samples(lower: float, upper: float, count: int) -> np.ndarray:
     """Include both sides of every discontinuity inside the plotted interval."""
     switches = np.array([math.log(2047), math.log(3000), QUARTER_LOW, *QUARTER_HIGH,
-                         1000.0, first_crossover(), THREE_ELEVENTHS_START,
+                         1000.0, first_crossover(),
                          3000.0, 10000.0])
     points = np.unique(np.concatenate((np.geomspace(lower, upper, count), switches,
                                       np.nextafter(switches, -np.inf),
@@ -158,16 +151,12 @@ def plot_cumulative(output_dir: Path) -> None:
                 label="Cumulative bound with piecewise cutoff")
     ax.semilogx(L, pointwise / L**2, color="#3977a8", linestyle="--",
                 label="Pointwise bound with piecewise cutoff")
-    ax.plot(L, np.maximum(2.0, .28 * L**2) / L**2, color="#333333", linestyle=":",
-            linewidth=1.7, label=r"$\max\{2,\frac{7}{25}(\ln N)^2\}$ reference")
+    ax.plot(L, np.maximum(2.0, (3 / 11) * L**2) / L**2, color="#333333", linestyle=":",
+            linewidth=1.7, label=r"Lean theorem: $\max\{2,\frac{3}{11}(\ln N)^2\}$")
     quarter = L <= QUARTER_HIGH[1]
     ax.semilogx(L[quarter], np.maximum(2.0, .25 * L[quarter]**2) / L[quarter]**2,
                 color="#8d48a3", linestyle="-.", linewidth=1.7, zorder=5,
-                label=r"Lean: $\max\{2,\frac{1}{4}L^2\}$, $L\leq398.75$")
-    high = L >= THREE_ELEVENTHS_START
-    ax.semilogx(L[high], np.full(np.count_nonzero(high), 3 / 11),
-                color="#7c4a9e", linestyle="-.", linewidth=1.5,
-                label=r"Lean: $3/11$ pointwise, $L\geq 5\cdot10^6$")
+                label=r"Lean theorem: $\max\{2,\frac{1}{4}L^2\}$, $L\leq465$")
     ax.set(xlabel=r"$L=\ln N$", ylabel=r"Upper bound divided by $L^2$",
            title="Cumulative bounds at high scales")
     ax.set_xlim(math.log(3000), 1e15)
@@ -187,13 +176,13 @@ def plot_pointwise(output_dir: Path, max_power: int) -> None:
     fig.subplots_adjust(left=.09, right=.95, top=.87, bottom=.13)
     ax.plot(np.log(L), upper, color="#d55e00", linewidth=2.5,
             label=r"Pointwise bound $U_{\mathrm{new}}(n)$", zorder=3)
-    ax.plot(np.log(L), np.maximum(2.0, .28 * L**2), color="#333333", linewidth=1.7,
-            linestyle=":", label=r"$\max\{2,\frac{7}{25}(\ln n)^2\}$", zorder=4)
+    ax.plot(np.log(L), np.maximum(2.0, (3 / 11) * L**2), color="#333333", linewidth=1.7,
+            linestyle=":", label=r"Lean theorem: $\max\{2,\frac{3}{11}(\ln n)^2\}$", zorder=4)
     for i, quarter in enumerate((L <= QUARTER_LOW,
                                  (QUARTER_HIGH[0] <= L) & (L <= QUARTER_HIGH[1]))):
         ax.plot(np.log(L[quarter]), np.maximum(2.0, .25 * L[quarter]**2),
                 color="#8d48a3", linestyle="-.", linewidth=1.7, zorder=5,
-                label=r"Lean: $\max\{2,\frac{1}{4}L^2\}$, $L=\ln n\leq398.75$"
+                label=r"Lean theorem: $\max\{2,\frac{1}{4}L^2\}$, $L=\ln n\leq465$"
                 if i == 0 else None)
     ax.step(np.log(record_L), ps, where="post", color="#007f80", linewidth=2, zorder=5)
     ax.scatter(np.log(record_L), ps, s=27, color="#007f80", zorder=7,
@@ -215,16 +204,16 @@ def plot_pointwise(output_dir: Path, max_power: int) -> None:
     top.tick_params(axis="x", colors="#536780", labelsize=10, pad=5)
     ax.legend(loc="upper left", framealpha=.97, fontsize=10)
     ax.set_title("Miller–Rabin: least-prime witness bounds", pad=46)
-    inset = ax.inset_axes([.06, .44, .35, .28])
+    inset = ax.inset_axes([.06, .44, .32, .28])
     inset_L = samples(math.log(3000), 1e14, 10000)
     inset.plot(np.log(inset_L), pointwise_upper(inset_L) / inset_L**2,
                color="#d55e00", linewidth=2)
-    inset.axhline(.28, color="#333333", linestyle=":", linewidth=1.3)
+    inset.axhline(3 / 11, color="#333333", linestyle=":", linewidth=1.3)
     inset.set_yscale("log")
     inset.set_xlim(math.log(math.log(3000)), math.log(1e14))
-    inset.set_ylim(.247, .283)
-    inset.yaxis.set_major_locator(FixedLocator([.25, .26, .27, .28]))
-    inset.yaxis.set_major_formatter(FuncFormatter(lambda y, _: f"{y:.3f}"))
+    inset.set_ylim(.247, .276)
+    inset.yaxis.set_major_locator(FixedLocator([.25, .26, .27, 3 / 11]))
+    inset.yaxis.set_major_formatter(FuncFormatter(lambda y, _: f"{y:.4f}"))
     inset.yaxis.set_minor_locator(NullLocator())
     ticks = [(math.log(k * math.log(10)), rf"$10^{{{k}}}$") for k in (4, 64)]
     ticks += [(k * math.log(10), rf"$e^{{10^{{{k}}}}}$") for k in (4, 6, 8, 10, 12, 14)]
@@ -245,7 +234,7 @@ def plot_pointwise(output_dir: Path, max_power: int) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path, default=ROOT / "doc/figures")
-    parser.add_argument("--max-power", type=int, default=1024)
+    parser.add_argument("--max-power", type=int, default=256)
     args = parser.parse_args()
     if not 1 <= args.max_power <= 8192:
         parser.error("--max-power must be between 1 and 8192")
