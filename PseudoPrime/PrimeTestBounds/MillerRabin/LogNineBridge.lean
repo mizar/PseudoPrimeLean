@@ -49,10 +49,7 @@ theorem prime_millerRabin_log_nine_criterion
     by_cases h9 : 9 ≤ n
     · apply (prime_millerRabin_027_criterion hGRH hn ho).mp
       intro p hp hb
-      have hcoef : (3 / 11 : ℝ) ≤ 7 / 25 := by norm_num only
-      have hcut : max 2 ((3 / 11 : ℝ) * Real.log n ^ 2) ≤ max 2 ((7 / 25 : ℝ) * Real.log n ^ 2) :=
-        max_le_max le_rfl (mul_le_mul_of_nonneg_right hcoef (sq_nonneg _))
-      exact hpass p hp (hb.trans (hcut.trans (max_028_le_logb_nine_sq (Nat.cast_le.mpr h9))))
+      exact hpass p hp (hb.trans (max_027_le_logb_nine_sq (Nat.cast_le.mpr h9)))
     · have hsmall : ∀ k : Fin 9, 1 < k.val → Odd k.val → k.val.Prime := by decide +kernel
       exact hsmall ⟨n, Nat.lt_of_not_ge h9⟩ hn ho
   · intro hp p hprime hb
