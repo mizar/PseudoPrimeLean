@@ -310,9 +310,9 @@ theorem exists_prime_pow_ne_one_19000007986_d10 {p : ℕ} [Fact p.Prime] (hodd :
       (by norm_num only : (0 : ℝ) < 19000007986 / 10000000000)
       (by norm_num only : (19000007986 / 10000000000 : ℝ) ≤ 1900001 / 1000000)
       ((by norm_num only : 256 ≤ 64 ^ 4).trans hB)
-      ((mul_le_mul_of_nonneg_right
-        (by norm_num only : (9501 / 1000 : ℝ) ≤ 13381 / 1000)
-        (Real.log_nonneg hL1)).trans hpowergap)
+      ((mul_le_mul_of_nonneg_right (by norm_num only : (9501 / 1000 : ℝ) ≤ 13381 / 1000)
+            (Real.log_nonneg hL1)).trans
+        hpowergap)
   exact
     exists_prime_pow_ne_one_19000007986_d10_smooth hodd (Nat.le_refl 76598623) hlarge
       (by linarith only [hlogLower]) (Nat.lt_of_lt_of_le (by decide : 0 < 64 ^ 4) hB) hC

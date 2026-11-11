@@ -24,8 +24,7 @@ theorem psi_le_three {x : ℝ} (hx : 0 ≤ x) : Chebyshev.psi x ≤ 3 * x := by
   by_cases hx1 : 1 ≤ x
   · have h4 :=
       (Analysis.rationalLogIntervalCheck_sound
-          (show Analysis.rationalLogIntervalCheck 4 2 16 1 (7 / 5) = true from by
-            decide +kernel)).2
+          (show Analysis.rationalLogIntervalCheck 4 2 16 1 (7 / 5) = true from by decide +kernel)).2
     have h25 :=
       (Analysis.rationalLogIntervalCheck_sound
           (show Analysis.rationalLogIntervalCheck (5 / 2) 2 16 (9 / 10) 1 = true from by
@@ -34,11 +33,9 @@ theorem psi_le_three {x : ℝ} (hx : 0 ≤ x) : Chebyshev.psi x ≤ 3 * x := by
     have hx0 : 0 < x := zero_lt_one.trans_le hx1
     have hs : 0 < Real.sqrt x := Real.sqrt_pos.mpr hx0
     have htangent :=
-      Analysis.log_le_log_add_sub_div (a := (5 / 2 : ℝ)) (y := Real.sqrt x)
-        (by norm_num only) hs
+      Analysis.log_le_log_add_sub_div (a := (5 / 2 : ℝ)) (y := Real.sqrt x) (by norm_num only) hs
     have he := Real.log_sqrt hx
-    have hlog : Real.log x ≤ (4 / 5 : ℝ) * Real.sqrt x := by
-      linarith only [htangent, h25, he]
+    have hlog : Real.log x ≤ (4 / 5 : ℝ) * Real.sqrt x := by linarith only [htangent, h25, he]
     have hroot := Real.sq_sqrt hx
     have hprod := mul_le_mul_of_nonneg_left hlog hs.le
     have hmain := mul_le_mul_of_nonneg_right h4 hx

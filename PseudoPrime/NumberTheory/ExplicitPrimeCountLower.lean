@@ -78,8 +78,8 @@ theorem four_fifths_le_primeCounting_mul_log {B : ℕ} (hB : 256 ≤ B) :
   have hs : (9 / 10 : ℝ) ≤ AnalyticNumberTheory.Arithmetic.chebyshevSlope := by
     linarith only [AnalyticNumberTheory.Arithmetic.chebyshevSlope_bounds.1]
   have hm := mul_le_mul_of_nonneg_right hs (Nat.cast_nonneg B : (0 : ℝ) ≤ B)
-  have hp := AnalyticNumberTheory.Arithmetic.psi_lower_fiveTerm
-    (show (30 : ℝ) ≤ B by linarith only [hBR])
+  have hp :=
+    AnalyticNumberTheory.Arithmetic.psi_lower_fiveTerm (show (30 : ℝ) ≤ B by linarith only [hBR])
   have hcount := Chebyshev.psi_le_primeCounting_mul_log B
   have hlog : Real.log 2 ≤ (7 / 10 : ℝ) := by linarith only [Real.log_two_lt_d9]
   nlinarith only [ht, hm, hp, hcount, hlog, hBR]
@@ -124,7 +124,8 @@ theorem two_mul_rpow_le_primeCounting_floor_of_half_gap {L A b : ℝ} (hL : 1 < 
   have hlogB :=
     Real.log_le_log (lt_of_lt_of_le zero_lt_one hB1) (Nat.floor_le (Real.rpow_nonneg hLp.le A))
   rw [Real.log_rpow hLp A] at hlogB
-  have hpi := half_le_primeCounting_mul_log (B := Nat.floor (L ^ A))
+  have hpi :=
+    half_le_primeCounting_mul_log (B := Nat.floor (L ^ A))
       ((by norm_num only : 16 ≤ 64 ^ 4).trans hB)
   have hm :=
     mul_le_mul_of_nonneg_left hlogB

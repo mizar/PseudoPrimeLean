@@ -86,8 +86,8 @@ theorem psi_error_quarter_sqrt (hRH : RiemannHypothesis) {t : ℝ} (ht : 625 ≤
 three-quarter error into the relative estimate `|psi t - t| ≤ t/r`.
 Compare the repeated square root with `r` and retain the exact fourth-power
 identity. Rational choices of `r` then certify whole half-lines. -/
-theorem psi_error_le_div_of_fourth_power (hRH : RiemannHypothesis) {r t : ℝ}
-    (hr : 5 ≤ r) (ht : r ^ 4 ≤ t) : |Chebyshev.psi t - t| ≤ t / r := by
+theorem psi_error_le_div_of_fourth_power (hRH : RiemannHypothesis) {r t : ℝ} (hr : 5 ≤ r)
+    (ht : r ^ 4 ≤ t) : |Chebyshev.psi t - t| ≤ t / r := by
   have hr0 : 0 < r := by linarith only [hr]
   have hr4 : (625 : ℝ) ≤ r ^ 4 := by
     have h := pow_le_pow_left₀ (by norm_num only : (0 : ℝ) ≤ 5) hr 4
@@ -100,22 +100,17 @@ theorem psi_error_le_div_of_fourth_power (hRH : RiemannHypothesis) {r t : ℝ}
     apply (pow_le_pow_iff_left₀ hr0.le (Real.sqrt_nonneg _) (by decide : 4 ≠ 0)).mp
     rwa [hu4]
   have hmul :=
-    mul_le_mul_of_nonneg_left hru
-      (mul_nonneg (Real.sqrt_nonneg t) (Real.sqrt_nonneg (Real.sqrt t)))
-  have hproduct :
-      Real.sqrt t * Real.sqrt (Real.sqrt t) * Real.sqrt (Real.sqrt t) = t := by
-    rw [mul_assoc, ← pow_two, Real.sq_sqrt (Real.sqrt_nonneg t), ← pow_two,
-      Real.sq_sqrt ht0]
+    mul_le_mul_of_nonneg_left hru (mul_nonneg (Real.sqrt_nonneg t) (Real.sqrt_nonneg (Real.sqrt t)))
+  have hproduct : Real.sqrt t * Real.sqrt (Real.sqrt t) * Real.sqrt (Real.sqrt t) = t := by
+    rw [mul_assoc, ← pow_two, Real.sq_sqrt (Real.sqrt_nonneg t), ← pow_two, Real.sq_sqrt ht0]
   rw [hproduct] at hmul
-  exact
-    (psi_error_quarter_sqrt hRH ht625).trans
-      ((le_div_iff₀ hr0).mpr hmul)
+  exact (psi_error_quarter_sqrt hRH ht625).trans ((le_div_iff₀ hr0).mpr hmul)
 
 /-- Under RH, fourth-power thresholds for two cutoffs give a lower bound for
 the Mangoldt mass between them. Subtract the two relative error estimates.
 This permits different endpoint precisions in positive Euler block bounds. -/
-theorem psi_block_lower_of_fourth_powers (hRH : RiemannHypothesis) {a b r s : ℝ}
-    (hr : 5 ≤ r) (hs : 5 ≤ s) (ha : r ^ 4 ≤ a) (hb : s ^ 4 ≤ b) :
+theorem psi_block_lower_of_fourth_powers (hRH : RiemannHypothesis) {a b r s : ℝ} (hr : 5 ≤ r)
+    (hs : 5 ≤ s) (ha : r ^ 4 ≤ a) (hb : s ^ 4 ≤ b) :
     b - a - a / r - b / s ≤ Chebyshev.psi b - Chebyshev.psi a := by
   have hlo := (abs_le.mp (psi_error_le_div_of_fourth_power hRH hs hb)).1
   have hhi := (abs_le.mp (psi_error_le_div_of_fourth_power hRH hr ha)).2
@@ -126,8 +121,9 @@ The three-quarter error and the rational fourth-root threshold `50/3` give
 relative error at most `3/50`. This supplies positive Euler blocks without enumeration. -/
 theorem psi_bounds_of_hundred_thousand_le (hRH : RiemannHypothesis) {t : ℝ} (ht : 100000 ≤ t) :
     (47 / 50 : ℝ) * t ≤ Chebyshev.psi t ∧ Chebyshev.psi t ≤ (53 / 50 : ℝ) * t := by
-  have h := psi_error_le_div_of_fourth_power hRH (r := 50 / 3) (by norm_num only)
-    (show (50 / 3 : ℝ) ^ 4 ≤ t by nlinarith only [ht])
+  have h :=
+    psi_error_le_div_of_fourth_power hRH (r := 50 / 3) (by norm_num only)
+      (show (50 / 3 : ℝ) ^ 4 ≤ t by nlinarith only [ht])
   constructor <;> nlinarith only [(abs_le.mp h).1, (abs_le.mp h).2]
 
 /-- Under RH and `a ≥ 10000`, the interval `(a, 5a/4]` has Mangoldt mass
@@ -135,10 +131,12 @@ at least `3a/100`. Apply the three-quarter error at both endpoints with
 fourth-root thresholds `10` and `125/12`. This improves the positive Euler block. -/
 theorem psi_five_fourths_block_lower (hRH : RiemannHypothesis) {a : ℝ} (ha : 10000 ≤ a) :
     3 * a / 100 ≤ Chebyshev.psi ((5 / 4 : ℝ) * a) - Chebyshev.psi a := by
-  have h := psi_block_lower_of_fourth_powers hRH (a := a) (b := (5 / 4) * a)
-    (r := 10) (s := 125 / 12) (by norm_num only) (by norm_num only)
-    (by norm_num only; exact ha)
-    (by nlinarith only [ha] : (125 / 12 : ℝ) ^ 4 ≤ (5 / 4 : ℝ) * a)
+  have h :=
+    psi_block_lower_of_fourth_powers hRH (a := a) (b := (5 / 4) * a) (r := 10) (s := 125 / 12)
+      (by norm_num only) (by norm_num only)
+      (by
+        norm_num only; exact ha)
+      (by nlinarith only [ha] : (125 / 12 : ℝ) ^ 4 ≤ (5 / 4 : ℝ) * a)
   nlinarith only [h]
 
 end PseudoPrime.LLS

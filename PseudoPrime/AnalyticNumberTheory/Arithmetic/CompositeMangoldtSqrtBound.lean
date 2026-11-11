@@ -52,8 +52,8 @@ private theorem fifth_root_le_two_fifths_sqrt {x : ℝ} (hx : 32 ≤ x) :
       _ ≤ (32 : ℝ) ^ (3 : ℕ) := by norm_num
       _ ≤ x ^ (3 : ℕ) := by gcongr
   have hroot : (5 / 2 : ℝ) ≤ (x ^ (3 : ℕ)) ^ ((10 : ℝ)⁻¹) := by
-    apply (Real.le_rpow_inv_iff_of_pos (by norm_num) (pow_nonneg hx0 3)
-      (by norm_num : (0 : ℝ) < 10)).2
+    apply
+      (Real.le_rpow_inv_iff_of_pos (by norm_num) (pow_nonneg hx0 3) (by norm_num : (0 : ℝ) < 10)).2
     simpa only [Real.rpow_ofNat] using hpow
   have he : (x ^ (3 : ℕ)) ^ ((10 : ℝ)⁻¹) = x ^ (3 / 10 : ℝ) := by
     rw [← Real.rpow_natCast, ← Real.rpow_mul hx0]
@@ -81,8 +81,7 @@ theorem psi_sub_theta_le_twice_linear_sqrt {C x : ℝ} (hx : 1 ≤ x) (hC : 0 �
   rw [hr2] at hcp h2
   by_cases hsmall : x < 32
   · have hr5 : x ^ ((5 : ℝ)⁻¹) < 2 := by
-      apply (Real.rpow_inv_lt_iff_of_pos hx0 (by norm_num)
-        (by norm_num : (0 : ℝ) < 5)).2
+      apply (Real.rpow_inv_lt_iff_of_pos hx0 (by norm_num) (by norm_num : (0 : ℝ) < 5)).2
       simpa only [Real.rpow_ofNat, show (2 : ℝ) ^ (5 : ℕ) = 32 by norm_num] using hsmall
     rw [Chebyshev.psi_eq_zero_of_lt_two hr5, add_zero] at hcp
     have hr3 : x ^ ((3 : ℝ)⁻¹) ≤ Real.sqrt x := by
@@ -104,8 +103,8 @@ Apply the common linear psi bound to the two-coefficient Costa-Pereira estimate.
 No RH or finite prime table is needed. -/
 theorem psi_sub_theta_le_six_sqrt {x : ℝ} (hx : 1 ≤ x) :
     Chebyshev.psi x - Chebyshev.theta x ≤ 6 * Real.sqrt x := by
-  have h := psi_sub_theta_le_twice_linear_sqrt hx (by norm_num : (0 : ℝ) ≤ 3)
-    (fun _ ht => psi_le_three ht)
+  have h :=
+    psi_sub_theta_le_twice_linear_sqrt hx (by norm_num : (0 : ℝ) ≤ 3) (fun _ ht => psi_le_three ht)
   norm_num only [show (2 : ℝ) * 3 = 6 by norm_num] at h
   exact h
 
