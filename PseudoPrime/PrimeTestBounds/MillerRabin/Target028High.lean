@@ -48,22 +48,4 @@ theorem target028_root_sq_le {L K : ℝ} (hL : 2000 ≤ L) (hK : 0 ≤ K) (hK3 :
   have hsq := pow_le_pow_left₀ hp.le hs 2
   simpa only [hzsq] using hsq
 
-/-- For every scale at least 2000 and allowance between zero and three, the
-paper's fourth-power cutoff is at most `7/25` times the squared logarithmic
-scale. Squaring the root bound supplies the numerical comparison. -/
-theorem target028_bound_le {L K : ℝ} (hL : 2000 ≤ L) (hK : 0 ≤ K) (hK3 : K ≤ 3) :
-    refinedPaperBound L K ≤ (7 / 25 : ℝ) * L ^ 2 := by
-  have hroot := target028_root_sq_le hL hK hK3
-  have hsq := pow_le_pow_left₀ (sq_nonneg (refinedPaperRoot L K)) hroot 2
-  dsimp only [refinedPaperBound]
-  nlinarith only [hsq, sq_nonneg L]
-
-/-- The selected piecewise cutoff is at most `7/25` times the squared
-logarithmic scale from 2000 onward. Its selected allowance is between zero
-and three, so the uniform cutoff comparison applies on every branch. -/
-theorem target028_piecewise_le {L : ℝ} (hL : 2000 ≤ L) :
-    refinedPaperCoefficient L * L ^ 2 ≤ (7 / 25 : ℝ) * L ^ 2 := by
-  rw [refined_piecewise_high (by linarith only [hL] : (1000 : ℝ) ≤ L)]
-  exact target028_bound_le hL (refined_allowance_range L).1 (refined_allowance_range L).2
-
 end PseudoPrime.PrimeTestBounds.MillerRabin

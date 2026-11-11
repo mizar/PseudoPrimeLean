@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterUniformAbel
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterReflectedMoments
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028BudgetGeneral
+import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedSixPoleUnitPrincipal
 
 /-! # Rational endpoint envelope for quarter-square cells -/
 

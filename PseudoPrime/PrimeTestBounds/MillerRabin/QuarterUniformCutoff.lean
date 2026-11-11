@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterUniformMass
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028FinitePair
+public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028PairSharp
 
 /-! # Variable-prefix three-character principal deficit -/
 

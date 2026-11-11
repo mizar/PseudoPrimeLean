@@ -102,7 +102,6 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.Count131Witness
 public import PseudoPrime.PrimeTestBounds.MillerRabin.Count1600Witness
 public import PseudoPrime.PrimeTestBounds.MillerRabin.SquareUniform371
 public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformTripleConductor
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028Selection
 public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedPiecewiseWitness
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianUniformScalarWitness
 public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformKorseltGaussian

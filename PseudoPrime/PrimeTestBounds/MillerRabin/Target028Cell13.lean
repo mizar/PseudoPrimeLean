@@ -7,7 +7,6 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028GeneralWeightCertificate
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028BudgetGeneral
 
 /-! # Uniform analytic cell 13 -/
 
@@ -166,59 +165,5 @@ theorem target028_cell13_principal :
     Rat.cast_lt.mpr target028_cell13_sum_check
   norm_num only [Rat.cast_div, Rat.cast_ofNat] at hr
   exact hr.trans_le hl
-
-/-- The certified upper budget at the cell endpoint is at most four times
-the rational principal lower bound. All comparisons use rational arithmetic. -/
-theorem target028_cell13_budget :
-    target028MomentBudget 547 (46225 / 1000) ≤ 4 * (11917 / 2000 : ℝ) := by
-  have hlog :=
-    (Analysis.rationalLogIntervalCheck_sound
-        (show Analysis.rationalLogIntervalCheck 547 9 32 0 (63047 / 10000) = true from by
-          decide +kernel)).2
-  have hpow :=
-    (AnalyticNumberTheory.Arithmetic.rationalPowerIntervalCheck_sound
-        (show
-          AnalyticNumberTheory.Arithmetic.rationalPowerIntervalCheck 547 0 (552007 / 500000000) 27
-              25 =
-            true
-          from by decide +kernel)).2
-  norm_num only [Rat.cast_ofNat, Rat.cast_div] at hlog hpow
-  have hl : Real.log 547 ≤ (63047 / 10000 : ℝ) := by
-    norm_num only at hlog ⊢; exact hlog
-  have hp : (547 : ℝ) ^ (-(27 / 25 : ℝ)) ≤ (552007 / 500000000 : ℝ) := by
-    norm_num only at hpow ⊢
-    exact hpow
-  have hs : (23387 / 1000 : ℝ) ≤ Real.sqrt 547 := Real.le_sqrt_of_sq_le (by norm_num only)
-  have ht : Real.sqrt 547 ≤ (2339 / 100 : ℝ) :=
-    Real.sqrt_le_iff.mpr ⟨by norm_num only, by norm_num only⟩
-  have hb :=
-    target028_budget_envelope (X := 547) (U := 46225 / 1000) (L := 63047 / 10000) (P :=
-      552007 / 500000000) (s := 23387 / 1000) (t := 2339 / 100) (by norm_num only)
-      (by norm_num only) hl hp (by norm_num only) hs ht
-  apply hb.trans
-  norm_num only [target028BudgetEnvelope, target028MomentPolynomial]
-
-/-- A uniform three-prime Korselt product in this logarithmic cell has a
-0.28 rejecting prime. The cutoff, finite principal sum, and budget are all
-verified at the cell endpoints. -/
-theorem target028_cell13_pair {n p q r : ℕ} [NeZero n] [NeZero p] [NeZero q] [NeZero r]
-    [Fact p.Prime] [Fact q.Prime] [Fact r.Prime] [Fact (2 < p)] [Fact (2 < q)] [Fact (2 < r)]
-    (hsq : Squarefree n) (hnprod : n = p * q * r)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hn : 1 < n) (ho : Odd n)
-    (hp : Odd p) (hq : Odd q) (hr : Odd r) (hpn : p ∣ n) (hqn : q ∣ n) (hrn : r ∣ n)
-    (hpqn : p * q ∣ n) (hprn : p * r ∣ n) (hqrn : q * r ∣ n) (hpK : p - 1 ∣ n - 1)
-    (hqK : q - 1 ∣ n - 1) (hrK : r - 1 ∣ n - 1)
-    (hvq : padicValNat 2 (q - 1) = padicValNat 2 (p - 1))
-    (hvr : padicValNat 2 (r - 1) = padicValNat 2 (p - 1)) (hL : (44225 / 1000 : ℝ) ≤ Real.log n)
-    (hU : Real.log n ≤ 46225 / 1000) :
-    ∃ l : ℕ,
-      l.Prime ∧
-        (l : ℝ) ≤ (7 / 25 : ℝ) * Real.log n ^ 2 ∧
-        ¬PrimeTest.StrongMillerRabinPass n (l : ZMod n) := by
-  have hcut : (547 : ℝ) ≤ (7 / 25 : ℝ) * Real.log n ^ 2 := by nlinarith only [hL]
-  exact
-    target028_finite_moment_of_partial hsq hnprod hGRH hn ho hp hq hr hpn hqn hrn hpqn hprn hqrn hpK
-      hqK hrK hvq hvr (X := 547) (U := 46225 / 1000) (S := 11917 / 2000) (by norm_num only) hU hcut
-      (le_of_lt target028_cell13_principal) target028_cell13_budget
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

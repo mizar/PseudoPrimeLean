@@ -131,45 +131,4 @@ theorem target028_high_scalar_excludes {L R : ℝ} (hL : 0 ≤ L) (hR : 0 ≤ R)
   norm_num only at hm hr hres hnecessary hs hsq ⊢
   nlinarith only [hm, hr, hres, hnecessary, hs, hsq]
 
-/-- Under GRH, a uniform Korselt triple of logarithmic scale at least 100 has
-a rejecting prime below the 0.28 cutoff once the paper's residual estimate is
-available at the selected scale. The scalar exclusion supplies the contradiction. -/
-theorem target028_high_pair_witness_of_residual {n p q r : ℕ} [NeZero n] [NeZero p] [NeZero q]
-    [NeZero r] [Fact p.Prime] [Fact q.Prime] [Fact r.Prime] [Fact (2 < p)] [Fact (2 < q)]
-    [Fact (2 < r)] (hsq : Squarefree n) (hnprod : n = p * q * r)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (hn : 1 < n) (ho : Odd n)
-    (hp : Odd p) (hq : Odd q) (hr : Odd r) (hpn : p ∣ n) (hqn : q ∣ n) (hrn : r ∣ n)
-    (hpqn : p * q ∣ n) (hprn : p * r ∣ n) (hqrn : q * r ∣ n) (hpK : p - 1 ∣ n - 1)
-    (hqK : q - 1 ∣ n - 1) (hrK : r - 1 ∣ n - 1)
-    (hvq : padicValNat 2 (q - 1) = padicValNat 2 (p - 1))
-    (hvr : padicValNat 2 (r - 1) = padicValNat 2 (p - 1)) (hL : (100 : ℝ) ≤ Real.log n)
-    (hres :
-      target028PaperResidual (Real.log n) (Real.sqrt (7 / 25 : ℝ) * Real.log n) ≤
-        -(3 / 2 : ℝ) * (27 / 25 : ℝ) ^ 5) :
-    ∃ l : ℕ,
-      l.Prime ∧
-        (l : ℝ) ≤ (7 / 25 : ℝ) * Real.log n ^ 2 ∧
-        ¬PrimeTest.StrongMillerRabinPass n (l : ZMod n) := by
-  let R : ℝ := Real.sqrt (7 / 25 : ℝ) * Real.log n
-  have hL0 : 0 ≤ Real.log n := by linarith only [hL]
-  have hs : (529 / 1000 : ℝ) ≤ Real.sqrt (7 / 25 : ℝ) := by
-    apply (Real.le_sqrt (by norm_num only) (by norm_num only)).2
-    norm_num only
-  have hLR : (529 / 1000 : ℝ) * Real.log n ≤ R := mul_le_mul_of_nonneg_right hs hL0
-  have hR : (529 / 10 : ℝ) ≤ R := by linarith only [hLR, hL]
-  have hR0 : 0 ≤ R := by linarith only [hR]
-  have hR2 : R ^ 2 = (7 / 25 : ℝ) * Real.log n ^ 2 := by
-    dsimp only [R]
-    rw [mul_pow, Real.sq_sqrt (by norm_num only : (0 : ℝ) ≤ 7 / 25)]
-  by_contra h
-  have hpass :
-    ∀ l : ℕ, l.Prime → (l : ℝ) ≤ R ^ 2 → PrimeTest.StrongMillerRabinPass n (l : ZMod n) := by
-    intro l hl hb
-    rw [hR2] at hb
-    exact Classical.byContradiction (fun hf ↦ h ⟨l, hl, hb, hf⟩)
-  have hnecessary :=
-    target028_pair_scalar_necessary hsq hnprod hGRH hn ho hp hq hr hpn hqn hrn hpqn hprn hqrn hpK
-      hqK hrK hvq hvr hR hpass
-  exact target028_high_scalar_excludes hL0 hR0 hLR hres hnecessary
-
 end PseudoPrime.PrimeTestBounds.MillerRabin

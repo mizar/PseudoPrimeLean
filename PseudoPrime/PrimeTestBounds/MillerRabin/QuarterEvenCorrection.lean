@@ -125,34 +125,4 @@ theorem quarter_variable_small_index {n J : ℕ} [NeZero n] (hn : 1 < n) (ho : O
         (quarter_variable_local_log (Nat.zero_lt_of_lt hn) hqpos hJ hsize hJr hscale)
   · exact False.elim (hu ht)
 
-/-- If `n ≤ J³`, `J ≤ r²` and `r ≥ 150`, the global 0.28 maximum cutoff is
-at most `r²`. A logarithm tangent bound at 150 absorbs the small-input branch
-of the variable-index proof into the quarter-square common scale. -/
-theorem quarter_variable_small_cutoff {n J : ℕ} (hn : 1 < n) (hsmall : n ≤ J ^ 3) {r : ℝ}
-    (hr : 150 ≤ r) (hJr : (J : ℝ) ≤ r ^ 2) : max 2 ((7 / 25 : ℝ) * Real.log n ^ 2) ≤ r ^ 2 := by
-  have hcert :=
-    (Analysis.rationalLogIntervalCheck_sound
-        (show Analysis.rationalLogIntervalCheck 150 8 32 5 (51 / 10) = true from by
-          decide +kernel)).2
-  norm_num only [Rat.cast_ofNat, Rat.cast_div] at hcert
-  have hlogr : Real.log r ≤ (17 / 500 : ℝ) * r := by
-    apply Analysis.log_le_mul_of_anchor (a := 150) (by norm_num only) hr
-    · nlinarith only [hcert]
-    · norm_num only
-  have hJ0 : (0 : ℝ) ≤ J := Nat.cast_nonneg J
-  have hnR : (n : ℝ) ≤ (r ^ 2) ^ 3 := by
-    calc
-      (n : ℝ) ≤ (J : ℝ) ^ 3 := by exact_mod_cast hsmall
-      _ ≤ (r ^ 2) ^ 3 := pow_le_pow_left₀ hJ0 hJr 3
-  have hl := Real.log_le_log (Nat.cast_pos.mpr (Nat.zero_lt_of_lt hn)) hnR
-  rw [Real.log_pow, Real.log_pow] at hl
-  norm_num only [Nat.cast_ofNat] at hl
-  have hn0 : 0 ≤ Real.log n := Real.log_nonneg (by exact_mod_cast (Nat.le_of_lt hn))
-  have hb : Real.log n ≤ (51 / 250 : ℝ) * r := by linarith only [hl, hlogr]
-  have hs := mul_self_le_mul_self hn0 hb
-  have hr2 : (150 : ℝ) ^ 2 ≤ r ^ 2 := by nlinarith only [hr]
-  apply max_le
-  · nlinarith only [hr2]
-  · nlinarith only [hs, sq_nonneg r]
-
 end PseudoPrime.PrimeTestBounds.MillerRabin

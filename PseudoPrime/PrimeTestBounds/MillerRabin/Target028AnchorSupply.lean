@@ -8,7 +8,6 @@ module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed43Count197
 public import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedSemiprimeTable
-public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028EvenEnvelope
 public import PseudoPrime.PrimeTestBounds.MillerRabin.SemiprimeCoreSupplies
 
 /-! # Weighted semiprime supply with even-character anchors -/
