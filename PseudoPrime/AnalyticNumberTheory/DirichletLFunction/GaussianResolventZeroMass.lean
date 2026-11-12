@@ -8,7 +8,8 @@ module
 
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaResolventZeroMass
 public import PseudoPrime.Analysis.GaussianResolventCompact
-public import PseudoPrime.Analysis.GaussianResolventGridCertificate
+public import PseudoPrime.Analysis.GaussianResolventDerivatives
+import PseudoPrime.Analysis.GaussianResolventGridCertificate
 
 /-! # Finite-conductor Gaussian Gamma zero mass from the resolvent grid
 

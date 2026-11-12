@@ -11,7 +11,7 @@ public import PseudoPrime.Analysis.SignedFiniteErrorBounds
 public import Mathlib.Tactic.NormNum
 public import Mathlib.Tactic.Ring
 public import PseudoPrime.Analysis.GammaResolventTail
-public import PseudoPrime.Analysis.GammaResolventGridCertificate
+import PseudoPrime.Analysis.GammaResolventGridCertificate
 public import PseudoPrime.Analysis.ListInfiniteSum
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.PoissonNumericalBounds
 

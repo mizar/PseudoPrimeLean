@@ -9,6 +9,8 @@ module
 public import PseudoPrime.AnalyticNumberTheory.RiemannXi.GammaSignedEulerBounds
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GaussianSignedEulerIdentity
 
+import PseudoPrime.Analysis.GaussianResolventGridCertificate
+
 /-! # Gaussian Euler mass bounded through the signed xi identity -/
 
 @[expose] public section

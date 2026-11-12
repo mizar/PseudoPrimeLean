@@ -9,6 +9,8 @@ module
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaPrefixZeroMass
 public import PseudoPrime.Analysis.GammaVariablePrefixZeroMass
 
+import PseudoPrime.Analysis.GammaResolventGridCertificate
+
 /-! # Variable-length digamma prefix error certificates
 
 Any certified prefix error sum transfers to the actual Gamma zero mass.

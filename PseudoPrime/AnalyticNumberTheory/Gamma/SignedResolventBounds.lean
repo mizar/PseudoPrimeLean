@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.AnalyticNumberTheory.Gamma.DigammaRationalCertificate
+import PseudoPrime.AnalyticNumberTheory.Gamma.DigammaRationalCertificate
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaFactorPrefixBounds
 public import PseudoPrime.Analysis.PrecisePiLogBound
 public import PseudoPrime.AnalyticNumberTheory.Gamma.RationalResolventApproximation

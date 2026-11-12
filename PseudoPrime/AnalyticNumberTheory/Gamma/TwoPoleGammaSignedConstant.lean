@@ -8,6 +8,7 @@ module
 
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.TwoPoleGammaZeroMass
 public import PseudoPrime.AnalyticNumberTheory.Gamma.SignedGammaIntervalBounds
+import PseudoPrime.AnalyticNumberTheory.Gamma.GammaNodeRationalCertificate
 
 /-! # Signed Gamma-factor corrections for the two-pole zero-mass bound -/
 

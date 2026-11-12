@@ -8,6 +8,8 @@ module
 
 public import PseudoPrime.AnalyticNumberTheory.Gamma.SignedGammaIntervalBounds
 public import PseudoPrime.Analysis.Phase64DyadicEulerBounds
+import PseudoPrime.AnalyticNumberTheory.Gamma.DigammaRationalCertificate
+import PseudoPrime.AnalyticNumberTheory.Gamma.GammaNodeRationalCertificate
 
 /-! # Certified even Gamma correction for the first phase candidate -/
 
@@ -17,13 +19,13 @@ namespace PseudoPrime.AnalyticNumberTheory.Gamma
 
 /-- The positive real digamma argument (1/2+a)/2 associated with an even
 Gamma-factor resolvent node. Rational arithmetic supplies its certificate input. -/
-def phase64DigammaNode (a : ℚ) : ℚ :=
+private def phase64DigammaNode (a : ℚ) : ℚ :=
   (1 / 2 + a) / 2
 
 /-- The rational signed even-Gamma allowance at one phase node, using a
 length-64 reciprocal prefix and a length-20 logarithm series. Existing certified
 log-pi endpoints select the upper allowance according to coefficient sign. -/
-def phase64GammaNodeUpper (ab : ℚ × ℚ) : ℚ :=
+private def phase64GammaNodeUpper (ab : ℚ × ℚ) : ℚ :=
   signedGammaNodeUpper ab.2 (rationalDigammaLower (phase64DigammaNode ab.1) 64 6 20)
     (rationalDigammaUpper (phase64DigammaNode ab.1) 64 6 20) (286182471 / 250000000)
     (35772809 / 31250000)
@@ -31,7 +33,7 @@ def phase64GammaNodeUpper (ab : ℚ × ℚ) : ℚ :=
 /-- All ten phase digamma nodes are at least one half and the translated
 logarithm displacement is below one. Kernel rational arithmetic checks these
 analytic admissibility conditions for the computed enclosures. -/
-theorem phase64_gamma_node_checks :
+private theorem phase64_gamma_node_checks :
     Analysis.phaseResolvent64Coefficients.Forall
       (fun ab ↦
         (1 / 2 : ℚ) ≤ phase64DigammaNode ab.1 ∧
@@ -41,14 +43,15 @@ theorem phase64_gamma_node_checks :
 /-- The signed rational Gamma allowances for the new phase list sum to at
 most -1499/1000. Exact kernel arithmetic evaluates the computed reciprocal and
 logarithm prefixes, with no table of assumed digamma values. -/
-theorem phase64_gamma_rational_upper_check :
+private theorem phase64_gamma_rational_upper_check :
     (Analysis.phaseResolvent64Coefficients.map phase64GammaNodeUpper).sum ≤ (-1499 / 1000 : ℚ) := by
   decide +kernel
 
 /-- At every phase node, the actual signed even-Gamma logarithmic derivative
 is bounded by its computed rational allowance. Apply the proved digamma
 trapezoid enclosure and the generic sign-sensitive Gamma comparison. -/
-theorem phase64_gamma_node_le (ab : ℚ × ℚ) (hab : ab ∈ Analysis.phaseResolvent64Coefficients) :
+private theorem phase64_gamma_node_le (ab : ℚ × ℚ)
+    (hab : ab ∈ Analysis.phaseResolvent64Coefficients) :
     (ab.2 : ℝ) * (logDeriv Complex.Gammaℝ (((1 / 2 : ℝ) + (ab.1 : ℝ)) : ℂ)).re ≤
       (phase64GammaNodeUpper ab : ℝ) := by
   have hc := List.forall_iff_forall_mem.mp phase64_gamma_node_checks ab hab

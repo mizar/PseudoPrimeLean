@@ -9,6 +9,8 @@ module
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GaussianSignedEulerIdentity
 public import PseudoPrime.Analysis.GaussianPairedEulerMass
 
+import PseudoPrime.Analysis.GaussianResolventGridCertificate
+
 /-! # Gaussian zero mass retaining nonnegative paired Euler tails -/
 
 @[expose] public section

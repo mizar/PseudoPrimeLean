@@ -8,6 +8,7 @@ module
 
 public import PseudoPrime.AnalyticNumberTheory.Gamma.SignedResolventBounds
 public import PseudoPrime.Analysis.GaussianResolventCertificate
+import PseudoPrime.AnalyticNumberTheory.Gamma.DigammaRationalCertificate
 
 /-! # Signed Gaussian archimedean contributions -/
 

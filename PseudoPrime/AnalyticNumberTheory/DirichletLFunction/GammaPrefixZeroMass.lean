@@ -9,6 +9,8 @@ module
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaPrefixPoissonBounds
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaResolventZeroMass
 
+import PseudoPrime.Analysis.GammaResolventGridCertificate
+
 /-! # Gamma zero mass with per-node digamma prefixes
 
 The existing global Gamma majorant and new centered Poisson errors yield additive 199/10.

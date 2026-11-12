@@ -12,6 +12,7 @@ public import PseudoPrime.LLS.GaussianPrincipalEulerBudgetExtensions
 public import PseudoPrime.LLS.PaperStatements.GaussianKernel
 public import PseudoPrime.LLS.PaperStatements.MellinKernelPrimitiveAverage
 public import PseudoPrime.LLS.PaperStatements.MellinKernelZeros
+import PseudoPrime.Analysis.GaussianResolventGridCertificate
 
 /-! # Explicit oscillating zero-sum bound for the Gaussian Gamma kernel
 

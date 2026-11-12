@@ -8,6 +8,7 @@ module
 
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaAdaptivePoissonBounds
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaResolventZeroMass
+import PseudoPrime.Analysis.GammaResolventGridCertificate
 
 /-! # Improved Gamma zero mass from adaptive archimedean errors
 

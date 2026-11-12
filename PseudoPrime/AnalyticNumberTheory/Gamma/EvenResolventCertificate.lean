@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.AnalyticNumberTheory.Gamma.GammaNodeRationalCertificate
+import PseudoPrime.AnalyticNumberTheory.Gamma.GammaNodeRationalCertificate
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.GammaFactorLogDeriv
 public import PseudoPrime.AnalyticNumberTheory.Gamma.RationalResolventApproximation
 public import PseudoPrime.Analysis.SignedFiniteErrorBounds

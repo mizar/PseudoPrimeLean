@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.GammaQuadraticNoWitness
+import Mathlib.Analysis.SpecialFunctions.Log.Monotone
 
 /-! # Uniform smoothed quadratic bounds below a common endpoint
 
