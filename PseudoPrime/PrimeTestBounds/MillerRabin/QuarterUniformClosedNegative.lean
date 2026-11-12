@@ -6,6 +6,8 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.Analysis.LogTaylorBounds
+
 import PseudoPrime.Analysis.ExponentialFixedPointBounds
 import PseudoPrime.AnalyticNumberTheory.Arithmetic.TruncatedEulerCertificates3
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterUniformClosedBounds

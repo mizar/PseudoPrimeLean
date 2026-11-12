@@ -6,7 +6,6 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed43Count197
 public import PseudoPrime.PrimeTestBounds.MillerRabin.SquareFactorBound19
 public import PseudoPrime.PrimeTestBounds.MillerRabin.SquareSeed43Stage197
 

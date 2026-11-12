@@ -7,7 +7,8 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028SevenSupply
-public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed19Count58
+public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed19
+import PseudoPrime.Analysis.LogTaylorBounds
 
 /-! # Nine-prime weighted count certificates -/
 
@@ -27,58 +28,12 @@ def target028NineWeight (p : ℕ) : ℕ :=
 def target028NineWeights : List ℕ :=
   [7, 11, 17, 20, 24, 26, 30, 30, 32]
 
-/-- Cumulative weighted counts for the nine-prime supply through budget 58. -/
-def target028NineRow : Array ℕ :=
-  #[1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 6, 6, 7, 8, 9, 9, 11, 12, 13, 14, 16, 17,
-    19, 22, 24, 26, 28, 31, 32, 36, 39, 42, 45, 50, 54, 57, 63, 67, 72, 77, 85, 90, 97, 105, 114,
-    120, 130, 140, 149, 159, 171]
-
-/-- Tail rows certify the recurrence for the nine-prime supply. -/
-def target028NineTail : List (Array ℕ) :=
-  [#[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 10,
-      11, 12, 13, 14, 15, 15, 17, 17, 18, 19, 22, 23, 25, 27, 28, 30, 32, 35, 36, 40, 42, 47, 48,
-      53, 55, 59, 62, 66],
-    #[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 5, 5, 5, 5, 7,
-      7, 8, 8, 9, 9, 9, 10, 10, 10, 11, 12, 12, 13, 14, 14, 15, 17, 18, 19, 22, 23, 25, 25, 28, 28,
-      31, 32, 34],
-    #[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 4, 4, 4, 4, 6,
-      6, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 10, 10, 11, 11, 14, 14, 16, 16, 18, 18, 21, 21,
-      22],
-    #[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 3, 3, 3, 3, 5,
-      5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 8, 8, 9, 9, 11, 11, 14, 14, 15],
-    #[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 4,
-      4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 8, 8, 9],
-    #[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3,
-      3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-    #[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,
-      2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-    #[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-      1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-    #[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
-
-set_option maxRecDepth 8192 in
-/-- The complete table satisfies the weighted count recurrence through 58. -/
-theorem target028Nine_checked :
-    weightedPrimeTableCheck 58 target028NineWeights (target028NineRow :: target028NineTail) =
-      true := by
-  decide +kernel
-
 /-- The nine labels are distinct and match their positive weights. -/
 theorem target028Nine_labels :
     target028NinePrimes.Nodup ∧
       target028NinePrimes.map target028NineWeight = target028NineWeights ∧
       ∀ p ∈ target028NinePrimes, 0 < target028NineWeight p := by
   decide +kernel
-
-/-- The checked table gives the family cardinality at every budget up to 58. -/
-theorem target028Nine_family_card (H : ℕ) (hH : H ≤ 58) :
-    (weightedPrimeFamily target028NinePrimes.toFinset target028NineWeight H).card =
-      target028NineRow.getD H 0 :=
-  (weightedPrimeCount_weights_eq_card target028NineWeight H target028NinePrimes target028NineWeights
-        target028Nine_labels.1 target028Nine_labels.2.2 target028Nine_labels.2.1).symm.trans
-    ((weightedPrimeTableCheck_sound 58 target028NineWeights target028NineRow target028NineTail
-        target028Nine_checked H hH).symm)
 
 /-- Every listed label is prime, does not exceed 23, and satisfies its
 certified scaled logarithmic weight. The first eight labels reuse the

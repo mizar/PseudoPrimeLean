@@ -6,6 +6,11 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeTable
+
+import PseudoPrime.Analysis.LogTaylorBounds
+import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeCount
+
 public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
 import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterSquareThird
 import PseudoPrime.PrimeTestBounds.MillerRabin.Target028NineCount

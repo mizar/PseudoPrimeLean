@@ -6,7 +6,10 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed43
+public import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeCount
+import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeTable
+
+public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed43Weight
 
 /-! # Extended weighted count through budget 197 for the supply through 43 -/
 
@@ -15,7 +18,7 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed43
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
 /-- The cumulative count row for the supply through 43 and budget 197. -/
-def primeSeed43Row197 : Array ℕ :=
+private def primeSeed43Row197 : Array ℕ :=
   #[1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 6, 6, 7, 8, 9, 9, 11, 12, 13, 14, 16, 17,
     19, 22, 24, 26, 28, 33, 34, 38, 44, 47, 50, 55, 61, 64, 70, 77, 84, 89, 97, 107, 114, 122, 136,
     144, 154, 169, 183, 195, 210, 229, 246, 263, 285, 307, 327, 352, 380, 406, 436, 469, 505, 537,
@@ -31,7 +34,7 @@ def primeSeed43Row197 : Array ℕ :=
     335463]
 
 /-- The remaining cumulative count rows for the same extended table. -/
-def primeSeed43Tail197 : List (Array ℕ) :=
+private def primeSeed43Tail197 : List (Array ℕ) :=
   [#[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 10,
       11, 12, 13, 14, 17, 17, 19, 22, 23, 24, 27, 28, 30, 32, 33, 37, 39, 42, 46, 50, 52, 59, 60,
       65, 72, 76, 81, 88, 93, 102, 109, 116, 124, 132, 142, 151, 160, 173, 184, 198, 210, 225, 241,
@@ -166,9 +169,19 @@ set_option maxRecDepth 16384 in
 set_option maxHeartbeats 4000000 in
 -- The extended table requires additional reduction steps.
 /-- The extended finite table satisfies the weighted-count recurrence. -/
-theorem primeSeed43Table197_checked :
+private theorem primeSeed43Table197_checked :
     weightedPrimeTableCheck 197 primeSeed43Weights (primeSeed43Row197 :: primeSeed43Tail197) =
       true := by
   decide +kernel
+
+-- Reduction traverses the certified count row.
+set_option maxRecDepth 8192 in
+/-- The weighted count through 43 at budget 197 is at least 335463. -/
+theorem primeSeed43_count_197 : 335463 ≤ weightedPrimeCount id primeSeed43Weights 197 := by
+  have h :=
+    weightedPrimeTableCheck_sound 197 primeSeed43Weights primeSeed43Row197 primeSeed43Tail197
+      primeSeed43Table197_checked 197 (by decide)
+  change 335463 = weightedPrimeCount id primeSeed43Weights 197 at h
+  exact h.le
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

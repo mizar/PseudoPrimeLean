@@ -6,6 +6,11 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeTable
+
+import PseudoPrime.Analysis.LogTaylorBounds
+import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeCount
+
 public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
 public import PseudoPrime.AnalyticNumberTheory.GRH.Definition
 import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed89Count197
@@ -21,13 +26,7 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 /-- The existing weighted prime supply through 89 has 35109 products at budget 129. -/
 private theorem card89 :
     (weightedPrimeFamily primeSeed89Primes.toFinset primeSeed89Weight 129).card = 35109 := by
-  have h :=
-    (weightedPrimeCount_weights_eq_card primeSeed89Weight 129 primeSeed89Primes primeSeed89Weights
-          primeSeed89_labels.1 primeSeed89_labels.2.2 primeSeed89_labels.2.1).symm.trans
-      ((weightedPrimeTableCheck_sound 197 primeSeed89Weights primeSeed89Row197 primeSeed89Tail197
-          primeSeed89_checked197 129 (by decide)).symm)
-  rw [show primeSeed89Row197.getD 129 0 = 35109 by decide +kernel] at h
-  exact h
+  exact primeSeed89_family_129
 
 /-- Under GRH, an odd product of ordered distinct primes with logarithm
 between 20 and 24.7 has a rejecting prime below one quarter of its squared

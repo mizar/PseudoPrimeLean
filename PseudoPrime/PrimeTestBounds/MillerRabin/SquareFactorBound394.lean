@@ -7,7 +7,6 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.SquareFactorBound35
-public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed89Count358
 public import PseudoPrime.PrimeTestBounds.MillerRabin.SquareSeed89Stage358
 
 /-! # Square-divisor coverage through logarithmic scale 39.4 -/

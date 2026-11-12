@@ -6,7 +6,12 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed89Count358
+public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed89Data
+
+import PseudoPrime.Analysis.LogTaylorBounds
+
+import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed373Bounds
+import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed89Weight
 public import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeCountExtend
 public import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedCountWitness
 
@@ -16,29 +21,9 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedCountWitness
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
-set_option maxRecDepth 32768 in
-/-- The checked tail at budget 358 and nine possible powers of the first
-prime yield a lower count at budget 414 without another large table. -/
+/-- The checked supply gives the weighted-count lower bound at budget 414. -/
 theorem primeSeed89_count414_lower : 2087485596 ≤ weightedPrimeCount id primeSeed89Weights 414 := by
-  have hc := primeSeed89_checked358
-  change
-    (weightedPrimeRowCheck 7 358 (primeSeed89Tail358.headD #[]) primeSeed89Row358 &&
-        weightedPrimeTableCheck 358 (primeSeed89Weights.drop 1)
-          (primeSeed89Tail358.headD #[] :: primeSeed89Tail358.drop 1)) =
-      true at hc
-  have ht := (Bool.and_eq_true _ _).mp hc
-  have hs :=
-    weightedPrimeTableCheck_sound 358 (primeSeed89Weights.drop 1) (primeSeed89Tail358.headD #[])
-      (primeSeed89Tail358.drop 1) ht.2 358 (by decide)
-  have heq : weightedPrimeCount id (primeSeed89Weights.drop 1) 358 = 231942844 := by
-    rw [← hs]
-    rfl
-  have hl := weightedPrimeCount_repeat_lower 7 358 8 (primeSeed89Weights.drop 1) (by decide)
-  change
-    9 * weightedPrimeCount id (primeSeed89Weights.drop 1) 358 ≤
-      weightedPrimeCount id primeSeed89Weights 414 at hl
-  rw [heq] at hl
-  exact hl
+  exact primeSeed89_count_414
 
 /-- A prime-square divisor at scale at most 42.5 has base at most
 2087485596, by a rational logarithm certificate. -/

@@ -6,6 +6,8 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeTable
+
 public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed19
 public import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedSemiprimeWitness
 

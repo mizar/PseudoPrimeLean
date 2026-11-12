@@ -6,15 +6,11 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed113
-public import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeCountExtend
-public import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeRowLower
+public import Mathlib.Data.List.Basic
 
-/-! # Lower count rows through the additional primes up to 163 -/
+/-! # Lower-count rows through 163 -/
 
 @[expose] public section
-
-set_option maxRecDepth 32768
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
@@ -445,83 +441,5 @@ def primeSeed163Row8 : Array ℕ :=
     96404592438, 99363596598, 102444455941, 105651998857, 108991222078, 112467339602, 116085739656,
     119852034968, 123772019034, 127851740121, 132097448784, 136515655446, 141113081674,
     145896729374, 150873853708]
-
-/-- The initial row repeats the last exact count above budget 358. -/
-theorem primeSeed163_base_eq :
-    ∀ h ≤ 450, primeSeed163Row0.getD h 0 = primeSeed113Row6.getD (min h 358) 0 := by decide +kernel
-
-/-- Count monotonicity makes the extended initial row a lower bound. -/
-theorem primeSeed163_base_lower :
-    ∀ h ≤ 450, primeSeed163Row0.getD h 0 ≤ weightedPrimeCount id primeSeed113Weights h := by
-  intro h hh
-  have hv := primeSeed113_count_correct (min h 358) (Nat.min_le_right h 358)
-  have hm := weightedPrimeCount_mono id primeSeed113Weights (Nat.min_le_left h 358)
-  rw [← hv] at hm
-  exact (primeSeed163_base_eq h hh).le.trans hm
-
-/-- The kernel verifies update row 1 through budget 450. -/
-theorem primeSeed163Check1 :
-    weightedPrimeRowCheck 49 450 primeSeed163Row0 primeSeed163Row1 = true := by decide +kernel
-
-/-- The kernel verifies update row 2 through budget 450. -/
-theorem primeSeed163Check2 :
-    weightedPrimeRowCheck 49 450 primeSeed163Row1 primeSeed163Row2 = true := by decide +kernel
-
-/-- The kernel verifies update row 3 through budget 450. -/
-theorem primeSeed163Check3 :
-    weightedPrimeRowCheck 50 450 primeSeed163Row2 primeSeed163Row3 = true := by decide +kernel
-
-/-- The kernel verifies update row 4 through budget 450. -/
-theorem primeSeed163Check4 :
-    weightedPrimeRowCheck 50 450 primeSeed163Row3 primeSeed163Row4 = true := by decide +kernel
-
-/-- The kernel verifies update row 5 through budget 450. -/
-theorem primeSeed163Check5 :
-    weightedPrimeRowCheck 51 450 primeSeed163Row4 primeSeed163Row5 = true := by decide +kernel
-
-/-- The kernel verifies update row 6 through budget 450. -/
-theorem primeSeed163Check6 :
-    weightedPrimeRowCheck 51 450 primeSeed163Row5 primeSeed163Row6 = true := by decide +kernel
-
-/-- The kernel verifies update row 7 through budget 450. -/
-theorem primeSeed163Check7 :
-    weightedPrimeRowCheck 51 450 primeSeed163Row6 primeSeed163Row7 = true := by decide +kernel
-
-/-- The kernel verifies update row 8 through budget 450. -/
-theorem primeSeed163Check8 :
-    weightedPrimeRowCheck 51 450 primeSeed163Row7 primeSeed163Row8 = true := by decide +kernel
-
-/-- Eight checked updates give a weighted-count lower bound through 450.
-The proof propagates the existing lower bound through every new prime label. -/
-theorem primeSeed163_lower :
-    ∀ h ≤ 450,
-      primeSeed163Row8.getD h 0 ≤
-        weightedPrimeCount id ([51, 51, 51, 51, 50, 50, 49, 49] ++ primeSeed113Weights) h := by
-  have h0 := primeSeed163_base_lower
-  have h1 :=
-    weightedPrimeRow_lower 49 450 (primeSeed113Weights) primeSeed163Row0 primeSeed163Row1
-      primeSeed163Check1 h0
-  have h2 :=
-    weightedPrimeRow_lower 49 450 (49 :: primeSeed113Weights) primeSeed163Row1 primeSeed163Row2
-      primeSeed163Check2 h1
-  have h3 :=
-    weightedPrimeRow_lower 50 450 (49 :: 49 :: primeSeed113Weights) primeSeed163Row2
-      primeSeed163Row3 primeSeed163Check3 h2
-  have h4 :=
-    weightedPrimeRow_lower 50 450 (50 :: 49 :: 49 :: primeSeed113Weights) primeSeed163Row3
-      primeSeed163Row4 primeSeed163Check4 h3
-  have h5 :=
-    weightedPrimeRow_lower 51 450 (50 :: 50 :: 49 :: 49 :: primeSeed113Weights) primeSeed163Row4
-      primeSeed163Row5 primeSeed163Check5 h4
-  have h6 :=
-    weightedPrimeRow_lower 51 450 (51 :: 50 :: 50 :: 49 :: 49 :: primeSeed113Weights)
-      primeSeed163Row5 primeSeed163Row6 primeSeed163Check6 h5
-  have h7 :=
-    weightedPrimeRow_lower 51 450 (51 :: 51 :: 50 :: 50 :: 49 :: 49 :: primeSeed113Weights)
-      primeSeed163Row6 primeSeed163Row7 primeSeed163Check7 h6
-  have h8 :=
-    weightedPrimeRow_lower 51 450 (51 :: 51 :: 51 :: 50 :: 50 :: 49 :: 49 :: primeSeed113Weights)
-      primeSeed163Row7 primeSeed163Row8 primeSeed163Check8 h7
-  exact h8
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

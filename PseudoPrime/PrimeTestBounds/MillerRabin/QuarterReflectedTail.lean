@@ -6,6 +6,8 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.Analysis.LogTaylorBounds
+
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterReflectedMoments
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevRHError
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PowerLogMomentAbel

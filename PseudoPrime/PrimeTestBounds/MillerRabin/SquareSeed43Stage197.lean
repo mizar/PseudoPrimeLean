@@ -6,8 +6,10 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimePowerCount
+
 public import PseudoPrime.PrimeTestBounds.MillerRabin.SquareSeed43Stage133
-public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed43Count197
+import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed43Count197
 
 /-! # Weighted square-divisor supply and factor bounds -/
 
@@ -57,14 +59,12 @@ theorem exists_prime_reject_square_seed43_197 {n p : ℕ} (hn : 1 < n) (ho : Odd
     ∃ r : ℕ, r.Prime ∧ r ≤ 43 ∧ ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
   have hpn : p ∣ n := (dvd_pow_self p (by decide : 2 ≠ 0)).trans hdiv
   have hp2 : p ≠ 2 := ho.ne_two_of_dvd_nat hpn
-  have hcount : p - 1 < primeSeed43Row197.getD 197 0 := by
-    change p - 1 < 335463
-    exact (Nat.sub_lt hp.pos (by decide : 0 < 1)).trans_le hbound
+  have hcount : p - 1 < 335463 := (Nat.sub_lt hp.pos (by decide : 0 < 1)).trans_le hbound
   exact
-    exists_prime_reject_prime_pow_table hn ho hp hp2 (by decide : 0 < 2) hdiv primeSeed43Primes
-      primeSeed43Weights 43 197 197 primeSeed43Weight 10 (by norm_num only) primeSeed43_labels.1
+    exists_prime_reject_prime_pow_count hn ho hp hp2 (by decide : 0 < 2) hdiv primeSeed43Primes
+      primeSeed43Weights 43 197 335463 primeSeed43Weight 10 (by norm_num only) primeSeed43_labels.1
       (fun r hr ↦ (primeSeed43_prime_supply r hr).1) (fun r hr ↦ (primeSeed43_prime_supply r hr).2)
-      primeSeed43_labels.2.2 primeSeed43_weight_bounds primeSeed43_labels.2.1 (by decide)
-      primeSeed43Row197 primeSeed43Tail197 primeSeed43Table197_checked hbudget hcount
+      primeSeed43_labels.2.2 primeSeed43_weight_bounds primeSeed43_labels.2.1 hbudget hcount
+      primeSeed43_count_197
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

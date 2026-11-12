@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.SquareGroupedSupply
+import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed373Bounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.SquareFactorBoundSmallFactor
 public import PseudoPrime.PrimeTestBounds.MillerRabin.SquareFactorStageLogs
 
@@ -43,11 +44,10 @@ theorem exists_prime_reject_03_square_8_to_100 {n p : ℕ} (hn : 1 < n) (ho : Od
         norm_num only [Nat.cast_ofNat]
         nlinarith only [square_factor_stage_log0]
       by_cases h1 : p ≤ 1488482619460
-      · have hc : p ≤ primeSeed373Row14.getD 414 0 := by
-          change p ≤ 1488482619460
-          exact h1
+      · have hc : p ≤ 1488482619460 := by exact h1
         obtain ⟨r, hr, hb, hf⟩ :=
-          exists_prime_reject_square_seed373 hn ho hp hdiv 414 (by decide) hc hcost0
+          exists_prime_reject_square_seed373 hn ho hp hdiv 414 1488482619460 primeSeed373_count_414
+            hc hcost0
         exact
           ⟨r, hr, (Nat.cast_le.mpr hb).trans ((by norm_num only : (373 : ℝ) ≤ 1849).trans hbudget),
             hf⟩
@@ -57,11 +57,10 @@ theorem exists_prime_reject_03_square_8_to_100 {n p : ℕ} (hn : 1 < n) (ho : Od
           norm_num only [Nat.cast_ofNat]
           nlinarith only [square_factor_stage_log1]
         by_cases h2 : p ≤ 68854718408873
-        · have hc : p ≤ primeSeed373Row14.getD 500 0 := by
-            change p ≤ 68854718408873
-            exact h2
+        · have hc : p ≤ 68854718408873 := by exact h2
           obtain ⟨r, hr, hb, hf⟩ :=
-            exists_prime_reject_square_seed373 hn ho hp hdiv 500 (by decide) hc hcost1
+            exists_prime_reject_square_seed373 hn ho hp hdiv 500 68854718408873
+              primeSeed373_count_500 hc hcost1
           exact
             ⟨r, hr,
               (Nat.cast_le.mpr hb).trans ((by norm_num only : (373 : ℝ) ≤ 1849).trans hbudget), hf⟩
@@ -71,11 +70,12 @@ theorem exists_prime_reject_03_square_8_to_100 {n p : ℕ} (hn : 1 < n) (ho : Od
             norm_num only [Nat.cast_ofNat]
             nlinarith only [square_factor_stage_log2]
           by_cases h3 : p ≤ 14459490865863330
-          · have hc : p ≤ Nat.choose (209 + 1) 1 * primeSeed373Row14.getD 500 0 := by
+          · have hc : p ≤ Nat.choose (209 + 1) 1 * 68854718408873 := by
               change p ≤ 14459490865863330
               exact h3
             obtain ⟨r, hr, hb, hf⟩ :=
-              exists_prime_reject_square_seed1849 hn ho hp hdiv 500 1 (by decide) hc hcost2
+              exists_prime_reject_square_seed1849 hn ho hp hdiv 500 1 68854718408873
+                primeSeed373_count_500 hc hcost2
             exact ⟨r, hr, (Nat.cast_le.mpr hb).trans hbudget, hf⟩
           · have hbig3 : 14459490865863331 ≤ p := Nat.succ_le_of_lt (Nat.lt_of_not_ge h3)
             have hcost3 : (652 : ℝ) / 10 < Real.log ((p ^ 2 : ℕ) : ℝ) := by
@@ -84,11 +84,12 @@ theorem exists_prime_reject_03_square_8_to_100 {n p : ℕ} (hn : 1 < n) (ho : Od
               norm_num only [Nat.cast_ofNat]
               nlinarith only [square_factor_stage_log3]
             by_cases h4 : p ≤ 1525476286348581315
-            · have hc : p ≤ Nat.choose (209 + 2) 2 * primeSeed373Row14.getD 500 0 := by
+            · have hc : p ≤ Nat.choose (209 + 2) 2 * 68854718408873 := by
                 change p ≤ 1525476286348581315
                 exact h4
               obtain ⟨r, hr, hb, hf⟩ :=
-                exists_prime_reject_square_seed1849 hn ho hp hdiv 500 2 (by decide) hc hcost3
+                exists_prime_reject_square_seed1849 hn ho hp hdiv 500 2 68854718408873
+                  primeSeed373_count_500 hc hcost3
               exact ⟨r, hr, (Nat.cast_le.mpr hb).trans hbudget, hf⟩
             · have hbig4 : 1525476286348581316 ≤ p := Nat.succ_le_of_lt (Nat.lt_of_not_ge h4)
               have hcost4 : (728 : ℝ) / 10 < Real.log ((p ^ 2 : ℕ) : ℝ) := by
@@ -98,11 +99,12 @@ theorem exists_prime_reject_03_square_8_to_100 {n p : ℕ} (hn : 1 < n) (ho : Od
                 norm_num only [Nat.cast_ofNat]
                 nlinarith only [square_factor_stage_log4]
               by_cases h5 : p ≤ 107800324235299746260
-              · have hc : p ≤ Nat.choose (209 + 3) 3 * primeSeed373Row14.getD 500 0 := by
+              · have hc : p ≤ Nat.choose (209 + 3) 3 * 68854718408873 := by
                   change p ≤ 107800324235299746260
                   exact h5
                 obtain ⟨r, hr, hb, hf⟩ :=
-                  exists_prime_reject_square_seed1849 hn ho hp hdiv 500 3 (by decide) hc hcost4
+                  exists_prime_reject_square_seed1849 hn ho hp hdiv 500 3 68854718408873
+                    primeSeed373_count_500 hc hcost4
                 exact ⟨r, hr, (Nat.cast_le.mpr hb).trans hbudget, hf⟩
               · have hbig5 : 107800324235299746261 ≤ p := Nat.succ_le_of_lt (Nat.lt_of_not_ge h5)
                 have hcost5 : (804 : ℝ) / 10 < Real.log ((p ^ 2 : ℕ) : ℝ) := by
@@ -111,11 +113,12 @@ theorem exists_prime_reject_03_square_8_to_100 {n p : ℕ} (hn : 1 < n) (ho : Od
                       hbig5
                   norm_num only [Nat.cast_ofNat]
                   nlinarith only [square_factor_stage_log5]
-                have hc : p ≤ Nat.choose (209 + 4) 4 * primeSeed373Row14.getD 500 0 := by
+                have hc : p ≤ Nat.choose (209 + 4) 4 * 68854718408873 := by
                   change p ≤ 5740367265529711488345
                   exact hpmax
                 obtain ⟨r, hr, hb, hf⟩ :=
-                  exists_prime_reject_square_seed1849 hn ho hp hdiv 500 4 (by decide) hc hcost5
+                  exists_prime_reject_square_seed1849 hn ho hp hdiv 500 4 68854718408873
+                    primeSeed373_count_500 hc hcost5
                 exact ⟨r, hr, (Nat.cast_le.mpr hb).trans hbudget, hf⟩
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

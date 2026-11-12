@@ -6,6 +6,11 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeTable
+
+import PseudoPrime.Analysis.LogTaylorBounds
+import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeCount
+
 public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
 public import PseudoPrime.AnalyticNumberTheory.GRH.Definition
 import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed89Count282
@@ -57,13 +62,7 @@ private theorem semiprime_local_anchor334 {n p q : ℕ} (hn : 1 < n) (ho : Odd n
 /-- The weighted prime family has 4099597 products at budget 220. -/
 private theorem card89_220 :
     (weightedPrimeFamily primeSeed89Primes.toFinset primeSeed89Weight 220).card = 4099597 := by
-  have h :=
-    (weightedPrimeCount_weights_eq_card primeSeed89Weight 220 primeSeed89Primes primeSeed89Weights
-          primeSeed89_labels.1 primeSeed89_labels.2.2 primeSeed89_labels.2.1).symm.trans
-      ((weightedPrimeTableCheck_sound 282 primeSeed89Weights primeSeed89Row282 primeSeed89Tail282
-          primeSeed89_checked282 220 (by decide)).symm)
-  rw [show primeSeed89Row282.getD 220 0 = 4099597 by decide +kernel] at h
-  exact h
+  exact primeSeed89_family_220
 
 /-- Under GRH, an odd product of ordered distinct primes with logarithm
 between 36.6 and 38.6 has a rejecting prime below one quarter of its squared

@@ -6,73 +6,13 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed89Count358
+public import Mathlib.Data.List.Basic
 
-/-! # Extended weighted supply through 113 -/
+/-! # Weighted count rows through 113 -/
 
 @[expose] public section
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
-
-/-- The 113 supply adds six distinct prime labels to the 89 supply. -/
-def primeSeed113Primes : List ℕ :=
-  [113, 109, 107, 103, 101, 97] ++ primeSeed89Primes
-
-/-- Scaled logarithmic weights extend the previous supply through 113. -/
-def primeSeed113Weight (p : ℕ) : ℕ :=
-  if p ≤ 89 then primeSeed89Weight p else if p ≤ 97 then 46 else if p ≤ 109 then 47 else 48
-
-/-- The ordered weights retain distinct labels with equal costs. -/
-def primeSeed113Weights : List ℕ :=
-  [48, 47, 47, 47, 47, 46] ++ primeSeed89Weights
-
-/-- The labels are distinct and match the positive weight list. -/
-theorem primeSeed113_labels :
-    primeSeed113Primes.Nodup ∧
-      primeSeed113Primes.map primeSeed113Weight = primeSeed113Weights ∧
-      ∀ p ∈ primeSeed113Primes, 0 < primeSeed113Weight p := by
-  decide +kernel
-
-/-- Every listed label is prime and at most 113. -/
-theorem primeSeed113_prime_supply : ∀ p ∈ primeSeed113Primes, p.Prime ∧ p ≤ 113 := by decide +kernel
-
-/-- Certified scaled weights bound the logarithms of the listed primes. -/
-theorem primeSeed113_weight_bounds :
-    ∀ p ∈ primeSeed113Primes, Real.log p ≤ (primeSeed113Weight p : ℝ) / 10 := by
-  have h97 :=
-    (Analysis.rationalLogIntervalCheck_sound
-        (show Analysis.rationalLogIntervalCheck 97 7 16 4 (46 / 10) = true from by
-          decide +kernel)).2
-  have h109 :=
-    (Analysis.rationalLogIntervalCheck_sound
-        (show Analysis.rationalLogIntervalCheck 109 7 16 4 (47 / 10) = true from by
-          decide +kernel)).2
-  have h113 :=
-    (Analysis.rationalLogIntervalCheck_sound
-        (show Analysis.rationalLogIntervalCheck 113 7 16 4 (48 / 10) = true from by
-          decide +kernel)).2
-  norm_num only [Rat.cast_ofNat, Rat.cast_div] at h97 h109 h113
-  have h101 : Real.log (101 : ℝ) ≤ 47 / 10 :=
-    (Real.log_le_log (by norm_num only) (by norm_num only : (101 : ℝ) ≤ 109)).trans h109
-  have h103 : Real.log (103 : ℝ) ≤ 47 / 10 :=
-    (Real.log_le_log (by norm_num only) (by norm_num only : (103 : ℝ) ≤ 109)).trans h109
-  have h107 : Real.log (107 : ℝ) ≤ 47 / 10 :=
-    (Real.log_le_log (by norm_num only) (by norm_num only : (107 : ℝ) ≤ 109)).trans h109
-  intro p hp
-  simp only [primeSeed113Primes, List.mem_append, List.mem_cons, List.not_mem_nil, or_false] at hp
-  rcases hp with (rfl | rfl | rfl | rfl | rfl | rfl) | hp
-  all_goals
-    try norm_num only [primeSeed113Weight, Nat.reduceLeDiff, Nat.cast_ofNat, ite_true, ite_false]
-  all_goals
-    first
-    | exact h113
-    | exact h109
-    | exact h107
-    | exact h103
-    | exact h101
-    | exact h97
-    | ( have hp89 := (primeSeed89_prime_supply p hp).2
-        simpa only [primeSeed113Weight, ite_eq_left hp89] using primeSeed89_weight_bounds p hp)
 
 /-- The cumulative count row after adding 1 new prime labels. -/
 def primeSeed113Row1 : Array ℕ :=
@@ -246,97 +186,5 @@ def primeSeed113Row5 : Array ℕ :=
     1287770930, 1339440606, 1393095529, 1448807998, 1506654105, 1566712199, 1629063529, 1693790776,
     1760981283, 1830723900, 1903113795, 1978244118, 2056215875, 2137130728, 2221097251, 2308223141,
     2398623578, 2492415095, 2589721079]
-
-/-- The cumulative count row after adding 6 new prime labels. -/
-def primeSeed113Row6 : Array ℕ :=
-  #[1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 6, 6, 7, 8, 9, 9, 11, 12, 13, 14, 16, 17,
-    19, 22, 24, 26, 28, 33, 34, 38, 44, 48, 52, 58, 65, 71, 78, 87, 96, 106, 116, 127, 138, 148,
-    165, 176, 194, 212, 230, 248, 270, 295, 319, 347, 376, 408, 441, 481, 519, 563, 609, 661, 714,
-    772, 835, 905, 974, 1052, 1141, 1231, 1334, 1436, 1553, 1672, 1810, 1946, 2102, 2270, 2444,
-    2635, 2833, 3052, 3288, 3531, 3796, 4082, 4383, 4707, 5044, 5417, 5803, 6226, 6668, 7148, 7662,
-    8204, 8784, 9401, 10068, 10772, 11534, 12325, 13187, 14099, 15076, 16104, 17216, 18392, 19650,
-    20981, 22399, 23915, 25530, 27238, 29058, 31006, 33062, 35276, 37579, 40064, 42694, 45488,
-    48443, 51587, 54941, 58471, 62223, 66195, 70420, 74893, 79630, 84632, 89966, 95587, 101565,
-    107858, 114555, 121638, 129149, 137072, 145476, 154392, 163796, 173758, 184286, 195446, 207232,
-    219723, 232867, 246819, 261549, 277121, 293563, 310936, 329311, 348716, 369176, 390783, 413635,
-    437728, 463166, 489960, 518312, 548150, 579691, 612849, 647875, 684810, 723719, 764705, 807907,
-    853464, 901421, 951934, 1005107, 1061173, 1120182, 1182309, 1247658, 1316549, 1388997, 1465283,
-    1545513, 1629949, 1718843, 1812326, 1910632, 2014034, 2122850, 2237200, 2357489, 2483838,
-    2616788, 2756459, 2903296, 3057462, 3219560, 3389847, 3568712, 3756544, 3953813, 4161007,
-    4378563, 4606890, 4846536, 5098210, 5362243, 5639361, 5929991, 6235064, 6555029, 6890693,
-    7242596, 7611711, 7998869, 8404670, 8830116, 9276090, 9743668, 10233650, 10747187, 11285153,
-    11849106, 12439824, 13058728, 13706890, 14385980, 15097172, 15841997, 16621830, 17438392,
-    18293440, 19188482, 20125328, 21105883, 22132284, 23206249, 24330154, 25505833, 26736058,
-    28022977, 29369075, 30776812, 32249165, 33788935, 35398861, 37082067, 38841671, 40681314,
-    42604116, 44613734, 46713736, 48908643, 51201811, 53597934, 56100908, 58715904, 61447429,
-    64300439, 67279842, 70391417, 73640796, 77033451, 80575569, 84273427, 88133921, 92163470,
-    96369351, 100758569, 105339593, 110119788, 115107565, 120311462, 125740672, 131404572,
-    137312596, 143474789, 149901618, 156604515, 163594014, 170882227, 178480993, 186403763,
-    194662861, 203272568, 212246233, 221599644, 231347674, 241506106, 252091295, 263120848,
-    274612553, 286584706, 299056406, 312047556, 325579585, 339673281, 354351079, 369635851,
-    385552642, 402125524, 419380717, 437344711, 456045925, 475513519, 495776839, 516867116,
-    538816971, 561660425, 585431281, 610166297, 635902168, 662679079, 690536055, 719515451,
-    749659610, 781015013, 813627099, 847544265, 882816280, 919495387, 957635482, 997291856,
-    1038521893, 1081385650, 1125945936, 1172265771, 1220412249, 1270453688, 1322462678, 1376512437,
-    1432679792, 1491043498, 1551686839, 1614695173, 1680155672, 1748160211, 1818803494, 1892184377,
-    1968403329, 2047565989, 2129780306, 2215161351, 2303823703, 2395889156, 2491481807, 2590733102,
-    2693775783, 2800749102, 2911795812, 3027065790]
-
-set_option maxRecDepth 32768 in
-/-- The kernel verifies update row 1 through budget 358. -/
-theorem primeSeed113Check1 :
-    weightedPrimeRowCheck 46 358 primeSeed89Row358 primeSeed113Row1 = true := by decide +kernel
-
-set_option maxRecDepth 32768 in
-/-- The kernel verifies update row 2 through budget 358. -/
-theorem primeSeed113Check2 :
-    weightedPrimeRowCheck 47 358 primeSeed113Row1 primeSeed113Row2 = true := by decide +kernel
-
-set_option maxRecDepth 32768 in
-/-- The kernel verifies update row 3 through budget 358. -/
-theorem primeSeed113Check3 :
-    weightedPrimeRowCheck 47 358 primeSeed113Row2 primeSeed113Row3 = true := by decide +kernel
-
-set_option maxRecDepth 32768 in
-/-- The kernel verifies update row 4 through budget 358. -/
-theorem primeSeed113Check4 :
-    weightedPrimeRowCheck 47 358 primeSeed113Row3 primeSeed113Row4 = true := by decide +kernel
-
-set_option maxRecDepth 32768 in
-/-- The kernel verifies update row 5 through budget 358. -/
-theorem primeSeed113Check5 :
-    weightedPrimeRowCheck 47 358 primeSeed113Row4 primeSeed113Row5 = true := by decide +kernel
-
-set_option maxRecDepth 32768 in
-/-- The kernel verifies update row 6 through budget 358. -/
-theorem primeSeed113Check6 :
-    weightedPrimeRowCheck 48 358 primeSeed113Row5 primeSeed113Row6 = true := by decide +kernel
-
-/-- Six checked updates extend the earlier table to the supply through 113.
-Each row uses the previous row's count correctness through budget 358. -/
-theorem primeSeed113_count_correct :
-    ∀ h ≤ 358, primeSeed113Row6.getD h 0 = weightedPrimeCount id primeSeed113Weights h := by
-  have h0 :=
-    weightedPrimeTableCheck_sound 358 primeSeed89Weights primeSeed89Row358 primeSeed89Tail358
-      primeSeed89_checked358
-  have h1 :=
-    weightedPrimeRow_correct 46 358 primeSeed89Weights primeSeed89Row358 primeSeed113Row1
-      primeSeed113Check1 h0
-  have h2 :=
-    weightedPrimeRow_correct 47 358 (46 :: primeSeed89Weights) primeSeed113Row1 primeSeed113Row2
-      primeSeed113Check2 h1
-  have h3 :=
-    weightedPrimeRow_correct 47 358 (47 :: 46 :: primeSeed89Weights) primeSeed113Row2
-      primeSeed113Row3 primeSeed113Check3 h2
-  have h4 :=
-    weightedPrimeRow_correct 47 358 (47 :: 47 :: 46 :: primeSeed89Weights) primeSeed113Row3
-      primeSeed113Row4 primeSeed113Check4 h3
-  have h5 :=
-    weightedPrimeRow_correct 47 358 (47 :: 47 :: 47 :: 46 :: primeSeed89Weights) primeSeed113Row4
-      primeSeed113Row5 primeSeed113Check5 h4
-  have h6 :=
-    weightedPrimeRow_correct 48 358 (47 :: 47 :: 47 :: 47 :: 46 :: primeSeed89Weights)
-      primeSeed113Row5 primeSeed113Row6 primeSeed113Check6 h5
-  exact h6
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

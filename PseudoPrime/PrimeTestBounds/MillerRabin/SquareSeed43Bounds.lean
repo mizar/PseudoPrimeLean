@@ -6,6 +6,8 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimePowerCount
+
 public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed43
 public import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedCountWitness
 
@@ -62,22 +64,14 @@ The checked count table is transferred directly to the original-input kernel. -/
 theorem exists_prime_reject_square_seed43 {n p : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime)
     (hdiv : p ^ 2 ∣ n) (hbound : p ≤ 809) (hbudget : (77 : ℝ) / 10 < Real.log ((p ^ 2 : ℕ) : ℝ)) :
     ∃ r : ℕ, r.Prime ∧ r ≤ 43 ∧ ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
-  let : NeZero (p ^ 2) := ⟨pow_ne_zero 2 hp.ne_zero⟩
-  let H := (powMonoidHom (n - 1) : (ZMod (p ^ 2))ˣ →* (ZMod (p ^ 2))ˣ).ker
   have hpn : p ∣ n := (dvd_pow_self p (by decide : 2 ≠ 0)).trans hdiv
   have hp2 : p ≠ 2 := ho.ne_two_of_dvd_nat hpn
-  have hcard : Nat.card H < primeSeed43Row.getD 77 0 := by
-    change Nat.card (powMonoidHom (n - 1) : (ZMod (p ^ 2))ˣ →* (ZMod (p ^ 2))ˣ).ker < _
-    rw [NumberTheory.card_local_fermat_kernel_prime_pow hn hp hp2 (by decide : 0 < 2) hdiv]
-    have hg := Nat.gcd_le_left (n - 1) (Nat.sub_pos_of_lt hp.one_lt)
-    change Nat.gcd (p - 1) (n - 1) < 809
-    exact hg.trans_lt ((Nat.sub_lt hp.pos (by decide : 0 < 1)).trans_le hbound)
+  have hcount : p - 1 < 809 := (Nat.sub_lt hp.pos (by decide : 0 < 1)).trans_le hbound
   exact
-    exists_prime_reject_of_weight_table H primeSeed43Primes primeSeed43Weights 43 77 77
-      primeSeed43Weight 10 (by norm_num only) (pow_pos hp.pos 2) primeSeed43_labels.1
-      (fun p hp ↦ (primeSeed43_prime_supply p hp).1) (fun p hp ↦ (primeSeed43_prime_supply p hp).2)
-      primeSeed43_labels.2.2 primeSeed43_weight_bounds primeSeed43_labels.2.1 hbudget (by decide)
-      primeSeed43Row primeSeed43Tail primeSeed43_checked hcard
-      (fun r hr ↦ PrimeTest.strongMR_local_divisorKernel hn ho hdiv hr)
+    exists_prime_reject_prime_pow_count hn ho hp hp2 (by decide : 0 < 2) hdiv primeSeed43Primes
+      primeSeed43Weights 43 77 809 primeSeed43Weight 10 (by norm_num only) primeSeed43_labels.1
+      (fun r hr ↦ (primeSeed43_prime_supply r hr).1) (fun r hr ↦ (primeSeed43_prime_supply r hr).2)
+      primeSeed43_labels.2.2 primeSeed43_weight_bounds primeSeed43_labels.2.1 hbudget hcount
+      primeSeed43_count_77
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

@@ -6,7 +6,10 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed89
+public import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeCount
+import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeTable
+
+public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed89Weight
 
 /-! # Extended weighted count through 197 for the supply through 89 -/
 
@@ -17,7 +20,7 @@ set_option maxRecDepth 16384
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
 /-- The cumulative weighted counts through budget 197. -/
-def primeSeed89Row197 : Array ℕ :=
+private def primeSeed89Row197 : Array ℕ :=
   #[1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 6, 6, 7, 8, 9, 9, 11, 12, 13, 14, 16, 17,
     19, 22, 24, 26, 28, 33, 34, 38, 44, 48, 52, 58, 65, 71, 78, 87, 95, 101, 110, 121, 132, 142,
     159, 169, 183, 200, 218, 235, 253, 277, 300, 324, 352, 383, 411, 446, 482, 521, 561, 608, 658,
@@ -33,7 +36,7 @@ def primeSeed89Row197 : Array ℕ :=
     1072793, 1127237, 1184348, 1244168, 1306842, 1372508]
 
 /-- The remaining checked count-table rows through budget 197. -/
-def primeSeed89Tail197 : List (Array ℕ) :=
+private def primeSeed89Tail197 : List (Array ℕ) :=
   [#[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 10,
       11, 12, 13, 14, 17, 17, 19, 22, 24, 26, 30, 32, 37, 40, 43, 47, 49, 52, 56, 61, 64, 72, 74,
       82, 90, 97, 103, 111, 118, 131, 141, 152, 165, 176, 193, 205, 221, 237, 256, 275, 296, 317,
@@ -268,9 +271,61 @@ def primeSeed89Tail197 : List (Array ℕ) :=
 
 set_option maxRecDepth 16384 in
 /-- The kernel verifies the recurrence for every table row. -/
-theorem primeSeed89_checked197 :
+private theorem primeSeed89_checked197 :
     weightedPrimeTableCheck 197 primeSeed89Weights (primeSeed89Row197 :: primeSeed89Tail197) =
       true := by
   decide +kernel
+
+/-- The weighted count through 89 at budget 197 is at least 1372508. -/
+theorem primeSeed89_count_197 : 1372508 ≤ weightedPrimeCount id primeSeed89Weights 197 := by
+  have h :=
+    weightedPrimeTableCheck_sound 197 primeSeed89Weights primeSeed89Row197 primeSeed89Tail197
+      primeSeed89_checked197 197 (by decide)
+  change 1372508 = weightedPrimeCount id primeSeed89Weights 197 at h
+  exact h.le
+
+/-- The weighted family through 89 has 35109 products at budget 129. -/
+theorem primeSeed89_family_129 :
+    (weightedPrimeFamily primeSeed89Primes.toFinset primeSeed89Weight 129).card = 35109 := by
+  have h :=
+    (weightedPrimeCount_weights_eq_card primeSeed89Weight 129 primeSeed89Primes primeSeed89Weights
+          primeSeed89_labels.1 primeSeed89_labels.2.2 primeSeed89_labels.2.1).symm.trans
+      ((weightedPrimeTableCheck_sound 197 primeSeed89Weights primeSeed89Row197 primeSeed89Tail197
+          primeSeed89_checked197 129 (by decide)).symm)
+  change (weightedPrimeFamily primeSeed89Primes.toFinset primeSeed89Weight 129).card = 35109 at h
+  exact h
+
+/-- The weighted family through 89 has 124707 products at budget 151. -/
+theorem primeSeed89_family_151 :
+    (weightedPrimeFamily primeSeed89Primes.toFinset primeSeed89Weight 151).card = 124707 := by
+  have h :=
+    (weightedPrimeCount_weights_eq_card primeSeed89Weight 151 primeSeed89Primes primeSeed89Weights
+          primeSeed89_labels.1 primeSeed89_labels.2.2 primeSeed89_labels.2.1).symm.trans
+      ((weightedPrimeTableCheck_sound 197 primeSeed89Weights primeSeed89Row197 primeSeed89Tail197
+          primeSeed89_checked197 151 (by decide)).symm)
+  change (weightedPrimeFamily primeSeed89Primes.toFinset primeSeed89Weight 151).card = 124707 at h
+  exact h
+
+/-- The weighted family through 89 has 387518 products at budget 172. -/
+theorem primeSeed89_family_172 :
+    (weightedPrimeFamily primeSeed89Primes.toFinset primeSeed89Weight 172).card = 387518 := by
+  have h :=
+    (weightedPrimeCount_weights_eq_card primeSeed89Weight 172 primeSeed89Primes primeSeed89Weights
+          primeSeed89_labels.1 primeSeed89_labels.2.2 primeSeed89_labels.2.1).symm.trans
+      ((weightedPrimeTableCheck_sound 197 primeSeed89Weights primeSeed89Row197 primeSeed89Tail197
+          primeSeed89_checked197 172 (by decide)).symm)
+  change (weightedPrimeFamily primeSeed89Primes.toFinset primeSeed89Weight 172).card = 387518 at h
+  exact h
+
+/-- The weighted family through 89 has 923924 products at budget 189. -/
+theorem primeSeed89_family_189 :
+    (weightedPrimeFamily primeSeed89Primes.toFinset primeSeed89Weight 189).card = 923924 := by
+  have h :=
+    (weightedPrimeCount_weights_eq_card primeSeed89Weight 189 primeSeed89Primes primeSeed89Weights
+          primeSeed89_labels.1 primeSeed89_labels.2.2 primeSeed89_labels.2.1).symm.trans
+      ((weightedPrimeTableCheck_sound 197 primeSeed89Weights primeSeed89Row197 primeSeed89Tail197
+          primeSeed89_checked197 189 (by decide)).symm)
+  change (weightedPrimeFamily primeSeed89Primes.toFinset primeSeed89Weight 189).card = 923924 at h
+  exact h
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

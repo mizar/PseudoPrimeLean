@@ -6,8 +6,11 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed373Data
+import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed373
+import PseudoPrime.Analysis.LogTaylorBounds
+
 public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed1849
-public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed1849Count
 
 /-! # Prime labels through 991 for semiprime intervals -/
 
@@ -38,7 +41,7 @@ theorem semiSeed991_labels :
   · intro p hp
     have hp0 := primeSeed1849_labels.2.2 p (hsub.subset hp)
     by_cases h : p ≤ 373
-    · simpa only [semiWeight991, primeSeed1849Weight, ite_eq_left h] using hp0
+    · simpa only [semiWeight991, primeSeed1849Weight, primeSeed373Weight, ite_eq_left h] using hp0
     · simp only [semiWeight991, ite_eq_right h]
       norm_num only
 
@@ -65,7 +68,7 @@ theorem semiSeed991_weights : ∀ p ∈ semiSeed991, Real.log p ≤ (semiWeight9
   · have hsub : semiSeed991.Sublist primeSeed1849Primes :=
       (List.drop_sublist 116 primeSeed1849Extra).append (List.Sublist.refl _)
     have hw := primeSeed1849_weight_bounds p (hsub.subset hp)
-    simpa only [semiWeight991, primeSeed1849Weight, ite_eq_left h] using hw
+    simpa only [semiWeight991, primeSeed1849Weight, primeSeed373Weight, ite_eq_left h] using hw
   · have hprime := semiSeed991_primes p hp
     have hl := Real.log_le_log (Nat.cast_pos.mpr hprime.1.pos) (Nat.cast_le.mpr hprime.2)
     norm_num only [Nat.cast_ofNat] at hl

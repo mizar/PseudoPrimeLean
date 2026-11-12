@@ -6,6 +6,11 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeTable
+
+import PseudoPrime.Analysis.LogTaylorBounds
+import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeCount
+
 public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
 public import PseudoPrime.AnalyticNumberTheory.GRH.Definition
 import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed61
@@ -21,12 +26,7 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 /-- The existing weighted prime supply through 61 has 3376 products at budget 96. -/
 private theorem card61 :
     (weightedPrimeFamily primeSeed61Primes.toFinset primeSeed61Weight 96).card = 3376 := by
-  have h :=
-    (weightedPrimeCount_weights_eq_card primeSeed61Weight 96 primeSeed61Primes primeSeed61Weights
-          primeSeed61_labels.1 primeSeed61_labels.2.2 primeSeed61_labels.2.1).symm.trans
-      ((weightedPrimeTableCheck_sound 96 primeSeed61Weights primeSeed61Row primeSeed61Tail
-          primeSeed61_checked 96 (by decide)).symm)
-  exact h
+  exact primeSeed61_family_96
 
 /-- Under GRH, an odd product of ordered distinct primes with logarithm
 between 15.63 and 20 has a rejecting prime below one quarter of its squared

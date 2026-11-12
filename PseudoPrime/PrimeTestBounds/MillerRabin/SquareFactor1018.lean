@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed19Count58
+import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed19Count58
 public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeProductFamilyTransfer
 
 /-! # Unconditional square-factor witness at logarithmic scale 10.18 -/

@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028GroupGrid
+import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed373Bounds
 
 /-! # Checked grouped semiprime count -/
 
@@ -118,18 +119,30 @@ private def semiGrid376Rows : List (Array ℕ) :=
     #[13, 7738, 1309030, 112048077, 6128790408, 236887533673],
     #[13, 7725, 1301292, 110739047, 6016742331, 230758743265]]
 
-/-- The sampled base and grouped recurrence rows pass their kernel checks. -/
+/-- The grouped recurrence rows pass their kernel check. -/
 private theorem semiGrid376_checked :
-    weightedGroupBaseCheck 70 26 500 5 primeSeed373Row14 semiGrid376Base = true ∧
-      weightedGroupRowsCheck 5 semiGrid376Base semiGrid376Row semiGrid376Rows = true := by
-  constructor <;> decide +kernel
+    weightedGroupRowsCheck 5 semiGrid376Base semiGrid376Row semiGrid376Rows = true := by
+  decide +kernel
 
 /-- The checked grid bounds the weighted count at budget 376. -/
 theorem semiGrid376_count :
     1480974425977 ≤ weightedPrimeCount id (List.replicate 93 70 ++ primeSeed373Weights) 376 := by
+  have hb :
+    ∀ k ≤ 5,
+      semiGrid376Base.getD k 0 ≤ weightedPrimeCount id primeSeed373Weights (26 + k * 70) := by
+    intro k hk
+    have hl : 0 ≤ k := Nat.zero_le k
+    have hu : k < 6 := Nat.lt_succ_of_le hk
+    interval_cases k using hl, hu
+    · exact primeSeed373_count_26
+    · exact primeSeed373_count_96
+    · exact primeSeed373_count_166
+    · exact primeSeed373_count_236
+    · exact primeSeed373_count_306
+    · exact primeSeed373_count_376
   have h :=
     target028_group_grid_general 70 26 5 93 (by decide) (by decide) semiGrid376Base semiGrid376Row
-      semiGrid376Rows (by decide) semiGrid376_checked.1 semiGrid376_checked.2
+      semiGrid376Rows (by decide) hb semiGrid376_checked
   exact h
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

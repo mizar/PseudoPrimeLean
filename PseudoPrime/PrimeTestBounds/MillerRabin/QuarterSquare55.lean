@@ -6,8 +6,12 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed373
+
+import PseudoPrime.Analysis.LogTaylorBounds
+
 public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
-import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed373Count
+import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed373Bounds
 import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterSquareCommon
 import PseudoPrime.PrimeTestBounds.MillerRabin.SquareSeed89Stage414
 
@@ -46,8 +50,7 @@ private theorem square373 {n p : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime) (
   let : NeZero (p ^ 2) := ⟨pow_ne_zero 2 hp.ne_zero⟩
   let H := (powMonoidHom (n - 1) : (ZMod (p ^ 2))ˣ →* (ZMod (p ^ 2))ˣ).ker
   have hcount : 1000000000000 ≤ weightedPrimeCount id primeSeed373Weights 414 := by
-    have h := primeSeed373_count_lower 414 (by decide)
-    rw [show primeSeed373Row14.getD 414 0 = 1488482619460 by decide +kernel] at h
+    have h := primeSeed373_count_414
     exact (by norm_num only : 1000000000000 ≤ 1488482619460).trans h
   have hcard : Nat.card H < weightedPrimeCount id primeSeed373Weights 414 := by
     change Nat.card (powMonoidHom (n - 1) : (ZMod (p ^ 2))ˣ →* (ZMod (p ^ 2))ˣ).ker < _

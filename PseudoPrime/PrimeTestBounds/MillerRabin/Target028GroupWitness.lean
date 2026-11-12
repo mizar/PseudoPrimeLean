@@ -7,7 +7,6 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed1849
-public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed1849Count
 public import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedSemiprimeCount
 
 /-! # Semiprime witnesses from grouped count certificates -/

@@ -7,7 +7,9 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed19Data
-public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalEvenAnchors
+public import Mathlib.Data.Nat.Prime.Basic
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import PseudoPrime.Analysis.LogTaylorBounds
 
 /-! # First low-scale weighted prime supply -/
 

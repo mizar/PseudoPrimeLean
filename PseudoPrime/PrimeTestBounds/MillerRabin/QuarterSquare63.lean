@@ -6,10 +6,14 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed373
+
+import PseudoPrime.Analysis.LogTaylorBounds
+
 public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
 import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterSquareCommon
 import PseudoPrime.PrimeTestBounds.MillerRabin.SquareSeed89Stage414
-import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed373Count
+import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed373Bounds
 import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeCountExtend
 
 /-! # Square-factor witnesses on logarithmic scales 55 to 63 -/
@@ -86,8 +90,7 @@ theorem quarter_square_55_63 {n p : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime
   · obtain ⟨r, hr, hb, hf⟩ := square_reject_le1054 hn ho hp hdiv hlow
     exact ⟨r, hr, (Nat.cast_le.mpr hb).trans ((by norm_num only : (89 : ℝ) ≤ 373).trans hB), hf⟩
   by_cases hmid : p ≤ 1000000000000
-  · have hc := primeSeed373_count_lower 414 (by decide)
-    rw [show primeSeed373Row14.getD 414 0 = 1488482619460 by decide +kernel] at hc
+  · have hc := primeSeed373_count_414
     have hcount : p - 1 < weightedPrimeCount id primeSeed373Weights 414 :=
       (Nat.sub_lt hp.pos (by decide : 0 < 1)).trans_le
         (hmid.trans ((by norm_num only : 1000000000000 ≤ 1488482619460).trans hc))
@@ -95,8 +98,7 @@ theorem quarter_square_55_63 {n p : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime
       square373_count hn ho hp hdiv hcount
         (square_factor_budget_414 (Nat.succ_le_of_lt (Nat.lt_of_not_ge hlow)))
     exact ⟨r, hr, (Nat.cast_le.mpr hb).trans hB, hf⟩
-  · have hc := primeSeed373_count_lower 500 (by decide)
-    rw [show primeSeed373Row14.getD 500 0 = 68854718408873 by decide +kernel] at hc
+  · have hc := primeSeed373_count_500
     have hc' := hc.trans (weightedPrimeCount_mono id primeSeed373Weights (show 500 ≤ 552 by decide))
     have hcount : p - 1 < weightedPrimeCount id primeSeed373Weights 552 :=
       (Nat.sub_lt hp.pos (by decide : 0 < 1)).trans_le

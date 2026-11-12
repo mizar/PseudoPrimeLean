@@ -6,6 +6,9 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeCount
+import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeTable
+
 public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed19
 public import PseudoPrime.Analysis.LogTaylorBounds
 
@@ -16,13 +19,13 @@ public import PseudoPrime.Analysis.LogTaylorBounds
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
 /-- Cumulative counts for the eight-prime supply through budget 58. -/
-def primeSeed19Row58 : Array ℕ :=
+private def primeSeed19Row58 : Array ℕ :=
   #[1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 6, 6, 7, 8, 9, 9, 11, 12, 13, 14, 16, 17,
     19, 22, 23, 25, 27, 30, 31, 35, 38, 40, 43, 48, 52, 54, 60, 64, 68, 73, 81, 85, 91, 99, 107,
     112, 121, 131, 138, 147, 158]
 
 /-- Remaining cumulative-count rows for the weighted supply through budget 58. -/
-def primeSeed19Tail58 : List (Array ℕ) :=
+private def primeSeed19Tail58 : List (Array ℕ) :=
   [#[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 10,
       11, 11, 12, 13, 14, 14, 16, 16, 17, 18, 21, 22, 23, 25, 26, 28, 30, 33, 33, 37, 39, 43, 44,
       48, 50, 53, 56, 59],
@@ -45,14 +48,14 @@ def primeSeed19Tail58 : List (Array ℕ) :=
 
 set_option maxRecDepth 8192 in
 /-- The finite table satisfies the weighted-count recurrence through budget 58. -/
-theorem primeSeed19_checked58 :
+private theorem primeSeed19_checked58 :
     weightedPrimeTableCheck 58 primeSeed19Weights (primeSeed19Row58 :: primeSeed19Tail58) =
       true := by
   decide +kernel
 
 /-- The checked row gives the exact weighted-family count for every budget
 through 58, by transfer from the table recurrence to the prime labels. -/
-theorem primeSeed19_family58 (H : ℕ) (hH : H ≤ 58) :
+private theorem primeSeed19_family58 (H : ℕ) (hH : H ≤ 58) :
     (weightedPrimeFamily primeSeed19Primes.toFinset primeSeed19Weight H).card =
       primeSeed19Row58.getD H 0 :=
   (weightedPrimeCount_weights_eq_card primeSeed19Weight H primeSeed19Primes primeSeed19Weights
@@ -72,7 +75,7 @@ theorem primeSeed19_card58 :
   exact h
 
 /-- A prime square dividing an input of logarithm at most 10.059 has base at most 157. -/
-theorem square_factor_le_157 {n p : ℕ} (hn : 1 < n) (hdiv : p ^ 2 ∣ n)
+private theorem square_factor_le_157 {n p : ℕ} (hn : 1 < n) (hdiv : p ^ 2 ∣ n)
     (hU : Real.log n ≤ (10059 / 1000 : ℝ)) : p ≤ 157 := by
   have hcert :=
     (Analysis.rationalLogIntervalCheck_sound

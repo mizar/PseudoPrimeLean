@@ -6,13 +6,17 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed373
+
+import PseudoPrime.Analysis.LogTaylorBounds
+
 public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
 import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterSquareCommon
 import PseudoPrime.PrimeTestBounds.MillerRabin.SquareSeed89Stage414
-import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed373Count
+import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed373Bounds
 import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeCountExtend
 import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed1849
-import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed1849Count
+import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeCountGroup
 
 /-! # Square-factor witnesses on logarithmic scales 63 to 68 -/
 
@@ -54,10 +58,8 @@ private theorem primes991 : ∀ p ∈ seed991, p.Prime ∧ p ≤ 991 := by
 
 /-- The additional 93 labels provide a multichoose lower bound for the
 weighted product count, starting from a certified budget through 500. -/
-private theorem count991 (A k : ℕ) (hA : A ≤ 500) :
-    Nat.choose (93 + k) k * primeSeed373Row14.getD A 0 ≤
-      weightedPrimeCount id weights991 (A + k * 76) := by
-  have hb := primeSeed373_count_lower A hA
+private theorem count991 (A k C : ℕ) (hb : C ≤ weightedPrimeCount id primeSeed373Weights A) :
+    Nat.choose (93 + k) k * C ≤ weightedPrimeCount id weights991 (A + k * 76) := by
   have hg := weightedPrimeCount_group_lower 76 A 93 k primeSeed373Weights (by decide)
   exact (Nat.mul_le_mul_left (Nat.choose (93 + k) k) hb).trans hg
 
@@ -135,9 +137,8 @@ theorem quarter_square_63_68 {n p : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime
   · obtain ⟨r, hr, hb, hf⟩ := square_reject_le1054 hn ho hp hdiv hlow
     exact ⟨r, hr, (Nat.cast_le.mpr hb).trans ((by norm_num only : (89 : ℝ) ≤ 991).trans hB), hf⟩
   by_cases hmid : p ≤ 1000000000000
-  · have hc := count991 414 0 (by decide)
+  · have hc := count991 414 0 1488482619460 primeSeed373_count_414
     norm_num only [Nat.choose_zero_right, Nat.one_mul, Nat.zero_mul, Nat.add_zero] at hc
-    rw [show primeSeed373Row14.getD 414 0 = 1488482619460 by decide +kernel] at hc
     have hcount : p - 1 < weightedPrimeCount id weights991 414 :=
       (Nat.sub_lt hp.pos (by decide : 0 < 1)).trans_le
         (hmid.trans ((by norm_num only : 1000000000000 ≤ 1488482619460).trans hc))
@@ -145,9 +146,8 @@ theorem quarter_square_63_68 {n p : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime
       square991_count hn ho hp hdiv hcount
         (square_factor_budget_414 (Nat.succ_le_of_lt (Nat.lt_of_not_ge hlow)))
     exact ⟨r, hr, (Nat.cast_le.mpr hb).trans hB, hf⟩
-  · have hc := count991 476 1 (by decide)
+  · have hc := count991 476 1 24433960763174 primeSeed373_count_476
     norm_num only [Nat.choose, Nat.add_zero, Nat.one_mul, Nat.zero_mul] at hc
-    rw [show primeSeed373Row14.getD 476 0 = 24433960763174 by decide +kernel] at hc
     have hcount : p - 1 < weightedPrimeCount id weights991 552 :=
       (Nat.sub_lt hp.pos (by decide : 0 < 1)).trans_le
         ((bound68 hn hdiv hU).trans

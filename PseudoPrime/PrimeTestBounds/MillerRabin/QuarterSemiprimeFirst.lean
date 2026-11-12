@@ -6,6 +6,11 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeTable
+
+import PseudoPrime.Analysis.LogTaylorBounds
+import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeCount
+
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterSquareFirst
 public import PseudoPrime.PrimeTestBounds.MillerRabin.SignedPrimeProductTransfer
 public import PseudoPrime.PrimeTestBounds.MillerRabin.SemiprimeSmallFactor
@@ -15,18 +20,6 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.SemiprimeSmallFactor
 @[expose] public section
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
-
-/-- The six-prime weighted family contains 73 products through budget 49.
-The checked recurrence supplies the count for the extended first cell. -/
-theorem quarterFirst_family_card49 :
-    (weightedPrimeFamily quarterFirstPrimes.toFinset primeSeed19Weight 49).card = 73 := by
-  have h :=
-    (weightedPrimeCount_weights_eq_card primeSeed19Weight 49 quarterFirstPrimes quarterFirstWeights
-          quarterFirst_labels.1 quarterFirst_labels.2.2 quarterFirst_labels.2.1).symm.trans
-      ((weightedPrimeTableCheck_sound 49 quarterFirstWeights quarterFirstRow quarterFirstTail
-          quarterFirst_checked 49 (by decide)).symm)
-  change (weightedPrimeFamily quarterFirstPrimes.toFinset primeSeed19Weight 49).card = 73 at h
-  exact h
 
 /-- On `8 ≤ log n ≤ 10.649`, a semiprime has a quarter-square witness once
 its branch `log q ≤ 5.666` is supplied. For larger `q`, the 73 checked products

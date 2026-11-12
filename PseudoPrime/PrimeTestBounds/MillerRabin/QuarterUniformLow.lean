@@ -6,6 +6,8 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.Analysis.LogTaylorBounds
+
 public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformKorseltLogLower
 public import PseudoPrime.PrimeTestBounds.MillerRabin.LogScalePow22
 public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimePairLocalData

@@ -6,6 +6,11 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeTable
+
+import PseudoPrime.Analysis.LogTaylorBounds
+import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeCount
+
 public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed19
 public import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedSemiprimeWitness
 
@@ -24,12 +29,12 @@ def quarterFirstWeights : List ℕ :=
   [7, 11, 17, 20, 24, 26]
 
 /-- The complete cumulative count row through budget 49. -/
-def quarterFirstRow : Array ℕ :=
+private def quarterFirstRow : Array ℕ :=
   #[1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 6, 6, 7, 8, 9, 9, 11, 12, 13, 14, 16, 17,
     17, 20, 21, 23, 25, 28, 29, 31, 34, 36, 39, 42, 46, 48, 52, 56, 60, 63, 69, 73]
 
 /-- Suffix rows certify the weighted-product recurrence. -/
-def quarterFirstTail : List (Array ℕ) :=
+private def quarterFirstTail : List (Array ℕ) :=
   [#[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 8, 9,
       9, 10, 11, 12, 12, 14, 14, 15, 16, 17, 18, 19, 21, 22, 24, 24, 27, 27],
     #[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 5, 5, 5, 5, 5,
@@ -45,7 +50,7 @@ def quarterFirstTail : List (Array ℕ) :=
 
 set_option maxRecDepth 8192 in
 /-- Kernel-check the recurrence for the six-prime count through budget 49. -/
-theorem quarterFirst_checked :
+private theorem quarterFirst_checked :
     weightedPrimeTableCheck 49 quarterFirstWeights (quarterFirstRow :: quarterFirstTail) =
       true := by
   decide +kernel
@@ -67,6 +72,18 @@ theorem quarterFirst_family_card :
       ((weightedPrimeTableCheck_sound 49 quarterFirstWeights quarterFirstRow quarterFirstTail
           quarterFirst_checked 48 (by decide)).symm)
   change (weightedPrimeFamily quarterFirstPrimes.toFinset primeSeed19Weight 48).card = 69 at h
+  exact h
+
+/-- The six-prime weighted family contains 73 products through budget 49.
+The checked recurrence supplies the count for the extended first cell. -/
+theorem quarterFirst_family_card49 :
+    (weightedPrimeFamily quarterFirstPrimes.toFinset primeSeed19Weight 49).card = 73 := by
+  have h :=
+    (weightedPrimeCount_weights_eq_card primeSeed19Weight 49 quarterFirstPrimes quarterFirstWeights
+          quarterFirst_labels.1 quarterFirst_labels.2.2 quarterFirst_labels.2.1).symm.trans
+      ((weightedPrimeTableCheck_sound 49 quarterFirstWeights quarterFirstRow quarterFirstTail
+          quarterFirst_checked 49 (by decide)).symm)
+  change (weightedPrimeFamily quarterFirstPrimes.toFinset primeSeed19Weight 49).card = 73 at h
   exact h
 
 /-- The weighted budget `48/10` lies below the logarithm of `p²` for every

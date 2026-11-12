@@ -6,6 +6,8 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.Analysis.LogTaylorBounds
+
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterEulerTail196
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterCenteredFirstEndpoint
 

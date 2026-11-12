@@ -6,9 +6,12 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.Analysis.LogTaylorBounds
+
 public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
 public import PseudoPrime.AnalyticNumberTheory.GRH.Definition
-import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed373Count
+import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed373Bounds
+import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeCountGroup
 import PseudoPrime.PrimeTestBounds.MillerRabin.SignedWeightedCell
 import PseudoPrime.PrimeTestBounds.MillerRabin.LocalEvenAnchors
 import PseudoPrime.PrimeTestBounds.MillerRabin.SemiprimeSmallFactor
@@ -60,8 +63,7 @@ private theorem semiprime_local_anchor982 {n p q : ℕ} (hn : 1 < n) (ho : Odd n
 /-- The weighted prime family has at least 181688287165 products at budget 357. -/
 private theorem card863_357 :
     181688287165 ≤ (weightedPrimeFamily semiSeed863.toFinset semiWeight863 357).card := by
-  have hb := primeSeed373_count_lower 289 (by decide)
-  rw [show primeSeed373Row14.getD 289 0 = 2359588145 by decide +kernel] at hb
+  have hb := primeSeed373_count_289
   have hg := weightedPrimeCount_group_lower 68 289 76 1 primeSeed373Weights (by decide)
   have hc : 181688287165 ≤ weightedPrimeCount id semiWeights863 357 := by
     have hm := (Nat.mul_le_mul_left (Nat.choose (76 + 1) 1) hb).trans hg

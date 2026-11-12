@@ -6,7 +6,21 @@ Authors: Mizar
 
 module
 
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import PseudoPrime.Analysis.LogTaylorBounds
+
 public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed1849Checks
+import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed373Checks
+import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed1849Extra
+import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed1849WeightStep
+import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed19
+import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed43WeightStep
+import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed61WeightStep
+import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed89WeightStep
+import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed113WeightStep
+import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed199WeightStep
+import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed281WeightStep
+import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed373WeightStep
 
 /-! # Certified prime supply through 1849 -/
 
@@ -14,31 +28,11 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed1849Checks
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
-set_option maxRecDepth 32768 in
-/-- The five checked chunks certify that every added label is prime and lies
-strictly above 373 and at most 1849. -/
-theorem primeSeed1849Extra_prime : ∀ p ∈ primeSeed1849Extra, p.Prime ∧ 373 < p ∧ p ≤ 1849 := by
-  have hs :
-    primeSeed1849Extra =
-      (primeSeed1849Extra.take 45) ++ ((primeSeed1849Extra.drop 45).take 45) ++
-        ((primeSeed1849Extra.drop 90).take 45) ++
-        ((primeSeed1849Extra.drop 135).take 45) ++
-        ((primeSeed1849Extra.drop 180).take 45) := by
-    rfl
-  have hall : primeSeed1849Extra.all (fun p ↦ decide (p.Prime ∧ 373 < p ∧ p ≤ 1849)) = true := by
-    have h1 := primeSeed1849Extra_checked1
-    simp only [List.drop_zero] at h1
-    rw [hs]
-    simp only [List.all_append, h1, primeSeed1849Extra_checked2, primeSeed1849Extra_checked3,
-      primeSeed1849Extra_checked4, primeSeed1849Extra_checked5]
-    rfl
-  intro p hp
-  exact of_decide_eq_true ((List.all_eq_true.mp hall) p hp)
-
 /-- Every label in the combined supply is prime and at most 1849. -/
 theorem primeSeed1849_prime_supply : ∀ p ∈ primeSeed1849Primes, p.Prime ∧ p ≤ 1849 := by
   intro p hp
-  simp only [primeSeed1849Primes, List.mem_append] at hp
+  change p ∈ primeSeed1849Extra ++ primeSeed373Primes at hp
+  simp only [List.mem_append] at hp
   rcases hp with hnew | hold
   · exact ⟨(primeSeed1849Extra_prime p hnew).1, (primeSeed1849Extra_prime p hnew).2.2⟩
   · exact
@@ -48,20 +42,13 @@ theorem primeSeed1849_prime_supply : ∀ p ∈ primeSeed1849Primes, p.Prime ∧ 
 labels use the certified logarithm of the common cutoff 1849. -/
 theorem primeSeed1849_weight_bounds :
     ∀ p ∈ primeSeed1849Primes, Real.log p ≤ (primeSeed1849Weight p : ℝ) / 10 := by
-  have hB :=
-    (Analysis.rationalLogIntervalCheck_sound
-        (show Analysis.rationalLogIntervalCheck 1849 11 16 7 (76 / 10) = true from by
-          decide +kernel)).2
-  norm_num only [Rat.cast_ofNat, Rat.cast_div] at hB
-  intro p hp
-  simp only [primeSeed1849Primes, List.mem_append] at hp
-  rcases hp with hnew | hold
-  · have hx := primeSeed1849Extra_prime p hnew
-    have hl := Real.log_le_log (Nat.cast_pos.mpr hx.1.pos) (Nat.cast_le.mpr hx.2.2)
-    simp only [primeSeed1849Weight, ite_eq_right (Nat.not_le_of_gt hx.2.1), Nat.cast_ofNat]
-    norm_num only [Nat.cast_ofNat] at hl
-    linarith only [hl, hB]
-  · have hp373 := (primeSeed373_prime_supply p hold).2
-    simpa only [primeSeed1849Weight, ite_eq_left hp373] using primeSeed373_weight_bounds p hold
+  have h43 := primeSeed43_weight_step prime_seed19_weight_bounds
+  have h61 := primeSeed61_weight_step h43
+  have h89 := primeSeed89_weight_step h61
+  have h113 := primeSeed113_weight_step h89
+  have h199 := primeSeed199_weight_step h113
+  have h281 := primeSeed281_weight_step h199
+  have h373 := primeSeed373_weight_step h281
+  exact primeSeed1849_weight_step primeSeed1849Extra_prime h373
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

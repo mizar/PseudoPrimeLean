@@ -6,6 +6,10 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeTable
+
+import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeCount
+
 public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028NineCount
 
 /-! # Extended nine-prime weighted count certificate -/

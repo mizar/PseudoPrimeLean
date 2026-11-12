@@ -6,9 +6,14 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed373
+
+import PseudoPrime.Analysis.LogTaylorBounds
+import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeCount
+
 public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
 public import PseudoPrime.AnalyticNumberTheory.GRH.Definition
-import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed373Count
+import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed373Bounds
 import PseudoPrime.PrimeTestBounds.MillerRabin.SignedWeightedCell
 import PseudoPrime.PrimeTestBounds.MillerRabin.LocalEvenAnchors
 import PseudoPrime.PrimeTestBounds.MillerRabin.SemiprimeSmallFactor
@@ -59,8 +64,7 @@ private theorem semiprime_local_anchor792 {n p q : ℕ} (hn : 1 < n) (ho : Odd n
 private theorem card373_324 :
     15868312145 ≤
       (weightedPrimeFamily primeSeed373Primes.toFinset primeSeed373Weight 324).card := by
-  have h := primeSeed373_count_lower 324 (by decide)
-  rw [show primeSeed373Row14.getD 324 0 = 15868312145 by decide +kernel] at h
+  have h := primeSeed373_count_324
   exact
     h.trans_eq
       (weightedPrimeCount_weights_eq_card primeSeed373Weight 324 primeSeed373Primes

@@ -6,6 +6,8 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.Analysis.LogTaylorBounds
+
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterEulerMomentEnvelope
 
 /-! # Analytic Euler-prefix lower bound through 26896 -/

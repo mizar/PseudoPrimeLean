@@ -6,14 +6,11 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed199Count
-public import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeCountExtend
+public import Mathlib.Data.List.Basic
 
-/-! # Lower count rows through the additional primes up to 241 -/
+/-! # Lower-count rows through 241 -/
 
 @[expose] public section
-
-set_option maxRecDepth 32768
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
@@ -554,75 +551,5 @@ def primeSeed241Row7 : Array ℕ :=
     15805164154109, 16213904005744, 16640733829343, 17086427664675, 17551791858176, 18037665611950,
     18544923172140, 19074474544062, 19627267541742, 20204288519424, 20806564621131, 21435164934174,
     22091202580401, 22775835953908, 23490270835002]
-
-/-- The initial row repeats the last proven lower bound above budget 450. -/
-theorem primeSeed241_base_eq :
-    ∀ h ≤ 550, primeSeed241Row0.getD h 0 = primeSeed199Row16.getD (min h 450) 0 := by decide +kernel
-
-/-- Count monotonicity makes the extended initial row a lower bound. -/
-theorem primeSeed241_base_lower :
-    ∀ h ≤ 550, primeSeed241Row0.getD h 0 ≤ weightedPrimeCount id primeSeed199Weights h := by
-  intro h hh
-  have hv := primeSeed199_count_lower (min h 450) (Nat.min_le_right h 450)
-  have hm := weightedPrimeCount_mono id primeSeed199Weights (Nat.min_le_left h 450)
-  exact (primeSeed241_base_eq h hh).le.trans (hv.trans hm)
-
-/-- The kernel verifies update row 1 through budget 550. -/
-theorem primeSeed241Check1 :
-    weightedPrimeRowCheck 54 550 primeSeed241Row0 primeSeed241Row1 = true := by decide +kernel
-
-/-- The kernel verifies update row 2 through budget 550. -/
-theorem primeSeed241Check2 :
-    weightedPrimeRowCheck 55 550 primeSeed241Row1 primeSeed241Row2 = true := by decide +kernel
-
-/-- The kernel verifies update row 3 through budget 550. -/
-theorem primeSeed241Check3 :
-    weightedPrimeRowCheck 55 550 primeSeed241Row2 primeSeed241Row3 = true := by decide +kernel
-
-/-- The kernel verifies update row 4 through budget 550. -/
-theorem primeSeed241Check4 :
-    weightedPrimeRowCheck 55 550 primeSeed241Row3 primeSeed241Row4 = true := by decide +kernel
-
-/-- The kernel verifies update row 5 through budget 550. -/
-theorem primeSeed241Check5 :
-    weightedPrimeRowCheck 55 550 primeSeed241Row4 primeSeed241Row5 = true := by decide +kernel
-
-/-- The kernel verifies update row 6 through budget 550. -/
-theorem primeSeed241Check6 :
-    weightedPrimeRowCheck 55 550 primeSeed241Row5 primeSeed241Row6 = true := by decide +kernel
-
-/-- The kernel verifies update row 7 through budget 550. -/
-theorem primeSeed241Check7 :
-    weightedPrimeRowCheck 55 550 primeSeed241Row6 primeSeed241Row7 = true := by decide +kernel
-
-/-- Seven checked updates extend the weighted-count lower bound to the new
-prime labels through 241 and budgets through 550. -/
-theorem primeSeed241_lower :
-    ∀ h ≤ 550,
-      primeSeed241Row7.getD h 0 ≤
-        weightedPrimeCount id ([55, 55, 55, 55, 55, 55, 54] ++ primeSeed199Weights) h := by
-  have h0 := primeSeed241_base_lower
-  have h1 :=
-    weightedPrimeRow_lower 54 550 (primeSeed199Weights) primeSeed241Row0 primeSeed241Row1
-      primeSeed241Check1 h0
-  have h2 :=
-    weightedPrimeRow_lower 55 550 (54 :: primeSeed199Weights) primeSeed241Row1 primeSeed241Row2
-      primeSeed241Check2 h1
-  have h3 :=
-    weightedPrimeRow_lower 55 550 (55 :: 54 :: primeSeed199Weights) primeSeed241Row2
-      primeSeed241Row3 primeSeed241Check3 h2
-  have h4 :=
-    weightedPrimeRow_lower 55 550 (55 :: 55 :: 54 :: primeSeed199Weights) primeSeed241Row3
-      primeSeed241Row4 primeSeed241Check4 h3
-  have h5 :=
-    weightedPrimeRow_lower 55 550 (55 :: 55 :: 55 :: 54 :: primeSeed199Weights) primeSeed241Row4
-      primeSeed241Row5 primeSeed241Check5 h4
-  have h6 :=
-    weightedPrimeRow_lower 55 550 (55 :: 55 :: 55 :: 55 :: 54 :: primeSeed199Weights)
-      primeSeed241Row5 primeSeed241Row6 primeSeed241Check6 h5
-  have h7 :=
-    weightedPrimeRow_lower 55 550 (55 :: 55 :: 55 :: 55 :: 55 :: 54 :: primeSeed199Weights)
-      primeSeed241Row6 primeSeed241Row7 primeSeed241Check7 h6
-  exact h7
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

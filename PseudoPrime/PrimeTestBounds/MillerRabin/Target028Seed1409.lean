@@ -7,9 +7,9 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed1849
-public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed1849Count
+public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed373Data
+public import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeCountGroup
 public import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedSemiprimeCount
-public import PseudoPrime.PrimeTestBounds.MillerRabin.SemiprimeCoreSupplies
 
 /-! # Grouped weighted prime supply through 1409 -/
 
@@ -38,7 +38,9 @@ theorem target028_seed1409_labels :
 /-- Every reduced label occurs in the certified supply through 1849. -/
 theorem target028_seed1409_subset : ∀ p ∈ target028Seed1409Primes, p ∈ primeSeed1849Primes := by
   intro p hp
-  simp only [target028Seed1409Primes, primeSeed1849Primes, List.mem_append] at hp ⊢
+  change p ∈ primeSeed1849Extra.drop 60 ++ primeSeed373Primes at hp
+  change p ∈ primeSeed1849Extra ++ primeSeed373Primes
+  simp only [List.mem_append] at hp ⊢
   exact hp.imp List.mem_of_mem_drop id
 
 /-- The reduced labels are prime and at most 1409; the bound is checked
@@ -50,10 +52,9 @@ theorem target028_seed1409_supply : ∀ p ∈ target028Seed1409Primes, p.Prime �
 
 /-- The 149 equal-weight labels multiply the existing base count by a
 multichoose factor at the extended budget. -/
-theorem target028_seed1409_count (A k : ℕ) (hA : A ≤ 500) :
-    Nat.choose (149 + k) k * primeSeed373Row14.getD A 0 ≤
-      weightedPrimeCount id target028Seed1409Weights (A + k * 76) := by
-  have hb := primeSeed373_count_lower A hA
+theorem target028_seed1409_count (A k C : ℕ)
+    (hb : C ≤ weightedPrimeCount id primeSeed373Weights A) :
+    Nat.choose (149 + k) k * C ≤ weightedPrimeCount id target028Seed1409Weights (A + k * 76) := by
   have hg := weightedPrimeCount_group_lower 76 A 149 k primeSeed373Weights (by decide)
   exact (Nat.mul_le_mul_left (Nat.choose (149 + k) k) hb).trans hg
 
@@ -61,9 +62,9 @@ theorem target028_seed1409_count (A k : ℕ) (hA : A ≤ 500) :
 and local envelope are below the requested bound. -/
 theorem exists_prime_reject_semiprime_seed1409 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime)
     (hq : q.Prime) (hpq : p < q) (hprod : n = p * q)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (A k : ℕ) (hA : A ≤ 500)
-    {D X : ℝ} (hD : D ≤ Real.log ((Nat.choose (149 + k) k * primeSeed373Row14.getD A 0 : ℕ) : ℝ))
-    (hB : (1409 : ℝ) ≤ X)
+    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) (A k C : ℕ)
+    (hb : C ≤ weightedPrimeCount id primeSeed373Weights A) {D X : ℝ}
+    (hD : D ≤ Real.log ((Nat.choose (149 + k) k * C : ℕ) : ℝ)) (hB : (1409 : ℝ) ≤ X)
     (hlocal : localFullEnvelope (max (((A + k * 76 : ℕ) : ℝ) / 10) (Real.log n - D)) ≤ X) :
     ∃ r : ℕ, r.Prime ∧ (r : ℝ) ≤ X ∧ ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
   exact
@@ -72,7 +73,7 @@ theorem exists_prime_reject_semiprime_seed1409 {n p q : ℕ} (hn : 1 < n) (ho : 
       target028_seed1409_labels.1 (fun r hr ↦ (target028_seed1409_supply r hr).1)
       (fun r hr ↦ (target028_seed1409_supply r hr).2) target028_seed1409_labels.2.2
       (fun r hr ↦ primeSeed1849_weight_bounds r (target028_seed1409_subset r hr))
-      target028_seed1409_labels.2.1 (Nat.choose (149 + k) k * primeSeed373Row14.getD A 0)
-      (target028_seed1409_count A k hA) hD hB hlocal
+      target028_seed1409_labels.2.1 (Nat.choose (149 + k) k * C) (target028_seed1409_count A k C hb)
+      hD hB hlocal
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

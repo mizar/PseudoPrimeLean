@@ -6,6 +6,8 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.Analysis.LogTaylorBounds
+
 public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
 import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterSquareSecond
 import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterNineCount90

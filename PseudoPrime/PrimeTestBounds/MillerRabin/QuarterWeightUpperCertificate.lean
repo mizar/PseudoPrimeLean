@@ -6,6 +6,8 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.Analysis.LogTaylorBounds
+
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterPrincipalWeightUpper
 public import PseudoPrime.Analysis.ExponentialFixedPointExecution
 public import PseudoPrime.Analysis.ExponentialFixedPointConversions

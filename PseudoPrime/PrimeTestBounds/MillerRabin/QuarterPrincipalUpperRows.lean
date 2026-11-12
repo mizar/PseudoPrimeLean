@@ -6,6 +6,8 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.Analysis.LogTaylorBounds
+
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterUniformFiniteSupport
 public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028FiniteRows
 

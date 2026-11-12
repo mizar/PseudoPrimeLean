@@ -6,7 +6,11 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed89Count197
+import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimePowerCount
+
+import PseudoPrime.Analysis.LogTaylorBounds
+
+import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed89Count197
 public import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimePowerTable
 
 /-! # Weighted square-divisor supply and factor bounds -/
@@ -42,14 +46,12 @@ theorem exists_prime_reject_square_seed89_197 {n p : ℕ} (hn : 1 < n) (ho : Odd
     ∃ r : ℕ, r.Prime ∧ r ≤ 89 ∧ ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
   have hpn : p ∣ n := (dvd_pow_self p (by decide : 2 ≠ 0)).trans hdiv
   have hp2 : p ≠ 2 := ho.ne_two_of_dvd_nat hpn
-  have hcount : p - 1 < primeSeed89Row197.getD 197 0 := by
-    change p - 1 < 1372508
-    exact (Nat.sub_lt hp.pos (by decide : 0 < 1)).trans_le hbound
+  have hcount : p - 1 < 1372508 := (Nat.sub_lt hp.pos (by decide : 0 < 1)).trans_le hbound
   exact
-    exists_prime_reject_prime_pow_table hn ho hp hp2 (by decide : 0 < 2) hdiv primeSeed89Primes
-      primeSeed89Weights 89 197 197 primeSeed89Weight 10 (by norm_num only) primeSeed89_labels.1
+    exists_prime_reject_prime_pow_count hn ho hp hp2 (by decide : 0 < 2) hdiv primeSeed89Primes
+      primeSeed89Weights 89 197 1372508 primeSeed89Weight 10 (by norm_num only) primeSeed89_labels.1
       (fun r hr ↦ (primeSeed89_prime_supply r hr).1) (fun r hr ↦ (primeSeed89_prime_supply r hr).2)
-      primeSeed89_labels.2.2 primeSeed89_weight_bounds primeSeed89_labels.2.1 (by decide)
-      primeSeed89Row197 primeSeed89Tail197 primeSeed89_checked197 hbudget hcount
+      primeSeed89_labels.2.2 primeSeed89_weight_bounds primeSeed89_labels.2.1 hbudget hcount
+      primeSeed89_count_197
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

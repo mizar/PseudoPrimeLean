@@ -6,6 +6,8 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.Analysis.LogTaylorBounds
+
 public import Mathlib.NumberTheory.Chebyshev
 import PseudoPrime.AnalyticNumberTheory.Arithmetic.LogWeightedDifferences
 import PseudoPrime.PrimeTestBounds.MillerRabin.QuadraticEulerPsiBound

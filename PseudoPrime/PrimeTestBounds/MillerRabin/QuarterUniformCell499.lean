@@ -6,6 +6,8 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.Analysis.LogTaylorBounds
+
 public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028Cell12
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterEulerCap499
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterAbelEnvelope

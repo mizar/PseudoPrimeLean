@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeTable
+public import Mathlib.Data.List.Basic
 
 /-! # First low-scale weighted count certificate -/
 

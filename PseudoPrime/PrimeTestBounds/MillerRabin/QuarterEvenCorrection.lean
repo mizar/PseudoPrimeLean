@@ -6,6 +6,8 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.Analysis.LogTaylorBounds
+
 public import PseudoPrime.LLS.PaperStatements.EndpointCorrectionIntervals
 public import PseudoPrime.Analysis.LogLinearAnchor
 public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalEvenWitness

@@ -6,7 +6,10 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed43
+public import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeCount
+import PseudoPrime.PrimeTestBounds.MillerRabin.WeightedPrimeTable
+
+public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed61Weight
 
 /-! # Weighted prime supply through 61 -/
 
@@ -14,22 +17,8 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeSeed43
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
-/-- The primes through 61 as distinct labels extending the supply through 43. -/
-def primeSeed61Primes : List ℕ :=
-  primeSeed43Primes ++ [47, 53, 59, 61]
-
-/-- Integer logarithm weights scaled by ten for the supply through 61. The
-previous weights are preserved and each new prime has a certified upper bound. -/
-def primeSeed61Weight (p : ℕ) : ℕ :=
-  if p ≤ 43 then primeSeed43Weight p
-  else if p ≤ 47 then 39 else if p ≤ 53 then 40 else if p ≤ 59 then 41 else 42
-
-/-- The ordered list of scaled weights for the prime supply through 61. -/
-def primeSeed61Weights : List ℕ :=
-  [7, 11, 17, 20, 24, 26, 30, 30, 32, 35, 35, 38, 38, 38, 39, 40, 41, 42]
-
 /-- The cumulative weighted-count row through budget 96. -/
-def primeSeed61Row : Array ℕ :=
+private def primeSeed61Row : Array ℕ :=
   #[1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 6, 6, 7, 8, 9, 9, 11, 12, 13, 14, 16, 17,
     19, 22, 24, 26, 28, 33, 34, 38, 44, 48, 52, 58, 65, 68, 74, 81, 89, 95, 104, 115, 123, 132, 147,
     157, 168, 184, 200, 214, 231, 253, 273, 293, 318, 344, 368, 397, 430, 461, 496, 535, 579, 619,
@@ -37,7 +26,7 @@ def primeSeed61Row : Array ℕ :=
     2149, 2304, 2455, 2614, 2790, 2979, 3169, 3376]
 
 /-- The remaining cumulative-count rows through budget 96. -/
-def primeSeed61Tail : List (Array ℕ) :=
+private def primeSeed61Tail : List (Array ℕ) :=
   [#[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 10,
       11, 12, 13, 14, 17, 17, 19, 22, 24, 26, 30, 32, 34, 36, 37, 41, 43, 46, 50, 55, 58, 66, 68,
       73, 80, 85, 91, 99, 106, 116, 125, 134, 144, 154, 166, 177, 188, 203, 217, 235, 251, 271, 291,
@@ -116,55 +105,18 @@ def primeSeed61Tail : List (Array ℕ) :=
 
 set_option maxRecDepth 8192 in
 /-- The finite table satisfies the weighted-count recurrence. -/
-theorem primeSeed61_checked :
+private theorem primeSeed61_checked :
     weightedPrimeTableCheck 96 primeSeed61Weights (primeSeed61Row :: primeSeed61Tail) = true := by
   decide +kernel
 
-/-- The labels are distinct, their weights match the table, and every weight
-is positive. This transfers the checked recurrence to repeated prime products. -/
-theorem primeSeed61_labels :
-    primeSeed61Primes.Nodup ∧
-      primeSeed61Primes.map primeSeed61Weight = primeSeed61Weights ∧
-      ∀ p ∈ primeSeed61Primes, 0 < primeSeed61Weight p := by
-  decide +kernel
-
-/-- Every listed label is prime and is at most 61. -/
-theorem primeSeed61_prime_supply : ∀ p ∈ primeSeed61Primes, p.Prime ∧ p ≤ 61 := by decide +kernel
-
-/-- The scaled integer weights dominate the logarithms of their prime labels.
-The existing supply handles primes through 43; rational certificates handle
-the four new primes. -/
-theorem primeSeed61_weight_bounds :
-    ∀ p ∈ primeSeed61Primes, Real.log p ≤ (primeSeed61Weight p : ℝ) / 10 := by
-  have h47 :=
-    (Analysis.rationalLogIntervalCheck_sound
-        (show Analysis.rationalLogIntervalCheck 47 6 16 3 (39 / 10) = true from by
-          decide +kernel)).2
-  have h53 :=
-    (Analysis.rationalLogIntervalCheck_sound
-        (show Analysis.rationalLogIntervalCheck 53 6 16 3 (40 / 10) = true from by
-          decide +kernel)).2
-  have h59 :=
-    (Analysis.rationalLogIntervalCheck_sound
-        (show Analysis.rationalLogIntervalCheck 59 6 16 4 (41 / 10) = true from by
-          decide +kernel)).2
-  have h61 :=
-    (Analysis.rationalLogIntervalCheck_sound
-        (show Analysis.rationalLogIntervalCheck 61 6 16 4 (42 / 10) = true from by
-          decide +kernel)).2
-  norm_num only [Rat.cast_ofNat, Rat.cast_div] at h47 h53 h59 h61
-  intro p hp
-  simp only [primeSeed61Primes, List.mem_append, List.mem_cons, List.not_mem_nil, or_false] at hp
-  rcases hp with hp | rfl | rfl | rfl | rfl
-  · have hp43 := (primeSeed43_prime_supply p hp).2
-    simpa only [primeSeed61Weight, ite_eq_left hp43] using primeSeed43_weight_bounds p hp
-  · norm_num only [primeSeed61Weight, Nat.reduceLeDiff, Nat.cast_ofNat, ite_true, ite_false]
-    exact h47
-  · norm_num only [primeSeed61Weight, Nat.reduceLeDiff, Nat.cast_ofNat, ite_true, ite_false]
-    exact h53
-  · norm_num only [primeSeed61Weight, Nat.reduceLeDiff, Nat.cast_ofNat, ite_true, ite_false]
-    exact h59
-  · norm_num only [primeSeed61Weight, Nat.reduceLeDiff, Nat.cast_ofNat, ite_true, ite_false]
-    exact h61
+/-- The weighted family through 61 has 3376 products at budget 96. -/
+theorem primeSeed61_family_96 :
+    (weightedPrimeFamily primeSeed61Primes.toFinset primeSeed61Weight 96).card = 3376 := by
+  have h :=
+    (weightedPrimeCount_weights_eq_card primeSeed61Weight 96 primeSeed61Primes primeSeed61Weights
+          primeSeed61_labels.1 primeSeed61_labels.2.2 primeSeed61_labels.2.1).symm.trans
+      ((weightedPrimeTableCheck_sound 96 primeSeed61Weights primeSeed61Row primeSeed61Tail
+          primeSeed61_checked 96 (by decide)).symm)
+  exact h
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

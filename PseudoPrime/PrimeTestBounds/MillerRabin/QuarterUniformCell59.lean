@@ -6,6 +6,8 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.Analysis.LogTaylorBounds
+
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterPrincipalUpper59
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterPrincipalLower59
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterReflectedMoments
