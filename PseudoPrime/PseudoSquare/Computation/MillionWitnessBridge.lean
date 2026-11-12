@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PseudoSquare.Computation.MillionCertificate
+import PseudoPrime.PseudoSquare.Computation.MillionCertificate
 public import PseudoPrime.NumberTheory.JacobiWitness.Existence
 
 /-!
