@@ -159,6 +159,7 @@ public import PseudoPrime.Analysis.TwoPoleGammaMajorant
 public import PseudoPrime.Analysis.ExponentialRampNormBounds
 public import PseudoPrime.Analysis.ElementaryBounds
 public import PseudoPrime.Analysis.NumericalLogBounds
+public import PseudoPrime.Analysis.LogLinearIntegral
 public import PseudoPrime.Analysis.GammaCriticalLine
 public import PseudoPrime.Analysis.GammaMellin
 public import PseudoPrime.Analysis.GammaSubtractedMellin

@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.OrdinateTail
-public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevFromZeroCount
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevPsiZeroCountRH
 import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCountErrorNumerics
 
 /-! # Chebyshev error from a full ordinate tail

@@ -6,8 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.OrdinateTailRosser
-public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevOrdinateTail
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.OrdinateTailCountRH
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevPsiOrdinateTailRH
 import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCountErrorNumerics
 
 /-! # Chebyshev bound from a Rosser-type zero count -/

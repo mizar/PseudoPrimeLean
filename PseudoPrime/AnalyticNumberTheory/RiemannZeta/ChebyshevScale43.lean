@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevRosser
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevPsiRosserRH
 
 /-! # The logarithmic scale for the Chebyshev estimate -/
 

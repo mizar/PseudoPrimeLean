@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.OrdinateTailFinite
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.OrdinateTailLimitRH
 
 /-! # Splitting the inverse-square ordinate tail -/
 

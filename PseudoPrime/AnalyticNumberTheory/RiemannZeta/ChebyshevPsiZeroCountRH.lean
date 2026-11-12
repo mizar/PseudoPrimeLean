@@ -6,8 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevZeroSplit
-public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroReciprocalPositiveCount
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevPsiZeroSplitRH
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroReciprocalPositiveCountRH
 import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCountErrorNumerics
 
 /-! # Chebyshev error from explicit zero-count inputs
@@ -46,7 +46,7 @@ theorem psi_error_of_coarse_count (hRH : RiemannHypothesis) {T x h : ℝ}
         1 / h := by
   have hT0 : 0 ≤ T :=
     (mul_pos (mul_pos (by norm_num only : (0 : ℝ) < 2) Real.pi_pos) (Real.exp_pos 1)).le.trans hT
-  have hlo := reciprocal_of_positive_count hRH hT hQ
+  have hlo := zeroReciprocal_of_positive_count hRH hT hQ
   have hh' := psi_error_of_zero_split hRH hT0 hh hx hC
   have hm := mul_le_mul_of_nonneg_left hlo (Real.sqrt_nonneg (x + h))
   linarith only [hh', hm]

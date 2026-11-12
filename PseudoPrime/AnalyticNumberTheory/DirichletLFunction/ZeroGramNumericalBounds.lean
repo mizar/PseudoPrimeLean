@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ZeroGramRows
+public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ZeroGramRowsIndividualRH
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.CompletedLogDerivativeNumericalBounds
 
 /-!

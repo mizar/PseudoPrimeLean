@@ -9,7 +9,7 @@ module
 public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformKorseltTriple
 public import PseudoPrime.AnalyticNumberTheory.GRH.Definition
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCountConjugation
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevSquareLog
+import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevPsiSquareLogLowerRH
 import PseudoPrime.PrimeTestBounds.MillerRabin.UniformThreeElevenMiddle
 
 /-! # Uniform three-elevenths bounds from coarse zero counts -/

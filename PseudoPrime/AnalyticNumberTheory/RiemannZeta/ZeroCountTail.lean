@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.OrdinateTailFinite
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.OrdinateTailLimitRH
 import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCountInverseSquare
 import PseudoPrime.Analysis.FiniteHeightAbel
 

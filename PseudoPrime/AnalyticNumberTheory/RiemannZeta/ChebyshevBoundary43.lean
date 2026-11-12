@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevMomentTail43
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.MangoldtMomentTail43RH
 import PseudoPrime.Analysis.LogarithmicPowerAbsorption
 import PseudoPrime.Analysis.LogPowerTailIntegral
 

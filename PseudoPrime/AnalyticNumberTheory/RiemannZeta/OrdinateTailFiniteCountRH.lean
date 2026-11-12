@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.OrdinateTailSplit
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.OrdinateTailSplitRH
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCountConjugation
 import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCountTailError
 import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCountErrorNumerics

@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCountTailError
-public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroReciprocalPositiveCount
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCountConjugation
 import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCountErrorNumerics
 
 /-! # Ordinate tail from a Rosser-type zero count -/

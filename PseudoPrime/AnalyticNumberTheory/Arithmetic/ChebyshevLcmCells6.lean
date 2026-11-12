@@ -6,7 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevLcmCertificates
+public import Mathlib.NumberTheory.Chebyshev
+import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevLcmCertificates
 
 /-! # Finite integer certificates for a linear Chebyshev bound -/
 
