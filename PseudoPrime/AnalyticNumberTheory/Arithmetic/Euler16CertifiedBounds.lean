@@ -6,7 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.AnalyticNumberTheory.Arithmetic.TruncatedEulerCertificates
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.TruncatedMangoldtBounds
+import PseudoPrime.AnalyticNumberTheory.Arithmetic.TruncatedEulerCertificates
 
 /-! # Certified sixteen-term Euler bounds at three rational exponents -/
 
