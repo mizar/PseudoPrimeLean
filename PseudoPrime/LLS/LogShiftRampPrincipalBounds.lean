@@ -8,36 +8,13 @@ module
 
 public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.VariableRampPrincipalBounds
-public import PseudoPrime.AnalyticNumberTheory.Arithmetic.LogShiftStencilBounds
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevRelativeRH
 
 /-! # Principal comparison retaining the logarithmic correction in the stencil -/
 
 @[expose] public section
 
 namespace PseudoPrime.LLS
-
-/-- Under RH at t greater than one, the corrected smoothed error has absolute
-value at most sqrt(t)/20+21/20. Retain log(2 pi)log t in the explicit formula and bound
-only the zero mass and trivial-zero tail. This avoids a logarithmic stencil error. -/
-theorem logWeightedMangoldtSum_log_shift_error_le (hRH : RiemannHypothesis) {t : ℝ} (ht : 1 < t) :
-    |AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum t - t +
-          Real.log (2 * Real.pi) * Real.log t| ≤
-      Real.sqrt t / 20 + 21 / 20 := by
-  have he := abs_le.mp (abs_logWeightedMangoldtSum_error_le hRH ht)
-  have hm :=
-    mul_le_mul_of_nonneg_right AnalyticNumberTheory.RiemannXi.riemannZeroMass_le_one_fortieth
-      (add_nonneg (Real.sqrt_nonneg t) zero_le_one)
-  have hb := AnalyticNumberTheory.RiemannZeta.logTrivialSeries_le_pi_sq_div_24 ht
-  have hz : 0 ≤ AnalyticNumberTheory.RiemannZeta.riemannZetaLogTrivialZeroSeries t := by
-    apply tsum_nonneg
-    intro k
-    exact
-      div_nonneg (pow_nonneg (inv_nonneg.mpr (zero_lt_one.trans ht).le) _)
-        (mul_nonneg (by norm_num only) (sq_nonneg _))
-  rw [abs_le]
-  constructor
-  · linarith only [he.1, hm, hb]
-  · nlinarith only [he.2, hm, hz, Real.pi_lt_four, Real.pi_pos, sq_nonneg (Real.pi - 4)]
 
 /-- The corrected three-point envelope sqrt(x)/10+21/20 on the enlarged ramp.
 It applies for x at least one, width at most x and all three arguments greater than one.
@@ -53,7 +30,7 @@ theorem logWeighted_log_shift_error_le_ramp (hRH : RiemannHypothesis) {x t : ℝ
     |AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum t - t +
           Real.log (2 * Real.pi) * Real.log t| ≤
       logShiftRampEnvelope x := by
-  have he := logWeightedMangoldtSum_log_shift_error_le hRH ht
+  have he := AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum_log_shift_error_le hRH ht
   have hs : Real.sqrt t ≤ 2 * Real.sqrt x := by
     apply Real.sqrt_le_iff.mpr
     exact

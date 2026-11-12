@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.RelativeChebyshevLowerBounds
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevRelativeRH
 
 /-! # High-range prime supply at square radii -/
 
@@ -23,8 +23,8 @@ theorem high_square_psi_lower (hRH : RiemannHypothesis) {b : ℝ} (hb : 56 ≤ b
   have hb0 : 0 ≤ b := by linarith only [hb]
   have hs : Real.sqrt (b ^ 2) = b := Real.sqrt_sq_eq_abs b |>.trans (abs_of_nonneg hb0)
   have hpsi :=
-    LLS.psi_lower_relative_log_shift hRH (h := (1 / 20 : ℝ)) (by norm_num only) (by norm_num only)
-      (sq_nonneg b)
+    AnalyticNumberTheory.Arithmetic.psi_lower_relative_log_shift hRH (h := (1 / 20 : ℝ))
+      (by norm_num only) (by norm_num only) (sq_nonneg b)
   rw [hs] at hpsi
   have hprod : 0 ≤ (b - 56) * ((b + 56) / 20 - 2) := by
     apply mul_nonneg

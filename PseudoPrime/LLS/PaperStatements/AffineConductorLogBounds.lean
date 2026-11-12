@@ -92,8 +92,11 @@ theorem principal_log_half_difference_lower_half_sqrt (hRH : RiemannHypothesis) 
   have hy0 : 0 < y := (by norm_num only : (0 : ℝ) < 200).trans_le hy
   have hy1 : 1 < y := (by norm_num only : (1 : ℝ) < 200).trans_le hy
   have hh : 1 < y / 2 := by linarith only [hy]
-  have hA := (abs_le.mp (LLS.logWeightedMangoldtSum_log_shift_error_le hRH hy1)).1
-  have hB := (abs_le.mp (LLS.logWeightedMangoldtSum_log_shift_error_le hRH hh)).2
+  have hA :=
+    (abs_le.mp
+        (AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum_log_shift_error_le hRH hy1)).1
+  have hB :=
+    (abs_le.mp (AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum_log_shift_error_le hRH hh)).2
   have hs := Real.sqrt_le_sqrt (show y / 2 ≤ y by linarith only [hy0])
   have hs2 : 14 ≤ Real.sqrt y :=
     (Real.le_sqrt (by norm_num only) hy0.le).mpr

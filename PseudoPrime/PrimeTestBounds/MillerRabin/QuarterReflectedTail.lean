@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterReflectedMoments
-public import PseudoPrime.LLS.ChebyshevQuarterError
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevRHError
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PowerLogMomentAbel
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterEulerTailPsi
 
@@ -45,7 +45,9 @@ theorem quarter_moment_tail_finite (hRH : RiemannHypothesis) {k : ℕ} (hk : k <
   have hψ : ∀ t ∈ Set.Icc (2701 : ℝ) b, Chebyshev.psi t ≤ E t := by
     intro t ht
     have h :=
-      (abs_le.mp (LLS.psi_error_quarter_sqrt hRH (show (625 : ℝ) ≤ t by linarith only [ht.1]))).2
+      (abs_le.mp
+          (AnalyticNumberTheory.Arithmetic.psi_error_le_three_quarter_sqrt hRH
+            (show (625 : ℝ) ≤ t by linarith only [ht.1]))).2
     dsimp only [E]
     linarith only [h]
   have hd :

@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.RelativeChebyshevLowerBounds
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevRelativeRH
 public import PseudoPrime.LLS.PaperStatements.GammaTruncatedBounds
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.AffineChebyshevSmoothing
 
@@ -29,7 +29,7 @@ theorem gamma_level_one_sum_lower_relative (hRH : RiemannHypothesis) {h x lambda
   have hp (t : ℝ) (ht : 0 ≤ t) :
     (1 - h) * t - (1 / (10 * h)) * Real.sqrt t - (21 / (10 * h) + 1839 / 1000) ≤
       Chebyshev.psi t := by
-    have hb := LLS.psi_lower_relative_log_shift hRH hh hh1 ht
+    have hb := AnalyticNumberTheory.Arithmetic.psi_lower_relative_log_shift hRH hh hh1 ht
     have he : (Real.sqrt t / 10 + 21 / 10) / h = (1 / (10 * h)) * Real.sqrt t + 21 / (10 * h) := by
       field_simp [hh.ne']
     rw [he] at hb

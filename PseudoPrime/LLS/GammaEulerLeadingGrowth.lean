@@ -25,9 +25,8 @@ theorem gammaEulerPrefix_doubling_leadingPower_RH (hRH : RiemannHypothesis) {a :
     C + (2190143241 / 10000000000 : ℝ) * r ≤
       ∑ k ∈ Finset.Ioc 0 (2 * a), Analysis.gammaResolventMangoldtWeight k := by
   have haR : (100000 : ℝ) ≤ a := by exact_mod_cast ha
-  have hap := psi_bounds_of_hundred_thousand_le hRH haR
-  have hbp :=
-    psi_bounds_of_hundred_thousand_le hRH (show (100000 : ℝ) ≤ (2 : ℝ) * a by linarith only [haR])
+  have hap := psi_bounds_of_100000_le hRH haR
+  have hbp := psi_bounds_of_100000_le hRH (show (100000 : ℝ) ≤ (2 : ℝ) * a by linarith only [haR])
   have hd : (39 / 100 : ℝ) * ((2 : ℝ) * a) ≤ Chebyshev.psi ((2 : ℝ) * a) - Chebyshev.psi a := by
     linarith only [hap.2, hbp.1, haR]
   have he : (((2 : ℝ) * a) ^ (-21 / 20 : ℝ)) * ((2 : ℝ) * a) = ((2 : ℝ) * a) ^ (-1 / 20 : ℝ) := by
@@ -123,8 +122,8 @@ theorem gamma_prefix100000000_lower_leading (hRH : RiemannHypothesis) {b : ℝ} 
   have hg :=
     Analysis.gamma_euler_prefix_lower_growth_leading (by norm_num only : (3 : ℕ) ≤ 51200000)
       (by norm_num only : (51200000 : ℕ) ≤ 100000000) h9
-  have ha := psi_bounds_of_hundred_thousand_le hRH (by norm_num only : (100000 : ℝ) ≤ 51200000)
-  have hB := psi_bounds_of_hundred_thousand_le hRH (by norm_num only : (100000 : ℝ) ≤ 100000000)
+  have ha := psi_bounds_of_100000_le hRH (by norm_num only : (100000 : ℝ) ≤ 51200000)
+  have hB := psi_bounds_of_100000_le hRH (by norm_num only : (100000 : ℝ) ≤ 100000000)
   have hd :
     (4713 / 12500 : ℝ) * 100000000 ≤
       Chebyshev.psi (100000000 : ℝ) - Chebyshev.psi (51200000 : ℝ) := by

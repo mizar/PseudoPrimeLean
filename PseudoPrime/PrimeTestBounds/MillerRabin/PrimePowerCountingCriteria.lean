@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.NumberTheory.AmbientFermatKernel
-public import PseudoPrime.LLS.RelativeChebyshevLowerBounds
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevRelativeRH
 public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeProductMultisetBounds
 
 /-! # Prime-count supply for prime-power witnesses -/
@@ -26,7 +26,8 @@ theorem primeCount_ge_of_relative_psi (hRH : RiemannHypothesis) {h : ℝ} (hh : 
     M ≤ B.primeCounting := by
   have hl :=
     hM.trans
-      ((LLS.psi_lower_relative_log_shift hRH hh hh1 (Nat.cast_nonneg B)).trans
+      ((AnalyticNumberTheory.Arithmetic.psi_lower_relative_log_shift hRH hh hh1
+            (Nat.cast_nonneg B)).trans
         (Chebyshev.psi_le_primeCounting_mul_log B))
   have hp : 0 < Real.log (B : ℝ) := Real.log_pos (Nat.one_lt_cast.mpr hB)
   exact Nat.cast_le.mp ((mul_le_mul_iff_left₀ hp).mp hl)

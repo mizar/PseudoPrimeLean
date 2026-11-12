@@ -37,9 +37,8 @@ theorem gamma_euler_prefix_doubling_gain (hRH : RiemannHypothesis) {a : ℕ} (ha
     C + 39 / 500 ≤ ∑ k ∈ Finset.Ioc 0 (2 * a), Analysis.gammaResolventMangoldtWeight k := by
   have haR : (100000 : ℝ) ≤ a := by exact_mod_cast ha
   have hbR : (2 : ℝ) * a ≤ 90000000 := by exact_mod_cast hb
-  have hap := psi_bounds_of_hundred_thousand_le hRH haR
-  have hbp :=
-    psi_bounds_of_hundred_thousand_le hRH (show (100000 : ℝ) ≤ (2 : ℝ) * a by linarith only [haR])
+  have hap := psi_bounds_of_100000_le hRH haR
+  have hbp := psi_bounds_of_100000_le hRH (show (100000 : ℝ) ≤ (2 : ℝ) * a by linarith only [haR])
   have hd : (39 / 100 : ℝ) * ((2 : ℝ) * a) ≤ Chebyshev.psi ((2 : ℝ) * a) - Chebyshev.psi a := by
     linarith only [hap.2, hbp.1, haR]
   have hp :=
@@ -167,17 +166,6 @@ theorem psi_asymmetric_doubling_block_lower {a : ℝ} (ha : 900 ≤ a) :
   rw [mul_div_assoc, hlo, mul_div_assoc, hhi]
   linarith only [h1, h2, h3, hroot, hlog, hlogb, ha]
 
-/-- Input: RH and a>=900. Claim: psi(2a)-psi(a)>=a/4. Combine the
-continuous asymmetric comparison and the uniform doubling budget.
-Role: provide analytic mass without a finite prime-power table. -/
-theorem psi_doubling_block_lower (hRH : RiemannHypothesis) {a : ℝ} (ha : 900 ≤ a) :
-    a / 4 ≤ Chebyshev.psi (2 * a) - Chebyshev.psi a := by
-  have hd :=
-    psi_sub_psi_ge_asymmetric_rh_bound hRH (show (1 : ℝ) < (7 / 4 : ℝ) * a by linarith only [ha])
-      (show (7 / 4 : ℝ) * a < 2 * a by linarith only [ha]) (show (1 : ℝ) < a by linarith only [ha])
-      (show a < (5 / 4 : ℝ) * a by linarith only [ha])
-  exact (psi_asymmetric_doubling_block_lower ha).trans hd
-
 /-- Input: RH, a>=900, b>=2a and an Euler prefix credit at a.
 Claim: the prefix through b gains at least (a/8)b^(-21/20). Use
 monotonicity of psi, the uniform short block and the positive Euler weight.
@@ -190,7 +178,7 @@ theorem gammaEulerPrefix_growth_doubling_RH (hRH : RiemannHypothesis) {a b : ℕ
   have haR : (900 : ℝ) ≤ a := by exact_mod_cast ha
   have habR : (a : ℝ) ≤ b := by linarith only [haR, hratio]
   have hab : a ≤ b := by exact_mod_cast habR
-  have hl := psi_doubling_block_lower hRH haR
+  have hl := AnalyticNumberTheory.Arithmetic.psi_doubling_block_lower hRH haR
   have hm := Chebyshev.psi_mono hratio
   have hd : (a : ℝ) / 4 ≤ Chebyshev.psi b - Chebyshev.psi a := by linarith only [hl, hm]
   have hp :=
@@ -341,9 +329,8 @@ theorem gamma_euler_prefix_doubling_gain_of_power_lower (hRH : RiemannHypothesis
     C + (39 / 200 : ℝ) * r ≤
       ∑ k ∈ Finset.Ioc 0 (2 * a), Analysis.gammaResolventMangoldtWeight k := by
   have haR : (100000 : ℝ) ≤ a := by exact_mod_cast ha
-  have hap := psi_bounds_of_hundred_thousand_le hRH haR
-  have hbp :=
-    psi_bounds_of_hundred_thousand_le hRH (show (100000 : ℝ) ≤ (2 : ℝ) * a by linarith only [haR])
+  have hap := psi_bounds_of_100000_le hRH haR
+  have hbp := psi_bounds_of_100000_le hRH (show (100000 : ℝ) ≤ (2 : ℝ) * a by linarith only [haR])
   have hd : (39 / 100 : ℝ) * ((2 : ℝ) * a) ≤ Chebyshev.psi ((2 : ℝ) * a) - Chebyshev.psi a := by
     linarith only [hap.2, hbp.1, haR]
   have he : (((2 : ℝ) * a) ^ (-21 / 20 : ℝ)) * ((2 : ℝ) * a) = ((2 : ℝ) * a) ^ (-1 / 20 : ℝ) := by

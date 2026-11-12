@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.RelativeChebyshevLowerBounds
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevRelativeRH
 public import PseudoPrime.LLS.PaperStatements.TriangularScaleOneAbel
 
 /-! # Relative Chebyshev input for the sharper scale-one bound -/
@@ -61,7 +61,7 @@ theorem scaleOne_psi_lower (hRH : RiemannHypothesis) {t : ℝ} (ht : 16 ≤ t) :
     calc
       _ = (3 / 10 : ℝ) * (Real.sqrt t * q) + (63 / 10) * q := by ring
       _ = _ := by rw [hsqrt]
-  have hb := LLS.psi_lower_relative_log_shift hRH hh hh1 hp.le
+  have hb := AnalyticNumberTheory.Arithmetic.psi_lower_relative_log_shift hRH hh hh1 hp.le
   have hmain : (1 - h) * t = t - (1 / 3 : ℝ) * t ^ (3 / 4 : ℝ) := by nlinarith only [hprod]
   rw [hmain, herr] at hb
   exact (by linarith only [hb])

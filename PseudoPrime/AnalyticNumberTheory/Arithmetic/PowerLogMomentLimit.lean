@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PowerLogMomentAbel
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.NaturalTailLimit
 import PseudoPrime.AnalyticNumberTheory.Arithmetic.PowerLogBoundarySummation
 import PseudoPrime.Analysis.LogarithmicPowerAbsorption
 
@@ -57,32 +58,6 @@ theorem summable_mangoldt_moment {σ : ℝ} (hσ : 1 < σ) (k : ℕ) :
   rw [Real.norm_eq_abs, abs_of_nonneg hnonneg]
   dsimp only [mangoldtMomentWeight]
   nlinarith only [hm]
-
-/-- For a summable real series whose zeroth term vanishes, tails beginning
-strictly above a fixed real cutoff converge to the total sum minus its finite
-prefix. Both finite intervals retain their upper endpoints. -/
-theorem tendsto_tail_prefix (f : ℕ → ℝ) (hf0 : f 0 = 0) (hf : Summable f) (a : ℝ) :
-    Filter.Tendsto (fun n : ℕ ↦ ∑ m ∈ Finset.Ioc ⌊a⌋₊ n, f m) Filter.atTop
-      (nhds ((∑' m : ℕ, f m) - ∑ m ∈ Finset.Ioc 0 ⌊a⌋₊, f m)) := by
-  have ht := hf.hasSum.tendsto_sum_nat.comp (Filter.tendsto_add_atTop_nat 1)
-  have ht' :
-    Filter.Tendsto (fun n : ℕ ↦ ∑ m ∈ Finset.Ioc 0 n, f m) Filter.atTop (nhds (∑' m : ℕ, f m)) := by
-    apply Filter.Tendsto.congr (fun n ↦ ?_) ht
-    dsimp only [Function.comp_apply]
-    rw [Nat.range_eq_Icc_zero_sub_one (n + 1) (Nat.add_one_ne_zero n), Nat.add_sub_cancel, ←
-      Finset.sum_Ioc_add_eq_sum_Icc (Nat.zero_le n)]
-    simp only [hf0, add_zero]
-  have hm := ht'.sub_const (∑ m ∈ Finset.Ioc 0 ⌊a⌋₊, f m)
-  apply Filter.Tendsto.congr' ?_ hm
-  apply (Filter.eventually_ge_atTop ⌊a⌋₊).mono
-  intro n hn
-  have hd : Disjoint (Finset.Ioc 0 ⌊a⌋₊) (Finset.Ioc ⌊a⌋₊ n) :=
-    Finset.disjoint_left.mpr
-      (fun m hm ht ↦ (not_lt_of_ge (Finset.mem_Ioc.mp hm).2) (Finset.mem_Ioc.mp ht).1)
-  have he := Finset.sum_union (f := f) hd
-  rw [Finset.Ioc_union_Ioc_eq_Ioc (Nat.zero_le _) hn] at he
-  dsimp only
-  linarith only [he]
 
 /-- For `σ > 1`, finite von Mangoldt moment tails converge to the complete
 series minus the prefix through the lower cutoff. The open lower endpoint is

@@ -6,6 +6,8 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevRHError
+
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PowerLogMomentLower
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterReflectedTail
 public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedSixPoleEulerSmoothed
@@ -50,7 +52,9 @@ theorem quarter_euler_moment_lower (hRH : RiemannHypothesis) {k : ℕ} (hk : k �
     intro t ht
     have ht0 : 0 ≤ t := by linarith only [ht.1]
     have h :=
-      (abs_le.mp (LLS.psi_error_quarter_sqrt hRH (show (625 : ℝ) ≤ t by linarith only [ht.1]))).1
+      (abs_le.mp
+          (AnalyticNumberTheory.Arithmetic.psi_error_le_three_quarter_sqrt hRH
+            (show (625 : ℝ) ≤ t by linarith only [ht.1]))).1
     rw [quarter_sqrt_product ht0] at h
     dsimp only [E]
     linarith only [h]

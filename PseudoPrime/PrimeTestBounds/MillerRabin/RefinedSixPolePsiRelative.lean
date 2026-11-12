@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedSixPoleUnitPrincipal
-public import PseudoPrime.LLS.RelativeChebyshevLowerBounds
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevRelativeRH
 public import PseudoPrime.LLS.RiemannOneSidedCheckpoint
 public import PseudoPrime.Analysis.LogTrapezoidBounds
 

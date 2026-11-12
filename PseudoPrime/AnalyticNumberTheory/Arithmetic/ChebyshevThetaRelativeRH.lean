@@ -6,8 +6,10 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.RelativeChebyshevLowerBounds
-public import PseudoPrime.AnalyticNumberTheory.Arithmetic.CompositeMangoldtSqrtBound
+public import Mathlib.NumberTheory.Chebyshev
+public import Mathlib.NumberTheory.LSeries.RiemannZeta
+import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevRelativeRH
+import PseudoPrime.AnalyticNumberTheory.Arithmetic.CompositeMangoldtSqrtBound
 
 /-! # Relative-width Chebyshev upper and theta lower bounds
 
@@ -17,31 +19,7 @@ The existing prime-power error bound transfers the relative psi lower estimate t
 
 @[expose] public section
 
-namespace PseudoPrime.LLS
-
-/-- Under RH, for `t > 1` and `h > 0`, the displayed relative-width expression bounds
-`psi t` from above. Apply the corrected smoothed-error bounds at `t` and `(1 + h) * t`
-and cancel their spacing in the upper stencil. This supplies theta upper bounds after
-choosing an explicit width. -/
-theorem psi_upper_relative_log_shift (hRH : RiemannHypothesis) {h t : ℝ} (hh : 0 < h) (ht : 1 < t) :
-    Chebyshev.psi t ≤
-      (1 + h) * t +
-        (Real.sqrt t / 20 + 21 / 20 + (Real.sqrt ((1 + h) * t) / 20 + 21 / 20)) * (1 + h) / h := by
-  have ht0 : 0 < t := zero_lt_one.trans ht
-  have hty : t < (1 + h) * t := by nlinarith only [mul_pos hh ht0]
-  have hL := logWeightedMangoldtSum_log_shift_error_le hRH ht
-  have hR := logWeightedMangoldtSum_log_shift_error_le hRH (ht.trans hty)
-  have hc : 0 ≤ Real.log (2 * Real.pi) := by linarith only [Analysis.log_two_mul_pi_gt]
-  have hb :=
-    (AnalyticNumberTheory.Arithmetic.psi_bounds_of_log_shift_error_without_log hc ht0 hty hL hR).1
-  have he :
-    ((Real.sqrt t / 20 + 21 / 20) + (Real.sqrt ((1 + h) * t) / 20 + 21 / 20)) * ((1 + h) * t) /
-        ((1 + h) * t - t) =
-      ((Real.sqrt t / 20 + 21 / 20) + (Real.sqrt ((1 + h) * t) / 20 + 21 / 20)) * (1 + h) / h := by
-    have hd : (1 + h) * t - t = h * t := by ring
-    rw [hd, ← mul_assoc, mul_div_mul_right _ _ ht0.ne']
-  rw [he] at hb
-  linarith only [hb, hc]
+namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 
 /-- Under RH, for `t ≥ 1` and `0 < h ≤ 1 / 2`, the displayed expression bounds
 `theta t` from below. Subtract the existing `6 * sqrt t` bound for `psi t - theta t`
@@ -51,7 +29,7 @@ theorem theta_lower_relative_log_shift (hRH : RiemannHypothesis) {h t : ℝ} (hh
     (1 - h) * t - (Real.sqrt t / 10 + 21 / 10) / h - 1839 / 1000 - 6 * Real.sqrt t ≤
       Chebyshev.theta t := by
   have hp := psi_lower_relative_log_shift hRH hh hh1 (by linarith only [ht])
-  have hd := AnalyticNumberTheory.Arithmetic.psi_sub_theta_le_six_sqrt ht
+  have hd := psi_sub_theta_le_six_sqrt ht
   linarith only [hp, hd]
 
 /-- Under RH, let `0 < h ≤ 1 / 2`, `r ≥ 1`, and `t ≥ r ^ 2`. If the displayed
@@ -84,7 +62,7 @@ theorem theta_lower_of_relative_budget (hRH : RiemannHypothesis) {h t r η : ℝ
   have hF' := mul_le_mul_of_nonneg_left htr hF
   have hb := mul_le_mul_of_nonneg_right hbudget ht0
   have hp := psi_lower_relative_log_shift hRH hh hh1 ht0
-  have hd := AnalyticNumberTheory.Arithmetic.psi_sub_theta_le_six_sqrt ht1
+  have hd := psi_sub_theta_le_six_sqrt ht1
   have hcost :
     (Real.sqrt t / 10 + 21 / 10) / h + 1839 / 1000 + 6 * Real.sqrt t ≤
       ((1 / (10 * h) + 6) / r + (21 / (10 * h) + 1839 / 1000) / r ^ 2) * t := by
@@ -148,4 +126,4 @@ theorem theta_upper_of_relative_budget (hRH : RiemannHypothesis) {h t r P : ℝ}
       _ = _ := by ring
   nlinarith only [hp, hθ, herr', hcost, hb]
 
-end PseudoPrime.LLS
+end PseudoPrime.AnalyticNumberTheory.Arithmetic

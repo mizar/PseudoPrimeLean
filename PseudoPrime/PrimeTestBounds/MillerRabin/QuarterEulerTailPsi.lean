@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.ChebyshevQuarterError
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevRHError
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PowerLogMomentAbel
 
 /-! Chebyshev quarter-power error for Euler moment tails. -/
@@ -25,7 +25,7 @@ theorem quarter_psi_error_rpow (hRH : RiemannHypothesis) {t : ℝ} (ht : 625 ≤
       Real.rpow_add (by linarith only [ht] : 0 < t)]
     norm_num only
   rw [← he]
-  exact LLS.psi_error_quarter_sqrt hRH ht
+  exact AnalyticNumberTheory.Arithmetic.psi_error_le_three_quarter_sqrt hRH ht
 
 /-- Under RH, a decreasing power-log Mangoldt moment has a finite-tail upper bound using the
 Chebyshev envelope `t + t^(3/4)`. The lower endpoint keeps its exact psi value. -/

@@ -35,7 +35,7 @@ theorem fixedStencil_error_le (hRH : RiemannHypothesis) {x t : ℝ} (hx : 1 ≤ 
     |AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum t - t +
           Real.log (2 * Real.pi) * Real.log t| ≤
       fixedStencilEnvelope x := by
-  have he := logWeightedMangoldtSum_log_shift_error_le hRH ht
+  have he := AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum_log_shift_error_le hRH ht
   have hs : Real.sqrt t ≤ (8 / 5 : ℝ) * Real.sqrt x := by
     apply Real.sqrt_le_iff.mpr
     exact

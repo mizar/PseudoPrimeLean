@@ -27,7 +27,7 @@ theorem logWeightedMangoldtSum_clipped_shift_error_le (hRH : RiemannHypothesis) 
       Real.sqrt t / 20 + 21 / 20 := by
   by_cases h : 1 < t
   · rw [max_eq_right h.le]
-    exact logWeightedMangoldtSum_log_shift_error_le hRH h
+    exact AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum_log_shift_error_le hRH h
   · have hs := le_of_not_gt h
     rw [logWeightedMangoldtSum_eq_zero_of_le_one hs, max_eq_left hs, Real.log_one, mul_zero,
       add_zero, zero_sub, abs_neg, abs_of_nonneg ht]
