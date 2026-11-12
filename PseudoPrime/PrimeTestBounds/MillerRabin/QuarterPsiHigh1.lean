@@ -8,6 +8,7 @@ module
 
 public import Mathlib.NumberTheory.Chebyshev
 import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterPsiPrimeCount
+import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterPsiCount1
 
 /-! # Chebyshev lower bound from a finite prime-count certificate -/
 
@@ -15,13 +16,10 @@ import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterPsiPrimeCount
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
-set_option maxRecDepth 20000 in
-set_option maxHeartbeats 0 in
--- Kernel reduction checks the finite interval using the minFac prime test.
 private theorem prime_count_50512 :
     letI : ∀ n : ℕ, Decidable n.Prime := Nat.decidablePrime'
     ((Finset.Ioc 50000 50511).filter Nat.Prime).card = 47 := by
-  decide +kernel
+  exact prime_count_50000_50511
 
 set_option maxRecDepth 20000 in
 -- The count covers every integer in the finite interval from 50001 to 50511.
