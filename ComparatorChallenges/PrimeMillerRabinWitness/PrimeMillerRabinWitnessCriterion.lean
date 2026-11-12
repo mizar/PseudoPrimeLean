@@ -86,6 +86,17 @@ def IsStrongMillerRabinProbablePrime (n a : ℕ) : Prop :=
   let (s, d) := Nat.maxPowDvdDiv 2 (n - 1)
   (a : ZMod n) ^ d = 1 ∨ ∃ j : ℕ, j < s ∧ (a : ZMod n) ^ (2 ^ j * d) = -1
 
+/-- Under GRH, an odd natural number `n > 1` is prime if and only if it passes the strong
+Miller–Rabin test for every prime base at most `2 * (logb 9 n)^2`. This states the challenge
+for the base-nine logarithmic cutoff; its proof is supplied by the comparator solution. -/
+theorem prime_millerRabin_log_nine_criterion (hGRH : GeneralizedRiemannHypothesis) {n : ℕ}
+    (hn : 1 < n) (ho : Odd n) :
+    (∀ p : ℕ,
+        Nat.Prime p →
+          (p : ℝ) ≤ (2 * ((Real.logb 9 n) ^ 2)) → IsStrongMillerRabinProbablePrime n p) ↔
+      Nat.Prime n := by
+  sorry
+
 /-- Under GRH, an odd natural number `n > 1` is prime if and only if it passes
 the strong Miller–Rabin test for every prime base at most
 `max 2 ((3 / 11) * (log n)^2)`. The composite direction uses the least
@@ -95,17 +106,8 @@ theorem prime_millerRabin_027_criterion (hGRH : GeneralizedRiemannHypothesis) {n
     (ho : Odd n) :
     (∀ p : ℕ,
         Nat.Prime p →
-          (p : ℝ) ≤ max 2 ((3 / 11 : ℝ) * Real.log n ^ 2) → IsStrongMillerRabinProbablePrime n p) ↔
-      Nat.Prime n := by
-  sorry
-
-/-- Under GRH, an odd natural number `n > 1` is prime if and only if it passes the strong
-Miller–Rabin test for every prime base at most `2 * (logb 9 n)^2`. This states the challenge
-for the base-nine logarithmic cutoff; its proof is supplied by the comparator solution. -/
-theorem prime_millerRabin_log_nine_criterion (hGRH : GeneralizedRiemannHypothesis) {n : ℕ}
-    (hn : 1 < n) (ho : Odd n) :
-    (∀ p : ℕ,
-        Nat.Prime p → (p : ℝ) ≤ 2 * (Real.logb 9 n) ^ 2 → IsStrongMillerRabinProbablePrime n p) ↔
+          (p : ℝ) ≤ (max 2 ((3 / 11 : ℝ) * ((Real.log n) ^ 2))) →
+          IsStrongMillerRabinProbablePrime n p) ↔
       Nat.Prime n := by
   sorry
 
