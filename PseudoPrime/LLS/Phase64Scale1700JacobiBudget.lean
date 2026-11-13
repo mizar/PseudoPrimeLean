@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.ExponentialRampSummation
-public import PseudoPrime.LLS.Phase64Ramified1700Bounds
+public import PseudoPrime.LLS.Phase64RamifiedBounds
 public import PseudoPrime.LLS.Phase64TransportedNumericalBudget
 
 /-! # Existing Jacobi numerical budgets on scales through 1700 -/

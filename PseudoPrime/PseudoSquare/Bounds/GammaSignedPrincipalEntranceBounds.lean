@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GammaSignedPrincipalEntranceCertificates
+public import PseudoPrime.LLS.GammaSignedPrincipalEntranceBounds
 public import PseudoPrime.PseudoSquare.Bounds.GammaNearUnitLog264Bounds
 public import PseudoPrime.PseudoSquare.Bounds.GammaSignedVariationBounds
 public import PseudoPrime.PseudoSquare.Bounds.GammaFactorFreeBounds

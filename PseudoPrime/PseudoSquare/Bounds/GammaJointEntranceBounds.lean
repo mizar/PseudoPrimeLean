@@ -27,7 +27,7 @@ theorem negOneWitness_cast_le_joint_entrance_endpoint {n : ℕ} (hn : Odd n) (hn
   · exact
       primeNegOneWitness_cast_le_base_ratio_endpoint hn hns hGRH (by linarith only [h260]) hlog hw
   · have hU := le_of_lt (lt_of_not_ge h260)
-    obtain ⟨hlo, hhi, hx, hb, hlow, hupp⟩ := LLS.gamma_joint_entrance_profile_inputs hL hU
+    obtain ⟨hx, hb⟩ := LLS.gamma_joint_entrance_witness_inputs hL hU
     have hs := LLS.gamma_joint_entrance_separation hGRH.riemann hL hU
     have h :=
       negOneWitness_le_of_jointFactorFree_gap hn hns hGRH (by linarith only [hL]) hlog hx

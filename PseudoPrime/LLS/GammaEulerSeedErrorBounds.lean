@@ -6,7 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GammaEulerSeed100
+public import PseudoPrime.Analysis.GammaEulerGridRatios
+public import PseudoPrime.Analysis.GammaFiniteEulerIntervals
 public import PseudoPrime.LLS.GammaEulerErrorEnvelopes
 public import PseudoPrime.LLS.GammaEulerTailErrorCertificate
 public import PseudoPrime.LLS.GammaEulerSeed100Bounds

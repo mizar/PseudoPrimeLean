@@ -6,7 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GammaLog264Certificates
+public import PseudoPrime.LLS.GammaScaleJointBudget
+import PseudoPrime.LLS.GammaLog264Certificates
 
 /-! # Certified nearly-unit separation between logarithmic scales 264 and 265 -/
 
@@ -18,7 +19,7 @@ namespace PseudoPrime.LLS
 Claim: the nearly-unit separation is at least 7/60.
 Proof: apply the improved prefix transfer and normalize the common scale.
 Role: share the quantitative certificate application across three cells. -/
-theorem gamma_log264_separation_on_cell (hRH : RiemannHypothesis) (i : Fin 3) {L : ℝ}
+private theorem gamma_log264_separation_on_cell (hRH : RiemannHypothesis) (i : Fin 3) {L : ℝ}
     (hlo : ((gammaLog264Certificate i).left : ℝ) ≤ L)
     (hhi : L ≤ ((gammaLog264Certificate i).right : ℝ)) :
     7 / 60 ≤

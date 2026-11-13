@@ -79,18 +79,4 @@ theorem principal_blocks : ∀ i : Fin 32, PrincipalBlockValid i.val := by
   · exact principal_block30
   · exact principal_block31
 
-/-- The actual lower-endpoint ramp sum is at least 1514, unconditionally.
-Combine the checked blocks with the generic fixed-point sum soundness theorem. -/
-theorem phase64_ramp_endpoint_lower : (1514 : ℝ) ≤ exponentialRampMangoldtSum (163840 / 99) := by
-  exact phase64_ramp_endpoint_lower_of_blocks ramp_blocks principal_blocks
-
-/-- The actual range-40000 exponential sum at the upper endpoint is at most
-1654, unconditionally. The per-index logarithm, exponential, support and rounding
-facts are all certified by the independent kernel block checks and soundness proof. -/
-theorem phase64_principal_endpoint_upper :
-    (∑ n ∈ Finset.range 40000,
-        Real.exp (-(n : ℝ) / (4096128001 / 2475000)) * ArithmeticFunction.vonMangoldt n) ≤
-      (1654 : ℝ) := by
-  exact principal_endpoint_upper_of_blocks principal_blocks
-
 end PseudoPrime.LLS.Phase64EndpointCertificates

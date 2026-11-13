@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GaussianSurplusPrefix
+public import PseudoPrime.LLS.GaussianSurplusBound
 public import PseudoPrime.LLS.GammaSeedLogMoment
 
 /-! # Stronger actual Gaussian prefixes from a finite surplus -/
@@ -22,8 +22,8 @@ theorem gaussian_prefix_add_surplus {b P : ℝ} (hb : 100 ≤ b)
     (hP : P ≤ ∑ n ∈ Finset.Ioc 0 ⌊b⌋₊, Analysis.gammaResolventMangoldtWeight n) :
     (17 / 20 : ℝ) * P + 73 / 100 ≤
       ∑ n ∈ Finset.Ioc 0 ⌊b⌋₊, Analysis.gaussianResolventMangoldtWeight n := by
-  have hs := gaussianSurplus_prefix hb
-  simp only [gaussianSurplus_mangoldt_eq, Finset.sum_sub_distrib, ← Finset.mul_sum] at hs
+  have hs := gaussian_surplus_prefix_bound hb
+  simp only [Finset.sum_sub_distrib, ← Finset.mul_sum] at hs
   have hm := mul_le_mul_of_nonneg_left hP (by norm_num only : (0 : ℝ) ≤ 17 / 20)
   linarith only [hs, hm]
 

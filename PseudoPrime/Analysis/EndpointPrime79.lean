@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.Analysis.EndpointFiniteSums
+import PseudoPrime.Analysis.EndpointFiniteData
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimitiveComparison
 public import PseudoPrime.Analysis.PointwiseReciprocalLowerBound
 
@@ -54,7 +55,7 @@ theorem prime79_radius_bounds : (2 : ℝ) ≤ prime79Radius ∧ (prime79Radius :
   norm_num only [prime79Radius, Rat.cast_div, Rat.cast_ofNat, and_self]
 
 /-- The unchanged thirty atoms remain valid at the enlarged radius and logarithm. -/
-theorem prime79_atom_data :
+private theorem prime79_atom_data :
     ∀ m ∈ FinitePrimeProfile.p73.atoms,
       0 < m ∧
         m.minFac ∈ finitePrincipalPrimes ∧
@@ -67,11 +68,11 @@ theorem prime79_atom_data :
   decide +kernel
 
 /-- The reciprocal lower sum uses exactly the existing thirty prime powers. -/
-def prime79ReciprocalLower : ℚ :=
+private def prime79ReciprocalLower : ℚ :=
   ∑ m ∈ FinitePrimeProfile.p73.atoms, principalLogLo m.minFac / m * (1 - m / prime79Radius ^ 2)
 
 /-- The smoothed lower sum uses exactly the existing thirty prime powers. -/
-def prime79SmoothedLower : ℚ :=
+private def prime79SmoothedLower : ℚ :=
   ∑ m ∈ FinitePrimeProfile.p73.atoms,
     principalLogLo m.minFac * (2 * prime79LogLo - principalAtomExp m * principalLogHi m.minFac)
 
@@ -80,26 +81,26 @@ def prime79ReciprocalLoss : ℚ :=
   78861 / 50000 + (231 / 5000) / prime79Radius - (16033 / 9000) / prime79Radius ^ 2
 
 /-- The reciprocal finite certificate covers the fixed-79 target. -/
-theorem prime79_rec_check :
+private theorem prime79_rec_check :
     2 * prime79LogHi - prime79ReciprocalLoss + prime79CreditR ≤ prime79ReciprocalLower := by
   decide +kernel
 
 /-- The smoothed finite certificate covers the fixed-79 target. -/
-theorem prime79_log_check :
+private theorem prime79_log_check :
     prime79Radius ^ 2 - prime79Radius / 20 - (1839 / 500 : ℚ) * prime79LogLo - 21 / 20 +
         prime79CreditS ≤
       prime79SmoothedLower := by
   decide +kernel
 
 /-- Embed every distinct selected positive prime power in the original finite sum. -/
-theorem prime79_atoms_subset :
+private theorem prime79_atoms_subset :
     FinitePrimeProfile.p73.atoms ⊆ Finset.Ioc 0 ⌊(prime79Radius : ℝ) ^ 2⌋₊ := by
   intro m hm
   rcases prime79_atom_data m hm with ⟨hm0, _, _, _, _, hmx, _, _⟩
   exact Finset.mem_Ioc.mpr ⟨hm0, Nat.le_floor (by exact_mod_cast hmx)⟩
 
 /-- The rational reciprocal payload is below the actual principal reciprocal sum. -/
-theorem prime79_rec_sum :
+private theorem prime79_rec_sum :
     (prime79ReciprocalLower : ℝ) ≤
       AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtSum ((prime79Radius : ℝ) ^ 2) := by
   have hy : (0 : ℝ) < prime79Radius := lt_of_lt_of_le (by norm_num only) prime79_radius_bounds.1
@@ -126,7 +127,7 @@ theorem prime79_rec_sum :
       (Finset.mem_Ioc.mp hm).1 (Finset.mem_Ioc.mp hm).2
 
 /-- The rational smoothed payload is below the actual principal smoothed sum. -/
-theorem prime79_log_sum :
+private theorem prime79_log_sum :
     (prime79SmoothedLower : ℝ) ≤
       AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum ((prime79Radius : ℝ) ^ 2) := by
   have hy : (0 : ℝ) < prime79Radius := lt_of_lt_of_le (by norm_num only) prime79_radius_bounds.1

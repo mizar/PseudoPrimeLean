@@ -18,7 +18,7 @@ namespace PseudoPrime.LLS.PaperStatements.Corollary12Reconstruction
 /-- Checked interval 800 through 20000 for at most 1 prime factors.
 The two-term endpoint logarithms, root inequalities and rational gap are
 checked in the kernel; the common soundness theorem gives the GRH bound. -/
-def interval1 : ResidueIntervalCertificate where
+private def interval1 : ResidueIntervalCertificate where
   lower := 800
   upper := 20000
   W := 1
@@ -34,9 +34,45 @@ def interval1 : ResidueIntervalCertificate where
   S := 198400
   T := 122 / 5
   roots := fun k ↦
-    ([193, 24, 10, 6, 5, 4, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2] : List ℕ)[(k - 3) / 2]?.getD 0
+    match (k - 3) / 2 with
+    | 0 => 193
+    | 1 => 24
+    | 2 => 10
+    | 3 => 6
+    | 4 => 5
+    | 5 => 4
+    | 6 => 3
+    | 7 => 3
+    | 8 => 3
+    | 9 => 3
+    | 10 => 2
+    | 11 => 2
+    | 12 => 2
+    | 13 => 2
+    | 14 => 2
+    | 15 => 2
+    | 16 => 2
+    | _ => 0
   squareRoots := fun k ↦
-    ([14, 5, 4, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2] : List ℕ)[(k - 3) / 2]?.getD 0
+    match (k - 3) / 2 with
+    | 0 => 14
+    | 1 => 5
+    | 2 => 4
+    | 3 => 3
+    | 4 => 3
+    | 5 => 2
+    | 6 => 2
+    | 7 => 2
+    | 8 => 2
+    | 9 => 2
+    | 10 => 2
+    | 11 => 2
+    | 12 => 2
+    | 13 => 2
+    | 14 => 2
+    | 15 => 2
+    | 16 => 2
+    | _ => 0
   guards := by decide +kernel
   logChecks := by decide +kernel
   rootChecks := by decide +kernel
@@ -55,7 +91,7 @@ theorem leastPrime1 {q : ℕ} [NeZero q] (a : (ZMod q)ˣ) (hl : 800 ≤ q) (hu :
 /-- Checked interval 1300 through 20000 for at most 2 prime factors.
 The two-term endpoint logarithms, root inequalities and rational gap are
 checked in the kernel; the common soundness theorem gives the GRH bound. -/
-def interval2 : ResidueIntervalCertificate where
+private def interval2 : ResidueIntervalCertificate where
   lower := 1300
   upper := 20000
   W := 2
@@ -71,9 +107,45 @@ def interval2 : ResidueIntervalCertificate where
   S := 198400
   T := 122 / 5
   roots := fun k ↦
-    ([213, 25, 10, 6, 5, 4, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2] : List ℕ)[(k - 3) / 2]?.getD 0
+    match (k - 3) / 2 with
+    | 0 => 213
+    | 1 => 25
+    | 2 => 10
+    | 3 => 6
+    | 4 => 5
+    | 5 => 4
+    | 6 => 3
+    | 7 => 3
+    | 8 => 3
+    | 9 => 3
+    | 10 => 3
+    | 11 => 2
+    | 12 => 2
+    | 13 => 2
+    | 14 => 2
+    | 15 => 2
+    | 16 => 2
+    | _ => 0
   squareRoots := fun k ↦
-    ([15, 5, 4, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2] : List ℕ)[(k - 3) / 2]?.getD 0
+    match (k - 3) / 2 with
+    | 0 => 15
+    | 1 => 5
+    | 2 => 4
+    | 3 => 3
+    | 4 => 3
+    | 5 => 2
+    | 6 => 2
+    | 7 => 2
+    | 8 => 2
+    | 9 => 2
+    | 10 => 2
+    | 11 => 2
+    | 12 => 2
+    | 13 => 2
+    | 14 => 2
+    | 15 => 2
+    | 16 => 2
+    | _ => 0
   guards := by decide +kernel
   logChecks := by decide +kernel
   rootChecks := by decide +kernel
@@ -92,7 +164,7 @@ theorem leastPrime2 {q : ℕ} [NeZero q] (a : (ZMod q)ˣ) (hl : 1300 ≤ q) (hu 
 /-- Checked interval 2100 through 20000 for at most 3 prime factors.
 The two-term endpoint logarithms, root inequalities and rational gap are
 checked in the kernel; the common soundness theorem gives the GRH bound. -/
-def interval3 : ResidueIntervalCertificate where
+private def interval3 : ResidueIntervalCertificate where
   lower := 2100
   upper := 20000
   W := 3
@@ -108,9 +180,45 @@ def interval3 : ResidueIntervalCertificate where
   S := 198400
   T := 122 / 5
   roots := fun k ↦
-    ([264, 29, 11, 7, 5, 4, 4, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2] : List ℕ)[(k - 3) / 2]?.getD 0
+    match (k - 3) / 2 with
+    | 0 => 264
+    | 1 => 29
+    | 2 => 11
+    | 3 => 7
+    | 4 => 5
+    | 5 => 4
+    | 6 => 4
+    | 7 => 3
+    | 8 => 3
+    | 9 => 3
+    | 10 => 3
+    | 11 => 2
+    | 12 => 2
+    | 13 => 2
+    | 14 => 2
+    | 15 => 2
+    | 16 => 2
+    | _ => 0
   squareRoots := fun k ↦
-    ([17, 6, 4, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2] : List ℕ)[(k - 3) / 2]?.getD 0
+    match (k - 3) / 2 with
+    | 0 => 17
+    | 1 => 6
+    | 2 => 4
+    | 3 => 3
+    | 4 => 3
+    | 5 => 2
+    | 6 => 2
+    | 7 => 2
+    | 8 => 2
+    | 9 => 2
+    | 10 => 2
+    | 11 => 2
+    | 12 => 2
+    | 13 => 2
+    | 14 => 2
+    | 15 => 2
+    | 16 => 2
+    | _ => 0
   guards := by decide +kernel
   logChecks := by decide +kernel
   rootChecks := by decide +kernel
@@ -129,7 +237,7 @@ theorem leastPrime3 {q : ℕ} [NeZero q] (a : (ZMod q)ˣ) (hl : 2100 ≤ q) (hu 
 /-- Checked interval 3300 through 20000 for at most 4 prime factors.
 The two-term endpoint logarithms, root inequalities and rational gap are
 checked in the kernel; the common soundness theorem gives the GRH bound. -/
-def interval4 : ResidueIntervalCertificate where
+private def interval4 : ResidueIntervalCertificate where
   lower := 3300
   upper := 20000
   W := 4
@@ -145,9 +253,45 @@ def interval4 : ResidueIntervalCertificate where
   S := 198400
   T := 122 / 5
   roots := fun k ↦
-    ([334, 33, 13, 7, 5, 4, 4, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2] : List ℕ)[(k - 3) / 2]?.getD 0
+    match (k - 3) / 2 with
+    | 0 => 334
+    | 1 => 33
+    | 2 => 13
+    | 3 => 7
+    | 4 => 5
+    | 5 => 4
+    | 6 => 4
+    | 7 => 3
+    | 8 => 3
+    | 9 => 3
+    | 10 => 3
+    | 11 => 3
+    | 12 => 2
+    | 13 => 2
+    | 14 => 2
+    | 15 => 2
+    | 16 => 2
+    | _ => 0
   squareRoots := fun k ↦
-    ([19, 6, 4, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2] : List ℕ)[(k - 3) / 2]?.getD 0
+    match (k - 3) / 2 with
+    | 0 => 19
+    | 1 => 6
+    | 2 => 4
+    | 3 => 3
+    | 4 => 3
+    | 5 => 2
+    | 6 => 2
+    | 7 => 2
+    | 8 => 2
+    | 9 => 2
+    | 10 => 2
+    | 11 => 2
+    | 12 => 2
+    | 13 => 2
+    | 14 => 2
+    | 15 => 2
+    | 16 => 2
+    | _ => 0
   guards := by decide +kernel
   logChecks := by decide +kernel
   rootChecks := by decide +kernel
@@ -166,7 +310,7 @@ theorem leastPrime4 {q : ℕ} [NeZero q] (a : (ZMod q)ˣ) (hl : 3300 ≤ q) (hu 
 /-- Checked interval 5700 through 20000 for at most 5 prime factors.
 The two-term endpoint logarithms, root inequalities and rational gap are
 checked in the kernel; the common soundness theorem gives the GRH bound. -/
-def interval5 : ResidueIntervalCertificate where
+private def interval5 : ResidueIntervalCertificate where
   lower := 5700
   upper := 20000
   W := 5
@@ -182,9 +326,45 @@ def interval5 : ResidueIntervalCertificate where
   S := 198400
   T := 122 / 5
   roots := fun k ↦
-    ([471, 41, 14, 8, 6, 5, 4, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2] : List ℕ)[(k - 3) / 2]?.getD 0
+    match (k - 3) / 2 with
+    | 0 => 471
+    | 1 => 41
+    | 2 => 14
+    | 3 => 8
+    | 4 => 6
+    | 5 => 5
+    | 6 => 4
+    | 7 => 3
+    | 8 => 3
+    | 9 => 3
+    | 10 => 3
+    | 11 => 3
+    | 12 => 2
+    | 13 => 2
+    | 14 => 2
+    | 15 => 2
+    | 16 => 2
+    | _ => 0
   squareRoots := fun k ↦
-    ([22, 7, 4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2] : List ℕ)[(k - 3) / 2]?.getD 0
+    match (k - 3) / 2 with
+    | 0 => 22
+    | 1 => 7
+    | 2 => 4
+    | 3 => 3
+    | 4 => 3
+    | 5 => 3
+    | 6 => 2
+    | 7 => 2
+    | 8 => 2
+    | 9 => 2
+    | 10 => 2
+    | 11 => 2
+    | 12 => 2
+    | 13 => 2
+    | 14 => 2
+    | 15 => 2
+    | 16 => 2
+    | _ => 0
   guards := by decide +kernel
   logChecks := by decide +kernel
   rootChecks := by decide +kernel

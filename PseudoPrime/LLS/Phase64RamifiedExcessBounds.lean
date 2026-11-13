@@ -90,33 +90,4 @@ theorem phase64_local_real_log_le {p : ℕ} (hp : p ∈ phase64LocalPrimes) :
   have h := (Analysis.rationalLogIntervalCheck_sound hc.2.2.2.1).2
   simpa only [Rat.cast_natCast] using h
 
-/-- On the entire scale interval 1600 to 1660, the fixed signed ramified
-excess is at most 13/5. Compare all 24 real terms with rational upper allowances
-and use the checked small-denominator sum. No sampled-scale or floating-point
-premise remains. -/
-theorem phase64_ramified_excess_le_thirteen_fifths {x : ℝ} (hlo : 1600 ≤ x) (hhi : x ≤ 1660) :
-    phase64RamifiedExcess x ≤ (13 / 5 : ℝ) := by
-  have hc := (Rat.cast_le (K := ℝ)).mpr phase64_local_excess_upper_check
-  norm_num only [Rat.cast_list_sum, List.map_map, Function.comp_def, Rat.cast_mul, Rat.cast_max,
-    Rat.cast_sub, Rat.cast_div, Rat.cast_ofNat, Rat.cast_zero] at hc
-  have hn : phase64LocalPrimes.Nodup := by decide +kernel
-  dsimp only [phase64RamifiedExcess]
-  rw [← phase64_local_prime_set_eq]
-  calc
-    _ ≤
-        ∑ p ∈ phase64LocalPrimes.toFinset,
-          (phase64LocalLogUpper p : ℝ) * max ((phase64LocalCostUpper p : ℝ) - 3 / 100) 0 :=
-      by
-      apply Finset.sum_le_sum
-      intro p hp
-      have hm := List.mem_toFinset.mp hp
-      have hs :=
-        max_le_max_right 0
-          (sub_le_sub_right (phase64_local_real_signed_cost_le hm hlo hhi) (3 / 100 : ℝ))
-      exact
-        (mul_le_mul_of_nonneg_left hs (Real.log_natCast_nonneg p)).trans
-          (mul_le_mul_of_nonneg_right (phase64_local_real_log_le hm) (le_max_right _ _))
-    _ = _ := List.sum_toFinset _ hn
-    _ ≤ (13 / 5 : ℝ) := hc
-
 end PseudoPrime.LLS

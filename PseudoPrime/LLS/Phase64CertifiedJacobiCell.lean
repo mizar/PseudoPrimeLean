@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.Phase64EndpointJacobiBudget
-public import PseudoPrime.LLS.Phase64EndpointCertificates
+public import PseudoPrime.LLS.Phase64EndpointBounds
 public import PseudoPrime.NumberTheory.JacobiWitness.Existence
 
 /-! # Fully certified Jacobi witnesses on the first phase64 logarithmic cell -/

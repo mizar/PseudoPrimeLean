@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.GaussianSeededPrefix
+import PseudoPrime.Analysis.GammaEulerSeed100
 
 /-! # Recovered credit from the unchanged Euler seed and ten-node checkpoints -/
 

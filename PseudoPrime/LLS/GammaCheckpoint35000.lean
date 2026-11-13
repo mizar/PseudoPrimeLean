@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.GammaEulerGridRatios
 public import PseudoPrime.LLS.RiemannOneSidedLogCap
 public import PseudoPrime.LLS.GammaSmallCheckpointBounds
 
@@ -20,7 +21,9 @@ Output: a rational interval for 35000 to the negative node exponent.
 Role: separate endpoint discovery from the subsequent kernel certificate. -/
 def checkpoint35000Ratios (a : ℚ) : ℚ × ℚ :=
   let rs : List ℕ := [16932791, 5947326, 1237974, 152720, 6617, 100, 0, 0, 0, 0]
-  let r := rs[(AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map Prod.fst).idxOf a]?.getD 0
+  let r :=
+    Analysis.sequentialNodeLookup
+      (AnalyticNumberTheory.Gamma.gammaResolventCoefficients.map Prod.fst) rs a
   ((r : ℚ) / 1000000000000, ((r + 1 : ℕ) : ℚ) / 1000000000000)
 
 /-- Claim: all ten power intervals at cutoff 35000 pass the common ratio checker.

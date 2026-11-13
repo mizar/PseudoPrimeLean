@@ -20,22 +20,22 @@ namespace PseudoPrime.Analysis
 
 /-- The leading node of the Gaussian-minus-17/20-Gamma resolvent combination.
 Combining the shared node avoids duplicating its coefficient in the moment certificate. -/
-def gaussianGammaDifferenceHead : ℚ × ℚ :=
+private def gaussianGammaDifferenceHead : ℚ × ℚ :=
   (11 / 20, 284090057 / 2000000000)
 
 /-- The remaining nodes of the Gaussian-minus-17/20-Gamma resolvent combination.
 Derive both tails from their source coefficient lists so later edits stay synchronized. -/
-def gaussianGammaDifferenceTail : List (ℚ × ℚ) :=
+private def gaussianGammaDifferenceTail : List (ℚ × ℚ) :=
   gaussianResolventCoefficients.tail ++
     AnalyticNumberTheory.Gamma.gammaResolventCoefficients.tail.map
       (fun ab ↦ (ab.1, -(17 / 20) * ab.2))
 
 /-- All nodes of the Gaussian-minus-17/20-Gamma resolvent combination. -/
-def gaussianGammaDifferenceCoefficients : List (ℚ × ℚ) :=
+private def gaussianGammaDifferenceCoefficients : List (ℚ × ℚ) :=
   gaussianGammaDifferenceHead :: gaussianGammaDifferenceTail
 
 /-- The exact rational reflected moment of the combined Gaussian and Gamma coefficients. -/
-def gaussianGammaDifferenceMoment (n : ℕ) : ℚ :=
+private def gaussianGammaDifferenceMoment (n : ℕ) : ℚ :=
   (gaussianGammaDifferenceCoefficients.map (fun ab ↦ ab.2 * ((7 : ℚ) - ab.1) ^ n)).sum
 
 /-- Casting a list of rational node terms to reals commutes with its finite sum.
@@ -55,17 +55,17 @@ theorem list_real_sum_eq_cast_rat_sum (l : List (ℚ × ℚ)) (n : ℕ) :
     rw [hterm, ih]
 
 /-- The first 64 reflected moments are nonnegative by exact rational arithmetic. -/
-theorem gaussianGammaDifference_small_moments :
+private theorem gaussianGammaDifference_small_moments :
     ∀ n ∈ Finset.range 64, 0 ≤ gaussianGammaDifferenceMoment n := by decide +kernel
 
 /-- Every reflected tail scale lies between zero and the leading reflected scale. -/
-theorem gaussianGammaDifference_tail_range :
+private theorem gaussianGammaDifference_tail_range :
     gaussianGammaDifferenceTail.Forall
       (fun ab ↦ (0 : ℚ) ≤ 7 - ab.1 ∧ 7 - ab.1 ≤ 7 - gaussianGammaDifferenceHead.1) := by
   decide +kernel
 
 /-- At degree 64 the positive leading coefficient dominates all negative tail terms. -/
-theorem gaussianGammaDifference_anchor_dominates :
+private theorem gaussianGammaDifference_anchor_dominates :
     (gaussianGammaDifferenceTail.map (fun ab ↦ max 0 (-(ab.2 : ℝ)) * (7 - (ab.1 : ℝ)) ^ 64)).sum ≤
       (gaussianGammaDifferenceHead.2 : ℝ) * (7 - (gaussianGammaDifferenceHead.1 : ℝ)) ^ 64 := by
   simp only [gaussianGammaDifferenceTail, gaussianResolventCoefficients,
@@ -79,7 +79,7 @@ Input: a natural moment order.
 Claim: the combined real moment equals the cast rational moment.
 Proof: cast the leading term and use the list-sum cast lemma on the derived tail.
 Role: supply the finite-prefix hypotheses for the all-orders positivity theorem. -/
-theorem gaussianGammaDifference_moment_cast (n : ℕ) :
+private theorem gaussianGammaDifference_moment_cast (n : ℕ) :
     ((gaussianGammaDifferenceHead :: gaussianGammaDifferenceTail).map
           (fun ab ↦ (ab.2 : ℝ) * (7 - (ab.1 : ℝ)) ^ n)).sum =
       (gaussianGammaDifferenceMoment n : ℝ) := by
@@ -97,7 +97,7 @@ theorem gaussianGammaDifference_moment_cast (n : ℕ) :
 /-- Every real reflected moment of the combined coefficients is nonnegative.
 Proof: the first 64 moments are exact, then the degree-64 anchor controls the tail.
 Role: imply positivity of the Gaussian Euler weight minus 17/20 of the Gamma weight. -/
-theorem gaussianGammaDifference_all_moments_nonneg :
+private theorem gaussianGammaDifference_all_moments_nonneg :
     ∀ n : ℕ,
       0 ≤
         (gaussianGammaDifferenceCoefficients.map
@@ -116,7 +116,7 @@ theorem gaussianGammaDifference_all_moments_nonneg :
 
 /-- The exponential combination of the derived coefficients is the Gaussian sum
 minus seventeen twentieths of the Gamma sum. -/
-theorem gaussianGammaDifferenceExpSum_eq_sub (t : ℝ) :
+private theorem gaussianGammaDifferenceExpSum_eq_sub (t : ℝ) :
     (gaussianGammaDifferenceCoefficients.map
           (fun ab ↦ (ab.2 : ℝ) * Real.exp ((7 - (ab.1 : ℝ)) * t))).sum =
       (gaussianResolventCoefficients.map

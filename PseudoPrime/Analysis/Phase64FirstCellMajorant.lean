@@ -7,10 +7,10 @@ Authors: Mizar
 module
 
 public import PseudoPrime.Analysis.Phase64AdaptiveCellBounds
-public import PseudoPrime.Analysis.Phase64AdaptiveCell.Block12
-public import PseudoPrime.Analysis.Phase64AdaptiveCell.Block13
-public import PseudoPrime.Analysis.Phase64AdaptiveCell.Block14
-public import PseudoPrime.Analysis.Phase64AdaptiveCell.Block15
+import PseudoPrime.Analysis.Phase64AdaptiveCell.Block12
+import PseudoPrime.Analysis.Phase64AdaptiveCell.Block13
+import PseudoPrime.Analysis.Phase64AdaptiveCell.Block14
+import PseudoPrime.Analysis.Phase64AdaptiveCell.Block15
 
 /-! # Complete Gamma phase majorant on the first continuous level cell -/
 
@@ -20,7 +20,7 @@ namespace PseudoPrime.Analysis.Phase64AdaptiveCell
 
 /-- Input: one of the sixteen consecutive block indices. Output: its checked dyadic partition.
 Role: collect compact certificate shapes while reusing independent kernel checks. -/
-def trees (i : Fin 16) : RationalIntervalTree :=
+private def trees (i : Fin 16) : RationalIntervalTree :=
   match i.val with
   | 0 => Block00.tree
   | 1 => Block01.tree
@@ -42,7 +42,7 @@ def trees (i : Fin 16) : RationalIntervalTree :=
 /-- Input: any block index. Claim: its rational adaptive interval checker succeeds.
 Proof: normalize only the block index and endpoint arithmetic, then reuse its checked theorem.
 Role: avoid recomputing the complete arithmetic certificate during public integration. -/
-theorem checked (i : Fin 16) :
+private theorem checked (i : Fin 16) :
     rationalIntervalTreeCheck
         (scaledPhaseIntervalCheck (10 ^ 12) phaseCell64Center phaseCell64Uncertainty)
         (5 * (i.val : ℚ) / 16) (5 * ((i.val + 1 : ℕ) : ℚ) / 16) (trees i) =

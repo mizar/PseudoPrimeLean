@@ -9,7 +9,6 @@ module
 public import PseudoPrime.Analysis.GammaEulerAnchoredBounds
 
 public import PseudoPrime.LLS.GammaSignedReciprocalBounds
-public import PseudoPrime.Analysis.GammaEulerSeed100
 
 /-! # Anchored reciprocal Euler envelopes and refined signed dual support -/
 

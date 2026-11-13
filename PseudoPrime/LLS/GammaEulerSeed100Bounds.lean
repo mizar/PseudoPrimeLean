@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.GammaEulerSeed100
+public import PseudoPrime.Analysis.GammaEulerSeed100Bounds
 public import PseudoPrime.LLS.GammaEulerPrefixTransport
 
 /-! # Prefix transport and actual character budgets from the certified seed -/

@@ -19,7 +19,7 @@ namespace PseudoPrime.Analysis
 /-- Output: the 43 exact rational coefficients of the cleared exponential-tail polynomial.
 Definition: the shift is t=5+v and the exponential Taylor degree is 24.
 Role: certify Gamma domination on the entire range |t|>=5. -/
-def phase64ExpTailCoefficients : List ℚ :=
+private def phase64ExpTailCoefficients : List ℚ :=
   [191510178919583140 / 1, 8317016441358350052 / 25, 395770122662322815809 / 1250,
     154808382100776723851633 / 375000, 93784638204299995055381849 / 150000000,
     10535207734053538707269095501 / 15000000000, 25469547551730611299639523321801 / 45000000000000,
@@ -91,14 +91,14 @@ def phase64ExpTailCoefficients : List ℚ :=
 /-- Claim: every displayed rational coefficient is strictly positive.
 Proof: exact kernel evaluation of the finite list.
 Role: remove all numerical sign assumptions from the polynomial certificate. -/
-theorem phase64_exp_tail_coefficients_pos :
+private theorem phase64_exp_tail_coefficients_pos :
     phase64ExpTailCoefficients.all (fun c ↦ decide (0 < c)) = true := by decide +kernel
 
 /-- Input: any real shift v.
 Claim: the cleared Taylor-resolvent comparison equals the displayed Horner polynomial.
 Proof: normalize rational constants and verify the ring identity.
 Role: independently check the externally generated polynomial coefficients. -/
-theorem phase64_exp_tail_identity (v : ℝ) :
+private theorem phase64_exp_tail_identity (v : ℝ) :
     2560 * (∑ j ∈ Finset.range 25, ((157 / 100 : ℝ) * v) ^ j / (j.factorial : ℝ)) *
           finiteResolventNumerator phaseResolvent64Coefficients ((5 + v) ^ 2) -
         (251 / 100 : ℝ) * finiteResolventDenominator phaseResolvent64Coefficients ((5 + v) ^ 2) =
@@ -111,7 +111,7 @@ theorem phase64_exp_tail_identity (v : ℝ) :
 /-- Input: a nonnegative shift. Claim: the certificate polynomial is strictly positive.
 Proof: apply the nonempty positive-coefficient Horner lemma.
 Role: establish the comparison simultaneously for every ordinate at least five. -/
-theorem phase64_exp_tail_polynomial_pos {v : ℝ} (hv : 0 ≤ v) :
+private theorem phase64_exp_tail_polynomial_pos {v : ℝ} (hv : 0 ≤ v) :
     0 < rationalHorner phase64ExpTailCoefficients v := by
   exact rationalHorner_pos_of_all _ (by decide) phase64_exp_tail_coefficients_pos hv
 

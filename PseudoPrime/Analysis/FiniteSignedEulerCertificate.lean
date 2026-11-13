@@ -7,8 +7,6 @@ Authors: Mizar
 module
 
 public import PseudoPrime.Analysis.SignedResolventEulerBounds
-public import Mathlib.Algebra.Order.Chebyshev
-public import Mathlib.Data.List.GetD
 
 /-! # Exact prefix certificates for nonnegative signed Euler weights -/
 
@@ -16,75 +14,100 @@ public import Mathlib.Data.List.GetD
 
 namespace PseudoPrime.Analysis
 
-/-- Input: a finite list, a default value and a real-valued map.
-Claim: the mapped list sum equals the indexed sum through the list length.
-Proof: use the finite enumeration and the in-range default lookup identity.
-Role: apply Abel's inequality to rational node lists. -/
-theorem sum_map_eq_sum_range_getD {α : Type*} (l : List α) (d : α) (f : α → ℝ) :
-    (l.map f).sum = ∑ i ∈ Finset.range l.length, f (l.getD i d) := by
-  have he : (fun i : Fin l.length ↦ f (l.get i)) = (fun i : Fin l.length ↦ f (l.getD i d)) := by
-    apply funext
-    intro i
-    rw [List.getD_eq_getElem l d i.isLt]
-    rfl
-  calc
-    (l.map f).sum = ∑ i : Fin l.length, f (l.get i) := by
-      rw [← List.sum_ofFn]
-      change (l.map f).sum = (List.ofFn (f ∘ l.get)).sum
-      rw [← List.map_ofFn, List.ofFn_get]
-    _ = ∑ i ∈ Finset.range l.length, f (l.getD i d) := by
-      rw [he]
-      exact Fin.sum_univ_eq_sum_range (fun i ↦ f (l.getD i d)) l.length
-
-end PseudoPrime.Analysis
-
-namespace PseudoPrime.Analysis
+/-- Nonnegative running coefficients and decreasing nonnegative weights give a
+nonnegative weighted sum with an initial coefficient. Induction consumes one
+row at a time and moves the accumulated coefficient to the next weight. -/
+private theorem finiteSigned_weighted_aux (l : List (ℚ × ℚ)) (w : ℚ → ℝ) (hw : Antitone w)
+    (hw0 : ∀ a, 0 ≤ w a) (hsort : l.Pairwise (fun ab cd ↦ ab.1 ≤ cd.1)) (s b : ℝ) (hs : 0 ≤ s)
+    (hb : 0 ≤ b) (hbound : ∀ ab ∈ l, w ab.1 ≤ b)
+    (hpref : ∀ k, 0 ≤ s + (((l.take k).map Prod.snd).sum : ℝ)) :
+    0 ≤ s * b + (l.map (fun ab ↦ (ab.2 : ℝ) * w ab.1)).sum := by
+  induction l generalizing s b with
+  | nil => simpa only [List.map_nil, List.sum_nil, add_zero] using mul_nonneg hs hb
+  | cons ab rest ih =>
+    have hsort' := List.pairwise_cons.mp hsort
+    have hs' : 0 ≤ s + (ab.2 : ℝ) := by
+      have h := hpref 1
+      simpa only [List.take_succ_cons, List.take_zero, List.map_cons, List.map_nil, List.sum_cons,
+        List.sum_nil, add_zero, Rat.cast_add, Rat.cast_zero] using h
+    have hpref' (k : ℕ) : 0 ≤ (s + (ab.2 : ℝ)) + (((rest.take k).map Prod.snd).sum : ℝ) := by
+      have h := hpref (k + 1)
+      simpa only [List.take_succ_cons, List.map_cons, List.sum_cons, Rat.cast_add, add_assoc] using
+        h
+    have hbound' : ∀ cd ∈ rest, w cd.1 ≤ w ab.1 := by
+      intro cd hcd
+      exact hw (hsort'.1 cd hcd)
+    have hi := ih hsort'.2 (s + ab.2) (w ab.1) hs' (hw0 ab.1) hbound' hpref'
+    have hm := mul_nonneg hs (sub_nonneg.mpr (hbound ab (List.mem_cons_self ..)))
+    simp only [List.map_cons, List.sum_cons]
+    nlinarith only [hi, hm]
 
 /-- Input: ordered rational nodes, nonnegative coefficient prefix sums,
 and a nonnegative antitone real weight on the nodes.
 Claim: the signed weighted combination is nonnegative.
-Proof: apply Abel's one-sided lower inequality after casting rational prefixes.
+Proof: use summation by parts while traversing the list.
 Role: certify common Euler weights while allowing negative coefficients. -/
 theorem finiteSigned_weighted_nonneg (l : List (ℚ × ℚ))
     (hsort : l.Pairwise (fun ab cd ↦ ab.1 ≤ cd.1))
-    (hprefix : ∀ k ≤ l.length, (0 : ℚ) ≤ ∑ i ∈ Finset.range k, (l.getD i (0, 0)).2) (w : ℚ → ℝ)
-    (hw : Antitone w) (hw0 : ∀ a, 0 ≤ w a) : 0 ≤ (l.map (fun ab ↦ (ab.2 : ℝ) * w ab.1)).sum := by
-  have hp (k : ℕ) (hk : k ≤ l.length) :
-    (0 : ℝ) ≤ ∑ i ∈ Finset.range k, ((l.getD i (0, 0)).2 : ℝ) := by exact_mod_cast hprefix k hk
-  have hanti : AntitoneOn (fun i ↦ w (l.getD i (0, 0)).1) (Set.Iio l.length) := by
-    intro i hi j hj hij
-    change w (l.getD j (0, 0)).1 ≤ w (l.getD i (0, 0)).1
-    rw [List.getD_eq_getElem l (0, 0) hi, List.getD_eq_getElem l (0, 0) hj]
-    rcases lt_or_eq_of_le hij with hlt | rfl
-    · exact hw (List.pairwise_iff_getElem.mp hsort i j hi hj hlt)
-    · exact le_rfl
-  have ha := Finset.mul_le_sum_mul_of_le_sum_range hp (fun i ↦ hw0 (l.getD i (0, 0)).1) hanti
-  rw [sum_map_eq_sum_range_getD l (0, 0)]
-  rw [zero_mul] at ha
-  exact ha
+    (hprefix : ∀ k, (0 : ℚ) ≤ ((l.take k).map Prod.snd).sum) (w : ℚ → ℝ) (hw : Antitone w)
+    (hw0 : ∀ a, 0 ≤ w a) : 0 ≤ (l.map (fun ab ↦ (ab.2 : ℝ) * w ab.1)).sum := by
+  cases l with
+  | nil => simp only [List.map_nil, List.sum_nil, le_refl]
+  | cons ab
+    rest =>
+    have hp (k : ℕ) : (0 : ℝ) ≤ ((((ab :: rest).take k).map Prod.snd).sum : ℝ) :=
+      Rat.cast_nonneg.mpr (hprefix k)
+    have hbound : ∀ cd ∈ ab :: rest, w cd.1 ≤ w ab.1 := by
+      intro cd hcd
+      rcases List.mem_cons.mp hcd with he | he
+      · subst cd
+        exact le_rfl
+      · exact hw ((List.pairwise_cons.mp hsort).1 cd he)
+    have h :=
+      finiteSigned_weighted_aux (ab :: rest) w hw hw0 hsort 0 (w ab.1) le_rfl (hw0 ab.1) hbound
+        (fun k ↦ by simpa only [zero_add] using hp k)
+    simpa only [zero_mul, zero_add] using h
 
 end PseudoPrime.Analysis
 
 namespace PseudoPrime.Analysis
+
+/-- Traverse the coefficient rows in order, checking each accumulated prefix. -/
+def finiteSignedPrefixCheck (s : ℚ) : List (ℚ × ℚ) → Bool
+  | [] => decide (0 ≤ s)
+  | ab :: rest => decide (0 ≤ s) && finiteSignedPrefixCheck (s + ab.2) rest
+
+/-- A successful sequential check bounds every coefficient prefix sum. -/
+private theorem finiteSignedPrefixCheck_sound (l : List (ℚ × ℚ)) (s : ℚ)
+    (h : finiteSignedPrefixCheck s l = true) (k : ℕ) : 0 ≤ s + ((l.take k).map Prod.snd).sum := by
+  induction l generalizing s k with
+  | nil =>
+    simpa only [List.take_nil, List.map_nil, List.sum_nil, add_zero, finiteSignedPrefixCheck] using
+      (of_decide_eq_true h : (0 : ℚ) ≤ s)
+  | cons ab rest ih =>
+    cases k with
+    | zero =>
+      have hs : (0 : ℚ) ≤ s := of_decide_eq_true (Bool.and_eq_true_iff.mp h).1
+      simpa only [List.take_zero, List.map_nil, List.sum_nil, add_zero] using hs
+    | succ k =>
+      have hp := ih (s + ab.2) (Bool.and_eq_true_iff.mp h).2 k
+      simpa only [List.take_succ_cons, List.map_cons, List.sum_cons, add_assoc] using hp
 
 /-- Input: a finite rational node-coefficient list.
 Output: true exactly when nodes are ordered and all rational coefficient prefixes are nonnegative.
 Role: replace an infinite real-weight positivity premise by finite exact arithmetic. -/
 def finiteSignedEulerCheck (l : List (ℚ × ℚ)) : Bool :=
-  decide (l.Pairwise (fun ab cd ↦ ab.1 ≤ cd.1)) &&
-    (List.range (l.length + 1)).all
-      (fun k ↦ decide ((0 : ℚ) ≤ ∑ i ∈ Finset.range k, (l.getD i (0, 0)).2))
+  decide (l.Pairwise (fun ab cd ↦ ab.1 ≤ cd.1)) && finiteSignedPrefixCheck 0 l
 
 /-- Input: the exact rational Euler check succeeds.
 Claim: nodes are ordered and every coefficient prefix is nonnegative.
 Proof: extract the Boolean conjunction and finite range checks.
 Role: supply Abel's inequality with independently checked inputs. -/
 theorem finiteSignedEulerCheck_sound (l : List (ℚ × ℚ)) (hc : finiteSignedEulerCheck l = true) :
-    l.Pairwise (fun ab cd ↦ ab.1 ≤ cd.1) ∧
-      ∀ k ≤ l.length, (0 : ℚ) ≤ ∑ i ∈ Finset.range k, (l.getD i (0, 0)).2 := by
+    l.Pairwise (fun ab cd ↦ ab.1 ≤ cd.1) ∧ ∀ k, (0 : ℚ) ≤ ((l.take k).map Prod.snd).sum := by
   have h := Bool.and_eq_true_iff.mp hc
-  refine ⟨of_decide_eq_true h.1, fun k hk ↦ ?_⟩
-  exact of_decide_eq_true (List.all_eq_true.mp h.2 k (List.mem_range.mpr (Nat.lt_succ_of_le hk)))
+  refine ⟨of_decide_eq_true h.1, fun k ↦ ?_⟩
+  simpa only [zero_add] using finiteSignedPrefixCheck_sound l 0 h.2 k
 
 /-- Input: the exact rational Euler check and a real base at least one.
 Claim: the combined Euler weight is nonnegative at that base.

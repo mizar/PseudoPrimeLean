@@ -6,7 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GammaNearUnitCertificates
+public import PseudoPrime.LLS.GammaScaleJointBudget
+import PseudoPrime.LLS.GammaNearUnitCertificates
 
 /-! # Certified nearly-unit separation on the entire bridge [265,290] -/
 
@@ -17,7 +18,7 @@ namespace PseudoPrime.LLS
 /-- Input: RH, one checked cell index and L inside that cell.
 Claim: the actual nearly-unit margin is at least 7/60. Proof: use the universal certificate
 and normalize its common scale. Role: share application code across all five cells. -/
-theorem gamma_near_unit_separation_on_cell (hRH : RiemannHypothesis) (i : Fin 5) {L : ℝ}
+private theorem gamma_near_unit_separation_on_cell (hRH : RiemannHypothesis) (i : Fin 5) {L : ℝ}
     (hlo : ((gammaNearUnitCertificate i).left : ℝ) ≤ L)
     (hhi : L ≤ ((gammaNearUnitCertificate i).right : ℝ)) :
     7 / 60 ≤

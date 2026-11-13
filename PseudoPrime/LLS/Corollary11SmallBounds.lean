@@ -6,7 +6,9 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.Corollary11Small
+public import PseudoPrime.LLS.Corollary11SmallCap
+public import PseudoPrime.LLS.PaperStatements.PaperStatements
+import PseudoPrime.LLS.Corollary11Small
 public import Mathlib.Analysis.Complex.ExponentialBounds
 
 /-! Logarithmic bounds used to convert the finite Jacobi certificates into

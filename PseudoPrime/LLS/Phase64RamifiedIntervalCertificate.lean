@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.GammaEulerGridRatios
 public import PseudoPrime.Analysis.PrimeLocalIntervalBounds
 public import PseudoPrime.LLS.Phase64RamifiedTailBounds
 public import PseudoPrime.Analysis.LogTaylorBounds
@@ -55,8 +56,9 @@ def phase64LocalRatioDigits (p : ℕ) : List ℕ :=
 point, indexed by the actual phase-node list. All uses are guarded by kernel
 checks of the real-power endpoint inequalities. -/
 def phase64LocalRatioInterval (p : ℕ) (a : ℚ) : ℚ × ℚ :=
-  let j := ((Analysis.phaseResolvent64Coefficients.map Prod.fst).idxOf a)
-  let v := (phase64LocalRatioDigits p).getD j 0
+  let v :=
+    Analysis.sequentialNodeLookup (Analysis.phaseResolvent64Coefficients.map Prod.fst)
+      (phase64LocalRatioDigits p) a
   ((v : ℚ) / 100000000, ((v : ℚ) + 1) / 100000000)
 
 /-- The positive-power prefix length whose next power exceeds (99/40)*1660.

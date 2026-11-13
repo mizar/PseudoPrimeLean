@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.Part2SmallFinite
+import PseudoPrime.LLS.Part2SmallFinite
 public import PseudoPrime.LLS.Theorem11S2
 
 /-! # Original LLS Part 2 extended from q >= 3000 to q >= 5 -/

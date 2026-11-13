@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.Analysis.EndpointFiniteData
+public import PseudoPrime.Analysis.EndpointFiniteProfile
 public import PseudoPrime.LLS.PaperStatements.EndpointFinitePrincipal
 public import PseudoPrime.LLS.PaperStatements.EndpointLowPrime
 

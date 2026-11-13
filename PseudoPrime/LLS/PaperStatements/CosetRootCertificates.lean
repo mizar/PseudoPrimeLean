@@ -23,10 +23,37 @@ indexed by exponent. Entries for exponents three through twenty-eight are
 used in the finite majorant; other indices return a dummy pair `(1,1)`.
 The following certificates verify both bounds and their total weighted cost. -/
 private def smallRootCeilings (k : ℕ) : ℕ × ℕ :=
-  ([(1, 1), (1, 1), (1, 1), (1000, 32), (178, 14), (64, 8), (32, 6), (20, 5), (14, 4), (10, 4),
-        (8, 3), (7, 3), (6, 3), (5, 3), (5, 3), (4, 2), (4, 2), (4, 2), (4, 2), (4, 2), (3, 2),
-        (3, 2), (3, 2), (3, 2), (3, 2), (3, 2), (3, 2), (3, 2), (3, 2)]).getD
-    k (1, 1)
+  match k with
+  | 0 => (1, 1)
+  | 1 => (1, 1)
+  | 2 => (1, 1)
+  | 3 => (1000, 32)
+  | 4 => (178, 14)
+  | 5 => (64, 8)
+  | 6 => (32, 6)
+  | 7 => (20, 5)
+  | 8 => (14, 4)
+  | 9 => (10, 4)
+  | 10 => (8, 3)
+  | 11 => (7, 3)
+  | 12 => (6, 3)
+  | 13 => (5, 3)
+  | 14 => (5, 3)
+  | 15 => (4, 2)
+  | 16 => (4, 2)
+  | 17 => (4, 2)
+  | 18 => (4, 2)
+  | 19 => (4, 2)
+  | 20 => (3, 2)
+  | 21 => (3, 2)
+  | 22 => (3, 2)
+  | 23 => (3, 2)
+  | 24 => (3, 2)
+  | 25 => (3, 2)
+  | 26 => (3, 2)
+  | 27 => (3, 2)
+  | 28 => (3, 2)
+  | _ => (1, 1)
 
 /-- For each exponent three through twenty-eight, the table's first entry
 has its `k`th power at least `10^9`, and its second entry has square at least

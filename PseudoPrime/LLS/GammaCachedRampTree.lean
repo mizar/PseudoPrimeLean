@@ -47,10 +47,8 @@ This representation supports arbitrary prefix cutoffs and moment orders. -/
 inductive GammaCachedRampTree (a : ℚ) (D : ℕ) : ℕ → ℕ → Type where
   /-- A checked row block and its certified complete integer moments. -/
   |
-  leaf {lo hi : ℕ} (b : GammaScaledRampBlock a D lo hi) (moments : List ℤ)
-    (checked :
-      (List.range moments.length).Forall
-        (fun k ↦ moments.getD k 0 = gammaScaledIntegerPrefix b.rows hi k)) :
+  leaf {lo hi : ℕ} (b : GammaScaledRampBlock a D lo hi) (moments : List (ℕ × ℤ))
+    (checked : moments.Forall (fun p ↦ p.2 = gammaScaledIntegerPrefix b.rows hi p.1)) :
     GammaCachedRampTree a D lo hi
   /-- Two cached trees on adjacent intervals. -/
   |
@@ -73,7 +71,10 @@ def GammaCachedRampTree.prefixMoment {a : ℚ} {D lo hi : ℕ} (t : GammaCachedR
   | .leaf (lo := lower) (hi := upper) b moments _ =>
     if bound ≤ lower then 0
     else
-      if upper ≤ bound ∧ k < moments.length then moments.getD k 0
+      if upper ≤ bound then
+        match moments.find? (fun p ↦ p.1 == k) with
+        | some p => p.2
+        | none => gammaScaledIntegerPrefix b.rows bound k
       else gammaScaledIntegerPrefix b.rows bound k
   | .node l r => l.prefixMoment bound k + r.prefixMoment bound k
 
@@ -94,9 +95,19 @@ theorem GammaCachedRampTree.prefixMoment_eq {a : ℚ} {D lo hi : ℕ}
       exact (b.prefix_zero h k).symm
     · split
       · rename_i h
-        exact
-          (List.forall_iff_forall_mem.mp checked k (List.mem_range.mpr h.2)).trans
-            (b.prefix_full h.1 k).symm
+        split
+        · rename_i p hp
+          have hm : p ∈ moments := by
+            obtain ⟨_, as, bs, hs, _⟩ := List.find?_eq_some_iff_append.mp hp
+            rw [hs]
+            exact List.mem_append_right _ (List.mem_cons_self ..)
+          have hk : p.1 = k := by
+            have hkp := (List.find?_eq_some_iff_append.mp hp).1
+            exact beq_iff_eq.mp hkp
+          have he := List.forall_iff_forall_mem.mp checked p hm
+          rw [hk] at he
+          exact he.trans (b.prefix_full h k).symm
+        · rfl
       · rfl
   | node l r il ir => exact congrArg₂ (fun u v : ℤ ↦ u + v) il ir
 

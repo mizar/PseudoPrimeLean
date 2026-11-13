@@ -40,12 +40,19 @@ noncomputable def invSqrtOneAddPolynomial (z : ℝ) : ℝ :=
 /-- Signed rational monomial coefficients of the same polynomial.
 These coefficients evaluate the finite exponential integral term by term.
 Their agreement with the polynomial is certified below. -/
-def invSqrtOneAddMonomialCoefficients : List ℚ :=
-  [9674845406880264809 / 9674588160000000000, -1934817422464003 / 3869835264000000,
-    161124788430529 / 429981696000000, -5010400364123 / 16124313600000,
-    8570206442567 / 32248627200000, -2982834188873 / 13436928000000, 6816834656863 / 40310784000000,
-    -543746993647 / 5038848000000, 69938683529 / 1343692800000, -1984904207 / 120932352000,
-    37713179933 / 15116544000000]
+def invSqrtOneAddMonomialCoefficients : ℕ → ℚ
+  | 0 => 9674845406880264809 / 9674588160000000000
+  | 1 => -1934817422464003 / 3869835264000000
+  | 2 => 161124788430529 / 429981696000000
+  | 3 => -5010400364123 / 16124313600000
+  | 4 => 8570206442567 / 32248627200000
+  | 5 => -2982834188873 / 13436928000000
+  | 6 => 6816834656863 / 40310784000000
+  | 7 => -543746993647 / 5038848000000
+  | 8 => 69938683529 / 1343692800000
+  | 9 => -1984904207 / 120932352000
+  | 10 => 37713179933 / 15116544000000
+  | _ => 0
 
 /-- Nonnegative rational Bernstein coefficients of the certified polynomial.
 The list records the coefficients including binomial basis factors.
@@ -89,16 +96,17 @@ private def invSqrtOneAddResidualCoefficients : List ℚ≥0 :=
 The list length fixes the degree, and coefficients include binomial basis factors.
 This form makes nonnegativity on the unit interval explicit. -/
 private noncomputable def nonnegativeBernstein (coefficients : List ℚ≥0) (z : ℝ) : ℝ :=
-  ∑ i ∈ Finset.range coefficients.length,
-    (coefficients.getD i 0 : ℝ) * z ^ i * (1 - z) ^ (coefficients.length - 1 - i)
+  (coefficients.zipIdx.map
+      (fun ci ↦ (ci.1 : ℝ) * z ^ ci.2 * (1 - z) ^ (coefficients.length - 1 - ci.2))).sum
 
 /-- On the unit interval each Bernstein basis factor is nonnegative.
 Multiply the nonnegative rational coefficient and powers, then sum.
 This is the positivity check for the polynomial certificates. -/
 private theorem nonnegativeBernstein_nonneg (coefficients : List ℚ≥0) {z : ℝ}
     (hz : z ∈ Set.Icc (0 : ℝ) 1) : 0 ≤ nonnegativeBernstein coefficients z := by
-  apply Finset.sum_nonneg
-  intro i _
+  apply List.sum_nonneg
+  intro x hx
+  obtain ⟨⟨c, i⟩, _, rfl⟩ := List.mem_map.mp hx
   exact
     mul_nonneg (mul_nonneg (NNRat.cast_nonneg _) (pow_nonneg hz.1 _))
       (pow_nonneg (sub_nonneg.mpr hz.2) _)
@@ -109,8 +117,9 @@ This supplies the sign needed when taking square roots. -/
 private theorem invSqrtOneAddPolynomial_positive_identity (z : ℝ) :
     invSqrtOneAddPolynomial z = nonnegativeBernstein invSqrtOneAddPositiveCoefficients z := by
   norm_num only [invSqrtOneAddPolynomial, nonnegativeBernstein, invSqrtOneAddPositiveCoefficients,
-    List.length_cons, List.length_nil, Finset.sum_range_succ, Finset.sum_range_zero,
-    List.getD_cons_zero, List.getD_cons_succ, NNRat.cast_div, NNRat.cast_ofNat]
+    List.length_cons, List.length_nil, List.zipIdx_cons, List.zipIdx_nil, List.map_cons,
+    List.map_nil, List.sum_cons, List.sum_nil, NNRat.cast_div, NNRat.cast_ofNat, Nat.reduceAdd,
+    Nat.reduceSub, pow_zero, mul_one, add_zero, zero_add]
   ring
 
 /-- The squared-majorant residual equals its nonnegative Bernstein expansion.
@@ -120,8 +129,9 @@ private theorem invSqrtOneAddPolynomial_residual_identity (z : ℝ) :
     (1 + z) * invSqrtOneAddPolynomial z ^ 2 - 1 =
       nonnegativeBernstein invSqrtOneAddResidualCoefficients z := by
   norm_num only [invSqrtOneAddPolynomial, nonnegativeBernstein, invSqrtOneAddResidualCoefficients,
-    List.length_cons, List.length_nil, Finset.sum_range_succ, Finset.sum_range_zero,
-    List.getD_cons_zero, List.getD_cons_succ, NNRat.cast_div, NNRat.cast_ofNat]
+    List.length_cons, List.length_nil, List.zipIdx_cons, List.zipIdx_nil, List.map_cons,
+    List.map_nil, List.sum_cons, List.sum_nil, NNRat.cast_div, NNRat.cast_ofNat, Nat.reduceAdd,
+    Nat.reduceSub, pow_zero, mul_one, add_zero, zero_add]
   ring
 
 /-- On `[0,1]`, the rational polynomial bounds `1/sqrt(1+z)` from above.
@@ -146,9 +156,9 @@ Exact rational normalization verifies the coefficient interface.
 This form permits termwise integration after exponential substitution. -/
 theorem invSqrtOneAddPolynomial_eq_sum (z : ℝ) :
     invSqrtOneAddPolynomial z =
-      ∑ i ∈ Finset.range 11, (invSqrtOneAddMonomialCoefficients.getD i 0 : ℝ) * z ^ i := by
+      ∑ i ∈ Finset.range 11, (invSqrtOneAddMonomialCoefficients i : ℝ) * z ^ i := by
   norm_num only [invSqrtOneAddPolynomial, invSqrtOneAddMonomialCoefficients, Finset.sum_range_succ,
-    Finset.sum_range_zero, List.getD_cons_zero, List.getD_cons_succ]
+    Finset.sum_range_zero]
   ring
 
 end PseudoPrime.Analysis

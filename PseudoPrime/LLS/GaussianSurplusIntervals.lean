@@ -8,7 +8,6 @@ module
 
 public import PseudoPrime.Analysis.FiniteSignedEulerIntervals
 public import PseudoPrime.Analysis.GaussianGammaWeightComparison
-public import PseudoPrime.Analysis.GammaEulerSeed100
 
 /-! # Integer power intervals for the finite Gaussian surplus -/
 

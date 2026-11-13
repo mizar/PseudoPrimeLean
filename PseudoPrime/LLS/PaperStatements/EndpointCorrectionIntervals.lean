@@ -230,13 +230,13 @@ theorem endpointBandCheck_sound {a b slope intercept : ℚ} {cs : List EndpointO
 
 /-- Rational covering cells for endpoint comparison band 0.
 The checked correction bounds imply a continuous affine bound for the second radius. -/
-def endpointOrderBand0 : List EndpointOrderCell :=
+private def endpointOrderBand0 : List EndpointOrderCell :=
   [⟨(74 / 5), (4499 / 250), (8 / 9), (-14 / 9), (556 / 125), (913 / 250)⟩,
     ⟨(4499 / 250), 22, (8 / 9), (-14 / 9), (4723 / 1000), (2009 / 500)⟩]
 
 /-- The exact rational certificates for band 0 pass kernel reduction.
 These certify interval coverage and correction inequalities, rather than sampled inputs. -/
-theorem endpointOrderBand0_check :
+private theorem endpointOrderBand0_check :
     endpointBandCheck (74 / 5) 22 (8 / 9) (-14 / 9) endpointOrderBand0 = true := by decide +kernel
 
 /-- Throughout comparison band 0, the second radius is below the stated affine bound.
@@ -251,12 +251,12 @@ theorem endpointOrderBand0_sound {L : ℝ} (hlo : ((74 / 5) : ℝ) ≤ L) (hhi :
 
 /-- Rational covering cells for endpoint comparison band 1.
 The checked correction bounds imply a continuous affine bound for the second radius. -/
-def endpointOrderBand1 : List EndpointOrderCell :=
+private def endpointOrderBand1 : List EndpointOrderCell :=
   [⟨22, (111 / 4), (9 / 10), (-63 / 40), (2519 / 500), (4363 / 1000)⟩]
 
 /-- The exact rational certificates for band 1 pass kernel reduction.
 These certify interval coverage and correction inequalities, rather than sampled inputs. -/
-theorem endpointOrderBand1_check :
+private theorem endpointOrderBand1_check :
     endpointBandCheck 22 (111 / 4) (9 / 10) (-63 / 40) endpointOrderBand1 = true := by
   decide +kernel
 
@@ -272,13 +272,13 @@ theorem endpointOrderBand1_sound {L : ℝ} (hlo : (22 : ℝ) ≤ L) (hhi : L ≤
 
 /-- Rational covering cells for endpoint comparison band 2.
 The checked correction bounds imply a continuous affine bound for the second radius. -/
-def endpointOrderBand2 : List EndpointOrderCell :=
+private def endpointOrderBand2 : List EndpointOrderCell :=
   [⟨(111 / 4), (14279 / 500), 0, 24, (5077 / 1000), (4761 / 1000)⟩,
     ⟨(14279 / 500), (144 / 5), 0, 24, (636 / 125), (601 / 125)⟩]
 
 /-- The exact rational certificates for band 2 pass kernel reduction.
 These certify interval coverage and correction inequalities, rather than sampled inputs. -/
-theorem endpointOrderBand2_check :
+private theorem endpointOrderBand2_check :
     endpointBandCheck (111 / 4) (144 / 5) 0 24 endpointOrderBand2 = true := by decide +kernel
 
 /-- Throughout comparison band 2, the second radius is below the stated affine bound.
@@ -293,13 +293,13 @@ theorem endpointOrderBand2_sound {L : ℝ} (hlo : ((111 / 4) : ℝ) ≤ L) (hhi 
 
 /-- Rational covering cells for endpoint comparison band 3.
 The checked correction bounds imply a continuous affine bound for the second radius. -/
-def endpointOrderBand3 : List EndpointOrderCell :=
+private def endpointOrderBand3 : List EndpointOrderCell :=
   [⟨(144 / 5), (8399 / 250), (800 / 837), (-304 / 93), (2649 / 500), (4809 / 1000)⟩,
     ⟨(8399 / 250), (369 / 10), (800 / 837), (-304 / 93), (5427 / 1000), (1011 / 200)⟩]
 
 /-- The exact rational certificates for band 3 pass kernel reduction.
 These certify interval coverage and correction inequalities, rather than sampled inputs. -/
-theorem endpointOrderBand3_check :
+private theorem endpointOrderBand3_check :
     endpointBandCheck (144 / 5) (369 / 10) (800 / 837) (-304 / 93) endpointOrderBand3 = true := by
   decide +kernel
 
@@ -315,14 +315,14 @@ theorem endpointOrderBand3_sound {L : ℝ} (hlo : ((144 / 5) : ℝ) ≤ L) (hhi 
 
 /-- Rational covering cells for endpoint comparison band 4.
 The checked correction bounds imply a continuous affine bound for the second radius. -/
-def endpointOrderBand4 : List EndpointOrderCell :=
+private def endpointOrderBand4 : List EndpointOrderCell :=
   [⟨(369 / 10), (5331 / 125), (3200 / 3337), (-11296 / 3337), (5627 / 1000), (5197 / 1000)⟩,
     ⟨(5331 / 125), (48201 / 1000), (3200 / 3337), (-11296 / 3337), (2899 / 500), (2711 / 500)⟩,
     ⟨(48201 / 1000), (10717 / 200), (3200 / 3337), (-11296 / 3337), (1487 / 250), (5611 / 1000)⟩]
 
 /-- The exact rational certificates for band 4 pass kernel reduction.
 These certify interval coverage and correction inequalities, rather than sampled inputs. -/
-theorem endpointOrderBand4_check :
+private theorem endpointOrderBand4_check :
     endpointBandCheck (369 / 10) (10717 / 200) (3200 / 3337) (-11296 / 3337) endpointOrderBand4 =
       true := by
   decide +kernel
@@ -340,14 +340,14 @@ theorem endpointOrderBand4_sound {L : ℝ} (hlo : ((369 / 10) : ℝ) ≤ L)
 
 /-- Rational covering cells for endpoint comparison band 5.
 The checked correction bounds imply a continuous affine bound for the second radius. -/
-def endpointOrderBand5 : List EndpointOrderCell :=
+private def endpointOrderBand5 : List EndpointOrderCell :=
   [⟨(10717 / 200), (59677 / 1000), (3200 / 3281), (-13984 / 3281), (6103 / 1000), (2887 / 500)⟩,
     ⟨(59677 / 1000), (66307 / 1000), (3200 / 3281), (-13984 / 3281), (782 / 125), (5941 / 1000)⟩,
     ⟨(66307 / 1000), (6999 / 100), (3200 / 3281), (-13984 / 3281), (1267 / 200), (6107 / 1000)⟩]
 
 /-- The exact rational certificates for band 5 pass kernel reduction.
 These certify interval coverage and correction inequalities, rather than sampled inputs. -/
-theorem endpointOrderBand5_check :
+private theorem endpointOrderBand5_check :
     endpointBandCheck (10717 / 200) (6999 / 100) (3200 / 3281) (-13984 / 3281) endpointOrderBand5 =
       true := by
   decide +kernel
@@ -365,7 +365,7 @@ theorem endpointOrderBand5_sound {L : ℝ} (hlo : ((10717 / 200) : ℝ) ≤ L)
 
 /-- Rational covering cells for endpoint comparison band 6.
 The checked correction bounds imply a continuous affine bound for the second radius. -/
-def endpointOrderBand6 : List EndpointOrderCell :=
+private def endpointOrderBand6 : List EndpointOrderCell :=
   [⟨(6999 / 100), (78739 / 1000), (3200 / 3259), (-15392 / 3259), (6509 / 1000), (6189 / 1000)⟩,
     ⟨(78739 / 1000), (22177 / 250), (3200 / 3259), (-15392 / 3259), (6689 / 1000), (3187 / 500)⟩,
     ⟨(22177 / 250), (49549 / 500), (3200 / 3259), (-15392 / 3259), (3429 / 500), (1641 / 250)⟩,
@@ -375,7 +375,7 @@ def endpointOrderBand6 : List EndpointOrderCell :=
 
 /-- The exact rational certificates for band 6 pass kernel reduction.
 These certify interval coverage and correction inequalities, rather than sampled inputs. -/
-theorem endpointOrderBand6_check :
+private theorem endpointOrderBand6_check :
     endpointBandCheck (6999 / 100) 122 (3200 / 3259) (-15392 / 3259) endpointOrderBand6 = true := by
   decide +kernel
 

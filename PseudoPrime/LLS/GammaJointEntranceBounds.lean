@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.GammaJointWindowTransport
-public import PseudoPrime.LLS.GammaTransportedEntranceBounds
+import PseudoPrime.LLS.GammaTransportedEntranceBounds
 
 /-! # Log-255 entrance from unchanged local rows and the joint arithmetic saving -/
 
@@ -28,7 +28,7 @@ def gammaJointEntranceRoot : ℚ :=
 /-- The unchanged prime-row factory, with lowered rational endpoints, has total
 allowance at most 769/200 on odd primes through 350. Check the aggregate
 with kernel rational arithmetic; no new prime-specific data are generated. -/
-theorem gamma_joint_entrance_allowance_sum :
+private theorem gamma_joint_entrance_allowance_sum :
     (∑ p ∈ (Finset.Icc 3 350).filter Nat.Prime,
         loweredPrimeAllowance gammaTransportedOldCell gammaTransportedRow gammaJointEntranceLo
           gammaJointEntranceRoot p) ≤
@@ -38,8 +38,8 @@ theorem gamma_joint_entrance_allowance_sum :
 /-- For nonnegative L and scales in the lowered old window, the actual signed
 dual budget is at most 5L/(4root)+769/200. Apply the reusable allowance
 transport with the old row checks and certified Euler caps. -/
-theorem gamma_joint_entrance_dual_cap {L x : ℝ} (hL : 0 ≤ L) (hlo : (gammaJointEntranceLo : ℝ) ≤ x)
-    (hhi : x ≤ (gammaTransportedOldCell.hi : ℝ)) :
+private theorem gamma_joint_entrance_dual_cap {L x : ℝ} (hL : 0 ≤ L)
+    (hlo : (gammaJointEntranceLo : ℝ) ≤ x) (hhi : x ≤ (gammaTransportedOldCell.hi : ℝ)) :
     gammaScaleSignedDualBudget L x ≤ (5 / (4 * ((1589 / 2500 : ℝ) * 255))) * L + 769 / 200 := by
   have he (p : ℕ) (hp : p ∈ gammaAnchoredWindowPrimeSet gammaTransportedOldCell.hi) :
     Analysis.gammaPrimeEulerCost p ≤ ((gammaTransportedRow p).eulerUpper : ℝ) :=
@@ -74,7 +74,7 @@ noncomputable def gammaJointEntranceCredit (L : ℝ) : ℝ :=
 /-- For 255<=L<=260 the scale (101/250)L^2 lies in the transferred window,
 exceeds 4096, contains prefix 50000 and lies in [16384,27556].
 Exact rational geometry supplies every analytic comparison gate. -/
-theorem gamma_joint_entrance_profile_inputs {L : ℝ} (hL : 255 ≤ L) (hU : L ≤ 260) :
+private theorem gamma_joint_entrance_profile_inputs {L : ℝ} (hL : 255 ≤ L) (hU : L ≤ 260) :
     let x := (101 / 250 : ℝ) * L ^ 2;
     (gammaJointEntranceLo : ℝ) ≤ x ∧
       x ≤ (gammaTransportedOldCell.hi : ℝ) ∧
@@ -100,6 +100,13 @@ theorem gamma_joint_entrance_profile_inputs {L : ℝ} (hL : 255 ≤ L) (hU : L �
   · nlinarith only [hloN]
   · nlinarith only [hloN]
   · nlinarith only [hupp]
+
+/-- For `255 ≤ L ≤ 260`, the selected scale is at least 4096 and its upper
+window reaches 50000. The private cell geometry supplies both inequalities. -/
+theorem gamma_joint_entrance_witness_inputs {L : ℝ} (hL : 255 ≤ L) (hU : L ≤ 260) :
+    4096 ≤ (101 / 250 : ℝ) * L ^ 2 ∧ 50000 ≤ (99 / 40 : ℝ) * ((101 / 250 : ℝ) * L ^ 2) := by
+  have h := gamma_joint_entrance_profile_inputs hL hU
+  exact ⟨h.2.2.1, h.2.2.2.1⟩
 
 /-- For all L>=255 the shared paired polynomial holds with the retained joint
 credit. Bound the square root rationally and the logarithm by its tangent

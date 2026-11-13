@@ -6,7 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GammaTransportedEntranceBounds
+public import PseudoPrime.LLS.GammaTransportedEntranceSeparation
+import PseudoPrime.LLS.GammaTransportedEntranceBounds
 public import PseudoPrime.PseudoSquare.Bounds.GammaSignedPrincipalEntranceBounds
 
 /-! # Quadratic witnesses from log 519/2 by transporting existing rows -/

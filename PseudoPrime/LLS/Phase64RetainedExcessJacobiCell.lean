@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.Phase64RetainedExcessBounds
+public import PseudoPrime.LLS.Phase64RamifiedBounds
 public import PseudoPrime.LLS.Phase64LowerStartJacobiCell
 
 /-! # A wider fixed-scale witness cell retaining the ramified aggregate saving -/

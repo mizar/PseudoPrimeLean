@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.Phase64FiniteJacobiBudget
-public import PseudoPrime.LLS.Phase64RamifiedExcessBounds
+public import PseudoPrime.LLS.Phase64RamifiedBounds
 
 /-! # First-phase Jacobi witness criterion with all local costs certified -/
 

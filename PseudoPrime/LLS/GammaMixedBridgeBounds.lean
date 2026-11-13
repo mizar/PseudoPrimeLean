@@ -6,9 +6,10 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GammaMixedBridgeCertificates
+import PseudoPrime.LLS.GammaMixedBridgeCertificates
 public import PseudoPrime.LLS.GammaMixedCellTransfer
-public import PseudoPrime.LLS.GammaMixedBridgeChecks
+public import PseudoPrime.LLS.GammaMixedIntervalSeparation
+import PseudoPrime.LLS.GammaMixedBridgeChecks
 
 /-! # Complete mixed-Euler analytic bridge from logarithmic scale 300 to 550 -/
 

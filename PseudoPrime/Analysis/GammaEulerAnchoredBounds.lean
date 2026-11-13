@@ -7,7 +7,8 @@ Authors: Mizar
 module
 
 public import PseudoPrime.Analysis.GammaEulerReciprocalBounds
-public import PseudoPrime.Analysis.GammaEulerSeed100
+public import PseudoPrime.Analysis.GammaEulerGridRatios
+public import PseudoPrime.Analysis.GammaFiniteEulerIntervals
 
 /-! # Anchored bounds for the intrinsic Gamma Euler weight -/
 

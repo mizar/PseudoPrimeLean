@@ -16,20 +16,19 @@ namespace PseudoPrime.LLS.Phase64EndpointCertificates
 
 /-- The sixteen saved natural lower caps sum to at least 1514*10^10.
 Exact kernel arithmetic checks only the compact aggregate list. -/
-theorem ramp_caps_sum : 1514 * 10000000000 ≤ ∑ i ∈ Finset.range 16, rampCaps.getD i 0 := by
-  decide +kernel
+theorem ramp_caps_sum : 1514 * 10000000000 ≤ ∑ i ∈ Finset.range 16, rampCaps i := by decide +kernel
 
 /-- The thirty-two saved natural upper caps sum to at most 1654*10^10.
 Exact kernel arithmetic checks the compact list without recomputing atoms. -/
-theorem principal_caps_sum :
-    (∑ i ∈ Finset.range 32, principalCaps.getD i 0) ≤ 1654 * 10000000000 := by decide +kernel
+theorem principal_caps_sum : (∑ i ∈ Finset.range 32, principalCaps i) ≤ 1654 * 10000000000 := by
+  decide +kernel
 
 /-- Checked ramp blocks imply the complete natural lower sum exceeds
 1514*10^10. Sum their inequalities and join consecutive right-closed intervals. -/
 theorem ramp_natural_lower_of_blocks (h : ∀ i : Fin 16, RampBlockValid i.val) :
     1514 * 10000000000 ≤ ∑ n ∈ Finset.Ioc 0 4096, phase64RampFixedLower n := by
   have hs :
-    (∑ i ∈ Finset.range 16, rampCaps.getD i 0) ≤
+    (∑ i ∈ Finset.range 16, rampCaps i) ≤
       ∑ i ∈ Finset.range 16, ∑ n ∈ Finset.Ioc (256 * i) (256 * (i + 1)), phase64RampFixedLower n :=
     Finset.sum_le_sum (fun i hi ↦ h ⟨i, Finset.mem_range.mp hi⟩)
   rw [Analysis.sum_Ioc_equal_blocks] at hs
@@ -42,7 +41,7 @@ theorem principal_natural_upper_of_blocks (h : ∀ i : Fin 32, PrincipalBlockVal
   have hs :
     (∑ i ∈ Finset.range 32,
         ∑ n ∈ Finset.Ico (1250 * i) (1250 * (i + 1)), phase64PrincipalFixedUpper n) ≤
-      ∑ i ∈ Finset.range 32, principalCaps.getD i 0 :=
+      ∑ i ∈ Finset.range 32, principalCaps i :=
     Finset.sum_le_sum (fun i hi ↦ (h ⟨i, Finset.mem_range.mp hi⟩).2)
   rw [Analysis.sum_Ico_equal_blocks, Nat.Ico_zero_eq_range] at hs
   exact hs.trans principal_caps_sum

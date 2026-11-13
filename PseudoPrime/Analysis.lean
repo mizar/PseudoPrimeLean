@@ -118,7 +118,8 @@ public import PseudoPrime.Analysis.GammaRefinedTailGeometry
 public import PseudoPrime.Analysis.GammaDyadicIntervalBounds
 public import PseudoPrime.Analysis.GammaExpRationalBounds
 public import PseudoPrime.Analysis.GammaDyadicTailBounds
-public import PseudoPrime.Analysis.GammaEulerSeed100
+public import PseudoPrime.Analysis.GammaEulerGridRatios
+public import PseudoPrime.Analysis.GammaEulerSeed100Bounds
 public import PseudoPrime.Analysis.GammaAdaptiveAnchorBounds
 public import PseudoPrime.Analysis.GammaDyadicAnchorBounds
 public import PseudoPrime.Analysis.GammaSignedEulerTail
@@ -219,9 +220,8 @@ public import PseudoPrime.Analysis.Phase64OddEulerBounds
 public import PseudoPrime.Analysis.FiniteSignedRamifiedCosts
 public import PseudoPrime.Analysis.PrimeLocalIntervalBounds
 public import PseudoPrime.Analysis.FiniteSignedEulerIntervals
-public import PseudoPrime.Analysis.Phase64EulerPrefixSeed
 public import PseudoPrime.Analysis.FiniteSignedEulerUpperRows
-public import PseudoPrime.Analysis.Phase64EulerPrefixUpper
+public import PseudoPrime.Analysis.Phase64EulerPrefixBounds
 public import PseudoPrime.Analysis.GammaHalfHeightResolvent
 public import PseudoPrime.Analysis.GammaPhaseScaleTransport
 public import PseudoPrime.Analysis.FiniteSignedPhaseTransport

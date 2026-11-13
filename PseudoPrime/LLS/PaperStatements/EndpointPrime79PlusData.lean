@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.Analysis.EndpointPrime79
+import PseudoPrime.Analysis.EndpointFiniteData
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PrimitiveComparison
 public import PseudoPrime.Analysis.PointwiseReciprocalLowerBound
 
@@ -18,29 +19,29 @@ namespace PseudoPrime.LLS.PaperStatements
 
 /-- The old thirty prime powers together with 79 and 81 form the new payload.
 The finite set removes repetitions; the checked cardinality below is exactly 32. -/
-def prime79PlusAtoms : Finset ℕ :=
+private def prime79PlusAtoms : Finset ℕ :=
   insert 79 (insert 81 Analysis.FinitePrimeProfile.p73.atoms)
 
 /-- Add the single new prime base 79 to the existing logarithm-certificate support. -/
-def prime79PlusPrimes : Finset ℕ :=
+private def prime79PlusPrimes : Finset ℕ :=
   insert 79 Analysis.finitePrincipalPrimes
 
 /-- The prime-log lower endpoint extends the old data only at the new prime 79. -/
-def prime79PlusPrimeLogLo (p : ℕ) : ℚ :=
+private def prime79PlusPrimeLogLo (p : ℕ) : ℚ :=
   if p = 79 then 4369444 / 1000000 else Analysis.principalLogLo p
 
 /-- The prime-log upper endpoint extends the old data only at the new prime 79. -/
-def prime79PlusPrimeLogHi (p : ℕ) : ℚ :=
+private def prime79PlusPrimeLogHi (p : ℕ) : ℚ :=
   if p = 79 then 4369451 / 1000000 else Analysis.principalLogHi p
 
 /-- The selected prime-power exponent corrects the old default specifically at 81 = 3^4.
 The new atom 79 retains the existing prime exponent one. -/
-def prime79PlusAtomExp (m : ℕ) : ℕ :=
+private def prime79PlusAtomExp (m : ℕ) : ℕ :=
   if m = 81 then 4 else Analysis.principalAtomExp m
 
 /-- The new support contains 32 distinct atoms, and both added atoms were absent before.
 These kernel checks also verify the explicitly required decomposition 81 = 3^4. -/
-theorem prime79Plus_atom_count :
+private theorem prime79Plus_atom_count :
     prime79PlusAtoms.card = 32 ∧
       79 ∉ Analysis.FinitePrimeProfile.p73.atoms ∧
       81 ∉ Analysis.FinitePrimeProfile.p73.atoms ∧ (81 : ℕ) = 3 ^ 4 := by
@@ -58,7 +59,7 @@ theorem prime79Plus_log79 :
 
 /-- Every prime base in the enlarged support has the stated real logarithm interval.
 Use the new certificate at 79 and the unchanged existing certificates everywhere else. -/
-theorem prime79Plus_prime_log_bounds {p : ℕ} (hp : p ∈ prime79PlusPrimes) :
+private theorem prime79Plus_prime_log_bounds {p : ℕ} (hp : p ∈ prime79PlusPrimes) :
     (prime79PlusPrimeLogLo p : ℝ) ≤ Real.log p ∧ Real.log p ≤ (prime79PlusPrimeLogHi p : ℝ) := by
   by_cases h79 : p = 79
   · subst p
@@ -104,7 +105,7 @@ theorem prime79Plus_radius_bounds :
   norm_num only [prime79PlusRadius, Rat.cast_div, Rat.cast_ofNat, and_self]
 
 /-- The thirty-two atoms remain valid at the enlarged radius and logarithm. -/
-theorem prime79Plus_atom_data :
+private theorem prime79Plus_atom_data :
     ∀ m ∈ prime79PlusAtoms,
       0 < m ∧
         m.minFac ∈ prime79PlusPrimes ∧
@@ -117,11 +118,11 @@ theorem prime79Plus_atom_data :
   decide +kernel
 
 /-- The reciprocal lower sum uses exactly the thirty-two selected prime powers. -/
-def prime79PlusReciprocalLower : ℚ :=
+private def prime79PlusReciprocalLower : ℚ :=
   ∑ m ∈ prime79PlusAtoms, prime79PlusPrimeLogLo m.minFac / m * (1 - m / prime79PlusRadius ^ 2)
 
 /-- The smoothed lower sum uses exactly the thirty-two selected prime powers. -/
-def prime79PlusSmoothedLower : ℚ :=
+private def prime79PlusSmoothedLower : ℚ :=
   ∑ m ∈ prime79PlusAtoms,
     prime79PlusPrimeLogLo m.minFac *
       (2 * prime79PlusLogLo - prime79PlusAtomExp m * prime79PlusPrimeLogHi m.minFac)
@@ -131,20 +132,20 @@ def prime79PlusReciprocalLoss : ℚ :=
   78861 / 50000 + (231 / 5000) / prime79PlusRadius - (16033 / 9000) / prime79PlusRadius ^ 2
 
 /-- The reciprocal finite certificate covers the fixed-79 target. -/
-theorem prime79Plus_rec_check :
+private theorem prime79Plus_rec_check :
     2 * prime79PlusLogHi - prime79PlusReciprocalLoss + prime79PlusCreditR ≤
       prime79PlusReciprocalLower := by
   decide +kernel
 
 /-- The smoothed finite certificate covers the fixed-79 target. -/
-theorem prime79Plus_log_check :
+private theorem prime79Plus_log_check :
     prime79PlusRadius ^ 2 - prime79PlusRadius / 20 - (1839 / 500 : ℚ) * prime79PlusLogLo - 21 / 20 +
         prime79PlusCreditS ≤
       prime79PlusSmoothedLower := by
   decide +kernel
 
 /-- Embed every distinct selected positive prime power in the original finite sum. -/
-theorem prime79Plus_atoms_subset :
+private theorem prime79Plus_atoms_subset :
     prime79PlusAtoms ⊆ Finset.Ioc 0 ⌊(prime79PlusRadius : ℝ) ^ 2⌋₊ := by
   intro m hm
   rcases prime79Plus_atom_data m hm with ⟨hm0, _, _, _, _, hmx, _, _⟩
@@ -153,7 +154,7 @@ theorem prime79Plus_atoms_subset :
   exact Finset.mem_Ioc.mpr ⟨hm0, Nat.le_floor hmxR⟩
 
 /-- The rational reciprocal payload is below the actual principal reciprocal sum. -/
-theorem prime79Plus_rec_sum :
+private theorem prime79Plus_rec_sum :
     (prime79PlusReciprocalLower : ℝ) ≤
       AnalyticNumberTheory.Arithmetic.reciprocalWeightedMangoldtSum
         ((prime79PlusRadius : ℝ) ^ 2) := by
@@ -183,7 +184,7 @@ theorem prime79Plus_rec_sum :
       (Finset.mem_Ioc.mp hm).1 (Finset.mem_Ioc.mp hm).2
 
 /-- The rational smoothed payload is below the actual principal smoothed sum. -/
-theorem prime79Plus_log_sum :
+private theorem prime79Plus_log_sum :
     (prime79PlusSmoothedLower : ℝ) ≤
       AnalyticNumberTheory.Arithmetic.logWeightedMangoldtSum ((prime79PlusRadius : ℝ) ^ 2) := by
   have hy : (0 : ℝ) < prime79PlusRadius :=

@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.GammaEulerGridRatios
 public import Mathlib.Analysis.SpecialFunctions.Log.Monotone
 public import PseudoPrime.Analysis.NumericalLogBounds
 public import PseudoPrime.Analysis.LogTaylorBounds
@@ -838,9 +839,9 @@ def TotientLogResidueCertificate.ofScaledData (t w lo hi upper j jx n nx K : ℕ
   cutoffLogScale := jx
   cutoffLogTerms := nx
   exponentBound := K
-  rootUpper := fun k ↦ roots.getD ((k - 3) / 2) 0
+  rootUpper := fun k ↦ Analysis.sequentialNodeLookup (List.range roots.length) roots ((k - 3) / 2)
   sqrtRootUpper := fun k ↦
-    let b := roots.getD ((k - 3) / 2) 0
+    let b := Analysis.sequentialNodeLookup (List.range roots.length) roots ((k - 3) / 2)
     let r := Nat.sqrt b
     if b ≤ r ^ 2 then r else r + 1
 

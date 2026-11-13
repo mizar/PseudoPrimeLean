@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.GammaSmallProfileCertificates
+import PseudoPrime.LLS.GammaSmallProfileCertificates
 public import PseudoPrime.LLS.GammaSmallProfileSeparation
 
 /-! # Certified mixed-profile separation on the full bridge from 290 to 300 -/
@@ -17,7 +17,7 @@ namespace PseudoPrime.LLS
 
 /-- Claim: the displayed rational cell passes the logarithm, error and margin checks.
 Proof: exact kernel arithmetic. Role: close the elementary separation certificate. -/
-theorem small_separation_290_295_check :
+private theorem small_separation_290_295_check :
     gammaSmallProfileCheck 290 295 (21 / 2) (57 / 5) (29 / 10) (19 / 50) (25 / 4) 15 16 = true := by
   decide +kernel
 
@@ -46,7 +46,7 @@ theorem gamma_small_profile_separation_290_295 (hRH : RiemannHypothesis) {L : â„
 
 /-- Claim: the displayed rational cell passes the logarithm, error and margin checks.
 Proof: exact kernel arithmetic. Role: close the elementary separation certificate. -/
-theorem small_separation_295_300_check :
+private theorem small_separation_295_300_check :
     gammaSmallProfileCheck 295 300 (21 / 2) (23 / 2) (29 / 10) (19 / 50) (25 / 4) 15 16 = true := by
   decide +kernel
 

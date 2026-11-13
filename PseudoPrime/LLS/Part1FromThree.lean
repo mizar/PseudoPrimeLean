@@ -6,8 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.Part1ProductCatalog
-public import PseudoPrime.LLS.Part1CoverageTransfer
+import PseudoPrime.LLS.Part1ProductCatalog
+import PseudoPrime.LLS.Part1CoverageTransfer
 public import PseudoPrime.LLS.Part1ThreeFourBounds
 
 /-! # Original LLS Part 1 extended from q >= 3000 to q >= 3 -/

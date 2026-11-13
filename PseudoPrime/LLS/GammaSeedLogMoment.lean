@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.GammaPrefixFine
+import PseudoPrime.Analysis.GammaEulerSeed100
 
 /-! # Checked seed logarithmic moments and transported actual prefixes -/
 
@@ -16,13 +17,13 @@ namespace PseudoPrime.LLS
 
 /-- The rational logarithmic moment of one existing prime-power row.
 The positive exponent is exponent plus one, matching the represented index. -/
-def seedRowLogMoment (r : Analysis.GammaFiniteEulerRow) : ℚ :=
+private def seedRowLogMoment (r : Analysis.GammaFiniteEulerRow) : ℚ :=
   ((r.exponent + 1 : ℕ) : ℚ) * r.logLower ^ 2
 
 /-- For a prime row with a valid logarithm check and nonnegative lower endpoint,
 its rational logarithmic moment is below the actual Mangoldt logarithmic moment.
 Square the certified logarithm inequality and evaluate Mangoldt at the positive prime power. -/
-theorem seed_row_log_moment (r : Analysis.GammaFiniteEulerRow) (hp : r.prime.Prime)
+private theorem seed_row_log_moment (r : Analysis.GammaFiniteEulerRow) (hp : r.prime.Prime)
     (hc : r.check = true) (hlo : 0 ≤ r.logLower) :
     (seedRowLogMoment r : ℝ) ≤ ArithmeticFunction.vonMangoldt r.index * Real.log (r.index : ℝ) := by
   have hh := Bool.and_eq_true_iff.mp hc
@@ -40,7 +41,7 @@ theorem seed_row_log_moment (r : Analysis.GammaFiniteEulerRow) (hp : r.prime.Pri
 
 /-- The existing 35 rows have exact rational logarithmic moment 342.3144832843.
 Kernel arithmetic also checks all logarithm lower endpoints are nonnegative. -/
-theorem seed_log_moment_check :
+private theorem seed_log_moment_check :
     (Analysis.smallSeedRows.map seedRowLogMoment).sum = (3423144832843 / 10000000000 : ℚ) ∧
       Analysis.smallSeedRows.Forall (fun r ↦ 0 ≤ r.logLower) := by
   decide +kernel

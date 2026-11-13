@@ -6,8 +6,9 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.GammaEulerGridRatios
 public import PseudoPrime.LLS.FiniteSignedEulerMassBounds
-public import PseudoPrime.Analysis.Phase64EulerPrefixUpper
+public import PseudoPrime.Analysis.Phase64EulerPrefixBounds
 
 /-! # Certified full Euler mass for the first phase64 cell -/
 
@@ -18,8 +19,9 @@ namespace PseudoPrime.LLS
 /-- The ten checked power intervals at cutoff 500, with denominator 10^8.
 The node order reuses the phase64 coefficients; exact power comparisons certify both endpoints. -/
 def phase64Mass500Ratios (a : ℚ) : ℚ × ℚ :=
-  let j := (Analysis.phaseResolvent64Coefficients.map Prod.fst).idxOf a
-  let v := ([8944, 2580, 744, 0, 0, 0, 0, 0, 0, 0] : List ℕ).getD j 0
+  let v :=
+    Analysis.sequentialNodeLookup (Analysis.phaseResolvent64Coefficients.map Prod.fst)
+      [8944, 2580, 744, 0, 0, 0, 0, 0, 0, 0] a
   ((v : ℚ) / 100000000, ((v : ℚ) + 1) / 100000000)
 
 /-- The rational signed slope coefficient -c*sigma for the boundary term at 500. -/

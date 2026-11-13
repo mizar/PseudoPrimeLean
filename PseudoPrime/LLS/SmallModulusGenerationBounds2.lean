@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.LLS.Theorem11S1Subgroup
 
-public import PseudoPrime.NumberTheory.UnitGenerationBalanced
+public import PseudoPrime.NumberTheory.UnitGenerationTree
 public import PseudoPrime.Analysis.LLSParityRationalWitnessProfiles
 
 /-! # Transferring finite generation certificates to the parity profile

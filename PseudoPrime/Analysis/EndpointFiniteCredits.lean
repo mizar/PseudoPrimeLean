@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.Analysis.EndpointFiniteSums
+import PseudoPrime.Analysis.EndpointFiniteSumsInternal
 
 /-! # Profile-specific finite principal credits and tuned logarithmic caps -/
 
@@ -67,11 +68,11 @@ def tunedS : FinitePrimeProfile → ℚ
 end FinitePrimeProfile
 
 /-- Every tuned reciprocal credit is covered by the existing finite payload. -/
-theorem finiteTuned_rec_check (f : FinitePrimeProfile) :
+private theorem finiteTuned_rec_check (f : FinitePrimeProfile) :
     2 * f.logHi - f.reciprocalLoss + f.tunedR ≤ f.reciprocalLower := by cases f <;> decide +kernel
 
 /-- Every tuned smoothed credit is covered by the existing finite payload. -/
-theorem finiteTuned_log_check (f : FinitePrimeProfile) :
+private theorem finiteTuned_log_check (f : FinitePrimeProfile) :
     f.radius ^ 2 - f.radius / 20 - (1839 / 500 : ℚ) * f.logLo - 21 / 20 + f.tunedS ≤
       f.smoothedLower := by
   cases f <;> decide +kernel

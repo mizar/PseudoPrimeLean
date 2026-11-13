@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.GammaEulerGridRatios
 public import PseudoPrime.Analysis.FiniteSignedEulerIntervals
 public import PseudoPrime.Analysis.Phase64DyadicEulerBounds
 
@@ -22,8 +23,7 @@ def phase64PrefixSeedRow (p k lo lower : ℕ) (digits : List ℕ) : GammaFiniteE
   ({ prime := p, exponent := k, logScale := Nat.log2 p + 1, logTerms := 20,
      logLower := (lo : ℚ) / 100000, logUpper := ((lo : ℚ) + 3) / 100000,
      ratios := fun a ↦
-       let j := (phaseResolvent64Coefficients.map Prod.fst).idxOf a
-       let v := digits.getD j 0
+       let v := sequentialNodeLookup (phaseResolvent64Coefficients.map Prod.fst) digits a
        ((v : ℚ) / 100000000, ((v : ℚ) + 1) / 100000000) },
     (lower : ℚ) / 1000000)
 
@@ -241,46 +241,5 @@ theorem phase64_prefix_seed_indices_nodup :
 kernel arithmetic verifies the small-denominator sum. -/
 theorem phase64_prefix_seed_rational_lower :
     (57 / 20 : ℚ) ≤ (phase64PrefixSeedRows.map Prod.snd).sum := by decide +kernel
-
-/-- The actual signed Mangoldt prefix through 500 is at least 57/20.
-Apply every checked row lower bound, distinctness and nonnegativity of omitted
-weights, then transfer the rational sum certificate into the reals. -/
-theorem phase64_prefix_seed_lower :
-    (57 / 20 : ℝ) ≤
-      ∑ n ∈ Finset.Ioc 0 500, finiteSignedMangoldtWeight phaseResolvent64Coefficients n := by
-  have hr :=
-    nonnegative_weight_prefix_le_of_rows (finiteSignedMangoldtWeight phaseResolvent64Coefficients)
-      (finiteSignedMangoldtWeight_nonneg phaseResolvent64Coefficients
-        (fun u hu ↦ phaseResolvent64_euler_nonneg hu))
-      phase64PrefixSeedRows (fun r ↦ r.1.index) Prod.snd phase64_prefix_seed_indices_nodup
-      (fun r hr ↦ by
-        have h := List.forall_iff_forall_mem.mp phase64_prefix_seed_checks r hr
-        exact ⟨h.2.2.2.1, h.2.2.2.2⟩)
-      (fun r hr ↦ by
-        have h := List.forall_iff_forall_mem.mp phase64_prefix_seed_checks r hr
-        exact
-          ((Rat.cast_le (K := ℝ)).mpr h.2.2.1).trans
-            (r.1.signedLower_le phaseResolvent64Coefficients (by norm_num only : 0 < (20 : ℕ)) h.1
-              h.2.1))
-  have hc := (Rat.cast_le (K := ℝ)).mpr phase64_prefix_seed_rational_lower
-  norm_num only [Rat.cast_div, Rat.cast_ofNat, Rat.cast_list_sum, List.map_map,
-    Function.comp_def] at hr hc
-  linarith only [hr, hc]
-
-/-- At any real cutoff at least 500, the actual signed Mangoldt prefix is
-at least 57/20. The seed prefix is a subset and every additional combined
-Mangoldt weight is nonnegative. No input enumeration is involved. -/
-theorem phase64_prefix_lower_of_cutoff_ge_500 {b : ℝ} (hb : 500 ≤ b) :
-    (57 / 20 : ℝ) ≤
-      ∑ n ∈ Finset.Ioc 0 ⌊b⌋₊, finiteSignedMangoldtWeight phaseResolvent64Coefficients n := by
-  have hfloor : 500 ≤ ⌊b⌋₊ := (Nat.le_floor_iff (by linarith only [hb] : 0 ≤ b)).mpr hb
-  have hsub : Finset.Ioc 0 500 ⊆ Finset.Ioc 0 ⌊b⌋₊ := fun n hn ↦
-    Finset.mem_Ioc.mpr ⟨(Finset.mem_Ioc.mp hn).1, (Finset.mem_Ioc.mp hn).2.trans hfloor⟩
-  exact
-    phase64_prefix_seed_lower.trans
-      (Finset.sum_le_sum_of_subset_of_nonneg hsub
-        (fun n _ _ ↦
-          finiteSignedMangoldtWeight_nonneg phaseResolvent64Coefficients
-            (fun u hu ↦ phaseResolvent64_euler_nonneg hu) n))
 
 end PseudoPrime.Analysis

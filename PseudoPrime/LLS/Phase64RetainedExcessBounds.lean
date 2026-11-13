@@ -47,20 +47,4 @@ theorem phase64_ramified_excess_le_of_caps (caps : ℕ → ℚ) {x : ℝ} {e : �
     _ = _ := List.sum_toFinset _ hn
     _ ≤ (e : ℝ) := hc
 
-/-- Input: 1600 <= x <= 1660. Claim: the ramified excess is at most 2503/1000.
-Reuse the existing 24 local caps and check their small rational aggregate.
-Role: recover 97/1000 of slack previously lost by rounding the excess to 13/5. -/
-theorem phase64_ramified_excess_le_2503 {x : ℝ} (hlo : 1600 ≤ x) (hhi : x ≤ 1660) :
-    phase64RamifiedExcess x ≤ (2503 / 1000 : ℝ) := by
-  have hc :
-    (phase64LocalPrimes.map
-          (fun p ↦ phase64LocalLogUpper p * max (phase64LocalCostUpper p - 3 / 100) 0)).sum ≤
-      (2503 / 1000 : ℚ) := by
-    decide +kernel
-  have he :=
-    phase64_ramified_excess_le_of_caps phase64LocalCostUpper
-      (fun p hp ↦ phase64_local_real_signed_cost_le hp hlo hhi) hc
-  norm_num only [Rat.cast_div, Rat.cast_ofNat] at he
-  exact he
-
 end PseudoPrime.LLS

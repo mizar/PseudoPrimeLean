@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.Part1ProductCatalog
+import PseudoPrime.LLS.Part1ProductCatalog
 public import PseudoPrime.LLS.Part1ProductSoundness
 public import PseudoPrime.LLS.UnitGenerationCoverSoundness
 

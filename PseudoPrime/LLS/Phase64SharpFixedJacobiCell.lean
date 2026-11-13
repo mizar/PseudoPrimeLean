@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.Phase64ExtendedJacobiCell
-public import PseudoPrime.LLS.Phase64SharpAggregateBounds
+public import PseudoPrime.LLS.Phase64EndpointBounds
 
 /-! # Wider fixed-scale Jacobi bounds from sharp existing aggregates -/
 

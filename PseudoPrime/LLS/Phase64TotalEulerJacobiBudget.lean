@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.LLS.ExponentialRampSummation
 public import PseudoPrime.LLS.Phase64EulerJacobiBudget
-public import PseudoPrime.Analysis.Phase64EulerPrefixSeed
+public import PseudoPrime.Analysis.Phase64EulerPrefixBounds
 
 /-! # First-phase Jacobi budget with the finite prefix certified -/
 

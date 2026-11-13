@@ -115,7 +115,7 @@ theorem gammaMassMajorant_eq_sum (t : ℝ) :
     gammaMassMajorant t =
       Real.sqrt (2 * Real.pi) *
         ∑ i ∈ Finset.range 11,
-          (Analysis.invSqrtOneAddMonomialCoefficients.getD i 0 : ℝ) *
+          (Analysis.invSqrtOneAddMonomialCoefficients i : ℝ) *
             Real.exp (-(Real.pi * (1 / 2 + 2 * i)) * |t|) := by
   unfold gammaMassMajorant
   rw [Analysis.invSqrtOneAddPolynomial_eq_sum, mul_assoc, Finset.mul_sum]
@@ -140,7 +140,7 @@ theorem integrable_gammaMassMajorant : MeasureTheory.Integrable gammaMassMajoran
     MeasureTheory.Integrable
       (fun t : ℝ ↦
         ∑ i ∈ Finset.range 11,
-          (Analysis.invSqrtOneAddMonomialCoefficients.getD i 0 : ℝ) *
+          (Analysis.invSqrtOneAddMonomialCoefficients i : ℝ) *
             Real.exp (-(Real.pi * (1 / 2 + 2 * i)) * |t|)) := by
     apply MeasureTheory.integrable_finsetSum
     intro i _
@@ -166,11 +166,11 @@ theorem integral_gammaMassMajorant :
     simp only [div_mul_eq_div_mul_one_div]
     have hsum :
       (∑ i ∈ Finset.range 11,
-          (Analysis.invSqrtOneAddMonomialCoefficients.getD i 0 : ℝ) *
+          (Analysis.invSqrtOneAddMonomialCoefficients i : ℝ) *
             (2 / Real.pi * (1 / (1 / 2 + 2 * i)))) =
         (2 / Real.pi) *
           ∑ i ∈ Finset.range 11,
-            (Analysis.invSqrtOneAddMonomialCoefficients.getD i 0 : ℝ) * (1 / (1 / 2 + 2 * i)) := by
+            (Analysis.invSqrtOneAddMonomialCoefficients i : ℝ) * (1 / (1 / 2 + 2 * i)) := by
       rw [Finset.mul_sum]
       apply Finset.sum_congr rfl
       intro i _
@@ -178,10 +178,10 @@ theorem integral_gammaMassMajorant :
     rw [hsum]
     have hs :
       (∑ i ∈ Finset.range 11,
-          (Analysis.invSqrtOneAddMonomialCoefficients.getD i 0 : ℝ) * (1 / (1 / 2 + 2 * i))) =
+          (Analysis.invSqrtOneAddMonomialCoefficients i : ℝ) * (1 / (1 / 2 + 2 * i))) =
         (87200369111842041392983877 / 47030364339978240000000000 : ℝ) := by
       norm_num only [Analysis.invSqrtOneAddMonomialCoefficients, Finset.sum_range_succ,
-        Finset.sum_range_zero, List.getD_cons_zero, List.getD_cons_succ]
+        Finset.sum_range_zero]
     rw [hs]
     ring
   · intro i _

@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.LLS.Part1ProductBlock00
+import PseudoPrime.LLS.Part1ProductBlock00
 public import PseudoPrime.LLS.Part2FiniteTransfer
 
 /-! # Small-modulus Part 2 witnesses checked by the kernel -/
@@ -20,7 +20,7 @@ Input: a local index for the modulus five plus that index.
 Definition: below 79, check allowed prime divisors or both certificate arrays of block zero;
 outside that range return true. Output: acceptance of either branch, or padding.
 Role: supply exact checks for the finite range from five through 78. -/
-def part2SmallCoverageLeaf (i : ℕ) : Bool :=
+private def part2SmallCoverageLeaf (i : ℕ) : Bool :=
   let q := 5 + i
   if q < 79 then
     unitGenerationPrimes.any (fun p ↦ decide (p ≤ part2SmallPrimeCap q ∧ p ∣ q)) ||
@@ -31,7 +31,7 @@ def part2SmallCoverageLeaf (i : ℕ) : Bool :=
 /-- Input: one of five windows of sixteen indices.
 Claim: every leaf of the window passes the exact small certificate check.
 Proof: kernel computation with default resources. Role: cover q from 5 through 78. -/
-theorem part2_small_windows (j : Fin 5) :
+private theorem part2_small_windows (j : Fin 5) :
     unitGenerationAll part2SmallCoverageLeaf 4 (16 * j.val) = true := by
   fin_cases j
   all_goals decide +kernel
@@ -40,7 +40,7 @@ theorem part2_small_windows (j : Fin 5) :
 Claim: the corresponding prime-divisor or product-generation check succeeds.
 Proof: choose the checked window by quotient and remainder and remove padding.
 Role: extract one finite check without enumerating subgroups. -/
-theorem part2_small_leaf_sound {q : ℕ} (hq : 5 ≤ q) (hQ : q < 79) :
+private theorem part2_small_leaf_sound {q : ℕ} (hq : 5 ≤ q) (hQ : q < 79) :
     (unitGenerationPrimes.any (fun p ↦ decide (p ≤ part2SmallPrimeCap q ∧ p ∣ q)) ||
         unitGenerationCoverCheck q (part2SmallPrimeCap q) (q.log2 + 1) part1ProductCodes00[q - 5]!
           part1DivisorCodes00[q - 5]!) =

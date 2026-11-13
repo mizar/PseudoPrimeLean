@@ -108,32 +108,4 @@ at most 143/50. Kernel rational arithmetic checks this aggregate upper allowance
 theorem phase64_prefix_rational_upper :
     (phase64PrefixSeedRows.map (fun r ↦ r.2 + 1 / 50000)).sum ≤ (143 / 50 : ℚ) := by decide +kernel
 
-/-- The actual full signed Mangoldt prefix through 500 is at most 143/50.
-Use exact prime-power support, the reused checked rows and the new upper
-allowances. No additional power or logarithm data are generated. -/
-theorem phase64_prefix_seed_upper :
-    (∑ n ∈ Finset.Ioc 0 500, finiteSignedMangoldtWeight phaseResolvent64Coefficients n) ≤
-      (143 / 50 : ℝ) := by
-  have he :=
-    prime_power_supported_prefix_eq_rows (finiteSignedMangoldtWeight phaseResolvent64Coefficients)
-      (fun n hn ↦ by
-        rw [finiteSignedMangoldtWeight, ArithmeticFunction.vonMangoldt_eq_zero_iff.mpr hn,
-          zero_mul])
-      phase64PrefixSeedRows (fun r ↦ r.1.index) phase64_prefix_seed_indices_nodup 500
-      phase64_prefix_seed_support
-  have hs :=
-    List.sum_le_sum
-      (fun r hr ↦ by
-        have hc := List.forall_iff_forall_mem.mp phase64_prefix_seed_checks r hr
-        exact
-          (r.1.le_signedUpper phaseResolvent64Coefficients (by norm_num only : 0 < (20 : ℕ)) hc.1
-                hc.2.1).trans
-            ((Rat.cast_le (K := ℝ)).mpr
-              (List.forall_iff_forall_mem.mp phase64_prefix_upper_checks r hr)))
-  have hb := (Rat.cast_le (K := ℝ)).mpr phase64_prefix_rational_upper
-  norm_num only [Rat.cast_list_sum, List.map_map, Function.comp_def, Rat.cast_add, Rat.cast_div,
-    Rat.cast_ofNat] at hs hb
-  rw [he]
-  linarith only [hs, hb]
-
 end PseudoPrime.Analysis

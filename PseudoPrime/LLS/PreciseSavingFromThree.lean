@@ -7,8 +7,9 @@ Authors: Mizar
 module
 
 public import PseudoPrime.LLS.PreciseSavingSmallBounds
-public import PseudoPrime.LLS.Part1RetainedSavingProductBounds
-public import PseudoPrime.LLS.Part1ProductFinite
+public import PseudoPrime.LLS.PrimeOutsideImage
+import PseudoPrime.LLS.Part1RetainedSavingProductBounds
+import PseudoPrime.LLS.Part1ProductFinite
 public import PseudoPrime.LLS.CharacterPart2FromFive
 
 /-! # Precise reciprocal-saving Part 1 witnesses from modulus three -/
@@ -21,7 +22,7 @@ namespace PseudoPrime.LLS
 Claim: a coprime outside prime exists below that cap.
 Proof: locate the existing checked product block and transfer its prime bound.
 Role: reuse the finite catalog for any later real radius without repeating its index proof. -/
-theorem exists_prime_outside_catalog_of_cap {q : ℕ} [NeZero q] (hq : 5 ≤ q) (hQ : q < 3000)
+private theorem exists_prime_outside_catalog_of_cap {q : ℕ} [NeZero q] (hq : 5 ≤ q) (hQ : q < 3000)
     (H : Subgroup (ZMod q)ˣ) (hH : H ≠ ⊤) {R : ℝ} (hcap : (part1PrimeCap q : ℝ) ≤ R) :
     ∃ p : ℕ, PrimeOutsideSubgroup q H p ∧ (p : ℝ) ≤ R :=
   Exists.elim (exists_prime_outside_part1_finite_cap hq hQ H hH) fun p hp ↦
@@ -32,7 +33,7 @@ theorem exists_prime_outside_catalog_of_cap {q : ℕ} [NeZero q] (hq : 5 ≤ q) 
 Claim: its finite catalog prime cap lies inside the precise-saving squared radius.
 Proof: use the new bounds nineteen and forty-three on the two catalog ranges.
 Role: reuse all finite certificate data unchanged. -/
-theorem precise_saving_finite_cap_le_radius {q : ℕ} (hq : 6 ≤ q) :
+private theorem precise_saving_finite_cap_le_radius {q : ℕ} (hq : 6 ≤ q) :
     (part1PrimeCap q : ℝ) ≤ (preciseSavingRadiusRoot q) ^ 2 := by
   by_cases h : q < 705
   · simpa only [part1PrimeCap, ite_eq_left h, Nat.cast_ofNat] using
