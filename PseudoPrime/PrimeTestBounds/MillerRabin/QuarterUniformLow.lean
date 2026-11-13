@@ -11,7 +11,7 @@ import PseudoPrime.Analysis.LogTaylorBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformKorseltLogLower
 public import PseudoPrime.PrimeTestBounds.MillerRabin.LogScalePow22
 public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimePairLocalData
-public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalEvenAnchors
+import PseudoPrime.PrimeTestBounds.MillerRabin.LocalEvenAnchors
 public import PseudoPrime.NumberTheory.PrimeFactorPairClassification
 
 /-! # Low-range uniform Korselt witnesses with coefficient one quarter -/

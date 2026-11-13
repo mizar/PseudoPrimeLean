@@ -59,15 +59,15 @@ theorem squareDivisor_chain {n p : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime)
     have htc : target ≤ cap := of_decide_eq_true hcheck
     exact hbase (hlog.trans ((Rat.cast_le (K := ℝ)).mpr htc))
   | cons i is ih =>
-    cases heq : L[i]? with
-    | none => simp only [squareChainCheck, heq, Bool.false_eq_true] at hcheck
+    cases heq : L.toArray[i]? with
+    | none => simp only [squareChainCheck, squareChainCheckArray, heq, Bool.false_eq_true] at hcheck
     | some
       d =>
       have hc :
         (decide (d.candidate.bound ≤ B ∧ d.candidate.upper ≤ cap) &&
             squareChainCheck L B (max cap (2 * d.candidate.lower)) target is) =
           true := by
-        simpa only [squareChainCheck, heq] using hcheck
+        simpa only [squareChainCheck, squareChainCheckArray, heq] using hcheck
       have hparts := Bool.and_eq_true_iff.mp hc
       have hd : d.candidate.bound ≤ B ∧ d.candidate.upper ≤ cap := of_decide_eq_true hparts.1
       apply ih (max cap (2 * d.candidate.lower)) hparts.2
@@ -80,8 +80,11 @@ theorem squareDivisor_chain {n p : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime)
           simp only [Rat.cast_max, Rat.cast_mul, Rat.cast_ofNat] at hx
           exact (le_max_iff.mp hx).resolve_left hsmall
         obtain ⟨r, hr, hrB, hfail⟩ :=
-          squareDivisor_candidate_list hn ho hp hp2 hdiv hRH L hL d (List.mem_of_getElem? heq) hlo
-            hhi
+          squareDivisor_candidate_list hn ho hp hp2 hdiv hRH L hL d
+            (by
+              have hm := Array.mem_of_getElem? heq
+              simpa only [← Array.mem_toList_iff, List.toList_toArray] using hm)
+            hlo hhi
         exact ⟨r, hr, hrB.trans hd.1, hfail⟩
 
 /-- Below the seed cap, the prime divisor itself is a bounded rejecting

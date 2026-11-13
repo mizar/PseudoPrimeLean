@@ -33,12 +33,10 @@ theorem quarter_semiprime_eighth {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p
         (show Analysis.rationalLogIntervalCheck 1062 10 32 (696 / 100) 7 = true from by
           decide +kernel)).1
   norm_num only [Rat.cast_ofNat, Rat.cast_div] at hlog
-  have hD : (696 / 100 : ℝ) ≤ Real.log ((2 * quarterElevenRow.getD 73 0 : ℕ) : ℝ) := by
-    change (696 / 100 : ℝ) ≤ Real.log (1062 : ℝ)
-    linarith only [hlog]
+  have hD : (696 / 100 : ℝ) ≤ Real.log (1062 : ℝ) := by linarith only [hlog]
   have hA : Real.log 2 + (73 : ℝ) / 10 ≤ 201 / 25 := by linarith only [Real.log_two_lt_d9]
   have hB : (55 : ℝ) ≤ (1 / 4 : ℝ) * (Real.log n) ^ 2 := by nlinarith only [hL]
-  apply quarter_eleven_cell hn ho hp hq hprod 73 55 (by decide) (by decide) hA hD hB
+  apply quarter_eleven_cell_73 hn ho hp hq hprod 55 (by decide) hA hD hB
   intro hqsmall
   have hmax : max (201 / 25 : ℝ) (Real.log n - 696 / 100) ≤ 201 / 25 := by
     apply max_le le_rfl

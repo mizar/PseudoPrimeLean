@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.AnalyticPrimeSupplyData
+import PseudoPrime.PrimeTestBounds.MillerRabin.AnalyticPrimeSupplyData
 public import PseudoPrime.Analysis.HighPrecisionLogBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.SquareLocalCounting
 public import PseudoPrime.PrimeTestBounds.MillerRabin.SemiprimeLocalCounting

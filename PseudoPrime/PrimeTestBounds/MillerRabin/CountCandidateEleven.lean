@@ -7,7 +7,8 @@ Authors: Mizar
 module
 
 public import PseudoPrime.Analysis.PreciseLogTaylorBounds
-public import PseudoPrime.PrimeTestBounds.MillerRabin.IndexedPrimeSupplies
+public import Mathlib.NumberTheory.PrimeCounting
+import PseudoPrime.PrimeTestBounds.MillerRabin.IndexedPrimeSupplies
 
 /-! # Prime supply and logarithms for the first repeated-product candidate -/
 

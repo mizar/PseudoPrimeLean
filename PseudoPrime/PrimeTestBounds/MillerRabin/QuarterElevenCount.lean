@@ -26,7 +26,7 @@ def quarterElevenRow : Array ℕ :=
     500, 531]
 
 /-- Suffix rows for the eleven-prime weighted recurrence through 73. -/
-def quarterElevenTail : List (Array ℕ) :=
+private def quarterElevenTail : List (Array ℕ) :=
   [#[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 9, 10,
       11, 12, 13, 15, 17, 17, 19, 19, 20, 22, 24, 25, 27, 29, 31, 35, 36, 39, 41, 44, 48, 53, 55,
       60, 64, 68, 73, 78, 83, 89, 95, 100, 108, 115, 122, 130, 137, 146, 156, 165, 174, 185, 193],
@@ -63,7 +63,7 @@ def quarterElevenTail : List (Array ℕ) :=
 
 set_option maxRecDepth 8192 in
 /-- The tabulated suffix counts satisfy the weighted recurrence through 73. -/
-theorem quarter_eleven_checked :
+private theorem quarter_eleven_checked :
     weightedPrimeTableCheck 73 target028ElevenWeights (quarterElevenRow :: quarterElevenTail) =
       true := by
   decide +kernel

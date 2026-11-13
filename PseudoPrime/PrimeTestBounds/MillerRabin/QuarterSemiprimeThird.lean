@@ -8,8 +8,9 @@ module
 
 import PseudoPrime.Analysis.LogTaylorBounds
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterNineCell
-public import PseudoPrime.PrimeTestBounds.MillerRabin.SemiprimeSmallFactor
+import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterNineCell
+public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
+import PseudoPrime.PrimeTestBounds.MillerRabin.SemiprimeSmallFactor
 
 /-! # The third signed-product semiprime cell -/
 
@@ -33,12 +34,10 @@ theorem quarter_semiprime_third {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.
         (show Analysis.rationalLogIntervalCheck 614 9 32 (641 / 100) 7 = true from by
           decide +kernel)).1
   norm_num only [Rat.cast_ofNat, Rat.cast_div] at hlog
-  have hD : (641 / 100 : ℝ) ≤ Real.log ((2 * quarterNine90Row.getD 67 0 : ℕ) : ℝ) := by
-    change _ ≤ Real.log (614 : ℝ)
-    linarith only [hlog]
+  have hD : (641 / 100 : ℝ) ≤ Real.log (614 : ℝ) := by linarith only [hlog]
   have hA : Real.log 2 + (67 : ℝ) / 10 ≤ 74 / 10 := by linarith only [Real.log_two_lt_d9]
   have hB : (40 : ℝ) ≤ (1 / 4 : ℝ) * (Real.log n) ^ 2 := by nlinarith only [hL]
-  apply quarter_nine_cell hn ho hp hq hprod 67 40 (by decide) (by decide) hA hD hB
+  apply quarter_nine_cell_67 hn ho hp hq hprod 40 (by decide) hA hD hB
   intro hqsmall
   have hmax : max (74 / 10 : ℝ) (Real.log n - 641 / 100) ≤ 74 / 10 := by
     apply max_le le_rfl

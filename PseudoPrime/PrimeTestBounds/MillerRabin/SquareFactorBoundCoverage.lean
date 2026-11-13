@@ -49,7 +49,9 @@ theorem exists_prime_reject_03_square_1304 {n p : ℕ} (hn : 1 < n) (ho : Odd n)
   by_cases h1 : Real.log n ≤ (113 / 10 : ℝ)
   · let d : SquareCoverageData :=
       ⟨29, 3401197381661 / 500000000000, 5655991810819 / 500000000000, 5, [7, 3, 5, 8]⟩
-    have hd : d ∈ squareCoverages := List.mem_of_getElem? (show squareCoverages[3]? = some d by rfl)
+    have hd : d ∈ squareCoverages := by
+      simp only [squareCoverages, List.mem_append, squareCoverage01, List.mem_cons, d, true_or,
+        or_true]
     apply
       squareCoverage_divisor_03 hn ho hp hdiv hRH d hd (lo := (509 / 50 : ℝ)) (hi := 113 / 10)
         (by norm_num only) hL h1
@@ -57,16 +59,18 @@ theorem exists_prime_reject_03_square_1304 {n p : ℕ} (hn : 1 < n) (ho : Odd n)
   · by_cases h2 : Real.log n ≤ (62 / 5 : ℝ)
     · let d : SquareCoverageData :=
         ⟨31, 1732867951399 / 250000000000, 6204557762567 / 500000000000, 6, [9, 3, 5, 8, 10, 6]⟩
-      have hd : d ∈ squareCoverages :=
-        List.mem_of_getElem? (show squareCoverages[4]? = some d by rfl)
+      have hd : d ∈ squareCoverages := by
+        simp only [squareCoverages, List.mem_append, squareCoverage01, List.mem_cons, d, true_or,
+          or_true]
       apply
         squareCoverage_divisor_03 hn ho hp hdiv hRH d hd (lo := (113 / 10 : ℝ)) (hi := 62 / 5)
           (by norm_num only) (le_of_not_ge h1) h2
       all_goals norm_num only [d, Rat.cast_div, Rat.cast_ofNat]
     · let d : SquareCoverageData :=
         ⟨43, 3784189633917 / 500000000000, 652209279817 / 50000000000, 6, [12, 5, 8, 13]⟩
-      have hd : d ∈ squareCoverages :=
-        List.mem_of_getElem? (show squareCoverages[5]? = some d by rfl)
+      have hd : d ∈ squareCoverages := by
+        simp only [squareCoverages, List.mem_append, squareCoverage01, List.mem_cons, d, true_or,
+          or_true]
       apply
         squareCoverage_divisor_03 hn ho hp hdiv hRH d hd (lo := (62 / 5 : ℝ)) (hi := 326 / 25)
           (by norm_num only) (le_of_not_ge h2) hU

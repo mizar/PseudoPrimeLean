@@ -27,8 +27,9 @@ theorem exists_prime_reject_03_square_mid {n p : ℕ} (hn : 1 < n) (ho : Odd n) 
   · let d : SquareCoverageData :=
       ⟨541, 3147633000719 / 250000000000, 3098894526487 / 62500000000, 10,
         [95, 69, 96, 90, 71, 91, 98, 92, 99, 93, 100, 94]⟩
-    have hd : d ∈ squareCoverages :=
-      List.mem_of_getElem? (show squareCoverages[21]? = some d by rfl)
+    have hd : d ∈ squareCoverages := by
+      simp only [squareCoverages, List.mem_append, squareCoverage03, List.mem_cons, d, true_or,
+        or_true]
     apply
       squareCoverage_divisor_03 hn ho hp hdiv hRH d hd (lo := (85 / 2 : ℝ)) (hi := (99 / 2 : ℝ))
         (by norm_num only) hL h1
@@ -37,8 +38,9 @@ theorem exists_prime_reject_03_square_mid {n p : ℕ} (hn : 1 < n) (ho : Odd n) 
     · let d : SquareCoverageData :=
         ⟨701, 819241675503 / 62500000000, 31073199677503 / 500000000000, 10,
           [116, 89, 70, 111, 103, 92, 117, 105, 118, 106, 119, 101, 107, 120]⟩
-      have hd : d ∈ squareCoverages :=
-        List.mem_of_getElem? (show squareCoverages[23]? = some d by rfl)
+      have hd : d ∈ squareCoverages := by
+        simp only [squareCoverages, List.mem_append, squareCoverage03, List.mem_cons, d, true_or,
+          or_true]
       apply
         squareCoverage_divisor_03 hn ho hp hdiv hRH d hd (lo := (99 / 2 : ℝ)) (hi := (62 : ℝ))
           (by norm_num only) (le_of_not_ge h1) h2
@@ -46,8 +48,9 @@ theorem exists_prime_reject_03_square_mid {n p : ℕ} (hn : 1 < n) (ho : Odd n) 
     · let d : SquareCoverageData :=
         ⟨1103, 1751673806709 / 125000000000, 5033898982571 / 62500000000, 11,
           [161, 110, 97, 163, 164, 165, 166, 167, 158, 168, 159, 169, 145, 160, 170]⟩
-      have hd : d ∈ squareCoverages :=
-        List.mem_of_getElem? (show squareCoverages[29]? = some d by rfl)
+      have hd : d ∈ squareCoverages := by
+        simp only [squareCoverages, List.mem_append, squareCoverage03, List.mem_cons, d, true_or,
+          or_true]
       apply
         squareCoverage_divisor_03 hn ho hp hdiv hRH d hd (lo := (62 : ℝ)) (hi := (161 / 2 : ℝ))
           (by norm_num only) (le_of_not_ge h2) hU

@@ -32,15 +32,7 @@ theorem three_le_local_full {s : ℝ} (hs : Real.log 9 ≤ s) : 3 ≤ localFullE
           localInterpolationWeight s * (Analysis.adaptivePart2CutoffRoot (max 7 s)) ^ 2)
     change (61 : ℝ) ≤ localInterpolatedGuard s at h
     linarith only [h]
-  have he : (3 : ℝ) ≤ localEvenEnvelope s := by
-    apply Finset.le_inf'
-    intro ⟨b, d, j⟩ hm
-    have hm' : (b, d, j) ∈ localEvenAnchors := List.mem_toFinset.mp hm
-    have hc := (List.all_eq_true.mp localEvenAnchors_checked) (b, d, j) hm'
-    have hbq : (8 : ℚ) ≤ b := (of_decide_eq_true hc).1
-    have hb : (8 : ℝ) ≤ b := by exact_mod_cast hbq
-    have hm := le_max_left (b : ℝ) (s - d)
-    nlinarith only [hb, hm]
+  have he : (3 : ℝ) ≤ localEvenEnvelope s := three_le_localEvenEnvelope s
   exact le_min (le_min hs2 (le_min ha hg)) he
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

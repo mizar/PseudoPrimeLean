@@ -6,8 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.QuadraticEulerCenterScalars
-public import PseudoPrime.PrimeTestBounds.MillerRabin.QuadraticEulerPsiBound
+import PseudoPrime.PrimeTestBounds.MillerRabin.QuadraticEulerCenterScalars
+import PseudoPrime.PrimeTestBounds.MillerRabin.QuadraticEulerPsiBound
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuadraticGammaCellTransfer
 
 /-! # Closed finite-center certificate for the coupled Gamma comparison -/

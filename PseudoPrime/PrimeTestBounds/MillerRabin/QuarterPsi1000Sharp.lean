@@ -6,8 +6,9 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.QuadraticEulerLogSumUpper
-public import PseudoPrime.PrimeTestBounds.MillerRabin.QuadraticEulerCutoffRows
+public import Mathlib.NumberTheory.Chebyshev
+import PseudoPrime.PrimeTestBounds.MillerRabin.QuadraticEulerLogSumUpper
+import PseudoPrime.PrimeTestBounds.MillerRabin.QuadraticEulerCutoffRows
 
 /-! # Chebyshev upper boundary at 1000 -/
 
@@ -17,7 +18,7 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
 -- Kernel reduction sums the previously checked finite logarithm endpoints.
 /-- The checked logarithm upper endpoints through 1000 sum to at most 996.7. -/
-theorem quarter_psi1000_rows_997 :
+private theorem quarter_psi1000_rows_997 :
     ((centerRowsBelow 1000).map (fun r ↦ r.hi)).sum ≤ (9967 / 10 : ℚ) := by decide +kernel
 
 /-- The existing checked prime-power rows give the unconditional upper bound

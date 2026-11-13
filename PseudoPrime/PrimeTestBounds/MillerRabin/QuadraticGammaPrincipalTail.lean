@@ -6,7 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.QuadraticGammaUpperRows
+public import PseudoPrime.LLS.PrincipalExponentialTailBounds
+import PseudoPrime.PrimeTestBounds.MillerRabin.QuadraticGammaUpperRows
 
 /-! # Explicit principal Gamma tail for the low middle cells -/
 

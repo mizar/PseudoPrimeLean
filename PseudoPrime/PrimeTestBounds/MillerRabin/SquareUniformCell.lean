@@ -27,7 +27,7 @@ structure SquareUniformCell where
 /-- Check that a square coverage row reaches the cell and its prime cutoff is at most
 `(371/1000) * lo²`. The lower endpoint is required to be nonnegative. -/
 def SquareUniformCell.check (c : SquareUniformCell) : Bool :=
-  match squareCoverages[c.row]? with
+  match squareCoverages.toArray[c.row]? with
   | none => false
   | some d =>
     decide (0 ≤ c.lo ∧ c.lo ≤ c.hi ∧ c.hi ≤ d.target ∧ (d.bound : ℚ) ≤ (371 / 1000) * c.lo ^ 2)
@@ -42,7 +42,7 @@ theorem SquareUniformCell.sound {n p : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Pr
       r.Prime ∧
         (r : ℝ) ≤ (371 / 1000 : ℝ) * (Real.log n) ^ 2 ∧
         ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
-  cases heq : squareCoverages[c.row]? with
+  cases heq : squareCoverages.toArray[c.row]? with
   | none => simp only [SquareUniformCell.check, heq, Bool.false_eq_true] at hcheck
   | some
     d =>
@@ -58,7 +58,11 @@ theorem SquareUniformCell.sound {n p : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Pr
         h
     have htarget : Real.log n ≤ (d.target : ℝ) := hhi.trans ((Rat.cast_le (K := ℝ)).mpr hc.2.2.1)
     obtain ⟨r, hr, hrB, hfail⟩ :=
-      squareCoverages_sound hn ho hp hp2 hpow hRH d (List.mem_of_getElem? heq) htarget
+      squareCoverages_sound hn ho hp hp2 hpow hRH d
+        (by
+          have hm := Array.mem_of_getElem? heq
+          simpa only [← Array.mem_toList_iff, List.toList_toArray] using hm)
+        htarget
     have hrB' : (r : ℝ) ≤ d.bound := by exact_mod_cast hrB
     refine ⟨r, hr, ?_, hfail⟩
     nlinarith only [hrB', hbudget, hsq]

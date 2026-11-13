@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterElevenCount
+import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterElevenCount
 public import PseudoPrime.PrimeTestBounds.MillerRabin.SignedWeightedCell
 
 /-! # Signed semiprime cells from the eleven-prime count table -/
@@ -18,8 +18,8 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 /-- A checked eleven-prime count reduces a semiprime witness to a local
 logarithmic case. The budget remains variable so that individual cells can
 reuse the same weighted-family construction without expanding it again. -/
-theorem quarter_eleven_cell {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime) (hq : q.Prime)
-    (hprod : n = p * q) (H B : ℕ) (hH : H ≤ 73) (h31 : 31 ≤ B) {A D X : ℝ}
+private theorem quarter_eleven_cell {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime)
+    (hq : q.Prime) (hprod : n = p * q) (H B : ℕ) (hH : H ≤ 73) (h31 : 31 ≤ B) {A D X : ℝ}
     (hA : Real.log 2 + (H : ℝ) / 10 ≤ A)
     (hD : D ≤ Real.log ((2 * quarterElevenRow.getD H 0 : ℕ) : ℝ)) (hB : (B : ℝ) ≤ X)
     (hlocal :
@@ -41,5 +41,29 @@ theorem quarter_eleven_cell {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prim
   exact
     exists_prime_reject_weighted_cell hn ho hp hq hprod S w H B 10 (by norm_num only) hwpos hprime
       hbound hw hA hDF hB hlocal
+
+/-- For budget 72, the checked eleven-prime family gives the stated semiprime
+witness whenever the local logarithmic reduction holds. The integer 1000 is
+its certified signed-family count. -/
+theorem quarter_eleven_cell_72 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime) (hq : q.Prime)
+    (hprod : n = p * q) (B : ℕ) (hB0 : 31 ≤ B) {A D X : ℝ} (hA : Real.log 2 + (72 : ℝ) / 10 ≤ A)
+    (hD : D ≤ Real.log (1000 : ℝ)) (hB : (B : ℝ) ≤ X)
+    (hlocal :
+      Real.log q ≤ max A (Real.log n - D) →
+        ∃ r : ℕ, r.Prime ∧ (r : ℝ) ≤ X ∧ ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n)) :
+    ∃ r : ℕ, r.Prime ∧ (r : ℝ) ≤ X ∧ ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
+  exact quarter_eleven_cell hn ho hp hq hprod 72 B (by decide) hB0 hA hD hB hlocal
+
+/-- For budget 73, the checked eleven-prime family gives the stated semiprime
+witness whenever the local logarithmic reduction holds. The integer 1062 is
+its certified signed-family count. -/
+theorem quarter_eleven_cell_73 {n p q : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Prime) (hq : q.Prime)
+    (hprod : n = p * q) (B : ℕ) (hB0 : 31 ≤ B) {A D X : ℝ} (hA : Real.log 2 + (73 : ℝ) / 10 ≤ A)
+    (hD : D ≤ Real.log (1062 : ℝ)) (hB : (B : ℝ) ≤ X)
+    (hlocal :
+      Real.log q ≤ max A (Real.log n - D) →
+        ∃ r : ℕ, r.Prime ∧ (r : ℝ) ≤ X ∧ ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n)) :
+    ∃ r : ℕ, r.Prime ∧ (r : ℝ) ≤ X ∧ ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
+  exact quarter_eleven_cell hn ho hp hq hprod 73 B (by decide) hB0 hA hD hB hlocal
 
 end PseudoPrime.PrimeTestBounds.MillerRabin

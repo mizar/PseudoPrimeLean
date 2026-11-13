@@ -46,7 +46,9 @@ theorem exists_prime_reject_03_square_144 {n p : ℕ} (hn : 1 < n) (ho : Odd n) 
         ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
   let d : SquareCoverageData :=
     ⟨53, 3988984046563 / 500000000000, 7218909707617 / 500000000000, 6, [15, 5, 8, 13, 16, 11]⟩
-  have hd : d ∈ squareCoverages := List.mem_of_getElem? (show squareCoverages[6]? = some d by rfl)
+  have hd : d ∈ squareCoverages := by
+    simp only [squareCoverages, List.mem_append, squareCoverage01, List.mem_cons, d, true_or,
+      or_true]
   apply
     squareCoverage_divisor_03 hn ho hp hdiv hRH d hd (lo := (133 / 10 : ℝ)) (hi := 72 / 5)
       (by norm_num only) hL hU

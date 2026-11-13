@@ -18,14 +18,18 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 Each candidate must have cutoff at most `B` and begin at or below the current cap; it
 extends coverage to twice its strict multichoose endpoint. The final cap must reach `target`.
 The separate soundness theorem combines these rational checks with checked candidate data. -/
-def squareChainCheck (L : List CandidateLogData) (B : ℕ) (cap target : ℚ) : List ℕ → Bool
+def squareChainCheckArray (L : Array CandidateLogData) (B : ℕ) (cap target : ℚ) : List ℕ → Bool
   | [] => decide (target ≤ cap)
   | i :: is =>
     match L[i]? with
     | none => false
     | some d =>
       decide (d.candidate.bound ≤ B ∧ d.candidate.upper ≤ cap) &&
-        squareChainCheck L B (max cap (2 * d.candidate.lower)) target is
+        squareChainCheckArray L B (max cap (2 * d.candidate.lower)) target is
+
+/-- Convert the candidate list once, then check the chain using the resulting array. -/
+def squareChainCheck (L : List CandidateLogData) (B : ℕ) (cap target : ℚ) (ids : List ℕ) : Bool :=
+  squareChainCheckArray L.toArray B cap target ids
 
 /-- A checked chain extends an initial square witness bound from `cap` through `target`.
 Assume RH, an odd prime square, and checked candidate certificates. Induction on the chain
@@ -45,15 +49,15 @@ theorem squareChainCheck_sound {n p : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Pri
     have htc : target ≤ cap := of_decide_eq_true hcheck
     exact hbase (hlog.trans ((Rat.cast_le (K := ℝ)).mpr htc))
   | cons i is ih =>
-    cases heq : L[i]? with
-    | none => simp only [squareChainCheck, heq, Bool.false_eq_true] at hcheck
+    cases heq : L.toArray[i]? with
+    | none => simp only [squareChainCheck, squareChainCheckArray, heq, Bool.false_eq_true] at hcheck
     | some
       d =>
       have hc :
         (decide (d.candidate.bound ≤ B ∧ d.candidate.upper ≤ cap) &&
             squareChainCheck L B (max cap (2 * d.candidate.lower)) target is) =
           true := by
-        simpa only [squareChainCheck, heq] using hcheck
+        simpa only [squareChainCheck, squareChainCheckArray, heq] using hcheck
       have hparts := Bool.and_eq_true_iff.mp hc
       have hd : d.candidate.bound ≤ B ∧ d.candidate.upper ≤ cap := of_decide_eq_true hparts.1
       apply ih (max cap (2 * d.candidate.lower)) hparts.2
@@ -66,7 +70,11 @@ theorem squareChainCheck_sound {n p : ℕ} (hn : 1 < n) (ho : Odd n) (hp : p.Pri
           simp only [Rat.cast_max, Rat.cast_mul, Rat.cast_ofNat] at hx
           exact (le_max_iff.mp hx).resolve_left hsmall
         obtain ⟨r, hr, hrB, hfail⟩ :=
-          candidateList_square hn ho hp hp2 hpow hRH L hL d (List.mem_of_getElem? heq) hlo hhi
+          candidateList_square hn ho hp hp2 hpow hRH L hL d
+            (by
+              have hm := Array.mem_of_getElem? heq
+              simpa only [← Array.mem_toList_iff, List.toList_toArray] using hm)
+            hlo hhi
         exact ⟨r, hr, hrB.trans hd.1, hfail⟩
 
 /-- An odd prime square below a logarithmic seed cap has a rejecting prime at most `B`

@@ -10,6 +10,8 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalDecimalScale
 public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedSixPoleEndpoints
 public import PseudoPrime.LLS.DecimalLogBounds
 
+import PseudoPrime.PrimeTestBounds.MillerRabin.LocalEvenAnchors
+
 /-! # Finite-index reduction for the refined paper cutoff -/
 
 @[expose] public section

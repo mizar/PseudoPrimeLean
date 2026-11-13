@@ -7,7 +7,8 @@ Authors: Mizar
 module
 
 public import PseudoPrime.Analysis.HighPrecisionLogBounds
-public import PseudoPrime.PrimeTestBounds.MillerRabin.IndexedPrimeSupplies
+public import Mathlib.NumberTheory.PrimeCounting
+import PseudoPrime.PrimeTestBounds.MillerRabin.IndexedPrimeSupplies
 
 /-! # A tight repeated-product candidate at 131 -/
 

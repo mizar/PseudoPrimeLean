@@ -6,14 +6,15 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedDigammaSquareBlock0
-public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedDigammaSquareBlock1
-public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedDigammaSquareBlock2
-public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedDigammaSquareBlock3
-public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedDigammaSquareBlock4
-public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedDigammaSquareBlock5
-public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedDigammaSquareBlock6
-public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedDigammaSquareBlock7
+public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedSixPoleGammaSecond
+import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedDigammaSquareBlock0
+import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedDigammaSquareBlock1
+import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedDigammaSquareBlock2
+import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedDigammaSquareBlock3
+import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedDigammaSquareBlock4
+import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedDigammaSquareBlock5
+import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedDigammaSquareBlock6
+import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedDigammaSquareBlock7
 
 /-! # Digamma reciprocal-square prefix certificate -/
 

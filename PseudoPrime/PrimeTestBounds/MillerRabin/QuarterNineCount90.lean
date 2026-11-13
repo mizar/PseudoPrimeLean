@@ -27,7 +27,7 @@ def quarterNine90Row : Array ℕ :=
     1146]
 
 /-- Suffix rows for checking the nine-prime weighted recurrence through 90. -/
-def quarterNine90Tail : List (Array ℕ) :=
+private def quarterNine90Tail : List (Array ℕ) :=
   [#[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 10,
       11, 12, 13, 14, 15, 15, 17, 17, 18, 19, 22, 23, 25, 27, 28, 30, 32, 35, 36, 40, 42, 47, 48,
       53, 55, 59, 62, 66, 69, 75, 80, 84, 90, 95, 101, 105, 112, 117, 123, 129, 138, 146, 153, 163,
@@ -64,7 +64,7 @@ def quarterNine90Tail : List (Array ℕ) :=
 
 set_option maxRecDepth 8192 in
 /-- The tabulated suffix counts satisfy the weighted recurrence through 90. -/
-theorem quarter_nine90_checked :
+private theorem quarter_nine90_checked :
     weightedPrimeTableCheck 90 target028NineWeights (quarterNine90Row :: quarterNine90Tail) =
       true := by
   decide +kernel

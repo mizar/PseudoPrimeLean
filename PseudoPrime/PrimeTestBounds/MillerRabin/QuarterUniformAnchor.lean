@@ -8,6 +8,8 @@ module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterUniformLow
 
+import PseudoPrime.PrimeTestBounds.MillerRabin.LocalEvenAnchors
+
 /-! # Local-anchor witnesses on the next uniform-triple range -/
 
 @[expose] public section

@@ -6,17 +6,18 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalEvenAnchors
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalEvenWitness
+import PseudoPrime.PrimeTestBounds.MillerRabin.LocalEvenAnchors
 
 /-! # The finite local even-character witness envelope -/
 
-@[expose] public section
+public section
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
 /-- The finite list of even correction anchors is nonempty. The explicit first
 anchor supplies the inhabitant required by the finite minimum. -/
-theorem localEvenAnchors_nonempty : localEvenAnchors.toFinset.Nonempty := by decide
+private theorem localEvenAnchors_nonempty : localEvenAnchors.toFinset.Nonempty := by decide
 
 /-- The minimum of the twenty certified squared local radii at logarithmic
 scale `s`. Each radius is `max b (s - d)` for a listed anchor; the minimum
@@ -45,6 +46,18 @@ theorem localEvenEnvelope_mono : Monotone localEvenEnvelope := by
   have ht : 0 ≤ max (b : ℝ) (t - d) := hb.trans (le_max_left _ _)
   exact
     (Finset.inf'_le _ hm).trans ((sq_le_sq₀ hs ht).mpr (max_le_max_left _ (sub_le_sub_right hst _)))
+
+/-- Every nonnegative local anchor gives a squared radius of at least three.
+The finite minimum therefore has the same lower bound at every scale. -/
+theorem three_le_localEvenEnvelope (s : ℝ) : 3 ≤ localEvenEnvelope s := by
+  apply Finset.le_inf'
+  intro ⟨b, d, j⟩ hm
+  have hm' : (b, d, j) ∈ localEvenAnchors := List.mem_toFinset.mp hm
+  have hc := (List.all_eq_true.mp localEvenAnchors_checked) (b, d, j) hm'
+  have hbq : (8 : ℚ) ≤ b := (of_decide_eq_true hc).1
+  have hb : (8 : ℝ) ≤ b := by exact_mod_cast hbq
+  have hm := le_max_left (b : ℝ) (s - d)
+  nlinarith only [hb, hm]
 
 /-- Under GRH, the finite local envelope bounds a prime rejecting odd `n > 1`
 when its local passing residues lie in a proper subgroup at a divisor `q` and

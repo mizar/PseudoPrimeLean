@@ -12,6 +12,8 @@ import PseudoPrime.PrimeTestBounds.MillerRabin.FromLLS
 public import PseudoPrime.PrimeTestBounds.MillerRabin.Target028SmallIndex
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterEvenCorrection
 
+import PseudoPrime.PrimeTestBounds.MillerRabin.LocalEvenAnchors
+
 /-! # Common-scale quarter bounds for small inputs and local subgroups -/
 
 @[expose] public section

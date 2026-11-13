@@ -8,6 +8,8 @@ module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterVariableAnchor
 
+import PseudoPrime.PrimeTestBounds.MillerRabin.LocalEvenNumerics
+
 /-! # Quarter-square uniform triple anchor 1125 -/
 
 @[expose] public section

@@ -6,7 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.PrimeTestBounds.MillerRabin.SquareUniformCover
+public import PseudoPrime.PrimeTestBounds.MillerRabin.SquareLocalCounting
+import PseudoPrime.PrimeTestBounds.MillerRabin.SquareUniformCover
 
 /-! # Uniform square coefficient from logarithmic scale 8 to 350 -/
 
@@ -16,7 +17,7 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
 /-- The 69 contiguous cells proving the `371/1000` square coefficient on `[8, 350]`.
 Each cell names a previously certified square coverage row and rational endpoints. -/
-def squareUniformCells : List SquareUniformCell :=
+private def squareUniformCells : List SquareUniformCell :=
   [⟨2, 8, 51059454739 / 5000000000⟩, ⟨3, 51059454739 / 5000000000, 5655991810819 / 500000000000⟩,
     ⟨4, 5655991810819 / 500000000000, 6204557762567 / 500000000000⟩,
     ⟨5, 6204557762567 / 500000000000, 652209279817 / 50000000000⟩,
@@ -89,8 +90,8 @@ def squareUniformCells : List SquareUniformCell :=
 set_option maxRecDepth 16384 in
 /-- The square coefficient cells cover `[8, 350]` and meet their rational budgets.
 The finite check also selects a verified square coverage row for each interval. -/
-theorem squareUniformCells_checked : squareUniformCoverCheck 8 350 squareUniformCells = true := by
-  decide +kernel
+private theorem squareUniformCells_checked :
+    squareUniformCoverCheck 8 350 squareUniformCells = true := by decide +kernel
 
 /-- Under RH, an odd prime square with logarithm in `[8, 350]` has a rejecting prime
 at most `(371/1000) * (log n)²`. The checked cells cover the interval and each cell uses

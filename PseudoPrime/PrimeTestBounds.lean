@@ -59,8 +59,6 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformThreeElevenGRH
 public import PseudoPrime.PrimeTestBounds.MillerRabin.ThreeEleventhsGRH
 public import PseudoPrime.PrimeTestBounds.MillerRabin.ThreeEleventhsBridge
 public import PseudoPrime.PrimeTestBounds.MillerRabin.LogNineBridge
-public import PseudoPrime.PrimeTestBounds.MillerRabin.SemiprimeFirstSupply
-public import PseudoPrime.PrimeTestBounds.MillerRabin.SemiprimeSeedSupplies
 public import PseudoPrime.PrimeTestBounds.MillerRabin.Anchor250Bounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.PrimeProductCountingBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.ExactKernelPrimeProductBounds
@@ -94,7 +92,6 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalDivisorLogBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalLogQuadraticBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalLogSquareBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalEnvelopeCheck
-public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalAnchorWitness
 public import PseudoPrime.PrimeTestBounds.MillerRabin.RationalLogCellChecks
 public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalModulusArithmetic
 public import PseudoPrime.PrimeTestBounds.MillerRabin.CountElevenWitness
