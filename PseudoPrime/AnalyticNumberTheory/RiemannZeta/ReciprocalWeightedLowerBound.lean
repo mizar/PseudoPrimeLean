@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ReciprocalRemainderNumerics
+import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ReciprocalRemainderNumerics
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ReciprocalResidueBoundGeneral
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.WeightedSumIntegral
 

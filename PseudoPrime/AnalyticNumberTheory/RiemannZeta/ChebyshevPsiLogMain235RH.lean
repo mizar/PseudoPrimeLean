@@ -69,10 +69,15 @@ theorem psi_error_main_remainder235 (hRH : RiemannHypothesis) {L : ℝ} (hL : (4
   have ht : 1000 ≤ 2 / δ := by
     rw [hi.2.2.2.1]
     linarith only [hc.2.2.2.2]
+  have hbase : 2 * Real.pi * Real.exp 1 ≤ (1000 : ℝ) := by
+    have hp :=
+      mul_le_mul Real.pi_lt_four.le Real.exp_one_lt_three.le (Real.exp_pos 1).le
+        (by norm_num only : (0 : ℝ) ≤ 4)
+    nlinarith only [hp]
   have hd2 : δ ≤ 1 / 2 := by linarith only [hi.2.1]
   have hb :=
-    psi_error_normalized_budget_of_RH hRH ht (Real.exp_pos L) hc.2.2.1 hc.2.2.2.1 hi.1.le hd2
-      hi.2.2.1
+    psi_error_normalized_budget_of_RH hRH (hbase.trans ht) (Real.exp_pos L) hc.2.2.1 hc.2.2.2.1
+      hi.1.le hd2 hi.2.2.1
   have ht0 : (2 / δ : ℝ) ≠ 0 := ne_of_gt (div_pos (by norm_num only) hi.1)
   have hp0 : (2 * Real.pi : ℝ) ≠ 0 := ne_of_gt (mul_pos (by norm_num only) Real.pi_pos)
   have hlog : Real.log (2 / δ) = a + c := by

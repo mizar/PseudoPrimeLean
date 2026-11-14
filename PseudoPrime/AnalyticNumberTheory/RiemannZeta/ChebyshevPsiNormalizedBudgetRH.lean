@@ -18,12 +18,13 @@ public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 
-/-- Under RH, a positive width `h = x * δ`, cutoff `T ≥ 1000`, and
+/-- Under RH, a positive width `h = x * δ`, cutoff `T ≥ 2 * π * exp 1`, and
 `0 ≤ δ ≤ 1/2` give the normalized Chebyshev estimate with the full sharp
 zero-count tail. Nonnegativity of the actual ordinate tail justifies applying
 the linear power estimates to its certified upper bound. -/
-theorem psi_error_normalized_budget_of_RH (hr : RiemannHypothesis) {T x h δ : ℝ} (hT : 1000 ≤ T)
-    (hx : 0 < x) (hh : 0 < h) (hxh : 1 < x - h) (hd : 0 ≤ δ) (hd2 : δ ≤ 1 / 2) (hw : h = x * δ) :
+theorem psi_error_normalized_budget_of_RH (hr : RiemannHypothesis) {T x h δ : ℝ}
+    (hT : 2 * Real.pi * Real.exp 1 ≤ T) (hx : 0 < x) (hh : 0 < h) (hxh : 1 < x - h) (hd : 0 ≤ δ)
+    (hd2 : δ ≤ 1 / 2) (hw : h = x * δ) :
     |Chebyshev.psi x - x| / Real.sqrt x ≤
       h / (2 * Real.sqrt x) + Real.log (2 * Real.pi) / Real.sqrt x +
         (1 + δ / 2) * (Real.log (T / (2 * Real.pi)) ^ 2 / (2 * Real.pi) + 53 / 100) +

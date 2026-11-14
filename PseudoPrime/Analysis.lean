@@ -188,6 +188,9 @@ public import PseudoPrime.Analysis.ComplexPowerBounds
 public import PseudoPrime.Analysis.ComplexExponentialBounds
 public import PseudoPrime.Analysis.ClampedExponentialDifference
 public import PseudoPrime.Analysis.ComplexLogPrimitive
+public import PseudoPrime.Analysis.ComplexLogBoundaryBound
+public import PseudoPrime.Analysis.CombinedZeroWeight
+public import PseudoPrime.Analysis.MovingPrimitiveParts
 public import PseudoPrime.Analysis.UnitDiskMinimum
 public import PseudoPrime.Analysis.LogPowerAsymptotics
 public import PseudoPrime.Analysis.LogSquareRootBounds

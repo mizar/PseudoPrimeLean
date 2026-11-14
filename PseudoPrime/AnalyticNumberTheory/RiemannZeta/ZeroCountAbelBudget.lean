@@ -48,6 +48,24 @@ theorem count_integral_le_of_error {a b : ℝ} {M E : ℝ → ℝ} (ha : 0 < a) 
   rw [intervalIntegral.integral_add hm he] at hh
   exact hh
 
+/-- For `1 < a ≤ b`, a continuous zero-count approximation and error budget
+bound the reciprocal sum between the two heights. The lower endpoint count is
+retained, which allows a certified finite zero count to sharpen the estimate. -/
+theorem reciprocal_interval_le_of_error {a b : ℝ} {M E : ℝ → ℝ} (ha : 1 < a) (hab : a ≤ b)
+    (hM : ContinuousOn M (Set.Icc a b)) (hE : ContinuousOn E (Set.Icc a b))
+    (hQ : ∀ t ∈ Set.Icc a b, |zeroCount t - M t| ≤ E t) :
+    zeroReciprocalSum b - zeroReciprocalSum a ≤
+      M b / b - zeroCount a / a + (∫ t in a..b, M t / t ^ 2) + E b / b +
+        (∫ t in a..b, E t / t ^ 2) := by
+  have ha0 : 0 < a := zero_lt_one.trans ha
+  have hb0 : 0 < b := ha0.trans_le hab
+  have hsum := zeroReciprocal_abel ha hab
+  have hint := count_integral_le_of_error ha0 hab hM hE hQ
+  have hpoint := (abs_le.mp (hQ b ⟨hab, le_rfl⟩)).2
+  have hdiv := div_le_div_of_nonneg_right hpoint hb0.le
+  rw [sub_div] at hdiv
+  linarith only [hsum, hint, hdiv]
+
 /-- Under RH, any continuous approximation and error budget valid from `2πe`
 to `b` bound the reciprocal zero sum. The explicit endpoint and integral budget
 terms remain separate so that sharp coefficients can be retained. -/

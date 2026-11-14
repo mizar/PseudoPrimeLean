@@ -59,11 +59,11 @@ theorem psi_error_budget_tail (hRH : RiemannHypothesis) {T x h C : ℝ}
   have hm := mul_le_mul_of_nonneg_left hlo (Real.sqrt_nonneg (x + h))
   linarith only [hsplit, hm]
 
-/-- Under RH and `T ≥ 1000`, the explicit zero-count budgets bound the
+/-- Under RH and `T ≥ 2 * π * exp 1`, the explicit zero-count budgets bound the
 Chebyshev error with reciprocal constant `53/100` and the detailed ordinate
 tail. This form is used before selecting the logarithmic smoothing scale. -/
-theorem psi_error_budget_of_RH (hRH : RiemannHypothesis) {T x h : ℝ} (hT : 1000 ≤ T) (hh : 0 < h)
-    (hx : 1 < x - h) :
+theorem psi_error_budget_of_RH (hRH : RiemannHypothesis) {T x h : ℝ}
+    (hT : 2 * Real.pi * Real.exp 1 ≤ T) (hh : 0 < h) (hx : 1 < x - h) :
     |Chebyshev.psi x - x| ≤
       h / 2 + Real.log (2 * Real.pi) +
         Real.sqrt (x + h) * (Real.log (T / (2 * Real.pi)) ^ 2 / (2 * Real.pi) + 53 / 100) +
@@ -72,11 +72,6 @@ theorem psi_error_budget_of_RH (hRH : RiemannHypothesis) {T x h : ℝ} (hT : 100
             ((3 / 2 : ℝ) * Real.log T + 271 / 40) / T ^ 2 +
             2 / (3 * T ^ 3)) +
         1 / h := by
-  have hbase : 2 * Real.pi * Real.exp 1 ≤ T := by
-    have hp :=
-      mul_le_mul Real.pi_lt_four.le Real.exp_one_lt_three.le (Real.exp_pos 1).le
-        (by norm_num only : (0 : ℝ) ≤ 4)
-    nlinarith only [hp, hT]
-  exact psi_error_budget_tail hRH hbase hh hx (ordinateTail_budget_of_RH hRH hT)
+  exact psi_error_budget_tail hRH hT hh hx (ordinateTail_budget_of_RH hRH hT)
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

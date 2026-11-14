@@ -16,21 +16,23 @@ public section
 
 namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
 
-/-- Under RH, the full inverse-square zero-ordinate tail above `a ≥ 1000`
+/-- Under RH, the full inverse-square zero-ordinate tail above `a ≥ 2 * π * exp 1`
 is bounded by the displayed logarithmic main term and explicit inverse powers.
 The estimate preserves all terms of the RH zero-count budget. -/
-theorem ordinateTail_budget_of_RH (hRH : RiemannHypothesis) {a : ℝ} (ha : 1000 ≤ a) :
+theorem ordinateTail_budget_of_RH (hRH : RiemannHypothesis) {a : ℝ}
+    (ha : 2 * Real.pi * Real.exp 1 ≤ a) :
     ordinateTail a ≤
       (Real.log (a / (2 * Real.pi)) + 1) / (Real.pi * a) +
         ((3 / 2 : ℝ) * Real.log a + 271 / 40) / a ^ 2 +
         2 / (3 * a ^ 3) := by
-  have ha0 : 0 < a := by linarith only [ha]
   have hp : 0 < 2 * Real.pi := mul_pos (by norm_num only) Real.pi_pos
-  have hbase : 2 * Real.pi * Real.exp 1 ≤ a := by
-    have h :=
-      mul_le_mul Real.pi_lt_four.le Real.exp_one_lt_three.le (Real.exp_pos 1).le
-        (by norm_num only : (0 : ℝ) ≤ 4)
-    nlinarith only [h, ha]
+  have he : (1 : ℝ) ≤ Real.exp 1 := by linarith only [Real.exp_one_gt_d9]
+  have hbase1 : (1 : ℝ) < 2 * Real.pi * Real.exp 1 := by
+    have hm := mul_le_mul_of_nonneg_left he hp.le
+    nlinarith only [hm, Real.pi_gt_three]
+  have ha1 : 1 < a := hbase1.trans_le ha
+  have ha0 : 0 < a := zero_lt_one.trans ha1
+  have hbase : 2 * Real.pi * Real.exp 1 ≤ a := ha
   apply ordinateTail_le_of_eventually hRH
   filter_upwards [Filter.eventually_ge_atTop a] with b hb
   have hb0 : 0 < b := ha0.trans_le hb
@@ -59,16 +61,18 @@ theorem ordinateTail_budget_of_RH (hRH : RiemannHypothesis) {a : ℝ} (ha : 1000
     have h := zero_count_budget_of_RH hRH (hbase.trans ht.1)
     convert h using 1
     ring
-  have h := finite_tail_of_log_budget (by linarith only [ha]) hb hM hE hQ
+  have h := finite_tail_of_log_budget (by linarith only [ha1]) hb hM hE hQ
   have hlog : 0 ≤ Real.log b - Real.log (2 * Real.pi) + 1 := by
-    have hp_le : 2 * Real.pi ≤ b := by linarith only [Real.pi_lt_four, ha, hb]
+    have hp_le : 2 * Real.pi ≤ b := by
+      have hm := mul_le_mul_of_nonneg_left he hp.le
+      linarith only [hm, ha, hb]
     have hl := Real.log_le_log hp hp_le
     linarith only [hl]
   have ht : 0 ≤ (1 / Real.pi) * (Real.log b - Real.log (2 * Real.pi) + 1) / b :=
     div_nonneg (mul_nonneg (one_div_nonneg.mpr Real.pi_pos.le) hlog) hb0.le
   have hbi : b⁻¹ ≤ (1 : ℝ) := by
     simpa only [inv_one] using
-      (inv_le_inv₀ hb0 (by norm_num only : (0 : ℝ) < 1)).2 (by linarith only [ha, hb])
+      (inv_le_inv₀ hb0 (by norm_num only : (0 : ℝ) < 1)).2 (by linarith only [ha1, hb])
   have hbi0 : 0 ≤ b⁻¹ := inv_nonneg.mpr hb0.le
   rw [Real.log_div ha0.ne' hp.ne']
   simp only [div_eq_mul_inv, mul_inv_rev, ← inv_pow] at h ht ⊢

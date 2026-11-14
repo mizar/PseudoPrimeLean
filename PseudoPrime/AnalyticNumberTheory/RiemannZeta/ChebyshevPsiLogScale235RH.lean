@@ -34,6 +34,11 @@ theorem psi_error_scale235_of_RH (hRH : RiemannHypothesis) {L : ℝ} (hL : (47 /
         1 / h := by
   dsimp only
   have hc := scale235_conditions hL
-  exact psi_error_budget_of_RH hRH (by linarith only [hc.2.2.2.2]) hc.2.2.1 hc.2.2.2.1
+  have hbase : 2 * Real.pi * Real.exp 1 ≤ (2000 : ℝ) := by
+    have hp :=
+      mul_le_mul Real.pi_lt_four.le Real.exp_one_lt_three.le (Real.exp_pos 1).le
+        (by norm_num only : (0 : ℝ) ≤ 4)
+    nlinarith only [hp]
+  exact psi_error_budget_of_RH hRH (hbase.trans hc.2.2.2.2) hc.2.2.1 hc.2.2.2.1
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta
