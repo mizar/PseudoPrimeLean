@@ -55,7 +55,7 @@ def target028Fine47Row : Array ℕ :=
     1904, 1964, 2028, 2094]
 
 /-- Tail arrays certify every step of the weighted count recurrence. -/
-def target028Fine47Tail : List (Array ℕ) :=
+private def target028Fine47Tail : List (Array ℕ) :=
   [#[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4,
       4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 9, 9, 9, 10, 11, 11, 12, 12, 13, 14, 14, 15, 16, 17, 18,
       19, 19, 21, 22, 23, 24, 24, 27, 28, 29, 31, 33, 34, 36, 38, 39, 42, 44, 46, 48, 49, 52, 55,
@@ -174,7 +174,7 @@ def target028Fine47Tail : List (Array ℕ) :=
 set_option maxRecDepth 65536 in
 -- The complete finite table contains sixteen arrays of 181 entries.
 /-- The rational weighted count table satisfies the exact recurrence. -/
-theorem target028_fine47_checked :
+private theorem target028_fine47_checked :
     weightedPrimeTableCheck 180 target028Fine47Weights (target028Fine47Row :: target028Fine47Tail) =
       true := by
   decide +kernel
@@ -189,7 +189,7 @@ theorem target028_fine47_labels :
 -- Eleven logarithm intervals are checked by the finite Taylor criterion.
 set_option maxRecDepth 65536 in
 /-- Each refined weight is an upper bound for twenty times the prime logarithm. -/
-theorem target028_fine47_log_check :
+private theorem target028_fine47_log_check :
     ∀ p ∈ target028FifteenPrimes,
       Analysis.rationalLogIntervalCheck p (Nat.log2 p + 1) 24 0
           ((target028Fine47Weight p : ℚ) / 20) =
