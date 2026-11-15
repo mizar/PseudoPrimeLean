@@ -65,10 +65,10 @@ theorem psi_error_81_upper_counterexample :
       (81 / 100 : ℝ) := by
   sorry
 
-/-- For every real `x` with `11 < x ≤ 10^19`, the Chebyshev ψ error is at most
-`(47 / 50) * √x`. The proof of Büthe's unconditional finite-range bound remains open here.
+/-- For every real `x` with `11 ≤ x ≤ 10^19`, the normalized Chebyshev ψ error is at most
+`47 / 50`. The proof of Büthe's unconditional finite-range bound remains open here.
 See Büthe, *An analytic method for bounding ψ(x)*, https://arxiv.org/abs/1511.02032. -/
-theorem psi_buthe_bound {x : ℝ} (hx : 11 < x) (hx' : x ≤ 10 ^ 19) :
-    |Chebyshev.psi x - x| ≤ (47 / 50 : ℝ) * Real.sqrt x := by sorry
+theorem psi_buthe_bound {x : ℝ} (hx : 11 ≤ x) (hx' : x ≤ 10 ^ 19) :
+    |Chebyshev.psi x - x| / Real.sqrt x ≤ (47 / 50 : ℝ) := by sorry
 
 end ComparatorChallenges.Chebyshev

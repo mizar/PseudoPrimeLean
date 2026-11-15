@@ -18,7 +18,7 @@ lake comparator --config=ComparatorChallenges/PrimeMillerRabinWitness/PrimeMille
 Its solution uses the base-nine and three-tenths rejecting-prime bounds and the four-ninths
 prime acceptance result. The [slides](PrimeMillerRabinWitness/PrimeMillerRabinWitnessCriterion.md) display both criteria and GRH.
 Each challenge and solution pair has its own namespace and repeats the GRH definitions locally.
-Import `ComparatorChallenges` to use all solution modules together.
+Import `ComparatorChallenges` to use all completed solution modules together.
 
 The two GRH-conditional odd-prime quadratic witness bounds use the same arrangement. Run both
 comparisons together with:
@@ -69,4 +69,4 @@ and proved using the existing finite certificate.
 It also states the unconditional ψ error bound `81 / 100` on `[17, 36076729684088]`
 and strict counterexamples at `16.99` and `36076729684088.75`; these proofs remain `sorry`.
 The open challenges also include Büthe's unconditional bound
-`|ψ(x) - x| ≤ (47 / 50) * √x` for `11 < x ≤ 10^19`.
+`|ψ(x) - x| / √x ≤ 47 / 50` for `11 ≤ x ≤ 10^19`.

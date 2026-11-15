@@ -9,7 +9,7 @@ module
 public import Mathlib.NumberTheory.Chebyshev
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 
-/-! # Challenges on the Chebyshev ψ and θ functions
+/-! # Challenges on the Chebyshev ψ function
 
 These challenges state bounds for the Chebyshev ψ function whose solutions are complete.
 Each declaration specifies its assumptions and range.
