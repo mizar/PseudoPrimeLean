@@ -45,8 +45,8 @@ The S1 statement fixes the original correction term and starts at modulus three.
 starts at modulus five, allows character value zero, and does not require the witness to be coprime
 to the modulus. The [LLS slides](LLSWitness/LLSWitnessCriterion.md) display both statements and GRH.
 
-The Lee–Nosal bounds for the Chebyshev ψ and θ functions assume RH and hold for real
-`x ≥ 101` and `x ≥ 2657`, respectively. Run their comparison with:
+The Chebyshev ψ and θ challenges are split by the status of their solutions. Compare the
+completed ψ bounds with:
 
 ```sh
 lake comparator --config=ComparatorChallenges/Chebyshev/ChebyshevCriterion.json
@@ -54,10 +54,19 @@ lake comparator --config=ComparatorChallenges/Chebyshev/ChebyshevCriterion.json
 
 The solution applies `psi_lee_nosal_of_RH` from
 `PseudoPrime/AnalyticNumberTheory/RiemannZeta/ChebyshevPsiSign100RH.lean`.
-The θ statement is included, but its solution remains `sorry`, so the comparison is incomplete.
+The θ statement and other open challenges have separate criterion and solution files and
+a separate comparison configuration:
+
+```sh
+lake comparator --config=ComparatorChallenges/Chebyshev/ChebyshevOpenCriterion.json
+```
+
+The Lee–Nosal θ bound assumes RH and holds for real `x ≥ 2657`; its solution remains `sorry`.
 The same challenge also states the unconditional ψ error bound `4 / 5` on
 `[1423, 36076580711678]` and strict counterexamples at `1422.99` and `36076580711678.75`.
 Their solution proofs remain `sorry`. The bound on `[1423, 1000000]` is stated separately
 and proved using the existing finite certificate.
 It also states the unconditional ψ error bound `81 / 100` on `[17, 36076729684088]`
 and strict counterexamples at `16.99` and `36076729684088.75`; these proofs remain `sorry`.
+The open challenges also include Büthe's unconditional bound
+`|ψ(x) - x| ≤ (47 / 50) * √x` for `11 < x ≤ 10^19`.

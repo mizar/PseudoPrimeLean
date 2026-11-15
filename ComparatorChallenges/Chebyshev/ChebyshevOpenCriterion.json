@@ -1,0 +1,20 @@
+{
+  "challenge_module": "ComparatorChallenges.Chebyshev.ChebyshevOpenCriterion",
+  "solution_module": "ComparatorChallenges.Chebyshev.ChebyshevOpenSolution",
+  "theorem_names": [
+    "ComparatorChallenges.Chebyshev.theta_lee_nosal_of_RH",
+    "ComparatorChallenges.Chebyshev.psi_error_le_four_fifths",
+    "ComparatorChallenges.Chebyshev.psi_error_lower_counterexample",
+    "ComparatorChallenges.Chebyshev.psi_error_upper_counterexample",
+    "ComparatorChallenges.Chebyshev.psi_error_le_eighty_one_percent",
+    "ComparatorChallenges.Chebyshev.psi_error_81_lower_counterexample",
+    "ComparatorChallenges.Chebyshev.psi_error_81_upper_counterexample",
+    "ComparatorChallenges.Chebyshev.psi_buthe_bound"
+  ],
+  "definition_names": [],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ]
+}
