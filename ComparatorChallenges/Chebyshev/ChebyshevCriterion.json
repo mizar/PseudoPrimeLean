@@ -1,0 +1,17 @@
+{
+  "challenge_module": "ComparatorChallenges.Chebyshev.ChebyshevCriterion",
+  "solution_module": "ComparatorChallenges.Chebyshev.ChebyshevSolution",
+  "theorem_names": [
+    "ComparatorChallenges.Chebyshev.psi_lee_nosal_of_RH",
+    "ComparatorChallenges.Chebyshev.theta_lee_nosal_of_RH",
+    "ComparatorChallenges.Chebyshev.psi_error_le_four_fifths_million",
+    "ComparatorChallenges.Chebyshev.psi_error_le_four_fifths",
+    "ComparatorChallenges.Chebyshev.psi_error_lower_counterexample",
+    "ComparatorChallenges.Chebyshev.psi_error_upper_counterexample",
+    "ComparatorChallenges.Chebyshev.psi_error_le_eighty_one_percent",
+    "ComparatorChallenges.Chebyshev.psi_error_81_lower_counterexample",
+    "ComparatorChallenges.Chebyshev.psi_error_81_upper_counterexample"
+  ],
+  "definition_names": [],
+  "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"]
+}

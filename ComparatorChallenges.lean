@@ -9,3 +9,4 @@ module
 public import ComparatorChallenges.LLSWitness.LLSWitnessSolution
 public import ComparatorChallenges.PrimeMillerRabinWitness.PrimeMillerRabinWitnessSolution
 public import ComparatorChallenges.PrimeQuadraticWitness.PrimeQuadraticWitnessSolution
+public import ComparatorChallenges.Chebyshev.ChebyshevSolution

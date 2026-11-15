@@ -18,7 +18,7 @@ lake comparator --config=ComparatorChallenges/PrimeMillerRabinWitness/PrimeMille
 Its solution uses the base-nine and three-tenths rejecting-prime bounds and the four-ninths
 prime acceptance result. The [slides](PrimeMillerRabinWitness/PrimeMillerRabinWitnessCriterion.md) display both criteria and GRH.
 Each challenge and solution pair has its own namespace and repeats the GRH definitions locally.
-Import `ComparatorChallenges` to use all three solution modules together.
+Import `ComparatorChallenges` to use all solution modules together.
 
 The two GRH-conditional odd-prime quadratic witness bounds use the same arrangement. Run both
 comparisons together with:
@@ -44,3 +44,20 @@ lake comparator --config=ComparatorChallenges/LLSWitness/LLSWitnessCriterion.jso
 The S1 statement fixes the original correction term and starts at modulus three. The S2 statement
 starts at modulus five, allows character value zero, and does not require the witness to be coprime
 to the modulus. The [LLS slides](LLSWitness/LLSWitnessCriterion.md) display both statements and GRH.
+
+The Lee–Nosal bounds for the Chebyshev ψ and θ functions assume RH and hold for real
+`x ≥ 101` and `x ≥ 2657`, respectively. Run their comparison with:
+
+```sh
+lake comparator --config=ComparatorChallenges/Chebyshev/ChebyshevCriterion.json
+```
+
+The solution applies `psi_lee_nosal_of_RH` from
+`PseudoPrime/AnalyticNumberTheory/RiemannZeta/ChebyshevPsiSign100RH.lean`.
+The θ statement is included, but its solution remains `sorry`, so the comparison is incomplete.
+The same challenge also states the unconditional ψ error bound `4 / 5` on
+`[1423, 36076580711678]` and strict counterexamples at `1422.99` and `36076580711678.75`.
+Their solution proofs remain `sorry`. The bound on `[1423, 1000000]` is stated separately
+and proved using the existing finite certificate.
+It also states the unconditional ψ error bound `81 / 100` on `[17, 36076729684088]`
+and strict counterexamples at `16.99` and `36076729684088.75`; these proofs remain `sorry`.
