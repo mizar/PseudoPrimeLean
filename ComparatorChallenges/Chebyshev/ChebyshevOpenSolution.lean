@@ -35,12 +35,6 @@ is at most `4 / 5`. This unconditional finite-range assertion remains open here.
 theorem psi_error_le_four_fifths {x : ℝ} (hx : 1423 ≤ x) (hx' : x ≤ 36076580711678) :
     |Chebyshev.psi x - x| / Real.sqrt x ≤ (4 / 5 : ℝ) := by sorry
 
-/-- At `x = 1422.99`, the normalized Chebyshev ψ error is strictly greater than `4 / 5`.
-The exact rational counterexample remains open here. -/
-theorem psi_error_lower_counterexample :
-    |Chebyshev.psi (142299 / 100) - 142299 / 100| / Real.sqrt (142299 / 100) > (4 / 5 : ℝ) := by
-  sorry
-
 /-- At `x = 36076580711678.75`, the normalized Chebyshev ψ error is strictly greater than
 `4 / 5`. This upper-endpoint counterexample remains open here. -/
 theorem psi_error_upper_counterexample :
@@ -52,11 +46,6 @@ theorem psi_error_upper_counterexample :
 is at most `81 / 100`. This unconditional finite-range assertion remains open here. -/
 theorem psi_error_le_eighty_one_percent {x : ℝ} (hx : 17 ≤ x) (hx' : x ≤ 36076729684088) :
     |Chebyshev.psi x - x| / Real.sqrt x ≤ (81 / 100 : ℝ) := by sorry
-
-/-- At `x = 16.99`, the normalized Chebyshev ψ error exceeds `81 / 100`.
-This exact rational counterexample remains open here. -/
-theorem psi_error_81_lower_counterexample :
-    |Chebyshev.psi (1699 / 100) - 1699 / 100| / Real.sqrt (1699 / 100) > (81 / 100 : ℝ) := by sorry
 
 /-- At `x = 36076729684088.75`, the normalized Chebyshev ψ error exceeds `81 / 100`.
 This upper-endpoint counterexample remains open here. -/

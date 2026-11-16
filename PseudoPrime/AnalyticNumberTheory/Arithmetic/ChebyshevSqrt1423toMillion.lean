@@ -62,4 +62,13 @@ theorem psi_four_fifths_1423_million {x : ℝ} (ha : 1423 ≤ x) (hb : x ≤ 100
         change x < (1000001 : ℝ)
         linarith only [hb]
 
+/-- For every real `x` from 1423 through 1000000, the normalized Chebyshev ψ error is at most
+`4 / 5`. Divide the existing unconditional square-root error bound by the positive square root. -/
+theorem psi_error_le_four_fifths_million {x : ℝ} (hx : 1423 ≤ x) (hx' : x ≤ 1000000) :
+    |Chebyshev.psi x - x| / Real.sqrt x ≤ (4 / 5 : ℝ) := by
+  have hpos : 0 < x := lt_of_lt_of_le (by norm_num only) hx
+  exact
+    (div_le_iff₀ (Real.sqrt_pos.2 hpos)).2
+      (psi_four_fifths_1423_million hx hx')
+
 end PseudoPrime.AnalyticNumberTheory.Arithmetic

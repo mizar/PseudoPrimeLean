@@ -8,6 +8,7 @@ module
 
 import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevPsiSign100RH
 import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevSqrt1423toMillion
+import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevCounterexamples
 public import Mathlib.NumberTheory.Chebyshev
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 
@@ -32,10 +33,19 @@ theorem psi_lee_nosal_of_RH (hRH : RiemannHypothesis) {x : ℝ} (hx : 101 ≤ x)
 /-- For every real `x` from 1423 through 1000000, the normalized Chebyshev ψ error is at most
 `4 / 5`. Divide the existing unconditional square-root error bound by the positive square root. -/
 theorem psi_error_le_four_fifths_million {x : ℝ} (hx : 1423 ≤ x) (hx' : x ≤ 1000000) :
-    |Chebyshev.psi x - x| / Real.sqrt x ≤ (4 / 5 : ℝ) := by
-  have hpos : 0 < x := lt_of_lt_of_le (by norm_num only) hx
-  exact
-    (div_le_iff₀ (Real.sqrt_pos.2 hpos)).2
-      (PseudoPrime.AnalyticNumberTheory.Arithmetic.psi_four_fifths_1423_million hx hx')
+    |Chebyshev.psi x - x| / Real.sqrt x ≤ (4 / 5 : ℝ) :=
+  PseudoPrime.AnalyticNumberTheory.Arithmetic.psi_error_le_four_fifths_million hx hx'
+
+/-- At `x = 1422.99`, the normalized Chebyshev ψ error is strictly greater than `4 / 5`.
+The proof uses a kernel-checked least-common-multiple bound and rational bounds on log and sqrt. -/
+theorem psi_error_lower_counterexample :
+    |Chebyshev.psi (142299 / 100) - 142299 / 100| / Real.sqrt (142299 / 100) > (4 / 5 : ℝ) :=
+  PseudoPrime.AnalyticNumberTheory.Arithmetic.psi_error_lower_counterexample
+
+/-- At `x = 16.99`, the normalized Chebyshev ψ error exceeds `81 / 100`.
+The proof uses a kernel-checked least-common-multiple bound and rational bounds on log and sqrt. -/
+theorem psi_error_81_lower_counterexample :
+    |Chebyshev.psi (1699 / 100) - 1699 / 100| / Real.sqrt (1699 / 100) > (81 / 100 : ℝ) :=
+  PseudoPrime.AnalyticNumberTheory.Arithmetic.psi_error_81_lower_counterexample
 
 end ComparatorChallenges.Chebyshev

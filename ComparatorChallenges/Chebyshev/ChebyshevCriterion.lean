@@ -33,4 +33,15 @@ theorem psi_lee_nosal_of_RH (hRH : RiemannHypothesis) {x : ℝ} (hx : 101 ≤ x)
 theorem psi_error_le_four_fifths_million {x : ℝ} (hx : 1423 ≤ x) (hx' : x ≤ 1000000) :
     |Chebyshev.psi x - x| / Real.sqrt x ≤ (4 / 5 : ℝ) := by sorry
 
+/-- At `x = 1422.99`, the normalized Chebyshev ψ error is strictly greater than `4 / 5`.
+The rational argument is exact and lies below the proposed lower endpoint. -/
+theorem psi_error_lower_counterexample :
+    |Chebyshev.psi (142299 / 100) - 142299 / 100| / Real.sqrt (142299 / 100) > (4 / 5 : ℝ) := by
+  sorry
+
+/-- At `x = 16.99`, the normalized Chebyshev ψ error exceeds `81 / 100`.
+The argument is an exact rational number below the proposed lower endpoint. -/
+theorem psi_error_81_lower_counterexample :
+    |Chebyshev.psi (1699 / 100) - 1699 / 100| / Real.sqrt (1699 / 100) > (81 / 100 : ℝ) := by sorry
+
 end ComparatorChallenges.Chebyshev
