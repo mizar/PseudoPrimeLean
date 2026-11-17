@@ -7,6 +7,8 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformKorseltTriple
+public import Mathlib.Data.Nat.Squarefree
+import Mathlib.Tactic.Linarith
 
 /-! # Ordered factors of uniform Korselt triples -/
 

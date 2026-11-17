@@ -7,6 +7,8 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalDecimalScale
+public import PseudoPrime.PrimeTestBounds.MillerRabin.LogScale100
+public import PseudoPrime.PrimeTestBounds.MillerRabin.FiniteIndexStructure
 public import PseudoPrime.PrimeTestBounds.MillerRabin.LocalDivisorLogBounds
 public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedSixPoleMonotonicity
 public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformKorseltTriple

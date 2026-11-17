@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformKorseltTriple
+public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
 public import PseudoPrime.AnalyticNumberTheory.GRH.Definition
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCountConjugation
 import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevPsiSquareLogLowerRH

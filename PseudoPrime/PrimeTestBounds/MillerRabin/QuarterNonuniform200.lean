@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformKorseltTriple
+public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
 public import PseudoPrime.AnalyticNumberTheory.GRH.Definition
 import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterFactorDispatch
 import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterSquareRange200

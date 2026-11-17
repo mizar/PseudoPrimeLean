@@ -11,6 +11,7 @@ import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterCenteredFirstEndpoint
 import PseudoPrime.Analysis.LogTaylorBounds
 import PseudoPrime.AnalyticNumberTheory.Arithmetic.TruncatedEulerCertificates3
 public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformKorseltTriple
+public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
 public import PseudoPrime.AnalyticNumberTheory.GRH.Definition
 import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterUniformClosedNegative
 
