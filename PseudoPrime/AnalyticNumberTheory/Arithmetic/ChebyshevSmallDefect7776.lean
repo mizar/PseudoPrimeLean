@@ -9,7 +9,7 @@ module
 public import Mathlib.NumberTheory.Chebyshev
 import Mathlib.Analysis.Complex.ExponentialBounds
 import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevLcmBounds
-import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevSmallPsiBounds
+import PseudoPrime.AnalyticNumberTheory.Cert.Chebyshev.SmallDefect.ChebyshevSmallPsiBounds
 
 /-! # A small-range higher-prime-power bound through 7776 -/
 
