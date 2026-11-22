@@ -7,9 +7,9 @@ Authors: Mizar
 module
 
 public import Mathlib.NumberTheory.Chebyshev
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevLeeNosal327to503
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevLeeNosal503to1006
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevLeeNosal1006to1930
+import PseudoPrime.AnalyticNumberTheory.Cert.Chebyshev.PsiChecks.LeeNosal327To503
+import PseudoPrime.AnalyticNumberTheory.Cert.Chebyshev.PsiChecks.LeeNosal503To1006
+import PseudoPrime.AnalyticNumberTheory.Cert.Chebyshev.PsiChecks.LeeNosal1006To1930
 
 /-! # Lee–Nosal psi bound through 1930 -/
 
@@ -24,9 +24,9 @@ theorem psi_lee_nosal_101_1930 {x : ℝ} (ha : 101 ≤ x) (hb : x < 1930) :
     |Chebyshev.psi x - x| ≤
       Real.sqrt x * (Real.log x * (Real.log x - Real.log (Real.log x)) / (8 * Real.pi)) := by
   by_cases h : x < 503
-  · exact psi_lee_nosal_101_503 ha h
+  · exact Cert.Chebyshev.PsiChecks.bound_101_503 ha h
   by_cases h' : x < 1006
-  · exact psi_lee_nosal_503_1006 (le_of_not_gt h) h'
-  · exact psi_lee_nosal_1006_1930 (le_of_not_gt h') hb
+  · exact Cert.Chebyshev.PsiChecks.bound_503_1006 (le_of_not_gt h) h'
+  · exact Cert.Chebyshev.PsiChecks.bound_1006_1930 (le_of_not_gt h') hb
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

@@ -325,16 +325,18 @@ theorem low_zero_signs_of_taylor (h : LowZero100TaylorSigns) : LowZero100SignCha
         ⟨RiemannXi.critical_xi_neg_of_approx hEb hpos.1,
           RiemannXi.critical_xi_pos_of_approx hEa hpos.2⟩
 
-/-- Certified sign changes on the candidate intervals produce the ordered
-critical-line zero ordinates and both bracket predicates. The rational
-endpoints are checked internally for positivity, separation and height. -/
-theorem low_zero_100_of_signs (hsign : LowZero100SignChanges) :
+/-- The ordinates belong to the open intervals used in the height-100 sign certificate. -/
+def LowZero100OpenBoxes (g : Fin 29 → ℝ) : Prop :=
+  ∀ i, (lowZero100Lower i : ℝ) < g i ∧ g i < (lowZero100Lower i : ℝ) + 1 / 100
+
+/-- Height-100 endpoint signs give ordered zeros strictly inside their certified intervals. -/
+theorem low_zero_100_open_of_signs (hsign : LowZero100SignChanges) :
     ∃ g : Fin 29 → ℝ,
       StrictMono g ∧
         (∀ i, 0 < g i) ∧
         (∀ i, g i ≤ 100) ∧
         (∀ i, riemannZeta (((1 / 2 : ℝ) : ℂ) + (g i : ℂ) * Complex.I) = 0) ∧
-        LowZero100LowerBounds g ∧ LowZero100UpperBounds g := by
+        LowZero100OpenBoxes g := by
   let a : Fin 29 → ℝ := fun i ↦ lowZero100Lower i
   let b : Fin 29 → ℝ := fun i ↦ (lowZero100Lower i : ℝ) + 1 / 100
   have hpa : ∀ i : Fin 29, (0 : ℚ) ≤ lowZero100Lower i := by decide +kernel
@@ -359,7 +361,7 @@ theorem low_zero_100_of_signs (hsign : LowZero100SignChanges) :
       (f (a i) < 0 ∧ 0 < f (b i)) ∨ (f (b i) < 0 ∧ 0 < f (a i)) :=
     hsign
   obtain ⟨g, hm, hg, hz⟩ := RiemannXi.critical_zeros_of_sign_intervals a b hab hsep hs
-  refine ⟨g, hm, ?_, ?_, hz, ?_, ?_⟩
+  refine ⟨g, hm, ?_, ?_, hz, hg⟩
   · intro i
     have h : (0 : ℝ) ≤ a i := by
       dsimp only [a]
@@ -373,10 +375,19 @@ theorem low_zero_100_of_signs (hsign : LowZero100SignChanges) :
       norm_num only [Rat.cast_add, Rat.cast_div, Rat.cast_ofNat] at hr
       exact hr
     exact (hg i).2.le.trans h
-  · intro i
-    exact (hg i).1.le
-  · intro i
-    exact (hg i).2.le
+
+/-- Certified sign changes on the candidate intervals produce the ordered
+critical-line zero ordinates and both bracket predicates. The rational
+endpoints are checked internally for positivity, separation and height. -/
+theorem low_zero_100_of_signs (hsign : LowZero100SignChanges) :
+    ∃ g : Fin 29 → ℝ,
+      StrictMono g ∧
+        (∀ i, 0 < g i) ∧
+        (∀ i, g i ≤ 100) ∧
+        (∀ i, riemannZeta (((1 / 2 : ℝ) : ℂ) + (g i : ℂ) * Complex.I) = 0) ∧
+        LowZero100LowerBounds g ∧ LowZero100UpperBounds g := by
+  obtain ⟨g, hm, hp, hh, hz, hb⟩ := low_zero_100_open_of_signs hsign
+  exact ⟨g, hm, hp, hh, hz, fun i ↦ (hb i).1.le, fun i ↦ (hb i).2.le⟩
 
 /-- Under RH, the endpoint signs and the two-sided count bound construct
 29 ordered zeros that satisfy the candidate bounds, exhaust the positive

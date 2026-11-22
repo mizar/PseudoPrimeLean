@@ -39,13 +39,4 @@ theorem psi_lee_nosal_cell {a b c x : ℝ} (ha : Real.exp 1 ≤ a) (hax : a ≤ 
       Real.sqrt x * (Real.log x * (Real.log x - Real.log (Real.log x)) / (8 * Real.pi)) := by
   exact lee_nosal_cell Chebyshev.psi_mono ha hax hxb hl hu hc
 
-/-- A checked pair of theta endpoint bounds and an envelope lower bound at `a ≥ exp 1`
-imply the Lee–Nosal theta error inequality on `[a, b]`. -/
-theorem theta_lee_nosal_cell {a b c x : ℝ} (ha : Real.exp 1 ≤ a) (hax : a ≤ x) (hxb : x ≤ b)
-    (hl : b - c ≤ Chebyshev.theta a) (hu : Chebyshev.theta b ≤ a + c)
-    (hc : c ≤ Real.sqrt a * (Real.log a * (Real.log a - Real.log (Real.log a)) / (8 * Real.pi))) :
-    |Chebyshev.theta x - x| ≤
-      Real.sqrt x * (Real.log x * (Real.log x - Real.log (Real.log x)) / (8 * Real.pi)) := by
-  exact lee_nosal_cell Chebyshev.theta_mono ha hax hxb hl hu hc
-
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

@@ -9,7 +9,7 @@ module
 public import Mathlib.NumberTheory.Chebyshev
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevLeeNosalRH
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevLeeNosalPsiSquare
+import PseudoPrime.AnalyticNumberTheory.Cert.Chebyshev.PsiResults.LeeNosalSquare101To50000
 
 /-! # A square-logarithmic Chebyshev bound under RH -/
 
@@ -23,7 +23,7 @@ estimate on the half-line beginning at `50000`. -/
 theorem psi_error_square_from_101_of_RH (hRH : RiemannHypothesis) {x : ℝ} (hx : 101 ≤ x) :
     |Chebyshev.psi x - x| ≤ Real.sqrt x * (Real.log x ^ 2 / 12) := by
   by_cases h : x ≤ 50000
-  · exact psi_error_square_twelve_finite hx h
+  · exact PseudoPrime.AnalyticNumberTheory.Cert.Chebyshev.PsiResults.square_bound_101_50000 hx h
   · exact psi_error_square_twelve_of_RH hRH (le_of_not_ge h)
 
 /-- Under RH, `ψ(x)` is at least `x - sqrt(x) * log(x)^2 / 12` for every

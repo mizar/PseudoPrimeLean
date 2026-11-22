@@ -112,27 +112,4 @@ theorem psi_error_envelope_of_log_coarse (hRH : RiemannHypothesis) {x : ℝ} (hx
   rw [Real.exp_log hx, hs] at h
   exact h
 
-/-- Under RH and the stated coarse positive zero-count bound, the
-Chebyshev `θ` error for positive `x` with `log x ≥ 43` is bounded by the
-target envelope minus `5/4 * sqrt x`. Combine the `ψ` bound with the
-prime-power excess; the zero-count estimate remains a hypothesis. -/
-theorem theta_error_envelope_of_log_coarse (hRH : RiemannHypothesis) {x : ℝ} (hx : 0 < x)
-    (hL : 43 ≤ Real.log x)
-    (hQ :
-      ∀ t ∈ Set.Ici (2 * Real.pi * Real.exp 1),
-        |positiveZeroCount t -
-              (t / (2 * Real.pi) * Real.log (t / (2 * Real.pi)) - t / (2 * Real.pi) + 7 / 8)| ≤
-          Real.log t) :
-    |Chebyshev.theta x - x| ≤
-      Real.sqrt x *
-        (Real.log x * (Real.log x - Real.log (Real.log x)) / (8 * Real.pi) - 5 / 4) := by
-  have hp := abs_le.mp (psi_error_envelope_of_log_coarse hRH hx hL hQ)
-  have hd := psi_sub_theta_43 hx hL
-  have hd0 := sub_nonneg.mpr (Chebyshev.theta_le_psi x)
-  have hs := Real.sqrt_nonneg x
-  apply abs_le.mpr
-  constructor
-  · nlinarith only [hp.1, hd]
-  · nlinarith only [hp.2, hd0, hs]
-
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

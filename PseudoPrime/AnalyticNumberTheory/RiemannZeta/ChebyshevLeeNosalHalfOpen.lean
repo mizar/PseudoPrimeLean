@@ -42,16 +42,4 @@ theorem psi_lee_nosal_halfopen {a b : ℕ} {c x : ℝ} (ha : Real.exp 1 ≤ a) (
   exact
     lee_nosal_halfopen_cell Chebyshev.psi_mono Chebyshev.psi_eq_psi_coe_floor ha hax hxb hl hu hc
 
-/-- Endpoint bounds for `theta a` and `theta (b - 1)`, together with an envelope lower
-bound at `a ≥ exp 1`, certify the Lee–Nosal theta inequality on `[a, b)`. -/
-theorem theta_lee_nosal_halfopen {a b : ℕ} {c x : ℝ} (ha : Real.exp 1 ≤ a) (hax : (a : ℝ) ≤ x)
-    (hxb : x < b) (hl : (b : ℝ) - c ≤ Chebyshev.theta a)
-    (hu : Chebyshev.theta (b - 1 : ℕ) ≤ (a : ℝ) + c)
-    (hc : c ≤ Real.sqrt a * (Real.log a * (Real.log a - Real.log (Real.log a)) / (8 * Real.pi))) :
-    |Chebyshev.theta x - x| ≤
-      Real.sqrt x * (Real.log x * (Real.log x - Real.log (Real.log x)) / (8 * Real.pi)) := by
-  exact
-    lee_nosal_halfopen_cell Chebyshev.theta_mono Chebyshev.theta_eq_theta_coe_floor ha hax hxb hl hu
-      hc
-
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta
