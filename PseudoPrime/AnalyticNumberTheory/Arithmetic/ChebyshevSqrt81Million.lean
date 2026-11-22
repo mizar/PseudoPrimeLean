@@ -8,20 +8,18 @@ module
 
 public import Mathlib.NumberTheory.Chebyshev
 import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevSqrt1423toMillion
-import PseudoPrime.AnalyticNumberTheory.Cert.Chebyshev.PsiSqrtBound.Psi81Low17To26
-import PseudoPrime.AnalyticNumberTheory.Cert.Chebyshev.PsiSqrtBound.Psi81Low26To88
-import PseudoPrime.AnalyticNumberTheory.Cert.Chebyshev.PsiSqrtBound.Psi81Low88To193
-import PseudoPrime.AnalyticNumberTheory.Cert.Chebyshev.PsiSqrtBound.Psi81Low193To348
-import PseudoPrime.AnalyticNumberTheory.Cert.Chebyshev.PsiSqrtBound.Psi81Low348To568
-import PseudoPrime.AnalyticNumberTheory.Cert.Chebyshev.PsiSqrtBound.Psi81Low568To815
-import PseudoPrime.AnalyticNumberTheory.Cert.Chebyshev.PsiSqrtBound.Psi81Low815To1109
-import PseudoPrime.AnalyticNumberTheory.Cert.Chebyshev.PsiSqrtBound.Psi81Low1109To1423
+import PseudoPrime.AnalyticNumberTheory.Cert.Chebyshev.Joint.HighMillion
 
 /-! # Reduction of the coefficient-81/100 psi bound below one million -/
 
 public section
 
 namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
+
+private theorem psi81_initial {x : ℝ} (hx : 17 ≤ x) (hr : x < 101) :
+    |Chebyshev.psi x - x| / Real.sqrt x ≤ (81 / 100 : ℝ) := by
+  apply (div_le_iff₀ (Real.sqrt_pos.2 (by linarith only [hx]))).2
+  exact Cert.Chebyshev.Joint.low_prefix.2.2 x hx hr
 
 /-- Every real `x` in `[1423, 1000000]` satisfies the `81 / 100` normalized psi error bound.
 The existing unconditional `4 / 5` estimate is stronger on this interval. -/
@@ -47,7 +45,7 @@ theorem psi81_million_of_23_1423
     {x : ℝ} (hx : 17 ≤ x) (hx' : x ≤ 1000000) :
     |Chebyshev.psi x - x| / Real.sqrt x ≤ (81 / 100 : ℝ) := by
   by_cases h : x < 23
-  · exact Cert.Chebyshev.PsiSqrtBound.psi81_on_17_23 hx h
+  · exact psi81_initial hx (by linarith only [h])
   · by_cases h' : x < 1423
     · exact hsmall x (le_of_not_gt h) h'
     · exact psi81_of_1423_le (le_of_not_gt h') hx'
@@ -59,29 +57,16 @@ theorem psi81_million_of_26_1423
     {x : ℝ} (hx : 17 ≤ x) (hx' : x ≤ 1000000) :
     |Chebyshev.psi x - x| / Real.sqrt x ≤ (81 / 100 : ℝ) := by
   by_cases h : x < 26
-  · exact Cert.Chebyshev.PsiSqrtBound.psi81_on_17_26 hx h
+  · exact psi81_initial hx (by linarith only [h])
   · by_cases h' : x < 1423
     · exact hsmall x (le_of_not_gt h) h'
     · exact psi81_of_1423_le (le_of_not_gt h') hx'
 
-/-- The internal LCM certificates and the existing four-fifths bound give the
-unconditional normalized psi estimate on the closed interval from 17 to one million. -/
+/-- The joint finite certificate gives the normalized psi estimate from 17 to one million.
+Divide its absolute-error estimate by the positive square root of the input. -/
 theorem psi81_million {x : ℝ} (hx : 17 ≤ x) (hx' : x ≤ 1000000) :
     |Chebyshev.psi x - x| / Real.sqrt x ≤ (81 / 100 : ℝ) := by
-  apply psi81_million_of_26_1423 _ hx hx'
-  intro y ha hb
-  by_cases h88 : y < 88
-  · exact Cert.Chebyshev.PsiSqrtBound.psi81_on_26_88 ha h88
-  by_cases h193 : y < 193
-  · exact Cert.Chebyshev.PsiSqrtBound.psi81_on_88_193 (le_of_not_gt h88) h193
-  by_cases h348 : y < 348
-  · exact Cert.Chebyshev.PsiSqrtBound.psi81_on_193_348 (le_of_not_gt h193) h348
-  by_cases h568 : y < 568
-  · exact Cert.Chebyshev.PsiSqrtBound.psi81_on_348_568 (le_of_not_gt h348) h568
-  by_cases h815 : y < 815
-  · exact Cert.Chebyshev.PsiSqrtBound.psi81_on_568_815 (le_of_not_gt h568) h815
-  by_cases h1109 : y < 1109
-  · exact Cert.Chebyshev.PsiSqrtBound.psi81_on_815_1109 (le_of_not_gt h815) h1109
-  exact Cert.Chebyshev.PsiSqrtBound.psi81_on_1109_1423 (le_of_not_gt h1109) hb
+  apply (div_le_iff₀ (Real.sqrt_pos.2 (by linarith only [hx]))).2
+  exact Cert.Chebyshev.Joint.psi_81_of_segment Cert.Chebyshev.Joint.high_million hx hx'
 
 end PseudoPrime.AnalyticNumberTheory.Arithmetic
