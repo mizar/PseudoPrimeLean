@@ -11,11 +11,13 @@ public import Mathlib.NumberTheory.LSeries.RiemannZeta
 public import Mathlib.NumberTheory.LSeries.Nonvanishing
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
 
-/-! # Base-nine logarithm Miller–Rabin criterion challenge
+/-! # Miller–Rabin primality criterion challenges
 
-This file states the GRH-conditional primality criterion independently of the library proof.
-Its theorem is a placeholder for comparison with a solution using Lake's built-in comparator.
-The definitions fix the meaning of GRH and the criterion for that comparison.
+This file states two GRH-conditional primality criteria independently of the library proofs:
+one with the base-nine logarithmic cutoff and a stronger one with cutoff
+`max 2 ((3 / 11) * (log n)^2)`. The theorems are placeholders for comparison with solutions
+using Lake's built-in comparator. The definitions fix the meanings of GRH and the strong
+Miller–Rabin test for that comparison.
 -/
 
 @[expose] public section
