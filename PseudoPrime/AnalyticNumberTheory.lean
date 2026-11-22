@@ -325,6 +325,7 @@ public import PseudoPrime.AnalyticNumberTheory.General.HorizontalLogDerivative
 public import PseudoPrime.AnalyticNumberTheory.General.QuadraticGoodHeights
 public import PseudoPrime.AnalyticNumberTheory.DirichletLFunction.ShiftedGammaResidues
 public import PseudoPrime.AnalyticNumberTheory.GRH.Definition
+public import PseudoPrime.AnalyticNumberTheory.GRH.EquivalentForms
 public import PseudoPrime.AnalyticNumberTheory.GRH.QuasiRiemannHypothesis
 public import PseudoPrime.AnalyticNumberTheory.GRH.QuasiRiemannConsequences
 public import PseudoPrime.AnalyticNumberTheory.GRH.HeckeQuasiRiemannHypothesis
