@@ -6,14 +6,16 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.Analysis.DyadicOddSums
+public import PseudoPrime.Analysis.QuarterPhase
+public import PseudoPrime.Analysis.QuarterPhaseIntervals
+public import PseudoPrime.Analysis.QuarterPhaseHorner
 public import PseudoPrime.Analysis.LogPowerTailIntegral
 public import PseudoPrime.Analysis.LogPowerIntervalIntegral
 public import PseudoPrime.Analysis.ExponentialFourierProduct
 public import PseudoPrime.Analysis.ExponentialMomentTail
 public import PseudoPrime.Analysis.FloorIntervalBounds
-
 public import PseudoPrime.Analysis.ClippedLogRatio
-
 public import PseudoPrime.Analysis.SqrtReciprocalSlope
 public import PseudoPrime.Analysis.RepeatedSqrt
 public import PseudoPrime.Analysis.InverseMellinRules
