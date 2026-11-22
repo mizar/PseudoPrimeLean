@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mizar
 -/
 
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.DyadicEM8
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.DyadicEM8Intervals
 module
 
 public import PseudoPrime.AnalyticNumberTheory.Gamma.DyadicResolventIntervals

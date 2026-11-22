@@ -642,15 +642,15 @@ private theorem integral_two_to_eight_finite (s : ℂ) (hs : s.re = 1 / 2) (N M 
 /-- For a negative critical-line shift, an upper endpoint power tends to
 zero as the integer endpoint tends to infinity. A fixed lower endpoint remains
 in the limit. -/
-private theorem tendsto_em_boundary {s : ℂ} (hs : s.re = 1 / 2) (k : ℕ) (c : ℂ) :
-    Filter.Tendsto (fun M : ℕ ↦ (M : ℂ) ^ (-s - k) * c - (128 : ℂ) ^ (-s - k) * c) Filter.atTop
-      (nhds (-((128 : ℂ) ^ (-s - k) * c))) := by
+private theorem tendsto_em_boundary {s : ℂ} (hs : s.re = 1 / 2) (k : ℕ) (c : ℂ) (N : ℕ) :
+    Filter.Tendsto (fun M : ℕ ↦ (M : ℂ) ^ (-s - k) * c - (N : ℂ) ^ (-s - k) * c) Filter.atTop
+      (nhds (-((N : ℂ) ^ (-s - k) * c))) := by
   have hr : (-s - k : ℂ).re < 0 := by
     simp only [Complex.sub_re, Complex.neg_re, Complex.natCast_re, hs]
     have hk : (0 : ℝ) ≤ k := Nat.cast_nonneg _
     linarith only [hk]
   have h := (tendsto_natCast_cpow_atTop_zero hr).mul_const c
-  simpa only [zero_mul, zero_sub] using h.sub_const ((128 : ℂ) ^ (-s - k) * c)
+  simpa only [zero_mul, zero_sub] using h.sub_const ((N : ℂ) ^ (-s - k) * c)
 
 /-- On the unit interval the eighth Bernoulli polynomial has absolute value
 at most `1/30`. Rewriting it in `u = v(1-v)` reduces the bound to polynomial
@@ -741,6 +741,45 @@ theorem integrable_em8_tail {s : ℂ} (hs : s.re = 1 / 2) :
     have hp := Real.rpow_nonneg ht0.le (-(17 / 2 : ℝ))
     nlinarith only [hb, hp, abs_nonneg (bernoulliEight (Int.fract t))]
 
+/-- The periodic second Bernoulli tail from any natural cutoff at least 128 equals the three lower
+endpoint corrections and the eighth Bernoulli tail. The finite-cell identity
+is passed to infinity using absolute integrability and vanishing upper powers. -/
+private theorem integral_two_to_eight_tail_at (s : ℂ) (hs : s.re = 1 / 2) (N : ℕ) (hN : 128 ≤ N) :
+    (∫ x in Set.Ioi (N : ℝ), (x : ℂ) ^ (-s - 2) * ((bernoulliTwo (Int.fract x) : ℝ) : ℂ)) =
+      (s + 2) / 3 *
+        (-(N : ℂ) ^ (-s - 3) * (((-1 / 30 : ℝ) / 4 : ℝ) : ℂ) +
+          (s + 3) / 4 *
+            ((s + 4) / 5 *
+              (-(N : ℂ) ^ (-s - 5) * (((1 / 42 : ℝ) / 6 : ℝ) : ℂ) +
+                (s + 5) / 6 *
+                  ((s + 6) / 7 *
+                    (-(N : ℂ) ^ (-s - 7) * (((-1 / 30 : ℝ) / 8 : ℝ) : ℂ) +
+                      (s + 7) / 8 *
+                        ∫ x in Set.Ioi (N : ℝ),
+                          (x : ℂ) ^ (-s - 8) * ((bernoulliEight (Int.fract x) : ℝ) : ℂ)))))) := by
+  have h2 :=
+    MeasureTheory.intervalIntegral_tendsto_integral_Ioi (N : ℝ)
+      ((integrable_em2_tail hs).mono_set (Set.Ioi_subset_Ioi (by exact_mod_cast hN)))
+      (tendsto_natCast_atTop_atTop (R := ℝ))
+  have h8 :=
+    MeasureTheory.intervalIntegral_tendsto_integral_Ioi (N : ℝ)
+      ((integrable_em8_tail hs).mono_set (Set.Ioi_subset_Ioi (by exact_mod_cast hN)))
+      (tendsto_natCast_atTop_atTop (R := ℝ))
+  have hb4 := tendsto_em_boundary hs 3 (((-1 / 30 : ℝ) / 4 : ℝ) : ℂ) N
+  have hb6 := tendsto_em_boundary hs 5 (((1 / 42 : ℝ) / 6 : ℝ) : ℂ) N
+  have hb8 := tendsto_em_boundary hs 7 (((-1 / 30 : ℝ) / 8 : ℝ) : ℂ) N
+  simp only [Nat.cast_ofNat] at hb4 hb6 hb8
+  have hr8 := (hb8.add (h8.const_mul ((s + 7) / 8))).const_mul ((s + 6) / 7)
+  have hr6 := (hb6.add (hr8.const_mul ((s + 5) / 6))).const_mul ((s + 4) / 5)
+  have hr := (hb4.add (hr6.const_mul ((s + 3) / 4))).const_mul ((s + 2) / 3)
+  have hevent : ∀ᶠ M : ℕ in Filter.atTop, N ≤ M := Filter.eventually_ge_atTop N
+  have heq :=
+    hevent.mono
+      (fun M hM ↦
+        (integral_two_to_eight_finite s hs N M (le_trans (by norm_num only : 1 ≤ 128) hN) hM).symm)
+  have hresult := tendsto_nhds_unique h2 (hr.congr' heq)
+  simpa only [neg_mul] using hresult
+
 /-- The periodic second Bernoulli tail from 128 equals the three lower
 endpoint corrections and the eighth Bernoulli tail. The finite-cell identity
 is passed to infinity using absolute integrability and vanishing upper powers. -/
@@ -757,37 +796,21 @@ private theorem integral_two_to_eight_tail (s : ℂ) (hs : s.re = 1 / 2) :
                       (s + 7) / 8 *
                         ∫ x in Set.Ioi (128 : ℝ),
                           (x : ℂ) ^ (-s - 8) * ((bernoulliEight (Int.fract x) : ℝ) : ℂ)))))) := by
-  have h2 :=
-    MeasureTheory.intervalIntegral_tendsto_integral_Ioi 128 (integrable_em2_tail hs)
-      (tendsto_natCast_atTop_atTop (R := ℝ))
-  have h8 :=
-    MeasureTheory.intervalIntegral_tendsto_integral_Ioi 128 (integrable_em8_tail hs)
-      (tendsto_natCast_atTop_atTop (R := ℝ))
-  have hb4 := tendsto_em_boundary hs 3 (((-1 / 30 : ℝ) / 4 : ℝ) : ℂ)
-  have hb6 := tendsto_em_boundary hs 5 (((1 / 42 : ℝ) / 6 : ℝ) : ℂ)
-  have hb8 := tendsto_em_boundary hs 7 (((-1 / 30 : ℝ) / 8 : ℝ) : ℂ)
-  simp only [Nat.cast_ofNat] at hb4 hb6 hb8
-  have hr8 := (hb8.add (h8.const_mul ((s + 7) / 8))).const_mul ((s + 6) / 7)
-  have hr6 := (hb6.add (hr8.const_mul ((s + 5) / 6))).const_mul ((s + 4) / 5)
-  have hr := (hb4.add (hr6.const_mul ((s + 3) / 4))).const_mul ((s + 2) / 3)
-  have hevent : ∀ᶠ M : ℕ in Filter.atTop, 128 ≤ M := Filter.eventually_ge_atTop 128
-  have heq :=
-    hevent.mono (fun M hM ↦ (integral_two_to_eight_finite s hs 128 M (by norm_num only) hM).symm)
-  have hresult := tendsto_nhds_unique h2 (hr.congr' heq)
-  simpa only [neg_mul] using hresult
+  exact integral_two_to_eight_tail_at s hs 128 (by norm_num only)
 
 /-- The original sawtooth tail equals one half of the second Bernoulli tail
 minus one twelfth of the pure complex-power tail. Both terms are integrable
 on the critical line. -/
-private theorem sawtooth_tail_eq_bernoulli (s : ℂ) (hs : s.re = 1 / 2) :
-    (∫ x in Set.Ioi (128 : ℝ), (x : ℂ) ^ (-s - 2) * ((zetaSawtooth x : ℝ) : ℂ)) =
-      ((∫ x in Set.Ioi (128 : ℝ), (x : ℂ) ^ (-s - 2) * ((bernoulliTwo (Int.fract x) : ℝ) : ℂ)) -
-          (∫ x in Set.Ioi (128 : ℝ), (x : ℂ) ^ (-s - 2)) * (1 / 6 : ℂ)) /
+private theorem sawtooth_tail_eq_bernoulli_at (s : ℂ) (hs : s.re = 1 / 2) (N : ℕ) (hN : 128 ≤ N) :
+    (∫ x in Set.Ioi (N : ℝ), (x : ℂ) ^ (-s - 2) * ((zetaSawtooth x : ℝ) : ℂ)) =
+      ((∫ x in Set.Ioi (N : ℝ), (x : ℂ) ^ (-s - 2) * ((bernoulliTwo (Int.fract x) : ℝ) : ℂ)) -
+          (∫ x in Set.Ioi (N : ℝ), (x : ℂ) ^ (-s - 2)) * (1 / 6 : ℂ)) /
         2 := by
   have hre : (-s - 2 : ℂ).re < -1 := by
     simp only [Complex.sub_re, Complex.neg_re, Complex.re_ofNat, hs]
     norm_num only
-  have hp := integrableOn_Ioi_cpow_of_lt hre (by norm_num only : (0 : ℝ) < 128)
+  have hN0 : (0 : ℝ) < N := by exact_mod_cast (lt_of_lt_of_le (by norm_num only : 0 < 128) hN)
+  have hp := integrableOn_Ioi_cpow_of_lt hre hN0
   have he :
     (fun x : ℝ ↦ (x : ℂ) ^ (-s - 2) * ((zetaSawtooth x : ℝ) : ℂ)) =
       (fun x : ℝ ↦
@@ -799,14 +822,23 @@ private theorem sawtooth_tail_eq_bernoulli (s : ℂ) (hs : s.re = 1 / 2) :
     simp only [Complex.ofReal_div, Complex.ofReal_sub, Complex.ofReal_one, Complex.ofReal_ofNat]
     ring
   rw [he, MeasureTheory.integral_div,
-    MeasureTheory.integral_sub (integrable_em2_tail hs) (hp.mul_const _),
+    MeasureTheory.integral_sub
+      ((integrable_em2_tail hs).mono_set (Set.Ioi_subset_Ioi (by exact_mod_cast hN)))
+      (hp.mul_const _),
     MeasureTheory.integral_mul_const]
+
+private theorem sawtooth_tail_eq_bernoulli (s : ℂ) (hs : s.re = 1 / 2) :
+    (∫ x in Set.Ioi (128 : ℝ), (x : ℂ) ^ (-s - 2) * ((zetaSawtooth x : ℝ) : ℂ)) =
+      ((∫ x in Set.Ioi (128 : ℝ), (x : ℂ) ^ (-s - 2) * ((bernoulliTwo (Int.fract x) : ℝ) : ℂ)) -
+          (∫ x in Set.Ioi (128 : ℝ), (x : ℂ) ^ (-s - 2)) * (1 / 6 : ℂ)) /
+        2 := by
+  exact sawtooth_tail_eq_bernoulli_at s hs 128 (by norm_num only)
 
 /-- The pure power tail occurring in the sawtooth decomposition cancels
 against `s + 1` on the critical line, leaving the first Euler–Maclaurin
 endpoint correction. -/
-private theorem cpow_tail_cancellation (s : ℂ) (hs : s.re = 1 / 2) :
-    (s + 1) * (∫ x in Set.Ioi (128 : ℝ), (x : ℂ) ^ (-s - 2)) = (128 : ℂ) ^ (-s - 1) := by
+private theorem cpow_tail_cancellation_at (s : ℂ) (hs : s.re = 1 / 2) (N : ℕ) (hN : 128 ≤ N) :
+    (s + 1) * (∫ x in Set.Ioi (N : ℝ), (x : ℂ) ^ (-s - 2)) = (N : ℂ) ^ (-s - 1) := by
   have hr : (-s - 2 : ℂ).re < -1 := by
     simp only [Complex.sub_re, Complex.neg_re, Complex.re_ofNat, hs]
     norm_num only
@@ -815,12 +847,29 @@ private theorem cpow_tail_cancellation (s : ℂ) (hs : s.re = 1 / 2) :
     have hh := congrArg Complex.re h
     simp only [Complex.add_re, Complex.one_re, Complex.zero_re, hs] at hh
     norm_num only at hh
-  rw [integral_Ioi_cpow_of_lt hr (by norm_num only : (0 : ℝ) < 128)]
-  simp only [Complex.ofReal_ofNat]
+  have hN0 : (0 : ℝ) < N := by exact_mod_cast (lt_of_lt_of_le (by norm_num only : 0 < 128) hN)
+  rw [integral_Ioi_cpow_of_lt hr hN0]
   have he : (-s - 2 + 1 : ℂ) = -s - 1 := by ring
   have hd : (-s - 1 : ℂ) = -(s + 1) := by ring
   rw [he, hd, div_neg, neg_div, neg_neg]
   exact mul_div_cancel₀ _ hs1
+
+private theorem cpow_tail_cancellation (s : ℂ) (hs : s.re = 1 / 2) :
+    (s + 1) * (∫ x in Set.Ioi (128 : ℝ), (x : ℂ) ^ (-s - 2)) = (128 : ℂ) ^ (-s - 1) := by
+  exact cpow_tail_cancellation_at s hs 128 (by norm_num only)
+
+/-- The variable-cutoff Euler–Maclaurin approximation on the critical line with
+four Bernoulli corrections. The powers are written separately so the exact
+tail identity follows directly from the telescoped endpoint terms. -/
+@[expose]
+noncomputable def finiteEM8At (N : ℕ) (t : ℝ) : ℂ :=
+  let s : ℂ := ((1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I
+  (∑ k ∈ Finset.Icc (1 : ℕ) (N - 1), (k : ℂ) ^ (-s)) + (N : ℂ) ^ (1 - s) / (s - 1) +
+          (N : ℂ) ^ (-s) / 2 +
+          s * (N : ℂ) ^ (-s - 1) / 12 -
+        (s * (s + 1) * (s + 2)) * (N : ℂ) ^ (-s - 3) / 720 +
+      (s * (s + 1) * (s + 2) * (s + 3) * (s + 4)) * (N : ℂ) ^ (-s - 5) / 30240 -
+    (s * (s + 1) * (s + 2) * (s + 3) * (s + 4) * (s + 5) * (s + 6)) * (N : ℂ) ^ (-s - 7) / 1209600
 
 /-- The 128-cutoff Euler–Maclaurin approximation on the critical line with
 four Bernoulli corrections. The powers are written separately so the exact
@@ -835,6 +884,20 @@ noncomputable def finiteEM8 (t : ℝ) : ℂ :=
       (s * (s + 1) * (s + 2) * (s + 3) * (s + 4)) * (128 : ℂ) ^ (-s - 5) / 30240 -
     (s * (s + 1) * (s + 2) * (s + 3) * (s + 4) * (s + 5) * (s + 6)) * (128 : ℂ) ^ (-s - 7) / 1209600
 
+/-- Specializing the variable cutoff to 128 recovers the existing approximation.
+The equality is definitional and preserves the old endpoint API. -/
+theorem finiteEM8At_128 (t : ℝ) : finiteEM8At 128 t = finiteEM8 t := by rfl
+
+/-- The coefficient of `(N : ℂ)^(-(1/2+it))` in the grouped four-correction
+Euler–Maclaurin approximation. It is a rational expression in the critical
+parameter and can be evaluated using rational arithmetic at rational heights. -/
+@[expose]
+noncomputable def finiteEM8CoefficientAt (N : ℕ) (t : ℝ) : ℂ :=
+  let s : ℂ := ((1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I
+  (N : ℂ) / (s - 1) + 1 / 2 + s / (12 * (N : ℂ)) - s * (s + 1) * (s + 2) / (720 * (N : ℂ) ^ 3) +
+      s * (s + 1) * (s + 2) * (s + 3) * (s + 4) / (30240 * (N : ℂ) ^ 5) -
+    s * (s + 1) * (s + 2) * (s + 3) * (s + 4) * (s + 5) * (s + 6) / (1209600 * (N : ℂ) ^ 7)
+
 /-- The coefficient of `128^(-(1/2+it))` in the grouped four-correction
 Euler–Maclaurin approximation. It is a rational expression in the critical
 parameter and can be evaluated using rational arithmetic at rational heights. -/
@@ -844,6 +907,37 @@ noncomputable def finiteEM8Coefficient (t : ℝ) : ℂ :=
   128 / (s - 1) + 1 / 2 + s / (12 * 128) - s * (s + 1) * (s + 2) / (720 * 128 ^ 3) +
       s * (s + 1) * (s + 2) * (s + 3) * (s + 4) / (30240 * 128 ^ 5) -
     s * (s + 1) * (s + 2) * (s + 3) * (s + 4) * (s + 5) * (s + 6) / (1209600 * 128 ^ 7)
+
+/-- The finite approximation is the sum of (N - 1) powers plus one power at
+128 multiplied by the grouped rational coefficient. The identity uses the
+complex-power addition law at the positive nonzero base 128. -/
+theorem finiteEM8At_eq_grouped (N : ℕ) (hN : 0 < N) (t : ℝ) :
+    finiteEM8At N t =
+      (∑ k ∈ Finset.Icc (1 : ℕ) (N - 1), (k : ℂ) ^ (-((((1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I)))) +
+        finiteEM8CoefficientAt N t * (N : ℂ) ^ (-((((1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I))) := by
+  let s : ℂ := ((1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I
+  have hshift (k : ℕ) : (N : ℂ) ^ (-s - k) = (N : ℂ) ^ (-s) / (N : ℂ) ^ k := by
+    rw [Complex.cpow_sub _ _ (by exact_mod_cast hN.ne'), Complex.cpow_natCast]
+  have hpole : (N : ℂ) ^ (1 - s) = (N : ℂ) ^ (-s) * (N : ℂ) := by
+    have he : (1 - s : ℂ) = -s + 1 := by ring
+    rw [he, Complex.cpow_add _ _ (by exact_mod_cast hN.ne'), Complex.cpow_one]
+  change
+    (∑ k ∈ Finset.Icc (1 : ℕ) (N - 1), (k : ℂ) ^ (-s)) + (N : ℂ) ^ (1 - s) / (s - 1) +
+              (N : ℂ) ^ (-s) / 2 +
+              s * (N : ℂ) ^ (-s - 1) / 12 -
+            (s * (s + 1) * (s + 2)) * (N : ℂ) ^ (-s - 3) / 720 +
+          (s * (s + 1) * (s + 2) * (s + 3) * (s + 4)) * (N : ℂ) ^ (-s - 5) / 30240 -
+        (s * (s + 1) * (s + 2) * (s + 3) * (s + 4) * (s + 5) * (s + 6)) * (N : ℂ) ^ (-s - 7) /
+          1209600 =
+      _
+  have h1 := hshift 1
+  have h3 := hshift 3
+  have h5 := hshift 5
+  have h7 := hshift 7
+  norm_num only [Nat.cast_one, Nat.cast_ofNat] at h1 h3 h5 h7
+  rw [hpole, h1, h3, h5, h7]
+  dsimp only [finiteEM8CoefficientAt]
+  ring
 
 /-- The finite approximation is the sum of 127 powers plus one power at
 128 multiplied by the grouped rational coefficient. The identity uses the
@@ -875,6 +969,64 @@ theorem finiteEM8_eq_grouped (t : ℝ) :
   rw [hpole, h1, h3, h5, h7]
   dsimp only [finiteEM8Coefficient]
   ring
+
+/-- For every real height, zeta equals the four-correction finite
+Euler–Maclaurin expression minus its eighth Bernoulli tail. The identity is
+obtained from the existing sawtooth formula by six cellwise integrations and
+the limit of their telescoping endpoint terms. -/
+theorem zeta_eq_finiteEM8At (N : ℕ) (hN : 128 ≤ N) (t : ℝ) :
+    riemannZeta (((1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I) =
+      finiteEM8At N t -
+        ((∏ j ∈ Finset.range 8, ((((1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I) + j)) / (40320 : ℂ)) *
+          ∫ x in Set.Ioi (N : ℝ),
+            (x : ℂ) ^ (-(((1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I) - 8) *
+              ((bernoulliEight (Int.fract x) : ℝ) : ℂ) := by
+  let s : ℂ := ((1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I
+  have hs : s.re = 1 / 2 := by
+    simp only [s, Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.ofReal_im,
+      Complex.I_re, Complex.I_im, mul_zero, zero_mul, sub_zero, add_zero]
+  have hs0 : s ≠ 0 := by
+    intro h
+    rw [h, Complex.zero_re] at hs
+    norm_num only at hs
+  have hs1 : s ≠ 1 := by
+    intro h
+    rw [h, Complex.one_re] at hs
+    norm_num only at hs
+  have hN1 : 1 ≤ N := le_trans (by norm_num only : 1 ≤ 128) hN
+  have hb := zeta_eq_finite_sawtooth (by linarith only [hs]) hs0 hs1 N hN1
+  have hsum :
+    (∑ k ∈ Finset.Icc 1 N, (k : ℂ) ^ (-s)) =
+      (∑ k ∈ Finset.Icc 1 (N - 1), (k : ℂ) ^ (-s)) + (N : ℂ) ^ (-s) := by
+    have hn : N - 1 + 1 = N := Nat.sub_add_cancel hN1
+    have h :=
+      Finset.sum_Icc_succ_top (a := 1) (b := N - 1) (show 1 ≤ N - 1 + 1 from hn.symm ▸ hN1)
+        (fun k : ℕ ↦ (k : ℂ) ^ (-s))
+    simpa only [hn] using h
+  rw [hsum] at hb
+  have hsign : (1 - s : ℂ) = -(s - 1) := by ring
+  rw [hsign, div_neg, ← hsign] at hb
+  have hj := cpow_tail_cancellation_at s hs N hN
+  change
+    riemannZeta s =
+      finiteEM8At N t -
+        ((∏ j ∈ Finset.range 8, (s + j)) / (40320 : ℂ)) *
+          ∫ x in Set.Ioi (N : ℝ), (x : ℂ) ^ (-s - 8) * ((bernoulliEight (Int.fract x) : ℝ) : ℂ)
+  have hf :
+    finiteEM8At N t =
+      (∑ k ∈ Finset.Icc (1 : ℕ) (N - 1), (k : ℂ) ^ (-s)) + (N : ℂ) ^ (1 - s) / (s - 1) +
+              (N : ℂ) ^ (-s) / 2 +
+              s * (N : ℂ) ^ (-s - 1) / 12 -
+            (s * (s + 1) * (s + 2)) * (N : ℂ) ^ (-s - 3) / 720 +
+          (s * (s + 1) * (s + 2) * (s + 3) * (s + 4)) * (N : ℂ) ^ (-s - 5) / 30240 -
+        (s * (s + 1) * (s + 2) * (s + 3) * (s + 4) * (s + 5) * (s + 6)) * (N : ℂ) ^ (-s - 7) /
+          1209600 :=
+    rfl
+  rw [hb, hf, sawtooth_tail_eq_bernoulli_at s hs N hN, integral_two_to_eight_tail_at s hs N hN]
+  simp only [Finset.prod_range_succ, Finset.prod_range_zero, Nat.cast_ofNat, Nat.cast_zero,
+    add_zero, one_mul, Complex.ofReal_div, Complex.ofReal_one, Complex.ofReal_ofNat]
+  simp only [Complex.ofReal_neg, Complex.ofReal_one, Nat.cast_one]
+  linear_combination (s / 12) * hj
 
 /-- For every real height, zeta equals the four-correction finite
 Euler–Maclaurin expression minus its eighth Bernoulli tail. The identity is
@@ -924,19 +1076,18 @@ theorem zeta_eq_finiteEM8 (t : ℝ) :
 
 /-- The norm of the eighth-order tail integral is bounded by the integral of
 the explicit `t^(-17/2) / 30` majorant on the critical line. -/
-private theorem norm_em8_tail_le_integral {s : ℂ} (hs : s.re = 1 / 2) :
-    ‖∫ t in Set.Ioi (128 : ℝ), (t : ℂ) ^ (-s - 8) * ((bernoulliEight (Int.fract t) : ℝ) : ℂ)‖ ≤
-      ∫ t in Set.Ioi (128 : ℝ), (1 / 30 : ℝ) * t ^ (-(17 / 2 : ℝ)) := by
+private theorem norm_em8_tail_le_integral_at {s : ℂ} (hs : s.re = 1 / 2) (N : ℝ) (hN : 0 < N) :
+    ‖∫ t in Set.Ioi N, (t : ℂ) ^ (-s - 8) * ((bernoulliEight (Int.fract t) : ℝ) : ℂ)‖ ≤
+      ∫ t in Set.Ioi N, (1 / 30 : ℝ) * t ^ (-(17 / 2 : ℝ)) := by
   have hd :
-    MeasureTheory.IntegrableOn (fun t : ℝ ↦ (1 / 30 : ℝ) * t ^ (-(17 / 2 : ℝ)))
-      (Set.Ioi (128 : ℝ)) :=
-    (integrableOn_Ioi_rpow_of_lt (by norm_num only) (by norm_num only)).const_mul _
+    MeasureTheory.IntegrableOn (fun t : ℝ ↦ (1 / 30 : ℝ) * t ^ (-(17 / 2 : ℝ))) (Set.Ioi N) :=
+    (integrableOn_Ioi_rpow_of_lt (by norm_num only) hN).const_mul _
   apply (MeasureTheory.norm_integral_le_integral_norm _).trans
   apply MeasureTheory.integral_mono_of_nonneg
   · filter_upwards with t using norm_nonneg _
   · exact hd
   · filter_upwards [MeasureTheory.self_mem_ae_restrict measurableSet_Ioi] with t ht
-    have ht0 : 0 < t := lt_trans (by norm_num only) ht
+    have ht0 : 0 < t := lt_trans hN ht
     rw [norm_mul, Complex.norm_cpow_eq_rpow_re_of_pos ht0, Complex.norm_real, Real.norm_eq_abs]
     have he : (-s - 8).re = -(17 / 2 : ℝ) := by
       simp only [Complex.sub_re, Complex.neg_re, Complex.re_ofNat, hs]
@@ -945,6 +1096,11 @@ private theorem norm_em8_tail_le_integral {s : ℂ} (hs : s.re = 1 / 2) :
     have hb := abs_periodic_bernoulli_eight_le t
     have hp := Real.rpow_nonneg ht0.le (-(17 / 2 : ℝ))
     nlinarith only [hb, hp, abs_nonneg (bernoulliEight (Int.fract t))]
+
+private theorem norm_em8_tail_le_integral {s : ℂ} (hs : s.re = 1 / 2) :
+    ‖∫ t in Set.Ioi (128 : ℝ), (t : ℂ) ^ (-s - 8) * ((bernoulliEight (Int.fract t) : ℝ) : ℂ)‖ ≤
+      ∫ t in Set.Ioi (128 : ℝ), (1 / 30 : ℝ) * t ^ (-(17 / 2 : ℝ)) := by
+  exact norm_em8_tail_le_integral_at hs 128 (by norm_num only)
 
 /-- Integrating the eighth-order power majorant from 128 gives at most the
 explicit rational bound obtained from `sqrt 128 ≥ 11`. -/
@@ -972,6 +1128,42 @@ private theorem em8_integral_majorant_le :
       (div_le_div_of_nonneg_right hi (show (0 : ℝ) ≤ 15 / 2 by norm_num only))
       (show (0 : ℝ) ≤ 1 / 30 by norm_num only)
 
+/-- Integrating the eighth-order power majorant from 512 gives at most the
+explicit rational bound obtained from `sqrt 512 ≥ 22`. -/
+private theorem em8_integral_majorant_512_le :
+    (∫ t in Set.Ioi (512 : ℝ), (1 / 30 : ℝ) * t ^ (-(17 / 2 : ℝ))) ≤
+      1 / (30 * (15 / 2) * 512 ^ 7 * 22) := by
+  have hs : (22 : ℝ) ≤ Real.sqrt 512 :=
+    (Real.le_sqrt (by norm_num only) (by norm_num only)).2 (by norm_num only)
+  have hp : (512 : ℝ) ^ 7 * 22 ≤ (512 : ℝ) ^ (15 / 2 : ℝ) := by
+    have he : (15 / 2 : ℝ) = 7 + 1 / 2 := by norm_num only
+    rw [he, Real.rpow_add (by norm_num only), Real.rpow_ofNat, ← Real.sqrt_eq_rpow]
+    exact mul_le_mul_of_nonneg_left hs (pow_nonneg (by norm_num only) _)
+  have hp0 : 0 < (512 : ℝ) ^ 7 * 22 := by norm_num only
+  have hi : ((512 : ℝ) ^ (15 / 2 : ℝ))⁻¹ ≤ ((512 : ℝ) ^ 7 * 22)⁻¹ :=
+    (inv_le_inv₀ (lt_of_lt_of_le hp0 hp) hp0).2 hp
+  have he :
+    (1 / (30 * (15 / 2) * 512 ^ 7 * 22) : ℝ) = (1 / 30) * (((512 : ℝ) ^ 7 * 22)⁻¹ / (15 / 2)) := by
+    norm_num only
+  rw [he, MeasureTheory.integral_const_mul,
+    integral_Ioi_rpow_of_lt (by norm_num only) (by norm_num only : (0 : ℝ) < 512)]
+  simp only [show (-(17 / 2 : ℝ)) + 1 = -(15 / 2 : ℝ) by norm_num only,
+    Real.rpow_neg (show (0 : ℝ) ≤ 512 by norm_num only), div_neg, neg_div, neg_neg]
+  exact
+    mul_le_mul_of_nonneg_left
+      (div_le_div_of_nonneg_right hi (show (0 : ℝ) ≤ 15 / 2 by norm_num only))
+      (show (0 : ℝ) ≤ 1 / 30 by norm_num only)
+
+/-- For a positive cutoff, the critical-line Bernoulli tail is bounded by
+its explicitly integrated power majorant. This supplies variable-cutoff remainders. -/
+theorem norm_em8_tail_at_le {s : ℂ} (hs : s.re = 1 / 2) (N : ℝ) (hN : 0 < N) :
+    ‖∫ t in Set.Ioi N, (t : ℂ) ^ (-s - 8) * ((bernoulliEight (Int.fract t) : ℝ) : ℂ)‖ ≤
+      (1 / 30 : ℝ) * (N ^ (-(15 / 2 : ℝ)) / (15 / 2)) := by
+  have h := norm_em8_tail_le_integral_at hs N hN
+  rw [MeasureTheory.integral_const_mul, integral_Ioi_rpow_of_lt (by norm_num only) hN] at h
+  simpa only [show (-(17 / 2 : ℝ)) + 1 = -(15 / 2 : ℝ) by norm_num only, div_neg, neg_div,
+    neg_neg] using h
+
 /-- On the critical line, the eighth-order Bernoulli tail integral from 128
 is bounded by an explicit rational constant. This is the analytic tail bound
 needed after the finite Euler–Maclaurin identity is established. -/
@@ -979,6 +1171,13 @@ theorem norm_em8_tail_le {s : ℂ} (hs : s.re = 1 / 2) :
     ‖∫ t in Set.Ioi (128 : ℝ), (t : ℂ) ^ (-s - 8) * ((bernoulliEight (Int.fract t) : ℝ) : ℂ)‖ ≤
       1 / (30 * (15 / 2) * 128 ^ 7 * 11) := by
   exact (norm_em8_tail_le_integral hs).trans em8_integral_majorant_le
+
+/-- At cutoff 512, the critical-line eighth Bernoulli tail has the rational
+majorant obtained from `sqrt 512 ≥ 22`. It is used for extra-zero endpoints. -/
+theorem norm_em8_tail_512_le {s : ℂ} (hs : s.re = 1 / 2) :
+    ‖∫ t in Set.Ioi (512 : ℝ), (t : ℂ) ^ (-s - 8) * ((bernoulliEight (Int.fract t) : ℝ) : ℂ)‖ ≤
+      1 / (30 * (15 / 2) * 512 ^ 7 * 22) := by
+  exact (norm_em8_tail_le_integral_at hs 512 (by norm_num only)).trans em8_integral_majorant_512_le
 
 /-- For `0 ≤ t ≤ 100` and `j ≤ 7`, each factor `1/2 + it + j` has norm
 at most 101. Squaring the norm uses the sharper coordinate bounds rather than
@@ -1118,5 +1317,68 @@ theorem norm_finiteEM8_coefficient_le (t : ℝ) (ht : 14 ≤ t) (ht100 : t ≤ 1
   simp only [Finset.prod_range_succ, Finset.prod_range_zero, Nat.cast_zero, Nat.cast_one,
     Nat.cast_ofNat, add_zero, one_mul] at h3 h5 h7
   exact norm_em8_coefficient_aux s hp h1 h3 h5 h7
+
+/-- For `0 ≤ t ≤ 500` and `j ≤ 7`, each factor `1/2 + it + j` has norm
+at most 508. Squaring the norm uses the sharper coordinate bounds rather than
+the sum of absolute values. -/
+theorem norm_critical_shift_500_le (t : ℝ) (ht0 : 0 ≤ t) (ht : t ≤ 500) (j : ℕ) (hj : j ≤ 7) :
+    ‖(((1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I) + j‖ ≤ 508 := by
+  have hj0 : (0 : ℝ) ≤ j := Nat.cast_nonneg _
+  have hj1 : (j : ℝ) ≤ 7 := by exact_mod_cast hj
+  have hn := Complex.sq_norm ((((1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I) + j)
+  simp only [Complex.normSq_apply, Complex.add_re, Complex.add_im, Complex.ofReal_re,
+    Complex.ofReal_im, Complex.mul_re, Complex.mul_im, Complex.I_re, Complex.I_im,
+    Complex.natCast_re, Complex.natCast_im, mul_zero, mul_one, sub_zero, add_zero, zero_add] at hn
+  have ht2 : t ^ 2 ≤ 500 ^ 2 := pow_le_pow_left₀ ht0 ht 2
+  have hj2 : ((j : ℝ) + 1 / 2) ^ 2 ≤ (15 / 2 : ℝ) ^ 2 := by
+    apply pow_le_pow_left₀
+    · linarith only [hj0]
+    · linarith only [hj1]
+  have hn0 := norm_nonneg ((((1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I) + j)
+  nlinarith only [hn, ht2, hj2, hn0]
+
+/-- The eight rising factors in the eighth-order remainder at a critical
+height `0 ≤ t ≤ 500` have product norm at most `508^8`. -/
+theorem norm_critical_rising_500_le (t : ℝ) (ht0 : 0 ≤ t) (ht : t ≤ 500) :
+    ‖∏ j ∈ Finset.range 8, ((((1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I) + j)‖ ≤ (508 : ℝ) ^ 8 := by
+  rw [norm_prod]
+  calc
+    _ ≤ ∏ _j ∈ Finset.range 8, (508 : ℝ) := by
+      apply Finset.prod_le_prod₀
+      · intro j hj
+        exact norm_nonneg _
+      · intro j hj
+        exact norm_critical_shift_500_le t ht0 ht j (Nat.le_of_lt_succ (Finset.mem_range.mp hj))
+    _ = _ := by simp only [Finset.prod_const, Finset.card_range]
+
+/-- For `0 ≤ t ≤ 500`, the entire eighth-order Euler–Maclaurin tail at
+cutoff 512, including its rising-factorial coefficient, has norm strictly
+below `1/400000`. The finite identity connecting this tail to zeta is a
+separate requirement. -/
+theorem norm_em8_remainder_512_lt (t : ℝ) (ht0 : 0 ≤ t) (ht : t ≤ 500) :
+    ‖(∏ j ∈ Finset.range 8, ((((1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I) + j)) / (40320 : ℂ) *
+          (∫ x in Set.Ioi (512 : ℝ),
+            (x : ℂ) ^ (-(((1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I) - 8) *
+              ((bernoulliEight (Int.fract x) : ℝ) : ℂ))‖ <
+      1 / 400000 := by
+  have hs : ((((1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I) : ℂ).re = 1 / 2 := by
+    simp only [Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.ofReal_im, Complex.I_re,
+      Complex.I_im, mul_zero, zero_mul, sub_zero, add_zero]
+  have hfac := norm_critical_rising_500_le t ht0 ht
+  have hi := norm_em8_tail_512_le hs
+  rw [norm_mul, norm_div, Complex.norm_ofNat]
+  have hd := div_le_div_of_nonneg_right hfac (show (0 : ℝ) ≤ 40320 by norm_num only)
+  have hb := mul_le_mul hd hi (norm_nonneg _) (by norm_num only : (0 : ℝ) ≤ 508 ^ 8 / 40320)
+  have hn : (508 : ℝ) ^ 8 / 40320 * (1 / (30 * (15 / 2) * 512 ^ 7 * 22)) < 1 / 400000 := by
+    norm_num only
+  exact hb.trans_lt hn
+
+/-- At heights between zero and 500, the cutoff-512 finite EM8 expression
+approximates critical-line zeta within `1/400000`. The exact identity and
+Bernoulli tail bound supply the error used by additional zero certificates. -/
+theorem norm_zeta_sub_em8_512_lt (t : ℝ) (ht0 : 0 ≤ t) (ht : t ≤ 500) :
+    ‖riemannZeta (((1 / 2 : ℝ) : ℂ) + (t : ℂ) * Complex.I) - finiteEM8At 512 t‖ < 1 / 400000 := by
+  rw [zeta_eq_finiteEM8At 512 (by norm_num only) t, sub_sub_cancel_left, norm_neg]
+  exact norm_em8_remainder_512_lt t ht0 ht
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta
