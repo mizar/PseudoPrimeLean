@@ -9,6 +9,8 @@ module
 import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevPsiSign100RH
 import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevSqrt1423toMillion
 import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevCounterexamples
+import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevSqrt81Million
+import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevSqrt94Million
 public import Mathlib.NumberTheory.Chebyshev
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 
@@ -30,11 +32,23 @@ theorem psi_lee_nosal_of_RH (hRH : RiemannHypothesis) {x : ℝ} (hx : 101 ≤ x)
       Real.log x * (Real.log x - Real.log (Real.log x)) / (8 * Real.pi) :=
   PseudoPrime.AnalyticNumberTheory.RiemannZeta.psi_lee_nosal_of_RH hRH hx
 
-/-- For every real `x` from 1423 through 1000000, the normalized Chebyshev ψ error is at most
+/-- For every real `x` with `1423 ≤ x ≤ 1000000`, the normalized Chebyshev ψ error is at most
 `4 / 5`. Divide the existing unconditional square-root error bound by the positive square root. -/
 theorem psi_error_le_four_fifths_million {x : ℝ} (hx : 1423 ≤ x) (hx' : x ≤ 1000000) :
     |Chebyshev.psi x - x| / Real.sqrt x ≤ (4 / 5 : ℝ) :=
   PseudoPrime.AnalyticNumberTheory.Arithmetic.psi_error_le_four_fifths_million hx hx'
+
+/-- For every real `x` with `17 ≤ x ≤ 1000000`, the normalized Chebyshev ψ error is at most
+`81 / 100`. This unconditional finite-range bound is proved in the comparator solution. -/
+theorem psi_error_le_eighty_one_percent_million {x : ℝ} (hx : 17 ≤ x) (hx' : x ≤ 1000000) :
+    |Chebyshev.psi x - x| / Real.sqrt x ≤ (81 / 100 : ℝ) := by
+  exact PseudoPrime.AnalyticNumberTheory.Arithmetic.psi81_million hx hx'
+
+/-- For every real `x` with `11 ≤ x ≤ 1000000`, the normalized Chebyshev ψ error is at most
+`47 / 50`. This unconditional finite-range bound is proved in the comparator solution. -/
+theorem psi_error_le_ninety_four_percent_million {x : ℝ} (hx : 11 ≤ x) (hx' : x ≤ 1000000) :
+    |Chebyshev.psi x - x| / Real.sqrt x ≤ (47 / 50 : ℝ) := by
+  exact PseudoPrime.AnalyticNumberTheory.Arithmetic.psi94_million hx hx'
 
 /-- At `x = 1422.99`, the normalized Chebyshev ψ error is strictly greater than `4 / 5`.
 The proof uses a kernel-checked least-common-multiple bound and rational bounds on log and sqrt. -/

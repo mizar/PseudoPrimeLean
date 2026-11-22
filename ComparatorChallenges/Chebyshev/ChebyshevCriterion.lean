@@ -28,10 +28,20 @@ theorem psi_lee_nosal_of_RH (hRH : RiemannHypothesis) {x : ℝ} (hx : 101 ≤ x)
       Real.log x * (Real.log x - Real.log (Real.log x)) / (8 * Real.pi) := by
   sorry
 
-/-- For every real `x` from 1423 through 1000000, the normalized Chebyshev ψ error is at most
+/-- For every real `x` with `1423 ≤ x ≤ 1000000`, the normalized Chebyshev ψ error is at most
 `4 / 5`. This unconditional finite-range bound is proved in the comparator solution. -/
 theorem psi_error_le_four_fifths_million {x : ℝ} (hx : 1423 ≤ x) (hx' : x ≤ 1000000) :
     |Chebyshev.psi x - x| / Real.sqrt x ≤ (4 / 5 : ℝ) := by sorry
+
+/-- For every real `x` with `17 ≤ x ≤ 1000000`, the normalized Chebyshev ψ error is at most
+`81 / 100`. This unconditional finite-range bound is proved in the comparator solution. -/
+theorem psi_error_le_eighty_one_percent_million {x : ℝ} (hx : 17 ≤ x) (hx' : x ≤ 1000000) :
+    |Chebyshev.psi x - x| / Real.sqrt x ≤ (81 / 100 : ℝ) := by sorry
+
+/-- For every real `x` with `11 ≤ x ≤ 1000000`, the normalized Chebyshev ψ error is at most
+`47 / 50`. This unconditional finite-range bound is proved in the comparator solution. -/
+theorem psi_error_le_ninety_four_percent_million {x : ℝ} (hx : 11 ≤ x) (hx' : x ≤ 1000000) :
+    |Chebyshev.psi x - x| / Real.sqrt x ≤ (47 / 50 : ℝ) := by sorry
 
 /-- At `x = 1422.99`, the normalized Chebyshev ψ error is strictly greater than `4 / 5`.
 The rational argument is exact and lies below the proposed lower endpoint. -/
