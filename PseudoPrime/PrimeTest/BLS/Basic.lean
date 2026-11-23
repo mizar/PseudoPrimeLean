@@ -248,7 +248,7 @@ theorem exists_common_blsWitness_base_of_prime {n : ℕ} (hn : Nat.Prime n) (hn5
   have hnNe : NeZero n := ⟨hn.ne_zero⟩
   obtain ⟨z, hzpow, hzq⟩ := reverse_lucas_primality n hn
   have hn1 : 0 < n - 1 := Nat.sub_pos_of_lt (lt_of_lt_of_le (by decide : 1 < 5) hn5)
-  have hord : orderOf z = n - 1 := orderOf_eq_of_pow_and_pow_div_prime hn1 hzpow hzq
+  have hord : orderOf z = n - 1 := orderOf_eq_of_pow_and_pow_div_prime hzpow hzq
   obtain ⟨q0, hq0, hq0div⟩ :=
     Nat.exists_prime_and_dvd
       (show n - 1 ≠ 1 by

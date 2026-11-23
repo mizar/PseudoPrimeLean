@@ -464,7 +464,7 @@ The proof factors off a prime divisor and applies strong induction to the quotie
 theorem exists_factor_form_of_prime_divisors_congruent (m F : ℕ) (hm : 0 < m)
     (hprime : ∀ p, Nat.Prime p → p ∣ m → F ∣ p - 1) : ∃ u, m = F * u + 1 := by
   induction m using Nat.strong_induction_on generalizing F with
-  | h m ih =>
+  | ind m ih =>
     by_cases hmone : m = 1
     · refine ⟨0, ?_⟩
       rw [hmone]

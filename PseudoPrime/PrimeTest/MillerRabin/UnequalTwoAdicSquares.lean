@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.NumberTheory.TwoAdic
 public import PseudoPrime.PrimeTest.MillerRabin.KorseltSignIndex
 
 /-! # Passing residues at prime factors with unequal two-adic valuations
@@ -91,9 +92,7 @@ theorem strongPass_mem_local_half_kernel_of_twoAdic_lt {n p q a : ℕ} [Fact p.P
   have he : 2 * E = 2 ^ t * d := by
     dsimp only [E]
     rw [← mul_assoc, ← pow_succ', Nat.sub_add_cancel ht]
-  have hval : padicValNat 2 (2 * E) = t := by
-    rw [he, padicValNat.mul (pow_ne_zero _ (by decide : (2 : ℕ) ≠ 0)) hd.pos.ne',
-      padicValNat.prime_pow, padicValNat.eq_zero_of_not_dvd hd.not_two_dvd_nat, Nat.add_zero]
+  have hval : padicValNat 2 (2 * E) = t := by rw [he, NumberTheory.TwoAdic.val_pow_mul_odd _ hd]
   obtain ⟨u, hu, hua⟩ :=
     strongMillerRabinPass_mem_signSubgroup hn hnOdd hpass (Fact.out : q.Prime) hqOdd hqn
   refine ⟨ZMod.unitsMap hpn u, ?_, ?_⟩

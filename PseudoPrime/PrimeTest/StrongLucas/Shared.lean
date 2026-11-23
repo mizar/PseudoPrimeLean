@@ -151,8 +151,9 @@ The selected index n + 1 is positive and divisible by two. -/
 theorem strongLucasTwoAdicExponent_pos (n : ℕ) (hn : Odd n) (D : ℤ) (hD : jacobiSym D n = -1) :
     1 ≤ strongLucasTwoAdicExponent n D := by
   rw [strongLucasTwoAdicExponent, lucasProbablePrimeIndex_of_jacobi_eq_neg_one hD]
+  rw [Nat.padicValNat_def]
   exact
-    one_le_padicValNat_of_dvd (Nat.succ_ne_zero n)
+    one_le_multiplicity_of_dvd (Nat.succ_ne_zero n)
       (even_iff_two_dvd.mp (hn.add_odd (show Odd (1 : ℕ) from ⟨0, rfl⟩)))
 
 /-- For odd n, the half exponent of n + 1 is one more than n / 2.
@@ -165,7 +166,7 @@ theorem lucasOdd_half_succ (n : ℕ) (hn : Odd n) : (n + 1) / 2 = n / 2 + 1 := b
 The natAbs is used only for the gcd guard, retaining the signed base. -/
 theorem lucasQ_isUnit_of_coprime (n : ℕ) (Q : ℤ) (h : Nat.Coprime Q.natAbs n) :
     IsUnit (Q : ZMod n) := by
-  rw [ZMod.coe_int_isUnit_iff_isCoprime, Int.isCoprime_iff_gcd_eq_one, Int.gcd_eq_natAbs]
+  rw [ZMod.isUnit_intCast_iff_isCoprime, Int.isCoprime_iff_gcd_eq_one, Int.gcd_eq_natAbs]
   change Nat.Coprime n Q.natAbs
   exact h.symm
 
@@ -225,7 +226,7 @@ theorem lucasQ_coprime_of_prime (n : ℕ) (hn : n.Prime) (D P Q : ℤ) (hdisc : 
   let : Fact n.Prime := ⟨hn⟩
   have hunit : IsUnit (Q : ZMod n) :=
     isUnit_iff_ne_zero.mpr (lucasQ_ne_zero_of_discriminant n D P Q hdisc hD)
-  rw [ZMod.coe_int_isUnit_iff_isCoprime, Int.isCoprime_iff_gcd_eq_one, Int.gcd_eq_natAbs] at hunit
+  rw [ZMod.isUnit_intCast_iff_isCoprime, Int.isCoprime_iff_gcd_eq_one, Int.gcd_eq_natAbs] at hunit
   change Nat.Coprime n Q.natAbs at hunit
   exact hunit.symm
 

@@ -27,9 +27,10 @@ theorem odd_sub_canonical_decomp {n : ℕ} (hn : 1 < n) (hnOdd : Odd n) :
       n - 1 = 2 ^ padicValNat 2 (n - 1) * Nat.divMaxPow (n - 1) 2 := by
   have hne : n - 1 ≠ 0 := Nat.sub_ne_zero_of_lt hn
   have htwo : 2 ∣ n - 1 := even_iff_two_dvd.mp (Nat.Odd.sub_odd hnOdd odd_one)
+  rw [Nat.padicValNat_def]
   exact
-    ⟨one_le_padicValNat_of_dvd hne htwo, oddPart_odd hne,
-      (Nat.pow_padicValNat_mul_divMaxPow 2 (n - 1)).symm⟩
+    ⟨one_le_multiplicity_of_dvd hne htwo, oddPart_odd hne,
+      (Nat.pow_multiplicity_mul_divMaxPow 2 (n - 1)).symm⟩
 
 /-- The strong Miller–Rabin pass condition using `s = padicValNat 2 (n - 1)` and
 `d = Nat.divMaxPow (n - 1) 2`. A residue passes when `x^d = 1` or one of the `s`
@@ -96,7 +97,7 @@ theorem isStrongMillerRabinProbablePrime_iff_pass {n a : ℕ} :
     IsStrongMillerRabinProbablePrime n a ↔ StrongMillerRabinPass n (a : ZMod n) := by
   simp only [IsStrongMillerRabinProbablePrime, StrongMillerRabinPass, Nat.fst_maxPowDvdDiv,
     Nat.snd_maxPowDvdDiv, zmodPowProof_eq_pow, List.mem_range, ZMod.natCast_self, zero_sub,
-    Nat.mul_comm]
+    Nat.padicValNat_def, Nat.mul_comm]
 
 /-- The executable single-base test returns `true` exactly when its residue satisfies the
 canonical proof-side pass predicate. This composes the existing Boolean specification with

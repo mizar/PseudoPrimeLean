@@ -203,7 +203,7 @@ private theorem exists_prime_field_unit_order_two_power {q : ℕ} (hq : Nat.Prim
   rcases hTcPair : Nat.maxPowDvdDiv 2 (q - 1) with ⟨t, c⟩
   simp only
   have hcanonical : 0 < t ∧ Odd c ∧ q - 1 = 2 ^ t * c := by
-    simpa only [← Nat.fst_maxPowDvdDiv 2 (q - 1), ← Nat.snd_maxPowDvdDiv 2 (q - 1), hTcPair] using
+    simpa only [padicValNat, ← Nat.snd_maxPowDvdDiv 2 (q - 1), hTcPair] using
       odd_sub_canonical_decomp hq.one_lt hqOdd
   obtain ⟨_, hcOdd, hqdecomp⟩ := hcanonical
   have : Fact (Nat.Prime q) := ⟨hq⟩

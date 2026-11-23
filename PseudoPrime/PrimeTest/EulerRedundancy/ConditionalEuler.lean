@@ -24,7 +24,7 @@ The two-adic factorization identifies the exponent; the absolute-value alternati
 supply the sign. This certifies the executable eligibility test, including Q = 1 and -1. -/
 theorem signed_two_power_of_oddPart_one (Q : ℤ) (h : Nat.divMaxPow Q.natAbs 2 = 1) :
     Q = (2 : ℤ) ^ padicValNat 2 Q.natAbs ∨ Q = -(2 : ℤ) ^ padicValNat 2 Q.natAbs := by
-  have hf := Nat.pow_padicValNat_mul_divMaxPow 2 Q.natAbs
+  have hf := (Nat.mul_comm _ _).trans (Nat.divMaxPow_mul_pow_padicValNat 2 Q.natAbs)
   rw [h, mul_one] at hf
   have hi : ((2 : ℕ) ^ padicValNat 2 Q.natAbs : ℤ) = (Q.natAbs : ℤ) :=
     congrArg (fun x : ℕ ↦ (x : ℤ)) hf

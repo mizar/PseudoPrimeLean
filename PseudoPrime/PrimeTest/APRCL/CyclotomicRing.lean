@@ -292,7 +292,8 @@ theorem cyclotomicFixedArrayPolynomial_coeff (n p k : ℕ) (a : cyclotomicFixedA
     induction s using Finset.induction_on with
     | empty => simp only [f, Finset.sum_empty, Polynomial.coeff_zero]
     | @insert i s hi ih =>
-      simp only [Finset.sum_insert hi, f, Polynomial.coeff_add, Polynomial.coeff_monomial, ih]
+      simp only [Finset.sum_insert hi, f, Polynomial.coeff_add, Polynomial.coeff_monomial,
+        Finsupp.single_apply, ih]
   have hcoeff :
     (cyclotomicFixedArrayPolynomial n p k a).coeff d =
       ∑ i : Fin (primePowerDegree p k), if i.val = d then a i else 0 := by
@@ -592,7 +593,7 @@ theorem cyclotomicFixedArrayMonomialReduce_correct (n : ℕ) {p k : ℕ} (hp : N
       cyclotomicRoot n p k ^ e := by
   classical
     induction e using Nat.strong_induction_on with
-  | h e ih =>
+  | ind e ih =>
     rw [cyclotomicFixedArrayMonomialReduce]
     by_cases he : e < primePowerDegree p k
     · simp only [dite_eq_left he]
@@ -600,7 +601,8 @@ theorem cyclotomicFixedArrayMonomialReduce_correct (n : ℕ) {p k : ℕ} (hp : N
         cyclotomicFixedArrayPolynomial n p k
             (fun j : Fin (primePowerDegree p k) => if j.val = e then 1 else 0) =
           Polynomial.X ^ e := by
-        apply Polynomial.ext
+        apply AddMonoidAlgebra.ext
+        apply Finsupp.ext
         intro d
         rw [cyclotomicFixedArrayPolynomial_coeff]
         by_cases hde : d = e

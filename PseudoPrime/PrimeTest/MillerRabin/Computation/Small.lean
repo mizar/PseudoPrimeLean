@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.NumberTheory.TwoAdic
 public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
 public import PseudoPrime.PrimeTest.MillerRabin.Prime
 public import Mathlib.Tactic.NormNum
@@ -59,8 +60,7 @@ private theorem baseTwoRejectCheckData_sound {n s d : ℕ} (hn : 1 < n)
   have hmax := Nat.maxPowDvdDiv_of_pow_mul_eq (Nat.sub_ne_zero_of_lt hn) hdecomp.symm hdvd
   have hs : padicValNat 2 (n - 1) = s := by
     calc
-      padicValNat 2 (n - 1) = (Nat.maxPowDvdDiv 2 (n - 1)).1 :=
-        (Nat.fst_maxPowDvdDiv 2 (n - 1)).symm
+      padicValNat 2 (n - 1) = (Nat.maxPowDvdDiv 2 (n - 1)).1 := rfl
       _ = s := congrArg Prod.fst hmax
   have hd : Nat.divMaxPow (n - 1) 2 = d := by
     calc
@@ -92,14 +92,10 @@ private theorem baseTwoRejectCheck_sound {n : ℕ} (hn : 1 < n)
 /-- The sole base-`2` composite exception below `3000` fails the base-`3` test. -/
 private theorem baseThreeRejects_2047 : strongMillerRabinWithBase 2047 3 = false := by
   apply (strongMillerRabinWithBase_eq_false_iff_not_pass).2
-  have hoddPart : padicValNat 2 1023 = 0 := padicValNat.eq_zero_of_not_dvd (by norm_num only)
-  have hs : padicValNat 2 (2047 - 1) = 1 := by
-    calc
-      padicValNat 2 (2047 - 1) = padicValNat 2 (2 * 1023) := by norm_num only
-      _ = padicValNat 2 1023 + 1 := padicValNat_base_mul (by norm_num only) (by norm_num only)
-      _ = 1 := by rw [hoddPart]
+  have hs : padicValNat 2 (2047 - 1) = 1 :=
+    NumberTheory.TwoAdic.val_pow_mul_odd 1 (d := 1023) ⟨511, rfl⟩
   have hd : Nat.divMaxPow (2047 - 1) 2 = 1023 := by
-    have hmul := Nat.pow_padicValNat_mul_divMaxPow 2 (2047 - 1)
+    have hmul := (Nat.mul_comm _ _).trans (Nat.divMaxPow_mul_pow_padicValNat 2 (2047 - 1))
     rw [hs] at hmul
     norm_num only at hmul ⊢
     exact Nat.mul_left_cancel (n := 2) (by norm_num only) (by norm_num only [hmul])

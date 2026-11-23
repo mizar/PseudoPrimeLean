@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.NumberTheory.TwoAdic
 public import PseudoPrime.PrimeTest.EulerRedundancy.EulerModEight
 public import PseudoPrime.PrimeTest.MillerRabin.WitnessSubgroup
 
@@ -79,7 +80,8 @@ theorem local_index_strict {p s d : ℕ} (hp : p.Prime) (ho : Odd p) (hs : 3 ≤
   have hst : s ≤ padicValNat 2 (p - 1) := by
     simpa only [Nat.succ_eq_add_one, Nat.sub_add_cancel hspos] using
       Nat.succ_le_of_lt (local_index_bound hp ho hn)
-  have h8 : 8 ∣ p - 1 := (padicValNat_dvd_iff 3 (p - 1)).mpr (Or.inr (hs.trans hst))
+  have h8 : 8 ∣ p - 1 :=
+    (NumberTheory.TwoAdic.pow_dvd_iff (Nat.sub_ne_zero_of_lt hp.one_lt)).mpr (hs.trans hst)
   have hp2 : p ≠ 2 := fun h ↦ (Nat.not_even_iff_odd.mpr ho) (h ▸ (by decide : Even 2))
   obtain ⟨y, hy, hy0⟩ := sqrt_two_nonzero hp hp2 (mod_eight_one_of_dvd_sub hp h8)
   exact
@@ -107,7 +109,8 @@ theorem prime_dvd_next_power {n p s d : ℕ} (ho : Odd n) (hs : 3 ≤ s)
     (hn : (2 : ZMod n) ^ (2 ^ (s - 1) * d) = -1) (hp : p.Prime) (hd : p ∣ n) :
     2 ^ (s + 1) ∣ p - 1 := by
   have ht := local_index_strict hp (prime_divisor_odd ho hp hd) hs (minus_cast hd hn)
-  exact (padicValNat_dvd_iff_le (Nat.sub_ne_zero_of_lt hp.one_lt)).mpr (Nat.succ_le_of_lt ht)
+  exact
+    (NumberTheory.TwoAdic.pow_dvd_iff (Nat.sub_ne_zero_of_lt hp.one_lt)).mpr (Nat.succ_le_of_lt ht)
 
 /-- A list of residues all congruent to one has product congruent to one.
 The list may contain repeated factors; multiplication of congruences proves the contract. -/
@@ -144,7 +147,7 @@ theorem last_stage_impossible {n s d : ℕ} (hn : 1 < n) (ho : Odd n) (hs : 3 �
     (hval : padicValNat 2 (n - 1) = s) : (2 : ZMod n) ^ (2 ^ (s - 1) * d) ≠ -1 := by
   intro hneg
   have hd := (Nat.modEq_iff_dvd' hn.le).mp (factors_mod_one hn ho hs hneg)
-  have hv := (padicValNat_dvd_iff_le (Nat.sub_ne_zero_of_lt hn)).mp hd
+  have hv := (NumberTheory.TwoAdic.pow_dvd_iff (Nat.sub_ne_zero_of_lt hn)).mp hd
   rw [hval] at hv
   exact Nat.not_succ_le_self s hv
 
@@ -200,7 +203,7 @@ theorem one_mod_eight_data {n : ℕ} (hn : 1 < n) (hm : n % 8 = 1) :
   have h8 : 8 ∣ n - 1 := (Nat.modEq_iff_dvd' hn.le).mp hm.symm
   exact
     ⟨Nat.odd_iff.mpr (Nat.odd_mod_four_iff.mpr (Or.inl h4)),
-      (padicValNat_dvd_iff_le (Nat.sub_ne_zero_of_lt hn)).mp h8⟩
+      (NumberTheory.TwoAdic.pow_dvd_iff (Nat.sub_ne_zero_of_lt hn)).mp h8⟩
 
 /-- The Jacobi symbol of two is one for a modulus one modulo eight greater than one.
 Evaluate the supplementary character without assuming primality. -/

@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import PseudoPrime.NumberTheory.TwoAdic
 public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
 public import Mathlib.NumberTheory.LegendreSymbol.Basic
 public import Mathlib.Data.Nat.GCD.BigOperators
@@ -153,8 +154,7 @@ private theorem strongMillerRabinWithBase_mul_eq_true_iff_decomp {p q s d a : �
   have hmax := Nat.maxPowDvdDiv_of_pow_mul_eq (Nat.sub_ne_zero_of_lt hn) hdecomp.symm hdvd
   have hs : padicValNat 2 (p * q - 1) = s := by
     calc
-      padicValNat 2 (p * q - 1) = (Nat.maxPowDvdDiv 2 (p * q - 1)).1 :=
-        (Nat.fst_maxPowDvdDiv 2 (p * q - 1)).symm
+      padicValNat 2 (p * q - 1) = (Nat.maxPowDvdDiv 2 (p * q - 1)).1 := rfl
       _ = s := congrArg Prod.fst hmax
   have hd : Nat.divMaxPow (p * q - 1) 2 = d := by
     calc
@@ -175,7 +175,7 @@ private theorem pow_oddPart_eq_one_iff_orderOf_twoAdic_eq_zero {n s d : ℕ} {x 
     have hnot : ¬2 ∣ orderOf x := by
       intro htwo
       exact (Nat.not_even_iff_odd.mpr hdOdd) (even_iff_two_dvd.mpr (dvd_trans htwo hdiv))
-    exact padicValNat.eq_zero_of_not_dvd hnot
+    exact Nat.padicValNat_def.trans (multiplicity_eq_zero_of_not_dvd hnot)
   · intro hval
     have hdiv : orderOf x ∣ 2 ^ s * d := orderOf_dvd_of_pow_eq_one hFermat
     have hne : orderOf x ≠ 0 := by
@@ -187,7 +187,8 @@ private theorem pow_oddPart_eq_one_iff_orderOf_twoAdic_eq_zero {n s d : ℕ} {x 
       · have hdmod := Nat.odd_iff.mp hdOdd
         exact Nat.zero_ne_one (by simpa only [hd0, Nat.zero_mod] using hdmod)
     have hnot : ¬2 ∣ orderOf x := by
-      rcases padicValNat.eq_zero_iff.mp hval with htwo | hzero | hnot
+      rcases Nat.multiplicity_eq_zero_iff.mp (Nat.padicValNat_def.symm.trans hval) with htwo |
+        hzero | hnot
       · exact False.elim ((by decide : (2 : ℕ) ≠ 1) htwo)
       · exact False.elim (hne hzero)
       · exact hnot
@@ -247,7 +248,7 @@ private theorem local_minus_one_of_positive_signature {p s d : ℕ} [Fact (Nat.P
   have hne : x ^ (2 ^ (t - 1) * d) ≠ 1 := by
     intro hz
     have hlocal : orderOf x ∣ 2 ^ (t - 1) * d := orderOf_dvd_of_pow_eq_one hz
-    have hpowdiv : 2 ^ t ∣ 2 ^ (t - 1) * d := dvd_trans pow_padicValNat_dvd hlocal
+    have hpowdiv : 2 ^ t ∣ 2 ^ (t - 1) * d := dvd_trans NumberTheory.TwoAdic.pow_dvd hlocal
     have htwo : 2 ∣ d := by
       rw [show 2 ^ t = 2 ^ (t - 1) * 2 by conv_lhs => rw [← hsucc, pow_succ]] at hpowdiv
       exact Nat.dvd_of_mul_dvd_mul_left (pow_pos (by decide) _) hpowdiv
@@ -267,12 +268,8 @@ private theorem local_signature_le {n s d : ℕ} {x : ZMod n} (hdOdd : Odd d)
     exact Nat.zero_ne_one (by simpa only [hd0, Nat.zero_mod] using ho)
   have hmulne : 2 ^ s * d ≠ 0 := mul_ne_zero (pow_ne_zero _ (by decide)) hdne
   have hv : padicValNat 2 (orderOf x) ≤ padicValNat 2 (2 ^ s * d) :=
-    (padicValNat_dvd_iff_le hmulne).mp (dvd_trans pow_padicValNat_dvd hdiv)
-  have hoddval : padicValNat 2 d = 0 := by
-    apply padicValNat.eq_zero_of_not_dvd
-    exact (even_iff_two_dvd).not.mp (Nat.not_even_iff_odd.mpr hdOdd)
-  rw [padicValNat.mul (p := 2) (pow_ne_zero _ (by decide)) hdne, padicValNat.prime_pow, hoddval,
-    Nat.add_zero] at hv
+    (NumberTheory.TwoAdic.pow_dvd_iff hmulne).mp (dvd_trans NumberTheory.TwoAdic.pow_dvd hdiv)
+  rw [NumberTheory.TwoAdic.val_pow_mul_odd _ hdOdd] at hv
   exact hv
 
 /-- A minus-one stage has exactly the indicated two-adic order signature. -/
@@ -385,8 +382,10 @@ theorem odd_korselt_quotient_of_equal_twoAdic {n p : ℕ} (hn : 1 < n) (hdiv : p
     rw [hzero, mul_zero] at hprod
     exact (Nat.sub_ne_zero_of_lt hn) hprod.symm
   have hv : padicValNat 2 ((n - 1) / (p - 1)) = 0 := by
-    rw [padicValNat.div_of_dvd hdiv, ← hval, Nat.sub_self]
-  rcases padicValNat.eq_zero_iff.mp hv with htwo | hzero | hnot
+    rw [Nat.padicValNat_def, Nat.multiplicity_div_of_dvd hdiv, ← Nat.padicValNat_def, ←
+      Nat.padicValNat_def, ← hval, Nat.sub_self]
+  rcases Nat.multiplicity_eq_zero_iff.mp (Nat.padicValNat_def.symm.trans hv) with htwo | hzero |
+    hnot
   · exact False.elim ((by decide : (2 : ℕ) ≠ 1) htwo)
   · exact False.elim (hrne hzero)
   · exact Nat.not_even_iff_odd.mp ((even_iff_two_dvd).not.mpr hnot)
@@ -554,8 +553,7 @@ private theorem strongMR_factors_iff_fermat_signature_decomp (factors : List ℕ
   have hmax := Nat.maxPowDvdDiv_of_pow_mul_eq (Nat.sub_ne_zero_of_lt hn) hdecomp.symm hdvd
   have hs : padicValNat 2 (factors.prod - 1) = s := by
     calc
-      padicValNat 2 (factors.prod - 1) = (Nat.maxPowDvdDiv 2 (factors.prod - 1)).1 :=
-        (Nat.fst_maxPowDvdDiv 2 (factors.prod - 1)).symm
+      padicValNat 2 (factors.prod - 1) = (Nat.maxPowDvdDiv 2 (factors.prod - 1)).1 := rfl
       _ = s := congrArg Prod.fst hmax
   have hd : Nat.divMaxPow (factors.prod - 1) 2 = d := by
     calc

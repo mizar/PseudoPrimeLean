@@ -7,6 +7,7 @@ Authors: Mizar
 module
 
 public import Mathlib.Algebra.Group.Even
+import Mathlib.Data.Bool.Basic
 public import Mathlib.Data.Nat.Sqrt
 public import PseudoPrime.PrimeTest.Basic
 

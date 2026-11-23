@@ -557,10 +557,10 @@ def jacobiGeneratorPowerOnJacobiIndex {q : ℕ} (hq : Nat.Prime q) (g : (ZMod q)
     (hg : IsPrimitiveRoot g (q - 1)) (x : { x : ℕ // 0 < x ∧ x < q - 1 }) :
     { u : (ZMod q)ˣ // u ≠ 1 } := by
   have hperiod : 0 < q - 1 := Nat.sub_pos_of_lt hq.one_lt
-  refine ⟨g ^ x.1, ?_⟩
+  refine ⟨g ^ x.val, ?_⟩
   intro hpow
-  have hzero : x.1 = 0 := hg.pow_inj x.2.2 hperiod (by simpa only [pow_zero] using hpow)
-  exact (Nat.ne_of_gt x.2.1) hzero
+  have hzero : x.val = 0 := hg.pow_inj x.property.2 hperiod (by simpa only [pow_zero] using hpow)
+  exact (Nat.ne_of_gt x.property.1) hzero
 
 /-- On the complete Jacobi exponent interval, primitive-root powers give a bijection to the
 units other than one. This is the finite reindexing core for identifying the computed exponent
@@ -571,16 +571,16 @@ theorem jacobiGeneratorPowerOnJacobiIndex_bijective {q : ℕ} (hq : Nat.Prime q)
   constructor
   · intro x y hxy
     apply Subtype.ext
-    apply hg.pow_inj x.2.2 y.2.2
+    apply hg.pow_inj x.property.2 y.property.2
     exact congrArg Subtype.val hxy
   · intro u
-    have hsome := discreteLogTableSearch_isSome_of_prime hq g u.1 hg
+    have hsome := discreteLogTableSearch_isSome_of_prime hq g u.val hg
     obtain ⟨e, he⟩ := Option.isSome_iff_exists.mp hsome
     obtain ⟨helt, hpow⟩ := discreteLogTableSearch_some_spec he
     have hepos : 0 < e := by
       by_cases he0 : e = 0
       · subst e
-        exact False.elim (u.2 (by simpa only [pow_zero] using hpow.symm))
+        exact False.elim (u.property (by simpa only [pow_zero] using hpow.symm))
       · exact Nat.pos_of_ne_zero he0
     refine ⟨⟨e, hepos, helt⟩, ?_⟩
     apply Subtype.ext
@@ -597,8 +597,8 @@ noncomputable def jacobiGeneratorPowerEquiv {q : ℕ} (hq : Nat.Prime q) (g : (Z
 theorem jacobiGeneratorPower_sum_eq_unit_sum {q : ℕ} (hq : Nat.Prime q) (g : (ZMod q)ˣ)
     (hg : IsPrimitiveRoot g (q - 1)) [Fintype { x : ℕ // 0 < x ∧ x < q - 1 }]
     [Fintype { u : (ZMod q)ˣ // u ≠ 1 }] {R : Type*} [AddCommMonoid R] (f : (ZMod q)ˣ → R) :
-    (∑ x : { x : ℕ // 0 < x ∧ x < q - 1 }, f (g ^ x.1)) =
-      ∑ u : { u : (ZMod q)ˣ // u ≠ 1 }, f u.1 := by
+    (∑ x : { x : ℕ // 0 < x ∧ x < q - 1 }, f (g ^ x.val)) =
+      ∑ u : { u : (ZMod q)ˣ // u ≠ 1 }, f u.val := by
   apply Fintype.sum_equiv (jacobiGeneratorPowerEquiv hq g hg)
   intro x
   rfl
@@ -609,24 +609,25 @@ noncomputable def zmodNonidentityUnitEquiv {q : ℕ} (hq : Nat.Prime q) :
     { x : ZMod q // x ≠ 0 ∧ x ≠ 1 } ≃ { u : (ZMod q)ˣ // u ≠ 1 } := by
   haveI : Fact (Nat.Prime q) := ⟨hq⟩
   let f : { x : ZMod q // x ≠ 0 ∧ x ≠ 1 } → { u : (ZMod q)ˣ // u ≠ 1 } := fun x =>
-    ⟨Units.mk0 x.1 x.2.1, by
+    ⟨Units.mk0 x.val x.property.1, by
       intro heq
       have hval := congrArg Units.val heq
-      change x.1 = 1 at hval
-      exact x.2.2 hval⟩
+      change x.val = 1 at hval
+      exact x.property.2 hval⟩
   have hf : Function.Bijective f := by
     constructor
     · intro x y hxy
       apply Subtype.ext
-      have hunit : Units.mk0 x.1 x.2.1 = Units.mk0 y.1 y.2.1 := congrArg Subtype.val hxy
+      have hunit : Units.mk0 x.val x.property.1 = Units.mk0 y.val y.property.1 :=
+        congrArg Subtype.val hxy
       have hval := congrArg Units.val hunit
       simpa only [Units.val_mk0] using hval
     · intro u
-      refine ⟨⟨u.1, ?_⟩, ?_⟩
+      refine ⟨⟨u.val, ?_⟩, ?_⟩
       · constructor
-        · exact Units.ne_zero u.1
+        · exact Units.ne_zero u.val
         · intro heq
-          exact u.2 (Units.ext heq)
+          exact u.property (Units.ext heq)
       · apply Subtype.ext
         apply Units.ext
         rfl
@@ -637,7 +638,7 @@ contribute zero because multiplicative characters vanish at nonunits. -/
 theorem jacobiSum_eq_nonidentityUnitSum {q : ℕ} (hq : Nat.Prime q) {R : Type*} [CommRing R]
     [Fintype (ZMod q)] (χ ψ : MulChar (ZMod q) R) :
     jacobiSum χ ψ =
-      ∑ u : { u : (ZMod q)ˣ // u ≠ 1 }, χ (u.1 : ZMod q) * ψ (1 - (u.1 : ZMod q)) := by
+      ∑ u : { u : (ZMod q)ˣ // u ≠ 1 }, χ (u.val : ZMod q) * ψ (1 - (u.val : ZMod q)) := by
   have : Fact (Nat.Prime q) := ⟨hq⟩
   let S : Finset (ZMod q) := Finset.univ.filter (fun x => x ≠ 0 ∧ x ≠ 1)
   have hχ0 : χ (0 : ZMod q) = 0 := by
@@ -665,13 +666,14 @@ theorem jacobiSum_eq_nonidentityUnitSum {q : ℕ} (hq : Nat.Prime q) {R : Type*}
       · rw [hx1, sub_self, hψ0]
         exact mul_zero _
   have hsubtype :
-    (∑ x ∈ S, χ x * ψ (1 - x)) = ∑ x : { x : ZMod q // x ≠ 0 ∧ x ≠ 1 }, χ x.1 * ψ (1 - x.1) := by
+    (∑ x ∈ S, χ x * ψ (1 - x)) =
+      ∑ x : { x : ZMod q // x ≠ 0 ∧ x ≠ 1 }, χ x.val * ψ (1 - x.val) := by
     apply Finset.sum_subtype S
     intro x
     simp only [S, Finset.mem_filter, Finset.mem_univ, true_and]
   have hunit :
-    (∑ x : { x : ZMod q // x ≠ 0 ∧ x ≠ 1 }, χ x.1 * ψ (1 - x.1)) =
-      ∑ u : { u : (ZMod q)ˣ // u ≠ 1 }, χ (u.1 : ZMod q) * ψ (1 - (u.1 : ZMod q)) := by
+    (∑ x : { x : ZMod q // x ≠ 0 ∧ x ≠ 1 }, χ x.val * ψ (1 - x.val)) =
+      ∑ u : { u : (ZMod q)ˣ // u ≠ 1 }, χ (u.val : ZMod q) * ψ (1 - (u.val : ZMod q)) := by
     apply Fintype.sum_equiv (zmodNonidentityUnitEquiv hq)
     intro x
     rfl
@@ -702,16 +704,16 @@ theorem mem_jacobiIcc_iff_valid {q x : ℕ} (hq : Nat.Prime q) :
 noncomputable def jacobiValidIndexEquivIcc {q : ℕ} (hq : Nat.Prime q) :
     { x : ℕ // 0 < x ∧ x < q - 1 } ≃ { x : ℕ // x ∈ Finset.Icc 1 (q - 2) } := by
   let f : { x : ℕ // 0 < x ∧ x < q - 1 } → { x : ℕ // x ∈ Finset.Icc 1 (q - 2) } := fun x =>
-    ⟨x.1, (mem_jacobiIcc_iff_valid hq).mpr x.2⟩
+    ⟨x.val, (mem_jacobiIcc_iff_valid hq).mpr x.property⟩
   have hf : Function.Bijective f := by
     constructor
     · intro x y hxy
       apply Subtype.ext
       have hv := congrArg Subtype.val hxy
-      change x.1 = y.1 at hv
+      change x.val = y.val at hv
       exact hv
     · intro y
-      refine ⟨⟨y.1, (mem_jacobiIcc_iff_valid hq).mp y.2⟩, ?_⟩
+      refine ⟨⟨y.val, (mem_jacobiIcc_iff_valid hq).mp y.property⟩, ?_⟩
       apply Subtype.ext
       rfl
   exact Equiv.ofBijective f hf
@@ -719,10 +721,10 @@ noncomputable def jacobiValidIndexEquivIcc {q : ℕ} (hq : Nat.Prime q) :
 /-- Reindex a sum over valid Jacobi exponents as a `Finset.Icc` sum. -/
 theorem jacobiValidIndex_sum_eq_Icc {q : ℕ} (hq : Nat.Prime q)
     [Fintype { x : ℕ // 0 < x ∧ x < q - 1 }] {R : Type*} [AddCommMonoid R] (f : ℕ → R) :
-    (∑ x : { x : ℕ // 0 < x ∧ x < q - 1 }, f x.1) = ∑ x ∈ Finset.Icc 1 (q - 2), f x := by
+    (∑ x : { x : ℕ // 0 < x ∧ x < q - 1 }, f x.val) = ∑ x ∈ Finset.Icc 1 (q - 2), f x := by
   calc
-    (∑ x : { x : ℕ // 0 < x ∧ x < q - 1 }, f x.1) =
-        ∑ x : { x : ℕ // x ∈ Finset.Icc 1 (q - 2) }, f x.1 :=
+    (∑ x : { x : ℕ // 0 < x ∧ x < q - 1 }, f x.val) =
+        ∑ x : { x : ℕ // x ∈ Finset.Icc 1 (q - 2) }, f x.val :=
       by
       apply Fintype.sum_equiv (jacobiValidIndexEquivIcc hq)
       intro x
@@ -890,11 +892,11 @@ theorem jacobiPowerCharacter_jacobiSum_eq_coefficients {q P a b : ℕ} {R : Type
   calc
     jacobiSum (jacobiPowerCharacter hq g hg ζ hζ hPdiv ^ a)
           (jacobiPowerCharacter hq g hg ζ hζ hPdiv ^ b) =
-        ∑ u : { u : (ZMod q)ˣ // u ≠ 1 }, χ (u.1 : ZMod q) * ψ (1 - (u.1 : ZMod q)) :=
+        ∑ u : { u : (ZMod q)ˣ // u ≠ 1 }, χ (u.val : ZMod q) * ψ (1 - (u.val : ZMod q)) :=
       by exact jacobiSum_eq_nonidentityUnitSum hq χ ψ
     _ =
         ∑ x : { x : ℕ // 0 < x ∧ x < q - 1 },
-          χ ((g ^ x.1 : (ZMod q)ˣ) : ZMod q) * ψ (1 - (g ^ x.1 : (ZMod q)ˣ) : ZMod q) :=
+          χ ((g ^ x.val : (ZMod q)ˣ) : ZMod q) * ψ (1 - (g ^ x.val : (ZMod q)ˣ) : ZMod q) :=
       by
       symm
       exact
@@ -941,14 +943,14 @@ theorem jacobiWeightedSum_eq_logPowerSum {q P a b : ℕ} {R : Type*} [CommRing R
     (g : (ZMod q)ˣ) (hg : IsPrimitiveRoot g (q - 1)) (ζ : Rˣ) (hζ : (ζ : R) ^ P = 1)
     (hP : P ∣ q - 1) [Fintype { x : ℕ // 0 < x ∧ x < q - 1 }] :
     (∑ x : { x : ℕ // 0 < x ∧ x < q - 1 },
-        (jacobiPowerCharacter hq g hg ζ hζ hP ((g ^ x.1 : (ZMod q)ˣ) : ZMod q)) ^ a *
-          (jacobiPowerCharacter hq g hg ζ hζ hP (1 - (g : ZMod q) ^ x.1)) ^ b) =
+        (jacobiPowerCharacter hq g hg ζ hζ hP ((g ^ x.val : (ZMod q)ˣ) : ZMod q)) ^ a *
+          (jacobiPowerCharacter hq g hg ζ hζ hP (1 - (g : ZMod q) ^ x.val)) ^ b) =
       ∑ x : { x : ℕ // 0 < x ∧ x < q - 1 },
-        (ζ : R) ^ (a * x.1 + b * jacobiOneSubLogValue g x.1) := by
+        (ζ : R) ^ (a * x.val + b * jacobiOneSubLogValue g x.val) := by
   apply Finset.sum_congr rfl
   intro x hx
-  obtain ⟨_, hlog, _, _⟩ := jacobiOneSubLogValue_spec hq g hg x.2.1 x.2.2
-  exact jacobiPowerCharacter_jacobiTerm_eq hq g hg ζ hζ hP x.2.1 x.2.2 hlog
+  obtain ⟨_, hlog, _, _⟩ := jacobiOneSubLogValue_spec hq g hg x.property.1 x.property.2
+  exact jacobiPowerCharacter_jacobiTerm_eq hq g hg ζ hζ hP x.property.1 x.property.2 hlog
 
 /-- For a prime auxiliary modulus, the ordered Option batch search returns exactly the list of
 pointwise logarithm values on every list of valid Jacobi indices. -/

@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.NumberTheory.TwoAdic
 public import PseudoPrime.NumberTheory.UnitPowerImageBounds
 public import PseudoPrime.NumberTheory.PrimeFactorCongruence
 public import PseudoPrime.PrimeTest.MillerRabin.WitnessSubgroupCardinality
@@ -80,9 +81,10 @@ private theorem sign_exponent_facts_of_minimal_prime {n p : ℕ} (hn1 : 1 < n) (
   have hdec := odd_sub_canonical_decomp hn1 hnOdd
   have hPow : 2 ^ t ∣ n - 1 :=
     NumberTheory.dvd_sub_one_of_forall_prime_dvd (Nat.ne_zero_of_lt hn1)
-      (fun q hq hd ↦ (padicValNat_dvd_iff_le (Nat.sub_ne_zero_of_lt hq.one_lt)).mpr (hmin q hq hd))
+      (fun q hq hd ↦
+        (NumberTheory.TwoAdic.pow_dvd_iff (Nat.sub_ne_zero_of_lt hq.one_lt)).mpr (hmin q hq hd))
   have hts : t ≤ padicValNat 2 (n - 1) :=
-    (padicValNat_dvd_iff_le (Nat.sub_ne_zero_of_lt hn1)).mp hPow
+    (NumberTheory.TwoAdic.pow_dvd_iff (Nat.sub_ne_zero_of_lt hn1)).mp hPow
   have hd0 : d ≠ 0 := by
     intro h
     apply hdec.2.1.not_two_dvd_nat
@@ -90,9 +92,7 @@ private theorem sign_exponent_facts_of_minimal_prime {n p : ℕ} (hn1 : 1 < n) (
     rw [h]
     exact dvd_zero 2
   have hE0 : E ≠ 0 := mul_ne_zero (pow_ne_zero _ (by decide : (2 : ℕ) ≠ 0)) hd0
-  have hval : padicValNat 2 E = t - 1 := by
-    rw [padicValNat.mul (pow_ne_zero _ (by decide : (2 : ℕ) ≠ 0)) hd0, padicValNat.prime_pow,
-      padicValNat.eq_zero_of_not_dvd hdec.2.1.not_two_dvd_nat, Nat.add_zero]
+  have hval : padicValNat 2 E = t - 1 := by exact NumberTheory.TwoAdic.val_pow_mul_odd _ hdec.2.1
   have hE2 : 2 * E = 2 ^ t * d := by
     change 2 * (2 ^ (t - 1) * d) = 2 ^ t * d
     rw [← Nat.mul_assoc, Nat.mul_comm 2 (2 ^ (t - 1)), ← pow_succ, Nat.sub_add_cancel ht]
@@ -181,8 +181,7 @@ private theorem exists_sign_power_negative {n t d : ℕ} (hn1 : 1 < n) (hnOdd : 
     exact dvd_zero 2
   have hE : 2 ^ (t - 1) * d ≠ 0 := mul_ne_zero (pow_ne_zero _ (by decide : (2 : ℕ) ≠ 0)) hd0
   have hval : padicValNat 2 (2 ^ (t - 1) * d) = t - 1 := by
-    rw [padicValNat.mul (pow_ne_zero _ (by decide : (2 : ℕ) ≠ 0)) hd0, padicValNat.prime_pow,
-      padicValNat.eq_zero_of_not_dvd hd.not_two_dvd_nat, Nat.add_zero]
+    exact NumberTheory.TwoAdic.val_pow_mul_odd _ hd
   exact
     (NumberTheory.exists_neg_root_even_image_of_twoAdic_lt hn1 hnOdd hE
         (fun p hp hdvd ↦ by

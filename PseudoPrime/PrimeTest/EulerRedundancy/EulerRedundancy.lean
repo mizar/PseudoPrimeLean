@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.NumberTheory.TwoAdic
 public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
 public import PseudoPrime.PrimeTest.BPSW.BFWSpec
 public import PseudoPrime.PrimeTest.EulerJacobi.Spec
@@ -42,7 +43,7 @@ theorem twoAdic_eq_one {n : ℕ} (hm : n % 4 = 3) : padicValNat 2 (n - 1) = 1 :=
   apply Nat.le_antisymm _ hs
   apply Nat.le_of_not_gt
   intro h
-  have hd : 4 ∣ n - 1 := (padicValNat_dvd_iff 2 (n - 1)).mpr (Or.inr h)
+  have hd : 4 ∣ n - 1 := (NumberTheory.TwoAdic.pow_dvd_iff (Nat.sub_ne_zero_of_lt hn)).mpr h
   obtain ⟨k, hk⟩ := hd
   have he : n = 4 * k + 1 := by rw [← Nat.sub_add_cancel (Nat.le_of_lt hn), hk]
   rw [he, Nat.add_mod, Nat.mul_mod] at hm

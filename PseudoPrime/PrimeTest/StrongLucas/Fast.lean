@@ -55,7 +55,7 @@ theorem strongLucasWithPQ_eq (n : ℕ) (hn : Odd n) (D P Q : ℤ) (hD : jacobiSy
   rw [← strongLucasWithParamsUVQ_eq]
   simp only [strongLucasWithPQ, strongLucasWithParamsUVQ, ite_eq_left hn, strongLucasOddPart,
     strongLucasTwoAdicExponent, lucasProbablePrimeIndex_of_jacobi_eq_neg_one hD, leading_eq n hn,
-    Nat.fst_maxPowDvdDiv, Nat.snd_maxPowDvdDiv]
+    Nat.snd_maxPowDvdDiv, Nat.fst_maxPowDvdDiv, ← Nat.padicValNat_def]
 
 /-- Fast explicit-parameter Strong Lucas, separate from the finite-index definition.
 Odd Jacobi-minus-one inputs run the reference PQ core; all other inputs use shared

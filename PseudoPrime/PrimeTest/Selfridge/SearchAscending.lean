@@ -429,6 +429,7 @@ theorem classicalAscending_of_prior_failures {n s k : ℕ} {i : ℕ}
     rw [selfridgeClassicalSearchAscendingFrom]
     simp only [Nat.add_zero] at hi hjacobi
     rw [← hi] at hjacobi
+    dsimp only
     split <;> rename_i hcondition
     · simp only [hi]
     · exact False.elim (hcondition hjacobi)
@@ -485,6 +486,7 @@ theorem classicalAscending_some_of_more_fuel {n s fuel extra : ℕ} {D : ℤ}
   | succ fuel ih =>
     rw [Nat.succ_add]
     rw [selfridgeClassicalSearchAscendingFrom] at hsearch ⊢
+    dsimp only at hsearch ⊢
     split at hsearch <;> rename_i hj
     · rw [ite_eq_left hj]
       exact hsearch

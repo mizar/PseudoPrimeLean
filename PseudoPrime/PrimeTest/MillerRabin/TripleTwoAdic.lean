@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.NumberTheory.TwoAdic
 public import PseudoPrime.PrimeTest.MillerRabin.Construction
 
 /-! # Equal two-adic predecessor valuations for three odd factors
@@ -44,9 +45,7 @@ theorem twoAdic_triple_pred_of_odd_parts {p q r t dp dq dr : ℕ} (ht : 0 < t)
     rw [hp, hq, hr]
     dsimp only [C]
     ring
-  rw [hprod, Nat.add_sub_cancel_right,
-    padicValNat.mul (pow_ne_zero t (by decide : (2 : ℕ) ≠ 0)) hC.pos.ne', padicValNat.prime_pow,
-    padicValNat.eq_zero_of_not_dvd hC.not_two_dvd_nat, Nat.add_zero]
+  rw [hprod, Nat.add_sub_cancel_right, NumberTheory.TwoAdic.val_pow_mul_odd _ hC]
 
 /-- Three odd numbers greater than one with equal predecessor two-adic
 valuations have product predecessor of the same valuation. Apply their

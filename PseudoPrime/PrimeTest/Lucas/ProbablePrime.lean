@@ -53,7 +53,7 @@ The integer coprimality criterion transports the result to the modular unit inte
 -/
 theorem lucasDiscriminant_isUnit_of_jacobi_neg_one {D : ℤ} {n : ℕ} (hjacobi : jacobiSym D n = -1) :
     IsUnit (D : ZMod n) := by
-  rw [ZMod.coe_int_isUnit_iff_isCoprime, Int.isCoprime_iff_gcd_eq_one]
+  rw [ZMod.isUnit_intCast_iff_isCoprime, Int.isCoprime_iff_gcd_eq_one]
   rcases eq_or_ne n 0 with hn | hn
   · subst n
     rw [jacobiSym.zero_right] at hjacobi

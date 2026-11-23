@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.NumberTheory.TwoAdic
 public import PseudoPrime.PrimeTest.MillerRabin.WitnessSubgroupCardinality
 
 /-! # Index-four pass-containing subgroups for two distinct odd primes -/
@@ -43,11 +44,11 @@ private theorem two_prime_sign_exponent_facts {p q : ℕ} (hp : p.Prime) (hq : q
     lt_min (odd_sub_canonical_decomp hp.one_lt (hp.odd_of_ne_two hp2)).1
       (odd_sub_canonical_decomp hq.one_lt (hq.odd_of_ne_two hq2)).1
   have hdp : 2 ^ t ∣ p - 1 :=
-    (padicValNat_dvd_iff_le (Nat.sub_ne_zero_of_lt hp.one_lt)).mpr (min_le_left _ _)
+    (NumberTheory.TwoAdic.pow_dvd_iff (Nat.sub_ne_zero_of_lt hp.one_lt)).mpr (min_le_left _ _)
   have hdq : 2 ^ t ∣ q - 1 :=
-    (padicValNat_dvd_iff_le (Nat.sub_ne_zero_of_lt hq.one_lt)).mpr (min_le_right _ _)
+    (NumberTheory.TwoAdic.pow_dvd_iff (Nat.sub_ne_zero_of_lt hq.one_lt)).mpr (min_le_right _ _)
   have hts : t ≤ padicValNat 2 (p * q - 1) :=
-    (padicValNat_dvd_iff_le (Nat.sub_ne_zero_of_lt hn)).mp
+    (NumberTheory.TwoAdic.pow_dvd_iff (Nat.sub_ne_zero_of_lt hn)).mp
       (dvd_product_sub_one hp.one_lt.le hq.one_lt.le hdp hdq)
   have hd0 : d ≠ 0 := by
     intro h
@@ -56,9 +57,7 @@ private theorem two_prime_sign_exponent_facts {p q : ℕ} (hp : p.Prime) (hq : q
     rw [h]
     exact dvd_zero 2
   have hE0 : E ≠ 0 := mul_ne_zero (pow_ne_zero _ (by decide : (2 : ℕ) ≠ 0)) hd0
-  have hval : padicValNat 2 E = t - 1 := by
-    rw [padicValNat.mul (pow_ne_zero _ (by decide : (2 : ℕ) ≠ 0)) hd0, padicValNat.prime_pow,
-      padicValNat.eq_zero_of_not_dvd hdec.2.1.not_two_dvd_nat, Nat.add_zero]
+  have hval : padicValNat 2 E = t - 1 := by exact NumberTheory.TwoAdic.val_pow_mul_odd _ hdec.2.1
   have hE2 : 2 * E = 2 ^ t * d := by
     change 2 * (2 ^ (t - 1) * d) = 2 ^ t * d
     rw [← Nat.mul_assoc, Nat.mul_comm 2 (2 ^ (t - 1)), ← pow_succ, Nat.sub_add_cancel ht]

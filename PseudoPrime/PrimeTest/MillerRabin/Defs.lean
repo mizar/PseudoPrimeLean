@@ -74,7 +74,7 @@ Apply the natural factorization theorem, including m=0.
 Nonzero-input oddness is supplied separately when decomposing Miller-Rabin exponents.
 -/
 theorem twoAdicPart_mul_oddPart (m : ℕ) : 2 ^ padicValNat 2 m * Nat.divMaxPow m 2 = m := by
-  exact Nat.pow_padicValNat_mul_divMaxPow 2 m
+  exact (Nat.mul_comm _ _).trans (Nat.divMaxPow_mul_pow_padicValNat 2 m)
 
 /-- For nonzero m, removing its maximal power of two leaves an odd quotient.
 Use coprimality with two and the maximal-power nondivisibility theorem.

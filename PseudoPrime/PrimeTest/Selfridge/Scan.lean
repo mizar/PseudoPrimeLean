@@ -350,7 +350,7 @@ Exhaustion is preserved at interval boundaries. -/
 theorem selfridgeNeOneJump_eq (n start fuel : ℕ) :
     selfridgeNeOneJump n start fuel = selfridgeNeOneScan n start fuel := by
   induction fuel using Nat.strong_induction_on generalizing start with
-  | h fuel ih =>
+  | ind fuel ih =>
     cases fuel with
     | zero => rw [selfridgeNeOneJump, selfridgeNeOneScan]
     | succ fuel =>
@@ -404,7 +404,7 @@ theorem selfridgeNeOneCachedJump_map (n start fuel : ℕ) :
     (selfridgeNeOneCachedJump n start fuel).map SelfridgeCachedStop.magnitude =
       selfridgeNeOneJump n start fuel := by
   induction fuel using Nat.strong_induction_on generalizing start with
-  | h fuel ih =>
+  | ind fuel ih =>
     cases fuel with
     | zero => simp only [selfridgeNeOneCachedJump, selfridgeNeOneJump, Option.map_none]
     | succ fuel =>

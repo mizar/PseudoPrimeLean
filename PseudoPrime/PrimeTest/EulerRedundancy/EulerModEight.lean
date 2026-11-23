@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.NumberTheory.TwoAdic
 public import PseudoPrime.PrimeTest.EulerRedundancy.EulerRedundancy
 
 /-! # Euler redundancy for the five-modulo-eight MR branch
@@ -62,9 +63,10 @@ Divisibility by four and nondivisibility by eight determine the valuation.
 This bounds the accepted minus-one stage to zero or one. -/
 theorem twoAdic_eq_two {n : ℕ} (hm : n % 8 = 5) : padicValNat 2 (n - 1) = 2 := by
   have hn := Nat.sub_ne_zero_of_lt (mod_eight_five_data hm).1
-  have hlo : 2 ≤ padicValNat 2 (n - 1) := (padicValNat_dvd_iff_le hn).mp (four_dvd_sub_five hm)
+  have hlo : 2 ≤ padicValNat 2 (n - 1) :=
+    (NumberTheory.TwoAdic.pow_dvd_iff hn).mp (four_dvd_sub_five hm)
   have hhi : ¬3 ≤ padicValNat 2 (n - 1) := fun h ↦
-    eight_not_dvd_sub_five hm ((padicValNat_dvd_iff 3 (n - 1)).mpr (Or.inr h))
+    eight_not_dvd_sub_five hm ((NumberTheory.TwoAdic.pow_dvd_iff hn).mpr h)
   exact Nat.le_antisymm (Nat.le_of_lt_succ (Nat.lt_of_not_ge hhi)) hlo
 
 /-- The Jacobi symbol of two is minus one for a modulus five modulo eight.
