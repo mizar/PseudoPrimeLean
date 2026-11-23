@@ -32,7 +32,7 @@ theorem jacobiSym_two_adic_left (a : ℤ) (N : ℕ) (hN : Odd N) :
         (if N % 8 = 3 ∨ N % 8 = 5 then (-1 : ℤ) else 1) ^ padicValNat 2 a.natAbs *
         jacobiSym (Nat.divMaxPow a.natAbs 2 : ℤ) N := by
   rw [jacobiSym_signed_natAbs a N hN]
-  nth_rw 1 [← Nat.pow_padicValNat_mul_divMaxPow 2 a.natAbs]
+  nth_rw 1 [← (Nat.mul_comm _ _).trans (Nat.divMaxPow_mul_pow_padicValNat 2 a.natAbs)]
   rw [Nat.cast_mul, Nat.cast_pow, Nat.cast_ofNat, jacobiSym.mul_left, jacobiSym.pow_left,
     Jacobi.jacobiSign2 N (Nat.odd_iff.mp hN), mul_assoc]
 
@@ -41,7 +41,7 @@ A positive denominator and maximal-power factorization justify multiplicativity.
 This isolates the sole extra factor needed for Kronecker compatibility. -/
 theorem jacobiSym_two_adic_right (a : ℤ) (n : ℕ) (hn : 0 < n) :
     jacobiSym a n = jacobiSym a 2 ^ padicValNat 2 n * jacobiSym a (Nat.divMaxPow n 2) := by
-  nth_rw 1 [← Nat.pow_padicValNat_mul_divMaxPow 2 n]
+  nth_rw 1 [← (Nat.mul_comm _ _).trans (Nat.divMaxPow_mul_pow_padicValNat 2 n)]
   rw [jacobiSym.mul_right' a (Nat.ne_of_gt (Nat.pow_pos (by decide : 0 < 2)))
       (Nat.ne_of_gt (TwoAdic.oddPart_pos n (Nat.ne_of_gt hn))),
     jacobiSym.pow_right]

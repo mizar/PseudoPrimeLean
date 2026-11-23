@@ -52,7 +52,8 @@ theorem kroneckerSym_zero_left (n : ℤ) (hn : n ≠ 0) :
     Int.zero_emod, ite_true, one_mul]
   change (0 : ℤ) ^ padicValNat 2 n.natAbs * jacobiSym 0 (Nat.divMaxPow n.natAbs 2) = _
   nth_rw 1 [← (jacobiSym.zero_left (by decide : 1 < 2))]
-  rw [← jacobiSym.pow_right, ← jacobiSym.mul_right, Nat.pow_padicValNat_mul_divMaxPow]
+  rw [← jacobiSym.pow_right, ← jacobiSym.mul_right, Nat.padicValNat_def,
+    Nat.pow_multiplicity_mul_divMaxPow]
   exact
     if h : n.natAbs = 1 then (show _ by simp only [h, jacobiSym.one_right, ite_true])
     else

@@ -251,7 +251,7 @@ theorem exists_smaller_neg_one_witness_of_mod_four_three {r : ℕ} (hr4 : r % 4 
       have hlt : m % 8 < 8 := Nat.mod_lt m (by norm_num only : 0 < 8)
       interval_cases hmres : m % 8
       all_goals norm_num only [hmres] at hmod
-      all_goals norm_num only [hmres]
+      norm_num only [hmres]
     have hmodd : Odd m := by
       apply Nat.odd_iff.mpr
       rw [← Nat.mod_mod_of_dvd m (by norm_num only : 2 ∣ 8), hm8]

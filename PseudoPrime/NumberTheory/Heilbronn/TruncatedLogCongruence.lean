@@ -21,7 +21,8 @@ coefficient by coefficient. This transfers derivative identities to ZMod(p^2). -
 theorem prime_mul_polynomial_eq_of_map_eq {p : ℕ} [Fact p.Prime] {F G : Polynomial (ZMod (p ^ 2))}
     (h : F.map (squareReduction p) = G.map (squareReduction p)) :
     Polynomial.C (p : ZMod (p ^ 2)) * F = Polynomial.C (p : ZMod (p ^ 2)) * G := by
-  apply Polynomial.ext
+  apply AddMonoidAlgebra.ext
+  apply Finsupp.ext
   intro n
   rw [Polynomial.coeff_C_mul, Polynomial.coeff_C_mul]
   apply prime_mul_eq_of_reduction_eq
@@ -37,7 +38,8 @@ noncomputable def liftedTruncatedLog (p : ℕ) : Polynomial (ZMod (p ^ 2)) := by
 theorem map_liftedTruncatedLog {p : ℕ} [Fact p.Prime] :
     (liftedTruncatedLog p).map (squareReduction p) = truncatedLog p := by
   classical
-  apply Polynomial.ext
+  apply AddMonoidAlgebra.ext
+  apply Finsupp.ext
   intro n
   rw [Polynomial.coeff_map]
   by_cases hn : n < p
@@ -70,7 +72,8 @@ derivative and constant coefficient, vanishes. Each positive coefficient index b
 theorem polynomial_eq_zero_of_derivative_eq_zero {p : ℕ} [Fact p.Prime]
     {F : Polynomial (ZMod (p ^ 2))} (hd : F.natDegree < p) (hder : F.derivative = 0)
     (h0 : F.coeff 0 = 0) : F = 0 := by
-  apply Polynomial.ext
+  apply AddMonoidAlgebra.ext
+  apply Finsupp.ext
   intro n
   rw [Polynomial.coeff_zero]
   by_cases hn : n = 0

@@ -222,7 +222,8 @@ theorem X_pow_product_not_dvd_logarithmicSubstitution {p : ℕ} [Fact p.Prime]
         rw [← he]
         simpa only [Finset.card_range, Nat.mul_comm] using hdiv)
   have hG0 : G = 0 := by
-    apply Polynomial.ext
+    apply AddMonoidAlgebra.ext
+    apply Finsupp.ext
     intro a
     rw [Polynomial.coeff_zero]
     by_cases ha : a < A

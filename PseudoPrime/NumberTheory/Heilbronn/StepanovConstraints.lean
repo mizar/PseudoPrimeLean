@@ -76,7 +76,8 @@ theorem exists_nonzero_rectangular_jets_vanish {p s : ℕ} [Fact p.Prime] (A B C
           (stepanovJet (r : ℕ) (rectangularPolynomial A B C v))).natDegree <
       A + B + C + 2 * D := by
     linarith only [hd, r.isLt]
-  apply Polynomial.ext
+  apply AddMonoidAlgebra.ext
+  apply Finsupp.ext
   intro j
   rw [Polynomial.coeff_zero]
   by_cases hj : j < A + B + C + 2 * D

@@ -31,7 +31,7 @@ theorem stepanovDerivation_apply {R : Type*} [CommRing R] (F : MvPolynomial (Fin
     stepanovDerivation F =
       MvPolynomial.X 0 * (1 - MvPolynomial.X 0) * MvPolynomial.pderiv 0 F +
         (MvPolynomial.X 0 - MvPolynomial.X 2) * MvPolynomial.pderiv 1 F := by
-  simp only [stepanovDerivation, Derivation.add_apply, Derivation.smul_apply, smul_eq_mul]
+  simp only [stepanovDerivation, add_apply, smul_apply, smul_eq_mul]
 
 /-- The ring homomorphism substituting X, the truncated logarithm f(X), and X^p for the three
 variables. It produces the actual auxiliary polynomial. -/

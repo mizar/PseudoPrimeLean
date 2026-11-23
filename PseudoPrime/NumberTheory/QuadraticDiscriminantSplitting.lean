@@ -34,7 +34,7 @@ theorem quadraticPrimeSplittingAt_of_odd_prime_discr (K : Type) [Field K] [Numbe
     (θ : NumberField.RingOfIntegers K) (a b D : ℤ)
     (hf : minpoly ℤ θ = Polynomial.X ^ 2 - Polynomial.C b * Polynomial.X - Polynomial.C a)
     (hd : D = b ^ 2 + 4 * a) (p : ℕ) [Fact p.Prime] (hp2 : p ≠ 2)
-    (hp : ¬p ∣ RingOfIntegers.exponent θ) (hc : χ (p : ℕ) = (legendreSym p D : ℂ)) :
+    (hp : ¬p ∣ NumberField.RingOfIntegers.exponent θ) (hc : χ (p : ℕ) = (legendreSym p D : ℂ)) :
     quadraticPrimeSplittingAt K χ p := by
   have hpnot : ¬p ∣ 2 := fun h ↦
     hp2 (((Nat.dvd_prime Nat.prime_two).mp h).resolve_left (Fact.out : p.Prime).ne_one)
@@ -86,7 +86,7 @@ theorem quadraticPrimeSplittingAt_at_two (K : Type) [Field K] [NumberField K]
     (hf :
       (minpoly ℤ θ).map (Int.castRingHom (ZMod 2)) =
         Polynomial.X ^ 2 - Polynomial.C b * Polynomial.X - Polynomial.C a)
-    (hp : ¬2 ∣ RingOfIntegers.exponent θ)
+    (hp : ¬2 ∣ NumberField.RingOfIntegers.exponent θ)
     (hc : χ (2 : ℕ) = if b = 0 then 0 else if a = 0 then 1 else -1) :
     quadraticPrimeSplittingAt K χ 2 := by
   let : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
@@ -146,7 +146,7 @@ theorem quadraticPrimeSplittingAt_of_two_discr (K : Type) [Field K] [NumberField
     (hdeg : Module.finrank ℚ K = 2) {q : ℕ} (χ : DirichletCharacter ℂ q)
     (θ : NumberField.RingOfIntegers K) (a b D : ℤ)
     (hf : minpoly ℤ θ = Polynomial.X ^ 2 - Polynomial.C b * Polynomial.X - Polynomial.C a)
-    (hd : D = b ^ 2 + 4 * a) (hp : ¬2 ∣ RingOfIntegers.exponent θ)
+    (hd : D = b ^ 2 + 4 * a) (hp : ¬2 ∣ NumberField.RingOfIntegers.exponent θ)
     (hc : χ (2 : ℕ) = (ZMod.χ₈ (D : ZMod 8) : ℂ)) : quadraticPrimeSplittingAt K χ 2 := by
   have hF :
     (minpoly ℤ θ).map (Int.castRingHom (ZMod 2)) =
@@ -176,11 +176,12 @@ theorem exists_primitive_character_splitting_of_discr (q : ℕ) (K : Type) [Fiel
   have hf : Int.IsFundamentalDiscr (-(q : ℤ)) := hd ▸ quadratic_discr_isFundamental K hdeg
   obtain ⟨χ, hprim, hquad, hodd, hvals, htwo⟩ := exists_primitive_values_fundamental q hf
   obtain ⟨a, b, θ, had, hpoly, hdiscr⟩ := quadratic_exists_integral_generator_polynomial K hdeg
-  have hexp : RingOfIntegers.exponent θ = 1 := RingOfIntegers.exponent_eq_one_iff.mpr had
+  have hexp : NumberField.RingOfIntegers.exponent θ = 1 :=
+    NumberField.RingOfIntegers.exponent_eq_one_iff.mpr had
   refine ⟨χ, hprim, hquad, hodd, ?_⟩
   intro p hp
   let : Fact p.Prime := ⟨hp⟩
-  have hnot : ¬p ∣ RingOfIntegers.exponent θ := hexp.symm ▸ hp.not_dvd_one
+  have hnot : ¬p ∣ NumberField.RingOfIntegers.exponent θ := hexp.symm ▸ hp.not_dvd_one
   by_cases hp2 : p = 2
   · subst p
     apply

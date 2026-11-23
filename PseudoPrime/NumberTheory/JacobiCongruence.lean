@@ -73,7 +73,7 @@ theorem exists_nat_one_modEq_and_jacobiSym_eq_neg_one {d c : ℕ} (hdodd : Odd d
     dsimp only [r]
     exact Nat.div_mul_cancel hc
   have hcop : r.Coprime c := by
-    have h := Nat.coprime_div_gcd_of_squarefree hdsq hc0
+    have h := Nat.coprime_div_gcd_of_squarefree (n := c) hdsq
     simpa only [Nat.gcd_eq_right hc] using h
   have hrgt : 1 < r := by
     by_contra hle

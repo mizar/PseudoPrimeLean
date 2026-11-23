@@ -46,7 +46,7 @@ theorem kroneckerSymNonzeroFast_spec (a n : ℤ) (b : Bool) (hn : n ≠ 0) :
       else kroneckerSym a n := by
   dsimp only [kroneckerSymNonzeroFast]
   rw [Jacobi.symbolNat_eq_reference, zeroGuard_mul]
-  simp only [Nat.fst_maxPowDvdDiv, Nat.snd_maxPowDvdDiv]
+  simp only [Nat.snd_maxPowDvdDiv, Nat.fst_maxPowDvdDiv, ← Nat.padicValNat_def]
   rw [Jacobi.jacobiNat_eq _ _ (TwoAdic.oddPart_odd n.natAbs (Int.natAbs_ne_zero.mpr hn)),
     Int.natCast_emod, ← jacobiSym.mod_left, kroneckerSym_two_adic a n hn]
   simp only [ite_mul, mul_assoc]

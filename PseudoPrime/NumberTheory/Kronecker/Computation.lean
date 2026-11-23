@@ -48,7 +48,7 @@ Sufficient normalized fuel identifies the shared output; the two normalization i
 restore the original signs and common two-power. No executable Jacobi or gcd fallback is used. -/
 theorem kroneckerGcdNonzero_spec (a n : ℤ) (ha : a ≠ 0) (hn : n ≠ 0) :
     kroneckerGcdNonzero a n = (kroneckerSym a n, Nat.gcd a.natAbs n.natAbs) := by
-  simp only [kroneckerGcdNonzero, Nat.fst_maxPowDvdDiv, Nat.snd_maxPowDvdDiv]
+  simp only [kroneckerGcdNonzero, Nat.snd_maxPowDvdDiv, Nat.fst_maxPowDvdDiv, ← Nat.padicValNat_def]
   rw [Jacobi.Gcd.runFuel_normalized _ _ _
       (Nat.odd_iff.mpr (TwoAdic.oddPart_odd n.natAbs (Int.natAbs_ne_zero.mpr hn)))]
   simp only [Option.getD_some]
@@ -93,7 +93,7 @@ theorem kroneckerGcdNonzero_corrected_spec (a n : ℤ) (ha : a ≠ 0) (hn : n �
     kroneckerGcdNonzero a n true =
       (kroneckerTwoPowerFactor a (padicValNat 2 n.natAbs) * kroneckerSym a n,
         Nat.gcd a.natAbs n.natAbs) := by
-  simp only [kroneckerGcdNonzero, Nat.fst_maxPowDvdDiv, Nat.snd_maxPowDvdDiv]
+  simp only [kroneckerGcdNonzero, Nat.snd_maxPowDvdDiv, Nat.fst_maxPowDvdDiv, ← Nat.padicValNat_def]
   rw [Jacobi.Gcd.runFuel_normalized _ _ _
       (Nat.odd_iff.mpr (TwoAdic.oddPart_odd n.natAbs (Int.natAbs_ne_zero.mpr hn)))]
   simp only [Option.getD_some]

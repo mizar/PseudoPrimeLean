@@ -17,6 +17,24 @@ public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 
 namespace PseudoPrime.NumberTheory.TwoAdic
 
+/-- For nonzero `n`, divisibility by `2 ^ k` bounds the executable valuation from below.
+Rewrite it as multiplicity to apply the prime-power divisibility criterion. -/
+theorem pow_dvd_iff {n k : ℕ} (hn : n ≠ 0) : 2 ^ k ∣ n ↔ k ≤ padicValNat 2 n := by
+  rw [Nat.padicValNat_def]
+  exact multiplicity_dvd_iff_le hn
+
+/-- The power of two selected by the executable valuation divides `n`, including at zero.
+This transfers divisibility from an element order to an exponent in the witness proofs. -/
+theorem pow_dvd {n : ℕ} : 2 ^ padicValNat 2 n ∣ n := by
+  rw [Nat.padicValNat_def]
+  exact pow_multiplicity_dvd 2 n
+
+/-- Multiplying an odd natural number by `2 ^ k` gives executable two-adic valuation `k`.
+Add the multiplicities of the two factors and use oddness to discard the second term. -/
+theorem val_pow_mul_odd (k : ℕ) {d : ℕ} (hd : Odd d) : padicValNat 2 (2 ^ k * d) = k := by
+  rw [Nat.padicValNat_def, Nat.multiplicity_mul (pow_ne_zero k (by decide)) hd.pos.ne',
+    Nat.multiplicity_prime_pow, multiplicity_eq_zero_of_not_dvd hd.not_two_dvd_nat, Nat.add_zero]
+
 /--
 For a nonzero numerator, removing all factors of two leaves a positive odd part.
 The factorization identity excludes zero; reciprocity uses this positive divisor.
@@ -96,16 +114,16 @@ theorem gcd_natAbs_two_adic (a n : ℤ) (ha : a ≠ 0) (hn : n ≠ 0) :
       (Nat.divMaxPow n.natAbs 2)
       (Nat.odd_iff.mpr (oddPart_odd a.natAbs (Int.natAbs_ne_zero.mpr ha)))
       (Nat.odd_iff.mpr (oddPart_odd n.natAbs (Int.natAbs_ne_zero.mpr hn)))
-  simpa only [Nat.pow_padicValNat_mul_divMaxPow] using h
+  simpa only [Nat.padicValNat_def, Nat.pow_multiplicity_mul_divMaxPow] using h
 
 /-- An odd natural denominator has no two-power factor.
 Nondivisibility by two makes its valuation zero; maximal-power factorization then
 identifies the odd quotient with the original denominator. -/
 theorem odd_decomposition (N : ℕ) (hN : Odd N) : padicValNat 2 N = 0 ∧ Nat.divMaxPow N 2 = N := by
-  have he := padicValNat.eq_zero_of_not_dvd (Nat.two_dvd_ne_zero.mpr (Nat.odd_iff.mp hN))
+  have he := multiplicity_eq_zero_of_not_dvd (Nat.two_dvd_ne_zero.mpr (Nat.odd_iff.mp hN))
   exact
-    ⟨he,
+    ⟨Nat.padicValNat_def.trans he,
       (show Nat.divMaxPow N 2 = N by
-        simpa only [he, pow_zero, one_mul] using Nat.pow_padicValNat_mul_divMaxPow 2 N)⟩
+        simpa only [he, pow_zero, one_mul] using Nat.pow_multiplicity_mul_divMaxPow 2 N)⟩
 
 end PseudoPrime.NumberTheory.TwoAdic

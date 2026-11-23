@@ -55,7 +55,7 @@ factors, and the quotient is coprime to `Q`.
 Role: gives the arithmetic decomposition needed to compare restricted and
 unrestricted squarefree reciprocal sums.
 -/
-theorem squarefree_coprime_factorization {m Q : ℕ} (hm : Squarefree m) (hQ : Q ≠ 0) :
+theorem squarefree_coprime_factorization {m Q : ℕ} (hm : Squarefree m) (_hQ : Q ≠ 0) :
     ∃ n d : ℕ, m = n * d ∧ Squarefree n ∧ Nat.Coprime n Q ∧ Squarefree d ∧ d ∣ Q := by
   let d : ℕ := Nat.gcd m Q
   let n : ℕ := m / d
@@ -63,7 +63,7 @@ theorem squarefree_coprime_factorization {m Q : ℕ} (hm : Squarefree m) (hQ : Q
   have hdvdQ : d ∣ Q := Nat.gcd_dvd_right m Q
   have hnfac : m = n * d := by simpa only [n, d] using (Nat.div_mul_cancel hdvdm).symm
   have hnsq : Squarefree n := by exact hm.squarefree_of_dvd (Nat.div_dvd_of_dvd hdvdm)
-  have hncop : Nat.Coprime n Q := by simpa only [n, d] using Nat.coprime_div_gcd_of_squarefree hm hQ
+  have hncop : Nat.Coprime n Q := Nat.coprime_div_gcd_of_squarefree hm
   have hdsq : Squarefree d := hm.squarefree_of_dvd hdvdm
   exact ⟨n, d, hnfac, hnsq, hncop, hdsq, hdvdQ⟩
 

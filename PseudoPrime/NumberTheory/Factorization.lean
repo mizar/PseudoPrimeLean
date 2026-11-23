@@ -42,7 +42,7 @@ theorem exists_prime_odd_factorization_of_not_square {r : ℕ} (hr0 : r ≠ 0) (
   rw [← Finset.prod_mul_distrib]
   apply Finset.prod_congr rfl
   intro p hp
-  have heven : Even (r.factorization p) := Nat.not_odd_iff_even.mp (hexists p hp)
+  have heven : Even (r.factorization p) := hexists p hp
   obtain ⟨k, hk⟩ := heven
   rw [← pow_add]
   congr 1

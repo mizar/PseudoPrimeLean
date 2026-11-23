@@ -106,7 +106,7 @@ theorem card_large_denominator_pairs_le {S : Finset (ℕ × ℕ)} {H J : ℕ}
             _ = _ := Nat.mul_div_cancel' hdb
         apply Prod.ext hx
         rw [hx] at hq
-        exact Nat.cast_inj.mp ((div_left_inj' (Nat.cast_ne_zero.mpr (ne_of_gt hsb.1))).mp hq))
+        exact Nat.cast_inj.mp ((div_left_inj₀ (Nat.cast_ne_zero.mpr (ne_of_gt hsb.1))).mp hq))
   simpa only [Finset.card_sigma, Nat.card_Icc, Nat.add_sub_cancel, Finset.sum_const, nsmul_eq_mul,
     Nat.cast_id] using hc
 

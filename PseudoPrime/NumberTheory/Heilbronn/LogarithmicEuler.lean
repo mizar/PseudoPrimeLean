@@ -116,7 +116,7 @@ theorem affineDerivative_pow_eq_zero_iff {K : Type*} [Field K] {c : K} (hc : c �
     (F : Polynomial K) : (affineDerivative c ^ k) F = 0 ↔ F = 0 := by
   induction k with
   | zero => rfl
-  | succ k ih => rw [pow_succ', Module.End.mul_apply, affineDerivative_eq_zero_iff hc, ih]
+  | succ k ih => rw [pow_succ', mul_apply_eq_comp, affineDerivative_eq_zero_iff hc, ih]
 
 /-- Every power of the coefficient operator preserves the natural degree bound. Apply the
 one-step estimate repeatedly. -/
@@ -125,7 +125,7 @@ theorem natDegree_affineDerivative_pow_le {R : Type*} [CommRing R] (c : R) (k : 
   induction k with
   | zero => exact le_rfl
   | succ k ih =>
-    rw [pow_succ', Module.End.mul_apply]
+    rw [pow_succ', mul_apply_eq_comp]
     exact (natDegree_affineDerivative_le c _).trans ih
 
 /-- At c=0, powers of the coefficient operator are the ordinary iterated derivatives. These kill
@@ -135,7 +135,7 @@ theorem affineDerivative_zero_pow {R : Type*} [CommRing R] (k : ℕ) (F : Polyno
   induction k with
   | zero => rfl
   | succ k ih =>
-    rw [pow_succ', Module.End.mul_apply, affineDerivative_apply, Polynomial.C_0, zero_mul, add_zero,
+    rw [pow_succ', mul_apply_eq_comp, affineDerivative_apply, Polynomial.C_0, zero_mul, add_zero,
       ih, Function.iterate_succ_apply']
 
 /-- If X^(m+1) divides F, then X^m divides its Euler image. Differentiation loses at most one
@@ -156,7 +156,7 @@ theorem X_pow_dvd_affineEuler_pow {R : Type*} [CommRing R] (c : R) {F : Polynomi
   induction k generalizing m with
   | zero => exact h
   | succ k ih =>
-    rw [pow_succ', Module.End.mul_apply]
+    rw [pow_succ', mul_apply_eq_comp]
     apply X_pow_dvd_affineEuler c
     exact ih (m + 1) (by simpa only [Nat.add_assoc, Nat.add_comm k 1] using h)
 
@@ -206,7 +206,7 @@ theorem X_pow_dvd_affineEuler_pow_block_error {p : ℕ} [Fact p.Prime] (a : ℕ)
         (affineEuler c ^ (k + 1)) (logarithmicBlock a F) -
           logarithmicBlock a ((affineDerivative (c - a) ^ (k + 1)) F) := by
       rw [pow_succ' (affineEuler c), pow_succ' (affineDerivative (c - a))]
-      simp only [Module.End.mul_apply]
+      simp only [mul_apply_eq_comp]
       abel
     exact he ▸ hd
 

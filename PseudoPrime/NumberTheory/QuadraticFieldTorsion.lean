@@ -180,7 +180,7 @@ theorem quadratic_torsion_sq_eq_one (K : Type) [Field K] [NumberField K]
     (hdeg : Module.finrank ℚ K = 2) (hd : NumberField.discr K < -4)
     (x : NumberField.Units.torsion K) : (x : (NumberField.RingOfIntegers K)ˣ) ^ 2 = 1 := by
   have hu := NumberField.Units.pow_torsionOrder_eq_one K x.property
-  have hz : (x.1 : K) ^ NumberField.Units.torsionOrder K = 1 := by
+  have hz : (x.val : K) ^ NumberField.Units.torsionOrder K = 1 := by
     have hm := congrArg (fun u : (NumberField.RingOfIntegers K)ˣ => (u : K)) hu
     simpa only [Units.val_pow_eq_pow_val, map_pow, Units.val_one, map_one] using hm
   have hs := quadratic_rootOfUnity_sq_eq_one K hdeg hd (NumberField.Units.torsionOrder_ne_zero K) hz

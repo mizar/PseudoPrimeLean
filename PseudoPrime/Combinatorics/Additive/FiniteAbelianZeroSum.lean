@@ -1201,7 +1201,7 @@ theorem exists_nonempty_labels_list {G L : Type} [AddCommGroup G] [Finite G] [De
       exact hgetMap (idx (Sum.inr j))
   exact
     exists_nonempty_labels_indices labels hlabels φ labelIdx t
-      (Finset.nonempty_iff_ne_empty.mpr htne) hlabelIdx
+      (Finset.ne_empty_iff_nonempty.mp htne) hlabelIdx
       (prefixTailCoordinate choices Finset.univ tail) hcoord (by simpa only [q, tail] using hsum)
 
 /--
@@ -1292,7 +1292,7 @@ theorem exists_nonempty_labels_segment {G L : Type} [AddCommGroup G] [Finite G] 
       exact hgetMap (idx (Sum.inr j))
   exact
     exists_nonempty_labels_indices labels hlabels φ labelIdx t
-      (Finset.nonempty_iff_ne_empty.mpr htne) hlabelIdx
+      (Finset.ne_empty_iff_nonempty.mp htne) hlabelIdx
       (prefixTailCoordinate choices Finset.univ tail) hcoord (by simpa only [q, tail] using hsum)
 
 /--

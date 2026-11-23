@@ -94,7 +94,8 @@ theorem step_value (st : State) (hc : Odd st.c) :
     else
       (show (step st).sign * jacobiSym ((step st).m : ℤ) (step st).c = _
         by
-        simp only [step, hm, ite_false, Nat.snd_maxPowDvdDiv, Nat.fst_maxPowDvdDiv, twoPowerSign_eq]
+        simp only [step, hm, ite_false, Nat.snd_maxPowDvdDiv, Nat.fst_maxPowDvdDiv,
+          ← Nat.padicValNat_def, twoPowerSign_eq]
         change
           (st.sign * jacobiRoundSign st.m st.c) *
               jacobiSym ((st.c % Nat.divMaxPow st.m 2 : ℕ) : ℤ) (Nat.divMaxPow st.m 2) =
@@ -203,8 +204,8 @@ theorem runFuel_fst (fuel : ℕ) (st : State) :
           change (runFuel fuel (step st)).map Prod.fst = _
           rw [ih]
           simp only [jacobiNatBatchedFuel, hm, ite_false, Option.map_map, step,
-            Nat.fst_maxPowDvdDiv, Nat.snd_maxPowDvdDiv, twoPowerSign_eq, jacobiRoundSign,
-            Function.comp_def, mul_assoc]
+            Nat.fst_maxPowDvdDiv, ← Nat.padicValNat_def, Nat.snd_maxPowDvdDiv, twoPowerSign_eq,
+            jacobiRoundSign, Function.comp_def, mul_assoc]
           rfl)
 
 /-- Exhaustion yields a divisor-reducing nonterminal trajectory at the supplied budget.

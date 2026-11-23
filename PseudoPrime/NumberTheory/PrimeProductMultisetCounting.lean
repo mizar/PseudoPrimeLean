@@ -138,7 +138,7 @@ theorem multichoose_le_card_subgroup {q : ℕ} [NeZero q] (H : Subgroup (ZMod q)
     let m := (((s.map f).filterNe 1).2 : Multiset ℕ)
     have hbound : ∀ p ∈ m, p ≤ B := fun p h ↦ hb p (mem_of_padded_prime_part S s h)
     have hc : m.card ≤ k := by
-      exact (Multiset.card_le_card (Multiset.filter_le _ _)).trans_eq (s.map f).2
+      exact (Multiset.card_le_card (Multiset.filter_le _ _)).trans_eq (s.map f).property
     exact ((Multiset.prod_le_pow_card m B hbound).trans (Nat.pow_le_pow_right hB hc)).trans_lt hsize
   · intro s
     apply multiset_prod_mem_subgroup H

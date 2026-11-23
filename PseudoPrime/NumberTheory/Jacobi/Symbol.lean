@@ -41,7 +41,7 @@ Together with odd-denominator reference correctness, this certifies normalized s
 theorem symbolNat_eq_reference (a n : ℕ) (sign : ℤ) :
     symbolNat a n sign = sign * jacobiNat a n := by
   induction a using Nat.strong_induction_on generalizing n sign with
-  | h a ih =>
+  | ind a ih =>
     rw [symbolNat]
     split
     · next ha =>

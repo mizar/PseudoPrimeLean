@@ -223,11 +223,11 @@ theorem exists_zeroSum_iff_card_gt_one {G : Type} [AddCommGroup G] [DecidableEq 
     have hb' := Finset.mem_filter.mp hb
     by_cases ha0 : a = ∅
     · subst a
-      exact ⟨b, hb'.1, (Finset.nonempty_iff_ne_empty).2 (Ne.symm hab), hb'.2⟩
-    · exact ⟨a, ha'.1, (Finset.nonempty_iff_ne_empty).2 ha0, ha'.2⟩
+      exact ⟨b, hb'.1, Finset.ne_empty_iff_nonempty.mp (Ne.symm hab), hb'.2⟩
+    · exact ⟨a, ha'.1, Finset.ne_empty_iff_nonempty.mp ha0, ha'.2⟩
   · rintro ⟨t, ht, hne, hsum⟩
     apply (Finset.one_lt_card_iff).2
-    exact ⟨∅, t, h0, Finset.mem_filter.mpr ⟨ht, hsum⟩, (Finset.nonempty_iff_ne_empty.mp hne).symm⟩
+    exact ⟨∅, t, h0, Finset.mem_filter.mpr ⟨ht, hsum⟩, (Finset.ne_empty_iff_nonempty.mpr hne).symm⟩
 
 /--
 Inputs: a finite indexed family in an additive commutative group.
@@ -252,7 +252,7 @@ theorem zeroSum_card_one_iff_none {G : Type} [AddCommGroup G] [DecidableEq G] (S
   constructor
   · intro hcard t ht hsum
     by_contra hne
-    have hnonempty : t.Nonempty := (Finset.nonempty_iff_ne_empty).2 hne
+    have hnonempty : t.Nonempty := Finset.ne_empty_iff_nonempty.mp hne
     have hgt := (exists_zeroSum_iff_card_gt_one S g).2 ⟨t, ht, hnonempty, hsum⟩
     rw [hcard] at hgt
     exact Nat.lt_irrefl 1 hgt
@@ -670,7 +670,7 @@ theorem one_sub_inv_nat_pow_le_exp_neg (m k : ℕ) (hm : 0 < m) :
   have hpow := pow_le_pow_left₀ hbase (Real.one_sub_le_exp_neg (1 / (m : ℝ))) k
   calc
     (1 - 1 / (m : ℝ)) ^ k ≤ Real.exp (-(1 / (m : ℝ))) ^ k := hpow
-    _ = Real.exp (-(1 / (m : ℝ)) * k) := by rw [← Real.exp_nat_mul, mul_comm]
+    _ = Real.exp (-(1 / (m : ℝ)) * k) := by rw [← Real.exp_natCast_mul, mul_comm]
     _ = Real.exp (-((k : ℝ) / m)) := by
       congr 1
       ring

@@ -147,10 +147,11 @@ is even. The gcd valuation is bounded by that of E, and the quotient retains a
 positive 2-adic valuation. This certifies an even image for a cyclic power map. -/
 theorem two_dvd_div_gcd_of_twoAdic_lt {N E : ℕ} (hE : E ≠ 0)
     (hv : padicValNat 2 E < padicValNat 2 N) : 2 ∣ N / N.gcd E := by
-  have hg : padicValNat 2 (N.gcd E) ≤ padicValNat 2 E :=
-    (padicValNat_dvd_iff_le hE).mp (pow_padicValNat_dvd.trans (Nat.gcd_dvd_right N E))
-  apply dvd_of_one_le_padicValNat
-  rw [padicValNat.div_of_dvd (Nat.gcd_dvd_left N E)]
+  simp only [Nat.padicValNat_def] at hv
+  have hg : multiplicity 2 (N.gcd E) ≤ multiplicity 2 E :=
+    (multiplicity_dvd_iff_le hE).mp ((pow_multiplicity_dvd 2 _).trans (Nat.gcd_dvd_right N E))
+  apply dvd_of_one_le_multiplicity
+  rw [Nat.multiplicity_div_of_dvd (Nat.gcd_dvd_left N E)]
   exact Nat.sub_pos_of_lt (lt_of_le_of_lt hg hv)
 
 /-- For coprime nonzero moduli, the E-power image on units modulo the product
@@ -228,7 +229,9 @@ theorem card_unitPowerKernel_prime_pow_twoAdic {p a t d : ℕ} (hp : p.Prime) (h
   rw [card_unitPowerKernel_prime_pow hp hp2 ha,
     Nat.Coprime.gcd_mul_left_cancel (p - 1) (hpc.pow_left (a - 1))]
   have hbase : t - 1 ≤ padicValNat 2 (p - 1) := (Nat.sub_le t 1).trans htp
-  conv_lhs => rw [← Nat.pow_padicValNat_mul_divMaxPow 2 (p - 1), ← Nat.pow_sub_mul_pow 2 hbase]
+  conv_lhs =>
+    rw [← Nat.pow_multiplicity_mul_divMaxPow 2 (p - 1), ← Nat.padicValNat_def, ←
+      Nat.pow_sub_mul_pow 2 hbase]
   rw [Nat.mul_comm (2 ^ (padicValNat 2 (p - 1) - (t - 1))) (2 ^ (t - 1)), Nat.mul_assoc,
     Nat.gcd_mul_left]
   rw [Nat.Coprime.gcd_mul_left_cancel (Nat.divMaxPow (p - 1) 2)
@@ -312,8 +315,8 @@ theorem card_unitPowerImage_prime_pow_twoAdic {p a t d : ℕ} (hp : p.Prime) (hp
   have hpdec :
     p - 1 = 2 ^ (t - 1) * (2 ^ (padicValNat 2 (p - 1) - (t - 1)) * Nat.divMaxPow (p - 1) 2) := by
     calc
-      _ = 2 ^ padicValNat 2 (p - 1) * Nat.divMaxPow (p - 1) 2 :=
-        (Nat.pow_padicValNat_mul_divMaxPow 2 (p - 1)).symm
+      _ = 2 ^ padicValNat 2 (p - 1) * Nat.divMaxPow (p - 1) 2 := by
+        simpa only [Nat.padicValNat_def] using (Nat.pow_multiplicity_mul_divMaxPow 2 (p - 1)).symm
       _ = _ := by
         rw [← Nat.pow_sub_mul_pow 2 hbase]
         ring

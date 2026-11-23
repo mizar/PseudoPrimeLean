@@ -94,9 +94,9 @@ This provides a single generator suitable for splitting every rational prime. -/
 theorem quadratic_exists_integral_generator (K : Type) [Field K] [NumberField K]
     (hdeg : Module.finrank ℚ K = 2) :
     ∃ θ : NumberField.RingOfIntegers K,
-      Algebra.adjoin ℤ {θ} = ⊤ ∧ RingOfIntegers.exponent θ = 1 := by
+      Algebra.adjoin ℤ {θ} = ⊤ ∧ NumberField.RingOfIntegers.exponent θ = 1 := by
   obtain ⟨_a, _b, θ, had, _hpoly, _hd⟩ := quadratic_exists_integral_generator_polynomial K hdeg
-  exact ⟨θ, had, RingOfIntegers.exponent_eq_one_iff.mpr had⟩
+  exact ⟨θ, had, NumberField.RingOfIntegers.exponent_eq_one_iff.mpr had⟩
 
 /-- In a degree-two number field, choose one integral generator such that, for every prime,
 the prime ideals above that prime correspond to the monic irreducible factors of its
@@ -112,7 +112,7 @@ theorem quadratic_exists_prime_factor_equiv (K : Type) [Field K] [NumberField K]
         ∀ (p : ℕ) [Fact p.Prime],
           ∃ e :
             (Ideal.span {(p : ℤ)}).primesOver (NumberField.RingOfIntegers K) ≃
-              RingOfIntegers.monicFactorsMod θ p,
+              NumberField.RingOfIntegers.monicFactorsMod θ p,
             ∀ Q,
               (e.symm Q : Ideal (NumberField.RingOfIntegers K)).inertiaDeg ℤ = Q.val.natDegree ∧
                 (e.symm Q : Ideal (NumberField.RingOfIntegers K)).ramificationIdx ℤ =
@@ -122,7 +122,7 @@ theorem quadratic_exists_prime_factor_equiv (K : Type) [Field K] [NumberField K]
   obtain ⟨θ, had, hexp⟩ := quadratic_exists_integral_generator K hdeg
   refine ⟨θ, had, ?_⟩
   intro p hp
-  have hnot : ¬p ∣ RingOfIntegers.exponent θ := by
+  have hnot : ¬p ∣ NumberField.RingOfIntegers.exponent θ := by
     rw [hexp]
     exact (Fact.out : p.Prime).not_dvd_one
   refine ⟨NumberField.Ideal.primesOverSpanEquivMonicFactorsMod hnot, ?_⟩
@@ -140,7 +140,8 @@ and its norm is `p^2` by the degree of the number field. This connects polynomia
 irreducibility to prime-power ideal counts. -/
 theorem quadraticPrimeSplittingAt_of_irreducible (K : Type) [Field K] [NumberField K]
     (hdeg : Module.finrank ℚ K = 2) {q : ℕ} (χ : DirichletCharacter ℂ q)
-    (θ : NumberField.RingOfIntegers K) (p : ℕ) [Fact p.Prime] (hp : ¬p ∣ RingOfIntegers.exponent θ)
+    (θ : NumberField.RingOfIntegers K) (p : ℕ) [Fact p.Prime]
+    (hp : ¬p ∣ NumberField.RingOfIntegers.exponent θ)
     (hi : Irreducible ((minpoly ℤ θ).map (Int.castRingHom (ZMod p)))) (hc : χ (p : ℕ) = -1) :
     quadraticPrimeSplittingAt K χ p := by
   have hn : (p : NumberField.RingOfIntegers K) ≠ 0 :=
@@ -169,7 +170,7 @@ private theorem linear_square_multiplicity {F : Type} [Field F] (r : F) :
     multiplicity (Polynomial.X - Polynomial.C r) ((Polynomial.X - Polynomial.C r) ^ 2) = 2 := by
   classical
   rw [UniqueFactorizationMonoid.multiplicity_eq_count_normalizedFactors
-      (Polynomial.irreducible_X_sub_C r) (pow_ne_zero 2 (Polynomial.X_sub_C_ne_zero r)),
+      (Polynomial.irreducible_X_sub_C r),
     (Polynomial.monic_X_sub_C r).normalize_eq_self, linear_square_factors]
   exact Multiset.count_replicate_self _ 2
 
@@ -197,8 +198,7 @@ private theorem linear_product_multiplicity {F : Type} [Field F] (r s : F) (hrs 
   have hlin : Polynomial.X - Polynomial.C r ≠ Polynomial.X - Polynomial.C s := fun h ↦
     hrs (Polynomial.C_injective (sub_right_inj.mp h))
   rw [UniqueFactorizationMonoid.multiplicity_eq_count_normalizedFactors
-      (Polynomial.irreducible_X_sub_C r)
-      (mul_ne_zero (Polynomial.X_sub_C_ne_zero r) (Polynomial.X_sub_C_ne_zero s)),
+      (Polynomial.irreducible_X_sub_C r),
     (Polynomial.monic_X_sub_C r).normalize_eq_self, linear_product_factors]
   simp only [Multiset.count_add, Multiset.count_singleton, ite_true, ite_false, hlin, add_zero]
 
@@ -209,15 +209,15 @@ Factor multiplicity two gives the ideal square and factor degree one gives the n
 This supplies the ramified input to ideal counting. -/
 theorem quadraticPrimeSplittingAt_of_reduced_square (K : Type) [Field K] [NumberField K] {q : ℕ}
     (χ : DirichletCharacter ℂ q) (θ : NumberField.RingOfIntegers K) (p : ℕ) [Fact p.Prime]
-    (hp : ¬p ∣ RingOfIntegers.exponent θ) (r : ZMod p)
+    (hp : ¬p ∣ NumberField.RingOfIntegers.exponent θ) (r : ZMod p)
     (hf : (minpoly ℤ θ).map (Int.castRingHom (ZMod p)) = (Polynomial.X - Polynomial.C r) ^ 2)
     (hc : χ (p : ℕ) = 0) : quadraticPrimeSplittingAt K χ p := by
   classical
-  have hs : RingOfIntegers.monicFactorsMod θ p = {Polynomial.X - Polynomial.C r} := by
+  have hs : NumberField.RingOfIntegers.monicFactorsMod θ p = {Polynomial.X - Polynomial.C r} := by
     change (UniqueFactorizationMonoid.normalizedFactors _).toFinset = _
     rw [hf, linear_square_factors, Multiset.toFinset_replicate]
     rfl
-  let U : RingOfIntegers.monicFactorsMod θ p :=
+  let U : NumberField.RingOfIntegers.monicFactorsMod θ p :=
     ⟨Polynomial.X - Polynomial.C r, hs.symm ▸ Finset.mem_singleton_self _⟩
   let P := (NumberField.Ideal.primesOverSpanEquivMonicFactorsMod hp).symm U
   have hp0 : Ideal.span {(p : ℤ)} ≠ ⊥ :=
@@ -227,7 +227,7 @@ theorem quadraticPrimeSplittingAt_of_reduced_square (K : Type) [Field K] [Number
       ⟨hc, (P : Ideal (NumberField.RingOfIntegers K)), Ideal.prime_of_mem_primesOver hp0 P.property,
         ?_, ?_⟩
   · rw [principal_prime_eq_prod_monicFactors K θ p hp]
-    have he : ∀ V : RingOfIntegers.monicFactorsMod θ p, V = U := by
+    have he : ∀ V : NumberField.RingOfIntegers.monicFactorsMod θ p, V = U := by
       intro V
       apply Subtype.ext
       exact Finset.mem_singleton.mp (hs ▸ V.property)
@@ -245,21 +245,21 @@ Distinct factors give distinct maximal ideals, and their multiplicities are one.
 This supplies the split input to ideal counting. -/
 theorem quadraticSplitting_of_distinct_linear (K : Type) [Field K] [NumberField K] {q : ℕ}
     (χ : DirichletCharacter ℂ q) (θ : NumberField.RingOfIntegers K) (p : ℕ) [Fact p.Prime]
-    (hp : ¬p ∣ RingOfIntegers.exponent θ) (r s : ZMod p) (hrs : r ≠ s)
+    (hp : ¬p ∣ NumberField.RingOfIntegers.exponent θ) (r s : ZMod p) (hrs : r ≠ s)
     (hf :
       (minpoly ℤ θ).map (Int.castRingHom (ZMod p)) =
         (Polynomial.X - Polynomial.C r) * (Polynomial.X - Polynomial.C s))
     (hc : χ (p : ℕ) = 1) : quadraticPrimeSplittingAt K χ p := by
   classical
   have hs :
-    RingOfIntegers.monicFactorsMod θ p =
+    NumberField.RingOfIntegers.monicFactorsMod θ p =
       {Polynomial.X - Polynomial.C r, Polynomial.X - Polynomial.C s} := by
     change (UniqueFactorizationMonoid.normalizedFactors _).toFinset = _
     rw [hf, linear_product_factors]
     simp only [Multiset.toFinset_add, Multiset.toFinset_singleton, Finset.singleton_union]
-  let U : RingOfIntegers.monicFactorsMod θ p :=
+  let U : NumberField.RingOfIntegers.monicFactorsMod θ p :=
     ⟨Polynomial.X - Polynomial.C r, hs.symm ▸ Finset.mem_insert_self _ _⟩
-  let V : RingOfIntegers.monicFactorsMod θ p :=
+  let V : NumberField.RingOfIntegers.monicFactorsMod θ p :=
     ⟨Polynomial.X - Polynomial.C s,
       hs.symm ▸ Finset.mem_insert_of_mem (Finset.mem_singleton_self _)⟩
   let e := NumberField.Ideal.primesOverSpanEquivMonicFactorsMod hp
@@ -281,7 +281,7 @@ theorem quadraticSplitting_of_distinct_linear (K : Type) [Field K] [NumberField 
         ((P.property.1.isMaximal (Ideal.ne_bot_of_mem_primesOver hp0 P.property)).coprime_of_ne
           (Q.property.1.isMaximal (Ideal.ne_bot_of_mem_primesOver hp0 Q.property)) hpq)
   · rw [principal_prime_eq_prod_monicFactors K θ p hp]
-    have hall : ∀ W : RingOfIntegers.monicFactorsMod θ p, W = U ∨ W = V := by
+    have hall : ∀ W : NumberField.RingOfIntegers.monicFactorsMod θ p, W = U ∨ W = V := by
       intro W
       have hw := W.property
       simp only [hs, Finset.mem_insert, Finset.mem_singleton] at hw

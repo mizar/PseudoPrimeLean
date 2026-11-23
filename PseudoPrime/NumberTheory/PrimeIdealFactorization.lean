@@ -29,8 +29,9 @@ factor degree. Kummer-Dedekind identifies the inertia degree, and the residue-fi
 formula converts it to an absolute norm. This supplies the norm condition in local ideal
 counting for ramified, inert, and split primes. -/
 theorem absNorm_primeIdeal_of_monicFactor (K : Type) [Field K] [NumberField K]
-    (θ : NumberField.RingOfIntegers K) (p : ℕ) [Fact p.Prime] (hp : ¬p ∣ RingOfIntegers.exponent θ)
-    (Q : RingOfIntegers.monicFactorsMod θ p) :
+    (θ : NumberField.RingOfIntegers K) (p : ℕ) [Fact p.Prime]
+    (hp : ¬p ∣ NumberField.RingOfIntegers.exponent θ)
+    (Q : NumberField.RingOfIntegers.monicFactorsMod θ p) :
     Ideal.absNorm
         ((NumberField.Ideal.primesOverSpanEquivMonicFactorsMod hp).symm Q :
           Ideal (NumberField.RingOfIntegers K)) =
@@ -83,9 +84,9 @@ Transport the prime-ideal product through Kummer-Dedekind. This provides the act
 ideal factorization needed to apply the ramified, inert, and split counting formulas. -/
 theorem principal_prime_eq_prod_monicFactors (K : Type) [Field K] [NumberField K]
     (θ : NumberField.RingOfIntegers K) (p : ℕ) [Fact p.Prime]
-    (hp : ¬p ∣ RingOfIntegers.exponent θ) :
+    (hp : ¬p ∣ NumberField.RingOfIntegers.exponent θ) :
     Ideal.span {(p : NumberField.RingOfIntegers K)} =
-      ∏ Q : RingOfIntegers.monicFactorsMod θ p,
+      ∏ Q : NumberField.RingOfIntegers.monicFactorsMod θ p,
         ((NumberField.Ideal.primesOverSpanEquivMonicFactorsMod hp).symm Q :
             Ideal (NumberField.RingOfIntegers K)) ^
           multiplicity Q.val ((minpoly ℤ θ).map (Int.castRingHom (ZMod p))) := by
@@ -112,12 +113,13 @@ exponent is prime to `p`, the principal ideal `(p)` is prime. Its quotient is is
 to the polynomial quotient, which is a domain. This supplies the inert ideal in the
 local splitting classification. -/
 theorem principal_prime_of_irreducible_minpoly_mod (K : Type) [Field K] [NumberField K]
-    (θ : NumberField.RingOfIntegers K) (p : ℕ) [Fact p.Prime] (hp : ¬p ∣ RingOfIntegers.exponent θ)
+    (θ : NumberField.RingOfIntegers K) (p : ℕ) [Fact p.Prime]
+    (hp : ¬p ∣ NumberField.RingOfIntegers.exponent θ)
     (hi : Irreducible ((minpoly ℤ θ).map (Int.castRingHom (ZMod p)))) :
     (Ideal.span {(p : NumberField.RingOfIntegers K)}).IsPrime := by
   let : (Ideal.span {((minpoly ℤ θ).map (Int.castRingHom (ZMod p)))}).IsPrime :=
     (Ideal.span_singleton_prime hi.ne_zero).mpr hi.prime
-  let e := RingOfIntegers.ZModXQuotSpanEquivQuotSpan hp
+  let e := NumberField.RingOfIntegers.ZModXQuotSpanEquivQuotSpan hp
   let :
     IsDomain
       ((Polynomial (ZMod p)) ⧸ Ideal.span {((minpoly ℤ θ).map (Int.castRingHom (ZMod p)))}) :=

@@ -93,7 +93,7 @@ theorem unit_mem_of_valid_generation_tree {q cap : ℕ} [NeZero q] {tree : ℕ �
           r < q → Nat.Coprime r q → ∀ u : (ZMod q)ˣ, (u : ZMod q) = (r : ZMod q) → u ∈ H := by
     intro d
     induction d using Nat.strong_induction_on with
-    | h d ih =>
+    | ind d ih =>
       intro r hd hr hc u hu
       rcases hvalid ⟨r, hr⟩ hc with he | ⟨hp, hcp, hdep, hpprime, hpdiv, hpcap, hmod⟩
       · change r = 1 at he

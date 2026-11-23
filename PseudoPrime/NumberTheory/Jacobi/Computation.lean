@@ -40,7 +40,7 @@ theorem jacobiRoundSign_mul (a n : ℕ) (ha : a ≠ 0) (hn : n % 2 = 1) :
     jacobiRoundSign a n * jacobiSym ((n % Nat.divMaxPow a 2 : ℕ) : ℤ) (Nat.divMaxPow a 2) =
       jacobiSym (a : ℤ) n := by
   have hr := jacobiSym.quadratic_reciprocity_if (TwoAdic.oddPart_odd a ha) hn
-  have hf := Nat.pow_padicValNat_mul_divMaxPow 2 a
+  have hf := (Nat.mul_comm _ _).trans (Nat.divMaxPow_mul_pow_padicValNat 2 a)
   conv_rhs =>
     rw [← hf, Nat.cast_mul, Nat.cast_pow, Nat.cast_ofNat, jacobiSym.mul_left, jacobiSym.pow_left,
       jacobiSign2 n hn]
@@ -63,7 +63,7 @@ Strong induction uses odd-part positivity and its upper bound to decrease the nu
 the batched sign identity combines factor-two removal, reciprocity, and remainder invariance. -/
 theorem jacobiNat_eq (a n : ℕ) (hn : n % 2 = 1) : jacobiNat a n = jacobiSym (a : ℤ) n := by
   induction a using Nat.strong_induction_on generalizing n with
-  | h a ih =>
+  | ind a ih =>
     rw [jacobiNat]
     split
     · next ha =>

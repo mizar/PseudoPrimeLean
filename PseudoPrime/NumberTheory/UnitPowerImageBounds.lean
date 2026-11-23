@@ -26,10 +26,11 @@ theorem two_dvd_card_unitPowerImage_prime_pow {p a E : ℕ} (hp : p.Prime) (hp2 
   let : IsCyclic (ZMod (p ^ a))ˣ := ZMod.isCyclic_units_of_prime_pow p hp hp2 a
   rw [IsCyclic.card_powMonoidHom_range, Nat.card_eq_fintype_card, ZMod.card_units_eq_totient]
   apply two_dvd_div_gcd_of_twoAdic_lt hE
+  simp only [Nat.padicValNat_def]
   rw [Nat.totient_prime_pow hp ha,
-    padicValNat.mul (pow_ne_zero _ hp.ne_zero) (Nat.sub_ne_zero_of_lt hp.one_lt),
-    padicValNat.eq_zero_of_not_dvd (hp.odd_of_ne_two hp2).pow.not_two_dvd_nat, Nat.zero_add]
-  exact hv
+    Nat.multiplicity_mul (pow_ne_zero _ hp.ne_zero) (Nat.sub_ne_zero_of_lt hp.one_lt),
+    multiplicity_eq_zero_of_not_dvd (hp.odd_of_ne_two hp2).pow.not_two_dvd_nat, Nat.zero_add]
+  simpa only [Nat.padicValNat_def] using hv
 
 /-- An even power image modulo an odd prime power contains -1. The unit group is
 cyclic and its signs are distinct, so the order-two subgroup lies in the image.

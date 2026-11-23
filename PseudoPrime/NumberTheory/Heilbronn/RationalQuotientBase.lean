@@ -49,7 +49,7 @@ theorem card_left_le_quotientSet {A B : Finset ℚ} {b : ℚ} (hb : b ∈ B) (hb
   · intro q hq
     exact Finset.mem_image.mpr ⟨(q, b), Finset.mem_product.mpr ⟨hq, hb⟩, rfl⟩
   · intro q hq t ht he
-    exact (div_left_inj' hb0).mp he
+    exact (div_left_inj₀ hb0).mp he
 
 /-- If B is a family of positive rationals of heights Q,D, then
 card(A)*card(B) is at most Q*D*card(A/B), without a positivity assumption on A.
@@ -62,7 +62,7 @@ theorem rational_quotient_base_bound {A B : Finset ℚ} {Q D : ℕ}
   by_cases hb : B = ∅
   · rw [hb, Finset.card_empty, mul_zero]
     exact Nat.zero_le _
-  · obtain ⟨b, hb⟩ := Finset.nonempty_iff_ne_empty.mpr hb
+  · obtain ⟨b, hb⟩ := Finset.ne_empty_iff_nonempty.mp hb
     have ha := card_left_le_quotientSet (A := A) hb (ne_of_gt (hB b hb).1)
     have hc := Nat.mul_le_mul ha (card_bounded_positive_rationals_le hB)
     simpa only [Nat.mul_comm] using hc
