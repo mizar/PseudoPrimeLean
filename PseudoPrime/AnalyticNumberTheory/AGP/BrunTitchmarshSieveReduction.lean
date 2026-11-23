@@ -129,7 +129,8 @@ theorem squarefree_card_eq_two_pow_factors (Q : ℕ) (hQ : 0 < Q) :
   rw [← Finset.card_def, Finset.card_powerset]
   congr 1
   rw [Nat.factors_eq]
-  rw [ArithmeticFunction.cardDistinctFactors_apply, Multiset.card_toFinset]
+  rw [ArithmeticFunction.cardDistinctFactors_eq_length_dedup_primeFactorsList,
+    Multiset.card_toFinset]
   simp
 
 /--

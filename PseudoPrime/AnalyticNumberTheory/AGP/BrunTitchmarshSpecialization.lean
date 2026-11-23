@@ -61,14 +61,14 @@ Proof: rewrite `d*r*m` as `r*(d*m)` and use `Nat.totient_mul_of_prime_of_dvd`.
 Role: this is the totient case needed when the bad prime factor already divides
 the AGP divisor.
 -/
-theorem agp_totient_drm_eq_r_mul_totient_dm_of_dvd {d r m : ℕ} (hr : Nat.Prime r) (hrd : r ∣ d) :
+theorem agp_totient_drm_eq_r_mul_totient_dm_of_dvd {d r m : ℕ} (_hr : Nat.Prime r) (hrd : r ∣ d) :
     Nat.totient (d * r * m) = r * Nat.totient (d * m) := by
   have hfactor : d * r * m = r * (d * m) := by
     calc
       d * r * m = d * (r * m) := Nat.mul_assoc d r m
       _ = r * (d * m) := Nat.mul_left_comm d r m
   rw [hfactor]
-  exact Nat.totient_mul_of_prime_of_dvd hr (dvd_mul_of_dvd_left hrd m)
+  exact Nat.totient_mul_of_dvd (dvd_mul_of_dvd_left hrd m)
 
 /--
 Inputs: a prime `r` that divides neither `d` nor `m`.

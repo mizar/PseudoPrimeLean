@@ -24,7 +24,7 @@ theorem exp_sixth_lower41 {L : ℝ} (hL : 41 ≤ L) : 20 * L ≤ Real.exp (L / 6
     linarith only [h]
   have he6 : (400 : ℝ) ≤ Real.exp 6 := by
     have h := pow_le_pow_left₀ (show (0 : ℝ) ≤ 2718 / 1000 by norm_num only) he 6
-    rw [← Real.exp_nat_mul] at h
+    rw [← Real.exp_natCast_mul] at h
     norm_num only at h ⊢
     linarith only [h]
   have ht0 : 0 ≤ L / 6 - 6 := by linarith only [hL]

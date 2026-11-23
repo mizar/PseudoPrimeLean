@@ -1400,9 +1400,9 @@ theorem exists_localFactor {F : ℂ → ℂ} (hF : AnalyticOnNhd ℂ F Set.univ)
   have horder (z : ℂ) : analyticOrderAt F z ≠ ⊤ :=
     hF.analyticOrderAt_ne_top_of_isPreconnected isPreconnected_univ trivial trivial hcOrder
   have hnotTop (u : Metric.ball c |R|) : meromorphicOrderAt F u ≠ ⊤ := by
-    rw [(hF u.1 trivial).meromorphicOrderAt_eq]
+    rw [(hF u.val trivial).meromorphicOrderAt_eq]
     intro hu
-    exact horder u.1 (ENat.map_eq_top_iff.mp hu)
+    exact horder u.val (ENat.map_eq_top_iff.mp hu)
   have hball : AnalyticOnNhd ℂ F (Metric.closedBall c |R|) := by
     intro z _
     exact hF z trivial

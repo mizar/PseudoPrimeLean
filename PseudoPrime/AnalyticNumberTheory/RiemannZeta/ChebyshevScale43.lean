@@ -46,7 +46,7 @@ cutoff conditions. Split the exponential at 20 and use `exp 1 > 2`. -/
 theorem exp_half_lower {L : ℝ} (hL : 43 ≤ L) : 1000 * L ≤ Real.exp (L / 2) := by
   have he20 : (1048576 : ℝ) ≤ Real.exp 20 := by
     have h := pow_le_pow_left₀ (show (0 : ℝ) ≤ 2 by norm_num only) Real.exp_one_gt_two.le 20
-    rw [← Real.exp_nat_mul] at h
+    rw [← Real.exp_natCast_mul] at h
     norm_num only at h ⊢
     exact h
   have he := Real.add_one_le_exp (L / 2 - 20)

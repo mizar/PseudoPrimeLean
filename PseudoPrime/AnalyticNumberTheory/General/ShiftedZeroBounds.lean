@@ -286,7 +286,7 @@ theorem integral_tsum_shifted_zero_residues {ι : Type*} (z : ι → ℂ) (m : �
         ∑' i : S,
           ∫ σ : ℝ in Set.Ioi 1, -(m i : ℂ) * (x : ℂ) ^ (z i - (σ : ℂ)) / (z i - (σ : ℂ)) ^ 2 :=
       (MeasureTheory.hasSum_integral_of_summable_integral_norm (fun i : S ↦ hi i)
-          (hn.subtype S)).tsum_eq.symm
+          (hn.subtype (fun i ↦ i ∈ S))).tsum_eq.symm
     _ = _ := by
       apply
         tsum_subtype_eq_of_support_subset (s := S) (f := fun i : ι ↦

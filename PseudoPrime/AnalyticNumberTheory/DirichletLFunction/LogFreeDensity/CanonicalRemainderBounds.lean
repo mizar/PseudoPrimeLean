@@ -942,9 +942,9 @@ theorem exists_localRemainder {F : ℂ → ℂ} (hFglobal : AnalyticOnNhd ℂ F 
   refine ⟨gLocal, ?_, ?_, ?_⟩
   · simpa only [abs_of_pos (by norm_num only : (0 : ℝ) < 1)] using hLocal
   · intro u
-    have hu : u.1 ∈ Metric.ball (0 : ℂ) |(1 : ℝ)| := by
-      simpa only [abs_of_pos (by norm_num only : (0 : ℝ) < 1)] using u.2
-    exact hLocalNe ⟨u.1, hu⟩
+    have hu : u.val ∈ Metric.ball (0 : ℂ) |(1 : ℝ)| := by
+      simpa only [abs_of_pos (by norm_num only : (0 : ℝ) < 1)] using u.property
+    exact hLocalNe ⟨u.val, hu⟩
   · exact localRemainder_le hF D h0 hzf n gLocal hLocalEq hglobal hreflect hn
 
 /--
@@ -1554,9 +1554,9 @@ theorem scaledZero_in_support {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ 
   have horder (w : ℂ) : analyticOrderAt F w ≠ ⊤ :=
     hFglobal.analyticOrderAt_ne_top_of_isPreconnected isPreconnected_univ trivial trivial hz₀Order
   have hnotTop (u : Metric.ball (0 : ℂ) |(1 : ℝ)|) : meromorphicOrderAt F u ≠ ⊤ := by
-    rw [(hFglobal u.1 trivial).meromorphicOrderAt_eq]
+    rw [(hFglobal u.val trivial).meromorphicOrderAt_eq]
     intro hu
-    exact horder u.1 (ENat.map_eq_top_iff.mp hu)
+    exact horder u.val (ENat.map_eq_top_iff.mp hu)
   have hFanalytic : AnalyticOnNhd ℂ F U := fun w _ => hFglobal w trivial
   have hnormal : MeromorphicNFOn F U := hFanalytic.meromorphicNFOn
   have hmem : z ∈ U ∩ F ⁻¹' {0} := by

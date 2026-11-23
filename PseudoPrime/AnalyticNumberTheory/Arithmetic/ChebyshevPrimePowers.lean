@@ -23,7 +23,7 @@ theorem exp_sixth_lower {L : ℝ} (hL : 43 ≤ L) : 20 * L ≤ Real.exp (L / 6) 
     linarith only [h]
   have he7 : (840 : ℝ) ≤ Real.exp 7 := by
     have h := pow_le_pow_left₀ (show (0 : ℝ) ≤ 8 / 3 by norm_num only) he 7
-    rw [← Real.exp_nat_mul] at h
+    rw [← Real.exp_natCast_mul] at h
     norm_num only at h ⊢
     linarith only [h]
   have ht := Real.add_one_le_exp (L / 6 - 7)

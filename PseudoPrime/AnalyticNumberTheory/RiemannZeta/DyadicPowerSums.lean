@@ -65,7 +65,7 @@ theorem dyadicPowerTerm_mul (s : ℂ) (a b : ℕ) (ha : 0 < a) (hb : 0 < b) :
   have hab : a * b ≠ 0 := Nat.ne_of_gt (Nat.mul_pos ha hb)
   simp only [dyadicPowerTerm, ite_eq_right (Nat.ne_of_gt ha), ite_eq_right (Nat.ne_of_gt hb),
     ite_eq_right hab, Nat.cast_mul]
-  exact Complex.mul_cpow_ofReal_nonneg (Nat.cast_nonneg a) (Nat.cast_nonneg b) (-s)
+  exact Complex.ofReal_mul_cpow (Nat.cast_nonneg a) (b : ℂ) (-s)
 
 /-- Doubling a natural-number base multiplies the extended power term by `2 ^ (-s)`.
 The zero case is handled separately; at positive bases the complex power product law applies
@@ -76,9 +76,7 @@ theorem dyadicPowerTerm_even (s : ℂ) (n : ℕ) :
   · simp only [hn, dyadicPowerTerm, ↓reduceIte, mul_zero]
   · have h2n : 2 * n ≠ 0 := Nat.mul_ne_zero (by decide) hn
     simp only [dyadicPowerTerm, hn, h2n, ↓reduceIte, Nat.cast_mul, Nat.cast_ofNat]
-    exact
-      Complex.mul_cpow_ofReal_nonneg (show (0 : ℝ) ≤ (2 : ℕ) from Nat.cast_nonneg 2)
-        (Nat.cast_nonneg n) (-s)
+    exact Complex.ofReal_mul_cpow (show (0 : ℝ) ≤ (2 : ℕ) from Nat.cast_nonneg 2) (n : ℂ) (-s)
 
 /-- A complex power at the positive base `2 ^ n` is the nth power of the value at two.
 The argument of the positive real base is zero, so the complex power composition law applies.

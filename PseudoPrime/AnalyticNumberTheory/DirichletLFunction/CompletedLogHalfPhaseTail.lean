@@ -939,7 +939,7 @@ theorem logHalfPhase_low_tail_bound_RH {N : ℕ} [NeZero N] (hN : 2 ≤ N) {χ :
   let hi : α → ℂ := fun ρ => if T ≤ |ρ.val.im| then completedLogHalfPhaseTerm χ v ρ.val else 0
   obtain ⟨_, _, hnorm⟩ := exists_summable_norm_halfPhaseTerm
   have hbase : Summable (fun ρ : α => ‖completedLogHalfPhaseTerm χ v ρ.val‖) := by
-    exact (hnorm N hN χ hRH hp hne hinv v).subtype S
+    exact (hnorm N hN χ hRH hp hne hinv v).subtype (fun z ↦ z ∈ S)
   have hhiNorm : Summable (fun ρ : α => ‖hi ρ‖) :=
     Summable.of_norm_bounded hbase
       (fun ρ => by

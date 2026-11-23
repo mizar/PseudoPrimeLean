@@ -22,7 +22,7 @@ Split at ten and use elementary exponential lower bounds. -/
 theorem exp_half_ge_hundred_mul {L : ℝ} (hL : (113 / 5 : ℝ) ≤ L) : 100 * L ≤ Real.exp (L / 2) := by
   have he10 : (1024 : ℝ) ≤ Real.exp 10 := by
     have h := pow_le_pow_left₀ (show (0 : ℝ) ≤ 2 by norm_num only) Real.exp_one_gt_two.le 10
-    rw [← Real.exp_nat_mul] at h
+    rw [← Real.exp_natCast_mul] at h
     norm_num only at h ⊢
     exact h
   have he := Real.add_one_le_exp (L / 2 - 10)

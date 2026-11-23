@@ -67,7 +67,7 @@ theorem zeroCountError_invSq_parts (hRH : RiemannHypothesis) {T R : ℝ} (hT : 1
   have hw : AbsolutelyContinuousOnInterval (fun t : ℝ ↦ t⁻¹ ^ 2) T R := by
     apply ContDiffOn.absolutelyContinuousOnInterval
     rw [Set.uIcc_of_le hTR]
-    exact (contDiffOn_id.inv (fun t ht ↦ (hT0.trans_le ht.1).ne')).pow 2
+    exact (contDiffOn_id.inv (fun t (ht : t ∈ Set.Icc T R) ↦ (hT0.trans_le ht.1).ne')).pow 2
   apply Analysis.integral_mul_of_moving_primitive hTR hf hw
   intro t ht
   have ht0 : t ≠ 0 := (hT0.trans_le ht.1).ne'

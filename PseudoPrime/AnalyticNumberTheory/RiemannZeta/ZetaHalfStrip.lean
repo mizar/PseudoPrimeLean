@@ -67,7 +67,7 @@ private theorem zeta_strip_cube {s : ℂ} (hlo : (-(1 / 2) : ℝ) ≤ s.re) (hhi
   have hc := pow_le_pow_left₀ (by linarith only [norm_nonneg s] : 0 ≤ ‖s‖ + 1) hbase 3
   rw [mul_pow] at hc
   have heq : (3 : ℝ) ^ 3 * Real.exp |s.im| ^ 3 = 27 * Real.exp (3 * |s.im|) := by
-    rw [← Real.exp_nat_mul]
+    rw [← Real.exp_natCast_mul]
     norm_num only [Nat.cast_ofNat]
   exact hc.trans_eq heq
 

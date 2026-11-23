@@ -29,7 +29,8 @@ has no Mellin or `L`-zero singularity.
 Content: remove the two Mellin points and the zero set of the (uncompleted) `L`-function.
 Role: regular rectangles contained here admit Cauchy--Goursat boundary identities immediately.
 -/
-def dirichletLFunctionContourRegularSet {N : ℕ} [NeZero N] (χ : DirichletCharacter ℂ N) : Set ℂ :=
+noncomputable def dirichletLFunctionContourRegularSet {N : ℕ} [NeZero N]
+    (χ : DirichletCharacter ℂ N) : Set ℂ :=
   ({0}ᶜ : Set ℂ) ∩ ({1}ᶜ : Set ℂ) ∩ (DirichletCharacter.LFunction χ) ⁻¹' ({0}ᶜ : Set ℂ)
 
 /--

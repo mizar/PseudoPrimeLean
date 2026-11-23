@@ -107,7 +107,7 @@ theorem summable_shifted_power_mass_RH (hRH : RiemannHypothesis) {σ : ℝ} (hσ
     (hp : 1 < p) :
     Summable
       (fun ρ : Zero ↦ (riemannXiZeroMultiplicity (ρ : ℂ) : ℝ) / ‖(ρ : ℂ) - (σ : ℂ)‖ ^ p) := by
-  have hs := (summable_regularPowerZeroWeight_riemannXi hp).subtype {z : ℂ | riemannXi z = 0}
+  have hs := (summable_regularPowerZeroWeight_riemannXi hp).subtype (fun z : ℂ ↦ riemannXi z = 0)
   change Summable (fun ρ : Zero ↦ General.regularPowerZeroWeight riemannXi p (ρ : ℂ)) at hs
   have hδ := norm_zero_sub_real_ge_half_RH hRH hσ
   have hc : ∀ ρ : Zero, 1 + ‖(ρ : ℂ)‖ ≤ (3 + 2 * σ) * ‖(ρ : ℂ) - (σ : ℂ)‖ := by
@@ -143,7 +143,7 @@ Restrict the existing all-point mass and identify the complex norm square.
 This is the absolute majorant for the genus-one series. -/
 theorem summable_inverse_square_mass_RH (hRH : RiemannHypothesis) :
     Summable (fun ρ : Zero ↦ (riemannXiZeroMultiplicity (ρ : ℂ) : ℝ) / ‖(ρ : ℂ)‖ ^ 2) := by
-  have h := (summable_zeroMultiplicityInvNormSq_RH hRH).subtype {z : ℂ | riemannXi z = 0}
+  have h := (summable_zeroMultiplicityInvNormSq_RH hRH).subtype (fun z : ℂ ↦ riemannXi z = 0)
   change
     Summable
       (fun ρ : Zero ↦

@@ -28,7 +28,7 @@ removed. The proof shifts the local power series; this supports iterated pole re
 theorem AnalyticAt.dslope {f : ℂ → ℂ} {c : ℂ} (hf : AnalyticAt ℂ f c) :
     AnalyticAt ℂ (dslope f c) c := by
   obtain ⟨p, hp⟩ := hf
-  exact ⟨p.fslope, hp.has_fpower_series_dslope_fslope⟩
+  exact ⟨p.fslope, hp.dslope_fslope⟩
 
 /-- For `R > 0`, if `g` is complex differentiable on the closed disk and
 `(z - c) * f z = g z` on its boundary, the circle integral of `f` is `2πi * g c`.

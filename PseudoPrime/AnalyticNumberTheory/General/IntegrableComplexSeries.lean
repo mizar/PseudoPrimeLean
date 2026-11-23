@@ -22,17 +22,17 @@ theorem integrable_complex_tsum_of_integral_norm {F : ℕ → ℝ → ℂ}
     (hi : ∀ n, MeasureTheory.Integrable (F n)) (hs : Summable (fun n ↦ ∫ t : ℝ, ‖F n t‖)) :
     MeasureTheory.Integrable (fun t : ℝ ↦ ∑' n : ℕ, F n t) := by
   refine ⟨MeasureTheory.AEStronglyMeasurable.tsum (fun n ↦ (hi n).aestronglyMeasurable), ?_⟩
-  apply MeasureTheory.hasFiniteIntegral_iff_enorm.mpr
+  apply MeasureTheory.hasFiniteIntegral_iff_eNorm.mpr
   have he (n : ℕ) : (∫⁻ t : ℝ, ‖F n t‖ₑ) = ‖∫ t : ℝ, ‖F n t‖‖ₑ := by
-    dsimp only [enorm]
-    rw [MeasureTheory.lintegral_coe_eq_integral _ (hi n).norm, ENNReal.coe_nnreal_eq, coe_nnnorm,
+    dsimp only [eNorm]
+    rw [MeasureTheory.lintegral_coe_eq_integral _ (hi n).norm, ENNReal.coe_nnreal_eq, coe_nnNorm,
       Real.norm_of_nonneg (MeasureTheory.integral_nonneg (fun t ↦ norm_nonneg (F n t)))]
-    simp only [coe_nnnorm]
+    simp only [coe_nnNorm]
   calc
     (∫⁻ t : ℝ, ‖∑' n : ℕ, F n t‖ₑ) ≤ ∫⁻ t : ℝ, ∑' n : ℕ, ‖F n t‖ₑ :=
-      MeasureTheory.lintegral_mono (fun t ↦ enorm_tsum_le_tsum_enorm)
+      MeasureTheory.lintegral_mono (fun t ↦ eNorm_tsum_le_tsum_eNorm)
     _ = ∑' n : ℕ, ∫⁻ t : ℝ, ‖F n t‖ₑ :=
-      MeasureTheory.lintegral_tsum (fun n ↦ (hi n).aestronglyMeasurable.enorm)
+      MeasureTheory.lintegral_tsum (fun n ↦ (hi n).aestronglyMeasurable.eNorm)
     _ < ⊤ := by
       simp only [he]
       apply lt_top_iff_ne_top.mpr

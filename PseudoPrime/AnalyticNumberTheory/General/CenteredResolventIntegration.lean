@@ -191,7 +191,7 @@ theorem integrable_tsum_centeredResolventKernel {ι : Type*} (α : ι → ℂ) (
       (fun i : S ↦ fun y : ℝ ↦ (m i : ℂ) * centeredResolventKernel (α i) x τ y)
       (fun i : S ↦ (integrable_centeredResolventKernel (hα i) hτ hx).const_mul _)
       (summable_integral_norm_centeredResolventKernel (fun i : S ↦ α i) (fun i : S ↦ m i)
-        (fun i ↦ hα i) hτ hx (hm.subtype S))
+        (fun i ↦ hα i) hτ hx (hm.subtype (fun i ↦ i ∈ S)))
   convert ht using 1
   funext y
   symm

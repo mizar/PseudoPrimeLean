@@ -626,8 +626,8 @@ theorem linearSignal_exp_ge (N m : ℕ) (hN : 1 ≤ N) (hm : m ≤ 4 * N) :
       _ = _ := by
         rw [← mul_pow, ← mul_pow]; norm_num only
   have hexp : Real.exp (-(Real.log 414720 * (N : ℝ))) = 1 / (414720 : ℝ) ^ N := by
-    rw [Real.exp_neg, mul_comm (Real.log 414720), Real.exp_nat_mul, Real.exp_log (by norm_num only),
-      one_div]
+    rw [Real.exp_neg, mul_comm (Real.log 414720), Real.exp_natCast_mul,
+      Real.exp_log (by norm_num only), one_div]
   rw [hexp]
   exact
     one_div_le_one_div_of_le

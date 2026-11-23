@@ -21,7 +21,7 @@ theorem exp_half_lower_235 {L : ℝ} (hL : (47 / 2 : ℝ) ≤ L) : 5000 * L ≤ 
   have he : (2718 / 1000 : ℝ) ≤ Real.exp 1 := by linarith only [Real.exp_one_gt_d9]
   have he11 : (59000 : ℝ) ≤ Real.exp 11 := by
     have h := pow_le_pow_left₀ (show (0 : ℝ) ≤ 2718 / 1000 by norm_num only) he 11
-    rw [← Real.exp_nat_mul] at h
+    rw [← Real.exp_natCast_mul] at h
     norm_num only at h ⊢
     linarith only [h]
   have he34 : (2 : ℝ) ≤ Real.exp (3 / 4) := by

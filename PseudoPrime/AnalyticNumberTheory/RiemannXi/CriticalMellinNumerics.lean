@@ -26,7 +26,7 @@ theorem critical_mellin_error_eight_sixty : criticalMellinError 8 60 ≤ (1 / (1
   have h180 : Real.exp (-(180 : ℝ)) ≤ (1 / 2 : ℝ) ^ 180 := by
     calc
       _ = Real.exp (-1) ^ 180 := by
-        rw [← Real.exp_nat_mul]
+        rw [← Real.exp_natCast_mul]
         congr 1
         norm_num only
       _ ≤ _ := pow_le_pow_left₀ (Real.exp_pos _).le hq 180

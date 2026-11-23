@@ -55,7 +55,7 @@ theorem signal_sampling_exp (x : ℝ) :
   rw [mul_assoc]
   rw [show Real.exp x ^ 2 * Real.exp x = Real.exp (3 * x)
       by
-      rw [← Real.exp_nat_mul, ← Real.exp_add]
+      rw [← Real.exp_natCast_mul, ← Real.exp_add]
       congr 1
       ring]
   norm_num only
@@ -95,7 +95,7 @@ theorem highCountBound_le (D c L : ℝ) (K n : ℕ) (hL : 0 ≤ L) :
     norm_num only [show (4 : ℝ) * 2 = 8 by norm_num only]
     ring
   have hexp : (8 : ℝ) ^ n = Real.exp (Real.log 8 * n) := by
-    rw [mul_comm, Real.exp_nat_mul, Real.exp_log (by norm_num only)]
+    rw [mul_comm, Real.exp_natCast_mul, Real.exp_log (by norm_num only)]
   have hsignal := signal_sampling_exp (D * K)
   have hexpjoin :
     Real.exp (3 * D * K) * Real.exp (Real.log 8 * n) = Real.exp (3 * D * K + Real.log 8 * n) :=
@@ -183,7 +183,7 @@ theorem highCountBound_exp_le (D c L b c₀ l x : ℝ) (N : ℕ) (hD : 0 ≤ D) 
   have hxexp : x ≤ Real.exp x := by linarith only [Real.add_one_le_exp x]
   have hx8 : x ^ 8 ≤ Real.exp (8 * x) := by
     have h := pow_le_pow_left₀ hxnonneg hxexp 8
-    simpa only [← Real.exp_nat_mul, Nat.cast_ofNat] using h
+    simpa only [← Real.exp_natCast_mul, Nat.cast_ofNat] using h
   let C := 603979776 * (Real.log 4 + 4) ^ 2 * l * (4 * b + 1) ^ 3 * (1 + (c₀ * b) ^ 2)
   have hC : 0 ≤ C :=
     mul_nonneg (mul_nonneg (mul_nonneg hH hl) (pow_nonneg (by linarith only [hb]) _))

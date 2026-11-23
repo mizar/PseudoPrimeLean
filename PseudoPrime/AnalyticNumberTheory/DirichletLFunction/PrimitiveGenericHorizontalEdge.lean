@@ -425,7 +425,7 @@ theorem tendsto_reciprocal_boundary_GRH {N : ℕ} [NeZero N] (hN2 : 2 ≤ N)
   rw [hweighted, Complex.real_smul]
   rw [← hcoeff]
   convert htarget using 2
-  all_goals push_cast
-  all_goals ring
+  push_cast
+  ring
 
 end PseudoPrime.AnalyticNumberTheory.DirichletLFunction

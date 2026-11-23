@@ -55,7 +55,7 @@ theorem factoredFamily_contains (G : ℤ)
         n ≤ N → Analysis.complexIntervalContains (B n).1 (B n).2 G (dyadicPowerTerm s n) := by
   intro n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     intro hP hn hN
     rcases hstep n hP hn hN with h | ⟨a, b, hPa, hPb, ha, hb, han, hbn, hab, hbox⟩
     · exact h

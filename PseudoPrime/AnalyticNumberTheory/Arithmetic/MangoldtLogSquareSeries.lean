@@ -635,8 +635,9 @@ theorem squareMangoldtCorrectionLoss_le (x : ℝ) (hx : 100 ≤ x) :
   have hN10R : (10 : ℝ) ≤ N := by exact_mod_cast hN10
   have hNs : (N : ℝ) ≤ Real.sqrt x := Nat.floor_le (Real.sqrt_nonneg x)
   have hsN : Real.sqrt x ≤ (N : ℝ) + 1 := (Nat.lt_floor_add_one (Real.sqrt x)).le
-  rw [squareMangoldtCorrectionLoss, squareMangoldtCutoff_eq x hx1,
-    tsum_compl_Ioc_mangoldtLogSquareTerm]
+  rw [squareMangoldtCorrectionLoss, squareMangoldtCutoff_eq x hx1]
+  dsimp only
+  rw [tsum_compl_Ioc_mangoldtLogSquareTerm]
   have ht := tsum_mangoldtLogSquareTerm_tail_le N hN2
   have hf := finite_squareMangoldtCorrectionLoss_le x hx
   have h := add_le_add ht hf

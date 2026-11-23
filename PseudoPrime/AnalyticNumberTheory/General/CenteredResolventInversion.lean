@@ -114,7 +114,7 @@ theorem integral_tsum_centeredResolventKernel_of_mass {ι : Type*} (α : ι → 
       MeasureTheory.integral_congr_ae (Filter.Eventually.of_forall (fun y ↦ (hs y).symm))
     _ = ∑' i : S, (m i : ℂ) * (∫ y : ℝ, centeredResolventKernel (α i) x τ y) :=
       integral_tsum_centeredResolventKernel (fun i : S ↦ α i) (fun i : S ↦ m i) (fun i ↦ hα i) hτ hx
-        (hm.subtype S)
+        (hm.subtype (fun i ↦ i ∈ S))
     _ = _ := by
       apply
         tsum_subtype_eq_of_support_subset (s := S) (f := fun i : ι ↦

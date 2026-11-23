@@ -61,10 +61,10 @@ theorem replayCells_sound {a b : ℕ} {extra : ℕ → ℕ} {coef : ℕ → ℕ 
     exact fun hs ↦ ⟨hs, fun _ hx hy ↦ False.elim ((not_lt_of_ge hx) hy)⟩
   | succ count ih =>
     rw [replayCells, replayWith] at h
+    dsimp only at h
     split at h
     next hr =>
       obtain ⟨ha, hb, hn, hv, hc⟩ := hr
-      dsimp only at h
       split at h
       next hg =>
         have hv' := Nat.cast_pos (α := ℝ).mpr hv

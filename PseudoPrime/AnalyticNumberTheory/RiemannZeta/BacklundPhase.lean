@@ -191,7 +191,8 @@ theorem backlundAux_eq_zero_of_cos (T x : ℝ) (N : ℕ) (α β : ℝ)
             riemannZeta ((x : ℂ) - (T : ℂ) * Complex.I) ^ N) /
         2 =
       0
-  rw [hz, ← map_pow, ← map_mul, ← mul_pow, hp, mul_pow, ← Complex.exp_nat_mul, ← Complex.ofReal_pow]
+  rw [hz, ← map_pow, ← map_mul, ← mul_pow, hp, mul_pow, ← Complex.exp_natCast_mul, ←
+    Complex.ofReal_pow]
   have he :
     (N : ℂ) * (((β - α : ℝ) : ℂ) * Complex.I) = (((N : ℝ) * (β - α) : ℝ) : ℂ) * Complex.I := by
     push_cast

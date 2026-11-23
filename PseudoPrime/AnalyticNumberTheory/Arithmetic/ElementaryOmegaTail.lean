@@ -305,7 +305,8 @@ cardinality of `Nat.primeFactors`, using the list-to-finset factor identity.
 This connects the character-modulus counting lemma to the tail parameter. -/
 theorem distinctPrimeFactorCount_eq_card (n : ℕ) :
     distinctPrimeFactorCount n = n.primeFactors.card := by
-  rw [distinctPrimeFactorCount, ArithmeticFunction.cardDistinctFactors_apply, ← List.card_toFinset,
+  rw [distinctPrimeFactorCount,
+    ArithmeticFunction.cardDistinctFactors_eq_length_dedup_primeFactorsList, ← List.card_toFinset,
     Nat.toFinset_factors]
 
 /--

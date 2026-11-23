@@ -744,7 +744,7 @@ theorem boundaryIntegral_comp_sub_translate (f : ℂ → ℂ) (c z w : ℂ) :
       simp only [Complex.ofReal_add, Complex.sub_re, Complex.sub_im, Complex.add_re,
         Complex.ofReal_re, Complex.mul_re, Complex.mul_im, Complex.I_re, mul_zero, Complex.add_im,
         Complex.ofReal_im, add_zero, Complex.I_im, mul_one, sub_self, add_sub_cancel_left]
-    all_goals ring_nf
+    ring_nf
   have vedge (a b d : ℝ) :
     (∫ y : ℝ in c.im + a..c.im + b, f ((c.re + d) + y * Complex.I - c)) =
       ∫ y : ℝ in a..b, f (d + y * Complex.I) := by
@@ -757,7 +757,7 @@ theorem boundaryIntegral_comp_sub_translate (f : ℂ → ℂ) (c z w : ℂ) :
         Complex.ofReal_im, add_zero, Complex.mul_im, Complex.mul_re, Complex.add_re,
         Complex.ofReal_re, Complex.I_im, mul_one, Complex.I_re, mul_zero, zero_add,
         add_sub_cancel_left]
-    all_goals ring_nf
+    ring_nf
   rw [hedge z.re w.re z.im, hedge z.re w.re w.im, vedge z.im w.im w.re, vedge z.im w.im z.re]
 
 /-- The centered simple-pole square integral is radius-independent for every positive radius. -/

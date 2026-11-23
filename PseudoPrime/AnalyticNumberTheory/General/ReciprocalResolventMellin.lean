@@ -306,7 +306,7 @@ theorem integral_tsum_reciprocalResolventKernel_of_mass {ι : Type*} (α : ι �
       MeasureTheory.integral_congr_ae (Filter.Eventually.of_forall (fun y ↦ (hs y).symm))
     _ = ∑' i : S, (m i : ℂ) * (∫ y : ℝ, reciprocalResolventKernel (α i) x τ y) :=
       integral_tsum_reciprocalResolventKernel (fun i : S ↦ α i) (fun i : S ↦ m i) (fun i ↦ hα i) hτ
-        hx (hm.subtype S)
+        hx (hm.subtype (fun i ↦ i ∈ S))
     _ = _ := by
       apply
         tsum_subtype_eq_of_support_subset (s := S) (f := fun i : ι ↦

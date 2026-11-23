@@ -68,7 +68,7 @@ private theorem phase_defect_range {L : ℝ} (hl : 22 ≤ L) (hu : L ≤ 27) :
     pow_le_pow_left₀ (Real.exp_pos 1).le
       (show Real.exp 1 ≤ 11 / 4 by linarith only [Real.exp_one_lt_d9]) 27
   have e (n : ℕ) : Real.exp (n : ℝ) = (Real.exp 1) ^ n := by
-    simpa only [mul_one] using Real.exp_nat_mul 1 n
+    simpa only [mul_one] using Real.exp_natCast_mul n 1
   exact
     ⟨((by norm_num only : (1423 : ℝ) ^ 2 ≤ 2 ^ 22).trans (hlo.trans (e 22).ge)).trans
         (Real.exp_le_exp.mpr hl),

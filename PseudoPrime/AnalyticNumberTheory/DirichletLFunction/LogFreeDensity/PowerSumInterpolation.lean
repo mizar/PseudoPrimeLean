@@ -2386,7 +2386,7 @@ theorem norm_esymm_bound {n : ℕ} (z : Fin n → ℂ)
     ∀ k, k ≤ n → ‖(Finset.univ.val.map z).esymm k‖ ≤ (1 / 2 : ℝ) ^ k := by
   intro k
   induction k using Nat.strong_induction_on with
-  | h k ih =>
+  | ind k ih =>
     intro hk
     by_cases hk0 : k = 0
     · subst k

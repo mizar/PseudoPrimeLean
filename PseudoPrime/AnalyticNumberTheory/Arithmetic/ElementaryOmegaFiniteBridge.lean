@@ -104,7 +104,7 @@ theorem exp_exp_one_lt_three_thousand : Real.exp (Real.exp 1) < 3000 := by
       have h8 : Real.exp (8 : ℝ) < (2981 : ℝ) := by
         have h1 : Real.exp (1 : ℝ) < 2.7182818286 := Real.exp_one_lt_d9
         have h8eq : Real.exp (8 : ℝ) = Real.exp 1 ^ 8 := by
-          rw [← Real.exp_nat_mul]
+          rw [← Real.exp_natCast_mul]
           norm_num only
         rw [h8eq]
         calc

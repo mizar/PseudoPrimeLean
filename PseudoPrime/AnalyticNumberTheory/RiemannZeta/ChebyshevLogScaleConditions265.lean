@@ -23,7 +23,7 @@ theorem exp_half_lower_265 {L : ℝ} (hL : (53 / 2 : ℝ) ≤ L) : 1000 * L ≤ 
     linarith only [h]
   have he13 : (400000 : ℝ) ≤ Real.exp 13 := by
     have h := pow_le_pow_left₀ (show (0 : ℝ) ≤ 2718 / 1000 by norm_num only) he 13
-    rw [← Real.exp_nat_mul] at h
+    rw [← Real.exp_natCast_mul] at h
     norm_num only at h ⊢
     linarith only [h]
   have hstep := Real.add_one_le_exp (L / 2 - 13)
@@ -151,7 +151,7 @@ theorem exp_half_cubic265 {L : ℝ} (hL : (53 / 2 : ℝ) ≤ L) : 4 * L ^ 3 ≤ 
       linarith only [h]
     have he13 : (400000 : ℝ) ≤ Real.exp 13 := by
       have h := pow_le_pow_left₀ (show (0 : ℝ) ≤ 2718 / 1000 by norm_num only) he 13
-      rw [← Real.exp_nat_mul] at h
+      rw [← Real.exp_natCast_mul] at h
       norm_num only at h ⊢
       linarith only [h]
     have hemono : Real.exp 13 ≤ Real.exp (L / 2) := Real.exp_le_exp.mpr (by linarith only [hL])

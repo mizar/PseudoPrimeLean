@@ -599,7 +599,7 @@ theorem exp_neg_large_le {u : ℝ} (hu : 64 ≤ u) : Real.exp (-u) ≤ 1 / 10 ^ 
     linarith only [h]
   have hpow : (2 : ℝ) ^ 64 ≤ Real.exp 64 := by
     have h := pow_le_pow_left₀ (by norm_num only : (0 : ℝ) ≤ 2) hbase 64
-    rw [← Real.exp_nat_mul] at h
+    rw [← Real.exp_natCast_mul] at h
     norm_num only [Nat.cast_ofNat, mul_one] at h ⊢
     exact h
   have hsmall : Real.exp (-64) ≤ 1 / 10 ^ 12 := by
@@ -619,7 +619,7 @@ theorem exp_neg_large_fortyseven {u : ℝ} (hu : 160 ≤ u) : Real.exp (-u) ≤ 
     linarith only [h]
   have hpow : (2 : ℝ) ^ 160 ≤ Real.exp 160 := by
     have h := pow_le_pow_left₀ (by norm_num only : (0 : ℝ) ≤ 2) hbase 160
-    rw [← Real.exp_nat_mul] at h
+    rw [← Real.exp_natCast_mul] at h
     norm_num only [Nat.cast_ofNat, mul_one] at h ⊢
     exact h
   have hsmall : Real.exp (-160) ≤ 1 / 10 ^ 47 := by
@@ -637,7 +637,7 @@ private theorem exp_neg_large_fortyeight {u : ℝ} (hu : 160 ≤ u) : Real.exp (
     linarith only [h]
   have hpow : (2 : ℝ) ^ 160 ≤ Real.exp 160 := by
     have h := pow_le_pow_left₀ (by norm_num only : (0 : ℝ) ≤ 2) hbase 160
-    rw [← Real.exp_nat_mul] at h
+    rw [← Real.exp_natCast_mul] at h
     norm_num only [Nat.cast_ofNat, mul_one] at h ⊢
     exact h
   have hsmall : Real.exp (-160) ≤ 1 / 10 ^ 48 := by

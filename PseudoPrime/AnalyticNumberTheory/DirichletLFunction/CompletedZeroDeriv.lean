@@ -52,7 +52,7 @@ theorem summable_zero_invSquare_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : Dir
         (analyticOrderNatAt χ.completedLFunction (ρ : ℂ) : ℝ) / ‖(ρ : ℂ) - (σ : ℂ)‖ ^ 2) := by
   have hb :=
     (summable_divisor_div_normSq_of_RH hq hRH hp hne hinv).subtype
-      {ρ : ℂ | χ.completedLFunction ρ = 0}
+      (fun ρ : ℂ ↦ χ.completedLFunction ρ = 0)
   have he :
     ∀ ρ : CompletedZero χ,
       (MeromorphicOn.divisor χ.completedLFunction Set.univ (ρ : ℂ) : ℝ) / Complex.normSq (ρ : ℂ) =
@@ -62,7 +62,7 @@ theorem summable_zero_invSquare_RH {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : Dir
   apply
     Summable.of_nonneg_of_le (fun ρ ↦ div_nonneg (Nat.cast_nonneg _) (sq_nonneg _)) (fun ρ ↦ ?_) hm
   have hr := completed_zero_re_eq_half_of_RH hRH hp hinv ρ.property
-  have hpos : 0 < ‖ρ.1‖ ^ 2 := sq_pos_of_pos (norm_pos_iff.mpr (General.zero_ne_of_re_half hr))
+  have hpos : 0 < ‖ρ.val‖ ^ 2 := sq_pos_of_pos (norm_pos_iff.mpr (General.zero_ne_of_re_half hr))
   exact
     div_le_div_of_nonneg_left (Nat.cast_nonneg _) hpos
       (General.norm_sq_le_norm_sq_sub_real_of_half hr hσ)

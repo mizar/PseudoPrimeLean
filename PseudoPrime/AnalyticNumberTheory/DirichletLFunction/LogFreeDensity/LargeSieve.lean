@@ -155,14 +155,14 @@ theorem ramanujan_prime_one {p : ℕ} [NeZero p] [Fact p.Prime] : ramanujanSum p
   have hchar : ZMod.stdAddChar ≠ (1 : AddChar (ZMod p) ℂ) := by
     intro h
     have hval := congrArg (fun ψ : AddChar (ZMod p) ℂ => ψ (1 : ZMod p)) h
-    have hone : ZMod.stdAddChar (1 : ZMod p) = 1 := by simpa only [AddChar.one_apply] using hval
+    have hone : ZMod.stdAddChar (1 : ZMod p) = 1 := by simpa only [one_apply] using hval
     have hzero : ZMod.stdAddChar (0 : ZMod p) = ZMod.stdAddChar (1 : ZMod p) := by
       simp only [AddChar.map_zero_eq_one, hone]
     have h01 := ZMod.injective_stdAddChar hzero
     exact one_ne_zero h01.symm
   have htotal : (∑ x : ZMod p, ZMod.stdAddChar x) = 0 := AddChar.sum_eq_zero_of_ne_one hchar
   have hnonzero :
-    (∑ x : { x : ZMod p // x ≠ 0 }, ZMod.stdAddChar x.1) =
+    (∑ x : { x : ZMod p // x ≠ 0 }, ZMod.stdAddChar x.val) =
       ∑ x ∈ Finset.univ.erase (0 : ZMod p), ZMod.stdAddChar x := by
     symm
     exact
@@ -174,9 +174,9 @@ theorem ramanujan_prime_one {p : ℕ} [NeZero p] [Fact p.Prime] : ramanujanSum p
   have hsumErase := Finset.sum_erase_add (Finset.univ : Finset (ZMod p)) ZMod.stdAddChar hzero
   have hunitSum : (∑ u : (ZMod p)ˣ, ZMod.stdAddChar (u : ZMod p)) = -1 := by
     calc
-      _ = ∑ x : { x : ZMod p // x ≠ 0 }, ZMod.stdAddChar x.1 :=
+      _ = ∑ x : { x : ZMod p // x ≠ 0 }, ZMod.stdAddChar x.val :=
         Fintype.sum_equiv unitsEquivNeZero (fun u : (ZMod p)ˣ => ZMod.stdAddChar (u : ZMod p))
-          (fun x : { x : ZMod p // x ≠ 0 } => ZMod.stdAddChar x.1) (fun _ => rfl)
+          (fun x : { x : ZMod p // x ≠ 0 } => ZMod.stdAddChar x.val) (fun _ => rfl)
       _ = ∑ x ∈ Finset.univ.erase (0 : ZMod p), ZMod.stdAddChar x := hnonzero
       _ = -ZMod.stdAddChar 0 := by
         rw [htotal] at hsumErase
@@ -430,7 +430,7 @@ theorem zmod_dft_parseval {q : ℕ} [NeZero q] (f : ZMod q → ℂ) :
     · have hne : ZMod.stdAddChar.mulShift t ≠ 1 := by
         intro h
         have hv := congrArg (fun ψ : AddChar (ZMod q) ℂ => ψ 1) h
-        simp only [AddChar.mulShift_apply, mul_one, AddChar.one_apply] at hv
+        simp only [AddChar.mulShift_apply, mul_one, one_apply] at hv
         exact ht (ZMod.injective_stdAddChar (by simpa using hv))
       calc
         _ = 0 := AddChar.sum_eq_zero_of_ne_one hne
@@ -1542,7 +1542,7 @@ theorem inner_window_fourier (T : Finset ℕ) (w : ℕ → ℝ) (α β : ℚ) :
   intro n hn
   rw [mul_assoc, rationalAddChar_cross]
   congr 1
-  rw [← Complex.exp_nat_mul]
+  rw [← Complex.exp_natCast_mul]
   congr 1
   push_cast
   ring
@@ -1744,13 +1744,13 @@ theorem unit_selfKernel_eq {q : ℕ} [NeZero q] (k : ZMod q) :
     _ = ∑ u : (ZMod q)ˣ, (1 : ℂ) := by
       let e : (ZMod q)ˣ ≃ { x : ZMod q // x ∈ U } :=
         { toFun := fun u => ⟨u, (hU u).2 u.isUnit⟩
-          invFun := fun x => ((hU x.1).1 x.2).unit
+          invFun := fun x => ((hU x.val).1 x.property).unit
           left_inv := fun u => by
             apply Units.ext
             rfl
           right_inv := fun x => by
             apply Subtype.ext
-            exact IsUnit.unit_spec ((hU x.1).1 x.2) }
+            exact IsUnit.unit_spec ((hU x.val).1 x.property) }
       calc
         _ = ∑ x : { x : ZMod q // x ∈ U }, (1 : ℂ) :=
           Finset.sum_subtype U (fun _ => Iff.rfl) (fun _ => (1 : ℂ))
@@ -2487,7 +2487,7 @@ Output: the ratio of its canonical numerator and denominator.
 Role: supplies real coordinates for circular separation and the signed shell partition.
 -/
 noncomputable def reducedFreqCoord {Q : ℕ} (f : ReducedFreqIndex Q) : ℝ :=
-  (f.2.1.val : ℝ) / f.1.1.val
+  (f.2.val.val : ℝ) / f.1.val.val
 
 /--
 Definition: the reduced rational frequency represented by an indexed numerator and denominator.
@@ -2499,7 +2499,7 @@ Output: the numerator divided by the denominator in `ℚ`.
 Role: provides the exact rational frequency used by `rationalAddChar`.
 -/
 noncomputable def reducedFreqRat {Q : ℕ} (f : ReducedFreqIndex Q) : ℚ :=
-  (f.2.1.val : ℚ) / f.1.1.val
+  (f.2.val.val : ℚ) / f.1.val.val
 
 /--
 Claim: casting the rational frequency to `ℝ` gives its real coordinate.
@@ -2632,7 +2632,7 @@ theorem windowGram_norm_eq {Q : ℕ} (f₀ f : ReducedFreqIndex Q) (N : ℕ) :
     rw [reducedFreqRat_cast f₀, reducedFreqRat_cast f]
     rw [signedReducedCoord]
     congr 1
-    rw [← Complex.exp_nat_mul]
+    rw [← Complex.exp_natCast_mul]
     congr 1
     push_cast
     ring_nf
@@ -3454,7 +3454,7 @@ large-sieve interface.
 theorem stdAddChar_eq_rat {q : ℕ} [NeZero q] (x : ZMod q) (n : ℕ) :
     ZMod.stdAddChar (x * (n : ZMod q)) = rationalAddChar ((x.val : ℚ) / q) n := by
   rw [stdAddChar_mul_nat, stdAddChar_exp_val]
-  rw [rationalAddChar, ← Complex.exp_nat_mul]
+  rw [rationalAddChar, ← Complex.exp_natCast_mul]
   congr 1
   have hq : (q : ℂ) ≠ 0 := by exact_mod_cast (NeZero.ne q)
   push_cast
@@ -3709,7 +3709,7 @@ theorem ramanujan_one_normSq (r : ℕ) (hr : 0 < r) (hsq : Squarefree r) :
     ‖@ramanujanSum r 1 ⟨Nat.ne_of_gt hr⟩‖ ^ 2 = 1 := by
   revert hr hsq
   induction r using Nat.strong_induction_on with
-  | h r ih =>
+  | ind r ih =>
     intro hr hsq
     by_cases hrOne : r = 1
     · subst r
@@ -3856,7 +3856,7 @@ theorem unitGauss_eq_gauss {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) 
   let f : ZMod q → ℂ := fun a => χ a * ZMod.stdAddChar ((n : ZMod q) * a)
   let e : (ZMod q)ˣ ≃ { a : ZMod q // IsUnit a } :=
     { toFun := fun u => ⟨u, u.isUnit⟩
-      invFun := fun a => a.2.unit
+      invFun := fun a => a.property.unit
       left_inv := fun u => by
         apply Units.ext; rfl
       right_inv := fun a => by
@@ -4596,15 +4596,15 @@ theorem char_units_sum_finset {q : ℕ} [NeZero q] (S : Finset (ZMod q)) (hS : �
   classical
   let e : (ZMod q)ˣ ≃ { x : ZMod q // x ∈ S } :=
     { toFun := fun u => ⟨u, (hS u).2 u.isUnit⟩
-      invFun := fun x => ((hS x.1).1 x.2).unit
+      invFun := fun x => ((hS x.val).1 x.property).unit
       left_inv := fun u => by
         apply Units.ext
         rfl
       right_inv := fun x => by
         apply Subtype.ext
-        exact IsUnit.unit_spec ((hS x.1).1 x.2) }
+        exact IsUnit.unit_spec ((hS x.val).1 x.property) }
   calc
-    _ = ∑ x : { x : ZMod q // x ∈ S }, χ x.1 * f x.1 := by
+    _ = ∑ x : { x : ZMod q // x ∈ S }, χ x.val * f x.val := by
       exact Fintype.sum_equiv e _ _ (fun u => rfl)
     _ = ∑ x ∈ S, χ x * f x := by
       exact (Finset.sum_subtype S (fun _ => Iff.rfl) (fun x : ZMod q => χ x * f x)).symm

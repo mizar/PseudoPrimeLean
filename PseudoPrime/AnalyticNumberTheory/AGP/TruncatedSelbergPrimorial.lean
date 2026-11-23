@@ -363,7 +363,7 @@ theorem selberg_inner_divisor_ratio_sum_le_four_pow {k : ℕ} (hk : 0 < k) (hsq 
     (∑ d ∈ k.divisors, (d : ℝ) / (Nat.totient k : ℝ)) ≤ (4 : ℝ) ^ k.primeFactors.card := by
   have hω : k.primeFactors.card = ArithmeticFunction.cardDistinctFactors k := by
     change k.primeFactorsList.toFinset.card = _
-    rw [List.card_toFinset, ArithmeticFunction.cardDistinctFactors_apply]
+    rw [List.card_toFinset, ArithmeticFunction.cardDistinctFactors_eq_length_dedup_primeFactorsList]
   have hfilter : k.divisors.filter (fun d => Squarefree d) = k.divisors := by
     ext d
     simp only [Finset.mem_filter]
@@ -405,7 +405,7 @@ theorem four_pow_primeFactorsCard_eq_finMulAntidiag_card {k : ℕ} (hsq : Square
     (4 : ℝ) ^ k.primeFactors.card = ((4 : ℕ).finMulAntidiag k).card := by
   have hω : k.primeFactors.card = ArithmeticFunction.cardDistinctFactors k := by
     change k.primeFactorsList.toFinset.card = _
-    rw [List.card_toFinset, ArithmeticFunction.cardDistinctFactors_apply]
+    rw [List.card_toFinset, ArithmeticFunction.cardDistinctFactors_eq_length_dedup_primeFactorsList]
   rw [hω]
   exact_mod_cast (Nat.card_finMulAntidiag_of_squarefree hsq).symm
 

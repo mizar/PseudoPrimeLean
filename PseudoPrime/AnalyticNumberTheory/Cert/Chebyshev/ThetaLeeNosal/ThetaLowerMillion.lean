@@ -135,7 +135,7 @@ private theorem computed : count common 1002048 11 1000000 = 153 := by decide +k
 private theorem log_lower : (12 : ℝ) ≤ Real.log 1000000 := by
   apply (Real.le_log_iff_exp_le (by norm_num only)).2
   have h := pow_le_pow_left₀ (Real.exp_pos 1).le Real.exp_one_lt_three.le 12
-  rw [← Real.exp_nat_mul] at h
+  rw [← Real.exp_natCast_mul] at h
   norm_num only [Nat.cast_ofNat, mul_one] at h
   exact h.trans (by norm_num only)
 

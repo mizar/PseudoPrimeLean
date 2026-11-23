@@ -206,7 +206,6 @@ theorem backlundAux_jensen {T : ℝ} (hT : 2 < T) (N : ℕ) :
         Real.log ‖backlundAux T N (((3 / 2 : ℝ) : ℂ))‖ := by
   have h :=
     AnalyticOnNhd.circleAverage_log_norm (f := backlundAux T N) (c := (((3 / 2 : ℝ) : ℂ))) (R := 2)
-      (by norm_num only)
       (by
         simpa only [abs_of_nonneg (by norm_num only : (0 : ℝ) ≤ 2)] using
           backlundAux_analytic_disk hT N)

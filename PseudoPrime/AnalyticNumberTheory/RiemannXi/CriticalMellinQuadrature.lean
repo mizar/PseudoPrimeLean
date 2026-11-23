@@ -258,7 +258,7 @@ theorem critical_sphere_majorant_rational : 32 * Real.exp (50 * Real.pi) ≤ (10
     apply Real.exp_le_exp.mpr
     linarith only [Real.pi_lt_four]
   have h2 : Real.exp (200 : ℝ) = Real.exp 1 ^ 200 := by
-    rw [← Real.exp_nat_mul]
+    rw [← Real.exp_natCast_mul]
     congr 1
     norm_num only
   have h3 : Real.exp 1 ^ 200 ≤ (3 : ℝ) ^ 200 :=

@@ -228,7 +228,7 @@ theorem centered_logDeriv_canonicalFactor {R : ℝ} {w s : ℂ} (hw : w ∈ Metr
 equality at any evaluation point in the ball. -/
 theorem preperfect_closedBall {R : ℝ} (hR : 0 < R) : Preperfect (Metric.closedBall (0 : ℂ) R) := by
   rw [← closure_ball (0 : ℂ) hR.ne']
-  exact Metric.isOpen_ball.perfect_closure.acc
+  exact Metric.isOpen_ball.perfect_closure.preperfect
 
 /-- Two complex-valued functions continuous at `x` and eventually equal on its punctured
 neighborhood have equal values at `x`. Uniqueness of the limits on the punctured neighborhood

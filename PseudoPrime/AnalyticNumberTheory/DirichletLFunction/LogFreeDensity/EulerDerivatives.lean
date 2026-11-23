@@ -1263,7 +1263,7 @@ theorem scaledTail_detector (η D K : ℝ) (n N : ℕ) (hη : 0 < η) (hηsmall 
   have heq :
     Real.exp (Real.log (24 * (Real.log 4 + 4)) + (n : ℝ) * Real.log 2 - η * Real.log N / 2) =
       8 * (3 * (Real.log 4 + 4) * (2 : ℝ) ^ n * Real.exp (-(η * Real.log N) / 2)) := by
-    rw [sub_eq_add_neg, Real.exp_add, Real.exp_add, Real.exp_nat_mul, Real.exp_log hC,
+    rw [sub_eq_add_neg, Real.exp_add, Real.exp_add, Real.exp_natCast_mul, Real.exp_log hC,
       Real.exp_log (by norm_num only : (0 : ℝ) < 2), neg_div]
     ring
   have he :=

@@ -73,7 +73,7 @@ theorem strip_log_vertical_tendsto_count {f : ℂ → ℂ} {u v : ℝ} (hu : 100
     exact hy (le_trans hu hyuv.1.le)
   have hconst :
     MeasureTheory.Integrable (fun _ : ℝ ↦ B) (MeasureTheory.volume.restrict (Set.Ioc u v)) :=
-    MeasureTheory.integrableOn_const measure_Ioc_lt_top.ne enorm_ne_top
+    MeasureTheory.integrableOn_const measure_Ioc_lt_top.ne eNorm_ne_top
   have hlim :=
     MeasureTheory.tendsto_integral_filter_of_dominated_convergence (fun _ : ℝ ↦ B) hmeas hbound
       hconst hpoint

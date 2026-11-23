@@ -42,7 +42,7 @@ bound `exp 6 ≤ 3⁶ = 729` supplies the comparison needed by the conversion. -
 theorem six_le_log_of_1423_le {x : ℝ} (hx : 1423 ≤ x) : 6 ≤ Real.log x := by
   have he : Real.exp 6 ≤ (729 : ℝ) := by
     have h := pow_le_pow_left₀ (Real.exp_pos 1).le Real.exp_one_lt_three.le 6
-    rw [← Real.exp_nat_mul] at h
+    rw [← Real.exp_natCast_mul] at h
     norm_num only at h ⊢
     exact h
   have h := Real.log_le_log (Real.exp_pos 6) (he.trans (by linarith only [hx]))

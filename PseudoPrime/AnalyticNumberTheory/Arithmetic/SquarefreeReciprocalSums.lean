@@ -58,7 +58,7 @@ theorem squarefree_recip_sum_le_factor_mul_coprime (z Q : ℕ) (hQ : Q ≠ 0) :
     have hdvdQ : Nat.gcd m Q ∣ Q := Nat.gcd_dvd_right m Q
     have hdsq : Squarefree (Nat.gcd m Q) := hmSq.squarefree_of_dvd hdvdm
     have hnsq : Squarefree (m / Nat.gcd m Q) := hmSq.squarefree_of_dvd (Nat.div_dvd_of_dvd hdvdm)
-    have hncop : Nat.Coprime (m / Nat.gcd m Q) Q := Nat.coprime_div_gcd_of_squarefree hmSq hQ
+    have hncop : Nat.Coprime (m / Nat.gcd m Q) Q := Nat.coprime_div_gcd_of_squarefree hmSq
     have hmlt : m < z + 1 := Finset.mem_range.mp (Finset.mem_filter.mp hm).1
     have hnle : m / Nat.gcd m Q ≤ z := by
       exact le_trans (Nat.div_le_self m (Nat.gcd m Q)) (Nat.le_of_lt_succ hmlt)

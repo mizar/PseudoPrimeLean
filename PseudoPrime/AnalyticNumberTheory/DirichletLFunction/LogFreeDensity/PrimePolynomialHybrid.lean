@@ -719,7 +719,7 @@ theorem primePower_exp_sum_le (P K : Finset ℕ) (hP : ∀ p ∈ P, Nat.Prime p)
       _ = Real.exp ((k : ℝ) * (-(3 / 4 : ℝ) * Real.log p)) := by
         congr 1
         ring
-      _ = Real.exp (-(3 / 4 : ℝ) * Real.log p) ^ k := Real.exp_nat_mul _ _
+      _ = Real.exp (-(3 / 4 : ℝ) * Real.log p) ^ k := Real.exp_natCast_mul _ _
       _ = r p ^ k := by rfl
   have hrpow : ∀ p ∈ P, r p ^ 2 = Real.exp (-(3 / 2 : ℝ) * Real.log p) := by
     intro p hp
@@ -939,7 +939,7 @@ theorem detector_power_bound {C D η : ℝ} {m K : ℕ} (hD : 0 ≤ D) (hη : 0 
       (4 * η) ^ m ≤ (Real.exp (-(D + 5))) ^ m :=
         pow_le_pow_left₀ (mul_nonneg (by norm_num only) hη) hηratio m
       _ = Real.exp (-((D + 5) * (m : ℝ))) := by
-        rw [← Real.exp_nat_mul]
+        rw [← Real.exp_natCast_mul]
         congr 1
         ring
   have hprod : C * (m : ℝ) ≤ Real.exp (2 * (m : ℝ)) := by
@@ -1254,11 +1254,11 @@ theorem lowPrime_detector_le (P n K : ℕ) (hP : 2 ≤ P) {η c D : ℝ} (hη : 
     calc
       (c * Real.exp 1) ^ n ≤ (Real.exp (-(D + 5))) ^ n := pow_le_pow_left₀ hcexp_nonneg hcexp n
       _ = Real.exp (-((D + 5) * (n : ℝ))) := by
-        rw [← Real.exp_nat_mul]
+        rw [← Real.exp_natCast_mul]
         congr 1
         ring
   have hexpn : Real.exp (n : ℝ) = Real.exp 1 ^ n := by
-    rw [show (n : ℝ) = (n : ℝ) * (1 : ℝ) by ring, ← Real.exp_nat_mul]
+    rw [show (n : ℝ) = (n : ℝ) * (1 : ℝ) by ring, ← Real.exp_natCast_mul]
   have hproduct : c ^ n * Real.exp (n : ℝ) = (c * Real.exp 1) ^ n := by rw [hexpn, ← mul_pow]
   have hlow' : 4 * (c ^ n * Real.exp (n : ℝ)) ≤ 4 * Real.exp (-(D * (K : ℝ)) - 5) := by
     calc
@@ -1275,7 +1275,7 @@ theorem lowPrime_detector_le (P n K : ℕ) (hP : 2 ≤ P) {η c D : ℝ} (hη : 
   have hexp5 : 32 ≤ Real.exp 5 := by
     have hpow : (2 : ℝ) ^ 5 ≤ Real.exp 1 ^ 5 := pow_le_pow_left₀ (by norm_num) hexp1 5
     have hexp : Real.exp 1 ^ 5 = Real.exp 5 := by
-      rw [show (5 : ℝ) = (5 : ℝ) * (1 : ℝ) by ring, ← Real.exp_nat_mul]
+      rw [show (5 : ℝ) = (5 : ℝ) * (1 : ℝ) by ring, ← Real.exp_natCast_mul]
       norm_num
     rw [hexp] at hpow
     norm_num at hpow ⊢
@@ -2145,7 +2145,7 @@ theorem primeEnergy_term_eq (η : ℝ) (n p : ℕ) (hp : 0 < p) :
   rw [norm_mul, Complex.norm_real, Real.norm_eq_abs,
     abs_of_nonneg (pow_nonneg (Real.log_natCast_nonneg p) (n + 1)), Complex.norm_exp]
   simp only [Complex.neg_re, Complex.ofReal_re]
-  rw [mul_pow, ← pow_mul, ← Real.exp_nat_mul]
+  rw [mul_pow, ← pow_mul, ← Real.exp_natCast_mul]
   have hpow : (n + 1) * 2 = 2 * n + 2 := by ring
   rw [hpow, Real.rpow_def_of_pos hpR, div_eq_mul_inv, ← Real.exp_neg]
   have he :

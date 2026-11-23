@@ -45,7 +45,7 @@ theorem psi_le_linear_of_prefix {C Y : ℝ} (hC : 0 ≤ C) (hY : 30 ≤ Y)
   have hNat : ∀ n : ℕ, Chebyshev.psi (n : ℝ) ≤ C * n := by
     intro n
     induction n using Nat.strong_induction_on with
-    | h n ih =>
+    | ind n ih =>
       by_cases hsmall : (n : ℝ) ≤ Y
       · exact hprefix n (Nat.cast_nonneg n) hsmall
       · have hn : Y < (n : ℝ) := lt_of_not_ge hsmall

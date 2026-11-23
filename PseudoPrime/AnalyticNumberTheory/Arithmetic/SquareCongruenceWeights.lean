@@ -99,8 +99,9 @@ theorem square_congruence_weighted_sum_le {q : ℕ} [NeZero q] (a : (ZMod q)ˣ) 
     intro m n hmn
     apply Subtype.ext
     exact congrArg (fun z : { n : ℕ // n ≤ N ∧ (n : ZMod q) ^ 2 = (a : ZMod q) } ↦ z.val) hmn
-  let : Finite { n : ℕ // n ≤ N ∧ (n : ZMod q) ^ 2 = (a : ZMod q) } :=
-    ((Set.finite_Iic N).subset (fun _ hn ↦ hn.1)).to_subtype
+  have hfin : Set.Finite {n : ℕ | n ≤ N ∧ (n : ZMod q) ^ 2 = (a : ZMod q)} :=
+    (Set.finite_Iic N).subset (fun _ hn ↦ hn.1)
+  let : Finite { n : ℕ // n ≤ N ∧ (n : ZMod q) ^ 2 = (a : ZMod q) } := hfin.to_subtype
   have hc :=
     (Nat.card_le_card_of_injective f hf).trans (NumberTheory.card_sq_congruence_le_primeFactors a N)
   have hcard : s.card ≤ 2 ^ (q.primeFactors.card + 1) * (N / q + 1) := by

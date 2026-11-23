@@ -41,7 +41,7 @@ private theorem exp_endpoint_lower {q u : ℚ} (hq : 0 ≤ q) (h : u ≤ endpoin
 
 /-- Recover the full exponential after reducing its argument by a factor of 32. -/
 private theorem exp_endpoint_pow (a : ℚ) : Real.exp (a : ℝ) = Real.exp ((a / 32 : ℚ) : ℝ) ^ 32 := by
-  rw [← Real.exp_nat_mul, Rat.cast_div, Rat.cast_ofNat]
+  rw [← Real.exp_natCast_mul, Rat.cast_div, Rat.cast_ofNat]
   congr 1
   ring
 

@@ -50,9 +50,9 @@ theorem exists_riemannZeta_zeroFree_factorization {z : ℂ} {R : ℝ} (hR : 0 < 
   have h1f : MeromorphicOn riemannZeta U := hAn.meromorphicOn
   have h2f : ∀ u : U, meromorphicOrderAt riemannZeta (u : ℂ) ≠ ⊤ := by
     intro u htop
-    have hmero := (hAn u.1 u.2).meromorphicOrderAt_eq
+    have hmero := (hAn u.val u.property).meromorphicOrderAt_eq
     rw [hmero] at htop
-    apply analyticOrderAt_riemannZeta_ne_top (hz1 u.1 (hUclosed u.2))
+    apply analyticOrderAt_riemannZeta_ne_top (hz1 u.val (hUclosed u.property))
     rw [← ENat.map_top (Nat.cast : ℕ → ℤ)] at htop
     exact ENat.map_natCast_injective.eq_iff.mp htop
   have h3f : (MeromorphicOn.divisor riemannZeta U).support.Finite :=
@@ -123,9 +123,8 @@ theorem exists_riemannZeta_zeroFree_factorization {z : ℂ} {R : ℝ} (hR : 0 < 
     rw [(hAn u huU).analyticOrderAt_eq_zero.mpr hne]
     simp only [ENat.map_zero, CharP.cast_eq_zero, WithTop.coe_zero, WithTop.untop₀_zero]
   refine ⟨S, m, g, hgAn, fun w hw => hgne ⟨w, hw⟩, hmpos, hSU, hSzero, hmeq, ?_⟩
-  have hfeq : (∏ᶠ u, (· - u) ^ MeromorphicOn.divisor riemannZeta U u) = φ := by
-    rw [hφ_def]
-    exact Function.FactorizedRational.finprod_eq_fun h3f
+  have hfeq : Function.factorizedRational (MeromorphicOn.divisor riemannZeta U) = φ :=
+    Function.FactorizedRational.finprod_eq_fun h3f
   intro z' hz'U
   have hcontZ : ContinuousAt riemannZeta z' := (hAn z' hz'U).continuousAt
   have hcontH : ContinuousAt (fun w => P w * g w) z' :=
