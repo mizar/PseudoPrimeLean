@@ -25,7 +25,7 @@ theorem halfLine_cpow_mul_phase {a x : ℝ} (ha : 0 < a) (hx : 0 < x) (t : ℝ) 
     rw [Real.sqrt_eq_rpow, Complex.ofReal_cpow ha.le, Complex.ofReal_div, Complex.ofReal_one,
       Complex.ofReal_ofNat]
   rw [Complex.cpow_add _ _ (Complex.ofReal_ne_zero.mpr ha.ne'), hhalf, mul_assoc, ←
-    Complex.mul_cpow_ofReal_nonneg ha.le hx.le, ← Complex.ofReal_mul,
+    Complex.ofReal_mul_cpow ha.le (x : ℂ), ← Complex.ofReal_mul,
     Complex.cpow_def_of_ne_zero (Complex.ofReal_ne_zero.mpr (mul_pos ha hx).ne'), ←
     Complex.ofReal_log (mul_pos ha hx).le, Complex.ofReal_mul]
   congr 2

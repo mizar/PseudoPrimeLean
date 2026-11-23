@@ -38,7 +38,7 @@ theorem exp_quarter_turn (r : ℝ) (k : ℤ) :
       (r : ℂ) * Complex.I + (k : ℂ) * ((Real.pi : ℂ) / 2 * Complex.I) := by
     push_cast
     ring
-  rw [h, Complex.exp_add, Complex.exp_int_mul, Complex.exp_pi_div_two_mul_I]
+  rw [h, Complex.exp_add, Complex.exp_intCast_mul, Complex.exp_pi_div_two_mul_I]
 
 /-- The exponential of a real phase equals two successive squares of the phase at one quarter
 of the argument. The exponential multiplication law proves this exact identity. A certified
@@ -49,7 +49,7 @@ theorem exp_phase_two_squares (r : ℝ) :
     push_cast
     ring
   rw [h, ← pow_mul]
-  simpa only [Nat.cast_ofNat] using (Complex.exp_nat_mul (((r / 4 : ℝ) : ℂ) * Complex.I) 4)
+  simpa only [Nat.cast_ofNat] using (Complex.exp_natCast_mul 4 (((r / 4 : ℝ) : ℂ) * Complex.I))
 
 /-- A phase equals the two-square expression at one quarter of its exact quarter-turn remainder,
 multiplied by the corresponding power of `I`. The remainder relation may use any integer and

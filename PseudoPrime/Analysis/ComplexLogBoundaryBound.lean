@@ -65,7 +65,7 @@ theorem local_log_im_bound {U : Set ℂ} (ho : IsOpen U) (hc : IsPreconnected U)
       linarith only [hU z hz]
     have hne : z - c ≠ 0 := Complex.ne_zero_of_re_pos hzpos
     dsimp only [p]
-    rw [Complex.exp_add, Complex.exp_nat_mul, Complex.exp_log hne, mul_comm]
+    rw [Complex.exp_add, Complex.exp_natCast_mul, Complex.exp_log hne, mul_comm]
     exact hexp z hz
   refine ⟨|(f w - p w).im| + B + (n : ℝ) * Real.pi, ?_⟩
   intro z hz

@@ -42,7 +42,7 @@ theorem log_gt_affine_of_anchor {a b y L : ℝ} (ha : 0 < a) (hab : a ≤ b) (ha
   have hla := Real.le_log_one_add_of_nonneg hx
   have hla' : 2 * (y / a - 1) / ((y / a - 1) + 2) ≤ Real.log (y / a) := by
     convert hla using 1
-    all_goals ring_nf
+    ring_nf
   have hden : 0 < (y / a - 1) + 2 := by linarith only [hx]
   have hfrac : 2 / (a + b) * (y - a) ≤ 2 * (y / a - 1) / ((y / a - 1) + 2) := by
     apply (le_div_iff₀ hden).2
@@ -100,7 +100,7 @@ theorem log_four_sub_log_pi_gt_twenty_four : (24 : ℝ) / 100 < Real.log 4 - Rea
 /-- At every level `q ≥ 3000`, the natural logarithm of `q` is strictly greater than `8`. -/
 theorem eight_lt_log_level {q : ℕ} (hq : 3000 ≤ q) : (8 : ℝ) < Real.log q := by
   have hexp : Real.exp 8 < (3000 : ℝ) := by
-    rw [show (8 : ℝ) = (8 : ℕ) * 1 by norm_num only, Real.exp_nat_mul]
+    rw [show (8 : ℝ) = (8 : ℕ) * 1 by norm_num only, Real.exp_natCast_mul]
     calc
       Real.exp 1 ^ 8 < (2.7182818286 : ℝ) ^ 8 := by
         gcongr

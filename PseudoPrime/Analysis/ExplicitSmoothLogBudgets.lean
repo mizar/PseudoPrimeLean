@@ -227,7 +227,7 @@ theorem exp_632991_over_25000_ge_98688000000 :
       le_trans hpow
         (pow_le_pow_left₀ (by norm_num only : (0 : ℝ) ≤ 250063299 / 250000000) hbaseExp 100000)
   have hexp0 : Real.exp x0 = Real.exp y ^ 100000 := by
-    rw [← Real.exp_nat_mul]
+    rw [← Real.exp_natCast_mul]
     congr 1
     dsimp only [y]
     ring
@@ -291,7 +291,7 @@ theorem exp_158222307_over_6250000_ge_98688000000 :
       _ ≤ (Real.exp y ^ 100000) ^ 10 := pow_le_pow_left₀ (by positivity) hb100000 10
       _ = Real.exp y ^ 1000000 := by rw [← pow_mul]
   have hexp0 : Real.exp x0 = Real.exp y ^ 1000000 := by
-    rw [← Real.exp_nat_mul]
+    rw [← Real.exp_natCast_mul]
     congr 1
     dsimp only [y]
     ring
@@ -374,13 +374,13 @@ theorem thirty_two_mul_le_exp_gap_half_million {z : ℝ} (hz : 53000000 ≤ z) :
     pow_le_pow_left₀ (by norm_num only) hthird 3
   have hE : (64 / 27 : ℝ) ≤ Real.exp 1 := by
     have hmul : Real.exp (1 / 3) ^ 3 = Real.exp 1 := by
-      rw [← Real.exp_nat_mul]
+      rw [← Real.exp_natCast_mul]
       congr 1
       norm_num only
     simpa only [show (4 / 3 : ℝ) ^ 3 = 64 / 27 by norm_num only, hmul] using hcube
   have hpow : (64 / 27 : ℝ) ^ 26 ≤ Real.exp 1 ^ 26 := pow_le_pow_left₀ (by norm_num only) hE 26
   have hexp26 : Real.exp 1 ^ 26 = Real.exp 26 := by
-    rw [← Real.exp_nat_mul]
+    rw [← Real.exp_natCast_mul]
     congr 1
     norm_num only
   have hx0lower : (1696000000 : ℝ) ≤ Real.exp x0 := by
@@ -426,7 +426,7 @@ theorem mul_32_le_exp_gap_2500000 {z : ℝ} (hz : 53162690 ≤ z) :
     calc
       _ ≤ Real.exp 1 ^ 21 := hEpow
       _ = Real.exp 21 := by
-        rw [← Real.exp_nat_mul]
+        rw [← Real.exp_natCast_mul]
         congr 1
         norm_num only
   have hrem :
@@ -492,7 +492,7 @@ theorem sixteen_mul_le_exp_gap_388_over_billion {z : ℝ} (hz : 53000000 ≤ z) 
     calc
       _ ≤ Real.exp 1 ^ 20 := hEpow
       _ = Real.exp 20 := by
-        rw [← Real.exp_nat_mul]
+        rw [← Real.exp_natCast_mul]
         congr 1
         norm_num only
   have hrem :
@@ -561,7 +561,7 @@ theorem fourteen_mul_le_exp_gap_771_over_2_billion {z : ℝ} (hz : 53000000 ≤ 
     calc
       _ ≤ Real.exp 1 ^ 20 := hEpow
       _ = Real.exp 20 := by
-        rw [← Real.exp_nat_mul]
+        rw [← Real.exp_natCast_mul]
         congr 1
         norm_num only
   have hrem :
@@ -630,7 +630,7 @@ theorem mul_13381_1000_le_exp_gap_3846_d10 {z : ℝ} (hz : 53000000 ≤ z) :
     calc
       _ ≤ Real.exp 1 ^ 20 := hEpow
       _ = Real.exp 20 := by
-        rw [← Real.exp_nat_mul]
+        rw [← Real.exp_natCast_mul]
         congr 1
         norm_num only
   have hrem :
@@ -726,7 +726,7 @@ theorem mul_32_le_exp_gap_14_d7 {z : ℝ} (hz : 14900000 ≤ z) :
     calc
       _ ≤ Real.exp 1 ^ 20 := pow_le_pow_left₀ (by norm_num only) hE1 20
       _ = Real.exp 20 := by
-        rw [← Real.exp_nat_mul]; congr 1; norm_num only
+        rw [← Real.exp_natCast_mul]; congr 1; norm_num only
   have hrem :
     (1 + (43 / 50 : ℝ) + (43 / 50 : ℝ) ^ 2 / 2 + (43 / 50 : ℝ) ^ 3 / 6 + (43 / 50 : ℝ) ^ 4 / 24) ≤
       Real.exp (43 / 50 : ℝ) := by
@@ -795,7 +795,7 @@ theorem mul_32_le_exp_gap_17_d7 {z : ℝ} (hz : 12082601 ≤ z) :
     calc
       _ ≤ Real.exp 1 ^ 20 := pow_le_pow_left₀ (by norm_num only) hE1 20
       _ = Real.exp 20 := by
-        rw [← Real.exp_nat_mul]; congr 1; norm_num only
+        rw [← Real.exp_natCast_mul]; congr 1; norm_num only
   have hrem :
     (1 + (5404 / 10000 : ℝ) + (5404 / 10000 : ℝ) ^ 2 / 2 + (5404 / 10000 : ℝ) ^ 3 / 6 +
         (5404 / 10000 : ℝ) ^ 4 / 24) ≤
@@ -871,7 +871,7 @@ theorem thirty_two_mul_le_exp_gap_1637_over_billion {z : ℝ} (hz : 12082601 ≤
     calc
       _ ≤ Real.exp 1 ^ 19 := pow_le_pow_left₀ (by norm_num only) hE1 19
       _ = Real.exp 19 := by
-        rw [← Real.exp_nat_mul]; congr 1; norm_num only
+        rw [← Real.exp_natCast_mul]; congr 1; norm_num only
   have hrem :
     (1 + (779 / 1000 : ℝ) + (779 / 1000 : ℝ) ^ 2 / 2 + (779 / 1000 : ℝ) ^ 3 / 6 +
         (779 / 1000 : ℝ) ^ 4 / 24) ≤
@@ -941,7 +941,7 @@ theorem thirty_two_mul_le_exp_gap_401_over_billion {z : ℝ} (hz : 53000000 ≤ 
     calc
       _ ≤ Real.exp 1 ^ 21 := hEpow
       _ = Real.exp 21 := by
-        rw [← Real.exp_nat_mul]
+        rw [← Real.exp_natCast_mul]
         congr 1
         norm_num only
   have hrem :

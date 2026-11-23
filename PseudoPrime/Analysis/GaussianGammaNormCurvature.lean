@@ -31,7 +31,7 @@ theorem exponential_moment_tangent_bound {u : ℝ} (hu : 0 ≤ u) (k : ℕ) :
   have hs := pow_le_pow_left₀ (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 8 / 3) hu) hp' k
   have hm := mul_le_mul_of_nonneg_right hs (Real.exp_pos (-(k : ℝ) * u)).le
   have hx : Real.exp u ^ k * Real.exp (-(k : ℝ) * u) = 1 := by
-    rw [← Real.exp_nat_mul, ← Real.exp_add, show (k : ℝ) * u + -(k : ℝ) * u = 0 by ring,
+    rw [← Real.exp_natCast_mul, ← Real.exp_add, show (k : ℝ) * u + -(k : ℝ) * u = 0 by ring,
       Real.exp_zero]
   rw [hx] at hm
   exact hm

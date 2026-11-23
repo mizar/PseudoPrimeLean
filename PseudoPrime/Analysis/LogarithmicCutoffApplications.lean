@@ -43,7 +43,7 @@ theorem logarithmicCutoffRoot_sq_lt_log_sq_of_large {n : ℕ} (hn : 200000 ≤ n
     (logarithmicCutoffRoot (Real.log n)) ^ 2 < (Real.log n) ^ 2 := by
   have h1 : Real.exp 1 < (87 / 32 : ℝ) := Real.exp_one_lt_d9.trans (by norm_num only)
   have heq : Real.exp (5 / 2 : ℝ) ^ 2 = Real.exp 1 ^ (5 : ℕ) := by
-    rw [pow_two, ← Real.exp_add, ← Real.exp_nat_mul]
+    rw [pow_two, ← Real.exp_add, ← Real.exp_natCast_mul]
     congr 1
     norm_num only
   have hpow := pow_lt_pow_left₀ h1 (Real.exp_pos 1).le (by norm_num only : (5 : ℕ) ≠ 0)

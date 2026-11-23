@@ -128,7 +128,7 @@ theorem norm_scaled_real_exp_error {G : ℕ} (hG : 0 < G) (v : ℚ) (hv0 : v ≤
     norm_rounded_square_iter_le_one hG hz (rationalComplexRound G (rationalRealExpTaylor u n)) hi k
       hsmall
   have hp : Complex.exp (v : ℂ) = Complex.exp (u : ℂ) ^ (2 ^ k) := by
-    rw [← Complex.exp_nat_mul]
+    rw [← Complex.exp_natCast_mul]
     congr 1
     dsimp only [u]
     norm_num only [Nat.cast_pow, Nat.cast_ofNat, Rat.cast_div, Rat.cast_pow, Rat.cast_ofNat]

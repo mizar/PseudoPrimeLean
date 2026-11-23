@@ -32,7 +32,7 @@ theorem continuousOn_inv_sqrt {a b : ℝ} (ha : 0 < a) :
     ContinuousOn (fun y : ℝ ↦ ((Real.sqrt y)⁻¹ : ℝ) • (1 : ℂ)) (Set.Icc a b) := by
   exact
     (Real.continuous_sqrt.continuousOn.inv₀
-          (fun y hy ↦ Real.sqrt_ne_zero'.mpr (lt_of_lt_of_le ha hy.1))).smul
+          (fun y (hy : y ∈ Set.Icc a b) ↦ Real.sqrt_ne_zero'.mpr (lt_of_lt_of_le ha hy.1))).smul
       continuousOn_const
 
 /-- For x > 0 and c ≥ 1, the squared inverse-square-root norm integrates to log c.

@@ -22,7 +22,7 @@ A rational lower bound 5/2 for exp(1), raised to the twenty-fourth power, proves
 private theorem gammaResolvent_exp_tail_gate : (771 : ℝ) * Real.exp (-24) < 1 / 40000 := by
   have he : (5 / 2 : ℝ) < Real.exp 1 := by linarith only [Real.exp_one_gt_d9]
   have hp : (5 / 2 : ℝ) ^ 24 < Real.exp 24 := by
-    rw [show (24 : ℝ) = (24 : ℕ) * 1 by norm_num only, Real.exp_nat_mul]
+    rw [show (24 : ℝ) = (24 : ℕ) * 1 by norm_num only, Real.exp_natCast_mul]
     exact pow_lt_pow_left₀ he (by norm_num only) (by norm_num only)
   have hn : (771 * 40000 : ℝ) < (5 / 2 : ℝ) ^ 24 := by norm_num only
   rw [Real.exp_neg, ← div_eq_mul_inv]

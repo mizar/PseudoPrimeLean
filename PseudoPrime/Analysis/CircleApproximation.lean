@@ -26,7 +26,7 @@ noncomputable def circleMonomial (k : ℤ) : C(Circle, ℂ) where
   toFun p := (p : ℂ) ^ k
   continuous_toFun := by
     have h :=
-      (continuous_subtype_val : Continuous (fun p : Circle => (p : ℂ))).comp
+      (continuous_subtypeVal : Continuous (fun p : Circle => (p : ℂ))).comp
         (continuous_zpow k : Continuous (fun p : Circle => p ^ k))
     change Continuous (fun p : Circle => ((p ^ k : Circle) : ℂ)) at h
     simpa only [Circle.coe_zpow] using h

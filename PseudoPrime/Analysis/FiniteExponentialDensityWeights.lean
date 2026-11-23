@@ -82,7 +82,7 @@ theorem sum_exp_weight_in_floor_bin {ι : Type*} (S : Finset ι) (u w : ι → �
     _ ≤ C * Real.exp (1 / 2 - (j : ℝ) / 2) := mul_le_mul_of_nonneg_left hexp hC
     _ = _ := by
       rw [show (1 / 2 - (j : ℝ) / 2) = 1 / 2 + (j : ℝ) * (-(1 / 2 : ℝ)) by ring, Real.exp_add,
-        Real.exp_nat_mul]
+        Real.exp_natCast_mul]
       ring
 
 /-- The positive absolute constant obtained by summing unit deficit bins with
@@ -125,7 +125,7 @@ theorem sum_exp_weight_of_count_growth_and_gap {ι : Type*} (S : Finset ι) (u w
   have hfloor : (K : ℝ) + 1 > u₀ := Nat.lt_floor_add_one u₀
   have htail : r ^ K ≤ Real.exp (1 / 2) * Real.exp (-u₀ / 2) := by
     dsimp only [r]
-    rw [← Real.exp_nat_mul, ← Real.exp_add]
+    rw [← Real.exp_natCast_mul, ← Real.exp_add]
     exact Real.exp_le_exp.mpr (by linarith only [hfloor])
   have hfiber :=
     Finset.sum_fiberwise_of_maps_to (s := S) (t := J) (g := fun i ↦ ⌊u i⌋₊)

@@ -32,7 +32,7 @@ private theorem tendsto_finiteMeasure_of_nonzero_mass_and_Ioc {ι : Type*} {l : 
     (hinterval :
       ∀ a b : ℝ, a < b → Filter.Tendsto (fun i ↦ μ i (Set.Ioc a b)) l (nhds (ν (Set.Ioc a b)))) :
     Filter.Tendsto μ l (nhds ν) := by
-  have hmne := ν.mass_nonzero_iff.mpr hν
+  have hmne := ν.mass_ne_zero_iff.mpr hν
   have he := hmass.eventually_ne hmne
   have hn : Filter.Tendsto (fun i ↦ (μ i).normalize) l (nhds ν.normalize) := by
     apply (isPiSystem_Ioc (id : ℝ → ℝ) (id : ℝ → ℝ)).tendsto_probabilityMeasure_of_tendsto_of_mem
@@ -48,10 +48,10 @@ private theorem tendsto_finiteMeasure_of_nonzero_mass_and_Ioc {ι : Type*} {l : 
         exact hab ⟨hy.1, by linarith only [hy.2, hx'.2]⟩
     · rintro s ⟨a, b, hab, rfl⟩
       have ht := (hmass.inv₀ hmne).mul (hinterval a b hab)
-      rw [ν.normalize_eq_of_nonzero hν]
+      rw [ν.normalize_eq_of_ne_zero hν]
       apply ht.congr'
       filter_upwards [he] with i hi
-      exact ((μ i).normalize_eq_of_nonzero ((μ i).mass_nonzero_iff.mp hi) (Set.Ioc a b)).symm
+      exact ((μ i).normalize_eq_of_ne_zero ((μ i).mass_ne_zero_iff.mp hi) (Set.Ioc a b)).symm
   exact
     MeasureTheory.FiniteMeasure.tendsto_of_tendsto_normalize_testAgainstNN_of_tendsto_mass hn hmass
 

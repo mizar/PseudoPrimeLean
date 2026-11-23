@@ -19,7 +19,7 @@ namespace PseudoPrime.Analysis
 The exponential multiple formula identifies a summable majorant at positive scale. -/
 theorem exp_neg_div_nat_eq_power (x : ℝ) (k : ℕ) :
     Real.exp (-((k + 1 : ℕ) : ℝ) / x) = Real.exp (-1 / x) ^ (k + 1) := by
-  rw [← Real.exp_nat_mul]
+  rw [← Real.exp_natCast_mul]
   congr 1
   ring
 

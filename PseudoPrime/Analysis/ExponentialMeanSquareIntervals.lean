@@ -76,7 +76,7 @@ theorem exp_le_cube_mul_weight {c v : ℝ} (hc : 1 ≤ c) (hv : v ∈ Set.Icc 0 
       Real.exp (3 * v) ≤ Real.exp (3 * Real.log c) :=
         Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_left hv.2 (by norm_num only))
       _ = c ^ 3 := by
-        rw [show (3 : ℝ) = ((3 : ℕ) : ℝ) by norm_num only, Real.exp_nat_mul, Real.exp_log hp]
+        rw [show (3 : ℝ) = ((3 : ℕ) : ℝ) by norm_num only, Real.exp_natCast_mul, Real.exp_log hp]
   calc
     Real.exp v = Real.exp (3 * v) * weight v := by
       rw [weight, abs_of_nonneg hv.1, ← Real.exp_add]

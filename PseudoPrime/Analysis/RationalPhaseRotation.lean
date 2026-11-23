@@ -121,7 +121,7 @@ theorem norm_rationalPhaseRotation_error {G : ℕ} (hG : 0 < G) (q A : ℚ) (p k
     Complex.exp (Complex.I * ((A * q : ℚ) : ℂ)) *
         Complex.exp (Complex.I * ((q / 250 : ℚ) : ℂ)) ^ n =
       Complex.exp (Complex.I * ((A : ℂ) + (n : ℂ) / 250) * (q : ℂ)) := by
-    rw [← Complex.exp_nat_mul, ← Complex.exp_add]
+    rw [← Complex.exp_natCast_mul, ← Complex.exp_add]
     congr 1
     simp only [Rat.cast_mul, Rat.cast_div, Rat.cast_ofNat]
     ring

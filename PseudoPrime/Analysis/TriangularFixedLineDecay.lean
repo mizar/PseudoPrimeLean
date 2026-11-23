@@ -58,7 +58,7 @@ theorem triangular18_fixed_line_decay {s : ℂ} (hs : |s.re| = (9 / 16 : ℝ)) :
   have he22 := pow_lt_pow_left₀ he (Real.exp_pos 1).le (by decide : (22 : ℕ) ≠ 0)
   have h11 : Real.exp 11 ^ 2 = Real.exp 1 ^ 22 := by
     rw [pow_two, ← Real.exp_add, show (11 : ℝ) + 11 = 22 by norm_num only]
-    simpa only [Nat.cast_ofNat, mul_one] using Real.exp_nat_mul 1 22
+    simpa only [Nat.cast_ofNat, mul_one] using Real.exp_natCast_mul 22 1
   have hnum : (4 : ℝ) * 3 ^ 22 < (81 / 256 : ℝ) * 1000000000000 := by norm_num only
   apply (le_div_iff₀ (by linarith only [sq_nonneg s.im] : 0 < 1 + s.im ^ 2)).mpr
   have hNsq :=
@@ -69,11 +69,11 @@ theorem triangular18_fixed_line_decay {s : ℂ} (hs : |s.re| = (9 / 16 : ℝ)) :
 /-- The symmetric exponential sum fits the improved rational fixed-line budget.
 A fourth-power comparison bounds the quarter exponential; rational arithmetic
 closes the estimate. -/
-theorem triangular18_exp_budget : (Real.exp (81 / 8 : ℝ) + Real.exp (-(81 / 8 : ℝ))) ^ 2 <
-    (81 / 256 : ℝ) * 2000000000 := by
+theorem triangular18_exp_budget :
+    (Real.exp (81 / 8 : ℝ) + Real.exp (-(81 / 8 : ℝ))) ^ 2 < (81 / 256 : ℝ) * 2000000000 := by
   have he : Real.exp (1 : ℝ) < 68 / 25 := Real.exp_one_lt_d9.trans (by norm_num only)
   have heq : Real.exp (1 / 4 : ℝ) ^ 4 = Real.exp 1 := by
-    rw [← Real.exp_nat_mul]
+    rw [← Real.exp_natCast_mul]
     norm_num only [Nat.cast_ofNat]
   have hquarter : Real.exp (1 / 4 : ℝ) < 257 / 200 := by
     by_contra hn
@@ -84,14 +84,13 @@ theorem triangular18_exp_budget : (Real.exp (81 / 8 : ℝ) + Real.exp (-(81 / 8 
     linarith only [hh, he]
   have h20 := pow_lt_pow_left₀ he (Real.exp_pos 1).le (by decide : (20 : ℕ) ≠ 0)
   have h21 : Real.exp (81 / 4 : ℝ) = Real.exp 1 ^ 20 * Real.exp (1 / 4) := by
-    rw [← Real.exp_nat_mul, ← Real.exp_add]
+    rw [← Real.exp_natCast_mul, ← Real.exp_add]
     norm_num only [Nat.cast_ofNat]
   have hpos := Real.exp_pos (1 / 4)
   have hbound : Real.exp (81 / 4 : ℝ) < (68 / 25 : ℝ) ^ 20 * (257 / 200) := by
     rw [h21]
     exact mul_lt_mul h20 hquarter.le hpos (by norm_num only)
-  have hneg : Real.exp (-(81 / 4 : ℝ)) ≤ 1 :=
-    (Real.exp_le_one_iff).2 (by norm_num only)
+  have hneg : Real.exp (-(81 / 4 : ℝ)) ≤ 1 := (Real.exp_le_one_iff).2 (by norm_num only)
   have hprod : Real.exp (81 / 8 : ℝ) * Real.exp (-(81 / 8 : ℝ)) = 1 := by
     rw [← Real.exp_add]
     norm_num only [add_neg_cancel, Real.exp_zero]
@@ -101,8 +100,7 @@ theorem triangular18_exp_budget : (Real.exp (81 / 8 : ℝ) + Real.exp (-(81 / 8 
   have hsq2 : Real.exp (-(81 / 8 : ℝ)) ^ 2 = Real.exp (-(81 / 4)) := by
     rw [pow_two, ← Real.exp_add]
     norm_num only
-  have hn : (68 / 25 : ℝ) ^ 20 * (257 / 200) + 3 <
-      (81 / 256 : ℝ) * 2000000000 := by norm_num only
+  have hn : (68 / 25 : ℝ) ^ 20 * (257 / 200) + 3 < (81 / 256 : ℝ) * 2000000000 := by norm_num only
   nlinarith only [hbound, hneg, hprod, hsq1, hsq2, hn]
 
 /-- On either fixed line, retain both positive and negative exponential contributions.
@@ -110,8 +108,7 @@ The two signs exchange the terms, yielding the same symmetric upper bound. -/
 theorem triangular18_fixed_line_exp_sum {s : ℂ} (hs : |s.re| = (9 / 16 : ℝ)) :
     ‖Complex.exp (((18 : ℝ) : ℂ) * s) - Complex.exp (-(((18 : ℝ) : ℂ) * s))‖ ≤
       Real.exp (81 / 8) + Real.exp (-(81 / 8)) := by
-  have hn := norm_sub_le (Complex.exp (((18 : ℝ) : ℂ) * s))
-    (Complex.exp (-(((18 : ℝ) : ℂ) * s)))
+  have hn := norm_sub_le (Complex.exp (((18 : ℝ) : ℂ) * s)) (Complex.exp (-(((18 : ℝ) : ℂ) * s)))
   have hre : s.re = (9 / 16 : ℝ) ∨ s.re = -(9 / 16 : ℝ) :=
     (abs_eq (by norm_num only : (0 : ℝ) ≤ 9 / 16)).mp hs
   rw [Complex.norm_exp, Complex.norm_exp, Complex.neg_re, Complex.mul_re] at hn

@@ -23,7 +23,7 @@ theorem realPower_cpow_mul_phase {a x : ℝ} (ha : 0 < a) (hx : 0 < x) (σ t : �
     (a : ℂ) ^ ((σ : ℂ) + Complex.I * t) * (x : ℂ) ^ (Complex.I * t) =
       (a ^ σ : ℝ) * Complex.exp (Complex.I * (((t * Real.log (a * x) : ℝ)) : ℂ)) := by
   rw [Complex.cpow_add _ _ (Complex.ofReal_ne_zero.mpr ha.ne'), ← Complex.ofReal_cpow ha.le,
-    mul_assoc, ← Complex.mul_cpow_ofReal_nonneg ha.le hx.le, ← Complex.ofReal_mul,
+    mul_assoc, ← Complex.ofReal_mul_cpow ha.le (x : ℂ), ← Complex.ofReal_mul,
     Complex.cpow_def_of_ne_zero (Complex.ofReal_ne_zero.mpr (mul_pos ha hx).ne'), ←
     Complex.ofReal_log (mul_pos ha hx).le, Complex.ofReal_mul]
   congr 2

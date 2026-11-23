@@ -35,7 +35,7 @@ theorem intervalIntegrable_cutoff {E : Type*} [NormedAddCommGroup E] [NormedSpac
   exact
     (MeasureTheory.integrableOn_const (hs :=
             (measure_Ioc_lt_top (μ := MeasureTheory.volume) (a := min U T) (b := max U T)).ne)
-            (hC := enorm_ne_top) :
+            (hC := eNorm_ne_top) :
           MeasureTheory.IntegrableOn (fun _ : ℝ ↦ u) (Set.uIoc U T)).indicator
       measurableSet_Ici
 

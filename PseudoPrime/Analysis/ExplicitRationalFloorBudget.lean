@@ -652,7 +652,7 @@ theorem rational_cutoff_28_15_le_prime_mul_floor_of_beta {p k : ℕ} {beta : ℝ
     have hE1 : (2 : ℝ) ≤ Real.exp 1 := by linarith only [Real.exp_one_gt_d9]
     have hEpow : (2 : ℝ) ^ 10 ≤ Real.exp 1 ^ 10 := pow_le_pow_left₀ (by norm_num only) hE1 10
     have hexp10 : Real.exp 1 ^ 10 = Real.exp 10 := by
-      rw [← Real.exp_nat_mul]
+      rw [← Real.exp_natCast_mul]
       congr 1
       norm_num only
     calc
@@ -717,7 +717,7 @@ theorem cutoff_192_105_le_prime_mul_floor {p k : ℕ} {beta : ℝ} (hp : 0 < p)
     have hE1 : (2 : ℝ) ≤ Real.exp 1 := by linarith only [Real.exp_one_gt_d9]
     have hEpow : (2 : ℝ) ^ 10 ≤ Real.exp 1 ^ 10 := pow_le_pow_left₀ (by norm_num only) hE1 10
     have hexp10 : Real.exp 1 ^ 10 = Real.exp 10 := by
-      rw [← Real.exp_nat_mul]
+      rw [← Real.exp_natCast_mul]
       congr 1
       norm_num only
     calc
@@ -785,7 +785,7 @@ theorem cutoff_2048_1120_le_prime_mul_floor {p k : ℕ} {beta : ℝ} (hp : 0 < p
     have hE1 : (2 : ℝ) ≤ Real.exp 1 := by linarith only [Real.exp_one_gt_d9]
     have hEpow : (2 : ℝ) ^ 10 ≤ Real.exp 1 ^ 10 := pow_le_pow_left₀ (by norm_num only) hE1 10
     have hexp10 : Real.exp 1 ^ 10 = Real.exp 10 := by
-      rw [← Real.exp_nat_mul]
+      rw [← Real.exp_natCast_mul]
       congr 1
       norm_num only
     calc

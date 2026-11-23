@@ -53,7 +53,7 @@ theorem taylor_integral_error_bound {f : ℝ → ℂ} {a b C : ℝ} {n : ℕ} (h
     have hx' : x ∈ Set.Icc a b := by
       rw [Set.uIoc_of_le hab] at hx
       exact ⟨hx.1.le, hx.2⟩
-    have hm := taylor_mean_remainder_bound hab hf hx' hC
+    have hm := taylor_mean_remainder_bound hf hx' hC
     have hpow := pow_le_pow_left₀ (sub_nonneg.mpr hx'.1) (sub_le_sub_right hx'.2 a) (n + 1)
     have hmul := mul_le_mul_of_nonneg_left hpow hC0
     exact hm.trans (div_le_div_of_nonneg_right hmul (Nat.cast_nonneg _))

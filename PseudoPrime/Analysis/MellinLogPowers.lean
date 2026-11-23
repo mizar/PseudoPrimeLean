@@ -141,8 +141,9 @@ theorem logPowerWeight_eq_log_min {n : ℕ} (hn : 1 ≤ n) {u : ℝ} (hu : 0 < u
   by_cases h1 : u ≤ 1
   · rw [Set.indicator_of_mem (show u ∈ Set.Ioc (0 : ℝ) 1 from ⟨hu, h1⟩), min_eq_left h1,
       Complex.real_smul, mul_one]
-  · rw [Set.indicator_of_notMem (fun h ↦ h1 h.2), smul_zero, min_eq_right (le_of_not_ge h1),
-      Real.log_one, neg_zero, zero_pow (Nat.ne_zero_of_lt hn), Complex.ofReal_zero]
+  · have hu' : u ∉ Set.Ioc (0 : ℝ) 1 := fun h ↦ h1 h.2
+    rw [Set.indicator_of_notMem hu', smul_zero, min_eq_right (le_of_not_ge h1), Real.log_one,
+      neg_zero, zero_pow (Nat.ne_zero_of_lt hn), Complex.ofReal_zero]
 
 /-- For n>=1, the logarithmic weight is continuous at each positive argument.
 Use the log-min formula on a positive neighborhood and continuity of min, log and

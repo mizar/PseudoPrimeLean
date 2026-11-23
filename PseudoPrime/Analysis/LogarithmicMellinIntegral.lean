@@ -90,7 +90,7 @@ theorem logMellin_eq_logLog_integral {s : ℝ} (hs : 1 < s) :
   have hJ := integrable_logMellin_Ioi hs
   have hH :=
     (Real.integrableOn_log_log_mul_rpow hs).mono_set
-      (fun t ht ↦ (by norm_num only : (1 : ℝ) < 2).trans ht)
+      (fun t (ht : t ∈ Set.Ioi (2 : ℝ)) ↦ (by norm_num only : (1 : ℝ) < 2).trans ht)
   have h :=
     MeasureTheory.integral_Ioi_of_hasDerivAt_of_tendsto'
       (fun t ht ↦ logLogMellin_hasDerivAt ((by norm_num only : (1 : ℝ) < 2).trans_le ht))

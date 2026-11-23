@@ -146,7 +146,7 @@ theorem norm_scaled_phase_error {G : ℕ} (hG : 0 < G) (v : ℚ) (n k : ℕ)
   have hp :
     Complex.exp (Complex.I * (v : ℂ)) =
       Complex.exp (Complex.I * ((v / (2 : ℚ) ^ k : ℚ) : ℂ)) ^ (2 ^ k) := by
-    rw [← Complex.exp_nat_mul]
+    rw [← Complex.exp_natCast_mul]
     congr 1
     norm_num only [Nat.cast_pow, Nat.cast_ofNat, Rat.cast_div, Rat.cast_pow, Rat.cast_ofNat]
     have hn : (2 : ℂ) ^ k ≠ 0 := pow_ne_zero k (by norm_num only)
