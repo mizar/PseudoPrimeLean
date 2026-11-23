@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+public import ComparatorChallenges.GRH.GRHSolution
 public import ComparatorChallenges.LLSWitness.LLSWitnessSolution
 public import ComparatorChallenges.PrimeMillerRabinWitness.PrimeMillerRabinWitnessSolution
 public import ComparatorChallenges.PrimeQuadraticWitness.PrimeQuadraticWitnessSolution

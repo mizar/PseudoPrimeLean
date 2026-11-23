@@ -9,6 +9,22 @@ The allowed axioms are `propext`, `Quot.sound`, and `Classical.choice`. GRH is a
 assumption in the statement, not an allowed axiom. The configuration contains no definition
 holes: the definitions used in the statement are part of the fixed challenge.
 
+## GRH formulations
+
+The [criterion](GRH/GRHCriterion.lean) states four equivalences using the definitions in
+[Statements.lean](https://github.com/leanprover-community/riemann-hypothesis/blob/main/src/Statements.lean).
+The zeta zero statement is equivalent to ordinary RH. Right-half-plane nonvanishing, open-strip
+zeros on the critical line for all characters, and the corresponding primitive-character statement
+are each equivalent to the witness challenges' GRH. Both modules include the modulus-one
+equivalence and the deduction of RH from GRH. The [solution](GRH/GRHSolution.lean) proves the
+four comparison targets using the library's GRH equivalences.
+
+```sh
+lake comparator --config=ComparatorChallenges/GRH/GRHCriterion.json
+```
+
+## Witness and Chebyshev challenges
+
 The stronger base-nine logarithm criterion has a separate challenge and solution:
 
 ```sh

@@ -1,0 +1,16 @@
+{
+  "challenge_module": "ComparatorChallenges.GRH.GRHCriterion",
+  "solution_module": "ComparatorChallenges.GRH.GRHSolution",
+  "theorem_names": [
+    "ComparatorChallenges.GRH.riemannZetaZerosOnLine_iff",
+    "ComparatorChallenges.GRH.nonvanishing_right_iff_grh",
+    "ComparatorChallenges.GRH.zeros_on_line_iff_grh",
+    "ComparatorChallenges.GRH.primitive_zeros_on_line_iff_grh"
+  ],
+  "definition_names": [],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ]
+}
