@@ -400,7 +400,7 @@ theorem characterLogSum_re_le_fullLevel_of_grh_generic {q : ℕ} [NeZero q]
                         1 / 4)))
                   (11 / 4) using
                 1
-              try ring
+              ring
             _ = _ := by ring)
 
 /--

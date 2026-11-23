@@ -33,7 +33,7 @@ theorem log_thirtyFiveHalf_lt_357_div_100 : Real.log (71 / 2 : ℝ) < 357 / 100 
     mul_le_mul (pow_le_pow_left₀ (by norm_num only) he 3) ht (by norm_num only)
       (pow_nonneg (Real.exp_pos 1).le 3)
   rw [show (357 / 100 : ℝ) = (3 : ℕ) * 1 + 57 / 100 by norm_num only, Real.exp_add,
-    Real.exp_nat_mul]
+    Real.exp_natCast_mul]
   exact
     (by norm_num only : (71 / 2 : ℝ) < (2718 / 1000) ^ 3 * (707286097519 / 400000000000)).trans_le
       hm

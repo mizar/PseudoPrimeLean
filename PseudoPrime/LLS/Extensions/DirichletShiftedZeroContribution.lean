@@ -41,7 +41,7 @@ theorem ofDirichletCharacter_summable_zeroMassTerm {q : ℕ} [NeZero q] (χ : Di
     simp only [Int.cast_natCast, pow_two, Complex.norm_mul_self_eq_normSq]
   let e : (ofDirichletCharacter χ).Zero ≃ { z : ℂ // χ.completedLFunction z = 0 } :=
     Equiv.subtypeEquivProp (funext fun z ↦ propext (ofDirichletCharacter_completed_eq_zero_iff χ z))
-  have hsub := hplane.subtype {z : ℂ | χ.completedLFunction z = 0}
+  have hsub := hplane.subtype (fun z : ℂ ↦ χ.completedLFunction z = 0)
   have he := e.summable_iff.mpr hsub
   apply he.congr
   intro ρ

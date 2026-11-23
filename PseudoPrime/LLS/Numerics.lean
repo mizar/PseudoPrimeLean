@@ -167,7 +167,9 @@ theorem llsPart1IntermediateUpperBound_le_upper {q : ℕ} (hq : 3000 ≤ q) :
     ring
   rw [hleft, hratioQ] at hmul
   have hscaled := (div_le_iff₀ hrootPos).mp hmul
-  rw [llsPart1IntermediateUpperBound, llsTheorem11S1UpperBound, Real.log_pow] at ⊢
+  rw [llsPart1IntermediateUpperBound, llsTheorem11S1UpperBound]
+  dsimp only
+  rw [Real.log_pow]
   norm_num only [Nat.cast_ofNat]
   nlinarith only [hscaled]
 
@@ -187,7 +189,9 @@ theorem llsPart1SeparationMargin_le_lower_sub_upper {q : ℕ} (hq : 3000 ≤ q) 
   have hscaled := mul_le_mul_of_nonneg_left hcorrection hy.le
   rw [llsTheorem11S1RadiusRoot] at hscaled
   rw [llsPart1SeparationMargin, llsTheorem11S1LowerBound, llsTheorem11S1UpperBound,
-    llsTheorem11S1RadiusRoot, Real.log_pow] at ⊢
+    llsTheorem11S1RadiusRoot]
+  dsimp only
+  rw [Real.log_pow]
   norm_num only [Nat.cast_ofNat]
   nlinarith only [hscaled]
 

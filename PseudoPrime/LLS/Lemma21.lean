@@ -99,7 +99,7 @@ theorem llsPart1CharacterWeightedDecomposition : LLSPart1CharacterWeightedDecomp
   have hx : 0 < (llsTheorem11S1RadiusRoot q) ^ 2 := by
     have hlog : (8 : ℝ) < Real.log q := by
       apply (Real.lt_log_iff_exp_lt hqpos).mpr
-      rw [show (8 : ℝ) = (8 : ℕ) * 1 by norm_num only, Real.exp_nat_mul]
+      rw [show (8 : ℝ) = (8 : ℕ) * 1 by norm_num only, Real.exp_natCast_mul]
       exact
         (show Real.exp 1 ^ 8 < (3000 : ℝ) by
               calc
@@ -153,7 +153,7 @@ theorem llsPart1WeightedRawLower (h21 : LLSRiemannWeightedLowerBound)
             (Real.lt_log_iff_exp_lt hqpos).mpr
                 ((show Real.exp 8 < (3000 : ℝ)
                       by
-                      rw [show (8 : ℝ) = (8 : ℕ) * 1 by norm_num only, Real.exp_nat_mul]
+                      rw [show (8 : ℝ) = (8 : ℕ) * 1 by norm_num only, Real.exp_natCast_mul]
                       calc
                         Real.exp 1 ^ 8 < (2.7182818286 : ℝ) ^ 8 := by
                           gcongr

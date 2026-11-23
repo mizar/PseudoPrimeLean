@@ -92,7 +92,7 @@ theorem reciprocal_norm_L_one_le_square_corrected (f : GeneralLFunction) (hf : f
   have hp : 0 < Real.pi ^ 2 / 6 := div_pos (sq_pos_of_pos Real.pi_pos) (by norm_num only)
   have hex :
     Real.exp (-(f.degree : ℝ) * Real.log (Real.pi ^ 2 / 6)) = (6 / Real.pi ^ 2) ^ f.degree := by
-    rw [neg_mul, ← mul_neg, Real.exp_nat_mul, Real.exp_neg, Real.exp_log hp, inv_div]
+    rw [neg_mul, ← mul_neg, Real.exp_natCast_mul, Real.exp_neg, Real.exp_log hp, inv_div]
   have harg :
     (f.degree : ℝ) *
           (AnalyticNumberTheory.Arithmetic.truncatedMangoldtMajorant x -

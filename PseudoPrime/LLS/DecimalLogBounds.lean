@@ -27,7 +27,7 @@ theorem log_ten_gt_twenty_three_tenths : (23 / 10 : ℝ) < Real.log 10 := by
   have he : Real.exp 1 ≤ (68 / 25 : ℝ) := Real.exp_one_lt_d9.le.trans (by norm_num only)
   have hs := pow_le_pow_left₀ (Real.exp_pos 1).le he 2
   rw [show (23 / 10 : ℝ) = 2 * 1 + 3 / 10 by norm_num only, Real.exp_add,
-    show (2 : ℝ) * 1 = (2 : ℕ) * 1 by norm_num only, Real.exp_nat_mul]
+    show (2 : ℝ) * 1 = (2 : ℕ) * 1 by norm_num only, Real.exp_natCast_mul]
   have hm := mul_le_mul hs ht (Real.exp_pos _).le (by norm_num only)
   exact hm.trans_lt (by norm_num only)
 

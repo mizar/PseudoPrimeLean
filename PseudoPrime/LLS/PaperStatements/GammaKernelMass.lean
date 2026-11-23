@@ -104,7 +104,7 @@ This permits termwise integration of the majorant. -/
 theorem exponential_mass_monomial (i : ℕ) (t : ℝ) :
     Real.exp (-|Real.pi * t| / 2) * Real.exp (-2 * |Real.pi * t|) ^ i =
       Real.exp (-(Real.pi * (1 / 2 + 2 * i)) * |t|) := by
-  rw [← Real.exp_nat_mul, ← Real.exp_add, abs_mul, abs_of_pos Real.pi_pos]
+  rw [← Real.exp_natCast_mul, ← Real.exp_add, abs_mul, abs_of_pos Real.pi_pos]
   congr 1
   ring
 

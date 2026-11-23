@@ -29,7 +29,7 @@ theorem triangular18_half_value_lt : 4 * (Real.exp 9 - Real.exp (-9)) ^ 2 < (300
   have hnum : 4 * (68 / 25 : ℝ) ^ 18 < 300000000 := by norm_num only
   have h9 : Real.exp 9 ^ 2 = Real.exp 1 ^ 18 := by
     rw [pow_two, ← Real.exp_add, show (9 : ℝ) + 9 = 18 by norm_num only]
-    simpa only [Nat.cast_ofNat, mul_one] using Real.exp_nat_mul 1 18
+    simpa only [Nat.cast_ofNat, mul_one] using Real.exp_natCast_mul 18 1
   have hpos := Real.exp_pos (-9)
   have hlt : Real.exp (-9) < Real.exp 9 := Real.exp_lt_exp.mpr (by norm_num only)
   have hs : (Real.exp 9 - Real.exp (-9)) ^ 2 < Real.exp 9 ^ 2 := by nlinarith only [hpos, hlt]

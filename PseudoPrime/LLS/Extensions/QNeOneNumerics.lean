@@ -230,7 +230,7 @@ theorem qNeOne_BzeroStar_affine_12_13 {y : ℝ} (hy : 12 ≤ y) (hy13 : y ≤ 13
     have hla := Real.le_log_one_add_of_nonneg hx
     have hla' : 2 * (y / 12 - 1) / ((y / 12 - 1) + 2) ≤ Real.log (y / 12) := by
       convert hla using 1
-      all_goals ring_nf
+      ring_nf
     have hfrac : (2 / 25 : ℝ) * (y - 12) ≤ 2 * (y / 12 - 1) / ((y / 12 - 1) + 2) := by
       have hden : 0 < (y / 12 - 1) + 2 := add_pos_of_nonneg_of_pos hx (by norm_num only)
       apply (le_div_iff₀ hden).2

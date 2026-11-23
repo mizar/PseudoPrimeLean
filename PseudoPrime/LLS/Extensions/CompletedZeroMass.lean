@@ -67,6 +67,7 @@ theorem summable_zeroMassTerm_of_admissible (f : GeneralLFunction) (hf : f.IsAdm
       (show (0 : ℝ) ≤ 3 / 2 by norm_num only) (show (3 / 2 : ℝ) < 2 by norm_num only) hg
   exact
     Summable.of_nonneg_of_le (fun ρ ↦ div_nonneg (Nat.cast_nonneg _) (sq_nonneg _))
-      (zeroMassTerm_le_regularWeight f hRH) ((hs.subtype {z : ℂ | f.completed z = 0}).mul_left 5)
+      (zeroMassTerm_le_regularWeight f hRH)
+      ((hs.subtype (fun z : ℂ ↦ f.completed z = 0)).mul_left 5)
 
 end PseudoPrime.LLS.Extensions.GeneralLFunction

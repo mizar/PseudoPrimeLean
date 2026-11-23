@@ -69,7 +69,7 @@ The exponent is at most four and `exp(4) < 3^4`. -/
 theorem gaussian_grid_inner_le_81_scale (i : ℕ) (hi : i < 256) :
     gaussianMomentGridInner i ≤ 81 * 10 ^ 24 := by
   have hexp4 : Real.exp (4 : ℝ) ≤ 81 := by
-    rw [show (4 : ℝ) = (4 : ℕ) * 1 by norm_num only, Real.exp_nat_mul]
+    rw [show (4 : ℝ) = (4 : ℕ) * 1 by norm_num only, Real.exp_natCast_mul]
     exact
       (pow_le_pow_left₀ (Real.exp_pos 1).le Real.exp_one_lt_three.le 4).trans_eq (by norm_num only)
   have hi0 : (0 : ℝ) ≤ i := Nat.cast_nonneg i

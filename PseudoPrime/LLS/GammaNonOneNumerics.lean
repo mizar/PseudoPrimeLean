@@ -37,7 +37,8 @@ theorem nonOne_ramp_log_bound {L : ℝ} (hL : 40000 ≤ L) : Real.log L ≤ L / 
       (by norm_num only : (27 / 10 : ℝ) ≤ 2.7182818283).trans Real.exp_one_gt_d9.le
     have htay := Real.sum_le_exp_of_nonneg (by norm_num only : (0 : ℝ) ≤ 3 / 4) 4
     norm_num only [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial] at htay
-    rw [show (43 / 4 : ℝ) = (10 : ℕ) * 1 + 3 / 4 by norm_num only, Real.exp_add, Real.exp_nat_mul]
+    rw [show (43 / 4 : ℝ) = (10 : ℕ) * 1 + 3 / 4 by norm_num only, Real.exp_add,
+      Real.exp_natCast_mul]
     have hm :=
       mul_le_mul (pow_le_pow_left₀ (by norm_num only) he 10) htay (by norm_num only)
         (pow_nonneg (Real.exp_pos 1).le 10)

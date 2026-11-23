@@ -46,7 +46,8 @@ theorem summable_shifted_power_mass_of_admissible (f : GeneralLFunction) (hf : f
       (fun ρ : f.Zero ↦
         (analyticOrderNatAt f.completed (ρ : ℂ) : ℝ) / ‖(ρ : ℂ) - (σ : ℂ)‖ ^ p) := by
   have hs :=
-    (summable_regularZeroWeight_of_admissible_RH f hf hRH hp).subtype {z : ℂ | f.completed z = 0}
+    (summable_regularZeroWeight_of_admissible_RH f hf hRH hp).subtype
+      (fun z : ℂ ↦ f.completed z = 0)
   change
     Summable
       (fun ρ : f.Zero ↦

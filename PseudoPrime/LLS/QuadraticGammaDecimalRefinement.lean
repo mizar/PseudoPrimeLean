@@ -31,7 +31,7 @@ theorem log_ten_gt_230258 : (115129 / 50000 : ℝ) < Real.log 10 := by
     Real.exp_one_lt_d9.le.trans (by norm_num only)
   have hs := pow_le_pow_left₀ (Real.exp_pos 1).le he 2
   rw [show (115129 / 50000 : ℝ) = 2 * 1 + 15129 / 50000 by norm_num only, Real.exp_add,
-    show (2 : ℝ) * 1 = (2 : ℕ) * 1 by norm_num only, Real.exp_nat_mul]
+    show (2 : ℝ) * 1 = (2 : ℕ) * 1 by norm_num only, Real.exp_natCast_mul]
   have hm := mul_le_mul hs ht (Real.exp_pos _).le (by norm_num only)
   exact hm.trans_lt (by norm_num only)
 

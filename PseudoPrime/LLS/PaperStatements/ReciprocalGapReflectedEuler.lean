@@ -18,12 +18,12 @@ namespace PseudoPrime.LLS.PaperStatements
 /-- For nonzero coefficient index and positive scale, factor the reflected Dirichlet term
 into a fixed coefficient and Mellin power at scale n*x. Use the complex power quotient law.
 This prepares exact integration without taking separate norms. -/
-theorem reflected_term_factor (f : ℕ → ℂ) {n : ℕ} (hn : n ≠ 0) {x : ℝ} (hx : 0 < x) (s : ℂ) :
+theorem reflected_term_factor (f : ℕ → ℂ) {n : ℕ} (hn : n ≠ 0) {x : ℝ} (_hx : 0 < x) (s : ℂ) :
     LSeries.term f (1 / 2 - s) n * (x : ℂ) ^ s =
       (f n / (n : ℂ) ^ (1 / 2 : ℂ)) * (((n : ℝ) * x : ℝ) : ℂ) ^ s := by
   have hnz : (n : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr hn
   simp only [LSeries.term, ite_eq_right hn, Complex.cpow_sub _ _ hnz, Complex.ofReal_mul]
-  rw [Complex.mul_cpow_ofReal_nonneg (Nat.cast_nonneg n) hx.le]
+  rw [Complex.ofReal_mul_cpow (Nat.cast_nonneg n) (x : ℂ)]
   simp only [Complex.ofReal_natCast, div_eq_mul_inv, mul_inv_rev, inv_inv]
   ring
 

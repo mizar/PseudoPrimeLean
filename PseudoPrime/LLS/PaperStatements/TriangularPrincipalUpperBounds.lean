@@ -196,7 +196,7 @@ Bound exp 9 using the certified exp 1 upper bound and rational ninth power. -/
 theorem triangular18_full_error_budget_le : 13 * (12 * Real.exp 9 + 64) ≤ (1300000 : ℝ) := by
   have he : Real.exp 1 < (68 / 25 : ℝ) := Real.exp_one_lt_d9.trans (by norm_num only)
   have hp := pow_lt_pow_left₀ he (Real.exp_pos 1).le (by decide : (9 : ℕ) ≠ 0)
-  have hn := Real.exp_nat_mul 1 9
+  have hn := Real.exp_natCast_mul 9 1
   norm_num only at hn
   rw [← hn] at hp
   have hnum : 13 * (12 * (68 / 25 : ℝ) ^ (9 : ℕ) + 64) < 1300000 := by norm_num only

@@ -102,7 +102,7 @@ theorem exp_valueMain_eq_normalized (d : ℕ) (a K γ : ℝ) {t : ℝ} (ht : 0 <
     rw [hs]
     field_simp (disch := simp only [ht.ne', (sub_pos.mpr hta).ne', ne_eq, not_false_eq_true])
     ring
-  rw [he, Real.exp_add, Real.exp_add, Real.exp_nat_mul, Real.exp_nat_mul,
+  rw [he, Real.exp_add, Real.exp_add, Real.exp_natCast_mul, Real.exp_natCast_mul,
     Real.exp_log (mul_pos (by norm_num only : (0 : ℝ) < 2) (sub_pos.mpr hta))]
   unfold normalizedValueUpper
   rw [hs]

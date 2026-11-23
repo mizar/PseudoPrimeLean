@@ -115,7 +115,7 @@ theorem log_46000_lt_eleven : Real.log (46000 : ℝ) < 11 := by
   apply (Real.log_lt_iff_lt_exp (by norm_num only : (0 : ℝ) < 46000)).mpr
   have he : (27 / 10 : ℝ) ≤ Real.exp 1 :=
     (by norm_num only : (27 / 10 : ℝ) ≤ 2.7182818283).trans Real.exp_one_gt_d9.le
-  rw [show (11 : ℝ) = (11 : ℕ) * 1 by norm_num only, Real.exp_nat_mul]
+  rw [show (11 : ℝ) = (11 : ℕ) * 1 by norm_num only, Real.exp_natCast_mul]
   exact
     (by norm_num only : (46000 : ℝ) < (27 / 10 : ℝ) ^ (11 : ℕ)).trans_le
       (pow_le_pow_left₀ (by norm_num only) he 11)

@@ -73,7 +73,9 @@ theorem integrableOn_weight (K : MellinKernel) {b : ℝ} (hb : 0 < b) :
   have hi :=
     (intervalIntegral.integrableOn_Ioo_rpow_iff hb).mpr (by norm_num only : (-1 : ℝ) < -(1 / 2 : ℝ))
   apply (hi.const_mul K.mass).mono'
-  · exact ((continuousOn_weight K).mono (fun _ hu ↦ hu.1)).aestronglyMeasurable measurableSet_Ioo
+  · exact
+      ((continuousOn_weight K).mono (fun u (hu : u ∈ Set.Ioo 0 b) ↦ hu.1)).aestronglyMeasurable
+        measurableSet_Ioo
   · filter_upwards [MeasureTheory.ae_restrict_mem measurableSet_Ioo] with u hu
     have hn : 0 ≤ (K.transform u).re / Real.sqrt u :=
       div_nonneg (K.mellin_nonneg u hu.1) (Real.sqrt_nonneg u)

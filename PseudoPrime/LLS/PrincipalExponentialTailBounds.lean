@@ -61,7 +61,7 @@ theorem principalExponentialMass_le_finite_add_tail {x : ℝ} (hx : 0 < x) (N : 
     rw [← he]
     exact add_le_add le_rfl (ht.trans_eq hmajor.tsum_eq)
   · have he : Real.exp (-((k + N : ℕ) : ℝ) / x) = r ^ (k + N) := by
-      rw [← Real.exp_nat_mul]
+      rw [← Real.exp_natCast_mul]
       congr 1
       ring
     rw [he]
@@ -130,7 +130,7 @@ theorem principalExponentialTailBound_le_polynomial {x : ℝ} (hx : 0 < x) (N : 
       show (N : ℝ) / (1 - r) = (N : ℝ) * (1 / (1 - r)) by ring]
     nlinarith only [h3, h4]
   have heq : r ^ N = Real.exp (-(N : ℝ) / x) := by
-    rw [← Real.exp_nat_mul]
+    rw [← Real.exp_natCast_mul]
     congr 1
     ring
   dsimp only [principalExponentialTailBound]
@@ -145,7 +145,7 @@ theorem exp_neg_twenty_four_le : Real.exp (-24 : ℝ) ≤ 1 / 10000000000 := by
   have hp := pow_le_pow_left₀ (by norm_num only : (0 : ℝ) ≤ 27 / 10) h1 24
   have ht : (10000000000 : ℝ) ≤ (27 / 10 : ℝ) ^ 24 := by norm_num only
   have he : Real.exp (24 : ℝ) = Real.exp 1 ^ 24 := by
-    simpa only [Nat.cast_ofNat, mul_one] using Real.exp_nat_mul 1 24
+    simpa only [Nat.cast_ofNat, mul_one] using Real.exp_natCast_mul 24 1
   rw [← he] at hp
   rw [Real.exp_neg, one_div]
   exact inv_anti₀ (by norm_num only : (0 : ℝ) < 10000000000) (ht.trans hp)

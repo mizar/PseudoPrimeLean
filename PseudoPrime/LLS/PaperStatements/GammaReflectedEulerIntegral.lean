@@ -54,7 +54,7 @@ theorem reflected_euler_term_factor (a : ℕ → ℂ) {x : ℝ} (hx : 0 < x) {n 
     ring
   rw [LSeries.term_of_ne_zero hn, he, Complex.cpow_sub _ _ (Nat.cast_ne_zero.mpr hn),
     Complex.cpow_one, gammaSignedLeftWeight_eq_factored hx]
-  rw [Complex.ofReal_mul, Complex.mul_cpow_ofReal_nonneg (Nat.cast_nonneg n) hx.le]
+  rw [Complex.ofReal_mul, Complex.ofReal_mul_cpow (Nat.cast_nonneg n) (x : ℂ)]
   simp only [Complex.ofReal_div, Complex.ofReal_one, Complex.ofReal_mul, Complex.ofReal_natCast]
   dsimp only [z]
   norm_num only [Complex.ofReal_div, Complex.ofReal_neg, Complex.ofReal_one, Complex.ofReal_ofNat]
