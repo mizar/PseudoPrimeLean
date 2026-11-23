@@ -30,7 +30,8 @@ theorem exists_prime_witness_le_larger_twoAdic_log_sq {n r s : ℕ} (hn : 1 < n)
   have hr3 : r ≠ 3 := by
     intro he
     have hsmall : padicValNat 2 (s - 1) < 1 := by
-      simpa only [he, show (3 - 1 : ℕ) = 2 by decide, padicValNat.self (by decide : 1 < 2)] using hv
+      simpa only [he, Nat.padicValNat_def, show (3 - 1 : ℕ) = 2 by decide,
+        Nat.multiplicity_self (by decide : 1 < 2)] using hv
     exact (not_lt_of_ge (PrimeTest.odd_sub_canonical_decomp hs.one_lt hsOdd).1) hsmall
   have hr5 := hr.five_le_of_ne_two_of_ne_three (ho.ne_two_of_dvd_nat hrn) hr3
   let : Fact r.Prime := ⟨hr⟩

@@ -48,7 +48,7 @@ theorem primeSeed113_weight_step
   simp only [List.mem_append, List.mem_cons, List.not_mem_nil, or_false] at hp
   rcases hp with (rfl | rfl | rfl | rfl | rfl | rfl) | hp
   all_goals
-    try norm_num only [primeSeed113Weight, Nat.reduceLeDiff, Nat.cast_ofNat, ite_true, ite_false]
+    norm_num only [primeSeed113Weight, Nat.reduceLeDiff, Nat.cast_ofNat, ite_true, ite_false]
   all_goals
     first
     | exact h113

@@ -645,7 +645,7 @@ theorem gaussian6_5_prime_largeFermatIndex_GRH {n : ℕ} (hn1 : 1 < n) (hnOdd : 
       _ ≤ Real.exp 10 ^ 50 := pow_le_pow_left₀ (by norm_num only) hExp10 50
   have hexp : Real.exp (500 : ℝ) = Real.exp 10 ^ 50 := by
     rw [show (500 : ℝ) = (50 : ℕ) * 10 by norm_num only]
-    exact Real.exp_nat_mul 10 50
+    exact Real.exp_natCast_mul 50 10
   have hExp500 : (20000 : ℝ) < Real.exp (500 : ℝ) := by
     rw [hexp]
     exact lt_of_lt_of_le (by norm_num only) hpow
@@ -688,7 +688,7 @@ theorem exists_prime_gaussian6_largeFermat_GRH {n : ℕ} (hn1 : 1 < n) (hnOdd : 
       _ ≤ Real.exp 10 ^ 30 := pow_le_pow_left₀ (by norm_num only) hExp10 30
   have hexp : Real.exp (300 : ℝ) = Real.exp 10 ^ 30 := by
     rw [show (300 : ℝ) = (30 : ℕ) * 10 by norm_num only]
-    exact Real.exp_nat_mul 10 30
+    exact Real.exp_natCast_mul 30 10
   have hExp300 : (20000 : ℝ) < Real.exp (300 : ℝ) := by
     rw [hexp]
     exact lt_of_lt_of_le (by norm_num only) hpow

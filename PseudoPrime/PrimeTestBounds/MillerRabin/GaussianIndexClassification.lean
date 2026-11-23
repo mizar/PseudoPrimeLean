@@ -28,7 +28,7 @@ theorem gaussian6fifths_decimal_threshold_of_log {n : ℕ} [NeZero n] (hL : 500 
   have hExp10 : (10 : ℝ) ^ 3 ≤ Real.exp 10 := by
     have he : Real.exp 10 = Real.exp 1 ^ (10 : ℕ) := by
       rw [show (10 : ℝ) = (10 : ℕ) * 1 by norm_num only]
-      exact Real.exp_nat_mul 1 10
+      exact Real.exp_natCast_mul 10 1
     rw [he]
     calc
       (10 : ℝ) ^ 3 ≤ 2 ^ (10 : ℕ) := by norm_num only
@@ -36,7 +36,7 @@ theorem gaussian6fifths_decimal_threshold_of_log {n : ℕ} [NeZero n] (hL : 500 
   have hExp500 : (10 : ℝ) ^ 150 ≤ Real.exp 500 := by
     have he : Real.exp 500 = Real.exp 10 ^ (50 : ℕ) := by
       rw [show (500 : ℝ) = (50 : ℕ) * 10 by norm_num only]
-      exact Real.exp_nat_mul 10 50
+      exact Real.exp_natCast_mul 50 10
     rw [he]
     calc
       (10 : ℝ) ^ 150 = ((10 : ℝ) ^ 3) ^ (50 : ℕ) := by rw [← pow_mul]

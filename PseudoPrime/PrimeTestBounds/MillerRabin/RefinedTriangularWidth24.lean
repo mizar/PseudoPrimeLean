@@ -922,9 +922,9 @@ theorem refined_24_shift_exp_bounds :
   have h6 := pow_le_pow_left₀ (Real.exp_pos 1).le he 6
   have h3 := pow_le_pow_left₀ (Real.exp_pos 1).le he 3
   have e6 : Real.exp 1 ^ 6 = Real.exp 6 := by
-    rw [← Real.exp_nat_mul]; norm_num only
+    rw [← Real.exp_natCast_mul]; norm_num only
   have e3 : Real.exp 1 ^ 3 = Real.exp 3 := by
-    rw [← Real.exp_nat_mul]; norm_num only
+    rw [← Real.exp_natCast_mul]; norm_num only
   rw [e6] at h6
   rw [e3] at h3
   have hn6 : Real.exp (-6) ≤ 1 := (Real.exp_le_one_iff).mpr (by norm_num only)

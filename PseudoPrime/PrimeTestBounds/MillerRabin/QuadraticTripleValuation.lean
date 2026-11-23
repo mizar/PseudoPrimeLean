@@ -6,6 +6,7 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.NumberTheory.TwoAdic
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuadraticTripleSpacingNat
 public import PseudoPrime.PrimeTest.MillerRabin.TripleTwoAdic
 
@@ -52,7 +53,7 @@ theorem triple_gap_val_lt {p q r : ℕ} (hp : 1 < p) (hq : 1 < q) (hr : 1 < r) (
     exact two_pow_succ_dvd_sub hp hq hpO hqO hv
   have hf := two_pow_succ_dvd_sub hq hr hqO hrO hvr
   have ht := Nat.dvd_sub (dvd_mul_of_dvd_left hd ((r - q) + 1)) hf
-  have hv' := (padicValNat_dvd_iff_le (Nat.ne_of_gt hpos)).mp ht
+  have hv' := (NumberTheory.TwoAdic.pow_dvd_iff (Nat.ne_of_gt hpos)).mp ht
   exact Nat.lt_of_succ_le hv'
 
 /-- Ordered odd factors with common predecessor valuations and the middle

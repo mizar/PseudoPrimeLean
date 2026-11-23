@@ -31,9 +31,9 @@ theorem exp_factor_le_4136 {L : ℝ} (hlo : 8 ≤ L) (hhi : L ≤ 25 / 2) :
     linarith only [ht, hd]
   have he := Real.exp_le_exp.mpr hc
   have hEL : Real.exp (2 * Real.log L) = L ^ 2 := by
-    simpa only [Nat.cast_ofNat, Real.exp_log hL] using (Real.exp_nat_mul (Real.log L) 2)
+    simpa only [Nat.cast_ofNat, Real.exp_log hL] using (Real.exp_natCast_mul 2 (Real.log L))
   have hET : Real.exp (2 * Real.log (25 / 2)) = (25 / 2 : ℝ) ^ 2 := by
-    simpa only [Nat.cast_ofNat, Real.exp_log hT] using (Real.exp_nat_mul (Real.log (25 / 2)) 2)
+    simpa only [Nat.cast_ofNat, Real.exp_log hT] using (Real.exp_natCast_mul 2 (Real.log (25 / 2)))
   rw [Real.exp_sub, Real.exp_sub, hEL, hET] at he
   have hlog : (25 / 6 : ℝ) ≤ Real.log (323 / 5) := by
     have hc : Analysis.preciseLogCheck (323 / 5) 7 64 (25 / 6) 5 = true := by decide +kernel

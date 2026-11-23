@@ -23,11 +23,12 @@ theorem twice_dvd_of_two_val_lt {a b : ℕ} (ha : a ≠ 0) (hb : b ≠ 0) (hab :
   obtain ⟨c, rfl⟩ := hab
   have hc : c ≠ 0 := right_ne_zero_of_mul hb
   let : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
-  have hv0 : padicValNat 2 c ≠ 0 := by
+  simp only [Nat.padicValNat_def] at hv
+  have hv0 : multiplicity 2 c ≠ 0 := by
     intro hz
-    rw [padicValNat.mul ha hc, hz, add_zero] at hv
+    rw [Nat.multiplicity_mul ha hc, hz, add_zero] at hv
     exact (lt_irrefl _) hv
-  obtain ⟨k, hk⟩ := padicValNat.dvd_of_ne_zero hv0
+  obtain ⟨k, hk⟩ := Nat.multiplicity_dvd_of_ne_zero hv0
   refine ⟨k, ?_⟩
   rw [hk]
   ac_rfl

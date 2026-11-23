@@ -40,7 +40,7 @@ theorem weightedPrimeCount_eq_card (w : ℕ → ℕ) (H : ℕ) (xs : List ℕ) (
     (hw : ∀ p ∈ xs, 0 < w p) :
     weightedPrimeCount w xs H = (weightedPrimeFamily xs.toFinset w H).card := by
   induction H using Nat.strong_induction_on generalizing xs with
-  | h H ih =>
+  | ind H ih =>
     induction xs with
     | nil =>
       rw [weightedPrimeCount.eq_def, List.toFinset_nil, weightedPrimeFamily_empty,
@@ -71,7 +71,7 @@ the prime-supply construction share one numerical certificate per weight list. -
 theorem weightedPrimeCount_map_weights (w : ℕ → ℕ) (H : ℕ) (xs : List ℕ) :
     weightedPrimeCount w xs H = weightedPrimeCount id (xs.map w) H := by
   induction H using Nat.strong_induction_on generalizing xs with
-  | h H ih =>
+  | ind H ih =>
     induction xs with
     | nil => rw [List.map_nil, weightedPrimeCount.eq_def, weightedPrimeCount.eq_def]
     | cons p ps
@@ -105,7 +105,7 @@ theorem weightedPrimeCount_row_sound (p : ℕ) (ps : List ℕ) (old new : ℕ �
     ∀ h ≤ N, new h = weightedPrimeCount id (p :: ps) h := by
   intro h
   induction h using Nat.strong_induction_on with
-  | h h ih =>
+  | ind h ih =>
     intro hN
     rw [hrow h hN, weightedPrimeCount.eq_def]
     dsimp only [id_eq]

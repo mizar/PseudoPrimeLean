@@ -19,7 +19,7 @@ on the larger budget and the recurrence cover every weight, including zero. -/
 theorem weightedPrimeCount_mono (w : ℕ → ℕ) (xs : List ℕ) {a b : ℕ} (hab : a ≤ b) :
     weightedPrimeCount w xs a ≤ weightedPrimeCount w xs b := by
   induction b using Nat.strong_induction_on generalizing xs a with
-  | h b ih =>
+  | ind b ih =>
     induction xs with
     | nil => rw [weightedPrimeCount.eq_def, weightedPrimeCount.eq_def]
     | cons p ps ip =>

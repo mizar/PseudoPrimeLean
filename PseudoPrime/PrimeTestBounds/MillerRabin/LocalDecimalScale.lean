@@ -23,12 +23,12 @@ theorem log_ten_lt_seven_thirds : Real.log 10 < 7 / 3 := by
     pow_lt_pow_left₀ hExp1 (by norm_num only) (by decide : 7 ≠ 0)
   have hexp7 : Real.exp 7 = Real.exp 1 ^ 7 := by
     rw [show (7 : ℝ) = (7 : ℕ) * 1 by norm_num only]
-    exact Real.exp_nat_mul 1 7
+    exact Real.exp_natCast_mul 7 1
   have hExp7 : 1000 < Real.exp 7 := by
     rw [hexp7]
     exact (by norm_num only : (1000 : ℝ) < (27 / 10) ^ 7).trans hpow
   have hexpSevenThirds : Real.exp (7 / 3 : ℝ) ^ 3 = Real.exp 7 := by
-    rw [← Real.exp_nat_mul (7 / 3 : ℝ) 3]
+    rw [← Real.exp_natCast_mul 3 (7 / 3 : ℝ)]
     congr 1
     norm_num only
   have hExpSevenThirds : 10 < Real.exp (7 / 3 : ℝ) := by

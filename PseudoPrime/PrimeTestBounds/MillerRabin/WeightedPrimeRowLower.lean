@@ -23,7 +23,7 @@ theorem weightedPrimeCount_row_lower (p : ℕ) (ps : List ℕ) (old new : ℕ �
     ∀ h ≤ N, new h ≤ weightedPrimeCount id (p :: ps) h := by
   intro h
   induction h using Nat.strong_induction_on with
-  | h h ih =>
+  | ind h ih =>
     intro hN
     have hstep := hrow h hN
     conv_rhs => rw [weightedPrimeCount.eq_def]

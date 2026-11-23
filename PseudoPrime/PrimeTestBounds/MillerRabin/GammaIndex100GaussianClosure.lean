@@ -1473,7 +1473,7 @@ theorem exists_prime_gaussianTriple29_indexFour_GRH {n : ℕ} [NeZero n] (hnOdd 
   have hpow : (20000 : ℝ) < (11 : ℝ) ^ 20 := by norm_num only
   have hexp : Real.exp (200 : ℝ) = Real.exp 10 ^ 20 := by
     rw [show (200 : ℝ) = (20 : ℕ) * 10 by norm_num only]
-    exact Real.exp_nat_mul 10 20
+    exact Real.exp_natCast_mul 20 10
   have hExp200 : (20000 : ℝ) < Real.exp (200 : ℝ) := by
     rw [hexp]
     exact hpow.trans_le (pow_le_pow_left₀ (by norm_num only) hExp10 20)

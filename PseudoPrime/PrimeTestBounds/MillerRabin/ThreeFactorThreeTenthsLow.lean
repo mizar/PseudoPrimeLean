@@ -33,9 +33,9 @@ theorem exp_factor_le_03_low {L : ℝ} (hlo : 8 ≤ L) (hhi : L ≤ 52 / 5) :
     linarith only [ht, hd]
   have he := Real.exp_le_exp.mpr hc
   have hEL : Real.exp (2 * Real.log L) = L ^ 2 := by
-    simpa only [Nat.cast_ofNat, Real.exp_log hL] using (Real.exp_nat_mul (Real.log L) 2)
+    simpa only [Nat.cast_ofNat, Real.exp_log hL] using (Real.exp_natCast_mul 2 (Real.log L))
   have hET : Real.exp (2 * Real.log (52 / 5)) = (52 / 5 : ℝ) ^ 2 := by
-    simpa only [Nat.cast_ofNat, Real.exp_log hT] using (Real.exp_nat_mul (Real.log (52 / 5)) 2)
+    simpa only [Nat.cast_ofNat, Real.exp_log hT] using (Real.exp_natCast_mul 2 (Real.log (52 / 5)))
   rw [Real.exp_sub, Real.exp_sub, hEL, hET] at he
   have hlog : (52 / 15 : ℝ) ≤ Real.log (4056 / 125) := by
     have hc : Analysis.preciseLogCheck (4056 / 125) 6 64 (52 / 15) 4 = true := by decide +kernel
