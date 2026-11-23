@@ -9,9 +9,9 @@ module
 public import Mathlib.NumberTheory.Chebyshev
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 
-/-! # Challenges on the Chebyshev ψ function
+/-! # Challenges on the Chebyshev ψ and θ functions
 
-These challenges state bounds for the Chebyshev ψ function whose solutions are complete.
+These challenges state bounds for the Chebyshev ψ and θ functions whose solutions are complete.
 Each declaration specifies its assumptions and range.
 -/
 
@@ -25,6 +25,15 @@ This is the challenge statement; the separate solution supplies its proof.
 See Lee and Nosal, https://arxiv.org/abs/2312.05628. -/
 theorem psi_lee_nosal_of_RH (hRH : RiemannHypothesis) {x : ℝ} (hx : 101 ≤ x) :
     |Chebyshev.psi x - x| / Real.sqrt x ≤
+      Real.log x * (Real.log x - Real.log (Real.log x)) / (8 * Real.pi) := by
+  sorry
+
+/-- Under the Riemann hypothesis, every real `x ≥ 2657` satisfies the Lee–Nosal bound
+`|θ(x) - x| / √x ≤ log x * (log x - log (log x)) / (8π)`.
+This is the challenge statement; the separate solution supplies its proof.
+See Lee and Nosal, https://arxiv.org/abs/2312.05628. -/
+theorem theta_lee_nosal_of_RH (hRH : RiemannHypothesis) {x : ℝ} (hx : 2657 ≤ x) :
+    |Chebyshev.theta x - x| / Real.sqrt x ≤
       Real.log x * (Real.log x - Real.log (Real.log x)) / (8 * Real.pi) := by
   sorry
 

@@ -19,15 +19,6 @@ Each declaration specifies its assumptions and range.
 
 namespace ComparatorChallenges.Chebyshev
 
-/-- Under the Riemann hypothesis, every real `x ≥ 2657` satisfies the Lee–Nosal bound
-`|θ(x) - x| / √x ≤ log x * (log x - log (log x)) / (8π)`.
-This is the challenge statement; its proof remains open in the comparator solution.
-See Lee and Nosal, https://arxiv.org/abs/2312.05628. -/
-theorem theta_lee_nosal_of_RH (hRH : RiemannHypothesis) {x : ℝ} (hx : 2657 ≤ x) :
-    |Chebyshev.theta x - x| / Real.sqrt x ≤
-      Real.log x * (Real.log x - Real.log (Real.log x)) / (8 * Real.pi) := by
-  sorry
-
 /-- For every real `x` from 1423 through 36076580711678, the normalized Chebyshev ψ error
 is at most `4 / 5`. This unconditional finite-range assertion is a separate challenge. -/
 theorem psi_error_le_four_fifths {x : ℝ} (hx : 1423 ≤ x) (hx' : x ≤ 36076580711678) :
