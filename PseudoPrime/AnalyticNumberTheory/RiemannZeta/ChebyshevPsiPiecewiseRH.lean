@@ -6,11 +6,12 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevPsiPiecewiseMillion
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevPsiPiecewiseMillion
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevPsiMidrangeTo15RH
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevPsiPost15MarginRH
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevPsiPost20MarginRH
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevIntegratedMargin20RH
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevPsiLeeNosalMillion
+import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevPsiLeeNosalMillion
 
 /-! # Conditional piecewise Lee–Nosal ψ envelope -/
 
@@ -42,8 +43,8 @@ theorem psi_piecewise_of_brackets (hRH : RiemannHypothesis) (g : Fin 29 → ℝ)
   have hx : 0 < x := by linarith only [ha]
   unfold psiPiecewiseEnvelope
   split_ifs with h1 h2 h3 h4
-  · exact psi_normalized_101_1423 ha h1
-  · exact psi_normalized_1423_million (le_of_not_gt h1) h2
+  · exact Arithmetic.psi_normalized_101_1423 ha h1
+  · exact Arithmetic.psi_normalized_1423_million (le_of_not_gt h1) h2
   · exact
       psi_midrange_margin_to_15 hRH g hmono hpos hheight hzero hcount hl hu (le_of_not_ge h2)
         (Real.log_le_iff_le_exp hx |>.2 h3.le)
@@ -68,7 +69,7 @@ theorem psi_lee_nosal_of_brackets (hRH : RiemannHypothesis) (g : Fin 29 → ℝ)
   have hx : 0 < x := by linarith only [ha]
   by_cases hs : x ≤ 1000000
   · apply (div_le_iff₀ (Real.sqrt_pos.2 hx)).2
-    have h := psi_lee_nosal_101_million ha hs
+    have h := Arithmetic.psi_lee_nosal_101_million ha hs
     dsimp only [leeNosalPsiLog]
     linarith only [h]
   · by_cases hm : Real.log x ≤ 15

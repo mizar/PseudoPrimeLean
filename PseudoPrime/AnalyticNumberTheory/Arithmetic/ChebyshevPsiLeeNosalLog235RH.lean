@@ -16,7 +16,7 @@ import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevLeeNosalLogGap235
 
 public section
 
-namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
+namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 
 /-- Under RH and `L ≥ 47/2`, the normalized psi error stays at least `1/200`
 below the Lee–Nosal envelope. The sharp main term, certified `1/500`
@@ -24,9 +24,9 @@ remainder, and envelope comparison provide the explicit margin. -/
 theorem psi_lee_nosal_margin235_of_RH (hRH : RiemannHypothesis) {L : ℝ} (hL : (47 / 2 : ℝ) ≤ L) :
     |Chebyshev.psi (Real.exp L) - Real.exp L| / Real.exp (L / 2) + 1 / 200 ≤
       L * (L - Real.log L) / (8 * Real.pi) := by
-  have hm := psi_error_main_remainder235 hRH hL
-  have hr := scale235_remainder_le hL
-  have hg := chebyshev_main_le_envelope235 hL
+  have hm := RiemannZeta.psi_error_main_remainder235 hRH hL
+  have hr := RiemannZeta.scale235_remainder_le hL
+  have hg := RiemannZeta.chebyshev_main_le_envelope235 hL
   dsimp only at hm hr
   linarith only [hm, hr, hg]
 
@@ -54,4 +54,4 @@ theorem psi_lee_nosal_log235_of_RH (hRH : RiemannHypothesis) {x : ℝ} (hx : 0 <
   rw [Real.exp_half, Real.exp_log hx] at h
   exact h
 
-end PseudoPrime.AnalyticNumberTheory.RiemannZeta
+end PseudoPrime.AnalyticNumberTheory.Arithmetic

@@ -9,7 +9,7 @@ module
 public import Mathlib.NumberTheory.Chebyshev
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevScaleError
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevPsiSharpRH
+import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevPsiSharpRH
 
 /-! # Normalized Chebyshev bound with refined zero sum -/
 
@@ -113,7 +113,7 @@ theorem psi_error_normalized_065 (hRH : RiemannHypothesis) {x h δ : ℝ} (hx0 :
       apply (le_div_iff₀ hp).2
       linarith only [hpi]
     linarith only [hi']
-  have hb := psi_error_sharp_of_RH hRH hT hh hx
+  have hb := Arithmetic.psi_error_sharp_of_RH hRH hT hh hx
   have hm := mul_le_mul_of_nonneg_left hc (Real.sqrt_nonneg (x + h))
   have hb' :
     |Chebyshev.psi x - x| ≤

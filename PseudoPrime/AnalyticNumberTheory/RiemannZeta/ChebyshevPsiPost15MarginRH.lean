@@ -7,6 +7,8 @@ Authors: Mizar
 module
 
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevPsiPost15Numerics
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevPsiMidrangeTo15RH
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevIntegratedMargin20RH
 
 /-! # The 9/100 margin just above log height 15 -/
 

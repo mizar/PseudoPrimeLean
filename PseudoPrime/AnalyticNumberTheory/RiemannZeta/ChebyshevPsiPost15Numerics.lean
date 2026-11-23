@@ -6,8 +6,8 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevPsiMidrangeTo15RH
-public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevIntegratedMargin20RH
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevPsiMidrangeMain
+public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevPsiMidrangeScaleRH
 import PseudoPrime.Analysis.LogTaylorBounds
 import Mathlib.Analysis.Real.Pi.Bounds
 

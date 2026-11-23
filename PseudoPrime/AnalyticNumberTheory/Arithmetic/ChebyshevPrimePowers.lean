@@ -12,7 +12,7 @@ public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevGap43
 
 public section
 
-namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
+namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 
 /-- Above logarithmic scale 43, `exp (L/6)` is at least `20L`. Split the
 exponential at seven and use the lower bound `exp 1 > 8/3`. -/
@@ -142,14 +142,14 @@ theorem theta_error_envelope_of_log (hRH : RiemannHypothesis) {x : ℝ} (hx : 0 
     (hL : 43 ≤ Real.log x)
     (hQ :
       ∀ t ∈ Set.Ici (2 * Real.pi * Real.exp 1),
-        |positiveZeroCount t -
+        |RiemannZeta.positiveZeroCount t -
               (t / (2 * Real.pi) * Real.log (t / (2 * Real.pi)) - t / (2 * Real.pi) + 7 / 8)| ≤
           (137 / 1000 : ℝ) * Real.log t + (443 / 1000 : ℝ) * Real.log (Real.log t) + 397 / 250 +
             1 / (5 * t)) :
     |Chebyshev.theta x - x| ≤
       Real.sqrt x *
         (Real.log x * (Real.log x - Real.log (Real.log x)) / (8 * Real.pi) - 5 / 4) := by
-  have hp := abs_le.mp (psi_error_envelope_of_log hRH hx hL hQ)
+  have hp := abs_le.mp (RiemannZeta.psi_error_envelope_of_log hRH hx hL hQ)
   have hd := psi_sub_theta_43 hx hL
   have hd0 := sub_nonneg.mpr (Chebyshev.theta_le_psi x)
   have hs := Real.sqrt_nonneg x
@@ -158,4 +158,4 @@ theorem theta_error_envelope_of_log (hRH : RiemannHypothesis) {x : ℝ} (hx : 0 
   · nlinarith only [hp.1, hd]
   · nlinarith only [hp.2, hd0, hs]
 
-end PseudoPrime.AnalyticNumberTheory.RiemannZeta
+end PseudoPrime.AnalyticNumberTheory.Arithmetic

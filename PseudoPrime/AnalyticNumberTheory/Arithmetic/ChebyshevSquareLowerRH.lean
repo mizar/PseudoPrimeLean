@@ -16,7 +16,7 @@ import PseudoPrime.AnalyticNumberTheory.RiemannZeta.CoarseZeroCountNumerics
 
 @[expose] public section
 
-namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
+namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 
 /-- Under RH, the one-sided square-logarithmic psi estimate with coefficient
 `1/12` holds for `x ≥ 25000000`. The RH zero-count theorem discharges the
@@ -24,7 +24,9 @@ counting hypothesis of the explicit-formula estimate. -/
 theorem psi_lower_square_twelve_of_RH (hRH : RiemannHypothesis) {x : ℝ} (hx : 25000000 ≤ x) :
     x - (1 / 12 : ℝ) * Real.sqrt x * Real.log x ^ 2 ≤ Chebyshev.psi x := by
   exact
-    psi_lower_square_coarse hRH hx
-      (fun t ht ↦ (positive_zero_count_budget_of_RH hRH t ht).trans (good_count_budget_le_log ht))
+    RiemannZeta.psi_lower_square_coarse hRH hx
+      (fun t ht ↦
+        (RiemannZeta.positive_zero_count_budget_of_RH hRH t ht).trans
+          (RiemannZeta.good_count_budget_le_log ht))
 
-end PseudoPrime.AnalyticNumberTheory.RiemannZeta
+end PseudoPrime.AnalyticNumberTheory.Arithmetic

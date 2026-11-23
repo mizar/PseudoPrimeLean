@@ -15,7 +15,7 @@ import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevPsiEnvelopeCompare2
 
 public section
 
-namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
+namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 
 /-- Under RH, for `x > 0` and `log x ≥ 113/5`, the Chebyshev ψ error is
 below the Lee–Nosal normalized envelope with an additional `1/300` margin.
@@ -25,7 +25,7 @@ theorem psi_lee_nosal_margin226_of_RH (hRH : RiemannHypothesis) {x : ℝ} (hx : 
     |Chebyshev.psi x - x| ≤
       Real.sqrt x *
         (Real.log x * (Real.log x - Real.log (Real.log x)) / (8 * Real.pi) - 1 / 300) := by
-  have h := (psi_error_envelope226 hRH hL).trans (envelope226_le_target hL)
+  have h := (RiemannZeta.psi_error_envelope226 hRH hL).trans (RiemannZeta.envelope226_le_target hL)
   rw [Real.exp_log hx, Real.exp_half, Real.exp_log hx] at h
   simpa only [mul_comm] using (div_le_iff₀ (Real.sqrt_pos.2 hx)).1 h
 
@@ -39,4 +39,4 @@ theorem psi_lee_nosal_log226_of_RH (hRH : RiemannHypothesis) {x : ℝ} (hx : 0 <
   have hs := Real.sqrt_nonneg x
   nlinarith only [h, hs]
 
-end PseudoPrime.AnalyticNumberTheory.RiemannZeta
+end PseudoPrime.AnalyticNumberTheory.Arithmetic

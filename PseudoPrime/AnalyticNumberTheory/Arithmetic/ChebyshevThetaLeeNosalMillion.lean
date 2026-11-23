@@ -13,7 +13,7 @@ import PseudoPrime.AnalyticNumberTheory.Cert.Chebyshev.Joint.HighMillion
 
 public section
 
-namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
+namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 
 /-- On the closed real interval from 2657 through one million, the normalized theta error
 is bounded by the Lee–Nosal logarithmic coefficient. The joint finite certificate supplies
@@ -23,4 +23,4 @@ theorem theta_lee_nosal_2657_million {x : ℝ} (hl : 2657 ≤ x) (hr : x ≤ 100
       Real.log x * (Real.log x - Real.log (Real.log x)) / (8 * Real.pi) := by
   exact Cert.Chebyshev.Joint.theta_million_of_segment Cert.Chebyshev.Joint.high_million hl hr
 
-end PseudoPrime.AnalyticNumberTheory.RiemannZeta
+end PseudoPrime.AnalyticNumberTheory.Arithmetic

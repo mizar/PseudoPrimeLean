@@ -8,8 +8,8 @@ module
 
 public import Mathlib.NumberTheory.Chebyshev
 import Mathlib.Analysis.Complex.ExponentialBounds
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevLeeNosalSquare
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevPsiLeeNosalMillion
+import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevLeeNosalSquare
+import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevPsiLeeNosalMillion
 
 /-! # Finite psi square-logarithmic bound -/
 
@@ -23,7 +23,7 @@ theorem square_bound_101_50000 {x : ℝ} (ha : 101 ≤ x) (hb : x ≤ 50000) :
     |Chebyshev.psi x - x| ≤ Real.sqrt x * (Real.log x ^ 2 / 12) := by
   have hx : Real.exp 1 ≤ x := Real.exp_one_lt_three.le.trans (by linarith only [ha])
   exact
-    (RiemannZeta.psi_lee_nosal_101_million ha (by linarith only [hb])).trans
-      (RiemannZeta.lee_nosal_le_square_twelve hx)
+    (Arithmetic.psi_lee_nosal_101_million ha (by linarith only [hb])).trans
+      (Arithmetic.lee_nosal_le_square_twelve hx)
 
 end PseudoPrime.AnalyticNumberTheory.Cert.Chebyshev.PsiResults

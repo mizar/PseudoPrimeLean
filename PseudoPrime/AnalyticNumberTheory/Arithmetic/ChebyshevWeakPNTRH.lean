@@ -8,14 +8,14 @@ module
 
 public import Mathlib.NumberTheory.Chebyshev
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevLeeNosalRH
+import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevLeeNosalRH
 import PseudoPrime.AnalyticNumberTheory.Cert.Chebyshev.PsiResults.LeeNosalSquare101To50000
 
 /-! # A square-logarithmic Chebyshev bound under RH -/
 
 @[expose] public section
 
-namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
+namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 
 /-- Under RH, the psi error is bounded by `sqrt x * log x ^ 2 / 12` for every
 `x ≥ 101`. Combine the unconditional finite certificate with the explicit-formula
@@ -41,4 +41,4 @@ theorem psi_upper_square_from_101_of_RH (hRH : RiemannHypothesis) {x : ℝ} (hx 
   have h := (abs_le.mp (psi_error_square_from_101_of_RH hRH hx)).2
   nlinarith only [h]
 
-end PseudoPrime.AnalyticNumberTheory.RiemannZeta
+end PseudoPrime.AnalyticNumberTheory.Arithmetic

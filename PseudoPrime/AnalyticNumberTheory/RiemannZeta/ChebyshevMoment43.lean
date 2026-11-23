@@ -6,7 +6,7 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevPrimePowers
+public import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevPrimePowers
 public import PseudoPrime.AnalyticNumberTheory.Arithmetic.PowerLogMomentAbel
 import PseudoPrime.AnalyticNumberTheory.Arithmetic.PowerLogMomentLowerFinite
 
@@ -43,7 +43,7 @@ theorem chebyshev_errors_43 (hRH : RiemannHypothesis) {x : ℝ} (hx : 0 < x) (hL
       |Chebyshev.theta x - x| ≤
         Real.sqrt x * (Real.log x * (Real.log x - Real.log (Real.log x)) / (8 * Real.pi)) := by
   have hp := psi_error_envelope_of_log hRH hx hL hQ
-  have ht := theta_error_envelope_of_log hRH hx hL hQ
+  have ht := Arithmetic.theta_error_envelope_of_log hRH hx hL hQ
   have hs := Real.sqrt_nonneg x
   constructor
   · nlinarith only [hp, hs]

@@ -7,13 +7,13 @@ Authors: Mizar
 module
 
 public import Mathlib.NumberTheory.Chebyshev
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevPrimePowers
+import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevPrimePowers
 
 /-! # Prime-power excess from logarithmic height forty-one -/
 
 @[expose] public section
 
-namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
+namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 
 /-- At logarithmic height at least 41, `exp (L / 6)` is at least `20 * L`.
 The quadratic exponential lower bound supplies the necessary improvement. -/
@@ -76,4 +76,4 @@ theorem psi_sub_theta_41 {x : ℝ} (hx : 0 < x) (hL : 41 ≤ Real.log x) :
   have hprime := psi_sub_theta_prime_powers hx4
   linarith only [hprime, hfirst, htail]
 
-end PseudoPrime.AnalyticNumberTheory.RiemannZeta
+end PseudoPrime.AnalyticNumberTheory.Arithmetic

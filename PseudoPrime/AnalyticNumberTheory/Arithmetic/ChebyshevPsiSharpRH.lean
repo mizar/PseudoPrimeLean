@@ -16,14 +16,14 @@ import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroReciprocalBoundRH
 
 public section
 
-namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
+namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 
 /-- Under RH, the explicit ordinate-tail hypothesis and `T ≥ 2πe` imply
 a Chebyshev error bound with the refined reciprocal-zero entrance constant.
 The proof combines the zero-split formula with the RH reciprocal-sum bound. -/
 theorem psi_error_sharp_tail (hRH : RiemannHypothesis) {T x h : ℝ}
     (hT : 2 * Real.pi * Real.exp 1 ≤ T) (hh : 0 < h) (hx : 1 < x - h)
-    (hTail : ordinateTail T ≤ Real.log T / (Real.pi * T)) :
+    (hTail : RiemannZeta.ordinateTail T ≤ Real.log T / (Real.pi * T)) :
     |Chebyshev.psi x - x| ≤
       h / 2 + Real.log (2 * Real.pi) +
         Real.sqrt (x + h) *
@@ -36,28 +36,28 @@ theorem psi_error_sharp_tail (hRH : RiemannHypothesis) {T x h : ℝ}
     ∀ m : ℕ,
       (∑
           ρ ∈
-            ((riemannZetaZerosInAnyRectangle (unifiedRectangleLower m)
-                      (unifiedTauRectangleUpper 2 m)).filter
+            ((RiemannZeta.riemannZetaZerosInAnyRectangle (RiemannZeta.unifiedRectangleLower m)
+                      (RiemannZeta.unifiedTauRectangleUpper 2 m)).filter
                   (fun ρ ↦ ¬ρ.re < 0)).filter
               (fun ρ ↦ ¬|ρ.im| ≤ T),
-          (riemannZetaZeroMultiplicity ρ : ℝ) / |ρ.im| ^ 2) ≤
+          (RiemannZeta.riemannZetaZeroMultiplicity ρ : ℝ) / |ρ.im| ^ 2) ≤
         Real.log T / (Real.pi * T) := by
     intro m
     let S :=
-      ((riemannZetaZerosInAnyRectangle (unifiedRectangleLower m)
-                (unifiedTauRectangleUpper 2 m)).filter
+      ((RiemannZeta.riemannZetaZerosInAnyRectangle (RiemannZeta.unifiedRectangleLower m)
+                (RiemannZeta.unifiedTauRectangleUpper 2 m)).filter
             (fun ρ ↦ ¬ρ.re < 0)).filter
         (fun ρ ↦ ¬|ρ.im| ≤ T)
     have hs :=
-      finite_ordinate_tail_le hRH S T
+      RiemannZeta.finite_ordinate_tail_le hRH S T
         (fun ρ hρ ↦
-          (mem_riemannZetaZerosInAnyRectangle_iff.mp
+          (RiemannZeta.mem_riemannZetaZerosInAnyRectangle_iff.mp
               (Finset.mem_filter.mp (Finset.mem_filter.mp hρ).1).1).2)
         (fun ρ hρ ↦ not_lt.mp (Finset.mem_filter.mp (Finset.mem_filter.mp hρ).1).2)
         (fun ρ hρ ↦ lt_of_not_ge (Finset.mem_filter.mp hρ).2)
     exact hs.trans hTail
-  have hlo := zeroReciprocal_bound_of_RH hRH hT
-  have hh' := psi_error_of_zero_split hRH hT0 hh hx hC
+  have hlo := RiemannZeta.zeroReciprocal_bound_of_RH hRH hT
+  have hh' := RiemannZeta.psi_error_of_zero_split hRH hT0 hh hx hC
   have hm := mul_le_mul_of_nonneg_left hlo (Real.sqrt_nonneg (x + h))
   linarith only [hh', hm]
 
@@ -76,6 +76,6 @@ theorem psi_error_sharp_of_RH (hRH : RiemannHypothesis) {T x h : ℝ} (hT : 1000
       mul_le_mul Real.pi_lt_four.le Real.exp_one_lt_three.le (Real.exp_pos 1).le
         (by norm_num only : (0 : ℝ) ≤ 4)
     nlinarith only [hp, hT]
-  exact psi_error_sharp_tail hRH hbase hh hx (ordinateTail_coarse_of_RH hRH hT)
+  exact psi_error_sharp_tail hRH hbase hh hx (RiemannZeta.ordinateTail_coarse_of_RH hRH hT)
 
-end PseudoPrime.AnalyticNumberTheory.RiemannZeta
+end PseudoPrime.AnalyticNumberTheory.Arithmetic

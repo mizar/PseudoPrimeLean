@@ -8,13 +8,13 @@ module
 
 public import Mathlib.NumberTheory.Chebyshev
 import PseudoPrime.AnalyticNumberTheory.Cert.Chebyshev.Joint.PsiEnvelopeLow
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevPsiSqrtLeeNosal1423
+import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevPsiSqrtLeeNosal1423
 
 /-! # Lee–Nosal psi bound through one million -/
 
 public section
 
-namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
+namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 
 /-- The unconditional Lee–Nosal psi bound holds on `[101, 1000000]`.
 The joint low cells certify the envelope directly. From 1423 the four-fifths bound suffices. -/
@@ -25,4 +25,4 @@ theorem psi_lee_nosal_101_million {x : ℝ} (ha : 101 ≤ x) (hb : x ≤ 1000000
   · exact Cert.Chebyshev.Joint.psi_envelope_low ha h
   · exact psi_lee_nosal_1423_million (le_of_not_gt h) hb
 
-end PseudoPrime.AnalyticNumberTheory.RiemannZeta
+end PseudoPrime.AnalyticNumberTheory.Arithmetic

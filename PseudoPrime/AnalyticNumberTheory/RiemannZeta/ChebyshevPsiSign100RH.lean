@@ -1390,12 +1390,6 @@ theorem low_zeros_complete_of_RH (hRH : RiemannHypothesis) :
         ∀ i, riemannZetaZeroMultiplicity (((1 / 2 : ℝ) : ℂ) + (g i : ℂ) * Complex.I) = 1 := by
   exact low_zeros_complete_of_signs hRH low_zero_100_sign_changes
 
-/-- Under RH, the normalized Chebyshev ψ error satisfies the Lee–Nosal logarithmic bound
-for every `x ≥ 101`. The low-zero signs and height-100 count bound are proved internally. -/
-theorem psi_lee_nosal_of_RH (hRH : RiemannHypothesis) {x : ℝ} (hx : 101 ≤ x) :
-    |Chebyshev.psi x - x| / Real.sqrt x ≤ leeNosalPsiLog (Real.log x) := by
-  exact psi_lee_nosal_of_signs_RH hRH low_zero_100_sign_changes hx
-
 /-- Under RH, the normalized Chebyshev ψ error is bounded by the complete piecewise
 envelope for every `x ≥ 101`. The proof supplies the certified endpoint signs and the
 independent height-100 count bound to the existing interval estimates. -/

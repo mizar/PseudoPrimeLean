@@ -14,7 +14,7 @@ import Mathlib.Analysis.Real.Pi.Bounds
 
 @[expose] public section
 
-namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
+namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 
 /-- Above `exp 1`, the Lee–Nosal error envelope is bounded by the square-logarithmic
 envelope with coefficient `1/12`. Positivity of the logarithms and a lower bound for
@@ -34,4 +34,4 @@ theorem lee_nosal_le_square_twelve {x : ℝ} (hx : Real.exp 1 ≤ x) :
   apply (div_le_div_iff₀ hp (by norm_num only : (0 : ℝ) < 12)).2
   nlinarith only [hm, hn]
 
-end PseudoPrime.AnalyticNumberTheory.RiemannZeta
+end PseudoPrime.AnalyticNumberTheory.Arithmetic

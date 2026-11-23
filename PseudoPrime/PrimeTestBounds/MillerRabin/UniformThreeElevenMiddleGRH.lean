@@ -10,7 +10,7 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.UniformKorseltTriple
 public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
 public import PseudoPrime.AnalyticNumberTheory.GRH.Definition
 import PseudoPrime.PrimeTestBounds.MillerRabin.UniformThreeElevenMiddle
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevSquareLowerRH
+import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevSquareLowerRH
 
 /-! # Uniform middle interval under GRH -/
 
@@ -37,7 +37,7 @@ theorem uniform_three_eleven_middle_grh {n : ℕ} (hn : 1 < n) (ho : Odd n)
     pow_le_pow_left₀ (by norm_num only) hrL 2
   have hbase : (25000000 : ℝ) ≤ ((52223 / 100000 : ℝ) * 10300) ^ 2 := by norm_num only
   have hp :=
-    AnalyticNumberTheory.RiemannZeta.psi_lower_square_twelve_of_RH hGRH.riemann (hbase.trans hXlo)
+    AnalyticNumberTheory.Arithmetic.psi_lower_square_twelve_of_RH hGRH.riemann (hbase.trans hXlo)
   rw [Real.sqrt_sq hr0] at hp
   exact uniform_three_eleven_middle_at hn ho hu hGRH hp hL hU
 

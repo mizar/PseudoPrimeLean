@@ -7,13 +7,13 @@ Authors: Mizar
 module
 
 public import Mathlib.NumberTheory.Chebyshev
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevPrimePowers
+import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevPrimePowers
 
 /-! # Prime-power excess from logarithmic height thirty-six -/
 
 @[expose] public section
 
-namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
+namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 
 /-- For `L ≥ 36`, the exponential `exp (L / 6)` is at least `10 * L`.
 The bound is used to control prime powers of exponent at least three. -/
@@ -73,4 +73,4 @@ theorem psi_sub_theta_36 {x : ℝ} (hx : 0 < x) (hL : 36 ≤ Real.log x) :
   have hprime := psi_sub_theta_prime_powers hx4
   linarith only [hprime, hfirst, htail]
 
-end PseudoPrime.AnalyticNumberTheory.RiemannZeta
+end PseudoPrime.AnalyticNumberTheory.Arithmetic

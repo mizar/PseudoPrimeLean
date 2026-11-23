@@ -11,13 +11,13 @@ public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroCountConjugation
 import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevScaleError
 import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevPsiLogScaleCoarseRH
 import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevGap43
-import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ChebyshevPrimePowers
+import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevPrimePowers
 
 /-! # Lee–Nosal high-range bounds from coarse zero counting -/
 
 @[expose] public section
 
-namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
+namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 
 /-- Under RH and the stated coarse zero-count bound, the normalized
 Chebyshev error satisfies the explicit logarithmic-scale estimate for
@@ -25,7 +25,7 @@ Chebyshev error satisfies the explicit logarithmic-scale estimate for
 theorem psi_error_log_scale_coarse (hRH : RiemannHypothesis) {L : ℝ} (hL : 43 ≤ L)
     (hQ :
       ∀ t ∈ Set.Ici (2 * Real.pi * Real.exp 1),
-        |positiveZeroCount t -
+        |RiemannZeta.positiveZeroCount t -
               (t / (2 * Real.pi) * Real.log (t / (2 * Real.pi)) - t / (2 * Real.pi) + 7 / 8)| ≤
           Real.log t) :
     let δ := L / (Real.pi * Real.exp (L / 2))
@@ -33,7 +33,7 @@ theorem psi_error_log_scale_coarse (hRH : RiemannHypothesis) {L : ℝ} (hL : 43 
       L / (2 * Real.pi) + (1 + δ / 2) * ((L / 2 - Real.log L) ^ 2 / (2 * Real.pi) + 1) +
         (1 + δ) * (L / 2 - Real.log L + Real.log (2 * Real.pi)) / Real.pi +
         3 / Real.exp (L / 2) := by
-  exact psi_error_log_scale265_coarse hRH (by linarith only [hL]) hQ
+  exact RiemannZeta.psi_error_log_scale265_coarse hRH (by linarith only [hL]) hQ
 
 /-- Under RH and the stated coarse zero-count hypothesis, split the
 normalized logarithmic-scale Chebyshev bound into its main expression and
@@ -41,7 +41,7 @@ the explicit exponentially small remainder. -/
 theorem psi_error_main_remainder_coarse (hRH : RiemannHypothesis) {L : ℝ} (hL : 43 ≤ L)
     (hQ :
       ∀ t ∈ Set.Ici (2 * Real.pi * Real.exp 1),
-        |positiveZeroCount t -
+        |RiemannZeta.positiveZeroCount t -
               (t / (2 * Real.pi) * Real.log (t / (2 * Real.pi)) - t / (2 * Real.pi) + 7 / 8)| ≤
           Real.log t) :
     let a := L / 2 - Real.log L
@@ -62,7 +62,7 @@ term plus `101/100`. The count estimate remains an assumption. -/
 theorem psi_error_main_43_coarse (hRH : RiemannHypothesis) {L : ℝ} (hL : 43 ≤ L)
     (hQ :
       ∀ t ∈ Set.Ici (2 * Real.pi * Real.exp 1),
-        |positiveZeroCount t -
+        |RiemannZeta.positiveZeroCount t -
               (t / (2 * Real.pi) * Real.log (t / (2 * Real.pi)) - t / (2 * Real.pi) + 7 / 8)| ≤
           Real.log t) :
     |Chebyshev.psi (Real.exp L) - Real.exp L| / Real.exp (L / 2) ≤
@@ -70,7 +70,7 @@ theorem psi_error_main_43_coarse (hRH : RiemannHypothesis) {L : ℝ} (hL : 43 �
           (2 * Real.pi) +
         101 / 100 := by
   have hm := psi_error_main_remainder_coarse hRH hL hQ
-  have hr := scale43_remainder_le hL
+  have hr := RiemannZeta.scale43_remainder_le hL
   dsimp only at hm hr
   linarith only [hm, hr]
 
@@ -81,12 +81,12 @@ estimate remains an explicit hypothesis. -/
 theorem psi_error_envelope43_coarse (hRH : RiemannHypothesis) {L : ℝ} (hL : 43 ≤ L)
     (hQ :
       ∀ t ∈ Set.Ici (2 * Real.pi * Real.exp 1),
-        |positiveZeroCount t -
+        |RiemannZeta.positiveZeroCount t -
               (t / (2 * Real.pi) * Real.log (t / (2 * Real.pi)) - t / (2 * Real.pi) + 7 / 8)| ≤
           Real.log t) :
     |Chebyshev.psi (Real.exp L) - Real.exp L| ≤
       Real.exp (L / 2) * (L * (L - Real.log L) / (8 * Real.pi) - 11 / 4) := by
-  have h := (psi_error_main_43_coarse hRH hL hQ).trans (chebyshev_main_le_envelope hL)
+  have h := (psi_error_main_43_coarse hRH hL hQ).trans (RiemannZeta.chebyshev_main_le_envelope hL)
   have hp := Real.exp_pos (L / 2)
   have hm := (div_le_iff₀ hp).1 h
   nlinarith only [hm]
@@ -98,7 +98,7 @@ theorem psi_error_envelope_of_log_coarse (hRH : RiemannHypothesis) {x : ℝ} (hx
     (hL : 43 ≤ Real.log x)
     (hQ :
       ∀ t ∈ Set.Ici (2 * Real.pi * Real.exp 1),
-        |positiveZeroCount t -
+        |RiemannZeta.positiveZeroCount t -
               (t / (2 * Real.pi) * Real.log (t / (2 * Real.pi)) - t / (2 * Real.pi) + 7 / 8)| ≤
           Real.log t) :
     |Chebyshev.psi x - x| ≤
@@ -112,4 +112,4 @@ theorem psi_error_envelope_of_log_coarse (hRH : RiemannHypothesis) {x : ℝ} (hx
   rw [Real.exp_log hx, hs] at h
   exact h
 
-end PseudoPrime.AnalyticNumberTheory.RiemannZeta
+end PseudoPrime.AnalyticNumberTheory.Arithmetic

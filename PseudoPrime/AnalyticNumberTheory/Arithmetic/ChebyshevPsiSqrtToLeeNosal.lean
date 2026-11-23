@@ -14,7 +14,7 @@ import Mathlib.Analysis.Complex.ExponentialBounds
 
 public section
 
-namespace PseudoPrime.AnalyticNumberTheory.RiemannZeta
+namespace PseudoPrime.AnalyticNumberTheory.Arithmetic
 
 /-- If `log x ≥ 6`, a four-fifths square-root psi error implies the
 Lee–Nosal error bound at `x`. A logarithmic tangent bound and the explicit
@@ -56,4 +56,4 @@ theorem psi_lee_nosal_of_1423 {x : ℝ} (hx : 1423 ≤ x)
       Real.sqrt x * (Real.log x * (Real.log x - Real.log (Real.log x)) / (8 * Real.pi)) := by
   exact psi_lee_nosal_of_four_fifths (six_le_log_of_1423_le hx) hψ
 
-end PseudoPrime.AnalyticNumberTheory.RiemannZeta
+end PseudoPrime.AnalyticNumberTheory.Arithmetic
