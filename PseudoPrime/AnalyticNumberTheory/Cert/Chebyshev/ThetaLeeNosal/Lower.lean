@@ -6,12 +6,10 @@ Authors: Mizar
 
 module
 
-public import PseudoPrime.AnalyticNumberTheory.Cert.Chebyshev.ThetaLeeNosal.High
-import PseudoPrime.AnalyticNumberTheory.Cert.Chebyshev.ThetaLeeNosal.ThetaDirectRange
-import PseudoPrime.AnalyticNumberTheory.Cert.Chebyshev.ThetaLeeNosal.ThetaMiddlePhase
-import PseudoPrime.AnalyticNumberTheory.Cert.Chebyshev.ThetaLeeNosal.ThetaRestartRange
-import PseudoPrime.AnalyticNumberTheory.Cert.Chebyshev.ThetaLeeNosal.ThetaGapRange
-import PseudoPrime.AnalyticNumberTheory.Cert.Chebyshev.ThetaLeeNosal.ThetaAnalyticOverlap
+public import PseudoPrime.AnalyticNumberTheory.Cert.Chebyshev.ThetaLeeNosal.ThetaFinitePrefix
+public import PseudoPrime.AnalyticNumberTheory.Cert.Chebyshev.ThetaLeeNosal.ThetaMiddleSinc
+import PseudoPrime.AnalyticNumberTheory.Arithmetic.ChebyshevThetaHighRH
+import PseudoPrime.Analysis.LogTaylorBounds
 
 /-! # Global lower Lee–Nosal bound for theta -/
 
@@ -20,18 +18,22 @@ public section
 namespace PseudoPrime.AnalyticNumberTheory.Cert.Chebyshev.ThetaLeeNosal
 
 /-- Under RH, the lower Lee–Nosal estimate for theta holds for every real x at least 2657.
-The signed middle phase supplies the entrance estimate for the final finite gap. -/
+Join the finite prefix, the sinc middle band and the analytic high range. -/
 theorem theta_lower_lee_nosal_of_RH (hRH : RiemannHypothesis) {x : ℝ} (hx : 2657 ≤ x) :
     (x - Chebyshev.theta x) / Real.sqrt x ≤
       Real.log x * (Real.log x - Real.log (Real.log x)) / (8 * Real.pi) := by
-  rcases le_total x 3593341184 with hlo | hlo
-  · exact theta_lower_2657_3593341184 hx hlo
-  rcases le_total x 7657341184 with hmid | hmid
-  · exact theta_lower_middle_phase hRH hlo hmid
-  rcases le_total x 7886980184 with h | h
-  · exact (theta_gap_7886980184 (theta_restart_7657341184 hRH)).2 x hmid h
-  rcases le_total x 8000000000 with h8 | h8
-  · exact theta_lower_analytic_overlap hRH h h8
-  · exact theta_lower_eight_billion hRH h8
+  rcases le_total x 42488064 with h | h
+  · exact theta_lower_2657_42488064 hx h
+  have hp : 0 < x := lt_of_lt_of_le (by norm_num only) hx
+  rcases le_total (53 / 2 : ℝ) (Real.log x) with hu | hu
+  · exact Arithmetic.theta_lower_log_half53 hRH hp hu
+  have hc :=
+    Analysis.rationalLogIntervalCheck_sound
+      (show Analysis.rationalLogIntervalCheck 42488064 25 12 (35 / 2) 18 = true from by
+        decide +kernel)
+  have hl : 35 / 2 ≤ Real.log x := by
+    apply le_trans _ (Real.log_le_log (by norm_num only : (0 : ℝ) < 42488064) h)
+    simpa only [Rat.cast_div, Rat.cast_ofNat] using hc.1
+  simpa only [Real.exp_log hp] using middleTheta_le hRH hl hu
 
 end PseudoPrime.AnalyticNumberTheory.Cert.Chebyshev.ThetaLeeNosal

@@ -59,18 +59,18 @@ private theorem phase_defect {x : ℝ} (hx : 1423 ^ 2 ≤ x) (hu : x ≤ 10 ^ 12
   exact (Chebyshev.psi_sub_theta_le_psi_add_psi_add_psi x).trans (add_le_add (add_le_add b2 b3) b5)
 
 /-- Exponential coordinates of the phase cells stay in the certified three-root range. -/
-private theorem phase_defect_range {L : ℝ} (hl : 22 ≤ L) (hu : L ≤ 27) :
+private theorem phase_defect_range {L : ℝ} (hl : 17 ≤ L) (hu : L ≤ 27) :
     1423 ^ 2 ≤ Real.exp L ∧ Real.exp L ≤ 10 ^ 12 := by
   have hlo :=
-    pow_le_pow_left₀ (by norm_num only : (0 : ℝ) ≤ 2)
-      (show 2 ≤ Real.exp 1 by linarith only [Real.add_one_le_exp (1 : ℝ)]) 22
+    pow_le_pow_left₀ (by norm_num only : (0 : ℝ) ≤ 5 / 2)
+      (show 5 / 2 ≤ Real.exp 1 by linarith only [Real.exp_one_gt_d9]) 17
   have hhi :=
     pow_le_pow_left₀ (Real.exp_pos 1).le
       (show Real.exp 1 ≤ 11 / 4 by linarith only [Real.exp_one_lt_d9]) 27
   have e (n : ℕ) : Real.exp (n : ℝ) = (Real.exp 1) ^ n := by
     simpa only [mul_one] using Real.exp_natCast_mul n 1
   exact
-    ⟨((by norm_num only : (1423 : ℝ) ^ 2 ≤ 2 ^ 22).trans (hlo.trans (e 22).ge)).trans
+    ⟨((by norm_num only : (1423 : ℝ) ^ 2 ≤ (5 / 2) ^ 17).trans (hlo.trans (e 17).ge)).trans
         (Real.exp_le_exp.mpr hl),
       ((Real.exp_le_exp.mpr hu).trans ((e 27).le.trans hhi)).trans (by norm_num only)⟩
 
@@ -80,9 +80,9 @@ private theorem root_decay (L s : ℝ) :
       Real.sqrt ((Real.exp L) ^ s) / Real.sqrt (Real.exp L) = Real.exp (L * s / 2 - L / 2) := by
   simp only [Real.sqrt_eq_rpow, ← Real.exp_mul, Real.exp_sub, div_eq_mul_inv, one_mul, and_self]
 
-/-- On the closed logarithmic band from 22 to 27, bound the normalized prime-power contribution
+/-- On the closed logarithmic band from 17 to 27, bound the normalized prime-power contribution
 by one plus five decaying exponentials using the finite psi bounds at three roots. -/
-theorem psi_theta_phase_defect {L : ℝ} (hl : 22 ≤ L) (hu : L ≤ 27) :
+theorem psi_theta_phase_defect_from17 {L : ℝ} (hl : 17 ≤ L) (hu : L ≤ 27) :
     (Chebyshev.psi (Real.exp L) - Chebyshev.theta (Real.exp L)) / Real.sqrt (Real.exp L) ≤
       1 + 4 / 5 * Real.exp (-L / 4) + Real.exp (-L / 6) + 81 / 100 * Real.exp (-L / 3) +
         Real.exp (-3 * L / 10) +
@@ -94,6 +94,59 @@ theorem psi_theta_phase_defect {L : ℝ} (hl : 22 ≤ L) (hu : L ≤ 27) :
   simp only [add_div, mul_div_assoc, (root_decay L _).1, (root_decay L _).2]
   ring_nf
   simp only [Real.exp_zero]
+
+/-- On the sinc band all five decreasing contributions are bounded at its
+left endpoint using finite positive Taylor sums for the exponential. -/
+theorem sinc_prime_power_bound {L : ℝ} (hl : 35 / 2 ≤ L) (hu : L ≤ 53 / 2) :
+    (Chebyshev.psi (Real.exp L) - Chebyshev.theta (Real.exp L)) / Real.sqrt (Real.exp L) ≤
+      27 / 25 := by
+  have bound {a b c : ℝ} (ha : 0 ≤ a) (hab : a ≤ b) (hc : 0 < c)
+    (hs : c ≤ ∑ i ∈ Finset.range 15, a ^ i / i.factorial) : Real.exp (-b) ≤ 1 / c := by
+    rw [Real.exp_neg, ← one_div]
+    exact
+      div_le_div_of_nonneg_left zero_le_one hc
+        ((hs.trans (Real.sum_le_exp_of_nonneg ha 15)).trans (Real.exp_le_exp.mpr hab))
+  have h₁ :=
+    bound (a := 35 / 8) (b := L / 4) (c := 75) (by norm_num only) (by linarith only [hl])
+      (by norm_num only)
+      (by
+        norm_num only [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial, Nat.cast_ofNat,
+          Nat.cast_one, Nat.cast_mul])
+  have h₂ :=
+    bound (a := 35 / 12) (b := L / 6) (c := 18) (by norm_num only) (by linarith only [hl])
+      (by norm_num only)
+      (by
+        norm_num only [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial, Nat.cast_ofNat,
+          Nat.cast_one, Nat.cast_mul])
+  have h₃ :=
+    bound (a := 35 / 6) (b := L / 3) (c := 300) (by norm_num only) (by linarith only [hl])
+      (by norm_num only)
+      (by
+        norm_num only [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial, Nat.cast_ofNat,
+          Nat.cast_one, Nat.cast_mul])
+  have h₄ :=
+    bound (a := 21 / 4) (b := 3 * L / 10) (c := 175) (by norm_num only) (by linarith only [hl])
+      (by norm_num only)
+      (by
+        norm_num only [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial, Nat.cast_ofNat,
+          Nat.cast_one, Nat.cast_mul])
+  have h₅ :=
+    bound (a := 7) (b := 2 * L / 5) (c := 900) (by norm_num only) (by linarith only [hl])
+      (by norm_num only)
+      (by
+        norm_num only [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial, Nat.cast_ofNat,
+          Nat.cast_one, Nat.cast_mul])
+  apply (psi_theta_phase_defect_from17 (by linarith only [hl]) (by linarith only [hu])).trans
+  simp only [neg_div, neg_mul]
+  linarith only [h₁, h₂, h₃, h₄, h₅]
+
+/-- The original phase-band bound on the closed interval from 22 to 27. -/
+theorem psi_theta_phase_defect {L : ℝ} (hl : 22 ≤ L) (hu : L ≤ 27) :
+    (Chebyshev.psi (Real.exp L) - Chebyshev.theta (Real.exp L)) / Real.sqrt (Real.exp L) ≤
+      1 + 4 / 5 * Real.exp (-L / 4) + Real.exp (-L / 6) + 81 / 100 * Real.exp (-L / 3) +
+        Real.exp (-3 * L / 10) +
+        81 / 100 * Real.exp (-2 * L / 5) := by
+  exact psi_theta_phase_defect_from17 (by linarith only [hl]) hu
 
 /-- Transfer a lower psi estimate at the same point to theta using a scalar correction bound. -/
 theorem theta_lower_of_psi_phase {L U D : ℝ} (hl : 22 ≤ L) (hu : L ≤ 27)

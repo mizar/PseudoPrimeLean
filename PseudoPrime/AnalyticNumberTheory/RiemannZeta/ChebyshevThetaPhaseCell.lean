@@ -179,7 +179,7 @@ private theorem curvature_bound {a x d : ℝ} (ha : 0 < a) (hax : a ≤ x) (hd :
   nlinarith only [hm]
 
 /-- Bound the curvature uniformly when the interval spans at most one thousandth of x. -/
-private theorem small_width_curvature {x u : ℝ} (hx : 0 < x) (hu : 0 ≤ u) (hc : u ≤ 1 / 1000) :
+theorem small_width_curvature {x u : ℝ} (hx : 0 < x) (hu : 0 ≤ u) (hc : u ≤ 1 / 1000) :
     let a := x - x * u
     (3640 * a ^ (-(3 / 2 : ℝ)) * (x - a) ^ 2 / 24) / Real.sqrt x ≤ 3640 * (1 / 999) ^ 2 / 24 := by
   have hm := mul_le_mul_of_nonneg_left hc hx.le

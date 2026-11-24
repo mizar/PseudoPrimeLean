@@ -165,4 +165,23 @@ theorem lower_bound_on_Icc_0_16_of_grid {f f' f'' : ℝ → ℝ}
       (fun y hy ↦ hf' y (hsub hy)) (fun y hy ↦ hbound y (hsub hy)) (hnodes j hj.le)
       (hnodes (j + 1) hju) hcell
 
+/-- The tangent at a center bounds the function up to half the curvature times the
+squared displacement, on either side of the center. -/
+theorem le_tangent_add_quadratic {f d e : ℝ → ℝ} {a b c x M : ℝ}
+    (hd : ∀ t ∈ Set.Icc a b, HasDerivAt f (d t) t) (he : ∀ t ∈ Set.Icc a b, HasDerivAt d (e t) t)
+    (hm : ∀ t ∈ Set.Icc a b, e t ≤ M) (hc : c ∈ Set.Icc a b) (hx : x ∈ Set.Icc a b) :
+    f x ≤ f c + d c * (x - c) + M / 2 * (x - c) ^ 2 := by
+  have hconc := concaveOn_quadratic_correction hd he hm
+  have hs := (hd c hc).sub (((hasDerivAt_id c).pow 2).const_mul (M / 2))
+  rcases lt_trichotomy c x with h | rfl | h
+  · have hsec := hconc.slope_le_of_hasDerivAt hc hx h hs
+    rw [slope_def_field] at hsec
+    simp only [id_eq] at hsec
+    nlinarith only [(div_le_iff₀ (sub_pos.mpr h)).mp hsec]
+  · exact le_of_eq (by ring)
+  · have hsec := hconc.le_slope_of_hasDerivAt hx hc h hs
+    rw [slope_def_field] at hsec
+    simp only [id_eq] at hsec
+    nlinarith only [(le_div_iff₀ (sub_pos.mpr h)).mp hsec]
+
 end PseudoPrime.Analysis

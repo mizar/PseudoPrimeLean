@@ -251,4 +251,58 @@ theorem psi_lower_of_midpoint (hRH : RiemannHypothesis) {a x d C : ℝ} (ha : 1 
   dsimp only [v, T] at hp htail he ⊢
   linarith only [hp, htail, he]
 
+/-- A uniform bound on finite high-zero sums and the signed midpoint estimate
+give a lower bound for psi on the additive smoothing interval. -/
+theorem psi_lower_of_finite_tail (hRH : RiemannHypothesis) {a b B : ℝ} (ha : 1 < a) (hab : a < b)
+    (hB :
+      ∀ U : Finset ℂ,
+        (∀ ρ ∈ U, riemannZeta ρ = 0) →
+          (∀ ρ ∈ U, 0 ≤ ρ.re) →
+          (∀ ρ ∈ U, 100 < |ρ.im|) →
+          ‖∑ ρ ∈ U,
+                (riemannZetaZeroMultiplicity ρ : ℂ) * ((b : ℂ) ^ (ρ + 1) - (a : ℂ) ^ (ρ + 1)) /
+                  (ρ * (ρ + 1))‖ ≤
+            B) :
+    let H := lowerMidpointSum ((a + b) / 2) + 3640 * a ^ (-(3 / 2 : ℝ)) * (b - a) ^ 2 / 24
+    (b - a) * (b - Chebyshev.psi b) ≤
+      (b - a) * ((b - a) / 2 + Real.log (2 * Real.pi) + H) + B + 1 := by
+  classical
+  intro H
+  let S := fun m ↦
+    (riemannZetaZerosInAnyRectangle (unifiedRectangleLower m) (unifiedTauRectangleUpper 2 m)).filter
+      (fun ρ ↦ ¬ρ.re < 0)
+  let f := fun ρ : ℂ ↦
+    (riemannZetaZeroMultiplicity ρ : ℂ) * ((b : ℂ) ^ (ρ + 1) - (a : ℂ) ^ (ρ + 1)) / (ρ * (ρ + 1))
+  have hh : (∑ ρ ∈ zerosUpTo 100, f ρ).re ≤ (b - a) * H := by
+    simpa only [f, H, mul_div_assoc] using
+      (lower_integrated_head hRH (zero_lt_one.trans ha) hab.le (C := lowerMidpointSum ((a + b) / 2))
+        le_rfl)
+  obtain ⟨r, hr, hlim⟩ := psi1_finite_zero_remainder ha hab.le
+  have hbound :
+    Arithmetic.psiIntegralSum b - Arithmetic.psiIntegralSum a ≥
+      (b ^ 2 - a ^ 2) / 2 - Real.log (2 * Real.pi) * (b - a) - ((b - a) * H + B) - 1 := by
+    apply ge_of_tendsto hlim
+    filter_upwards [unified_head_eventually_eq (by norm_num only : (0 : ℝ) ≤ 100)] with m hm
+    let U := (S m).filter (fun ρ ↦ ¬|ρ.im| ≤ 100)
+    have ht : ‖∑ ρ ∈ U, f ρ‖ ≤ B :=
+      hB U
+        (fun ρ h ↦
+          (mem_riemannZetaZerosInAnyRectangle_iff.mp
+              (Finset.mem_filter.mp (Finset.mem_filter.mp h).1).1).2)
+        (fun ρ h ↦ not_lt.mp (Finset.mem_filter.mp (Finset.mem_filter.mp h).1).2)
+        (fun ρ h ↦ lt_of_not_ge (Finset.mem_filter.mp h).2)
+    have hs : (∑ ρ ∈ S m, f ρ).re ≤ (b - a) * H + B := by
+      rw [← Finset.sum_filter_add_sum_filter_not (S m) (fun ρ ↦ |ρ.im| ≤ 100), hm, Complex.add_re]
+      exact add_le_add hh (((le_abs_self _).trans (Complex.abs_re_le_norm _)).trans ht)
+    change
+      _ ≤
+        (b ^ 2 - a ^ 2) / 2 - Real.log (2 * Real.pi) * (b - a) +
+          (∑ ρ ∈ S m,
+              -(riemannZetaZeroMultiplicity ρ : ℂ) * ((b : ℂ) ^ (ρ + 1) - (a : ℂ) ^ (ρ + 1)) /
+                (ρ * (ρ + 1))).re +
+          r
+    simp only [neg_mul, neg_div, Finset.sum_neg_distrib, Complex.neg_re]
+    linarith only [hs, (abs_le.mp hr).1]
+  nlinarith only [hbound, (Arithmetic.psi1_bounds (zero_lt_one.trans ha) hab.le).2]
+
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

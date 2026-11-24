@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.AnalyticNumberTheory.RiemannZeta.ZeroHeightCounting
-import PseudoPrime.Analysis.FiniteHeightAbel
+import PseudoPrime.Analysis.WeightedHeightAbel
 
 /-! # Integrability of height-counting functions
 
@@ -62,5 +62,20 @@ theorem zeroCount_invSq_integrable {a b : ℝ} (ha : 0 < a) (hab : a ≤ b) :
     exact ((continuousAt_id.inv₀ (ne_of_gt (lt_of_lt_of_le ha ht.1))).pow 2) |>.continuousWithinAt
   have h := hp.mul_continuousOn hc
   simpa only [div_eq_mul_inv, ← inv_pow] using h
+
+/-- On a nonnegative height interval the integral of the zero count times a continuous
+derivative equals a finite sum of primitive differences, including endpoint multiplicities. -/
+theorem zeroCount_weighted_integral {a b : ℝ} (ha : 0 ≤ a) (hab : a ≤ b) {f g : ℝ → ℝ}
+    (hd : ∀ t ∈ Set.Icc a b, HasDerivAt f (g t) t) (hg : ContinuousOn g (Set.uIcc a b)) :
+    (∫ t in a..b, zeroCount t * g t) =
+      ∑ ρ ∈ zerosUpTo b, (riemannZetaZeroMultiplicity ρ : ℝ) * (f b - f (max a |ρ.im|)) := by
+  rw [←
+    Analysis.FiniteHeightAbel.integral_prefix_deriv (zerosUpTo b) (fun ρ ↦ |ρ.im|)
+      (fun ρ ↦ (riemannZetaZeroMultiplicity ρ : ℝ)) hab
+      (fun ρ hρ ↦ ((mem_zerosUpTo (ha.trans hab)).1 hρ).2.2) hd hg]
+  apply intervalIntegral.integral_congr
+  rw [Set.uIcc_of_le hab]
+  intro t ht
+  exact congrArg (· * g t) (zeroCount_eq_heightPrefix (ha.trans ht.1) ht.2).symm
 
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta
