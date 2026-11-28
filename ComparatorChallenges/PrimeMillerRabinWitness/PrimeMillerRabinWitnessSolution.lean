@@ -6,9 +6,11 @@ Authors: Mizar
 
 module
 
+import PseudoPrime.AnalyticNumberTheory.GRH.EquivalentForms
 import PseudoPrime.PrimeTestBounds.MillerRabin.ThreeEleventhsBridge
 import PseudoPrime.PrimeTestBounds.MillerRabin.LogNineBridge
-public import Mathlib.NumberTheory.LSeries.RiemannZeta
+import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterCriterionTo663
+import PseudoPrime.PrimeTestBounds.MillerRabin.Gaussian027007
 public import Mathlib.NumberTheory.LSeries.Nonvanishing
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
 
@@ -18,61 +20,25 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Base
 
 namespace ComparatorChallenges.PrimeMillerRabinWitness
 
-/-- Integer arguments excluded as trivial zeros for a complex Dirichlet character. The
-modulus-one case uses negative even integers; otherwise parity selects the nonpositive even
-or negative odd integers. This set specifies the zero exclusions used in GRH. -/
-noncomputable def dirichletTrivialZeros {q : ℕ} (χ : DirichletCharacter ℂ q) : Set ℤ := by
-  classical
-    exact
-    if q = 1 then {z | ∃ n : ℕ, z = -2 * ((n : ℤ) + 1)}
-    else if χ.Odd then {z | ∃ n : ℕ, z = -2 * (n : ℤ) - 1} else {z | ∃ n : ℕ, z = -2 * (n : ℤ)}
+/-- The open-critical-strip formulation of the generalized Riemann hypothesis
+for Dirichlet L-functions. For every nonzero modulus `N` and every Dirichlet
+character `χ` modulo `N`, any zero of `χ.LFunction` with `0 < s.re < 1` has
+real part `1 / 2`. This formulation supports specialization to modulus one. -/
+def DirichletLZerosOnLine : Prop :=
+  ∀ (N : ℕ) [NeZero N] (χ : DirichletCharacter ℂ N) (s : ℂ),
+    0 < s.re → s.re < 1 → DirichletCharacter.LFunction χ s = 0 → s.re = 1 / 2
 
-/-- For a character of nonzero modulus, zeros outside the excluded integer set have real part
-one half. This character-level condition is used to formulate GRH. -/
-def DirichletRiemannHypothesis {q : ℕ} [NeZero q] (χ : DirichletCharacter ℂ q) : Prop :=
-  ∀ s : ℂ,
-    χ.LFunction s = 0 → s ∉ (Int.cast : ℤ → ℂ) '' dirichletTrivialZeros χ → s.re = (1 : ℝ) / 2
-
-/-- Every primitive complex Dirichlet character of nonzero modulus satisfies the character-level
-Riemann hypothesis. This is the explicit assumption in both witness propositions. -/
-def GeneralizedRiemannHypothesis : Prop :=
-  ∀ (q : ℕ) [NeZero q] (χ : DirichletCharacter ℂ q), χ.IsPrimitive → DirichletRiemannHypothesis χ
-
-/-- The Dirichlet Riemann hypothesis for the trivial character modulo one is equivalent to
-the Riemann hypothesis for the Riemann zeta function. Identify the character's L-function and
-trivial zeros with those of zeta, and use the nonvanishing convention at one. This equivalence
-connects the challenge's GRH formulation to the ordinary Riemann hypothesis. -/
-theorem dirichletRiemannHypothesis_one_iff :
-    DirichletRiemannHypothesis (1 : DirichletCharacter ℂ 1) ↔ RiemannHypothesis := by
-  classical
-  have htriv (s : ℂ) :
-    s ∈ (Int.cast : ℤ → ℂ) '' dirichletTrivialZeros (1 : DirichletCharacter ℂ 1) ↔
-      ∃ n : ℕ, s = -2 * ((n : ℂ) + 1) := by
-    simp only [Set.mem_image]
-    constructor
-    · rintro ⟨_, ⟨n, rfl⟩, rfl⟩
-      refine ⟨n, ?_⟩
-      push_cast
-      ring
-    · rintro ⟨n, rfl⟩
-      refine ⟨-2 * ((n : ℤ) + 1), ⟨n, rfl⟩, ?_⟩
-      push_cast
-      ring
-  simp only [DirichletRiemannHypothesis, DirichletCharacter.LFunction_modOne_eq, htriv]
-  constructor
-  · intro h s hs ht _
-    exact h s hs ht
-  · intro h s hs ht
-    exact h s hs ht (fun he => riemannZeta_one_ne_zero (he ▸ hs))
-
-/-- The challenge's generalized Riemann hypothesis implies the Riemann hypothesis. Apply GRH
-to the primitive trivial character modulo one and use the modulus-one equivalence. This provides
-the ordinary hypothesis to results that need only the Riemann zeta function. -/
-theorem GeneralizedRiemannHypothesis.riemann (h : GeneralizedRiemannHypothesis) :
-    RiemannHypothesis := by
-  have hDirichlet : DirichletRiemannHypothesis 1 :=
-    h 1 1 DirichletCharacter.isPrimitive_one_level_one
-  exact dirichletRiemannHypothesis_one_iff.mp hDirichlet
+/-- The open-critical-strip hypothesis for Dirichlet L-functions implies the
+Riemann hypothesis. The classification of zeta zeros with `s.re ≤ 0` and
+nonvanishing for `1 ≤ s.re` put every nontrivial zeta zero in the open strip.
+The Dirichlet L-function for the character modulo one equals `riemannZeta`,
+so the hypothesis places each such zero on the critical line. -/
+theorem DirichletLZerosOnLine.riemann (h : DirichletLZerosOnLine) : RiemannHypothesis := by
+  intro s hz ht _
+  exact
+    h 1 1 s (lt_of_not_ge fun hs ↦ ht ((riemannZeta_eq_zero_iff_of_re_nonpos hs).mp hz))
+      (lt_of_not_ge fun hs ↦ riemannZeta_ne_zero_of_one_le_re hs hz)
+      (DirichletCharacter.LFunction_modOne_eq.symm ▸ hz)
 
 /-- The strong Miller–Rabin probable-prime condition for a natural input `n` and base `a`.
 With `(s, d) = Nat.maxPowDvdDiv 2 (n - 1)`, it asserts that `a^d = 1` in `ZMod n`, or that
@@ -85,12 +51,13 @@ def IsStrongMillerRabinProbablePrime (n a : ℕ) : Prop :=
 /-- Under GRH, an odd natural number `n > 1` is prime if and only if it passes the strong
 Miller–Rabin test for every prime base at most `2 * (logb 9 n)^2`. This states the challenge
 for the base-nine logarithmic cutoff; its proof is supplied by the comparator solution. -/
-theorem prime_millerRabin_log_nine_criterion (hGRH : GeneralizedRiemannHypothesis) {n : ℕ}
-    (hn : 1 < n) (ho : Odd n) :
+theorem prime_millerRabin_log_nine_criterion (hG : DirichletLZerosOnLine) {n : ℕ} (hn : 1 < n)
+    (ho : Odd n) :
     (∀ p : ℕ,
         Nat.Prime p →
           (p : ℝ) ≤ (2 * ((Real.logb 9 n) ^ 2)) → IsStrongMillerRabinProbablePrime n p) ↔
       Nat.Prime n := by
+  have hGRH := PseudoPrime.AnalyticNumberTheory.GRH.zeros_on_line_iff_grh.mp hG
   exact PseudoPrime.PrimeTestBounds.MillerRabin.prime_millerRabin_log_nine_criterion hGRH hn ho
 
 /-- Under GRH, an odd natural number `n > 1` is prime if and only if it passes
@@ -98,13 +65,63 @@ the strong Miller–Rabin test for every prime base at most
 `max 2 ((3 / 11) * (log n)^2)`. The composite direction uses the least
 rejecting-prime bound, and the prime direction uses base-two acceptance and
 the log-square bound. -/
-theorem prime_millerRabin_027_criterion (hGRH : GeneralizedRiemannHypothesis) {n : ℕ} (hn : 1 < n)
+theorem prime_millerRabin_027273_criterion (hG : DirichletLZerosOnLine) {n : ℕ} (hn : 1 < n)
     (ho : Odd n) :
     (∀ p : ℕ,
         Nat.Prime p →
           (p : ℝ) ≤ (max 2 ((3 / 11 : ℝ) * ((Real.log n) ^ 2))) →
           IsStrongMillerRabinProbablePrime n p) ↔
       Nat.Prime n := by
+  have hGRH := PseudoPrime.AnalyticNumberTheory.GRH.zeros_on_line_iff_grh.mp hG
   exact PseudoPrime.PrimeTestBounds.MillerRabin.prime_millerRabin_027_criterion hGRH hn ho
+
+/-- Assume GRH in the form `DirichletLZerosOnLine`. An odd natural number
+`n > 1` is prime exactly when it passes the strong Miller–Rabin test for every
+prime base at most `max 2 (max (L^2 / 4) ((9090 / 33659) * L^2 -
+(53 / 4) * L * exp (-(L / 11000)^2)))`, where `L = log n`.
+The library proof joins the uniform Korselt triple ranges before combining
+them with the nonuniform and small-input bounds. -/
+theorem prime_millerRabin_027007_gaussian_criterion (hG : DirichletLZerosOnLine) {n : ℕ}
+    (hn : 1 < n) (ho : Odd n) :
+    (∀ p : ℕ,
+        Nat.Prime p →
+          (p : ℝ) ≤
+            (max 2
+              (max ((1 / 4 : ℝ) * ((Real.log n) ^ 2))
+                ((9090 / 33659 : ℝ) * ((Real.log n) ^ 2) -
+                  (53 / 4 : ℝ) * (Real.log n) * (Real.exp (-((Real.log n) / 11000) ^ 2))))) →
+          IsStrongMillerRabinProbablePrime n p) ↔
+      Nat.Prime n := by
+  have hGRH := PseudoPrime.AnalyticNumberTheory.GRH.zeros_on_line_iff_grh.mp hG
+  exact
+    PseudoPrime.PrimeTestBounds.MillerRabin.prime_millerRabin_027007_gaussian_criterion hGRH hn ho
+
+/-- Assume GRH in the form `DirichletLZerosOnLine`. An odd natural number
+`n > 1` is prime exactly when it passes the strong Miller–Rabin test for every
+prime base at most `max 2 ((9090 / 33659) * (log n)^2)`.
+The proof uses the Gaussian criterion and bounds its cutoff by this
+quadratic expression. -/
+theorem prime_millerRabin_027007_criterion (hG : DirichletLZerosOnLine) {n : ℕ} (hn : 1 < n)
+    (ho : Odd n) :
+    (∀ p : ℕ,
+        Nat.Prime p →
+          (p : ℝ) ≤ (max 2 ((9090 / 33659 : ℝ) * ((Real.log n) ^ 2))) →
+          IsStrongMillerRabinProbablePrime n p) ↔
+      Nat.Prime n := by
+  have hGRH := PseudoPrime.AnalyticNumberTheory.GRH.zeros_on_line_iff_grh.mp hG
+  exact PseudoPrime.PrimeTestBounds.MillerRabin.prime_millerRabin_027007_criterion hGRH hn ho
+
+/-- Under GRH, an odd natural number `n > 1` with `log n ≤ 663` is prime
+if and only if it passes the strong Miller–Rabin test for every prime base
+at most `max 2 ((1 / 4) * (log n)^2)`. -/
+theorem prime_millerRabin_025_L663_criterion (hG : DirichletLZerosOnLine) {n : ℕ} (hn : 1 < n)
+    (hln : (Real.log n) ≤ 663) (ho : Odd n) :
+    (∀ p : ℕ,
+        Nat.Prime p →
+          (p : ℝ) ≤ (max 2 ((1 / 4 : ℝ) * ((Real.log n) ^ 2))) →
+          IsStrongMillerRabinProbablePrime n p) ↔
+      Nat.Prime n := by
+  have hGRH := PseudoPrime.AnalyticNumberTheory.GRH.zeros_on_line_iff_grh.mp hG
+  exact PseudoPrime.PrimeTestBounds.MillerRabin.prime_millerRabin_025_L663_criterion hGRH hn hln ho
 
 end ComparatorChallenges.PrimeMillerRabinWitness

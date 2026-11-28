@@ -113,17 +113,4 @@ theorem prime_millerRabin_025_criterion (hGRH : GeneralizedRiemannHypothesis) {n
       Nat.Prime n := by
   sorry
 
-theorem prime_millerRabin_027p_criterion (hGRH : GeneralizedRiemannHypothesis) {n : ℕ} (hn : 1 < n)
-    (ho : Odd n) :
-    (∀ p : ℕ,
-        Nat.Prime p →
-          (p : ℝ) ≤
-            (max 2
-              (max ((1 / 4 : ℝ) * ((Real.log n) ^ 2))
-                ((9090 / 33659 : ℝ) * ((Real.log n) ^ 2) -
-                  (53 / 4 : ℝ) * (Real.log n) * (Real.exp (-((Real.log n) / 11000) ^ 2))))) →
-          IsStrongMillerRabinProbablePrime n p) ↔
-      Nat.Prime n := by
-  sorry
-
 end ComparatorChallenges.PrimeMillerRabinWitness
