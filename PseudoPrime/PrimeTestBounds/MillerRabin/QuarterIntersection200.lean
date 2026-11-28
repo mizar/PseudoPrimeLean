@@ -10,7 +10,8 @@ public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
 public import PseudoPrime.AnalyticNumberTheory.GRH.Definition
 import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterSemiprimeRange200
 import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterSquareRange200
-import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterUniformClosed398375
+import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterUniformTo663
+import Mathlib.Tactic.Ring
 import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterFactorDispatch
 
 /-! # Common quarter-bound range for all factor types -/
@@ -30,7 +31,9 @@ theorem quarter_all_8_200 {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
         ¬PrimeTest.StrongMillerRabinPass n (r : ZMod n) := by
   apply quarter_of_factor_cases hn ho hc hGRH
   · intro hu
-    exact quarter_uniform_8_398375 hn ho hu hGRH (by linarith only [hU])
+    obtain ⟨p, hp, hb, hf⟩ := uniform_witness_8_to663 hn ho hu hGRH ⟨hL, by linarith only [hU]⟩
+    rw [show (Real.log n / 2) ^ 2 = (1 / 4 : ℝ) * Real.log n ^ 2 by ring] at hb
+    exact ⟨p, hp, hb, hf⟩
   · intro p hp hd
     exact quarter_square_8_200 hn ho hp hd hGRH hL hU
   · intro p q hp hq hpq hprod

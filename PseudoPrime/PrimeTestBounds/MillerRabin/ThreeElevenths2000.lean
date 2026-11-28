@@ -8,7 +8,7 @@ module
 
 public import PseudoPrime.PrimeTest.MillerRabin.Decomposition
 public import PseudoPrime.AnalyticNumberTheory.GRH.Definition
-import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterBridge465
+import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterCriterionTo663
 import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterNonuniformLog8
 import PseudoPrime.PrimeTestBounds.MillerRabin.UniformThreeEleven465to700
 import PseudoPrime.PrimeTestBounds.MillerRabin.UniformThreeEleven700to1000
@@ -33,10 +33,10 @@ theorem three_eleven_max_to2000 {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Pr
         (p : ℝ) ≤ max 2 ((3 / 11 : ℝ) * Real.log n ^ 2) ∧
         ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
   have hcoef : (1 / 4 : ℝ) ≤ 3 / 11 := by norm_num only
-  by_cases h465 : Real.log n ≤ 465
-  · obtain ⟨p, hp, hb, hf⟩ := quarter_max_through465 hn ho hc hGRH h465
+  by_cases h663 : Real.log n ≤ 663
+  · obtain ⟨p, hp, hb, hf⟩ := quarter_witness_to663 hn ho hc hGRH (Or.inl h663)
     exact ⟨p, hp, hb.trans (max_le_max le_rfl (mul_le_mul_of_nonneg_right hcoef (sq_nonneg _))), hf⟩
-  have hL : (465 : ℝ) ≤ Real.log n := le_of_not_ge h465
+  have hL : (465 : ℝ) ≤ Real.log n := (by norm_num only : (465 : ℝ) ≤ 663).trans (le_of_not_ge h663)
   have hbound :
     ∃ p : ℕ,
       p.Prime ∧

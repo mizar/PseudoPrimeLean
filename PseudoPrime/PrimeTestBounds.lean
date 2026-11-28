@@ -15,8 +15,7 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterJointPrimitive
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterNonuniform200
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterNonuniformLog8
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterFrom200
-public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterBridge200
-public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterBridge465
+public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterCriterionTo663
 public import PseudoPrime.PrimeTestBounds.MillerRabin.ThreeElevenths10300
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterSemiprimeRange200
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterSquareRange200
@@ -32,7 +31,7 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterUniformMassTail
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterUniformMassSharp
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterMomentTailClosed
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterUniformPairTail
-public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterUniformClosed398375
+public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterUniformTo663
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterCenteredPsiLower
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterCenteredFinite465
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterUniformFinite3988400

@@ -7,7 +7,7 @@ Authors: Mizar
 module
 
 public import PseudoPrime.AnalyticNumberTheory.GRH.Definition
-import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterBridge465
+import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterCriterionTo663
 import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterNonuniformLog8
 import PseudoPrime.PrimeTestBounds.MillerRabin.UniformThreeEleven465to700
 import PseudoPrime.PrimeTestBounds.MillerRabin.UniformThreeEleven700to1000
@@ -32,8 +32,8 @@ theorem refined_piecewise_low_witness {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : 
   rw [refinedPaperCoefficient, ite_eq_left hU]
   have hsmall : (2 : ℝ) ≤ (3 / 10 : ℝ) * Real.log n ^ 2 := by
     nlinarith only [hL, sq_nonneg (Real.log n - 8)]
-  by_cases h465 : Real.log n ≤ 465
-  · obtain ⟨p, hp, hb, hf⟩ := quarter_max_through465 hn ho hc hGRH h465
+  by_cases h663 : Real.log n ≤ 663
+  · obtain ⟨p, hp, hb, hf⟩ := quarter_witness_to663 hn ho hc hGRH (Or.inl h663)
     have hq : (1 / 4 : ℝ) ≤ 3 / 10 := by norm_num only
     exact ⟨p, hp, hb.trans (max_le hsmall (mul_le_mul_of_nonneg_right hq (sq_nonneg _))), hf⟩
   by_cases hu : UniformKorseltTriple n
@@ -43,7 +43,9 @@ theorem refined_piecewise_low_witness {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : 
           (p : ℝ) ≤ (3 / 11 : ℝ) * Real.log n ^ 2 ∧
           ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
       by_cases h700 : Real.log n ≤ 700
-      · exact uniform_three_eleven_465_700 hn ho hu hGRH (le_of_not_ge h465) h700
+      · have hL' : (465 : ℝ) ≤ Real.log n :=
+          (by norm_num only : (465 : ℝ) ≤ 663).trans (le_of_not_ge h663)
+        exact uniform_three_eleven_465_700 hn ho hu hGRH hL' h700
       · exact uniform_three_eleven_700_1000 hn ho hu hGRH (le_of_not_ge h700) hU.le
     obtain ⟨p, hp, hb, hf⟩ := hw
     exact ⟨p, hp, hb.trans (mul_le_mul_of_nonneg_right (by norm_num only) (sq_nonneg _)), hf⟩

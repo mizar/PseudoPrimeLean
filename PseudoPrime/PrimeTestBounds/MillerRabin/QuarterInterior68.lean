@@ -73,24 +73,4 @@ theorem quarter_interior_witness68 {n : ℕ} (hn : 1 < n) (ho : Odd n) (hscale :
       hscale hindex hGRH hnone
   exact (not_lt_of_ge h) quarter_interior_gap68
 
-/-- Under GRH, a nonuniform odd composite whose logarithm is at most 68 has
-a rejecting prime at most one quarter of 68 squared. Split the Fermat index
-at 33000 and use the small-index and interior endpoint witnesses. -/
-theorem quarter_nonuniform_scale68 {n : ℕ} (hn : 1 < n) (ho : Odd n) (hc : ¬n.Prime)
-    (hu : ¬UniformKorseltTriple n) (hscale : Real.log n ≤ 68)
-    (hGRH : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis) :
-    ∃ p : ℕ,
-      p.Prime ∧
-        (p : ℝ) ≤ (1 / 4 : ℝ) * 68 ^ 2 ∧ ¬PrimeTest.StrongMillerRabinPass n (p : ZMod n) := by
-  let : NeZero n := ⟨Nat.ne_zero_of_lt hn⟩
-  by_cases hi : (PrimeTest.fermatSubgroup n).index ≤ 33000
-  · exact
-      quarter_common_index_le hn ho hc (PrimeTest.fermatSubgroup n) le_rfl hi hu hGRH
-        (by norm_num only) hscale
-  · obtain ⟨p, hp, hb, hf⟩ :=
-      quarter_interior_witness68 hn ho hscale (Nat.le_of_lt (Nat.lt_of_not_ge hi)) hGRH
-    refine ⟨p, hp, ?_, hf⟩
-    norm_num only at hb ⊢
-    exact hb
-
 end PseudoPrime.PrimeTestBounds.MillerRabin

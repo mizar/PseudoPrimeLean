@@ -47,6 +47,22 @@ theorem poisson_distance_second_abs_le {a : ℝ} (ha : 0 < a) (t : ℝ) :
     mul_nonneg (sq_nonneg t) (mul_nonneg (by norm_num only : (0 : ℝ) ≤ 6) (pow_nonneg hd.le 2))
   nlinarith only [hm, ht]
 
+/-- The first derivative series is summable at a positive anchor with nonnegative weights.
+The anchor sum supplies the majorant. -/
+theorem poisson_deriv_summable {m : ℂ → ℝ} {a : ℝ} (ha : 0 < a) (hn : ∀ ρ, 0 ≤ m ρ)
+    (hs : Summable (fun ρ : ℂ ↦ m ρ * (a / (a ^ 2 + ρ.im ^ 2)))) :
+    Summable (fun ρ : ℂ ↦ m ρ * ((ρ.im ^ 2 - a ^ 2) / (a ^ 2 + ρ.im ^ 2) ^ 2)) := by
+  apply (hs.mul_left (a⁻¹)).of_norm_bounded
+  intro ρ
+  rw [Real.norm_eq_abs, abs_mul, abs_of_nonneg (hn ρ)]
+  have he : a⁻¹ * (m ρ * (a / (a ^ 2 + ρ.im ^ 2))) = m ρ * (1 / (a ^ 2 + ρ.im ^ 2)) := by
+    rw [div_eq_mul_inv, div_eq_mul_inv, one_mul]
+    calc
+      a⁻¹ * (m ρ * (a * (a ^ 2 + ρ.im ^ 2)⁻¹)) = (a⁻¹ * a) * (m ρ * (a ^ 2 + ρ.im ^ 2)⁻¹) := by ring
+      _ = _ := by rw [inv_mul_cancel₀ ha.ne', one_mul]
+  rw [he]
+  exact mul_le_mul_of_nonneg_left (poisson_distance_deriv_abs_le ha ρ.im) (hn ρ)
+
 /-- Under individual RH, the first pole-distance derivative summed over
 completed zeros is absolutely summable at every positive distance. The
 pointwise derivative bound is dominated by the summable Poisson resolvent,
@@ -58,31 +74,36 @@ theorem poisson_deriv_zero_summable {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : Di
       (fun ρ : ℂ ↦
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
           ((ρ.im ^ 2 - a ^ 2) / (a ^ 2 + ρ.im ^ 2) ^ 2)) := by
-  have hAn : AnalyticOnNhd ℂ χ.completedLFunction Set.univ := fun z _ ↦
+  have hA : AnalyticOnNhd ℂ χ.completedLFunction Set.univ := fun z _ ↦
     (DirichletCharacter.differentiable_completedLFunction hne).analyticAt z
   have hn (ρ : ℂ) : (0 : ℝ) ≤ (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) := by
-    exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg hAn ρ
-  have hs :=
-    (AnalyticNumberTheory.DirichletLFunction.summable_completed_resolvent_terms hq hRH hp hne hinv
-          ha).mul_left
-      (a⁻¹)
-  apply hs.of_norm_bounded
+    exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg hA ρ
+  exact
+    poisson_deriv_summable ha hn
+      (AnalyticNumberTheory.DirichletLFunction.summable_completed_resolvent_terms hq hRH hp hne hinv
+        ha)
+
+/-- The second derivative series is summable at a positive anchor with nonnegative weights.
+The anchor sum supplies the majorant. -/
+theorem poisson_second_summable {m : ℂ → ℝ} {a : ℝ} (ha : 0 < a) (hn : ∀ ρ, 0 ≤ m ρ)
+    (hs : Summable (fun ρ : ℂ ↦ m ρ * (a / (a ^ 2 + ρ.im ^ 2)))) :
+    Summable (fun ρ : ℂ ↦ m ρ * (2 * a * (a ^ 2 - 3 * ρ.im ^ 2) / (a ^ 2 + ρ.im ^ 2) ^ 3)) := by
+  apply (hs.mul_left (6 / a ^ 2)).of_norm_bounded
   intro ρ
   rw [Real.norm_eq_abs, abs_mul, abs_of_nonneg (hn ρ)]
   have he :
-    a⁻¹ * ((MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) * (a / (a ^ 2 + ρ.im ^ 2))) =
-      (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) * (1 / (a ^ 2 + ρ.im ^ 2)) := by
-    rw [div_eq_mul_inv, div_eq_mul_inv, one_mul]
+    (6 / a ^ 2) * (m ρ * (a / (a ^ 2 + ρ.im ^ 2))) = m ρ * (6 / (a * (a ^ 2 + ρ.im ^ 2))) := by
+    rw [div_eq_mul_inv, div_eq_mul_inv, div_eq_mul_inv, mul_inv_rev, ← inv_pow]
+    have hc : (a⁻¹) ^ 2 * a = a⁻¹ := by
+      calc
+        (a⁻¹) ^ 2 * a = a⁻¹ * (a⁻¹ * a) := by ring
+        _ = _ := by rw [inv_mul_cancel₀ ha.ne', mul_one]
     calc
-      a⁻¹ *
-            ((MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
-              (a * (a ^ 2 + ρ.im ^ 2)⁻¹)) =
-          (a⁻¹ * a) *
-            ((MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) * (a ^ 2 + ρ.im ^ 2)⁻¹) :=
-        by ring
-      _ = _ := by rw [inv_mul_cancel₀ ha.ne', one_mul]
+      _ = 6 * m ρ * (a ^ 2 + ρ.im ^ 2)⁻¹ * ((a⁻¹) ^ 2 * a) := by ring
+      _ = _ := by
+        rw [hc]; ring
   rw [he]
-  exact mul_le_mul_of_nonneg_left (poisson_distance_deriv_abs_le ha ρ.im) (hn ρ)
+  exact mul_le_mul_of_nonneg_left (poisson_distance_second_abs_le ha ρ.im) (hn ρ)
 
 /-- Under individual RH, the second pole-distance derivative summed over
 completed zeros is absolutely summable at every positive distance. Its
@@ -94,36 +115,14 @@ theorem poisson_second_zero_summable {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ : D
       (fun ρ : ℂ ↦
         (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
           (2 * a * (a ^ 2 - 3 * ρ.im ^ 2) / (a ^ 2 + ρ.im ^ 2) ^ 3)) := by
-  have hAn : AnalyticOnNhd ℂ χ.completedLFunction Set.univ := fun z _ ↦
+  have hA : AnalyticOnNhd ℂ χ.completedLFunction Set.univ := fun z _ ↦
     (DirichletCharacter.differentiable_completedLFunction hne).analyticAt z
   have hn (ρ : ℂ) : (0 : ℝ) ≤ (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) := by
-    exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg hAn ρ
-  have hs :=
-    (AnalyticNumberTheory.DirichletLFunction.summable_completed_resolvent_terms hq hRH hp hne hinv
-          ha).mul_left
-      (6 / a ^ 2)
-  apply hs.of_norm_bounded
-  intro ρ
-  rw [Real.norm_eq_abs, abs_mul, abs_of_nonneg (hn ρ)]
-  have he :
-    (6 / a ^ 2) *
-        ((MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) * (a / (a ^ 2 + ρ.im ^ 2))) =
-      (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
-        (6 / (a * (a ^ 2 + ρ.im ^ 2))) := by
-    rw [div_eq_mul_inv, div_eq_mul_inv, div_eq_mul_inv, mul_inv_rev, ← inv_pow]
-    have hc : (a⁻¹) ^ 2 * a = a⁻¹ := by
-      calc
-        (a⁻¹) ^ 2 * a = a⁻¹ * (a⁻¹ * a) := by ring
-        _ = _ := by rw [inv_mul_cancel₀ ha.ne', mul_one]
-    calc
-      _ =
-          6 * (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) * (a ^ 2 + ρ.im ^ 2)⁻¹ *
-            ((a⁻¹) ^ 2 * a) :=
-        by ring
-      _ = _ := by
-        rw [hc]; ring
-  rw [he]
-  exact mul_le_mul_of_nonneg_left (poisson_distance_second_abs_le ha ρ.im) (hn ρ)
+    exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg hA ρ
+  exact
+    poisson_second_summable ha hn
+      (AnalyticNumberTheory.DirichletLFunction.summable_completed_resolvent_terms hq hRH hp hne hinv
+        ha)
 
 /-- On the half-line above half a positive anchor, the first derivative of
 any Poisson resolvent is bounded by four times the inverse anchor denominator.

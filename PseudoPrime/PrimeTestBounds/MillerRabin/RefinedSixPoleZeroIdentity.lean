@@ -14,6 +14,28 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.RefinedSixPoleDerivativeBo
 
 namespace PseudoPrime.PrimeTestBounds.MillerRabin
 
+/-- For nonnegative weights with a summable anchor, combine the first two derivatives
+with the Poisson series to obtain the sixth-pole series.
+The anchor sum supplies the majorant. -/
+theorem sixth_pole_weighted_identity {m : ℂ → ℝ} {a : ℝ} (ha : 0 < a) (hn : ∀ ρ, 0 ≤ m ρ)
+    (hs : Summable (fun ρ : ℂ ↦ m ρ * (a / (a ^ 2 + ρ.im ^ 2)))) :
+    (∑' ρ : ℂ, m ρ * (8 * a ^ 5 / (a ^ 2 + ρ.im ^ 2) ^ 3)) =
+      3 * (∑' ρ : ℂ, m ρ * (a / (a ^ 2 + ρ.im ^ 2))) -
+          3 * a * (∑' ρ : ℂ, m ρ * ((ρ.im ^ 2 - a ^ 2) / (a ^ 2 + ρ.im ^ 2) ^ 2)) +
+        a ^ 2 * (∑' ρ : ℂ, m ρ * (2 * a * (a ^ 2 - 3 * ρ.im ^ 2) / (a ^ 2 + ρ.im ^ 2) ^ 3)) := by
+  have h0 := hs
+  have h1 := poisson_deriv_summable ha hn hs
+  have h2 := poisson_second_summable ha hn hs
+  have he (ρ : ℂ) :
+    m ρ * (8 * a ^ 5 / (a ^ 2 + ρ.im ^ 2) ^ 3) =
+      3 * (m ρ * (a / (a ^ 2 + ρ.im ^ 2))) -
+          (3 * a) * (m ρ * ((ρ.im ^ 2 - a ^ 2) / (a ^ 2 + ρ.im ^ 2) ^ 2)) +
+        a ^ 2 * (m ρ * (2 * a * (a ^ 2 - 3 * ρ.im ^ 2) / (a ^ 2 + ρ.im ^ 2) ^ 3)) := by
+    rw [← sixth_pole_poisson_identity ha ρ.im]
+    ring
+  rw [tsum_congr he, ((h0.mul_left 3).sub (h1.mul_left (3 * a))).tsum_add (h2.mul_left (a ^ 2)),
+    (h0.mul_left 3).tsum_sub (h1.mul_left (3 * a)), tsum_mul_left, tsum_mul_left, tsum_mul_left]
+
 /-- Under individual RH, the completed-zero sixth-order resolvent series is
 the same linear combination of the Poisson series and the two series of its
 termwise derivatives. All three series are summable, so the pointwise identity
@@ -37,24 +59,14 @@ theorem sixth_pole_zero_series_identity {q : ℕ} [NeZero q] (hq : 2 ≤ q) {χ 
           (∑' ρ : ℂ,
             (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
               (2 * a * (a ^ 2 - 3 * ρ.im ^ 2) / (a ^ 2 + ρ.im ^ 2) ^ 3)) := by
-  have h0 :=
-    AnalyticNumberTheory.DirichletLFunction.summable_completed_resolvent_terms hq hRH hp hne hinv ha
-  have h1 := poisson_deriv_zero_summable hq hRH hp hne hinv ha
-  have h2 := poisson_second_zero_summable hq hRH hp hne hinv ha
-  have he (ρ : ℂ) :
-    (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
-        (8 * a ^ 5 / (a ^ 2 + ρ.im ^ 2) ^ 3) =
-      3 * ((MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) * (a / (a ^ 2 + ρ.im ^ 2))) -
-          (3 * a) *
-            ((MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
-              ((ρ.im ^ 2 - a ^ 2) / (a ^ 2 + ρ.im ^ 2) ^ 2)) +
-        a ^ 2 *
-          ((MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) *
-            (2 * a * (a ^ 2 - 3 * ρ.im ^ 2) / (a ^ 2 + ρ.im ^ 2) ^ 3)) := by
-    rw [← sixth_pole_poisson_identity ha ρ.im]
-    ring
-  rw [tsum_congr he, ((h0.mul_left 3).sub (h1.mul_left (3 * a))).tsum_add (h2.mul_left (a ^ 2)),
-    (h0.mul_left 3).tsum_sub (h1.mul_left (3 * a)), tsum_mul_left, tsum_mul_left, tsum_mul_left]
+  have hA : AnalyticOnNhd ℂ χ.completedLFunction Set.univ := fun z _ ↦
+    (DirichletCharacter.differentiable_completedLFunction hne).analyticAt z
+  have hn (ρ : ℂ) : (0 : ℝ) ≤ (MeromorphicOn.divisor χ.completedLFunction Set.univ ρ : ℝ) := by
+    exact_mod_cast MeromorphicOn.AnalyticOnNhd.divisor_nonneg hA ρ
+  exact
+    sixth_pole_weighted_identity ha hn
+      (AnalyticNumberTheory.DirichletLFunction.summable_completed_resolvent_terms hq hRH hp hne hinv
+        ha)
 
 /-- Under individual RH, eight times the actual refined-kernel zero mass is
 the linear combination of the Poisson zero series at `27/25` and its two

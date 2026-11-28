@@ -9,6 +9,7 @@ module
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterGammaConvolutionIntegral
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterGammaExpLower
 public import PseudoPrime.PrimeTestBounds.MillerRabin.QuarterGammaExpUpper
+import PseudoPrime.Analysis.NumericalLogBounds
 
 /-! # First Gamma-pole moment on intervals -/
 
@@ -85,6 +86,37 @@ theorem quarter_first_correction_13_1325 {z : ℝ} (hz : 13 ≤ z) (hZ : z ≤ 5
         (54 / 100000 : ℝ) * Analysis.logPowerTailPoly (29 / 50) 5 13 := by
     norm_num only [Analysis.logPowerTailPoly]
   have he := quarter_gamma_exp_lower
+  have hp := mul_le_mul he hM hM0 (Real.exp_pos _).le
+  have hs := mul_le_mul_of_nonneg_left hp (show 0 ≤ (27 / 25 : ℝ) ^ 5 / 120 by positivity)
+  norm_num only [Analysis.logPowerTailPoly] at hs h ⊢
+  linarith only [hs, h]
+
+/-- The first Gamma pole contributes at least 0.026 throughout the shifted interval [13,14]. -/
+theorem quarter_first_correction_13_14 {z : ℝ} (hz : 13 ≤ z) (hZ : z ≤ 14) :
+    (26 / 1000 : ℝ) ≤ quarterGammaFirstCorrection z := by
+  have h := quarter_first_correction_interval (a := 13) (b := 14) (by norm_num only) hz hZ
+  have hpoly : 0 ≤ Analysis.logPowerTailPoly (29 / 50 : ℝ) 5 13 := by
+    norm_num only [Analysis.logPowerTailPoly]
+  have hm := mul_le_mul_of_nonneg_right quarter_gamma_exp_upper hpoly
+  have hM :
+    Analysis.logPowerTailPoly (29 / 50 : ℝ) 5 0 -
+        (54 / 100000 : ℝ) * Analysis.logPowerTailPoly (29 / 50) 5 13 ≤
+      Analysis.logPowerTailPoly (29 / 50) 5 0 -
+        Real.exp (-(377 / 50 : ℝ)) * Analysis.logPowerTailPoly (29 / 50) 5 13 := by
+    linarith only [hm]
+  have hM0 :
+    0 ≤
+      Analysis.logPowerTailPoly (29 / 50 : ℝ) 5 0 -
+        (54 / 100000 : ℝ) * Analysis.logPowerTailPoly (29 / 50) 5 13 := by
+    norm_num only [Analysis.logPowerTailPoly]
+  have h7 :=
+    Analysis.exp_le_taylor_add_two_next (x := (7 : ℝ)) (n := 28) (by norm_num only)
+      (by norm_num only)
+  norm_num only [Finset.sum_range_succ, Finset.sum_range_zero, Nat.factorial, Nat.cast_ofNat,
+    Nat.cast_zero, Nat.cast_one] at h7
+  have he : 1 / 1100 ≤ Real.exp (-(7 : ℝ)) := by
+    rw [Real.exp_neg, ← one_div]
+    exact one_div_le_one_div_of_le (Real.exp_pos _) (by linarith only [h7])
   have hp := mul_le_mul he hM hM0 (Real.exp_pos _).le
   have hs := mul_le_mul_of_nonneg_left hp (show 0 ≤ (27 / 25 : ℝ) ^ 5 / 120 by positivity)
   norm_num only [Analysis.logPowerTailPoly] at hs h ⊢
