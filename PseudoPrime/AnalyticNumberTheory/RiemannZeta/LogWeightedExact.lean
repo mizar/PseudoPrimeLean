@@ -47,7 +47,7 @@ private theorem nontrivial_mem_unified_eventually {τ : ℝ} (hτ : 1 < τ) {ρ 
 /-- For `x > 1`, the finite logarithmic nontrivial-zero ledgers converge to
 the absolutely convergent zero sum. Each zero eventually lies in the rectangle,
 and the inverse-square zero mass supplies a summable dominating family. -/
-theorem log_zero_tsum_limit {x : ℝ} (hx : 1 < x) :
+theorem log_zero_tsum_limit_closed {x : ℝ} (hx : 1 ≤ x) :
     Filter.Tendsto
       (fun m : ℕ ↦
         ∑
@@ -75,9 +75,9 @@ theorem log_zero_tsum_limit {x : ℝ} (hx : 1 < x) :
     ∀ᶠ m : ℕ in Filter.atTop, ∀ ρ : ℂ, ‖f m ρ‖ ≤ x * RiemannXi.inversePowerZeroWeight 2 ρ := by
     filter_upwards with m ρ
     by_cases hm : ρ ∈ S m
-    · simpa only [f, hm, ↓reduceIte] using norm_nontrivialLogZeroTerm_le hx.le ρ
+    · simpa only [f, hm, ↓reduceIte] using norm_nontrivialLogZeroTerm_le hx ρ
     · simp only [f, hm, ↓reduceIte, norm_zero]
-      exact mul_nonneg (zero_le_one.trans hx.le) (RiemannXi.inversePowerZeroWeight_nonneg 2 ρ)
+      exact mul_nonneg (zero_le_one.trans hx) (RiemannXi.inversePowerZeroWeight_nonneg 2 ρ)
   have hs := (RiemannXi.summable_inversePowerZeroWeight (by norm_num only : (1 : ℝ) < 2)).mul_left x
   have hlim := tendsto_tsum_of_dominated_convergence hs hpoint hbound
   apply hlim.congr'
@@ -88,6 +88,19 @@ theorem log_zero_tsum_limit {x : ℝ} (hx : 1 < x) :
   intro ρ hρ
   have hz := (mem_riemannZetaZerosInAnyRectangle_iff.mp hρ).2
   simp only [f, hρ, ↓reduceIte, nontrivialLogZeroTerm, hz, true_and, not_lt]
+
+/-- The rectangular zero ledger converges in particular at every point above one. -/
+theorem log_zero_tsum_limit {x : ℝ} (hx : 1 < x) :
+    Filter.Tendsto
+      (fun m : ℕ ↦
+        ∑
+          ρ ∈
+            (riemannZetaZerosInAnyRectangle (unifiedRectangleLower m)
+                  (unifiedTauRectangleUpper 2 m)).filter
+              (fun ρ ↦ ¬ρ.re < 0),
+          riemannZetaLogZeroContribution x ρ)
+      Filter.atTop (nhds (∑' ρ : ℂ, nontrivialLogZeroTerm x ρ)) := by
+  exact log_zero_tsum_limit_closed hx.le
 
 /-- For `x > 1`, the logarithmically weighted Mangoldt sum equals its exact
 pole contribution, the real part of the nontrivial-zero series and the trivial

@@ -98,4 +98,86 @@ theorem shifted_log_moment (n : ℕ) (b : ℝ) {s : ℝ} (hs : 0 < s) :
   intro j _
   rw [MeasureTheory.integral_const_mul, (real_log_moment j hs).2]
 
+/-- For a complex exponent with positive real part, expand the shifted
+logarithmic power and integrate each term on the unit interval. -/
+theorem complex_shifted_log_moment (n : ℕ) (b : ℝ) {s : ℂ} (hs : 0 < s.re) :
+    MeasureTheory.IntegrableOn (fun u : ℝ ↦ (u : ℂ) ^ (s - 1) * ((b - Real.log u : ℝ) : ℂ) ^ n)
+        (Set.Ioc 0 1) ∧
+      (∫ u : ℝ in Set.Ioc 0 1, (u : ℂ) ^ (s - 1) * ((b - Real.log u : ℝ) : ℂ) ^ n) =
+        ∑ j ∈ Finset.range (n + 1),
+          ((n.choose j : ℂ) * (b : ℂ) ^ (n - j)) * ((j.factorial : ℂ) / s ^ (j + 1)) := by
+  have he (u : ℝ) :
+    (u : ℂ) ^ (s - 1) * ((b - Real.log u : ℝ) : ℂ) ^ n =
+      ∑ j ∈ Finset.range (n + 1),
+        ((n.choose j : ℂ) * (b : ℂ) ^ (n - j)) *
+          ((u : ℂ) ^ (s - 1) * ((-Real.log u : ℝ) : ℂ) ^ j) := by
+    rw [show b - Real.log u = -Real.log u + b by ring, Complex.ofReal_add, add_pow, Finset.mul_sum]
+    apply Finset.sum_congr rfl
+    intro j _
+    ring
+  have hi (j : ℕ) :
+    MeasureTheory.IntegrableOn
+      (fun u : ℝ ↦
+        ((n.choose j : ℂ) * (b : ℂ) ^ (n - j)) * ((u : ℂ) ^ (s - 1) * ((-Real.log u : ℝ) : ℂ) ^ j))
+      (Set.Ioc 0 1) :=
+    (cpow_log_moment j hs).1.const_mul _
+  simp_rw [he]
+  refine ⟨MeasureTheory.integrable_finsetSum _ (fun j _ ↦ hi j), ?_⟩
+  rw [MeasureTheory.integral_finsetSum _ (fun j _ ↦ hi j)]
+  apply Finset.sum_congr rfl
+  intro j _
+  rw [MeasureTheory.integral_const_mul, (cpow_log_moment j hs).2]
+
+/-- The shifted complex log moment up to a positive cutoff is a unit
+moment with a shifted logarithm, multiplied by the cutoff power. -/
+theorem complex_log_moment_cutoff (n : ℕ) (b : ℝ) {s : ℂ} (hs : 0 < s.re) {y : ℝ} (hy : 0 < y) :
+    (∫ u in (0 : ℝ)..y, (u : ℂ) ^ (s - 1) * ((b - Real.log u : ℝ) : ℂ) ^ n) =
+      (y : ℂ) ^ s *
+        ∑ j ∈ Finset.range (n + 1),
+          ((n.choose j : ℂ) * ((b - Real.log y : ℝ) : ℂ) ^ (n - j)) *
+            ((j.factorial : ℂ) / s ^ (j + 1)) := by
+  let f := fun u : ℝ ↦ (u : ℂ) ^ (s - 1) * ((b - Real.log u : ℝ) : ℂ) ^ n
+  let g := fun u : ℝ ↦ (u : ℂ) ^ (s - 1) * (((b - Real.log y) - Real.log u : ℝ) : ℂ) ^ n
+  have h := intervalIntegral.smul_integral_comp_mul_right f (a := 0) (b := 1) y
+  rw [zero_mul, one_mul] at h
+  have he : (∫ u in (0 : ℝ)..1, f (u * y)) = ∫ u in (0 : ℝ)..1, (y : ℂ) ^ (s - 1) * g u := by
+    rw [intervalIntegral.integral_of_le zero_le_one, intervalIntegral.integral_of_le zero_le_one]
+    apply MeasureTheory.setIntegral_congr_fun measurableSet_Ioc
+    intro u hu
+    dsimp only [f, g]
+    rw [Complex.ofReal_mul, Complex.ofReal_mul_cpow hu.1.le y, Real.log_mul hu.1.ne' hy.ne',
+      show b - (Real.log u + Real.log y) = b - Real.log y - Real.log u by ring]
+    ring
+  rw [he, intervalIntegral.integral_const_mul, Complex.real_smul] at h
+  have hp : (y : ℂ) * (y : ℂ) ^ (s - 1) = (y : ℂ) ^ s := by
+    conv_lhs =>
+      lhs; rw [← Complex.cpow_one (y : ℂ)]
+    rw [← Complex.cpow_add _ _ (Complex.ofReal_ne_zero.mpr hy.ne')]
+    congr 1
+    ring
+  rw [← mul_assoc, hp] at h
+  rw [← h, intervalIntegral.integral_of_le zero_le_one]
+  exact congrArg ((y : ℂ) ^ s * ·) (complex_shifted_log_moment n (b - Real.log y) hs).2
+
+/-- The complex logarithmic moment is integrable up to any positive cutoff.
+Use the unit moment near zero and continuity on the remaining compact interval. -/
+theorem complex_log_moment_integrable (n : ℕ) (b : ℝ) {s : ℂ} (hs : 0 < s.re) {y : ℝ} (hy : 0 < y) :
+    IntervalIntegrable (fun u : ℝ ↦ (u : ℂ) ^ (s - 1) * ((b - Real.log u : ℝ) : ℂ) ^ n)
+      MeasureTheory.volume 0 y := by
+  have h₁ :=
+    (intervalIntegrable_iff_integrableOn_Ioc_of_le zero_le_one).2
+      (complex_shifted_log_moment n b hs).1
+  rcases le_or_gt y 1 with h | h
+  · apply h₁.mono_set
+    rw [Set.uIcc_of_le hy.le, Set.uIcc_of_le zero_le_one]
+    exact Set.Icc_subset_Icc_right h
+  · apply h₁.trans
+    apply ContinuousOn.intervalIntegrable
+    rw [Set.uIcc_of_le h.le]
+    intro u hu
+    have hu0 := zero_lt_one.trans_le hu.1
+    have hp := Complex.continuousAt_ofReal_cpow_const u (s - 1) (Or.inr hu0.ne')
+    have hl := (continuousAt_const (y := b)).sub (Real.continuousAt_log hu0.ne')
+    exact (hp.mul ((Complex.continuous_ofReal.continuousAt.comp hl).pow n)).continuousWithinAt
+
 end PseudoPrime.Analysis

@@ -103,6 +103,25 @@ private theorem prime_avoids {n p m : ℕ} (hn : n.Prime) (hp : 2 ≤ p) (hm : p
     have hle := Nat.le_of_mul_le_mul_right hh (Nat.zero_lt_of_lt hp)
     linarith only [hle, hp, hm]
 
+/-- On a half-open segment the sieve characterizes primality if every
+composite in the segment has its least prime factor among the supplied bases.
+Bases beyond the least factors need no primality hypothesis. -/
+theorem sieve_get_true_iff {a b n : ℕ} (ha : a ≤ n) (hb : n < b) (ps : Array ℕ)
+    (hbase : 2 ≤ n → ¬n.Prime → n.minFac ∈ ps) : (sieve a b ps)[n - a]? = some true ↔ n.Prime := by
+  rw [read_sieve ha hb]
+  constructor
+  · intro h
+    by_contra hc
+    have hn₀ : 0 < n := by linarith only [h.1]
+    have hp := Nat.minFac_prime (show n ≠ 1 by linarith only [h.1])
+    obtain ⟨m, hm⟩ := Nat.minFac_dvd n
+    have hs := Nat.minFac_sq_le_self hn₀ hc
+    have hm' : n = m * n.minFac := hm.trans (Nat.mul_comm _ _)
+    have hmul : n.minFac * n.minFac ≤ m * n.minFac :=
+      (by simpa only [pow_two] using hs : n.minFac * n.minFac ≤ n).trans_eq hm'
+    exact h.2 n.minFac (hbase h.1 hc) hp.two_le m (Nat.le_of_mul_le_mul_right hmul hp.pos) hm'.symm
+  · exact fun hp ↦ ⟨hp.two_le, fun _ _ h _ hm ↦ prime_avoids hp h hm⟩
+
 /-- Scalar query of the shared sieve at an absolute integer index. -/
 def sieveFlag (a b n : ℕ) : Bool :=
   ((sieve a b basePrimes)[n - a]?).getD false

@@ -71,6 +71,49 @@ theorem expFixedPointLowerSum_le_exp (a b scale n : ℕ) :
         (Real.sum_le_exp_of_nonneg (div_nonneg (Nat.cast_nonneg a) (Nat.cast_nonneg b)) n)
         (Nat.cast_nonneg scale))
 
+/-- Integer multiplication comparisons certify lower Taylor terms supplied
+by a generator, with no division in the certificate hypotheses. -/
+theorem exp_mul_cert_term_le (a b Q : ℕ) (T : ℕ → ℕ) (hb : 0 < b) (hzero : T 0 = Q) {N : ℕ}
+    (hstep : ∀ j < N, b * (j + 1) * T (j + 1) ≤ a * T j) :
+    ∀ j ≤ N, (T j : ℝ) ≤ (Q : ℝ) * ((a : ℝ) / b) ^ j / j.factorial := by
+  intro j
+  induction j with
+  | zero =>
+    intro _
+    simp only [hzero, pow_zero, Nat.factorial_zero, Nat.cast_one, mul_one, div_one, le_refl]
+  | succ j ih =>
+    intro hj
+    have hj' := Nat.lt_of_succ_le hj
+    have hb' : (0 : ℝ) < b := Nat.cast_pos.mpr hb
+    have hd : 0 < (b : ℝ) * ((j : ℝ) + 1) := mul_pos hb' (by positivity)
+    have hc : (b : ℝ) * ((j : ℝ) + 1) * T (j + 1) ≤ (a : ℝ) * T j := by exact_mod_cast hstep j hj'
+    have ht : (T (j + 1) : ℝ) ≤ (T j : ℝ) * a / ((b : ℝ) * (j + 1)) :=
+      (le_div_iff₀ hd).mpr (by simpa only [mul_comm, mul_left_comm] using hc)
+    refine
+      ht.trans
+        ((div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_right (ih hj'.le) (Nat.cast_nonneg a))
+              hd.le).trans_eq
+          ?_)
+    rw [Nat.factorial_succ, Nat.cast_mul, Nat.cast_add, Nat.cast_one, pow_succ]
+    simp only [div_eq_mul_inv, mul_inv_rev]
+    ring
+
+/-- A prefix of terms certified by integer multiplication bounds the
+positive exponential from below after division by the common scale. -/
+theorem exp_mul_cert_sum_le (a b Q N : ℕ) (T : ℕ → ℕ) (hb : 0 < b) (hzero : T 0 = Q)
+    (hstep : ∀ j < N, b * (j + 1) * T (j + 1) ≤ a * T j) :
+    ((∑ j ∈ Finset.range (N + 1), T j : ℕ) : ℝ) ≤ Q * Real.exp ((a : ℝ) / b) := by
+  rw [Nat.cast_sum]
+  have ht :=
+    Finset.sum_le_sum (s := Finset.range (N + 1)) fun j hj ↦
+      exp_mul_cert_term_le a b Q T hb hzero hstep j (Nat.lt_succ_iff.mp (Finset.mem_range.mp hj))
+  simp only [mul_div_assoc, ← Finset.mul_sum] at ht
+  exact
+    ht.trans
+      (mul_le_mul_of_nonneg_left
+        (Real.sum_le_exp_of_nonneg (div_nonneg (Nat.cast_nonneg a) (Nat.cast_nonneg b)) (N + 1))
+        (Nat.cast_nonneg Q))
+
 /-- For nonnegative x with x/(n+1)<=1/2, exp(x) is at most the first n
 Taylor terms plus twice the next term. Transfer the complex Taylor error bound
 to the reals. This supplies an alternative rational upper envelope for x<=16. -/

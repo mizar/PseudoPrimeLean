@@ -141,4 +141,70 @@ theorem zero_integrals_limit {a b : ℝ} (ha : 1 ≤ a) (hab : a ≤ b) :
   rw [Set.uIcc_of_le hab]
   exact zero_term_continuous (zero_lt_one.trans_le ha) ρ
 
+/-- On a compact interval with left endpoint at least one, integrating a
+continuous real weight against the real part of the logarithmic zero ledger
+commutes with the limit of its rectangular cutoffs. -/
+theorem weighted_zero_integral_limit {a b : ℝ} (ha : 1 ≤ a) (hab : a ≤ b) {Q : ℝ → ℝ}
+    (hQ : ContinuousOn Q (Set.Icc a b)) :
+    Filter.Tendsto
+      (fun m : ℕ ↦
+        ∫ x in a..b,
+          (∑
+                ρ ∈
+                  (riemannZetaZerosInAnyRectangle (unifiedRectangleLower m)
+                        (unifiedTauRectangleUpper 2 m)).filter
+                    (fun ρ ↦ ¬ρ.re < 0),
+                riemannZetaLogZeroContribution x ρ).re *
+            Q x)
+      Filter.atTop (nhds (∫ x in a..b, (∑' ρ : ℂ, nontrivialLogZeroTerm x ρ).re * Q x)) := by
+  classical
+  let S : ℕ → Finset ℂ := fun m ↦
+    (riemannZetaZerosInAnyRectangle (unifiedRectangleLower m) (unifiedTauRectangleUpper 2 m)).filter
+      (fun ρ ↦ ¬ρ.re < 0)
+  let M := ∑' ρ : ℂ, b * RiemannXi.inversePowerZeroWeight 2 ρ
+  have heq (m : ℕ) (x : ℝ) :
+    (∑ ρ ∈ S m, riemannZetaLogZeroContribution x ρ) = ∑ ρ ∈ S m, nontrivialLogZeroTerm x ρ := by
+    apply Finset.sum_congr rfl
+    intro ρ hρ
+    have hm := Finset.mem_filter.mp hρ
+    have hz := (mem_riemannZetaZerosInAnyRectangle_iff.mp hm.1).2
+    simp only [nontrivialLogZeroTerm, hz, true_and, not_lt.mp hm.2, ↓reduceIte]
+  have hs := (RiemannXi.summable_inversePowerZeroWeight (by norm_num only : (1 : ℝ) < 2)).mul_left b
+  rw [show
+      (fun m : ℕ ↦ ∫ x in a..b, (∑ ρ ∈ S m, riemannZetaLogZeroContribution x ρ).re * Q x) =
+        (fun m : ℕ ↦ ∫ x in a..b, (∑ ρ ∈ S m, nontrivialLogZeroTerm x ρ).re * Q x)
+      from by simp only [heq]]
+  apply intervalIntegral.tendsto_integral_filter_of_dominated_convergence (fun x ↦ M * |Q x|)
+  · filter_upwards with m
+    have hc : ContinuousOn (fun x ↦ ∑ ρ ∈ S m, nontrivialLogZeroTerm x ρ) (Set.Icc a b) :=
+      continuousOn_finsetSum (S m) (fun ρ _ ↦ zero_term_continuous (zero_lt_one.trans_le ha) ρ)
+    apply ContinuousOn.aestronglyMeasurable _ measurableSet_uIoc
+    exact
+      ((Complex.continuous_re.comp_continuousOn hc).mul hQ).mono
+        (Set.uIoc_of_le hab ▸ Set.Ioc_subset_Icc_self)
+  · filter_upwards with m
+    filter_upwards with x hx
+    rw [Set.uIoc_of_le hab] at hx
+    rw [Real.norm_eq_abs, abs_mul]
+    apply mul_le_mul_of_nonneg_right _ (abs_nonneg _)
+    calc
+      _ ≤ ‖∑ ρ ∈ S m, nontrivialLogZeroTerm x ρ‖ := Complex.abs_re_le_norm _
+      _ ≤ ∑ ρ ∈ S m, ‖nontrivialLogZeroTerm x ρ‖ := norm_sum_le _ _
+      _ ≤ ∑ ρ ∈ S m, b * RiemannXi.inversePowerZeroWeight 2 ρ :=
+        Finset.sum_le_sum fun ρ _ ↦
+          (norm_nontrivialLogZeroTerm_le (ha.trans hx.1.le) ρ).trans
+            (mul_le_mul_of_nonneg_right hx.2 (RiemannXi.inversePowerZeroWeight_nonneg 2 ρ))
+      _ ≤ M :=
+        hs.sum_le_tsum _
+          (fun ρ _ ↦
+            mul_nonneg (zero_le_one.trans (ha.trans hab))
+              (RiemannXi.inversePowerZeroWeight_nonneg 2 ρ))
+  · exact ((Set.uIcc_of_le hab ▸ hQ).abs.const_mul M).intervalIntegrable
+  · filter_upwards with x hx
+    rw [Set.uIoc_of_le hab] at hx
+    simp only [← heq]
+    exact
+      ((Complex.continuous_re.tendsto _).comp (log_zero_tsum_limit (ha.trans_lt hx.1))).mul_const
+        (Q x)
+
 end PseudoPrime.AnalyticNumberTheory.RiemannZeta

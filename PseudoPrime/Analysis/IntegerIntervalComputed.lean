@@ -87,4 +87,52 @@ theorem interval_contains_of_bounds {G : ℤ} {R S : IntegerInterval} {x : ℝ} 
   have up := div_le_div_of_nonneg_right ((Int.cast_le (R := ℝ)).mpr hu) h
   exact ⟨lo.trans hx.1, hx.2.trans up⟩
 
+/-- Multiply by the exact integer ratio `p/d`, rounding the two endpoints
+outwards. The containment theorem requires a positive denominator. -/
+def IntegerInterval.scaleRatio (I : IntegerInterval) (p d : ℤ) : IntegerInterval :=
+  let J := I.scale p
+  roundInterval d J.lower J.upper
+
+/-- Scaling by an exact ratio preserves containment, including signed data. -/
+theorem IntegerInterval.scaleRatio_contains {G p d : ℤ} {I : IntegerInterval} {x : ℝ} (hG : 0 < G)
+    (hd : 0 < d) (hx : I.Contains G x) : (I.scaleRatio p d).Contains G ((p : ℝ) * x / d) := by
+  let J := I.scale p
+  let R := I.scaleRatio p d
+  have hl := (round_corner hd (l := J.lower) (u := J.lower) le_rfl le_rfl).1
+  have hu := (round_corner hd (l := J.upper) (u := J.upper) le_rfl le_rfl).2
+  change R.lower * d ≤ J.lower at hl
+  change J.upper ≤ R.upper * d at hu
+  have hdl : (0 : ℝ) < d := Int.cast_pos.mpr hd
+  have hGl : (0 : ℝ) < G := Int.cast_pos.mpr hG
+  have hl' : (R.lower : ℝ) * (d : ℝ) ≤ J.lower := by
+    simpa only [Int.cast_mul] using (Int.cast_le (R := ℝ)).mpr hl
+  have hu' : (J.upper : ℝ) ≤ (R.upper : ℝ) * (d : ℝ) := by
+    simpa only [Int.cast_mul] using (Int.cast_le (R := ℝ)).mpr hu
+  refine ⟨?_, ?_⟩
+  · have h := div_le_div_of_nonneg_right ((le_div_iff₀ hdl).mpr hl') hGl.le
+    rw [div_right_comm] at h
+    exact h.trans (div_le_div_of_nonneg_right (scale_contains (k := p) hx).1 hdl.le)
+  · have h := div_le_div_of_nonneg_right ((div_le_iff₀ hdl).mpr hu') hGl.le
+    rw [div_right_comm] at h
+    exact (div_le_div_of_nonneg_right (scale_contains (k := p) hx).2 hdl.le).trans h
+
+/-- Evaluate a row of fixed-point coefficient intervals in ascending degree,
+using two endpoint divisions per Horner step at an exact rational argument. -/
+def intervalRatioHorner (p d : ℤ) (row : List IntegerInterval) : IntegerInterval :=
+  row.foldr (fun c acc ↦ c.add (acc.scaleRatio p d)) ⟨0, 0⟩
+
+/-- Coefficient-wise containment supplies an enclosure for the real Horner
+evaluation, without computing a separate fixed-point interval for the argument. -/
+theorem interval_ratio_horner_contains {G p d : ℤ} {row : List IntegerInterval} {coeff : List ℝ}
+    (hG : 0 < G) (hd : 0 < d)
+    (h : List.Forall₂ (fun I x ↦ IntegerInterval.Contains I G x) row coeff) :
+    (intervalRatioHorner p d row).Contains G
+      (coeff.foldr (fun c acc ↦ c + (p : ℝ) * acc / d) 0) := by
+  induction h with
+  | nil =>
+    simp only [intervalRatioHorner, List.foldr_nil, IntegerInterval.Contains, Int.cast_zero,
+      zero_div, le_refl, and_self]
+  | cons hc _ ih =>
+    exact IntegerInterval.add_contains hc (IntegerInterval.scaleRatio_contains hG hd ih)
+
 end PseudoPrime.Analysis
