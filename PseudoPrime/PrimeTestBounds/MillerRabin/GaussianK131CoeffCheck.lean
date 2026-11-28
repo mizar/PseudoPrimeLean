@@ -13,6 +13,8 @@ import all PseudoPrime.PrimeTestBounds.MillerRabin.GaussianK131Constants
 import all PseudoPrime.PrimeTestBounds.MillerRabin.GaussianK131Reflection
 import PseudoPrime.Analysis.PositiveTaylorTransport
 import PseudoPrime.Analysis.ExponentialTaylorRatio
+import PseudoPrime.Analysis.ExponentialFixedPointUpperBounds
+import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianDirectMiddleExp
 import Mathlib.Data.List.GetD
 import Mathlib.Tactic
 
@@ -618,6 +620,124 @@ private theorem gram_cast (j : Fin 4) : gram j = (gramRat j : ℝ) := by
   · change (-13 / 1250 : ℝ) = ((-13 / 1250 : ℚ) : ℝ)
     norm_num only [Rat.cast_div, Rat.cast_neg, Rat.cast_ofNat]
 
+/-- Working scale for the range-reduced exponential computed by the row checker. -/
+private def expTickScale : ℕ :=
+  10 ^ 32
+
+/-- Accumulate each Taylor term once and keep the sum of the preceding terms. -/
+private def expTaylorAccum (next : ℕ → ℕ → ℕ) (initial : ℕ) : ℕ → ℕ × ℕ
+  | 0 => (initial, 0)
+  | j + 1 =>
+    let p := expTaylorAccum next initial j
+    (next j p.1, p.2 + p.1)
+
+/-- The accumulator agrees with the term recurrence and its partial sum. -/
+private theorem exp_taylor_accum_eq (next : ℕ → ℕ → ℕ) (f : ℕ → ℕ)
+    (hf : ∀ j, f (j + 1) = next j (f j)) (n : ℕ) :
+    expTaylorAccum next (f 0) n = (f n, ∑ j ∈ Finset.range n, f j) := by
+  induction n with
+  | zero => simp only [expTaylorAccum, Finset.range_zero, Finset.sum_empty]
+  | succ n ih => simp only [expTaylorAccum, ih, Finset.sum_range_succ, hf]
+
+/-- Round the next scaled Taylor term down by natural division. -/
+private def expLowerStep (a b j x : ℕ) : ℕ :=
+  x * a / (b * (j + 1))
+
+/-- Round the next scaled Taylor term up by ceiling division. -/
+private def expUpperStep (a b j x : ℕ) : ℕ :=
+  (x * a + b * (j + 1) - 1) / (b * (j + 1))
+
+/-- The scaled lower and upper Taylor sums at the reduced nonnegative argument. -/
+private def expTickSeed (a b : ℕ) : Analysis.IntegerInterval :=
+  let L := expTaylorAccum (expLowerStep a b) expTickScale 24
+  let U := expTaylorAccum (expUpperStep a b) expTickScale 24
+  ⟨L.2, (U.2 + 2 * U.1 : ℕ)⟩
+
+/-- The shared recurrence computes the existing lower and upper Taylor sums. -/
+private theorem exp_tick_seed_eq (a b : ℕ) :
+    expTickSeed a b =
+      ⟨Analysis.expFixedPointLowerSum a b expTickScale 24,
+        Analysis.expFixedPointUpperSum a b expTickScale 24⟩ := by
+  have hl :=
+    exp_taylor_accum_eq (expLowerStep a b) (Analysis.expFixedPointLowerTerm a b expTickScale)
+      (fun _ ↦ rfl) 24
+  have hu :=
+    exp_taylor_accum_eq (expUpperStep a b) (Analysis.expFixedPointUpperTerm a b expTickScale)
+      (fun _ ↦ rfl) 24
+  change expTaylorAccum (expLowerStep a b) expTickScale 24 = _ at hl
+  change expTaylorAccum (expUpperStep a b) expTickScale 24 = _ at hu
+  simp only [expTickSeed, hl, hu, Analysis.expFixedPointLowerSum, Analysis.expFixedPointUpperSum]
+
+/-- At a reduced argument at most one, the 24-term integer sums enclose the exponential. -/
+private theorem exp_tick_seed_sound (a b : ℕ) (hb : 0 < b) (h : (a : ℝ) / b ≤ 1) :
+    (expTickSeed a b).Contains expTickScale (Real.exp ((a : ℝ) / b)) := by
+  have hs : (0 : ℝ) < expTickScale := Nat.cast_pos.mpr (by decide)
+  have hsize : ((a : ℝ) / b) / (24 + 1 : ℕ) ≤ 1 / 2 := by
+    norm_num only at *
+    linarith only [h]
+  exact
+    ⟨(div_le_iff₀ hs).mpr
+        (by
+          simpa only [exp_tick_seed_eq, Int.cast_natCast, mul_comm] using
+            Analysis.expFixedPointLowerSum_le_exp a b expTickScale 24),
+      (le_div_iff₀ hs).mpr
+        (by
+          simpa only [exp_tick_seed_eq, Int.cast_natCast, mul_comm] using
+            Analysis.expFixedPointUpperSum_ge_exp a b expTickScale 24 hb hsize)⟩
+
+/-- Enclose a nonnegative rational argument by raising the reduced enclosure to the 64th power. -/
+private def expPositiveTicks (t : ℚ) : Analysis.IntegerInterval :=
+  gaussianMidExpFold expTickScale 64 ⟨expTickScale, expTickScale⟩
+    (expTickSeed t.num.natAbs (64 * t.den))
+
+/-- For a rational argument in [0,16], the binary interval evaluation encloses its exponential. -/
+private theorem exp_positive_ticks_sound {t : ℚ} (ht : 0 ≤ t) (htmax : t ≤ 16) :
+    (expPositiveTicks t).Contains expTickScale (Real.exp (t : ℝ)) := by
+  have hnum : 0 ≤ t.num := Rat.num_nonneg.mpr ht
+  have hden : 0 < 64 * t.den := Nat.mul_pos (by decide) t.den_pos
+  have htR : (t : ℝ) ≤ 16 := by exact_mod_cast htmax
+  have hx : (t.num.natAbs : ℝ) / ((64 * t.den : ℕ) : ℝ) = (t : ℝ) / 64 := by
+    rw [← Int.cast_natCast, Int.natAbs_of_nonneg hnum]
+    simp only [Nat.cast_mul, Nat.cast_ofNat, Rat.cast_def, div_div]
+    rw [mul_comm (64 : ℝ)]
+  have hseed :=
+    exp_tick_seed_sound t.num.natAbs (64 * t.den) hden
+      (by
+        rw [hx]; linarith only [htR])
+  have hG : (0 : ℤ) < (expTickScale : ℤ) := by decide
+  have hs : (0 : ℝ) < expTickScale := Nat.cast_pos.mpr (by decide)
+  have hone : (Analysis.IntegerInterval.mk expTickScale expTickScale).Contains expTickScale 1 := by
+    simp only [Analysis.IntegerInterval.Contains, Int.cast_natCast, div_self hs.ne', le_refl,
+      and_self]
+  have hf := gaussian_mid_exp_fold_contains hG 64 hone hseed
+  have he : (64 : ℝ) * ((t : ℝ) / 64) = (t : ℝ) := by
+    rw [mul_comm, div_mul_cancel₀ _ (by norm_num only)]
+  simpa only [expPositiveTicks, hx, one_mul, ← Real.exp_natCast_mul, Nat.cast_ofNat, he] using hf
+
+/-- Enclose a signed exponent, using a reciprocal for the negative case. -/
+private def expSignedTicks (t : ℚ) (I : Analysis.IntegerInterval) : Analysis.IntegerInterval :=
+  if 0 ≤ t then I else gaussianMidScaledInv expTickScale 1 I
+
+/-- For absolute argument at most 16 and positive input ticks, the signed enclosure is sound. -/
+private theorem exp_signed_ticks_sound {t : ℚ} (ht : |t| ≤ 16)
+    (hp : 0 < (expPositiveTicks |t|).lower) :
+    (expSignedTicks t (expPositiveTicks |t|)).Contains expTickScale (Real.exp (t : ℝ)) := by
+  unfold expSignedTicks
+  split
+  · rename_i h
+    rw [abs_of_nonneg h]
+    exact exp_positive_ticks_sound h ((le_abs_self t).trans ht)
+  · rename_i h
+    have hn : 0 ≤ -t := neg_nonneg.mpr (le_of_not_ge h)
+    have hh := exp_positive_ticks_sound hn ((neg_le_abs t).trans ht)
+    have hl : 0 < (expPositiveTicks (-t)).lower := by
+      simpa only [abs_of_neg (lt_of_not_ge h)] using hp
+    have hv :=
+      gaussian_mid_scaled_inv (by decide : (0 : ℤ) < (expTickScale : ℤ)) (by decide : (0 : ℤ) ≤ 1)
+        hl hh
+    rw [abs_of_neg (lt_of_not_ge h)]
+    simpa only [Int.cast_one, Rat.cast_neg, one_div, ← Real.exp_neg, neg_neg] using hv
+
 private def expRoundedRows : List (ℚ × ℕ) :=
   [(-729 / 64, 113009360431463080), (-243 / 32, 5035890497369525153),
     (-297 / 40, 5961608766843588517), (-2349 / 320, 6486449911098249323),
@@ -634,42 +754,60 @@ private def expRoundedRows : List (ℚ × ℕ) :=
 private def expRoundScale : ℚ :=
   10 ^ 22
 
+/-- Verify that the computed enclosure fits inside the recorded adjacent decimal ticks. -/
 private def expRoundValid (r : ℚ × ℕ) : Bool :=
+  let I := expPositiveTicks |r.1|
+  let J := expSignedTicks r.1 I
   decide
-    ((r.2 : ℚ) / expRoundScale ≤ expWeightLower r.1 ∧
-      expWeightUpper r.1 ≤ ((r.2 : ℚ) + 1) / expRoundScale)
+    (|r.1| ≤ 16 ∧
+      0 < I.lower ∧
+      (r.2 : ℤ) * expTickScale ≤ J.lower * (10 ^ 22 : ℤ) ∧
+      J.upper * (10 ^ 22 : ℤ) ≤ ((r.2 : ℤ) + 1) * expTickScale)
 
 private theorem exp_rounded_valid : expRoundedRows.all expRoundValid = true := by decide +kernel
+
+/-- A checked decimal row encloses the exponential at its recorded argument. -/
+private theorem exp_round_sound (r : ℚ × ℕ) (h : expRoundValid r = true) :
+    (r.2 : ℝ) / expRoundScale ≤ Real.exp (r.1 : ℝ) ∧
+      Real.exp (r.1 : ℝ) ≤ ((r.2 : ℝ) + 1) / expRoundScale := by
+  obtain ⟨ht, hp, hlo, hhi⟩ := of_decide_eq_true h
+  obtain ⟨hl, hu⟩ := exp_signed_ticks_sound ht hp
+  have hD : (0 : ℝ) < (10 : ℝ) ^ 22 := by norm_num only
+  have hG : (0 : ℝ) < (expTickScale : ℝ) := Nat.cast_pos.mpr (by decide)
+  have hloR := (Int.cast_le (R := ℝ)).mpr hlo
+  have hhiR := (Int.cast_le (R := ℝ)).mpr hhi
+  simp only [Int.cast_mul, Int.cast_natCast, Int.cast_pow, Int.cast_ofNat, Int.cast_add,
+    Int.cast_one] at hloR hhiR
+  simp only [expRoundScale, Rat.cast_pow, Rat.cast_ofNat]
+  exact ⟨((div_le_div_iff₀ hD hG).mpr hloR).trans hl, hu.trans ((div_le_div_iff₀ hG hD).mpr hhiR)⟩
 
 private def expRounded (t : ℚ) : ℚ × ℚ :=
   match expRoundedRows.find? (fun r ↦ r.1 == t) with
   | some r => ((r.2 : ℚ) / expRoundScale, ((r.2 : ℚ) + 1) / expRoundScale)
   | none => (expWeightLower t, expWeightUpper t)
 
-private theorem exp_rounded_bounds (t : ℚ) :
-    (expRounded t).1 ≤ expWeightLower t ∧ expWeightUpper t ≤ (expRounded t).2 := by
+/-- The stored rounded interval encloses the exponential, with Taylor bounds for other inputs. -/
+private theorem exp_rounded_bounds {t : ℚ} (ht : |t| ≤ 16) :
+    ((expRounded t).1 : ℝ) ≤ Real.exp (t : ℝ) ∧ Real.exp (t : ℝ) ≤ ((expRounded t).2 : ℝ) := by
   unfold expRounded
   split
   · rename_i r hr
-    have hm := List.mem_of_find?_eq_some hr
+    have hv := List.all_eq_true.mp exp_rounded_valid r (List.mem_of_find?_eq_some hr)
     have hk := List.find?_some hr
-    have hv := (List.all_eq_true.mp exp_rounded_valid) r hm
     have he : r.1 = t := eq_of_beq hk
-    have hc := of_decide_eq_true hv
-    simpa only [he] using hc
-  · exact ⟨le_rfl, le_rfl⟩
+    simpa only [Rat.cast_div, Rat.cast_natCast, Rat.cast_add, Rat.cast_one, he] using
+      exp_round_sound r hv
+  · exact exp_weight_bounds ht
 
 private def expContributionUpper (t v : ℚ) : ℚ :=
   let b := expRounded t
   max (b.1 * v) (b.2 * v)
 
-private theorem exp_contribution_le {t v : ℚ} {w : ℝ}
-    (hw : (expWeightLower t : ℝ) ≤ w ∧ w ≤ (expWeightUpper t : ℝ)) :
-    w * (v : ℝ) ≤ (expContributionUpper t v : ℝ) := by
+/-- The sign of the coefficient determines which rounded endpoint supplies an upper bound. -/
+private theorem exp_contribution_le {t v : ℚ} (ht : |t| ≤ 16) :
+    Real.exp (t : ℝ) * (v : ℝ) ≤ (expContributionUpper t v : ℝ) := by
   simp only [expContributionUpper, Rat.cast_max, Rat.cast_mul]
-  obtain ⟨hl, hu⟩ := exp_rounded_bounds t
-  have hlo := ((Rat.cast_le (K := ℝ)).mpr hl).trans hw.1
-  have hhi := hw.2.trans ((Rat.cast_le (K := ℝ)).mpr hu)
+  obtain ⟨hlo, hhi⟩ := exp_rounded_bounds ht
   by_cases hv : 0 ≤ (v : ℝ)
   · exact (mul_le_mul_of_nonneg_right hhi hv).trans (le_max_right _ _)
   · exact (mul_le_mul_of_nonpos_right hlo (le_of_not_ge hv)).trans (le_max_left _ _)
@@ -684,36 +822,75 @@ private theorem shifted_fourier_linear_le {ι : Type*} (s : Finset ι) (k : ι �
       (shiftedFourierUpper h (∑ j ∈ s, c j / 2 * shiftedCoeff 10 fourierCoeff |h| (k j))
           (∑ j ∈ s, c j / 2 * shiftedCoeff 10 fourierCoeff (-|h|) (k j)) :
         ℝ) := by
-  obtain ⟨hlo, hhi⟩ := exp_fourier_weights h hh
+  have ht : 0 ≤ (27 / 16 : ℚ) * |h| := mul_nonneg (by norm_num only) (abs_nonneg _)
+  have hmax : |((27 / 16 : ℚ) * |h|)| ≤ 16 := by
+    rw [abs_of_nonneg ht]
+    linarith only [hh]
   have h₁ :=
-    exp_contribution_le (v := ∑ j ∈ s, c j / 2 * shiftedCoeff 10 fourierCoeff |h| (k j)) hlo
+    exp_contribution_le (t := -((27 / 16) * |h|)) (v :=
+      ∑ j ∈ s, c j / 2 * shiftedCoeff 10 fourierCoeff |h| (k j))
+      (by simpa only [abs_neg] using hmax)
   have h₂ :=
-    exp_contribution_le (v := ∑ j ∈ s, c j / 2 * shiftedCoeff 10 fourierCoeff (-|h|) (k j)) hhi
+    exp_contribution_le (v := ∑ j ∈ s, c j / 2 * shiftedCoeff 10 fourierCoeff (-|h|) (k j)) hmax
   simp only [shiftedFourierUpper, Rat.cast_add]
   refine le_trans ?_ (add_le_add h₁ h₂)
-  simp only [Rat.cast_sum, Rat.cast_mul, Rat.cast_div, Rat.cast_ofNat, Finset.mul_sum,
+  simp only [Rat.cast_sum, Rat.cast_mul, Rat.cast_div, Rat.cast_ofNat, Rat.cast_neg, Finset.mul_sum,
     ← Finset.sum_add_distrib]
   apply le_of_eq
   apply Finset.sum_congr rfl
   intro j _
   unfold shiftedFourierCoeff
+  simp only [neg_mul]
   ring
 
 private def fourierLinearUpper {ι : Type*} (s : Finset ι) (k : ι → ℕ) (c : ι → ℚ) (h : ℚ) : ℚ :=
   shiftedFourierUpper h (∑ j ∈ s, c j / 2 * shiftedCoeff 10 fourierCoeff |h| (k j))
     (∑ j ∈ s, c j / 2 * shiftedCoeff 10 fourierCoeff (-|h|) (k j))
 
+/-- The seven distinct shifts of the quadratic Gram part, including the diagonal. -/
+private def gramPairOffset : Fin 7 → ℚ :=
+  ![0, offsetRat 0 - offsetRat 1, offsetRat 0 - offsetRat 2, offsetRat 0 - offsetRat 3,
+    offsetRat 1 - offsetRat 2, offsetRat 1 - offsetRat 3, offsetRat 2 - offsetRat 3]
+
+/-- Combine the four diagonal weights and the two weights of each off-diagonal pair. -/
+private def gramPairWeight : Fin 7 → ℚ :=
+  ![(gramRat 0 ^ 2 + gramRat 1 ^ 2 + gramRat 2 ^ 2 + gramRat 3 ^ 2) / 2, gramRat 0 * gramRat 1,
+    gramRat 0 * gramRat 2, gramRat 0 * gramRat 3, gramRat 1 * gramRat 2, gramRat 1 * gramRat 3,
+    gramRat 2 * gramRat 3]
+
+/-- The shifted Fourier coefficient depends on the absolute difference only. -/
+private theorem shifted_fourier_sub_swap (a b : ℚ) (k : ℕ) :
+    shiftedFourierCoeff (a - b) k = shiftedFourierCoeff (b - a) k := by
+  simp only [shiftedFourierCoeff, abs_sub_comm a b]
+
+/-- Collect symmetric Gram terms before applying a numerical interval bound. -/
+private theorem gram_pair_group_eq (k : ℕ) :
+    (∑ i : Fin 4,
+        ∑ j : Fin 4,
+          ((gramRat i : ℝ) * gramRat j / 2) * shiftedFourierCoeff (offsetRat i - offsetRat j) k) =
+      ∑ i : Fin 7, (gramPairWeight i : ℝ) * shiftedFourierCoeff (gramPairOffset i) k := by
+  simp only [Fin.sum_univ_succ, Fin.sum_univ_zero, Fin.succ_zero_eq_one, add_zero, gramPairOffset,
+    gramPairWeight, Matrix.cons_val_zero, Matrix.cons_val_succ, Rat.cast_add, Rat.cast_div,
+    Rat.cast_mul, Rat.cast_pow, Rat.cast_ofNat, sub_self]
+  have h₂ : (1 : Fin 3).succ = (2 : Fin 4) := rfl
+  have h₃ : (1 : Fin 2).succ.succ = (3 : Fin 4) := rfl
+  rw [h₂, h₃, shifted_fourier_sub_swap (offsetRat 1) (offsetRat 0),
+    shifted_fourier_sub_swap (offsetRat 2) (offsetRat 0),
+    shifted_fourier_sub_swap (offsetRat 3) (offsetRat 0),
+    shifted_fourier_sub_swap (offsetRat 2) (offsetRat 1),
+    shifted_fourier_sub_swap (offsetRat 3) (offsetRat 1),
+    shifted_fourier_sub_swap (offsetRat 3) (offsetRat 2)]
+  ring
+
+/-- The four linear shifts and the seven distinct quadratic shifts bound the Gram row. -/
 private def gramLinearUpper {ι : Type*} (s : Finset ι) (k : ι → ℕ) (c : ι → ℚ) : ℚ :=
   (∑ j : Fin 4, fourierLinearUpper s k (fun r ↦ c r * -gramRat j) (9 / 4 + offsetRat j)) +
-    ∑ i : Fin 4,
-      ∑ j : Fin 4,
-        fourierLinearUpper s k (fun r ↦ c r * (gramRat i * gramRat j / 2))
-          (offsetRat i - offsetRat j)
+    ∑ j : Fin 7, fourierLinearUpper s k (fun r ↦ c r * gramPairWeight j) (gramPairOffset j)
 
 private theorem gram_fourier_linear_le {ι : Type*} (s : Finset ι) (k : ι → ℕ) (c : ι → ℚ) :
     (∑ r ∈ s, (c r : ℝ) * gramFourierCoeff (k r)) ≤ (gramLinearUpper s k c : ℝ) := by
-  simp only [gramFourierCoeff, gramLinearUpper, mul_add, Finset.sum_add_distrib, Finset.mul_sum,
-    ← mul_assoc, Rat.cast_add, Rat.cast_sum, gram_cast]
+  simp only [gramFourierCoeff, gram_cast, gram_pair_group_eq, gramLinearUpper, mul_add,
+    Finset.sum_add_distrib, Finset.mul_sum, ← mul_assoc, Rat.cast_add, Rat.cast_sum]
   apply add_le_add
   · rw [Finset.sum_comm]
     apply Finset.sum_le_sum
@@ -725,17 +902,10 @@ private theorem gram_fourier_linear_le {ι : Type*} (s : Finset ι) (k : ι → 
       shifted_fourier_linear_le s k (fun r ↦ c r * -gramRat j) _ hh
   · rw [Finset.sum_comm]
     apply Finset.sum_le_sum
-    intro i _
-    rw [Finset.sum_comm]
-    apply Finset.sum_le_sum
     intro j _
-    have hh : |offsetRat i - offsetRat j| ≤ (7 : ℚ) := by
-      rw [abs_le]
-      exact
-        ⟨by linarith only [(offset_bounds i).1, (offset_bounds j).2], by
-          linarith only [(offset_bounds i).2, (offset_bounds j).1]⟩
-    simpa only [fourierLinearUpper, Rat.cast_mul, Rat.cast_div, Rat.cast_ofNat] using
-      shifted_fourier_linear_le s k (fun r ↦ c r * (gramRat i * gramRat j / 2)) _ hh
+    have hh : |gramPairOffset j| ≤ (7 : ℚ) := by fin_cases j <;> decide +kernel
+    simpa only [fourierLinearUpper, Rat.cast_mul] using
+      shifted_fourier_linear_le s k (fun r ↦ c r * gramPairWeight j) _ hh
 
 private noncomputable def shiftedInverseCoeff (k : ℕ) : ℝ :=
   ∑ j : Fin 4,
@@ -757,13 +927,11 @@ private theorem inverse_linear_le {ι : Type*} (s : Finset ι) (k : ι → ℕ) 
   rw [Finset.sum_comm]
   apply Finset.sum_le_sum
   intro j _
-  have hb :=
-    (exp_fourier_weights (offsetRat j)
-        (by
-          rw [abs_of_nonneg (offset_bounds j).1]; linarith only [(offset_bounds j).2])).2
-  rw [abs_of_nonneg (offset_bounds j).1] at hb
+  have hb : |(27 / 16 : ℚ) * offsetRat j| ≤ 16 := by
+    rw [abs_of_nonneg (mul_nonneg (by norm_num only) (offset_bounds j).1)]
+    linarith only [(offset_bounds j).2]
   refine le_trans ?_ (exp_contribution_le hb)
-  simp only [Rat.cast_sum, Rat.cast_mul, Rat.cast_neg, Finset.mul_sum]
+  simp only [Rat.cast_sum, Rat.cast_mul, Rat.cast_neg, Rat.cast_div, Rat.cast_ofNat, Finset.mul_sum]
   apply le_of_eq
   apply Finset.sum_congr rfl
   intro r _
@@ -774,11 +942,10 @@ private def prefactorLinearUpper (v : ℚ) : ℚ :=
 
 private theorem prefactor_linear_le (v : ℚ) :
     k131Prefactor * (v : ℝ) ≤ (prefactorLinearUpper v : ℝ) := by
-  have hw :=
-    exp_weight_bounds (t := -(27 / 16) * (9 / 4))
+  have h :=
+    exp_contribution_le (t := -(27 / 16) * (9 / 4)) (v := gaussianK131Amplitude * v)
       (by
         rw [abs_le]; constructor <;> norm_num only)
-  have h := exp_contribution_le (v := gaussianK131Amplitude * v) hw
   simpa only [prefactorLinearUpper, k131Prefactor, Rat.cast_mul, Rat.cast_neg, Rat.cast_div,
     Rat.cast_ofNat, mul_left_comm, mul_comm, mul_assoc] using h
 
@@ -1134,12 +1301,68 @@ private theorem collect_gram_linear {ι : Type*} (s : Finset ι) (k : ι → ℕ
   intro r hr
   rw [(Finset.mem_filter.mp hr).2]
 
-private def gramTailWeight {ι : Type*} (s : Finset ι) (k : ι → ℕ) (c : ι → ℚ) (j : ℕ) : ℚ :=
+/-- The three analytic sums grouped by the Fourier coefficient index. -/
+private def gramTailGather {ι : Type*} (s : Finset ι) (k : ι → ℕ) (c : ι → ℚ) (j : ℕ) : ℚ :=
   collectWeight (s.filter (fun r ↦ 2 ≤ k r)) (fun r ↦ k r - 2) c j +
     collectWeight (tailMomentIndices s k) (fun r ↦ k r.1 + r.2 - 2)
       (fun r ↦ tailMomentWeight k c r * (35 / 16)) j +
     collectWeight (tailMomentIndices s k) (fun r ↦ k r.1 + r.2 - 2 + 1)
       (fun r ↦ tailMomentWeight k c r * -(((k r.1 + r.2 - 2 : ℕ) : ℚ) + 1)) j
+
+/-- A tail index is in the second-moment support exactly when it is shifted by two. -/
+private theorem tail_index_eq (m j : ℕ) : (2 ≤ m ∧ m - 2 = j) ↔ m = j + 2 := by
+  constructor
+  · rintro ⟨hm, hj⟩
+    exact (Nat.sub_add_cancel hm).symm.trans (congrArg (· + 2) hj)
+  · rintro rfl
+    exact ⟨Nat.le_add_left _ _, Nat.add_sub_cancel _ _⟩
+
+/-- Gather a tail weight directly at the corresponding moment coefficient. -/
+private theorem collect_tail_moment {ι : Type*} (s : Finset ι) (k : ι → ℕ) (c : ι → ℚ) (j : ℕ)
+    (f : ℕ → ℚ) :
+    collectWeight (tailMomentIndices s k) (fun r ↦ k r.1 + r.2 - 2)
+        (fun r ↦ tailMomentWeight k c r * f (k r.1 + r.2 - 2)) j =
+      momentGramWeight s k c (27 / 16) 0 (j + 2) * f j := by
+  have he :
+    (tailMomentIndices s k).filter (fun r ↦ k r.1 + r.2 - 2 = j) =
+      (s ×ˢ Finset.range 20).filter (fun r ↦ k r.1 + r.2 = j + 2) := by
+    rw [tailMomentIndices, Finset.filter_filter]
+    apply Finset.filter_congr
+    intro r _
+    exact tail_index_eq (k r.1 + r.2) j
+  rw [collectWeight, he, ← moment_gram_fiber, Finset.sum_mul]
+  apply Finset.sum_congr rfl
+  intro r hr
+  have hk := (tail_index_eq _ _).mpr (Finset.mem_filter.mp hr).2
+  rw [hk.2, tailMomentWeight]
+
+/-- The derivative shifts the gathered moment weight by one degree. -/
+private theorem collect_tail_succ {ι : Type*} (s : Finset ι) (k : ι → ℕ) (c : ι → ℚ) (j : ℕ) :
+    collectWeight (tailMomentIndices s k) (fun r ↦ k r.1 + r.2 - 2 + 1)
+        (fun r ↦ tailMomentWeight k c r * -(((k r.1 + r.2 - 2 : ℕ) : ℚ) + 1)) j =
+      (if j = 0 then 0 else momentGramWeight s k c (27 / 16) 0 (j + 1) * -(j : ℚ)) := by
+  cases j with
+  | zero =>
+    simp only [collectWeight, Nat.add_one_ne_zero, Finset.filter_false, Finset.sum_empty,
+      ite_eq_left]
+  | succ j =>
+    have h := collect_tail_moment s k c j (fun u ↦ -((u : ℚ) + 1))
+    simp only [collectWeight, Nat.add_right_cancel_iff, Nat.add_one_ne_zero, Nat.cast_add,
+      Nat.cast_one] at h ⊢
+    exact h
+
+/-- Compute a tail weight with two scalar moment lookups and no filtered product. -/
+private def gramTailWeight {ι : Type*} (s : Finset ι) (k : ι → ℕ) (c : ι → ℚ) (j : ℕ) : ℚ :=
+  collectWeight (s.filter (fun r ↦ 2 ≤ k r)) (fun r ↦ k r - 2) c j +
+    momentGramWeight s k c (27 / 16) 0 (j + 2) * (35 / 16) +
+    (if j = 0 then 0 else momentGramWeight s k c (27 / 16) 0 (j + 1) * -(j : ℚ))
+
+/-- The numerical weight agrees with the fixed fibers of the analytic sum. -/
+private theorem gram_tail_gather_eq {ι : Type*} (s : Finset ι) (k : ι → ℕ) (c : ι → ℚ) :
+    gramTailGather s k c = gramTailWeight s k c := by
+  funext j
+  unfold gramTailGather gramTailWeight
+  rw [collect_tail_moment s k c j (fun _ ↦ 35 / 16), collect_tail_succ]
 
 private def gramTailUpper {ι : Type*} (s : Finset ι) (k : ι → ℕ) (c : ι → ℚ) : ℚ :=
   gramLinearUpper (Finset.range 10) id (gramTailWeight s k c)
@@ -1150,7 +1373,11 @@ private theorem gram_tail_linear_le {ι : Type*} (s : Finset ι) (k : ι → ℕ
   rw [collect_gram_linear (s.filter (fun r ↦ 2 ≤ k r)), collect_gram_linear (tailMomentIndices s k),
     collect_gram_linear (tailMomentIndices s k)]
   simp only [← Finset.sum_add_distrib, ← add_mul, ← Rat.cast_add]
-  exact gram_fourier_linear_le (Finset.range 10) id (gramTailWeight s k c)
+  change
+    (∑ j ∈ Finset.range 10, (gramTailGather s k c j : ℝ) * gramFourierCoeff j) ≤
+      (gramTailUpper s k c : ℝ)
+  rw [gramTailUpper, ← gram_tail_gather_eq s k c]
+  exact gram_fourier_linear_le (Finset.range 10) id (gramTailGather s k c)
 
 private noncomputable def gammaRemainderCoeff (k : ℕ) : ℝ :=
   let g := fun j : ℕ ↦
@@ -1175,22 +1402,118 @@ private theorem coeff_shift_real {P : Polynomial ℝ} {d : ℕ} (hd : P.natDegre
 private def momentRat (c : ℕ → ℚ) (a : ℚ) (k : ℕ) : ℚ :=
   ∑ j ∈ Finset.range 20, momentWeight a 0 k j * c (k + j)
 
+/-- Apply the falling-factorial recurrence to one nonconstant term. -/
+private theorem moment_rat_step_term (c : ℕ → ℚ) {a : ℚ} (ha : a ≠ 0) (k j : ℕ) :
+    momentWeight a 0 k (j + 1) * c (k + (j + 1)) =
+      ((k : ℚ) + 1) / a * (momentWeight a 0 (k + 1) j * c (k + 1 + j)) := by
+  have hj : k + (j + 1) = k + 1 + j := (Nat.add_assoc k j 1).symm.trans (Nat.add_right_comm k j 1)
+  simp only [momentWeight, ite_true, hj, Nat.descFactorial_succ, Nat.add_sub_cancel, pow_succ,
+    Nat.cast_mul, Nat.cast_add, Nat.cast_one]
+  field_simp [ha]
+
+/-- A supported moment coefficient depends only on the next coefficient. -/
+private theorem moment_rat_step (c : ℕ → ℚ) {a : ℚ} (ha : a ≠ 0) (hz : ∀ n, 20 ≤ n → c n = 0)
+    (k : ℕ) : momentRat c a k = c k / a + ((k : ℚ) + 1) / a * momentRat c a (k + 1) := by
+  have h := hz (k + 1 + 19) (Nat.le_add_left 20 k)
+  have hs :
+    momentRat c a (k + 1) = ∑ j ∈ Finset.range 19, momentWeight a 0 (k + 1) j * c (k + 1 + j) := by
+    rw [momentRat, show 20 = 19 + 1 by rfl, Finset.sum_range_succ, h, mul_zero, add_zero]
+  rw [momentRat, show 20 = 19 + 1 by rfl, Finset.sum_range_succ', hs, Finset.mul_sum]
+  rw [add_comm]
+  congr 1
+  · simp only [momentWeight, ite_true, Nat.add_zero, Nat.descFactorial_zero, Nat.cast_one, zero_add,
+      pow_one, div_eq_mul_inv, one_mul]
+    ring
+  · exact Finset.sum_congr rfl (fun j _ ↦ moment_rat_step_term c ha k j)
+
+/-- Compute a suffix of moment coefficients in one backward pass. -/
+private def momentSuffix (c : ℕ → ℚ) (a : ℚ) : ℕ → ℕ → List ℚ
+  | 0, _ => []
+  | n + 1, k =>
+    let tail := momentSuffix c a n (k + 1)
+    (c k / a + ((k : ℚ) + 1) / a * tail.getD 0 0) :: tail
+
+/-- Moments vanish above the support of their input coefficients. -/
+private theorem moment_rat_zero (c : ℕ → ℚ) (a : ℚ) (hz : ∀ n, 20 ≤ n → c n = 0) {k : ℕ}
+    (hk : 20 ≤ k) : momentRat c a k = 0 := by
+  unfold momentRat
+  apply Finset.sum_eq_zero
+  intro j _
+  rw [hz _ (hk.trans (Nat.le_add_right _ _)), mul_zero]
+
+/-- Every entry of the backward pass is the corresponding finite moment. -/
+private theorem moment_suffix_get (c : ℕ → ℚ) {a : ℚ} (ha : a ≠ 0) (hz : ∀ n, 20 ≤ n → c n = 0)
+    (n k j : ℕ) (h : 20 ≤ k + n) : (momentSuffix c a n k).getD j 0 = momentRat c a (k + j) := by
+  induction n generalizing k j with
+  | zero =>
+    have hk : 20 ≤ k := by simpa only [Nat.add_zero] using h
+    exact (moment_rat_zero c a hz (hk.trans (Nat.le_add_right _ _))).symm
+  | succ n
+    ih =>
+    have h' : 20 ≤ k + 1 + n := by
+      rw [Nat.add_right_comm k 1 n, Nat.add_assoc]
+      exact h
+    cases j with
+    | zero =>
+      simpa only [momentSuffix, List.getD_cons_zero, Nat.add_zero, ih (k + 1) 0 h'] using
+        (moment_rat_step c ha hz k).symm
+    | succ
+      j =>
+      have he : k + (j + 1) = k + 1 + j :=
+        (Nat.add_assoc k j 1).symm.trans (Nat.add_right_comm k j 1)
+      simpa only [momentSuffix, List.getD_cons_succ, he] using ih (k + 1) j h'
+
 private theorem cast_moment_rat (c : ℕ → ℚ) (a : ℚ) (k : ℕ) :
     (momentRat c a k : ℝ) = momentCoeff (fun j ↦ (c j : ℝ)) (a : ℝ) 0 k := by
   simp only [momentRat, moment_coeff_weights, Rat.cast_sum, Rat.cast_mul]
 
+/-- Read a finite moment from the shared backward row. -/
+private def momentRowAt (c : ℕ → ℚ) (a : ℚ) (k : ℕ) : ℚ :=
+  (momentSuffix c a 20 0).getD k 0
+
+/-- A supported backward row has the same real coefficients as the analytic moment. -/
+private theorem cast_moment_row (c : ℕ → ℚ) {a : ℚ} (ha : a ≠ 0) (hz : ∀ n, 20 ≤ n → c n = 0)
+    (k : ℕ) : (momentRowAt c a k : ℝ) = momentCoeff (fun j ↦ (c j : ℝ)) (a : ℝ) 0 k := by
+  rw [momentRowAt, moment_suffix_get c ha hz 20 0 k (by decide), Nat.zero_add]
+  exact cast_moment_rat c a k
+
+/-- The finite inverse row has no terms above degree 19. -/
+private theorem inverse_rat_zero (n : ℕ) (hn : 20 ≤ n) : inverseCoeff n = 0 := by
+  unfold inverseCoeff
+  apply List.getD_eq_default
+  exact hn
+
+/-- The finite Fourier row has no terms above degree 9. -/
+private theorem fourier_rat_zero {n : ℕ} (hn : 10 ≤ n) : fourierCoeff n = 0 := by
+  unfold fourierCoeff
+  apply List.getD_eq_default
+  exact hn
+
+/-- Compute the Fourier coefficients entering the first tail moment. -/
+private def fourierTailInput (j : ℕ) : ℚ :=
+  if j < 2 then 0
+  else (35 / 16) * fourierCoeff (j - 2) - fourierCoeff (j - 2 + 1) * ((j - 2 : ℕ) + 1 : ℚ)
+
+/-- The Fourier tail input fits within the backward row. -/
+private theorem fourier_tail_input_zero (j : ℕ) (hj : 20 ≤ j) : fourierTailInput j = 0 := by
+  have hj' : 10 ≤ j - 2 := Nat.le_sub_of_add_le ((by decide : 10 + 2 ≤ 20).trans hj)
+  simp only [fourierTailInput, ite_eq_right (not_lt.mpr ((by decide : 2 ≤ 20).trans hj)),
+    fourier_rat_zero hj', fourier_rat_zero (hj'.trans (Nat.le_add_right _ _)), mul_zero, zero_mul,
+    sub_zero]
+
+/-- Interpret the Fourier tail moment produced by the backward pass. -/
+private theorem cast_fourier_moment (k : ℕ) :
+    (momentRowAt fourierTailInput (27 / 16) k : ℝ) =
+      momentCoeff (fun j ↦ (fourierTailInput j : ℝ)) ((27 / 16 : ℚ) : ℝ) 0 k :=
+  cast_moment_row fourierTailInput (by norm_num only) fourier_tail_input_zero k
+
 private def fourierTailRat (k : ℕ) : ℚ :=
-  (if k < 2 then 0 else fourierCoeff (k - 2)) +
-    momentRat
-      (fun j ↦
-        if j < 2 then 0
-        else (35 / 16) * fourierCoeff (j - 2) - fourierCoeff (j - 2 + 1) * ((j - 2 : ℕ) + 1 : ℚ))
-      (27 / 16) k
+  (if k < 2 then 0 else fourierCoeff (k - 2)) + momentRowAt fourierTailInput (27 / 16) k
 
 private theorem cast_fourier_tail_rat (k : ℕ) :
     (fourierTailRat k : ℝ) = mainTailCoeff (fun j ↦ (fourierCoeff j : ℝ)) k := by
-  simp only [fourierTailRat, mainTailCoeff, Rat.cast_add, cast_moment_rat, Rat.cast_div,
-    Rat.cast_ofNat]
+  simp only [fourierTailRat, mainTailCoeff, Rat.cast_add, cast_fourier_moment, fourierTailInput,
+    Rat.cast_div, Rat.cast_ofNat]
   congr 1
   · split <;> simp only [Rat.cast_zero]
   · congr 2
@@ -1204,13 +1527,31 @@ private def gammaInputRat (j : ℕ) : ℚ :=
     (2 * (19 / 16 : ℚ)) * (inverseCoeff (j + 1) * ((j : ℚ) + 1)) +
     (inverseCoeff (j + 2) * ((j : ℚ) + 2)) * ((j : ℚ) + 1)
 
+/-- Differentiation and scaling preserve the finite support of the inverse row. -/
+private theorem gamma_input_zero (j : ℕ) (hj : 20 ≤ j) : gammaInputRat j = 0 := by
+  simp only [gammaInputRat, inverse_rat_zero j hj,
+    inverse_rat_zero (j + 1) (hj.trans (Nat.le_add_right _ _)),
+    inverse_rat_zero (j + 2) (hj.trans (Nat.le_add_right _ _)), mul_zero, zero_mul, add_zero]
+
+/-- Interpret the Gamma remainder moment produced by the backward pass. -/
+private theorem cast_gamma_moment (k : ℕ) :
+    (momentRowAt gammaInputRat (19 / 16) k : ℝ) =
+      momentCoeff (fun j ↦ (gammaInputRat j : ℝ)) ((19 / 16 : ℚ) : ℝ) 0 k :=
+  cast_moment_row gammaInputRat (by norm_num only) gamma_input_zero k
+
+/-- Interpret the inverse moment produced by the backward pass. -/
+private theorem cast_inverse_moment (k : ℕ) :
+    (momentRowAt inverseCoeff (19 / 16) k : ℝ) =
+      momentCoeff (fun j ↦ (inverseCoeff j : ℝ)) ((19 / 16 : ℚ) : ℝ) 0 k :=
+  cast_moment_row inverseCoeff (by norm_num only) inverse_rat_zero k
+
 private def gammaRemainderRat (k : ℕ) : ℚ :=
-  (17 / 10) * momentRat gammaInputRat (19 / 16) k + ((5 / 12) / (2 - 19 / 16)) * gammaInputRat k
+  (17 / 10) * momentRowAt gammaInputRat (19 / 16) k + ((5 / 12) / (2 - 19 / 16)) * gammaInputRat k
 
 private theorem cast_gamma_remainder (k : ℕ) :
     (gammaRemainderRat k : ℝ) = gammaRemainderCoeff k := by
   simp only [gammaRemainderRat, gammaRemainderCoeff, Rat.cast_add, Rat.cast_mul, Rat.cast_div,
-    Rat.cast_sub, Rat.cast_ofNat, cast_moment_rat, gammaInputRat, Rat.cast_pow, Rat.cast_natCast,
+    Rat.cast_sub, Rat.cast_ofNat, cast_gamma_moment, gammaInputRat, Rat.cast_pow, Rat.cast_natCast,
     Rat.cast_one]
 
 private theorem cast_shifted_coeff (d : ℕ) (c : ℕ → ℚ) (h : ℚ) (k : ℕ) :
@@ -1225,7 +1566,7 @@ private def poly27PrefFormula (k : ℕ) : ℚ :=
   let cR : ℚ := 486361785475175632772883470102367621 / 1000000000000000000000000000000000000
   (-2 * t / s + cR) * shiftedCoeff 20 inverseCoeff h k -
     3 *
-      (shiftedCoeff 20 (momentRat inverseCoeff (19 / 16)) h k +
+      (shiftedCoeff 20 (momentRowAt inverseCoeff (19 / 16)) h k +
         shiftedCoeff 20 gammaRemainderRat h k)
 
 private def poly27PrefCoeff (k : ℕ) : ℚ :=
@@ -1323,7 +1664,7 @@ private theorem coeff_poly27_split (k : ℕ) :
   rw [coeff_k131_poly27]
   simp only [poly27Coeff, poly27_pref_eq, poly27PrefFormula, poly27InvScale, Rat.cast_sub,
     Rat.cast_add, Rat.cast_mul, Rat.cast_div, Rat.cast_neg, Rat.cast_ofNat]
-  simp only [cast_shifted_coeff, cast_moment_rat, cast_gamma_remainder, Rat.cast_div,
+  simp only [cast_shifted_coeff, cast_inverse_moment, cast_gamma_remainder, Rat.cast_div,
     Rat.cast_ofNat]
   ring
 
@@ -1584,11 +1925,9 @@ private def dominantRoundedUpper (k : Fin 20) : ℚ :=
       -184739, 565719, 284018, 106973, 43411, 17935, 6469, 1943, 494, 138, 0, 0]
     k
 
-private theorem dominant_rounded_bernstein :
-    ∀ k : Fin 20,
-      (∑ j : Fin 20,
-          dominantRoundedUpper j * ((k.val.choose j.val : ℚ) / ((19 : ℕ).choose j.val : ℚ))) ≤
-        -1 := by
+/-- The constant upper bound absorbs the sum of all positive higher upper bounds. -/
+private theorem dominant_rounded_sum_neg :
+    dominantRoundedUpper 0 + (∑ j : Fin 19, max 0 (dominantRoundedUpper j.succ)) < 0 := by
   decide +kernel
 
 private theorem dominant_rounded_hi_index (k : Fin 10) :
@@ -1603,18 +1942,17 @@ private theorem dominant_rounded_high (k : Fin 20) (hk : 10 ≤ k.val) :
   change dominantCoeffUpper (Fin.natAdd 10 j).val ≤ dominantRoundedUpper (Fin.natAdd 10 j) at h
   exact he ▸ h
 
-private theorem dominant_bernstein_of_rounding
-    (h : ∀ j : Fin 20, dominantCoeffUpper j.val ≤ dominantRoundedUpper j) (k : Fin 20) :
-    (∑ j : Fin 20,
-        (k131DominantCheckPoly.comp (Polynomial.C 0 + Polynomial.C 3 * Polynomial.X)).coeff j.val *
-          ((k.val.choose j.val : ℝ) / ((19 : ℕ).choose j.val : ℝ))) ≤
-      -1 := by
-  refine
-    (bernstein_transform_mono
-          (fun j ↦ (coeff_dominant_le j.val).trans ((Rat.cast_le (K := ℝ)).mpr (h j))) k).trans
-      ?_
-  simpa only [Rat.cast_sum, Rat.cast_mul, Rat.cast_div, Rat.cast_natCast, Rat.cast_neg,
-    Rat.cast_one] using (Rat.cast_le (K := ℝ)).mpr (dominant_rounded_bernstein k)
+/-- On the unit interval, each higher power is between zero and one. -/
+private theorem power_sum_le {n : ℕ} {c a : Fin (n + 1) → ℝ} {t : ℝ} (ht : t ∈ Set.Icc 0 1)
+    (hc : ∀ i, c i ≤ a i) :
+    (∑ i : Fin (n + 1), c i * t ^ i.val) ≤ a 0 + ∑ i : Fin n, max 0 (a i.succ) := by
+  rw [Fin.sum_univ_succ, Fin.val_zero, pow_zero, mul_one]
+  apply add_le_add (hc 0)
+  apply Finset.sum_le_sum
+  intro i _
+  exact
+    (mul_le_mul_of_nonneg_right ((hc i.succ).trans (le_max_right _ _)) (pow_nonneg ht.1 _)).trans
+      (mul_le_of_le_one_right (le_max_left _ _) (pow_le_one₀ ht.1 ht.2))
 
 private theorem dominant_round_0 : dominantCoeffUpper 0 ≤ dominantRoundedUpper 0 := by
   decide +kernel
@@ -1673,17 +2011,22 @@ theorem k131_dominant_negative {x : ℝ} (hx : x ∈ Set.Icc (0 : ℝ) 3) :
     by_cases hj : j.val < 10
     · exact dominant_rounded_low ⟨j.val, hj⟩
     · exact dominant_rounded_high j (Nat.le_of_not_gt hj)
-  have hb :=
-    Analysis.bernstein_interval_le (by norm_num only : (0 : ℝ) < 3) hx.1 hx.2
-      k131DominantCheckPoly.eval 19 _ (-1) (dominant_bernstein_of_rounding hall) ?_
-  · exact hb.trans_lt (by norm_num only)
-  · intro t
-    refine
-      (show k131DominantCheckPoly.eval (0 + (3 - 0) * (t : ℝ)) = Q.eval (t : ℝ) by
-            simp only [Q, Polynomial.eval_comp, Polynomial.eval_add, Polynomial.eval_mul,
-              Polynomial.eval_C, Polynomial.eval_X, sub_zero]).trans
-        ?_
-    exact (coeff_eval_fin Q hd _).trans (Analysis.bernstein_power_sum 19 _ t).symm
+  let t := x / 3
+  have ht : t ∈ Set.Icc (0 : ℝ) 1 :=
+    ⟨div_nonneg hx.1 (by norm_num only), (div_le_one (by norm_num only)).mpr hx.2⟩
+  have hxt : 3 * t = x := by
+    dsimp only [t]
+    ring
+  have he : Q.eval t = k131DominantCheckPoly.eval x := by
+    simp only [Q, Polynomial.eval_comp, Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_C,
+      Polynomial.eval_X, zero_add, hxt]
+  rw [← he, coeff_eval_fin Q hd]
+  refine
+    (power_sum_le ht
+          (fun j ↦ (coeff_dominant_le j.val).trans ((Rat.cast_le (K := ℝ)).mpr (hall j)))).trans_lt
+      ?_
+  simpa only [Rat.cast_add, Rat.cast_sum, Rat.cast_max, Rat.cast_zero] using
+    (Rat.cast_lt (K := ℝ)).mpr dominant_rounded_sum_neg
 
 private theorem bernstein_check_sound {i : Fin 5} {a b x : ℝ} {P : Polynomial ℝ}
     (h : K131BernsteinCheck i a b P) (hab : a < b) (hx : x ∈ Set.Icc a b)
