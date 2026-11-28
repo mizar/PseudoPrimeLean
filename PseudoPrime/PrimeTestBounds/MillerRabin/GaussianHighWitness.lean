@@ -7,8 +7,6 @@ Authors: Mizar
 module
 
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianK186EulerTail
-public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianK196ZeroUpper
-public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianK131TailWitness
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianCompensationAbel
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianHighCompensationPartition
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianReflectedAbel
@@ -38,87 +36,6 @@ noncomputable def gaussianPairZeroScore (K : HighGaussianKernel) (X : ℝ) {p q 
   let c := NumberTheory.complexJacobiNumeratorCharacter (q * r) (hq.mul hr);
   -(∑' ρ : ℂ, K.zeroTerm a X ρ).re - (∑' ρ : ℂ, K.zeroTerm b X ρ).re -
     (∑' ρ : ℂ, K.zeroTerm c X ρ).re
-
-/-- A lower zero comparison at a positive real cutoff for every prime
-factorization of a uniform triple when all prime bases through the cutoff pass.
-Each branch includes its kernel threshold. -/
-def GaussianHighLowerBounds (n : ℕ) (X : ℝ) : Prop :=
-  (∀ l : ℕ, l.Prime → (l : ℝ) ≤ X → PrimeTest.StrongMillerRabinPass n (l : ZMod n)) →
-    ∀ p q r : ℕ,
-      p.Prime →
-        q.Prime →
-        r.Prime →
-        n = p * q * r →
-        ∀ [NeZero p] [NeZero q] [NeZero r],
-          ∀ (hp : Odd p) (hq : Odd q) (hr : Odd r),
-            (30 ≤ Real.log X ∧
-                3 / 8 * Real.log n - 94173 / 1250 + 3 * HighGaussianKernel.k186.xiMass.re +
-                    4 * k186TailCost X <
-                  gaussianPairZeroScore .k186 X hp hq hr) ∨
-              (75 / 2 ≤ Real.log X ∧
-                3 / 8 * Real.log n - 543 / 40 + 3 * HighGaussianKernel.k196.xiMass.re <
-                  gaussianPairZeroScore .k196 X hp hq hr)
-
-/-- At a positive cutoff, either strict lower bound contradicts the corresponding
-K186 or K196 upper bound under passage of all prime bases. -/
-theorem gaussian_high_witness_of_bounds {n : ℕ} (hn : 1 < n) (ho : Odd n)
-    (hu : UniformKorseltTriple n) (hg : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    {X : ℝ} (hX : 0 < X) (hlower : GaussianHighLowerBounds n X) : HasRejectingPrime n X := by
-  by_contra h
-  have hpass (l : ℕ) (hl : l.Prime) (hle : (l : ℝ) ≤ X) :
-    PrimeTest.StrongMillerRabinPass n (l : ZMod n) :=
-    Classical.byContradiction (fun hf ↦ h ⟨l, hl, hle, hf⟩)
-  obtain ⟨p, q, r, hp, hq, hr, _, _, hprod⟩ := uniformKorselt_ordered_factors hu
-  have hpO := Odd.of_dvd_nat ho (show p ∣ n from ⟨q * r, hprod.trans (Nat.mul_assoc _ _ _)⟩)
-  have hqO := Odd.of_dvd_nat ho (show q ∣ n from ⟨p * r, hprod.trans (by ac_rfl)⟩)
-  have hrO := Odd.of_dvd_nat ho (show r ∣ n from ⟨p * q, hprod.trans (by ac_rfl)⟩)
-  let : NeZero n := ⟨Nat.ne_of_gt (Nat.zero_lt_of_lt hn)⟩
-  let : NeZero p := ⟨hp.ne_zero⟩
-  let : NeZero q := ⟨hq.ne_zero⟩
-  let : NeZero r := ⟨hr.ne_zero⟩
-  let : Fact p.Prime := ⟨hp⟩
-  let : Fact q.Prime := ⟨hq⟩
-  let : Fact r.Prime := ⟨hr⟩
-  let : Fact (2 < p) := ⟨lt_of_le_of_ne hp.two_le (hpO.ne_two_of_dvd_nat dvd_rfl).symm⟩
-  let : Fact (2 < q) := ⟨lt_of_le_of_ne hq.two_le (hqO.ne_two_of_dvd_nat dvd_rfl).symm⟩
-  let : Fact (2 < r) := ⟨lt_of_le_of_ne hr.two_le (hrO.ne_two_of_dvd_nat dvd_rfl).symm⟩
-  rcases hlower hpass p q r hp hq hr hprod hpO hqO hrO with ⟨hlog, hlo⟩ | ⟨hlog, hlo⟩
-  · rw [gaussianPairZeroScore] at hlo
-    exact (not_lt_of_ge (k186_zero_upper hn ho hu hprod hpO hqO hrO hg hX hlog hpass)) hlo
-  · rw [gaussianPairZeroScore] at hlo
-    exact (not_lt_of_ge (k196_zero_upper hn ho hu hprod hpO hqO hrO hg hX hlog hpass)) hlo
-
-/-- Combine the middle witness and high zero comparisons with the proved
-uniform ranges. Then use the quarter bounds for the other composites. -/
-theorem gaussian_criterion_of_analytic_bounds {n : ℕ} (hn : 1 < n) (ho : Odd n)
-    (hg : AnalyticNumberTheory.GRH.GeneralizedRiemannHypothesis)
-    (hmid :
-      UniformKorseltTriple n →
-        Real.log n ∈ Set.Icc (42410 : ℝ) 7000000 →
-        HasRejectingPrime n
-          (max 2
-            (max ((1 / 4 : ℝ) * Real.log n ^ 2)
-              ((9090 / 33659 : ℝ) * Real.log n ^ 2 -
-                (64 / 5 : ℝ) * Real.log n * Real.exp (-(Real.log n / 1000000) ^ 2)))))
-    (hhigh :
-      UniformKorseltTriple n →
-        6300000 ≤ Real.log n →
-        GaussianHighLowerBounds n ((0.270061456043740 : ℝ) * Real.log n ^ 2)) :
-    (∀ p : ℕ,
-        p.Prime →
-          (p : ℝ) ≤ gaussianWitnessCutoff (Real.log n) →
-          PrimeTest.StrongMillerRabinPass n (p : ZMod n)) ↔
-      n.Prime := by
-  apply gaussian_criterion_of_uniform_witness hn ho hg
-  intro hu hL
-  apply uniform_gaussian_witness_of_upper hn ho hu hL hg (hmid hu)
-  intro hU
-  have hp : 0 < Real.log n := (by norm_num only : (0 : ℝ) < 6300000).trans_le hU
-  exact
-    (gaussian_high_witness_of_bounds hn ho hu hg
-          (mul_pos (by norm_num only : (0 : ℝ) < 0.270061456043740) (sq_pos_of_pos hp))
-          (hhigh hu hU)).mono
-      (le_max_right _ _)
 
 private theorem compensated_trace_lower {t b c : ℝ} (ht : t ∈ Set.Icc (-1) 3) (hc : 0 ≤ c)
     (hn : -b ≤ c) : -b - 4 * c ≤ t * b := by
