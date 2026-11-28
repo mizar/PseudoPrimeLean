@@ -36,148 +36,148 @@ private def endpoints : Fin 21 → ℕ × ℚ :=
 private theorem endpoint_0 :
     ((endpoints 0).2 : ℝ) ≤ k186FiniteGap (((endpoints 0).1 : ℝ) / 32) := by
   exact
-    k186_gap_lower_of_compare _ (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel)
+    k186_gap_lower_of_compare _ (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (k186_gap_exp_lower_pos _) (by decide +kernel)
 
 /-- Certify the lower residual value at endpoint 1. -/
 private theorem endpoint_1 :
     ((endpoints 1).2 : ℝ) ≤ k186FiniteGap (((endpoints 1).1 : ℝ) / 32) := by
   exact
-    k186_gap_lower_of_compare _ (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel)
+    k186_gap_lower_of_compare _ (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (k186_gap_exp_lower_pos _) (by decide +kernel)
 
 /-- Certify the lower residual value at endpoint 2. -/
 private theorem endpoint_2 :
     ((endpoints 2).2 : ℝ) ≤ k186FiniteGap (((endpoints 2).1 : ℝ) / 32) := by
   exact
-    k186_gap_lower_of_compare _ (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel)
+    k186_gap_lower_of_compare _ (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (k186_gap_exp_lower_pos _) (by decide +kernel)
 
 /-- Certify the lower residual value at endpoint 3. -/
 private theorem endpoint_3 :
     ((endpoints 3).2 : ℝ) ≤ k186FiniteGap (((endpoints 3).1 : ℝ) / 32) := by
   exact
-    k186_gap_lower_of_compare _ (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel)
+    k186_gap_lower_of_compare _ (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (k186_gap_exp_lower_pos _) (by decide +kernel)
 
 /-- Certify the lower residual value at endpoint 4. -/
 private theorem endpoint_4 :
     ((endpoints 4).2 : ℝ) ≤ k186FiniteGap (((endpoints 4).1 : ℝ) / 32) := by
   exact
-    k186_gap_lower_of_compare _ (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel)
+    k186_gap_lower_of_compare _ (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (k186_gap_exp_lower_pos _) (by decide +kernel)
 
 /-- Certify the lower residual value at endpoint 5. -/
 private theorem endpoint_5 :
     ((endpoints 5).2 : ℝ) ≤ k186FiniteGap (((endpoints 5).1 : ℝ) / 32) := by
   exact
-    k186_gap_lower_of_compare _ (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel)
+    k186_gap_lower_of_compare _ (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (k186_gap_exp_lower_pos _) (by decide +kernel)
 
 /-- Certify the lower residual value at endpoint 6. -/
 private theorem endpoint_6 :
     ((endpoints 6).2 : ℝ) ≤ k186FiniteGap (((endpoints 6).1 : ℝ) / 32) := by
   exact
-    k186_gap_lower_of_compare _ (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel)
+    k186_gap_lower_of_compare _ (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (k186_gap_exp_lower_pos _) (by decide +kernel)
 
 /-- Certify the lower residual value at endpoint 7. -/
 private theorem endpoint_7 :
     ((endpoints 7).2 : ℝ) ≤ k186FiniteGap (((endpoints 7).1 : ℝ) / 32) := by
   exact
-    k186_gap_lower_of_compare _ (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel)
+    k186_gap_lower_of_compare _ (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (k186_gap_exp_lower_pos _) (by decide +kernel)
 
 /-- Certify the lower residual value at endpoint 8. -/
 private theorem endpoint_8 :
     ((endpoints 8).2 : ℝ) ≤ k186FiniteGap (((endpoints 8).1 : ℝ) / 32) := by
   exact
-    k186_gap_lower_of_compare _ (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel)
+    k186_gap_lower_of_compare _ (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (k186_gap_exp_lower_pos _) (by decide +kernel)
 
 /-- Certify the lower residual value at endpoint 9. -/
 private theorem endpoint_9 :
     ((endpoints 9).2 : ℝ) ≤ k186FiniteGap (((endpoints 9).1 : ℝ) / 32) := by
   exact
-    k186_gap_lower_of_compare _ (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel)
+    k186_gap_lower_of_compare _ (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (k186_gap_exp_lower_pos _) (by decide +kernel)
 
 /-- Certify the lower residual value at endpoint 10. -/
 private theorem endpoint_10 :
     ((endpoints 10).2 : ℝ) ≤ k186FiniteGap (((endpoints 10).1 : ℝ) / 32) := by
   exact
-    k186_gap_lower_of_compare _ (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel)
+    k186_gap_lower_of_compare _ (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (k186_gap_exp_lower_pos _) (by decide +kernel)
 
 /-- Certify the lower residual value at endpoint 11. -/
 private theorem endpoint_11 :
     ((endpoints 11).2 : ℝ) ≤ k186FiniteGap (((endpoints 11).1 : ℝ) / 32) := by
   exact
-    k186_gap_lower_of_compare _ (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel)
+    k186_gap_lower_of_compare _ (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (k186_gap_exp_lower_pos _) (by decide +kernel)
 
 /-- Certify the lower residual value at endpoint 12. -/
 private theorem endpoint_12 :
     ((endpoints 12).2 : ℝ) ≤ k186FiniteGap (((endpoints 12).1 : ℝ) / 32) := by
   exact
-    k186_gap_lower_of_compare _ (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel)
+    k186_gap_lower_of_compare _ (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (k186_gap_exp_lower_pos _) (by decide +kernel)
 
 /-- Certify the lower residual value at endpoint 13. -/
 private theorem endpoint_13 :
     ((endpoints 13).2 : ℝ) ≤ k186FiniteGap (((endpoints 13).1 : ℝ) / 32) := by
   exact
-    k186_gap_lower_of_compare _ (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel)
+    k186_gap_lower_of_compare _ (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (k186_gap_exp_lower_pos _) (by decide +kernel)
 
 /-- Certify the lower residual value at endpoint 14. -/
 private theorem endpoint_14 :
     ((endpoints 14).2 : ℝ) ≤ k186FiniteGap (((endpoints 14).1 : ℝ) / 32) := by
   exact
-    k186_gap_lower_of_compare _ (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel)
+    k186_gap_lower_of_compare _ (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (k186_gap_exp_lower_pos _) (by decide +kernel)
 
 /-- Certify the lower residual value at endpoint 15. -/
 private theorem endpoint_15 :
     ((endpoints 15).2 : ℝ) ≤ k186FiniteGap (((endpoints 15).1 : ℝ) / 32) := by
   exact
-    k186_gap_lower_of_compare _ (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel)
+    k186_gap_lower_of_compare _ (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (k186_gap_exp_lower_pos _) (by decide +kernel)
 
 /-- Certify the lower residual value at endpoint 16. -/
 private theorem endpoint_16 :
     ((endpoints 16).2 : ℝ) ≤ k186FiniteGap (((endpoints 16).1 : ℝ) / 32) := by
   exact
-    k186_gap_lower_of_compare _ (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel)
+    k186_gap_lower_of_compare _ (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (k186_gap_exp_lower_pos _) (by decide +kernel)
 
 /-- Certify the lower residual value at endpoint 17. -/
 private theorem endpoint_17 :
     ((endpoints 17).2 : ℝ) ≤ k186FiniteGap (((endpoints 17).1 : ℝ) / 32) := by
   exact
-    k186_gap_lower_of_compare _ (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel)
+    k186_gap_lower_of_compare _ (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (k186_gap_exp_lower_pos _) (by decide +kernel)
 
 /-- Certify the lower residual value at endpoint 18. -/
 private theorem endpoint_18 :
     ((endpoints 18).2 : ℝ) ≤ k186FiniteGap (((endpoints 18).1 : ℝ) / 32) := by
   exact
-    k186_gap_lower_of_compare _ (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel)
+    k186_gap_lower_of_compare _ (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (k186_gap_exp_lower_pos _) (by decide +kernel)
 
 /-- Certify the lower residual value at endpoint 19. -/
 private theorem endpoint_19 :
     ((endpoints 19).2 : ℝ) ≤ k186FiniteGap (((endpoints 19).1 : ℝ) / 32) := by
   exact
-    k186_gap_lower_of_compare _ (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel)
+    k186_gap_lower_of_compare _ (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (k186_gap_exp_lower_pos _) (by decide +kernel)
 
 /-- Certify the lower residual value at endpoint 20. -/
 private theorem endpoint_20 :
     ((endpoints 20).2 : ℝ) ≤ k186FiniteGap (((endpoints 20).1 : ℝ) / 32) := by
   exact
-    k186_gap_lower_of_compare _ (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      (by decide +kernel)
+    k186_gap_lower_of_compare _ (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (k186_gap_exp_lower_pos _) (by decide +kernel)
 
 /-- The checked estimates, indexed by the distinct endpoints. -/
 private theorem endpoint_lower (i : Fin 21) :

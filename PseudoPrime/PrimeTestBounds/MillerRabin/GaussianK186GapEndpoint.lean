@@ -35,7 +35,7 @@ private theorem gap_product_contains {I J : Analysis.IntegerInterval} {x y : ℝ
 theorem k186_gap_pref_contains :
     (k186GapExpNeg 1760).Contains k186GapExpScale (Real.exp (-55 / 4)) := by
   simpa only [Nat.cast_ofNat, show -((1760 : ℝ) / 128) = -55 / 4 by ring] using
-    k186_gap_exp_neg_contains 1760 (by decide +kernel)
+    k186_gap_exp_neg_contains 1760 (k186_gap_exp_lower_pos _)
 
 /-- The first exponential-polynomial cost from the common profile and Euler evaluations. -/
 def k186GapCostNine (j : ℕ) : Analysis.IntegerInterval :=

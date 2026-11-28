@@ -54,162 +54,162 @@ private theorem checked_to_cell (i : Fin 20) {a b : ℕ} {C : ℚ}
 private theorem checked_0_0 : CheckedCurvature 960 1022 (1628336647 / 1000000000) := by
   intro x hx
   exact
-    k186_curv_le_of_compare (by decide) (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      hx
+    k186_curv_le_of_compare (by decide) (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (by decide +kernel) hx
 
 /-- Check the signed curvature over dyadic indices 1022 to 1084. -/
 private theorem checked_0_1 : CheckedCurvature 1022 1084 (1628336647 / 1000000000) := by
   intro x hx
   exact
-    k186_curv_le_of_compare (by decide) (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      hx
+    k186_curv_le_of_compare (by decide) (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (by decide +kernel) hx
 
 /-- Check the signed curvature over dyadic indices 1084 to 1146. -/
 private theorem checked_1_0 : CheckedCurvature 1084 1146 (16557975141 / 1000000000) := by
   intro x hx
   exact
-    k186_curv_le_of_compare (by decide) (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      hx
+    k186_curv_le_of_compare (by decide) (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (by decide +kernel) hx
 
 /-- Check the signed curvature over dyadic indices 1146 to 1208. -/
 private theorem checked_2_0 : CheckedCurvature 1146 1208 (100125413 / 10000000) := by
   intro x hx
   exact
-    k186_curv_le_of_compare (by decide) (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      hx
+    k186_curv_le_of_compare (by decide) (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (by decide +kernel) hx
 
 /-- Check the signed curvature over dyadic indices 1208 to 1239. -/
 private theorem checked_3_0 : CheckedCurvature 1208 1239 (282709021 / 125000000) := by
   intro x hx
   exact
-    k186_curv_le_of_compare (by decide) (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      hx
+    k186_curv_le_of_compare (by decide) (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (by decide +kernel) hx
 
 /-- Check the signed curvature over dyadic indices 1239 to 1270. -/
 private theorem checked_4_0 : CheckedCurvature 1239 1270 (6025901189 / 1000000000) := by
   intro x hx
   exact
-    k186_curv_le_of_compare (by decide) (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      hx
+    k186_curv_le_of_compare (by decide) (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (by decide +kernel) hx
 
 /-- Check the signed curvature over dyadic indices 1270 to 1301. -/
 private theorem checked_5_0 : CheckedCurvature 1270 1301 (2362679123 / 1000000000) := by
   intro x hx
   exact
-    k186_curv_le_of_compare (by decide) (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      hx
+    k186_curv_le_of_compare (by decide) (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (by decide +kernel) hx
 
 /-- Check the signed curvature over dyadic indices 1301 to 1332. -/
 private theorem checked_5_1 : CheckedCurvature 1301 1332 (2362679123 / 1000000000) := by
   intro x hx
   exact
-    k186_curv_le_of_compare (by decide) (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      hx
+    k186_curv_le_of_compare (by decide) (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (by decide +kernel) hx
 
 /-- Check the signed curvature over dyadic indices 1332 to 1363. -/
 private theorem checked_6_0 : CheckedCurvature 1332 1363 (6869715957 / 1000000000) := by
   intro x hx
   exact
-    k186_curv_le_of_compare (by decide) (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      hx
+    k186_curv_le_of_compare (by decide) (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (by decide +kernel) hx
 
 /-- Check the signed curvature over dyadic indices 1363 to 1394. -/
 private theorem checked_7_0 : CheckedCurvature 1363 1394 (13544019257 / 500000000) := by
   intro x hx
   exact
-    k186_curv_le_of_compare (by decide) (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      hx
+    k186_curv_le_of_compare (by decide) (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (by decide +kernel) hx
 
 /-- Check the signed curvature over dyadic indices 1394 to 1425. -/
 private theorem checked_8_0 : CheckedCurvature 1394 1425 (24384585687 / 1000000000) := by
   intro x hx
   exact
-    k186_curv_le_of_compare (by decide) (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      hx
+    k186_curv_le_of_compare (by decide) (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (by decide +kernel) hx
 
 /-- Check the signed curvature over dyadic indices 1425 to 1456. -/
 private theorem checked_9_0 : CheckedCurvature 1425 1456 (4702122591 / 1000000000) := by
   intro x hx
   exact
-    k186_curv_le_of_compare (by decide) (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      hx
+    k186_curv_le_of_compare (by decide) (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (by decide +kernel) hx
 
 /-- Check the signed curvature over dyadic indices 1456 to 1487. -/
 private theorem checked_10_0 : CheckedCurvature 1456 1487 (2382220037 / 250000000) := by
   intro x hx
   exact
-    k186_curv_le_of_compare (by decide) (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      hx
+    k186_curv_le_of_compare (by decide) (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (by decide +kernel) hx
 
 /-- Check the signed curvature over dyadic indices 1487 to 1518. -/
 private theorem checked_10_1 : CheckedCurvature 1487 1518 (2382220037 / 250000000) := by
   intro x hx
   exact
-    k186_curv_le_of_compare (by decide) (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      hx
+    k186_curv_le_of_compare (by decide) (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (by decide +kernel) hx
 
 /-- Check the signed curvature over dyadic indices 1518 to 1549. -/
 private theorem checked_11_0 : CheckedCurvature 1518 1549 (37933781607 / 500000000) := by
   intro x hx
   exact
-    k186_curv_le_of_compare (by decide) (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      hx
+    k186_curv_le_of_compare (by decide) (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (by decide +kernel) hx
 
 /-- Check the signed curvature over dyadic indices 1549 to 1580. -/
 private theorem checked_12_0 : CheckedCurvature 1549 1580 (36153811909 / 200000000) := by
   intro x hx
   exact
-    k186_curv_le_of_compare (by decide) (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      hx
+    k186_curv_le_of_compare (by decide) (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (by decide +kernel) hx
 
 /-- Check the signed curvature over dyadic indices 1580 to 1611. -/
 private theorem checked_13_0 : CheckedCurvature 1580 1611 (199864072313 / 1000000000) := by
   intro x hx
   exact
-    k186_curv_le_of_compare (by decide) (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      hx
+    k186_curv_le_of_compare (by decide) (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (by decide +kernel) hx
 
 /-- Check the signed curvature over dyadic indices 1611 to 1642. -/
 private theorem checked_14_0 : CheckedCurvature 1611 1642 (2081560211 / 15625000) := by
   intro x hx
   exact
-    k186_curv_le_of_compare (by decide) (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      hx
+    k186_curv_le_of_compare (by decide) (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (by decide +kernel) hx
 
 /-- Check the signed curvature over dyadic indices 1642 to 1704. -/
 private theorem checked_15_0 : CheckedCurvature 1642 1704 (146655101471 / 1000000000) := by
   intro x hx
   exact
-    k186_curv_le_of_compare (by decide) (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      hx
+    k186_curv_le_of_compare (by decide) (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (by decide +kernel) hx
 
 /-- Check the signed curvature over dyadic indices 1704 to 1766. -/
 private theorem checked_16_0 : CheckedCurvature 1704 1766 (54137772713 / 125000000) := by
   intro x hx
   exact
-    k186_curv_le_of_compare (by decide) (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      hx
+    k186_curv_le_of_compare (by decide) (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (by decide +kernel) hx
 
 /-- Check the signed curvature over dyadic indices 1766 to 1828. -/
 private theorem checked_17_0 : CheckedCurvature 1766 1828 (1694727035807 / 1000000000) := by
   intro x hx
   exact
-    k186_curv_le_of_compare (by decide) (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      hx
+    k186_curv_le_of_compare (by decide) (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (by decide +kernel) hx
 
 /-- Check the signed curvature over dyadic indices 1828 to 1890. -/
 private theorem checked_18_0 : CheckedCurvature 1828 1890 (3621261921333 / 1000000000) := by
   intro x hx
   exact
-    k186_curv_le_of_compare (by decide) (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      hx
+    k186_curv_le_of_compare (by decide) (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (by decide +kernel) hx
 
 /-- Check the signed curvature over dyadic indices 1890 to 1952. -/
 private theorem checked_19_0 : CheckedCurvature 1890 1952 (7095934361887 / 1000000000) := by
   intro x hx
   exact
-    k186_curv_le_of_compare (by decide) (by decide +kernel) (by decide +kernel) (by decide +kernel)
-      hx
+    k186_curv_le_of_compare (by decide) (k186_gap_exp_lower_pos _) (k186_gap_exp_lower_pos _)
+      (by decide +kernel) hx
 
 /-- The finite residual has the checked curvature on each of the twenty cells. -/
 theorem k186_gap_curv_checked (i : Fin 20) {x : ℝ}
