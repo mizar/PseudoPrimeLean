@@ -133,14 +133,6 @@ private theorem high_gamma_shifted_cast (K : HighGaussianKernel) (a : ℤ) {i : 
   rw [high_cell_power_coeff K (a : ℚ) 1 hi, Polynomial.C_1, one_mul]
   exact h
 
-/-- Reuse verified expanded and shifted rows without redoing an earlier stage. -/
-private theorem high_gamma_profile_of_stages (K : HighGaussianKernel) (a : ℤ) {e : Array ℚ}
-    {base shifted : Array ℤ} (he : K.expandedCoeffRow = e)
-    (hb : highGammaProfileInt (2 * K.degree + 4) (highGammaBaseFrom K.degree e) = base)
-    (hs : highGammaShiftInt (2 * K.degree + 4) a base = shifted) :
-    highGammaShiftedProfile K a = shifted := by
-  simpa only [highGammaShiftedProfile, highGammaBaseRow, he, hb] using hs
-
 /-- Compare a finite block of scalar computations with a literal certificate. -/
 private def highGammaScalarEqBlock {α : Type} [DecidableEq α] (m : ℕ) (f : ℕ → α) (b : Array α)
     (start count : ℕ) : Bool :=
@@ -162,80 +154,6 @@ private theorem high_gamma_row_of_scalar_blocks {α : Type} [DecidableEq α] (m 
       (List.all_eq_true.mp (h (i / width) hk) (i % width) (List.mem_range.mpr (Nat.mod_lt i hw)))
   rw [Nat.add_comm, Nat.mod_add_div, ite_eq_left hi, Array.getElem?_eq_getElem hbi] at he
   simpa only [Array.getElem_ofFn] using Option.some.inj he
-
-/-- Factor the common pole power and denominator out of the compact row sum. -/
-private def highCompactFactored (K : HighGaussianKernel) (i : ℕ) : ℚ :=
-  if i ≤ K.degree then
-    let v := coefficientTicks K
-    let k := K.degree - i
-    (-(2 * K.pole)) ^ k / (v.sum : ℚ) *
-      (↑(∑ j ∈ Finset.range (K.degree + 1), v[j]?.getD 0 * (Nat.fast_choose j k : ℤ)) : ℚ)
-  else 0
-
-/-- The factored integer sum recovers the original compact coefficient. -/
-private theorem high_compact_factored_eq (K : HighGaussianKernel) (i : ℕ) :
-    highCompactFactored K i = compactCoeff K i := by
-  by_cases hi : i ≤ K.degree
-  · simp only [highCompactFactored, ite_eq_left hi, compactCoeff, Int.cast_sum, Finset.mul_sum]
-    apply Finset.sum_congr rfl
-    intro j hj
-    have hj' := Nat.le_of_lt_succ (Finset.mem_range.mp hj)
-    by_cases h : K.degree - j ≤ i
-    · have he : (K.degree - i) + (i - (K.degree - j)) = j := by
-        rw [← Nat.add_sub_assoc h, Nat.sub_add_cancel hi, Nat.sub_sub_self hj']
-      have hpow : j - (i - (K.degree - j)) = K.degree - i := by
-        calc
-          _ = (K.degree - i + (i - (K.degree - j))) - (i - (K.degree - j)) :=
-            congrArg (· - (i - (K.degree - j))) he.symm
-          _ = _ := Nat.add_sub_cancel _ _
-      rw [ite_eq_left h, hpow, ← Nat.choose_symm_of_eq_add he.symm]
-      simp only [Int.cast_mul, Int.cast_natCast, Nat.choose_eq_fast_choose]
-      ring
-    · have hjk : j < K.degree - i := by
-        apply Nat.lt_sub_iff_add_lt.mpr
-        simpa only [Nat.add_comm] using Nat.lt_sub_iff_add_lt.mp (lt_of_not_ge h)
-      simp only [ite_eq_right h, ← Nat.choose_eq_fast_choose, Nat.choose_eq_zero_of_lt hjk,
-        Nat.cast_zero, Int.cast_zero, mul_zero]
-  · rw [highCompactFactored, ite_eq_right hi, ← compact_coeff_eq]
-    exact
-      (Polynomial.coeff_eq_zero_of_natDegree_lt
-          ((high_gaussian_polynomial_degree K).trans_lt (lt_of_not_ge hi))).symm
-
-/-- Convolve a certified compact coefficient row using the kernel normalization. -/
-private def highGammaExpandAt (K : HighGaussianKernel) (c : Array ℚ) (j : ℕ) : ℚ :=
-  K.normalization * ∑ ij ∈ Finset.antidiagonal j, c[ij.1]?.getD 0 * c[ij.2]?.getD 0
-
-/-- A certified compact row can be substituted before the normalized convolution. -/
-private theorem high_gamma_expanded_of_compact (K : HighGaussianKernel) (c : Array ℚ)
-    (hc : (Array.ofFn (fun i : Fin (2 * K.degree + 1) ↦ highCompactFactored K i.val)) = c) :
-    K.expandedCoeffRow =
-      Array.ofFn (fun j : Fin (2 * K.degree + 1) ↦ highGammaExpandAt K c j.val) := by
-  simp only [high_compact_factored_eq] at hc
-  rw [HighGaussianKernel.expandedCoeffRow]
-  simp only [highGammaExpandAt, hc]
-
-/-- Use a checked denominator and entry values to certify the cleared profile. -/
-private theorem high_gamma_profile_int_of_den (m d : ℕ) (e : Array ℚ) {H : ℕ}
-    (hH : highGammaProfileDen m (highGammaBaseFrom d e) = H) (hm : m = 2 * d + 4) (b : Array ℤ)
-    (hb : (Array.ofFn (fun i : Fin m ↦ clearedProfileCoeff H (highGammaBaseAt d e i.val))) = b) :
-    highGammaProfileInt m (highGammaBaseFrom d e) = b := by
-  rw [highGammaProfileInt, hH, ← hb]
-  apply congrArg Array.ofFn
-  funext i
-  have hi : i.val < 2 * d + 4 := by
-    rw [← hm]; exact i.isLt
-  simp only [highGammaBaseFrom, Array.getElem?_ofFn, dite_eq_left hi, Option.getD_some]
-
-/-- Compute the common denominator from already verified scalar denominators. -/
-private theorem high_gamma_den_of_row (d : ℕ) (e : Array ℚ) {r : Array ℕ}
-    (hr : (Array.ofFn (fun i : Fin (2 * d + 4) ↦ (highGammaBaseAt d e i.val).den)) = r) :
-    highGammaProfileDen (2 * d + 4) (highGammaBaseFrom d e) =
-      (Finset.range (2 * d + 4)).lcm (fun i ↦ r[i]?.getD 1) := by
-  rw [← hr, highGammaProfileDen]
-  apply Finset.lcm_congr rfl
-  intro i hi
-  have hm := Finset.mem_range.mp hi
-  simp only [highGammaBaseFrom, Array.getElem?_ofFn, dite_eq_left hm, Option.getD_some]
 
 /-- The direct unshifted row is also the input to the H28 profile checker. -/
 private theorem high_gamma_base_eq_profile (K : HighGaussianKernel) :

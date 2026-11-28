@@ -32,18 +32,8 @@ private theorem shifted_row_poly :
   apply Finsupp.ext
   intro i
   by_cases hi : i ≤ 83
-  · have h := high_gamma_shifted_cast .k186 65 (Nat.lt_succ_of_le hi)
+  · have h := k186_cached_shift 65 (Nat.lt_succ_of_le hi)
     simp only [k186_shifted_ok, Int.cast_ofNat] at h
-    rw [high_cell_power_coeff .k186 (65 : ℚ) 1 (Nat.lt_succ_of_le hi), Polynomial.C_1, one_mul] at h
-    have hd :
-      highGammaProfileDen (2 * HighGaussianKernel.k186.degree + 4) (highGammaBaseRow .k186) =
-        k186GammaDen := by
-      change
-        highGammaProfileDen 84 (highGammaBaseFrom 40 HighGaussianKernel.k186.expandedCoeffRow) =
-          k186GammaDen
-      rw [conductor_expanded]
-      exact conductor_den
-    rw [hd] at h
     rw [shiftedRow.poly_coeff hi]
     change (k186GridShift[i]?.getD 0 : ℚ) / k186GammaDen = _
     rw [h, mul_comm, mul_div_cancel_right₀ _ (by decide +kernel)]

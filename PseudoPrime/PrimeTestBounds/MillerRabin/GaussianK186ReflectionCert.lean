@@ -29,43 +29,9 @@ private def baseRow : MiddleIntRow :=
 /-- The common denominator is positive. -/
 private theorem row_den_pos : 0 < shiftedRow.den := by decide +kernel
 
-/-- The integer source row represents the rational physical profile. -/
-private theorem base_row_poly : baseRow.poly 83 = HighGaussianKernel.k186.ratProfile := by
-  have hbase : highGammaProfileInt 84 (highGammaBaseFrom 40 k186GammaExpanded) = k186GridBase :=
-    high_gamma_profile_int_of_den 84 40 _ conductor_den rfl _ base_num_ok
-  have hrow : highGammaShiftedProfile .k186 0 = highGammaShiftInt 84 0 k186GridBase :=
-    high_gamma_profile_of_stages .k186 0 conductor_expanded hbase rfl
-  apply AddMonoidAlgebra.ext
-  apply Finsupp.ext
-  intro i
-  by_cases hi : i ≤ 83
-  · have hh : i < 84 := Nat.lt_succ_of_le hi
-    have he := high_gamma_shifted_cast .k186 0 hh
-    simp only [hrow, Int.cast_zero] at he
-    rw [high_cell_power_coeff .k186 (0 : ℚ) 1 hh, Polynomial.C_1, Polynomial.C_0, one_mul, add_zero,
-      Polynomial.comp_X] at he
-    have hz : highGammaShiftInt 84 0 k186GridBase = k186GridBase := by decide +kernel
-    have hd :
-      highGammaProfileDen (2 * HighGaussianKernel.k186.degree + 4) (highGammaBaseRow .k186) =
-        k186GammaDen := by
-      change
-        highGammaProfileDen 84 (highGammaBaseFrom 40 HighGaussianKernel.k186.expandedCoeffRow) =
-          k186GammaDen
-      rw [conductor_expanded]
-      exact conductor_den
-    rw [hz, hd] at he
-    rw [baseRow.poly_coeff hi]
-    change (k186GridBase[i]?.getD 0 : ℚ) / k186GammaDen = _
-    rw [he, mul_comm, mul_div_cancel_right₀ _ (by decide +kernel)]
-  · have hdeg := high_rat_profile_degree .k186
-    exact
-      (baseRow.poly_coeff_all 83 (by decide +kernel) i).trans
-        (by
-          rw [Polynomial.coeff_eq_zero_of_natDegree_lt (hdeg.trans_lt (Nat.lt_of_not_ge hi))]
-          simp only [baseRow, MiddleIntRow.num,
-            Array.getElem?_eq_none
-                (show k186GridBase.size ≤ i from Nat.succ_le_of_lt (Nat.lt_of_not_ge hi)),
-            Option.getD_none, Int.cast_zero, zero_div])
+/-- The original-scale base row represents the physical profile. -/
+private theorem base_row_poly : baseRow.poly 83 = HighGaussianKernel.k186.ratProfile :=
+  k186_cached_poly
 
 /-- The certificate gives the translated profile, including zero padding. -/
 private theorem shifted_row_poly :

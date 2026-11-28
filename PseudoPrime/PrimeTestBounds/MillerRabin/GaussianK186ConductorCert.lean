@@ -19,37 +19,12 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 private def conductorRow : Array ℤ :=
   highGammaShiftInt 84 58 k186GridBase
 
-/-- The normalized expanded input is already verified by the profile certificate. -/
-private theorem conductor_expanded : HighGaussianKernel.k186.expandedCoeffRow = k186GammaExpanded :=
-  (high_gamma_expanded_of_compact .k186 _ compact_ok).trans expanded_ok
-
-/-- The unshifted coefficient denominator is the checked common denominator. -/
-private theorem conductor_den :
-    highGammaProfileDen 84 (highGammaBaseFrom 40 k186GammaExpanded) = k186GammaDen :=
-  (high_gamma_den_of_row 40 _ den_row_ok).trans denLCM
-
 /-- Relate the translated integer row to the analytic power basis. -/
 private theorem conductor_entry (i : ℕ) (hi : i < 84) :
     (conductorRow[i]?.getD 0 : ℚ) =
       (k186GammaDen : ℚ) *
         (HighGaussianKernel.k186.ratProfile.comp (Polynomial.X + Polynomial.C 58)).coeff i := by
-  have hbase : highGammaProfileInt 84 (highGammaBaseFrom 40 k186GammaExpanded) = k186GridBase :=
-    high_gamma_profile_int_of_den 84 40 _ conductor_den rfl _ base_num_ok
-  have hrow : highGammaShiftedProfile .k186 58 = conductorRow :=
-    high_gamma_profile_of_stages .k186 58 conductor_expanded hbase rfl
-  have h := high_gamma_shifted_cast .k186 58 hi
-  simp only [hrow, Int.cast_ofNat] at h
-  rw [high_cell_power_coeff .k186 (58 : ℚ) 1 hi, Polynomial.C_1, one_mul] at h
-  have hd :
-    highGammaProfileDen (2 * HighGaussianKernel.k186.degree + 4) (highGammaBaseRow .k186) =
-      k186GammaDen := by
-    change
-      highGammaProfileDen 84 (highGammaBaseFrom 40 HighGaussianKernel.k186.expandedCoeffRow) =
-        k186GammaDen
-    rw [conductor_expanded]
-    exact conductor_den
-  rw [hd] at h
-  exact h
+  simpa only [conductorRow, Int.cast_ofNat] using k186_cached_shift 58 hi
 
 /-- Sum the positive translated numerators with the monomial bound weights.
 The exponential is checked separately, so the shift is evaluated once. -/
