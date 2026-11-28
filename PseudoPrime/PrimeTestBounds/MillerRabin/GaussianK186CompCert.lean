@@ -9,6 +9,7 @@ module
 public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianK186CompCells
 import all PseudoPrime.PrimeTestBounds.MillerRabin.GaussianCompCellCaps
 import all PseudoPrime.PrimeTestBounds.MillerRabin.GaussianK186CompCells
+import all PseudoPrime.PrimeTestBounds.MillerRabin.GaussianAffineHorner
 import all PseudoPrime.PrimeTestBounds.MillerRabin.GaussianHighCompensationPartition
 
 /-! # Kernel-checked scalar caps for the K186 Abel compensation -/

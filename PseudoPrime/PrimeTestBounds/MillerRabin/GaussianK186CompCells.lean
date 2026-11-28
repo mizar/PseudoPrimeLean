@@ -11,6 +11,7 @@ public import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianCompSigned
 import all PseudoPrime.PrimeTestBounds.MillerRabin.GaussianCompCellCaps
 import all PseudoPrime.PrimeTestBounds.MillerRabin.GaussianCompSigned
 import all PseudoPrime.PrimeTestBounds.MillerRabin.GaussianK186CompInteger
+import all PseudoPrime.PrimeTestBounds.MillerRabin.GaussianAffineHorner
 import all PseudoPrime.PrimeTestBounds.MillerRabin.GaussianHighCompensationPartition
 import all PseudoPrime.PrimeTestBounds.MillerRabin.GaussianK186ForwardMoment
 import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianCompIntegerBernstein

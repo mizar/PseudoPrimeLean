@@ -11,6 +11,7 @@ import all PseudoPrime.PrimeTestBounds.MillerRabin.GaussianHighCompensationPaire
 import all PseudoPrime.PrimeTestBounds.MillerRabin.GaussianHighCompensationPartition
 import all PseudoPrime.PrimeTestBounds.MillerRabin.GaussianK186ReflectionCert
 import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianCompIntegerBernstein
+import PseudoPrime.PrimeTestBounds.MillerRabin.GaussianAffineHorner
 
 /-! # Integer affine and Bernstein evaluation of the K186 compensation -/
 
@@ -19,7 +20,13 @@ namespace PseudoPrime.PrimeTestBounds.MillerRabin
 /-- Integer affine coefficients for the dyadic log cell with start and width
 given in the units of the fixed compensation partition. -/
 private def k186CompAffine (i w : ℕ) : MiddleIntRow :=
-  baseRow.affine 83 (5 * (i : ℤ)) (5 * (w : ℤ)) 524288
+  ⟨baseRow.den * 524288 ^ 83,
+    gaussianFastAffineRatio 83 (5 * (i : ℤ)) (5 * (w : ℤ)) 524288 baseRow.num⟩
+
+/-- The Horner evaluator has the same coefficients and scale as the binomial evaluator. -/
+private theorem k186_comp_affine_eq (i w : ℕ) :
+    k186CompAffine i w = baseRow.affine 83 (5 * (i : ℤ)) (5 * (w : ℤ)) 524288 := by
+  simp only [k186CompAffine, MiddleIntRow.affine, gaussian_fast_ratio_eq]
 
 /-- The integer affine row represents the normalized K186 profile on its cell. -/
 private theorem k186_comp_affine_poly (i w : ℕ) :
@@ -29,7 +36,8 @@ private theorem k186_comp_affine_poly (i w : ℕ) :
   have h :=
     baseRow.poly_affine 83 (5 * (i : ℤ)) (5 * (w : ℤ)) 524288 (by decide +kernel) (by decide)
   rw [base_row_poly] at h
-  simpa only [k186CompAffine, logCoordinate, Int.cast_mul, Int.cast_ofNat, Int.cast_natCast] using h
+  simpa only [k186_comp_affine_eq, logCoordinate, Int.cast_mul, Int.cast_ofNat,
+    Int.cast_natCast] using h
 
 /-- The denominator remains positive for every affine row. -/
 private theorem k186_comp_affine_pos (i w : ℕ) : 0 < (k186CompAffine i w).den := by
